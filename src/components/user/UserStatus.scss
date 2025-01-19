@@ -1,0 +1,49 @@
+.user-status {
+  height: 48px;
+  background: #575056;
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+  width: 250px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.user-status:hover {
+  background: #5f595f;
+}
+
+.user-status-icon {
+  width: 32px;
+  height: 32px;
+  margin-top: 8px;
+  margin-left: 8px;
+  margin-right: 8px;
+  background-position: center;
+  background-size: cover;
+  border-radius: 29px;
+  display: inline-block;
+}
+
+.user-status-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.user-status-username {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.user-status-info {
+  font-size: 10px;
+  text-overflow: ellipsis;
+  width: 170px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.user-status-menu {
+  position: absolute;
+}

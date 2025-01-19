@@ -1,0 +1,68 @@
+.channel-group {
+  padding: 10px 15px;
+  line-height: 29px;
+}
+
+.channel-group-name {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.channel-group-channel {
+  padding: 0px 10px;
+}
+
+.channel-group-channel-name {
+  font-weight: 300;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.channel-configure {
+  display: none;
+}
+
+.channel-group-channel-name:hover {
+  background: rgba(255, 200, 255, 0.05);
+  padding: 0px 15px;
+  margin: 0px -15px;
+  border-radius: 10px 0px 0px 10px;
+  opacity: 1;
+
+  .channel-configure {
+    display: block !important;
+  }
+}
+
+.channel-group-channel-name-focused {
+  font-weight: 700;
+  background: rgba(255, 200, 255, 0.1);
+  padding: 0px 15px;
+  margin: 0px -15px;
+  opacity: 1;
+  border-radius: 10px 0px 0px 10px;
+}
+
+.channel-group-channel-name-focused:hover {
+  .channel-configure {
+    display: block !important;
+  }
+}
+
+.channel-group-channel-name-mentions-you,
+.channel-group-channel-name-mentions-role {
+  float: right;
+  padding: 0px 6px;
+  border-radius: 15px;
+  line-height: 20px;
+  margin-top: 4px;
+  font-weight: 700;
+}
+
+.channel-group-channel-name-mentions-role {
+  background: #3e8914;
+}
+
+.channel-group-channel-name-mentions-you {
+  background: #eeb155;
+}

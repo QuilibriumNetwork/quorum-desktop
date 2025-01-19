@@ -1,0 +1,16 @@
+.user-state-indicator {
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.user-state-online::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  background: #bcffb6;
+  border-radius: 5px;
+  margin-right: 4px;
+  margin-top: -2px;
+  vertical-align: middle;
+}

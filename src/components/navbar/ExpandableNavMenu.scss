@@ -1,0 +1,47 @@
+.expand-button {
+  font-size: 24px;
+  text-align: center;
+  padding-top: 12px;
+  width: 57px;
+  height: 57px;
+  flex-shrink: 0;
+  margin-left: 8px;
+  margin-top: 6px;
+  margin-bottom: -4px;
+}
+
+.expanded-nav-menu {
+  text-align: center;
+  bottom: 0px;
+  width: 57px;
+
+  .quorum-button {
+    margin-bottom: 10px;
+  }
+
+  .quorum-tooltip {
+    position: fixed;
+    z-index: 1002;
+    margin-top: -3.4rem;
+    margin-left: 4rem;
+  }
+
+  .quorum-tooltip-arrow-left::before {
+    content: '';
+    border-style: solid;
+    border-width: 8px 11px 8px 0;
+    border-color: transparent #0e0e0e transparent transparent;
+    position: absolute;
+    left: -0.5rem;
+    top: 11px;
+  }
+}
+
+.expanded-nav-search-spaces,
+.expanded-nav-add-spaces,
+.expanded-nav-join-spaces {
+  z-index: 1002;
+  position: relative;
+  left: 0px;
+  bottom: 0px;
+}

@@ -1,0 +1,39 @@
+.quorum-modal {
+  position: relative;
+  background-color: #4f454c;
+  border-radius: 10px;
+  padding: 26px;
+  animation: createBox 0.25s;
+}
+
+.quorum-modal-closing {
+  scale: 0;
+  transition: scale 0.25s;
+}
+
+@keyframes createBox {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.quorum-modal-close {
+  position: absolute;
+  right: 14px;
+  top: 10px;
+}
+
+.quorum-modal-title {
+  font-size: 24px;
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.quorum-modal-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

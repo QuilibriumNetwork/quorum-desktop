@@ -1,0 +1,77 @@
+{
+  "name": "quorum-desktop",
+  "private": true,
+  "version": "0.0.0",
+  "main": "electron/main.cjs",
+  "type": "module",
+  "build": {
+    "extends": null,
+    "files": [
+      "dist/**/*",
+      "electron/**/*"
+    ]
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "electron:dev": "NODE_ENV=development electron electron/main.cjs",
+    "electron:build": "vite build && electron-builder",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/modifiers": "^9.0.0",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@fortawesome/fontawesome-svg-core": "^6.7.1",
+    "@fortawesome/free-solid-svg-icons": "^6.7.1",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@iden3/js-crypto": "^1.1.0",
+    "@quilibrium/quilibrium-js-sdk-channels": "file:../quilibrium-js-sdk-channels",
+    "@tanstack/react-query": "^5.62.7",
+    "base58-js": "^2.0.0",
+    "buffer": "^6.0.3",
+    "compressorjs": "^1.2.1",
+    "crypto-browserify": "^3.12.1",
+    "electron-is-dev": "^3.0.1",
+    "emoji-datasource-apple": "^15.1.2",
+    "emoji-picker-react": "^4.12.0",
+    "linkifyjs": "^4.2.0",
+    "moment-timezone": "^0.5.46",
+    "multiformats": "^13.3.1",
+    "qs": "^6.13.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-dropzone": "^14.3.5",
+    "react-router": "^7.0.2",
+    "react-router-dom": "^7.0.2",
+    "react-virtuoso": "^4.12.3",
+    "vite-plugin-static-copy": "^2.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.15.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-basic-ssl": "^1.2.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "eslint": "^9.15.0",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.14",
+    "globals": "^15.12.0",
+    "postcss": "^8.4.49",
+    "prettier": "^3.4.2",
+    "sass-embedded": "^1.83.0",
+    "tailwindcss": "^3.4.16",
+    "vite": "^6.0.1",
+    "vite-plugin-node-polyfills": "^0.23.0"
+  },
+  "resolutions": {
+    "@quilibrium/quilibrium-js-sdk-channels": "file:../quilibrium-js-sdk-channels"
+  }
+}

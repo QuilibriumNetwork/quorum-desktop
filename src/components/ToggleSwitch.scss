@@ -1,0 +1,29 @@
+.quorum-toggle-switch {
+  width: 60px;
+  height: 32px;
+  border-radius: 30px;
+  display: inline-block;
+  padding: 2px;
+  background-color: #ffeebc;
+  border: 1px solid #ffdea2;
+  transition: all 200ms;
+  cursor: pointer;
+}
+
+.quorum-toggle-switch-inactive {
+  background-color: #373036;
+  border: 1px solid #272026;
+}
+
+.quorum-toggle-switch-active {
+  padding-left: 30px;
+}
+
+.quorum-toggle-switch-flipper {
+  width: 26px;
+  height: 26px;
+  background-color: #f8c271;
+  display: inline-block;
+  border-radius: 13px;
+  border: 1px solid #ffce82;
+}

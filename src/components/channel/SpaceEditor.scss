@@ -1,0 +1,134 @@
+.space-editor {
+  position: absolute;
+  z-index: 3000;
+  width: 90vw;
+  height: 90vh;
+  background: #3f353c;
+  border-radius: 10px;
+  color: #ffdeac;
+  user-select: none;
+}
+
+.space-editor-header {
+  background: #4f454c;
+  min-height: 120px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+.space-editor-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 212px;
+}
+
+.space-editor-username {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.space-editor-info {
+  font-size: 13px;
+
+  .quorum-input {
+    width: 100%;
+    background: #0e0e0e;
+    padding: 10px;
+    font-size: 13px;
+  }
+}
+
+.space-editor-editor-actions {
+  display: flex;
+  justify-content: right;
+  margin-top: 10px;
+
+  .quorum-button {
+    height: 38px;
+    font-size: 13px;
+  }
+}
+
+.space-editor-content {
+  padding: 14px;
+  background-color: #4f454c;
+  border-radius: 0px 0px 10px 10px;
+}
+
+.space-editor-icon,
+.space-editor-icon-editable {
+  width: 82px;
+  height: 82px;
+  margin-top: 20px;
+  margin-left: 18px;
+  margin-right: 18px;
+  background-position: center;
+  background-size: cover;
+  border-radius: 41px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.space-editor-icon-editable::after {
+  width: 24px;
+  height: 24px;
+  background: #373036ff;
+  color: #ddbea8ff;
+  content: '+';
+  display: block;
+  text-align: center;
+  border-radius: 12px;
+  font-weight: 700;
+  float: right;
+  margin-top: 58px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.space-editor-banner,
+.space-editor-banner-editable {
+  width: 260px;
+  height: 120px;
+  background-position: center;
+  background-size: cover;
+  border-radius: 10px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.space-editor-banner-editable::after {
+  width: 24px;
+  height: 24px;
+  background: #373036ff;
+  color: #ddbea8ff;
+  content: '+';
+  display: block;
+  text-align: center;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 12pt;
+  float: right;
+  margin-top: 100px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.space-editor-content-section-header {
+  font-weight: 700;
+  border-top: 1px solid #3e3e3e;
+  padding-top: 7px;
+  margin-top: 7px;
+}
+
+.space-editor-content-section-header:first-child {
+  border-top: 0px none;
+  padding-top: 0px;
+  margin-top: 0px;
+}
+
+.space-editor-edit-button {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}

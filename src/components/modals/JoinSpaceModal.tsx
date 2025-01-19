@@ -1,0 +1,178 @@
+import * as React from 'react';
+import { channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
+import Modal from '../Modal';
+import Input from '../Input';
+import Button from '../Button';
+import SpaceIcon from '../navbar/SpaceIcon';
+import './JoinSpaceModal.scss';
+import { useLocation, useNavigate } from 'react-router';
+import { useLocalization } from '../../hooks';
+import { getConfig } from '../../config/config';
+import { useQuorumApiClient } from '../context/QuorumApiContext';
+import { Space } from '../../api/quorumApi';
+
+type JoinSpaceModalProps = {
+  visible: boolean;
+  onClose: () => void;
+};
+
+const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
+  props
+) => {
+  let [space, setSpace] = React.useState<
+    { iconUrl: string; spaceName: string; spaceId: string } | undefined
+  >(undefined);
+  let { hash, pathname } = useLocation();
+  let [init, setInit] = React.useState<boolean>(false);
+  let [lookup, setLookup] = React.useState<string>();
+
+  // let connection = props.connection as WebSocket;
+  let navigate = useNavigate();
+  let { data: localization } = useLocalization({ langId: getConfig().langId });
+  let [info, setInfo] = React.useState<{
+    spaceId: string;
+    configKey: string;
+  }>();
+  let [error, setError] = React.useState<string>();
+  const { apiClient } = useQuorumApiClient();
+
+  React.useEffect(() => {
+    if (!init) {
+      setInit(true);
+      if (hash.trim().length > 0) {
+        setLookup('qm.one/' + hash);
+      }
+    }
+  }, [init, hash]);
+
+  React.useEffect(() => {
+    setError(undefined);
+    setSpace(undefined);
+    (async () => {
+      if (
+        lookup?.startsWith('https://app.quorummessenger.com/invite/#') ||
+        lookup?.startsWith('https://qm.one/#') ||
+        lookup?.startsWith('app.quorummessenger.com/invite/#') ||
+        lookup?.startsWith('qm.one/#')
+      ) {
+        const output = lookup
+          .split('#')[1]
+          .split('&')
+          .map((l) => {
+            const [key, value] = l.split('=');
+            if (!key || !value) {
+              return undefined;
+            }
+
+            if (key != 'spaceId' && key != 'configKey') {
+              return undefined;
+            }
+
+            return { [key]: value };
+          })
+          .filter((l) => !!l)
+          .reduce((prev, curr) => Object.assign(prev, curr), {});
+
+        if (output) {
+          const info = output as { spaceId: string; configKey: string };
+
+          try {
+            const manifest = await apiClient.getSpaceManifest(info.spaceId);
+            if (!manifest) {
+              throw new Error('invalid response');
+            }
+
+            const ciphertext = JSON.parse(manifest.data.space_manifest) as {
+              ciphertext: string;
+              initialization_vector: string;
+              associated_data: string;
+            };
+            const space = JSON.parse(
+              Buffer.from(
+                JSON.parse(
+                  ch.js_decrypt_inbox_message(
+                    JSON.stringify({
+                      inbox_private_key: [
+                        ...new Uint8Array(Buffer.from(info.configKey, 'hex')),
+                      ],
+                      ephemeral_public_key: [
+                        ...new Uint8Array(
+                          Buffer.from(manifest.data.ephemeral_public_key, 'hex')
+                        ),
+                      ],
+                      ciphertext: ciphertext,
+                    })
+                  )
+                )
+              ).toString('utf-8')
+            ) as Space;
+            setSpace(space);
+          } catch (e) {
+            setError('Could not verify invite');
+          }
+        }
+      }
+    })();
+  }, [lookup]);
+
+  return (
+    <Modal
+      hideClose={pathname.startsWith('/invite')}
+      visible={props.visible}
+      onClose={props.onClose}
+      title={localization.localizations['JOIN_SPACE_TITLE']([])}
+    >
+      <div className="modal-join-space">
+        <div>
+          <Input
+            className="w-[300pt]"
+            value={lookup}
+            onChange={(e) => setLookup(e.target.value)}
+            placeholder={localization.localizations['JOIN_SPACE_PROMPT']([])}
+          />
+        </div>
+        <div className="modal-join-space-icon">
+          {!space ? (
+            <SpaceIcon
+              noTooltip={true}
+              notifs={false}
+              spaceName={'Unknown'}
+              size="large"
+              selected={false}
+              iconUrl="/quorumicon.png"
+            />
+          ) : (
+            <>
+              <SpaceIcon
+                noToggle={true}
+                noTooltip={true}
+                notifs={false}
+                spaceName={space.spaceName}
+                size="large"
+                selected={true}
+                iconUrl={space.iconUrl}
+              />
+              <div className="quorum-modal-title">{space.spaceName}</div>
+            </>
+          )}
+        </div>
+        <div className="modal-join-space-actions">
+          <Button
+            className="w-32 inline-block"
+            type="primary"
+            disabled={!space}
+            onClick={() => {
+              if (!!space) {
+                /*connection.send("JoinSpace", space.spaceId);*/ navigate('/');
+              }
+            }}
+          >
+            {localization.localizations['JOIN_SPACE']([])}
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+export default JoinSpaceModal;

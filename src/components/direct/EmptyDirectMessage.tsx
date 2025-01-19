@@ -1,0 +1,28 @@
+import React from 'react';
+import './DirectMessage.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { useConversations } from '../../hooks';
+
+export const EmptyDirectMessage = () => {
+  const user = usePasskeysContext();
+  const { data: conversations } = useConversations({type:"direct"});
+
+  return (
+    <div className="direct-message">
+      <div className="flex w-full flex-col justify-around">
+        <div>
+          <div className="flex flex-row justify-around">
+            <FontAwesomeIcon icon={faPen} size="6x" />
+          </div>
+          <div className="flex flex-row justify-around text-lg pt-4">
+            {conversations.pages.flatMap((p: any) => p.conversations).length === 0
+              ? 'Start with a message to a friend. Click on the add button next to the direct messages list.'
+              : "What's on your mind today?"}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
