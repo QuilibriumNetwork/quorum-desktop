@@ -1,7 +1,7 @@
 import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { usePasskeysContext, channel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useNavigate } from 'react-router';
 import {
   faChevronDown,
@@ -22,6 +22,8 @@ import {
 } from '../../api/quorumApi';
 import ToggleSwitch from '../ToggleSwitch';
 import Tooltip from '../Tooltip';
+import Input from '../Input';
+import { useQuorumApiClient } from '../context/QuorumApiContext';
 
 const SpaceEditor: React.FunctionComponent<{
   spaceId: string;
@@ -53,16 +55,19 @@ const SpaceEditor: React.FunctionComponent<{
       ?.channels.find((c) => c.channelId === space.defaultChannelId)!
   );
   const { currentPasskeyInfo } = usePasskeysContext();
-  const { updateSpace, ensureKeyForSpace, sendInviteToConversation } =
+  const { updateSpace, ensureKeyForSpace, sendInviteToUser } =
     useMessageDB();
   const [selectedUser, setSelectedUser] = React.useState<Conversation>();
   const [success, setSuccess] = React.useState<boolean>(false);
   const [sendingInvite, setSendingInvite] = React.useState<boolean>(false);
+  const [manualAddress, setManualAddress] = React.useState<string>();
+  const [resolvedUser, setResolvedUser] = React.useState<channel.UserRegistration>();
   const [isRepudiable, setIsRepudiable] = React.useState<boolean>(
     space?.isRepudiable || false
   );
   const [repudiableTooltip, setRepudiableTooltip] = React.useState(false);
   const { data: conversations } = useConversations({ type: 'direct' });
+  const { apiClient } = useQuorumApiClient();
   const navigate = useNavigate();
 
   const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
@@ -118,6 +123,23 @@ const SpaceEditor: React.FunctionComponent<{
   }, [bannerAcceptedFiles]);
 
   React.useEffect(() => {
+    (async () => {
+      if (manualAddress?.length === 46) {
+        try {
+          const reg = await apiClient.getUser(manualAddress);
+          if (reg.data) {
+            setResolvedUser(reg.data);
+          }
+        } catch {
+          setResolvedUser(undefined);
+        }
+      } else {
+        setResolvedUser(undefined);
+      }
+    })();
+  }, [manualAddress])
+
+  React.useEffect(() => {
     if (emojiAcceptedFiles.length > 0) {
       (async () => {
         const file = await emojiAcceptedFiles[0].arrayBuffer();
@@ -141,7 +163,7 @@ const SpaceEditor: React.FunctionComponent<{
   }, [emojiAcceptedFiles]);
 
   const invite = React.useCallback(
-    async (recipient: Conversation) => {
+    async (address: string) => {
       setSendingInvite(true);
       try {
         const spaceAddress = await ensureKeyForSpace(
@@ -152,8 +174,8 @@ const SpaceEditor: React.FunctionComponent<{
           navigate('/spaces/' + spaceAddress + '/' + defaultChannel.channelId);
         }
 
-        await sendInviteToConversation(
-          recipient,
+        await sendInviteToUser(
+          address,
           spaceAddress,
           currentPasskeyInfo!
         );
@@ -663,6 +685,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="flex"></div>
                     <div className="pt-4"></div>
                     <div className="space-editor-info">
+                      <div className="small-caps">Existing Conversations</div>
                       <div
                         className="w-full quorum-input !font-bold flex flex-row justify-between cursor-pointer"
                         onClick={() => {
@@ -710,6 +733,8 @@ const SpaceEditor: React.FunctionComponent<{
                                   <div
                                     onClick={() => {
                                       setSelectedUser(c);
+                                      setResolvedUser(undefined);
+                                      setManualAddress("");
                                       setSuccess(false);
                                       setIsInviteListExpanded(false);
                                     }}
@@ -740,6 +765,12 @@ const SpaceEditor: React.FunctionComponent<{
                           </div>
                         </div>
                       )}
+                      <div className="small-caps">Enter Address Manually</div>
+                      <Input value={manualAddress} placeholder="Type the address of the user you want to send to" onChange={(e) => {
+                        setManualAddress(e.target.value);
+                        setSuccess(false);
+                        setIsInviteListExpanded(false);
+                      }} />
                       {success && (
                         <div className="text-green-300">
                           Successfully sent invite to{' '}
@@ -751,10 +782,12 @@ const SpaceEditor: React.FunctionComponent<{
                       <div className="space-editor-editor-actions">
                         <Button
                           type="primary"
-                          disabled={sendingInvite}
+                          disabled={sendingInvite || (!selectedUser && !resolvedUser)}
                           onClick={() => {
                             if (selectedUser) {
-                              invite(selectedUser);
+                              invite(selectedUser.address);
+                            } else if (resolvedUser) {
+                              invite(resolvedUser.user_address);
                             }
                           }}
                         >

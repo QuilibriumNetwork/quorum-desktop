@@ -131,8 +131,8 @@ type MessageDBContextValue = {
   }) => Promise<void>;
   setSelfAddress: React.Dispatch<React.SetStateAction<string>>;
   ensureKeyForSpace: (user_address: string, space: Space) => Promise<string>;
-  sendInviteToConversation: (
-    conversation: Conversation,
+  sendInviteToUser: (
+    address: string,
     spaceId: string,
     currentPasskeyInfo: {
       credentialId: string;
@@ -3277,9 +3277,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     return link;
   }, []);
 
-  const sendInviteToConversation = React.useCallback(
+  const sendInviteToUser = React.useCallback(
     async (
-      conversation: Conversation,
+      address: string,
       spaceId: string,
       currentPasskeyInfo: {
         credentialId: string;
@@ -3292,9 +3292,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     ) => {
       const link = await constructInviteLink(spaceId);
       const self = await apiClient.getUser(currentPasskeyInfo.address);
-      const recipient = await apiClient.getUser(conversation.address);
+      const recipient = await apiClient.getUser(address);
       await submitMessage(
-        conversation.address,
+        address,
         link,
         self.data,
         recipient.data,
@@ -4333,7 +4333,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         saveConfig,
         setSelfAddress,
         ensureKeyForSpace,
-        sendInviteToConversation,
+        sendInviteToUser,
         processInviteLink,
         joinInviteLink,
         deleteSpace,
@@ -4359,7 +4359,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   saveConfig: () => undefined as never,
   setSelfAddress: (_) => {},
   ensureKeyForSpace: () => undefined as never,
-  sendInviteToConversation: () => undefined as never,
+  sendInviteToUser: () => undefined as never,
   processInviteLink: () => undefined as never,
   joinInviteLink: () => undefined as never,
   deleteSpace: () => undefined as never,
