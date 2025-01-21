@@ -8,6 +8,7 @@ import React, {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faPlus,
+  faFaceSmileBeam,
   faUsers,
   faX,
 } from '@fortawesome/free-solid-svg-icons';
@@ -22,6 +23,7 @@ import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import { MessageList } from '../message/MessageList';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
+import EmojiPicker, { SkinTonePickerLocation, SuggestionMode, Theme} from 'emoji-picker-react';
 
 type ChannelProps = { spaceId: string; channelId: string };
 
@@ -184,6 +186,30 @@ const Channel: React.FC<ChannelProps> = ({ spaceId, channelId }) => {
   const rowCount =
     state.pendingMessage.split('').filter((c) => c == '\n').length + 1;
 
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const emojiPickerRef = useRef<HTMLDivElement>(null); // Create a ref for the emoji picker
+  const emojiButtonRef = useRef<HTMLDivElement | null>(null);
+  const handleEmojiSelect = (emojiData: any) => {
+    setPendingMessage((prevMessage) => prevMessage + emojiData.emoji);
+    setShowEmojiPicker(false); // Close emoji picker after selecting an emoji
+  };
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Check if the click happened outside the emoji picker
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node) && 
+          emojiButtonRef.current && !emojiButtonRef.current.contains(event.target as Node)
+      ) {
+        setShowEmojiPicker(false); // Close the emoji picker
+      }
+    };
+    // Add event listener for clicks outside
+    document.addEventListener('mousedown', handleClickOutside);
+    // Cleanup event listener
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="channel">
       <div className="flex flex-col">
@@ -270,8 +296,31 @@ const Channel: React.FC<ChannelProps> = ({ spaceId, channelId }) => {
             </div>
           </div>
         )}
-        <div {...getRootProps()} className="flex flex-row relative">
+        <div className="flex flex-row relative">
           <div
+            ref={emojiButtonRef}
+            className={
+              'absolute hover:bg-[#5f555c] flex flex-col justify-around cursor-pointer right-14 w-8 h-8 rounded-full bg-[length:60%] bg-[#4f454c] ' +
+              (inReplyTo ? 'top-1' : 'top-3')
+            }
+            onClick={() => setShowEmojiPicker((prev) => !prev)} // Toggle emoji picker
+          >
+            <FontAwesomeIcon
+              className="text-white"
+              icon={faFaceSmileBeam}
+            />
+          </div>
+          {showEmojiPicker && (
+            <div ref={emojiPickerRef} className="absolute bottom-[60px] right-10 z-50">
+              <EmojiPicker
+                suggestedEmojisMode={SuggestionMode.FREQUENT}
+                skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
+                theme={Theme.DARK}
+                onEmojiClick={handleEmojiSelect} // Custom handler for emoji selection
+              />
+            </div>
+          )}
+          <div {...getRootProps()}
             className={
               'absolute hover:bg-[#5f555c] flex flex-col justify-around cursor-pointer left-4 w-8 h-8 rounded-full bg-[length:60%] bg-[#4f454c] ' +
               (inReplyTo ? 'top-1' : 'top-3')
@@ -291,14 +340,14 @@ const Channel: React.FC<ChannelProps> = ({ spaceId, channelId }) => {
               rowCount > 4
                 ? 4
                 : pendingMessage == ''
-                  ? 1
-                  : Math.min(
-                      4,
-                      Math.max(
-                        rowCount,
-                        Math.round(editor.current!.scrollHeight / 28)
-                      )
+                ? 1
+                : Math.min(
+                    4,
+                    Math.max(
+                      rowCount,
+                      Math.round(editor.current!.scrollHeight / 28)
                     )
+                  )
             }
             value={pendingMessage}
             onChange={(e) => setPendingMessage(e.target.value)}
