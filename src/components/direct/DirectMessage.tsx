@@ -1,9 +1,4 @@
-import React, {
-  useMemo,
-  useState,
-  useEffect,
-  useRef,
-} from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faUsers, faX } from '@fortawesome/free-solid-svg-icons';
@@ -98,7 +93,13 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   }, []);
 
   const members = useMemo(() => {
-    let m = {} as {[address: string]: {displayName?: string; userIcon?: string; address: string;}};
+    let m = {} as {
+      [address: string]: {
+        displayName?: string;
+        userIcon?: string;
+        address: string;
+      };
+    };
     if (conversation?.conversation) {
       m[address!] = {
         displayName: conversation.conversation!.displayName,

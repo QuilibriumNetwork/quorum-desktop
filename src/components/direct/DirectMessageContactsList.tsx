@@ -4,9 +4,7 @@ import { Link } from 'react-router-dom';
 import './DirectMessageContactsList.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
-import {
-  useConversations,
-} from '../../hooks';
+import { useConversations } from '../../hooks';
 
 const DirectMessageContactsList: React.FC<{}> = ({}) => {
   const { data: conversations, refetch: refetchConversations } =
@@ -32,6 +30,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
         </div>
       </div>
       {[...conversations.pages.flatMap((c: any) => c.conversations)]
+        .filter((c) => c)
         .sort((a, b) => b.timestamp - a.timestamp)
         .map((c) => {
           return (

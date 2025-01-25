@@ -53,16 +53,15 @@ const Channel: React.FC<ChannelProps> = ({ spaceId, channelId }) => {
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
   const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
   const [fileType, setFileType] = React.useState<string>();
-  const { getRootProps, getInputProps, acceptedFiles } =
-    useDropzone({
-      accept: {
-        'image/png': ['.png'],
-        'image/jpeg': ['.jpg', '.jpeg'],
-        'image/gif': ['.gif'],
-      },
-      minSize: 0,
-      maxSize: 2 * 1024 * 1024,
-    });
+  const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
+    accept: {
+      'image/png': ['.png'],
+      'image/jpeg': ['.jpg', '.jpeg'],
+      'image/gif': ['.gif'],
+    },
+    minSize: 0,
+    maxSize: 2 * 1024 * 1024,
+  });
 
   const compressImage = async function (file: FileWithPath) {
     return new Promise<File>((resolve, reject) => {
@@ -109,7 +108,13 @@ const Channel: React.FC<ChannelProps> = ({ spaceId, channelId }) => {
             displayName: curr.display_name,
           },
         }),
-      {} as {[address: string]: {address: string; userIcon?: string; displayName?: string}}
+      {} as {
+        [address: string]: {
+          address: string;
+          userIcon?: string;
+          displayName?: string;
+        };
+      }
     );
   }, [spaceMembers]);
 
@@ -124,7 +129,14 @@ const Channel: React.FC<ChannelProps> = ({ spaceId, channelId }) => {
             left: curr.inbox_address === '',
           },
         }),
-      {} as {[address: string]: {address: string; userIcon?: string; displayName?: string; left: boolean}}
+      {} as {
+        [address: string]: {
+          address: string;
+          userIcon?: string;
+          displayName?: string;
+          left: boolean;
+        };
+      }
     );
   }, [spaceMembers]);
 

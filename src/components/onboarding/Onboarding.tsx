@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Button from '../Button';
-import { PasskeyModal, usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import {
+  PasskeyModal,
+  usePasskeysContext,
+} from '@quilibrium/quilibrium-js-sdk-channels';
 import Input from '../Input';
 import { useDropzone } from 'react-dropzone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileImage } from '@fortawesome/free-solid-svg-icons';
-import { useMessageDB } from '../context/MessageDB';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
 
@@ -74,7 +76,13 @@ export const Onboarding = ({
 
   return (
     <>
-      <PasskeyModal fqAppPrefix='Quorum' getUserRegistration={async (address: string) => { return (await apiClient.getUser(address)).data; }} uploadRegistration={uploadRegistration} />
+      <PasskeyModal
+        fqAppPrefix="Quorum"
+        getUserRegistration={async (address: string) => {
+          return (await apiClient.getUser(address)).data;
+        }}
+        uploadRegistration={uploadRegistration}
+      />
       <div className="flex flex-col grow"></div>
       <div className="flex flex-col select-none">
         <div className="flex flex-row grow"></div>
@@ -227,6 +235,22 @@ export const Onboarding = ({
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
                 <div className="flex flex-col justify-around pl-2 pt-4">
+                  <Button
+                    type="secondary"
+                    className="px-8"
+                    onClick={() => {
+                      updateStoredPasskey(currentPasskeyInfo!.credentialId, {
+                        credentialId: currentPasskeyInfo!.credentialId,
+                        address: currentPasskeyInfo!.address,
+                        publicKey: currentPasskeyInfo!.publicKey,
+                        displayName: displayName,
+                        completedOnboarding: false,
+                        pfpUrl: '/unknown.png',
+                      });
+                    }}
+                  >
+                    Skip Adding Photo
+                  </Button>
                   <Button
                     type="primary"
                     disabled={!fileData}

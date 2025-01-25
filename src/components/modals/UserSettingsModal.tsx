@@ -262,31 +262,33 @@ const UserSettingsModal: React.FunctionComponent<{
                   </div>
                   <div className="user-settings-content flex flex-col grow">
                     <div className="small-caps">Devices</div>
-                    {stagedRegistration?.device_registrations.map((d: secureChannel.DeviceRegistration) => (
-                      <div
-                        key={d.inbox_registration.inbox_address}
-                        className="user-settings-content-section-header flex flex-row justify-between"
-                      >
-                        <div className="flex flex-col justify-around font-light">
-                          {d.inbox_registration.inbox_address}
+                    {stagedRegistration?.device_registrations.map(
+                      (d: secureChannel.DeviceRegistration) => (
+                        <div
+                          key={d.inbox_registration.inbox_address}
+                          className="user-settings-content-section-header flex flex-row justify-between"
+                        >
+                          <div className="flex flex-col justify-around font-light">
+                            {d.inbox_registration.inbox_address}
+                          </div>
+                          {keyset.deviceKeyset.inbox_keyset.inbox_address !==
+                            d.inbox_registration.inbox_address && (
+                            <Button
+                              onClick={() => {
+                                removeDevice(d.identity_public_key);
+                              }}
+                              type="danger"
+                            >
+                              Remove
+                            </Button>
+                          )}
+                          {keyset.deviceKeyset.inbox_keyset.inbox_address ===
+                            d.inbox_registration.inbox_address && (
+                            <div className="font-light">(this device)</div>
+                          )}
                         </div>
-                        {keyset.deviceKeyset.inbox_keyset.inbox_address !==
-                          d.inbox_registration.inbox_address && (
-                          <Button
-                            onClick={() => {
-                              removeDevice(d.identity_public_key);
-                            }}
-                            type="danger"
-                          >
-                            Remove
-                          </Button>
-                        )}
-                        {keyset.deviceKeyset.inbox_keyset.inbox_address ===
-                          d.inbox_registration.inbox_address && (
-                          <div className="font-light">(this device)</div>
-                        )}
-                      </div>
-                    ))}
+                      )
+                    )}
                     <div className="user-settings-content-section-header" />
                     <div className="user-settings-info">
                       <div className="user-settings-content-section-header small-caps !pt-4">

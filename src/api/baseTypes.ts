@@ -7,6 +7,8 @@ import {
   getInboxDeleteUrl,
   getInboxFetchUrl,
   getInboxUrl,
+  getSpaceInviteEvalsUrl,
+  getSpaceInviteEvalUrl,
   getSpaceManifestUrl,
   getSpaceUrl,
   getUserRegistrationUrl,
@@ -91,217 +93,6 @@ abstract class AbstractQuorumApiClient {
       method: 'DELETE',
     });
   }
-}
-
-export class QuorumApiClient extends AbstractQuorumApiClient {
-  // MAIN API:
-  getUser(
-    address: string,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.get<channel.UserRegistration>(getUserRegistrationUrl(address), {
-      headers,
-      timeout,
-    });
-  }
-
-  getSpace(
-    spaceAddress: string,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.get<channel.SpaceRegistration>(getSpaceUrl(spaceAddress), {
-      headers,
-      timeout,
-    });
-  }
-
-  getUserSettings(
-    address: string,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.get<channel.UserConfig>(getUserSettingsUrl(address), {
-      headers,
-      timeout,
-    });
-  }
-
-  postUser(
-    address: string,
-    userRegistration: channel.UserRegistration,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.post<channel.UserRegistration>(getUserRegistrationUrl(address), {
-      headers,
-      timeout,
-      body: userRegistration,
-    });
-  }
-
-  getInbox(
-    address: string,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.get<(channel.SealedMessage & { timestamp: number })[]>(
-      getInboxFetchUrl(address),
-      {
-        headers,
-        timeout,
-      }
-    );
-  }
-
-  postInbox(
-    sealedMessage: channel.SealedMessage,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.post<{ status: string }>(getInboxUrl(), {
-      headers,
-      timeout,
-      body: sealedMessage,
-    });
-  }
-
-  deleteInbox(
-    messages: channel.DeleteMessages,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.post<{ status: string }>(getInboxDeleteUrl(), {
-      headers,
-      timeout,
-      body: messages,
-    });
-  }
-
-  postUserSettings(
-    address: string,
-    sealedMessage: channel.UserConfig,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.post<{ status: string }>(getUserSettingsUrl(address), {
-      headers,
-      timeout,
-      body: sealedMessage,
-    });
-  }
-
-  postSpace(
-    address: string,
-    spaceRegistration: channel.SpaceRegistration,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.post<{ status: string }>(getSpaceUrl(address), {
-      headers,
-      timeout,
-      body: spaceRegistration,
-    });
-  }
-
-  getSpaceManifest(
-    address: string,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.get<channel.SpaceManifest>(getSpaceManifestUrl(address), {
-      headers,
-      timeout,
-    });
-  }
-
-  postSpaceManifest(
-    address: string,
-    manifest: channel.SpaceManifest,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.post<{ status: string }>(getSpaceManifestUrl(address), {
-      headers,
-      timeout,
-      body: manifest,
-    });
-  }
-
-  postHub(
-    hubSealedMessage: channel.HubSealedMessage,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.post<{ status: string }>(getHubUrl(), {
-      headers,
-      timeout,
-      body: hubSealedMessage,
-    });
-  }
-
-  postHubAdd(
-    hubControlMessage: channel.HubControlMessage,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.post<{ status: string }>(getHubAddUrl(), {
-      headers,
-      timeout,
-      body: hubControlMessage,
-    });
-  }
-
-  postHubDelete(
-    hubControlMessage: channel.HubControlMessage,
-    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.post<{ status: string }>(getHubDeleteUrl(), {
-      headers,
-      timeout,
-      body: hubControlMessage,
-    });
-  }
-
-  // LOCALIZATION API:
-  getLocalization(langId: string) {
-    function remap(pair: any[]): (vars: any) => string {
-      return (vars: any): string => {
-        let template = pair[0] as string;
-
-        for (let name of pair[1] as string[]) {
-          template = template.replace('${' + name + '}', vars[name]);
-        }
-
-        return template;
-      };
-    }
-
-    return {
-      direction: 'ltr',
-      langId: langId,
-      localizations: {
-        ADVANCED_SETTINGS: remap(['Advanced Settings', []]),
-        COMMUNITY_GUIDELINES: remap(['Community Guidelines', []]),
-        CREATE_SPACE: remap(['Create Space', []]),
-        CREATE_SPACE_PROMPT: remap(['Choose a name for your Space', []]),
-        CREATE_SPACE_TITLE: remap(['Create a Space', []]),
-        JOIN_SPACE: remap(['Join Space', []]),
-        JOIN_SPACE_PROMPT: remap([
-          'Enter the vanity URL or invite URL to join',
-          [],
-        ]),
-        JOIN_SPACE_TITLE: remap(['Join a Space', []]),
-        LOG_OUT: remap(['Log Out', []]),
-        NEW_DIRECT_MESSAGE_BUTTON: remap(['Create', []]),
-        NEW_DIRECT_MESSAGE_PROMPT: remap([
-          'Enter the address of a user to direct message',
-          [],
-        ]),
-        NEW_DIRECT_MESSAGE_TITLE: remap(['New Direct Message', []]),
-        SPACE_BANNER_ATTACHMENT: remap([
-          'Drag and drop or click to add a Space banner',
-          [],
-        ]),
-        SPACE_ICON_ATTACHMENT: remap([
-          'Drag and drop or click to add a Space icon (1MB max)',
-          [],
-        ]),
-        TOOLTIP_ADD_SPACE: remap(['Add a Space', []]),
-        TOOLTIP_JOIN_SPACE: remap(['Join an existing Space', []]),
-        TOOLTIP_SEARCH_SPACES: remap(['Search for Public Spaces', []]),
-      },
-    };
-  }
-
 
   public updateOptions(options: Partial<QuorumApiClientOptions>) {
     this.options = Object.assign({}, this.options, options);
@@ -546,6 +337,248 @@ export class QuorumApiClient extends AbstractQuorumApiClient {
     } finally {
       clearTimeout(timeoutId);
     }
+  }
+}
+
+export class QuorumApiClient extends AbstractQuorumApiClient {
+  // MAIN API:
+  getUser(
+    address: string,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.get<channel.UserRegistration>(getUserRegistrationUrl(address), {
+      headers,
+      timeout,
+    });
+  }
+
+  getSpace(
+    spaceAddress: string,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.get<channel.SpaceRegistration>(getSpaceUrl(spaceAddress), {
+      headers,
+      timeout,
+    });
+  }
+
+  getUserSettings(
+    address: string,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.get<channel.UserConfig>(getUserSettingsUrl(address), {
+      headers,
+      timeout,
+    });
+  }
+
+  postUser(
+    address: string,
+    userRegistration: channel.UserRegistration,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<channel.UserRegistration>(
+      getUserRegistrationUrl(address),
+      {
+        headers,
+        timeout,
+        body: userRegistration,
+      }
+    );
+  }
+
+  getInbox(
+    address: string,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.get<(channel.SealedMessage & { timestamp: number })[]>(
+      getInboxFetchUrl(address),
+      {
+        headers,
+        timeout,
+      }
+    );
+  }
+
+  postInbox(
+    sealedMessage: channel.SealedMessage,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<{ status: string }>(getInboxUrl(), {
+      headers,
+      timeout,
+      body: sealedMessage,
+    });
+  }
+
+  deleteInbox(
+    messages: channel.DeleteMessages,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<{ status: string }>(getInboxDeleteUrl(), {
+      headers,
+      timeout,
+      body: messages,
+    });
+  }
+
+  postUserSettings(
+    address: string,
+    sealedMessage: channel.UserConfig,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<{ status: string }>(getUserSettingsUrl(address), {
+      headers,
+      timeout,
+      body: sealedMessage,
+    });
+  }
+
+  postSpace(
+    address: string,
+    spaceRegistration: channel.SpaceRegistration,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<{ status: string }>(getSpaceUrl(address), {
+      headers,
+      timeout,
+      body: spaceRegistration,
+    });
+  }
+
+  getSpaceManifest(
+    address: string,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.get<channel.SpaceManifest>(getSpaceManifestUrl(address), {
+      headers,
+      timeout,
+    });
+  }
+
+  postSpaceManifest(
+    address: string,
+    manifest: channel.SpaceManifest,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<{ status: string }>(getSpaceManifestUrl(address), {
+      headers,
+      timeout,
+      body: manifest,
+    });
+  }
+
+  postHub(
+    hubSealedMessage: channel.HubSealedMessage,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<{ status: string }>(getHubUrl(), {
+      headers,
+      timeout,
+      body: hubSealedMessage,
+    });
+  }
+
+  postHubAdd(
+    hubControlMessage: channel.HubControlMessage,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<{ status: string }>(getHubAddUrl(), {
+      headers,
+      timeout,
+      body: hubControlMessage,
+    });
+  }
+
+  postHubDelete(
+    hubControlMessage: channel.HubControlMessage,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<{ status: string }>(getHubDeleteUrl(), {
+      headers,
+      timeout,
+      body: hubControlMessage,
+    });
+  }
+
+  postSpaceInviteEvals(
+    spaceInviteEvals: {
+      space_address: string;
+      config_public_key: string;
+      space_evals: string[];
+      ephemeral_public_key: string;
+      owner_public_key: string;
+      owner_signature: string;
+    },
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<{ status: string }>(getSpaceInviteEvalsUrl(), {
+      headers,
+      timeout,
+      body: spaceInviteEvals,
+    });
+  }
+
+  getSpaceInviteEval(
+    configPublicKey: string,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<string>(getSpaceInviteEvalUrl(), {
+      headers,
+      timeout,
+      body: configPublicKey,
+    });
+  }
+
+  // LOCALIZATION API:
+  getLocalization(langId: string) {
+    function remap(pair: any[]): (vars: any) => string {
+      return (vars: any): string => {
+        let template = pair[0] as string;
+
+        for (let name of pair[1] as string[]) {
+          template = template.replace('${' + name + '}', vars[name]);
+        }
+
+        return template;
+      };
+    }
+
+    return {
+      direction: 'ltr',
+      langId: langId,
+      localizations: {
+        ADVANCED_SETTINGS: remap(['Advanced Settings', []]),
+        COMMUNITY_GUIDELINES: remap(['Community Guidelines', []]),
+        CREATE_SPACE: remap(['Create Space', []]),
+        CREATE_SPACE_PROMPT: remap(['Choose a name for your Space', []]),
+        CREATE_SPACE_TITLE: remap(['Create a Space', []]),
+        JOIN_SPACE: remap(['Join Space', []]),
+        JOIN_SPACE_PROMPT: remap([
+          'Enter the vanity URL or invite URL to join',
+          [],
+        ]),
+        JOIN_SPACE_TITLE: remap(['Join a Space', []]),
+        LOG_OUT: remap(['Log Out', []]),
+        NEW_DIRECT_MESSAGE_BUTTON: remap(['Create', []]),
+        NEW_DIRECT_MESSAGE_PROMPT: remap([
+          'Enter the address of a user to direct message',
+          [],
+        ]),
+        NEW_DIRECT_MESSAGE_TITLE: remap(['New Direct Message', []]),
+        SPACE_BANNER_ATTACHMENT: remap([
+          'Drag and drop or click to add a Space banner',
+          [],
+        ]),
+        SPACE_ICON_ATTACHMENT: remap([
+          'Drag and drop or click to add a Space icon (1MB max)',
+          [],
+        ]),
+        TOOLTIP_ADD_SPACE: remap(['Add a Space', []]),
+        TOOLTIP_JOIN_SPACE: remap(['Join an existing Space', []]),
+        TOOLTIP_SEARCH_SPACES: remap(['Search for Public Spaces', []]),
+      },
+    };
   }
 }
 

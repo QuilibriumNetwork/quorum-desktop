@@ -7,7 +7,7 @@ import { useConversations } from '../../hooks';
 
 export const EmptyDirectMessage = () => {
   const user = usePasskeysContext();
-  const { data: conversations } = useConversations({type:"direct"});
+  const { data: conversations } = useConversations({ type: 'direct' });
 
   return (
     <div className="direct-message">
@@ -17,7 +17,8 @@ export const EmptyDirectMessage = () => {
             <FontAwesomeIcon icon={faPen} size="6x" />
           </div>
           <div className="flex flex-row justify-around text-lg pt-4">
-            {conversations.pages.flatMap((p: any) => p.conversations).length === 0
+            {conversations.pages.flatMap((p: any) => p.conversations).length ===
+            0
               ? 'Start with a message to a friend. Click on the add button next to the direct messages list.'
               : "What's on your mind today?"}
           </div>
