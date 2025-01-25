@@ -1,17 +1,17 @@
 import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { usePasskeysContext, channel } from '@quilibrium/quilibrium-js-sdk-channels';
-import { useNavigate } from 'react-router';
 import {
-  faChevronDown,
-  faTrash,
-} from '@fortawesome/free-solid-svg-icons';
+  usePasskeysContext,
+  channel,
+} from '@quilibrium/quilibrium-js-sdk-channels';
+import { useNavigate } from 'react-router';
+import { faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import { useMessageDB } from '../context/MessageDB';
 import './SpaceEditor.scss';
 import Button from '../Button';
-import { useConversations, useSpace } from '../../hooks';
+import { useConversations, useRegistration, useSpace } from '../../hooks';
 import {
   Channel,
   Emoji,
@@ -24,6 +24,7 @@ import ToggleSwitch from '../ToggleSwitch';
 import Tooltip from '../Tooltip';
 import Input from '../Input';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
+import { useRegistrationContext } from '../context/RegistrationPersister';
 
 const SpaceEditor: React.FunctionComponent<{
   spaceId: string;
@@ -55,17 +56,30 @@ const SpaceEditor: React.FunctionComponent<{
       ?.channels.find((c) => c.channelId === space.defaultChannelId)!
   );
   const { currentPasskeyInfo } = usePasskeysContext();
-  const { updateSpace, ensureKeyForSpace, sendInviteToUser } =
-    useMessageDB();
+  const {
+    updateSpace,
+    ensureKeyForSpace,
+    sendInviteToUser,
+    generateNewInviteLink,
+  } = useMessageDB();
+  const { data: registration } = useRegistration({
+    address: currentPasskeyInfo!.address,
+  });
+  const { keyset } = useRegistrationContext();
   const [selectedUser, setSelectedUser] = React.useState<Conversation>();
   const [success, setSuccess] = React.useState<boolean>(false);
   const [sendingInvite, setSendingInvite] = React.useState<boolean>(false);
   const [manualAddress, setManualAddress] = React.useState<string>();
-  const [resolvedUser, setResolvedUser] = React.useState<channel.UserRegistration>();
+  const [resolvedUser, setResolvedUser] =
+    React.useState<channel.UserRegistration>();
   const [isRepudiable, setIsRepudiable] = React.useState<boolean>(
     space?.isRepudiable || false
   );
   const [repudiableTooltip, setRepudiableTooltip] = React.useState(false);
+  const [publicInviteTooltip, setPublicInviteTooltip] = React.useState(false);
+  const [publicInvite, setPublicInvite] = React.useState(
+    space?.isPublic || false
+  );
   const { data: conversations } = useConversations({ type: 'direct' });
   const { apiClient } = useQuorumApiClient();
   const navigate = useNavigate();
@@ -137,7 +151,7 @@ const SpaceEditor: React.FunctionComponent<{
         setResolvedUser(undefined);
       }
     })();
-  }, [manualAddress])
+  }, [manualAddress]);
 
   React.useEffect(() => {
     if (emojiAcceptedFiles.length > 0) {
@@ -174,11 +188,7 @@ const SpaceEditor: React.FunctionComponent<{
           navigate('/spaces/' + spaceAddress + '/' + defaultChannel.channelId);
         }
 
-        await sendInviteToUser(
-          address,
-          spaceAddress,
-          currentPasskeyInfo!
-        );
+        await sendInviteToUser(address, spaceAddress, currentPasskeyInfo!);
         setSuccess(true);
       } finally {
         setSendingInvite(false);
@@ -671,7 +681,7 @@ const SpaceEditor: React.FunctionComponent<{
             case 'invites':
               return (
                 <>
-                  <div className="space-editor-header pt-4 px-4 flex flex-row">
+                  <div className="space-editor-header !min-h-[50px] pt-4 px-4 flex flex-row">
                     <div className="">
                       <div className="text-xl font-bold">Invites</div>
                       <div className="pt-1 text-sm text-white">
@@ -734,7 +744,7 @@ const SpaceEditor: React.FunctionComponent<{
                                     onClick={() => {
                                       setSelectedUser(c);
                                       setResolvedUser(undefined);
-                                      setManualAddress("");
+                                      setManualAddress('');
                                       setSuccess(false);
                                       setIsInviteListExpanded(false);
                                     }}
@@ -766,15 +776,82 @@ const SpaceEditor: React.FunctionComponent<{
                         </div>
                       )}
                       <div className="small-caps">Enter Address Manually</div>
-                      <Input value={manualAddress} placeholder="Type the address of the user you want to send to" onChange={(e) => {
-                        setManualAddress(e.target.value);
-                        setSuccess(false);
-                        setIsInviteListExpanded(false);
-                      }} />
+                      <Input
+                        value={manualAddress}
+                        placeholder="Type the address of the user you want to send to"
+                        onChange={(e) => {
+                          setManualAddress(e.target.value);
+                          setSuccess(false);
+                          setIsInviteListExpanded(false);
+                        }}
+                      />
                       {success && (
                         <div className="text-green-300">
                           Successfully sent invite to{' '}
                           {selectedUser?.displayName}
+                        </div>
+                      )}
+                      <div className="flex flex-row pt-8 justify-between">
+                        <div className="text-sm flex flex-row">
+                          <div className="text-sm flex flex-col justify-around">
+                            Public Invite Link
+                          </div>
+                          <div className="text-sm flex flex-col justify-around ml-2">
+                            <div
+                              className="border border-[#67606f] rounded-full w-6 h-6 text-center leading-5 text-lg"
+                              onMouseOut={() => setPublicInviteTooltip(false)}
+                              onMouseOver={() => setPublicInviteTooltip(true)}
+                            >
+                              ℹ
+                            </div>
+                          </div>
+                          <div className="absolute left-[322px]">
+                            <Tooltip
+                              arrow="left"
+                              className="w-[400px]"
+                              visible={publicInviteTooltip}
+                            >
+                              Public invite links allow anyone with access to
+                              the link join your space. Understand the risks of
+                              enabling this, and to whom and where you share the
+                              link.
+                            </Tooltip>
+                          </div>
+                        </div>
+                        <ToggleSwitch
+                          onClick={() => setPublicInvite((prev) => !prev)}
+                          active={publicInvite}
+                        />
+                      </div>
+                      {space?.isPublic && (
+                        <div>
+                          <div>
+                            <textarea
+                              className="bg-[#373036] rounded-xl px-4 py-2 resize-none outline-none w-full mt-2"
+                              rows={1}
+                              readOnly
+                              value={
+                                space.inviteUrl ||
+                                'Click Generate New Invite Link'
+                              }
+                            />
+                          </div>
+                          <div className="mt-4">
+                            <Button
+                              type="danger"
+                              className="px-4"
+                              onClick={() =>
+                                generateNewInviteLink(
+                                  space.spaceId,
+                                  keyset.userKeyset,
+                                  keyset.deviceKeyset,
+                                  registration.registration!
+                                )
+                              }
+                            >
+                              Generate New Invite Link
+                            </Button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -782,7 +859,9 @@ const SpaceEditor: React.FunctionComponent<{
                       <div className="space-editor-editor-actions">
                         <Button
                           type="primary"
-                          disabled={sendingInvite || (!selectedUser && !resolvedUser)}
+                          disabled={
+                            sendingInvite || (!selectedUser && !resolvedUser)
+                          }
                           onClick={() => {
                             if (selectedUser) {
                               invite(selectedUser.address);

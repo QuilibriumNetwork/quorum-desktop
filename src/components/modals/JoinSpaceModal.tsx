@@ -1,5 +1,8 @@
 import * as React from 'react';
-import { channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
+import {
+  channel_raw as ch,
+  usePasskeysContext,
+} from '@quilibrium/quilibrium-js-sdk-channels';
 import Modal from '../Modal';
 import Input from '../Input';
 import Button from '../Button';
@@ -10,6 +13,7 @@ import { useLocalization } from '../../hooks';
 import { getConfig } from '../../config/config';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { Space } from '../../api/quorumApi';
+import { useMessageDB } from '../context/MessageDB';
 
 type JoinSpaceModalProps = {
   visible: boolean;
@@ -34,6 +38,9 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
     configKey: string;
   }>();
   let [error, setError] = React.useState<string>();
+  const { joinInviteLink, keyset } = useMessageDB();
+  const [joining, setJoining] = React.useState<boolean>(false);
+  const { currentPasskeyInfo } = usePasskeysContext();
   const { apiClient } = useQuorumApiClient();
 
   React.useEffect(() => {
@@ -52,6 +59,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
       if (
         lookup?.startsWith('https://app.quorummessenger.com/invite/#') ||
         lookup?.startsWith('https://qm.one/#') ||
+        lookup?.startsWith('https://qm.one/invite/#') ||
         lookup?.startsWith('app.quorummessenger.com/invite/#') ||
         lookup?.startsWith('qm.one/#')
       ) {
@@ -115,6 +123,20 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
     })();
   }, [lookup]);
 
+  const join = React.useCallback(async () => {
+    setJoining(true);
+    try {
+      const result = await joinInviteLink(lookup!, keyset, currentPasskeyInfo!);
+      if (result) {
+        navigate('/spaces/' + result.spaceId + '/' + result.channelId);
+      }
+    } catch (e: any) {
+      console.error(e);
+      setError(e);
+    }
+    setJoining(false);
+  }, [joinInviteLink, keyset, currentPasskeyInfo, lookup]);
+
   return (
     <Modal
       hideClose={pathname.startsWith('/invite')}
@@ -160,10 +182,10 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
           <Button
             className="w-32 inline-block"
             type="primary"
-            disabled={!space}
+            disabled={!space || joining}
             onClick={() => {
               if (!!space) {
-                /*connection.send("JoinSpace", space.spaceId);*/ navigate('/');
+                join();
               }
             }}
           >

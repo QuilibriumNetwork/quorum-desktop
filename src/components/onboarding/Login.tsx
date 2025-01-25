@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { PasskeyModal, usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import {
+  PasskeyModal,
+  usePasskeysContext,
+} from '@quilibrium/quilibrium-js-sdk-channels';
 import Button from '../Button';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
@@ -26,7 +29,13 @@ export const Login = ({
 
   return (
     <>
-      <PasskeyModal fqAppPrefix='Quorum' getUserRegistration={async (address: string) => { return (await apiClient.getUser(address)).data; }} uploadRegistration={uploadRegistration} />
+      <PasskeyModal
+        fqAppPrefix="Quorum"
+        getUserRegistration={async (address: string) => {
+          return (await apiClient.getUser(address)).data;
+        }}
+        uploadRegistration={uploadRegistration}
+      />
       <div className="flex flex-col grow"></div>
       <div className="flex flex-col select-none">
         <div className="flex flex-row grow"></div>

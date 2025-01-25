@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import * as moment from 'moment-timezone';
-import * as linkify from "linkifyjs";
+import * as linkify from 'linkifyjs';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Emoji, Message as MessageType, Role } from '../../api/quorumApi';
 import EmojiPicker, {
@@ -48,7 +48,7 @@ const YTRegex = new RegExp(
   /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu\.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]{11})((?:\?|\&)\S+)?$/
 );
 const InviteRegex = new RegExp(
-  /^((?:https?:)?\/\/?)?((?:www\.)?(?:qm\.one|app\.quorummessenger\.com))(\/#(.*))$/
+  /^((?:https?:)?\/\/?)?((?:www\.)?(?:qm\.one|app\.quorummessenger\.com))(\/(invite\/)?#(.*))$/
 );
 
 export const Message = ({
@@ -448,7 +448,18 @@ export const Message = ({
                           <React.Fragment
                             key={message.messageId + '-' + i + '-' + j}
                           >
-                            {linkify.test(t) ? <a href={linkify.find(t)[0].href} className="text-[#f3dfc1] hover:text-[#f3dfc1] hover:underline" target="_blank" referrerPolicy="no-referrer">{t}</a> : <>{t}</>}{' '}
+                            {linkify.test(t) ? (
+                              <a
+                                href={linkify.find(t)[0].href}
+                                className="text-[#f3dfc1] hover:text-[#f3dfc1] hover:underline"
+                                target="_blank"
+                                referrerPolicy="no-referrer"
+                              >
+                                {t}
+                              </a>
+                            ) : (
+                              <>{t}</>
+                            )}{' '}
                           </React.Fragment>
                         );
                       })}

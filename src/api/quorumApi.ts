@@ -218,3 +218,7 @@ export const getHubUrl: () => `/${string}` = () => `/hub`;
 export const getHubAddUrl: () => `/${string}` = () => `/hub/add`;
 
 export const getHubDeleteUrl: () => `/${string}` = () => `/hub/delete`;
+
+export const getSpaceInviteEvalsUrl: () => `/${string}` = () => `/invite/evals`;
+
+export const getSpaceInviteEvalUrl: () => `/${string}` = () => `/invite/eval`;

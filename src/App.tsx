@@ -2,7 +2,10 @@ import React, { Suspense } from 'react';
 import { Buffer } from 'buffer';
 import { useState, useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
-import { channel_raw, usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import {
+  channel_raw,
+  usePasskeysContext,
+} from '@quilibrium/quilibrium-js-sdk-channels';
 
 import Layout from './components/Layout';
 import Space from './components/space/Space';

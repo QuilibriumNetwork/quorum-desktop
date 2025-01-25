@@ -7,6 +7,8 @@ import {
   getInboxDeleteUrl,
   getInboxFetchUrl,
   getInboxUrl,
+  getSpaceInviteEvalsUrl,
+  getSpaceInviteEvalUrl,
   getSpaceManifestUrl,
   getSpaceUrl,
   getUserRegistrationUrl,
@@ -375,11 +377,14 @@ export class QuorumApiClient extends AbstractQuorumApiClient {
     userRegistration: channel.UserRegistration,
     { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
   ) {
-    return this.post<channel.UserRegistration>(getUserRegistrationUrl(address), {
-      headers,
-      timeout,
-      body: userRegistration,
-    });
+    return this.post<channel.UserRegistration>(
+      getUserRegistrationUrl(address),
+      {
+        headers,
+        timeout,
+        body: userRegistration,
+      }
+    );
   }
 
   getInbox(
@@ -493,6 +498,35 @@ export class QuorumApiClient extends AbstractQuorumApiClient {
       headers,
       timeout,
       body: hubControlMessage,
+    });
+  }
+
+  postSpaceInviteEvals(
+    spaceInviteEvals: {
+      space_address: string;
+      config_public_key: string;
+      space_evals: string[];
+      ephemeral_public_key: string;
+      owner_public_key: string;
+      owner_signature: string;
+    },
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<{ status: string }>(getSpaceInviteEvalsUrl(), {
+      headers,
+      timeout,
+      body: spaceInviteEvals,
+    });
+  }
+
+  getSpaceInviteEval(
+    configPublicKey: string,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<string>(getSpaceInviteEvalUrl(), {
+      headers,
+      timeout,
+      body: configPublicKey,
     });
   }
 

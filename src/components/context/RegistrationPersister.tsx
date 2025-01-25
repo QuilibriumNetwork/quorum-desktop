@@ -14,9 +14,7 @@ import {
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faLock,
-} from '@fortawesome/free-solid-svg-icons';
+import { faLock } from '@fortawesome/free-solid-svg-icons';
 import Button from '../Button';
 import { useMessageDB } from './MessageDB';
 import { useQuorumApiClient } from './QuorumApiContext';
@@ -72,7 +70,9 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
                 const envelope = JSON.parse(
                   Buffer.from(data).toString('utf-8')
                 );
-                const key = await passkey.createKeyFromBuffer(user_key as unknown as ArrayBuffer);
+                const key = await passkey.createKeyFromBuffer(
+                  user_key as unknown as ArrayBuffer
+                );
                 const inner = JSON.parse(
                   Buffer.from(
                     await passkey.decrypt(
@@ -125,7 +125,9 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
                     existing?.device_registrations ?? [],
                     [senderDevice]
                   );
-                const key = await passkey.createKeyFromBuffer(user_key as unknown as ArrayBuffer);
+                const key = await passkey.createKeyFromBuffer(
+                  user_key as unknown as ArrayBuffer
+                );
                 const inner = await passkey.encrypt(
                   Buffer.from(
                     JSON.stringify({
@@ -167,7 +169,9 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
                 const envelope = JSON.parse(
                   Buffer.from(data).toString('utf-8')
                 );
-                const key = await passkey.createKeyFromBuffer(user_key as unknown as ArrayBuffer);
+                const key = await passkey.createKeyFromBuffer(
+                  user_key as unknown as ArrayBuffer
+                );
                 const inner = JSON.parse(
                   Buffer.from(
                     await passkey.decrypt(
