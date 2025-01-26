@@ -843,14 +843,12 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             [message.timestamp],
             apiClient
           );
-          console.warn(`Decryption failed`, error);
           return;
         }
         return;
       }
 
       if (!found) {
-        console.warn('received message with no known state');
         await deleteInboxMessages(
           keyset.deviceKeyset.inbox_keyset,
           [message.timestamp],
@@ -861,11 +859,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
       const conversationId = found.conversationId;
       const conversation = await messageDB.getConversation({ conversationId });
-
-      if (!found) {
-        console.warn('No state found', message.inboxAddress);
-        return;
-      }
 
       let decryptedContent: Message | null = null;
       let newState: string | null = null;
@@ -894,7 +887,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               updatedUserProfile = result.user_profile;
             }
           } catch (error) {
-            console.warn(`Decryption failed`, error);
             await deleteInboxMessages(
               keys.receiving_inbox,
               [message.timestamp],
@@ -936,7 +928,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             decryptedContent = JSON.parse(result.message);
             sentAccept = found.sentAccept;
           } catch (error) {
-            console.warn(`Decryption failed`, error);
             await deleteInboxMessages(
               keys.receiving_inbox,
               [message.timestamp],
@@ -947,366 +938,145 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           }
         }
       } else {
-        const hub_key = await messageDB.getSpaceKey(
-          conversationId.split('/')[0],
-          'hub'
-        );
-        const result = Buffer.from(
-          new Uint8Array(
-            await secureChannel.UnsealHubEnvelope(
-              {
-                type: 'ed448',
-                public_key: [
-                  ...new Uint8Array(Buffer.from(hub_key.publicKey, 'hex')),
-                ],
-                private_key: [
-                  ...new Uint8Array(Buffer.from(hub_key.privateKey, 'hex')),
-                ],
-              },
-              JSON.parse(message.encryptedContent)
-            )
-          )
-        ).toString('utf-8');
-        const envelope = JSON.parse(result);
-        if (envelope.type === 'message') {
-          const decrypted = JSON.parse(
-            await secureChannel.TripleRatchetDecrypt(
-              JSON.stringify({
-                ratchet_state: keys.state,
-                envelope: JSON.stringify(envelope.message),
-              })
-            )
+        try {
+          const hub_key = await messageDB.getSpaceKey(
+            conversationId.split('/')[0],
+            'hub'
           );
-          const output = Buffer.from(
-            new Uint8Array(decrypted.message)
+          const result = Buffer.from(
+            new Uint8Array(
+              await secureChannel.UnsealHubEnvelope(
+                {
+                  type: 'ed448',
+                  public_key: [
+                    ...new Uint8Array(Buffer.from(hub_key.publicKey, 'hex')),
+                  ],
+                  private_key: [
+                    ...new Uint8Array(Buffer.from(hub_key.privateKey, 'hex')),
+                  ],
+                },
+                JSON.parse(message.encryptedContent)
+              )
+            )
           ).toString('utf-8');
-          decryptedContent = JSON.parse(output);
-
-          if (decryptedContent) {
-            const space = await messageDB.getSpace(
-              conversationId.split('/')[0]
-            );
-
-            // enforce non-repudiability
-            if (
-              space &&
-              !space.isRepudiable &&
-              decryptedContent.publicKey &&
-              decryptedContent.signature
-            ) {
-              const participant = await messageDB.getSpaceMember(
-                space.spaceId,
-                decryptedContent.content.senderId
-              );
-              const sh = await sha256.digest(
-                Buffer.from(decryptedContent.publicKey, 'hex')
-              );
-              const inboxAddress = base58btc.baseEncode(sh.bytes);
-              const messageId = await crypto.subtle.digest(
-                'SHA-256',
-                Buffer.from(
-                  decryptedContent.nonce +
-                    'post' +
-                    decryptedContent.content.senderId +
-                    canonicalize(decryptedContent.content as any),
-                  'utf-8'
-                )
-              );
-              if (
-                (participant.inbox_address !== inboxAddress &&
-                  participant.inbox_address) ||
-                decryptedContent.messageId !==
-                  Buffer.from(messageId).toString('hex')
-              ) {
-                console.warn('invalid address for signature');
-                decryptedContent.publicKey = undefined;
-                decryptedContent.signature = undefined;
-              } else {
-                if (
-                  ch.js_verify_ed448(
-                    Buffer.from(decryptedContent.publicKey, 'hex').toString(
-                      'base64'
-                    ),
-                    Buffer.from(messageId).toString('base64'),
-                    Buffer.from(decryptedContent.signature, 'hex').toString(
-                      'base64'
-                    )
-                  ) !== 'true'
-                ) {
-                  console.warn('invalid signature');
-                  decryptedContent.publicKey = undefined;
-                  decryptedContent.signature = undefined;
-                }
-              }
-            }
-
-            if (
-              decryptedContent?.content.type === 'update-profile' &&
-              (!decryptedContent?.publicKey || !decryptedContent?.signature)
-            ) {
-              decryptedContent = null;
-            }
-          }
-        } else if (envelope.type === 'control') {
-          const exteriorEnvelope = JSON.parse(message.encryptedContent);
-          if (envelope.message.type === 'join') {
-            const participant = envelope.message.participant;
-            const pointResult = ch.js_verify_point(
-              JSON.stringify({
-                ratchet_state: keys.state,
-                point: participant.pubKey,
-                index: participant.id,
-              })
-            );
-            if (pointResult === 'true') {
-              const msg = Buffer.from(
-                participant.address +
-                  participant.id +
-                  participant.inboxAddress +
-                  participant.pubKey +
-                  participant.inboxKey +
-                  participant.identityKey +
-                  participant.preKey +
-                  participant.userIcon +
-                  participant.displayName,
-                'utf-8'
-              ).toString('base64');
-              const result = ch.js_verify_ed448(
-                Buffer.from(participant.inboxPubKey, 'hex').toString('base64'),
-                msg,
-                participant.signature
-              );
-              if (result === 'true') {
-                messageDB.saveSpaceMember(conversationId.split('/')[0], {
-                  user_address: participant.address,
-                  user_icon: participant.userIcon,
-                  display_name: participant.displayName,
-                  inbox_address: participant.inboxAddress,
-                });
-                await queryClient.setQueryData(
-                  buildSpaceMembersKey({
-                    spaceId: conversationId.split('/')[0],
-                  }),
-                  (oldData: secureChannel.UserProfile[]) => {
-                    return [
-                      ...(oldData ?? []),
-                      {
-                        user_address: participant.address,
-                        user_icon: participant.userIcon,
-                        display_name: participant.displayName,
-                      },
-                    ];
-                  }
-                );
-                const ratchet = JSON.parse(keys.state);
-                ratchet.id_peer_map = {
-                  ...ratchet.id_peer_map,
-                  [participant.id]: {
-                    public_key: Buffer.from(
-                      participant.inboxKey,
-                      'hex'
-                    ).toString('base64'),
-                    identity_public_key: Buffer.from(
-                      participant.identityKey,
-                      'hex'
-                    ).toString('base64'),
-                    signed_pre_public_key: Buffer.from(
-                      participant.preKey,
-                      'hex'
-                    ).toString('base64'),
-                  },
-                };
-                ratchet.peer_id_map = {
-                  ...ratchet.peer_id_map,
-                  [Buffer.from(participant.inboxKey, 'hex').toString('base64')]:
-                    participant.id,
-                };
-                newState = JSON.stringify({
-                  ...keys,
-                  state: JSON.stringify(ratchet),
-                });
-                const space = await messageDB.getSpace(
-                  conversationId.split('/')[0]
-                );
-                const messageId = await crypto.subtle.digest(
-                  'SHA-256',
-                  Buffer.from('join' + participant.inboxAddress, 'utf-8')
-                );
-                const msg = {
-                  channelId: space!.defaultChannelId,
-                  spaceId: conversationId.split('/')[0],
-                  messageId: Buffer.from(messageId).toString('hex'),
-                  digestAlgorithm: 'SHA-256',
-                  nonce: Buffer.from(messageId).toString('hex'),
-                  createdDate: Date.now(),
-                  modifiedDate: Date.now(),
-                  lastModifiedHash: '',
-                  content: {
-                    senderId: participant.address,
-                    type: 'join',
-                  } as JoinMessage,
-                } as Message;
-                await saveMessage(
-                  msg,
-                  messageDB,
-                  conversationId.split('/')[0],
-                  space!.defaultChannelId,
-                  'group',
-                  {}
-                );
-                await addMessage(
-                  queryClient,
-                  conversationId.split('/')[0],
-                  space!.defaultChannelId,
-                  msg
-                );
-              }
-            } else {
-              console.error(pointResult);
-            }
-          } else if (envelope.message.type === 'sync-peer-map') {
-            let reg = spaceInfo.current[conversationId.split('/')[0]];
-            if (!reg) {
-              reg = (await apiClient.getSpace(conversationId.split('/')[0]))
-                .data;
-              spaceInfo.current[conversationId.split('/')[0]] = reg;
-            }
-
-            if (
-              reg.owner_public_keys.includes(
-                exteriorEnvelope.owner_public_key
-              ) ||
-              syncInfo.current[conversationId.split('/')[0]]
-            ) {
-              const verify = JSON.parse(
-                ch.js_verify_ed448(
-                  Buffer.from(
-                    exteriorEnvelope.owner_public_key,
-                    'hex'
-                  ).toString('base64'),
-                  Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
-                    'base64'
-                  ),
-                  Buffer.from(exteriorEnvelope.owner_signature, 'hex').toString(
-                    'base64'
-                  )
-                )
-              );
-              if (verify) {
-                const ratchet = JSON.parse(keys.state);
-                ratchet.id_peer_map = envelope.message.peerMap.id_peer_map;
-                ratchet.peer_id_map = envelope.message.peerMap.peer_id_map;
-                newState = JSON.stringify({
-                  ...keys,
-                  state: JSON.stringify(ratchet),
-                });
-              }
-            }
-          } else if (envelope.message.type === 'space-manifest') {
-            let reg = spaceInfo.current[conversationId.split('/')[0]];
-            if (!reg) {
-              reg = (await apiClient.getSpace(conversationId.split('/')[0]))
-                .data;
-              spaceInfo.current[conversationId.split('/')[0]] = reg;
-            }
-            const manifest = envelope.message
-              .manifest as secureChannel.SpaceManifest;
-            if (reg.owner_public_keys.includes(manifest.owner_public_key)) {
-              const verify = JSON.parse(
-                ch.js_verify_ed448(
-                  Buffer.from(manifest.owner_public_key, 'hex').toString(
-                    'base64'
-                  ),
-                  Buffer.from(
-                    new Uint8Array([
-                      ...new Uint8Array(
-                        Buffer.from(manifest.space_manifest, 'utf-8')
-                      ),
-                      ...int64ToBytes(manifest.timestamp),
-                    ])
-                  ).toString('base64'),
-                  Buffer.from(manifest.owner_signature, 'hex').toString(
-                    'base64'
-                  )
-                )
-              );
-              if (verify) {
-                const ciphertext = JSON.parse(manifest.space_manifest) as {
-                  ciphertext: string;
-                  initialization_vector: string;
-                  associated_data: string;
-                };
-                const config_key = await messageDB.getSpaceKey(
-                  conversationId.split('/')[0],
-                  'config'
-                );
-                const space = JSON.parse(
-                  Buffer.from(
-                    JSON.parse(
-                      ch.js_decrypt_inbox_message(
-                        JSON.stringify({
-                          inbox_private_key: [
-                            ...new Uint8Array(
-                              Buffer.from(config_key.privateKey, 'hex')
-                            ),
-                          ],
-                          ephemeral_public_key: [
-                            ...new Uint8Array(
-                              Buffer.from(manifest.ephemeral_public_key, 'hex')
-                            ),
-                          ],
-                          ciphertext: ciphertext,
-                        })
-                      )
-                    )
-                  ).toString('utf-8')
-                ) as Space;
-                await messageDB.saveSpace(space);
-                await queryClient.setQueryData(
-                  buildSpaceKey({ spaceId: conversationId.split('/')[0] }),
-                  () => {
-                    return space;
-                  }
-                );
-              }
-            }
-          } else if (envelope.message.type === 'leave') {
-            const hubKey = await messageDB.getSpaceKey(
-              conversationId.split('/')[0],
-              'hub'
-            );
-
-            const verify = JSON.parse(
-              ch.js_verify_ed448(
-                Buffer.from(envelope.message.inboxPublicKey, 'hex').toString(
-                  'base64'
-                ),
-                Buffer.from(
-                  new Uint8Array([
-                    ...new Uint8Array(
-                      Buffer.from('delete' + hubKey.publicKey, 'utf-8')
-                    ),
-                  ])
-                ).toString('base64'),
-                Buffer.from(envelope.message.inboxSignature, 'hex').toString(
-                  'base64'
-                )
+          const envelope = JSON.parse(result);
+          if (envelope.type === 'message') {
+            const decrypted = JSON.parse(
+              await secureChannel.TripleRatchetDecrypt(
+                JSON.stringify({
+                  ratchet_state: keys.state,
+                  envelope: JSON.stringify(envelope.message),
+                })
               )
             );
-            const sh = await sha256.digest(
-              Buffer.from(envelope.message.inboxPublicKey, 'hex')
-            );
-            const inboxAddress = base58btc.baseEncode(sh.bytes);
-            if (verify) {
-              const members = await messageDB.getSpaceMembers(
+            const output = Buffer.from(
+              new Uint8Array(decrypted.message)
+            ).toString('utf-8');
+            decryptedContent = JSON.parse(output);
+
+            if (decryptedContent) {
+              const space = await messageDB.getSpace(
                 conversationId.split('/')[0]
               );
-              for (const member of members) {
-                if (member.inbox_address == inboxAddress) {
-                  await messageDB.saveSpaceMember(
-                    conversationId.split('/')[0],
-                    { ...member, inbox_address: '' }
-                  );
+
+              // enforce non-repudiability
+              if (
+                space &&
+                !space.isRepudiable &&
+                decryptedContent.publicKey &&
+                decryptedContent.signature
+              ) {
+                const participant = await messageDB.getSpaceMember(
+                  space.spaceId,
+                  decryptedContent.content.senderId
+                );
+                const sh = await sha256.digest(
+                  Buffer.from(decryptedContent.publicKey, 'hex')
+                );
+                const inboxAddress = base58btc.baseEncode(sh.bytes);
+                const messageId = await crypto.subtle.digest(
+                  'SHA-256',
+                  Buffer.from(
+                    decryptedContent.nonce +
+                      'post' +
+                      decryptedContent.content.senderId +
+                      canonicalize(decryptedContent.content as any),
+                    'utf-8'
+                  )
+                );
+                if (
+                  (participant.inbox_address !== inboxAddress &&
+                    participant.inbox_address) ||
+                  decryptedContent.messageId !==
+                    Buffer.from(messageId).toString('hex')
+                ) {
+                  console.warn('invalid address for signature');
+                  decryptedContent.publicKey = undefined;
+                  decryptedContent.signature = undefined;
+                } else {
+                  if (
+                    ch.js_verify_ed448(
+                      Buffer.from(decryptedContent.publicKey, 'hex').toString(
+                        'base64'
+                      ),
+                      Buffer.from(messageId).toString('base64'),
+                      Buffer.from(decryptedContent.signature, 'hex').toString(
+                        'base64'
+                      )
+                    ) !== 'true'
+                  ) {
+                    console.warn('invalid signature');
+                    decryptedContent.publicKey = undefined;
+                    decryptedContent.signature = undefined;
+                  }
+                }
+              }
+
+              if (
+                decryptedContent?.content.type === 'update-profile' &&
+                (!decryptedContent?.publicKey || !decryptedContent?.signature)
+              ) {
+                decryptedContent = null;
+              }
+            }
+          } else if (envelope.type === 'control') {
+            const exteriorEnvelope = JSON.parse(message.encryptedContent);
+            if (envelope.message.type === 'join') {
+              const participant = envelope.message.participant;
+              const pointResult = ch.js_verify_point(
+                JSON.stringify({
+                  ratchet_state: keys.state,
+                  point: participant.pubKey,
+                  index: participant.id,
+                })
+              );
+              if (pointResult === 'true') {
+                const msg = Buffer.from(
+                  participant.address +
+                    participant.id +
+                    participant.inboxAddress +
+                    participant.pubKey +
+                    participant.inboxKey +
+                    participant.identityKey +
+                    participant.preKey +
+                    participant.userIcon +
+                    participant.displayName,
+                  'utf-8'
+                ).toString('base64');
+                const result = ch.js_verify_ed448(
+                  Buffer.from(participant.inboxPubKey, 'hex').toString(
+                    'base64'
+                  ),
+                  msg,
+                  participant.signature
+                );
+                if (result === 'true') {
+                  messageDB.saveSpaceMember(conversationId.split('/')[0], {
+                    user_address: participant.address,
+                    user_icon: participant.userIcon,
+                    display_name: participant.displayName,
+                    inbox_address: participant.inboxAddress,
+                  });
                   await queryClient.setQueryData(
                     buildSpaceMembersKey({
                       spaceId: conversationId.split('/')[0],
@@ -1314,16 +1084,48 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                     (oldData: secureChannel.UserProfile[]) => {
                       return [
                         ...(oldData ?? []),
-                        { ...member, inbox_address: '' },
+                        {
+                          user_address: participant.address,
+                          user_icon: participant.userIcon,
+                          display_name: participant.displayName,
+                        },
                       ];
                     }
                   );
+                  const ratchet = JSON.parse(keys.state);
+                  ratchet.id_peer_map = {
+                    ...ratchet.id_peer_map,
+                    [participant.id]: {
+                      public_key: Buffer.from(
+                        participant.inboxKey,
+                        'hex'
+                      ).toString('base64'),
+                      identity_public_key: Buffer.from(
+                        participant.identityKey,
+                        'hex'
+                      ).toString('base64'),
+                      signed_pre_public_key: Buffer.from(
+                        participant.preKey,
+                        'hex'
+                      ).toString('base64'),
+                    },
+                  };
+                  ratchet.peer_id_map = {
+                    ...ratchet.peer_id_map,
+                    [Buffer.from(participant.inboxKey, 'hex').toString(
+                      'base64'
+                    )]: participant.id,
+                  };
+                  newState = JSON.stringify({
+                    ...keys,
+                    state: JSON.stringify(ratchet),
+                  });
                   const space = await messageDB.getSpace(
                     conversationId.split('/')[0]
                   );
                   const messageId = await crypto.subtle.digest(
                     'SHA-256',
-                    Buffer.from('leave' + member.inbox_address, 'utf-8')
+                    Buffer.from('join' + participant.inboxAddress, 'utf-8')
                   );
                   const msg = {
                     channelId: space!.defaultChannelId,
@@ -1335,9 +1137,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                     modifiedDate: Date.now(),
                     lastModifiedHash: '',
                     content: {
-                      senderId: member.user_address,
-                      type: 'leave',
-                    } as LeaveMessage,
+                      senderId: participant.address,
+                      type: 'join',
+                    } as JoinMessage,
                   } as Message;
                   await saveMessage(
                     msg,
@@ -1353,436 +1155,646 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                     space!.defaultChannelId,
                     msg
                   );
-                  break;
                 }
+              } else {
+                console.error(pointResult);
               }
-            }
-          } else if (envelope.message.type === 'rekey') {
-            let reg = spaceInfo.current[conversationId.split('/')[0]];
-            if (!reg) {
-              reg = (await apiClient.getSpace(conversationId.split('/')[0]))
-                .data;
-              spaceInfo.current[conversationId.split('/')[0]] = reg;
-            }
-            if (
-              reg.owner_public_keys.includes(exteriorEnvelope.owner_public_key)
-            ) {
-              const verify = JSON.parse(
-                ch.js_verify_ed448(
-                  Buffer.from(
-                    exteriorEnvelope.owner_public_key,
-                    'hex'
-                  ).toString('base64'),
-                  Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
-                    'base64'
-                  ),
-                  Buffer.from(exteriorEnvelope.owner_signature, 'hex').toString(
-                    'base64'
-                  )
-                )
-              );
-              if (verify) {
-                const info = JSON.parse(envelope.message.info);
-                const inner_envelope = JSON.parse(
-                  Buffer.from(
-                    new Uint8Array(
-                      await secureChannel.UnsealInboxEnvelope(
-                        keyset.deviceKeyset.inbox_keyset.inbox_encryption_key
-                          .private_key,
-                        info
-                      )
-                    )
-                  ).toString('utf-8')
-                );
-                const configPub = Buffer.from(
-                  JSON.parse(
-                    ch.js_get_pubkey_x448(
-                      Buffer.from(inner_envelope.configKey, 'hex').toString(
-                        'base64'
-                      )
-                    )
-                  ),
-                  'base64'
-                ).toString('hex');
-                await messageDB.saveSpaceKey({
-                  spaceId: conversationId.split('/')[0],
-                  keyId: 'config',
-                  privateKey: inner_envelope.configKey,
-                  publicKey: configPub,
-                });
-                let template = JSON.parse(inner_envelope.state);
-                template.peer_key = Buffer.from(
-                  new Uint8Array(
-                    keyset.deviceKeyset.inbox_keyset.inbox_encryption_key.private_key
-                  )
-                ).toString('base64');
-                newState = JSON.stringify({
-                  ...keys,
-                  state: JSON.stringify(template),
-                });
-                const space = await messageDB.getSpace(
-                  conversationId.split('/')[0]
-                );
-                if (envelope.message.kick) {
-                  const messageId = await crypto.subtle.digest(
-                    'SHA-256',
-                    Buffer.from('kick' + envelope.message.kick, 'utf-8')
-                  );
-                  const msg = {
-                    channelId: space!.defaultChannelId,
-                    spaceId: conversationId.split('/')[0],
-                    messageId: Buffer.from(messageId).toString('hex'),
-                    digestAlgorithm: 'SHA-256',
-                    nonce: Buffer.from(messageId).toString('hex'),
-                    createdDate: Date.now(),
-                    modifiedDate: Date.now(),
-                    lastModifiedHash: '',
-                    content: {
-                      senderId: envelope.message.kick,
-                      type: 'kick',
-                    } as KickMessage,
-                  } as Message;
-                  await saveMessage(
-                    msg,
-                    messageDB,
-                    conversationId.split('/')[0],
-                    space!.defaultChannelId,
-                    'group',
-                    {}
-                  );
-                  await addMessage(
-                    queryClient,
-                    conversationId.split('/')[0],
-                    space!.defaultChannelId,
-                    msg
-                  );
-                }
+            } else if (envelope.message.type === 'sync-peer-map') {
+              let reg = spaceInfo.current[conversationId.split('/')[0]];
+              if (!reg) {
+                reg = (await apiClient.getSpace(conversationId.split('/')[0]))
+                  .data;
+                spaceInfo.current[conversationId.split('/')[0]] = reg;
+              }
 
-                if (space?.inviteUrl) {
-                  space.inviteUrl = `https://qm.one/invite/#spaceId=${space.spaceId}&configKey=${inner_envelope.configKey}`;
-                  await messageDB.saveSpace(space);
-                }
-              }
-            }
-          } else if (envelope.message.type === 'kick') {
-            let reg = spaceInfo.current[conversationId.split('/')[0]];
-            if (!reg) {
-              reg = (await apiClient.getSpace(conversationId.split('/')[0]))
-                .data;
-              spaceInfo.current[conversationId.split('/')[0]] = reg;
-            }
-            if (
-              reg.owner_public_keys.includes(exteriorEnvelope.owner_public_key)
-            ) {
-              const verify = JSON.parse(
-                ch.js_verify_ed448(
-                  Buffer.from(
-                    exteriorEnvelope.owner_public_key,
-                    'hex'
-                  ).toString('base64'),
-                  Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
-                    'base64'
-                  ),
-                  Buffer.from(exteriorEnvelope.owner_signature, 'hex').toString(
-                    'base64'
-                  )
-                )
-              );
-              if (verify) {
-                if (envelope.message.kick === self_address) {
-                  const spaceId = conversationId.split('/')[0];
-                  const hubKey = await messageDB.getSpaceKey(spaceId, 'hub');
-                  const inboxKey = await messageDB.getSpaceKey(
-                    spaceId,
-                    'inbox'
-                  );
-                  await apiClient.postHubDelete({
-                    hub_address: hubKey.address!,
-                    hub_public_key: hubKey.publicKey,
-                    hub_signature: Buffer.from(
-                      JSON.parse(
-                        ch.js_sign_ed448(
-                          Buffer.from(hubKey.privateKey, 'hex').toString(
-                            'base64'
-                          ),
-                          Buffer.from(
-                            new Uint8Array([
-                              ...new Uint8Array(
-                                Buffer.from(
-                                  'delete' + inboxKey.publicKey,
-                                  'utf-8'
-                                )
-                              ),
-                            ])
-                          ).toString('base64')
-                        )
-                      ),
-                      'base64'
-                    ).toString('hex'),
-                    inbox_public_key: inboxKey.publicKey,
-                    inbox_signature: Buffer.from(
-                      JSON.parse(
-                        ch.js_sign_ed448(
-                          Buffer.from(inboxKey.privateKey, 'hex').toString(
-                            'base64'
-                          ),
-                          Buffer.from(
-                            new Uint8Array([
-                              ...new Uint8Array(
-                                Buffer.from(
-                                  'delete' + hubKey.publicKey,
-                                  'utf-8'
-                                )
-                              ),
-                            ])
-                          ).toString('base64')
-                        )
-                      ),
-                      'base64'
-                    ).toString('hex'),
-                  });
-                  const states = await messageDB.getEncryptionStates({
-                    conversationId: spaceId + '/' + spaceId,
-                  });
-                  for (const state of states) {
-                    await messageDB.deleteEncryptionState(state);
-                  }
-                  const messages = await messageDB.getAllSpaceMessages({
-                    spaceId,
-                  });
-                  for (const message of messages) {
-                    await messageDB.deleteMessage(message.messageId);
-                  }
-                  const members = await messageDB.getSpaceMembers(spaceId);
-                  for (const member of members) {
-                    await messageDB.deleteSpaceMember(
-                      spaceId,
-                      member.user_address
-                    );
-                  }
-                  const keys = await messageDB.getSpaceKeys(spaceId);
-                  for (const key of keys) {
-                    await messageDB.deleteSpaceKey(spaceId, key.keyId);
-                  }
-                  let userConfig = await messageDB.getUserConfig({
-                    address: self_address,
-                  });
-                  userConfig = {
-                    ...(userConfig ?? { address: self_address }),
-                    spaceIds: [
-                      ...(userConfig?.spaceIds.filter((s) => s != spaceId) ??
-                        []),
-                    ],
-                  };
-                  await saveConfig({ config: userConfig, keyset });
-                  await queryClient.setQueryData(
-                    buildConfigKey({ userAddress: self_address }),
-                    () => userConfig
-                  );
-                  await messageDB.deleteSpace(spaceId);
-                  return;
-                }
-              }
-            }
-          } else if (envelope.message.type === 'sync') {
-            await synchronizeAll(
-              conversationId.split('/')[0],
-              envelope.message.inboxAddress
-            );
-          } else if (envelope.message.type === 'sync-request') {
-            if (envelope.message.expiry > Date.now()) {
-              await informSyncData(
-                conversationId.split('/')[0],
-                envelope.message.inboxAddress,
-                envelope.message.messageCount,
-                envelope.message.memberCount
-              );
-            }
-          } else if (envelope.message.type === 'sync-info') {
-            if (
-              syncInfo.current[conversationId.split('/')[0]] &&
-              syncInfo.current[conversationId.split('/')[0]].expiry > Date.now()
-            ) {
               if (
-                envelope.message.inboxAddress &&
-                envelope.message.messageCount &&
-                envelope.message.memberCount
+                reg.owner_public_keys.includes(
+                  exteriorEnvelope.owner_public_key
+                ) ||
+                syncInfo.current[conversationId.split('/')[0]]
               ) {
-                syncInfo.current[conversationId.split('/')[0]].candidates.push(
-                  envelope.message
-                );
-                // reset the timeout to be 1s to more aggressively grab viable candidates for sync instead of waiting the full 30s
-                clearTimeout(
-                  syncInfo.current[conversationId.split('/')[0]].invokable
-                );
-                syncInfo.current[conversationId.split('/')[0]].invokable =
-                  setTimeout(
-                    () => initiateSync(conversationId.split('/')[0]),
-                    1000
-                  );
-              }
-            }
-          } else if (envelope.message.type === 'sync-initiate') {
-            if (envelope.message.inboxAddress) {
-              await directSync(conversationId.split('/')[0], envelope.message);
-            }
-          } else if (envelope.message.type === 'sync-members') {
-            let reg = spaceInfo.current[conversationId.split('/')[0]];
-            if (!reg) {
-              reg = (await apiClient.getSpace(conversationId.split('/')[0]))
-                .data;
-              spaceInfo.current[conversationId.split('/')[0]] = reg;
-            }
-
-            if (
-              reg.owner_public_keys.includes(
-                exteriorEnvelope.owner_public_key
-              ) ||
-              syncInfo.current[conversationId.split('/')[0]]
-            ) {
-              const verify = JSON.parse(
-                ch.js_verify_ed448(
-                  Buffer.from(
-                    exteriorEnvelope.owner_public_key,
-                    'hex'
-                  ).toString('base64'),
-                  Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
-                    'base64'
-                  ),
-                  Buffer.from(exteriorEnvelope.owner_signature, 'hex').toString(
-                    'base64'
+                const verify = JSON.parse(
+                  ch.js_verify_ed448(
+                    Buffer.from(
+                      exteriorEnvelope.owner_public_key,
+                      'hex'
+                    ).toString('base64'),
+                    Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
+                      'base64'
+                    ),
+                    Buffer.from(
+                      exteriorEnvelope.owner_signature,
+                      'hex'
+                    ).toString('base64')
                   )
-                )
-              );
-              if (verify) {
-                for (const member of envelope.message.members) {
-                  await messageDB.saveSpaceMember(
+                );
+                if (verify) {
+                  const ratchet = JSON.parse(keys.state);
+                  ratchet.id_peer_map = envelope.message.peerMap.id_peer_map;
+                  ratchet.peer_id_map = envelope.message.peerMap.peer_id_map;
+                  newState = JSON.stringify({
+                    ...keys,
+                    state: JSON.stringify(ratchet),
+                  });
+                }
+              }
+            } else if (envelope.message.type === 'space-manifest') {
+              let reg = spaceInfo.current[conversationId.split('/')[0]];
+              if (!reg) {
+                reg = (await apiClient.getSpace(conversationId.split('/')[0]))
+                  .data;
+                spaceInfo.current[conversationId.split('/')[0]] = reg;
+              }
+              const manifest = envelope.message
+                .manifest as secureChannel.SpaceManifest;
+              if (reg.owner_public_keys.includes(manifest.owner_public_key)) {
+                const verify = JSON.parse(
+                  ch.js_verify_ed448(
+                    Buffer.from(manifest.owner_public_key, 'hex').toString(
+                      'base64'
+                    ),
+                    Buffer.from(
+                      new Uint8Array([
+                        ...new Uint8Array(
+                          Buffer.from(manifest.space_manifest, 'utf-8')
+                        ),
+                        ...int64ToBytes(manifest.timestamp),
+                      ])
+                    ).toString('base64'),
+                    Buffer.from(manifest.owner_signature, 'hex').toString(
+                      'base64'
+                    )
+                  )
+                );
+                if (verify) {
+                  const ciphertext = JSON.parse(manifest.space_manifest) as {
+                    ciphertext: string;
+                    initialization_vector: string;
+                    associated_data: string;
+                  };
+                  const config_key = await messageDB.getSpaceKey(
                     conversationId.split('/')[0],
-                    member
+                    'config'
+                  );
+                  const space = JSON.parse(
+                    Buffer.from(
+                      JSON.parse(
+                        ch.js_decrypt_inbox_message(
+                          JSON.stringify({
+                            inbox_private_key: [
+                              ...new Uint8Array(
+                                Buffer.from(config_key.privateKey, 'hex')
+                              ),
+                            ],
+                            ephemeral_public_key: [
+                              ...new Uint8Array(
+                                Buffer.from(
+                                  manifest.ephemeral_public_key,
+                                  'hex'
+                                )
+                              ),
+                            ],
+                            ciphertext: ciphertext,
+                          })
+                        )
+                      )
+                    ).toString('utf-8')
+                  ) as Space;
+                  await messageDB.saveSpace(space);
+                  await queryClient.setQueryData(
+                    buildSpaceKey({ spaceId: conversationId.split('/')[0] }),
+                    () => {
+                      return space;
+                    }
                   );
                 }
-                await queryClient.setQueryData(
-                  buildSpaceMembersKey({
-                    spaceId: conversationId.split('/')[0],
-                  }),
-                  (oldData: secureChannel.UserProfile[]) => {
-                    return [...(oldData ?? []), ...envelope.message.members];
-                  }
-                );
               }
-            }
-          } else if (envelope.message.type === 'sync-messages') {
-            let reg = spaceInfo.current[conversationId.split('/')[0]];
-            if (!reg) {
-              reg = (await apiClient.getSpace(conversationId.split('/')[0]))
-                .data;
-              spaceInfo.current[conversationId.split('/')[0]] = reg;
-            }
+            } else if (envelope.message.type === 'leave') {
+              const hubKey = await messageDB.getSpaceKey(
+                conversationId.split('/')[0],
+                'hub'
+              );
 
-            if (
-              reg.owner_public_keys.includes(
-                exteriorEnvelope.owner_public_key
-              ) ||
-              syncInfo.current[conversationId.split('/')[0]]
-            ) {
               const verify = JSON.parse(
                 ch.js_verify_ed448(
-                  Buffer.from(
-                    exteriorEnvelope.owner_public_key,
-                    'hex'
-                  ).toString('base64'),
-                  Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
+                  Buffer.from(envelope.message.inboxPublicKey, 'hex').toString(
                     'base64'
                   ),
-                  Buffer.from(exteriorEnvelope.owner_signature, 'hex').toString(
+                  Buffer.from(
+                    new Uint8Array([
+                      ...new Uint8Array(
+                        Buffer.from('delete' + hubKey.publicKey, 'utf-8')
+                      ),
+                    ])
+                  ).toString('base64'),
+                  Buffer.from(envelope.message.inboxSignature, 'hex').toString(
                     'base64'
                   )
                 )
               );
+              const sh = await sha256.digest(
+                Buffer.from(envelope.message.inboxPublicKey, 'hex')
+              );
+              const inboxAddress = base58btc.baseEncode(sh.bytes);
               if (verify) {
-                const space = await messageDB.getSpace(
+                const members = await messageDB.getSpaceMembers(
                   conversationId.split('/')[0]
                 );
-                for (const message of envelope.message.messages) {
-                  // enforce non-repudiability
-                  if (
-                    space &&
-                    !space.isRepudiable &&
-                    message.publicKey &&
-                    message.signature
-                  ) {
-                    const participant = await messageDB.getSpaceMember(
-                      space.spaceId,
-                      message.content.senderId
+                for (const member of members) {
+                  if (member.inbox_address == inboxAddress) {
+                    await messageDB.saveSpaceMember(
+                      conversationId.split('/')[0],
+                      { ...member, inbox_address: '' }
                     );
-                    const sh = await sha256.digest(
-                      Buffer.from(message.publicKey, 'hex')
+                    await queryClient.setQueryData(
+                      buildSpaceMembersKey({
+                        spaceId: conversationId.split('/')[0],
+                      }),
+                      (oldData: secureChannel.UserProfile[]) => {
+                        return [
+                          ...(oldData ?? []),
+                          { ...member, inbox_address: '' },
+                        ];
+                      }
                     );
-                    const inboxAddress = base58btc.baseEncode(sh.bytes);
+                    const space = await messageDB.getSpace(
+                      conversationId.split('/')[0]
+                    );
                     const messageId = await crypto.subtle.digest(
                       'SHA-256',
-                      Buffer.from(
-                        message.nonce +
-                          'post' +
-                          message.content.senderId +
-                          canonicalize(message.content as any),
-                        'utf-8'
-                      )
+                      Buffer.from('leave' + member.inbox_address, 'utf-8')
                     );
-                    if (
-                      (participant.inbox_address !== inboxAddress &&
-                        participant.inbox_address) ||
-                      message.messageId !==
-                        Buffer.from(messageId).toString('hex')
-                    ) {
-                      message.publicKey = undefined;
-                      message.signature = undefined;
-                    } else {
-                      if (
-                        ch.js_verify_ed448(
-                          Buffer.from(message.publicKey, 'hex').toString(
-                            'base64'
-                          ),
-                          Buffer.from(messageId).toString('base64'),
-                          Buffer.from(message.signature, 'hex').toString(
-                            'base64'
-                          )
-                        ) !== 'true'
-                      ) {
-                        console.warn('invalid signature');
-                        message.publicKey = undefined;
-                        message.signature = undefined;
-                      }
-                    }
+                    const msg = {
+                      channelId: space!.defaultChannelId,
+                      spaceId: conversationId.split('/')[0],
+                      messageId: Buffer.from(messageId).toString('hex'),
+                      digestAlgorithm: 'SHA-256',
+                      nonce: Buffer.from(messageId).toString('hex'),
+                      createdDate: Date.now(),
+                      modifiedDate: Date.now(),
+                      lastModifiedHash: '',
+                      content: {
+                        senderId: member.user_address,
+                        type: 'leave',
+                      } as LeaveMessage,
+                    } as Message;
+                    await saveMessage(
+                      msg,
+                      messageDB,
+                      conversationId.split('/')[0],
+                      space!.defaultChannelId,
+                      'group',
+                      {}
+                    );
+                    await addMessage(
+                      queryClient,
+                      conversationId.split('/')[0],
+                      space!.defaultChannelId,
+                      msg
+                    );
+                    break;
                   }
-                  await saveMessage(
-                    message,
-                    messageDB,
-                    conversationId.split('/')[0],
-                    message.channelId,
-                    'group',
-                    {}
+                }
+              }
+            } else if (envelope.message.type === 'rekey') {
+              let reg = spaceInfo.current[conversationId.split('/')[0]];
+              if (!reg) {
+                reg = (await apiClient.getSpace(conversationId.split('/')[0]))
+                  .data;
+                spaceInfo.current[conversationId.split('/')[0]] = reg;
+              }
+              if (
+                reg.owner_public_keys.includes(
+                  exteriorEnvelope.owner_public_key
+                )
+              ) {
+                const verify = JSON.parse(
+                  ch.js_verify_ed448(
+                    Buffer.from(
+                      exteriorEnvelope.owner_public_key,
+                      'hex'
+                    ).toString('base64'),
+                    Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
+                      'base64'
+                    ),
+                    Buffer.from(
+                      exteriorEnvelope.owner_signature,
+                      'hex'
+                    ).toString('base64')
+                  )
+                );
+                if (verify) {
+                  const info = JSON.parse(envelope.message.info);
+                  const inner_envelope = JSON.parse(
+                    Buffer.from(
+                      new Uint8Array(
+                        await secureChannel.UnsealInboxEnvelope(
+                          keyset.deviceKeyset.inbox_keyset.inbox_encryption_key
+                            .private_key,
+                          info
+                        )
+                      )
+                    ).toString('utf-8')
+                  );
+                  const configPub = Buffer.from(
+                    JSON.parse(
+                      ch.js_get_pubkey_x448(
+                        Buffer.from(inner_envelope.configKey, 'hex').toString(
+                          'base64'
+                        )
+                      )
+                    ),
+                    'base64'
+                  ).toString('hex');
+                  await messageDB.saveSpaceKey({
+                    spaceId: conversationId.split('/')[0],
+                    keyId: 'config',
+                    privateKey: inner_envelope.configKey,
+                    publicKey: configPub,
+                  });
+                  let template = JSON.parse(inner_envelope.state);
+                  template.peer_key = Buffer.from(
+                    new Uint8Array(
+                      keyset.deviceKeyset.inbox_keyset.inbox_encryption_key.private_key
+                    )
+                  ).toString('base64');
+                  newState = JSON.stringify({
+                    ...keys,
+                    state: JSON.stringify(template),
+                  });
+                  const space = await messageDB.getSpace(
+                    conversationId.split('/')[0]
+                  );
+                  if (envelope.message.kick) {
+                    const messageId = await crypto.subtle.digest(
+                      'SHA-256',
+                      Buffer.from('kick' + envelope.message.kick, 'utf-8')
+                    );
+                    const msg = {
+                      channelId: space!.defaultChannelId,
+                      spaceId: conversationId.split('/')[0],
+                      messageId: Buffer.from(messageId).toString('hex'),
+                      digestAlgorithm: 'SHA-256',
+                      nonce: Buffer.from(messageId).toString('hex'),
+                      createdDate: Date.now(),
+                      modifiedDate: Date.now(),
+                      lastModifiedHash: '',
+                      content: {
+                        senderId: envelope.message.kick,
+                        type: 'kick',
+                      } as KickMessage,
+                    } as Message;
+                    await saveMessage(
+                      msg,
+                      messageDB,
+                      conversationId.split('/')[0],
+                      space!.defaultChannelId,
+                      'group',
+                      {}
+                    );
+                    await addMessage(
+                      queryClient,
+                      conversationId.split('/')[0],
+                      space!.defaultChannelId,
+                      msg
+                    );
+                  }
+
+                  if (space?.inviteUrl) {
+                    space.inviteUrl = `https://qm.one/invite/#spaceId=${space.spaceId}&configKey=${inner_envelope.configKey}`;
+                    await messageDB.saveSpace(space);
+                  }
+                }
+              }
+            } else if (envelope.message.type === 'kick') {
+              let reg = spaceInfo.current[conversationId.split('/')[0]];
+              if (!reg) {
+                reg = (await apiClient.getSpace(conversationId.split('/')[0]))
+                  .data;
+                spaceInfo.current[conversationId.split('/')[0]] = reg;
+              }
+              if (
+                reg.owner_public_keys.includes(
+                  exteriorEnvelope.owner_public_key
+                )
+              ) {
+                const verify = JSON.parse(
+                  ch.js_verify_ed448(
+                    Buffer.from(
+                      exteriorEnvelope.owner_public_key,
+                      'hex'
+                    ).toString('base64'),
+                    Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
+                      'base64'
+                    ),
+                    Buffer.from(
+                      exteriorEnvelope.owner_signature,
+                      'hex'
+                    ).toString('base64')
+                  )
+                );
+                if (verify) {
+                  if (envelope.message.kick === self_address) {
+                    const spaceId = conversationId.split('/')[0];
+                    const hubKey = await messageDB.getSpaceKey(spaceId, 'hub');
+                    const inboxKey = await messageDB.getSpaceKey(
+                      spaceId,
+                      'inbox'
+                    );
+                    await apiClient.postHubDelete({
+                      hub_address: hubKey.address!,
+                      hub_public_key: hubKey.publicKey,
+                      hub_signature: Buffer.from(
+                        JSON.parse(
+                          ch.js_sign_ed448(
+                            Buffer.from(hubKey.privateKey, 'hex').toString(
+                              'base64'
+                            ),
+                            Buffer.from(
+                              new Uint8Array([
+                                ...new Uint8Array(
+                                  Buffer.from(
+                                    'delete' + inboxKey.publicKey,
+                                    'utf-8'
+                                  )
+                                ),
+                              ])
+                            ).toString('base64')
+                          )
+                        ),
+                        'base64'
+                      ).toString('hex'),
+                      inbox_public_key: inboxKey.publicKey,
+                      inbox_signature: Buffer.from(
+                        JSON.parse(
+                          ch.js_sign_ed448(
+                            Buffer.from(inboxKey.privateKey, 'hex').toString(
+                              'base64'
+                            ),
+                            Buffer.from(
+                              new Uint8Array([
+                                ...new Uint8Array(
+                                  Buffer.from(
+                                    'delete' + hubKey.publicKey,
+                                    'utf-8'
+                                  )
+                                ),
+                              ])
+                            ).toString('base64')
+                          )
+                        ),
+                        'base64'
+                      ).toString('hex'),
+                    });
+                    const states = await messageDB.getEncryptionStates({
+                      conversationId: spaceId + '/' + spaceId,
+                    });
+                    for (const state of states) {
+                      await messageDB.deleteEncryptionState(state);
+                    }
+                    const messages = await messageDB.getAllSpaceMessages({
+                      spaceId,
+                    });
+                    for (const message of messages) {
+                      await messageDB.deleteMessage(message.messageId);
+                    }
+                    const members = await messageDB.getSpaceMembers(spaceId);
+                    for (const member of members) {
+                      await messageDB.deleteSpaceMember(
+                        spaceId,
+                        member.user_address
+                      );
+                    }
+                    const keys = await messageDB.getSpaceKeys(spaceId);
+                    for (const key of keys) {
+                      await messageDB.deleteSpaceKey(spaceId, key.keyId);
+                    }
+                    let userConfig = await messageDB.getUserConfig({
+                      address: self_address,
+                    });
+                    userConfig = {
+                      ...(userConfig ?? { address: self_address }),
+                      spaceIds: [
+                        ...(userConfig?.spaceIds.filter((s) => s != spaceId) ??
+                          []),
+                      ],
+                    };
+                    await saveConfig({ config: userConfig, keyset });
+                    await queryClient.setQueryData(
+                      buildConfigKey({ userAddress: self_address }),
+                      () => userConfig
+                    );
+                    await messageDB.deleteSpace(spaceId);
+                    return;
+                  }
+                }
+              }
+            } else if (envelope.message.type === 'sync') {
+              await synchronizeAll(
+                conversationId.split('/')[0],
+                envelope.message.inboxAddress
+              );
+            } else if (envelope.message.type === 'sync-request') {
+              if (envelope.message.expiry > Date.now()) {
+                await informSyncData(
+                  conversationId.split('/')[0],
+                  envelope.message.inboxAddress,
+                  envelope.message.messageCount,
+                  envelope.message.memberCount
+                );
+              }
+            } else if (envelope.message.type === 'sync-info') {
+              if (
+                syncInfo.current[conversationId.split('/')[0]] &&
+                syncInfo.current[conversationId.split('/')[0]].expiry >
+                  Date.now()
+              ) {
+                if (
+                  envelope.message.inboxAddress &&
+                  envelope.message.messageCount &&
+                  envelope.message.memberCount
+                ) {
+                  syncInfo.current[
+                    conversationId.split('/')[0]
+                  ].candidates.push(envelope.message);
+                  // reset the timeout to be 1s to more aggressively grab viable candidates for sync instead of waiting the full 30s
+                  clearTimeout(
+                    syncInfo.current[conversationId.split('/')[0]].invokable
+                  );
+                  syncInfo.current[conversationId.split('/')[0]].invokable =
+                    setTimeout(
+                      () => initiateSync(conversationId.split('/')[0]),
+                      1000
+                    );
+                }
+              }
+            } else if (envelope.message.type === 'sync-initiate') {
+              if (envelope.message.inboxAddress) {
+                await directSync(
+                  conversationId.split('/')[0],
+                  envelope.message
+                );
+              }
+            } else if (envelope.message.type === 'sync-members') {
+              let reg = spaceInfo.current[conversationId.split('/')[0]];
+              if (!reg) {
+                reg = (await apiClient.getSpace(conversationId.split('/')[0]))
+                  .data;
+                spaceInfo.current[conversationId.split('/')[0]] = reg;
+              }
+
+              if (
+                reg.owner_public_keys.includes(
+                  exteriorEnvelope.owner_public_key
+                ) ||
+                syncInfo.current[conversationId.split('/')[0]]
+              ) {
+                const verify = JSON.parse(
+                  ch.js_verify_ed448(
+                    Buffer.from(
+                      exteriorEnvelope.owner_public_key,
+                      'hex'
+                    ).toString('base64'),
+                    Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
+                      'base64'
+                    ),
+                    Buffer.from(
+                      exteriorEnvelope.owner_signature,
+                      'hex'
+                    ).toString('base64')
+                  )
+                );
+                if (verify) {
+                  for (const member of envelope.message.members) {
+                    await messageDB.saveSpaceMember(
+                      conversationId.split('/')[0],
+                      member
+                    );
+                  }
+                  await queryClient.setQueryData(
+                    buildSpaceMembersKey({
+                      spaceId: conversationId.split('/')[0],
+                    }),
+                    (oldData: secureChannel.UserProfile[]) => {
+                      return [...(oldData ?? []), ...envelope.message.members];
+                    }
                   );
                 }
-                const channelIds = envelope.message.messages
-                  .map((m: any) => m.channelId)
-                  .sort();
-                const checked = {} as { [id: string]: boolean };
-                for (const channelId of channelIds) {
-                  if (!checked[channelId]) {
-                    checked[channelId] = true;
-                    queryClient.refetchQueries({
-                      queryKey: buildMessagesKey({
-                        spaceId: conversationId.split('/')[0],
-                        channelId: channelId,
-                      }),
-                    });
+              }
+            } else if (envelope.message.type === 'sync-messages') {
+              let reg = spaceInfo.current[conversationId.split('/')[0]];
+              if (!reg) {
+                reg = (await apiClient.getSpace(conversationId.split('/')[0]))
+                  .data;
+                spaceInfo.current[conversationId.split('/')[0]] = reg;
+              }
+
+              if (
+                reg.owner_public_keys.includes(
+                  exteriorEnvelope.owner_public_key
+                ) ||
+                syncInfo.current[conversationId.split('/')[0]]
+              ) {
+                const verify = JSON.parse(
+                  ch.js_verify_ed448(
+                    Buffer.from(
+                      exteriorEnvelope.owner_public_key,
+                      'hex'
+                    ).toString('base64'),
+                    Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
+                      'base64'
+                    ),
+                    Buffer.from(
+                      exteriorEnvelope.owner_signature,
+                      'hex'
+                    ).toString('base64')
+                  )
+                );
+                if (verify) {
+                  const space = await messageDB.getSpace(
+                    conversationId.split('/')[0]
+                  );
+                  for (const message of envelope.message.messages) {
+                    // enforce non-repudiability
+                    if (
+                      space &&
+                      !space.isRepudiable &&
+                      message.publicKey &&
+                      message.signature
+                    ) {
+                      const participant = await messageDB.getSpaceMember(
+                        space.spaceId,
+                        message.content.senderId
+                      );
+                      const sh = await sha256.digest(
+                        Buffer.from(message.publicKey, 'hex')
+                      );
+                      const inboxAddress = base58btc.baseEncode(sh.bytes);
+                      const messageId = await crypto.subtle.digest(
+                        'SHA-256',
+                        Buffer.from(
+                          message.nonce +
+                            'post' +
+                            message.content.senderId +
+                            canonicalize(message.content as any),
+                          'utf-8'
+                        )
+                      );
+                      if (
+                        (participant.inbox_address !== inboxAddress &&
+                          participant.inbox_address) ||
+                        message.messageId !==
+                          Buffer.from(messageId).toString('hex')
+                      ) {
+                        message.publicKey = undefined;
+                        message.signature = undefined;
+                      } else {
+                        if (
+                          ch.js_verify_ed448(
+                            Buffer.from(message.publicKey, 'hex').toString(
+                              'base64'
+                            ),
+                            Buffer.from(messageId).toString('base64'),
+                            Buffer.from(message.signature, 'hex').toString(
+                              'base64'
+                            )
+                          ) !== 'true'
+                        ) {
+                          console.warn('invalid signature');
+                          message.publicKey = undefined;
+                          message.signature = undefined;
+                        }
+                      }
+                    }
+                    await saveMessage(
+                      message,
+                      messageDB,
+                      conversationId.split('/')[0],
+                      message.channelId,
+                      'group',
+                      {}
+                    );
+                  }
+                  const channelIds = envelope.message.messages
+                    .map((m: any) => m.channelId)
+                    .sort();
+                  const checked = {} as { [id: string]: boolean };
+                  for (const channelId of channelIds) {
+                    if (!checked[channelId]) {
+                      checked[channelId] = true;
+                      queryClient.refetchQueries({
+                        queryKey: buildMessagesKey({
+                          spaceId: conversationId.split('/')[0],
+                          channelId: channelId,
+                        }),
+                      });
+                    }
                   }
                 }
               }
             }
           }
-        }
+        } catch {}
       }
 
       if (newState) {
@@ -3805,370 +3817,362 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       device_keyset: secureChannel.DeviceKeyset,
       registration: secureChannel.UserRegistration
     ) => {
-      enqueueOutbound(async () => {
-        try {
-          const space = await messageDB.getSpace(spaceId);
-          const spaceKey = await messageDB.getSpaceKey(spaceId, spaceId);
-          const ownerKey = await messageDB.getSpaceKey(spaceId, 'owner');
-          const hubKey = await messageDB.getSpaceKey(spaceId, 'hub');
-          const cp = ch.js_generate_x448();
-          const configPair = JSON.parse(cp);
+      try {
+        const space = await messageDB.getSpace(spaceId);
+        const spaceKey = await messageDB.getSpaceKey(spaceId, spaceId);
+        const ownerKey = await messageDB.getSpaceKey(spaceId, 'owner');
+        const hubKey = await messageDB.getSpaceKey(spaceId, 'hub');
+        const cp = ch.js_generate_x448();
+        const configPair = JSON.parse(cp);
 
-          await messageDB.saveSpaceKey({
-            spaceId: spaceId,
-            keyId: 'config',
-            publicKey: Buffer.from(
-              new Uint8Array(configPair.public_key)
-            ).toString('hex'),
-            privateKey: Buffer.from(
-              new Uint8Array(configPair.private_key)
-            ).toString('hex'),
-          });
+        await messageDB.saveSpaceKey({
+          spaceId: spaceId,
+          keyId: 'config',
+          publicKey: Buffer.from(
+            new Uint8Array(configPair.public_key)
+          ).toString('hex'),
+          privateKey: Buffer.from(
+            new Uint8Array(configPair.private_key)
+          ).toString('hex'),
+        });
 
-          const ts = Date.now();
-          const ownerPayload = Buffer.from(
-            new Uint8Array([
-              ...new Uint8Array(Buffer.from(spaceKey.publicKey, 'hex')),
-              ...configPair.public_key,
-              ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
-              ...int64ToBytes(ts),
-            ])
+        const ts = Date.now();
+        const ownerPayload = Buffer.from(
+          new Uint8Array([
+            ...new Uint8Array(Buffer.from(spaceKey.publicKey, 'hex')),
+            ...configPair.public_key,
+            ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
+            ...int64ToBytes(ts),
+          ])
+        ).toString('base64');
+        const spacePayload = Buffer.from(
+          new Uint8Array([
+            ...new Uint8Array(Buffer.from(spaceKey.publicKey, 'hex')),
+            ...configPair.public_key,
+            ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
+            ...int64ToBytes(ts),
+          ])
+        ).toString('base64');
+        const spaceSignature = JSON.parse(
+          ch.js_sign_ed448(
+            Buffer.from(spaceKey.privateKey, 'hex').toString('base64'),
+            spacePayload
+          )
+        );
+        const ownerSignature = JSON.parse(
+          ch.js_sign_ed448(
+            Buffer.from(ownerKey.privateKey, 'hex').toString('base64'),
+            ownerPayload
+          )
+        );
+
+        await apiClient.postSpace(spaceId, {
+          space_address: spaceId,
+          space_public_key: spaceKey.publicKey,
+          space_signature: Buffer.from(spaceSignature, 'base64').toString(
+            'hex'
+          ),
+          config_public_key: Buffer.from(
+            new Uint8Array(configPair.public_key)
+          ).toString('hex'),
+          owner_public_keys: [ownerKey.publicKey],
+          owner_signatures: [
+            Buffer.from(ownerSignature, 'base64').toString('hex'),
+          ],
+          timestamp: ts,
+        } as secureChannel.SpaceRegistration);
+        spaceInfo.current[spaceId] = {
+          space_address: spaceId,
+          space_public_key: spaceKey.publicKey,
+          space_signature: Buffer.from(spaceSignature, 'base64').toString(
+            'hex'
+          ),
+          config_public_key: Buffer.from(
+            new Uint8Array(configPair.public_key)
+          ).toString('hex'),
+          owner_public_keys: [ownerKey.publicKey],
+          owner_signatures: [
+            Buffer.from(ownerSignature, 'base64').toString('hex'),
+          ],
+          timestamp: ts,
+        } as secureChannel.SpaceRegistration;
+        const ephemeral_key = JSON.parse(
+          ch.js_generate_x448()
+        ) as secureChannel.X448Keypair;
+        let members = await messageDB.getSpaceMembers(spaceId);
+        let filteredMembers = members.filter(
+          (m) => m.inbox_address !== '' && m.user_address != selfAddress
+        );
+        const encryptionStates = await messageDB.getEncryptionStates({
+          conversationId: spaceId + '/' + spaceId,
+        });
+        const state = encryptionStates[0];
+        const trState = JSON.parse(JSON.parse(state.state).state);
+        const session =
+          await secureChannel.EstablishTripleRatchetSessionForSpace(
+            user_keyset,
+            device_keyset,
+            registration,
+            filteredMembers.length + 200
+          );
+        let outbounds: string[] = [];
+        let newPeerIdSet = {
+          [trState.id_peer_map[1].public_key]: 1,
+        };
+        let newIdPeerSet = {
+          [1]: trState.id_peer_map[1],
+        } as { [key: number]: any };
+        let idCounter = 2;
+        for (const member of filteredMembers) {
+          const user = await apiClient.getUser(member.user_address);
+          const device = user.data.device_registrations.find(
+            (d: any) =>
+              trState.peer_id_map[
+                Buffer.from(
+                  d.inbox_registration.inbox_encryption_public_key,
+                  'hex'
+                ).toString('base64')
+              ]
+          );
+          const inboxKey = Buffer.from(
+            device!.inbox_registration.inbox_encryption_public_key,
+            'hex'
           ).toString('base64');
-          const spacePayload = Buffer.from(
-            new Uint8Array([
-              ...new Uint8Array(Buffer.from(spaceKey.publicKey, 'hex')),
-              ...configPair.public_key,
-              ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
-              ...int64ToBytes(ts),
-            ])
+          newPeerIdSet = {
+            ...newPeerIdSet,
+            [inboxKey]: idCounter,
+          };
+          newIdPeerSet = {
+            ...newIdPeerSet,
+            [idCounter]: trState.id_peer_map[trState.peer_id_map[inboxKey]],
+          };
+          idCounter++;
+        }
+        let ownRatchet = JSON.parse(session.state);
+        ownRatchet.peer_id_map = newPeerIdSet;
+        ownRatchet.id_peer_map = newIdPeerSet;
+        session.state = JSON.stringify(ownRatchet);
+
+        idCounter = 2;
+        for (const member of filteredMembers) {
+          const sendState = session.template;
+          const ratchet = JSON.parse(sendState.dkg_ratchet);
+          sendState.peer_id_map = newPeerIdSet;
+          sendState.id_peer_map = newIdPeerSet;
+          ratchet.id = 100001 - session.evals.length;
+          sendState.root_key = JSON.parse(session.state).root_key;
+          const index_secret_raw = session.evals.shift();
+          const secret_pair = JSON.parse(ch.js_generate_x448());
+          const eph_pair = JSON.parse(ch.js_generate_x448());
+          ratchet.total = Object.keys(ownRatchet.peer_id_map).length;
+          ratchet.secret = Buffer.from(
+            new Uint8Array(secret_pair.private_key)
           ).toString('base64');
-          const spaceSignature = JSON.parse(
-            ch.js_sign_ed448(
-              Buffer.from(spaceKey.privateKey, 'hex').toString('base64'),
-              spacePayload
+          ratchet.scalar = Buffer.from(
+            new Uint8Array(index_secret_raw!)
+          ).toString('base64');
+          ratchet.point = JSON.parse(
+            ch.js_get_pubkey_x448(
+              Buffer.from(new Uint8Array(index_secret_raw!)).toString('base64')
             )
           );
-          const ownerSignature = JSON.parse(
-            ch.js_sign_ed448(
-              Buffer.from(ownerKey.privateKey, 'hex').toString('base64'),
-              ownerPayload
+          ratchet.random_commitment_point = JSON.parse(
+            ch.js_get_pubkey_x448(
+              Buffer.from(new Uint8Array(index_secret_raw!)).toString('base64')
             )
           );
+          sendState.dkg_ratchet = JSON.stringify(ratchet);
+          sendState.next_dkg_ratchet = JSON.stringify(ratchet);
+          sendState.ephemeral_private_key = Buffer.from(
+            new Uint8Array(eph_pair.private_key)
+          ).toString('base64');
+          const template = JSON.stringify(sendState);
 
-          await apiClient.postSpace(spaceId, {
-            space_address: spaceId,
-            space_public_key: spaceKey.publicKey,
-            space_signature: Buffer.from(spaceSignature, 'base64').toString(
-              'hex'
-            ),
-            config_public_key: Buffer.from(
-              new Uint8Array(configPair.public_key)
-            ).toString('hex'),
-            owner_public_keys: [ownerKey.publicKey],
-            owner_signatures: [
-              Buffer.from(ownerSignature, 'base64').toString('hex'),
-            ],
-            timestamp: ts,
-          } as secureChannel.SpaceRegistration);
-          spaceInfo.current[spaceId] = {
-            space_address: spaceId,
-            space_public_key: spaceKey.publicKey,
-            space_signature: Buffer.from(spaceSignature, 'base64').toString(
-              'hex'
-            ),
-            config_public_key: Buffer.from(
-              new Uint8Array(configPair.public_key)
-            ).toString('hex'),
-            owner_public_keys: [ownerKey.publicKey],
-            owner_signatures: [
-              Buffer.from(ownerSignature, 'base64').toString('hex'),
-            ],
-            timestamp: ts,
-          } as secureChannel.SpaceRegistration;
-          const ephemeral_key = JSON.parse(
-            ch.js_generate_x448()
-          ) as secureChannel.X448Keypair;
+          const innerEnvelope = await secureChannel.SealInboxEnvelope(
+            newIdPeerSet[idCounter].public_key,
+            JSON.stringify({
+              configKey: Buffer.from(
+                new Uint8Array(configPair.private_key)
+              ).toString('hex'),
+              state: template,
+            })
+          );
+          const envelope = await secureChannel.SealSyncEnvelope(
+            member.inbox_address,
+            hubKey.address!,
+            {
+              type: 'ed448',
+              private_key: [
+                ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
+              ],
+              public_key: [
+                ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
+              ],
+            },
+            {
+              type: 'ed448',
+              private_key: [
+                ...new Uint8Array(Buffer.from(ownerKey.privateKey, 'hex')),
+              ],
+              public_key: [
+                ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
+              ],
+            },
+            JSON.stringify({
+              type: 'control',
+              message: {
+                type: 'rekey',
+                info: JSON.stringify(innerEnvelope),
+              },
+            })
+          );
+          outbounds.push(JSON.stringify({ type: 'sync', ...envelope }));
+          idCounter++;
+        }
+
+        const space_evals = [] as string[];
+        for (
+          let e = session.evals.shift();
+          e != undefined;
+          e = session.evals.shift()
+        ) {
+          const sendState = session.template;
+          const ratchet = JSON.parse(sendState.dkg_ratchet);
+          sendState.peer_id_map = newPeerIdSet;
+          sendState.id_peer_map = newIdPeerSet;
+          ratchet.id = idCounter;
+          sendState.root_key = JSON.parse(session.state).root_key;
+          const index_secret_raw = e;
+          const secret_pair = JSON.parse(ch.js_generate_x448());
+          const eph_pair = JSON.parse(ch.js_generate_x448());
+          ratchet.total = Object.keys(ownRatchet.peer_id_map).length;
+          ratchet.secret = Buffer.from(
+            new Uint8Array(secret_pair.private_key)
+          ).toString('base64');
+          ratchet.scalar = Buffer.from(
+            new Uint8Array(index_secret_raw!)
+          ).toString('base64');
+          ratchet.point = JSON.parse(
+            ch.js_get_pubkey_x448(
+              Buffer.from(new Uint8Array(index_secret_raw!)).toString('base64')
+            )
+          );
+          ratchet.random_commitment_point = JSON.parse(
+            ch.js_get_pubkey_x448(
+              Buffer.from(new Uint8Array(index_secret_raw!)).toString('base64')
+            )
+          );
+          sendState.dkg_ratchet = JSON.stringify(ratchet);
+          sendState.next_dkg_ratchet = JSON.stringify(ratchet);
+          sendState.ephemeral_private_key = Buffer.from(
+            new Uint8Array(eph_pair.private_key)
+          ).toString('base64');
+          const template = JSON.stringify(sendState);
           const ciphertext = ch.js_encrypt_inbox_message(
             JSON.stringify({
               inbox_public_key: [...new Uint8Array(configPair.public_key)],
               ephemeral_private_key: ephemeral_key.private_key,
               plaintext: [
-                ...new Uint8Array(Buffer.from(JSON.stringify(space), 'utf-8')),
+                ...new Uint8Array(
+                  Buffer.from(
+                    JSON.stringify({
+                      id: idCounter,
+                      template: template,
+                      secret: Buffer.from(new Uint8Array(e)).toString('hex'),
+                      hubKey: hubKey.privateKey,
+                    }),
+                    'utf-8'
+                  )
+                ),
               ],
             } as secureChannel.SealedInboxMessageEncryptRequest)
           );
 
-          const manifest = {
-            space_address: spaceId,
-            space_manifest: ciphertext,
-            ephemeral_public_key: Buffer.from(
-              new Uint8Array(ephemeral_key.public_key)
-            ).toString('hex'),
-            timestamp: ts,
-            owner_public_key: ownerKey.publicKey,
-            owner_signature: Buffer.from(
-              JSON.parse(
-                ch.js_sign_ed448(
-                  Buffer.from(ownerKey.privateKey, 'hex').toString('base64'),
-                  Buffer.from(
-                    new Uint8Array([
-                      ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
-                      ...int64ToBytes(ts),
-                    ])
-                  ).toString('base64')
-                )
-              ),
-              'base64'
-            ).toString('hex'),
-          };
-          await apiClient.postSpaceManifest(spaceId, manifest);
-          let members = await messageDB.getSpaceMembers(spaceId);
-          let filteredMembers = members.filter(
-            (m) => m.inbox_address !== '' && m.user_address != selfAddress
-          );
-          const encryptionStates = await messageDB.getEncryptionStates({
-            conversationId: spaceId + '/' + spaceId,
-          });
-          const state = encryptionStates[0];
-          const trState = JSON.parse(JSON.parse(state.state).state);
-          const session =
-            await secureChannel.EstablishTripleRatchetSessionForSpace(
-              user_keyset,
-              device_keyset,
-              registration,
-              filteredMembers.length + 200
-            );
-          let outbounds: string[] = [];
-          let newPeerIdSet = {
-            [trState.id_peer_map[1].public_key]: 1,
-          };
-          let newIdPeerSet = {
-            [1]: trState.id_peer_map[1],
-          } as { [key: number]: any };
-          let idCounter = 2;
-          for (const member of filteredMembers) {
-            const user = await apiClient.getUser(member.user_address);
-            const device = user.data.device_registrations.find(
-              (d: any) =>
-                trState.peer_id_map[
-                  Buffer.from(
-                    d.inbox_registration.inbox_encryption_public_key,
-                    'hex'
-                  ).toString('base64')
-                ]
-            );
-            const inboxKey = Buffer.from(
-              device!.inbox_registration.inbox_encryption_public_key,
-              'hex'
-            ).toString('base64');
-            newPeerIdSet = {
-              ...newPeerIdSet,
-              [inboxKey]: idCounter,
-            };
-            newIdPeerSet = {
-              ...newIdPeerSet,
-              [idCounter]: trState.id_peer_map[trState.peer_id_map[inboxKey]],
-            };
-            idCounter++;
-          }
-          let ownRatchet = JSON.parse(session.state);
-          ownRatchet.peer_id_map = newPeerIdSet;
-          ownRatchet.id_peer_map = newIdPeerSet;
-          session.state = JSON.stringify(ownRatchet);
-
-          idCounter = 2;
-          for (const member of filteredMembers) {
-            const sendState = session.template;
-            const ratchet = JSON.parse(sendState.dkg_ratchet);
-            sendState.peer_id_map = newPeerIdSet;
-            sendState.id_peer_map = newIdPeerSet;
-            ratchet.id = 100001 - session.evals.length;
-            sendState.root_key = JSON.parse(session.state).root_key;
-            const index_secret_raw = session.evals.shift();
-            const secret_pair = JSON.parse(ch.js_generate_x448());
-            const eph_pair = JSON.parse(ch.js_generate_x448());
-            ratchet.total = Object.keys(ownRatchet.peer_id_map).length;
-            ratchet.secret = Buffer.from(
-              new Uint8Array(secret_pair.private_key)
-            ).toString('base64');
-            ratchet.scalar = Buffer.from(
-              new Uint8Array(index_secret_raw!)
-            ).toString('base64');
-            ratchet.point = JSON.parse(
-              ch.js_get_pubkey_x448(
-                Buffer.from(new Uint8Array(index_secret_raw!)).toString(
-                  'base64'
-                )
-              )
-            );
-            ratchet.random_commitment_point = JSON.parse(
-              ch.js_get_pubkey_x448(
-                Buffer.from(new Uint8Array(index_secret_raw!)).toString(
-                  'base64'
-                )
-              )
-            );
-            sendState.dkg_ratchet = JSON.stringify(ratchet);
-            sendState.next_dkg_ratchet = JSON.stringify(ratchet);
-            sendState.ephemeral_private_key = Buffer.from(
-              new Uint8Array(eph_pair.private_key)
-            ).toString('base64');
-            const template = JSON.stringify(sendState);
-
-            const innerEnvelope = await secureChannel.SealInboxEnvelope(
-              newIdPeerSet[idCounter].public_key,
-              JSON.stringify({
-                configKey: Buffer.from(
-                  new Uint8Array(configPair.private_key)
-                ).toString('hex'),
-                state: template,
-              })
-            );
-            const envelope = await secureChannel.SealSyncEnvelope(
-              member.inbox_address,
-              hubKey.address!,
-              {
-                type: 'ed448',
-                private_key: [
-                  ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
-                ],
-                public_key: [
-                  ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
-                ],
-              },
-              {
-                type: 'ed448',
-                private_key: [
-                  ...new Uint8Array(Buffer.from(ownerKey.privateKey, 'hex')),
-                ],
-                public_key: [
-                  ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
-                ],
-              },
-              JSON.stringify({
-                type: 'control',
-                message: {
-                  type: 'rekey',
-                  info: JSON.stringify(innerEnvelope),
-                },
-              })
-            );
-            outbounds.push(JSON.stringify({ type: 'sync', ...envelope }));
-            idCounter++;
-          }
-
-          const space_evals = [] as string[];
-          for (
-            let e = session.evals.shift();
-            e != undefined;
-            e = session.evals.shift()
-          ) {
-            const sendState = session.template;
-            const ratchet = JSON.parse(sendState.dkg_ratchet);
-            sendState.peer_id_map = newPeerIdSet;
-            sendState.id_peer_map = newIdPeerSet;
-            ratchet.id = idCounter;
-            sendState.root_key = JSON.parse(session.state).root_key;
-            const index_secret_raw = e;
-            const secret_pair = JSON.parse(ch.js_generate_x448());
-            const eph_pair = JSON.parse(ch.js_generate_x448());
-            ratchet.total = Object.keys(ownRatchet.peer_id_map).length;
-            ratchet.secret = Buffer.from(
-              new Uint8Array(secret_pair.private_key)
-            ).toString('base64');
-            ratchet.scalar = Buffer.from(
-              new Uint8Array(index_secret_raw!)
-            ).toString('base64');
-            ratchet.point = JSON.parse(
-              ch.js_get_pubkey_x448(
-                Buffer.from(new Uint8Array(index_secret_raw!)).toString(
-                  'base64'
-                )
-              )
-            );
-            ratchet.random_commitment_point = JSON.parse(
-              ch.js_get_pubkey_x448(
-                Buffer.from(new Uint8Array(index_secret_raw!)).toString(
-                  'base64'
-                )
-              )
-            );
-            sendState.dkg_ratchet = JSON.stringify(ratchet);
-            sendState.next_dkg_ratchet = JSON.stringify(ratchet);
-            sendState.ephemeral_private_key = Buffer.from(
-              new Uint8Array(eph_pair.private_key)
-            ).toString('base64');
-            const template = JSON.stringify(sendState);
-            const ciphertext = ch.js_encrypt_inbox_message(
-              JSON.stringify({
-                inbox_public_key: [...new Uint8Array(configPair.public_key)],
-                ephemeral_private_key: ephemeral_key.private_key,
-                plaintext: [
-                  ...new Uint8Array(
-                    Buffer.from(
-                      JSON.stringify({
-                        id: idCounter,
-                        template: template,
-                        secret: Buffer.from(new Uint8Array(e)).toString('hex'),
-                        hubKey: hubKey.privateKey,
-                      }),
-                      'utf-8'
-                    )
-                  ),
-                ],
-              } as secureChannel.SealedInboxMessageEncryptRequest)
-            );
-
-            space_evals.push(ciphertext);
-            idCounter++;
-          }
-
-          const out = {
-            config_public_key: Buffer.from(
-              new Uint8Array(configPair.public_key)
-            ).toString('hex'),
-            space_address: space!.spaceId,
-            space_evals: space_evals,
-            ephemeral_public_key: Buffer.from(
-              new Uint8Array(ephemeral_key.public_key)
-            ).toString('hex'),
-            owner_public_key: ownerKey.publicKey,
-            owner_signature: Buffer.from(
-              JSON.parse(
-                ch.js_sign_ed448(
-                  Buffer.from(ownerKey.privateKey, 'hex').toString('base64'),
-                  Buffer.from(
-                    new Uint8Array([
-                      ...space_evals.flatMap((s) => [
-                        ...new Uint8Array(Buffer.from(s, 'utf-8')),
-                      ]),
-                    ])
-                  ).toString('base64')
-                )
-              ),
-              'base64'
-            ).toString('hex'),
-          };
-
-          await apiClient.postSpaceInviteEvals(out);
-
-          space!.inviteUrl = `https://qm.one/invite/#spaceId=${space!.spaceId}&configKey=${Buffer.from(new Uint8Array(configPair.private_key)).toString('hex')}`;
-          await messageDB.saveSpace(space!);
-          await queryClient.setQueryData(
-            buildSpaceKey({ spaceId: space?.spaceId! }),
-            space
-          );
-
-          await messageDB.saveEncryptionState(
-            { ...state, state: JSON.stringify(session) },
-            true
-          );
-          return outbounds;
-        } catch (e) {
-          console.error(e);
-          throw e;
+          space_evals.push(ciphertext);
+          idCounter++;
         }
-      });
+
+        const out = {
+          config_public_key: Buffer.from(
+            new Uint8Array(configPair.public_key)
+          ).toString('hex'),
+          space_address: space!.spaceId,
+          space_evals: space_evals,
+          ephemeral_public_key: Buffer.from(
+            new Uint8Array(ephemeral_key.public_key)
+          ).toString('hex'),
+          owner_public_key: ownerKey.publicKey,
+          owner_signature: Buffer.from(
+            JSON.parse(
+              ch.js_sign_ed448(
+                Buffer.from(ownerKey.privateKey, 'hex').toString('base64'),
+                Buffer.from(
+                  new Uint8Array([
+                    ...space_evals.flatMap((s) => [
+                      ...new Uint8Array(Buffer.from(s, 'utf-8')),
+                    ]),
+                  ])
+                ).toString('base64')
+              )
+            ),
+            'base64'
+          ).toString('hex'),
+        };
+
+        await apiClient.postSpaceInviteEvals(out);
+
+        space!.inviteUrl = `https://qm.one/invite/#spaceId=${space!.spaceId}&configKey=${Buffer.from(new Uint8Array(configPair.private_key)).toString('hex')}`;
+        const ciphertext = ch.js_encrypt_inbox_message(
+          JSON.stringify({
+            inbox_public_key: [...new Uint8Array(configPair.public_key)],
+            ephemeral_private_key: ephemeral_key.private_key,
+            plaintext: [
+              ...new Uint8Array(Buffer.from(JSON.stringify(space), 'utf-8')),
+            ],
+          } as secureChannel.SealedInboxMessageEncryptRequest)
+        );
+
+        const manifest = {
+          space_address: spaceId,
+          space_manifest: ciphertext,
+          ephemeral_public_key: Buffer.from(
+            new Uint8Array(ephemeral_key.public_key)
+          ).toString('hex'),
+          timestamp: ts,
+          owner_public_key: ownerKey.publicKey,
+          owner_signature: Buffer.from(
+            JSON.parse(
+              ch.js_sign_ed448(
+                Buffer.from(ownerKey.privateKey, 'hex').toString('base64'),
+                Buffer.from(
+                  new Uint8Array([
+                    ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
+                    ...int64ToBytes(ts),
+                  ])
+                ).toString('base64')
+              )
+            ),
+            'base64'
+          ).toString('hex'),
+        };
+        await apiClient.postSpaceManifest(spaceId, manifest);
+        await messageDB.saveSpace(space!);
+        await queryClient.setQueryData(
+          buildSpaceKey({ spaceId: space?.spaceId! }),
+          space
+        );
+
+        await messageDB.saveEncryptionState(
+          { ...state, state: JSON.stringify(session) },
+          true
+        );
+        enqueueOutbound(async () => {
+          return outbounds;
+        });
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
     },
     []
   );
@@ -4353,7 +4357,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             ),
             'base64'
           );
-
+          let template: any;
           if (!info.secret && !info.template && !info.hubKey) {
             if (!space.inviteUrl || space.inviteUrl == '') {
               throw new Error('invalid link');
@@ -4389,6 +4393,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             info.secret = invite.secret;
             info.template = invite.template;
             info.hubKey = invite.hubKey;
+            template = JSON.parse(info.template);
+          } else {
+            template = JSON.parse(
+              Buffer.from(info.template, 'hex').toString('utf-8')
+            );
           }
 
           const ip = ch.js_generate_ed448();
@@ -4405,7 +4414,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           );
           const hh = await sha256.digest(hubPub);
           const hubAddress = base58btc.baseEncode(hh.bytes);
-          const template = JSON.parse(info.template);
           const secret_pair = JSON.parse(ch.js_generate_x448());
           const eph_pair = JSON.parse(ch.js_generate_x448());
           const ratchet = JSON.parse(template.dkg_ratchet);

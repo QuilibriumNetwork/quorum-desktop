@@ -25,6 +25,7 @@ import Tooltip from '../Tooltip';
 import Input from '../Input';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useRegistrationContext } from '../context/RegistrationPersister';
+import { Loading } from '../Loading';
 
 const SpaceEditor: React.FunctionComponent<{
   spaceId: string;
@@ -69,6 +70,7 @@ const SpaceEditor: React.FunctionComponent<{
   const [selectedUser, setSelectedUser] = React.useState<Conversation>();
   const [success, setSuccess] = React.useState<boolean>(false);
   const [sendingInvite, setSendingInvite] = React.useState<boolean>(false);
+  const [generating, setGenerating] = React.useState<boolean>(false);
   const [manualAddress, setManualAddress] = React.useState<string>();
   const [resolvedUser, setResolvedUser] =
     React.useState<channel.UserRegistration>();
@@ -836,21 +838,33 @@ const SpaceEditor: React.FunctionComponent<{
                               }
                             />
                           </div>
-                          <div className="mt-4">
+                          <div className="mt-4 flex flex-row">
                             <Button
                               type="danger"
                               className="px-4"
-                              onClick={() =>
-                                generateNewInviteLink(
-                                  space.spaceId,
-                                  keyset.userKeyset,
-                                  keyset.deviceKeyset,
-                                  registration.registration!
-                                )
-                              }
+                              disabled={generating}
+                              onClick={async () => {
+                                setGenerating(true);
+                                try {
+                                  await new Promise<void>((resolve) =>
+                                    setTimeout(() => resolve(), 200)
+                                  );
+                                  await generateNewInviteLink(
+                                    space.spaceId,
+                                    keyset.userKeyset,
+                                    keyset.deviceKeyset,
+                                    registration.registration!
+                                  );
+                                } finally {
+                                  setGenerating(false);
+                                }
+                              }}
                             >
                               Generate New Invite Link
                             </Button>
+                            <div className="flex flex-col pl-4 justify-around">
+                              {generating && <Loading loading={generating} />}
+                            </div>
                           </div>
                         </div>
                       )}
