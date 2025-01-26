@@ -3292,6 +3292,10 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 ).toString('base64')
               ]
           );
+          if (!device) {
+            idCounter++;
+            continue;
+          }
           const inboxKey = Buffer.from(
             device!.inbox_registration.inbox_encryption_public_key,
             'hex'
@@ -3934,6 +3938,10 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 ).toString('base64')
               ]
           );
+          if (!device) {
+            idCounter++;
+            continue;
+          }
           const inboxKey = Buffer.from(
             device!.inbox_registration.inbox_encryption_public_key,
             'hex'
