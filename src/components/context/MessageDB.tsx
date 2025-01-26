@@ -3317,7 +3317,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           const ratchet = JSON.parse(sendState.dkg_ratchet);
           sendState.peer_id_map = newPeerIdSet;
           sendState.id_peer_map = newIdPeerSet;
-          ratchet.id = 10001 - session.evals.length;
+          ratchet.id = filteredMembers.length + 201 - session.evals.length;
           sendState.root_key = JSON.parse(session.state).root_key;
           const index_secret_raw = session.evals.shift();
           const secret_pair = JSON.parse(ch.js_generate_x448());
@@ -3959,7 +3959,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           const ratchet = JSON.parse(sendState.dkg_ratchet);
           sendState.peer_id_map = newPeerIdSet;
           sendState.id_peer_map = newIdPeerSet;
-          ratchet.id = 100001 - session.evals.length;
+          ratchet.id = filteredMembers.length + 201 - session.evals.length;
           sendState.root_key = JSON.parse(session.state).root_key;
           const index_secret_raw = session.evals.shift();
           const secret_pair = JSON.parse(ch.js_generate_x448());

@@ -54,7 +54,7 @@ const NavMenu: React.FC<NavMenuProps> = (props) => {
   React.useEffect(() => {
     (async () => {
       const spaceSet = config.spaceIds;
-      let dedupeList = {} as {[spaceId: string]: boolean};
+      let dedupeList = {} as { [spaceId: string]: boolean };
       for (const id of spaceSet) {
         if (!dedupeList[id]) {
           dedupeList[id] = true;
