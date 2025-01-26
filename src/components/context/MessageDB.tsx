@@ -3317,6 +3317,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
         idCounter = 2;
         for (const member of filteredMembers) {
+          if (!newIdPeerSet[idCounter]) {
+            continue;
+          }
           const sendState = session.template;
           const ratchet = JSON.parse(sendState.dkg_ratchet);
           sendState.peer_id_map = newPeerIdSet;
@@ -3963,6 +3966,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
         idCounter = 2;
         for (const member of filteredMembers) {
+          if (!newIdPeerSet[idCounter]) {
+            continue;
+          }
           const sendState = session.template;
           const ratchet = JSON.parse(sendState.dkg_ratchet);
           sendState.peer_id_map = newPeerIdSet;
