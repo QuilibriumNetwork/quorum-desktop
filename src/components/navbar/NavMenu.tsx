@@ -53,7 +53,15 @@ const NavMenu: React.FC<NavMenuProps> = (props) => {
 
   React.useEffect(() => {
     (async () => {
-      const set = config.spaceIds
+      const spaceSet = config.spaceIds;
+      let dedupeList = {} as {[spaceId: string]: boolean};
+      for (const id of spaceSet) {
+        if (!dedupeList[id]) {
+          dedupeList[id] = true;
+        }
+      }
+
+      const set = Object.keys(dedupeList)
         .map((s) => {
           const space = spaces.find((sp) => sp.spaceId === s);
           if (!space) {
