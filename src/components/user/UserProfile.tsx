@@ -39,6 +39,8 @@ const UserProfile: React.FunctionComponent<{
         >
       >
     | undefined;
+  kickUserAddress?: string;
+  setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }> = (props) => {
   let [status, setStatus] = React.useState<string>(props.user.status);
   let [displayName, setDisplayName] = React.useState<string>(
@@ -310,13 +312,7 @@ const UserProfile: React.FunctionComponent<{
                       icon={faShieldAlt}
                       text="Kick User"
                       onClick={() => {
-                        kickUser(
-                          props.spaceId!,
-                          props.user.address,
-                          keyset.userKeyset,
-                          keyset.deviceKeyset,
-                          selfRegistration.registration!
-                        );
+                        props.setKickUserAddress!(props.user.address);
                         props.dismiss && props.dismiss();
                       }}
                     />

@@ -42,6 +42,8 @@ type MessageProps = {
   editorRef: any;
   height: number;
   submitMessage: (message: any) => Promise<void>;
+  kickUserAddress?: string;
+  setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 const YTRegex = new RegExp(
@@ -71,6 +73,8 @@ export const Message = ({
   editorRef,
   height,
   submitMessage,
+  kickUserAddress,
+  setKickUserAddress,
 }: MessageProps) => {
   const user = usePasskeysContext();
   const { spaceId } = useParams();
@@ -358,6 +362,8 @@ export const Message = ({
                 <UserProfile
                   spaceId={message.spaceId}
                   canEditRoles={canEditRoles}
+                  kickUserAddress={kickUserAddress}
+                  setKickUserAddress={setKickUserAddress}
                   roles={senderRoles}
                   user={sender}
                   editMode={false}

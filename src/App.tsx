@@ -62,6 +62,7 @@ const App = () => {
   >(undefined);
   const [init, setInit] = useState(false);
   const [landing, setLanding] = useState(false);
+  const [kickUserAddress, setKickUserAddress] = useState<string>();
 
   useEffect(() => {
     if (!init) {
@@ -116,7 +117,10 @@ const App = () => {
                   <Route
                     path="/messages"
                     element={
-                      <Layout>
+                      <Layout
+                        kickUserAddress={kickUserAddress}
+                        setKickUserAddress={setKickUserAddress}
+                      >
                         <DirectMessages
                           setUser={setUser}
                           setAuthState={() => {
@@ -130,7 +134,11 @@ const App = () => {
                   <Route
                     path="/messages/new"
                     element={
-                      <Layout newDirectMessage>
+                      <Layout
+                        newDirectMessage
+                        kickUserAddress={kickUserAddress}
+                        setKickUserAddress={setKickUserAddress}
+                      >
                         <DirectMessages
                           setUser={setUser}
                           setAuthState={() => {
@@ -144,7 +152,10 @@ const App = () => {
                   <Route
                     path="/messages/:address"
                     element={
-                      <Layout>
+                      <Layout
+                        kickUserAddress={kickUserAddress}
+                        setKickUserAddress={setKickUserAddress}
+                      >
                         <DirectMessages
                           setUser={setUser}
                           setAuthState={() => {
@@ -158,12 +169,17 @@ const App = () => {
                   <Route
                     path="/spaces/:spaceId/:channelId"
                     element={
-                      <Layout>
+                      <Layout
+                        kickUserAddress={kickUserAddress}
+                        setKickUserAddress={setKickUserAddress}
+                      >
                         <Space
                           setUser={setUser}
                           setAuthState={() => {
                             setUser(undefined);
                           }}
+                          kickUserAddress={kickUserAddress}
+                          setKickUserAddress={setKickUserAddress}
                           user={user}
                         />
                       </Layout>
@@ -172,7 +188,10 @@ const App = () => {
                   <Route
                     path="/invite/"
                     element={
-                      <Layout>
+                      <Layout
+                        kickUserAddress={kickUserAddress}
+                        setKickUserAddress={setKickUserAddress}
+                      >
                         <JoinSpaceModal visible={true} onClose={() => {}} />
                       </Layout>
                     }

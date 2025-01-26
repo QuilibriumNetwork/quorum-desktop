@@ -19,9 +19,19 @@ import { MessageList } from '../message/MessageList';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
 
-type ChannelProps = { spaceId: string; channelId: string };
+type ChannelProps = {
+  spaceId: string;
+  channelId: string;
+  kickUserAddress?: string;
+  setKickUserAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
+};
 
-const Channel: React.FC<ChannelProps> = ({ spaceId, channelId }) => {
+const Channel: React.FC<ChannelProps> = ({
+  spaceId,
+  channelId,
+  kickUserAddress,
+  setKickUserAddress,
+}) => {
   const [state, setState] = React.useState<{
     pendingMessage: string;
     messages: MessageType[];
@@ -228,6 +238,8 @@ const Channel: React.FC<ChannelProps> = ({ spaceId, channelId }) => {
             customEmoji={space?.emojis}
             members={members}
             submitMessage={submit}
+            kickUserAddress={kickUserAddress}
+            setKickUserAddress={setKickUserAddress}
             fetchPreviousPage={() => {
               fetchPreviousPage();
             }}

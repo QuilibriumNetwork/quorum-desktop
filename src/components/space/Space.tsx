@@ -23,6 +23,8 @@ type SpaceProps = {
       | undefined
     >
   >;
+  kickUserAddress?: string;
+  setKickUserAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 const Space: React.FunctionComponent<SpaceProps> = (props) => {
@@ -61,7 +63,12 @@ const Space: React.FunctionComponent<SpaceProps> = (props) => {
           user={props.user}
         />
       </div>
-      <Channel spaceId={params.spaceId} channelId={params.channelId} />
+      <Channel
+        kickUserAddress={props.kickUserAddress}
+        setKickUserAddress={props.setKickUserAddress}
+        spaceId={params.spaceId}
+        channelId={params.channelId}
+      />
     </div>
   );
 };

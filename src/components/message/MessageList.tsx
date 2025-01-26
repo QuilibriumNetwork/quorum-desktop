@@ -30,6 +30,8 @@ export const MessageList = ({
   customEmoji,
   isRepudiable,
   roles,
+  kickUserAddress,
+  setKickUserAddress,
 }: {
   messageList: MessageType[];
   members: any;
@@ -42,6 +44,8 @@ export const MessageList = ({
   customEmoji?: Emoji[];
   isRepudiable?: boolean;
   roles: Role[];
+  kickUserAddress?: string;
+  setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }) => {
   const [width, height] = useWindowSize();
   const [hoverTarget, setHoverTarget] = useState<string>();
@@ -83,6 +87,8 @@ export const MessageList = ({
         canEditRoles={isSpaceOwner}
         canDeleteMessages={canDeleteMessages(message)}
         submitMessage={submitMessage}
+        kickUserAddress={kickUserAddress}
+        setKickUserAddress={setKickUserAddress}
       />
     );
   };

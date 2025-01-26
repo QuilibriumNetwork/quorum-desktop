@@ -559,6 +559,12 @@ export class QuorumApiClient extends AbstractQuorumApiClient {
           [],
         ]),
         JOIN_SPACE_TITLE: remap(['Join a Space', []]),
+        KICK_USER: remap(['Kick User', []]),
+        KICK_USER_TITLE: remap(['Kick User?', []]),
+        KICK_USER_TEXT: remap([
+          'Are you sure you want to kick this user? You will have to reinvite them for them to return.',
+          [],
+        ]),
         LOG_OUT: remap(['Log Out', []]),
         NEW_DIRECT_MESSAGE_BUTTON: remap(['Create', []]),
         NEW_DIRECT_MESSAGE_PROMPT: remap([
