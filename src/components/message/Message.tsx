@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import * as moment from 'moment-timezone';
 import * as linkify from 'linkifyjs';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Emoji, Message as MessageType, Role } from '../../api/quorumApi';
+import { Emoji, Message as MessageType, Role, Sticker } from '../../api/quorumApi';
 import EmojiPicker, {
   SkinTonePickerLocation,
   SuggestionMode,
@@ -22,6 +22,7 @@ import { InviteLink } from './InviteLink';
 
 type MessageProps = {
   customEmoji?: Emoji[];
+  stickers?: {[key: string]: Sticker};
   message: MessageType;
   messageList: MessageType[];
   senderRoles: Role[];
@@ -55,6 +56,7 @@ const InviteRegex = new RegExp(
 
 export const Message = ({
   customEmoji,
+  stickers,
   message,
   messageList,
   senderRoles,
@@ -499,6 +501,12 @@ export const Message = ({
                     )}
                   </div>
                 );
+              } else if (message.content.type == 'sticker') {
+                const sticker = (stickers ?? {})[message.content.stickerId];
+                return <img
+                  src={sticker?.imgUrl}
+                  style={{ maxWidth: 300, maxHeight: 300 }}
+                />;
               }
             })()}
             <div className="flex flex-row pt-1">

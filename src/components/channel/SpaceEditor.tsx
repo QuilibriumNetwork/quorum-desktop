@@ -122,6 +122,20 @@ const SpaceEditor: React.FunctionComponent<{
     maxSize: 256 * 1024,
   });
 
+  const {
+    getRootProps: getStickerRootProps,
+    getInputProps: getStickerInputProps,
+    acceptedFiles: stickerAcceptedFiles,
+  } = useDropzone({
+    accept: {
+      'image/png': ['.png'],
+      'image/jpeg': ['.jpg', '.jpeg'],
+      'image/gif': ['.gif'],
+    },
+    minSize: 0,
+    maxSize: 256 * 1024,
+  });
+
   React.useEffect(() => {
     if (acceptedFiles.length > 0) {
       (async () => {
@@ -177,6 +191,29 @@ const SpaceEditor: React.FunctionComponent<{
       })();
     }
   }, [emojiAcceptedFiles]);
+
+  React.useEffect(() => {
+    if (stickerAcceptedFiles.length > 0) {
+      (async () => {
+        const file = await stickerAcceptedFiles[0].arrayBuffer();
+        setStickers((prev) => [
+          ...prev,
+          {
+            id: crypto.randomUUID(),
+            name: stickerAcceptedFiles[0].name
+              .split('.')[0]
+              .toLowerCase()
+              .replace(/[^a-z0-9\-]/gi, ''),
+            imgUrl:
+              'data:' +
+              stickerAcceptedFiles[0].type +
+              ';base64,' +
+              Buffer.from(file).toString('base64'),
+          },
+        ]);
+      })();
+    }
+  }, [stickerAcceptedFiles]);
 
   const invite = React.useCallback(
     async (address: string) => {
@@ -271,6 +308,15 @@ const SpaceEditor: React.FunctionComponent<{
           }
         >
           Emojis
+        </div>
+        <div
+          onClick={() => setSelectedCategory('stickers')}
+          className={
+            (selectedCategory == 'stickers' ? 'bg-[rgba(235,200,255,0.1)] ' : '') +
+            'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
+          }
+        >
+          Stickers
         </div>
         <div
           onClick={() => setSelectedCategory('invites')}
@@ -660,6 +706,102 @@ const SpaceEditor: React.FunctionComponent<{
                                 icon={faTrash}
                                 onClick={() =>
                                   setEmojis((prev) => [
+                                    ...prev.filter((p, pi) => i !== pi),
+                                  ])
+                                }
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div className="space-editor-info"></div>
+                    <div className="grow flex flex-col justify-end">
+                      <div className="space-editor-editor-actions">
+                        <Button type="primary" onClick={() => saveChanges()}>
+                          Save Changes
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              );
+            case 'stickers':
+              return (
+                <>
+                  <div className="space-editor-header pt-4 px-4 !min-h-[160px] flex flex-row">
+                    <div className="">
+                      <div className="text-xl font-bold">Stickers</div>
+                      <div className="pt-1 text-sm text-white">
+                        Add up to 50 custom stickers. Custom stickers can only be
+                        used within a space.
+                        <br />
+                        <br />
+                        Requirements:
+                        <ul>
+                          <li>Supported types: PNG, JPG, GIF</li>
+                          <li>Max file size: 256kB</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-editor-content flex flex-col grow">
+                    <div className="flex">
+                      {stickers.length < 50 && (
+                        <div
+                          className="p-2 rounded-full shadow-lg font-medium text-sm text-center select-none text-[#301f21] transition duration-300 cursor-pointer border border-[#ffce82] bg-[#f8c271] hover:border-[#ffd79a] hover:bg-[#ffce82] border border-[#eedfee] bg-[#e0d4e0] cursor-arrow"
+                          {...getStickerRootProps()}
+                        >
+                          Upload Sticker
+                          <input {...getStickerInputProps()} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="pt-4">
+                      {stickers.map((em, i) => {
+                        return (
+                          <div
+                            key={'space-editor-sticker-' + i}
+                            className="space-editor-content-section-header text-white flex flex-row"
+                          >
+                            <img width="24" height="24" src={em.imgUrl} />
+                            <div className="flex flex-col justify-around font-mono font-medium mx-2">
+                              <span>
+                                :
+                                <input
+                                  className={'border-0 bg-[rgba(0,0,0,0)]'}
+                                  style={{
+                                    width:
+                                      (stickers.find((_, pi) => i == pi)?.name
+                                        .length ?? 0) *
+                                        10 +
+                                      10 +
+                                      'px',
+                                  }}
+                                  onChange={(e) =>
+                                    setStickers((prev) => [
+                                      ...prev.map((p, pi) =>
+                                        pi == i
+                                          ? {
+                                              ...p,
+                                              name: e.target.value
+                                                .toLowerCase()
+                                                .replace(/[^a-z0-9\_]/gi, ''),
+                                            }
+                                          : p
+                                      ),
+                                    ])
+                                  }
+                                  value={em.name}
+                                />
+                                :
+                              </span>
+                            </div>
+                            <div className="flex flex-col grow justify-around items-end">
+                              <FontAwesomeIcon
+                                icon={faTrash}
+                                onClick={() =>
+                                  setStickers((prev) => [
                                     ...prev.filter((p, pi) => i !== pi),
                                   ])
                                 }

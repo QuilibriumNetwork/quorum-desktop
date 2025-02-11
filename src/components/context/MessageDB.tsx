@@ -43,6 +43,7 @@ import {
   RemoveMessage,
   RemoveReactionMessage,
   Space,
+  StickerMessage,
   UpdateProfileMessage,
 } from '../../api/quorumApi';
 import { useQuorumApiClient } from './QuorumApiContext';
@@ -3872,22 +3873,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             ownerPayload
           )
         );
-
-        await apiClient.postSpace(spaceId, {
-          space_address: spaceId,
-          space_public_key: spaceKey.publicKey,
-          space_signature: Buffer.from(spaceSignature, 'base64').toString(
-            'hex'
-          ),
-          config_public_key: Buffer.from(
-            new Uint8Array(configPair.public_key)
-          ).toString('hex'),
-          owner_public_keys: [ownerKey.publicKey],
-          owner_signatures: [
-            Buffer.from(ownerSignature, 'base64').toString('hex'),
-          ],
-          timestamp: ts,
-        } as secureChannel.SpaceRegistration);
         spaceInfo.current[spaceId] = {
           space_address: spaceId,
           space_public_key: spaceKey.publicKey,
@@ -4133,8 +4118,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           ).toString('hex'),
         };
 
-        await apiClient.postSpaceInviteEvals(out);
-
         space!.inviteUrl = `https://qm.one/invite/#spaceId=${space!.spaceId}&configKey=${Buffer.from(new Uint8Array(configPair.private_key)).toString('hex')}`;
         const ciphertext = ch.js_encrypt_inbox_message(
           JSON.stringify({
@@ -4169,6 +4152,23 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             'base64'
           ).toString('hex'),
         };
+
+        await apiClient.postSpace(spaceId, {
+          space_address: spaceId,
+          space_public_key: spaceKey.publicKey,
+          space_signature: Buffer.from(spaceSignature, 'base64').toString(
+            'hex'
+          ),
+          config_public_key: Buffer.from(
+            new Uint8Array(configPair.public_key)
+          ).toString('hex'),
+          owner_public_keys: [ownerKey.publicKey],
+          owner_signatures: [
+            Buffer.from(ownerSignature, 'base64').toString('hex'),
+          ],
+          timestamp: ts,
+        } as secureChannel.SpaceRegistration);
+        await apiClient.postSpaceInviteEvals(out);
         await apiClient.postSpaceManifest(spaceId, manifest);
         await messageDB.saveSpace(space!);
         await queryClient.setQueryData(
@@ -4678,6 +4678,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         | RemoveReactionMessage
         | RemoveMessage
         | UpdateProfileMessage
+        | StickerMessage
     ) => {
       if (typeof pendingMessage === 'string') {
         return pendingMessage;
@@ -4727,6 +4728,14 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           pendingMessage.type +
           pendingMessage.messageId +
           pendingMessage.reaction
+        );
+      }
+
+      if (pendingMessage.type === 'sticker') {
+        return (
+          pendingMessage.type +
+          pendingMessage.stickerId +
+          (pendingMessage.repliesToMessageId ?? "")
         );
       }
 

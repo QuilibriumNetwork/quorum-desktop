@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as moment from 'moment-timezone';
 import { Message } from './Message';
-import { Emoji, Message as MessageType, Role } from '../../api/quorumApi';
+import { Emoji, Message as MessageType, Role, Sticker } from '../../api/quorumApi';
 import { Virtuoso } from 'react-virtuoso';
 import React from 'react';
 
@@ -20,6 +20,7 @@ function useWindowSize() {
 
 export const MessageList = ({
   messageList,
+  stickers,
   members,
   setInReplyTo,
   editor,
@@ -34,6 +35,7 @@ export const MessageList = ({
   setKickUserAddress,
 }: {
   messageList: MessageType[];
+  stickers?: {[stickerId: string]: Sticker};
   members: any;
   setInReplyTo: React.Dispatch<React.SetStateAction<MessageType | undefined>>;
   editor: React.RefObject<HTMLTextAreaElement>;
@@ -69,6 +71,7 @@ export const MessageList = ({
     return (
       <Message
         senderRoles={roles}
+        stickers={stickers}
         emojiPickerOpen={emojiPickerOpen}
         setEmojiPickerOpen={setEmojiPickerOpen}
         emojiPickerOpenDirection={emojiPickerOpenDirection}

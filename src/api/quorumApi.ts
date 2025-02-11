@@ -89,7 +89,8 @@ export type Message = {
     | JoinMessage
     | LeaveMessage
     | KickMessage
-    | UpdateProfileMessage;
+    | UpdateProfileMessage
+    | StickerMessage;
   reactions: Reaction[];
   mentions: Mentions;
   publicKey?: string;
@@ -160,6 +161,13 @@ export type LeaveMessage = {
 export type KickMessage = {
   senderId: string;
   type: 'kick';
+};
+
+export type StickerMessage = {
+  senderId: string;
+  type: 'sticker';
+  stickerId: string;
+  repliesToMessageId?: string;
 };
 
 export type Reaction = {

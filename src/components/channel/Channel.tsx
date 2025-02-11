@@ -6,10 +6,10 @@ import React, {
   useState,
 } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faUsers, faX } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSmile, faUsers, faX } from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import './Channel.scss';
-import { EmbedMessage, Message as MessageType } from '../../api/quorumApi';
+import { EmbedMessage, Message as MessageType, StickerMessage } from '../../api/quorumApi';
 import { useMessages, useSpace } from '../../hooks';
 import { useMessageDB } from '../context/MessageDB';
 import { useQueryClient } from '@tanstack/react-query';
@@ -50,6 +50,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [showUsers, setShowUsers] = useState(false);
   const [init, setInit] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showStickers, setShowStickers] = useState(false);
   const [inReplyTo, setInReplyTo] = useState<MessageType>();
   const editor = useRef<HTMLTextAreaElement>(null);
   const { submitChannelMessage } = useMessageDB();
@@ -199,6 +200,25 @@ const Channel: React.FC<ChannelProps> = ({
     );
   };
 
+  const stickers = useMemo(() => {
+    return (space?.stickers ?? []).reduce((prev, curr) => Object.assign(prev, {[curr.id]: curr}), {});
+  }, [space]);
+
+  const sendSticker = async (stickerId: string) => {
+    submitChannelMessage(
+      spaceId,
+      channelId,
+      { senderId: user.currentPasskeyInfo?.address, type: "sticker", stickerId: stickerId } as StickerMessage,
+      queryClient,
+      user.currentPasskeyInfo!,
+      inReplyTo?.messageId
+    ).finally(() => {
+      setIsSubmitting(false);
+    });
+    setInReplyTo(undefined);
+    setShowStickers(false);
+  };
+
   const rowCount =
     state.pendingMessage.split('').filter((c) => c == '\n').length + 1;
 
@@ -229,6 +249,7 @@ const Channel: React.FC<ChannelProps> = ({
         >
           <MessageList
             isRepudiable={space?.isRepudiable}
+            stickers={stickers}
             roles={roles}
             canDeleteMessages={canDeleteMessages}
             isSpaceOwner={isSpaceOwner}
@@ -290,6 +311,19 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
           </div>
         )}
+        {showStickers && <>
+          <div
+            className="invisible-dismissal invisible-dismissal-no-blur"
+            onClick={() => setShowStickers(false)}
+          />
+          <div className="relative z-[1002]">
+          <div className="flex flex-col right-11 bottom-[0px] absolute border border-[#5f555c] shadow-2xl w-[300px] h-[400px] rounded-lg bg-[#373036]">
+            <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">Stickers</div>
+            <div className="grid grid-cols-2 gap-4 h-[359px] w-[300px] p-4 overflow-scroll">{space?.stickers.map(s => {
+              return <div key={"sticker-" + s.id} className="flex flex-col justify-around h-[126px] w-[126px]" onClick={() => sendSticker(s.id)}><img src={s.imgUrl} /></div>;
+            })}</div>
+          </div>
+        </div></>}
         <div {...getRootProps()} className="flex flex-row relative">
           <div
             className={
@@ -368,6 +402,16 @@ const Channel: React.FC<ChannelProps> = ({
               }
             }}
           />
+          <div
+            className={
+              "absolute hover:bg-[#5f555c] cursor-pointer right-14 center flex flex-col justify-around w-8 h-8 rounded-full bg-[length:60%] bg-[#4f454c] " +
+              (inReplyTo ? 'top-1' : 'top-3')
+            }
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowStickers(true);
+            }}
+          ><FontAwesomeIcon icon={faSmile}/></div>
           <div
             className={
               "absolute hover:bg-[#5f555c] cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-[#4f454c] bg-center bg-no-repeat bg-[url('/send.png')] " +
