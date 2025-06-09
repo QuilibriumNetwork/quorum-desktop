@@ -1,0 +1,48 @@
+.btn-base {
+  @apply p-2 rounded-full shadow-lg font-medium text-sm text-center select-none transition duration-300;
+  color: white;
+}
+
+.btn-primary {
+  @extend .btn-base;
+  background-color: var(--primary);
+  border: 2px solid var(--primary);
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.1) saturate(1.2);
+  }
+}
+
+.btn-danger {
+  @extend .btn-base;
+  background-color: #fd303d;
+  border: 2px solid #fd303d;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #ff0314;
+    border: 2px solid #ff0314;
+  }
+}
+
+.btn-secondary {
+  @extend .btn-base;
+  background-color: transparent;
+  border: 2px solid var(--primary);
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    filter: brightness(1.1) saturate(1.2);
+  }
+}
+.btn-disabled {
+  @extend .btn-base;
+  background-color: rgba(255, 255, 255, 0.2); 
+  border: 2px solid transparent;  
+  color: rgba(255, 255, 255, 0.4);                
+  cursor: default;
+  pointer-events: none;                             
+}
+

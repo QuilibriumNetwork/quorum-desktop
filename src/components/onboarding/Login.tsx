@@ -52,6 +52,17 @@ export const Login = ({
               type="primary"
               className="w-80 mt-2"
               onClick={() => {
+                setShowPasskeyPrompt({
+                  value: true,
+                });
+              }}
+            >
+              Create New Account
+            </Button>
+            <Button
+              type="secondary"
+              className="w-80 mt-2"
+              onClick={() => {
                 //@ts-ignore
                 setShowPasskeyPrompt({
                   value: true,
@@ -60,17 +71,6 @@ export const Login = ({
               }}
             >
               Import Existing Key
-            </Button>
-            <Button
-              type="secondary"
-              className="w-80 mt-2"
-              onClick={() => {
-                setShowPasskeyPrompt({
-                  value: true,
-                });
-              }}
-            >
-              Create New Account
             </Button>
           </div>
         </div>

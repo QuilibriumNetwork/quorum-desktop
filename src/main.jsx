@@ -5,7 +5,7 @@ import { PasskeysProvider } from '@quilibrium/quilibrium-js-sdk-channels';
 import { QuorumApiClientProvider } from './components/context/QuorumApiContext.tsx';
 import { MessageDBProvider } from './components/context/MessageDB.tsx';
 import './index.css';
-import App from './App';
+import App from './App.tsx';
 import { WebSocketProvider } from './components/context/WebsocketProvider.tsx';
 
 const queryClient = new QueryClient({

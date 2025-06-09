@@ -133,15 +133,15 @@ export const Onboarding = ({
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
               <div className="w-[460px] pt-4 text-center">
+                <Button type="primary" className="px-8 mr-4" onClick={downloadKey}>
+                  Save User Key
+                </Button>
                 <Button
                   type="secondary"
-                  className="px-8 mr-4"
+                  className="px-8"
                   onClick={() => setExported(true)}
                 >
                   I already saved mine
-                </Button>
-                <Button type="primary" className="px-8" onClick={downloadKey}>
-                  Save User Key
                 </Button>
               </div>
               <div className="grow"></div>
