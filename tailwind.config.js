@@ -13,7 +13,21 @@ export default {
     },
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        // new brand dark theme
+        'surface-00': 'var(--surface-00)',
+        'surface-0': 'var(--surface-0)',
+        'surface-1': 'var(--surface-1)',
+        'surface-2': 'var(--surface-2)',
+        'surface-3': 'var(--surface-3)',
+        'surface-4': 'var(--surface-4)',
+        'surface-border': 'var(--surface-border)',
+        'text-primary': '#f4f1f6',
+        'text-secondary': '#bfb5c8',
+        'text-muted': '#5a5160',
+      },
+    },
   },
   plugins: [],
 };

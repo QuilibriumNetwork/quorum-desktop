@@ -96,7 +96,7 @@ const NavMenu: React.FC<NavMenuProps> = (props) => {
             size="regular"
             selected={location.pathname.startsWith('/messages')}
             spaceName="Direct Messages"
-            iconUrl="/quorumicon.png"
+            iconUrl="/quorum-symbol-bg-blue.png"
           />
         </Link>
       </div>

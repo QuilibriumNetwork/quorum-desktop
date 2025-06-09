@@ -15,6 +15,19 @@
   --primary-light: #daeeff;
   --accent: #b4e235;
 
+  /*new dark theme*/
+  --surface-00: #100f11;
+  --surface-0: #1d1a21;
+  --surface-1: #241f27;
+  --surface-2: #2c252e;
+  --surface-3: #312935;
+  --surface-4: #3a313f;
+  --surface-5: #443b49;
+
+  --text-primary: #f4f1f6;
+  --text-secondary: #bfb5c8;
+  --text-muted: #5a5160;
+
   /*old colors*/
   --pakistan-green: #134611ff;
   --india-green: #3e8914ff;
@@ -147,71 +160,6 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
-}
-
-.quorum-tooltip {
-  background-color: #0e0e0e;
-  color: #fff;
-  font-weight: 700;
-  display: inline-block;
-  padding: 7px 10px;
-  border-radius: 8px;
-  margin-left: 11px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
-  z-index: 2000;
-}
-
-.quorum-tooltip-arrow-none {
-  margin-right: 11px;
-  margin-bottom: 11px;
-}
-
-.quorum-tooltip-arrow-left::before {
-  content: '';
-  border-style: solid;
-  border-width: 8px 11px 8px 0;
-  border-color: transparent #0e0e0e transparent transparent;
-  position: absolute;
-  left: 0px;
-  top: 11px;
-}
-
-.quorum-tooltip-arrow-left.absolute::before {
-  left: -10px;
-}
-
-.quorum-tooltip-arrow-right::after {
-  content: '';
-  border-style: solid;
-  border-width: 8px 0px 8px 11px;
-  border-color: transparent transparent transparent #0e0e0e;
-  position: absolute;
-  right: -11px;
-  top: 11px;
-}
-
-.quorum-tooltip-arrow-up::before {
-  content: '';
-  border-style: solid;
-  border-width: 0px 8px 11px 8px;
-  border-color: transparent transparent #0e0e0e transparent;
-  position: absolute;
-  left: calc(50% - 8px);
-  top: -11px;
-}
-
-.quorum-tooltip-arrow-down::after {
-  content: '';
-  border-style: solid;
-  border-width: 11px 8px 0px 8px;
-  border-color: #0e0e0e transparent transparent transparent;
-  position: absolute;
-  right: calc(50% - 8px);
-  bottom: -11px;
-}
-
-.quorum-tooltip-invisible {
-  display: none;
 }
 
 .small-caps {

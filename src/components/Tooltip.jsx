@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import './Tooltip.scss';
 
 const Tooltip = (props) => (
   <div className={'z-[2000] w-0 ' + props.className}>

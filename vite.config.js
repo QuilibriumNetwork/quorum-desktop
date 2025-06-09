@@ -26,6 +26,7 @@ export default defineConfig({
     headers: {
       'Permissions-Policy': 'publickey-credentials-get=*',
     },
+    
   },
   resolve: {
     alias: {
