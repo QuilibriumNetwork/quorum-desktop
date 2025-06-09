@@ -25,7 +25,7 @@ export const Maintenance = () => {
           <div className="grow"></div>
           <div className="w-[460px] py-4 text-justify">
             Quorum infrastructure is being deployed at this time. Please try
-            refreshing, and check https://status.quilibrium.com/ for updates.
+            refreshing, and check <a href="https://status.quilibrium.com/" target='_blank' rel="noopener noreferrer">https://status.quilibrium.com/</a> for updates.
           </div>
           <div className="grow"></div>
         </div>

@@ -102,38 +102,52 @@ export const Onboarding = ({
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
               <div className="w-[460px] py-4 text-justify">
-                <b>Important first-time user information:</b> Quorum is
-                peer-to-peer and end-to-end encrypted. This means your messages
-                stay private, but equally important, they only live on the
-                network for the time required to reach you and your recipients.{' '}
-                {
-                  //@ts-ignore
-                  !window.electron ? (
-                    <>
-                      When using Quorum on a browser, your messages are saved
-                      locally to your browser, so{' '}
+                <p className="py-4">
+                  <b>Important first-time user information:</b>
+                </p>
+                <p className="pb-4">
+                  Quorum is peer-to-peer and end-to-end encrypted. This means
+                  your messages stay private, but equally important, they only
+                  live on the network for the time required to reach you and
+                  your recipients.
+                </p>
+                <p className="pb-4">
+                  {
+                    // @ts-ignore
+                    !window.electron ? (
+                      <>
+                        When using Quorum on a browser, your messages are saved
+                        locally to your browser, so{' '}
+                        <b>
+                          if you clear your browser storage or switch browsers,
+                          your old messages and keys may disappear.
+                        </b>
+                      </>
+                    ) : (
                       <b>
-                        if you clear your browser storage or switch browsers,
-                        your old messages and keys may disappear.
-                      </b>{' '}
-                    </>
-                  ) : (
-                    <b>
-                      If you uninstall the app, you will lose your old messages
-                      and keys.{' '}
-                    </b>
-                  )
-                }
-                Click the button below to create a backup of your key info,
-                because once it's gone, it's gone forever. You may be prompted
-                to authenticate again.
+                        If you uninstall the app, you will lose your old
+                        messages and keys.
+                      </b>
+                    )
+                  }
+                </p>
+                <p className="pb-4">
+                  Click the button below to create a backup of your key info,
+                  because once it's gone, it's gone forever. You may be prompted
+                  to authenticate again.
+                </p>
               </div>
+
               <div className="grow"></div>
             </div>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
               <div className="w-[460px] pt-4 text-center">
-                <Button type="primary" className="px-8 mr-4" onClick={downloadKey}>
+                <Button
+                  type="primary"
+                  className="px-8 mr-4"
+                  onClick={downloadKey}
+                >
                   Save User Key
                 </Button>
                 <Button
@@ -153,18 +167,21 @@ export const Onboarding = ({
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
               <div className="w-[460px] py-4 text-justify">
-                Let your friends know who you are! Pick a friendly name to
-                display in your conversations, something easier to read than{' '}
-                {currentPasskeyInfo?.address}. This information is only provided
-                to the spaces you join.
+                <p className="pb-4">
+                  Let your friends know who you are! Pick a friendly name to
+                  display in your conversations, something easier to read than{' '}
+                  {currentPasskeyInfo?.address}.
+                </p>
+                <p>This information is only provided to the spaces you join.</p>
               </div>
+
               <div className="grow"></div>
             </div>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
               <div className="w-[460px] pt-4 text-center flex flex-row justify-between">
                 <Input
-                  className="!bg-[#272026] grow"
+                  className="!bg-[var(--primary-dark)] grow"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Bongocat"
@@ -254,7 +271,7 @@ export const Onboarding = ({
                   <Button
                     type="primary"
                     disabled={!fileData}
-                    className="px-8"
+                    className="px-8 mt-4"
                     onClick={() => {
                       updateStoredPasskey(currentPasskeyInfo!.credentialId, {
                         credentialId: currentPasskeyInfo!.credentialId,

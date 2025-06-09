@@ -1,15 +1,54 @@
 .btn-base {
-  @apply p-2 rounded-full shadow-lg font-medium text-sm text-center select-none transition duration-300;
-  color: white;
+  @apply py-2 px-4 rounded-full shadow-lg font-medium text-sm text-center select-none transition duration-300;
+  color: var(--primary-dark);
 }
 
 .btn-primary {
+  @extend .btn-base;
+  background-color: white;
+  border: 2px solid white;
+  cursor: pointer;
+
+  &:hover {
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+  }
+}
+
+.btn-secondary {
+  @extend .btn-base;
+  background-color: transparent;
+  border: 2px solid white;
+  cursor: pointer;
+  color: white;
+
+  &:hover {
+    background-color: white;
+    border: 2px solid white;
+    color: var(--primary-dark);
+  }
+}
+
+.btn-blue {
   @extend .btn-base;
   background-color: var(--primary);
   border: 2px solid var(--primary);
   cursor: pointer;
 
   &:hover {
+    filter: brightness(1.1) saturate(1.2);
+  }
+}
+
+.btn-blue-outline {
+  @extend .btn-base;
+  background-color: transparent;
+  border: 2px solid var(--primary);
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.2);
     filter: brightness(1.1) saturate(1.2);
   }
 }
@@ -26,23 +65,11 @@
   }
 }
 
-.btn-secondary {
-  @extend .btn-base;
-  background-color: transparent;
-  border: 2px solid var(--primary);
-  cursor: pointer;
-
-  &:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    filter: brightness(1.1) saturate(1.2);
-  }
-}
 .btn-disabled {
   @extend .btn-base;
-  background-color: rgba(255, 255, 255, 0.2); 
-  border: 2px solid transparent;  
-  color: rgba(255, 255, 255, 0.4);                
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 2px solid transparent;
+  color: rgba(255, 255, 255, 0.6);
   cursor: default;
-  pointer-events: none;                             
+  pointer-events: none;
 }
-

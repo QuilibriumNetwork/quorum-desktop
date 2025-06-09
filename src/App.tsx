@@ -88,7 +88,7 @@ const App = () => {
   }, [currentPasskeyInfo, passkeyRegistrationComplete, setUser, user]);
 
   return (
-    <div className="flex flex-col h-[100vh]">
+    <div className="bg-primary--accent--noise flex flex-col min-h-screen text-white">
       {
         // @ts-ignore
         window.electron && <CustomTitlebar />
