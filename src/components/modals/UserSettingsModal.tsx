@@ -165,7 +165,7 @@ const UserSettingsModal: React.FunctionComponent<{
   return (
     <div className="user-settings flex flex-row">
       <div className="px-4 py-2 text-text-base w-[200px]">
-        <div className="small-caps text-[#877f87]">Settings</div>
+        <div className="small-caps text-subtle">Settings</div>
         <div
           onClick={() => setSelectedCategory('general')}
           className={
@@ -299,7 +299,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         not share this file with anyone else or they can
                         impersonate you or steal your space's Apex earnings.
                       </div>
-                      <div className="pt-4 pb-8">
+                      <div className="pt-4 pb-8 max-w-[100px]">
                         <Button
                           type="danger"
                           onClick={() => {
@@ -324,29 +324,34 @@ const UserSettingsModal: React.FunctionComponent<{
                           <div className="text-sm flex flex-col justify-around">
                             Enable sync
                           </div>
-                          <div className="text-sm flex flex-col justify-around ml-2">
-                            <div
-                              className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
-                              onMouseOut={() => setAllowSyncTooltip(false)}
-                              onMouseOver={() => setAllowSyncTooltip(true)}
-                            >
+                          <div
+                            className="relative ml-2 group"
+                            onMouseEnter={() => setAllowSyncTooltip(true)}
+                            onMouseLeave={() => setAllowSyncTooltip(false)}
+                          >
+                            <div className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1">
                               ℹ
                             </div>
-                          </div>
-                          <div className="absolute left-[280px]">
-                            <Tooltip
-                              arrow="left"
-                              className="w-[400px]"
-                              visible={allowSyncTooltip}
-                            >
-                              When enabled, synchronizes your user data, spaces,
-                              and space keys between devices. Enabling this
-                              increases metadata visibility of your account,
-                              which can reveal when you have joined new spaces,
-                              although not the spaces you have joined.
-                            </Tooltip>
+                            {allowSyncTooltip && (
+                              <div className="absolute left-[150%] top-0 z-50 w-[400px]">
+                                <Tooltip
+                                variant='dark'
+                                  arrow="left"
+                                  className="w-[400px]"
+                                  visible={true}
+                                >
+                                  When enabled, synchronizes your user data,
+                                  spaces, and space keys between devices.
+                                  Enabling this increases metadata visibility of
+                                  your account, which can reveal when you have
+                                  joined new spaces, although not the spaces you
+                                  have joined.
+                                </Tooltip>
+                              </div>
+                            )}
                           </div>
                         </div>
+
                         <ToggleSwitch
                           onClick={() => setAllowSync((prev) => !prev)}
                           active={allowSync}
@@ -357,32 +362,36 @@ const UserSettingsModal: React.FunctionComponent<{
                           <div className="text-sm flex flex-col justify-around">
                             Non-repudiability
                           </div>
-                          <div className="text-sm flex flex-col justify-around ml-2">
-                            <div
-                              className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
-                              onMouseOut={() => setNonRepudiableTooltip(false)}
-                              onMouseOver={() => setNonRepudiableTooltip(true)}
-                            >
+                          <div
+                            className="relative ml-2 group"
+                            onMouseEnter={() => setNonRepudiableTooltip(true)}
+                            onMouseLeave={() => setNonRepudiableTooltip(false)}
+                          >
+                            <div className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1">
                               ℹ
                             </div>
-                          </div>
-                          <div className="absolute left-[322px]">
-                            <Tooltip
-                              arrow="left"
-                              className="w-[400px]"
-                              visible={nonRepudiableTooltip}
-                            >
-                              When enabled, direct messages are not signed by
-                              your user key. This improves performance, but can
-                              allow the user you are communicating with to forge
-                              messages to you as if they came from you. They
-                              cannot forge messages to other people as if they
-                              came from you. This does not impact the
-                              repudiability of spaces, as this is a
-                              configuration option by the space owner.
-                            </Tooltip>
+                            {nonRepudiableTooltip && (
+                              <div className="absolute left-[150%] top-0 z-50 w-[400px]">
+                                <Tooltip
+                                variant='dark'
+                                  arrow="left"
+                                  className="w-[400px]"
+                                  visible={true}
+                                >
+                                  When enabled, direct messages are not signed
+                                  by your user key. This improves performance,
+                                  but can allow the user you are communicating
+                                  with to forge messages to you as if they came
+                                  from you. They cannot forge messages to other
+                                  people as if they came from you. This does not
+                                  impact the repudiability of spaces, as this is
+                                  a configuration option by the space owner.
+                                </Tooltip>
+                              </div>
+                            )}
                           </div>
                         </div>
+
                         <ToggleSwitch
                           onClick={() => setNonRepudiable((prev) => !prev)}
                           active={nonRepudiable}

@@ -58,6 +58,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
             onClick={() => setIsMenuExpanded(false)}
           />
           <Tooltip
+            variant='light'
             className="user-status-menu bottom-[24px] w-[200px] !p-[2px]"
             arrow="none"
             visible={isMenuExpanded}

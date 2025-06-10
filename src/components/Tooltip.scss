@@ -1,64 +1,128 @@
-
+/* Default tooltip (light version properties) */
 .quorum-tooltip {
-  background-color: var(--surface-00);
-  color: var(--text-base);
   display: inline-block;
   padding: 7px 10px;
   border-radius: 8px;
   margin-left: 11px;
+  color: var(--text-base);
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
   z-index: 2000;
+  position: absolute;
+  background-color: var(--surface-6); /* Light background as default */
 }
 
-.quorum-tooltip-arrow-none {
+/* Dark tooltip variant (original dark properties) */
+.quorum-tooltip-dark {
+  display: inline-block;
+  padding: 7px 10px;
+  border-radius: 8px;
+  margin-left: 11px;
+  color: var(--text-base);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
+  z-index: 2000;
+  position: absolute;
+  background-color: var(--surface-1); /* Dark background */
+}
+
+/* No arrow */
+.quorum-tooltip-arrow-none,
+.quorum-tooltip-dark-arrow-none {
   margin-right: 11px;
   margin-bottom: 11px;
 }
 
+/* Left arrow */
 .quorum-tooltip-arrow-left::before {
   content: '';
   border-style: solid;
   border-width: 8px 11px 8px 0;
-  border-color: transparent var(--surface-00) transparent transparent !important;
   position: absolute;
-  left: 0px;
+  left: 0;
   top: 11px;
+  border-color: transparent var(--surface-6) transparent transparent !important; /* Force light color */
 }
 
-.quorum-tooltip-arrow-left.absolute::before {
+
+.quorum-tooltip-dark-arrow-left::before {
+  content: '';
+  border-style: solid;
+  border-width: 8px 11px 8px 0;
+  position: absolute;
+  left: 0;
+  top: 11px;
+  border-color: transparent var(--surface-1) transparent transparent;
+}
+
+.quorum-tooltip-arrow-left.absolute::before,
+.quorum-tooltip-dark-arrow-left.absolute::before {
   left: -10px;
 }
 
+/* Right arrow */
 .quorum-tooltip-arrow-right::after {
   content: '';
   border-style: solid;
-  border-width: 8px 0px 8px 11px;
-  border-color: transparent transparent transparent var(--surface-00) !important;
+  border-width: 8px 0 8px 11px;
   position: absolute;
   right: -11px;
   top: 11px;
+  border-color: transparent transparent transparent var(--surface-6); /* Light arrow */
 }
 
+.quorum-tooltip-dark-arrow-right::after {
+  content: '';
+  border-style: solid;
+  border-width: 8px 0 8px 11px;
+  position: absolute;
+  right: -11px;
+  top: 11px;
+  border-color: transparent transparent transparent var(--surface-1); /* Dark arrow */
+}
+
+/* Up arrow */
 .quorum-tooltip-arrow-up::before {
   content: '';
   border-style: solid;
-  border-width: 0px 8px 11px 8px;
-  border-color: transparent transparent var(--surface-00) transparent !important;
+  border-width: 0 8px 11px 8px;
   position: absolute;
   left: calc(50% - 8px);
   top: -11px;
+  border-color: transparent transparent var(--surface-6) transparent; /* Light arrow */
 }
 
+.quorum-tooltip-dark-arrow-up::before {
+  content: '';
+  border-style: solid;
+  border-width: 0 8px 11px 8px;
+  position: absolute;
+  left: calc(50% - 8px);
+  top: -11px;
+  border-color: transparent transparent var(--surface-1) transparent; /* Dark arrow */
+}
+
+/* Down arrow */
 .quorum-tooltip-arrow-down::after {
   content: '';
   border-style: solid;
-  border-width: 11px 8px 0px 8px;
-  border-color: var(--surface-00) transparent transparent transparent !important;
+  border-width: 11px 8px 0 8px;
   position: absolute;
   right: calc(50% - 8px);
   bottom: -11px;
+  border-color: var(--surface-6) transparent transparent transparent; /* Light arrow */
 }
 
-.quorum-tooltip-invisible {
+.quorum-tooltip-dark-arrow-down::after {
+  content: '';
+  border-style: solid;
+  border-width: 11px 8px 0 8px;
+  position: absolute;
+  right: calc(50% - 8px);
+  bottom: -11px;
+  border-color: var(--surface-1) transparent transparent transparent; /* Dark arrow */
+}
+
+/* Invisible tooltip */
+.quorum-tooltip-invisible,
+.quorum-tooltip-dark-invisible {
   display: none;
 }

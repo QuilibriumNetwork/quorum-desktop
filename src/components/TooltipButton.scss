@@ -1,3 +1,4 @@
+/* Base button styles */
 .quorum-tooltip-button {
   padding: 5px 8px;
   border-radius: 5px;
@@ -6,10 +7,16 @@
   width: 100%;
 }
 
+/* Type variants */
 .quorum-tooltip-button-danger {
   color: #de3e3e;
 }
 
-.quorum-tooltip-button:hover {
+/* Hover effects for default and light variants */
+.quorum-tooltip-button-default:hover {
   background: var(--surface-6);
+}
+
+.quorum-tooltip-button-light:hover {
+  background: var(--surface-7);
 }

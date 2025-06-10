@@ -464,6 +464,7 @@ const SpaceEditor: React.FunctionComponent<{
                           <div className="absolute left-[322px]">
                             <Tooltip
                               arrow="left"
+                              variant="dark"
                               className="w-[400px]"
                               visible={repudiableTooltip}
                             >
@@ -944,7 +945,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 ℹ
                               </div>
                               <div className="absolute left-8 top-0 z-50 w-[400px] hidden group-hover:block">
-                                <Tooltip arrow="left" className="w-[400px]">
+                                <Tooltip arrow="left" variant="dark" className="w-[400px]">
                                   Public invite links allow anyone with access
                                   to the link join your space. Understand the
                                   risks of enabling this, and to whom and where
