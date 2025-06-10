@@ -263,7 +263,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
             }
           >
             <input {...getInputProps()} />
-            <FontAwesomeIcon className="text-text-base" icon={faPlus} />
+            <FontAwesomeIcon className="text-text-subtle" icon={faPlus} />
           </div>
           <textarea
             ref={editor}
