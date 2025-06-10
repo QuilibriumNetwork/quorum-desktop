@@ -2,7 +2,12 @@ import React, { useMemo, useState } from 'react';
 import * as moment from 'moment-timezone';
 import * as linkify from 'linkifyjs';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Emoji, Message as MessageType, Role, Sticker } from '../../api/quorumApi';
+import {
+  Emoji,
+  Message as MessageType,
+  Role,
+  Sticker,
+} from '../../api/quorumApi';
 import EmojiPicker, {
   SkinTonePickerLocation,
   SuggestionMode,
@@ -22,7 +27,7 @@ import { InviteLink } from './InviteLink';
 
 type MessageProps = {
   customEmoji?: Emoji[];
-  stickers?: {[key: string]: Sticker};
+  stickers?: { [key: string]: Sticker };
   message: MessageType;
   messageList: MessageType[];
   senderRoles: Role[];
@@ -252,7 +257,7 @@ export const Message = ({
                 e.stopPropagation();
                 return false;
               }}
-              className="absolute flex flex-row right-[20px] top-[-10px] p-1 bg-surface-5 select-none border border-slate-50/10 shadow-lg rounded-lg"
+              className="absolute flex flex-row right-[20px] top-[-10px] p-1 bg-surface-6 select-none border border-surface-7 shadow-lg rounded-lg"
             >
               <div
                 onClick={() => {
@@ -268,7 +273,7 @@ export const Message = ({
                     });
                   }
                 }}
-                className="w-5 text-center hover:bg-[rgba(255,255,255,0.05)] rounded-md flex flex-col justify-around cursor-pointer"
+                className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 hover:brightness-200 transition duration-200"
               >
                 ❤️
               </div>
@@ -286,7 +291,7 @@ export const Message = ({
                     });
                   }
                 }}
-                className="w-5 text-center hover:bg-[rgba(255,255,255,0.05)] rounded-md flex flex-col justify-around cursor-pointer"
+                className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 hover:brightness-200 transition duration-200"
               >
                 👍
               </div>
@@ -300,15 +305,15 @@ export const Message = ({
                     submitMessage({
                       type: 'reaction',
                       messageId: message.messageId,
-                      reaction: '🫡',
+                      reaction: '🔥',
                     });
                   }
                 }}
-                className="w-5 text-center hover:bg-[rgba(255,255,255,0.05)] rounded-md flex flex-col justify-around cursor-pointer"
+                className="w-5 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 hover:brightness-200 transition duration-200"
               >
-                🫡
+                🔥
               </div>
-              <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-[rgba(255,255,255,0.05)]"></div>
+              <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-2"></div>
               <div
                 onClick={(e) => {
                   setEmojiPickerOpen(message.messageId);
@@ -316,7 +321,7 @@ export const Message = ({
                     e.clientY / height > 0.5 ? 'upwards' : 'downwards'
                   );
                 }}
-                className="w-5 text-center hover:bg-[rgba(255,255,255,0.05)] rounded-md flex flex-col justify-around cursor-pointer"
+                className="w-5 mr-2 text-center hover:scale-125 hover:brightness-200 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
                 <FontAwesomeIcon icon={faFaceSmileBeam} />
               </div>
@@ -325,13 +330,13 @@ export const Message = ({
                   setInReplyTo(message);
                   editorRef?.focus();
                 }}
-                className="w-5 text-center hover:bg-[rgba(255,255,255,0.05)] rounded-md flex flex-col justify-around cursor-pointer"
+                className="w-5 text-center hover:scale-125 hover:brightness-200 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
                 <FontAwesomeIcon icon={faReply} />
               </div>
               {canUserDelete && (
                 <>
-                  <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-[rgba(255,255,255,0.05)]"></div>
+                  <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-2"></div>
                   <div
                     onClick={() => {
                       submitMessage({
@@ -339,7 +344,7 @@ export const Message = ({
                         removeMessageId: message.messageId,
                       });
                     }}
-                    className="w-5 text-center hover:bg-[rgba(255,255,255,0.05)] rounded-md flex flex-col justify-around cursor-pointer"
+                    className="w-5 text-center hover:scale-125 hover:brightness-200 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
                   >
                     <FontAwesomeIcon className="text-red-400" icon={faTrash} />
                   </div>
@@ -459,7 +464,7 @@ export const Message = ({
                             {linkify.test(t) ? (
                               <a
                                 href={linkify.find(t)[0].href}
-                                className="text-[#f3dfc1] hover:text-[#f3dfc1] hover:underline"
+                                className="text-primary-300 hover:text-primary-100 hover:underline"
                                 target="_blank"
                                 referrerPolicy="no-referrer"
                               >
@@ -503,10 +508,12 @@ export const Message = ({
                 );
               } else if (message.content.type == 'sticker') {
                 const sticker = (stickers ?? {})[message.content.stickerId];
-                return <img
-                  src={sticker?.imgUrl}
-                  style={{ maxWidth: 300, maxHeight: 300 }}
-                />;
+                return (
+                  <img
+                    src={sticker?.imgUrl}
+                    style={{ maxWidth: 300, maxHeight: 300 }}
+                  />
+                );
               }
             })()}
             <div className="flex flex-row pt-1">

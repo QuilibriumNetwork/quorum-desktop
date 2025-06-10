@@ -18,7 +18,7 @@
   --primary-800: #0a0733;
   --primary: var(--primary-500);
 
-    --accent: #b4e235;
+  --accent: #b4e235; /*accent is not used*/
 
   /*new dark theme*/
   --surface-00: #100f11;
@@ -29,12 +29,13 @@
   --surface-4: #3a313f;
   --surface-5: #443b49;
   --surface-6: #584d5e;
+  --surface-7: #716379;
 
   --text-base: #f4f1f6;
   --text-subtle: #bfb5c8;
-  --text-muted: #5a5160;
+  --text-muted: #84788b;
 
-  /*old colors*/
+  /*old colors NOT USED*/
   --pakistan-green: #134611ff;
   --india-green: #3e8914ff;
   --licorice: #373036ff;
@@ -194,4 +195,12 @@ button:focus-visible {
 
 .invisible-dark {
   background-color: rgba(0, 0, 0, 0.6);
+}
+
+.error-label {
+  background-color: rgb(201, 14, 14);
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-style: normal;
+  font-size: 0.9rem;
 }

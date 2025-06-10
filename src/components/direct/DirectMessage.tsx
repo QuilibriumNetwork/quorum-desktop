@@ -215,7 +215,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
             return (
               <div
                 onClick={() => setInReplyTo(undefined)}
-                className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-[var(--surface-3)] ml-[11px] mr-[11px]"
+                className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-[var(--surface-4)] ml-[11px] mr-[11px]"
               >
                 Replying to{' '}
                 {mapSenderToUser(inReplyTo.content.senderId).displayName}{' '}

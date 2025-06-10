@@ -37,6 +37,7 @@ export default {
         'surface-4': 'var(--surface-4)',
         'surface-5': 'var(--surface-5)',
         'surface-6': 'var(--surface-6)',
+        'surface-7': 'var(--surface-7)',
         'surface-border': 'var(--surface-border)',
 
         // Text

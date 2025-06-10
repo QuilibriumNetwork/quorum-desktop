@@ -279,7 +279,7 @@ const SpaceEditor: React.FunctionComponent<{
   return (
     <div className="space-editor flex flex-row">
       <div className="px-4 py-2 text-text-base w-[200px]">
-        <div className="small-caps text-[#877f87]">Settings</div>
+        <div className="small-caps text-subtle">Settings</div>
         <div
           onClick={() => setSelectedCategory('general')}
           className={
@@ -356,7 +356,7 @@ const SpaceEditor: React.FunctionComponent<{
                       <input {...getInputProps()} />
                     </div>
                     <div className="space-editor-text flex flex-col grow pr-4">
-                      <div className="small-caps">Server Name</div>
+                      <div className="small-caps">Space Name</div>
                       <input
                         className="w-full quorum-input"
                         value={displayName}
@@ -467,12 +467,7 @@ const SpaceEditor: React.FunctionComponent<{
                               className="w-[400px]"
                               visible={repudiableTooltip}
                             >
-                              Repudiability is a setting which makes
-                              conversations in this space unable to be proven
-                              they originated by the named sender. This can be
-                              useful in sensitive situations, but also means
-                              others forge messages that appear as if they
-                              originated from you.
+                              Repudiability is a setting that makes conversations in this space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.
                             </Tooltip>
                           </div>
                         </div>
@@ -505,7 +500,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="space-editor-editor-actions">
                       <div>
                         <Button
-                          type="primary"
+                          type="secondary"
                           onClick={() => {
                             setRoles((prev) => [
                               ...prev,
@@ -580,6 +575,7 @@ const SpaceEditor: React.FunctionComponent<{
                           <span className="float-right">
                             <FontAwesomeIcon
                               icon={faTrash}
+                              className="cursor-pointer"
                               onClick={() =>
                                 setRoles((prev) => [
                                   ...prev.filter((p, pi) => i !== pi),
@@ -655,7 +651,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="flex">
                       {emojis.length < 50 && (
                         <div
-                          className="p-2 rounded-full shadow-lg font-medium text-sm text-center select-none text-[#301f21] transition duration-300 cursor-pointer border border-[var(--primary-200)] bg-[var(--primary-200)] hover:border-[#ffd79a] hover:bg-[var(--primary-200)] border border-[#eedfee] bg-[#e0d4e0] cursor-arrow"
+                          className="px-4 py-2 rounded-full font-medium text-sm text-center select-none border-2 border-[var(--primary-300)] text-[var(--primary-300)] bg-transparent transition duration-300 cursor-pointer hover:bg-[var(--primary)] hover:border-[var(--primary)] hover:text-white"
                           {...getEmojiRootProps()}
                         >
                           Upload Emoji
@@ -751,7 +747,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="flex">
                       {stickers.length < 50 && (
                         <div
-                          className="p-2 rounded-full shadow-lg font-medium text-sm text-center select-none text-[#301f21] transition duration-300 cursor-pointer border-[var(--primary-200)] bg-[var(--primary-200)] hover:border-[#ffd79a] hover:bg-[var(--primary-200)] border border-[#eedfee] bg-[#e0d4e0] cursor-arrow"
+                          className="px-4 py-2 rounded-full font-medium text-sm text-center select-none border-2 border-[var(--primary-300)] text-[var(--primary-300)] bg-transparent transition duration-300 cursor-pointer hover:bg-[var(--primary)] hover:border-[var(--primary)] hover:text-white"
                           {...getStickerRootProps()}
                         >
                           Upload Sticker

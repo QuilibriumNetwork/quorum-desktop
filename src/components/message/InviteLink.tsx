@@ -45,9 +45,9 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
   }, [joinInviteLink, keyset, currentPasskeyInfo, inviteLink]);
 
   return (
-    <div className="w-[400px] rounded-md p-3 bg-[#373036]">
+    <div className="w-[400px] rounded-md p-3 bg-surface-5 border border-surface-6">
       {error && (
-        <div className="font-bold">
+        <div className="error-label mb-2">
           The invite link has expired or is invalid.
         </div>
       )}

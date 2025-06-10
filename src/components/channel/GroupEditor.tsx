@@ -73,7 +73,7 @@ const GroupEditor: React.FunctionComponent<{
   }, [space, group]);
 
   return (
-    <div className="group-editor flex flex-row">
+    <div className="group-editor flex flex-row min-w-[350px]">
       <div className="flex flex-col grow overflow-y-scroll rounded-xl">
         <div className="group-editor-header">
           <div className="group-editor-text flex flex-col grow px-4">

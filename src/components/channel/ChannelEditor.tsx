@@ -107,7 +107,7 @@ const ChannelEditor: React.FunctionComponent<{
   }, [space, channelName, channelTopic]);
 
   return (
-    <div className="channel-editor flex flex-row">
+    <div className="channel-editor flex flex-row min-w-[350px]">
       <div className="flex flex-col grow overflow-y-scroll rounded-xl">
         <div className="channel-editor-header">
           <div className="channel-editor-text flex flex-col grow px-4">
@@ -134,7 +134,7 @@ const ChannelEditor: React.FunctionComponent<{
               onChange={(e) => setChannelTopic(e.target.value)}
             />
           </div>
-          <div className="grow flex flex-col justify-end">
+          <div className="grow flex flex-col justify-end mt-4">
             <div className="channel-editor-editor-actions justify-between">
               {channelId && (
                 <Button
