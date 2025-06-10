@@ -95,7 +95,7 @@ const App = () => {
       }
       <ErrorBoundary fallback={<Maintenance />}>
         {user && currentPasskeyInfo ? (
-          <div className="bg-[var(--surface-00)] flex flex-col min-h-screen text-white">
+          <div className="bg-[var(--surface-00)] flex flex-col min-h-screen text-text-base">
             <Suspense fallback={<Connecting />}>
               <RegistrationProvider>
                 <Suspense>
@@ -213,14 +213,14 @@ const App = () => {
             </Suspense>
           </div>
         ) : landing && !currentPasskeyInfo ? (
-          <div className="bg-primary--accent--noise flex flex-col min-h-screen text-white">
+          <div className="bg-primary--accent--noise flex flex-col min-h-screen text-text-base">
             <Routes>
               <Route path="/" element={<Login setUser={setUser} />} />
               <Route path="/*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
         ) : landing ? (
-          <div className="bg-primary--accent--noise flex flex-col min-h-screen text-white">
+          <div className="bg-primary--accent--noise flex flex-col min-h-screen text-text-base">
             <Routes>
               <Route path="/" element={<Onboarding setUser={setUser} />} />
               <Route path="/*" element={<Navigate to="/" replace />} />

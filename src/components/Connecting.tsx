@@ -4,7 +4,7 @@ import './Connecting.scss';
 
 const Connecting = () => {
   return (
-    <div className="connecting-splash bg-primary--accent--noise">
+    <div className="connecting-splash bg-surface-00">
       <div
         className="connecting-icon pulse"
         style={{ backgroundImage: "url('/quorumicon.png')" }}

@@ -68,9 +68,10 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
       <div className="flex flex-row justify-around pb-4 select-none cursor-default">
         <div>{localization.localizations['SPACE_ICON_ATTACHMENT']([])}</div>
       </div>
+
       <div className="flex flex-row justify-around pb-4">
         {acceptedFiles.length != 0 ? (
-          <div {...getRootProps()}>
+          <div className="cursor-pointer" {...getRootProps()}>
             <input {...getInputProps()} />
             <SpaceIcon
               noTooltip={true}
@@ -82,7 +83,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
             />
           </div>
         ) : (
-          <div className="attachment-drop" {...getRootProps()}>
+          <div className="attachment-drop cursor-pointer" {...getRootProps()}>
             <span className="attachment-drop-icon inline-block justify-around w-20 h-20 flex flex-col">
               <input {...getInputProps()} />
               <FontAwesomeIcon icon={faFileImage} />
@@ -90,6 +91,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           </div>
         )}
       </div>
+
       <div className="select-none cursor-default">
         <Input
           value={spaceName}
@@ -97,7 +99,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           placeholder={localization.localizations['CREATE_SPACE_PROMPT']([])}
           className="w-full"
         />
-        <div className="mt-4 text-xs text-slate-300 w-[320pt]">
+        <div className="mt-4 text-xs text-subtle w-[320pt]">
           Default space settings provide the most typical chat experience, but
           for higher privacy guarantees, review Advanced Settings.
         </div>

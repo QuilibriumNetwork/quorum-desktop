@@ -164,7 +164,7 @@ const UserSettingsModal: React.FunctionComponent<{
 
   return (
     <div className="user-settings flex flex-row">
-      <div className="px-4 py-2 text-white w-[200px]">
+      <div className="px-4 py-2 text-text-base w-[200px]">
         <div className="small-caps text-[#877f87]">Settings</div>
         <div
           onClick={() => setSelectedCategory('general')}
@@ -251,7 +251,7 @@ const UserSettingsModal: React.FunctionComponent<{
                   <div className="user-settings-header pt-4 px-4 !min-h-[0px] flex flex-row justify-between">
                     <div className="">
                       <div className="text-xl font-bold">Privacy/Security</div>
-                      <div className="pt-1 text-sm text-white">
+                      <div className="pt-1 text-sm text-text-base">
                         Manage devices, and privacy conditions for messaging and
                         synchronization.
                       </div>
@@ -294,7 +294,7 @@ const UserSettingsModal: React.FunctionComponent<{
                       <div className="user-settings-content-section-header small-caps !pt-4">
                         Key Export
                       </div>
-                      <div className="pt-1 text-sm text-white">
+                      <div className="pt-1 text-sm text-text-base">
                         Export your key to a file by clicking this button. Do
                         not share this file with anyone else or they can
                         impersonate you or steal your space's Apex earnings.
@@ -313,7 +313,7 @@ const UserSettingsModal: React.FunctionComponent<{
                     <div className="user-settings-content-section-header small-caps">
                       Security
                     </div>
-                    <div className="pt-1 text-sm text-white">
+                    <div className="pt-1 text-sm text-text-base">
                       Adjust security-related settings, which may impact user
                       experience but increase the security of your Quorum
                       account.

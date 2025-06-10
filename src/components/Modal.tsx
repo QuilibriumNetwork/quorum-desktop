@@ -32,7 +32,7 @@ const Modal: React.FunctionComponent<ModalProps> = (props) => {
           <div className="flex flex-row justify-around">
             <div
               className={
-                'quorum-modal text-slate-300' +
+                'quorum-modal text-subtle' +
                 (closing ? ' quorum-modal-closing' : '')
               }
             >

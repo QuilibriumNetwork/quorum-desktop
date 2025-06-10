@@ -30,7 +30,7 @@ const DirectMessageContact: React.FunctionComponent<{
         <div className="flex flex-col justify-around">
           <div
             className={
-              'direct-message-contact-name text-white opacity-80 pl-2 w-[180px] truncate ' +
+              'direct-message-contact-name text-text-base opacity-80 pl-2 w-[180px] truncate ' +
               (props.unread && address !== props.address
                 ? '!font-extrabold'
                 : ' ')
@@ -39,7 +39,7 @@ const DirectMessageContact: React.FunctionComponent<{
             {props.displayName ?? props.address}
           </div>
           {props.displayName && (
-            <div className="text-white opacity-40 pl-2 text-xs w-[180px] truncate">
+            <div className="text-text-base opacity-40 pl-2 text-xs w-[180px] truncate">
               {props.address}
             </div>
           )}

@@ -1,5 +1,5 @@
 .attachment-drop {
-  border: 3px dashed var(--primary-200);
+  border: 3px dashed var(--primary-100);
   font-size: 18px;
   text-align: center;
   border-radius: 1000px;
@@ -13,8 +13,8 @@
 .attachment-drop::after {
   width: 24px;
   height: 24px;
-  background: #272026ff;
-  color: #ddbea8ff;
+  background: var(--surface-00);
+  color: var(--primary);
   content: '+';
   display: block;
   text-align: center;

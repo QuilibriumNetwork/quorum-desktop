@@ -155,7 +155,7 @@ const UserProfile: React.FunctionComponent<{
               {props.user.address}
             </div>
             <FontAwesomeIcon
-              className="hover:text-white cursor-pointer"
+              className="hover:text-text-base cursor-pointer"
               icon={faClipboard}
               onClick={() => {
                 navigator.clipboard.writeText(props.user.address);

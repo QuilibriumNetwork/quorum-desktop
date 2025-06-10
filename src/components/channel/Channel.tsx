@@ -225,7 +225,7 @@ const Channel: React.FC<ChannelProps> = ({
   return (
     <div className="channel">
       <div className="flex flex-col">
-        <div className="channel-name mt-[8px] pb-[8px] mx-[11px] text-white">
+        <div className="channel-name mt-[8px] pb-[8px] mx-[11px] text-text-base">
           <span>
             #{channel?.channelName}
             {channel?.channelTopic && ' | '}
@@ -332,7 +332,7 @@ const Channel: React.FC<ChannelProps> = ({
             }
           >
             <input {...getInputProps()} />
-            <FontAwesomeIcon className="text-white" icon={faPlus} />
+            <FontAwesomeIcon className="text-text-base" icon={faPlus} />
           </div>
           <textarea
             ref={editor}
@@ -490,7 +490,7 @@ const Channel: React.FC<ChannelProps> = ({
                         backgroundImage: `url(${members[s]?.userIcon})`,
                       }}
                     />
-                    <div className="flex flex-col ml-2 text-white">
+                    <div className="flex flex-col ml-2 text-text-base">
                       <span className="text-md font-bold">
                         {members[s]?.displayName}
                       </span>
@@ -514,7 +514,7 @@ const Channel: React.FC<ChannelProps> = ({
                   backgroundImage: `url(${members[s].userIcon})`,
                 }}
               />
-              <div className="flex flex-col ml-2 text-white">
+              <div className="flex flex-col ml-2 text-text-base">
                 <span className="text-md font-bold">
                   {members[s].displayName}
                 </span>

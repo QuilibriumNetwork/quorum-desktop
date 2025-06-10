@@ -162,7 +162,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   return (
     <div className="direct-message">
       <div className="flex flex-col">
-        <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] text-white flex flex-row justify-between">
+        <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] text-text-base flex flex-row justify-between">
           <div className="flex flex-row">
             <div className="flex flex-col justify-around">
               <div
@@ -263,7 +263,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
             }
           >
             <input {...getInputProps()} />
-            <FontAwesomeIcon className="text-white" icon={faPlus} />
+            <FontAwesomeIcon className="text-text-base" icon={faPlus} />
           </div>
           <textarea
             ref={editor}
@@ -410,7 +410,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   backgroundImage: `url(${members[s].userIcon})`,
                 }}
               />
-              <div className="flex flex-col ml-2 text-white">
+              <div className="flex flex-col ml-2 text-text-base">
                 <span className="text-md font-bold truncate w-[190px]">
                   {members[s].displayName}
                 </span>
