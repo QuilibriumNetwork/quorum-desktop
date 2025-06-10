@@ -15,17 +15,32 @@ export default {
   theme: {
     extend: {
       colors: {
-        // new brand dark theme
+        // Brand Blue Scale
+        primary: {
+          DEFAULT: 'var(--primary)', // fallback for just 'text-primary' or 'bg-primary'
+          100: 'var(--primary-100)',
+          200: 'var(--primary-200)',
+          300: 'var(--primary-200)',
+          500: 'var(--primary-500)',
+          700: 'var(--primary-700)',
+          800: 'var(--primary-800)',
+        },
+        accent: 'var(--accent)',
+
+        // Surface Layers
         'surface-00': 'var(--surface-00)',
         'surface-0': 'var(--surface-0)',
         'surface-1': 'var(--surface-1)',
         'surface-2': 'var(--surface-2)',
         'surface-3': 'var(--surface-3)',
         'surface-4': 'var(--surface-4)',
+        'surface-5': 'var(--surface-5)',
         'surface-border': 'var(--surface-border)',
-        'text-primary': '#f4f1f6',
-        'text-secondary': '#bfb5c8',
-        'text-muted': '#5a5160',
+
+        // Text
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'text-muted': 'var(--text-muted)',
       },
     },
   },

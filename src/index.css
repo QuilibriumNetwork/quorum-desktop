@@ -9,11 +9,15 @@
 }
 
 :root {
-  --primary: #0287f2;
-  --primary-dark: #0e0858;
-  --primary-darker: #0a0733;
-  --primary-light: #daeeff;
-  --accent: #b4e235;
+  --primary-100: #daeeff;
+  --primary-200: #6fc3ff;
+  --primary-300: #48adf5;
+  --primary-500: #0287f2;
+  --primary-700: #0e0858;
+  --primary-800: #0a0733;
+  --primary: var(--primary-500);
+
+    --accent: #b4e235;
 
   /*new dark theme*/
   --surface-00: #100f11;
@@ -66,12 +70,12 @@
 
 /*used for onboarding bg*/
 .bg-primary--accent--noise {
-  background-color: var(--primary-dark);
+  background-color: var(--primary-700);
   background-image:
     url('/otis-redding.png'),
     radial-gradient(circle at 90% 100%, var(--accent) 0%, transparent 35%),
     radial-gradient(circle at 60% 50%, var(--primary) 0%, transparent 90%),
-    radial-gradient(circle at 10% 10%, var(--primary-dark) 0%, transparent 80%);
+    radial-gradient(circle at 10% 10%, var(--primary-700) 0%, transparent 80%);
   background-repeat: repeat, no-repeat, no-repeat, no-repeat;
   background-size: auto, cover, cover, cover;
 }

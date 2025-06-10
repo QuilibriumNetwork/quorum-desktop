@@ -1,18 +1,18 @@
 .btn-base {
   @apply py-2 px-4 rounded-full shadow-lg font-medium text-sm text-center select-none transition duration-300;
-  color: var(--primary-dark);
+  color: var(--primary-700);
 }
 
 .btn-primary {
   @extend .btn-base;
-  background-color: white;
-  border: 2px solid white;
+  background-color: var(--primary);
+  border: 2px solid var(--primary);
   cursor: pointer;
 
   &:hover {
     background-color: transparent;
-    border: 2px solid white;
-    color: white;
+    border: 2px solid var(--primary);
+    color: var(--primary-700);
   }
 }
 
@@ -26,30 +26,37 @@
   &:hover {
     background-color: white;
     border: 2px solid white;
-    color: var(--primary-dark);
+    color: var(--primary-700);
   }
 }
 
-.btn-blue {
+
+.btn-light {
   @extend .btn-base;
-  background-color: var(--primary);
-  border: 2px solid var(--primary);
+  background-color: var(--primary-100);
+  border: 2px solid var(--primary-100);
   cursor: pointer;
+  color: var(--primary-700);
 
   &:hover {
-    filter: brightness(1.1) saturate(1.2);
+    background-color: transparent;
+    border: 2px solid var(--primary-100);
+    color: var(--primary-100);
   }
 }
 
-.btn-blue-outline {
+
+.btn-light-outline {
   @extend .btn-base;
   background-color: transparent;
-  border: 2px solid var(--primary);
+  border: 2px solid var(--primary-100);
   cursor: pointer;
+  color: var(--primary-100);
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    filter: brightness(1.1) saturate(1.2);
+    background-color: var(--primary-100);
+    border: 2px solid var(--primary-100);
+    color: var(--primary-700);
   }
 }
 

@@ -144,14 +144,14 @@ export const Onboarding = ({
               <div className="grow"></div>
               <div className="w-[460px] pt-4 text-center">
                 <Button
-                  type="primary"
+                  type="light"
                   className="px-8 mr-4"
                   onClick={downloadKey}
                 >
                   Save User Key
                 </Button>
                 <Button
-                  type="secondary"
+                  type="light-outline"
                   className="px-8"
                   onClick={() => setExported(true)}
                 >
@@ -181,14 +181,14 @@ export const Onboarding = ({
               <div className="grow"></div>
               <div className="w-[460px] pt-4 text-center flex flex-row justify-between">
                 <Input
-                  className="!bg-[var(--primary-dark)] grow"
+                  className="onboarding-input !bg-[var(--primary-100)] grow"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Bongocat"
                 />
                 <div className="flex flex-col justify-around pl-2">
                   <Button
-                    type="primary"
+                    type="light"
                     disabled={displayName.length === 0}
                     className="px-8"
                     onClick={() => {
@@ -253,7 +253,7 @@ export const Onboarding = ({
                 <div className="grow"></div>
                 <div className="flex flex-col justify-around pl-2 pt-4">
                   <Button
-                    type="secondary"
+                    type="light-outline"
                     className="px-8"
                     onClick={() => {
                       updateStoredPasskey(currentPasskeyInfo!.credentialId, {
@@ -269,7 +269,7 @@ export const Onboarding = ({
                     Skip Adding Photo
                   </Button>
                   <Button
-                    type="primary"
+                    type="light"
                     disabled={!fileData}
                     className="px-8 mt-4"
                     onClick={() => {
@@ -309,7 +309,7 @@ export const Onboarding = ({
                 <div className="grow"></div>
                 <div className="flex flex-col justify-around pl-2">
                   <Button
-                    type="primary"
+                    type="light"
                     className="px-8"
                     onClick={() => {
                       updateStoredPasskey(currentPasskeyInfo!.credentialId, {

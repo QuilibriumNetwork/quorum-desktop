@@ -1,16 +1,30 @@
 .quorum-input {
-  background-color: #373036;
+  background-color: var(--surface-3);
+  border-radius: 9999px; // full pill shape
+  padding: 10px 16px;
   height: 42px;
   font-size: 16px;
-  padding: 18px;
   margin: 0px;
   border: 0px none;
-  border-radius: 10px;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 1);
+  color: var(--text-primary);
   outline: 0px none;
 
   ::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-muted);
+  }
+}
+
+.onboarding-input {
+  color: var(--primary-700);
+  border-radius: 9999px; // full pill shape
+  padding: 10px 16px;
+  height: 42px;
+  font-size: 16px;
+  margin: 0px;
+  border: 0px none;
+
+  &::placeholder {
+    color: var(--primary-200);
+    opacity: 1;
   }
 }

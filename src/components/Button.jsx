@@ -8,11 +8,7 @@ const Button = (props) => {
 
   const baseClass = props.disabled
     ? 'btn-disabled'
-    : props.type === 'danger'
-      ? 'btn-danger'
-      : props.type === 'secondary'
-        ? 'btn-secondary'
-        : 'btn-primary'; // default
+    : `btn-${props.type || 'primary'}`;
 
   return (
     <>
@@ -40,7 +36,13 @@ const Button = (props) => {
 };
 
 Button.propTypes = {
-  type: PropTypes.string,
+  type: PropTypes.oneOf([
+    'primary',
+    'secondary',
+    'light',
+    'light-outline',
+    'danger',
+  ]),
   disabled: PropTypes.bool,
   icon: PropTypes.bool,
   className: PropTypes.string,
