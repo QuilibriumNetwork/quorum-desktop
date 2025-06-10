@@ -372,7 +372,7 @@ const SpaceEditor: React.FunctionComponent<{
                           'space-editor-banner-editable ' +
                           (space?.bannerUrl || bannerAcceptedFiles.length != 0
                             ? ''
-                            : ' border border-2 border-dashed border-[#ffdeac]')
+                            : ' border border-2 border-dashed border-[var(--primary-200)]')
                         }
                         style={{
                           backgroundImage:
@@ -653,7 +653,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="flex">
                       {emojis.length < 50 && (
                         <div
-                          className="p-2 rounded-full shadow-lg font-medium text-sm text-center select-none text-[#301f21] transition duration-300 cursor-pointer border border-[#ffce82] bg-[#f8c271] hover:border-[#ffd79a] hover:bg-[#ffce82] border border-[#eedfee] bg-[#e0d4e0] cursor-arrow"
+                          className="p-2 rounded-full shadow-lg font-medium text-sm text-center select-none text-[#301f21] transition duration-300 cursor-pointer border border-[var(--primary-200)] bg-[var(--primary-200)] hover:border-[#ffd79a] hover:bg-[var(--primary-200)] border border-[#eedfee] bg-[#e0d4e0] cursor-arrow"
                           {...getEmojiRootProps()}
                         >
                           Upload Emoji
@@ -749,7 +749,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="flex">
                       {stickers.length < 50 && (
                         <div
-                          className="p-2 rounded-full shadow-lg font-medium text-sm text-center select-none text-[#301f21] transition duration-300 cursor-pointer border border-[#ffce82] bg-[#f8c271] hover:border-[#ffd79a] hover:bg-[#ffce82] border border-[#eedfee] bg-[#e0d4e0] cursor-arrow"
+                          className="p-2 rounded-full shadow-lg font-medium text-sm text-center select-none text-[#301f21] transition duration-300 cursor-pointer border border-[var(--primary-200)] bg-[var(--primary-200)] hover:border-[#ffd79a] hover:bg-[var(--primary-200)] border border-[#eedfee] bg-[#e0d4e0] cursor-arrow"
                           {...getStickerRootProps()}
                         >
                           Upload Sticker

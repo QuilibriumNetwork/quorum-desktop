@@ -1,20 +1,22 @@
 .btn-base {
-  @apply py-2 px-4 rounded-full shadow-lg font-medium text-sm text-center select-none transition duration-300;
-  color: var(--primary-700);
+  @apply flex items-center justify-center py-2 px-4 rounded-full shadow-lg font-medium text-sm text-center select-none transition duration-300;
+  color: white;
 }
 
 .btn-primary {
   @extend .btn-base;
   background-color: var(--primary);
   border: 2px solid var(--primary);
+  color: white;
   cursor: pointer;
 
   &:hover {
-    background-color: transparent;
-    border: 2px solid var(--primary);
-    color: var(--primary-700);
+    background-color: var(--primary-300);
+    border: 2px solid var(--primary-300);
+    color: white;
   }
 }
+
 
 .btn-secondary {
   @extend .btn-base;

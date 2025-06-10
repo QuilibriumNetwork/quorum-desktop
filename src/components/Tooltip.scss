@@ -1,5 +1,6 @@
+
 .quorum-tooltip {
-  background-color: var(--surface-00);
+  background-color: var(--surface-5);
   color: #fff;
   font-weight: 700;
   display: inline-block;
@@ -19,7 +20,7 @@
   content: '';
   border-style: solid;
   border-width: 8px 11px 8px 0;
-  border-color: transparent var(--surface-00) transparent transparent;
+  border-color: transparent var(--surface-5) transparent transparent !important;
   position: absolute;
   left: 0px;
   top: 11px;
@@ -33,7 +34,7 @@
   content: '';
   border-style: solid;
   border-width: 8px 0px 8px 11px;
-  border-color: transparent transparent transparent var(--surface-00);
+  border-color: transparent transparent transparent var(--surface-5) !important;
   position: absolute;
   right: -11px;
   top: 11px;
@@ -43,7 +44,7 @@
   content: '';
   border-style: solid;
   border-width: 0px 8px 11px 8px;
-  border-color: transparent transparent var(--surface-00) transparent;
+  border-color: transparent transparent var(--surface-5) transparent !important;
   position: absolute;
   left: calc(50% - 8px);
   top: -11px;
@@ -53,7 +54,7 @@
   content: '';
   border-style: solid;
   border-width: 11px 8px 0px 8px;
-  border-color: var(--surface-00) transparent transparent transparent;
+  border-color: var(--surface-5) transparent transparent transparent !important;
   position: absolute;
   right: calc(50% - 8px);
   bottom: -11px;

@@ -252,7 +252,7 @@ export const Message = ({
                 e.stopPropagation();
                 return false;
               }}
-              className="absolute flex flex-row right-[20px] top-[-10px] p-1 bg-[#4f454c] select-none border border-slate-50/10 shadow-lg rounded-lg"
+              className="absolute flex flex-row right-[20px] top-[-10px] p-1 bg-surface-5 select-none border border-slate-50/10 shadow-lg rounded-lg"
             >
               <div
                 onClick={() => {
@@ -516,7 +516,7 @@ export const Message = ({
                   className={
                     'cursor-pointer flex flex-row mr-1 border hover:border-[rgba(255,255,255,0.1)] rounded-lg py-[1pt] px-2 bg-[#3f353c]' +
                     (r.memberIds.includes(user.currentPasskeyInfo!.address)
-                      ? ' border-[#ffce82]'
+                      ? ' border-[var(--primary-200)]'
                       : ' border-[rgba(0,0,0,0)]')
                   }
                   onClick={() => {

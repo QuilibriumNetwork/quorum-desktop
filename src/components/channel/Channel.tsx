@@ -327,7 +327,7 @@ const Channel: React.FC<ChannelProps> = ({
         <div {...getRootProps()} className="flex flex-row relative">
           <div
             className={
-              'absolute hover:bg-[#5f555c] flex flex-col justify-around cursor-pointer left-4 w-8 h-8 rounded-full bg-[length:60%] bg-[#4f454c] ' +
+              'absolute hover:bg-[#5f555c] flex flex-col justify-around cursor-pointer left-4 w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 ' +
               (inReplyTo ? 'top-1' : 'top-3')
             }
           >
@@ -404,7 +404,7 @@ const Channel: React.FC<ChannelProps> = ({
           />
           <div
             className={
-              "absolute hover:bg-[#5f555c] cursor-pointer right-14 center flex flex-col justify-around w-8 h-8 rounded-full bg-[length:60%] bg-[#4f454c] " +
+              "absolute hover:bg-[#5f555c] cursor-pointer right-14 center flex flex-col justify-around w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 " +
               (inReplyTo ? 'top-1' : 'top-3')
             }
             onClick={(e) => {
@@ -414,7 +414,7 @@ const Channel: React.FC<ChannelProps> = ({
           ><FontAwesomeIcon icon={faSmile}/></div>
           <div
             className={
-              "absolute hover:bg-[#5f555c] cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-[#4f454c] bg-center bg-no-repeat bg-[url('/send.png')] " +
+              "absolute hover:bg-[#5f555c] cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 bg-center bg-no-repeat bg-[url('/send.png')] " +
               (inReplyTo ? 'top-1' : 'top-3')
             }
             onClick={(e) => {

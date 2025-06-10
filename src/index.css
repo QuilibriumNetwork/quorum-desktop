@@ -12,6 +12,7 @@
   --primary-100: #daeeff;
   --primary-200: #6fc3ff;
   --primary-300: #48adf5;
+  --primary-400: #3aa9f8;
   --primary-500: #0287f2;
   --primary-700: #0e0858;
   --primary-800: #0a0733;
@@ -27,6 +28,7 @@
   --surface-3: #312935;
   --surface-4: #3a313f;
   --surface-5: #443b49;
+  --surface-6: #584d5e;
 
   --text-primary: #f4f1f6;
   --text-secondary: #bfb5c8;
@@ -122,11 +124,11 @@
 
 a {
   font-weight: 500;
-  color: var(--accent);
+  color: var(--primary);
   text-decoration: inherit;
 }
 a:hover {
-  text-decoration: underline;
+  color: var(--primary-200);
 }
 
 h1 {

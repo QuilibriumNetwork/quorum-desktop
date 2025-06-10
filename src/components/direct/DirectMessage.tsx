@@ -258,7 +258,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         <div {...getRootProps()} className="flex flex-row relative">
           <div
             className={
-              'absolute hover:bg-[#5f555c] flex flex-col justify-around cursor-pointer left-4 w-8 h-8 rounded-full bg-[length:60%] bg-[#4f454c] ' +
+              'absolute hover:bg-surface-6 flex flex-col justify-around cursor-pointer left-4 w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 ' +
               (inReplyTo ? 'top-1' : 'top-3')
             }
           >
@@ -268,7 +268,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           <textarea
             ref={editor}
             className={
-              'message-editor w-full !pl-11 !pr-11 ' +
+              'message-editor w-full !pl-11 !pr-11' +
               (inReplyTo ? 'message-editor-reply' : '')
             }
             placeholder={
@@ -341,7 +341,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           />
           <div
             className={
-              "absolute hover:bg-[#5f555c] cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-[#4f454c] bg-center bg-no-repeat bg-[url('/send.png')] " +
+              "absolute hover:bg-primary-400 cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:50%] bg-primary bg-center bg-no-repeat bg-[url('/send.png')] " +
               (inReplyTo ? 'top-1' : 'top-3')
             }
             onClick={(e) => {

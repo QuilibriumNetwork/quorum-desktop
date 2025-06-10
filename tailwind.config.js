@@ -20,7 +20,8 @@ export default {
           DEFAULT: 'var(--primary)', // fallback for just 'text-primary' or 'bg-primary'
           100: 'var(--primary-100)',
           200: 'var(--primary-200)',
-          300: 'var(--primary-200)',
+          300: 'var(--primary-300)',
+          400: 'var(--primary-400)',
           500: 'var(--primary-500)',
           700: 'var(--primary-700)',
           800: 'var(--primary-800)',
@@ -35,6 +36,7 @@ export default {
         'surface-3': 'var(--surface-3)',
         'surface-4': 'var(--surface-4)',
         'surface-5': 'var(--surface-5)',
+        'surface-6': 'var(--surface-6)',
         'surface-border': 'var(--surface-border)',
 
         // Text

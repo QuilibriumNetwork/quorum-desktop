@@ -1,9 +1,10 @@
 .attachment-drop {
-  border: 3px dashed #ffeebc;
+  border: 3px dashed var(--primary-200);
   font-size: 18px;
   text-align: center;
   border-radius: 1000px;
   color: rgba(255, 255, 255, 0.6);
+  background-color: var(--primary);
 
   .attachment-drop-icon {
     font-size: 32px;
@@ -13,8 +14,8 @@
 .attachment-drop::after {
   width: 24px;
   height: 24px;
-  background: #272026ff;
-  color: #ddbea8ff;
+  background: var(--surface-00);
+  color: var(--primary);
   content: '+';
   display: block;
   text-align: center;
