@@ -11,8 +11,8 @@
 }
 
 .quorum-toggle-switch-inactive {
-  background-color: #373036;
-  border: 1px solid #272026;
+  background-color: var(--surface-3);
+  border: 1px solid var(--surface-3);
 }
 
 .quorum-toggle-switch-active {
@@ -22,8 +22,8 @@
 .quorum-toggle-switch-flipper {
   width: 26px;
   height: 26px;
-  background-color: var(--primary-200);
+  background-color: var(--primary);
   display: inline-block;
   border-radius: 13px;
-  border: 1px solid var(--primary-200);
+  border: 1px solid var(--primary);
 }

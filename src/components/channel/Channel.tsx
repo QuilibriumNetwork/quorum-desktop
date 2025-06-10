@@ -271,7 +271,7 @@ const Channel: React.FC<ChannelProps> = ({
             return (
               <div
                 onClick={() => setInReplyTo(undefined)}
-                className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-[#3f353c] ml-[11px] mr-[11px]"
+                className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-[var(--surface-3)] ml-[11px] mr-[11px]"
               >
                 Replying to{' '}
                 {mapSenderToUser(inReplyTo.content.senderId).displayName}{' '}
@@ -317,7 +317,7 @@ const Channel: React.FC<ChannelProps> = ({
             onClick={() => setShowStickers(false)}
           />
           <div className="relative z-[1002]">
-          <div className="flex flex-col right-11 bottom-[0px] absolute border border-[#5f555c] shadow-2xl w-[300px] h-[400px] rounded-lg bg-[#373036]">
+          <div className="flex flex-col right-11 bottom-[0px] absolute border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-[#373036]">
             <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">Stickers</div>
             <div className="grid grid-cols-2 gap-4 h-[359px] w-[300px] p-4 overflow-scroll">{space?.stickers.map(s => {
               return <div key={"sticker-" + s.id} className="flex flex-col justify-around h-[126px] w-[126px]" onClick={() => sendSticker(s.id)}><img src={s.imgUrl} /></div>;
@@ -327,7 +327,7 @@ const Channel: React.FC<ChannelProps> = ({
         <div {...getRootProps()} className="flex flex-row relative">
           <div
             className={
-              'absolute hover:bg-[#5f555c] flex flex-col justify-around cursor-pointer left-4 w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 ' +
+              'absolute hover:bg-surface-6 flex flex-col justify-around cursor-pointer left-4 w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 ' +
               (inReplyTo ? 'top-1' : 'top-3')
             }
           >
@@ -404,7 +404,7 @@ const Channel: React.FC<ChannelProps> = ({
           />
           <div
             className={
-              "absolute hover:bg-[#5f555c] cursor-pointer right-14 center flex flex-col justify-around w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 " +
+              "absolute hover:bg-surface-6 cursor-pointer right-14 center flex flex-col justify-around w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 " +
               (inReplyTo ? 'top-1' : 'top-3')
             }
             onClick={(e) => {
@@ -414,7 +414,7 @@ const Channel: React.FC<ChannelProps> = ({
           ><FontAwesomeIcon icon={faSmile}/></div>
           <div
             className={
-              "absolute hover:bg-[#5f555c] cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 bg-center bg-no-repeat bg-[url('/send.png')] " +
+              "absolute hover:bg-primary-400 cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-primary bg-center bg-no-repeat bg-[url('/send.png')] " +
               (inReplyTo ? 'top-1' : 'top-3')
             }
             onClick={(e) => {
@@ -464,7 +464,7 @@ const Channel: React.FC<ChannelProps> = ({
       </div>
       <div
         className={
-          'w-[260px] bg-[#474046] p-3 overflow-scroll ' +
+          'w-[260px] bg-surface-4 p-3 overflow-scroll ' +
           (showUsers ? '' : 'hidden')
         }
       >

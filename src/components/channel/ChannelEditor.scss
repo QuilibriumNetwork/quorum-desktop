@@ -2,14 +2,14 @@
   position: absolute;
   z-index: 3000;
   width: 300px;
-  background: #3f353c;
+  background: var(--surface-3);
   border-radius: 10px;
   color: var(--primary-200);
   user-select: none;
 }
 
 .channel-editor-header {
-  background: #4f454c;
+  background: var(--surface-5);
   padding-top: 4pt;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
@@ -45,7 +45,7 @@
 
 .channel-editor-content {
   padding: 14px;
-  background-color: #4f454c;
+  background-color: var(--surface-5);
   border-radius: 0px 0px 10px 10px;
 }
 
@@ -107,7 +107,7 @@
 
 .channel-editor-content-section-header {
   font-weight: 700;
-  border-top: 1px solid #3e3e3e;
+  border-top: 1px solid var(--surface-6);
   padding-top: 7px;
   margin-top: 7px;
 }

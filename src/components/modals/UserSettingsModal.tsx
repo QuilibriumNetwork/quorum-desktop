@@ -326,7 +326,7 @@ const UserSettingsModal: React.FunctionComponent<{
                           </div>
                           <div className="text-sm flex flex-col justify-around ml-2">
                             <div
-                              className="border border-[#67606f] rounded-full w-6 h-6 text-center leading-5 text-lg"
+                              className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
                               onMouseOut={() => setAllowSyncTooltip(false)}
                               onMouseOver={() => setAllowSyncTooltip(true)}
                             >
@@ -359,7 +359,7 @@ const UserSettingsModal: React.FunctionComponent<{
                           </div>
                           <div className="text-sm flex flex-col justify-around ml-2">
                             <div
-                              className="border border-[#67606f] rounded-full w-6 h-6 text-center leading-5 text-lg"
+                              className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
                               onMouseOut={() => setNonRepudiableTooltip(false)}
                               onMouseOver={() => setNonRepudiableTooltip(true)}
                             >

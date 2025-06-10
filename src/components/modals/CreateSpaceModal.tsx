@@ -111,7 +111,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               </div>
               <div className="text-sm flex flex-col justify-around ml-2">
                 <div
-                  className="border border-[#67606f] rounded-full w-6 h-6 text-center leading-5 text-lg"
+                  className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
                   onMouseOut={() => setRepudiableTooltip(false)}
                   onMouseOver={() => setRepudiableTooltip(true)}
                 >
@@ -144,7 +144,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               </div>
               <div className="text-sm flex flex-col justify-around ml-2">
                 <div
-                  className="border border-[#67606f] rounded-full w-6 h-6 text-center leading-5 text-lg"
+                  className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
                   onMouseOut={() => setPublicTooltip(false)}
                   onMouseOver={() => setPublicTooltip(true)}
                 >
@@ -175,7 +175,8 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           </div>
         </div>
       )}
-      <div className="mt-4 pt-5 mx-[-26px] px-4 rounded-b-xl bg-[#474046] mb-[-26px] h-16 flex flex-row-reverse justify-between">
+      {/* <div className="mt-4 py-5 mx-[-26px] px-4 rounded-b-xl bg-surface-4 mb-[-26px] h-16 flex flex-row-reverse justify-between"> Issues with bottom space*/}
+      <div className="mt-6 pt-6 rounded-b-xl border-t border-t-surface-1 flex flex-row-reverse justify-between">
         <div>
           <Button
             type="primary"

@@ -131,7 +131,7 @@ export const Message = ({
   return (
     <div
       className={
-        'text-white relative hover:bg-[rgba(0,0,0,.05)] flex flex-col ' +
+        'text-base relative hover:bg-surface-4 flex flex-col ' +
         (message.mentions?.memberIds.includes(user.currentPasskeyInfo!.address)
           ? ' message-mentions-you'
           : '')
@@ -514,7 +514,7 @@ export const Message = ({
                 <div
                   key={message.messageId + '-reactions-' + r.emojiId}
                   className={
-                    'cursor-pointer flex flex-row mr-1 border hover:border-[rgba(255,255,255,0.1)] rounded-lg py-[1pt] px-2 bg-[#3f353c]' +
+                    'cursor-pointer flex flex-row mr-1 border hover:border-[rgba(255,255,255,0.1)] rounded-lg py-[1pt] px-2 bg-[var(--surface-3)]' +
                     (r.memberIds.includes(user.currentPasskeyInfo!.address)
                       ? ' border-[var(--primary-200)]'
                       : ' border-[rgba(0,0,0,0)]')

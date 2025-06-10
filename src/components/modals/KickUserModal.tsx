@@ -35,7 +35,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
       <div className="flex flex-row justify-around pb-4 select-none w-[400px] cursor-default">
         <div>{localization.localizations['KICK_USER_TEXT']([])}</div>
       </div>
-      <div className="mt-4 pt-5 mx-[-26px] px-4 rounded-b-xl bg-[#474046] mb-[-26px] h-16 flex flex-row-reverse justify-between">
+      <div className="mt-4 pt-5 mx-[-26px] px-4 rounded-b-xl bg-surface-4 mb-[-26px] h-16 flex flex-row-reverse justify-between">
         <div>
           <Button
             type="primary"

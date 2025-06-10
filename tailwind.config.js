@@ -40,8 +40,8 @@ export default {
         'surface-border': 'var(--surface-border)',
 
         // Text
-        'text-primary': 'var(--text-primary)',
-        'text-secondary': 'var(--text-secondary)',
+        'text-base': 'var(--text-base)',
+        'text-subtle': 'var(--text-subtle)',
         'text-muted': 'var(--text-muted)',
       },
     },

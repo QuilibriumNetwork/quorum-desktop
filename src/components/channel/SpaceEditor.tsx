@@ -452,7 +452,7 @@ const SpaceEditor: React.FunctionComponent<{
                           </div>
                           <div className="text-sm flex flex-col justify-around ml-2">
                             <div
-                              className="border border-[#67606f] rounded-full w-6 h-6 text-center leading-5 text-lg"
+                              className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
                               onMouseOut={() => setRepudiableTooltip(false)}
                               onMouseOver={() => setRepudiableTooltip(true)}
                             >
@@ -942,7 +942,7 @@ const SpaceEditor: React.FunctionComponent<{
                           </div>
                           <div className="text-sm flex flex-col justify-around ml-2">
                             <div
-                              className="border border-[#67606f] rounded-full w-6 h-6 text-center leading-5 text-lg"
+                              className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
                               onMouseOut={() => setPublicInviteTooltip(false)}
                               onMouseOver={() => setPublicInviteTooltip(true)}
                             >

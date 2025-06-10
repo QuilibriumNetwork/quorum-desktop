@@ -1,7 +1,7 @@
 .channel {
   flex: 1 0;
   border-top-left-radius: 10px;
-  background: #4f454c;
+  background: var(--surface-2);
   z-index: 1;
   display: flex;
   height: calc(100vh - 35px);
@@ -27,8 +27,8 @@
 }
 
 .message-mentions-you {
-  border-left: 2px solid #eeb155;
-  background: #6e5145;
+  border-left: 2px solid var(--primary);
+  background: var(--surface-4);
 }
 
 .message-mentions-role {
@@ -41,7 +41,7 @@
 }
 
 .message-name-mentions-you {
-  background: #eeb155;
+  background: var(--primary);
 }
 
 .message-list {
@@ -99,7 +99,7 @@
 }
 
 .message-editor {
-  background: #373036ff;
+  background: var(--surface-5);
   border-radius: 10px;
   padding: 11px 15px;
   overflow: hidden;

@@ -292,7 +292,7 @@ const UserProfile: React.FunctionComponent<{
             </div>
           </div>
           {currentPasskeyInfo!.address !== props.user.address && (
-            <div className="bg-[#0E0E0E] rounded-b-xl p-1">
+            <div className="bg-[var(--surface-0)] rounded-b-xl p-1">
               <div className="user-profile-actions">
                 <TooltipButton
                   icon={faReply}
