@@ -215,7 +215,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
             return (
               <div
                 onClick={() => setInReplyTo(undefined)}
-                className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-[var(--surface-4)] ml-[11px] mr-[11px]"
+                className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-surface-4 ml-[11px] mr-[11px]"
               >
                 Replying to{' '}
                 {mapSenderToUser(inReplyTo.content.senderId).displayName}{' '}
@@ -223,7 +223,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   className="message-in-reply-dismiss"
                   onClick={() => setInReplyTo(undefined)}
                 >
-                  ×
+                  x
                 </span>
               </div>
             );
@@ -268,7 +268,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           <textarea
             ref={editor}
             className={
-              'message-editor w-full !pl-11 !pr-11' +
+              'message-editor w-full !pl-11 !pr-11 ' +
               (inReplyTo ? 'message-editor-reply' : '')
             }
             placeholder={
@@ -341,7 +341,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           />
           <div
             className={
-              "absolute hover:bg-primary-400 cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:50%] bg-primary bg-center bg-no-repeat bg-[url('/send.png')] " +
+              "absolute hover:bg-primary-400 cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-primary bg-center bg-no-repeat bg-[url('/send.png')] " +
               (inReplyTo ? 'top-1' : 'top-3')
             }
             onClick={(e) => {
