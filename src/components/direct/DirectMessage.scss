@@ -96,7 +96,7 @@
   padding: 11px 15px;
   overflow: hidden;
   border: 0px none;
-  color: rgba(255, 255, 255, 1);
+  color: var(--text-base);
   outline: 0px none;
   font-weight: 300;
   resize: none;
@@ -104,7 +104,7 @@
   margin: 8px 11px;
 
   ::placeholder {
-    color: rgba(255, 235, 255, 0.6);
+    color: var(--text-muted);
   }
 }
 

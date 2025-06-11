@@ -146,16 +146,28 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
       <div className="channels-list">
         <div
           className={
-            'space-header flex flex-row justify-between ' +
+            'space-header relative flex flex-row justify-between ' +
             (space?.bannerUrl
               ? ''
-              : ' !h-[41px] border-b border-b-1 border-b-[rgba(255,255,255,0.1)]')
+              : ' !h-[41px] border-b border-b-1 border-b-surface-6')
           }
           style={{ backgroundImage: `url('${space?.bannerUrl}')` }}
         >
-          <div className="space-header-name truncate">{space?.spaceName}</div>
+          {space?.bannerUrl && (
+            <div
+              className="absolute inset-0 pointer-events-none z-0"
+              style={{
+                background:
+                  'linear-gradient(to bottom, rgba(var(--surface-00-rgb), 0.8), rgba(var(--surface-00-rgb), 0))',
+              }}
+            ></div>
+          )}
+
+          <div className="space-header-name truncate relative z-10">
+            {space?.spaceName}
+          </div>
           <div
-            className="space-context-menu-toggle-button"
+            className="space-context-menu-toggle-button relative z-10"
             onClick={() => setIsMenuExpanded(true)}
           >
             <FontAwesomeIcon icon={faChevronDown} />

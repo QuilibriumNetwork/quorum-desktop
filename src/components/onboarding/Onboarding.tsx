@@ -88,7 +88,7 @@ export const Onboarding = ({
         <div className="flex flex-row grow"></div>
         <div className="flex flex-row grow font-semibold text-2xl">
           <div className="flex flex-col grow"></div>
-          <div className="flex flex-col">
+          <div className="flex flex-col text-white">
             {!exported
               ? 'Welcome to Quorum!'
               : currentPasskeyInfo?.pfpUrl && currentPasskeyInfo.displayName
@@ -101,7 +101,7 @@ export const Onboarding = ({
           <>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
-              <div className="w-[460px] py-4 text-justify">
+              <div className="w-[460px] py-4 text-justify text-white">
                 <p className="py-4">
                   <b>Important first-time user information:</b>
                 </p>
@@ -145,7 +145,7 @@ export const Onboarding = ({
               <div className="w-[460px] pt-4 text-center">
                 <Button
                   type="light"
-                  className="px-8 mr-4"
+                  className="px-8 mb-4"
                   onClick={downloadKey}
                 >
                   Save User Key
@@ -166,7 +166,7 @@ export const Onboarding = ({
           <>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
-              <div className="w-[460px] py-4 text-justify">
+              <div className="w-[460px] py-4 text-justify text-white">
                 <p className="pb-4">
                   Let your friends know who you are! Pick a friendly name to
                   display in your conversations, something easier to read than{' '}
@@ -190,7 +190,7 @@ export const Onboarding = ({
                   <Button
                     type="light"
                     disabled={displayName.length === 0}
-                    className="px-8"
+                    className={`px-8 ${displayName.length === 0 ? 'btn-disabled-onboarding ' : ''}`}
                     onClick={() => {
                       updateStoredPasskey(currentPasskeyInfo!.credentialId, {
                         credentialId: currentPasskeyInfo!.credentialId,

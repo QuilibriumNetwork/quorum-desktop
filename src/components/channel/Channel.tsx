@@ -411,7 +411,7 @@ const Channel: React.FC<ChannelProps> = ({
               e.stopPropagation();
               setShowStickers(true);
             }}
-          ><FontAwesomeIcon icon={faSmile}/></div>
+          ><FontAwesomeIcon className="text-text-subtle" icon={faSmile}/></div>
           <div
             className={
               "absolute hover:bg-primary-400 cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-primary bg-center bg-no-repeat bg-[url('/send.png')] " +

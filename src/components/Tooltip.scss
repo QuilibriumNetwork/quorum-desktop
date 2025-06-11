@@ -4,11 +4,11 @@
   padding: 7px 10px;
   border-radius: 8px;
   margin-left: 11px;
-  color: var(--text-base);
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
+  color: var(--surface-00);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.22);
   z-index: 2000;
   position: absolute;
-  background-color: var(--surface-6); /* Light background as default */
+  background-color: var(--surface-9); /* Light background as default */
 }
 
 /* Dark tooltip variant (original dark properties) */
@@ -40,7 +40,7 @@
   position: absolute;
   left: 0;
   top: 11px;
-  border-color: transparent var(--surface-6) transparent transparent !important; /* Force light color */
+  border-color: transparent var(--surface-9) transparent transparent !important; /* Force light color */
 }
 
 .quorum-tooltip-dark-arrow-left::before {
@@ -62,6 +62,8 @@
   left: -10px;
 }
 
+
+
 /* Right arrow */
 .quorum-tooltip-arrow-right::after {
   content: '';
@@ -71,7 +73,7 @@
   position: absolute;
   right: -11px;
   top: 11px;
-  border-color: transparent transparent transparent var(--surface-6); /* Light arrow */
+  border-color: transparent transparent transparent var(--surface-9); /* Light arrow */
 }
 
 .quorum-tooltip-dark-arrow-right::after {
@@ -94,7 +96,7 @@
   position: absolute;
   left: calc(50% - 8px);
   top: -11px;
-  border-color: transparent transparent var(--surface-6) transparent; /* Light arrow */
+  border-color: transparent transparent var(--surface-9) transparent; /* Light arrow */
 }
 
 .quorum-tooltip-dark-arrow-up::before {
@@ -117,7 +119,7 @@
   position: absolute;
   right: calc(50% - 8px);
   bottom: -11px;
-  border-color: var(--surface-6) transparent transparent transparent; /* Light arrow */
+  border-color: var(--surface-9) transparent transparent transparent; /* Light arrow */
 }
 
 .quorum-tooltip-dark-arrow-down::after {

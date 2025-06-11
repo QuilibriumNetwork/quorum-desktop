@@ -346,7 +346,7 @@ export const Message = ({
                     }}
                     className="w-5 text-center hover:scale-125 hover:brightness-200 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
                   >
-                    <FontAwesomeIcon className="text-red-400" icon={faTrash} />
+                    <FontAwesomeIcon className="text-danger" icon={faTrash} />
                   </div>
                 </>
               )}

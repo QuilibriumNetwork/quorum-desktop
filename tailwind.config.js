@@ -39,12 +39,19 @@ export default {
         'surface-6': 'var(--surface-6)',
         'surface-7': 'var(--surface-7)',
         'surface-8': 'var(--surface-8)',
+        'surface-9': 'var(--surface-9)',
         'surface-border': 'var(--surface-border)',
 
         // Text
         'text-base': 'var(--text-base)',
         'text-subtle': 'var(--text-subtle)',
         'text-muted': 'var(--text-muted)',
+
+        // Others
+        'danger': 'var(--danger)',
+        'warning': 'var(--warning)',
+        'success': 'var(--success)',
+        'info': 'var(--info)',
       },
     },
   },

@@ -27,7 +27,7 @@ const Button = (props) => {
         {props.children}
       </span>
       {props.tooltip && (
-        <Tooltip visible={isTooltipOpen} arrow="left">
+        <Tooltip visible={isTooltipOpen} arrow="left" className='absolute'>
           {props.tooltip}
         </Tooltip>
       )}
