@@ -332,23 +332,22 @@ const UserSettingsModal: React.FunctionComponent<{
                             <div className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1">
                               ℹ
                             </div>
-                            {allowSyncTooltip && (
-                              <div className="absolute left-[150%] top-0 z-50 w-[400px]">
-                                <Tooltip
-                                variant='dark'
-                                  arrow="left"
-                                  className="w-[400px]"
-                                  visible={true}
-                                >
-                                  When enabled, synchronizes your user data,
-                                  spaces, and space keys between devices.
-                                  Enabling this increases metadata visibility of
-                                  your account, which can reveal when you have
-                                  joined new spaces, although not the spaces you
-                                  have joined.
-                                </Tooltip>
-                              </div>
-                            )}
+
+                            <div className="absolute left-[150%] top-0 z-50 w-[400px]">
+                              <Tooltip
+                                variant="dark"
+                                arrow="left"
+                                className="w-[400px] absolute"
+                                visible={allowSyncTooltip}
+                              >
+                                When enabled, synchronizes your user data,
+                                spaces, and space keys between devices. Enabling
+                                this increases metadata visibility of your
+                                account, which can reveal when you have joined
+                                new spaces, although not the spaces you have
+                                joined.
+                              </Tooltip>
+                            </div>
                           </div>
                         </div>
 
@@ -370,25 +369,24 @@ const UserSettingsModal: React.FunctionComponent<{
                             <div className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1">
                               ℹ
                             </div>
-                            {nonRepudiableTooltip && (
-                              <div className="absolute left-[150%] top-0 z-50 w-[400px]">
-                                <Tooltip
-                                variant='dark'
-                                  arrow="left"
-                                  className="w-[400px]"
-                                  visible={true}
-                                >
-                                  When enabled, direct messages are not signed
-                                  by your user key. This improves performance,
-                                  but can allow the user you are communicating
-                                  with to forge messages to you as if they came
-                                  from you. They cannot forge messages to other
-                                  people as if they came from you. This does not
-                                  impact the repudiability of spaces, as this is
-                                  a configuration option by the space owner.
-                                </Tooltip>
-                              </div>
-                            )}
+
+                            <div className="absolute left-[150%] top-0 z-50 w-[400px]">
+                              <Tooltip
+                                variant="dark"
+                                arrow="left"
+                                className="w-[400px] absolute"
+                                visible={nonRepudiableTooltip}
+                              >
+                                When enabled, direct messages are not signed by
+                                your user key. This improves performance, but
+                                can allow the user you are communicating with to
+                                forge messages to you as if they came from you.
+                                They cannot forge messages to other people as if
+                                they came from you. This does not impact the
+                                repudiability of spaces, as this is a
+                                configuration option by the space owner.
+                              </Tooltip>
+                            </div>
                           </div>
                         </div>
 

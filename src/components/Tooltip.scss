@@ -18,7 +18,7 @@
   border-radius: 8px;
   margin-left: 11px;
   color: var(--text-base);
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.22);
   z-index: 2000;
   position: absolute;
   background-color: var(--surface-1); /* Dark background */
@@ -34,6 +34,7 @@
 /* Left arrow */
 .quorum-tooltip-arrow-left::before {
   content: '';
+  position: absolute;
   border-style: solid;
   border-width: 8px 11px 8px 0;
   position: absolute;
@@ -42,9 +43,10 @@
   border-color: transparent var(--surface-6) transparent transparent !important; /* Force light color */
 }
 
-
 .quorum-tooltip-dark-arrow-left::before {
   content: '';
+  left: -10px;
+  position: absolute;
   border-style: solid;
   border-width: 8px 11px 8px 0;
   position: absolute;
@@ -52,6 +54,8 @@
   top: 11px;
   border-color: transparent var(--surface-1) transparent transparent;
 }
+
+
 
 .quorum-tooltip-arrow-left.absolute::before,
 .quorum-tooltip-dark-arrow-left.absolute::before {
@@ -61,6 +65,7 @@
 /* Right arrow */
 .quorum-tooltip-arrow-right::after {
   content: '';
+  position: absolute;
   border-style: solid;
   border-width: 8px 0 8px 11px;
   position: absolute;
@@ -71,6 +76,7 @@
 
 .quorum-tooltip-dark-arrow-right::after {
   content: '';
+  position: absolute;
   border-style: solid;
   border-width: 8px 0 8px 11px;
   position: absolute;
@@ -82,6 +88,7 @@
 /* Up arrow */
 .quorum-tooltip-arrow-up::before {
   content: '';
+  position: absolute;
   border-style: solid;
   border-width: 0 8px 11px 8px;
   position: absolute;
@@ -92,6 +99,7 @@
 
 .quorum-tooltip-dark-arrow-up::before {
   content: '';
+  position: absolute;
   border-style: solid;
   border-width: 0 8px 11px 8px;
   position: absolute;
@@ -103,6 +111,7 @@
 /* Down arrow */
 .quorum-tooltip-arrow-down::after {
   content: '';
+  position: absolute;
   border-style: solid;
   border-width: 11px 8px 0 8px;
   position: absolute;
@@ -113,6 +122,7 @@
 
 .quorum-tooltip-dark-arrow-down::after {
   content: '';
+  position: absolute;
   border-style: solid;
   border-width: 11px 8px 0 8px;
   position: absolute;

@@ -93,7 +93,13 @@ const App = () => {
         // @ts-ignore
         window.electron && <CustomTitlebar />
       }
-      <ErrorBoundary fallback={<Maintenance />}>
+      <ErrorBoundary
+        fallback={
+          <div className="bg-primary--accent--noise flex flex-col min-h-screen text-text-base">
+            <Maintenance />
+          </div>
+        }
+      >
         {user && currentPasskeyInfo ? (
           <div className="bg-[var(--surface-00)] flex flex-col min-h-screen text-text-base">
             <Suspense fallback={<Connecting />}>

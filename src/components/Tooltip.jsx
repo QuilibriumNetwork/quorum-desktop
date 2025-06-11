@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import './Tooltip.scss';
 
 const Tooltip = ({ arrow, visible = true, variant = 'light', className = '', children }) => (
-  <div className={`z-[2000] w-0 ${className}`}>
+  <div className={`z-[2000] ${className}`}>
     <span
       className={`
         ${variant === 'dark' ? 'quorum-tooltip-dark' : 'quorum-tooltip'}
@@ -19,7 +19,7 @@ const Tooltip = ({ arrow, visible = true, variant = 'light', className = '', chi
 Tooltip.propTypes = {
   arrow: PropTypes.oneOf(['left', 'right', 'up', 'down', 'none']).isRequired,
   visible: PropTypes.bool,
-  variant: PropTypes.oneOf(['light', 'dark']), // Updated to reflect new default
+  variant: PropTypes.oneOf(['light', 'dark']),
   className: PropTypes.string,
   children: PropTypes.node,
 };

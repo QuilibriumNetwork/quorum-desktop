@@ -461,11 +461,11 @@ const SpaceEditor: React.FunctionComponent<{
                               ℹ
                             </div>
                           </div>
-                          <div className="absolute left-[322px]">
+                          <div className="absolute left-[340px]">
                             <Tooltip
                               arrow="left"
                               variant="dark"
-                              className="w-[400px]"
+                              className="w-[400px] absolute"
                               visible={repudiableTooltip}
                             >
                               Repudiability is a setting that makes conversations in this space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.
@@ -944,8 +944,8 @@ const SpaceEditor: React.FunctionComponent<{
                               <div className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg">
                                 ℹ
                               </div>
-                              <div className="absolute left-8 top-0 z-50 w-[400px] hidden group-hover:block">
-                                <Tooltip arrow="left" variant="dark" className="w-[400px]">
+                              <div className="absolute left-8 -top-[5px] z-50 w-[400px] hidden group-hover:block">
+                                <Tooltip arrow="left" variant="dark" className="absolute w-[400px]">
                                   Public invite links allow anyone with access
                                   to the link join your space. Understand the
                                   risks of enabling this, and to whom and where
