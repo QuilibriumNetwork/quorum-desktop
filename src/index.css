@@ -66,38 +66,36 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    /* Surface */
-    --surface-00: #ffffff;
-    --surface-00-rgb: 255, 255, 255;
-    --surface-0: #fbfbfd;
-    --surface-1: #f2f2f5;
-    --surface-2: #e9e9ed;
-    --surface-3: #e0e0e5;
-    --surface-4: #d7d7dd;
-    --surface-5: #ceced4;
-    --surface-6: #c6c6cc;
-    --surface-7: #bdbdc3;
-    --surface-8: #b4b4bb;
-    --surface-9: #9b9ba3;
+html.light {
+  /* Surface */
+  --surface-00: #ffffff;
+  --surface-00-rgb: 255, 255, 255;
+  --surface-0: #fbfbfd;
+  --surface-1: #f2f2f5;
+  --surface-2: #e9e9ed;
+  --surface-3: #e0e0e5;
+  --surface-4: #d7d7dd;
+  --surface-5: #ceced4;
+  --surface-6: #c6c6cc;
+  --surface-7: #bdbdc3;
+  --surface-8: #b4b4bb;
+  --surface-9: #9b9ba3;
 
-    --text-base: #1a1a1a;
-    --text-subtle: #444444;
-    --text-muted: #6e6e6e;
+  --text-base: #1a1a1a;
+  --text-subtle: #444444;
+  --text-muted: #6e6e6e;
 
-    /* General */
-    color: var(--text-base);
-    background-color: var(--surface-00);
-  }
+  /* General */
+  color: var(--text-base);
+  background-color: var(--surface-00);
+}
 
-  a:hover {
-    color: var(--primary-400); /* reused from existing theme */
-  }
+html.light a:hover {
+  color: var(--primary-400); /* reused from existing theme */
+}
 
-  button {
-    background-color: #f0f0f0;
-  }
+html.light button {
+  background-color: #f0f0f0;
 }
 
 .EmojiPickerReact {

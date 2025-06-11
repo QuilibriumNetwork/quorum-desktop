@@ -7,6 +7,7 @@ import { MessageDBProvider } from './components/context/MessageDB.tsx';
 import './index.css';
 import App from './App.tsx';
 import { WebSocketProvider } from './components/context/WebsocketProvider.tsx';
+import { ThemeProvider } from './components/context/ThemeProvider.tsx';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,7 +28,9 @@ createRoot(document.getElementById('root')).render(
         <QuorumApiClientProvider>
           <WebSocketProvider>
             <MessageDBProvider>
-              <App />
+              <ThemeProvider>
+                <App />
+              </ThemeProvider>
             </MessageDBProvider>
           </WebSocketProvider>
         </QuorumApiClientProvider>

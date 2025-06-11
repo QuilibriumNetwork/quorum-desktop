@@ -14,12 +14,12 @@ const DirectMessageContact: React.FunctionComponent<{
     <Link to={`/messages/${props.address}`}>
       <div
         className={
-          'relative direct-message-contact flex flex-row rounded-lg hover:bg-surface-6' +
-          (address === props.address ? ' bg-surface-5' : '')
+          'relative direct-message-contact flex flex-row rounded-lg hover:bg-surface-5' +
+          (address === props.address ? ' bg-surface-4' : '')
         }
       >
         {props.unread && address !== props.address && (
-          <div className="w-1 h-1 mt-4 absolute ml-[-6pt] bg-white rounded-full"></div>
+          <div className="w-1 h-1 mt-4 absolute ml-[-6pt] bg-primary rounded-full"></div>
         )}
         <div
           className="direct-message-contact-icon flex flex-col justify-around w-[38px] bg-cover bg-center rounded-full"

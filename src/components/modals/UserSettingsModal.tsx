@@ -10,6 +10,7 @@ import { useMessageDB } from '../context/MessageDB';
 import ToggleSwitch from '../ToggleSwitch';
 import Tooltip from '../Tooltip';
 import { UserConfig } from '../../db/messages';
+import ThemeRadioGroup from '../ThemeRadioGroup';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -169,10 +170,8 @@ const UserSettingsModal: React.FunctionComponent<{
         <div
           onClick={() => setSelectedCategory('general')}
           className={
-            (selectedCategory == 'general'
-              ? 'bg-[rgba(235,200,255,0.1)] '
-              : '') +
-            'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
+            (selectedCategory == 'general' ? 'bg-surface-5 ' : '') +
+            'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
           General
@@ -180,13 +179,20 @@ const UserSettingsModal: React.FunctionComponent<{
         <div
           onClick={() => setSelectedCategory('privacy')}
           className={
-            (selectedCategory == 'privacy'
-              ? 'bg-[rgba(235,200,255,0.1)] '
-              : '') +
-            'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
+            (selectedCategory == 'privacy' ? 'bg-surface-5 ' : '') +
+            'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
           Privacy/Security
+        </div>
+        <div
+          onClick={() => setSelectedCategory('appearance')}
+          className={
+            (selectedCategory === 'appearance' ? 'bg-surface-5 ' : '') +
+            'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
+          }
+        >
+          Appearance
         </div>
       </div>
       <div className="flex flex-col grow overflow-y-scroll rounded-xl">
@@ -410,6 +416,16 @@ const UserSettingsModal: React.FunctionComponent<{
                     </div>
                   </div>
                 </>
+              );
+            case 'appearance':
+              return (
+                <div className="user-settings-content px-4 py-6 flex flex-col gap-4">
+                  <div className="text-xl font-bold">Appearance</div>
+                  <div className="text-sm text-text-base">
+                    Choose your preferred theme for Quorum.
+                  </div>
+                  <ThemeRadioGroup />
+                </div>
               );
           }
         })()}
