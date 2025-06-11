@@ -120,13 +120,12 @@ const UserProfile: React.FunctionComponent<{
             className="user-profile-icon-editable"
             style={{
               backgroundImage:
-                fileData != undefined
-                  ? 'url(data:' +
-                    acceptedFiles[0].type +
-                    ';base64,' +
-                    Buffer.from(fileData).toString('base64') +
-                    ')'
-                  : `url(${props.user.userIcon})`,
+                fileData !== undefined
+                  ? `url(data:${acceptedFiles[0].type};base64,${Buffer.from(fileData).toString('base64')})`
+                  : props.user.userIcon &&
+                      !props.user.userIcon.includes('unknown.png')
+                    ? `url(${props.user.userIcon})`
+                    : 'var(--unknown-icon)',
             }}
             {...getRootProps()}
           >
@@ -135,7 +134,13 @@ const UserProfile: React.FunctionComponent<{
         ) : (
           <div
             className="user-profile-icon"
-            style={{ backgroundImage: `url(${props.user.userIcon})` }}
+            style={{
+              backgroundImage:
+                props.user.userIcon &&
+                !props.user.userIcon.includes('unknown.png')
+                  ? `url(${props.user.userIcon})`
+                  : 'var(--unknown-icon)',
+            }}
           />
         )}
         <div className="user-profile-text">

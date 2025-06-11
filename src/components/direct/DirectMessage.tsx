@@ -159,6 +159,8 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
 
   const rowCount = pendingMessage.split('').filter((c) => c == '\n').length + 1;
 
+  const icon = mapSenderToUser(address ?? '').userIcon;
+
   return (
     <div className="direct-message">
       <div className="flex flex-col">
@@ -168,7 +170,10 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               <div
                 className="w-[28px] h-[28px] bg-cover bg-center rounded-full"
                 style={{
-                  backgroundImage: `url(${mapSenderToUser(address ?? '').userIcon ?? '/unknown.png'})`,
+                  backgroundImage:
+                    icon === '/unknown.png'
+                      ? 'var(--unknown-icon)'
+                      : `url(${icon})`,
                 }}
               />
             </div>
@@ -177,7 +182,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 <span>{mapSenderToUser(address ?? '').displayName} |</span>
               </div>
               <div className="flex flex-col justify-around pl-1">
-                <span className="font-light text-sm">{address}</span>
+                <span className="font-light text-sm text-text-subtle">{address}</span>
               </div>
             </div>
           </div>
@@ -395,7 +400,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       </div>
       <div
         className={
-          'w-[260px] bg-surface-4 p-3 overflow-scroll ' +
+          'w-[260px] bg-surface-3 p-3 overflow-scroll ' +
           (showUsers ? '' : 'hidden')
         }
       >
@@ -414,7 +419,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 <span className="text-md font-bold truncate w-[190px]">
                   {members[s].displayName}
                 </span>
-                <span className="text-sm truncate w-[190px]">
+                <span className="text-sm truncate w-[190px] opacity-70">
                   {members[s].address}
                 </span>
               </div>

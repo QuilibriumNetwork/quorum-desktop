@@ -206,13 +206,14 @@ const UserSettingsModal: React.FunctionComponent<{
                       className="user-settings-icon-editable"
                       style={{
                         backgroundImage:
-                          fileData != undefined && acceptedFiles.length != 0
-                            ? 'url(data:' +
-                              acceptedFiles[0].type +
-                              ';base64,' +
-                              Buffer.from(fileData).toString('base64') +
-                              ')'
-                            : `url(${currentPasskeyInfo?.pfpUrl})`,
+                          fileData !== undefined && acceptedFiles.length !== 0
+                            ? `url(data:${acceptedFiles[0].type};base64,${Buffer.from(fileData).toString('base64')})`
+                            : currentPasskeyInfo?.pfpUrl &&
+                                !currentPasskeyInfo.pfpUrl.includes(
+                                  'unknown.png'
+                                )
+                              ? `url(${currentPasskeyInfo.pfpUrl})`
+                              : 'var(--unknown-icon)',
                       }}
                       {...getRootProps()}
                     >

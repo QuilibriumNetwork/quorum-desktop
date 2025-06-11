@@ -58,7 +58,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
             onClick={() => setIsMenuExpanded(false)}
           />
           <Tooltip
-            variant='light'
+            variant="light"
             className="user-status-menu bottom-[24px] w-[200px] !p-[2px]"
             arrow="none"
             visible={isMenuExpanded}
@@ -79,7 +79,13 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
       <div onClick={() => setIsMenuExpanded(true)} className="user-status">
         <div
           className="user-status-icon"
-          style={{ backgroundImage: `url(${props.user.userIcon})` }}
+          style={{
+            backgroundImage:
+              props.user.userIcon &&
+              !props.user.userIcon.includes('unknown.png')
+                ? `url(${props.user.userIcon})`
+                : 'var(--unknown-icon)',
+          }}
         />
         <div className="user-status-text">
           <div className="user-status-username w-[164px] text-ellipsis overflow-hidden">

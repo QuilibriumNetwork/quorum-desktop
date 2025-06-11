@@ -136,7 +136,7 @@ export const Message = ({
   return (
     <div
       className={
-        'text-base relative hover:bg-surface-4 flex flex-col ' +
+        'text-base relative hover:bg-surface-3 flex flex-col ' +
         (message.mentions?.memberIds.includes(user.currentPasskeyInfo!.address)
           ? ' message-mentions-you'
           : '')
@@ -257,7 +257,7 @@ export const Message = ({
                 e.stopPropagation();
                 return false;
               }}
-              className="absolute flex flex-row right-[20px] top-[-10px] p-1 bg-surface-6 select-none border border-surface-7 shadow-lg rounded-lg"
+              className="absolute flex flex-row right-[20px] top-[-10px] p-1 bg-surface-0 select-none shadow-lg rounded-lg"
             >
               <div
                 onClick={() => {
@@ -273,7 +273,7 @@ export const Message = ({
                     });
                   }
                 }}
-                className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 hover:brightness-200 transition duration-200"
+                className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125  transition duration-200"
               >
                 ❤️
               </div>
@@ -291,7 +291,7 @@ export const Message = ({
                     });
                   }
                 }}
-                className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 hover:brightness-200 transition duration-200"
+                className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125  transition duration-200"
               >
                 👍
               </div>
@@ -309,11 +309,11 @@ export const Message = ({
                     });
                   }
                 }}
-                className="w-5 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 hover:brightness-200 transition duration-200"
+                className="w-5 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125  transition duration-200"
               >
                 🔥
               </div>
-              <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-2"></div>
+              <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
               <div
                 onClick={(e) => {
                   setEmojiPickerOpen(message.messageId);
@@ -321,22 +321,22 @@ export const Message = ({
                     e.clientY / height > 0.5 ? 'upwards' : 'downwards'
                   );
                 }}
-                className="w-5 mr-2 text-center hover:scale-125 hover:brightness-200 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                className="w-5 mr-2 text-center hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
-                <FontAwesomeIcon icon={faFaceSmileBeam} />
+                <FontAwesomeIcon icon={faFaceSmileBeam} className="text-surface-9" />
               </div>
               <div
                 onClick={() => {
                   setInReplyTo(message);
                   editorRef?.focus();
                 }}
-                className="w-5 text-center hover:scale-125 hover:brightness-200 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                className="w-5 text-center hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
-                <FontAwesomeIcon icon={faReply} />
+                <FontAwesomeIcon icon={faReply} className="text-surface-9" />
               </div>
               {canUserDelete && (
                 <>
-                  <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-2"></div>
+                  <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
                   <div
                     onClick={() => {
                       submitMessage({
@@ -344,7 +344,7 @@ export const Message = ({
                         removeMessageId: message.messageId,
                       });
                     }}
-                    className="w-5 text-center hover:scale-125 hover:brightness-200 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                    className="w-5 text-center hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
                   >
                     <FontAwesomeIcon className="text-danger" icon={faTrash} />
                   </div>
@@ -390,7 +390,12 @@ export const Message = ({
               e.stopPropagation();
             }}
             className="message-sender-icon"
-            style={{ backgroundImage: `url(${sender.userIcon})` }}
+            style={{
+              backgroundImage:
+                sender.userIcon === '/unknown.png'
+                  ? 'var(--unknown-icon)'
+                  : `url(${sender.userIcon})`,
+            }}
           />
           <div className="message-content">
             <span className="message-sender-name">{sender.displayName}</span>
@@ -464,7 +469,7 @@ export const Message = ({
                             {linkify.test(t) ? (
                               <a
                                 href={linkify.find(t)[0].href}
-                                className="text-primary-300 hover:text-primary-100 hover:underline"
+                                className="text-primary-300 hover:text-primary-400 hover:underline"
                                 target="_blank"
                                 referrerPolicy="no-referrer"
                               >
@@ -521,9 +526,9 @@ export const Message = ({
                 <div
                   key={message.messageId + '-reactions-' + r.emojiId}
                   className={
-                    'cursor-pointer flex flex-row mr-1 border hover:border-[rgba(255,255,255,0.1)] rounded-lg py-[1pt] px-2 bg-[var(--surface-3)]' +
+                    'cursor-pointer flex flex-row mr-1 border hover:border-surface-7 rounded-lg py-[1pt] px-2 bg-[var(--surface-0)]' +
                     (r.memberIds.includes(user.currentPasskeyInfo!.address)
-                      ? ' border-[var(--primary-200)]'
+                      ? ' border-[var(--primary-300)]'
                       : ' border-[rgba(0,0,0,0)]')
                   }
                   onClick={() => {

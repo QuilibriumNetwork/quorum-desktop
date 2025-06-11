@@ -14,7 +14,7 @@ const DirectMessageContact: React.FunctionComponent<{
     <Link to={`/messages/${props.address}`}>
       <div
         className={
-          'relative direct-message-contact flex flex-row rounded-lg hover:bg-surface-5' +
+          'relative direct-message-contact flex flex-row rounded-lg hover:bg-surface-6' +
           (address === props.address ? ' bg-surface-4' : '')
         }
       >
@@ -24,13 +24,16 @@ const DirectMessageContact: React.FunctionComponent<{
         <div
           className="direct-message-contact-icon flex flex-col justify-around w-[38px] bg-cover bg-center rounded-full"
           style={{
-            backgroundImage: `url(${props.userIcon ?? '/unknown.png'})`,
+            backgroundImage:
+              props.userIcon && !props.userIcon.includes('unknown.png')
+                ? `url(${props.userIcon})`
+                : 'var(--unknown-icon)',
           }}
         ></div>
         <div className="flex flex-col justify-around">
           <div
             className={
-              'direct-message-contact-name text-text-base opacity-80 pl-2 w-[180px] truncate ' +
+              'direct-message-contact-name text-text-base opacity-90 pl-2 w-[180px] truncate ' +
               (props.unread && address !== props.address
                 ? '!font-extrabold'
                 : ' ')

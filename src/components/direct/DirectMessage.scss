@@ -22,12 +22,12 @@
   margin-top: 4px;
   font-weight: 700;
   min-width: 29px;
-  color: #fff;
+  color: var(--text-base);
 }
 
 .message-mentions-you {
-  border-left: 2px solid #eeb155;
-  background: #6e5145;
+  border-left: 2px solid var(--primary);
+  background: var(--highlight);
 }
 
 .message-mentions-role {
@@ -40,7 +40,7 @@
 }
 
 .message-name-mentions-you {
-  background: #eeb155;
+  background: var(--primary);
 }
 
 .message-list {
@@ -81,7 +81,7 @@
 }
 
 .message-timestamp {
-  opacity: 0.4;
+  color: var(--text-muted);
   margin-left: 9px;
   font-size: 10pt;
 }
