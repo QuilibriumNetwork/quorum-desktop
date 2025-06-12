@@ -40,6 +40,7 @@ export default {
         'surface-7': 'var(--surface-7)',
         'surface-8': 'var(--surface-8)',
         'surface-9': 'var(--surface-9)',
+        'surface-10': 'var(--surface-10)',
         'surface-border': 'var(--surface-border)',
 
         // Text
@@ -49,6 +50,7 @@ export default {
 
         // Others
         'danger': 'var(--danger)',
+        'danger-hover': 'var(--danger-hover)',
         'warning': 'var(--warning)',
         'success': 'var(--success)',
         'info': 'var(--info)',

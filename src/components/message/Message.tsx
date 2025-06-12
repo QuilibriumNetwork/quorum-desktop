@@ -321,18 +321,18 @@ export const Message = ({
                     e.clientY / height > 0.5 ? 'upwards' : 'downwards'
                   );
                 }}
-                className="w-5 mr-2 text-center hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
-                <FontAwesomeIcon icon={faFaceSmileBeam} className="text-surface-9" />
+                <FontAwesomeIcon icon={faFaceSmileBeam} />
               </div>
               <div
                 onClick={() => {
                   setInReplyTo(message);
                   editorRef?.focus();
                 }}
-                className="w-5 text-center hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
-                <FontAwesomeIcon icon={faReply} className="text-surface-9" />
+                <FontAwesomeIcon icon={faReply} />
               </div>
               {canUserDelete && (
                 <>
@@ -344,7 +344,7 @@ export const Message = ({
                         removeMessageId: message.messageId,
                       });
                     }}
-                    className="w-5 text-center hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                    className="w-5 text-center text-danger hover:text-danger-hover hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
                   >
                     <FontAwesomeIcon className="text-danger" icon={faTrash} />
                   </div>
@@ -448,6 +448,7 @@ export const Message = ({
                                 height={'400'}
                                 src={'https://www.youtube.com/embed/' + group}
                                 allow="autoplay; encrypted-media"
+                                className="rounded-lg"
                               ></iframe>
                             </div>
                           );
@@ -501,12 +502,14 @@ export const Message = ({
                         height={content.height || '400'}
                         src={content.videoUrl}
                         allow="autoplay; encrypted-media"
+                        className="rounded-lg"
                       ></iframe>
                     )}
                     {content.imageUrl && (
                       <img
                         src={content.imageUrl}
                         style={{ maxWidth: 300, maxHeight: 300 }}
+                        className="rounded-lg"
                       />
                     )}
                   </div>
@@ -517,6 +520,7 @@ export const Message = ({
                   <img
                     src={sticker?.imgUrl}
                     style={{ maxWidth: 300, maxHeight: 300 }}
+                    className="rounded-lg"
                   />
                 );
               }

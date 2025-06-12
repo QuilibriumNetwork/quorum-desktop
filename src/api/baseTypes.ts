@@ -584,6 +584,7 @@ export class QuorumApiClient extends AbstractQuorumApiClient {
         TOOLTIP_JOIN_SPACE: remap(['Join an existing Space', []]),
         TOOLTIP_SEARCH_SPACES: remap(['Search for Public Spaces', []]),
         FILE_TOO_LARGE: remap(['The file is too large', []]),
+        FILE_TOO_LARGE_2MB: remap(['The file is too large (max 2 MB)', []]),
         FILE_REJECTED: remap([
           'Unsupported file format or error during upload',
           [],

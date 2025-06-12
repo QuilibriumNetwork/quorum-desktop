@@ -13,8 +13,12 @@ import { useInvalidateConversation } from '../../hooks/queries/conversation/useI
 import { MessageList } from '../message/MessageList';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
+import { useLocalization } from '../../hooks';
 
 const DirectMessage: React.FC<{}> = (p: {}) => {
+  const [fileError, setFileError] = useState<string | null>(null);
+  const { data: localization } = useLocalization({ langId: 'en' });
+  const localizations = localization.localizations;
   let { address } = useParams<{ address: string }>();
   const conversationId = address! + '/' + address!;
   const [pendingMessage, setPendingMessage] = useState('');
@@ -47,7 +51,19 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         'image/gif': ['.gif'],
       },
       minSize: 0,
-      maxSize: 2 * 1024 * 1024,
+      maxSize: 2 * 1024 * 1024, // 2MB
+      onDropRejected: (fileRejections) => {
+        for (const rejection of fileRejections) {
+          if (rejection.errors.some((err) => err.code === 'file-too-large')) {
+            setFileError(localizations['FILE_TOO_LARGE_2MB']([]));
+          } else {
+            setFileError(localizations['FILE_REJECTED']([]));
+          }
+        }
+      },
+      onDropAccepted: () => {
+        setFileError(null);
+      },
     });
 
   const compressImage = async function (file: FileWithPath) {
@@ -182,7 +198,9 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 <span>{mapSenderToUser(address ?? '').displayName} |</span>
               </div>
               <div className="flex flex-col justify-around pl-1">
-                <span className="font-light text-sm text-text-subtle">{address}</span>
+                <span className="font-light text-sm text-text-subtle">
+                  {address}
+                </span>
               </div>
             </div>
           </div>
@@ -215,15 +233,18 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
             }}
           />
         </div>
-        {(() => {
-          if (inReplyTo) {
-            return (
+        {(fileError || inReplyTo) && (
+          <div className="flex flex-col w-full px-[11px]">
+            {fileError && (
+              <div className="text-sm text-danger ml-1 mt-3 mb-1">{fileError}</div>
+            )}
+            {inReplyTo && (
               <div
                 onClick={() => setInReplyTo(undefined)}
-                className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-surface-4 ml-[11px] mr-[11px]"
+                className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-surface-4"
               >
                 Replying to{' '}
-                {mapSenderToUser(inReplyTo.content.senderId).displayName}{' '}
+                {mapSenderToUser(inReplyTo.content.senderId).displayName}
                 <span
                   className="message-in-reply-dismiss"
                   onClick={() => setInReplyTo(undefined)}
@@ -231,11 +252,10 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   x
                 </span>
               </div>
-            );
-          } else {
-            return <></>;
-          }
-        })()}
+            )}
+          </div>
+        )}
+
         {fileData && (
           <div className="mx-3 mt-2">
             <div className="p-2 relative rounded-lg bg-[rgba(0,0,0,0.2)] inline-block">
@@ -260,6 +280,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
             </div>
           </div>
         )}
+
         <div {...getRootProps()} className="flex flex-row relative">
           <div
             className={
@@ -270,6 +291,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
             <input {...getInputProps()} />
             <FontAwesomeIcon className="text-text-subtle" icon={faPlus} />
           </div>
+
           <textarea
             ref={editor}
             className={
@@ -400,7 +422,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       </div>
       <div
         className={
-          'w-[260px] bg-surface-3 p-3 overflow-scroll ' +
+          'w-[260px] bg-surface-3 p-3 ' + // removed overflow-scroll
           (showUsers ? '' : 'hidden')
         }
       >
@@ -419,7 +441,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 <span className="text-md font-bold truncate w-[190px]">
                   {members[s].displayName}
                 </span>
-                <span className="text-sm truncate w-[190px] opacity-70">
+                <span className="text-xs truncate w-[190px] opacity-70">
                   {members[s].address}
                 </span>
               </div>
