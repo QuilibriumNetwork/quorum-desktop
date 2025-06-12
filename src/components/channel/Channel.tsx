@@ -6,10 +6,19 @@ import React, {
   useState,
 } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faSmile, faUsers, faX } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPlus,
+  faSmile,
+  faUsers,
+  faX,
+} from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import './Channel.scss';
-import { EmbedMessage, Message as MessageType, StickerMessage } from '../../api/quorumApi';
+import {
+  EmbedMessage,
+  Message as MessageType,
+  StickerMessage,
+} from '../../api/quorumApi';
 import { useMessages, useSpace } from '../../hooks';
 import { useMessageDB } from '../context/MessageDB';
 import { useQueryClient } from '@tanstack/react-query';
@@ -18,6 +27,7 @@ import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import { MessageList } from '../message/MessageList';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
+import { useLocalization } from '../../hooks';
 
 type ChannelProps = {
   spaceId: string;
@@ -58,6 +68,9 @@ const Channel: React.FC<ChannelProps> = ({
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
   const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
   const [fileType, setFileType] = React.useState<string>();
+  const [fileError, setFileError] = useState<string | null>(null);
+  const { data: localization } = useLocalization({ langId: 'en' });
+  const localizations = localization.localizations;
   const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
     accept: {
       'image/png': ['.png'],
@@ -66,6 +79,18 @@ const Channel: React.FC<ChannelProps> = ({
     },
     minSize: 0,
     maxSize: 2 * 1024 * 1024,
+    onDropRejected: (fileRejections) => {
+      for (const rejection of fileRejections) {
+        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
+          setFileError(localizations['FILE_TOO_LARGE_2MB']([]));
+        } else {
+          setFileError(localizations['FILE_REJECTED']([]));
+        }
+      }
+    },
+    onDropAccepted: () => {
+      setFileError(null);
+    },
   });
 
   const compressImage = async function (file: FileWithPath) {
@@ -201,14 +226,21 @@ const Channel: React.FC<ChannelProps> = ({
   };
 
   const stickers = useMemo(() => {
-    return (space?.stickers ?? []).reduce((prev, curr) => Object.assign(prev, {[curr.id]: curr}), {});
+    return (space?.stickers ?? []).reduce(
+      (prev, curr) => Object.assign(prev, { [curr.id]: curr }),
+      {}
+    );
   }, [space]);
 
   const sendSticker = async (stickerId: string) => {
     submitChannelMessage(
       spaceId,
       channelId,
-      { senderId: user.currentPasskeyInfo?.address, type: "sticker", stickerId: stickerId } as StickerMessage,
+      {
+        senderId: user.currentPasskeyInfo?.address,
+        type: 'sticker',
+        stickerId: stickerId,
+      } as StickerMessage,
       queryClient,
       user.currentPasskeyInfo!,
       inReplyTo?.messageId
@@ -266,15 +298,20 @@ const Channel: React.FC<ChannelProps> = ({
             }}
           />
         </div>
-        {(() => {
-          if (inReplyTo) {
-            return (
+        {(fileError || inReplyTo) && (
+          <div className="flex flex-col w-full px-[11px]">
+            {fileError && (
+              <div className="text-sm text-danger ml-1 mt-3 mb-1">
+                {fileError}
+              </div>
+            )}
+            {inReplyTo && (
               <div
                 onClick={() => setInReplyTo(undefined)}
-                className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-[var(--surface-4)] ml-[11px] mr-[11px]"
+                className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-[var(--surface-4)]"
               >
                 Replying to{' '}
-                {mapSenderToUser(inReplyTo.content.senderId).displayName}{' '}
+                {mapSenderToUser(inReplyTo.content.senderId).displayName}
                 <span
                   className="message-in-reply-dismiss"
                   onClick={() => setInReplyTo(undefined)}
@@ -282,11 +319,10 @@ const Channel: React.FC<ChannelProps> = ({
                   ×
                 </span>
               </div>
-            );
-          } else {
-            return <></>;
-          }
-        })()}
+            )}
+          </div>
+        )}
+
         {fileData && (
           <div className="mx-3 mt-2">
             <div className="p-2 relative rounded-lg bg-[rgba(0,0,0,0.2)] inline-block">
@@ -311,19 +347,34 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
           </div>
         )}
-        {showStickers && <>
-          <div
-            className="invisible-dismissal invisible-dismissal-no-blur"
-            onClick={() => setShowStickers(false)}
-          />
-          <div className="relative z-[1002]">
-          <div className="flex flex-col right-11 bottom-[0px] absolute border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4">
-            <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">Stickers</div>
-            <div className="grid grid-cols-2 gap-4 h-[359px] w-[300px] p-4 overflow-scroll">{space?.stickers.map(s => {
-              return <div key={"sticker-" + s.id} className="flex flex-col justify-around h-[126px] w-[126px]" onClick={() => sendSticker(s.id)}><img src={s.imgUrl} /></div>;
-            })}</div>
-          </div>
-        </div></>}
+        {showStickers && (
+          <>
+            <div
+              className="invisible-dismissal invisible-dismissal-no-blur"
+              onClick={() => setShowStickers(false)}
+            />
+            <div className="relative z-[1002]">
+              <div className="flex flex-col right-11 bottom-[0px] absolute border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4">
+                <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">
+                  Stickers
+                </div>
+                <div className="grid grid-cols-2 gap-4 h-[359px] w-[300px] p-4 overflow-scroll">
+                  {space?.stickers.map((s) => {
+                    return (
+                      <div
+                        key={'sticker-' + s.id}
+                        className="flex flex-col justify-around h-[126px] w-[126px]"
+                        onClick={() => sendSticker(s.id)}
+                      >
+                        <img src={s.imgUrl} />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
         <div {...getRootProps()} className="flex flex-row relative">
           <div
             className={
@@ -404,14 +455,16 @@ const Channel: React.FC<ChannelProps> = ({
           />
           <div
             className={
-              "absolute hover:bg-surface-6 cursor-pointer right-14 center flex flex-col justify-around w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 " +
+              'absolute hover:bg-surface-6 cursor-pointer right-14 center flex flex-col justify-around w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 ' +
               (inReplyTo ? 'top-1' : 'top-3')
             }
             onClick={(e) => {
               e.stopPropagation();
               setShowStickers(true);
             }}
-          ><FontAwesomeIcon className="text-text-subtle" icon={faSmile}/></div>
+          >
+            <FontAwesomeIcon className="text-text-subtle" icon={faSmile} />
+          </div>
           <div
             className={
               "absolute hover:bg-primary-400 cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-primary bg-center bg-no-repeat bg-[url('/send.png')] " +
