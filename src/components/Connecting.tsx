@@ -7,7 +7,7 @@ const Connecting = () => {
     <div className="connecting-splash bg-surface-00">
       <div
         className="connecting-icon pulse"
-        style={{ backgroundImage: "url('/quorumicon.png')" }}
+        style={{ backgroundImage: "url('/quorumicon-blue.png')" }}
       ></div>
       <div className="connecting-message">Connecting</div>
     </div>

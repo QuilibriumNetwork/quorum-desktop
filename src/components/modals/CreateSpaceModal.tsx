@@ -35,6 +35,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
   const { createSpace } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const { keyset } = useRegistrationContext();
+  const [fileError, setFileError] = React.useState<string | null>(null);
   const { data: registration } = useRegistration({
     address: currentPasskeyInfo!.address,
   });
@@ -49,6 +50,18 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
       },
       minSize: 0,
       maxSize: 1 * 1024 * 1024,
+      onDropRejected: (fileRejections) => {
+        for (const rejection of fileRejections) {
+          if (rejection.errors.some((err) => err.code === 'file-too-large')) {
+            setFileError(localization.localizations['FILE_TOO_LARGE']([]));
+          } else {
+            setFileError(localization.localizations['FILE_REJECTED']([]));
+          }
+        }
+      },
+      onDropAccepted: () => {
+        setFileError(null); // Clear errors on success
+      },
     });
 
   React.useEffect(() => {
@@ -65,8 +78,11 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
       onClose={props.onClose}
       title={localization.localizations['CREATE_SPACE_TITLE']([])}
     >
-      <div className="flex flex-row justify-around pb-4 select-none cursor-default">
-        <div>{localization.localizations['SPACE_ICON_ATTACHMENT']([])}</div>
+      <div className="flex flex-col justify-around pb-4 select-none cursor-default">
+        <div className="mb-1">
+          {localization.localizations['SPACE_ICON_ATTACHMENT']([])}
+        </div>
+        {fileError && <div className="text-sm text-danger">{fileError}</div>}
       </div>
 
       <div className="flex flex-row justify-around pb-4">

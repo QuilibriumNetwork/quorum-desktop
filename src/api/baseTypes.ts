@@ -583,6 +583,11 @@ export class QuorumApiClient extends AbstractQuorumApiClient {
         TOOLTIP_ADD_SPACE: remap(['Add a Space', []]),
         TOOLTIP_JOIN_SPACE: remap(['Join an existing Space', []]),
         TOOLTIP_SEARCH_SPACES: remap(['Search for Public Spaces', []]),
+        FILE_TOO_LARGE: remap(['The file is too large', []]),
+        FILE_REJECTED: remap([
+          'Unsupported file format or error during upload',
+          [],
+        ]),
       },
     };
   }

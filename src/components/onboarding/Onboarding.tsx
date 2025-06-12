@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileImage } from '@fortawesome/free-solid-svg-icons';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
+import { useLocalization } from '../../hooks';
 
 export const Onboarding = ({
   setUser,
@@ -34,7 +35,13 @@ export const Onboarding = ({
     currentPasskeyInfo?.displayName ?? ''
   );
   const [fileData, setFileData] = useState<ArrayBuffer | undefined>();
+  const [fileError, setFileError] = useState<string | null>(null);
+
   const { apiClient } = useQuorumApiClient();
+
+  const { data: localization } = useLocalization({ langId: 'en' });
+  const localizations = localization.localizations;
+
   const uploadRegistration = useUploadRegistration();
 
   const downloadKey = async () => {
@@ -64,6 +71,18 @@ export const Onboarding = ({
       },
       minSize: 0,
       maxSize: 1 * 1024 * 1024,
+      onDropRejected: (fileRejections) => {
+        for (const rejection of fileRejections) {
+          if (rejection.errors.some((err) => err.code === 'file-too-large')) {
+            setFileError(localizations['FILE_TOO_LARGE']([]));
+          } else {
+            setFileError(localizations['FILE_REJECTED']([]));
+          }
+        }
+      },
+      onDropAccepted: () => {
+        setFileError(null);
+      },
     });
 
   useEffect(() => {
@@ -215,10 +234,16 @@ export const Onboarding = ({
             <>
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
-                <div className="w-[460px] py-4 text-justify">
-                  Make your account uniquely yours – set a contact photo. This
-                  information is only provided to the spaces you join.
+                <div className="w-[460px] flex flex-col justify-around py-4 text-white">
+                  <div className="mb-1">
+                    Make your account uniquely yours – set a contact photo. This
+                    information is only provided to the spaces you join.
+                  </div>
+                  {fileError && (
+                    <div className="error-label mt-2">{fileError}</div>
+                  )}
                 </div>
+
                 <div className="grow"></div>
               </div>
               <div className="flex flex-row justify-center">
@@ -228,6 +253,7 @@ export const Onboarding = ({
                     <div {...getRootProps()}>
                       <input {...getInputProps()} />
                       <img
+                        className="max-w-[200px] max-h-[200px] object-cover rounded-full mx-auto"
                         src={
                           fileData != undefined
                             ? 'data:' +
@@ -239,7 +265,10 @@ export const Onboarding = ({
                       />
                     </div>
                   ) : (
-                    <div className="attachment-drop" {...getRootProps()}>
+                    <div
+                      className="attachment-drop cursor-pointer"
+                      {...getRootProps()}
+                    >
                       <span className="attachment-drop-icon inline-block justify-around w-20 h-20 flex flex-col">
                         <input {...getInputProps()} />
                         <FontAwesomeIcon icon={faFileImage} />
@@ -247,6 +276,7 @@ export const Onboarding = ({
                     </div>
                   )}
                 </div>
+
                 <div className="grow"></div>
               </div>
               <div className="flex flex-row justify-center">
@@ -270,8 +300,8 @@ export const Onboarding = ({
                   </Button>
                   <Button
                     type="light"
-                    disabled={!fileData}
-                    className="px-8 mt-4"
+                    disabled={!fileData || !!fileError}
+                    className={`px-8 mt-4 ${!fileData || !!fileError ? 'btn-disabled-onboarding' : ''}`}
                     onClick={() => {
                       updateStoredPasskey(currentPasskeyInfo!.credentialId, {
                         credentialId: currentPasskeyInfo!.credentialId,
@@ -300,7 +330,7 @@ export const Onboarding = ({
             <>
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
-                <div className="w-[460px] py-4 text-center">
+                <div className="w-[460px] py-4 text-center text-white">
                   You're all set. Welcome to Quorum!
                 </div>
                 <div className="grow"></div>

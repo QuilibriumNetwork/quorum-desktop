@@ -1,4 +1,4 @@
-// not used for now as switching form unkonw.png to this is a bit complex
+// not used for now as switching from unkonw.png to this is a bit complex
 
 import React from 'react';
 
