@@ -146,7 +146,7 @@ const UserProfile: React.FunctionComponent<{
         <div className="user-profile-text">
           {props.editMode ? (
             <input
-              className="w-[180px] quorum-input"
+              className="w-[190px] quorum-input"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
             />
@@ -155,12 +155,13 @@ const UserProfile: React.FunctionComponent<{
               {props.user.displayName}
             </div>
           )}
-          <div className="flex flex-row pb-1">
-            <div className="text-xs w-[180px] truncate">
+          <div className="flex flex-row py-1 text-text-subtle">
+            <div className="text-xs w-[175px] truncate">
               {props.user.address}
             </div>
             <FontAwesomeIcon
               className="hover:text-text-base cursor-pointer"
+              title='Copy to clipboard'
               icon={faClipboard}
               onClick={() => {
                 navigator.clipboard.writeText(props.user.address);
