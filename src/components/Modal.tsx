@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
@@ -21,40 +22,37 @@ const Modal: React.FunctionComponent<ModalProps> = (props) => {
     }, 300);
   };
 
-  return props.visible ? (
-    <>
+  if (!props.visible) return null;
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[2000] flex items-center justify-center bg-[rgba(0,0,0,0.6)] backdrop-blur"
+      onClick={() => {
+        if (!props.hideClose) close();
+      }}
+    >
       <div
-        className="invisible-dismissal invisible-dark"
-        onClick={() => (props.hideClose ? (() => {})() : close())}
-      />
-      <div>
-        <div className="w-[100vw] h-[100vh] z-[2000] flex flex-col absolute top-0 left-0 justify-around">
-          <div className="flex flex-row justify-around">
-            <div
-              className={
-                'quorum-modal text-subtle' +
-                (closing ? ' quorum-modal-closing' : '')
-              }
-            >
-              {!props.hideClose && (
-                <div
-                  className="quorum-modal-close select-none cursor-pointer"
-                  onClick={() => close()}
-                >
-                  <FontAwesomeIcon icon={faTimes} />
-                </div>
-              )}
-              <div className="quorum-modal-title select-none cursor-default">
-                {props.title}
-              </div>
-              <div className="quorum-modal-container">{props.children}</div>
-            </div>
+        className={
+          'quorum-modal text-subtle relative pointer-events-auto' +
+          (closing ? ' quorum-modal-closing' : '')
+        }
+        onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+      >
+        {!props.hideClose && (
+          <div
+            className="quorum-modal-close select-none cursor-pointer"
+            onClick={close}
+          >
+            <FontAwesomeIcon icon={faTimes} />
           </div>
+        )}
+        <div className="quorum-modal-title select-none cursor-default">
+          {props.title}
         </div>
+        <div className="quorum-modal-container">{props.children}</div>
       </div>
-    </>
-  ) : (
-    <></>
+    </div>,
+    document.body
   );
 };
 

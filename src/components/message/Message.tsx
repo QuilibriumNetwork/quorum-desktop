@@ -24,6 +24,7 @@ import { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
 import UserProfile from '../user/UserProfile';
 import { useParams } from 'react-router';
 import { InviteLink } from './InviteLink';
+import Modal from '../Modal';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -58,6 +59,8 @@ const YTRegex = new RegExp(
 const InviteRegex = new RegExp(
   /^((?:https?:)?\/\/?)?((?:www\.)?(?:qm\.one|app\.quorummessenger\.com))(\/(invite\/)?#(.*))$/
 );
+
+
 
 export const Message = ({
   customEmoji,
@@ -104,6 +107,7 @@ export const Message = ({
   const fromNow = time.fromNow();
   const timeFormatted = time.format('h:mm a');
   const [showUserProfile, setShowUserProfile] = useState<boolean>(false);
+  const [openImage, setOpenImage] = useState<string | null>(null);
   const canUserDelete = useMemo(() => {
     return (
       message.content.senderId == user.currentPasskeyInfo!.address ||
@@ -508,8 +512,22 @@ export const Message = ({
                     {content.imageUrl && (
                       <img
                         src={content.imageUrl}
-                        style={{ maxWidth: 300, maxHeight: 300 }}
-                        className="rounded-lg"
+                        style={{
+                          maxWidth: 300,
+                          maxHeight: 300,
+                          cursor: 'pointer',
+                        }}
+                        className="rounded-lg hover:opacity-70 transition-opacity duration-200 cursor-pointer"
+                        onClick={(e) => {
+                          const img = e.currentTarget;
+                          if (
+                            (img.naturalWidth > 300 ||
+                              img.naturalHeight > 300) &&
+                            content.imageUrl
+                          ) {
+                            setOpenImage(content.imageUrl);
+                          }
+                        }}
                       />
                     )}
                   </div>
@@ -570,6 +588,27 @@ export const Message = ({
             </div>
           </div>
         </div>
+      )}
+      {openImage && (
+        <Modal
+          title=""
+          visible={true}
+          onClose={() => setOpenImage(null)}
+          hideClose={false}
+        >
+          <div className="flex justify-center items-center">
+            <img
+              src={openImage}
+              style={{
+                maxHeight: '80vh',
+                width: 'auto',
+                height: 'auto',
+                maxWidth: '100%',
+              }}
+              className="rounded-lg"
+            />
+          </div>
+        </Modal>
       )}
     </div>
   );
