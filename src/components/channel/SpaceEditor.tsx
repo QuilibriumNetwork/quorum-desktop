@@ -6,7 +6,11 @@ import {
   channel,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useNavigate } from 'react-router';
-import { faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
+import {
+  faChevronDown,
+  faTrash,
+  faClipboard,
+} from '@fortawesome/free-solid-svg-icons';
 
 import { useMessageDB } from '../context/MessageDB';
 import './SpaceEditor.scss';
@@ -71,6 +75,7 @@ const SpaceEditor: React.FunctionComponent<{
   const [success, setSuccess] = React.useState<boolean>(false);
   const [sendingInvite, setSendingInvite] = React.useState<boolean>(false);
   const [generating, setGenerating] = React.useState<boolean>(false);
+  const [copied, setCopied] = React.useState(false);
   const [manualAddress, setManualAddress] = React.useState<string>();
   const [resolvedUser, setResolvedUser] =
     React.useState<channel.UserRegistration>();
@@ -340,7 +345,7 @@ const SpaceEditor: React.FunctionComponent<{
                 <>
                   <div className="space-editor-header">
                     <div
-                      className="space-editor-icon-editable"
+                      className="space-editor-icon-editable cursor-pointer"
                       style={{
                         backgroundImage:
                           fileData != undefined && acceptedFiles.length != 0
@@ -371,7 +376,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="space-editor-info">
                       <div
                         className={
-                          'space-editor-banner-editable ' +
+                          'space-editor-banner-editable cursor-pointer ' +
                           (space?.bannerUrl || bannerAcceptedFiles.length != 0
                             ? ''
                             : 'border-2 border-dashed border-[var(--primary-200)]')
@@ -468,7 +473,12 @@ const SpaceEditor: React.FunctionComponent<{
                               className="w-[400px] absolute"
                               visible={repudiableTooltip}
                             >
-                              Repudiability is a setting that makes conversations in this space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.
+                              Repudiability is a setting that makes
+                              conversations in this space unverifiable as
+                              originating from the named sender. This can be
+                              useful in sensitive situations, but it also means
+                              others may forge messages that appear to come from
+                              you.
                             </Tooltip>
                           </div>
                         </div>
@@ -509,7 +519,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 roleId: crypto.randomUUID(),
                                 roleTag: 'New Role' + (prev.length + 1),
                                 displayName: 'New Role',
-                                color: '#3e8914',
+                                color: 'var(--success)',
                                 members: [],
                                 permissions: [],
                               },
@@ -576,7 +586,7 @@ const SpaceEditor: React.FunctionComponent<{
                           <span className="float-right">
                             <FontAwesomeIcon
                               icon={faTrash}
-                              className="cursor-pointer"
+                              className="cursor-pointer text-danger"
                               onClick={() =>
                                 setRoles((prev) => [
                                   ...prev.filter((p, pi) => i !== pi),
@@ -584,7 +594,7 @@ const SpaceEditor: React.FunctionComponent<{
                               }
                             />
                           </span>
-                          <span className="float-right pr-10">
+                          <span className="float-right pr-10 text-normal">
                             Can delete messages?{' '}
                             <input
                               type="checkbox"
@@ -945,7 +955,11 @@ const SpaceEditor: React.FunctionComponent<{
                                 ℹ
                               </div>
                               <div className="absolute left-8 -top-[5px] z-50 w-[400px] hidden group-hover:block">
-                                <Tooltip arrow="left" variant="dark" className="absolute w-[400px]">
+                                <Tooltip
+                                  arrow="left"
+                                  variant="dark"
+                                  className="absolute w-[400px]"
+                                >
                                   Public invite links allow anyone with access
                                   to the link join your space. Understand the
                                   risks of enabling this, and to whom and where
@@ -963,9 +977,24 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                       {space?.isPublic && (
                         <div>
-                          <div>
+                          <div className="flex items-start gap-2 mt-2">
+                            <div
+                              className="text-text-subtle hover:text-text-base mt-2 cursor-pointer"
+                              title="Copy to clipboard"
+                              onClick={() => {
+                                navigator.clipboard.writeText(
+                                  space.inviteUrl ||
+                                    'Click Generate New Invite Link'
+                                );
+                                setCopied(true);
+                                setTimeout(() => setCopied(false), 1500);
+                              }}
+                            >
+                              <FontAwesomeIcon icon={faClipboard} />
+                            </div>
+
                             <textarea
-                              className="bg-surface-4 rounded-xl px-4 py-2 resize-none outline-none w-full mt-2"
+                              className="bg-surface-4 rounded-xl px-4 py-2 resize-none outline-none w-full"
                               rows={1}
                               readOnly
                               value={
@@ -974,6 +1003,13 @@ const SpaceEditor: React.FunctionComponent<{
                               }
                             />
                           </div>
+
+                          {copied && (
+                            <div className="text-sm text-success mt-1 ml-1">
+                              Copied!
+                            </div>
+                          )}
+
                           <div className="mt-4 flex flex-row">
                             <Button
                               type="danger"
@@ -998,9 +1034,6 @@ const SpaceEditor: React.FunctionComponent<{
                             >
                               Generate New Invite Link
                             </Button>
-                            <div className="flex flex-col pl-4 justify-around">
-                              {generating && <Loading loading={generating} />}
-                            </div>
                           </div>
                         </div>
                       )}

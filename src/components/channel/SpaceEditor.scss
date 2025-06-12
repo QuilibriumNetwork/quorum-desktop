@@ -77,7 +77,7 @@
   width: 24px;
   height: 24px;
   background: var(--surface-00);
-  color: var(--primary);;
+  color: var(--primary);
   content: '+';
   display: block;
   text-align: center;
@@ -97,6 +97,13 @@
   border-radius: 10px;
   display: inline-block;
   flex-shrink: 0;
+}
+
+.space-editor-banner:hover,
+.space-editor-banner-editable:hover,
+.space-editor-icon:hover,
+.space-editor-icon-editable:hover {
+  opacity: 0.8;
 }
 
 .space-editor-banner-editable::after {
