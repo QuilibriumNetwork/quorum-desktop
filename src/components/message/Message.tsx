@@ -60,8 +60,6 @@ const InviteRegex = new RegExp(
   /^((?:https?:)?\/\/?)?((?:www\.)?(?:qm\.one|app\.quorummessenger\.com))(\/(invite\/)?#(.*))$/
 );
 
-
-
 export const Message = ({
   customEmoji,
   stickers,
@@ -517,7 +515,7 @@ export const Message = ({
                           maxHeight: 300,
                           cursor: 'pointer',
                         }}
-                        className="rounded-lg hover:opacity-70 transition-opacity duration-200 cursor-pointer"
+                        className="rounded-lg hover:opacity-0 transition-opacity duration-200 cursor-pointer"
                         onClick={(e) => {
                           const img = e.currentTarget;
                           if (
@@ -550,8 +548,8 @@ export const Message = ({
                   className={
                     'cursor-pointer flex flex-row mr-1 border hover:border-surface-7 rounded-lg py-[1pt] px-2 bg-[var(--surface-0)]' +
                     (r.memberIds.includes(user.currentPasskeyInfo!.address)
-                      ? ' border-[var(--primary-300)]'
-                      : ' border-[rgba(0,0,0,0)]')
+                      ? ' bg-highlight border border-transparent hover:bg-highlight-hover hover:border-transparent'
+                      : ' bg-surface-0 border border-transparent hover:bg-surface-5 hover:border-transparent')
                   }
                   onClick={() => {
                     if (

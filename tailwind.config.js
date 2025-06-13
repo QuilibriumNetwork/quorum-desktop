@@ -48,6 +48,12 @@ export default {
         'text-subtle': 'var(--text-subtle)',
         'text-muted': 'var(--text-muted)',
 
+        // Highlight colors
+        'highlight': 'var(--highlight)',
+        'highlight-hover': 'var(--highlight-hover)',
+        'highlight-orange': 'var(--highlight-orange)',
+        'highlight-orange-border': 'var(--highlight-orange-border)',
+
         // Others
         'danger': 'var(--danger)',
         'danger-hover': 'var(--danger-hover)',
