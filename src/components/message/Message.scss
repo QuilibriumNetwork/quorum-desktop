@@ -1,0 +1,15 @@
+@keyframes flash-highlight {
+  0% {
+    background-color: var(--highlight-orange);
+  }
+  50% {
+    background-color: var(--highlight-orange); /* stay solid */
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.message-highlighted {
+  animation: flash-highlight 4s ease-out;
+}

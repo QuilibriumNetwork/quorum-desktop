@@ -19,12 +19,14 @@ import {
   faReply,
   faTrash,
   faUnlock,
+  faLink,
 } from '@fortawesome/free-solid-svg-icons';
 import { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
 import UserProfile from '../user/UserProfile';
 import { useParams } from 'react-router';
 import { InviteLink } from './InviteLink';
 import Modal from '../Modal';
+import './Message.scss';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -98,6 +100,9 @@ export const Message = ({
     });
   }, [customEmoji]);
   let sender = mapSenderToUser(message.content?.senderId);
+  const isHashTarget = useMemo(() => {
+    return window.location.hash === `#msg-${message.messageId}`;
+  }, [message.messageId]);
   const time = moment.tz(
     message.createdDate,
     Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -137,11 +142,13 @@ export const Message = ({
 
   return (
     <div
+      id={`msg-${message.messageId}`}
       className={
         'text-base relative hover:bg-surface-3 flex flex-col ' +
         (message.mentions?.memberIds.includes(user.currentPasskeyInfo!.address)
           ? ' message-mentions-you'
-          : '')
+          : '') +
+        (isHashTarget ? ' message-highlighted' : '')
       }
       onMouseOver={() => setHoverTarget(message.messageId)}
       onMouseOut={() => setHoverTarget(undefined)}
@@ -323,6 +330,7 @@ export const Message = ({
                     e.clientY / height > 0.5 ? 'upwards' : 'downwards'
                   );
                 }}
+                title="More reactions"
                 className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
                 <FontAwesomeIcon icon={faFaceSmileBeam} />
@@ -332,10 +340,22 @@ export const Message = ({
                   setInReplyTo(message);
                   editorRef?.focus();
                 }}
-                className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                title="Reply"
+                className="w-5 mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
                 <FontAwesomeIcon icon={faReply} />
               </div>
+              <div
+                onClick={() => {
+                  const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
+                  navigator.clipboard.writeText(url);
+                }}
+                title="Copy message link"
+                className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+              >
+                <FontAwesomeIcon icon={faLink} />
+              </div>
+
               {canUserDelete && (
                 <>
                   <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
@@ -346,6 +366,7 @@ export const Message = ({
                         removeMessageId: message.messageId,
                       });
                     }}
+                    title="Delete message"
                     className="w-5 text-center text-danger hover:text-danger-hover hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
                   >
                     <FontAwesomeIcon className="text-danger" icon={faTrash} />

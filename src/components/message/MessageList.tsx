@@ -1,8 +1,14 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import * as moment from 'moment-timezone';
 import { Message } from './Message';
-import { Emoji, Message as MessageType, Role, Sticker } from '../../api/quorumApi';
+import {
+  Emoji,
+  Message as MessageType,
+  Role,
+  Sticker,
+} from '../../api/quorumApi';
 import { Virtuoso } from 'react-virtuoso';
+import type { VirtuosoHandle } from 'react-virtuoso';
 import React from 'react';
 
 function useWindowSize() {
@@ -35,7 +41,7 @@ export const MessageList = ({
   setKickUserAddress,
 }: {
   messageList: MessageType[];
-  stickers?: {[stickerId: string]: Sticker};
+  stickers?: { [stickerId: string]: Sticker };
   members: any;
   setInReplyTo: React.Dispatch<React.SetStateAction<MessageType | undefined>>;
   editor: React.RefObject<HTMLTextAreaElement>;
@@ -54,7 +60,7 @@ export const MessageList = ({
   const [emojiPickerOpen, setEmojiPickerOpen] = useState<string>();
   const [emojiPickerOpenDirection, setEmojiPickerOpenDirection] =
     useState<string>();
-  const virtuoso = useRef(null);
+  const virtuoso = useRef<VirtuosoHandle>(null);
   const [init, setInit] = useState(false);
 
   const mapSenderToUser = (senderId: string) => {
@@ -102,6 +108,32 @@ export const MessageList = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (!init || messageList.length === 0) return;
+
+    // Capture and remove hash to prevent browser's default scroll
+    const hash = window.location.hash;
+    if (hash.startsWith('#msg-')) {
+      history.replaceState(
+        null,
+        '',
+        window.location.pathname + window.location.search
+      );
+
+      const msgId = hash.replace('#msg-', '');
+      const index = messageList.findIndex((m) => m.messageId === msgId);
+      if (index !== -1 && virtuoso.current) {
+        setTimeout(() => {
+          virtuoso.current?.scrollToIndex({
+            index,
+            align: 'center',
+            behavior: 'smooth',
+          });
+        }, 200);
+      }
+    }
+  }, [init, messageList]);
+
   return (
     <Virtuoso
       ref={virtuoso}
@@ -118,7 +150,11 @@ export const MessageList = ({
       }}
       alignToBottom={true}
       firstItemIndex={0}
-      initialTopMostItemIndex={messageList.length - 1}
+      initialTopMostItemIndex={
+        window.location.hash && window.location.hash.startsWith('#msg-')
+          ? 0 // scroll to top initially, will override with scrollToIndex()
+          : messageList.length - 1
+      }
       followOutput={(isAtBottom: boolean) => {
         if (isAtBottom) {
           return 'smooth';
