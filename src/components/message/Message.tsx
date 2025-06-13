@@ -367,9 +367,9 @@ export const Message = ({
                       });
                     }}
                     title="Delete message"
-                    className="w-5 text-center text-danger hover:text-danger-hover hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                    className="w-5 text-center transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
                   >
-                    <FontAwesomeIcon className="text-danger" icon={faTrash} />
+                    <FontAwesomeIcon icon={faTrash} className='text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125 ' />
                   </div>
                 </>
               )}

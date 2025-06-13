@@ -1,4 +1,12 @@
 /** @type {import('tailwindcss').Config} */
+
+function withOpacityValue(variable) {
+  return ({ opacityValue }) =>
+    opacityValue === undefined
+      ? `rgb(var(${variable}))`
+      : `rgb(var(${variable}) / ${opacityValue})`;
+}
+
 export default {
   content: [
     './index.html',
@@ -25,8 +33,8 @@ export default {
           500: 'var(--primary-500)',
           700: 'var(--primary-700)',
           800: 'var(--primary-800)',
+          900: 'var(--primary-900)',
         },
-        accent: 'var(--accent)',
 
         // Surface Layers
         'surface-00': 'var(--surface-00)',
@@ -48,18 +56,19 @@ export default {
         'text-subtle': 'var(--text-subtle)',
         'text-muted': 'var(--text-muted)',
 
-        // Highlight colors
-        'highlight': 'var(--highlight)',
-        'highlight-hover': 'var(--highlight-hover)',
-        'highlight-orange': 'var(--highlight-orange)',
-        'highlight-orange-border': 'var(--highlight-orange-border)',
+        // Utilities (opacity support)
+        danger: withOpacityValue('--danger'),
+        'danger-hover': withOpacityValue('--danger-hover'),
+        warning: withOpacityValue('--warning'),
+        success: withOpacityValue('--success'),
+        info: withOpacityValue('--info'),
 
-        // Others
-        'danger': 'var(--danger)',
-        'danger-hover': 'var(--danger-hover)',
-        'warning': 'var(--warning)',
-        'success': 'var(--success)',
-        'info': 'var(--info)',
+        // Utilitites HEX variables (no opacity support)
+        'danger-hex': 'var(--danger-hex)',
+        'danger-hover-hex': 'var(--danger-hover-hex)',
+        'warning-hex': 'var(--warning-hex)',
+        'success-hex': 'var(--success-hex)',
+        'info-hex': 'var(--info-hex)',
       },
     },
   },

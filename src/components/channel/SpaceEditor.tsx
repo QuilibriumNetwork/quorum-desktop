@@ -519,7 +519,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 roleId: crypto.randomUUID(),
                                 roleTag: 'New Role' + (prev.length + 1),
                                 displayName: 'New Role',
-                                color: 'var(--success)',
+                                color: 'var(--success-hex)',
                                 members: [],
                                 permissions: [],
                               },
@@ -560,7 +560,7 @@ const SpaceEditor: React.FunctionComponent<{
                             }
                             value={r.roleTag}
                           />
-                          <span className="font-mono message-name-mentions-role">
+                          <span className="font-mono space-editor-role">
                             <input
                               className="border-0 bg-[rgba(0,0,0,0)] "
                               style={{
@@ -586,7 +586,8 @@ const SpaceEditor: React.FunctionComponent<{
                           <span className="float-right">
                             <FontAwesomeIcon
                               icon={faTrash}
-                              className="cursor-pointer text-danger"
+                              title='Delete role'
+                              className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
                               onClick={() =>
                                 setRoles((prev) => [
                                   ...prev.filter((p, pi) => i !== pi),
@@ -939,7 +940,7 @@ const SpaceEditor: React.FunctionComponent<{
                         }}
                       />
                       {success && (
-                        <div className="text-green-300">
+                        <div className="text-success-hex">
                           Successfully sent invite to{' '}
                           {selectedUser?.displayName}
                         </div>
@@ -1005,7 +1006,7 @@ const SpaceEditor: React.FunctionComponent<{
                           </div>
 
                           {copied && (
-                            <div className="text-sm text-success mt-1 ml-1">
+                            <div className="text-sm text-success-hex mt-1 ml-1">
                               Copied!
                             </div>
                           )}

@@ -27,16 +27,16 @@
 
 .message-mentions-you {
   border-left: 2px solid var(--primary);
-  background: var(--highlight);
+  background: rgba(var(--info), 0.2)
 }
 
 .message-mentions-role {
-  border-left: 2px solid #3e8914;
-  background: #446145;
+  border-left: 2px solid var(--success);
+  background: rgba(var(--success), 0.2)
 }
 
 .message-name-mentions-role {
-  background: #3e8914;
+  background: var(--success-hex)
 }
 
 .message-name-mentions-you {

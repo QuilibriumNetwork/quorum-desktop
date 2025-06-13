@@ -64,13 +64,13 @@
 
 .btn-danger {
   @extend .btn-base;
-  background-color: var(--danger);
-  border: 2px solid var(--danger);
+  background-color: rgba(var(--danger), 0.8);
+  border: 2px solid transparent;
   cursor: pointer;
 
   &:hover {
-    background-color: #ff0314;
-    border: 2px solid #ff0314;
+    background-color: rgba(var(--danger), 1);
+    border: 2px solid transparent;
   }
 }
 

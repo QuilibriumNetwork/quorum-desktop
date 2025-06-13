@@ -1,9 +1,9 @@
 @keyframes flash-highlight {
   0% {
-    background-color: var(--highlight-orange);
+    background-color: rgba(var(--warning), 0.2);
   }
   50% {
-    background-color: var(--highlight-orange); /* stay solid */
+    background-color: rgba(var(--warning), 0.2); /* stay solid */
   }
   100% {
     background-color: transparent;
@@ -11,5 +11,5 @@
 }
 
 .message-highlighted {
-  animation: flash-highlight 4s ease-out;
+  animation: flash-highlight 2s ease-out;
 }

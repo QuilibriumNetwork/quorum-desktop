@@ -21,8 +21,6 @@
   --primary-900: #060421;
   --primary: var(--primary-500);
 
-  --accent: #b4e235; /*accent is not used*/
-
   --surface-00: #100f11;
   --surface-00-rgb: 16, 15, 17; /* to be used with opacity */
   --surface-0: #1d1a21;
@@ -42,21 +40,18 @@
   --text-muted: #84788b;
 
   /*utilities*/
-  --danger: #e74a4a;
-  --danger-hover: #ec3333;
-  --warning: #e7b04a;
-  --success: #46c236;
-  --info: #3095bd;
+  --danger-hex: #e74a4a;
+  --danger-hover-hex: #ec3333;
+  --warning-hex: #e7b04a;
+  --success-hex: #46c236;
+  --info-hex: #3095bd;
 
-  --highlight: #08315e;
-  --highlight-hover: #094280;
-  --highlight-orange: #6d4202;
-  --highlight-orange-border: #c26904;
-
-  --highlight: 8, 49, 94;
-  --highlight-hover: 9, 66, 128;
-  --highlight-orange: 109, 66, 2;
-  --highlight-orange-border: 194, 105, 4;
+  /* utilities for use with opacity */
+  --danger: 231, 74, 74; /* RED #e74a4a */
+  --danger-hover: 236, 51, 51; /* RED BRIGHTER #ec3333 */
+  --warning: 231, 176, 74; /* YELLOw #e7b04a */
+  --success: 70, 194, 54; /* GREEN #46c236 */
+  --info: 48, 149, 189; /* BLUE #3095bd */
 
   font-family: Sen, sans-serif;
   line-height: 1.5;
@@ -93,18 +88,6 @@ html.light {
   --text-base: #363636;
   --text-subtle: #5a5a5a;
   --text-muted: #a8a8a8;
-
-  /*utilities*/
-  --danger: #e74a4a;
-  --danger-hover: #ec3333;
-  --warning: #e7b04a;
-  --success: #46c236;
-  --info: #3095bd;
-
-  --highlight: #c0e0f7;
-  --highlight-hover: #9bd1f8;
-  --highlight-orange-border: #f5961a;
-  --highlight-orange: #e7c67f;
 
   /* General */
   color: var(--text-base);
