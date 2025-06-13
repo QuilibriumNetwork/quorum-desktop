@@ -69,6 +69,8 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* === LIGHT THEME ===*/
+
 html.light {
   /* Surface */
   --surface-00: #ffffff;
@@ -97,12 +99,14 @@ html.light {
 }
 
 html.light a:hover {
-  color: var(--primary-400); /* reused from existing theme */
+  color: var(--primary-400); 
 }
 
 html.light button {
   background-color: #f0f0f0;
 }
+
+/* === END LIGHT THEME ===*/
 
 .EmojiPickerReact {
   /* Backgrounds */
@@ -141,36 +145,12 @@ html.light button {
   background-color: var(--primary-700);
   background-image:
     url('/otis-redding.png'),
-    radial-gradient(circle at 90% 100%, var(--accent) 0%, transparent 35%),
+    radial-gradient(circle at 90% 100%, #B4E235 0%, transparent 35%),
     radial-gradient(circle at 60% 50%, var(--primary) 0%, transparent 90%),
     radial-gradient(circle at 10% 10%, var(--primary-700) 0%, transparent 80%);
   background-repeat: repeat, no-repeat, no-repeat, no-repeat;
   background-size: auto, cover, cover, cover;
 }
-
-/* .quorum-button-secondary {
-    background-color: $secondary-action-color;
-}
-
-.quorum-button-secondary:hover {
-    background-color: $secondary-action-highlight-color;
-}
-
-.quorum-button-tertiary {
-    background-color: #FFEEBC;
-}
-
-.quorum-button-tertiary:hover {
-    background-color: $tertiary-action-highlight-color;
-}
-
-.quorum-button-disabled {
-    background-color: #2E2E2E;
-}
-
-.quorum-button-disabled:hover {
-    background-color: #2E2E2E;
-} */
 
 .-webkit-app-region-drag {
   -webkit-app-region: drag;
@@ -200,25 +180,6 @@ a:hover {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
 .small-caps {
@@ -265,3 +226,23 @@ button:focus-visible {
   border: 1px solid var(--surface-7);
 }
 
+/*  NOT USED ? */
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}

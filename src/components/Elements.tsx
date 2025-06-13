@@ -148,9 +148,6 @@ const Elements = () => {
           <Button type="danger" onClick={() => {}}>
             Danger
           </Button>
-          <Button type="primary" className="quorum-tooltip-right" tooltip="This is a tooltip" onClick={() => {}}>
-            With Tooltip
-          </Button>
         </div>
       </section>
 

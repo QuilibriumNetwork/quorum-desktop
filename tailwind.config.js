@@ -35,39 +35,38 @@ export default {
           800: 'var(--primary-800)',
           900: 'var(--primary-900)',
         },
-
-        // Surface Layers
-        'surface-00': 'var(--surface-00)',
-        'surface-0': 'var(--surface-0)',
-        'surface-1': 'var(--surface-1)',
-        'surface-2': 'var(--surface-2)',
-        'surface-3': 'var(--surface-3)',
-        'surface-4': 'var(--surface-4)',
-        'surface-5': 'var(--surface-5)',
-        'surface-6': 'var(--surface-6)',
-        'surface-7': 'var(--surface-7)',
-        'surface-8': 'var(--surface-8)',
-        'surface-9': 'var(--surface-9)',
-        'surface-10': 'var(--surface-10)',
-
-        // Text
-        'text-base': 'var(--text-base)',
-        'text-subtle': 'var(--text-subtle)',
-        'text-muted': 'var(--text-muted)',
-
-        // Utilities (opacity support)
-        danger: withOpacityValue('--danger'),
-        'danger-hover': withOpacityValue('--danger-hover'),
-        warning: withOpacityValue('--warning'),
-        success: withOpacityValue('--success'),
-        info: withOpacityValue('--info'),
-
-        // Utilitites HEX variables (no opacity support)
-        'danger-hex': 'var(--danger-hex)',
-        'danger-hover-hex': 'var(--danger-hover-hex)',
-        'warning-hex': 'var(--warning-hex)',
-        'success-hex': 'var(--success-hex)',
-        'info-hex': 'var(--info-hex)',
+        theme: {
+          'surface-00': 'var(--surface-00)',
+          'surface-0': 'var(--surface-0)',
+          'surface-1': 'var(--surface-1)',
+          'surface-2': 'var(--surface-2)',
+          'surface-3': 'var(--surface-3)',
+          'surface-4': 'var(--surface-4)',
+          'surface-5': 'var(--surface-5)',
+          'surface-6': 'var(--surface-6)',
+          'surface-7': 'var(--surface-7)',
+          'surface-8': 'var(--surface-8)',
+          'surface-9': 'var(--surface-9)',
+          'surface-10': 'var(--surface-10)',
+          // Text
+          'text-base': 'var(--text-base)',
+          'text-subtle': 'var(--text-subtle)',
+          'text-muted': 'var(--text-muted)',
+        },
+        utilities: {
+          // Utilities (opacity support)
+          danger: withOpacityValue('--danger'),
+          'danger-hover': withOpacityValue('--danger-hover'),
+          warning: withOpacityValue('--warning'),
+          success: withOpacityValue('--success'),
+          info: withOpacityValue('--info'),
+          // Utilitites HEX variables (no opacity support)
+          'danger-hex': 'var(--danger-hex)',
+          'danger-hover-hex': 'var(--danger-hover-hex)',
+          'warning-hex': 'var(--warning-hex)',
+          'success-hex': 'var(--success-hex)',
+          'info-hex': 'var(--info-hex)',
+        },
       },
     },
   },

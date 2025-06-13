@@ -34,7 +34,7 @@ const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({ horizontal }) => 
         >
           <div className="flex items-center gap-2">
             <FontAwesomeIcon icon={iconMap[opt]} className="text-surface-9" />
-            <span className="capitalize">{opt}</span>
+            <span className="capitalize mr-3">{opt}</span>
           </div>
 
           <input
