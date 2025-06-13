@@ -11,11 +11,17 @@ const iconMap = {
 
 const options: Array<'light' | 'dark' | 'system'> = ['light', 'dark', 'system'];
 
-const ThemeRadioGroup: React.FC = () => {
+const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({ horizontal }) => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="flex flex-col gap-3 mt-2 max-w-[300px]">
+    <div
+      className={`mt-2 ${
+        horizontal
+          ? 'flex flex-row gap-4'
+          : 'flex flex-col gap-3 max-w-[300px]'
+      }`}
+    >
       {options.map((opt) => (
         <label
           key={opt}

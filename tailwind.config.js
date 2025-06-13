@@ -49,7 +49,6 @@ export default {
         'surface-8': 'var(--surface-8)',
         'surface-9': 'var(--surface-9)',
         'surface-10': 'var(--surface-10)',
-        'surface-border': 'var(--surface-border)',
 
         // Text
         'text-base': 'var(--text-base)',

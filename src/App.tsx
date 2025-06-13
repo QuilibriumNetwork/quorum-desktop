@@ -17,6 +17,8 @@ import DirectMessages from './components/direct/DirectMessages';
 import { Maintenance } from './components/Maintenance';
 import { RegistrationProvider } from './components/context/RegistrationPersister';
 import JoinSpaceModal from './components/modals/JoinSpaceModal';
+import Elements from './components/Elements';
+
 
 window.Buffer = Buffer;
 
@@ -63,6 +65,9 @@ const App = () => {
   const [init, setInit] = useState(false);
   const [landing, setLanding] = useState(false);
   const [kickUserAddress, setKickUserAddress] = useState<string>();
+
+  const isElementsPage = window.location.pathname === '/elements';
+  if (isElementsPage) return <Elements />;
 
   useEffect(() => {
     if (!init) {
