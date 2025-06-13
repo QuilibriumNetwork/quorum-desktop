@@ -2,7 +2,7 @@
   0% {
     background-color: rgba(var(--warning), 0.2);
   }
-  50% {
+  30% {
     background-color: rgba(var(--warning), 0.2); /* stay solid */
   }
   100% {
@@ -11,5 +11,5 @@
 }
 
 .message-highlighted {
-  animation: flash-highlight 2s ease-out;
+  animation: flash-highlight 4s ease-out;
 }
