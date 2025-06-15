@@ -8,6 +8,8 @@ import './index.css';
 import App from './App.tsx';
 import { WebSocketProvider } from './components/context/WebsocketProvider.tsx';
 import { ThemeProvider } from './components/context/ThemeProvider.tsx';
+import { I18nProvider } from '@lingui/react';
+//import { i18n } from './i18n';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,7 +31,9 @@ createRoot(document.getElementById('root')).render(
           <WebSocketProvider>
             <MessageDBProvider>
               <ThemeProvider>
-                <App />
+        
+                  <App />
+       
               </ThemeProvider>
             </MessageDBProvider>
           </WebSocketProvider>

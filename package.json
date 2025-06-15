@@ -19,7 +19,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "extract": "lingui extract",
+    "compile": "lingui compile",
+    "i18n": "yarn lingui extract && yarn lingui compile"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
