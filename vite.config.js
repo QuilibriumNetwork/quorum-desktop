@@ -1,14 +1,28 @@
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
+
+
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
+import { lingui } from '@lingui/vite-plugin';
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    nodePolyfills(),
-    react(),
+    lingui({
+
+    }),
+    nodePolyfills({
+      target: 'esnext'
+    }),
+    react({
+      babel: {
+        plugins: [
+          '@lingui/babel-plugin-lingui-macro',
+        ],
+      }
+    }),
     viteStaticCopy({
       targets: [
         {
@@ -26,7 +40,7 @@ export default defineConfig({
     headers: {
       'Permissions-Policy': 'publickey-credentials-get=*',
     },
-    
+
   },
   resolve: {
     alias: {

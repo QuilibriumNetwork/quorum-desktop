@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Trans } from "@lingui/react/macro";
 
 import './Connecting.scss';
 
@@ -9,7 +10,7 @@ const Connecting = () => {
         className="connecting-icon pulse"
         style={{ backgroundImage: "url('/quorumicon-blue.png')" }}
       ></div>
-      <div className="connecting-message">Connecting</div>
+      <div className="connecting-message"><Trans>Connecting</Trans></div>
     </div>
   );
 };

@@ -8,6 +8,13 @@ import './index.css';
 import App from './App.tsx';
 import { WebSocketProvider } from './components/context/WebsocketProvider.tsx';
 import { ThemeProvider } from './components/context/ThemeProvider.tsx';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { messages } from './locales/messages.ts';
+import { defaultLocale, dynamicActivate } from './i18n.ts';
+
+const locale = navigator.language.split('-')[0] || defaultLocale;
+dynamicActivate(locale);
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,7 +36,9 @@ createRoot(document.getElementById('root')).render(
           <WebSocketProvider>
             <MessageDBProvider>
               <ThemeProvider>
-                <App />
+                <I18nProvider i18n={i18n}>
+                  <App />
+                </I18nProvider>
               </ThemeProvider>
             </MessageDBProvider>
           </WebSocketProvider>

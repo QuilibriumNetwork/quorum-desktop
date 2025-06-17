@@ -27,7 +27,7 @@ import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import { MessageList } from '../message/MessageList';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
-import { useLocalization } from '../../hooks';
+import { t } from "@lingui/core/macro";
 
 type ChannelProps = {
   spaceId: string;
@@ -69,8 +69,6 @@ const Channel: React.FC<ChannelProps> = ({
   const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
   const [fileType, setFileType] = React.useState<string>();
   const [fileError, setFileError] = useState<string | null>(null);
-  const { data: localization } = useLocalization({ langId: 'en' });
-  const localizations = localization.localizations;
   const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
     accept: {
       'image/png': ['.png'],
@@ -82,9 +80,9 @@ const Channel: React.FC<ChannelProps> = ({
     onDropRejected: (fileRejections) => {
       for (const rejection of fileRejections) {
         if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          setFileError(localizations['FILE_TOO_LARGE_2MB']([]));
+          setFileError(t`File cannot be larger than 2MB`);
         } else {
-          setFileError(localizations['FILE_REJECTED']([]));
+          setFileError(t`File rejected`);
         }
       }
     },
@@ -189,7 +187,7 @@ const Channel: React.FC<ChannelProps> = ({
   const mapSenderToUser = (senderId: string) => {
     return (
       members[senderId] || {
-        displayName: 'Unknown User',
+        displayName: t`Unknown User`,
         userIcon: '/unknown.png',
       }
     );
@@ -391,7 +389,7 @@ const Channel: React.FC<ChannelProps> = ({
               'message-editor w-full !pl-11 !pr-11 ' +
               (inReplyTo ? 'message-editor-reply' : '')
             }
-            placeholder={'Send a message to #' + channel?.channelName}
+            placeholder={t`Send a message to #` + channel?.channelName}
             rows={
               rowCount > 4
                 ? 4

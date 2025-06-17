@@ -2,6 +2,7 @@ import React from 'react';
 import Button from './Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTools } from '@fortawesome/free-solid-svg-icons';
+import { Trans } from '@lingui/react/macro';
 
 export const Maintenance = () => {
   return (
@@ -24,8 +25,8 @@ export const Maintenance = () => {
         <div className="flex flex-row justify-center">
           <div className="grow"></div>
           <div className="w-[460px] py-4 text-justify text-white">
-            Quorum infrastructure is being deployed at this time. Please try
-            refreshing, and check <a href="https://status.quilibrium.com/" target='_blank' rel="noopener noreferrer" className="text-white underline">https://status.quilibrium.com/</a> for updates.
+            <Trans>Quorum infrastructure is being deployed at this time. Please try
+            refreshing, and check <a href="https://status.quilibrium.com/" target='_blank' rel="noopener noreferrer" className="text-white underline">https://status.quilibrium.com/</a> for updates.</Trans>
           </div>
           <div className="grow"></div>
         </div>

@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileImage } from '@fortawesome/free-solid-svg-icons';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
-import { useLocalization } from '../../hooks';
+import { t } from '@lingui/core/macro';
 
 export const Onboarding = ({
   setUser,
@@ -109,10 +109,10 @@ export const Onboarding = ({
           <div className="flex flex-col grow"></div>
           <div className="flex flex-col text-white">
             {!exported
-              ? 'Welcome to Quorum!'
+              ? t`Welcome to Quorum!`
               : currentPasskeyInfo?.pfpUrl && currentPasskeyInfo.displayName
-                ? 'One of us, one of us!'
-                : 'Personalize your account'}
+                ? t`One of us, one of us!`
+                : t`Personalize your account`}
           </div>
           <div className="flex flex-col grow"></div>
         </div>
@@ -122,38 +122,38 @@ export const Onboarding = ({
               <div className="grow"></div>
               <div className="w-[460px] py-4 text-justify text-white">
                 <p className="py-4">
-                  <b>Important first-time user information:</b>
+                  <b>{t`Important first-time user information:`}</b>
                 </p>
                 <p className="pb-4">
-                  Quorum is peer-to-peer and end-to-end encrypted. This means
+                  {t`Quorum is peer-to-peer and end-to-end encrypted. This means
                   your messages stay private, but equally important, they only
                   live on the network for the time required to reach you and
-                  your recipients.
+                  your recipients.`}
                 </p>
                 <p className="pb-4">
                   {
                     // @ts-ignore
                     !window.electron ? (
                       <>
-                        When using Quorum on a browser, your messages are saved
-                        locally to your browser, so{' '}
+                        {t`When using Quorum on a browser, your messages are saved
+                        locally to your browser, so`}
                         <b>
-                          if you clear your browser storage or switch browsers,
-                          your old messages and keys may disappear.
+                          {t`if you clear your browser storage or switch browsers,
+                          your old messages and keys may disappear.`}
                         </b>
                       </>
                     ) : (
                       <b>
-                        If you uninstall the app, you will lose your old
-                        messages and keys.
+                        {t`If you uninstall the app, you will lose your old
+                        messages and keys.`}
                       </b>
                     )
                   }
                 </p>
                 <p className="pb-4">
-                  Click the button below to create a backup of your key info,
+                  {t`Click the button below to create a backup of your key info,
                   because once it's gone, it's gone forever. You may be prompted
-                  to authenticate again.
+                  to authenticate again.`}
                 </p>
               </div>
 
@@ -167,14 +167,14 @@ export const Onboarding = ({
                   className="px-8 mb-4"
                   onClick={downloadKey}
                 >
-                  Save User Key
+                  {t`Save User Key`}
                 </Button>
                 <Button
                   type="light-outline"
                   className="px-8"
                   onClick={() => setExported(true)}
                 >
-                  I already saved mine
+                  {t`I already saved mine`}
                 </Button>
               </div>
               <div className="grow"></div>
@@ -187,11 +187,11 @@ export const Onboarding = ({
               <div className="grow"></div>
               <div className="w-[460px] py-4 text-justify text-white">
                 <p className="pb-4">
-                  Let your friends know who you are! Pick a friendly name to
-                  display in your conversations, something easier to read than{' '}
+                  {t`Let your friends know who you are! Pick a friendly name to
+                  display in your conversations, something easier to read than`}
                   {currentPasskeyInfo?.address}.
                 </p>
-                <p>This information is only provided to the spaces you join.</p>
+                <p>{t`This information is only provided to the spaces you join.`}</p>
               </div>
 
               <div className="grow"></div>
@@ -220,7 +220,7 @@ export const Onboarding = ({
                       });
                     }}
                   >
-                    Set Display Name
+                    {t`Set Display Name`}
                   </Button>
                 </div>
               </div>
@@ -236,8 +236,8 @@ export const Onboarding = ({
                 <div className="grow"></div>
                 <div className="w-[460px] flex flex-col justify-around py-4 text-white">
                   <div className="mb-1">
-                    Make your account uniquely yours – set a contact photo. This
-                    information is only provided to the spaces you join.
+                    {t`Make your account uniquely yours – set a contact photo. This
+                    information is only provided to the spaces you join.`}
                   </div>
                   {fileError && (
                     <div className="error-label mt-2">{fileError}</div>
@@ -317,7 +317,7 @@ export const Onboarding = ({
                       });
                     }}
                   >
-                    Save Contact Photo
+                    {t`Save Contact Photo`}
                   </Button>
                 </div>
                 <div className="grow"></div>
@@ -331,7 +331,7 @@ export const Onboarding = ({
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
                 <div className="w-[460px] py-4 text-center text-white">
-                  You're all set. Welcome to Quorum!
+                  {t`You're all set. Welcome to Quorum!`}
                 </div>
                 <div className="grow"></div>
               </div>
@@ -359,7 +359,7 @@ export const Onboarding = ({
                       });
                     }}
                   >
-                    Let's gooooooooo
+                    {t`Let's gooooooooo`}
                   </Button>
                 </div>
                 <div className="grow"></div>

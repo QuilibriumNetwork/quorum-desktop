@@ -1,12 +1,11 @@
 import React from 'react';
-import { useLocalization, useRegistration } from '../hooks';
+import { useRegistration } from '../hooks';
 import { useNavigate } from 'react-router';
 import Button from './Button';
-import { getConfig } from '../config/config';
+import { Trans } from '@lingui/react/macro';
 
 export const AddressLookup = ({ address }: { address: string }) => {
   const { data: registration } = useRegistration({ address });
-  let { data: localization } = useLocalization({ langId: getConfig().langId });
   let navigate = useNavigate();
   return (
     <>
@@ -24,7 +23,7 @@ export const AddressLookup = ({ address }: { address: string }) => {
             }
           }}
         >
-          {localization.localizations['NEW_DIRECT_MESSAGE_BUTTON']([])}
+          <Trans>New Direct Message</Trans>
         </Button>
       </div>
     </>
