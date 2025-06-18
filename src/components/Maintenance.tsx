@@ -12,7 +12,7 @@ export const Maintenance = () => {
         <div className="flex flex-row grow"></div>
         <div className="flex flex-row grow font-semibold text-2xl">
           <div className="flex flex-col grow"></div>
-          <div className="flex flex-col text-white">Maintenance in Progress</div>
+          <div className="flex flex-col text-white"><Trans>Maintenance in Progress</Trans></div>
           <div className="flex flex-col grow"></div>
         </div>
         <div className="flex flex-row justify-center">
@@ -38,7 +38,7 @@ export const Maintenance = () => {
               className="px-8"
               onClick={() => window.location.reload()}
             >
-              Refresh
+              <Trans>Refresh</Trans>
             </Button>
           </div>
           <div className="grow"></div>
