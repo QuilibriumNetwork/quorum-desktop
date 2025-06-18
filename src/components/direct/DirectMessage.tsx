@@ -13,12 +13,11 @@ import { useInvalidateConversation } from '../../hooks/queries/conversation/useI
 import { MessageList } from '../message/MessageList';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
-import { useLocalization } from '../../hooks';
+
+import { t } from '@lingui/core/macro';
 
 const DirectMessage: React.FC<{}> = (p: {}) => {
   const [fileError, setFileError] = useState<string | null>(null);
-  const { data: localization } = useLocalization({ langId: 'en' });
-  const localizations = localization.localizations;
   let { address } = useParams<{ address: string }>();
   const conversationId = address! + '/' + address!;
   const [pendingMessage, setPendingMessage] = useState('');
@@ -55,9 +54,9 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       onDropRejected: (fileRejections) => {
         for (const rejection of fileRejections) {
           if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-            setFileError(localizations['FILE_TOO_LARGE_2MB']([]));
+            setFileError(t`File cannot be larger than 2MB`);
           } else {
-            setFileError(localizations['FILE_REJECTED']([]));
+            setFileError(t`File rejected`);
           }
         }
       },
@@ -299,7 +298,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               (inReplyTo ? 'message-editor-reply' : '')
             }
             placeholder={
-              'Send a message to ' + mapSenderToUser(address ?? '').displayName
+              t`Send a message to ` + mapSenderToUser(address ?? '').displayName
             }
             rows={
               rowCount > 4

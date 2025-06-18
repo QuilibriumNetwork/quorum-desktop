@@ -4,6 +4,8 @@ import './GroupEditor.scss';
 import { useSpace } from '../../hooks';
 import { useMessageDB } from '../context/MessageDB';
 import { useNavigate, useParams } from 'react-router';
+import { Trans } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 
 const GroupEditor: React.FunctionComponent<{
   spaceId: string;
@@ -77,7 +79,7 @@ const GroupEditor: React.FunctionComponent<{
       <div className="flex flex-col grow overflow-y-scroll rounded-xl">
         <div className="group-editor-header">
           <div className="group-editor-text flex flex-col grow px-4">
-            <div className="small-caps">Group Name</div>
+            <div className="small-caps"><Trans>Group Name</Trans></div>
             <input
               className="w-full quorum-input"
               value={group}
@@ -99,7 +101,7 @@ const GroupEditor: React.FunctionComponent<{
                     }
                   }}
                 >
-                  {!deleteStatus ? 'Delete Group' : 'Confirm Deletion'}
+                  {!deleteStatus ? t`Delete Group` : t`Confirm Deletion`}
                 </Button>
               )}
               {!groupName && <div></div>}

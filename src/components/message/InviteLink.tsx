@@ -6,6 +6,8 @@ import { useSpaces } from '../../hooks';
 import Button from '../Button';
 import { useMessageDB } from '../context/MessageDB';
 import { useNavigate } from 'react-router';
+import { Trans } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 
 export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
   const [error, setError] = useState<string>();
@@ -21,7 +23,7 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
       try {
         setSpace(await processInviteLink(inviteLink));
       } catch (e) {
-        setError('Could not verify invite');
+        setError(t`Could not verify invite`);
       }
     })();
   }, [inviteLink]);
@@ -48,12 +50,12 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
     <div className="w-[400px] rounded-md p-3 bg-surface-5 border border-surface-6">
       {error && (
         <div className="error-label mb-2">
-          The invite link has expired or is invalid.
+          <Trans>The invite link has expired or is invalid.</Trans>
         </div>
       )}
       {space && (
         <div className="font-bold flex flex-col">
-          <div>You've been invited to join a space</div>
+          <div><Trans>You've been invited to join a space</Trans></div>
           <div className="flex flex-row">
             <SpaceIcon
               noToggle={true}
@@ -80,8 +82,8 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
                   }
                 >
                   {spaces.find((s) => s.spaceId === space.spaceId)
-                    ? 'Joined'
-                    : 'Join'}
+                    ? t`Joined`
+                    : t`Join`}
                 </Button>
               </div>
             </div>

@@ -39,9 +39,6 @@ export const Onboarding = ({
 
   const { apiClient } = useQuorumApiClient();
 
-  const { data: localization } = useLocalization({ langId: 'en' });
-  const localizations = localization.localizations;
-
   const uploadRegistration = useUploadRegistration();
 
   const downloadKey = async () => {
@@ -74,9 +71,9 @@ export const Onboarding = ({
       onDropRejected: (fileRejections) => {
         for (const rejection of fileRejections) {
           if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-            setFileError(localizations['FILE_TOO_LARGE']([]));
+            setFileError(t`File cannot be larger than 2MB`);
           } else {
-            setFileError(localizations['FILE_REJECTED']([]));
+            setFileError(t`File rejected`);
           }
         }
       },

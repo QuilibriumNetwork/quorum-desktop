@@ -5,6 +5,7 @@ import './DirectMessageContactsList.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { useConversations } from '../../hooks';
+import { Trans } from '@lingui/react/macro';
 
 const DirectMessageContactsList: React.FC<{}> = ({}) => {
   const { data: conversations, refetch: refetchConversations } =
@@ -22,7 +23,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
   return (
     <div className="direct-messages-list">
       <div className="px-4 py-2 font-semibold flex flex-row justify-between">
-        <div>Direct Messages</div>
+        <div><Trans>Direct Messages</Trans></div>
         <div className="flex flex-col justify-around pr-2">
           <Link to="/messages/new">
             <FontAwesomeIcon className="cursor-pointer text-primary hover:text-primary-300 h-5" icon={faPlusCircle} />

@@ -9,11 +9,11 @@ import Button from '../Button';
 import SpaceIcon from '../navbar/SpaceIcon';
 import './JoinSpaceModal.scss';
 import { useLocation, useNavigate } from 'react-router';
-import { useLocalization } from '../../hooks';
 import { getConfig } from '../../config/config';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { Space } from '../../api/quorumApi';
 import { useMessageDB } from '../context/MessageDB';
+import { t } from '@lingui/core/macro';
 
 type JoinSpaceModalProps = {
   visible: boolean;
@@ -32,7 +32,6 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
 
   // let connection = props.connection as WebSocket;
   let navigate = useNavigate();
-  let { data: localization } = useLocalization({ langId: getConfig().langId });
   let [info, setInfo] = React.useState<{
     spaceId: string;
     configKey: string;
@@ -116,7 +115,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
             ) as Space;
             setSpace(space);
           } catch (e) {
-            setError('Could not verify invite');
+            setError(t`Could not verify invite`);
           }
         }
       }
@@ -142,7 +141,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
       hideClose={pathname.startsWith('/invite')}
       visible={props.visible}
       onClose={props.onClose}
-      title={localization.localizations['JOIN_SPACE_TITLE']([])}
+      title={t`Join Space Title`}
     >
       <div className="modal-join-space">
         <div>
@@ -150,7 +149,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
             className="w-[300pt]"
             value={lookup}
             onChange={(e) => setLookup(e.target.value)}
-            placeholder={localization.localizations['JOIN_SPACE_PROMPT']([])}
+            placeholder={t`Join Space Prompt`}
           />
         </div>
         <div className="modal-join-space-icon">
@@ -189,7 +188,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
               }
             }}
           >
-            {localization.localizations['JOIN_SPACE']([])}
+            {t`Join Space`}
           </Button>
         </div>
       </div>

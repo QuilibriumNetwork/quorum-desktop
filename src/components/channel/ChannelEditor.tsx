@@ -5,6 +5,8 @@ import { useSpace } from '../../hooks';
 import { useMessageDB } from '../context/MessageDB';
 import { Channel } from '../../api/quorumApi';
 import { useNavigate, useParams } from 'react-router';
+import { Trans } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 
 const ChannelEditor: React.FunctionComponent<{
   spaceId: string;
@@ -111,7 +113,7 @@ const ChannelEditor: React.FunctionComponent<{
       <div className="flex flex-col grow overflow-y-scroll rounded-xl">
         <div className="channel-editor-header">
           <div className="channel-editor-text flex flex-col grow px-4">
-            <div className="small-caps">Channel Name</div>
+            <div className="small-caps"><Trans>Channel Name</Trans></div>
             <input
               className="w-full quorum-input"
               value={channelName}
@@ -125,7 +127,7 @@ const ChannelEditor: React.FunctionComponent<{
         </div>
         <div className="channel-editor-content flex flex-col grow">
           <div className="channel-editor-content-section-header small-caps">
-            Channel Topic
+            <Trans>Channel Topic</Trans>
           </div>
           <div className="channel-editor-info">
             <input
@@ -147,12 +149,12 @@ const ChannelEditor: React.FunctionComponent<{
                     }
                   }}
                 >
-                  {!deleteStatus ? 'Delete Channel' : 'Confirm Deletion'}
+                  {!deleteStatus ? t`Delete Channel` : t`Confirm Deletion`}
                 </Button>
               )}
               {!channelId && <div></div>}
               <Button type="primary" onClick={() => saveChanges()}>
-                Save Changes
+                <Trans>Save Changes</Trans>
               </Button>
             </div>
           </div>

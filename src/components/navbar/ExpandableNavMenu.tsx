@@ -9,7 +9,6 @@ import {
 import { useState } from 'react';
 import Button from '../Button';
 import './ExpandableNavMenu.scss';
-import { useLocalization } from '../../hooks';
 import { getConfig } from '../../config/config';
 
 type ExpandableNavMenuProps = {
@@ -21,9 +20,6 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
   props
 ) => {
   const [isExpanded, setExpanded] = useState(false);
-  const { data: localizations } = useLocalization({
-    langId: getConfig().langId,
-  });
 
   return isExpanded ? (
     <div className="expanded-nav-menu">
@@ -37,7 +33,7 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
           setExpanded(false);
           props.showCreateSpaceModal();
         }}
-        tooltip={localizations.localizations['TOOLTIP_ADD_SPACE']([])}
+        tooltip={t`Tooltip Add Space`}
       >
         <FontAwesomeIcon icon={faPlus} />
       </Button>
