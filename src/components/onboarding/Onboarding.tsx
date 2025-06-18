@@ -132,18 +132,25 @@ export const Onboarding = ({
                     // @ts-ignore
                     !window.electron ? (
                       <>
+                        <p className="pb-4">
+
                         {t`When using Quorum on a browser, your messages are saved
-                        locally to your browser, so`}
+                        locally to your browser.`}
+                        </p>
+                        <p className="pb-4 font-bold">
                         <b>
-                          {t`if you clear your browser storage or switch browsers,
+                          {t`If you clear your browser storage or switch browsers,
                           your old messages and keys may disappear.`}
                         </b>
+                        </p>
                       </>
                     ) : (
-                      <b>
-                        {t`If you uninstall the app, you will lose your old
-                        messages and keys.`}
-                      </b>
+                      <>
+                        <p className="pb-4 font-bold">
+                          {t`If you uninstall the app from your device, you will lose your old
+                          messages and keys.`}
+                        </p>
+                      </>
                     )
                   }
                 </p>

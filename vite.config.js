@@ -10,9 +10,7 @@ import { lingui } from '@lingui/vite-plugin';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
-    lingui({
-
-    }),
+    lingui(),
     nodePolyfills({
       target: 'esnext'
     }),
