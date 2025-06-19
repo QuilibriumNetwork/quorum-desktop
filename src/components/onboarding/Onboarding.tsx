@@ -137,7 +137,7 @@ export const Onboarding = ({
                         {t`When using Quorum on a browser, your messages are saved
                         locally to your browser.`}
                         </p>
-                        <p className="pb-4 font-bold">
+                        <p className="font-bold">
                         <b>
                           {t`If you clear your browser storage or switch browsers,
                           your old messages and keys may disappear.`}
