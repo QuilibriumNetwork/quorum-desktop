@@ -13,6 +13,31 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:137
+msgid "{user} has joined"
+msgstr "{user} liittynyt"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:139
+msgid "{user} has left"
+msgstr "{user} jätti"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:141
+msgid "{user} has been kicked"
+msgstr "{user} on potkittu"
+
+#. js-lingui-explicit-id
+#: src/components/direct/DirectMessage.tsx:302
+msgid "Send a message to {user}"
+msgstr "Lähetä viesti {user}:lle"
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:393
+msgid "Send a message to #{channel_name}"
+msgstr "Lähetä viesti #{channel_name}:lle"
+
 #: src/components/channel/SpaceEditor.tsx:531
 msgid "Add Role"
 msgstr "Lisää Rooli"
@@ -34,10 +59,6 @@ msgstr "Lisäasetukset"
 msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
 msgstr "Oletko varma, että haluat lähteä {0}? Et voi liittyä takaisin, ellei sinua kutsuta uudelleen."
 
-#: src/components/message/Message.tsx:140
-msgid "been kicked"
-msgstr "on potkittu"
-
 #: src/components/channel/SpaceEditor.tsx:601
 msgid "Can delete messages?"
 msgstr "Voiko viestejä poistaa?"
@@ -54,7 +75,7 @@ msgstr "Kanavan Nimi"
 msgid "Channel Topic"
 msgstr "Kanavan aihe"
 
-#: src/components/channel/SpaceEditor.tsx:1005
+#: src/components/channel/SpaceEditor.tsx:1004
 msgid "Click Generate New Invite Link"
 msgstr "Napsauta Luo uusi kutsulinkki"
 
@@ -62,7 +83,7 @@ msgstr "Napsauta Luo uusi kutsulinkki"
 msgid "Click on the role name and tag to edit them."
 msgstr "Muokkaa roolin nimeä ja tunnistetta napsauttamalla niitä."
 
-#: src/components/onboarding/Onboarding.tsx:158
+#: src/components/onboarding/Onboarding.tsx:159
 msgid ""
 "Click the button below to create a backup of your key info,\n"
 "                  because once it's gone, it's gone forever. You may be prompted\n"
@@ -78,7 +99,7 @@ msgstr "Vahvista poisto"
 msgid "Connecting"
 msgstr "Yhdistetään"
 
-#: src/components/message/Message.tsx:354
+#: src/components/message/Message.tsx:355
 msgid "Copy message link"
 msgstr "Kopioi viesti"
 
@@ -119,7 +140,7 @@ msgstr "Poista kanava"
 msgid "Delete Group"
 msgstr "Poista ryhmä"
 
-#: src/components/message/Message.tsx:370
+#: src/components/message/Message.tsx:371
 msgid "Delete message"
 msgstr "Poista viesti"
 
@@ -140,17 +161,17 @@ msgstr "Syötä osoite manuaalisesti"
 msgid "Existing Conversations"
 msgstr "Olemassa olevat keskustelut"
 
-#: src/components/onboarding/Onboarding.tsx:74
+#: src/components/onboarding/Onboarding.tsx:75
 #: src/components/modals/CreateSpaceModal.tsx:58
-#: src/components/direct/DirectMessage.tsx:57
-#: src/components/channel/Channel.tsx:83
+#: src/components/direct/DirectMessage.tsx:58
+#: src/components/channel/Channel.tsx:84
 msgid "File cannot be larger than 2MB"
 msgstr "Tiedosto ei saa olla yli 2 Mt"
 
-#: src/components/onboarding/Onboarding.tsx:76
+#: src/components/onboarding/Onboarding.tsx:77
 #: src/components/modals/CreateSpaceModal.tsx:60
-#: src/components/direct/DirectMessage.tsx:59
-#: src/components/channel/Channel.tsx:85
+#: src/components/direct/DirectMessage.tsx:60
+#: src/components/channel/Channel.tsx:86
 msgid "File rejected"
 msgstr "Tiedosto hylätty"
 
@@ -158,7 +179,7 @@ msgstr "Tiedosto hylätty"
 msgid "General"
 msgstr "Yleinen"
 
-#: src/components/channel/SpaceEditor.tsx:1038
+#: src/components/channel/SpaceEditor.tsx:1037
 msgid "Generate New Invite Link"
 msgstr "Luo uusi kutsulinkki"
 
@@ -166,11 +187,7 @@ msgstr "Luo uusi kutsulinkki"
 msgid "Group Name"
 msgstr "Ryhmän nimi"
 
-#: src/components/message/Message.tsx:206
-msgid "has"
-msgstr ":llä on"
-
-#: src/components/onboarding/Onboarding.tsx:181
+#: src/components/onboarding/Onboarding.tsx:182
 msgid "I already saved mine"
 msgstr "Olen jo tallentanut omani"
 
@@ -180,13 +197,13 @@ msgstr "Olen jo tallentanut omani"
 #~ "                          your old messages and keys may disappear."
 #~ msgstr "jos tyhjennät selaimesi tallennustilan tai vaihdat selainta, vanhat viestisi ja avaimesi saattavat kadota"
 
-#: src/components/onboarding/Onboarding.tsx:142
+#: src/components/onboarding/Onboarding.tsx:143
 msgid ""
 "If you clear your browser storage or switch browsers,\n"
 "                          your old messages and keys may disappear."
 msgstr "Jos tyhjennät selaimesi tallennustilan tai vaihdat selainta, vanhat viestisi ja avaimesi saattavat kadota"
 
-#: src/components/onboarding/Onboarding.tsx:150
+#: src/components/onboarding/Onboarding.tsx:151
 msgid ""
 "If you uninstall the app from your device, you will lose your old\n"
 "                          messages and keys."
@@ -202,7 +219,7 @@ msgstr "Jos poistat sovelluksen laitteestasi, menetät vanhat viestit ja avaimet
 msgid "Import Existing Key"
 msgstr "Tuo olemassa oleva avain"
 
-#: src/components/onboarding/Onboarding.tsx:122
+#: src/components/onboarding/Onboarding.tsx:123
 msgid "Important first-time user information:"
 msgstr "Tärkeitä tietoja ensikertalaiselle:"
 
@@ -227,10 +244,6 @@ msgstr "Liity Tila"
 msgid "Join Space Title"
 msgstr "Liity Tila"
 
-#: src/components/message/Message.tsx:136
-msgid "joined"
-msgstr "liittynyt"
-
 #: src/components/message/InviteLink.tsx:85
 msgid "Joined"
 msgstr "Liittynyt"
@@ -252,17 +265,12 @@ msgstr "Potku Käyttäjä"
 msgid "Leave Space"
 msgstr "Jätä Tilasta"
 
-#: src/components/message/Message.tsx:138
-msgid "left"
-msgstr "jätti"
+#. placeholder {0}: currentPasskeyInfo?.address
+#: src/components/onboarding/Onboarding.tsx:195
+msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
+msgstr "Kerro ystävillesi kuka olet! Valitse keskusteluissasi näkyväksi ystävällinen nimi, jokin helpompi lukea kuin {0}"
 
-#: src/components/onboarding/Onboarding.tsx:194
-msgid ""
-"Let your friends know who you are! Pick a friendly name to\n"
-"                  display in your conversations, something easier to read than"
-msgstr "Kerro ystävillesi kuka olet! Valitse keskusteluissasi näkyväksi ystävällinen nimi, jokin helpompi lukea kuin"
-
-#: src/components/onboarding/Onboarding.tsx:366
+#: src/components/onboarding/Onboarding.tsx:367
 msgid "Let's gooooooooo"
 msgstr "Mennäänpä!"
 
@@ -270,7 +278,7 @@ msgstr "Mennäänpä!"
 msgid "Maintenance in Progress"
 msgstr "Ylläpidossa"
 
-#: src/components/onboarding/Onboarding.tsx:243
+#: src/components/onboarding/Onboarding.tsx:244
 msgid ""
 "Make your account uniquely yours – set a contact photo. This\n"
 "                    information is only provided to the spaces you join."
@@ -281,7 +289,7 @@ msgstr "Tee tilistäsi ainutlaatuinen – lisää yhteyshenkilölle kuva. Nämä
 msgid "Max file size: 256kB"
 msgstr "Suurin tiedostokoko: 256kB"
 
-#: src/components/message/Message.tsx:334
+#: src/components/message/Message.tsx:335
 msgid "More reactions"
 msgstr "Lisää reaktioita"
 
@@ -302,11 +310,11 @@ msgstr "Lähetä uusi suora viesti"
 msgid "New Direct Message Title"
 msgstr "Uusi Suoraviesti"
 
-#: src/components/onboarding/Onboarding.tsx:111
+#: src/components/onboarding/Onboarding.tsx:112
 msgid "One of us, one of us!"
 msgstr "Yksi meistä, yksi meistä!"
 
-#: src/components/onboarding/Onboarding.tsx:112
+#: src/components/onboarding/Onboarding.tsx:113
 msgid "Personalize your account"
 msgstr "Mukauta tiliäsi"
 
@@ -314,11 +322,11 @@ msgstr "Mukauta tiliäsi"
 msgid "Privacy Settings"
 msgstr "Tietosuoja-asetukset"
 
-#: src/components/channel/SpaceEditor.tsx:953
+#: src/components/channel/SpaceEditor.tsx:952
 msgid "Public Invite Link"
 msgstr "Julkisen kutsun linkki"
 
-#: src/components/channel/SpaceEditor.tsx:966
+#: src/components/channel/SpaceEditor.tsx:965
 msgid "Public invite links allow anyone with access to the link join your space. Understand the risks of enabling this, and to whom and where you share the link."
 msgstr "Julkisten kutsulinkkien avulla kuka tahansa, jolla on pääsy linkkiin, voi liittyä tilaan. Ymmärrä tämän käyttöönoton riskit sekä se, kenelle ja missä jaat linkin."
 
@@ -326,7 +334,7 @@ msgstr "Julkisten kutsulinkkien avulla kuka tahansa, jolla on pääsy linkkiin, 
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
 msgstr "Quorum-infrastruktuuria otetaan parhaillaan käyttöön. Kokeile päivittämistä ja tarkista päivitykset osoitteesta <0>https://status.quilibrium.com/</0>."
 
-#: src/components/onboarding/Onboarding.tsx:125
+#: src/components/onboarding/Onboarding.tsx:126
 msgid ""
 "Quorum is peer-to-peer and end-to-end encrypted. This means\n"
 "                  your messages stay private, but equally important, they only\n"
@@ -338,7 +346,7 @@ msgstr "Quorum on vertaisverkon ja päästä päähän -salattu. Tämä tarkoitt
 msgid "Refresh"
 msgstr "Päivitä"
 
-#: src/components/message/Message.tsx:344
+#: src/components/message/Message.tsx:345
 msgid "Reply"
 msgstr "Vastaa"
 
@@ -373,23 +381,15 @@ msgstr "Roolit"
 msgid "Save Changes"
 msgstr "Tallenna muutokset"
 
-#: src/components/onboarding/Onboarding.tsx:324
+#: src/components/onboarding/Onboarding.tsx:325
 msgid "Save Contact Photo"
 msgstr "Tallenna yhteystiedon kuva"
 
-#: src/components/onboarding/Onboarding.tsx:174
+#: src/components/onboarding/Onboarding.tsx:175
 msgid "Save User Key"
 msgstr "Tallenna käyttäjäavain"
 
-#: src/components/direct/DirectMessage.tsx:301
-msgid "Send a message to "
-msgstr "Lähetä viesti osoitteeseen "
-
-#: src/components/channel/Channel.tsx:392
-msgid "Send a message to #"
-msgstr "Lähetä viesti numeroon #"
-
-#: src/components/channel/SpaceEditor.tsx:1059
+#: src/components/channel/SpaceEditor.tsx:1058
 msgid "Send Invite"
 msgstr "Lähetä kutsu"
 
@@ -397,7 +397,7 @@ msgstr "Lähetä kutsu"
 msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 msgstr "Lähetä kutsuja ihmisille, joiden kanssa olet aiemmin keskustellut. Kutsupainike ilmestyy heidän postilaatikkoonsa."
 
-#: src/components/onboarding/Onboarding.tsx:227
+#: src/components/onboarding/Onboarding.tsx:228
 msgid "Set Display Name"
 msgstr "Aseta näyttönimi"
 
@@ -417,9 +417,10 @@ msgstr "Space Nimi"
 msgid "Stickers"
 msgstr "Tarrat"
 
+#. placeholder {0}: selectedUser?.displayName
 #: src/components/channel/SpaceEditor.tsx:946
-msgid "Successfully sent invite to"
-msgstr "Onnistunut kutsun lähettäminen osoitteeseen"
+msgid "Successfully sent invite to {0}"
+msgstr "Onnistunut kutsun lähettäminen osoitteeseen {0}"
 
 #: src/components/channel/SpaceEditor.tsx:658
 #: src/components/channel/SpaceEditor.tsx:754
@@ -430,15 +431,15 @@ msgstr "Tuetut tyypit: PNG, JPG, GIF"
 msgid "The invite link has expired or is invalid."
 msgstr "Kutsulinkki on vanhentunut tai on virheellinen."
 
-#: src/components/onboarding/Onboarding.tsx:198
+#: src/components/onboarding/Onboarding.tsx:199
 msgid "This information is only provided to the spaces you join."
 msgstr "Nämä tiedot annetaan vain niille tiloille, joihin liityt."
 
-#: src/components/message/Message.tsx:124
-msgid "Today at"
-msgstr "Tänään klo"
+#: src/components/message/Message.tsx:125
+msgid "Today at {timeFormatted}"
+msgstr "Tänään klo {timeFormatted}"
 
-#: src/components/channel/Channel.tsx:190
+#: src/components/channel/Channel.tsx:191
 msgid "Unknown User"
 msgstr "Tuntematon käyttäjä"
 
@@ -450,7 +451,7 @@ msgstr "Lataa Emoji"
 msgid "Upload Sticker"
 msgstr "Lataa tarra"
 
-#: src/components/onboarding/Onboarding.tsx:109
+#: src/components/onboarding/Onboarding.tsx:110
 msgid "Welcome to Quorum!"
 msgstr "Tervetuloa Quorumiin!"
 
@@ -464,17 +465,17 @@ msgstr "Kun tämä asetus on käytössä, kutsulinkit sallivat automaattisesti k
 #~ "                        locally to your browser, so"
 #~ msgstr "Kun käytät Quorumia selaimessa, viestisi tallennetaan paikallisesti selaimeesi, joten"
 
-#: src/components/onboarding/Onboarding.tsx:137
+#: src/components/onboarding/Onboarding.tsx:138
 msgid ""
 "When using Quorum on a browser, your messages are saved\n"
 "                        locally to your browser."
 msgstr "Kun käytät Quorumia selaimella, viestit tallennetaan paikallisesti selaimeesi."
 
-#: src/components/message/Message.tsx:127
-msgid "Yesterday at"
-msgstr "Eilen klo"
+#: src/components/message/Message.tsx:128
+msgid "Yesterday at {timeFormatted}"
+msgstr "Eilen klo {timeFormatted}"
 
-#: src/components/onboarding/Onboarding.tsx:338
+#: src/components/onboarding/Onboarding.tsx:339
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Olet valmis. Tervetuloa Quorumiin!"
 

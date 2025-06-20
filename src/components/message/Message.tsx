@@ -28,6 +28,7 @@ import { InviteLink } from './InviteLink';
 import Modal from '../Modal';
 import './Message.scss';
 import { t } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -121,23 +122,23 @@ export const Message = ({
 
   const displayedTimestmap = time.calendar(null, {
     sameDay: function () {
-      return `[${t`Today at`} ${timeFormatted}]`;
+      return `[${t`Today at ${timeFormatted}`}]`;
     },
     lastWeek: 'dddd',
-    lastDay: `[${t`Yesterday at`} ${timeFormatted}]`,
+    lastDay: `[${t`Yesterday at ${timeFormatted}`}]`,
     sameElse: function () {
       return `[${fromNow}]`;
     },
   });
 
-  const formatEventMessage = (type: string) => {
+  const formatEventMessage = (userDisplayName: string, type: string) => {
     switch (type) {
       case 'join':
-        return t`joined`;
+        return i18n._("{user} has joined", {user: userDisplayName});
       case 'leave':
-        return t`left`;
+        return i18n._("{user} has left", {user: userDisplayName});
       case 'kick':
-        return t`been kicked`;
+        return i18n._("{user} has been kicked", {user: userDisplayName});
     }
   };
 
@@ -203,7 +204,7 @@ export const Message = ({
       })()}
       {['join', 'leave', 'kick'].includes(message.content.type) && (
         <div className="flex flex-row font-[11px] px-[11px] py-[8px] italic">
-          {sender.displayName} {t`has`} {formatEventMessage(message.content.type)}
+          {formatEventMessage(sender.displayName, message.content.type)}
         </div>
       )}
       {!['join', 'leave', 'kick'].includes(message.content.type) && (

@@ -5,6 +5,7 @@ import { messages as messagesEn } from "./en/messages";
 import { messages as messagesEs } from "./es/messages";
 import { messages as messagesFi } from "./fi/messages";
 import { messages as messagesRu } from "./ru/messages";
+// import { messages as messagesZh } from "./zh/messages";
 
 export interface Languages {
   [key: string]: string;
@@ -15,6 +16,8 @@ export const localeNames: Languages = {
   fi: "Suomi",
   es: "Español",
   ru: "Русский",
+  "zh-CN": "简体中文",
+  "zh-TW": "繁體中文",
 };
 
 export const defaultLocale = "en";
@@ -28,6 +31,7 @@ export const locales: LocaleMessages = {
   'es': messagesEs,
   'fi': messagesFi,
   'ru': messagesRu,
+  // 'zh': messagesZh,
 };
 
 /**

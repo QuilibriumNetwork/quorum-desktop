@@ -13,6 +13,31 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:137
+msgid "{user} has joined"
+msgstr "{user} присоединился"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:139
+msgid "{user} has left"
+msgstr "{user} присоединился"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:141
+msgid "{user} has been kicked"
+msgstr "{user} был выгнан"
+
+#. js-lingui-explicit-id
+#: src/components/direct/DirectMessage.tsx:302
+msgid "Send a message to {user}"
+msgstr "Отправить сообщение для {user}"
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:393
+msgid "Send a message to #{channel_name}"
+msgstr "Отправить сообщение для #{channel_name}"
+
 #: src/components/channel/SpaceEditor.tsx:531
 msgid "Add Role"
 msgstr "Добавить роль"
@@ -34,10 +59,6 @@ msgstr "Дополнительные настройки"
 msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
 msgstr "Вы уверены, что хотите покинуть {0}? Вы сможете присоединиться только после повторного приглашения."
 
-#: src/components/message/Message.tsx:140
-msgid "been kicked"
-msgstr "был выбит"
-
 #: src/components/channel/SpaceEditor.tsx:601
 msgid "Can delete messages?"
 msgstr "Можно ли удалять сообщения?"
@@ -54,7 +75,7 @@ msgstr "Название канала"
 msgid "Channel Topic"
 msgstr "Тема канала"
 
-#: src/components/channel/SpaceEditor.tsx:1005
+#: src/components/channel/SpaceEditor.tsx:1004
 msgid "Click Generate New Invite Link"
 msgstr "Нажмите на ссылку Создать новое приглашение"
 
@@ -62,7 +83,7 @@ msgstr "Нажмите на ссылку Создать новое пригла�
 msgid "Click on the role name and tag to edit them."
 msgstr "Нажмите на имя роли и тег, чтобы отредактировать их."
 
-#: src/components/onboarding/Onboarding.tsx:158
+#: src/components/onboarding/Onboarding.tsx:159
 msgid ""
 "Click the button below to create a backup of your key info,\n"
 "                  because once it's gone, it's gone forever. You may be prompted\n"
@@ -78,7 +99,7 @@ msgstr "Подтвердите удаление"
 msgid "Connecting"
 msgstr "Подключение"
 
-#: src/components/message/Message.tsx:354
+#: src/components/message/Message.tsx:355
 msgid "Copy message link"
 msgstr "Скопируйте ссылку на сообщение"
 
@@ -119,7 +140,7 @@ msgstr "Удалить канал"
 msgid "Delete Group"
 msgstr "Удалить группу"
 
-#: src/components/message/Message.tsx:370
+#: src/components/message/Message.tsx:371
 msgid "Delete message"
 msgstr "Удалить сообщение"
 
@@ -140,17 +161,17 @@ msgstr "Введите адрес вручную"
 msgid "Existing Conversations"
 msgstr "Существующие разговоры"
 
-#: src/components/onboarding/Onboarding.tsx:74
+#: src/components/onboarding/Onboarding.tsx:75
 #: src/components/modals/CreateSpaceModal.tsx:58
-#: src/components/direct/DirectMessage.tsx:57
-#: src/components/channel/Channel.tsx:83
+#: src/components/direct/DirectMessage.tsx:58
+#: src/components/channel/Channel.tsx:84
 msgid "File cannot be larger than 2MB"
 msgstr "Размер файла не может превышать 2 МБ"
 
-#: src/components/onboarding/Onboarding.tsx:76
+#: src/components/onboarding/Onboarding.tsx:77
 #: src/components/modals/CreateSpaceModal.tsx:60
-#: src/components/direct/DirectMessage.tsx:59
-#: src/components/channel/Channel.tsx:85
+#: src/components/direct/DirectMessage.tsx:60
+#: src/components/channel/Channel.tsx:86
 msgid "File rejected"
 msgstr "Файл отклонен"
 
@@ -158,7 +179,7 @@ msgstr "Файл отклонен"
 msgid "General"
 msgstr "Общий"
 
-#: src/components/channel/SpaceEditor.tsx:1038
+#: src/components/channel/SpaceEditor.tsx:1037
 msgid "Generate New Invite Link"
 msgstr "Создайте новую ссылку для приглашения"
 
@@ -166,11 +187,7 @@ msgstr "Создайте новую ссылку для приглашения"
 msgid "Group Name"
 msgstr "Название группы"
 
-#: src/components/message/Message.tsx:206
-msgid "has"
-msgstr "имеет"
-
-#: src/components/onboarding/Onboarding.tsx:181
+#: src/components/onboarding/Onboarding.tsx:182
 msgid "I already saved mine"
 msgstr "Я уже сохранил свой"
 
@@ -180,13 +197,13 @@ msgstr "Я уже сохранил свой"
 #~ "                          your old messages and keys may disappear."
 #~ msgstr "Если вы очистите хранилище браузера или переключите браузер, старые сообщения и клавиши могут исчезнуть."
 
-#: src/components/onboarding/Onboarding.tsx:142
+#: src/components/onboarding/Onboarding.tsx:143
 msgid ""
 "If you clear your browser storage or switch browsers,\n"
 "                          your old messages and keys may disappear."
 msgstr "Если вы очистите хранилище браузера или переключите браузер, старые сообщения и клавиши могут исчезнуть."
 
-#: src/components/onboarding/Onboarding.tsx:150
+#: src/components/onboarding/Onboarding.tsx:151
 msgid ""
 "If you uninstall the app from your device, you will lose your old\n"
 "                          messages and keys."
@@ -202,7 +219,7 @@ msgstr "Если вы удалите приложение, то потеряет
 msgid "Import Existing Key"
 msgstr "Импорт существующего ключа"
 
-#: src/components/onboarding/Onboarding.tsx:122
+#: src/components/onboarding/Onboarding.tsx:123
 msgid "Important first-time user information:"
 msgstr "Важная информация для начинающих пользователей:"
 
@@ -227,10 +244,6 @@ msgstr "Регистрация в пространстве"
 msgid "Join Space Title"
 msgstr "Присоединяйтесь к пространству"
 
-#: src/components/message/Message.tsx:136
-msgid "joined"
-msgstr "присоединился"
-
 #: src/components/message/InviteLink.tsx:85
 msgid "Joined"
 msgstr "Уже Присоединился"
@@ -252,17 +265,12 @@ msgstr "Удалить пользователя"
 msgid "Leave Space"
 msgstr "Оставьте место"
 
-#: src/components/message/Message.tsx:138
-msgid "left"
-msgstr "покинул"
+#. placeholder {0}: currentPasskeyInfo?.address
+#: src/components/onboarding/Onboarding.tsx:195
+msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
+msgstr "Пусть ваши друзья знают, кто вы! Выберите дружелюбное имя, которое будет отображаться в ваших беседах, что-нибудь более легкое для чтения, чем {0}"
 
-#: src/components/onboarding/Onboarding.tsx:194
-msgid ""
-"Let your friends know who you are! Pick a friendly name to\n"
-"                  display in your conversations, something easier to read than"
-msgstr "Пусть ваши друзья знают, кто вы! Выберите дружелюбное имя, которое будет отображаться в ваших беседах, что-нибудь более легкое для чтения, чем x"
-
-#: src/components/onboarding/Onboarding.tsx:366
+#: src/components/onboarding/Onboarding.tsx:367
 msgid "Let's gooooooooo"
 msgstr "Поехали!"
 
@@ -270,7 +278,7 @@ msgstr "Поехали!"
 msgid "Maintenance in Progress"
 msgstr "Текущее обслуживание"
 
-#: src/components/onboarding/Onboarding.tsx:243
+#: src/components/onboarding/Onboarding.tsx:244
 msgid ""
 "Make your account uniquely yours – set a contact photo. This\n"
 "                    information is only provided to the spaces you join."
@@ -281,7 +289,7 @@ msgstr "Сделайте свой аккаунт уникальным - уста
 msgid "Max file size: 256kB"
 msgstr "Максимальный размер файла: 256 кБ"
 
-#: src/components/message/Message.tsx:334
+#: src/components/message/Message.tsx:335
 msgid "More reactions"
 msgstr "Другие реакции"
 
@@ -302,11 +310,11 @@ msgstr "Написать новое прямое сообщение"
 msgid "New Direct Message Title"
 msgstr "Новое прямое сообщение"
 
-#: src/components/onboarding/Onboarding.tsx:111
+#: src/components/onboarding/Onboarding.tsx:112
 msgid "One of us, one of us!"
 msgstr "Один из нас, один из нас!"
 
-#: src/components/onboarding/Onboarding.tsx:112
+#: src/components/onboarding/Onboarding.tsx:113
 msgid "Personalize your account"
 msgstr "Персонализируйте свой аккаунт"
 
@@ -314,11 +322,11 @@ msgstr "Персонализируйте свой аккаунт"
 msgid "Privacy Settings"
 msgstr "Настройки конфиденциальности"
 
-#: src/components/channel/SpaceEditor.tsx:953
+#: src/components/channel/SpaceEditor.tsx:952
 msgid "Public Invite Link"
 msgstr "Ссылка для публичного приглашения"
 
-#: src/components/channel/SpaceEditor.tsx:966
+#: src/components/channel/SpaceEditor.tsx:965
 msgid "Public invite links allow anyone with access to the link join your space. Understand the risks of enabling this, and to whom and where you share the link."
 msgstr "Публичные пригласительные ссылки позволяют любому, кто имеет доступ к ссылке, присоединиться к вашему пространству. Поймите, чем чревата такая возможность, а также кому и где вы предоставляете ссылку."
 
@@ -326,7 +334,7 @@ msgstr "Публичные пригласительные ссылки позв�
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
 msgstr "Инфраструктура кворума в данный момент развертывается. Пожалуйста, попробуйте обновить и проверьте <0>https://status.quilibrium.com/</0> на наличие обновлений."
 
-#: src/components/onboarding/Onboarding.tsx:125
+#: src/components/onboarding/Onboarding.tsx:126
 msgid ""
 "Quorum is peer-to-peer and end-to-end encrypted. This means\n"
 "                  your messages stay private, but equally important, they only\n"
@@ -338,7 +346,7 @@ msgstr "Quorum - это одноранговая сеть, зашифрован�
 msgid "Refresh"
 msgstr "Обновление"
 
-#: src/components/message/Message.tsx:344
+#: src/components/message/Message.tsx:345
 msgid "Reply"
 msgstr "Ответить"
 
@@ -373,23 +381,15 @@ msgstr "Роли"
 msgid "Save Changes"
 msgstr "Сохранить изменения"
 
-#: src/components/onboarding/Onboarding.tsx:324
+#: src/components/onboarding/Onboarding.tsx:325
 msgid "Save Contact Photo"
 msgstr "Сохранить фотографию контакта"
 
-#: src/components/onboarding/Onboarding.tsx:174
+#: src/components/onboarding/Onboarding.tsx:175
 msgid "Save User Key"
 msgstr "Сохранить ключ пользователя"
 
-#: src/components/direct/DirectMessage.tsx:301
-msgid "Send a message to "
-msgstr "Отправить сообщение для"
-
-#: src/components/channel/Channel.tsx:392
-msgid "Send a message to #"
-msgstr "Отправить сообщение для #"
-
-#: src/components/channel/SpaceEditor.tsx:1059
+#: src/components/channel/SpaceEditor.tsx:1058
 msgid "Send Invite"
 msgstr "Отправить приглашение"
 
@@ -397,7 +397,7 @@ msgstr "Отправить приглашение"
 msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 msgstr "Отправляйте приглашения людям, с которыми вы ранее общались. Кнопка приглашения появится в их почтовом ящике."
 
-#: src/components/onboarding/Onboarding.tsx:227
+#: src/components/onboarding/Onboarding.tsx:228
 msgid "Set Display Name"
 msgstr "Установить отображаемое имя"
 
@@ -417,9 +417,10 @@ msgstr "Имя пространства"
 msgid "Stickers"
 msgstr "Наклейки"
 
+#. placeholder {0}: selectedUser?.displayName
 #: src/components/channel/SpaceEditor.tsx:946
-msgid "Successfully sent invite to"
-msgstr "Успешно отправлено приглашение"
+msgid "Successfully sent invite to {0}"
+msgstr "Успешно отправлено приглашение на {0}"
 
 #: src/components/channel/SpaceEditor.tsx:658
 #: src/components/channel/SpaceEditor.tsx:754
@@ -430,15 +431,15 @@ msgstr "Поддерживаемые типы: PNG, JPG, GIF"
 msgid "The invite link has expired or is invalid."
 msgstr "Срок действия ссылки на приглашение истек или она недействительна."
 
-#: src/components/onboarding/Onboarding.tsx:198
+#: src/components/onboarding/Onboarding.tsx:199
 msgid "This information is only provided to the spaces you join."
 msgstr "Эта информация предоставляется только тем местам, к которым вы присоединяетесь."
 
-#: src/components/message/Message.tsx:124
-msgid "Today at"
-msgstr "Сегодня в"
+#: src/components/message/Message.tsx:125
+msgid "Today at {timeFormatted}"
+msgstr "Сегодня в {timeFormatted}"
 
-#: src/components/channel/Channel.tsx:190
+#: src/components/channel/Channel.tsx:191
 msgid "Unknown User"
 msgstr "Неизвестный пользователь"
 
@@ -450,7 +451,7 @@ msgstr "Загрузить Emoji"
 msgid "Upload Sticker"
 msgstr "Загрузить наклейку"
 
-#: src/components/onboarding/Onboarding.tsx:109
+#: src/components/onboarding/Onboarding.tsx:110
 msgid "Welcome to Quorum!"
 msgstr "Добро пожаловать в Quorum!"
 
@@ -464,17 +465,17 @@ msgstr "Если эта настройка включена, ссылки-при
 #~ "                        locally to your browser, so"
 #~ msgstr "При использовании Quorum в браузере сообщения сохраняются локально в браузере."
 
-#: src/components/onboarding/Onboarding.tsx:137
+#: src/components/onboarding/Onboarding.tsx:138
 msgid ""
 "When using Quorum on a browser, your messages are saved\n"
 "                        locally to your browser."
 msgstr "При использовании Quorum в браузере сообщения сохраняются локально в браузере."
 
-#: src/components/message/Message.tsx:127
-msgid "Yesterday at"
-msgstr "Вчера в"
+#: src/components/message/Message.tsx:128
+msgid "Yesterday at {timeFormatted}"
+msgstr "Вчера в {timeFormatted}"
 
-#: src/components/onboarding/Onboarding.tsx:338
+#: src/components/onboarding/Onboarding.tsx:339
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Все готово. Добро пожаловать в Quorum!"
 

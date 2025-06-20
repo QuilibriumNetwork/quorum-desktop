@@ -28,6 +28,7 @@ import { MessageList } from '../message/MessageList';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
 import { t } from "@lingui/core/macro";
+import { i18n } from '@lingui/core';
 
 type ChannelProps = {
   spaceId: string;
@@ -389,7 +390,7 @@ const Channel: React.FC<ChannelProps> = ({
               'message-editor w-full !pl-11 !pr-11 ' +
               (inReplyTo ? 'message-editor-reply' : '')
             }
-            placeholder={t`Send a message to #` + channel?.channelName}
+            placeholder={i18n._("Send a message to #{channel_name}", {channel_name: channel?.channelName ?? '' })}
             rows={
               rowCount > 4
                 ? 4

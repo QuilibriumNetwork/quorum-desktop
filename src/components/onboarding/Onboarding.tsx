@@ -11,6 +11,7 @@ import { faFileImage } from '@fortawesome/free-solid-svg-icons';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
 import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 
 export const Onboarding = ({
   setUser,
@@ -191,9 +192,9 @@ export const Onboarding = ({
               <div className="grow"></div>
               <div className="w-[460px] py-4 text-justify text-white">
                 <p className="pb-4">
-                  {t`Let your friends know who you are! Pick a friendly name to
-                  display in your conversations, something easier to read than`}
-                  {currentPasskeyInfo?.address}.
+                  <Trans>Let your friends know who you are! Pick a friendly name to
+                  display in your conversations, something easier to read than {currentPasskeyInfo?.address}
+                  </Trans>
                 </p>
                 <p>{t`This information is only provided to the spaces you join.`}</p>
               </div>

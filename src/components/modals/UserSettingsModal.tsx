@@ -343,7 +343,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             <div className="absolute left-[150%] top-0 z-50 w-[400px]">
                               <Tooltip
                                 variant="dark"
-                                arrow="left"
+                                arrow="{user} has left"
                                 className="w-[400px] absolute"
                                 visible={allowSyncTooltip}
                               >
@@ -380,7 +380,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             <div className="absolute left-[150%] top-0 z-50 w-[400px]">
                               <Tooltip
                                 variant="dark"
-                                arrow="left"
+                                arrow="{user} has left"
                                 className="w-[400px] absolute"
                                 visible={nonRepudiableTooltip}
                               >

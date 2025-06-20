@@ -15,6 +15,7 @@ import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
 
 import { t } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 
 const DirectMessage: React.FC<{}> = (p: {}) => {
   const [fileError, setFileError] = useState<string | null>(null);
@@ -298,7 +299,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               (inReplyTo ? 'message-editor-reply' : '')
             }
             placeholder={
-              t`Send a message to ` + mapSenderToUser(address ?? '').displayName
+              i18n._("Send a message to {user}", { user: mapSenderToUser(address ?? '').displayName })
             }
             rows={
               rowCount > 4

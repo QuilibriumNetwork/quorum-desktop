@@ -59,7 +59,7 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
           <Tooltip
             visible={isTooltipOpen !== undefined}
             className="absolute whitespace-nowrap"
-            arrow="left"
+            arrow="{user} has left"
           >
             {props.spaceName}
           </Tooltip>
