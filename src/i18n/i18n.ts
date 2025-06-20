@@ -11,6 +11,7 @@ import { i18n, Messages } from "@lingui/core";
 
 // load language specific messages
 import { messages as messagesEn } from "./en/messages";
+import { messages as messagesEnPI } from "./en-PI/messages";
 import { messages as messagesEs } from "./es/messages";
 import { messages as messagesFi } from "./fi/messages";
 import { messages as messagesRu } from "./ru/messages";
@@ -47,6 +48,7 @@ export interface Languages {
 
 export const localeNames: Languages = {
   en: "English",
+  'en-PI': "English (Pirate)",
   fi: "Suomi",
   es: "Español",
   ru: "Русский",
@@ -86,6 +88,7 @@ export type LocaleMessages = {
 
 export const locales: LocaleMessages = {
   'en': messagesEn,
+  'en-PI': messagesEnPI,
   'es': messagesEs,
   'fi': messagesFi,
   'ru': messagesRu,
