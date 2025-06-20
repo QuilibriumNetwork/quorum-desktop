@@ -10,74 +10,74 @@
 import { i18n, Messages } from "@lingui/core";
 
 // load language specific messages
+import { messages as messagesAr } from "./ar/messages";
+import { messages as messagesCs } from "./cs/messages";
+import { messages as messagesDa } from "./da/messages";
+import { messages as messagesDe } from "./de/messages";
+import { messages as messagesEl } from "./el/messages";
 import { messages as messagesEn } from "./en/messages";
 import { messages as messagesEnPI } from "./en-PI/messages";
 import { messages as messagesEs } from "./es/messages";
 import { messages as messagesFi } from "./fi/messages";
-import { messages as messagesRu } from "./ru/messages";
-import { messages as messagesZhCN } from "./zh-CN/messages";
-import { messages as messagesZhTW } from "./zh-TW/messages";
-import { messages as messagesAr } from "./ar/messages";
-import { messages as messagesTr } from "./tr/messages";
-import { messages as messagesUk } from "./uk/messages";
-import { messages as messagesVi } from "./vi/messages";
-import { messages as messagesSv } from "./sv/messages";
-import { messages as messagesSr } from "./sr/messages";
+import { messages as messagesFr } from "./fr/messages";
 import { messages as messagesHe } from "./he/messages";
-import { messages as messagesEl } from "./el/messages";
+import { messages as messagesId } from "./id/messages";
+import { messages as messagesIt } from "./it/messages";
 import { messages as messagesJa } from "./ja/messages";
 import { messages as messagesKo } from "./ko/messages";
-import { messages as messagesIt } from "./it/messages";
+import { messages as messagesNl } from "./nl/messages";
+import { messages as messagesNo } from "./no/messages";
 import { messages as messagesPl } from "./pl/messages";
 import { messages as messagesPt } from "./pt/messages";
 import { messages as messagesRo } from "./ro/messages";
+import { messages as messagesRu } from "./ru/messages";
 import { messages as messagesSk } from "./sk/messages";
 import { messages as messagesSl } from "./sl/messages";
+import { messages as messagesSr } from "./sr/messages";
+import { messages as messagesSv } from "./sv/messages";
 import { messages as messagesTh } from "./th/messages";
-import { messages as messagesFr } from "./fr/messages";
-import { messages as messagesDe } from "./de/messages";
-import { messages as messagesNl } from "./nl/messages";
-import { messages as messagesNo } from "./no/messages";
-import { messages as messagesDa } from "./da/messages";
-import { messages as messagesCs } from "./cs/messages";
-import { messages as messagesId } from "./id/messages";
+import { messages as messagesTr } from "./tr/messages";
+import { messages as messagesUk } from "./uk/messages";
+import { messages as messagesVi } from "./vi/messages";
+import { messages as messagesZhCN } from "./zh-CN/messages";
+import { messages as messagesZhTW } from "./zh-TW/messages";
 
 export interface Languages {
   [key: string]: string;
 }
 
 export const localeNames: Languages = {
+  ar: "العربية",
+  cs: "Čeština",
+  da: "Dansk",
+  de: "Deutsch",
+  el: "Ελληνικά",
   en: "English",
   'en-PI': "English (Pirate)",
-  fi: "Suomi",
   es: "Español",
-  ru: "Русский",
-  "zh-CN": "简体中文",
-  "zh-TW": "繁體中文",
-  ar: "العربية",
-  tr: "Türkçe",
-  uk: "Українська",
-  vi: "Tiếng Việt",
-  sv: "Svenska",
-  sr: "Српски",
+  fi: "Suomi",
+  fr: "Français",
   he: "עברית",
-  el: "Ελληνικά",
+  id: "Bahasa Indonesia",
+  it: "Italiano",
   ja: "日本語",
   ko: "한국어",
-  it: "Italiano",
+  nl: "Nederlands",
+  no: "Norsk",
   pl: "Polski",
   pt: "Português",
   ro: "Română",
+  ru: "Русский",
   sk: "Slovenčina",
   sl: "Slovenščina",
+  sr: "Српски",
+  sv: "Svenska",
   th: "ไทย",
-  fr: "Français",
-  de: "Deutsch",
-  nl: "Nederlands",
-  no: "Norsk",
-  da: "Dansk",
-  cs: "Čeština",
-  id: "Bahasa Indonesia",
+  tr: "Türkçe",
+  uk: "Українська",
+  vi: "Tiếng Việt",
+  'zh-CN': "简体中文",
+  'zh-TW': "繁體中文",
 };
 
 export const defaultLocale = "en";
@@ -87,37 +87,37 @@ export type LocaleMessages = {
 }
 
 export const locales: LocaleMessages = {
+  'ar': messagesAr,
+  'cs': messagesCs,
+  'da': messagesDa,
+  'de': messagesDe,
+  'el': messagesEl,
   'en': messagesEn,
   'en-PI': messagesEnPI,
   'es': messagesEs,
   'fi': messagesFi,
-  'ru': messagesRu,
-  'zh-CN': messagesZhCN,
-  'zh-TW': messagesZhTW,
-  'ar': messagesAr,
-  'tr': messagesTr,
-  'uk': messagesUk,
-  'vi': messagesVi,
-  'sv': messagesSv,
-  'sr': messagesSr,
+  'fr': messagesFr,
   'he': messagesHe,
-  'el': messagesEl,
+  'id': messagesId,
+  'it': messagesIt,
   'ja': messagesJa,
   'ko': messagesKo,
-  'it': messagesIt,
+  'nl': messagesNl,
+  'no': messagesNo,
   'pl': messagesPl,
   'pt': messagesPt,
   'ro': messagesRo,
+  'ru': messagesRu,
   'sk': messagesSk,
   'sl': messagesSl,
+  'sr': messagesSr,
+  'sv': messagesSv,
   'th': messagesTh,
-  'fr': messagesFr,
-  'de': messagesDe,
-  'nl': messagesNl,
-  'no': messagesNo,
-  'da': messagesDa,
-  'cs': messagesCs,
-  'id': messagesId,
+  'tr': messagesTr,
+  'uk': messagesUk,
+  'vi': messagesVi,
+  'zh-CN': messagesZhCN,
+  'zh-TW': messagesZhTW,
 };
 
 /**
