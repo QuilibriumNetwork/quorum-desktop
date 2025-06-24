@@ -32,6 +32,7 @@ import { useRegistrationContext } from '../context/RegistrationPersister';
 import { Loading } from '../Loading';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
+import SpaceTag from '../SpaceTag';
 
 const SpaceEditor: React.FunctionComponent<{
   spaceId: string;
@@ -46,6 +47,8 @@ const SpaceEditor: React.FunctionComponent<{
     React.useState<string>('general');
   const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
   const [bannerData, setBannerData] = React.useState<ArrayBuffer | undefined>();
+  const [spaceTagLetters, setSpaceTagLetters] = React.useState<string | undefined>(space?.spaceTag?.letters || undefined);
+  const [spaceTagData, setSpaceTagData] = React.useState<ArrayBuffer | undefined>();
   const [isDefaultChannelListExpanded, setIsDefaultChannelListExpanded] =
     React.useState<boolean>(false);
   const [isInviteListExpanded, setIsInviteListExpanded] =
@@ -116,6 +119,19 @@ const SpaceEditor: React.FunctionComponent<{
   });
 
   const {
+    getRootProps: getSpaceTagRootProps,
+    getInputProps: getSpaceTagInputProps,
+    acceptedFiles: spaceTagAcceptedFiles,
+  } = useDropzone({
+    accept: {
+      'image/png': ['.png'],
+      'image/jpeg': ['.jpg', '.jpeg'],
+    },
+    minSize: 0,
+    maxSize: 1 * 1024 * 1024,
+  });
+
+  const {
     getRootProps: getEmojiRootProps,
     getInputProps: getEmojiInputProps,
     acceptedFiles: emojiAcceptedFiles,
@@ -158,6 +174,14 @@ const SpaceEditor: React.FunctionComponent<{
       })();
     }
   }, [bannerAcceptedFiles]);
+
+  React.useEffect(() => {
+    if (spaceTagAcceptedFiles.length > 0) {
+      (async () => {
+        setSpaceTagData(await spaceTagAcceptedFiles[0].arrayBuffer());
+      })();
+    }
+  }, [spaceTagAcceptedFiles]);
 
   React.useEffect(() => {
     (async () => {
@@ -263,6 +287,16 @@ const SpaceEditor: React.FunctionComponent<{
             ';base64,' +
             Buffer.from(bannerData).toString('base64')
           : space!.bannerUrl,
+      spaceTag: spaceTagLetters && spaceTagLetters.length === 4 && spaceTagData && spaceTagAcceptedFiles.length
+        ? {
+          letters: spaceTagLetters,
+          url:
+            'data:' +
+            spaceTagAcceptedFiles[0].type +
+            ';base64,' +
+            Buffer.from(spaceTagData).toString('base64')
+        }
+        : undefined,
       roles: roles,
       emojis: emojis,
       stickers: stickers,
@@ -371,7 +405,7 @@ const SpaceEditor: React.FunctionComponent<{
                       />
                     </div>
                   </div>
-                  <div className="space-editor-content flex flex-col grow">
+                    <div className="space-editor-content flex flex-col grow">
                     <div className="space-editor-content-section-header small-caps">
                       <Trans>Space Banner</Trans>
                     </div>
@@ -398,7 +432,68 @@ const SpaceEditor: React.FunctionComponent<{
                       >
                         <input {...getBannerInputProps()} />
                       </div>
+
+                    {space?.spaceTag?.url && space?.spaceTag?.letters.length === 4 ? (
+                      <div className="mt-2 flex items-center">
+                        <span className="small-caps mr-2"><Trans>Preview:</Trans></span>
+                        <SpaceTag spaceId={space.spaceId} size="medium" />
+                      </div>
+                    ) :
+                    <div className="mt-2 text-sm text-text-subtle">
+                      <Trans>Upload content and enter 4 letters to preview your space tag</Trans>
                     </div>
+                    }
+                    </div>
+                  </div>
+                  {space?.isPublic && (
+                    <div className="space-editor-content flex flex-col grow">
+                      <div className="space-editor-content-section-header small-caps">
+                        <Trans>Space Tag</Trans>
+                      </div>
+                      <div className="space-editor-info">
+
+                      <div className={
+                            'space-editor-space-tag-editable cursor-pointer ' +
+                            (space?.spaceTag?.url || spaceTagAcceptedFiles.length != 0
+                              ? ''
+                              : 'border-2 border-dashed border-[var(--primary-200)]')
+                          }
+                          style={{
+                            backgroundImage:
+                              spaceTagData != undefined &&
+                              spaceTagAcceptedFiles.length != 0
+                                ? 'url(data:' +
+                                  spaceTagAcceptedFiles[0].type +
+                                  ';base64,' +
+                                  Buffer.from(spaceTagData).toString('base64') +
+                                  ')'
+                                : `url(${space?.spaceTag?.url})`,
+                          }}
+                          {...getSpaceTagRootProps()}
+                        >
+                          <input {...getSpaceTagInputProps()} />
+                        </div>
+                        <div className="flex flex-row justify-between">
+                          <div className="flex flex-row">
+                            <div className="small-caps"><Trans>Letters</Trans></div>
+                            <div className="flex flex-row">
+                              <input
+                                className="w-full quorum-input"
+                                value={spaceTagLetters}
+                                onChange={(e) => setSpaceTagLetters(e.target.value)}
+                                maxLength={4}
+                                minLength={4}
+                                pattern="[A-Z0-9]{4}"
+                                title={t`4 uppercase letters or numbers`}
+                                required
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div className="space-editor-content flex flex-col grow">
                     <div className="space-editor-content-section-header small-caps">
                       <Trans>Default Channel</Trans>
                     </div>

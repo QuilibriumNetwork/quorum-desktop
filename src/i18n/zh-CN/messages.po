@@ -14,17 +14,17 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:137
+#: src/components/message/Message.tsx:138
 msgid "{user} has joined"
 msgstr "{user}已加入"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:139
+#: src/components/message/Message.tsx:140
 msgid "{user} has left"
 msgstr "{user}已离开"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:141
+#: src/components/message/Message.tsx:142
 msgid "{user} has been kicked"
 msgstr "{user}已被踢出"
 
@@ -38,28 +38,49 @@ msgstr "给 {user} 发送信息"
 msgid "Send a message to #{channel_name}"
 msgstr "向 #{channel_name} 发送信息"
 
-#: src/components/channel/SpaceEditor.tsx:531
+#: src/components/modals/UserSettingsModal.tsx:343
+msgid "(this device)"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:487
+msgid "4 uppercase letters or numbers"
+msgstr ""
+
+#: src/components/modals/UserSettingsModal.tsx:282
+msgid "Account Address"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:626
 msgid "Add Role"
 msgstr "添加角色"
 
-#: src/components/channel/SpaceEditor.tsx:652
+#: src/components/channel/SpaceEditor.tsx:747
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a space."
 msgstr "最多可添加 50 个自定义表情符号。自定义表情符号只能在空格内使用。"
 
-#: src/components/channel/SpaceEditor.tsx:748
+#: src/components/channel/SpaceEditor.tsx:843
 msgid "Add up to 50 custom stickers. Custom stickers can only be used within a space."
 msgstr "最多可添加 50 个自定义贴纸。自定义贴纸只能在一个空间内使用。"
+
+#: src/components/modals/UserSettingsModal.tsx:373
+msgid "Adjust security-related settings, which may impact user experience but increase the security of your Quorum account."
+msgstr ""
 
 #: src/components/modals/CreateSpaceModal.tsx:237
 msgid "Advanced Settings"
 msgstr "高级设置"
+
+#: src/components/modals/UserSettingsModal.tsx:244
+#: src/components/modals/UserSettingsModal.tsx:473
+msgid "Appearance"
+msgstr ""
 
 #. placeholder {0}: space?.spaceName
 #: src/components/channel/LeaveSpace.tsx:30
 msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
 msgstr "您确定要离开 {0}？除非再次被邀请，否则您将无法重新加入。"
 
-#: src/components/channel/SpaceEditor.tsx:601
+#: src/components/channel/SpaceEditor.tsx:696
 msgid "Can delete messages?"
 msgstr "可以删除信息吗？"
 
@@ -75,11 +96,19 @@ msgstr "频道名称"
 msgid "Channel Topic"
 msgstr "频道主题"
 
-#: src/components/channel/SpaceEditor.tsx:1004
+#: src/components/modals/UserSettingsModal.tsx:482
+msgid "Choose your preferred space tag for Quorum. This can be selected from the public spaces you are a member of and will be displayed next to your name in your messages."
+msgstr ""
+
+#: src/components/modals/UserSettingsModal.tsx:475
+msgid "Choose your preferred theme for Quorum."
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:1099
 msgid "Click Generate New Invite Link"
 msgstr "单击生成新邀请链接"
 
-#: src/components/channel/SpaceEditor.tsx:510
+#: src/components/channel/SpaceEditor.tsx:605
 msgid "Click on the role name and tag to edit them."
 msgstr "点击角色名称和标签进行编辑。"
 
@@ -99,7 +128,7 @@ msgstr "确认删除"
 msgid "Connecting"
 msgstr "连接"
 
-#: src/components/message/Message.tsx:355
+#: src/components/message/Message.tsx:358
 msgid "Copy message link"
 msgstr "复制信息链接"
 
@@ -124,7 +153,7 @@ msgstr "创建空间"
 msgid "Create Space Title"
 msgstr "创造空间"
 
-#: src/components/channel/SpaceEditor.tsx:403
+#: src/components/channel/SpaceEditor.tsx:498
 msgid "Default Channel"
 msgstr "默认频道"
 
@@ -140,26 +169,46 @@ msgstr "删除频道"
 msgid "Delete Group"
 msgstr "删除组"
 
-#: src/components/message/Message.tsx:371
+#: src/components/message/Message.tsx:374
 msgid "Delete message"
 msgstr "删除信息"
+
+#: src/components/modals/UserSettingsModal.tsx:320
+msgid "Devices"
+msgstr ""
 
 #: src/components/direct/DirectMessageContactsList.tsx:26
 msgid "Direct Messages"
 msgstr "直接消息"
 
-#: src/components/channel/SpaceEditor.tsx:317
-#: src/components/channel/SpaceEditor.tsx:650
+#: src/components/modals/UserSettingsModal.tsx:272
+msgid "Display Name"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:351
+#: src/components/channel/SpaceEditor.tsx:745
 msgid "Emojis"
 msgstr "表情符号"
 
-#: src/components/channel/SpaceEditor.tsx:934
+#: src/components/modals/UserSettingsModal.tsx:381
+msgid "Enable sync"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:1029
 msgid "Enter Address Manually"
 msgstr "手动输入地址"
 
-#: src/components/channel/SpaceEditor.tsx:854
+#: src/components/channel/SpaceEditor.tsx:949
 msgid "Existing Conversations"
 msgstr "现有对话"
+
+#: src/components/modals/UserSettingsModal.tsx:365
+msgid "Export"
+msgstr ""
+
+#: src/components/modals/UserSettingsModal.tsx:354
+msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your space's Apex earnings."
+msgstr ""
 
 #: src/components/onboarding/Onboarding.tsx:75
 #: src/components/modals/CreateSpaceModal.tsx:58
@@ -175,11 +224,12 @@ msgstr "文件不能大于 2MB"
 msgid "File rejected"
 msgstr "文件被拒"
 
-#: src/components/channel/SpaceEditor.tsx:299
+#: src/components/modals/UserSettingsModal.tsx:226
+#: src/components/channel/SpaceEditor.tsx:333
 msgid "General"
 msgstr "一般情况"
 
-#: src/components/channel/SpaceEditor.tsx:1037
+#: src/components/channel/SpaceEditor.tsx:1132
 msgid "Generate New Invite Link"
 msgstr "生成新的邀请链接"
 
@@ -211,8 +261,8 @@ msgstr "导入现有密钥"
 msgid "Important first-time user information:"
 msgstr "首次使用的重要信息："
 
-#: src/components/channel/SpaceEditor.tsx:339
-#: src/components/channel/SpaceEditor.tsx:842
+#: src/components/channel/SpaceEditor.tsx:373
+#: src/components/channel/SpaceEditor.tsx:937
 msgid "Invites"
 msgstr "邀请函"
 
@@ -235,6 +285,10 @@ msgstr "加入空间"
 #: src/components/message/InviteLink.tsx:85
 msgid "Joined"
 msgstr "已加入"
+
+#: src/components/modals/UserSettingsModal.tsx:351
+msgid "Key Export"
+msgstr ""
 
 #: src/components/modals/KickUserModal.tsx:56
 msgid "Kick User"
@@ -262,6 +316,10 @@ msgstr "让朋友知道你是谁 选择一个友好的名字，在对话中显�
 msgid "Let's gooooooooo"
 msgstr "我们走吧"
 
+#: src/components/channel/SpaceEditor.tsx:478
+msgid "Letters"
+msgstr ""
+
 #: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
 msgstr "维护正在进行中"
@@ -272,12 +330,16 @@ msgid ""
 "                    information is only provided to the spaces you join."
 msgstr "让您的账户独一无二--设置联系人照片。这些信息只提供给您加入的空间。"
 
-#: src/components/channel/SpaceEditor.tsx:659
-#: src/components/channel/SpaceEditor.tsx:755
+#: src/components/modals/UserSettingsModal.tsx:311
+msgid "Manage devices, and privacy conditions for messaging and synchronization."
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:754
+#: src/components/channel/SpaceEditor.tsx:850
 msgid "Max file size: 256kB"
 msgstr "最大文件大小：256kB"
 
-#: src/components/message/Message.tsx:335
+#: src/components/message/Message.tsx:338
 msgid "More reactions"
 msgstr "更多反应"
 
@@ -298,6 +360,10 @@ msgstr "撰写新的直接消息"
 msgid "New Direct Message Title"
 msgstr "新的直接消息"
 
+#: src/components/modals/UserSettingsModal.tsx:418
+msgid "Non-repudiability"
+msgstr ""
+
 #: src/components/onboarding/Onboarding.tsx:112
 msgid "One of us, one of us!"
 msgstr "我们中的一个，我们中的一个！"
@@ -306,15 +372,24 @@ msgstr "我们中的一个，我们中的一个！"
 msgid "Personalize your account"
 msgstr "个性化您的账户"
 
-#: src/components/channel/SpaceEditor.tsx:454
+#: src/components/channel/SpaceEditor.tsx:438
+msgid "Preview:"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:549
 msgid "Privacy Settings"
 msgstr "隐私设置"
 
-#: src/components/channel/SpaceEditor.tsx:952
+#: src/components/modals/UserSettingsModal.tsx:235
+#: src/components/modals/UserSettingsModal.tsx:309
+msgid "Privacy/Security"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:1047
 msgid "Public Invite Link"
 msgstr "公开邀请链接"
 
-#: src/components/channel/SpaceEditor.tsx:965
+#: src/components/channel/SpaceEditor.tsx:1060
 msgid "Public invite links allow anyone with access to the link join your space. Understand the risks of enabling this, and to whom and where you share the link."
 msgstr "公开邀请链接允许任何可以访问该链接的人加入您的空间。请了解启用此功能的风险，以及分享链接的对象和地点。"
 
@@ -334,16 +409,20 @@ msgstr "Quorum 是点对点、端对端加密的。这意味着您的信息将�
 msgid "Refresh"
 msgstr "刷新"
 
-#: src/components/message/Message.tsx:345
+#: src/components/modals/UserSettingsModal.tsx:338
+msgid "Remove"
+msgstr ""
+
+#: src/components/message/Message.tsx:348
 msgid "Reply"
 msgstr "答复"
 
 #: src/components/modals/CreateSpaceModal.tsx:130
-#: src/components/channel/SpaceEditor.tsx:460
+#: src/components/channel/SpaceEditor.tsx:555
 msgid "Repudiability"
 msgstr "Repudiability"
 
-#: src/components/channel/SpaceEditor.tsx:478
+#: src/components/channel/SpaceEditor.tsx:573
 msgid "Repudiability is a setting that makes conversations in this space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
 msgstr "Repudiability 是一种设置，它使该空间中的对话无法证明是由指定的发件人发出的。这在敏感情况下可能很有用，但也意味着其他人会伪造信息，使其看起来像是发自你的。"
 
@@ -351,20 +430,22 @@ msgstr "Repudiability 是一种设置，它使该空间中的对话无法证明�
 msgid "Repudiability is a setting which makes conversations in this space unable to be proven they originated by the named sender. This can be useful in sensitive situations, but also means others forge messages that appear as if they originated from you."
 msgstr "Repudiability 是一种设置，它使该空间中的对话无法证明是由指定的发件人发出的。这在敏感情况下可能很有用，但也意味着其他人会伪造信息，使其看起来像是发自你的。"
 
-#: src/components/channel/SpaceEditor.tsx:656
-#: src/components/channel/SpaceEditor.tsx:752
+#: src/components/channel/SpaceEditor.tsx:751
+#: src/components/channel/SpaceEditor.tsx:847
 msgid "Requirements:"
 msgstr "需求："
 
-#: src/components/channel/SpaceEditor.tsx:308
-#: src/components/channel/SpaceEditor.tsx:508
+#: src/components/channel/SpaceEditor.tsx:342
+#: src/components/channel/SpaceEditor.tsx:603
 msgid "Roles"
 msgstr "职责"
 
-#: src/components/channel/SpaceEditor.tsx:496
-#: src/components/channel/SpaceEditor.tsx:638
-#: src/components/channel/SpaceEditor.tsx:734
-#: src/components/channel/SpaceEditor.tsx:830
+#: src/components/modals/UserSettingsModal.tsx:297
+#: src/components/modals/UserSettingsModal.tsx:463
+#: src/components/channel/SpaceEditor.tsx:591
+#: src/components/channel/SpaceEditor.tsx:733
+#: src/components/channel/SpaceEditor.tsx:829
+#: src/components/channel/SpaceEditor.tsx:925
 #: src/components/channel/ChannelEditor.tsx:157
 msgid "Save Changes"
 msgstr "保存更改"
@@ -377,11 +458,15 @@ msgstr "保存联系人照片"
 msgid "Save User Key"
 msgstr "保存用户密钥"
 
-#: src/components/channel/SpaceEditor.tsx:1058
+#: src/components/modals/UserSettingsModal.tsx:370
+msgid "Security"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:1153
 msgid "Send Invite"
 msgstr "发送邀请"
 
-#: src/components/channel/SpaceEditor.tsx:844
+#: src/components/channel/SpaceEditor.tsx:939
 msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 msgstr "向之前与你交谈过的人发送邀请。他们的收件箱中会出现一个邀请按钮。"
 
@@ -389,7 +474,7 @@ msgstr "向之前与你交谈过的人发送邀请。他们的收件箱中会出
 msgid "Set Display Name"
 msgstr "设置显示名称"
 
-#: src/components/channel/SpaceEditor.tsx:376
+#: src/components/channel/SpaceEditor.tsx:410
 msgid "Space Banner"
 msgstr "太空横幅"
 
@@ -397,21 +482,26 @@ msgstr "太空横幅"
 msgid "Space Icon Attachment"
 msgstr "空间图标附件"
 
-#: src/components/channel/SpaceEditor.tsx:366
+#: src/components/channel/SpaceEditor.tsx:400
 msgid "Space Name"
 msgstr "空间名称"
 
-#: src/components/channel/SpaceEditor.tsx:746
+#: src/components/modals/UserSettingsModal.tsx:479
+#: src/components/channel/SpaceEditor.tsx:451
+msgid "Space Tag"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:841
 msgid "Stickers"
 msgstr "贴画"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:946
+#: src/components/channel/SpaceEditor.tsx:1041
 msgid "Successfully sent invite to {0}"
 msgstr "成功向 {0} 发送邀请"
 
-#: src/components/channel/SpaceEditor.tsx:658
-#: src/components/channel/SpaceEditor.tsx:754
+#: src/components/channel/SpaceEditor.tsx:753
+#: src/components/channel/SpaceEditor.tsx:849
 msgid "Supported types: PNG, JPG, GIF"
 msgstr "支持的类型 PNG、JPG、GIF"
 
@@ -423,7 +513,7 @@ msgstr "邀请链接已过期或无效。"
 msgid "This information is only provided to the spaces you join."
 msgstr "这些信息只提供给您加入的空间。"
 
-#: src/components/message/Message.tsx:125
+#: src/components/message/Message.tsx:126
 msgid "Today at {timeFormatted}"
 msgstr "今天 {0}"
 
@@ -431,17 +521,29 @@ msgstr "今天 {0}"
 msgid "Unknown User"
 msgstr "未知用户"
 
-#: src/components/channel/SpaceEditor.tsx:671
+#: src/components/channel/SpaceEditor.tsx:443
+msgid "Upload content and enter 4 letters to preview your space tag"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:766
 msgid "Upload Emoji"
 msgstr "上传表情符号"
 
-#: src/components/channel/SpaceEditor.tsx:767
+#: src/components/channel/SpaceEditor.tsx:862
 msgid "Upload Sticker"
 msgstr "上传标签"
 
 #: src/components/onboarding/Onboarding.tsx:110
 msgid "Welcome to Quorum!"
 msgstr "欢迎来到 Quorum！"
+
+#: src/components/modals/UserSettingsModal.tsx:436
+msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of spaces, as this is a configuration option by the space owner."
+msgstr ""
+
+#: src/components/modals/UserSettingsModal.tsx:399
+msgid "When enabled, synchronizes your user data, spaces, and space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new spaces, although not the spaces you have joined."
+msgstr ""
 
 #: src/components/modals/CreateSpaceModal.tsx:180
 msgid "When this setting is enabled, invite links will automatically allow a user to join your space. When it is not enabled, users following an invite link will send you a request to join your space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public space link can allow anyone with the link to read messages on the space for the duration of the link being valid."
@@ -453,7 +555,7 @@ msgid ""
 "                        locally to your browser."
 msgstr "在浏览器上使用 Quorum 时，信息会保存在浏览器本地。"
 
-#: src/components/message/Message.tsx:128
+#: src/components/message/Message.tsx:129
 msgid "Yesterday at {timeFormatted}"
 msgstr "昨天 {0}"
 

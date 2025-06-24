@@ -3,7 +3,7 @@ import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import Button from '../Button';
 import './UserSettingsModal.scss';
-import { useConfig, useRegistration } from '../../hooks';
+import { useConfig, useRegistration, useSpaces } from '../../hooks';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../context/MessageDB';
@@ -11,6 +11,9 @@ import ToggleSwitch from '../ToggleSwitch';
 import Tooltip from '../Tooltip';
 import { UserConfig } from '../../db/messages';
 import ThemeRadioGroup from '../ThemeRadioGroup';
+import { Trans } from '@lingui/react/macro';
+import { Space } from '../../api/quorumApi';
+import SpaceTag from '../SpaceTag';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -23,6 +26,7 @@ const UserSettingsModal: React.FunctionComponent<{
           status: string;
           userIcon: string;
           address: string;
+          spaceTagId?: string;
         }
       | undefined
     >
@@ -52,6 +56,51 @@ const UserSettingsModal: React.FunctionComponent<{
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
   const [nonRepudiableTooltip, setNonRepudiableTooltip] =
     React.useState<boolean>(false);
+  const [spaceTagId, setSpaceTagId] = React.useState<string | undefined>(undefined);
+  const { data: spaces } = useSpaces({});
+  const [availableSpaceTags, setAvailableSpaceTags] = React.useState<{
+    spaceId: string;
+    spaceName: string;
+  }[]>([])
+
+  React.useEffect(() => {
+    if (!existingConfig.current) {
+      return;
+    }
+
+    if (existingConfig.current.spaceKeys === undefined
+      || existingConfig.current.spaceKeys.length === 0) {
+      return;
+    }
+
+    const publicSpaces: Space[] = []
+
+    existingConfig.current?.spaceKeys?.every((spaceKey) => {
+      const space = spaces?.find((space) => space.spaceId === spaceKey.spaceId);
+
+      if (!space?.isPublic) {
+        return;
+      }
+
+      if (space?.spaceTag === undefined) {
+        return;
+      }
+
+      if (space?.spaceTag?.letters.length !== 4 || space?.spaceTag?.url.length === 0) {
+        return;
+      }
+
+      publicSpaces.push(space);
+    });
+
+    setAvailableSpaceTags(publicSpaces.map((space) => {
+      const { spaceId, spaceName } = space;
+      return {
+        spaceId,
+        spaceName,
+      };
+    }));
+  }, [existingConfig.current]);
 
   React.useEffect(() => {
     if (!init) {
@@ -174,7 +223,7 @@ const UserSettingsModal: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          General
+          <Trans>General</Trans>
         </div>
         <div
           onClick={() => setSelectedCategory('privacy')}
@@ -183,7 +232,7 @@ const UserSettingsModal: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          Privacy/Security
+          <Trans>Privacy/Security</Trans>
         </div>
         <div
           onClick={() => setSelectedCategory('appearance')}
@@ -192,7 +241,7 @@ const UserSettingsModal: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          Appearance
+          <Trans>Appearance</Trans>
         </div>
       </div>
       <div className="flex flex-col grow overflow-y-scroll rounded-xl">
@@ -220,7 +269,7 @@ const UserSettingsModal: React.FunctionComponent<{
                       <input {...getInputProps()} />
                     </div>
                     <div className="user-settings-text flex flex-col grow pr-4">
-                      <div className="small-caps">Display Name</div>
+                      <div className="small-caps"><Trans>Display Name</Trans></div>
                       <input
                         className="w-full quorum-input"
                         value={displayName}
@@ -230,7 +279,7 @@ const UserSettingsModal: React.FunctionComponent<{
                   </div>
                   <div className="user-settings-content flex flex-col !rounded-b-none">
                     <div className="user-settings-info">
-                      <div className="small-caps">Account Address</div>
+                      <div className="small-caps"><Trans>Account Address</Trans></div>
                       <div className="text-base">
                         {currentPasskeyInfo!.address}
                       </div>
@@ -245,7 +294,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             saveChanges();
                           }}
                         >
-                          Save Changes
+                          <Trans>Save Changes</Trans>
                         </Button>
                       </div>
                     </div>
@@ -257,10 +306,10 @@ const UserSettingsModal: React.FunctionComponent<{
                 <>
                   <div className="user-settings-header pt-4 px-4 !min-h-[0px] flex flex-row justify-between">
                     <div className="">
-                      <div className="text-xl font-bold">Privacy/Security</div>
+                      <div className="text-xl font-bold"><Trans>Privacy/Security</Trans></div>
                       <div className="pt-1 text-sm text-text-base">
-                        Manage devices, and privacy conditions for messaging and
-                        synchronization.
+                        <Trans>Manage devices, and privacy conditions for messaging and
+                        synchronization.</Trans>
                       </div>
                     </div>
                     <div className="user-settings-editor-actions">
@@ -268,7 +317,7 @@ const UserSettingsModal: React.FunctionComponent<{
                     </div>
                   </div>
                   <div className="user-settings-content flex flex-col grow">
-                    <div className="small-caps">Devices</div>
+                    <div className="small-caps"><Trans>Devices</Trans></div>
                     {stagedRegistration?.device_registrations.map(
                       (d: secureChannel.DeviceRegistration) => (
                         <div
@@ -286,12 +335,12 @@ const UserSettingsModal: React.FunctionComponent<{
                               }}
                               type="danger"
                             >
-                              Remove
+                              <Trans>Remove</Trans>
                             </Button>
                           )}
                           {keyset.deviceKeyset.inbox_keyset.inbox_address ===
                             d.inbox_registration.inbox_address && (
-                            <div className="font-light">(this device)</div>
+                            <div className="font-light"><Trans>(this device)</Trans></div>
                           )}
                         </div>
                       )
@@ -299,12 +348,12 @@ const UserSettingsModal: React.FunctionComponent<{
                     <div className="user-settings-content-section-header" />
                     <div className="user-settings-info">
                       <div className="user-settings-content-section-header small-caps !pt-4">
-                        Key Export
+                        <Trans>Key Export</Trans>
                       </div>
                       <div className="pt-1 text-sm text-text-base">
-                        Export your key to a file by clicking this button. Do
+                        <Trans>Export your key to a file by clicking this button. Do
                         not share this file with anyone else or they can
-                        impersonate you or steal your space's Apex earnings.
+                        impersonate you or steal your space's Apex earnings.</Trans>
                       </div>
                       <div className="pt-4 pb-8 max-w-[100px]">
                         <Button
@@ -313,23 +362,23 @@ const UserSettingsModal: React.FunctionComponent<{
                             downloadKey();
                           }}
                         >
-                          Export
+                          <Trans>Export</Trans>
                         </Button>
                       </div>
                     </div>
                     <div className="user-settings-content-section-header small-caps">
-                      Security
+                      <Trans>Security</Trans>
                     </div>
                     <div className="pt-1 text-sm text-text-base">
-                      Adjust security-related settings, which may impact user
+                      <Trans>Adjust security-related settings, which may impact user
                       experience but increase the security of your Quorum
-                      account.
+                      account.</Trans>
                     </div>
                     <div className="user-settings-info">
                       <div className="flex flex-row justify-between pb-2">
                         <div className="text-sm flex flex-row">
                           <div className="text-sm flex flex-col justify-around">
-                            Enable sync
+                            <Trans>Enable sync</Trans>
                           </div>
                           <div
                             className="relative ml-2 group"
@@ -347,12 +396,12 @@ const UserSettingsModal: React.FunctionComponent<{
                                 className="w-[400px] absolute"
                                 visible={allowSyncTooltip}
                               >
-                                When enabled, synchronizes your user data,
+                                <Trans>When enabled, synchronizes your user data,
                                 spaces, and space keys between devices. Enabling
                                 this increases metadata visibility of your
                                 account, which can reveal when you have joined
                                 new spaces, although not the spaces you have
-                                joined.
+                                joined.</Trans>
                               </Tooltip>
                             </div>
                           </div>
@@ -366,7 +415,7 @@ const UserSettingsModal: React.FunctionComponent<{
                       <div className="flex flex-row justify-between">
                         <div className="text-sm flex flex-row">
                           <div className="text-sm flex flex-col justify-around">
-                            Non-repudiability
+                            <Trans>Non-repudiability</Trans>
                           </div>
                           <div
                             className="relative ml-2 group"
@@ -384,14 +433,14 @@ const UserSettingsModal: React.FunctionComponent<{
                                 className="w-[400px] absolute"
                                 visible={nonRepudiableTooltip}
                               >
-                                When enabled, direct messages are not signed by
+                                <Trans>When enabled, direct messages are not signed by
                                 your user key. This improves performance, but
                                 can allow the user you are communicating with to
                                 forge messages to you as if they came from you.
                                 They cannot forge messages to other people as if
                                 they came from you. This does not impact the
                                 repudiability of spaces, as this is a
-                                configuration option by the space owner.
+                                configuration option by the space owner.</Trans>
                               </Tooltip>
                             </div>
                           </div>
@@ -411,7 +460,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             saveChanges();
                           }}
                         >
-                          Save Changes
+                          <Trans>Save Changes</Trans>
                         </Button>
                       </div>
                     </div>
@@ -421,11 +470,40 @@ const UserSettingsModal: React.FunctionComponent<{
             case 'appearance':
               return (
                 <div className="user-settings-content px-4 py-6 flex flex-col gap-4">
-                  <div className="text-xl font-bold">Appearance</div>
+                  <div className="text-xl font-bold"><Trans>Appearance</Trans></div>
                   <div className="text-sm text-text-base">
-                    Choose your preferred theme for Quorum.
+                    <Trans>Choose your preferred theme for Quorum.</Trans>
                   </div>
                   <ThemeRadioGroup />
+                  <div className="user-settings-content-section-header small-caps">
+                    <Trans>Space Tag</Trans>
+                  </div>
+                  <div className="pt-1 text-sm text-text-base">
+                    <Trans>Choose your preferred space tag for Quorum. This can be selected from the public spaces you are a member of and will be displayed next to your name in your messages.</Trans>
+                  </div>
+                <select
+                  className="quorum-input mt-2"
+                  value={spaceTagId}
+                  onChange={(e) => {
+                    if (e.target.value === '') {
+                      setSpaceTagId(undefined);
+                      return;
+                    }
+
+                    const space = availableSpaceTags?.find((space) => space.spaceId === e.target.value);
+                    if (space) {
+                      setSpaceTagId(space.spaceId);
+                    }
+                  }}
+                >
+                  <option value="">None</option>
+                  {availableSpaceTags?.map(({spaceId, spaceName}) => (
+                    <option key={spaceId} value={spaceId}>
+                      {spaceName} <SpaceTag spaceId={spaceId} size="small" />
+                    </option>
+                  ))}
+                </select>
+
                 </div>
               );
           }
