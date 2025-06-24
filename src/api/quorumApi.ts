@@ -23,6 +23,11 @@ export type Sticker = {
   imgUrl: string;
 };
 
+export type SpaceTag = {
+  letters: string;
+  url: string;
+};
+
 export type Space = {
   spaceId: string;
   spaceName: string;
@@ -31,6 +36,7 @@ export type Space = {
   inviteUrl: string;
   iconUrl: string;
   bannerUrl: string;
+  spaceTag?: SpaceTag;
   defaultChannelId: string;
   hubAddress: string;
   createdDate: number;

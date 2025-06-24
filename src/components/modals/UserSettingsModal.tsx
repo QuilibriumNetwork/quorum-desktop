@@ -3,7 +3,7 @@ import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import Button from '../Button';
 import './UserSettingsModal.scss';
-import { useRegistration } from '../../hooks';
+import { useConfig, useRegistration, useSpaces } from '../../hooks';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../context/MessageDB';
@@ -21,7 +21,7 @@ import {
 import locales from '../../i18n/locales';
 import useForceUpdate from '../hooks/forceUpdate';
 import ReactTooltip from '../ReactTooltip';
-
+import { Trans } from '@lingui/react/macro';
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
   onEditModeClick?: () => void;
@@ -33,6 +33,7 @@ const UserSettingsModal: React.FunctionComponent<{
           status: string;
           userIcon: string;
           address: string;
+          spaceTagId?: string;
         }
       | undefined
     >
@@ -71,6 +72,53 @@ const UserSettingsModal: React.FunctionComponent<{
   }, [language]);
 
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
+  const [nonRepudiableTooltip, setNonRepudiableTooltip] =
+    React.useState<boolean>(false);
+  const [spaceTagId, setSpaceTagId] = React.useState<string | undefined>(undefined);
+  const { data: spaces } = useSpaces({});
+  const [availableSpaceTags, setAvailableSpaceTags] = React.useState<{
+    spaceId: string;
+    spaceName: string;
+  }[]>([])
+
+  React.useEffect(() => {
+    if (!existingConfig.current) {
+      return;
+    }
+
+    if (existingConfig.current.spaceKeys === undefined
+      || existingConfig.current.spaceKeys.length === 0) {
+      return;
+    }
+
+    const publicSpaces: Space[] = []
+
+    existingConfig.current?.spaceKeys?.every((spaceKey) => {
+      const space = spaces?.find((space) => space.spaceId === spaceKey.spaceId);
+
+      if (!space?.isPublic) {
+        return;
+      }
+
+      if (space?.spaceTag === undefined) {
+        return;
+      }
+
+      if (space?.spaceTag?.letters.length !== 4 || space?.spaceTag?.url.length === 0) {
+        return;
+      }
+
+      publicSpaces.push(space);
+    });
+
+    setAvailableSpaceTags(publicSpaces.map((space) => {
+      const { spaceId, spaceName } = space;
+      return {
+        spaceId,
+        spaceName,
+      };
+    }));
+  }, [existingConfig.current]);
 
   React.useEffect(() => {
     if (!init) {
@@ -193,7 +241,7 @@ const UserSettingsModal: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          {t`General`}
+          <Trans>General</Trans>
         </div>
         <div
           onClick={() => setSelectedCategory('privacy')}
@@ -282,9 +330,10 @@ const UserSettingsModal: React.FunctionComponent<{
                 <>
                   <div className="user-settings-header pt-4 px-4 !min-h-[0px] flex flex-row justify-between">
                     <div className="">
-                      <div className="text-xl font-bold">{t`Privacy/Security`}</div>
+                      <div className="text-xl font-bold"><Trans>Privacy/Security</Trans></div>
                       <div className="pt-1 text-sm text-text-base">
-                        {t`Manage devices, and privacy conditions for messaging and synchronization.`}
+                        <Trans>Manage devices, and privacy conditions for messaging and
+                        synchronization.</Trans>
                       </div>
                     </div>
                     <div className="user-settings-editor-actions">
@@ -292,7 +341,7 @@ const UserSettingsModal: React.FunctionComponent<{
                     </div>
                   </div>
                   <div className="user-settings-content flex flex-col grow">
-                    <div className="small-caps">Devices</div>
+                    <div className="small-caps"><Trans>Devices</Trans></div>
                     {stagedRegistration?.device_registrations.map(
                       (d: secureChannel.DeviceRegistration) => (
                         <div
@@ -310,12 +359,12 @@ const UserSettingsModal: React.FunctionComponent<{
                               }}
                               type="danger"
                             >
-                              {t`Remove`}
+                              <Trans>Remove</Trans>
                             </Button>
                           )}
                           {keyset.deviceKeyset.inbox_keyset.inbox_address ===
                             d.inbox_registration.inbox_address && (
-                            <div className="font-light">(this device)</div>
+                            <div className="font-light"><Trans>(this device)</Trans></div>
                           )}
                         </div>
                       )
@@ -323,10 +372,12 @@ const UserSettingsModal: React.FunctionComponent<{
                     <div className="user-settings-content-section-header" />
                     <div className="user-settings-info">
                       <div className="user-settings-content-section-header small-caps !pt-4">
-                        {t`Key Export`}
+                        <Trans>Key Export</Trans>
                       </div>
                       <div className="pt-1 text-sm text-text-base">
-                        {t`Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings.`}
+                        <Trans>Export your key to a file by clicking this button. Do
+                        not share this file with anyone else or they can
+                        impersonate you or steal your space's Apex earnings.</Trans>
                       </div>
                       <div className="pt-4 pb-8 max-w-[100px]">
                         <Button
@@ -460,6 +511,35 @@ const UserSettingsModal: React.FunctionComponent<{
                       </Button>
                     </div>
                   </div>
+                  <div className="user-settings-content-section-header small-caps">
+                    <Trans>Space Tag</Trans>
+                  </div>
+                  <div className="pt-1 text-sm text-text-base">
+                    <Trans>Choose your preferred space tag for Quorum. This can be selected from the public spaces you are a member of and will be displayed next to your name in your messages.</Trans>
+                  </div>
+                <select
+                  className="quorum-input mt-2"
+                  value={spaceTagId}
+                  onChange={(e) => {
+                    if (e.target.value === '') {
+                      setSpaceTagId(undefined);
+                      return;
+                    }
+
+                    const space = availableSpaceTags?.find((space) => space.spaceId === e.target.value);
+                    if (space) {
+                      setSpaceTagId(space.spaceId);
+                    }
+                  }}
+                >
+                  <option value="">None</option>
+                  {availableSpaceTags?.map(({spaceId, spaceName}) => (
+                    <option key={spaceId} value={spaceId}>
+                      {spaceName} <SpaceTag spaceId={spaceId} size="small" />
+                    </option>
+                  ))}
+                </select>
+
                 </div>
               );
           }

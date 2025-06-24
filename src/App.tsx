@@ -62,6 +62,7 @@ const App = () => {
         status: string;
         userIcon: string;
         address: string;
+        spaceTagId?: string;
       }
     | undefined
   >(undefined);
@@ -91,6 +92,7 @@ const App = () => {
         status: '',
         userIcon: currentPasskeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER,
         address: currentPasskeyInfo.address,
+        spaceTagId: currentPasskeyInfo.spaceTagId,
       });
     }
   }, [currentPasskeyInfo, passkeyRegistrationComplete, setUser, user]);

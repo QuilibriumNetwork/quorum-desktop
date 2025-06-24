@@ -122,6 +122,30 @@
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
+.space-editor-space-tag,
+.space-editor-space-tag-editable {
+  width: 260px;
+  height: 120px;
+  background-position: center;
+  background-size: cover;
+}
+
+.space-editor-space-tag-editable::after {
+  width: 24px;
+  height: 24px;
+  background: var(--surface-00);
+  color: var(--primary);
+  content: '+';
+  display: block;
+  text-align: center;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 12pt;
+  float: right;
+  margin-top: 100px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
 .space-editor-content-section-header {
   font-weight: 700;
   border-top: 1px solid var(--surface-6);

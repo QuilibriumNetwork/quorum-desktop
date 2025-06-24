@@ -15,24 +15,19 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:84
-msgid "File cannot be larger than {maxFileSize}"
-msgstr "Dosya {maxFileSize} boyutundan büyük olamaz"
-
-#. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:282
-msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "Profil resminizin boyutu {maxFileSize} veya daha az olmalı ve PNG, JPG veya JPEG dosya uzantısına sahip olmalıdır."
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:139
+#: src/components/message/Message.tsx:138
 msgid "{user} has joined"
-msgstr "{user} katıldı"
+msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:141
+#: src/components/message/Message.tsx:140
 msgid "{user} has left"
-msgstr "{user} ayrıldı"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:142
+msgid "{user} has been kicked"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:143
@@ -55,45 +50,35 @@ msgstr "{user} ile bir mesaj gönder"
 msgid "Send a message to #{channel_name}"
 msgstr "#{channel_name} kanalına bir mesaj gönder"
 
-#. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:533
-msgid "{role} - {count}"
-msgstr "{role} - {count}"
+#: src/components/modals/UserSettingsModal.tsx:343
+msgid "(this device)"
+msgstr ""
 
-#. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:561
-msgid "No Role - {count}"
-msgstr "Rol Yok - {count}"
+#: src/components/channel/SpaceEditor.tsx:487
+msgid "4 uppercase letters or numbers"
+msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:254
+#: src/components/modals/UserSettingsModal.tsx:282
 msgid "Account Address"
-msgstr "Hesap Adresi"
+msgstr ""
 
-#: src/components/channel/ChannelList.tsx:190
-msgid "Add Group"
-msgstr "Grup Ekle"
-
-#: src/components/channel/SpaceEditor.tsx:534
+#: src/components/channel/SpaceEditor.tsx:626
 msgid "Add Role"
 msgstr "Rol Ekle"
 
-#: src/components/navbar/ExpandableNavMenu.tsx:37
-msgid "Add Space"
-msgstr "Alan Ekle"
+#: src/components/channel/SpaceEditor.tsx:747
+msgid "Add up to 50 custom emoji. Custom emojis can only be used within a space."
+msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:657
-msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
-msgstr "50'ye kadar özel emoji ekleyin. Özel emojiler yalnızca bir Alan içinde kullanılabilir."
+#: src/components/channel/SpaceEditor.tsx:843
+msgid "Add up to 50 custom stickers. Custom stickers can only be used within a space."
+msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:760
-msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space."
-msgstr "50'ye kadar özel çıkartma ekleyin. Özel çıkartmalar yalnızca bir Alan içinde kullanılabilir."
+#: src/components/modals/UserSettingsModal.tsx:373
+msgid "Adjust security-related settings, which may impact user experience but increase the security of your Quorum account."
+msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:348
-msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
-msgstr "Güvenlikle ilgili ayarları ayarlayın, bu kullanıcı deneyimini etkileyebilir ancak Quorum hesabınızın güvenliğini artırabilir."
-
-#: src/components/modals/CreateSpaceModal.tsx:219
+#: src/components/modals/CreateSpaceModal.tsx:237
 msgid "Advanced Settings"
 msgstr "Gelişmiş Ayarlar"
 
@@ -102,20 +87,17 @@ msgstr "Gelişmiş Ayarlar"
 msgid "Appearance"
 msgstr "Görünüm"
 
+#: src/components/modals/UserSettingsModal.tsx:244
+#: src/components/modals/UserSettingsModal.tsx:473
+msgid "Appearance"
+msgstr ""
+
 #. placeholder {0}: space?.spaceName
 #: src/components/channel/LeaveSpace.tsx:30
 msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
 msgstr "{0}'dan ayrılmak istediğinize emin misiniz? Yeniden davet edilmedikçe tekrar katılamayacaksınız."
 
-#: src/components/user/UserOnlineStateIndicator.tsx:14
-msgid "Away"
-msgstr "Uzak"
-
-#: src/components/user/UserOnlineStateIndicator.tsx:16
-msgid "Busy"
-msgstr "Meşgul"
-
-#: src/components/channel/SpaceEditor.tsx:604
+#: src/components/channel/SpaceEditor.tsx:696
 msgid "Can delete messages?"
 msgstr "Mesajları silebilir mi?"
 
@@ -135,11 +117,19 @@ msgstr "Kanal Adı"
 msgid "Channel Topic"
 msgstr "Kanal Konusu"
 
-#: src/components/modals/UserSettingsModal.tsx:436
-msgid "Choose your preferred theme for Quorum."
-msgstr "Quorum için tercih ettiğiniz temayı seçin."
+#: src/components/modals/UserSettingsModal.tsx:482
+msgid "Choose your preferred space tag for Quorum. This can be selected from the public spaces you are a member of and will be displayed next to your name in your messages."
+msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:511
+#: src/components/modals/UserSettingsModal.tsx:475
+msgid "Choose your preferred theme for Quorum."
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:1099
+msgid "Click Generate New Invite Link"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:605
 msgid "Click on the role name and tag to edit them."
 msgstr "Onları düzenlemek için rol adını ve etiketini tıklayın."
 
@@ -160,23 +150,7 @@ msgstr "Silme Onayla"
 msgid "Connecting"
 msgstr "Bağlanıyor"
 
-#: src/components/CopyToClipboard.tsx:71
-#: src/components/ClickToCopyContent.tsx:62
-#: src/components/message/Message.tsx:403
-msgid "Copied!"
-msgstr "Kopyalandı!"
-
-#: src/components/user/UserStatus.tsx:96
-#: src/components/modals/UserSettingsModal.tsx:259
-#: src/components/direct/DirectMessage.tsx:219
-msgid "Copy address to clipboard"
-msgstr "Adres panoya kopyala"
-
-#: src/components/channel/SpaceEditor.tsx:1023
-msgid "Copy invite link to clipboard"
-msgstr "Davet bağlantısını panoya kopyala"
-
-#: src/components/message/Message.tsx:404
+#: src/components/message/Message.tsx:358
 msgid "Copy message link"
 msgstr "Mesaj bağlantısını kopyala"
 
@@ -229,7 +203,7 @@ msgstr "bilinmeyen yapılandırma anahtarı ile şifrelenmiş alan"
 msgid "Decrypted Space with no known hub key"
 msgstr "Bilinmeyen hub anahtarı ile şifrelenmiş Alan"
 
-#: src/components/channel/SpaceEditor.tsx:407
+#: src/components/channel/SpaceEditor.tsx:498
 msgid "Default Channel"
 msgstr "Varsayılan Kanal"
 
@@ -245,91 +219,51 @@ msgstr "Kanalı Sil"
 msgid "Delete Group"
 msgstr "Grubu Sil"
 
-#: src/components/message/Message.tsx:433
+#: src/components/message/Message.tsx:374
 msgid "Delete message"
 msgstr "Mesajı Sil"
 
-#: src/components/navbar/NavMenu.tsx:99
+#: src/components/modals/UserSettingsModal.tsx:320
+msgid "Devices"
+msgstr ""
+
 #: src/components/direct/DirectMessageContactsList.tsx:26
 msgid "Direct Messages"
 msgstr "Doğrudan Mesajlar"
 
-#: src/components/modals/UserSettingsModal.tsx:244
+#: src/components/modals/UserSettingsModal.tsx:272
 msgid "Display Name"
-msgstr "Görünen Ad"
+msgstr ""
 
-#: src/components/modals/KickUserModal.tsx:56
-msgid "Do it!"
-msgstr "Yap gitsin!"
-
-#: src/components/onboarding/Onboarding.tsx:157
-msgid "Drop your profile photo here"
-msgstr "Profil fotoğrafını buraya bırak"
-
-#: src/components/user/UserStatus.tsx:70
-msgid "Edit Profile"
-msgstr "Profili Düzenle"
-
-#: src/components/channel/ChannelList.tsx:121
-msgid "Edit Space"
-msgstr "Alanı Düzenle"
-
-#: src/components/channel/SpaceEditor.tsx:319
-#: src/components/channel/SpaceEditor.tsx:654
+#: src/components/channel/SpaceEditor.tsx:351
+#: src/components/channel/SpaceEditor.tsx:745
 msgid "Emojis"
 msgstr "Emojiler"
 
-#: src/components/modals/UserSettingsModal.tsx:354
+#: src/components/modals/UserSettingsModal.tsx:381
 msgid "Enable sync"
-msgstr "Senki etkinleştir"
+msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:111
-msgid "Enter a name for your new Space"
-msgstr "Yeni Alanınız için bir isim girin"
-
-#: src/components/modals/NewDirectMessageModal.tsx:41
-msgid "Enter a user's address to start messaging them."
-msgstr "Mesajlaşmaya başlamak için bir kullanıcının adresini girin."
-
-#: src/components/channel/SpaceEditor.tsx:958
+#: src/components/channel/SpaceEditor.tsx:1029
 msgid "Enter Address Manually"
 msgstr "Adres Manuel Olarak Gir"
 
-#: src/components/context/WebsocketProvider.tsx:90
-msgid "Error processing inbound:"
-msgstr "Gelen işlenirken hata:"
-
-#: src/components/context/WebsocketProvider.tsx:109
-msgid "Error processing outbound:"
-msgstr "Giden işlenirken hata:"
-
-#: src/components/context/WebsocketProvider.tsx:114
-msgid "Error processing queue:"
-msgstr "Kuyruk işlenirken hata:"
-
-#: src/components/channel/SpaceEditor.tsx:876
+#: src/components/channel/SpaceEditor.tsx:949
 msgid "Existing Conversations"
 msgstr "Mevcut Görüşmeler"
 
-#: src/components/modals/UserSettingsModal.tsx:340
+#: src/components/modals/UserSettingsModal.tsx:365
 msgid "Export"
-msgstr "Dışa Aktar"
+msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:331
-msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
-msgstr "Bu düğmeye tıklayarak anahtarınızı bir dosyaya dışa aktarın. Bu dosyayı başkalarıyla paylaşmayın, aksi takdirde sizi taklit edebilirler veya Alanınızın Apex kazançlarını çalabilirler."
+#: src/components/modals/UserSettingsModal.tsx:354
+msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your space's Apex earnings."
+msgstr ""
 
-#: src/components/context/MessageDB.tsx:836
-msgid "Failed to decrypt message with any known state"
-msgstr "Bilinmeyen bir durumla mesajı şifreyi çözemedi"
-
-#: src/components/context/WebsocketProvider.tsx:141
-msgid "Failed to parse WebSocket message:"
-msgstr "WebSocket mesajını ayrıştırmada başarısız oldu:"
-
-#: src/components/modals/CreateSpaceModal.tsx:55
-#: src/components/direct/DirectMessage.tsx:61
-#: src/components/channel/Channel.tsx:85
+#: src/components/onboarding/Onboarding.tsx:75
+#: src/components/modals/CreateSpaceModal.tsx:58
+#: src/components/direct/DirectMessage.tsx:58
+#: src/components/channel/Channel.tsx:84
 msgid "File cannot be larger than 2MB"
 msgstr "Dosya 2MB'dan büyük olamaz"
 
@@ -340,20 +274,12 @@ msgstr "Dosya 2MB'dan büyük olamaz"
 msgid "File rejected"
 msgstr "Dosya reddedildi"
 
-#: src/components/context/MessageDB.tsx:2755
-msgid "general"
-msgstr "genel"
-
-#: src/components/modals/UserSettingsModal.tsx:198
-#: src/components/channel/SpaceEditor.tsx:301
+#: src/components/modals/UserSettingsModal.tsx:226
+#: src/components/channel/SpaceEditor.tsx:333
 msgid "General"
 msgstr "Genel"
 
-#: src/components/context/MessageDB.tsx:2756
-msgid "General Chat"
-msgstr "Genel Sohbet"
-
-#: src/components/channel/SpaceEditor.tsx:1059
+#: src/components/channel/SpaceEditor.tsx:1132
 msgid "Generate New Invite Link"
 msgstr "Yeni Davet Bağlantısı Oluştur"
 
@@ -386,29 +312,8 @@ msgstr "Mevcut Anahtarı İçe Aktar"
 msgid "Important first-time user information:"
 msgstr "Önemli ilk kez kullanıcı bilgileri:"
 
-#: src/components/context/MessageDB.tsx:1016
-msgid "invalid address for signature"
-msgstr "imza için geçersiz adres"
-
-#: src/components/context/MessageDB.tsx:4238
-#: src/components/context/MessageDB.tsx:4275
-#: src/components/context/MessageDB.tsx:4281
-#: src/components/context/MessageDB.tsx:4379
-msgid "invalid link"
-msgstr "geçersiz bağlantı"
-
-#: src/components/context/MessageDB.tsx:4744
-msgid "invalid message type"
-msgstr "geçersiz mesaj türü"
-
-#: src/components/modals/JoinSpaceModal.tsx:89
-#: src/components/context/MessageDB.tsx:4243
-#: src/components/context/MessageDB.tsx:4342
-msgid "invalid response"
-msgstr "geçersiz yanıt"
-
-#: src/components/channel/SpaceEditor.tsx:341
-#: src/components/channel/SpaceEditor.tsx:860
+#: src/components/channel/SpaceEditor.tsx:373
+#: src/components/channel/SpaceEditor.tsx:937
 msgid "Invites"
 msgstr "Davetler"
 
@@ -426,9 +331,17 @@ msgstr "Uzaya Katıl"
 msgid "Joined"
 msgstr "Katıldı"
 
-#: src/components/modals/UserSettingsModal.tsx:328
+#: src/components/modals/UserSettingsModal.tsx:351
 msgid "Key Export"
-msgstr "Anahtar Dışa Aktar"
+msgstr ""
+
+#: src/components/modals/KickUserModal.tsx:56
+msgid "Kick User"
+msgstr ""
+
+#: src/components/modals/KickUserModal.tsx:36
+msgid "Kick User Text"
+msgstr ""
 
 #: src/components/user/UserProfile.tsx:321
 #: src/components/modals/KickUserModal.tsx:33
@@ -458,6 +371,10 @@ msgstr "Hadi gidelim"
 msgid "light"
 msgstr ""
 
+#: src/components/channel/SpaceEditor.tsx:478
+msgid "Letters"
+msgstr ""
+
 #: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
 msgstr "Bakım Devam Ediyor"
@@ -466,20 +383,16 @@ msgstr "Bakım Devam Ediyor"
 msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
 msgstr "Hesabınızı benzersiz kılın – bir profil fotoğrafı ayarlayın. Bu bilgi yalnızca katıldığınız Uzaylara sağlanır."
 
-#: src/components/modals/UserSettingsModal.tsx:289
+#: src/components/modals/UserSettingsModal.tsx:311
 msgid "Manage devices, and privacy conditions for messaging and synchronization."
-msgstr "Aygıtları ve mesajlaşma ile senkronizasyon için gizlilik koşullarını yönetin."
+msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:668
-#: src/components/channel/SpaceEditor.tsx:771
+#: src/components/channel/SpaceEditor.tsx:754
+#: src/components/channel/SpaceEditor.tsx:850
 msgid "Max file size: 256kB"
 msgstr "Maksimum dosya boyutu: 256kB"
 
-#: src/components/message/Message.tsx:492
-msgid "Message does not have a valid signature, this may not be from the sender"
-msgstr "Mesajın geçerli bir imzası yok, bu gönderenden gelmiyor olabilir"
-
-#: src/components/message/Message.tsx:353
+#: src/components/message/Message.tsx:338
 msgid "More reactions"
 msgstr "Daha fazla tepki"
 
@@ -489,15 +402,11 @@ msgstr "Daha fazla tepki"
 msgid "New Direct Message"
 msgstr "Yeni Doğrudan Mesaj"
 
-#: src/components/modals/UserSettingsModal.tsx:386
+#: src/components/modals/UserSettingsModal.tsx:418
 msgid "Non-repudiability"
-msgstr "İnkar Edilemezlik"
+msgstr ""
 
-#: src/components/user/UserOnlineStateIndicator.tsx:18
-msgid "Offline"
-msgstr "Çevrimdışı"
-
-#: src/components/onboarding/Onboarding.tsx:144
+#: src/components/onboarding/Onboarding.tsx:112
 msgid "One of us, one of us!"
 msgstr "Bizden biri, bizden biri!"
 
@@ -509,22 +418,26 @@ msgstr "Çevrimiçi"
 msgid "Personalize your account"
 msgstr "Hesabınızı kişiselleştirin"
 
-#: src/components/channel/SpaceEditor.tsx:458
+#: src/components/channel/SpaceEditor.tsx:438
+msgid "Preview:"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:549
 msgid "Privacy Settings"
 msgstr "Gizlilik Ayarları"
 
-#: src/components/modals/UserSettingsModal.tsx:207
-#: src/components/modals/UserSettingsModal.tsx:287
+#: src/components/modals/UserSettingsModal.tsx:235
+#: src/components/modals/UserSettingsModal.tsx:309
 msgid "Privacy/Security"
-msgstr "Gizlilik/Güvenlik"
+msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:981
+#: src/components/channel/SpaceEditor.tsx:1047
 msgid "Public Invite Link"
 msgstr "Açık Davet Bağlantısı"
 
-#: src/components/channel/SpaceEditor.tsx:983
-msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
-msgstr "Açık davet bağlantıları, bağlantıya erişimi olan herkesin Uzayınıza katılmasına izin verir. Bunu etkinleştirmenin risklerini ve bağlantıyı kime ve nerede paylaştığınızı anlayın."
+#: src/components/channel/SpaceEditor.tsx:1060
+msgid "Public invite links allow anyone with access to the link join your space. Understand the risks of enabling this, and to whom and where you share the link."
+msgstr ""
 
 #: src/components/Maintenance.tsx:28
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
@@ -551,42 +464,43 @@ msgstr "geçersiz imzaya sahip yapılandırma alındı!"
 msgid "Refresh"
 msgstr "Yenile"
 
-#: src/components/modals/UserSettingsModal.tsx:315
+#: src/components/modals/UserSettingsModal.tsx:338
 msgid "Remove"
-msgstr "Kaldır"
+msgstr ""
 
-#: src/components/message/Message.tsx:373
+#: src/components/message/Message.tsx:348
 msgid "Reply"
 msgstr "Cevapla"
 
-#: src/components/modals/CreateSpaceModal.tsx:125
-#: src/components/channel/SpaceEditor.tsx:464
+#: src/components/modals/CreateSpaceModal.tsx:130
+#: src/components/channel/SpaceEditor.tsx:555
 msgid "Repudiability"
 msgstr "Reddebilirlik"
 
-#: src/components/modals/CreateSpaceModal.tsx:138
-#: src/components/channel/SpaceEditor.tsx:479
-msgid "Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
-msgstr "Reddebilirlik, bu Alan'daki konuşmaların belirtilen gönderenin kaynağını doğrulanamaz hale getiren bir ayardır. Bu, hassas durumlarda faydalı olabilir, ancak başkalarının sizin adınıza görünen mesajlar oluşturabileceği anlamına da gelir."
+#: src/components/channel/SpaceEditor.tsx:573
+msgid "Repudiability is a setting that makes conversations in this space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
+msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:662
-#: src/components/channel/SpaceEditor.tsx:765
+#: src/components/modals/CreateSpaceModal.tsx:147
+msgid "Repudiability is a setting which makes conversations in this space unable to be proven they originated by the named sender. This can be useful in sensitive situations, but also means others forge messages that appear as if they originated from you."
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:751
+#: src/components/channel/SpaceEditor.tsx:847
 msgid "Requirements:"
 msgstr "Gereksinimler:"
 
-#: src/components/channel/SpaceEditor.tsx:310
-#: src/components/channel/SpaceEditor.tsx:508
+#: src/components/channel/SpaceEditor.tsx:342
+#: src/components/channel/SpaceEditor.tsx:603
 msgid "Roles"
 msgstr "Roller"
 
-#: src/components/user/UserProfile.tsx:241
-#: src/components/modals/UserSettingsModal.tsx:275
-#: src/components/modals/UserSettingsModal.tsx:424
-#: src/components/channel/SpaceEditor.tsx:495
-#: src/components/channel/SpaceEditor.tsx:641
-#: src/components/channel/SpaceEditor.tsx:744
-#: src/components/channel/SpaceEditor.tsx:847
-#: src/components/channel/GroupEditor.tsx:109
+#: src/components/modals/UserSettingsModal.tsx:297
+#: src/components/modals/UserSettingsModal.tsx:463
+#: src/components/channel/SpaceEditor.tsx:591
+#: src/components/channel/SpaceEditor.tsx:733
+#: src/components/channel/SpaceEditor.tsx:829
+#: src/components/channel/SpaceEditor.tsx:925
 #: src/components/channel/ChannelEditor.tsx:157
 msgid "Save Changes"
 msgstr "Değişiklikleri Kaydet"
@@ -599,23 +513,15 @@ msgstr "İletişim Fotoğrafını Kaydet"
 msgid "Save User Key"
 msgstr "Kullanıcı Anahtarını Kaydet"
 
-#: src/components/context/MessageDB.tsx:4904
-msgid "saved config is out of date"
-msgstr "kaydedilen yapılandırma güncel değil"
-
-#: src/components/modals/UserSettingsModal.tsx:345
+#: src/components/modals/UserSettingsModal.tsx:370
 msgid "Security"
-msgstr "Güvenlik"
+msgstr ""
 
-#: src/components/modals/NewDirectMessageModal.tsx:68
-msgid "Send"
-msgstr "Gönder"
-
-#: src/components/channel/SpaceEditor.tsx:1080
+#: src/components/channel/SpaceEditor.tsx:1153
 msgid "Send Invite"
 msgstr "Davet Gönder"
 
-#: src/components/channel/SpaceEditor.tsx:863
+#: src/components/channel/SpaceEditor.tsx:939
 msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 msgstr "Daha önce konuştuğunuz kişilere davet gönderin. Gelen kutularında bir davet butonu belirecektir."
 
@@ -631,15 +537,7 @@ msgstr "Oturum Şifreli"
 msgid "Set Display Name"
 msgstr "Görüntü Adını Ayarla"
 
-#: src/components/modals/UserSettingsModal.tsx:190
-msgid "Settings"
-msgstr "Ayarlar"
-
-#: src/components/onboarding/Onboarding.tsx:333
-msgid "Skip Adding Photo"
-msgstr "Fotoğraf Eklemeyi Atla"
-
-#: src/components/channel/SpaceEditor.tsx:380
+#: src/components/channel/SpaceEditor.tsx:410
 msgid "Space Banner"
 msgstr "Alan Afişi"
 
@@ -647,30 +545,26 @@ msgstr "Alan Afişi"
 msgid "Space Icon Attachment"
 msgstr "Alan İkonu Eki"
 
-#: src/components/channel/SpaceEditor.tsx:369
+#: src/components/channel/SpaceEditor.tsx:400
 msgid "Space Name"
 msgstr "Alan Adı"
 
-#: src/components/direct/EmptyDirectMessage.tsx:23
-msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
-msgstr "Bir arkadaşınıza bir mesajla başlayın. Doğrudan mesajlar listesinin yanındaki ekle butonuna tıklayın."
+#: src/components/modals/UserSettingsModal.tsx:479
+#: src/components/channel/SpaceEditor.tsx:451
+msgid "Space Tag"
+msgstr ""
 
-#: src/components/user/UserProfile.tsx:186
-msgid "Status goes here"
-msgstr "Durum buraya gelecek"
-
-#: src/components/channel/SpaceEditor.tsx:330
-#: src/components/channel/SpaceEditor.tsx:757
+#: src/components/channel/SpaceEditor.tsx:841
 msgid "Stickers"
 msgstr "Çıkartmalar"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:971
+#: src/components/channel/SpaceEditor.tsx:1041
 msgid "Successfully sent invite to {0}"
 msgstr "{0} için davet başarıyla gönderildi"
 
-#: src/components/channel/SpaceEditor.tsx:665
-#: src/components/channel/SpaceEditor.tsx:768
+#: src/components/channel/SpaceEditor.tsx:753
+#: src/components/channel/SpaceEditor.tsx:849
 msgid "Supported types: PNG, JPG, GIF"
 msgstr "Desteklenen türler: PNG, JPG, GIF"
 
@@ -686,11 +580,7 @@ msgstr "Davet bağlantısı süresi dolmuş veya geçersiz."
 msgid "This information is only provided to the Spaces you join."
 msgstr "Bu bilgi yalnızca katıldığınız Alanlar için sağlanmaktadır."
 
-#: src/components/channel/SpaceEditor.tsx:1016
-msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
-msgstr "Bu bağlantı süresi dolmayacak, ancak istediğiniz zaman yeni bir tane oluşturabilirsiniz, bu da eski bağlantıyı geçersiz kılacaktır. Mevcut Alan üyeleri Alan'dan çıkarılmayacaktır."
-
-#: src/components/message/Message.tsx:127
+#: src/components/message/Message.tsx:126
 msgid "Today at {timeFormatted}"
 msgstr "Bugün {timeFormatted} tarihinde"
 
@@ -709,15 +599,15 @@ msgstr "Bilinmeyen"
 msgid "Unknown User"
 msgstr "Bilinmeyen Kullanıcı"
 
-#: src/components/direct/DirectMessage.tsx:304
-msgid "Until you reply, this sender will not see your display name or profile picture"
-msgstr "Cevap verene kadar, bu gönderici sizin görüntü adınızı veya profil resminizi göremeyecek"
+#: src/components/channel/SpaceEditor.tsx:443
+msgid "Upload content and enter 4 letters to preview your space tag"
+msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:681
+#: src/components/channel/SpaceEditor.tsx:766
 msgid "Upload Emoji"
 msgstr "Emoji Yükle"
 
-#: src/components/channel/SpaceEditor.tsx:784
+#: src/components/channel/SpaceEditor.tsx:862
 msgid "Upload Sticker"
 msgstr "Çıkartma Yükle"
 
@@ -737,27 +627,23 @@ msgstr "useWebSocket bir WebSocketProvider içinde kullanılmalıdır"
 msgid "Welcome to Quorum!"
 msgstr "Quorum'a hoş geldiniz!"
 
-#: src/components/direct/EmptyDirectMessage.tsx:24
-msgid "What's on your mind today?"
-msgstr "Bugün aklınızda ne var?"
+#: src/components/modals/UserSettingsModal.tsx:436
+msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of spaces, as this is a configuration option by the space owner."
+msgstr ""
+
+#: src/components/modals/UserSettingsModal.tsx:399
+msgid "When enabled, synchronizes your user data, spaces, and space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new spaces, although not the spaces you have joined."
+msgstr ""
+
+#: src/components/modals/CreateSpaceModal.tsx:180
+msgid "When this setting is enabled, invite links will automatically allow a user to join your space. When it is not enabled, users following an invite link will send you a request to join your space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public space link can allow anyone with the link to read messages on the space for the duration of the link being valid."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:404
 msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
 msgstr "Açık olduğunda, doğrudan mesajlar kullanıcı anahtarınızla imzalanmaz. Bu performansı artırır, ancak iletişim kurduğunuz kullanıcının size gelmiş gibi mesajları sahte olarak oluşturmasına izin verebilir. Diğer insanlara sizin adınıza mesajları sahte olarak oluşturamazlar. Bu, Spaces'in reddedilebilirliğini etkilemez, çünkü bu bir Space sahibinin yapılandırma seçeneğidir."
 
-#: src/components/modals/UserSettingsModal.tsx:372
-msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
-msgstr "Açık olduğunda, kullanıcı verilerinizi, Spaces'i ve Space anahtarlarını cihazlar arasında senkronize eder. Bunu etkinleştirmek, hesabınızın meta verilerinin görünürlüğünü artırır, bu da yeni Spaces'e katıldığınızda bunu açığa çıkarabilir, ancak katıldığınız Spaces'leri göstermez."
-
-#: src/components/modals/CreateSpaceModal.tsx:166
-msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
-msgstr "Bu ayar etkinleştirildiğinde, davet bağlantıları otomatik olarak bir kullanıcının Space'inize katılmasına izin verecektir. Etkinleştirilmediğinde, bir davet bağlantısını takip eden kullanıcı, Space'inize katılmak için size bir talep gönderecektir ve bunu manuel olarak onaylamanız gerekecektir. Kamu bağlantıları, bağlantıda bazı anahtar materyallerin mevcut olmasını gerektirir - bir kamu Space bağlantısına sahip olmanın, bağlantının geçerli olduğu süre boyunca Space'teki mesajları okumak için bağlantıya sahip olan herkesin bunu yapmasına izin verebileceğini unutmayın."
-
-#: src/components/onboarding/Onboarding.tsx:180
-msgid "When using Quorum on a browser, your messages are saved locally to your browser."
-msgstr "Bir tarayıcıda Quorum kullanırken, mesajlarınız tarayıcınıza yerel olarak kaydedilir."
-
-#: src/components/message/Message.tsx:130
+#: src/components/message/Message.tsx:129
 msgid "Yesterday at {timeFormatted}"
 msgstr "Dün {timeFormatted} tarihinde"
 

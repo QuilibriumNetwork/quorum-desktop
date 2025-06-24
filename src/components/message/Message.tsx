@@ -31,6 +31,7 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
 import ReactTooltip from '../../components/ReactTooltip';
+import SpaceTag from '../SpaceTag';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -200,8 +201,9 @@ export const Message = ({
                   }}
                 />
                 <div className="message-reply-sender-name">
-                  {mapSenderToUser(reply.content.senderId).displayName}
+                  {sender.displayName} {sender.spaceTagId && <SpaceTag spaceId={sender.spaceTagId} />}
                 </div>
+
                 <div className="message-reply-text">
                   {reply.content.type == 'post' && reply.content.text}
                 </div>
