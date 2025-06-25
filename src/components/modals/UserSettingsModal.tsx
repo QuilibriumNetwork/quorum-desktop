@@ -11,6 +11,7 @@ import ToggleSwitch from '../ToggleSwitch';
 import Tooltip from '../Tooltip';
 import { UserConfig } from '../../db/messages';
 import ThemeRadioGroup from '../ThemeRadioGroup';
+import { t } from '@lingui/core/macro';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -166,7 +167,7 @@ const UserSettingsModal: React.FunctionComponent<{
   return (
     <div className="user-settings flex flex-row">
       <div className="px-4 py-2 text-text-base w-[200px]">
-        <div className="small-caps text-subtle">Settings</div>
+        <div className="small-caps text-subtle">{t`Settings`}</div>
         <div
           onClick={() => setSelectedCategory('general')}
           className={
@@ -174,7 +175,7 @@ const UserSettingsModal: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          General
+          {t`General`}
         </div>
         <div
           onClick={() => setSelectedCategory('privacy')}
@@ -183,7 +184,7 @@ const UserSettingsModal: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          Privacy/Security
+          {t`Privacy/Security`}
         </div>
         <div
           onClick={() => setSelectedCategory('appearance')}
@@ -192,7 +193,7 @@ const UserSettingsModal: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          Appearance
+          {t`Appearance`}
         </div>
       </div>
       <div className="flex flex-col grow overflow-y-scroll rounded-xl">
@@ -220,7 +221,7 @@ const UserSettingsModal: React.FunctionComponent<{
                       <input {...getInputProps()} />
                     </div>
                     <div className="user-settings-text flex flex-col grow pr-4">
-                      <div className="small-caps">Display Name</div>
+                      <div className="small-caps">{t`Display Name`}</div>
                       <input
                         className="w-full quorum-input"
                         value={displayName}
@@ -230,7 +231,7 @@ const UserSettingsModal: React.FunctionComponent<{
                   </div>
                   <div className="user-settings-content flex flex-col !rounded-b-none">
                     <div className="user-settings-info">
-                      <div className="small-caps">Account Address</div>
+                      <div className="small-caps">{t`Account Address`}</div>
                       <div className="text-base">
                         {currentPasskeyInfo!.address}
                       </div>
@@ -245,7 +246,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             saveChanges();
                           }}
                         >
-                          Save Changes
+                          {t`Save Changes`}
                         </Button>
                       </div>
                     </div>
@@ -257,10 +258,10 @@ const UserSettingsModal: React.FunctionComponent<{
                 <>
                   <div className="user-settings-header pt-4 px-4 !min-h-[0px] flex flex-row justify-between">
                     <div className="">
-                      <div className="text-xl font-bold">Privacy/Security</div>
+                      <div className="text-xl font-bold">{t`Privacy/Security`}</div>
                       <div className="pt-1 text-sm text-text-base">
-                        Manage devices, and privacy conditions for messaging and
-                        synchronization.
+                        {t`Manage devices, and privacy conditions for messaging and
+                        synchronization.`}
                       </div>
                     </div>
                     <div className="user-settings-editor-actions">
@@ -286,7 +287,7 @@ const UserSettingsModal: React.FunctionComponent<{
                               }}
                               type="danger"
                             >
-                              Remove
+                              {t`Remove`}
                             </Button>
                           )}
                           {keyset.deviceKeyset.inbox_keyset.inbox_address ===
@@ -299,12 +300,12 @@ const UserSettingsModal: React.FunctionComponent<{
                     <div className="user-settings-content-section-header" />
                     <div className="user-settings-info">
                       <div className="user-settings-content-section-header small-caps !pt-4">
-                        Key Export
+                        {t`Key Export`}
                       </div>
                       <div className="pt-1 text-sm text-text-base">
-                        Export your key to a file by clicking this button. Do
+                        {t`Export your key to a file by clicking this button. Do
                         not share this file with anyone else or they can
-                        impersonate you or steal your space's Apex earnings.
+                        impersonate you or steal your space's Apex earnings.`}
                       </div>
                       <div className="pt-4 pb-8 max-w-[100px]">
                         <Button
@@ -313,23 +314,23 @@ const UserSettingsModal: React.FunctionComponent<{
                             downloadKey();
                           }}
                         >
-                          Export
+                          {t`Export`}
                         </Button>
                       </div>
                     </div>
                     <div className="user-settings-content-section-header small-caps">
-                      Security
+                      {t`Security`}
                     </div>
                     <div className="pt-1 text-sm text-text-base">
-                      Adjust security-related settings, which may impact user
+                      {t`Adjust security-related settings, which may impact user
                       experience but increase the security of your Quorum
-                      account.
+                      account.`}
                     </div>
                     <div className="user-settings-info">
                       <div className="flex flex-row justify-between pb-2">
                         <div className="text-sm flex flex-row">
                           <div className="text-sm flex flex-col justify-around">
-                            Enable sync
+                            {t`Enable sync`}
                           </div>
                           <div
                             className="relative ml-2 group"
@@ -347,12 +348,12 @@ const UserSettingsModal: React.FunctionComponent<{
                                 className="w-[400px] absolute"
                                 visible={allowSyncTooltip}
                               >
-                                When enabled, synchronizes your user data,
+                                {t`When enabled, synchronizes your user data,
                                 spaces, and space keys between devices. Enabling
                                 this increases metadata visibility of your
                                 account, which can reveal when you have joined
                                 new spaces, although not the spaces you have
-                                joined.
+                                joined.`}
                               </Tooltip>
                             </div>
                           </div>
@@ -366,7 +367,7 @@ const UserSettingsModal: React.FunctionComponent<{
                       <div className="flex flex-row justify-between">
                         <div className="text-sm flex flex-row">
                           <div className="text-sm flex flex-col justify-around">
-                            Non-repudiability
+                            {t`Non-repudiability`}
                           </div>
                           <div
                             className="relative ml-2 group"
@@ -384,14 +385,14 @@ const UserSettingsModal: React.FunctionComponent<{
                                 className="w-[400px] absolute"
                                 visible={nonRepudiableTooltip}
                               >
-                                When enabled, direct messages are not signed by
+                                {t`When enabled, direct messages are not signed by
                                 your user key. This improves performance, but
                                 can allow the user you are communicating with to
                                 forge messages to you as if they came from you.
                                 They cannot forge messages to other people as if
                                 they came from you. This does not impact the
                                 repudiability of spaces, as this is a
-                                configuration option by the space owner.
+                                configuration option by the space owner.`}
                               </Tooltip>
                             </div>
                           </div>
@@ -411,7 +412,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             saveChanges();
                           }}
                         >
-                          Save Changes
+                          {t`Save Changes`}
                         </Button>
                       </div>
                     </div>
@@ -421,9 +422,9 @@ const UserSettingsModal: React.FunctionComponent<{
             case 'appearance':
               return (
                 <div className="user-settings-content px-4 py-6 flex flex-col gap-4">
-                  <div className="text-xl font-bold">Appearance</div>
+                  <div className="text-xl font-bold">{t`Appearance`}</div>
                   <div className="text-sm text-text-base">
-                    Choose your preferred theme for Quorum.
+                    {t`Choose your preferred theme for Quorum.`}
                   </div>
                   <ThemeRadioGroup />
                 </div>

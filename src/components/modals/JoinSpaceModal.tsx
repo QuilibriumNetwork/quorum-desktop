@@ -86,7 +86,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
           try {
             const manifest = await apiClient.getSpaceManifest(info.spaceId);
             if (!manifest) {
-              throw new Error('invalid response');
+              throw new Error(t`invalid response`);
             }
 
             const ciphertext = JSON.parse(manifest.data.space_manifest) as {
@@ -157,7 +157,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
             <SpaceIcon
               noTooltip={true}
               notifs={false}
-              spaceName={'Unknown'}
+              spaceName={t`Unknown`}
               size="large"
               selected={false}
               iconUrl="/quorumicon.png"

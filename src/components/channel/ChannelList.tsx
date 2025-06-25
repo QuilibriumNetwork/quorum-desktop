@@ -16,6 +16,7 @@ import ChannelEditor from './ChannelEditor';
 import GroupEditor from './GroupEditor';
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import LeaveSpace from './LeaveSpace';
+import { t } from '@lingui/core/macro';
 
 type ChannelListProps = { spaceId: string };
 
@@ -117,7 +118,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
             {isSpaceOwner && (
               <>
                 <TooltipButton
-                  text="Edit Space"
+                  text={t`Edit Space`}
                   icon={faEdit}
                   onClick={() => {
                     setIsMenuExpanded(false);
@@ -130,7 +131,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
             {(!isSpaceOwner || members.length == 1) && (
               <TooltipButton
                 type="danger"
-                text="Leave Space"
+                text={t`Leave Space`}
                 icon={faDoorOpen}
                 onClick={() => {
                   setIsMenuExpanded(false);
@@ -186,7 +187,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
             className="channel-group-name small-caps flex flex-row px-4 cursor-pointer hover:text-text-base"
             onClick={() => setIsGroupEditorOpen({})}
           >
-            <div className="truncate">Add Group</div>
+            <div className="truncate">{t`Add Group`}</div>
             <div className="pt-[.15rem] pl-1">
               <FontAwesomeIcon
                 onClick={() => setIsGroupEditorOpen({})}

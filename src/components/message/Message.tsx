@@ -427,7 +427,7 @@ export const Message = ({
             <span className="pl-2">
               {!repudiability && !message.signature && (
                 <FontAwesomeIcon
-                  title="Message does not have a valid signature, this may not be from the sender"
+                  title={t`Message does not have a valid signature, this may not be from the sender`}
                   size={'2xs'}
                   icon={faUnlock}
                 />

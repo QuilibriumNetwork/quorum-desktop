@@ -106,7 +106,7 @@ const GroupEditor: React.FunctionComponent<{
               )}
               {!groupName && <div></div>}
               <Button type="primary" onClick={() => saveChanges()}>
-                Save Changes
+                {t`Save Changes`}
               </Button>
             </div>
           </div>

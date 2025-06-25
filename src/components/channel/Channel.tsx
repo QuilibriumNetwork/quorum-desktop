@@ -309,8 +309,7 @@ const Channel: React.FC<ChannelProps> = ({
                 onClick={() => setInReplyTo(undefined)}
                 className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-[var(--surface-4)]"
               >
-                Replying to{' '}
-                {mapSenderToUser(inReplyTo.content.senderId).displayName}
+                {i18n._('Replying to {user}', { user: mapSenderToUser(inReplyTo.content.senderId).displayName })}
                 <span
                   className="message-in-reply-dismiss"
                   onClick={() => setInReplyTo(undefined)}
@@ -530,7 +529,7 @@ const Channel: React.FC<ChannelProps> = ({
             return (
               <div className="flex flex-col mb-2" key={'role-' + r}>
                 <div className="font-semibold ml-[1pt] mb-1 text-xs">
-                  {role.displayName.toUpperCase()} - {roleMembers.length}
+                  {i18n._('{role} - {count}', { role: role.displayName.toUpperCase(), count: roleMembers.length })}
                 </div>
                 {roleMembers.map((s) => (
                   <div key={s} className="w-full flex flex-row mb-2">
@@ -554,7 +553,7 @@ const Channel: React.FC<ChannelProps> = ({
           })}
         <div className="flex flex-col">
           <div className="font-semibold ml-[1pt] mb-1 text-xs">
-            No Role - {noRoleMembers.length}
+            {i18n._('No Role - {count}', { count: noRoleMembers.length })}
           </div>
           {noRoleMembers.map((s) => (
             <div key={s} className="w-full flex flex-row mb-2">

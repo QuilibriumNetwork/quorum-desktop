@@ -18,6 +18,7 @@ import { faLock } from '@fortawesome/free-solid-svg-icons';
 import Button from '../Button';
 import { useMessageDB } from './MessageDB';
 import { useQuorumApiClient } from './QuorumApiContext';
+import { t } from '@lingui/core/macro';
 
 type RegistrationContextValue = {
   keyset: {
@@ -244,7 +245,7 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
             <div className="flex flex-row grow"></div>
             <div className="flex flex-row grow font-semibold text-2xl">
               <div className="flex flex-col grow"></div>
-              <div className="flex flex-col">Session Encrypted</div>
+              <div className="flex flex-col">{t`Session Encrypted`}</div>
               <div className="flex flex-col grow"></div>
             </div>
             <div className="flex flex-row justify-center">
@@ -257,9 +258,9 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
               <div className="w-[460px] py-4 text-justify">
-                Quorum was loaded while the browser was not in focus or a
+                {t`Quorum was loaded while the browser was not in focus or a
                 passkey request was rejected. Please reauthorize to access your
-                messages.
+                messages.`}
               </div>
               <div className="grow"></div>
             </div>
@@ -274,7 +275,7 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
                     setClickRestore(false);
                   }}
                 >
-                  Reauthorize
+                  {t`Reauthorize`}
                 </Button>
               </div>
               <div className="grow"></div>

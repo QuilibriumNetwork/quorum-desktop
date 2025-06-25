@@ -10,6 +10,7 @@ import { useState } from 'react';
 import Button from '../Button';
 import './ExpandableNavMenu.scss';
 import { getConfig } from '../../config/config';
+import { t } from '@lingui/core/macro';
 
 type ExpandableNavMenuProps = {
   showCreateSpaceModal: () => void;

@@ -16,6 +16,7 @@ import { Role } from '../../api/quorumApi';
 import { useMessageDB } from '../context/MessageDB';
 import { useNavigate } from 'react-router';
 import { useRegistration } from '../../hooks';
+import { t } from '@lingui/core/macro';
 
 const UserProfile: React.FunctionComponent<{
   spaceId?: string;
@@ -181,7 +182,7 @@ const UserProfile: React.FunctionComponent<{
           </div>
           <div className="user-profile-info">
             <Input
-              placeholder="Status goes here"
+              placeholder={t`Status goes here`}
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             />
@@ -236,7 +237,7 @@ const UserProfile: React.FunctionComponent<{
                 }
               }}
             >
-              Save Changes
+              {t`Save Changes`}
             </Button>
           </div>
         </div>
@@ -302,7 +303,7 @@ const UserProfile: React.FunctionComponent<{
               <div className="user-profile-actions">
                 <TooltipButton
                   icon={faReply}
-                  text="Send Message"
+                  text={t`Send Message`}
                   onClick={() => {
                     navigate('/messages/' + props.user.address);
                     props.dismiss && props.dismiss();
@@ -316,7 +317,7 @@ const UserProfile: React.FunctionComponent<{
                     <TooltipButton
                       type="danger"
                       icon={faShieldAlt}
-                      text="Kick User"
+                      text={t`Kick User`}
                       onClick={() => {
                         props.setKickUserAddress!(props.user.address);
                         props.dismiss && props.dismiss();

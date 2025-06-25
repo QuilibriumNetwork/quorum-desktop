@@ -7,6 +7,7 @@ import UserProfile from './UserProfile';
 import './UserStatus.scss';
 import UserOnlineStateIndicator from './UserOnlineStateIndicator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { t } from '@lingui/core/macro';
 
 type UserStatusProps = {
   user: any;
@@ -64,7 +65,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
             visible={isMenuExpanded}
           >
             <TooltipButton
-              text="Edit Profile"
+              text={t`Edit Profile`}
               icon={faEdit}
               onClick={() => {
                 setIsMenuExpanded(false);

@@ -325,7 +325,7 @@ const SpaceEditor: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          Stickers
+          <Trans>Stickers</Trans>
         </div>
         <div
           onClick={() => setSelectedCategory('invites')}

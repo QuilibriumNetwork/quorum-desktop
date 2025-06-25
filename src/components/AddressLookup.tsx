@@ -10,7 +10,7 @@ export const AddressLookup = ({ address }: { address: string }) => {
   return (
     <>
       {!registration.registered && (
-        <div className="text-red-400 pt-2">User does not exist</div>
+        <div className="text-red-400 pt-2"><Trans>User does not exist</Trans></div>
       )}
       <div className="modal-new-direct-message-actions">
         <Button
