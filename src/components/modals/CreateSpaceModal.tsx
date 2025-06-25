@@ -140,7 +140,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               </div>
               <div className="absolute left-[147px]">
                 <Tooltip
-                  arrow="{user} has left"
+                  arrow="left"
                   className="w-[300px]"
                   visible={repudiableTooltip}
                 >
@@ -173,7 +173,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               </div>
               <div className="absolute left-[216px]">
                 <Tooltip
-                  arrow="{user} has left"
+                  arrow="left"
                   className="w-[400px]"
                   visible={pubTooltip}
                 >
