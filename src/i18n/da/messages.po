@@ -14,18 +14,13 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:312
-msgid "Replying to {user}"
+#: src/components/onboarding/Onboarding.tsx:83
+msgid "File cannot be larger than {maxFileSize}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:532
-msgid "{role} - {count}"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:556
-msgid "No Role - {count}"
+#: src/components/onboarding/Onboarding.tsx:290
+msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -49,9 +44,24 @@ msgid "Send a message to {user}"
 msgstr "Send en besked til {user}"
 
 #. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:312
+msgid "Replying to {user}"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/components/channel/Channel.tsx:392
 msgid "Send a message to #{channel_name}"
 msgstr "Send en besked til #{channel_name}"
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:532
+msgid "{role} - {count}"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:556
+msgid "No Role - {count}"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:234
 msgid "Account Address"
@@ -122,7 +132,7 @@ msgstr "Klik for at generere nyt invitationslink"
 msgid "Click on the role name and tag to edit them."
 msgstr "Klik på rollenavnet og tagget for at redigere dem."
 
-#: src/components/onboarding/Onboarding.tsx:159
+#: src/components/onboarding/Onboarding.tsx:203
 msgid ""
 "Click the button below to create a backup of your key info,\n"
 "                  because once it's gone, it's gone forever. You may be prompted\n"
@@ -208,6 +218,10 @@ msgstr "Direkte beskeder"
 msgid "Display Name"
 msgstr ""
 
+#: src/components/onboarding/Onboarding.tsx:156
+msgid "Drop your profile photo here"
+msgstr ""
+
 #: src/components/user/UserStatus.tsx:68
 msgid "Edit Profile"
 msgstr ""
@@ -264,14 +278,13 @@ msgstr ""
 msgid "Failed to parse WebSocket message:"
 msgstr ""
 
-#: src/components/onboarding/Onboarding.tsx:75
 #: src/components/modals/CreateSpaceModal.tsx:58
 #: src/components/direct/DirectMessage.tsx:58
 #: src/components/channel/Channel.tsx:84
 msgid "File cannot be larger than 2MB"
 msgstr "Filen må ikke være større end 2 MB"
 
-#: src/components/onboarding/Onboarding.tsx:77
+#: src/components/onboarding/Onboarding.tsx:85
 #: src/components/modals/CreateSpaceModal.tsx:60
 #: src/components/direct/DirectMessage.tsx:60
 #: src/components/channel/Channel.tsx:86
@@ -299,17 +312,22 @@ msgstr "Generer nyt invitationslink"
 msgid "Group Name"
 msgstr "Gruppens navn"
 
-#: src/components/onboarding/Onboarding.tsx:182
+#: src/components/onboarding/Onboarding.tsx:226
 msgid "I already saved mine"
 msgstr "Jeg har allerede gemt min"
 
-#: src/components/onboarding/Onboarding.tsx:143
+#: src/components/onboarding/Onboarding.tsx:349
+#: src/components/onboarding/Onboarding.tsx:356
+msgid "If skipped, you'll get the default profile image and can set it later"
+msgstr ""
+
+#: src/components/onboarding/Onboarding.tsx:187
 msgid ""
 "If you clear your browser storage or switch browsers,\n"
 "                          your old messages and keys may disappear."
 msgstr "Hvis du rydder dit browserlager eller skifter browser, kan dine gamle beskeder og taster forsvinde."
 
-#: src/components/onboarding/Onboarding.tsx:151
+#: src/components/onboarding/Onboarding.tsx:195
 msgid ""
 "If you uninstall the app from your device, you will lose your old\n"
 "                          messages and keys."
@@ -319,7 +337,7 @@ msgstr "Hvis du afinstallerer appen fra din enhed, mister du dine gamle beskeder
 msgid "Import Existing Key"
 msgstr "Importer eksisterende nøgle"
 
-#: src/components/onboarding/Onboarding.tsx:123
+#: src/components/onboarding/Onboarding.tsx:167
 msgid "Important first-time user information:"
 msgstr "Vigtig information til førstegangsbrugere:"
 
@@ -393,11 +411,11 @@ msgid "Leave Space"
 msgstr "Efterlad plads"
 
 #. placeholder {0}: currentPasskeyInfo?.address
-#: src/components/onboarding/Onboarding.tsx:195
+#: src/components/onboarding/Onboarding.tsx:239
 msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
 msgstr "Lad dine venner vide, hvem du er! Vælg et venligt navn til at vise i dine samtaler, noget, der er lettere at læse end {0}."
 
-#: src/components/onboarding/Onboarding.tsx:367
+#: src/components/onboarding/Onboarding.tsx:401
 msgid "Let's gooooooooo"
 msgstr "Lad os komme af sted"
 
@@ -405,7 +423,7 @@ msgstr "Lad os komme af sted"
 msgid "Maintenance in Progress"
 msgstr "Vedligeholdelse i gang"
 
-#: src/components/onboarding/Onboarding.tsx:244
+#: src/components/onboarding/Onboarding.tsx:280
 msgid ""
 "Make your account uniquely yours – set a contact photo. This\n"
 "                    information is only provided to the spaces you join."
@@ -451,11 +469,11 @@ msgstr "Ny direkte besked"
 msgid "Non-repudiability"
 msgstr ""
 
-#: src/components/onboarding/Onboarding.tsx:112
+#: src/components/onboarding/Onboarding.tsx:143
 msgid "One of us, one of us!"
 msgstr "En af os, en af os!"
 
-#: src/components/onboarding/Onboarding.tsx:113
+#: src/components/onboarding/Onboarding.tsx:144
 msgid "Personalize your account"
 msgstr "Gør din konto personlig"
 
@@ -480,7 +498,7 @@ msgstr "Offentlige invitationslinks giver alle med adgang til linket mulighed fo
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
 msgstr "Quorum-infrastrukturen er ved at blive implementeret på nuværende tidspunkt. Prøv at opdatere, og tjek <0>https://status.quilibrium.com/</0> for opdateringer."
 
-#: src/components/onboarding/Onboarding.tsx:126
+#: src/components/onboarding/Onboarding.tsx:170
 msgid ""
 "Quorum is peer-to-peer and end-to-end encrypted. This means\n"
 "                  your messages stay private, but equally important, they only\n"
@@ -550,11 +568,11 @@ msgstr "Roller"
 msgid "Save Changes"
 msgstr "Gem ændringer"
 
-#: src/components/onboarding/Onboarding.tsx:325
+#: src/components/onboarding/Onboarding.tsx:366
 msgid "Save Contact Photo"
 msgstr "Gem kontaktfoto"
 
-#: src/components/onboarding/Onboarding.tsx:175
+#: src/components/onboarding/Onboarding.tsx:219
 msgid "Save User Key"
 msgstr "Gem brugernøgle"
 
@@ -582,12 +600,16 @@ msgstr ""
 msgid "Session Encrypted"
 msgstr ""
 
-#: src/components/onboarding/Onboarding.tsx:228
+#: src/components/onboarding/Onboarding.tsx:264
 msgid "Set Display Name"
 msgstr "Indstil visningsnavn"
 
 #: src/components/modals/UserSettingsModal.tsx:170
 msgid "Settings"
+msgstr ""
+
+#: src/components/onboarding/Onboarding.tsx:341
+msgid "Skip Adding Photo"
 msgstr ""
 
 #: src/components/channel/SpaceEditor.tsx:376
@@ -629,7 +651,7 @@ msgstr "Understøttede typer: PNG, JPG, GIF"
 msgid "The invite link has expired or is invalid."
 msgstr "Invitationslinket er udløbet eller ugyldigt."
 
-#: src/components/onboarding/Onboarding.tsx:199
+#: src/components/onboarding/Onboarding.tsx:243
 msgid "This information is only provided to the spaces you join."
 msgstr "Disse oplysninger gives kun til de områder, du deltager i."
 
@@ -670,7 +692,7 @@ msgstr ""
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr ""
 
-#: src/components/onboarding/Onboarding.tsx:110
+#: src/components/onboarding/Onboarding.tsx:141
 msgid "Welcome to Quorum!"
 msgstr "Velkommen til Quorum!"
 
@@ -704,7 +726,7 @@ msgstr ""
 msgid "When this setting is enabled, invite links will automatically allow a user to join your space. When it is not enabled, users following an invite link will send you a request to join your space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public space link can allow anyone with the link to read messages on the space for the duration of the link being valid."
 msgstr "Når denne indstilling er aktiveret, giver invitationslinks automatisk en bruger mulighed for at blive medlem af dit område. Når den ikke er aktiveret, vil brugere, der følger et invitationslink, sende dig en anmodning om at blive medlem af dit rum, som du skal godkende manuelt. Offentlige links kræver, at der findes noget nøglemateriale i linket - vær opmærksom på, at besiddelse af et link til et offentligt rum kan give alle med linket mulighed for at læse beskeder på rummet, så længe linket er gyldigt."
 
-#: src/components/onboarding/Onboarding.tsx:138
+#: src/components/onboarding/Onboarding.tsx:182
 msgid ""
 "When using Quorum on a browser, your messages are saved\n"
 "                        locally to your browser."
@@ -714,7 +736,15 @@ msgstr "Når du bruger Quorum i en browser, gemmes dine beskeder lokalt i din br
 msgid "Yesterday at {timeFormatted}"
 msgstr "I går klokken {timeFormatted}."
 
-#: src/components/onboarding/Onboarding.tsx:339
+#: src/components/onboarding/Onboarding.tsx:284
+msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
+msgstr ""
+
+#: src/components/onboarding/Onboarding.tsx:287
+msgid "You will be able to change this later in your settings."
+msgstr ""
+
+#: src/components/onboarding/Onboarding.tsx:380
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Så er du klar. Velkommen til Quorum!"
 

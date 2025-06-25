@@ -14,18 +14,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:312
-msgid "Replying to {user}"
+#: src/components/onboarding/Onboarding.tsx:83
+msgid "File cannot be larger than {maxFileSize}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:532
-msgid "{role} - {count}"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:556
-msgid "No Role - {count}"
+#: src/components/onboarding/Onboarding.tsx:290
+msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -49,9 +44,24 @@ msgid "Send a message to {user}"
 msgstr "傳送訊息給 {user}"
 
 #. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:312
+msgid "Replying to {user}"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/components/channel/Channel.tsx:392
 msgid "Send a message to #{channel_name}"
 msgstr "傳送訊息至 #{channel_name}"
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:532
+msgid "{role} - {count}"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:556
+msgid "No Role - {count}"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:234
 msgid "Account Address"
@@ -122,7 +132,7 @@ msgstr "點擊生成新邀請連結"
 msgid "Click on the role name and tag to edit them."
 msgstr "點擊角色名稱或標籤進行編輯。"
 
-#: src/components/onboarding/Onboarding.tsx:159
+#: src/components/onboarding/Onboarding.tsx:203
 msgid ""
 "Click the button below to create a backup of your key info,\n"
 "                  because once it's gone, it's gone forever. You may be prompted\n"
@@ -208,6 +218,10 @@ msgstr "私訊"
 msgid "Display Name"
 msgstr ""
 
+#: src/components/onboarding/Onboarding.tsx:156
+msgid "Drop your profile photo here"
+msgstr ""
+
 #: src/components/user/UserStatus.tsx:68
 msgid "Edit Profile"
 msgstr ""
@@ -264,14 +278,13 @@ msgstr ""
 msgid "Failed to parse WebSocket message:"
 msgstr ""
 
-#: src/components/onboarding/Onboarding.tsx:75
 #: src/components/modals/CreateSpaceModal.tsx:58
 #: src/components/direct/DirectMessage.tsx:58
 #: src/components/channel/Channel.tsx:84
 msgid "File cannot be larger than 2MB"
 msgstr "檔案大小不可超過 2MB"
 
-#: src/components/onboarding/Onboarding.tsx:77
+#: src/components/onboarding/Onboarding.tsx:85
 #: src/components/modals/CreateSpaceModal.tsx:60
 #: src/components/direct/DirectMessage.tsx:60
 #: src/components/channel/Channel.tsx:86
@@ -299,17 +312,22 @@ msgstr "產生新邀請連結"
 msgid "Group Name"
 msgstr "群組名稱"
 
-#: src/components/onboarding/Onboarding.tsx:182
+#: src/components/onboarding/Onboarding.tsx:226
 msgid "I already saved mine"
 msgstr "我已備份"
 
-#: src/components/onboarding/Onboarding.tsx:143
+#: src/components/onboarding/Onboarding.tsx:349
+#: src/components/onboarding/Onboarding.tsx:356
+msgid "If skipped, you'll get the default profile image and can set it later"
+msgstr ""
+
+#: src/components/onboarding/Onboarding.tsx:187
 msgid ""
 "If you clear your browser storage or switch browsers,\n"
 "                          your old messages and keys may disappear."
 msgstr "若清除瀏覽器儲存空間或更換瀏覽器，舊訊息與金鑰可能會遺失。"
 
-#: src/components/onboarding/Onboarding.tsx:151
+#: src/components/onboarding/Onboarding.tsx:195
 msgid ""
 "If you uninstall the app from your device, you will lose your old\n"
 "                          messages and keys."
@@ -319,7 +337,7 @@ msgstr "若解除安裝應用程式，舊訊息與金鑰將會遺失。"
 msgid "Import Existing Key"
 msgstr "匯入現有金鑰"
 
-#: src/components/onboarding/Onboarding.tsx:123
+#: src/components/onboarding/Onboarding.tsx:167
 msgid "Important first-time user information:"
 msgstr "首次使用重要資訊："
 
@@ -393,11 +411,11 @@ msgid "Leave Space"
 msgstr "離開空間"
 
 #. placeholder {0}: currentPasskeyInfo?.address
-#: src/components/onboarding/Onboarding.tsx:195
+#: src/components/onboarding/Onboarding.tsx:239
 msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
 msgstr "讓朋友知道您是誰！選擇一個易讀的顯示名稱，比 {0} 更友善。"
 
-#: src/components/onboarding/Onboarding.tsx:367
+#: src/components/onboarding/Onboarding.tsx:401
 msgid "Let's gooooooooo"
 msgstr "開始使用！"
 
@@ -405,7 +423,7 @@ msgstr "開始使用！"
 msgid "Maintenance in Progress"
 msgstr "維護進行中"
 
-#: src/components/onboarding/Onboarding.tsx:244
+#: src/components/onboarding/Onboarding.tsx:280
 msgid ""
 "Make your account uniquely yours – set a contact photo. This\n"
 "                    information is only provided to the spaces you join."
@@ -451,11 +469,11 @@ msgstr "新私訊"
 msgid "Non-repudiability"
 msgstr ""
 
-#: src/components/onboarding/Onboarding.tsx:112
+#: src/components/onboarding/Onboarding.tsx:143
 msgid "One of us, one of us!"
 msgstr "歡迎加入！"
 
-#: src/components/onboarding/Onboarding.tsx:113
+#: src/components/onboarding/Onboarding.tsx:144
 msgid "Personalize your account"
 msgstr "個人化您的帳號"
 
@@ -480,7 +498,7 @@ msgstr "公開連結允許任何人加入您的空間。請了解啟用此功能
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
 msgstr "系統正在部署中，請稍後重新整理頁面，或查看 <0>https://status.quilibrium.com/</0> 取得最新狀態。"
 
-#: src/components/onboarding/Onboarding.tsx:126
+#: src/components/onboarding/Onboarding.tsx:170
 msgid ""
 "Quorum is peer-to-peer and end-to-end encrypted. This means\n"
 "                  your messages stay private, but equally important, they only\n"
@@ -550,11 +568,11 @@ msgstr "角色"
 msgid "Save Changes"
 msgstr "儲存變更"
 
-#: src/components/onboarding/Onboarding.tsx:325
+#: src/components/onboarding/Onboarding.tsx:366
 msgid "Save Contact Photo"
 msgstr "儲存聯絡人照片"
 
-#: src/components/onboarding/Onboarding.tsx:175
+#: src/components/onboarding/Onboarding.tsx:219
 msgid "Save User Key"
 msgstr "儲存使用者金鑰"
 
@@ -582,12 +600,16 @@ msgstr ""
 msgid "Session Encrypted"
 msgstr ""
 
-#: src/components/onboarding/Onboarding.tsx:228
+#: src/components/onboarding/Onboarding.tsx:264
 msgid "Set Display Name"
 msgstr "設定顯示名稱"
 
 #: src/components/modals/UserSettingsModal.tsx:170
 msgid "Settings"
+msgstr ""
+
+#: src/components/onboarding/Onboarding.tsx:341
+msgid "Skip Adding Photo"
 msgstr ""
 
 #: src/components/channel/SpaceEditor.tsx:376
@@ -629,7 +651,7 @@ msgstr "支援格式：PNG、JPG、GIF"
 msgid "The invite link has expired or is invalid."
 msgstr "邀請連結已失效或無效。"
 
-#: src/components/onboarding/Onboarding.tsx:199
+#: src/components/onboarding/Onboarding.tsx:243
 msgid "This information is only provided to the spaces you join."
 msgstr "此資訊僅提供給您加入的空間。"
 
@@ -670,7 +692,7 @@ msgstr ""
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr ""
 
-#: src/components/onboarding/Onboarding.tsx:110
+#: src/components/onboarding/Onboarding.tsx:141
 msgid "Welcome to Quorum!"
 msgstr "歡迎使用 Quorum！"
 
@@ -704,7 +726,7 @@ msgstr ""
 msgid "When this setting is enabled, invite links will automatically allow a user to join your space. When it is not enabled, users following an invite link will send you a request to join your space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public space link can allow anyone with the link to read messages on the space for the duration of the link being valid."
 msgstr "啟用此設定後，邀請連結將自動允許用戶加入空間。若未啟用，用戶需發送加入請求並經手動批准。公開連結包含特定金鑰材料，請注意：任何持有有效公開連結的人皆可讀取空間訊息。"
 
-#: src/components/onboarding/Onboarding.tsx:138
+#: src/components/onboarding/Onboarding.tsx:182
 msgid ""
 "When using Quorum on a browser, your messages are saved\n"
 "                        locally to your browser."
@@ -714,7 +736,15 @@ msgstr "於瀏覽器使用 Quorum 時，訊息將儲存於本地瀏覽器。"
 msgid "Yesterday at {timeFormatted}"
 msgstr "昨天 {timeFormatted}"
 
-#: src/components/onboarding/Onboarding.tsx:339
+#: src/components/onboarding/Onboarding.tsx:284
+msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
+msgstr ""
+
+#: src/components/onboarding/Onboarding.tsx:287
+msgid "You will be able to change this later in your settings."
+msgstr ""
+
+#: src/components/onboarding/Onboarding.tsx:380
 msgid "You're all set. Welcome to Quorum!"
 msgstr "一切就緒，歡迎使用 Quorum！"
 
