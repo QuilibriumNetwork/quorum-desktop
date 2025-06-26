@@ -12,6 +12,8 @@ import Tooltip from '../Tooltip';
 import { UserConfig } from '../../db/messages';
 import ThemeRadioGroup from '../ThemeRadioGroup';
 import { t } from '@lingui/core/macro';
+import CopyToClipboard from '../CopyToClipboard';
+import { DefaultImages } from '../../utils';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -63,8 +65,8 @@ const UserSettingsModal: React.FunctionComponent<{
           userKey: keyset.userKeyset,
         });
         existingConfig.current = config;
-        setAllowSync(config.allowSync ?? allowSync);
-        setNonRepudiable(config.nonRepudiable ?? nonRepudiable);
+        setAllowSync(config?.allowSync ?? allowSync);
+        setNonRepudiable(config?.nonRepudiable ?? nonRepudiable);
       })();
     }
   }, [init]);
@@ -140,7 +142,7 @@ const UserSettingsModal: React.FunctionComponent<{
             acceptedFiles[0].type +
             ';base64,' +
             Buffer.from(fileData).toString('base64')
-          : (currentPasskeyInfo!.pfpUrl ?? '/unknown.png'),
+          : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
       address: currentPasskeyInfo!.address,
     });
     updateUserProfile(
@@ -150,7 +152,7 @@ const UserSettingsModal: React.FunctionComponent<{
             acceptedFiles[0].type +
             ';base64,' +
             Buffer.from(fileData).toString('base64')
-        : (currentPasskeyInfo!.pfpUrl ?? '/unknown.png'),
+        : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
       currentPasskeyInfo!
     );
     await saveConfig({
@@ -211,7 +213,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             ? `url(data:${acceptedFiles[0].type};base64,${Buffer.from(fileData).toString('base64')})`
                             : currentPasskeyInfo?.pfpUrl &&
                                 !currentPasskeyInfo.pfpUrl.includes(
-                                  'unknown.png'
+                                  DefaultImages.UNKNOWN_USER
                                 )
                               ? `url(${currentPasskeyInfo.pfpUrl})`
                               : 'var(--unknown-icon)',
@@ -232,8 +234,8 @@ const UserSettingsModal: React.FunctionComponent<{
                   <div className="user-settings-content flex flex-col !rounded-b-none">
                     <div className="user-settings-info">
                       <div className="small-caps">{t`Account Address`}</div>
-                      <div className="text-base">
-                        {currentPasskeyInfo!.address}
+                      <div className="flex flex-row items-center text-base">
+                        {currentPasskeyInfo!.address} <CopyToClipboard className="ml-2" tooltipText={t`Copy address to clipboard`} text={currentPasskeyInfo!.address} />
                       </div>
                     </div>
                   </div>
@@ -279,7 +281,7 @@ const UserSettingsModal: React.FunctionComponent<{
                           <div className="flex flex-col justify-around font-light">
                             {d.inbox_registration.inbox_address}
                           </div>
-                          {keyset.deviceKeyset.inbox_keyset.inbox_address !==
+                          {keyset.deviceKeyset?.inbox_keyset?.inbox_address !==
                             d.inbox_registration.inbox_address && (
                             <Button
                               onClick={() => {

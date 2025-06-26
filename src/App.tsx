@@ -18,6 +18,7 @@ import { Maintenance } from './components/Maintenance';
 import { RegistrationProvider } from './components/context/RegistrationPersister';
 import JoinSpaceModal from './components/modals/JoinSpaceModal';
 import Elements from './components/Elements';
+import { DefaultImages } from './utils';
 
 
 window.Buffer = Buffer;
@@ -86,7 +87,7 @@ const App = () => {
           currentPasskeyInfo.displayName ?? currentPasskeyInfo.address,
         state: 'online',
         status: '',
-        userIcon: currentPasskeyInfo.pfpUrl ?? '/unknown.png',
+        userIcon: currentPasskeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER,
         address: currentPasskeyInfo.address,
       });
     }

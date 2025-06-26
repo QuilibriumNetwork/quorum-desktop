@@ -54,6 +54,7 @@ import { sha256 } from 'multiformats/hashes/sha2';
 import { base58btc } from 'multiformats/bases/base58';
 import { buildConfigKey } from '../../hooks/queries/config/buildConfigKey';
 import { t } from '@lingui/core/macro';
+import { DefaultImages } from '../../utils';
 
 type MessageDBContextValue = {
   messageDB: MessageDB;
@@ -809,7 +810,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               session.user_address,
               'direct',
               updatedUserProfile ?? {
-                user_icon: conversation?.conversation?.icon ?? '/unknown.png',
+                user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
                 display_name:
                   conversation?.conversation?.displayName ?? t`Unknown User`,
               }
@@ -826,7 +827,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               envelope.timestamp,
               0,
               updatedUserProfile ?? {
-                user_icon: conversation?.conversation?.icon ?? '/unknown.png',
+                user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
                 display_name:
                   conversation?.conversation?.displayName ?? t`Unknown User`,
               }
@@ -2607,7 +2608,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         }
 
         await saveMessage(message, messageDB, address!, address!, 'direct', {
-          user_icon: conversation?.conversation?.icon ?? '/unknown.png',
+          user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
           display_name:
             conversation?.conversation?.displayName ?? t`Unknown User`,
         });
@@ -2618,7 +2619,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           Date.now(),
           message.createdDate,
           {
-            user_icon: conversation?.conversation?.icon ?? '/unknown.png',
+            user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
             display_name:
               conversation?.conversation?.displayName ?? 'Unknown User',
           }
@@ -3627,7 +3628,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               0,
               spaceAddress,
               'group',
-              '/unknown.png',
+              DefaultImages.UNKNOWN_USER,
               t`Unknown User`
             );
           }
@@ -4847,7 +4848,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           )
         );
         await saveMessage(message, messageDB, spaceId, channelId, 'group', {
-          user_icon: conversation.conversation?.icon ?? '/unknown.png',
+          user_icon: conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
           display_name:
             conversation.conversation?.displayName ?? t`Unknown User`,
         });
