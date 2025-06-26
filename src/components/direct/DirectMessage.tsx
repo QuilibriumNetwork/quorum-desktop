@@ -464,7 +464,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   {members[s].displayName} {members[s].address === user.currentPasskeyInfo!.address && <span className="text-xs text-text-subtle">({t`You`})</span>}
                 </span>
                 <span className="text-xs truncate w-[190px] opacity-70">
-                  <ClickToCopyContent text={members[s].address}>{members[s].address}</ClickToCopyContent>
+                  <ClickToCopyContent text={members[s].address} tooltipLocation="left-start">{members[s].address}</ClickToCopyContent>
                 </span>
               </div>
             </div>

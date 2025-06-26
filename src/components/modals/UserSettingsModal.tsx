@@ -235,7 +235,7 @@ const UserSettingsModal: React.FunctionComponent<{
                     <div className="user-settings-info">
                       <div className="small-caps">{t`Account Address`}</div>
                       <div className="flex flex-row items-center text-base">
-                        {currentPasskeyInfo!.address} <CopyToClipboard className="ml-2" tooltipText={t`Copy address to clipboard`} text={currentPasskeyInfo!.address} />
+                        {currentPasskeyInfo!.address} <CopyToClipboard className="ml-2" tooltipText={t`Copy address to clipboard`} text={currentPasskeyInfo!.address} tooltipLocation="top" />
                       </div>
                     </div>
                   </div>

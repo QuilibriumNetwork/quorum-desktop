@@ -93,7 +93,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
         <div className="user-status-text">
           <div className="flex flex-row user-status-username w-[164px] text-ellipsis overflow-hidden">
             <span>{props.user.displayName}</span>
-            <CopyToClipboard className="ml-2" tooltipText={t`Copy address to clipboard`} text={props.user.address} />
+            <CopyToClipboard className="ml-2" tooltipText={t`Copy address to clipboard`} text={props.user.address} tooltipLocation="top" />
           </div>
           <div className="user-status-info">
             <UserOnlineStateIndicator user={props.user} />

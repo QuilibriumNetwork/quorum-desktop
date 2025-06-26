@@ -3,7 +3,8 @@ import { faClipboard } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
-import Tooltip from './Tooltip';
+import { Tooltip } from 'react-tooltip';
+import 'react-tooltip/dist/react-tooltip.css';
 
 
 type CopyToClipboardProps = {
@@ -12,7 +13,8 @@ type CopyToClipboardProps = {
   iconClassName?: string;
   onCopy?: () => void;
   tooltipText?: string;
-  arrow?: 'down' | 'top' | 'left' | 'right' | 'none';
+  noArrow?: boolean;
+  tooltipLocation?: 'top' | 'top-start' | 'top-end' | 'right' | 'right-start' | 'right-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end';
 };
 
 const CopyToClipboard: React.FunctionComponent<CopyToClipboardProps> = ({
@@ -21,7 +23,8 @@ const CopyToClipboard: React.FunctionComponent<CopyToClipboardProps> = ({
   iconClassName = '',
   tooltipText = t`Copy to clipboard`,
   onCopy,
-  arrow = 'none',
+  noArrow = false,
+  tooltipLocation = 'top',
 }) => {
   const [copied, setCopied] = React.useState(false);
   const [onHover, setOnHover] = React.useState(false);
@@ -57,22 +60,23 @@ const CopyToClipboard: React.FunctionComponent<CopyToClipboardProps> = ({
     }
   };
 
+
   return (
     <div className={`flex items-center ${className}`}>
-      <Tooltip visible={onHover} arrow={arrow}>
-        {tooltipText}
-      </Tooltip>
-      <FontAwesomeIcon
-        icon={faClipboard}
-        className={`cursor-pointer hover:text-text-base ${iconClassName}`}
-        onClick={(e) => handleCopy(e)}
-        onMouseEnter={() => !copied && setTimeout(() => setOnHover(true), 1000)}
-        onMouseLeave={() => setOnHover(false)}
-        onMouseOut={() => setOnHover(false)}
-      />
-      <Tooltip visible={copied} arrow={arrow}>
-        <Trans>Copied!</Trans>
-      </Tooltip>
+      <a
+        data-tooltip-id="copy-to-clipboard-tooltip"
+        data-tooltip-content={copied ? t`Copied!` : tooltipText}
+        data-tooltip-place={tooltipLocation}
+        data-tooltip-variant="dark"
+        data-tooltip-no-arrow={noArrow}
+      >
+        <FontAwesomeIcon
+          icon={faClipboard}
+          className={`cursor-pointer hover:text-text-base text-white ${iconClassName}`}
+          onClick={(e) => handleCopy(e)}
+        />
+      </a>
+      <Tooltip id="copy-to-clipboard-tooltip" />
     </div>
   );
 };
