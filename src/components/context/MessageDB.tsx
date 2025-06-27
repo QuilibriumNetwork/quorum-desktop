@@ -5149,7 +5149,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         deviceKeyset: secureChannel.DeviceKeyset;
       };
     }) => {
+      const ts = Date.now();
+      config.timestamp = ts;
+
       if (config.allowSync) {
+        console.log('syncing config', config);
         const userKey = keyset.userKeyset;
         const derived = await crypto.subtle.digest(
           'SHA-512',
@@ -5167,8 +5171,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           ['encrypt']
         );
 
-        const ts = Date.now();
-        config.timestamp = ts;
         config.spaceKeys = [];
         const spaces = await messageDB.getSpaces();
 
