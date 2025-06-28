@@ -19,6 +19,7 @@ import Button from '../Button';
 import { useMessageDB } from './MessageDB';
 import { useQuorumApiClient } from './QuorumApiContext';
 import { t } from '@lingui/core/macro';
+import { getDefaultUserConfig } from '../../utils';
 
 type RegistrationContextValue = {
   keyset: {
@@ -35,7 +36,7 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
   const { currentPasskeyInfo, exportKey } = usePasskeysContext();
   const [clickRestore, setClickRestore] = useState(false);
   const [init, setInit] = useState(false);
-  const { keyset, setKeyset, setSelfAddress, getConfig } = useMessageDB();
+  const { keyset, setKeyset, setSelfAddress, getConfig, saveConfig } = useMessageDB();
   const { data: registration } = useRegistration({
     address: currentPasskeyInfo!.address,
   });
@@ -213,10 +214,17 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
                   deviceKeyset: senderDevice,
                   userKeyset: senderIdent,
                 });
-                getConfig({
+                const userConfig = await getConfig({
                   address: currentPasskeyInfo!.address,
                   userKey: senderIdent,
                 });
+                if (userConfig === undefined) {
+                  const defaultConfig = getDefaultUserConfig(currentPasskeyInfo!.address);
+                  saveConfig({
+                    config: defaultConfig,
+                    keyset,
+                  });
+                }
               } catch (e: any) {
                 if (e.name === 'NotAllowedError') {
                   setClickRestore(true);

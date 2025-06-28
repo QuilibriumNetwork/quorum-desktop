@@ -54,7 +54,7 @@ import { sha256 } from 'multiformats/hashes/sha2';
 import { base58btc } from 'multiformats/bases/base58';
 import { buildConfigKey } from '../../hooks/queries/config/buildConfigKey';
 import { t } from '@lingui/core/macro';
-import { DefaultImages } from '../../utils';
+import { DefaultImages, getDefaultUserConfig } from '../../utils';
 
 type MessageDBContextValue = {
   messageDB: MessageDB;
@@ -4894,10 +4894,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
       const storedConfig = await messageDB.getUserConfig({ address });
       if (!savedConfig) {
+        if (!storedConfig) {
+          return getDefaultUserConfig(address);
+        }
         return storedConfig;
       }
 
-      if (savedConfig.timestamp < (storedConfig?.timestamp ?? 0)) {
+     if (savedConfig.timestamp < (storedConfig?.timestamp ?? 0)) {
         console.warn(t`saved config is out of date`);
         return storedConfig;
       }

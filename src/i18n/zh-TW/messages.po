@@ -39,13 +39,13 @@ msgid "{user} has been kicked"
 msgstr "{user} 已被踢出"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:259
+#: src/components/direct/DirectMessage.tsx:263
 #: src/components/channel/Channel.tsx:313
 msgid "Replying to {user}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:324
+#: src/components/direct/DirectMessage.tsx:328
 msgid "Send a message to {user}"
 msgstr "傳送訊息給 {user}"
 
@@ -72,7 +72,7 @@ msgstr ""
 msgid "Add Group"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:531
+#: src/components/channel/SpaceEditor.tsx:533
 msgid "Add Role"
 msgstr "新增角色"
 
@@ -80,11 +80,11 @@ msgstr "新增角色"
 msgid "Add Space"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:652
+#: src/components/channel/SpaceEditor.tsx:654
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a space."
 msgstr "最多可新增 50 個自訂表情符號。自訂表情符號僅限於空間內使用。"
 
-#: src/components/channel/SpaceEditor.tsx:748
+#: src/components/channel/SpaceEditor.tsx:750
 msgid "Add up to 50 custom stickers. Custom stickers can only be used within a space."
 msgstr "最多可新增 50 個自訂貼圖。自訂貼圖僅限於空間內使用。"
 
@@ -95,7 +95,7 @@ msgid ""
 "                      account."
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:238
+#: src/components/modals/CreateSpaceModal.tsx:234
 msgid "Advanced Settings"
 msgstr "進階設定"
 
@@ -117,7 +117,7 @@ msgstr ""
 msgid "Busy"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:601
+#: src/components/channel/SpaceEditor.tsx:603
 msgid "Can delete messages?"
 msgstr "允許刪除訊息嗎？"
 
@@ -138,10 +138,10 @@ msgid "Choose your preferred theme for Quorum."
 msgstr ""
 
 #: src/components/channel/SpaceEditor.tsx:1004
-msgid "Click Generate New Invite Link"
-msgstr "點擊生成新邀請連結"
+#~ msgid "Click Generate New Invite Link"
+#~ msgstr "點擊生成新邀請連結"
 
-#: src/components/channel/SpaceEditor.tsx:510
+#: src/components/channel/SpaceEditor.tsx:512
 msgid "Click on the role name and tag to edit them."
 msgstr "點擊角色名稱或標籤進行編輯。"
 
@@ -152,7 +152,7 @@ msgid ""
 "                  to authenticate again."
 msgstr "點擊下方按鈕備份金鑰資訊，遺失後將無法恢復。系統可能會要求您重新驗證。"
 
-#: src/components/ClickToCopyContent.tsx:19
+#: src/components/ClickToCopyContent.tsx:24
 msgid "Click to copy"
 msgstr ""
 
@@ -165,29 +165,34 @@ msgstr "確認刪除"
 msgid "Connecting"
 msgstr "連線中…"
 
-#: src/components/CopyToClipboard.tsx:74
-#: src/components/ClickToCopyContent.tsx:59
+#: src/components/CopyToClipboard.tsx:71
+#: src/components/ClickToCopyContent.tsx:62
 msgid "Copied!"
 msgstr ""
 
 #: src/components/user/UserStatus.tsx:96
 #: src/components/modals/UserSettingsModal.tsx:238
+#: src/components/direct/DirectMessage.tsx:219
 msgid "Copy address to clipboard"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:991
+msgid "Copy invite link to clipboard"
 msgstr ""
 
 #: src/components/message/Message.tsx:360
 msgid "Copy message link"
 msgstr "複製訊息連結"
 
-#: src/components/CopyToClipboard.tsx:22
+#: src/components/CopyToClipboard.tsx:32
 msgid "Copy to clipboard"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:5121
+#: src/components/context/MessageDB.tsx:5124
 msgid "could not add space"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:4994
+#: src/components/context/MessageDB.tsx:4997
 msgid "could not obtain manifest for space"
 msgstr ""
 
@@ -200,31 +205,39 @@ msgstr "無法驗證邀請"
 msgid "Create New Account"
 msgstr "建立新帳號"
 
-#: src/components/modals/CreateSpaceModal.tsx:227
+#: src/components/modals/CreateSpaceModal.tsx:223
 msgid "Create Space"
 msgstr "建立空間"
 
-#: src/components/modals/CreateSpaceModal.tsx:118
+#: src/components/modals/CreateSpaceModal.tsx:115
 msgid "Create Space Prompt"
 msgstr "建立空間提示"
 
-#: src/components/modals/CreateSpaceModal.tsx:82
+#: src/components/modals/CreateSpaceModal.tsx:79
 msgid "Create Space Title"
 msgstr "建立空間"
 
-#: src/components/context/MessageDB.tsx:4973
+#: src/components/modals/CreateSpaceModal.tsx:223
+msgid "Creating space..."
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:975
+msgid "Current Invite Link"
+msgstr ""
+
+#: src/components/context/MessageDB.tsx:4976
 msgid "decrypted space with no known config key"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:4979
+#: src/components/context/MessageDB.tsx:4982
 msgid "decrypted space with no known hub key"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:403
+#: src/components/channel/SpaceEditor.tsx:405
 msgid "Default Channel"
 msgstr "預設頻道"
 
-#: src/components/modals/CreateSpaceModal.tsx:122
+#: src/components/modals/CreateSpaceModal.tsx:119
 msgid "Default space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
 msgstr "預設空間設定提供標準聊天體驗，如需更高隱私保障，請查看「進階設定」。"
 
@@ -261,8 +274,8 @@ msgstr ""
 msgid "Edit Space"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:317
-#: src/components/channel/SpaceEditor.tsx:650
+#: src/components/channel/SpaceEditor.tsx:319
+#: src/components/channel/SpaceEditor.tsx:652
 msgid "Emojis"
 msgstr "表情符號"
 
@@ -270,7 +283,7 @@ msgstr "表情符號"
 msgid "Enable sync"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:934
+#: src/components/channel/SpaceEditor.tsx:936
 msgid "Enter Address Manually"
 msgstr "手動輸入地址"
 
@@ -286,7 +299,7 @@ msgstr ""
 msgid "Error processing queue:"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:854
+#: src/components/channel/SpaceEditor.tsx:856
 msgid "Existing Conversations"
 msgstr "現有對話"
 
@@ -309,15 +322,15 @@ msgstr ""
 msgid "Failed to parse WebSocket message:"
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:59
-#: src/components/direct/DirectMessage.tsx:60
+#: src/components/modals/CreateSpaceModal.tsx:56
+#: src/components/direct/DirectMessage.tsx:61
 #: src/components/channel/Channel.tsx:85
 msgid "File cannot be larger than 2MB"
 msgstr "檔案大小不可超過 2MB"
 
 #: src/components/onboarding/Onboarding.tsx:86
-#: src/components/modals/CreateSpaceModal.tsx:61
-#: src/components/direct/DirectMessage.tsx:62
+#: src/components/modals/CreateSpaceModal.tsx:58
+#: src/components/direct/DirectMessage.tsx:63
 #: src/components/channel/Channel.tsx:87
 msgid "File rejected"
 msgstr "檔案已拒絕"
@@ -327,7 +340,7 @@ msgid "general"
 msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:180
-#: src/components/channel/SpaceEditor.tsx:299
+#: src/components/channel/SpaceEditor.tsx:301
 msgid "General"
 msgstr "一般設定"
 
@@ -335,7 +348,7 @@ msgstr "一般設定"
 msgid "General Chat"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:1037
+#: src/components/channel/SpaceEditor.tsx:1028
 msgid "Generate New Invite Link"
 msgstr "產生新邀請連結"
 
@@ -393,8 +406,8 @@ msgstr ""
 msgid "invalid response"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:339
-#: src/components/channel/SpaceEditor.tsx:842
+#: src/components/channel/SpaceEditor.tsx:341
+#: src/components/channel/SpaceEditor.tsx:844
 msgid "Invites"
 msgstr "邀請"
 
@@ -466,8 +479,8 @@ msgid ""
 "                        synchronization."
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:659
-#: src/components/channel/SpaceEditor.tsx:755
+#: src/components/channel/SpaceEditor.tsx:661
+#: src/components/channel/SpaceEditor.tsx:757
 msgid "Max file size: 256kB"
 msgstr "檔案大小上限：256kB"
 
@@ -516,7 +529,7 @@ msgstr ""
 msgid "Personalize your account"
 msgstr "個人化您的帳號"
 
-#: src/components/channel/SpaceEditor.tsx:454
+#: src/components/channel/SpaceEditor.tsx:456
 msgid "Privacy Settings"
 msgstr "隱私設定"
 
@@ -525,11 +538,11 @@ msgstr "隱私設定"
 msgid "Privacy/Security"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:952
+#: src/components/channel/SpaceEditor.tsx:955
 msgid "Public Invite Link"
 msgstr "公開邀請連結"
 
-#: src/components/channel/SpaceEditor.tsx:965
+#: src/components/channel/SpaceEditor.tsx:957
 msgid "Public invite links allow anyone with access to the link join your space. Understand the risks of enabling this, and to whom and where you share the link."
 msgstr "公開連結允許任何人加入您的空間。請了解啟用此功能的風險，並謹慎選擇分享對象。"
 
@@ -545,18 +558,18 @@ msgid ""
 "                  your recipients."
 msgstr "Quorum 採用點對點端到端加密，訊息不僅保持私密，且僅在網絡上留存至送達您與收件人所需的時間。"
 
-#: src/components/context/RegistrationPersister.tsx:261
+#: src/components/context/RegistrationPersister.tsx:269
 msgid ""
 "Quorum was loaded while the browser was not in focus or a\n"
 "                passkey request was rejected. Please reauthorize to access your\n"
 "                messages."
 msgstr ""
 
-#: src/components/context/RegistrationPersister.tsx:278
+#: src/components/context/RegistrationPersister.tsx:286
 msgid "Reauthorize"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:4943
+#: src/components/context/MessageDB.tsx:4946
 msgid "received config with invalid signature!"
 msgstr ""
 
@@ -572,36 +585,45 @@ msgstr ""
 msgid "Reply"
 msgstr "回覆"
 
-#: src/components/modals/CreateSpaceModal.tsx:131
-#: src/components/channel/SpaceEditor.tsx:460
+#: src/components/modals/CreateSpaceModal.tsx:128
+#: src/components/channel/SpaceEditor.tsx:462
 msgid "Repudiability"
 msgstr "可否認性"
 
-#: src/components/channel/SpaceEditor.tsx:478
+#: src/components/channel/SpaceEditor.tsx:480
 msgid "Repudiability is a setting that makes conversations in this space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
 msgstr "『可否認性』設定會使空間內的對話無法驗證發送者身份。這適用於敏感情境，但也意味著他人可能偽造您的名義發送訊息。"
 
-#: src/components/modals/CreateSpaceModal.tsx:148
-msgid "Repudiability is a setting which makes conversations in this space unable to be proven they originated by the named sender. This can be useful in sensitive situations, but also means others forge messages that appear as if they originated from you."
-msgstr "『可否認性』設定使空間對話無法證明由指定發送者發出。雖適用於敏感情境，但也可能導致他人偽造您的名義發送訊息。"
+#: src/components/modals/CreateSpaceModal.tsx:141
+msgid ""
+"Repudiability is a setting which makes conversations in this\n"
+"                  space unable to be proven they originated by the named sender.\n"
+"                  This can be useful in sensitive situations, but also means\n"
+"                  others forge messages that appear as if they originated from\n"
+"                  you."
+msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:656
-#: src/components/channel/SpaceEditor.tsx:752
+#: src/components/modals/CreateSpaceModal.tsx:148
+#~ msgid "Repudiability is a setting which makes conversations in this space unable to be proven they originated by the named sender. This can be useful in sensitive situations, but also means others forge messages that appear as if they originated from you."
+#~ msgstr "『可否認性』設定使空間對話無法證明由指定發送者發出。雖適用於敏感情境，但也可能導致他人偽造您的名義發送訊息。"
+
+#: src/components/channel/SpaceEditor.tsx:658
+#: src/components/channel/SpaceEditor.tsx:754
 msgid "Requirements:"
 msgstr "要求："
 
-#: src/components/channel/SpaceEditor.tsx:308
-#: src/components/channel/SpaceEditor.tsx:508
+#: src/components/channel/SpaceEditor.tsx:310
+#: src/components/channel/SpaceEditor.tsx:510
 msgid "Roles"
 msgstr "角色"
 
 #: src/components/user/UserProfile.tsx:241
 #: src/components/modals/UserSettingsModal.tsx:251
 #: src/components/modals/UserSettingsModal.tsx:417
-#: src/components/channel/SpaceEditor.tsx:496
-#: src/components/channel/SpaceEditor.tsx:638
-#: src/components/channel/SpaceEditor.tsx:734
-#: src/components/channel/SpaceEditor.tsx:830
+#: src/components/channel/SpaceEditor.tsx:498
+#: src/components/channel/SpaceEditor.tsx:640
+#: src/components/channel/SpaceEditor.tsx:736
+#: src/components/channel/SpaceEditor.tsx:832
 #: src/components/channel/GroupEditor.tsx:109
 #: src/components/channel/ChannelEditor.tsx:157
 msgid "Save Changes"
@@ -615,7 +637,7 @@ msgstr "儲存聯絡人照片"
 msgid "Save User Key"
 msgstr "儲存使用者金鑰"
 
-#: src/components/context/MessageDB.tsx:4901
+#: src/components/context/MessageDB.tsx:4904
 msgid "saved config is out of date"
 msgstr ""
 
@@ -623,11 +645,11 @@ msgstr ""
 msgid "Security"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:1058
+#: src/components/channel/SpaceEditor.tsx:1049
 msgid "Send Invite"
 msgstr "傳送邀請"
 
-#: src/components/channel/SpaceEditor.tsx:844
+#: src/components/channel/SpaceEditor.tsx:846
 msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 msgstr "向曾有對話的對象發送邀請，他們的收件箱將顯示邀請按鈕。"
 
@@ -635,7 +657,7 @@ msgstr "向曾有對話的對象發送邀請，他們的收件箱將顯示邀請
 msgid "Send Message"
 msgstr ""
 
-#: src/components/context/RegistrationPersister.tsx:248
+#: src/components/context/RegistrationPersister.tsx:256
 msgid "Session Encrypted"
 msgstr ""
 
@@ -651,15 +673,15 @@ msgstr ""
 msgid "Skip Adding Photo"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:376
+#: src/components/channel/SpaceEditor.tsx:378
 msgid "Space Banner"
 msgstr "空間橫幅"
 
-#: src/components/modals/CreateSpaceModal.tsx:86
+#: src/components/modals/CreateSpaceModal.tsx:106
 msgid "Space Icon Attachment"
 msgstr "空間圖示附件"
 
-#: src/components/channel/SpaceEditor.tsx:366
+#: src/components/channel/SpaceEditor.tsx:368
 msgid "Space Name"
 msgstr "空間名稱"
 
@@ -671,18 +693,18 @@ msgstr ""
 msgid "Status goes here"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:328
-#: src/components/channel/SpaceEditor.tsx:746
+#: src/components/channel/SpaceEditor.tsx:330
+#: src/components/channel/SpaceEditor.tsx:748
 msgid "Stickers"
 msgstr "貼圖"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:946
+#: src/components/channel/SpaceEditor.tsx:948
 msgid "Successfully sent invite to {0}"
 msgstr "已成功發送邀請給 {0}"
 
-#: src/components/channel/SpaceEditor.tsx:658
-#: src/components/channel/SpaceEditor.tsx:754
+#: src/components/channel/SpaceEditor.tsx:660
+#: src/components/channel/SpaceEditor.tsx:756
 msgid "Supported types: PNG, JPG, GIF"
 msgstr "支援格式：PNG、JPG、GIF"
 
@@ -693,6 +715,10 @@ msgstr "邀請連結已失效或無效。"
 #: src/components/onboarding/Onboarding.tsx:244
 msgid "This information is only provided to the spaces you join."
 msgstr "此資訊僅提供給您加入的空間。"
+
+#: src/components/channel/SpaceEditor.tsx:984
+msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current space members will not be removed from the space."
+msgstr ""
 
 #: src/components/message/Message.tsx:126
 msgid "Today at {timeFormatted}"
@@ -706,8 +732,8 @@ msgstr "今天 {timeFormatted}"
 msgid "Unknown"
 msgstr ""
 
-#: src/components/direct/DirectMessage.tsx:129
-#: src/components/direct/DirectMessage.tsx:147
+#: src/components/direct/DirectMessage.tsx:130
+#: src/components/direct/DirectMessage.tsx:148
 #: src/components/context/MessageDB.tsx:815
 #: src/components/context/MessageDB.tsx:832
 #: src/components/context/MessageDB.tsx:2613
@@ -717,15 +743,15 @@ msgstr ""
 msgid "Unknown User"
 msgstr "未知使用者"
 
-#: src/components/direct/DirectMessage.tsx:300
+#: src/components/direct/DirectMessage.tsx:304
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:671
+#: src/components/channel/SpaceEditor.tsx:673
 msgid "Upload Emoji"
 msgstr "上傳表情符號"
 
-#: src/components/channel/SpaceEditor.tsx:767
+#: src/components/channel/SpaceEditor.tsx:769
 msgid "Upload Sticker"
 msgstr "上傳貼圖"
 
@@ -767,9 +793,21 @@ msgid ""
 "                                joined."
 msgstr ""
 
+#: src/components/modals/CreateSpaceModal.tsx:173
+msgid ""
+"When this setting is enabled, invite links will automatically\n"
+"                  allow a user to join your space. When it is not enabled, users\n"
+"                  following an invite link will send you a request to join your\n"
+"                  space that you must manually approve. Public links require\n"
+"                  some key material to be present in the link – be aware that\n"
+"                  possession of a public space link can allow anyone with the\n"
+"                  link to read messages on the space for the duration of the\n"
+"                  link being valid."
+msgstr ""
+
 #: src/components/modals/CreateSpaceModal.tsx:181
-msgid "When this setting is enabled, invite links will automatically allow a user to join your space. When it is not enabled, users following an invite link will send you a request to join your space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public space link can allow anyone with the link to read messages on the space for the duration of the link being valid."
-msgstr "啟用此設定後，邀請連結將自動允許用戶加入空間。若未啟用，用戶需發送加入請求並經手動批准。公開連結包含特定金鑰材料，請注意：任何持有有效公開連結的人皆可讀取空間訊息。"
+#~ msgid "When this setting is enabled, invite links will automatically allow a user to join your space. When it is not enabled, users following an invite link will send you a request to join your space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public space link can allow anyone with the link to read messages on the space for the duration of the link being valid."
+#~ msgstr "啟用此設定後，邀請連結將自動允許用戶加入空間。若未啟用，用戶需發送加入請求並經手動批准。公開連結包含特定金鑰材料，請注意：任何持有有效公開連結的人皆可讀取空間訊息。"
 
 #: src/components/onboarding/Onboarding.tsx:183
 msgid ""
@@ -781,7 +819,7 @@ msgstr "於瀏覽器使用 Quorum 時，訊息將儲存於本地瀏覽器。"
 msgid "Yesterday at {timeFormatted}"
 msgstr "昨天 {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:464
+#: src/components/direct/DirectMessage.tsx:468
 msgid "You"
 msgstr ""
 

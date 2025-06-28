@@ -39,13 +39,13 @@ msgid "{user} has been kicked"
 msgstr "{user} has been kicked"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:259
+#: src/components/direct/DirectMessage.tsx:263
 #: src/components/channel/Channel.tsx:313
 msgid "Replying to {user}"
 msgstr "Replying to {user}"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:324
+#: src/components/direct/DirectMessage.tsx:328
 msgid "Send a message to {user}"
 msgstr "Send a message to {user}"
 
@@ -72,7 +72,7 @@ msgstr "Account Address"
 msgid "Add Group"
 msgstr "Add Group"
 
-#: src/components/channel/SpaceEditor.tsx:531
+#: src/components/channel/SpaceEditor.tsx:533
 msgid "Add Role"
 msgstr "Add Role"
 
@@ -80,11 +80,11 @@ msgstr "Add Role"
 msgid "Add Space"
 msgstr "Add Space"
 
-#: src/components/channel/SpaceEditor.tsx:652
+#: src/components/channel/SpaceEditor.tsx:654
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a space."
 msgstr "Add up to 50 custom emoji. Custom emojis can only be used within a space."
 
-#: src/components/channel/SpaceEditor.tsx:748
+#: src/components/channel/SpaceEditor.tsx:750
 msgid "Add up to 50 custom stickers. Custom stickers can only be used within a space."
 msgstr "Add up to 50 custom stickers. Custom stickers can only be used within a space."
 
@@ -98,7 +98,7 @@ msgstr ""
 "                      experience but increase the security of your Quorum\n"
 "                      account."
 
-#: src/components/modals/CreateSpaceModal.tsx:238
+#: src/components/modals/CreateSpaceModal.tsx:234
 msgid "Advanced Settings"
 msgstr "Advanced Settings"
 
@@ -120,7 +120,7 @@ msgstr "Away"
 msgid "Busy"
 msgstr "Busy"
 
-#: src/components/channel/SpaceEditor.tsx:601
+#: src/components/channel/SpaceEditor.tsx:603
 msgid "Can delete messages?"
 msgstr "Can delete messages?"
 
@@ -141,10 +141,10 @@ msgid "Choose your preferred theme for Quorum."
 msgstr "Choose your preferred theme for Quorum."
 
 #: src/components/channel/SpaceEditor.tsx:1004
-msgid "Click Generate New Invite Link"
-msgstr "Click Generate New Invite Link"
+#~ msgid "Click Generate New Invite Link"
+#~ msgstr "Click Generate New Invite Link"
 
-#: src/components/channel/SpaceEditor.tsx:510
+#: src/components/channel/SpaceEditor.tsx:512
 msgid "Click on the role name and tag to edit them."
 msgstr "Click on the role name and tag to edit them."
 
@@ -158,7 +158,7 @@ msgstr ""
 "                  because once it's gone, it's gone forever. You may be prompted\n"
 "                  to authenticate again."
 
-#: src/components/ClickToCopyContent.tsx:19
+#: src/components/ClickToCopyContent.tsx:24
 msgid "Click to copy"
 msgstr "Click to copy"
 
@@ -171,29 +171,34 @@ msgstr "Confirm Deletion"
 msgid "Connecting"
 msgstr "Connecting"
 
-#: src/components/CopyToClipboard.tsx:74
-#: src/components/ClickToCopyContent.tsx:59
+#: src/components/CopyToClipboard.tsx:71
+#: src/components/ClickToCopyContent.tsx:62
 msgid "Copied!"
 msgstr "Copied!"
 
 #: src/components/user/UserStatus.tsx:96
 #: src/components/modals/UserSettingsModal.tsx:238
+#: src/components/direct/DirectMessage.tsx:219
 msgid "Copy address to clipboard"
 msgstr "Copy address to clipboard"
+
+#: src/components/channel/SpaceEditor.tsx:991
+msgid "Copy invite link to clipboard"
+msgstr "Copy invite link to clipboard"
 
 #: src/components/message/Message.tsx:360
 msgid "Copy message link"
 msgstr "Copy message link"
 
-#: src/components/CopyToClipboard.tsx:22
+#: src/components/CopyToClipboard.tsx:32
 msgid "Copy to clipboard"
 msgstr "Copy to clipboard"
 
-#: src/components/context/MessageDB.tsx:5121
+#: src/components/context/MessageDB.tsx:5124
 msgid "could not add space"
 msgstr "could not add space"
 
-#: src/components/context/MessageDB.tsx:4994
+#: src/components/context/MessageDB.tsx:4997
 msgid "could not obtain manifest for space"
 msgstr "could not obtain manifest for space"
 
@@ -206,31 +211,39 @@ msgstr "Could not verify invite"
 msgid "Create New Account"
 msgstr "Create New Account"
 
-#: src/components/modals/CreateSpaceModal.tsx:227
+#: src/components/modals/CreateSpaceModal.tsx:223
 msgid "Create Space"
 msgstr "Create Space"
 
-#: src/components/modals/CreateSpaceModal.tsx:118
+#: src/components/modals/CreateSpaceModal.tsx:115
 msgid "Create Space Prompt"
-msgstr "Create Space Prompt"
+msgstr "Enter a name for your new Space"
 
-#: src/components/modals/CreateSpaceModal.tsx:82
+#: src/components/modals/CreateSpaceModal.tsx:79
 msgid "Create Space Title"
-msgstr "Create Space Title"
+msgstr "Create a Space"
 
-#: src/components/context/MessageDB.tsx:4973
+#: src/components/modals/CreateSpaceModal.tsx:223
+msgid "Creating space..."
+msgstr "Creating space..."
+
+#: src/components/channel/SpaceEditor.tsx:975
+msgid "Current Invite Link"
+msgstr "Current Invite Link"
+
+#: src/components/context/MessageDB.tsx:4976
 msgid "decrypted space with no known config key"
 msgstr "decrypted space with no known config key"
 
-#: src/components/context/MessageDB.tsx:4979
+#: src/components/context/MessageDB.tsx:4982
 msgid "decrypted space with no known hub key"
 msgstr "decrypted space with no known hub key"
 
-#: src/components/channel/SpaceEditor.tsx:403
+#: src/components/channel/SpaceEditor.tsx:405
 msgid "Default Channel"
 msgstr "Default Channel"
 
-#: src/components/modals/CreateSpaceModal.tsx:122
+#: src/components/modals/CreateSpaceModal.tsx:119
 msgid "Default space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
 msgstr "Default space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
 
@@ -267,8 +280,8 @@ msgstr "Edit Profile"
 msgid "Edit Space"
 msgstr "Edit Space"
 
-#: src/components/channel/SpaceEditor.tsx:317
-#: src/components/channel/SpaceEditor.tsx:650
+#: src/components/channel/SpaceEditor.tsx:319
+#: src/components/channel/SpaceEditor.tsx:652
 msgid "Emojis"
 msgstr "Emojis"
 
@@ -276,7 +289,7 @@ msgstr "Emojis"
 msgid "Enable sync"
 msgstr "Enable sync"
 
-#: src/components/channel/SpaceEditor.tsx:934
+#: src/components/channel/SpaceEditor.tsx:936
 msgid "Enter Address Manually"
 msgstr "Enter Address Manually"
 
@@ -292,7 +305,7 @@ msgstr "Error processing outbound:"
 msgid "Error processing queue:"
 msgstr "Error processing queue:"
 
-#: src/components/channel/SpaceEditor.tsx:854
+#: src/components/channel/SpaceEditor.tsx:856
 msgid "Existing Conversations"
 msgstr "Existing Conversations"
 
@@ -318,15 +331,15 @@ msgstr "Failed to decrypt message with any known state"
 msgid "Failed to parse WebSocket message:"
 msgstr "Failed to parse WebSocket message:"
 
-#: src/components/modals/CreateSpaceModal.tsx:59
-#: src/components/direct/DirectMessage.tsx:60
+#: src/components/modals/CreateSpaceModal.tsx:56
+#: src/components/direct/DirectMessage.tsx:61
 #: src/components/channel/Channel.tsx:85
 msgid "File cannot be larger than 2MB"
 msgstr "File cannot be larger than 2MB"
 
 #: src/components/onboarding/Onboarding.tsx:86
-#: src/components/modals/CreateSpaceModal.tsx:61
-#: src/components/direct/DirectMessage.tsx:62
+#: src/components/modals/CreateSpaceModal.tsx:58
+#: src/components/direct/DirectMessage.tsx:63
 #: src/components/channel/Channel.tsx:87
 msgid "File rejected"
 msgstr "File rejected"
@@ -336,7 +349,7 @@ msgid "general"
 msgstr "general"
 
 #: src/components/modals/UserSettingsModal.tsx:180
-#: src/components/channel/SpaceEditor.tsx:299
+#: src/components/channel/SpaceEditor.tsx:301
 msgid "General"
 msgstr "General"
 
@@ -344,7 +357,7 @@ msgstr "General"
 msgid "General Chat"
 msgstr "General Chat"
 
-#: src/components/channel/SpaceEditor.tsx:1037
+#: src/components/channel/SpaceEditor.tsx:1028
 msgid "Generate New Invite Link"
 msgstr "Generate New Invite Link"
 
@@ -422,8 +435,8 @@ msgstr "invalid message type"
 msgid "invalid response"
 msgstr "invalid response"
 
-#: src/components/channel/SpaceEditor.tsx:339
-#: src/components/channel/SpaceEditor.tsx:842
+#: src/components/channel/SpaceEditor.tsx:341
+#: src/components/channel/SpaceEditor.tsx:844
 msgid "Invites"
 msgstr "Invites"
 
@@ -507,8 +520,8 @@ msgstr ""
 "Manage devices, and privacy conditions for messaging and\n"
 "                        synchronization."
 
-#: src/components/channel/SpaceEditor.tsx:659
-#: src/components/channel/SpaceEditor.tsx:755
+#: src/components/channel/SpaceEditor.tsx:661
+#: src/components/channel/SpaceEditor.tsx:757
 msgid "Max file size: 256kB"
 msgstr "Max file size: 256kB"
 
@@ -557,7 +570,7 @@ msgstr "Online"
 msgid "Personalize your account"
 msgstr "Personalize your account"
 
-#: src/components/channel/SpaceEditor.tsx:454
+#: src/components/channel/SpaceEditor.tsx:456
 msgid "Privacy Settings"
 msgstr "Privacy Settings"
 
@@ -566,11 +579,11 @@ msgstr "Privacy Settings"
 msgid "Privacy/Security"
 msgstr "Privacy/Security"
 
-#: src/components/channel/SpaceEditor.tsx:952
+#: src/components/channel/SpaceEditor.tsx:955
 msgid "Public Invite Link"
 msgstr "Public Invite Link"
 
-#: src/components/channel/SpaceEditor.tsx:965
+#: src/components/channel/SpaceEditor.tsx:957
 msgid "Public invite links allow anyone with access to the link join your space. Understand the risks of enabling this, and to whom and where you share the link."
 msgstr "Public invite links allow anyone with access to the link join your space. Understand the risks of enabling this, and to whom and where you share the link."
 
@@ -590,7 +603,7 @@ msgstr ""
 "                  live on the network for the time required to reach you and\n"
 "                  your recipients."
 
-#: src/components/context/RegistrationPersister.tsx:261
+#: src/components/context/RegistrationPersister.tsx:269
 msgid ""
 "Quorum was loaded while the browser was not in focus or a\n"
 "                passkey request was rejected. Please reauthorize to access your\n"
@@ -600,11 +613,11 @@ msgstr ""
 "                passkey request was rejected. Please reauthorize to access your\n"
 "                messages."
 
-#: src/components/context/RegistrationPersister.tsx:278
+#: src/components/context/RegistrationPersister.tsx:286
 msgid "Reauthorize"
 msgstr "Reauthorize"
 
-#: src/components/context/MessageDB.tsx:4943
+#: src/components/context/MessageDB.tsx:4946
 msgid "received config with invalid signature!"
 msgstr "received config with invalid signature!"
 
@@ -620,36 +633,50 @@ msgstr "Remove"
 msgid "Reply"
 msgstr "Reply"
 
-#: src/components/modals/CreateSpaceModal.tsx:131
-#: src/components/channel/SpaceEditor.tsx:460
+#: src/components/modals/CreateSpaceModal.tsx:128
+#: src/components/channel/SpaceEditor.tsx:462
 msgid "Repudiability"
 msgstr "Repudiability"
 
-#: src/components/channel/SpaceEditor.tsx:478
+#: src/components/channel/SpaceEditor.tsx:480
 msgid "Repudiability is a setting that makes conversations in this space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
 msgstr "Repudiability is a setting that makes conversations in this space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
 
-#: src/components/modals/CreateSpaceModal.tsx:148
-msgid "Repudiability is a setting which makes conversations in this space unable to be proven they originated by the named sender. This can be useful in sensitive situations, but also means others forge messages that appear as if they originated from you."
-msgstr "Repudiability is a setting which makes conversations in this space unable to be proven they originated by the named sender. This can be useful in sensitive situations, but also means others forge messages that appear as if they originated from you."
+#: src/components/modals/CreateSpaceModal.tsx:141
+msgid ""
+"Repudiability is a setting which makes conversations in this\n"
+"                  space unable to be proven they originated by the named sender.\n"
+"                  This can be useful in sensitive situations, but also means\n"
+"                  others forge messages that appear as if they originated from\n"
+"                  you."
+msgstr ""
+"Repudiability is a setting which makes conversations in this\n"
+"                  space unable to be proven they originated by the named sender.\n"
+"                  This can be useful in sensitive situations, but also means\n"
+"                  others forge messages that appear as if they originated from\n"
+"                  you."
 
-#: src/components/channel/SpaceEditor.tsx:656
-#: src/components/channel/SpaceEditor.tsx:752
+#: src/components/modals/CreateSpaceModal.tsx:148
+#~ msgid "Repudiability is a setting which makes conversations in this space unable to be proven they originated by the named sender. This can be useful in sensitive situations, but also means others forge messages that appear as if they originated from you."
+#~ msgstr "Repudiability is a setting which makes conversations in this space unable to be proven they originated by the named sender. This can be useful in sensitive situations, but also means others forge messages that appear as if they originated from you."
+
+#: src/components/channel/SpaceEditor.tsx:658
+#: src/components/channel/SpaceEditor.tsx:754
 msgid "Requirements:"
 msgstr "Requirements:"
 
-#: src/components/channel/SpaceEditor.tsx:308
-#: src/components/channel/SpaceEditor.tsx:508
+#: src/components/channel/SpaceEditor.tsx:310
+#: src/components/channel/SpaceEditor.tsx:510
 msgid "Roles"
 msgstr "Roles"
 
 #: src/components/user/UserProfile.tsx:241
 #: src/components/modals/UserSettingsModal.tsx:251
 #: src/components/modals/UserSettingsModal.tsx:417
-#: src/components/channel/SpaceEditor.tsx:496
-#: src/components/channel/SpaceEditor.tsx:638
-#: src/components/channel/SpaceEditor.tsx:734
-#: src/components/channel/SpaceEditor.tsx:830
+#: src/components/channel/SpaceEditor.tsx:498
+#: src/components/channel/SpaceEditor.tsx:640
+#: src/components/channel/SpaceEditor.tsx:736
+#: src/components/channel/SpaceEditor.tsx:832
 #: src/components/channel/GroupEditor.tsx:109
 #: src/components/channel/ChannelEditor.tsx:157
 msgid "Save Changes"
@@ -663,7 +690,7 @@ msgstr "Save Contact Photo"
 msgid "Save User Key"
 msgstr "Save User Key"
 
-#: src/components/context/MessageDB.tsx:4901
+#: src/components/context/MessageDB.tsx:4904
 msgid "saved config is out of date"
 msgstr "saved config is out of date"
 
@@ -671,11 +698,11 @@ msgstr "saved config is out of date"
 msgid "Security"
 msgstr "Security"
 
-#: src/components/channel/SpaceEditor.tsx:1058
+#: src/components/channel/SpaceEditor.tsx:1049
 msgid "Send Invite"
 msgstr "Send Invite"
 
-#: src/components/channel/SpaceEditor.tsx:844
+#: src/components/channel/SpaceEditor.tsx:846
 msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 msgstr "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 
@@ -683,7 +710,7 @@ msgstr "Send invites to people you've previously had conversations with. An invi
 msgid "Send Message"
 msgstr "Send Message"
 
-#: src/components/context/RegistrationPersister.tsx:248
+#: src/components/context/RegistrationPersister.tsx:256
 msgid "Session Encrypted"
 msgstr "Session Encrypted"
 
@@ -699,15 +726,15 @@ msgstr "Settings"
 msgid "Skip Adding Photo"
 msgstr "Skip Adding Photo"
 
-#: src/components/channel/SpaceEditor.tsx:376
+#: src/components/channel/SpaceEditor.tsx:378
 msgid "Space Banner"
 msgstr "Space Banner"
 
-#: src/components/modals/CreateSpaceModal.tsx:86
+#: src/components/modals/CreateSpaceModal.tsx:106
 msgid "Space Icon Attachment"
-msgstr "Space Icon Attachment"
+msgstr "Add an image for your Space"
 
-#: src/components/channel/SpaceEditor.tsx:366
+#: src/components/channel/SpaceEditor.tsx:368
 msgid "Space Name"
 msgstr "Space Name"
 
@@ -719,18 +746,18 @@ msgstr "Start with a message to a friend. Click on the add button next to the di
 msgid "Status goes here"
 msgstr "Status goes here"
 
-#: src/components/channel/SpaceEditor.tsx:328
-#: src/components/channel/SpaceEditor.tsx:746
+#: src/components/channel/SpaceEditor.tsx:330
+#: src/components/channel/SpaceEditor.tsx:748
 msgid "Stickers"
 msgstr "Stickers"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:946
+#: src/components/channel/SpaceEditor.tsx:948
 msgid "Successfully sent invite to {0}"
 msgstr "Successfully sent invite to {0}"
 
-#: src/components/channel/SpaceEditor.tsx:658
-#: src/components/channel/SpaceEditor.tsx:754
+#: src/components/channel/SpaceEditor.tsx:660
+#: src/components/channel/SpaceEditor.tsx:756
 msgid "Supported types: PNG, JPG, GIF"
 msgstr "Supported types: PNG, JPG, GIF"
 
@@ -741,6 +768,10 @@ msgstr "The invite link has expired or is invalid."
 #: src/components/onboarding/Onboarding.tsx:244
 msgid "This information is only provided to the spaces you join."
 msgstr "This information is only provided to the spaces you join."
+
+#: src/components/channel/SpaceEditor.tsx:984
+msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current space members will not be removed from the space."
+msgstr "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current space members will not be removed from the space."
 
 #: src/components/message/Message.tsx:124
 #~ msgid "Today at {0}"
@@ -758,8 +789,8 @@ msgstr "Today at {timeFormatted}"
 msgid "Unknown"
 msgstr "Unknown"
 
-#: src/components/direct/DirectMessage.tsx:129
-#: src/components/direct/DirectMessage.tsx:147
+#: src/components/direct/DirectMessage.tsx:130
+#: src/components/direct/DirectMessage.tsx:148
 #: src/components/context/MessageDB.tsx:815
 #: src/components/context/MessageDB.tsx:832
 #: src/components/context/MessageDB.tsx:2613
@@ -769,15 +800,15 @@ msgstr "Unknown"
 msgid "Unknown User"
 msgstr "Unknown User"
 
-#: src/components/direct/DirectMessage.tsx:300
+#: src/components/direct/DirectMessage.tsx:304
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Until you reply, this sender will not see your display name or profile picture"
 
-#: src/components/channel/SpaceEditor.tsx:671
+#: src/components/channel/SpaceEditor.tsx:673
 msgid "Upload Emoji"
 msgstr "Upload Emoji"
 
-#: src/components/channel/SpaceEditor.tsx:767
+#: src/components/channel/SpaceEditor.tsx:769
 msgid "Upload Sticker"
 msgstr "Upload Sticker"
 
@@ -833,9 +864,29 @@ msgstr ""
 "                                new spaces, although not the spaces you have\n"
 "                                joined."
 
+#: src/components/modals/CreateSpaceModal.tsx:173
+msgid ""
+"When this setting is enabled, invite links will automatically\n"
+"                  allow a user to join your space. When it is not enabled, users\n"
+"                  following an invite link will send you a request to join your\n"
+"                  space that you must manually approve. Public links require\n"
+"                  some key material to be present in the link – be aware that\n"
+"                  possession of a public space link can allow anyone with the\n"
+"                  link to read messages on the space for the duration of the\n"
+"                  link being valid."
+msgstr ""
+"When this setting is enabled, invite links will automatically\n"
+"                  allow a user to join your space. When it is not enabled, users\n"
+"                  following an invite link will send you a request to join your\n"
+"                  space that you must manually approve. Public links require\n"
+"                  some key material to be present in the link – be aware that\n"
+"                  possession of a public space link can allow anyone with the\n"
+"                  link to read messages on the space for the duration of the\n"
+"                  link being valid."
+
 #: src/components/modals/CreateSpaceModal.tsx:181
-msgid "When this setting is enabled, invite links will automatically allow a user to join your space. When it is not enabled, users following an invite link will send you a request to join your space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public space link can allow anyone with the link to read messages on the space for the duration of the link being valid."
-msgstr "When this setting is enabled, invite links will automatically allow a user to join your space. When it is not enabled, users following an invite link will send you a request to join your space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public space link can allow anyone with the link to read messages on the space for the duration of the link being valid."
+#~ msgid "When this setting is enabled, invite links will automatically allow a user to join your space. When it is not enabled, users following an invite link will send you a request to join your space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public space link can allow anyone with the link to read messages on the space for the duration of the link being valid."
+#~ msgstr "When this setting is enabled, invite links will automatically allow a user to join your space. When it is not enabled, users following an invite link will send you a request to join your space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public space link can allow anyone with the link to read messages on the space for the duration of the link being valid."
 
 #: src/components/onboarding/Onboarding.tsx:135
 #~ msgid ""
@@ -861,7 +912,7 @@ msgstr ""
 msgid "Yesterday at {timeFormatted}"
 msgstr "Yesterday at {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:464
+#: src/components/direct/DirectMessage.tsx:468
 msgid "You"
 msgstr "You"
 
