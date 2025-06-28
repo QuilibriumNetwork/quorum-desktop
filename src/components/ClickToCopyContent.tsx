@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { Tooltip } from 'react-tooltip';
-import 'react-tooltip/dist/react-tooltip.css';
+import ReactTooltip from './ReactTooltip';
 import { faClipboard } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useTheme } from './context/ThemeProvider';
 
 type ClickToCopyContentProps = {
   text: string;
@@ -15,6 +14,7 @@ type ClickToCopyContentProps = {
   iconClassName?: string;
   noArrow?: boolean;
   tooltipLocation?: 'top' | 'top-start' | 'top-end' | 'right' | 'right-start' | 'right-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end';
+  theme?: 'dark' | 'light' | 'system';
 };
 
 const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
@@ -26,8 +26,11 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   onCopy,
   noArrow = false,
   tooltipLocation,
+  theme,
 }) => {
   const [copied, setCopied] = React.useState(false);
+  const { theme: contextTheme } = useTheme();
+  const resolvedTheme = theme ?? contextTheme;
 
   const handleCopy = async (e: React.MouseEvent<SVGSVGElement>) => {
     e.stopPropagation();
@@ -46,26 +49,22 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
     }
   };
 
-  const generateRandomId = () => {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-  };
-
   return (
     <div className={`flex items-center hover:bg-surface-2 hover:text-white rounded-md cursor-pointer ${className}`}>
-      <a
-        data-tooltip-id="click-to-copy-content-tooltip"
-        data-tooltip-content={copied ? t`Copied!` : tooltipText}
-        data-tooltip-variant="dark"
-        data-tooltip-no-arrow={noArrow}
-        data-tooltip-place={tooltipLocation}
-      >
-        <FontAwesomeIcon
-          icon={faClipboard}
-          className={`cursor-pointer hover:text-text-base text-white mr-1 ${iconClassName}`}
-          onClick={(e) => handleCopy(e)}
-        />
-      </a>
-      <Tooltip id="click-to-copy-content-tooltip" />
+      <FontAwesomeIcon
+        icon={faClipboard}
+        id="click-to-copy-content-icon"
+        className={`cursor-pointer hover:text-text-base text-white mr-1 ${iconClassName}`}
+        onClick={(e) => handleCopy(e)}
+      />
+      <ReactTooltip
+        id="click-to-copy-content-tooltip"
+        content={copied ? t`Copied!` : tooltipText}
+        place={tooltipLocation}
+        noArrow={noArrow}
+        theme={resolvedTheme}
+        anchorSelect="#click-to-copy-content-icon"
+      />
       {children}
     </div>
   );
