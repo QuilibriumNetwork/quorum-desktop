@@ -3,15 +3,20 @@ import Button from '../Button';
 import {
   PasskeyModal,
   usePasskeysContext,
+  passkey,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import Input from '../Input';
 import { useDropzone } from 'react-dropzone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileImage } from '@fortawesome/free-solid-svg-icons';
+import { faFileImage, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
 import { t } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 import { Trans } from '@lingui/react/macro';
+import Tooltip from '../Tooltip';
+
+const maxImageSize = 2 * 1024 * 1024;
 
 export const Onboarding = ({
   setUser,
@@ -61,18 +66,21 @@ export const Onboarding = ({
     setExported(true);
   };
 
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
   const { getRootProps, getInputProps, acceptedFiles, isDragActive } =
     useDropzone({
       accept: {
-        'image/png': ['.png'],
-        'image/jpeg': ['.jpg', '.jpeg'],
+        'image/*': ['.png', '.jpg', '.jpeg'],
       },
       minSize: 0,
-      maxSize: 1 * 1024 * 1024,
+      maxSize: maxImageSize,
+      maxFiles: 1,
+      multiple: false,
       onDropRejected: (fileRejections) => {
         for (const rejection of fileRejections) {
           if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-            setFileError(t`File cannot be larger than 2MB`);
+            setFileError(i18n._(`File cannot be larger than {maxFileSize}`, { maxFileSize: `${maxImageSize / 1024 / 1024}MB` }));
           } else {
             setFileError(t`File rejected`);
           }
@@ -81,7 +89,30 @@ export const Onboarding = ({
       onDropAccepted: () => {
         setFileError(null);
       },
+  });
+
+  const setPfpImage = async () => {
+
+    let pfpUrl = './unknown.png'
+
+    if (acceptedFiles.length > 0) {
+      pfpUrl = 'data:' + acceptedFiles[0].type + ';base64,' + Buffer.from(fileData!).toString('base64')
+    }
+
+    updateUserStoredInfo({ pfpUrl });
+  }
+
+  const updateUserStoredInfo = (updates: Partial<passkey.StoredPasskey> = {}) => {
+    updateStoredPasskey(currentPasskeyInfo!.credentialId, {
+      credentialId: currentPasskeyInfo!.credentialId,
+      address: currentPasskeyInfo!.address,
+      publicKey: currentPasskeyInfo!.publicKey,
+      displayName: displayName,
+      completedOnboarding: false,
+      pfpUrl: currentPasskeyInfo?.pfpUrl ?? '/unknown.png',
+      ...updates,
     });
+  }
 
   useEffect(() => {
     if (acceptedFiles.length > 0) {
@@ -114,6 +145,19 @@ export const Onboarding = ({
           </div>
           <div className="flex flex-col grow"></div>
         </div>
+        {isDragActive && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 pointer-events-none">
+            <div className="flex flex-col p-8 border-2 border-dashed border-white rounded-lg bg-white bg-opacity-50 items-center">
+              <FontAwesomeIcon
+                icon={faFileImage}
+                className="text-4xl text-gray-700 mb-4"
+              />
+              <p className="text-xl font-semibold text-gray-800">
+                {t`Drop your profile photo here`}
+              </p>
+            </div>
+          </div>
+        )}
         {!exported && (
           <>
             <div className="flex flex-row justify-center">
@@ -215,15 +259,7 @@ export const Onboarding = ({
                     type="light"
                     disabled={displayName.length === 0}
                     className={`px-8 ${displayName.length === 0 ? 'btn-disabled-onboarding ' : ''}`}
-                    onClick={() => {
-                      updateStoredPasskey(currentPasskeyInfo!.credentialId, {
-                        credentialId: currentPasskeyInfo!.credentialId,
-                        address: currentPasskeyInfo!.address,
-                        publicKey: currentPasskeyInfo!.publicKey,
-                        displayName: displayName,
-                        completedOnboarding: false,
-                      });
-                    }}
+                    onClick={() => updateUserStoredInfo({ displayName, pfpUrl: undefined })}
                   >
                     {t`Set Display Name`}
                   </Button>
@@ -239,10 +275,19 @@ export const Onboarding = ({
             <>
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
-                <div className="w-[460px] flex flex-col justify-around py-4 text-white">
-                  <div className="mb-1">
+                <div className="w-[460px] flex flex-col justify-center py-4 text-white">
+                  <div className="mb-2 text-center">
                     {t`Make your account uniquely yours – set a contact photo. This
                     information is only provided to the spaces you join.`}
+                  </div>
+                  <div className="mb-2 text-center">
+                    {t`You can click the default image below to select it with your system's file dialog or drag and drop a new one.`}
+                  </div>
+                  <div className="mb-2 text-center">
+                    {t`You will be able to change this later in your settings.`}
+                  </div>
+                  <div className="mb-2 text-center">
+                    {i18n._(`Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension.`, { maxFileSize: `${maxImageSize / 1024 / 1024}MB` })}
                   </div>
                   {fileError && (
                     <div className="error-label mt-2">{fileError}</div>
@@ -253,7 +298,7 @@ export const Onboarding = ({
               </div>
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
-                <div className="w-[460px] pt-4 text-center flex flex-row justify-around">
+                <div className="w-[460px] py-4  text-center flex flex-row justify-around">
                   {acceptedFiles.length != 0 ? (
                     <div {...getRootProps()}>
                       <input {...getInputProps()} />
@@ -276,7 +321,7 @@ export const Onboarding = ({
                     >
                       <span className="attachment-drop-icon inline-block justify-around w-20 h-20 flex flex-col">
                         <input {...getInputProps()} />
-                        <FontAwesomeIcon icon={faFileImage} />
+                        <img src="./unknown.png" className="w-20 h-20 object-cover rounded-full mx-auto" />
                       </span>
                     </div>
                   )}
@@ -287,40 +332,36 @@ export const Onboarding = ({
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
                 <div className="flex flex-col justify-around pl-2 pt-4">
-                  <Button
-                    type="light-outline"
-                    className="px-8"
-                    onClick={() => {
-                      updateStoredPasskey(currentPasskeyInfo!.credentialId, {
-                        credentialId: currentPasskeyInfo!.credentialId,
-                        address: currentPasskeyInfo!.address,
-                        publicKey: currentPasskeyInfo!.publicKey,
-                        displayName: displayName,
-                        completedOnboarding: false,
-                        pfpUrl: '/unknown.png',
-                      });
-                    }}
-                  >
-                    Skip Adding Photo
-                  </Button>
+                  <div className="flex flex-row justify-between ml-4">
+                    <Button
+                      type="light-outline"
+                      className="px-8"
+                      onClick={setPfpImage}
+                      >
+                      {t`Skip Adding Photo`}
+                    </Button>
+                    <div className="flex flex-row justify-between">
+                      <FontAwesomeIcon
+                          icon={faCircleInfo}
+                          className="text-white-400 hover:text-gray-300 cursor-pointer ml-2 my-auto"
+                          onMouseEnter={() => setTooltipVisible(true)}
+                          onMouseLeave={() => setTooltipVisible(false)}
+                          aria-label={t`If skipped, you'll get the default profile image and can set it later`}
+
+                      />
+                      <Tooltip
+                        arrow="left"
+                        visible={tooltipVisible}
+                      >
+                        <Trans>If skipped, you'll get the default profile image and can set it later</Trans>
+                      </Tooltip>
+                    </div>
+                  </div>
                   <Button
                     type="light"
                     disabled={!fileData || !!fileError}
                     className={`px-8 mt-4 ${!fileData || !!fileError ? 'btn-disabled-onboarding' : ''}`}
-                    onClick={() => {
-                      updateStoredPasskey(currentPasskeyInfo!.credentialId, {
-                        credentialId: currentPasskeyInfo!.credentialId,
-                        address: currentPasskeyInfo!.address,
-                        publicKey: currentPasskeyInfo!.publicKey,
-                        displayName: displayName,
-                        completedOnboarding: false,
-                        pfpUrl:
-                          'data:' +
-                          acceptedFiles[0].type +
-                          ';base64,' +
-                          Buffer.from(fileData!).toString('base64'),
-                      });
-                    }}
+                    onClick={setPfpImage}
                   >
                     {t`Save Contact Photo`}
                   </Button>
@@ -347,14 +388,7 @@ export const Onboarding = ({
                     type="light"
                     className="px-8"
                     onClick={() => {
-                      updateStoredPasskey(currentPasskeyInfo!.credentialId, {
-                        credentialId: currentPasskeyInfo!.credentialId,
-                        address: currentPasskeyInfo!.address,
-                        publicKey: currentPasskeyInfo!.publicKey,
-                        displayName: displayName,
-                        completedOnboarding: true,
-                        pfpUrl: currentPasskeyInfo.pfpUrl ?? '/unknown.png',
-                      });
+                      updateUserStoredInfo({ completedOnboarding: true })
                       setUser({
                         displayName: displayName,
                         state: 'online',

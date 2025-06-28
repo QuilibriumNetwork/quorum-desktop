@@ -14,19 +14,14 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:312
-msgid "Replying to {user}"
-msgstr "Replying to {user}"
+#: src/components/onboarding/Onboarding.tsx:83
+msgid "File cannot be larger than {maxFileSize}"
+msgstr "File cannot be larger than {maxFileSize}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:532
-msgid "{role} - {count}"
-msgstr "{role} - {count}"
-
-#. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:556
-msgid "No Role - {count}"
-msgstr "No Role - {count}"
+#: src/components/onboarding/Onboarding.tsx:290
+msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+msgstr "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:137
@@ -49,9 +44,24 @@ msgid "Send a message to {user}"
 msgstr "Send a message to {user}"
 
 #. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:312
+msgid "Replying to {user}"
+msgstr "Replying to {user}"
+
+#. js-lingui-explicit-id
 #: src/components/channel/Channel.tsx:392
 msgid "Send a message to #{channel_name}"
 msgstr "Send a message to #{channel_name}"
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:532
+msgid "{role} - {count}"
+msgstr "{role} - {count}"
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:556
+msgid "No Role - {count}"
+msgstr "No Role - {count}"
 
 #: src/components/modals/UserSettingsModal.tsx:234
 msgid "Account Address"
@@ -125,7 +135,7 @@ msgstr "Click Generate New Invite Link"
 msgid "Click on the role name and tag to edit them."
 msgstr "Click on the role name and tag to edit them."
 
-#: src/components/onboarding/Onboarding.tsx:159
+#: src/components/onboarding/Onboarding.tsx:203
 msgid ""
 "Click the button below to create a backup of your key info,\n"
 "                  because once it's gone, it's gone forever. You may be prompted\n"
@@ -214,6 +224,10 @@ msgstr "Direct Messages"
 msgid "Display Name"
 msgstr "Display Name"
 
+#: src/components/onboarding/Onboarding.tsx:156
+msgid "Drop your profile photo here"
+msgstr "Drop your profile photo here"
+
 #: src/components/user/UserStatus.tsx:68
 msgid "Edit Profile"
 msgstr "Edit Profile"
@@ -273,14 +287,13 @@ msgstr "Failed to decrypt message with any known state"
 msgid "Failed to parse WebSocket message:"
 msgstr "Failed to parse WebSocket message:"
 
-#: src/components/onboarding/Onboarding.tsx:75
 #: src/components/modals/CreateSpaceModal.tsx:58
 #: src/components/direct/DirectMessage.tsx:58
 #: src/components/channel/Channel.tsx:84
 msgid "File cannot be larger than 2MB"
 msgstr "File cannot be larger than 2MB"
 
-#: src/components/onboarding/Onboarding.tsx:77
+#: src/components/onboarding/Onboarding.tsx:85
 #: src/components/modals/CreateSpaceModal.tsx:60
 #: src/components/direct/DirectMessage.tsx:60
 #: src/components/channel/Channel.tsx:86
@@ -308,9 +321,14 @@ msgstr "Generate New Invite Link"
 msgid "Group Name"
 msgstr "Group Name"
 
-#: src/components/onboarding/Onboarding.tsx:182
+#: src/components/onboarding/Onboarding.tsx:226
 msgid "I already saved mine"
 msgstr "I already saved mine"
+
+#: src/components/onboarding/Onboarding.tsx:349
+#: src/components/onboarding/Onboarding.tsx:356
+msgid "If skipped, you'll get the default profile image and can set it later"
+msgstr "If skipped, you'll get the default profile image and can set it later"
 
 #: src/components/onboarding/Onboarding.tsx:138
 #~ msgid ""
@@ -320,7 +338,7 @@ msgstr "I already saved mine"
 #~ "if you clear your browser storage or switch browsers,\n"
 #~ "                          your old messages and keys may disappear."
 
-#: src/components/onboarding/Onboarding.tsx:143
+#: src/components/onboarding/Onboarding.tsx:187
 msgid ""
 "If you clear your browser storage or switch browsers,\n"
 "                          your old messages and keys may disappear."
@@ -328,7 +346,7 @@ msgstr ""
 "If you clear your browser storage or switch browsers,\n"
 "                          your old messages and keys may disappear."
 
-#: src/components/onboarding/Onboarding.tsx:151
+#: src/components/onboarding/Onboarding.tsx:195
 msgid ""
 "If you uninstall the app from your device, you will lose your old\n"
 "                          messages and keys."
@@ -348,7 +366,7 @@ msgstr ""
 msgid "Import Existing Key"
 msgstr "Import Existing Key"
 
-#: src/components/onboarding/Onboarding.tsx:123
+#: src/components/onboarding/Onboarding.tsx:167
 msgid "Important first-time user information:"
 msgstr "Important first-time user information:"
 
@@ -430,11 +448,11 @@ msgstr "Leave Space"
 #~ "                  display in your conversations, something easier to read than {0}"
 
 #. placeholder {0}: currentPasskeyInfo?.address
-#: src/components/onboarding/Onboarding.tsx:195
+#: src/components/onboarding/Onboarding.tsx:239
 msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
 msgstr "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
 
-#: src/components/onboarding/Onboarding.tsx:367
+#: src/components/onboarding/Onboarding.tsx:401
 msgid "Let's gooooooooo"
 msgstr "Let's gooooooooo"
 
@@ -442,7 +460,7 @@ msgstr "Let's gooooooooo"
 msgid "Maintenance in Progress"
 msgstr "Maintenance in Progress"
 
-#: src/components/onboarding/Onboarding.tsx:244
+#: src/components/onboarding/Onboarding.tsx:280
 msgid ""
 "Make your account uniquely yours – set a contact photo. This\n"
 "                    information is only provided to the spaces you join."
@@ -492,11 +510,11 @@ msgstr "New Direct Message Title"
 msgid "Non-repudiability"
 msgstr "Non-repudiability"
 
-#: src/components/onboarding/Onboarding.tsx:112
+#: src/components/onboarding/Onboarding.tsx:143
 msgid "One of us, one of us!"
 msgstr "One of us, one of us!"
 
-#: src/components/onboarding/Onboarding.tsx:113
+#: src/components/onboarding/Onboarding.tsx:144
 msgid "Personalize your account"
 msgstr "Personalize your account"
 
@@ -521,7 +539,7 @@ msgstr "Public invite links allow anyone with access to the link join your space
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
 msgstr "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
 
-#: src/components/onboarding/Onboarding.tsx:126
+#: src/components/onboarding/Onboarding.tsx:170
 msgid ""
 "Quorum is peer-to-peer and end-to-end encrypted. This means\n"
 "                  your messages stay private, but equally important, they only\n"
@@ -598,11 +616,11 @@ msgstr "Roles"
 msgid "Save Changes"
 msgstr "Save Changes"
 
-#: src/components/onboarding/Onboarding.tsx:325
+#: src/components/onboarding/Onboarding.tsx:366
 msgid "Save Contact Photo"
 msgstr "Save Contact Photo"
 
-#: src/components/onboarding/Onboarding.tsx:175
+#: src/components/onboarding/Onboarding.tsx:219
 msgid "Save User Key"
 msgstr "Save User Key"
 
@@ -630,13 +648,17 @@ msgstr "Send Message"
 msgid "Session Encrypted"
 msgstr "Session Encrypted"
 
-#: src/components/onboarding/Onboarding.tsx:228
+#: src/components/onboarding/Onboarding.tsx:264
 msgid "Set Display Name"
 msgstr "Set Display Name"
 
 #: src/components/modals/UserSettingsModal.tsx:170
 msgid "Settings"
 msgstr "Settings"
+
+#: src/components/onboarding/Onboarding.tsx:341
+msgid "Skip Adding Photo"
+msgstr "Skip Adding Photo"
 
 #: src/components/channel/SpaceEditor.tsx:376
 msgid "Space Banner"
@@ -677,7 +699,7 @@ msgstr "Supported types: PNG, JPG, GIF"
 msgid "The invite link has expired or is invalid."
 msgstr "The invite link has expired or is invalid."
 
-#: src/components/onboarding/Onboarding.tsx:199
+#: src/components/onboarding/Onboarding.tsx:243
 msgid "This information is only provided to the spaces you join."
 msgstr "This information is only provided to the spaces you join."
 
@@ -722,7 +744,7 @@ msgstr "User does not exist"
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr "useWebSocket must be used within a WebSocketProvider"
 
-#: src/components/onboarding/Onboarding.tsx:110
+#: src/components/onboarding/Onboarding.tsx:141
 msgid "Welcome to Quorum!"
 msgstr "Welcome to Quorum!"
 
@@ -778,7 +800,7 @@ msgstr "When this setting is enabled, invite links will automatically allow a us
 #~ "When using Quorum on a browser, your messages are saved\n"
 #~ "                        locally to your browser, so"
 
-#: src/components/onboarding/Onboarding.tsx:138
+#: src/components/onboarding/Onboarding.tsx:182
 msgid ""
 "When using Quorum on a browser, your messages are saved\n"
 "                        locally to your browser."
@@ -794,7 +816,15 @@ msgstr ""
 msgid "Yesterday at {timeFormatted}"
 msgstr "Yesterday at {timeFormatted}"
 
-#: src/components/onboarding/Onboarding.tsx:339
+#: src/components/onboarding/Onboarding.tsx:284
+msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
+msgstr "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
+
+#: src/components/onboarding/Onboarding.tsx:287
+msgid "You will be able to change this later in your settings."
+msgstr "You will be able to change this later in your settings."
+
+#: src/components/onboarding/Onboarding.tsx:380
 msgid "You're all set. Welcome to Quorum!"
 msgstr "You're all set. Welcome to Quorum!"
 
