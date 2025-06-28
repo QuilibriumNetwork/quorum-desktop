@@ -158,7 +158,7 @@ const UserSettingsModal: React.FunctionComponent<{
     await saveConfig({
       config: {
         ...existingConfig.current!,
-        allowSync: allowSync,
+        allowSync,
         nonRepudiable: nonRepudiable,
       },
       keyset: keyset,
