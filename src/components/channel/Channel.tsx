@@ -29,6 +29,7 @@ import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
 import { t } from "@lingui/core/macro";
 import { i18n } from '@lingui/core';
+import { DefaultImages } from '../../utils';
 
 type ChannelProps = {
   spaceId: string;
@@ -189,7 +190,7 @@ const Channel: React.FC<ChannelProps> = ({
     return (
       members[senderId] || {
         displayName: t`Unknown User`,
-        userIcon: '/unknown.png',
+        userIcon: DefaultImages.UNKNOWN_USER,
       }
     );
   };
@@ -538,7 +539,11 @@ const Channel: React.FC<ChannelProps> = ({
                       style={{
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
-                        backgroundImage: `url(${members[s]?.userIcon})`,
+                        backgroundImage: `url(${
+                          members[s]?.userIcon?.includes(DefaultImages.UNKNOWN_USER)
+                          ? 'var(--unknown-icon)'
+                          : `url(${members[s]?.userIcon})`
+                        })`,
                       }}
                     />
                     <div className="flex flex-col ml-2 text-text-base">

@@ -17,6 +17,7 @@ import { useMessageDB } from '../context/MessageDB';
 import { useNavigate } from 'react-router';
 import { useRegistration } from '../../hooks';
 import { t } from '@lingui/core/macro';
+import { DefaultImages } from '../../utils';
 
 const UserProfile: React.FunctionComponent<{
   spaceId?: string;
@@ -124,7 +125,7 @@ const UserProfile: React.FunctionComponent<{
                 fileData !== undefined
                   ? `url(data:${acceptedFiles[0].type};base64,${Buffer.from(fileData).toString('base64')})`
                   : props.user.userIcon &&
-                      !props.user.userIcon.includes('unknown.png')
+                      !props.user.userIcon.includes(DefaultImages.UNKNOWN_USER)
                     ? `url(${props.user.userIcon})`
                     : 'var(--unknown-icon)',
             }}
@@ -138,7 +139,7 @@ const UserProfile: React.FunctionComponent<{
             style={{
               backgroundImage:
                 props.user.userIcon &&
-                !props.user.userIcon.includes('unknown.png')
+                !props.user.userIcon.includes(DefaultImages.UNKNOWN_USER)
                   ? `url(${props.user.userIcon})`
                   : 'var(--unknown-icon)',
             }}
@@ -219,7 +220,7 @@ const UserProfile: React.FunctionComponent<{
                         acceptedFiles[0].type +
                         ';base64,' +
                         Buffer.from(fileData).toString('base64')
-                      : (currentPasskeyInfo!.pfpUrl ?? '/unknown.png'),
+                      : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
                   address: currentPasskeyInfo!.address,
                 });
                 updateUserProfile(
@@ -229,7 +230,7 @@ const UserProfile: React.FunctionComponent<{
                         acceptedFiles[0].type +
                         ';base64,' +
                         Buffer.from(fileData).toString('base64')
-                    : (currentPasskeyInfo!.pfpUrl ?? '/unknown.png'),
+                    : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
                   currentPasskeyInfo!
                 );
                 if (props.dismiss !== undefined) {

@@ -15,6 +15,7 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { Trans } from '@lingui/react/macro';
 import Tooltip from '../Tooltip';
+import { DefaultImages } from '../../utils';
 
 const maxImageSize = 2 * 1024 * 1024;
 
@@ -93,7 +94,7 @@ export const Onboarding = ({
 
   const setPfpImage = async () => {
 
-    let pfpUrl = './unknown.png'
+    let pfpUrl: string = String(DefaultImages.UNKNOWN_USER);
 
     if (acceptedFiles.length > 0) {
       pfpUrl = 'data:' + acceptedFiles[0].type + ';base64,' + Buffer.from(fileData!).toString('base64')
@@ -109,7 +110,7 @@ export const Onboarding = ({
       publicKey: currentPasskeyInfo!.publicKey,
       displayName: displayName,
       completedOnboarding: false,
-      pfpUrl: currentPasskeyInfo?.pfpUrl ?? '/unknown.png',
+      pfpUrl: currentPasskeyInfo?.pfpUrl ?? DefaultImages.UNKNOWN_USER,
       ...updates,
     });
   }
@@ -310,7 +311,7 @@ export const Onboarding = ({
                               acceptedFiles[0].type +
                               ';base64,' +
                               Buffer.from(fileData).toString('base64')
-                            : '/unknown.png'
+                            : DefaultImages.UNKNOWN_USER
                         }
                       />
                     </div>
@@ -321,7 +322,7 @@ export const Onboarding = ({
                     >
                       <span className="attachment-drop-icon inline-block justify-around w-20 h-20 flex flex-col">
                         <input {...getInputProps()} />
-                        <img src="./unknown.png" className="w-20 h-20 object-cover rounded-full mx-auto" />
+                        <img src={DefaultImages.UNKNOWN_USER} className="w-20 h-20 object-cover rounded-full mx-auto" />
                       </span>
                     </div>
                   )}
@@ -393,7 +394,7 @@ export const Onboarding = ({
                         displayName: displayName,
                         state: 'online',
                         status: '',
-                        userIcon: currentPasskeyInfo.pfpUrl ?? '/unknown.png',
+                        userIcon: currentPasskeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER,
                         address: currentPasskeyInfo!.address,
                       });
                     }}

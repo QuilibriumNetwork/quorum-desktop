@@ -17,6 +17,7 @@ import { useRegistrationContext } from '../context/RegistrationPersister';
 import { useRegistration } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
+import { DefaultImages } from '../../utils';
 
 
 type CreateSpaceModalProps = {
@@ -140,7 +141,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               </div>
               <div className="absolute left-[147px]">
                 <Tooltip
-                  arrow="{user} has left"
+                  arrow="left"
                   className="w-[300px]"
                   visible={repudiableTooltip}
                 >
@@ -173,7 +174,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               </div>
               <div className="absolute left-[216px]">
                 <Tooltip
-                  arrow="{user} has left"
+                  arrow="left"
                   className="w-[400px]"
                   visible={pubTooltip}
                 >
@@ -210,7 +211,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                       acceptedFiles[0].type +
                       ';base64,' +
                       Buffer.from(fileData).toString('base64')
-                  : '/unknown.png',
+                  : DefaultImages.UNKNOWN_USER,
                 keyset,
                 registration.registration!,
                 repudiable,

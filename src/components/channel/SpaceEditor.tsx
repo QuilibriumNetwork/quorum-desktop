@@ -470,7 +470,7 @@ const SpaceEditor: React.FunctionComponent<{
                           </div>
                           <div className="absolute left-[340px]">
                             <Tooltip
-                              arrow="{user} has left"
+                              arrow="left"
                               variant="dark"
                               className="w-[400px] absolute"
                               visible={repudiableTooltip}
@@ -958,7 +958,7 @@ const SpaceEditor: React.FunctionComponent<{
                               </div>
                               <div className="absolute left-8 -top-[5px] z-50 w-[400px] hidden group-hover:block">
                                 <Tooltip
-                                  arrow="{user} has left"
+                                  arrow="left"
                                   variant="dark"
                                   className="absolute w-[400px]"
                                 >

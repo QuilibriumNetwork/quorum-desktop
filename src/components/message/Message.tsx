@@ -29,6 +29,7 @@ import Modal from '../Modal';
 import './Message.scss';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
+import { DefaultImages } from '../../utils';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -186,7 +187,11 @@ export const Message = ({
                 <div
                   className="message-reply-sender-icon"
                   style={{
-                    backgroundImage: `url(${mapSenderToUser(reply.content.senderId).userIcon})`,
+                    backgroundImage: `url(${
+                      mapSenderToUser(reply.content.senderId).userIcon?.includes(DefaultImages.UNKNOWN_USER)
+                        ? 'var(--unknown-icon)'
+                        : mapSenderToUser(reply.content.senderId).userIcon
+                    })`,
                   }}
                 />
                 <div className="message-reply-sender-name">
@@ -417,7 +422,7 @@ export const Message = ({
             className="message-sender-icon"
             style={{
               backgroundImage:
-                sender.userIcon === '/unknown.png'
+                sender.userIcon?.includes(DefaultImages.UNKNOWN_USER)
                   ? 'var(--unknown-icon)'
                   : `url(${sender.userIcon})`,
             }}
