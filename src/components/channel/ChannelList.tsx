@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faChevronDown,
   faDoorOpen,
   faEdit,
   faPlus,
+  faSliders,
 } from '@fortawesome/free-solid-svg-icons';
 import ChannelGroup from './ChannelGroup';
 import './ChannelList.scss';
@@ -171,7 +171,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
             className="space-context-menu-toggle-button relative z-10"
             onClick={() => setIsMenuExpanded(true)}
           >
-            <FontAwesomeIcon icon={faChevronDown} />
+            <FontAwesomeIcon icon={faSliders} />
           </div>
         </div>
         {space?.groups.map((group) => (

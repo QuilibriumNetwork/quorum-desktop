@@ -18,6 +18,7 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages } from '../../utils';
+import CopyToClipboard from '../CopyToClipboard';
 
 const DirectMessage: React.FC<{}> = (p: {}) => {
   const [fileError, setFileError] = useState<string | null>(null);
@@ -190,8 +191,8 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   const userIcon = mapSenderToUser(address ?? '').userIcon;
   const icon = userIcon?.includes(DefaultImages.UNKNOWN_USER)
     ? 'var(--unknown-icon)'
-    : userIcon;
-
+    : 'url(' + userIcon + ')';
+  console.log('userIcon', icon);
   return (
     <div className="direct-message">
       <div className="flex flex-col">
@@ -202,7 +203,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 className="w-[28px] h-[28px] bg-cover bg-center rounded-full"
                 style={{
                   backgroundImage:
-                    `url(${icon})`,
+                    `${icon}`,
                 }}
               />
             </div>
@@ -211,9 +212,12 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 <span>{mapSenderToUser(address ?? '').displayName} |</span>
               </div>
               <div className="flex flex-col justify-around pl-1">
-                <span className="font-light text-sm text-text-subtle">
-                  {address}
-                </span>
+                <div className="flex flex-row items-center">
+                  <span className="font-light text-sm text-text-subtle mr-2">
+                    {address}
+                  </span>
+                  <CopyToClipboard text={address ?? ''} tooltipText={t`Copy address to clipboard`} />
+                </div>
               </div>
             </div>
           </div>

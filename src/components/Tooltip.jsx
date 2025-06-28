@@ -1,3 +1,10 @@
+/**
+ * @deprecated use @components/ReactTooltip instead
+ *
+ * This component is deprecated and will be removed in the future.
+ * This is still used in the project for now, but is used in some
+ * odd patterns, so we need to keep it for now.
+ */
 import PropTypes from 'prop-types';
 import './Tooltip.scss';
 

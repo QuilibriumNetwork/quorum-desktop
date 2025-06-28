@@ -7,17 +7,16 @@ import Button from '../Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileImage } from '@fortawesome/free-solid-svg-icons';
 import './CreateSpaceModal.scss';
-import { getConfig } from '../../config/config';
 import ToggleSwitch from '../ToggleSwitch';
 import { useDropzone } from 'react-dropzone';
 import SpaceIcon from '../navbar/SpaceIcon';
-import Tooltip from '../Tooltip';
 import { useMessageDB } from '../context/MessageDB';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { useRegistration } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../utils';
+import ReactTooltip from '../ReactTooltip';
 
 
 type CreateSpaceModalProps = {
@@ -31,8 +30,6 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
   const [advancedMode, setAdvancedMode] = React.useState(false);
   const [repudiable, setRepudiable] = React.useState(false);
   const [pub, setPublic] = React.useState(true);
-  const [repudiableTooltip, setRepudiableTooltip] = React.useState(false);
-  const [pubTooltip, setPublicTooltip] = React.useState(false);
   const [spaceName, setSpaceName] = React.useState('');
   const [creating, setCreating] = React.useState(false);
   const { createSpace } = useMessageDB();
@@ -81,12 +78,6 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
       onClose={props.onClose}
       title={t`Create Space Title`}
     >
-      <div className="flex flex-col justify-around pb-4 select-none cursor-default">
-        <div className="mb-1">
-          {t`Space Icon Attachment`}
-        </div>
-        {fileError && <div className="text-sm text-danger">{fileError}</div>}
-      </div>
 
       <div className="flex flex-row justify-around pb-4">
         {acceptedFiles.length != 0 ? (
@@ -110,6 +101,12 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           </div>
         )}
       </div>
+      <div className="flex flex-col justify-around pb-4 select-none cursor-default">
+        <div className="mb-1 text-center">
+          {t`Space Icon Attachment`}
+        </div>
+        {fileError && <div className="text-sm text-danger">{fileError}</div>}
+      </div>
 
       <div className="select-none cursor-default">
         <Input
@@ -132,25 +129,24 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               </div>
               <div className="text-sm flex flex-col justify-around ml-2">
                 <div
+                  id="repudiability-tooltip-icon"
                   className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
-                  onMouseOut={() => setRepudiableTooltip(false)}
-                  onMouseOver={() => setRepudiableTooltip(true)}
                 >
                   ℹ
                 </div>
               </div>
               <div className="absolute left-[147px]">
-                <Tooltip
-                  arrow="left"
-                  className="w-[300px]"
-                  visible={repudiableTooltip}
-                >
-                  <Trans>Repudiability is a setting which makes conversations in this
+                <ReactTooltip
+                  id="repudiability-tooltip"
+                  content={t`Repudiability is a setting which makes conversations in this
                   space unable to be proven they originated by the named sender.
                   This can be useful in sensitive situations, but also means
                   others forge messages that appear as if they originated from
-                  you.</Trans>
-                </Tooltip>
+                  you.`}
+                  place="bottom"
+                  className="!w-[400px]"
+                  anchorSelect="#repudiability-tooltip-icon"
+                />
               </div>
             </div>
             <ToggleSwitch
@@ -165,28 +161,28 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               </div>
               <div className="text-sm flex flex-col justify-around ml-2">
                 <div
+                  id="public-tooltip-icon"
                   className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
-                  onMouseOut={() => setPublicTooltip(false)}
-                  onMouseOver={() => setPublicTooltip(true)}
                 >
                   ℹ
                 </div>
               </div>
               <div className="absolute left-[216px]">
-                <Tooltip
-                  arrow="left"
-                  className="w-[400px]"
-                  visible={pubTooltip}
-                >
-                  <Trans>When this setting is enabled, invite links will automatically
+                <ReactTooltip
+                  id="public-tooltip"
+                  content={t`When this setting is enabled, invite links will automatically
                   allow a user to join your space. When it is not enabled, users
                   following an invite link will send you a request to join your
                   space that you must manually approve. Public links require
                   some key material to be present in the link – be aware that
                   possession of a public space link can allow anyone with the
                   link to read messages on the space for the duration of the
-                  link being valid.</Trans>
-                </Tooltip>
+                  link being valid.`}
+                  place="bottom"
+                  className="!w-[400px]"
+                  anchorSelect="#public-tooltip-icon"
+                />
+
               </div>
             </div>
             <ToggleSwitch
@@ -224,7 +220,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               setCreating(false);
             }}
           >
-            {t`Create Space`}
+            {creating ? t`Creating space...` : t`Create Space`}
           </Button>
         </div>
         {!advancedMode && (

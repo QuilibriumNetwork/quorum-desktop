@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router';
 import {
   faChevronDown,
   faTrash,
-  faClipboard,
+  faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { useMessageDB } from '../context/MessageDB';
@@ -32,6 +32,8 @@ import { useRegistrationContext } from '../context/RegistrationPersister';
 import { Loading } from '../Loading';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
+import ClickToCopyContent from '../ClickToCopyContent';
+import ReactTooltip from '../ReactTooltip';
 
 const SpaceEditor: React.FunctionComponent<{
   spaceId: string;
@@ -409,7 +411,7 @@ const SpaceEditor: React.FunctionComponent<{
                           setIsDefaultChannelListExpanded((prev) => !prev)
                         }
                       >
-                        <div className="flex flex-col justify-around">
+                        <div className="flex flex-col justify-around w-[calc(100%-30px)]">
                           #{defaultChannel?.channelName}
                         </div>
                         <div className="space-context-menu-toggle-button">
@@ -418,7 +420,7 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                       {isDefaultChannelListExpanded && (
                         <div className="absolute pr-[227px] w-full">
-                          <div className="bg-surface-00 w-full mt-1 max-h-[200px] rounded-xl overflow-y-scroll">
+                          <div className="bg-surface-00 w-full mt-1 max-h-[200px] rounded-xl overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                             {space?.groups.map((g, i) => {
                               return (
                                 <React.Fragment key={'group-select-' + i}>
@@ -888,7 +890,7 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                       {isInviteListExpanded && (
                         <div className="absolute pr-[227px] w-full">
-                          <div className="bg-surface-00 w-full mt-1 max-h-[200px] rounded-xl overflow-y-scroll">
+                          <div className="bg-surface-00 w-full mt-1 max-h-[200px] rounded-xl overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                             {conversations.pages
                               .flatMap(
                                 (c: any) => c.conversations as Conversation[]
@@ -946,71 +948,60 @@ const SpaceEditor: React.FunctionComponent<{
                           <Trans>Successfully sent invite to {selectedUser?.displayName}</Trans>
                         </div>
                       )}
-                      <div className="flex flex-row pt-8 justify-between">
-                        <div className="text-sm flex flex-row">
-                          <div className="text-sm flex flex-col justify-around">
+                      <div className="border-t border-surface-6 mt-4 pt-4"></div>
+                      <div className="flex flex-row justify-between">
+                        <div className="text-sm flex flex-row justify-center">
+                          <div className="text-lg flex flex-col justify-around">
                             <Trans>Public Invite Link</Trans>
-                          </div>
-                          <div className="text-sm flex flex-col justify-around ml-2">
-                            <div className="relative group">
-                              <div className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg">
-                                ℹ
-                              </div>
-                              <div className="absolute left-8 -top-[5px] z-50 w-[400px] hidden group-hover:block">
-                                <Tooltip
-                                  arrow="left"
-                                  variant="dark"
-                                  className="absolute w-[400px]"
-                                >
-                                  <Trans>Public invite links allow anyone with access
-                                  to the link join your space. Understand the
-                                  risks of enabling this, and to whom and where
-                                  you share the link.</Trans>
-                                </Tooltip>
-                              </div>
+                            <div className="text-sm flex flex-col justify-around pt-2 max-w-[500px]">
+                              <Trans>Public invite links allow anyone with access to the link join your space. Understand the risks of enabling this, and to whom and where you share the link.</Trans>
                             </div>
                           </div>
                         </div>
-
-                        <ToggleSwitch
-                          onClick={() => setPublicInvite((prev) => !prev)}
-                          active={publicInvite}
-                        />
+                        <div className="flex flex-col justify-center pt-2">
+                          <ToggleSwitch
+                            onClick={() => setPublicInvite((prev) => !prev)}
+                            active={publicInvite}
+                          />
+                        </div>
                       </div>
-                      {space?.isPublic && (
+                      {space?.isPublic && publicInvite && (
                         <div>
-                          <div className="flex items-start gap-2 mt-2">
-                            <div
-                              className="text-text-subtle hover:text-text-base mt-2 cursor-pointer"
-                              title="Copy to clipboard"
-                              onClick={() => {
-                                navigator.clipboard.writeText(
-                                  space.inviteUrl ||
-                                    'Click Generate New Invite Link'
-                                );
-                                setCopied(true);
-                                setTimeout(() => setCopied(false), 1500);
-                              }}
-                            >
-                              <FontAwesomeIcon icon={faClipboard} />
-                            </div>
-
-                            <textarea
-                              className="bg-surface-4 rounded-xl px-4 py-2 resize-none outline-none w-full"
-                              rows={1}
-                              readOnly
-                              value={
-                                space.inviteUrl ||
-                                t`Click Generate New Invite Link`
-                              }
-                            />
+                          {space.inviteUrl && (
+                            <>
+                            <div className="flex pt-2 pb-1 items-center">
+                            <div className="text-sm flex flex-row">
+                          <div className="small-caps text-lg flex flex-col justify-around">
+                            <Trans>Current Invite Link</Trans>
                           </div>
-
-                          {copied && (
-                            <div className="text-sm text-success-hex mt-1 ml-1">
-                              Copied!
+                          <div className="flex flex-col justify-around ml-2">
+                              <FontAwesomeIcon id="current-invite-link-tooltip-icon" icon={faInfoCircle} className="ml-2" />
+                              <ReactTooltip
+                                id="current-invite-link-tooltip"
+                                anchorSelect="#current-invite-link-tooltip-icon"
+                                className="flex flex-col justify-around pt-3 pb-1 !w-[400px]"
+                                place="bottom"
+                                content={t`This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current space members will not be removed from the space.`}
+                              />
+                          </div>
                             </div>
+                            </div>
+                            <ClickToCopyContent
+                              text={space.inviteUrl}
+                              tooltipText={t`Copy invite link to clipboard`}
+                              className="pl-2 border-2 border-surface-6 rounded-lg py-1 max-w-[100%] w-[100%] overflow-x-auto whitespace-nowrap"
+                            >
+                              <div className="flex flex-row">
+                                <div className="text-sm flex flex-col justify-around">
+                                  <div className="text-sm flex flex-col justify-around ml-2 overflow-x-auto whitespace-nowrap">
+                                    {space.inviteUrl}
+                                  </div>
+                                </div>
+                              </div>
+                            </ClickToCopyContent>
+                            </>
                           )}
+
 
                           <div className="mt-4 flex flex-row">
                             <Button
