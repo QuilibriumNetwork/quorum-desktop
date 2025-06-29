@@ -14,6 +14,7 @@ import ThemeRadioGroup from '../ThemeRadioGroup';
 import { t } from '@lingui/core/macro';
 import CopyToClipboard from '../CopyToClipboard';
 import { DefaultImages } from '../../utils';
+import { dynamicActivate, localeNames } from '../../i18n/i18n';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -50,6 +51,20 @@ const UserSettingsModal: React.FunctionComponent<{
   const [init, setInit] = React.useState<boolean>(false);
   const existingConfig = React.useRef<UserConfig | null>(null);
   const [allowSync, setAllowSync] = React.useState<boolean>(false);
+  const availableLocales = Object.keys(
+    localeNames
+  ) as (keyof typeof localeNames)[];
+  const storedLang = localStorage.getItem('language') as
+    | keyof typeof localeNames
+    | null;
+  const [language, setLanguage] = React.useState(
+    storedLang && availableLocales.includes(storedLang)
+      ? storedLang
+      : availableLocales[0]
+  );
+  React.useEffect(() => {
+    dynamicActivate(language);
+  }, []);
   const [allowSyncTooltip, setAllowSyncTooltip] =
     React.useState<boolean>(false);
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
@@ -418,6 +433,27 @@ const UserSettingsModal: React.FunctionComponent<{
                     {t`Choose your preferred theme for Quorum.`}
                   </div>
                   <ThemeRadioGroup />
+
+                  <div className="pt-4">
+                    <div className="small-caps">{t`Language`}</div>
+                    <select
+                      className="quorum-input mt-2"
+                      value={language}
+                      onChange={async (e) => {
+                        const selected =
+                          e.target.value.toString() as keyof typeof localeNames;
+                        setLanguage(selected);
+                        localStorage.setItem('language', selected);
+                        await dynamicActivate(selected);
+                      }}
+                    >
+                      {Object.entries(localeNames).map(([code, label]) => (
+                        <option key={code} value={code}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               );
           }

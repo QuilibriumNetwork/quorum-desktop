@@ -65,7 +65,7 @@ const NewDirectMessageModal: React.FunctionComponent<
               disabled={true}
               onClick={() => {}}
             >
-              {t`New Direct Message`}
+              {t`Send`}
             </Button>
           </div>
         )}

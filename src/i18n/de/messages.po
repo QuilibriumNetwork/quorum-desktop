@@ -64,7 +64,7 @@ msgstr ""
 msgid "No Role - {count}"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:236
+#: src/components/modals/UserSettingsModal.tsx:251
 msgid "Account Address"
 msgstr ""
 
@@ -88,7 +88,7 @@ msgstr ""
 msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space."
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:330
+#: src/components/modals/UserSettingsModal.tsx:345
 msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
 msgstr ""
 
@@ -96,8 +96,8 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr "Erweiterte Einstellungen"
 
-#: src/components/modals/UserSettingsModal.tsx:198
-#: src/components/modals/UserSettingsModal.tsx:416
+#: src/components/modals/UserSettingsModal.tsx:213
+#: src/components/modals/UserSettingsModal.tsx:431
 msgid "Appearance"
 msgstr ""
 
@@ -130,7 +130,7 @@ msgstr "Kanal Name"
 msgid "Channel Topic"
 msgstr "Kanal Thema"
 
-#: src/components/modals/UserSettingsModal.tsx:418
+#: src/components/modals/UserSettingsModal.tsx:433
 msgid "Choose your preferred theme for Quorum."
 msgstr ""
 
@@ -161,7 +161,7 @@ msgid "Copied!"
 msgstr ""
 
 #: src/components/user/UserStatus.tsx:96
-#: src/components/modals/UserSettingsModal.tsx:241
+#: src/components/modals/UserSettingsModal.tsx:256
 #: src/components/direct/DirectMessage.tsx:219
 msgid "Copy address to clipboard"
 msgstr ""
@@ -244,7 +244,7 @@ msgstr "Nachricht löschen"
 msgid "Direct Messages"
 msgstr "Direktnachrichten"
 
-#: src/components/modals/UserSettingsModal.tsx:226
+#: src/components/modals/UserSettingsModal.tsx:241
 msgid "Display Name"
 msgstr ""
 
@@ -269,7 +269,7 @@ msgstr ""
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal.tsx:336
+#: src/components/modals/UserSettingsModal.tsx:351
 msgid "Enable sync"
 msgstr ""
 
@@ -301,11 +301,11 @@ msgstr ""
 msgid "Existing Conversations"
 msgstr "Bestehende Konversationen"
 
-#: src/components/modals/UserSettingsModal.tsx:322
+#: src/components/modals/UserSettingsModal.tsx:337
 msgid "Export"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:313
+#: src/components/modals/UserSettingsModal.tsx:328
 msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 msgstr ""
 
@@ -334,7 +334,7 @@ msgstr "Datei abgelehnt"
 msgid "general"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:180
+#: src/components/modals/UserSettingsModal.tsx:195
 #: src/components/channel/SpaceEditor.tsx:301
 msgid "General"
 msgstr "Allgemein"
@@ -416,7 +416,7 @@ msgstr "Raum verbinden"
 msgid "Joined"
 msgstr "Beitritt"
 
-#: src/components/modals/UserSettingsModal.tsx:310
+#: src/components/modals/UserSettingsModal.tsx:325
 msgid "Key Export"
 msgstr ""
 
@@ -424,6 +424,10 @@ msgstr ""
 #: src/components/modals/KickUserModal.tsx:33
 msgid "Kick User"
 msgstr "Kick-Benutzer"
+
+#: src/components/modals/UserSettingsModal.tsx:438
+msgid "Language"
+msgstr ""
 
 #: src/components/channel/LeaveSpace.tsx:28
 #: src/components/channel/LeaveSpace.tsx:44
@@ -448,7 +452,7 @@ msgstr "Instandhaltung in Arbeit"
 msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:271
+#: src/components/modals/UserSettingsModal.tsx:286
 msgid "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr ""
 
@@ -468,11 +472,10 @@ msgstr "Weitere Reaktionen"
 #: src/components/AddressLookup.tsx:26
 #: src/components/modals/NewDirectMessageModal.tsx:34
 #: src/components/modals/NewDirectMessageModal.tsx:53
-#: src/components/modals/NewDirectMessageModal.tsx:68
 msgid "New Direct Message"
 msgstr "Neue Direktnachricht"
 
-#: src/components/modals/UserSettingsModal.tsx:368
+#: src/components/modals/UserSettingsModal.tsx:383
 msgid "Non-repudiability"
 msgstr ""
 
@@ -496,8 +499,8 @@ msgstr "Personalisieren Sie Ihr Konto"
 msgid "Privacy Settings"
 msgstr "Datenschutz-Einstellungen"
 
-#: src/components/modals/UserSettingsModal.tsx:189
-#: src/components/modals/UserSettingsModal.tsx:269
+#: src/components/modals/UserSettingsModal.tsx:204
+#: src/components/modals/UserSettingsModal.tsx:284
 msgid "Privacy/Security"
 msgstr ""
 
@@ -533,7 +536,7 @@ msgstr ""
 msgid "Refresh"
 msgstr "Auffrischen"
 
-#: src/components/modals/UserSettingsModal.tsx:297
+#: src/components/modals/UserSettingsModal.tsx:312
 msgid "Remove"
 msgstr ""
 
@@ -562,8 +565,8 @@ msgid "Roles"
 msgstr "Rollen"
 
 #: src/components/user/UserProfile.tsx:241
-#: src/components/modals/UserSettingsModal.tsx:257
-#: src/components/modals/UserSettingsModal.tsx:406
+#: src/components/modals/UserSettingsModal.tsx:272
+#: src/components/modals/UserSettingsModal.tsx:421
 #: src/components/channel/SpaceEditor.tsx:495
 #: src/components/channel/SpaceEditor.tsx:641
 #: src/components/channel/SpaceEditor.tsx:744
@@ -585,8 +588,12 @@ msgstr "Benutzerschlüssel speichern"
 msgid "saved config is out of date"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:327
+#: src/components/modals/UserSettingsModal.tsx:342
 msgid "Security"
+msgstr ""
+
+#: src/components/modals/NewDirectMessageModal.tsx:68
+msgid "Send"
 msgstr ""
 
 #: src/components/channel/SpaceEditor.tsx:1080
@@ -609,7 +616,7 @@ msgstr ""
 msgid "Set Display Name"
 msgstr "Anzeigename festlegen"
 
-#: src/components/modals/UserSettingsModal.tsx:172
+#: src/components/modals/UserSettingsModal.tsx:187
 msgid "Settings"
 msgstr ""
 
@@ -715,11 +722,11 @@ msgstr "Willkommen bei Quorum!"
 msgid "What's on your mind today?"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:386
+#: src/components/modals/UserSettingsModal.tsx:401
 msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:354
+#: src/components/modals/UserSettingsModal.tsx:369
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
 msgstr ""
 
