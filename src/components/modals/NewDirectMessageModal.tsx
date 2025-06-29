@@ -3,11 +3,11 @@ import Modal from '../Modal';
 import Input from '../Input';
 import Button from '../Button';
 import { useNavigate } from 'react-router';
-import { useLocalization, useRegistration } from '../../hooks';
+import {  useRegistration } from '../../hooks';
 import { getConfig } from '../../config/config';
 import { AddressLookup } from '../AddressLookup';
-
 import './NewDirectMessageModal.scss';
+import { t } from '@lingui/core/macro';
 
 type NewDirectMessageModalProps = {
   visible: boolean;
@@ -18,7 +18,6 @@ const NewDirectMessageModal: React.FunctionComponent<
   NewDirectMessageModalProps
 > = (props) => {
   let [address, setAddress] = React.useState<string | undefined>(undefined);
-  let { data: localization } = useLocalization({ langId: getConfig().langId });
 
   const lookupUser = (address: string) => {
     if (address == '' || address.length != 46) {
@@ -32,16 +31,14 @@ const NewDirectMessageModal: React.FunctionComponent<
     <Modal
       visible={props.visible}
       onClose={props.onClose}
-      title={localization.localizations['NEW_DIRECT_MESSAGE_TITLE']([])}
+      title={t`New Direct Message Title`}
     >
       <div className="modal-new-direct-message">
         <div>
           <Input
             className="w-[400pt] !text-xs"
             onChange={(e) => lookupUser(e.target.value)}
-            placeholder={localization.localizations[
-              'NEW_DIRECT_MESSAGE_PROMPT'
-            ]([])}
+            placeholder={t`New Direct Message Prompt`}
           />
         </div>
         <React.Suspense
@@ -53,7 +50,7 @@ const NewDirectMessageModal: React.FunctionComponent<
                 disabled={!address}
                 onClick={() => {}}
               >
-                {localization.localizations['NEW_DIRECT_MESSAGE_BUTTON']([])}
+                {t`New Direct Message Button`}
               </Button>
             </div>
           }
@@ -68,7 +65,7 @@ const NewDirectMessageModal: React.FunctionComponent<
               disabled={true}
               onClick={() => {}}
             >
-              {localization.localizations['NEW_DIRECT_MESSAGE_BUTTON']([])}
+              {t`New Direct Message Button`}
             </Button>
           </div>
         )}

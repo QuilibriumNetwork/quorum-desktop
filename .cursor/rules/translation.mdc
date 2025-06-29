@@ -1,0 +1,12 @@
+---
+description:
+globs: src/i18n/*
+alwaysApply: false
+---
+The translations are in the context of a messenger app.  When translating, keep this is mind.
+
+Verify translations make sense by translating it back and compare against the original english translation.
+
+Spaces are like a chat-room, with Channels being sub-chats in the Space.
+
+Translations may have variables in curly-brackets, e.g. {0} or {user}.  These must be left intact in the translation, e.g. "My name is {name}" -> "Mi nombre es {name}".

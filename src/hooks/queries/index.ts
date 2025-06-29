@@ -1,4 +1,3 @@
-export * from './localization';
 export * from './config';
 export * from './space';
 export * from './spaces';

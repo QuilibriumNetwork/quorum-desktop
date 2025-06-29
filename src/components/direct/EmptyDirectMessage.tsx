@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useConversations } from '../../hooks';
+import { t } from '@lingui/core/macro';
 
 export const EmptyDirectMessage = () => {
   const user = usePasskeysContext();
@@ -19,8 +20,8 @@ export const EmptyDirectMessage = () => {
           <div className="flex flex-row justify-around text-lg pt-4">
             {conversations.pages.flatMap((p: any) => p.conversations).length ===
             0
-              ? 'Start with a message to a friend. Click on the add button next to the direct messages list.'
-              : "What's on your mind today?"}
+              ? t`Start with a message to a friend. Click on the add button next to the direct messages list.`
+              : t`What's on your mind today?`}
           </div>
         </div>
       </div>

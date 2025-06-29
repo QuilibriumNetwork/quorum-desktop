@@ -1,14 +1,18 @@
-const { formatter } = require('@lingui/format-json')
+import { defineConfig } from "@lingui/cli";
 
-/** @type {import('@lingui/cli').LinguiConfig} */
-module.exports = {
-  locales: ['en'],
-  sourceLocale: 'en',
-  format: formatter({ style: 'minimal' }),
+import { localeNames, defaultLocale } from "./src/i18n/i18n";
+
+export default defineConfig({
+  fallbackLocales: {
+    default: defaultLocale,
+  },
+  sourceLocale: defaultLocale,
+  locales: Object.keys(localeNames),
   catalogs: [
     {
-      path: 'src/i18n/locales/{locale}/messages',
-      include: ['src'],
+      path: "<rootDir>/src/i18n/{locale}/messages",
+      include: ["src"],
+      exclude: ["**/node_modules/*", "/dist", "/build", "/public", "/src/wasm", "/src/locales"]
     },
   ],
-}
+});

@@ -27,6 +27,9 @@ import { useParams } from 'react-router';
 import { InviteLink } from './InviteLink';
 import Modal from '../Modal';
 import './Message.scss';
+import { t } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
+import { DefaultImages } from '../../utils';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -120,23 +123,23 @@ export const Message = ({
 
   const displayedTimestmap = time.calendar(null, {
     sameDay: function () {
-      return `[Today at ${timeFormatted}]`;
+      return `[${t`Today at ${timeFormatted}`}]`;
     },
     lastWeek: 'dddd',
-    lastDay: `[Yesterday at ${timeFormatted}]`,
+    lastDay: `[${t`Yesterday at ${timeFormatted}`}]`,
     sameElse: function () {
       return `[${fromNow}]`;
     },
   });
 
-  const formatEventMessage = (type: string) => {
+  const formatEventMessage = (userDisplayName: string, type: string) => {
     switch (type) {
       case 'join':
-        return 'joined';
+        return i18n._("{user} has joined", {user: userDisplayName});
       case 'leave':
-        return 'left';
+        return i18n._("{user} has left", {user: userDisplayName});
       case 'kick':
-        return 'been kicked';
+        return i18n._("{user} has been kicked", {user: userDisplayName});
     }
   };
 
@@ -184,7 +187,11 @@ export const Message = ({
                 <div
                   className="message-reply-sender-icon"
                   style={{
-                    backgroundImage: `url(${mapSenderToUser(reply.content.senderId).userIcon})`,
+                    backgroundImage: `url(${
+                      mapSenderToUser(reply.content.senderId).userIcon?.includes(DefaultImages.UNKNOWN_USER)
+                        ? 'var(--unknown-icon)'
+                        : mapSenderToUser(reply.content.senderId).userIcon
+                    })`,
                   }}
                 />
                 <div className="message-reply-sender-name">
@@ -202,7 +209,7 @@ export const Message = ({
       })()}
       {['join', 'leave', 'kick'].includes(message.content.type) && (
         <div className="flex flex-row font-[11px] px-[11px] py-[8px] italic">
-          {sender.displayName} has {formatEventMessage(message.content.type)}
+          {formatEventMessage(sender.displayName, message.content.type)}
         </div>
       )}
       {!['join', 'leave', 'kick'].includes(message.content.type) && (
@@ -330,7 +337,7 @@ export const Message = ({
                     e.clientY / height > 0.5 ? 'upwards' : 'downwards'
                   );
                 }}
-                title="More reactions"
+                title={t`More reactions`}
                 className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
                 <FontAwesomeIcon icon={faFaceSmileBeam} />
@@ -340,7 +347,7 @@ export const Message = ({
                   setInReplyTo(message);
                   editorRef?.focus();
                 }}
-                title="Reply"
+                title={t`Reply`}
                 className="w-5 mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
                 <FontAwesomeIcon icon={faReply} />
@@ -350,7 +357,7 @@ export const Message = ({
                   const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
                   navigator.clipboard.writeText(url);
                 }}
-                title="Copy message link"
+                title={t`Copy message link`}
                 className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
                 <FontAwesomeIcon icon={faLink} />
@@ -366,7 +373,7 @@ export const Message = ({
                         removeMessageId: message.messageId,
                       });
                     }}
-                    title="Delete message"
+                    title={t`Delete message`}
                     className="w-5 text-center transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
                   >
                     <FontAwesomeIcon icon={faTrash} className='text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125 ' />
@@ -415,7 +422,7 @@ export const Message = ({
             className="message-sender-icon"
             style={{
               backgroundImage:
-                sender.userIcon === '/unknown.png'
+                sender.userIcon?.includes(DefaultImages.UNKNOWN_USER)
                   ? 'var(--unknown-icon)'
                   : `url(${sender.userIcon})`,
             }}
@@ -425,7 +432,7 @@ export const Message = ({
             <span className="pl-2">
               {!repudiability && !message.signature && (
                 <FontAwesomeIcon
-                  title="Message does not have a valid signature, this may not be from the sender"
+                  title={t`Message does not have a valid signature, this may not be from the sender`}
                   size={'2xs'}
                   icon={faUnlock}
                 />

@@ -8,6 +8,7 @@ import React, {
 import { useQuorumApiClient } from './QuorumApiContext';
 import { getConfig } from '../../config/config';
 import { EncryptedMessage } from '../../db/messages';
+import { t } from '@lingui/core/macro';
 
 type MessageHandler = (message: EncryptedMessage) => Promise<void>;
 type OutboundMessage = () => Promise<string[]>;
@@ -86,7 +87,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
               try {
                 await handlerRef.current!(message);
               } catch (error) {
-                console.error('Error processing inbound:', error);
+                console.error(t`Error processing inbound:`, error);
               }
             }
             resolve();
@@ -105,12 +106,12 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
               wsRef.current.send(m);
             }
           } catch (error) {
-            console.error('Error processing outbound:', error);
+            console.error(t`Error processing outbound:`, error);
           }
         }
       }
     } catch (error) {
-      console.error('Error processing queue:', error);
+      console.error(t`Error processing queue:`, error);
     } finally {
       processingRef.current = false;
     }
@@ -137,7 +138,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
           messageQueue.current = [...messageQueue.current, message];
           processQueue();
         } catch (error) {
-          console.error('Failed to parse WebSocket message:', error);
+          console.error(t`Failed to parse WebSocket message:`, error);
         }
       };
 
@@ -192,7 +193,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
 export function useWebSocket() {
   const context = useContext(WebSocketContext);
   if (!context) {
-    throw new Error('useWebSocket must be used within a WebSocketProvider');
+    throw new Error(t`useWebSocket must be used within a WebSocketProvider`);
   }
   return context;
 }

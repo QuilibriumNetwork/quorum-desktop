@@ -27,7 +27,9 @@ import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import { MessageList } from '../message/MessageList';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
-import { useLocalization } from '../../hooks';
+import { t } from "@lingui/core/macro";
+import { i18n } from '@lingui/core';
+import { DefaultImages } from '../../utils';
 
 type ChannelProps = {
   spaceId: string;
@@ -69,8 +71,6 @@ const Channel: React.FC<ChannelProps> = ({
   const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
   const [fileType, setFileType] = React.useState<string>();
   const [fileError, setFileError] = useState<string | null>(null);
-  const { data: localization } = useLocalization({ langId: 'en' });
-  const localizations = localization.localizations;
   const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
     accept: {
       'image/png': ['.png'],
@@ -82,9 +82,9 @@ const Channel: React.FC<ChannelProps> = ({
     onDropRejected: (fileRejections) => {
       for (const rejection of fileRejections) {
         if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          setFileError(localizations['FILE_TOO_LARGE_2MB']([]));
+          setFileError(t`File cannot be larger than 2MB`);
         } else {
-          setFileError(localizations['FILE_REJECTED']([]));
+          setFileError(t`File rejected`);
         }
       }
     },
@@ -189,8 +189,8 @@ const Channel: React.FC<ChannelProps> = ({
   const mapSenderToUser = (senderId: string) => {
     return (
       members[senderId] || {
-        displayName: 'Unknown User',
-        userIcon: '/unknown.png',
+        displayName: t`Unknown User`,
+        userIcon: DefaultImages.UNKNOWN_USER,
       }
     );
   };
@@ -310,8 +310,7 @@ const Channel: React.FC<ChannelProps> = ({
                 onClick={() => setInReplyTo(undefined)}
                 className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-[var(--surface-4)]"
               >
-                Replying to{' '}
-                {mapSenderToUser(inReplyTo.content.senderId).displayName}
+                {i18n._('Replying to {user}', { user: mapSenderToUser(inReplyTo.content.senderId).displayName })}
                 <span
                   className="message-in-reply-dismiss"
                   onClick={() => setInReplyTo(undefined)}
@@ -391,7 +390,7 @@ const Channel: React.FC<ChannelProps> = ({
               'message-editor w-full !pl-11 !pr-11 ' +
               (inReplyTo ? 'message-editor-reply' : '')
             }
-            placeholder={'Send a message to #' + channel?.channelName}
+            placeholder={i18n._("Send a message to #{channel_name}", {channel_name: channel?.channelName ?? '' })}
             rows={
               rowCount > 4
                 ? 4
@@ -531,7 +530,7 @@ const Channel: React.FC<ChannelProps> = ({
             return (
               <div className="flex flex-col mb-2" key={'role-' + r}>
                 <div className="font-semibold ml-[1pt] mb-1 text-xs">
-                  {role.displayName.toUpperCase()} - {roleMembers.length}
+                  {i18n._('{role} - {count}', { role: role.displayName.toUpperCase(), count: roleMembers.length })}
                 </div>
                 {roleMembers.map((s) => (
                   <div key={s} className="w-full flex flex-row mb-2">
@@ -540,7 +539,11 @@ const Channel: React.FC<ChannelProps> = ({
                       style={{
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
-                        backgroundImage: `url(${members[s]?.userIcon})`,
+                        backgroundImage: `url(${
+                          members[s]?.userIcon?.includes(DefaultImages.UNKNOWN_USER)
+                          ? 'var(--unknown-icon)'
+                          : `url(${members[s]?.userIcon})`
+                        })`,
                       }}
                     />
                     <div className="flex flex-col ml-2 text-text-base">
@@ -555,7 +558,7 @@ const Channel: React.FC<ChannelProps> = ({
           })}
         <div className="flex flex-col">
           <div className="font-semibold ml-[1pt] mb-1 text-xs">
-            No Role - {noRoleMembers.length}
+            {i18n._('No Role - {count}', { count: noRoleMembers.length })}
           </div>
           {noRoleMembers.map((s) => (
             <div key={s} className="w-full flex flex-row mb-2">

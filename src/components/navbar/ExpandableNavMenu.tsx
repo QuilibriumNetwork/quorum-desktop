@@ -9,8 +9,8 @@ import {
 import { useState } from 'react';
 import Button from '../Button';
 import './ExpandableNavMenu.scss';
-import { useLocalization } from '../../hooks';
 import { getConfig } from '../../config/config';
+import { t } from '@lingui/core/macro';
 
 type ExpandableNavMenuProps = {
   showCreateSpaceModal: () => void;
@@ -21,9 +21,6 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
   props
 ) => {
   const [isExpanded, setExpanded] = useState(false);
-  const { data: localizations } = useLocalization({
-    langId: getConfig().langId,
-  });
 
   return isExpanded ? (
     <div className="expanded-nav-menu">
@@ -37,14 +34,14 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
           setExpanded(false);
           props.showCreateSpaceModal();
         }}
-        tooltip={localizations.localizations['TOOLTIP_ADD_SPACE']([])}
+        tooltip={t`Add Space`}
       >
         <FontAwesomeIcon icon={faPlus} />
       </Button>
       {/* <Button className="expanded-nav-join-spaces w-10 h-10 ml-3 leading-6 mb-4 inline-block" icon type="primary" onClick={(e) => { setExpanded(false); props.showJoinSpaceModal(); }} tooltip={localizations.localizations["TOOLTIP_JOIN_SPACE"]([])}><FontAwesomeIcon icon={faCompressAlt}/></Button> */}
     </div>
   ) : (
-    <div className="expand-button" onClick={() => setExpanded(true)}>
+    <div className="expand-button cursor-pointer" onClick={() => setExpanded(true)}>
       <FontAwesomeIcon icon={faBars} />
     </div>
   );

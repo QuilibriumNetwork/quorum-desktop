@@ -53,6 +53,8 @@ import { useInvalidateConversation } from '../../hooks/queries/conversation/useI
 import { sha256 } from 'multiformats/hashes/sha2';
 import { base58btc } from 'multiformats/bases/base58';
 import { buildConfigKey } from '../../hooks/queries/config/buildConfigKey';
+import { t } from '@lingui/core/macro';
+import { DefaultImages, getDefaultUserConfig } from '../../utils';
 
 type MessageDBContextValue = {
   messageDB: MessageDB;
@@ -808,9 +810,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               session.user_address,
               'direct',
               updatedUserProfile ?? {
-                user_icon: conversation?.conversation?.icon ?? '/unknown.png',
+                user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
                 display_name:
-                  conversation?.conversation?.displayName ?? 'Unknown User',
+                  conversation?.conversation?.displayName ?? t`Unknown User`,
               }
             );
             await addMessage(
@@ -825,13 +827,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               envelope.timestamp,
               0,
               updatedUserProfile ?? {
-                user_icon: conversation?.conversation?.icon ?? '/unknown.png',
+                user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
                 display_name:
-                  conversation?.conversation?.displayName ?? 'Unknown User',
+                  conversation?.conversation?.displayName ?? t`Unknown User`,
               }
             );
           } else {
-            console.error('Failed to decrypt message with any known state');
+            console.error(t`Failed to decrypt message with any known state`);
           }
           await deleteInboxMessages(
             keyset.deviceKeyset.inbox_keyset,
@@ -1011,7 +1013,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                   decryptedContent.messageId !==
                     Buffer.from(messageId).toString('hex')
                 ) {
-                  console.warn('invalid address for signature');
+                  console.warn(t`invalid address for signature`);
                   decryptedContent.publicKey = undefined;
                   decryptedContent.signature = undefined;
                 } else {
@@ -2606,9 +2608,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         }
 
         await saveMessage(message, messageDB, address!, address!, 'direct', {
-          user_icon: conversation?.conversation?.icon ?? '/unknown.png',
+          user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
           display_name:
-            conversation?.conversation?.displayName ?? 'Unknown User',
+            conversation?.conversation?.displayName ?? t`Unknown User`,
         });
         await addMessage(queryClient, address, address, message);
         addOrUpdateConversation(
@@ -2617,7 +2619,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           Date.now(),
           message.createdDate,
           {
-            user_icon: conversation?.conversation?.icon ?? '/unknown.png',
+            user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
             display_name:
               conversation?.conversation?.displayName ?? 'Unknown User',
           }
@@ -2750,8 +2752,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               {
                 spaceId: spaceAddress,
                 channelId: groupAddress,
-                channelName: 'general',
-                channelTopic: 'General Chat',
+                channelName: t`general`,
+                channelTopic: t`General Chat`,
                 createdDate: ts,
                 modifiedDate: ts,
               },
@@ -3626,8 +3628,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               0,
               spaceAddress,
               'group',
-              '/unknown.png',
-              'Unknown User'
+              DefaultImages.UNKNOWN_USER,
+              t`Unknown User`
             );
           }
         }
@@ -4233,12 +4235,12 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         };
 
         if (!info.spaceId || !info.configKey) {
-          throw new Error('invalid link');
+          throw new Error(t`invalid link`);
         }
 
         const manifest = await apiClient.getSpaceManifest(info.spaceId);
         if (!manifest) {
-          throw new Error('invalid response');
+          throw new Error(t`invalid response`);
         }
 
         const ciphertext = JSON.parse(manifest.data.space_manifest) as {
@@ -4270,13 +4272,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           (space.inviteUrl == '' || !space.inviteUrl) &&
           (!info.secret || !info.template || !info.hubKey)
         ) {
-          throw new Error('invalid link');
+          throw new Error(t`invalid link`);
         }
 
         return space;
       }
     }
-    throw new Error('invalid link');
+    throw new Error(t`invalid link`);
   }, []);
 
   const joinInviteLink = React.useCallback(
@@ -4337,7 +4339,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
           const manifest = await apiClient.getSpaceManifest(info.spaceId);
           if (!manifest) {
-            throw new Error('invalid response');
+            throw new Error(t`invalid response`);
           }
 
           const ciphertext = JSON.parse(manifest.data.space_manifest) as {
@@ -4374,7 +4376,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           let template: any;
           if (!info.secret && !info.template && !info.hubKey) {
             if (!space.inviteUrl || space.inviteUrl == '') {
-              throw new Error('invalid link');
+              throw new Error(t`invalid link`);
             }
 
             const inviteEval = await apiClient.getSpaceInviteEval(
@@ -4739,7 +4741,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         );
       }
 
-      throw new Error('invalid message type');
+      throw new Error(t`invalid message type`);
     },
     []
   );
@@ -4846,9 +4848,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           )
         );
         await saveMessage(message, messageDB, spaceId, channelId, 'group', {
-          user_icon: conversation.conversation?.icon ?? '/unknown.png',
+          user_icon: conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
           display_name:
-            conversation.conversation?.displayName ?? 'Unknown User',
+            conversation.conversation?.displayName ?? t`Unknown User`,
         });
         await addMessage(queryClient, spaceId, channelId, message);
 
@@ -4892,11 +4894,14 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
       const storedConfig = await messageDB.getUserConfig({ address });
       if (!savedConfig) {
+        if (!storedConfig) {
+          return getDefaultUserConfig(address);
+        }
         return storedConfig;
       }
 
-      if (savedConfig.timestamp < (storedConfig?.timestamp ?? 0)) {
-        console.warn('saved config is out of date');
+     if (savedConfig.timestamp < (storedConfig?.timestamp ?? 0)) {
+        console.warn(t`saved config is out of date`);
         return storedConfig;
       }
 
@@ -4938,7 +4943,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           )
         )
       ) {
-        console.warn('received config with invalid signature!');
+        console.warn(t`received config with invalid signature!`);
         return storedConfig;
       }
 
@@ -4968,13 +4973,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           try {
             const config = space.keys.find((k) => k.keyId == 'config');
             if (!config) {
-              console.warn('decrypted space with no known config key');
+              console.warn(t`decrypted space with no known config key`);
               continue;
             }
 
             const hub = space.keys.find((k) => k.keyId == 'hub');
             if (!hub) {
-              console.warn('decrypted space with no known hub key');
+              console.warn(t`decrypted space with no known hub key`);
               continue;
             }
 
@@ -4989,7 +4994,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               space.spaceId
             );
             if (!manifestPayload) {
-              console.warn('could not obtain manifest for space');
+              console.warn(t`could not obtain manifest for space`);
               continue;
             }
 
@@ -5116,7 +5121,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               ),
             ]);
           } catch (e) {
-            console.error('could not add space', e);
+            console.error(t`could not add space`, e);
           }
         }
       }
@@ -5147,7 +5152,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         deviceKeyset: secureChannel.DeviceKeyset;
       };
     }) => {
+      const ts = Date.now();
+      config.timestamp = ts;
+
       if (config.allowSync) {
+        console.log('syncing config', config);
         const userKey = keyset.userKeyset;
         const derived = await crypto.subtle.digest(
           'SHA-512',
@@ -5165,8 +5174,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           ['encrypt']
         );
 
-        const ts = Date.now();
-        config.timestamp = ts;
         config.spaceKeys = [];
         const spaces = await messageDB.getSpaces();
 

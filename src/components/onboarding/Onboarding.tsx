@@ -3,14 +3,21 @@ import Button from '../Button';
 import {
   PasskeyModal,
   usePasskeysContext,
+  passkey,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import Input from '../Input';
 import { useDropzone } from 'react-dropzone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileImage } from '@fortawesome/free-solid-svg-icons';
+import { faFileImage, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
-import { useLocalization } from '../../hooks';
+import { t } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
+import { Trans } from '@lingui/react/macro';
+import Tooltip from '../Tooltip';
+import { DefaultImages } from '../../utils';
+
+const maxImageSize = 2 * 1024 * 1024;
 
 export const Onboarding = ({
   setUser,
@@ -39,9 +46,6 @@ export const Onboarding = ({
 
   const { apiClient } = useQuorumApiClient();
 
-  const { data: localization } = useLocalization({ langId: 'en' });
-  const localizations = localization.localizations;
-
   const uploadRegistration = useUploadRegistration();
 
   const downloadKey = async () => {
@@ -63,27 +67,53 @@ export const Onboarding = ({
     setExported(true);
   };
 
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
   const { getRootProps, getInputProps, acceptedFiles, isDragActive } =
     useDropzone({
       accept: {
-        'image/png': ['.png'],
-        'image/jpeg': ['.jpg', '.jpeg'],
+        'image/*': ['.png', '.jpg', '.jpeg'],
       },
       minSize: 0,
-      maxSize: 1 * 1024 * 1024,
+      maxSize: maxImageSize,
+      maxFiles: 1,
+      multiple: false,
       onDropRejected: (fileRejections) => {
         for (const rejection of fileRejections) {
           if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-            setFileError(localizations['FILE_TOO_LARGE']([]));
+            setFileError(i18n._(`File cannot be larger than {maxFileSize}`, { maxFileSize: `${maxImageSize / 1024 / 1024}MB` }));
           } else {
-            setFileError(localizations['FILE_REJECTED']([]));
+            setFileError(t`File rejected`);
           }
         }
       },
       onDropAccepted: () => {
         setFileError(null);
       },
+  });
+
+  const setPfpImage = async () => {
+
+    let pfpUrl: string = String(DefaultImages.UNKNOWN_USER);
+
+    if (acceptedFiles.length > 0) {
+      pfpUrl = 'data:' + acceptedFiles[0].type + ';base64,' + Buffer.from(fileData!).toString('base64')
+    }
+
+    updateUserStoredInfo({ pfpUrl });
+  }
+
+  const updateUserStoredInfo = (updates: Partial<passkey.StoredPasskey> = {}) => {
+    updateStoredPasskey(currentPasskeyInfo!.credentialId, {
+      credentialId: currentPasskeyInfo!.credentialId,
+      address: currentPasskeyInfo!.address,
+      publicKey: currentPasskeyInfo!.publicKey,
+      displayName: displayName,
+      completedOnboarding: false,
+      pfpUrl: currentPasskeyInfo?.pfpUrl ?? DefaultImages.UNKNOWN_USER,
+      ...updates,
     });
+  }
 
   useEffect(() => {
     if (acceptedFiles.length > 0) {
@@ -109,51 +139,71 @@ export const Onboarding = ({
           <div className="flex flex-col grow"></div>
           <div className="flex flex-col text-white">
             {!exported
-              ? 'Welcome to Quorum!'
+              ? t`Welcome to Quorum!`
               : currentPasskeyInfo?.pfpUrl && currentPasskeyInfo.displayName
-                ? 'One of us, one of us!'
-                : 'Personalize your account'}
+                ? t`One of us, one of us!`
+                : t`Personalize your account`}
           </div>
           <div className="flex flex-col grow"></div>
         </div>
+        {isDragActive && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 pointer-events-none">
+            <div className="flex flex-col p-8 border-2 border-dashed border-white rounded-lg bg-white bg-opacity-50 items-center">
+              <FontAwesomeIcon
+                icon={faFileImage}
+                className="text-4xl text-gray-700 mb-4"
+              />
+              <p className="text-xl font-semibold text-gray-800">
+                {t`Drop your profile photo here`}
+              </p>
+            </div>
+          </div>
+        )}
         {!exported && (
           <>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
               <div className="w-[460px] py-4 text-justify text-white">
                 <p className="py-4">
-                  <b>Important first-time user information:</b>
+                  <b>{t`Important first-time user information:`}</b>
                 </p>
                 <p className="pb-4">
-                  Quorum is peer-to-peer and end-to-end encrypted. This means
+                  {t`Quorum is peer-to-peer and end-to-end encrypted. This means
                   your messages stay private, but equally important, they only
                   live on the network for the time required to reach you and
-                  your recipients.
+                  your recipients.`}
                 </p>
                 <p className="pb-4">
                   {
                     // @ts-ignore
                     !window.electron ? (
                       <>
-                        When using Quorum on a browser, your messages are saved
-                        locally to your browser, so{' '}
+                        <p className="pb-4">
+
+                        {t`When using Quorum on a browser, your messages are saved
+                        locally to your browser.`}
+                        </p>
+                        <p className="font-bold">
                         <b>
-                          if you clear your browser storage or switch browsers,
-                          your old messages and keys may disappear.
+                          {t`If you clear your browser storage or switch browsers,
+                          your old messages and keys may disappear.`}
                         </b>
+                        </p>
                       </>
                     ) : (
-                      <b>
-                        If you uninstall the app, you will lose your old
-                        messages and keys.
-                      </b>
+                      <>
+                        <p className="pb-4 font-bold">
+                          {t`If you uninstall the app from your device, you will lose your old
+                          messages and keys.`}
+                        </p>
+                      </>
                     )
                   }
                 </p>
                 <p className="pb-4">
-                  Click the button below to create a backup of your key info,
+                  {t`Click the button below to create a backup of your key info,
                   because once it's gone, it's gone forever. You may be prompted
-                  to authenticate again.
+                  to authenticate again.`}
                 </p>
               </div>
 
@@ -167,14 +217,14 @@ export const Onboarding = ({
                   className="px-8 mb-4"
                   onClick={downloadKey}
                 >
-                  Save User Key
+                  {t`Save User Key`}
                 </Button>
                 <Button
                   type="light-outline"
                   className="px-8"
                   onClick={() => setExported(true)}
                 >
-                  I already saved mine
+                  {t`I already saved mine`}
                 </Button>
               </div>
               <div className="grow"></div>
@@ -187,11 +237,11 @@ export const Onboarding = ({
               <div className="grow"></div>
               <div className="w-[460px] py-4 text-justify text-white">
                 <p className="pb-4">
-                  Let your friends know who you are! Pick a friendly name to
-                  display in your conversations, something easier to read than{' '}
-                  {currentPasskeyInfo?.address}.
+                  <Trans>Let your friends know who you are! Pick a friendly name to
+                  display in your conversations, something easier to read than {currentPasskeyInfo?.address}
+                  </Trans>
                 </p>
-                <p>This information is only provided to the spaces you join.</p>
+                <p>{t`This information is only provided to the spaces you join.`}</p>
               </div>
 
               <div className="grow"></div>
@@ -210,17 +260,9 @@ export const Onboarding = ({
                     type="light"
                     disabled={displayName.length === 0}
                     className={`px-8 ${displayName.length === 0 ? 'btn-disabled-onboarding ' : ''}`}
-                    onClick={() => {
-                      updateStoredPasskey(currentPasskeyInfo!.credentialId, {
-                        credentialId: currentPasskeyInfo!.credentialId,
-                        address: currentPasskeyInfo!.address,
-                        publicKey: currentPasskeyInfo!.publicKey,
-                        displayName: displayName,
-                        completedOnboarding: false,
-                      });
-                    }}
+                    onClick={() => updateUserStoredInfo({ displayName, pfpUrl: undefined })}
                   >
-                    Set Display Name
+                    {t`Set Display Name`}
                   </Button>
                 </div>
               </div>
@@ -234,10 +276,19 @@ export const Onboarding = ({
             <>
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
-                <div className="w-[460px] flex flex-col justify-around py-4 text-white">
-                  <div className="mb-1">
-                    Make your account uniquely yours – set a contact photo. This
-                    information is only provided to the spaces you join.
+                <div className="w-[460px] flex flex-col justify-center py-4 text-white">
+                  <div className="mb-2 text-center">
+                    {t`Make your account uniquely yours – set a contact photo. This
+                    information is only provided to the spaces you join.`}
+                  </div>
+                  <div className="mb-2 text-center">
+                    {t`You can click the default image below to select it with your system's file dialog or drag and drop a new one.`}
+                  </div>
+                  <div className="mb-2 text-center">
+                    {t`You will be able to change this later in your settings.`}
+                  </div>
+                  <div className="mb-2 text-center">
+                    {i18n._(`Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension.`, { maxFileSize: `${maxImageSize / 1024 / 1024}MB` })}
                   </div>
                   {fileError && (
                     <div className="error-label mt-2">{fileError}</div>
@@ -248,7 +299,7 @@ export const Onboarding = ({
               </div>
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
-                <div className="w-[460px] pt-4 text-center flex flex-row justify-around">
+                <div className="w-[460px] py-4  text-center flex flex-row justify-around">
                   {acceptedFiles.length != 0 ? (
                     <div {...getRootProps()}>
                       <input {...getInputProps()} />
@@ -260,7 +311,7 @@ export const Onboarding = ({
                               acceptedFiles[0].type +
                               ';base64,' +
                               Buffer.from(fileData).toString('base64')
-                            : '/unknown.png'
+                            : DefaultImages.UNKNOWN_USER
                         }
                       />
                     </div>
@@ -271,7 +322,7 @@ export const Onboarding = ({
                     >
                       <span className="attachment-drop-icon inline-block justify-around w-20 h-20 flex flex-col">
                         <input {...getInputProps()} />
-                        <FontAwesomeIcon icon={faFileImage} />
+                        <img src={DefaultImages.UNKNOWN_USER} className="w-20 h-20 object-cover rounded-full mx-auto" />
                       </span>
                     </div>
                   )}
@@ -282,42 +333,38 @@ export const Onboarding = ({
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
                 <div className="flex flex-col justify-around pl-2 pt-4">
-                  <Button
-                    type="light-outline"
-                    className="px-8"
-                    onClick={() => {
-                      updateStoredPasskey(currentPasskeyInfo!.credentialId, {
-                        credentialId: currentPasskeyInfo!.credentialId,
-                        address: currentPasskeyInfo!.address,
-                        publicKey: currentPasskeyInfo!.publicKey,
-                        displayName: displayName,
-                        completedOnboarding: false,
-                        pfpUrl: '/unknown.png',
-                      });
-                    }}
-                  >
-                    Skip Adding Photo
-                  </Button>
+                  <div className="flex flex-row justify-between ml-4">
+                    <Button
+                      type="light-outline"
+                      className="px-8"
+                      onClick={setPfpImage}
+                      >
+                      {t`Skip Adding Photo`}
+                    </Button>
+                    <div className="flex flex-row justify-between">
+                      <FontAwesomeIcon
+                          icon={faCircleInfo}
+                          className="text-white-400 hover:text-gray-300 cursor-pointer ml-2 my-auto"
+                          onMouseEnter={() => setTooltipVisible(true)}
+                          onMouseLeave={() => setTooltipVisible(false)}
+                          aria-label={t`If skipped, you'll get the default profile image and can set it later`}
+
+                      />
+                      <Tooltip
+                        arrow="left"
+                        visible={tooltipVisible}
+                      >
+                        <Trans>If skipped, you'll get the default profile image and can set it later</Trans>
+                      </Tooltip>
+                    </div>
+                  </div>
                   <Button
                     type="light"
                     disabled={!fileData || !!fileError}
                     className={`px-8 mt-4 ${!fileData || !!fileError ? 'btn-disabled-onboarding' : ''}`}
-                    onClick={() => {
-                      updateStoredPasskey(currentPasskeyInfo!.credentialId, {
-                        credentialId: currentPasskeyInfo!.credentialId,
-                        address: currentPasskeyInfo!.address,
-                        publicKey: currentPasskeyInfo!.publicKey,
-                        displayName: displayName,
-                        completedOnboarding: false,
-                        pfpUrl:
-                          'data:' +
-                          acceptedFiles[0].type +
-                          ';base64,' +
-                          Buffer.from(fileData!).toString('base64'),
-                      });
-                    }}
+                    onClick={setPfpImage}
                   >
-                    Save Contact Photo
+                    {t`Save Contact Photo`}
                   </Button>
                 </div>
                 <div className="grow"></div>
@@ -331,7 +378,7 @@ export const Onboarding = ({
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
                 <div className="w-[460px] py-4 text-center text-white">
-                  You're all set. Welcome to Quorum!
+                  {t`You're all set. Welcome to Quorum!`}
                 </div>
                 <div className="grow"></div>
               </div>
@@ -342,24 +389,17 @@ export const Onboarding = ({
                     type="light"
                     className="px-8"
                     onClick={() => {
-                      updateStoredPasskey(currentPasskeyInfo!.credentialId, {
-                        credentialId: currentPasskeyInfo!.credentialId,
-                        address: currentPasskeyInfo!.address,
-                        publicKey: currentPasskeyInfo!.publicKey,
-                        displayName: displayName,
-                        completedOnboarding: true,
-                        pfpUrl: currentPasskeyInfo.pfpUrl ?? '/unknown.png',
-                      });
+                      updateUserStoredInfo({ completedOnboarding: true })
                       setUser({
                         displayName: displayName,
                         state: 'online',
                         status: '',
-                        userIcon: currentPasskeyInfo.pfpUrl ?? '/unknown.png',
+                        userIcon: currentPasskeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER,
                         address: currentPasskeyInfo!.address,
                       });
                     }}
                   >
-                    Let's gooooooooo
+                    {t`Let's gooooooooo`}
                   </Button>
                 </div>
                 <div className="grow"></div>
