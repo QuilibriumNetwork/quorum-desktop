@@ -476,7 +476,7 @@ const SpaceEditor: React.FunctionComponent<{
                           <div className="absolute left-[340px]">
                             <ReactTooltip
                               id="repudiability-tooltip"
-                              content={t`Repudiability is a setting that makes conversations in this space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.`}
+                              content={t`Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.`}
                               place="bottom"
                               className="!w-[400px]"
                               anchorSelect="#repudiability-tooltip-icon"
@@ -655,8 +655,7 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                       <div className="pt-1 text-sm text-text-base">
                         <Trans>
-                          Add up to 50 custom emoji. Custom emojis can only be
-                          used within a space.
+                          Add up to 50 custom emoji. Custom emojis can only be used within a Space.
                         </Trans>
                         <br />
                         <br />
@@ -759,8 +758,7 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                       <div className="pt-1 text-sm text-text-base">
                         <Trans>
-                          Add up to 50 custom stickers. Custom stickers can only
-                          be used within a space.
+                          Add up to 50 custom stickers. Custom stickers can only be used within a Space.
                         </Trans>
                         <br />
                         <br />
@@ -983,10 +981,7 @@ const SpaceEditor: React.FunctionComponent<{
                             <Trans>Public Invite Link</Trans>
                             <div className="text-sm flex flex-col justify-around pt-2 max-w-[500px]">
                               <Trans>
-                                Public invite links allow anyone with access to
-                                the link join your space. Understand the risks
-                                of enabling this, and to whom and where you
-                                share the link.
+                                Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link.
                               </Trans>
                             </div>
                           </div>
@@ -1018,7 +1013,7 @@ const SpaceEditor: React.FunctionComponent<{
                                       anchorSelect="#current-invite-link-tooltip-icon"
                                       className="flex flex-col justify-around pt-3 pb-1 !w-[400px]"
                                       place="bottom"
-                                      content={t`This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current space members will not be removed from the space.`}
+                                      content={t`This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space.`}
                                     />
                                   </div>
                                 </div>

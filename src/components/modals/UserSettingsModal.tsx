@@ -310,7 +310,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         {t`Key Export`}
                       </div>
                       <div className="pt-1 text-sm text-text-base">
-                        {t`Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your space's Apex earnings.`}
+                        {t`Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings.`}
                       </div>
                       <div className="pt-4 pb-8 max-w-[100px]">
                         <Button
@@ -351,7 +351,7 @@ const UserSettingsModal: React.FunctionComponent<{
                                 className="w-[400px] absolute"
                                 visible={allowSyncTooltip}
                               >
-                                {t`When enabled, synchronizes your user data, spaces, and space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new spaces, although not the spaces you have joined.`}
+                                {t`When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined.`}
                               </Tooltip>
                             </div>
                           </div>
@@ -383,7 +383,7 @@ const UserSettingsModal: React.FunctionComponent<{
                                 className="w-[400px] absolute"
                                 visible={nonRepudiableTooltip}
                               >
-                                {t`When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of spaces, as this is a configuration option by the space owner.`}
+                                {t`When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner.`}
                               </Tooltip>
                             </div>
                           </div>

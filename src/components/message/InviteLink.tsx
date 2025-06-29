@@ -55,7 +55,7 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
       )}
       {space && (
         <div className="font-bold flex flex-col">
-          <div><Trans>You've been invited to join a space</Trans></div>
+          <div><Trans>You've been invited to join a Space</Trans></div>
           <div className="flex flex-row">
             <SpaceIcon
               noToggle={true}

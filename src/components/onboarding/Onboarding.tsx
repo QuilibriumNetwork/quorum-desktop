@@ -233,7 +233,7 @@ export const Onboarding = ({
                   display in your conversations, something easier to read than {currentPasskeyInfo?.address}
                   </Trans>
                 </p>
-                <p>{t`This information is only provided to the spaces you join.`}</p>
+                <p>{t`This information is only provided to the Spaces you join.`}</p>
               </div>
 
               <div className="grow"></div>
@@ -270,7 +270,7 @@ export const Onboarding = ({
                 <div className="grow"></div>
                 <div className="w-[460px] flex flex-col justify-center py-4 text-white">
                   <div className="mb-2 text-center">
-                    {t`Make your account uniquely yours – set a contact photo. This information is only provided to the spaces you join.`}
+                    {t`Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join.`}
                   </div>
                   <div className="mb-2 text-center">
                     {t`You can click the default image below to select it with your system's file dialog or drag and drop a new one.`}

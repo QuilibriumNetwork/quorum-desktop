@@ -113,8 +113,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
         />
         <div className="mt-4 text-xs text-subtle w-[320pt]">
           <Trans>
-            Default space settings provide the most typical chat experience, but
-            for higher privacy guarantees, review Advanced Settings.
+            Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings.
           </Trans>
         </div>
       </div>
@@ -136,7 +135,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               <div className="absolute left-[147px]">
                 <ReactTooltip
                   id="repudiability-tooltip"
-                  content={t`Repudiability is a setting that makes conversations in this space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.`}
+                  content={t`Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.`}
                   place="bottom"
                   className="!w-[400px]"
                   anchorSelect="#repudiability-tooltip-icon"
@@ -164,7 +163,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               <div className="absolute left-[216px]">
                 <ReactTooltip
                   id="public-tooltip"
-                  content={t`When this setting is enabled, invite links will automatically allow a user to join your space. When it is not enabled, users following an invite link will send you a request to join your space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public space link can allow anyone with the link to read messages on the space for the duration of the link being valid.`}
+                  content={t`When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid.`}
                   place="bottom"
                   className="!w-[400px]"
                   anchorSelect="#public-tooltip-icon"
@@ -206,7 +205,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               setCreating(false);
             }}
           >
-            {creating ? t`Creating space...` : t`Create Space`}
+            {creating ? t`Creating Space...` : t`Create Space`}
           </Button>
         </div>
         {!advancedMode && (

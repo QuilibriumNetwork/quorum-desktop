@@ -4979,7 +4979,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
             const hub = space.keys.find((k) => k.keyId == 'hub');
             if (!hub) {
-              console.warn(t`decrypted space with no known hub key`);
+              console.warn(t`Decrypted Space with no known hub key`);
               continue;
             }
 
@@ -4994,7 +4994,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               space.spaceId
             );
             if (!manifestPayload) {
-              console.warn(t`could not obtain manifest for space`);
+              console.warn(t`Could not obtain manifest for Space`);
               continue;
             }
 
@@ -5121,7 +5121,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               ),
             ]);
           } catch (e) {
-            console.error(t`could not add space`, e);
+            console.error(t`Could not add Space`, e);
           }
         }
       }
