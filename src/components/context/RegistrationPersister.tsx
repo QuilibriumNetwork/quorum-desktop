@@ -266,9 +266,7 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
               <div className="w-[460px] py-4 text-justify">
-                {t`Quorum was loaded while the browser was not in focus or a
-                passkey request was rejected. Please reauthorize to access your
-                messages.`}
+                {t`Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages.`}
               </div>
               <div className="grow"></div>
             </div>

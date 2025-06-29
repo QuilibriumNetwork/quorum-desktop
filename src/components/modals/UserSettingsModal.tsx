@@ -235,7 +235,13 @@ const UserSettingsModal: React.FunctionComponent<{
                     <div className="user-settings-info">
                       <div className="small-caps">{t`Account Address`}</div>
                       <div className="flex flex-row items-center text-base">
-                        {currentPasskeyInfo!.address} <CopyToClipboard className="ml-2" tooltipText={t`Copy address to clipboard`} text={currentPasskeyInfo!.address} tooltipLocation="top" />
+                        {currentPasskeyInfo!.address}{' '}
+                        <CopyToClipboard
+                          className="ml-2"
+                          tooltipText={t`Copy address to clipboard`}
+                          text={currentPasskeyInfo!.address}
+                          tooltipLocation="top"
+                        />
                       </div>
                     </div>
                   </div>
@@ -262,8 +268,7 @@ const UserSettingsModal: React.FunctionComponent<{
                     <div className="">
                       <div className="text-xl font-bold">{t`Privacy/Security`}</div>
                       <div className="pt-1 text-sm text-text-base">
-                        {t`Manage devices, and privacy conditions for messaging and
-                        synchronization.`}
+                        {t`Manage devices, and privacy conditions for messaging and synchronization.`}
                       </div>
                     </div>
                     <div className="user-settings-editor-actions">
@@ -305,9 +310,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         {t`Key Export`}
                       </div>
                       <div className="pt-1 text-sm text-text-base">
-                        {t`Export your key to a file by clicking this button. Do
-                        not share this file with anyone else or they can
-                        impersonate you or steal your space's Apex earnings.`}
+                        {t`Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your space's Apex earnings.`}
                       </div>
                       <div className="pt-4 pb-8 max-w-[100px]">
                         <Button
@@ -324,9 +327,7 @@ const UserSettingsModal: React.FunctionComponent<{
                       {t`Security`}
                     </div>
                     <div className="pt-1 text-sm text-text-base">
-                      {t`Adjust security-related settings, which may impact user
-                      experience but increase the security of your Quorum
-                      account.`}
+                      {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
                     </div>
                     <div className="user-settings-info">
                       <div className="flex flex-row justify-between pb-2">
@@ -350,12 +351,7 @@ const UserSettingsModal: React.FunctionComponent<{
                                 className="w-[400px] absolute"
                                 visible={allowSyncTooltip}
                               >
-                                {t`When enabled, synchronizes your user data,
-                                spaces, and space keys between devices. Enabling
-                                this increases metadata visibility of your
-                                account, which can reveal when you have joined
-                                new spaces, although not the spaces you have
-                                joined.`}
+                                {t`When enabled, synchronizes your user data, spaces, and space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new spaces, although not the spaces you have joined.`}
                               </Tooltip>
                             </div>
                           </div>
@@ -387,14 +383,7 @@ const UserSettingsModal: React.FunctionComponent<{
                                 className="w-[400px] absolute"
                                 visible={nonRepudiableTooltip}
                               >
-                                {t`When enabled, direct messages are not signed by
-                                your user key. This improves performance, but
-                                can allow the user you are communicating with to
-                                forge messages to you as if they came from you.
-                                They cannot forge messages to other people as if
-                                they came from you. This does not impact the
-                                repudiability of spaces, as this is a
-                                configuration option by the space owner.`}
+                                {t`When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of spaces, as this is a configuration option by the space owner.`}
                               </Tooltip>
                             </div>
                           </div>

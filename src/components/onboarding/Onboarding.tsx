@@ -168,10 +168,7 @@ export const Onboarding = ({
                   <b>{t`Important first-time user information:`}</b>
                 </p>
                 <p className="pb-4">
-                  {t`Quorum is peer-to-peer and end-to-end encrypted. This means
-                  your messages stay private, but equally important, they only
-                  live on the network for the time required to reach you and
-                  your recipients.`}
+                  {t`Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients.`}
                 </p>
                 <p className="pb-4">
                   {
@@ -180,30 +177,25 @@ export const Onboarding = ({
                       <>
                         <p className="pb-4">
 
-                        {t`When using Quorum on a browser, your messages are saved
-                        locally to your browser.`}
+                        {t`When using Quorum on a browser, your messages are saved locally to your browser.`}
                         </p>
                         <p className="font-bold">
                         <b>
-                          {t`If you clear your browser storage or switch browsers,
-                          your old messages and keys may disappear.`}
+                          {t`If you clear your browser storage or switch browsers, your old messages and keys may disappear.`}
                         </b>
                         </p>
                       </>
                     ) : (
                       <>
                         <p className="pb-4 font-bold">
-                          {t`If you uninstall the app from your device, you will lose your old
-                          messages and keys.`}
+                          {t`If you uninstall the app from your device, you will lose your old messages and keys.`}
                         </p>
                       </>
                     )
                   }
                 </p>
                 <p className="pb-4">
-                  {t`Click the button below to create a backup of your key info,
-                  because once it's gone, it's gone forever. You may be prompted
-                  to authenticate again.`}
+                  {t`Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again.`}
                 </p>
               </div>
 
@@ -278,8 +270,7 @@ export const Onboarding = ({
                 <div className="grow"></div>
                 <div className="w-[460px] flex flex-col justify-center py-4 text-white">
                   <div className="mb-2 text-center">
-                    {t`Make your account uniquely yours – set a contact photo. This
-                    information is only provided to the spaces you join.`}
+                    {t`Make your account uniquely yours – set a contact photo. This information is only provided to the spaces you join.`}
                   </div>
                   <div className="mb-2 text-center">
                     {t`You can click the default image below to select it with your system's file dialog or drag and drop a new one.`}

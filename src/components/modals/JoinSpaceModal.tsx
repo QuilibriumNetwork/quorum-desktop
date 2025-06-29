@@ -141,7 +141,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
       hideClose={pathname.startsWith('/invite')}
       visible={props.visible}
       onClose={props.onClose}
-      title={t`Join Space Title`}
+      title={t`Join Space`}
     >
       <div className="modal-join-space">
         <div>
@@ -149,7 +149,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
             className="w-[300pt]"
             value={lookup}
             onChange={(e) => setLookup(e.target.value)}
-            placeholder={t`Join Space Prompt`}
+            placeholder={t`Join Space`}
           />
         </div>
         <div className="modal-join-space-icon">

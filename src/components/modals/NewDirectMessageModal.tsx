@@ -31,14 +31,14 @@ const NewDirectMessageModal: React.FunctionComponent<
     <Modal
       visible={props.visible}
       onClose={props.onClose}
-      title={t`New Direct Message Title`}
+      title={t`New Direct Message`}
     >
       <div className="modal-new-direct-message">
         <div>
           <Input
             className="w-[400pt] !text-xs"
             onChange={(e) => lookupUser(e.target.value)}
-            placeholder={t`New Direct Message Prompt`}
+            placeholder={t`Enter a user's address to start messaging them.`}
           />
         </div>
         <React.Suspense
@@ -50,7 +50,7 @@ const NewDirectMessageModal: React.FunctionComponent<
                 disabled={!address}
                 onClick={() => {}}
               >
-                {t`New Direct Message Button`}
+                {t`New Direct Message`}
               </Button>
             </div>
           }
@@ -65,7 +65,7 @@ const NewDirectMessageModal: React.FunctionComponent<
               disabled={true}
               onClick={() => {}}
             >
-              {t`New Direct Message Button`}
+              {t`New Direct Message`}
             </Button>
           </div>
         )}

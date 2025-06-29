@@ -30,10 +30,10 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
     <Modal
       visible={props.visible}
       onClose={props.onClose}
-      title={t`Kick User Title`}
+      title={t`Kick User`}
     >
       <div className="flex flex-row justify-around pb-4 select-none w-[400px] cursor-default">
-        <div>{t`Kick User Text`}</div>
+        <div>{t`Use the below button to kick this user out of the Space`}</div>
       </div>
       <div className="mt-4 pt-5 mx-[-26px] px-4 rounded-b-xl bg-surface-4 mb-[-26px] h-16 flex flex-row-reverse justify-between">
         <div>
@@ -53,7 +53,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
               props.onClose();
             }}
           >
-            {t`Kick User`}
+            {t`Do it!`}
           </Button>
         </div>
       </div>
