@@ -1,0 +1,16 @@
+You are translating an app UI using gettext .po files.
+
+❗️Never translate the following words, even when used in a sentence:
+- Quorum
+- Quilibrium
+- Emoji
+- Emojis
+- useWebSocket
+- WebSocketProvider
+
+❗️Also, do NOT translate anything inside:
+- curly braces `{}` (e.g. {username})
+- angle brackets `<>` (e.g. <0>Click here</0>)
+
+Preserve formatting and placeholders exactly.
+Translate only the user-visible strings.
