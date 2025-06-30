@@ -13,6 +13,7 @@ const Button = (props) => {
   return (
     <>
       <span
+        id={props.id}
         className={
           baseClass +
           (props.icon ? ' quorum-button-icon' : '') +
@@ -36,6 +37,7 @@ const Button = (props) => {
 };
 
 Button.propTypes = {
+  id: PropTypes.string,
   type: PropTypes.oneOf([
     'primary',
     'secondary',

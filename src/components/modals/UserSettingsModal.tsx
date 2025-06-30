@@ -3,7 +3,7 @@ import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import Button from '../Button';
 import './UserSettingsModal.scss';
-import { useConfig, useRegistration } from '../../hooks';
+import { useRegistration } from '../../hooks';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../context/MessageDB';
@@ -14,9 +14,10 @@ import ThemeRadioGroup from '../ThemeRadioGroup';
 import { t } from '@lingui/core/macro';
 import CopyToClipboard from '../CopyToClipboard';
 import { DefaultImages } from '../../utils';
-import { dynamicActivate, } from '../../i18n/i18n.ts';
-import locales, { defaultLocale } from '../../i18n/locales';
+import { dynamicActivate, getUserLocale, saveUserLocale } from '../../i18n/i18n.ts';
+import locales from '../../i18n/locales';
 import useForceUpdate from '../hooks/forceUpdate';
+import ReactTooltip from '../ReactTooltip';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -53,24 +54,16 @@ const UserSettingsModal: React.FunctionComponent<{
   const [init, setInit] = React.useState<boolean>(false);
   const existingConfig = React.useRef<UserConfig | null>(null);
   const [allowSync, setAllowSync] = React.useState<boolean>(false);
-  const availableLocales = Object.keys(locales) as (keyof typeof locales)[];
-  const storedLang = localStorage.getItem('language') as
-    | keyof typeof locales
-    | null;
-  const [language, setLanguage] = React.useState(
-    storedLang && availableLocales.includes(storedLang)
-      ? storedLang
-      : defaultLocale
-  );
+  const [language, setLanguage] = React.useState(getUserLocale());
+  const [languageChanged, setLanguageChanged] = React.useState<boolean>(false);
 
   const forceUpdate = useForceUpdate();
 
   React.useEffect(() => {
+    console.log('Language changed to:', language);
     dynamicActivate(language);
-  }, []);
-
-  React.useEffect(() => {
-    // Force a re-render after language change
+    setLanguageChanged(true);
+    saveUserLocale(language);
     forceUpdate();
 
   }, [language]);
@@ -446,23 +439,38 @@ const UserSettingsModal: React.FunctionComponent<{
 
                   <div className="pt-4">
                     <div className="small-caps">{t`Language`}</div>
-                    <select
-                      className="quorum-input mt-2"
-                      value={language}
-                      onChange={async (e) => {
-                        const selected =
-                          e.target.value.toString() as keyof typeof locales;
-                        setLanguage(selected);
-                        localStorage.setItem('language', selected);
-                        await dynamicActivate(selected);
-                      }}
-                    >
-                      {Object.entries(locales).map(([code, label]) => (
-                        <option key={code} value={code}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="flex flex-row gap-2 items-center">
+                      <select
+                        className="quorum-input flex-1"
+                        value={language}
+                        onChange={async (e) => {
+                          const selected =
+                            e.target.value.toString() as keyof typeof locales;
+                          setLanguage(selected);
+                        }}
+                      >
+                        {Object.entries(locales).map(([code, label]) => (
+                          <option key={code} value={code}>
+                            {label}
+                          </option>
+                        ))}
+                      </select>
+                      <ReactTooltip
+                        id="language-refresh-tooltip"
+                        place="top"
+                        anchorSelect="#language-refresh-button"
+                        content={t`Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language.`}
+                        className="!bg-surface-5 !text-text-base !w-[400px]"
+                      />
+                      <Button
+                        id="language-refresh-button"
+                        type="secondary"
+                        disabled={!languageChanged}
+                        onClick={forceUpdate}
+                      >
+                        {t`Refresh`}
+                      </Button>
+                    </div>
                   </div>
                 </div>
               );

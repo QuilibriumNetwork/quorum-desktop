@@ -10,11 +10,8 @@ import { WebSocketProvider } from './components/context/WebsocketProvider.tsx';
 import { ThemeProvider } from './components/context/ThemeProvider.tsx';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { dynamicActivate } from './i18n/i18n.ts';
-import { defaultLocale } from './i18n/locales.ts';
-
-const locale = navigator.language.split('-')[0] || defaultLocale;
-dynamicActivate(locale);
+import { dynamicActivate, getUserLocale } from './i18n/i18n.ts';
+import React from 'react';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,22 +25,28 @@ const queryClient = new QueryClient({
   },
 });
 
-createRoot(document.getElementById('root')).render(
-  <BrowserRouter>
-    <PasskeysProvider fqAppPrefix="Quorum">
-      <QueryClientProvider client={queryClient}>
-        <QuorumApiClientProvider>
-          <WebSocketProvider>
-            <MessageDBProvider>
-              <ThemeProvider>
-                <I18nProvider i18n={i18n}>
+const Root = () => {
+  React.useEffect(() => {
+    dynamicActivate(getUserLocale());
+  }, []);
+
+  return (
+    <BrowserRouter>
+      <PasskeysProvider fqAppPrefix="Quorum">
+        <QueryClientProvider client={queryClient}>
+          <QuorumApiClientProvider>
+            <WebSocketProvider>
+              <MessageDBProvider>
+                <ThemeProvider>
                   <App />
-                </I18nProvider>
-              </ThemeProvider>
-            </MessageDBProvider>
-          </WebSocketProvider>
-        </QuorumApiClientProvider>
-      </QueryClientProvider>
-    </PasskeysProvider>
-  </BrowserRouter>
-);
+                </ThemeProvider>
+              </MessageDBProvider>
+            </WebSocketProvider>
+          </QuorumApiClientProvider>
+        </QueryClientProvider>
+      </PasskeysProvider>
+    </BrowserRouter>
+  )
+};
+
+createRoot(document.getElementById('root')).render(<Root />);
