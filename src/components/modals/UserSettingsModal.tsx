@@ -14,7 +14,7 @@ import ThemeRadioGroup from '../ThemeRadioGroup';
 import { t } from '@lingui/core/macro';
 import CopyToClipboard from '../CopyToClipboard';
 import { DefaultImages } from '../../utils';
-import { dynamicActivate, localeNames } from '../../i18n/i18n';
+import { dynamicActivate, localeNames } from '../../i18n/i18n.ts';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;

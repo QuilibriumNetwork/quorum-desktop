@@ -1,6 +1,5 @@
 import { defineConfig } from "@lingui/cli";
-
-import { localeNames, defaultLocale } from "./src/i18n/i18n";
+import { localeNames, defaultLocale } from "./src/i18n/i18n.ts";
 
 export default defineConfig({
   fallbackLocales: {
@@ -15,4 +14,5 @@ export default defineConfig({
       exclude: ["**/node_modules/*", "/dist", "/build", "/public", "/src/wasm", "/src/locales"]
     },
   ],
+  compileNamespace: "es",
 });
