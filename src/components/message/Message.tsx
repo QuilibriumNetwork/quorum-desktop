@@ -543,7 +543,7 @@ export const Message = ({
                           maxHeight: 300,
                           cursor: 'pointer',
                         }}
-                        className="rounded-lg hover:opacity-0 transition-opacity duration-200 cursor-pointer"
+                        className="rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer"
                         onClick={(e) => {
                           const img = e.currentTarget;
                           if (
