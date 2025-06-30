@@ -1,568 +1,648 @@
+#
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-06-20 10:50-0800\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: @lingui/cli\n"
-"Language: th\n"
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-20 10:50-0800\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: th\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
+"X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/Onboarding.tsx:84
 msgid "File cannot be larger than {maxFileSize}"
-msgstr ""
+msgstr "ไฟล์ไม่สามารถมีขนาดใหญ่กว่า {maxFileSize}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/Onboarding.tsx:282
-msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+msgid ""
+"Your profile image size must be {maxFileSize} or less and must be a PNG, "
+"JPG, or JPEG file extension."
 msgstr ""
+"ขนาดภาพโปรไฟล์ของคุณต้องไม่เกิน {maxFileSize} และต้องเป็นไฟล์นามสกุล PNG, "
+"JPG หรือ JPEG."
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:138
 msgid "{user} has joined"
-msgstr ""
+msgstr "{user} ได้เข้าร่วม"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:140
 msgid "{user} has left"
-msgstr ""
+msgstr "{user} ได้ออก"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:142
 msgid "{user} has been kicked"
-msgstr ""
+msgstr "{user} ถูกเตะ"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:263
 #: src/components/channel/Channel.tsx:313
 msgid "Replying to {user}"
-msgstr ""
+msgstr "กำลังตอบกลับ {user}"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:328
 msgid "Send a message to {user}"
-msgstr ""
+msgstr "ส่งข้อความไปยัง {user}"
 
 #. js-lingui-explicit-id
 #: src/components/channel/Channel.tsx:393
 msgid "Send a message to #{channel_name}"
-msgstr ""
+msgstr "ส่งข้อความไปยัง #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/channel/Channel.tsx:533
 msgid "{role} - {count}"
-msgstr ""
+msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/channel/Channel.tsx:561
 msgid "No Role - {count}"
-msgstr ""
+msgstr "ไม่มีบทบาท - {count}"
 
 #: src/components/modals/UserSettingsModal.tsx:251
 msgid "Account Address"
-msgstr ""
+msgstr "ที่อยู่บัญชี"
 
 #: src/components/channel/ChannelList.tsx:190
 msgid "Add Group"
-msgstr ""
+msgstr "เพิ่มกลุ่ม"
 
 #: src/components/channel/SpaceEditor.tsx:534
 msgid "Add Role"
-msgstr ""
+msgstr "เพิ่มบทบาท"
 
 #: src/components/navbar/ExpandableNavMenu.tsx:37
 msgid "Add Space"
-msgstr ""
+msgstr "เพิ่มพื้นที่"
 
 #: src/components/channel/SpaceEditor.tsx:657
-msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
+msgid ""
+"Add up to 50 custom emoji. Custom emojis can only be used within a Space."
 msgstr ""
+"เพิ่มอีโมจิแบบกำหนดเองได้สูงสุด 50 ตัว "
+"อีโมจิแบบกำหนดเองสามารถใช้ได้เฉพาะภายในพื้นที่เท่านั้น."
 
 #: src/components/channel/SpaceEditor.tsx:760
-msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space."
+msgid ""
+"Add up to 50 custom stickers. Custom stickers can only be used within a "
+"Space."
 msgstr ""
+"เพิ่มสติกเกอร์แบบกำหนดเองได้สูงสุด 50 ตัว "
+"สติกเกอร์แบบกำหนดเองสามารถใช้ได้เฉพาะภายในพื้นที่เท่านั้น."
 
 #: src/components/modals/UserSettingsModal.tsx:345
-msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
+msgid ""
+"Adjust security-related settings, which may impact user  experience but "
+"increase the security of your Quorum account."
 msgstr ""
+"ปรับแต่งการตั้งค่าที่เกี่ยวข้องกับความปลอดภัย "
+"ซึ่งอาจส่งผลต่อประสบการณ์ของผู้ใช้ แต่เพิ่มความปลอดภัยให้กับบัญชี Quorum "
+"ของคุณ."
 
 #: src/components/modals/CreateSpaceModal.tsx:219
 msgid "Advanced Settings"
-msgstr ""
+msgstr "การตั้งค่าขั้นสูง"
 
 #: src/components/modals/UserSettingsModal.tsx:213
 #: src/components/modals/UserSettingsModal.tsx:431
 msgid "Appearance"
-msgstr ""
+msgstr "รูปลักษณ์"
 
 #. placeholder {0}: space?.spaceName
 #: src/components/channel/LeaveSpace.tsx:30
-msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
+msgid ""
+"Are you sure you want to leave {0}? You won't be able to rejoin unless you "
+"are re-invited."
 msgstr ""
+"คุณแน่ใจหรือไม่ว่าต้องการออกจาก {0}? คุณจะไม่สามารถเข้าร่วมใหม่ได้ "
+"เว้นแต่จะได้รับการเชิญใหม่."
 
 #: src/components/user/UserOnlineStateIndicator.tsx:14
 msgid "Away"
-msgstr ""
+msgstr "ออกไป"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:16
 msgid "Busy"
-msgstr ""
+msgstr "ยุ่ง"
 
 #: src/components/channel/SpaceEditor.tsx:604
 msgid "Can delete messages?"
-msgstr ""
+msgstr "สามารถลบข้อความได้หรือไม่?"
 
 #: src/components/channel/LeaveSpace.tsx:39
 msgid "Cancel"
-msgstr ""
+msgstr "ยกเลิก"
 
 #: src/components/channel/ChannelEditor.tsx:116
 msgid "Channel Name"
-msgstr ""
+msgstr "ชื่อช่อง"
 
 #: src/components/channel/ChannelEditor.tsx:130
 msgid "Channel Topic"
-msgstr ""
+msgstr "หัวข้อช่อง"
 
 #: src/components/modals/UserSettingsModal.tsx:433
 msgid "Choose your preferred theme for Quorum."
-msgstr ""
+msgstr "เลือกธีมที่คุณต้องการสำหรับ Quorum."
 
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
-msgstr ""
+msgstr "คลิกที่ชื่อบทบาทและแท็กเพื่อแก้ไข."
 
 #: src/components/onboarding/Onboarding.tsx:198
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
+msgid ""
+"Click the button below to create a backup of your key info, because once "
+"it's gone, it's gone  forever. You may be prompted to authenticate again."
 msgstr ""
+"คลิกปุ่มด้านล่างเพื่อสร้างสำเนาสำรองของข้อมูลสำคัญของคุณ เพราะเมื่อมันหายไป "
+"มันจะหายไปตลอดกาล คุณอาจถูกขอให้ยืนยันตัวตนอีกครั้ง."
 
 #: src/components/ClickToCopyContent.tsx:24
 msgid "Click to copy"
-msgstr ""
+msgstr "คลิกเพื่อคัดลอก"
 
 #: src/components/channel/GroupEditor.tsx:104
 #: src/components/channel/ChannelEditor.tsx:152
 msgid "Confirm Deletion"
-msgstr ""
+msgstr "ยืนยันการลบ"
 
 #: src/components/Connecting.tsx:13
 msgid "Connecting"
-msgstr ""
+msgstr "กำลังเชื่อมต่อ"
 
 #: src/components/CopyToClipboard.tsx:71
 #: src/components/ClickToCopyContent.tsx:62
 msgid "Copied!"
-msgstr ""
+msgstr "คัดลอกแล้ว!"
 
 #: src/components/user/UserStatus.tsx:96
 #: src/components/modals/UserSettingsModal.tsx:256
 #: src/components/direct/DirectMessage.tsx:219
 msgid "Copy address to clipboard"
-msgstr ""
+msgstr "คัดลอกที่อยู่ไปยังคลิปบอร์ด"
 
 #: src/components/channel/SpaceEditor.tsx:1023
 msgid "Copy invite link to clipboard"
-msgstr ""
+msgstr "คัดลอกลิงก์เชิญไปยังคลิปบอร์ด"
 
 #: src/components/message/Message.tsx:360
 msgid "Copy message link"
-msgstr ""
+msgstr "คัดลอกลิงก์ข้อความ"
 
 #: src/components/CopyToClipboard.tsx:32
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "คัดลอกไปยังคลิปบอร์ด"
 
 #: src/components/context/MessageDB.tsx:5124
 msgid "Could not add Space"
-msgstr ""
+msgstr "ไม่สามารถเพิ่ม Space ได้"
 
 #: src/components/context/MessageDB.tsx:4997
 msgid "Could not obtain manifest for Space"
-msgstr ""
+msgstr "ไม่สามารถรับ manifest สำหรับ Space ได้"
 
 #: src/components/modals/JoinSpaceModal.tsx:118
 #: src/components/message/InviteLink.tsx:26
 msgid "Could not verify invite"
-msgstr ""
+msgstr "ไม่สามารถตรวจสอบเชิญได้"
 
 #: src/components/modals/CreateSpaceModal.tsx:78
 msgid "Create a Space"
-msgstr ""
+msgstr "สร้าง Space"
 
 #: src/components/onboarding/Login.tsx:61
 msgid "Create New Account"
-msgstr ""
+msgstr "สร้างบัญชีใหม่"
 
 #: src/components/modals/CreateSpaceModal.tsx:208
 msgid "Create Space"
-msgstr ""
+msgstr "สร้าง Space"
 
 #: src/components/modals/CreateSpaceModal.tsx:208
 msgid "Creating Space..."
-msgstr ""
+msgstr "กำลังสร้าง Space..."
 
 #: src/components/channel/SpaceEditor.tsx:1003
 msgid "Current Invite Link"
-msgstr ""
+msgstr "ลิงก์เชิญปัจจุบัน"
 
 #: src/components/context/MessageDB.tsx:4976
 msgid "decrypted space with no known config key"
-msgstr ""
+msgstr "พื้นที่ที่ถอดรหัสแล้วโดยไม่มีคีย์การกำหนดค่าที่รู้จัก"
 
 #: src/components/context/MessageDB.tsx:4982
 msgid "Decrypted Space with no known hub key"
-msgstr ""
+msgstr "พื้นที่ที่ถอดรหัสแล้วโดยไม่มีคีย์ฮับที่รู้จัก"
 
 #: src/components/channel/SpaceEditor.tsx:407
 msgid "Default Channel"
-msgstr ""
+msgstr "ช่องทางเริ่มต้น"
 
 #: src/components/modals/CreateSpaceModal.tsx:115
-msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
+msgid ""
+"Default Space settings provide the most typical chat experience, but for "
+"higher privacy guarantees, review Advanced Settings."
 msgstr ""
+"การตั้งค่า Space เริ่มต้นให้ประสบการณ์การแชทที่เป็นมาตรฐานที่สุด "
+"แต่เพื่อความเป็นส่วนตัวที่สูงขึ้น ให้ตรวจสอบการตั้งค่าขั้นสูง."
 
 #: src/components/channel/ChannelEditor.tsx:152
 msgid "Delete Channel"
-msgstr ""
+msgstr "ลบช่องทาง"
 
 #: src/components/channel/GroupEditor.tsx:104
 msgid "Delete Group"
-msgstr ""
+msgstr "ลบกลุ่ม"
 
 #: src/components/message/Message.tsx:376
 msgid "Delete message"
-msgstr ""
+msgstr "ลบข้อความ"
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
 msgid "Direct Messages"
-msgstr ""
+msgstr "ข้อความตรง"
 
 #: src/components/modals/UserSettingsModal.tsx:241
 msgid "Display Name"
-msgstr ""
+msgstr "ชื่อที่แสดง"
 
 #: src/components/modals/KickUserModal.tsx:56
 msgid "Do it!"
-msgstr ""
+msgstr "ทำเลย!"
 
 #: src/components/onboarding/Onboarding.tsx:157
 msgid "Drop your profile photo here"
-msgstr ""
+msgstr "วางรูปโปรไฟล์ของคุณที่นี่"
 
 #: src/components/user/UserStatus.tsx:70
 msgid "Edit Profile"
-msgstr ""
+msgstr "แก้ไขโปรไฟล์"
 
 #: src/components/channel/ChannelList.tsx:121
 msgid "Edit Space"
-msgstr ""
+msgstr "แก้ไข Space"
 
 #: src/components/channel/SpaceEditor.tsx:319
 #: src/components/channel/SpaceEditor.tsx:654
 msgid "Emojis"
-msgstr ""
+msgstr "Emojis"
 
 #: src/components/modals/UserSettingsModal.tsx:351
 msgid "Enable sync"
-msgstr ""
+msgstr "เปิดใช้งานการซิงค์"
 
 #: src/components/modals/CreateSpaceModal.tsx:111
 msgid "Enter a name for your new Space"
-msgstr ""
+msgstr "กรุณาใส่ชื่อสำหรับ Space ใหม่ของคุณ"
 
 #: src/components/modals/NewDirectMessageModal.tsx:41
 msgid "Enter a user's address to start messaging them."
-msgstr ""
+msgstr "กรุณาใส่ที่อยู่ของผู้ใช้เพื่อเริ่มส่งข้อความถึงพวกเขา"
 
 #: src/components/channel/SpaceEditor.tsx:958
 msgid "Enter Address Manually"
-msgstr ""
+msgstr "กรุณาใส่ที่อยู่ด้วยตนเอง"
 
 #: src/components/context/WebsocketProvider.tsx:90
 msgid "Error processing inbound:"
-msgstr ""
+msgstr "เกิดข้อผิดพลาดในการประมวลผลข้อมูลขาเข้า:"
 
 #: src/components/context/WebsocketProvider.tsx:109
 msgid "Error processing outbound:"
-msgstr ""
+msgstr "เกิดข้อผิดพลาดในการประมวลผลข้อมูลขาออก:"
 
 #: src/components/context/WebsocketProvider.tsx:114
 msgid "Error processing queue:"
-msgstr ""
+msgstr "เกิดข้อผิดพลาดในการประมวลผลคิว:"
 
 #: src/components/channel/SpaceEditor.tsx:876
 msgid "Existing Conversations"
-msgstr ""
+msgstr "การสนทนาที่มีอยู่"
 
 #: src/components/modals/UserSettingsModal.tsx:337
 msgid "Export"
-msgstr ""
+msgstr "ส่งออก"
 
 #: src/components/modals/UserSettingsModal.tsx:328
-msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
+msgid ""
+"Export your key to a file by clicking this button. Do not share this file "
+"with anyone else or they can impersonate you or steal your Space's Apex "
+"earnings."
 msgstr ""
+"ส่งออกกุญแจของคุณไปยังไฟล์โดยการคลิกปุ่มนี้ "
+"อย่าแชร์ไฟล์นี้กับใครมิฉะนั้นพวกเขาจะสามารถปลอมตัวคุณหรือขโมยรายได้ Apex ของ"
+" Space ของคุณได้"
 
 #: src/components/context/MessageDB.tsx:836
 msgid "Failed to decrypt message with any known state"
-msgstr ""
+msgstr "ไม่สามารถถอดรหัสข้อความด้วยสถานะที่รู้จักได้"
 
 #: src/components/context/WebsocketProvider.tsx:141
 msgid "Failed to parse WebSocket message:"
-msgstr ""
+msgstr "ไม่สามารถวิเคราะห์ข้อความ WebSocket ได้:"
 
 #: src/components/modals/CreateSpaceModal.tsx:55
 #: src/components/direct/DirectMessage.tsx:61
 #: src/components/channel/Channel.tsx:85
 msgid "File cannot be larger than 2MB"
-msgstr ""
+msgstr "ไฟล์ไม่สามารถมีขนาดใหญ่กว่า 2MB"
 
 #: src/components/onboarding/Onboarding.tsx:86
 #: src/components/modals/CreateSpaceModal.tsx:57
 #: src/components/direct/DirectMessage.tsx:63
 #: src/components/channel/Channel.tsx:87
 msgid "File rejected"
-msgstr ""
+msgstr "ไฟล์ถูกปฏิเสธ"
 
 #: src/components/context/MessageDB.tsx:2755
 msgid "general"
-msgstr ""
+msgstr "ทั่วไป"
 
 #: src/components/modals/UserSettingsModal.tsx:195
 #: src/components/channel/SpaceEditor.tsx:301
 msgid "General"
-msgstr ""
+msgstr "ทั่วไป"
 
 #: src/components/context/MessageDB.tsx:2756
 msgid "General Chat"
-msgstr ""
+msgstr "แชททั่วไป"
 
 #: src/components/channel/SpaceEditor.tsx:1059
 msgid "Generate New Invite Link"
-msgstr ""
+msgstr "สร้างลิงก์เชิญใหม่"
 
 #: src/components/channel/GroupEditor.tsx:82
 msgid "Group Name"
-msgstr ""
+msgstr "ชื่อกลุ่ม"
 
 #: src/components/onboarding/Onboarding.tsx:219
 msgid "I already saved mine"
-msgstr ""
+msgstr "ฉันได้บันทึกของฉันแล้ว"
 
 #: src/components/onboarding/Onboarding.tsx:341
 #: src/components/onboarding/Onboarding.tsx:348
 msgid "If skipped, you'll get the default profile image and can set it later"
-msgstr ""
+msgstr "ถ้าข้ามไป คุณจะได้รับภาพโปรไฟล์เริ่มต้นและสามารถตั้งค่าได้ในภายหลัง"
 
 #: src/components/onboarding/Onboarding.tsx:184
-msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
+msgid ""
+"If you clear your browser storage or switch browsers, your old messages and "
+"keys may disappear."
 msgstr ""
+"ถ้าคุณล้างที่เก็บข้อมูลของเบราว์เซอร์หรือเปลี่ยนเบราว์เซอร์ "
+"ข้อความและกุญแจเก่าของคุณอาจหายไป"
 
 #: src/components/onboarding/Onboarding.tsx:191
-msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+msgid ""
+"If you uninstall the app from your device, you will lose your old messages "
+"and keys."
 msgstr ""
+"ถ้าคุณถอนการติดตั้งแอปจากอุปกรณ์ของคุณ คุณจะสูญเสียข้อความและกุญแจเก่าของคุณ"
 
 #: src/components/onboarding/Login.tsx:74
 msgid "Import Existing Key"
-msgstr ""
+msgstr "นำเข้ากุญแจที่มีอยู่"
 
 #: src/components/onboarding/Onboarding.tsx:168
 msgid "Important first-time user information:"
-msgstr ""
+msgstr "ข้อมูลสำคัญสำหรับผู้ใช้ครั้งแรก:"
 
 #: src/components/context/MessageDB.tsx:1016
 msgid "invalid address for signature"
-msgstr ""
+msgstr "ที่อยู่ไม่ถูกต้องสำหรับลายเซ็น"
 
 #: src/components/context/MessageDB.tsx:4238
 #: src/components/context/MessageDB.tsx:4275
 #: src/components/context/MessageDB.tsx:4281
 #: src/components/context/MessageDB.tsx:4379
 msgid "invalid link"
-msgstr ""
+msgstr "ลิงก์ไม่ถูกต้อง"
 
 #: src/components/context/MessageDB.tsx:4744
 msgid "invalid message type"
-msgstr ""
+msgstr "ประเภทข้อความไม่ถูกต้อง"
 
 #: src/components/modals/JoinSpaceModal.tsx:89
 #: src/components/context/MessageDB.tsx:4243
 #: src/components/context/MessageDB.tsx:4342
 msgid "invalid response"
-msgstr ""
+msgstr "การตอบสนองไม่ถูกต้อง"
 
 #: src/components/channel/SpaceEditor.tsx:341
 #: src/components/channel/SpaceEditor.tsx:860
 msgid "Invites"
-msgstr ""
+msgstr "คำเชิญ"
 
 #: src/components/message/InviteLink.tsx:86
 msgid "Join"
-msgstr ""
+msgstr "เข้าร่วม"
 
 #: src/components/modals/JoinSpaceModal.tsx:144
 #: src/components/modals/JoinSpaceModal.tsx:152
 #: src/components/modals/JoinSpaceModal.tsx:191
 msgid "Join Space"
-msgstr ""
+msgstr "เข้าร่วม Space"
 
 #: src/components/message/InviteLink.tsx:85
 msgid "Joined"
-msgstr ""
+msgstr "เข้าร่วมแล้ว"
 
 #: src/components/modals/UserSettingsModal.tsx:325
 msgid "Key Export"
-msgstr ""
+msgstr "ส่งออกคีย์"
 
 #: src/components/user/UserProfile.tsx:321
 #: src/components/modals/KickUserModal.tsx:33
 msgid "Kick User"
-msgstr ""
+msgstr "เตะผู้ใช้"
 
 #: src/components/modals/UserSettingsModal.tsx:438
 msgid "Language"
-msgstr ""
+msgstr "ภาษา"
 
 #: src/components/channel/LeaveSpace.tsx:28
 #: src/components/channel/LeaveSpace.tsx:44
 #: src/components/channel/ChannelList.tsx:134
 msgid "Leave Space"
-msgstr ""
+msgstr "ออกจาก Space"
 
 #. placeholder {0}: currentPasskeyInfo?.address
 #: src/components/onboarding/Onboarding.tsx:232
-msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
+msgid ""
+"Let your friends know who you are! Pick a friendly name to display in your "
+"conversations, something easier to read than {0}"
 msgstr ""
+"ให้เพื่อนของคุณรู้ว่าคุณเป็นใคร! "
+"เลือกชื่อที่เป็นมิตรเพื่อแสดงในบทสนทนาของคุณ ซึ่งอ่านง่ายกว่าที่ {0}"
 
 #: src/components/onboarding/Onboarding.tsx:393
 msgid "Let's gooooooooo"
-msgstr ""
+msgstr "ไปกันเถอะ"
 
 #: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
-msgstr ""
+msgstr "กำลังบำรุงรักษา"
 
 #: src/components/onboarding/Onboarding.tsx:273
-msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
+msgid ""
+"Make your account uniquely yours – set a contact photo. This information is "
+"only provided to the Spaces you join."
 msgstr ""
+"ทำให้บัญชีของคุณเป็นเอกลักษณ์ – ตั้งค่าภาพโปรไฟล์ "
+"ติดต่อข้อมูลนี้จะถูกให้เฉพาะกับ Spaces ที่คุณเข้าร่วม"
 
 #: src/components/modals/UserSettingsModal.tsx:286
-msgid "Manage devices, and privacy conditions for messaging and synchronization."
+msgid ""
+"Manage devices, and privacy conditions for messaging and synchronization."
 msgstr ""
+"จัดการอุปกรณ์และเงื่อนไขความเป็นส่วนตัวสำหรับการส่งข้อความและการซิงโครไนซ์"
 
 #: src/components/channel/SpaceEditor.tsx:668
 #: src/components/channel/SpaceEditor.tsx:771
 msgid "Max file size: 256kB"
-msgstr ""
+msgstr "ขนาดไฟล์สูงสุด: 256kB"
 
 #: src/components/message/Message.tsx:435
-msgid "Message does not have a valid signature, this may not be from the sender"
-msgstr ""
+msgid ""
+"Message does not have a valid signature, this may not be from the sender"
+msgstr "ข้อความไม่มีลายเซ็นที่ถูกต้อง อาจไม่ใช่มาจากผู้ส่ง"
 
 #: src/components/message/Message.tsx:340
 msgid "More reactions"
-msgstr ""
+msgstr "ปฏิกิริยามากขึ้น"
 
 #: src/components/AddressLookup.tsx:26
 #: src/components/modals/NewDirectMessageModal.tsx:34
 #: src/components/modals/NewDirectMessageModal.tsx:53
 msgid "New Direct Message"
-msgstr ""
+msgstr "ข้อความตรงใหม่"
 
 #: src/components/modals/UserSettingsModal.tsx:383
 msgid "Non-repudiability"
-msgstr ""
+msgstr "ไม่สามารถปฏิเสธได้"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:18
 msgid "Offline"
-msgstr ""
+msgstr "ออฟไลน์"
 
 #: src/components/onboarding/Onboarding.tsx:144
 msgid "One of us, one of us!"
-msgstr ""
+msgstr "หนึ่งในเรา หนึ่งในเรา!"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:12
 msgid "Online"
-msgstr ""
+msgstr "ออนไลน์"
 
 #: src/components/onboarding/Onboarding.tsx:145
 msgid "Personalize your account"
-msgstr ""
+msgstr "ปรับแต่งบัญชีของคุณ"
 
 #: src/components/channel/SpaceEditor.tsx:458
 msgid "Privacy Settings"
-msgstr ""
+msgstr "การตั้งค่าความเป็นส่วนตัว"
 
 #: src/components/modals/UserSettingsModal.tsx:204
 #: src/components/modals/UserSettingsModal.tsx:284
 msgid "Privacy/Security"
-msgstr ""
+msgstr "ความเป็นส่วนตัว/ความปลอดภัย"
 
 #: src/components/channel/SpaceEditor.tsx:981
 msgid "Public Invite Link"
-msgstr ""
+msgstr "ลิงก์เชิญสาธารณะ"
 
 #: src/components/channel/SpaceEditor.tsx:983
-msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
+msgid ""
+"Public invite links allow anyone with access to the link join your Space. "
+"Understand the risks of enabling this, and to whom and where you share the "
+"link."
 msgstr ""
+"ลิงก์เชิญสาธารณะอนุญาตให้ใครก็ตามที่เข้าถึงลิงก์เข้าร่วม Space ของคุณ "
+"เข้าใจความเสี่ยงของการเปิดใช้งานนี้ และกับใครและที่ไหนที่คุณแชร์ลิงก์"
 
 #: src/components/Maintenance.tsx:28
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
+msgid ""
+"Quorum infrastructure is being deployed at this time. Please try refreshing,"
+" and check <0>https://status.quilibrium.com/</0> for updates."
 msgstr ""
+"โครงสร้างพื้นฐาน Quorum กำลังถูกติดตั้งในขณะนี้ กรุณาลองรีเฟรช และตรวจสอบ "
+"<0>https://status.quilibrium.com/</0> สำหรับการอัปเดต"
 
 #: src/components/onboarding/Onboarding.tsx:171
-msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
+msgid ""
+"Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
+"stay private, but equally important, they only live on the network for the "
+"time required to reach you and your recipients."
 msgstr ""
+"Quorum เป็นแบบ peer-to-peer และเข้ารหัสแบบ end-to-end "
+"ซึ่งหมายความว่าข้อความของคุณจะยังคงเป็นส่วนตัว แต่ที่สำคัญไม่แพ้กัน "
+"พวกเขาจะอยู่ในเครือข่ายเพียงระยะเวลาที่จำเป็นเพื่อไปถึงคุณและผู้รับของคุณ"
 
 #: src/components/context/RegistrationPersister.tsx:269
-msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
+msgid ""
+"Quorum was loaded while the browser was not in focus or a passkey request "
+"was rejected. Please reauthorize to access your messages."
 msgstr ""
+"Quorum ถูกโหลดในขณะที่เบราว์เซอร์ไม่ได้อยู่ในโฟกัสหรือคำขอรหัสผ่านถูกปฏิเสธ "
+"กรุณาอนุญาตใหม่เพื่อเข้าถึงข้อความของคุณ"
 
 #: src/components/context/RegistrationPersister.tsx:284
 msgid "Reauthorize"
-msgstr ""
+msgstr "อนุญาตใหม่"
 
 #: src/components/context/MessageDB.tsx:4946
 msgid "received config with invalid signature!"
-msgstr ""
+msgstr "ได้รับการกำหนดค่าที่มีลายเซ็นไม่ถูกต้อง!"
 
 #: src/components/Maintenance.tsx:41
 msgid "Refresh"
-msgstr ""
+msgstr "รีเฟรช"
 
 #: src/components/modals/UserSettingsModal.tsx:312
 msgid "Remove"
-msgstr ""
+msgstr "ลบ"
 
 #: src/components/message/Message.tsx:350
 msgid "Reply"
-msgstr ""
+msgstr "ตอบกลับ"
 
 #: src/components/modals/CreateSpaceModal.tsx:125
 #: src/components/channel/SpaceEditor.tsx:464
 msgid "Repudiability"
-msgstr ""
+msgstr "การปฏิเสธความรับผิด"
 
 #: src/components/modals/CreateSpaceModal.tsx:138
 #: src/components/channel/SpaceEditor.tsx:479
-msgid "Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
+msgid ""
+"Repudiability is a setting that makes conversations in this Space "
+"unverifiable as originating from the named sender. This can be useful in "
+"sensitive situations, but it also means others may forge messages that "
+"appear to come from you."
 msgstr ""
+"การปฏิเสธความรับผิดเป็นการตั้งค่าที่ทำให้การสนทนาใน Space "
+"นี้ไม่สามารถตรวจสอบได้ว่าเป็นการส่งจากผู้ส่งที่ระบุ "
+"นี่อาจมีประโยชน์ในสถานการณ์ที่ละเอียดอ่อน "
+"แต่ก็หมายความว่าคนอื่นอาจปลอมข้อความที่ดูเหมือนจะมาจากคุณ"
 
 #: src/components/channel/SpaceEditor.tsx:662
 #: src/components/channel/SpaceEditor.tsx:765
 msgid "Requirements:"
-msgstr ""
+msgstr "ข้อกำหนด:"
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
 msgid "Roles"
-msgstr ""
+msgstr "บทบาท"
 
 #: src/components/user/UserProfile.tsx:241
 #: src/components/modals/UserSettingsModal.tsx:272
@@ -574,110 +654,123 @@ msgstr ""
 #: src/components/channel/GroupEditor.tsx:109
 #: src/components/channel/ChannelEditor.tsx:157
 msgid "Save Changes"
-msgstr ""
+msgstr "บันทึกการเปลี่ยนแปลง"
 
 #: src/components/onboarding/Onboarding.tsx:358
 msgid "Save Contact Photo"
-msgstr ""
+msgstr "บันทึกภาพติดต่อ"
 
 #: src/components/onboarding/Onboarding.tsx:212
 msgid "Save User Key"
-msgstr ""
+msgstr "บันทึกกุญแจผู้ใช้"
 
 #: src/components/context/MessageDB.tsx:4904
 msgid "saved config is out of date"
-msgstr ""
+msgstr "การตั้งค่าที่บันทึกไว้ล้าสมัย"
 
 #: src/components/modals/UserSettingsModal.tsx:342
 msgid "Security"
-msgstr ""
+msgstr "ความปลอดภัย"
 
 #: src/components/modals/NewDirectMessageModal.tsx:68
 msgid "Send"
-msgstr ""
+msgstr "ส่ง"
 
 #: src/components/channel/SpaceEditor.tsx:1080
 msgid "Send Invite"
-msgstr ""
+msgstr "ส่งคำเชิญ"
 
 #: src/components/channel/SpaceEditor.tsx:863
-msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
+msgid ""
+"Send invites to people you've previously had conversations with. An invite "
+"button will appear in their inbox."
 msgstr ""
+"ส่งคำเชิญไปยังผู้คนที่คุณเคยสนทนาด้วยก่อนหน้านี้ "
+"ปุ่มคำเชิญจะปรากฏในกล่องจดหมายของพวกเขา"
 
 #: src/components/user/UserProfile.tsx:307
 msgid "Send Message"
-msgstr ""
+msgstr "ส่งข้อความ"
 
 #: src/components/context/RegistrationPersister.tsx:256
 msgid "Session Encrypted"
-msgstr ""
+msgstr "เซสชันเข้ารหัส"
 
 #: src/components/onboarding/Onboarding.tsx:257
 msgid "Set Display Name"
-msgstr ""
+msgstr "ตั้งค่าชื่อแสดง"
 
 #: src/components/modals/UserSettingsModal.tsx:187
 msgid "Settings"
-msgstr ""
+msgstr "การตั้งค่า"
 
 #: src/components/onboarding/Onboarding.tsx:333
 msgid "Skip Adding Photo"
-msgstr ""
+msgstr "ข้ามการเพิ่มภาพ"
 
 #: src/components/channel/SpaceEditor.tsx:380
 msgid "Space Banner"
-msgstr ""
+msgstr "แบนเนอร์ Space"
 
 #: src/components/modals/CreateSpaceModal.tsx:103
 msgid "Space Icon Attachment"
-msgstr ""
+msgstr "ไฟล์แนบไอคอน Space"
 
 #: src/components/channel/SpaceEditor.tsx:369
 msgid "Space Name"
-msgstr ""
+msgstr "ชื่อ Space"
 
 #: src/components/direct/EmptyDirectMessage.tsx:23
-msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
+msgid ""
+"Start with a message to a friend. Click on the add button next to the direct"
+" messages list."
 msgstr ""
+"เริ่มต้นด้วยข้อความถึงเพื่อน คลิกที่ปุ่มเพิ่มถัดจากรายการข้อความโดยตรง"
 
 #: src/components/user/UserProfile.tsx:186
 msgid "Status goes here"
-msgstr ""
+msgstr "สถานะไปที่นี่"
 
 #: src/components/channel/SpaceEditor.tsx:330
 #: src/components/channel/SpaceEditor.tsx:757
 msgid "Stickers"
-msgstr ""
+msgstr "สติกเกอร์"
 
 #. placeholder {0}: selectedUser?.displayName
 #: src/components/channel/SpaceEditor.tsx:971
 msgid "Successfully sent invite to {0}"
-msgstr ""
+msgstr "ส่งคำเชิญไปยัง {0} สำเร็จ"
 
 #: src/components/channel/SpaceEditor.tsx:665
 #: src/components/channel/SpaceEditor.tsx:768
 msgid "Supported types: PNG, JPG, GIF"
-msgstr ""
+msgstr "ประเภทที่รองรับ: PNG, JPG, GIF"
 
 #: src/components/message/InviteLink.tsx:53
 msgid "The invite link has expired or is invalid."
-msgstr ""
+msgstr "ลิงก์คำเชิญหมดอายุหรือไม่ถูกต้อง"
 
 #: src/components/onboarding/Onboarding.tsx:236
 msgid "This information is only provided to the Spaces you join."
-msgstr ""
+msgstr "ข้อมูลนี้จะถูกจัดเตรียมเฉพาะสำหรับ Spaces ที่คุณเข้าร่วม"
 
 #: src/components/channel/SpaceEditor.tsx:1016
-msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
+msgid ""
+"This link will not expire, but you can generate a new one at any time, which"
+" will invalidate the old link. Current Space members will not be removed "
+"from the Space."
 msgstr ""
+"ลิงก์นี้จะไม่หมดอายุ แต่คุณสามารถสร้างลิงก์ใหม่ได้ทุกเมื่อ "
+"ซึ่งจะทำให้ลิงก์เก่าไม่สามารถใช้งานได้ สมาชิก Space ปัจจุบันจะไม่ถูกลบออกจาก"
+" Space"
 
 #: src/components/message/Message.tsx:126
 msgid "Today at {timeFormatted}"
-msgstr ""
+msgstr "วันนี้เวลา {timeFormatted}"
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
-msgstr ""
+msgstr "ไม่ทราบ"
 
 #: src/components/direct/DirectMessage.tsx:130
 #: src/components/direct/DirectMessage.tsx:148
@@ -688,76 +781,119 @@ msgstr ""
 #: src/components/context/MessageDB.tsx:4853
 #: src/components/channel/Channel.tsx:192
 msgid "Unknown User"
-msgstr ""
+msgstr "ผู้ใช้ที่ไม่ทราบ"
 
 #: src/components/direct/DirectMessage.tsx:304
-msgid "Until you reply, this sender will not see your display name or profile picture"
-msgstr ""
+msgid ""
+"Until you reply, this sender will not see your display name or profile "
+"picture"
+msgstr "จนกว่าคุณจะตอบกลับ ผู้ส่งนี้จะไม่เห็นชื่อแสดงของคุณหรือรูปโปรไฟล์"
 
 #: src/components/channel/SpaceEditor.tsx:681
 msgid "Upload Emoji"
-msgstr ""
+msgstr "อัปโหลด Emoji"
 
 #: src/components/channel/SpaceEditor.tsx:784
 msgid "Upload Sticker"
-msgstr ""
+msgstr "อัปโหลดสติกเกอร์"
 
 #: src/components/modals/KickUserModal.tsx:36
 msgid "Use the below button to kick this user out of the Space"
-msgstr ""
+msgstr "ใช้ปุ่มด้านล่างเพื่อเตะผู้ใช้นี้ออกจาก Space"
 
 #: src/components/AddressLookup.tsx:13
 msgid "User does not exist"
-msgstr ""
+msgstr "ผู้ใช้ไม่มีอยู่"
 
 #: src/components/context/WebsocketProvider.tsx:196
 msgid "useWebSocket must be used within a WebSocketProvider"
-msgstr ""
+msgstr "useWebSocket ต้องถูกใช้ภายใน WebSocketProvider"
 
 #: src/components/onboarding/Onboarding.tsx:142
 msgid "Welcome to Quorum!"
-msgstr ""
+msgstr "ยินดีต้อนรับสู่ Quorum!"
 
 #: src/components/direct/EmptyDirectMessage.tsx:24
 msgid "What's on your mind today?"
-msgstr ""
+msgstr "วันนี้คุณคิดอะไรอยู่?"
 
 #: src/components/modals/UserSettingsModal.tsx:401
-msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
+msgid ""
+"When enabled, direct messages are not signed by your user key. This improves"
+" performance, but can allow the user you are communicating with to forge "
+"messages to you as if they came from you. They cannot forge messages to "
+"other people as if they came from you. This does not impact the "
+"repudiability of Spaces, as this is a configuration option by the Space "
+"owner."
 msgstr ""
+"เมื่อเปิดใช้งาน ข้อความตรงจะไม่ได้รับการลงนามโดยกุญแจผู้ใช้ของคุณ "
+"ซึ่งจะช่วยปรับปรุงประสิทธิภาพ "
+"แต่สามารถอนุญาตให้ผู้ใช้ที่คุณกำลังสื่อสารด้วยปลอมแปลงข้อความถึงคุณราวกับว่ามาจากคุณ"
+" พวกเขาไม่สามารถปลอมแปลงข้อความถึงคนอื่นราวกับว่ามาจากคุณ "
+"สิ่งนี้ไม่ส่งผลกระทบต่อความสามารถในการปฏิเสธของ Spaces "
+"เนื่องจากนี่เป็นตัวเลือกการกำหนดค่าจากเจ้าของ Space"
 
 #: src/components/modals/UserSettingsModal.tsx:369
-msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
+msgid ""
+"When enabled, synchronizes your user data, Spaces, and Space keys between "
+"devices. Enabling this increases metadata visibility of your account, which "
+"can reveal when you have joined new Spaces, although not the Spaces you have"
+" joined."
 msgstr ""
+"เมื่อเปิดใช้งาน จะซิงโครไนซ์ข้อมูลผู้ใช้ของคุณ Spaces และกุญแจ Space "
+"ระหว่างอุปกรณ์ "
+"การเปิดใช้งานนี้จะเพิ่มความสามารถในการมองเห็นข้อมูลเมตาของบัญชีของคุณ "
+"ซึ่งอาจเปิดเผยเมื่อคุณเข้าร่วม Spaces ใหม่ แม้ว่าจะไม่ใช่ Spaces "
+"ที่คุณเข้าร่วม"
 
 #: src/components/modals/CreateSpaceModal.tsx:166
-msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
+msgid ""
+"When this setting is enabled, invite links will automatically allow a user "
+"to join your Space. When it is not enabled, users following an invite link "
+"will send you a request to join your Space that you must manually approve. "
+"Public links require some key material to be present in the link – be aware "
+"that possession of a public Space link can allow anyone with the link to "
+"read messages on the Space for the duration of the link being valid."
 msgstr ""
+"เมื่อการตั้งค่านี้เปิดใช้งาน ลิงก์เชิญจะอนุญาตให้ผู้ใช้เข้าร่วม Space "
+"ของคุณโดยอัตโนมัติ เมื่อไม่ได้เปิดใช้งาน "
+"ผู้ใช้ที่ติดตามลิงก์เชิญจะส่งคำขอให้คุณเข้าร่วม Space "
+"ของคุณที่คุณต้องอนุมัติด้วยตนเอง "
+"ลิงก์สาธารณะต้องการให้มีวัสดุสำคัญบางอย่างอยู่ในลิงก์ - "
+"โปรดทราบว่าการมีลิงก์ Space "
+"สาธารณะสามารถอนุญาตให้ใครก็ตามที่มีลิงก์อ่านข้อความใน Space "
+"ได้ในระยะเวลาที่ลิงก์นั้นมีผล"
 
 #: src/components/onboarding/Onboarding.tsx:180
-msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+msgid ""
+"When using Quorum on a browser, your messages are saved locally to your "
+"browser."
 msgstr ""
+"เมื่อใช้ Quorum บนเบราว์เซอร์ ข้อความของคุณจะถูกบันทึกไว้ในเครื่องของคุณ"
 
 #: src/components/message/Message.tsx:129
 msgid "Yesterday at {timeFormatted}"
-msgstr ""
+msgstr "เมื่อวานนี้เวลา {timeFormatted}"
 
 #: src/components/direct/DirectMessage.tsx:468
 msgid "You"
-msgstr ""
+msgstr "คุณ"
 
 #: src/components/onboarding/Onboarding.tsx:276
-msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
+msgid ""
+"You can click the default image below to select it with your system's file "
+"dialog or drag and drop a new one."
 msgstr ""
+"คุณสามารถคลิกที่ภาพเริ่มต้นด้านล่างเพื่อเลือกด้วยกล่องโต้ตอบไฟล์ของระบบของคุณหรือลากและวางใหม่"
 
 #: src/components/onboarding/Onboarding.tsx:279
 msgid "You will be able to change this later in your settings."
-msgstr ""
+msgstr "คุณจะสามารถเปลี่ยนแปลงสิ่งนี้ได้ในภายหลังในการตั้งค่าของคุณ"
 
 #: src/components/onboarding/Onboarding.tsx:372
 msgid "You're all set. Welcome to Quorum!"
-msgstr ""
+msgstr "คุณพร้อมแล้ว ยินดีต้อนรับสู่ Quorum!"
 
 #: src/components/message/InviteLink.tsx:58
 msgid "You've been invited to join a Space"
-msgstr ""
+msgstr "คุณได้รับเชิญให้เข้าร่วม Space"

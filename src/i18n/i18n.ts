@@ -2,10 +2,10 @@
 // 1. Add the language to the localeNames object in this file
 // 2. Run yarn lingui:extract on the command line, which creates the messages file in the i18n/<new-locale>/messages.po file
 // 3. Translate the messages in the messages.po file
-// 5. Run yarn lingui:compile on the command line, which creates the messages.ts file in the i18n/<new-locale>/messages.ts file
-// 3. Import the messages file here
-// 4. Add the language to the locales object in this file
+// 4. Run yarn lingui:compile on the command line, which creates the messages.mjs file in the i18n/<new-locale>/messages.mjs file
+// 5. Add the language to the locales object in this file
 // 6. Commit the changes and push to the remote repository
+// Note: to translate via LLM you can use https://github.com/lamat1111/po-files-translator
 
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';

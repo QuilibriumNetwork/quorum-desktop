@@ -1,27 +1,32 @@
+#
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2025-06-16 16:26-0800\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: @lingui/cli\n"
-"Language: ru\n"
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-16 16:26-0800\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
+"X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/Onboarding.tsx:84
 msgid "File cannot be larger than {maxFileSize}"
-msgstr ""
+msgstr "Файл не может быть больше {maxFileSize}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/Onboarding.tsx:282
-msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+msgid ""
+"Your profile image size must be {maxFileSize} or less and must be a PNG, "
+"JPG, or JPEG file extension."
 msgstr ""
+"Размер вашего изображения профиля должен быть {maxFileSize} или меньше и "
+"должен иметь расширение файла PNG, JPG или JPEG."
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:138
@@ -42,7 +47,7 @@ msgstr "{user} был выгнан"
 #: src/components/direct/DirectMessage.tsx:263
 #: src/components/channel/Channel.tsx:313
 msgid "Replying to {user}"
-msgstr ""
+msgstr "Ответ на {user}"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:328
@@ -57,20 +62,20 @@ msgstr "Отправить сообщение для #{channel_name}"
 #. js-lingui-explicit-id
 #: src/components/channel/Channel.tsx:533
 msgid "{role} - {count}"
-msgstr ""
+msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/channel/Channel.tsx:561
 msgid "No Role - {count}"
-msgstr ""
+msgstr "Нет роли - {count}"
 
 #: src/components/modals/UserSettingsModal.tsx:251
 msgid "Account Address"
-msgstr ""
+msgstr "Адрес аккаунта"
 
 #: src/components/channel/ChannelList.tsx:190
 msgid "Add Group"
-msgstr ""
+msgstr "Добавить группу"
 
 #: src/components/channel/SpaceEditor.tsx:534
 msgid "Add Role"
@@ -78,19 +83,30 @@ msgstr "Добавить роль"
 
 #: src/components/navbar/ExpandableNavMenu.tsx:37
 msgid "Add Space"
-msgstr ""
+msgstr "Добавить пространство"
 
 #: src/components/channel/SpaceEditor.tsx:657
-msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
+msgid ""
+"Add up to 50 custom emoji. Custom emojis can only be used within a Space."
 msgstr ""
+"Добавьте до 50 пользовательских эмодзи. Пользовательские эмодзи могут "
+"использоваться только в пределах пространства."
 
 #: src/components/channel/SpaceEditor.tsx:760
-msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space."
+msgid ""
+"Add up to 50 custom stickers. Custom stickers can only be used within a "
+"Space."
 msgstr ""
+"Добавьте до 50 пользовательских стикеров. Пользовательские стикеры могут "
+"использоваться только в пределах пространства."
 
 #: src/components/modals/UserSettingsModal.tsx:345
-msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
+msgid ""
+"Adjust security-related settings, which may impact user  experience but "
+"increase the security of your Quorum account."
 msgstr ""
+"Настройте параметры безопасности, которые могут повлиять на пользовательский"
+" опыт, но увеличивают безопасность вашего аккаунта Quorum."
 
 #: src/components/modals/CreateSpaceModal.tsx:219
 msgid "Advanced Settings"
@@ -99,20 +115,24 @@ msgstr "Дополнительные настройки"
 #: src/components/modals/UserSettingsModal.tsx:213
 #: src/components/modals/UserSettingsModal.tsx:431
 msgid "Appearance"
-msgstr ""
+msgstr "Внешний вид"
 
 #. placeholder {0}: space?.spaceName
 #: src/components/channel/LeaveSpace.tsx:30
-msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
-msgstr "Вы уверены, что хотите покинуть {0}? Вы сможете присоединиться только после повторного приглашения."
+msgid ""
+"Are you sure you want to leave {0}? You won't be able to rejoin unless you "
+"are re-invited."
+msgstr ""
+"Вы уверены, что хотите покинуть {0}? Вы сможете присоединиться только после "
+"повторного приглашения."
 
 #: src/components/user/UserOnlineStateIndicator.tsx:14
 msgid "Away"
-msgstr ""
+msgstr "Отошел"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:16
 msgid "Busy"
-msgstr ""
+msgstr "Занят"
 
 #: src/components/channel/SpaceEditor.tsx:604
 msgid "Can delete messages?"
@@ -132,19 +152,24 @@ msgstr "Тема канала"
 
 #: src/components/modals/UserSettingsModal.tsx:433
 msgid "Choose your preferred theme for Quorum."
-msgstr ""
+msgstr "Выберите предпочитаемую тему для Quorum."
 
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
 msgstr "Нажмите на имя роли и тег, чтобы отредактировать их."
 
 #: src/components/onboarding/Onboarding.tsx:198
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
+msgid ""
+"Click the button below to create a backup of your key info, because once "
+"it's gone, it's gone  forever. You may be prompted to authenticate again."
 msgstr ""
+"Нажмите кнопку ниже, чтобы создать резервную копию вашей ключевой "
+"информации, потому что, как только она исчезнет, ее не вернуть навсегда. "
+"Возможно, вам будет предложено снова пройти аутентификацию."
 
 #: src/components/ClickToCopyContent.tsx:24
 msgid "Click to copy"
-msgstr ""
+msgstr "Нажмите, чтобы скопировать"
 
 #: src/components/channel/GroupEditor.tsx:104
 #: src/components/channel/ChannelEditor.tsx:152
@@ -158,17 +183,17 @@ msgstr "Подключение"
 #: src/components/CopyToClipboard.tsx:71
 #: src/components/ClickToCopyContent.tsx:62
 msgid "Copied!"
-msgstr ""
+msgstr "Скопировано!"
 
 #: src/components/user/UserStatus.tsx:96
 #: src/components/modals/UserSettingsModal.tsx:256
 #: src/components/direct/DirectMessage.tsx:219
 msgid "Copy address to clipboard"
-msgstr ""
+msgstr "Скопировать адрес в буфер обмена"
 
 #: src/components/channel/SpaceEditor.tsx:1023
 msgid "Copy invite link to clipboard"
-msgstr ""
+msgstr "Скопировать ссылку приглашения в буфер обмена"
 
 #: src/components/message/Message.tsx:360
 msgid "Copy message link"
@@ -176,15 +201,15 @@ msgstr "Скопируйте ссылку на сообщение"
 
 #: src/components/CopyToClipboard.tsx:32
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Скопировать в буфер обмена"
 
 #: src/components/context/MessageDB.tsx:5124
 msgid "Could not add Space"
-msgstr ""
+msgstr "Не удалось добавить пространство"
 
 #: src/components/context/MessageDB.tsx:4997
 msgid "Could not obtain manifest for Space"
-msgstr ""
+msgstr "Не удалось получить манифест для пространства"
 
 #: src/components/modals/JoinSpaceModal.tsx:118
 #: src/components/message/InviteLink.tsx:26
@@ -193,7 +218,7 @@ msgstr "Не удалось проверить приглашение"
 
 #: src/components/modals/CreateSpaceModal.tsx:78
 msgid "Create a Space"
-msgstr ""
+msgstr "Создать пространство"
 
 #: src/components/onboarding/Login.tsx:61
 msgid "Create New Account"
@@ -205,27 +230,32 @@ msgstr "Создай пространство"
 
 #: src/components/modals/CreateSpaceModal.tsx:208
 msgid "Creating Space..."
-msgstr ""
+msgstr "Создание пространства..."
 
 #: src/components/channel/SpaceEditor.tsx:1003
 msgid "Current Invite Link"
-msgstr ""
+msgstr "Текущая ссылка приглашения"
 
 #: src/components/context/MessageDB.tsx:4976
 msgid "decrypted space with no known config key"
-msgstr ""
+msgstr "расшифрованное пространство без известного ключа конфигурации"
 
 #: src/components/context/MessageDB.tsx:4982
 msgid "Decrypted Space with no known hub key"
-msgstr ""
+msgstr "Расшифрованное пространство без известного ключа хаба"
 
 #: src/components/channel/SpaceEditor.tsx:407
 msgid "Default Channel"
 msgstr "Канал по умолчанию"
 
 #: src/components/modals/CreateSpaceModal.tsx:115
-msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
+msgid ""
+"Default Space settings provide the most typical chat experience, but for "
+"higher privacy guarantees, review Advanced Settings."
 msgstr ""
+"Настройки пространства по умолчанию обеспечивают наиболее типичный опыт "
+"чата, но для более высоких гарантий конфиденциальности просмотрите "
+"Расширенные настройки."
 
 #: src/components/channel/ChannelEditor.tsx:152
 msgid "Delete Channel"
@@ -246,23 +276,23 @@ msgstr "Прямые сообщения"
 
 #: src/components/modals/UserSettingsModal.tsx:241
 msgid "Display Name"
-msgstr ""
+msgstr "Отображаемое имя"
 
 #: src/components/modals/KickUserModal.tsx:56
 msgid "Do it!"
-msgstr ""
+msgstr "Сделай это!"
 
 #: src/components/onboarding/Onboarding.tsx:157
 msgid "Drop your profile photo here"
-msgstr ""
+msgstr "Перетащите ваше фото профиля сюда"
 
 #: src/components/user/UserStatus.tsx:70
 msgid "Edit Profile"
-msgstr ""
+msgstr "Редактировать профиль"
 
 #: src/components/channel/ChannelList.tsx:121
 msgid "Edit Space"
-msgstr ""
+msgstr "Редактировать пространство"
 
 #: src/components/channel/SpaceEditor.tsx:319
 #: src/components/channel/SpaceEditor.tsx:654
@@ -271,15 +301,15 @@ msgstr "Emojis"
 
 #: src/components/modals/UserSettingsModal.tsx:351
 msgid "Enable sync"
-msgstr ""
+msgstr "Включить синхронизацию"
 
 #: src/components/modals/CreateSpaceModal.tsx:111
 msgid "Enter a name for your new Space"
-msgstr ""
+msgstr "Введите имя для вашего нового пространства"
 
 #: src/components/modals/NewDirectMessageModal.tsx:41
 msgid "Enter a user's address to start messaging them."
-msgstr ""
+msgstr "Введите адрес пользователя, чтобы начать с ним переписку."
 
 #: src/components/channel/SpaceEditor.tsx:958
 msgid "Enter Address Manually"
@@ -287,15 +317,15 @@ msgstr "Введите адрес вручную"
 
 #: src/components/context/WebsocketProvider.tsx:90
 msgid "Error processing inbound:"
-msgstr ""
+msgstr "Ошибка обработки входящего:"
 
 #: src/components/context/WebsocketProvider.tsx:109
 msgid "Error processing outbound:"
-msgstr ""
+msgstr "Ошибка обработки исходящего:"
 
 #: src/components/context/WebsocketProvider.tsx:114
 msgid "Error processing queue:"
-msgstr ""
+msgstr "Ошибка обработки очереди:"
 
 #: src/components/channel/SpaceEditor.tsx:876
 msgid "Existing Conversations"
@@ -303,19 +333,25 @@ msgstr "Существующие разговоры"
 
 #: src/components/modals/UserSettingsModal.tsx:337
 msgid "Export"
-msgstr ""
+msgstr "Экспорт"
 
 #: src/components/modals/UserSettingsModal.tsx:328
-msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
+msgid ""
+"Export your key to a file by clicking this button. Do not share this file "
+"with anyone else or they can impersonate you or steal your Space's Apex "
+"earnings."
 msgstr ""
+"Экспортируйте ваш ключ в файл, нажав эту кнопку. Не делитесь этим файлом ни "
+"с кем, иначе они могут выдать себя за вас или украсть ваши доходы Apex в "
+"пространстве."
 
 #: src/components/context/MessageDB.tsx:836
 msgid "Failed to decrypt message with any known state"
-msgstr ""
+msgstr "Не удалось расшифровать сообщение с известным состоянием"
 
 #: src/components/context/WebsocketProvider.tsx:141
 msgid "Failed to parse WebSocket message:"
-msgstr ""
+msgstr "Не удалось разобрать сообщение WebSocket:"
 
 #: src/components/modals/CreateSpaceModal.tsx:55
 #: src/components/direct/DirectMessage.tsx:61
@@ -332,7 +368,7 @@ msgstr "Файл отклонен"
 
 #: src/components/context/MessageDB.tsx:2755
 msgid "general"
-msgstr ""
+msgstr "общий"
 
 #: src/components/modals/UserSettingsModal.tsx:195
 #: src/components/channel/SpaceEditor.tsx:301
@@ -341,7 +377,7 @@ msgstr "Общий"
 
 #: src/components/context/MessageDB.tsx:2756
 msgid "General Chat"
-msgstr ""
+msgstr "Общий чат"
 
 #: src/components/channel/SpaceEditor.tsx:1059
 msgid "Generate New Invite Link"
@@ -359,14 +395,24 @@ msgstr "Я уже сохранил свой"
 #: src/components/onboarding/Onboarding.tsx:348
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr ""
+"Если пропустить, вы получите изображение профиля по умолчанию и сможете "
+"установить его позже"
 
 #: src/components/onboarding/Onboarding.tsx:184
-msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
+msgid ""
+"If you clear your browser storage or switch browsers, your old messages and "
+"keys may disappear."
 msgstr ""
+"Если вы очистите хранилище браузера или переключитесь на другой браузер, "
+"ваши старые сообщения и ключи могут исчезнуть."
 
 #: src/components/onboarding/Onboarding.tsx:191
-msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+msgid ""
+"If you uninstall the app from your device, you will lose your old messages "
+"and keys."
 msgstr ""
+"Если вы удалите приложение с вашего устройства, вы потеряете свои старые "
+"сообщения и ключи."
 
 #: src/components/onboarding/Login.tsx:74
 msgid "Import Existing Key"
@@ -378,24 +424,24 @@ msgstr "Важная информация для начинающих польз
 
 #: src/components/context/MessageDB.tsx:1016
 msgid "invalid address for signature"
-msgstr ""
+msgstr "недействительный адрес для подписи"
 
 #: src/components/context/MessageDB.tsx:4238
 #: src/components/context/MessageDB.tsx:4275
 #: src/components/context/MessageDB.tsx:4281
 #: src/components/context/MessageDB.tsx:4379
 msgid "invalid link"
-msgstr ""
+msgstr "недействительная ссылка"
 
 #: src/components/context/MessageDB.tsx:4744
 msgid "invalid message type"
-msgstr ""
+msgstr "недействительный тип сообщения"
 
 #: src/components/modals/JoinSpaceModal.tsx:89
 #: src/components/context/MessageDB.tsx:4243
 #: src/components/context/MessageDB.tsx:4342
 msgid "invalid response"
-msgstr ""
+msgstr "недействительный ответ"
 
 #: src/components/channel/SpaceEditor.tsx:341
 #: src/components/channel/SpaceEditor.tsx:860
@@ -418,7 +464,7 @@ msgstr "Уже Присоединился"
 
 #: src/components/modals/UserSettingsModal.tsx:325
 msgid "Key Export"
-msgstr ""
+msgstr "Экспорт ключа"
 
 #: src/components/user/UserProfile.tsx:321
 #: src/components/modals/KickUserModal.tsx:33
@@ -427,7 +473,7 @@ msgstr "Удалить пользователя"
 
 #: src/components/modals/UserSettingsModal.tsx:438
 msgid "Language"
-msgstr ""
+msgstr "Язык"
 
 #: src/components/channel/LeaveSpace.tsx:28
 #: src/components/channel/LeaveSpace.tsx:44
@@ -437,8 +483,12 @@ msgstr "Оставьте место"
 
 #. placeholder {0}: currentPasskeyInfo?.address
 #: src/components/onboarding/Onboarding.tsx:232
-msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
-msgstr "Пусть ваши друзья знают, кто вы! Выберите дружелюбное имя, которое будет отображаться в ваших беседах, что-нибудь более легкое для чтения, чем {0}"
+msgid ""
+"Let your friends know who you are! Pick a friendly name to display in your "
+"conversations, something easier to read than {0}"
+msgstr ""
+"Пусть ваши друзья знают, кто вы! Выберите дружелюбное имя, которое будет "
+"отображаться в ваших беседах, что-нибудь более легкое для чтения, чем {0}"
 
 #: src/components/onboarding/Onboarding.tsx:393
 msgid "Let's gooooooooo"
@@ -449,12 +499,20 @@ msgid "Maintenance in Progress"
 msgstr "Текущее обслуживание"
 
 #: src/components/onboarding/Onboarding.tsx:273
-msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
+msgid ""
+"Make your account uniquely yours – set a contact photo. This information is "
+"only provided to the Spaces you join."
 msgstr ""
+"Сделайте вашу учетную запись уникальной – установите фото контакта. Эта "
+"информация предоставляется только пространствам, в которые вы "
+"присоединяетесь."
 
 #: src/components/modals/UserSettingsModal.tsx:286
-msgid "Manage devices, and privacy conditions for messaging and synchronization."
+msgid ""
+"Manage devices, and privacy conditions for messaging and synchronization."
 msgstr ""
+"Управляйте устройствами и условиями конфиденциальности для обмена "
+"сообщениями и синхронизации."
 
 #: src/components/channel/SpaceEditor.tsx:668
 #: src/components/channel/SpaceEditor.tsx:771
@@ -462,8 +520,10 @@ msgid "Max file size: 256kB"
 msgstr "Максимальный размер файла: 256 кБ"
 
 #: src/components/message/Message.tsx:435
-msgid "Message does not have a valid signature, this may not be from the sender"
+msgid ""
+"Message does not have a valid signature, this may not be from the sender"
 msgstr ""
+"Сообщение не имеет действительной подписи, это может быть не от отправителя"
 
 #: src/components/message/Message.tsx:340
 msgid "More reactions"
@@ -477,11 +537,11 @@ msgstr "Новое прямое сообщение"
 
 #: src/components/modals/UserSettingsModal.tsx:383
 msgid "Non-repudiability"
-msgstr ""
+msgstr "Неопровержимость"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:18
 msgid "Offline"
-msgstr ""
+msgstr "Оффлайн"
 
 #: src/components/onboarding/Onboarding.tsx:144
 msgid "One of us, one of us!"
@@ -489,7 +549,7 @@ msgstr "Один из нас, один из нас!"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:12
 msgid "Online"
-msgstr ""
+msgstr "Онлайн"
 
 #: src/components/onboarding/Onboarding.tsx:145
 msgid "Personalize your account"
@@ -502,35 +562,57 @@ msgstr "Настройки конфиденциальности"
 #: src/components/modals/UserSettingsModal.tsx:204
 #: src/components/modals/UserSettingsModal.tsx:284
 msgid "Privacy/Security"
-msgstr ""
+msgstr "Конфиденциальность/Безопасность"
 
 #: src/components/channel/SpaceEditor.tsx:981
 msgid "Public Invite Link"
 msgstr "Ссылка для публичного приглашения"
 
 #: src/components/channel/SpaceEditor.tsx:983
-msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
+msgid ""
+"Public invite links allow anyone with access to the link join your Space. "
+"Understand the risks of enabling this, and to whom and where you share the "
+"link."
 msgstr ""
+"Публичные ссылки для приглашения позволяют любому, у кого есть доступ к "
+"ссылке, присоединиться к вашему Пространству. Поймите риски, связанные с "
+"включением этого, и кому и где вы делитесь ссылкой."
 
 #: src/components/Maintenance.tsx:28
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
-msgstr "Инфраструктура кворума в данный момент развертывается. Пожалуйста, попробуйте обновить и проверьте <0>https://status.quilibrium.com/</0> на наличие обновлений."
+msgid ""
+"Quorum infrastructure is being deployed at this time. Please try refreshing,"
+" and check <0>https://status.quilibrium.com/</0> for updates."
+msgstr ""
+"Инфраструктура кворума в данный момент развертывается. Пожалуйста, "
+"попробуйте обновить и проверьте <0>https://status.quilibrium.com/</0> на "
+"наличие обновлений."
 
 #: src/components/onboarding/Onboarding.tsx:171
-msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
+msgid ""
+"Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
+"stay private, but equally important, they only live on the network for the "
+"time required to reach you and your recipients."
 msgstr ""
+"Quorum является пиринговым и сквозным шифрованным. Это означает, что ваши "
+"сообщения остаются конфиденциальными, но не менее важно, что они существуют "
+"в сети только на время, необходимое для достижения вас и ваших получателей."
 
 #: src/components/context/RegistrationPersister.tsx:269
-msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
+msgid ""
+"Quorum was loaded while the browser was not in focus or a passkey request "
+"was rejected. Please reauthorize to access your messages."
 msgstr ""
+"Quorum был загружен, когда браузер не был в фокусе или запрос на ключ "
+"доступа был отклонен. Пожалуйста, повторно авторизуйтесь, чтобы получить "
+"доступ к вашим сообщениям."
 
 #: src/components/context/RegistrationPersister.tsx:284
 msgid "Reauthorize"
-msgstr ""
+msgstr "Повторная авторизация"
 
 #: src/components/context/MessageDB.tsx:4946
 msgid "received config with invalid signature!"
-msgstr ""
+msgstr "получена конфигурация с недействительной подписью!"
 
 #: src/components/Maintenance.tsx:41
 msgid "Refresh"
@@ -538,7 +620,7 @@ msgstr "Обновление"
 
 #: src/components/modals/UserSettingsModal.tsx:312
 msgid "Remove"
-msgstr ""
+msgstr "Удалить"
 
 #: src/components/message/Message.tsx:350
 msgid "Reply"
@@ -551,8 +633,17 @@ msgstr "Repudiability"
 
 #: src/components/modals/CreateSpaceModal.tsx:138
 #: src/components/channel/SpaceEditor.tsx:479
-msgid "Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
+msgid ""
+"Repudiability is a setting that makes conversations in this Space "
+"unverifiable as originating from the named sender. This can be useful in "
+"sensitive situations, but it also means others may forge messages that "
+"appear to come from you."
 msgstr ""
+"Отказоустойчивость — это настройка, которая делает разговоры в этом "
+"Пространстве недостоверными как исходящие от указанного отправителя. Это "
+"может быть полезно в чувствительных ситуациях, но это также означает, что "
+"другие могут подделывать сообщения, которые выглядят так, как будто они "
+"пришли от вас."
 
 #: src/components/channel/SpaceEditor.tsx:662
 #: src/components/channel/SpaceEditor.tsx:765
@@ -586,31 +677,35 @@ msgstr "Сохранить ключ пользователя"
 
 #: src/components/context/MessageDB.tsx:4904
 msgid "saved config is out of date"
-msgstr ""
+msgstr "сохраненная конфигурация устарела"
 
 #: src/components/modals/UserSettingsModal.tsx:342
 msgid "Security"
-msgstr ""
+msgstr "Безопасность"
 
 #: src/components/modals/NewDirectMessageModal.tsx:68
 msgid "Send"
-msgstr ""
+msgstr "Отправить"
 
 #: src/components/channel/SpaceEditor.tsx:1080
 msgid "Send Invite"
 msgstr "Отправить приглашение"
 
 #: src/components/channel/SpaceEditor.tsx:863
-msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
-msgstr "Отправляйте приглашения людям, с которыми вы ранее общались. Кнопка приглашения появится в их почтовом ящике."
+msgid ""
+"Send invites to people you've previously had conversations with. An invite "
+"button will appear in their inbox."
+msgstr ""
+"Отправляйте приглашения людям, с которыми вы ранее общались. Кнопка "
+"приглашения появится в их почтовом ящике."
 
 #: src/components/user/UserProfile.tsx:307
 msgid "Send Message"
-msgstr ""
+msgstr "Отправить сообщение"
 
 #: src/components/context/RegistrationPersister.tsx:256
 msgid "Session Encrypted"
-msgstr ""
+msgstr "Сессия зашифрована"
 
 #: src/components/onboarding/Onboarding.tsx:257
 msgid "Set Display Name"
@@ -618,11 +713,11 @@ msgstr "Установить отображаемое имя"
 
 #: src/components/modals/UserSettingsModal.tsx:187
 msgid "Settings"
-msgstr ""
+msgstr "Настройки"
 
 #: src/components/onboarding/Onboarding.tsx:333
 msgid "Skip Adding Photo"
-msgstr ""
+msgstr "Пропустить добавление фото"
 
 #: src/components/channel/SpaceEditor.tsx:380
 msgid "Space Banner"
@@ -637,12 +732,16 @@ msgid "Space Name"
 msgstr "Имя пространства"
 
 #: src/components/direct/EmptyDirectMessage.tsx:23
-msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
+msgid ""
+"Start with a message to a friend. Click on the add button next to the direct"
+" messages list."
 msgstr ""
+"Начните с сообщения другу. Нажмите на кнопку добавления рядом со списком "
+"прямых сообщений."
 
 #: src/components/user/UserProfile.tsx:186
 msgid "Status goes here"
-msgstr ""
+msgstr "Статус будет здесь"
 
 #: src/components/channel/SpaceEditor.tsx:330
 #: src/components/channel/SpaceEditor.tsx:757
@@ -666,10 +765,18 @@ msgstr "Срок действия ссылки на приглашение ис�
 #: src/components/onboarding/Onboarding.tsx:236
 msgid "This information is only provided to the Spaces you join."
 msgstr ""
+"Эта информация предоставляется только для Пространств, в которые вы "
+"присоединяетесь."
 
 #: src/components/channel/SpaceEditor.tsx:1016
-msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
+msgid ""
+"This link will not expire, but you can generate a new one at any time, which"
+" will invalidate the old link. Current Space members will not be removed "
+"from the Space."
 msgstr ""
+"Эта ссылка не истечет, но вы можете сгенерировать новую в любое время, что "
+"сделает старую ссылку недействительной. Текущие участники Пространства не "
+"будут удалены из Пространства."
 
 #: src/components/message/Message.tsx:126
 msgid "Today at {timeFormatted}"
@@ -677,7 +784,7 @@ msgstr "Сегодня в {timeFormatted}"
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
-msgstr ""
+msgstr "Неизвестно"
 
 #: src/components/direct/DirectMessage.tsx:130
 #: src/components/direct/DirectMessage.tsx:148
@@ -691,8 +798,12 @@ msgid "Unknown User"
 msgstr "Неизвестный пользователь"
 
 #: src/components/direct/DirectMessage.tsx:304
-msgid "Until you reply, this sender will not see your display name or profile picture"
+msgid ""
+"Until you reply, this sender will not see your display name or profile "
+"picture"
 msgstr ""
+"Пока вы не ответите, этот отправитель не увидит ваше отображаемое имя или "
+"фотографию профиля"
 
 #: src/components/channel/SpaceEditor.tsx:681
 msgid "Upload Emoji"
@@ -705,14 +816,15 @@ msgstr "Загрузить наклейку"
 #: src/components/modals/KickUserModal.tsx:36
 msgid "Use the below button to kick this user out of the Space"
 msgstr ""
+"Используйте кнопку ниже, чтобы выгнать этого пользователя из Пространства"
 
 #: src/components/AddressLookup.tsx:13
 msgid "User does not exist"
-msgstr ""
+msgstr "Пользователь не существует"
 
 #: src/components/context/WebsocketProvider.tsx:196
 msgid "useWebSocket must be used within a WebSocketProvider"
-msgstr ""
+msgstr "useWebSocket должен использоваться внутри WebSocketProvider"
 
 #: src/components/onboarding/Onboarding.tsx:142
 msgid "Welcome to Quorum!"
@@ -720,23 +832,62 @@ msgstr "Добро пожаловать в Quorum!"
 
 #: src/components/direct/EmptyDirectMessage.tsx:24
 msgid "What's on your mind today?"
-msgstr ""
+msgstr "О чем вы сегодня думаете?"
 
 #: src/components/modals/UserSettingsModal.tsx:401
-msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
+msgid ""
+"When enabled, direct messages are not signed by your user key. This improves"
+" performance, but can allow the user you are communicating with to forge "
+"messages to you as if they came from you. They cannot forge messages to "
+"other people as if they came from you. This does not impact the "
+"repudiability of Spaces, as this is a configuration option by the Space "
+"owner."
 msgstr ""
+"Когда включено, прямые сообщения не подписываются вашим пользовательским "
+"ключом. Это улучшает производительность, но может позволить пользователю, с "
+"которым вы общаетесь, подделывать сообщения к вам так, как будто они пришли "
+"от вас. Они не могут подделывать сообщения к другим людям так, как будто они"
+" пришли от вас. Это не влияет на отказоустойчивость Пространств, так как это"
+" опция конфигурации владельца Пространства."
 
 #: src/components/modals/UserSettingsModal.tsx:369
-msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
+msgid ""
+"When enabled, synchronizes your user data, Spaces, and Space keys between "
+"devices. Enabling this increases metadata visibility of your account, which "
+"can reveal when you have joined new Spaces, although not the Spaces you have"
+" joined."
 msgstr ""
+"Когда включено, синхронизирует ваши пользовательские данные, Пространства и "
+"ключи Пространства между устройствами. Включение этого увеличивает видимость"
+" метаданных вашей учетной записи, что может раскрыть, когда вы "
+"присоединились к новым Пространствам, хотя не к тем Пространствам, к которым"
+" вы присоединились."
 
 #: src/components/modals/CreateSpaceModal.tsx:166
-msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
+msgid ""
+"When this setting is enabled, invite links will automatically allow a user "
+"to join your Space. When it is not enabled, users following an invite link "
+"will send you a request to join your Space that you must manually approve. "
+"Public links require some key material to be present in the link – be aware "
+"that possession of a public Space link can allow anyone with the link to "
+"read messages on the Space for the duration of the link being valid."
 msgstr ""
+"Когда эта настройка включена, ссылки для приглашения автоматически позволят "
+"пользователю присоединиться к вашему Пространству. Когда она не включена, "
+"пользователи, следуя по ссылке приглашения, отправят вам запрос на "
+"присоединение к вашему Пространству, который вы должны вручную одобрить. "
+"Публичные ссылки требуют, чтобы некоторые ключевые материалы были "
+"присутствуют в ссылке – имейте в виду, что обладание публичной ссылкой "
+"Пространства может позволить любому, у кого есть ссылка, читать сообщения в "
+"Пространстве на время действия ссылки."
 
 #: src/components/onboarding/Onboarding.tsx:180
-msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+msgid ""
+"When using Quorum on a browser, your messages are saved locally to your "
+"browser."
 msgstr ""
+"При использовании Quorum в браузере ваши сообщения сохраняются локально в "
+"вашем браузере."
 
 #: src/components/message/Message.tsx:129
 msgid "Yesterday at {timeFormatted}"
@@ -744,15 +895,20 @@ msgstr "Вчера в {timeFormatted}"
 
 #: src/components/direct/DirectMessage.tsx:468
 msgid "You"
-msgstr ""
+msgstr "Вы\""
 
 #: src/components/onboarding/Onboarding.tsx:276
-msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
+msgid ""
+"You can click the default image below to select it with your system's file "
+"dialog or drag and drop a new one."
 msgstr ""
+"Вы можете щелкнуть на изображение по умолчанию ниже, чтобы выбрать его с "
+"помощью диалогового окна файлов вашей системы или перетащить и вставить "
+"новое.\""
 
 #: src/components/onboarding/Onboarding.tsx:279
 msgid "You will be able to change this later in your settings."
-msgstr ""
+msgstr "Вы сможете изменить это позже в ваших настройках.\""
 
 #: src/components/onboarding/Onboarding.tsx:372
 msgid "You're all set. Welcome to Quorum!"
@@ -760,4 +916,4 @@ msgstr "Все готово. Добро пожаловать в Quorum!"
 
 #: src/components/message/InviteLink.tsx:58
 msgid "You've been invited to join a Space"
-msgstr ""
+msgstr "Вас пригласили присоединиться к Space"
