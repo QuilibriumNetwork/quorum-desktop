@@ -12,4 +12,10 @@ You are translating an app UI using gettext .po files.
 - curly braces `{}` (e.g. {username})
 - angle brackets `<>` (e.g. <0>Click here</0>)
 
-Preserve formatting and placeholders exactly. Respect all uppercases (the word "Space" must remain in uppercase when translated). Do not output comments or notes.
+Preserve formatting and placeholders exactly.
+Respect all capitalization (e.g. "Space" must remain capitalized).
+⚠️ Output ONLY the translations.
+⚠️ Return one translation per line, **in the exact same order**, no numbering, no bullet points, no blank lines.
+
+If the language code is `en-PI`, use Pirate English: humorous nautical slang, pirate-style grammar, creative expressions. Be playful but preserve meaning.
+
