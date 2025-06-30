@@ -14,7 +14,9 @@ import ThemeRadioGroup from '../ThemeRadioGroup';
 import { t } from '@lingui/core/macro';
 import CopyToClipboard from '../CopyToClipboard';
 import { DefaultImages } from '../../utils';
-import { dynamicActivate, localeNames } from '../../i18n/i18n.ts';
+import { dynamicActivate, } from '../../i18n/i18n.ts';
+import locales, { defaultLocale } from '../../i18n/locales';
+import useForceUpdate from '../hooks/forceUpdate';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -51,20 +53,28 @@ const UserSettingsModal: React.FunctionComponent<{
   const [init, setInit] = React.useState<boolean>(false);
   const existingConfig = React.useRef<UserConfig | null>(null);
   const [allowSync, setAllowSync] = React.useState<boolean>(false);
-  const availableLocales = Object.keys(
-    localeNames
-  ) as (keyof typeof localeNames)[];
+  const availableLocales = Object.keys(locales) as (keyof typeof locales)[];
   const storedLang = localStorage.getItem('language') as
-    | keyof typeof localeNames
+    | keyof typeof locales
     | null;
   const [language, setLanguage] = React.useState(
     storedLang && availableLocales.includes(storedLang)
       ? storedLang
-      : availableLocales[0]
+      : defaultLocale
   );
+
+  const forceUpdate = useForceUpdate();
+
   React.useEffect(() => {
     dynamicActivate(language);
   }, []);
+
+  React.useEffect(() => {
+    // Force a re-render after language change
+    forceUpdate();
+
+  }, [language]);
+
   const [allowSyncTooltip, setAllowSyncTooltip] =
     React.useState<boolean>(false);
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
@@ -441,13 +451,13 @@ const UserSettingsModal: React.FunctionComponent<{
                       value={language}
                       onChange={async (e) => {
                         const selected =
-                          e.target.value.toString() as keyof typeof localeNames;
+                          e.target.value.toString() as keyof typeof locales;
                         setLanguage(selected);
                         localStorage.setItem('language', selected);
                         await dynamicActivate(selected);
                       }}
                     >
-                      {Object.entries(localeNames).map(([code, label]) => (
+                      {Object.entries(locales).map(([code, label]) => (
                         <option key={code} value={code}>
                           {label}
                         </option>
