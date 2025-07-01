@@ -3,6 +3,7 @@ import ThemeRadioGroup from './ThemeRadioGroup';
 import Button from './Button';
 import ToggleSwitch from './ToggleSwitch';
 import Tooltip from './Tooltip';
+import ReactTooltip from './ReactTooltip';
 
 const Elements = () => {
   const [toggle, setToggle] = React.useState(false);
@@ -168,40 +169,34 @@ const Elements = () => {
       <section className="card mb-4">
         <h2 className="text-2xl mb-4">Tooltips</h2>
         <div className="flex gap-12">
-          <div className="relative">
+          <div>
             <span
+              id="hover-light-tooltip-anchor"
               className="underline cursor-pointer"
-              onMouseEnter={() => setShowTooltipLight(true)}
-              onMouseLeave={() => setShowTooltipLight(false)}
             >
-              Hover me (Light)
+              Hover me (Top)
             </span>
-            <Tooltip
-              arrow="down"
-              variant="light"
-              visible={showTooltipLight}
-              className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 text-sm"
-            >
-              I’m a light tooltip!
-            </Tooltip>
+            <ReactTooltip
+              id="hover-light-tooltip"
+              content="I’m a top tooltip!"
+              place="top"
+              anchorSelect="#hover-light-tooltip-anchor"
+            />
           </div>
 
-          <div className="relative">
+          <div>
             <span
+              id="hover-dark-tooltip-anchor"
               className="underline cursor-pointer"
-              onMouseEnter={() => setShowTooltipDark(true)}
-              onMouseLeave={() => setShowTooltipDark(false)}
             >
-              Hover me (Dark)
+              Hover me (Right)
             </span>
-            <Tooltip
-              arrow="down"
-              variant="dark"
-              visible={showTooltipDark}
-              className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 text-sm"
-            >
-              I’m a dark tooltip!
-            </Tooltip>
+            <ReactTooltip
+              id="hover-dark-tooltip"
+              content="I’m a right tooltip!"
+              place="right"
+              anchorSelect="#hover-dark-tooltip-anchor"
+            />
           </div>
         </div>
       </section>
