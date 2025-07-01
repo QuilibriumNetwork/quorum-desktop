@@ -27,7 +27,8 @@ const queryClient = new QueryClient({
 
 const Root = () => {
   React.useEffect(() => {
-    dynamicActivate(getUserLocale());
+    //dynamicActivate(getUserLocale());
+    dynamicActivate('en'); //force english until onboarding translations are proofread
   }, []);
 
   return (
