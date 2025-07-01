@@ -1,5 +1,6 @@
 // All the existing translations (apart from English) have been created using an LLM,
 // Communities are welcome to proofread and correct them.
+// Proofreading completed for: English, Italian.
 
 // To correct an exiisting language you need to:
 // 1. Correct the file src/i18n/<locale>/messages.po
