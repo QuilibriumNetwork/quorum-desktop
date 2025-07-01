@@ -28,7 +28,9 @@ const queryClient = new QueryClient({
 const Root = () => {
   React.useEffect(() => {
     //dynamicActivate(getUserLocale());
-    dynamicActivate('en'); //force english until onboarding translations are proofread
+    //force english until onboarding translations are proofread
+    const savedLocale = getUserLocale() || 'en';
+    dynamicActivate(savedLocale);
   }, []);
 
   return (
@@ -47,7 +49,7 @@ const Root = () => {
         </QueryClientProvider>
       </PasskeysProvider>
     </BrowserRouter>
-  )
+  );
 };
 
 createRoot(document.getElementById('root')).render(<Root />);

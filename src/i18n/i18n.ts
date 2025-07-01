@@ -25,7 +25,9 @@ export function getUserLocale() {
     return storedLocale;
   }
 
-  return navigator.language.split('-')[0] || defaultLocale;
+  // return navigator.language.split('-')[0] || defaultLocale;
+  // changed: fallback to defaultLocale instead of browser language - keep until onboarding translations are proofread
+  return defaultLocale;
 }
 
 export function saveUserLocale(locale: string) {
