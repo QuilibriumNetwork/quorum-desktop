@@ -8,13 +8,16 @@ import { useRegistrationContext } from '../context/RegistrationPersister';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../context/MessageDB';
 import ToggleSwitch from '../ToggleSwitch';
-import Tooltip from '../Tooltip';
 import { UserConfig } from '../../db/messages';
 import ThemeRadioGroup from '../ThemeRadioGroup';
 import { t } from '@lingui/core/macro';
 import CopyToClipboard from '../CopyToClipboard';
 import { DefaultImages } from '../../utils';
-import { dynamicActivate, getUserLocale, saveUserLocale } from '../../i18n/i18n.ts';
+import {
+  dynamicActivate,
+  getUserLocale,
+  saveUserLocale,
+} from '../../i18n/i18n.ts';
 import locales from '../../i18n/locales';
 import useForceUpdate from '../hooks/forceUpdate';
 import ReactTooltip from '../ReactTooltip';
@@ -65,14 +68,9 @@ const UserSettingsModal: React.FunctionComponent<{
     setLanguageChanged(true);
     saveUserLocale(language);
     forceUpdate();
-
   }, [language]);
 
-  const [allowSyncTooltip, setAllowSyncTooltip] =
-    React.useState<boolean>(false);
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
-  const [nonRepudiableTooltip, setNonRepudiableTooltip] =
-    React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (!init) {
@@ -353,26 +351,21 @@ const UserSettingsModal: React.FunctionComponent<{
                           <div className="text-sm flex flex-col justify-around">
                             {t`Enable sync`}
                           </div>
-                          <div
-                            className="relative ml-2 group"
-                            onMouseEnter={() => setAllowSyncTooltip(true)}
-                            onMouseLeave={() => setAllowSyncTooltip(false)}
-                          >
-                            <div className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1">
+                          <>
+                            <div
+                              id="allow-sync-tooltip-anchor"
+                              className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1 ml-2 cursor-default"
+                            >
                               ℹ
                             </div>
-
-                            <div className="absolute left-[150%] top-0 z-50 w-[400px]">
-                              <Tooltip
-                                variant="dark"
-                                arrow="left"
-                                className="w-[400px] absolute"
-                                visible={allowSyncTooltip}
-                              >
-                                {t`When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined.`}
-                              </Tooltip>
-                            </div>
-                          </div>
+                            <ReactTooltip
+                              id="allow-sync-tooltip"
+                              anchorSelect="#allow-sync-tooltip-anchor"
+                              content={t`When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined.`}
+                              place="right"
+                              className="!w-[400px]"
+                            />
+                          </>
                         </div>
 
                         <ToggleSwitch
@@ -385,26 +378,21 @@ const UserSettingsModal: React.FunctionComponent<{
                           <div className="text-sm flex flex-col justify-around">
                             {t`Non-repudiability`}
                           </div>
-                          <div
-                            className="relative ml-2 group"
-                            onMouseEnter={() => setNonRepudiableTooltip(true)}
-                            onMouseLeave={() => setNonRepudiableTooltip(false)}
-                          >
-                            <div className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1">
+                          <>
+                            <div
+                              id="non-repudiable-tooltip-anchor"
+                              className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1 ml-2 cursor-default"
+                            >
                               ℹ
                             </div>
-
-                            <div className="absolute left-[150%] top-0 z-50 w-[400px]">
-                              <Tooltip
-                                variant="dark"
-                                arrow="left"
-                                className="w-[400px] absolute"
-                                visible={nonRepudiableTooltip}
-                              >
-                                {t`When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner.`}
-                              </Tooltip>
-                            </div>
-                          </div>
+                            <ReactTooltip
+                              id="non-repudiable-tooltip"
+                              anchorSelect="#non-repudiable-tooltip-anchor"
+                              content={t`When enabled, direct messages are not signed by your user key...`}
+                              place="right"
+                              className="!w-[400px]"
+                            />
+                          </>
                         </div>
 
                         <ToggleSwitch

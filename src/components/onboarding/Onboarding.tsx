@@ -14,8 +14,8 @@ import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistrati
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { Trans } from '@lingui/react/macro';
-import Tooltip from '../Tooltip';
 import { DefaultImages } from '../../utils';
+import ReactTooltip from '../ReactTooltip';
 
 const maxImageSize = 2 * 1024 * 1024;
 
@@ -81,7 +81,11 @@ export const Onboarding = ({
       onDropRejected: (fileRejections) => {
         for (const rejection of fileRejections) {
           if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-            setFileError(i18n._(`File cannot be larger than {maxFileSize}`, { maxFileSize: `${maxImageSize / 1024 / 1024}MB` }));
+            setFileError(
+              i18n._(`File cannot be larger than {maxFileSize}`, {
+                maxFileSize: `${maxImageSize / 1024 / 1024}MB`,
+              })
+            );
           } else {
             setFileError(t`File rejected`);
           }
@@ -90,20 +94,25 @@ export const Onboarding = ({
       onDropAccepted: () => {
         setFileError(null);
       },
-  });
+    });
 
   const setPfpImage = async () => {
-
     let pfpUrl: string = String(DefaultImages.UNKNOWN_USER);
 
     if (acceptedFiles.length > 0) {
-      pfpUrl = 'data:' + acceptedFiles[0].type + ';base64,' + Buffer.from(fileData!).toString('base64')
+      pfpUrl =
+        'data:' +
+        acceptedFiles[0].type +
+        ';base64,' +
+        Buffer.from(fileData!).toString('base64');
     }
 
     updateUserStoredInfo({ pfpUrl });
-  }
+  };
 
-  const updateUserStoredInfo = (updates: Partial<passkey.StoredPasskey> = {}) => {
+  const updateUserStoredInfo = (
+    updates: Partial<passkey.StoredPasskey> = {}
+  ) => {
     updateStoredPasskey(currentPasskeyInfo!.credentialId, {
       credentialId: currentPasskeyInfo!.credentialId,
       address: currentPasskeyInfo!.address,
@@ -113,7 +122,7 @@ export const Onboarding = ({
       pfpUrl: currentPasskeyInfo?.pfpUrl ?? DefaultImages.UNKNOWN_USER,
       ...updates,
     });
-  }
+  };
 
   useEffect(() => {
     if (acceptedFiles.length > 0) {
@@ -176,13 +185,12 @@ export const Onboarding = ({
                     !window.electron ? (
                       <>
                         <p className="pb-4">
-
-                        {t`When using Quorum on a browser, your messages are saved locally to your browser.`}
+                          {t`When using Quorum on a browser, your messages are saved locally to your browser.`}
                         </p>
                         <p className="font-bold">
-                        <b>
-                          {t`If you clear your browser storage or switch browsers, your old messages and keys may disappear.`}
-                        </b>
+                          <b>
+                            {t`If you clear your browser storage or switch browsers, your old messages and keys may disappear.`}
+                          </b>
                         </p>
                       </>
                     ) : (
@@ -229,8 +237,10 @@ export const Onboarding = ({
               <div className="grow"></div>
               <div className="w-[460px] py-4 text-justify text-white">
                 <p className="pb-4">
-                  <Trans>Let your friends know who you are! Pick a friendly name to
-                  display in your conversations, something easier to read than {currentPasskeyInfo?.address}
+                  <Trans>
+                    Let your friends know who you are! Pick a friendly name to
+                    display in your conversations, something easier to read than{' '}
+                    {currentPasskeyInfo?.address}
                   </Trans>
                 </p>
                 <p>{t`This information is only provided to the Spaces you join.`}</p>
@@ -252,7 +262,9 @@ export const Onboarding = ({
                     type="light"
                     disabled={displayName.length === 0}
                     className={`px-8 ${displayName.length === 0 ? 'btn-disabled-onboarding ' : ''}`}
-                    onClick={() => updateUserStoredInfo({ displayName, pfpUrl: undefined })}
+                    onClick={() =>
+                      updateUserStoredInfo({ displayName, pfpUrl: undefined })
+                    }
                   >
                     {t`Set Display Name`}
                   </Button>
@@ -279,7 +291,10 @@ export const Onboarding = ({
                     {t`You will be able to change this later in your settings.`}
                   </div>
                   <div className="mb-2 text-center">
-                    {i18n._(`Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension.`, { maxFileSize: `${maxImageSize / 1024 / 1024}MB` })}
+                    {i18n._(
+                      `Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension.`,
+                      { maxFileSize: `${maxImageSize / 1024 / 1024}MB` }
+                    )}
                   </div>
                   {fileError && (
                     <div className="error-label mt-2">{fileError}</div>
@@ -313,7 +328,10 @@ export const Onboarding = ({
                     >
                       <span className="attachment-drop-icon inline-block justify-around w-20 h-20 flex flex-col">
                         <input {...getInputProps()} />
-                        <img src={DefaultImages.UNKNOWN_USER} className="w-20 h-20 object-cover rounded-full mx-auto" />
+                        <img
+                          src={DefaultImages.UNKNOWN_USER}
+                          className="w-20 h-20 object-cover rounded-full mx-auto"
+                        />
                       </span>
                     </div>
                   )}
@@ -329,25 +347,26 @@ export const Onboarding = ({
                       type="light-outline"
                       className="px-8"
                       onClick={setPfpImage}
-                      >
+                    >
                       {t`Skip Adding Photo`}
                     </Button>
-                    <div className="flex flex-row justify-between">
-                      <FontAwesomeIcon
+                    <>
+                      <div className="flex flex-row justify-between">
+                        <FontAwesomeIcon
                           icon={faCircleInfo}
+                          id="profile-image-info-tooltip-anchor"
                           className="text-white-400 hover:text-gray-300 cursor-pointer ml-2 my-auto"
-                          onMouseEnter={() => setTooltipVisible(true)}
-                          onMouseLeave={() => setTooltipVisible(false)}
                           aria-label={t`If skipped, you'll get the default profile image and can set it later`}
+                        />
+                      </div>
 
+                      <ReactTooltip
+                        id="profile-image-info-tooltip"
+                        anchorSelect="#profile-image-info-tooltip-anchor"
+                        content={t`If skipped, you'll get the default profile image and can set it later`}
+                        place="right"
                       />
-                      <Tooltip
-                        arrow="left"
-                        visible={tooltipVisible}
-                      >
-                        <Trans>If skipped, you'll get the default profile image and can set it later</Trans>
-                      </Tooltip>
-                    </div>
+                    </>
                   </div>
                   <Button
                     type="light"
@@ -380,12 +399,14 @@ export const Onboarding = ({
                     type="light"
                     className="px-8"
                     onClick={() => {
-                      updateUserStoredInfo({ completedOnboarding: true })
+                      updateUserStoredInfo({ completedOnboarding: true });
                       setUser({
                         displayName: displayName,
                         state: 'online',
                         status: '',
-                        userIcon: currentPasskeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER,
+                        userIcon:
+                          currentPasskeyInfo.pfpUrl ??
+                          DefaultImages.UNKNOWN_USER,
                         address: currentPasskeyInfo!.address,
                       });
                     }}
