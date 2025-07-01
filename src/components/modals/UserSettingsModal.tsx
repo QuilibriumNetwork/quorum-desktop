@@ -3,14 +3,24 @@ import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import Button from '../Button';
 import './UserSettingsModal.scss';
-import { useConfig, useRegistration } from '../../hooks';
+import { useRegistration } from '../../hooks';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../context/MessageDB';
 import ToggleSwitch from '../ToggleSwitch';
-import Tooltip from '../Tooltip';
 import { UserConfig } from '../../db/messages';
 import ThemeRadioGroup from '../ThemeRadioGroup';
+import { t } from '@lingui/core/macro';
+import CopyToClipboard from '../CopyToClipboard';
+import { DefaultImages } from '../../utils';
+import {
+  dynamicActivate,
+  getUserLocale,
+  saveUserLocale,
+} from '../../i18n/i18n.ts';
+import locales from '../../i18n/locales';
+import useForceUpdate from '../hooks/forceUpdate';
+import ReactTooltip from '../ReactTooltip';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -47,11 +57,20 @@ const UserSettingsModal: React.FunctionComponent<{
   const [init, setInit] = React.useState<boolean>(false);
   const existingConfig = React.useRef<UserConfig | null>(null);
   const [allowSync, setAllowSync] = React.useState<boolean>(false);
-  const [allowSyncTooltip, setAllowSyncTooltip] =
-    React.useState<boolean>(false);
+  const [language, setLanguage] = React.useState(getUserLocale());
+  const [languageChanged, setLanguageChanged] = React.useState<boolean>(false);
+
+  const forceUpdate = useForceUpdate();
+
+  React.useEffect(() => {
+    console.log('Language changed to:', language);
+    dynamicActivate(language);
+    setLanguageChanged(true);
+    saveUserLocale(language);
+    forceUpdate();
+  }, [language]);
+
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
-  const [nonRepudiableTooltip, setNonRepudiableTooltip] =
-    React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (!init) {
@@ -62,8 +81,8 @@ const UserSettingsModal: React.FunctionComponent<{
           userKey: keyset.userKeyset,
         });
         existingConfig.current = config;
-        setAllowSync(config.allowSync ?? allowSync);
-        setNonRepudiable(config.nonRepudiable ?? nonRepudiable);
+        setAllowSync(config?.allowSync ?? allowSync);
+        setNonRepudiable(config?.nonRepudiable ?? nonRepudiable);
       })();
     }
   }, [init]);
@@ -139,7 +158,7 @@ const UserSettingsModal: React.FunctionComponent<{
             acceptedFiles[0].type +
             ';base64,' +
             Buffer.from(fileData).toString('base64')
-          : (currentPasskeyInfo!.pfpUrl ?? '/unknown.png'),
+          : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
       address: currentPasskeyInfo!.address,
     });
     updateUserProfile(
@@ -149,13 +168,13 @@ const UserSettingsModal: React.FunctionComponent<{
             acceptedFiles[0].type +
             ';base64,' +
             Buffer.from(fileData).toString('base64')
-        : (currentPasskeyInfo!.pfpUrl ?? '/unknown.png'),
+        : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
       currentPasskeyInfo!
     );
     await saveConfig({
       config: {
         ...existingConfig.current!,
-        allowSync: allowSync,
+        allowSync,
         nonRepudiable: nonRepudiable,
       },
       keyset: keyset,
@@ -166,7 +185,7 @@ const UserSettingsModal: React.FunctionComponent<{
   return (
     <div className="user-settings flex flex-row">
       <div className="px-4 py-2 text-text-base w-[200px]">
-        <div className="small-caps text-subtle">Settings</div>
+        <div className="small-caps text-subtle">{t`Settings`}</div>
         <div
           onClick={() => setSelectedCategory('general')}
           className={
@@ -174,7 +193,7 @@ const UserSettingsModal: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          General
+          {t`General`}
         </div>
         <div
           onClick={() => setSelectedCategory('privacy')}
@@ -183,7 +202,7 @@ const UserSettingsModal: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          Privacy/Security
+          {t`Privacy/Security`}
         </div>
         <div
           onClick={() => setSelectedCategory('appearance')}
@@ -192,7 +211,7 @@ const UserSettingsModal: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          Appearance
+          {t`Appearance`}
         </div>
       </div>
       <div className="flex flex-col grow overflow-y-scroll rounded-xl">
@@ -210,7 +229,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             ? `url(data:${acceptedFiles[0].type};base64,${Buffer.from(fileData).toString('base64')})`
                             : currentPasskeyInfo?.pfpUrl &&
                                 !currentPasskeyInfo.pfpUrl.includes(
-                                  'unknown.png'
+                                  DefaultImages.UNKNOWN_USER
                                 )
                               ? `url(${currentPasskeyInfo.pfpUrl})`
                               : 'var(--unknown-icon)',
@@ -220,7 +239,7 @@ const UserSettingsModal: React.FunctionComponent<{
                       <input {...getInputProps()} />
                     </div>
                     <div className="user-settings-text flex flex-col grow pr-4">
-                      <div className="small-caps">Display Name</div>
+                      <div className="small-caps">{t`Display Name`}</div>
                       <input
                         className="w-full quorum-input"
                         value={displayName}
@@ -230,9 +249,15 @@ const UserSettingsModal: React.FunctionComponent<{
                   </div>
                   <div className="user-settings-content flex flex-col !rounded-b-none">
                     <div className="user-settings-info">
-                      <div className="small-caps">Account Address</div>
-                      <div className="text-base">
-                        {currentPasskeyInfo!.address}
+                      <div className="small-caps">{t`Account Address`}</div>
+                      <div className="flex flex-row items-center text-base">
+                        {currentPasskeyInfo!.address}{' '}
+                        <CopyToClipboard
+                          className="ml-2"
+                          tooltipText={t`Copy address to clipboard`}
+                          text={currentPasskeyInfo!.address}
+                          tooltipLocation="top"
+                        />
                       </div>
                     </div>
                   </div>
@@ -245,7 +270,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             saveChanges();
                           }}
                         >
-                          Save Changes
+                          {t`Save Changes`}
                         </Button>
                       </div>
                     </div>
@@ -257,10 +282,9 @@ const UserSettingsModal: React.FunctionComponent<{
                 <>
                   <div className="user-settings-header pt-4 px-4 !min-h-[0px] flex flex-row justify-between">
                     <div className="">
-                      <div className="text-xl font-bold">Privacy/Security</div>
+                      <div className="text-xl font-bold">{t`Privacy/Security`}</div>
                       <div className="pt-1 text-sm text-text-base">
-                        Manage devices, and privacy conditions for messaging and
-                        synchronization.
+                        {t`Manage devices, and privacy conditions for messaging and synchronization.`}
                       </div>
                     </div>
                     <div className="user-settings-editor-actions">
@@ -278,7 +302,7 @@ const UserSettingsModal: React.FunctionComponent<{
                           <div className="flex flex-col justify-around font-light">
                             {d.inbox_registration.inbox_address}
                           </div>
-                          {keyset.deviceKeyset.inbox_keyset.inbox_address !==
+                          {keyset.deviceKeyset?.inbox_keyset?.inbox_address !==
                             d.inbox_registration.inbox_address && (
                             <Button
                               onClick={() => {
@@ -286,7 +310,7 @@ const UserSettingsModal: React.FunctionComponent<{
                               }}
                               type="danger"
                             >
-                              Remove
+                              {t`Remove`}
                             </Button>
                           )}
                           {keyset.deviceKeyset.inbox_keyset.inbox_address ===
@@ -299,12 +323,10 @@ const UserSettingsModal: React.FunctionComponent<{
                     <div className="user-settings-content-section-header" />
                     <div className="user-settings-info">
                       <div className="user-settings-content-section-header small-caps !pt-4">
-                        Key Export
+                        {t`Key Export`}
                       </div>
                       <div className="pt-1 text-sm text-text-base">
-                        Export your key to a file by clicking this button. Do
-                        not share this file with anyone else or they can
-                        impersonate you or steal your space's Apex earnings.
+                        {t`Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings.`}
                       </div>
                       <div className="pt-4 pb-8 max-w-[100px]">
                         <Button
@@ -313,49 +335,37 @@ const UserSettingsModal: React.FunctionComponent<{
                             downloadKey();
                           }}
                         >
-                          Export
+                          {t`Export`}
                         </Button>
                       </div>
                     </div>
                     <div className="user-settings-content-section-header small-caps">
-                      Security
+                      {t`Security`}
                     </div>
                     <div className="pt-1 text-sm text-text-base">
-                      Adjust security-related settings, which may impact user
-                      experience but increase the security of your Quorum
-                      account.
+                      {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
                     </div>
                     <div className="user-settings-info">
                       <div className="flex flex-row justify-between pb-2">
                         <div className="text-sm flex flex-row">
                           <div className="text-sm flex flex-col justify-around">
-                            Enable sync
+                            {t`Enable sync`}
                           </div>
-                          <div
-                            className="relative ml-2 group"
-                            onMouseEnter={() => setAllowSyncTooltip(true)}
-                            onMouseLeave={() => setAllowSyncTooltip(false)}
-                          >
-                            <div className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1">
+                          <>
+                            <div
+                              id="allow-sync-tooltip-anchor"
+                              className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1 ml-2 cursor-default"
+                            >
                               ℹ
                             </div>
-
-                            <div className="absolute left-[150%] top-0 z-50 w-[400px]">
-                              <Tooltip
-                                variant="dark"
-                                arrow="left"
-                                className="w-[400px] absolute"
-                                visible={allowSyncTooltip}
-                              >
-                                When enabled, synchronizes your user data,
-                                spaces, and space keys between devices. Enabling
-                                this increases metadata visibility of your
-                                account, which can reveal when you have joined
-                                new spaces, although not the spaces you have
-                                joined.
-                              </Tooltip>
-                            </div>
-                          </div>
+                            <ReactTooltip
+                              id="allow-sync-tooltip"
+                              anchorSelect="#allow-sync-tooltip-anchor"
+                              content={t`When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined.`}
+                              place="right"
+                              className="!w-[400px]"
+                            />
+                          </>
                         </div>
 
                         <ToggleSwitch
@@ -366,35 +376,23 @@ const UserSettingsModal: React.FunctionComponent<{
                       <div className="flex flex-row justify-between">
                         <div className="text-sm flex flex-row">
                           <div className="text-sm flex flex-col justify-around">
-                            Non-repudiability
+                            {t`Non-repudiability`}
                           </div>
-                          <div
-                            className="relative ml-2 group"
-                            onMouseEnter={() => setNonRepudiableTooltip(true)}
-                            onMouseLeave={() => setNonRepudiableTooltip(false)}
-                          >
-                            <div className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1">
+                          <>
+                            <div
+                              id="non-repudiable-tooltip-anchor"
+                              className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1 ml-2 cursor-default"
+                            >
                               ℹ
                             </div>
-
-                            <div className="absolute left-[150%] top-0 z-50 w-[400px]">
-                              <Tooltip
-                                variant="dark"
-                                arrow="left"
-                                className="w-[400px] absolute"
-                                visible={nonRepudiableTooltip}
-                              >
-                                When enabled, direct messages are not signed by
-                                your user key. This improves performance, but
-                                can allow the user you are communicating with to
-                                forge messages to you as if they came from you.
-                                They cannot forge messages to other people as if
-                                they came from you. This does not impact the
-                                repudiability of spaces, as this is a
-                                configuration option by the space owner.
-                              </Tooltip>
-                            </div>
-                          </div>
+                            <ReactTooltip
+                              id="non-repudiable-tooltip"
+                              anchorSelect="#non-repudiable-tooltip-anchor"
+                              content={t`When enabled, direct messages are not signed by your user key...`}
+                              place="right"
+                              className="!w-[400px]"
+                            />
+                          </>
                         </div>
 
                         <ToggleSwitch
@@ -411,7 +409,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             saveChanges();
                           }}
                         >
-                          Save Changes
+                          {t`Save Changes`}
                         </Button>
                       </div>
                     </div>
@@ -421,11 +419,47 @@ const UserSettingsModal: React.FunctionComponent<{
             case 'appearance':
               return (
                 <div className="user-settings-content px-4 py-6 flex flex-col gap-4">
-                  <div className="text-xl font-bold">Appearance</div>
+                  <div className="text-xl font-bold">{t`Appearance`}</div>
                   <div className="text-sm text-text-base">
-                    Choose your preferred theme for Quorum.
+                    {t`Choose your preferred theme for Quorum.`}
                   </div>
                   <ThemeRadioGroup />
+
+                  <div className="pt-4">
+                    <div className="small-caps">{t`Language`}</div>
+                    <div className="flex flex-row gap-2 items-center">
+                      <select
+                        className="quorum-input flex-1"
+                        value={language}
+                        onChange={async (e) => {
+                          const selected =
+                            e.target.value.toString() as keyof typeof locales;
+                          setLanguage(selected);
+                        }}
+                      >
+                        {Object.entries(locales).map(([code, label]) => (
+                          <option key={code} value={code}>
+                            {label}
+                          </option>
+                        ))}
+                      </select>
+                      <ReactTooltip
+                        id="language-refresh-tooltip"
+                        place="top"
+                        anchorSelect="#language-refresh-button"
+                        content={t`Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language.`}
+                        className="!bg-surface-5 !text-text-base !w-[400px]"
+                      />
+                      <Button
+                        id="language-refresh-button"
+                        type="secondary"
+                        disabled={!languageChanged}
+                        onClick={forceUpdate}
+                      >
+                        {t`Refresh`}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               );
           }

@@ -19,7 +19,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "lingui:extract": "lingui extract",
+    "lingui:compile": "lingui compile --typescript"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -47,11 +49,16 @@
     "react-dropzone": "^14.3.5",
     "react-router": "^7.0.2",
     "react-router-dom": "^7.0.2",
+    "react-tooltip": "^5.29.1",
     "react-virtuoso": "^4.12.3",
     "vite-plugin-static-copy": "^2.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
+    "@lingui/babel-plugin-lingui-macro": "^5.3.2",
+    "@lingui/cli": "^5.3.2",
+    "@lingui/react": "^5.3.2",
+    "@lingui/vite-plugin": "^5.3.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-basic-ssl": "^1.2.0",

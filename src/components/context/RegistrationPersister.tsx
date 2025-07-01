@@ -18,6 +18,8 @@ import { faLock } from '@fortawesome/free-solid-svg-icons';
 import Button from '../Button';
 import { useMessageDB } from './MessageDB';
 import { useQuorumApiClient } from './QuorumApiContext';
+import { t } from '@lingui/core/macro';
+import { getDefaultUserConfig } from '../../utils';
 
 type RegistrationContextValue = {
   keyset: {
@@ -34,7 +36,7 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
   const { currentPasskeyInfo, exportKey } = usePasskeysContext();
   const [clickRestore, setClickRestore] = useState(false);
   const [init, setInit] = useState(false);
-  const { keyset, setKeyset, setSelfAddress, getConfig } = useMessageDB();
+  const { keyset, setKeyset, setSelfAddress, getConfig, saveConfig } = useMessageDB();
   const { data: registration } = useRegistration({
     address: currentPasskeyInfo!.address,
   });
@@ -212,10 +214,17 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
                   deviceKeyset: senderDevice,
                   userKeyset: senderIdent,
                 });
-                getConfig({
+                const userConfig = await getConfig({
                   address: currentPasskeyInfo!.address,
                   userKey: senderIdent,
                 });
+                if (userConfig === undefined) {
+                  const defaultConfig = getDefaultUserConfig(currentPasskeyInfo!.address);
+                  saveConfig({
+                    config: defaultConfig,
+                    keyset,
+                  });
+                }
               } catch (e: any) {
                 if (e.name === 'NotAllowedError') {
                   setClickRestore(true);
@@ -244,7 +253,7 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
             <div className="flex flex-row grow"></div>
             <div className="flex flex-row grow font-semibold text-2xl">
               <div className="flex flex-col grow"></div>
-              <div className="flex flex-col">Session Encrypted</div>
+              <div className="flex flex-col">{t`Session Encrypted`}</div>
               <div className="flex flex-col grow"></div>
             </div>
             <div className="flex flex-row justify-center">
@@ -257,9 +266,7 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
               <div className="w-[460px] py-4 text-justify">
-                Quorum was loaded while the browser was not in focus or a
-                passkey request was rejected. Please reauthorize to access your
-                messages.
+                {t`Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages.`}
               </div>
               <div className="grow"></div>
             </div>
@@ -274,7 +281,7 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
                     setClickRestore(false);
                   }}
                 >
-                  Reauthorize
+                  {t`Reauthorize`}
                 </Button>
               </div>
               <div className="grow"></div>

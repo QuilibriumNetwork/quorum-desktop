@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { faEdit, faGear } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faEdit, faGear } from '@fortawesome/free-solid-svg-icons';
 import Tooltip from '../Tooltip';
 import TooltipButton from '../TooltipButton';
 import UserProfile from './UserProfile';
@@ -7,6 +7,9 @@ import UserProfile from './UserProfile';
 import './UserStatus.scss';
 import UserOnlineStateIndicator from './UserOnlineStateIndicator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { t } from '@lingui/core/macro';
+import CopyToClipboard from '../CopyToClipboard';
+import { DefaultImages } from '../../utils';
 
 type UserStatusProps = {
   user: any;
@@ -64,7 +67,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
             visible={isMenuExpanded}
           >
             <TooltipButton
-              text="Edit Profile"
+              text={t`Edit Profile`}
               icon={faEdit}
               onClick={() => {
                 setIsMenuExpanded(false);
@@ -82,14 +85,15 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
           style={{
             backgroundImage:
               props.user.userIcon &&
-              !props.user.userIcon.includes('unknown.png')
+              !props.user.userIcon.includes(DefaultImages.UNKNOWN_USER)
                 ? `url(${props.user.userIcon})`
                 : 'var(--unknown-icon)',
           }}
         />
         <div className="user-status-text">
-          <div className="user-status-username w-[164px] text-ellipsis overflow-hidden">
-            {props.user.displayName}
+          <div className="flex flex-row user-status-username w-[164px] text-ellipsis overflow-hidden">
+            <span>{props.user.displayName}</span>
+            <CopyToClipboard className="ml-2" tooltipText={t`Copy address to clipboard`} text={props.user.address} tooltipLocation="top" />
           </div>
           <div className="user-status-info">
             <UserOnlineStateIndicator user={props.user} />

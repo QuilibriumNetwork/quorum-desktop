@@ -1,0 +1,782 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-20 10:50-0800\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: @lingui/cli\n"
+
+#. js-lingui-explicit-id
+#: src/components/onboarding/Onboarding.tsx:84
+msgid "File cannot be larger than {maxFileSize}"
+msgstr "Bestand mag niet groter zijn dan {maxFileSize}"
+
+#. js-lingui-explicit-id
+#: src/components/onboarding/Onboarding.tsx:282
+msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+msgstr "De grootte van je profielafbeelding moet {maxFileSize} of kleiner zijn en moet een PNG-, JPG- of JPEG-bestandsextensie hebben."
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:139
+msgid "{user} has joined"
+msgstr "{user} is toegetreden"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:141
+msgid "{user} has left"
+msgstr "{user} heeft de groep verlaten"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:143
+msgid "{user} has been kicked"
+msgstr "{user} is eruit gekickt"
+
+#. js-lingui-explicit-id
+#: src/components/direct/DirectMessage.tsx:263
+#: src/components/channel/Channel.tsx:313
+msgid "Replying to {user}"
+msgstr "Beantwoorden aan {user}"
+
+#. js-lingui-explicit-id
+#: src/components/direct/DirectMessage.tsx:328
+msgid "Send a message to {user}"
+msgstr "Stuur een bericht naar {user}"
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:393
+msgid "Send a message to #{channel_name}"
+msgstr "Stuur een bericht naar #{channel_name}"
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:533
+msgid "{role} - {count}"
+msgstr "{role} - {count}"
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:561
+msgid "No Role - {count}"
+msgstr "Geen rol - {count}"
+
+#: src/components/modals/UserSettingsModal.tsx:254
+msgid "Account Address"
+msgstr "Accountadres"
+
+#: src/components/channel/ChannelList.tsx:190
+msgid "Add Group"
+msgstr "Groep toevoegen"
+
+#: src/components/channel/SpaceEditor.tsx:534
+msgid "Add Role"
+msgstr "Rol toevoegen"
+
+#: src/components/navbar/ExpandableNavMenu.tsx:37
+msgid "Add Space"
+msgstr "Ruimte toevoegen"
+
+#: src/components/channel/SpaceEditor.tsx:657
+msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
+msgstr "Voeg tot 50 aangepaste emoji toe. Aangepaste emoji kunnen alleen binnen een Ruimte worden gebruikt."
+
+#: src/components/channel/SpaceEditor.tsx:760
+msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space."
+msgstr "Voeg tot 50 aangepaste stickers toe. Aangepaste stickers kunnen alleen binnen een Ruimte worden gebruikt."
+
+#: src/components/modals/UserSettingsModal.tsx:348
+msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
+msgstr "Pas beveiligingsgerelateerde instellingen aan, die de gebruikerservaring kunnen beïnvloeden, maar de beveiliging van je Quorum-account vergroten."
+
+#: src/components/modals/CreateSpaceModal.tsx:219
+msgid "Advanced Settings"
+msgstr "Geavanceerde instellingen"
+
+#: src/components/modals/UserSettingsModal.tsx:216
+#: src/components/modals/UserSettingsModal.tsx:434
+msgid "Appearance"
+msgstr "Uiterlijk"
+
+#. placeholder {0}: space?.spaceName
+#: src/components/channel/LeaveSpace.tsx:30
+msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
+msgstr "Ben je zeker dat je {0} wilt verlaten? Je kunt niet opnieuw deelnemen tenzij je opnieuw wordt uitgenodigd."
+
+#: src/components/user/UserOnlineStateIndicator.tsx:14
+msgid "Away"
+msgstr "Afwezig"
+
+#: src/components/user/UserOnlineStateIndicator.tsx:16
+msgid "Busy"
+msgstr "Bezig"
+
+#: src/components/channel/SpaceEditor.tsx:604
+msgid "Can delete messages?"
+msgstr "Kunnen berichten verwijderen?"
+
+#: src/components/channel/LeaveSpace.tsx:39
+msgid "Cancel"
+msgstr "Annuleren"
+
+#: src/components/modals/UserSettingsModal.tsx:462
+msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
+msgstr ""
+
+#: src/components/channel/ChannelEditor.tsx:116
+msgid "Channel Name"
+msgstr "Kanaalnaam"
+
+#: src/components/channel/ChannelEditor.tsx:130
+msgid "Channel Topic"
+msgstr "Kanaalonderwerp"
+
+#: src/components/modals/UserSettingsModal.tsx:436
+msgid "Choose your preferred theme for Quorum."
+msgstr "Kies je voorkeurs thema voor Quorum."
+
+#: src/components/channel/SpaceEditor.tsx:511
+msgid "Click on the role name and tag to edit them."
+msgstr "Klik op de rolnaam en tag om ze te bewerken."
+
+#: src/components/onboarding/Onboarding.tsx:198
+msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
+msgstr "Klik op de knop hieronder om een back-up van je belangrijke informatie te maken, want als het weg is, is het voor altijd weg. Je kunt gevraagd worden om opnieuw te authenticeren."
+
+#: src/components/ClickToCopyContent.tsx:24
+msgid "Click to copy"
+msgstr "Klik om te kopiëren"
+
+#: src/components/channel/GroupEditor.tsx:104
+#: src/components/channel/ChannelEditor.tsx:152
+msgid "Confirm Deletion"
+msgstr "Bevestig Verwijdering\""
+
+#: src/components/Connecting.tsx:13
+msgid "Connecting"
+msgstr "Verbinden\""
+
+#: src/components/CopyToClipboard.tsx:71
+#: src/components/ClickToCopyContent.tsx:62
+#: src/components/message/Message.tsx:403
+msgid "Copied!"
+msgstr "Gekopieerd!\""
+
+#: src/components/user/UserStatus.tsx:96
+#: src/components/modals/UserSettingsModal.tsx:259
+#: src/components/direct/DirectMessage.tsx:219
+msgid "Copy address to clipboard"
+msgstr "Kopieer adres naar klembord\""
+
+#: src/components/channel/SpaceEditor.tsx:1023
+msgid "Copy invite link to clipboard"
+msgstr "Kopieer uitnodigingslink naar klembord\""
+
+#: src/components/message/Message.tsx:404
+msgid "Copy message link"
+msgstr "Kopieer berichtlink\""
+
+#: src/components/CopyToClipboard.tsx:32
+msgid "Copy to clipboard"
+msgstr "Kopieer naar klembord\""
+
+#: src/components/context/MessageDB.tsx:5124
+msgid "Could not add Space"
+msgstr "Kon Space niet toevoegen\""
+
+#: src/components/context/MessageDB.tsx:4997
+msgid "Could not obtain manifest for Space"
+msgstr "Kon manifest voor Space niet verkrijgen\""
+
+#: src/components/modals/JoinSpaceModal.tsx:118
+#: src/components/message/InviteLink.tsx:26
+msgid "Could not verify invite"
+msgstr "Kon uitnodiging niet verifiëren\""
+
+#: src/components/modals/CreateSpaceModal.tsx:78
+msgid "Create a Space"
+msgstr "Maak een Space\""
+
+#: src/components/onboarding/Login.tsx:61
+msgid "Create New Account"
+msgstr "Maak Nieuwe Account\""
+
+#: src/components/modals/CreateSpaceModal.tsx:208
+msgid "Create Space"
+msgstr "Maak Space\""
+
+#: src/components/modals/CreateSpaceModal.tsx:208
+msgid "Creating Space..."
+msgstr "Space aanmaken...\""
+
+#: src/components/channel/SpaceEditor.tsx:1003
+msgid "Current Invite Link"
+msgstr "Huidige Uitnodigingslink\""
+
+#: src/components/ThemeRadioGroup.tsx:16
+msgid "dark"
+msgstr ""
+
+#: src/components/context/MessageDB.tsx:4976
+msgid "decrypted space with no known config key"
+msgstr "gedecodeerde space zonder bekende configuratiesleutel\""
+
+#: src/components/context/MessageDB.tsx:4982
+msgid "Decrypted Space with no known hub key"
+msgstr "Gedecodeerde Space zonder bekende hub-sleutel\""
+
+#: src/components/channel/SpaceEditor.tsx:407
+msgid "Default Channel"
+msgstr "Standaard Kanaal\""
+
+#: src/components/modals/CreateSpaceModal.tsx:115
+msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
+msgstr "Standaard Space-instellingen bieden de meest typische chatervaring, maar voor hogere privacygaranties, bekijk Geavanceerde Instellingen.\""
+
+#: src/components/channel/ChannelEditor.tsx:152
+msgid "Delete Channel"
+msgstr "Verwijder Kanaal\""
+
+#: src/components/channel/GroupEditor.tsx:104
+msgid "Delete Group"
+msgstr "Verwijder Groep\""
+
+#: src/components/message/Message.tsx:433
+msgid "Delete message"
+msgstr "Verwijder bericht\""
+
+#: src/components/navbar/NavMenu.tsx:99
+#: src/components/direct/DirectMessageContactsList.tsx:26
+msgid "Direct Messages"
+msgstr "Directe Berichten\""
+
+#: src/components/modals/UserSettingsModal.tsx:244
+msgid "Display Name"
+msgstr "Weergavenaam\""
+
+#: src/components/modals/KickUserModal.tsx:56
+msgid "Do it!"
+msgstr "Doen!\""
+
+#: src/components/onboarding/Onboarding.tsx:157
+msgid "Drop your profile photo here"
+msgstr "Sleep je profielfoto hierheen\""
+
+#: src/components/user/UserStatus.tsx:70
+msgid "Edit Profile"
+msgstr "Bewerk Profiel\""
+
+#: src/components/channel/ChannelList.tsx:121
+msgid "Edit Space"
+msgstr "Bewerk Space\""
+
+#: src/components/channel/SpaceEditor.tsx:319
+#: src/components/channel/SpaceEditor.tsx:654
+msgid "Emojis"
+msgstr "Emojis\""
+
+#: src/components/modals/UserSettingsModal.tsx:354
+msgid "Enable sync"
+msgstr "Synchronisatie inschakelen"
+
+#: src/components/modals/CreateSpaceModal.tsx:111
+msgid "Enter a name for your new Space"
+msgstr "Voer een naam in voor je nieuwe Space"
+
+#: src/components/modals/NewDirectMessageModal.tsx:41
+msgid "Enter a user's address to start messaging them."
+msgstr "Voer het adres van een gebruiker in om met hen te beginnen met berichten."
+
+#: src/components/channel/SpaceEditor.tsx:958
+msgid "Enter Address Manually"
+msgstr "Voer adres handmatig in"
+
+#: src/components/context/WebsocketProvider.tsx:90
+msgid "Error processing inbound:"
+msgstr "Fout bij het verwerken van inkomend:"
+
+#: src/components/context/WebsocketProvider.tsx:109
+msgid "Error processing outbound:"
+msgstr "Fout bij het verwerken van uitgaand:"
+
+#: src/components/context/WebsocketProvider.tsx:114
+msgid "Error processing queue:"
+msgstr "Fout bij het verwerken van de wachtrij:"
+
+#: src/components/channel/SpaceEditor.tsx:876
+msgid "Existing Conversations"
+msgstr "Bestaande gesprekken"
+
+#: src/components/modals/UserSettingsModal.tsx:340
+msgid "Export"
+msgstr "Exporteer"
+
+#: src/components/modals/UserSettingsModal.tsx:331
+msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
+msgstr "Exporteer je sleutel naar een bestand door op deze knop te klikken. Deel dit bestand niet met anderen, anders kunnen ze zich als jou voordoen of je Apex-inkomsten van je Space stelen."
+
+#: src/components/context/MessageDB.tsx:836
+msgid "Failed to decrypt message with any known state"
+msgstr "Kon het bericht met geen enkele bekende staat ontsleutelen"
+
+#: src/components/context/WebsocketProvider.tsx:141
+msgid "Failed to parse WebSocket message:"
+msgstr "Kon het WebSocket-bericht niet parseren:"
+
+#: src/components/modals/CreateSpaceModal.tsx:55
+#: src/components/direct/DirectMessage.tsx:61
+#: src/components/channel/Channel.tsx:85
+msgid "File cannot be larger than 2MB"
+msgstr "Bestand mag niet groter zijn dan 2MB"
+
+#: src/components/onboarding/Onboarding.tsx:86
+#: src/components/modals/CreateSpaceModal.tsx:57
+#: src/components/direct/DirectMessage.tsx:63
+#: src/components/channel/Channel.tsx:87
+msgid "File rejected"
+msgstr "Bestand afgewezen"
+
+#: src/components/context/MessageDB.tsx:2755
+msgid "general"
+msgstr "algemeen"
+
+#: src/components/modals/UserSettingsModal.tsx:198
+#: src/components/channel/SpaceEditor.tsx:301
+msgid "General"
+msgstr "Algemeen"
+
+#: src/components/context/MessageDB.tsx:2756
+msgid "General Chat"
+msgstr "Algemene chat"
+
+#: src/components/channel/SpaceEditor.tsx:1059
+msgid "Generate New Invite Link"
+msgstr "Genereer nieuwe uitnodigingslink"
+
+#: src/components/channel/GroupEditor.tsx:82
+msgid "Group Name"
+msgstr "Groepsnaam"
+
+#: src/components/onboarding/Onboarding.tsx:219
+msgid "I already saved mine"
+msgstr "Ik heb de mijne al opgeslagen"
+
+#: src/components/onboarding/Onboarding.tsx:341
+#: src/components/onboarding/Onboarding.tsx:348
+msgid "If skipped, you'll get the default profile image and can set it later"
+msgstr "Als je het overslaat, krijg je de standaard profielafbeelding en kun je deze later instellen"
+
+#: src/components/onboarding/Onboarding.tsx:184
+msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
+msgstr "Als je je browseropslag wist of van browser wisselt, kunnen je oude berichten en sleutels verdwijnen."
+
+#: src/components/onboarding/Onboarding.tsx:191
+msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+msgstr "Als je de app van je apparaat verwijdert, verlies je je oude berichten en sleutels."
+
+#: src/components/onboarding/Login.tsx:74
+msgid "Import Existing Key"
+msgstr "Importeer bestaande sleutel"
+
+#: src/components/onboarding/Onboarding.tsx:168
+msgid "Important first-time user information:"
+msgstr "Belangrijke informatie voor nieuwe gebruikers:"
+
+#: src/components/context/MessageDB.tsx:1016
+msgid "invalid address for signature"
+msgstr "ongeldig adres voor handtekening"
+
+#: src/components/context/MessageDB.tsx:4238
+#: src/components/context/MessageDB.tsx:4275
+#: src/components/context/MessageDB.tsx:4281
+#: src/components/context/MessageDB.tsx:4379
+msgid "invalid link"
+msgstr "ongeldige link"
+
+#: src/components/context/MessageDB.tsx:4744
+msgid "invalid message type"
+msgstr "ongeldig berichttype"
+
+#: src/components/modals/JoinSpaceModal.tsx:89
+#: src/components/context/MessageDB.tsx:4243
+#: src/components/context/MessageDB.tsx:4342
+msgid "invalid response"
+msgstr "ongeldige reactie"
+
+#: src/components/channel/SpaceEditor.tsx:341
+#: src/components/channel/SpaceEditor.tsx:860
+msgid "Invites"
+msgstr "Uitnodigingen"
+
+#: src/components/message/InviteLink.tsx:86
+msgid "Join"
+msgstr "Deelnemen"
+
+#: src/components/modals/JoinSpaceModal.tsx:144
+#: src/components/modals/JoinSpaceModal.tsx:152
+#: src/components/modals/JoinSpaceModal.tsx:191
+msgid "Join Space"
+msgstr "Word bij Ruimte"
+
+#: src/components/message/InviteLink.tsx:85
+msgid "Joined"
+msgstr "Verbonden"
+
+#: src/components/modals/UserSettingsModal.tsx:328
+msgid "Key Export"
+msgstr "Toets Exporteren"
+
+#: src/components/user/UserProfile.tsx:321
+#: src/components/modals/KickUserModal.tsx:33
+msgid "Kick User"
+msgstr "Verwijder Gebruiker"
+
+#: src/components/modals/UserSettingsModal.tsx:441
+msgid "Language"
+msgstr "Taal"
+
+#: src/components/channel/LeaveSpace.tsx:28
+#: src/components/channel/LeaveSpace.tsx:44
+#: src/components/channel/ChannelList.tsx:134
+msgid "Leave Space"
+msgstr "Verlaat Ruimte"
+
+#. placeholder {0}: currentPasskeyInfo?.address
+#: src/components/onboarding/Onboarding.tsx:232
+msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
+msgstr "Laat je vrienden weten wie je bent! Kies een vriendelijke naam om weer te geven in je gesprekken, iets dat makkelijker te lezen is dan {0}"
+
+#: src/components/onboarding/Onboarding.tsx:393
+msgid "Let's gooooooooo"
+msgstr "Laten we gaan!"
+
+#: src/components/ThemeRadioGroup.tsx:15
+msgid "light"
+msgstr ""
+
+#: src/components/Maintenance.tsx:15
+msgid "Maintenance in Progress"
+msgstr "Onderhoud in uitvoering"
+
+#: src/components/onboarding/Onboarding.tsx:273
+msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
+msgstr "Maak je account uniek – stel een contactfoto in. Deze informatie wordt alleen verstrekt aan de Ruimtes die je betreedt."
+
+#: src/components/modals/UserSettingsModal.tsx:289
+msgid "Manage devices, and privacy conditions for messaging and synchronization."
+msgstr "Beheer apparaten en privacyvoorwaarden voor messaging en synchronisatie."
+
+#: src/components/channel/SpaceEditor.tsx:668
+#: src/components/channel/SpaceEditor.tsx:771
+msgid "Max file size: 256kB"
+msgstr "Maximale bestandsgrootte: 256kB"
+
+#: src/components/message/Message.tsx:492
+msgid "Message does not have a valid signature, this may not be from the sender"
+msgstr "Bericht heeft geen geldige handtekening, dit is mogelijk niet van de afzender"
+
+#: src/components/message/Message.tsx:353
+msgid "More reactions"
+msgstr "Meer reacties"
+
+#: src/components/AddressLookup.tsx:26
+#: src/components/modals/NewDirectMessageModal.tsx:34
+#: src/components/modals/NewDirectMessageModal.tsx:53
+msgid "New Direct Message"
+msgstr "Nieuwe Directe Bericht"
+
+#: src/components/modals/UserSettingsModal.tsx:386
+msgid "Non-repudiability"
+msgstr "Niet-ontkenbaarheid"
+
+#: src/components/user/UserOnlineStateIndicator.tsx:18
+msgid "Offline"
+msgstr "Offline"
+
+#: src/components/onboarding/Onboarding.tsx:144
+msgid "One of us, one of us!"
+msgstr "Een van ons, een van ons!"
+
+#: src/components/user/UserOnlineStateIndicator.tsx:12
+msgid "Online"
+msgstr "Online"
+
+#: src/components/onboarding/Onboarding.tsx:145
+msgid "Personalize your account"
+msgstr "Personaliseer je account"
+
+#: src/components/channel/SpaceEditor.tsx:458
+msgid "Privacy Settings"
+msgstr "Privacy-instellingen"
+
+#: src/components/modals/UserSettingsModal.tsx:207
+#: src/components/modals/UserSettingsModal.tsx:287
+msgid "Privacy/Security"
+msgstr "Privacy/Beveiliging"
+
+#: src/components/channel/SpaceEditor.tsx:981
+msgid "Public Invite Link"
+msgstr "Openbare Uitnodigingslink"
+
+#: src/components/channel/SpaceEditor.tsx:983
+msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
+msgstr "Openbare uitnodigingslinks stellen iedereen met toegang tot de link in staat om je Ruimte te betreden. Begrijp de risico's van het inschakelen hiervan, en aan wie en waar je de link deelt."
+
+#: src/components/Maintenance.tsx:28
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
+msgstr "Quorum-infrastructuur wordt op dit moment uitgerold. Probeer te verversen en controleer <0>https://status.quilibrium.com/</0> voor updates."
+
+#: src/components/onboarding/Onboarding.tsx:171
+msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
+msgstr "Quorum is peer-to-peer en end-to-end versleuteld. Dit betekent dat je berichten privé blijven, maar even belangrijk, ze leven alleen op het netwerk voor de tijd die nodig is om jou en je ontvangers te bereiken."
+
+#: src/components/context/RegistrationPersister.tsx:269
+msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
+msgstr "Quorum werd geladen terwijl de browser niet in focus was of een verzoek om een toegangscode werd afgewezen. Gelieve opnieuw te autoriseren om toegang te krijgen tot je berichten."
+
+#: src/components/context/RegistrationPersister.tsx:284
+msgid "Reauthorize"
+msgstr "Herautoriseer"
+
+#: src/components/context/MessageDB.tsx:4946
+msgid "received config with invalid signature!"
+msgstr "ontvangen configuratie met ongeldige handtekening!"
+
+#: src/components/Maintenance.tsx:41
+#: src/components/modals/UserSettingsModal.tsx:471
+msgid "Refresh"
+msgstr "Vernieuwen"
+
+#: src/components/modals/UserSettingsModal.tsx:315
+msgid "Remove"
+msgstr "Verwijderen"
+
+#: src/components/message/Message.tsx:373
+msgid "Reply"
+msgstr "Beantwoorden"
+
+#: src/components/modals/CreateSpaceModal.tsx:125
+#: src/components/channel/SpaceEditor.tsx:464
+msgid "Repudiability"
+msgstr "Repudiabiliteit"
+
+#: src/components/modals/CreateSpaceModal.tsx:138
+#: src/components/channel/SpaceEditor.tsx:479
+msgid "Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
+msgstr "Repudiabiliteit is een instelling die gesprekken in deze Space onverifieerbaar maakt als afkomstig van de genoemde afzender. Dit kan nuttig zijn in gevoelige situaties, maar het betekent ook dat anderen berichten kunnen vervalsen die lijken te komen van jou."
+
+#: src/components/channel/SpaceEditor.tsx:662
+#: src/components/channel/SpaceEditor.tsx:765
+msgid "Requirements:"
+msgstr "Vereisten:"
+
+#: src/components/channel/SpaceEditor.tsx:310
+#: src/components/channel/SpaceEditor.tsx:508
+msgid "Roles"
+msgstr "Rollen"
+
+#: src/components/user/UserProfile.tsx:241
+#: src/components/modals/UserSettingsModal.tsx:275
+#: src/components/modals/UserSettingsModal.tsx:424
+#: src/components/channel/SpaceEditor.tsx:495
+#: src/components/channel/SpaceEditor.tsx:641
+#: src/components/channel/SpaceEditor.tsx:744
+#: src/components/channel/SpaceEditor.tsx:847
+#: src/components/channel/GroupEditor.tsx:109
+#: src/components/channel/ChannelEditor.tsx:157
+msgid "Save Changes"
+msgstr "Wijzigingen Opslaan"
+
+#: src/components/onboarding/Onboarding.tsx:358
+msgid "Save Contact Photo"
+msgstr "Contactfoto Opslaan"
+
+#: src/components/onboarding/Onboarding.tsx:212
+msgid "Save User Key"
+msgstr "Gebruikerssleutel Opslaan"
+
+#: src/components/context/MessageDB.tsx:4904
+msgid "saved config is out of date"
+msgstr "opgeslagen configuratie is verouderd"
+
+#: src/components/modals/UserSettingsModal.tsx:345
+msgid "Security"
+msgstr "Beveiliging"
+
+#: src/components/modals/NewDirectMessageModal.tsx:68
+msgid "Send"
+msgstr "Verzenden"
+
+#: src/components/channel/SpaceEditor.tsx:1080
+msgid "Send Invite"
+msgstr "Uitnodiging Verzenden"
+
+#: src/components/channel/SpaceEditor.tsx:863
+msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
+msgstr "Stuur uitnodigingen naar mensen met wie je eerder gesprekken hebt gehad. Een uitnodigingsknop verschijnt in hun inbox."
+
+#: src/components/user/UserProfile.tsx:307
+msgid "Send Message"
+msgstr "Bericht Verzenden"
+
+#: src/components/context/RegistrationPersister.tsx:256
+msgid "Session Encrypted"
+msgstr "Sessie Versleuteld"
+
+#: src/components/onboarding/Onboarding.tsx:257
+msgid "Set Display Name"
+msgstr "Stel Weergavenaam In"
+
+#: src/components/modals/UserSettingsModal.tsx:190
+msgid "Settings"
+msgstr "Instellingen"
+
+#: src/components/onboarding/Onboarding.tsx:333
+msgid "Skip Adding Photo"
+msgstr "Foto Toevoegen Overslaan"
+
+#: src/components/channel/SpaceEditor.tsx:380
+msgid "Space Banner"
+msgstr "Space Banner"
+
+#: src/components/modals/CreateSpaceModal.tsx:103
+msgid "Space Icon Attachment"
+msgstr "Space Pictogram Bijlage"
+
+#: src/components/channel/SpaceEditor.tsx:369
+msgid "Space Name"
+msgstr "Space Naam"
+
+#: src/components/direct/EmptyDirectMessage.tsx:23
+msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
+msgstr "Begin met een bericht aan een vriend. Klik op de voeg toe-knop naast de lijst met directe berichten."
+
+#: src/components/user/UserProfile.tsx:186
+msgid "Status goes here"
+msgstr "Status gaat hier"
+
+#: src/components/channel/SpaceEditor.tsx:330
+#: src/components/channel/SpaceEditor.tsx:757
+msgid "Stickers"
+msgstr "Stickers"
+
+#. placeholder {0}: selectedUser?.displayName
+#: src/components/channel/SpaceEditor.tsx:971
+msgid "Successfully sent invite to {0}"
+msgstr "Uitnodiging succesvol verzonden naar {0}"
+
+#: src/components/channel/SpaceEditor.tsx:665
+#: src/components/channel/SpaceEditor.tsx:768
+msgid "Supported types: PNG, JPG, GIF"
+msgstr "Ondersteunde types: PNG, JPG, GIF"
+
+#: src/components/ThemeRadioGroup.tsx:17
+msgid "system"
+msgstr ""
+
+#: src/components/message/InviteLink.tsx:53
+msgid "The invite link has expired or is invalid."
+msgstr "De uitnodigingslink is verlopen of ongeldig."
+
+#: src/components/onboarding/Onboarding.tsx:236
+msgid "This information is only provided to the Spaces you join."
+msgstr "Deze informatie wordt alleen verstrekt aan de Spaces die je join."
+
+#: src/components/channel/SpaceEditor.tsx:1016
+msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
+msgstr "Deze link verloopt niet, maar je kunt op elk moment een nieuwe genereren, wat de oude link ongeldig maakt. Huidige Space-leden zullen niet uit de Space worden verwijderd."
+
+#: src/components/message/Message.tsx:127
+msgid "Today at {timeFormatted}"
+msgstr "Vandaag om {timeFormatted}"
+
+#: src/components/modals/JoinSpaceModal.tsx:160
+msgid "Unknown"
+msgstr "Onbekend"
+
+#: src/components/direct/DirectMessage.tsx:130
+#: src/components/direct/DirectMessage.tsx:148
+#: src/components/context/MessageDB.tsx:815
+#: src/components/context/MessageDB.tsx:832
+#: src/components/context/MessageDB.tsx:2613
+#: src/components/context/MessageDB.tsx:3632
+#: src/components/context/MessageDB.tsx:4853
+#: src/components/channel/Channel.tsx:192
+msgid "Unknown User"
+msgstr "Onbekende gebruiker"
+
+#: src/components/direct/DirectMessage.tsx:304
+msgid "Until you reply, this sender will not see your display name or profile picture"
+msgstr "Tenzij je antwoordt, zal deze afzender je weergavenaam of profielfoto niet zien"
+
+#: src/components/channel/SpaceEditor.tsx:681
+msgid "Upload Emoji"
+msgstr "Upload Emoji"
+
+#: src/components/channel/SpaceEditor.tsx:784
+msgid "Upload Sticker"
+msgstr "Upload Sticker"
+
+#: src/components/modals/KickUserModal.tsx:36
+msgid "Use the below button to kick this user out of the Space"
+msgstr "Gebruik de onderstaande knop om deze gebruiker uit de Space te zetten"
+
+#: src/components/AddressLookup.tsx:13
+msgid "User does not exist"
+msgstr "Gebruiker bestaat niet"
+
+#: src/components/context/WebsocketProvider.tsx:196
+msgid "useWebSocket must be used within a WebSocketProvider"
+msgstr "useWebSocket moet binnen een WebSocketProvider worden gebruikt"
+
+#: src/components/onboarding/Onboarding.tsx:142
+msgid "Welcome to Quorum!"
+msgstr "Welkom bij Quorum!"
+
+#: src/components/direct/EmptyDirectMessage.tsx:24
+msgid "What's on your mind today?"
+msgstr "Wat gaat er vandaag door je hoofd?"
+
+#: src/components/modals/UserSettingsModal.tsx:404
+msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
+msgstr "Wanneer ingeschakeld, worden directe berichten niet ondertekend met je gebruikerssleutel. Dit verbetert de prestaties, maar kan de gebruiker met wie je communiceert in staat stellen om berichten naar jou te vervalsen alsof ze van jou kwamen. Ze kunnen geen berichten naar andere mensen vervalsen alsof ze van jou kwamen. Dit heeft geen invloed op de weerlegbaarheid van Spaces, aangezien dit een configuratieoptie is van de Space-eigenaar."
+
+#: src/components/modals/UserSettingsModal.tsx:372
+msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
+msgstr "Wanneer ingeschakeld, synchroniseert je gebruikersgegevens, Spaces en Space-sleutels tussen apparaten. Dit inschakelen verhoogt de zichtbaarheid van metadata van je account, wat kan onthullen wanneer je nieuwe Spaces hebt toegevoegd, hoewel niet de Spaces die je hebt toegevoegd."
+
+#: src/components/modals/CreateSpaceModal.tsx:166
+msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
+msgstr "Wanneer deze instelling is ingeschakeld, zullen uitnodigingslinks automatisch een gebruiker toestaan om je Space te betreden. Wanneer het niet is ingeschakeld, zullen gebruikers die een uitnodigingslink volgen je een verzoek sturen om je Space te betreden dat je handmatig moet goedkeuren. Publieke links vereisen dat er enige sleutelmaterialen aanwezig zijn in de link - wees je ervan bewust dat het bezit van een publieke Space-link iedereen met de link kan toestaan om berichten op de Space te lezen zolang de link geldig is."
+
+#: src/components/onboarding/Onboarding.tsx:180
+msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+msgstr "Wanneer je Quorum in een browser gebruikt, worden je berichten lokaal opgeslagen in je browser."
+
+#: src/components/message/Message.tsx:130
+msgid "Yesterday at {timeFormatted}"
+msgstr "Gisteren om {timeFormatted}"
+
+#: src/components/direct/DirectMessage.tsx:468
+msgid "You"
+msgstr "Jij"
+
+#: src/components/onboarding/Onboarding.tsx:276
+msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
+msgstr "Je kunt op de standaardafbeelding hieronder klikken om deze te selecteren met de bestandsdialoog van je systeem of een nieuwe slepen en neerzetten."
+
+#: src/components/onboarding/Onboarding.tsx:279
+msgid "You will be able to change this later in your settings."
+msgstr "Je kunt dit later in je instellingen wijzigen."
+
+#: src/components/onboarding/Onboarding.tsx:372
+msgid "You're all set. Welcome to Quorum!"
+msgstr "Je bent helemaal klaar. Welkom bij Quorum!"
+
+#: src/components/message/InviteLink.tsx:58
+msgid "You've been invited to join a Space"
+msgstr "Je bent uitgenodigd om een Space te betreden"

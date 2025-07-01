@@ -6,6 +6,7 @@ import {
 import Button from '../Button';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
+import { t } from '@lingui/core/macro';
 
 export const Login = ({
   setUser,
@@ -57,7 +58,7 @@ export const Login = ({
                 });
               }}
             >
-              Create New Account
+              {t`Create New Account`}
             </Button>
             <Button
               type="light-outline"
@@ -70,7 +71,7 @@ export const Login = ({
                 });
               }}
             >
-              Import Existing Key
+              {t`Import Existing Key`}
             </Button>
           </div>
         </div>

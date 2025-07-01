@@ -19,6 +19,7 @@ import { useSpaces } from '../../hooks/queries/spaces';
 import './NavMenu.scss';
 import { useMessageDB } from '../context/MessageDB';
 import { useConfig } from '../../hooks/queries/config/useConfig';
+import { t } from '@lingui/core/macro';
 
 type NavMenuProps = {
   showCreateSpaceModal: () => void;
@@ -95,7 +96,7 @@ const NavMenu: React.FC<NavMenuProps> = (props) => {
             notifs={false}
             size="regular"
             selected={location.pathname.startsWith('/messages')}
-            spaceName="Direct Messages"
+            spaceName={t`Direct Messages`}
             iconUrl="/quorum-symbol-bg-blue.png"
           />
         </Link>

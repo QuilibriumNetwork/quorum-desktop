@@ -27,6 +27,10 @@ import { useParams } from 'react-router';
 import { InviteLink } from './InviteLink';
 import Modal from '../Modal';
 import './Message.scss';
+import { t } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
+import { DefaultImages } from '../../utils';
+import ReactTooltip from '../../components/ReactTooltip';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -120,25 +124,27 @@ export const Message = ({
 
   const displayedTimestmap = time.calendar(null, {
     sameDay: function () {
-      return `[Today at ${timeFormatted}]`;
+      return `[${t`Today at ${timeFormatted}`}]`;
     },
     lastWeek: 'dddd',
-    lastDay: `[Yesterday at ${timeFormatted}]`,
+    lastDay: `[${t`Yesterday at ${timeFormatted}`}]`,
     sameElse: function () {
       return `[${fromNow}]`;
     },
   });
 
-  const formatEventMessage = (type: string) => {
+  const formatEventMessage = (userDisplayName: string, type: string) => {
     switch (type) {
       case 'join':
-        return 'joined';
+        return i18n._('{user} has joined', { user: userDisplayName });
       case 'leave':
-        return 'left';
+        return i18n._('{user} has left', { user: userDisplayName });
       case 'kick':
-        return 'been kicked';
+        return i18n._('{user} has been kicked', { user: userDisplayName });
     }
   };
+
+  const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null);
 
   return (
     <div
@@ -184,7 +190,13 @@ export const Message = ({
                 <div
                   className="message-reply-sender-icon"
                   style={{
-                    backgroundImage: `url(${mapSenderToUser(reply.content.senderId).userIcon})`,
+                    backgroundImage: `url(${
+                      mapSenderToUser(
+                        reply.content.senderId
+                      ).userIcon?.includes(DefaultImages.UNKNOWN_USER)
+                        ? 'var(--unknown-icon)'
+                        : mapSenderToUser(reply.content.senderId).userIcon
+                    })`,
                   }}
                 />
                 <div className="message-reply-sender-name">
@@ -202,7 +214,7 @@ export const Message = ({
       })()}
       {['join', 'leave', 'kick'].includes(message.content.type) && (
         <div className="flex flex-row font-[11px] px-[11px] py-[8px] italic">
-          {sender.displayName} has {formatEventMessage(message.content.type)}
+          {formatEventMessage(sender.displayName, message.content.type)}
         </div>
       )}
       {!['join', 'leave', 'kick'].includes(message.content.type) && (
@@ -323,54 +335,105 @@ export const Message = ({
                 🔥
               </div>
               <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
-              <div
-                onClick={(e) => {
-                  setEmojiPickerOpen(message.messageId);
-                  setEmojiPickerOpenDirection(
-                    e.clientY / height > 0.5 ? 'upwards' : 'downwards'
-                  );
-                }}
-                title="More reactions"
-                className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
-              >
-                <FontAwesomeIcon icon={faFaceSmileBeam} />
-              </div>
-              <div
-                onClick={() => {
-                  setInReplyTo(message);
-                  editorRef?.focus();
-                }}
-                title="Reply"
-                className="w-5 mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
-              >
-                <FontAwesomeIcon icon={faReply} />
-              </div>
-              <div
-                onClick={() => {
-                  const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
-                  navigator.clipboard.writeText(url);
-                }}
-                title="Copy message link"
-                className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
-              >
-                <FontAwesomeIcon icon={faLink} />
-              </div>
+              <>
+                <div
+                  id={`emoji-tooltip-icon-${message.messageId}`}
+                  onClick={(e) => {
+                    setEmojiPickerOpen(message.messageId);
+                    setEmojiPickerOpenDirection(
+                      e.clientY / height > 0.5 ? 'upwards' : 'downwards'
+                    );
+                  }}
+                  className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faFaceSmileBeam} />
+                </div>
+                <ReactTooltip
+                  id={`emoji-tooltip-${message.messageId}`}
+                  content={t`More reactions`}
+                  place="top"
+                  anchorSelect={`#emoji-tooltip-icon-${message.messageId}`}
+                />
+              </>
+
+              <>
+                <div
+                  id={`reply-tooltip-icon-${message.messageId}`}
+                  onClick={() => {
+                    setInReplyTo(message);
+                    editorRef?.focus();
+                  }}
+                  className="w-5 mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faReply} />
+                </div>
+
+                <ReactTooltip
+                  id={`reply-tooltip-${message.messageId}`}
+                  content={t`Reply`}
+                  place="top"
+                  anchorSelect={`#reply-tooltip-icon-${message.messageId}`}
+                />
+              </>
+
+              <>
+                <div
+                  id={`copy-link-tooltip-icon-${message.messageId}`}
+                  onClick={() => {
+                    const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
+                    navigator.clipboard.writeText(url);
+                    setCopiedLinkId(message.messageId);
+
+                    // Reset tooltip after 1.5s
+                    setTimeout(() => {
+                      setCopiedLinkId((prev) =>
+                        prev === message.messageId ? null : prev
+                      );
+                    }, 1500);
+                  }}
+                  className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faLink} />
+                </div>
+
+                <ReactTooltip
+                  id={`copy-link-tooltip-${message.messageId}`}
+                  content={
+                    copiedLinkId === message.messageId
+                      ? t`Copied!`
+                      : t`Copy message link`
+                  }
+                  place="top-start"
+                  anchorSelect={`#copy-link-tooltip-icon-${message.messageId}`}
+                />
+              </>
 
               {canUserDelete && (
                 <>
                   <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
+
                   <div
+                    id={`delete-tooltip-icon-${message.messageId}`}
                     onClick={() => {
                       submitMessage({
                         type: 'remove-message',
                         removeMessageId: message.messageId,
                       });
                     }}
-                    title="Delete message"
                     className="w-5 text-center transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
                   >
-                    <FontAwesomeIcon icon={faTrash} className='text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125 ' />
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      className="text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125"
+                    />
                   </div>
+
+                  <ReactTooltip
+                    id={`delete-tooltip-${message.messageId}`}
+                    content={t`Delete message`}
+                    place="top-start"
+                    anchorSelect={`#delete-tooltip-icon-${message.messageId}`}
+                  />
                 </>
               )}
             </div>
@@ -414,10 +477,11 @@ export const Message = ({
             }}
             className="message-sender-icon"
             style={{
-              backgroundImage:
-                sender.userIcon === '/unknown.png'
-                  ? 'var(--unknown-icon)'
-                  : `url(${sender.userIcon})`,
+              backgroundImage: sender.userIcon?.includes(
+                DefaultImages.UNKNOWN_USER
+              )
+                ? 'var(--unknown-icon)'
+                : `url(${sender.userIcon})`,
             }}
           />
           <div className="message-content">
@@ -425,7 +489,7 @@ export const Message = ({
             <span className="pl-2">
               {!repudiability && !message.signature && (
                 <FontAwesomeIcon
-                  title="Message does not have a valid signature, this may not be from the sender"
+                  title={t`Message does not have a valid signature, this may not be from the sender`}
                   size={'2xs'}
                   icon={faUnlock}
                 />
@@ -536,7 +600,7 @@ export const Message = ({
                           maxHeight: 300,
                           cursor: 'pointer',
                         }}
-                        className="rounded-lg hover:opacity-0 transition-opacity duration-200 cursor-pointer"
+                        className="rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer"
                         onClick={(e) => {
                           const img = e.currentTarget;
                           if (

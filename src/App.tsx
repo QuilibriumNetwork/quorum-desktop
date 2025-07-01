@@ -18,6 +18,9 @@ import { Maintenance } from './components/Maintenance';
 import { RegistrationProvider } from './components/context/RegistrationPersister';
 import JoinSpaceModal from './components/modals/JoinSpaceModal';
 import Elements from './components/Elements';
+import { DefaultImages } from './utils';
+import { i18n } from './i18n';
+import { I18nProvider } from '@lingui/react';
 
 
 window.Buffer = Buffer;
@@ -86,7 +89,7 @@ const App = () => {
           currentPasskeyInfo.displayName ?? currentPasskeyInfo.address,
         state: 'online',
         status: '',
-        userIcon: currentPasskeyInfo.pfpUrl ?? '/unknown.png',
+        userIcon: currentPasskeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER,
         address: currentPasskeyInfo.address,
       });
     }
@@ -94,153 +97,155 @@ const App = () => {
 
   return (
     <>
-      {
-        // @ts-ignore
-        window.electron && <CustomTitlebar />
-      }
-      <ErrorBoundary
-        fallback={
-          <div className="bg-primary--accent--noise flex flex-col min-h-screen text-text-base">
-            <Maintenance />
-          </div>
+      <I18nProvider i18n={i18n}>
+        {
+          // @ts-ignore
+          window.electron && <CustomTitlebar />
         }
-      >
-        {user && currentPasskeyInfo ? (
-          <div className="bg-[var(--surface-00)] flex flex-col min-h-screen text-text-base">
-            <Suspense fallback={<Connecting />}>
-              <RegistrationProvider>
-                <Suspense>
-                  <Routes>
-                    <Route
-                      path="/"
-                      element={
-                        <>
-                          <Connecting />
-                          {user && (
-                            <Navigate
-                              to="/messages"
-                              state={{ from: '/' }}
-                              replace
-                            />
-                          )}
-                        </>
-                      }
-                    />
-                    <Route
-                      path="/messages"
-                      element={
-                        <Layout
-                          kickUserAddress={kickUserAddress}
-                          setKickUserAddress={setKickUserAddress}
-                        >
-                          <DirectMessages
-                            setUser={setUser}
-                            setAuthState={() => {
-                              setUser(undefined);
-                            }}
-                            user={user}
-                          />
-                        </Layout>
-                      }
-                    />
-                    <Route
-                      path="/messages/new"
-                      element={
-                        <Layout
-                          newDirectMessage
-                          kickUserAddress={kickUserAddress}
-                          setKickUserAddress={setKickUserAddress}
-                        >
-                          <DirectMessages
-                            setUser={setUser}
-                            setAuthState={() => {
-                              setUser(undefined);
-                            }}
-                            user={user}
-                          />
-                        </Layout>
-                      }
-                    />
-                    <Route
-                      path="/messages/:address"
-                      element={
-                        <Layout
-                          kickUserAddress={kickUserAddress}
-                          setKickUserAddress={setKickUserAddress}
-                        >
-                          <DirectMessages
-                            setUser={setUser}
-                            setAuthState={() => {
-                              setUser(undefined);
-                            }}
-                            user={user}
-                          />
-                        </Layout>
-                      }
-                    />
-                    <Route
-                      path="/spaces/:spaceId/:channelId"
-                      element={
-                        <Layout
-                          kickUserAddress={kickUserAddress}
-                          setKickUserAddress={setKickUserAddress}
-                        >
-                          <Space
-                            setUser={setUser}
-                            setAuthState={() => {
-                              setUser(undefined);
-                            }}
+        <ErrorBoundary
+          fallback={
+            <div className="bg-primary--accent--noise flex flex-col min-h-screen text-text-base">
+              <Maintenance />
+            </div>
+          }
+        >
+          {user && currentPasskeyInfo ? (
+            <div className="bg-[var(--surface-00)] flex flex-col min-h-screen text-text-base">
+              <Suspense fallback={<Connecting />}>
+                <RegistrationProvider>
+                  <Suspense>
+                    <Routes>
+                      <Route
+                        path="/"
+                        element={
+                          <>
+                            <Connecting />
+                            {user && (
+                              <Navigate
+                                to="/messages"
+                                state={{ from: '/' }}
+                                replace
+                              />
+                            )}
+                          </>
+                        }
+                      />
+                      <Route
+                        path="/messages"
+                        element={
+                          <Layout
                             kickUserAddress={kickUserAddress}
                             setKickUserAddress={setKickUserAddress}
-                            user={user}
+                          >
+                            <DirectMessages
+                              setUser={setUser}
+                              setAuthState={() => {
+                                setUser(undefined);
+                              }}
+                              user={user}
+                            />
+                          </Layout>
+                        }
+                      />
+                      <Route
+                        path="/messages/new"
+                        element={
+                          <Layout
+                            newDirectMessage
+                            kickUserAddress={kickUserAddress}
+                            setKickUserAddress={setKickUserAddress}
+                          >
+                            <DirectMessages
+                              setUser={setUser}
+                              setAuthState={() => {
+                                setUser(undefined);
+                              }}
+                              user={user}
+                            />
+                          </Layout>
+                        }
+                      />
+                      <Route
+                        path="/messages/:address"
+                        element={
+                          <Layout
+                            kickUserAddress={kickUserAddress}
+                            setKickUserAddress={setKickUserAddress}
+                          >
+                            <DirectMessages
+                              setUser={setUser}
+                              setAuthState={() => {
+                                setUser(undefined);
+                              }}
+                              user={user}
+                            />
+                          </Layout>
+                        }
+                      />
+                      <Route
+                        path="/spaces/:spaceId/:channelId"
+                        element={
+                          <Layout
+                            kickUserAddress={kickUserAddress}
+                            setKickUserAddress={setKickUserAddress}
+                          >
+                            <Space
+                              setUser={setUser}
+                              setAuthState={() => {
+                                setUser(undefined);
+                              }}
+                              kickUserAddress={kickUserAddress}
+                              setKickUserAddress={setKickUserAddress}
+                              user={user}
+                            />
+                          </Layout>
+                        }
+                      />
+                      <Route
+                        path="/invite/"
+                        element={
+                          <Layout
+                            kickUserAddress={kickUserAddress}
+                            setKickUserAddress={setKickUserAddress}
+                          >
+                            <JoinSpaceModal visible={true} onClose={() => {}} />
+                          </Layout>
+                        }
+                      />
+                      <Route
+                        path="/*"
+                        element={
+                          <Navigate
+                            to="/messages"
+                            state={{ from: '/' }}
+                            replace
                           />
-                        </Layout>
-                      }
-                    />
-                    <Route
-                      path="/invite/"
-                      element={
-                        <Layout
-                          kickUserAddress={kickUserAddress}
-                          setKickUserAddress={setKickUserAddress}
-                        >
-                          <JoinSpaceModal visible={true} onClose={() => {}} />
-                        </Layout>
-                      }
-                    />
-                    <Route
-                      path="/*"
-                      element={
-                        <Navigate
-                          to="/messages"
-                          state={{ from: '/' }}
-                          replace
-                        />
-                      }
-                    />
-                  </Routes>
-                </Suspense>
-              </RegistrationProvider>
-            </Suspense>
-          </div>
-        ) : landing && !currentPasskeyInfo ? (
-          <div className="bg-primary--accent--noise flex flex-col min-h-screen text-text-base">
-            <Routes>
-              <Route path="/" element={<Login setUser={setUser} />} />
-              <Route path="/*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </div>
-        ) : landing ? (
-          <div className="bg-primary--accent--noise flex flex-col min-h-screen text-text-base">
-            <Routes>
-              <Route path="/" element={<Onboarding setUser={setUser} />} />
-              <Route path="/*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </div>
-        ) : (
-          <Connecting />
-        )}
-      </ErrorBoundary>
+                        }
+                      />
+                    </Routes>
+                  </Suspense>
+                </RegistrationProvider>
+              </Suspense>
+            </div>
+          ) : landing && !currentPasskeyInfo ? (
+            <div className="bg-primary--accent--noise flex flex-col min-h-screen text-text-base">
+              <Routes>
+                <Route path="/" element={<Login setUser={setUser} />} />
+                <Route path="/*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </div>
+          ) : landing ? (
+            <div className="bg-primary--accent--noise flex flex-col min-h-screen text-text-base">
+              <Routes>
+                <Route path="/" element={<Onboarding setUser={setUser} />} />
+                <Route path="/*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </div>
+          ) : (
+            <Connecting />
+          )}
+        </ErrorBoundary>
+      </I18nProvider>
     </>
   );
 };

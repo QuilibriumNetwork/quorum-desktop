@@ -1,18 +1,21 @@
-import React from 'react';
-import { useTheme } from './context/ThemeProvider';
+import React, { useEffect } from 'react';
+import { useTheme, Theme } from './context/ThemeProvider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSun, faMoon, faDesktop } from '@fortawesome/free-solid-svg-icons';
+import { t } from '@lingui/core/macro';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
-const iconMap = {
-  light: faSun,
-  dark: faMoon,
-  system: faDesktop,
-};
 
-const options: Array<'light' | 'dark' | 'system'> = ['light', 'dark', 'system'];
+type ThemeOption = { text: string; icon: IconDefinition };
 
 const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({ horizontal }) => {
   const { theme, setTheme } = useTheme();
+
+  const options: { [key: string]: ThemeOption } = {
+    light: { text: t`light`, icon: faSun },
+    dark: { text: t`dark`, icon: faMoon },
+    system: { text: t`system`, icon: faDesktop }
+  };
 
   return (
     <div
@@ -22,27 +25,27 @@ const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({ horizontal }) => 
           : 'flex flex-col gap-3 max-w-[300px]'
       }`}
     >
-      {options.map((opt) => (
+      {Object.entries(options).map(([key, opt]) => (
         <label
-          key={opt}
+          key={key}
           className={
             'flex items-center justify-between px-4 py-2 rounded-md border cursor-pointer ' +
-            (theme === opt
+            (theme === key
               ? 'border-[var(--primary)] bg-[var(--surface-1)]'
               : 'border-[var(--surface-3)] hover:bg-[var(--surface-2)]')
           }
         >
           <div className="flex items-center gap-2">
-            <FontAwesomeIcon icon={iconMap[opt]} className="text-surface-9" />
-            <span className="capitalize mr-3">{opt}</span>
+            <FontAwesomeIcon icon={opt.icon} className="text-surface-9" />
+            <span className="capitalize mr-3">{opt.text}</span>
           </div>
 
           <input
             type="radio"
             name="theme"
-            value={opt}
-            checked={theme === opt}
-            onChange={() => setTheme(opt)}
+            value={key}
+            checked={theme === key}
+            onChange={() => setTheme(key as Theme)}
             className="accent-[var(--primary)] w-4 h-4"
           />
         </label>

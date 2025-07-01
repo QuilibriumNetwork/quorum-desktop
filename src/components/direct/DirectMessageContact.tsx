@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import './DirectMessageContact.scss';
+import { DefaultImages } from '../../utils';
 
 const DirectMessageContact: React.FunctionComponent<{
   unread: boolean;
@@ -25,7 +26,7 @@ const DirectMessageContact: React.FunctionComponent<{
           className="direct-message-contact-icon flex flex-col justify-around w-[38px] bg-cover bg-center rounded-full"
           style={{
             backgroundImage:
-              props.userIcon && !props.userIcon.includes('unknown.png')
+              props.userIcon && !props.userIcon.includes(DefaultImages.UNKNOWN_USER)
                 ? `url(${props.userIcon})`
                 : 'var(--unknown-icon)',
           }}

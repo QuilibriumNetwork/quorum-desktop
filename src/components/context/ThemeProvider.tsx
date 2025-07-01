@@ -1,21 +1,28 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = 'light' | 'dark' | 'system';
+export type Theme = 'light' | 'dark' | 'system';
 
 interface ThemeContextType {
   theme: Theme;
   setTheme: (value: Theme) => void;
+  resolvedTheme: Theme;
 }
 
 const ThemeContext = createContext<ThemeContextType>({
   theme: 'system',
   setTheme: () => {},
+  resolvedTheme: 'light',
 });
 
 export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>('system');
+
+  // we need to keep track of the resolved theme because the theme
+  // can be set to system, but the resolved theme is the actual theme
+  // that is applied to the document.
+  const [resolvedTheme, setResolvedTheme] = useState<Theme>('system');
 
   const applyTheme = (value: Theme) => {
     const html = document.documentElement;
@@ -24,8 +31,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (value === 'system') {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       html.classList.add(prefersDark ? 'dark' : 'light');
+      setResolvedTheme(prefersDark ? 'dark' : 'light');
     } else {
       html.classList.add(value);
+      setResolvedTheme(value);
     }
   };
 
@@ -49,7 +58,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
       {children}
     </ThemeContext.Provider>
   );

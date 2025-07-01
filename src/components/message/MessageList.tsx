@@ -10,6 +10,7 @@ import {
 import { Virtuoso } from 'react-virtuoso';
 import type { VirtuosoHandle } from 'react-virtuoso';
 import React from 'react';
+import { DefaultImages } from '../../utils';
 
 function useWindowSize() {
   const [size, setSize] = React.useState([0, 0]);
@@ -67,7 +68,7 @@ export const MessageList = ({
     return (
       members[senderId] || {
         displayName: 'Unknown User',
-        userIcon: '/unknown.png',
+        userIcon: DefaultImages.UNKNOWN_USER,
       }
     );
   };

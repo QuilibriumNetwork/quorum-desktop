@@ -13,12 +13,15 @@ import { useInvalidateConversation } from '../../hooks/queries/conversation/useI
 import { MessageList } from '../message/MessageList';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
-import { useLocalization } from '../../hooks';
+
+import { t } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
+import ClickToCopyContent from '../ClickToCopyContent';
+import { DefaultImages } from '../../utils';
+import CopyToClipboard from '../CopyToClipboard';
 
 const DirectMessage: React.FC<{}> = (p: {}) => {
   const [fileError, setFileError] = useState<string | null>(null);
-  const { data: localization } = useLocalization({ langId: 'en' });
-  const localizations = localization.localizations;
   let { address } = useParams<{ address: string }>();
   const conversationId = address! + '/' + address!;
   const [pendingMessage, setPendingMessage] = useState('');
@@ -55,9 +58,9 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       onDropRejected: (fileRejections) => {
         for (const rejection of fileRejections) {
           if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-            setFileError(localizations['FILE_TOO_LARGE_2MB']([]));
+            setFileError(t`File cannot be larger than 2MB`);
           } else {
-            setFileError(localizations['FILE_REJECTED']([]));
+            setFileError(t`File rejected`);
           }
         }
       },
@@ -124,8 +127,8 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       };
     } else if (registration.registration) {
       m[registration.registration.user_address] = {
-        displayName: 'Unknown User',
-        userIcon: '/unknown.png',
+        displayName: t`Unknown User`,
+        userIcon: DefaultImages.UNKNOWN_USER,
         address: registration.registration.user_address,
       };
     }
@@ -137,12 +140,13 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     return m;
   }, [registration, conversation]);
   const [showUsers, setShowUsers] = React.useState(false);
+  const [acceptChat, setAcceptChat] = React.useState(false);
 
   const mapSenderToUser = (senderId: string) => {
     return (
       members[senderId] || {
-        displayName: 'Unknown User',
-        userIcon: '/unknown.png',
+        displayName: t`Unknown User`,
+        userIcon: DefaultImages.UNKNOWN_USER,
       }
     );
   };
@@ -159,6 +163,15 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       lastMessageTimestamp: Date.now(),
     });
     invalidateConversation({ conversationId });
+
+    // determine if the user has sent any messages in this conversation
+    const userMessages = messageList.filter((m) => m.content.senderId === user.currentPasskeyInfo!.address);
+
+    // if the user has sent any messages, do not show the accept chat message
+    console.log(userMessages);
+    if (userMessages.length > 0) {
+      setAcceptChat(true);
+    }
   }, [messageList]);
 
   const submit = async (message: any) => {
@@ -175,8 +188,11 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
 
   const rowCount = pendingMessage.split('').filter((c) => c == '\n').length + 1;
 
-  const icon = mapSenderToUser(address ?? '').userIcon;
-
+  const userIcon = mapSenderToUser(address ?? '').userIcon;
+  const icon = userIcon?.includes(DefaultImages.UNKNOWN_USER)
+    ? 'var(--unknown-icon)'
+    : 'url(' + userIcon + ')';
+  console.log('userIcon', icon);
   return (
     <div className="direct-message">
       <div className="flex flex-col">
@@ -187,9 +203,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 className="w-[28px] h-[28px] bg-cover bg-center rounded-full"
                 style={{
                   backgroundImage:
-                    icon === '/unknown.png'
-                      ? 'var(--unknown-icon)'
-                      : `url(${icon})`,
+                    `${icon}`,
                 }}
               />
             </div>
@@ -198,9 +212,12 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 <span>{mapSenderToUser(address ?? '').displayName} |</span>
               </div>
               <div className="flex flex-col justify-around pl-1">
-                <span className="font-light text-sm text-text-subtle">
-                  {address}
-                </span>
+                <div className="flex flex-row items-center">
+                  <span className="font-light text-sm text-text-subtle mr-2">
+                    {address}
+                  </span>
+                  <CopyToClipboard text={address ?? ''} tooltipText={t`Copy address to clipboard`} />
+                </div>
               </div>
             </div>
           </div>
@@ -243,8 +260,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 onClick={() => setInReplyTo(undefined)}
                 className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-surface-4"
               >
-                Replying to{' '}
-                {mapSenderToUser(inReplyTo.content.senderId).displayName}
+                {i18n._('Replying to {user}', { user: mapSenderToUser(inReplyTo.content.senderId).displayName })}
                 <span
                   className="message-in-reply-dismiss"
                   onClick={() => setInReplyTo(undefined)}
@@ -281,6 +297,16 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           </div>
         )}
 
+        {!acceptChat && (
+          <div className="flex flex-row justify-center">
+            <div className="flex flex-row justify-center">
+            <div className="w-full px-3 py-2 mb-2 text-sm text-center rounded-lg bg-surface-4 text-text-subtle">
+              {t`Until you reply, this sender will not see your display name or profile picture`}
+            </div>
+            </div>
+          </div>
+        )}
+
         <div {...getRootProps()} className="flex flex-row relative">
           <div
             className={
@@ -299,7 +325,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               (inReplyTo ? 'message-editor-reply' : '')
             }
             placeholder={
-              'Send a message to ' + mapSenderToUser(address ?? '').displayName
+              i18n._("Send a message to {user}", { user: mapSenderToUser(address ?? '').displayName })
             }
             rows={
               rowCount > 4
@@ -436,13 +462,13 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   backgroundSize: 'cover',
                   backgroundImage: `url(${members[s].userIcon})`,
                 }}
-              />
+                />
               <div className="flex flex-col ml-2 text-text-base">
                 <span className="text-md font-bold truncate w-[190px]">
-                  {members[s].displayName}
+                  {members[s].displayName} {members[s].address === user.currentPasskeyInfo!.address && <span className="text-xs text-text-subtle">({t`You`})</span>}
                 </span>
                 <span className="text-xs truncate w-[190px] opacity-70">
-                  {members[s].address}
+                  <ClickToCopyContent text={members[s].address} tooltipLocation="left-start">{members[s].address}</ClickToCopyContent>
                 </span>
               </div>
             </div>

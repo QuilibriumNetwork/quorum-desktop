@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router';
 import {
   faChevronDown,
   faTrash,
-  faClipboard,
+  faInfoCircle,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { useMessageDB } from '../context/MessageDB';
@@ -30,6 +30,10 @@ import Input from '../Input';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { Loading } from '../Loading';
+import { Trans } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
+import ClickToCopyContent from '../ClickToCopyContent';
+import ReactTooltip from '../ReactTooltip';
 
 const SpaceEditor: React.FunctionComponent<{
   spaceId: string;
@@ -294,7 +298,7 @@ const SpaceEditor: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          General
+          <Trans>General</Trans>
         </div>
         <div
           onClick={() => setSelectedCategory('roles')}
@@ -303,7 +307,7 @@ const SpaceEditor: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          Roles
+          <Trans>Roles</Trans>
         </div>
         <div
           onClick={() => setSelectedCategory('emojis')}
@@ -312,7 +316,7 @@ const SpaceEditor: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          Emojis
+          <Trans>Emojis</Trans>
         </div>
         <div
           onClick={() => setSelectedCategory('stickers')}
@@ -323,7 +327,7 @@ const SpaceEditor: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          Stickers
+          <Trans>Stickers</Trans>
         </div>
         <div
           onClick={() => setSelectedCategory('invites')}
@@ -334,7 +338,7 @@ const SpaceEditor: React.FunctionComponent<{
             'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
-          Invites
+          <Trans>Invites</Trans>
         </div>
       </div>
       <div className="flex flex-col grow overflow-y-scroll rounded-xl">
@@ -361,7 +365,9 @@ const SpaceEditor: React.FunctionComponent<{
                       <input {...getInputProps()} />
                     </div>
                     <div className="space-editor-text flex flex-col grow pr-4">
-                      <div className="small-caps">Space Name</div>
+                      <div className="small-caps">
+                        <Trans>Space Name</Trans>
+                      </div>
                       <input
                         className="w-full quorum-input"
                         value={displayName}
@@ -371,7 +377,7 @@ const SpaceEditor: React.FunctionComponent<{
                   </div>
                   <div className="space-editor-content flex flex-col grow">
                     <div className="space-editor-content-section-header small-caps">
-                      Space Banner
+                      <Trans>Space Banner</Trans>
                     </div>
                     <div className="space-editor-info">
                       <div
@@ -398,7 +404,7 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                     </div>
                     <div className="space-editor-content-section-header small-caps">
-                      Default Channel
+                      <Trans>Default Channel</Trans>
                     </div>
                     <div className="space-editor-info">
                       <div
@@ -407,7 +413,7 @@ const SpaceEditor: React.FunctionComponent<{
                           setIsDefaultChannelListExpanded((prev) => !prev)
                         }
                       >
-                        <div className="flex flex-col justify-around">
+                        <div className="flex flex-col justify-around w-[calc(100%-30px)]">
                           #{defaultChannel?.channelName}
                         </div>
                         <div className="space-context-menu-toggle-button">
@@ -416,7 +422,7 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                       {isDefaultChannelListExpanded && (
                         <div className="absolute pr-[227px] w-full">
-                          <div className="bg-surface-00 w-full mt-1 max-h-[200px] rounded-xl overflow-y-scroll">
+                          <div className="bg-surface-00 w-full mt-1 max-h-[200px] rounded-xl overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                             {space?.groups.map((g, i) => {
                               return (
                                 <React.Fragment key={'group-select-' + i}>
@@ -449,16 +455,17 @@ const SpaceEditor: React.FunctionComponent<{
                       )}
                     </div>
                     <div className="space-editor-content-section-header small-caps">
-                      Privacy Settings
+                      <Trans>Privacy Settings</Trans>
                     </div>
                     <div className="space-editor-info">
                       <div className="flex flex-row justify-between">
                         <div className="text-sm flex flex-row">
                           <div className="text-sm flex flex-col justify-around">
-                            Repudiability
+                            <Trans>Repudiability</Trans>
                           </div>
                           <div className="text-sm flex flex-col justify-around ml-2">
                             <div
+                              id="repudiability-tooltip-icon"
                               className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
                               onMouseOut={() => setRepudiableTooltip(false)}
                               onMouseOver={() => setRepudiableTooltip(true)}
@@ -467,19 +474,13 @@ const SpaceEditor: React.FunctionComponent<{
                             </div>
                           </div>
                           <div className="absolute left-[340px]">
-                            <Tooltip
-                              arrow="left"
-                              variant="dark"
-                              className="w-[400px] absolute"
-                              visible={repudiableTooltip}
-                            >
-                              Repudiability is a setting that makes
-                              conversations in this space unverifiable as
-                              originating from the named sender. This can be
-                              useful in sensitive situations, but it also means
-                              others may forge messages that appear to come from
-                              you.
-                            </Tooltip>
+                            <ReactTooltip
+                              id="repudiability-tooltip"
+                              content={t`Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.`}
+                              place="bottom"
+                              className="!w-[400px]"
+                              anchorSelect="#repudiability-tooltip-icon"
+                            />
                           </div>
                         </div>
                         <ToggleSwitch
@@ -491,7 +492,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="grow flex flex-col justify-end">
                       <div className="space-editor-editor-actions">
                         <Button type="primary" onClick={() => saveChanges()}>
-                          Save Changes
+                          <Trans>Save Changes</Trans>
                         </Button>
                       </div>
                     </div>
@@ -503,9 +504,13 @@ const SpaceEditor: React.FunctionComponent<{
                 <>
                   <div className="space-editor-header pt-4 px-4 !min-h-[0px] flex flex-row justify-between">
                     <div className="">
-                      <div className="text-xl font-bold">Roles</div>
+                      <div className="text-xl font-bold">
+                        <Trans>Roles</Trans>
+                      </div>
                       <div className="pt-1 text-sm text-text-base">
-                        Click on the role name and tag to edit them.
+                        <Trans>
+                          Click on the role name and tag to edit them.
+                        </Trans>
                       </div>
                     </div>
                     <div className="space-editor-editor-actions">
@@ -526,7 +531,7 @@ const SpaceEditor: React.FunctionComponent<{
                             ]);
                           }}
                         >
-                          Add Role
+                          <Trans>Add Role</Trans>
                         </Button>
                       </div>
                     </div>
@@ -586,7 +591,7 @@ const SpaceEditor: React.FunctionComponent<{
                           <span className="float-right">
                             <FontAwesomeIcon
                               icon={faTrash}
-                              title='Delete role'
+                              title="Delete role"
                               className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
                               onClick={() =>
                                 setRoles((prev) => [
@@ -596,7 +601,7 @@ const SpaceEditor: React.FunctionComponent<{
                             />
                           </span>
                           <span className="float-right pr-10 text-normal">
-                            Can delete messages?{' '}
+                            <Trans>Can delete messages?</Trans>{' '}
                             <input
                               type="checkbox"
                               checked={roles
@@ -633,7 +638,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="grow flex flex-col justify-end">
                       <div className="space-editor-editor-actions">
                         <Button type="primary" onClick={() => saveChanges()}>
-                          Save Changes
+                          <Trans>Save Changes</Trans>
                         </Button>
                       </div>
                     </div>
@@ -645,16 +650,23 @@ const SpaceEditor: React.FunctionComponent<{
                 <>
                   <div className="space-editor-header pt-4 px-4 !min-h-[160px] flex flex-row">
                     <div className="">
-                      <div className="text-xl font-bold">Emojis</div>
+                      <div className="text-xl font-bold">
+                        <Trans>Emojis</Trans>
+                      </div>
                       <div className="pt-1 text-sm text-text-base">
-                        Add up to 50 custom emoji. Custom emojis can only be
-                        used within a space.
+                        <Trans>
+                          Add up to 50 custom emoji. Custom emojis can only be used within a Space.
+                        </Trans>
                         <br />
                         <br />
-                        Requirements:
+                        <Trans>Requirements:</Trans>
                         <ul>
-                          <li>Supported types: PNG, JPG, GIF</li>
-                          <li>Max file size: 256kB</li>
+                          <li>
+                            <Trans>Supported types: PNG, JPG, GIF</Trans>
+                          </li>
+                          <li>
+                            <Trans>Max file size: 256kB</Trans>
+                          </li>
                         </ul>
                       </div>
                     </div>
@@ -666,7 +678,7 @@ const SpaceEditor: React.FunctionComponent<{
                           className="px-4 py-2 rounded-full font-medium text-sm text-center select-none border-2 border-[var(--primary-300)] text-[var(--primary-300)] bg-transparent transition duration-300 cursor-pointer hover:bg-[var(--primary)] hover:border-[var(--primary)] hover:text-white"
                           {...getEmojiRootProps()}
                         >
-                          Upload Emoji
+                          <Trans>Upload Emoji</Trans>
                           <input {...getEmojiInputProps()} />
                         </div>
                       )}
@@ -729,7 +741,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="grow flex flex-col justify-end">
                       <div className="space-editor-editor-actions">
                         <Button type="primary" onClick={() => saveChanges()}>
-                          Save Changes
+                          <Trans>Save Changes</Trans>
                         </Button>
                       </div>
                     </div>
@@ -741,16 +753,23 @@ const SpaceEditor: React.FunctionComponent<{
                 <>
                   <div className="space-editor-header pt-4 px-4 !min-h-[160px] flex flex-row">
                     <div className="">
-                      <div className="text-xl font-bold">Stickers</div>
+                      <div className="text-xl font-bold">
+                        <Trans>Stickers</Trans>
+                      </div>
                       <div className="pt-1 text-sm text-text-base">
-                        Add up to 50 custom stickers. Custom stickers can only
-                        be used within a space.
+                        <Trans>
+                          Add up to 50 custom stickers. Custom stickers can only be used within a Space.
+                        </Trans>
                         <br />
                         <br />
-                        Requirements:
+                        <Trans>Requirements:</Trans>
                         <ul>
-                          <li>Supported types: PNG, JPG, GIF</li>
-                          <li>Max file size: 256kB</li>
+                          <li>
+                            <Trans>Supported types: PNG, JPG, GIF</Trans>
+                          </li>
+                          <li>
+                            <Trans>Max file size: 256kB</Trans>
+                          </li>
                         </ul>
                       </div>
                     </div>
@@ -762,7 +781,7 @@ const SpaceEditor: React.FunctionComponent<{
                           className="px-4 py-2 rounded-full font-medium text-sm text-center select-none border-2 border-[var(--primary-300)] text-[var(--primary-300)] bg-transparent transition duration-300 cursor-pointer hover:bg-[var(--primary)] hover:border-[var(--primary)] hover:text-white"
                           {...getStickerRootProps()}
                         >
-                          Upload Sticker
+                          <Trans>Upload Sticker</Trans>
                           <input {...getStickerInputProps()} />
                         </div>
                       )}
@@ -825,7 +844,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="grow flex flex-col justify-end">
                       <div className="space-editor-editor-actions">
                         <Button type="primary" onClick={() => saveChanges()}>
-                          Save Changes
+                          <Trans>Save Changes</Trans>
                         </Button>
                       </div>
                     </div>
@@ -837,11 +856,15 @@ const SpaceEditor: React.FunctionComponent<{
                 <>
                   <div className="space-editor-header !min-h-[50px] pt-4 px-4 flex flex-row">
                     <div className="">
-                      <div className="text-xl font-bold">Invites</div>
+                      <div className="text-xl font-bold">
+                        <Trans>Invites</Trans>
+                      </div>
                       <div className="pt-1 text-sm text-text-base">
-                        Send invites to people you've previously had
-                        conversations with. An invite button will appear in
-                        their inbox.
+                        <Trans>
+                          Send invites to people you've previously had
+                          conversations with. An invite button will appear in
+                          their inbox.
+                        </Trans>
                       </div>
                     </div>
                   </div>
@@ -849,7 +872,9 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="flex"></div>
                     <div className="pt-4"></div>
                     <div className="space-editor-info">
-                      <div className="small-caps">Existing Conversations</div>
+                      <div className="small-caps">
+                        <Trans>Existing Conversations</Trans>
+                      </div>
                       <div
                         className="w-full quorum-input !font-bold flex flex-row justify-between cursor-pointer"
                         onClick={() => {
@@ -886,7 +911,7 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                       {isInviteListExpanded && (
                         <div className="absolute pr-[227px] w-full">
-                          <div className="bg-surface-00 w-full mt-1 max-h-[200px] rounded-xl overflow-y-scroll">
+                          <div className="bg-surface-00 w-full mt-1 max-h-[200px] rounded-xl overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                             {conversations.pages
                               .flatMap(
                                 (c: any) => c.conversations as Conversation[]
@@ -929,7 +954,9 @@ const SpaceEditor: React.FunctionComponent<{
                           </div>
                         </div>
                       )}
-                      <div className="small-caps">Enter Address Manually</div>
+                      <div className="small-caps">
+                        <Trans>Enter Address Manually</Trans>
+                      </div>
                       <Input
                         value={manualAddress}
                         placeholder="Type the address of the user you want to send to"
@@ -941,74 +968,70 @@ const SpaceEditor: React.FunctionComponent<{
                       />
                       {success && (
                         <div className="text-success-hex">
-                          Successfully sent invite to{' '}
-                          {selectedUser?.displayName}
+                          <Trans>
+                            Successfully sent invite to{' '}
+                            {selectedUser?.displayName}
+                          </Trans>
                         </div>
                       )}
-                      <div className="flex flex-row pt-8 justify-between">
-                        <div className="text-sm flex flex-row">
-                          <div className="text-sm flex flex-col justify-around">
-                            Public Invite Link
-                          </div>
-                          <div className="text-sm flex flex-col justify-around ml-2">
-                            <div className="relative group">
-                              <div className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg">
-                                ℹ
-                              </div>
-                              <div className="absolute left-8 -top-[5px] z-50 w-[400px] hidden group-hover:block">
-                                <Tooltip
-                                  arrow="left"
-                                  variant="dark"
-                                  className="absolute w-[400px]"
-                                >
-                                  Public invite links allow anyone with access
-                                  to the link join your space. Understand the
-                                  risks of enabling this, and to whom and where
-                                  you share the link.
-                                </Tooltip>
-                              </div>
+                      <div className="border-t border-surface-6 mt-4 pt-4"></div>
+                      <div className="flex flex-row justify-between">
+                        <div className="text-sm flex flex-row justify-center">
+                          <div className="text-lg flex flex-col justify-around">
+                            <Trans>Public Invite Link</Trans>
+                            <div className="text-sm flex flex-col justify-around pt-2 max-w-[500px]">
+                              <Trans>
+                                Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link.
+                              </Trans>
                             </div>
                           </div>
                         </div>
-
-                        <ToggleSwitch
-                          onClick={() => setPublicInvite((prev) => !prev)}
-                          active={publicInvite}
-                        />
+                        <div className="flex flex-col justify-center pt-2">
+                          <ToggleSwitch
+                            onClick={() => setPublicInvite((prev) => !prev)}
+                            active={publicInvite}
+                          />
+                        </div>
                       </div>
-                      {space?.isPublic && (
+                      {space?.isPublic && publicInvite && (
                         <div>
-                          <div className="flex items-start gap-2 mt-2">
-                            <div
-                              className="text-text-subtle hover:text-text-base mt-2 cursor-pointer"
-                              title="Copy to clipboard"
-                              onClick={() => {
-                                navigator.clipboard.writeText(
-                                  space.inviteUrl ||
-                                    'Click Generate New Invite Link'
-                                );
-                                setCopied(true);
-                                setTimeout(() => setCopied(false), 1500);
-                              }}
-                            >
-                              <FontAwesomeIcon icon={faClipboard} />
-                            </div>
-
-                            <textarea
-                              className="bg-surface-4 rounded-xl px-4 py-2 resize-none outline-none w-full"
-                              rows={1}
-                              readOnly
-                              value={
-                                space.inviteUrl ||
-                                'Click Generate New Invite Link'
-                              }
-                            />
-                          </div>
-
-                          {copied && (
-                            <div className="text-sm text-success-hex mt-1 ml-1">
-                              Copied!
-                            </div>
+                          {space.inviteUrl && (
+                            <>
+                              <div className="flex pt-2 pb-1 items-center">
+                                <div className="text-sm flex flex-row">
+                                  <div className="small-caps text-lg flex flex-col justify-around">
+                                    <Trans>Current Invite Link</Trans>
+                                  </div>
+                                  <div className="flex flex-col justify-around ml-2">
+                                    <FontAwesomeIcon
+                                      id="current-invite-link-tooltip-icon"
+                                      icon={faInfoCircle}
+                                      className="ml-2"
+                                    />
+                                    <ReactTooltip
+                                      id="current-invite-link-tooltip"
+                                      anchorSelect="#current-invite-link-tooltip-icon"
+                                      className="flex flex-col justify-around pt-3 pb-1 !w-[400px]"
+                                      place="bottom"
+                                      content={t`This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space.`}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                              <ClickToCopyContent
+                                text={space.inviteUrl}
+                                tooltipText={t`Copy invite link to clipboard`}
+                                className="pl-2 border-2 border-surface-6 rounded-lg py-1 max-w-[100%] w-[100%] overflow-x-auto whitespace-nowrap"
+                              >
+                                <div className="flex flex-row">
+                                  <div className="text-sm flex flex-col justify-around">
+                                    <div className="text-sm flex flex-col justify-around ml-2 overflow-x-auto whitespace-nowrap">
+                                      {space.inviteUrl}
+                                    </div>
+                                  </div>
+                                </div>
+                              </ClickToCopyContent>
+                            </>
                           )}
 
                           <div className="mt-4 flex flex-row">
@@ -1033,7 +1056,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 }
                               }}
                             >
-                              Generate New Invite Link
+                              <Trans>Generate New Invite Link</Trans>
                             </Button>
                           </div>
                         </div>
@@ -1054,7 +1077,7 @@ const SpaceEditor: React.FunctionComponent<{
                             }
                           }}
                         >
-                          Send Invite
+                          <Trans>Send Invite</Trans>
                         </Button>
                       </div>
                     </div>

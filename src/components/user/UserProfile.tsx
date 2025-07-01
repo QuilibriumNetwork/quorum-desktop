@@ -16,6 +16,8 @@ import { Role } from '../../api/quorumApi';
 import { useMessageDB } from '../context/MessageDB';
 import { useNavigate } from 'react-router';
 import { useRegistration } from '../../hooks';
+import { t } from '@lingui/core/macro';
+import { DefaultImages } from '../../utils';
 
 const UserProfile: React.FunctionComponent<{
   spaceId?: string;
@@ -123,7 +125,7 @@ const UserProfile: React.FunctionComponent<{
                 fileData !== undefined
                   ? `url(data:${acceptedFiles[0].type};base64,${Buffer.from(fileData).toString('base64')})`
                   : props.user.userIcon &&
-                      !props.user.userIcon.includes('unknown.png')
+                      !props.user.userIcon.includes(DefaultImages.UNKNOWN_USER)
                     ? `url(${props.user.userIcon})`
                     : 'var(--unknown-icon)',
             }}
@@ -137,7 +139,7 @@ const UserProfile: React.FunctionComponent<{
             style={{
               backgroundImage:
                 props.user.userIcon &&
-                !props.user.userIcon.includes('unknown.png')
+                !props.user.userIcon.includes(DefaultImages.UNKNOWN_USER)
                   ? `url(${props.user.userIcon})`
                   : 'var(--unknown-icon)',
             }}
@@ -181,7 +183,7 @@ const UserProfile: React.FunctionComponent<{
           </div>
           <div className="user-profile-info">
             <Input
-              placeholder="Status goes here"
+              placeholder={t`Status goes here`}
               value={status}
               onChange={(e) => setStatus(e.target.value)}
             />
@@ -218,7 +220,7 @@ const UserProfile: React.FunctionComponent<{
                         acceptedFiles[0].type +
                         ';base64,' +
                         Buffer.from(fileData).toString('base64')
-                      : (currentPasskeyInfo!.pfpUrl ?? '/unknown.png'),
+                      : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
                   address: currentPasskeyInfo!.address,
                 });
                 updateUserProfile(
@@ -228,7 +230,7 @@ const UserProfile: React.FunctionComponent<{
                         acceptedFiles[0].type +
                         ';base64,' +
                         Buffer.from(fileData).toString('base64')
-                    : (currentPasskeyInfo!.pfpUrl ?? '/unknown.png'),
+                    : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
                   currentPasskeyInfo!
                 );
                 if (props.dismiss !== undefined) {
@@ -236,7 +238,7 @@ const UserProfile: React.FunctionComponent<{
                 }
               }}
             >
-              Save Changes
+              {t`Save Changes`}
             </Button>
           </div>
         </div>
@@ -302,7 +304,7 @@ const UserProfile: React.FunctionComponent<{
               <div className="user-profile-actions">
                 <TooltipButton
                   icon={faReply}
-                  text="Send Message"
+                  text={t`Send Message`}
                   onClick={() => {
                     navigate('/messages/' + props.user.address);
                     props.dismiss && props.dismiss();
@@ -316,7 +318,7 @@ const UserProfile: React.FunctionComponent<{
                     <TooltipButton
                       type="danger"
                       icon={faShieldAlt}
-                      text="Kick User"
+                      text={t`Kick User`}
                       onClick={() => {
                         props.setKickUserAddress!(props.user.address);
                         props.dismiss && props.dismiss();

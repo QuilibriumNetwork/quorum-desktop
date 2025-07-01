@@ -3,11 +3,12 @@ import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import Modal from '../Modal';
 import Button from '../Button';
-import { useLocalization, useRegistration } from '../../hooks';
+import { useRegistration } from '../../hooks';
 import { getConfig } from '../../config/config';
 import { useMessageDB } from '../context/MessageDB';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import './KickUserModal.scss';
+import { t } from '@lingui/core/macro';
 
 type KickUserModalProps = {
   visible: boolean;
@@ -16,7 +17,6 @@ type KickUserModalProps = {
 };
 
 const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
-  let { data: localization } = useLocalization({ langId: getConfig().langId });
   const [kicking, setKicking] = React.useState(false);
   const { kickUser } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
@@ -30,10 +30,10 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
     <Modal
       visible={props.visible}
       onClose={props.onClose}
-      title={localization.localizations['KICK_USER_TITLE']([])}
+      title={t`Kick User`}
     >
       <div className="flex flex-row justify-around pb-4 select-none w-[400px] cursor-default">
-        <div>{localization.localizations['KICK_USER_TEXT']([])}</div>
+        <div>{t`Use the below button to kick this user out of the Space`}</div>
       </div>
       <div className="mt-4 pt-5 mx-[-26px] px-4 rounded-b-xl bg-surface-4 mb-[-26px] h-16 flex flex-row-reverse justify-between">
         <div>
@@ -53,7 +53,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
               props.onClose();
             }}
           >
-            {localization.localizations['KICK_USER']([])}
+            {t`Do it!`}
           </Button>
         </div>
       </div>

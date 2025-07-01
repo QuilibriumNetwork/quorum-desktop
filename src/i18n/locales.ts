@@ -1,0 +1,37 @@
+ const locales: Record<string, string> = {
+    ar: "العربية",
+    cs: "Čeština",
+    da: "Dansk",
+    de: "Deutsch",
+    el: "Ελληνικά",
+    en: "English",
+    'en-PI': "English (Pirate)",
+    es: "Español",
+    fi: "Suomi",
+    fr: "Français",
+    he: "עברית",
+    id: "Bahasa Indonesia",
+    it: "Italiano",
+    ja: "日本語",
+    ko: "한국어",
+    nl: "Nederlands",
+    no: "Norsk",
+    pl: "Polski",
+    pt: "Português",
+    ro: "Română",
+    ru: "Русский",
+    sk: "Slovenčina",
+    sl: "Slovenščina",
+    sr: "Српски",
+    sv: "Svenska",
+    th: "ไทย",
+    tr: "Türkçe",
+    uk: "Українська",
+    vi: "Tiếng Việt",
+    'zh-CN': "简体中文",
+    'zh-TW': "繁體中文",
+  };
+
+export const defaultLocale = "en";
+
+export default locales;
