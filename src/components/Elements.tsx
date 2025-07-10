@@ -11,7 +11,7 @@ const Elements = () => {
   const [showTooltipDark, setShowTooltipDark] = useState(false);
 
   return (
-    <div className="p-12 space-y-12 text-main bg-[var(--surface-00)] min-h-screen">
+    <div className="p-12 space-y-12 text-main bg-app min-h-screen">
       <h1 className="text-4xl font-bold">Style Guide</h1>
 
       <div className="flex flex-row items-center gap-6">

@@ -67,15 +67,10 @@ export default {
 
       backgroundColor: {
         app: 'var(--color-bg-app)',
-        sidebar: 'var(--color-bg-sidebar)',
-        'sidebar-active': 'var(--color-bg-sidebar-active)',
-        chat: 'var(--color-bg-chat)',
-        'chat-input': 'var(--color-bg-chat-input)',
-        header: 'var(--color-bg-header)',
-        hover: 'var(--color-bg-hover)',
-        overlay: 'var(--color-bg-overlay)',
+
+        icon: 'var(--color-bg-icon)',
+        input: 'var(--color-bg-input)',
         card: 'var(--color-bg-card)',
-        panel: 'var(--color-bg-panel)',
       },
 
       borderColor: {

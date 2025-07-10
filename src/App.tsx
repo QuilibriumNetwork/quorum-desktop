@@ -110,7 +110,7 @@ const App = () => {
           }
         >
           {user && currentPasskeyInfo ? (
-            <div className="bg-[var(--surface-00)] flex flex-col min-h-screen text-main">
+            <div className="bg-app flex flex-col min-h-screen text-main">
               <Suspense fallback={<Connecting />}>
                 <RegistrationProvider>
                   <Suspense>

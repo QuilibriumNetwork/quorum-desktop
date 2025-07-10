@@ -385,7 +385,7 @@ const SpaceEditor: React.FunctionComponent<{
                           'space-editor-banner-editable cursor-pointer ' +
                           (space?.bannerUrl || bannerAcceptedFiles.length != 0
                             ? ''
-                            : 'border-2 border-dashed border-[var(--primary-200)]')
+                            : 'border-2 border-dashed border-primary-200')
                         }
                         style={{
                           backgroundImage:
@@ -422,7 +422,7 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                       {isDefaultChannelListExpanded && (
                         <div className="absolute pr-[227px] w-full">
-                          <div className="bg-surface-00 w-full mt-1 max-h-[200px] rounded-xl overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                          <div className="bg-input max-w-[350px] mt-1 max-h-[200px] rounded-xl overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                             {space?.groups.map((g, i) => {
                               return (
                                 <React.Fragment key={'group-select-' + i}>
@@ -438,7 +438,7 @@ const SpaceEditor: React.FunctionComponent<{
                                             false
                                           );
                                         }}
-                                        className="py-2 px-2 mx-1 my-1 text-main hover:bg-[rgba(235,200,255,0.3)] rounded-lg cursor-pointer !font-bold"
+                                        className="py-2 px-2 mx-1 my-1 text-main hover:bg-surface-4 rounded-lg cursor-pointer !font-bold"
                                         key={
                                           'group-select-' + i + '-channel-' + i
                                         }
@@ -466,7 +466,7 @@ const SpaceEditor: React.FunctionComponent<{
                           <div className="text-sm flex flex-col justify-around ml-2">
                             <div
                               id="repudiability-tooltip-icon"
-                              className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
+                              className="border rounded-full w-6 h-6 text-center leading-5 text-lg"
                               onMouseOut={() => setRepudiableTooltip(false)}
                               onMouseOver={() => setRepudiableTooltip(true)}
                             >
@@ -655,7 +655,8 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                       <div className="pt-1 text-sm text-main">
                         <Trans>
-                          Add up to 50 custom emoji. Custom emojis can only be used within a Space.
+                          Add up to 50 custom emoji. Custom emojis can only be
+                          used within a Space.
                         </Trans>
                         <br />
                         <br />
@@ -758,7 +759,8 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                       <div className="pt-1 text-sm text-main">
                         <Trans>
-                          Add up to 50 custom stickers. Custom stickers can only be used within a Space.
+                          Add up to 50 custom stickers. Custom stickers can only
+                          be used within a Space.
                         </Trans>
                         <br />
                         <br />
@@ -911,7 +913,7 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                       {isInviteListExpanded && (
                         <div className="absolute pr-[227px] w-full">
-                          <div className="bg-surface-00 w-full mt-1 max-h-[200px] rounded-xl overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                          <div className="bg-input w-full mt-1 max-h-[200px] rounded-xl overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                             {conversations.pages
                               .flatMap(
                                 (c: any) => c.conversations as Conversation[]
@@ -927,7 +929,7 @@ const SpaceEditor: React.FunctionComponent<{
                                       setSuccess(false);
                                       setIsInviteListExpanded(false);
                                     }}
-                                    className="py-2 px-2 mx-1 my-1 text-main hover:bg-[rgba(235,200,255,0.3)] rounded-lg cursor-pointer !font-bold flex flex-row"
+                                    className="py-2 px-2 mx-1 my-1 text-main hover:bg-surface-4 rounded-lg cursor-pointer !font-bold flex flex-row"
                                     key={'group-select-' + i + '-channel-' + i}
                                   >
                                     <div className="flex flex-col justify-around">
@@ -974,14 +976,17 @@ const SpaceEditor: React.FunctionComponent<{
                           </Trans>
                         </div>
                       )}
-                      <div className="border-t border-surface-6 mt-4 pt-4"></div>
+                      <div className="border-t border-default mt-4 pt-4"></div>
                       <div className="flex flex-row justify-between">
                         <div className="text-sm flex flex-row justify-center">
                           <div className="text-lg flex flex-col justify-around">
                             <Trans>Public Invite Link</Trans>
                             <div className="text-sm flex flex-col justify-around pt-2 max-w-[500px]">
                               <Trans>
-                                Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link.
+                                Public invite links allow anyone with access to
+                                the link join your Space. Understand the risks
+                                of enabling this, and to whom and where you
+                                share the link.
                               </Trans>
                             </div>
                           </div>
@@ -1021,13 +1026,11 @@ const SpaceEditor: React.FunctionComponent<{
                               <ClickToCopyContent
                                 text={space.inviteUrl}
                                 tooltipText={t`Copy invite link to clipboard`}
-                                className="pl-2 border-2 border-surface-6 rounded-lg py-1 max-w-[100%] w-[100%] overflow-x-auto whitespace-nowrap"
+                                className="bg-input border border-default rounded-md px-3 py-2 text-sm w-full max-w-full overflow-x-auto whitespace-nowrap cursor-pointer transition hover:border-strong"
                               >
-                                <div className="flex flex-row">
-                                  <div className="text-sm flex flex-col justify-around">
-                                    <div className="text-sm flex flex-col justify-around ml-2 overflow-x-auto whitespace-nowrap">
-                                      {space.inviteUrl}
-                                    </div>
+                                <div className="flex items-center space-x-2">
+                                  <div className="truncate">
+                                    {space.inviteUrl}
                                   </div>
                                 </div>
                               </ClickToCopyContent>
