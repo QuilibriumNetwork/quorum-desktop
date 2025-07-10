@@ -77,16 +77,19 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   } ${className}`;
 
   const icon = (
-    <FontAwesomeIcon
-      icon={faClipboard}
-      id={!copyOnContentClick ? anchorId : undefined}
-      className={`${
-        iconClassName || 'text-main'
-      } ${iconPosition === 'left' ? 'mr-1' : 'ml-1'} ${
-        !copyOnContentClick ? 'cursor-pointer hover:text-subtle' : ''
-      }`}
-      onClick={!copyOnContentClick ? handleCopy : undefined}
-    />
+   <FontAwesomeIcon
+  icon={faClipboard}
+  id={!copyOnContentClick ? anchorId : undefined}
+  className={`${
+    iconClassName || 'text-main'
+  } ${iconPosition === 'left' ? 'mr-1' : 'ml-1'} ${
+    !copyOnContentClick
+      ? 'cursor-pointer hover:text-subtle focus:outline-none focus:ring-0 active:bg-transparent'
+      : ''
+  }`}
+  onClick={!copyOnContentClick ? handleCopy : undefined}
+/>
+
   );
 
   return (
