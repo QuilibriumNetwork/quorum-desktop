@@ -480,12 +480,12 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                     <span className="text-xs text-subtle">({t`You`})</span>
                   )}
                 </span>
-                <span className="text-xs truncate w-[190px] text-surface-8">
+                <span className="text-xs truncate w-[190px] text-surface-9 dark:text-surface-8">
                   <ClickToCopyContent
                     text={members[s].address}
                     tooltipText={t`Copy address to clipboard`}
                     tooltipLocation="left-start"
-                    iconClassName="text-surface-8 hover:text-surface-10"
+                    iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
                   >
                     {members[s].address}
                   </ClickToCopyContent>

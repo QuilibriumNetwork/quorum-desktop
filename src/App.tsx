@@ -104,7 +104,7 @@ const App = () => {
         }
         <ErrorBoundary
           fallback={
-            <div className="bg-primary--accent--noise flex flex-col min-h-screen text-main">
+            <div className="bg-radial--accent-noise flex flex-col min-h-screen text-main">
               <Maintenance />
             </div>
           }
@@ -228,14 +228,14 @@ const App = () => {
               </Suspense>
             </div>
           ) : landing && !currentPasskeyInfo ? (
-            <div className="bg-primary--accent--noise flex flex-col min-h-screen text-main">
+            <div className="bg-radial--accent-noise flex flex-col min-h-screen text-main">
               <Routes>
                 <Route path="/" element={<Login setUser={setUser} />} />
                 <Route path="/*" element={<Navigate to="/" replace />} />
               </Routes>
             </div>
           ) : landing ? (
-            <div className="bg-primary--accent--noise flex flex-col min-h-screen text-main">
+            <div className="bg-radial--accent-noise flex flex-col min-h-screen text-main">
               <Routes>
                 <Route path="/" element={<Onboarding setUser={setUser} />} />
                 <Route path="/*" element={<Navigate to="/" replace />} />

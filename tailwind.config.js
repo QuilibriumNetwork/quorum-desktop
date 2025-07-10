@@ -8,6 +8,7 @@ function withOpacityValue(variable) {
 }
 
 export default {
+  darkMode: 'class',
   content: [
     './index.html',
     './src/**/*.{js,ts,jsx,tsx}',
@@ -70,6 +71,7 @@ export default {
 
         icon: 'var(--color-bg-icon)',
         input: 'var(--color-bg-input)',
+        "input-strong": 'var(--color-bg-input-strong)',
         card: 'var(--color-bg-card)',
         tooltip: 'var(--color-bg-tooltip)',
       },
