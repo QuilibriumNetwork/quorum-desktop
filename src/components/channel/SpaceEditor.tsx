@@ -1027,6 +1027,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 text={space.inviteUrl}
                                 tooltipText={t`Copy invite link to clipboard`}
                                 className="bg-input border border-default rounded-md px-3 py-2 text-sm w-full max-w-full overflow-x-auto whitespace-nowrap cursor-pointer transition hover:border-strong"
+                                copyOnContentClick
                               >
                                 <div className="flex items-center space-x-2">
                                   <div className="truncate">

@@ -13,8 +13,13 @@ type ClickToCopyContentProps = {
   onCopy?: () => void;
   iconClassName?: string;
   noArrow?: boolean;
-  tooltipLocation?: 'top' | 'top-start' | 'top-end' | 'right' | 'right-start' | 'right-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end';
+  tooltipLocation?:
+    | 'top' | 'top-start' | 'top-end'
+    | 'right' | 'right-start' | 'right-end'
+    | 'bottom' | 'bottom-start' | 'bottom-end'
+    | 'left' | 'left-start' | 'left-end';
   theme?: 'dark' | 'light' | 'system';
+  copyOnContentClick?: boolean;
 };
 
 const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
@@ -27,12 +32,13 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   noArrow = false,
   tooltipLocation,
   theme,
+  copyOnContentClick = false,
 }) => {
   const [copied, setCopied] = React.useState(false);
   const { theme: contextTheme } = useTheme();
   const resolvedTheme = theme ?? contextTheme;
 
-  const handleCopy = async (e: React.MouseEvent<SVGSVGElement>) => {
+  const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
       if (window.electron !== undefined) {
@@ -50,12 +56,16 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   };
 
   return (
-    <div className={`flex items-center hover:bg-surface-2 hover:text-white rounded-md cursor-pointer ${className}`}>
+    <div
+      className={`flex items-center hover:bg-surface-2 hover:text-white rounded-md cursor-pointer ${className}`}
+      onClick={copyOnContentClick ? handleCopy : undefined}
+      id={copyOnContentClick ? 'click-to-copy-content-wrapper' : undefined}
+    >
       <FontAwesomeIcon
         icon={faClipboard}
-        id="click-to-copy-content-icon"
+        id={!copyOnContentClick ? 'click-to-copy-content-icon' : undefined}
         className={`cursor-pointer hover:text-main text-white mr-1 ${iconClassName}`}
-        onClick={(e) => handleCopy(e)}
+        onClick={!copyOnContentClick ? handleCopy : undefined}
       />
       <ReactTooltip
         id="click-to-copy-content-tooltip"
@@ -63,7 +73,11 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
         place={tooltipLocation}
         noArrow={noArrow}
         theme={resolvedTheme}
-        anchorSelect="#click-to-copy-content-icon"
+        anchorSelect={
+          copyOnContentClick
+            ? '#click-to-copy-content-wrapper'
+            : '#click-to-copy-content-icon'
+        }
       />
       {children}
     </div>
