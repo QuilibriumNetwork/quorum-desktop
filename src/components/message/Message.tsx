@@ -557,7 +557,7 @@ export const Message = ({
                             {linkify.test(t) ? (
                               <a
                                 href={linkify.find(t)[0].href}
-                                className="text-primary-300 hover:text-primary-400 hover:underline"
+                                className="text-accent-300 hover:text-accent-400 hover:underline"
                                 target="_blank"
                                 referrerPolicy="no-referrer"
                               >
@@ -633,7 +633,7 @@ export const Message = ({
                   className={
                     'cursor-pointer flex flex-row mr-1 rounded-lg py-[1pt] px-2 border border-transparent ' +
                     (r.memberIds.includes(user.currentPasskeyInfo!.address)
-                      ? 'bg-primary-150 hover:bg-primary-200 dark:bg-primary-700 dark:hover:bg-primary-600'
+                      ? 'bg-accent-150 hover:bg-accent-200 dark:bg-accent-700 dark:hover:bg-accent-600'
                       : 'bg-tooltip hover:bg-surface-5')
                   }
                   onClick={() => {

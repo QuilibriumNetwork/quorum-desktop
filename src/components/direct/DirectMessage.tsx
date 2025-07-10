@@ -404,7 +404,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           />
           <div
             className={
-              "absolute hover:bg-primary-400 cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-primary bg-center bg-no-repeat bg-[url('/send.png')] " +
+              "absolute hover:bg-accent-400 cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-accent bg-center bg-no-repeat bg-[url('/send.png')] " +
               (inReplyTo ? 'top-1' : 'top-3')
             }
             onClick={(e) => {

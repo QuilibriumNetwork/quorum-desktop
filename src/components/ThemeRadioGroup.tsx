@@ -31,7 +31,7 @@ const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({ horizontal }) => 
           className={
             'flex items-center justify-between px-4 py-2 rounded-md border cursor-pointer ' +
             (theme === key
-              ? 'border-primary bg-[var(--surface-1)]'
+              ? 'border-accent bg-[var(--surface-1)]'
               : 'border-[var(--surface-3)] hover:bg-[var(--surface-2)]')
           }
         >
@@ -46,7 +46,7 @@ const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({ horizontal }) => 
             value={key}
             checked={theme === key}
             onChange={() => setTheme(key as Theme)}
-            className="accent-[var(--primary)] w-4 h-4"
+            className="accent-[var(--accent)] w-4 h-4"
           />
         </label>
       ))}

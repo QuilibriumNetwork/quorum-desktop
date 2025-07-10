@@ -1,10 +1,10 @@
 .attachment-drop {
-  border: 3px dashed var(--primary-100);
+  border: 3px dashed var(--accent-100);
   font-size: 18px;
   text-align: center;
   border-radius: 1000px;
   color: rgba(255, 255, 255, 0.6);
-  background-color: var(--primary);
+  background-color: var(--accent);
 
   .attachment-drop-icon {
     font-size: 32px;
@@ -12,7 +12,7 @@
 }
 
 .attachment-drop:hover {
-   background-color: var(--primary-400);
+   background-color: var(--accent-400);
    color: white;
 }
 
@@ -20,7 +20,7 @@
   width: 24px;
   height: 24px;
   background: var(--color-bg-icon);
-  color: var(--primary);
+  color: var(--accent);
   content: '+';
   display: block;
   text-align: center;

@@ -20,7 +20,7 @@ const DirectMessageContact: React.FunctionComponent<{
         }
       >
         {props.unread && address !== props.address && (
-          <div className="w-1 h-1 mt-4 absolute ml-[-6pt] bg-primary rounded-full"></div>
+          <div className="w-1 h-1 mt-4 absolute ml-[-6pt] bg-accent rounded-full"></div>
         )}
         <div
           className="direct-message-contact-icon flex flex-col justify-around w-[38px] bg-cover bg-center rounded-full"

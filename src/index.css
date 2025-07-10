@@ -10,19 +10,19 @@
 
 :root {
   /*accent*/
-  --primary-50: #eef7ff;
-  --primary-100: #daeeff;
-  --primary-150: #a6d9ff; 
-  --primary-200: #6fc3ff;
-  --primary-300: #48adf5;
-  --primary-400: #3aa9f8;
-  --primary-500: #0287f2;
-  --primary-600: #025ead;
-  --primary-700: #034081;
-  --primary-800: #0a0733;
-  --primary-900: #060421;
+  --accent-50: #eef7ff;
+  --accent-100: #daeeff;
+  --accent-150: #a6d9ff; 
+  --accent-200: #6fc3ff;
+  --accent-300: #48adf5;
+  --accent-400: #3aa9f8;
+  --accent-500: #0287f2;
+  --accent-600: #025ead;
+  --accent-700: #034081;
+  --accent-800: #0a0733;
+  --accent-900: #060421;
 
-  --primary: var(--primary-500);
+  --accent: var(--accent-500);
 
   /* Surface */
   --surface-00: #ffffff;
@@ -43,7 +43,7 @@
   --color-text-main: 54, 54, 54;
   --color-text-subtle: #818181;
   --color-text-muted: #b6b6b6;
-  --color-link-hover: var(--primary-400);
+  --color-link-hover: var(--accent-400);
 
 
 
@@ -131,7 +131,7 @@ html.dark {
   --color-text-main: 244, 241, 246;
   --color-text-subtle: #bfb5c8;
   --color-text-muted: #84788b;
-  --color-link-hover: var(--primary-200);
+  --color-link-hover: var(--accent-200);
 
   --unknown-icon: url('/unknown-dark.png');
 }
@@ -147,7 +147,7 @@ html.dark {
   --epr-focus-bg-color: var(--surface-3) !important;
   --epr-search-input-bg-color-active: var(--surface-00) !important;
   --epr-search-input-focus-bg-color: var(--surface-0) !important;
-  --epr-search-input-focus-border-color: var(--primary-400) !important;
+  --epr-search-input-focus-border-color: var(--accent-400) !important;
 
   /* Borders */
   --epr-picker-border-color: var(--surface-5) !important;
@@ -157,20 +157,20 @@ html.dark {
   --epr-search-input-text-color: var(--color-text-main) !important;
   --epr-category-label-text-color: var(--color-text-subtle) !important;
   /* Highlights */
-  --epr-highlight-color: var(--primary) !important;
-  --epr-focus-color: var(--primary-400) !important;
+  --epr-highlight-color: var(--accent) !important;
+  --epr-focus-color: var(--accent-400) !important;
   /* UI sizing */
   --epr-category-navigation-button-size: 38px !important;
 }
 
 /*used for onboarding bg*/
 .bg-radial--accent-noise {
-  background-color: var(--primary-700);
+  background-color: var(--accent-700);
   background-image:
     url('/otis-redding.png'),
     radial-gradient(circle at 90% 100%, #b4e235 0%, transparent 35%),
-    radial-gradient(circle at 60% 50%, var(--primary) 0%, transparent 90%),
-    radial-gradient(circle at 10% 10%, var(--primary-700) 0%, transparent 80%);
+    radial-gradient(circle at 60% 50%, var(--accent) 0%, transparent 90%),
+    radial-gradient(circle at 10% 10%, var(--accent-700) 0%, transparent 80%);
   background-repeat: repeat, no-repeat, no-repeat, no-repeat;
   background-size: auto, cover, cover, cover;
 }
@@ -193,7 +193,7 @@ html.dark {
 
 a {
   font-weight: 500;
-  color: var(--primary);
+  color: var(--accent);
   text-decoration: inherit;
 }
 

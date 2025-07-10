@@ -26,7 +26,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
         <div><Trans>Direct Messages</Trans></div>
         <div className="flex flex-col justify-around pr-2">
           <Link to="/messages/new">
-            <FontAwesomeIcon className="cursor-pointer text-primary hover:text-primary-300 h-5" icon={faPlusCircle} />
+            <FontAwesomeIcon className="cursor-pointer text-accent hover:text-accent-300 h-5" icon={faPlusCircle} />
           </Link>
         </div>
       </div>
