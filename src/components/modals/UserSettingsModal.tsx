@@ -280,8 +280,8 @@ const UserSettingsModal: React.FunctionComponent<{
             case 'privacy':
               return (
                 <>
-                  <div className="user-settings-header pt-4 px-4 !min-h-[0px] flex flex-row justify-between">
-                    <div className="">
+                  <div className="user-settings-header pt-4 px-4 flex flex-row justify-between">
+                    <div>
                       <div className="text-xl font-bold">{t`Privacy/Security`}</div>
                       <div className="pt-1 text-sm text-main">
                         {t`Manage devices, and privacy conditions for messaging and synchronization.`}
