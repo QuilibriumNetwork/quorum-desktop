@@ -676,7 +676,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="flex">
                       {emojis.length < 50 && (
                         <div
-                          className="px-4 py-2 rounded-full font-medium text-sm text-center select-none border-2 border-[var(--primary-300)] text-[var(--primary-300)] bg-transparent transition duration-300 cursor-pointer hover:bg-[var(--primary)] hover:border-[var(--primary)] hover:text-white"
+                          className="px-4 py-2 rounded-full font-medium text-sm text-center select-none border-2 border-primary-300 text-primary-300 bg-transparent transition duration-300 cursor-pointer hover:bg-primary hover:border-primary hover:text-white"
                           {...getEmojiRootProps()}
                         >
                           <Trans>Upload Emoji</Trans>
@@ -780,7 +780,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="flex">
                       {stickers.length < 50 && (
                         <div
-                          className="px-4 py-2 rounded-full font-medium text-sm text-center select-none border-2 border-[var(--primary-300)] text-[var(--primary-300)] bg-transparent transition duration-300 cursor-pointer hover:bg-[var(--primary)] hover:border-[var(--primary)] hover:text-white"
+                          className="px-4 py-2 rounded-full font-medium text-sm text-center select-none border-2 border-primary-300 text-primary-300 bg-transparent transition duration-300 cursor-pointer hover:bg-primary hover:border-primary hover:text-white"
                           {...getStickerRootProps()}
                         >
                           <Trans>Upload Sticker</Trans>
@@ -856,8 +856,8 @@ const SpaceEditor: React.FunctionComponent<{
             case 'invites':
               return (
                 <>
-                  <div className="space-editor-header !min-h-[50px] pt-4 px-4 flex flex-row">
-                    <div className="">
+                  <div className="space-editor-header pt-4 px-4 flex flex-row">
+                    <div>
                       <div className="text-xl font-bold">
                         <Trans>Invites</Trans>
                       </div>
@@ -872,7 +872,7 @@ const SpaceEditor: React.FunctionComponent<{
                   </div>
                   <div className="space-editor-content flex flex-col grow">
                     <div className="flex"></div>
-                    <div className="pt-4"></div>
+                    <div className=""></div>
                     <div className="space-editor-info">
                       <div className="small-caps">
                         <Trans>Existing Conversations</Trans>
