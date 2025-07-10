@@ -26,15 +26,18 @@ export default {
       colors: {
         // Primary accent color
         primary: {
-          DEFAULT: 'var(--primary)',
+          50: 'var(--primary-50)',
           100: 'var(--primary-100)',
+          150: 'var(--primary-150)',
           200: 'var(--primary-200)',
           300: 'var(--primary-300)',
           400: 'var(--primary-400)',
           500: 'var(--primary-500)',
+          600: 'var(--primary-600)',
           700: 'var(--primary-700)',
           800: 'var(--primary-800)',
           900: 'var(--primary-900)',
+          DEFAULT: 'var(--primary)',
         },
 
         // surface raw variables (legacy/direct use if needed)
@@ -68,10 +71,16 @@ export default {
 
       backgroundColor: {
         app: 'var(--color-bg-app)',
+        sidebar: 'var(--color-bg-sidebar)',
+        'sidebar-hover': 'var(--color-bg-sidebar-hover)',
+        'sidebar-active': 'var(--color-bg-sidebar-active)',
+
+        chat: 'var(--color-bg-chat)',
+        'chat-hover': 'var(--color-bg-chat-hover)',
+        'chat-input': 'var(--color-bg-chat-input)',
 
         icon: 'var(--color-bg-icon)',
         input: 'var(--color-bg-input)',
-        "input-strong": 'var(--color-bg-input-strong)',
         card: 'var(--color-bg-card)',
         tooltip: 'var(--color-bg-tooltip)',
       },
@@ -82,7 +91,7 @@ export default {
       },
 
       textColor: {
-        main: 'var(--color-text-main)',
+        main: withOpacityValue('--color-text-main'),
         subtle: 'var(--color-text-subtle)',
         muted: 'var(--color-text-muted)',
       },

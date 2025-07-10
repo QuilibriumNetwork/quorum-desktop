@@ -10,7 +10,9 @@
 
 :root {
   /*accent*/
+  --primary-50: #eef7ff;
   --primary-100: #daeeff;
+  --primary-150: #a6d9ff; 
   --primary-200: #6fc3ff;
   --primary-300: #48adf5;
   --primary-400: #3aa9f8;
@@ -19,6 +21,7 @@
   --primary-700: #034081;
   --primary-800: #0a0733;
   --primary-900: #060421;
+
   --primary: var(--primary-500);
 
   /* Surface */
@@ -36,24 +39,16 @@
   --surface-9: #a2a2aa;
   --surface-10: #939399;
 
-  --color-text-main: #363636;
+
+  --color-text-main: 54, 54, 54;
   --color-text-subtle: #818181;
   --color-text-muted: #b6b6b6;
   --color-link-hover: var(--primary-400);
- 
 
-  /* General */
-  color: var(--color-text-main);
-  background-color: var(--color-bg-app);
 
-  --unknown-icon: url('/unknown-light.png');
 
   /* used ??? */
 
-  --color-bg-sidebar: var(--surface-1);
-  --color-bg-sidebar-active: var(--surface-3);
-  --color-bg-chat: var(--surface-0);
-  --color-bg-chat-input: var(--surface-1);
   --color-bg-header: var(--surface-2);
   --color-bg-hover: var(--surface-4);
   --color-bg-overlay: rgba(var(--surface-7), 0.8);
@@ -62,10 +57,18 @@
 
   /*surface semantic*/
   --color-bg-app: var(--surface-00);
+
+  --color-bg-sidebar: var(--surface-1);
+  --color-bg-sidebar-hover: var(--surface-4);
+  --color-bg-sidebar-active: var(--surface-3);
+
+  --color-bg-chat: var(--surface-2);
+  --color-bg-chat-hover: var(--surface-3);
+  --color-bg-chat-input: var(--surface-0);
+
   --color-bg-tooltip: var(--surface-0);
   --color-bg-icon: var(--surface-00);
   --color-bg-input: var(--surface-3);
-  --color-bg-input-strong: var(--surface-0);
 
   --color-border-default: var(--surface-6);
   --color-border-strong: var(--surface-7);
@@ -86,13 +89,16 @@
   --success: 70, 194, 54; /* GREEN #46c236 */
   --info: 48, 149, 189; /* BLUE #3095bd */
 
+  /* general */
+  --unknown-icon: url('/unknown-light.png');
+
   font-family: Sen, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   cursor: default;
   color-scheme: light dark;
-  color: var(--color-text-main) !important;
+  color: rgb(var(--color-text-main)) !important;
   background-color: var(--color-bg-app);
 
   text-rendering: optimizeLegibility;
@@ -118,8 +124,11 @@ html.dark {
   --surface-9: #a999b3;
   --surface-10: #bfadca;
 
+  --color-bg-sidebar-hover: var(--surface-5);
+  --color-bg-sidebar-active: var(--surface-4);
+
   /*text*/
-  --color-text-main: #f4f1f6;
+  --color-text-main: 244, 241, 246;
   --color-text-subtle: #bfb5c8;
   --color-text-muted: #84788b;
   --color-link-hover: var(--primary-200);

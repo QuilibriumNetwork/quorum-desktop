@@ -458,7 +458,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       </div>
       <div
         className={
-          'w-[260px] bg-surface-3 p-3 ' + // removed overflow-scroll
+          'w-[260px] bg-sidebar p-3 ' + // removed overflow-scroll
           (showUsers ? '' : 'hidden')
         }
       >
@@ -473,8 +473,8 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   backgroundImage: `url(${members[s].userIcon})`,
                 }}
               />
-              <div className="flex flex-col ml-2 text-main">
-                <span className="text-md font-bold truncate w-[190px]">
+              <div className="flex flex-col ml-2">
+                <span className="text-md font-bold truncate w-[190px] text-main/90">
                   {members[s].displayName}{' '}
                   {members[s].address === user.currentPasskeyInfo!.address && (
                     <span className="text-xs text-subtle">({t`You`})</span>

@@ -150,7 +150,7 @@ export const Message = ({
     <div
       id={`msg-${message.messageId}`}
       className={
-        'text-base relative hover:bg-surface-3 flex flex-col ' +
+        'text-base relative hover:bg-chat-hover flex flex-col ' +
         (message.mentions?.memberIds.includes(user.currentPasskeyInfo!.address)
           ? ' message-mentions-you'
           : '') +
@@ -278,7 +278,7 @@ export const Message = ({
                 e.stopPropagation();
                 return false;
               }}
-              className="absolute flex flex-row right-[20px] top-[-10px] p-1 bg-surface-0 select-none shadow-lg rounded-lg"
+              className="absolute flex flex-row right-[20px] top-[-10px] p-1 bg-tooltip select-none shadow-lg rounded-lg"
             >
               <div
                 onClick={() => {
@@ -631,27 +631,20 @@ export const Message = ({
                 <div
                   key={message.messageId + '-reactions-' + r.emojiId}
                   className={
-                    'cursor-pointer flex flex-row mr-1 border hover:border-surface-7 rounded-lg py-[1pt] px-2 bg-[var(--surface-0)]' +
+                    'cursor-pointer flex flex-row mr-1 rounded-lg py-[1pt] px-2 border border-transparent ' +
                     (r.memberIds.includes(user.currentPasskeyInfo!.address)
-                      ? ' bg-[rgba(var(--info),0.4)] border border-transparent hover:bg-[rgba(var(--info),0.6)] hover:border-transparent'
-                      : ' bg-surface-0 border border-transparent hover:bg-surface-5 hover:border-transparent')
+                      ? 'bg-primary-150 hover:bg-primary-200 dark:bg-primary-700 dark:hover:bg-primary-600'
+                      : 'bg-tooltip hover:bg-surface-5')
                   }
                   onClick={() => {
-                    if (
-                      !r.memberIds.includes(user.currentPasskeyInfo!.address)
-                    ) {
-                      submitMessage({
-                        type: 'reaction',
-                        messageId: message.messageId,
-                        reaction: r.emojiId,
-                      });
-                    } else {
-                      submitMessage({
-                        type: 'remove-reaction',
-                        messageId: message.messageId,
-                        reaction: r.emojiId,
-                      });
-                    }
+                    const hasReacted = r.memberIds.includes(
+                      user.currentPasskeyInfo!.address
+                    );
+                    submitMessage({
+                      type: hasReacted ? 'remove-reaction' : 'reaction',
+                      messageId: message.messageId,
+                      reaction: r.emojiId,
+                    });
                   }}
                 >
                   {customEmojis.find((e) => e.id === r.emojiName) ? (

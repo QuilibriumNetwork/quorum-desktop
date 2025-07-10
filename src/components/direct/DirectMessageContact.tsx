@@ -15,8 +15,8 @@ const DirectMessageContact: React.FunctionComponent<{
     <Link to={`/messages/${props.address}`}>
       <div
         className={
-          'relative direct-message-contact flex flex-row rounded-lg hover:bg-surface-6' +
-          (address === props.address ? ' bg-surface-4' : '')
+          'relative direct-message-contact flex flex-row rounded-lg hover:bg-sidebar-hover' +
+          (address === props.address ? ' bg-sidebar-active' : '')
         }
       >
         {props.unread && address !== props.address && (
@@ -43,7 +43,7 @@ const DirectMessageContact: React.FunctionComponent<{
             {props.displayName ?? props.address}
           </div>
           {props.displayName && (
-            <div className="text-main opacity-40 pl-2 text-xs w-[180px] truncate">
+            <div className="text-muted pl-2 text-xs w-[180px] truncate">
               {props.address}
             </div>
           )}
