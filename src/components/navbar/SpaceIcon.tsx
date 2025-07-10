@@ -1,6 +1,7 @@
 import * as React from 'react';
 import './SpaceIcon.scss';
 import Tooltip from '../Tooltip';
+import { createPortal } from 'react-dom';
 
 type SpaceIconProps = {
   selected: boolean;
@@ -56,13 +57,23 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
           className="absolute z-[2000] ml-[3rem]"
           style={{ top: '' + (isTooltipOpen ?? [0, 0])[1] + 'px' }}
         >
-          <Tooltip
-            visible={isTooltipOpen !== undefined}
-            className="absolute whitespace-nowrap"
-            arrow="left"
-          >
-            {props.spaceName}
-          </Tooltip>
+          {!props.noTooltip &&
+            isTooltipOpen &&
+            createPortal(
+              <div
+                className="absolute z-[2000] ml-[3rem]"
+                style={{ top: `${isTooltipOpen[1]}px` }}
+              >
+                <Tooltip
+                  visible
+                  className="absolute whitespace-nowrap text-main"
+                  arrow="left"
+                >
+                  {props.spaceName}
+                </Tooltip>
+              </div>,
+              document.body
+            )}
         </div>
       )}
     </>

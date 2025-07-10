@@ -76,6 +76,8 @@ export default {
         'sidebar-active': 'var(--color-bg-sidebar-active)',
 
         modal: 'var(--color-bg-modal)',
+        "modal-cat-hover": 'var(--color-bg-modal-cat-hover)',
+        "modal-cat-active": 'var(--color-bg-modal-cat-active)',
         overlay: 'var(--color-bg-overlay)',
 
         chat: 'var(--color-bg-chat)',
@@ -91,6 +93,7 @@ export default {
       borderColor: {
         DEFAULT: 'var(--color-border-default)',
         strong: 'var(--color-border-strong)',
+        stronger: 'var(--color-border-stronger)',
       },
 
       textColor: {

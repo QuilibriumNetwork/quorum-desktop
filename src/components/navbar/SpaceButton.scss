@@ -1,3 +1,8 @@
 .space-button {
-  display: block;
+  color: var(--color-text-main);
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--color-text-main);
+  }
 }

@@ -293,9 +293,9 @@ const SpaceEditor: React.FunctionComponent<{
           onClick={() => setSelectedCategory('general')}
           className={
             (selectedCategory == 'general'
-              ? 'bg-[rgba(235,200,255,0.1)] '
+              ? 'bg-modal-cat-active '
               : '') +
-            'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
+            'font-medium cursor-pointer hover:bg-modal-cat-hover px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
           <Trans>General</Trans>
@@ -303,8 +303,8 @@ const SpaceEditor: React.FunctionComponent<{
         <div
           onClick={() => setSelectedCategory('roles')}
           className={
-            (selectedCategory == 'roles' ? 'bg-[rgba(235,200,255,0.1)] ' : '') +
-            'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
+            (selectedCategory == 'roles' ? 'bg-modal-cat-active ' : '') +
+            'font-medium cursor-pointer hover:bg-modal-cat-hover px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
           <Trans>Roles</Trans>
@@ -312,8 +312,8 @@ const SpaceEditor: React.FunctionComponent<{
         <div
           onClick={() => setSelectedCategory('emojis')}
           className={
-            (selectedCategory == 'emoji' ? 'bg-[rgba(235,200,255,0.1)] ' : '') +
-            'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
+            (selectedCategory == 'emoji' ? 'bg-modal-cat-active ' : '') +
+            'font-medium cursor-pointer hover:bg-modal-cat-hover px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
           <Trans>Emojis</Trans>
@@ -322,9 +322,9 @@ const SpaceEditor: React.FunctionComponent<{
           onClick={() => setSelectedCategory('stickers')}
           className={
             (selectedCategory == 'stickers'
-              ? 'bg-[rgba(235,200,255,0.1)] '
+              ? 'bg-modal-cat-active '
               : '') +
-            'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
+            'font-medium cursor-pointer hover:bg-modal-cat-hover px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
           <Trans>Stickers</Trans>
@@ -333,9 +333,9 @@ const SpaceEditor: React.FunctionComponent<{
           onClick={() => setSelectedCategory('invites')}
           className={
             (selectedCategory == 'invites'
-              ? 'bg-[rgba(235,200,255,0.1)] '
+              ? 'bg-modal-cat-active '
               : '') +
-            'font-medium cursor-pointer hover:bg-[rgba(235,200,255,0.05)] px-2 mt-1 mx-[-.5rem] rounded-md py-1'
+            'font-medium cursor-pointer hover:bg-modal-cat-hover px-2 mt-1 mx-[-.5rem] rounded-md py-1'
           }
         >
           <Trans>Invites</Trans>
@@ -466,7 +466,7 @@ const SpaceEditor: React.FunctionComponent<{
                           <div className="text-sm flex flex-col justify-around ml-2">
                             <div
                               id="repudiability-tooltip-icon"
-                              className="border rounded-full w-6 h-6 text-center leading-5 text-lg"
+                              className="border border-strong rounded-full w-6 h-6 text-center leading-5 text-lg"
                               onMouseOut={() => setRepudiableTooltip(false)}
                               onMouseOver={() => setRepudiableTooltip(true)}
                             >
@@ -976,7 +976,7 @@ const SpaceEditor: React.FunctionComponent<{
                           </Trans>
                         </div>
                       )}
-                      <div className="border-t border-default mt-4 pt-4"></div>
+                      <div className="border-t border-strong mt-4 pt-4"></div>
                       <div className="flex flex-row justify-between">
                         <div className="text-sm flex flex-row justify-center">
                           <div className="text-lg flex flex-col justify-around">
@@ -1026,11 +1026,12 @@ const SpaceEditor: React.FunctionComponent<{
                               <ClickToCopyContent
                                 text={space.inviteUrl}
                                 tooltipText={t`Copy invite link to clipboard`}
-                                className="bg-input border border-default rounded-md px-3 py-2 text-sm w-full max-w-full overflow-x-auto whitespace-nowrap cursor-pointer transition hover:border-strong"
+                                className="bg-input border border-strong rounded-md px-3 py-1.5 text-sm w-full max-w-full overflow-hidden whitespace-nowrap cursor-pointer transition hover:border-stronger"
+                                iconClassName="text-muted hover:text-main"
                                 copyOnContentClick
                               >
-                                <div className="flex items-center space-x-2">
-                                  <div className="truncate">
+                                <div className="flex items-center gap-2 w-full">
+                                  <div className="truncate flex-1">
                                     {space.inviteUrl}
                                   </div>
                                 </div>
