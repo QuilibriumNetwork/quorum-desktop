@@ -6,12 +6,12 @@
   height: 90vh;
   background: var(--surface-3);
   border-radius: 10px;
-  color: var(--text-base);
+  color: var(--color-text-main);
 }
 
 .user-settings-header {
   background: var(--surface-5);
-  min-height: 120px;
+  min-height: 120px !important;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   display: flex;
@@ -76,8 +76,8 @@
 .user-settings-icon-editable::after {
   width: 24px;
   height: 24px;
-  background: var(--surface-00);
-  color: var(--primary);
+  background: var(--color-bg-icon);
+  color: var(--accent);
   content: '+';
   display: block;
   text-align: center;
@@ -102,8 +102,8 @@
 .user-settings-banner-editable::after {
   width: 24px;
   height: 24px;
-  background: var(--surface-00);
-  color: var(--primary);
+  background: var(--color-bg-icon);
+  color: var(--accent);
   content: '+';
   display: block;
   text-align: center;

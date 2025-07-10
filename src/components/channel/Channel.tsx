@@ -257,7 +257,7 @@ const Channel: React.FC<ChannelProps> = ({
   return (
     <div className="channel">
       <div className="flex flex-col">
-        <div className="channel-name mt-[8px] pb-[8px] mx-[11px] text-text-base">
+        <div className="channel-name mt-[8px] pb-[8px] mx-[11px] text-main">
           <span>
             #{channel?.channelName}
             {channel?.channelTopic && ' | '}
@@ -382,7 +382,7 @@ const Channel: React.FC<ChannelProps> = ({
             }
           >
             <input {...getInputProps()} />
-            <FontAwesomeIcon className="text-text-subtle" icon={faPlus} />
+            <FontAwesomeIcon className="text-subtle" icon={faPlus} />
           </div>
           <textarea
             ref={editor}
@@ -462,11 +462,11 @@ const Channel: React.FC<ChannelProps> = ({
               setShowStickers(true);
             }}
           >
-            <FontAwesomeIcon className="text-text-subtle" icon={faSmile} />
+            <FontAwesomeIcon className="text-subtle" icon={faSmile} />
           </div>
           <div
             className={
-              "absolute hover:bg-primary-400 cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-primary bg-center bg-no-repeat bg-[url('/send.png')] " +
+              "absolute hover:bg-accent-400 cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-accent bg-center bg-no-repeat bg-[url('/send.png')] " +
               (inReplyTo ? 'top-1' : 'top-3')
             }
             onClick={(e) => {
@@ -546,7 +546,7 @@ const Channel: React.FC<ChannelProps> = ({
                         })`,
                       }}
                     />
-                    <div className="flex flex-col ml-2 text-text-base">
+                    <div className="flex flex-col ml-2 text-main">
                       <span className="text-md font-bold">
                         {members[s]?.displayName}
                       </span>
@@ -570,7 +570,7 @@ const Channel: React.FC<ChannelProps> = ({
                   backgroundImage: `url(${members[s].userIcon})`,
                 }}
               />
-              <div className="flex flex-col ml-2 text-text-base">
+              <div className="flex flex-col ml-2 text-main">
                 <span className="text-md font-bold">
                   {members[s].displayName}
                 </span>

@@ -105,7 +105,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
               props.setIsUserSettingsOpen(true);
               e.stopPropagation();
             }}
-            className="p-1 rounded-md hover:bg-[rgba(255,255,255,0.1)] hover:text-text-base"
+            className="p-1 rounded-md hover:bg-[rgba(255,255,255,0.1)] hover:text-main"
             icon={faGear}
           />
         </div>

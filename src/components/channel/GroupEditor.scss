@@ -4,7 +4,7 @@
   width: 300px;
   background: var(--surface-3);
   border-radius: 10px;
-  color: var(--text-base);
+  color: var(--color-text-main);
   user-select: none;
 }
 
@@ -66,8 +66,8 @@
 .group-editor-icon-editable::after {
   width: 24px;
   height: 24px;
-  background: var(--surface-00);
-  color: var(--primary);
+  background: var(--color-bg-icon);
+  color: var(--accent);
   content: '+';
   display: block;
   text-align: center;
@@ -92,8 +92,8 @@
 .group-editor-banner-editable::after {
   width: 24px;
   height: 24px;
-  background: var(--surface-00);
-  color: var(--primary);
+  background: var(--color-bg-icon);
+  color: var(--accent);
   content: '+';
   display: block;
   text-align: center;

@@ -5,7 +5,7 @@ import './Connecting.scss';
 
 const Connecting = () => {
   return (
-    <div className="connecting-splash bg-surface-00">
+    <div className="connecting-splash bg-app">
       <div
         className="connecting-icon pulse"
         style={{ backgroundImage: "url('/quorumicon-blue.png')" }}

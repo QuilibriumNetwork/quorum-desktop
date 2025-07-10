@@ -15,12 +15,12 @@ const DirectMessageContact: React.FunctionComponent<{
     <Link to={`/messages/${props.address}`}>
       <div
         className={
-          'relative direct-message-contact flex flex-row rounded-lg hover:bg-surface-6' +
-          (address === props.address ? ' bg-surface-4' : '')
+          'relative direct-message-contact flex flex-row rounded-lg hover:bg-sidebar-hover' +
+          (address === props.address ? ' bg-sidebar-active' : '')
         }
       >
         {props.unread && address !== props.address && (
-          <div className="w-1 h-1 mt-4 absolute ml-[-6pt] bg-primary rounded-full"></div>
+          <div className="w-1 h-1 mt-4 absolute ml-[-6pt] bg-accent rounded-full"></div>
         )}
         <div
           className="direct-message-contact-icon flex flex-col justify-around w-[38px] bg-cover bg-center rounded-full"
@@ -34,7 +34,7 @@ const DirectMessageContact: React.FunctionComponent<{
         <div className="flex flex-col justify-around">
           <div
             className={
-              'direct-message-contact-name text-text-base opacity-90 pl-2 w-[180px] truncate ' +
+              'direct-message-contact-name text-main opacity-90 pl-2 w-[180px] truncate ' +
               (props.unread && address !== props.address
                 ? '!font-extrabold'
                 : ' ')
@@ -43,7 +43,7 @@ const DirectMessageContact: React.FunctionComponent<{
             {props.displayName ?? props.address}
           </div>
           {props.displayName && (
-            <div className="text-text-base opacity-40 pl-2 text-xs w-[180px] truncate">
+            <div className="text-muted pl-2 text-xs w-[180px] truncate">
               {props.address}
             </div>
           )}

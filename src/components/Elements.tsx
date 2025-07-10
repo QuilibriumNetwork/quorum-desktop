@@ -11,7 +11,7 @@ const Elements = () => {
   const [showTooltipDark, setShowTooltipDark] = useState(false);
 
   return (
-    <div className="p-12 space-y-12 text-text-base bg-[var(--surface-00)] min-h-screen">
+    <div className="p-12 space-y-12 text-main bg-app min-h-screen">
       <h1 className="text-4xl font-bold">Style Guide</h1>
 
       <div className="flex flex-row items-center gap-6">
@@ -25,16 +25,16 @@ const Elements = () => {
           {
             title: 'Primary',
             vars: [
-              '--primary-100',
-              '--primary-200',
-              '--primary-300',
-              '--primary-400',
-              '--primary-500',
-              '--primary-600',
-              '--primary-700',
-              '--primary-800',
-              '--primary-900',
-              '--primary',
+              '--accent-100',
+              '--accent-200',
+              '--accent-300',
+              '--accent-400',
+              '--accent-500',
+              '--accent-600',
+              '--accent-700',
+              '--accent-800',
+              '--accent-900',
+              '--accent',
             ],
           },
           {
@@ -94,7 +94,7 @@ const Elements = () => {
                   className="p-2 rounded shadow flex items-center justify-center text-center text-xs font-mono"
                   style={{
                     backgroundColor: bg,
-                    color: 'var(--text-base)',
+                    color: 'var(--color-text-main)',
                     minHeight: '3rem',
                   }}
                 >
@@ -103,7 +103,7 @@ const Elements = () => {
               ))}
             </div>
             {title === 'Utility (RGB w/ opacity)' && (
-              <p className="mt-2 text-sm text-text-subtle">
+              <p className="mt-2 text-sm text-subtle">
                 <span className="italic">
                   Use{' '}
                   <code className="font-mono not-italic text-[rgba(var(--warning),0.8)]">
@@ -125,8 +125,8 @@ const Elements = () => {
         <h2 className="text-2xl mb-2">Typography</h2>
         <div className="flex flex-row items-center gap-6">
           <p className="text-base">Base text</p>
-          <p className="text-text-subtle">Subtle text</p>
-          <p className="text-text-muted">Muted text</p>
+          <p className="text-subtle">Subtle text</p>
+          <p className="text-muted">Muted text</p>
           <p className="small-caps">Small Caps Text</p>
         </div>
       </section>

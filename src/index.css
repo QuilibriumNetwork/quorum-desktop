@@ -10,69 +10,21 @@
 
 :root {
   /*accent*/
-  --primary-100: #daeeff;
-  --primary-200: #6fc3ff;
-  --primary-300: #48adf5;
-  --primary-400: #3aa9f8;
-  --primary-500: #0287f2;
-  --primary-600: #025ead;
-  --primary-700: #034081;
-  --primary-800: #0a0733;
-  --primary-900: #060421;
-  --primary: var(--primary-500);
+  --accent-50: #eef7ff;
+  --accent-100: #daeeff;
+  --accent-150: #a6d9ff; 
+  --accent-200: #6fc3ff;
+  --accent-300: #48adf5;
+  --accent-400: #3aa9f8;
+  --accent-500: #0287f2;
+  --accent-600: #025ead;
+  --accent-700: #034081;
+  --accent-800: #0a0733;
+  --accent-900: #060421;
 
-  --surface-00: #100f11;
-  --surface-00-rgb: 16, 15, 17; /* to be used with opacity */
-  --surface-0: #1d1a21;
-  --surface-1: #241f27;
-  --surface-2: #2c252e;
-  --surface-3: #312935;
-  --surface-4: #3a313f;
-  --surface-5: #443b49;
-  --surface-6: #584d5e;
-  --surface-7: #716379;
-  --surface-8: #92829b;
-  --surface-9: #a999b3;
-  --surface-10: #bfadca;
+  --accent: var(--accent-500);
 
-  --text-base: #f4f1f6;
-  --text-subtle: #bfb5c8;
-  --text-muted: #84788b;
-
-  /*utilities*/
-  --danger-hex: #e74a4a;
-  --danger-hover-hex: #ec3333;
-  --warning-hex: #e7b04a;
-  --success-hex: #46c236;
-  --info-hex: #3095bd;
-
-  /* utilities for use with opacity */
-  --danger: 231, 74, 74; /* RED #e74a4a */
-  --danger-hover: 236, 51, 51; /* RED BRIGHTER #ec3333 */
-  --warning: 231, 176, 74; /* YELLOw #e7b04a */
-  --success: 70, 194, 54; /* GREEN #46c236 */
-  --info: 48, 149, 189; /* BLUE #3095bd */
-
-  font-family: Sen, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  cursor: default;
-  color-scheme: light dark;
-  color: var(--text-base) !important;
-  background-color: var(--surface-00) !important;
-
-  --unknown-icon: url('/unknown-dark.png');
-
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* === LIGHT THEME ===*/
-
-html.light {
-  /* Surface */
+  /* surface */
   --surface-00: #ffffff;
   --surface-00-rgb: 255, 255, 255;
   --surface-0: #fefeff;
@@ -87,26 +39,103 @@ html.light {
   --surface-9: #a2a2aa;
   --surface-10: #939399;
 
-  --text-base: #363636;
-  --text-subtle: #5a5a5a;
-  --text-muted: #a8a8a8;
 
-  /* General */
-  color: var(--text-base);
-  background-color: var(--surface-00);
+  --color-text-strong:#3b3b3b;
+  --color-text-main: 54, 54, 54;
+  --color-text-subtle: #818181;
+  --color-text-muted: #b6b6b6;
+  --color-link-hover: var(--accent-400);
 
+  /* surface semantic */
+  --color-bg-app: var(--surface-00);
+
+  --color-bg-sidebar: var(--surface-1);
+  --color-bg-sidebar-hover: var(--surface-4);
+  --color-bg-sidebar-active: var(--surface-3);
+
+  --color-bg-chat: var(--surface-2);
+  --color-bg-chat-hover: var(--surface-3);
+  --color-bg-chat-input: var(--surface-0);
+
+  --color-bg-modal: var(--surface-5);
+  --color-bg-modal-cat-hover: var(--surface-6);
+  --color-bg-modal-cat-active: var(--surface-5);
+
+  --color-bg-overlay: rgba(0, 0, 0, 0.6);
+
+  --color-bg-tooltip: var(--surface-0);
+  --color-bg-icon: var(--surface-00);
+  --color-bg-input: var(--surface-3);
+
+  --color-border-default: var(--surface-6);
+  --color-border-strong: var(--surface-7);
+  --color-border-stronger: var(--surface-8);
+
+  --color-bg-card: var(--surface-2);
+
+  /* utilities */
+  --danger-hex: #e74a4a;
+  --danger-hover-hex: #ec3333;
+  --warning-hex: #e7b04a;
+  --success-hex: #46c236;
+  --info-hex: #3095bd;
+
+  /* utilities for use with opacity */
+  --danger: 231, 74, 74; /* RED #e74a4a */
+  --danger-hover: 236, 51, 51; /* RED BRIGHTER #ec3333 */
+  --warning: 231, 176, 74; /* YELLOw #e7b04a */
+  --success: 70, 194, 54; /* GREEN #46c236 */
+  --info: 48, 149, 189; /* BLUE #3095bd */
+
+  /* general */
   --unknown-icon: url('/unknown-light.png');
+
+  font-family: Sen, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  cursor: default;
+  color-scheme: light dark;
+  color: rgb(var(--color-text-main)) !important;
+  background-color: var(--color-bg-app);
+
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-html.light a:hover {
-  color: var(--primary-400); 
+/* === DARK THEME ===*/
+
+html.dark {
+  /* surface */
+  --surface-00: #100f11;
+  --surface-00-rgb: 16, 15, 17; /* to be used with opacity */
+  --surface-0: #1d1a21;
+  --surface-1: #241f27;
+  --surface-2: #2c252e;
+  --surface-3: #312935;
+  --surface-4: #3a313f;
+  --surface-5: #443b49;
+  --surface-6: #584d5e;
+  --surface-7: #716379;
+  --surface-8: #92829b;
+  --surface-9: #a999b3;
+  --surface-10: #bfadca;
+
+  --color-bg-sidebar-hover: var(--surface-5);
+  --color-bg-sidebar-active: var(--surface-4);
+
+  /* text */
+  --color-text-strong: #f8f7fa;
+  --color-text-main: 244, 241, 246;
+  --color-text-subtle: #bfb5c8;
+  --color-text-muted: #84788b;
+  --color-link-hover: var(--accent-200);
+
+  --unknown-icon: url('/unknown-dark.png');
 }
 
-html.light button {
-  background-color: #f0f0f0;
-}
-
-/* === END LIGHT THEME ===*/
+/* === END DARK THEME ===*/
 
 .EmojiPickerReact {
   /* Backgrounds */
@@ -117,37 +146,30 @@ html.light button {
   --epr-focus-bg-color: var(--surface-3) !important;
   --epr-search-input-bg-color-active: var(--surface-00) !important;
   --epr-search-input-focus-bg-color: var(--surface-0) !important;
-  --epr-search-input-focus-border-color: var(--primary-400) !important;
+  --epr-search-input-focus-border-color: var(--accent-400) !important;
 
   /* Borders */
   --epr-picker-border-color: var(--surface-5) !important;
   --epr-search-input-border-color: var(--surface-5) !important;
   /* Text */
-  --epr-text-color: var(--text-base) !important;
-  --epr-search-input-text-color: var(--text-base) !important;
-  --epr-category-label-text-color: var(--text-subtle) !important;
+  --epr-text-color: var(--color-text-main) !important;
+  --epr-search-input-text-color: var(--color-text-main) !important;
+  --epr-category-label-text-color: var(--color-text-subtle) !important;
   /* Highlights */
-  --epr-highlight-color: var(--primary) !important;
-  --epr-focus-color: var(--primary-400) !important;
+  --epr-highlight-color: var(--accent) !important;
+  --epr-focus-color: var(--accent-400) !important;
   /* UI sizing */
   --epr-category-navigation-button-size: 38px !important;
 }
 
-.bg-primary-dark--noise {
-  background-color: var(--primary-dark);
-  background-image: url('/otis-redding.png');
-  background-repeat: repeat;
-  background-size: auto, cover;
-}
-
-/*used for onboarding bg*/
-.bg-primary--accent--noise {
-  background-color: var(--primary-700);
+/* used for onboarding bg */
+.bg-radial--accent-noise {
+  background-color: var(--accent-700);
   background-image:
     url('/otis-redding.png'),
-    radial-gradient(circle at 90% 100%, #B4E235 0%, transparent 35%),
-    radial-gradient(circle at 60% 50%, var(--primary) 0%, transparent 90%),
-    radial-gradient(circle at 10% 10%, var(--primary-700) 0%, transparent 80%);
+    radial-gradient(circle at 90% 100%, #b4e235 0%, transparent 35%),
+    radial-gradient(circle at 60% 50%, var(--accent) 0%, transparent 90%),
+    radial-gradient(circle at 10% 10%, var(--accent-700) 0%, transparent 80%);
   background-repeat: repeat, no-repeat, no-repeat, no-repeat;
   background-size: auto, cover, cover, cover;
 }
@@ -170,11 +192,20 @@ html.light button {
 
 a {
   font-weight: 500;
-  color: var(--primary);
+  color: var(--accent);
   text-decoration: inherit;
 }
+
 a:hover {
-  color: var(--primary-200);
+  color: var(--color-link-hover);
+}
+
+html.dark a:hover {
+  color: var(--color-link-hover-dark);
+}
+
+button {
+  background-color: #f0f0f0;
 }
 
 h1 {

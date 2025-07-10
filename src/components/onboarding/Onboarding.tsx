@@ -252,7 +252,7 @@ export const Onboarding = ({
               <div className="grow"></div>
               <div className="w-[460px] pt-4 text-center flex flex-row justify-between">
                 <Input
-                  className="onboarding-input !bg-[var(--primary-100)] grow"
+                  className="onboarding-input !bg-accent-100 grow"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Bongocat"

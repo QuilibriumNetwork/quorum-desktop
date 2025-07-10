@@ -5,14 +5,14 @@
 
 .btn-primary {
   @extend .btn-base;
-  background-color: var(--primary);
-  border: 2px solid var(--primary);
+  background-color: var(--accent);
+  border: 2px solid var(--accent);
   color: white;
   cursor: pointer;
 
   &:hover {
-    background-color: var(--primary-300);
-    border: 2px solid var(--primary-300);
+    background-color: var(--accent-300);
+    border: 2px solid var(--accent-300);
     color: white;
   }
 }
@@ -21,13 +21,13 @@
 .btn-secondary {
   @extend .btn-base;
   background-color: transparent;
-  border: 2px solid var(--primary-500);
+  border: 2px solid var(--accent-500);
   cursor: pointer;
-  color: var(--primary-500);
+  color: var(--accent-500);
 
   &:hover {
-    background-color: var(--primary);
-    border: 2px solid var(--primary);
+    background-color: var(--accent);
+    border: 2px solid var(--accent);
     color: white;
   }
 }
@@ -35,15 +35,15 @@
 
 .btn-light {
   @extend .btn-base;
-  background-color: var(--primary-100);
-  border: 2px solid var(--primary-100);
+  background-color: var(--accent-100);
+  border: 2px solid var(--accent-100);
   cursor: pointer;
-  color: var(--primary-700);
+  color: var(--accent-700);
 
   &:hover {
     background-color: transparent;
-    border: 2px solid var(--primary-100);
-    color: var(--primary-100);
+    border: 2px solid var(--accent-100);
+    color: var(--accent-100);
   }
 }
 
@@ -51,14 +51,14 @@
 .btn-light-outline {
   @extend .btn-base;
   background-color: transparent;
-  border: 2px solid var(--primary-100);
+  border: 2px solid var(--accent-100);
   cursor: pointer;
-  color: var(--primary-100);
+  color: var(--accent-100);
 
   &:hover {
-    background-color: var(--primary-100);
-    border: 2px solid var(--primary-100);
-    color: var(--primary-700);
+    background-color: var(--accent-100);
+    border: 2px solid var(--accent-100);
+    color: var(--accent-700);
   }
 }
 

@@ -1,7 +1,7 @@
 .channel {
   flex: 1 0;
   border-top-left-radius: 10px;
-  background: var(--surface-2);
+  background: var(--color-bg-chat);
   z-index: 1;
   display: flex;
   height: calc(100vh - 35px);
@@ -23,11 +23,11 @@
   margin-top: 4px;
   font-weight: 700;
   min-width: 29px;
-  color: var(--text-base);
+  color: var(--color-text-main);
 }
 
 .message-mentions-you {
-  border-left: 2px solid var(--primary);
+  border-left: 2px solid var(--accent);
   background: rgba(var(--info), 0.2)
 }
 
@@ -41,7 +41,7 @@
 }
 
 .message-name-mentions-you {
-  background: var(--primary);
+  background: var(--accent);
 }
 
 .message-list {
@@ -89,7 +89,7 @@
 }
 
 .message-timestamp {
-  color: var(--text-subtle);
+  color: var(--color-text-subtle);
   margin-left: 9px;
   font-size: 10pt;
 }
@@ -104,7 +104,7 @@
   padding: 11px 15px;
   overflow: hidden;
   border: 0px none;
-  color: var(--text-base);
+  color: var(--color-text-main);
   outline: 0px none;
   font-weight: 300;
   resize: none;
@@ -112,6 +112,6 @@
   margin: 8px 11px;
 
   ::placeholder {
-    color: var(--text-muted);
+    color: var(--color-text-muted);
   }
 }

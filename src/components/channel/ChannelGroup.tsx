@@ -46,7 +46,7 @@ const ChannelGroup: React.FunctionComponent<{
         <div
           className={
             'truncate ' +
-            (isSpaceOwner ? 'hover:text-text-base cursor-pointer' : '')
+            (isSpaceOwner ? 'hover:text-main cursor-pointer' : '')
           }
           onClick={() => {
             if (isSpaceOwner) {
@@ -59,7 +59,7 @@ const ChannelGroup: React.FunctionComponent<{
         {isSpaceOwner && (
           <div className="pt-[.15rem] pr-2">
             <FontAwesomeIcon
-              className="hover:text-text-base cursor-pointer"
+              className="hover:text-main cursor-pointer"
               onClick={() =>
                 props.setIsChannelEditorOpen({
                   groupName: props.group.groupName,

@@ -165,7 +165,9 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     invalidateConversation({ conversationId });
 
     // determine if the user has sent any messages in this conversation
-    const userMessages = messageList.filter((m) => m.content.senderId === user.currentPasskeyInfo!.address);
+    const userMessages = messageList.filter(
+      (m) => m.content.senderId === user.currentPasskeyInfo!.address
+    );
 
     // if the user has sent any messages, do not show the accept chat message
     console.log(userMessages);
@@ -196,14 +198,13 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   return (
     <div className="direct-message">
       <div className="flex flex-col">
-        <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] text-text-base flex flex-row justify-between">
+        <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] text-main flex flex-row justify-between">
           <div className="flex flex-row">
             <div className="flex flex-col justify-around">
               <div
                 className="w-[28px] h-[28px] bg-cover bg-center rounded-full"
                 style={{
-                  backgroundImage:
-                    `${icon}`,
+                  backgroundImage: `${icon}`,
                 }}
               />
             </div>
@@ -213,10 +214,15 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               </div>
               <div className="flex flex-col justify-around pl-1">
                 <div className="flex flex-row items-center">
-                  <span className="font-light text-sm text-text-subtle mr-2">
+                  <ClickToCopyContent
+                    text={address ?? ''}
+                    tooltipText={t`Copy address to clipboard`}
+                    className="font-light text-sm text-subtle"
+                    iconPosition="right"
+                    iconClassName="text-subtle hover:text-surface-7"
+                  >
                     {address}
-                  </span>
-                  <CopyToClipboard text={address ?? ''} tooltipText={t`Copy address to clipboard`} />
+                  </ClickToCopyContent>
                 </div>
               </div>
             </div>
@@ -226,7 +232,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               onClick={() => {
                 setShowUsers((prev) => !prev);
               }}
-              className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"
+              className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"
               icon={faUsers}
             />
           </span>
@@ -253,14 +259,18 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         {(fileError || inReplyTo) && (
           <div className="flex flex-col w-full px-[11px]">
             {fileError && (
-              <div className="text-sm text-danger ml-1 mt-3 mb-1">{fileError}</div>
+              <div className="text-sm text-danger ml-1 mt-3 mb-1">
+                {fileError}
+              </div>
             )}
             {inReplyTo && (
               <div
                 onClick={() => setInReplyTo(undefined)}
                 className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-surface-4"
               >
-                {i18n._('Replying to {user}', { user: mapSenderToUser(inReplyTo.content.senderId).displayName })}
+                {i18n._('Replying to {user}', {
+                  user: mapSenderToUser(inReplyTo.content.senderId).displayName,
+                })}
                 <span
                   className="message-in-reply-dismiss"
                   onClick={() => setInReplyTo(undefined)}
@@ -300,9 +310,9 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         {!acceptChat && (
           <div className="flex flex-row justify-center">
             <div className="flex flex-row justify-center">
-            <div className="w-full px-3 py-2 mb-2 text-sm text-center rounded-lg bg-surface-4 text-text-subtle">
-              {t`Until you reply, this sender will not see your display name or profile picture`}
-            </div>
+              <div className="w-full px-3 py-2 mb-2 text-sm text-center rounded-lg bg-surface-4 text-subtle">
+                {t`Until you reply, this sender will not see your display name or profile picture`}
+              </div>
             </div>
           </div>
         )}
@@ -315,7 +325,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
             }
           >
             <input {...getInputProps()} />
-            <FontAwesomeIcon className="text-text-subtle" icon={faPlus} />
+            <FontAwesomeIcon className="text-subtle" icon={faPlus} />
           </div>
 
           <textarea
@@ -324,9 +334,9 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               'message-editor w-full !pl-11 !pr-11 ' +
               (inReplyTo ? 'message-editor-reply' : '')
             }
-            placeholder={
-              i18n._("Send a message to {user}", { user: mapSenderToUser(address ?? '').displayName })
-            }
+            placeholder={i18n._('Send a message to {user}', {
+              user: mapSenderToUser(address ?? '').displayName,
+            })}
             rows={
               rowCount > 4
                 ? 4
@@ -394,7 +404,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           />
           <div
             className={
-              "absolute hover:bg-primary-400 cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-primary bg-center bg-no-repeat bg-[url('/send.png')] " +
+              "absolute hover:bg-accent-400 cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-accent bg-center bg-no-repeat bg-[url('/send.png')] " +
               (inReplyTo ? 'top-1' : 'top-3')
             }
             onClick={(e) => {
@@ -448,7 +458,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       </div>
       <div
         className={
-          'w-[260px] bg-surface-3 p-3 ' + // removed overflow-scroll
+          'w-[260px] bg-sidebar p-3 ' + // removed overflow-scroll
           (showUsers ? '' : 'hidden')
         }
       >
@@ -462,13 +472,23 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   backgroundSize: 'cover',
                   backgroundImage: `url(${members[s].userIcon})`,
                 }}
-                />
-              <div className="flex flex-col ml-2 text-text-base">
-                <span className="text-md font-bold truncate w-[190px]">
-                  {members[s].displayName} {members[s].address === user.currentPasskeyInfo!.address && <span className="text-xs text-text-subtle">({t`You`})</span>}
+              />
+              <div className="flex flex-col ml-2">
+                <span className="text-md font-bold truncate w-[190px] text-main/90">
+                  {members[s].displayName}{' '}
+                  {members[s].address === user.currentPasskeyInfo!.address && (
+                    <span className="text-xs text-subtle">({t`You`})</span>
+                  )}
                 </span>
-                <span className="text-xs truncate w-[190px] opacity-70">
-                  <ClickToCopyContent text={members[s].address} tooltipLocation="left-start">{members[s].address}</ClickToCopyContent>
+                <span className="text-xs truncate w-[190px] text-surface-9 dark:text-surface-8">
+                  <ClickToCopyContent
+                    text={members[s].address}
+                    tooltipText={t`Copy address to clipboard`}
+                    tooltipLocation="left-start"
+                    iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
+                  >
+                    {members[s].address}
+                  </ClickToCopyContent>
                 </span>
               </div>
             </div>

@@ -1,21 +1,21 @@
 .quorum-input {
-  background-color: var(--surface-3);
+  background-color: var(--color-bg-input);
   border-radius: 10px;
   padding: 10px 16px;
   height: 42px;
   font-size: 16px;
   margin: 0px;
   border: 0px none;
-  color: var(--text-base);
+  color: var(--color-text-main);
   outline: 0px none;
 
   ::placeholder {
-    color: var(--text-muted);
+    color: var(--color-text-muted);
   }
 }
 
 .onboarding-input {
-  color: var(--primary-700);
+  color: var(--accent-700);
   border-radius: 9999px; // full pill shape
   padding: 10px 16px;
   height: 42px;
@@ -24,7 +24,7 @@
   border: 0px none;
 
   &::placeholder {
-    color: var(--primary-200);
+    color: var(--accent-200);
     opacity: 1;
   }
 }

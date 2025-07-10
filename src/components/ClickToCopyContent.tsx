@@ -13,8 +13,22 @@ type ClickToCopyContentProps = {
   onCopy?: () => void;
   iconClassName?: string;
   noArrow?: boolean;
-  tooltipLocation?: 'top' | 'top-start' | 'top-end' | 'right' | 'right-start' | 'right-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end';
+  tooltipLocation?:
+    | 'top'
+    | 'top-start'
+    | 'top-end'
+    | 'right'
+    | 'right-start'
+    | 'right-end'
+    | 'bottom'
+    | 'bottom-start'
+    | 'bottom-end'
+    | 'left'
+    | 'left-start'
+    | 'left-end';
   theme?: 'dark' | 'light' | 'system';
+  copyOnContentClick?: boolean;
+  iconPosition?: 'left' | 'right';
 };
 
 const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
@@ -27,12 +41,21 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   noArrow = false,
   tooltipLocation,
   theme,
+  copyOnContentClick = false,
+  iconPosition = 'left',
 }) => {
   const [copied, setCopied] = React.useState(false);
   const { theme: contextTheme } = useTheme();
   const resolvedTheme = theme ?? contextTheme;
 
-  const handleCopy = async (e: React.MouseEvent<SVGSVGElement>) => {
+  const uid = React.useMemo(
+    () => Math.random().toString(36).slice(2, 10),
+    []
+  );
+  const tooltipId = `click-to-copy-tooltip-${uid}`;
+  const anchorId = `click-to-copy-anchor-${uid}`;
+
+  const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
       if (window.electron !== undefined) {
@@ -49,23 +72,46 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
     }
   };
 
+  const wrapperClass = `flex items-center rounded-md ${
+    copyOnContentClick ? 'cursor-pointer hover:text-subtle' : ''
+  } ${className}`;
+
+  const icon = (
+   <FontAwesomeIcon
+  icon={faClipboard}
+  id={!copyOnContentClick ? anchorId : undefined}
+  className={`${
+    iconClassName || 'text-main'
+  } ${iconPosition === 'left' ? 'mr-1' : 'ml-1'} ${
+    !copyOnContentClick
+      ? 'cursor-pointer hover:text-subtle focus:outline-none focus:ring-0 active:bg-transparent'
+      : ''
+  }`}
+  onClick={!copyOnContentClick ? handleCopy : undefined}
+/>
+
+  );
+
   return (
-    <div className={`flex items-center hover:bg-surface-2 hover:text-white rounded-md cursor-pointer ${className}`}>
-      <FontAwesomeIcon
-        icon={faClipboard}
-        id="click-to-copy-content-icon"
-        className={`cursor-pointer hover:text-text-base text-white mr-1 ${iconClassName}`}
-        onClick={(e) => handleCopy(e)}
-      />
+    <div
+      className={wrapperClass}
+      onClick={copyOnContentClick ? handleCopy : undefined}
+      id={copyOnContentClick ? anchorId : undefined}
+    >
+      {iconPosition === 'left' && icon}
+      <span className={!copyOnContentClick ? 'select-text' : 'flex-1'}>
+        {children}
+      </span>
+      {iconPosition === 'right' && icon}
+
       <ReactTooltip
-        id="click-to-copy-content-tooltip"
+        id={tooltipId}
         content={copied ? t`Copied!` : tooltipText}
         place={tooltipLocation}
         noArrow={noArrow}
         theme={resolvedTheme}
-        anchorSelect="#click-to-copy-content-icon"
+        anchorSelect={`#${anchorId}`}
       />
-      {children}
     </div>
   );
 };

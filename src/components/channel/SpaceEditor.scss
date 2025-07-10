@@ -6,13 +6,13 @@
   height: 90vh;
   background: var(--surface-3);
   border-radius: 10px;
-  color: var(--text-base);
+  color: var(--color-text-main);
   user-select: none;
 }
 
 .space-editor-header {
   background: var(--surface-5);
-  min-height: 120px;
+  min-height: 110px;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   display: flex;
@@ -36,7 +36,7 @@
 
   .quorum-input {
     width: 100%;
-    background: var(--surface-0);
+    background: var(--color-bg-input);
     padding: 10px;
     font-size: 13px;
   }
@@ -76,8 +76,8 @@
 .space-editor-icon-editable::after {
   width: 24px;
   height: 24px;
-  background: var(--surface-00);
-  color: var(--primary);
+  background: var(--color-bg-icon);
+  color: var(--accent);
   content: '+';
   display: block;
   text-align: center;
@@ -109,8 +109,8 @@
 .space-editor-banner-editable::after {
   width: 24px;
   height: 24px;
-  background: var(--surface-00);
-  color: var(--primary);
+  background: var(--color-bg-icon);
+  color: var(--accent);
   content: '+';
   display: block;
   text-align: center;
@@ -124,7 +124,7 @@
 
 .space-editor-content-section-header {
   font-weight: 700;
-  border-top: 1px solid var(--surface-6);
+  border-top: 1px solid var(--color-border-strong);
   padding-top: 7px;
   margin-top: 7px;
 }
@@ -145,6 +145,6 @@
 .space-editor-role {
   padding: 2px 10px;
   border-radius: 9px;
-  color: var(--text-base);
+  color: var(--color-text-main);
   background: rgba(var(--success), 0.5);
 }

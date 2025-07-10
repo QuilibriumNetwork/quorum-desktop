@@ -184,7 +184,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
         ))}
         {isSpaceOwner && (
           <div
-            className="channel-group-name small-caps flex flex-row px-4 cursor-pointer hover:text-text-base"
+            className="channel-group-name small-caps flex flex-row px-4 cursor-pointer hover:text-main"
             onClick={() => setIsGroupEditorOpen({})}
           >
             <div className="truncate">{t`Add Group`}</div>

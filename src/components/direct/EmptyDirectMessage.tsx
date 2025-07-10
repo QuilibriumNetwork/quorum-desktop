@@ -1,7 +1,7 @@
 import React from 'react';
 import './DirectMessage.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen } from '@fortawesome/free-solid-svg-icons';
+import { faCommentDots } from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useConversations } from '../../hooks';
 import { t } from '@lingui/core/macro';
@@ -15,7 +15,7 @@ export const EmptyDirectMessage = () => {
       <div className="flex w-full flex-col justify-around">
         <div>
           <div className="flex flex-row justify-around">
-            <FontAwesomeIcon icon={faPen} size="6x" />
+            <FontAwesomeIcon icon={faCommentDots} size="6x" className='text-accent-300 dark:text-accent' />
           </div>
           <div className="flex flex-row justify-around text-lg pt-4">
             {conversations.pages.flatMap((p: any) => p.conversations).length ===
