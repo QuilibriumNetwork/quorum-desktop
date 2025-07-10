@@ -165,7 +165,9 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     invalidateConversation({ conversationId });
 
     // determine if the user has sent any messages in this conversation
-    const userMessages = messageList.filter((m) => m.content.senderId === user.currentPasskeyInfo!.address);
+    const userMessages = messageList.filter(
+      (m) => m.content.senderId === user.currentPasskeyInfo!.address
+    );
 
     // if the user has sent any messages, do not show the accept chat message
     console.log(userMessages);
@@ -202,8 +204,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               <div
                 className="w-[28px] h-[28px] bg-cover bg-center rounded-full"
                 style={{
-                  backgroundImage:
-                    `${icon}`,
+                  backgroundImage: `${icon}`,
                 }}
               />
             </div>
@@ -213,10 +214,14 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               </div>
               <div className="flex flex-col justify-around pl-1">
                 <div className="flex flex-row items-center">
-                  <span className="font-light text-sm text-subtle mr-2">
+                  <ClickToCopyContent
+                    text={address ?? ''}
+                    tooltipText={t`Copy address to clipboard`}
+                    className="font-light text-sm text-subtle"
+                    iconPosition="right"
+                  >
                     {address}
-                  </span>
-                  <CopyToClipboard text={address ?? ''} tooltipText={t`Copy address to clipboard`} />
+                  </ClickToCopyContent>
                 </div>
               </div>
             </div>
@@ -253,14 +258,18 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         {(fileError || inReplyTo) && (
           <div className="flex flex-col w-full px-[11px]">
             {fileError && (
-              <div className="text-sm text-danger ml-1 mt-3 mb-1">{fileError}</div>
+              <div className="text-sm text-danger ml-1 mt-3 mb-1">
+                {fileError}
+              </div>
             )}
             {inReplyTo && (
               <div
                 onClick={() => setInReplyTo(undefined)}
                 className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-surface-4"
               >
-                {i18n._('Replying to {user}', { user: mapSenderToUser(inReplyTo.content.senderId).displayName })}
+                {i18n._('Replying to {user}', {
+                  user: mapSenderToUser(inReplyTo.content.senderId).displayName,
+                })}
                 <span
                   className="message-in-reply-dismiss"
                   onClick={() => setInReplyTo(undefined)}
@@ -300,9 +309,9 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         {!acceptChat && (
           <div className="flex flex-row justify-center">
             <div className="flex flex-row justify-center">
-            <div className="w-full px-3 py-2 mb-2 text-sm text-center rounded-lg bg-surface-4 text-subtle">
-              {t`Until you reply, this sender will not see your display name or profile picture`}
-            </div>
+              <div className="w-full px-3 py-2 mb-2 text-sm text-center rounded-lg bg-surface-4 text-subtle">
+                {t`Until you reply, this sender will not see your display name or profile picture`}
+              </div>
             </div>
           </div>
         )}
@@ -324,9 +333,9 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               'message-editor w-full !pl-11 !pr-11 ' +
               (inReplyTo ? 'message-editor-reply' : '')
             }
-            placeholder={
-              i18n._("Send a message to {user}", { user: mapSenderToUser(address ?? '').displayName })
-            }
+            placeholder={i18n._('Send a message to {user}', {
+              user: mapSenderToUser(address ?? '').displayName,
+            })}
             rows={
               rowCount > 4
                 ? 4
@@ -462,13 +471,21 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   backgroundSize: 'cover',
                   backgroundImage: `url(${members[s].userIcon})`,
                 }}
-                />
+              />
               <div className="flex flex-col ml-2 text-main">
                 <span className="text-md font-bold truncate w-[190px]">
-                  {members[s].displayName} {members[s].address === user.currentPasskeyInfo!.address && <span className="text-xs text-subtle">({t`You`})</span>}
+                  {members[s].displayName}{' '}
+                  {members[s].address === user.currentPasskeyInfo!.address && (
+                    <span className="text-xs text-subtle">({t`You`})</span>
+                  )}
                 </span>
                 <span className="text-xs truncate w-[190px] opacity-70">
-                  <ClickToCopyContent text={members[s].address} tooltipLocation="left-start">{members[s].address}</ClickToCopyContent>
+                  <ClickToCopyContent
+                    text={members[s].address}
+                    tooltipLocation="left-start"
+                  >
+                    {members[s].address}
+                  </ClickToCopyContent>
                 </span>
               </div>
             </div>
