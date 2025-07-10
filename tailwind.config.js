@@ -75,6 +75,9 @@ export default {
         'sidebar-hover': 'var(--color-bg-sidebar-hover)',
         'sidebar-active': 'var(--color-bg-sidebar-active)',
 
+        modal: 'var(--color-bg-modal)',
+        overlay: 'var(--color-bg-overlay)',
+
         chat: 'var(--color-bg-chat)',
         'chat-hover': 'var(--color-bg-chat-hover)',
         'chat-input': 'var(--color-bg-chat-input)',
@@ -91,6 +94,7 @@ export default {
       },
 
       textColor: {
+        strong: 'var(--color-text-strong)',
         main: withOpacityValue('--color-text-main'),
         subtle: 'var(--color-text-subtle)',
         muted: 'var(--color-text-muted)',

@@ -26,7 +26,7 @@ const Modal: React.FunctionComponent<ModalProps> = (props) => {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[2000] flex items-center justify-center bg-[rgba(0,0,0,0.6)] backdrop-blur"
+      className="fixed inset-0 z-[2000] flex items-center justify-center bg-overlay backdrop-blur"
       onClick={() => {
         if (!props.hideClose) close();
       }}
