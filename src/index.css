@@ -21,6 +21,7 @@
   --primary-900: #060421;
   --primary: var(--primary-500);
 
+  /*surface*/
   --surface-00: #100f11;
   --surface-00-rgb: 16, 15, 17; /* to be used with opacity */
   --surface-0: #1d1a21;
@@ -35,11 +36,26 @@
   --surface-9: #a999b3;
   --surface-10: #bfadca;
 
+  /*surface semantic*/
+  --color-bg-app: var(--surface-00);
+  --color-bg-sidebar: var(--surface-1);
+  --color-bg-sidebar-active: var(--surface-3);
+  --color-bg-chat: var(--surface-0);
+  --color-bg-chat-input: var(--surface-1);
+  --color-bg-header: var(--surface-2);
+  --color-bg-hover: var(--surface-4);
+  --color-bg-overlay: rgba(var(--surface-7), 0.8);
+
+  --color-border-default: var(--surface-6);
+  --color-border-strong: var(--surface-7);
+
+  --color-bg-card: var(--surface-2);
+  --color-bg-panel: var(--surface-3);
+
+  /*text*/
   --color-text-main: #f4f1f6;
   --color-text-subtle: #bfb5c8;
   --color-text-muted: #84788b;
-
-
 
   /*utilities*/
   --danger-hex: #e74a4a;
@@ -89,9 +105,9 @@ html.light {
   --surface-9: #a2a2aa;
   --surface-10: #939399;
 
-  --text-base: #363636;
-  --text-subtle: #5a5a5a;
-  --text-muted: #a8a8a8;
+  --color-text-main: #363636;
+  --color-text-subtle: #5a5a5a;
+  --color-text-muted: #a8a8a8;
 
   /* General */
   color: var(--color-text-main);
@@ -101,7 +117,7 @@ html.light {
 }
 
 html.light a:hover {
-  color: var(--primary-400); 
+  color: var(--primary-400);
 }
 
 html.light button {
@@ -147,7 +163,7 @@ html.light button {
   background-color: var(--primary-700);
   background-image:
     url('/otis-redding.png'),
-    radial-gradient(circle at 90% 100%, #B4E235 0%, transparent 35%),
+    radial-gradient(circle at 90% 100%, #b4e235 0%, transparent 35%),
     radial-gradient(circle at 60% 50%, var(--primary) 0%, transparent 90%),
     radial-gradient(circle at 10% 10%, var(--primary-700) 0%, transparent 80%);
   background-repeat: repeat, no-repeat, no-repeat, no-repeat;
