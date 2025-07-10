@@ -78,7 +78,7 @@
   cursor: default;
   color-scheme: light dark;
   color: var(--color-text-main) !important;
-  background-color: var(--surface-00) !important;
+  background-color: var(--color-bg-app);
 
   --unknown-icon: url('/unknown-dark.png');
 
@@ -111,7 +111,7 @@ html.light {
 
   /* General */
   color: var(--color-text-main);
-  background-color: var(--surface-00);
+  background-color: var(--color-bg-app);
 
   --unknown-icon: url('/unknown-light.png');
 }

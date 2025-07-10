@@ -23,9 +23,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Brand Blue Scale
+        // Primary accent color
         primary: {
-          DEFAULT: 'var(--primary)', // fallback for just 'text-primary' or 'bg-primary'
+          DEFAULT: 'var(--primary)',
           100: 'var(--primary-100)',
           200: 'var(--primary-200)',
           300: 'var(--primary-300)',
@@ -36,7 +36,7 @@ export default {
           900: 'var(--primary-900)',
         },
 
-        // theme
+        // surface raw variables (legacy/direct use if needed)
         'surface-00': 'var(--surface-00)',
         'surface-0': 'var(--surface-0)',
         'surface-1': 'var(--surface-1)',
@@ -56,18 +56,37 @@ export default {
         warning: withOpacityValue('--warning'),
         success: withOpacityValue('--success'),
         info: withOpacityValue('--info'),
-        // Utilitites HEX variables (no opacity support)
+
+        // Utilities HEX variables
         'danger-hex': 'var(--danger-hex)',
         'danger-hover-hex': 'var(--danger-hover-hex)',
         'warning-hex': 'var(--warning-hex)',
         'success-hex': 'var(--success-hex)',
         'info-hex': 'var(--info-hex)',
+      },
 
-        textColor: {
-          main: 'var(--color-text-main)',
-          subtle: 'var(--color-text-subtle)',
-          muted: 'var(--color-text-muted)',
-        },
+      backgroundColor: {
+        app: 'var(--color-bg-app)',
+        sidebar: 'var(--color-bg-sidebar)',
+        'sidebar-active': 'var(--color-bg-sidebar-active)',
+        chat: 'var(--color-bg-chat)',
+        'chat-input': 'var(--color-bg-chat-input)',
+        header: 'var(--color-bg-header)',
+        hover: 'var(--color-bg-hover)',
+        overlay: 'var(--color-bg-overlay)',
+        card: 'var(--color-bg-card)',
+        panel: 'var(--color-bg-panel)',
+      },
+
+      borderColor: {
+        DEFAULT: 'var(--color-border-default)',
+        strong: 'var(--color-border-strong)',
+      },
+
+      textColor: {
+        main: 'var(--color-text-main)',
+        subtle: 'var(--color-text-subtle)',
+        muted: 'var(--color-text-muted)',
       },
     },
   },
