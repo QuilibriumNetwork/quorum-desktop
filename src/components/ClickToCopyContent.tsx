@@ -48,6 +48,11 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   const { theme: contextTheme } = useTheme();
   const resolvedTheme = theme ?? contextTheme;
 
+  const tooltipId = React.useMemo(
+    () => `click-to-copy-tooltip-${Math.random().toString(36).slice(2, 10)}`,
+    []
+  );
+
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
@@ -95,7 +100,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
       {iconPosition === 'right' && icon}
 
       <ReactTooltip
-        id="click-to-copy-content-tooltip"
+        id={tooltipId}
         content={copied ? t`Copied!` : tooltipText}
         place={tooltipLocation}
         noArrow={noArrow}

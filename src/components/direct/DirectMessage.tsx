@@ -482,6 +482,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 <span className="text-xs truncate w-[190px] opacity-70">
                   <ClickToCopyContent
                     text={members[s].address}
+                    tooltipText={t`Copy address to clipboard`}
                     tooltipLocation="left-start"
                   >
                     {members[s].address}
