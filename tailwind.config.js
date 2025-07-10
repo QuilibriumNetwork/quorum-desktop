@@ -49,7 +49,7 @@ export default {
         'surface-8': 'var(--surface-8)',
         'surface-9': 'var(--surface-9)',
         'surface-10': 'var(--surface-10)',
-        
+
         // text
         'text-base': 'var(--text-base)',
         'text-subtle': 'var(--text-subtle)',
@@ -67,6 +67,12 @@ export default {
         'warning-hex': 'var(--warning-hex)',
         'success-hex': 'var(--success-hex)',
         'info-hex': 'var(--info-hex)',
+        
+        textColor: {
+          main: 'var(--color-text-main)',
+          subtle: 'var(--color-text-subtle)',
+          muted: 'var(--color-text-muted)',
+        },
       },
     },
   },
