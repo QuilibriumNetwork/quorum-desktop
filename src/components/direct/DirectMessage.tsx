@@ -213,7 +213,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               </div>
               <div className="flex flex-col justify-around pl-1">
                 <div className="flex flex-row items-center">
-                  <span className="font-light text-sm text-text-subtle mr-2">
+                  <span className="font-light text-sm text-subtle mr-2">
                     {address}
                   </span>
                   <CopyToClipboard text={address ?? ''} tooltipText={t`Copy address to clipboard`} />
@@ -300,7 +300,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         {!acceptChat && (
           <div className="flex flex-row justify-center">
             <div className="flex flex-row justify-center">
-            <div className="w-full px-3 py-2 mb-2 text-sm text-center rounded-lg bg-surface-4 text-text-subtle">
+            <div className="w-full px-3 py-2 mb-2 text-sm text-center rounded-lg bg-surface-4 text-subtle">
               {t`Until you reply, this sender will not see your display name or profile picture`}
             </div>
             </div>
@@ -315,7 +315,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
             }
           >
             <input {...getInputProps()} />
-            <FontAwesomeIcon className="text-text-subtle" icon={faPlus} />
+            <FontAwesomeIcon className="text-subtle" icon={faPlus} />
           </div>
 
           <textarea
@@ -465,7 +465,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 />
               <div className="flex flex-col ml-2 text-main">
                 <span className="text-md font-bold truncate w-[190px]">
-                  {members[s].displayName} {members[s].address === user.currentPasskeyInfo!.address && <span className="text-xs text-text-subtle">({t`You`})</span>}
+                  {members[s].displayName} {members[s].address === user.currentPasskeyInfo!.address && <span className="text-xs text-subtle">({t`You`})</span>}
                 </span>
                 <span className="text-xs truncate w-[190px] opacity-70">
                   <ClickToCopyContent text={members[s].address} tooltipLocation="left-start">{members[s].address}</ClickToCopyContent>

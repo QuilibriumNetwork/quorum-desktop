@@ -50,11 +50,6 @@ export default {
         'surface-9': 'var(--surface-9)',
         'surface-10': 'var(--surface-10)',
 
-        // text
-        'text-base': 'var(--color-text-main)',
-        'text-subtle': 'var(--text-subtle)',
-        'text-muted': 'var(--text-muted)',
-
         // Utilities (opacity support)
         danger: withOpacityValue('--danger'),
         'danger-hover': withOpacityValue('--danger-hover'),

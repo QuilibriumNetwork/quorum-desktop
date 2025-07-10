@@ -157,7 +157,7 @@ const UserProfile: React.FunctionComponent<{
               {props.user.displayName}
             </div>
           )}
-          <div className="flex flex-row py-1 text-text-subtle">
+          <div className="flex flex-row py-1 text-subtle">
             <div className="text-xs w-[175px] truncate">
               {props.user.address}
             </div>

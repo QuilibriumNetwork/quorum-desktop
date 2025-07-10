@@ -103,7 +103,7 @@ const Elements = () => {
               ))}
             </div>
             {title === 'Utility (RGB w/ opacity)' && (
-              <p className="mt-2 text-sm text-text-subtle">
+              <p className="mt-2 text-sm text-subtle">
                 <span className="italic">
                   Use{' '}
                   <code className="font-mono not-italic text-[rgba(var(--warning),0.8)]">
@@ -125,8 +125,8 @@ const Elements = () => {
         <h2 className="text-2xl mb-2">Typography</h2>
         <div className="flex flex-row items-center gap-6">
           <p className="text-base">Base text</p>
-          <p className="text-text-subtle">Subtle text</p>
-          <p className="text-text-muted">Muted text</p>
+          <p className="text-subtle">Subtle text</p>
+          <p className="text-muted">Muted text</p>
           <p className="small-caps">Small Caps Text</p>
         </div>
       </section>

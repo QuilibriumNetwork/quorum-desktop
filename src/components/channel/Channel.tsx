@@ -382,7 +382,7 @@ const Channel: React.FC<ChannelProps> = ({
             }
           >
             <input {...getInputProps()} />
-            <FontAwesomeIcon className="text-text-subtle" icon={faPlus} />
+            <FontAwesomeIcon className="text-subtle" icon={faPlus} />
           </div>
           <textarea
             ref={editor}
@@ -462,7 +462,7 @@ const Channel: React.FC<ChannelProps> = ({
               setShowStickers(true);
             }}
           >
-            <FontAwesomeIcon className="text-text-subtle" icon={faSmile} />
+            <FontAwesomeIcon className="text-subtle" icon={faSmile} />
           </div>
           <div
             className={
