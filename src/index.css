@@ -63,7 +63,7 @@
 
   cursor: default;
   color-scheme: light dark;
-  color: var(--text-base) !important;
+  color: var(--color-text-main) !important;
   background-color: var(--surface-00) !important;
 
   --unknown-icon: url('/unknown-dark.png');
@@ -96,7 +96,7 @@ html.light {
   --text-muted: #a8a8a8;
 
   /* General */
-  color: var(--text-base);
+  color: var(--color-text-main);
   background-color: var(--surface-00);
 
   --unknown-icon: url('/unknown-light.png');
@@ -127,8 +127,8 @@ html.light button {
   --epr-picker-border-color: var(--surface-5) !important;
   --epr-search-input-border-color: var(--surface-5) !important;
   /* Text */
-  --epr-text-color: var(--text-base) !important;
-  --epr-search-input-text-color: var(--text-base) !important;
+  --epr-text-color: var(--color-text-main) !important;
+  --epr-search-input-text-color: var(--color-text-main) !important;
   --epr-category-label-text-color: var(--text-subtle) !important;
   /* Highlights */
   --epr-highlight-color: var(--primary) !important;

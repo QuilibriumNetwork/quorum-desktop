@@ -13,7 +13,7 @@ const UnknownAvatar = ({
   size = 38,
   className = '',
   bgColor = 'bg-surface-8',
-  iconColor = 'text-text-base',
+  iconColor = 'text-main',
 }: UnknownAvatarProps) => {
   return (
     <div

@@ -54,7 +54,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
       <FontAwesomeIcon
         icon={faClipboard}
         id="click-to-copy-content-icon"
-        className={`cursor-pointer hover:text-text-base text-white mr-1 ${iconClassName}`}
+        className={`cursor-pointer hover:text-main text-white mr-1 ${iconClassName}`}
         onClick={(e) => handleCopy(e)}
       />
       <ReactTooltip

@@ -257,7 +257,7 @@ const Channel: React.FC<ChannelProps> = ({
   return (
     <div className="channel">
       <div className="flex flex-col">
-        <div className="channel-name mt-[8px] pb-[8px] mx-[11px] text-text-base">
+        <div className="channel-name mt-[8px] pb-[8px] mx-[11px] text-main">
           <span>
             #{channel?.channelName}
             {channel?.channelTopic && ' | '}
@@ -546,7 +546,7 @@ const Channel: React.FC<ChannelProps> = ({
                         })`,
                       }}
                     />
-                    <div className="flex flex-col ml-2 text-text-base">
+                    <div className="flex flex-col ml-2 text-main">
                       <span className="text-md font-bold">
                         {members[s]?.displayName}
                       </span>
@@ -570,7 +570,7 @@ const Channel: React.FC<ChannelProps> = ({
                   backgroundImage: `url(${members[s].userIcon})`,
                 }}
               />
-              <div className="flex flex-col ml-2 text-text-base">
+              <div className="flex flex-col ml-2 text-main">
                 <span className="text-md font-bold">
                   {members[s].displayName}
                 </span>

@@ -196,7 +196,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   return (
     <div className="direct-message">
       <div className="flex flex-col">
-        <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] text-text-base flex flex-row justify-between">
+        <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] text-main flex flex-row justify-between">
           <div className="flex flex-row">
             <div className="flex flex-col justify-around">
               <div
@@ -463,7 +463,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   backgroundImage: `url(${members[s].userIcon})`,
                 }}
                 />
-              <div className="flex flex-col ml-2 text-text-base">
+              <div className="flex flex-col ml-2 text-main">
                 <span className="text-md font-bold truncate w-[190px]">
                   {members[s].displayName} {members[s].address === user.currentPasskeyInfo!.address && <span className="text-xs text-text-subtle">({t`You`})</span>}
                 </span>

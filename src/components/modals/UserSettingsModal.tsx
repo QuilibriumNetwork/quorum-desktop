@@ -184,7 +184,7 @@ const UserSettingsModal: React.FunctionComponent<{
 
   return (
     <div className="user-settings flex flex-row">
-      <div className="px-4 py-2 text-text-base w-[200px]">
+      <div className="px-4 py-2 text-main w-[200px]">
         <div className="small-caps text-subtle">{t`Settings`}</div>
         <div
           onClick={() => setSelectedCategory('general')}
@@ -283,7 +283,7 @@ const UserSettingsModal: React.FunctionComponent<{
                   <div className="user-settings-header pt-4 px-4 !min-h-[0px] flex flex-row justify-between">
                     <div className="">
                       <div className="text-xl font-bold">{t`Privacy/Security`}</div>
-                      <div className="pt-1 text-sm text-text-base">
+                      <div className="pt-1 text-sm text-main">
                         {t`Manage devices, and privacy conditions for messaging and synchronization.`}
                       </div>
                     </div>
@@ -325,7 +325,7 @@ const UserSettingsModal: React.FunctionComponent<{
                       <div className="user-settings-content-section-header small-caps !pt-4">
                         {t`Key Export`}
                       </div>
-                      <div className="pt-1 text-sm text-text-base">
+                      <div className="pt-1 text-sm text-main">
                         {t`Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings.`}
                       </div>
                       <div className="pt-4 pb-8 max-w-[100px]">
@@ -342,7 +342,7 @@ const UserSettingsModal: React.FunctionComponent<{
                     <div className="user-settings-content-section-header small-caps">
                       {t`Security`}
                     </div>
-                    <div className="pt-1 text-sm text-text-base">
+                    <div className="pt-1 text-sm text-main">
                       {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
                     </div>
                     <div className="user-settings-info">
@@ -420,7 +420,7 @@ const UserSettingsModal: React.FunctionComponent<{
               return (
                 <div className="user-settings-content px-4 py-6 flex flex-col gap-4">
                   <div className="text-xl font-bold">{t`Appearance`}</div>
-                  <div className="text-sm text-text-base">
+                  <div className="text-sm text-main">
                     {t`Choose your preferred theme for Quorum.`}
                   </div>
                   <ThemeRadioGroup />
@@ -448,7 +448,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         place="top"
                         anchorSelect="#language-refresh-button"
                         content={t`Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language.`}
-                        className="!bg-surface-5 !text-text-base !w-[400px]"
+                        className="!bg-surface-5 !text-main !w-[400px]"
                       />
                       <Button
                         id="language-refresh-button"

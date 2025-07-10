@@ -51,7 +51,7 @@ export default {
         'surface-10': 'var(--surface-10)',
 
         // text
-        'text-base': 'var(--text-base)',
+        'text-base': 'var(--color-text-main)',
         'text-subtle': 'var(--text-subtle)',
         'text-muted': 'var(--text-muted)',
 
@@ -67,7 +67,7 @@ export default {
         'warning-hex': 'var(--warning-hex)',
         'success-hex': 'var(--success-hex)',
         'info-hex': 'var(--info-hex)',
-        
+
         textColor: {
           main: 'var(--color-text-main)',
           subtle: 'var(--color-text-subtle)',

@@ -162,7 +162,7 @@ const UserProfile: React.FunctionComponent<{
               {props.user.address}
             </div>
             <FontAwesomeIcon
-              className="hover:text-text-base cursor-pointer"
+              className="hover:text-main cursor-pointer"
               title='Copy to clipboard'
               icon={faClipboard}
               onClick={() => {

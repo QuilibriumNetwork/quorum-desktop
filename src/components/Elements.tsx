@@ -11,7 +11,7 @@ const Elements = () => {
   const [showTooltipDark, setShowTooltipDark] = useState(false);
 
   return (
-    <div className="p-12 space-y-12 text-text-base bg-[var(--surface-00)] min-h-screen">
+    <div className="p-12 space-y-12 text-main bg-[var(--surface-00)] min-h-screen">
       <h1 className="text-4xl font-bold">Style Guide</h1>
 
       <div className="flex flex-row items-center gap-6">
@@ -94,7 +94,7 @@ const Elements = () => {
                   className="p-2 rounded shadow flex items-center justify-center text-center text-xs font-mono"
                   style={{
                     backgroundColor: bg,
-                    color: 'var(--text-base)',
+                    color: 'var(--color-text-main)',
                     minHeight: '3rem',
                   }}
                 >

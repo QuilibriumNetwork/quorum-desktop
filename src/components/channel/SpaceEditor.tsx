@@ -287,7 +287,7 @@ const SpaceEditor: React.FunctionComponent<{
 
   return (
     <div className="space-editor flex flex-row">
-      <div className="px-4 py-2 text-text-base w-[200px]">
+      <div className="px-4 py-2 text-main w-[200px]">
         <div className="small-caps text-subtle">Settings</div>
         <div
           onClick={() => setSelectedCategory('general')}
@@ -438,7 +438,7 @@ const SpaceEditor: React.FunctionComponent<{
                                             false
                                           );
                                         }}
-                                        className="py-2 px-2 mx-1 my-1 text-text-base hover:bg-[rgba(235,200,255,0.3)] rounded-lg cursor-pointer !font-bold"
+                                        className="py-2 px-2 mx-1 my-1 text-main hover:bg-[rgba(235,200,255,0.3)] rounded-lg cursor-pointer !font-bold"
                                         key={
                                           'group-select-' + i + '-channel-' + i
                                         }
@@ -507,7 +507,7 @@ const SpaceEditor: React.FunctionComponent<{
                       <div className="text-xl font-bold">
                         <Trans>Roles</Trans>
                       </div>
-                      <div className="pt-1 text-sm text-text-base">
+                      <div className="pt-1 text-sm text-main">
                         <Trans>
                           Click on the role name and tag to edit them.
                         </Trans>
@@ -541,7 +541,7 @@ const SpaceEditor: React.FunctionComponent<{
                       return (
                         <div
                           key={'space-editor-role-' + i}
-                          className="space-editor-content-section-header text-text-base"
+                          className="space-editor-content-section-header text-main"
                         >
                           @
                           <input
@@ -653,7 +653,7 @@ const SpaceEditor: React.FunctionComponent<{
                       <div className="text-xl font-bold">
                         <Trans>Emojis</Trans>
                       </div>
-                      <div className="pt-1 text-sm text-text-base">
+                      <div className="pt-1 text-sm text-main">
                         <Trans>
                           Add up to 50 custom emoji. Custom emojis can only be used within a Space.
                         </Trans>
@@ -688,7 +688,7 @@ const SpaceEditor: React.FunctionComponent<{
                         return (
                           <div
                             key={'space-editor-emoji-' + i}
-                            className="space-editor-content-section-header text-text-base flex flex-row"
+                            className="space-editor-content-section-header text-main flex flex-row"
                           >
                             <img width="24" height="24" src={em.imgUrl} />
                             <div className="flex flex-col justify-around font-mono font-medium mx-2">
@@ -756,7 +756,7 @@ const SpaceEditor: React.FunctionComponent<{
                       <div className="text-xl font-bold">
                         <Trans>Stickers</Trans>
                       </div>
-                      <div className="pt-1 text-sm text-text-base">
+                      <div className="pt-1 text-sm text-main">
                         <Trans>
                           Add up to 50 custom stickers. Custom stickers can only be used within a Space.
                         </Trans>
@@ -791,7 +791,7 @@ const SpaceEditor: React.FunctionComponent<{
                         return (
                           <div
                             key={'space-editor-sticker-' + i}
-                            className="space-editor-content-section-header text-text-base flex flex-row"
+                            className="space-editor-content-section-header text-main flex flex-row"
                           >
                             <img width="24" height="24" src={em.imgUrl} />
                             <div className="flex flex-col justify-around font-mono font-medium mx-2">
@@ -859,7 +859,7 @@ const SpaceEditor: React.FunctionComponent<{
                       <div className="text-xl font-bold">
                         <Trans>Invites</Trans>
                       </div>
-                      <div className="pt-1 text-sm text-text-base">
+                      <div className="pt-1 text-sm text-main">
                         <Trans>
                           Send invites to people you've previously had
                           conversations with. An invite button will appear in
@@ -927,7 +927,7 @@ const SpaceEditor: React.FunctionComponent<{
                                       setSuccess(false);
                                       setIsInviteListExpanded(false);
                                     }}
-                                    className="py-2 px-2 mx-1 my-1 text-text-base hover:bg-[rgba(235,200,255,0.3)] rounded-lg cursor-pointer !font-bold flex flex-row"
+                                    className="py-2 px-2 mx-1 my-1 text-main hover:bg-[rgba(235,200,255,0.3)] rounded-lg cursor-pointer !font-bold flex flex-row"
                                     key={'group-select-' + i + '-channel-' + i}
                                   >
                                     <div className="flex flex-col justify-around">
