@@ -71,6 +71,7 @@ export default {
         icon: 'var(--color-bg-icon)',
         input: 'var(--color-bg-input)',
         card: 'var(--color-bg-card)',
+        tooltip: 'var(--color-bg-tooltip)',
       },
 
       borderColor: {

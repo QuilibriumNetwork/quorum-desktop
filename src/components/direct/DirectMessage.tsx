@@ -219,6 +219,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                     tooltipText={t`Copy address to clipboard`}
                     className="font-light text-sm text-subtle"
                     iconPosition="right"
+                    iconClassName="text-subtle hover:text-surface-7"
                   >
                     {address}
                   </ClickToCopyContent>
@@ -231,7 +232,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               onClick={() => {
                 setShowUsers((prev) => !prev);
               }}
-              className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"
+              className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"
               icon={faUsers}
             />
           </span>
@@ -479,11 +480,12 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                     <span className="text-xs text-subtle">({t`You`})</span>
                   )}
                 </span>
-                <span className="text-xs truncate w-[190px] opacity-70">
+                <span className="text-xs truncate w-[190px] text-surface-8">
                   <ClickToCopyContent
                     text={members[s].address}
                     tooltipText={t`Copy address to clipboard`}
                     tooltipLocation="left-start"
+                    iconClassName="text-surface-8 hover:text-surface-10"
                   >
                     {members[s].address}
                   </ClickToCopyContent>

@@ -48,10 +48,12 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   const { theme: contextTheme } = useTheme();
   const resolvedTheme = theme ?? contextTheme;
 
-  const tooltipId = React.useMemo(
-    () => `click-to-copy-tooltip-${Math.random().toString(36).slice(2, 10)}`,
+  const uid = React.useMemo(
+    () => Math.random().toString(36).slice(2, 10),
     []
   );
+  const tooltipId = `click-to-copy-tooltip-${uid}`;
+  const anchorId = `click-to-copy-anchor-${uid}`;
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -71,13 +73,13 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   };
 
   const wrapperClass = `flex items-center rounded-md ${
-    copyOnContentClick ? 'cursor-pointer' : ''
+    copyOnContentClick ? 'cursor-pointer hover:text-subtle' : ''
   } ${className}`;
 
   const icon = (
     <FontAwesomeIcon
       icon={faClipboard}
-      id={!copyOnContentClick ? 'click-to-copy-content-icon' : undefined}
+      id={!copyOnContentClick ? anchorId : undefined}
       className={`${
         iconClassName || 'text-main'
       } ${iconPosition === 'left' ? 'mr-1' : 'ml-1'} ${
@@ -91,7 +93,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
     <div
       className={wrapperClass}
       onClick={copyOnContentClick ? handleCopy : undefined}
-      id={copyOnContentClick ? 'click-to-copy-content-wrapper' : undefined}
+      id={copyOnContentClick ? anchorId : undefined}
     >
       {iconPosition === 'left' && icon}
       <span className={!copyOnContentClick ? 'select-text' : 'flex-1'}>
@@ -105,11 +107,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
         place={tooltipLocation}
         noArrow={noArrow}
         theme={resolvedTheme}
-        anchorSelect={
-          copyOnContentClick
-            ? '#click-to-copy-content-wrapper'
-            : '#click-to-copy-content-icon'
-        }
+        anchorSelect={`#${anchorId}`}
       />
     </div>
   );
