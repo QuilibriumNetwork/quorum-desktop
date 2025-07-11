@@ -318,45 +318,95 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           </div>
         )}
 
-        <div {...getRootProps()} className="flex flex-row relative">
+        <div {...getRootProps()} className="message-editor-container">
           <div
             className={
-              'absolute hover:bg-surface-6 flex flex-col justify-around cursor-pointer left-4 w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 ' +
-              (inReplyTo ? 'top-1' : 'top-3')
-            }
-            data-tooltip-id="attach-image-tooltip-dm"
-          >
-            <input {...getInputProps()} />
-            <FontAwesomeIcon className="text-subtle" icon={faPlus} />
-          </div>
-
-          <textarea
-            ref={editor}
-            className={
-              'message-editor w-full !pl-11 !pr-11 ' +
+              'message-editor w-full flex items-center gap-2 ' +
               (inReplyTo ? 'message-editor-reply' : '')
             }
-            placeholder={i18n._('Send a message to {user}', {
-              user: mapSenderToUser(address ?? '').displayName,
-            })}
-            rows={
-              rowCount > 4
-                ? 4
-                : pendingMessage == ''
-                  ? 1
-                  : Math.min(
-                      4,
-                      Math.max(
-                        rowCount,
-                        Math.round(editor.current!.scrollHeight / 28)
+          >
+            <div
+              className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
+              data-tooltip-id="attach-image-tooltip-dm"
+            >
+              <input {...getInputProps()} />
+              <FontAwesomeIcon className="text-subtle" icon={faPlus} />
+            </div>
+            <textarea
+              ref={editor}
+              className="flex-1 bg-transparent border-0 outline-0 resize-none py-1"
+              placeholder={i18n._('Send a message to {user}', {
+                user: mapSenderToUser(address ?? '').displayName,
+              })}
+              rows={
+                rowCount > 4
+                  ? 4
+                  : pendingMessage == ''
+                    ? 1
+                    : Math.min(
+                        4,
+                        Math.max(
+                          rowCount,
+                          Math.round(editor.current!.scrollHeight / 28)
+                        )
                       )
-                    )
-            }
-            value={pendingMessage}
-            onChange={(e) => setPendingMessage(e.target.value)}
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
+              }
+              value={pendingMessage}
+              onChange={(e) => setPendingMessage(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  if ((pendingMessage || fileData) && !isSubmitting) {
+                    setIsSubmitting(true);
+                    setInReplyTo(undefined);
+                    if (pendingMessage) {
+                      submitMessage(
+                        address!,
+                        pendingMessage,
+                        self.registration!,
+                        registration.registration!,
+                        queryClient,
+                        user.currentPasskeyInfo!,
+                        keyset,
+                        inReplyTo?.messageId
+                      ).finally(() => {
+                        setIsSubmitting(false);
+                      });
+                    }
+                    if (fileData) {
+                      submitMessage(
+                        address!,
+                        {
+                          senderId: user.currentPasskeyInfo!.address,
+                          type: 'embed',
+                          imageUrl:
+                            'data:' +
+                            fileType +
+                            ';base64,' +
+                            Buffer.from(fileData).toString('base64'),
+                        } as EmbedMessage,
+                        self.registration!,
+                        registration.registration!,
+                        queryClient,
+                        user.currentPasskeyInfo!,
+                        keyset,
+                        inReplyTo?.messageId
+                      ).finally(() => {
+                        setIsSubmitting(false);
+                      });
+                    }
+                    setPendingMessage('');
+                    setFileData(undefined);
+                    setFileType(undefined);
+                  }
+                  e.preventDefault();
+                }
+              }}
+            />
+            <div
+              className="hover:bg-accent-400 cursor-pointer w-8 h-8 rounded-full bg-accent bg-center bg-no-repeat bg-[url('/send.png')] bg-[length:60%] flex-shrink-0"
+              onClick={(e) => {
+                e.stopPropagation();
                 if ((pendingMessage || fileData) && !isSubmitting) {
                   setIsSubmitting(true);
                   setInReplyTo(undefined);
@@ -400,62 +450,9 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   setFileData(undefined);
                   setFileType(undefined);
                 }
-                e.preventDefault();
-              }
-            }}
-          />
-          <div
-            className={
-              "absolute hover:bg-accent-400 cursor-pointer right-4 w-8 h-8 rounded-full bg-[length:60%] bg-accent bg-center bg-no-repeat bg-[url('/send.png')] " +
-              (inReplyTo ? 'top-1' : 'top-3')
-            }
-            onClick={(e) => {
-              e.stopPropagation();
-              if ((pendingMessage || fileData) && !isSubmitting) {
-                setIsSubmitting(true);
-                setInReplyTo(undefined);
-                if (pendingMessage) {
-                  submitMessage(
-                    address!,
-                    pendingMessage,
-                    self.registration!,
-                    registration.registration!,
-                    queryClient,
-                    user.currentPasskeyInfo!,
-                    keyset,
-                    inReplyTo?.messageId
-                  ).finally(() => {
-                    setIsSubmitting(false);
-                  });
-                }
-                if (fileData) {
-                  submitMessage(
-                    address!,
-                    {
-                      senderId: user.currentPasskeyInfo!.address,
-                      type: 'embed',
-                      imageUrl:
-                        'data:' +
-                        fileType +
-                        ';base64,' +
-                        Buffer.from(fileData).toString('base64'),
-                    } as EmbedMessage,
-                    self.registration!,
-                    registration.registration!,
-                    queryClient,
-                    user.currentPasskeyInfo!,
-                    keyset,
-                    inReplyTo?.messageId
-                  ).finally(() => {
-                    setIsSubmitting(false);
-                  });
-                }
-                setPendingMessage('');
-                setFileData(undefined);
-                setFileType(undefined);
-              }
-            }}
-          ></div>
+              }}
+            ></div>
+          </div>
         </div>
       </div>
       <div

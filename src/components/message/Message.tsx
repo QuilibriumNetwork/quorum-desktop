@@ -272,172 +272,6 @@ export const Message = ({
               />
             </div>
           )}
-          {hoverTarget === message.messageId && (
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-                return false;
-              }}
-              className="absolute flex flex-row right-[20px] top-[-10px] p-1 bg-tooltip select-none shadow-lg rounded-lg"
-            >
-              <div
-                onClick={() => {
-                  if (
-                    !message.reactions
-                      ?.find((r) => r.emojiId == '❤️')
-                      ?.memberIds.includes(user.currentPasskeyInfo!.address)
-                  ) {
-                    submitMessage({
-                      type: 'reaction',
-                      messageId: message.messageId,
-                      reaction: '❤️',
-                    });
-                  }
-                }}
-                className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125  transition duration-200"
-              >
-                ❤️
-              </div>
-              <div
-                onClick={() => {
-                  if (
-                    !message.reactions
-                      ?.find((r) => r.emojiId == '👍')
-                      ?.memberIds.includes(user.currentPasskeyInfo!.address)
-                  ) {
-                    submitMessage({
-                      type: 'reaction',
-                      messageId: message.messageId,
-                      reaction: '👍',
-                    });
-                  }
-                }}
-                className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125  transition duration-200"
-              >
-                👍
-              </div>
-              <div
-                onClick={() => {
-                  if (
-                    !message.reactions
-                      ?.find((r) => r.emojiId == '🫡')
-                      ?.memberIds.includes(user.currentPasskeyInfo!.address)
-                  ) {
-                    submitMessage({
-                      type: 'reaction',
-                      messageId: message.messageId,
-                      reaction: '🔥',
-                    });
-                  }
-                }}
-                className="w-5 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125  transition duration-200"
-              >
-                🔥
-              </div>
-              <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
-              <>
-                <div
-                  id={`emoji-tooltip-icon-${message.messageId}`}
-                  onClick={(e) => {
-                    setEmojiPickerOpen(message.messageId);
-                    setEmojiPickerOpenDirection(
-                      e.clientY / height > 0.5 ? 'upwards' : 'downwards'
-                    );
-                  }}
-                  className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
-                >
-                  <FontAwesomeIcon icon={faFaceSmileBeam} />
-                </div>
-                <ReactTooltip
-                  id={`emoji-tooltip-${message.messageId}`}
-                  content={t`More reactions`}
-                  place="top"
-                  anchorSelect={`#emoji-tooltip-icon-${message.messageId}`}
-                />
-              </>
-
-              <>
-                <div
-                  id={`reply-tooltip-icon-${message.messageId}`}
-                  onClick={() => {
-                    setInReplyTo(message);
-                    editorRef?.focus();
-                  }}
-                  className="w-5 mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
-                >
-                  <FontAwesomeIcon icon={faReply} />
-                </div>
-
-                <ReactTooltip
-                  id={`reply-tooltip-${message.messageId}`}
-                  content={t`Reply`}
-                  place="top"
-                  anchorSelect={`#reply-tooltip-icon-${message.messageId}`}
-                />
-              </>
-
-              <>
-                <div
-                  id={`copy-link-tooltip-icon-${message.messageId}`}
-                  onClick={() => {
-                    const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
-                    navigator.clipboard.writeText(url);
-                    setCopiedLinkId(message.messageId);
-
-                    // Reset tooltip after 1.5s
-                    setTimeout(() => {
-                      setCopiedLinkId((prev) =>
-                        prev === message.messageId ? null : prev
-                      );
-                    }, 1500);
-                  }}
-                  className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
-                >
-                  <FontAwesomeIcon icon={faLink} />
-                </div>
-
-                <ReactTooltip
-                  id={`copy-link-tooltip-${message.messageId}`}
-                  content={
-                    copiedLinkId === message.messageId
-                      ? t`Copied!`
-                      : t`Copy message link`
-                  }
-                  place="top-start"
-                  anchorSelect={`#copy-link-tooltip-icon-${message.messageId}`}
-                />
-              </>
-
-              {canUserDelete && (
-                <>
-                  <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
-
-                  <div
-                    id={`delete-tooltip-icon-${message.messageId}`}
-                    onClick={() => {
-                      submitMessage({
-                        type: 'remove-message',
-                        removeMessageId: message.messageId,
-                      });
-                    }}
-                    className="w-5 text-center transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
-                  >
-                    <FontAwesomeIcon
-                      icon={faTrash}
-                      className="text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125"
-                    />
-                  </div>
-
-                  <ReactTooltip
-                    id={`delete-tooltip-${message.messageId}`}
-                    content={t`Delete message`}
-                    place="top-start"
-                    anchorSelect={`#delete-tooltip-icon-${message.messageId}`}
-                  />
-                </>
-              )}
-            </div>
-          )}
           {showUserProfile && spaceId && (
             <div
               onClick={(e) => setShowUserProfile(false)}
@@ -485,6 +319,172 @@ export const Message = ({
             }}
           />
           <div className="message-content">
+            {hoverTarget === message.messageId && (
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  return false;
+                }}
+                className="absolute flex flex-row right-0 top-[-10px] p-1 bg-tooltip select-none shadow-lg rounded-lg"
+              >
+                <div
+                  onClick={() => {
+                    if (
+                      !message.reactions
+                        ?.find((r) => r.emojiId == '❤️')
+                        ?.memberIds.includes(user.currentPasskeyInfo!.address)
+                    ) {
+                      submitMessage({
+                        type: 'reaction',
+                        messageId: message.messageId,
+                        reaction: '❤️',
+                      });
+                    }
+                  }}
+                  className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125  transition duration-200"
+                >
+                  ❤️
+                </div>
+                <div
+                  onClick={() => {
+                    if (
+                      !message.reactions
+                        ?.find((r) => r.emojiId == '👍')
+                        ?.memberIds.includes(user.currentPasskeyInfo!.address)
+                    ) {
+                      submitMessage({
+                        type: 'reaction',
+                        messageId: message.messageId,
+                        reaction: '👍',
+                      });
+                    }
+                  }}
+                  className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125  transition duration-200"
+                >
+                  👍
+                </div>
+                <div
+                  onClick={() => {
+                    if (
+                      !message.reactions
+                        ?.find((r) => r.emojiId == '🫡')
+                        ?.memberIds.includes(user.currentPasskeyInfo!.address)
+                    ) {
+                      submitMessage({
+                        type: 'reaction',
+                        messageId: message.messageId,
+                        reaction: '🔥',
+                      });
+                    }
+                  }}
+                  className="w-5 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125  transition duration-200"
+                >
+                  🔥
+                </div>
+                <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
+                <>
+                  <div
+                    id={`emoji-tooltip-icon-${message.messageId}`}
+                    onClick={(e) => {
+                      setEmojiPickerOpen(message.messageId);
+                      setEmojiPickerOpenDirection(
+                        e.clientY / height > 0.5 ? 'upwards' : 'downwards'
+                      );
+                    }}
+                    className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                  >
+                    <FontAwesomeIcon icon={faFaceSmileBeam} />
+                  </div>
+                  <ReactTooltip
+                    id={`emoji-tooltip-${message.messageId}`}
+                    content={t`More reactions`}
+                    place="top"
+                    anchorSelect={`#emoji-tooltip-icon-${message.messageId}`}
+                  />
+                </>
+
+                <>
+                  <div
+                    id={`reply-tooltip-icon-${message.messageId}`}
+                    onClick={() => {
+                      setInReplyTo(message);
+                      editorRef?.focus();
+                    }}
+                    className="w-5 mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                  >
+                    <FontAwesomeIcon icon={faReply} />
+                  </div>
+
+                  <ReactTooltip
+                    id={`reply-tooltip-${message.messageId}`}
+                    content={t`Reply`}
+                    place="top"
+                    anchorSelect={`#reply-tooltip-icon-${message.messageId}`}
+                  />
+                </>
+
+                <>
+                  <div
+                    id={`copy-link-tooltip-icon-${message.messageId}`}
+                    onClick={() => {
+                      const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
+                      navigator.clipboard.writeText(url);
+                      setCopiedLinkId(message.messageId);
+
+                      // Reset tooltip after 1.5s
+                      setTimeout(() => {
+                        setCopiedLinkId((prev) =>
+                          prev === message.messageId ? null : prev
+                        );
+                      }, 1500);
+                    }}
+                    className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                  >
+                    <FontAwesomeIcon icon={faLink} />
+                  </div>
+
+                  <ReactTooltip
+                    id={`copy-link-tooltip-${message.messageId}`}
+                    content={
+                      copiedLinkId === message.messageId
+                        ? t`Copied!`
+                        : t`Copy message link`
+                    }
+                    place="top-start"
+                    anchorSelect={`#copy-link-tooltip-icon-${message.messageId}`}
+                  />
+                </>
+
+                {canUserDelete && (
+                  <>
+                    <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
+
+                    <div
+                      id={`delete-tooltip-icon-${message.messageId}`}
+                      onClick={() => {
+                        submitMessage({
+                          type: 'remove-message',
+                          removeMessageId: message.messageId,
+                        });
+                      }}
+                      className="w-5 text-center transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                    >
+                      <FontAwesomeIcon
+                        icon={faTrash}
+                        className="text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125"
+                      />
+                    </div>
+
+                    <ReactTooltip
+                      id={`delete-tooltip-${message.messageId}`}
+                      content={t`Delete message`}
+                      place="top-start"
+                      anchorSelect={`#delete-tooltip-icon-${message.messageId}`}
+                    />
+                  </>
+                )}
+              </div>
+            )}
             <span className="message-sender-name">{sender.displayName}</span>
             <span className="pl-2">
               {!repudiability && !message.signature && (
