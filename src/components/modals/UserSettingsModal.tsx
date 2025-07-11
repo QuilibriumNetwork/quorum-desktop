@@ -355,7 +355,7 @@ const UserSettingsModal: React.FunctionComponent<{
                           <>
                             <div
                               id="allow-sync-tooltip-anchor"
-                              className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1 ml-2 cursor-default"
+                              className="border border-strong rounded-full w-6 h-6 text-center leading-5 text-lg mt-1 ml-2 cursor-default"
                             >
                               ℹ
                             </div>
@@ -382,7 +382,7 @@ const UserSettingsModal: React.FunctionComponent<{
                           <>
                             <div
                               id="non-repudiable-tooltip-anchor"
-                              className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg mt-1 ml-2 cursor-default"
+                              className="border border-strong rounded-full w-6 h-6 text-center leading-5 text-lg mt-1 ml-2 cursor-default"
                             >
                               ℹ
                             </div>
