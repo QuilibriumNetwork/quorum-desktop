@@ -115,7 +115,7 @@ const UserProfile: React.FunctionComponent<{
   }, [acceptedFiles]);
 
   return (
-    <div className="user-profile" onClick={(e) => e.stopPropagation()}>
+    <div className="user-profile shadow-md" onClick={(e) => e.stopPropagation()}>
       <div className="user-profile-header">
         {props.editMode ? (
           <div
@@ -274,7 +274,7 @@ const UserProfile: React.FunctionComponent<{
                       className={'message-name-mentions-role'}
                     >
                       <span
-                        className="hover:bg-[rgba(255,255,255,0.2)] rounded-full px-[.3rem] cursor-pointer ml-[-.25rem] font-thin"
+                        className="hover:bg-surface-3 rounded-full px-[.3rem] cursor-pointer ml-[-.25rem] font-thin"
                         onClick={() => removeRole(r.roleId)}
                       >
                         x
@@ -300,7 +300,7 @@ const UserProfile: React.FunctionComponent<{
             </div>
           </div>
           {currentPasskeyInfo!.address !== props.user.address && (
-            <div className="bg-[var(--surface-0)] rounded-b-xl p-1">
+            <div className="bg-tooltip rounded-b-xl p-1">
               <div className="user-profile-actions">
                 <TooltipButton
                   icon={faReply}

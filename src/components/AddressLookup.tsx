@@ -23,7 +23,7 @@ export const AddressLookup = ({ address }: { address: string }) => {
             }
           }}
         >
-          <Trans>New Direct Message</Trans>
+          <Trans>Send</Trans>
         </Button>
       </div>
     </>

@@ -12,7 +12,7 @@
   /*accent*/
   --accent-50: #eef7ff;
   --accent-100: #daeeff;
-  --accent-150: #a6d9ff; 
+  --accent-150: #a6d9ff;
   --accent-200: #6fc3ff;
   --accent-300: #48adf5;
   --accent-400: #3aa9f8;
@@ -39,8 +39,7 @@
   --surface-9: #a2a2aa;
   --surface-10: #939399;
 
-
-  --color-text-strong:#3b3b3b;
+  --color-text-strong: #3b3b3b;
   --color-text-main: 54, 54, 54;
   --color-text-subtle: #818181;
   --color-text-muted: #b6b6b6;
@@ -131,6 +130,20 @@ html.dark {
   --color-text-subtle: #bfb5c8;
   --color-text-muted: #84788b;
   --color-link-hover: var(--accent-200);
+
+  /* utilities */
+  --danger-hex: #c73737;
+  --danger-hover-hex: #b83030;
+  --warning-hex: #d09a3d;
+  --success-hex: #379e2b;
+  --info-hex: #267b9e;
+
+  /* utilities for use with opacity */
+  --danger: 199, 55, 55; /* #c73737 */
+  --danger-hover: 184, 48, 48; /* #b83030 */
+  --warning: 208, 154, 61; /* #d09a3d */
+  --success: 55, 158, 43; /* #379e2b */
+  --info: 38, 123, 158; /* #267b9e */
 
   --unknown-icon: url('/unknown-dark.png');
 }

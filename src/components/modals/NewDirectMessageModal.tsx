@@ -45,12 +45,12 @@ const NewDirectMessageModal: React.FunctionComponent<
           fallback={
             <div className="modal-new-direct-message-actions">
               <Button
-                className="w-32 inline-block"
+                className="w-40 inline-block"
                 type="primary"
                 disabled={!address}
                 onClick={() => {}}
               >
-                {t`New Direct Message`}
+                {t`Send`}
               </Button>
             </div>
           }
