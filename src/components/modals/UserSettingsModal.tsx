@@ -427,7 +427,7 @@ const UserSettingsModal: React.FunctionComponent<{
                   <ThemeRadioGroup />
 
                   <div className="pt-4">
-                    <div className="small-caps">{t`Accent Color`}</div>
+                    
                     <AccentColorSwitcher />
                   </div>
 
