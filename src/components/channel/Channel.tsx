@@ -28,6 +28,7 @@ import { MessageList } from '../message/MessageList';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
 import { t } from "@lingui/core/macro";
+import ReactTooltip from '../ReactTooltip';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
 
@@ -380,6 +381,7 @@ const Channel: React.FC<ChannelProps> = ({
               'absolute hover:bg-surface-6 flex flex-col justify-around cursor-pointer left-4 w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 ' +
               (inReplyTo ? 'top-1' : 'top-3')
             }
+            data-tooltip-id="attach-image-tooltip"
           >
             <input {...getInputProps()} />
             <FontAwesomeIcon className="text-subtle" icon={faPlus} />
@@ -461,6 +463,7 @@ const Channel: React.FC<ChannelProps> = ({
               e.stopPropagation();
               setShowStickers(true);
             }}
+            data-tooltip-id="add-sticker-tooltip"
           >
             <FontAwesomeIcon className="text-subtle" icon={faSmile} />
           </div>
@@ -579,6 +582,16 @@ const Channel: React.FC<ChannelProps> = ({
           ))}
         </div>
       </div>
+      <ReactTooltip
+        id="attach-image-tooltip"
+        content={t`attach image`}
+        place="top"
+      />
+      <ReactTooltip
+        id="add-sticker-tooltip"
+        content={t`add sticker`}
+        place="top"
+      />
     </div>
   );
 };

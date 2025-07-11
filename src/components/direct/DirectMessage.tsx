@@ -16,6 +16,7 @@ import Compressor from 'compressorjs';
 
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
+import ReactTooltip from '../ReactTooltip';
 import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages } from '../../utils';
 import CopyToClipboard from '../CopyToClipboard';
@@ -323,6 +324,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               'absolute hover:bg-surface-6 flex flex-col justify-around cursor-pointer left-4 w-8 h-8 rounded-full bg-[length:60%] bg-surface-5 ' +
               (inReplyTo ? 'top-1' : 'top-3')
             }
+            data-tooltip-id="attach-image-tooltip-dm"
           >
             <input {...getInputProps()} />
             <FontAwesomeIcon className="text-subtle" icon={faPlus} />
@@ -495,6 +497,11 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           ))}
         </div>
       </div>
+      <ReactTooltip
+        id="attach-image-tooltip-dm"
+        content={t`attach image`}
+        place="top"
+      />
     </div>
   );
 };
