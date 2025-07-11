@@ -27,8 +27,14 @@
 
   &:hover {
     background-color: var(--accent);
-    border: 2px solid var(--accent);
+    border-color: var(--accent);
     color: white;
+  }
+
+  // Dark mode
+  @media (prefers-color-scheme: dark) {
+    border-color: var(--accent-400);
+    color: var(--accent-400);
   }
 }
 
