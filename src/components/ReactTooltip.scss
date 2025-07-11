@@ -3,8 +3,15 @@
   background-color: var(--color-bg-tooltip) !important;
   padding: 7px 12px !important;
   border-radius: 8px !important;
-  color: var(--color-text-main) !important;
+  color: rgb(var(--color-text-main)) !important;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11) !important;
+  opacity: 1 !important;
+}
+
+/* Ensure all child elements inherit the correct text color */
+.quorum-react-tooltip *,
+.quorum-react-tooltip-dark * {
+  color: inherit !important;
 }
 
 .quorum-react-tooltip-dark {

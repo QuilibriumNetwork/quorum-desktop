@@ -488,7 +488,6 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                     tooltipText={t`Copy address to clipboard`}
                     tooltipLocation="left-start"
                     iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
-                    className="dm-address-copy-tooltip"
                   >
                     {members[s].address}
                   </ClickToCopyContent>
