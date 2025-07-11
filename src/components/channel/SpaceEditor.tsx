@@ -676,7 +676,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="flex">
                       {emojis.length < 50 && (
                         <div
-                          className="px-4 py-2 rounded-full font-medium text-sm text-center select-none border-2 border-accent-300 text-accent-300 bg-transparent transition duration-300 cursor-pointer hover:bg-accent hover:border-accent hover:text-white"
+                          className="btn-secondary"
                           {...getEmojiRootProps()}
                         >
                           <Trans>Upload Emoji</Trans>
@@ -780,7 +780,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="flex">
                       {stickers.length < 50 && (
                         <div
-                          className="px-4 py-2 rounded-full font-medium text-sm text-center select-none border-2 border-accent-300 text-accent-300 bg-transparent transition duration-300 cursor-pointer hover:bg-accent hover:border-accent hover:text-white"
+                          className="btn-secondary"
                           {...getStickerRootProps()}
                         >
                           <Trans>Upload Sticker</Trans>
