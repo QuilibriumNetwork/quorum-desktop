@@ -429,7 +429,7 @@ const UserSettingsModal: React.FunctionComponent<{
                     <div className="small-caps">{t`Language`}</div>
                     <div className="flex flex-row gap-2 items-center">
                       <select
-                        className="quorum-input flex-1"
+                        className="quorum-input w-56"
                         value={language}
                         onChange={async (e) => {
                           const selected =
