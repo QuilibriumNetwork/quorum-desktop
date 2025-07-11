@@ -1,0 +1,94 @@
+.message-name-mentions-you,
+.message-name-mentions-role {
+  padding: 2px 10px;
+  border-radius: 9px;
+  line-height: 20px;
+  margin-top: 4px;
+  font-weight: 700;
+  min-width: 29px;
+  color: var(--color-text-main);
+}
+
+.message-mentions-you {
+  border-left: 2px solid var(--accent);
+  background: rgba(var(--accent-rgb), 0.2);
+}
+
+.message-mentions-role {
+  border-left: 2px solid var(--success);
+  background: rgba(var(--success), 0.2)
+}
+
+.message-name-mentions-role {
+  background: var(--success-hex)
+}
+
+.message-name-mentions-you {
+  background: var(--accent);
+}
+
+.message-list {
+  flex: 1 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  width: calc(100vw - 584px);
+  transition: width 200ms;
+}
+
+.message-list-expanded {
+  width: calc(100vw - 322px);
+}
+
+.message-list::-webkit-scrollbar {
+  width: 0; /* Remove scrollbar space */
+  background: transparent; /* Optional: just make scrollbar invisible */
+}
+
+.message-sender-icon {
+  width: 49px;
+  height: 49px;
+  min-width: 49px;
+  background-position: center;
+  background-size: cover;
+  border-radius: 29px;
+  display: inline-block;
+}
+
+.message-content {
+  flex: 1 0;
+  padding-left: 10px;
+  width: 80%;
+  max-width: 800px;
+}
+
+.message-sender-name {
+  font-weight: 700;
+}
+
+.message-timestamp {
+  color: var(--color-text-subtle);
+  margin-left: 9px;
+  font-size: 10pt;
+}
+
+.message-post-content {
+  margin-top: 2px;
+}
+
+.message-editor {
+  border-radius: 10px;
+  padding: 11px 15px;
+  overflow: hidden;
+  border: 0px none;
+  color: var(--color-text-main);
+  outline: 0px none;
+  font-weight: 300;
+  resize: none;
+  line-height: 18px;
+  margin: 8px 11px;
+
+  ::placeholder {
+    color: var(--color-text-muted);
+  }
+}
