@@ -10,6 +10,7 @@ import { useMessageDB } from '../context/MessageDB';
 import ToggleSwitch from '../ToggleSwitch';
 import { UserConfig } from '../../db/messages';
 import ThemeRadioGroup from '../ThemeRadioGroup';
+import AccentColorSwitcher from '../AccentColorSwitcher';
 import { t } from '@lingui/core/macro';
 import CopyToClipboard from '../CopyToClipboard';
 import { DefaultImages } from '../../utils';
@@ -424,6 +425,11 @@ const UserSettingsModal: React.FunctionComponent<{
                     {t`Choose your preferred theme for Quorum.`}
                   </div>
                   <ThemeRadioGroup />
+
+                  <div className="pt-4">
+                    <div className="small-caps">{t`Accent Color`}</div>
+                    <AccentColorSwitcher />
+                  </div>
 
                   <div className="pt-4">
                     <div className="small-caps">{t`Language`}</div>

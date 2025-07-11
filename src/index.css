@@ -149,6 +149,84 @@ html.dark {
   --unknown-icon: url('/unknown-dark.png');
 }
 
+/* === ACCENT THEMES === */
+.accent-purple {
+  --accent-50: #f5f2ff;
+  --accent-100: #e9e3ff;
+  --accent-150: #d3c6ff;
+  --accent-200: #bda8ff;
+  --accent-300: #a78bff;
+  --accent-400: #916eff;
+  --accent-500: #7c52ff;
+  --accent-600: #6233e8;
+  --accent-700: #4b27b3;
+  --accent-800: #281566;
+  --accent-900: #140b33;
+  --accent: var(--accent-500);
+  --accent-rgb: 124, 82, 255;
+}
+
+.accent-fuchsia {
+    --accent-50: #fdf4ff;
+    --accent-100: #fae8ff;
+    --accent-200: #f5d0fe;
+    --accent-300: #f0abfc;
+    --accent-400: #e879f9;
+    --accent-500: #d946ef;
+    --accent-600: #c026d3;
+    --accent-700: #a21caf;
+    --accent-800: #86198f;
+    --accent-900: #701a75;
+    --accent: var(--accent-500);
+    --accent-rgb: 217, 70, 239;
+}
+
+.accent-orange {
+    --accent-50: #fff7ed;
+    --accent-100: #ffedd5;
+    --accent-200: #fed7aa;
+    --accent-300: #fdba74;
+    --accent-400: #fb923c;
+    --accent-500: #f97316;
+    --accent-600: #ea580c;
+    --accent-700: #c2410c;
+    --accent-800: #9a3412;
+    --accent-900: #7c2d12;
+    --accent: var(--accent-500);
+    --accent-rgb: 249, 115, 22;
+}
+
+.accent-green {
+  --accent-50: #f0f9eb;
+  --accent-100: #e1f3d6;
+  --accent-150: #c3e7ad;
+  --accent-200: #a5d984;
+  --accent-300: #87cc5b;
+  --accent-400: #69be32;
+  --accent-500: #4fa81a;
+  --accent-600: #3b7e14;
+  --accent-700: #27540e;
+  --accent-800: #142b07;
+  --accent-900: #0a1504;
+  --accent: var(--accent-500);
+  --accent-rgb: 79, 168, 26;
+}
+
+.accent-yellow {
+    --accent-50: #fefce8;
+    --accent-100: #fef9c3;
+    --accent-200: #fef08a;
+    --accent-300: #fde047;
+    --accent-400: #facc15;
+    --accent-500: #eab308;
+    --accent-600: #ca8a04;
+    --accent-700: #a16207;
+    --accent-800: #854d0e;
+    --accent-900: #713f12;
+    --accent: var(--accent-500);
+    --accent-rgb: 234, 179, 8;
+}
+
 /* === END DARK THEME ===*/
 
 .EmojiPickerReact {
