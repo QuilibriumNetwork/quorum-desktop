@@ -17,7 +17,7 @@ The main dependencies are:
 - `electron:build`: Builds the Electron app for production.
 - `lint`: Lints the code using ESLint.
 - `format`: Formats the code using Prettier.
-- `lingui:extract`: Extracts i1n messages.
+- `lingui:extract`: Extracts i18n messages.
 - `lingui:compile`: Compiles i18n messages.
 
 ## Instructions
@@ -74,3 +74,17 @@ The dark theme is enabled by adding the `dark` class to the `html` element. The 
 ### Font
 
 The project uses the 'Sen' font, which is a variable font.
+
+## Key Components Structure
+
+### Message Editor
+The message editor components (`Channel.tsx` and `DirectMessage.tsx`) use a clean flexbox layout with:
+- Consistent button alignment using `flex items-center gap-2`
+- Minimal padding (6px) for tight spacing
+- Buttons positioned with `flex items-center justify-center` for perfect centering
+
+### Styling Best Practices
+- Use flexbox for alignment rather than absolute positioning when possible
+- Maintain consistent spacing with Tailwind gap classes
+- Follow the existing color system with CSS variables
+- Keep button styling minimal and consistent across components
