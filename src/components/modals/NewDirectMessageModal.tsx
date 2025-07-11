@@ -18,6 +18,14 @@ const NewDirectMessageModal: React.FunctionComponent<
   NewDirectMessageModalProps
 > = (props) => {
   let [address, setAddress] = React.useState<string | undefined>(undefined);
+  const [hasBeenClosed, setHasBeenClosed] = React.useState(false);
+
+  // Reset the closed state when the modal becomes visible
+  React.useEffect(() => {
+    if (props.visible) {
+      setHasBeenClosed(false);
+    }
+  }, [props.visible]);
 
   const lookupUser = (address: string) => {
     if (address == '' || address.length != 46) {
@@ -27,10 +35,20 @@ const NewDirectMessageModal: React.FunctionComponent<
     }
   };
 
+  const handleClose = () => {
+    setHasBeenClosed(true);
+    props.onClose();
+  };
+
+  // Don't show modal if it has been manually closed
+  if (hasBeenClosed) {
+    return null;
+  }
+
   return (
     <Modal
       visible={props.visible}
-      onClose={props.onClose}
+      onClose={handleClose}
       title={t`New Direct Message`}
     >
       <div className="modal-new-direct-message">
@@ -45,7 +63,7 @@ const NewDirectMessageModal: React.FunctionComponent<
           fallback={
             <div className="modal-new-direct-message-actions">
               <Button
-                className="w-40 inline-block"
+                className="w-32 inline-block"
                 type="primary"
                 disabled={!address}
                 onClick={() => {}}

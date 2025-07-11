@@ -14,15 +14,29 @@ type ModalProps = {
 
 const Modal: React.FunctionComponent<ModalProps> = (props) => {
   const [closing, setClosing] = useState<boolean>(false);
+  const [shouldRender, setShouldRender] = useState<boolean>(props.visible);
+
   const close = () => {
     setClosing(true);
     setTimeout(() => {
-      props.onClose();
+      setShouldRender(false);
       setClosing(false);
+      props.onClose();
     }, 300);
   };
 
-  if (!props.visible) return null;
+  // Handle visibility changes
+  React.useEffect(() => {
+    if (props.visible) {
+      setShouldRender(true);
+    } else if (!closing) {
+      // If props.visible becomes false but we're not in a closing animation,
+      // immediately hide the modal
+      setShouldRender(false);
+    }
+  }, [props.visible, closing]);
+
+  if (!shouldRender) return null;
 
   return createPortal(
     <div

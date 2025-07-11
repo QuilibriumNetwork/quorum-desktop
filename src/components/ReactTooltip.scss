@@ -6,12 +6,29 @@
   color: rgb(var(--color-text-main)) !important;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11) !important;
   opacity: 1 !important;
+  
+  /* Reset text properties to ensure consistency */
+  font-weight: normal !important;
+  font-style: normal !important;
+  text-decoration: none !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  line-height: normal !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
 }
 
-/* Ensure all child elements inherit the correct text color */
+/* Ensure all child elements inherit the correct text properties */
 .quorum-react-tooltip *,
 .quorum-react-tooltip-dark * {
   color: inherit !important;
+  font-weight: inherit !important;
+  font-style: inherit !important;
+  text-decoration: inherit !important;
+  text-transform: inherit !important;
+  letter-spacing: inherit !important;
+  line-height: inherit !important;
+  font-size: inherit !important;
 }
 
 .quorum-react-tooltip-dark {
