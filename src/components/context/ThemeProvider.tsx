@@ -48,6 +48,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const saved = (localStorage.getItem('theme') as Theme) || 'system';
     setTheme(saved); // this will call applyTheme internally
 
+    // Initialize accent color
+    const savedAccent = localStorage.getItem('accent-color') || 'blue';
+    document.documentElement.classList.add(`accent-${savedAccent}`);
+
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const onSystemChange = () => {
       if (saved === 'system') applyTheme('system');

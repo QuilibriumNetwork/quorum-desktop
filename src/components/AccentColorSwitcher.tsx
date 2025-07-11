@@ -17,7 +17,6 @@ const AccentColorSwitcher: React.FC = () => {
   React.useEffect(() => {
     const currentAccent = localStorage.getItem('accent-color') || 'blue';
     setActiveAccent(currentAccent);
-    document.documentElement.classList.add(`accent-${currentAccent}`);
   }, []);
 
   const setAccent = (color: string) => {
