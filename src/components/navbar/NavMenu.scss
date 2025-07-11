@@ -28,8 +28,6 @@ header {
   user-select: none;
 }
 
-@import '../../styles/navbar_common';
-
 .nav-menu-logo {
   width: 74px;
   max-width: 74px;
@@ -37,11 +35,20 @@ header {
   padding-left: 8px;
 
   .space-icon {
+    width: 48px;
     margin-left: 4px;
-    border-radius: 0px;
+    height: 48px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-position: center;
     background-size: contain;
     background-color: #373036ff;
+    background-repeat: no-repeat;
+    margin-top: 7px;
+    display: inline-block;
+    transition: all 100ms linear;
     border: 2px none #f3dfc1ff;
+    cursor: pointer;
   }
 }
 
