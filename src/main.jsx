@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PasskeysProvider } from '@quilibrium/quilibrium-js-sdk-channels';
 import { QuorumApiClientProvider } from './components/context/QuorumApiContext.tsx';
 import { MessageDBProvider } from './components/context/MessageDB.tsx';
-import './index.css';
+import './index.scss';
 import App from './App.tsx';
 import { WebSocketProvider } from './components/context/WebsocketProvider.tsx';
 import { ThemeProvider } from './components/context/ThemeProvider.tsx';
