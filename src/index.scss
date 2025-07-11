@@ -1,9 +1,10 @@
 /* === IMPORTS === */
 @use './styles/_colors.scss';
+@use './styles/_base.scss';
+@use './styles/_components.scss';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import './styles/_base.css';
-@import './styles/_components.css';
+
