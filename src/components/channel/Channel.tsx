@@ -380,7 +380,7 @@ const Channel: React.FC<ChannelProps> = ({
         <div {...getRootProps()} className="message-editor-container">
           <div
             className={
-              'message-editor w-full flex items-center gap-2 relative ' +
+              'message-editor w-full flex items-center gap-2 ' +
               (inReplyTo ? 'message-editor-reply' : '')
             }
           >
@@ -513,34 +513,6 @@ const Channel: React.FC<ChannelProps> = ({
                 }
               }}
             ></div>
-            {showStickers && (
-              <>
-                <div
-                  className="invisible-dismissal invisible-dismissal-no-blur"
-                  onClick={() => setShowStickers(false)}
-                />
-                <div className="absolute right-400 bottom-full mb-2 z-[1002]">
-                  <div className="flex flex-col border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4">
-                    <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">
-                      Stickers
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 h-[359px] w-[300px] p-4 overflow-scroll">
-                      {space?.stickers.map((s) => {
-                        return (
-                          <div
-                            key={'sticker-' + s.id}
-                            className="flex flex-col justify-around h-[126px] w-[126px]"
-                            onClick={() => sendSticker(s.id)}
-                          >
-                            <img src={s.imgUrl} />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
           </div>
         </div>
       </div>
