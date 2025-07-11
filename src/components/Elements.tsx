@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ThemeRadioGroup from './ThemeRadioGroup';
+import AccentColorSwitcher from './AccentColorSwitcher';
 import Button from './Button';
 import ToggleSwitch from './ToggleSwitch';
 import Tooltip from './Tooltip';
@@ -14,8 +15,9 @@ const Elements = () => {
     <div className="p-12 space-y-12 text-main bg-app min-h-screen">
       <h1 className="text-4xl font-bold">Style Guide</h1>
 
-      <div className="flex flex-row items-center gap-6">
+      <div className="flex flex-wrap items-center gap-12">
         <ThemeRadioGroup horizontal />
+        <AccentColorSwitcher />
       </div>
 
       <section className="card mb-4">
