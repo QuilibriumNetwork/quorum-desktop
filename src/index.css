@@ -22,7 +22,8 @@
   --accent-800: #0a0733;
   --accent-900: #060421;
 
-  --accent: var(--accent-500);
+  --accent: var(--accent-500); /* for solid use (hex) */
+  --accent-rgb: 2, 135, 242; /* for rgba(var(--accent-rgb), <opacity>) */
 
   /* surface */
   --surface-00: #ffffff;
