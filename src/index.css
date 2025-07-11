@@ -150,6 +150,23 @@ html.dark {
 }
 
 /* === ACCENT THEMES === */
+.accent-blue {
+  --accent-50: #eef7ff;
+  --accent-100: #daeeff;
+  --accent-150: #a6d9ff;
+  --accent-200: #6fc3ff;
+  --accent-300: #48adf5;
+  --accent-400: #3aa9f8;
+  --accent-500: #0287f2;
+  --accent-600: #025ead;
+  --accent-700: #034081;
+  --accent-800: #0a0733;
+  --accent-900: #060421;
+  --accent: var(--accent-500);
+  --accent-rgb: 2, 135, 242;
+  background-color: var(--accent-500);
+}
+
 .accent-purple {
   --accent-50: #f5f2ff;
   --accent-100: #e9e3ff;
@@ -164,6 +181,7 @@ html.dark {
   --accent-900: #140b33;
   --accent: var(--accent-500);
   --accent-rgb: 124, 82, 255;
+  background-color: var(--accent-500);
 }
 
 .accent-fuchsia {
@@ -179,6 +197,7 @@ html.dark {
     --accent-900: #701a75;
     --accent: var(--accent-500);
     --accent-rgb: 217, 70, 239;
+    background-color: var(--accent-500);
 }
 
 .accent-orange {
@@ -194,6 +213,7 @@ html.dark {
     --accent-900: #7c2d12;
     --accent: var(--accent-500);
     --accent-rgb: 249, 115, 22;
+    background-color: var(--accent-500);
 }
 
 .accent-green {
@@ -210,6 +230,7 @@ html.dark {
   --accent-900: #0a1504;
   --accent: var(--accent-500);
   --accent-rgb: 79, 168, 26;
+  background-color: var(--accent-500);
 }
 
 .accent-yellow {
@@ -225,6 +246,7 @@ html.dark {
     --accent-900: #713f12;
     --accent: var(--accent-500);
     --accent-rgb: 234, 179, 8;
+    background-color: var(--accent-500);
 }
 
 /* === END DARK THEME ===*/
