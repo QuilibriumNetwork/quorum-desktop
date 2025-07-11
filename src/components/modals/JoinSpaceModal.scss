@@ -1,19 +1,17 @@
+@import '../../styles/modal_common';
+
 .modal-join-space {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  text-align: center;
+  @extend .modal-body;
 }
 
 .modal-join-space-icon {
-  padding: 20px;
+  @extend .modal-icon-section;
 }
 
 .modal-join-space-actions {
-  padding-top: 20px;
-  text-align: right;
+  @extend .modal-actions;
 }
 
 .modal-join-space-info {
-  font-size: 12px;
+  @extend .modal-info;
 }

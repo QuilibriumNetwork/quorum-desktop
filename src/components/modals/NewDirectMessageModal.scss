@@ -1,19 +1,17 @@
+@import '../../styles/modal_common';
+
 .modal-new-direct-message {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
-  text-align: center;
+  @extend .modal-body;
 }
 
 .modal-new-direct-message-icon {
-  padding: 20px;
+  @extend .modal-icon-section;
 }
 
 .modal-new-direct-message-actions {
-  padding-top: 20px;
-  text-align: right;
+  @extend .modal-actions;
 }
 
 .modal-new-direct-message-info {
-  font-size: 12px;
+  @extend .modal-info;
 }
