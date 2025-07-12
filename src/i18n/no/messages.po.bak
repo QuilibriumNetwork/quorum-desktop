@@ -66,10 +66,14 @@ msgid "No Role - {count}"
 msgstr "Ingen rolle - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#. placeholder {1}: results.length === 1 ? t`result` : t`results`
 #: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for \"{query}"
+msgid "{0} {1} for {query}"
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+#~ msgid "{0} {1} for {query}"
+#~ msgstr "{0} {1} for {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -89,7 +93,7 @@ msgstr "Legg til rom"
 
 #: src/components/channel/Channel.tsx:596
 msgid "add sticker"
-msgstr ""
+msgstr "legg til klistremerke"
 
 #: src/components/channel/SpaceEditor.tsx:657
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
@@ -120,7 +124,7 @@ msgstr "Er du sikker på at du vil forlate {0}? Du vil ikke kunne bli med igjen 
 #: src/components/direct/DirectMessage.tsx:499
 #: src/components/channel/Channel.tsx:591
 msgid "attach image"
-msgstr ""
+msgstr "vedlegg bilde"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:14
 msgid "Away"
@@ -140,7 +144,7 @@ msgstr "Avbryt"
 
 #: src/components/modals/UserSettingsModal.tsx:456
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
-msgstr ""
+msgstr "Endringer gjøres automatisk, men den aktive siden kan hende ikke er oppdatert. Oppdater siden for å bruke det nye språket."
 
 #: src/components/channel/ChannelEditor.tsx:116
 msgid "Channel Name"
@@ -156,7 +160,7 @@ msgstr "Velg ditt foretrukne tema for Quorum."
 
 #: src/components/search/SearchBar.tsx:160
 msgid "Clear search"
-msgstr ""
+msgstr "Fjern søk"
 
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
@@ -239,7 +243,7 @@ msgstr "Nåværende invitasjonslenke"
 
 #: src/components/ThemeRadioGroup.tsx:16
 msgid "dark"
-msgstr ""
+msgstr "mørk"
 
 #: src/components/context/MessageDB.tsx:4976
 msgid "decrypted space with no known config key"
@@ -271,7 +275,7 @@ msgstr "Slett melding"
 
 #: src/components/search/SearchResultItem.tsx:41
 msgid "Direct Message"
-msgstr ""
+msgstr "Direkte melding"
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
@@ -480,7 +484,7 @@ msgstr "La oss gååååå"
 
 #: src/components/ThemeRadioGroup.tsx:15
 msgid "light"
-msgstr ""
+msgstr "lys"
 
 #: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
@@ -512,8 +516,12 @@ msgid "New Direct Message"
 msgstr "Ny Direkte Meldinger"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for \"{query}"
+msgid "No messages found for {query}"
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:132
+#~ msgid "No messages found for {query}"
+#~ msgstr "Ingen meldinger funnet for {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -600,6 +608,14 @@ msgstr "Repudiabilitet er en innstilling som gjør samtaler i dette Rommet uveri
 msgid "Requirements:"
 msgstr "Krav:"
 
+#: src/components/search/SearchResults.tsx:164
+msgid "result"
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+msgid "results"
+msgstr ""
+
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
 msgid "Roles"
@@ -632,27 +648,27 @@ msgstr "lagret konfigurasjon er utdatert"
 #. placeholder {0}: error?.message || 'Unknown error'
 #: src/components/search/SearchResults.tsx:122
 msgid "Search failed: {0}"
-msgstr ""
+msgstr "Søket mislyktes: {0}"
 
 #: src/hooks/useSearchContext.ts:92
 msgid "Search in direct messages"
-msgstr ""
+msgstr "Søk i direkte meldinger"
 
 #: src/hooks/useSearchContext.ts:90
 msgid "Search in this Space"
-msgstr ""
+msgstr "Søk i denne Space"
 
 #: src/hooks/useSearchContext.ts:94
 msgid "Search messages"
-msgstr ""
+msgstr "Søk meldinger"
 
 #: src/components/search/SearchBar.tsx:22
 msgid "Search messages..."
-msgstr ""
+msgstr "Søk meldinger..."
 
 #: src/components/search/SearchResults.tsx:112
 msgid "Searching..."
-msgstr ""
+msgstr "Søker..."
 
 #: src/components/modals/UserSettingsModal.tsx:344
 msgid "Security"
@@ -706,7 +722,7 @@ msgstr "Romnavn"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "Start typing to search messages..."
-msgstr ""
+msgstr "Begynn å skrive for å søke meldinger..."
 
 #: src/components/direct/EmptyDirectMessage.tsx:23
 msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
@@ -733,7 +749,7 @@ msgstr "Støttede typer: PNG, JPG, GIF"
 
 #: src/components/ThemeRadioGroup.tsx:17
 msgid "system"
-msgstr ""
+msgstr "system"
 
 #: src/components/message/InviteLink.tsx:53
 msgid "The invite link has expired or is invalid."
@@ -753,7 +769,7 @@ msgstr "I dag kl {timeFormatted}"
 
 #: src/components/search/SearchResults.tsx:135
 msgid "Try different keywords or check your spelling"
-msgstr ""
+msgstr "Prøv forskjellige søkeord eller sjekk stavemåten din"
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
@@ -761,7 +777,7 @@ msgstr "Ukjent"
 
 #: src/components/search/SearchResultItem.tsx:73
 msgid "Unknown Space"
-msgstr ""
+msgstr "Ukjent Space"
 
 #: src/components/search/SearchResultItem.tsx:33
 #: src/components/search/SearchResultItem.tsx:72
@@ -808,13 +824,12 @@ msgstr "Velkommen til Quorum!"
 msgid "What's on your mind today?"
 msgstr "Hva tenker du på i dag?"
 
-#: src/components/modals/UserSettingsModal.tsx:404
 #~ msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
 #~ msgstr "Når aktivert, blir direkte meldinger ikke signert med din bruker nøkkel. Dette forbedrer ytelsen, men kan tillate brukeren du kommuniserer med å forfalske meldinger til deg som om de kom fra deg. De kan ikke forfalske meldinger til andre som om de kom fra deg. Dette påvirker ikke tilbakekallbarheten av Spaces, da dette er et konfigurasjonsalternativ av Space-eieren."
 
 #: src/components/modals/UserSettingsModal.tsx:392
 msgid "When enabled, direct messages are not signed by your user key..."
-msgstr ""
+msgstr "Når aktivert, er direkte meldinger ikke signert med din brukernøkkel..."
 
 #: src/components/modals/UserSettingsModal.tsx:365
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
@@ -830,7 +845,7 @@ msgstr "Når du bruker Quorum i en nettleser, lagres meldingene dine lokalt i ne
 
 #: src/components/search/SearchResultItem.tsx:136
 msgid "Yesterday"
-msgstr ""
+msgstr "I går"
 
 #: src/components/message/Message.tsx:132
 msgid "Yesterday at {timeFormatted}"

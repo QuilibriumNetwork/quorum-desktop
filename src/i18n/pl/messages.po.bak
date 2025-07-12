@@ -66,10 +66,14 @@ msgid "No Role - {count}"
 msgstr "Brak roli - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#. placeholder {1}: results.length === 1 ? t`result` : t`results`
 #: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for \"{query}"
+msgid "{0} {1} for {query}"
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+#~ msgid "{0} {1} for {query}"
+#~ msgstr "{0} {1} dla {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -89,7 +93,7 @@ msgstr "Dodaj przestrzeń"
 
 #: src/components/channel/Channel.tsx:596
 msgid "add sticker"
-msgstr ""
+msgstr "dodaj naklejkę"
 
 #: src/components/channel/SpaceEditor.tsx:657
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
@@ -120,7 +124,7 @@ msgstr "Czy na pewno chcesz opuścić {0}? Nie będziesz mógł dołączyć pono
 #: src/components/direct/DirectMessage.tsx:499
 #: src/components/channel/Channel.tsx:591
 msgid "attach image"
-msgstr ""
+msgstr "dołącz obraz"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:14
 msgid "Away"
@@ -140,7 +144,7 @@ msgstr "Anuluj"
 
 #: src/components/modals/UserSettingsModal.tsx:456
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
-msgstr ""
+msgstr "Zmiany są wprowadzane automatycznie, ale aktywna strona może nie być zaktualizowana. Odśwież stronę, aby zastosować nowy język."
 
 #: src/components/channel/ChannelEditor.tsx:116
 msgid "Channel Name"
@@ -156,7 +160,7 @@ msgstr "Wybierz preferowany motyw dla Quorum."
 
 #: src/components/search/SearchBar.tsx:160
 msgid "Clear search"
-msgstr ""
+msgstr "Wyczyść wyszukiwanie"
 
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
@@ -239,7 +243,7 @@ msgstr "Bieżący link zaproszenia"
 
 #: src/components/ThemeRadioGroup.tsx:16
 msgid "dark"
-msgstr ""
+msgstr "ciemny"
 
 #: src/components/context/MessageDB.tsx:4976
 msgid "decrypted space with no known config key"
@@ -271,7 +275,7 @@ msgstr "Usuń wiadomość"
 
 #: src/components/search/SearchResultItem.tsx:41
 msgid "Direct Message"
-msgstr ""
+msgstr "Wiadomość bezpośrednia"
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
@@ -480,7 +484,7 @@ msgstr "Idziemy!"
 
 #: src/components/ThemeRadioGroup.tsx:15
 msgid "light"
-msgstr ""
+msgstr "jasny"
 
 #: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
@@ -512,8 +516,12 @@ msgid "New Direct Message"
 msgstr "Nowa wiadomość bezpośrednia"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for \"{query}"
+msgid "No messages found for {query}"
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:132
+#~ msgid "No messages found for {query}"
+#~ msgstr "Nie znaleziono wiadomości dla {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -600,6 +608,14 @@ msgstr "Repudiowalność to ustawienie, które sprawia, że rozmowy w tej Przest
 msgid "Requirements:"
 msgstr "Wymagania:"
 
+#: src/components/search/SearchResults.tsx:164
+msgid "result"
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+msgid "results"
+msgstr ""
+
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
 msgid "Roles"
@@ -632,27 +648,27 @@ msgstr "zapisana konfiguracja jest nieaktualna"
 #. placeholder {0}: error?.message || 'Unknown error'
 #: src/components/search/SearchResults.tsx:122
 msgid "Search failed: {0}"
-msgstr ""
+msgstr "Nieudane wyszukiwanie: {0}"
 
 #: src/hooks/useSearchContext.ts:92
 msgid "Search in direct messages"
-msgstr ""
+msgstr "Wyszukaj w wiadomościach bezpośrednich"
 
 #: src/hooks/useSearchContext.ts:90
 msgid "Search in this Space"
-msgstr ""
+msgstr "Wyszukaj w tej Przestrzeni"
 
 #: src/hooks/useSearchContext.ts:94
 msgid "Search messages"
-msgstr ""
+msgstr "Wyszukaj wiadomości"
 
 #: src/components/search/SearchBar.tsx:22
 msgid "Search messages..."
-msgstr ""
+msgstr "Wyszukaj wiadomości..."
 
 #: src/components/search/SearchResults.tsx:112
 msgid "Searching..."
-msgstr ""
+msgstr "Wyszukiwanie..."
 
 #: src/components/modals/UserSettingsModal.tsx:344
 msgid "Security"
@@ -706,7 +722,7 @@ msgstr "Nazwa Przestrzeni"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "Start typing to search messages..."
-msgstr ""
+msgstr "Zacznij pisać, aby wyszukać wiadomości..."
 
 #: src/components/direct/EmptyDirectMessage.tsx:23
 msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
@@ -733,7 +749,7 @@ msgstr "Obsługiwane typy: PNG, JPG, GIF"
 
 #: src/components/ThemeRadioGroup.tsx:17
 msgid "system"
-msgstr ""
+msgstr "system"
 
 #: src/components/message/InviteLink.tsx:53
 msgid "The invite link has expired or is invalid."
@@ -753,7 +769,7 @@ msgstr "Dziś o {timeFormatted}"
 
 #: src/components/search/SearchResults.tsx:135
 msgid "Try different keywords or check your spelling"
-msgstr ""
+msgstr "Spróbuj innych słów kluczowych lub sprawdź pisownię"
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
@@ -761,7 +777,7 @@ msgstr "Nieznany"
 
 #: src/components/search/SearchResultItem.tsx:73
 msgid "Unknown Space"
-msgstr ""
+msgstr "Nieznana Przestrzeń"
 
 #: src/components/search/SearchResultItem.tsx:33
 #: src/components/search/SearchResultItem.tsx:72
@@ -808,13 +824,12 @@ msgstr "Witaj w Quorum!"
 msgid "What's on your mind today?"
 msgstr "Co dzisiaj masz na myśli?"
 
-#: src/components/modals/UserSettingsModal.tsx:404
 #~ msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
 #~ msgstr "Gdy jest włączone, wiadomości bezpośrednie nie są podpisywane przez twój klucz użytkownika. To poprawia wydajność, ale może pozwolić użytkownikowi, z którym się komunikujesz, na fałszowanie wiadomości do ciebie, jakby pochodziły od ciebie. Nie mogą fałszować wiadomości do innych osób, jakby pochodziły od ciebie. To nie wpływa na możliwość odrzucenia Przestrzeni, ponieważ jest to opcja konfiguracyjna właściciela Przestrzeni."
 
 #: src/components/modals/UserSettingsModal.tsx:392
 msgid "When enabled, direct messages are not signed by your user key..."
-msgstr ""
+msgstr "Gdy jest włączone, wiadomości bezpośrednie nie są podpisywane przez twój klucz użytkownika..."
 
 #: src/components/modals/UserSettingsModal.tsx:365
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
@@ -830,7 +845,7 @@ msgstr "Gdy używasz Quorum w przeglądarce, twoje wiadomości są zapisywane lo
 
 #: src/components/search/SearchResultItem.tsx:136
 msgid "Yesterday"
-msgstr ""
+msgstr "Wczoraj"
 
 #: src/components/message/Message.tsx:132
 msgid "Yesterday at {timeFormatted}"

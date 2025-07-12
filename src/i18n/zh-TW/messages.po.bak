@@ -66,10 +66,14 @@ msgid "No Role - {count}"
 msgstr "無角色 - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#. placeholder {1}: results.length === 1 ? t`result` : t`results`
 #: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for \"{query}"
+msgid "{0} {1} for {query}"
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+#~ msgid "{0} {1} for {query}"
+#~ msgstr "{0} {1} 為 {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -89,7 +93,7 @@ msgstr "新增空間"
 
 #: src/components/channel/Channel.tsx:596
 msgid "add sticker"
-msgstr ""
+msgstr "新增貼圖"
 
 #: src/components/channel/SpaceEditor.tsx:657
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
@@ -120,7 +124,7 @@ msgstr "確定要離開 {0} 嗎？除非重新收到邀請，否則將無法重�
 #: src/components/direct/DirectMessage.tsx:499
 #: src/components/channel/Channel.tsx:591
 msgid "attach image"
-msgstr ""
+msgstr "附加圖片"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:14
 msgid "Away"
@@ -140,7 +144,7 @@ msgstr "取消"
 
 #: src/components/modals/UserSettingsModal.tsx:456
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
-msgstr ""
+msgstr "變更會自動進行，但當前頁面可能未更新。請刷新頁面以應用新語言。"
 
 #: src/components/channel/ChannelEditor.tsx:116
 msgid "Channel Name"
@@ -156,7 +160,7 @@ msgstr "選擇您對 Quorum 的首選主題。"
 
 #: src/components/search/SearchBar.tsx:160
 msgid "Clear search"
-msgstr ""
+msgstr "清除搜尋"
 
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
@@ -239,7 +243,7 @@ msgstr "當前邀請連結"
 
 #: src/components/ThemeRadioGroup.tsx:16
 msgid "dark"
-msgstr ""
+msgstr "黑暗"
 
 #: src/components/context/MessageDB.tsx:4976
 msgid "decrypted space with no known config key"
@@ -271,7 +275,7 @@ msgstr "刪除訊息"
 
 #: src/components/search/SearchResultItem.tsx:41
 msgid "Direct Message"
-msgstr ""
+msgstr "私訊"
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
@@ -480,7 +484,7 @@ msgstr "開始使用！"
 
 #: src/components/ThemeRadioGroup.tsx:15
 msgid "light"
-msgstr ""
+msgstr "明亮"
 
 #: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
@@ -512,8 +516,12 @@ msgid "New Direct Message"
 msgstr "新私訊"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for \"{query}"
+msgid "No messages found for {query}"
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:132
+#~ msgid "No messages found for {query}"
+#~ msgstr "找不到 {query}\" 的訊息"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -600,6 +608,14 @@ msgstr "可否認性是一個設置，使這個空間中的對話無法驗證為
 msgid "Requirements:"
 msgstr "要求："
 
+#: src/components/search/SearchResults.tsx:164
+msgid "result"
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+msgid "results"
+msgstr ""
+
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
 msgid "Roles"
@@ -632,27 +648,27 @@ msgstr "保存的配置已過期"
 #. placeholder {0}: error?.message || 'Unknown error'
 #: src/components/search/SearchResults.tsx:122
 msgid "Search failed: {0}"
-msgstr ""
+msgstr "搜尋失敗：{0}"
 
 #: src/hooks/useSearchContext.ts:92
 msgid "Search in direct messages"
-msgstr ""
+msgstr "在私訊中搜尋"
 
 #: src/hooks/useSearchContext.ts:90
 msgid "Search in this Space"
-msgstr ""
+msgstr "在此 Space 中搜尋"
 
 #: src/hooks/useSearchContext.ts:94
 msgid "Search messages"
-msgstr ""
+msgstr "搜尋訊息"
 
 #: src/components/search/SearchBar.tsx:22
 msgid "Search messages..."
-msgstr ""
+msgstr "搜尋訊息..."
 
 #: src/components/search/SearchResults.tsx:112
 msgid "Searching..."
-msgstr ""
+msgstr "搜尋中..."
 
 #: src/components/modals/UserSettingsModal.tsx:344
 msgid "Security"
@@ -706,7 +722,7 @@ msgstr "空間名稱"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "Start typing to search messages..."
-msgstr ""
+msgstr "開始輸入以搜尋訊息..."
 
 #: src/components/direct/EmptyDirectMessage.tsx:23
 msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
@@ -733,7 +749,7 @@ msgstr "支援格式：PNG、JPG、GIF"
 
 #: src/components/ThemeRadioGroup.tsx:17
 msgid "system"
-msgstr ""
+msgstr "系統"
 
 #: src/components/message/InviteLink.tsx:53
 msgid "The invite link has expired or is invalid."
@@ -753,7 +769,7 @@ msgstr "今天 {timeFormatted}"
 
 #: src/components/search/SearchResults.tsx:135
 msgid "Try different keywords or check your spelling"
-msgstr ""
+msgstr "嘗試不同的關鍵字或檢查拼寫"
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
@@ -761,7 +777,7 @@ msgstr "未知"
 
 #: src/components/search/SearchResultItem.tsx:73
 msgid "Unknown Space"
-msgstr ""
+msgstr "未知的 Space"
 
 #: src/components/search/SearchResultItem.tsx:33
 #: src/components/search/SearchResultItem.tsx:72
@@ -808,13 +824,12 @@ msgstr "歡迎使用 Quorum！"
 msgid "What's on your mind today?"
 msgstr "今天你在想什麼？"
 
-#: src/components/modals/UserSettingsModal.tsx:404
 #~ msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
 #~ msgstr "當啟用時，直接消息不會由您的用戶密鑰簽名。這提高了性能，但可能允許您正在與之通信的用戶偽造發送給您的消息，就好像它們來自您一樣。他們無法偽造發送給其他人的消息，就好像它們來自您一樣。這不會影響空間的可否認性，因為這是空間擁有者的配置選項。"
 
 #: src/components/modals/UserSettingsModal.tsx:392
 msgid "When enabled, direct messages are not signed by your user key..."
-msgstr ""
+msgstr "當啟用時，私訊不會由您的用戶金鑰簽名..."
 
 #: src/components/modals/UserSettingsModal.tsx:365
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
@@ -830,7 +845,7 @@ msgstr "在瀏覽器上使用 Quorum 時，您的消息會保存在本地瀏覽�
 
 #: src/components/search/SearchResultItem.tsx:136
 msgid "Yesterday"
-msgstr ""
+msgstr "昨天"
 
 #: src/components/message/Message.tsx:132
 msgid "Yesterday at {timeFormatted}"

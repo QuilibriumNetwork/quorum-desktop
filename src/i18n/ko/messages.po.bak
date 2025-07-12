@@ -66,10 +66,14 @@ msgid "No Role - {count}"
 msgstr "역할 없음 - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#. placeholder {1}: results.length === 1 ? t`result` : t`results`
 #: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for \"{query}"
+msgid "{0} {1} for {query}"
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+#~ msgid "{0} {1} for {query}"
+#~ msgstr "{0} {1}에 대해 {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -89,7 +93,7 @@ msgstr "공간 추가"
 
 #: src/components/channel/Channel.tsx:596
 msgid "add sticker"
-msgstr ""
+msgstr "스티커 추가"
 
 #: src/components/channel/SpaceEditor.tsx:657
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
@@ -120,7 +124,7 @@ msgstr "{0}를 나가시겠습니까? 다시 초대받지 않는 한 재참여�
 #: src/components/direct/DirectMessage.tsx:499
 #: src/components/channel/Channel.tsx:591
 msgid "attach image"
-msgstr ""
+msgstr "이미지 첨부"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:14
 msgid "Away"
@@ -140,7 +144,7 @@ msgstr "취소"
 
 #: src/components/modals/UserSettingsModal.tsx:456
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
-msgstr ""
+msgstr "변경 사항은 자동으로 적용되지만, 활성 페이지가 업데이트되지 않을 수 있습니다. 새 언어를 적용하려면 페이지를 새로 고치세요."
 
 #: src/components/channel/ChannelEditor.tsx:116
 msgid "Channel Name"
@@ -156,7 +160,7 @@ msgstr "Quorum에 대한 선호하는 테마를 선택하세요."
 
 #: src/components/search/SearchBar.tsx:160
 msgid "Clear search"
-msgstr ""
+msgstr "검색 지우기"
 
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
@@ -239,7 +243,7 @@ msgstr "현재 초대 링크"
 
 #: src/components/ThemeRadioGroup.tsx:16
 msgid "dark"
-msgstr ""
+msgstr "어두운"
 
 #: src/components/context/MessageDB.tsx:4976
 msgid "decrypted space with no known config key"
@@ -271,7 +275,7 @@ msgstr "메시지 삭제"
 
 #: src/components/search/SearchResultItem.tsx:41
 msgid "Direct Message"
-msgstr ""
+msgstr "다이렉트 메시지"
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
@@ -480,7 +484,7 @@ msgstr "가자아아아아"
 
 #: src/components/ThemeRadioGroup.tsx:15
 msgid "light"
-msgstr ""
+msgstr "밝은"
 
 #: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
@@ -512,8 +516,12 @@ msgid "New Direct Message"
 msgstr "새로운 다이렉트 메시지"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for \"{query}"
+msgid "No messages found for {query}"
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:132
+#~ msgid "No messages found for {query}"
+#~ msgstr "{query}\"에 대한 메시지를 찾을 수 없습니다."
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -600,6 +608,14 @@ msgstr "부인 가능성은 이 공간에서 대화가 명시된 발신자로부
 msgid "Requirements:"
 msgstr "요구 사항:"
 
+#: src/components/search/SearchResults.tsx:164
+msgid "result"
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+msgid "results"
+msgstr ""
+
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
 msgid "Roles"
@@ -632,27 +648,27 @@ msgstr "저장된 구성은 오래되었습니다"
 #. placeholder {0}: error?.message || 'Unknown error'
 #: src/components/search/SearchResults.tsx:122
 msgid "Search failed: {0}"
-msgstr ""
+msgstr "검색 실패: {0}"
 
 #: src/hooks/useSearchContext.ts:92
 msgid "Search in direct messages"
-msgstr ""
+msgstr "다이렉트 메시지에서 검색"
 
 #: src/hooks/useSearchContext.ts:90
 msgid "Search in this Space"
-msgstr ""
+msgstr "이 Space에서 검색"
 
 #: src/hooks/useSearchContext.ts:94
 msgid "Search messages"
-msgstr ""
+msgstr "메시지 검색"
 
 #: src/components/search/SearchBar.tsx:22
 msgid "Search messages..."
-msgstr ""
+msgstr "메시지 검색 중..."
 
 #: src/components/search/SearchResults.tsx:112
 msgid "Searching..."
-msgstr ""
+msgstr "검색 중..."
 
 #: src/components/modals/UserSettingsModal.tsx:344
 msgid "Security"
@@ -706,7 +722,7 @@ msgstr "공간 이름"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "Start typing to search messages..."
-msgstr ""
+msgstr "메시지를 검색하려면 입력을 시작하세요..."
 
 #: src/components/direct/EmptyDirectMessage.tsx:23
 msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
@@ -733,7 +749,7 @@ msgstr "지원되는 형식: PNG, JPG, GIF"
 
 #: src/components/ThemeRadioGroup.tsx:17
 msgid "system"
-msgstr ""
+msgstr "시스템"
 
 #: src/components/message/InviteLink.tsx:53
 msgid "The invite link has expired or is invalid."
@@ -753,7 +769,7 @@ msgstr "오늘 {timeFormatted}에"
 
 #: src/components/search/SearchResults.tsx:135
 msgid "Try different keywords or check your spelling"
-msgstr ""
+msgstr "다른 키워드를 시도하거나 철자를 확인하세요."
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
@@ -761,7 +777,7 @@ msgstr "알 수 없음"
 
 #: src/components/search/SearchResultItem.tsx:73
 msgid "Unknown Space"
-msgstr ""
+msgstr "알 수 없는 Space"
 
 #: src/components/search/SearchResultItem.tsx:33
 #: src/components/search/SearchResultItem.tsx:72
@@ -808,13 +824,12 @@ msgstr "Quorum에 오신 것을 환영합니다!"
 msgid "What's on your mind today?"
 msgstr "오늘 당신의 마음속에 무엇이 있나요?"
 
-#: src/components/modals/UserSettingsModal.tsx:404
 #~ msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
 #~ msgstr "이 기능이 활성화되면, 직접 메시지는 사용자 키로 서명되지 않습니다. 이는 성능을 향상시키지만, 당신과 소통하는 사용자가 당신으로부터 온 것처럼 메시지를 위조할 수 있게 할 수 있습니다. 그들은 당신으로부터 온 것처럼 다른 사람에게 메시지를 위조할 수 없습니다. 이는 공간 소유자의 구성 옵션이므로 공간의 신뢰성에는 영향을 미치지 않습니다."
 
 #: src/components/modals/UserSettingsModal.tsx:392
 msgid "When enabled, direct messages are not signed by your user key..."
-msgstr ""
+msgstr "활성화되면, 다이렉트 메시지는 사용자 키로 서명되지 않습니다..."
 
 #: src/components/modals/UserSettingsModal.tsx:365
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
@@ -830,7 +845,7 @@ msgstr "브라우저에서 Quorum을 사용할 때, 당신의 메시지는 브�
 
 #: src/components/search/SearchResultItem.tsx:136
 msgid "Yesterday"
-msgstr ""
+msgstr "어제"
 
 #: src/components/message/Message.tsx:132
 msgid "Yesterday at {timeFormatted}"
