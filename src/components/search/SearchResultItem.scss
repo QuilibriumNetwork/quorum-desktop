@@ -6,12 +6,12 @@
   background: transparent;
 
   &:hover {
-    background: var(--surface-1);
+    background: var(--surface-2);
   }
 
   &:focus {
     outline: none;
-    background: var(--surface-1);
+    background: var(--surface-2);
     box-shadow: inset 2px 0 0 var(--accent-500);
   }
 
@@ -25,6 +25,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
+   background: var(--surface-0);
 }
 
 .result-meta {

@@ -30,7 +30,7 @@
 .search-results-list {
   overflow-y: auto;
   max-height: 340px;
-  background: var(--surface-00);
+  background: var(--surface-0);
 }
 
 // Empty states
@@ -97,11 +97,11 @@
     width: auto;
     min-width: auto;
     max-width: none;
-    max-height: calc(100vh - 80px);
+    max-height: calc(100vh - 100px);
   }
   
   .search-results-list {
-    max-height: calc(100vh - 140px);
+    max-height: calc(100vh - 200px);
   }
   
   .search-empty-state,

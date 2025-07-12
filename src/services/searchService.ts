@@ -86,9 +86,7 @@ export class SearchService {
 
     try {
       // Perform search
-      console.log('SearchService: Searching for:', query, 'in context:', context);
       const results = await this.messageDB.searchMessages(query, context, limit);
-      console.log('SearchService: Found', results.length, 'results');
       
       // Cache results
       this.searchCache.set(cacheKey, {

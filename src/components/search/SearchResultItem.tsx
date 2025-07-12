@@ -3,6 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag, faUser, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { SearchResult } from '../../db/messages';
 import { Message } from '../../api/quorumApi';
+import { useUserInfo } from '../../hooks/queries/userInfo/useUserInfo';
+import { useSpace } from '../../hooks/queries/space/useSpace';
 import './SearchResultItem.scss';
 
 interface SearchResultItemProps {
@@ -19,6 +21,28 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
   className,
 }) => {
   const { message, score, highlights } = result;
+
+  // Fetch user info for the sender
+  const { data: userInfo } = useUserInfo({ 
+    address: message.content.senderId,
+    enabled: !!message.content.senderId 
+  });
+
+  // Fetch space info for the space name
+  const { data: spaceInfo } = useSpace({ 
+    spaceId: message.spaceId,
+    enabled: !!message.spaceId 
+  });
+
+  // Get channel name from space data
+  const channel = spaceInfo?.groups
+    .find((g) => g.channels.find((c) => c.channelId === message.channelId))
+    ?.channels.find((c) => c.channelId === message.channelId);
+
+  // Get display names with fallbacks
+  const displayName = userInfo?.userProfile?.displayName || userInfo?.userProfile?.display_name || 'Unknown User';
+  const spaceName = spaceInfo?.spaceName || 'Unknown Space';
+  const channelName = channel?.channelName || message.channelId;
 
   const formatDate = (timestamp: number): string => {
     const date = new Date(timestamp);
@@ -88,7 +112,11 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
             className="result-type-icon"
           />
           <span className="result-channel">
-            #{message.channelId}
+            #{channelName}
+          </span>
+          <span className="result-separator">•</span>
+          <span className="result-space">
+            {spaceName}
           </span>
           <span className="result-separator">•</span>
           <FontAwesomeIcon 
@@ -96,7 +124,7 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
             className="result-user-icon"
           />
           <span className="result-sender">
-            {message.content.senderId}
+            {displayName}
           </span>
           <span className="result-separator">•</span>
           <span className="result-date">
