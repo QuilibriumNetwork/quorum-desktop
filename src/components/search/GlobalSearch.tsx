@@ -23,7 +23,10 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
   // Create search service instance (in a real app, this should be a singleton)
   const searchService = useMemo(() => {
     if (!messageDB) return null;
-    return new SearchService(messageDB);
+    const service = new SearchService(messageDB);
+    // Initialize search indices
+    service.initialize().catch(console.error);
+    return service;
   }, [messageDB]);
 
   // Search hook

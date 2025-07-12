@@ -15,41 +15,60 @@ export const useSearchContext = (): SearchContext => {
   return useMemo((): SearchContext => {
     const pathname = location.pathname;
     
+    console.log('useSearchContext: pathname:', pathname, 'params:', params);
+    
     // Direct message routes
-    if (pathname.includes('/dm/') || pathname.includes('/direct/')) {
+    if (pathname.includes('/dm/') || pathname.includes('/direct/') || pathname.includes('/messages/')) {
       // Try to get from params first
       if (params.conversationId) {
-        return { type: 'dm', conversationId: params.conversationId };
+        const context = { type: 'dm' as const, conversationId: params.conversationId };
+        console.log('useSearchContext: returning DM context (from params):', context);
+        return context;
       }
       
       // Try to extract from pathname
-      const dmMatch = pathname.match(/\/(?:dm|direct)\/([^\/]+)/);
+      const dmMatch = pathname.match(/\/(?:dm|direct|messages)\/([^\/]+)/);
       if (dmMatch) {
-        return { type: 'dm', conversationId: dmMatch[1] };
+        const context = { type: 'dm' as const, conversationId: dmMatch[1] };
+        console.log('useSearchContext: returning DM context (from path):', context);
+        return context;
+      }
+      
+      // For /messages route without specific conversation
+      if (pathname.includes('/messages')) {
+        const context = { type: 'dm' as const, conversationId: 'general' };
+        console.log('useSearchContext: returning general DM context:', context);
+        return context;
       }
     }
     
-    // Space routes
-    if (pathname.includes('/space/')) {
+    // Space routes (handle both /space/ and /spaces/)
+    if (pathname.includes('/space/') || pathname.includes('/spaces/')) {
       // Try to get from params first
       if (params.spaceId) {
-        return { type: 'space', spaceId: params.spaceId, channelId: params.channelId };
+        const context = { type: 'space' as const, spaceId: params.spaceId, channelId: params.channelId };
+        console.log('useSearchContext: returning space context (from params):', context);
+        return context;
       }
       
       // Try to extract from pathname
-      const spaceMatch = pathname.match(/\/space\/([^\/]+)/);
+      const spaceMatch = pathname.match(/\/spaces?\/([^\/]+)/);
       if (spaceMatch) {
-        const channelMatch = pathname.match(/\/channel\/([^\/]+)/);
-        return { 
-          type: 'space', 
+        const channelMatch = pathname.match(/\/([^\/]+)$/); // Last segment is likely the channel
+        const context = { 
+          type: 'space' as const, 
           spaceId: spaceMatch[1],
           channelId: channelMatch?.[1]
         };
+        console.log('useSearchContext: returning space context (from path):', context);
+        return context;
       }
     }
     
     // Default fallback - could be improved based on app structure
-    return { type: 'space', spaceId: 'default' };
+    const context = { type: 'space' as const, spaceId: 'default' };
+    console.log('useSearchContext: returning default context:', context);
+    return context;
   }, [location.pathname, params]);
 };
 

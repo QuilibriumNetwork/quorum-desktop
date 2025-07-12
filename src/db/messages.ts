@@ -855,22 +855,34 @@ export class MessageDB {
   async initializeSearchIndices(): Promise<void> {
     if (this.indexInitialized) return;
     
+    console.log('MessageDB: Initializing search indices...');
     await this.init();
     
     // Get all spaces and conversations to build indices
     const spaces = await this.getSpaces();
     const dmConversations = await this.getConversations({ type: 'direct' });
     
+    console.log('MessageDB: Found', spaces.length, 'spaces and', dmConversations.conversations.length, 'DM conversations');
+    
     // Initialize space indices
     for (const space of spaces) {
       const indexKey = `space:${space.spaceId}`;
       const messages = await this.getAllSpaceMessages({ spaceId: space.spaceId });
       
+      console.log(`MessageDB: Building index for space ${space.spaceId} with ${messages.length} messages`);
+      
       const searchIndex = this.createSearchIndex();
       const searchableMessages = messages.map(msg => this.messageToSearchable(msg));
+      
+      // Debug: log a few example messages
+      if (searchableMessages.length > 0) {
+        console.log('MessageDB: Example searchable messages:', searchableMessages.slice(0, 3));
+      }
+      
       searchIndex.addAll(searchableMessages);
       
       this.searchIndices.set(indexKey, searchIndex);
+      console.log(`MessageDB: Created index ${indexKey} with ${searchableMessages.length} searchable messages`);
     }
     
     // Initialize DM indices
@@ -879,13 +891,17 @@ export class MessageDB {
       // Get DM messages (need to implement this method)
       const messages = await this.getDirectMessages(conversation.conversationId);
       
+      console.log(`MessageDB: Building index for DM ${conversation.conversationId} with ${messages.length} messages`);
+      
       const searchIndex = this.createSearchIndex();
       const searchableMessages = messages.map(msg => this.messageToSearchable(msg));
       searchIndex.addAll(searchableMessages);
       
       this.searchIndices.set(indexKey, searchIndex);
+      console.log(`MessageDB: Created index ${indexKey} with ${searchableMessages.length} searchable messages`);
     }
     
+    console.log('MessageDB: Search indices initialized. Total indices:', this.searchIndices.size);
     this.indexInitialized = true;
   }
 
@@ -928,33 +944,51 @@ export class MessageDB {
     context: SearchContext, 
     limit: number = 50
   ): Promise<SearchResult[]> {
+    console.log('MessageDB: searchMessages called with query:', query, 'context:', context);
+    
     if (!this.indexInitialized) {
+      console.log('MessageDB: Initializing search indices...');
       await this.initializeSearchIndices();
     }
 
     const indexKey = this.getIndexKey(context);
+    console.log('MessageDB: Looking for index with key:', indexKey);
     const searchIndex = this.searchIndices.get(indexKey);
     
     if (!searchIndex) {
+      console.log('MessageDB: No search index found for key:', indexKey);
+      console.log('MessageDB: Available indices:', Array.from(this.searchIndices.keys()));
       return [];
     }
 
+    console.log('MessageDB: Searching with MiniSearch for query:', query);
+    console.log('MessageDB: Index has', searchIndex.documentCount, 'documents');
+    
     const searchResults = searchIndex.search(query, {
       prefix: true,
       fuzzy: 0.2,
       combineWith: 'OR',
     });
+    
+    console.log('MessageDB: MiniSearch returned', searchResults.length, 'raw results:', searchResults);
 
     // Get full message objects and create results
     const results: SearchResult[] = [];
     
     for (const result of searchResults.slice(0, limit)) {
       try {
+        console.log('MessageDB: Processing search result:', result);
+        console.log('MessageDB: Extracted spaceId:', result.match?.spaceId?.[0] || result.spaceId);
+        console.log('MessageDB: Extracted channelId:', result.match?.channelId?.[0] || result.channelId);
+        console.log('MessageDB: Message ID:', result.id);
+        
         const message = await this.getMessage({
-          spaceId: result.match.spaceId?.[0] || '',
-          channelId: result.match.channelId?.[0] || '',
+          spaceId: result.match?.spaceId?.[0] || result.spaceId || '',
+          channelId: result.match?.channelId?.[0] || result.channelId || '',
           messageId: result.id,
         });
+        
+        console.log('MessageDB: Retrieved message:', message ? 'Found' : 'Not found');
         
         if (message) {
           results.push({
