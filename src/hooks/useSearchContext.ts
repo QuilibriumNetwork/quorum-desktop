@@ -6,6 +6,7 @@ interface RouteParams {
   spaceId?: string;
   channelId?: string;
   conversationId?: string;
+  address?: string; // For DM routes
 }
 
 export const useSearchContext = (): SearchContext => {
@@ -19,17 +20,27 @@ export const useSearchContext = (): SearchContext => {
     
     // Direct message routes
     if (pathname.includes('/dm/') || pathname.includes('/direct/') || pathname.includes('/messages/')) {
-      // Try to get from params first
+      // For /messages/:address routes, get address from params
+      if (params.address) {
+        const conversationId = `${params.address}/${params.address}`;
+        const context = { type: 'dm' as const, conversationId };
+        console.log('useSearchContext: returning DM context (from address param):', context);
+        return context;
+      }
+      
+      // Legacy: try to get from conversationId param
       if (params.conversationId) {
         const context = { type: 'dm' as const, conversationId: params.conversationId };
-        console.log('useSearchContext: returning DM context (from params):', context);
+        console.log('useSearchContext: returning DM context (from conversationId param):', context);
         return context;
       }
       
       // Try to extract from pathname
       const dmMatch = pathname.match(/\/(?:dm|direct|messages)\/([^\/]+)/);
       if (dmMatch) {
-        const context = { type: 'dm' as const, conversationId: dmMatch[1] };
+        const address = dmMatch[1];
+        const conversationId = `${address}/${address}`;
+        const context = { type: 'dm' as const, conversationId };
         console.log('useSearchContext: returning DM context (from path):', context);
         return context;
       }

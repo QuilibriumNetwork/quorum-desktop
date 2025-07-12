@@ -14,13 +14,14 @@ interface SearchResultItemProps {
   className?: string;
 }
 
-export const SearchResultItem: React.FC<SearchResultItemProps> = ({
+// Component for DM search results
+const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   result,
   onNavigate,
   highlightTerms,
   className,
 }) => {
-  const { message, score, highlights } = result;
+  const { message } = result;
 
   // Fetch user info for the sender
   const { data: userInfo } = useUserInfo({ 
@@ -28,10 +29,45 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
     enabled: !!message.content.senderId 
   });
 
-  // Fetch space info for the space name
+  // Get contact info for DMs (the other party in the conversation)
+  const { data: contactInfo } = useUserInfo({
+    address: message.spaceId,
+    enabled: !!message.spaceId
+  });
+
+  const displayName = userInfo?.userProfile?.displayName || userInfo?.userProfile?.display_name || 'Unknown User';
+  const contactName = contactInfo?.userProfile?.displayName || contactInfo?.userProfile?.display_name || 'Unknown Contact';
+  
+  return <SearchResultItemContent 
+    {...result}
+    onNavigate={onNavigate}
+    highlightTerms={highlightTerms}
+    className={className}
+    displayName={displayName}
+    spaceName="Direct Message"
+    channelName={contactName}
+    isDM={true}
+  />;
+};
+
+// Component for Space search results
+const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
+  result,
+  onNavigate,
+  highlightTerms,
+  className,
+}) => {
+  const { message } = result;
+
+  // Fetch user info for the sender
+  const { data: userInfo } = useUserInfo({ 
+    address: message.content.senderId,
+    enabled: !!message.content.senderId 
+  });
+
+  // Fetch space info
   const { data: spaceInfo } = useSpace({ 
-    spaceId: message.spaceId,
-    enabled: !!message.spaceId 
+    spaceId: message.spaceId
   });
 
   // Get channel name from space data
@@ -39,10 +75,60 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
     .find((g) => g.channels.find((c) => c.channelId === message.channelId))
     ?.channels.find((c) => c.channelId === message.channelId);
 
-  // Get display names with fallbacks
   const displayName = userInfo?.userProfile?.displayName || userInfo?.userProfile?.display_name || 'Unknown User';
   const spaceName = spaceInfo?.spaceName || 'Unknown Space';
   const channelName = channel?.channelName || message.channelId;
+  
+  return <SearchResultItemContent 
+    {...result}
+    onNavigate={onNavigate}
+    highlightTerms={highlightTerms}
+    className={className}
+    displayName={displayName}
+    spaceName={spaceName}
+    channelName={channelName}
+    isDM={false}
+  />;
+};
+
+// Main component that delegates to appropriate sub-component
+export const SearchResultItem: React.FC<SearchResultItemProps> = (props) => {
+  const { result } = props;
+  const { message } = result;
+
+  // Detect if this is a DM message (spaceId === channelId indicates DM)
+  const isDM = message.spaceId === message.channelId;
+
+  if (isDM) {
+    return <DMSearchResultItem {...props} />;
+  } else {
+    return <SpaceSearchResultItem {...props} />;
+  }
+};
+
+// Shared content component
+interface SearchResultItemContentProps extends SearchResult {
+  onNavigate: (spaceId: string, channelId: string, messageId: string) => void;
+  highlightTerms: (text: string) => string;
+  className?: string;
+  displayName: string;
+  spaceName: string;
+  channelName: string;
+  isDM: boolean;
+}
+
+const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
+  message,
+  score,
+  highlights,
+  onNavigate,
+  highlightTerms,
+  className,
+  displayName,
+  spaceName,
+  channelName,
+  isDM,
+}) => {
 
   const formatDate = (timestamp: number): string => {
     const date = new Date(timestamp);
@@ -112,7 +198,7 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
             className="result-type-icon"
           />
           <span className="result-channel mr-2">
-            {channelName}
+            {isDM ? `💬 ${channelName}` : `#${channelName}`}
           </span>
         
           <FontAwesomeIcon 

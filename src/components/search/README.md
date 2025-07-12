@@ -1,5 +1,7 @@
 # 🔍 Global Message Search - Implementation Guide & Documentation
 
+*The search feature has been built completely by Claude Code with human supervision*
+
 ## 📋 Overview
 Complete implementation of a Discord-like global search feature for Quilibrium Desktop. This document provides comprehensive technical details for developers working on the search system.
 
@@ -12,6 +14,8 @@ The global search feature is fully implemented and functional with:
 - ✅ Message navigation with flash highlighting
 - ✅ Focus management and UX polish
 - ✅ 3-character minimum for better performance
+- ✅ DM search functionality with proper navigation
+- ✅ Component architecture to handle both spaces and DMs safely
 
 ## 🏗️ Architecture Overview
 
@@ -312,6 +316,27 @@ mark {
 ### 6. CSS Variable Issues
 **Problem**: Used `rgb(var(--surface-XX))` incorrectly
 **Solution**: Changed to `var(--surface-XX)` for hex colors
+
+### 7. DM Search Navigation Crashes
+**Problem**: DM search results navigated to `/spaces/` URLs causing crashes
+**Solution**: Added conditional navigation logic in `handleNavigate`:
+```typescript
+const handleNavigate = (spaceId: string, channelId: string, messageId: string) => {
+  const isDM = spaceId === channelId;
+  if (isDM) {
+    navigate(`/messages/${spaceId}#msg-${messageId}`);
+  } else {
+    navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
+  }
+};
+```
+
+### 8. DM SearchResultItem Component Crashes
+**Problem**: SearchResultItem tried to fetch space data for DM addresses, causing React hook errors
+**Solution**: Split into separate components with conditional hook usage:
+- `DMSearchResultItem` - handles DM results with user info only
+- `SpaceSearchResultItem` - handles space results with space and user data
+- Main component delegates based on `spaceId === channelId` detection
 
 ## 🔧 Development Guidelines
 

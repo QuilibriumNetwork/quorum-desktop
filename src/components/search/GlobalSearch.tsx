@@ -48,7 +48,16 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
 
   // Handle navigation to message
   const handleNavigate = (spaceId: string, channelId: string, messageId: string) => {
-    navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
+    // Check if this is a DM message (spaceId === channelId indicates DM)
+    const isDM = spaceId === channelId;
+    
+    if (isDM) {
+      // For DMs, navigate to /messages/:address route
+      navigate(`/messages/${spaceId}#msg-${messageId}`);
+    } else {
+      // For spaces, use normal space route
+      navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
+    }
   };
 
   // Handle query changes
