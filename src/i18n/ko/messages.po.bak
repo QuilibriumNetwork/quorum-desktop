@@ -1,0 +1,857 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-06-20 10:50-0800\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: @lingui/cli\n"
+
+#. js-lingui-explicit-id
+#: src/components/onboarding/Onboarding.tsx:85
+msgid "File cannot be larger than {maxFileSize}"
+msgstr "파일 크기는 {maxFileSize}보다 클 수 없습니다."
+
+#. js-lingui-explicit-id
+#: src/components/onboarding/Onboarding.tsx:294
+msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+msgstr "프로필 이미지 크기는 {maxFileSize} 이하이어야 하며 PNG, JPG 또는 JPEG 파일 확장자를 사용해야 합니다."
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:141
+msgid "{user} has joined"
+msgstr "{user}가 참여했습니다."
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:143
+msgid "{user} has left"
+msgstr "{user}가 나갔습니다."
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:145
+msgid "{user} has been kicked"
+msgstr "{user}가 퇴장당했습니다."
+
+#. js-lingui-explicit-id
+#: src/components/direct/DirectMessage.tsx:272
+#: src/components/channel/Channel.tsx:314
+msgid "Replying to {user}"
+msgstr "{user}에게 답장 중"
+
+#. js-lingui-explicit-id
+#: src/components/direct/DirectMessage.tsx:338
+msgid "Send a message to {user}"
+msgstr "{user}에게 메시지 보내기"
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:397
+msgid "Send a message to #{channel_name}"
+msgstr "#{channel_name}에 메시지 보내기"
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:535
+msgid "{role} - {count}"
+msgstr "{role} - {count}"
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:568
+msgid "No Role - {count}"
+msgstr "역할 없음 - {count}"
+
+#. placeholder {0}: results.length
+#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#: src/components/search/SearchResults.tsx:164
+msgid "{0} {1} for \"{query}"
+msgstr ""
+
+#: src/components/modals/UserSettingsModal.tsx:253
+msgid "Account Address"
+msgstr "계정 주소"
+
+#: src/components/channel/ChannelList.tsx:190
+msgid "Add Group"
+msgstr "그룹 추가"
+
+#: src/components/channel/SpaceEditor.tsx:534
+msgid "Add Role"
+msgstr "역할 추가"
+
+#: src/components/navbar/ExpandableNavMenu.tsx:37
+msgid "Add Space"
+msgstr "공간 추가"
+
+#: src/components/channel/Channel.tsx:596
+msgid "add sticker"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:657
+msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
+msgstr "최대 50개의 사용자 정의 이모지를 추가하세요. 사용자 정의 이모지는 공간 내에서만 사용할 수 있습니다."
+
+#: src/components/channel/SpaceEditor.tsx:761
+msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space."
+msgstr "최대 50개의 사용자 정의 스티커를 추가하세요. 사용자 정의 스티커는 공간 내에서만 사용할 수 있습니다."
+
+#: src/components/modals/UserSettingsModal.tsx:347
+msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
+msgstr "보안 관련 설정을 조정하세요. 이는 사용자 경험에 영향을 미칠 수 있지만 Quorum 계정의 보안을 강화합니다."
+
+#: src/components/modals/CreateSpaceModal.tsx:219
+msgid "Advanced Settings"
+msgstr "고급 설정"
+
+#: src/components/modals/UserSettingsModal.tsx:215
+#: src/components/modals/UserSettingsModal.tsx:423
+msgid "Appearance"
+msgstr "모양"
+
+#. placeholder {0}: space?.spaceName
+#: src/components/channel/LeaveSpace.tsx:30
+msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
+msgstr "{0}를 나가시겠습니까? 다시 초대받지 않는 한 재참여할 수 없습니다."
+
+#: src/components/direct/DirectMessage.tsx:499
+#: src/components/channel/Channel.tsx:591
+msgid "attach image"
+msgstr ""
+
+#: src/components/user/UserOnlineStateIndicator.tsx:14
+msgid "Away"
+msgstr "자리 비움"
+
+#: src/components/user/UserOnlineStateIndicator.tsx:16
+msgid "Busy"
+msgstr "바쁨"
+
+#: src/components/channel/SpaceEditor.tsx:604
+msgid "Can delete messages?"
+msgstr "메시지를 삭제할 수 있나요?"
+
+#: src/components/channel/LeaveSpace.tsx:39
+msgid "Cancel"
+msgstr "취소"
+
+#: src/components/modals/UserSettingsModal.tsx:456
+msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
+msgstr ""
+
+#: src/components/channel/ChannelEditor.tsx:116
+msgid "Channel Name"
+msgstr "채널 이름"
+
+#: src/components/channel/ChannelEditor.tsx:130
+msgid "Channel Topic"
+msgstr "채널 주제"
+
+#: src/components/modals/UserSettingsModal.tsx:425
+msgid "Choose your preferred theme for Quorum."
+msgstr "Quorum에 대한 선호하는 테마를 선택하세요."
+
+#: src/components/search/SearchBar.tsx:160
+msgid "Clear search"
+msgstr ""
+
+#: src/components/channel/SpaceEditor.tsx:511
+msgid "Click on the role name and tag to edit them."
+msgstr "역할 이름과 태그를 클릭하여 수정하세요."
+
+#: src/components/onboarding/Onboarding.tsx:206
+msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
+msgstr "아래 버튼을 클릭하여 키 정보를 백업하세요. 한 번 사라지면 영원히 사라집니다. 다시 인증하라는 메시지가 표시될 수 있습니다."
+
+#: src/components/ClickToCopyContent.tsx:38
+msgid "Click to copy"
+msgstr "복사하려면 클릭"
+
+#: src/components/channel/GroupEditor.tsx:104
+#: src/components/channel/ChannelEditor.tsx:152
+msgid "Confirm Deletion"
+msgstr "삭제 확인"
+
+#: src/components/Connecting.tsx:13
+msgid "Connecting"
+msgstr "연결 중"
+
+#: src/components/CopyToClipboard.tsx:71
+#: src/components/ClickToCopyContent.tsx:109
+#: src/components/message/Message.tsx:452
+msgid "Copied!"
+msgstr "복사됨!"
+
+#: src/components/user/UserStatus.tsx:96
+#: src/components/modals/UserSettingsModal.tsx:258
+#: src/components/direct/DirectMessage.tsx:220
+#: src/components/direct/DirectMessage.tsx:485
+msgid "Copy address to clipboard"
+msgstr "주소를 클립보드에 복사"
+
+#: src/components/channel/SpaceEditor.tsx:1028
+msgid "Copy invite link to clipboard"
+msgstr "초대 링크를 클립보드에 복사"
+
+#: src/components/message/Message.tsx:453
+msgid "Copy message link"
+msgstr "메시지 링크 복사"
+
+#: src/components/CopyToClipboard.tsx:32
+msgid "Copy to clipboard"
+msgstr "클립보드에 복사"
+
+#: src/components/context/MessageDB.tsx:5124
+msgid "Could not add Space"
+msgstr "스페이스를 추가할 수 없습니다"
+
+#: src/components/context/MessageDB.tsx:4997
+msgid "Could not obtain manifest for Space"
+msgstr "스페이스에 대한 매니페스트를 가져올 수 없습니다"
+
+#: src/components/modals/JoinSpaceModal.tsx:118
+#: src/components/message/InviteLink.tsx:26
+msgid "Could not verify invite"
+msgstr "초대를 확인할 수 없습니다"
+
+#: src/components/modals/CreateSpaceModal.tsx:78
+msgid "Create a Space"
+msgstr "스페이스 만들기"
+
+#: src/components/onboarding/Login.tsx:61
+msgid "Create New Account"
+msgstr "새 계정 만들기"
+
+#: src/components/modals/CreateSpaceModal.tsx:208
+msgid "Create Space"
+msgstr "스페이스 만들기"
+
+#: src/components/modals/CreateSpaceModal.tsx:208
+msgid "Creating Space..."
+msgstr "스페이스 생성 중..."
+
+#: src/components/channel/SpaceEditor.tsx:1008
+msgid "Current Invite Link"
+msgstr "현재 초대 링크"
+
+#: src/components/ThemeRadioGroup.tsx:16
+msgid "dark"
+msgstr ""
+
+#: src/components/context/MessageDB.tsx:4976
+msgid "decrypted space with no known config key"
+msgstr "알려진 구성 키가 없는 복호화된 스페이스"
+
+#: src/components/context/MessageDB.tsx:4982
+msgid "Decrypted Space with no known hub key"
+msgstr "알려진 허브 키가 없는 복호화된 스페이스"
+
+#: src/components/channel/SpaceEditor.tsx:407
+msgid "Default Channel"
+msgstr "기본 채널"
+
+#: src/components/modals/CreateSpaceModal.tsx:115
+msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
+msgstr "기본 스페이스 설정은 가장 일반적인 채팅 경험을 제공하지만, 더 높은 개인 정보 보호 보장을 원하시면 고급 설정을 검토하세요."
+
+#: src/components/channel/ChannelEditor.tsx:152
+msgid "Delete Channel"
+msgstr "채널 삭제"
+
+#: src/components/channel/GroupEditor.tsx:104
+msgid "Delete Group"
+msgstr "그룹 삭제"
+
+#: src/components/message/Message.tsx:482
+msgid "Delete message"
+msgstr "메시지 삭제"
+
+#: src/components/search/SearchResultItem.tsx:41
+msgid "Direct Message"
+msgstr ""
+
+#: src/components/navbar/NavMenu.tsx:99
+#: src/components/direct/DirectMessageContactsList.tsx:26
+msgid "Direct Messages"
+msgstr "다이렉트 메시지"
+
+#: src/components/modals/UserSettingsModal.tsx:243
+msgid "Display Name"
+msgstr "표시 이름"
+
+#: src/components/modals/KickUserModal.tsx:56
+msgid "Do it!"
+msgstr "해보세요!"
+
+#: src/components/onboarding/Onboarding.tsx:166
+msgid "Drop your profile photo here"
+msgstr "여기에 프로필 사진을 드롭하세요"
+
+#: src/components/user/UserStatus.tsx:70
+msgid "Edit Profile"
+msgstr "프로필 편집"
+
+#: src/components/channel/ChannelList.tsx:121
+msgid "Edit Space"
+msgstr "스페이스 편집"
+
+#: src/components/channel/SpaceEditor.tsx:319
+#: src/components/channel/SpaceEditor.tsx:654
+msgid "Emojis"
+msgstr "이모지"
+
+#: src/components/modals/UserSettingsModal.tsx:353
+msgid "Enable sync"
+msgstr "동기화 활성화"
+
+#: src/components/modals/CreateSpaceModal.tsx:111
+msgid "Enter a name for your new Space"
+msgstr "새로운 Space의 이름을 입력하세요"
+
+#: src/components/modals/NewDirectMessageModal.tsx:59
+msgid "Enter a user's address to start messaging them."
+msgstr "사용자의 주소를 입력하여 메시지를 시작하세요."
+
+#: src/components/channel/SpaceEditor.tsx:960
+msgid "Enter Address Manually"
+msgstr "주소 수동 입력"
+
+#: src/components/context/WebsocketProvider.tsx:90
+msgid "Error processing inbound:"
+msgstr "수신 처리 중 오류:"
+
+#: src/components/context/WebsocketProvider.tsx:109
+msgid "Error processing outbound:"
+msgstr "발신 처리 중 오류:"
+
+#: src/components/context/WebsocketProvider.tsx:114
+msgid "Error processing queue:"
+msgstr "큐 처리 중 오류:"
+
+#: src/components/channel/SpaceEditor.tsx:878
+msgid "Existing Conversations"
+msgstr "기존 대화"
+
+#: src/components/modals/UserSettingsModal.tsx:339
+msgid "Export"
+msgstr "내보내기"
+
+#: src/components/modals/UserSettingsModal.tsx:330
+msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
+msgstr "이 버튼을 클릭하여 키를 파일로 내보내세요. 이 파일을 다른 사람과 공유하지 마세요. 그렇지 않으면 그들이 당신을 사칭하거나 당신의 Space의 Apex 수익을 훔칠 수 있습니다."
+
+#: src/components/context/MessageDB.tsx:836
+msgid "Failed to decrypt message with any known state"
+msgstr "알려진 상태로 메시지를 복호화하는 데 실패했습니다"
+
+#: src/components/context/WebsocketProvider.tsx:141
+msgid "Failed to parse WebSocket message:"
+msgstr "WebSocket 메시지를 구문 분석하는 데 실패했습니다:"
+
+#: src/components/modals/CreateSpaceModal.tsx:55
+#: src/components/direct/DirectMessage.tsx:62
+#: src/components/channel/Channel.tsx:86
+msgid "File cannot be larger than 2MB"
+msgstr "파일 크기는 2MB를 초과할 수 없습니다"
+
+#: src/components/onboarding/Onboarding.tsx:90
+#: src/components/modals/CreateSpaceModal.tsx:57
+#: src/components/direct/DirectMessage.tsx:64
+#: src/components/channel/Channel.tsx:88
+msgid "File rejected"
+msgstr "파일이 거부되었습니다"
+
+#: src/components/context/MessageDB.tsx:2755
+msgid "general"
+msgstr "일반"
+
+#: src/components/modals/UserSettingsModal.tsx:197
+#: src/components/channel/SpaceEditor.tsx:301
+msgid "General"
+msgstr "일반"
+
+#: src/components/context/MessageDB.tsx:2756
+msgid "General Chat"
+msgstr "일반 채팅"
+
+#: src/components/channel/SpaceEditor.tsx:1064
+msgid "Generate New Invite Link"
+msgstr "새 초대 링크 생성"
+
+#: src/components/channel/GroupEditor.tsx:82
+msgid "Group Name"
+msgstr "그룹 이름"
+
+#: src/components/onboarding/Onboarding.tsx:227
+msgid "I already saved mine"
+msgstr "나는 이미 내 것을 저장했습니다"
+
+#: src/components/onboarding/Onboarding.tsx:359
+#: src/components/onboarding/Onboarding.tsx:366
+msgid "If skipped, you'll get the default profile image and can set it later"
+msgstr "건너뛰면 기본 프로필 이미지가 제공되며 나중에 설정할 수 있습니다"
+
+#: src/components/onboarding/Onboarding.tsx:192
+msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
+msgstr "브라우저 저장소를 지우거나 브라우저를 변경하면 이전 메시지와 키가 사라질 수 있습니다."
+
+#: src/components/onboarding/Onboarding.tsx:199
+msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+msgstr "장치에서 앱을 제거하면 이전 메시지와 키를 잃게 됩니다."
+
+#: src/components/onboarding/Login.tsx:74
+msgid "Import Existing Key"
+msgstr "기존 키 가져오기"
+
+#: src/components/onboarding/Onboarding.tsx:177
+msgid "Important first-time user information:"
+msgstr "중요한 첫 사용자 정보:"
+
+#: src/components/context/MessageDB.tsx:1016
+msgid "invalid address for signature"
+msgstr "서명을 위한 잘못된 주소"
+
+#: src/components/context/MessageDB.tsx:4238
+#: src/components/context/MessageDB.tsx:4275
+#: src/components/context/MessageDB.tsx:4281
+#: src/components/context/MessageDB.tsx:4379
+msgid "invalid link"
+msgstr "잘못된 링크"
+
+#: src/components/context/MessageDB.tsx:4744
+msgid "invalid message type"
+msgstr "잘못된 메시지 유형"
+
+#: src/components/modals/JoinSpaceModal.tsx:89
+#: src/components/context/MessageDB.tsx:4243
+#: src/components/context/MessageDB.tsx:4342
+msgid "invalid response"
+msgstr "잘못된 응답"
+
+#: src/components/channel/SpaceEditor.tsx:341
+#: src/components/channel/SpaceEditor.tsx:862
+msgid "Invites"
+msgstr "초대"
+
+#: src/components/message/InviteLink.tsx:86
+msgid "Join"
+msgstr "참여"
+
+#: src/components/modals/JoinSpaceModal.tsx:144
+#: src/components/modals/JoinSpaceModal.tsx:152
+#: src/components/modals/JoinSpaceModal.tsx:191
+msgid "Join Space"
+msgstr "스페이스 참여"
+
+#: src/components/message/InviteLink.tsx:85
+msgid "Joined"
+msgstr "참여 완료"
+
+#: src/components/modals/UserSettingsModal.tsx:327
+msgid "Key Export"
+msgstr "키 내보내기"
+
+#: src/components/user/UserProfile.tsx:321
+#: src/components/modals/KickUserModal.tsx:33
+msgid "Kick User"
+msgstr "사용자 추방"
+
+#: src/components/modals/UserSettingsModal.tsx:435
+msgid "Language"
+msgstr "언어"
+
+#: src/components/channel/LeaveSpace.tsx:28
+#: src/components/channel/LeaveSpace.tsx:44
+#: src/components/channel/ChannelList.tsx:134
+msgid "Leave Space"
+msgstr "스페이스 나가기"
+
+#. placeholder {0}: currentPasskeyInfo?.address
+#: src/components/onboarding/Onboarding.tsx:240
+msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
+msgstr "친구들에게 당신이 누구인지 알려주세요! 대화에서 표시할 친근한 이름을 선택하세요. {0}보다 읽기 쉬운 이름이 좋습니다."
+
+#: src/components/onboarding/Onboarding.tsx:414
+msgid "Let's gooooooooo"
+msgstr "가자아아아아"
+
+#: src/components/ThemeRadioGroup.tsx:15
+msgid "light"
+msgstr ""
+
+#: src/components/Maintenance.tsx:15
+msgid "Maintenance in Progress"
+msgstr "유지보수 진행 중"
+
+#: src/components/onboarding/Onboarding.tsx:285
+msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
+msgstr "계정을 독특하게 만들어 보세요 – 연락처 사진을 설정하세요. 이 정보는 당신이 참여하는 스페이스에만 제공됩니다."
+
+#: src/components/modals/UserSettingsModal.tsx:288
+msgid "Manage devices, and privacy conditions for messaging and synchronization."
+msgstr "장치 및 메시징과 동기화에 대한 개인 정보 조건을 관리하세요."
+
+#: src/components/channel/SpaceEditor.tsx:669
+#: src/components/channel/SpaceEditor.tsx:773
+msgid "Max file size: 256kB"
+msgstr "최대 파일 크기: 256kB"
+
+#: src/components/message/Message.tsx:494
+msgid "Message does not have a valid signature, this may not be from the sender"
+msgstr "메시지에 유효한 서명이 없습니다. 이는 발신자가 아닐 수 있습니다."
+
+#: src/components/message/Message.tsx:402
+msgid "More reactions"
+msgstr "더 많은 반응"
+
+#: src/components/modals/NewDirectMessageModal.tsx:52
+msgid "New Direct Message"
+msgstr "새로운 다이렉트 메시지"
+
+#: src/components/search/SearchResults.tsx:132
+msgid "No messages found for \"{query}"
+msgstr ""
+
+#: src/components/modals/UserSettingsModal.tsx:380
+msgid "Non-repudiability"
+msgstr "부인할 수 없음"
+
+#: src/components/user/UserOnlineStateIndicator.tsx:18
+msgid "Offline"
+msgstr "오프라인"
+
+#: src/components/onboarding/Onboarding.tsx:153
+msgid "One of us, one of us!"
+msgstr "우리 중 하나, 우리 중 하나!"
+
+#: src/components/user/UserOnlineStateIndicator.tsx:12
+msgid "Online"
+msgstr "온라인"
+
+#: src/components/onboarding/Onboarding.tsx:154
+msgid "Personalize your account"
+msgstr "계정을 개인화하세요"
+
+#: src/components/channel/SpaceEditor.tsx:458
+msgid "Privacy Settings"
+msgstr "개인 정보 설정"
+
+#: src/components/modals/UserSettingsModal.tsx:206
+#: src/components/modals/UserSettingsModal.tsx:286
+msgid "Privacy/Security"
+msgstr "개인 정보/보안"
+
+#: src/components/channel/SpaceEditor.tsx:983
+msgid "Public Invite Link"
+msgstr "공개 초대 링크"
+
+#: src/components/channel/SpaceEditor.tsx:985
+msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
+msgstr "공개 초대 링크는 링크에 접근할 수 있는 누구나 스페이스에 참여할 수 있게 합니다. 이를 활성화할 때의 위험과 링크를 공유할 대상과 장소를 이해하세요."
+
+#: src/components/Maintenance.tsx:28
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
+msgstr "Quorum 인프라가 현재 배포되고 있습니다. 새로 고침을 시도하고 <0>https://status.quilibrium.com/</0>에서 업데이트를 확인하세요."
+
+#: src/components/onboarding/Onboarding.tsx:180
+msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
+msgstr "Quorum은 피어 투 피어 및 종단 간 암호화됩니다. 이는 당신의 메시지가 비공개로 유지되지만, 똑같이 중요한 것은, 당신과 수신자에게 도달하는 데 필요한 시간 동안만 네트워크에 존재한다는 것을 의미합니다."
+
+#: src/components/context/RegistrationPersister.tsx:269
+msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
+msgstr "브라우저가 포커스되지 않거나 패스키 요청이 거부되는 동안 Quorum이 로드되었습니다. 메시지에 접근하려면 다시 인증하세요."
+
+#: src/components/context/RegistrationPersister.tsx:284
+msgid "Reauthorize"
+msgstr "재인증"
+
+#: src/components/context/MessageDB.tsx:4946
+msgid "received config with invalid signature!"
+msgstr "유효하지 않은 서명으로 구성 수신!"
+
+#: src/components/Maintenance.tsx:41
+#: src/components/modals/UserSettingsModal.tsx:465
+msgid "Refresh"
+msgstr "새로 고침"
+
+#: src/components/modals/UserSettingsModal.tsx:314
+msgid "Remove"
+msgstr "제거"
+
+#: src/components/message/Message.tsx:422
+msgid "Reply"
+msgstr "답장"
+
+#: src/components/modals/CreateSpaceModal.tsx:125
+#: src/components/channel/SpaceEditor.tsx:464
+msgid "Repudiability"
+msgstr "부인 가능성"
+
+#: src/components/modals/CreateSpaceModal.tsx:138
+#: src/components/channel/SpaceEditor.tsx:479
+msgid "Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
+msgstr "부인 가능성은 이 공간에서 대화가 명시된 발신자로부터 유래된 것인지 확인할 수 없게 만드는 설정입니다. 이는 민감한 상황에서 유용할 수 있지만, 다른 사람들이 당신으로부터 온 것처럼 보이는 메시지를 위조할 수 있다는 것을 의미합니다."
+
+#: src/components/channel/SpaceEditor.tsx:663
+#: src/components/channel/SpaceEditor.tsx:767
+msgid "Requirements:"
+msgstr "요구 사항:"
+
+#: src/components/channel/SpaceEditor.tsx:310
+#: src/components/channel/SpaceEditor.tsx:508
+msgid "Roles"
+msgstr "역할"
+
+#: src/components/user/UserProfile.tsx:241
+#: src/components/modals/UserSettingsModal.tsx:274
+#: src/components/modals/UserSettingsModal.tsx:413
+#: src/components/channel/SpaceEditor.tsx:495
+#: src/components/channel/SpaceEditor.tsx:641
+#: src/components/channel/SpaceEditor.tsx:745
+#: src/components/channel/SpaceEditor.tsx:849
+#: src/components/channel/GroupEditor.tsx:109
+#: src/components/channel/ChannelEditor.tsx:157
+msgid "Save Changes"
+msgstr "변경 사항 저장"
+
+#: src/components/onboarding/Onboarding.tsx:377
+msgid "Save Contact Photo"
+msgstr "연락처 사진 저장"
+
+#: src/components/onboarding/Onboarding.tsx:220
+msgid "Save User Key"
+msgstr "사용자 키 저장"
+
+#: src/components/context/MessageDB.tsx:4904
+msgid "saved config is out of date"
+msgstr "저장된 구성은 오래되었습니다"
+
+#. placeholder {0}: error?.message || 'Unknown error'
+#: src/components/search/SearchResults.tsx:122
+msgid "Search failed: {0}"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:92
+msgid "Search in direct messages"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:90
+msgid "Search in this Space"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:94
+msgid "Search messages"
+msgstr ""
+
+#: src/components/search/SearchBar.tsx:22
+msgid "Search messages..."
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:112
+msgid "Searching..."
+msgstr ""
+
+#: src/components/modals/UserSettingsModal.tsx:344
+msgid "Security"
+msgstr "보안"
+
+#: src/components/AddressLookup.tsx:26
+#: src/components/modals/NewDirectMessageModal.tsx:71
+#: src/components/modals/NewDirectMessageModal.tsx:86
+msgid "Send"
+msgstr "전송"
+
+#: src/components/channel/SpaceEditor.tsx:1085
+msgid "Send Invite"
+msgstr "초대 전송"
+
+#: src/components/channel/SpaceEditor.tsx:865
+msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
+msgstr "이전에 대화를 나눈 사람들에게 초대를 전송합니다. 초대 버튼이 그들의 받은 편지함에 나타납니다."
+
+#: src/components/user/UserProfile.tsx:307
+msgid "Send Message"
+msgstr "메시지 전송"
+
+#: src/components/context/RegistrationPersister.tsx:256
+msgid "Session Encrypted"
+msgstr "세션 암호화됨"
+
+#: src/components/onboarding/Onboarding.tsx:269
+msgid "Set Display Name"
+msgstr "표시 이름 설정"
+
+#: src/components/modals/UserSettingsModal.tsx:189
+msgid "Settings"
+msgstr "설정"
+
+#: src/components/onboarding/Onboarding.tsx:351
+msgid "Skip Adding Photo"
+msgstr "사진 추가 건너뛰기"
+
+#: src/components/channel/SpaceEditor.tsx:380
+msgid "Space Banner"
+msgstr "공간 배너"
+
+#: src/components/modals/CreateSpaceModal.tsx:103
+msgid "Space Icon Attachment"
+msgstr "공간 아이콘 첨부"
+
+#: src/components/channel/SpaceEditor.tsx:369
+msgid "Space Name"
+msgstr "공간 이름"
+
+#: src/components/search/SearchResults.tsx:103
+msgid "Start typing to search messages..."
+msgstr ""
+
+#: src/components/direct/EmptyDirectMessage.tsx:23
+msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
+msgstr "친구에게 메시지로 시작하세요. 직접 메시지 목록 옆의 추가 버튼을 클릭하세요."
+
+#: src/components/user/UserProfile.tsx:186
+msgid "Status goes here"
+msgstr "상태는 여기로 갑니다"
+
+#: src/components/channel/SpaceEditor.tsx:330
+#: src/components/channel/SpaceEditor.tsx:758
+msgid "Stickers"
+msgstr "스티커"
+
+#. placeholder {0}: selectedUser?.displayName
+#: src/components/channel/SpaceEditor.tsx:973
+msgid "Successfully sent invite to {0}"
+msgstr "{0}에게 초대를 성공적으로 전송했습니다"
+
+#: src/components/channel/SpaceEditor.tsx:666
+#: src/components/channel/SpaceEditor.tsx:770
+msgid "Supported types: PNG, JPG, GIF"
+msgstr "지원되는 형식: PNG, JPG, GIF"
+
+#: src/components/ThemeRadioGroup.tsx:17
+msgid "system"
+msgstr ""
+
+#: src/components/message/InviteLink.tsx:53
+msgid "The invite link has expired or is invalid."
+msgstr "초대 링크가 만료되었거나 유효하지 않습니다."
+
+#: src/components/onboarding/Onboarding.tsx:246
+msgid "This information is only provided to the Spaces you join."
+msgstr "이 정보는 당신이 가입한 공간에만 제공됩니다."
+
+#: src/components/channel/SpaceEditor.tsx:1021
+msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
+msgstr "이 링크는 만료되지 않지만, 언제든지 새로운 링크를 생성할 수 있으며, 이는 이전 링크를 무효화합니다. 현재 공간 구성원은 공간에서 제거되지 않습니다."
+
+#: src/components/message/Message.tsx:129
+msgid "Today at {timeFormatted}"
+msgstr "오늘 {timeFormatted}에"
+
+#: src/components/search/SearchResults.tsx:135
+msgid "Try different keywords or check your spelling"
+msgstr ""
+
+#: src/components/modals/JoinSpaceModal.tsx:160
+msgid "Unknown"
+msgstr "알 수 없음"
+
+#: src/components/search/SearchResultItem.tsx:73
+msgid "Unknown Space"
+msgstr ""
+
+#: src/components/search/SearchResultItem.tsx:33
+#: src/components/search/SearchResultItem.tsx:72
+#: src/components/direct/DirectMessage.tsx:131
+#: src/components/direct/DirectMessage.tsx:149
+#: src/components/context/MessageDB.tsx:815
+#: src/components/context/MessageDB.tsx:832
+#: src/components/context/MessageDB.tsx:2613
+#: src/components/context/MessageDB.tsx:3632
+#: src/components/context/MessageDB.tsx:4853
+#: src/components/channel/Channel.tsx:193
+msgid "Unknown User"
+msgstr "알 수 없는 사용자"
+
+#: src/components/direct/DirectMessage.tsx:315
+msgid "Until you reply, this sender will not see your display name or profile picture"
+msgstr "당신이 응답할 때까지, 이 발신자는 당신의 표시 이름이나 프로필 사진을 볼 수 없습니다."
+
+#: src/components/channel/SpaceEditor.tsx:682
+msgid "Upload Emoji"
+msgstr "이모지 업로드"
+
+#: src/components/channel/SpaceEditor.tsx:786
+msgid "Upload Sticker"
+msgstr "스티커 업로드"
+
+#: src/components/modals/KickUserModal.tsx:36
+msgid "Use the below button to kick this user out of the Space"
+msgstr "아래 버튼을 사용하여 이 사용자를 공간에서 추방하세요."
+
+#: src/components/AddressLookup.tsx:13
+msgid "User does not exist"
+msgstr "사용자가 존재하지 않습니다."
+
+#: src/components/context/WebsocketProvider.tsx:196
+msgid "useWebSocket must be used within a WebSocketProvider"
+msgstr "useWebSocket은 WebSocketProvider 내에서 사용해야 합니다."
+
+#: src/components/onboarding/Onboarding.tsx:151
+msgid "Welcome to Quorum!"
+msgstr "Quorum에 오신 것을 환영합니다!"
+
+#: src/components/direct/EmptyDirectMessage.tsx:24
+msgid "What's on your mind today?"
+msgstr "오늘 당신의 마음속에 무엇이 있나요?"
+
+#: src/components/modals/UserSettingsModal.tsx:404
+#~ msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
+#~ msgstr "이 기능이 활성화되면, 직접 메시지는 사용자 키로 서명되지 않습니다. 이는 성능을 향상시키지만, 당신과 소통하는 사용자가 당신으로부터 온 것처럼 메시지를 위조할 수 있게 할 수 있습니다. 그들은 당신으로부터 온 것처럼 다른 사람에게 메시지를 위조할 수 없습니다. 이는 공간 소유자의 구성 옵션이므로 공간의 신뢰성에는 영향을 미치지 않습니다."
+
+#: src/components/modals/UserSettingsModal.tsx:392
+msgid "When enabled, direct messages are not signed by your user key..."
+msgstr ""
+
+#: src/components/modals/UserSettingsModal.tsx:365
+msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
+msgstr "이 기능이 활성화되면, 사용자 데이터, 공간 및 공간 키가 장치 간에 동기화됩니다. 이를 활성화하면 계정의 메타데이터 가시성이 증가하여 새로운 공간에 가입했을 때를 알 수 있지만, 가입한 공간은 알 수 없습니다."
+
+#: src/components/modals/CreateSpaceModal.tsx:166
+msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
+msgstr "이 설정이 활성화되면, 초대 링크가 자동으로 사용자가 당신의 공간에 가입할 수 있도록 허용합니다. 활성화되지 않은 경우, 초대 링크를 따르는 사용자는 당신의 공간에 가입하기 위한 요청을 보내며, 이를 수동으로 승인해야 합니다. 공개 링크는 링크에 일부 키 자료가 존재해야 하며, 공개 공간 링크를 소유하면 링크가 유효한 동안 누구나 메시지를 읽을 수 있습니다."
+
+#: src/components/onboarding/Onboarding.tsx:188
+msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+msgstr "브라우저에서 Quorum을 사용할 때, 당신의 메시지는 브라우저에 로컬로 저장됩니다."
+
+#: src/components/search/SearchResultItem.tsx:136
+msgid "Yesterday"
+msgstr ""
+
+#: src/components/message/Message.tsx:132
+msgid "Yesterday at {timeFormatted}"
+msgstr "어제 {timeFormatted}에"
+
+#: src/components/direct/DirectMessage.tsx:479
+msgid "You"
+msgstr "당신"
+
+#: src/components/onboarding/Onboarding.tsx:288
+msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
+msgstr "아래 기본 이미지를 클릭하여 시스템의 파일 대화상자를 통해 선택하거나 새 이미지를 드래그 앤 드롭할 수 있습니다."
+
+#: src/components/onboarding/Onboarding.tsx:291
+msgid "You will be able to change this later in your settings."
+msgstr "나중에 설정에서 이를 변경할 수 있습니다."
+
+#: src/components/onboarding/Onboarding.tsx:391
+msgid "You're all set. Welcome to Quorum!"
+msgstr "모든 준비가 완료되었습니다. Quorum에 오신 것을 환영합니다!"
+
+#: src/components/message/InviteLink.tsx:58
+msgid "You've been invited to join a Space"
+msgstr "당신은 공간에 가입하라는 초대를 받았습니다."

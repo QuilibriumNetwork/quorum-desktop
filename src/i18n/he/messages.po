@@ -66,10 +66,14 @@ msgid "No Role - {count}"
 msgstr "בלי תפקיד - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#. placeholder {1}: results.length === 1 ? t`result` : t`results`
 #: src/components/search/SearchResults.tsx:164
 msgid "{0} {1} for \"{query}\""
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+#~ msgid "{0} {1} for {query}"
+#~ msgstr "{0} {1} עבור {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -89,7 +93,7 @@ msgstr "הוסף חלל"
 
 #: src/components/channel/Channel.tsx:596
 msgid "add sticker"
-msgstr ""
+msgstr "הוסף מדבקה"
 
 #: src/components/channel/SpaceEditor.tsx:657
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
@@ -120,7 +124,7 @@ msgstr "האם אתה בטוח שאתה רוצה לעזוב את {0}? לא תו�
 #: src/components/direct/DirectMessage.tsx:499
 #: src/components/channel/Channel.tsx:591
 msgid "attach image"
-msgstr ""
+msgstr "הצמד תמונה"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:14
 msgid "Away"
@@ -140,7 +144,7 @@ msgstr "ביטול"
 
 #: src/components/modals/UserSettingsModal.tsx:456
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
-msgstr ""
+msgstr "שינויים מתבצעים אוטומטית, אך הדף הפעיל עשוי לא להתעדכן. רענן את הדף כדי להחיל את השפה החדשה."
 
 #: src/components/channel/ChannelEditor.tsx:116
 msgid "Channel Name"
@@ -156,7 +160,7 @@ msgstr "בחר את הנושא המועדף שלך עבור Quorum."
 
 #: src/components/search/SearchBar.tsx:160
 msgid "Clear search"
-msgstr ""
+msgstr "נקה חיפוש"
 
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
@@ -239,7 +243,7 @@ msgstr "קישור ההזמנה הנוכחי"
 
 #: src/components/ThemeRadioGroup.tsx:16
 msgid "dark"
-msgstr ""
+msgstr "כהה"
 
 #: src/components/context/MessageDB.tsx:4976
 msgid "decrypted space with no known config key"
@@ -271,7 +275,7 @@ msgstr "מחוק הודעה"
 
 #: src/components/search/SearchResultItem.tsx:41
 msgid "Direct Message"
-msgstr ""
+msgstr "הודעה ישירה"
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
@@ -480,7 +484,7 @@ msgstr "בוא נלך"
 
 #: src/components/ThemeRadioGroup.tsx:15
 msgid "light"
-msgstr ""
+msgstr "בהיר"
 
 #: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
@@ -514,6 +518,10 @@ msgstr "הודעה ישירה חדשה"
 #: src/components/search/SearchResults.tsx:132
 msgid "No messages found for \"{query}\""
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:132
+#~ msgid "No messages found for {query}"
+#~ msgstr "לא נמצאו הודעות עבור {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -579,31 +587,39 @@ msgstr "רענן"
 
 #: src/components/modals/UserSettingsModal.tsx:314
 msgid "Remove"
-msgstr "הסר\""
+msgstr "הסר"
 
 #: src/components/message/Message.tsx:422
 msgid "Reply"
-msgstr "ענה\""
+msgstr "ענה"
 
 #: src/components/modals/CreateSpaceModal.tsx:125
 #: src/components/channel/SpaceEditor.tsx:464
 msgid "Repudiability"
-msgstr "יכולת הכחשה\""
+msgstr "יכולת הכחשה"
 
 #: src/components/modals/CreateSpaceModal.tsx:138
 #: src/components/channel/SpaceEditor.tsx:479
 msgid "Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
-msgstr "יכולת הכחשה היא הגדרה שהופכת שיחות בחלל זה לבלתי ניתנות לאימות כמקור מהשולח המוזכר. זה יכול להיות שימושי במצבים רגישים, אך זה גם אומר שאחרים עשויים לזייף הודעות שנראות כאילו מגיעות ממך.\""
+msgstr "יכולת הכחשה היא הגדרה שהופכת שיחות בחלל זה לבלתי ניתנות לאימות כמקור מהשולח המוזכר. זה יכול להיות שימושי במצבים רגישים, אך זה גם אומר שאחרים עשויים לזייף הודעות שנראות כאילו מגיעות ממך."
 
 #: src/components/channel/SpaceEditor.tsx:663
 #: src/components/channel/SpaceEditor.tsx:767
 msgid "Requirements:"
-msgstr "דרישות:\""
+msgstr "דרישות:"
+
+#: src/components/search/SearchResults.tsx:164
+msgid "result"
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+msgid "results"
+msgstr ""
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
 msgid "Roles"
-msgstr "תפקידים\""
+msgstr "תפקידים"
 
 #: src/components/user/UserProfile.tsx:241
 #: src/components/modals/UserSettingsModal.tsx:274
@@ -615,133 +631,133 @@ msgstr "תפקידים\""
 #: src/components/channel/GroupEditor.tsx:109
 #: src/components/channel/ChannelEditor.tsx:157
 msgid "Save Changes"
-msgstr "שמור שינויים\""
+msgstr "שמור שינויים"
 
 #: src/components/onboarding/Onboarding.tsx:377
 msgid "Save Contact Photo"
-msgstr "שמור תמונת קשר\""
+msgstr "שמור תמונת קשר"
 
 #: src/components/onboarding/Onboarding.tsx:220
 msgid "Save User Key"
-msgstr "שמור מפתח משתמש\""
+msgstr "שמור מפתח משתמש"
 
 #: src/components/context/MessageDB.tsx:4904
 msgid "saved config is out of date"
-msgstr "הגדרת הקונפיגורציה שהושמרה אינה עדכנית\""
+msgstr "הגדרת הקונפיגורציה שהושמרה אינה עדכנית"
 
 #. placeholder {0}: error?.message || 'Unknown error'
 #: src/components/search/SearchResults.tsx:122
 msgid "Search failed: {0}"
-msgstr ""
+msgstr "נכשל בחיפוש: {0}"
 
 #: src/hooks/useSearchContext.ts:92
 msgid "Search in direct messages"
-msgstr ""
+msgstr "חפש בהודעות ישירות"
 
 #: src/hooks/useSearchContext.ts:90
 msgid "Search in this Space"
-msgstr ""
+msgstr "חפש בחלל הזה"
 
 #: src/hooks/useSearchContext.ts:94
 msgid "Search messages"
-msgstr ""
+msgstr "חפש הודעות"
 
 #: src/components/search/SearchBar.tsx:22
 msgid "Search messages..."
-msgstr ""
+msgstr "חפש הודעות..."
 
 #: src/components/search/SearchResults.tsx:112
 msgid "Searching..."
-msgstr ""
+msgstr "מחפש..."
 
 #: src/components/modals/UserSettingsModal.tsx:344
 msgid "Security"
-msgstr "אבטחה\""
+msgstr "אבטחה"
 
 #: src/components/AddressLookup.tsx:26
 #: src/components/modals/NewDirectMessageModal.tsx:71
 #: src/components/modals/NewDirectMessageModal.tsx:86
 msgid "Send"
-msgstr "שלח\""
+msgstr "שלח"
 
 #: src/components/channel/SpaceEditor.tsx:1085
 msgid "Send Invite"
-msgstr "שלח הזמנה\""
+msgstr "שלח הזמנה"
 
 #: src/components/channel/SpaceEditor.tsx:865
 msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
-msgstr "שלח הזמנות לאנשים שעםם כבר ניהלת שיחות. כפתור הזמנה יופיע בתיבת הדואר שלהם.\""
+msgstr "שלח הזמנות לאנשים שעםם כבר ניהלת שיחות. כפתור הזמנה יופיע בתיבת הדואר שלהם."
 
 #: src/components/user/UserProfile.tsx:307
 msgid "Send Message"
-msgstr "שלח הודעה\""
+msgstr "שלח הודעה"
 
 #: src/components/context/RegistrationPersister.tsx:256
 msgid "Session Encrypted"
-msgstr "המפגש מוצפן\""
+msgstr "המפגש מוצפן"
 
 #: src/components/onboarding/Onboarding.tsx:269
 msgid "Set Display Name"
-msgstr "קבע שם תצוגה\""
+msgstr "קבע שם תצוגה"
 
 #: src/components/modals/UserSettingsModal.tsx:189
 msgid "Settings"
-msgstr "הגדרות\""
+msgstr "הגדרות"
 
 #: src/components/onboarding/Onboarding.tsx:351
 msgid "Skip Adding Photo"
-msgstr "דלג על הוספת תמונה\""
+msgstr "דלג על הוספת תמונה"
 
 #: src/components/channel/SpaceEditor.tsx:380
 msgid "Space Banner"
-msgstr "באנר חלל\""
+msgstr "באנר חלל"
 
 #: src/components/modals/CreateSpaceModal.tsx:103
 msgid "Space Icon Attachment"
-msgstr "סמל חלל מצורף\""
+msgstr "סמל חלל מצורף"
 
 #: src/components/channel/SpaceEditor.tsx:369
 msgid "Space Name"
-msgstr "שם חלל\""
+msgstr "שם חלל"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "Start typing to search messages..."
-msgstr ""
+msgstr "התחל להקליד כדי לחפש הודעות..."
 
 #: src/components/direct/EmptyDirectMessage.tsx:23
 msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
-msgstr "התחל עם הודעה לחבר. לחץ על כפתור ההוספה ליד רשימת ההודעות הישירות.\""
+msgstr "התחל עם הודעה לחבר. לחץ על כפתור ההוספה ליד רשימת ההודעות הישירות."
 
 #: src/components/user/UserProfile.tsx:186
 msgid "Status goes here"
-msgstr "סטטוס הולך כאן\""
+msgstr "סטטוס הולך כאן"
 
 #: src/components/channel/SpaceEditor.tsx:330
 #: src/components/channel/SpaceEditor.tsx:758
 msgid "Stickers"
-msgstr "מדבקות\""
+msgstr "מדבקות"
 
 #. placeholder {0}: selectedUser?.displayName
 #: src/components/channel/SpaceEditor.tsx:973
 msgid "Successfully sent invite to {0}"
-msgstr "הזמנה נשלחה בהצלחה ל-{0}\""
+msgstr "הזמנה נשלחה בהצלחה ל-{0}"
 
 #: src/components/channel/SpaceEditor.tsx:666
 #: src/components/channel/SpaceEditor.tsx:770
 msgid "Supported types: PNG, JPG, GIF"
-msgstr "סוגים נתמכים: PNG, JPG, GIF\""
+msgstr "סוגים נתמכים: PNG, JPG, GIF"
 
 #: src/components/ThemeRadioGroup.tsx:17
 msgid "system"
-msgstr ""
+msgstr "מערכת"
 
 #: src/components/message/InviteLink.tsx:53
 msgid "The invite link has expired or is invalid."
-msgstr "קישור ההזמנה פג או אינו תקף.\""
+msgstr "קישור ההזמנה פג או אינו תקף."
 
 #: src/components/onboarding/Onboarding.tsx:246
 msgid "This information is only provided to the Spaces you join."
-msgstr "מידע זה מסופק רק לחללים שאתה מצטרף אליהם.\""
+msgstr "מידע זה מסופק רק לחללים שאתה מצטרף אליהם."
 
 #: src/components/channel/SpaceEditor.tsx:1021
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
@@ -753,7 +769,7 @@ msgstr "היום ב{timeFormatted}"
 
 #: src/components/search/SearchResults.tsx:135
 msgid "Try different keywords or check your spelling"
-msgstr ""
+msgstr "נסה מילות מפתח שונות או בדוק את האיות שלך"
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
@@ -761,7 +777,7 @@ msgstr "לא ידוע"
 
 #: src/components/search/SearchResultItem.tsx:73
 msgid "Unknown Space"
-msgstr ""
+msgstr "חלל לא ידוע"
 
 #: src/components/search/SearchResultItem.tsx:33
 #: src/components/search/SearchResultItem.tsx:72
@@ -808,13 +824,12 @@ msgstr "ברוך הבא לQuorum!"
 msgid "What's on your mind today?"
 msgstr "מה על דעתך היום?"
 
-#: src/components/modals/UserSettingsModal.tsx:404
 #~ msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
 #~ msgstr "כשזה מופעל, הודעות ישירות אינן חתומות על ידי מפתח המשתמש שלך. זה משפר את הביצועים, אך יכול לאפשר למשתמש שאתה מתקשר איתו לזייף הודעות אליך כאילו הן הגיעו ממך. הם לא יכולים לזייף הודעות לאנשים אחרים כאילו הן הגיעו ממך. זה לא משפיע על היכולת להפרות של Spaces, מכיוון שזה אפשרות קונפיגורציה על ידי בעל המרחב."
 
 #: src/components/modals/UserSettingsModal.tsx:392
 msgid "When enabled, direct messages are not signed by your user key..."
-msgstr ""
+msgstr "כשהאפשרות מופעלת, הודעות ישירות אינן חתומות על ידי מפתח המשתמש שלך..."
 
 #: src/components/modals/UserSettingsModal.tsx:365
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
@@ -830,7 +845,7 @@ msgstr "כשאתה משתמש בQuorum בדפדפן, ההודעות שלך נש�
 
 #: src/components/search/SearchResultItem.tsx:136
 msgid "Yesterday"
-msgstr ""
+msgstr "אתמול"
 
 #: src/components/message/Message.tsx:132
 msgid "Yesterday at {timeFormatted}"

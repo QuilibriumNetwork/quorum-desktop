@@ -66,10 +66,14 @@ msgid "No Role - {count}"
 msgstr "No Role - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#. placeholder {1}: results.length === 1 ? t`result` : t`results`
 #: src/components/search/SearchResults.tsx:164
 msgid "{0} {1} for \"{query}\""
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+#~ msgid "{0} {1} for {query}"
+#~ msgstr "{0} {1} fer {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -89,7 +93,7 @@ msgstr "Add Space"
 
 #: src/components/channel/Channel.tsx:596
 msgid "add sticker"
-msgstr ""
+msgstr "add sticker"
 
 #: src/components/channel/SpaceEditor.tsx:657
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
@@ -120,7 +124,7 @@ msgstr "Art thou certain thou wishest to leave {0}? Thou shalt not be able to re
 #: src/components/direct/DirectMessage.tsx:499
 #: src/components/channel/Channel.tsx:591
 msgid "attach image"
-msgstr ""
+msgstr "attach image"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:14
 msgid "Away"
@@ -140,7 +144,7 @@ msgstr "Cancel"
 
 #: src/components/modals/UserSettingsModal.tsx:456
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
-msgstr ""
+msgstr "Changes be made automatically, but the active page may not be updated. Refresh the page t' apply the new language."
 
 #: src/components/channel/ChannelEditor.tsx:116
 msgid "Channel Name"
@@ -156,7 +160,7 @@ msgstr "Choose thy preferred theme for Quorum."
 
 #: src/components/search/SearchBar.tsx:160
 msgid "Clear search"
-msgstr ""
+msgstr "Clear search"
 
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
@@ -239,7 +243,7 @@ msgstr "Current Invite Link, hoist the flag!"
 
 #: src/components/ThemeRadioGroup.tsx:16
 msgid "dark"
-msgstr ""
+msgstr "dark"
 
 #: src/components/context/MessageDB.tsx:4976
 msgid "decrypted space with no known config key"
@@ -271,7 +275,7 @@ msgstr "Delete message, make it disappear like a puff of smoke!"
 
 #: src/components/search/SearchResultItem.tsx:41
 msgid "Direct Message"
-msgstr ""
+msgstr "Direct Message"
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
@@ -480,7 +484,7 @@ msgstr "Let's set sail!"
 
 #: src/components/ThemeRadioGroup.tsx:15
 msgid "light"
-msgstr ""
+msgstr "light"
 
 #: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
@@ -514,6 +518,10 @@ msgstr "New Direct Message, ahoy!"
 #: src/components/search/SearchResults.tsx:132
 msgid "No messages found for \"{query}\""
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:132
+#~ msgid "No messages found for {query}"
+#~ msgstr "No messages found fer {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -600,6 +608,14 @@ msgstr "Repudiability be a setting that makes parley in this here Space untracea
 msgid "Requirements:"
 msgstr "Requirements, arrr:"
 
+#: src/components/search/SearchResults.tsx:164
+msgid "result"
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+msgid "results"
+msgstr ""
+
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
 msgid "Roles"
@@ -632,27 +648,27 @@ msgstr "saved config be out o' date"
 #. placeholder {0}: error?.message || 'Unknown error'
 #: src/components/search/SearchResults.tsx:122
 msgid "Search failed: {0}"
-msgstr ""
+msgstr "Search failed: {0}"
 
 #: src/hooks/useSearchContext.ts:92
 msgid "Search in direct messages"
-msgstr ""
+msgstr "Search in direct messages"
 
 #: src/hooks/useSearchContext.ts:90
 msgid "Search in this Space"
-msgstr ""
+msgstr "Search in this Space"
 
 #: src/hooks/useSearchContext.ts:94
 msgid "Search messages"
-msgstr ""
+msgstr "Search messages"
 
 #: src/components/search/SearchBar.tsx:22
 msgid "Search messages..."
-msgstr ""
+msgstr "Search messages..."
 
 #: src/components/search/SearchResults.tsx:112
 msgid "Searching..."
-msgstr ""
+msgstr "Searching..."
 
 #: src/components/modals/UserSettingsModal.tsx:344
 msgid "Security"
@@ -706,7 +722,7 @@ msgstr "Space Name, matey"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "Start typing to search messages..."
-msgstr ""
+msgstr "Start typin' t' search messages..."
 
 #: src/components/direct/EmptyDirectMessage.tsx:23
 msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
@@ -733,7 +749,7 @@ msgstr "Supported types: PNG, JPG, GIF, matey"
 
 #: src/components/ThemeRadioGroup.tsx:17
 msgid "system"
-msgstr ""
+msgstr "system"
 
 #: src/components/message/InviteLink.tsx:53
 msgid "The invite link has expired or is invalid."
@@ -749,19 +765,19 @@ msgstr "This link shan't expire, but ye can conjure a new one at any time, which
 
 #: src/components/message/Message.tsx:129
 msgid "Today at {timeFormatted}"
-msgstr "Today at {timeFormatted}\""
+msgstr "Today at {timeFormatted}"
 
 #: src/components/search/SearchResults.tsx:135
 msgid "Try different keywords or check your spelling"
-msgstr ""
+msgstr "Try different keywords or check yer spellin'"
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
-msgstr "Unknown\""
+msgstr "Unknown"
 
 #: src/components/search/SearchResultItem.tsx:73
 msgid "Unknown Space"
-msgstr ""
+msgstr "Unknown Space"
 
 #: src/components/search/SearchResultItem.tsx:33
 #: src/components/search/SearchResultItem.tsx:72
@@ -774,83 +790,82 @@ msgstr ""
 #: src/components/context/MessageDB.tsx:4853
 #: src/components/channel/Channel.tsx:193
 msgid "Unknown User"
-msgstr "Unknown User\""
+msgstr "Unknown User"
 
 #: src/components/direct/DirectMessage.tsx:315
 msgid "Until you reply, this sender will not see your display name or profile picture"
-msgstr "Until ye reply, this scallywag shan't see yer display name or profile picture\""
+msgstr "Until ye reply, this scallywag shan't see yer display name or profile picture"
 
 #: src/components/channel/SpaceEditor.tsx:682
 msgid "Upload Emoji"
-msgstr "Upload Emoji\""
+msgstr "Upload Emoji"
 
 #: src/components/channel/SpaceEditor.tsx:786
 msgid "Upload Sticker"
-msgstr "Upload Sticker\""
+msgstr "Upload Sticker"
 
 #: src/components/modals/KickUserModal.tsx:36
 msgid "Use the below button to kick this user out of the Space"
-msgstr "Use the below button to heave this user out of the Space\""
+msgstr "Use the below button to heave this user out of the Space"
 
 #: src/components/AddressLookup.tsx:13
 msgid "User does not exist"
-msgstr "User does not exist\""
+msgstr "User does not exist"
 
 #: src/components/context/WebsocketProvider.tsx:196
 msgid "useWebSocket must be used within a WebSocketProvider"
-msgstr "useWebSocket must be used within a WebSocketProvider\""
+msgstr "useWebSocket must be used within a WebSocketProvider"
 
 #: src/components/onboarding/Onboarding.tsx:151
 msgid "Welcome to Quorum!"
-msgstr "Welcome to Quorum, matey!\""
+msgstr "Welcome to Quorum, matey!"
 
 #: src/components/direct/EmptyDirectMessage.tsx:24
 msgid "What's on your mind today?"
-msgstr "What's stirrin' in yer noggin today?\""
+msgstr "What's stirrin' in yer noggin today?"
 
-#: src/components/modals/UserSettingsModal.tsx:404
 #~ msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
-#~ msgstr "When enabled, direct messages be not signed by yer user key. This be boostin' performance, but can allow the scallywag ye be chattin' with to forge messages to ye as if they came from ye. They can’t forge messages to other landlubbers as if they came from ye. This does not impact the repudiability of Spaces, as this be a configuration option by the Space owner.\""
+#~ msgstr "When enabled, direct messages be not signed by yer user key. This be boostin' performance, but can allow the scallywag ye be chattin' with to forge messages to ye as if they came from ye. They can’t forge messages to other landlubbers as if they came from ye. This does not impact the repudiability of Spaces, as this be a configuration option by the Space owner."
 
 #: src/components/modals/UserSettingsModal.tsx:392
 msgid "When enabled, direct messages are not signed by your user key..."
-msgstr ""
+msgstr "When enabled, direct messages be not signed by yer user key..."
 
 #: src/components/modals/UserSettingsModal.tsx:365
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
-msgstr "When enabled, it synchronizes yer user data, Spaces, and Space keys ‘twixt devices. Enabling this be increasin' metadata visibility of yer account, which can reveal when ye have joined new Spaces, albeit not the Spaces ye have joined.\""
+msgstr "When enabled, it synchronizes yer user data, Spaces, and Space keys ‘twixt devices. Enabling this be increasin' metadata visibility of yer account, which can reveal when ye have joined new Spaces, albeit not the Spaces ye have joined."
 
 #: src/components/modals/CreateSpaceModal.tsx:166
 msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
-msgstr "When this settin’ be enabled, invite links will automatically allow a user to join yer Space. When it be not enabled, users followin’ an invite link will send ye a request to join yer Space that ye must manually approve. Public links require some key material to be present in the link – be wary that possession of a public Space link can allow any scallywag with the link to read messages on the Space for the duration of the link bein' valid.\""
+msgstr "When this settin’ be enabled, invite links will automatically allow a user to join yer Space. When it be not enabled, users followin’ an invite link will send ye a request to join yer Space that ye must manually approve. Public links require some key material to be present in the link – be wary that possession of a public Space link can allow any scallywag with the link to read messages on the Space for the duration of the link bein' valid."
 
 #: src/components/onboarding/Onboarding.tsx:188
 msgid "When using Quorum on a browser, your messages are saved locally to your browser."
-msgstr "When usin' Quorum on a browser, yer messages be saved locally to yer browser.\""
+msgstr "When usin' Quorum on a browser, yer messages be saved locally to yer browser."
 
 #: src/components/search/SearchResultItem.tsx:136
 msgid "Yesterday"
-msgstr ""
+msgstr "Yesterday"
 
 #: src/components/message/Message.tsx:132
 msgid "Yesterday at {timeFormatted}"
-msgstr "Yesterday at {timeFormatted}\""
+msgstr "Yesterday at {timeFormatted}"
 
 #: src/components/direct/DirectMessage.tsx:479
 msgid "You"
-msgstr "Ye\""
+msgstr "Ye"
 
 #: src/components/onboarding/Onboarding.tsx:288
 msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
-msgstr "Ye can smack the default image below to select it with yer system's file dialog or drag and drop a new one.\""
+msgstr "Ye can smack the default image below to select it with yer system's file dialog or drag and drop a new one."
 
 #: src/components/onboarding/Onboarding.tsx:291
 msgid "You will be able to change this later in your settings."
-msgstr "Ye will be able to change this later in yer settings.\""
+msgstr "Ye will be able to change this later in yer settings."
 
 #: src/components/onboarding/Onboarding.tsx:391
 msgid "You're all set. Welcome to Quorum!"
-msgstr "Ye're all set. Welcome to Quorum, matey!\""
+msgstr "Ye're all set. Welcome to Quorum, matey!"
 
 #: src/components/message/InviteLink.tsx:58
 msgid "You've been invited to join a Space"

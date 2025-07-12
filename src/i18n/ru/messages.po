@@ -66,10 +66,14 @@ msgid "No Role - {count}"
 msgstr "Нет роли - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#. placeholder {1}: results.length === 1 ? t`result` : t`results`
 #: src/components/search/SearchResults.tsx:164
 msgid "{0} {1} for \"{query}\""
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+#~ msgid "{0} {1} for {query}"
+#~ msgstr "{0} {1} для {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -89,7 +93,7 @@ msgstr "Добавить пространство"
 
 #: src/components/channel/Channel.tsx:596
 msgid "add sticker"
-msgstr ""
+msgstr "добавить стикер"
 
 #: src/components/channel/SpaceEditor.tsx:657
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
@@ -120,7 +124,7 @@ msgstr "Вы уверены, что хотите покинуть {0}? Вы см
 #: src/components/direct/DirectMessage.tsx:499
 #: src/components/channel/Channel.tsx:591
 msgid "attach image"
-msgstr ""
+msgstr "прикрепить изображение"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:14
 msgid "Away"
@@ -140,7 +144,7 @@ msgstr "Отмена"
 
 #: src/components/modals/UserSettingsModal.tsx:456
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
-msgstr ""
+msgstr "Изменения вносятся автоматически, но активная страница может не обновиться. Обновите страницу, чтобы применить новый язык."
 
 #: src/components/channel/ChannelEditor.tsx:116
 msgid "Channel Name"
@@ -156,7 +160,7 @@ msgstr "Выберите предпочитаемую тему для Quorum."
 
 #: src/components/search/SearchBar.tsx:160
 msgid "Clear search"
-msgstr ""
+msgstr "Очистить поиск"
 
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
@@ -239,7 +243,7 @@ msgstr "Текущая ссылка приглашения"
 
 #: src/components/ThemeRadioGroup.tsx:16
 msgid "dark"
-msgstr ""
+msgstr "темный"
 
 #: src/components/context/MessageDB.tsx:4976
 msgid "decrypted space with no known config key"
@@ -271,7 +275,7 @@ msgstr "Удалить сообщение"
 
 #: src/components/search/SearchResultItem.tsx:41
 msgid "Direct Message"
-msgstr ""
+msgstr "Прямое сообщение"
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
@@ -480,7 +484,7 @@ msgstr "Поехали!"
 
 #: src/components/ThemeRadioGroup.tsx:15
 msgid "light"
-msgstr ""
+msgstr "светлый"
 
 #: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
@@ -514,6 +518,10 @@ msgstr "Новое прямое сообщение"
 #: src/components/search/SearchResults.tsx:132
 msgid "No messages found for \"{query}\""
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:132
+#~ msgid "No messages found for {query}"
+#~ msgstr "Сообщений не найдено для {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -600,6 +608,14 @@ msgstr "Отказоустойчивость — это настройка, ко
 msgid "Requirements:"
 msgstr "Требования:"
 
+#: src/components/search/SearchResults.tsx:164
+msgid "result"
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+msgid "results"
+msgstr ""
+
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
 msgid "Roles"
@@ -632,27 +648,27 @@ msgstr "сохраненная конфигурация устарела"
 #. placeholder {0}: error?.message || 'Unknown error'
 #: src/components/search/SearchResults.tsx:122
 msgid "Search failed: {0}"
-msgstr ""
+msgstr "Поиск не удался: {0}"
 
 #: src/hooks/useSearchContext.ts:92
 msgid "Search in direct messages"
-msgstr ""
+msgstr "Поиск в прямых сообщениях"
 
 #: src/hooks/useSearchContext.ts:90
 msgid "Search in this Space"
-msgstr ""
+msgstr "Поиск в этом Space"
 
 #: src/hooks/useSearchContext.ts:94
 msgid "Search messages"
-msgstr ""
+msgstr "Поиск сообщений"
 
 #: src/components/search/SearchBar.tsx:22
 msgid "Search messages..."
-msgstr ""
+msgstr "Поиск сообщений..."
 
 #: src/components/search/SearchResults.tsx:112
 msgid "Searching..."
-msgstr ""
+msgstr "Поиск..."
 
 #: src/components/modals/UserSettingsModal.tsx:344
 msgid "Security"
@@ -706,7 +722,7 @@ msgstr "Имя пространства"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "Start typing to search messages..."
-msgstr ""
+msgstr "Начните вводить, чтобы искать сообщения..."
 
 #: src/components/direct/EmptyDirectMessage.tsx:23
 msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
@@ -733,7 +749,7 @@ msgstr "Поддерживаемые типы: PNG, JPG, GIF"
 
 #: src/components/ThemeRadioGroup.tsx:17
 msgid "system"
-msgstr ""
+msgstr "система"
 
 #: src/components/message/InviteLink.tsx:53
 msgid "The invite link has expired or is invalid."
@@ -753,7 +769,7 @@ msgstr "Сегодня в {timeFormatted}"
 
 #: src/components/search/SearchResults.tsx:135
 msgid "Try different keywords or check your spelling"
-msgstr ""
+msgstr "Попробуйте другие ключевые слова или проверьте правописание"
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
@@ -761,7 +777,7 @@ msgstr "Неизвестно"
 
 #: src/components/search/SearchResultItem.tsx:73
 msgid "Unknown Space"
-msgstr ""
+msgstr "Неизвестный Space"
 
 #: src/components/search/SearchResultItem.tsx:33
 #: src/components/search/SearchResultItem.tsx:72
@@ -808,13 +824,12 @@ msgstr "Добро пожаловать в Quorum!"
 msgid "What's on your mind today?"
 msgstr "О чем вы сегодня думаете?"
 
-#: src/components/modals/UserSettingsModal.tsx:404
 #~ msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
 #~ msgstr "Когда включено, прямые сообщения не подписываются вашим пользовательским ключом. Это улучшает производительность, но может позволить пользователю, с которым вы общаетесь, подделывать сообщения к вам так, как будто они пришли от вас. Они не могут подделывать сообщения к другим людям так, как будто они пришли от вас. Это не влияет на отказоустойчивость Пространств, так как это опция конфигурации владельца Пространства."
 
 #: src/components/modals/UserSettingsModal.tsx:392
 msgid "When enabled, direct messages are not signed by your user key..."
-msgstr ""
+msgstr "Когда включено, прямые сообщения не подписываются вашим пользовательским ключом..."
 
 #: src/components/modals/UserSettingsModal.tsx:365
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
@@ -830,7 +845,7 @@ msgstr "При использовании Quorum в браузере ваши с
 
 #: src/components/search/SearchResultItem.tsx:136
 msgid "Yesterday"
-msgstr ""
+msgstr "Вчера"
 
 #: src/components/message/Message.tsx:132
 msgid "Yesterday at {timeFormatted}"
@@ -838,15 +853,15 @@ msgstr "Вчера в {timeFormatted}"
 
 #: src/components/direct/DirectMessage.tsx:479
 msgid "You"
-msgstr "Вы\""
+msgstr "Вы"
 
 #: src/components/onboarding/Onboarding.tsx:288
 msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
-msgstr "Вы можете щелкнуть на изображение по умолчанию ниже, чтобы выбрать его с помощью диалогового окна файлов вашей системы или перетащить и вставить новое.\""
+msgstr "Вы можете щелкнуть на изображение по умолчанию ниже, чтобы выбрать его с помощью диалогового окна файлов вашей системы или перетащить и вставить новое."
 
 #: src/components/onboarding/Onboarding.tsx:291
 msgid "You will be able to change this later in your settings."
-msgstr "Вы сможете изменить это позже в ваших настройках.\""
+msgstr "Вы сможете изменить это позже в ваших настройках."
 
 #: src/components/onboarding/Onboarding.tsx:391
 msgid "You're all set. Welcome to Quorum!"

@@ -66,10 +66,14 @@ msgid "No Role - {count}"
 msgstr "Geen rol - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#. placeholder {1}: results.length === 1 ? t`result` : t`results`
 #: src/components/search/SearchResults.tsx:164
 msgid "{0} {1} for \"{query}\""
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+#~ msgid "{0} {1} for {query}"
+#~ msgstr "{0} {1} voor {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -89,7 +93,7 @@ msgstr "Ruimte toevoegen"
 
 #: src/components/channel/Channel.tsx:596
 msgid "add sticker"
-msgstr ""
+msgstr "sticker toevoegen"
 
 #: src/components/channel/SpaceEditor.tsx:657
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
@@ -120,7 +124,7 @@ msgstr "Ben je zeker dat je {0} wilt verlaten? Je kunt niet opnieuw deelnemen te
 #: src/components/direct/DirectMessage.tsx:499
 #: src/components/channel/Channel.tsx:591
 msgid "attach image"
-msgstr ""
+msgstr "afbeelding bijvoegen"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:14
 msgid "Away"
@@ -140,7 +144,7 @@ msgstr "Annuleren"
 
 #: src/components/modals/UserSettingsModal.tsx:456
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
-msgstr ""
+msgstr "Wijzigingen worden automatisch aangebracht, maar de actieve pagina is mogelijk niet bijgewerkt. Vernieuw de pagina om de nieuwe taal toe te passen."
 
 #: src/components/channel/ChannelEditor.tsx:116
 msgid "Channel Name"
@@ -156,7 +160,7 @@ msgstr "Kies je voorkeurs thema voor Quorum."
 
 #: src/components/search/SearchBar.tsx:160
 msgid "Clear search"
-msgstr ""
+msgstr "Zoekopdracht wissen"
 
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
@@ -173,135 +177,135 @@ msgstr "Klik om te kopiëren"
 #: src/components/channel/GroupEditor.tsx:104
 #: src/components/channel/ChannelEditor.tsx:152
 msgid "Confirm Deletion"
-msgstr "Bevestig Verwijdering\""
+msgstr "Bevestig Verwijdering"
 
 #: src/components/Connecting.tsx:13
 msgid "Connecting"
-msgstr "Verbinden\""
+msgstr "Verbinden"
 
 #: src/components/CopyToClipboard.tsx:71
 #: src/components/ClickToCopyContent.tsx:109
 #: src/components/message/Message.tsx:452
 msgid "Copied!"
-msgstr "Gekopieerd!\""
+msgstr "Gekopieerd!"
 
 #: src/components/user/UserStatus.tsx:96
 #: src/components/modals/UserSettingsModal.tsx:258
 #: src/components/direct/DirectMessage.tsx:220
 #: src/components/direct/DirectMessage.tsx:485
 msgid "Copy address to clipboard"
-msgstr "Kopieer adres naar klembord\""
+msgstr "Kopieer adres naar klembord"
 
 #: src/components/channel/SpaceEditor.tsx:1028
 msgid "Copy invite link to clipboard"
-msgstr "Kopieer uitnodigingslink naar klembord\""
+msgstr "Kopieer uitnodigingslink naar klembord"
 
 #: src/components/message/Message.tsx:453
 msgid "Copy message link"
-msgstr "Kopieer berichtlink\""
+msgstr "Kopieer berichtlink"
 
 #: src/components/CopyToClipboard.tsx:32
 msgid "Copy to clipboard"
-msgstr "Kopieer naar klembord\""
+msgstr "Kopieer naar klembord"
 
 #: src/components/context/MessageDB.tsx:5124
 msgid "Could not add Space"
-msgstr "Kon Space niet toevoegen\""
+msgstr "Kon Space niet toevoegen"
 
 #: src/components/context/MessageDB.tsx:4997
 msgid "Could not obtain manifest for Space"
-msgstr "Kon manifest voor Space niet verkrijgen\""
+msgstr "Kon manifest voor Space niet verkrijgen"
 
 #: src/components/modals/JoinSpaceModal.tsx:118
 #: src/components/message/InviteLink.tsx:26
 msgid "Could not verify invite"
-msgstr "Kon uitnodiging niet verifiëren\""
+msgstr "Kon uitnodiging niet verifiëren"
 
 #: src/components/modals/CreateSpaceModal.tsx:78
 msgid "Create a Space"
-msgstr "Maak een Space\""
+msgstr "Maak een Space"
 
 #: src/components/onboarding/Login.tsx:61
 msgid "Create New Account"
-msgstr "Maak Nieuwe Account\""
+msgstr "Maak Nieuwe Account"
 
 #: src/components/modals/CreateSpaceModal.tsx:208
 msgid "Create Space"
-msgstr "Maak Space\""
+msgstr "Maak Space"
 
 #: src/components/modals/CreateSpaceModal.tsx:208
 msgid "Creating Space..."
-msgstr "Space aanmaken...\""
+msgstr "Space aanmaken..."
 
 #: src/components/channel/SpaceEditor.tsx:1008
 msgid "Current Invite Link"
-msgstr "Huidige Uitnodigingslink\""
+msgstr "Huidige Uitnodigingslink"
 
 #: src/components/ThemeRadioGroup.tsx:16
 msgid "dark"
-msgstr ""
+msgstr "donker"
 
 #: src/components/context/MessageDB.tsx:4976
 msgid "decrypted space with no known config key"
-msgstr "gedecodeerde space zonder bekende configuratiesleutel\""
+msgstr "gedecodeerde space zonder bekende configuratiesleutel"
 
 #: src/components/context/MessageDB.tsx:4982
 msgid "Decrypted Space with no known hub key"
-msgstr "Gedecodeerde Space zonder bekende hub-sleutel\""
+msgstr "Gedecodeerde Space zonder bekende hub-sleutel"
 
 #: src/components/channel/SpaceEditor.tsx:407
 msgid "Default Channel"
-msgstr "Standaard Kanaal\""
+msgstr "Standaard Kanaal"
 
 #: src/components/modals/CreateSpaceModal.tsx:115
 msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
-msgstr "Standaard Space-instellingen bieden de meest typische chatervaring, maar voor hogere privacygaranties, bekijk Geavanceerde Instellingen.\""
+msgstr "Standaard Space-instellingen bieden de meest typische chatervaring, maar voor hogere privacygaranties, bekijk Geavanceerde Instellingen."
 
 #: src/components/channel/ChannelEditor.tsx:152
 msgid "Delete Channel"
-msgstr "Verwijder Kanaal\""
+msgstr "Verwijder Kanaal"
 
 #: src/components/channel/GroupEditor.tsx:104
 msgid "Delete Group"
-msgstr "Verwijder Groep\""
+msgstr "Verwijder Groep"
 
 #: src/components/message/Message.tsx:482
 msgid "Delete message"
-msgstr "Verwijder bericht\""
+msgstr "Verwijder bericht"
 
 #: src/components/search/SearchResultItem.tsx:41
 msgid "Direct Message"
-msgstr ""
+msgstr "Directe Berichten"
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
 msgid "Direct Messages"
-msgstr "Directe Berichten\""
+msgstr "Directe Berichten"
 
 #: src/components/modals/UserSettingsModal.tsx:243
 msgid "Display Name"
-msgstr "Weergavenaam\""
+msgstr "Weergavenaam"
 
 #: src/components/modals/KickUserModal.tsx:56
 msgid "Do it!"
-msgstr "Doen!\""
+msgstr "Doen!"
 
 #: src/components/onboarding/Onboarding.tsx:166
 msgid "Drop your profile photo here"
-msgstr "Sleep je profielfoto hierheen\""
+msgstr "Sleep je profielfoto hierheen"
 
 #: src/components/user/UserStatus.tsx:70
 msgid "Edit Profile"
-msgstr "Bewerk Profiel\""
+msgstr "Bewerk Profiel"
 
 #: src/components/channel/ChannelList.tsx:121
 msgid "Edit Space"
-msgstr "Bewerk Space\""
+msgstr "Bewerk Space"
 
 #: src/components/channel/SpaceEditor.tsx:319
 #: src/components/channel/SpaceEditor.tsx:654
 msgid "Emojis"
-msgstr "Emojis\""
+msgstr "Emojis"
 
 #: src/components/modals/UserSettingsModal.tsx:353
 msgid "Enable sync"
@@ -480,7 +484,7 @@ msgstr "Laten we gaan!"
 
 #: src/components/ThemeRadioGroup.tsx:15
 msgid "light"
-msgstr ""
+msgstr "licht"
 
 #: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
@@ -514,6 +518,10 @@ msgstr "Nieuwe Directe Bericht"
 #: src/components/search/SearchResults.tsx:132
 msgid "No messages found for \"{query}\""
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:132
+#~ msgid "No messages found for {query}"
+#~ msgstr "Geen berichten gevonden voor {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -600,6 +608,14 @@ msgstr "Repudiabiliteit is een instelling die gesprekken in deze Space onverifie
 msgid "Requirements:"
 msgstr "Vereisten:"
 
+#: src/components/search/SearchResults.tsx:164
+msgid "result"
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:164
+msgid "results"
+msgstr ""
+
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
 msgid "Roles"
@@ -632,27 +648,27 @@ msgstr "opgeslagen configuratie is verouderd"
 #. placeholder {0}: error?.message || 'Unknown error'
 #: src/components/search/SearchResults.tsx:122
 msgid "Search failed: {0}"
-msgstr ""
+msgstr "Zoeken mislukt: {0}"
 
 #: src/hooks/useSearchContext.ts:92
 msgid "Search in direct messages"
-msgstr ""
+msgstr "Zoeken in directe berichten"
 
 #: src/hooks/useSearchContext.ts:90
 msgid "Search in this Space"
-msgstr ""
+msgstr "Zoeken in deze Space"
 
 #: src/hooks/useSearchContext.ts:94
 msgid "Search messages"
-msgstr ""
+msgstr "Berichten zoeken"
 
 #: src/components/search/SearchBar.tsx:22
 msgid "Search messages..."
-msgstr ""
+msgstr "Berichten zoeken..."
 
 #: src/components/search/SearchResults.tsx:112
 msgid "Searching..."
-msgstr ""
+msgstr "Zoeken..."
 
 #: src/components/modals/UserSettingsModal.tsx:344
 msgid "Security"
@@ -706,7 +722,7 @@ msgstr "Space Naam"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "Start typing to search messages..."
-msgstr ""
+msgstr "Begin met typen om berichten te zoeken..."
 
 #: src/components/direct/EmptyDirectMessage.tsx:23
 msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
@@ -733,7 +749,7 @@ msgstr "Ondersteunde types: PNG, JPG, GIF"
 
 #: src/components/ThemeRadioGroup.tsx:17
 msgid "system"
-msgstr ""
+msgstr "systeem"
 
 #: src/components/message/InviteLink.tsx:53
 msgid "The invite link has expired or is invalid."
@@ -753,7 +769,7 @@ msgstr "Vandaag om {timeFormatted}"
 
 #: src/components/search/SearchResults.tsx:135
 msgid "Try different keywords or check your spelling"
-msgstr ""
+msgstr "Probeer andere zoekwoorden of controleer je spelling"
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
@@ -761,7 +777,7 @@ msgstr "Onbekend"
 
 #: src/components/search/SearchResultItem.tsx:73
 msgid "Unknown Space"
-msgstr ""
+msgstr "Onbekende Space"
 
 #: src/components/search/SearchResultItem.tsx:33
 #: src/components/search/SearchResultItem.tsx:72
@@ -808,13 +824,12 @@ msgstr "Welkom bij Quorum!"
 msgid "What's on your mind today?"
 msgstr "Wat gaat er vandaag door je hoofd?"
 
-#: src/components/modals/UserSettingsModal.tsx:404
 #~ msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
 #~ msgstr "Wanneer ingeschakeld, worden directe berichten niet ondertekend met je gebruikerssleutel. Dit verbetert de prestaties, maar kan de gebruiker met wie je communiceert in staat stellen om berichten naar jou te vervalsen alsof ze van jou kwamen. Ze kunnen geen berichten naar andere mensen vervalsen alsof ze van jou kwamen. Dit heeft geen invloed op de weerlegbaarheid van Spaces, aangezien dit een configuratieoptie is van de Space-eigenaar."
 
 #: src/components/modals/UserSettingsModal.tsx:392
 msgid "When enabled, direct messages are not signed by your user key..."
-msgstr ""
+msgstr "Wanneer ingeschakeld, worden directe berichten niet ondertekend met je gebruikerssleutel..."
 
 #: src/components/modals/UserSettingsModal.tsx:365
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
@@ -830,7 +845,7 @@ msgstr "Wanneer je Quorum in een browser gebruikt, worden je berichten lokaal op
 
 #: src/components/search/SearchResultItem.tsx:136
 msgid "Yesterday"
-msgstr ""
+msgstr "Gisteren"
 
 #: src/components/message/Message.tsx:132
 msgid "Yesterday at {timeFormatted}"

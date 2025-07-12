@@ -161,7 +161,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     >
       <div className="search-results-header">
         <span className="results-count">
-          {t`${results.length} ${results.length === 1 ? 'result' : 'results'} for "${query}"`}
+          {t`${results.length} ${results.length === 1 ? t`result` : t`results`} for "${query}"`}
         </span>
       </div>
       
