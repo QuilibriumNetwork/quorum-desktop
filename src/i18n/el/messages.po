@@ -25,17 +25,17 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Το μέγεθος της εικόνας προφίλ σας πρέπει να είναι {maxFileSize} ή λιγότερο και πρέπει να έχει κατάληξη PNG, JPG ή JPEG."
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:139
+#: src/components/message/Message.tsx:141
 msgid "{user} has joined"
 msgstr "{user} έχει ενταχθεί"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:141
+#: src/components/message/Message.tsx:143
 msgid "{user} has left"
 msgstr "{user} έχει αποχωρήσει"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:143
+#: src/components/message/Message.tsx:145
 msgid "{user} has been kicked"
 msgstr "{user} έχει αποβληθεί"
 
@@ -64,6 +64,12 @@ msgstr "{role} - {count}"
 #: src/components/channel/Channel.tsx:568
 msgid "No Role - {count}"
 msgstr "Χωρίς Ρόλο - {count}"
+
+#. placeholder {0}: results.length
+#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#: src/components/search/SearchResults.tsx:164
+msgid "{0} {1} for \"{query}\""
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -148,6 +154,10 @@ msgstr "Θέμα Καναλιού"
 msgid "Choose your preferred theme for Quorum."
 msgstr "Επιλέξτε το προτιμώμενο θέμα σας για το Quorum."
 
+#: src/components/search/SearchBar.tsx:160
+msgid "Clear search"
+msgstr ""
+
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
 msgstr "Κάντε κλικ στο όνομα του ρόλου και στην ετικέτα για να τα επεξεργαστείτε."
@@ -171,7 +181,7 @@ msgstr "Σύνδεση"
 
 #: src/components/CopyToClipboard.tsx:71
 #: src/components/ClickToCopyContent.tsx:109
-#: src/components/message/Message.tsx:450
+#: src/components/message/Message.tsx:452
 msgid "Copied!"
 msgstr "Αντιγράφηκε!"
 
@@ -186,7 +196,7 @@ msgstr "Αντιγραφή διεύθυνσης στο πρόχειρο"
 msgid "Copy invite link to clipboard"
 msgstr "Αντιγραφή συνδέσμου πρόσκλησης στο πρόχειρο"
 
-#: src/components/message/Message.tsx:451
+#: src/components/message/Message.tsx:453
 msgid "Copy message link"
 msgstr "Αντιγραφή συνδέσμου μηνύματος"
 
@@ -255,9 +265,13 @@ msgstr "Διαγραφή Καναλιού"
 msgid "Delete Group"
 msgstr "Διαγραφή Ομάδας"
 
-#: src/components/message/Message.tsx:480
+#: src/components/message/Message.tsx:482
 msgid "Delete message"
 msgstr "Διαγραφή μηνύματος"
+
+#: src/components/search/SearchResultItem.tsx:41
+msgid "Direct Message"
+msgstr ""
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
@@ -485,17 +499,21 @@ msgstr "Διαχείριση συσκευών και συνθηκών ιδιωτ
 msgid "Max file size: 256kB"
 msgstr "Μέγιστο μέγεθος αρχείου: 256kB"
 
-#: src/components/message/Message.tsx:492
+#: src/components/message/Message.tsx:494
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Το μήνυμα δεν έχει έγκυρη υπογραφή, αυτό μπορεί να μην είναι από τον αποστολέα"
 
-#: src/components/message/Message.tsx:400
+#: src/components/message/Message.tsx:402
 msgid "More reactions"
 msgstr "Περισσότερες αντιδράσεις"
 
 #: src/components/modals/NewDirectMessageModal.tsx:52
 msgid "New Direct Message"
 msgstr "Νέο Άμεσο Μήνυμα"
+
+#: src/components/search/SearchResults.tsx:132
+msgid "No messages found for \"{query}\""
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -563,7 +581,7 @@ msgstr "Ανανέωση"
 msgid "Remove"
 msgstr "Αφαίρεση"
 
-#: src/components/message/Message.tsx:420
+#: src/components/message/Message.tsx:422
 msgid "Reply"
 msgstr "Απάντηση"
 
@@ -610,6 +628,31 @@ msgstr "Αποθήκευση Κλειδιού Χρήστη"
 #: src/components/context/MessageDB.tsx:4904
 msgid "saved config is out of date"
 msgstr "η αποθηκευμένη ρύθμιση είναι παλιά"
+
+#. placeholder {0}: error?.message || 'Unknown error'
+#: src/components/search/SearchResults.tsx:122
+msgid "Search failed: {0}"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:92
+msgid "Search in direct messages"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:90
+msgid "Search in this Space"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:94
+msgid "Search messages"
+msgstr ""
+
+#: src/components/search/SearchBar.tsx:22
+msgid "Search messages..."
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:112
+msgid "Searching..."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:344
 msgid "Security"
@@ -661,6 +704,10 @@ msgstr "Επισύναψη Εικονιδίου Χώρου"
 msgid "Space Name"
 msgstr "Όνομα Χώρου"
 
+#: src/components/search/SearchResults.tsx:103
+msgid "Start typing to search messages..."
+msgstr ""
+
 #: src/components/direct/EmptyDirectMessage.tsx:23
 msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
 msgstr "Ξεκινήστε με ένα μήνυμα σε έναν φίλο. Κάντε κλικ στο κουμπί προσθήκης δίπλα στη λίστα άμεσων μηνυμάτων."
@@ -700,14 +747,24 @@ msgstr "Αυτές οι πληροφορίες παρέχονται μόνο σ�
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
 msgstr "Αυτός ο σύνδεσμος δεν θα λήξει, αλλά μπορείτε να δημιουργήσετε έναν νέο ανά πάσα στιγμή, ο οποίος θα ακυρώσει τον παλιό σύνδεσμο. Τα τρέχοντα μέλη του Χώρου δεν θα αφαιρεθούν από τον Χώρο."
 
-#: src/components/message/Message.tsx:127
+#: src/components/message/Message.tsx:129
 msgid "Today at {timeFormatted}"
 msgstr "Σήμερα στις {timeFormatted}"
+
+#: src/components/search/SearchResults.tsx:135
+msgid "Try different keywords or check your spelling"
+msgstr ""
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
 msgstr "Άγνωστο"
 
+#: src/components/search/SearchResultItem.tsx:73
+msgid "Unknown Space"
+msgstr ""
+
+#: src/components/search/SearchResultItem.tsx:33
+#: src/components/search/SearchResultItem.tsx:72
 #: src/components/direct/DirectMessage.tsx:131
 #: src/components/direct/DirectMessage.tsx:149
 #: src/components/context/MessageDB.tsx:815
@@ -771,7 +828,11 @@ msgstr "Όταν αυτή η ρύθμιση είναι ενεργοποιημέ�
 msgid "When using Quorum on a browser, your messages are saved locally to your browser."
 msgstr "Όταν χρησιμοποιείς το Quorum σε έναν περιηγητή, τα μηνύματά σου αποθηκεύονται τοπικά στον περιηγητή σου."
 
-#: src/components/message/Message.tsx:130
+#: src/components/search/SearchResultItem.tsx:136
+msgid "Yesterday"
+msgstr ""
+
+#: src/components/message/Message.tsx:132
 msgid "Yesterday at {timeFormatted}"
 msgstr "Χθες στις {timeFormatted}"
 

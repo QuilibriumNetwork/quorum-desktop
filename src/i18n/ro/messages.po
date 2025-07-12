@@ -25,17 +25,17 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Dimensiunea imaginii tale de profil trebuie să fie {maxFileSize} sau mai mică și trebuie să fie un fișier cu extensia PNG, JPG sau JPEG."
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:139
+#: src/components/message/Message.tsx:141
 msgid "{user} has joined"
 msgstr "{user} s-a alăturat"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:141
+#: src/components/message/Message.tsx:143
 msgid "{user} has left"
 msgstr "{user} a plecat"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:143
+#: src/components/message/Message.tsx:145
 msgid "{user} has been kicked"
 msgstr "{user} a fost dat afară"
 
@@ -64,6 +64,12 @@ msgstr "{role} - {count}"
 #: src/components/channel/Channel.tsx:568
 msgid "No Role - {count}"
 msgstr "Fără rol - {count}"
+
+#. placeholder {0}: results.length
+#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#: src/components/search/SearchResults.tsx:164
+msgid "{0} {1} for \"{query}\""
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -148,6 +154,10 @@ msgstr "Subiectul canalului"
 msgid "Choose your preferred theme for Quorum."
 msgstr "Alege tema preferată pentru Quorum."
 
+#: src/components/search/SearchBar.tsx:160
+msgid "Clear search"
+msgstr ""
+
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
 msgstr "Fă clic pe numele rolului și eticheta pentru a le edita."
@@ -171,7 +181,7 @@ msgstr "Conectare"
 
 #: src/components/CopyToClipboard.tsx:71
 #: src/components/ClickToCopyContent.tsx:109
-#: src/components/message/Message.tsx:450
+#: src/components/message/Message.tsx:452
 msgid "Copied!"
 msgstr "Copiat!"
 
@@ -186,7 +196,7 @@ msgstr "Copie adresă în clipboard"
 msgid "Copy invite link to clipboard"
 msgstr "Copie link invitație în clipboard"
 
-#: src/components/message/Message.tsx:451
+#: src/components/message/Message.tsx:453
 msgid "Copy message link"
 msgstr "Copie link mesaj"
 
@@ -255,9 +265,13 @@ msgstr "Șterge canal"
 msgid "Delete Group"
 msgstr "Șterge grup"
 
-#: src/components/message/Message.tsx:480
+#: src/components/message/Message.tsx:482
 msgid "Delete message"
 msgstr "Șterge mesaj"
+
+#: src/components/search/SearchResultItem.tsx:41
+msgid "Direct Message"
+msgstr ""
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
@@ -485,17 +499,21 @@ msgstr "Gestionează dispozitivele și condițiile de confidențialitate pentru 
 msgid "Max file size: 256kB"
 msgstr "Dimensiunea maximă a fișierului: 256kB"
 
-#: src/components/message/Message.tsx:492
+#: src/components/message/Message.tsx:494
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Mesajul nu are o semnătură validă, acesta poate să nu fie de la expeditor"
 
-#: src/components/message/Message.tsx:400
+#: src/components/message/Message.tsx:402
 msgid "More reactions"
 msgstr "Mai multe reacții"
 
 #: src/components/modals/NewDirectMessageModal.tsx:52
 msgid "New Direct Message"
 msgstr "Mesaj Direct Nou"
+
+#: src/components/search/SearchResults.tsx:132
+msgid "No messages found for \"{query}\""
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -563,7 +581,7 @@ msgstr "Refresh"
 msgid "Remove"
 msgstr "Elimină"
 
-#: src/components/message/Message.tsx:420
+#: src/components/message/Message.tsx:422
 msgid "Reply"
 msgstr "Răspunde"
 
@@ -610,6 +628,31 @@ msgstr "Salvează cheia utilizatorului"
 #: src/components/context/MessageDB.tsx:4904
 msgid "saved config is out of date"
 msgstr "configurația salvată este depășită"
+
+#. placeholder {0}: error?.message || 'Unknown error'
+#: src/components/search/SearchResults.tsx:122
+msgid "Search failed: {0}"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:92
+msgid "Search in direct messages"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:90
+msgid "Search in this Space"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:94
+msgid "Search messages"
+msgstr ""
+
+#: src/components/search/SearchBar.tsx:22
+msgid "Search messages..."
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:112
+msgid "Searching..."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:344
 msgid "Security"
@@ -661,6 +704,10 @@ msgstr "Atasament Icon Spațiu"
 msgid "Space Name"
 msgstr "Numele Spațiului"
 
+#: src/components/search/SearchResults.tsx:103
+msgid "Start typing to search messages..."
+msgstr ""
+
 #: src/components/direct/EmptyDirectMessage.tsx:23
 msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
 msgstr "Începe cu un mesaj pentru un prieten. Fă clic pe butonul de adăugare de lângă lista de mesaje directe."
@@ -700,14 +747,24 @@ msgstr "Această informație este oferită doar pentru Spațiile la care te ală
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
 msgstr "Aceast link nu va expira, dar poți genera unul nou în orice moment, ceea ce va invalida vechiul link. Membrii actuali ai Spațiului nu vor fi eliminați din Spațiu."
 
-#: src/components/message/Message.tsx:127
+#: src/components/message/Message.tsx:129
 msgid "Today at {timeFormatted}"
 msgstr "Azi la {timeFormatted}"
+
+#: src/components/search/SearchResults.tsx:135
+msgid "Try different keywords or check your spelling"
+msgstr ""
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
 msgstr "Necunoscut"
 
+#: src/components/search/SearchResultItem.tsx:73
+msgid "Unknown Space"
+msgstr ""
+
+#: src/components/search/SearchResultItem.tsx:33
+#: src/components/search/SearchResultItem.tsx:72
 #: src/components/direct/DirectMessage.tsx:131
 #: src/components/direct/DirectMessage.tsx:149
 #: src/components/context/MessageDB.tsx:815
@@ -771,7 +828,11 @@ msgstr "Când această setare este activată, linkurile de invitație vor permit
 msgid "When using Quorum on a browser, your messages are saved locally to your browser."
 msgstr "Când folosești Quorum pe un browser, mesajele tale sunt salvate local în browserul tău."
 
-#: src/components/message/Message.tsx:130
+#: src/components/search/SearchResultItem.tsx:136
+msgid "Yesterday"
+msgstr ""
+
+#: src/components/message/Message.tsx:132
 msgid "Yesterday at {timeFormatted}"
 msgstr "Ieri la {timeFormatted}"
 

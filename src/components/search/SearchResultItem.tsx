@@ -1,6 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHashtag, faUser, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../db/messages';
 import { Message } from '../../api/quorumApi';
 import { useUserInfo } from '../../hooks/queries/userInfo/useUserInfo';
@@ -29,7 +30,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
     enabled: !!message.content.senderId 
   });
 
-  const displayName = userInfo?.userProfile?.displayName || userInfo?.userProfile?.display_name || 'Unknown User';
+  const displayName = userInfo?.userProfile?.displayName || userInfo?.userProfile?.display_name || t`Unknown User`;
   
   return <SearchResultItemContent 
     {...result}
@@ -37,7 +38,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
     highlightTerms={highlightTerms}
     className={className}
     displayName={displayName}
-    spaceName="Direct Message"
+    spaceName={t`Direct Message`}
     channelName={displayName} // Use sender name for both
     isDM={true}
   />;
@@ -68,8 +69,8 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
     .find((g) => g.channels.find((c) => c.channelId === message.channelId))
     ?.channels.find((c) => c.channelId === message.channelId);
 
-  const displayName = userInfo?.userProfile?.displayName || userInfo?.userProfile?.display_name || 'Unknown User';
-  const spaceName = spaceInfo?.spaceName || 'Unknown Space';
+  const displayName = userInfo?.userProfile?.displayName || userInfo?.userProfile?.display_name || t`Unknown User`;
+  const spaceName = spaceInfo?.spaceName || t`Unknown Space`;
   const channelName = channel?.channelName || message.channelId;
   
   return <SearchResultItemContent 
@@ -132,7 +133,7 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
     if (diffDays === 0) {
       return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     } else if (diffDays === 1) {
-      return 'Yesterday';
+      return t`Yesterday`;
     } else if (diffDays < 7) {
       return date.toLocaleDateString([], { weekday: 'long' });
     } else {

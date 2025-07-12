@@ -25,17 +25,17 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Kích thước hình ảnh hồ sơ của bạn phải là {maxFileSize} hoặc nhỏ hơn và phải có phần mở rộng tệp PNG, JPG hoặc JPEG."
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:139
+#: src/components/message/Message.tsx:141
 msgid "{user} has joined"
 msgstr "{user} đã tham gia"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:141
+#: src/components/message/Message.tsx:143
 msgid "{user} has left"
 msgstr "{user} đã rời đi"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:143
+#: src/components/message/Message.tsx:145
 msgid "{user} has been kicked"
 msgstr "{user} đã bị đuổi"
 
@@ -64,6 +64,12 @@ msgstr "{role} - {count}"
 #: src/components/channel/Channel.tsx:568
 msgid "No Role - {count}"
 msgstr "Không có vai trò - {count}"
+
+#. placeholder {0}: results.length
+#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#: src/components/search/SearchResults.tsx:164
+msgid "{0} {1} for \"{query}\""
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -148,6 +154,10 @@ msgstr "Chủ đề Kênh"
 msgid "Choose your preferred theme for Quorum."
 msgstr "Chọn chủ đề ưa thích của bạn cho Quorum."
 
+#: src/components/search/SearchBar.tsx:160
+msgid "Clear search"
+msgstr ""
+
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
 msgstr "Nhấp vào tên vai trò và thẻ để chỉnh sửa chúng."
@@ -171,7 +181,7 @@ msgstr "Đang kết nối"
 
 #: src/components/CopyToClipboard.tsx:71
 #: src/components/ClickToCopyContent.tsx:109
-#: src/components/message/Message.tsx:450
+#: src/components/message/Message.tsx:452
 msgid "Copied!"
 msgstr "Đã sao chép!"
 
@@ -186,7 +196,7 @@ msgstr "Sao chép địa chỉ vào clipboard"
 msgid "Copy invite link to clipboard"
 msgstr "Sao chép liên kết mời vào clipboard"
 
-#: src/components/message/Message.tsx:451
+#: src/components/message/Message.tsx:453
 msgid "Copy message link"
 msgstr "Sao chép liên kết tin nhắn"
 
@@ -255,9 +265,13 @@ msgstr "Xóa Kênh"
 msgid "Delete Group"
 msgstr "Xóa Nhóm"
 
-#: src/components/message/Message.tsx:480
+#: src/components/message/Message.tsx:482
 msgid "Delete message"
 msgstr "Xóa tin nhắn"
+
+#: src/components/search/SearchResultItem.tsx:41
+msgid "Direct Message"
+msgstr ""
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
@@ -485,17 +499,21 @@ msgstr "Quản lý thiết bị và điều kiện quyền riêng tư cho nhắn
 msgid "Max file size: 256kB"
 msgstr "Kích thước tệp tối đa: 256kB"
 
-#: src/components/message/Message.tsx:492
+#: src/components/message/Message.tsx:494
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Tin nhắn không có chữ ký hợp lệ, điều này có thể không phải từ người gửi"
 
-#: src/components/message/Message.tsx:400
+#: src/components/message/Message.tsx:402
 msgid "More reactions"
 msgstr "Nhiều phản ứng hơn"
 
 #: src/components/modals/NewDirectMessageModal.tsx:52
 msgid "New Direct Message"
 msgstr "Tin nhắn trực tiếp mới"
+
+#: src/components/search/SearchResults.tsx:132
+msgid "No messages found for \"{query}\""
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -563,7 +581,7 @@ msgstr "Làm mới"
 msgid "Remove"
 msgstr "Xóa"
 
-#: src/components/message/Message.tsx:420
+#: src/components/message/Message.tsx:422
 msgid "Reply"
 msgstr "Trả lời"
 
@@ -610,6 +628,31 @@ msgstr "Lưu khóa người dùng"
 #: src/components/context/MessageDB.tsx:4904
 msgid "saved config is out of date"
 msgstr "cấu hình đã lưu đã lỗi thời"
+
+#. placeholder {0}: error?.message || 'Unknown error'
+#: src/components/search/SearchResults.tsx:122
+msgid "Search failed: {0}"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:92
+msgid "Search in direct messages"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:90
+msgid "Search in this Space"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:94
+msgid "Search messages"
+msgstr ""
+
+#: src/components/search/SearchBar.tsx:22
+msgid "Search messages..."
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:112
+msgid "Searching..."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:344
 msgid "Security"
@@ -661,6 +704,10 @@ msgstr "Đính kèm biểu tượng không gian"
 msgid "Space Name"
 msgstr "Tên không gian"
 
+#: src/components/search/SearchResults.tsx:103
+msgid "Start typing to search messages..."
+msgstr ""
+
 #: src/components/direct/EmptyDirectMessage.tsx:23
 msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
 msgstr "Bắt đầu với một tin nhắn cho một người bạn. Nhấn vào nút thêm bên cạnh danh sách tin nhắn trực tiếp."
@@ -700,14 +747,24 @@ msgstr "Thông tin này chỉ được cung cấp cho các không gian mà bạn
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
 msgstr "Liên kết này sẽ không hết hạn, nhưng bạn có thể tạo một cái mới bất cứ lúc nào, điều này sẽ làm không hợp lệ liên kết cũ. Các thành viên hiện tại trong không gian sẽ không bị xóa khỏi không gian."
 
-#: src/components/message/Message.tsx:127
+#: src/components/message/Message.tsx:129
 msgid "Today at {timeFormatted}"
 msgstr "Hôm nay lúc {timeFormatted}\""
+
+#: src/components/search/SearchResults.tsx:135
+msgid "Try different keywords or check your spelling"
+msgstr ""
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
 msgstr "Không xác định\""
 
+#: src/components/search/SearchResultItem.tsx:73
+msgid "Unknown Space"
+msgstr ""
+
+#: src/components/search/SearchResultItem.tsx:33
+#: src/components/search/SearchResultItem.tsx:72
 #: src/components/direct/DirectMessage.tsx:131
 #: src/components/direct/DirectMessage.tsx:149
 #: src/components/context/MessageDB.tsx:815
@@ -771,7 +828,11 @@ msgstr "Khi cài đặt này được bật, liên kết mời sẽ tự động
 msgid "When using Quorum on a browser, your messages are saved locally to your browser."
 msgstr "Khi sử dụng Quorum trên trình duyệt, tin nhắn của bạn được lưu trữ cục bộ trên trình duyệt của bạn.\""
 
-#: src/components/message/Message.tsx:130
+#: src/components/search/SearchResultItem.tsx:136
+msgid "Yesterday"
+msgstr ""
+
+#: src/components/message/Message.tsx:132
 msgid "Yesterday at {timeFormatted}"
 msgstr "Hôm qua lúc {timeFormatted}\""
 

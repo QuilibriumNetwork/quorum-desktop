@@ -25,17 +25,17 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "De grootte van je profielafbeelding moet {maxFileSize} of kleiner zijn en moet een PNG-, JPG- of JPEG-bestandsextensie hebben."
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:139
+#: src/components/message/Message.tsx:141
 msgid "{user} has joined"
 msgstr "{user} is toegetreden"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:141
+#: src/components/message/Message.tsx:143
 msgid "{user} has left"
 msgstr "{user} heeft de groep verlaten"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:143
+#: src/components/message/Message.tsx:145
 msgid "{user} has been kicked"
 msgstr "{user} is eruit gekickt"
 
@@ -64,6 +64,12 @@ msgstr "{role} - {count}"
 #: src/components/channel/Channel.tsx:568
 msgid "No Role - {count}"
 msgstr "Geen rol - {count}"
+
+#. placeholder {0}: results.length
+#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#: src/components/search/SearchResults.tsx:164
+msgid "{0} {1} for \"{query}\""
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -148,6 +154,10 @@ msgstr "Kanaalonderwerp"
 msgid "Choose your preferred theme for Quorum."
 msgstr "Kies je voorkeurs thema voor Quorum."
 
+#: src/components/search/SearchBar.tsx:160
+msgid "Clear search"
+msgstr ""
+
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
 msgstr "Klik op de rolnaam en tag om ze te bewerken."
@@ -171,7 +181,7 @@ msgstr "Verbinden\""
 
 #: src/components/CopyToClipboard.tsx:71
 #: src/components/ClickToCopyContent.tsx:109
-#: src/components/message/Message.tsx:450
+#: src/components/message/Message.tsx:452
 msgid "Copied!"
 msgstr "Gekopieerd!\""
 
@@ -186,7 +196,7 @@ msgstr "Kopieer adres naar klembord\""
 msgid "Copy invite link to clipboard"
 msgstr "Kopieer uitnodigingslink naar klembord\""
 
-#: src/components/message/Message.tsx:451
+#: src/components/message/Message.tsx:453
 msgid "Copy message link"
 msgstr "Kopieer berichtlink\""
 
@@ -255,9 +265,13 @@ msgstr "Verwijder Kanaal\""
 msgid "Delete Group"
 msgstr "Verwijder Groep\""
 
-#: src/components/message/Message.tsx:480
+#: src/components/message/Message.tsx:482
 msgid "Delete message"
 msgstr "Verwijder bericht\""
+
+#: src/components/search/SearchResultItem.tsx:41
+msgid "Direct Message"
+msgstr ""
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
@@ -485,17 +499,21 @@ msgstr "Beheer apparaten en privacyvoorwaarden voor messaging en synchronisatie.
 msgid "Max file size: 256kB"
 msgstr "Maximale bestandsgrootte: 256kB"
 
-#: src/components/message/Message.tsx:492
+#: src/components/message/Message.tsx:494
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Bericht heeft geen geldige handtekening, dit is mogelijk niet van de afzender"
 
-#: src/components/message/Message.tsx:400
+#: src/components/message/Message.tsx:402
 msgid "More reactions"
 msgstr "Meer reacties"
 
 #: src/components/modals/NewDirectMessageModal.tsx:52
 msgid "New Direct Message"
 msgstr "Nieuwe Directe Bericht"
+
+#: src/components/search/SearchResults.tsx:132
+msgid "No messages found for \"{query}\""
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -563,7 +581,7 @@ msgstr "Vernieuwen"
 msgid "Remove"
 msgstr "Verwijderen"
 
-#: src/components/message/Message.tsx:420
+#: src/components/message/Message.tsx:422
 msgid "Reply"
 msgstr "Beantwoorden"
 
@@ -610,6 +628,31 @@ msgstr "Gebruikerssleutel Opslaan"
 #: src/components/context/MessageDB.tsx:4904
 msgid "saved config is out of date"
 msgstr "opgeslagen configuratie is verouderd"
+
+#. placeholder {0}: error?.message || 'Unknown error'
+#: src/components/search/SearchResults.tsx:122
+msgid "Search failed: {0}"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:92
+msgid "Search in direct messages"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:90
+msgid "Search in this Space"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:94
+msgid "Search messages"
+msgstr ""
+
+#: src/components/search/SearchBar.tsx:22
+msgid "Search messages..."
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:112
+msgid "Searching..."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:344
 msgid "Security"
@@ -661,6 +704,10 @@ msgstr "Space Pictogram Bijlage"
 msgid "Space Name"
 msgstr "Space Naam"
 
+#: src/components/search/SearchResults.tsx:103
+msgid "Start typing to search messages..."
+msgstr ""
+
 #: src/components/direct/EmptyDirectMessage.tsx:23
 msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
 msgstr "Begin met een bericht aan een vriend. Klik op de voeg toe-knop naast de lijst met directe berichten."
@@ -700,14 +747,24 @@ msgstr "Deze informatie wordt alleen verstrekt aan de Spaces die je join."
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
 msgstr "Deze link verloopt niet, maar je kunt op elk moment een nieuwe genereren, wat de oude link ongeldig maakt. Huidige Space-leden zullen niet uit de Space worden verwijderd."
 
-#: src/components/message/Message.tsx:127
+#: src/components/message/Message.tsx:129
 msgid "Today at {timeFormatted}"
 msgstr "Vandaag om {timeFormatted}"
+
+#: src/components/search/SearchResults.tsx:135
+msgid "Try different keywords or check your spelling"
+msgstr ""
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
 msgstr "Onbekend"
 
+#: src/components/search/SearchResultItem.tsx:73
+msgid "Unknown Space"
+msgstr ""
+
+#: src/components/search/SearchResultItem.tsx:33
+#: src/components/search/SearchResultItem.tsx:72
 #: src/components/direct/DirectMessage.tsx:131
 #: src/components/direct/DirectMessage.tsx:149
 #: src/components/context/MessageDB.tsx:815
@@ -771,7 +828,11 @@ msgstr "Wanneer deze instelling is ingeschakeld, zullen uitnodigingslinks automa
 msgid "When using Quorum on a browser, your messages are saved locally to your browser."
 msgstr "Wanneer je Quorum in een browser gebruikt, worden je berichten lokaal opgeslagen in je browser."
 
-#: src/components/message/Message.tsx:130
+#: src/components/search/SearchResultItem.tsx:136
+msgid "Yesterday"
+msgstr ""
+
+#: src/components/message/Message.tsx:132
 msgid "Yesterday at {timeFormatted}"
 msgstr "Gisteren om {timeFormatted}"
 

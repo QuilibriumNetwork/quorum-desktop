@@ -25,17 +25,17 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "您的个人资料图片大小必须为 {maxFileSize} 或更小，并且必须是 PNG、JPG 或 JPEG 文件扩展名。"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:139
+#: src/components/message/Message.tsx:141
 msgid "{user} has joined"
 msgstr "{user}已加入"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:141
+#: src/components/message/Message.tsx:143
 msgid "{user} has left"
 msgstr "{user}已离开"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:143
+#: src/components/message/Message.tsx:145
 msgid "{user} has been kicked"
 msgstr "{user}已被踢出"
 
@@ -64,6 +64,12 @@ msgstr "{role} - {count}"
 #: src/components/channel/Channel.tsx:568
 msgid "No Role - {count}"
 msgstr "无角色 - {count}"
+
+#. placeholder {0}: results.length
+#. placeholder {1}: results.length === 1 ? 'result' : 'results'
+#: src/components/search/SearchResults.tsx:164
+msgid "{0} {1} for \"{query}\""
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -148,6 +154,10 @@ msgstr "频道主题"
 msgid "Choose your preferred theme for Quorum."
 msgstr "选择您在 Quorum 中的首选主题。"
 
+#: src/components/search/SearchBar.tsx:160
+msgid "Clear search"
+msgstr ""
+
 #: src/components/channel/SpaceEditor.tsx:511
 msgid "Click on the role name and tag to edit them."
 msgstr "点击角色名称和标签进行编辑。"
@@ -171,7 +181,7 @@ msgstr "连接"
 
 #: src/components/CopyToClipboard.tsx:71
 #: src/components/ClickToCopyContent.tsx:109
-#: src/components/message/Message.tsx:450
+#: src/components/message/Message.tsx:452
 msgid "Copied!"
 msgstr "已复制！"
 
@@ -186,7 +196,7 @@ msgstr "复制地址到剪贴板"
 msgid "Copy invite link to clipboard"
 msgstr "复制邀请链接到剪贴板"
 
-#: src/components/message/Message.tsx:451
+#: src/components/message/Message.tsx:453
 msgid "Copy message link"
 msgstr "复制信息链接"
 
@@ -255,9 +265,13 @@ msgstr "删除频道"
 msgid "Delete Group"
 msgstr "删除组"
 
-#: src/components/message/Message.tsx:480
+#: src/components/message/Message.tsx:482
 msgid "Delete message"
 msgstr "删除信息"
+
+#: src/components/search/SearchResultItem.tsx:41
+msgid "Direct Message"
+msgstr ""
 
 #: src/components/navbar/NavMenu.tsx:99
 #: src/components/direct/DirectMessageContactsList.tsx:26
@@ -485,17 +499,21 @@ msgstr "管理设备和消息传递及同步的隐私条件。"
 msgid "Max file size: 256kB"
 msgstr "最大文件大小：256kB"
 
-#: src/components/message/Message.tsx:492
+#: src/components/message/Message.tsx:494
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "消息没有有效的签名，这可能不是发送者发来的"
 
-#: src/components/message/Message.tsx:400
+#: src/components/message/Message.tsx:402
 msgid "More reactions"
 msgstr "更多反应"
 
 #: src/components/modals/NewDirectMessageModal.tsx:52
 msgid "New Direct Message"
 msgstr "新的直接消息"
+
+#: src/components/search/SearchResults.tsx:132
+msgid "No messages found for \"{query}\""
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -563,7 +581,7 @@ msgstr "刷新"
 msgid "Remove"
 msgstr "移除"
 
-#: src/components/message/Message.tsx:420
+#: src/components/message/Message.tsx:422
 msgid "Reply"
 msgstr "答复"
 
@@ -610,6 +628,31 @@ msgstr "保存用户密钥"
 #: src/components/context/MessageDB.tsx:4904
 msgid "saved config is out of date"
 msgstr "保存的配置已过期"
+
+#. placeholder {0}: error?.message || 'Unknown error'
+#: src/components/search/SearchResults.tsx:122
+msgid "Search failed: {0}"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:92
+msgid "Search in direct messages"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:90
+msgid "Search in this Space"
+msgstr ""
+
+#: src/hooks/useSearchContext.ts:94
+msgid "Search messages"
+msgstr ""
+
+#: src/components/search/SearchBar.tsx:22
+msgid "Search messages..."
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:112
+msgid "Searching..."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:344
 msgid "Security"
@@ -661,6 +704,10 @@ msgstr "空间图标附件"
 msgid "Space Name"
 msgstr "空间名称"
 
+#: src/components/search/SearchResults.tsx:103
+msgid "Start typing to search messages..."
+msgstr ""
+
 #: src/components/direct/EmptyDirectMessage.tsx:23
 msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
 msgstr "从给朋友发消息开始。点击直接消息列表旁边的添加按钮。"
@@ -700,14 +747,24 @@ msgstr "此信息仅提供给您加入的空间。"
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
 msgstr "此链接不会过期，但您可以随时生成一个新链接，这将使旧链接失效。当前空间成员将不会被移除。"
 
-#: src/components/message/Message.tsx:127
+#: src/components/message/Message.tsx:129
 msgid "Today at {timeFormatted}"
 msgstr "今天 {0}"
+
+#: src/components/search/SearchResults.tsx:135
+msgid "Try different keywords or check your spelling"
+msgstr ""
 
 #: src/components/modals/JoinSpaceModal.tsx:160
 msgid "Unknown"
 msgstr "未知"
 
+#: src/components/search/SearchResultItem.tsx:73
+msgid "Unknown Space"
+msgstr ""
+
+#: src/components/search/SearchResultItem.tsx:33
+#: src/components/search/SearchResultItem.tsx:72
 #: src/components/direct/DirectMessage.tsx:131
 #: src/components/direct/DirectMessage.tsx:149
 #: src/components/context/MessageDB.tsx:815
@@ -771,7 +828,11 @@ msgstr "当此设置启用时，邀请链接将自动允许用户加入您的空
 msgid "When using Quorum on a browser, your messages are saved locally to your browser."
 msgstr "在浏览器上使用 Quorum 时，您的消息会保存在本地浏览器中。"
 
-#: src/components/message/Message.tsx:130
+#: src/components/search/SearchResultItem.tsx:136
+msgid "Yesterday"
+msgstr ""
+
+#: src/components/message/Message.tsx:132
 msgid "Yesterday at {timeFormatted}"
 msgstr "昨天 {0}"
 

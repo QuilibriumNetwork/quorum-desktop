@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faSpinner, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../db/messages';
 import { SearchResultItem } from './SearchResultItem';
 import './SearchResults.scss';
@@ -99,7 +100,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       return (
         <div className="search-empty-state">
           <FontAwesomeIcon icon={faSearch} className="empty-icon" />
-          <p className="empty-message">Start typing to search messages...</p>
+          <p className="empty-message">{t`Start typing to search messages...`}</p>
         </div>
       );
     }
@@ -108,7 +109,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       return (
         <div className="search-loading-state">
           <FontAwesomeIcon icon={faSpinner} className="loading-icon" spin />
-          <p className="loading-message">Searching...</p>
+          <p className="loading-message">{t`Searching...`}</p>
         </div>
       );
     }
@@ -118,7 +119,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
         <div className="search-error-state">
           <FontAwesomeIcon icon={faExclamationTriangle} className="error-icon" />
           <p className="error-message">
-            Search failed: {error?.message || 'Unknown error'}
+            {t`Search failed: ${error?.message || 'Unknown error'}`}
           </p>
         </div>
       );
@@ -128,10 +129,10 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       <div className="search-no-results">
         <FontAwesomeIcon icon={faSearch} className="empty-icon" />
         <p className="empty-message">
-          No messages found for "{query}"
+          {t`No messages found for "${query}"`}
         </p>
         <p className="empty-hint">
-          Try different keywords or check your spelling
+          {t`Try different keywords or check your spelling`}
         </p>
       </div>
     );
@@ -160,7 +161,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     >
       <div className="search-results-header">
         <span className="results-count">
-          {results.length} result{results.length !== 1 ? 's' : ''} for "{query}"
+          {t`${results.length} ${results.length === 1 ? 'result' : 'results'} for "${query}"`}
         </span>
       </div>
       

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+import { t } from '@lingui/core/macro';
 import { SearchContext } from '../db/messages';
 
 interface RouteParams {
@@ -86,11 +87,11 @@ export const useSearchContext = (): SearchContext => {
 export const getContextDisplayName = (context: SearchContext): string => {
   switch (context.type) {
     case 'space':
-      return `Search in this Space`;
+      return t`Search in this Space`;
     case 'dm':
-      return 'Search in direct messages';
+      return t`Search in direct messages`;
     default:
-      return 'Search messages';
+      return t`Search messages`;
   }
 };
 

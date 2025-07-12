@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { t } from '@lingui/core/macro';
 import './SearchBar.scss';
 
 interface SearchBarProps {
@@ -18,7 +19,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   query,
   onQueryChange,
   onClear,
-  placeholder = "Search messages...",
+  placeholder = t`Search messages...`,
   suggestions = [],
   onSuggestionSelect,
   className,
@@ -156,7 +157,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             className="search-clear-button"
             onClick={handleClear}
             type="button"
-            aria-label="Clear search"
+            aria-label={t`Clear search`}
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>
