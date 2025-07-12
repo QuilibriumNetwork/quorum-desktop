@@ -8,6 +8,7 @@ import {
 } from '@quilibrium/quilibrium-js-sdk-channels';
 
 import Layout from './components/Layout';
+import { AppWithSearch } from './components/AppWithSearch';
 import Space from './components/space/Space';
 import Connecting from './components/Connecting';
 import CustomTitlebar from './components/Titlebar';
@@ -133,7 +134,7 @@ const App = () => {
                       <Route
                         path="/messages"
                         element={
-                          <Layout
+                          <AppWithSearch
                             kickUserAddress={kickUserAddress}
                             setKickUserAddress={setKickUserAddress}
                           >
@@ -144,13 +145,13 @@ const App = () => {
                               }}
                               user={user}
                             />
-                          </Layout>
+                          </AppWithSearch>
                         }
                       />
                       <Route
                         path="/messages/new"
                         element={
-                          <Layout
+                          <AppWithSearch
                             newDirectMessage
                             kickUserAddress={kickUserAddress}
                             setKickUserAddress={setKickUserAddress}
@@ -162,13 +163,13 @@ const App = () => {
                               }}
                               user={user}
                             />
-                          </Layout>
+                          </AppWithSearch>
                         }
                       />
                       <Route
                         path="/messages/:address"
                         element={
-                          <Layout
+                          <AppWithSearch
                             kickUserAddress={kickUserAddress}
                             setKickUserAddress={setKickUserAddress}
                           >
@@ -179,13 +180,13 @@ const App = () => {
                               }}
                               user={user}
                             />
-                          </Layout>
+                          </AppWithSearch>
                         }
                       />
                       <Route
                         path="/spaces/:spaceId/:channelId"
                         element={
-                          <Layout
+                          <AppWithSearch
                             kickUserAddress={kickUserAddress}
                             setKickUserAddress={setKickUserAddress}
                           >
@@ -198,18 +199,18 @@ const App = () => {
                               setKickUserAddress={setKickUserAddress}
                               user={user}
                             />
-                          </Layout>
+                          </AppWithSearch>
                         }
                       />
                       <Route
                         path="/invite/"
                         element={
-                          <Layout
+                          <AppWithSearch
                             kickUserAddress={kickUserAddress}
                             setKickUserAddress={setKickUserAddress}
                           >
                             <JoinSpaceModal visible={true} onClose={() => {}} />
-                          </Layout>
+                          </AppWithSearch>
                         }
                       />
                       <Route

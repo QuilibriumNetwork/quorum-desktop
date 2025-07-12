@@ -1,0 +1,142 @@
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgb(var(--surface-01));
+  border: 1px solid rgb(var(--surface-04));
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  margin-top: 8px;
+  z-index: 1001;
+  overflow: hidden;
+  min-width: 400px;
+}
+
+.search-results-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgb(var(--surface-03));
+  background: rgb(var(--surface-00));
+}
+
+.results-count {
+  font-size: 12px;
+  color: rgb(var(--color-text-subtle));
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.search-results-list {
+  overflow-y: auto;
+  max-height: 340px;
+}
+
+// Empty states
+.search-empty-state,
+.search-loading-state,
+.search-error-state,
+.search-no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-icon,
+.loading-icon,
+.error-icon {
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: rgb(var(--color-text-muted));
+}
+
+.loading-icon {
+  color: rgb(var(--accent-500));
+}
+
+.error-icon {
+  color: rgb(var(--danger));
+}
+
+.empty-message,
+.loading-message,
+.error-message {
+  font-size: 14px;
+  color: rgb(var(--color-text-main));
+  margin: 0 0 4px 0;
+  font-weight: 500;
+}
+
+.empty-hint {
+  font-size: 12px;
+  color: rgb(var(--color-text-subtle));
+  margin: 0;
+}
+
+.error-message {
+  color: rgb(var(--danger));
+}
+
+// Dark theme adjustments
+.dark .search-results {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .search-results {
+    position: fixed;
+    top: 60px;
+    left: 12px;
+    right: 12px;
+    margin-top: 0;
+    min-width: auto;
+    max-height: calc(100vh - 80px);
+  }
+  
+  .search-results-list {
+    max-height: calc(100vh - 140px);
+  }
+  
+  .search-empty-state,
+  .search-loading-state,
+  .search-error-state,
+  .search-no-results {
+    padding: 30px 16px;
+  }
+  
+  .empty-icon,
+  .loading-icon,
+  .error-icon {
+    font-size: 20px;
+  }
+  
+  .empty-message,
+  .loading-message,
+  .error-message {
+    font-size: 13px;
+  }
+  
+  .empty-hint {
+    font-size: 11px;
+  }
+}
+
+// Animation for opening/closing
+.search-results {
+  animation: searchResultsOpen 0.2s ease-out;
+}
+
+@keyframes searchResultsOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

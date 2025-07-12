@@ -1,0 +1,148 @@
+.search-result-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid rgb(var(--surface-03));
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+
+  &:hover {
+    background: rgb(var(--surface-02));
+  }
+
+  &:focus {
+    outline: none;
+    background: rgb(var(--surface-02));
+    box-shadow: inset 2px 0 0 rgb(var(--accent-500));
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.result-meta {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: rgb(var(--color-text-subtle));
+  gap: 6px;
+}
+
+.result-type-icon,
+.result-user-icon {
+  font-size: 10px;
+  color: rgb(var(--color-text-muted));
+}
+
+.result-channel {
+  color: rgb(var(--accent-500));
+  font-weight: 500;
+}
+
+.result-sender {
+  color: rgb(var(--color-text-main));
+  font-weight: 500;
+}
+
+.result-separator {
+  color: rgb(var(--color-text-muted));
+  font-size: 10px;
+}
+
+.result-date {
+  color: rgb(var(--color-text-muted));
+}
+
+.result-score {
+  font-size: 11px;
+  color: rgb(var(--color-text-muted));
+  background: rgb(var(--surface-04));
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.result-content {
+  margin-bottom: 8px;
+}
+
+.result-text {
+  color: rgb(var(--color-text-main));
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+
+  // Highlight styling for search terms
+  :global(mark) {
+    background: rgba(var(--accent-500), 0.3);
+    color: rgb(var(--color-text-strong));
+    padding: 1px 2px;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+}
+
+.result-highlights {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.highlights-label {
+  font-size: 11px;
+  color: rgb(var(--color-text-muted));
+  font-weight: 500;
+}
+
+.highlight-term {
+  font-size: 11px;
+  background: rgb(var(--surface-04));
+  color: rgb(var(--color-text-main));
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.highlights-more {
+  font-size: 11px;
+  color: rgb(var(--color-text-subtle));
+  font-style: italic;
+}
+
+// Dark theme adjustments
+.dark .result-score {
+  background: rgb(var(--surface-06));
+}
+
+.dark .highlight-term {
+  background: rgb(var(--surface-06));
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .search-result-item {
+    padding: 10px 12px;
+  }
+  
+  .result-meta {
+    font-size: 11px;
+    gap: 4px;
+  }
+  
+  .result-text {
+    font-size: 13px;
+  }
+  
+  .result-score {
+    font-size: 10px;
+    padding: 1px 4px;
+  }
+}

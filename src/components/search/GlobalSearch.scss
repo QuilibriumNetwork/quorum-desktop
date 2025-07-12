@@ -1,0 +1,68 @@
+.global-search {
+  position: relative;
+  z-index: 1000;
+  
+  &.header-search {
+    // When positioned in header/titlebar
+    position: fixed;
+    top: 8px;
+    right: 120px;
+    z-index: 9999;
+  }
+  
+  &.layout-search {
+    // When positioned in main layout
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 1000;
+  }
+}
+
+.global-search-bar {
+  min-width: 200px;
+  
+  @media (max-width: 768px) {
+    min-width: 200px;
+  }
+  
+  @media (max-width: 480px) {
+    min-width: 200px;
+  }
+}
+
+.global-search-results {
+  // Positioning handled by SearchResults component
+}
+
+// Integration with existing layout
+.container-unit {
+  .global-search {
+    &.layout-search {
+      // Ensure search doesn't interfere with content
+      position: absolute;
+      top: 12px;
+      right: 12px;
+    }
+  }
+}
+
+// Header integration
+.header-search {
+  .search-input-container {
+    background: rgba(var(--surface-02), 0.9);
+    backdrop-filter: blur(8px);
+    border-color: rgba(var(--surface-04), 0.8);
+    
+    &.focused {
+      background: rgb(var(--surface-01));
+      border-color: rgb(var(--accent-500));
+    }
+  }
+  
+  .search-results {
+    // Adjust for header positioning
+    margin-top: 4px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+}
