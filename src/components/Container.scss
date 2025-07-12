@@ -1,9 +1,9 @@
 .container-unit {
-  position: absolute;
+  position: fixed;
   width: calc(100vw - 72px);
-  height: calc(100vh - 34px);
+  height: calc(100vh - 50px);
   left: 72px;
-  margin-top: 50px;
+  top: 50px; 
   border-top-left-radius: 10px;
   background-color: var(--color-bg-sidebar);
 }
