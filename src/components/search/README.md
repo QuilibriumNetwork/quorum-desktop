@@ -3,7 +3,7 @@
 *The search feature has been built completely by Claude Code with human supervision*
 
 ## 📋 Overview
-Complete implementation of a Discord-like global search feature for Quilibrium Desktop. This document provides comprehensive technical details for developers working on the search system.
+Complete implementation of a Discord-like global search feature for Quorum Desktop. This document provides comprehensive technical details for developers working on the search system.
 
 ## ✅ Implementation Status: **COMPLETE**
 
@@ -16,6 +16,11 @@ The global search feature is fully implemented and functional with:
 - ✅ 3-character minimum for better performance
 - ✅ DM search functionality with proper navigation
 - ✅ Component architecture to handle both spaces and DMs safely
+
+
+## TO DO
+
+- Search perfomance optimization - see .agents\tasks\search-performance-optimization.md
 
 ## 🏗️ Architecture Overview
 
