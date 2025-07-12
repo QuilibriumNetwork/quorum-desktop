@@ -65,35 +65,20 @@ msgstr "{role} - {count}"
 msgid "No Role - {count}"
 msgstr "Aucun rôle - {count}"
 
-#~ msgid "{0} {1} for {query}"
-#~ msgstr "{0} {1} pour {query}"
-
 #. placeholder {0}: results.length
 #: src/components/search/SearchResults.tsx:165
 msgid "{0} result"
 msgstr "{0} résultat"
 
 #: src/components/search/SearchResults.tsx:165
-#~ msgid "{0} result for \"{query}\""
-#~ msgstr "{0} résultat pour \"{query}\""
-
 #: src/components/search/SearchResults.tsx:165
-#~ msgid "{0} result for {query}"
-#~ msgstr "{0} résultat pour {query}"
-
 #. placeholder {0}: results.length
 #: src/components/search/SearchResults.tsx:166
 msgid "{0} results"
 msgstr "{0} résultats"
 
 #: src/components/search/SearchResults.tsx:166
-#~ msgid "{0} results for \"{query}\""
-#~ msgstr "{0} résultats pour \"{query}\""
-
 #: src/components/search/SearchResults.tsx:166
-#~ msgid "{0} results for {query}"
-#~ msgstr "{0} résultats pour {query}"
-
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
 msgstr "Adresse du compte"
@@ -539,13 +524,7 @@ msgid "No messages found"
 msgstr "Aucun message trouvé"
 
 #: src/components/search/SearchResults.tsx:132
-#~ msgid "No messages found for \"{query}\""
-#~ msgstr "Aucun message trouvé pour \"{query}\""
-
 #: src/components/search/SearchResults.tsx:132
-#~ msgid "No messages found for {query}"
-#~ msgstr "Aucun message trouvé pour {query}"
-
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
 msgstr "Non-répudiation"
@@ -632,13 +611,7 @@ msgid "Requirements:"
 msgstr "Exigences:"
 
 #: src/components/search/SearchResults.tsx:164
-#~ msgid "result"
-#~ msgstr "résultat"
-
 #: src/components/search/SearchResults.tsx:164
-#~ msgid "results"
-#~ msgstr "résultats"
-
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
 msgid "Roles"
@@ -846,9 +819,6 @@ msgstr "Bienvenue à Quorum !"
 #: src/components/direct/EmptyDirectMessage.tsx:24
 msgid "What's on your mind today?"
 msgstr "Qu'avez-vous en tête aujourd'hui ?"
-
-#~ msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of Spaces, as this is a configuration option by the Space owner."
-#~ msgstr "Lorsqu'elle est activée, les messages directs ne sont pas signés par votre clé utilisateur. Cela améliore les performances, mais peut permettre à l'utilisateur avec qui vous communiquez de falsifier des messages comme s'ils provenaient de vous. Ils ne peuvent pas falsifier des messages à d'autres personnes comme s'ils provenaient de vous. Cela n'affecte pas la répudiabilité des Spaces, car c'est une option de configuration par le propriétaire du Space."
 
 #: src/components/modals/UserSettingsModal.tsx:392
 msgid "When enabled, direct messages are not signed by your user key..."
