@@ -70,10 +70,14 @@ msgid "No Role - {count}"
 msgstr "Geen rol - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? t`result` : t`results`
-#: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for {query}"
-msgstr "{0} {1} voor {query}"
+#: src/components/search/SearchResults.tsx:165
+msgid "{0} result"
+msgstr "{0} resultaat"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:166
+msgid "{0} results"
+msgstr "{0} resultaten"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -575,8 +579,8 @@ msgid "New Direct Message"
 msgstr "Nieuwe Directe Bericht"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for {query}"
-msgstr "Geen berichten gevonden voor {query}"
+msgid "No messages found"
+msgstr "Geen berichten gevonden"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -691,14 +695,6 @@ msgstr ""
 #: src/components/channel/SpaceEditor.tsx:767
 msgid "Requirements:"
 msgstr "Vereisten:"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "result"
-msgstr "resultaat"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "results"
-msgstr "resultaten"
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
@@ -1005,8 +1001,29 @@ msgstr "Je bent uitgenodigd om een Space te betreden"
 #~ msgid "{0} {1} for {query}"
 #~ msgstr "{0} {1} voor {query}"
 
+#~ msgid "{0} result for \"{query}\""
+#~ msgstr "{0} result for \"{query}\""
+
+#~ msgid "{0} result for {query}"
+#~ msgstr "{0} resultaat voor {query}"
+
+#~ msgid "{0} results for \"{query}\""
+#~ msgstr "{0} results for \"{query}\""
+
+#~ msgid "{0} results for {query}"
+#~ msgstr "{0} resultaten voor {query}"
+
+#~ msgid "No messages found for \"{query}\""
+#~ msgstr "No messages found for \"{query}\""
+
 #~ msgid "No messages found for {query}"
 #~ msgstr "Geen berichten gevonden voor {query}"
+
+#~ msgid "result"
+#~ msgstr "resultaat"
+
+#~ msgid "results"
+#~ msgstr "resultaten"
 
 #~ msgid ""
 #~ "When enabled, direct messages are not signed by your user key. This improves"

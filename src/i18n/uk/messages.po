@@ -70,10 +70,14 @@ msgid "No Role - {count}"
 msgstr "Без ролі - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? t`result` : t`results`
-#: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for {query}"
-msgstr "{0} {1} для {query}"
+#: src/components/search/SearchResults.tsx:165
+msgid "{0} result"
+msgstr "{0} результат"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:166
+msgid "{0} results"
+msgstr "{0} результати"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -572,8 +576,8 @@ msgid "New Direct Message"
 msgstr "Новий прямий повідомлення"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for {query}"
-msgstr "Повідомлень не знайдено для {query}"
+msgid "No messages found"
+msgstr "Повідомлень не знайдено"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -687,14 +691,6 @@ msgstr ""
 #: src/components/channel/SpaceEditor.tsx:767
 msgid "Requirements:"
 msgstr "Вимоги:"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "result"
-msgstr "результат"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "results"
-msgstr "результати"
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
@@ -1001,8 +997,29 @@ msgstr "Вас запросили приєднатися до Простору"
 #~ msgid "{0} {1} for {query}"
 #~ msgstr "{0} {1} для {query}"
 
+#~ msgid "{0} result for \"{query}\""
+#~ msgstr "{0} result for \"{query}\""
+
+#~ msgid "{0} result for {query}"
+#~ msgstr "{0} результат для {query}"
+
+#~ msgid "{0} results for \"{query}\""
+#~ msgstr "{0} results for \"{query}\""
+
+#~ msgid "{0} results for {query}"
+#~ msgstr "{0} результати для {query}"
+
+#~ msgid "No messages found for \"{query}\""
+#~ msgstr "No messages found for \"{query}\""
+
 #~ msgid "No messages found for {query}"
 #~ msgstr "Повідомлень не знайдено для {query}"
+
+#~ msgid "result"
+#~ msgstr "результат"
+
+#~ msgid "results"
+#~ msgstr "результати"
 
 #~ msgid ""
 #~ "When enabled, direct messages are not signed by your user key. This improves"

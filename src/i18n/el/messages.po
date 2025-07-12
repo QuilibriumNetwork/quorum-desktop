@@ -70,10 +70,14 @@ msgid "No Role - {count}"
 msgstr "Χωρίς Ρόλο - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? t`result` : t`results`
-#: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for {query}"
-msgstr "{0} {1} για {query}"
+#: src/components/search/SearchResults.tsx:165
+msgid "{0} result"
+msgstr "{0} αποτέλεσμα"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:166
+msgid "{0} results"
+msgstr "{0} αποτελέσματα"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -579,8 +583,8 @@ msgid "New Direct Message"
 msgstr "Νέο Άμεσο Μήνυμα"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for {query}"
-msgstr "Δεν βρέθηκαν μηνύματα για {query}"
+msgid "No messages found"
+msgstr "Δεν βρέθηκαν μηνύματα"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -695,14 +699,6 @@ msgstr ""
 #: src/components/channel/SpaceEditor.tsx:767
 msgid "Requirements:"
 msgstr "Απαιτήσεις:"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "result"
-msgstr "αποτέλεσμα"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "results"
-msgstr "αποτελέσματα"
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
@@ -1012,8 +1008,29 @@ msgstr "Έχεις προσκληθεί να ενταχθείς σε ένα Spac
 #~ msgid "{0} {1} for {query}"
 #~ msgstr "{0} {1} για {query}"
 
+#~ msgid "{0} result for \"{query}\""
+#~ msgstr "{0} result for \"{query}\""
+
+#~ msgid "{0} result for {query}"
+#~ msgstr "{0} αποτέλεσμα για {query}"
+
+#~ msgid "{0} results for \"{query}\""
+#~ msgstr "{0} results for \"{query}\""
+
+#~ msgid "{0} results for {query}"
+#~ msgstr "{0} αποτελέσματα για {query}"
+
+#~ msgid "No messages found for \"{query}\""
+#~ msgstr "No messages found for \"{query}\""
+
 #~ msgid "No messages found for {query}"
 #~ msgstr "Δεν βρέθηκαν μηνύματα για {query}"
+
+#~ msgid "result"
+#~ msgstr "αποτέλεσμα"
+
+#~ msgid "results"
+#~ msgstr "αποτελέσματα"
 
 #~ msgid ""
 #~ "When enabled, direct messages are not signed by your user key. This improves"

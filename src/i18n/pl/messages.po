@@ -70,10 +70,14 @@ msgid "No Role - {count}"
 msgstr "Brak roli - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? t`result` : t`results`
-#: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for {query}"
-msgstr "{0} {1} dla {query}"
+#: src/components/search/SearchResults.tsx:165
+msgid "{0} result"
+msgstr "{0} wynik"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:166
+msgid "{0} results"
+msgstr "{0} wyniki"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -573,8 +577,8 @@ msgid "New Direct Message"
 msgstr "Nowa wiadomość bezpośrednia"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for {query}"
-msgstr "Nie znaleziono wiadomości dla {query}"
+msgid "No messages found"
+msgstr "Nie znaleziono wiadomości"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -690,14 +694,6 @@ msgstr ""
 #: src/components/channel/SpaceEditor.tsx:767
 msgid "Requirements:"
 msgstr "Wymagania:"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "result"
-msgstr "wynik"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "results"
-msgstr "wyniki"
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
@@ -1005,8 +1001,29 @@ msgstr "Zostałeś zaproszony do dołączenia do Przestrzeni"
 #~ msgid "{0} {1} for {query}"
 #~ msgstr "{0} {1} dla {query}"
 
+#~ msgid "{0} result for \"{query}\""
+#~ msgstr "{0} result for \"{query}\""
+
+#~ msgid "{0} result for {query}"
+#~ msgstr "{0} wynik dla {query}"
+
+#~ msgid "{0} results for \"{query}\""
+#~ msgstr "{0} results for \"{query}\""
+
+#~ msgid "{0} results for {query}"
+#~ msgstr "{0} wyniki dla {query}"
+
+#~ msgid "No messages found for \"{query}\""
+#~ msgstr "No messages found for \"{query}\""
+
 #~ msgid "No messages found for {query}"
 #~ msgstr "Nie znaleziono wiadomości dla {query}"
+
+#~ msgid "result"
+#~ msgstr "wynik"
+
+#~ msgid "results"
+#~ msgstr "wyniki"
 
 #~ msgid ""
 #~ "When enabled, direct messages are not signed by your user key. This improves"

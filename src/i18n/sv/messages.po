@@ -70,10 +70,14 @@ msgid "No Role - {count}"
 msgstr "Ingen roll - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? t`result` : t`results`
-#: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for {query}"
-msgstr "{0} {1} för {query}"
+#: src/components/search/SearchResults.tsx:165
+msgid "{0} result"
+msgstr "{0} resultat"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:166
+msgid "{0} results"
+msgstr "{0} resultat"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -573,8 +577,8 @@ msgid "New Direct Message"
 msgstr "Ny direktmeddelande"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for {query}"
-msgstr "Inga meddelanden hittades för {query}"
+msgid "No messages found"
+msgstr "Inga meddelanden hittades"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -690,14 +694,6 @@ msgstr ""
 #: src/components/channel/SpaceEditor.tsx:767
 msgid "Requirements:"
 msgstr "Krav:"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "result"
-msgstr "resultat"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "results"
-msgstr "resultat"
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
@@ -1003,8 +999,29 @@ msgstr "Du har blivit inbjuden att gå med i en Space"
 #~ msgid "{0} {1} for {query}"
 #~ msgstr "{0} {1} för {query}"
 
+#~ msgid "{0} result for \"{query}\""
+#~ msgstr "{0} result for \"{query}\""
+
+#~ msgid "{0} result for {query}"
+#~ msgstr "{0} resultat för {query}"
+
+#~ msgid "{0} results for \"{query}\""
+#~ msgstr "{0} results for \"{query}\""
+
+#~ msgid "{0} results for {query}"
+#~ msgstr "{0} resultat för {query}"
+
+#~ msgid "No messages found for \"{query}\""
+#~ msgstr "No messages found for \"{query}\""
+
 #~ msgid "No messages found for {query}"
 #~ msgstr "Inga meddelanden hittades för {query}"
+
+#~ msgid "result"
+#~ msgstr "resultat"
+
+#~ msgid "results"
+#~ msgstr "resultat"
 
 #~ msgid ""
 #~ "When enabled, direct messages are not signed by your user key. This improves"

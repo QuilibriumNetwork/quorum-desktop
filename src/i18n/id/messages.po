@@ -70,10 +70,14 @@ msgid "No Role - {count}"
 msgstr "Tidak Ada Peran - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? t`result` : t`results`
-#: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for {query}"
-msgstr "{0} {1} untuk {query}"
+#: src/components/search/SearchResults.tsx:165
+msgid "{0} result"
+msgstr "{0} hasil"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:166
+msgid "{0} results"
+msgstr "{0} hasil"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -572,8 +576,8 @@ msgid "New Direct Message"
 msgstr "Pesan Langsung Baru"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for {query}"
-msgstr "Tidak ada pesan ditemukan untuk {query}"
+msgid "No messages found"
+msgstr "Tidak ada pesan yang ditemukan"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -687,14 +691,6 @@ msgstr ""
 #: src/components/channel/SpaceEditor.tsx:767
 msgid "Requirements:"
 msgstr "Persyaratan:"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "result"
-msgstr "hasil"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "results"
-msgstr "hasil-hasil"
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
@@ -1002,8 +998,29 @@ msgstr "Kamu telah diundang untuk bergabung dengan Space"
 #~ msgid "{0} {1} for {query}"
 #~ msgstr "{0} {1} untuk {query}"
 
+#~ msgid "{0} result for \"{query}\""
+#~ msgstr "{0} result for \"{query}\""
+
+#~ msgid "{0} result for {query}"
+#~ msgstr "{0} hasil untuk {query}"
+
+#~ msgid "{0} results for \"{query}\""
+#~ msgstr "{0} results for \"{query}\""
+
+#~ msgid "{0} results for {query}"
+#~ msgstr "{0} hasil untuk {query}"
+
+#~ msgid "No messages found for \"{query}\""
+#~ msgstr "No messages found for \"{query}\""
+
 #~ msgid "No messages found for {query}"
 #~ msgstr "Tidak ada pesan ditemukan untuk {query}"
+
+#~ msgid "result"
+#~ msgstr "hasil"
+
+#~ msgid "results"
+#~ msgstr "hasil-hasil"
 
 #~ msgid ""
 #~ "When enabled, direct messages are not signed by your user key. This improves"

@@ -68,10 +68,14 @@ msgid "No Role - {count}"
 msgstr "無角色 - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? t`result` : t`results`
-#: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for {query}"
-msgstr "{0} {1} 為 {query}"
+#: src/components/search/SearchResults.tsx:165
+msgid "{0} result"
+msgstr "{0} 結果"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:166
+msgid "{0} results"
+msgstr "{0} 結果"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -540,8 +544,8 @@ msgid "New Direct Message"
 msgstr "新私訊"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for {query}"
-msgstr "找不到任何訊息 {query}"
+msgid "No messages found"
+msgstr "未找到消息"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -641,14 +645,6 @@ msgstr "可否認性是一個設置，使這個空間中的對話無法驗證為
 #: src/components/channel/SpaceEditor.tsx:767
 msgid "Requirements:"
 msgstr "要求："
-
-#: src/components/search/SearchResults.tsx:164
-msgid "result"
-msgstr "結果"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "results"
-msgstr "結果們"
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
@@ -931,8 +927,29 @@ msgstr "你已被邀請加入一個 Space"
 #~ msgid "{0} {1} for {query}"
 #~ msgstr "{0} {1} 為 {query}"
 
+#~ msgid "{0} result for \"{query}\""
+#~ msgstr "{0} result for \"{query}\""
+
+#~ msgid "{0} result for {query}"
+#~ msgstr "{0} 結果為 {query}"
+
+#~ msgid "{0} results for \"{query}\""
+#~ msgstr "{0} results for \"{query}\""
+
+#~ msgid "{0} results for {query}"
+#~ msgstr "{0} 結果為 {query}"
+
+#~ msgid "No messages found for \"{query}\""
+#~ msgstr "未找到 \"{query}\" 的消息"
+
 #~ msgid "No messages found for {query}"
 #~ msgstr "找不到 {query}\" 的訊息"
+
+#~ msgid "result"
+#~ msgstr "結果"
+
+#~ msgid "results"
+#~ msgstr "結果們"
 
 #~ msgid ""
 #~ "When enabled, direct messages are not signed by your user key. This improves"

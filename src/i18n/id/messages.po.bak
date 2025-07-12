@@ -65,15 +65,34 @@ msgstr "{role} - {count}"
 msgid "No Role - {count}"
 msgstr "Tidak Ada Peran - {count}"
 
-#. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? t`result` : t`results`
-#: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for {query}"
-msgstr ""
-
-#: src/components/search/SearchResults.tsx:164
 #~ msgid "{0} {1} for {query}"
 #~ msgstr "{0} {1} untuk {query}"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:165
+msgid "{0} result"
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:165
+#~ msgid "{0} result for \"{query}\""
+#~ msgstr ""
+
+#: src/components/search/SearchResults.tsx:165
+#~ msgid "{0} result for {query}"
+#~ msgstr ""
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:166
+msgid "{0} results"
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:166
+#~ msgid "{0} results for \"{query}\""
+#~ msgstr ""
+
+#: src/components/search/SearchResults.tsx:166
+#~ msgid "{0} results for {query}"
+#~ msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -516,8 +535,12 @@ msgid "New Direct Message"
 msgstr "Pesan Langsung Baru"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for {query}"
+msgid "No messages found"
 msgstr ""
+
+#: src/components/search/SearchResults.tsx:132
+#~ msgid "No messages found for \"{query}\""
+#~ msgstr ""
 
 #: src/components/search/SearchResults.tsx:132
 #~ msgid "No messages found for {query}"
@@ -609,12 +632,12 @@ msgid "Requirements:"
 msgstr "Persyaratan:"
 
 #: src/components/search/SearchResults.tsx:164
-msgid "result"
-msgstr ""
+#~ msgid "result"
+#~ msgstr "hasil"
 
 #: src/components/search/SearchResults.tsx:164
-msgid "results"
-msgstr ""
+#~ msgid "results"
+#~ msgstr "hasil-hasil"
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508

@@ -70,10 +70,14 @@ msgid "No Role - {count}"
 msgstr "Bez úlohy - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? t`result` : t`results`
-#: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for {query}"
-msgstr "{0} {1} pre {query}"
+#: src/components/search/SearchResults.tsx:165
+msgid "{0} result"
+msgstr "{0} výsledok"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:166
+msgid "{0} results"
+msgstr "{0} výsledky"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -572,8 +576,8 @@ msgid "New Direct Message"
 msgstr "Nová priama správa"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for {query}"
-msgstr "Žiadne správy nenájdené pre {query}"
+msgid "No messages found"
+msgstr "Žiadne správy nenájdené"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -688,14 +692,6 @@ msgstr ""
 #: src/components/channel/SpaceEditor.tsx:767
 msgid "Requirements:"
 msgstr "Požiadavky:"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "result"
-msgstr "výsledok"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "results"
-msgstr "výsledky"
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
@@ -1001,8 +997,29 @@ msgstr "Boli ste pozvaní pripojiť sa k Space"
 #~ msgid "{0} {1} for {query}"
 #~ msgstr "{0} {1} pre {query}"
 
+#~ msgid "{0} result for \"{query}\""
+#~ msgstr "{0} result for \"{query}\""
+
+#~ msgid "{0} result for {query}"
+#~ msgstr "{0} výsledok pre {query}"
+
+#~ msgid "{0} results for \"{query}\""
+#~ msgstr "{0} results for \"{query}\""
+
+#~ msgid "{0} results for {query}"
+#~ msgstr "{0} výsledky pre {query}"
+
+#~ msgid "No messages found for \"{query}\""
+#~ msgstr "No messages found for \"{query}\""
+
 #~ msgid "No messages found for {query}"
 #~ msgstr "Nenašli sa žiadne správy pre {query}"
+
+#~ msgid "result"
+#~ msgstr "výsledok"
+
+#~ msgid "results"
+#~ msgstr "výsledky"
 
 #~ msgid ""
 #~ "When enabled, direct messages are not signed by your user key. This improves"

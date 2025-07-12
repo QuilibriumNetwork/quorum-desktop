@@ -70,10 +70,14 @@ msgid "No Role - {count}"
 msgstr "Нет роли - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? t`result` : t`results`
-#: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for {query}"
-msgstr "{0} {1} для {query}"
+#: src/components/search/SearchResults.tsx:165
+msgid "{0} result"
+msgstr "{0} результат"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:166
+msgid "{0} results"
+msgstr "{0} результатов"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -575,8 +579,8 @@ msgid "New Direct Message"
 msgstr "Новое прямое сообщение"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for {query}"
-msgstr "Сообщений не найдено для {query}"
+msgid "No messages found"
+msgstr "Сообщений не найдено"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -693,14 +697,6 @@ msgstr ""
 #: src/components/channel/SpaceEditor.tsx:767
 msgid "Requirements:"
 msgstr "Требования:"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "result"
-msgstr "результат"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "results"
-msgstr "результаты"
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
@@ -1012,8 +1008,29 @@ msgstr "Вас пригласили присоединиться к Space"
 #~ msgid "{0} {1} for {query}"
 #~ msgstr "{0} {1} для {query}"
 
+#~ msgid "{0} result for \"{query}\""
+#~ msgstr "{0} result for \"{query}\""
+
+#~ msgid "{0} result for {query}"
+#~ msgstr "{0} результат для {query}"
+
+#~ msgid "{0} results for \"{query}\""
+#~ msgstr "{0} results for \"{query}\""
+
+#~ msgid "{0} results for {query}"
+#~ msgstr "{0} результатов для {query}"
+
+#~ msgid "No messages found for \"{query}\""
+#~ msgstr "No messages found for \"{query}\""
+
 #~ msgid "No messages found for {query}"
 #~ msgstr "Сообщений не найдено для {query}"
+
+#~ msgid "result"
+#~ msgstr "результат"
+
+#~ msgid "results"
+#~ msgstr "результаты"
 
 #~ msgid ""
 #~ "When enabled, direct messages are not signed by your user key. This improves"

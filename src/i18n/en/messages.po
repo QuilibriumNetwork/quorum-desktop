@@ -65,15 +65,35 @@ msgstr "{role} - {count}"
 msgid "No Role - {count}"
 msgstr "No Role - {count}"
 
-#. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? t`result` : t`results`
-#: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for {query}"
-msgstr "{0} {1} for {query}"
-
 #: src/components/search/SearchResults.tsx:164
 #~ msgid "{0} {1} for {query}"
 #~ msgstr "{0} {1} for {query}"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:165
+msgid "{0} result"
+msgstr "{0} result"
+
+#: src/components/search/SearchResults.tsx:165
+#~ msgid "{0} result for \"{query}\""
+#~ msgstr "{0} result for \"{query}\""
+
+#: src/components/search/SearchResults.tsx:165
+#~ msgid "{0} result for {query}"
+#~ msgstr "{0} result for {query}"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:166
+msgid "{0} results"
+msgstr "{0} results"
+
+#: src/components/search/SearchResults.tsx:166
+#~ msgid "{0} results for \"{query}\""
+#~ msgstr "{0} results for \"{query}\""
+
+#: src/components/search/SearchResults.tsx:166
+#~ msgid "{0} results for {query}"
+#~ msgstr "{0} results for {query}"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -516,8 +536,12 @@ msgid "New Direct Message"
 msgstr "New Direct Message"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for {query}"
-msgstr "No messages found for {query}"
+msgid "No messages found"
+msgstr "No messages found"
+
+#: src/components/search/SearchResults.tsx:132
+#~ msgid "No messages found for \"{query}\""
+#~ msgstr "No messages found for \"{query}\""
 
 #: src/components/search/SearchResults.tsx:132
 #~ msgid "No messages found for {query}"
@@ -609,12 +633,12 @@ msgid "Requirements:"
 msgstr "Requirements:"
 
 #: src/components/search/SearchResults.tsx:164
-msgid "result"
-msgstr "result"
+#~ msgid "result"
+#~ msgstr "result"
 
 #: src/components/search/SearchResults.tsx:164
-msgid "results"
-msgstr "results"
+#~ msgid "results"
+#~ msgstr "results"
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508

@@ -129,7 +129,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       <div className="search-no-results">
         <FontAwesomeIcon icon={faSearch} className="empty-icon" />
         <p className="empty-message">
-          {t`No messages found for "${query}"`}
+          {t`No messages found`}
         </p>
         <p className="empty-hint">
           {t`Try different keywords or check your spelling`}
@@ -161,7 +161,10 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     >
       <div className="search-results-header">
         <span className="results-count">
-          {t`${results.length} ${results.length === 1 ? t`result` : t`results`} for "${query}"`}
+          {results.length === 1 
+            ? t`${results.length} result`
+            : t`${results.length} results`
+          }
         </span>
       </div>
       

@@ -70,10 +70,14 @@ msgid "No Role - {count}"
 msgstr "Nema uloge - {count}"
 
 #. placeholder {0}: results.length
-#. placeholder {1}: results.length === 1 ? t`result` : t`results`
-#: src/components/search/SearchResults.tsx:164
-msgid "{0} {1} for {query}"
-msgstr "{0} {1} za {query}"
+#: src/components/search/SearchResults.tsx:165
+msgid "{0} result"
+msgstr "{0} rezultat"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:166
+msgid "{0} results"
+msgstr "{0} rezultati"
 
 #: src/components/modals/UserSettingsModal.tsx:253
 msgid "Account Address"
@@ -570,8 +574,8 @@ msgid "New Direct Message"
 msgstr "Nova direktna poruka"
 
 #: src/components/search/SearchResults.tsx:132
-msgid "No messages found for {query}"
-msgstr "Nema poruka za {query}"
+msgid "No messages found"
+msgstr "Nema poruka"
 
 #: src/components/modals/UserSettingsModal.tsx:380
 msgid "Non-repudiability"
@@ -685,14 +689,6 @@ msgstr ""
 #: src/components/channel/SpaceEditor.tsx:767
 msgid "Requirements:"
 msgstr "Zahtevi:"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "result"
-msgstr "rezultat"
-
-#: src/components/search/SearchResults.tsx:164
-msgid "results"
-msgstr "rezultati"
 
 #: src/components/channel/SpaceEditor.tsx:310
 #: src/components/channel/SpaceEditor.tsx:508
@@ -997,8 +993,29 @@ msgstr "Pozvani ste da se pridružite Space-u"
 #~ msgid "{0} {1} for {query}"
 #~ msgstr "{0} {1} za {query}"
 
+#~ msgid "{0} result for \"{query}\""
+#~ msgstr "{0} result for \"{query}\""
+
+#~ msgid "{0} result for {query}"
+#~ msgstr "{0} rezultat za {query}"
+
+#~ msgid "{0} results for \"{query}\""
+#~ msgstr "{0} results for \"{query}\""
+
+#~ msgid "{0} results for {query}"
+#~ msgstr "{0} rezultati za {query}"
+
+#~ msgid "No messages found for \"{query}\""
+#~ msgstr "No messages found for \"{query}\""
+
 #~ msgid "No messages found for {query}"
 #~ msgstr "Nema poruka za {query}"
+
+#~ msgid "result"
+#~ msgstr "rezultat"
+
+#~ msgid "results"
+#~ msgstr "rezultati"
 
 #~ msgid ""
 #~ "When enabled, direct messages are not signed by your user key. This improves"
