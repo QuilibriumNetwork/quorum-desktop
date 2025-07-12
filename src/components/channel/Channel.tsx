@@ -256,7 +256,7 @@ const Channel: React.FC<ChannelProps> = ({
     state.pendingMessage.split('').filter((c) => c == '\n').length + 1;
 
   return (
-    <div className="channel">
+    <div className="chat-container">
       <div className="flex flex-col">
         <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] text-main">
           <span>

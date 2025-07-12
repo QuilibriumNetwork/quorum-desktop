@@ -33,6 +33,15 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Preserve search input focus when component mounts
+  useEffect(() => {
+    // Ensure search input keeps focus when results appear
+    const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+    if (searchInput && document.activeElement !== searchInput) {
+      searchInput.focus();
+    }
+  }, []); // Run only on mount
+
   // Adjust position to prevent going off-screen
   useEffect(() => {
     if (containerRef.current) {
@@ -47,16 +56,33 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     }
   }, [results, query]);
 
-  // Close on click outside
+  // Close on click outside (but not on search bar)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        onClose?.();
+      const target = event.target as Node;
+      
+      // Don't close if clicking on the search results container
+      if (containerRef.current && containerRef.current.contains(target)) {
+        return;
       }
+      
+      // Don't close if clicking on the search bar or its children
+      const searchBar = document.querySelector('.search-bar');
+      if (searchBar && searchBar.contains(target)) {
+        return;
+      }
+      
+      // Close if clicking anywhere else
+      onClose?.();
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    // Use a slight delay to avoid conflicts with search bar focus
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('mousedown', handleClickOutside);
+    }, 100);
+
     return () => {
+      clearTimeout(timeoutId);
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [onClose]);
@@ -118,6 +144,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
         ref={containerRef}
         className={`search-results ${className || ''}`}
         style={{ maxHeight }}
+        tabIndex={-1}
       >
         {renderEmptyState()}
       </div>
@@ -129,6 +156,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       ref={containerRef}
       className={`search-results ${className || ''}`}
       style={{ maxHeight }}
+      tabIndex={-1}
     >
       <div className="search-results-header">
         <span className="results-count">
@@ -152,6 +180,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
           <Virtuoso
             style={{ height: maxHeight - 60 }}
             totalCount={results.length}
+            tabIndex={-1}
             itemContent={(index) => (
               <SearchResultItem
                 key={`${results[index].message.messageId}-${index}`}

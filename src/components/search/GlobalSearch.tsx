@@ -48,13 +48,13 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
 
   // Handle navigation to message
   const handleNavigate = (spaceId: string, channelId: string, messageId: string) => {
-    navigate(`/space/${spaceId}/channel/${channelId}#${messageId}`);
+    navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
   };
 
   // Handle query changes
   const handleQueryChange = (newQuery: string) => {
     setQuery(newQuery);
-    setShowResults(!!newQuery.trim());
+    setShowResults(newQuery.trim().length >= 3);
   };
 
   // Handle suggestion selection

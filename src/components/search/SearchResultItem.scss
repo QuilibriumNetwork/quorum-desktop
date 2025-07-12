@@ -36,19 +36,23 @@
 }
 
 .result-type-icon,
-.result-user-icon,
-.result-date {
+.result-user-icon, {
   font-size: 10px;
   color: var(--color-text-muted);
 }
 
+.result-date {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
 .result-channel {
-  color: var(--accent-500);
+  color: var(--color-text-main);
   font-weight: 500;
 }
 
 .result-sender {
-  color: rgb(var(--color-text-main));
+  color: var(--color-text-main);
   font-weight: 500;
 }
 
@@ -71,7 +75,7 @@
 }
 
 .result-text {
-  color: rgb(var(--color-text-main));
+  color: var(--color-text-main);
   font-size: 14px;
   line-height: 1.4;
   word-wrap: break-word;
@@ -94,7 +98,7 @@
 .highlight-term {
   font-size: 11px;
   background-color: var(--surface-4);
-  color: rgb(var(--color-text-main));
+  color: var(--color-text-main);
   padding: 2px 6px;
   border-radius: 8px;
   font-weight: 500;

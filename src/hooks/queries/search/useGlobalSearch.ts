@@ -56,7 +56,7 @@ export const useGlobalSearch = ({
   } = useQuery({
     queryKey,
     queryFn,
-    enabled: enabled && !!debouncedQuery.trim(),
+    enabled: enabled && debouncedQuery.trim().length >= 3,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
   });

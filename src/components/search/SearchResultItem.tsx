@@ -111,15 +111,15 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
             icon={getMessageTypeIcon(message)} 
             className="result-type-icon"
           />
-          <span className="result-channel">
-            #{channelName}
+          <span className="result-channel mr-2">
+            {channelName}
           </span>
-          <span className="result-separator">•</span>
+        
           <FontAwesomeIcon 
             icon={faUser} 
             className="result-user-icon"
           />
-          <span className="result-sender">
+          <span className=" result-sender">
             {displayName}
           </span>
         </div>

@@ -1,3 +1,14 @@
+
+.chat-container {
+  flex: 1 0;
+  border-top-left-radius: 10px;
+  background: var(--color-bg-chat);
+  z-index: 1;
+  display: flex;
+  height: calc(100vh - 50px);
+  flex-direction: row;
+}
+
 .message-name-mentions-you,
 .message-name-mentions-role {
   padding: 2px 10px;

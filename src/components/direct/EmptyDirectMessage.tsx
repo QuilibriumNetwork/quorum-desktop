@@ -11,7 +11,7 @@ export const EmptyDirectMessage = () => {
   const { data: conversations } = useConversations({ type: 'direct' });
 
   return (
-    <div className="direct-message">
+    <div className="chat-container">
       <div className="flex w-full flex-col justify-around">
         <div>
           <div className="flex flex-row justify-around">

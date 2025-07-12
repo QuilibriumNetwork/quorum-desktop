@@ -93,6 +93,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     onQueryChange(value);
     setSelectedSuggestionIndex(-1);
     setShowSuggestions(value.length > 0 && suggestions.length > 0);
+    
+    // Ensure input stays focused after state changes
+    setTimeout(() => {
+      if (inputRef.current && document.activeElement !== inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 0);
   };
 
   const handleInputFocus = () => {

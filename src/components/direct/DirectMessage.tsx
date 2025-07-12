@@ -197,7 +197,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     : 'url(' + userIcon + ')';
   console.log('userIcon', icon);
   return (
-    <div className="direct-message">
+    <div className="chat-container">
       <div className="flex flex-col">
         <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] text-main flex flex-row justify-between">
           <div className="flex flex-row">

@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import * as moment from 'moment-timezone';
 import { Message } from './Message';
 import {
@@ -63,6 +64,7 @@ export const MessageList = ({
     useState<string>();
   const virtuoso = useRef<VirtuosoHandle>(null);
   const [init, setInit] = useState(false);
+  const location = useLocation();
 
   const mapSenderToUser = (senderId: string) => {
     return (
@@ -112,18 +114,13 @@ export const MessageList = ({
   useEffect(() => {
     if (!init || messageList.length === 0) return;
 
-    // Capture and remove hash to prevent browser's default scroll
-    const hash = window.location.hash;
+    // Capture hash but delay removal to allow Message components to detect it
+    const hash = location.hash;
     if (hash.startsWith('#msg-')) {
-      history.replaceState(
-        null,
-        '',
-        window.location.pathname + window.location.search
-      );
-
       const msgId = hash.replace('#msg-', '');
       const index = messageList.findIndex((m) => m.messageId === msgId);
       if (index !== -1 && virtuoso.current) {
+        // Scroll to the message
         setTimeout(() => {
           virtuoso.current?.scrollToIndex({
             index,
@@ -131,9 +128,18 @@ export const MessageList = ({
             behavior: 'smooth',
           });
         }, 200);
+        
+        // Remove hash after Message components have had time to detect it
+        setTimeout(() => {
+          history.replaceState(
+            null,
+            '',
+            window.location.pathname + window.location.search
+          );
+        }, 1000);
       }
     }
-  }, [init, messageList]);
+  }, [init, messageList, location.hash]);
 
   return (
     <Virtuoso

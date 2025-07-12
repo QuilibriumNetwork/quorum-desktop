@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import * as moment from 'moment-timezone';
 import * as linkify from 'linkifyjs';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -92,6 +93,7 @@ export const Message = ({
 }: MessageProps) => {
   const user = usePasskeysContext();
   const { spaceId } = useParams();
+  const location = useLocation();
   const customEmojis = useMemo(() => {
     if (!customEmoji) return [];
 
@@ -105,8 +107,8 @@ export const Message = ({
   }, [customEmoji]);
   let sender = mapSenderToUser(message.content?.senderId);
   const isHashTarget = useMemo(() => {
-    return window.location.hash === `#msg-${message.messageId}`;
-  }, [message.messageId]);
+    return location.hash === `#msg-${message.messageId}`;
+  }, [message.messageId, location.hash]);
   const time = moment.tz(
     message.createdDate,
     Intl.DateTimeFormat().resolvedOptions().timeZone
