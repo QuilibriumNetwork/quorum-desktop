@@ -42,6 +42,15 @@ h1 {
   line-height: 1.1;
 }
 
+/* === SEARCH HIGHLIGHTING === */
+mark {
+  background-color: rgba(var(--accent-rgb), 0.5) !important;
+  color: var(--color-text-strong) !important;
+  padding: 1px 2px;
+  border-radius: 2px;
+  font-weight: 500;
+}
+
 /* === UTILITIES === */
 .small-caps {
   font-variant-caps: all-small-caps;

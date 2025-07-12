@@ -3,15 +3,15 @@
   border-bottom: 1px solid var(--surface-3);
   cursor: pointer;
   transition: all 0.2s ease;
-  background: transparent;
+  background-color: transparent;
 
   &:hover {
-    background: var(--surface-2);
+    background-color: var(--surface-2);
   }
 
   &:focus {
     outline: none;
-    background: var(--surface-2);
+    background-color: var(--surface-2);
     box-shadow: inset 2px 0 0 var(--accent-500);
   }
 
@@ -25,7 +25,6 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 8px;
-   background: var(--surface-0);
 }
 
 .result-meta {
@@ -37,7 +36,8 @@
 }
 
 .result-type-icon,
-.result-user-icon {
+.result-user-icon,
+.result-date {
   font-size: 10px;
   color: var(--color-text-muted);
 }
@@ -57,14 +57,10 @@
   font-size: 10px;
 }
 
-.result-date {
-  color: var(--color-text-muted);
-}
-
 .result-score {
   font-size: 11px;
   color: var(--color-text-muted);
-  background: var(--surface-4);
+  background-color: var(--surface-4);
   padding: 2px 6px;
   border-radius: 10px;
   font-weight: 500;
@@ -80,14 +76,6 @@
   line-height: 1.4;
   word-wrap: break-word;
 
-  // Highlight styling for search terms
-  :global(mark) {
-    background: rgba(var(--accent-500), 0.3);
-    color: var(--color-text-strong);
-    padding: 1px 2px;
-    border-radius: 2px;
-    font-weight: 500;
-  }
 }
 
 .result-highlights {
@@ -105,7 +93,7 @@
 
 .highlight-term {
   font-size: 11px;
-  background: var(--surface-4);
+  background-color: var(--surface-4);
   color: rgb(var(--color-text-main));
   padding: 2px 6px;
   border-radius: 8px;
@@ -120,11 +108,11 @@
 
 // Dark theme adjustments
 .dark .result-score {
-  background: var(--surface-6);
+  background-color: var(--surface-6);
 }
 
 .dark .highlight-term {
-  background: var(--surface-6);
+  background-color: var(--surface-6);
 }
 
 // Responsive design

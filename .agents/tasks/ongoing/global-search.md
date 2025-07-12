@@ -152,7 +152,7 @@ src/
 
 ### Context Awareness
 - DM View: "Search in Direct Messages"
-- Space View: "Search in [Space Name]"
+- Space View: "Search in this Space"
 - Visual indicators for result source context
 
 ## 🔍 Search Algorithm Design

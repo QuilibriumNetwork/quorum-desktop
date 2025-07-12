@@ -115,10 +115,6 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
             #{channelName}
           </span>
           <span className="result-separator">•</span>
-          <span className="result-space">
-            {spaceName}
-          </span>
-          <span className="result-separator">•</span>
           <FontAwesomeIcon 
             icon={faUser} 
             className="result-user-icon"
@@ -126,13 +122,6 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
           <span className="result-sender">
             {displayName}
           </span>
-          <span className="result-separator">•</span>
-          <span className="result-date">
-            {formatDate(message.createdDate)}
-          </span>
-        </div>
-        <div className="result-score">
-          {Math.round(score * 100)}%
         </div>
       </div>
       
@@ -145,21 +134,11 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = ({
         />
       </div>
       
-      {highlights.length > 0 && (
-        <div className="result-highlights">
-          <span className="highlights-label">Matches:</span>
-          {highlights.slice(0, 3).map((term, index) => (
-            <span key={index} className="highlight-term">
-              {term}
-            </span>
-          ))}
-          {highlights.length > 3 && (
-            <span className="highlights-more">
-              +{highlights.length - 3} more
-            </span>
-          )}
-        </div>
-      )}
+      <div className="result-footer">
+        <span className="result-date">
+          {formatDate(message.createdDate)}
+        </span>
+      </div>
     </div>
   );
 };
