@@ -25,6 +25,18 @@ The main dependencies are:
 - Follow the existing coding style.
 - Make sure to run `yarn lint` and `yarn format` before committing.
 
+## Claude Development Resources
+
+**Important locations for Claude:**
+
+- **`.claude/` folder**: Contains all Claude-related resources and context
+- **`.claude/screenshots/`**: Screenshots for debugging/reference (when mentioned, use the image with the highest number in filename)
+- **`.claude/tasks/`**: Task management with 3 folders:
+  - `done/`: Completed tasks
+  - `ongoing/`: Current work
+  - `todo/`: Future tasks
+- **Component README.md files**: When working with components, check for README.md files in component directories for context and documentation
+
 ## Styling
 
 The project uses Tailwind CSS for styling. The configuration is in `tailwind.config.js` and the main CSS file is `src/index.css`.

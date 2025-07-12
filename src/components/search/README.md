@@ -20,7 +20,7 @@ The global search feature is fully implemented and functional with:
 
 ## TO DO
 
-- Search perfomance optimization - see .agents\tasks\search-performance-optimization.md
+- Search perfomance optimization - see .claude\tasks\search-performance-optimization.md
 
 ## 🏗️ Architecture Overview
 

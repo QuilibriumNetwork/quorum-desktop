@@ -29,14 +29,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
     enabled: !!message.content.senderId 
   });
 
-  // Get contact info for DMs (the other party in the conversation)
-  const { data: contactInfo } = useUserInfo({
-    address: message.spaceId,
-    enabled: !!message.spaceId
-  });
-
   const displayName = userInfo?.userProfile?.displayName || userInfo?.userProfile?.display_name || 'Unknown User';
-  const contactName = contactInfo?.userProfile?.displayName || contactInfo?.userProfile?.display_name || 'Unknown Contact';
   
   return <SearchResultItemContent 
     {...result}
@@ -45,7 +38,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
     className={className}
     displayName={displayName}
     spaceName="Direct Message"
-    channelName={contactName}
+    channelName={displayName} // Use sender name for both
     isDM={true}
   />;
 };
@@ -194,20 +187,24 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
       <div className="result-header">
         <div className="result-meta">
           <FontAwesomeIcon 
-            icon={getMessageTypeIcon(message)} 
+            icon={isDM ? faUser : getMessageTypeIcon(message)} 
             className="result-type-icon"
           />
           <span className="result-channel mr-2">
-            {isDM ? `💬 ${channelName}` : `#${channelName}`}
+            {channelName}
           </span>
         
-          <FontAwesomeIcon 
-            icon={faUser} 
-            className="result-user-icon"
-          />
-          <span className=" result-sender">
-            {displayName}
-          </span>
+          {!isDM && (
+            <>
+              <FontAwesomeIcon 
+                icon={faUser} 
+                className="result-user-icon"
+              />
+              <span className=" result-sender">
+                {displayName}
+              </span>
+            </>
+          )}
         </div>
       </div>
       
