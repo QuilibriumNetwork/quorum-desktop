@@ -1,27 +1,27 @@
 .search-results {
   position: absolute;
   top: 100%;
-  left: 0;
   right: 0;
-  background: rgb(var(--surface-01));
-  border: 1px solid rgb(var(--surface-04));
+  background: var(--surface-00);
   border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   margin-top: 8px;
-  z-index: 1001;
+  z-index: 9999;
   overflow: hidden;
+  width: 400px;
   min-width: 400px;
+  max-width: 400px;
 }
 
 .search-results-header {
   padding: 12px 16px;
-  border-bottom: 1px solid rgb(var(--surface-03));
-  background: rgb(var(--surface-00));
+  border-bottom: 1px solid var(--surface-3);
+  background: var(--surface-0);
 }
 
 .results-count {
   font-size: 12px;
-  color: rgb(var(--color-text-subtle));
+  color: var(--color-text-subtle);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -30,6 +30,7 @@
 .search-results-list {
   overflow-y: auto;
   max-height: 340px;
+  background: var(--surface-00);
 }
 
 // Empty states
@@ -50,11 +51,11 @@
 .error-icon {
   font-size: 24px;
   margin-bottom: 12px;
-  color: rgb(var(--color-text-muted));
+  color: var(--color-text-muted);
 }
 
 .loading-icon {
-  color: rgb(var(--accent-500));
+  color: var(--accent-500);
 }
 
 .error-icon {
@@ -72,7 +73,7 @@
 
 .empty-hint {
   font-size: 12px;
-  color: rgb(var(--color-text-subtle));
+  color: var(--color-text-subtle);
   margin: 0;
 }
 
@@ -93,7 +94,9 @@
     left: 12px;
     right: 12px;
     margin-top: 0;
+    width: auto;
     min-width: auto;
+    max-width: none;
     max-height: calc(100vh - 80px);
   }
   

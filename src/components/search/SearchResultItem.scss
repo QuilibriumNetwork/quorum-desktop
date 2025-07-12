@@ -1,18 +1,18 @@
 .search-result-item {
   padding: 12px 16px;
-  border-bottom: 1px solid rgb(var(--surface-03));
+  border-bottom: 1px solid var(--surface-3);
   cursor: pointer;
   transition: all 0.2s ease;
   background: transparent;
 
   &:hover {
-    background: rgb(var(--surface-02));
+    background: var(--surface-1);
   }
 
   &:focus {
     outline: none;
-    background: rgb(var(--surface-02));
-    box-shadow: inset 2px 0 0 rgb(var(--accent-500));
+    background: var(--surface-1);
+    box-shadow: inset 2px 0 0 var(--accent-500);
   }
 
   &:last-child {
@@ -31,18 +31,18 @@
   display: flex;
   align-items: center;
   font-size: 12px;
-  color: rgb(var(--color-text-subtle));
+  color: var(--color-text-subtle);
   gap: 6px;
 }
 
 .result-type-icon,
 .result-user-icon {
   font-size: 10px;
-  color: rgb(var(--color-text-muted));
+  color: var(--color-text-muted);
 }
 
 .result-channel {
-  color: rgb(var(--accent-500));
+  color: var(--accent-500);
   font-weight: 500;
 }
 
@@ -52,18 +52,18 @@
 }
 
 .result-separator {
-  color: rgb(var(--color-text-muted));
+  color: var(--color-text-muted);
   font-size: 10px;
 }
 
 .result-date {
-  color: rgb(var(--color-text-muted));
+  color: var(--color-text-muted);
 }
 
 .result-score {
   font-size: 11px;
-  color: rgb(var(--color-text-muted));
-  background: rgb(var(--surface-04));
+  color: var(--color-text-muted);
+  background: var(--surface-4);
   padding: 2px 6px;
   border-radius: 10px;
   font-weight: 500;
@@ -82,7 +82,7 @@
   // Highlight styling for search terms
   :global(mark) {
     background: rgba(var(--accent-500), 0.3);
-    color: rgb(var(--color-text-strong));
+    color: var(--color-text-strong);
     padding: 1px 2px;
     border-radius: 2px;
     font-weight: 500;
@@ -98,13 +98,13 @@
 
 .highlights-label {
   font-size: 11px;
-  color: rgb(var(--color-text-muted));
+  color: var(--color-text-muted);
   font-weight: 500;
 }
 
 .highlight-term {
   font-size: 11px;
-  background: rgb(var(--surface-04));
+  background: var(--surface-4);
   color: rgb(var(--color-text-main));
   padding: 2px 6px;
   border-radius: 8px;
@@ -113,17 +113,17 @@
 
 .highlights-more {
   font-size: 11px;
-  color: rgb(var(--color-text-subtle));
+  color: var(--color-text-subtle);
   font-style: italic;
 }
 
 // Dark theme adjustments
 .dark .result-score {
-  background: rgb(var(--surface-06));
+  background: var(--surface-6);
 }
 
 .dark .highlight-term {
-  background: rgb(var(--surface-06));
+  background: var(--surface-6);
 }
 
 // Responsive design

@@ -59,7 +59,7 @@ export const getContextDisplayName = (context: SearchContext): string => {
       if (context.channelId) {
         return `Search in #${context.channelId}`;
       }
-      return `Search in space`;
+      return `Search in this Space`;
     case 'dm':
       return 'Search in direct messages';
     default:

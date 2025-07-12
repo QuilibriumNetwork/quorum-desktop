@@ -33,6 +33,20 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Adjust position to prevent going off-screen
+  useEffect(() => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      
+      // If results would go off the right side of the screen
+      if (rect.right > viewportWidth) {
+        containerRef.current.style.right = '0';
+        containerRef.current.style.left = 'auto';
+      }
+    }
+  }, [results, query]);
+
   // Close on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
