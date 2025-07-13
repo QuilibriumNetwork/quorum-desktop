@@ -1,25 +1,69 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import './Modal.scss';
 
-interface SimpleModalProps {
+type SimpleModalProps = {
+  title: string;
+  visible: boolean;
+  onClose: () => void;
+  hideClose?: boolean;
   children: React.ReactNode;
-  onClose?: () => void;
-  className?: string;
-}
+};
 
-const SimpleModal: React.FC<SimpleModalProps> = ({ 
-  children, 
-  onClose, 
-  className = "" 
-}) => {
+const SimpleModal: React.FunctionComponent<SimpleModalProps> = (props) => {
+  const [closing, setClosing] = useState<boolean>(false);
+  const [shouldRender, setShouldRender] = useState<boolean>(props.visible);
+
+  const close = () => {
+    setClosing(true);
+    setTimeout(() => {
+      setShouldRender(false);
+      setClosing(false);
+      props.onClose();
+    }, 300);
+  };
+
+  // Handle visibility changes
+  React.useEffect(() => {
+    if (props.visible) {
+      setShouldRender(true);
+    } else if (!closing) {
+      // If props.visible becomes false but we're not in a closing animation,
+      // immediately hide the modal
+      setShouldRender(false);
+    }
+  }, [props.visible, closing]);
+
+  if (!shouldRender) return null;
+
   return (
-    <div className="fixed inset-0 z-[9999] bg-black bg-opacity-50 flex items-center justify-center backdrop-blur">
-      {children}
-      {onClose && (
-        <div
-          className="fixed inset-0 -z-10"
-          onClick={onClose}
-        />
-      )}
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur"
+      onClick={() => {
+        if (!props.hideClose) close();
+      }}
+    >
+      <div
+        className={
+          'quorum-modal text-subtle relative pointer-events-auto' +
+          (closing ? ' quorum-modal-closing' : '')
+        }
+        onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+      >
+        {!props.hideClose && (
+          <div
+            className="quorum-modal-close select-none cursor-pointer"
+            onClick={close}
+          >
+            <FontAwesomeIcon icon={faTimes} />
+          </div>
+        )}
+        <div className="quorum-modal-title select-none cursor-default">
+          {props.title}
+        </div>
+        <div className="quorum-modal-container">{props.children}</div>
+      </div>
     </div>
   );
 };

@@ -39,7 +39,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
     <>
       {isSpaceEditorOpen ? (
         <>
-          <div className="invisible-dismissal invisible-dark">
+          <div className="invisible-dismissal invisible-dark invisible-dismissal-high">
             <SpaceEditor
               spaceId={spaceId}
               dismiss={() => setIsSpaceEditorOpen(false)}
@@ -71,7 +71,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
       )}
       {isChannelEditorOpen ? (
         <>
-          <div className="invisible-dismissal invisible-dark">
+          <div className="invisible-dismissal invisible-dark invisible-dismissal-high">
             <ChannelEditor
               spaceId={spaceId}
               groupName={isChannelEditorOpen.groupName}

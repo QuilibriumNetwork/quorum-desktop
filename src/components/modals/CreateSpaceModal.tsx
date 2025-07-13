@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import Modal from '../Modal';
+import SimpleModal from '../SimpleModal';
 import Input from '../Input';
 import Button from '../Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -72,7 +72,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
   }, [acceptedFiles]);
 
   return (
-    <Modal
+    <SimpleModal
       visible={props.visible}
       onClose={props.onClose}
       title={t`Create a Space`}
@@ -221,7 +221,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           </div>
         )}
       </div>
-    </Modal>
+    </SimpleModal>
   );
 };
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Modal from '../Modal';
+import SimpleModal from '../SimpleModal';
 import Input from '../Input';
 import Button from '../Button';
 import { useNavigate } from 'react-router';
@@ -46,7 +46,7 @@ const NewDirectMessageModal: React.FunctionComponent<
   }
 
   return (
-    <Modal
+    <SimpleModal
       visible={props.visible}
       onClose={handleClose}
       title={t`New Direct Message`}
@@ -88,7 +88,7 @@ const NewDirectMessageModal: React.FunctionComponent<
           </div>
         )}
       </div>
-    </Modal>
+    </SimpleModal>
   );
 };
 

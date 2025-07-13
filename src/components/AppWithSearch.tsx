@@ -44,12 +44,16 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
   return (
     <div className="app-with-search">
       {isUserSettingsOpen && (
-        <SimpleModal onClose={() => setIsUserSettingsOpen(false)}>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
           <UserSettingsModal
             setUser={setUser}
             dismiss={() => setIsUserSettingsOpen(false)}
           />
-        </SimpleModal>
+          <div
+            className="fixed inset-0 -z-10"
+            onClick={() => setIsUserSettingsOpen(false)}
+          />
+        </div>
       )}
       
       <ModalContext.Provider value={modalContextValue}>
