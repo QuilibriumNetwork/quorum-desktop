@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import SimpleModal from '../SimpleModal';
+import Modal from '../Modal';
 import Button from '../Button';
 import { useRegistration } from '../../hooks';
 import { getConfig } from '../../config/config';
@@ -27,7 +27,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
   const { spaceId } = useParams();
 
   return (
-    <SimpleModal
+    <Modal
       visible={props.visible}
       onClose={props.onClose}
       title={t`Kick User`}
@@ -57,7 +57,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
           </Button>
         </div>
       </div>
-    </SimpleModal>
+    </Modal>
   );
 };
 

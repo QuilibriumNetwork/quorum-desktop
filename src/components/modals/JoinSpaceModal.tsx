@@ -3,7 +3,7 @@ import {
   channel_raw as ch,
   usePasskeysContext,
 } from '@quilibrium/quilibrium-js-sdk-channels';
-import SimpleModal from '../SimpleModal';
+import Modal from '../Modal';
 import Input from '../Input';
 import Button from '../Button';
 import SpaceIcon from '../navbar/SpaceIcon';
@@ -137,7 +137,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
   }, [joinInviteLink, keyset, currentPasskeyInfo, lookup]);
 
   return (
-    <SimpleModal
+    <Modal
       hideClose={pathname.startsWith('/invite')}
       visible={props.visible}
       onClose={props.onClose}
@@ -192,7 +192,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
           </Button>
         </div>
       </div>
-    </SimpleModal>
+    </Modal>
   );
 };
 

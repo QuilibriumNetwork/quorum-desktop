@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState } from 'react';
 import './Modal.scss';
 
-type SimpleModalProps = {
+type ModalProps = {
   title: string;
   visible: boolean;
   onClose: () => void;
@@ -11,7 +12,7 @@ type SimpleModalProps = {
   children: React.ReactNode;
 };
 
-const SimpleModal: React.FunctionComponent<SimpleModalProps> = (props) => {
+const Modal: React.FunctionComponent<ModalProps> = (props) => {
   const [closing, setClosing] = useState<boolean>(false);
   const [shouldRender, setShouldRender] = useState<boolean>(props.visible);
 
@@ -37,9 +38,9 @@ const SimpleModal: React.FunctionComponent<SimpleModalProps> = (props) => {
 
   if (!shouldRender) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur"
+      className="fixed inset-0 z-[2000] flex items-center justify-center bg-overlay backdrop-blur"
       onClick={() => {
         if (!props.hideClose) close();
       }}
@@ -64,8 +65,9 @@ const SimpleModal: React.FunctionComponent<SimpleModalProps> = (props) => {
         </div>
         <div className="quorum-modal-container">{props.children}</div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
-export default SimpleModal;
+export default Modal;

@@ -3,7 +3,7 @@ import Layout from './Layout';
 import UserSettingsModal from './modals/UserSettingsModal';
 import SpaceEditor from './channel/SpaceEditor';
 import ChannelEditor from './channel/ChannelEditor';
-import SimpleModal from './SimpleModal';
+// Note: UserSettingsModal, SpaceEditor, ChannelEditor use custom simple modal pattern
 import './AppWithSearch.scss';
 
 interface AppWithSearchProps {

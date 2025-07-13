@@ -26,7 +26,7 @@ import { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
 import UserProfile from '../user/UserProfile';
 import { useParams } from 'react-router';
 import { InviteLink } from './InviteLink';
-import SimpleModal from '../SimpleModal';
+import Modal from '../Modal';
 import './Message.scss';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
@@ -668,7 +668,7 @@ export const Message = ({
         </div>
       )}
       {openImage && (
-        <SimpleModal
+        <Modal
           title=""
           visible={true}
           onClose={() => setOpenImage(null)}
@@ -686,7 +686,7 @@ export const Message = ({
               className="rounded-lg"
             />
           </div>
-        </SimpleModal>
+        </Modal>
       )}
     </div>
   );
