@@ -127,6 +127,56 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
+// Inline search variant for chat headers
+.search-bar-inline {
+  width: 300px;
+  max-width: 300px;
+  min-width: 150px;
+  position: relative;
+  
+  .search-input-container {
+    background-color: var(--color-bg-chat);
+    border-radius: 8px;
+    padding: 0 10px;
+    height: 32px;
+    border: 1px solid transparent;
+    transition: background-color 0.2s ease;
+    
+    &:hover {
+      background-color: var(--surface-1);
+    }
+    
+    &.focused {
+      background-color: var(--surface-0);
+      border: 1px solid transparent;
+    }
+  }
+  
+  .search-icon-focused {
+    color: var(--accent);
+  }
+  
+  .search-input {
+    padding: 0;
+    height: 32px;
+    line-height: 32px;
+    background: transparent;
+  }
+  
+  .search-shortcut {
+    display: none;
+  }
+  
+  .search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    margin-top: 4px;
+  }
+}
+
 // Responsive design
 @media (max-width: 768px) {
   .search-bar {
@@ -138,6 +188,12 @@
   .search-shortcut {
     display: none;
   }
+  
+  .search-bar-inline {
+    width: 180px;
+    max-width: 180px;
+    min-width: 120px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -145,5 +201,11 @@
     width: 200px;
     min-width: 200px;
     max-width: 200px;
+  }
+  
+  .search-bar-inline {
+    width: 150px;
+    max-width: 150px;
+    min-width: 100px;
   }
 }

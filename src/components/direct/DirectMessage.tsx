@@ -20,6 +20,7 @@ import ReactTooltip from '../ReactTooltip';
 import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages } from '../../utils';
 import CopyToClipboard from '../CopyToClipboard';
+import { GlobalSearch } from '../search';
 
 const DirectMessage: React.FC<{}> = (p: {}) => {
   const [fileError, setFileError] = useState<string | null>(null);
@@ -199,8 +200,8 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   return (
     <div className="chat-container">
       <div className="flex flex-col">
-        <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] text-main flex flex-row justify-between">
-          <div className="flex flex-row">
+        <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] text-main flex flex-row justify-between items-center">
+          <div className="flex flex-row items-center">
             <div className="flex flex-col justify-around">
               <div
                 className="w-[28px] h-[28px] bg-cover bg-center rounded-full"
@@ -228,7 +229,11 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               </div>
             </div>
           </div>
-          <span className="float-right h-4">
+          <div className="flex flex-row items-center gap-2">
+            <GlobalSearch 
+              className="dm-search" 
+              inline={true}
+            />
             <FontAwesomeIcon
               onClick={() => {
                 setShowUsers((prev) => !prev);
@@ -236,7 +241,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"
               icon={faUsers}
             />
-          </span>
+          </div>
         </div>
         <div
           className={

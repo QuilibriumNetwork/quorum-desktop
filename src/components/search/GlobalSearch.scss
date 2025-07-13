@@ -17,6 +17,13 @@
     right: 16px;
     z-index: 1000;
   }
+  
+  &.dm-search,
+  &.channel-search {
+    // Simple inline search - respect parent spacing
+    position: static;
+    z-index: auto;
+  }
 }
 
 .global-search-bar {
@@ -50,7 +57,7 @@
 // Header integration
 .header-search {
   .search-input-container {
-    background: rgba(var(--surface-00-rgb), 0.9);
+    background: (var(--surface-00-rgb), 0.9);
     backdrop-filter: blur(8px);
     border-color: var(--surface-4);
     

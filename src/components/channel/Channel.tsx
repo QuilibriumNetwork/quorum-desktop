@@ -31,6 +31,7 @@ import { t } from '@lingui/core/macro';
 import ReactTooltip from '../ReactTooltip';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
+import { GlobalSearch } from '../search';
 
 type ChannelProps = {
   spaceId: string;
@@ -258,14 +259,21 @@ const Channel: React.FC<ChannelProps> = ({
   return (
     <div className="chat-container">
       <div className="flex flex-col">
-        <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] text-main">
-          <span>
-            #{channel?.channelName}
-            {channel?.channelTopic && ' | '}
-          </span>
-          <span className="font-light text-sm">{channel?.channelTopic}</span>
-          <span className="float-right h-4">
-            {/* <FontAwesomeIcon onClick={() => {setShowUsers(false); setShowPins(prev => !prev);}} className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]" icon={faMapPin}/> */}
+        <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] text-main flex flex-row justify-between items-center">
+          <div className="flex-1 min-w-0">
+            <div className="truncate">
+              <span>
+                #{channel?.channelName}
+                {channel?.channelTopic && ' | '}
+              </span>
+              <span className="font-light text-sm">{channel?.channelTopic}</span>
+            </div>
+          </div>
+          <div className="flex flex-row items-center gap-2">
+            <GlobalSearch 
+              className="channel-search" 
+              inline={true}
+            />
             <FontAwesomeIcon
               onClick={() => {
                 setShowUsers((prev) => !prev);
@@ -273,7 +281,7 @@ const Channel: React.FC<ChannelProps> = ({
               className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"
               icon={faUsers}
             />
-          </span>
+          </div>
         </div>
         <div
           className={

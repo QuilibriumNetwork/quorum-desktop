@@ -128,6 +128,19 @@
   }
 }
 
+// Inline search results for chat headers
+.global-search.dm-search .search-results,
+.global-search.channel-search .search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: auto;
+  width: 400px;
+  min-width: 400px;
+  max-width: 400px;
+  z-index: 1001;
+}
+
 // Animation for opening/closing
 .search-results {
   animation: searchResultsOpen 0.2s ease-out;

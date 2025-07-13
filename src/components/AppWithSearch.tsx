@@ -1,6 +1,5 @@
 import React from 'react';
 import Layout from './Layout';
-import { GlobalSearch } from './search';
 import './AppWithSearch.scss';
 
 interface AppWithSearchProps {
@@ -18,7 +17,6 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
 }) => {
   return (
     <div className="app-with-search">
-      <GlobalSearch className="app-search-bar" />
       <Layout
         newDirectMessage={newDirectMessage}
         kickUserAddress={kickUserAddress}

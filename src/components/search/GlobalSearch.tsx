@@ -10,9 +10,13 @@ import './GlobalSearch.scss';
 
 interface GlobalSearchProps {
   className?: string;
+  inline?: boolean;
 }
 
-export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
+export const GlobalSearch: React.FC<GlobalSearchProps> = ({ 
+  className, 
+  inline = false 
+}) => {
   const navigate = useNavigate();
   const { messageDB } = useMessageDB();
   const [showResults, setShowResults] = useState(false);
@@ -100,6 +104,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
         suggestions={suggestions}
         onSuggestionSelect={handleSuggestionSelect}
         className="global-search-bar"
+        inline={inline}
       />
       
       {showResults && (
