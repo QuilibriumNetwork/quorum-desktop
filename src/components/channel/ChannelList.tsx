@@ -11,8 +11,7 @@ import './ChannelList.scss';
 import { useSpace, useSpaceMembers } from '../../hooks';
 import Tooltip from '../Tooltip';
 import TooltipButton from '../TooltipButton';
-import SpaceEditor from './SpaceEditor';
-import ChannelEditor from './ChannelEditor';
+import { useModalContext } from '../AppWithSearch';
 import GroupEditor from './GroupEditor';
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import LeaveSpace from './LeaveSpace';
@@ -23,12 +22,8 @@ type ChannelListProps = { spaceId: string };
 const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   const { data: space } = useSpace({ spaceId });
   let [isMenuExpanded, setIsMenuExpanded] = React.useState<boolean>(false);
-  let [isSpaceEditorOpen, setIsSpaceEditorOpen] =
-    React.useState<boolean>(false);
+  const { openSpaceEditor, openChannelEditor } = useModalContext();
   let [isLeaveSpaceOpen, setIsLeaveSpaceOpen] = React.useState<boolean>(false);
-  let [isChannelEditorOpen, setIsChannelEditorOpen] = React.useState<
-    { groupName: string; channelId?: string } | undefined
-  >();
   let [isGroupEditorOpen, setIsGroupEditorOpen] = React.useState<
     { groupName?: string } | undefined
   >();
@@ -37,22 +32,6 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
 
   return (
     <>
-      {isSpaceEditorOpen ? (
-        <>
-          <div className="invisible-dismissal invisible-dark invisible-dismissal-high">
-            <SpaceEditor
-              spaceId={spaceId}
-              dismiss={() => setIsSpaceEditorOpen(false)}
-            />
-            <div
-              className="invisible-dismissal"
-              onClick={() => setIsSpaceEditorOpen(false)}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
       {isLeaveSpaceOpen ? (
         <>
           <div className="invisible-dismissal invisible-dark">
@@ -63,24 +42,6 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
             <div
               className="invisible-dismissal"
               onClick={() => setIsLeaveSpaceOpen(false)}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
-      {isChannelEditorOpen ? (
-        <>
-          <div className="invisible-dismissal invisible-dark invisible-dismissal-high">
-            <ChannelEditor
-              spaceId={spaceId}
-              groupName={isChannelEditorOpen.groupName}
-              channelId={isChannelEditorOpen.channelId}
-              dismiss={() => setIsChannelEditorOpen(undefined)}
-            />
-            <div
-              className="invisible-dismissal"
-              onClick={() => setIsChannelEditorOpen(undefined)}
             />
           </div>
         </>
@@ -122,7 +83,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
                   icon={faEdit}
                   onClick={() => {
                     setIsMenuExpanded(false);
-                    setIsSpaceEditorOpen(true);
+                    openSpaceEditor(spaceId);
                   }}
                 />
                 {/* <TooltipDivider /> */}
@@ -177,7 +138,6 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
         {space?.groups.map((group) => (
           <ChannelGroup
             setIsGroupEditorOpen={setIsGroupEditorOpen}
-            setIsChannelEditorOpen={setIsChannelEditorOpen}
             key={group.groupName}
             group={group}
           />

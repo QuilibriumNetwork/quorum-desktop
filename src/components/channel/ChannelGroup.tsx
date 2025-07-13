@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
+import { useModalContext } from '../AppWithSearch';
 
 const ChannelGroup: React.FunctionComponent<{
   group: {
@@ -24,16 +25,8 @@ const ChannelGroup: React.FunctionComponent<{
       | undefined
     >
   >;
-  setIsChannelEditorOpen: React.Dispatch<
-    React.SetStateAction<
-      | {
-          groupName: string;
-          channelId?: string;
-        }
-      | undefined
-    >
-  >;
 }> = (props) => {
+  const { openChannelEditor } = useModalContext();
   let { spaceId, channelId } = useParams<{
     spaceId: string;
     channelId: string;
@@ -61,9 +54,7 @@ const ChannelGroup: React.FunctionComponent<{
             <FontAwesomeIcon
               className="hover:text-main cursor-pointer"
               onClick={() =>
-                props.setIsChannelEditorOpen({
-                  groupName: props.group.groupName,
-                })
+                openChannelEditor(spaceId!, props.group.groupName, '')
               }
               size={'2xs'}
               icon={faPlus}
@@ -101,10 +92,7 @@ const ChannelGroup: React.FunctionComponent<{
               {isSpaceOwner && (
                 <div
                   onClick={(e) => {
-                    props.setIsChannelEditorOpen({
-                      groupName: props.group.groupName,
-                      channelId: channel.channelId,
-                    });
+                    openChannelEditor(spaceId!, props.group.groupName, channel.channelId);
                   }}
                   className={'channel-configure float-right'}
                 >
