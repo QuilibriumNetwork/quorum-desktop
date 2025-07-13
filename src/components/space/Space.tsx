@@ -7,7 +7,7 @@ import { useSpace } from '../../hooks';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 import './Space.scss';
-import UserSettingsModal from '../modals/UserSettingsModal';
+import { useModalContext } from '../AppWithSearch';
 
 type SpaceProps = {
   user: any;
@@ -32,31 +32,14 @@ const Space: React.FunctionComponent<SpaceProps> = (props) => {
   let params = useParams<{ spaceId: string; channelId: string }>();
   let { data: space } = useSpace({ spaceId: params.spaceId! });
   const { isMobile, leftSidebarOpen, closeLeftSidebar } = useResponsiveLayoutContext();
+  const { openUserSettings } = useModalContext();
   
   if (!props || !space || !params.spaceId || !params.channelId) {
     return <></>;
   }
-  let [isUserSettingsOpen, setIsUserSettingsOpen] =
-    React.useState<boolean>(false);
 
   return (
     <div className="space-container">
-      {isUserSettingsOpen ? (
-        <>
-          <div className="invisible-dismissal invisible-dark">
-            <UserSettingsModal
-              setUser={props.setUser}
-              dismiss={() => setIsUserSettingsOpen(false)}
-            />
-            <div
-              className="invisible-dismissal"
-              onClick={() => setIsUserSettingsOpen(false)}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
       {/* Mobile backdrop overlay */}
       {isMobile && leftSidebarOpen && (
         <div 
@@ -69,7 +52,7 @@ const Space: React.FunctionComponent<SpaceProps> = (props) => {
         <ChannelList spaceId={params.spaceId} />
         <UserStatus
           setUser={props.setUser}
-          setIsUserSettingsOpen={setIsUserSettingsOpen}
+          setIsUserSettingsOpen={openUserSettings}
           setAuthState={props.setAuthState}
           user={props.user}
         />

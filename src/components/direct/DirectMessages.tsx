@@ -8,7 +8,7 @@ import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider'
 
 import './DirectMessages.scss';
 import { useRegistrationContext } from '../context/RegistrationPersister';
-import UserSettingsModal from '../modals/UserSettingsModal';
+import { useModalContext } from '../AppWithSearch';
 
 type DirectMessagesProps = {
   user: any;
@@ -33,27 +33,10 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
   let { address } = useParams<{ address: string }>();
   const { keyset } = useRegistrationContext();
   const { isMobile, leftSidebarOpen, closeLeftSidebar } = useResponsiveLayoutContext();
-  let [isUserSettingsOpen, setIsUserSettingsOpen] =
-    React.useState<boolean>(false);
+  const { openUserSettings } = useModalContext();
 
   return (
     <div className="direct-messages-container">
-      {isUserSettingsOpen ? (
-        <>
-          <div className="invisible-dismissal invisible-dark">
-            <UserSettingsModal
-              setUser={props.setUser}
-              dismiss={() => setIsUserSettingsOpen(false)}
-            />
-            <div
-              className="invisible-dismissal"
-              onClick={() => setIsUserSettingsOpen(false)}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
       {/* Mobile backdrop overlay */}
       {isMobile && leftSidebarOpen && (
         <div 
@@ -67,7 +50,7 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
           {keyset.deviceKeyset?.inbox_keyset && <DirectMessageContactsList />}
         </React.Suspense>
         <UserStatus
-          setIsUserSettingsOpen={setIsUserSettingsOpen}
+          setIsUserSettingsOpen={openUserSettings}
           setUser={props.setUser}
           setAuthState={props.setAuthState}
           user={props.user}

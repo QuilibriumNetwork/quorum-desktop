@@ -139,6 +139,8 @@ const App = () => {
                           <AppWithSearch
                             kickUserAddress={kickUserAddress}
                             setKickUserAddress={setKickUserAddress}
+                            user={user}
+                            setUser={setUser}
                           >
                             <DirectMessages
                               setUser={setUser}
@@ -174,6 +176,8 @@ const App = () => {
                           <AppWithSearch
                             kickUserAddress={kickUserAddress}
                             setKickUserAddress={setKickUserAddress}
+                            user={user}
+                            setUser={setUser}
                           >
                             <DirectMessages
                               setUser={setUser}
@@ -191,6 +195,8 @@ const App = () => {
                           <AppWithSearch
                             kickUserAddress={kickUserAddress}
                             setKickUserAddress={setKickUserAddress}
+                            user={user}
+                            setUser={setUser}
                           >
                             <Space
                               setUser={setUser}
