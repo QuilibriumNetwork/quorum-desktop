@@ -72,6 +72,16 @@ The application required a complete responsive layout overhaul to provide optima
   - Proper z-index hierarchy
   - Consistent behavior across all overlay components
 
+### 9. NavMenu Mobile Optimization
+- **Problem**: NavMenu (NavMenu.tsx) is too wide for mobile phones and uses desktop-sized icons
+- **Requirement**: NavMenu should be optimized for mobile screens
+- **Mobile Specifications**:
+  - Reduced width (smaller than desktop's 74px)
+  - Smaller icons to fit mobile screen constraints
+  - Maintain functionality while using less horizontal space
+  - Should provide more room for main content area on mobile
+- **Impact**: This affects left sidebar positioning calculation on mobile devices
+
 ## Screen Size Breakpoints
 - **Desktop**: ≥768px (md: breakpoint)
 - **Tablet/Mobile**: <768px
