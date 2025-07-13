@@ -1,8 +1,8 @@
 // Clean inline search bar for chat headers
 .search-bar {
   position: relative;
-  width: 300px;
-  max-width: 300px;
+  width: 250px;
+  max-width: 250px;
   min-width: 150px;
 }
 
@@ -49,9 +49,11 @@
   color: var(--color-text-main);
   font-size: 14px;
   font-family: inherit;
+  font-weight: normal;
 
   &::placeholder {
     color: var(--color-text-subtle);
+    font-weight: normal;
   }
 
   &:disabled {
@@ -133,14 +135,14 @@
 // Responsive design
 @media (max-width: 768px) {
   .search-bar {
-    width: 250px;
-    max-width: 250px;
+    width: 180px;
+    max-width: 180px;
   }
 }
 
 @media (max-width: 480px) {
   .search-bar {
-    width: 200px;
-    max-width: 200px;
+    width: 180px;
+    max-width: 180px;
   }
 }
