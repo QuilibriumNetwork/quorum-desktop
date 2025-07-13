@@ -518,7 +518,7 @@ const Channel: React.FC<ChannelProps> = ({
       </div>
       <div
         className={
-          'w-[260px] bg-surface-3 p-3 overflow-scroll ' +
+          'w-[260px] bg-sidebar p-3 overflow-scroll ' +
           (showUsers ? '' : 'hidden')
         }
       >
