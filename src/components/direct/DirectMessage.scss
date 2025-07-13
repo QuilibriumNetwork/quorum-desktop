@@ -4,6 +4,16 @@
   font-weight: 700;
   font-size: 16px;
   border-bottom: 1px solid var(--surface-5);
+  
+  // Responsive layout for mobile/tablet
+  @media (max-width: 767px) {
+    gap: 8px;
+    
+    // Ensure search bar + users icon are properly spaced on top
+    .dm-search {
+      flex: 1;
+    }
+  }
 }
 
 .message-editor {

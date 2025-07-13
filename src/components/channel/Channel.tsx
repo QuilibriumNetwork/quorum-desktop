@@ -259,17 +259,8 @@ const Channel: React.FC<ChannelProps> = ({
   return (
     <div className="chat-container">
       <div className="flex flex-col">
-        <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] text-main flex flex-row justify-between items-center">
-          <div className="flex-1 min-w-0">
-            <div className="truncate">
-              <span>
-                #{channel?.channelName}
-                {channel?.channelTopic && ' | '}
-              </span>
-              <span className="font-light text-sm">{channel?.channelTopic}</span>
-            </div>
-          </div>
-          <div className="flex flex-row items-center gap-2">
+        <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] text-main flex flex-col md:flex-row md:justify-between md:items-center">
+          <div className="flex flex-row items-center gap-2 md:order-2">
             <GlobalSearch 
               className="channel-search"
             />
@@ -280,6 +271,15 @@ const Channel: React.FC<ChannelProps> = ({
               className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"
               icon={faUsers}
             />
+          </div>
+          <div className="flex-1 min-w-0 md:order-1">
+            <div className="truncate">
+              <span>
+                #{channel?.channelName}
+                {channel?.channelTopic && ' | '}
+              </span>
+              <span className="font-light text-sm">{channel?.channelTopic}</span>
+            </div>
           </div>
         </div>
         <div

@@ -4,6 +4,16 @@
   font-weight: 700;
   font-size: 16px;
   user-select: none;
+  
+  // Responsive layout for mobile/tablet
+  @media (max-width: 767px) {
+    gap: 8px;
+    
+    // Ensure search bar + users icon are properly spaced on top
+    .channel-search {
+      flex: 1;
+    }
+  }
 }
 
 .message {
