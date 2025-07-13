@@ -47,7 +47,7 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
   }, [joinInviteLink, keyset, currentPasskeyInfo, inviteLink]);
 
   return (
-    <div className="max-w-[500px] lg:max-w-[500px] md:max-w-[500px] sm:max-w-[300px] w-fit rounded-md p-3 bg-surface-5 border border-surface-6">
+    <div className="w-full !max-w-[250px] sm:!max-w-[400px] lg:!max-w-[500px] lg:min-w-[500px] rounded-md p-2 sm:p-3 bg-surface-5 border border-surface-6">
       {error && (
         <div className="error-label mb-2 text-center sm:text-left">
           <Trans>The invite link has expired or is invalid.</Trans>
@@ -56,22 +56,22 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
       {space && (
         <div className="font-bold flex flex-col items-center sm:items-start">
           <div className="mb-2 text-center sm:text-left"><Trans>You've been invited to join a Space</Trans></div>
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full items-center sm:items-stretch">
-            <div className="flex flex-row items-center flex-1 min-w-0 justify-center sm:justify-start">
-              <div className="flex items-center bg-surface-4 rounded-lg px-2 py-2 gap-3 pr-4">
-                <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0" style={{
-                  backgroundImage: space.iconUrl ? `url(${space.iconUrl})` : '',
-                  backgroundPosition: 'center',
-                  backgroundSize: 'cover',
-                  backgroundColor: 'var(--surface-2)'
-                }}>
-                </div>
-                <span className="truncate font-medium">{space?.spaceName}</span>
+          <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3 w-full">
+            <div className="flex items-center bg-surface-4 rounded-lg px-1 sm:px-2 py-1 sm:py-2 gap-1 sm:gap-2 lg:gap-3 w-full lg:flex-1 overflow-hidden">
+              <div className="w-8 sm:w-10 lg:w-12 h-8 sm:h-10 lg:h-12 rounded-md sm:rounded-lg overflow-hidden flex-shrink-0" style={{
+                backgroundImage: space.iconUrl ? `url(${space.iconUrl})` : '',
+                backgroundPosition: 'center',
+                backgroundSize: 'cover',
+                backgroundColor: 'var(--surface-2)'
+              }}>
+              </div>
+              <div className="flex-1 min-w-0 overflow-hidden">
+                <span className="block truncate font-medium text-sm lg:text-base">{space?.spaceName}</span>
               </div>
             </div>
-            <div className="flex flex-col justify-center flex-shrink-0">
+            <div className="flex justify-center w-full lg:w-auto lg:flex-shrink-0">
               <Button
-                className="px-6"
+                className="px-4 sm:px-6 whitespace-nowrap text-sm w-full lg:w-auto"
                 onClick={() => {
                   join();
                 }}
