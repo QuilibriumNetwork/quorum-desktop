@@ -9,7 +9,7 @@
   flex-direction: row;
   
   // Mobile layout - ensure full width usage
-  @media (max-width: 767px) {
+  @media (max-width: 1023px) {
     width: 100%;
     max-width: 100%;
     flex: 1;
@@ -61,7 +61,7 @@
   transition: width 200ms;
   
   // Mobile override - use full available width
-  @media (max-width: 767px) {
+  @media (max-width: 1023px) {
     width: 100% !important;
     flex: 1;
   }
@@ -71,7 +71,7 @@
   width: calc(100vw - 322px);
   
   // Mobile override - use full available width
-  @media (max-width: 767px) {
+  @media (max-width: 1023px) {
     width: 100% !important;
     flex: 1;
   }
@@ -101,7 +101,7 @@
   position: relative;
   
   // Mobile override - use full available width
-  @media (max-width: 767px) {
+  @media (max-width: 1023px) {
     width: 100% !important;
     max-width: none !important;
   }
@@ -139,7 +139,7 @@
   }
   
   // Mobile override - use full available width
-  @media (max-width: 767px) {
+  @media (max-width: 1023px) {
     max-width: none !important;
   }
 }

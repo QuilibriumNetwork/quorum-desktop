@@ -262,18 +262,20 @@ const Channel: React.FC<ChannelProps> = ({
   return (
     <div className="chat-container">
       <div className="flex flex-col">
-        <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] text-main flex flex-col md:flex-row md:justify-between md:items-center">
-          <div className="flex flex-row items-center gap-2 md:order-2">
-            {isMobile && (
-              <FontAwesomeIcon
-                onClick={toggleLeftSidebar}
-                className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"
-                icon={faBars}
+        <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
+          <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start">
+            <div className="flex flex-row items-center gap-2">
+              {isMobile && (
+                <FontAwesomeIcon
+                  onClick={toggleLeftSidebar}
+                  className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"
+                  icon={faBars}
+                />
+              )}
+              <GlobalSearch 
+                className="channel-search flex-1 lg:flex-none max-w-xs lg:max-w-none"
               />
-            )}
-            <GlobalSearch 
-              className="channel-search"
-            />
+            </div>
             <FontAwesomeIcon
               onClick={() => {
                 setShowUsers((prev) => !prev);
@@ -282,7 +284,7 @@ const Channel: React.FC<ChannelProps> = ({
               icon={faUsers}
             />
           </div>
-          <div className="flex-1 min-w-0 md:order-1">
+          <div className="flex-1 min-w-0 lg:order-1">
             <div className="truncate">
               <span>
                 #{channel?.channelName}
@@ -536,9 +538,10 @@ const Channel: React.FC<ChannelProps> = ({
       <div
         className={
           'w-[260px] bg-mobile-sidebar p-3 overflow-scroll ' +
-          'fixed top-0 right-0 h-full z-50 ' +
           'transition-transform duration-300 ease-in-out ' +
-          (showUsers ? 'translate-x-0' : 'translate-x-full hidden')
+          (showUsers 
+            ? 'translate-x-0 fixed top-0 right-0 h-full z-50 lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
+            : 'translate-x-full hidden')
         }
       >
         {roles
@@ -607,7 +610,7 @@ const Channel: React.FC<ChannelProps> = ({
       </div>
       {showUsers && (
         <div 
-          className="fixed inset-0 bg-mobile-overlay z-40 md:hidden"
+          className="fixed inset-0 bg-mobile-overlay z-40 lg:hidden"
           onClick={() => setShowUsers(false)}
         />
       )}

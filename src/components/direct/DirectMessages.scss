@@ -6,7 +6,7 @@
   width: 100%;
   
   // Mobile layout - ensure main content expands when sidebar is hidden
-  @media (max-width: 767px) {
+  @media (max-width: 1023px) {
     // When sidebar is hidden, the container should flex properly
     > * {
       flex: 1; // All direct children (DirectMessage component) should expand
@@ -23,7 +23,7 @@
   height: 100%;
   
   // Mobile responsive behavior - completely hidden by default, slide-in as overlay when toggled
-  @media (max-width: 767px) {
+  @media (max-width: 1023px) {
     display: none; // Completely hidden by default
     position: fixed;
     top: 0;
