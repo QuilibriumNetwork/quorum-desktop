@@ -17,6 +17,7 @@ import { Onboarding } from './components/onboarding/Onboarding';
 import DirectMessages from './components/direct/DirectMessages';
 import { Maintenance } from './components/Maintenance';
 import { RegistrationProvider } from './components/context/RegistrationPersister';
+import { ResponsiveLayoutProvider } from './components/context/ResponsiveLayoutProvider';
 import JoinSpaceModal from './components/modals/JoinSpaceModal';
 import Elements from './components/Elements';
 import { DefaultImages } from './utils';
@@ -114,7 +115,8 @@ const App = () => {
             <div className="bg-app flex flex-col min-h-screen text-main">
               <Suspense fallback={<Connecting />}>
                 <RegistrationProvider>
-                  <Suspense>
+                  <ResponsiveLayoutProvider>
+                    <Suspense>
                     <Routes>
                       <Route
                         path="/"
@@ -224,7 +226,8 @@ const App = () => {
                         }
                       />
                     </Routes>
-                  </Suspense>
+                    </Suspense>
+                  </ResponsiveLayoutProvider>
                 </RegistrationProvider>
               </Suspense>
             </div>

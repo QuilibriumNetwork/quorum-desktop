@@ -11,6 +11,7 @@ import {
   faSmile,
   faUsers,
   faX,
+  faBars,
 } from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import './Channel.scss';
@@ -32,6 +33,7 @@ import ReactTooltip from '../ReactTooltip';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
 import { GlobalSearch } from '../search';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 type ChannelProps = {
   spaceId: string;
@@ -46,6 +48,7 @@ const Channel: React.FC<ChannelProps> = ({
   kickUserAddress,
   setKickUserAddress,
 }) => {
+  const { isMobile, toggleLeftSidebar } = useResponsiveLayoutContext();
   const [state, setState] = React.useState<{
     pendingMessage: string;
     messages: MessageType[];
@@ -261,6 +264,13 @@ const Channel: React.FC<ChannelProps> = ({
       <div className="flex flex-col">
         <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] text-main flex flex-col md:flex-row md:justify-between md:items-center">
           <div className="flex flex-row items-center gap-2 md:order-2">
+            {isMobile && (
+              <FontAwesomeIcon
+                onClick={toggleLeftSidebar}
+                className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"
+                icon={faBars}
+              />
+            )}
             <GlobalSearch 
               className="channel-search"
             />

@@ -6,4 +6,10 @@
   top: 14px; 
   border-top-left-radius: 10px;
   background-color: var(--color-bg-sidebar);
+  
+  // Mobile phone optimization - adjust for smaller NavMenu
+  @media (max-width: 480px) {
+    width: calc(100vw - 48px);
+    left: 48px;
+  }
 }

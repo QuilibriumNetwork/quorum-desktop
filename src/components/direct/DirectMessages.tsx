@@ -4,6 +4,7 @@ import DirectMessageContactsList from './DirectMessageContactsList';
 import DirectMessage from './DirectMessage';
 import UserStatus from '../user/UserStatus';
 import { EmptyDirectMessage } from './EmptyDirectMessage';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 import './DirectMessages.scss';
 import { useRegistrationContext } from '../context/RegistrationPersister';
@@ -31,6 +32,7 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
 ) => {
   let { address } = useParams<{ address: string }>();
   const { keyset } = useRegistrationContext();
+  const { isMobile, leftSidebarOpen, closeLeftSidebar } = useResponsiveLayoutContext();
   let [isUserSettingsOpen, setIsUserSettingsOpen] =
     React.useState<boolean>(false);
 
@@ -52,7 +54,15 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
       ) : (
         <></>
       )}
-      <div className="direct-messages-container-channels">
+      {/* Mobile backdrop overlay */}
+      {isMobile && leftSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-[997]"
+          onClick={closeLeftSidebar}
+        />
+      )}
+      
+      <div className={`direct-messages-container-channels ${leftSidebarOpen && isMobile ? 'open' : ''}`}>
         <React.Suspense>
           {keyset.deviceKeyset?.inbox_keyset && <DirectMessageContactsList />}
         </React.Suspense>

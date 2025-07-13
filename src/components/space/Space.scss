@@ -11,4 +11,28 @@
   flex-direction: column;
   justify-content: stretch;
   height: 100%;
+  
+  // Mobile responsive behavior - hide by default, slide-in as overlay
+  @media (max-width: 767px) {
+    position: fixed;
+    top: 0;
+    left: 74px; // Start from edge of default NavMenu
+    width: 280px;
+    background-color: var(--color-bg-sidebar);
+    z-index: 998;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    transform: translateX(-100%);
+    transition: transform 300ms ease-in-out;
+    
+    &.open {
+      transform: translateX(0);
+    }
+    
+    // Phone-specific positioning for smaller NavMenu
+    @media (max-width: 480px) {
+      left: 50px; // Start from edge of mobile NavMenu
+    }
+  }
 }

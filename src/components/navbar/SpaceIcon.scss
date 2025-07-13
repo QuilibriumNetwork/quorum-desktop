@@ -12,6 +12,15 @@
   display: inline-block;
   transition: all 100ms linear;
   border: 2px none var(--surface-border);
+  
+  // Mobile phone optimization
+  @media (max-width: 480px) {
+    width: 32px;
+    height: 32px;
+    margin-left: 2px;
+    margin-top: 5px;
+    border-radius: 16px;
+  }
 }
 
 .space-icon-large {
@@ -57,6 +66,16 @@
   border: none;
   border-radius: 10px;
   transition: all 100ms linear;
+  
+  // Mobile phone optimization
+  @media (max-width: 480px) {
+    width: 32px;
+    height: 32px;
+    margin-left: 2px;
+    margin-top: 5px;
+    border-radius: 8px;
+    box-shadow: 0 0 3px 2px var(--accent-500);
+  }
 }
 
 .space-icon-selected-toggle {

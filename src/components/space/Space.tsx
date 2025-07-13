@@ -4,6 +4,7 @@ import ChannelList from '../channel/ChannelList';
 import Channel from '../channel/Channel';
 import UserStatus from '../user/UserStatus';
 import { useSpace } from '../../hooks';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 import './Space.scss';
 import UserSettingsModal from '../modals/UserSettingsModal';
@@ -30,6 +31,8 @@ type SpaceProps = {
 const Space: React.FunctionComponent<SpaceProps> = (props) => {
   let params = useParams<{ spaceId: string; channelId: string }>();
   let { data: space } = useSpace({ spaceId: params.spaceId! });
+  const { isMobile, leftSidebarOpen, closeLeftSidebar } = useResponsiveLayoutContext();
+  
   if (!props || !space || !params.spaceId || !params.channelId) {
     return <></>;
   }
@@ -54,7 +57,15 @@ const Space: React.FunctionComponent<SpaceProps> = (props) => {
       ) : (
         <></>
       )}
-      <div className="space-container-channels">
+      {/* Mobile backdrop overlay */}
+      {isMobile && leftSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-[997]"
+          onClick={closeLeftSidebar}
+        />
+      )}
+      
+      <div className={`space-container-channels ${leftSidebarOpen && isMobile ? 'open' : ''}`}>
         <ChannelList spaceId={params.spaceId} />
         <UserStatus
           setUser={props.setUser}

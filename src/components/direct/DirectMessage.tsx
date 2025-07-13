@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faUsers, faX } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faUsers, faX, faBars } from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { EmbedMessage, Message as MessageType } from '../../api/quorumApi';
 import './DirectMessage.scss';
@@ -21,8 +21,10 @@ import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages, truncateAddress } from '../../utils';
 import CopyToClipboard from '../CopyToClipboard';
 import { GlobalSearch } from '../search';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 const DirectMessage: React.FC<{}> = (p: {}) => {
+  const { isMobile, toggleLeftSidebar } = useResponsiveLayoutContext();
   const [fileError, setFileError] = useState<string | null>(null);
   let { address } = useParams<{ address: string }>();
   const conversationId = address! + '/' + address!;
@@ -202,6 +204,13 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       <div className="flex flex-col">
         <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] text-main flex flex-col md:flex-row md:justify-between md:items-center">
           <div className="flex flex-row items-center gap-2 md:order-2">
+            {isMobile && (
+              <FontAwesomeIcon
+                onClick={toggleLeftSidebar}
+                className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"
+                icon={faBars}
+              />
+            )}
             <GlobalSearch 
               className="dm-search"
             />
