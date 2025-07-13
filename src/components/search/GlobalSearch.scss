@@ -2,6 +2,11 @@
 .global-search {
   position: relative;
   z-index: 1000;
+  
+  // Lower z-index on mobile to go behind sidebar
+  @media (max-width: 767px) {
+    z-index: 30;
+  }
 }
 
 .global-search-bar {

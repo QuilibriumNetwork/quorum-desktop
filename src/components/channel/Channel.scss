@@ -16,6 +16,14 @@
   }
 }
 
+// Mobile sidebar overlay
+@media (max-width: 767px) {
+  .chat-container {
+    position: relative;
+    overflow: hidden;
+  }
+}
+
 .message {
   display: flex;
   font-size: 11pt;

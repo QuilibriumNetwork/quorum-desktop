@@ -16,6 +16,14 @@
   }
 }
 
+// Mobile sidebar overlay
+@media (max-width: 767px) {
+  .chat-container {
+    position: relative;
+    overflow: hidden;
+  }
+}
+
 .message-editor {
   background: var(--color-bg-chat-input);
 }

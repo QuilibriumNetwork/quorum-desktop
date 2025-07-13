@@ -525,8 +525,11 @@ const Channel: React.FC<ChannelProps> = ({
       </div>
       <div
         className={
-          'w-[260px] bg-sidebar p-3 overflow-scroll ' +
-          (showUsers ? '' : 'hidden')
+          'w-[260px] bg-mobile-sidebar p-3 overflow-scroll ' +
+          'md:relative md:block ' +
+          'fixed top-0 right-0 h-full z-50 ' +
+          'transition-transform duration-300 ease-in-out ' +
+          (showUsers ? 'translate-x-0' : 'translate-x-full md:translate-x-0 hidden md:block')
         }
       >
         {roles
@@ -593,6 +596,12 @@ const Channel: React.FC<ChannelProps> = ({
           ))}
         </div>
       </div>
+      {showUsers && (
+        <div 
+          className="fixed inset-0 bg-mobile-overlay z-40 md:hidden"
+          onClick={() => setShowUsers(false)}
+        />
+      )}
       <ReactTooltip
         id="attach-image-tooltip"
         content={t`attach image`}
