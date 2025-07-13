@@ -1,10 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-/dist
 
-# Vite
-.vite/
 
 # dependencies
+.vite/
 /node_modules
 /.pnp
 .pnp.js
@@ -14,6 +12,8 @@
 
 # production
 /build
+/dist
+
 
 # misc
 .DS_Store
@@ -28,3 +28,4 @@ yarn-error.log*
 
 # custom
 .claude/screenshots/*
+.claude/settings.local.json
