@@ -1,7 +1,6 @@
 .direct-messages-list {
   overflow-y: auto;
   overflow-x: hidden;
-  width: 260px;
   z-index: 0;
   margin-right: -10px;
   scrollbar-width: none;
@@ -31,7 +30,7 @@
   border-top-left-radius: 10px;
   margin-right: -10px;
   height: 120px;
-  width: 260px;
+  width: var(--sidebar-left-width);
   color: var(--color-text-main);
   text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3);
  

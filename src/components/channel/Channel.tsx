@@ -537,7 +537,7 @@ const Channel: React.FC<ChannelProps> = ({
       </div>
       <div
         className={
-          'w-[260px] bg-mobile-sidebar p-3 overflow-scroll ' +
+          'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-scroll ' +
           'transition-transform duration-300 ease-in-out ' +
           (showUsers 
             ? 'translate-x-0 fixed top-0 right-0 h-full z-50 lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'

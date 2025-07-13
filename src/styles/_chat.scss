@@ -90,6 +90,14 @@
   background-size: cover;
   border-radius: 29px;
   display: inline-block;
+  
+  // Smaller on mobile phones
+  @media (max-width: 480px) {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 18px;
+  }
 }
 
 .message-content {

@@ -472,7 +472,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       </div>
       <div
         className={
-          'w-[260px] bg-mobile-sidebar p-3 overflow-scroll ' +
+          'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-scroll ' +
           'transition-transform duration-300 ease-in-out ' +
           (showUsers 
             ? 'translate-x-0 fixed top-0 right-0 h-full z-50 lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
@@ -481,9 +481,9 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       >
         <div className="flex flex-col">
           {Object.keys(members).map((s) => (
-            <div key={s} className="w-full flex flex-row mb-2">
+            <div key={s} className="w-full flex flex-row items-center mb-2">
               <div
-                className="rounded-full w-[40px] h-[40px] mt-[2px]"
+                className="rounded-full w-[36px] h-[36px] flex-shrink-0"
                 style={{
                   backgroundPosition: 'center',
                   backgroundSize: 'cover',

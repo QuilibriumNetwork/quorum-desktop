@@ -66,3 +66,15 @@
 .channel-group-channel-name-mentions-you {
   background: #eeb155;
 }
+
+
+// Mobile layout
+@media (max-width: 1023px) {
+  .channel-group-channel-name:hover {
+    border-radius: 10px;
+  }
+
+  .channel-group-channel-name-focused {
+    border-radius: 10px;
+  }
+}

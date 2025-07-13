@@ -9,8 +9,14 @@
   user-select: none;
 }
 
+@media (max-width: 1023px) {
+  .user-status {
+    width: var(--sidebar-left-width);
+  }
+}
+
 .user-status:hover {
-  background:  var(--surface-5);
+  background: var(--surface-5);
 }
 
 .user-status-icon {
