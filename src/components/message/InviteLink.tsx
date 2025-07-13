@@ -47,45 +47,43 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
   }, [joinInviteLink, keyset, currentPasskeyInfo, inviteLink]);
 
   return (
-    <div className="w-[400px] rounded-md p-3 bg-surface-5 border border-surface-6">
+    <div className="max-w-[500px] lg:max-w-[500px] md:max-w-[500px] sm:max-w-[300px] w-fit rounded-md p-3 bg-surface-5 border border-surface-6">
       {error && (
-        <div className="error-label mb-2">
+        <div className="error-label mb-2 text-center sm:text-left">
           <Trans>The invite link has expired or is invalid.</Trans>
         </div>
       )}
       {space && (
-        <div className="font-bold flex flex-col">
-          <div><Trans>You've been invited to join a Space</Trans></div>
-          <div className="flex flex-row">
-            <SpaceIcon
-              noToggle={true}
-              noTooltip={true}
-              notifs={false}
-              spaceName={space.spaceName}
-              size="regular"
-              selected={true}
-              iconUrl={space.iconUrl}
-            />
-            <div className="flex flex-row grow justify-between pl-2">
-              <div className="flex flex-col w-[200px] justify-around truncate">
-                {space?.spaceName}
+        <div className="font-bold flex flex-col items-center sm:items-start">
+          <div className="mb-2 text-center sm:text-left"><Trans>You've been invited to join a Space</Trans></div>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full items-center sm:items-stretch">
+            <div className="flex flex-row items-center flex-1 min-w-0 justify-center sm:justify-start">
+              <div className="flex items-center bg-surface-4 rounded-lg px-2 py-2 gap-3 pr-4">
+                <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0" style={{
+                  backgroundImage: space.iconUrl ? `url(${space.iconUrl})` : '',
+                  backgroundPosition: 'center',
+                  backgroundSize: 'cover',
+                  backgroundColor: 'var(--surface-2)'
+                }}>
+                </div>
+                <span className="truncate font-medium">{space?.spaceName}</span>
               </div>
-              <div className="flex flex-col justify-around">
-                <Button
-                  className="px-6"
-                  onClick={() => {
-                    join();
-                  }}
-                  type="primary"
-                  disabled={
-                    joining || !!spaces.find((s) => s.spaceId === space.spaceId)
-                  }
-                >
-                  {spaces.find((s) => s.spaceId === space.spaceId)
-                    ? t`Joined`
-                    : t`Join`}
-                </Button>
-              </div>
+            </div>
+            <div className="flex flex-col justify-center flex-shrink-0">
+              <Button
+                className="px-6"
+                onClick={() => {
+                  join();
+                }}
+                type="primary"
+                disabled={
+                  joining || !!spaces.find((s) => s.spaceId === space.spaceId)
+                }
+              >
+                {spaces.find((s) => s.spaceId === space.spaceId)
+                  ? t`Joined`
+                  : t`Join`}
+              </Button>
             </div>
           </div>
         </div>

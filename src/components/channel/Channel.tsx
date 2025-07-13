@@ -263,7 +263,7 @@ const Channel: React.FC<ChannelProps> = ({
     <div className="chat-container">
       <div className="flex flex-col">
         <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
-          <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start">
+          <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2">
             <div className="flex flex-row items-center gap-2">
               {isMobile && (
                 <FontAwesomeIcon

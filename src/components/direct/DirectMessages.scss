@@ -37,7 +37,6 @@
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
     transform: translateX(-100%);
     transition: transform 300ms ease-in-out;
-    padding: 5px; // Add padding for mobile overlay
     
     &.open {
       display: flex; // Show when open
@@ -47,7 +46,7 @@
     // Phone-specific positioning for smaller NavMenu
     @media (max-width: 480px) {
       left: 50px; // Start from edge of mobile NavMenu
-      width: 220px; // Even smaller for phones
+      //width: 220px; // Even smaller for phones
     }
   }
 }
