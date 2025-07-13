@@ -16,11 +16,20 @@
   }
 }
 
-// Mobile sidebar overlay
+// Mobile layout - ensure chat container fills available space
 @media (max-width: 767px) {
   .chat-container {
     position: relative;
     overflow: hidden;
+    flex: 1; // Expand to fill available space when sidebar is hidden
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0; // Allow shrinking
+  }
+  
+  // Force full width for all chat content
+  .chat-container * {
+    max-width: 100%;
   }
 }
 

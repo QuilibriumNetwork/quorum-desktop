@@ -536,10 +536,9 @@ const Channel: React.FC<ChannelProps> = ({
       <div
         className={
           'w-[260px] bg-mobile-sidebar p-3 overflow-scroll ' +
-          'md:relative md:block ' +
           'fixed top-0 right-0 h-full z-50 ' +
           'transition-transform duration-300 ease-in-out ' +
-          (showUsers ? 'translate-x-0' : 'translate-x-full md:translate-x-0 hidden md:block')
+          (showUsers ? 'translate-x-0' : 'translate-x-full hidden')
         }
       >
         {roles
