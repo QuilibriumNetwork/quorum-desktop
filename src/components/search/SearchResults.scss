@@ -1,7 +1,8 @@
+// Clean search results for inline search
 .search-results {
   position: absolute;
   top: 100%;
-  right: 0;
+  left: 0;
   background: var(--surface-00);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
@@ -84,61 +85,6 @@
 // Dark theme adjustments
 .dark .search-results {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-
-// Responsive design
-@media (max-width: 768px) {
-  .search-results {
-    position: fixed;
-    top: 60px;
-    left: 12px;
-    right: 12px;
-    margin-top: 0;
-    width: auto;
-    min-width: auto;
-    max-width: none;
-    max-height: calc(100vh - 100px);
-  }
-  
-  .search-results-list {
-    max-height: calc(100vh - 200px);
-  }
-  
-  .search-empty-state,
-  .search-loading-state,
-  .search-error-state,
-  .search-no-results {
-    padding: 30px 16px;
-  }
-  
-  .empty-icon,
-  .loading-icon,
-  .error-icon {
-    font-size: 20px;
-  }
-  
-  .empty-message,
-  .loading-message,
-  .error-message {
-    font-size: 13px;
-  }
-  
-  .empty-hint {
-    font-size: 11px;
-  }
-}
-
-// Inline search results for chat headers
-.global-search.dm-search .search-results,
-.global-search.channel-search .search-results {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: auto;
-  width: 400px;
-  min-width: 400px;
-  max-width: 400px;
-  z-index: 1001;
 }
 
 // Animation for opening/closing

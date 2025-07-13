@@ -13,7 +13,6 @@ interface SearchBarProps {
   onSuggestionSelect?: (suggestion: string) => void;
   className?: string;
   disabled?: boolean;
-  inline?: boolean;
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
@@ -25,7 +24,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   onSuggestionSelect,
   className,
   disabled = false,
-  inline = false,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -134,11 +132,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className={`search-bar ${inline ? 'search-bar-inline' : ''} ${className || ''}`}>
+    <div className={`search-bar ${className || ''}`}>
       <div className={`search-input-container ${isFocused ? 'focused' : ''}`}>
         <FontAwesomeIcon 
           icon={faSearch} 
-          className={`search-icon ${isFocused && inline ? 'search-icon-focused' : ''}`}
+          className={`search-icon ${isFocused ? 'search-icon-focused' : ''}`}
         />
         <input
           ref={inputRef}

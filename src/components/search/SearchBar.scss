@@ -1,28 +1,29 @@
+// Clean inline search bar for chat headers
 .search-bar {
   position: relative;
   width: 300px;
-  min-width: 300px;
   max-width: 300px;
+  min-width: 150px;
 }
 
 .search-input-container {
   position: relative;
   display: flex;
   align-items: center;
-  background-color: transparent;
+  background-color: var(--color-bg-chat);
   border-radius: 8px;
   padding: 0 10px;
-  transition: all 0.2s ease;
-  background-color: var(--surface-2);
+  height: 32px;
   border: 1px solid transparent;
-
+  transition: background-color 0.2s ease;
+  
   &:hover {
-    background-color: var(--surface-3);
-    border: 1px solid transparent;
+    background-color: var(--surface-1);
   }
-
+  
   &.focused {
-    border: 1px solid var(--accent);
+    background-color: var(--surface-0);
+    border: 1px solid transparent;
   }
 }
 
@@ -33,12 +34,18 @@
   flex-shrink: 0;
 }
 
+.search-icon-focused {
+  color: var(--accent);
+}
+
 .search-input {
   flex: 1;
   background-color: transparent;
   border: none;
   outline: none;
-  padding: 7px 0;
+  padding: 0;
+  height: 32px;
+  line-height: 32px;
   color: var(--color-text-main);
   font-size: 14px;
   font-family: inherit;
@@ -74,11 +81,7 @@
 }
 
 .search-shortcut {
-  color: var(--color-text-muted);
-  font-size: 12px;
-  margin-left: 8px;
-  flex-shrink: 0;
-  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  display: none;
 }
 
 .search-suggestions {
@@ -127,85 +130,17 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-// Inline search variant for chat headers
-.search-bar-inline {
-  width: 300px;
-  max-width: 300px;
-  min-width: 150px;
-  position: relative;
-  
-  .search-input-container {
-    background-color: var(--color-bg-chat);
-    border-radius: 8px;
-    padding: 0 10px;
-    height: 32px;
-    border: 1px solid transparent;
-    transition: background-color 0.2s ease;
-    
-    &:hover {
-      background-color: var(--surface-1);
-    }
-    
-    &.focused {
-      background-color: var(--surface-0);
-      border: 1px solid transparent;
-    }
-  }
-  
-  .search-icon-focused {
-    color: var(--accent);
-  }
-  
-  .search-input {
-    padding: 0;
-    height: 32px;
-    line-height: 32px;
-    background: transparent;
-  }
-  
-  .search-shortcut {
-    display: none;
-  }
-  
-  .search-suggestions {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    margin-top: 4px;
-  }
-}
-
 // Responsive design
 @media (max-width: 768px) {
   .search-bar {
     width: 250px;
-    min-width: 250px;
     max-width: 250px;
-  }
-  
-  .search-shortcut {
-    display: none;
-  }
-  
-  .search-bar-inline {
-    width: 180px;
-    max-width: 180px;
-    min-width: 120px;
   }
 }
 
 @media (max-width: 480px) {
   .search-bar {
     width: 200px;
-    min-width: 200px;
     max-width: 200px;
-  }
-  
-  .search-bar-inline {
-    width: 150px;
-    max-width: 150px;
-    min-width: 100px;
   }
 }

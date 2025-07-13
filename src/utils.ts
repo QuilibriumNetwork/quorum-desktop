@@ -14,3 +14,11 @@ export const getDefaultUserConfig = (address: string): UserConfig => {
     timestamp: Date.now(),
   };
 };
+
+export const truncateAddress = (address: string, startChars: number = 4, endChars: number = 4): string => {
+  if (!address || address.length <= startChars + endChars) {
+    return address;
+  }
+  
+  return `${address.slice(0, startChars)}...${address.slice(-endChars)}`;
+};

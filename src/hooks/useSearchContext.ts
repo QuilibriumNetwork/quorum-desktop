@@ -89,9 +89,7 @@ export const getContextDisplayName = (context: SearchContext): string => {
     case 'space':
       return t`Search in this Space`;
     case 'dm':
-      return t`Search in direct messages`;
-    default:
-      return t`Search messages`;
+      return t`Search here`;
   }
 };
 
@@ -101,7 +99,5 @@ export const getContextScope = (context: SearchContext): string => {
       return context.channelId ? 'channel' : 'space';
     case 'dm':
       return 'dm';
-    default:
-      return 'global';
   }
 };

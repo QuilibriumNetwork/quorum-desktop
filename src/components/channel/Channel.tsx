@@ -271,8 +271,7 @@ const Channel: React.FC<ChannelProps> = ({
           </div>
           <div className="flex flex-row items-center gap-2">
             <GlobalSearch 
-              className="channel-search" 
-              inline={true}
+              className="channel-search"
             />
             <FontAwesomeIcon
               onClick={() => {

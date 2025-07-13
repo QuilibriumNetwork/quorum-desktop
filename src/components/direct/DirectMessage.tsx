@@ -18,7 +18,7 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import ReactTooltip from '../ReactTooltip';
 import ClickToCopyContent from '../ClickToCopyContent';
-import { DefaultImages } from '../../utils';
+import { DefaultImages, truncateAddress } from '../../utils';
 import CopyToClipboard from '../CopyToClipboard';
 import { GlobalSearch } from '../search';
 
@@ -223,7 +223,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                     iconPosition="right"
                     iconClassName="text-subtle hover:text-surface-7"
                   >
-                    {address}
+                    {truncateAddress(address ?? '')}
                   </ClickToCopyContent>
                 </div>
               </div>
@@ -231,8 +231,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           </div>
           <div className="flex flex-row items-center gap-2">
             <GlobalSearch 
-              className="dm-search" 
-              inline={true}
+              className="dm-search"
             />
             <FontAwesomeIcon
               onClick={() => {
@@ -491,7 +490,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                     tooltipLocation="left-start"
                     iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
                   >
-                    {members[s].address}
+                    {truncateAddress(members[s].address)}
                   </ClickToCopyContent>
                 </span>
               </div>

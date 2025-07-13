@@ -1,75 +1,13 @@
+// Clean global search component
 .global-search {
   position: relative;
   z-index: 1000;
-  
-  &.header-search {
-    // When positioned in header/titlebar
-    position: fixed;
-    top: 8px;
-    right: 120px;
-    z-index: 9999;
-  }
-  
-  &.layout-search {
-    // When positioned in main layout
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    z-index: 1000;
-  }
-  
-  &.dm-search,
-  &.channel-search {
-    // Simple inline search - respect parent spacing
-    position: static;
-    z-index: auto;
-  }
 }
 
 .global-search-bar {
-  min-width: 200px;
-  
-  @media (max-width: 768px) {
-    min-width: 200px;
-  }
-  
-  @media (max-width: 480px) {
-    min-width: 200px;
-  }
+  // No specific styling needed - inherits from SearchBar
 }
 
 .global-search-results {
-  // Positioning handled by SearchResults component
-}
-
-// Integration with existing layout
-.container-unit {
-  .global-search {
-    &.layout-search {
-      // Ensure search doesn't interfere with content
-      position: absolute;
-      top: 12px;
-      right: 12px;
-    }
-  }
-}
-
-// Header integration
-.header-search {
-  .search-input-container {
-    background: (var(--surface-00-rgb), 0.9);
-    backdrop-filter: blur(8px);
-    border-color: var(--surface-4);
-    
-    &.focused {
-      background: var(--surface-1);
-      border-color: var(--accent-500);
-    }
-  }
-  
-  .search-results {
-    // Adjust for header positioning
-    margin-top: 4px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  }
+  // No specific styling needed - inherits from SearchResults
 }
