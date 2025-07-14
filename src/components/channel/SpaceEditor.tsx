@@ -418,7 +418,7 @@ const SpaceEditor: React.FunctionComponent<{
                         <input {...getBannerInputProps()} />
                       </div>
                     </div>
-                    <div className="space-editor-content-section-header small-caps">
+                    <div className="modal-content-section-header small-caps">
                       <Trans>Default Channel</Trans>
                     </div>
                     <div className="modal-content-info">
@@ -469,7 +469,7 @@ const SpaceEditor: React.FunctionComponent<{
                         </div>
                       )}
                     </div>
-                    <div className="space-editor-content-section-header small-caps">
+                    <div className="modal-content-section-header small-caps">
                       <Trans>Privacy Settings</Trans>
                     </div>
                     <div className="modal-content-info">
