@@ -222,7 +222,9 @@ const UserSettingsModal: React.FunctionComponent<{
         <div
           onClick={() => setSelectedCategory('general')}
           className={
-            (selectedCategory == 'general' ? 'bg-surface-5 border-l-2 border-accent ' : '') +
+            (selectedCategory == 'general'
+              ? 'bg-surface-5 border-l-2 border-accent '
+              : '') +
             'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm'
           }
         >
@@ -231,7 +233,9 @@ const UserSettingsModal: React.FunctionComponent<{
         <div
           onClick={() => setSelectedCategory('privacy')}
           className={
-            (selectedCategory == 'privacy' ? 'bg-surface-5 border-l-2 border-accent ' : '') +
+            (selectedCategory == 'privacy'
+              ? 'bg-surface-5 border-l-2 border-accent '
+              : '') +
             'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm'
           }
         >
@@ -240,7 +244,9 @@ const UserSettingsModal: React.FunctionComponent<{
         <div
           onClick={() => setSelectedCategory('appearance')}
           className={
-            (selectedCategory === 'appearance' ? 'bg-surface-5 border-l-2 border-accent ' : '') +
+            (selectedCategory === 'appearance'
+              ? 'bg-surface-5 border-l-2 border-accent '
+              : '') +
             'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm'
           }
         >
@@ -253,7 +259,7 @@ const UserSettingsModal: React.FunctionComponent<{
             case 'general':
               return (
                 <>
-                  <div className="user-settings-header">
+                  <div className="user-settings-header min-h-[120px]">
                     <div
                       className="user-settings-icon-editable"
                       style={{
@@ -327,18 +333,20 @@ const UserSettingsModal: React.FunctionComponent<{
                     </div>
                   </div>
                   <div className="user-settings-content flex flex-col grow">
-                    <div className="small-caps">Devices</div>
+                    <div className='user-settings-content-section-header'/>
+                    <div className="small-caps pb-2">Devices</div>
                     {stagedRegistration?.device_registrations.map(
                       (d: secureChannel.DeviceRegistration) => (
                         <div
                           key={d.inbox_registration.inbox_address}
-                          className="user-settings-content-section-header flex flex-row justify-between items-start"
+                          className="flex flex-row justify-between items-start"
                         >
                           <div className="flex flex-col justify-around font-light break-all flex-1 mr-2">
                             {d.inbox_registration.inbox_address}
                           </div>
                           <div className="flex-shrink-0">
-                            {keyset.deviceKeyset?.inbox_keyset?.inbox_address !==
+                            {keyset.deviceKeyset?.inbox_keyset
+                              ?.inbox_address !==
                               d.inbox_registration.inbox_address && (
                               <Button
                                 onClick={() => {
@@ -357,11 +365,11 @@ const UserSettingsModal: React.FunctionComponent<{
                         </div>
                       )
                     )}
-                    <div className="user-settings-content-section-header" />
-                    <div className="user-settings-info">
-                      <div className="user-settings-content-section-header small-caps !pt-4">
-                        {t`Key Export`}
-                      </div>
+                 
+                    <div className="user-settings-info  !pt-4">
+                      <div className="user-settings-content-section-header" />
+                      <div className="small-caps">{t`Key Export`}</div>
+
                       <div className="pt-1 text-sm text-main">
                         {t`Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings.`}
                       </div>
@@ -376,9 +384,9 @@ const UserSettingsModal: React.FunctionComponent<{
                         </Button>
                       </div>
                     </div>
-                    <div className="user-settings-content-section-header small-caps">
-                      {t`Security`}
-                    </div>
+                    <div className="user-settings-content-section-header" />
+                    <div className="small-caps">{t`Security`}</div>
+
                     <div className="pt-1 text-sm text-main">
                       {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
                     </div>
@@ -463,7 +471,6 @@ const UserSettingsModal: React.FunctionComponent<{
                   <ThemeRadioGroup />
 
                   <div className="pt-4">
-                    
                     <AccentColorSwitcher />
                   </div>
 

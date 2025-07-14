@@ -11,7 +11,7 @@
   
   @media (max-width: 768px) {
     width: 95vw;
-    height: 90vh;
+    height: 85vh;
     max-width: none;
     border-radius: 10px;
   }
@@ -19,7 +19,6 @@
 
 .user-settings-header {
   background: var(--surface-5);
-  
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   display: flex;
@@ -30,7 +29,6 @@
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
     padding: 20px 12px 0px 12px;
-    background: var(--surface-5);
   }
 }
 
@@ -56,12 +54,6 @@
     font-size: 13px;
   }
   
-  @media (max-width: 768px) {
-    .quorum-input {
-      padding: 12px;
-      font-size: 14px;
-    }
-  }
 }
 
 .user-settings-editor-actions {
@@ -75,13 +67,9 @@
   }
   
   @media (max-width: 768px) {
-    justify-content: center;
+    justify-content: left;
     margin-top: 16px;
-    
-    .quorum-button {
-      width: 100%;
-      max-width: 200px;
-    }
+    margin-bottom: 20px;
   }
 }
 
@@ -91,10 +79,7 @@
   border-radius: 0px 0px 10px 10px;
   
   @media (max-width: 768px) {
-    padding: 16px 12px;
     border-radius: 0px;
-    background-color: var(--surface-5);
-    height: 100%;
     
     &:last-child {
       border-radius: 0px 0px 10px 10px;
@@ -179,11 +164,11 @@
   margin-top: 7px;
 }
 
-.user-settings-content-section-header:first-child {
-  border-top: 0px none;
-  padding-top: 0px;
-  margin-top: 0px;
-}
+// .user-settings-content-section-header:first-child {
+//   border-top: 0px none;
+//   padding-top: 0px;
+//   margin-top: 0px;
+// }
 
 .user-settings-edit-button {
   position: absolute;
