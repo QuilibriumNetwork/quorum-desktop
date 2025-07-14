@@ -241,6 +241,57 @@ Both mobile and desktop use a consistent overlay system:
 - `transition-transform duration-300` for consistent timing
 - Minimal re-renders with proper dependency arrays
 
+## Modal Responsive System
+
+### Overview
+A comprehensive modal system has been implemented with consistent responsive behavior and reusable CSS classes in `src/styles/_modal_common.scss`.
+
+### Modal Types
+
+#### Complex Modals (UserSettingsModal, SpaceEditor)
+- **Desktop**: Sidebar navigation with main content area
+- **Mobile**: Stacked category navigation with 1-column or 2-column layouts
+- Uses `.modal-complex-container`, `.modal-complex-layout`, `.modal-complex-content`
+
+#### Small Modals (ChannelEditor) 
+- **All screens**: Compact, auto-sized containers
+- Uses `.modal-small-container`, `.modal-small-layout`, `.modal-small-content`
+
+### Navigation Patterns
+
+```scss
+// Single column for ≤3 categories
+.modal-nav-mobile-single {
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+}
+
+// 2-column grid for 4-6 categories  
+.modal-nav-mobile-2col {
+  @media (max-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px 16px;
+  }
+}
+```
+
+### Common Classes
+- `.modal-content-header` - Header with icon/banner and text
+- `.modal-content-section` - Main content areas with auto-sizing
+- `.modal-content-actions` - Button containers (right-aligned desktop, left-aligned mobile)
+- `.modal-content-info` - Input fields and form content
+- `.modal-icon-editable` / `.modal-banner-editable` - Interactive media elements
+
+### Responsive Features
+- **768px breakpoint** for mobile/desktop switching
+- **Address truncation** (first 4 + last 4 characters) on mobile
+- **Flexible button layouts** prevent text cutoff in different languages
+- **Proper dropdown positioning** relative to parent containers
+
 ## Future Enhancement Areas
 
 1. **Gesture Support**: Swipe gestures for sidebar navigation
