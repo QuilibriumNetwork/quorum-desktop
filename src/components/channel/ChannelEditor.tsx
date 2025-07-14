@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Button from '../Button';
-import './ChannelEditor.scss';
+import '../../styles/_modal_common.scss';
 import { useSpace } from '../../hooks';
 import { useMessageDB } from '../context/MessageDB';
 import { Channel } from '../../api/quorumApi';
@@ -109,35 +109,31 @@ const ChannelEditor: React.FunctionComponent<{
   }, [space, channelName, channelTopic]);
 
   return (
-    <div className="channel-editor flex flex-row min-w-[350px]">
-      <div className="flex flex-col grow overflow-y-scroll rounded-xl">
-        <div className="channel-editor-header">
-          <div className="channel-editor-text flex flex-col grow px-4">
-            <div className="small-caps"><Trans>Channel Name</Trans></div>
-            <input
-              className="w-full quorum-input"
-              value={channelName}
-              onChange={(e) =>
-                setChannelName(
-                  e.target.value.toLowerCase().replace(/[^a-z0-9\-]/gi, '')
-                )
-              }
-            />
-          </div>
-        </div>
-        <div className="channel-editor-content flex flex-col grow">
-          <div className="channel-editor-content-section-header small-caps">
-            <Trans>Channel Topic</Trans>
-          </div>
-          <div className="channel-editor-info">
-            <input
-              className="w-full quorum-input"
-              value={channelTopic}
-              onChange={(e) => setChannelTopic(e.target.value)}
-            />
-          </div>
-          <div className="grow flex flex-col justify-end mt-4">
-            <div className="channel-editor-editor-actions justify-between">
+    <div className="modal-small-container">
+      <div className="modal-small-layout">
+        <div className="modal-small-content">
+          <div className="modal-content-section">
+            <div className="modal-content-info">
+              <div className="small-caps"><Trans>Channel Name</Trans></div>
+              <input
+                className="w-full quorum-input"
+                value={channelName}
+                onChange={(e) =>
+                  setChannelName(
+                    e.target.value.toLowerCase().replace(/[^a-z0-9\-]/gi, '')
+                  )
+                }
+              />
+            </div>
+            <div className="modal-content-info">
+              <div className="small-caps"><Trans>Channel Topic</Trans></div>
+              <input
+                className="w-full quorum-input"
+                value={channelTopic}
+                onChange={(e) => setChannelTopic(e.target.value)}
+              />
+            </div>
+            <div className="modal-small-actions">
               {channelId && (
                 <Button
                   type="danger"
@@ -152,7 +148,6 @@ const ChannelEditor: React.FunctionComponent<{
                   {!deleteStatus ? t`Delete Channel` : t`Confirm Deletion`}
                 </Button>
               )}
-              {!channelId && <div></div>}
               <Button type="primary" onClick={() => saveChanges()}>
                 <Trans>Save Changes</Trans>
               </Button>

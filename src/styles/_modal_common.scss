@@ -1,3 +1,4 @@
+// Simple Modal Classes (for basic modals like CreateSpace, JoinSpace, etc.)
 .modal-body {
   display: flex;
   justify-content: space-between;
@@ -28,4 +29,467 @@
 
 .modal-info {
   font-size: 12px;
+}
+
+// Complex Modal System Classes
+.modal-complex-container {
+  position: absolute;
+  z-index: 3000;
+  width: 90vw;
+  max-width: 800px;
+  height: 90vh;
+  background: var(--surface-3);
+  border-radius: 10px;
+  color: var(--color-text-main);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  
+  @media (max-width: 768px) {
+    width: 95vw;
+    height: 85vh;
+    max-width: none;
+    border-radius: 10px;
+  }
+}
+
+.modal-complex-layout {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.modal-complex-sidebar {
+  padding: 16px;
+  color: var(--color-text-main);
+  width: 200px;
+  flex-shrink: 0;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.modal-complex-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+  border-radius: 0px 10px 10px 0px;
+  
+  @media (max-width: 768px) {
+    border-radius: 0px 0px 10px 10px;
+  }
+}
+
+// Navigation Classes
+.modal-nav-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-subtle);
+  margin-bottom: 12px;
+}
+
+.modal-nav-category {
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+  margin: 4px -8px;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: var(--color-bg-modal-cat-hover);
+  }
+  
+  &.active {
+    background-color: var(--color-bg-modal-cat-active);
+  }
+}
+
+// Mobile Navigation Layouts
+.modal-nav-mobile-single {
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    padding: 8px 16px;
+    background: var(--surface-3);
+    border-bottom: 1px solid var(--surface-6);
+    border-radius: 10px 10px 0px 0px;
+    gap: 1px;
+    
+    .modal-nav-category {
+      font-weight: 500;
+      cursor: pointer;
+      padding: 6px 12px;
+      margin: 0.5px 0;
+      border-radius: 6px;
+      font-size: 14px;
+      border-left: 2px solid transparent;
+      
+      &:hover {
+        background-color: var(--color-bg-modal-cat-hover);
+      }
+      
+      &.active {
+        background-color: var(--color-bg-modal-cat-active);
+        border-left-color: var(--accent);
+      }
+      
+      @media (max-width: 480px) {
+        font-size: 13px;
+        padding: 5px 10px;
+      }
+    }
+  }
+}
+
+.modal-nav-mobile-2col {
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 8px 16px;
+    background: var(--surface-3);
+    border-bottom: 1px solid var(--surface-6);
+    border-radius: 10px 10px 0px 0px;
+    gap: 2px 16px;
+    
+    .modal-nav-category {
+      font-weight: 500;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 14px;
+      text-align: center;
+      border-left: 2px solid transparent;
+      
+      &:hover {
+        background-color: var(--color-bg-modal-cat-hover);
+      }
+      
+      &.active {
+        background-color: var(--color-bg-modal-cat-active);
+        border-left-color: var(--accent);
+      }
+      
+      @media (max-width: 480px) {
+        font-size: 12px;
+        padding: 5px 6px;
+      }
+    }
+  }
+}
+
+// Content Section Classes
+.modal-content-header {
+  background: var(--surface-5);
+  border-top-left-radius: 0px;
+  border-top-right-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  user-select: none;
+  min-height: 120px;
+  padding: 20px 16px;
+  align-items: flex-start;
+  gap: 16px;
+  
+  @media (max-width: 768px) {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    padding: 16px 12px;
+    min-height: auto;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+}
+
+.modal-content-section {
+  padding: 20px;
+  background-color: var(--surface-5);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+  
+  &:last-child {
+    border-radius: 0px 0px 10px 10px;
+  }
+  
+  /* Ensure Save button stays at bottom right for all categories */
+  .modal-content-actions {
+    margin-top: auto;
+    padding-top: 16px;
+  }
+}
+
+.modal-content-actions {
+  display: flex;
+  justify-content: right;
+  margin-top: 10px;
+  gap: 8px;
+  flex-shrink: 0;
+
+  .quorum-button {
+    height: 38px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  
+  @media (max-width: 768px) {
+    justify-content: left;
+    margin-top: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+}
+
+/* Special styling for actions in header */
+.modal-content-header .modal-content-actions {
+  margin-top: 0;
+  align-self: flex-start;
+  flex-shrink: 0;
+  
+  @media (max-width: 768px) {
+    margin-top: 0;
+    margin-bottom: 0;
+    align-self: stretch;
+    width: 100%;
+    flex-shrink: 0;
+    
+    .quorum-button {
+      width: 100%;
+      text-align: center;
+      min-height: 40px;
+      padding: 8px 12px;
+      box-sizing: border-box;
+    }
+  }
+}
+
+// Content Info Classes
+.modal-content-info {
+  font-size: 13px;
+  margin-bottom: 16px;
+
+  .quorum-input {
+    width: 100%;
+    background: var(--surface-0);
+    padding: 10px;
+    font-size: 13px;
+  }
+  
+  @media (max-width: 768px) {
+    margin-bottom: 12px;
+    
+    .quorum-input {
+      padding: 12px;
+      font-size: 14px;
+    }
+  }
+}
+
+.modal-content-section-header {
+  font-weight: 700;
+  border-top: 1px solid var(--color-border-strong);
+  padding-top: 7px;
+  margin-top: 7px;
+  
+  &:first-child {
+    border-top: 0px none;
+    padding-top: 0px;
+    margin-top: 0px;
+  }
+}
+
+// Small Modal Classes (for simple modals like ChannelEditor)
+.modal-small-container {
+  position: absolute;
+  z-index: 3000;
+  width: 90vw;
+  max-width: 500px;
+  height: auto;
+  max-height: 70vh;
+  background: var(--surface-3);
+  border-radius: 10px;
+  color: var(--color-text-main);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  
+  @media (max-width: 768px) {
+    width: 95vw;
+    max-width: none;
+    max-height: 60vh;
+    border-radius: 10px;
+  }
+}
+
+.modal-small-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.modal-small-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+  border-radius: 10px;
+}
+
+.modal-small-actions {
+  display: flex;
+  justify-content: right;
+  gap: 8px;
+  margin-top: 10px;
+
+  .quorum-button {
+    height: 38px;
+    font-size: 13px;
+  }
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    justify-content: left;
+    margin-top: 16px;
+    margin-bottom: 20px;
+    gap: 12px;
+  }
+}
+
+// Icon Classes  
+.modal-icon,
+.modal-icon-editable {
+  width: 82px;
+  height: 82px;
+  margin-top: 20px;
+  margin-left: 18px;
+  margin-right: 18px;
+  background-position: center;
+  background-size: cover;
+  border-radius: 41px;
+  display: inline-block;
+  flex-shrink: 0;
+  
+  @media (max-width: 768px) {
+    width: 70px;
+    height: 70px;
+    margin-top: 15px;
+    margin-left: 12px;
+    margin-right: 12px;
+    border-radius: 35px;
+  }
+}
+
+// Banner Classes
+.modal-banner,
+.modal-banner-editable {
+  width: 100%;
+  max-width: 300px;
+  height: 120px;
+  background-position: center;
+  background-size: cover;
+  border-radius: 8px;
+  display: block;
+  margin-top: 8px;
+  
+  @media (max-width: 768px) {
+    height: 100px;
+    max-width: 100%;
+  }
+}
+
+.modal-banner-editable {
+  cursor: pointer;
+  position: relative;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &::after {
+    content: '+';
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: var(--color-bg-icon);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  }
+}
+
+.modal-icon-editable {
+  cursor: pointer;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &::after {
+    width: 24px;
+    height: 24px;
+    background: var(--color-bg-icon);
+    color: var(--accent);
+    content: '+';
+    display: block;
+    text-align: center;
+    border-radius: 12px;
+    font-weight: 700;
+    float: right;
+    margin-top: 58px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    
+    @media (max-width: 768px) {
+      margin-top: 46px;
+    }
+  }
+}
+
+.modal-text-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-grow: 1;
+  width: 100%;
+  padding-right: 16px;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    padding-right: 0;
+  }
+}
+
+// Role Classes
+.modal-role {
+  padding: 2px 10px;
+  border-radius: 9px;
+  color: var(--color-text-main);
+  background: rgba(var(--success), 0.5);
+  display: inline-block;
+  margin-right: 8px;
+  font-size: 13px;
 }

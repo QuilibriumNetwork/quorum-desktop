@@ -2,7 +2,7 @@ import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import Button from '../Button';
-import './UserSettingsModal.scss';
+import '../../styles/_modal_common.scss';
 import { useRegistration } from '../../hooks';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -184,84 +184,61 @@ const UserSettingsModal: React.FunctionComponent<{
   };
 
   return (
-    <div className="user-settings flex flex-col md:flex-row">
-      {/* Desktop/Tablet Sidebar */}
-      <div className="hidden md:block px-4 py-2 text-main w-[200px]">
-        <div className="small-caps text-subtle">{t`Settings`}</div>
-        <div
-          onClick={() => setSelectedCategory('general')}
-          className={
-            (selectedCategory == 'general' ? 'bg-surface-5 ' : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
-          }
-        >
-          {t`General`}
+    <div className="modal-complex-container">
+      <div className="modal-complex-layout">
+        {/* Desktop/Tablet Sidebar */}
+        <div className="modal-complex-sidebar">
+          <div className="modal-nav-title">{t`Settings`}</div>
+          <div
+            onClick={() => setSelectedCategory('general')}
+            className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
+          >
+            {t`General`}
+          </div>
+          <div
+            onClick={() => setSelectedCategory('privacy')}
+            className={`modal-nav-category ${selectedCategory === 'privacy' ? 'active' : ''}`}
+          >
+            {t`Privacy/Security`}
+          </div>
+          <div
+            onClick={() => setSelectedCategory('appearance')}
+            className={`modal-nav-category ${selectedCategory === 'appearance' ? 'active' : ''}`}
+          >
+            {t`Appearance`}
+          </div>
         </div>
-        <div
-          onClick={() => setSelectedCategory('privacy')}
-          className={
-            (selectedCategory == 'privacy' ? 'bg-surface-5 ' : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1 '
-          }
-        >
-          {t`Privacy/Security`}
-        </div>
-        <div
-          onClick={() => setSelectedCategory('appearance')}
-          className={
-            (selectedCategory === 'appearance' ? 'bg-surface-5 ' : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1 text-sm sm:text-base'
-          }
-        >
-          {t`Appearance`}
-        </div>
-      </div>
 
-      {/* Mobile Stacked Menu */}
-      <div className="md:hidden px-3 py-2 bg-surface-3 border-b border-surface-6 rounded-t-[10px]">
-        <div
-          onClick={() => setSelectedCategory('general')}
-          className={
-            (selectedCategory == 'general'
-              ? 'bg-surface-5 border-l-2 border-accent '
-              : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm sm:text-base'
-          }
-        >
-          {t`General`}
+        {/* Mobile Stacked Menu */}
+        <div className="modal-nav-mobile-single">
+          <div
+            onClick={() => setSelectedCategory('general')}
+            className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
+          >
+            {t`General`}
+          </div>
+          <div
+            onClick={() => setSelectedCategory('privacy')}
+            className={`modal-nav-category ${selectedCategory === 'privacy' ? 'active' : ''}`}
+          >
+            {t`Privacy/Security`}
+          </div>
+          <div
+            onClick={() => setSelectedCategory('appearance')}
+            className={`modal-nav-category ${selectedCategory === 'appearance' ? 'active' : ''}`}
+          >
+            {t`Appearance`}
+          </div>
         </div>
-        <div
-          onClick={() => setSelectedCategory('privacy')}
-          className={
-            (selectedCategory == 'privacy'
-              ? 'bg-surface-5 border-l-2 border-accent '
-              : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm sm:text-base'
-          }
-        >
-          {t`Privacy/Security`}
-        </div>
-        <div
-          onClick={() => setSelectedCategory('appearance')}
-          className={
-            (selectedCategory === 'appearance'
-              ? 'bg-surface-5 border-l-2 border-accent '
-              : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm sm:text-base'
-          }
-        >
-          {t`Appearance`}
-        </div>
-      </div>
-      <div className="flex flex-col grow overflow-y-scroll md:rounded-xl">
+        <div className="modal-complex-content">
         {(() => {
           switch (selectedCategory) {
             case 'general':
               return (
                 <>
-                  <div className="user-settings-header min-h-[120px]">
+                  <div className="modal-content-header">
                     <div
-                      className="user-settings-icon-editable"
+                      className="modal-icon-editable"
                       style={{
                         backgroundImage:
                           fileData !== undefined && acceptedFiles.length !== 0
@@ -277,7 +254,7 @@ const UserSettingsModal: React.FunctionComponent<{
                     >
                       <input {...getInputProps()} />
                     </div>
-                    <div className="user-settings-text flex flex-col grow pr-4">
+                    <div className="modal-text-section">
                       <div className="small-caps">{t`Display Name`}</div>
                       <input
                         className="w-full quorum-input"
@@ -286,8 +263,8 @@ const UserSettingsModal: React.FunctionComponent<{
                       />
                     </div>
                   </div>
-                  <div className="user-settings-content flex flex-col !rounded-b-none">
-                    <div className="user-settings-info">
+                  <div className="modal-content-section">
+                    <div className="modal-content-info">
                       <div className="small-caps">{t`Account Address`}</div>
                       <div className="flex flex-row items-start text-base">
                         <div className="break-all flex-1 mr-2">
@@ -301,19 +278,15 @@ const UserSettingsModal: React.FunctionComponent<{
                         />
                       </div>
                     </div>
-                  </div>
-                  <div className="user-settings-content flex flex-col grow">
-                    <div className="grow flex flex-col justify-end">
-                      <div className="user-settings-editor-actions">
-                        <Button
-                          type="primary"
-                          onClick={() => {
-                            saveChanges();
-                          }}
-                        >
-                          {t`Save Changes`}
-                        </Button>
-                      </div>
+                    <div className="modal-content-actions">
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          saveChanges();
+                        }}
+                      >
+                        {t`Save Changes`}
+                      </Button>
                     </div>
                   </div>
                 </>
@@ -321,19 +294,16 @@ const UserSettingsModal: React.FunctionComponent<{
             case 'privacy':
               return (
                 <>
-                  <div className="user-settings-header pt-4 px-4 flex flex-row justify-between">
-                    <div>
+                  <div className="modal-content-header">
+                    <div className="modal-text-section">
                       <div className="text-xl font-bold">{t`Privacy/Security`}</div>
                       <div className="pt-1 text-sm text-main">
                         {t`Manage devices, and privacy conditions for messaging and synchronization.`}
                       </div>
                     </div>
-                    <div className="user-settings-editor-actions">
-                      {/* <div><Button type="primary" onClick={() => {setRoles(prev => [...prev, {roleId: crypto.randomUUID(), roleTag: "New Role"+(prev.length+1), displayName: "New Role", color: "#3e8914", members: [], permissions: []}])}}>Add Role</Button></div> */}
-                    </div>
                   </div>
-                  <div className="user-settings-content flex flex-col grow">
-                    <div className='user-settings-content-section-header'/>
+                  <div className="modal-content-section">
+                    <div className='modal-content-section-header'/>
                     <div className="small-caps pb-2">Devices</div>
                     {stagedRegistration?.device_registrations.map(
                       (d: secureChannel.DeviceRegistration) => (
@@ -366,8 +336,8 @@ const UserSettingsModal: React.FunctionComponent<{
                       )
                     )}
                  
-                    <div className="user-settings-info  !pt-4">
-                      <div className="user-settings-content-section-header" />
+                    <div className="modal-content-info !pt-4">
+                      <div className="modal-content-section-header" />
                       <div className="small-caps">{t`Key Export`}</div>
 
                       <div className="pt-1 text-sm text-main">
@@ -384,13 +354,13 @@ const UserSettingsModal: React.FunctionComponent<{
                         </Button>
                       </div>
                     </div>
-                    <div className="user-settings-content-section-header" />
+                    <div className="modal-content-section-header" />
                     <div className="small-caps">{t`Security`}</div>
 
                     <div className="pt-1 text-sm text-main">
                       {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
                     </div>
-                    <div className="user-settings-info">
+                    <div className="modal-content-info">
                       <div className="flex flex-row justify-between pb-2">
                         <div className="text-sm flex flex-row">
                           <div className="text-sm flex flex-col justify-around">
@@ -446,24 +416,22 @@ const UserSettingsModal: React.FunctionComponent<{
                         />
                       </div>
                     </div>
-                    <div className="grow flex flex-col justify-end">
-                      <div className="user-settings-editor-actions">
-                        <Button
-                          type="primary"
-                          onClick={() => {
-                            saveChanges();
-                          }}
-                        >
-                          {t`Save Changes`}
-                        </Button>
-                      </div>
+                    <div className="modal-content-actions">
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          saveChanges();
+                        }}
+                      >
+                        {t`Save Changes`}
+                      </Button>
                     </div>
                   </div>
                 </>
               );
             case 'appearance':
               return (
-                <div className="user-settings-content px-4 py-6 flex flex-col gap-4 grow">
+                <div className="modal-content-section">
                   <div className="text-xl font-bold">{t`Appearance`}</div>
                   <div className="text-sm text-main">
                     {t`Choose your preferred theme for Quorum.`}
@@ -475,7 +443,7 @@ const UserSettingsModal: React.FunctionComponent<{
                   </div>
 
                   <div className="pt-4">
-                    <div className='user-settings-content-section-header'/>
+                    <div className='modal-content-section-header'/>
                     <div className="small-caps pb-2">{t`Language`}</div>
                     <div className="flex flex-row gap-2 items-center">
                       <select
@@ -514,6 +482,7 @@ const UserSettingsModal: React.FunctionComponent<{
               );
           }
         })()}
+        </div>
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 
 import { useMessageDB } from '../context/MessageDB';
-import './SpaceEditor.scss';
+import '../../styles/_modal_common.scss';
 import Button from '../Button';
 import { useConversations, useRegistration, useSpace } from '../../hooks';
 import {
@@ -34,6 +34,7 @@ import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import ClickToCopyContent from '../ClickToCopyContent';
 import ReactTooltip from '../ReactTooltip';
+import { truncateAddress } from '../../utils';
 
 const SpaceEditor: React.FunctionComponent<{
   spaceId: string;
@@ -286,70 +287,84 @@ const SpaceEditor: React.FunctionComponent<{
   ]);
 
   return (
-    <div className="space-editor flex flex-row">
-      <div className="px-4 py-2 text-main w-[200px]">
-        <div className="small-caps text-subtle">Settings</div>
-        <div
-          onClick={() => setSelectedCategory('general')}
-          className={
-            (selectedCategory == 'general'
-              ? 'bg-modal-cat-active '
-              : '') +
-            'font-medium cursor-pointer hover:bg-modal-cat-hover px-2 mt-1 mx-[-.5rem] rounded-md py-1'
-          }
-        >
-          <Trans>General</Trans>
+    <div className="modal-complex-container">
+      <div className="modal-complex-layout">
+        <div className="modal-complex-sidebar">
+          <div className="modal-nav-title">Settings</div>
+          <div
+            onClick={() => setSelectedCategory('general')}
+            className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
+          >
+            <Trans>General</Trans>
+          </div>
+          <div
+            onClick={() => setSelectedCategory('roles')}
+            className={`modal-nav-category ${selectedCategory === 'roles' ? 'active' : ''}`}
+          >
+            <Trans>Roles</Trans>
+          </div>
+          <div
+            onClick={() => setSelectedCategory('emojis')}
+            className={`modal-nav-category ${selectedCategory === 'emojis' ? 'active' : ''}`}
+          >
+            <Trans>Emojis</Trans>
+          </div>
+          <div
+            onClick={() => setSelectedCategory('stickers')}
+            className={`modal-nav-category ${selectedCategory === 'stickers' ? 'active' : ''}`}
+          >
+            <Trans>Stickers</Trans>
+          </div>
+          <div
+            onClick={() => setSelectedCategory('invites')}
+            className={`modal-nav-category ${selectedCategory === 'invites' ? 'active' : ''}`}
+          >
+            <Trans>Invites</Trans>
+          </div>
         </div>
-        <div
-          onClick={() => setSelectedCategory('roles')}
-          className={
-            (selectedCategory == 'roles' ? 'bg-modal-cat-active ' : '') +
-            'font-medium cursor-pointer hover:bg-modal-cat-hover px-2 mt-1 mx-[-.5rem] rounded-md py-1'
-          }
-        >
-          <Trans>Roles</Trans>
+
+        {/* Mobile 2-Column Menu */}
+        <div className="modal-nav-mobile-2col">
+          <div
+            onClick={() => setSelectedCategory('general')}
+            className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
+          >
+            <Trans>General</Trans>
+          </div>
+          <div
+            onClick={() => setSelectedCategory('stickers')}
+            className={`modal-nav-category ${selectedCategory === 'stickers' ? 'active' : ''}`}
+          >
+            <Trans>Stickers</Trans>
+          </div>
+          <div
+            onClick={() => setSelectedCategory('roles')}
+            className={`modal-nav-category ${selectedCategory === 'roles' ? 'active' : ''}`}
+          >
+            <Trans>Roles</Trans>
+          </div>
+          <div
+            onClick={() => setSelectedCategory('invites')}
+            className={`modal-nav-category ${selectedCategory === 'invites' ? 'active' : ''}`}
+          >
+            <Trans>Invites</Trans>
+          </div>
+          <div
+            onClick={() => setSelectedCategory('emojis')}
+            className={`modal-nav-category ${selectedCategory === 'emojis' ? 'active' : ''}`}
+          >
+            <Trans>Emojis</Trans>
+          </div>
         </div>
-        <div
-          onClick={() => setSelectedCategory('emojis')}
-          className={
-            (selectedCategory == 'emoji' ? 'bg-modal-cat-active ' : '') +
-            'font-medium cursor-pointer hover:bg-modal-cat-hover px-2 mt-1 mx-[-.5rem] rounded-md py-1'
-          }
-        >
-          <Trans>Emojis</Trans>
-        </div>
-        <div
-          onClick={() => setSelectedCategory('stickers')}
-          className={
-            (selectedCategory == 'stickers'
-              ? 'bg-modal-cat-active '
-              : '') +
-            'font-medium cursor-pointer hover:bg-modal-cat-hover px-2 mt-1 mx-[-.5rem] rounded-md py-1'
-          }
-        >
-          <Trans>Stickers</Trans>
-        </div>
-        <div
-          onClick={() => setSelectedCategory('invites')}
-          className={
-            (selectedCategory == 'invites'
-              ? 'bg-modal-cat-active '
-              : '') +
-            'font-medium cursor-pointer hover:bg-modal-cat-hover px-2 mt-1 mx-[-.5rem] rounded-md py-1'
-          }
-        >
-          <Trans>Invites</Trans>
-        </div>
-      </div>
-      <div className="flex flex-col grow overflow-y-scroll rounded-xl">
+        <div className="modal-complex-content">
         {(() => {
           switch (selectedCategory) {
             case 'general':
               return (
                 <>
-                  <div className="space-editor-header">
+                  <div className="modal-content-header">
                     <div
-                      className="space-editor-icon-editable cursor-pointer"
+                      className="modal-icon-editable cursor-pointer"
                       style={{
                         backgroundImage:
                           fileData != undefined && acceptedFiles.length != 0
@@ -364,7 +379,7 @@ const SpaceEditor: React.FunctionComponent<{
                     >
                       <input {...getInputProps()} />
                     </div>
-                    <div className="space-editor-text flex flex-col grow pr-4">
+                    <div className="modal-text-section">
                       <div className="small-caps">
                         <Trans>Space Name</Trans>
                       </div>
@@ -375,14 +390,14 @@ const SpaceEditor: React.FunctionComponent<{
                       />
                     </div>
                   </div>
-                  <div className="space-editor-content flex flex-col grow">
-                    <div className="space-editor-content-section-header small-caps">
+                  <div className="modal-content-section">
+                    <div className="modal-content-section-header small-caps">
                       <Trans>Space Banner</Trans>
                     </div>
-                    <div className="space-editor-info">
+                    <div className="modal-content-info">
                       <div
                         className={
-                          'space-editor-banner-editable cursor-pointer ' +
+                          'modal-banner-editable ' +
                           (space?.bannerUrl || bannerAcceptedFiles.length != 0
                             ? ''
                             : 'border-2 border-dashed border-accent-200')
@@ -406,7 +421,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="space-editor-content-section-header small-caps">
                       <Trans>Default Channel</Trans>
                     </div>
-                    <div className="space-editor-info">
+                    <div className="modal-content-info">
                       <div
                         className="w-full quorum-input !font-bold flex flex-row justify-between cursor-pointer"
                         onClick={() =>
@@ -457,7 +472,7 @@ const SpaceEditor: React.FunctionComponent<{
                     <div className="space-editor-content-section-header small-caps">
                       <Trans>Privacy Settings</Trans>
                     </div>
-                    <div className="space-editor-info">
+                    <div className="modal-content-info">
                       <div className="flex flex-row justify-between">
                         <div className="text-sm flex flex-row">
                           <div className="text-sm flex flex-col justify-around">
@@ -489,12 +504,10 @@ const SpaceEditor: React.FunctionComponent<{
                         />
                       </div>
                     </div>
-                    <div className="grow flex flex-col justify-end">
-                      <div className="space-editor-editor-actions">
-                        <Button type="primary" onClick={() => saveChanges()}>
-                          <Trans>Save Changes</Trans>
-                        </Button>
-                      </div>
+                    <div className="modal-content-actions">
+                      <Button type="primary" onClick={() => saveChanges()}>
+                        <Trans>Save Changes</Trans>
+                      </Button>
                     </div>
                   </div>
                 </>
@@ -502,8 +515,8 @@ const SpaceEditor: React.FunctionComponent<{
             case 'roles':
               return (
                 <>
-                  <div className="space-editor-header pt-4 px-4 !min-h-[0px] flex flex-row justify-between">
-                    <div className="">
+                  <div className="modal-content-header">
+                    <div className="modal-text-section">
                       <div className="text-xl font-bold">
                         <Trans>Roles</Trans>
                       </div>
@@ -513,7 +526,7 @@ const SpaceEditor: React.FunctionComponent<{
                         </Trans>
                       </div>
                     </div>
-                    <div className="space-editor-editor-actions">
+                    <div className="modal-content-actions">
                       <div>
                         <Button
                           type="secondary"
@@ -536,12 +549,12 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                     </div>
                   </div>
-                  <div className="space-editor-content flex flex-col grow">
+                  <div className="modal-content-section">
                     {roles.map((r, i) => {
                       return (
                         <div
                           key={'space-editor-role-' + i}
-                          className="space-editor-content-section-header text-main"
+                          className="modal-content-section-header text-main"
                         >
                           @
                           <input
@@ -565,7 +578,7 @@ const SpaceEditor: React.FunctionComponent<{
                             }
                             value={r.roleTag}
                           />
-                          <span className="font-mono space-editor-role">
+                          <span className="font-mono modal-role" style={{ backgroundColor: r.color }}>
                             <input
                               className="border-0 bg-[rgba(0,0,0,0)] "
                               style={{
@@ -634,13 +647,11 @@ const SpaceEditor: React.FunctionComponent<{
                         </div>
                       );
                     })}
-                    <div className="space-editor-info"></div>
-                    <div className="grow flex flex-col justify-end">
-                      <div className="space-editor-editor-actions">
-                        <Button type="primary" onClick={() => saveChanges()}>
-                          <Trans>Save Changes</Trans>
-                        </Button>
-                      </div>
+                    <div className="modal-content-info"></div>
+                    <div className="modal-content-actions">
+                      <Button type="primary" onClick={() => saveChanges()}>
+                        <Trans>Save Changes</Trans>
+                      </Button>
                     </div>
                   </div>
                 </>
@@ -648,8 +659,8 @@ const SpaceEditor: React.FunctionComponent<{
             case 'emojis':
               return (
                 <>
-                  <div className="space-editor-header pt-4 px-4 !min-h-[160px] flex flex-row">
-                    <div className="">
+                  <div className="modal-content-header">
+                    <div className="modal-text-section">
                       <div className="text-xl font-bold">
                         <Trans>Emojis</Trans>
                       </div>
@@ -672,7 +683,7 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                     </div>
                   </div>
-                  <div className="space-editor-content flex flex-col grow">
+                  <div className="modal-content-section">
                     <div className="flex">
                       {emojis.length < 50 && (
                         <div
@@ -689,7 +700,7 @@ const SpaceEditor: React.FunctionComponent<{
                         return (
                           <div
                             key={'space-editor-emoji-' + i}
-                            className="space-editor-content-section-header text-main flex flex-row"
+                            className="modal-content-section-header text-main flex flex-row"
                           >
                             <img width="24" height="24" src={em.imgUrl} />
                             <div className="flex flex-col justify-around font-mono font-medium mx-2">
@@ -738,13 +749,11 @@ const SpaceEditor: React.FunctionComponent<{
                         );
                       })}
                     </div>
-                    <div className="space-editor-info"></div>
-                    <div className="grow flex flex-col justify-end">
-                      <div className="space-editor-editor-actions">
-                        <Button type="primary" onClick={() => saveChanges()}>
-                          <Trans>Save Changes</Trans>
-                        </Button>
-                      </div>
+                    <div className="modal-content-info"></div>
+                    <div className="modal-content-actions">
+                      <Button type="primary" onClick={() => saveChanges()}>
+                        <Trans>Save Changes</Trans>
+                      </Button>
                     </div>
                   </div>
                 </>
@@ -752,8 +761,8 @@ const SpaceEditor: React.FunctionComponent<{
             case 'stickers':
               return (
                 <>
-                  <div className="space-editor-header pt-4 px-4 !min-h-[160px] flex flex-row">
-                    <div className="">
+                  <div className="modal-content-header">
+                    <div className="modal-text-section">
                       <div className="text-xl font-bold">
                         <Trans>Stickers</Trans>
                       </div>
@@ -776,7 +785,7 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                     </div>
                   </div>
-                  <div className="space-editor-content flex flex-col grow">
+                  <div className="modal-content-section">
                     <div className="flex">
                       {stickers.length < 50 && (
                         <div
@@ -793,7 +802,7 @@ const SpaceEditor: React.FunctionComponent<{
                         return (
                           <div
                             key={'space-editor-sticker-' + i}
-                            className="space-editor-content-section-header text-main flex flex-row"
+                            className="modal-content-section-header text-main flex flex-row"
                           >
                             <img width="24" height="24" src={em.imgUrl} />
                             <div className="flex flex-col justify-around font-mono font-medium mx-2">
@@ -842,13 +851,11 @@ const SpaceEditor: React.FunctionComponent<{
                         );
                       })}
                     </div>
-                    <div className="space-editor-info"></div>
-                    <div className="grow flex flex-col justify-end">
-                      <div className="space-editor-editor-actions">
-                        <Button type="primary" onClick={() => saveChanges()}>
-                          <Trans>Save Changes</Trans>
-                        </Button>
-                      </div>
+                    <div className="modal-content-info"></div>
+                    <div className="modal-content-actions">
+                      <Button type="primary" onClick={() => saveChanges()}>
+                        <Trans>Save Changes</Trans>
+                      </Button>
                     </div>
                   </div>
                 </>
@@ -856,8 +863,8 @@ const SpaceEditor: React.FunctionComponent<{
             case 'invites':
               return (
                 <>
-                  <div className="space-editor-header pt-4 px-4 flex flex-row">
-                    <div>
+                  <div className="modal-content-header">
+                    <div className="modal-text-section">
                       <div className="text-xl font-bold">
                         <Trans>Invites</Trans>
                       </div>
@@ -870,50 +877,56 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                     </div>
                   </div>
-                  <div className="space-editor-content flex flex-col grow">
+                  <div className="modal-content-section">
                     <div className="flex"></div>
                     <div className=""></div>
-                    <div className="space-editor-info">
+                    <div className="modal-content-info">
                       <div className="small-caps">
                         <Trans>Existing Conversations</Trans>
                       </div>
-                      <div
-                        className="w-full quorum-input !font-bold flex flex-row justify-between cursor-pointer"
-                        onClick={() => {
-                          setSuccess(false);
-                          setIsInviteListExpanded((prev) => !prev);
-                        }}
-                      >
-                        {selectedUser && (
-                          <div className="flex flex-row">
-                            <div className="flex flex-col justify-around">
-                              <div
-                                className="rounded-full w-[24px] h-[24px] mt-[2px]"
-                                style={{
-                                  backgroundPosition: 'center',
-                                  backgroundSize: 'cover',
-                                  backgroundImage: `url(${selectedUser.icon})`,
-                                }}
-                              />
-                            </div>
-                            <div className="flex flex-col justify-around pl-2">
-                              <div>
-                                {selectedUser.displayName}{' '}
-                                <span className="font-light">
-                                  ({selectedUser.address})
-                                </span>
+                      <div className="relative">
+                        <div
+                          className="w-full quorum-input !font-bold flex flex-row justify-between cursor-pointer"
+                          onClick={() => {
+                            setSuccess(false);
+                            setIsInviteListExpanded((prev) => !prev);
+                          }}
+                        >
+                          {selectedUser && (
+                            <div className="flex flex-row">
+                              <div className="flex flex-col justify-around">
+                                <div
+                                  className="rounded-full w-[24px] h-[24px] mt-[2px]"
+                                  style={{
+                                    backgroundPosition: 'center',
+                                    backgroundSize: 'cover',
+                                    backgroundImage: `url(${selectedUser.icon})`,
+                                  }}
+                                />
+                              </div>
+                              <div className="flex flex-col justify-around pl-2">
+                                <div>
+                                  {selectedUser.displayName}{' '}
+                                  <span className="font-light">
+                                    (<span className="hidden md:inline">{selectedUser.address}</span>
+                                    <span className="md:hidden">{truncateAddress(selectedUser.address)}</span>)
+                                  </span>
+                                </div>
                               </div>
                             </div>
+                          )}
+                          {!selectedUser && (
+                            <div className="text-subtle font-normal">
+                              {t`Select conversation`}
+                            </div>
+                          )}
+                          <div className="space-context-menu-toggle-button">
+                            <FontAwesomeIcon icon={faChevronDown} />
                           </div>
-                        )}
-                        {!selectedUser && <div></div>}
-                        <div className="space-context-menu-toggle-button">
-                          <FontAwesomeIcon icon={faChevronDown} />
                         </div>
-                      </div>
-                      {isInviteListExpanded && (
-                        <div className="absolute pr-[227px] w-full">
-                          <div className="bg-input w-full mt-1 max-h-[200px] rounded-xl overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
+                        {isInviteListExpanded && (
+                          <div className="absolute top-full left-0 right-0 z-10 mt-1">
+                            <div className="bg-input w-full max-h-[200px] md:max-h-[300px] rounded-xl overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
                             {conversations.pages
                               .flatMap(
                                 (c: any) => c.conversations as Conversation[]
@@ -946,16 +959,18 @@ const SpaceEditor: React.FunctionComponent<{
                                       <div>
                                         {c.displayName}{' '}
                                         <span className="font-light">
-                                          ({c.address})
+                                          (<span className="hidden md:inline">{c.address}</span>
+                                          <span className="md:hidden">{truncateAddress(c.address)}</span>)
                                         </span>
                                       </div>
                                     </div>
                                   </div>
                                 );
                               })}
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
+                      </div>
                       <div className="small-caps">
                         <Trans>Enter Address Manually</Trans>
                       </div>
@@ -1023,19 +1038,25 @@ const SpaceEditor: React.FunctionComponent<{
                                   </div>
                                 </div>
                               </div>
-                              <ClickToCopyContent
-                                text={space.inviteUrl}
-                                tooltipText={t`Copy invite link to clipboard`}
-                                className="bg-input border border-strong rounded-md px-3 py-1.5 text-sm w-full max-w-full overflow-hidden whitespace-nowrap cursor-pointer transition hover:border-stronger"
-                                iconClassName="text-muted hover:text-main"
-                                copyOnContentClick
-                              >
-                                <div className="flex items-center gap-2 w-full">
-                                  <div className="truncate flex-1">
-                                    {space.inviteUrl}
-                                  </div>
+                              {generating ? (
+                                <div className="bg-input border border-strong rounded-md px-3 py-1.5 text-sm w-full text-subtle">
+                                  {t`Be patient, this can take a few seconds...`}
                                 </div>
-                              </ClickToCopyContent>
+                              ) : (
+                                <ClickToCopyContent
+                                  text={space.inviteUrl}
+                                  tooltipText={t`Copy invite link to clipboard`}
+                                  className="bg-input border border-strong rounded-md px-3 py-1.5 text-sm w-full max-w-full overflow-hidden whitespace-nowrap cursor-pointer transition hover:border-stronger"
+                                  iconClassName="text-muted hover:text-main"
+                                  copyOnContentClick
+                                >
+                                  <div className="flex items-center gap-2 w-full">
+                                    <div className="truncate flex-1">
+                                      {space.inviteUrl}
+                                    </div>
+                                  </div>
+                                </ClickToCopyContent>
+                              )}
                             </>
                           )}
 
@@ -1061,14 +1082,14 @@ const SpaceEditor: React.FunctionComponent<{
                                 }
                               }}
                             >
-                              <Trans>Generate New Invite Link</Trans>
+                              {generating ? t`Generating link...` : <Trans>Generate New Invite Link</Trans>}
                             </Button>
                           </div>
                         </div>
                       )}
                     </div>
-                    <div className="grow flex flex-col justify-end">
-                      <div className="space-editor-editor-actions">
+                    <div style={{ marginBottom: '20px' }}></div>
+                    <div className="modal-content-actions">
                         <Button
                           type="primary"
                           disabled={
@@ -1085,12 +1106,12 @@ const SpaceEditor: React.FunctionComponent<{
                           <Trans>Send Invite</Trans>
                         </Button>
                       </div>
-                    </div>
                   </div>
                 </>
               );
           }
         })()}
+        </div>
       </div>
     </div>
   );
