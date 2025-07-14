@@ -7,7 +7,6 @@ import { useRegistration } from '../../hooks';
 import { getConfig } from '../../config/config';
 import { useMessageDB } from '../context/MessageDB';
 import { useRegistrationContext } from '../context/RegistrationPersister';
-import './KickUserModal.scss';
 import { t } from '@lingui/core/macro';
 
 type KickUserModalProps = {
