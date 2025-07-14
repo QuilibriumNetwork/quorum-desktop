@@ -4,6 +4,17 @@
   border-radius: 10px;
   padding: 26px;
   animation: createBox 0.25s;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  
+  @media (max-width: 768px) {
+    margin: 16px;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+  }
 }
 
 .quorum-modal-closing {
@@ -30,7 +41,12 @@
   font-size: 24px;
   text-align: center;
   padding-bottom: 20px;
-  color: var(--color-text-strong)
+  color: var(--color-text-strong);
+  
+  @media (max-width: 768px) {
+    font-size: 20px;
+    padding-bottom: 16px;
+  }
 }
 
 .quorum-modal-container {

@@ -3,15 +3,27 @@
   justify-content: space-between;
   flex-direction: column;
   text-align: center;
+  
+  @media (max-width: 768px) {
+    gap: 16px;
+  }
 }
 
 .modal-icon-section {
   padding: 20px;
+  
+  @media (max-width: 768px) {
+    padding: 16px 12px;
+  }
 }
 
 .modal-actions {
   padding-top: 20px;
-  text-align: right;
+  text-align: center;
+  
+  @media (max-width: 768px) {
+    padding-top: 16px;
+  }
 }
 
 .modal-info {

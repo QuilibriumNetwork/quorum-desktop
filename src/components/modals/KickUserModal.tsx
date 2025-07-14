@@ -32,31 +32,31 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
       onClose={props.onClose}
       title={t`Kick User`}
     >
-      <div className="flex flex-row justify-around pb-4 select-none w-[350px] cursor-default">
-        <div>{t`Use the below button to kick this user out of the Space`}</div>
-      </div>
-      <div className="mt-4 pt-5 mx-[-26px] px-4 rounded-b-xl bg-surface-4 mb-[-26px] h-20 flex flex-row-reverse justify-between">
-        <div>
-          <Button
-            type="danger"
-            disabled={kicking}
-            onClick={async () => {
-              setKicking(true);
-              await kickUser(
-                spaceId!,
-                props.kickUserAddress!,
-                keyset.userKeyset,
-                keyset.deviceKeyset,
-                registration.registration!
-              );
-              setKicking(false);
-              props.onClose();
-            }}
-          >
-            {t`Do it!`}
-          </Button>
+      <div className="w-full max-w-[400px] mx-auto">
+        <div className="mb-4 text-sm text-subtle text-center">
+          {t`Use the below button to kick this user out of the Space`}
         </div>
-      </div>
+          <div className="flex justify-center">
+            <Button
+              type="danger"
+              disabled={kicking}
+              onClick={async () => {
+                setKicking(true);
+                await kickUser(
+                  spaceId!,
+                  props.kickUserAddress!,
+                  keyset.userKeyset,
+                  keyset.deviceKeyset,
+                  registration.registration!
+                );
+                setKicking(false);
+                props.onClose();
+              }}
+            >
+              {t`Do it!`}
+            </Button>
+          </div>
+        </div>
     </Modal>
   );
 };

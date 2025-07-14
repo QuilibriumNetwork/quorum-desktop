@@ -146,7 +146,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
       <div className="modal-join-space">
         <div>
           <Input
-            className="w-[300pt]"
+            className="w-full max-w-[300pt] min-w-[200px]"
             value={lookup}
             onChange={(e) => setLookup(e.target.value)}
             placeholder={t`Join Space`}
@@ -179,7 +179,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
         </div>
         <div className="modal-join-space-actions">
           <Button
-            className="w-32 inline-block"
+            className="w-full max-w-32 inline-block"
             type="primary"
             disabled={!space || joining}
             onClick={() => {

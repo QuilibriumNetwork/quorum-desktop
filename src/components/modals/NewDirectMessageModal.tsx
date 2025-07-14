@@ -51,19 +51,22 @@ const NewDirectMessageModal: React.FunctionComponent<
       onClose={handleClose}
       title={t`New Direct Message`}
     >
-      <div className="modal-new-direct-message">
+      <div className="modal-new-direct-message w-full max-w-[500px] mx-auto">
+        <div className="mb-4 text-sm text-subtle text-center">
+          {t`Enter a user's address to start messaging them.`}
+        </div>
         <div>
           <Input
-            className="w-[400pt] !text-xs"
+            className="w-full !text-xs sm:!text-sm"
             onChange={(e) => lookupUser(e.target.value)}
-            placeholder={t`Enter a user's address to start messaging them.`}
+            placeholder={t`User address here`}
           />
         </div>
         <React.Suspense
           fallback={
             <div className="modal-new-direct-message-actions">
               <Button
-                className="w-32 inline-block"
+                className="w-32"
                 type="primary"
                 disabled={!address}
                 onClick={() => {}}
@@ -78,7 +81,7 @@ const NewDirectMessageModal: React.FunctionComponent<
         {address?.length != 46 && (
           <div className="modal-new-direct-message-actions">
             <Button
-              className="w-32 inline-block"
+              className="w-32"
               type="primary"
               disabled={true}
               onClick={() => {}}
