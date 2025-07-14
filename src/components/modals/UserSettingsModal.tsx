@@ -201,7 +201,7 @@ const UserSettingsModal: React.FunctionComponent<{
           onClick={() => setSelectedCategory('privacy')}
           className={
             (selectedCategory == 'privacy' ? 'bg-surface-5 ' : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
+            'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1 '
           }
         >
           {t`Privacy/Security`}
@@ -210,7 +210,7 @@ const UserSettingsModal: React.FunctionComponent<{
           onClick={() => setSelectedCategory('appearance')}
           className={
             (selectedCategory === 'appearance' ? 'bg-surface-5 ' : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
+            'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1 text-sm sm:text-base'
           }
         >
           {t`Appearance`}
@@ -225,7 +225,7 @@ const UserSettingsModal: React.FunctionComponent<{
             (selectedCategory == 'general'
               ? 'bg-surface-5 border-l-2 border-accent '
               : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm'
+            'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm sm:text-base'
           }
         >
           {t`General`}
@@ -236,7 +236,7 @@ const UserSettingsModal: React.FunctionComponent<{
             (selectedCategory == 'privacy'
               ? 'bg-surface-5 border-l-2 border-accent '
               : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm'
+            'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm sm:text-base'
           }
         >
           {t`Privacy/Security`}
@@ -247,7 +247,7 @@ const UserSettingsModal: React.FunctionComponent<{
             (selectedCategory === 'appearance'
               ? 'bg-surface-5 border-l-2 border-accent '
               : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm'
+            'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm sm:text-base'
           }
         >
           {t`Appearance`}
@@ -463,7 +463,7 @@ const UserSettingsModal: React.FunctionComponent<{
               );
             case 'appearance':
               return (
-                <div className="user-settings-content px-4 py-6 flex flex-col gap-4">
+                <div className="user-settings-content px-4 py-6 flex flex-col gap-4 grow">
                   <div className="text-xl font-bold">{t`Appearance`}</div>
                   <div className="text-sm text-main">
                     {t`Choose your preferred theme for Quorum.`}
@@ -475,7 +475,8 @@ const UserSettingsModal: React.FunctionComponent<{
                   </div>
 
                   <div className="pt-4">
-                    <div className="small-caps">{t`Language`}</div>
+                    <div className='user-settings-content-section-header'/>
+                    <div className="small-caps pb-2">{t`Language`}</div>
                     <div className="flex flex-row gap-2 items-center">
                       <select
                         className="quorum-input w-56"
