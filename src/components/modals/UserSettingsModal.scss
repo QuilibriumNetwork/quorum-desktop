@@ -7,16 +7,31 @@
   background: var(--surface-3);
   border-radius: 10px;
   color: var(--color-text-main);
+  overflow: hidden;
+  
+  @media (max-width: 768px) {
+    width: 95vw;
+    height: 90vh;
+    max-width: none;
+    border-radius: 10px;
+  }
 }
 
 .user-settings-header {
   background: var(--surface-5);
-  min-height: 120px !important;
+  
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   display: flex;
   flex-direction: row;
   user-select: none;
+  
+  @media (max-width: 768px) {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    padding: 20px 12px 0px 12px;
+    background: var(--surface-5);
+  }
 }
 
 .user-settings-text {
@@ -40,6 +55,13 @@
     padding: 10px;
     font-size: 13px;
   }
+  
+  @media (max-width: 768px) {
+    .quorum-input {
+      padding: 12px;
+      font-size: 14px;
+    }
+  }
 }
 
 .user-settings-editor-actions {
@@ -51,12 +73,33 @@
     height: 38px;
     font-size: 13px;
   }
+  
+  @media (max-width: 768px) {
+    justify-content: center;
+    margin-top: 16px;
+    
+    .quorum-button {
+      width: 100%;
+      max-width: 200px;
+    }
+  }
 }
 
 .user-settings-content {
   padding: 14px;
   background-color: var(--surface-5);
   border-radius: 0px 0px 10px 10px;
+  
+  @media (max-width: 768px) {
+    padding: 16px 12px;
+    border-radius: 0px;
+    background-color: var(--surface-5);
+    height: 100%;
+    
+    &:last-child {
+      border-radius: 0px 0px 10px 10px;
+    }
+  }
 }
 
 .user-settings-icon,
@@ -71,6 +114,15 @@
   border-radius: 41px;
   display: inline-block;
   flex-shrink: 0;
+  
+  @media (max-width: 768px) {
+    width: 70px;
+    height: 70px;
+    margin-top: 15px;
+    margin-left: 12px;
+    margin-right: 12px;
+    border-radius: 35px;
+  }
 }
 
 .user-settings-icon-editable:hover {

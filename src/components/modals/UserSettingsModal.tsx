@@ -184,8 +184,9 @@ const UserSettingsModal: React.FunctionComponent<{
   };
 
   return (
-    <div className="user-settings flex flex-row">
-      <div className="px-4 py-2 text-main w-[200px]">
+    <div className="user-settings flex flex-col md:flex-row">
+      {/* Desktop/Tablet Sidebar */}
+      <div className="hidden md:block px-4 py-2 text-main w-[200px]">
         <div className="small-caps text-subtle">{t`Settings`}</div>
         <div
           onClick={() => setSelectedCategory('general')}
@@ -215,7 +216,38 @@ const UserSettingsModal: React.FunctionComponent<{
           {t`Appearance`}
         </div>
       </div>
-      <div className="flex flex-col grow overflow-y-scroll rounded-xl">
+
+      {/* Mobile Stacked Menu */}
+      <div className="md:hidden px-3 py-2 bg-surface-3 border-b border-surface-6 rounded-t-[10px]">
+        <div
+          onClick={() => setSelectedCategory('general')}
+          className={
+            (selectedCategory == 'general' ? 'bg-surface-5 border-l-2 border-accent ' : '') +
+            'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm'
+          }
+        >
+          {t`General`}
+        </div>
+        <div
+          onClick={() => setSelectedCategory('privacy')}
+          className={
+            (selectedCategory == 'privacy' ? 'bg-surface-5 border-l-2 border-accent ' : '') +
+            'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm'
+          }
+        >
+          {t`Privacy/Security`}
+        </div>
+        <div
+          onClick={() => setSelectedCategory('appearance')}
+          className={
+            (selectedCategory === 'appearance' ? 'bg-surface-5 border-l-2 border-accent ' : '') +
+            'font-medium cursor-pointer hover:bg-surface-4 px-3 py-2 mb-1 rounded-md text-sm'
+          }
+        >
+          {t`Appearance`}
+        </div>
+      </div>
+      <div className="flex flex-col grow overflow-y-scroll md:rounded-xl">
         {(() => {
           switch (selectedCategory) {
             case 'general':
@@ -251,10 +283,12 @@ const UserSettingsModal: React.FunctionComponent<{
                   <div className="user-settings-content flex flex-col !rounded-b-none">
                     <div className="user-settings-info">
                       <div className="small-caps">{t`Account Address`}</div>
-                      <div className="flex flex-row items-center text-base">
-                        {currentPasskeyInfo!.address}{' '}
+                      <div className="flex flex-row items-start text-base">
+                        <div className="break-all flex-1 mr-2">
+                          {currentPasskeyInfo!.address}
+                        </div>
                         <CopyToClipboard
-                          className="ml-2"
+                          className="flex-shrink-0"
                           tooltipText={t`Copy address to clipboard`}
                           text={currentPasskeyInfo!.address}
                           tooltipLocation="top"
@@ -298,26 +332,28 @@ const UserSettingsModal: React.FunctionComponent<{
                       (d: secureChannel.DeviceRegistration) => (
                         <div
                           key={d.inbox_registration.inbox_address}
-                          className="user-settings-content-section-header flex flex-row justify-between"
+                          className="user-settings-content-section-header flex flex-row justify-between items-start"
                         >
-                          <div className="flex flex-col justify-around font-light">
+                          <div className="flex flex-col justify-around font-light break-all flex-1 mr-2">
                             {d.inbox_registration.inbox_address}
                           </div>
-                          {keyset.deviceKeyset?.inbox_keyset?.inbox_address !==
-                            d.inbox_registration.inbox_address && (
-                            <Button
-                              onClick={() => {
-                                removeDevice(d.identity_public_key);
-                              }}
-                              type="danger"
-                            >
-                              {t`Remove`}
-                            </Button>
-                          )}
-                          {keyset.deviceKeyset.inbox_keyset.inbox_address ===
-                            d.inbox_registration.inbox_address && (
-                            <div className="font-light">(this device)</div>
-                          )}
+                          <div className="flex-shrink-0">
+                            {keyset.deviceKeyset?.inbox_keyset?.inbox_address !==
+                              d.inbox_registration.inbox_address && (
+                              <Button
+                                onClick={() => {
+                                  removeDevice(d.identity_public_key);
+                                }}
+                                type="danger"
+                              >
+                                {t`Remove`}
+                              </Button>
+                            )}
+                            {keyset.deviceKeyset.inbox_keyset.inbox_address ===
+                              d.inbox_registration.inbox_address && (
+                              <div className="font-light">(this device)</div>
+                            )}
+                          </div>
                         </div>
                       )
                     )}
