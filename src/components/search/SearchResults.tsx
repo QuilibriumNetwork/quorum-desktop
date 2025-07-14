@@ -43,18 +43,43 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     }
   }, []); // Run only on mount
 
-  // Adjust position to prevent going off-screen
+  // Adjust position and width to prevent going off-screen
   useEffect(() => {
-    if (containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      
-      // If results would go off the right side of the screen
-      if (rect.right > viewportWidth) {
-        containerRef.current.style.right = '0';
-        containerRef.current.style.left = 'auto';
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const viewportWidth = window.innerWidth;
+        const isMobile = viewportWidth <= 1023;
+        const navMenuWidth = isMobile ? 74 : 0;
+        
+        // Calculate available width accounting for nav menu
+        const availableWidth = viewportWidth - navMenuWidth - 40; // 40px for margins
+        const maxWidth = Math.min(400, availableWidth);
+        const minWidth = 200;
+        const responsiveWidth = Math.max(minWidth, maxWidth);
+        
+        // Apply responsive width with !important to override any CSS
+        containerRef.current.style.setProperty('width', `${responsiveWidth}px`, 'important');
+        containerRef.current.style.setProperty('min-width', `${minWidth}px`, 'important');
+        containerRef.current.style.setProperty('max-width', `${responsiveWidth}px`, 'important');
+        
+        // Check if results would go off the right side of the screen
+        const rect = containerRef.current.getBoundingClientRect();
+        if (rect.right > viewportWidth) {
+          containerRef.current.style.right = '0';
+          containerRef.current.style.left = 'auto';
+        }
       }
-    }
+    };
+
+    // Update dimensions on mount and when results/query change
+    updateDimensions();
+    
+    // Add resize listener
+    window.addEventListener('resize', updateDimensions);
+    
+    return () => {
+      window.removeEventListener('resize', updateDimensions);
+    };
   }, [results, query]);
 
   // Close on click outside (but not on search bar)

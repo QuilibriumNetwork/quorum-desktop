@@ -9,9 +9,9 @@
   margin-top: 8px;
   z-index: 9999;
   overflow: hidden;
-  width: 400px;
-  min-width: 400px;
-  max-width: 400px;
+  width: min(400px, calc(100vw - 40px)) !important;
+  min-width: 200px;
+  max-width: min(400px, calc(100vw - 40px)) !important;
   font-weight: normal;
 }
 
