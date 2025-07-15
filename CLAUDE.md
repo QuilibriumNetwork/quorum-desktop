@@ -96,4 +96,89 @@ Examples:
 
 ---
 
+## Styling Philosophy
 
+- Use Tailwind utility classes for unique or one-off component styles  
+- Extract shared patterns using `@apply` for consistency and maintainability  
+- Embrace Tailwind’s design system (spacing, color, font, radius)  
+- Keep custom CSS minimal and focused on things Tailwind can't handle  
+
+---
+
+## Styling Best Practices
+
+### 1. Use Tailwind Utilities for One-Off Components
+
+Style components directly using Tailwind utility classes if they don’t share their style with others.
+
+```html
+<!-- Good -->
+<div class="bg-surface-0 p-4 rounded shadow-md">
+  <h2 class="text-xl font-bold mb-2">Card Title</h2>
+  <p class="text-main">Card content goes here.</p>
+</div>
+```
+
+### 2. Extract Reusable Styles with `@apply`
+
+If two or more components share similar styling, define a semantic class with `@apply`.
+
+```css
+/* styles/components.css */
+.btn-primary {
+  @apply bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700;
+}
+```
+
+```html
+<button class="btn-primary">Click Me</button>
+```
+
+### 3. Use `clsx` or `classnames` for Dynamic Styling
+
+Cleanly manage conditional logic in JS/TS components.
+
+```tsx
+import clsx from 'clsx'
+
+<div className={clsx("text-sm", isActive && "font-bold")} />
+```
+
+### 4. Extend Tailwind via `tailwind.config.js`
+
+Use the config file to centralize design tokens like colors and spacing.
+
+```js
+// tailwind.config.js
+theme: {
+  extend: {
+    colors: {
+      brand: '#5D3FD3',
+    },
+  },
+},
+```
+
+### 5. Keep Custom CSS Minimal
+
+Write raw CSS only when needed for:
+- Keyframe animations
+- Scrollbar styling
+- Third-party integration quirks
+
+Avoid rebuilding what's already covered by Tailwind utilities or your semantic class layer.
+
+### 6. Purge & Optimize
+
+Ensure unused styles are purged from production builds using the `content` config:
+
+```js
+// tailwind.config.js
+content: [
+  "./src/**/*.{js,ts,jsx,tsx,html}",
+]
+```
+
+---
+
+Stick to Tailwind’s strengths, extract wisely, and keep your design system DRY, scalable, and clear.
