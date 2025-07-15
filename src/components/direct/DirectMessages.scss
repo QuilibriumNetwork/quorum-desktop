@@ -35,12 +35,12 @@
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-    transform: translateX(-100%);
+    transform: translateX(-100%); // Hidden by default
     transition: transform 300ms ease-in-out;
     
     &.open {
       display: flex; // Show when open
-      transform: translateX(0);
+      transform: translateX(0); // Visible when open
     }
     
     // Phone-specific positioning for smaller NavMenu

@@ -32,12 +32,19 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
 ) => {
   let { address } = useParams<{ address: string }>();
   const { keyset } = useRegistrationContext();
-  const { isMobile, leftSidebarOpen, closeLeftSidebar } = useResponsiveLayoutContext();
+  const { isMobile, leftSidebarOpen, closeLeftSidebar, openLeftSidebar } = useResponsiveLayoutContext();
+
+  // Initialize sidebar as open on mobile by default (only on mount or when switching to mobile)
+  React.useEffect(() => {
+    if (isMobile) {
+      openLeftSidebar();
+    }
+  }, [isMobile, openLeftSidebar]);
   const { openUserSettings } = useModalContext();
 
   return (
     <div className="direct-messages-container">
-      {/* Mobile backdrop overlay */}
+      {/* Mobile backdrop overlay - show when sidebar is visible */}
       {isMobile && leftSidebarOpen && (
         <div 
           className="fixed inset-y-0 right-0 bg-black bg-opacity-50 z-[997]"
