@@ -541,7 +541,7 @@ const Channel: React.FC<ChannelProps> = ({
           'transition-transform duration-300 ease-in-out ' +
           (showUsers 
             ? 'translate-x-0 fixed top-0 right-0 h-full z-50 lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
-            : 'translate-x-full hidden')
+            : 'translate-x-full fixed top-0 right-0 h-full z-50 lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto')
         }
       >
         {roles

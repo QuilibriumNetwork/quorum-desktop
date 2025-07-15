@@ -103,7 +103,17 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     }, 0);
   };
 
-  const handleInputFocus = () => {
+  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    // On mobile, prevent focus if users sidebar overlay is visible
+    if (window.innerWidth < 1024) {
+      const mobileOverlay = document.querySelector('.bg-mobile-overlay');
+      if (mobileOverlay) {
+        e.preventDefault();
+        inputRef.current?.blur();
+        return;
+      }
+    }
+    
     setIsFocused(true);
     setShowSuggestions(query.length > 0 && suggestions.length > 0);
   };

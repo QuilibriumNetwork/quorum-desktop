@@ -34,14 +34,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Preserve search input focus when component mounts
-  useEffect(() => {
-    // Ensure search input keeps focus when results appear
-    const searchInput = document.querySelector('.search-input') as HTMLInputElement;
-    if (searchInput && document.activeElement !== searchInput) {
-      searchInput.focus();
-    }
-  }, []); // Run only on mount
+  // Note: Removed auto-focus behavior to prevent conflicts with sidebar interactions
 
   // Adjust position and width to prevent going off-screen
   useEffect(() => {

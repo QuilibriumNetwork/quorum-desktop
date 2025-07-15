@@ -34,12 +34,12 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
   const { keyset } = useRegistrationContext();
   const { isMobile, leftSidebarOpen, closeLeftSidebar, openLeftSidebar } = useResponsiveLayoutContext();
 
-  // Initialize sidebar as open on mobile by default (only on mount or when switching to mobile)
+  // Initialize sidebar as open on mobile by default (only on /messages homepage, not on conversation pages)
   React.useEffect(() => {
-    if (isMobile) {
+    if (isMobile && !address) {
       openLeftSidebar();
     }
-  }, [isMobile, openLeftSidebar]);
+  }, [isMobile, address, openLeftSidebar]);
   const { openUserSettings } = useModalContext();
 
   return (

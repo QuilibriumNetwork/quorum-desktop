@@ -22,31 +22,29 @@
   justify-content: stretch;
   height: 100%;
   
-  // Mobile responsive behavior - completely hidden by default, slide-in as overlay when toggled
+  // Mobile responsive behavior - smooth slide animation with proper hiding
   @media (max-width: 1023px) {
-    display: none; // Completely hidden by default
+    display: flex;
     position: fixed;
     top: 0;
-    left: 74px; // Start from edge of NavMenu
-    width: var(--sidebar-left-width); // Smaller width for mobile
+    left: calc(74px - var(--sidebar-left-width)); // Position so that when translateX(-100%) it's completely hidden
+    width: var(--sidebar-left-width);
     height: 100vh;
     background-color: var(--color-bg-sidebar);
     z-index: 998;
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-    transform: translateX(-100%); // Hidden by default
+    transform: translateX(-100%); // Hidden: move completely left
     transition: transform 300ms ease-in-out;
     
     &.open {
-      display: flex; // Show when open
-      transform: translateX(0); // Visible when open
+      transform: translateX(100%); // Visible: slide to navbar edge position
     }
     
     // Phone-specific positioning for smaller NavMenu
     @media (max-width: 480px) {
-      left: 50px; // Start from edge of mobile NavMenu
-      //width: 220px; // Even smaller for phones
+      left: calc(50px - var(--sidebar-left-width)); // Adjust for smaller navbar
     }
   }
 }
