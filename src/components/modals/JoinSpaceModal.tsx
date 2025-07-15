@@ -3,7 +3,8 @@ import {
   channel_raw as ch,
   usePasskeysContext,
 } from '@quilibrium/quilibrium-js-sdk-channels';
-import Modal from '../Modal';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Input from '../Input';
 import Button from '../Button';
 import SpaceIcon from '../navbar/SpaceIcon';
@@ -137,62 +138,68 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
   }, [joinInviteLink, keyset, currentPasskeyInfo, lookup]);
 
   return (
-    <Modal
-      hideClose={pathname.startsWith('/invite')}
-      visible={props.visible}
-      onClose={props.onClose}
-      title={t`Join Space`}
-    >
-      <div className="modal-join-space">
-        <div>
-          <Input
-            className="w-full max-w-[300pt] min-w-[200px]"
-            value={lookup}
-            onChange={(e) => setLookup(e.target.value)}
-            placeholder={t`Join Space`}
-          />
-        </div>
-        <div className="modal-join-space-icon">
-          {!space ? (
-            <SpaceIcon
-              noTooltip={true}
-              notifs={false}
-              spaceName={t`Unknown`}
-              size="large"
-              selected={false}
-              iconUrl="/quorumicon.png"
+    <div className="quorum-modal text-subtle relative pointer-events-auto">
+      <div
+        className="quorum-modal-close select-none cursor-pointer"
+        onClick={props.onClose}
+      >
+        <FontAwesomeIcon icon={faTimes} />
+      </div>
+      <div className="quorum-modal-title select-none cursor-default">
+        {t`Join Space`}
+      </div>
+      <div className="quorum-modal-container">
+        <div className="modal-join-space min-w-[200px] max-w-[90vw] sm:min-w-[420px]">
+          <div className="w-full flex justify-center">
+            <Input
+              className="w-full max-w-[500px] mx-auto"
+              value={lookup}
+              onChange={(e) => setLookup(e.target.value)}
+              placeholder={t`Join Space`}
             />
-          ) : (
-            <>
+          </div>
+          <div className="modal-join-space-icon">
+            {!space ? (
               <SpaceIcon
-                noToggle={true}
                 noTooltip={true}
                 notifs={false}
-                spaceName={space.spaceName}
+                spaceName={t`Unknown`}
                 size="large"
-                selected={true}
-                iconUrl={space.iconUrl}
+                selected={false}
+                iconUrl="/quorumicon.png"
               />
-              <div className="quorum-modal-title">{space.spaceName}</div>
-            </>
-          )}
-        </div>
-        <div className="modal-join-space-actions">
-          <Button
-            className="w-full max-w-32 inline-block"
-            type="primary"
-            disabled={!space || joining}
-            onClick={() => {
-              if (!!space) {
-                join();
-              }
-            }}
-          >
-            {t`Join Space`}
-          </Button>
+            ) : (
+              <>
+                <SpaceIcon
+                  noToggle={true}
+                  noTooltip={true}
+                  notifs={false}
+                  spaceName={space.spaceName}
+                  size="large"
+                  selected={true}
+                  iconUrl={space.iconUrl}
+                />
+                <div className="quorum-modal-title">{space.spaceName}</div>
+              </>
+            )}
+          </div>
+          <div className="modal-join-space-actions">
+            <Button
+              className="w-full max-w-32 sm:inline-block"
+              type="primary"
+              disabled={!space || joining}
+              onClick={() => {
+                if (!!space) {
+                  join();
+                }
+              }}
+            >
+              {t`Join Space`}
+            </Button>
+          </div>
         </div>
       </div>
-    </Modal>
+    </div>
   );
 };
 

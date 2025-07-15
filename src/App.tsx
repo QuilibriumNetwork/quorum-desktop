@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { Buffer } from 'buffer';
 import { useState, useEffect } from 'react';
-import { Navigate, Route, Routes } from 'react-router';
+import { Navigate, Route, Routes, useNavigate } from 'react-router';
 import {
   channel_raw,
   usePasskeysContext,
@@ -213,12 +213,10 @@ const App = () => {
                       <Route
                         path="/invite/"
                         element={
-                          <AppWithSearch
+                          <InviteRoute 
                             kickUserAddress={kickUserAddress}
                             setKickUserAddress={setKickUserAddress}
-                          >
-                            <JoinSpaceModal visible={true} onClose={() => {}} />
-                          </AppWithSearch>
+                          />
                         }
                       />
                       <Route
@@ -257,6 +255,40 @@ const App = () => {
         </ErrorBoundary>
       </I18nProvider>
     </>
+  );
+};
+
+const InviteRoute: React.FC<{ kickUserAddress: string; setKickUserAddress: (addr: string) => void }> = ({ kickUserAddress, setKickUserAddress }) => {
+  const navigate = useNavigate();
+  
+  const handleClose = () => {
+    // Check if there's meaningful browser history to go back to
+    if (window.history.length > 1 && document.referrer) {
+      // There's previous history and a referrer, safe to go back
+      window.history.back();
+    } else {
+      // No meaningful history or came directly to this page, go to messages
+      navigate('/messages');
+    }
+  };
+  
+  return (
+    <div className="app-with-search">
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
+        <JoinSpaceModal visible={true} onClose={handleClose} />
+        <div
+          className="fixed inset-0 -z-10"
+          onClick={handleClose}
+        />
+      </div>
+      
+      <AppWithSearch
+        kickUserAddress={kickUserAddress}
+        setKickUserAddress={setKickUserAddress}
+      >
+        <div />
+      </AppWithSearch>
+    </div>
   );
 };
 
