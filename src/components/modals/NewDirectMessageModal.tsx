@@ -66,7 +66,7 @@ const NewDirectMessageModal: React.FunctionComponent<
           fallback={
             <div className="modal-new-direct-message-actions">
               <Button
-                className="w-32"
+                className="w-full sm:max-w-32 sm:inline-block"
                 type="primary"
                 disabled={!address}
                 onClick={() => {}}
@@ -81,7 +81,7 @@ const NewDirectMessageModal: React.FunctionComponent<
         {address?.length != 46 && (
           <div className="modal-new-direct-message-actions">
             <Button
-              className="w-32"
+              className="w-full sm:max-w-32 sm:inline-block"
               type="primary"
               disabled={true}
               onClick={() => {}}

@@ -152,7 +152,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
         <div className="modal-join-space min-w-[200px] max-w-[90vw] sm:min-w-[420px]">
           <div className="w-full flex justify-center">
             <Input
-              className="w-full max-w-[500px] mx-auto"
+              className="w-full max-w-[500px] mx-auto !text-sm"
               value={lookup}
               onChange={(e) => setLookup(e.target.value)}
               placeholder={t`Join Space`}
@@ -179,13 +179,13 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
                   selected={true}
                   iconUrl={space.iconUrl}
                 />
-                <div className="quorum-modal-title">{space.spaceName}</div>
+                <div className="mt-4 text-lg sm:text-xl text-strong">{space.spaceName}</div>
               </>
             )}
           </div>
           <div className="modal-join-space-actions">
             <Button
-              className="w-full max-w-32 sm:inline-block"
+              className="w-full sm:max-w-32 sm:inline-block"
               type="primary"
               disabled={!space || joining}
               onClick={() => {

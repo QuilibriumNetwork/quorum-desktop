@@ -10,6 +10,11 @@
 
 .modal-new-direct-message-actions {
   @extend .modal-actions;
+  
+  @media (max-width: 640px) {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .modal-new-direct-message-info {
