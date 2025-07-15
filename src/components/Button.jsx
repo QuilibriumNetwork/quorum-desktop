@@ -16,6 +16,7 @@ const Button = (props) => {
         id={props.id}
         className={
           baseClass +
+          (props.size === 'small' ? ' btn-small' : '') +
           (props.icon ? ' quorum-button-icon' : '') +
           (props.className ? ' ' + props.className : '')
         }
@@ -45,6 +46,7 @@ Button.propTypes = {
     'light-outline',
     'danger',
   ]),
+  size: PropTypes.oneOf(['normal', 'small']),
   disabled: PropTypes.bool,
   icon: PropTypes.bool,
   className: PropTypes.string,

@@ -55,6 +55,46 @@
   }
 }
 
+// Consistent Text Size Classes for Modals
+.modal-text-label {
+  font-size: 16px;
+  font-weight: 600;
+  
+  @media (max-width: 640px) {
+    font-size: 14px;
+  }
+}
+
+.modal-text-section-header {
+  font-size: 18px;
+  font-weight: 700;
+  
+  @media (max-width: 640px) {
+    font-size: 16px;
+  }
+}
+
+.modal-text-small {
+  font-size: 14px;
+  
+  @media (max-width: 640px) {
+    font-size: 13px;
+  }
+}
+
+// Input field sizing rules
+.modal-input-text {
+  font-size: 16px !important; // Always 16px for user input fields (accessibility)
+}
+
+.modal-input-select {
+  font-size: 14px !important; // Smaller for selects/dropdowns since users don't type
+  
+  @media (max-width: 640px) {
+    font-size: 13px !important;
+  }
+}
+
 .modal-icon-section {
   padding: 20px;
   

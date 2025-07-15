@@ -3,6 +3,7 @@
   color: white;
 }
 
+
 .btn-primary {
   @extend .btn-base;
   background-color: var(--accent);
@@ -78,6 +79,11 @@
     background-color: rgba(var(--danger), 1);
     border: 2px solid transparent;
   }
+}
+
+// Small button modifier - can be combined with any button type
+.btn-small {
+  @apply py-1 px-2 text-xs shadow-sm;
 }
 
 .btn-disabled {

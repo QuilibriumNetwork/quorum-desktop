@@ -255,9 +255,9 @@ const UserSettingsModal: React.FunctionComponent<{
                       <input {...getInputProps()} />
                     </div>
                     <div className="modal-text-section">
-                      <div className="small-caps">{t`Display Name`}</div>
+                      <div className="modal-text-label">{t`Display Name`}</div>
                       <input
-                        className="w-full quorum-input"
+                        className="w-full quorum-input modal-input-text"
                         value={displayName}
                         onChange={(e) => setDisplayName(e.target.value)}
                       />
@@ -265,7 +265,7 @@ const UserSettingsModal: React.FunctionComponent<{
                   </div>
                   <div className="modal-content-section">
                     <div className="modal-content-info">
-                      <div className="small-caps">{t`Account Address`}</div>
+                      <div className="modal-text-label">{t`Account Address`}</div>
                       <div className="flex flex-row items-start text-base">
                         <div className="break-all flex-1 mr-2">
                           {currentPasskeyInfo!.address}
@@ -296,20 +296,22 @@ const UserSettingsModal: React.FunctionComponent<{
                 <>
                   <div className="modal-content-header">
                     <div className="modal-text-section">
-                      <div className="text-xl font-bold">{t`Privacy/Security`}</div>
-                      <div className="pt-1 text-sm text-main">
+                      <div className="modal-text-section-header">{t`Privacy/Security`}</div>
+                      <div className="pt-1 modal-text-small text-main">
                         {t`Manage devices, and privacy conditions for messaging and synchronization.`}
                       </div>
                     </div>
                   </div>
                   <div className="modal-content-section">
                     <div className='modal-content-section-header'/>
-                    <div className="small-caps pb-2">Devices</div>
+                    <div className="modal-text-label pb-2">Devices</div>
                     {stagedRegistration?.device_registrations.map(
-                      (d: secureChannel.DeviceRegistration) => (
+                      (d: secureChannel.DeviceRegistration, index: number) => (
                         <div
                           key={d.inbox_registration.inbox_address}
-                          className="flex flex-row justify-between items-start"
+                          className={`flex flex-row justify-between items-start py-3 ${
+                            index > 0 ? 'border-t border-dashed border-subtle' : ''
+                          }`}
                         >
                           <div className="flex flex-col justify-around font-light break-all flex-1 mr-2">
                             {d.inbox_registration.inbox_address}
@@ -323,6 +325,7 @@ const UserSettingsModal: React.FunctionComponent<{
                                   removeDevice(d.identity_public_key);
                                 }}
                                 type="danger"
+                                size="small"
                               >
                                 {t`Remove`}
                               </Button>
@@ -338,9 +341,9 @@ const UserSettingsModal: React.FunctionComponent<{
                  
                     <div className="modal-content-info !pt-4">
                       <div className="modal-content-section-header" />
-                      <div className="small-caps">{t`Key Export`}</div>
+                      <div className="modal-text-label">{t`Key Export`}</div>
 
-                      <div className="pt-1 text-sm text-main">
+                      <div className="pt-1 modal-text-small text-main">
                         {t`Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings.`}
                       </div>
                       <div className="pt-4 pb-8 max-w-[100px]">
@@ -355,9 +358,9 @@ const UserSettingsModal: React.FunctionComponent<{
                       </div>
                     </div>
                     <div className="modal-content-section-header" />
-                    <div className="small-caps">{t`Security`}</div>
+                    <div className="modal-text-label">{t`Security`}</div>
 
-                    <div className="pt-1 text-sm text-main">
+                    <div className="pt-1 modal-text-small text-main">
                       {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
                     </div>
                     <div className="modal-content-info">
@@ -432,8 +435,8 @@ const UserSettingsModal: React.FunctionComponent<{
             case 'appearance':
               return (
                 <div className="modal-content-section">
-                  <div className="text-xl font-bold">{t`Appearance`}</div>
-                  <div className="text-sm text-main">
+                  <div className="modal-text-section-header">{t`Appearance`}</div>
+                  <div className="modal-text-small text-main">
                     {t`Choose your preferred theme for Quorum.`}
                   </div>
                   <ThemeRadioGroup />
@@ -444,10 +447,10 @@ const UserSettingsModal: React.FunctionComponent<{
 
                   <div className="pt-4">
                     <div className='modal-content-section-header'/>
-                    <div className="small-caps pb-2">{t`Language`}</div>
+                    <div className="modal-text-label pb-2">{t`Language`}</div>
                     <div className="flex flex-row gap-2 items-center">
                       <select
-                        className="quorum-input w-56 !text-sm !sm:text-base"
+                        className="quorum-input w-56 modal-input-select"
                         value={language}
                         onChange={async (e) => {
                           const selected =
