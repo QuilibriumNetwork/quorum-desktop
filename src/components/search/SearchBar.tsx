@@ -31,13 +31,23 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
+  // Centralized focus management - prevents focus when mobile overlay is active
+  const focusInputSafely = () => {
+    // Prevent focus if mobile overlay is active
+    if (window.innerWidth < 1024) {
+      const mobileOverlay = document.querySelector('.bg-mobile-overlay');
+      if (mobileOverlay) return; // Don't focus
+    }
+    inputRef.current?.focus();
+  };
+
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Ctrl/Cmd + K to focus search
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
         e.preventDefault();
-        inputRef.current?.focus();
+        focusInputSafely();
       }
       
       // Escape to blur search
@@ -49,7 +59,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isFocused]);
+  }, [isFocused, focusInputSafely]);
 
   // Handle suggestion navigation
   const handleInputKeyDown = (e: React.KeyboardEvent) => {
@@ -98,22 +108,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     // Ensure input stays focused after state changes
     setTimeout(() => {
       if (inputRef.current && document.activeElement !== inputRef.current) {
-        inputRef.current.focus();
+        focusInputSafely();
       }
     }, 0);
   };
 
-  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    // On mobile, prevent focus if users sidebar overlay is visible
-    if (window.innerWidth < 1024) {
-      const mobileOverlay = document.querySelector('.bg-mobile-overlay');
-      if (mobileOverlay) {
-        e.preventDefault();
-        inputRef.current?.blur();
-        return;
-      }
-    }
-    
+  const handleInputFocus = () => {
     setIsFocused(true);
     setShowSuggestions(query.length > 0 && suggestions.length > 0);
   };
@@ -131,14 +131,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     onSuggestionSelect?.(suggestion);
     setShowSuggestions(false);
     setSelectedSuggestionIndex(-1);
-    inputRef.current?.focus();
+    focusInputSafely();
   };
 
   const handleClear = () => {
     onClear();
     setShowSuggestions(false);
     setSelectedSuggestionIndex(-1);
-    inputRef.current?.focus();
+    focusInputSafely();
   };
 
   return (

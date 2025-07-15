@@ -475,8 +475,8 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-scroll ' +
           'transition-transform duration-300 ease-in-out ' +
           (showUsers 
-            ? 'translate-x-0 fixed top-0 right-0 h-full z-50 lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
-            : 'translate-x-full fixed top-0 right-0 h-full z-50 lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto')
+            ? 'translate-x-0 fixed top-0 right-0 h-full z-[1001] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
+            : 'translate-x-full fixed top-0 right-0 h-full z-[1001] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto')
         }
       >
         <div className="flex flex-col">
@@ -514,7 +514,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       </div>
       {showUsers && (
         <div 
-          className="fixed inset-0 bg-mobile-overlay z-40 lg:hidden"
+          className="fixed inset-0 bg-mobile-overlay z-[1000] lg:hidden"
           onClick={() => setShowUsers(false)}
         />
       )}
