@@ -540,8 +540,8 @@ const Channel: React.FC<ChannelProps> = ({
           'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-scroll ' +
           'transition-transform duration-300 ease-in-out ' +
           (showUsers 
-            ? 'translate-x-0 fixed top-0 right-0 h-full z-[1001] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
-            : 'translate-x-full fixed top-0 right-0 h-full z-[1001] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto')
+            ? 'translate-x-0 fixed top-0 right-0 h-full z-[9999] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
+            : 'translate-x-full fixed top-0 right-0 h-full z-[9999] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto')
         }
       >
         {roles
@@ -610,7 +610,7 @@ const Channel: React.FC<ChannelProps> = ({
       </div>
       {showUsers && (
         <div 
-          className="fixed inset-0 bg-mobile-overlay z-[1000] lg:hidden"
+          className="fixed inset-0 bg-mobile-overlay z-[9998] lg:hidden"
           onClick={() => setShowUsers(false)}
         />
       )}
