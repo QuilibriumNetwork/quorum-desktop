@@ -43,7 +43,8 @@ const Space: React.FunctionComponent<SpaceProps> = (props) => {
       {/* Mobile backdrop overlay */}
       {isMobile && leftSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-[997]"
+          className="fixed inset-y-0 right-0 bg-black bg-opacity-50 z-[997]"
+          style={{ left: window.innerWidth <= 480 ? '50px' : '74px' }}
           onClick={closeLeftSidebar}
         />
       )}

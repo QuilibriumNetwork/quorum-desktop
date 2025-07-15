@@ -33,6 +33,10 @@
   width: var(--sidebar-left-width);
   color: var(--color-text-main);
   text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3);
+
+ @media (max-width: 1023px) {
+  border-top-left-radius: 0px;
+ }
  
 }
 
