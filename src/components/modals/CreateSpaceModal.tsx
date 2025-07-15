@@ -112,7 +112,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           placeholder={t`Enter a name for your new Space`}
           className="w-full"
         />
-        <div className="mt-4 text-xs text-subtle w-[320pt]">
+        <div className="mt-4 text-xs text-subtle">
           <Trans>
             Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings.
           </Trans>
