@@ -149,7 +149,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
         {t`Join Space`}
       </div>
       <div className="quorum-modal-container">
-        <div className="modal-join-space min-w-[200px] max-w-[90vw] sm:min-w-[420px]">
+        <div className="modal-join-space modal-width-large">
           <div className="w-full flex justify-center">
             <Input
               className="w-full max-w-[500px] mx-auto !text-sm"

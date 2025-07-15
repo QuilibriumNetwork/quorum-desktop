@@ -77,7 +77,8 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
       onClose={props.onClose}
       title={t`Create a Space`}
     >
-      <div className="flex flex-row justify-around pb-4">
+      <div className="modal-width-large">
+        <div className="flex flex-row justify-around pb-4">
         {acceptedFiles.length != 0 ? (
           <div className="cursor-pointer" {...getRootProps()}>
             <input {...getInputProps()} />
@@ -178,8 +179,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
         </div>
       )}
       {/* <div className="mt-4 py-5 mx-[-26px] px-4 rounded-b-xl bg-surface-4 mb-[-26px] h-16 flex flex-row-reverse justify-between"> Issues with bottom space*/}
-      <div className="mt-6 pt-6 rounded-b-xl border-t border-t-surface-1 flex flex-row-reverse justify-between">
-        <div>
+        <div className="mt-6 pt-6 rounded-b-xl border-t border-t-surface-1 modal-buttons-responsive">
           <Button
             type="primary"
             disabled={creating || !fileData || !spaceName}
@@ -207,9 +207,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           >
             {creating ? t`Creating Space...` : t`Create Space`}
           </Button>
-        </div>
-        {!advancedMode && (
-          <div>
+          {!advancedMode && (
             <Button
               type="secondary"
               onClick={() => {
@@ -218,8 +216,8 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
             >
               {t`Advanced Settings`}
             </Button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </Modal>
   );

@@ -10,6 +10,51 @@
   }
 }
 
+// Standard Modal Width Classes
+.modal-width-large {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  
+  @media (max-width: 640px) {
+    max-width: 95vw;
+    margin: 0 16px;
+  }
+}
+
+.modal-width-medium {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  
+  @media (max-width: 640px) {
+    max-width: 95vw;
+    margin: 0 16px;
+  }
+}
+
+// Standard Button Layout Classes
+.modal-buttons-responsive {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  
+  @media (max-width: 640px) {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .quorum-button {
+    min-width: 120px;
+    
+    @media (max-width: 640px) {
+      width: 100%;
+      min-width: unset;
+    }
+  }
+}
+
 .modal-icon-section {
   padding: 20px;
   
@@ -321,7 +366,7 @@
   position: absolute;
   z-index: 3000;
   width: 90vw;
-  max-width: 500px;
+  max-width: 400px;
   height: auto;
   max-height: 70vh;
   background: var(--surface-3);

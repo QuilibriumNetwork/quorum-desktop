@@ -30,6 +30,8 @@ The main dependencies are:
 **Important locations for Claude:**
 
 - **`.claude/` folder**: Contains all Claude-related resources and context
+- `.claude/docs/`: Documentation on specific features we developed
+- `.claude/bugs/`: Reports on bugs we found and solution to bugs we solved
 - **`.claude/screenshots/`**: Screenshots for debugging/reference (when mentioned, use the image with the highest number in filename)
 - **`.claude/tasks/`**: Task management with 3 folders:
   - `done/`: Completed tasks

@@ -75,7 +75,7 @@ const GroupEditor: React.FunctionComponent<{
   }, [space, group]);
 
   return (
-    <div className="group-editor flex flex-row min-w-[350px]">
+    <div className="group-editor flex flex-row modal-width-medium">
       <div className="flex flex-col grow overflow-y-scroll rounded-xl">
         <div className="group-editor-header">
           <div className="group-editor-text flex flex-col grow px-4">
@@ -89,7 +89,7 @@ const GroupEditor: React.FunctionComponent<{
         </div>
         <div className="group-editor-content flex flex-col grow">
           <div className="grow flex flex-col">
-            <div className="group-editor-editor-actions justify-between">
+            <div className="group-editor-editor-actions modal-buttons-responsive">
               {groupName && (
                 <Button
                   type="danger"
@@ -104,7 +104,6 @@ const GroupEditor: React.FunctionComponent<{
                   {!deleteStatus ? t`Delete Group` : t`Confirm Deletion`}
                 </Button>
               )}
-              {!groupName && <div></div>}
               <Button type="primary" onClick={() => saveChanges()}>
                 {t`Save Changes`}
               </Button>
