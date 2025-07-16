@@ -234,46 +234,6 @@ export const Message = ({
               : 'pt-[8px]')
           }
         >
-          {emojiPickerOpen === message.messageId && (
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className={
-                'absolute right-0 z-[1000] flex flex-row-reverse ' +
-                (emojiPickerOpenDirection == 'upwards' ? 'top-[-420px]' : '')
-              }
-            >
-              <EmojiPicker
-                suggestedEmojisMode={SuggestionMode.FREQUENT}
-                customEmojis={customEmojis}
-                getEmojiUrl={(unified, style) => {
-                  return '/apple/64/' + unified + '.png';
-                }}
-                skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                theme={Theme.DARK}
-                className={'right-0 absolute'}
-                onEmojiClick={(e) => {
-                  if (
-                    !message.reactions
-                      ?.find((r) => r.emojiId == e.emoji)
-                      ?.memberIds.includes(user.currentPasskeyInfo!.address)
-                  ) {
-                    submitMessage({
-                      type: 'reaction',
-                      messageId: message.messageId,
-                      reaction: e.emoji,
-                    });
-                  } else {
-                    submitMessage({
-                      type: 'remove-reaction',
-                      messageId: message.messageId,
-                      reaction: e.emoji,
-                    });
-                  }
-                  setEmojiPickerOpen(undefined);
-                }}
-              />
-            </div>
-          )}
           {showUserProfile && spaceId && (
             <div
               onClick={(e) => setShowUserProfile(false)}
@@ -485,6 +445,45 @@ export const Message = ({
                     />
                   </>
                 )}
+              </div>
+            )}
+            {emojiPickerOpen === message.messageId && (
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className={
+                  'absolute right-0 z-[9999] ' +
+                  (emojiPickerOpenDirection == 'upwards' ? 'bottom-6' : 'top-0')
+                }
+              >
+                <EmojiPicker
+                  suggestedEmojisMode={SuggestionMode.FREQUENT}
+                  customEmojis={customEmojis}
+                  getEmojiUrl={(unified, style) => {
+                    return '/apple/64/' + unified + '.png';
+                  }}
+                  skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
+                  theme={Theme.DARK}
+                  onEmojiClick={(e) => {
+                    if (
+                      !message.reactions
+                        ?.find((r) => r.emojiId == e.emoji)
+                        ?.memberIds.includes(user.currentPasskeyInfo!.address)
+                    ) {
+                      submitMessage({
+                        type: 'reaction',
+                        messageId: message.messageId,
+                        reaction: e.emoji,
+                      });
+                    } else {
+                      submitMessage({
+                        type: 'remove-reaction',
+                        messageId: message.messageId,
+                        reaction: e.emoji,
+                      });
+                    }
+                    setEmojiPickerOpen(undefined);
+                  }}
+                />
               </div>
             )}
             <span className="message-sender-name">{sender.displayName}</span>

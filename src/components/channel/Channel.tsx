@@ -346,8 +346,8 @@ const Channel: React.FC<ChannelProps> = ({
   return (
     <div className="chat-container">
       <div className="flex flex-col">
-        <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
-          <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2">
+        <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
+          <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2 lg:mb-0">
             <div className="flex flex-row items-center gap-2">
               {isMobile && (
                 <FontAwesomeIcon
@@ -451,34 +451,6 @@ const Channel: React.FC<ChannelProps> = ({
               />
             </div>
           </div>
-        )}
-        {showStickers && (
-          <>
-            <div
-              className="invisible-dismissal invisible-dismissal-no-blur"
-              onClick={() => setShowStickers(false)}
-            />
-            <div className="relative z-[1002]">
-              <div className="flex flex-col right-11 bottom-[0px] absolute border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4">
-                <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">
-                  Stickers
-                </div>
-                <div className="grid grid-cols-2 gap-4 h-[359px] w-[300px] p-4 overflow-scroll">
-                  {space?.stickers.map((s) => {
-                    return (
-                      <div
-                        key={'sticker-' + s.id}
-                        className="flex flex-col justify-around h-[126px] w-[126px]"
-                        onClick={() => sendSticker(s.id)}
-                      >
-                        <img src={s.imgUrl} />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </>
         )}
         <div {...getRootProps()} className="message-editor-container pr-[20px]">
           <div
@@ -706,6 +678,36 @@ const Channel: React.FC<ChannelProps> = ({
         content={t`add sticker`}
         place="top"
       />
+      
+      {/* Stickers panel - positioned at top level to avoid stacking context issues */}
+      {showStickers && (
+        <>
+          <div
+            className="fixed inset-0 z-[9998]"
+            onClick={() => setShowStickers(false)}
+          />
+          <div className="fixed bottom-20 right-4 lg:left-[890px] z-[9999] pointer-events-none">
+            <div className="flex flex-col border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4 pointer-events-auto">
+              <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">
+                Stickers
+              </div>
+              <div className="grid grid-cols-2 gap-4 h-[359px] w-[300px] p-4 overflow-scroll">
+                {space?.stickers.map((s) => {
+                  return (
+                    <div
+                      key={'sticker-' + s.id}
+                      className="flex flex-col justify-around h-[126px] w-[126px]"
+                      onClick={() => sendSticker(s.id)}
+                    >
+                      <img src={s.imgUrl} />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
