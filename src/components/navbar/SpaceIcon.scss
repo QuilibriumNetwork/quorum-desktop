@@ -49,6 +49,12 @@
   z-index: 1000;
   background: var(--warning-hex);
   transition: all 100ms linear;
+
+  // Mobile phone optimization - adjust positioning for smaller icons
+  @media (max-width: 480px) {
+    margin-left: -8px;
+    margin-top: 18px;
+  }
 }
 
 .space-icon-selected {
@@ -91,4 +97,11 @@
   z-index: 1000;
   background: var(--accent-500);
   transition: all 100ms linear;
+
+  // Mobile phone optimization - adjust positioning for smaller icons
+  @media (max-width: 480px) {
+    margin-left: -8px;
+    margin-top: 11px;
+    height: 18px;
+  }
 }

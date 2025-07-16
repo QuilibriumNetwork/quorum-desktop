@@ -32,21 +32,28 @@ export const EmptyDirectMessage = () => {
         {/* Main content */}
         <div className="flex w-full flex-col justify-around flex-1">
           <div>
-            <div className="flex flex-row justify-around">
-              <FontAwesomeIcon
-                icon={faCommentDots}
-                size="6x"
-                className="text-accent-300 dark:text-accent"
+            <div className="flex flex-row justify-around hidden sm:flex">
+              <img
+                src="/stay-connected-stay-invisible.gif"
+                alt="Stay connected, stay invisible"
+                className="w-[250px] sm:w-[300px] md:w-[400px] lg:w-[500px] max-w-full "
               />
             </div>
+            <div className="flex flex-row justify-center text-lg lg:text-2xl pt-4 hidden sm:flex">
+              <div className="max-w-[500px] text-center mt-8">
+                {t`Stay Connected, Stay Invisible`}
+              </div>
+            </div>
+            {/* 
             <div className="flex flex-row justify-center text-lg pt-4">
               <div className="max-w-[500px] text-center">
                 {conversations.pages.flatMap((p: any) => p.conversations)
                   .length === 0
-                  ? t`Start with a message to a friend. Click on the add button next to the direct messages list.`
+                  ? t`Stay Connected, Stay Invisible`
                   : t`What's on your mind today?`}
               </div>
             </div>
+            */}
           </div>
         </div>
       </div>

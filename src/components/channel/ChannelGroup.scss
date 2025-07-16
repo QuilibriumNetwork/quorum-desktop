@@ -9,7 +9,7 @@
 }
 
 .channel-group-channel {
-  padding: 0px 10px;
+  padding: 0px 0px 0px 10px;
 }
 
 .channel-group-channel-name {
@@ -69,6 +69,10 @@
 
 // Mobile layout
 @media (max-width: 1023px) {
+  .channel-group-channel {
+    padding: 0px 10px;
+  }
+
   .channel-group-channel-name:hover {
     border-radius: 10px;
   }

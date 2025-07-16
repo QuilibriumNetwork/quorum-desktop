@@ -31,7 +31,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
         <div>
           <Trans>Direct Messages</Trans>
         </div>
-        <div className="flex flex-col justify-around pr-2">
+        <div className="flex flex-col justify-around pt-1">
           <Link to="/messages/new">
             <FontAwesomeIcon
               className="cursor-pointer text-accent hover:text-accent-300 h-5"
@@ -42,6 +42,13 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
       </div>
       {conversationsList.length === 0 ? (
         <div className="flex flex-col justify-center items-center flex-1 px-4">
+          <div className="flex flex-col justify-center items-center sm:hidden mb-4">
+            <img
+              src="/stay-connected-stay-invisible.gif"
+              alt="Stay connected, stay invisible"
+              className="w-[200px] max-w-full mb-4"
+            />
+          </div>
           <div className="w-full text-center mb-4 text-subtle">
             <Trans>Ready to start a truly private conversation?</Trans>
           </div>
