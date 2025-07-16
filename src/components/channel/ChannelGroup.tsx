@@ -38,8 +38,7 @@ const ChannelGroup: React.FunctionComponent<{
       <div className="channel-group-name small-caps flex flex-row justify-between">
         <div
           className={
-            'truncate ' +
-            (isSpaceOwner ? 'hover:text-main cursor-pointer' : '')
+            'truncate ' + (isSpaceOwner ? 'hover:text-main cursor-pointer' : '')
           }
           onClick={() => {
             if (isSpaceOwner) {
@@ -92,7 +91,11 @@ const ChannelGroup: React.FunctionComponent<{
               {isSpaceOwner && (
                 <div
                   onClick={(e) => {
-                    openChannelEditor(spaceId!, props.group.groupName, channel.channelId);
+                    openChannelEditor(
+                      spaceId!,
+                      props.group.groupName,
+                      channel.channelId
+                    );
                   }}
                   className={'channel-configure float-right'}
                 >

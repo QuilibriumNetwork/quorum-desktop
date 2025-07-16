@@ -115,7 +115,10 @@ const UserProfile: React.FunctionComponent<{
   }, [acceptedFiles]);
 
   return (
-    <div className="user-profile shadow-md" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="user-profile shadow-md"
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="user-profile-header">
         {props.editMode ? (
           <div
@@ -163,7 +166,7 @@ const UserProfile: React.FunctionComponent<{
             </div>
             <FontAwesomeIcon
               className="hover:text-main cursor-pointer"
-              title='Copy to clipboard'
+              title="Copy to clipboard"
               icon={faClipboard}
               onClick={() => {
                 navigator.clipboard.writeText(props.user.address);
@@ -220,7 +223,8 @@ const UserProfile: React.FunctionComponent<{
                         acceptedFiles[0].type +
                         ';base64,' +
                         Buffer.from(fileData).toString('base64')
-                      : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
+                      : (currentPasskeyInfo!.pfpUrl ??
+                        DefaultImages.UNKNOWN_USER),
                   address: currentPasskeyInfo!.address,
                 });
                 updateUserProfile(
@@ -230,7 +234,8 @@ const UserProfile: React.FunctionComponent<{
                         acceptedFiles[0].type +
                         ';base64,' +
                         Buffer.from(fileData).toString('base64')
-                    : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
+                    : (currentPasskeyInfo!.pfpUrl ??
+                        DefaultImages.UNKNOWN_USER),
                   currentPasskeyInfo!
                 );
                 if (props.dismiss !== undefined) {

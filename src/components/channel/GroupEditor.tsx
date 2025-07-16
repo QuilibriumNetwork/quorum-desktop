@@ -79,7 +79,9 @@ const GroupEditor: React.FunctionComponent<{
       <div className="flex flex-col grow overflow-y-scroll rounded-xl">
         <div className="group-editor-header">
           <div className="group-editor-text flex flex-col grow px-4">
-            <div className="small-caps"><Trans>Group Name</Trans></div>
+            <div className="small-caps">
+              <Trans>Group Name</Trans>
+            </div>
             <input
               className="w-full quorum-input"
               value={group}

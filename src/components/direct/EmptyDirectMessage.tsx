@@ -28,16 +28,20 @@ export const EmptyDirectMessage = () => {
             <span className="font-semibold">{t`Direct Messages`}</span>
           </div>
         </div>
-        
+
         {/* Main content */}
         <div className="flex w-full flex-col justify-around flex-1">
           <div>
             <div className="flex flex-row justify-around">
-              <FontAwesomeIcon icon={faCommentDots} size="6x" className='text-accent-300 dark:text-accent' />
+              <FontAwesomeIcon
+                icon={faCommentDots}
+                size="6x"
+                className="text-accent-300 dark:text-accent"
+              />
             </div>
             <div className="flex flex-row justify-around text-lg pt-4">
-              {conversations.pages.flatMap((p: any) => p.conversations).length ===
-              0
+              {conversations.pages.flatMap((p: any) => p.conversations)
+                .length === 0
                 ? t`Start with a message to a friend. Click on the add button next to the direct messages list.`
                 : t`What's on your mind today?`}
             </div>

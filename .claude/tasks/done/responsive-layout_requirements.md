@@ -1,11 +1,13 @@
 # Responsive Layout Requirements
 
 ## Overview
+
 The application required a complete responsive layout overhaul to provide optimal user experience across desktop, tablet, and mobile devices. The main challenge was transforming a desktop-first application with multiple sidebars into a mobile-friendly interface.
 
 ## Initial Problems Identified
 
 ### 1. Search Bar Positioning Issues
+
 - **Problem**: Search input field was positioned in the top-level app header
 - **Requirement**: Move search bar to inline position within chat headers (both Channel and DirectMessage components)
 - **Target Location**: Should be positioned where a red rectangle was shown in provided screenshots
@@ -18,6 +20,7 @@ The application required a complete responsive layout overhaul to provide optima
   - Width should adjust when sidebar opens
 
 ### 2. Right Sidebar (Users List) Mobile Issues
+
 - **Problem**: Right sidebar was opening by default on tablet and mobile devices
 - **Requirement**: Right sidebar should start closed on mobile/tablet (≤767px)
 - **Expected Behavior**:
@@ -27,6 +30,7 @@ The application required a complete responsive layout overhaul to provide optima
   - **Responsive Logic**: Should automatically close when screen resizes to mobile
 
 ### 3. Left Sidebar (Navigation) Mobile Adaptation
+
 - **Problem**: Left sidebar containing channel lists and direct message contacts was always visible, taking up valuable screen space on mobile
 - **Requirement**: Implement responsive left sidebar behavior
 - **Components Affected**:
@@ -41,11 +45,13 @@ The application required a complete responsive layout overhaul to provide optima
   - **Animation**: Smooth slide-in/out transitions
 
 ### 4. Space Banner Overflow Issues
+
 - **Problem**: Space banner images were overflowing outside their layout containers
 - **Requirement**: Banner should be properly constrained within its container
 - **Technical Issue**: Fixed width was causing overflow instead of responsive behavior
 
 ### 5. Header Layout Responsive Design
+
 - **Problem**: Chat headers were not responsive on mobile/tablet
 - **Requirement**: Implement stacked layout for mobile
 - **Behavior**:
@@ -54,16 +60,19 @@ The application required a complete responsive layout overhaul to provide optima
   - **Components**: Both Channel and DirectMessage headers needed this treatment
 
 ### 6. Navigation Integration Issues
+
 - **Problem**: Left sidebar was sliding in from screen edge (left: 0) which covered the NavMenu
 - **Requirement**: Left sidebar should slide in from position that accounts for NavMenu width
 - **Technical Detail**: NavMenu has fixed width of 74px, sidebar should start from `left: 74px`
 
 ### 7. Search Results Positioning
+
 - **Problem**: Search results dropdown was getting positioned incorrectly when sidebar was open
 - **Requirement**: Search results should maintain proper positioning relative to search input
 - **Z-index Management**: Need proper stacking order for overlays
 
 ### 8. Mobile Overlay System
+
 - **Problem**: No consistent overlay system for mobile sidebars
 - **Requirement**: Implement backdrop overlay system
 - **Features Needed**:
@@ -73,6 +82,7 @@ The application required a complete responsive layout overhaul to provide optima
   - Consistent behavior across all overlay components
 
 ### 9. NavMenu Mobile Optimization
+
 - **Problem**: NavMenu (NavMenu.tsx) is too wide for mobile phones and uses desktop-sized icons
 - **Requirement**: NavMenu should be optimized for mobile screens
 - **Mobile Specifications**:
@@ -83,18 +93,21 @@ The application required a complete responsive layout overhaul to provide optima
 - **Impact**: This affects left sidebar positioning calculation on mobile devices
 
 ## Screen Size Breakpoints
+
 - **Desktop**: ≥768px (md: breakpoint)
 - **Tablet/Mobile**: <768px
 
 ## User Experience Requirements
 
 ### Desktop Behavior
+
 - All sidebars should be toggleable but remain in normal document flow
 - Search bar integrated inline within headers
 - Normal hover states and interactions
 - Full functionality available
 
 ### Mobile/Tablet Behavior
+
 - Both left and right sidebars start closed to maximize message reading area
 - Hamburger menu icon for left sidebar (positioned left of search bar)
 - Users icon for right sidebar (positioned right of search bar)
@@ -103,6 +116,7 @@ The application required a complete responsive layout overhaul to provide optima
 - Touch-friendly interaction targets
 
 ## Technical Constraints
+
 - Must maintain all existing functionality
 - Should use existing color system and CSS variables
 - Need to preserve semantic class naming conventions
@@ -111,12 +125,14 @@ The application required a complete responsive layout overhaul to provide optima
 - Must not break any existing desktop workflows
 
 ## Accessibility Requirements
+
 - Maintain keyboard navigation
 - Proper focus management when sidebars open/close
 - Screen reader compatibility
 - Touch targets should be appropriately sized for mobile
 
 ## Performance Considerations
+
 - Minimize layout shifts during responsive transitions
 - Efficient re-rendering when screen size changes
 - Smooth animations without janky behavior

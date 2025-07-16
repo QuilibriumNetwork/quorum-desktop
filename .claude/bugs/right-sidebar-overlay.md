@@ -25,7 +25,9 @@ Latest screenshot: `.claude/screenshots/172.png` shows the issue clearly - space
 ## Technical Context
 
 ### Z-Index Hierarchy Attempted
+
 Multiple z-index values have been tried:
+
 - **Navbar**: `z-index: 999` (fixed in NavMenu.scss)
 - **Overlay**: Tried `z-40`, `z-[1000]`, `z-[9998]`
 - **Right Sidebar**: Tried `z-50`, `z-[1001]`, `z-[9999]`
@@ -33,46 +35,58 @@ Multiple z-index values have been tried:
 ### Components Involved
 
 **1. Right Sidebar Overlay (both components):**
+
 ```tsx
 // DirectMessage.tsx line ~517
-{showUsers && (
-  <div 
-    className="fixed inset-0 bg-mobile-overlay z-[9998] lg:hidden"
-    onClick={() => setShowUsers(false)}
-  />
-)}
+{
+  showUsers && (
+    <div
+      className="fixed inset-0 bg-mobile-overlay z-[9998] lg:hidden"
+      onClick={() => setShowUsers(false)}
+    />
+  );
+}
 
-// Channel.tsx line ~613  
-{showUsers && (
-  <div 
-    className="fixed inset-0 bg-mobile-overlay z-[9998] lg:hidden"
-    onClick={() => setShowUsers(false)}
-  />
-)}
+// Channel.tsx line ~613
+{
+  showUsers && (
+    <div
+      className="fixed inset-0 bg-mobile-overlay z-[9998] lg:hidden"
+      onClick={() => setShowUsers(false)}
+    />
+  );
+}
 ```
 
 **2. Right Sidebar Content:**
+
 ```tsx
 // Both components have similar structure
 <div className={
   'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-scroll ' +
   'transition-transform duration-300 ease-in-out ' +
-  (showUsers 
+  (showUsers
     ? 'translate-x-0 fixed top-0 right-0 h-full z-[9999] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
     : 'translate-x-full fixed top-0 right-0 h-full z-[9999] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto')
 }>
 ```
 
 **3. Navbar (NavMenu.tsx):**
+
 ```tsx
-<header> // Has z-index: 999 in NavMenu.scss
+<header>
+  {' '}
+  // Has z-index: 999 in NavMenu.scss
   <div className="nav-menu-logo">
     <Link to="/messages">
       <SpaceIcon /> // These icons remain visible
     </Link>
   </div>
   <div className="nav-menu-spaces">
-    {spaces.map(space => <SpaceButton />)} // These remain visible
+    {spaces.map((space) => (
+      <SpaceButton />
+    ))}{' '}
+    // These remain visible
   </div>
 </header>
 ```
@@ -97,6 +111,7 @@ The issue persists despite using the same z-index solution (`z-[9998]` and `z-[9
 ### Related Solutions
 
 Check `.claude/docs/new-modal-component.md` for the successful modal fix that solved a similar navbar z-index issue. The modal solution used:
+
 - Direct rendering (no portals)
 - `z-[9999]` for modal content
 - Rendering at AppWithSearch level
@@ -104,7 +119,7 @@ Check `.claude/docs/new-modal-component.md` for the successful modal fix that so
 ### Files Modified During Debugging
 
 - `src/components/direct/DirectMessage.tsx` - Overlay z-index changes
-- `src/components/channel/Channel.tsx` - Overlay z-index changes  
+- `src/components/channel/Channel.tsx` - Overlay z-index changes
 - `src/components/search/SearchBar.tsx` - Fixed search highlighting issue (working)
 
 ### Additional Context
@@ -120,7 +135,7 @@ Check `.claude/docs/new-modal-component.md` for the successful modal fix that so
 ## Next Steps for Investigation
 
 1. **Inspect Stacking Context**: Check if navbar creates its own stacking context
-2. **Component Tree Analysis**: Verify where overlay is rendered vs navbar  
+2. **Component Tree Analysis**: Verify where overlay is rendered vs navbar
 3. **CSS Audit**: Look for any CSS rules affecting navbar z-index
 4. **Alternative Solutions**: Consider moving overlay to higher component level like modal solution did
 5. **Browser DevTools**: Use z-index inspector to understand actual stacking order

@@ -32,7 +32,8 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
 ) => {
   let { address } = useParams<{ address: string }>();
   const { keyset } = useRegistrationContext();
-  const { isMobile, leftSidebarOpen, closeLeftSidebar, openLeftSidebar } = useResponsiveLayoutContext();
+  const { isMobile, leftSidebarOpen, closeLeftSidebar, openLeftSidebar } =
+    useResponsiveLayoutContext();
 
   // Initialize sidebar as open on mobile by default (only on /messages homepage, not on conversation pages)
   React.useEffect(() => {
@@ -46,14 +47,16 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
     <div className="direct-messages-container">
       {/* Mobile backdrop overlay - show when sidebar is visible */}
       {isMobile && leftSidebarOpen && (
-        <div 
-          className="fixed inset-y-0 right-0 bg-black bg-opacity-50 z-[997]"
+        <div
+          className="fixed inset-y-0 right-0 bg-overlay z-[997]"
           style={{ left: window.innerWidth <= 480 ? '50px' : '74px' }}
           onClick={closeLeftSidebar}
         />
       )}
-      
-      <div className={`direct-messages-container-channels ${leftSidebarOpen && isMobile ? 'open' : ''}`}>
+
+      <div
+        className={`direct-messages-container-channels ${leftSidebarOpen && isMobile ? 'open' : ''}`}
+      >
         <React.Suspense>
           {keyset.deviceKeyset?.inbox_keyset && <DirectMessageContactsList />}
         </React.Suspense>

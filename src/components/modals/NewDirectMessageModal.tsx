@@ -3,7 +3,7 @@ import Modal from '../Modal';
 import Input from '../Input';
 import Button from '../Button';
 import { useNavigate } from 'react-router';
-import {  useRegistration } from '../../hooks';
+import { useRegistration } from '../../hooks';
 import { getConfig } from '../../config/config';
 import { AddressLookup } from '../AddressLookup';
 import './NewDirectMessageModal.scss';

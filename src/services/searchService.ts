@@ -41,9 +41,10 @@ export class SearchService {
   }
 
   private getCacheKey(query: string, context: SearchContext): string {
-    const contextKey = context.type === 'space' 
-      ? `space:${context.spaceId}`
-      : `dm:${context.conversationId}`;
+    const contextKey =
+      context.type === 'space'
+        ? `space:${context.spaceId}`
+        : `dm:${context.conversationId}`;
     return `${query.toLowerCase().trim()}:${contextKey}`;
   }
 
@@ -70,14 +71,14 @@ export class SearchService {
 
   async search(searchQuery: SearchQuery): Promise<SearchResult[]> {
     const { query, context, limit = this.config.maxResults } = searchQuery;
-    
+
     // Empty query returns empty results
     if (!query.trim()) {
       return [];
     }
 
     const cacheKey = this.getCacheKey(query, context);
-    
+
     // Check cache first
     const cached = this.searchCache.get(cacheKey);
     if (cached && this.isValidCache(cached)) {
@@ -86,8 +87,12 @@ export class SearchService {
 
     try {
       // Perform search
-      const results = await this.messageDB.searchMessages(query, context, limit);
-      
+      const results = await this.messageDB.searchMessages(
+        query,
+        context,
+        limit
+      );
+
       // Cache results
       this.searchCache.set(cacheKey, {
         results,
@@ -95,10 +100,10 @@ export class SearchService {
         query,
         contextKey: this.getCacheKey('', context),
       });
-      
+
       // Clean up cache periodically
       this.cleanCache();
-      
+
       return results;
     } catch (error) {
       console.error('Search failed:', error);
@@ -112,24 +117,27 @@ export class SearchService {
   ): void {
     const { query, context } = searchQuery;
     const debounceKey = this.getCacheKey(query, context);
-    
+
     // Clear existing timer
     const existingTimer = this.debounceTimers.get(debounceKey);
     if (existingTimer) {
       clearTimeout(existingTimer);
     }
-    
+
     // Set new timer
     const timer = setTimeout(async () => {
       const results = await this.search(searchQuery);
       callback(results);
       this.debounceTimers.delete(debounceKey);
     }, this.config.debounceMs);
-    
+
     this.debounceTimers.set(debounceKey, timer);
   }
 
-  async getSuggestions(query: string, context: SearchContext): Promise<string[]> {
+  async getSuggestions(
+    query: string,
+    context: SearchContext
+  ): Promise<string[]> {
     if (!query.trim()) {
       return [];
     }
@@ -138,20 +146,20 @@ export class SearchService {
       // For now, return simple word-based suggestions
       // This could be enhanced with more sophisticated suggestion logic
       const results = await this.search({ query, context, limit: 10 });
-      
+
       // Extract unique words from search results for suggestions
       const suggestions = new Set<string>();
-      
-      results.forEach(result => {
+
+      results.forEach((result) => {
         const messageText = this.extractTextFromMessage(result.message);
         const words = messageText.toLowerCase().split(/\s+/);
-        words.forEach(word => {
+        words.forEach((word) => {
           if (word.length > 2 && word.includes(query.toLowerCase())) {
             suggestions.add(word);
           }
         });
       });
-      
+
       return Array.from(suggestions).slice(0, 5);
     } catch (error) {
       console.error('Failed to get suggestions:', error);
@@ -172,13 +180,13 @@ export class SearchService {
 
   highlightSearchTerms(text: string, searchTerms: string[]): string {
     if (!searchTerms.length) return text;
-    
+
     let highlightedText = text;
-    searchTerms.forEach(term => {
+    searchTerms.forEach((term) => {
       const regex = new RegExp(`(${term})`, 'gi');
       highlightedText = highlightedText.replace(regex, '<mark>$1</mark>');
     });
-    
+
     return highlightedText;
   }
 
@@ -188,11 +196,12 @@ export class SearchService {
       this.searchCache.clear();
       return;
     }
-    
-    const contextKey = context.type === 'space' 
-      ? `space:${context.spaceId}`
-      : `dm:${context.conversationId}`;
-    
+
+    const contextKey =
+      context.type === 'space'
+        ? `space:${context.spaceId}`
+        : `dm:${context.conversationId}`;
+
     // Remove cached entries for this context
     for (const [key, cached] of this.searchCache.entries()) {
       if (cached.contextKey === contextKey) {
@@ -203,24 +212,31 @@ export class SearchService {
 
   async addMessage(message: any): Promise<void> {
     await this.messageDB.addMessageToIndex(message);
-    
+
     // Invalidate relevant cache entries
-    const spaceContext: SearchContext = { type: 'space', spaceId: message.spaceId };
+    const spaceContext: SearchContext = {
+      type: 'space',
+      spaceId: message.spaceId,
+    };
     this.invalidateCache(spaceContext);
-    
+
     // If it's a DM, also invalidate DM cache
     const conversationId = `${message.spaceId}/${message.channelId}`;
     const dmContext: SearchContext = { type: 'dm', conversationId };
     this.invalidateCache(dmContext);
   }
 
-  async removeMessage(messageId: string, spaceId: string, channelId: string): Promise<void> {
+  async removeMessage(
+    messageId: string,
+    spaceId: string,
+    channelId: string
+  ): Promise<void> {
     await this.messageDB.removeMessageFromIndex(messageId, spaceId, channelId);
-    
+
     // Invalidate relevant cache entries
     const spaceContext: SearchContext = { type: 'space', spaceId };
     this.invalidateCache(spaceContext);
-    
+
     const conversationId = `${spaceId}/${channelId}`;
     const dmContext: SearchContext = { type: 'dm', conversationId };
     this.invalidateCache(dmContext);
@@ -240,9 +256,9 @@ export class SearchService {
 
   cleanup(): void {
     // Clear all timers
-    this.debounceTimers.forEach(timer => clearTimeout(timer));
+    this.debounceTimers.forEach((timer) => clearTimeout(timer));
     this.debounceTimers.clear();
-    
+
     // Clear cache
     this.searchCache.clear();
   }

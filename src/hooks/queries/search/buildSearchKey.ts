@@ -7,10 +7,11 @@ const buildSearchKey = ({
   query: string;
   context: SearchContext;
 }) => {
-  const contextKey = context.type === 'space' 
-    ? `space:${context.spaceId}`
-    : `dm:${context.conversationId}`;
-  
+  const contextKey =
+    context.type === 'space'
+      ? `space:${context.spaceId}`
+      : `dm:${context.conversationId}`;
+
   return ['Search', query, contextKey];
 };
 

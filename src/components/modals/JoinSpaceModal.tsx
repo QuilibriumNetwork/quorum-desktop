@@ -179,7 +179,9 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
                   selected={true}
                   iconUrl={space.iconUrl}
                 />
-                <div className="mt-4 text-lg sm:text-xl text-strong">{space.spaceName}</div>
+                <div className="mt-4 text-lg sm:text-xl text-strong">
+                  {space.spaceName}
+                </div>
               </>
             )}
           </div>

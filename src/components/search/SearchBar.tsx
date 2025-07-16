@@ -49,7 +49,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         e.preventDefault();
         focusInputSafely();
       }
-      
+
       // Escape to blur search
       if (e.key === 'Escape' && isFocused) {
         inputRef.current?.blur();
@@ -68,13 +68,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedSuggestionIndex(prev => 
+        setSelectedSuggestionIndex((prev) =>
           prev < suggestions.length - 1 ? prev + 1 : 0
         );
         break;
       case 'ArrowUp':
         e.preventDefault();
-        setSelectedSuggestionIndex(prev => 
+        setSelectedSuggestionIndex((prev) =>
           prev > 0 ? prev - 1 : suggestions.length - 1
         );
         break;
@@ -104,7 +104,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     onQueryChange(value);
     setSelectedSuggestionIndex(-1);
     setShowSuggestions(value.length > 0 && suggestions.length > 0);
-    
+
     // Ensure input stays focused after state changes
     setTimeout(() => {
       if (inputRef.current && document.activeElement !== inputRef.current) {
@@ -144,8 +144,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <div className={`search-bar ${className || ''}`}>
       <div className={`search-input-container ${isFocused ? 'focused' : ''}`}>
-        <FontAwesomeIcon 
-          icon={faSearch} 
+        <FontAwesomeIcon
+          icon={faSearch}
           className={`search-icon ${isFocused ? 'search-icon-focused' : ''}`}
         />
         <input
@@ -178,13 +178,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </span>
         )}
       </div>
-      
+
       {showSuggestions && suggestions.length > 0 && (
-        <div 
-          ref={suggestionsRef}
-          className="search-suggestions"
-          role="listbox"
-        >
+        <div ref={suggestionsRef} className="search-suggestions" role="listbox">
           {suggestions.map((suggestion, index) => (
             <div
               key={suggestion}

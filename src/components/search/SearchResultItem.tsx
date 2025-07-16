@@ -1,6 +1,10 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHashtag, faUser, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import {
+  faHashtag,
+  faUser,
+  faCalendarAlt,
+} from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../db/messages';
 import { Message } from '../../api/quorumApi';
@@ -25,23 +29,28 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   const { message } = result;
 
   // Fetch user info for the sender
-  const { data: userInfo } = useUserInfo({ 
+  const { data: userInfo } = useUserInfo({
     address: message.content.senderId,
-    enabled: !!message.content.senderId 
+    enabled: !!message.content.senderId,
   });
 
-  const displayName = userInfo?.userProfile?.displayName || userInfo?.userProfile?.display_name || t`Unknown User`;
-  
-  return <SearchResultItemContent 
-    {...result}
-    onNavigate={onNavigate}
-    highlightTerms={highlightTerms}
-    className={className}
-    displayName={displayName}
-    spaceName={t`Direct Message`}
-    channelName={displayName} // Use sender name for both
-    isDM={true}
-  />;
+  const displayName =
+    userInfo?.userProfile?.displayName ||
+    userInfo?.userProfile?.display_name ||
+    t`Unknown User`;
+
+  return (
+    <SearchResultItemContent
+      {...result}
+      onNavigate={onNavigate}
+      highlightTerms={highlightTerms}
+      className={className}
+      displayName={displayName}
+      spaceName={t`Direct Message`}
+      channelName={displayName} // Use sender name for both
+      isDM={true}
+    />
+  );
 };
 
 // Component for Space search results
@@ -54,14 +63,14 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   const { message } = result;
 
   // Fetch user info for the sender
-  const { data: userInfo } = useUserInfo({ 
+  const { data: userInfo } = useUserInfo({
     address: message.content.senderId,
-    enabled: !!message.content.senderId 
+    enabled: !!message.content.senderId,
   });
 
   // Fetch space info
-  const { data: spaceInfo } = useSpace({ 
-    spaceId: message.spaceId
+  const { data: spaceInfo } = useSpace({
+    spaceId: message.spaceId,
   });
 
   // Get channel name from space data
@@ -69,20 +78,25 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
     .find((g) => g.channels.find((c) => c.channelId === message.channelId))
     ?.channels.find((c) => c.channelId === message.channelId);
 
-  const displayName = userInfo?.userProfile?.displayName || userInfo?.userProfile?.display_name || t`Unknown User`;
+  const displayName =
+    userInfo?.userProfile?.displayName ||
+    userInfo?.userProfile?.display_name ||
+    t`Unknown User`;
   const spaceName = spaceInfo?.spaceName || t`Unknown Space`;
   const channelName = channel?.channelName || message.channelId;
-  
-  return <SearchResultItemContent 
-    {...result}
-    onNavigate={onNavigate}
-    highlightTerms={highlightTerms}
-    className={className}
-    displayName={displayName}
-    spaceName={spaceName}
-    channelName={channelName}
-    isDM={false}
-  />;
+
+  return (
+    <SearchResultItemContent
+      {...result}
+      onNavigate={onNavigate}
+      highlightTerms={highlightTerms}
+      className={className}
+      displayName={displayName}
+      spaceName={spaceName}
+      channelName={channelName}
+      isDM={false}
+    />
+  );
 };
 
 // Main component that delegates to appropriate sub-component
@@ -123,7 +137,6 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
   channelName,
   isDM,
 }) => {
-
   const formatDate = (timestamp: number): string => {
     const date = new Date(timestamp);
     const now = new Date();
@@ -131,7 +144,10 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
     } else if (diffDays === 1) {
       return t`Yesterday`;
     } else if (diffDays < 7) {
@@ -168,12 +184,13 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
   };
 
   const messageText = getMessageText(message);
-  const truncatedText = messageText.length > 150 
-    ? messageText.substring(0, 150) + '...'
-    : messageText;
+  const truncatedText =
+    messageText.length > 150
+      ? messageText.substring(0, 150) + '...'
+      : messageText;
 
   return (
-    <div 
+    <div
       className={`search-result-item ${className || ''}`}
       onClick={handleClick}
       role="button"
@@ -187,41 +204,32 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
     >
       <div className="result-header">
         <div className="result-meta">
-          <FontAwesomeIcon 
-            icon={isDM ? faUser : getMessageTypeIcon(message)} 
+          <FontAwesomeIcon
+            icon={isDM ? faUser : getMessageTypeIcon(message)}
             className="result-type-icon"
           />
-          <span className="result-channel mr-2">
-            {channelName}
-          </span>
-        
+          <span className="result-channel mr-2">{channelName}</span>
+
           {!isDM && (
             <>
-              <FontAwesomeIcon 
-                icon={faUser} 
-                className="result-user-icon"
-              />
-              <span className=" result-sender">
-                {displayName}
-              </span>
+              <FontAwesomeIcon icon={faUser} className="result-user-icon" />
+              <span className=" result-sender">{displayName}</span>
             </>
           )}
         </div>
       </div>
-      
+
       <div className="result-content">
-        <div 
+        <div
           className="result-text"
           dangerouslySetInnerHTML={{
-            __html: highlightTerms(truncatedText)
+            __html: highlightTerms(truncatedText),
           }}
         />
       </div>
-      
+
       <div className="result-footer">
-        <span className="result-date">
-          {formatDate(message.createdDate)}
-        </span>
+        <span className="result-date">{formatDate(message.createdDate)}</span>
       </div>
     </div>
   );

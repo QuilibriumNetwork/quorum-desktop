@@ -71,12 +71,15 @@ export const useGlobalSearch = ({
   }, [query, context, searchService]);
 
   // Highlight search terms in text
-  const highlightTerms = useCallback((text: string): string => {
-    if (!query.trim()) return text;
-    
-    const terms = query.trim().split(/\s+/);
-    return searchService.highlightSearchTerms(text, terms);
-  }, [query, searchService]);
+  const highlightTerms = useCallback(
+    (text: string): string => {
+      if (!query.trim()) return text;
+
+      const terms = query.trim().split(/\s+/);
+      return searchService.highlightSearchTerms(text, terms);
+    },
+    [query, searchService]
+  );
 
   // Clear search
   const clearSearch = useCallback(() => {

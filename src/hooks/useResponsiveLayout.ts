@@ -25,7 +25,7 @@ export const useResponsiveLayout = (): ResponsiveLayoutState => {
   const updateScreenSize = useCallback(() => {
     const newWidth = window.innerWidth;
     setScreenWidth(newWidth);
-    
+
     // Auto-close left sidebar when switching to desktop
     if (newWidth >= MOBILE_BREAKPOINT && leftSidebarOpen) {
       setLeftSidebarOpen(false);
@@ -40,7 +40,7 @@ export const useResponsiveLayout = (): ResponsiveLayoutState => {
   }, [updateScreenSize]);
 
   const toggleLeftSidebar = useCallback(() => {
-    setLeftSidebarOpen(prev => !prev);
+    setLeftSidebarOpen((prev) => !prev);
   }, []);
 
   const closeLeftSidebar = useCallback(() => {

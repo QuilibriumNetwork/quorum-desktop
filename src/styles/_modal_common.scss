@@ -4,7 +4,7 @@
   justify-content: space-between;
   flex-direction: column;
   text-align: center;
-  
+
   @media (max-width: 768px) {
     gap: 16px;
   }
@@ -16,7 +16,7 @@
   max-width: 500px;
   min-width: 490px;
   margin: 0 auto;
-  
+
   @media (max-width: 640px) {
     max-width: 95vw;
     min-width: 200px;
@@ -28,7 +28,7 @@
   max-width: 400px;
   min-width: 390px;
   margin: 0 auto;
-  
+
   @media (max-width: 640px) {
     max-width: 95vw;
     min-width: 200px;
@@ -41,15 +41,15 @@
   gap: 8px;
   justify-content: center;
   flex-wrap: wrap;
-  
+
   @media (max-width: 640px) {
     flex-direction: column;
     gap: 12px;
   }
-  
+
   .quorum-button {
     min-width: 120px;
-    
+
     @media (max-width: 640px) {
       width: 100%;
       min-width: unset;
@@ -61,7 +61,7 @@
 .modal-text-label {
   font-size: 16px;
   font-weight: 600;
-  
+
   @media (max-width: 640px) {
     font-size: 14px;
   }
@@ -70,7 +70,7 @@
 .modal-text-section-header {
   font-size: 18px;
   font-weight: 700;
-  
+
   @media (max-width: 640px) {
     font-size: 16px;
   }
@@ -78,7 +78,7 @@
 
 .modal-text-small {
   font-size: 14px;
-  
+
   @media (max-width: 640px) {
     font-size: 13px;
   }
@@ -91,7 +91,7 @@
 
 .modal-input-select {
   font-size: 14px !important; // Smaller for selects/dropdowns since users don't type
-  
+
   @media (max-width: 640px) {
     font-size: 13px !important;
   }
@@ -99,7 +99,7 @@
 
 .modal-icon-section {
   padding: 20px;
-  
+
   @media (max-width: 768px) {
     padding: 16px 12px;
   }
@@ -108,7 +108,7 @@
 .modal-actions {
   padding-top: 20px;
   text-align: center;
-  
+
   @media (max-width: 768px) {
     padding-top: 16px;
   }
@@ -131,7 +131,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  
+
   @media (max-width: 768px) {
     width: 95vw;
     height: 85vh;
@@ -144,7 +144,7 @@
   display: flex;
   flex-direction: row;
   height: 100%;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
   }
@@ -155,7 +155,7 @@
   color: var(--color-text-main);
   width: 200px;
   flex-shrink: 0;
-  
+
   @media (max-width: 768px) {
     display: none;
   }
@@ -167,7 +167,7 @@
   flex-grow: 1;
   overflow-y: auto;
   border-radius: 0px 10px 10px 0px;
-  
+
   @media (max-width: 768px) {
     border-radius: 0px 0px 10px 10px;
   }
@@ -191,11 +191,11 @@
   border-radius: 6px;
   font-size: 14px;
   transition: background-color 0.2s ease;
-  
+
   &:hover {
     background-color: var(--color-bg-modal-cat-hover);
   }
-  
+
   &.active {
     background-color: var(--color-bg-modal-cat-active);
   }
@@ -204,7 +204,7 @@
 // Mobile Navigation Layouts
 .modal-nav-mobile-single {
   display: none;
-  
+
   @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
@@ -213,7 +213,7 @@
     border-bottom: 1px solid var(--surface-6);
     border-radius: 10px 10px 0px 0px;
     gap: 1px;
-    
+
     .modal-nav-category {
       font-weight: 500;
       cursor: pointer;
@@ -222,16 +222,16 @@
       border-radius: 6px;
       font-size: 14px;
       border-left: 2px solid transparent;
-      
+
       &:hover {
         background-color: var(--color-bg-modal-cat-hover);
       }
-      
+
       &.active {
         background-color: var(--color-bg-modal-cat-active);
         border-left-color: var(--accent);
       }
-      
+
       @media (max-width: 480px) {
         font-size: 13px;
         padding: 5px 10px;
@@ -242,7 +242,7 @@
 
 .modal-nav-mobile-2col {
   display: none;
-  
+
   @media (max-width: 768px) {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -251,7 +251,7 @@
     border-bottom: 1px solid var(--surface-6);
     border-radius: 10px 10px 0px 0px;
     gap: 2px 16px;
-    
+
     .modal-nav-category {
       font-weight: 500;
       cursor: pointer;
@@ -260,16 +260,16 @@
       font-size: 14px;
       text-align: center;
       border-left: 2px solid transparent;
-      
+
       &:hover {
         background-color: var(--color-bg-modal-cat-hover);
       }
-      
+
       &.active {
         background-color: var(--color-bg-modal-cat-active);
         border-left-color: var(--accent);
       }
-      
+
       @media (max-width: 480px) {
         font-size: 12px;
         padding: 5px 6px;
@@ -290,7 +290,7 @@
   padding: 20px 16px;
   align-items: flex-start;
   gap: 16px;
-  
+
   @media (max-width: 768px) {
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
@@ -308,15 +308,15 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  
+
   @media (max-width: 768px) {
     padding: 16px;
   }
-  
+
   &:last-child {
     border-radius: 0px 0px 10px 10px;
   }
-  
+
   /* Ensure Save button stays at bottom right for all categories */
   .modal-content-actions {
     margin-top: auto;
@@ -336,7 +336,7 @@
     font-size: 13px;
     white-space: nowrap;
   }
-  
+
   @media (max-width: 768px) {
     justify-content: left;
     margin-top: 16px;
@@ -350,14 +350,14 @@
   margin-top: 0;
   align-self: flex-start;
   flex-shrink: 0;
-  
+
   @media (max-width: 768px) {
     margin-top: 0;
     margin-bottom: 0;
     align-self: stretch;
     width: 100%;
     flex-shrink: 0;
-    
+
     .quorum-button {
       width: 100%;
       text-align: center;
@@ -379,10 +379,10 @@
     padding: 10px;
     font-size: 13px;
   }
-  
+
   @media (max-width: 768px) {
     margin-bottom: 12px;
-    
+
     .quorum-input {
       padding: 12px;
       font-size: 14px;
@@ -395,7 +395,7 @@
   border-top: 1px solid var(--color-border-strong);
   padding-top: 7px;
   margin-top: 7px;
-  
+
   &:first-child {
     border-top: 0px none;
     padding-top: 0px;
@@ -417,7 +417,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  
+
   @media (max-width: 768px) {
     width: 95vw;
     max-width: none;
@@ -450,7 +450,7 @@
     height: 38px;
     font-size: 13px;
   }
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     justify-content: left;
@@ -460,7 +460,7 @@
   }
 }
 
-// Icon Classes  
+// Icon Classes
 .modal-icon,
 .modal-icon-editable {
   width: 82px;
@@ -473,7 +473,7 @@
   border-radius: 41px;
   display: inline-block;
   flex-shrink: 0;
-  
+
   @media (max-width: 768px) {
     width: 70px;
     height: 70px;
@@ -495,7 +495,7 @@
   border-radius: 8px;
   display: block;
   margin-top: 8px;
-  
+
   @media (max-width: 768px) {
     height: 100px;
     max-width: 100%;
@@ -505,7 +505,7 @@
 .modal-banner-editable {
   cursor: pointer;
   position: relative;
-  
+
   &:hover {
     opacity: 0.8;
   }
@@ -531,7 +531,7 @@
 
 .modal-icon-editable {
   cursor: pointer;
-  
+
   &:hover {
     opacity: 0.8;
   }
@@ -549,7 +549,7 @@
     float: right;
     margin-top: 58px;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    
+
     @media (max-width: 768px) {
       margin-top: 46px;
     }
@@ -563,7 +563,7 @@
   flex-grow: 1;
   width: 100%;
   padding-right: 16px;
-  
+
   @media (max-width: 768px) {
     width: 100%;
     padding-right: 0;

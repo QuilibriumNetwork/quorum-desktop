@@ -13,17 +13,16 @@ This document outlines how messages are handled in the Quilibrium desktop applic
 
 ## Key Data Structures
 
-*   **`Message`**: The core message object, defined in `src/api/quorumApi.ts`. It contains the message content, sender information, timestamps, and other metadata.
-*   **`Conversation`**: Represents a direct message or group chat, defined in `src/api/quorumApi.ts`.
-*   **`Space`**: Represents a server or community, defined in `src/api/quorumApi.ts`.
-*   **`Channel`**: Represents a channel within a space, defined in `src/api/quorumApi.ts`.
+- **`Message`**: The core message object, defined in `src/api/quorumApi.ts`. It contains the message content, sender information, timestamps, and other metadata.
+- **`Conversation`**: Represents a direct message or group chat, defined in `src/api/quorumApi.ts`.
+- **`Space`**: Represents a server or community, defined in `src/api/quorumApi.ts`.
+- **`Channel`**: Represents a channel within a space, defined in `src/api/quorumApi.ts`.
 
 ## Database Schema
 
 The IndexedDB schema is defined in `src/db/messages.ts`. The key object stores are:
 
-*   **`messages`**: Stores all messages, indexed by `[spaceId, channelId, createdDate]`.
-*   **`conversations`**: Stores conversation metadata.
-*   **`spaces`**: Stores space metadata.
-*   **`users`**: Stores user profiles.
-
+- **`messages`**: Stores all messages, indexed by `[spaceId, channelId, createdDate]`.
+- **`conversations`**: Stores conversation metadata.
+- **`spaces`**: Stores space metadata.
+- **`users`**: Stores user profiles.

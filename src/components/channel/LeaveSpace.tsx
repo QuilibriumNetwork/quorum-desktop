@@ -25,10 +25,14 @@ const LeaveSpace: React.FunctionComponent<{
       <div className="flex flex-col grow overflow-y-scroll rounded-xl">
         <div className="leave-space-header">
           <div className="leave-space-text flex flex-col grow px-4">
-            <div className="text-xl py-2"><Trans>Leave Space</Trans></div>
+            <div className="text-xl py-2">
+              <Trans>Leave Space</Trans>
+            </div>
             <div>
-              <Trans>Are you sure you want to leave {space?.spaceName}? You won't be
-              able to rejoin unless you are re-invited.</Trans>
+              <Trans>
+                Are you sure you want to leave {space?.spaceName}? You won't be
+                able to rejoin unless you are re-invited.
+              </Trans>
             </div>
           </div>
         </div>

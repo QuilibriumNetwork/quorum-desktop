@@ -21,7 +21,19 @@ type CopyToClipboardProps = {
   onCopy?: () => void;
   tooltipText?: string;
   noArrow?: boolean;
-  tooltipLocation?: 'top' | 'top-start' | 'top-end' | 'right' | 'right-start' | 'right-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end';
+  tooltipLocation?:
+    | 'top'
+    | 'top-start'
+    | 'top-end'
+    | 'right'
+    | 'right-start'
+    | 'right-end'
+    | 'bottom'
+    | 'bottom-start'
+    | 'bottom-end'
+    | 'left'
+    | 'left-start'
+    | 'left-end';
   theme?: 'dark' | 'light' | 'system';
 };
 

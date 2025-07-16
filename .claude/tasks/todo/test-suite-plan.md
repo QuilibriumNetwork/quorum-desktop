@@ -5,6 +5,7 @@ This document outlines the plan to create a comprehensive testing suite for the 
 **This plan uses checkboxes (`- [ ]`). As the agent, I will update this file and mark tasks as complete (`- [x]`) as I execute them.**
 
 The primary tools for this initiative will be:
+
 - **[Vitest](https://vitest.dev/):** A modern, fast, and Vite-native test runner.
 - **[React Testing Library](https://testing-library.com/docs/react-testing-library/intro/):** For testing React components from a user-centric perspective.
 - **[jsdom](https://github.com/jsdom/jsdom):** To simulate a browser environment for tests running in Node.js.

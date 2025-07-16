@@ -1,13 +1,15 @@
 # 🔍 Global Message Search - Implementation Guide & Documentation
 
-*The search feature has been built completely by Claude Code with human supervision*
+_The search feature has been built completely by Claude Code with human supervision_
 
 ## 📋 Overview
+
 Complete implementation of a Discord-like global search feature for Quorum Desktop. This document provides comprehensive technical details for developers working on the search system.
 
 ## ✅ Implementation Status: **COMPLETE**
 
 The global search feature is fully implemented and functional with:
+
 - ✅ Real-time message search across spaces and DMs
 - ✅ Context-aware scoping (searches current space only)
 - ✅ Proper name resolution (displays user names, not public keys)
@@ -17,7 +19,6 @@ The global search feature is fully implemented and functional with:
 - ✅ DM search functionality with proper navigation
 - ✅ Component architecture to handle both spaces and DMs safely
 
-
 ## TO DO
 
 - Search perfomance optimization - see .claude\tasks\search-performance-optimization.md
@@ -25,12 +26,14 @@ The global search feature is fully implemented and functional with:
 ## 🏗️ Architecture Overview
 
 ### Search Technology Stack
+
 - **MiniSearch 7.1.2**: Client-side full-text search engine
 - **IndexedDB**: Persistent message storage via existing MessageDB
 - **React Query**: Caching and state management
 - **React Router**: Navigation and context detection
 
 ### Data Flow
+
 ```
 User Types → Search Service → MiniSearch Index → MessageDB → Search Results → Navigation
      ↓              ↓              ↓              ↓              ↓              ↓
@@ -68,15 +71,18 @@ src/
 ## 🔍 Core Components Guide
 
 ### 1. SearchService (`src/services/searchService.ts`)
+
 **Purpose**: Handles search logic, caching, and MiniSearch integration
 
 **Key Methods**:
+
 - `initialize()`: Builds search indices from MessageDB
 - `search(query, context)`: Performs search with context scoping
 - `highlightSearchTerms(text, terms)`: Adds `<mark>` tags for highlighting
 - `invalidateCache(context)`: Clears cache for specific context
 
 **Configuration**:
+
 ```typescript
 {
   debounceMs: 300,        // Search debouncing
@@ -87,84 +93,97 @@ src/
 ```
 
 ### 2. MessageDB Search Enhancement (`src/db/messages.ts`)
+
 **Added Methods**:
+
 - `initializeSearchIndices()`: Builds indices for all spaces and DMs
 - `searchMessages(query, context, limit)`: Context-aware search
 - `addMessageToIndex(message)`: Real-time index updates
 - `removeMessageFromIndex(messageId, spaceId, channelId)`: Index cleanup
 
 **Index Structure**:
+
 ```typescript
 // Index keys: "space:{spaceId}" or "dm:{conversationId}"
-searchIndices: Map<string, MiniSearch<SearchableMessage>>
+searchIndices: Map<string, MiniSearch<SearchableMessage>>;
 
 // Searchable message format
 interface SearchableMessage {
-  id: string;           // messageId
-  spaceId: string;      // Space identifier
-  channelId: string;    // Channel identifier  
-  content: string;      // Extracted text content
-  senderId: string;     // Message sender
-  createdDate: number;  // Timestamp
-  type: string;         // Message type
+  id: string; // messageId
+  spaceId: string; // Space identifier
+  channelId: string; // Channel identifier
+  content: string; // Extracted text content
+  senderId: string; // Message sender
+  createdDate: number; // Timestamp
+  type: string; // Message type
 }
 ```
 
 ### 3. GlobalSearch Component (`src/components/search/GlobalSearch.tsx`)
+
 **Purpose**: Main integration component that orchestrates search functionality
 
 **Key Features**:
+
 - Context detection via `useSearchContext`
 - Search service initialization
 - Navigation handling with proper URL patterns
 - State management for search results visibility
 
 **Navigation Pattern**:
+
 ```typescript
 // Correct URL pattern for message navigation
 navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
 ```
 
 ### 4. SearchResultItem (`src/components/search/SearchResultItem.tsx`)
+
 **Purpose**: Individual search result with proper name resolution
 
 **Name Resolution**:
+
 - Uses `useUserInfo` hook for sender display names
 - Uses `useSpace` hook for space names
 - Resolves channel names from space data structure
 - Fallbacks: "Unknown User", "Unknown Space", channelId
 
 **Data Flow**:
+
 ```typescript
 // Input: message with public keys
-message.content.senderId = "Qm..."
-message.spaceId = "Qm..."
-message.channelId = "Qm..."
+message.content.senderId = 'Qm...';
+message.spaceId = 'Qm...';
+message.channelId = 'Qm...';
 
 // Output: human-readable names
-displayName = "John Doe" 
-spaceName = "My Space"
-channelName = "General"
+displayName = 'John Doe';
+spaceName = 'My Space';
+channelName = 'General';
 ```
 
 ## 🔧 Search Context System
 
 ### Context Detection (`src/hooks/useSearchContext.ts`)
+
 **Route Patterns**:
+
 - Spaces: `/spaces/{spaceId}/{channelId}`
 - Direct Messages: `/messages/{conversationId}`
 
 **Context Types**:
+
 ```typescript
 interface SearchContext {
   type: 'space' | 'dm';
-  spaceId?: string;        // For space searches
-  channelId?: string;      // For channel context (display only)
+  spaceId?: string; // For space searches
+  channelId?: string; // For channel context (display only)
   conversationId?: string; // For DM searches
 }
 ```
 
 **Search Scoping**:
+
 - **Space context**: Searches ALL messages within the space (all channels)
 - **DM context**: Searches messages within specific conversation
 - **Index keys**: `space:{spaceId}` or `dm:{conversationId}`
@@ -172,7 +191,9 @@ interface SearchContext {
 ## 🎨 UI/UX Features
 
 ### Search Bar (`src/components/search/SearchBar.tsx`)
+
 **Features**:
+
 - Keyboard shortcut: `Ctrl/Cmd + K` to focus
 - 3-character minimum before showing results
 - Debounced input (300ms)
@@ -180,6 +201,7 @@ interface SearchContext {
 - Focus preservation during results display
 
 **Focus Management**:
+
 ```typescript
 // Automatic focus restoration after state changes
 setTimeout(() => {
@@ -190,17 +212,22 @@ setTimeout(() => {
 ```
 
 ### Search Results (`src/components/search/SearchResults.tsx`)
+
 **Features**:
+
 - Virtualized results for large datasets
 - Click-outside to close (with search bar exclusion)
 - Position adjustment to prevent off-screen display
 - Non-focusable elements (`tabIndex={-1}`)
 
 **Focus Preservation**:
+
 ```typescript
 // Prevents focus stealing when results mount
 useEffect(() => {
-  const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+  const searchInput = document.querySelector(
+    '.search-input'
+  ) as HTMLInputElement;
   if (searchInput && document.activeElement !== searchInput) {
     searchInput.focus();
   }
@@ -208,21 +235,24 @@ useEffect(() => {
 ```
 
 ### Message Navigation & Flash Effect
+
 **URL Pattern**: `/spaces/{spaceId}/{channelId}#msg-{messageId}`
 
 **Flash Highlighting**:
+
 - **Duration**: 6 seconds
 - **Animation**: Yellow highlight that fades to transparent
 - **CSS**: `message-highlighted` class with `flash-highlight` animation
 - **Implementation**: Via `isHashTarget` detection in Message component
 
 **Auto-scroll Implementation** (`src/components/message/MessageList.tsx`):
+
 ```typescript
 useEffect(() => {
   if (location.hash.startsWith('#msg-')) {
     const msgId = hash.replace('#msg-', '');
     const index = messageList.findIndex((m) => m.messageId === msgId);
-    
+
     // Scroll to message
     setTimeout(() => {
       virtuoso.current?.scrollToIndex({
@@ -231,10 +261,14 @@ useEffect(() => {
         behavior: 'smooth',
       });
     }, 200);
-    
+
     // Remove hash after flash effect has time to trigger
     setTimeout(() => {
-      history.replaceState(null, '', window.location.pathname + window.location.search);
+      history.replaceState(
+        null,
+        '',
+        window.location.pathname + window.location.search
+      );
     }, 1000);
   }
 }, [init, messageList, location.hash]);
@@ -243,20 +277,22 @@ useEffect(() => {
 ## 🔧 Technical Implementation Details
 
 ### MiniSearch Configuration
+
 ```typescript
 new MiniSearch({
-  fields: ['content', 'senderId'],              // Searchable fields
+  fields: ['content', 'senderId'], // Searchable fields
   storeFields: ['messageId', 'spaceId', 'channelId', 'createdDate', 'type'],
   searchOptions: {
-    boost: { content: 2, senderId: 1 },         // Field importance
-    prefix: true,                               // Prefix matching
-    fuzzy: 0.2,                                // Fuzzy search tolerance
-    combineWith: 'OR',                         // Query combination
+    boost: { content: 2, senderId: 1 }, // Field importance
+    prefix: true, // Prefix matching
+    fuzzy: 0.2, // Fuzzy search tolerance
+    combineWith: 'OR', // Query combination
   },
 });
 ```
 
 ### Text Extraction
+
 ```typescript
 // From Message.content to searchable text
 extractTextFromMessage(message: Message): string {
@@ -272,6 +308,7 @@ extractTextFromMessage(message: Message): string {
 ```
 
 ### Highlight Implementation
+
 ```typescript
 // Search service highlighting
 highlightSearchTerms(text: string, searchTerms: string[]): string {
@@ -296,37 +333,50 @@ mark {
 ## 🚨 Issues Fixed During Implementation
 
 ### 1. Focus Management Issues
+
 **Problem**: Search input lost focus when results appeared
-**Solution**: 
+**Solution**:
+
 - Added focus preservation in SearchResults component
 - Made all result containers non-focusable (`tabIndex={-1}`)
 - Implemented automatic focus restoration
 
-### 2. URL Navigation Issues  
+### 2. URL Navigation Issues
+
 **Problem**: Search results navigated to wrong URLs
 **Solution**: Fixed URL pattern from `/space/{id}/channel/{id}` to `/spaces/{id}/{id}`
 
 ### 3. Context Detection Issues
+
 **Problem**: Route pattern didn't match `/spaces/` URLs
 **Solution**: Updated regex to handle both `/space/` and `/spaces/` patterns
 
 ### 4. Name Resolution Issues
+
 **Problem**: Displayed public keys instead of user/space names
 **Solution**: Integrated `useUserInfo` and `useSpace` hooks with proper fallbacks
 
 ### 5. Flash Effect Timing Issues
+
 **Problem**: Hash removed before Message components could detect it
 **Solution**: Added 1-second delay before hash removal to allow flash effect
 
 ### 6. CSS Variable Issues
+
 **Problem**: Used `rgb(var(--surface-XX))` incorrectly
 **Solution**: Changed to `var(--surface-XX)` for hex colors
 
 ### 7. DM Search Navigation Crashes
+
 **Problem**: DM search results navigated to `/spaces/` URLs causing crashes
 **Solution**: Added conditional navigation logic in `handleNavigate`:
+
 ```typescript
-const handleNavigate = (spaceId: string, channelId: string, messageId: string) => {
+const handleNavigate = (
+  spaceId: string,
+  channelId: string,
+  messageId: string
+) => {
   const isDM = spaceId === channelId;
   if (isDM) {
     navigate(`/messages/${spaceId}#msg-${messageId}`);
@@ -337,8 +387,10 @@ const handleNavigate = (spaceId: string, channelId: string, messageId: string) =
 ```
 
 ### 8. DM SearchResultItem Component Crashes
+
 **Problem**: SearchResultItem tried to fetch space data for DM addresses, causing React hook errors
 **Solution**: Split into separate components with conditional hook usage:
+
 - `DMSearchResultItem` - handles DM results with user info only
 - `SpaceSearchResultItem` - handles space results with space and user data
 - Main component delegates based on `spaceId === channelId` detection
@@ -346,18 +398,21 @@ const handleNavigate = (spaceId: string, channelId: string, messageId: string) =
 ## 🔧 Development Guidelines
 
 ### Adding New Search Features
+
 1. **Extend SearchContext**: Add new context types if needed
 2. **Update SearchService**: Modify search logic and ranking
 3. **Enhance UI Components**: Add new result types or filters
 4. **Test Context Switching**: Ensure indices update correctly
 
 ### Performance Considerations
+
 - **Index Size**: Monitor memory usage for large message histories
 - **Search Frequency**: Debouncing prevents excessive queries
 - **Cache Management**: LRU cache with TTL prevents memory leaks
 - **Index Updates**: Real-time updates maintain accuracy
 
 ### Testing Search Components
+
 ```typescript
 // Test search context detection
 const { result } = renderHook(() => useSearchContext(), {
@@ -378,12 +433,14 @@ expect(result.current).toEqual({
 ## 🎯 Performance Metrics
 
 ### Current Performance
+
 - **Search Response**: < 100ms for typical queries
 - **Index Build Time**: ~2-5 seconds for moderate message history
 - **Memory Usage**: ~5-10MB for search indices
 - **UI Responsiveness**: No blocking during search operations
 
 ### Optimization Opportunities
+
 - Implement index chunking for very large histories
 - Add search result pagination for 1000+ results
 - Consider search index persistence in IndexedDB
@@ -392,6 +449,7 @@ expect(result.current).toEqual({
 ## 🔄 Future Enhancements
 
 ### Potential Features
+
 - **Advanced Filters**: Date range, user, channel filtering
 - **Search History**: Recent searches with quick access
 - **Search Suggestions**: Auto-complete based on message content
@@ -399,6 +457,7 @@ expect(result.current).toEqual({
 - **Search Analytics**: Usage tracking and optimization
 
 ### Technical Improvements
+
 - **Offline Search**: Persist indices for offline access
 - **Search Workers**: Move search operations to Web Workers
 - **Progressive Loading**: Load older message indices on demand
@@ -407,6 +466,7 @@ expect(result.current).toEqual({
 ## 🐛 Known Limitations
 
 ### Current Constraints
+
 1. **Search Scope**: Limited to current space/DM context
 2. **Index Persistence**: Indices rebuilt on app restart
 3. **Message Types**: Only text content indexed (no attachments)
@@ -414,6 +474,7 @@ expect(result.current).toEqual({
 5. **Memory Usage**: All indices kept in memory
 
 ### Workarounds
+
 - Context switching provides focused, relevant results
 - Fast index rebuilding minimizes startup impact
 - Clear visual feedback for search limitations
@@ -424,6 +485,7 @@ expect(result.current).toEqual({
 ## 📞 Developer Support
 
 ### Key Files for Modifications
+
 - **Search Logic**: `src/services/searchService.ts`
 - **UI Components**: `src/components/search/`
 - **Database Integration**: `src/db/messages.ts` (search methods)
@@ -431,6 +493,7 @@ expect(result.current).toEqual({
 - **Navigation**: `src/components/search/GlobalSearch.tsx`
 
 ### Common Debugging Tips
+
 1. **Check Context**: Verify `useSearchContext` returns expected values
 2. **Verify Indices**: Check `searchIndices.size` in MessageDB
 3. **Test Navigation**: Ensure URL patterns match router configuration
@@ -438,8 +501,9 @@ expect(result.current).toEqual({
 5. **Cache Issues**: Clear React Query cache if stale results appear
 
 ### Integration Points
+
 - **New Message Types**: Update `extractTextFromMessage` method
-- **Permission Changes**: Modify context detection logic  
+- **Permission Changes**: Modify context detection logic
 - **UI Updates**: Follow existing SCSS patterns and CSS variables
 - **Performance Issues**: Monitor with React DevTools and Performance tab
 

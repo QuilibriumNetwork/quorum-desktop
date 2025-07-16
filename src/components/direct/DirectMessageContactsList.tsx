@@ -23,10 +23,15 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
   return (
     <div className="direct-messages-list">
       <div className="px-4 pt-4 pb-2 lg:py-2 font-semibold flex flex-row justify-between">
-        <div><Trans>Direct Messages</Trans></div>
+        <div>
+          <Trans>Direct Messages</Trans>
+        </div>
         <div className="flex flex-col justify-around pr-2">
           <Link to="/messages/new">
-            <FontAwesomeIcon className="cursor-pointer text-accent hover:text-accent-300 h-5" icon={faPlusCircle} />
+            <FontAwesomeIcon
+              className="cursor-pointer text-accent hover:text-accent-300 h-5"
+              icon={faPlusCircle}
+            />
           </Link>
         </div>
       </div>

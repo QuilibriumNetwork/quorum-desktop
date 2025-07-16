@@ -4,24 +4,25 @@ Create a comprehensive implementation plan to add a "color switcher" to `UserSet
 2. Select a custom **accent color** from a predefined palette
 
 Current Setup:
+
 - In `index.css`, the following accent color system is defined:
   --accent-50: #eef7ff;
   --accent-100: #daeeff;
   ...
   --accent-900: #060421;
 
-  --accent: var(--accent-500); /* for solid use */
-  --accent-rgb: 2, 135, 242;   /* for opacity-based utilities */
+  --accent: var(--accent-500); /_ for solid use _/
+  --accent-rgb: 2, 135, 242; /_ for opacity-based utilities _/
 
 - In `tailwind.config.js`, Tailwind colors are configured as:
   colors: {
-    accent: {
-      50: 'var(--accent-50)',
-      100: 'var(--accent-100)',
-      ...
-      900: 'var(--accent-900)',
-      DEFAULT: 'var(--accent)',
-    },
+  accent: {
+  50: 'var(--accent-50)',
+  100: 'var(--accent-100)',
+  ...
+  900: 'var(--accent-900)',
+  DEFAULT: 'var(--accent)',
+  },
   }
 
 The Plan Should Cover:

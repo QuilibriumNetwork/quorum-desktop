@@ -15,9 +15,8 @@
 // 4. Run `yarn lingui:compile` on the command line, which creates the messages.js file in src/i18n/<new-locale>/messages.js
 // 5. Commit the changes and push to the remote repository
 
-
-import { i18n } from "@lingui/core";
-import locales, { defaultLocale } from "./locales";
+import { i18n } from '@lingui/core';
+import locales, { defaultLocale } from './locales';
 
 export function getUserLocale() {
   const storedLocale = localStorage.getItem('language');
@@ -46,7 +45,7 @@ export async function dynamicActivate(locale: string) {
 
   const messagesPath = process.cwd() + 'src/i18n/' + locale + '/messages.po';
   // dynamically compile the messages file
-  const { messages } = await import(/* @vite-ignore */`${messagesPath}`);
+  const { messages } = await import(/* @vite-ignore */ `${messagesPath}`);
   i18n.load(locale, messages);
   i18n.activate(locale);
 }

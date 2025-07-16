@@ -41,7 +41,10 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
       {/* <Button className="expanded-nav-join-spaces w-10 h-10 ml-3 leading-6 mb-4 inline-block" icon type="primary" onClick={(e) => { setExpanded(false); props.showJoinSpaceModal(); }} tooltip={localizations.localizations["TOOLTIP_JOIN_SPACE"]([])}><FontAwesomeIcon icon={faCompressAlt}/></Button> */}
     </div>
   ) : (
-    <div className="expand-button cursor-pointer" onClick={() => setExpanded(true)}>
+    <div
+      className="expand-button cursor-pointer"
+      onClick={() => setExpanded(true)}
+    >
       <FontAwesomeIcon icon={faBars} />
     </div>
   );

@@ -5,24 +5,23 @@ import { faSun, faMoon, faDesktop } from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/core/macro';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
-
 type ThemeOption = { text: string; icon: IconDefinition };
 
-const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({ horizontal }) => {
+const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({
+  horizontal,
+}) => {
   const { theme, setTheme } = useTheme();
 
   const options: { [key: string]: ThemeOption } = {
     light: { text: t`light`, icon: faSun },
     dark: { text: t`dark`, icon: faMoon },
-    system: { text: t`system`, icon: faDesktop }
+    system: { text: t`system`, icon: faDesktop },
   };
 
   return (
     <div
       className={`mt-2 ${
-        horizontal
-          ? 'flex flex-row gap-4'
-          : 'flex flex-col gap-3 max-w-[300px]'
+        horizontal ? 'flex flex-row gap-4' : 'flex flex-col gap-3 max-w-[300px]'
       }`}
     >
       {Object.entries(options).map(([key, opt]) => (

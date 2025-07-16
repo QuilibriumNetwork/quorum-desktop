@@ -26,7 +26,7 @@ header {
   display: flex;
   flex-direction: column;
   user-select: none;
-  
+
   // Mobile phone optimization - smaller width and icons
   @media (max-width: 480px) {
     width: 50px;
@@ -57,13 +57,13 @@ header {
     border: 2px none #f3dfc1ff;
     cursor: pointer;
   }
-  
+
   // Mobile phone optimization
   @media (max-width: 480px) {
     width: 50px;
     max-width: 50px;
     padding-left: 6px;
-    
+
     .space-icon {
       width: 32px;
       height: 32px;
@@ -82,7 +82,7 @@ header {
   scrollbar-width: none;
   flex-grow: 1;
   padding-left: 8px;
-  
+
   // Mobile phone optimization
   @media (max-width: 480px) {
     width: 50px;

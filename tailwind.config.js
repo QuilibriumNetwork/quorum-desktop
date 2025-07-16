@@ -69,9 +69,9 @@ export default {
         'success-hex': 'var(--success-hex)',
         'info-hex': 'var(--info-hex)',
       },
-      
+
       // === semantic variables === //
-      
+
       backgroundColor: {
         app: 'var(--color-bg-app)',
         sidebar: 'var(--color-bg-sidebar)',

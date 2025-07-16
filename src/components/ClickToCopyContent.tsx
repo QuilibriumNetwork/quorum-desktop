@@ -48,10 +48,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   const { theme: contextTheme } = useTheme();
   const resolvedTheme = theme ?? contextTheme;
 
-  const uid = React.useMemo(
-    () => Math.random().toString(36).slice(2, 10),
-    []
-  );
+  const uid = React.useMemo(() => Math.random().toString(36).slice(2, 10), []);
   const tooltipId = `click-to-copy-tooltip-${uid}`;
   const anchorId = `click-to-copy-anchor-${uid}`;
 
@@ -77,19 +74,18 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   } ${className}`;
 
   const icon = (
-   <FontAwesomeIcon
-  icon={faClipboard}
-  id={!copyOnContentClick ? anchorId : undefined}
-  className={`${
-    iconClassName || 'text-main'
-  } ${iconPosition === 'left' ? 'mr-1' : 'ml-1'} ${
-    !copyOnContentClick
-      ? 'cursor-pointer hover:text-subtle focus:outline-none focus:ring-0 active:bg-transparent'
-      : ''
-  }`}
-  onClick={!copyOnContentClick ? handleCopy : undefined}
-/>
-
+    <FontAwesomeIcon
+      icon={faClipboard}
+      id={!copyOnContentClick ? anchorId : undefined}
+      className={`${
+        iconClassName || 'text-main'
+      } ${iconPosition === 'left' ? 'mr-1' : 'ml-1'} ${
+        !copyOnContentClick
+          ? 'cursor-pointer hover:text-subtle focus:outline-none focus:ring-0 active:bg-transparent'
+          : ''
+      }`}
+      onClick={!copyOnContentClick ? handleCopy : undefined}
+    />
   );
 
   return (

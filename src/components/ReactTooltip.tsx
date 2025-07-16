@@ -8,7 +8,19 @@ import { useTheme } from './context/ThemeProvider';
 type ReactTooltipProps = {
   id: string;
   content: string;
-  place?: 'top' | 'top-start' | 'top-end' | 'right' | 'right-start' | 'right-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end';
+  place?:
+    | 'top'
+    | 'top-start'
+    | 'top-end'
+    | 'right'
+    | 'right-start'
+    | 'right-end'
+    | 'bottom'
+    | 'bottom-start'
+    | 'bottom-end'
+    | 'left'
+    | 'left-start'
+    | 'left-end';
   noArrow?: boolean;
   theme?: 'dark' | 'light' | 'system';
   anchorSelect?: string;

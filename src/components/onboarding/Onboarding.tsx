@@ -156,7 +156,7 @@ export const Onboarding = ({
           <div className="flex flex-col grow"></div>
         </div>
         {isDragActive && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 pointer-events-none">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay pointer-events-none">
             <div className="flex flex-col p-8 border-2 border-dashed border-white rounded-lg bg-white bg-opacity-50 items-center">
               <FontAwesomeIcon
                 icon={faFileImage}

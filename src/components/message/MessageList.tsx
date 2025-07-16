@@ -128,7 +128,7 @@ export const MessageList = ({
             behavior: 'smooth',
           });
         }, 200);
-        
+
         // Remove hash after Message components have had time to detect it
         setTimeout(() => {
           history.replaceState(

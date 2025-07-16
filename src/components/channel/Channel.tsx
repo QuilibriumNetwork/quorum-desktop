@@ -272,9 +272,7 @@ const Channel: React.FC<ChannelProps> = ({
                   icon={faBars}
                 />
               )}
-              <GlobalSearch 
-                className="channel-search flex-1 lg:flex-none max-w-xs lg:max-w-none"
-              />
+              <GlobalSearch className="channel-search flex-1 lg:flex-none max-w-xs lg:max-w-none" />
             </div>
             <FontAwesomeIcon
               onClick={() => {
@@ -290,7 +288,9 @@ const Channel: React.FC<ChannelProps> = ({
                 #{channel?.channelName}
                 {channel?.channelTopic && ' | '}
               </span>
-              <span className="font-light text-sm">{channel?.channelTopic}</span>
+              <span className="font-light text-sm">
+                {channel?.channelTopic}
+              </span>
             </div>
           </div>
         </div>
@@ -539,9 +539,9 @@ const Channel: React.FC<ChannelProps> = ({
         className={
           'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-scroll ' +
           'transition-transform duration-300 ease-in-out ' +
-          (showUsers 
-            ? 'translate-x-0 fixed top-0 right-0 h-full z-[9999] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
-            : 'translate-x-full fixed top-0 right-0 h-full z-[9999] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto')
+          (showUsers
+            ? 'translate-x-0 fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
+            : 'translate-x-full fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto')
         }
       >
         {roles
@@ -609,8 +609,8 @@ const Channel: React.FC<ChannelProps> = ({
         </div>
       </div>
       {showUsers && (
-        <div 
-          className="fixed inset-0 bg-mobile-overlay z-[9998] lg:hidden"
+        <div
+          className="fixed inset-0 bg-mobile-overlay z-[9999] lg:hidden"
           onClick={() => setShowUsers(false)}
         />
       )}

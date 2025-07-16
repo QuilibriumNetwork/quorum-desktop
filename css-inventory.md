@@ -19,7 +19,7 @@ This document provides a comprehensive inventory of all CSS selectors across the
 
 ---
 
-## src/styles/_base.scss
+## src/styles/\_base.scss
 
 - **:root** - theme-token - Global CSS variables and layout dimensions
 - **a** - theme-token - Link styling with theme variables
@@ -38,7 +38,7 @@ This document provides a comprehensive inventory of all CSS selectors across the
 
 ---
 
-## src/styles/_colors.scss
+## src/styles/\_colors.scss
 
 - **:root** - theme-token - Light theme color definitions
 - **html.dark** - theme-token - Dark theme color overrides
@@ -51,7 +51,7 @@ This document provides a comprehensive inventory of all CSS selectors across the
 
 ---
 
-## src/styles/_components.scss
+## src/styles/\_components.scss
 
 - **.EmojiPickerReact** - theme-token - Third-party emoji picker theming
 - **.-webkit-app-region-drag** - custom-logic - Electron titlebar dragging
@@ -64,7 +64,7 @@ This document provides a comprehensive inventory of all CSS selectors across the
 
 ---
 
-## src/styles/_chat.scss
+## src/styles/\_chat.scss
 
 - **.chat-container** - responsive - Chat layout with mobile optimizations
 - **.message-name-mentions-you** - theme-token - Message mention styling
@@ -84,7 +84,7 @@ This document provides a comprehensive inventory of all CSS selectors across the
 
 ---
 
-## src/styles/_modal_common.scss
+## src/styles/\_modal_common.scss
 
 - **.modal-body** - responsive - Modal body layout
 - **.modal-width-large** - responsive - Large modal width
@@ -563,6 +563,7 @@ This document provides a comprehensive inventory of all CSS selectors across the
 **Total selectors analyzed:** 379
 
 **Classification breakdown:**
+
 - **@apply-convertible:** 127 selectors (33.5%)
 - **theme-token:** 163 selectors (43.0%)
 - **custom-logic:** 42 selectors (11.1%)
@@ -570,6 +571,7 @@ This document provides a comprehensive inventory of all CSS selectors across the
 - **semantic-class:** 9 selectors (2.4%)
 
 **Recommendations:**
+
 1. Start with @apply-convertible selectors for quick wins
 2. Theme-token selectors should be carefully evaluated - many can be converted to semantic classes
 3. Custom-logic selectors (animations, pseudo-elements) should remain as custom CSS

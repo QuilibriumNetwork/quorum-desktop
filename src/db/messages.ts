@@ -854,48 +854,73 @@ export class MessageDB {
 
   async initializeSearchIndices(): Promise<void> {
     if (this.indexInitialized) return;
-    
+
     console.log('MessageDB: Initializing search indices...');
     await this.init();
-    
+
     // Get all spaces and conversations to build indices
     const spaces = await this.getSpaces();
     const dmConversations = await this.getConversations({ type: 'direct' });
-    
-    console.log('MessageDB: Found', spaces.length, 'spaces and', dmConversations.conversations.length, 'DM conversations');
-    
+
+    console.log(
+      'MessageDB: Found',
+      spaces.length,
+      'spaces and',
+      dmConversations.conversations.length,
+      'DM conversations'
+    );
+
     // Initialize space indices
     for (const space of spaces) {
       const indexKey = `space:${space.spaceId}`;
-      const messages = await this.getAllSpaceMessages({ spaceId: space.spaceId });
-      
-      console.log(`MessageDB: Building index for space ${space.spaceId} with ${messages.length} messages`);
-      
+      const messages = await this.getAllSpaceMessages({
+        spaceId: space.spaceId,
+      });
+
+      console.log(
+        `MessageDB: Building index for space ${space.spaceId} with ${messages.length} messages`
+      );
+
       const searchIndex = this.createSearchIndex();
-      const searchableMessages = messages.map(msg => this.messageToSearchable(msg));
+      const searchableMessages = messages.map((msg) =>
+        this.messageToSearchable(msg)
+      );
       searchIndex.addAll(searchableMessages);
-      
+
       this.searchIndices.set(indexKey, searchIndex);
-      console.log(`MessageDB: Created index ${indexKey} with ${searchableMessages.length} searchable messages`);
+      console.log(
+        `MessageDB: Created index ${indexKey} with ${searchableMessages.length} searchable messages`
+      );
     }
-    
+
     // Initialize DM indices
     for (const conversation of dmConversations.conversations) {
       const indexKey = `dm:${conversation.conversationId}`;
       // Get DM messages (need to implement this method)
-      const messages = await this.getDirectMessages(conversation.conversationId);
-      
-      console.log(`MessageDB: Building index for DM ${conversation.conversationId} with ${messages.length} messages`);
-      
+      const messages = await this.getDirectMessages(
+        conversation.conversationId
+      );
+
+      console.log(
+        `MessageDB: Building index for DM ${conversation.conversationId} with ${messages.length} messages`
+      );
+
       const searchIndex = this.createSearchIndex();
-      const searchableMessages = messages.map(msg => this.messageToSearchable(msg));
+      const searchableMessages = messages.map((msg) =>
+        this.messageToSearchable(msg)
+      );
       searchIndex.addAll(searchableMessages);
-      
+
       this.searchIndices.set(indexKey, searchIndex);
-      console.log(`MessageDB: Created index ${indexKey} with ${searchableMessages.length} searchable messages`);
+      console.log(
+        `MessageDB: Created index ${indexKey} with ${searchableMessages.length} searchable messages`
+      );
     }
-    
-    console.log('MessageDB: Search indices initialized. Total indices:', this.searchIndices.size);
+
+    console.log(
+      'MessageDB: Search indices initialized. Total indices:',
+      this.searchIndices.size
+    );
     this.indexInitialized = true;
   }
 
@@ -916,7 +941,11 @@ export class MessageDB {
     }
   }
 
-  async removeMessageFromIndex(messageId: string, spaceId: string, channelId: string): Promise<void> {
+  async removeMessageFromIndex(
+    messageId: string,
+    spaceId: string,
+    channelId: string
+  ): Promise<void> {
     // Remove from space index
     const spaceIndexKey = `space:${spaceId}`;
     const spaceIndex = this.searchIndices.get(spaceIndexKey);
@@ -934,8 +963,8 @@ export class MessageDB {
   }
 
   async searchMessages(
-    query: string, 
-    context: SearchContext, 
+    query: string,
+    context: SearchContext,
     limit: number = 50
   ): Promise<SearchResult[]> {
     if (!this.indexInitialized) {
@@ -944,7 +973,7 @@ export class MessageDB {
 
     const indexKey = this.getIndexKey(context);
     const searchIndex = this.searchIndices.get(indexKey);
-    
+
     if (!searchIndex) {
       return [];
     }
@@ -957,7 +986,7 @@ export class MessageDB {
 
     // Get full message objects and create results
     const results: SearchResult[] = [];
-    
+
     for (const result of searchResults.slice(0, limit)) {
       try {
         const message = await this.getMessage({
@@ -965,7 +994,7 @@ export class MessageDB {
           channelId: result.match?.channelId?.[0] || result.channelId || '',
           messageId: result.id,
         });
-        
+
         if (message) {
           results.push({
             message,
@@ -974,7 +1003,11 @@ export class MessageDB {
           });
         }
       } catch (error) {
-        console.warn('Failed to get message for search result:', result.id, error);
+        console.warn(
+          'Failed to get message for search result:',
+          result.id,
+          error
+        );
       }
     }
 
@@ -985,7 +1018,7 @@ export class MessageDB {
     // Parse conversationId to get spaceId and channelId
     const [spaceId, channelId] = conversationId.split('/');
     if (!spaceId || !channelId) return [];
-    
+
     const result = await this.getMessages({ spaceId, channelId, limit: 1000 });
     return result.messages;
   }

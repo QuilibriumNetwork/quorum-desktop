@@ -55,18 +55,24 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
       )}
       {space && (
         <div className="font-bold flex flex-col items-center sm:items-start">
-          <div className="mb-2 text-center sm:text-left"><Trans>You've been invited to join a Space</Trans></div>
+          <div className="mb-2 text-center sm:text-left">
+            <Trans>You've been invited to join a Space</Trans>
+          </div>
           <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-3 w-full">
             <div className="flex items-center bg-surface-4 rounded-lg px-1 sm:px-2 py-1 sm:py-2 gap-1 sm:gap-2 lg:gap-3 w-full lg:flex-1 overflow-hidden">
-              <div className="w-8 sm:w-10 lg:w-12 h-8 sm:h-10 lg:h-12 rounded-md sm:rounded-lg overflow-hidden flex-shrink-0" style={{
-                backgroundImage: space.iconUrl ? `url(${space.iconUrl})` : '',
-                backgroundPosition: 'center',
-                backgroundSize: 'cover',
-                backgroundColor: 'var(--surface-2)'
-              }}>
-              </div>
+              <div
+                className="w-8 sm:w-10 lg:w-12 h-8 sm:h-10 lg:h-12 rounded-md sm:rounded-lg overflow-hidden flex-shrink-0"
+                style={{
+                  backgroundImage: space.iconUrl ? `url(${space.iconUrl})` : '',
+                  backgroundPosition: 'center',
+                  backgroundSize: 'cover',
+                  backgroundColor: 'var(--surface-2)',
+                }}
+              ></div>
               <div className="flex-1 min-w-0 overflow-hidden">
-                <span className="block truncate font-medium text-sm lg:text-base">{space?.spaceName}</span>
+                <span className="block truncate font-medium text-sm lg:text-base">
+                  {space?.spaceName}
+                </span>
               </div>
             </div>
             <div className="flex justify-center w-full lg:w-auto lg:flex-shrink-0">

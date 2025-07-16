@@ -8,7 +8,13 @@
 import PropTypes from 'prop-types';
 import './Tooltip.scss';
 
-const Tooltip = ({ arrow, visible = true, variant = 'light', className = '', children }) => (
+const Tooltip = ({
+  arrow,
+  visible = true,
+  variant = 'light',
+  className = '',
+  children,
+}) => (
   <div className={`z-[2000] ${className}`}>
     <span
       className={`

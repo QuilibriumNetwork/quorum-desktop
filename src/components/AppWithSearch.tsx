@@ -18,7 +18,13 @@ interface AppWithSearchProps {
 interface ModalContextType {
   openUserSettings: () => void;
   openSpaceEditor: (spaceId: string) => void;
-  openChannelEditor: (spaceId: string, groupName: string, channelId: string) => void;
+  openChannelEditor: (
+    spaceId: string,
+    groupName: string,
+    channelId: string
+  ) => void;
+  showRightSidebar: boolean;
+  setShowRightSidebar: (show: boolean) => void;
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
@@ -40,14 +46,24 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
   setUser,
 }) => {
   const [isUserSettingsOpen, setIsUserSettingsOpen] = useState(false);
-  const [spaceEditorData, setSpaceEditorData] = useState<{spaceId: string} | null>(null);
-  const [channelEditorData, setChannelEditorData] = useState<{spaceId: string, groupName: string, channelId: string} | null>(null);
+  const [spaceEditorData, setSpaceEditorData] = useState<{
+    spaceId: string;
+  } | null>(null);
+  const [channelEditorData, setChannelEditorData] = useState<{
+    spaceId: string;
+    groupName: string;
+    channelId: string;
+  } | null>(null);
+  const [showRightSidebar, setShowRightSidebar] = useState(false);
 
   const modalContextValue = {
     openUserSettings: () => setIsUserSettingsOpen(true),
-    openSpaceEditor: (spaceId: string) => setSpaceEditorData({spaceId}),
-    openChannelEditor: (spaceId: string, groupName: string, channelId: string) => 
-      setChannelEditorData({spaceId, groupName, channelId}),
+    openSpaceEditor: (spaceId: string) => setSpaceEditorData({ spaceId }),
+    openChannelEditor: (
+      spaceId: string,
+      groupName: string,
+      channelId: string
+    ) => setChannelEditorData({ spaceId, groupName, channelId }),
   };
 
   return (
@@ -64,7 +80,7 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
           />
         </div>
       )}
-      
+
       {spaceEditorData && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
           <SpaceEditor
@@ -77,7 +93,7 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
           />
         </div>
       )}
-      
+
       {channelEditorData && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
           <ChannelEditor
@@ -92,7 +108,7 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
           />
         </div>
       )}
-      
+
       <ModalContext.Provider value={modalContextValue}>
         <Layout
           newDirectMessage={newDirectMessage}

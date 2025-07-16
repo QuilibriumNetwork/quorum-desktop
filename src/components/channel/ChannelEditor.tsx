@@ -114,7 +114,9 @@ const ChannelEditor: React.FunctionComponent<{
         <div className="modal-small-content">
           <div className="modal-content-section">
             <div className="modal-content-info">
-              <div className="small-caps"><Trans>Channel Name</Trans></div>
+              <div className="small-caps">
+                <Trans>Channel Name</Trans>
+              </div>
               <input
                 className="w-full quorum-input"
                 value={channelName}
@@ -126,7 +128,9 @@ const ChannelEditor: React.FunctionComponent<{
               />
             </div>
             <div className="modal-content-info">
-              <div className="small-caps"><Trans>Channel Topic</Trans></div>
+              <div className="small-caps">
+                <Trans>Channel Topic</Trans>
+              </div>
               <input
                 className="w-full quorum-input"
                 value={channelTopic}

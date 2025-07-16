@@ -24,7 +24,6 @@ import { DefaultImages } from './utils';
 import { i18n } from './i18n';
 import { I18nProvider } from '@lingui/react';
 
-
 window.Buffer = Buffer;
 
 class ErrorBoundary extends React.Component<
@@ -117,119 +116,119 @@ const App = () => {
                 <RegistrationProvider>
                   <ResponsiveLayoutProvider>
                     <Suspense>
-                    <Routes>
-                      <Route
-                        path="/"
-                        element={
-                          <>
-                            <Connecting />
-                            {user && (
-                              <Navigate
-                                to="/messages"
-                                state={{ from: '/' }}
-                                replace
-                              />
-                            )}
-                          </>
-                        }
-                      />
-                      <Route
-                        path="/messages"
-                        element={
-                          <AppWithSearch
-                            kickUserAddress={kickUserAddress}
-                            setKickUserAddress={setKickUserAddress}
-                            user={user}
-                            setUser={setUser}
-                          >
-                            <DirectMessages
-                              setUser={setUser}
-                              setAuthState={() => {
-                                setUser(undefined);
-                              }}
-                              user={user}
-                            />
-                          </AppWithSearch>
-                        }
-                      />
-                      <Route
-                        path="/messages/new"
-                        element={
-                          <AppWithSearch
-                            newDirectMessage
-                            kickUserAddress={kickUserAddress}
-                            setKickUserAddress={setKickUserAddress}
-                          >
-                            <DirectMessages
-                              setUser={setUser}
-                              setAuthState={() => {
-                                setUser(undefined);
-                              }}
-                              user={user}
-                            />
-                          </AppWithSearch>
-                        }
-                      />
-                      <Route
-                        path="/messages/:address"
-                        element={
-                          <AppWithSearch
-                            kickUserAddress={kickUserAddress}
-                            setKickUserAddress={setKickUserAddress}
-                            user={user}
-                            setUser={setUser}
-                          >
-                            <DirectMessages
-                              setUser={setUser}
-                              setAuthState={() => {
-                                setUser(undefined);
-                              }}
-                              user={user}
-                            />
-                          </AppWithSearch>
-                        }
-                      />
-                      <Route
-                        path="/spaces/:spaceId/:channelId"
-                        element={
-                          <AppWithSearch
-                            kickUserAddress={kickUserAddress}
-                            setKickUserAddress={setKickUserAddress}
-                            user={user}
-                            setUser={setUser}
-                          >
-                            <Space
-                              setUser={setUser}
-                              setAuthState={() => {
-                                setUser(undefined);
-                              }}
+                      <Routes>
+                        <Route
+                          path="/"
+                          element={
+                            <>
+                              <Connecting />
+                              {user && (
+                                <Navigate
+                                  to="/messages"
+                                  state={{ from: '/' }}
+                                  replace
+                                />
+                              )}
+                            </>
+                          }
+                        />
+                        <Route
+                          path="/messages"
+                          element={
+                            <AppWithSearch
                               kickUserAddress={kickUserAddress}
                               setKickUserAddress={setKickUserAddress}
                               user={user}
+                              setUser={setUser}
+                            >
+                              <DirectMessages
+                                setUser={setUser}
+                                setAuthState={() => {
+                                  setUser(undefined);
+                                }}
+                                user={user}
+                              />
+                            </AppWithSearch>
+                          }
+                        />
+                        <Route
+                          path="/messages/new"
+                          element={
+                            <AppWithSearch
+                              newDirectMessage
+                              kickUserAddress={kickUserAddress}
+                              setKickUserAddress={setKickUserAddress}
+                            >
+                              <DirectMessages
+                                setUser={setUser}
+                                setAuthState={() => {
+                                  setUser(undefined);
+                                }}
+                                user={user}
+                              />
+                            </AppWithSearch>
+                          }
+                        />
+                        <Route
+                          path="/messages/:address"
+                          element={
+                            <AppWithSearch
+                              kickUserAddress={kickUserAddress}
+                              setKickUserAddress={setKickUserAddress}
+                              user={user}
+                              setUser={setUser}
+                            >
+                              <DirectMessages
+                                setUser={setUser}
+                                setAuthState={() => {
+                                  setUser(undefined);
+                                }}
+                                user={user}
+                              />
+                            </AppWithSearch>
+                          }
+                        />
+                        <Route
+                          path="/spaces/:spaceId/:channelId"
+                          element={
+                            <AppWithSearch
+                              kickUserAddress={kickUserAddress}
+                              setKickUserAddress={setKickUserAddress}
+                              user={user}
+                              setUser={setUser}
+                            >
+                              <Space
+                                setUser={setUser}
+                                setAuthState={() => {
+                                  setUser(undefined);
+                                }}
+                                kickUserAddress={kickUserAddress}
+                                setKickUserAddress={setKickUserAddress}
+                                user={user}
+                              />
+                            </AppWithSearch>
+                          }
+                        />
+                        <Route
+                          path="/invite/"
+                          element={
+                            <InviteRoute
+                              kickUserAddress={kickUserAddress}
+                              setKickUserAddress={setKickUserAddress}
                             />
-                          </AppWithSearch>
-                        }
-                      />
-                      <Route
-                        path="/invite/"
-                        element={
-                          <InviteRoute 
-                            kickUserAddress={kickUserAddress}
-                            setKickUserAddress={setKickUserAddress}
-                          />
-                        }
-                      />
-                      <Route
-                        path="/*"
-                        element={
-                          <Navigate
-                            to="/messages"
-                            state={{ from: '/' }}
-                            replace
-                          />
-                        }
-                      />
-                    </Routes>
+                          }
+                        />
+                        <Route
+                          path="/*"
+                          element={
+                            <Navigate
+                              to="/messages"
+                              state={{ from: '/' }}
+                              replace
+                            />
+                          }
+                        />
+                      </Routes>
                     </Suspense>
                   </ResponsiveLayoutProvider>
                 </RegistrationProvider>
@@ -258,9 +257,12 @@ const App = () => {
   );
 };
 
-const InviteRoute: React.FC<{ kickUserAddress: string; setKickUserAddress: (addr: string) => void }> = ({ kickUserAddress, setKickUserAddress }) => {
+const InviteRoute: React.FC<{
+  kickUserAddress: string;
+  setKickUserAddress: (addr: string) => void;
+}> = ({ kickUserAddress, setKickUserAddress }) => {
   const navigate = useNavigate();
-  
+
   const handleClose = () => {
     // Check if there's meaningful browser history to go back to
     if (window.history.length > 1 && document.referrer) {
@@ -271,17 +273,14 @@ const InviteRoute: React.FC<{ kickUserAddress: string; setKickUserAddress: (addr
       navigate('/messages');
     }
   };
-  
+
   return (
     <div className="app-with-search">
       <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
         <JoinSpaceModal visible={true} onClose={handleClose} />
-        <div
-          className="fixed inset-0 -z-10"
-          onClick={handleClose}
-        />
+        <div className="fixed inset-0 -z-10" onClick={handleClose} />
       </div>
-      
+
       <AppWithSearch
         kickUserAddress={kickUserAddress}
         setKickUserAddress={setKickUserAddress}

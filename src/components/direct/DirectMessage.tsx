@@ -1,7 +1,12 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faUsers, faX, faBars } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPlus,
+  faUsers,
+  faX,
+  faBars,
+} from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { EmbedMessage, Message as MessageType } from '../../api/quorumApi';
 import './DirectMessage.scss';
@@ -212,9 +217,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   icon={faBars}
                 />
               )}
-              <GlobalSearch 
-                className="dm-search flex-1 lg:flex-none max-w-xs lg:max-w-none"
-              />
+              <GlobalSearch className="dm-search flex-1 lg:flex-none max-w-xs lg:max-w-none" />
             </div>
             <FontAwesomeIcon
               onClick={() => {
@@ -474,9 +477,9 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         className={
           'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-scroll ' +
           'transition-transform duration-300 ease-in-out ' +
-          (showUsers 
-            ? 'translate-x-0 fixed top-0 right-0 h-full z-[9999] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
-            : 'translate-x-full fixed top-0 right-0 h-full z-[9999] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto')
+          (showUsers
+            ? 'translate-x-0 fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
+            : 'translate-x-full fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto')
         }
       >
         <div className="flex flex-col">
@@ -513,8 +516,8 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         </div>
       </div>
       {showUsers && (
-        <div 
-          className="fixed inset-0 bg-mobile-overlay z-[9998] lg:hidden"
+        <div
+          className="fixed inset-0 bg-mobile-overlay z-[9999] lg:hidden"
           onClick={() => setShowUsers(false)}
         />
       )}

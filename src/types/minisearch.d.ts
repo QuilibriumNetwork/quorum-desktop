@@ -40,7 +40,10 @@ declare module 'minisearch' {
 
     add(document: T): void;
     addAll(documents: T[]): void;
-    addAllAsync(documents: T[], options?: { chunkSize?: number }): Promise<void>;
+    addAllAsync(
+      documents: T[],
+      options?: { chunkSize?: number }
+    ): Promise<void>;
     remove(document: T): void;
     removeById(id: string): void;
     removeAll(documents: T[]): void;

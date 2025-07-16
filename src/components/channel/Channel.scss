@@ -4,11 +4,11 @@
   font-weight: 700;
   font-size: 16px;
   user-select: none;
-  
+
   // Responsive layout for mobile/tablet
   @media (max-width: 1023px) {
     gap: 6px;
-    
+
     // Ensure search bar + users icon are properly spaced on top
     .channel-search {
       flex: 1;
@@ -26,7 +26,7 @@
     max-width: 100% !important;
     min-width: 0; // Allow shrinking
   }
-  
+
   // Force full width for all chat content
   .chat-container * {
     max-width: 100%;

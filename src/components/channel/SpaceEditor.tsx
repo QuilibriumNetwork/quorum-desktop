@@ -357,739 +357,764 @@ const SpaceEditor: React.FunctionComponent<{
           </div>
         </div>
         <div className="modal-complex-content">
-        {(() => {
-          switch (selectedCategory) {
-            case 'general':
-              return (
-                <>
-                  <div className="modal-content-header">
-                    <div
-                      className="modal-icon-editable cursor-pointer"
-                      style={{
-                        backgroundImage:
-                          fileData != undefined && acceptedFiles.length != 0
-                            ? 'url(data:' +
-                              acceptedFiles[0].type +
-                              ';base64,' +
-                              Buffer.from(fileData).toString('base64') +
-                              ')'
-                            : `url(${space?.iconUrl})`,
-                      }}
-                      {...getRootProps()}
-                    >
-                      <input {...getInputProps()} />
-                    </div>
-                    <div className="modal-text-section">
-                      <div className="small-caps">
-                        <Trans>Space Name</Trans>
-                      </div>
-                      <input
-                        className="w-full quorum-input"
-                        value={displayName}
-                        onChange={(e) => setDisplayName(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="modal-content-section">
-                    <div className="modal-content-section-header small-caps">
-                      <Trans>Space Banner</Trans>
-                    </div>
-                    <div className="modal-content-info">
+          {(() => {
+            switch (selectedCategory) {
+              case 'general':
+                return (
+                  <>
+                    <div className="modal-content-header">
                       <div
-                        className={
-                          'modal-banner-editable ' +
-                          (space?.bannerUrl || bannerAcceptedFiles.length != 0
-                            ? ''
-                            : 'border-2 border-dashed border-accent-200')
-                        }
+                        className="modal-icon-editable cursor-pointer"
                         style={{
                           backgroundImage:
-                            bannerData != undefined &&
-                            bannerAcceptedFiles.length != 0
+                            fileData != undefined && acceptedFiles.length != 0
                               ? 'url(data:' +
-                                bannerAcceptedFiles[0].type +
+                                acceptedFiles[0].type +
                                 ';base64,' +
-                                Buffer.from(bannerData).toString('base64') +
+                                Buffer.from(fileData).toString('base64') +
                                 ')'
-                              : `url(${space?.bannerUrl})`,
+                              : `url(${space?.iconUrl})`,
                         }}
-                        {...getBannerRootProps()}
+                        {...getRootProps()}
                       >
-                        <input {...getBannerInputProps()} />
+                        <input {...getInputProps()} />
                       </div>
-                    </div>
-                    <div className="modal-content-section-header small-caps">
-                      <Trans>Default Channel</Trans>
-                    </div>
-                    <div className="modal-content-info">
-                      <div
-                        className="w-full quorum-input !font-bold flex flex-row justify-between cursor-pointer"
-                        onClick={() =>
-                          setIsDefaultChannelListExpanded((prev) => !prev)
-                        }
-                      >
-                        <div className="flex flex-col justify-around w-[calc(100%-30px)]">
-                          #{defaultChannel?.channelName}
+                      <div className="modal-text-section">
+                        <div className="small-caps">
+                          <Trans>Space Name</Trans>
                         </div>
-                        <div className="space-context-menu-toggle-button">
-                          <FontAwesomeIcon icon={faChevronDown} />
-                        </div>
-                      </div>
-                      {isDefaultChannelListExpanded && (
-                        <div className="absolute pr-[227px] w-full">
-                          <div className="bg-input max-w-[350px] mt-1 max-h-[200px] rounded-xl overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
-                            {space?.groups.map((g, i) => {
-                              return (
-                                <React.Fragment key={'group-select-' + i}>
-                                  <div className="small-caps py-2 px-3">
-                                    {g.groupName}
-                                  </div>
-                                  {g.channels.map((c, j) => {
-                                    return (
-                                      <div
-                                        onClick={() => {
-                                          setDefaultChannel(c);
-                                          setIsDefaultChannelListExpanded(
-                                            false
-                                          );
-                                        }}
-                                        className="py-2 px-2 mx-1 my-1 text-main hover:bg-surface-4 rounded-lg cursor-pointer !font-bold"
-                                        key={
-                                          'group-select-' + i + '-channel-' + i
-                                        }
-                                      >
-                                        #{c.channelName}
-                                      </div>
-                                    );
-                                  })}
-                                </React.Fragment>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="modal-content-section-header small-caps">
-                      <Trans>Privacy Settings</Trans>
-                    </div>
-                    <div className="modal-content-info">
-                      <div className="flex flex-row justify-between">
-                        <div className="text-sm flex flex-row">
-                          <div className="text-sm flex flex-col justify-around">
-                            <Trans>Repudiability</Trans>
-                          </div>
-                          <div className="text-sm flex flex-col justify-around ml-2">
-                            <div
-                              id="repudiability-tooltip-icon"
-                              className="border border-strong rounded-full w-6 h-6 text-center leading-5 text-lg"
-                              onMouseOut={() => setRepudiableTooltip(false)}
-                              onMouseOver={() => setRepudiableTooltip(true)}
-                            >
-                              ℹ
-                            </div>
-                          </div>
-                          <div className="absolute left-[340px]">
-                            <ReactTooltip
-                              id="repudiability-tooltip"
-                              content={t`Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.`}
-                              place="bottom"
-                              className="!w-[400px]"
-                              anchorSelect="#repudiability-tooltip-icon"
-                            />
-                          </div>
-                        </div>
-                        <ToggleSwitch
-                          onClick={() => setIsRepudiable((prev) => !prev)}
-                          active={isRepudiable}
+                        <input
+                          className="w-full quorum-input"
+                          value={displayName}
+                          onChange={(e) => setDisplayName(e.target.value)}
                         />
                       </div>
                     </div>
-                    <div className="modal-content-actions">
-                      <Button type="primary" onClick={() => saveChanges()}>
-                        <Trans>Save Changes</Trans>
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              );
-            case 'roles':
-              return (
-                <>
-                  <div className="modal-content-header">
-                    <div className="modal-text-section">
-                      <div className="text-xl font-bold">
-                        <Trans>Roles</Trans>
+                    <div className="modal-content-section">
+                      <div className="modal-content-section-header small-caps">
+                        <Trans>Space Banner</Trans>
                       </div>
-                      <div className="pt-1 text-sm text-main">
-                        <Trans>
-                          Click on the role name and tag to edit them.
-                        </Trans>
-                      </div>
-                    </div>
-                    <div className="modal-content-actions">
-                      <div>
-                        <Button
-                          type="secondary"
-                          onClick={() => {
-                            setRoles((prev) => [
-                              ...prev,
-                              {
-                                roleId: crypto.randomUUID(),
-                                roleTag: 'New Role' + (prev.length + 1),
-                                displayName: 'New Role',
-                                color: 'var(--success-hex)',
-                                members: [],
-                                permissions: [],
-                              },
-                            ]);
+                      <div className="modal-content-info">
+                        <div
+                          className={
+                            'modal-banner-editable ' +
+                            (space?.bannerUrl || bannerAcceptedFiles.length != 0
+                              ? ''
+                              : 'border-2 border-dashed border-accent-200')
+                          }
+                          style={{
+                            backgroundImage:
+                              bannerData != undefined &&
+                              bannerAcceptedFiles.length != 0
+                                ? 'url(data:' +
+                                  bannerAcceptedFiles[0].type +
+                                  ';base64,' +
+                                  Buffer.from(bannerData).toString('base64') +
+                                  ')'
+                                : `url(${space?.bannerUrl})`,
                           }}
+                          {...getBannerRootProps()}
                         >
-                          <Trans>Add Role</Trans>
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="modal-content-section">
-                    {roles.map((r, i) => {
-                      return (
-                        <div
-                          key={'space-editor-role-' + i}
-                          className="modal-content-section-header text-main"
-                        >
-                          @
-                          <input
-                            className="font-mono border-0 bg-[rgba(0,0,0,0)] pr-2"
-                            style={{
-                              width:
-                                (roles.find((_, pi) => i == pi)?.roleTag
-                                  .length ?? 0) *
-                                  11 +
-                                11 +
-                                'px',
-                            }}
-                            onChange={(e) =>
-                              setRoles((prev) => [
-                                ...prev.map((p, pi) =>
-                                  pi == i
-                                    ? { ...p, roleTag: e.target.value }
-                                    : p
-                                ),
-                              ])
-                            }
-                            value={r.roleTag}
-                          />
-                          <span className="font-mono modal-role" style={{ backgroundColor: r.color }}>
-                            <input
-                              className="border-0 bg-[rgba(0,0,0,0)] "
-                              style={{
-                                width:
-                                  (roles.find((_, pi) => i == pi)?.displayName
-                                    .length ?? 0) *
-                                    10 +
-                                  10 +
-                                  'px',
-                              }}
-                              onChange={(e) =>
-                                setRoles((prev) => [
-                                  ...prev.map((p, pi) =>
-                                    pi == i
-                                      ? { ...p, displayName: e.target.value }
-                                      : p
-                                  ),
-                                ])
-                              }
-                              value={r.displayName}
-                            />
-                          </span>
-                          <span className="float-right">
-                            <FontAwesomeIcon
-                              icon={faTrash}
-                              title="Delete role"
-                              className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
-                              onClick={() =>
-                                setRoles((prev) => [
-                                  ...prev.filter((p, pi) => i !== pi),
-                                ])
-                              }
-                            />
-                          </span>
-                          <span className="float-right pr-10 text-normal">
-                            <Trans>Can delete messages?</Trans>{' '}
-                            <input
-                              type="checkbox"
-                              checked={roles
-                                .find((_, pi) => i == pi)
-                                ?.permissions.includes('message:delete')}
-                              onChange={() =>
-                                setRoles((prev) => [
-                                  ...prev.map((p, pi) =>
-                                    pi == i
-                                      ? {
-                                          ...p,
-                                          permissions: p.permissions.includes(
-                                            'message:delete'
-                                          )
-                                            ? p.permissions.filter(
-                                                (pr: Permission) =>
-                                                  pr !== 'message:delete'
-                                              )
-                                            : ([
-                                                ...p.permissions,
-                                                'message:delete',
-                                              ] as Permission[]),
-                                        }
-                                      : p
-                                  ),
-                                ])
-                              }
-                            />
-                          </span>
+                          <input {...getBannerInputProps()} />
                         </div>
-                      );
-                    })}
-                    <div className="modal-content-info"></div>
-                    <div className="modal-content-actions">
-                      <Button type="primary" onClick={() => saveChanges()}>
-                        <Trans>Save Changes</Trans>
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              );
-            case 'emojis':
-              return (
-                <>
-                  <div className="modal-content-header">
-                    <div className="modal-text-section">
-                      <div className="text-xl font-bold">
-                        <Trans>Emojis</Trans>
                       </div>
-                      <div className="pt-1 text-sm text-main">
-                        <Trans>
-                          Add up to 50 custom emoji. Custom emojis can only be
-                          used within a Space.
-                        </Trans>
-                        <br />
-                        <br />
-                        <Trans>Requirements:</Trans>
-                        <ul>
-                          <li>
-                            <Trans>Supported types: PNG, JPG, GIF</Trans>
-                          </li>
-                          <li>
-                            <Trans>Max file size: 256kB</Trans>
-                          </li>
-                        </ul>
+                      <div className="modal-content-section-header small-caps">
+                        <Trans>Default Channel</Trans>
                       </div>
-                    </div>
-                  </div>
-                  <div className="modal-content-section">
-                    <div className="flex">
-                      {emojis.length < 50 && (
-                        <div
-                          className="btn-secondary"
-                          {...getEmojiRootProps()}
-                        >
-                          <Trans>Upload Emoji</Trans>
-                          <input {...getEmojiInputProps()} />
-                        </div>
-                      )}
-                    </div>
-                    <div className="pt-4">
-                      {emojis.map((em, i) => {
-                        return (
-                          <div
-                            key={'space-editor-emoji-' + i}
-                            className="modal-content-section-header text-main flex flex-row"
-                          >
-                            <img width="24" height="24" src={em.imgUrl} />
-                            <div className="flex flex-col justify-around font-mono font-medium mx-2">
-                              <span>
-                                :
-                                <input
-                                  className={'border-0 bg-[rgba(0,0,0,0)]'}
-                                  style={{
-                                    width:
-                                      (emojis.find((_, pi) => i == pi)?.name
-                                        .length ?? 0) *
-                                        10 +
-                                      10 +
-                                      'px',
-                                  }}
-                                  onChange={(e) =>
-                                    setEmojis((prev) => [
-                                      ...prev.map((p, pi) =>
-                                        pi == i
-                                          ? {
-                                              ...p,
-                                              name: e.target.value
-                                                .toLowerCase()
-                                                .replace(/[^a-z0-9\_]/gi, ''),
-                                            }
-                                          : p
-                                      ),
-                                    ])
-                                  }
-                                  value={em.name}
-                                />
-                                :
-                              </span>
-                            </div>
-                            <div className="flex flex-col grow justify-around items-end">
-                              <FontAwesomeIcon
-                                icon={faTrash}
-                                onClick={() =>
-                                  setEmojis((prev) => [
-                                    ...prev.filter((p, pi) => i !== pi),
-                                  ])
-                                }
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <div className="modal-content-info"></div>
-                    <div className="modal-content-actions">
-                      <Button type="primary" onClick={() => saveChanges()}>
-                        <Trans>Save Changes</Trans>
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              );
-            case 'stickers':
-              return (
-                <>
-                  <div className="modal-content-header">
-                    <div className="modal-text-section">
-                      <div className="text-xl font-bold">
-                        <Trans>Stickers</Trans>
-                      </div>
-                      <div className="pt-1 text-sm text-main">
-                        <Trans>
-                          Add up to 50 custom stickers. Custom stickers can only
-                          be used within a Space.
-                        </Trans>
-                        <br />
-                        <br />
-                        <Trans>Requirements:</Trans>
-                        <ul>
-                          <li>
-                            <Trans>Supported types: PNG, JPG, GIF</Trans>
-                          </li>
-                          <li>
-                            <Trans>Max file size: 256kB</Trans>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="modal-content-section">
-                    <div className="flex">
-                      {stickers.length < 50 && (
-                        <div
-                          className="btn-secondary"
-                          {...getStickerRootProps()}
-                        >
-                          <Trans>Upload Sticker</Trans>
-                          <input {...getStickerInputProps()} />
-                        </div>
-                      )}
-                    </div>
-                    <div className="pt-4">
-                      {stickers.map((em, i) => {
-                        return (
-                          <div
-                            key={'space-editor-sticker-' + i}
-                            className="modal-content-section-header text-main flex flex-row"
-                          >
-                            <img width="24" height="24" src={em.imgUrl} />
-                            <div className="flex flex-col justify-around font-mono font-medium mx-2">
-                              <span>
-                                :
-                                <input
-                                  className={'border-0 bg-[rgba(0,0,0,0)]'}
-                                  style={{
-                                    width:
-                                      (stickers.find((_, pi) => i == pi)?.name
-                                        .length ?? 0) *
-                                        10 +
-                                      10 +
-                                      'px',
-                                  }}
-                                  onChange={(e) =>
-                                    setStickers((prev) => [
-                                      ...prev.map((p, pi) =>
-                                        pi == i
-                                          ? {
-                                              ...p,
-                                              name: e.target.value
-                                                .toLowerCase()
-                                                .replace(/[^a-z0-9\_]/gi, ''),
-                                            }
-                                          : p
-                                      ),
-                                    ])
-                                  }
-                                  value={em.name}
-                                />
-                                :
-                              </span>
-                            </div>
-                            <div className="flex flex-col grow justify-around items-end">
-                              <FontAwesomeIcon
-                                icon={faTrash}
-                                onClick={() =>
-                                  setStickers((prev) => [
-                                    ...prev.filter((p, pi) => i !== pi),
-                                  ])
-                                }
-                              />
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <div className="modal-content-info"></div>
-                    <div className="modal-content-actions">
-                      <Button type="primary" onClick={() => saveChanges()}>
-                        <Trans>Save Changes</Trans>
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              );
-            case 'invites':
-              return (
-                <>
-                  <div className="modal-content-header">
-                    <div className="modal-text-section">
-                      <div className="text-xl font-bold">
-                        <Trans>Invites</Trans>
-                      </div>
-                      <div className="pt-1 text-sm text-main">
-                        <Trans>
-                          Send invites to people you've previously had
-                          conversations with. An invite button will appear in
-                          their inbox.
-                        </Trans>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="modal-content-section">
-                    <div className="flex"></div>
-                    <div className=""></div>
-                    <div className="modal-content-info">
-                      <div className="small-caps">
-                        <Trans>Existing Conversations</Trans>
-                      </div>
-                      <div className="relative">
+                      <div className="modal-content-info">
                         <div
                           className="w-full quorum-input !font-bold flex flex-row justify-between cursor-pointer"
-                          onClick={() => {
-                            setSuccess(false);
-                            setIsInviteListExpanded((prev) => !prev);
-                          }}
+                          onClick={() =>
+                            setIsDefaultChannelListExpanded((prev) => !prev)
+                          }
                         >
-                          {selectedUser && (
-                            <div className="flex flex-row">
-                              <div className="flex flex-col justify-around">
-                                <div
-                                  className="rounded-full w-[24px] h-[24px] mt-[2px]"
-                                  style={{
-                                    backgroundPosition: 'center',
-                                    backgroundSize: 'cover',
-                                    backgroundImage: `url(${selectedUser.icon})`,
-                                  }}
-                                />
-                              </div>
-                              <div className="flex flex-col justify-around pl-2">
-                                <div>
-                                  {selectedUser.displayName}{' '}
-                                  <span className="font-light">
-                                    (<span className="hidden md:inline">{selectedUser.address}</span>
-                                    <span className="md:hidden">{truncateAddress(selectedUser.address)}</span>)
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                          {!selectedUser && (
-                            <div className="text-subtle font-normal">
-                              {t`Select conversation`}
-                            </div>
-                          )}
+                          <div className="flex flex-col justify-around w-[calc(100%-30px)]">
+                            #{defaultChannel?.channelName}
+                          </div>
                           <div className="space-context-menu-toggle-button">
                             <FontAwesomeIcon icon={faChevronDown} />
                           </div>
                         </div>
-                        {isInviteListExpanded && (
-                          <div className="absolute top-full left-0 right-0 z-10 mt-1">
-                            <div className="bg-input w-full max-h-[200px] md:max-h-[300px] rounded-xl overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
-                            {conversations.pages
-                              .flatMap(
-                                (c: any) => c.conversations as Conversation[]
-                              )
-                              .toReversed()
-                              .map((c, i) => {
+                        {isDefaultChannelListExpanded && (
+                          <div className="absolute pr-[227px] w-full">
+                            <div className="bg-input max-w-[350px] mt-1 max-h-[200px] rounded-xl overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
+                              {space?.groups.map((g, i) => {
                                 return (
-                                  <div
-                                    onClick={() => {
-                                      setSelectedUser(c);
-                                      setResolvedUser(undefined);
-                                      setManualAddress('');
-                                      setSuccess(false);
-                                      setIsInviteListExpanded(false);
-                                    }}
-                                    className="py-2 px-2 mx-1 my-1 text-main hover:bg-surface-4 rounded-lg cursor-pointer !font-bold flex flex-row"
-                                    key={'group-select-' + i + '-channel-' + i}
-                                  >
-                                    <div className="flex flex-col justify-around">
-                                      <div
-                                        className="rounded-full w-[24px] h-[24px] mt-[2px]"
-                                        style={{
-                                          backgroundPosition: 'center',
-                                          backgroundSize: 'cover',
-                                          backgroundImage: `url(${c.icon})`,
-                                        }}
-                                      />
+                                  <React.Fragment key={'group-select-' + i}>
+                                    <div className="small-caps py-2 px-3">
+                                      {g.groupName}
                                     </div>
-                                    <div className="flex flex-col justify-around pl-2">
-                                      <div>
-                                        {c.displayName}{' '}
-                                        <span className="font-light">
-                                          (<span className="hidden md:inline">{c.address}</span>
-                                          <span className="md:hidden">{truncateAddress(c.address)}</span>)
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
+                                    {g.channels.map((c, j) => {
+                                      return (
+                                        <div
+                                          onClick={() => {
+                                            setDefaultChannel(c);
+                                            setIsDefaultChannelListExpanded(
+                                              false
+                                            );
+                                          }}
+                                          className="py-2 px-2 mx-1 my-1 text-main hover:bg-surface-4 rounded-lg cursor-pointer !font-bold"
+                                          key={
+                                            'group-select-' +
+                                            i +
+                                            '-channel-' +
+                                            i
+                                          }
+                                        >
+                                          #{c.channelName}
+                                        </div>
+                                      );
+                                    })}
+                                  </React.Fragment>
                                 );
                               })}
                             </div>
                           </div>
                         )}
                       </div>
-                      <div className="small-caps">
-                        <Trans>Enter Address Manually</Trans>
+                      <div className="modal-content-section-header small-caps">
+                        <Trans>Privacy Settings</Trans>
                       </div>
-                      <Input
-                        value={manualAddress}
-                        placeholder="Type the address of the user you want to send to"
-                        onChange={(e) => {
-                          setManualAddress(e.target.value);
-                          setSuccess(false);
-                          setIsInviteListExpanded(false);
-                        }}
-                      />
-                      {success && (
-                        <div className="text-success-hex">
-                          <Trans>
-                            Successfully sent invite to{' '}
-                            {selectedUser?.displayName}
-                          </Trans>
-                        </div>
-                      )}
-                      <div className="border-t border-strong mt-4 pt-4"></div>
-                      <div className="flex flex-row justify-between">
-                        <div className="text-sm flex flex-row justify-center">
-                          <div className="text-lg flex flex-col justify-around">
-                            <Trans>Public Invite Link</Trans>
-                            <div className="text-sm flex flex-col justify-around pt-2 max-w-[500px]">
-                              <Trans>
-                                Public invite links allow anyone with access to
-                                the link join your Space. Understand the risks
-                                of enabling this, and to whom and where you
-                                share the link.
-                              </Trans>
+                      <div className="modal-content-info">
+                        <div className="flex flex-row justify-between">
+                          <div className="text-sm flex flex-row">
+                            <div className="text-sm flex flex-col justify-around">
+                              <Trans>Repudiability</Trans>
+                            </div>
+                            <div className="text-sm flex flex-col justify-around ml-2">
+                              <div
+                                id="repudiability-tooltip-icon"
+                                className="border border-strong rounded-full w-6 h-6 text-center leading-5 text-lg"
+                                onMouseOut={() => setRepudiableTooltip(false)}
+                                onMouseOver={() => setRepudiableTooltip(true)}
+                              >
+                                ℹ
+                              </div>
+                            </div>
+                            <div className="absolute left-[340px]">
+                              <ReactTooltip
+                                id="repudiability-tooltip"
+                                content={t`Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.`}
+                                place="bottom"
+                                className="!w-[400px]"
+                                anchorSelect="#repudiability-tooltip-icon"
+                              />
                             </div>
                           </div>
-                        </div>
-                        <div className="flex flex-col justify-center pt-2">
                           <ToggleSwitch
-                            onClick={() => setPublicInvite((prev) => !prev)}
-                            active={publicInvite}
+                            onClick={() => setIsRepudiable((prev) => !prev)}
+                            active={isRepudiable}
                           />
                         </div>
                       </div>
-                      {space?.isPublic && publicInvite && (
+                      <div className="modal-content-actions">
+                        <Button type="primary" onClick={() => saveChanges()}>
+                          <Trans>Save Changes</Trans>
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                );
+              case 'roles':
+                return (
+                  <>
+                    <div className="modal-content-header">
+                      <div className="modal-text-section">
+                        <div className="text-xl font-bold">
+                          <Trans>Roles</Trans>
+                        </div>
+                        <div className="pt-1 text-sm text-main">
+                          <Trans>
+                            Click on the role name and tag to edit them.
+                          </Trans>
+                        </div>
+                      </div>
+                      <div className="modal-content-actions">
                         <div>
-                          {space.inviteUrl && (
-                            <>
-                              <div className="flex pt-2 pb-1 items-center">
-                                <div className="text-sm flex flex-row">
-                                  <div className="small-caps text-lg flex flex-col justify-around">
-                                    <Trans>Current Invite Link</Trans>
-                                  </div>
-                                  <div className="flex flex-col justify-around ml-2">
-                                    <FontAwesomeIcon
-                                      id="current-invite-link-tooltip-icon"
-                                      icon={faInfoCircle}
-                                      className="ml-2"
-                                    />
-                                    <ReactTooltip
-                                      id="current-invite-link-tooltip"
-                                      anchorSelect="#current-invite-link-tooltip-icon"
-                                      className="flex flex-col justify-around pt-3 pb-1 !w-[400px]"
-                                      place="bottom"
-                                      content={t`This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space.`}
-                                    />
+                          <Button
+                            type="secondary"
+                            onClick={() => {
+                              setRoles((prev) => [
+                                ...prev,
+                                {
+                                  roleId: crypto.randomUUID(),
+                                  roleTag: 'New Role' + (prev.length + 1),
+                                  displayName: 'New Role',
+                                  color: 'var(--success-hex)',
+                                  members: [],
+                                  permissions: [],
+                                },
+                              ]);
+                            }}
+                          >
+                            <Trans>Add Role</Trans>
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="modal-content-section">
+                      {roles.map((r, i) => {
+                        return (
+                          <div
+                            key={'space-editor-role-' + i}
+                            className="modal-content-section-header text-main"
+                          >
+                            @
+                            <input
+                              className="font-mono border-0 bg-[rgba(0,0,0,0)] pr-2"
+                              style={{
+                                width:
+                                  (roles.find((_, pi) => i == pi)?.roleTag
+                                    .length ?? 0) *
+                                    11 +
+                                  11 +
+                                  'px',
+                              }}
+                              onChange={(e) =>
+                                setRoles((prev) => [
+                                  ...prev.map((p, pi) =>
+                                    pi == i
+                                      ? { ...p, roleTag: e.target.value }
+                                      : p
+                                  ),
+                                ])
+                              }
+                              value={r.roleTag}
+                            />
+                            <span
+                              className="font-mono modal-role"
+                              style={{ backgroundColor: r.color }}
+                            >
+                              <input
+                                className="border-0 bg-[rgba(0,0,0,0)] "
+                                style={{
+                                  width:
+                                    (roles.find((_, pi) => i == pi)?.displayName
+                                      .length ?? 0) *
+                                      10 +
+                                    10 +
+                                    'px',
+                                }}
+                                onChange={(e) =>
+                                  setRoles((prev) => [
+                                    ...prev.map((p, pi) =>
+                                      pi == i
+                                        ? { ...p, displayName: e.target.value }
+                                        : p
+                                    ),
+                                  ])
+                                }
+                                value={r.displayName}
+                              />
+                            </span>
+                            <span className="float-right">
+                              <FontAwesomeIcon
+                                icon={faTrash}
+                                title="Delete role"
+                                className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
+                                onClick={() =>
+                                  setRoles((prev) => [
+                                    ...prev.filter((p, pi) => i !== pi),
+                                  ])
+                                }
+                              />
+                            </span>
+                            <span className="float-right pr-10 text-normal">
+                              <Trans>Can delete messages?</Trans>{' '}
+                              <input
+                                type="checkbox"
+                                checked={roles
+                                  .find((_, pi) => i == pi)
+                                  ?.permissions.includes('message:delete')}
+                                onChange={() =>
+                                  setRoles((prev) => [
+                                    ...prev.map((p, pi) =>
+                                      pi == i
+                                        ? {
+                                            ...p,
+                                            permissions: p.permissions.includes(
+                                              'message:delete'
+                                            )
+                                              ? p.permissions.filter(
+                                                  (pr: Permission) =>
+                                                    pr !== 'message:delete'
+                                                )
+                                              : ([
+                                                  ...p.permissions,
+                                                  'message:delete',
+                                                ] as Permission[]),
+                                          }
+                                        : p
+                                    ),
+                                  ])
+                                }
+                              />
+                            </span>
+                          </div>
+                        );
+                      })}
+                      <div className="modal-content-info"></div>
+                      <div className="modal-content-actions">
+                        <Button type="primary" onClick={() => saveChanges()}>
+                          <Trans>Save Changes</Trans>
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                );
+              case 'emojis':
+                return (
+                  <>
+                    <div className="modal-content-header">
+                      <div className="modal-text-section">
+                        <div className="text-xl font-bold">
+                          <Trans>Emojis</Trans>
+                        </div>
+                        <div className="pt-1 text-sm text-main">
+                          <Trans>
+                            Add up to 50 custom emoji. Custom emojis can only be
+                            used within a Space.
+                          </Trans>
+                          <br />
+                          <br />
+                          <Trans>Requirements:</Trans>
+                          <ul>
+                            <li>
+                              <Trans>Supported types: PNG, JPG, GIF</Trans>
+                            </li>
+                            <li>
+                              <Trans>Max file size: 256kB</Trans>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="modal-content-section">
+                      <div className="flex">
+                        {emojis.length < 50 && (
+                          <div
+                            className="btn-secondary"
+                            {...getEmojiRootProps()}
+                          >
+                            <Trans>Upload Emoji</Trans>
+                            <input {...getEmojiInputProps()} />
+                          </div>
+                        )}
+                      </div>
+                      <div className="pt-4">
+                        {emojis.map((em, i) => {
+                          return (
+                            <div
+                              key={'space-editor-emoji-' + i}
+                              className="modal-content-section-header text-main flex flex-row"
+                            >
+                              <img width="24" height="24" src={em.imgUrl} />
+                              <div className="flex flex-col justify-around font-mono font-medium mx-2">
+                                <span>
+                                  :
+                                  <input
+                                    className={'border-0 bg-[rgba(0,0,0,0)]'}
+                                    style={{
+                                      width:
+                                        (emojis.find((_, pi) => i == pi)?.name
+                                          .length ?? 0) *
+                                          10 +
+                                        10 +
+                                        'px',
+                                    }}
+                                    onChange={(e) =>
+                                      setEmojis((prev) => [
+                                        ...prev.map((p, pi) =>
+                                          pi == i
+                                            ? {
+                                                ...p,
+                                                name: e.target.value
+                                                  .toLowerCase()
+                                                  .replace(/[^a-z0-9\_]/gi, ''),
+                                              }
+                                            : p
+                                        ),
+                                      ])
+                                    }
+                                    value={em.name}
+                                  />
+                                  :
+                                </span>
+                              </div>
+                              <div className="flex flex-col grow justify-around items-end">
+                                <FontAwesomeIcon
+                                  icon={faTrash}
+                                  onClick={() =>
+                                    setEmojis((prev) => [
+                                      ...prev.filter((p, pi) => i !== pi),
+                                    ])
+                                  }
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="modal-content-info"></div>
+                      <div className="modal-content-actions">
+                        <Button type="primary" onClick={() => saveChanges()}>
+                          <Trans>Save Changes</Trans>
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                );
+              case 'stickers':
+                return (
+                  <>
+                    <div className="modal-content-header">
+                      <div className="modal-text-section">
+                        <div className="text-xl font-bold">
+                          <Trans>Stickers</Trans>
+                        </div>
+                        <div className="pt-1 text-sm text-main">
+                          <Trans>
+                            Add up to 50 custom stickers. Custom stickers can
+                            only be used within a Space.
+                          </Trans>
+                          <br />
+                          <br />
+                          <Trans>Requirements:</Trans>
+                          <ul>
+                            <li>
+                              <Trans>Supported types: PNG, JPG, GIF</Trans>
+                            </li>
+                            <li>
+                              <Trans>Max file size: 256kB</Trans>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="modal-content-section">
+                      <div className="flex">
+                        {stickers.length < 50 && (
+                          <div
+                            className="btn-secondary"
+                            {...getStickerRootProps()}
+                          >
+                            <Trans>Upload Sticker</Trans>
+                            <input {...getStickerInputProps()} />
+                          </div>
+                        )}
+                      </div>
+                      <div className="pt-4">
+                        {stickers.map((em, i) => {
+                          return (
+                            <div
+                              key={'space-editor-sticker-' + i}
+                              className="modal-content-section-header text-main flex flex-row"
+                            >
+                              <img width="24" height="24" src={em.imgUrl} />
+                              <div className="flex flex-col justify-around font-mono font-medium mx-2">
+                                <span>
+                                  :
+                                  <input
+                                    className={'border-0 bg-[rgba(0,0,0,0)]'}
+                                    style={{
+                                      width:
+                                        (stickers.find((_, pi) => i == pi)?.name
+                                          .length ?? 0) *
+                                          10 +
+                                        10 +
+                                        'px',
+                                    }}
+                                    onChange={(e) =>
+                                      setStickers((prev) => [
+                                        ...prev.map((p, pi) =>
+                                          pi == i
+                                            ? {
+                                                ...p,
+                                                name: e.target.value
+                                                  .toLowerCase()
+                                                  .replace(/[^a-z0-9\_]/gi, ''),
+                                              }
+                                            : p
+                                        ),
+                                      ])
+                                    }
+                                    value={em.name}
+                                  />
+                                  :
+                                </span>
+                              </div>
+                              <div className="flex flex-col grow justify-around items-end">
+                                <FontAwesomeIcon
+                                  icon={faTrash}
+                                  onClick={() =>
+                                    setStickers((prev) => [
+                                      ...prev.filter((p, pi) => i !== pi),
+                                    ])
+                                  }
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      <div className="modal-content-info"></div>
+                      <div className="modal-content-actions">
+                        <Button type="primary" onClick={() => saveChanges()}>
+                          <Trans>Save Changes</Trans>
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                );
+              case 'invites':
+                return (
+                  <>
+                    <div className="modal-content-header">
+                      <div className="modal-text-section">
+                        <div className="text-xl font-bold">
+                          <Trans>Invites</Trans>
+                        </div>
+                        <div className="pt-1 text-sm text-main">
+                          <Trans>
+                            Send invites to people you've previously had
+                            conversations with. An invite button will appear in
+                            their inbox.
+                          </Trans>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="modal-content-section">
+                      <div className="flex"></div>
+                      <div className=""></div>
+                      <div className="modal-content-info">
+                        <div className="small-caps">
+                          <Trans>Existing Conversations</Trans>
+                        </div>
+                        <div className="relative">
+                          <div
+                            className="w-full quorum-input !font-bold flex flex-row justify-between cursor-pointer"
+                            onClick={() => {
+                              setSuccess(false);
+                              setIsInviteListExpanded((prev) => !prev);
+                            }}
+                          >
+                            {selectedUser && (
+                              <div className="flex flex-row">
+                                <div className="flex flex-col justify-around">
+                                  <div
+                                    className="rounded-full w-[24px] h-[24px] mt-[2px]"
+                                    style={{
+                                      backgroundPosition: 'center',
+                                      backgroundSize: 'cover',
+                                      backgroundImage: `url(${selectedUser.icon})`,
+                                    }}
+                                  />
+                                </div>
+                                <div className="flex flex-col justify-around pl-2">
+                                  <div>
+                                    {selectedUser.displayName}{' '}
+                                    <span className="font-light">
+                                      (
+                                      <span className="hidden md:inline">
+                                        {selectedUser.address}
+                                      </span>
+                                      <span className="md:hidden">
+                                        {truncateAddress(selectedUser.address)}
+                                      </span>
+                                      )
+                                    </span>
                                   </div>
                                 </div>
                               </div>
-                              {generating ? (
-                                <div className="bg-input border border-strong rounded-md px-3 py-1.5 text-sm w-full text-subtle">
-                                  {t`Be patient, this can take a few seconds...`}
-                                </div>
-                              ) : (
-                                <ClickToCopyContent
-                                  text={space.inviteUrl}
-                                  tooltipText={t`Copy invite link to clipboard`}
-                                  className="bg-input border border-strong rounded-md px-3 py-1.5 text-sm w-full max-w-full overflow-hidden whitespace-nowrap cursor-pointer transition hover:border-stronger"
-                                  iconClassName="text-muted hover:text-main"
-                                  copyOnContentClick
-                                >
-                                  <div className="flex items-center gap-2 w-full">
-                                    <div className="truncate flex-1">
-                                      {space.inviteUrl}
-                                    </div>
-                                  </div>
-                                </ClickToCopyContent>
-                              )}
-                            </>
+                            )}
+                            {!selectedUser && (
+                              <div className="text-subtle font-normal">
+                                {t`Select conversation`}
+                              </div>
+                            )}
+                            <div className="space-context-menu-toggle-button">
+                              <FontAwesomeIcon icon={faChevronDown} />
+                            </div>
+                          </div>
+                          {isInviteListExpanded && (
+                            <div className="absolute top-full left-0 right-0 z-10 mt-1">
+                              <div className="bg-input w-full max-h-[200px] md:max-h-[300px] rounded-xl overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
+                                {conversations.pages
+                                  .flatMap(
+                                    (c: any) =>
+                                      c.conversations as Conversation[]
+                                  )
+                                  .toReversed()
+                                  .map((c, i) => {
+                                    return (
+                                      <div
+                                        onClick={() => {
+                                          setSelectedUser(c);
+                                          setResolvedUser(undefined);
+                                          setManualAddress('');
+                                          setSuccess(false);
+                                          setIsInviteListExpanded(false);
+                                        }}
+                                        className="py-2 px-2 mx-1 my-1 text-main hover:bg-surface-4 rounded-lg cursor-pointer !font-bold flex flex-row"
+                                        key={
+                                          'group-select-' + i + '-channel-' + i
+                                        }
+                                      >
+                                        <div className="flex flex-col justify-around">
+                                          <div
+                                            className="rounded-full w-[24px] h-[24px] mt-[2px]"
+                                            style={{
+                                              backgroundPosition: 'center',
+                                              backgroundSize: 'cover',
+                                              backgroundImage: `url(${c.icon})`,
+                                            }}
+                                          />
+                                        </div>
+                                        <div className="flex flex-col justify-around pl-2">
+                                          <div>
+                                            {c.displayName}{' '}
+                                            <span className="font-light">
+                                              (
+                                              <span className="hidden md:inline">
+                                                {c.address}
+                                              </span>
+                                              <span className="md:hidden">
+                                                {truncateAddress(c.address)}
+                                              </span>
+                                              )
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                              </div>
+                            </div>
                           )}
-
-                          <div className="mt-4 flex flex-row">
-                            <Button
-                              type="danger"
-                              className="px-4"
-                              disabled={generating}
-                              onClick={async () => {
-                                setGenerating(true);
-                                try {
-                                  await new Promise<void>((resolve) =>
-                                    setTimeout(() => resolve(), 200)
-                                  );
-                                  await generateNewInviteLink(
-                                    space.spaceId,
-                                    keyset.userKeyset,
-                                    keyset.deviceKeyset,
-                                    registration.registration!
-                                  );
-                                } finally {
-                                  setGenerating(false);
-                                }
-                              }}
-                            >
-                              {generating ? t`Generating link...` : <Trans>Generate New Invite Link</Trans>}
-                            </Button>
+                        </div>
+                        <div className="small-caps">
+                          <Trans>Enter Address Manually</Trans>
+                        </div>
+                        <Input
+                          value={manualAddress}
+                          placeholder="Type the address of the user you want to send to"
+                          onChange={(e) => {
+                            setManualAddress(e.target.value);
+                            setSuccess(false);
+                            setIsInviteListExpanded(false);
+                          }}
+                        />
+                        {success && (
+                          <div className="text-success-hex">
+                            <Trans>
+                              Successfully sent invite to{' '}
+                              {selectedUser?.displayName}
+                            </Trans>
+                          </div>
+                        )}
+                        <div className="border-t border-strong mt-4 pt-4"></div>
+                        <div className="flex flex-row justify-between">
+                          <div className="text-sm flex flex-row justify-center">
+                            <div className="text-lg flex flex-col justify-around">
+                              <Trans>Public Invite Link</Trans>
+                              <div className="text-sm flex flex-col justify-around pt-2 max-w-[500px]">
+                                <Trans>
+                                  Public invite links allow anyone with access
+                                  to the link join your Space. Understand the
+                                  risks of enabling this, and to whom and where
+                                  you share the link.
+                                </Trans>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex flex-col justify-center pt-2">
+                            <ToggleSwitch
+                              onClick={() => setPublicInvite((prev) => !prev)}
+                              active={publicInvite}
+                            />
                           </div>
                         </div>
-                      )}
-                    </div>
-                    <div style={{ marginBottom: '20px' }}></div>
-                    <div className="modal-content-actions">
+                        {space?.isPublic && publicInvite && (
+                          <div>
+                            {space.inviteUrl && (
+                              <>
+                                <div className="flex pt-2 pb-1 items-center">
+                                  <div className="text-sm flex flex-row">
+                                    <div className="small-caps text-lg flex flex-col justify-around">
+                                      <Trans>Current Invite Link</Trans>
+                                    </div>
+                                    <div className="flex flex-col justify-around ml-2">
+                                      <FontAwesomeIcon
+                                        id="current-invite-link-tooltip-icon"
+                                        icon={faInfoCircle}
+                                        className="ml-2"
+                                      />
+                                      <ReactTooltip
+                                        id="current-invite-link-tooltip"
+                                        anchorSelect="#current-invite-link-tooltip-icon"
+                                        className="flex flex-col justify-around pt-3 pb-1 !w-[400px]"
+                                        place="bottom"
+                                        content={t`This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space.`}
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                                {generating ? (
+                                  <div className="bg-input border border-strong rounded-md px-3 py-1.5 text-sm w-full text-subtle">
+                                    {t`Be patient, this can take a few seconds...`}
+                                  </div>
+                                ) : (
+                                  <ClickToCopyContent
+                                    text={space.inviteUrl}
+                                    tooltipText={t`Copy invite link to clipboard`}
+                                    className="bg-input border border-strong rounded-md px-3 py-1.5 text-sm w-full max-w-full overflow-hidden whitespace-nowrap cursor-pointer transition hover:border-stronger"
+                                    iconClassName="text-muted hover:text-main"
+                                    copyOnContentClick
+                                  >
+                                    <div className="flex items-center gap-2 w-full">
+                                      <div className="truncate flex-1">
+                                        {space.inviteUrl}
+                                      </div>
+                                    </div>
+                                  </ClickToCopyContent>
+                                )}
+                              </>
+                            )}
+
+                            <div className="mt-4 flex flex-row">
+                              <Button
+                                type="danger"
+                                className="px-4"
+                                disabled={generating}
+                                onClick={async () => {
+                                  setGenerating(true);
+                                  try {
+                                    await new Promise<void>((resolve) =>
+                                      setTimeout(() => resolve(), 200)
+                                    );
+                                    await generateNewInviteLink(
+                                      space.spaceId,
+                                      keyset.userKeyset,
+                                      keyset.deviceKeyset,
+                                      registration.registration!
+                                    );
+                                  } finally {
+                                    setGenerating(false);
+                                  }
+                                }}
+                              >
+                                {generating ? (
+                                  t`Generating link...`
+                                ) : (
+                                  <Trans>Generate New Invite Link</Trans>
+                                )}
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <div style={{ marginBottom: '20px' }}></div>
+                      <div className="modal-content-actions">
                         <Button
                           type="primary"
                           disabled={
@@ -1106,11 +1131,11 @@ const SpaceEditor: React.FunctionComponent<{
                           <Trans>Send Invite</Trans>
                         </Button>
                       </div>
-                  </div>
-                </>
-              );
-          }
-        })()}
+                    </div>
+                  </>
+                );
+            }
+          })()}
         </div>
       </div>
     </div>

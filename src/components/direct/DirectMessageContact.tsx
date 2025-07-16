@@ -34,7 +34,8 @@ const DirectMessageContact: React.FunctionComponent<{
           className="direct-message-contact-icon flex flex-col justify-around w-[38px] bg-cover bg-center rounded-full"
           style={{
             backgroundImage:
-              props.userIcon && !props.userIcon.includes(DefaultImages.UNKNOWN_USER)
+              props.userIcon &&
+              !props.userIcon.includes(DefaultImages.UNKNOWN_USER)
                 ? `url(${props.userIcon})`
                 : 'var(--unknown-icon)',
           }}

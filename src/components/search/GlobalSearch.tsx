@@ -5,16 +5,17 @@ import { SearchResults } from './SearchResults';
 import { useGlobalSearch } from '../../hooks/queries/search/useGlobalSearch';
 import { SearchService } from '../../services/searchService';
 import { useMessageDB } from '../context/MessageDB';
-import { useSearchContext, getContextDisplayName } from '../../hooks/useSearchContext';
+import {
+  useSearchContext,
+  getContextDisplayName,
+} from '../../hooks/useSearchContext';
 import './GlobalSearch.scss';
 
 interface GlobalSearchProps {
   className?: string;
 }
 
-export const GlobalSearch: React.FC<GlobalSearchProps> = ({ 
-  className 
-}) => {
+export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
   const navigate = useNavigate();
   const { messageDB } = useMessageDB();
   const [showResults, setShowResults] = useState(false);
@@ -49,10 +50,14 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
   });
 
   // Handle navigation to message
-  const handleNavigate = (spaceId: string, channelId: string, messageId: string) => {
+  const handleNavigate = (
+    spaceId: string,
+    channelId: string,
+    messageId: string
+  ) => {
     // Check if this is a DM message (spaceId === channelId indicates DM)
     const isDM = spaceId === channelId;
-    
+
     if (isDM) {
       // For DMs, navigate to /messages/:address route
       navigate(`/messages/${spaceId}#msg-${messageId}`);
@@ -103,7 +108,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
         onSuggestionSelect={handleSuggestionSelect}
         className="global-search-bar"
       />
-      
+
       {showResults && (
         <SearchResults
           results={results}

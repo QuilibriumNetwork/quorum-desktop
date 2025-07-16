@@ -24,7 +24,6 @@
   background-color: var(--surface-1); /* Dark background */
 }
 
-
 /* No arrow */
 .quorum-tooltip-arrow-none,
 .quorum-tooltip-dark-arrow-none {
@@ -56,14 +55,10 @@
   border-color: transparent var(--surface-1) transparent transparent;
 }
 
-
-
 .quorum-tooltip-arrow-left.absolute::before,
 .quorum-tooltip-dark-arrow-left.absolute::before {
   left: -10px;
 }
-
-
 
 /* Right arrow */
 .quorum-tooltip-arrow-right::after {
@@ -139,5 +134,3 @@
 .quorum-tooltip-dark-invisible {
   display: none;
 }
-
-
