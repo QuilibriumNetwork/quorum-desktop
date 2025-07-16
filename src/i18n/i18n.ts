@@ -43,9 +43,8 @@ export async function dynamicActivate(locale: string) {
     locale = defaultLocale;
   }
 
-  const messagesPath = process.cwd() + 'src/i18n/' + locale + '/messages.po';
   // dynamically compile the messages file
-  const { messages } = await import(/* @vite-ignore */ `${messagesPath}`);
+  const { messages } = await import(`./${locale}/messages.ts`);
   i18n.load(locale, messages);
   i18n.activate(locale);
 }

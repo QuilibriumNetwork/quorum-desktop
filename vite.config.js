@@ -8,6 +8,9 @@ import { lingui } from '@lingui/vite-plugin';
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    target: 'es2022', // Support top-level await or error on build for i18n
+  },
   plugins: [
     lingui(),
     nodePolyfills({

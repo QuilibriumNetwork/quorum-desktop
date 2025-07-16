@@ -31,6 +31,8 @@ The main dependencies are:
 - Follow the existing coding style
 - Always run `yarn lint` and `yarn format` before committing
 - do not run `yarn dev`, `yarn build` unless specifically instructed
+- never install dependencies because we are runnig on windows and oyu are running on WSL
+- if you are mounting a Windows path which contains "Niccolò": you cannot run build commands or install dependencies because you are on WSL and the deps have been installed on Windows
 
 ## Claude Code Development Resources
 
@@ -104,7 +106,7 @@ Examples:
 
 - Use Tailwind utility classes for unique or one-off component styles
 - Extract shared patterns using `@apply` for consistency and maintainability
-- Embrace Tailwind’s design system (spacing, color, font, radius)
+- Embrace Tailwind's design system (spacing, color, font, radius)
 - Keep custom CSS minimal and focused on things Tailwind can't handle
 
 ---
@@ -113,7 +115,7 @@ Examples:
 
 ### 1. Use Tailwind Utilities for One-Off Components
 
-Style components directly using Tailwind utility classes if they don’t share their style with others.
+Style components directly using Tailwind utility classes if they don't share their style with others.
 
 ```html
 <!-- Good -->
@@ -184,4 +186,4 @@ content: ['./src/**/*.{js,ts,jsx,tsx,html}'];
 
 ---
 
-Stick to Tailwind’s strengths, extract wisely, and keep your design system DRY, scalable, and clear.
+Stick to Tailwind's strengths, extract wisely, and keep your design system DRY, scalable, and clear.
