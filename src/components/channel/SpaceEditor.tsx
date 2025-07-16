@@ -34,6 +34,7 @@ import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import ClickToCopyContent from '../ClickToCopyContent';
 import ReactTooltip from '../ReactTooltip';
+import SpaceTag from '../SpaceTag';
 
 const SpaceEditor: React.FunctionComponent<{
   spaceId: string;

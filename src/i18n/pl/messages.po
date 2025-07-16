@@ -92,6 +92,11 @@ msgstr "Wygląd"
 msgid "Appearance"
 msgstr ""
 
+#: src/components/modals/UserSettingsModal.tsx:244
+#: src/components/modals/UserSettingsModal.tsx:473
+msgid "Appearance"
+msgstr ""
+
 #. placeholder {0}: space?.spaceName
 #: src/components/channel/LeaveSpace.tsx:30
 msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
@@ -227,6 +232,10 @@ msgstr "Usuń wiadomość"
 msgid "Devices"
 msgstr ""
 
+#: src/components/modals/UserSettingsModal.tsx:320
+msgid "Devices"
+msgstr ""
+
 #: src/components/direct/DirectMessageContactsList.tsx:26
 msgid "Direct Messages"
 msgstr "Wiadomości bezpośrednie"
@@ -251,6 +260,14 @@ msgstr "Wprowadź adres ręcznie"
 #: src/components/channel/SpaceEditor.tsx:949
 msgid "Existing Conversations"
 msgstr "Istniejące rozmowy"
+
+#: src/components/modals/UserSettingsModal.tsx:365
+msgid "Export"
+msgstr ""
+
+#: src/components/modals/UserSettingsModal.tsx:354
+msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your space's Apex earnings."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:365
 msgid "Export"
@@ -335,6 +352,10 @@ msgstr "Dołączono"
 msgid "Key Export"
 msgstr ""
 
+#: src/components/modals/UserSettingsModal.tsx:351
+msgid "Key Export"
+msgstr ""
+
 #: src/components/modals/KickUserModal.tsx:56
 msgid "Kick User"
 msgstr ""
@@ -375,6 +396,10 @@ msgstr ""
 msgid "Letters"
 msgstr ""
 
+#: src/components/channel/SpaceEditor.tsx:478
+msgid "Letters"
+msgstr ""
+
 #: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
 msgstr "Prace konserwacyjne w toku"
@@ -401,6 +426,10 @@ msgstr "Więcej reakcji"
 #: src/components/modals/NewDirectMessageModal.tsx:53
 msgid "New Direct Message"
 msgstr "Nowa wiadomość bezpośrednia"
+
+#: src/components/modals/UserSettingsModal.tsx:418
+msgid "Non-repudiability"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:418
 msgid "Non-repudiability"
@@ -626,6 +655,14 @@ msgstr "useWebSocket musi być używane w obrębie WebSocketProvider\""
 #: src/components/onboarding/Onboarding.tsx:142
 msgid "Welcome to Quorum!"
 msgstr "Witaj w Quorum!\""
+
+#: src/components/modals/UserSettingsModal.tsx:436
+msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of spaces, as this is a configuration option by the space owner."
+msgstr ""
+
+#: src/components/modals/UserSettingsModal.tsx:399
+msgid "When enabled, synchronizes your user data, spaces, and space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new spaces, although not the spaces you have joined."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:436
 msgid "When enabled, direct messages are not signed by your user key. This improves performance, but can allow the user you are communicating with to forge messages to you as if they came from you. They cannot forge messages to other people as if they came from you. This does not impact the repudiability of spaces, as this is a configuration option by the space owner."

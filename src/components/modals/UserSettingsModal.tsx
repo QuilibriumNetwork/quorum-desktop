@@ -22,6 +22,9 @@ import locales from '../../i18n/locales';
 import useForceUpdate from '../hooks/forceUpdate';
 import ReactTooltip from '../ReactTooltip';
 import { Trans } from '@lingui/react/macro';
+import { Space } from '../../api/quorumApi.ts';
+import SpaceTag from '../SpaceTag';
+
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
   onEditModeClick?: () => void;
