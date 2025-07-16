@@ -47,7 +47,7 @@ export const Maintenance = () => {
           <div className="grow"></div>
           <div className="w-[460px] pt-4 text-center">
             <Button
-              type="light"
+              type="secondary-white"
               className="px-8"
               onClick={() => window.location.reload()}
             >

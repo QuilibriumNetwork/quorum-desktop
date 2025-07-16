@@ -99,3 +99,49 @@
   cursor: default;
   pointer-events: none;
 }
+
+/* === WHITE BUTTON VARIANTS === */
+/* These buttons use white backgrounds with opacity and hardcoded accent colors */
+/* Used in Onboarding.tsx and Maintenance.tsx - no dark mode variants needed */
+
+.btn-primary-white {
+  @extend .btn-base;
+  background-color: rgba(255, 255, 255, 1);
+  border: 2px solid rgba(255, 255, 255, 1);
+  color: #0287f2;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #d6ee93;
+    border: 2px solid #d6ee93;
+    color: #025ead;
+  }
+}
+
+.btn-secondary-white {
+  @extend .btn-base;
+  background-color: transparent;
+  border: 2px solid rgba(255, 255, 255, 1);
+  cursor: pointer;
+  color: rgba(255, 255, 255, 1);
+
+  &:hover {
+    background-color: #d6ee93;
+    border: 2px solid #d6ee93;
+    color: #025ead;
+  }
+}
+
+.btn-light-outline-white {
+  @extend .btn-base;
+  background-color: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.8);
+
+  &:hover {
+    background-color: #d6ee93;
+    border: 2px solid #d6ee93;
+    color: #025ead;
+  }
+}
