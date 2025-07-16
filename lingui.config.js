@@ -8,6 +8,7 @@ export default defineConfig({
   sourceLocale: defaultLocale,
   locales: Object.keys(locales),
   format: 'po',
+  compileNamespace: 'ts',
   catalogs: [
     {
       path: '<rootDir>/src/i18n/{locale}/messages',

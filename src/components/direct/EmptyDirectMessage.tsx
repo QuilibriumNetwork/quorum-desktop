@@ -39,11 +39,13 @@ export const EmptyDirectMessage = () => {
                 className="text-accent-300 dark:text-accent"
               />
             </div>
-            <div className="flex flex-row justify-around text-lg pt-4">
-              {conversations.pages.flatMap((p: any) => p.conversations)
-                .length === 0
-                ? t`Start with a message to a friend. Click on the add button next to the direct messages list.`
-                : t`What's on your mind today?`}
+            <div className="flex flex-row justify-center text-lg pt-4">
+              <div className="max-w-[500px] text-center">
+                {conversations.pages.flatMap((p: any) => p.conversations)
+                  .length === 0
+                  ? t`Start with a message to a friend. Click on the add button next to the direct messages list.`
+                  : t`What's on your mind today?`}
+              </div>
             </div>
           </div>
         </div>
