@@ -15,6 +15,7 @@ import { useMessageDB } from '../context/MessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
 import { useInvalidateConversation } from '../../hooks/queries/conversation/useInvalidateConversation';
+import { useModalContext } from '../AppWithSearch';
 import { MessageList } from '../message/MessageList';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
@@ -148,8 +149,58 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     };
     return m;
   }, [registration, conversation]);
-  const [showUsers, setShowUsers] = React.useState(false);
+  const {
+    showRightSidebar: showUsers,
+    setShowRightSidebar: setShowUsers,
+    setRightSidebarContent,
+  } = useModalContext();
   const [acceptChat, setAcceptChat] = React.useState(false);
+
+  // Set sidebar content in context
+  React.useEffect(() => {
+    const sidebarContent = (
+      <div className="flex flex-col">
+        {Object.keys(members).map((s) => (
+          <div key={s} className="w-full flex flex-row items-center mb-2">
+            <div
+              className="rounded-full w-[36px] h-[36px] flex-shrink-0"
+              style={{
+                backgroundPosition: 'center',
+                backgroundSize: 'cover',
+                backgroundImage: `url(${members[s].userIcon})`,
+              }}
+            />
+            <div className="flex flex-col ml-2">
+              <span className="text-md font-bold truncate w-[190px] text-main/90">
+                {members[s].displayName}{' '}
+                {members[s].address === user.currentPasskeyInfo!.address && (
+                  <span className="text-xs text-subtle">({t`You`})</span>
+                )}
+              </span>
+              <span className="text-xs truncate w-[190px] text-surface-9 dark:text-surface-8">
+                <ClickToCopyContent
+                  text={members[s].address}
+                  tooltipText={t`Copy address to clipboard`}
+                  tooltipLocation="left-start"
+                  iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
+                >
+                  {truncateAddress(members[s].address)}
+                </ClickToCopyContent>
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+    setRightSidebarContent(sidebarContent);
+  }, [members, user.currentPasskeyInfo, setRightSidebarContent]);
+
+  // Clean up sidebar content when component unmounts
+  React.useEffect(() => {
+    return () => {
+      setRightSidebarContent(null);
+    };
+  }, [setRightSidebarContent]);
 
   const mapSenderToUser = (senderId: string) => {
     return (
@@ -473,13 +524,16 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           </div>
         </div>
       </div>
+
+      {/* Desktop sidebar - only visible on lg+ screens */}
       <div
         className={
           'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-scroll ' +
           'transition-transform duration-300 ease-in-out ' +
           (showUsers
             ? 'translate-x-0 fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
-            : 'translate-x-full fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto')
+            : 'translate-x-full fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto') +
+          ' hidden lg:block'
         }
       >
         <div className="flex flex-col">
@@ -515,12 +569,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           ))}
         </div>
       </div>
-      {showUsers && (
-        <div
-          className="fixed inset-0 bg-mobile-overlay z-[9999] lg:hidden"
-          onClick={() => setShowUsers(false)}
-        />
-      )}
+
       <ReactTooltip
         id="attach-image-tooltip-dm"
         content={t`attach image`}

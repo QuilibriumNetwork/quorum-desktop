@@ -25,6 +25,8 @@ interface ModalContextType {
   ) => void;
   showRightSidebar: boolean;
   setShowRightSidebar: (show: boolean) => void;
+  rightSidebarContent: React.ReactNode;
+  setRightSidebarContent: (content: React.ReactNode) => void;
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
@@ -55,6 +57,8 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
     channelId: string;
   } | null>(null);
   const [showRightSidebar, setShowRightSidebar] = useState(false);
+  const [rightSidebarContent, setRightSidebarContent] =
+    useState<React.ReactNode>(null);
 
   const modalContextValue = {
     openUserSettings: () => setIsUserSettingsOpen(true),
@@ -64,6 +68,10 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
       groupName: string,
       channelId: string
     ) => setChannelEditorData({ spaceId, groupName, channelId }),
+    showRightSidebar,
+    setShowRightSidebar,
+    rightSidebarContent,
+    setRightSidebarContent,
   };
 
   return (
@@ -106,6 +114,26 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
             className="fixed inset-0 -z-10"
             onClick={() => setChannelEditorData(null)}
           />
+        </div>
+      )}
+
+      {showRightSidebar && (
+        <div
+          className="fixed inset-0 bg-mobile-overlay z-[9999] lg:hidden"
+          onClick={() => setShowRightSidebar(false)}
+        />
+      )}
+
+      {rightSidebarContent && (
+        <div
+          className={
+            'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-scroll ' +
+            'transition-transform duration-300 ease-in-out ' +
+            (showRightSidebar ? 'translate-x-0' : 'translate-x-full') +
+            ' fixed top-0 right-0 h-full z-[10000] lg:hidden'
+          }
+        >
+          {rightSidebarContent}
         </div>
       )}
 

@@ -34,6 +34,7 @@ import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
+import { useModalContext } from '../AppWithSearch';
 
 type ChannelProps = {
   spaceId: string;
@@ -64,8 +65,19 @@ const Channel: React.FC<ChannelProps> = ({
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
   const [pendingMessage, setPendingMessage] = useState('');
-  const [showUsers, setShowUsers] = useState(false);
+  const {
+    showRightSidebar: showUsers,
+    setShowRightSidebar: setShowUsers,
+    setRightSidebarContent,
+  } = useModalContext();
   const [init, setInit] = useState(false);
+
+  // Clean up sidebar content when component unmounts
+  React.useEffect(() => {
+    return () => {
+      setRightSidebarContent(null);
+    };
+  }, [setRightSidebarContent]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showStickers, setShowStickers] = useState(false);
   const [inReplyTo, setInReplyTo] = useState<MessageType>();
@@ -184,6 +196,78 @@ const Channel: React.FC<ChannelProps> = ({
       .filter((s) => !roles.flatMap((r) => r.members).includes(s))
       .filter((r) => !activeMembers[r].left);
   }, [roles, activeMembers]);
+
+  // Set sidebar content in context
+  React.useEffect(() => {
+    const sidebarContent = (
+      <>
+        {roles
+          .filter((r) => r.members.length != 0)
+          .map((r) => {
+            const role = r;
+            const roleMembers = Object.keys(activeMembers).filter((s) =>
+              role.members.includes(s)
+            );
+            return (
+              <div className="flex flex-col mb-2" key={'role-' + r}>
+                <div className="font-semibold ml-[1pt] mb-1 text-xs">
+                  {i18n._('{role} - {count}', {
+                    role: role.displayName.toUpperCase(),
+                    count: roleMembers.length,
+                  })}
+                </div>
+                {roleMembers.map((s) => (
+                  <div key={s} className="w-full flex flex-row mb-2">
+                    <div
+                      className="rounded-full w-[40px] h-[40px] mt-[2px]"
+                      style={{
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                        backgroundImage: `url(${
+                          members[s]?.userIcon?.includes(
+                            DefaultImages.UNKNOWN_USER
+                          )
+                            ? 'var(--unknown-icon)'
+                            : `url(${members[s]?.userIcon})`
+                        })`,
+                      }}
+                    />
+                    <div className="flex flex-col ml-2 text-main">
+                      <span className="text-md font-bold">
+                        {members[s]?.displayName}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        <div className="flex flex-col">
+          <div className="font-semibold ml-[1pt] mb-1 text-xs">
+            {i18n._('No Role - {count}', { count: noRoleMembers.length })}
+          </div>
+          {noRoleMembers.map((s) => (
+            <div key={s} className="w-full flex flex-row mb-2">
+              <div
+                className="rounded-full w-[40px] h-[40px] mt-[2px]"
+                style={{
+                  backgroundPosition: 'center',
+                  backgroundSize: 'cover',
+                  backgroundImage: `url(${members[s].userIcon})`,
+                }}
+              />
+              <div className="flex flex-col ml-2 text-main">
+                <span className="text-md font-bold">
+                  {members[s].displayName}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
+    );
+    setRightSidebarContent(sidebarContent);
+  }, [roles, activeMembers, members, noRoleMembers, setRightSidebarContent]);
 
   const channel = useMemo(() => {
     return space?.groups
@@ -535,13 +619,16 @@ const Channel: React.FC<ChannelProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Desktop sidebar - only visible on lg+ screens */}
       <div
         className={
           'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-scroll ' +
           'transition-transform duration-300 ease-in-out ' +
           (showUsers
             ? 'translate-x-0 fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
-            : 'translate-x-full fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto')
+            : 'translate-x-full fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto') +
+          ' hidden lg:block'
         }
       >
         {roles
@@ -608,12 +695,7 @@ const Channel: React.FC<ChannelProps> = ({
           ))}
         </div>
       </div>
-      {showUsers && (
-        <div
-          className="fixed inset-0 bg-mobile-overlay z-[9999] lg:hidden"
-          onClick={() => setShowUsers(false)}
-        />
-      )}
+
       <ReactTooltip
         id="attach-image-tooltip"
         content={t`attach image`}
