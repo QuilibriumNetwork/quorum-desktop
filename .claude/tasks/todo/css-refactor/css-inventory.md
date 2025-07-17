@@ -134,28 +134,6 @@
 - `.toggle-switch:checked` - theme-token - Toggle checked state
 - `.toggle-switch:disabled` - theme-token - Toggle disabled state
 
-### src/components/Tooltip.scss
-
-- `.tooltip` - theme-token - Tooltip with theme colors
-- `.tooltip-trigger` - @apply-convertible - Tooltip trigger positioning
-- `.tooltip-content` - theme-token - Tooltip content with theme colors
-- `.tooltip-arrow` - custom-logic - Tooltip arrow with pseudo-elements
-- `.tooltip-top` - @apply-convertible - Top tooltip positioning
-- `.tooltip-bottom` - @apply-convertible - Bottom tooltip positioning
-- `.tooltip-left` - @apply-convertible - Left tooltip positioning
-- `.tooltip-right` - @apply-convertible - Right tooltip positioning
-
-### src/components/TooltipButton.scss
-
-- `.tooltip-button` - theme-token - Tooltip button with theme colors
-- `.tooltip-button-content` - theme-token - Tooltip button content
-- `.tooltip-button:hover` - theme-token - Tooltip button hover state
-- `.tooltip-button:focus` - theme-token - Tooltip button focus state
-
-### src/components/TooltipDivider.scss
-
-- `.tooltip-divider` - theme-token - Tooltip divider with theme colors
-- `.tooltip-divider-line` - theme-token - Divider line with theme colors
 
 ### src/components/CloseButton.scss
 

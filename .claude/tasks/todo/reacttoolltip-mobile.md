@@ -1,6 +1,6 @@
 Dear Claude, read the text and code below and decide if it's a good idea to implement it, or if it could be improved upon.
 
-Objective is to made ReactTooltip optimized for mobile. This component coudl have mobile features that we are unaware of, so search online in their docs.
+Objective is to made ReactTooltip.tsx optimized for mobile. This component could have mobile features that we are unaware of, so search online in their docs.
 
 Once we have the component optimized for mobile, all "i" icons on the app that have a tooltip for more info, should open the tooltip on touch devices upon normal touch (not long pres). In all othercases, the tooltips should be hidden on touch devices, at least for now.
 These "i" icons are mainly in SpaceEditor and UserSettingsModal modals.
@@ -26,6 +26,8 @@ The new version of the ReactTooltip component adds two optional props:
 
 **Summary:**  
 By default, no tooltips show on mobile/touch. But now, by opting in (`showOnTouch`), you can provide interactive tooltips on mobile using tap or long press, for specific tooltips where they're helpful. This gives you control and improves accessibility for both desktop and mobile users.
+
+Current ReactTooltip.tsx may have added features compared to the below one, we must alwys maintain the latest features we implemented (like the "highlighted" prop).
 
 ```tsx
 import * as React from 'react';

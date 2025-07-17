@@ -159,25 +159,6 @@ This document provides a comprehensive inventory of all CSS selectors across the
 
 ---
 
-## src/components/Tooltip.scss
-
-- **.quorum-tooltip** - theme-token - Light tooltip styling
-- **.quorum-tooltip-dark** - theme-token - Dark tooltip styling
-- **.quorum-tooltip-arrow-none** - @apply-convertible - No arrow tooltip
-- **.quorum-tooltip-dark-arrow-none** - @apply-convertible - Dark no arrow tooltip
-- **.quorum-tooltip-arrow-left::before** - custom-logic - Left arrow pseudo-element
-- **.quorum-tooltip-dark-arrow-left::before** - custom-logic - Dark left arrow pseudo-element
-- **.quorum-tooltip-arrow-right::after** - custom-logic - Right arrow pseudo-element
-- **.quorum-tooltip-dark-arrow-right::after** - custom-logic - Dark right arrow pseudo-element
-- **.quorum-tooltip-arrow-up::before** - custom-logic - Up arrow pseudo-element
-- **.quorum-tooltip-dark-arrow-up::before** - custom-logic - Dark up arrow pseudo-element
-- **.quorum-tooltip-arrow-down::after** - custom-logic - Down arrow pseudo-element
-- **.quorum-tooltip-dark-arrow-down::after** - custom-logic - Dark down arrow pseudo-element
-- **.quorum-tooltip-invisible** - @apply-convertible - Hidden tooltip
-- **.quorum-tooltip-dark-invisible** - @apply-convertible - Dark hidden tooltip
-
----
-
 ## src/components/Container.scss
 
 - **.container-unit** - responsive - Main container with mobile optimizations
@@ -197,20 +178,6 @@ This document provides a comprehensive inventory of all CSS selectors across the
 - **.quorum-toggle-switch-active** - @apply-convertible - Active toggle positioning
 - **.quorum-toggle-switch-flipper** - theme-token - Toggle switch flipper
 
----
-
-## src/components/TooltipButton.scss
-
-- **.quorum-tooltip-button** - @apply-convertible - Base tooltip button
-- **.quorum-tooltip-button-danger** - theme-token - Danger tooltip button
-- **.quorum-tooltip-button-default:hover** - theme-token - Default hover state
-- **.quorum-tooltip-button-light:hover** - theme-token - Light hover state
-
----
-
-## src/components/TooltipDivider.scss
-
-- **.quorum-tooltip-divider** - theme-token - Tooltip divider styling
 
 ---
 

@@ -3,7 +3,6 @@ import ThemeRadioGroup from './ThemeRadioGroup';
 import AccentColorSwitcher from './AccentColorSwitcher';
 import Button from './Button';
 import ToggleSwitch from './ToggleSwitch';
-import Tooltip from './Tooltip';
 import ReactTooltip from './ReactTooltip';
 
 const Elements = () => {

@@ -27,7 +27,6 @@ import {
   Conversation,
 } from '../../api/quorumApi';
 import ToggleSwitch from '../ToggleSwitch';
-import Tooltip from '../Tooltip';
 import Input from '../Input';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useRegistrationContext } from '../context/RegistrationPersister';

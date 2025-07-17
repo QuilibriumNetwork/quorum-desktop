@@ -180,7 +180,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               <span className="text-xs truncate w-[190px] text-surface-9 dark:text-surface-8">
                 <ClickToCopyContent
                   text={members[s].address}
-                  tooltipText={t`Copy address to clipboard`}
+                  tooltipText={t`Copy address`}
                   tooltipLocation="left-start"
                   iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
                 >
@@ -295,7 +295,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 <div className="flex flex-row items-center">
                   <ClickToCopyContent
                     text={address ?? ''}
-                    tooltipText={t`Copy address to clipboard`}
+                    tooltipText={t`Copy address`}
                     className="font-light text-sm text-subtle"
                     iconPosition="right"
                     iconClassName="text-subtle hover:text-surface-7"
@@ -557,7 +557,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 <span className="text-xs truncate w-[190px] text-surface-9 dark:text-surface-8">
                   <ClickToCopyContent
                     text={members[s].address}
-                    tooltipText={t`Copy address to clipboard`}
+                    tooltipText={t`Copy address`}
                     tooltipLocation="left-start"
                     iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
                   >

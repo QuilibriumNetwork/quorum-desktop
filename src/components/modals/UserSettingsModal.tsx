@@ -349,7 +349,7 @@ const UserSettingsModal: React.FunctionComponent<{
                           </div>
                           <CopyToClipboard
                             className="flex-shrink-0"
-                            tooltipText={t`Copy address to clipboard`}
+                            tooltipText={t`Copy address`}
                             text={currentPasskeyInfo!.address}
                             tooltipLocation="top"
                           />

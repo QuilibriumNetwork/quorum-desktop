@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { faCopy, faEdit, faGear } from '@fortawesome/free-solid-svg-icons';
-import Tooltip from '../Tooltip';
-import TooltipButton from '../TooltipButton';
+import Button from '../Button';
 import UserProfile from './UserProfile';
 
 import './UserStatus.scss';
@@ -60,21 +59,18 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
             className="invisible-dismissal"
             onClick={() => setIsMenuExpanded(false)}
           />
-          <Tooltip
-            variant="light"
-            className="user-status-menu bottom-[24px] w-[200px] !p-[2px]"
-            arrow="none"
-            visible={isMenuExpanded}
-          >
-            <TooltipButton
-              text={t`Edit Profile`}
-              icon={faEdit}
+          <div className="user-status-menu bottom-[24px] w-[200px] p-[2px] bg-surface-0 rounded-lg shadow-lg border border-default">
+            <Button
+              className="w-full justify-between text-left p-2 hover:bg-surface-1 rounded text-main"
               onClick={() => {
                 setIsMenuExpanded(false);
                 setIsProfileEditorOpen(true);
               }}
-            />
-          </Tooltip>
+            >
+              <span>{t`Edit Profile`}</span>
+              <FontAwesomeIcon icon={faEdit} />
+            </Button>
+          </div>
         </>
       ) : (
         <></>
@@ -94,8 +90,8 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
           <div className="flex flex-row user-status-username w-[164px] text-ellipsis overflow-hidden">
             <span>{props.user.displayName}</span>
             <CopyToClipboard
-              className="ml-2"
-              tooltipText={t`Copy address to clipboard`}
+              className="ml-4"
+              tooltipText={t`Copy address`}
               text={props.user.address}
               tooltipLocation="top"
             />

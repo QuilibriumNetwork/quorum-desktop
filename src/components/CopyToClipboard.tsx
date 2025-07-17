@@ -75,7 +75,7 @@ const CopyToClipboard: React.FunctionComponent<CopyToClipboardProps> = ({
       <FontAwesomeIcon
         icon={faClipboard}
         id="copy-to-clipboard-icon"
-        className={`cursor-pointer hover:text-main text-surface-10 ${iconClassName}`}
+        className={`cursor-pointer hover:text-subtle text-surface-10 ${iconClassName}`}
         onClick={(e) => handleCopy(e)}
       />
       <ReactTooltip
