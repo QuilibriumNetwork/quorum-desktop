@@ -21,7 +21,9 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
     };
   }, []);
 
-  const conversationsList = [...conversations.pages.flatMap((c: any) => c.conversations)]
+  const conversationsList = [
+    ...conversations.pages.flatMap((c: any) => c.conversations),
+  ]
     .filter((c) => c)
     .sort((a, b) => b.timestamp - a.timestamp);
 
@@ -53,11 +55,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
             <Trans>Ready to start a truly private conversation?</Trans>
           </div>
           <Link to="/messages/new" className="inline-block max-w-full">
-            <Button
-              type="primary"
-              className="max-w-full"
-              onClick={() => {}}
-            >
+            <Button type="primary" className="max-w-full" onClick={() => {}}>
               <Trans>+ add friend</Trans>
             </Button>
           </Link>

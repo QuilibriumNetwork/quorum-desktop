@@ -6,6 +6,8 @@ import { useMessageDB } from '../context/MessageDB';
 import { useNavigate, useParams } from 'react-router';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const GroupEditor: React.FunctionComponent<{
   spaceId: string;
@@ -17,8 +19,16 @@ const GroupEditor: React.FunctionComponent<{
   let [group, setGroup] = React.useState<string>(groupName || '');
   let { channelId } = useParams();
   let [deleteStatus, setDeleteStatus] = React.useState<boolean>(false);
+  let [closing, setClosing] = React.useState<boolean>(false);
   let navigate = useNavigate();
   const { updateSpace } = useMessageDB();
+
+  const handleDismiss = () => {
+    setClosing(true);
+    setTimeout(() => {
+      dismiss();
+    }, 300);
+  };
 
   const saveChanges = React.useCallback(async () => {
     if (
@@ -43,7 +53,7 @@ const GroupEditor: React.FunctionComponent<{
         });
       }
     }
-    dismiss();
+    handleDismiss();
   }, [space, group]);
 
   const deleteGroup = React.useCallback(async () => {
@@ -71,11 +81,16 @@ const GroupEditor: React.FunctionComponent<{
         groups: space!.groups.filter((g) => g.groupName !== groupName),
       });
     }
-    dismiss();
+    handleDismiss();
   }, [space, group]);
 
   return (
-    <div className="group-editor flex flex-row modal-width-medium">
+    <div
+      className={`group-editor flex flex-row modal-width-medium${closing ? ' group-editor-closing' : ''}`}
+    >
+      <div className="group-editor-close-button" onClick={handleDismiss}>
+        <FontAwesomeIcon icon={faTimes} />
+      </div>
       <div className="flex flex-col grow overflow-y-scroll rounded-xl">
         <div className="group-editor-header">
           <div className="group-editor-text flex flex-col grow px-4">

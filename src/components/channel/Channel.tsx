@@ -678,7 +678,7 @@ const Channel: React.FC<ChannelProps> = ({
         content={t`add sticker`}
         place="top"
       />
-      
+
       {/* Stickers panel - positioned at top level to avoid stacking context issues */}
       {showStickers && (
         <>

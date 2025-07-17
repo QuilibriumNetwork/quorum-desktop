@@ -1,12 +1,15 @@
 # Mobile Message Options UX Enhancement
 
 ## Overview
+
 Transform the current hover-based message actions into a Discord-like mobile experience with long-press interactions and drawer-based UI patterns.
 
 ## Current State Analysis
 
 ### Existing Desktop Implementation
+
 Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
+
 - **Quick reactions**: ❤️, 👍, 🔥 (direct click)
 - **More reactions**: FontAwesome smile icon → opens emoji picker
 - **Reply**: FontAwesome reply icon → sets reply mode
@@ -14,6 +17,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - **Delete**: FontAwesome trash icon → deletes message (if user has permissions)
 
 ### Mobile UX Problems
+
 1. **No hover on mobile**: Touch devices don't have hover states
 2. **Tiny touch targets**: Current icons are too small for mobile interaction
 3. **No discoverability**: Users don't know message actions exist
@@ -22,12 +26,14 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ## Target UX Pattern (Discord-Inspired)
 
 ### Reference Screenshots Analysis
+
 - **image.png**: Discord mobile long-press drawer showing:
   - Quick reaction bar at top (❤️, 👍, 🔥, etc.)
   - Action menu below: Reply, Forward, Create Thread, Copy Text, Mark Unread, Reactions, Pin Message, Apps
 - **image2.png**: Discord emoji picker with search and organized categories
 
 ### Proposed Mobile Flow
+
 1. **Long-press message** → Opens action drawer
 2. **Quick reactions** → Tap to add reaction immediately
 3. **"Reactions" option** → Opens second drawer with full emoji picker
@@ -36,24 +42,28 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ## Implementation Strategy
 
 ### Phase 1: Mobile Detection & Long-Press Handler
+
 - [ ] Add mobile device detection
 - [ ] Implement long-press gesture handling
 - [ ] Create touch event handlers for message interaction
 - [ ] Add haptic feedback (if supported)
 
 ### Phase 2: Action Drawer Component
+
 - [ ] Create `MessageActionsDrawer` component
 - [ ] Implement slide-up animation from bottom
 - [ ] Add backdrop dismiss functionality
 - [ ] Create responsive layout for different screen sizes
 
 ### Phase 3: Quick Reactions Bar
+
 - [ ] Design quick reaction UI matching Discord pattern
 - [ ] Implement horizontal scrollable reaction list
 - [ ] Add reaction submission logic
 - [ ] Handle reaction state updates
 
 ### Phase 4: Action Menu Items
+
 - [ ] Create action menu item component
 - [ ] Implement Reply action
 - [ ] Implement Copy Link action
@@ -61,6 +71,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - [ ] Add "More Reactions" option
 
 ### Phase 5: Secondary Emoji Picker Drawer
+
 - [ ] Create secondary drawer for full emoji picker
 - [ ] Integrate with existing emoji picker logic
 - [ ] Implement proper mobile sizing (no CSS scaling)
@@ -68,6 +79,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - [ ] Handle drawer stacking (action drawer → emoji drawer)
 
 ### Phase 6: Desktop/Tablet Compatibility
+
 - [ ] Ensure desktop hover actions still work
 - [ ] Add tablet-specific interaction patterns
 - [ ] Implement responsive behavior switching
@@ -76,28 +88,30 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ## Technical Implementation Plan
 
 ### 1. Mobile Detection Hook
+
 ```typescript
 // src/hooks/useMobileDetection.ts
 export const useMobileDetection = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isTouch, setIsTouch] = useState(false);
-  
+
   useEffect(() => {
     const checkDevice = () => {
       setIsMobile(window.innerWidth <= 768);
       setIsTouch('ontouchstart' in window);
     };
-    
+
     checkDevice();
     window.addEventListener('resize', checkDevice);
     return () => window.removeEventListener('resize', checkDevice);
   }, []);
-  
+
   return { isMobile, isTouch };
 };
 ```
 
 ### 2. Long-Press Handler
+
 ```typescript
 // src/hooks/useLongPress.ts
 export const useLongPress = (
@@ -106,18 +120,18 @@ export const useLongPress = (
   delay: number = 500
 ) => {
   const timeoutRef = useRef<NodeJS.Timeout>();
-  
+
   const handleStart = useCallback(() => {
     timeoutRef.current = setTimeout(onLongPress, delay);
   }, [onLongPress, delay]);
-  
+
   const handleEnd = useCallback(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = undefined;
     }
   }, []);
-  
+
   return {
     onTouchStart: handleStart,
     onTouchEnd: handleEnd,
@@ -130,6 +144,7 @@ export const useLongPress = (
 ```
 
 ### 3. Action Drawer Component Structure
+
 ```typescript
 // src/components/message/MessageActionsDrawer.tsx
 interface MessageActionsDrawerProps {
@@ -164,7 +179,7 @@ const MessageActionsDrawer = ({
         className="absolute inset-0 bg-black/50"
         onClick={onClose}
       />
-      
+
       {/* Drawer */}
       <div
         className={`absolute bottom-0 left-0 right-0 bg-surface-1 rounded-t-lg transform transition-transform duration-300 ${
@@ -180,7 +195,7 @@ const MessageActionsDrawer = ({
           <QuickReactionButton emoji="😢" onReaction={onReaction} />
           <QuickReactionButton emoji="😡" onReaction={onReaction} />
         </div>
-        
+
         {/* Action Menu */}
         <div className="p-4">
           <ActionMenuItem
@@ -214,6 +229,7 @@ const MessageActionsDrawer = ({
 ```
 
 ### 4. Quick Reaction Button Component
+
 ```typescript
 // src/components/message/QuickReactionButton.tsx
 interface QuickReactionButtonProps {
@@ -234,6 +250,7 @@ const QuickReactionButton = ({ emoji, onReaction }: QuickReactionButtonProps) =>
 ```
 
 ### 5. Action Menu Item Component
+
 ```typescript
 // src/components/message/ActionMenuItem.tsx
 interface ActionMenuItemProps {
@@ -259,6 +276,7 @@ const ActionMenuItem = ({ icon, label, onAction, destructive = false }: ActionMe
 ```
 
 ### 6. Secondary Emoji Drawer Component
+
 ```typescript
 // src/components/message/EmojiPickerDrawer.tsx
 interface EmojiPickerDrawerProps {
@@ -285,7 +303,7 @@ const EmojiPickerDrawer = ({
         className="absolute inset-0 bg-black/50"
         onClick={onClose}
       />
-      
+
       {/* Drawer */}
       <div
         className={`absolute bottom-0 left-0 right-0 bg-surface-1 rounded-t-lg transform transition-transform duration-300 ${
@@ -303,7 +321,7 @@ const EmojiPickerDrawer = ({
             <FontAwesomeIcon icon={faX} />
           </button>
         </div>
-        
+
         {/* Emoji Picker */}
         <div className="flex-1 overflow-hidden">
           <EmojiPicker
@@ -326,17 +344,20 @@ const EmojiPickerDrawer = ({
 ## Message.tsx Integration Plan
 
 ### Current Desktop Behavior (Keep)
+
 - [ ] Maintain hover actions for desktop/tablet
 - [ ] Keep existing emoji picker positioning for non-mobile
 - [ ] Preserve current functionality and styling
 
 ### Mobile Behavior (New)
+
 - [ ] Replace hover with long-press interaction
 - [ ] Show action drawer instead of inline buttons
 - [ ] Use drawer-based emoji picker
 - [ ] Add haptic feedback for interactions
 
 ### Implementation Steps
+
 ```typescript
 // In Message.tsx component
 const { isMobile, isTouch } = useMobileDetection();
@@ -363,7 +384,7 @@ const longPressHandlers = useLongPress(
   className="message-container"
 >
   {/* Existing message content */}
-  
+
   {/* Desktop hover actions - only show on non-mobile */}
   {!isMobile && hoverTarget === message.messageId && (
     <div className="absolute flex flex-row right-0 top-[-10px] p-1 bg-tooltip select-none shadow-lg rounded-lg">
@@ -426,6 +447,7 @@ const longPressHandlers = useLongPress(
 ## Files to Create/Modify
 
 ### New Files
+
 - [ ] `src/hooks/useMobileDetection.ts` - Mobile device detection
 - [ ] `src/hooks/useLongPress.ts` - Long-press gesture handler
 - [ ] `src/components/message/MessageActionsDrawer.tsx` - Main action drawer
@@ -434,6 +456,7 @@ const longPressHandlers = useLongPress(
 - [ ] `src/components/message/EmojiPickerDrawer.tsx` - Secondary emoji drawer
 
 ### Modified Files
+
 - [ ] `src/components/message/Message.tsx` - Add mobile interaction logic
 - [ ] `src/styles/_components.scss` - Add mobile drawer styling
 - [ ] `src/components/message/MessageList.tsx` - Handle drawer positioning context
@@ -441,12 +464,13 @@ const longPressHandlers = useLongPress(
 ## Styling Requirements
 
 ### Mobile Drawer Styles
+
 ```scss
 // Action drawer animations
 .message-actions-drawer {
   transform: translateY(100%);
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   &.open {
     transform: translateY(0);
   }
@@ -475,6 +499,7 @@ const longPressHandlers = useLongPress(
 ```
 
 ### Responsive Breakpoints
+
 - **Mobile**: ≤ 768px (use drawer pattern)
 - **Tablet**: 769px - 1023px (hybrid approach)
 - **Desktop**: ≥ 1024px (keep hover pattern)
@@ -482,6 +507,7 @@ const longPressHandlers = useLongPress(
 ## Testing Checklist
 
 ### Mobile Testing
+
 - [ ] Long-press gesture detection works reliably
 - [ ] Haptic feedback triggers on supported devices
 - [ ] Drawer animations are smooth (60fps)
@@ -491,12 +517,14 @@ const longPressHandlers = useLongPress(
 - [ ] Secondary emoji drawer opens/closes correctly
 
 ### Cross-Device Testing
+
 - [ ] Desktop hover actions still work
 - [ ] Tablet experience is optimized
 - [ ] No conflicts between mobile and desktop patterns
 - [ ] Responsive switching works at breakpoints
 
 ### Accessibility Testing
+
 - [ ] Screen reader compatibility
 - [ ] High contrast mode support
 - [ ] Keyboard navigation (for desktop)
@@ -506,6 +534,7 @@ const longPressHandlers = useLongPress(
 ## Performance Considerations
 
 ### Optimization Strategies
+
 - [ ] Lazy load drawer components
 - [ ] Use `React.memo` for frequently rendered components
 - [ ] Debounce resize events for responsive switching
@@ -513,6 +542,7 @@ const longPressHandlers = useLongPress(
 - [ ] Use `will-change` CSS property for animated elements
 
 ### Memory Management
+
 - [ ] Clean up event listeners on unmount
 - [ ] Cancel pending timeouts on component unmount
 - [ ] Avoid memory leaks in gesture handlers
@@ -520,12 +550,14 @@ const longPressHandlers = useLongPress(
 ## Success Metrics
 
 ### User Experience
+
 - [ ] Reduced tap errors on mobile
 - [ ] Increased message interaction rate
 - [ ] Improved discoverability of message actions
 - [ ] Better accessibility compliance
 
 ### Technical
+
 - [ ] No performance regression
 - [ ] Smooth animations (60fps)
 - [ ] Proper gesture recognition
@@ -534,18 +566,21 @@ const longPressHandlers = useLongPress(
 ## Integration with Existing Systems
 
 ### Emoji Picker Integration
+
 - [ ] Reference `emojipicker-responsive.md` for proper mobile sizing
 - [ ] Use same responsive strategy (no CSS scaling)
 - [ ] Maintain existing theme integration
 - [ ] Preserve custom emoji support
 
 ### Message System Integration
+
 - [ ] Use existing `submitMessage` function
 - [ ] Maintain reaction state management
 - [ ] Preserve reply functionality
 - [ ] Keep delete permissions logic
 
 ### Translation Integration
+
 - [ ] Use existing `@lingui/core` for all text
 - [ ] Add new translation keys for drawer labels
 - [ ] Maintain RTL language support
@@ -553,11 +588,13 @@ const longPressHandlers = useLongPress(
 ## Rollback Plan
 
 ### Phase-by-Phase Rollback
+
 1. **Phase 1 Rollback**: Remove mobile detection, restore hover-only
 2. **Phase 2 Rollback**: Remove drawer components, keep desktop behavior
 3. **Phase 3+ Rollback**: Disable mobile features with feature flag
 
 ### Feature Flag Implementation
+
 ```typescript
 // src/config/featureFlags.ts
 export const FEATURE_FLAGS = {

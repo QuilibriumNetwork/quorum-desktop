@@ -22,6 +22,8 @@ import {
 import locales from '../../i18n/locales';
 import useForceUpdate from '../hooks/forceUpdate';
 import ReactTooltip from '../ReactTooltip';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -60,8 +62,16 @@ const UserSettingsModal: React.FunctionComponent<{
   const [allowSync, setAllowSync] = React.useState<boolean>(false);
   const [language, setLanguage] = React.useState(getUserLocale());
   const [languageChanged, setLanguageChanged] = React.useState<boolean>(false);
+  const [closing, setClosing] = React.useState<boolean>(false);
 
   const forceUpdate = useForceUpdate();
+
+  const handleDismiss = () => {
+    setClosing(true);
+    setTimeout(() => {
+      dismiss();
+    }, 300);
+  };
 
   React.useEffect(() => {
     console.log('Language changed to:', language);
@@ -180,11 +190,16 @@ const UserSettingsModal: React.FunctionComponent<{
       },
       keyset: keyset,
     });
-    dismiss();
+    handleDismiss();
   };
 
   return (
-    <div className="modal-complex-container">
+    <div
+      className={`modal-complex-container${closing ? ' modal-complex-closing' : ''}`}
+    >
+      <div className="modal-complex-close-button" onClick={handleDismiss}>
+        <FontAwesomeIcon icon={faTimes} />
+      </div>
       <div className="modal-complex-layout">
         {/* Desktop/Tablet Sidebar */}
         <div className="modal-complex-sidebar">
@@ -254,7 +269,7 @@ const UserSettingsModal: React.FunctionComponent<{
                       >
                         <input {...getInputProps()} />
                       </div>
-                      <div className="modal-text-section">
+                      <div className="modal-text-section sm:mt-6">
                         <div className="modal-text-label">{t`Display Name`}</div>
                         <input
                           className="w-full quorum-input modal-input-text"
@@ -266,7 +281,10 @@ const UserSettingsModal: React.FunctionComponent<{
                     <div className="modal-content-section">
                       <div className="modal-content-info">
                         <div className="modal-text-label">{t`Account Address`}</div>
-                        <div className="flex flex-row items-start text-base">
+                        <div className="pt-1 mb-4 modal-text-small text-main">
+                          {t`This is your public address and is safe to share with anyone you want to interact with.`}
+                        </div>
+                        <div className="modal-input-display text-sm lg:text-base">
                           <div className="break-all flex-1 mr-2">
                             {currentPasskeyInfo!.address}
                           </div>
@@ -312,13 +330,13 @@ const UserSettingsModal: React.FunctionComponent<{
                         ) => (
                           <div
                             key={d.inbox_registration.inbox_address}
-                            className={`flex flex-row justify-between items-start py-3 ${
+                            className={`flex flex-row justify-between items-center py-3 ${
                               index > 0
-                                ? 'border-t border-dashed border-subtle'
+                                ? 'border-t border-dashed border-surface-7'
                                 : ''
                             }`}
                           >
-                            <div className="flex flex-col justify-around font-light break-all flex-1 mr-2">
+                            <div className="flex flex-col justify-around font-light break-all flex-1 mr-2 text-sm">
                               {d.inbox_registration.inbox_address}
                             </div>
                             <div className="flex-shrink-0">
@@ -338,7 +356,13 @@ const UserSettingsModal: React.FunctionComponent<{
                               {keyset.deviceKeyset.inbox_keyset
                                 .inbox_address ===
                                 d.inbox_registration.inbox_address && (
-                                <div className="font-light">(this device)</div>
+                                <Button
+                                  size="small"
+                                  disabled={true}
+                                  onClick={() => {}}
+                                >
+                                  {t`This device`}
+                                </Button>
                               )}
                             </div>
                           </div>

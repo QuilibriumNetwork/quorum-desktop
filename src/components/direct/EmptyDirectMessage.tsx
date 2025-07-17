@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './DirectMessage.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCommentDots, faBars, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCommentDots,
+  faBars,
+  faEye,
+  faEyeSlash,
+} from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useConversations } from '../../hooks';
 import { t } from '@lingui/core/macro';
@@ -17,7 +22,10 @@ export const EmptyDirectMessage = () => {
   });
 
   useEffect(() => {
-    localStorage.setItem('quilibrium-show-home-screen', JSON.stringify(showHomeScreen));
+    localStorage.setItem(
+      'quilibrium-show-home-screen',
+      JSON.stringify(showHomeScreen)
+    );
   }, [showHomeScreen]);
 
   return (

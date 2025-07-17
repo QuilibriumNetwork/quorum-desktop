@@ -59,12 +59,9 @@
 
 // Consistent Text Size Classes for Modals
 .modal-text-label {
-  font-size: 16px;
-  font-weight: 600;
-
-  @media (max-width: 640px) {
-    font-size: 14px;
-  }
+  font-variant-caps: all-small-caps;
+  font-weight: 700;
+  font-size: 1.2rem;
 }
 
 .modal-text-section-header {
@@ -94,6 +91,23 @@
 
   @media (max-width: 640px) {
     font-size: 13px !important;
+  }
+}
+
+// Display box that looks like an input but handles read-only content
+.modal-input-display {
+  width: 100%;
+  background: var(--color-bg-input);
+  padding: 10px 16px;
+  border-radius: 10px;
+  color: var(--color-text-main);
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+
+  @media (max-width: 768px) {
+
+    padding: 12px;
   }
 }
 
@@ -131,12 +145,52 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  animation: modalOpen 0.3s ease-out;
 
   @media (max-width: 768px) {
     width: 95vw;
     height: 85vh;
     max-width: none;
     border-radius: 10px;
+  }
+}
+
+.modal-complex-container.modal-complex-closing {
+  opacity: 0;
+  transform: scale(0.95);
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
+}
+
+.modal-complex-close-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-subtle);
+  transition: all 0.2s ease;
+  z-index: 10;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--color-text-main);
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 768px) {
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
   }
 }
 
@@ -417,12 +471,52 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  animation: modalOpen 0.3s ease-out;
 
   @media (max-width: 768px) {
     width: 95vw;
     max-width: none;
     max-height: 60vh;
     border-radius: 10px;
+  }
+}
+
+.modal-small-container.modal-small-closing {
+  opacity: 0;
+  transform: scale(0.95);
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
+}
+
+.modal-small-close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-subtle);
+  transition: all 0.2s ease;
+  z-index: 10;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--color-text-main);
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 768px) {
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
   }
 }
 

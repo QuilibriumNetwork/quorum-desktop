@@ -7,6 +7,8 @@ import { Channel } from '../../api/quorumApi';
 import { useNavigate, useParams } from 'react-router';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const ChannelEditor: React.FunctionComponent<{
   spaceId: string;
@@ -28,8 +30,16 @@ const ChannelEditor: React.FunctionComponent<{
       ?.channels.find((c) => c.channelId === channelId)?.channelTopic || ''
   );
   let [deleteStatus, setDeleteStatus] = React.useState<boolean>(false);
+  let [closing, setClosing] = React.useState<boolean>(false);
   let navigate = useNavigate();
   const { updateSpace, createChannel } = useMessageDB();
+
+  const handleDismiss = () => {
+    setClosing(true);
+    setTimeout(() => {
+      dismiss();
+    }, 300);
+  };
 
   const saveChanges = React.useCallback(async () => {
     if (channelId) {
@@ -79,7 +89,7 @@ const ChannelEditor: React.FunctionComponent<{
         }),
       });
     }
-    dismiss();
+    handleDismiss();
   }, [space, channelName, channelTopic]);
 
   const deleteChannel = React.useCallback(async () => {
@@ -104,12 +114,17 @@ const ChannelEditor: React.FunctionComponent<{
           };
         }),
       });
-      dismiss();
+      handleDismiss();
     }
   }, [space, channelName, channelTopic]);
 
   return (
-    <div className="modal-small-container">
+    <div
+      className={`modal-small-container${closing ? ' modal-small-closing' : ''}`}
+    >
+      <div className="modal-small-close-button" onClick={handleDismiss}>
+        <FontAwesomeIcon icon={faTimes} />
+      </div>
       <div className="modal-small-layout">
         <div className="modal-small-content">
           <div className="modal-content-section">

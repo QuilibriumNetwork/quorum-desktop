@@ -10,6 +10,7 @@ import {
   faChevronDown,
   faTrash,
   faInfoCircle,
+  faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { useMessageDB } from '../context/MessageDB';
@@ -48,9 +49,17 @@ const SpaceEditor: React.FunctionComponent<{
   let [selectedCategory, setSelectedCategory] =
     React.useState<string>('general');
   const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
+  const [closing, setClosing] = React.useState<boolean>(false);
   const [bannerData, setBannerData] = React.useState<ArrayBuffer | undefined>();
   const [isDefaultChannelListExpanded, setIsDefaultChannelListExpanded] =
     React.useState<boolean>(false);
+
+  const handleDismiss = () => {
+    setClosing(true);
+    setTimeout(() => {
+      dismiss();
+    }, 300);
+  };
   const [isInviteListExpanded, setIsInviteListExpanded] =
     React.useState<boolean>(false);
   const [roles, setRoles] = React.useState<Role[]>(space?.roles || []);
@@ -270,7 +279,7 @@ const SpaceEditor: React.FunctionComponent<{
       emojis: emojis,
       stickers: stickers,
     });
-    dismiss();
+    handleDismiss();
   }, [
     space,
     displayName,
@@ -287,7 +296,12 @@ const SpaceEditor: React.FunctionComponent<{
   ]);
 
   return (
-    <div className="modal-complex-container">
+    <div
+      className={`modal-complex-container${closing ? ' modal-complex-closing' : ''}`}
+    >
+      <div className="modal-complex-close-button" onClick={handleDismiss}>
+        <FontAwesomeIcon icon={faTimes} />
+      </div>
       <div className="modal-complex-layout">
         <div className="modal-complex-sidebar">
           <div className="modal-nav-title">Settings</div>
@@ -528,11 +542,10 @@ const SpaceEditor: React.FunctionComponent<{
                             Click on the role name and tag to edit them.
                           </Trans>
                         </div>
-                      </div>
-                      <div className="modal-content-actions">
-                        <div>
+                        <div className="pt-3">
                           <Button
                             type="secondary"
+                            className="!w-auto !inline-flex"
                             onClick={() => {
                               setRoles((prev) => [
                                 ...prev,

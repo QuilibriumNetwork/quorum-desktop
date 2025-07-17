@@ -3,7 +3,7 @@
   background-color: var(--color-bg-modal);
   border-radius: 10px;
   padding: 26px;
-  animation: createBox 0.25s;
+  animation: modalOpen 0.3s ease-out;
   max-width: 90vw;
   max-height: 90vh;
   overflow-y: auto;
@@ -18,15 +18,20 @@
 }
 
 .quorum-modal-closing {
-  scale: 0;
-  transition: scale 0.25s;
+  opacity: 0;
+  transform: scale(0.95);
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
 }
 
-@keyframes createBox {
+@keyframes modalOpen {
   from {
-    transform: scale(0);
+    opacity: 0;
+    transform: scale(0.95);
   }
   to {
+    opacity: 1;
     transform: scale(1);
   }
 }
@@ -53,4 +58,18 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+/* Backdrop fade animation */
+.fixed.inset-0.z-\[9999\] {
+  animation: backdropFadeIn 0.3s ease-out;
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
