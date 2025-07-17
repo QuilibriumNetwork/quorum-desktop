@@ -8,6 +8,11 @@
   margin-left: 8px;
   margin-top: 6px;
   margin-bottom: -4px;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--accent-500);
+  }
 
   // Mobile phone optimization
   @media (max-width: 480px) {
@@ -47,11 +52,44 @@
   }
 }
 
-.expanded-nav-search-spaces,
-.expanded-nav-add-spaces,
-.expanded-nav-join-spaces {
-  z-index: 1002;
-  position: relative;
-  left: 0px;
-  bottom: 0px;
+.expanded-nav-buttons-container {
+  @apply fixed bottom-0 flex flex-col items-center justify-end;
+  width: 57px;
+  height: 100vh;
+  padding-bottom: 48px;
+  padding-left: 16px;
+  gap: 8px;
+  
+  // Mobile phone optimization
+  @media (max-width: 480px) {
+    width: 40px;
+    padding-bottom: 40px;
+    padding-left: 8px;
+    gap: 8px;
+  }
+}
+
+.expanded-nav-button-primary {
+  @apply w-[40px] h-[40px] flex items-center justify-center rounded-full;
+  @apply bg-accent-500 text-white border-2 border-transparent;
+  @apply transition-all duration-200 lg:hover:border-accent-400 lg:hover:bg-accent-400;
+  @apply cursor-pointer;
+  
+  // Mobile phone optimization
+  @media (max-width: 480px) {
+    @apply w-[32px] h-[32px];
+  }
+}
+
+.expanded-nav-button-avatar {
+  @apply w-[40px] h-[40px] rounded-full border-2 border-transparent;
+  @apply transition-all duration-200 lg:hover:border-accent-500;
+  @apply cursor-pointer;
+  background-position: center;
+  background-size: cover;
+  
+  // Mobile phone optimization
+  @media (max-width: 480px) {
+    @apply w-[32px] h-[32px];
+  }
 }

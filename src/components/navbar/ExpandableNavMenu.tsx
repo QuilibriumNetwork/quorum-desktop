@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faBars,
+  faGear,
   faCompressAlt,
   faPlus,
   faSearch,
@@ -11,6 +11,10 @@ import Button from '../Button';
 import './ExpandableNavMenu.scss';
 import { getConfig } from '../../config/config';
 import { t } from '@lingui/core/macro';
+import { useModalContext } from '../AppWithSearch';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { DefaultImages } from '../../utils';
+import ReactTooltip from '../ReactTooltip';
 
 type ExpandableNavMenuProps = {
   showCreateSpaceModal: () => void;
@@ -21,38 +25,77 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
   props
 ) => {
   const [isExpanded, setExpanded] = useState(false);
+  const { openUserSettings } = useModalContext();
+  const user = usePasskeysContext();
 
-  return isExpanded ? (
+  return (
     <>
-      <div
-        className="fixed inset-0 z-[9998] bg-overlay backdrop-blur"
-        onClick={() => setExpanded(false)}
-      />
-      <div className="expanded-nav-menu relative z-[9999]">
-        {/* <Button className="expanded-nav-search-spaces" icon type="primary" onClick={(e) => history.push("/spaces/search")} tooltip={localizations["TOOLTIP_SEARCH_SPACES"]([])}><FontAwesomeIcon icon={faSearch}/></Button> */}
-        <Button
-          className="expanded-nav-add-spaces w-10 h-10 ml-3 leading-6 mb-4 inline-block"
-          icon
-          type="primary"
-          onClick={(e) => {
-            setExpanded(false);
-            props.showCreateSpaceModal();
-          }}
-          tooltip={t`Add Space`}
-          highlightedTooltip={true}
+      {isExpanded ? (
+        <>
+          <div
+            className="fixed inset-0 z-[9998] bg-overlay backdrop-blur"
+            onClick={() => setExpanded(false)}
+          />
+          <div className="expanded-nav-menu relative z-[9999]">
+            <div className="expanded-nav-buttons-container">
+              <div
+                className="expanded-nav-button-primary"
+                onClick={(e) => {
+                  setExpanded(false);
+                  props.showCreateSpaceModal();
+                }}
+                data-tooltip-id="create-space-tooltip"
+              >
+                <FontAwesomeIcon icon={faPlus} />
+              </div>
+              <div
+                className="expanded-nav-button-avatar"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpanded(false);
+                  openUserSettings();
+                }}
+                style={{
+                  backgroundImage:
+                    user?.currentPasskeyInfo?.pfpUrl &&
+                    !user.currentPasskeyInfo.pfpUrl.includes(
+                      DefaultImages.UNKNOWN_USER
+                    )
+                      ? `url(${user.currentPasskeyInfo.pfpUrl})`
+                      : 'var(--unknown-icon)',
+                }}
+                data-tooltip-id="user-avatar-tooltip"
+              />
+            </div>
+          </div>
+        </>
+      ) : (
+        <div
+          className="expand-button cursor-pointer"
+          onClick={() => setExpanded(true)}
         >
-          <FontAwesomeIcon icon={faPlus} />
-        </Button>
-        {/* <Button className="expanded-nav-join-spaces w-10 h-10 ml-3 leading-6 mb-4 inline-block" icon type="primary" onClick={(e) => { setExpanded(false); props.showJoinSpaceModal(); }} tooltip={localizations.localizations["TOOLTIP_JOIN_SPACE"]([])}><FontAwesomeIcon icon={faCompressAlt}/></Button> */}
-      </div>
+          <FontAwesomeIcon icon={faGear} />
+        </div>
+      )}
+      <ReactTooltip
+        id="create-space-tooltip"
+        content={t`Add Space`}
+        place="top"
+        anchorSelect="[data-tooltip-id='create-space-tooltip']"
+        showOnTouch={true}
+        highlighted={true}
+        className="z-[10000]"
+      />
+      <ReactTooltip
+        id="user-avatar-tooltip"
+        content={t`Account Settings`}
+        place="top"
+        anchorSelect="[data-tooltip-id='user-avatar-tooltip']"
+        showOnTouch={true}
+        highlighted={true}
+        className="z-[10000]"
+      />
     </>
-  ) : (
-    <div
-      className="expand-button cursor-pointer"
-      onClick={() => setExpanded(true)}
-    >
-      <FontAwesomeIcon icon={faBars} />
-    </div>
   );
 };
 
