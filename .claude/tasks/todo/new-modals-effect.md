@@ -18,6 +18,7 @@ After analyzing the risks of complex modal animations, we've decided to implemen
 - ✅ Safe implementation for complex modals (SpaceEditor, UserSettingsModal)
 - ✅ Mobile-friendly performance
 - ✅ Maintains existing functionality
+- ✅ Consistent close button layout across all modals
 
 ## Technical Specifications
 
@@ -72,6 +73,7 @@ After analyzing the risks of complex modal animations, we've decided to implemen
 - [ ] Update `Modal.scss` with fade + subtle scale animations
 - [ ] Replace current scale animation with safer version
 - [ ] Add backdrop fade animation for consistency
+- [ ] Ensure every modal has a close "X" button in the top right corner with consistent layout
 - [ ] Test base Modal component functionality
 
 ### Phase 2: Simple Modal Updates
@@ -108,6 +110,7 @@ After analyzing the risks of complex modal animations, we've decided to implemen
   - [ ] Update closing animation logic
   - [ ] Ensure consistent 300ms timing
   - [ ] Add fade component to existing scale
+  - [ ] Ensure close "X" button is positioned consistently in top right corner
   - [ ] Test backdrop click behavior
   
 - [ ] `/src/components/Modal.scss`
