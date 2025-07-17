@@ -39,6 +39,7 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
             props.showCreateSpaceModal();
           }}
           tooltip={t`Add Space`}
+          highlightedTooltip={true}
         >
           <FontAwesomeIcon icon={faPlus} />
         </Button>

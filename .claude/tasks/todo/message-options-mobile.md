@@ -29,7 +29,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 
 - **image.png**: Discord mobile long-press drawer showing:
   - Quick reaction bar at top (❤️, 👍, 🔥, etc.)
-  - Action menu below: Reply, Forward, Create Thread, Copy Text, Mark Unread, Reactions, Pin Message, Apps
+  - Action menu below: Reply, Forward, Copy Link, Copy Text, Reactions, Delete (if permitted)
 - **image2.png**: Discord emoji picker with search and organized categories
 
 ### Proposed Mobile Flow
@@ -37,9 +37,10 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 1. **Long-press message** → Opens action drawer
 2. **Quick reactions** → Tap to add reaction immediately
 3. **"Reactions" option** → Opens second drawer with full emoji picker
-4. **Other actions** → Reply, Copy Link, Delete (if permitted)
 
 ## Implementation Strategy
+
+Check each box once a task has been completed. Add notes if necessary.
 
 ### Phase 1: Mobile Detection & Long-Press Handler
 
@@ -448,8 +449,8 @@ const longPressHandlers = useLongPress(
 
 ### New Files
 
-- [ ] `src/hooks/useMobileDetection.ts` - Mobile device detection
-- [ ] `src/hooks/useLongPress.ts` - Long-press gesture handler
+- [ ] `src/hooks/useMobileDetection.ts` - Mobile device detection (check if existing already)
+- [ ] `src/hooks/useLongPress.ts` - Long-press gesture handler (check if existing already)
 - [ ] `src/components/message/MessageActionsDrawer.tsx` - Main action drawer
 - [ ] `src/components/message/QuickReactionButton.tsx` - Quick reaction buttons
 - [ ] `src/components/message/ActionMenuItem.tsx` - Action menu items

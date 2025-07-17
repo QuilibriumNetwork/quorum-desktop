@@ -42,7 +42,7 @@ export default defineConfig({
   resolve: {
     alias: {
       crypto: 'crypto-browserify',
-      // eslint-disable-next-line no-undef
+
       '@quilibrium/quilibrium-js-sdk-channels': resolve(
         __dirname,
         'node_modules/@quilibrium/quilibrium-js-sdk-channels/dist/index.js'

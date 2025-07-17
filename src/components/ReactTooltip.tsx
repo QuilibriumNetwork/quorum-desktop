@@ -25,6 +25,7 @@ type ReactTooltipProps = {
   theme?: 'dark' | 'light' | 'system';
   anchorSelect?: string;
   className?: string;
+  highlighted?: boolean;
 };
 
 const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
@@ -35,9 +36,12 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
   className = '',
   theme,
   anchorSelect,
+  highlighted = false,
 }) => {
   const { resolvedTheme } = useTheme();
   const resolvedThemeInUse = theme || resolvedTheme;
+
+  const tooltipClassName = `${resolvedThemeInUse === 'dark' ? 'quorum-react-tooltip-dark' : 'quorum-react-tooltip'} ${highlighted ? 'quorum-react-tooltip-highlighted' : ''} ${className}`;
 
   return (
     <Tooltip
@@ -45,8 +49,9 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
       content={content}
       place={place}
       noArrow={noArrow}
-      className={`${resolvedThemeInUse === 'dark' ? 'quorum-react-tooltip-dark' : 'quorum-react-tooltip'} ${className}`}
+      className={tooltipClassName}
       anchorSelect={anchorSelect}
+      border={highlighted ? '1px solid var(--color-border-default)' : undefined}
     />
   );
 };

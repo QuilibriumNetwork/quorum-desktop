@@ -103,11 +103,18 @@ const SpaceEditor: React.FunctionComponent<{
   const { data: spaceMembers } = useSpaceMembers({ spaceId });
   const [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
   const [iconFileError, setIconFileError] = React.useState<string | null>(null);
-  const [bannerFileError, setBannerFileError] = React.useState<string | null>(null);
+  const [bannerFileError, setBannerFileError] = React.useState<string | null>(
+    null
+  );
   const [isIconUploading, setIsIconUploading] = React.useState<boolean>(false);
-  const [isBannerUploading, setIsBannerUploading] = React.useState<boolean>(false);
-  const [emojiFileError, setEmojiFileError] = React.useState<string | null>(null);
-  const [stickerFileError, setStickerFileError] = React.useState<string | null>(null);
+  const [isBannerUploading, setIsBannerUploading] =
+    React.useState<boolean>(false);
+  const [emojiFileError, setEmojiFileError] = React.useState<string | null>(
+    null
+  );
+  const [stickerFileError, setStickerFileError] = React.useState<string | null>(
+    null
+  );
   const [publicInvite, setPublicInvite] = React.useState(
     space?.isPublic || false
   );
@@ -115,7 +122,12 @@ const SpaceEditor: React.FunctionComponent<{
   const { apiClient } = useQuorumApiClient();
   const navigate = useNavigate();
 
-  const { getRootProps, getInputProps, acceptedFiles, isDragActive: isIconDragActive } = useDropzone({
+  const {
+    getRootProps,
+    getInputProps,
+    acceptedFiles,
+    isDragActive: isIconDragActive,
+  } = useDropzone({
     accept: {
       'image/png': ['.png'],
       'image/jpeg': ['.jpg', '.jpeg'],
@@ -561,9 +573,9 @@ const SpaceEditor: React.FunctionComponent<{
                             {iconFileError && (
                               <div className="error-label flex items-center justify-between">
                                 <span>{iconFileError}</span>
-                                <FontAwesomeIcon 
-                                  icon={faTimes} 
-                                  className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100" 
+                                <FontAwesomeIcon
+                                  icon={faTimes}
+                                  className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                                   onClick={() => setIconFileError(null)}
                                 />
                               </div>
@@ -571,9 +583,9 @@ const SpaceEditor: React.FunctionComponent<{
                             {bannerFileError && (
                               <div className="error-label flex items-center justify-between">
                                 <span>{bannerFileError}</span>
-                                <FontAwesomeIcon 
-                                  icon={faTimes} 
-                                  className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100" 
+                                <FontAwesomeIcon
+                                  icon={faTimes}
+                                  className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                                   onClick={() => setBannerFileError(null)}
                                 />
                               </div>
@@ -603,42 +615,44 @@ const SpaceEditor: React.FunctionComponent<{
                           <>
                             <div
                               className="fixed inset-0 z-[1]"
-                              onClick={() => setIsDefaultChannelListExpanded(false)}
+                              onClick={() =>
+                                setIsDefaultChannelListExpanded(false)
+                              }
                             />
                             <div className="absolute pr-[227px] w-full z-[2]">
                               <div className="bg-input max-w-[350px] mt-1 max-h-[200px] rounded-xl overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
                                 {space?.groups.map((g, i) => {
-                                return (
-                                  <React.Fragment key={'group-select-' + i}>
-                                    <div className="small-caps py-2 px-3">
-                                      {g.groupName}
-                                    </div>
-                                    {g.channels.map((c, j) => {
-                                      return (
-                                        <div
-                                          onClick={() => {
-                                            setDefaultChannel(c);
-                                            setIsDefaultChannelListExpanded(
-                                              false
-                                            );
-                                          }}
-                                          className="py-2 px-2 mx-1 my-1 text-main hover:bg-surface-4 rounded-lg cursor-pointer !font-bold"
-                                          key={
-                                            'group-select-' +
-                                            i +
-                                            '-channel-' +
-                                            i
-                                          }
-                                        >
-                                          #{c.channelName}
-                                        </div>
-                                      );
-                                    })}
-                                  </React.Fragment>
-                                );
-                              })}
+                                  return (
+                                    <React.Fragment key={'group-select-' + i}>
+                                      <div className="small-caps py-2 px-3">
+                                        {g.groupName}
+                                      </div>
+                                      {g.channels.map((c, j) => {
+                                        return (
+                                          <div
+                                            onClick={() => {
+                                              setDefaultChannel(c);
+                                              setIsDefaultChannelListExpanded(
+                                                false
+                                              );
+                                            }}
+                                            className="py-2 px-2 mx-1 my-1 text-main hover:bg-surface-4 rounded-lg cursor-pointer !font-bold"
+                                            key={
+                                              'group-select-' +
+                                              i +
+                                              '-channel-' +
+                                              i
+                                            }
+                                          >
+                                            #{c.channelName}
+                                          </div>
+                                        );
+                                      })}
+                                    </React.Fragment>
+                                  );
+                                })}
+                              </div>
                             </div>
-                          </div>
                           </>
                         )}
                       </div>
@@ -844,7 +858,8 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="pt-2 text-sm text-main">
                           <Trans>
                             Add up to 50 custom emoji. Custom emojis can only be
-                            used within a Space. You can upload PNG, JPG or GIF, max 256kB.
+                            used within a Space. You can upload PNG, JPG or GIF,
+                            max 256kB.
                           </Trans>
                         </div>
                       </div>
@@ -865,9 +880,9 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="mt-2">
                           <div className="error-label flex items-center justify-between">
                             <span>{emojiFileError}</span>
-                            <FontAwesomeIcon 
-                              icon={faTimes} 
-                              className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100" 
+                            <FontAwesomeIcon
+                              icon={faTimes}
+                              className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                               onClick={() => setEmojiFileError(null)}
                             />
                           </div>
@@ -884,7 +899,9 @@ const SpaceEditor: React.FunctionComponent<{
                               <div className="flex flex-col justify-around font-mono font-medium mx-2">
                                 <span>
                                   <input
-                                    className={'border-0 bg-[rgba(0,0,0,0)] max-w-48 truncate'}
+                                    className={
+                                      'border-0 bg-[rgba(0,0,0,0)] max-w-48 truncate'
+                                    }
                                     title={em.name}
                                     onChange={(e) =>
                                       setEmojis((prev) => [
@@ -939,7 +956,8 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="pt-2 text-sm text-main">
                           <Trans>
                             Add up to 50 custom stickers. Custom stickers can
-                            only be used within a Space. You can upload PNG, JPG or GIF, max 256kB.
+                            only be used within a Space. You can upload PNG, JPG
+                            or GIF, max 256kB.
                           </Trans>
                         </div>
                       </div>
@@ -960,9 +978,9 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="mt-2">
                           <div className="error-label flex items-center justify-between">
                             <span>{stickerFileError}</span>
-                            <FontAwesomeIcon 
-                              icon={faTimes} 
-                              className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100" 
+                            <FontAwesomeIcon
+                              icon={faTimes}
+                              className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                               onClick={() => setStickerFileError(null)}
                             />
                           </div>
@@ -979,7 +997,9 @@ const SpaceEditor: React.FunctionComponent<{
                               <div className="flex flex-col justify-around font-mono font-medium mx-2">
                                 <span>
                                   <input
-                                    className={'border-0 bg-[rgba(0,0,0,0)] max-w-48 truncate'}
+                                    className={
+                                      'border-0 bg-[rgba(0,0,0,0)] max-w-48 truncate'
+                                    }
                                     title={em.name}
                                     onChange={(e) =>
                                       setStickers((prev) => [
@@ -1102,56 +1122,59 @@ const SpaceEditor: React.FunctionComponent<{
                               />
                               <div className="absolute top-full left-0 right-0 z-10 mt-1">
                                 <div className="bg-input w-full max-h-[200px] md:max-h-[300px] rounded-xl overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
-                                {conversations.pages
-                                  .flatMap(
-                                    (c: any) =>
-                                      c.conversations as Conversation[]
-                                  )
-                                  .toReversed()
-                                  .map((c, i) => {
-                                    return (
-                                      <div
-                                        onClick={() => {
-                                          setSelectedUser(c);
-                                          setResolvedUser(undefined);
-                                          setManualAddress('');
-                                          setSuccess(false);
-                                          setIsInviteListExpanded(false);
-                                        }}
-                                        className="py-2 px-2 mx-1 my-1 text-main hover:bg-surface-4 rounded-lg cursor-pointer !font-bold flex flex-row"
-                                        key={
-                                          'group-select-' + i + '-channel-' + i
-                                        }
-                                      >
-                                        <div className="flex flex-col justify-around">
-                                          <div
-                                            className="rounded-full w-[24px] h-[24px] mt-[2px]"
-                                            style={{
-                                              backgroundPosition: 'center',
-                                              backgroundSize: 'cover',
-                                              backgroundImage: `url(${c.icon})`,
-                                            }}
-                                          />
-                                        </div>
-                                        <div className="flex flex-col justify-around pl-2">
-                                          <div>
-                                            {c.displayName}{' '}
-                                            <span className="font-light">
-                                              (
-                                              <span className="hidden md:inline">
-                                                {c.address}
+                                  {conversations.pages
+                                    .flatMap(
+                                      (c: any) =>
+                                        c.conversations as Conversation[]
+                                    )
+                                    .toReversed()
+                                    .map((c, i) => {
+                                      return (
+                                        <div
+                                          onClick={() => {
+                                            setSelectedUser(c);
+                                            setResolvedUser(undefined);
+                                            setManualAddress('');
+                                            setSuccess(false);
+                                            setIsInviteListExpanded(false);
+                                          }}
+                                          className="py-2 px-2 mx-1 my-1 text-main hover:bg-surface-4 rounded-lg cursor-pointer !font-bold flex flex-row"
+                                          key={
+                                            'group-select-' +
+                                            i +
+                                            '-channel-' +
+                                            i
+                                          }
+                                        >
+                                          <div className="flex flex-col justify-around">
+                                            <div
+                                              className="rounded-full w-[24px] h-[24px] mt-[2px]"
+                                              style={{
+                                                backgroundPosition: 'center',
+                                                backgroundSize: 'cover',
+                                                backgroundImage: `url(${c.icon})`,
+                                              }}
+                                            />
+                                          </div>
+                                          <div className="flex flex-col justify-around pl-2">
+                                            <div>
+                                              {c.displayName}{' '}
+                                              <span className="font-light">
+                                                (
+                                                <span className="hidden md:inline">
+                                                  {c.address}
+                                                </span>
+                                                <span className="md:hidden">
+                                                  {truncateAddress(c.address)}
+                                                </span>
+                                                )
                                               </span>
-                                              <span className="md:hidden">
-                                                {truncateAddress(c.address)}
-                                              </span>
-                                              )
-                                            </span>
+                                            </div>
                                           </div>
                                         </div>
-                                      </div>
-                                    );
-                                  })}
-                              </div>
+                                      );
+                                    })}
+                                </div>
                               </div>
                             </>
                           )}

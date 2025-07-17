@@ -89,6 +89,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                 size="large"
                 selected={false}
                 iconData={acceptedFiles[0].arrayBuffer()}
+                spaceId="create-space-preview"
               />
             </div>
           ) : (

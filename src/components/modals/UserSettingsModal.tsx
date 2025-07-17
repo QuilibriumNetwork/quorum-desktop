@@ -63,8 +63,11 @@ const UserSettingsModal: React.FunctionComponent<{
   const [language, setLanguage] = React.useState(getUserLocale());
   const [languageChanged, setLanguageChanged] = React.useState<boolean>(false);
   const [closing, setClosing] = React.useState<boolean>(false);
-  const [userIconFileError, setUserIconFileError] = React.useState<string | null>(null);
-  const [isUserIconUploading, setIsUserIconUploading] = React.useState<boolean>(false);
+  const [userIconFileError, setUserIconFileError] = React.useState<
+    string | null
+  >(null);
+  const [isUserIconUploading, setIsUserIconUploading] =
+    React.useState<boolean>(false);
 
   const forceUpdate = useForceUpdate();
 
@@ -118,7 +121,12 @@ const UserSettingsModal: React.FunctionComponent<{
     window.URL.revokeObjectURL(url);
   };
 
-  const { getRootProps, getInputProps, acceptedFiles, isDragActive: isUserIconDragActive } = useDropzone({
+  const {
+    getRootProps,
+    getInputProps,
+    acceptedFiles,
+    isDragActive: isUserIconDragActive,
+  } = useDropzone({
     accept: {
       'image/png': ['.png'],
       'image/jpeg': ['.jpg', '.jpeg'],
@@ -322,9 +330,9 @@ const UserSettingsModal: React.FunctionComponent<{
                         <div className="mb-4">
                           <div className="error-label flex items-center justify-between">
                             <span>{userIconFileError}</span>
-                            <FontAwesomeIcon 
-                              icon={faTimes} 
-                              className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100" 
+                            <FontAwesomeIcon
+                              icon={faTimes}
+                              className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                               onClick={() => setUserIconFileError(null)}
                             />
                           </div>
@@ -517,7 +525,7 @@ const UserSettingsModal: React.FunctionComponent<{
                 return (
                   <div className="modal-content-section">
                     <div className="modal-text-section-header">{t`Appearance`}</div>
-                    <div className="modal-text-small text-main">
+                    <div className="modal-text-small text-main pt-2">
                       {t`Choose your preferred theme for Quorum.`}
                     </div>
                     <ThemeRadioGroup />
@@ -526,7 +534,7 @@ const UserSettingsModal: React.FunctionComponent<{
                       <AccentColorSwitcher />
                     </div>
 
-                    <div className="pt-4">
+                    <div className="pt-6">
                       <div className="modal-content-section-header" />
                       <div className="modal-text-label pb-2">{t`Language`}</div>
                       <div className="flex flex-row gap-2 items-center">

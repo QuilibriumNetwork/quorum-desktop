@@ -1,7 +1,6 @@
 import * as React from 'react';
 import './SpaceIcon.scss';
-import Tooltip from '../Tooltip';
-import { createPortal } from 'react-dom';
+import ReactTooltip from '../ReactTooltip';
 
 type SpaceIconProps = {
   selected: boolean;
@@ -12,11 +11,10 @@ type SpaceIconProps = {
   notifs: boolean;
   noTooltip?: boolean;
   noToggle?: boolean;
+  spaceId?: string; // Add spaceId to make IDs unique
+  highlightedTooltip?: boolean;
 };
 const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
-  const [isTooltipOpen, setTooltipOpen] = React.useState<
-    [number, number] | undefined
-  >(undefined);
   const [data, setData] = React.useState<ArrayBuffer>();
 
   React.useEffect(() => {
@@ -26,6 +24,21 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
       });
     }
   }, [data]);
+
+  // Generate a unique ID for this space icon
+  // Use spaceId if available, otherwise sanitize the space name
+  const sanitizedName = props.spaceName
+    .toLowerCase()
+    .replace(/[^a-z0-9]/gi, '-') // Replace all non-alphanumeric chars with hyphens
+    .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
+    .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
+  
+  const uniqueId = props.spaceId || sanitizedName || 'default';
+  
+  // Use useMemo to ensure stable ID across renders
+  const iconId = React.useMemo(() => {
+    return `space-icon-${uniqueId}-${Math.random().toString(36).substr(2, 9)}`;
+  }, [uniqueId]);
   return (
     <>
       <div className="relative z-[999]">
@@ -35,6 +48,7 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
           />
         )}
         <div
+          id={iconId}
           className={`${props.selected ? 'space-icon-selected' : 'space-icon'} space-icon-${props.size}`}
           style={{
             backgroundImage: props.iconUrl
@@ -43,38 +57,16 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
                 ? `url(data:image/png;base64,${Buffer.from(data).toString('base64')})`
                 : '',
           }}
-          onMouseEnter={(e) =>
-            setTooltipOpen([
-              78,
-              e.currentTarget.getBoundingClientRect().top + 5,
-            ])
-          }
-          onMouseLeave={() => setTooltipOpen(undefined)}
         ></div>
       </div>
       {!props.noTooltip && (
-        <div
-          className="absolute z-[2000] ml-[3rem]"
-          style={{ top: '' + (isTooltipOpen ?? [0, 0])[1] + 'px' }}
-        >
-          {!props.noTooltip &&
-            isTooltipOpen &&
-            createPortal(
-              <div
-                className="absolute z-[2000] ml-[3rem]"
-                style={{ top: `${isTooltipOpen[1]}px` }}
-              >
-                <Tooltip
-                  visible
-                  className="absolute whitespace-nowrap text-main"
-                  arrow="left"
-                >
-                  {props.spaceName}
-                </Tooltip>
-              </div>,
-              document.body
-            )}
-        </div>
+        <ReactTooltip
+          id={`${iconId}-tooltip`}
+          content={props.spaceName}
+          place="right"
+          anchorSelect={`#${iconId}`}
+          highlighted={props.highlightedTooltip}
+        />
       )}
     </>
   );

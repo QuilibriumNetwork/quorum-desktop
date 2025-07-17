@@ -38,6 +38,8 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = (props) => {
         size="regular"
         iconUrl={props.space.iconUrl}
         spaceName={props.space.spaceName}
+        spaceId={props.space.spaceId}
+        highlightedTooltip={true}
       />
     </Link>
   );

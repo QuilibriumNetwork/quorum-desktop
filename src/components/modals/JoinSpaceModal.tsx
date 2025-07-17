@@ -167,6 +167,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
                 size="large"
                 selected={false}
                 iconUrl="/quorumicon.png"
+                spaceId="unknown-space"
               />
             ) : (
               <>
@@ -178,6 +179,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
                   size="large"
                   selected={true}
                   iconUrl={space.iconUrl}
+                  spaceId={space.spaceId}
                 />
                 <div className="mt-4 text-lg sm:text-xl text-strong">
                   {space.spaceName}
