@@ -10,7 +10,7 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import Button from '../Button';
 import Input from '../Input';
 import UserOnlineStateIndicator from './UserOnlineStateIndicator';
-import CopyToClipboard from '../CopyToClipboard';
+import ClickToCopyContent from '../ClickToCopyContent';
 import './UserProfile.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Role } from '../../api/quorumApi';
@@ -165,12 +165,15 @@ const UserProfile: React.FunctionComponent<{
             <div className="text-xs w-[140px] truncate">
               {props.user.address}
             </div>
-            <CopyToClipboard
+            <ClickToCopyContent
               className="ml-2"
               tooltipText={t`Copy address`}
               text={props.user.address}
               tooltipLocation="top"
-            />
+              iconClassName="text-subtle hover:text-surface-7"
+            >
+              <></>
+            </ClickToCopyContent>
           </div>
           <div className="user-profile-state">
             <UserOnlineStateIndicator user={props.user} />

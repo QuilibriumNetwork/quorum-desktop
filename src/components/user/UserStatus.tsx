@@ -7,7 +7,7 @@ import './UserStatus.scss';
 import UserOnlineStateIndicator from './UserOnlineStateIndicator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { t } from '@lingui/core/macro';
-import CopyToClipboard from '../CopyToClipboard';
+import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages } from '../../utils';
 
 type UserStatusProps = {
@@ -89,12 +89,15 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
         <div className="user-status-text">
           <div className="flex flex-row user-status-username w-[164px] text-ellipsis overflow-hidden">
             <span>{props.user.displayName}</span>
-            <CopyToClipboard
+            <ClickToCopyContent
               className="ml-4"
               tooltipText={t`Copy address`}
               text={props.user.address}
               tooltipLocation="top"
-            />
+              iconClassName="text-surface-10"
+            >
+              <></>
+            </ClickToCopyContent>
           </div>
           <div className="user-status-info">
             <UserOnlineStateIndicator user={props.user} />

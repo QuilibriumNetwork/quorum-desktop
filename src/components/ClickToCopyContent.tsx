@@ -5,6 +5,12 @@ import { faClipboard } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTheme } from './context/ThemeProvider';
 
+const isTouchDevice = () =>
+  typeof window !== 'undefined' &&
+  ('ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+    (navigator as any).msMaxTouchPoints > 0);
+
 type ClickToCopyContentProps = {
   text: string;
   className?: string;
@@ -29,6 +35,8 @@ type ClickToCopyContentProps = {
   theme?: 'dark' | 'light' | 'system';
   copyOnContentClick?: boolean;
   iconPosition?: 'left' | 'right';
+  touchTrigger?: 'click' | 'long-press';
+  longPressDuration?: number;
 };
 
 const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
@@ -43,6 +51,8 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   theme,
   copyOnContentClick = false,
   iconPosition = 'left',
+  touchTrigger = 'click',
+  longPressDuration = 700,
 }) => {
   const [copied, setCopied] = React.useState(false);
   const { theme: contextTheme } = useTheme();
@@ -52,8 +62,8 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   const tooltipId = `click-to-copy-tooltip-${uid}`;
   const anchorId = `click-to-copy-anchor-${uid}`;
 
-  const handleCopy = async (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleCopy = async (e?: React.MouseEvent | Event) => {
+    e?.stopPropagation();
     try {
       if (window.electron !== undefined) {
         window.electron.clipboard.writeText(text);
@@ -68,6 +78,50 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
       console.error('Failed to copy text: ', err);
     }
   };
+
+  // Touch event handling for mobile devices
+  React.useEffect(() => {
+    if (!isTouchDevice()) return;
+
+    const anchorElement = document.getElementById(anchorId);
+    if (!anchorElement) return;
+
+    let pressTimer: NodeJS.Timeout | null = null;
+
+    const handleTouchCopy = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      handleCopy(e);
+    };
+
+    if (touchTrigger === 'click') {
+      anchorElement.addEventListener('touchend', handleTouchCopy, {
+        passive: false,
+      });
+      return () => {
+        anchorElement.removeEventListener('touchend', handleTouchCopy);
+      };
+    }
+
+    if (touchTrigger === 'long-press') {
+      const handleTouchStart = (e: TouchEvent) => {
+        pressTimer = setTimeout(() => handleTouchCopy(e), longPressDuration);
+      };
+      const handleTouchEnd = () => {
+        if (pressTimer) clearTimeout(pressTimer);
+      };
+
+      anchorElement.addEventListener('touchstart', handleTouchStart);
+      anchorElement.addEventListener('touchend', handleTouchEnd);
+      anchorElement.addEventListener('touchcancel', handleTouchEnd);
+
+      return () => {
+        anchorElement.removeEventListener('touchstart', handleTouchStart);
+        anchorElement.removeEventListener('touchend', handleTouchEnd);
+        anchorElement.removeEventListener('touchcancel', handleTouchEnd);
+      };
+    }
+  }, [anchorId, touchTrigger, longPressDuration, text, onCopy]);
 
   const wrapperClass = `flex items-center rounded-md ${
     copyOnContentClick ? 'cursor-pointer hover:text-subtle' : ''
@@ -107,6 +161,9 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
         noArrow={noArrow}
         theme={resolvedTheme}
         anchorSelect={`#${anchorId}`}
+        showOnTouch
+        touchTrigger={touchTrigger}
+        longPressDuration={longPressDuration}
       />
     </div>
   );

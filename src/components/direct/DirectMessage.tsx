@@ -25,7 +25,6 @@ import { i18n } from '@lingui/core';
 import ReactTooltip from '../ReactTooltip';
 import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages, truncateAddress } from '../../utils';
-import CopyToClipboard from '../CopyToClipboard';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 

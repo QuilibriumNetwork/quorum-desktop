@@ -12,7 +12,7 @@ import { UserConfig } from '../../db/messages';
 import ThemeRadioGroup from '../ThemeRadioGroup';
 import AccentColorSwitcher from '../AccentColorSwitcher';
 import { t } from '@lingui/core/macro';
-import CopyToClipboard from '../CopyToClipboard';
+import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages } from '../../utils';
 import {
   dynamicActivate,
@@ -347,12 +347,15 @@ const UserSettingsModal: React.FunctionComponent<{
                           <div className="break-all flex-1 mr-2">
                             {currentPasskeyInfo!.address}
                           </div>
-                          <CopyToClipboard
+                          <ClickToCopyContent
                             className="flex-shrink-0"
                             tooltipText={t`Copy address`}
                             text={currentPasskeyInfo!.address}
                             tooltipLocation="top"
-                          />
+                            iconClassName="text-surface-10"
+                          >
+                            <></>
+                          </ClickToCopyContent>
                         </div>
                       </div>
                       <div className="modal-content-actions">
