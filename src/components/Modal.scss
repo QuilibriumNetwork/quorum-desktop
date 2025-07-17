@@ -61,16 +61,8 @@
   justify-content: space-between;
 }
 
-/* Backdrop fade animation */
+/* Backdrop - no animation to prevent flash */
 .fixed.inset-0.z-\[9999\] {
-  animation: backdropFadeIn 0.3s ease-out;
-}
-
-@keyframes backdropFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  opacity: 1;
+  animation: none !important;
 }
