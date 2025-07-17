@@ -1,0 +1,46 @@
+# Build outputs
+dist/
+build/
+electron/dist/
+
+# Dependencies
+node_modules/
+
+# Lock files
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+
+# Lingui generated message files
+src/i18n/**/messages.js
+src/i18n/**/messages.ts
+
+# Generated documentation
+docs/generated/
+*.generated.*
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+.parcel-cache/
+.vite/
+
+# IDE/Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
