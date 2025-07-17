@@ -10,6 +10,8 @@
 
 .modal-new-direct-message-actions {
   @extend .modal-actions;
+  display: flex;
+  justify-content: flex-start;
 
   @media (max-width: 640px) {
     display: flex;

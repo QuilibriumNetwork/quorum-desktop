@@ -14,7 +14,6 @@ import TooltipButton from '../TooltipButton';
 import { useModalContext } from '../AppWithSearch';
 import GroupEditor from './GroupEditor';
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
-import LeaveSpace from './LeaveSpace';
 import { t } from '@lingui/core/macro';
 
 type ChannelListProps = { spaceId: string };
@@ -22,8 +21,7 @@ type ChannelListProps = { spaceId: string };
 const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   const { data: space } = useSpace({ spaceId });
   let [isMenuExpanded, setIsMenuExpanded] = React.useState<boolean>(false);
-  const { openSpaceEditor, openChannelEditor } = useModalContext();
-  let [isLeaveSpaceOpen, setIsLeaveSpaceOpen] = React.useState<boolean>(false);
+  const { openSpaceEditor, openChannelEditor, openLeaveSpace } = useModalContext();
   let [isGroupEditorOpen, setIsGroupEditorOpen] = React.useState<
     { groupName?: string } | undefined
   >();
@@ -32,22 +30,6 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
 
   return (
     <>
-      {isLeaveSpaceOpen ? (
-        <>
-          <div className="invisible-dismissal invisible-dark">
-            <LeaveSpace
-              spaceId={spaceId}
-              dismiss={() => setIsLeaveSpaceOpen(false)}
-            />
-            <div
-              className="invisible-dismissal"
-              onClick={() => setIsLeaveSpaceOpen(false)}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
       {isGroupEditorOpen ? (
         <>
           <div className="invisible-dismissal invisible-dark">
@@ -96,7 +78,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
                 icon={faDoorOpen}
                 onClick={() => {
                   setIsMenuExpanded(false);
-                  setIsLeaveSpaceOpen(true);
+                  openLeaveSpace(spaceId);
                 }}
               />
             )}

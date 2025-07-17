@@ -17,6 +17,7 @@ type KickUserModalProps = {
 
 const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
   const [kicking, setKicking] = React.useState(false);
+  const [confirmationStep, setConfirmationStep] = React.useState(0); // 0: initial, 1: awaiting confirmation
   const { kickUser } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const { keyset } = useRegistrationContext();
@@ -28,27 +29,33 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
   return (
     <Modal visible={props.visible} onClose={props.onClose} title={t`Kick User`}>
       <div className="w-full max-w-[400px] mx-auto">
-        <div className="mb-4 text-sm text-subtle text-center">
+        <div className="mb-4 text-sm text-subtle text-left max-sm:text-center">
           {t`Use the below button to kick this user out of the Space`}
         </div>
-        <div className="flex justify-center">
+        <div className="flex justify-start max-sm:justify-center">
           <Button
             type="danger"
             disabled={kicking}
             onClick={async () => {
-              setKicking(true);
-              await kickUser(
-                spaceId!,
-                props.kickUserAddress!,
-                keyset.userKeyset,
-                keyset.deviceKeyset,
-                registration.registration!
-              );
-              setKicking(false);
-              props.onClose();
+              if (confirmationStep === 0) {
+                setConfirmationStep(1);
+                // Reset confirmation after 5 seconds
+                setTimeout(() => setConfirmationStep(0), 5000);
+              } else {
+                setKicking(true);
+                await kickUser(
+                  spaceId!,
+                  props.kickUserAddress!,
+                  keyset.userKeyset,
+                  keyset.deviceKeyset,
+                  registration.registration!
+                );
+                setKicking(false);
+                props.onClose();
+              }
             }}
           >
-            {t`Do it!`}
+            {confirmationStep === 0 ? t`Kick!` : t`Click again to confirm`}
           </Button>
         </div>
       </div>

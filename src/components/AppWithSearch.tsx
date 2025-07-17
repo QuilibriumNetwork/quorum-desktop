@@ -3,6 +3,7 @@ import Layout from './Layout';
 import UserSettingsModal from './modals/UserSettingsModal';
 import SpaceEditor from './channel/SpaceEditor';
 import ChannelEditor from './channel/ChannelEditor';
+import LeaveSpaceModal from './modals/LeaveSpaceModal';
 // Note: UserSettingsModal, SpaceEditor, ChannelEditor use custom simple modal pattern
 import './AppWithSearch.scss';
 
@@ -23,6 +24,7 @@ interface ModalContextType {
     groupName: string,
     channelId: string
   ) => void;
+  openLeaveSpace: (spaceId: string) => void;
   showRightSidebar: boolean;
   setShowRightSidebar: (show: boolean) => void;
   rightSidebarContent: React.ReactNode;
@@ -56,6 +58,9 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
     groupName: string;
     channelId: string;
   } | null>(null);
+  const [leaveSpaceData, setLeaveSpaceData] = useState<{
+    spaceId: string;
+  } | null>(null);
   const [showRightSidebar, setShowRightSidebar] = useState(false);
   const [rightSidebarContent, setRightSidebarContent] =
     useState<React.ReactNode>(null);
@@ -68,6 +73,7 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
       groupName: string,
       channelId: string
     ) => setChannelEditorData({ spaceId, groupName, channelId }),
+    openLeaveSpace: (spaceId: string) => setLeaveSpaceData({ spaceId }),
     showRightSidebar,
     setShowRightSidebar,
     rightSidebarContent,
@@ -115,6 +121,14 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
             onClick={() => setChannelEditorData(null)}
           />
         </div>
+      )}
+
+      {leaveSpaceData && (
+        <LeaveSpaceModal
+          spaceId={leaveSpaceData.spaceId}
+          visible={true}
+          onClose={() => setLeaveSpaceData(null)}
+        />
       )}
 
       {showRightSidebar && (

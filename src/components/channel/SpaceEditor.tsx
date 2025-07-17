@@ -632,8 +632,10 @@ const SpaceEditor: React.FunctionComponent<{
                                 }
                               />
                             </span>
-                            <span className="float-right pr-10 text-normal">
-                              <Trans>Can delete messages?</Trans>{' '}
+                            <span className="float-right pr-10 flex items-center">
+                              <span className="text-sm font-normal pr-2">
+                                <Trans>Can delete messages?</Trans>
+                              </span>{' '}
                               <input
                                 type="checkbox"
                                 checked={roles

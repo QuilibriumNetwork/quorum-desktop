@@ -34,7 +34,7 @@ const NewDirectMessageModal: React.FunctionComponent<
       title={t`New Direct Message`}
     >
       <div className="modal-new-direct-message w-full max-w-[500px] mx-auto">
-        <div className="mb-4 text-sm text-subtle text-center">
+        <div className="mb-4 text-sm text-subtle text-left max-sm:text-center">
           {t`Enter a user's address to start messaging them.`}
         </div>
         <div>
