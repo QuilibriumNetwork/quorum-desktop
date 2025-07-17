@@ -258,7 +258,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   return (
     <div className="chat-container">
       <div className="flex flex-col">
-        <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
+        <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
           <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2">
             <div className="flex flex-row items-center gap-2">
               {isMobile && (
