@@ -23,10 +23,11 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
   const [isExpanded, setExpanded] = useState(false);
 
   return isExpanded ? (
-    <div className="expanded-nav-menu">
-      <div className="invisible-dismissal" onClick={() => setExpanded(false)} />
-      {/* <Button className="expanded-nav-search-spaces" icon type="primary" onClick={(e) => history.push("/spaces/search")} tooltip={localizations["TOOLTIP_SEARCH_SPACES"]([])}><FontAwesomeIcon icon={faSearch}/></Button> */}
-      <Button
+    <>
+      <div className="fixed inset-0 z-[9998] bg-overlay backdrop-blur" onClick={() => setExpanded(false)} />
+      <div className="expanded-nav-menu relative z-[9999]">
+        {/* <Button className="expanded-nav-search-spaces" icon type="primary" onClick={(e) => history.push("/spaces/search")} tooltip={localizations["TOOLTIP_SEARCH_SPACES"]([])}><FontAwesomeIcon icon={faSearch}/></Button> */}
+        <Button
         className="expanded-nav-add-spaces w-10 h-10 ml-3 leading-6 mb-4 inline-block"
         icon
         type="primary"
@@ -37,9 +38,10 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
         tooltip={t`Add Space`}
       >
         <FontAwesomeIcon icon={faPlus} />
-      </Button>
-      {/* <Button className="expanded-nav-join-spaces w-10 h-10 ml-3 leading-6 mb-4 inline-block" icon type="primary" onClick={(e) => { setExpanded(false); props.showJoinSpaceModal(); }} tooltip={localizations.localizations["TOOLTIP_JOIN_SPACE"]([])}><FontAwesomeIcon icon={faCompressAlt}/></Button> */}
-    </div>
+        </Button>
+        {/* <Button className="expanded-nav-join-spaces w-10 h-10 ml-3 leading-6 mb-4 inline-block" icon type="primary" onClick={(e) => { setExpanded(false); props.showJoinSpaceModal(); }} tooltip={localizations.localizations["TOOLTIP_JOIN_SPACE"]([])}><FontAwesomeIcon icon={faCompressAlt}/></Button> */}
+      </div>
+    </>
   ) : (
     <div
       className="expand-button cursor-pointer"

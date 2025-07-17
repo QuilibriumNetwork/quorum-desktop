@@ -49,7 +49,7 @@ const ChannelGroup: React.FunctionComponent<{
           {props.group.groupName}
         </div>
         {isSpaceOwner && (
-          <div className="pt-[.15rem] pr-2">
+          <div className="pt-[.15rem]">
             <FontAwesomeIcon
               className="hover:text-main cursor-pointer"
               onClick={() =>
