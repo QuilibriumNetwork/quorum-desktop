@@ -398,6 +398,7 @@ const SpaceEditor: React.FunctionComponent<{
                   <>
                     <div className="modal-content-header">
                       <div
+                        id="space-icon-tooltip-target"
                         className="modal-icon-editable cursor-pointer"
                         style={{
                           backgroundImage:
@@ -413,6 +414,13 @@ const SpaceEditor: React.FunctionComponent<{
                       >
                         <input {...getInputProps()} />
                       </div>
+                      <ReactTooltip
+                        id="space-icon-tooltip"
+                        content="Upload an avatar for this Space - PNG or JPG, Max 1MB, Optimal size 123×123px"
+                        place="bottom"
+                        className="!w-[400px]"
+                        anchorSelect="#space-icon-tooltip-target"
+                      />
                       <div className="modal-text-section mt-4">
                         <div className="small-caps">
                           <Trans>Space Name</Trans>
@@ -430,6 +438,7 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                       <div className="modal-content-info">
                         <div
+                          id="space-banner-tooltip-target"
                           className={
                             'modal-banner-editable ' +
                             (space?.bannerUrl || bannerAcceptedFiles.length != 0
@@ -451,6 +460,13 @@ const SpaceEditor: React.FunctionComponent<{
                         >
                           <input {...getBannerInputProps()} />
                         </div>
+                        <ReactTooltip
+                          id="space-banner-tooltip"
+                          content="Upload a banner for this Space - PNG or JPG, Max 1MB, Optimal size 450×180px"
+                          place="bottom"
+                          className="!w-[400px]"
+                          anchorSelect="#space-banner-tooltip-target"
+                        />
                       </div>
                       <div className="modal-content-section-header small-caps">
                         <Trans>Default Channel</Trans>

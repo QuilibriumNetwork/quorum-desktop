@@ -253,6 +253,7 @@ const UserSettingsModal: React.FunctionComponent<{
                   <>
                     <div className="modal-content-header">
                       <div
+                        id="user-icon-tooltip-target"
                         className="modal-icon-editable"
                         style={{
                           backgroundImage:
@@ -269,6 +270,13 @@ const UserSettingsModal: React.FunctionComponent<{
                       >
                         <input {...getInputProps()} />
                       </div>
+                      <ReactTooltip
+                        id="user-icon-tooltip"
+                        content="Upload an avatar for your profile - PNG or JPG, Max 1MB, Optimal size 123×123px"
+                        place="bottom"
+                        className="!w-[400px]"
+                        anchorSelect="#user-icon-tooltip-target"
+                      />
                       <div className="modal-text-section sm:mt-6">
                         <div className="modal-text-label">{t`Display Name`}</div>
                         <input
@@ -281,7 +289,7 @@ const UserSettingsModal: React.FunctionComponent<{
                     <div className="modal-content-section">
                       <div className="modal-content-info">
                         <div className="modal-text-label">{t`Account Address`}</div>
-                        <div className="pt-1 mb-4 modal-text-small text-main">
+                        <div className="pt-2 mb-4 modal-text-small text-main">
                           {t`This is your public address and is safe to share with anyone you want to interact with.`}
                         </div>
                         <div className="modal-input-display text-sm lg:text-base">
@@ -315,7 +323,7 @@ const UserSettingsModal: React.FunctionComponent<{
                     <div className="modal-content-header">
                       <div className="modal-text-section">
                         <div className="modal-text-section-header">{t`Privacy/Security`}</div>
-                        <div className="pt-1 modal-text-small text-main">
+                        <div className="pt-2 modal-text-small text-main">
                           {t`Manage devices, and privacy conditions for messaging and synchronization.`}
                         </div>
                       </div>
@@ -373,7 +381,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         <div className="modal-content-section-header" />
                         <div className="modal-text-label">{t`Key Export`}</div>
 
-                        <div className="pt-1 modal-text-small text-main">
+                        <div className="pt-2 modal-text-small text-main">
                           {t`Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings.`}
                         </div>
                         <div className="pt-4 pb-8 max-w-[100px]">
@@ -390,7 +398,7 @@ const UserSettingsModal: React.FunctionComponent<{
                       <div className="modal-content-section-header" />
                       <div className="modal-text-label">{t`Security`}</div>
 
-                      <div className="pt-1 modal-text-small text-main">
+                      <div className="pt-2 modal-text-small text-main">
                         {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
                       </div>
                       <div className="modal-content-info">
