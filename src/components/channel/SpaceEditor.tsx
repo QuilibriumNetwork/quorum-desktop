@@ -102,6 +102,12 @@ const SpaceEditor: React.FunctionComponent<{
   const [publicInviteTooltip, setPublicInviteTooltip] = React.useState(false);
   const { data: spaceMembers } = useSpaceMembers({ spaceId });
   const [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
+  const [iconFileError, setIconFileError] = React.useState<string | null>(null);
+  const [bannerFileError, setBannerFileError] = React.useState<string | null>(null);
+  const [isIconUploading, setIsIconUploading] = React.useState<boolean>(false);
+  const [isBannerUploading, setIsBannerUploading] = React.useState<boolean>(false);
+  const [emojiFileError, setEmojiFileError] = React.useState<string | null>(null);
+  const [stickerFileError, setStickerFileError] = React.useState<string | null>(null);
   const [publicInvite, setPublicInvite] = React.useState(
     space?.isPublic || false
   );
@@ -109,19 +115,46 @@ const SpaceEditor: React.FunctionComponent<{
   const { apiClient } = useQuorumApiClient();
   const navigate = useNavigate();
 
-  const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
+  const { getRootProps, getInputProps, acceptedFiles, isDragActive: isIconDragActive } = useDropzone({
     accept: {
       'image/png': ['.png'],
       'image/jpeg': ['.jpg', '.jpeg'],
     },
     minSize: 0,
     maxSize: 1 * 1024 * 1024,
+    onDropRejected: (fileRejections) => {
+      setIsIconUploading(false);
+      for (const rejection of fileRejections) {
+        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
+          setIconFileError(t`File cannot be larger than 1MB`);
+        } else {
+          setIconFileError(t`File rejected`);
+        }
+      }
+    },
+    onDropAccepted: () => {
+      setIsIconUploading(true); // Keep uploading state during processing
+      setIconFileError(null);
+    },
+    onDragEnter: () => {
+      setIsIconUploading(true);
+    },
+    onDragLeave: () => {
+      setIsIconUploading(false);
+    },
+    onFileDialogOpen: () => {
+      setIsIconUploading(true);
+    },
+    onFileDialogCancel: () => {
+      setIsIconUploading(false);
+    },
   });
 
   const {
     getRootProps: getBannerRootProps,
     getInputProps: getBannerInputProps,
     acceptedFiles: bannerAcceptedFiles,
+    isDragActive: isBannerDragActive,
   } = useDropzone({
     accept: {
       'image/png': ['.png'],
@@ -129,6 +162,32 @@ const SpaceEditor: React.FunctionComponent<{
     },
     minSize: 0,
     maxSize: 1 * 1024 * 1024,
+    onDropRejected: (fileRejections) => {
+      setIsBannerUploading(false);
+      for (const rejection of fileRejections) {
+        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
+          setBannerFileError(t`File cannot be larger than 1MB`);
+        } else {
+          setBannerFileError(t`File rejected`);
+        }
+      }
+    },
+    onDropAccepted: () => {
+      setIsBannerUploading(true); // Keep uploading state during processing
+      setBannerFileError(null);
+    },
+    onDragEnter: () => {
+      setIsBannerUploading(true);
+    },
+    onDragLeave: () => {
+      setIsBannerUploading(false);
+    },
+    onFileDialogOpen: () => {
+      setIsBannerUploading(true);
+    },
+    onFileDialogCancel: () => {
+      setIsBannerUploading(false);
+    },
   });
 
   const {
@@ -143,6 +202,18 @@ const SpaceEditor: React.FunctionComponent<{
     },
     minSize: 0,
     maxSize: 256 * 1024,
+    onDropRejected: (fileRejections) => {
+      for (const rejection of fileRejections) {
+        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
+          setEmojiFileError(t`File cannot be larger than 256KB`);
+        } else {
+          setEmojiFileError(t`File rejected`);
+        }
+      }
+    },
+    onDropAccepted: () => {
+      setEmojiFileError(null);
+    },
   });
 
   const {
@@ -157,12 +228,25 @@ const SpaceEditor: React.FunctionComponent<{
     },
     minSize: 0,
     maxSize: 256 * 1024,
+    onDropRejected: (fileRejections) => {
+      for (const rejection of fileRejections) {
+        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
+          setStickerFileError(t`File cannot be larger than 256KB`);
+        } else {
+          setStickerFileError(t`File rejected`);
+        }
+      }
+    },
+    onDropAccepted: () => {
+      setStickerFileError(null);
+    },
   });
 
   React.useEffect(() => {
     if (acceptedFiles.length > 0) {
       (async () => {
         setFileData(await acceptedFiles[0].arrayBuffer());
+        setIsIconUploading(false); // Reset after processing
       })();
     }
   }, [acceptedFiles]);
@@ -171,6 +255,7 @@ const SpaceEditor: React.FunctionComponent<{
     if (bannerAcceptedFiles.length > 0) {
       (async () => {
         setBannerData(await bannerAcceptedFiles[0].arrayBuffer());
+        setIsBannerUploading(false); // Reset after processing
       })();
     }
   }, [bannerAcceptedFiles]);
@@ -414,13 +499,15 @@ const SpaceEditor: React.FunctionComponent<{
                       >
                         <input {...getInputProps()} />
                       </div>
-                      <ReactTooltip
-                        id="space-icon-tooltip"
-                        content="Upload an avatar for this Space - PNG or JPG, Max 1MB, Optimal size 123×123px"
-                        place="bottom"
-                        className="!w-[400px]"
-                        anchorSelect="#space-icon-tooltip-target"
-                      />
+                      {!isIconUploading && !isIconDragActive && (
+                        <ReactTooltip
+                          id="space-icon-tooltip"
+                          content="Upload an avatar for this Space - PNG or JPG, Max 1MB, Optimal size 123×123px"
+                          place="bottom"
+                          className="!w-[400px]"
+                          anchorSelect="#space-icon-tooltip-target"
+                        />
+                      )}
                       <div className="modal-text-section mt-4">
                         <div className="small-caps">
                           <Trans>Space Name</Trans>
@@ -460,13 +547,39 @@ const SpaceEditor: React.FunctionComponent<{
                         >
                           <input {...getBannerInputProps()} />
                         </div>
-                        <ReactTooltip
-                          id="space-banner-tooltip"
-                          content="Upload a banner for this Space - PNG or JPG, Max 1MB, Optimal size 450×180px"
-                          place="bottom"
-                          className="!w-[400px]"
-                          anchorSelect="#space-banner-tooltip-target"
-                        />
+                        {!isBannerUploading && !isBannerDragActive && (
+                          <ReactTooltip
+                            id="space-banner-tooltip"
+                            content="Upload a banner for this Space - PNG or JPG, Max 1MB, Optimal size 450×180px"
+                            place="bottom"
+                            className="!w-[400px]"
+                            anchorSelect="#space-banner-tooltip-target"
+                          />
+                        )}
+                        {(iconFileError || bannerFileError) && (
+                          <div className="mt-4 space-y-2">
+                            {iconFileError && (
+                              <div className="error-label flex items-center justify-between">
+                                <span>{iconFileError}</span>
+                                <FontAwesomeIcon 
+                                  icon={faTimes} 
+                                  className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100" 
+                                  onClick={() => setIconFileError(null)}
+                                />
+                              </div>
+                            )}
+                            {bannerFileError && (
+                              <div className="error-label flex items-center justify-between">
+                                <span>{bannerFileError}</span>
+                                <FontAwesomeIcon 
+                                  icon={faTimes} 
+                                  className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100" 
+                                  onClick={() => setBannerFileError(null)}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                       <div className="modal-content-section-header small-caps">
                         <Trans>Default Channel</Trans>
@@ -585,30 +698,30 @@ const SpaceEditor: React.FunctionComponent<{
                             Click on the role name and tag to edit them.
                           </Trans>
                         </div>
-                        <div className="pt-3">
-                          <Button
-                            type="secondary"
-                            className="!w-auto !inline-flex"
-                            onClick={() => {
-                              setRoles((prev) => [
-                                ...prev,
-                                {
-                                  roleId: crypto.randomUUID(),
-                                  roleTag: 'New Role' + (prev.length + 1),
-                                  displayName: 'New Role',
-                                  color: 'var(--success-hex)',
-                                  members: [],
-                                  permissions: [],
-                                },
-                              ]);
-                            }}
-                          >
-                            <Trans>Add Role</Trans>
-                          </Button>
-                        </div>
                       </div>
                     </div>
                     <div className="modal-content-section">
+                      <div className="flex mb-4">
+                        <Button
+                          type="secondary"
+                          className="!w-auto !inline-flex"
+                          onClick={() => {
+                            setRoles((prev) => [
+                              ...prev,
+                              {
+                                roleId: crypto.randomUUID(),
+                                roleTag: 'New Role' + (prev.length + 1),
+                                displayName: 'New Role',
+                                color: 'var(--success-hex)',
+                                members: [],
+                                permissions: [],
+                              },
+                            ]);
+                          }}
+                        >
+                          <Trans>Add Role</Trans>
+                        </Button>
+                      </div>
                       {roles.map((r, i) => {
                         return (
                           <div
@@ -731,19 +844,8 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="pt-2 text-sm text-main">
                           <Trans>
                             Add up to 50 custom emoji. Custom emojis can only be
-                            used within a Space.
+                            used within a Space. You can upload PNG, JPG or GIF, max 256kB.
                           </Trans>
-                          <br />
-                          <br />
-                          <Trans>Requirements:</Trans>
-                          <ul>
-                            <li>
-                              <Trans>Supported types: PNG, JPG, GIF</Trans>
-                            </li>
-                            <li>
-                              <Trans>Max file size: 256kB</Trans>
-                            </li>
-                          </ul>
                         </div>
                       </div>
                     </div>
@@ -759,6 +861,18 @@ const SpaceEditor: React.FunctionComponent<{
                           </div>
                         )}
                       </div>
+                      {emojiFileError && (
+                        <div className="mt-2">
+                          <div className="error-label flex items-center justify-between">
+                            <span>{emojiFileError}</span>
+                            <FontAwesomeIcon 
+                              icon={faTimes} 
+                              className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100" 
+                              onClick={() => setEmojiFileError(null)}
+                            />
+                          </div>
+                        </div>
+                      )}
                       <div className="pt-4">
                         {emojis.map((em, i) => {
                           return (
@@ -834,19 +948,8 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="pt-2 text-sm text-main">
                           <Trans>
                             Add up to 50 custom stickers. Custom stickers can
-                            only be used within a Space.
+                            only be used within a Space. You can upload PNG, JPG or GIF, max 256kB.
                           </Trans>
-                          <br />
-                          <br />
-                          <Trans>Requirements:</Trans>
-                          <ul>
-                            <li>
-                              <Trans>Supported types: PNG, JPG, GIF</Trans>
-                            </li>
-                            <li>
-                              <Trans>Max file size: 256kB</Trans>
-                            </li>
-                          </ul>
                         </div>
                       </div>
                     </div>
@@ -862,6 +965,18 @@ const SpaceEditor: React.FunctionComponent<{
                           </div>
                         )}
                       </div>
+                      {stickerFileError && (
+                        <div className="mt-2">
+                          <div className="error-label flex items-center justify-between">
+                            <span>{stickerFileError}</span>
+                            <FontAwesomeIcon 
+                              icon={faTimes} 
+                              className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100" 
+                              onClick={() => setStickerFileError(null)}
+                            />
+                          </div>
+                        </div>
+                      )}
                       <div className="pt-4">
                         {stickers.map((em, i) => {
                           return (
@@ -1208,7 +1323,7 @@ const SpaceEditor: React.FunctionComponent<{
                           undone and will permanently remove all messages,
                           channels, and settings associated with this space.
                         </div>
-                        <div className="pt-3">
+                        <div className="pt-6">
                           <Button
                             type="danger"
                             className="!w-auto !inline-flex"
