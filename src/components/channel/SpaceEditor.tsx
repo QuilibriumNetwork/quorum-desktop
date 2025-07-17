@@ -17,6 +17,7 @@ import { useMessageDB } from '../context/MessageDB';
 import '../../styles/_modal_common.scss';
 import Button from '../Button';
 import { useConversations, useRegistration, useSpace } from '../../hooks';
+import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
 import {
   Channel,
   Emoji,
@@ -80,6 +81,7 @@ const SpaceEditor: React.FunctionComponent<{
     ensureKeyForSpace,
     sendInviteToUser,
     generateNewInviteLink,
+    deleteSpace,
   } = useMessageDB();
   const { data: registration } = useRegistration({
     address: currentPasskeyInfo!.address,
@@ -98,6 +100,8 @@ const SpaceEditor: React.FunctionComponent<{
   );
   const [repudiableTooltip, setRepudiableTooltip] = React.useState(false);
   const [publicInviteTooltip, setPublicInviteTooltip] = React.useState(false);
+  const { data: spaceMembers } = useSpaceMembers({ spaceId });
+  const [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
   const [publicInvite, setPublicInvite] = React.useState(
     space?.isPublic || false
   );
@@ -335,6 +339,14 @@ const SpaceEditor: React.FunctionComponent<{
           >
             <Trans>Invites</Trans>
           </div>
+          {spaceMembers && spaceMembers.length === 1 && (
+            <div
+              onClick={() => setSelectedCategory('danger')}
+              className={`modal-nav-category text-danger ${selectedCategory === 'danger' ? 'active' : ''}`}
+            >
+              <Trans>Delete Space</Trans>
+            </div>
+          )}
         </div>
 
         {/* Mobile 2-Column Menu */}
@@ -369,6 +381,14 @@ const SpaceEditor: React.FunctionComponent<{
           >
             <Trans>Emojis</Trans>
           </div>
+          {spaceMembers && spaceMembers.length === 1 && (
+            <div
+              onClick={() => setSelectedCategory('danger')}
+              className={`modal-nav-category text-danger ${selectedCategory === 'danger' ? 'active' : ''}`}
+            >
+              <Trans>Delete Space</Trans>
+            </div>
+          )}
         </div>
         <div className="modal-complex-content">
           {(() => {
@@ -393,7 +413,7 @@ const SpaceEditor: React.FunctionComponent<{
                       >
                         <input {...getInputProps()} />
                       </div>
-                      <div className="modal-text-section">
+                      <div className="modal-text-section mt-4">
                         <div className="small-caps">
                           <Trans>Space Name</Trans>
                         </div>
@@ -438,6 +458,7 @@ const SpaceEditor: React.FunctionComponent<{
                       <div className="modal-content-info">
                         <div
                           className="w-full quorum-input !font-bold flex flex-row justify-between cursor-pointer"
+                          style={{ backgroundColor: 'var(--color-bg-input)' }}
                           onClick={() =>
                             setIsDefaultChannelListExpanded((prev) => !prev)
                           }
@@ -450,9 +471,14 @@ const SpaceEditor: React.FunctionComponent<{
                           </div>
                         </div>
                         {isDefaultChannelListExpanded && (
-                          <div className="absolute pr-[227px] w-full">
-                            <div className="bg-input max-w-[350px] mt-1 max-h-[200px] rounded-xl overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
-                              {space?.groups.map((g, i) => {
+                          <>
+                            <div
+                              className="fixed inset-0 z-[1]"
+                              onClick={() => setIsDefaultChannelListExpanded(false)}
+                            />
+                            <div className="absolute pr-[227px] w-full z-[2]">
+                              <div className="bg-input max-w-[350px] mt-1 max-h-[200px] rounded-xl overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
+                                {space?.groups.map((g, i) => {
                                 return (
                                   <React.Fragment key={'group-select-' + i}>
                                     <div className="small-caps py-2 px-3">
@@ -484,6 +510,7 @@ const SpaceEditor: React.FunctionComponent<{
                               })}
                             </div>
                           </div>
+                          </>
                         )}
                       </div>
                       <div className="modal-content-section-header small-caps">
@@ -537,7 +564,7 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="text-xl font-bold">
                           <Trans>Roles</Trans>
                         </div>
-                        <div className="pt-1 text-sm text-main">
+                        <div className="pt-2 text-sm text-main">
                           <Trans>
                             Click on the role name and tag to edit them.
                           </Trans>
@@ -685,7 +712,7 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="text-xl font-bold">
                           <Trans>Emojis</Trans>
                         </div>
-                        <div className="pt-1 text-sm text-main">
+                        <div className="pt-2 text-sm text-main">
                           <Trans>
                             Add up to 50 custom emoji. Custom emojis can only be
                             used within a Space.
@@ -759,6 +786,7 @@ const SpaceEditor: React.FunctionComponent<{
                               <div className="flex flex-col grow justify-around items-end">
                                 <FontAwesomeIcon
                                   icon={faTrash}
+                                  className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
                                   onClick={() =>
                                     setEmojis((prev) => [
                                       ...prev.filter((p, pi) => i !== pi),
@@ -787,7 +815,7 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="text-xl font-bold">
                           <Trans>Stickers</Trans>
                         </div>
-                        <div className="pt-1 text-sm text-main">
+                        <div className="pt-2 text-sm text-main">
                           <Trans>
                             Add up to 50 custom stickers. Custom stickers can
                             only be used within a Space.
@@ -861,6 +889,7 @@ const SpaceEditor: React.FunctionComponent<{
                               <div className="flex flex-col grow justify-around items-end">
                                 <FontAwesomeIcon
                                   icon={faTrash}
+                                  className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
                                   onClick={() =>
                                     setStickers((prev) => [
                                       ...prev.filter((p, pi) => i !== pi),
@@ -889,7 +918,7 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="text-xl font-bold">
                           <Trans>Invites</Trans>
                         </div>
-                        <div className="pt-1 text-sm text-main">
+                        <div className="pt-2 text-sm text-main">
                           <Trans>
                             Send invites to people you've previously had
                             conversations with. An invite button will appear in
@@ -1146,6 +1175,54 @@ const SpaceEditor: React.FunctionComponent<{
                           <Trans>Send Invite</Trans>
                         </Button>
                       </div>
+                    </div>
+                  </>
+                );
+              case 'danger':
+                return (
+                  <>
+                    <div className="modal-content-header">
+                      <div className="modal-text-section">
+                        <div className="text-xl font-bold text-danger">
+                          <Trans>Delete this space</Trans>
+                        </div>
+                        <div className="pt-2 text-sm text-main">
+                          Are you sure you want to delete your '
+                          {space?.spaceName}' space? This action cannot be
+                          undone and will permanently remove all messages,
+                          channels, and settings associated with this space.
+                        </div>
+                        <div className="pt-3">
+                          <Button
+                            type="danger"
+                            className="!w-auto !inline-flex"
+                            onClick={() => {
+                              if (deleteConfirmationStep === 0) {
+                                setDeleteConfirmationStep(1);
+                                // Reset confirmation after 5 seconds
+                                setTimeout(
+                                  () => setDeleteConfirmationStep(0),
+                                  5000
+                                );
+                              } else {
+                                deleteSpace(spaceId);
+                                navigate('/messages');
+                                dismiss();
+                              }
+                            }}
+                          >
+                            {deleteConfirmationStep === 0 ? (
+                              <Trans>Delete Space</Trans>
+                            ) : (
+                              <Trans>Click again to confirm</Trans>
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="modal-content-section">
+                      <div className="modal-content-info"></div>
+                      <div className="modal-content-actions"></div>
                     </div>
                   </>
                 );

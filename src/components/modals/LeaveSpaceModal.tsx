@@ -34,13 +34,13 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
       <div className="w-full max-w-[400px] mx-auto">
         <div className="mb-6 text-sm text-subtle text-left max-sm:text-center">
           <Trans>
-            Are you sure you want to leave {space?.spaceName}? You won't be
-            able to rejoin unless you are re-invited.
+            Are you sure you want to leave {space?.spaceName}? You won't be able
+            to rejoin unless you are re-invited.
           </Trans>
         </div>
         <div className="flex gap-3 justify-start max-sm:justify-center">
-          <Button 
-            type="danger" 
+          <Button
+            type="danger"
             onClick={() => {
               if (confirmationStep === 0) {
                 setConfirmationStep(1);
