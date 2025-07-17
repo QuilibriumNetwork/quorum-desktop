@@ -134,7 +134,6 @@
 - `.toggle-switch:checked` - theme-token - Toggle checked state
 - `.toggle-switch:disabled` - theme-token - Toggle disabled state
 
-
 ### src/components/CloseButton.scss
 
 - `.close-button` - theme-token - Close button with theme colors

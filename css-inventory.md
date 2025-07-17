@@ -178,7 +178,6 @@ This document provides a comprehensive inventory of all CSS selectors across the
 - **.quorum-toggle-switch-active** - @apply-convertible - Active toggle positioning
 - **.quorum-toggle-switch-flipper** - theme-token - Toggle switch flipper
 
-
 ---
 
 ## src/components/ReactTooltip.scss

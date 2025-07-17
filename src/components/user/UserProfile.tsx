@@ -289,7 +289,10 @@ const UserProfile: React.FunctionComponent<{
                 props.roles
                   ?.filter((r) => !r.members.includes(props.user.address))
                   .map((r) => (
-                    <div key={'user-profile-add-role-' + r.roleId} className="w-full sm:w-auto sm:inline-block">
+                    <div
+                      key={'user-profile-add-role-' + r.roleId}
+                      className="w-full sm:w-auto sm:inline-block"
+                    >
                       <Button
                         className="!py-0 w-full sm:w-auto"
                         onClick={() => {

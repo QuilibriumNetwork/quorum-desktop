@@ -142,6 +142,8 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                     place="bottom"
                     className="!w-[400px]"
                     anchorSelect="#repudiability-tooltip-icon"
+                    showOnTouch
+                    touchTrigger="click"
                   />
                 </div>
               </div>
@@ -170,6 +172,8 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                     place="bottom"
                     className="!w-[400px]"
                     anchorSelect="#public-tooltip-icon"
+                    showOnTouch
+                    touchTrigger="click"
                   />
                 </div>
               </div>

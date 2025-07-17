@@ -36,7 +36,7 @@ The main dependencies are:
 - When you insert any new text that must be readby users, always use the Lingui sintax for localization
 - Look for documentation files in `.claude/docs/` whne you work on specific things (e.g. Modals, Search, etc.)
 - When editign anything, you must be very careful to not cause destructive changes or conflicts with other functionalities, as the app is pretty complex with many shared styles and features
-- Think always mobile first, and when making layout/css edits, always think at the final result for both desktop and mobile users for an optimal UX/UI 
+- Think always mobile first, and when making layout/css edits, always think at the final result for both desktop and mobile users for an optimal UX/UI
 
 ## Claude Code Development Resources
 

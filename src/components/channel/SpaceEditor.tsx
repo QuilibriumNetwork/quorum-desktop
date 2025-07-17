@@ -681,6 +681,8 @@ const SpaceEditor: React.FunctionComponent<{
                                 place="bottom"
                                 className="!w-[400px]"
                                 anchorSelect="#repudiability-tooltip-icon"
+                                showOnTouch
+                                touchTrigger="click"
                               />
                             </div>
                           </div>
@@ -1243,6 +1245,8 @@ const SpaceEditor: React.FunctionComponent<{
                                         className="flex flex-col justify-around pt-3 pb-1 !w-[400px]"
                                         place="bottom"
                                         content={t`This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space.`}
+                                        showOnTouch
+                                        touchTrigger="click"
                                       />
                                     </div>
                                   </div>

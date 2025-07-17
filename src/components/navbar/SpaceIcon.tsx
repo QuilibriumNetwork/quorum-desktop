@@ -32,9 +32,9 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
     .replace(/[^a-z0-9]/gi, '-') // Replace all non-alphanumeric chars with hyphens
     .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
     .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
-  
+
   const uniqueId = props.spaceId || sanitizedName || 'default';
-  
+
   // Use useMemo to ensure stable ID across renders
   const iconId = React.useMemo(() => {
     return `space-icon-${uniqueId}-${Math.random().toString(36).substr(2, 9)}`;

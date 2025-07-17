@@ -471,6 +471,8 @@ const UserSettingsModal: React.FunctionComponent<{
                                 content={t`When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined.`}
                                 place="right"
                                 className="!w-[400px]"
+                                showOnTouch
+                                touchTrigger="click"
                               />
                             </>
                           </div>
@@ -498,6 +500,8 @@ const UserSettingsModal: React.FunctionComponent<{
                                 content={t`When enabled, direct messages are not signed by your user key...`}
                                 place="right"
                                 className="!w-[400px]"
+                                showOnTouch
+                                touchTrigger="click"
                               />
                             </>
                           </div>
