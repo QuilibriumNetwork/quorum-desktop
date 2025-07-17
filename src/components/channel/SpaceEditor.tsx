@@ -883,17 +883,9 @@ const SpaceEditor: React.FunctionComponent<{
                               <img width="24" height="24" src={em.imgUrl} />
                               <div className="flex flex-col justify-around font-mono font-medium mx-2">
                                 <span>
-                                  :
                                   <input
-                                    className={'border-0 bg-[rgba(0,0,0,0)]'}
-                                    style={{
-                                      width:
-                                        (emojis.find((_, pi) => i == pi)?.name
-                                          .length ?? 0) *
-                                          10 +
-                                        10 +
-                                        'px',
-                                    }}
+                                    className={'border-0 bg-[rgba(0,0,0,0)] max-w-48 truncate'}
+                                    title={em.name}
                                     onChange={(e) =>
                                       setEmojis((prev) => [
                                         ...prev.map((p, pi) =>
@@ -910,7 +902,6 @@ const SpaceEditor: React.FunctionComponent<{
                                     }
                                     value={em.name}
                                   />
-                                  :
                                 </span>
                               </div>
                               <div className="flex flex-col grow justify-around items-end">
@@ -987,17 +978,9 @@ const SpaceEditor: React.FunctionComponent<{
                               <img width="24" height="24" src={em.imgUrl} />
                               <div className="flex flex-col justify-around font-mono font-medium mx-2">
                                 <span>
-                                  :
                                   <input
-                                    className={'border-0 bg-[rgba(0,0,0,0)]'}
-                                    style={{
-                                      width:
-                                        (stickers.find((_, pi) => i == pi)?.name
-                                          .length ?? 0) *
-                                          10 +
-                                        10 +
-                                        'px',
-                                    }}
+                                    className={'border-0 bg-[rgba(0,0,0,0)] max-w-48 truncate'}
+                                    title={em.name}
                                     onChange={(e) =>
                                       setStickers((prev) => [
                                         ...prev.map((p, pi) =>
@@ -1014,7 +997,6 @@ const SpaceEditor: React.FunctionComponent<{
                                     }
                                     value={em.name}
                                   />
-                                  :
                                 </span>
                               </div>
                               <div className="flex flex-col grow justify-around items-end">
@@ -1068,6 +1050,7 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="relative">
                           <div
                             className="w-full quorum-input !font-bold flex flex-row justify-between cursor-pointer"
+                            style={{ backgroundColor: 'var(--color-bg-input)' }}
                             onClick={() => {
                               setSuccess(false);
                               setIsInviteListExpanded((prev) => !prev);
@@ -1103,7 +1086,7 @@ const SpaceEditor: React.FunctionComponent<{
                               </div>
                             )}
                             {!selectedUser && (
-                              <div className="text-subtle font-normal">
+                              <div className="font-normal text-subtle">
                                 {t`Select conversation`}
                               </div>
                             )}
@@ -1112,8 +1095,13 @@ const SpaceEditor: React.FunctionComponent<{
                             </div>
                           </div>
                           {isInviteListExpanded && (
-                            <div className="absolute top-full left-0 right-0 z-10 mt-1">
-                              <div className="bg-input w-full max-h-[200px] md:max-h-[300px] rounded-xl overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
+                            <>
+                              <div
+                                className="fixed inset-0 z-[5]"
+                                onClick={() => setIsInviteListExpanded(false)}
+                              />
+                              <div className="absolute top-full left-0 right-0 z-10 mt-1">
+                                <div className="bg-input w-full max-h-[200px] md:max-h-[300px] rounded-xl overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
                                 {conversations.pages
                                   .flatMap(
                                     (c: any) =>
@@ -1164,13 +1152,16 @@ const SpaceEditor: React.FunctionComponent<{
                                     );
                                   })}
                               </div>
-                            </div>
+                              </div>
+                            </>
                           )}
                         </div>
-                        <div className="small-caps">
+                        <div className="small-caps mt-2">
                           <Trans>Enter Address Manually</Trans>
                         </div>
-                        <Input
+                        <input
+                          className="w-full quorum-input placeholder:text-subtle"
+                          style={{ backgroundColor: 'var(--color-bg-input)' }}
                           value={manualAddress}
                           placeholder="Type the address of the user you want to send to"
                           onChange={(e) => {

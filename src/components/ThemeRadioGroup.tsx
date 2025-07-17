@@ -30,8 +30,8 @@ const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({
           className={
             'flex items-center justify-between px-4 py-2 rounded-md border cursor-pointer ' +
             (theme === key
-              ? 'border-accent bg-[var(--surface-1)]'
-              : 'border-[var(--surface-3)] hover:bg-[var(--surface-2)]')
+              ? 'border-accent bg-[var(--surface-3)]'
+              : 'border-[var(--surface-3)] hover:bg-[var(--surface-3)]')
           }
         >
           <div className="flex items-center gap-2">
