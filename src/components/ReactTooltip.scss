@@ -54,3 +54,14 @@
   /* Border is now handled by the border prop in ReactTooltip component */
   /* This class can be used for additional highlighted styling if needed */
 }
+
+/* Responsive width and text wrapping for showOnTouch tooltips */
+.quorum-react-tooltip-touch {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  width: 300px !important;
+  
+  @media (min-width: 640px) {
+    width: 400px !important;
+  }
+}
