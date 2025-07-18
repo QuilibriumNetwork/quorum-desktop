@@ -1,0 +1,98 @@
+/* === EMOJI PICKER THEMING === */
+
+/* Base theming using CSS variables */
+.EmojiPickerReact {
+  /* Backgrounds */
+  --epr-bg-color: var(--surface-1) !important;
+  --epr-category-label-bg-color: var(--surface-1) !important;
+  --epr-search-input-bg-color: var(--surface-00) !important;
+  --epr-hover-bg-color: var(--surface-3) !important;
+  --epr-focus-bg-color: var(--surface-3) !important;
+  --epr-search-input-bg-color-active: var(--surface-00) !important;
+  --epr-search-input-focus-bg-color: var(--surface-0) !important;
+  --epr-search-input-focus-border-color: var(--accent-400) !important;
+
+  /* Borders */
+  --epr-picker-border-color: var(--surface-5) !important;
+  --epr-search-input-border-color: var(--surface-5) !important;
+
+  /* Text */
+  --epr-text-color: var(--color-text-main) !important;
+  --epr-search-input-text-color: var(--color-text-main) !important;
+  --epr-category-label-text-color: var(--color-text-subtle) !important;
+
+  /* Try to work with component's system instead of against it */
+  /* Remove these variables completely to see natural behavior */
+
+  /* UI sizing */
+  --epr-category-navigation-button-size: 38px !important;
+}
+
+/* Minimal targeted fixes only */
+.EmojiPickerReact {
+  // Fix browser focus outline 
+  .epr-category-nav button:focus,
+  .epr-cat-btn:focus {
+    outline: none !important;
+  }
+  .epr-category-nav button,
+  .epr-cat-btn {
+    // Remove ALL pseudo-elements at all states
+    &::before,
+    &::after {
+      display: none !important;
+      content: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+
+    &:focus,
+    &:hover,
+    &:active {
+      // Remove problematic pseudo-elements
+      &::before,
+      &::after {
+        display: none !important;
+        content: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+      }
+
+      // Force visibility - icons are getting hidden
+      opacity: 1 !important;
+      color: inherit !important;
+
+      * {
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+    }
+  }
+
+  // Search input focus
+  .epr-search:focus {
+    border-color: var(--accent) !important;
+    outline: none !important;
+  }
+
+  // Emoji hover states
+  .epr-emoji-img:hover,
+  .epr-emoji-native:hover {
+    background-color: rgba(var(--accent-rgb), 0.1) !important;
+  }
+
+  // Skin tone picker
+  .epr-skin-tone-select button.epr-active {
+    background-color: var(--accent) !important;
+  }
+}
+
+/* Mobile-specific emoji picker styling */
+@media (max-width: 768px) {
+  .EmojiPickerReact {
+    /* Larger touch targets for mobile */
+    --epr-category-navigation-button-size: 44px !important;
+    --epr-emoji-size: 32px !important;
+    --epr-emoji-gap: 8px !important;
+  }
+}

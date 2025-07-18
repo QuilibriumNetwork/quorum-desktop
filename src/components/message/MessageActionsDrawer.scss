@@ -1,60 +1,7 @@
-// Mobile Message Actions Drawer Styles
-.message-actions-drawer {
-  background: var(--surface-1);
-  border-radius: 16px 16px 0 0;
-  padding: 16px;
-  width: 100%;
-  max-width: 500px;
-  margin: 0 8px;
-  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
-  transform: translateY(0);
-  animation: slide-up 0.3s ease-out;
-  position: relative;
-  
-  &--closing {
-    animation: slide-down 0.3s ease-out forwards;
-  }
-  
-  // Safe area handling for mobile devices
-  padding-bottom: calc(16px + env(safe-area-inset-bottom));
-}
-
-.message-actions-drawer__close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 32px;
-  height: 32px;
-  background: none;
-  border: none;
-  color: var(--color-text-main);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  z-index: 1;
-
-  &:hover {
-    color: var(--color-text-strong);
-    transform: scale(1.1);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
+// Mobile Message Actions Drawer Specific Styles
 .message-actions-drawer__quick-reactions {
   margin-bottom: 24px;
-  margin-top: 16px; // Add space below the X button
-}
-
-.message-actions-drawer__quick-reactions-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-text-main);
-  margin-bottom: 12px;
+  margin-top: 16px; // Space from top of drawer
 }
 
 .message-actions-drawer__quick-reactions-list {
@@ -62,6 +9,7 @@
   gap: 8px;
   justify-content: space-between;
   flex-wrap: wrap;
+  padding: 0 16px; // Left and right spacing like action items below
 }
 
 .quick-reaction-button {
@@ -103,6 +51,20 @@
   font-size: 20px;
   line-height: 1;
   margin-bottom: 2px;
+}
+
+.quick-reaction-button--more {
+  // Special styling for the "more reactions" button
+  border-style: dashed; // Distinguish from reaction buttons
+  
+  .quick-reaction-button__more-icon {
+    font-size: 20px;
+    color: var(--color-text-main);
+  }
+  
+  &:hover .quick-reaction-button__more-icon {
+    color: var(--color-text-strong);
+  }
 }
 
 // Removed count styles - counts are now hidden
@@ -169,41 +131,8 @@
   line-height: 1.4;
 }
 
-// Animations
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slide-up {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-@keyframes slide-down {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(100%);
-  }
-}
-
 // Responsive adjustments
 @media (max-width: 375px) {
-  .message-actions-drawer {
-    margin: 0;
-    border-radius: 16px 16px 0 0;
-  }
-
   .quick-reaction-button {
     min-width: 44px;
     min-height: 44px;
@@ -222,10 +151,6 @@
 
 // High contrast mode support
 @media (prefers-contrast: high) {
-  .message-actions-drawer {
-    border: 2px solid var(--color-text-main);
-  }
-
   .quick-reaction-button {
     border-width: 2px;
   }
@@ -241,17 +166,8 @@
 
 // Reduce motion for accessibility
 @media (prefers-reduced-motion: reduce) {
-  .message-actions-drawer-backdrop {
-    animation: none;
-  }
-
-  .message-actions-drawer {
-    animation: none;
-  }
-
   .quick-reaction-button,
-  .action-menu-item,
-  .message-actions-drawer__close {
+  .action-menu-item {
     transition: none;
   }
 }

@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import React from 'react';
 import { t } from '@lingui/core/macro';
 import EmojiPicker, {
   SkinTonePickerLocation,
@@ -8,6 +6,7 @@ import EmojiPicker, {
   Theme,
 } from 'emoji-picker-react';
 import { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
+import MobileDrawer from '../MobileDrawer';
 import './EmojiPickerDrawer.scss';
 
 export interface EmojiPickerDrawerProps {
@@ -27,61 +26,22 @@ const EmojiPickerDrawer: React.FC<EmojiPickerDrawerProps> = ({
   onEmojiClick,
   customEmojis,
 }) => {
-  const [isClosing, setIsClosing] = useState(false);
-  const [shouldRender, setShouldRender] = useState(isOpen);
-
-  // Handle visibility changes with animation
-  React.useEffect(() => {
-    if (isOpen) {
-      setShouldRender(true);
-      setIsClosing(false);
-    } else if (shouldRender) {
-      setIsClosing(true);
-      // Wait for animation to complete before hiding
-      setTimeout(() => {
-        setShouldRender(false);
-        setIsClosing(false);
-      }, 300); // Match CSS animation duration
-    }
-  }, [isOpen, shouldRender]);
-
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      onClose();
-    }, 300);
-  };
-
   const handleEmojiClick = (emojiData: any) => {
     onEmojiClick(emojiData.emoji);
-    handleClose();
+    onClose();
   };
 
-  if (!shouldRender) return null;
-
   return (
-    <div
-      className={`emoji-picker-drawer ${isOpen && !isClosing ? 'emoji-picker-drawer--open' : ''} ${isClosing ? 'emoji-picker-drawer--closing' : ''}`}
-      role="dialog"
-      aria-modal="true"
-      aria-label={t`Emoji picker`}
+    <MobileDrawer
+      isOpen={isOpen}
+      onClose={onClose}
+      ariaLabel={t`Emoji picker`}
+      showCloseButton={false}
     >
-      {/* Header with close button only */}
-      <div className="emoji-picker-drawer__header">
-        <button
-          className="emoji-picker-drawer__close"
-          onClick={handleClose}
-          aria-label={t`Close`}
-        >
-          <FontAwesomeIcon icon={faTimes} />
-        </button>
-      </div>
-
-      {/* Emoji picker */}
       <div className="emoji-picker-drawer__content">
         <EmojiPicker
           width="100%"
-          height={400}
+          height={600}
           suggestedEmojisMode={SuggestionMode.FREQUENT}
           customEmojis={customEmojis}
           getEmojiUrl={(unified, style) => {
@@ -92,7 +52,7 @@ const EmojiPickerDrawer: React.FC<EmojiPickerDrawerProps> = ({
           onEmojiClick={handleEmojiClick}
         />
       </div>
-    </div>
+    </MobileDrawer>
   );
 };
 
