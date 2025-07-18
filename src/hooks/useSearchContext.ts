@@ -17,8 +17,6 @@ export const useSearchContext = (): SearchContext => {
   return useMemo((): SearchContext => {
     const pathname = location.pathname;
 
-    console.log('useSearchContext: pathname:', pathname, 'params:', params);
-
     // Direct message routes
     if (
       pathname.includes('/dm/') ||
@@ -29,10 +27,6 @@ export const useSearchContext = (): SearchContext => {
       if (params.address) {
         const conversationId = `${params.address}/${params.address}`;
         const context = { type: 'dm' as const, conversationId };
-        console.log(
-          'useSearchContext: returning DM context (from address param):',
-          context
-        );
         return context;
       }
 
@@ -42,10 +36,6 @@ export const useSearchContext = (): SearchContext => {
           type: 'dm' as const,
           conversationId: params.conversationId,
         };
-        console.log(
-          'useSearchContext: returning DM context (from conversationId param):',
-          context
-        );
         return context;
       }
 
@@ -55,17 +45,12 @@ export const useSearchContext = (): SearchContext => {
         const address = dmMatch[1];
         const conversationId = `${address}/${address}`;
         const context = { type: 'dm' as const, conversationId };
-        console.log(
-          'useSearchContext: returning DM context (from path):',
-          context
-        );
         return context;
       }
 
       // For /messages route without specific conversation
       if (pathname.includes('/messages')) {
         const context = { type: 'dm' as const, conversationId: 'general' };
-        console.log('useSearchContext: returning general DM context:', context);
         return context;
       }
     }
@@ -79,10 +64,6 @@ export const useSearchContext = (): SearchContext => {
           spaceId: params.spaceId,
           channelId: params.channelId,
         };
-        console.log(
-          'useSearchContext: returning space context (from params):',
-          context
-        );
         return context;
       }
 
@@ -95,17 +76,12 @@ export const useSearchContext = (): SearchContext => {
           spaceId: spaceMatch[1],
           channelId: channelMatch?.[1],
         };
-        console.log(
-          'useSearchContext: returning space context (from path):',
-          context
-        );
         return context;
       }
     }
 
     // Default fallback - could be improved based on app structure
     const context = { type: 'space' as const, spaceId: 'default' };
-    console.log('useSearchContext: returning default context:', context);
     return context;
   }, [location.pathname, params]);
 };
