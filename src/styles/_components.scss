@@ -1,6 +1,5 @@
 /* === EMOJI PICKER THEMING === */
 .EmojiPickerReact {
-  scale: 0.85;
   /* Backgrounds */
   --epr-bg-color: var(--surface-1) !important;
   --epr-category-label-bg-color: var(--surface-1) !important;
@@ -25,17 +24,13 @@
   --epr-category-navigation-button-size: 38px !important;
 }
 
-@media (max-width: 1023px) {
+/* Mobile-specific emoji picker styling */
+@media (max-width: 768px) {
   .EmojiPickerReact {
-    scale: 0.75;
-    --epr-category-navigation-button-size: 32px !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .EmojiPickerReact {
-    scale: 0.7;
-    --epr-category-navigation-button-size: 32px !important;
+    /* Larger touch targets for mobile */
+    --epr-category-navigation-button-size: 44px !important;
+    --epr-emoji-size: 32px !important;
+    --epr-emoji-gap: 8px !important;
   }
 }
 

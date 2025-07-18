@@ -10,7 +10,7 @@ export interface ResponsiveLayoutState {
   openLeftSidebar: () => void;
 }
 
-const MOBILE_BREAKPOINT = 1024; // Tablets and below
+const MOBILE_BREAKPOINT = 768; // Mobile devices only
 
 export const useResponsiveLayout = (): ResponsiveLayoutState => {
   const [screenWidth, setScreenWidth] = useState(

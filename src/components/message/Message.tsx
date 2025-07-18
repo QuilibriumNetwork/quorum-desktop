@@ -32,6 +32,9 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
 import ReactTooltip from '../../components/ReactTooltip';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { useLongPress } from '../../hooks/useLongPress';
+import MessageActionsDrawer from './MessageActionsDrawer';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -94,6 +97,24 @@ export const Message = ({
   const user = usePasskeysContext();
   const { spaceId } = useParams();
   const location = useLocation();
+
+  // Responsive layout and device detection
+  const { isMobile } = useResponsiveLayout();
+  const isTouchDevice = 'ontouchstart' in window;
+  const useMobileDrawer = isMobile;
+  const useDesktopTap = !isMobile && isTouchDevice;
+  const useDesktopHover = !isMobile && !isTouchDevice;
+
+  // State for mobile drawer
+  const [showActionsDrawer, setShowActionsDrawer] = useState(false);
+  const [showEmojiDrawer, setShowEmojiDrawer] = useState(false);
+
+  // State for desktop tap interaction
+  const [actionsVisibleOnTap, setActionsVisibleOnTap] = useState(false);
+
+  // State for copied link feedback
+  const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null);
+
   const customEmojis = useMemo(() => {
     if (!customEmoji) return [];
 
@@ -146,7 +167,60 @@ export const Message = ({
     }
   };
 
-  const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null);
+  // Long-press handler for mobile
+  const longPressHandlers = useLongPress({
+    onLongPress: () => {
+      if (useMobileDrawer) {
+        setShowActionsDrawer(true);
+        if ('vibrate' in navigator) {
+          navigator.vibrate(50);
+        }
+      }
+    },
+    delay: 500,
+  });
+
+  // Action handlers
+  const handleReaction = (emoji: string) => {
+    if (!message.reactions?.find(r => r.emojiId === emoji)?.memberIds.includes(user.currentPasskeyInfo!.address)) {
+      submitMessage({
+        type: 'reaction',
+        messageId: message.messageId,
+        reaction: emoji,
+      });
+    } else {
+      submitMessage({
+        type: 'remove-reaction',
+        messageId: message.messageId,
+        reaction: emoji,
+      });
+    }
+  };
+
+  const handleReply = () => {
+    setInReplyTo(message);
+    editorRef?.focus();
+  };
+
+  const handleCopyLink = () => {
+    const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
+    navigator.clipboard.writeText(url);
+    setCopiedLinkId(message.messageId);
+    setTimeout(() => {
+      setCopiedLinkId(prev => prev === message.messageId ? null : prev);
+    }, 1500);
+  };
+
+  const handleDelete = () => {
+    submitMessage({
+      type: 'remove-message',
+      removeMessageId: message.messageId,
+    });
+  };
+
+  const handleMoreReactions = () => {
+    setShowEmojiDrawer(true);
+  };
 
   return (
     <div
@@ -158,12 +232,26 @@ export const Message = ({
           : '') +
         (isHashTarget ? ' message-highlighted' : '')
       }
-      onMouseOver={() => setHoverTarget(message.messageId)}
-      onMouseOut={() => setHoverTarget(undefined)}
-      onClick={() => {
+      // Desktop mouse interaction
+      onMouseOver={() => useDesktopHover && setHoverTarget(message.messageId)}
+      onMouseOut={() => useDesktopHover && setHoverTarget(undefined)}
+      onClick={(e) => {
+        // Prevent default click behavior for mobile drawer
+        if (useMobileDrawer) {
+          e.preventDefault();
+        }
+        
+        // Desktop touch interaction
+        if (useDesktopTap) {
+          setActionsVisibleOnTap(prev => !prev);
+        }
+        
+        // Common click behaviors
         setShowUserProfile(false);
         setEmojiPickerOpen(undefined);
       }}
+      // Mobile touch interaction
+      {...(useMobileDrawer ? longPressHandlers : {})}
     >
       {(() => {
         if (message.content.type == 'post') {
@@ -281,7 +369,7 @@ export const Message = ({
             }}
           />
           <div className="message-content">
-            {hoverTarget === message.messageId && (
+            {((hoverTarget === message.messageId && useDesktopHover) || (actionsVisibleOnTap && useDesktopTap)) && (
               <div
                 onClick={(e) => {
                   e.stopPropagation();
@@ -486,6 +574,49 @@ export const Message = ({
                 />
               </div>
             )}
+
+            {/* Mobile Actions Drawer */}
+            {useMobileDrawer && (
+              <MessageActionsDrawer
+                isOpen={showActionsDrawer}
+                message={message}
+                onClose={() => setShowActionsDrawer(false)}
+                onReply={handleReply}
+                onCopyLink={handleCopyLink}
+                onDelete={canUserDelete ? handleDelete : undefined}
+                onReaction={handleReaction}
+                onMoreReactions={handleMoreReactions}
+                canDelete={canUserDelete}
+                userAddress={user.currentPasskeyInfo!.address}
+              />
+            )}
+
+            {/* Mobile Emoji Picker */}
+            {useMobileDrawer && showEmojiDrawer && (
+              <Modal
+                title=""
+                visible={showEmojiDrawer}
+                onClose={() => setShowEmojiDrawer(false)}
+                hideClose={false}
+              >
+                <EmojiPicker
+                  width="100%"
+                  height={300}
+                  suggestedEmojisMode={SuggestionMode.FREQUENT}
+                  customEmojis={customEmojis}
+                  getEmojiUrl={(unified, style) => {
+                    return '/apple/64/' + unified + '.png';
+                  }}
+                  skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
+                  theme={Theme.DARK}
+                  onEmojiClick={(e) => {
+                    handleReaction(e.emoji);
+                    setShowEmojiDrawer(false);
+                  }}
+                />
+              </Modal>
+            )}
+
             <span className="message-sender-name">{sender.displayName}</span>
             <span className="pl-2">
               {!repudiability && !message.signature && (
