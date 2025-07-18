@@ -17,6 +17,7 @@ interface SearchResultItemProps {
   onNavigate: (spaceId: string, channelId: string, messageId: string) => void;
   highlightTerms: (text: string) => string;
   className?: string;
+  searchTerms: string[];
 }
 
 // Component for DM search results
@@ -25,6 +26,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   onNavigate,
   highlightTerms,
   className,
+  searchTerms,
 }) => {
   const { message } = result;
 
@@ -49,6 +51,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
       spaceName={t`Direct Message`}
       channelName={displayName} // Use sender name for both
       isDM={true}
+      searchTerms={searchTerms}
     />
   );
 };
@@ -59,6 +62,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   onNavigate,
   highlightTerms,
   className,
+  searchTerms,
 }) => {
   const { message } = result;
 
@@ -95,6 +99,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
       spaceName={spaceName}
       channelName={channelName}
       isDM={false}
+      searchTerms={searchTerms}
     />
   );
 };
@@ -123,6 +128,7 @@ interface SearchResultItemContentProps extends SearchResult {
   spaceName: string;
   channelName: string;
   isDM: boolean;
+  searchTerms: string[];
 }
 
 const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
@@ -136,6 +142,7 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
   spaceName,
   channelName,
   isDM,
+  searchTerms,
 }) => {
   const formatDate = (timestamp: number): string => {
     const date = new Date(timestamp);
@@ -168,6 +175,65 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
     return '';
   };
 
+  const generateContextualSnippet = (
+    text: string,
+    searchTerms: string[],
+    contextWords: number = 12,
+    maxLength: number = 200
+  ): string => {
+    if (!searchTerms.length || !text.trim()) {
+      return text.length > maxLength 
+        ? text.substring(0, maxLength) + '...' 
+        : text;
+    }
+
+    // Split text into words
+    const words = text.split(/\s+/);
+    
+    // Find the first occurrence of any search term
+    let foundIndex = -1;
+    
+    for (const term of searchTerms) {
+      const termLower = term.toLowerCase();
+      for (let i = 0; i < words.length; i++) {
+        if (words[i].toLowerCase().includes(termLower)) {
+          foundIndex = i;
+          break;
+        }
+      }
+      if (foundIndex !== -1) break;
+    }
+
+    // If no terms found, return truncated text from beginning
+    if (foundIndex === -1) {
+      return text.length > maxLength 
+        ? text.substring(0, maxLength) + '...' 
+        : text;
+    }
+
+    // Calculate snippet boundaries
+    const startIndex = Math.max(0, foundIndex - contextWords);
+    const endIndex = Math.min(words.length, foundIndex + contextWords + 1);
+    
+    // Extract snippet
+    let snippet = words.slice(startIndex, endIndex).join(' ');
+    
+    // Add ellipsis if we're not at the start/end
+    if (startIndex > 0) {
+      snippet = '...' + snippet;
+    }
+    if (endIndex < words.length) {
+      snippet = snippet + '...';
+    }
+
+    // If snippet is still too long, truncate it
+    if (snippet.length > maxLength) {
+      snippet = snippet.substring(0, maxLength - 3) + '...';
+    }
+
+    return snippet;
+  };
+
   const getMessageTypeIcon = (message: Message) => {
     switch (message.content.type) {
       case 'post':
@@ -184,10 +250,7 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
   };
 
   const messageText = getMessageText(message);
-  const truncatedText =
-    messageText.length > 150
-      ? messageText.substring(0, 150) + '...'
-      : messageText;
+  const contextualSnippet = generateContextualSnippet(messageText, searchTerms);
 
   return (
     <div
@@ -223,7 +286,7 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
         <div
           className="result-text"
           dangerouslySetInnerHTML={{
-            __html: highlightTerms(truncatedText),
+            __html: highlightTerms(contextualSnippet),
           }}
         />
       </div>

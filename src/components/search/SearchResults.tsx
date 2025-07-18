@@ -36,6 +36,8 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   className,
   maxHeight = 400,
 }) => {
+  // Extract search terms from query
+  const searchTerms = query.trim().split(/\s+/).filter(term => term.length > 0);
   const containerRef = useRef<HTMLDivElement>(null);
   const updateTimeoutRef = useRef<NodeJS.Timeout>();
 
@@ -231,6 +233,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
               result={result}
               onNavigate={handleNavigate}
               highlightTerms={highlightTerms}
+              searchTerms={searchTerms}
             />
           ))
         ) : (
@@ -245,6 +248,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                 result={results[index]}
                 onNavigate={handleNavigate}
                 highlightTerms={highlightTerms}
+                searchTerms={searchTerms}
               />
             )}
             overscan={5}
