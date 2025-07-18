@@ -26,3 +26,12 @@ export const truncateAddress = (
 
   return `${address.slice(0, startChars)}...${address.slice(-endChars)}`;
 };
+
+export const isTouchDevice = (): boolean => {
+  return (
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+    // @ts-ignore - for older browsers
+    navigator.msMaxTouchPoints > 0
+  );
+};
