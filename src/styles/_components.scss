@@ -48,6 +48,13 @@
   -webkit-app-region: no-drag;
 }
 
+/* === INFO ICON TOOLTIPS === */
+.info-icon-tooltip {
+  @apply text-subtle hover:text-main cursor-pointer;
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .titlebar {
   -webkit-app-region: drag;
 }

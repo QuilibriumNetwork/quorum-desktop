@@ -23,7 +23,7 @@ import locales from '../../i18n/locales';
 import useForceUpdate from '../hooks/forceUpdate';
 import ReactTooltip from '../ReactTooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -462,12 +462,11 @@ const UserSettingsModal: React.FunctionComponent<{
                               {t`Enable sync`}
                             </div>
                             <>
-                              <div
+                              <FontAwesomeIcon
                                 id="allow-sync-tooltip-anchor"
-                                className="border border-strong rounded-full w-6 h-6 text-center leading-5 text-lg mt-1 ml-2 cursor-default"
-                              >
-                                ℹ
-                              </div>
+                                icon={faInfoCircle}
+                                className="info-icon-tooltip mt-2 ml-2"
+                              />
                               <ReactTooltip
                                 id="allow-sync-tooltip"
                                 anchorSelect="#allow-sync-tooltip-anchor"
@@ -491,12 +490,11 @@ const UserSettingsModal: React.FunctionComponent<{
                               {t`Non-repudiability`}
                             </div>
                             <>
-                              <div
+                              <FontAwesomeIcon
                                 id="non-repudiable-tooltip-anchor"
-                                className="border border-strong rounded-full w-6 h-6 text-center leading-5 text-lg mt-1 ml-2 cursor-default"
-                              >
-                                ℹ
-                              </div>
+                                icon={faInfoCircle}
+                                className="info-icon-tooltip mt-2 ml-2"
+                              />
                               <ReactTooltip
                                 id="non-repudiable-tooltip"
                                 anchorSelect="#non-repudiable-tooltip-anchor"
