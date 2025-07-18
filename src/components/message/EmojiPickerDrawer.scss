@@ -15,10 +15,7 @@
     // Ensure proper sizing
     width: 100% !important;
     
-    // Mobile-optimized touch targets
-    --epr-emoji-size: 32px !important;
-    --epr-emoji-gap: 8px !important;
-    --epr-category-navigation-button-size: 36px !important; // Smaller category buttons
+    // Mobile drawer uses global sizing (no overrides needed)
     
     // Mobile-optimized search
     .epr-search-container {
@@ -31,39 +28,10 @@
       border-radius: 12px;
     }
     
-    // Category navigation
+    // Category navigation - basic spacing only (focus styling is global)
     .epr-category-nav {
       padding: 8px 4px;
       gap: 4px;
-      
-      // Remove browser focus outline on category buttons
-      button {
-        outline: none !important;
-        border: none !important;
-        
-        &:focus {
-          outline: none !important;
-          box-shadow: none !important;
-          border: none !important;
-        }
-        
-        &:focus-visible {
-          outline: none !important;
-          box-shadow: none !important;
-          border: none !important;
-        }
-        
-        &.epr-cat-btn {
-          border: none !important;
-          outline: none !important;
-          
-          &:focus, &:focus-visible, &:active, &.epr-active {
-            border: none !important;
-            outline: none !important;
-            box-shadow: none !important;
-          }
-        }
-      }
     }
     
     // Emoji body
@@ -97,9 +65,7 @@
     padding: 6px 8px 8px 8px;
     
     .EmojiPickerReact {
-      --epr-emoji-size: 28px !important;
-      --epr-emoji-gap: 6px !important;
-      
+      // Size variables handled globally, only drawer-specific heights here
       .epr-body {
         height: 420px; // Much taller even on small screens
       }

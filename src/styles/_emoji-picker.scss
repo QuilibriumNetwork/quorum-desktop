@@ -10,57 +10,50 @@
   --epr-focus-bg-color: var(--surface-3) !important;
   --epr-search-input-bg-color-active: var(--surface-00) !important;
   --epr-search-input-focus-bg-color: var(--surface-0) !important;
-  --epr-search-input-focus-border-color: var(--accent-400) !important;
 
   /* Borders */
   --epr-picker-border-color: var(--surface-5) !important;
   --epr-search-input-border-color: var(--surface-5) !important;
+  --epr-search-border-color: var(--accent-300) !important;
 
   /* Text */
   --epr-text-color: var(--color-text-main) !important;
   --epr-search-input-text-color: var(--color-text-main) !important;
   --epr-category-label-text-color: var(--color-text-subtle) !important;
 
-  /* Try to work with component's system instead of against it */
-  /* Remove these variables completely to see natural behavior */
-
-  /* UI sizing */
+  /* UI sizing - standardized across all instances */
   --epr-category-navigation-button-size: 38px !important;
+  --epr-emoji-size: 28px !important;
+  --epr-emoji-gap: 6px !important;
 }
 
-/* Minimal targeted fixes only */
+
+/* Global EmojiPicker fixes and customizations */
 .EmojiPickerReact {
-  // Fix browser focus outline 
-  .epr-category-nav button:focus,
-  .epr-cat-btn:focus {
-    outline: none !important;
-  }
+  // Category button fixes - global for all instances
   .epr-category-nav button,
   .epr-cat-btn {
-    // Remove ALL pseudo-elements at all states
+    // Remove browser focus outlines
+    &:focus,
+    &:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+
+    // Remove ALL pseudo-elements that cause icon disappearing
     &::before,
     &::after {
       display: none !important;
       content: none !important;
-      opacity: 0 !important;
-      visibility: hidden !important;
     }
 
+    // Ensure icons stay visible on all interactive states
     &:focus,
     &:hover,
-    &:active {
-      // Remove problematic pseudo-elements
-      &::before,
-      &::after {
-        display: none !important;
-        content: none !important;
-        opacity: 0 !important;
-        visibility: hidden !important;
-      }
-
-      // Force visibility - icons are getting hidden
+    &:active,
+    &.epr-active {
       opacity: 1 !important;
-      color: inherit !important;
 
       * {
         opacity: 1 !important;
@@ -71,14 +64,23 @@
 
   // Search input focus
   .epr-search:focus {
-    border-color: var(--accent) !important;
+    border-color: var(--accent-400) !important;
     outline: none !important;
   }
 
-  // Emoji hover states
-  .epr-emoji-img:hover,
-  .epr-emoji-native:hover {
-    background-color: rgba(var(--accent-rgb), 0.1) !important;
+  // Emoji hover/active/focus states - remove any borders/outlines
+  .epr-emoji-img,
+  .epr-emoji-native,
+  button[class*='epr-emoji'] {
+    &:hover,
+    &:active,
+    &:focus,
+    &:focus-visible {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
   }
 
   // Skin tone picker
@@ -87,12 +89,3 @@
   }
 }
 
-/* Mobile-specific emoji picker styling */
-@media (max-width: 768px) {
-  .EmojiPickerReact {
-    /* Larger touch targets for mobile */
-    --epr-category-navigation-button-size: 44px !important;
-    --epr-emoji-size: 32px !important;
-    --epr-emoji-gap: 8px !important;
-  }
-}
