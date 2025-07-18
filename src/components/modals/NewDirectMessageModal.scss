@@ -22,3 +22,16 @@
 .modal-new-direct-message-info {
   @extend .modal-info;
 }
+
+.modal-new-direct-message-error {
+  color: #f56565;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  text-align: left;
+}
+
+@media (max-width: 640px) {
+  .modal-new-direct-message-error {
+    text-align: center;
+  }
+}
