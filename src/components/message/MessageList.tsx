@@ -120,12 +120,12 @@ export const MessageList = ({
       const msgId = hash.replace('#msg-', '');
       const index = messageList.findIndex((m) => m.messageId === msgId);
       if (index !== -1 && virtuoso.current) {
-        // Scroll to the message
+        // Scroll to the message - use instant scroll for search navigation to prevent focus stealing
         setTimeout(() => {
           virtuoso.current?.scrollToIndex({
             index,
             align: 'center',
-            behavior: 'smooth',
+            behavior: 'auto',
           });
         }, 200);
 

@@ -30,9 +30,13 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const isUserTyping = useRef(false);
 
   // Centralized focus management - prevents focus when mobile overlay is active
   const focusInputSafely = () => {
+    // Don't steal focus if user is actively typing
+    if (isUserTyping.current) return;
+    
     // Prevent focus if mobile overlay is active
     if (window.innerWidth < 1024) {
       const mobileOverlay = document.querySelector('.bg-mobile-overlay');
@@ -100,17 +104,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Mark user as actively typing
+    isUserTyping.current = true;
+    
     const value = e.target.value;
     onQueryChange(value);
     setSelectedSuggestionIndex(-1);
     setShowSuggestions(value.length > 0 && suggestions.length > 0);
-
-    // Ensure input stays focused after state changes
+    
+    // Reset typing state after a short delay
     setTimeout(() => {
-      if (inputRef.current && document.activeElement !== inputRef.current) {
-        focusInputSafely();
-      }
-    }, 0);
+      isUserTyping.current = false;
+    }, 300);
   };
 
   const handleInputFocus = () => {
@@ -119,6 +124,17 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   const handleInputBlur = () => {
+    // Don't blur if user is actively typing (focus was stolen)
+    if (isUserTyping.current) {
+      // Try to restore focus
+      setTimeout(() => {
+        if (isUserTyping.current && inputRef.current) {
+          inputRef.current.focus();
+        }
+      }, 10);
+      return;
+    }
+    
     // Delay to allow suggestion clicks
     setTimeout(() => {
       setIsFocused(false);
