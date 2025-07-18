@@ -1,19 +1,4 @@
 // Mobile Message Actions Drawer Styles
-.message-actions-drawer-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  z-index: 10000;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  animation: fade-in 0.3s ease-out;
-}
-
 .message-actions-drawer {
   background: var(--surface-1);
   border-radius: 16px 16px 0 0;
@@ -36,9 +21,8 @@
   right: 12px;
   width: 32px;
   height: 32px;
-  background: var(--surface-3);
+  background: none;
   border: none;
-  border-radius: 50%;
   color: var(--color-text-main);
   cursor: pointer;
   display: flex;
@@ -48,7 +32,7 @@
   z-index: 1;
 
   &:hover {
-    background: var(--surface-4);
+    color: var(--color-text-strong);
     transform: scale(1.1);
   }
 
@@ -59,6 +43,7 @@
 
 .message-actions-drawer__quick-reactions {
   margin-bottom: 24px;
+  margin-top: 16px; // Add space below the X button
 }
 
 .message-actions-drawer__quick-reactions-title {
@@ -116,31 +101,25 @@
   margin-bottom: 2px;
 }
 
-.quick-reaction-button__count {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--color-text-subtle);
-  min-height: 12px;
-  line-height: 1;
-}
+// Removed count styles - counts are now hidden
 
 .message-actions-drawer__actions {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px; // Reduced gap for better mobile density
 }
 
 .action-menu-item {
   background: none;
   border: none;
-  padding: 16px;
+  padding: 14px 16px; // Slightly reduced vertical padding
   border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px; // Slightly reduced gap
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: 56px;
+  min-height: 52px; // Reduced from 56px for better mobile fit
   text-align: left;
   color: var(--color-text-main);
 
@@ -181,7 +160,7 @@
 }
 
 .action-menu-item__label {
-  font-size: 16px;
+  font-size: 15px; // Slightly smaller for better mobile density
   font-weight: 500;
   line-height: 1.4;
 }

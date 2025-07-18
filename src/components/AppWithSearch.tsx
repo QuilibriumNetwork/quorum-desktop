@@ -4,6 +4,7 @@ import UserSettingsModal from './modals/UserSettingsModal';
 import SpaceEditor from './channel/SpaceEditor';
 import ChannelEditor from './channel/ChannelEditor';
 import LeaveSpaceModal from './modals/LeaveSpaceModal';
+import MessageActionsDrawer from './message/MessageActionsDrawer';
 // Note: UserSettingsModal, SpaceEditor, ChannelEditor use custom simple modal pattern
 import './AppWithSearch.scss';
 
@@ -29,6 +30,8 @@ interface ModalContextType {
   setShowRightSidebar: (show: boolean) => void;
   rightSidebarContent: React.ReactNode;
   setRightSidebarContent: (content: React.ReactNode) => void;
+  openMobileActionsDrawer: (messageData: any) => void;
+  closeMobileActionsDrawer: () => void;
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
@@ -64,6 +67,7 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
   const [showRightSidebar, setShowRightSidebar] = useState(false);
   const [rightSidebarContent, setRightSidebarContent] =
     useState<React.ReactNode>(null);
+  const [mobileActionsDrawerData, setMobileActionsDrawerData] = useState<any>(null);
 
   const modalContextValue = {
     openUserSettings: () => setIsUserSettingsOpen(true),
@@ -78,6 +82,8 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
     setShowRightSidebar,
     rightSidebarContent,
     setRightSidebarContent,
+    openMobileActionsDrawer: (messageData: any) => setMobileActionsDrawerData(messageData),
+    closeMobileActionsDrawer: () => setMobileActionsDrawerData(null),
   };
 
   return (
@@ -129,6 +135,27 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
           visible={true}
           onClose={() => setLeaveSpaceData(null)}
         />
+      )}
+
+      {mobileActionsDrawerData && (
+        <div className="fixed inset-0 z-[9999] flex items-end justify-center bg-overlay backdrop-blur">
+          <MessageActionsDrawer
+            isOpen={true}
+            message={mobileActionsDrawerData.message}
+            onClose={() => setMobileActionsDrawerData(null)}
+            onReply={mobileActionsDrawerData.onReply}
+            onCopyLink={mobileActionsDrawerData.onCopyLink}
+            onDelete={mobileActionsDrawerData.onDelete}
+            onReaction={mobileActionsDrawerData.onReaction}
+            onMoreReactions={mobileActionsDrawerData.onMoreReactions}
+            canDelete={mobileActionsDrawerData.canDelete}
+            userAddress={mobileActionsDrawerData.userAddress}
+          />
+          <div
+            className="fixed inset-0 -z-10"
+            onClick={() => setMobileActionsDrawerData(null)}
+          />
+        </div>
       )}
 
       {showRightSidebar && (

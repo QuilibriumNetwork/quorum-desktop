@@ -44,12 +44,6 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
 }) => {
   const quickReactions = ['❤️', '👍', '🔥', '😂', '😢', '😮'];
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
   const handleReaction = (emoji: string) => {
     onReaction(emoji);
     onClose();
@@ -81,13 +75,11 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
 
   return (
     <div
-      className="message-actions-drawer-backdrop"
-      onClick={handleBackdropClick}
+      className="message-actions-drawer"
       role="dialog"
       aria-modal="true"
       aria-label={t`Message actions`}
     >
-      <div className="message-actions-drawer">
         {/* Close button */}
         <button
           className="message-actions-drawer__close"
@@ -144,7 +136,6 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
             />
           )}
         </div>
-      </div>
     </div>
   );
 };

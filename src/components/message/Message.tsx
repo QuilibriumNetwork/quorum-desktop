@@ -34,7 +34,7 @@ import { DefaultImages } from '../../utils';
 import ReactTooltip from '../../components/ReactTooltip';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { useLongPress } from '../../hooks/useLongPress';
-import MessageActionsDrawer from './MessageActionsDrawer';
+import { useModalContext } from '../AppWithSearch';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -97,6 +97,7 @@ export const Message = ({
   const user = usePasskeysContext();
   const { spaceId } = useParams();
   const location = useLocation();
+  const { openMobileActionsDrawer } = useModalContext();
 
   // Responsive layout and device detection
   const { isMobile } = useResponsiveLayout();
@@ -105,8 +106,7 @@ export const Message = ({
   const useDesktopTap = !isMobile && isTouchDevice;
   const useDesktopHover = !isMobile && !isTouchDevice;
 
-  // State for mobile drawer
-  const [showActionsDrawer, setShowActionsDrawer] = useState(false);
+  // State for mobile emoji drawer (kept separate from actions drawer)
   const [showEmojiDrawer, setShowEmojiDrawer] = useState(false);
 
   // State for desktop tap interaction
@@ -114,6 +114,22 @@ export const Message = ({
 
   // State for copied link feedback
   const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null);
+
+  // Effect to handle hiding tablet actions when clicking elsewhere
+  React.useEffect(() => {
+    if (useDesktopTap && actionsVisibleOnTap && hoverTarget === message.messageId) {
+      const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as Element;
+        if (!target.closest(`#msg-${message.messageId}`)) {
+          setHoverTarget(undefined);
+          setActionsVisibleOnTap(false);
+        }
+      };
+
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [useDesktopTap, actionsVisibleOnTap, hoverTarget, message.messageId]);
 
   const customEmojis = useMemo(() => {
     if (!customEmoji) return [];
@@ -167,14 +183,28 @@ export const Message = ({
     }
   };
 
-  // Long-press handler for mobile
+  // Long-press handler for mobile and tablets
   const longPressHandlers = useLongPress({
     onLongPress: () => {
       if (useMobileDrawer) {
-        setShowActionsDrawer(true);
+        // Mobile: Open drawer
+        openMobileActionsDrawer({
+          message,
+          onReply: handleReply,
+          onCopyLink: handleCopyLink,
+          onDelete: canUserDelete ? handleDelete : undefined,
+          onReaction: handleReaction,
+          onMoreReactions: handleMoreReactions,
+          canDelete: canUserDelete,
+          userAddress: user.currentPasskeyInfo!.address,
+        });
         if ('vibrate' in navigator) {
           navigator.vibrate(50);
         }
+      } else if (useDesktopTap) {
+        // Tablet: Show inline actions and hide others
+        setHoverTarget(message.messageId);
+        setActionsVisibleOnTap(true);
       }
     },
     delay: 500,
@@ -241,17 +271,21 @@ export const Message = ({
           e.preventDefault();
         }
         
-        // Desktop touch interaction
+        // For tablets, regular click should hide actions (not show them)
         if (useDesktopTap) {
-          setActionsVisibleOnTap(prev => !prev);
+          // Hide actions if clicking on a different message or same message
+          if (hoverTarget !== message.messageId) {
+            setHoverTarget(undefined);
+            setActionsVisibleOnTap(false);
+          }
         }
         
         // Common click behaviors
         setShowUserProfile(false);
         setEmojiPickerOpen(undefined);
       }}
-      // Mobile touch interaction
-      {...(useMobileDrawer ? longPressHandlers : {})}
+      // Mobile and tablet touch interaction
+      {...(useMobileDrawer || useDesktopTap ? longPressHandlers : {})}
     >
       {(() => {
         if (message.content.type == 'post') {
@@ -369,7 +403,7 @@ export const Message = ({
             }}
           />
           <div className="message-content">
-            {((hoverTarget === message.messageId && useDesktopHover) || (actionsVisibleOnTap && useDesktopTap)) && (
+            {((hoverTarget === message.messageId && useDesktopHover) || (hoverTarget === message.messageId && actionsVisibleOnTap && useDesktopTap)) && (
               <div
                 onClick={(e) => {
                   e.stopPropagation();
@@ -573,22 +607,6 @@ export const Message = ({
                   }}
                 />
               </div>
-            )}
-
-            {/* Mobile Actions Drawer */}
-            {useMobileDrawer && (
-              <MessageActionsDrawer
-                isOpen={showActionsDrawer}
-                message={message}
-                onClose={() => setShowActionsDrawer(false)}
-                onReply={handleReply}
-                onCopyLink={handleCopyLink}
-                onDelete={canUserDelete ? handleDelete : undefined}
-                onReaction={handleReaction}
-                onMoreReactions={handleMoreReactions}
-                canDelete={canUserDelete}
-                userAddress={user.currentPasskeyInfo!.address}
-              />
             )}
 
             {/* Mobile Emoji Picker */}

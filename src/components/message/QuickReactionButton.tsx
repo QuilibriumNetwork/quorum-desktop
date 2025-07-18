@@ -30,9 +30,6 @@ const QuickReactionButton: React.FC<QuickReactionButtonProps> = ({
       type="button"
     >
       <span className="quick-reaction-button__emoji">{emoji}</span>
-      {reactionCount > 0 && (
-        <span className="quick-reaction-button__count">{reactionCount}</span>
-      )}
     </button>
   );
 };
