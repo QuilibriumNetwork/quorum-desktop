@@ -784,12 +784,12 @@ export const Message = ({
                 );
               }
             })()}
-            <div className="flex flex-row pt-1">
+            <div className="flex flex-wrap pt-1 -mr-1">
               {message.reactions?.map((r) => (
                 <div
                   key={message.messageId + '-reactions-' + r.emojiId}
                   className={
-                    'cursor-pointer flex flex-row mr-1 rounded-lg py-[1pt] px-2 border border-transparent ' +
+                    'cursor-pointer flex flex-row items-center mr-1 mb-1 rounded-lg py-[1pt] px-2 border border-transparent whitespace-nowrap ' +
                     (r.memberIds.includes(user.currentPasskeyInfo!.address)
                       ? 'bg-accent-150 hover:bg-accent-200 dark:bg-accent-700 dark:hover:bg-accent-600'
                       : 'bg-tooltip hover:bg-surface-5')
@@ -808,15 +808,15 @@ export const Message = ({
                   {customEmojis.find((e) => e.id === r.emojiName) ? (
                     <img
                       width="24"
-                      className="mr-2"
+                      className="mr-1"
                       src={
                         customEmojis.find((e) => e.id === r.emojiName)?.imgUrl
                       }
                     />
                   ) : (
-                    r.emojiName
-                  )}{' '}
-                  {r.count}
+                    <span className="mr-1">{r.emojiName}</span>
+                  )}
+                  <span className="text-sm">{r.count}</span>
                 </div>
               ))}
             </div>
