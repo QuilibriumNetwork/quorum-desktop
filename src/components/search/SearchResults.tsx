@@ -9,7 +9,6 @@ import {
 import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../db/messages';
 import { SearchResultItem } from './SearchResultItem';
-import { isTouchDevice } from '../../utils';
 import './SearchResults.scss';
 
 interface SearchResultsProps {
@@ -94,12 +93,12 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       clearTimeout(updateTimeoutRef.current);
     }
 
-    // Simple, non-blocking DOM update
+    // Debounce updates during active search to prevent performance issues
     updateTimeoutRef.current = setTimeout(() => {
       updateDimensions();
-    }, 0);
+    }, 100);
 
-    // Add resize listener
+    // Add resize listener only once
     window.addEventListener('resize', updateDimensions);
 
     return () => {
@@ -130,7 +129,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       onClose?.();
     };
 
-    // Simple delay to avoid conflicts with search bar focus
+    // Use a slight delay to avoid conflicts with search bar focus
     const timeoutId = setTimeout(() => {
       document.addEventListener('mousedown', handleClickOutside);
     }, 100);

@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/core/macro';
-import { isTouchDevice } from '../../utils';
 import './SearchBar.scss';
 
 interface SearchBarProps {
@@ -31,17 +30,20 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
-  const blurTimeoutRef = useRef<NodeJS.Timeout>();
+  const isUserTyping = useRef(false);
 
-  // Simple focus management - prevents focus when mobile overlay is active
-  const focusInputSafely = useCallback(() => {
+  // Centralized focus management - prevents focus when mobile overlay is active
+  const focusInputSafely = () => {
+    // Don't steal focus if user is actively typing
+    if (isUserTyping.current) return;
+    
     // Prevent focus if mobile overlay is active
     if (window.innerWidth < 1024) {
       const mobileOverlay = document.querySelector('.bg-mobile-overlay');
-      if (mobileOverlay) return;
+      if (mobileOverlay) return; // Don't focus
     }
     inputRef.current?.focus();
-  }, []);
+  };
 
   // Handle keyboard shortcuts
   useEffect(() => {
@@ -60,13 +62,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     };
 
     document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      // Cleanup blur timeout
-      if (blurTimeoutRef.current) {
-        clearTimeout(blurTimeoutRef.current);
-      }
-    };
+    return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isFocused, focusInputSafely]);
 
   // Handle suggestion navigation
@@ -108,10 +104,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Mark user as actively typing
+    isUserTyping.current = true;
+    
     const value = e.target.value;
     onQueryChange(value);
     setSelectedSuggestionIndex(-1);
     setShowSuggestions(value.length > 0 && suggestions.length > 0);
+    
+    // Reset typing state after a short delay
+    setTimeout(() => {
+      isUserTyping.current = false;
+    }, 300);
   };
 
   const handleInputFocus = () => {
@@ -120,20 +124,23 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   const handleInputBlur = () => {
-    // Clear any existing blur timeout
-    if (blurTimeoutRef.current) {
-      clearTimeout(blurTimeoutRef.current);
+    // Don't blur if user is actively typing (focus was stolen)
+    if (isUserTyping.current) {
+      // Try to restore focus
+      setTimeout(() => {
+        if (isUserTyping.current && inputRef.current) {
+          inputRef.current.focus();
+        }
+      }, 10);
+      return;
     }
     
-    // Simple delay to allow suggestion clicks and reduce focus conflicts
-    blurTimeoutRef.current = setTimeout(() => {
-      // Only blur if input is still not focused (prevents race conditions)
-      if (document.activeElement !== inputRef.current) {
-        setIsFocused(false);
-        setShowSuggestions(false);
-        setSelectedSuggestionIndex(-1);
-      }
-    }, 200);
+    // Delay to allow suggestion clicks
+    setTimeout(() => {
+      setIsFocused(false);
+      setShowSuggestions(false);
+      setSelectedSuggestionIndex(-1);
+    }, 150);
   };
 
   const handleSuggestionClick = (suggestion: string) => {
