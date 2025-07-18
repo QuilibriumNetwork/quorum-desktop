@@ -47,6 +47,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
     searchService: searchService!,
     context: searchContext,
     enabled: !!searchService,
+    debounceMs: 800, // Increased delay to prevent focus stealing during typing
   });
 
   // Handle navigation to message
