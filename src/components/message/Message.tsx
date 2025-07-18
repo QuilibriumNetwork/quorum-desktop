@@ -32,6 +32,9 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
 import ReactTooltip from '../../components/ReactTooltip';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { useLongPress } from '../../hooks/useLongPress';
+import { useModalContext } from '../AppWithSearch';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -94,6 +97,40 @@ export const Message = ({
   const user = usePasskeysContext();
   const { spaceId } = useParams();
   const location = useLocation();
+  const { openMobileActionsDrawer, openMobileEmojiDrawer } = useModalContext();
+
+  // Responsive layout and device detection
+  const { isMobile } = useResponsiveLayout();
+  const isTouchDevice = 'ontouchstart' in window;
+  const useMobileDrawer = isMobile;
+  const useDesktopTap = !isMobile && isTouchDevice;
+  const useDesktopHover = !isMobile && !isTouchDevice;
+
+  // State for mobile emoji drawer (kept separate from actions drawer)
+  const [showEmojiDrawer, setShowEmojiDrawer] = useState(false);
+
+  // State for desktop tap interaction
+  const [actionsVisibleOnTap, setActionsVisibleOnTap] = useState(false);
+
+  // State for copied link feedback
+  const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null);
+
+  // Effect to handle hiding tablet actions when clicking elsewhere
+  React.useEffect(() => {
+    if (useDesktopTap && actionsVisibleOnTap && hoverTarget === message.messageId) {
+      const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as Element;
+        if (!target.closest(`#msg-${message.messageId}`)) {
+          setHoverTarget(undefined);
+          setActionsVisibleOnTap(false);
+        }
+      };
+
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [useDesktopTap, actionsVisibleOnTap, hoverTarget, message.messageId]);
+
   const customEmojis = useMemo(() => {
     if (!customEmoji) return [];
 
@@ -146,7 +183,81 @@ export const Message = ({
     }
   };
 
-  const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null);
+  // Long-press handler for mobile and tablets
+  const longPressHandlers = useLongPress({
+    onLongPress: () => {
+      if (useMobileDrawer) {
+        // Mobile: Open drawer
+        openMobileActionsDrawer({
+          message,
+          onReply: handleReply,
+          onCopyLink: handleCopyLink,
+          onDelete: canUserDelete ? handleDelete : undefined,
+          onReaction: handleReaction,
+          onMoreReactions: handleMoreReactions,
+          canDelete: canUserDelete,
+          userAddress: user.currentPasskeyInfo!.address,
+        });
+        if ('vibrate' in navigator) {
+          navigator.vibrate(50);
+        }
+      } else if (useDesktopTap) {
+        // Tablet: Show inline actions and hide others
+        setHoverTarget(message.messageId);
+        setActionsVisibleOnTap(true);
+      }
+    },
+    delay: 500,
+  });
+
+  // Action handlers
+  const handleReaction = (emoji: string) => {
+    if (!message.reactions?.find(r => r.emojiId === emoji)?.memberIds.includes(user.currentPasskeyInfo!.address)) {
+      submitMessage({
+        type: 'reaction',
+        messageId: message.messageId,
+        reaction: emoji,
+      });
+    } else {
+      submitMessage({
+        type: 'remove-reaction',
+        messageId: message.messageId,
+        reaction: emoji,
+      });
+    }
+  };
+
+  const handleReply = () => {
+    setInReplyTo(message);
+    editorRef?.focus();
+  };
+
+  const handleCopyLink = () => {
+    const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
+    navigator.clipboard.writeText(url);
+    setCopiedLinkId(message.messageId);
+    setTimeout(() => {
+      setCopiedLinkId(prev => prev === message.messageId ? null : prev);
+    }, 1500);
+  };
+
+  const handleDelete = () => {
+    submitMessage({
+      type: 'remove-message',
+      removeMessageId: message.messageId,
+    });
+  };
+
+  const handleMoreReactions = () => {
+    if (useMobileDrawer) {
+      openMobileEmojiDrawer({
+        onEmojiClick: handleReaction,
+        customEmojis: customEmojis,
+      });
+    } else {
+      setShowEmojiDrawer(true);
+    }
+  };
 
   return (
     <div
@@ -158,12 +269,30 @@ export const Message = ({
           : '') +
         (isHashTarget ? ' message-highlighted' : '')
       }
-      onMouseOver={() => setHoverTarget(message.messageId)}
-      onMouseOut={() => setHoverTarget(undefined)}
-      onClick={() => {
+      // Desktop mouse interaction
+      onMouseOver={() => useDesktopHover && setHoverTarget(message.messageId)}
+      onMouseOut={() => useDesktopHover && setHoverTarget(undefined)}
+      onClick={(e) => {
+        // Prevent default click behavior for mobile drawer
+        if (useMobileDrawer) {
+          e.preventDefault();
+        }
+        
+        // For tablets, regular click should hide actions (not show them)
+        if (useDesktopTap) {
+          // Hide actions if clicking on a different message or same message
+          if (hoverTarget !== message.messageId) {
+            setHoverTarget(undefined);
+            setActionsVisibleOnTap(false);
+          }
+        }
+        
+        // Common click behaviors
         setShowUserProfile(false);
         setEmojiPickerOpen(undefined);
       }}
+      // Mobile and tablet touch interaction
+      {...(useMobileDrawer || useDesktopTap ? longPressHandlers : {})}
     >
       {(() => {
         if (message.content.type == 'post') {
@@ -281,7 +410,7 @@ export const Message = ({
             }}
           />
           <div className="message-content">
-            {hoverTarget === message.messageId && (
+            {((hoverTarget === message.messageId && useDesktopHover) || (hoverTarget === message.messageId && actionsVisibleOnTap && useDesktopTap)) && (
               <div
                 onClick={(e) => {
                   e.stopPropagation();
@@ -486,6 +615,33 @@ export const Message = ({
                 />
               </div>
             )}
+
+            {/* Mobile Emoji Picker */}
+            {useMobileDrawer && showEmojiDrawer && (
+              <Modal
+                title=""
+                visible={showEmojiDrawer}
+                onClose={() => setShowEmojiDrawer(false)}
+                hideClose={false}
+              >
+                <EmojiPicker
+                  width="100%"
+                  height={300}
+                  suggestedEmojisMode={SuggestionMode.FREQUENT}
+                  customEmojis={customEmojis}
+                  getEmojiUrl={(unified, style) => {
+                    return '/apple/64/' + unified + '.png';
+                  }}
+                  skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
+                  theme={Theme.DARK}
+                  onEmojiClick={(e) => {
+                    handleReaction(e.emoji);
+                    setShowEmojiDrawer(false);
+                  }}
+                />
+              </Modal>
+            )}
+
             <span className="message-sender-name">{sender.displayName}</span>
             <span className="pl-2">
               {!repudiability && !message.signature && (
@@ -628,12 +784,12 @@ export const Message = ({
                 );
               }
             })()}
-            <div className="flex flex-row pt-1">
+            <div className="flex flex-wrap pt-1 -mr-1">
               {message.reactions?.map((r) => (
                 <div
                   key={message.messageId + '-reactions-' + r.emojiId}
                   className={
-                    'cursor-pointer flex flex-row mr-1 rounded-lg py-[1pt] px-2 border border-transparent ' +
+                    'cursor-pointer flex flex-row items-center mr-1 mb-1 rounded-lg py-[1pt] px-2 border border-transparent whitespace-nowrap ' +
                     (r.memberIds.includes(user.currentPasskeyInfo!.address)
                       ? 'bg-accent-150 hover:bg-accent-200 dark:bg-accent-700 dark:hover:bg-accent-600'
                       : 'bg-tooltip hover:bg-surface-5')
@@ -652,15 +808,15 @@ export const Message = ({
                   {customEmojis.find((e) => e.id === r.emojiName) ? (
                     <img
                       width="24"
-                      className="mr-2"
+                      className="mr-1"
                       src={
                         customEmojis.find((e) => e.id === r.emojiName)?.imgUrl
                       }
                     />
                   ) : (
-                    r.emojiName
-                  )}{' '}
-                  {r.count}
+                    <span className="mr-1">{r.emojiName}</span>
+                  )}
+                  <span className="text-sm">{r.count}</span>
                 </div>
               ))}
             </div>

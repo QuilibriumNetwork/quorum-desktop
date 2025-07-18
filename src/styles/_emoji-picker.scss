@@ -1,0 +1,104 @@
+/* === EMOJI PICKER THEMING === */
+
+/* Base theming using CSS variables */
+.EmojiPickerReact {
+  /* Backgrounds */
+  --epr-bg-color: var(--surface-1) !important;
+  --epr-category-label-bg-color: var(--surface-1) !important;
+  --epr-search-input-bg-color: var(--surface-00) !important;
+  --epr-hover-bg-color: var(--surface-3) !important;
+  --epr-focus-bg-color: var(--surface-3) !important;
+  --epr-search-input-bg-color-active: var(--surface-00) !important;
+  --epr-search-input-focus-bg-color: var(--surface-0) !important;
+
+  /* Borders */
+  --epr-picker-border-color: var(--surface-5) !important;
+  --epr-search-input-border-color: var(--surface-5) !important;
+  --epr-search-border-color: var(--accent-300) !important;
+
+  /* Text */
+  --epr-text-color: var(--color-text-main) !important;
+  --epr-search-input-text-color: var(--color-text-main) !important;
+  --epr-category-label-text-color: var(--color-text-subtle) !important;
+
+  /* UI sizing - standardized across all instances */
+  --epr-category-navigation-button-size: 38px !important;
+  --epr-emoji-size: 28px !important;
+  --epr-emoji-gap: 6px !important;
+}
+
+
+/* Global EmojiPicker fixes and customizations */
+.EmojiPickerReact {
+  // Apply default app font
+  font-family: Sen, sans-serif !important;
+  
+  * {
+    font-family: inherit !important;
+  }
+  
+  // Category button fixes - global for all instances
+  .epr-category-nav button,
+  .epr-cat-btn {
+    // Remove browser focus outlines
+    &:focus,
+    &:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+
+    // Remove ALL pseudo-elements that cause icon disappearing
+    &::before,
+    &::after {
+      display: none !important;
+      content: none !important;
+    }
+
+    // Ensure icons stay visible on all interactive states
+    &:focus,
+    &:hover,
+    &:active,
+    &.epr-active {
+      opacity: 1 !important;
+
+      * {
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+    }
+  }
+
+  // Search input focus
+  .epr-search:focus {
+    border-color: var(--accent-400) !important;
+    outline: none !important;
+  }
+
+  // Emoji hover/active/focus states - remove any borders/outlines
+  .epr-emoji-img,
+  .epr-emoji-native,
+  button[class*='epr-emoji'] {
+    &:hover,
+    &:active,
+    &:focus,
+    &:focus-visible {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
+  }
+
+  // Skin tone picker
+  .epr-skin-tone-select button {
+    &.epr-active,
+    &:hover,
+    &:active,
+    &:focus,
+    &:focus-visible {
+      border-color: var(--accent) !important;
+    }
+  }
+}
+
