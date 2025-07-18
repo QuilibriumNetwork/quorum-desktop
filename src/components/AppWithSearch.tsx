@@ -5,6 +5,7 @@ import SpaceEditor from './channel/SpaceEditor';
 import ChannelEditor from './channel/ChannelEditor';
 import LeaveSpaceModal from './modals/LeaveSpaceModal';
 import MessageActionsDrawer from './message/MessageActionsDrawer';
+import EmojiPickerDrawer from './message/EmojiPickerDrawer';
 // Note: UserSettingsModal, SpaceEditor, ChannelEditor use custom simple modal pattern
 import './AppWithSearch.scss';
 
@@ -32,6 +33,8 @@ interface ModalContextType {
   setRightSidebarContent: (content: React.ReactNode) => void;
   openMobileActionsDrawer: (messageData: any) => void;
   closeMobileActionsDrawer: () => void;
+  openMobileEmojiDrawer: (emojiData: any) => void;
+  closeMobileEmojiDrawer: () => void;
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
@@ -68,6 +71,9 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
   const [rightSidebarContent, setRightSidebarContent] =
     useState<React.ReactNode>(null);
   const [mobileActionsDrawerData, setMobileActionsDrawerData] = useState<any>(null);
+  const [drawerClosing, setDrawerClosing] = useState(false);
+  const [mobileEmojiDrawerData, setMobileEmojiDrawerData] = useState<any>(null);
+  const [emojiDrawerClosing, setEmojiDrawerClosing] = useState(false);
 
   const modalContextValue = {
     openUserSettings: () => setIsUserSettingsOpen(true),
@@ -83,7 +89,21 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
     rightSidebarContent,
     setRightSidebarContent,
     openMobileActionsDrawer: (messageData: any) => setMobileActionsDrawerData(messageData),
-    closeMobileActionsDrawer: () => setMobileActionsDrawerData(null),
+    closeMobileActionsDrawer: () => {
+      setDrawerClosing(true);
+      setTimeout(() => {
+        setMobileActionsDrawerData(null);
+        setDrawerClosing(false);
+      }, 300);
+    },
+    openMobileEmojiDrawer: (emojiData: any) => setMobileEmojiDrawerData(emojiData),
+    closeMobileEmojiDrawer: () => {
+      setEmojiDrawerClosing(true);
+      setTimeout(() => {
+        setMobileEmojiDrawerData(null);
+        setEmojiDrawerClosing(false);
+      }, 300);
+    },
   };
 
   return (
@@ -140,9 +160,15 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
       {mobileActionsDrawerData && (
         <div className="fixed inset-0 z-[9999] flex items-end justify-center bg-overlay backdrop-blur">
           <MessageActionsDrawer
-            isOpen={true}
+            isOpen={!drawerClosing}
             message={mobileActionsDrawerData.message}
-            onClose={() => setMobileActionsDrawerData(null)}
+            onClose={() => {
+              setDrawerClosing(true);
+              setTimeout(() => {
+                setMobileActionsDrawerData(null);
+                setDrawerClosing(false);
+              }, 300);
+            }}
             onReply={mobileActionsDrawerData.onReply}
             onCopyLink={mobileActionsDrawerData.onCopyLink}
             onDelete={mobileActionsDrawerData.onDelete}
@@ -153,7 +179,40 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
           />
           <div
             className="fixed inset-0 -z-10"
-            onClick={() => setMobileActionsDrawerData(null)}
+            onClick={() => {
+              setDrawerClosing(true);
+              setTimeout(() => {
+                setMobileActionsDrawerData(null);
+                setDrawerClosing(false);
+              }, 300);
+            }}
+          />
+        </div>
+      )}
+
+      {mobileEmojiDrawerData && (
+        <div className="fixed inset-0 z-[9999] flex items-end justify-center bg-overlay backdrop-blur">
+          <EmojiPickerDrawer
+            isOpen={!emojiDrawerClosing}
+            onClose={() => {
+              setEmojiDrawerClosing(true);
+              setTimeout(() => {
+                setMobileEmojiDrawerData(null);
+                setEmojiDrawerClosing(false);
+              }, 300);
+            }}
+            onEmojiClick={mobileEmojiDrawerData.onEmojiClick}
+            customEmojis={mobileEmojiDrawerData.customEmojis}
+          />
+          <div
+            className="fixed inset-0 -z-10"
+            onClick={() => {
+              setEmojiDrawerClosing(true);
+              setTimeout(() => {
+                setMobileEmojiDrawerData(null);
+                setEmojiDrawerClosing(false);
+              }, 300);
+            }}
           />
         </div>
       )}

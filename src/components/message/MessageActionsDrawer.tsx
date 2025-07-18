@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faReply,
@@ -43,39 +43,63 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
   userAddress,
 }) => {
   const quickReactions = ['❤️', '👍', '🔥', '😂', '😢', '😮'];
+  const [isClosing, setIsClosing] = useState(false);
+  const [shouldRender, setShouldRender] = useState(isOpen);
+
+  // Handle visibility changes with animation
+  React.useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+      setIsClosing(false);
+    } else if (shouldRender) {
+      setIsClosing(true);
+      // Wait for animation to complete before hiding
+      setTimeout(() => {
+        setShouldRender(false);
+        setIsClosing(false);
+      }, 300); // Match CSS animation duration
+    }
+  }, [isOpen, shouldRender]);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+    }, 300);
+  };
 
   const handleReaction = (emoji: string) => {
     onReaction(emoji);
-    onClose();
+    handleClose();
   };
 
   const handleReply = () => {
     onReply();
-    onClose();
+    handleClose();
   };
 
   const handleCopyLink = () => {
     onCopyLink();
-    onClose();
+    handleClose();
   };
 
   const handleDelete = () => {
     if (onDelete) {
       onDelete();
-      onClose();
+      handleClose();
     }
   };
 
   const handleMoreReactions = () => {
     onMoreReactions();
-    onClose();
+    handleClose();
   };
 
-  if (!isOpen) return null;
+  if (!shouldRender) return null;
 
   return (
     <div
-      className="message-actions-drawer"
+      className={`message-actions-drawer ${isOpen && !isClosing ? 'message-actions-drawer--open' : ''} ${isClosing ? 'message-actions-drawer--closing' : ''}`}
       role="dialog"
       aria-modal="true"
       aria-label={t`Message actions`}
@@ -83,7 +107,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
         {/* Close button */}
         <button
           className="message-actions-drawer__close"
-          onClick={onClose}
+          onClick={handleClose}
           aria-label={t`Close`}
         >
           <FontAwesomeIcon icon={faTimes} />

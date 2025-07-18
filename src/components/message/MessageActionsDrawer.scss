@@ -11,6 +11,10 @@
   animation: slide-up 0.3s ease-out;
   position: relative;
   
+  &--closing {
+    animation: slide-down 0.3s ease-out forwards;
+  }
+  
   // Safe area handling for mobile devices
   padding-bottom: calc(16px + env(safe-area-inset-bottom));
 }
@@ -181,6 +185,15 @@
   }
   to {
     transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100%);
   }
 }
 

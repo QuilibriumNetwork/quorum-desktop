@@ -97,7 +97,7 @@ export const Message = ({
   const user = usePasskeysContext();
   const { spaceId } = useParams();
   const location = useLocation();
-  const { openMobileActionsDrawer } = useModalContext();
+  const { openMobileActionsDrawer, openMobileEmojiDrawer } = useModalContext();
 
   // Responsive layout and device detection
   const { isMobile } = useResponsiveLayout();
@@ -249,7 +249,14 @@ export const Message = ({
   };
 
   const handleMoreReactions = () => {
-    setShowEmojiDrawer(true);
+    if (useMobileDrawer) {
+      openMobileEmojiDrawer({
+        onEmojiClick: handleReaction,
+        customEmojis: customEmojis,
+      });
+    } else {
+      setShowEmojiDrawer(true);
+    }
   };
 
   return (
