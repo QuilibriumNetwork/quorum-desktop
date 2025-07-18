@@ -12,10 +12,11 @@ This feature transforms the desktop hover-based message actions into a comprehen
 - **Desktop (> 768px + mouse)**: Hover messages to reveal inline actions (existing behavior preserved)
 
 ### Key Components
-1. **Mobile Drawer System**: Touch-friendly bottom drawer with quick reactions and action menu
-2. **Responsive Detection**: Smart device and interaction mode detection
-3. **Smooth Animations**: Professional slide-up/slide-down animations for mobile drawer
-4. **Modal Context Integration**: High-level rendering to solve z-index stacking issues
+1. **Common MobileDrawer**: Shared component providing consistent drawer behavior across all mobile interfaces
+2. **Mobile Drawer System**: Touch-friendly bottom drawer with quick reactions and action menu
+3. **Responsive Detection**: Smart device and interaction mode detection
+4. **Smooth Animations**: Professional slide-up/slide-down animations with swipe-to-close support
+5. **Modal Context Integration**: High-level rendering to solve z-index stacking issues
 
 ## Technical Architecture
 
@@ -37,8 +38,11 @@ const useDesktopHover = !isMobile && !isTouchDevice;
 ```
 AppWithSearch (modal context level)
 ├── MessageActionsDrawer (mobile drawer)
+│   ├── MobileDrawer (common drawer component)
 │   ├── QuickReactionButton (touch-optimized reactions)
 │   └── ActionMenuItem (menu actions)
+├── EmojiPickerDrawer (mobile emoji picker)
+│   └── MobileDrawer (common drawer component)
 └── Message (individual message component)
     └── Long-press/hover detection
 ```
@@ -55,7 +59,23 @@ AppWithSearch (modal context level)
 
 **Implementation**: Uses same pattern as `UserSettingsModal`, `SpaceEditor`, etc.
 
-### 2. Responsive Breakpoint Strategy
+### 2. Common MobileDrawer Component
+**Decision**: Create a shared `MobileDrawer` component used by all mobile drawer interfaces.
+
+**Rationale**:
+- Consistent behavior across all mobile drawers (actions, emoji picker, future features)
+- Shared animation system and swipe-to-close functionality
+- Single source of truth for drawer styling and accessibility features
+- Reduced code duplication and maintenance overhead
+
+**Implementation**: 
+- Full-width on mobile devices (≤768px) for maximum content space
+- Constrained width (500px max) and centered on tablets/desktop
+- Built-in swipe-to-close gesture support with visual feedback
+- Comprehensive accessibility features (ARIA labels, keyboard support)
+- Smooth animations with reduced motion support
+
+### 3. Responsive Breakpoint Strategy
 **Decision**: Use 768px as mobile breakpoint instead of 1024px.
 
 **Rationale**:
@@ -83,9 +103,13 @@ AppWithSearch (modal context level)
 
 ### New Files Created
 ```
+src/components/MobileDrawer.tsx - Common mobile drawer component
+src/components/MobileDrawer.scss - Shared drawer styling
 src/hooks/useLongPress.ts - Long-press gesture detection
 src/components/message/MessageActionsDrawer.tsx - Mobile drawer UI
 src/components/message/MessageActionsDrawer.scss - Drawer styling
+src/components/message/EmojiPickerDrawer.tsx - Mobile emoji picker
+src/components/message/EmojiPickerDrawer.scss - Emoji picker styling
 src/components/message/QuickReactionButton.tsx - Reaction buttons
 src/components/message/ActionMenuItem.tsx - Menu action items
 ```
@@ -154,9 +178,9 @@ src/index.scss - Added new stylesheet imports
 ## Known Limitations
 
 ### 1. Emoji Picker Mobile Optimization
-- Current solution wraps existing picker in modal
-- Could benefit from custom mobile-optimized emoji picker
-- Search functionality may need mobile keyboard optimization
+- Current solution wraps existing picker in MobileDrawer
+- Uses shared drawer component for consistency
+- Search functionality optimized for mobile keyboards
 
 ### 2. Tablet Edge Cases
 - Complex gesture detection on hybrid devices
@@ -171,10 +195,10 @@ src/index.scss - Added new stylesheet imports
 ## Future Enhancements
 
 ### Short-Term Improvements
-1. **Swipe Gestures**: Add swipe-to-close for mobile drawer
-2. **Keyboard Navigation**: Full keyboard support for accessibility
-3. **Custom Emoji Optimization**: Lazy loading and caching strategies
-4. **Haptic Feedback**: Enhanced feedback patterns for different actions
+1. **Keyboard Navigation**: Enhanced keyboard support for accessibility
+2. **Custom Emoji Optimization**: Lazy loading and caching strategies  
+3. **Haptic Feedback**: Enhanced feedback patterns for different actions
+4. **Voice Commands**: Basic voice control integration
 
 ### Medium-Term Enhancements
 1. **Gesture Recognition**: Advanced gesture support (pinch, swipe patterns)
@@ -247,6 +271,25 @@ src/index.scss - Added new stylesheet imports
 - [Responsive Layout Documentation](.claude/docs/responsive-layout.md)
 - [Emoji System Documentation](.claude/docs/emojipicker-responsive.md)
 - [Touch Interface Guidelines](.claude/docs/reacttooltip-mobile.md)
+
+---
+
+## Recent Updates (Latest)
+
+### MobileDrawer Component Integration
+- **Date**: Latest update
+- **Changes**: Refactored to use common `MobileDrawer.tsx` component
+- **Benefits**: 
+  - Consistent drawer behavior across all mobile interfaces
+  - Full-width support on mobile devices (follows mobile UI best practices)
+  - Built-in swipe-to-close functionality with visual feedback
+  - Shared accessibility features and animation system
+  - Reduced code duplication and maintenance overhead
+
+### Component Updates
+- `MessageActionsDrawer.tsx`: Now uses `MobileDrawer` component
+- `EmojiPickerDrawer.tsx`: Now uses `MobileDrawer` component  
+- `MobileDrawer.scss`: Updated with mobile-first responsive design (full-width on mobile, constrained on tablets/desktop)
 
 ---
 

@@ -30,6 +30,13 @@
 
 /* Global EmojiPicker fixes and customizations */
 .EmojiPickerReact {
+  // Apply default app font
+  font-family: Sen, sans-serif !important;
+  
+  * {
+    font-family: inherit !important;
+  }
+  
   // Category button fixes - global for all instances
   .epr-category-nav button,
   .epr-cat-btn {
@@ -84,8 +91,14 @@
   }
 
   // Skin tone picker
-  .epr-skin-tone-select button.epr-active {
-    background-color: var(--accent) !important;
+  .epr-skin-tone-select button {
+    &.epr-active,
+    &:hover,
+    &:active,
+    &:focus,
+    &:focus-visible {
+      border-color: var(--accent) !important;
+    }
   }
 }
 

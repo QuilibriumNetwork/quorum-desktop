@@ -3,8 +3,6 @@
   background: var(--surface-1);
   border-radius: 16px 16px 0 0;
   width: 100%;
-  max-width: 500px;
-  margin: 0 8px;
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
   transform: translateY(0);
   animation: slide-up 0.3s ease-out;
@@ -113,8 +111,6 @@
 // Responsive adjustments
 @media (max-width: 375px) {
   .mobile-drawer {
-    margin: 0;
-    border-radius: 16px 16px 0 0;
     max-height: 85vh;
   }
 
@@ -128,6 +124,14 @@
 
   .mobile-drawer__content {
     padding: 6px 8px 8px 8px;
+  }
+}
+
+// For tablets and larger screens, add constraints
+@media (min-width: 768px) {
+  .mobile-drawer {
+    max-width: 500px;
+    margin: 0 auto;
   }
 }
 
