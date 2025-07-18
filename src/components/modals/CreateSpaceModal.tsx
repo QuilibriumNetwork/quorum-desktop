@@ -16,7 +16,7 @@ import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../utils';
 import ReactTooltip from '../ReactTooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileImage, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faFileImage, faTimes, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 type CreateSpaceModalProps = {
   visible: boolean;
@@ -170,12 +170,11 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                   <Trans>Repudiability</Trans>
                 </div>
                 <div className="text-sm flex flex-col justify-around ml-2">
-                  <div
+                  <FontAwesomeIcon
                     id="repudiability-tooltip-icon"
-                    className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
-                  >
-                    ℹ
-                  </div>
+                    icon={faInfoCircle}
+                    className="info-icon-tooltip  hover:text-main cursor-pointer"
+                  />
                 </div>
                 <div className="absolute left-[147px]">
                   <ReactTooltip
@@ -199,12 +198,11 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                   Directly joinable by link
                 </div>
                 <div className="text-sm flex flex-col justify-around ml-2">
-                  <div
+                  <FontAwesomeIcon
                     id="public-tooltip-icon"
-                    className="border border-[var(--surface-6)] rounded-full w-6 h-6 text-center leading-5 text-lg"
-                  >
-                    ℹ
-                  </div>
+                    icon={faInfoCircle}
+                    className="info-icon-tooltip  hover:text-main cursor-pointer"
+                  />
                 </div>
                 <div className="absolute left-[216px]">
                   <ReactTooltip

@@ -79,10 +79,9 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
       )}
       <ReactTooltip
         id="create-space-tooltip"
-        content={t`Add Space`}
+        content={t`Create a new Space`}
         place="top"
         anchorSelect="[data-tooltip-id='create-space-tooltip']"
-        showOnTouch={true}
         highlighted={true}
         className="z-[10000]"
       />
@@ -91,7 +90,6 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
         content={t`Account Settings`}
         place="top"
         anchorSelect="[data-tooltip-id='user-avatar-tooltip']"
-        showOnTouch={true}
         highlighted={true}
         className="z-[10000]"
       />

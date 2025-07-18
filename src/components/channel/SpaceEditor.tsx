@@ -97,8 +97,6 @@ const SpaceEditor: React.FunctionComponent<{
   const [isRepudiable, setIsRepudiable] = React.useState<boolean>(
     space?.isRepudiable || false
   );
-  const [repudiableTooltip, setRepudiableTooltip] = React.useState(false);
-  const [publicInviteTooltip, setPublicInviteTooltip] = React.useState(false);
   const { data: spaceMembers } = useSpaceMembers({ spaceId });
   const [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
   const [iconFileError, setIconFileError] = React.useState<string | null>(null);
@@ -665,14 +663,11 @@ const SpaceEditor: React.FunctionComponent<{
                               <Trans>Repudiability</Trans>
                             </div>
                             <div className="text-sm flex flex-col justify-around ml-2">
-                              <div
+                              <FontAwesomeIcon
                                 id="repudiability-tooltip-icon"
-                                className="border border-strong rounded-full w-6 h-6 text-center leading-5 text-lg"
-                                onMouseOut={() => setRepudiableTooltip(false)}
-                                onMouseOver={() => setRepudiableTooltip(true)}
-                              >
-                                ℹ
-                              </div>
+                                icon={faInfoCircle}
+                                className="info-icon-tooltip"
+                              />
                             </div>
                             <div className="absolute left-[340px]">
                               <ReactTooltip
@@ -1237,12 +1232,12 @@ const SpaceEditor: React.FunctionComponent<{
                                       <FontAwesomeIcon
                                         id="current-invite-link-tooltip-icon"
                                         icon={faInfoCircle}
-                                        className="ml-2"
+                                        className="info-icon-tooltip"
                                       />
                                       <ReactTooltip
                                         id="current-invite-link-tooltip"
                                         anchorSelect="#current-invite-link-tooltip-icon"
-                                        className="flex flex-col justify-around pt-3 pb-1 !w-[400px]"
+                                        className="flex flex-col justify-around pt-3 pb-1 !w-[400px] cursor-pointer"
                                         place="bottom"
                                         content={t`This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space.`}
                                         showOnTouch
