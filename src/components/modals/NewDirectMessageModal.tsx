@@ -2,12 +2,12 @@ import * as React from 'react';
 import Modal from '../Modal';
 import Input from '../Input';
 import Button from '../Button';
-import { useConversations } from '../../hooks';
-import { AddressLookup } from '../AddressLookup';
 import './NewDirectMessageModal.scss';
 import { t } from '@lingui/core/macro';
 import { base58btc } from 'multiformats/bases/base58';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { useConversations, useRegistration } from '../../hooks';
+import { useNavigate } from 'react-router';
 
 type NewDirectMessageModalProps = {
   visible: boolean;
@@ -19,23 +19,37 @@ const NewDirectMessageModal: React.FunctionComponent<
 > = (props) => {
   let [address, setAddress] = React.useState<string>('');
   let [error, setError] = React.useState<string | null>(null);
+  let [buttonText, setButtonText] = React.useState<string>(t`Send`);
+  let navigate = useNavigate();
 
   const { data: conversations } =
     useConversations({ type: 'direct' });
-
   const conversationsList = [
     ...conversations.pages.flatMap((c: any) => c.conversations),
   ];
-
   const { currentPasskeyInfo } = usePasskeysContext();
   const ownAddress = currentPasskeyInfo?.address;
 
-  const lookupUser = (value: string) => {
-    setAddress(value.trim());
+  const lookupUser = async (): Promise<boolean> => {
+      setButtonText(t`Looking up user...`);
+      try {
+        const { data: registration } = await useRegistration({ address });
+        return registration.registered;
+      } catch {
+        setError(t`User does not exist.`);
+        return false;
+      } finally {
+        setButtonText(t`Send`);
+      }
+  };
+
+  const resetState = () => {
+    setError(null);
+    setButtonText(t`Send`);
   };
 
   React.useEffect(() => {
-    setError(null);
+    resetState();
 
     if (!address) return;
 
@@ -59,9 +73,13 @@ const NewDirectMessageModal: React.FunctionComponent<
 
     // check if conversation already exists
     if (conversationsList.find((c: any) => c.address === address)) {
-      setError(t`You already have a conversation with this user.`);
+      setButtonText(t`Go to conversation`);
       return;
     }
+
+    lookupUser().then((isRegistered: boolean) => {
+      setError(isRegistered ? null : t`User does not exist.`);
+    });
 
     try {
       base58btc.baseDecode(address);
@@ -83,12 +101,13 @@ const NewDirectMessageModal: React.FunctionComponent<
         </div>
         <div>
           <Input
-            className="w-full !text-xs sm:!text-sm"
-            onChange={(e) => lookupUser(e.target.value)}
+            className={`w-full !text-xs sm:!text-sm ${error ? 'error' : ''}`}
+            onChange={(e) => setAddress(e.target.value.trim())}
             placeholder={t`User address here`}
           />
-          {error && <div className="modal-new-direct-message-error">{error}</div>}
+
         </div>
+        {error && <div className="modal-new-direct-message-error">{error}</div>}
         <React.Suspense
           fallback={
             <div className="modal-new-direct-message-actions">
@@ -98,25 +117,26 @@ const NewDirectMessageModal: React.FunctionComponent<
                 disabled={!address}
                 onClick={() => {}}
               >
-                {t`Send`}
+                {buttonText}
               </Button>
             </div>
           }
         >
-          {address.length === 46 && !error && <AddressLookup address={address} />}
-        </React.Suspense>
-        { (address.length !== 46 || error) && (
           <div className="modal-new-direct-message-actions">
             <Button
-              className="w-full sm:max-w-32 sm:inline-block"
+              className="w-full sm:inline-block"
               type="primary"
-              disabled={true}
-              onClick={() => {}}
+              disabled={!address || !!error}
+              onClick={() => {
+                if (!!address) {
+                  navigate('/messages/' + address);
+                }
+              }}
             >
-              {t`Send`}
+              {buttonText}
             </Button>
           </div>
-        )}
+        </React.Suspense>
       </div>
     </Modal>
   );
