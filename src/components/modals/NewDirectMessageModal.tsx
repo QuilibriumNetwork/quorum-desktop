@@ -9,6 +9,7 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useConversations, useRegistration } from '../../hooks';
 import { useNavigate } from 'react-router';
 import { useModalContext } from '../AppWithSearch';
+import { useQuorumApiClient } from '../context/QuorumApiContext';
 
 type NewDirectMessageModalProps = {
   visible: boolean;
@@ -32,12 +33,14 @@ const NewDirectMessageModal: React.FunctionComponent<
   const { currentPasskeyInfo } = usePasskeysContext();
   const ownAddress = currentPasskeyInfo?.address;
 
+  const { apiClient } = useQuorumApiClient();
+
   const lookupUser = async (): Promise<boolean> => {
       setButtonText(t`Looking up user...`);
       try {
-        const { data: registration } = await useRegistration({ address });
-        return registration.registered;
-      } catch {
+        await apiClient.getUser(address);
+        return true;
+      } catch (e) {
         setError(t`User does not exist.`);
         return false;
       } finally {
