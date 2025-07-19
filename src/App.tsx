@@ -152,24 +152,6 @@ const App = () => {
                           }
                         />
                         <Route
-                          path="/messages/new"
-                          element={
-                            <AppWithSearch
-                              newDirectMessage
-                              kickUserAddress={kickUserAddress}
-                              setKickUserAddress={setKickUserAddress}
-                            >
-                              <DirectMessages
-                                setUser={setUser}
-                                setAuthState={() => {
-                                  setUser(undefined);
-                                }}
-                                user={user}
-                              />
-                            </AppWithSearch>
-                          }
-                        />
-                        <Route
                           path="/messages/:address"
                           element={
                             <AppWithSearch

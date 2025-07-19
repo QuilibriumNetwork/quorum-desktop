@@ -1,16 +1,17 @@
 import * as React from 'react';
 import DirectMessageContact from './DirectMessageContact';
-import { Link } from 'react-router-dom';
 import './DirectMessageContactsList.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { useConversations } from '../../hooks';
 import { Trans, t } from '@lingui/macro';
 import Button from '../Button';
+import { useModalContext } from '../AppWithSearch';
 
 const DirectMessageContactsList: React.FC<{}> = ({}) => {
   const { data: conversations, refetch: refetchConversations } =
     useConversations({ type: 'direct' });
+  const { openNewDirectMessage } = useModalContext();
 
   React.useEffect(() => {
     const i = setInterval(() => {
@@ -34,13 +35,12 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
           <Trans>Direct Messages</Trans>
         </div>
         <div className="flex flex-col justify-around">
-          <Link to="/messages/new">
-            <FontAwesomeIcon
-              className="cursor-pointer text-accent hover:text-accent-300 h-4"
-              icon={faUserPlus}
-              data-tooltip-id="add-friend-tooltip"
-            />
-          </Link>
+          <FontAwesomeIcon
+            className="cursor-pointer text-accent hover:text-accent-300 h-4"
+            icon={faUserPlus}
+            data-tooltip-id="add-friend-tooltip"
+            onClick={openNewDirectMessage}
+          />
         </div>
       </div>
       {conversationsList.length === 0 ? (
@@ -55,11 +55,9 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
           <div className="w-full text-center mb-4 text-subtle">
             <Trans>Ready to start a truly private conversation?</Trans>
           </div>
-          <Link to="/messages/new" className="inline-block max-w-full">
-            <Button type="primary" className="max-w-full" onClick={() => {}}>
-              <Trans>+ Add a friend</Trans>
-            </Button>
-          </Link>
+          <Button type="primary" className="max-w-full" onClick={openNewDirectMessage}>
+            <Trans>+ Add a friend</Trans>
+          </Button>
         </div>
       ) : (
         <div className="flex-1 overflow-y-auto">

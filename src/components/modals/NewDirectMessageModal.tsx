@@ -8,6 +8,7 @@ import { base58btc } from 'multiformats/bases/base58';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useConversations, useRegistration } from '../../hooks';
 import { useNavigate } from 'react-router';
+import { useModalContext } from '../AppWithSearch';
 
 type NewDirectMessageModalProps = {
   visible: boolean;
@@ -21,6 +22,7 @@ const NewDirectMessageModal: React.FunctionComponent<
   let [error, setError] = React.useState<string | null>(null);
   let [buttonText, setButtonText] = React.useState<string>(t`Send`);
   let navigate = useNavigate();
+  const { closeNewDirectMessage } = useModalContext();
 
   const { data: conversations } =
     useConversations({ type: 'direct' });
@@ -129,6 +131,7 @@ const NewDirectMessageModal: React.FunctionComponent<
               disabled={!address || !!error}
               onClick={() => {
                 if (!!address) {
+                  closeNewDirectMessage();
                   navigate('/messages/' + address);
                 }
               }}

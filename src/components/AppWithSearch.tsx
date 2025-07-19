@@ -11,7 +11,6 @@ import './AppWithSearch.scss';
 
 interface AppWithSearchProps {
   children: React.ReactNode;
-  newDirectMessage?: boolean;
   kickUserAddress?: string;
   setKickUserAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
   user?: any;
@@ -35,6 +34,9 @@ interface ModalContextType {
   closeMobileActionsDrawer: () => void;
   openMobileEmojiDrawer: (emojiData: any) => void;
   closeMobileEmojiDrawer: () => void;
+  isNewDirectMessageOpen: boolean;
+  openNewDirectMessage: () => void;
+  closeNewDirectMessage: () => void;
 }
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
@@ -49,7 +51,6 @@ export const useModalContext = () => {
 
 export const AppWithSearch: React.FC<AppWithSearchProps> = ({
   children,
-  newDirectMessage,
   kickUserAddress,
   setKickUserAddress,
   user,
@@ -74,6 +75,7 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
   const [drawerClosing, setDrawerClosing] = useState(false);
   const [mobileEmojiDrawerData, setMobileEmojiDrawerData] = useState<any>(null);
   const [emojiDrawerClosing, setEmojiDrawerClosing] = useState(false);
+  const [isNewDirectMessageOpen, setIsNewDirectMessageOpen] = useState(false);
 
   const modalContextValue = {
     openUserSettings: () => setIsUserSettingsOpen(true),
@@ -104,6 +106,9 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
         setEmojiDrawerClosing(false);
       }, 300);
     },
+    isNewDirectMessageOpen,
+    openNewDirectMessage: () => setIsNewDirectMessageOpen(true),
+    closeNewDirectMessage: () => setIsNewDirectMessageOpen(false),
   };
 
   return (
@@ -239,7 +244,6 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
 
       <ModalContext.Provider value={modalContextValue}>
         <Layout
-          newDirectMessage={newDirectMessage}
           kickUserAddress={kickUserAddress}
           setKickUserAddress={setKickUserAddress}
         >
