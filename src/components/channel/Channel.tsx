@@ -452,7 +452,7 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
           </div>
         )}
-        <div {...getRootProps()} className="message-editor-container pr-4 lg:pr-[20px]">
+        <div {...getRootProps()} className="message-editor-container pr-6 lg:pr-8">
           <div
             className={
               'message-editor w-full flex items-center gap-2 ' +
