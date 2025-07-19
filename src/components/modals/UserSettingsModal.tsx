@@ -23,7 +23,7 @@ import locales from '../../i18n/locales';
 import useForceUpdate from '../hooks/forceUpdate';
 import ReactTooltip from '../ReactTooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faInfoCircle, faUser, faShield, faPalette } from '@fortawesome/free-solid-svg-icons';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -245,18 +245,21 @@ const UserSettingsModal: React.FunctionComponent<{
             onClick={() => setSelectedCategory('general')}
             className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faUser} className="mr-2 text-accent" />
             {t`General`}
           </div>
           <div
             onClick={() => setSelectedCategory('privacy')}
             className={`modal-nav-category ${selectedCategory === 'privacy' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faShield} className="mr-2 text-accent" />
             {t`Privacy/Security`}
           </div>
           <div
             onClick={() => setSelectedCategory('appearance')}
             className={`modal-nav-category ${selectedCategory === 'appearance' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faPalette} className="mr-2 text-accent" />
             {t`Appearance`}
           </div>
         </div>
@@ -267,18 +270,21 @@ const UserSettingsModal: React.FunctionComponent<{
             onClick={() => setSelectedCategory('general')}
             className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faUser} className="mr-2 text-accent" />
             {t`General`}
           </div>
           <div
             onClick={() => setSelectedCategory('privacy')}
             className={`modal-nav-category ${selectedCategory === 'privacy' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faShield} className="mr-2 text-accent" />
             {t`Privacy/Security`}
           </div>
           <div
             onClick={() => setSelectedCategory('appearance')}
             className={`modal-nav-category ${selectedCategory === 'appearance' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faPalette} className="mr-2 text-accent" />
             {t`Appearance`}
           </div>
         </div>

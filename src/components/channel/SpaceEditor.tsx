@@ -11,6 +11,12 @@ import {
   faTrash,
   faInfoCircle,
   faTimes,
+  faCog,
+  faUsers,
+  faSmile,
+  faImage,
+  faEnvelope,
+  faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { useMessageDB } from '../context/MessageDB';
@@ -407,30 +413,35 @@ const SpaceEditor: React.FunctionComponent<{
             onClick={() => setSelectedCategory('general')}
             className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faCog} className="mr-2 text-accent" />
             <Trans>General</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('roles')}
             className={`modal-nav-category ${selectedCategory === 'roles' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faUsers} className="mr-2 text-accent" />
             <Trans>Roles</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('emojis')}
             className={`modal-nav-category ${selectedCategory === 'emojis' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faSmile} className="mr-2 text-accent" />
             <Trans>Emojis</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('stickers')}
             className={`modal-nav-category ${selectedCategory === 'stickers' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faImage} className="mr-2 text-accent" />
             <Trans>Stickers</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('invites')}
             className={`modal-nav-category ${selectedCategory === 'invites' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-accent" />
             <Trans>Invites</Trans>
           </div>
           {spaceMembers && spaceMembers.length === 1 && (
@@ -438,6 +449,7 @@ const SpaceEditor: React.FunctionComponent<{
               onClick={() => setSelectedCategory('danger')}
               className={`modal-nav-category text-danger ${selectedCategory === 'danger' ? 'active' : ''}`}
             >
+              <FontAwesomeIcon icon={faExclamationTriangle} className="mr-2 text-accent" />
               <Trans>Delete Space</Trans>
             </div>
           )}
@@ -449,30 +461,35 @@ const SpaceEditor: React.FunctionComponent<{
             onClick={() => setSelectedCategory('general')}
             className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faCog} className="mr-2 text-accent" />
             <Trans>General</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('stickers')}
             className={`modal-nav-category ${selectedCategory === 'stickers' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faImage} className="mr-2 text-accent" />
             <Trans>Stickers</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('roles')}
             className={`modal-nav-category ${selectedCategory === 'roles' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faUsers} className="mr-2 text-accent" />
             <Trans>Roles</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('invites')}
             className={`modal-nav-category ${selectedCategory === 'invites' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-accent" />
             <Trans>Invites</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('emojis')}
             className={`modal-nav-category ${selectedCategory === 'emojis' ? 'active' : ''}`}
           >
+            <FontAwesomeIcon icon={faSmile} className="mr-2 text-accent" />
             <Trans>Emojis</Trans>
           </div>
           {spaceMembers && spaceMembers.length === 1 && (
@@ -480,6 +497,7 @@ const SpaceEditor: React.FunctionComponent<{
               onClick={() => setSelectedCategory('danger')}
               className={`modal-nav-category text-danger ${selectedCategory === 'danger' ? 'active' : ''}`}
             >
+              <FontAwesomeIcon icon={faExclamationTriangle} className="mr-2 text-accent" />
               <Trans>Delete Space</Trans>
             </div>
           )}
@@ -1271,7 +1289,6 @@ const SpaceEditor: React.FunctionComponent<{
                             <div className="mt-4 flex flex-row">
                               <Button
                                 type="danger"
-                                className="px-4"
                                 disabled={generating}
                                 onClick={async () => {
                                   setGenerating(true);
