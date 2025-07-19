@@ -55,6 +55,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   longPressDuration = 700,
 }) => {
   const [copied, setCopied] = React.useState(false);
+  const [hideTooltip, setHideTooltip] = React.useState(false);
   const { theme: contextTheme } = useTheme();
   const resolvedTheme = theme ?? contextTheme;
 
@@ -72,8 +73,17 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
       }
 
       setCopied(true);
+      setHideTooltip(false);
       if (onCopy) onCopy();
-      setTimeout(() => setCopied(false), 2000);
+      
+      if (isTouchDevice()) {
+        setTimeout(() => {
+          setHideTooltip(true);
+          setCopied(false);
+        }, 3000);
+      } else {
+        setTimeout(() => setCopied(false), 2000);
+      }
     } catch (err) {
       console.error('Failed to copy text: ', err);
     }
@@ -154,17 +164,19 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
       </span>
       {iconPosition === 'right' && icon}
 
-      <ReactTooltip
-        id={tooltipId}
-        content={copied ? t`Copied!` : tooltipText}
-        place={tooltipLocation}
-        noArrow={noArrow}
-        theme={resolvedTheme}
-        anchorSelect={`#${anchorId}`}
-        showOnTouch
-        touchTrigger={touchTrigger}
-        longPressDuration={longPressDuration}
-      />
+      {!(isTouchDevice() && hideTooltip) && (
+        <ReactTooltip
+          id={tooltipId}
+          content={copied ? t`Copied!` : tooltipText}
+          place={tooltipLocation}
+          noArrow={noArrow}
+          theme={resolvedTheme}
+          anchorSelect={`#${anchorId}`}
+          showOnTouch
+          touchTrigger={touchTrigger}
+          longPressDuration={longPressDuration}
+        />
+      )}
     </div>
   );
 };

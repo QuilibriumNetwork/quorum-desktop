@@ -416,7 +416,7 @@ export const Message = ({
                   e.stopPropagation();
                   return false;
                 }}
-                className="absolute flex flex-row right-0 top-[-10px] p-1 bg-tooltip select-none shadow-lg rounded-lg"
+                className="absolute flex flex-row right-4 top-[-10px] p-1 bg-tooltip select-none shadow-lg rounded-lg"
               >
                 <div
                   onClick={() => {
@@ -580,7 +580,7 @@ export const Message = ({
               <div
                 onClick={(e) => e.stopPropagation()}
                 className={
-                  'absolute right-0 z-[9999] ' +
+                  'absolute right-4 z-[9999] ' +
                   (emojiPickerOpenDirection == 'upwards' ? 'bottom-6' : 'top-0')
                 }
               >

@@ -61,6 +61,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
   const touchClass = showOnTouch ? 'quorum-react-tooltip-touch' : '';
   const tooltipClassName = `${resolvedThemeInUse === 'dark' ? 'quorum-react-tooltip-dark' : 'quorum-react-tooltip'} ${highlighted ? 'quorum-react-tooltip-highlighted' : ''} ${touchClass} ${className}`;
 
+
   // Handle opening/closing on touch devices with click or long-press, and outside click/touch to close
   React.useEffect(() => {
     if (!showOnTouch || !isTouchDevice() || !anchorSelect || alwaysVisible) return;

@@ -452,7 +452,7 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
           </div>
         )}
-        <div {...getRootProps()} className="message-editor-container pr-[20px]">
+        <div {...getRootProps()} className="message-editor-container pr-4 lg:pr-[20px]">
           <div
             className={
               'message-editor w-full flex items-center gap-2 ' +
@@ -682,10 +682,10 @@ const Channel: React.FC<ChannelProps> = ({
       {showStickers && (
         <>
           <div
-            className="fixed inset-0 z-[9998]"
+            className="fixed inset-0 top-16 z-[9998]"
             onClick={() => setShowStickers(false)}
           />
-          <div className="fixed bottom-20 right-4 lg:left-[890px] z-[9999] pointer-events-none">
+          <div className={`fixed bottom-20 z-[9990] pointer-events-none ${showUsers ? 'right-[300px]' : 'right-6'} transition-all duration-300`}>
             <div className="flex flex-col border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4 pointer-events-auto">
               <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">
                 Stickers

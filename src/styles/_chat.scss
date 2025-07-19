@@ -68,6 +68,7 @@
 
 .message-list-expanded {
   flex-grow: 1;
+  width: calc(100vw - 324px);
 
   // Mobile override - use full available width
   @media (max-width: 1023px) {
@@ -102,10 +103,10 @@
 .message-content {
   flex: 1 0;
   padding-left: 10px;
-  width: 80%;
-  max-width: 800px;
-  max-width: in;
+  width: 100%;
+  max-width: none;
   position: relative;
+  padding-right: 1rem;
 
   // Mobile override - use full available width
   @media (max-width: 1023px) {
