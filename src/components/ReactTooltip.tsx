@@ -29,6 +29,7 @@ type ReactTooltipProps = {
   showOnTouch?: boolean;
   touchTrigger?: 'click' | 'long-press';
   longPressDuration?: number;
+  alwaysVisible?: boolean;
 };
 
 const isTouchDevice = () =>
@@ -49,6 +50,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
   showOnTouch = false,
   touchTrigger = 'click',
   longPressDuration = 700,
+  alwaysVisible = false,
 }) => {
   const { resolvedTheme } = useTheme();
   const resolvedThemeInUse = theme || resolvedTheme;
@@ -61,7 +63,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
 
   // Handle opening/closing on touch devices with click or long-press, and outside click/touch to close
   React.useEffect(() => {
-    if (!showOnTouch || !isTouchDevice() || !anchorSelect) return;
+    if (!showOnTouch || !isTouchDevice() || !anchorSelect || alwaysVisible) return;
 
     const elem = document.querySelector(anchorSelect) as HTMLElement | null;
     if (!elem) return;
@@ -113,7 +115,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
 
   // Dismiss on outside tap/click when tooltip is open and on a touch device
   React.useEffect(() => {
-    if (!showOnTouch || !isTouchDevice() || !visible) return;
+    if (!showOnTouch || !isTouchDevice() || !visible || alwaysVisible) return;
 
     const handleOutside = (e: Event) => {
       // If anchor is not present or the click was outside
@@ -149,7 +151,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
         border={
           highlighted ? '1px solid var(--color-border-default)' : undefined
         }
-        isOpen={visible}
+        isOpen={alwaysVisible ? true : visible}
         disableFocusListener
         disableHoverListener
         disableTouchListener

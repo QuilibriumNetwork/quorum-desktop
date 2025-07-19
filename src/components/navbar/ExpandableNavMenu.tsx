@@ -77,22 +77,32 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
           <FontAwesomeIcon icon={faGear} />
         </div>
       )}
-      <ReactTooltip
-        id="create-space-tooltip"
-        content={t`Create a new Space`}
-        place="top"
-        anchorSelect="[data-tooltip-id='create-space-tooltip']"
-        highlighted={true}
-        className="z-[10000]"
-      />
-      <ReactTooltip
-        id="user-avatar-tooltip"
-        content={t`Account Settings`}
-        place="top"
-        anchorSelect="[data-tooltip-id='user-avatar-tooltip']"
-        highlighted={true}
-        className="z-[10000]"
-      />
+      {isExpanded && (
+        <>
+          <ReactTooltip
+            key="create-space-tooltip-expanded"
+            id="create-space-tooltip"
+            content={t`Create a new Space`}
+            place="top"
+            anchorSelect="[data-tooltip-id='create-space-tooltip']"
+            highlighted={true}
+            className="z-[10000]"
+            showOnTouch={true}
+            alwaysVisible={true}
+          />
+          <ReactTooltip
+            key="user-avatar-tooltip-expanded"
+            id="user-avatar-tooltip"
+            content={t`Account Settings`}
+            place="top"
+            anchorSelect="[data-tooltip-id='user-avatar-tooltip']"
+            highlighted={true}
+            className="z-[10000]"
+            showOnTouch={true}
+            alwaysVisible={true}
+          />
+        </>
+      )}
     </>
   );
 };

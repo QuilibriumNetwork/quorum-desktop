@@ -1,130 +1,190 @@
-# Enhanced Component Architecture Proposal
+# Enhanced Component Architecture Proposal (Revised)
 
 ## Current Problem
 
-- **Code Duplication**: Quorum Mobile and Quorum Desktop contain mirrored code, leading to increased maintenance overhead and potential inconsistencies.
+- **Code Duplication**: Quorum Mobile mirrors much of the Quorum Desktop codebase, leading to maintenance overhead and potential inconsistencies.
+- **"Everything else is mirrored instead of being shared"** - complex React components are duplicated when they could be reused.
 
-## Proposed Solution
+## Proposed Solution: Cassie's Two-Layer Architecture
 
-Implement a **two-layer architecture** that separates platform-specific rendering from shared business logic, avoiding the dependency on `react-native-web`.
+Implement a **minimal-change architecture** that extracts only the "raw HTML portion" into platform-specific primitives while keeping all existing business logic unchanged.
 
-### Layer 1: Simple/Primitive Components
+### Core Principle
+> "if each concrete UI component were its own thing, essentially boiling down the raw HTML to the simple components only, everything else is a react component, that actually would make unification between mobile and desktop quite easy, just sub out the simple components"
 
-These components encapsulate all platform-specific rendering. They provide an abstract interface for both web and mobile implementations.
+### Layer 1: Platform-Specific Primitives
 
-#### Goals
-
-- **Consistent Interface**: Ensure that both versions implement a unified props interface and share common logic and styles as much as possible.
+Extract **only the raw HTML/React Native rendering** into tightly contained components. These should match your existing component APIs exactly.
 
 #### Example: Button Component
 
-- **Button.native.tsx**:
-
+**Button.web.tsx** (preserves your current HTML structure):
 ```tsx
 import React from 'react';
-import { Pressable, Text, ViewProps } from 'react-native';
+import './Button.scss'; // Keep existing SCSS
 
-interface ButtonProps extends ViewProps {
-  title: string;
-  onPress: () => void;
+export function Button({ 
+  type = 'primary', 
+  size, 
+  disabled, 
+  onClick, 
+  children, 
+  className,
+  icon,
+  id
+}) {
+  const baseClass = disabled ? 'btn-disabled' : `btn-${type}`;
+  const buttonId = id || `button-${Math.random().toString(36).substr(2, 9)}`;
+
+  return (
+    <span
+      id={buttonId}
+      className={
+        baseClass +
+        (size === 'small' ? ' btn-small' : '') +
+        (icon ? ' quorum-button-icon' : '') +
+        (className ? ' ' + className : '')
+      }
+      onClick={() => {
+        if (!disabled) onClick();
+      }}
+    >
+      {children}
+    </span>
+  );
 }
+```
 
-export function Button(props: ButtonProps) {
-  const { title, onPress, ...rest } = props;
+**Button.native.tsx** (React Native equivalent):
+```tsx
+import React from 'react';
+import { Pressable, Text, StyleSheet } from 'react-native';
+
+export function Button({ 
+  type = 'primary', 
+  size, 
+  disabled, 
+  onClick, 
+  children, 
+  className, // ignored on mobile
+  icon,
+  id // ignored on mobile
+}) {
   return (
     <Pressable
-      {...rest}
-      onPress={onPress}
-      style={{ padding: 12, borderRadius: 6 }}
+      onPress={() => {
+        if (!disabled) onClick();
+      }}
+      style={[
+        styles.button,
+        styles[`btn${type.charAt(0).toUpperCase() + type.slice(1)}`],
+        size === 'small' && styles.btnSmall,
+        disabled && styles.btnDisabled
+      ]}
     >
-      <Text>{title}</Text>
+      <Text style={[styles.text, disabled && styles.textDisabled]}>
+        {children}
+      </Text>
     </Pressable>
   );
 }
+
+const styles = StyleSheet.create({
+  button: { padding: 12, borderRadius: 6 },
+  btnPrimary: { backgroundColor: '#007bff' },
+  btnSecondary: { backgroundColor: '#6c757d' },
+  // ... other styles matching your SCSS
+});
 ```
 
-- **Button.web.tsx**:
+### Layer 2: Shared Business Logic (Zero Changes)
 
+**All existing complex components remain completely unchanged.** They continue to import and use components exactly as before.
+
+#### Example: Your Existing Components Stay the Same
+
+**Your current component that uses Button**:
 ```tsx
-import React from 'react';
+// This file stays EXACTLY the same - no changes needed
+import Button from './Button'; // Auto-resolves to Button.web.tsx or Button.native.tsx
+import ReactTooltip from './ReactTooltip';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  title: string;
-}
-
-export function Button(props: ButtonProps) {
-  const { title, onClick, ...rest } = props;
+const MyFeature = () => {
   return (
-    <button
-      {...rest}
-      onClick={onClick}
-      style={{ padding: 12, borderRadius: 6 }}
-    >
-      {title}
-    </button>
-  );
-}
-```
-
-### Layer 2: Business Logic
-
-These components are platform-agnostic and leverage the primitive components from Layer 1.
-
-#### Example: Using the Button in a Feature Component
-
-**FeatureComponent.tsx**:
-
-```tsx
-import React from 'react';
-import { Button } from './Button';
-
-const FeatureComponent = () => {
-  const handleButtonClick = () => {
-    alert('Button clicked!');
-  };
-
-  return (
-    <div>
-      <h1>Welcome</h1>
-      <Button title="Click Me" onPress={handleButtonClick} />
-    </div>
+    <>
+      <Button 
+        type="primary" 
+        size="small"
+        onClick={handleClick}
+        tooltip="Click me!"
+        className="my-custom-class"
+      >
+        Save Changes
+      </Button>
+      {/* All your existing tooltip logic, etc. stays the same */}
+    </>
   );
 };
-
-export default FeatureComponent;
 ```
 
-### Key Requirement
+### Key Requirements
 
-Ensure that "raw HTML portion of components" is encapsulated within these tightly-contained primitive components. This entails:
+1. **"Raw HTML portion strictly within tightly contained components"**
+   - ❌ No `<span>`, `<div>`, `<Pressable>`, `<Text>` in business logic components
+   - ✅ Only abstract components like `<Button>`, `<Input>`, `<Card>`
 
-- **❌ Avoiding** direct use of `<div>`, `<span>`, `<Pressable>`, `<Text>` in your business logic components.
-- **✅ Utilizing** abstract components like `<Button>`, `<Input>`, `<Card>` from your primitive layer.
+2. **Preserve Existing APIs**
+   - New primitives must accept the same props your existing components expect
+   - No breaking changes to existing component usage
 
-### Resulting Benefits
+3. **Avoid react-native-web dependency**
+   - Web primitives use standard HTML + CSS/SCSS
+   - Mobile primitives use pure React Native
 
-- **Code Reuse**: Business logic is shared across platforms; only primitive components require platform-specific implementations.
-- **Consistency**: Guarantees that UI components behave consistently across platforms.
-- **Maintenance**: Simplifies updates since changes at the primitive level automatically propagate throughout the application.
+### Implementation Strategy
 
-### Structuring the Codebase
+#### Phase 1: Identify Primitives
+Extract components that contain "raw HTML":
+- Button, Input, Select, Textarea
+- Layout components: Container, Row, Column
+- Basic UI: Card, Modal backdrop, etc.
 
-#### Recommended Directory Structure
+#### Phase 2: Create Platform Versions
+For each primitive:
+1. **`.web.tsx`**: Extract existing HTML/SCSS exactly as-is
+2. **`.native.tsx`**: Create React Native equivalent with same props
+3. **`index.ts`**: Let bundler auto-resolve platform
+
+#### Phase 3: Zero-Change Migration
+- Existing imports continue working: `import Button from './Button'`
+- Complex components remain unchanged
+- Business logic, state management, routing all stay the same
+
+### Directory Structure
 
 ```
 src/
   components/
     Button/
-      Button.native.tsx
-      Button.web.tsx
+      Button.web.tsx      // Your current Button logic + HTML
+      Button.native.tsx   // React Native equivalent
+      Button.scss         // Web-only styles
+      index.ts           // Platform resolution
+    Input/
+      Input.web.tsx
+      Input.native.tsx
+      Input.scss
       index.ts
-    Card/
-      Card.native.tsx
-      Card.web.tsx
-      index.ts
+    MyComplexFeature.tsx  // UNCHANGED - imports Button and works on both platforms
+    AnotherFeature.tsx    // UNCHANGED - imports primitives, logic stays same
 ```
 
-- **Component-Level Index Files**: Utilize index files to abstract platform logic using `Platform.select` for dynamic component resolution.
-- **Shared Utilities**: Host shared styles and utility functions in a common directory.
+### Expected Outcome
 
-This enhanced architecture employs platform-specific implementations while emphasizing uniformity, maintainability, and scalability across both mobile and desktop platforms, without the complexity of `react-native-web`.
+- **90%+ of your codebase shared** between platforms
+- **Only primitive UI components** have platform-specific implementations
+- **All business logic, state, routing, complex components shared**
+- **No API changes** - existing components continue working unchanged
+- **No react-native-web complexity**
+
+This approach achieves Cassie's vision: **"everything else can then be shared instead of being mirrors"** with minimal disruption to your existing codebase.
