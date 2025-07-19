@@ -277,7 +277,7 @@ export const Message = ({
         if (useMobileDrawer) {
           e.preventDefault();
         }
-        
+
         // For tablets, regular click should hide actions (not show them)
         if (useDesktopTap) {
           // Hide actions if clicking on a different message or same message
@@ -286,7 +286,7 @@ export const Message = ({
             setActionsVisibleOnTap(false);
           }
         }
-        
+
         // Common click behaviors
         setShowUserProfile(false);
         setEmojiPickerOpen(undefined);
@@ -351,7 +351,7 @@ export const Message = ({
       {!['join', 'leave', 'kick'].includes(message.content.type) && (
         <div
           className={
-            'flex flex-row font-[11pt] px-[11px] pb-[8px] ' +
+            'flex flex-row w-full font-[11pt] px-[11px] pb-[8px] ' +
             ((
               !(message.content as any).repliesToMessageId
                 ? undefined

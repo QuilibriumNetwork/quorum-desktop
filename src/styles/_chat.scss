@@ -67,7 +67,7 @@
 }
 
 .message-list-expanded {
-  width: calc(100vw - 322px);
+  flex-grow: 1;
 
   // Mobile override - use full available width
   @media (max-width: 1023px) {
@@ -129,7 +129,7 @@
 }
 
 .message-editor {
-  max-width: 850px;
+  max-width: 100%;
   border-radius: 10px;
   padding: 6px;
   overflow: hidden;
@@ -148,5 +148,13 @@
   // Mobile override - use full available width
   @media (max-width: 1023px) {
     max-width: none !important;
+  }
+}
+
+.side-bar {
+  display: block;
+
+  &.hidden {
+    display: none;
   }
 }

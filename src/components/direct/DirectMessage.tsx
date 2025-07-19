@@ -527,12 +527,11 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       {/* Desktop sidebar - only visible on lg+ screens */}
       <div
         className={
-          'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-scroll ' +
+          'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-y-auto ' +
           'transition-transform duration-300 ease-in-out ' +
           (showUsers
-            ? 'translate-x-0 fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
-            : 'translate-x-full fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto') +
-          ' hidden lg:block'
+            ? 'hidden lg:block translate-x-0 fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
+            : 'hidden')
         }
       >
         <div className="flex flex-col">
