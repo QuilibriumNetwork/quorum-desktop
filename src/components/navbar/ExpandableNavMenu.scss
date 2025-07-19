@@ -56,7 +56,7 @@
   @apply fixed bottom-0 flex flex-col items-center justify-end;
   width: 57px;
   height: 100vh;
-  padding-bottom: 48px;
+  padding-bottom: 40px;
   padding-left: 16px;
   gap: 8px;
   
@@ -71,25 +71,38 @@
 
 .expanded-nav-button-primary {
   @apply w-[40px] h-[40px] flex items-center justify-center rounded-full;
-  @apply bg-accent-500 text-white border-2 border-transparent;
-  @apply transition-all duration-200 lg:hover:border-accent-400 lg:hover:bg-accent-400;
+  @apply bg-surface-4 text-white;
+  @apply transition-all duration-200 lg:hover:bg-surface-6;
   @apply cursor-pointer;
+  margin-top: 12px;
   
   // Mobile phone optimization
   @media (max-width: 480px) {
     @apply w-[32px] h-[32px];
+    margin-top: 8px;
   }
 }
 
 .expanded-nav-button-avatar {
-  @apply w-[40px] h-[40px] rounded-full border-2 border-transparent;
-  @apply transition-all duration-200 lg:hover:border-accent-500;
+  @apply w-[40px] h-[40px] rounded-full;
+  @apply transition-all duration-200 lg:hover:opacity-80;
   @apply cursor-pointer;
   background-position: center;
   background-size: cover;
+  margin-top: 12px;
   
   // Mobile phone optimization
   @media (max-width: 480px) {
     @apply w-[32px] h-[32px];
+    margin-top: 8px;
   }
+}
+
+// Full-width container for centering buttons
+.nav-buttons-centered-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
 }

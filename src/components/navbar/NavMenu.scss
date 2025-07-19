@@ -17,7 +17,7 @@ html {
 }
 
 header {
-  padding: 8px 8px 8px 0px;
+  padding: 8px 0px 16px 0px;
   position: fixed;
   height: 100%;
   width: 74px;
@@ -31,19 +31,19 @@ header {
   @media (max-width: 480px) {
     width: 50px;
     max-width: 50px;
-    padding: 6px 6px 6px 0px;
+    padding: 6px 0px 12px 0px;
   }
 }
 
 .nav-menu-logo {
-  width: 74px;
-  max-width: 74px;
+  width: 100%;
   scrollbar-width: none;
-  padding-left: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   .space-icon {
     width: 48px;
-    margin-left: 4px;
     height: 48px;
     box-sizing: border-box;
     border-radius: 10px;
@@ -54,22 +54,18 @@ header {
     margin-top: 7px;
     display: inline-block;
     transition: all 100ms linear;
-    border: 2px none #f3dfc1ff;
     cursor: pointer;
+    //margin-bottom: 16px;
   }
 
   // Mobile phone optimization
   @media (max-width: 480px) {
-    width: 50px;
-    max-width: 50px;
-    padding-left: 6px;
-
     .space-icon {
       width: 32px;
       height: 32px;
-      margin-left: 2px;
       margin-top: 5px;
       border-radius: 8px;
+      //margin-bottom: 8px;
     }
   }
 }
@@ -77,18 +73,12 @@ header {
 .nav-menu-spaces {
   overflow-y: auto;
   overflow-x: none;
-  width: 74px;
-  max-width: 74px;
+  width: 100%;
   scrollbar-width: none;
   flex-grow: 1;
-  padding-left: 8px;
-
-  // Mobile phone optimization
-  @media (max-width: 480px) {
-    width: 50px;
-    max-width: 50px;
-    padding-left: 6px;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .nav-menu-spaces::-webkit-scrollbar {
