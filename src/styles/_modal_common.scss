@@ -166,11 +166,8 @@
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(4px);
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -180,7 +177,6 @@
   z-index: 10;
 
   &:hover {
-    background: rgba(0, 0, 0, 0.3);
     color: var(--color-text-main);
     transform: scale(1.1);
   }
@@ -188,8 +184,8 @@
   @media (max-width: 768px) {
     top: 10px;
     right: 10px;
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -261,7 +257,7 @@
   @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
-    padding: 8px 16px;
+    padding: 40px 16px 8px 16px;
     background: var(--surface-3);
     border-bottom: 1px solid var(--surface-6);
     border-radius: 10px 10px 0px 0px;
@@ -299,7 +295,7 @@
   @media (max-width: 768px) {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    padding: 8px 16px;
+    padding: 40px 16px 8px 16px;
     background: var(--surface-3);
     border-bottom: 1px solid var(--surface-6);
     border-radius: 10px 10px 0px 0px;
