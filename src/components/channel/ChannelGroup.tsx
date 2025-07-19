@@ -69,25 +69,27 @@ const ChannelGroup: React.FunctionComponent<{
           <div className="channel-group-channel">
             <div
               className={
-                'channel-group-channel-name' +
+                'channel-group-channel-name flex items-start justify-between' +
                 (channel.channelId === channelId ? '-focused' : '') +
                 (channel.unreads && channel.unreads > 0
                   ? ' !font-bold !opacity-100'
                   : '')
               }
             >
-              #{channel.channelName}
-              {!!channel.mentionCount ? (
-                <span
-                  className={
-                    'channel-group-channel-name-mentions-' + channel.mentions
-                  }
-                >
-                  {channel.mentionCount}
-                </span>
-              ) : (
-                <></>
-              )}
+              <div className="flex-1 min-w-0">
+                #{channel.channelName}
+                {!!channel.mentionCount ? (
+                  <span
+                    className={
+                      'channel-group-channel-name-mentions-' + channel.mentions
+                    }
+                  >
+                    {channel.mentionCount}
+                  </span>
+                ) : (
+                  <></>
+                )}
+              </div>
               {isSpaceOwner && (
                 <div
                   onClick={(e) => {
@@ -97,7 +99,7 @@ const ChannelGroup: React.FunctionComponent<{
                       channel.channelId
                     );
                   }}
-                  className={'channel-configure float-right'}
+                  className={'channel-configure flex-shrink-0 ml-2'}
                 >
                   <FontAwesomeIcon size={'2xs'} icon={faGear} />
                 </div>

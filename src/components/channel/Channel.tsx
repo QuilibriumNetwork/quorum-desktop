@@ -49,7 +49,7 @@ const Channel: React.FC<ChannelProps> = ({
   kickUserAddress,
   setKickUserAddress,
 }) => {
-  const { isMobile, toggleLeftSidebar } = useResponsiveLayoutContext();
+  const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
   const [state, setState] = React.useState<{
     pendingMessage: string;
     messages: MessageType[];
@@ -349,7 +349,7 @@ const Channel: React.FC<ChannelProps> = ({
         <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
           <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2 lg:mb-0">
             <div className="flex flex-row items-center gap-2">
-              {isMobile && (
+              {!isDesktop && (
                 <FontAwesomeIcon
                   onClick={toggleLeftSidebar}
                   className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"

@@ -39,6 +39,7 @@
 .quorum-react-tooltip-dark {
   @include tooltip-box;
   @include reset-text;
+  z-index: 10000 !important;
 
   * {
     @include inherit-text;

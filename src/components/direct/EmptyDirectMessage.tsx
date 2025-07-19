@@ -15,7 +15,7 @@ import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider'
 export const EmptyDirectMessage = () => {
   const user = usePasskeysContext();
   const { data: conversations } = useConversations({ type: 'direct' });
-  const { isMobile, toggleLeftSidebar } = useResponsiveLayoutContext();
+  const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
   const [showHomeScreen, setShowHomeScreen] = useState(() => {
     const saved = localStorage.getItem('quilibrium-show-home-screen');
     return saved !== null ? JSON.parse(saved) : true;
@@ -34,7 +34,7 @@ export const EmptyDirectMessage = () => {
         {/* Header with hamburger menu for mobile */}
         <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
           <div className="flex flex-row items-center gap-2">
-            {isMobile && (
+            {!isDesktop && (
               <FontAwesomeIcon
                 onClick={toggleLeftSidebar}
                 className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"
