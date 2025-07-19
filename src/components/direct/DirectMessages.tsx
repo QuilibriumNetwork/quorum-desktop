@@ -10,7 +10,7 @@ import './DirectMessages.scss';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { useModalContext } from '../AppWithSearch';
 import ReactTooltip from '../ReactTooltip';
-import { t } from '@lingui/macro';
+import { t } from '@lingui/core/macro';
 
 type DirectMessagesProps = {
   user: any;
