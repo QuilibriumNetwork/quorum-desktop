@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { faCopy, faEdit, faGear } from '@fortawesome/free-solid-svg-icons';
-import Button from '../Button';
-import UserProfile from './UserProfile';
+import { faGear } from '@fortawesome/free-solid-svg-icons';
 
 import './UserStatus.scss';
 import UserOnlineStateIndicator from './UserOnlineStateIndicator';
@@ -29,53 +27,9 @@ type UserStatusProps = {
 };
 
 const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
-  let [isMenuExpanded, setIsMenuExpanded] = React.useState<boolean>(false);
-  let [isProfileEditorOpen, setIsProfileEditorOpen] =
-    React.useState<boolean>(false);
-
   return (
     <>
-      {isProfileEditorOpen ? (
-        <>
-          <div className="invisible-dismissal invisible-dark">
-            <UserProfile
-              setUser={props.setUser}
-              editMode={true}
-              user={props.user}
-              dismiss={() => setIsProfileEditorOpen(false)}
-            />
-            <div
-              className="invisible-dismissal"
-              onClick={() => setIsProfileEditorOpen(false)}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
-      {isMenuExpanded ? (
-        <>
-          <div
-            className="invisible-dismissal"
-            onClick={() => setIsMenuExpanded(false)}
-          />
-          <div className="user-status-menu bottom-[24px] w-[200px] p-[2px] bg-surface-0 rounded-lg shadow-lg border border-default">
-            <Button
-              className="w-full justify-between text-left p-2 hover:bg-surface-1 rounded text-main"
-              onClick={() => {
-                setIsMenuExpanded(false);
-                setIsProfileEditorOpen(true);
-              }}
-            >
-              <span>{t`Edit Profile`}</span>
-              <FontAwesomeIcon icon={faEdit} />
-            </Button>
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
-      <div onClick={() => setIsMenuExpanded(true)} className="user-status">
+      <div className="user-status">
         <div
           className="user-status-icon"
           style={{
@@ -109,7 +63,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
               props.setIsUserSettingsOpen(true);
               e.stopPropagation();
             }}
-            className="p-1 rounded-md hover:bg-[rgba(255,255,255,0.1)] hover:text-main"
+            className="p-1 rounded-md hover:bg-[rgba(255,255,255,0.1)] hover:text-main cursor-pointer"
             icon={faGear}
           />
         </div>

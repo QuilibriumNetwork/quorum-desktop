@@ -5,7 +5,6 @@
   flex-direction: row;
   flex-shrink: 0;
   width: var(--sidebar-left-width);
-  cursor: pointer;
   user-select: none;
 }
 
@@ -13,10 +12,6 @@
   .user-status {
     width: var(--sidebar-left-width);
   }
-}
-
-.user-status:hover {
-  background: var(--surface-5);
 }
 
 .user-status-icon {
