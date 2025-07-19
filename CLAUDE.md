@@ -30,9 +30,6 @@ The main dependencies are:
 - Use `yarn` for package management
 - Follow the existing coding style
 - Run `yarn lint` and `yarn format` only on the files you modified during each task
-- do not run `yarn dev`, `yarn build` unless specifically instructed
-- never install dependencies because we are runnig on windows and you are running on WSL
-- if you are mounting a Windows path which contains "Niccolò": you cannot run build commands or install dependencies because you are on WSL and the deps have been installed on Windows
 - When you insert any new text that must be readby users, always use the Lingui sintax for localization
 - Look for documentation files in `.claude/docs/` whne you work on specific things (e.g. Modals, Search, etc.)
 - When editign anything, you must be very careful to not cause destructive changes or conflicts with other functionalities, as the app is pretty complex with many shared styles and features

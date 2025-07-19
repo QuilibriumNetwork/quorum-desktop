@@ -1,461 +1,392 @@
-# CSS Inventory - Complete Selector Analysis
+# CSS Inventory - Complete Codebase Analysis
 
-## 📊 Summary Statistics
+## 📋 Document Information
 
-- **Total selectors analyzed:** 379 across 41 SCSS files
-- **@apply-convertible:** 127 selectors (33.5%) - Simple CSS that can be converted to Tailwind utilities
-- **theme-token:** 163 selectors (43.0%) - Uses CSS custom properties and theme system
-- **custom-logic:** 42 selectors (11.1%) - Complex CSS that should remain custom
-- **responsive:** 38 selectors (10.0%) - Contains media queries
-- **semantic-class:** 9 selectors (2.4%) - Already well-structured semantic classes
+**Last Updated:** January 19, 2025  
+**Analysis Type:** Comprehensive CSS/SCSS Selector Inventory  
+**Purpose:** This document provides a detailed inventory of all CSS selectors across the Quilibrium quorum-desktop codebase, classified for systematic Tailwind CSS conversion planning.
 
----
-
-## 🗂️ Core Style Files
-
-### src/styles/\_base.scss
-
-- `html` - theme-token - Root element with theme variables
-- `body` - theme-token - Body styling with theme colors
-- `#root` - @apply-convertible - Root container with basic layout
-- `h1, h2, h3, h4, h5, h6` - theme-token - Heading styles with theme colors
-- `p` - theme-token - Paragraph styling with theme colors
-- `a` - theme-token - Link styling with theme colors
-- `*:focus` - theme-token - Focus styles with theme colors
-- `*:focus-visible` - theme-token - Focus-visible styles with theme colors
-- `.small-caps` - semantic-class - Small caps text transformation
-- `.invisible-dismissal` - semantic-class - Invisible overlay for dismissals
-- `.error-label` - semantic-class - Error message styling
-- `.card` - theme-token - Card component with theme background
-
-### src/styles/\_chat.scss
-
-- `.chat-input` - theme-token - Chat input with theme colors and complex layout
-- `.chat-input-container` - @apply-convertible - Container with flex layout
-- `.chat-input-wrapper` - @apply-convertible - Wrapper with flex and padding
-- `.chat-input-field` - theme-token - Input field with theme colors
-- `.chat-input-send` - theme-token - Send button with theme colors
-- `.chat-messages` - @apply-convertible - Messages container with flex layout
-- `.chat-message` - theme-token - Individual message with theme colors
-- `.chat-message-content` - @apply-convertible - Message content wrapper
-- `.chat-message-time` - theme-token - Message timestamp with theme colors
-- `.chat-message-sender` - theme-token - Message sender with theme colors
-
-### src/styles/\_colors.scss
-
-- `:root` - theme-token - Root color variables and theme system
-- `:root[data-theme="light"]` - theme-token - Light theme color definitions
-- `:root[data-theme="dark"]` - theme-token - Dark theme color definitions
-- `:root[data-accent="blue"]` - theme-token - Blue accent color theme
-- `:root[data-accent="purple"]` - theme-token - Purple accent color theme
-- `:root[data-accent="fuchsia"]` - theme-token - Fuchsia accent color theme
-- `:root[data-accent="orange"]` - theme-token - Orange accent color theme
-- `:root[data-accent="green"]` - theme-token - Green accent color theme
-- `:root[data-accent="yellow"]` - theme-token - Yellow accent color theme
-
-### src/styles/\_components.scss
-
-- `.emoji-picker` - theme-token - Emoji picker with theme colors and complex layout
-- `.emoji-picker-trigger` - theme-token - Emoji picker trigger button
-- `.emoji-picker-content` - theme-token - Emoji picker content area
-- `.titlebar` - theme-token - Titlebar with theme colors
-- `.titlebar-controls` - @apply-convertible - Titlebar controls container
-- `.mobile-overlay` - theme-token - Mobile overlay with theme background
-- `.mobile-sidebar` - theme-token - Mobile sidebar with theme background
-- `.bg-mobile-overlay` - semantic-class - Mobile overlay background utility
-- `.bg-mobile-sidebar` - semantic-class - Mobile sidebar background utility
-- `.bg-radial--accent-noise` - semantic-class - Radial background with accent noise
-
-### src/styles/\_modal_common.scss
-
-- `.modal-overlay` - theme-token - Modal overlay with theme background
-- `.modal-container` - @apply-convertible - Modal container with flex layout
-- `.modal-content` - theme-token - Modal content with theme colors
-- `.modal-header` - theme-token - Modal header with theme colors
-- `.modal-body` - @apply-convertible - Modal body with flex layout
-- `.modal-footer` - @apply-convertible - Modal footer with flex layout
-- `.modal-close` - theme-token - Modal close button with theme colors
-- `.modal-nav` - theme-token - Modal navigation with theme colors
-- `.modal-nav-item` - theme-token - Modal navigation item
-- `.modal-nav-category` - theme-token - Modal navigation category
-- `.modal-simple` - @apply-convertible - Simple modal layout
-- `.modal-complex` - @apply-convertible - Complex modal layout
-- `.modal-small` - @apply-convertible - Small modal layout
-- `.modal-sidebar` - theme-token - Modal sidebar with theme colors
-- `.modal-content-area` - @apply-convertible - Modal content area layout
-- `.modal-2-column` - responsive - Two-column modal layout with media queries
-- `.modal-mobile-nav` - responsive - Mobile navigation for modals
+**Context:** This inventory supports the CSS refactoring initiative to migrate custom SCSS to Tailwind utilities using `@apply` while preserving semantic class names and theme functionality. Classifications help prioritize conversion efforts and identify areas requiring special handling.
 
 ---
 
-## 🧩 Component-Specific SCSS Files
+## 📊 Executive Summary
 
-### src/components/Button.scss
+### **Codebase Statistics**
+- **Total SCSS files:** 40 files analyzed
+- **Total selectors:** ~450 CSS selectors classified
+- **Recent improvements:** Button.scss successfully converted to Tailwind pattern
 
-- `.button` - theme-token - Base button with theme colors
-- `.button-primary` - theme-token - Primary button variant
-- `.button-secondary` - theme-token - Secondary button variant
-- `.button-danger` - theme-token - Danger button variant
-- `.button-small` - @apply-convertible - Small button size
-- `.button-medium` - @apply-convertible - Medium button size
-- `.button-large` - @apply-convertible - Large button size
-- `.button:hover` - theme-token - Button hover state
-- `.button:focus` - theme-token - Button focus state
-- `.button:disabled` - theme-token - Button disabled state
-
-### src/components/Input.scss
-
-- `.input` - theme-token - Base input with theme colors
-- `.input-container` - @apply-convertible - Input container with flex layout
-- `.input-label` - theme-token - Input label with theme colors
-- `.input-error` - theme-token - Input error state
-- `.input-success` - theme-token - Input success state
-- `.input:focus` - theme-token - Input focus state
-- `.input:disabled` - theme-token - Input disabled state
-
-### src/components/Modal.scss
-
-- `.modal` - theme-token - Modal component with theme colors
-- `.modal-backdrop` - theme-token - Modal backdrop with theme colors
-- `.modal-dialog` - @apply-convertible - Modal dialog with flex layout
-- `.modal-content` - theme-token - Modal content with theme colors
-- `.modal-header` - theme-token - Modal header with theme colors
-- `.modal-title` - theme-token - Modal title with theme colors
-- `.modal-body` - @apply-convertible - Modal body with flex layout
-- `.modal-footer` - @apply-convertible - Modal footer with flex layout
-- `.modal-close-button` - theme-token - Modal close button
-
-### src/components/ToggleSwitch.scss
-
-- `.toggle-switch` - theme-token - Toggle switch with theme colors
-- `.toggle-switch-track` - theme-token - Toggle track with theme colors
-- `.toggle-switch-thumb` - theme-token - Toggle thumb with theme colors
-- `.toggle-switch-label` - theme-token - Toggle label with theme colors
-- `.toggle-switch:checked` - theme-token - Toggle checked state
-- `.toggle-switch:disabled` - theme-token - Toggle disabled state
-
-### src/components/CloseButton.scss
-
-- `.close-button` - theme-token - Close button with theme colors
-- `.close-button:hover` - theme-token - Close button hover state
-- `.close-button:focus` - theme-token - Close button focus state
-- `.close-button-icon` - @apply-convertible - Close button icon sizing
-
-### src/components/Connecting.scss
-
-- `.connecting` - theme-token - Connecting state with theme colors
-- `.connecting-spinner` - custom-logic - Connecting spinner animation
-- `.connecting-text` - theme-token - Connecting text with theme colors
-
-### src/components/Container.scss
-
-- `.container` - @apply-convertible - Container with responsive max-width
-- `.container-fluid` - @apply-convertible - Full-width container
-- `.container-centered` - @apply-convertible - Centered container
-
-### src/components/Loading.scss
-
-- `.loading` - theme-token - Loading state with theme colors
-- `.loading-spinner` - custom-logic - Loading spinner animation
-- `.loading-text` - theme-token - Loading text with theme colors
-
-### src/components/ReactTooltip.scss
-
-- `.react-tooltip` - theme-token - React tooltip with theme colors
-- `.react-tooltip-arrow` - custom-logic - React tooltip arrow
-- `.react-tooltip-content` - theme-token - React tooltip content
-
-### src/components/ThemeRadioGroup.scss
-
-- `.theme-radio-group` - @apply-convertible - Theme radio group layout
-- `.theme-radio-option` - theme-token - Theme radio option styling
-- `.theme-radio-input` - custom-logic - Hidden radio input
-- `.theme-radio-label` - theme-token - Theme radio label styling
-
-### src/components/Titlebar.scss
-
-- `.titlebar` - theme-token - Titlebar with theme colors
-- `.titlebar-drag-region` - custom-logic - Titlebar drag region
-- `.titlebar-controls` - @apply-convertible - Titlebar controls layout
-- `.titlebar-button` - theme-token - Titlebar button styling
-
-### src/components/UnknownAvatar.scss
-
-- `.unknown-avatar` - theme-token - Unknown avatar with theme colors
-- `.unknown-avatar-icon` - @apply-convertible - Unknown avatar icon sizing
-- `.unknown-avatar-text` - theme-token - Unknown avatar text styling
+### **Classification Distribution**
+- **@apply-convertible:** ~135 selectors (30%) - Quick conversion candidates
+- **theme-token:** ~200 selectors (44%) - Require theme integration care
+- **custom-logic:** ~65 selectors (14%) - Keep as custom CSS
+- **responsive:** ~40 selectors (9%) - Convert to Tailwind responsive utilities
+- **semantic-class:** ~10 selectors (2%) - Already well-structured
 
 ---
 
-## 📱 Channel Components
-
-### src/components/channel/Channel.scss
-
-- `.channel` - theme-token - Channel component with theme colors
-- `.channel-header` - theme-token - Channel header with theme colors
-- `.channel-name` - theme-token - Channel name styling
-- `.channel-description` - theme-token - Channel description styling
-- `.channel-members` - @apply-convertible - Channel members layout
-- `.channel-member` - theme-token - Individual channel member styling
-
-### src/components/channel/ChannelGroup.scss
-
-- `.channel-group` - theme-token - Channel group with theme colors
-- `.channel-group-header` - theme-token - Channel group header
-- `.channel-group-name` - theme-token - Channel group name
-- `.channel-group-channels` - @apply-convertible - Channel group channels layout
-- `.channel-group-collapsed` - @apply-convertible - Collapsed channel group state
-
-### src/components/channel/ChannelList.scss
-
-- `.channel-list` - theme-token - Channel list with theme colors
-- `.channel-list-header` - theme-token - Channel list header
-- `.channel-list-item` - theme-token - Channel list item styling
-- `.channel-list-item:hover` - theme-token - Channel list item hover state
-- `.channel-list-item.active` - theme-token - Active channel list item
-
-### src/components/channel/GroupEditor.scss
-
-- `.group-editor` - theme-token - Group editor with theme colors
-- `.group-editor-form` - @apply-convertible - Group editor form layout
-- `.group-editor-input` - theme-token - Group editor input styling
-- `.group-editor-actions` - @apply-convertible - Group editor actions layout
-
-### src/components/channel/LeaveSpace.scss
-
-- `.leave-space` - theme-token - Leave space component with theme colors
-- `.leave-space-button` - theme-token - Leave space button styling
-- `.leave-space-confirmation` - theme-token - Leave space confirmation
-- `.leave-space-modal` - theme-token - Leave space modal styling
-
----
-
-## 💬 Direct Message Components
-
-### src/components/direct/DirectMessage.scss
-
-- `.direct-message` - theme-token - Direct message with theme colors
-- `.direct-message-header` - theme-token - Direct message header
-- `.direct-message-content` - @apply-convertible - Direct message content layout
-- `.direct-message-input` - theme-token - Direct message input styling
-
-### src/components/direct/DirectMessageContact.scss
-
-- `.direct-message-contact` - theme-token - Direct message contact with theme colors
-- `.direct-message-contact-avatar` - @apply-convertible - Contact avatar sizing
-- `.direct-message-contact-name` - theme-token - Contact name styling
-- `.direct-message-contact-status` - theme-token - Contact status styling
-
-### src/components/direct/DirectMessageContactsList.scss
-
-- `.direct-message-contacts-list` - theme-token - Contacts list with theme colors
-- `.direct-message-contacts-item` - theme-token - Contacts list item
-- `.direct-message-contacts-item:hover` - theme-token - Contacts item hover state
-- `.direct-message-contacts-search` - theme-token - Contacts search styling
-
-### src/components/direct/DirectMessages.scss
-
-- `.direct-messages` - theme-token - Direct messages with theme colors
-- `.direct-messages-sidebar` - theme-token - Direct messages sidebar
-- `.direct-messages-content` - @apply-convertible - Direct messages content layout
-- `.direct-messages-empty` - theme-token - Empty direct messages state
-
----
-
-## 📨 Message Components
-
-### src/components/message/Message.scss
-
-- `.message` - theme-token - Message component with theme colors
-- `.message-header` - theme-token - Message header styling
-- `.message-content` - theme-token - Message content styling
-- `.message-sender` - theme-token - Message sender styling
-- `.message-time` - theme-token - Message timestamp styling
-- `.message-actions` - @apply-convertible - Message actions layout
-- `.message-reply` - theme-token - Message reply styling
-- `.message-edited` - theme-token - Edited message indicator
-
----
-
-## 🔍 Search Components
-
-### src/components/search/GlobalSearch.scss
-
-- `.global-search` - theme-token - Global search with theme colors
-- `.global-search-input` - theme-token - Global search input styling
-- `.global-search-results` - theme-token - Global search results
-- `.global-search-overlay` - theme-token - Global search overlay
-
-### src/components/search/SearchBar.scss
-
-- `.search-bar` - theme-token - Search bar with theme colors
-- `.search-bar-input` - theme-token - Search bar input styling
-- `.search-bar-icon` - @apply-convertible - Search bar icon sizing
-- `.search-bar-clear` - theme-token - Search bar clear button
-
-### src/components/search/SearchResultItem.scss
-
-- `.search-result-item` - theme-token - Search result item with theme colors
-- `.search-result-item:hover` - theme-token - Search result item hover state
-- `.search-result-title` - theme-token - Search result title styling
-- `.search-result-content` - theme-token - Search result content styling
-
-### src/components/search/SearchResults.scss
-
-- `.search-results` - theme-token - Search results with theme colors
-- `.search-results-empty` - theme-token - Empty search results state
-- `.search-results-item` - theme-token - Search results item styling
-- `.search-results-highlight` - theme-token - Search results highlight
-
----
-
-## 🌍 Space Components
-
-### src/components/space/Space.scss
-
-- `.space` - theme-token - Space component with theme colors
-- `.space-header` - theme-token - Space header styling
-- `.space-name` - theme-token - Space name styling
-- `.space-description` - theme-token - Space description styling
-- `.space-members` - @apply-convertible - Space members layout
-- `.space-channels` - @apply-convertible - Space channels layout
-
----
-
-## 👤 User Components
-
-### src/components/user/UserOnlineStateIndicator.scss
-
-- `.user-online-state-indicator` - theme-token - Online state indicator with theme colors
-- `.user-online-state-indicator.online` - theme-token - Online state styling
-- `.user-online-state-indicator.offline` - theme-token - Offline state styling
-- `.user-online-state-indicator.away` - theme-token - Away state styling
-
-### src/components/user/UserProfile.scss
-
-- `.user-profile` - theme-token - User profile with theme colors
-- `.user-profile-avatar` - @apply-convertible - User profile avatar sizing
-- `.user-profile-name` - theme-token - User profile name styling
-- `.user-profile-status` - theme-token - User profile status styling
-- `.user-profile-bio` - theme-token - User profile bio styling
-
-### src/components/user/UserStatus.scss
-
-- `.user-status` - theme-token - User status with theme colors
-- `.user-status-indicator` - theme-token - Status indicator styling
-- `.user-status-text` - theme-token - Status text styling
-
----
-
-## 🎯 Navigation Components
-
-### src/components/navbar/ExpandableNavMenu.scss
-
-- `.expandable-nav-menu` - theme-token - Expandable nav menu with theme colors
-- `.expandable-nav-menu-trigger` - theme-token - Nav menu trigger styling
-- `.expandable-nav-menu-content` - theme-token - Nav menu content styling
-- `.expandable-nav-menu-item` - theme-token - Nav menu item styling
-- `.expandable-nav-menu-item:hover` - theme-token - Nav menu item hover state
-
-### src/components/navbar/NavMenu.scss
-
-- `.nav-menu` - theme-token - Navigation menu with theme colors
-- `.nav-menu-item` - theme-token - Navigation menu item styling
-- `.nav-menu-item:hover` - theme-token - Navigation menu item hover state
-- `.nav-menu-item.active` - theme-token - Active navigation menu item
-
-### src/components/navbar/SpaceButton.scss
-
-- `.space-button` - theme-token - Space button with theme colors
-- `.space-button:hover` - theme-token - Space button hover state
-- `.space-button:focus` - theme-token - Space button focus state
-- `.space-button.active` - theme-token - Active space button
-
-### src/components/navbar/SpaceIcon.scss
-
-- `.space-icon` - theme-token - Space icon with theme colors
-- `.space-icon-image` - @apply-convertible - Space icon image sizing
-- `.space-icon-fallback` - theme-token - Space icon fallback styling
-
----
-
-## 🎭 Modal Components
-
-### src/components/modals/CreateSpaceModal.scss
-
-- `.create-space-modal` - theme-token - Create space modal with theme colors
-- `.create-space-modal-form` - @apply-convertible - Create space form layout
-- `.create-space-modal-input` - theme-token - Create space input styling
-- `.create-space-modal-actions` - @apply-convertible - Create space actions layout
-
-### src/components/modals/JoinSpaceModal.scss
-
-- `.join-space-modal` - theme-token - Join space modal with theme colors
-- `.join-space-modal-form` - @apply-convertible - Join space form layout
-- `.join-space-modal-input` - theme-token - Join space input styling
-- `.join-space-modal-actions` - @apply-convertible - Join space actions layout
-
-### src/components/modals/NewDirectMessageModal.scss
-
-- `.new-direct-message-modal` - theme-token - New direct message modal with theme colors
-- `.new-direct-message-modal-form` - @apply-convertible - New direct message form layout
-- `.new-direct-message-modal-search` - theme-token - New direct message search styling
-- `.new-direct-message-modal-contacts` - @apply-convertible - New direct message contacts layout
-
----
-
-## 🎨 Animation & Custom Logic Selectors
-
-### Custom Logic (Preserve as-is)
-
-- `.connecting-spinner` - Keyframe animation for loading state
-- `.loading-spinner` - Keyframe animation for loading state
-- `.tooltip-arrow` - Pseudo-element with complex positioning
-- `.react-tooltip-arrow` - Pseudo-element with complex positioning
-- `.theme-radio-input` - Hidden input with complex styling
-- `.titlebar-drag-region` - Electron-specific drag region
-- `.message-sender-icon::before` - Pseudo-element for message icons
-- `.channel-list-item::after` - Pseudo-element for active indicators
-- `.user-online-state-indicator::before` - Pseudo-element for status dots
-
-### Responsive Patterns
-
-- Media queries in modal system (mobile, tablet, desktop)
-- Responsive navigation patterns
-- Adaptive layout systems
+## 🎯 Classification Legend
+
+### **@apply-convertible**
+Simple CSS properties that map directly to Tailwind utilities:
+- Basic layout (display, flex, grid)
+- Spacing (margin, padding, gap)
+- Sizing (width, height, max-width)
+- Basic positioning (relative, absolute positioning)
+
+### **theme-token**
+Selectors using CSS custom properties and theme system:
+- Color properties using `var(--accent)`, `var(--surface-*)`, etc.
+- Theme-dependent backgrounds and borders
+- Properties that change with light/dark mode or accent colors
+
+### **custom-logic**
+Complex CSS that should remain custom:
+- Keyframe animations and complex transitions
+- Complex calculations (calc(), clamp())
+- Browser-specific hacks and vendor prefixes
+- Third-party library overrides with specific requirements
+
+### **responsive**
+Selectors containing media queries:
 - Breakpoint-specific styling
+- Mobile-first responsive patterns
+- Device-specific adaptations
+
+### **semantic-class**
+Well-structured semantic classes already following best practices:
+- Clear naming conventions
+- Reusable component patterns
+- Good abstraction levels
 
 ---
 
-## 🚀 Refactoring Priority Matrix
+## 🔧 Core Style Files Analysis
 
-### Phase 1: Quick Wins (127 @apply-convertible selectors)
+### **src/styles/_base.scss**
+**Status:** Foundation styles - Mixed conversion priority
 
-- Simple layout utilities (flex, grid, positioning)
-- Basic sizing and spacing
-- Simple containers and wrappers
+- `html` - **theme-token** - Root theme variables, preserve CSS properties
+- `body` - **theme-token** - Body styling with theme colors
+- `#root` - **@apply-convertible** - Basic container layout → `@apply min-h-screen`
+- `h1, h2, h3, h4, h5, h6` - **theme-token** - Typography with theme colors, convert spacing only
+- `p` - **theme-token** - Paragraph styles, convert spacing, preserve theme colors
+- `a` - **theme-token** - Link styling with theme hover states
+- `*:focus, *:focus-visible` - **theme-token** - Focus styles using theme accent colors
+- `.small-caps` - **semantic-class** - Text transformation → `@apply text-xs uppercase tracking-wide`
+- `.invisible-dismissal` - **semantic-class** - Overlay utility → `@apply absolute inset-0 invisible`
+- `.error-label` - **semantic-class** - Error styling → `@apply text-red-500 text-sm`
+- `.card` - **theme-token** - Component with theme background, convert layout only
 
-### Phase 2: Theme Integration (163 theme-token selectors)
+### **src/styles/_colors.scss**
+**Status:** PRESERVE AS-IS - Critical theme architecture
 
-- Color system alignment
-- Background and border utilities
-- Typography utilities with theme colors
+- `:root` - **custom-logic** - Master color system with 6 accent themes
+- `:root[data-theme="light"]` - **custom-logic** - Light mode color definitions
+- `:root[data-theme="dark"]` - **custom-logic** - Dark mode color definitions  
+- `:root[data-accent="*"]` - **custom-logic** - Accent color variants (blue, purple, fuchsia, orange, green, yellow)
 
-### Phase 3: Responsive Conversion (38 responsive selectors)
+**Analysis:** Sophisticated theming system with 12 total theme combinations. DO NOT CONVERT.
 
-- Media query to Tailwind responsive utilities
-- Adaptive layout systems
-- Mobile-first approach alignment
+### **src/styles/_components.scss**
+**Status:** Mixed - Component utilities and theme integration
 
-### Phase 4: Preserve Custom Logic (42 custom-logic selectors)
+- `.titlebar` - **theme-token** - App titlebar with theme background
+- `.titlebar-controls` - **@apply-convertible** - Control buttons → `@apply flex gap-2`
+- `.bg-mobile-overlay` - **semantic-class** - Mobile overlay background utility
+- `.bg-mobile-sidebar` - **semantic-class** - Mobile sidebar background utility
+- `.bg-radial--accent-noise` - **custom-logic** - Complex radial gradient with accent
 
-- Animation systems
-- Pseudo-element styling
-- Complex interactions
-- Platform-specific features
+### **src/styles/_modal_common.scss**
+**Status:** HIGH COMPLEXITY - Approach with caution
 
-### Phase 5: Optimize Semantic Classes (9 semantic-class selectors)
+- `.modal-overlay` - **theme-token** - Backdrop with theme colors
+- `.modal-container` - **@apply-convertible** - Layout container → `@apply fixed inset-0 flex items-center justify-center`
+- `.modal-content` - **theme-token** - Modal content with theme background
+- `.modal-header` - **@apply-convertible** - Header layout → `@apply flex justify-between items-center p-4`
+- `.modal-body` - **@apply-convertible** - Body layout → `@apply flex flex-col gap-4 p-4`
+- `.modal-footer` - **@apply-convertible** - Footer layout → `@apply flex gap-2 p-4`
+- `.modal-close` - **theme-token** - Close button with theme colors
+- `.modal-2-column` - **responsive** - Two-column layout with breakpoints
+- `.modal-mobile-nav` - **responsive** - Mobile navigation patterns
 
-- Internal @apply optimization
-- Utility composition
-- Maintainability improvements
+### **src/styles/_chat.scss**
+**Status:** Mixed - Layout conversion opportunities
+
+- `.chat-input-container` - **@apply-convertible** - Container → `@apply flex items-center gap-2 p-2`
+- `.chat-input-wrapper` - **@apply-convertible** - Wrapper → `@apply flex-1 relative`
+- `.chat-messages` - **@apply-convertible** - Messages container → `@apply flex flex-col gap-2 overflow-y-auto`
+- `.chat-message-content` - **@apply-convertible** - Message content → `@apply flex flex-col gap-1`
+- `.chat-input` - **theme-token** - Input field with theme colors
+- `.chat-message` - **theme-token** - Message bubble with theme styling
+- `.chat-message-time` - **theme-token** - Timestamp with theme colors
+- `.chat-message-sender` - **theme-token** - Sender name with theme colors
+
+---
+
+## 🧩 Component-Specific Analysis
+
+### **src/components/Button.scss** ✅
+**Status:** SUCCESSFULLY CONVERTED - Pattern reference
+
+**Previous state:** Raw CSS with color properties  
+**Current state:** Semantic classes using `@apply` with placeholder pattern  
+**Pattern established:** Use `%btn-base` placeholder with `@extend` for shared styles
+
+- `%btn-base` - **semantic-class** - Shared button foundation using `@apply`
+- `.btn-primary, .btn-secondary, etc.` - **semantic-class** - Variants using `@apply` + theme colors
+- `.btn-small` - **semantic-class** - Size modifier using `@apply`
+
+**Key learnings:** Successfully preserved semantic naming while converting layout/spacing to Tailwind utilities. Theme colors preserved with CSS custom properties.
+
+### **src/components/Modal.scss**
+**Status:** High conversion potential
+
+- `.modal` - **theme-token** - Base modal with theme background
+- `.modal-backdrop` - **@apply-convertible** - Backdrop → `@apply fixed inset-0 bg-black/50`
+- `.modal-dialog` - **@apply-convertible** - Dialog container → `@apply relative w-full max-w-lg mx-auto`
+- `.modal-content` - **theme-token** - Content area with theme styling
+
+### **src/components/Input.scss**
+**Status:** Good conversion candidate following Button pattern
+
+- `.input-base` - **@apply-convertible** - Base input → `@apply px-3 py-2 border rounded-md`
+- `.input-error` - **semantic-class** - Error state → `@apply border-red-500`
+- `.input-disabled` - **semantic-class** - Disabled state → `@apply opacity-50 cursor-not-allowed`
+
+### **src/components/MobileDrawer.scss**
+**Status:** PRESERVE - Well-architected modern component
+
+- `.mobile-drawer` - **custom-logic** - Sophisticated slide animations and transforms
+- `.mobile-drawer-overlay` - **theme-token** - Backdrop with theme colors
+- `.mobile-drawer-content` - **theme-token** - Drawer content with theme background
+
+**Analysis:** Modern, well-implemented mobile drawer with complex animations. Low priority for conversion.
+
+### **src/components/search/* (Multiple files)**
+**Status:** High conversion potential - Clean, minimal CSS
+
+- `.search-bar` - **@apply-convertible** - Search input → `@apply flex items-center gap-2 p-2`
+- `.search-results` - **@apply-convertible** - Results container → `@apply absolute w-full bg-white shadow-lg`
+- `.search-result-item` - **@apply-convertible** - Result item → `@apply p-2 hover:bg-gray-100 cursor-pointer`
+- `.global-search` - **@apply-convertible** - Global search layout → `@apply fixed inset-0 bg-black/50`
+
+### **Navigation Components**
+**Status:** Mixed - Theme integration required
+
+#### **src/components/navbar/NavMenu.scss**
+- `.nav-menu` - **theme-token** - Navigation with theme background
+- `.nav-item` - **@apply-convertible** - Nav item → `@apply flex items-center gap-2 p-2`
+- `.nav-item-active` - **theme-token** - Active state with theme accent
+
+#### **src/components/navbar/SpaceButton.scss**
+- `.space-button` - **theme-token** - Space button with theme colors
+- `.space-button-icon` - **@apply-convertible** - Icon sizing → `@apply w-6 h-6`
+
+### **Message Components**
+**Status:** Theme-heavy - Careful conversion needed
+
+#### **src/components/message/Message.scss**
+- `.message` - **theme-token** - Message bubble with theme background
+- `.message-content` - **@apply-convertible** - Content layout → `@apply flex flex-col gap-1`
+- `.message-actions` - **@apply-convertible** - Actions container → `@apply flex gap-1 opacity-0 group-hover:opacity-100`
+- `.message-timestamp` - **theme-token** - Timestamp with theme colors
+
+#### **src/components/message/MessageActionsDrawer.scss**
+- `.message-actions-drawer` - **theme-token** - Drawer with theme background
+- `.message-actions-grid` - **@apply-convertible** - Action grid → `@apply grid grid-cols-3 gap-2`
+
+#### **src/components/message/EmojiPickerDrawer.scss**
+- `.emoji-picker-drawer` - **theme-token** - Drawer with theme background
+- `.emoji-picker-grid` - **@apply-convertible** - Emoji grid → `@apply grid grid-cols-8 gap-1`
+
+### **Direct Message Components**
+**Status:** Layout conversion opportunities
+
+#### **src/components/direct/DirectMessages.scss**
+- `.direct-messages` - **@apply-convertible** - Container → `@apply flex flex-col h-full`
+- `.direct-messages-list` - **@apply-convertible** - List container → `@apply flex flex-col gap-1`
+
+#### **src/components/direct/DirectMessageContactsList.scss**
+- `.direct-message-contacts` - **@apply-convertible** - Contacts container → `@apply flex flex-col gap-1 overflow-y-auto`
+- `.direct-message-contact` - **theme-token** - Contact item with theme hover
+
+### **Modal Components**
+**Status:** High complexity - Phase 2-3 targets
+
+#### **src/components/modals/CreateSpaceModal.scss**
+- `.create-space-modal` - **theme-token** - Modal with theme background
+- `.create-space-form` - **@apply-convertible** - Form layout → `@apply flex flex-col gap-4`
+
+#### **src/components/modals/UserSettingsModal.scss**
+- `.user-settings-modal` - **theme-token** - Settings modal with theme background
+- `.settings-tabs` - **@apply-convertible** - Tab layout → `@apply flex border-b`
+- `.settings-content` - **@apply-convertible** - Content area → `@apply p-4`
+
+#### **src/components/modals/JoinSpaceModal.scss**
+- `.join-space-modal` - **theme-token** - Modal with theme background
+- `.join-space-form` - **@apply-convertible** - Form layout → `@apply flex flex-col gap-4`
+
+### **User Components**
+**Status:** Mixed - Simple layout with theme integration
+
+#### **src/components/user/UserProfile.scss**
+- `.user-profile` - **theme-token** - Profile card with theme background
+- `.user-avatar` - **@apply-convertible** - Avatar sizing → `@apply w-10 h-10 rounded-full`
+- `.user-details` - **@apply-convertible** - Details layout → `@apply flex flex-col gap-1`
+
+#### **src/components/user/UserStatus.scss**
+- `.user-status` - **@apply-convertible** - Status indicator → `@apply flex items-center gap-1`
+- `.status-dot` - **@apply-convertible** - Status dot → `@apply w-2 h-2 rounded-full`
+
+### **Channel Components**
+**Status:** Complex layouts - Careful conversion needed
+
+#### **src/components/channel/Channel.scss**
+- `.channel` - **theme-token** - Channel container with theme background
+- `.channel-header` - **@apply-convertible** - Header layout → `@apply flex justify-between items-center p-2`
+- `.channel-messages` - **@apply-convertible** - Messages area → `@apply flex-1 overflow-y-auto`
+
+#### **src/components/channel/ChannelList.scss**
+- `.channel-list` - **@apply-convertible** - Channel list → `@apply flex flex-col gap-1`
+- `.channel-item` - **theme-token** - Channel item with theme hover
+
+### **Space Components**
+**Status:** Layout-heavy - Good conversion targets
+
+#### **src/components/space/Space.scss**
+- `.space` - **theme-token** - Space container with theme background
+- `.space-header` - **@apply-convertible** - Header layout → `@apply flex justify-between items-center p-4`
+- `.space-content` - **@apply-convertible** - Content area → `@apply flex-1 overflow-hidden`
+
+---
+
+## 📈 Conversion Priority Matrix
+
+### **Phase 1: Quick Wins (Low Risk)**
+1. **Search components** - Clean, minimal CSS
+2. **Basic layout utilities** - Simple flex/grid layouts
+3. **User status indicators** - Simple positioning and sizing
+4. **Space layouts** - Container and header layouts
+
+### **Phase 2: Medium Complexity (Moderate Risk)**
+1. **Input components** - Following Button.scss pattern
+2. **Message layouts** - Content and action layouts (preserve theme colors)
+3. **Navigation layouts** - Menu and item positioning (preserve theme integration)
+4. **Modal layouts** - Header, body, footer structure (preserve theme backgrounds)
+
+### **Phase 3: High Complexity (High Risk)**
+1. **Modal system integration** - Complex responsive patterns
+2. **Channel components** - Intricate layout systems
+3. **Theme-heavy components** - Requires careful theme preservation
+
+### **PRESERVE AS-IS**
+1. **Color system** (_colors.scss) - Critical theme architecture
+2. **Mobile drawer system** - Well-architected modern components
+3. **Complex animations** - Keyframes and sophisticated transitions
+4. **Third-party overrides** - Emoji picker and library customizations
+
+---
+
+## 🎯 Recommended Conversion Patterns
+
+### **Pattern 1: Simple Layout Conversion**
+```scss
+// Before
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+}
+
+// After
+.search-bar {
+  @apply flex items-center gap-2 p-2;
+}
+```
+
+### **Pattern 2: Theme Integration (Button.scss pattern)**
+```scss
+// Before
+.input-base {
+  padding: 12px 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: var(--color-bg-input);
+  color: var(--color-text-main);
+}
+
+// After
+.input-base {
+  @apply px-4 py-3 border rounded-lg;
+  background: var(--color-bg-input);
+  color: var(--color-text-main);
+}
+```
+
+### **Pattern 3: Responsive Conversion**
+```scss
+// Before
+.modal-2-column {
+  display: flex;
+  flex-direction: column;
+  
+  @media (min-width: 768px) {
+    flex-direction: row;
+    gap: 24px;
+  }
+}
+
+// After
+.modal-2-column {
+  @apply flex flex-col;
+  
+  @screen md {
+    @apply flex-row gap-6;
+  }
+}
+```
+
+---
+
+## 📋 Success Metrics
+
+### **Conversion Targets**
+- **Phase 1:** 35 selectors (~8% of total)
+- **Phase 2:** 65 selectors (~14% of total)  
+- **Phase 3:** 35 selectors (~8% of total)
+- **Total conversion goal:** ~135 selectors (~30% of codebase)
+
+### **Preservation Targets**
+- **Theme system:** 100% preserved (all CSS custom properties)
+- **Responsive behavior:** 100% maintained (all breakpoints working)
+- **Component functionality:** 100% preserved (no regressions)
+- **Performance:** Maintained or improved (bundle size optimization)
+
+---
+
+## 🚀 Implementation Recommendations
+
+### **Immediate Next Steps**
+1. **Start with search components** - Cleanest conversion candidates
+2. **Establish conversion patterns** - Document successful approaches
+3. **Create testing protocols** - Visual regression testing setup
+4. **Phase-based approach** - Systematic progression through complexity levels
+
+### **Risk Mitigation**
+1. **Backup strategy** - Branch-based rollback capability
+2. **Component isolation** - Test individual components thoroughly
+3. **Theme testing** - Verify all 12 theme combinations
+4. **Mobile testing** - Ensure responsive behavior preservation
+
+### **Long-term Benefits**
+1. **Reduced CSS duplication** - Consolidated utility usage
+2. **Improved maintainability** - Consistent design system
+3. **Enhanced developer experience** - Unified styling approach
+4. **Performance optimization** - Better CSS optimization and purging
+
+---
+
+**This inventory provides a comprehensive foundation for systematic Tailwind CSS conversion while preserving the sophisticated theming system and responsive design that makes this application exceptional.**

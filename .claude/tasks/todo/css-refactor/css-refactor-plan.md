@@ -1,5 +1,11 @@
 # CSS Refactor Plan - Claude Code Execution Strategy
 
+## 📋 Document Information
+
+**Last Updated:** January 19, 2025  
+**Status:** Updated based on latest CSS inventory analysis  
+**Context:** This plan reflects the current codebase state including the successful Button.scss conversion to Tailwind pattern.
+
 ## 🎯 Objective Re-evaluation
 
 ### **Is This a Good Objective?**
@@ -7,6 +13,8 @@
 **✅ YES - The objective is sound and achievable with proper execution**
 
 **Verdict:** Proceed with phased approach - the current system is sophisticated but can be systematically improved with Tailwind utilities while preserving all functionality.
+
+**Important Context:** Mobile development may proceed in parallel or before this CSS refactor. The Tailwind conversion will enhance but not block mobile primitive development.
 
 ### **Original Objective:**
 
@@ -22,7 +30,8 @@ Migrate the existing SCSS-based styling system (using semantic class names and r
 **Reference Documents:**
 
 - Full analysis of the current situation: `.claude/tasks/todo/css-refactor/analysis.md`
-- Inventory of the current css styles: `.claude/tasks/todo/css-refactor/css-inventory.md`
+- **Updated inventory** of current CSS styles: `.claude/tasks/todo/css-refactor/css-inventory.md` (January 19, 2025)
+- Mobile development plan context: `.claude/tasks/todo/mobile-dev/mobile-dev-plan.md`
 
 ---
 
@@ -57,13 +66,20 @@ Migrate the existing SCSS-based styling system (using semantic class names and r
 
 ## 🗂️ CSS Inventory Context & Selector Classifications
 
-### **From css-inventory.md - Classification Breakdown:**
+### **From css-inventory.md - Updated Classification Breakdown (January 19, 2025):**
 
-- **127 @apply-convertible selectors** (33.5%) - **Phase 1 targets**
-- **163 theme-token selectors** (43.0%) - **Phase 2 integration**
-- **42 custom-logic selectors** (11.1%) - **Preserve as-is**
-- **38 responsive selectors** (10.0%) - **Phase 3 conversion**
-- **9 semantic-class selectors** (2.4%) - **Phase 4 optimization**
+- **~135 @apply-convertible selectors** (30%) - **Phase 1 targets**
+- **~200 theme-token selectors** (44%) - **Phase 2 integration**
+- **~65 custom-logic selectors** (14%) - **Preserve as-is**
+- **~40 responsive selectors** (9%) - **Phase 3 conversion**
+- **~10 semantic-class selectors** (2%) - **Phase 4 optimization**
+
+**Total:** ~450 CSS selectors across 40 SCSS files
+
+### **Key Recent Changes:**
+- **Button.scss successfully converted** - Now serves as reference pattern for `@apply` usage
+- **Search components identified** - Clean, minimal CSS perfect for Phase 1 conversion
+- **Mobile drawer system documented** - Well-architected modern components to preserve
 
 ### **Build Pipeline Reality Check (from analysis.md):**
 
@@ -152,18 +168,36 @@ When converting a raw SCSS file to use Tailwind's utility classes via `@apply`, 
 
 ## 📋 Phase 1: Foundation & Quick Wins (Low Risk)
 
-**Target:** 20 simplest @apply-convertible selectors
-**Components affected:** Container, basic layout utilities, simple button variants
+**Target:** ~35 simplest @apply-convertible selectors (updated count)
+**Components affected:** Search components, layout utilities, user status indicators, space layouts
 
-### **Phase 1 Inventory Context:**
+### **Phase 1 Inventory Context (Updated):**
 
-From css-inventory.md, targeting these @apply-convertible selectors:
+From css-inventory.md, targeting the **highest priority @apply-convertible selectors**:
 
-- `.container`, `.container-fluid`, `.container-centered` - Basic layout containers
-- `.button-small`, `.button-medium`, `.button-large` - Simple button size variants
-- `.close-button-icon`, `.unknown-avatar-icon` - Basic icon sizing
-- `.tooltip-trigger`, `.tooltip-top`, `.tooltip-bottom`, `.tooltip-left`, `.tooltip-right` - Tooltip positioning
-- `.chat-input-container`, `.chat-input-wrapper`, `.chat-messages`, `.chat-message-content` - Chat layout
+**Priority 1: Search Components (Clean, minimal CSS)**
+- `.search-bar` - Search input → `@apply flex items-center gap-2 p-2`
+- `.search-results` - Results container → `@apply absolute w-full bg-white shadow-lg`  
+- `.search-result-item` - Result item → `@apply p-2 hover:bg-gray-100 cursor-pointer`
+- `.global-search` - Global search layout → `@apply fixed inset-0 bg-black/50`
+
+**Priority 2: Basic Layout Utilities**
+- `.chat-input-container` - Container → `@apply flex items-center gap-2 p-2`
+- `.chat-input-wrapper` - Wrapper → `@apply flex-1 relative`
+- `.chat-messages` - Messages container → `@apply flex flex-col gap-2 overflow-y-auto`
+- `.chat-message-content` - Message content → `@apply flex flex-col gap-1`
+
+**Priority 3: User Status & Simple Components** 
+- `.user-status` - Status indicator → `@apply flex items-center gap-1`
+- `.status-dot` - Status dot → `@apply w-2 h-2 rounded-full`
+- `.user-avatar` - Avatar sizing → `@apply w-10 h-10 rounded-full`
+- `.user-details` - Details layout → `@apply flex flex-col gap-1`
+
+**Priority 4: Space Layout Components**
+- `.space-header` - Header layout → `@apply flex justify-between items-center p-4`
+- `.space-content` - Content area → `@apply flex-1 overflow-hidden`
+- `.channel-header` - Header layout → `@apply flex justify-between items-center p-2`
+- `.channel-messages` - Messages area → `@apply flex-1 overflow-y-auto`
 
 ### Phase 1 Subtasks:
 
@@ -175,53 +209,57 @@ From css-inventory.md, targeting these @apply-convertible selectors:
 - [ ] Test current application works correctly
 - [ ] Run `yarn lint` and `yarn format` to ensure clean starting state
 
-#### 1.2 Container Components Migration
+#### 1.2 Search Components Migration (Highest Priority)
 
-- [ ] Migrate `src/components/Container.scss` - `.container` class
-  - Convert `max-width: 1200px; margin: 0 auto; padding: 0 16px;` to `@apply max-w-6xl mx-auto px-4;`
-- [ ] Migrate `src/components/Container.scss` - `.container-fluid` class
-  - Convert basic width/padding to `@apply w-full px-4;`
-- [ ] Migrate `src/components/Container.scss` - `.container-centered` class
-  - Convert centering logic to `@apply mx-auto text-center;`
-- [ ] Test container components in isolation
-- [ ] Visual regression test - compare before/after screenshots
+- [ ] Migrate `src/components/search/SearchBar.scss` - `.search-bar` class
+  - Convert layout to `@apply flex items-center gap-2 p-2;`
+- [ ] Migrate `src/components/search/SearchResults.scss` - `.search-results` class
+  - Convert positioning to `@apply absolute w-full shadow-lg;` (preserve theme background)
+- [ ] Migrate `src/components/search/SearchResultItem.scss` - `.search-result-item` class
+  - Convert layout to `@apply p-2 cursor-pointer;` (preserve theme hover)
+- [ ] Migrate `src/components/search/GlobalSearch.scss` - `.global-search` class
+  - Convert overlay to `@apply fixed inset-0;` (preserve theme background)
+- [ ] Test search functionality across all components
+- [ ] Visual regression test - verify search interface unchanged
 
-#### 1.3 Basic Button Utilities Migration
-
-- [ ] Migrate `src/components/Button.scss` - `.button-small` class
-  - Convert size/padding to appropriate Tailwind utilities
-- [ ] Migrate `src/components/Button.scss` - `.button-medium` class
-  - Convert size/padding to appropriate Tailwind utilities
-- [ ] Migrate `src/components/Button.scss` - `.button-large` class
-  - Convert size/padding to appropriate Tailwind utilities
-- [ ] Test button size variants functionality
-- [ ] Visual regression test - verify button appearance unchanged
-
-#### 1.4 Simple Layout Utilities Migration
-
-- [ ] Migrate `src/components/CloseButton.scss` - `.close-button-icon` class
-  - Convert icon sizing to `@apply w-4 h-4;` or similar
-- [ ] Migrate `src/components/UnknownAvatar.scss` - `.unknown-avatar-icon` class
-  - Convert icon sizing to appropriate Tailwind utilities
-- [ ] Migrate `src/components/Tooltip.scss` - `.tooltip-trigger` class
-  - Convert positioning to `@apply relative inline-block;` or similar
-- [ ] Migrate `src/components/Tooltip.scss` - position classes (`.tooltip-top`, `.tooltip-bottom`, `.tooltip-left`, `.tooltip-right`)
-  - Convert absolute positioning to Tailwind utilities
-- [ ] Test tooltip positioning and close button functionality
-- [ ] Visual regression test - verify layout utilities work correctly
-
-#### 1.5 Chat Layout Utilities Migration
+#### 1.3 Basic Layout Utilities Migration
 
 - [ ] Migrate `src/styles/_chat.scss` - `.chat-input-container` class
-  - Convert flex layout to `@apply flex items-center;` or similar
+  - Convert layout to `@apply flex items-center gap-2 p-2;`
 - [ ] Migrate `src/styles/_chat.scss` - `.chat-input-wrapper` class
-  - Convert wrapper layout to appropriate Tailwind utilities
+  - Convert wrapper to `@apply flex-1 relative;`
 - [ ] Migrate `src/styles/_chat.scss` - `.chat-messages` class
-  - Convert messages container to flex utilities
+  - Convert messages container to `@apply flex flex-col gap-2 overflow-y-auto;`
 - [ ] Migrate `src/styles/_chat.scss` - `.chat-message-content` class
-  - Convert message content layout to Tailwind utilities
+  - Convert message content to `@apply flex flex-col gap-1;`
 - [ ] Test chat layout and message display
 - [ ] Visual regression test - verify chat interface unchanged
+
+#### 1.4 User Status & Simple Components Migration
+
+- [ ] Migrate `src/components/user/UserStatus.scss` - `.user-status` class
+  - Convert layout to `@apply flex items-center gap-1;`
+- [ ] Migrate `src/components/user/UserStatus.scss` - `.status-dot` class
+  - Convert sizing to `@apply w-2 h-2 rounded-full;`
+- [ ] Migrate `src/components/user/UserProfile.scss` - `.user-avatar` class
+  - Convert sizing to `@apply w-10 h-10 rounded-full;`
+- [ ] Migrate `src/components/user/UserProfile.scss` - `.user-details` class
+  - Convert layout to `@apply flex flex-col gap-1;`
+- [ ] Test user status indicators and profile components
+- [ ] Visual regression test - verify user components unchanged
+
+#### 1.5 Space Layout Components Migration
+
+- [ ] Migrate `src/components/space/Space.scss` - `.space-header` class
+  - Convert layout to `@apply flex justify-between items-center p-4;`
+- [ ] Migrate `src/components/space/Space.scss` - `.space-content` class
+  - Convert layout to `@apply flex-1 overflow-hidden;`
+- [ ] Migrate `src/components/channel/Channel.scss` - `.channel-header` class
+  - Convert layout to `@apply flex justify-between items-center p-2;`
+- [ ] Migrate `src/components/channel/Channel.scss` - `.channel-messages` class
+  - Convert layout to `@apply flex-1 overflow-y-auto;`
+- [ ] Test space and channel layout components
+- [ ] Visual regression test - verify space/channel interfaces unchanged
 
 #### 1.6 Phase 1 Verification
 
@@ -236,39 +274,69 @@ From css-inventory.md, targeting these @apply-convertible selectors:
 
 **Components to test manually:**
 
-- [ ] **Container layouts** - Check main app container, centered content, fluid layouts
-- [ ] **Button variants** - Test small, medium, large buttons across the app
-- [ ] **Close buttons** - Test modal close buttons, dismissible elements
-- [ ] **Avatar icons** - Check unknown user avatars display correctly
-- [ ] **Tooltips** - Test tooltip positioning (top, bottom, left, right) on various elements
+- [ ] **Search interface** - Test search bar, results display, result item interactions, global search overlay
 - [ ] **Chat interface** - Test chat input container, message layout, message content display
-- [ ] **Theme switching** - Verify all components work in light/dark mode
-- [ ] **Responsive behavior** - Test on mobile, tablet, desktop breakpoints
+- [ ] **User components** - Test user status indicators, status dots, user avatars, user details layout
+- [ ] **Space/Channel layouts** - Test space headers, content areas, channel headers, message areas
+- [ ] **Theme switching** - Verify all converted components work in light/dark mode + all 6 accent colors
+- [ ] **Responsive behavior** - Test converted components on mobile, tablet, desktop breakpoints
 
 **Specific app sections to test:**
 
-- Main application container
-- Chat interface and messaging
-- Modal dialogs with close buttons
-- User profile areas with avatars
-- Tooltip interactions throughout app
-- Button interactions across all components
+- **Global search functionality** - Search bar, results, global search modal
+- **Chat interface and messaging** - Input areas, message display, content layout
+- **User profile areas** - Status indicators, avatars, user details
+- **Space management interface** - Headers, content areas, navigation
+- **Channel interface** - Headers, message areas, layout consistency
+
+---
+
+---
+
+## 🎯 Reference Success Pattern: Button.scss Conversion
+
+**Already Completed:** `src/components/Button.scss` has been successfully converted to Tailwind using the `@apply` pattern with semantic classes. This serves as the **proven reference pattern** for all future conversions.
+
+**Key learnings from Button.scss conversion:**
+- ✅ **Semantic class names preserved** (`.btn-primary`, `.btn-secondary`, etc.)
+- ✅ **Theme colors preserved** using CSS custom properties 
+- ✅ **@apply usage works perfectly** for layout/spacing properties
+- ✅ **SCSS placeholder pattern** (`%btn-base`) provides efficient shared styles
+- ✅ **No functionality regressions** - all button variants work identically
+
+**Mobile Development Context:**
+This refactor can proceed in parallel with or after mobile development. The Tailwind conversion will enhance but not block mobile primitive development, as both raw CSS and Tailwind-converted classes map equally well to React Native StyleSheet patterns.
 
 ---
 
 ## 📋 Phase 2: Theme Integration (Medium Risk)
 
-**Target:** 25 theme-token selectors (subset of 163)
-**Components affected:** Base elements, message components, navigation elements
+**Target:** ~65 theme-token selectors (subset of ~200)
+**Components affected:** Input components, message layouts, navigation elements, modal utilities
 
-### **Phase 2 Inventory Context:**
+### **Phase 2 Inventory Context (Updated):**
 
-From css-inventory.md, targeting these theme-token selectors while preserving CSS custom properties:
+From css-inventory.md, targeting theme-token selectors **following Button.scss pattern** while preserving CSS custom properties:
 
-- Base elements: `html`, `body`, `#root`, headings, paragraphs, links
-- Message components: `.message-actions` and layout utilities
-- Navigation elements: layout utilities in nav components
-- Modal utilities: `.modal-container`, `.modal-body`, `.modal-footer`
+**Priority 1: Input Components (Following Button Pattern)**
+- `.input-base` - Base input → `@apply px-3 py-2 border rounded-md` (preserve theme background/colors)
+- `.input-error` - Error state → `@apply border-red-500` 
+- `.input-disabled` - Disabled state → `@apply opacity-50 cursor-not-allowed`
+
+**Priority 2: Message Layout Components**
+- `.message-content` - Content layout → `@apply flex flex-col gap-1` (preserve theme background)
+- `.message-actions` - Actions container → `@apply flex gap-1 opacity-0 group-hover:opacity-100`
+- `.message-actions-grid` - Action grid → `@apply grid grid-cols-3 gap-2`
+
+**Priority 3: Navigation Layout Elements**
+- `.nav-item` - Nav item → `@apply flex items-center gap-2 p-2` (preserve theme background/colors)
+- `.space-button-icon` - Icon sizing → `@apply w-6 h-6`
+
+**Priority 4: Modal Layout Utilities**
+- `.modal-container` - Layout container → `@apply fixed inset-0 flex items-center justify-center` (preserve theme backdrop)
+- `.modal-header` - Header layout → `@apply flex justify-between items-center p-4`
+- `.modal-body` - Body layout → `@apply flex flex-col gap-4 p-4`
+- `.modal-footer` - Footer layout → `@apply flex gap-2 p-4`
 
 ### **Critical Theme Integration Notes:**
 
@@ -653,17 +721,39 @@ If any phase causes issues:
 - [ ] **Maintained performance** - No significant bundle size increase
 - [ ] **Improved maintainability** - Reduced CSS duplication, clearer patterns
 - [ ] **Complete documentation** - Clear guide for future development
+- [ ] **Mobile compatibility maintained** - Tailwind classes map cleanly to React Native primitives
 
 ### **Project Completion Checklist:**
 
-- [ ] All 5 phases completed successfully
-- [ ] All subtasks checked off
-- [ ] User manual testing completed for all phases
+- [ ] All 5 phases completed successfully (or paused for mobile development)
+- [ ] All subtasks checked off for completed phases
+- [ ] User manual testing completed for all completed phases
 - [ ] Documentation created and reviewed
 - [ ] Performance verified and documented
 - [ ] Migration guide created for future development
+- [ ] **Mobile development compatibility verified** (if proceeding in parallel)
 
-**Total estimated timeline:** 4-6 weeks with user testing checkpoints
+**Total estimated timeline:** 4-6 weeks with user testing checkpoints (flexible based on mobile development priorities)
+
+---
+
+## 🚨 Important Note: Mobile Development Priority
+
+**This CSS refactor can be paused or run in parallel with mobile development.** The current CSS state (hybrid Tailwind + raw CSS) is perfectly suitable for mobile primitive development. Key considerations:
+
+### **If Mobile Development Proceeds First:**
+- ✅ **Current CSS works fine** for React Native conversion
+- ✅ **Semantic class names** provide perfect abstraction layer
+- ✅ **Button.scss pattern** already established for future reference
+- ✅ **No blocking dependencies** - mobile primitives work with any CSS implementation
+
+### **If CSS Refactor Proceeds First:**
+- ✅ **Enhanced mobile development** with cleaner Tailwind patterns  
+- ✅ **Better design token consistency** across platforms
+- ✅ **Proven conversion patterns** for mobile primitive styling
+
+### **Recommended Approach:**
+**Start mobile development with current CSS state. Complete CSS refactor later with mobile learnings for better-informed Tailwind patterns.**
 
 ---
 
