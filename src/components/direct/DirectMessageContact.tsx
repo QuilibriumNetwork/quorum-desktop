@@ -11,10 +11,10 @@ const DirectMessageContact: React.FunctionComponent<{
   userIcon?: string;
 }> = (props) => {
   let { address } = useParams<{ address: string }>();
-  const { isMobile, closeLeftSidebar } = useResponsiveLayoutContext();
+  const { isMobile, isTablet, closeLeftSidebar } = useResponsiveLayoutContext();
 
   const handleContactClick = () => {
-    if (isMobile) {
+    if (isMobile || isTablet) {
       closeLeftSidebar();
     }
   };

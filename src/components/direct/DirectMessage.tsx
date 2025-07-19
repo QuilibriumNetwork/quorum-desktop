@@ -29,7 +29,7 @@ import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 const DirectMessage: React.FC<{}> = (p: {}) => {
-  const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
+  const { isDesktop, isMobile, isTablet, toggleLeftSidebar } = useResponsiveLayoutContext();
   const [fileError, setFileError] = useState<string | null>(null);
   let { address } = useParams<{ address: string }>();
   const conversationId = address! + '/' + address!;
@@ -260,7 +260,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
           <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2">
             <div className="flex flex-row items-center gap-2">
-              {!isDesktop && (
+              {(isMobile || isTablet) && (
                 <FontAwesomeIcon
                   onClick={toggleLeftSidebar}
                   className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"

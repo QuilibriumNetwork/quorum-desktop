@@ -50,19 +50,19 @@ export const EmptyDirectMessage = () => {
           <div>
             {showHomeScreen ? (
               <>
-                <div className="flex flex-row justify-around hidden sm:flex">
+                <div className="flex flex-row justify-around">
                   <img
                     src="/stay-connected-stay-invisible.gif"
                     alt="Stay connected, stay invisible"
                     className="w-[250px] sm:w-[300px] md:w-[400px] lg:w-[500px] max-w-full "
                   />
                 </div>
-                <div className="flex flex-row justify-center text-lg lg:text-2xl pt-4 hidden sm:flex">
+                <div className="flex flex-row justify-center text-lg lg:text-2xl pt-4">
                   <div className="max-w-[500px] text-center mt-8">
                     {t`Stay Connected, Stay Invisible`}
                   </div>
                 </div>
-                <div className="flex flex-row justify-center pt-8 hidden sm:flex">
+                <div className="flex flex-row justify-center pt-8 ">
                   <div
                     onClick={() => setShowHomeScreen(false)}
                     className="flex items-center gap-2 text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors cursor-pointer text-sm"
@@ -74,7 +74,7 @@ export const EmptyDirectMessage = () => {
               </>
             ) : (
               <>
-                <div className="flex flex-col items-center justify-center pt-8 hidden sm:flex">
+                <div className="flex flex-col items-center justify-center pt-8">
                   <FontAwesomeIcon
                     icon={faCommentDots}
                     size="6x"

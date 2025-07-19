@@ -31,7 +31,7 @@ type SpaceProps = {
 const Space: React.FunctionComponent<SpaceProps> = (props) => {
   let params = useParams<{ spaceId: string; channelId: string }>();
   let { data: space } = useSpace({ spaceId: params.spaceId! });
-  const { isMobile, leftSidebarOpen, closeLeftSidebar } =
+  const { isMobile, isTablet, leftSidebarOpen, closeLeftSidebar } =
     useResponsiveLayoutContext();
   const { openUserSettings } = useModalContext();
 
@@ -42,7 +42,7 @@ const Space: React.FunctionComponent<SpaceProps> = (props) => {
   return (
     <div className="space-container">
       {/* Mobile backdrop overlay */}
-      {isMobile && leftSidebarOpen && (
+      {(isMobile || isTablet) && leftSidebarOpen && (
         <div
           className="fixed inset-y-0 right-0 bg-overlay z-[997]"
           style={{ left: window.innerWidth <= 480 ? '50px' : '74px' }}
@@ -51,7 +51,7 @@ const Space: React.FunctionComponent<SpaceProps> = (props) => {
       )}
 
       <div
-        className={`space-container-channels ${leftSidebarOpen && isMobile ? 'open' : ''}`}
+        className={`space-container-channels ${leftSidebarOpen && (isMobile || isTablet) ? 'open' : ''}`}
       >
         <ChannelList spaceId={params.spaceId} />
         <UserStatus

@@ -9,6 +9,8 @@ import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider'
 import './DirectMessages.scss';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { useModalContext } from '../AppWithSearch';
+import ReactTooltip from '../ReactTooltip';
+import { t } from '@lingui/macro';
 
 type DirectMessagesProps = {
   user: any;
@@ -32,21 +34,16 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
 ) => {
   let { address } = useParams<{ address: string }>();
   const { keyset } = useRegistrationContext();
-  const { isMobile, leftSidebarOpen, closeLeftSidebar, openLeftSidebar } =
+  const { isMobile, isTablet, leftSidebarOpen, closeLeftSidebar, openLeftSidebar } =
     useResponsiveLayoutContext();
 
-  // Initialize sidebar as open on mobile by default (only on /messages homepage, not on conversation pages)
-  React.useEffect(() => {
-    if (isMobile && !address) {
-      openLeftSidebar();
-    }
-  }, [isMobile, address, openLeftSidebar]);
+  // Removed automatic sidebar opening behavior - sidebar now opens only when user clicks burger menu
   const { openUserSettings } = useModalContext();
 
   return (
     <div className="direct-messages-container">
       {/* Mobile backdrop overlay - show when sidebar is visible */}
-      {isMobile && leftSidebarOpen && (
+      {(isMobile || isTablet) && leftSidebarOpen && (
         <div
           className="fixed inset-y-0 right-0 bg-overlay z-[997]"
           style={{ left: window.innerWidth <= 480 ? '50px' : '74px' }}
@@ -55,7 +52,7 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
       )}
 
       <div
-        className={`direct-messages-container-channels ${leftSidebarOpen && isMobile ? 'open' : ''}`}
+        className={`direct-messages-container-channels ${leftSidebarOpen && (isMobile || isTablet) ? 'open' : ''}`}
       >
         <React.Suspense>
           {keyset.deviceKeyset?.inbox_keyset && <DirectMessageContactsList />}
@@ -74,6 +71,12 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
           <EmptyDirectMessage />
         )}
       </React.Suspense>
+      <ReactTooltip
+        id="add-friend-tooltip"
+        content={t`Add friend`}
+        place="right"
+        className="z-[9999]"
+      />
     </div>
   );
 };
