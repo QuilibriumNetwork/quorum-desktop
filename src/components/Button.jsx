@@ -5,7 +5,7 @@ import './Button.scss';
 
 const Button = (props) => {
   const baseClass = props.disabled
-    ? 'btn-disabled'
+    ? (props.type === 'disabled-onboarding' ? 'btn-disabled-onboarding' : 'btn-disabled')
     : `btn-${props.type || 'primary'}`;
 
   const buttonId =
@@ -52,6 +52,7 @@ Button.propTypes = {
     'secondary-white',
     'light-white',
     'light-outline-white',
+    'disabled-onboarding',
   ]),
   size: PropTypes.oneOf(['normal', 'small']),
   disabled: PropTypes.bool,
