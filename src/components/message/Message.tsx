@@ -115,6 +115,9 @@ export const Message = ({
   // State for copied link feedback
   const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null);
 
+  // State for shared tooltip
+  const [hoveredAction, setHoveredAction] = useState<string | null>(null);
+
   // Effect to handle hiding tablet actions when clicking elsewhere
   React.useEffect(() => {
     if (useDesktopTap && actionsVisibleOnTap && hoverTarget === message.messageId) {
@@ -256,6 +259,48 @@ export const Message = ({
       });
     } else {
       setShowEmojiDrawer(true);
+    }
+  };
+
+  // Tooltip content mapping function
+  const getTooltipContent = (action: string | null) => {
+    switch (action) {
+      case 'emoji':
+        return t`More reactions`;
+      case 'reply':
+        return t`Reply`;
+      case 'copy':
+        return copiedLinkId === message.messageId ? t`Copied!` : t`Copy message link`;
+      case 'delete':
+        return t`Delete message`;
+      default:
+        return '';
+    }
+  };
+
+  // Get the correct anchor ID for each action
+  const getTooltipAnchorId = (action: string | null) => {
+    switch (action) {
+      case 'emoji':
+        return `#emoji-tooltip-icon-${message.messageId}`;
+      case 'reply':
+        return `#reply-tooltip-icon-${message.messageId}`;
+      case 'copy':
+        return `#copy-link-tooltip-icon-${message.messageId}`;
+      case 'delete':
+        return `#delete-tooltip-icon-${message.messageId}`;
+      default:
+        return '';
+    }
+  };
+
+  // Get the correct placement for each action
+  const getTooltipPlacement = (action: string | null) => {
+    switch (action) {
+      case 'delete':
+        return 'top-end'; // Delete is at the right edge, so expand left
+      default:
+        return 'top'; // All others open above and center
     }
   };
 
@@ -473,78 +518,54 @@ export const Message = ({
                   🔥
                 </div>
                 <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
-                <>
-                  <div
-                    id={`emoji-tooltip-icon-${message.messageId}`}
-                    onClick={(e) => {
-                      setEmojiPickerOpen(message.messageId);
-                      setEmojiPickerOpenDirection(
-                        e.clientY / height > 0.5 ? 'upwards' : 'downwards'
+                <div
+                  id={`emoji-tooltip-icon-${message.messageId}`}
+                  onClick={(e) => {
+                    setEmojiPickerOpen(message.messageId);
+                    setEmojiPickerOpenDirection(
+                      e.clientY / height > 0.5 ? 'upwards' : 'downwards'
+                    );
+                  }}
+                  onMouseEnter={() => setHoveredAction('emoji')}
+                  onMouseLeave={() => setHoveredAction(null)}
+                  className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faFaceSmileBeam} />
+                </div>
+
+                <div
+                  id={`reply-tooltip-icon-${message.messageId}`}
+                  onClick={() => {
+                    setInReplyTo(message);
+                    editorRef?.focus();
+                  }}
+                  onMouseEnter={() => setHoveredAction('reply')}
+                  onMouseLeave={() => setHoveredAction(null)}
+                  className="w-5 mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faReply} />
+                </div>
+
+                <div
+                  id={`copy-link-tooltip-icon-${message.messageId}`}
+                  onClick={() => {
+                    const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
+                    navigator.clipboard.writeText(url);
+                    setCopiedLinkId(message.messageId);
+
+                    // Reset tooltip after 1.5s
+                    setTimeout(() => {
+                      setCopiedLinkId((prev) =>
+                        prev === message.messageId ? null : prev
                       );
-                    }}
-                    className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
-                  >
-                    <FontAwesomeIcon icon={faFaceSmileBeam} />
-                  </div>
-                  <ReactTooltip
-                    id={`emoji-tooltip-${message.messageId}`}
-                    content={t`More reactions`}
-                    place="top"
-                    anchorSelect={`#emoji-tooltip-icon-${message.messageId}`}
-                  />
-                </>
-
-                <>
-                  <div
-                    id={`reply-tooltip-icon-${message.messageId}`}
-                    onClick={() => {
-                      setInReplyTo(message);
-                      editorRef?.focus();
-                    }}
-                    className="w-5 mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
-                  >
-                    <FontAwesomeIcon icon={faReply} />
-                  </div>
-
-                  <ReactTooltip
-                    id={`reply-tooltip-${message.messageId}`}
-                    content={t`Reply`}
-                    place="top"
-                    anchorSelect={`#reply-tooltip-icon-${message.messageId}`}
-                  />
-                </>
-
-                <>
-                  <div
-                    id={`copy-link-tooltip-icon-${message.messageId}`}
-                    onClick={() => {
-                      const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
-                      navigator.clipboard.writeText(url);
-                      setCopiedLinkId(message.messageId);
-
-                      // Reset tooltip after 1.5s
-                      setTimeout(() => {
-                        setCopiedLinkId((prev) =>
-                          prev === message.messageId ? null : prev
-                        );
-                      }, 1500);
-                    }}
-                    className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
-                  >
-                    <FontAwesomeIcon icon={faLink} />
-                  </div>
-
-                  <ReactTooltip
-                    id={`copy-link-tooltip-${message.messageId}`}
-                    content={
-                      copiedLinkId === message.messageId
-                        ? t`Copied!`
-                        : t`Copy message link`
-                    }
-                    place="top-start"
-                    anchorSelect={`#copy-link-tooltip-icon-${message.messageId}`}
-                  />
-                </>
+                    }, 1500);
+                  }}
+                  onMouseEnter={() => setHoveredAction('copy')}
+                  onMouseLeave={() => setHoveredAction(null)}
+                  className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faLink} />
+                </div>
 
                 {canUserDelete && (
                   <>
@@ -558,6 +579,8 @@ export const Message = ({
                           removeMessageId: message.messageId,
                         });
                       }}
+                      onMouseEnter={() => setHoveredAction('delete')}
+                      onMouseLeave={() => setHoveredAction(null)}
                       className="w-5 text-center transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
                     >
                       <FontAwesomeIcon
@@ -565,17 +588,21 @@ export const Message = ({
                         className="text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125"
                       />
                     </div>
-
-                    <ReactTooltip
-                      id={`delete-tooltip-${message.messageId}`}
-                      content={t`Delete message`}
-                      place="top-start"
-                      anchorSelect={`#delete-tooltip-icon-${message.messageId}`}
-                    />
                   </>
                 )}
               </div>
             )}
+            
+            {/* Shared tooltip for all action icons to avoid flashing issues */}
+            {((hoverTarget === message.messageId && useDesktopHover) || (hoverTarget === message.messageId && actionsVisibleOnTap && useDesktopTap)) && hoveredAction && (
+              <ReactTooltip
+                id={`shared-action-tooltip-${message.messageId}`}
+                content={getTooltipContent(hoveredAction)}
+                place={getTooltipPlacement(hoveredAction) as any}
+                anchorSelect={getTooltipAnchorId(hoveredAction)}
+              />
+            )}
+            
             {emojiPickerOpen === message.messageId && (
               <div
                 onClick={(e) => e.stopPropagation()}
