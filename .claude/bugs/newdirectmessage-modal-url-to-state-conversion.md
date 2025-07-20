@@ -211,3 +211,39 @@ git checkout HEAD~1 -- src/App.tsx src/components/AppWithSearch.tsx src/componen
 ---
 
 **Note**: Keep `/invite/` route URL-based as it has legitimate reasons for shareable URLs.
+
+---
+
+## UPDATE
+
+The dev who worked on this modal fixed the issue: fixed version src\components\modals\NewDirectMessageModal.tsx
+
+Dev comment: you can't use hooks in functions in a component, Ihad to convert the registration hook to the underlying raw api call 
+
+I didi some testing though and looks like the version right after their first edit (and before mine) was already showing the issue:
+
+This is what I see:
+- current version: working
+- before my edits to the modal and after the dev edits: NOT working
+- before all edits: working
+
+
+Please compare all th eversion to see what chnages and identify the real issue:
+
+VERSION 3: current src\components\modals\NewDirectMessageModal.tsx (working)
+
+VERSION 2: before my edits to the modal and after the dev edits (NOT working)
+
+```
+
+
+
+
+```
+
+
+VERSION 1: before all edits: working
+
+```
+
+```
