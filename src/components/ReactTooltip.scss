@@ -39,6 +39,7 @@
 .quorum-react-tooltip-dark {
   @include tooltip-box;
   @include reset-text;
+  z-index: 10000 !important;
 
   * {
     @include inherit-text;
@@ -47,4 +48,15 @@
 
 .quorum-react-tooltip-dark {
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.22) !important;
+}
+
+/* Responsive width and text wrapping for showOnTouch tooltips */
+.quorum-react-tooltip-touch {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  max-width: 300px !important;
+  
+  @media (min-width: 640px) {
+    max-width: 400px !important;
+  }
 }

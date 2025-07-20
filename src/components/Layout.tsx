@@ -5,18 +5,17 @@ import Container from './Container';
 import CreateSpaceModal from './modals/CreateSpaceModal';
 import NewDirectMessageModal from './modals/NewDirectMessageModal';
 import Connecting from './Connecting';
-import { useNavigate } from 'react-router';
 import KickUserModal from './modals/KickUserModal';
+import { useModalContext } from './AppWithSearch';
 
 const Layout: React.FunctionComponent<{
   children: React.ReactNode;
-  newDirectMessage?: boolean;
   kickUserAddress?: string;
   setKickUserAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
 }> = (props) => {
   let [createSpaceVisible, setCreateSpaceVisible] = React.useState(false);
   // let [joinSpaceVisible, setJoinSpaceVisible] = React.useState(false);
-  let navigate = useNavigate();
+  const { isNewDirectMessageOpen, closeNewDirectMessage } = useModalContext();
 
   return (
     <React.Suspense fallback={<Connecting />}>
@@ -27,10 +26,10 @@ const Layout: React.FunctionComponent<{
         />
       )}
       {/* {joinSpaceVisible && <JoinSpaceModal visible={joinSpaceVisible} onClose={() => setJoinSpaceVisible(false)}/>} */}
-      {props.newDirectMessage && (
+      {isNewDirectMessageOpen && (
         <NewDirectMessageModal
-          visible={props.newDirectMessage ?? false}
-          onClose={() => navigate(-1)}
+          visible={isNewDirectMessageOpen}
+          onClose={closeNewDirectMessage}
         />
       )}
       {props.kickUserAddress && (

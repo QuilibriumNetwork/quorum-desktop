@@ -810,7 +810,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               session.user_address,
               'direct',
               updatedUserProfile ?? {
-                user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+                user_icon:
+                  conversation?.conversation?.icon ??
+                  DefaultImages.UNKNOWN_USER,
                 display_name:
                   conversation?.conversation?.displayName ?? t`Unknown User`,
               }
@@ -827,7 +829,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               envelope.timestamp,
               0,
               updatedUserProfile ?? {
-                user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+                user_icon:
+                  conversation?.conversation?.icon ??
+                  DefaultImages.UNKNOWN_USER,
                 display_name:
                   conversation?.conversation?.displayName ?? t`Unknown User`,
               }
@@ -2608,7 +2612,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         }
 
         await saveMessage(message, messageDB, address!, address!, 'direct', {
-          user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+          user_icon:
+            conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
           display_name:
             conversation?.conversation?.displayName ?? t`Unknown User`,
         });
@@ -2619,7 +2624,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           Date.now(),
           message.createdDate,
           {
-            user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+            user_icon:
+              conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
             display_name:
               conversation?.conversation?.displayName ?? 'Unknown User',
           }
@@ -4737,7 +4743,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         return (
           pendingMessage.type +
           pendingMessage.stickerId +
-          (pendingMessage.repliesToMessageId ?? "")
+          (pendingMessage.repliesToMessageId ?? '')
         );
       }
 
@@ -4848,7 +4854,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           )
         );
         await saveMessage(message, messageDB, spaceId, channelId, 'group', {
-          user_icon: conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+          user_icon:
+            conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
           display_name:
             conversation.conversation?.displayName ?? t`Unknown User`,
         });
@@ -4900,7 +4907,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         return storedConfig;
       }
 
-     if (savedConfig.timestamp < (storedConfig?.timestamp ?? 0)) {
+      if (savedConfig.timestamp < (storedConfig?.timestamp ?? 0)) {
         console.warn(t`saved config is out of date`);
         return storedConfig;
       }

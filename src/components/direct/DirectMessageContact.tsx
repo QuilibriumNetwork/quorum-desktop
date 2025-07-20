@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import './DirectMessageContact.scss';
 import { DefaultImages } from '../../utils';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 const DirectMessageContact: React.FunctionComponent<{
   unread: boolean;
@@ -10,9 +11,16 @@ const DirectMessageContact: React.FunctionComponent<{
   userIcon?: string;
 }> = (props) => {
   let { address } = useParams<{ address: string }>();
+  const { isMobile, isTablet, closeLeftSidebar } = useResponsiveLayoutContext();
+
+  const handleContactClick = () => {
+    if (isMobile || isTablet) {
+      closeLeftSidebar();
+    }
+  };
 
   return (
-    <Link to={`/messages/${props.address}`}>
+    <Link to={`/messages/${props.address}`} onClick={handleContactClick}>
       <div
         className={
           'relative direct-message-contact flex flex-row rounded-lg hover:bg-sidebar-hover' +
@@ -26,7 +34,8 @@ const DirectMessageContact: React.FunctionComponent<{
           className="direct-message-contact-icon flex flex-col justify-around w-[38px] bg-cover bg-center rounded-full"
           style={{
             backgroundImage:
-              props.userIcon && !props.userIcon.includes(DefaultImages.UNKNOWN_USER)
+              props.userIcon &&
+              !props.userIcon.includes(DefaultImages.UNKNOWN_USER)
                 ? `url(${props.userIcon})`
                 : 'var(--unknown-icon)',
           }}

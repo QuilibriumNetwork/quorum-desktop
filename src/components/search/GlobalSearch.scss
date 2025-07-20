@@ -1,0 +1,18 @@
+// Clean global search component
+.global-search {
+  position: relative;
+  z-index: 1000;
+
+  // Lower z-index on mobile to go behind sidebar
+  @media (max-width: 767px) {
+    z-index: 30;
+  }
+}
+
+.global-search-bar {
+  // No specific styling needed - inherits from SearchBar
+}
+
+.global-search-results {
+  // No specific styling needed - inherits from SearchResults
+}

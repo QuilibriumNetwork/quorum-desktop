@@ -14,7 +14,7 @@
   --accent-900: #060421;
 
   --accent: var(--accent-500); /* for solid use (hex) */
-  --accent-rgb: 2, 135, 242; /* for rgba(var(--accent-rgb), <opacity>) */
+  --accent-rgb: 2, 135, 242; /* for color , <opacity>) */
 
   /* surface */
   --surface-00: #ffffff;
@@ -32,7 +32,7 @@
   --surface-10: #939399;
 
   --color-text-strong: #3b3b3b;
-  --color-text-main: 54, 54, 54;
+  --color-text-main: 54 54 54;
   --color-text-subtle: #818181;
   --color-text-muted: #b6b6b6;
   --color-link-hover: var(--accent-400);
@@ -72,11 +72,11 @@
   --info-hex: #3095bd;
 
   /* utilities for use with opacity */
-  --danger: 231, 74, 74; /* RED #e74a4a */
-  --danger-hover: 236, 51, 51; /* RED BRIGHTER #ec3333 */
-  --warning: 231, 176, 74; /* YELLOw #e7b04a */
-  --success: 70, 194, 54; /* GREEN #46c236 */
-  --info: 48, 149, 189; /* BLUE #3095bd */
+  --danger: 231 74 74; /* RED #e74a4a */
+  --danger-hover: 236 51 51; /* RED BRIGHTER #ec3333 */
+  --warning: 231 176 74; /* YELLOw #e7b04a */
+  --success: 70 194 54; /* GREEN #46c236 */
+  --info: 48 149 189; /* BLUE #3095bd */
 
   /* general */
   --unknown-icon: url('/unknown-light.png');
@@ -104,7 +104,7 @@ html.dark {
 
   /* text */
   --color-text-strong: #f8f7fa;
-  --color-text-main: 244, 241, 246;
+  --color-text-main: 244 241 246;
   --color-text-subtle: #bfb5c8;
   --color-text-muted: #84788b;
   --color-link-hover: var(--accent-200);
@@ -117,11 +117,11 @@ html.dark {
   --info-hex: #267b9e;
 
   /* utilities for use with opacity */
-  --danger: 199, 55, 55; /* #c73737 */
-  --danger-hover: 184, 48, 48; /* #b83030 */
-  --warning: 208, 154, 61; /* #d09a3d */
-  --success: 55, 158, 43; /* #379e2b */
-  --info: 38, 123, 158; /* #267b9e */
+  --danger: 199 55 55; /* #c73737 */
+  --danger-hover: 184 48 48; /* #b83030 */
+  --warning: 208 154 61; /* #d09a3d */
+  --success: 55 158 43; /* #379e2b */
+  --info: 38 123 158; /* #267b9e */
 
   --unknown-icon: url('/unknown-dark.png');
 }
@@ -162,35 +162,35 @@ html.dark {
 }
 
 .accent-fuchsia {
-    --accent-50: #fdf4ff;
-    --accent-100: #fae8ff;
-    --accent-200: #f5d0fe;
-    --accent-300: #f0abfc;
-    --accent-400: #e879f9;
-    --accent-500: #d946ef;
-    --accent-600: #c026d3;
-    --accent-700: #a21caf;
-    --accent-800: #86198f;
-    --accent-900: #701a75;
-    --accent: var(--accent-500);
-    --accent-rgb: 217, 70, 239;
-    background-color: var(--accent-500);
+  --accent-50: #fdf4ff;
+  --accent-100: #fae8ff;
+  --accent-200: #f5d0fe;
+  --accent-300: #f0abfc;
+  --accent-400: #e879f9;
+  --accent-500: #d946ef;
+  --accent-600: #c026d3;
+  --accent-700: #a21caf;
+  --accent-800: #86198f;
+  --accent-900: #701a75;
+  --accent: var(--accent-500);
+  --accent-rgb: 217, 70, 239;
+  background-color: var(--accent-500);
 }
 
 .accent-orange {
-    --accent-50: #fff7ed;
-    --accent-100: #ffedd5;
-    --accent-200: #fed7aa;
-    --accent-300: #fdba74;
-    --accent-400: #fb923c;
-    --accent-500: #f97316;
-    --accent-600: #ea580c;
-    --accent-700: #c2410c;
-    --accent-800: #9a3412;
-    --accent-900: #7c2d12;
-    --accent: var(--accent-500);
-    --accent-rgb: 249, 115, 22;
-    background-color: var(--accent-500);
+  --accent-50: #fff7ed;
+  --accent-100: #ffedd5;
+  --accent-200: #fed7aa;
+  --accent-300: #fdba74;
+  --accent-400: #fb923c;
+  --accent-500: #f97316;
+  --accent-600: #ea580c;
+  --accent-700: #c2410c;
+  --accent-800: #9a3412;
+  --accent-900: #7c2d12;
+  --accent: var(--accent-500);
+  --accent-rgb: 249, 115, 22;
+  background-color: var(--accent-500);
 }
 
 .accent-green {
@@ -212,17 +212,17 @@ html.dark {
 }
 
 .accent-yellow {
-    --accent-50: #fefce8;
-    --accent-100: #fef9c3;
-    --accent-200: #fef08a;
-    --accent-300: #fde047;
-    --accent-400: #facc15;
-    --accent-500: #eab308;
-    --accent-600: #ca8a04;
-    --accent-700: #a16207;
-    --accent-800: #854d0e;
-    --accent-900: #713f12;
-    --accent: var(--accent-500);
-    --accent-rgb: 234, 179, 8;
-    background-color: var(--accent-500);
+  --accent-50: #fefce8;
+  --accent-100: #fef9c3;
+  --accent-200: #fef08a;
+  --accent-300: #fde047;
+  --accent-400: #facc15;
+  --accent-500: #eab308;
+  --accent-600: #ca8a04;
+  --accent-700: #a16207;
+  --accent-800: #854d0e;
+  --accent-900: #713f12;
+  --accent: var(--accent-500);
+  --accent-rgb: 234, 179, 8;
+  background-color: var(--accent-500);
 }

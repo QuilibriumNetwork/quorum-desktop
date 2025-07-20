@@ -2,33 +2,23 @@ import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faDoorOpen,
-  faEdit,
   faPlus,
   faSliders,
 } from '@fortawesome/free-solid-svg-icons';
 import ChannelGroup from './ChannelGroup';
 import './ChannelList.scss';
 import { useSpace, useSpaceMembers } from '../../hooks';
-import Tooltip from '../Tooltip';
-import TooltipButton from '../TooltipButton';
-import SpaceEditor from './SpaceEditor';
-import ChannelEditor from './ChannelEditor';
+import { useModalContext } from '../AppWithSearch';
 import GroupEditor from './GroupEditor';
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
-import LeaveSpace from './LeaveSpace';
 import { t } from '@lingui/core/macro';
 
 type ChannelListProps = { spaceId: string };
 
 const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   const { data: space } = useSpace({ spaceId });
-  let [isMenuExpanded, setIsMenuExpanded] = React.useState<boolean>(false);
-  let [isSpaceEditorOpen, setIsSpaceEditorOpen] =
-    React.useState<boolean>(false);
-  let [isLeaveSpaceOpen, setIsLeaveSpaceOpen] = React.useState<boolean>(false);
-  let [isChannelEditorOpen, setIsChannelEditorOpen] = React.useState<
-    { groupName: string; channelId?: string } | undefined
-  >();
+  const { openSpaceEditor, openChannelEditor, openLeaveSpace } =
+    useModalContext();
   let [isGroupEditorOpen, setIsGroupEditorOpen] = React.useState<
     { groupName?: string } | undefined
   >();
@@ -37,56 +27,6 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
 
   return (
     <>
-      {isSpaceEditorOpen ? (
-        <>
-          <div className="invisible-dismissal invisible-dark">
-            <SpaceEditor
-              spaceId={spaceId}
-              dismiss={() => setIsSpaceEditorOpen(false)}
-            />
-            <div
-              className="invisible-dismissal"
-              onClick={() => setIsSpaceEditorOpen(false)}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
-      {isLeaveSpaceOpen ? (
-        <>
-          <div className="invisible-dismissal invisible-dark">
-            <LeaveSpace
-              spaceId={spaceId}
-              dismiss={() => setIsLeaveSpaceOpen(false)}
-            />
-            <div
-              className="invisible-dismissal"
-              onClick={() => setIsLeaveSpaceOpen(false)}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
-      {isChannelEditorOpen ? (
-        <>
-          <div className="invisible-dismissal invisible-dark">
-            <ChannelEditor
-              spaceId={spaceId}
-              groupName={isChannelEditorOpen.groupName}
-              channelId={isChannelEditorOpen.channelId}
-              dismiss={() => setIsChannelEditorOpen(undefined)}
-            />
-            <div
-              className="invisible-dismissal"
-              onClick={() => setIsChannelEditorOpen(undefined)}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
       {isGroupEditorOpen ? (
         <>
           <div className="invisible-dismissal invisible-dark">
@@ -100,46 +40,6 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
               onClick={() => setIsGroupEditorOpen(undefined)}
             />
           </div>
-        </>
-      ) : (
-        <></>
-      )}
-      {isMenuExpanded ? (
-        <>
-          <div
-            className="invisible-dismissal"
-            onClick={() => setIsMenuExpanded(false)}
-          />
-          <Tooltip
-            className="user-status-menu left-[20px] top-[24px] w-[200px] !p-[2px]"
-            arrow="none"
-            visible={isMenuExpanded}
-          >
-            {isSpaceOwner && (
-              <>
-                <TooltipButton
-                  text={t`Edit Space`}
-                  icon={faEdit}
-                  onClick={() => {
-                    setIsMenuExpanded(false);
-                    setIsSpaceEditorOpen(true);
-                  }}
-                />
-                {/* <TooltipDivider /> */}
-              </>
-            )}
-            {(!isSpaceOwner || members.length == 1) && (
-              <TooltipButton
-                type="danger"
-                text={t`Leave Space`}
-                icon={faDoorOpen}
-                onClick={() => {
-                  setIsMenuExpanded(false);
-                  setIsLeaveSpaceOpen(true);
-                }}
-              />
-            )}
-          </Tooltip>
         </>
       ) : (
         <></>
@@ -169,15 +69,20 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
           </div>
           <div
             className="space-context-menu-toggle-button relative z-10"
-            onClick={() => setIsMenuExpanded(true)}
+            onClick={() => {
+              if (isSpaceOwner) {
+                openSpaceEditor(spaceId);
+              } else {
+                openLeaveSpace(spaceId);
+              }
+            }}
           >
-            <FontAwesomeIcon icon={faSliders} />
+            <FontAwesomeIcon icon={isSpaceOwner ? faSliders : faDoorOpen} />
           </div>
         </div>
         {space?.groups.map((group) => (
           <ChannelGroup
             setIsGroupEditorOpen={setIsGroupEditorOpen}
-            setIsChannelEditorOpen={setIsChannelEditorOpen}
             key={group.groupName}
             group={group}
           />

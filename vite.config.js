@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
-
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
@@ -9,17 +8,18 @@ import { lingui } from '@lingui/vite-plugin';
 
 // https://vite.dev/config/
 export default defineConfig({
+  build: {
+    target: 'es2022', // Support top-level await or error on build for i18n
+  },
   plugins: [
     lingui(),
     nodePolyfills({
-      target: 'esnext'
+      target: 'esnext',
     }),
     react({
       babel: {
-        plugins: [
-          '@lingui/babel-plugin-lingui-macro',
-        ],
-      }
+        plugins: ['@lingui/babel-plugin-lingui-macro'],
+      },
     }),
     viteStaticCopy({
       targets: [
@@ -38,16 +38,18 @@ export default defineConfig({
     headers: {
       'Permissions-Policy': 'publickey-credentials-get=*',
     },
-
   },
   resolve: {
     alias: {
       crypto: 'crypto-browserify',
-      // eslint-disable-next-line no-undef
+
       '@quilibrium/quilibrium-js-sdk-channels': resolve(
         __dirname,
         'node_modules/@quilibrium/quilibrium-js-sdk-channels/dist/index.js'
       ),
     },
+  },
+  optimizeDeps: {
+    include: ['@quilibrium/quilibrium-js-sdk-channels'], // Force Vite to pre-bundle or app doesn't load (WSL)
   },
 });

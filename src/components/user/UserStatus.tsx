@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { faCopy, faEdit, faGear } from '@fortawesome/free-solid-svg-icons';
-import Tooltip from '../Tooltip';
-import TooltipButton from '../TooltipButton';
-import UserProfile from './UserProfile';
+import { faGear } from '@fortawesome/free-solid-svg-icons';
 
 import './UserStatus.scss';
 import UserOnlineStateIndicator from './UserOnlineStateIndicator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { t } from '@lingui/core/macro';
-import CopyToClipboard from '../CopyToClipboard';
+import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages } from '../../utils';
 
 type UserStatusProps = {
@@ -30,56 +27,9 @@ type UserStatusProps = {
 };
 
 const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
-  let [isMenuExpanded, setIsMenuExpanded] = React.useState<boolean>(false);
-  let [isProfileEditorOpen, setIsProfileEditorOpen] =
-    React.useState<boolean>(false);
-
   return (
     <>
-      {isProfileEditorOpen ? (
-        <>
-          <div className="invisible-dismissal invisible-dark">
-            <UserProfile
-              setUser={props.setUser}
-              editMode={true}
-              user={props.user}
-              dismiss={() => setIsProfileEditorOpen(false)}
-            />
-            <div
-              className="invisible-dismissal"
-              onClick={() => setIsProfileEditorOpen(false)}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
-      {isMenuExpanded ? (
-        <>
-          <div
-            className="invisible-dismissal"
-            onClick={() => setIsMenuExpanded(false)}
-          />
-          <Tooltip
-            variant="light"
-            className="user-status-menu bottom-[24px] w-[200px] !p-[2px]"
-            arrow="none"
-            visible={isMenuExpanded}
-          >
-            <TooltipButton
-              text={t`Edit Profile`}
-              icon={faEdit}
-              onClick={() => {
-                setIsMenuExpanded(false);
-                setIsProfileEditorOpen(true);
-              }}
-            />
-          </Tooltip>
-        </>
-      ) : (
-        <></>
-      )}
-      <div onClick={() => setIsMenuExpanded(true)} className="user-status">
+      <div className="user-status">
         <div
           className="user-status-icon"
           style={{
@@ -93,7 +43,15 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
         <div className="user-status-text">
           <div className="flex flex-row user-status-username w-[164px] text-ellipsis overflow-hidden">
             <span>{props.user.displayName}</span>
-            <CopyToClipboard className="ml-2" tooltipText={t`Copy address to clipboard`} text={props.user.address} tooltipLocation="top" />
+            <ClickToCopyContent
+              className="ml-4"
+              tooltipText={t`Copy address`}
+              text={props.user.address}
+              tooltipLocation="top"
+              iconClassName="text-surface-10"
+            >
+              <></>
+            </ClickToCopyContent>
           </div>
           <div className="user-status-info">
             <UserOnlineStateIndicator user={props.user} />
@@ -105,7 +63,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
               props.setIsUserSettingsOpen(true);
               e.stopPropagation();
             }}
-            className="p-1 rounded-md hover:bg-[rgba(255,255,255,0.1)] hover:text-main"
+            className="p-1 rounded-md hover:bg-[rgba(255,255,255,0.1)] hover:text-main cursor-pointer"
             icon={faGear}
           />
         </div>

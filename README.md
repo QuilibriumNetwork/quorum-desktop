@@ -37,7 +37,6 @@ yarn electron:dev
 > Communities are welcome to proofread and correct them.  
 > **Proofreading completed for**: English, Italian.
 
-
 ### To Correct an Existing Language
 
 1. Correct the file: `src/i18n/<locale>/messages.po`
@@ -47,7 +46,6 @@ yarn electron:dev
    ```
    This updates the `messages.js` file in `src/i18n/<locale>/messages.js`.
 3. Commit the changes and push to the remote repository.
-
 
 ### To Add a New Language
 

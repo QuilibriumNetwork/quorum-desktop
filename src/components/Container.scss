@@ -1,9 +1,21 @@
 .container-unit {
-  position: absolute;
+  position: fixed;
   width: calc(100vw - 72px);
-  height: calc(100vh - 34px);
+  height: calc(100vh - 14px);
   left: 72px;
-  top: 34px;
+  top: 14px;
   border-top-left-radius: 10px;
   background-color: var(--color-bg-sidebar);
+
+  // Mobile optimization - full width for chat content
+  @media (max-width: 1023px) {
+    width: calc(100vw - 74px);
+    left: 74px;
+  }
+
+  // Phone-specific optimization for smaller NavMenu
+  @media (max-width: 480px) {
+    width: calc(100vw - 50px);
+    left: 50px;
+  }
 }

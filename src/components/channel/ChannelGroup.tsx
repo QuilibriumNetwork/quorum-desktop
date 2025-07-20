@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
+import { useModalContext } from '../AppWithSearch';
 
 const ChannelGroup: React.FunctionComponent<{
   group: {
@@ -24,16 +25,8 @@ const ChannelGroup: React.FunctionComponent<{
       | undefined
     >
   >;
-  setIsChannelEditorOpen: React.Dispatch<
-    React.SetStateAction<
-      | {
-          groupName: string;
-          channelId?: string;
-        }
-      | undefined
-    >
-  >;
 }> = (props) => {
+  const { openChannelEditor } = useModalContext();
   let { spaceId, channelId } = useParams<{
     spaceId: string;
     channelId: string;
@@ -45,8 +38,7 @@ const ChannelGroup: React.FunctionComponent<{
       <div className="channel-group-name small-caps flex flex-row justify-between">
         <div
           className={
-            'truncate ' +
-            (isSpaceOwner ? 'hover:text-main cursor-pointer' : '')
+            'truncate ' + (isSpaceOwner ? 'hover:text-main cursor-pointer' : '')
           }
           onClick={() => {
             if (isSpaceOwner) {
@@ -57,13 +49,11 @@ const ChannelGroup: React.FunctionComponent<{
           {props.group.groupName}
         </div>
         {isSpaceOwner && (
-          <div className="pt-[.15rem] pr-2">
+          <div className="pt-[.15rem]">
             <FontAwesomeIcon
               className="hover:text-main cursor-pointer"
               onClick={() =>
-                props.setIsChannelEditorOpen({
-                  groupName: props.group.groupName,
-                })
+                openChannelEditor(spaceId!, props.group.groupName, '')
               }
               size={'2xs'}
               icon={faPlus}
@@ -79,34 +69,37 @@ const ChannelGroup: React.FunctionComponent<{
           <div className="channel-group-channel">
             <div
               className={
-                'channel-group-channel-name' +
+                'channel-group-channel-name flex items-start justify-between' +
                 (channel.channelId === channelId ? '-focused' : '') +
                 (channel.unreads && channel.unreads > 0
                   ? ' !font-bold !opacity-100'
                   : '')
               }
             >
-              #{channel.channelName}
-              {!!channel.mentionCount ? (
-                <span
-                  className={
-                    'channel-group-channel-name-mentions-' + channel.mentions
-                  }
-                >
-                  {channel.mentionCount}
-                </span>
-              ) : (
-                <></>
-              )}
+              <div className="flex-1 min-w-0">
+                #{channel.channelName}
+                {!!channel.mentionCount ? (
+                  <span
+                    className={
+                      'channel-group-channel-name-mentions-' + channel.mentions
+                    }
+                  >
+                    {channel.mentionCount}
+                  </span>
+                ) : (
+                  <></>
+                )}
+              </div>
               {isSpaceOwner && (
                 <div
                   onClick={(e) => {
-                    props.setIsChannelEditorOpen({
-                      groupName: props.group.groupName,
-                      channelId: channel.channelId,
-                    });
+                    openChannelEditor(
+                      spaceId!,
+                      props.group.groupName,
+                      channel.channelId
+                    );
                   }}
-                  className={'channel-configure float-right'}
+                  className={'channel-configure flex-shrink-0 ml-2'}
                 >
                   <FontAwesomeIcon size={'2xs'} icon={faGear} />
                 </div>

@@ -156,7 +156,7 @@ export const Onboarding = ({
           <div className="flex flex-col grow"></div>
         </div>
         {isDragActive && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 pointer-events-none">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay pointer-events-none">
             <div className="flex flex-col p-8 border-2 border-dashed border-white rounded-lg bg-white bg-opacity-50 items-center">
               <FontAwesomeIcon
                 icon={faFileImage}
@@ -213,14 +213,14 @@ export const Onboarding = ({
               <div className="grow"></div>
               <div className="w-[460px] pt-4 text-center">
                 <Button
-                  type="light"
+                  type="primary-white"
                   className="px-8 mb-4"
                   onClick={downloadKey}
                 >
                   {t`Save User Key`}
                 </Button>
                 <Button
-                  type="light-outline"
+                  type="light-outline-white"
                   className="px-8"
                   onClick={() => setExported(true)}
                 >
@@ -252,14 +252,14 @@ export const Onboarding = ({
               <div className="grow"></div>
               <div className="w-[460px] pt-4 text-center flex flex-row justify-between">
                 <Input
-                  className="onboarding-input !bg-accent-100 grow"
+                  className="onboarding-input !bg-white grow"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Bongocat"
                 />
                 <div className="flex flex-col justify-around pl-2">
                   <Button
-                    type="light"
+                    type="primary-white"
                     disabled={displayName.length === 0}
                     className={`px-8 ${displayName.length === 0 ? 'btn-disabled-onboarding ' : ''}`}
                     onClick={() =>
@@ -284,13 +284,13 @@ export const Onboarding = ({
                   <div className="mb-2 text-center">
                     {t`Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join.`}
                   </div>
-                  <div className="mb-2 text-center">
+                  {/* <div className="mb-2 text-center">
                     {t`You can click the default image below to select it with your system's file dialog or drag and drop a new one.`}
                   </div>
                   <div className="mb-2 text-center">
                     {t`You will be able to change this later in your settings.`}
-                  </div>
-                  <div className="mb-2 text-center">
+                  </div> */}
+                  <div className="mb-2 text-sm text-center">
                     {i18n._(
                       `Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension.`,
                       { maxFileSize: `${maxImageSize / 1024 / 1024}MB` }
@@ -344,7 +344,7 @@ export const Onboarding = ({
                 <div className="flex flex-col justify-around pl-2 pt-4">
                   <div className="flex flex-row justify-between ml-4">
                     <Button
-                      type="light-outline"
+                      type="light-outline-white"
                       className="px-8"
                       onClick={setPfpImage}
                     >
@@ -355,7 +355,7 @@ export const Onboarding = ({
                         <FontAwesomeIcon
                           icon={faCircleInfo}
                           id="profile-image-info-tooltip-anchor"
-                          className="text-white-400 hover:text-gray-300 cursor-pointer ml-2 my-auto"
+                          className="text-white/80 hover:text-white/60 cursor-pointer ml-2 my-auto"
                           aria-label={t`If skipped, you'll get the default profile image and can set it later`}
                         />
                       </div>
@@ -369,7 +369,7 @@ export const Onboarding = ({
                     </>
                   </div>
                   <Button
-                    type="light"
+                    type="primary-white"
                     disabled={!fileData || !!fileError}
                     className={`px-8 mt-4 ${!fileData || !!fileError ? 'btn-disabled-onboarding' : ''}`}
                     onClick={setPfpImage}
@@ -396,7 +396,7 @@ export const Onboarding = ({
                 <div className="grow"></div>
                 <div className="flex flex-col justify-around pl-2">
                   <Button
-                    type="light"
+                    type="primary-white"
                     className="px-8"
                     onClick={() => {
                       updateUserStoredInfo({ completedOnboarding: true });

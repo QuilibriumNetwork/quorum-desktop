@@ -1,0 +1,173 @@
+// Mobile Message Actions Drawer Specific Styles
+.message-actions-drawer__quick-reactions {
+  margin-bottom: 24px;
+  margin-top: 16px; // Space from top of drawer
+}
+
+.message-actions-drawer__quick-reactions-list {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  padding: 0 16px; // Left and right spacing like action items below
+}
+
+.quick-reaction-button {
+  background: var(--surface-2);
+  border: 2px solid var(--surface-4);
+  border-radius: 12px;
+  padding: 12px 8px;
+  min-width: 48px;
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  flex: 1;
+
+  &:hover {
+    background: var(--surface-3);
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &--active {
+    border-color: var(--accent-500);
+    background: var(--surface-2); // Keep same background as default
+    
+    .quick-reaction-button__emoji {
+      filter: brightness(1.2);
+    }
+  }
+}
+
+.quick-reaction-button__emoji {
+  font-size: 20px;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.quick-reaction-button--more {
+  // Special styling for the "more reactions" button
+  border-style: dashed; // Distinguish from reaction buttons
+  
+  .quick-reaction-button__more-icon {
+    font-size: 20px;
+    color: var(--color-text-main);
+  }
+  
+  &:hover .quick-reaction-button__more-icon {
+    color: var(--color-text-strong);
+  }
+}
+
+// Removed count styles - counts are now hidden
+
+.message-actions-drawer__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 2px; // Reduced gap for better mobile density
+}
+
+.action-menu-item {
+  background: none;
+  border: none;
+  padding: 14px 16px; // Slightly reduced vertical padding
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px; // Slightly reduced gap
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 52px; // Reduced from 56px for better mobile fit
+  text-align: left;
+  color: var(--color-text-main);
+
+  &:hover {
+    background: var(--surface-2);
+  }
+
+  &:active {
+    transform: scale(0.98);
+    background: var(--surface-3);
+  }
+
+  &--danger {
+    color: var(--danger-hex);
+    
+    &:hover {
+      background: rgb(var(--danger) / 0.1);
+    }
+  }
+
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    
+    &:hover {
+      background: none;
+    }
+  }
+}
+
+.action-menu-item__icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.action-menu-item__label {
+  font-size: 15px; // Slightly smaller for better mobile density
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+// Responsive adjustments
+@media (max-width: 375px) {
+  .quick-reaction-button {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 8px 6px;
+  }
+
+  .quick-reaction-button__emoji {
+    font-size: 18px;
+  }
+
+  .action-menu-item {
+    padding: 14px;
+    min-height: 52px;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .quick-reaction-button {
+    border-width: 2px;
+  }
+
+  .action-menu-item {
+    border: 1px solid transparent;
+    
+    &:hover {
+      border-color: var(--color-text-main);
+    }
+  }
+}
+
+// Reduce motion for accessibility
+@media (prefers-reduced-motion: reduce) {
+  .quick-reaction-button,
+  .action-menu-item {
+    transition: none;
+  }
+}

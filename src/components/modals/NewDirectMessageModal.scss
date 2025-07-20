@@ -10,8 +10,28 @@
 
 .modal-new-direct-message-actions {
   @extend .modal-actions;
+  display: flex;
+  justify-content: flex-start;
+
+  @media (max-width: 640px) {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .modal-new-direct-message-info {
   @extend .modal-info;
+}
+
+.modal-new-direct-message-error {
+  color: var(--danger-hex);
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .modal-new-direct-message-error {
+    text-align: center;
+  }
 }

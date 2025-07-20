@@ -2,7 +2,7 @@ import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import Button from '../Button';
-import './UserSettingsModal.scss';
+import '../../styles/_modal_common.scss';
 import { useRegistration } from '../../hooks';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -12,7 +12,7 @@ import { UserConfig } from '../../db/messages';
 import ThemeRadioGroup from '../ThemeRadioGroup';
 import AccentColorSwitcher from '../AccentColorSwitcher';
 import { t } from '@lingui/core/macro';
-import CopyToClipboard from '../CopyToClipboard';
+import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages } from '../../utils';
 import {
   dynamicActivate,
@@ -22,6 +22,8 @@ import {
 import locales from '../../i18n/locales';
 import useForceUpdate from '../hooks/forceUpdate';
 import ReactTooltip from '../ReactTooltip';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes, faInfoCircle, faUser, faShield, faPalette } from '@fortawesome/free-solid-svg-icons';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -60,8 +62,21 @@ const UserSettingsModal: React.FunctionComponent<{
   const [allowSync, setAllowSync] = React.useState<boolean>(false);
   const [language, setLanguage] = React.useState(getUserLocale());
   const [languageChanged, setLanguageChanged] = React.useState<boolean>(false);
+  const [closing, setClosing] = React.useState<boolean>(false);
+  const [userIconFileError, setUserIconFileError] = React.useState<
+    string | null
+  >(null);
+  const [isUserIconUploading, setIsUserIconUploading] =
+    React.useState<boolean>(false);
 
   const forceUpdate = useForceUpdate();
+
+  const handleDismiss = () => {
+    setClosing(true);
+    setTimeout(() => {
+      dismiss();
+    }, 300);
+  };
 
   React.useEffect(() => {
     console.log('Language changed to:', language);
@@ -106,19 +121,51 @@ const UserSettingsModal: React.FunctionComponent<{
     window.URL.revokeObjectURL(url);
   };
 
-  const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
+  const {
+    getRootProps,
+    getInputProps,
+    acceptedFiles,
+    isDragActive: isUserIconDragActive,
+  } = useDropzone({
     accept: {
       'image/png': ['.png'],
       'image/jpeg': ['.jpg', '.jpeg'],
     },
     minSize: 0,
     maxSize: 1 * 1024 * 1024,
+    onDropRejected: (fileRejections) => {
+      setIsUserIconUploading(false);
+      for (const rejection of fileRejections) {
+        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
+          setUserIconFileError(t`File cannot be larger than 1MB`);
+        } else {
+          setUserIconFileError(t`File rejected`);
+        }
+      }
+    },
+    onDropAccepted: () => {
+      setIsUserIconUploading(true); // Keep uploading state during processing
+      setUserIconFileError(null);
+    },
+    onDragEnter: () => {
+      setIsUserIconUploading(true);
+    },
+    onDragLeave: () => {
+      setIsUserIconUploading(false);
+    },
+    onFileDialogOpen: () => {
+      setIsUserIconUploading(true);
+    },
+    onFileDialogCancel: () => {
+      setIsUserIconUploading(false);
+    },
   });
 
   React.useEffect(() => {
     if (acceptedFiles.length > 0) {
       (async () => {
         setFileData(await acceptedFiles[0].arrayBuffer());
+        setIsUserIconUploading(false); // Reset after processing
       })();
     }
   }, [acceptedFiles]);
@@ -180,296 +227,382 @@ const UserSettingsModal: React.FunctionComponent<{
       },
       keyset: keyset,
     });
-    dismiss();
+    handleDismiss();
   };
 
   return (
-    <div className="user-settings flex flex-row">
-      <div className="px-4 py-2 text-main w-[200px]">
-        <div className="small-caps text-subtle">{t`Settings`}</div>
-        <div
-          onClick={() => setSelectedCategory('general')}
-          className={
-            (selectedCategory == 'general' ? 'bg-surface-5 ' : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
-          }
-        >
-          {t`General`}
-        </div>
-        <div
-          onClick={() => setSelectedCategory('privacy')}
-          className={
-            (selectedCategory == 'privacy' ? 'bg-surface-5 ' : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
-          }
-        >
-          {t`Privacy/Security`}
-        </div>
-        <div
-          onClick={() => setSelectedCategory('appearance')}
-          className={
-            (selectedCategory === 'appearance' ? 'bg-surface-5 ' : '') +
-            'font-medium cursor-pointer hover:bg-surface-4 px-2 mt-1 mx-[-.5rem] rounded-md py-1'
-          }
-        >
-          {t`Appearance`}
-        </div>
+    <div
+      className={`modal-complex-container${closing ? ' modal-complex-closing' : ''}`}
+    >
+      <div className="modal-complex-close-button" onClick={handleDismiss}>
+        <FontAwesomeIcon icon={faTimes} />
       </div>
-      <div className="flex flex-col grow overflow-y-scroll rounded-xl">
-        {(() => {
-          switch (selectedCategory) {
-            case 'general':
-              return (
-                <>
-                  <div className="user-settings-header">
-                    <div
-                      className="user-settings-icon-editable"
-                      style={{
-                        backgroundImage:
-                          fileData !== undefined && acceptedFiles.length !== 0
-                            ? `url(data:${acceptedFiles[0].type};base64,${Buffer.from(fileData).toString('base64')})`
-                            : currentPasskeyInfo?.pfpUrl &&
-                                !currentPasskeyInfo.pfpUrl.includes(
-                                  DefaultImages.UNKNOWN_USER
-                                )
-                              ? `url(${currentPasskeyInfo.pfpUrl})`
-                              : 'var(--unknown-icon)',
-                      }}
-                      {...getRootProps()}
-                    >
-                      <input {...getInputProps()} />
-                    </div>
-                    <div className="user-settings-text flex flex-col grow pr-4">
-                      <div className="small-caps">{t`Display Name`}</div>
-                      <input
-                        className="w-full quorum-input"
-                        value={displayName}
-                        onChange={(e) => setDisplayName(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="user-settings-content flex flex-col !rounded-b-none">
-                    <div className="user-settings-info">
-                      <div className="small-caps">{t`Account Address`}</div>
-                      <div className="flex flex-row items-center text-base">
-                        {currentPasskeyInfo!.address}{' '}
-                        <CopyToClipboard
-                          className="ml-2"
-                          tooltipText={t`Copy address to clipboard`}
-                          text={currentPasskeyInfo!.address}
-                          tooltipLocation="top"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="user-settings-content flex flex-col grow">
-                    <div className="grow flex flex-col justify-end">
-                      <div className="user-settings-editor-actions">
-                        <Button
-                          type="primary"
-                          onClick={() => {
-                            saveChanges();
-                          }}
-                        >
-                          {t`Save Changes`}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              );
-            case 'privacy':
-              return (
-                <>
-                  <div className="user-settings-header pt-4 px-4 flex flex-row justify-between">
-                    <div>
-                      <div className="text-xl font-bold">{t`Privacy/Security`}</div>
-                      <div className="pt-1 text-sm text-main">
-                        {t`Manage devices, and privacy conditions for messaging and synchronization.`}
-                      </div>
-                    </div>
-                    <div className="user-settings-editor-actions">
-                      {/* <div><Button type="primary" onClick={() => {setRoles(prev => [...prev, {roleId: crypto.randomUUID(), roleTag: "New Role"+(prev.length+1), displayName: "New Role", color: "#3e8914", members: [], permissions: []}])}}>Add Role</Button></div> */}
-                    </div>
-                  </div>
-                  <div className="user-settings-content flex flex-col grow">
-                    <div className="small-caps">Devices</div>
-                    {stagedRegistration?.device_registrations.map(
-                      (d: secureChannel.DeviceRegistration) => (
-                        <div
-                          key={d.inbox_registration.inbox_address}
-                          className="user-settings-content-section-header flex flex-row justify-between"
-                        >
-                          <div className="flex flex-col justify-around font-light">
-                            {d.inbox_registration.inbox_address}
-                          </div>
-                          {keyset.deviceKeyset?.inbox_keyset?.inbox_address !==
-                            d.inbox_registration.inbox_address && (
-                            <Button
-                              onClick={() => {
-                                removeDevice(d.identity_public_key);
-                              }}
-                              type="danger"
-                            >
-                              {t`Remove`}
-                            </Button>
-                          )}
-                          {keyset.deviceKeyset.inbox_keyset.inbox_address ===
-                            d.inbox_registration.inbox_address && (
-                            <div className="font-light">(this device)</div>
-                          )}
-                        </div>
-                      )
-                    )}
-                    <div className="user-settings-content-section-header" />
-                    <div className="user-settings-info">
-                      <div className="user-settings-content-section-header small-caps !pt-4">
-                        {t`Key Export`}
-                      </div>
-                      <div className="pt-1 text-sm text-main">
-                        {t`Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings.`}
-                      </div>
-                      <div className="pt-4 pb-8 max-w-[100px]">
-                        <Button
-                          type="danger"
-                          onClick={() => {
-                            downloadKey();
-                          }}
-                        >
-                          {t`Export`}
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="user-settings-content-section-header small-caps">
-                      {t`Security`}
-                    </div>
-                    <div className="pt-1 text-sm text-main">
-                      {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
-                    </div>
-                    <div className="user-settings-info">
-                      <div className="flex flex-row justify-between pb-2">
-                        <div className="text-sm flex flex-row">
-                          <div className="text-sm flex flex-col justify-around">
-                            {t`Enable sync`}
-                          </div>
-                          <>
-                            <div
-                              id="allow-sync-tooltip-anchor"
-                              className="border border-strong rounded-full w-6 h-6 text-center leading-5 text-lg mt-1 ml-2 cursor-default"
-                            >
-                              ℹ
-                            </div>
-                            <ReactTooltip
-                              id="allow-sync-tooltip"
-                              anchorSelect="#allow-sync-tooltip-anchor"
-                              content={t`When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined.`}
-                              place="right"
-                              className="!w-[400px]"
-                            />
-                          </>
-                        </div>
+      <div className="modal-complex-layout">
+        {/* Desktop/Tablet Sidebar */}
+        <div className="modal-complex-sidebar">
+          <div className="modal-nav-title">{t`Settings`}</div>
+          <div
+            onClick={() => setSelectedCategory('general')}
+            className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
+          >
+            <FontAwesomeIcon icon={faUser} className="mr-2 text-accent" />
+            {t`General`}
+          </div>
+          <div
+            onClick={() => setSelectedCategory('privacy')}
+            className={`modal-nav-category ${selectedCategory === 'privacy' ? 'active' : ''}`}
+          >
+            <FontAwesomeIcon icon={faShield} className="mr-2 text-accent" />
+            {t`Privacy/Security`}
+          </div>
+          <div
+            onClick={() => setSelectedCategory('appearance')}
+            className={`modal-nav-category ${selectedCategory === 'appearance' ? 'active' : ''}`}
+          >
+            <FontAwesomeIcon icon={faPalette} className="mr-2 text-accent" />
+            {t`Appearance`}
+          </div>
+        </div>
 
-                        <ToggleSwitch
-                          onClick={() => setAllowSync((prev) => !prev)}
-                          active={allowSync}
-                        />
-                      </div>
-                      <div className="flex flex-row justify-between">
-                        <div className="text-sm flex flex-row">
-                          <div className="text-sm flex flex-col justify-around">
-                            {t`Non-repudiability`}
-                          </div>
-                          <>
-                            <div
-                              id="non-repudiable-tooltip-anchor"
-                              className="border border-strong rounded-full w-6 h-6 text-center leading-5 text-lg mt-1 ml-2 cursor-default"
-                            >
-                              ℹ
-                            </div>
-                            <ReactTooltip
-                              id="non-repudiable-tooltip"
-                              anchorSelect="#non-repudiable-tooltip-anchor"
-                              content={t`When enabled, direct messages are not signed by your user key...`}
-                              place="right"
-                              className="!w-[400px]"
-                            />
-                          </>
-                        </div>
-
-                        <ToggleSwitch
-                          onClick={() => setNonRepudiable((prev) => !prev)}
-                          active={nonRepudiable}
-                        />
-                      </div>
-                    </div>
-                    <div className="grow flex flex-col justify-end">
-                      <div className="user-settings-editor-actions">
-                        <Button
-                          type="primary"
-                          onClick={() => {
-                            saveChanges();
-                          }}
-                        >
-                          {t`Save Changes`}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              );
-            case 'appearance':
-              return (
-                <div className="user-settings-content px-4 py-6 flex flex-col gap-4">
-                  <div className="text-xl font-bold">{t`Appearance`}</div>
-                  <div className="text-sm text-main">
-                    {t`Choose your preferred theme for Quorum.`}
-                  </div>
-                  <ThemeRadioGroup />
-
-                  <div className="pt-4">
-                    
-                    <AccentColorSwitcher />
-                  </div>
-
-                  <div className="pt-4">
-                    <div className="small-caps">{t`Language`}</div>
-                    <div className="flex flex-row gap-2 items-center">
-                      <select
-                        className="quorum-input w-56"
-                        value={language}
-                        onChange={async (e) => {
-                          const selected =
-                            e.target.value.toString() as keyof typeof locales;
-                          setLanguage(selected);
+        {/* Mobile Stacked Menu */}
+        <div className="modal-nav-mobile-single">
+          <div
+            onClick={() => setSelectedCategory('general')}
+            className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
+          >
+            <FontAwesomeIcon icon={faUser} className="mr-2 text-accent" />
+            {t`General`}
+          </div>
+          <div
+            onClick={() => setSelectedCategory('privacy')}
+            className={`modal-nav-category ${selectedCategory === 'privacy' ? 'active' : ''}`}
+          >
+            <FontAwesomeIcon icon={faShield} className="mr-2 text-accent" />
+            {t`Privacy/Security`}
+          </div>
+          <div
+            onClick={() => setSelectedCategory('appearance')}
+            className={`modal-nav-category ${selectedCategory === 'appearance' ? 'active' : ''}`}
+          >
+            <FontAwesomeIcon icon={faPalette} className="mr-2 text-accent" />
+            {t`Appearance`}
+          </div>
+        </div>
+        <div className="modal-complex-content">
+          {(() => {
+            switch (selectedCategory) {
+              case 'general':
+                return (
+                  <>
+                    <div className="modal-content-header">
+                      <div
+                        id="user-icon-tooltip-target"
+                        className="modal-icon-editable"
+                        style={{
+                          backgroundImage:
+                            fileData !== undefined && acceptedFiles.length !== 0
+                              ? `url(data:${acceptedFiles[0].type};base64,${Buffer.from(fileData).toString('base64')})`
+                              : currentPasskeyInfo?.pfpUrl &&
+                                  !currentPasskeyInfo.pfpUrl.includes(
+                                    DefaultImages.UNKNOWN_USER
+                                  )
+                                ? `url(${currentPasskeyInfo.pfpUrl})`
+                                : 'var(--unknown-icon)',
                         }}
+                        {...getRootProps()}
                       >
-                        {Object.entries(locales).map(([code, label]) => (
-                          <option key={code} value={code}>
-                            {label}
-                          </option>
-                        ))}
-                      </select>
-                      <ReactTooltip
-                        id="language-refresh-tooltip"
-                        place="top"
-                        anchorSelect="#language-refresh-button"
-                        content={t`Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language.`}
-                        className="!bg-surface-5 !text-main !w-[400px]"
-                      />
-                      <Button
-                        id="language-refresh-button"
-                        type="secondary"
-                        disabled={!languageChanged}
-                        onClick={forceUpdate}
-                      >
-                        {t`Refresh`}
-                      </Button>
+                        <input {...getInputProps()} />
+                      </div>
+                      {!isUserIconUploading && !isUserIconDragActive && (
+                        <ReactTooltip
+                          id="user-icon-tooltip"
+                          content="Upload an avatar for your profile - PNG or JPG, Max 1MB, Optimal size 123×123px"
+                          place="bottom"
+                          className="!w-[400px]"
+                          anchorSelect="#user-icon-tooltip-target"
+                        />
+                      )}
+                      <div className="modal-text-section sm:mt-6">
+                        <div className="modal-text-label">{t`Display Name`}</div>
+                        <input
+                          className="w-full quorum-input modal-input-text"
+                          value={displayName}
+                          onChange={(e) => setDisplayName(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="modal-content-section">
+                      {userIconFileError && (
+                        <div className="mb-4">
+                          <div className="error-label flex items-center justify-between">
+                            <span>{userIconFileError}</span>
+                            <FontAwesomeIcon
+                              icon={faTimes}
+                              className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
+                              onClick={() => setUserIconFileError(null)}
+                            />
+                          </div>
+                        </div>
+                      )}
+                      <div className="modal-content-info">
+                        <div className="modal-text-label">{t`Account Address`}</div>
+                        <div className="pt-2 mb-4 modal-text-small text-main">
+                          {t`This is your public address and is safe to share with anyone you want to interact with.`}
+                        </div>
+                        <div className="modal-input-display text-sm lg:text-base">
+                          <div className="break-all flex-1 mr-2">
+                            {currentPasskeyInfo!.address}
+                          </div>
+                          <ClickToCopyContent
+                            className="flex-shrink-0"
+                            tooltipText={t`Copy address`}
+                            text={currentPasskeyInfo!.address}
+                            tooltipLocation="top"
+                            iconClassName="text-surface-10"
+                          >
+                            <></>
+                          </ClickToCopyContent>
+                        </div>
+                      </div>
+                      {/* <div className="modal-content-info">
+                        <div className="modal-text-label">{t`Status`}</div>
+                        <div className="pt-2 mb-4 modal-text-small text-main">
+                          {t`Set a custom status message that others can see.`}
+                        </div>
+                        <input
+                          className="w-full quorum-input modal-input-text"
+                          style={{ background: 'var(--color-bg-input)' }}
+                          value={status}
+                          onChange={(e) => setStatus(e.target.value.slice(0, 100))}
+                          placeholder={t`What's on your mind?`}
+                          maxLength={100}
+                        />
+                        <div className="text-xs text-subtle mt-1">
+                          {status.length}/100 {t`characters`}
+                        </div>
+                      </div> */}
+                      <div className="modal-content-actions">
+                        <Button
+                          type="primary"
+                          onClick={() => {
+                            saveChanges();
+                          }}
+                        >
+                          {t`Save Changes`}
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                );
+              case 'privacy':
+                return (
+                  <>
+                    <div className="modal-content-header">
+                      <div className="modal-text-section">
+                        <div className="modal-text-section-header">{t`Privacy/Security`}</div>
+                        <div className="pt-2 modal-text-small text-main">
+                          {t`Manage devices, and privacy conditions for messaging and synchronization.`}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="modal-content-section">
+                      <div className="modal-content-section-header" />
+                      <div className="modal-text-label pb-2">Devices</div>
+                      {stagedRegistration?.device_registrations.map(
+                        (
+                          d: secureChannel.DeviceRegistration,
+                          index: number
+                        ) => (
+                          <div
+                            key={d.inbox_registration.inbox_address}
+                            className={`flex flex-row justify-between items-center py-3 ${
+                              index > 0
+                                ? 'border-t border-dashed border-surface-7'
+                                : ''
+                            }`}
+                          >
+                            <div className="flex flex-col justify-around font-light break-all flex-1 mr-2 text-sm">
+                              {d.inbox_registration.inbox_address}
+                            </div>
+                            <div className="flex-shrink-0">
+                              {keyset.deviceKeyset?.inbox_keyset
+                                ?.inbox_address !==
+                                d.inbox_registration.inbox_address && (
+                                <Button
+                                  onClick={() => {
+                                    removeDevice(d.identity_public_key);
+                                  }}
+                                  type="danger"
+                                  size="small"
+                                >
+                                  {t`Remove`}
+                                </Button>
+                              )}
+                              {keyset.deviceKeyset.inbox_keyset
+                                .inbox_address ===
+                                d.inbox_registration.inbox_address && (
+                                <Button
+                                  size="small"
+                                  disabled={true}
+                                  onClick={() => {}}
+                                >
+                                  {t`This device`}
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        )
+                      )}
+
+                      <div className="modal-content-info !pt-4">
+                        <div className="modal-content-section-header" />
+                        <div className="modal-text-label">{t`Key Export`}</div>
+
+                        <div className="pt-2 modal-text-small text-main">
+                          {t`Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings.`}
+                        </div>
+                        <div className="pt-4 pb-8 max-w-[100px]">
+                          <Button
+                            type="danger"
+                            onClick={() => {
+                              downloadKey();
+                            }}
+                          >
+                            {t`Export`}
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="modal-content-section-header" />
+                      <div className="modal-text-label">{t`Security`}</div>
+
+                      <div className="pt-2 modal-text-small text-main">
+                        {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
+                      </div>
+                      <div className="modal-content-info">
+                        <div className="flex flex-row justify-between pb-2">
+                          <div className="text-sm flex flex-row">
+                            <div className="text-sm flex flex-col justify-around">
+                              {t`Enable sync`}
+                            </div>
+                            <>
+                              <FontAwesomeIcon
+                                id="allow-sync-tooltip-anchor"
+                                icon={faInfoCircle}
+                                className="info-icon-tooltip mt-2 ml-2"
+                              />
+                              <ReactTooltip
+                                id="allow-sync-tooltip"
+                                anchorSelect="#allow-sync-tooltip-anchor"
+                                content={t`When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined.`}
+                                place="right"
+                                className="!w-[400px]"
+                                showOnTouch
+                                touchTrigger="click"
+                              />
+                            </>
+                          </div>
+
+                          <ToggleSwitch
+                            onClick={() => setAllowSync((prev) => !prev)}
+                            active={allowSync}
+                          />
+                        </div>
+                        <div className="flex flex-row justify-between">
+                          <div className="text-sm flex flex-row">
+                            <div className="text-sm flex flex-col justify-around">
+                              {t`Non-repudiability`}
+                            </div>
+                            <>
+                              <FontAwesomeIcon
+                                id="non-repudiable-tooltip-anchor"
+                                icon={faInfoCircle}
+                                className="info-icon-tooltip mt-2 ml-2"
+                              />
+                              <ReactTooltip
+                                id="non-repudiable-tooltip"
+                                anchorSelect="#non-repudiable-tooltip-anchor"
+                                content={t`When enabled, direct messages are not signed by your user key...`}
+                                place="right"
+                                className="!w-[400px]"
+                                showOnTouch
+                                touchTrigger="click"
+                              />
+                            </>
+                          </div>
+
+                          <ToggleSwitch
+                            onClick={() => setNonRepudiable((prev) => !prev)}
+                            active={nonRepudiable}
+                          />
+                        </div>
+                      </div>
+                      <div className="modal-content-actions">
+                        <Button
+                          type="primary"
+                          onClick={() => {
+                            saveChanges();
+                          }}
+                        >
+                          {t`Save Changes`}
+                        </Button>
+                      </div>
+                    </div>
+                  </>
+                );
+              case 'appearance':
+                return (
+                  <div className="modal-content-section">
+                    <div className="modal-text-section-header">{t`Appearance`}</div>
+                    <div className="modal-text-small text-main pt-2">
+                      {t`Choose your preferred theme for Quorum.`}
+                    </div>
+                    <ThemeRadioGroup />
+
+                    <div className="pt-4">
+                      <AccentColorSwitcher />
+                    </div>
+
+                    <div className="pt-6">
+                      <div className="modal-content-section-header" />
+                      <div className="modal-text-label pb-2">{t`Language`}</div>
+                      <div className="flex flex-row gap-2 items-center">
+                        <select
+                          className="quorum-input w-56 modal-input-select"
+                          value={language}
+                          onChange={async (e) => {
+                            const selected =
+                              e.target.value.toString() as keyof typeof locales;
+                            setLanguage(selected);
+                          }}
+                        >
+                          {Object.entries(locales).map(([code, label]) => (
+                            <option key={code} value={code}>
+                              {label}
+                            </option>
+                          ))}
+                        </select>
+                        <ReactTooltip
+                          id="language-refresh-tooltip"
+                          place="top"
+                          anchorSelect="#language-refresh-button"
+                          content={t`Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language.`}
+                          className="!bg-surface-5 !text-main !w-[400px]"
+                        />
+                        <Button
+                          id="language-refresh-button"
+                          type="secondary"
+                          disabled={!languageChanged}
+                          onClick={forceUpdate}
+                        >
+                          {t`Refresh`}
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-          }
-        })()}
+                );
+            }
+          })()}
+        </div>
       </div>
     </div>
   );

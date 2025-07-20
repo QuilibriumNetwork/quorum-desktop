@@ -1,16 +1,19 @@
 import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faBars,
   faCompressAlt,
   faPlus,
   faSearch,
 } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
 import Button from '../Button';
 import './ExpandableNavMenu.scss';
 import { getConfig } from '../../config/config';
 import { t } from '@lingui/core/macro';
+import { useModalContext } from '../AppWithSearch';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { DefaultImages } from '../../utils';
+import ReactTooltip from '../ReactTooltip';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
 type ExpandableNavMenuProps = {
   showCreateSpaceModal: () => void;
@@ -20,29 +23,56 @@ type ExpandableNavMenuProps = {
 const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
   props
 ) => {
-  const [isExpanded, setExpanded] = useState(false);
+  const { openUserSettings } = useModalContext();
+  const user = usePasskeysContext();
+  const { isDesktop } = useResponsiveLayout();
 
-  return isExpanded ? (
-    <div className="expanded-nav-menu">
-      <div className="invisible-dismissal" onClick={() => setExpanded(false)} />
-      {/* <Button className="expanded-nav-search-spaces" icon type="primary" onClick={(e) => history.push("/spaces/search")} tooltip={localizations["TOOLTIP_SEARCH_SPACES"]([])}><FontAwesomeIcon icon={faSearch}/></Button> */}
-      <Button
-        className="expanded-nav-add-spaces w-10 h-10 ml-3 leading-6 mb-4 inline-block"
-        icon
-        type="primary"
-        onClick={(e) => {
-          setExpanded(false);
-          props.showCreateSpaceModal();
-        }}
-        tooltip={t`Add Space`}
+  // Desktop: Show only + button for creating spaces
+  if (isDesktop) {
+    return (
+      <>
+        <div className="nav-buttons-centered-container">
+          <div
+            className="expanded-nav-button-primary"
+            onClick={() => props.showCreateSpaceModal()}
+            data-tooltip-id="create-space-tooltip-desktop"
+          >
+            <FontAwesomeIcon icon={faPlus} />
+          </div>
+        </div>
+        <ReactTooltip
+          id="create-space-tooltip-desktop"
+          content={t`Create a new Space`}
+          place="right"
+          anchorSelect="[data-tooltip-id='create-space-tooltip-desktop']"
+          highlighted={true}
+        />
+      </>
+    );
+  }
+
+  // Mobile/Tablet: Show both buttons directly (no tooltips to avoid tap conflicts)
+  return (
+    <div className="nav-buttons-centered-container">
+      <div
+        className="expanded-nav-button-primary"
+        onClick={() => props.showCreateSpaceModal()}
       >
         <FontAwesomeIcon icon={faPlus} />
-      </Button>
-      {/* <Button className="expanded-nav-join-spaces w-10 h-10 ml-3 leading-6 mb-4 inline-block" icon type="primary" onClick={(e) => { setExpanded(false); props.showJoinSpaceModal(); }} tooltip={localizations.localizations["TOOLTIP_JOIN_SPACE"]([])}><FontAwesomeIcon icon={faCompressAlt}/></Button> */}
-    </div>
-  ) : (
-    <div className="expand-button cursor-pointer" onClick={() => setExpanded(true)}>
-      <FontAwesomeIcon icon={faBars} />
+      </div>
+      <div
+        className="expanded-nav-button-avatar"
+        onClick={() => openUserSettings()}
+        style={{
+          backgroundImage:
+            user?.currentPasskeyInfo?.pfpUrl &&
+            !user.currentPasskeyInfo.pfpUrl.includes(
+              DefaultImages.UNKNOWN_USER
+            )
+              ? `url(${user.currentPasskeyInfo.pfpUrl})`
+              : 'var(--unknown-icon)',
+        }}
+      />
     </div>
   );
 };

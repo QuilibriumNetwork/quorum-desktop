@@ -19,6 +19,9 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* layout dimensions */
+  --sidebar-left-width: 260px;
 }
 
 /* === LINKS === */
@@ -40,6 +43,15 @@ html.dark a:hover {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+/* === SEARCH HIGHLIGHTING === */
+mark {
+  background-color: rgba(var(--accent-rgb), 0.5) !important;
+  color: var(--color-text-strong) !important;
+  padding: 1px 2px;
+  border-radius: 2px;
+  font-weight: 500;
 }
 
 /* === UTILITIES === */
@@ -89,12 +101,12 @@ h1 {
 
 /* used for onboarding bg */
 .bg-radial--accent-noise {
-  background-color: var(--accent-700);
+  background-color: #034081;
   background-image:
     url('/otis-redding.png'),
     radial-gradient(circle at 90% 100%, #b4e235 0%, transparent 35%),
-    radial-gradient(circle at 60% 50%, var(--accent) 0%, transparent 90%),
-    radial-gradient(circle at 10% 10%, var(--accent-700) 0%, transparent 80%);
+    radial-gradient(circle at 60% 50%, #0287f2 0%, transparent 90%),
+    radial-gradient(circle at 10% 10%, #034081 0%, transparent 80%);
   background-repeat: repeat, no-repeat, no-repeat, no-repeat;
   background-size: auto, cover, cover, cover;
 }

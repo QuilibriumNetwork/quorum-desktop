@@ -11,6 +11,7 @@ import {
   faSmile,
   faUsers,
   faX,
+  faBars,
 } from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import './Channel.scss';
@@ -31,6 +32,9 @@ import { t } from '@lingui/core/macro';
 import ReactTooltip from '../ReactTooltip';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
+import { GlobalSearch } from '../search';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
+import { useModalContext } from '../AppWithSearch';
 
 type ChannelProps = {
   spaceId: string;
@@ -45,6 +49,7 @@ const Channel: React.FC<ChannelProps> = ({
   kickUserAddress,
   setKickUserAddress,
 }) => {
+  const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
   const [state, setState] = React.useState<{
     pendingMessage: string;
     messages: MessageType[];
@@ -60,8 +65,19 @@ const Channel: React.FC<ChannelProps> = ({
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
   const [pendingMessage, setPendingMessage] = useState('');
-  const [showUsers, setShowUsers] = useState(false);
+  const {
+    showRightSidebar: showUsers,
+    setShowRightSidebar: setShowUsers,
+    setRightSidebarContent,
+  } = useModalContext();
   const [init, setInit] = useState(false);
+
+  // Clean up sidebar content when component unmounts
+  React.useEffect(() => {
+    return () => {
+      setRightSidebarContent(null);
+    };
+  }, [setRightSidebarContent]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showStickers, setShowStickers] = useState(false);
   const [inReplyTo, setInReplyTo] = useState<MessageType>();
@@ -181,6 +197,78 @@ const Channel: React.FC<ChannelProps> = ({
       .filter((r) => !activeMembers[r].left);
   }, [roles, activeMembers]);
 
+  // Set sidebar content in context
+  React.useEffect(() => {
+    const sidebarContent = (
+      <>
+        {roles
+          .filter((r) => r.members.length != 0)
+          .map((r) => {
+            const role = r;
+            const roleMembers = Object.keys(activeMembers).filter((s) =>
+              role.members.includes(s)
+            );
+            return (
+              <div className="flex flex-col mb-2" key={'role-' + r}>
+                <div className="font-semibold ml-[1pt] mb-1 text-xs">
+                  {i18n._('{role} - {count}', {
+                    role: role.displayName.toUpperCase(),
+                    count: roleMembers.length,
+                  })}
+                </div>
+                {roleMembers.map((s) => (
+                  <div key={s} className="w-full flex flex-row mb-2">
+                    <div
+                      className="rounded-full w-[40px] h-[40px] mt-[2px]"
+                      style={{
+                        backgroundPosition: 'center',
+                        backgroundSize: 'cover',
+                        backgroundImage: `url(${
+                          members[s]?.userIcon?.includes(
+                            DefaultImages.UNKNOWN_USER
+                          )
+                            ? 'var(--unknown-icon)'
+                            : `url(${members[s]?.userIcon})`
+                        })`,
+                      }}
+                    />
+                    <div className="flex flex-col ml-2 text-main">
+                      <span className="text-md font-bold">
+                        {members[s]?.displayName}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            );
+          })}
+        <div className="flex flex-col">
+          <div className="font-semibold ml-[1pt] mb-1 text-xs">
+            {i18n._('No Role - {count}', { count: noRoleMembers.length })}
+          </div>
+          {noRoleMembers.map((s) => (
+            <div key={s} className="w-full flex flex-row mb-2">
+              <div
+                className="rounded-full w-[40px] h-[40px] mt-[2px]"
+                style={{
+                  backgroundPosition: 'center',
+                  backgroundSize: 'cover',
+                  backgroundImage: `url(${members[s].userIcon})`,
+                }}
+              />
+              <div className="flex flex-col ml-2 text-main">
+                <span className="text-md font-bold">
+                  {members[s].displayName}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
+    );
+    setRightSidebarContent(sidebarContent);
+  }, [roles, activeMembers, members, noRoleMembers, setRightSidebarContent]);
+
   const channel = useMemo(() => {
     return space?.groups
       .find((g) => g.channels.find((c) => c.channelId == channelId))
@@ -234,6 +322,8 @@ const Channel: React.FC<ChannelProps> = ({
   }, [space]);
 
   const sendSticker = async (stickerId: string) => {
+    console.log('Sending sticker:', stickerId);
+    setIsSubmitting(true);
     submitChannelMessage(
       spaceId,
       channelId,
@@ -256,16 +346,20 @@ const Channel: React.FC<ChannelProps> = ({
     state.pendingMessage.split('').filter((c) => c == '\n').length + 1;
 
   return (
-    <div className="channel">
+    <div className="chat-container">
       <div className="flex flex-col">
-        <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] text-main">
-          <span>
-            #{channel?.channelName}
-            {channel?.channelTopic && ' | '}
-          </span>
-          <span className="font-light text-sm">{channel?.channelTopic}</span>
-          <span className="float-right h-4">
-            {/* <FontAwesomeIcon onClick={() => {setShowUsers(false); setShowPins(prev => !prev);}} className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]" icon={faMapPin}/> */}
+        <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
+          <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2 lg:mb-0">
+            <div className="flex flex-row items-center gap-2">
+              {!isDesktop && (
+                <FontAwesomeIcon
+                  onClick={toggleLeftSidebar}
+                  className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"
+                  icon={faBars}
+                />
+              )}
+              <GlobalSearch className="channel-search flex-1 lg:flex-none max-w-xs lg:max-w-none" />
+            </div>
             <FontAwesomeIcon
               onClick={() => {
                 setShowUsers((prev) => !prev);
@@ -273,7 +367,18 @@ const Channel: React.FC<ChannelProps> = ({
               className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"
               icon={faUsers}
             />
-          </span>
+          </div>
+          <div className="flex-1 min-w-0 lg:order-1">
+            <div className="truncate">
+              <span>
+                #{channel?.channelName}
+                {channel?.channelTopic && ' | '}
+              </span>
+              <span className="font-light text-sm">
+                {channel?.channelTopic}
+              </span>
+            </div>
+          </div>
         </div>
         <div
           className={
@@ -349,35 +454,7 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
           </div>
         )}
-        {showStickers && (
-          <>
-            <div
-              className="invisible-dismissal invisible-dismissal-no-blur"
-              onClick={() => setShowStickers(false)}
-            />
-            <div className="relative z-[1002]">
-              <div className="flex flex-col right-11 bottom-[0px] absolute border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4">
-                <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">
-                  Stickers
-                </div>
-                <div className="grid grid-cols-2 gap-4 h-[359px] w-[300px] p-4 overflow-scroll">
-                  {space?.stickers.map((s) => {
-                    return (
-                      <div
-                        key={'sticker-' + s.id}
-                        className="flex flex-col justify-around h-[126px] w-[126px]"
-                        onClick={() => sendSticker(s.id)}
-                      >
-                        <img src={s.imgUrl} />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-        <div {...getRootProps()} className="message-editor-container pr-[20px]">
+        <div {...getRootProps()} className="message-editor-container pr-6 lg:pr-8">
           <div
             className={
               'message-editor w-full flex items-center gap-2 ' +
@@ -393,7 +470,7 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
             <textarea
               ref={editor}
-              className="flex-1 bg-transparent border-0 outline-0 resize-none py-1"
+              className="flex-1 bg-transparent border-0 outline-0 resize-none py-1 placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap"
               placeholder={i18n._('Send a message to #{channel_name}', {
                 channel_name: channel?.channelName ?? '',
               })}
@@ -516,10 +593,15 @@ const Channel: React.FC<ChannelProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Desktop sidebar - only visible on lg+ screens */}
       <div
         className={
-          'w-[260px] bg-surface-3 p-3 overflow-scroll ' +
-          (showUsers ? '' : 'hidden')
+          'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-y-auto ' +
+          'transition-transform duration-300 ease-in-out ' +
+          (showUsers
+            ? 'hidden lg:block translate-x-0 fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
+            : 'hidden')
         }
       >
         {roles
@@ -586,6 +668,7 @@ const Channel: React.FC<ChannelProps> = ({
           ))}
         </div>
       </div>
+
       <ReactTooltip
         id="attach-image-tooltip"
         content={t`attach image`}
@@ -596,6 +679,43 @@ const Channel: React.FC<ChannelProps> = ({
         content={t`add sticker`}
         place="top"
       />
+
+      {/* Stickers panel - positioned at top level to avoid stacking context issues */}
+      {showStickers && (
+        <>
+          <div
+            className="fixed inset-0 top-16 z-[9990]"
+            onClick={() => setShowStickers(false)}
+          />
+          <div className={`fixed bottom-20 z-[9999] pointer-events-none ${showUsers ? 'right-[300px]' : 'right-6'} transition-all duration-300`}>
+            <div className="flex flex-col border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4 pointer-events-auto">
+              <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">
+                Stickers
+              </div>
+              <div className="grid grid-cols-3 auto-rows-min gap-1 w-[300px] p-4 overflow-y-auto max-h-[359px]">
+                {space?.stickers.map((s) => {
+                  return (
+                    <div
+                      key={'sticker-' + s.id}
+                      className="flex justify-center items-center w-[80px] h-[80px] cursor-pointer hover:bg-surface-6 hover:scale-105 transition-all duration-200 rounded-lg p-1 bg-surface-3"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        sendSticker(s.id);
+                      }}
+                    >
+                      <img 
+                        src={s.imgUrl} 
+                        className="max-w-full max-h-full object-contain rounded-md" 
+                        alt="sticker"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

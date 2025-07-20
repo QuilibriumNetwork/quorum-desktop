@@ -1,6 +1,30 @@
+.chat-container {
+  flex: 1 0;
+  border-top-left-radius: 10px;
+  background: var(--color-bg-chat);
+  z-index: 1;
+  display: flex;
+  height: calc(100vh - 14px);
+  flex-direction: row;
+
+  // Mobile layout - ensure full width usage
+  @media (max-width: 1023px) {
+    width: 100%;
+    max-width: 100%;
+    flex: 1;
+  }
+
+  // Ensure the main flex child (chat content) takes full available space
+  > .flex.flex-col {
+    flex: 1;
+    min-width: 0; // Allow shrinking
+    width: 100%;
+  }
+}
+
 .message-name-mentions-you,
 .message-name-mentions-role {
-  padding: 2px 10px;
+  padding: 2px 8px 4px 4px;
   border-radius: 9px;
   line-height: 20px;
   margin-top: 4px;
@@ -16,11 +40,11 @@
 
 .message-mentions-role {
   border-left: 2px solid var(--success);
-  background: rgba(var(--success), 0.2)
+  background: rgba(var(--success), 0.2);
 }
 
 .message-name-mentions-role {
-  background: var(--success-hex)
+  background: var(--success-hex);
 }
 
 .message-name-mentions-you {
@@ -34,10 +58,23 @@
   scrollbar-width: none;
   width: calc(100vw - 584px);
   transition: width 200ms;
+
+  // Mobile override - use full available width
+  @media (max-width: 1023px) {
+    width: 100% !important;
+    flex: 1;
+  }
 }
 
 .message-list-expanded {
-  width: calc(100vw - 322px);
+  flex-grow: 1;
+  width: calc(100vw - 324px);
+
+  // Mobile override - use full available width
+  @media (max-width: 1023px) {
+    width: 100% !important;
+    flex: 1;
+  }
 }
 
 .message-list::-webkit-scrollbar {
@@ -53,15 +90,29 @@
   background-size: cover;
   border-radius: 29px;
   display: inline-block;
+
+  // Smaller on mobile phones
+  @media (max-width: 480px) {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-radius: 18px;
+  }
 }
 
 .message-content {
   flex: 1 0;
   padding-left: 10px;
-  width: 80%;
-  max-width: 800px;
-  max-width: in;
+  width: 100%;
+  max-width: none;
   position: relative;
+  padding-right: 1rem;
+
+  // Mobile override - use full available width
+  @media (max-width: 1023px) {
+    width: 100% !important;
+    max-width: none !important;
+  }
 }
 
 .message-sender-name {
@@ -79,7 +130,7 @@
 }
 
 .message-editor {
-  max-width: 850px;
+  max-width: 100%;
   border-radius: 10px;
   padding: 6px;
   overflow: hidden;
@@ -93,5 +144,18 @@
 
   ::placeholder {
     color: var(--color-text-muted);
+  }
+
+  // Mobile override - use full available width
+  @media (max-width: 1023px) {
+    max-width: none !important;
+  }
+}
+
+.side-bar {
+  display: block;
+
+  &.hidden {
+    display: none;
   }
 }

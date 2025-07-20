@@ -36,7 +36,8 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
   const { currentPasskeyInfo, exportKey } = usePasskeysContext();
   const [clickRestore, setClickRestore] = useState(false);
   const [init, setInit] = useState(false);
-  const { keyset, setKeyset, setSelfAddress, getConfig, saveConfig } = useMessageDB();
+  const { keyset, setKeyset, setSelfAddress, getConfig, saveConfig } =
+    useMessageDB();
   const { data: registration } = useRegistration({
     address: currentPasskeyInfo!.address,
   });
@@ -219,7 +220,9 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
                   userKey: senderIdent,
                 });
                 if (userConfig === undefined) {
-                  const defaultConfig = getDefaultUserConfig(currentPasskeyInfo!.address);
+                  const defaultConfig = getDefaultUserConfig(
+                    currentPasskeyInfo!.address
+                  );
                   saveConfig({
                     config: defaultConfig,
                     keyset,

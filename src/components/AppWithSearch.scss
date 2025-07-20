@@ -1,0 +1,35 @@
+.app-with-search {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.app-search-bar {
+  position: fixed;
+  top: 7px;
+  right: 7px;
+  z-index: 9998;
+
+  // Make sure it's positioned relative to the bg-app area
+  &.app-search-bar {
+    z-index: 9998;
+  }
+
+  // Responsive positioning
+  @media (max-width: 768px) {
+    top: 7px;
+    right: 7px;
+  }
+
+  @media (max-width: 480px) {
+    top: 7px;
+    right: 7px;
+
+    .global-search-bar {
+      min-width: 200px;
+    }
+  }
+}
+
+// Ensure search bar doesn't interfere with existing layout
+// The search bar is positioned absolutely and shouldn't require layout changes

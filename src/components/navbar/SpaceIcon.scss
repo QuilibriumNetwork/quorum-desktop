@@ -1,6 +1,5 @@
 .space-icon {
   width: 48px;
-  margin-left: 4px;
   height: 48px;
   box-sizing: border-box;
   border-radius: 24px;
@@ -12,6 +11,14 @@
   display: inline-block;
   transition: all 100ms linear;
   border: 2px none var(--surface-border);
+
+  // Mobile phone optimization
+  @media (max-width: 480px) {
+    width: 32px;
+    height: 32px;
+    margin-top: 5px;
+    border-radius: 16px;
+  }
 }
 
 .space-icon-large {
@@ -33,30 +40,44 @@
   content: ' ';
   position: absolute;
   width: 6px;
-  height: 7px;
+  height: 6px;
   border-radius: 3px;
-  margin-left: -10px;
+  margin-left: -15px;
   margin-top: 28px;
   z-index: 1000;
-  background: var(--warning-hex);     
+  background: var(--warning-hex);
   transition: all 100ms linear;
+
+  // Mobile phone optimization - adjust positioning for smaller icons
+  @media (max-width: 480px) {
+    margin-left: -12px;
+    margin-top: 18px;
+  }
 }
 
 .space-icon-selected {
   width: 48px;
-  margin-left: 4px;
   height: 48px;
   box-sizing: border-box;
   background-position: center;
   background-size: cover;
   background-color: var(--accent-500);
   background-repeat: no-repeat;
-  margin-top: 7px;
+  margin-top: 8px;
   display: inline-block;
-  box-shadow: 0 0 5px 3px var(--accent-500);
+  box-shadow: 0 0 13px 1px var(--accent-500);
   border: none;
   border-radius: 10px;
   transition: all 100ms linear;
+
+  // Mobile phone optimization
+  @media (max-width: 480px) {
+    width: 32px;
+    height: 32px;
+    margin-top: 4px;
+    border-radius: 8px;
+    box-shadow: none;
+  }
 }
 
 .space-icon-selected-toggle {
@@ -67,9 +88,16 @@
   position: absolute;
   width: 6px;
   height: 20px;
-  margin-left: -10px;
+  margin-left: -15px;
   margin-top: 22px;
   z-index: 1000;
   background: var(--accent-500);
   transition: all 100ms linear;
+
+  // Mobile phone optimization - adjust positioning for smaller icons
+  @media (max-width: 480px) {
+    margin-left: -12px;
+    margin-top: 11px;
+    height: 18px;
+  }
 }

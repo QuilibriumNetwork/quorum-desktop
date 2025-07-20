@@ -1,0 +1,83 @@
+// Mobile Emoji Picker Drawer Specific Styles
+
+.emoji-picker-drawer__content {
+  flex: 1;
+  overflow: hidden;
+  padding: 8px 12px 12px 12px;
+  
+  // Override emoji picker styles for mobile drawer
+  .EmojiPickerReact {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    
+    // Ensure proper sizing
+    width: 100% !important;
+    
+    // Mobile drawer uses global sizing (no overrides needed)
+    
+    // Mobile-optimized search
+    .epr-search-container {
+      padding: 12px 8px;
+    }
+    
+    .epr-search {
+      font-size: 16px; // Prevent iOS zoom
+      padding: 12px 16px;
+      border-radius: 12px;
+    }
+    
+    // Category navigation - basic spacing only (focus styling is global)
+    .epr-category-nav {
+      padding: 8px 4px;
+      gap: 4px;
+    }
+    
+    // Emoji body
+    .epr-body {
+      height: 500px; // Much taller for mobile
+    }
+    
+    // Individual emoji categories - make them taller (but exclude frequently used)
+    .epr-emoji-category:not([data-name="suggested"]) {
+      min-height: 400px !important;
+    }
+    
+    // Keep frequently used section compact
+    .epr-emoji-category[data-name="suggested"] {
+      min-height: auto !important;
+      max-height: 120px !important;
+    }
+    
+    // Preview section
+    .epr-preview {
+      padding: 12px;
+      border-top: 1px solid var(--surface-3);
+      min-height: 60px;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 375px) {
+  .emoji-picker-drawer__content {
+    padding: 6px 8px 8px 8px;
+    
+    .EmojiPickerReact {
+      // Size variables handled globally, only drawer-specific heights here
+      .epr-body {
+        height: 420px; // Much taller even on small screens
+      }
+      
+      .epr-emoji-category:not([data-name="suggested"]) {
+        min-height: 350px !important;
+      }
+      
+      .epr-emoji-category[data-name="suggested"] {
+        min-height: auto !important;
+        max-height: 100px !important;
+      }
+    }
+  }
+}

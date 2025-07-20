@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import * as moment from 'moment-timezone';
 import * as linkify from 'linkifyjs';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -31,6 +32,9 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
 import ReactTooltip from '../../components/ReactTooltip';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { useLongPress } from '../../hooks/useLongPress';
+import { useModalContext } from '../AppWithSearch';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -92,6 +96,44 @@ export const Message = ({
 }: MessageProps) => {
   const user = usePasskeysContext();
   const { spaceId } = useParams();
+  const location = useLocation();
+  const { openMobileActionsDrawer, openMobileEmojiDrawer } = useModalContext();
+
+  // Responsive layout and device detection
+  const { isMobile } = useResponsiveLayout();
+  const isTouchDevice = 'ontouchstart' in window;
+  const useMobileDrawer = isMobile;
+  const useDesktopTap = !isMobile && isTouchDevice;
+  const useDesktopHover = !isMobile && !isTouchDevice;
+
+  // State for mobile emoji drawer (kept separate from actions drawer)
+  const [showEmojiDrawer, setShowEmojiDrawer] = useState(false);
+
+  // State for desktop tap interaction
+  const [actionsVisibleOnTap, setActionsVisibleOnTap] = useState(false);
+
+  // State for copied link feedback
+  const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null);
+
+  // State for shared tooltip
+  const [hoveredAction, setHoveredAction] = useState<string | null>(null);
+
+  // Effect to handle hiding tablet actions when clicking elsewhere
+  React.useEffect(() => {
+    if (useDesktopTap && actionsVisibleOnTap && hoverTarget === message.messageId) {
+      const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as Element;
+        if (!target.closest(`#msg-${message.messageId}`)) {
+          setHoverTarget(undefined);
+          setActionsVisibleOnTap(false);
+        }
+      };
+
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [useDesktopTap, actionsVisibleOnTap, hoverTarget, message.messageId]);
+
   const customEmojis = useMemo(() => {
     if (!customEmoji) return [];
 
@@ -105,8 +147,8 @@ export const Message = ({
   }, [customEmoji]);
   let sender = mapSenderToUser(message.content?.senderId);
   const isHashTarget = useMemo(() => {
-    return window.location.hash === `#msg-${message.messageId}`;
-  }, [message.messageId]);
+    return location.hash === `#msg-${message.messageId}`;
+  }, [message.messageId, location.hash]);
   const time = moment.tz(
     message.createdDate,
     Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -144,7 +186,123 @@ export const Message = ({
     }
   };
 
-  const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null);
+  // Long-press handler for mobile and tablets
+  const longPressHandlers = useLongPress({
+    onLongPress: () => {
+      if (useMobileDrawer) {
+        // Mobile: Open drawer
+        openMobileActionsDrawer({
+          message,
+          onReply: handleReply,
+          onCopyLink: handleCopyLink,
+          onDelete: canUserDelete ? handleDelete : undefined,
+          onReaction: handleReaction,
+          onMoreReactions: handleMoreReactions,
+          canDelete: canUserDelete,
+          userAddress: user.currentPasskeyInfo!.address,
+        });
+        if ('vibrate' in navigator) {
+          navigator.vibrate(50);
+        }
+      } else if (useDesktopTap) {
+        // Tablet: Show inline actions and hide others
+        setHoverTarget(message.messageId);
+        setActionsVisibleOnTap(true);
+      }
+    },
+    delay: 500,
+  });
+
+  // Action handlers
+  const handleReaction = (emoji: string) => {
+    if (!message.reactions?.find(r => r.emojiId === emoji)?.memberIds.includes(user.currentPasskeyInfo!.address)) {
+      submitMessage({
+        type: 'reaction',
+        messageId: message.messageId,
+        reaction: emoji,
+      });
+    } else {
+      submitMessage({
+        type: 'remove-reaction',
+        messageId: message.messageId,
+        reaction: emoji,
+      });
+    }
+  };
+
+  const handleReply = () => {
+    setInReplyTo(message);
+    editorRef?.focus();
+  };
+
+  const handleCopyLink = () => {
+    const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
+    navigator.clipboard.writeText(url);
+    setCopiedLinkId(message.messageId);
+    setTimeout(() => {
+      setCopiedLinkId(prev => prev === message.messageId ? null : prev);
+    }, 1500);
+  };
+
+  const handleDelete = () => {
+    submitMessage({
+      type: 'remove-message',
+      removeMessageId: message.messageId,
+    });
+  };
+
+  const handleMoreReactions = () => {
+    if (useMobileDrawer) {
+      openMobileEmojiDrawer({
+        onEmojiClick: handleReaction,
+        customEmojis: customEmojis,
+      });
+    } else {
+      setShowEmojiDrawer(true);
+    }
+  };
+
+  // Tooltip content mapping function
+  const getTooltipContent = (action: string | null) => {
+    switch (action) {
+      case 'emoji':
+        return t`More reactions`;
+      case 'reply':
+        return t`Reply`;
+      case 'copy':
+        return copiedLinkId === message.messageId ? t`Copied!` : t`Copy message link`;
+      case 'delete':
+        return t`Delete message`;
+      default:
+        return '';
+    }
+  };
+
+  // Get the correct anchor ID for each action
+  const getTooltipAnchorId = (action: string | null) => {
+    switch (action) {
+      case 'emoji':
+        return `#emoji-tooltip-icon-${message.messageId}`;
+      case 'reply':
+        return `#reply-tooltip-icon-${message.messageId}`;
+      case 'copy':
+        return `#copy-link-tooltip-icon-${message.messageId}`;
+      case 'delete':
+        return `#delete-tooltip-icon-${message.messageId}`;
+      default:
+        return '';
+    }
+  };
+
+  // Get the correct placement for each action
+  const getTooltipPlacement = (action: string | null) => {
+    switch (action) {
+      case 'delete':
+        return 'top-end'; // Delete is at the right edge, so expand left
+      default:
+        return 'top'; // All others open above and center
+    }
+  };
 
   return (
     <div
@@ -156,12 +314,30 @@ export const Message = ({
           : '') +
         (isHashTarget ? ' message-highlighted' : '')
       }
-      onMouseOver={() => setHoverTarget(message.messageId)}
-      onMouseOut={() => setHoverTarget(undefined)}
-      onClick={() => {
+      // Desktop mouse interaction
+      onMouseOver={() => useDesktopHover && setHoverTarget(message.messageId)}
+      onMouseOut={() => useDesktopHover && setHoverTarget(undefined)}
+      onClick={(e) => {
+        // Prevent default click behavior for mobile drawer
+        if (useMobileDrawer) {
+          e.preventDefault();
+        }
+
+        // For tablets, regular click should hide actions (not show them)
+        if (useDesktopTap) {
+          // Hide actions if clicking on a different message or same message
+          if (hoverTarget !== message.messageId) {
+            setHoverTarget(undefined);
+            setActionsVisibleOnTap(false);
+          }
+        }
+
+        // Common click behaviors
         setShowUserProfile(false);
         setEmojiPickerOpen(undefined);
       }}
+      // Mobile and tablet touch interaction
+      {...(useMobileDrawer || useDesktopTap ? longPressHandlers : {})}
     >
       {(() => {
         if (message.content.type == 'post') {
@@ -220,7 +396,7 @@ export const Message = ({
       {!['join', 'leave', 'kick'].includes(message.content.type) && (
         <div
           className={
-            'flex flex-row font-[11pt] px-[11px] pb-[8px] ' +
+            'flex flex-row w-full font-[11pt] px-[11px] pb-[8px] ' +
             ((
               !(message.content as any).repliesToMessageId
                 ? undefined
@@ -232,46 +408,6 @@ export const Message = ({
               : 'pt-[8px]')
           }
         >
-          {emojiPickerOpen === message.messageId && (
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className={
-                'absolute right-0 z-[1000] flex flex-row-reverse ' +
-                (emojiPickerOpenDirection == 'upwards' ? 'top-[-420px]' : '')
-              }
-            >
-              <EmojiPicker
-                suggestedEmojisMode={SuggestionMode.FREQUENT}
-                customEmojis={customEmojis}
-                getEmojiUrl={(unified, style) => {
-                  return '/apple/64/' + unified + '.png';
-                }}
-                skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                theme={Theme.DARK}
-                className={'right-0 absolute'}
-                onEmojiClick={(e) => {
-                  if (
-                    !message.reactions
-                      ?.find((r) => r.emojiId == e.emoji)
-                      ?.memberIds.includes(user.currentPasskeyInfo!.address)
-                  ) {
-                    submitMessage({
-                      type: 'reaction',
-                      messageId: message.messageId,
-                      reaction: e.emoji,
-                    });
-                  } else {
-                    submitMessage({
-                      type: 'remove-reaction',
-                      messageId: message.messageId,
-                      reaction: e.emoji,
-                    });
-                  }
-                  setEmojiPickerOpen(undefined);
-                }}
-              />
-            </div>
-          )}
           {showUserProfile && spaceId && (
             <div
               onClick={(e) => setShowUserProfile(false)}
@@ -319,13 +455,13 @@ export const Message = ({
             }}
           />
           <div className="message-content">
-            {hoverTarget === message.messageId && (
+            {((hoverTarget === message.messageId && useDesktopHover) || (hoverTarget === message.messageId && actionsVisibleOnTap && useDesktopTap)) && (
               <div
                 onClick={(e) => {
                   e.stopPropagation();
                   return false;
                 }}
-                className="absolute flex flex-row right-0 top-[-10px] p-1 bg-tooltip select-none shadow-lg rounded-lg"
+                className="absolute flex flex-row right-4 top-[-10px] p-1 bg-tooltip select-none shadow-lg rounded-lg"
               >
                 <div
                   onClick={() => {
@@ -382,78 +518,54 @@ export const Message = ({
                   🔥
                 </div>
                 <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
-                <>
-                  <div
-                    id={`emoji-tooltip-icon-${message.messageId}`}
-                    onClick={(e) => {
-                      setEmojiPickerOpen(message.messageId);
-                      setEmojiPickerOpenDirection(
-                        e.clientY / height > 0.5 ? 'upwards' : 'downwards'
+                <div
+                  id={`emoji-tooltip-icon-${message.messageId}`}
+                  onClick={(e) => {
+                    setEmojiPickerOpen(message.messageId);
+                    setEmojiPickerOpenDirection(
+                      e.clientY / height > 0.5 ? 'upwards' : 'downwards'
+                    );
+                  }}
+                  onMouseEnter={() => setHoveredAction('emoji')}
+                  onMouseLeave={() => setHoveredAction(null)}
+                  className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faFaceSmileBeam} />
+                </div>
+
+                <div
+                  id={`reply-tooltip-icon-${message.messageId}`}
+                  onClick={() => {
+                    setInReplyTo(message);
+                    editorRef?.focus();
+                  }}
+                  onMouseEnter={() => setHoveredAction('reply')}
+                  onMouseLeave={() => setHoveredAction(null)}
+                  className="w-5 mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faReply} />
+                </div>
+
+                <div
+                  id={`copy-link-tooltip-icon-${message.messageId}`}
+                  onClick={() => {
+                    const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
+                    navigator.clipboard.writeText(url);
+                    setCopiedLinkId(message.messageId);
+
+                    // Reset tooltip after 1.5s
+                    setTimeout(() => {
+                      setCopiedLinkId((prev) =>
+                        prev === message.messageId ? null : prev
                       );
-                    }}
-                    className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
-                  >
-                    <FontAwesomeIcon icon={faFaceSmileBeam} />
-                  </div>
-                  <ReactTooltip
-                    id={`emoji-tooltip-${message.messageId}`}
-                    content={t`More reactions`}
-                    place="top"
-                    anchorSelect={`#emoji-tooltip-icon-${message.messageId}`}
-                  />
-                </>
-
-                <>
-                  <div
-                    id={`reply-tooltip-icon-${message.messageId}`}
-                    onClick={() => {
-                      setInReplyTo(message);
-                      editorRef?.focus();
-                    }}
-                    className="w-5 mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
-                  >
-                    <FontAwesomeIcon icon={faReply} />
-                  </div>
-
-                  <ReactTooltip
-                    id={`reply-tooltip-${message.messageId}`}
-                    content={t`Reply`}
-                    place="top"
-                    anchorSelect={`#reply-tooltip-icon-${message.messageId}`}
-                  />
-                </>
-
-                <>
-                  <div
-                    id={`copy-link-tooltip-icon-${message.messageId}`}
-                    onClick={() => {
-                      const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
-                      navigator.clipboard.writeText(url);
-                      setCopiedLinkId(message.messageId);
-
-                      // Reset tooltip after 1.5s
-                      setTimeout(() => {
-                        setCopiedLinkId((prev) =>
-                          prev === message.messageId ? null : prev
-                        );
-                      }, 1500);
-                    }}
-                    className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
-                  >
-                    <FontAwesomeIcon icon={faLink} />
-                  </div>
-
-                  <ReactTooltip
-                    id={`copy-link-tooltip-${message.messageId}`}
-                    content={
-                      copiedLinkId === message.messageId
-                        ? t`Copied!`
-                        : t`Copy message link`
-                    }
-                    place="top-start"
-                    anchorSelect={`#copy-link-tooltip-icon-${message.messageId}`}
-                  />
-                </>
+                    }, 1500);
+                  }}
+                  onMouseEnter={() => setHoveredAction('copy')}
+                  onMouseLeave={() => setHoveredAction(null)}
+                  className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                >
+                  <FontAwesomeIcon icon={faLink} />
+                </div>
 
                 {canUserDelete && (
                   <>
@@ -467,6 +579,8 @@ export const Message = ({
                           removeMessageId: message.messageId,
                         });
                       }}
+                      onMouseEnter={() => setHoveredAction('delete')}
+                      onMouseLeave={() => setHoveredAction(null)}
                       className="w-5 text-center transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
                     >
                       <FontAwesomeIcon
@@ -474,17 +588,87 @@ export const Message = ({
                         className="text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125"
                       />
                     </div>
-
-                    <ReactTooltip
-                      id={`delete-tooltip-${message.messageId}`}
-                      content={t`Delete message`}
-                      place="top-start"
-                      anchorSelect={`#delete-tooltip-icon-${message.messageId}`}
-                    />
                   </>
                 )}
               </div>
             )}
+            
+            {/* Shared tooltip for all action icons to avoid flashing issues */}
+            {((hoverTarget === message.messageId && useDesktopHover) || (hoverTarget === message.messageId && actionsVisibleOnTap && useDesktopTap)) && hoveredAction && (
+              <ReactTooltip
+                id={`shared-action-tooltip-${message.messageId}`}
+                content={getTooltipContent(hoveredAction)}
+                place={getTooltipPlacement(hoveredAction) as any}
+                anchorSelect={getTooltipAnchorId(hoveredAction)}
+              />
+            )}
+            
+            {emojiPickerOpen === message.messageId && (
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className={
+                  'absolute right-4 z-[9999] ' +
+                  (emojiPickerOpenDirection == 'upwards' ? 'bottom-6' : 'top-0')
+                }
+              >
+                <EmojiPicker
+                  suggestedEmojisMode={SuggestionMode.FREQUENT}
+                  customEmojis={customEmojis}
+                  getEmojiUrl={(unified, style) => {
+                    return '/apple/64/' + unified + '.png';
+                  }}
+                  skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
+                  theme={Theme.DARK}
+                  onEmojiClick={(e) => {
+                    if (
+                      !message.reactions
+                        ?.find((r) => r.emojiId == e.emoji)
+                        ?.memberIds.includes(user.currentPasskeyInfo!.address)
+                    ) {
+                      submitMessage({
+                        type: 'reaction',
+                        messageId: message.messageId,
+                        reaction: e.emoji,
+                      });
+                    } else {
+                      submitMessage({
+                        type: 'remove-reaction',
+                        messageId: message.messageId,
+                        reaction: e.emoji,
+                      });
+                    }
+                    setEmojiPickerOpen(undefined);
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Mobile Emoji Picker */}
+            {useMobileDrawer && showEmojiDrawer && (
+              <Modal
+                title=""
+                visible={showEmojiDrawer}
+                onClose={() => setShowEmojiDrawer(false)}
+                hideClose={false}
+              >
+                <EmojiPicker
+                  width="100%"
+                  height={300}
+                  suggestedEmojisMode={SuggestionMode.FREQUENT}
+                  customEmojis={customEmojis}
+                  getEmojiUrl={(unified, style) => {
+                    return '/apple/64/' + unified + '.png';
+                  }}
+                  skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
+                  theme={Theme.DARK}
+                  onEmojiClick={(e) => {
+                    handleReaction(e.emoji);
+                    setShowEmojiDrawer(false);
+                  }}
+                />
+              </Modal>
+            )}
+
             <span className="message-sender-name">{sender.displayName}</span>
             <span className="pl-2">
               {!repudiability && !message.signature && (
@@ -598,6 +782,7 @@ export const Message = ({
                         style={{
                           maxWidth: 300,
                           maxHeight: 300,
+                          width: '100%',
                           cursor: 'pointer',
                         }}
                         className="rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer"
@@ -626,12 +811,12 @@ export const Message = ({
                 );
               }
             })()}
-            <div className="flex flex-row pt-1">
+            <div className="flex flex-wrap pt-1 -mr-1">
               {message.reactions?.map((r) => (
                 <div
                   key={message.messageId + '-reactions-' + r.emojiId}
                   className={
-                    'cursor-pointer flex flex-row mr-1 rounded-lg py-[1pt] px-2 border border-transparent ' +
+                    'cursor-pointer flex flex-row items-center mr-1 mb-1 rounded-lg py-[1pt] px-2 border border-transparent whitespace-nowrap ' +
                     (r.memberIds.includes(user.currentPasskeyInfo!.address)
                       ? 'bg-accent-150 hover:bg-accent-200 dark:bg-accent-700 dark:hover:bg-accent-600'
                       : 'bg-tooltip hover:bg-surface-5')
@@ -650,15 +835,15 @@ export const Message = ({
                   {customEmojis.find((e) => e.id === r.emojiName) ? (
                     <img
                       width="24"
-                      className="mr-2"
+                      className="mr-1"
                       src={
                         customEmojis.find((e) => e.id === r.emojiName)?.imgUrl
                       }
                     />
                   ) : (
-                    r.emojiName
-                  )}{' '}
-                  {r.count}
+                    <span className="mr-1">{r.emojiName}</span>
+                  )}
+                  <span className="text-sm">{r.count}</span>
                 </div>
               ))}
             </div>

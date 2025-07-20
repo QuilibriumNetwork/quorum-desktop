@@ -2,14 +2,15 @@ import {
   faClipboard,
   faReply,
   faShieldAlt,
+  faTimes,
 } from '@fortawesome/free-solid-svg-icons';
 import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import Button from '../Button';
 import Input from '../Input';
-import TooltipButton from '../TooltipButton';
 import UserOnlineStateIndicator from './UserOnlineStateIndicator';
+import ClickToCopyContent from '../ClickToCopyContent';
 import './UserProfile.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Role } from '../../api/quorumApi';
@@ -115,7 +116,10 @@ const UserProfile: React.FunctionComponent<{
   }, [acceptedFiles]);
 
   return (
-    <div className="user-profile shadow-md" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="user-profile shadow-md"
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="user-profile-header">
         {props.editMode ? (
           <div
@@ -158,17 +162,18 @@ const UserProfile: React.FunctionComponent<{
             </div>
           )}
           <div className="flex flex-row py-1 text-subtle">
-            <div className="text-xs w-[175px] truncate">
+            <div className="text-xs w-[140px] truncate">
               {props.user.address}
             </div>
-            <FontAwesomeIcon
-              className="hover:text-main cursor-pointer"
-              title='Copy to clipboard'
-              icon={faClipboard}
-              onClick={() => {
-                navigator.clipboard.writeText(props.user.address);
-              }}
-            />
+            <ClickToCopyContent
+              className="ml-2"
+              tooltipText={t`Copy address`}
+              text={props.user.address}
+              tooltipLocation="top"
+              iconClassName="text-subtle hover:text-surface-7"
+            >
+              <></>
+            </ClickToCopyContent>
           </div>
           <div className="user-profile-state">
             <UserOnlineStateIndicator user={props.user} />
@@ -220,7 +225,8 @@ const UserProfile: React.FunctionComponent<{
                         acceptedFiles[0].type +
                         ';base64,' +
                         Buffer.from(fileData).toString('base64')
-                      : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
+                      : (currentPasskeyInfo!.pfpUrl ??
+                        DefaultImages.UNKNOWN_USER),
                   address: currentPasskeyInfo!.address,
                 });
                 updateUserProfile(
@@ -230,7 +236,8 @@ const UserProfile: React.FunctionComponent<{
                         acceptedFiles[0].type +
                         ';base64,' +
                         Buffer.from(fileData).toString('base64')
-                    : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
+                    : (currentPasskeyInfo!.pfpUrl ??
+                        DefaultImages.UNKNOWN_USER),
                   currentPasskeyInfo!
                 );
                 if (props.dismiss !== undefined) {
@@ -273,60 +280,62 @@ const UserProfile: React.FunctionComponent<{
                       key={'user-profile-role-' + r.roleId}
                       className={'message-name-mentions-role'}
                     >
-                      <span
-                        className="hover:bg-surface-3 rounded-full px-[.3rem] cursor-pointer ml-[-.25rem] font-thin"
+                      <FontAwesomeIcon
+                        icon={faTimes}
+                        className="hover:bg-black hover:bg-opacity-30 rounded-full p-1 cursor-pointer mr-1 text-sm align-middle"
                         onClick={() => removeRole(r.roleId)}
-                      >
-                        x
-                      </span>{' '}
-                      {r.displayName}
+                      />
+                      <span className="text-xs">{r.displayName}</span>
                     </span>
                   ))}
               {props.canEditRoles &&
                 props.roles
                   ?.filter((r) => !r.members.includes(props.user.address))
                   .map((r) => (
-                    <Button
+                    <div
                       key={'user-profile-add-role-' + r.roleId}
-                      className="!py-0"
-                      onClick={() => {
-                        addRole(r.roleId);
-                      }}
-                      type="primary"
+                      className="w-full sm:w-auto sm:inline-block"
                     >
-                      + {r.roleTag}
-                    </Button>
+                      <Button
+                        className="!py-0 w-full sm:w-auto"
+                        onClick={() => {
+                          addRole(r.roleId);
+                        }}
+                        type="primary"
+                      >
+                        + {r.roleTag}
+                      </Button>
+                    </div>
                   ))}
             </div>
           </div>
           {currentPasskeyInfo!.address !== props.user.address && (
-            <div className="bg-tooltip rounded-b-xl p-1">
-              <div className="user-profile-actions">
-                <TooltipButton
-                  icon={faReply}
-                  text={t`Send Message`}
+            <div className="bg-tooltip rounded-b-xl p-3">
+              <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2">
+                <Button
+                  size="small"
+                  className="justify-center text-center hover:bg-surface-1 rounded text-main"
                   onClick={() => {
                     navigate('/messages/' + props.user.address);
                     props.dismiss && props.dismiss();
                   }}
-                />
+                >
+                  {t`Send Message`}
+                </Button>
+                {props.canEditRoles && (
+                  <Button
+                    type="danger"
+                    size="small"
+                    className="justify-center text-center hover:bg-surface-1 rounded text-main"
+                    onClick={() => {
+                      props.setKickUserAddress!(props.user.address);
+                      props.dismiss && props.dismiss();
+                    }}
+                  >
+                    {t`Kick User`}
+                  </Button>
+                )}
               </div>
-              {props.canEditRoles && (
-                <>
-                  <div className="user-profile-content-section-header"></div>
-                  <div className="user-profile-actions">
-                    <TooltipButton
-                      type="danger"
-                      icon={faShieldAlt}
-                      text={t`Kick User`}
-                      onClick={() => {
-                        props.setKickUserAddress!(props.user.address);
-                        props.dismiss && props.dismiss();
-                      }}
-                    />
-                  </div>
-                </>
-              )}
             </div>
           )}
         </div>

@@ -16,7 +16,9 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export const useTheme = () => useContext(ThemeContext);
 
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [theme, setThemeState] = useState<Theme>('system');
 
   // we need to keep track of the resolved theme because the theme
@@ -29,7 +31,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     html.classList.remove('light', 'dark');
 
     if (value === 'system') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const prefersDark = window.matchMedia(
+        '(prefers-color-scheme: dark)'
+      ).matches;
       html.classList.add(prefersDark ? 'dark' : 'light');
       setResolvedTheme(prefersDark ? 'dark' : 'light');
     } else {

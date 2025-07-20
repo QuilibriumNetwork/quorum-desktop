@@ -2,9 +2,11 @@
 @use './styles/_colors.scss';
 @use './styles/_base.scss';
 @use './styles/_components.scss';
+@use './styles/_emoji-picker.scss';
+@use './components/MobileDrawer.scss';
+@use './components/message/MessageActionsDrawer.scss';
+@use './components/message/EmojiPickerDrawer.scss';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-

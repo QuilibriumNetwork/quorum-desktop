@@ -3,19 +3,35 @@
   background-color: var(--color-bg-modal);
   border-radius: 10px;
   padding: 26px;
-  animation: createBox 0.25s;
+  animation: modalOpen 0.3s ease-out;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  @media (max-width: 768px) {
+    margin: 16px;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+  }
 }
 
 .quorum-modal-closing {
-  scale: 0;
-  transition: scale 0.25s;
+  opacity: 0;
+  transform: scale(0.95);
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
 }
 
-@keyframes createBox {
+@keyframes modalOpen {
   from {
-    transform: scale(0);
+    opacity: 0;
+    transform: scale(0.95);
   }
   to {
+    opacity: 1;
     transform: scale(1);
   }
 }
@@ -28,13 +44,25 @@
 
 .quorum-modal-title {
   font-size: 24px;
-  text-align: center;
+  text-align: left;
   padding-bottom: 20px;
-  color: var(--color-text-strong)
+  color: var(--color-text-strong);
+
+  @media (max-width: 640px) {
+    font-size: 20px;
+    padding-bottom: 16px;
+    text-align: center;
+  }
 }
 
 .quorum-modal-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+/* Backdrop - no animation to prevent flash */
+.fixed.inset-0.z-\[9999\] {
+  opacity: 1;
+  animation: none !important;
 }

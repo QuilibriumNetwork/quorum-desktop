@@ -1,19 +1,37 @@
-@import '../../styles/chat';
-
-.direct-message {
-  flex: 1 0;
-  border-top-left-radius: 10px;
-  background: var(--surface-2);
-  z-index: 1;
-  display: flex;
-  height: calc(100vh - 35px);
-  flex-direction: row;
-}
+@use '../../styles/chat';
 
 .direct-message-name {
   font-weight: 700;
   font-size: 16px;
   border-bottom: 1px solid var(--surface-5);
+
+  // Responsive layout for mobile/tablet
+  @media (max-width: 1023px) {
+    gap: 6px;
+
+    // Ensure search bar + users icon are properly spaced on top
+    .dm-search {
+      flex: 1;
+    }
+  }
+}
+
+
+// Mobile layout - ensure chat container fills available space
+@media (max-width: 1023px) {
+  .chat-container {
+    position: relative;
+    overflow: hidden;
+    flex: 1; // Expand to fill available space when sidebar is hidden
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0; // Allow shrinking
+  }
+
+  // Force full width for all chat content
+  .chat-container * {
+    max-width: 100%;
+  }
 }
 
 .message-editor {
@@ -34,7 +52,7 @@
   border-bottom: 0px;
   border-left: 1px;
   border-top: 1px;
-  border-color: var(--color-border-strong) ;
+  border-color: var(--color-border-strong);
   border-style: solid;
   margin-left: 37px;
   margin-top: 8px;
@@ -74,5 +92,3 @@
   width: 40%;
   overflow-x: hidden;
 }
-
-

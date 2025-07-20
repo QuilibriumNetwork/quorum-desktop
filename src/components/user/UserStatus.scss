@@ -1,16 +1,17 @@
 .user-status {
-  height: 48px;
+  height: 52px;
   background: var(--surface-4);
   display: flex;
   flex-direction: row;
   flex-shrink: 0;
-  width: 250px;
-  cursor: pointer;
+  width: var(--sidebar-left-width);
   user-select: none;
 }
 
-.user-status:hover {
-  background:  var(--surface-5);
+@media (max-width: 1023px) {
+  .user-status {
+    width: var(--sidebar-left-width);
+  }
 }
 
 .user-status-icon {

@@ -1,11 +1,50 @@
 .group-editor {
   position: absolute;
   z-index: 3000;
-  width: 300px;
   background: var(--surface-3);
   border-radius: 10px;
   color: var(--color-text-main);
   user-select: none;
+  animation: modalOpen 0.3s ease-out;
+}
+
+.group-editor.group-editor-closing {
+  opacity: 0;
+  transform: scale(0.95);
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
+}
+
+.group-editor-close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-subtle);
+  transition: all 0.2s ease;
+  z-index: 10;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--color-text-main);
+    transform: scale(1.1);
+  }
+
+  @media (max-width: 768px) {
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .group-editor-header {
@@ -80,7 +119,7 @@
 
 .group-editor-banner,
 .group-editor-banner-editable {
-  width: 260px;
+  width: var(--sidebar-left-width);
   height: 120px;
   background-position: center;
   background-size: cover;

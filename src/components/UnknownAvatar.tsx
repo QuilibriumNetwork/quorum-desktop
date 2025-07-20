@@ -3,10 +3,10 @@
 import React from 'react';
 
 interface UnknownAvatarProps {
-  size?: number; 
+  size?: number;
   className?: string;
-  bgColor?: string; 
-  iconColor?: string; 
+  bgColor?: string;
+  iconColor?: string;
 }
 
 const UnknownAvatar = ({

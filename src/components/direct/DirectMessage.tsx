@@ -1,7 +1,12 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faUsers, faX } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPlus,
+  faUsers,
+  faX,
+  faBars,
+} from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { EmbedMessage, Message as MessageType } from '../../api/quorumApi';
 import './DirectMessage.scss';
@@ -10,6 +15,7 @@ import { useMessageDB } from '../context/MessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
 import { useInvalidateConversation } from '../../hooks/queries/conversation/useInvalidateConversation';
+import { useModalContext } from '../AppWithSearch';
 import { MessageList } from '../message/MessageList';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
@@ -18,10 +24,12 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import ReactTooltip from '../ReactTooltip';
 import ClickToCopyContent from '../ClickToCopyContent';
-import { DefaultImages } from '../../utils';
-import CopyToClipboard from '../CopyToClipboard';
+import { DefaultImages, truncateAddress } from '../../utils';
+import { GlobalSearch } from '../search';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 const DirectMessage: React.FC<{}> = (p: {}) => {
+  const { isDesktop, isMobile, isTablet, toggleLeftSidebar } = useResponsiveLayoutContext();
   const [fileError, setFileError] = useState<string | null>(null);
   let { address } = useParams<{ address: string }>();
   const conversationId = address! + '/' + address!;
@@ -140,8 +148,58 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     };
     return m;
   }, [registration, conversation]);
-  const [showUsers, setShowUsers] = React.useState(false);
+  const {
+    showRightSidebar: showUsers,
+    setShowRightSidebar: setShowUsers,
+    setRightSidebarContent,
+  } = useModalContext();
   const [acceptChat, setAcceptChat] = React.useState(false);
+
+  // Set sidebar content in context
+  React.useEffect(() => {
+    const sidebarContent = (
+      <div className="flex flex-col">
+        {Object.keys(members).map((s) => (
+          <div key={s} className="w-full flex flex-row items-center mb-2">
+            <div
+              className="rounded-full w-[36px] h-[36px] flex-shrink-0"
+              style={{
+                backgroundPosition: 'center',
+                backgroundSize: 'cover',
+                backgroundImage: `url(${members[s].userIcon})`,
+              }}
+            />
+            <div className="flex flex-col ml-2">
+              <span className="text-md font-bold truncate w-[190px] text-main/90">
+                {members[s].displayName}{' '}
+                {members[s].address === user.currentPasskeyInfo!.address && (
+                  <span className="text-xs text-subtle">({t`You`})</span>
+                )}
+              </span>
+              <span className="text-xs truncate w-[190px] text-surface-9 dark:text-surface-8">
+                <ClickToCopyContent
+                  text={members[s].address}
+                  tooltipText={t`Copy address`}
+                  tooltipLocation="left-start"
+                  iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
+                >
+                  {truncateAddress(members[s].address)}
+                </ClickToCopyContent>
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+    setRightSidebarContent(sidebarContent);
+  }, [members, user.currentPasskeyInfo, setRightSidebarContent]);
+
+  // Clean up sidebar content when component unmounts
+  React.useEffect(() => {
+    return () => {
+      setRightSidebarContent(null);
+    };
+  }, [setRightSidebarContent]);
 
   const mapSenderToUser = (senderId: string) => {
     return (
@@ -197,10 +255,29 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     : 'url(' + userIcon + ')';
   console.log('userIcon', icon);
   return (
-    <div className="direct-message">
+    <div className="chat-container">
       <div className="flex flex-col">
-        <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] text-main flex flex-row justify-between">
-          <div className="flex flex-row">
+        <div className="direct-message-name mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
+          <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2">
+            <div className="flex flex-row items-center gap-2">
+              {(isMobile || isTablet) && (
+                <FontAwesomeIcon
+                  onClick={toggleLeftSidebar}
+                  className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"
+                  icon={faBars}
+                />
+              )}
+              <GlobalSearch className="dm-search flex-1 lg:flex-none max-w-xs lg:max-w-none" />
+            </div>
+            <FontAwesomeIcon
+              onClick={() => {
+                setShowUsers((prev) => !prev);
+              }}
+              className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"
+              icon={faUsers}
+            />
+          </div>
+          <div className="flex flex-row items-center lg:order-1">
             <div className="flex flex-col justify-around">
               <div
                 className="w-[28px] h-[28px] bg-cover bg-center rounded-full"
@@ -217,26 +294,18 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 <div className="flex flex-row items-center">
                   <ClickToCopyContent
                     text={address ?? ''}
-                    tooltipText={t`Copy address to clipboard`}
+                    tooltipText={t`Copy address`}
+                    tooltipLocation="right"
                     className="font-light text-sm text-subtle"
                     iconPosition="right"
                     iconClassName="text-subtle hover:text-surface-7"
                   >
-                    {address}
+                    {truncateAddress(address ?? '')}
                   </ClickToCopyContent>
                 </div>
               </div>
             </div>
           </div>
-          <span className="float-right h-4">
-            <FontAwesomeIcon
-              onClick={() => {
-                setShowUsers((prev) => !prev);
-              }}
-              className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"
-              icon={faUsers}
-            />
-          </span>
         </div>
         <div
           className={
@@ -318,7 +387,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           </div>
         )}
 
-        <div {...getRootProps()} className="message-editor-container pr-[20px]">
+        <div {...getRootProps()} className="message-editor-container pr-6 lg:pr-8">
           <div
             className={
               'message-editor w-full flex items-center gap-2 ' +
@@ -334,7 +403,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
             </div>
             <textarea
               ref={editor}
-              className="flex-1 bg-transparent border-0 outline-0 resize-none py-1"
+              className="flex-1 bg-transparent border-0 outline-0 resize-none py-1 placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap"
               placeholder={i18n._('Send a message to {user}', {
                 user: mapSenderToUser(address ?? '').displayName,
               })}
@@ -455,17 +524,22 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           </div>
         </div>
       </div>
+
+      {/* Desktop sidebar - only visible on lg+ screens */}
       <div
         className={
-          'w-[260px] bg-sidebar p-3 ' + // removed overflow-scroll
-          (showUsers ? '' : 'hidden')
+          'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-y-auto ' +
+          'transition-transform duration-300 ease-in-out ' +
+          (showUsers
+            ? 'hidden lg:block translate-x-0 fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
+            : 'hidden')
         }
       >
         <div className="flex flex-col">
           {Object.keys(members).map((s) => (
-            <div key={s} className="w-full flex flex-row mb-2">
+            <div key={s} className="w-full flex flex-row items-center mb-2">
               <div
-                className="rounded-full w-[40px] h-[40px] mt-[2px]"
+                className="rounded-full w-[36px] h-[36px] flex-shrink-0"
                 style={{
                   backgroundPosition: 'center',
                   backgroundSize: 'cover',
@@ -482,11 +556,11 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 <span className="text-xs truncate w-[190px] text-surface-9 dark:text-surface-8">
                   <ClickToCopyContent
                     text={members[s].address}
-                    tooltipText={t`Copy address to clipboard`}
+                    tooltipText={t`Copy address`}
                     tooltipLocation="left-start"
                     iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
                   >
-                    {members[s].address}
+                    {truncateAddress(members[s].address)}
                   </ClickToCopyContent>
                 </span>
               </div>
@@ -494,6 +568,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           ))}
         </div>
       </div>
+
       <ReactTooltip
         id="attach-image-tooltip-dm"
         content={t`attach image`}

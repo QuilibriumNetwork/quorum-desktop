@@ -1,7 +1,6 @@
-import { createPortal } from 'react-dom';
+import React, { useState } from 'react';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
 import './Modal.scss';
 
 type ModalProps = {
@@ -38,9 +37,9 @@ const Modal: React.FunctionComponent<ModalProps> = (props) => {
 
   if (!shouldRender) return null;
 
-  return createPortal(
+  return (
     <div
-      className="fixed inset-0 z-[2000] flex items-center justify-center bg-overlay backdrop-blur"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur"
       onClick={() => {
         if (!props.hideClose) close();
       }}
@@ -65,8 +64,7 @@ const Modal: React.FunctionComponent<ModalProps> = (props) => {
         </div>
         <div className="quorum-modal-container">{props.children}</div>
       </div>
-    </div>,
-    document.body
+    </div>
   );
 };
 

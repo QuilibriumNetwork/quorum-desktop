@@ -21,7 +21,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lingui:extract": "lingui extract",
-    "lingui:compile": "lingui compile --typescript"
+    "lingui:compile": "lingui compile"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -31,6 +31,10 @@
     "@fortawesome/free-solid-svg-icons": "^6.7.1",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@iden3/js-crypto": "^1.1.0",
+    "@lingui/babel-plugin-lingui-macro": "^5.3.3",
+    "@lingui/cli": "^5.3.3",
+    "@lingui/react": "^5.3.3",
+    "@lingui/vite-plugin": "^5.3.3",
     "@quilibrium/quilibrium-js-sdk-channels": "file:../quilibrium-js-sdk-channels",
     "@tanstack/react-query": "^5.62.7",
     "base58-js": "^2.0.0",
@@ -41,6 +45,7 @@
     "emoji-datasource-apple": "^15.1.2",
     "emoji-picker-react": "^4.12.0",
     "linkifyjs": "^4.2.0",
+    "minisearch": "^7.1.2",
     "moment-timezone": "^0.5.46",
     "multiformats": "^13.3.1",
     "qs": "^6.13.1",
@@ -55,10 +60,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
-    "@lingui/babel-plugin-lingui-macro": "^5.3.2",
-    "@lingui/cli": "^5.3.2",
-    "@lingui/react": "^5.3.2",
-    "@lingui/vite-plugin": "^5.3.2",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-basic-ssl": "^1.2.0",
@@ -75,8 +76,9 @@
     "prettier": "^3.4.2",
     "sass-embedded": "^1.83.0",
     "tailwindcss": "^3.4.16",
+    "unenv": "^1.10.0",
     "vite": "^6.0.1",
-    "vite-plugin-node-polyfills": "^0.23.0"
+    "vite-plugin-node-polyfills": "^0.22.0"
   },
   "resolutions": {
     "@quilibrium/quilibrium-js-sdk-channels": "file:../quilibrium-js-sdk-channels"

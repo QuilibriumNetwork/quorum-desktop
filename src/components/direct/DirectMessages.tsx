@@ -4,10 +4,13 @@ import DirectMessageContactsList from './DirectMessageContactsList';
 import DirectMessage from './DirectMessage';
 import UserStatus from '../user/UserStatus';
 import { EmptyDirectMessage } from './EmptyDirectMessage';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 import './DirectMessages.scss';
 import { useRegistrationContext } from '../context/RegistrationPersister';
-import UserSettingsModal from '../modals/UserSettingsModal';
+import { useModalContext } from '../AppWithSearch';
+import ReactTooltip from '../ReactTooltip';
+import { t } from '@lingui/core/macro';
 
 type DirectMessagesProps = {
   user: any;
@@ -31,33 +34,31 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
 ) => {
   let { address } = useParams<{ address: string }>();
   const { keyset } = useRegistrationContext();
-  let [isUserSettingsOpen, setIsUserSettingsOpen] =
-    React.useState<boolean>(false);
+  const { isMobile, isTablet, leftSidebarOpen, closeLeftSidebar, openLeftSidebar } =
+    useResponsiveLayoutContext();
+
+  // Removed automatic sidebar opening behavior - sidebar now opens only when user clicks burger menu
+  const { openUserSettings } = useModalContext();
 
   return (
     <div className="direct-messages-container">
-      {isUserSettingsOpen ? (
-        <>
-          <div className="invisible-dismissal invisible-dark">
-            <UserSettingsModal
-              setUser={props.setUser}
-              dismiss={() => setIsUserSettingsOpen(false)}
-            />
-            <div
-              className="invisible-dismissal"
-              onClick={() => setIsUserSettingsOpen(false)}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
+      {/* Mobile backdrop overlay - show when sidebar is visible */}
+      {(isMobile || isTablet) && leftSidebarOpen && (
+        <div
+          className="fixed inset-y-0 right-0 bg-overlay z-[997]"
+          style={{ left: window.innerWidth <= 480 ? '50px' : '74px' }}
+          onClick={closeLeftSidebar}
+        />
       )}
-      <div className="direct-messages-container-channels">
+
+      <div
+        className={`direct-messages-container-channels ${leftSidebarOpen && (isMobile || isTablet) ? 'open' : ''}`}
+      >
         <React.Suspense>
           {keyset.deviceKeyset?.inbox_keyset && <DirectMessageContactsList />}
         </React.Suspense>
         <UserStatus
-          setIsUserSettingsOpen={setIsUserSettingsOpen}
+          setIsUserSettingsOpen={openUserSettings}
           setUser={props.setUser}
           setAuthState={props.setAuthState}
           user={props.user}
@@ -70,6 +71,12 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
           <EmptyDirectMessage />
         )}
       </React.Suspense>
+      <ReactTooltip
+        id="add-friend-tooltip"
+        content={t`Add friend`}
+        place="right"
+        className="z-[9999]"
+      />
     </div>
   );
 };

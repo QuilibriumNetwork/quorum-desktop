@@ -4,9 +4,10 @@ import ChannelList from '../channel/ChannelList';
 import Channel from '../channel/Channel';
 import UserStatus from '../user/UserStatus';
 import { useSpace } from '../../hooks';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 import './Space.scss';
-import UserSettingsModal from '../modals/UserSettingsModal';
+import { useModalContext } from '../AppWithSearch';
 
 type SpaceProps = {
   user: any;
@@ -30,35 +31,32 @@ type SpaceProps = {
 const Space: React.FunctionComponent<SpaceProps> = (props) => {
   let params = useParams<{ spaceId: string; channelId: string }>();
   let { data: space } = useSpace({ spaceId: params.spaceId! });
+  const { isMobile, isTablet, leftSidebarOpen, closeLeftSidebar } =
+    useResponsiveLayoutContext();
+  const { openUserSettings } = useModalContext();
+
   if (!props || !space || !params.spaceId || !params.channelId) {
     return <></>;
   }
-  let [isUserSettingsOpen, setIsUserSettingsOpen] =
-    React.useState<boolean>(false);
 
   return (
     <div className="space-container">
-      {isUserSettingsOpen ? (
-        <>
-          <div className="invisible-dismissal invisible-dark">
-            <UserSettingsModal
-              setUser={props.setUser}
-              dismiss={() => setIsUserSettingsOpen(false)}
-            />
-            <div
-              className="invisible-dismissal"
-              onClick={() => setIsUserSettingsOpen(false)}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
+      {/* Mobile backdrop overlay */}
+      {(isMobile || isTablet) && leftSidebarOpen && (
+        <div
+          className="fixed inset-y-0 right-0 bg-overlay z-[997]"
+          style={{ left: window.innerWidth <= 480 ? '50px' : '74px' }}
+          onClick={closeLeftSidebar}
+        />
       )}
-      <div className="space-container-channels">
+
+      <div
+        className={`space-container-channels ${leftSidebarOpen && (isMobile || isTablet) ? 'open' : ''}`}
+      >
         <ChannelList spaceId={params.spaceId} />
         <UserStatus
           setUser={props.setUser}
-          setIsUserSettingsOpen={setIsUserSettingsOpen}
+          setIsUserSettingsOpen={openUserSettings}
           setAuthState={props.setAuthState}
           user={props.user}
         />

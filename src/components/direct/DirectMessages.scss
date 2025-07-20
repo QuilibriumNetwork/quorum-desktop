@@ -4,6 +4,16 @@
   justify-content: stretch;
   height: 100%;
   width: 100%;
+
+  // Mobile layout - ensure main content expands when sidebar is hidden
+  @media (max-width: 1023px) {
+    // When sidebar is hidden, the container should flex properly
+    > * {
+      flex: 1; // All direct children (DirectMessage component) should expand
+      width: 100%;
+      max-width: 100%;
+    }
+  }
 }
 
 .direct-messages-container-channels {
@@ -11,4 +21,35 @@
   flex-direction: column;
   justify-content: stretch;
   height: 100%;
+  width: var(--sidebar-left-width);
+  min-width: var(--sidebar-left-width);
+  max-width: var(--sidebar-left-width);
+
+  // Mobile responsive behavior - smooth slide animation with proper hiding
+  @media (max-width: 1023px) {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: calc(
+      74px - var(--sidebar-left-width)
+    ); // Position so that when translateX(-100%) it's completely hidden
+    width: var(--sidebar-left-width);
+    height: 100vh;
+    background-color: var(--color-bg-sidebar);
+    z-index: 998;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    transform: translateX(-100%); // Hidden: move completely left
+    transition: transform 300ms ease-in-out;
+
+    &.open {
+      transform: translateX(100%); // Visible: slide to navbar edge position
+    }
+
+    // Phone-specific positioning for smaller NavMenu
+    @media (max-width: 480px) {
+      left: calc(50px - var(--sidebar-left-width)); // Adjust for smaller navbar
+    }
+  }
 }
