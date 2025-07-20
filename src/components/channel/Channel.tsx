@@ -322,6 +322,8 @@ const Channel: React.FC<ChannelProps> = ({
   }, [space]);
 
   const sendSticker = async (stickerId: string) => {
+    console.log('Sending sticker:', stickerId);
+    setIsSubmitting(true);
     submitChannelMessage(
       spaceId,
       channelId,
@@ -682,23 +684,30 @@ const Channel: React.FC<ChannelProps> = ({
       {showStickers && (
         <>
           <div
-            className="fixed inset-0 top-16 z-[9998]"
+            className="fixed inset-0 top-16 z-[9990]"
             onClick={() => setShowStickers(false)}
           />
-          <div className={`fixed bottom-20 z-[9990] pointer-events-none ${showUsers ? 'right-[300px]' : 'right-6'} transition-all duration-300`}>
+          <div className={`fixed bottom-20 z-[9999] pointer-events-none ${showUsers ? 'right-[300px]' : 'right-6'} transition-all duration-300`}>
             <div className="flex flex-col border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4 pointer-events-auto">
               <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">
                 Stickers
               </div>
-              <div className="grid grid-cols-2 gap-4 h-[359px] w-[300px] p-4 overflow-scroll">
+              <div className="grid grid-cols-3 auto-rows-min gap-1 w-[300px] p-4 overflow-y-auto max-h-[359px]">
                 {space?.stickers.map((s) => {
                   return (
                     <div
                       key={'sticker-' + s.id}
-                      className="flex flex-col justify-around h-[126px] w-[126px]"
-                      onClick={() => sendSticker(s.id)}
+                      className="flex justify-center items-center w-[80px] h-[80px] cursor-pointer hover:bg-surface-6 hover:scale-105 transition-all duration-200 rounded-lg p-1 bg-surface-3"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        sendSticker(s.id);
+                      }}
                     >
-                      <img src={s.imgUrl} />
+                      <img 
+                        src={s.imgUrl} 
+                        className="max-w-full max-h-full object-contain rounded-md" 
+                        alt="sticker"
+                      />
                     </div>
                   );
                 })}
