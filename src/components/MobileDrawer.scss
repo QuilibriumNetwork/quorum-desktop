@@ -11,6 +11,8 @@
   flex-direction: column;
   max-height: 90vh;
   transition: transform 0.2s ease-out;
+  // Safe area handling for mobile devices
+  padding-bottom: calc(8px + env(safe-area-inset-bottom));
   
   &--closing {
     animation: slide-down 0.3s ease-out forwards;
@@ -19,9 +21,6 @@
   &--dragging {
     transition: none; // Disable transition during drag for immediate feedback
   }
-  
-  // Safe area handling for mobile devices
-  padding-bottom: calc(8px + env(safe-area-inset-bottom));
 }
 
 .mobile-drawer__handle {

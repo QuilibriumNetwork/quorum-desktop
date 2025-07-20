@@ -21,27 +21,31 @@ msgstr "لا يمكن أن يكون حجم الملف أكبر من {maxFileSize
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/Onboarding.tsx:294
-msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "يجب أن يكون حجم صورة ملفك الشخصي {maxFileSize} أو أقل ويجب أن يكون بامتداد PNG أو JPG أو JPEG."
+msgid ""
+"Your profile image size must be {maxFileSize} or less and must be a PNG, "
+"JPG, or JPEG file extension."
+msgstr ""
+"يجب أن يكون حجم صورة ملفك الشخصي {maxFileSize} أو أقل ويجب أن يكون بامتداد "
+"PNG أو JPG أو JPEG."
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:141
+#: src/components/message/Message.tsx:181
 msgid "{user} has joined"
 msgstr "{user} انضم"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:143
+#: src/components/message/Message.tsx:183
 msgid "{user} has left"
 msgstr "{user} غادر"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:145
+#: src/components/message/Message.tsx:185
 msgid "{user} has been kicked"
 msgstr "{user} تم طرده"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:341
-#: src/components/channel/Channel.tsx:417
+#: src/components/channel/Channel.tsx:419
 msgid "Replying to {user}"
 msgstr "ردًا على {user}"
 
@@ -52,80 +56,108 @@ msgstr "أرسل رسالة إلى {user}"
 
 #. js-lingui-explicit-id
 #: src/components/channel/Channel.tsx:214
-#: src/components/channel/Channel.tsx:644
+#: src/components/channel/Channel.tsx:617
 msgid "{role} - {count}"
 msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
 #: src/components/channel/Channel.tsx:247
-#: src/components/channel/Channel.tsx:677
+#: src/components/channel/Channel.tsx:650
 msgid "No Role - {count}"
 msgstr "لا دور - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:500
+#: src/components/channel/Channel.tsx:474
 msgid "Send a message to #{channel_name}"
 msgstr "أرسل رسالة إلى #{channel_name}"
 
 #. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:204
+#: src/components/search/SearchResults.tsx:222
 msgid "{0} result"
 msgstr "{0} نتيجة"
 
 #. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:205
+#: src/components/search/SearchResults.tsx:223
 msgid "{0} results"
 msgstr "{0} نتائج"
 
-#: src/components/modals/UserSettingsModal.tsx:268
+#: src/components/direct/DirectMessageContactsList.tsx:59
+msgid "+ Add a friend"
+msgstr "أضف صديقًا"
+
+#: src/components/modals/UserSettingsModal.tsx:348
 msgid "Account Address"
 msgstr "عنوان الحساب"
 
-#: src/components/channel/ChannelList.tsx:150
+#: src/components/direct/DirectMessages.tsx:76
+msgid "Add friend"
+msgstr "أضف صديق"
+
+#: src/components/channel/ChannelList.tsx:95
 msgid "Add Group"
 msgstr "إضافة مجموعة"
 
-#: src/components/channel/SpaceEditor.tsx:550
+#: src/components/channel/SpaceEditor.tsx:750
 msgid "Add Role"
 msgstr "إضافة دور"
 
-#: src/components/navbar/ExpandableNavMenu.tsx:37
-msgid "Add Space"
-msgstr "إضافة مساحة"
-
-#: src/components/channel/Channel.tsx:706
+#: src/components/channel/Channel.tsx:679
 msgid "add sticker"
 msgstr "أضف ملصق"
 
-#: src/components/channel/SpaceEditor.tsx:674
-msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
-msgstr "أضف ما يصل إلى 50 رمز تعبيري مخصص. يمكن استخدام الرموز التعبيرية المخصصة فقط داخل مساحة."
+#: src/components/channel/SpaceEditor.tsx:873
+msgid ""
+"Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
+"You can upload PNG, JPG or GIF, max 256kB."
+msgstr ""
+"أضف حتى 50 رمز تعبيري مخصص. يمكن استخدام الرموز التعبيرية المخصصة فقط داخل "
+"Espacio. يمكنك تحميل PNG أو JPG أو GIF، بحد أقصى 256 كيلوبايت."
 
-#: src/components/channel/SpaceEditor.tsx:776
-msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space."
-msgstr "أضف ما يصل إلى 50 ملصق مخصص. يمكن استخدام الملصقات المخصصة فقط داخل مساحة."
+#: src/components/channel/SpaceEditor.tsx:971
+msgid ""
+"Add up to 50 custom stickers. Custom stickers can only be used within a "
+"Space. You can upload PNG, JPG or GIF, max 256kB."
+msgstr ""
+"أضف حتى 50 ملصق مخصص. يمكن استخدام الملصقات المخصصة فقط داخل Espacio. يمكنك "
+"تحميل PNG أو JPG أو GIF، بحد أقصى 256 كيلوبايت."
 
-#: src/components/modals/UserSettingsModal.tsx:370
-msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
-msgstr "قم بضبط إعدادات الأمان المتعلقة، والتي قد تؤثر على تجربة المستخدم ولكن تزيد من أمان حسابك في Quorum."
+#: src/components/modals/NewDirectMessageModal.tsx:69
+msgid "Addresses must be exactly 46 characters long."
+msgstr "يجب أن تكون العناوين بطول 46 حرفًا بالضبط."
 
-#: src/components/modals/CreateSpaceModal.tsx:218
+#: src/components/modals/NewDirectMessageModal.tsx:75
+msgid "Addresses start with \"Qm\"."
+msgstr "تبدأ العناوين بـ \"Qm\"."
+
+#: src/components/modals/UserSettingsModal.tsx:479
+msgid ""
+"Adjust security-related settings, which may impact user  experience but "
+"increase the security of your Quorum account."
+msgstr ""
+"قم بضبط إعدادات الأمان المتعلقة، والتي قد تؤثر على تجربة المستخدم ولكن تزيد "
+"من أمان حسابك في Quorum."
+
+#: src/components/modals/CreateSpaceModal.tsx:261
 msgid "Advanced Settings"
 msgstr "إعدادات متقدمة"
 
-#: src/components/modals/UserSettingsModal.tsx:208
-#: src/components/modals/UserSettingsModal.tsx:230
-#: src/components/modals/UserSettingsModal.tsx:444
+#: src/components/modals/UserSettingsModal.tsx:263
+#: src/components/modals/UserSettingsModal.tsx:288
+#: src/components/modals/UserSettingsModal.tsx:555
 msgid "Appearance"
 msgstr "المظهر"
 
 #. placeholder {0}: space?.spaceName
-#: src/components/channel/LeaveSpace.tsx:32
-msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
-msgstr "هل أنت متأكد أنك تريد مغادرة {0}؟ لن تتمكن من إعادة الانضمام ما لم يتم دعوتك مرة أخرى."
+#: src/components/modals/LeaveSpaceModal.tsx:36
+msgid ""
+"Are you sure you want to leave {0}? You won't be able to rejoin unless you "
+"are re-invited."
+msgstr ""
+"هل أنت متأكد أنك تريد مغادرة {0}؟ لن تتمكن من إعادة الانضمام ما لم يتم دعوتك"
+" مرة أخرى."
 
-#: src/components/direct/DirectMessage.tsx:575
-#: src/components/channel/Channel.tsx:701
+#: src/components/direct/DirectMessage.tsx:574
+#: src/components/channel/Channel.tsx:674
 msgid "attach image"
 msgstr "إرفاق صورة"
 
@@ -133,56 +165,70 @@ msgstr "إرفاق صورة"
 msgid "Away"
 msgstr "بعيد"
 
-#: src/components/channel/SpaceEditor.tsx:1064
+#: src/components/channel/SpaceEditor.tsx:1269
 msgid "Be patient, this can take a few seconds..."
-msgstr ""
+msgstr "كن صبورًا، قد يستغرق هذا بضع ثوانٍ..."
 
 #: src/components/user/UserOnlineStateIndicator.tsx:16
 msgid "Busy"
 msgstr "مشغول"
 
-#: src/components/channel/SpaceEditor.tsx:623
+#: src/components/channel/SpaceEditor.tsx:821
 msgid "Can delete messages?"
 msgstr "هل يمكن حذف الرسائل؟"
 
-#: src/components/channel/LeaveSpace.tsx:43
-msgid "Cancel"
-msgstr "إلغاء"
+#: src/components/modals/UserSettingsModal.tsx:588
+msgid ""
+"Changes are made automatically, but the active page may not be updated. "
+"Refresh the page to apply the new language."
+msgstr ""
+"تُجرى التغييرات تلقائيًا، لكن قد لا يتم تحديث الصفحة النشطة. قم بتحديث "
+"الصفحة لتطبيق اللغة الجديدة."
 
-#: src/components/modals/UserSettingsModal.tsx:477
-msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
-msgstr "تُجرى التغييرات تلقائيًا، لكن قد لا يتم تحديث الصفحة النشطة. قم بتحديث الصفحة لتطبيق اللغة الجديدة."
-
-#: src/components/channel/ChannelEditor.tsx:118
+#: src/components/channel/ChannelEditor.tsx:133
 msgid "Channel Name"
 msgstr "اسم القناة"
 
-#: src/components/channel/ChannelEditor.tsx:132
+#: src/components/channel/ChannelEditor.tsx:147
 msgid "Channel Topic"
 msgstr "موضوع القناة"
 
-#: src/components/modals/UserSettingsModal.tsx:446
+#: src/components/modals/UserSettingsModal.tsx:557
 msgid "Choose your preferred theme for Quorum."
 msgstr "اختر المظهر المفضل لديك لـ Quorum."
 
-#: src/components/search/SearchBar.tsx:170
+#: src/components/search/SearchBar.tsx:186
 msgid "Clear search"
 msgstr "مسح البحث"
 
-#: src/components/channel/SpaceEditor.tsx:527
+#: src/components/modals/LeaveSpaceModal.tsx:57
+#: src/components/modals/KickUserModal.tsx:58
+#: src/components/channel/SpaceEditor.tsx:1377
+msgid "Click again to confirm"
+msgstr "انقر مرة أخرى للتأكيد"
+
+#: src/components/channel/SpaceEditor.tsx:725
 msgid "Click on the role name and tag to edit them."
 msgstr "انقر على اسم الدور والعلامة لتعديلهما."
 
 #: src/components/onboarding/Onboarding.tsx:206
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
-msgstr "انقر على الزر أدناه لإنشاء نسخة احتياطية من معلوماتك الأساسية، لأنه بمجرد أن تذهب، تذهب إلى الأبد. قد يُطلب منك المصادقة مرة أخرى."
+msgid ""
+"Click the button below to create a backup of your key info, because once "
+"it's gone, it's gone  forever. You may be prompted to authenticate again."
+msgstr ""
+"انقر على الزر أدناه لإنشاء نسخة احتياطية من معلوماتك الأساسية، لأنه بمجرد أن"
+" تذهب، تذهب إلى الأبد. قد يُطلب منك المصادقة مرة أخرى."
 
-#: src/components/ClickToCopyContent.tsx:38
+#: src/components/ClickToCopyContent.tsx:46
 msgid "Click to copy"
 msgstr "انقر لنسخ"
 
-#: src/components/channel/GroupEditor.tsx:106
-#: src/components/channel/ChannelEditor.tsx:152
+#: src/components/MobileDrawer.tsx:145
+msgid "Close"
+msgstr "أغلق"
+
+#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/ChannelEditor.tsx:167
 msgid "Confirm Deletion"
 msgstr "تأكيد الحذف"
 
@@ -190,31 +236,28 @@ msgstr "تأكيد الحذف"
 msgid "Connecting"
 msgstr "جارٍ الاتصال"
 
-#: src/components/CopyToClipboard.tsx:83
-#: src/components/ClickToCopyContent.tsx:105
-#: src/components/message/Message.tsx:452
+#: src/components/ClickToCopyContent.tsx:170
+#: src/components/message/Message.tsx:273
 msgid "Copied!"
 msgstr "تم النسخ!"
 
-#: src/components/user/UserStatus.tsx:98
-#: src/components/modals/UserSettingsModal.tsx:275
-#: src/components/direct/DirectMessage.tsx:183
-#: src/components/direct/DirectMessage.tsx:298
-#: src/components/direct/DirectMessage.tsx:560
-msgid "Copy address to clipboard"
-msgstr "نسخ العنوان إلى الحافظة"
+#: src/components/user/UserStatus.tsx:48
+#: src/components/user/UserProfile.tsx:170
+#: src/components/modals/UserSettingsModal.tsx:358
+#: src/components/direct/DirectMessage.tsx:182
+#: src/components/direct/DirectMessage.tsx:297
+#: src/components/direct/DirectMessage.tsx:559
+msgid "Copy address"
+msgstr "انسخ العنوان"
 
-#: src/components/channel/SpaceEditor.tsx:1069
+#: src/components/channel/SpaceEditor.tsx:1274
 msgid "Copy invite link to clipboard"
 msgstr "نسخ رابط الدعوة إلى الحافظة"
 
-#: src/components/message/Message.tsx:453
+#: src/components/message/MessageActionsDrawer.tsx:117
+#: src/components/message/Message.tsx:273
 msgid "Copy message link"
 msgstr "نسخ رابط الرسالة"
-
-#: src/components/CopyToClipboard.tsx:44
-msgid "Copy to clipboard"
-msgstr "نسخ إلى الحافظة"
 
 #: src/components/context/MessageDB.tsx:5131
 msgid "Could not add Space"
@@ -229,7 +272,11 @@ msgstr "لم يتمكن من الحصول على البيان لـ Space"
 msgid "Could not verify invite"
 msgstr "لم يتمكن من التحقق من الدعوة"
 
-#: src/components/modals/CreateSpaceModal.tsx:78
+#: src/components/navbar/ExpandableNavMenu.tsx:45
+msgid "Create a new Space"
+msgstr "أنشئ Espacio جديد"
+
+#: src/components/modals/CreateSpaceModal.tsx:94
 msgid "Create a Space"
 msgstr "إنشاء Space"
 
@@ -237,15 +284,15 @@ msgstr "إنشاء Space"
 msgid "Create New Account"
 msgstr "إنشاء حساب جديد"
 
-#: src/components/modals/CreateSpaceModal.tsx:209
+#: src/components/modals/CreateSpaceModal.tsx:252
 msgid "Create Space"
 msgstr "إنشاء Space"
 
-#: src/components/modals/CreateSpaceModal.tsx:209
+#: src/components/modals/CreateSpaceModal.tsx:252
 msgid "Creating Space..."
 msgstr "جارٍ إنشاء Space..."
 
-#: src/components/channel/SpaceEditor.tsx:1044
+#: src/components/channel/SpaceEditor.tsx:1247
 msgid "Current Invite Link"
 msgstr "رابط الدعوة الحالي"
 
@@ -261,75 +308,85 @@ msgstr "مساحة مفككة بدون مفتاح تكوين معروف"
 msgid "Decrypted Space with no known hub key"
 msgstr "مساحة مفككة بدون مفتاح مركز معروف"
 
-#: src/components/channel/SpaceEditor.tsx:422
+#: src/components/channel/SpaceEditor.tsx:612
 msgid "Default Channel"
 msgstr "القناة الافتراضية"
 
-#: src/components/modals/CreateSpaceModal.tsx:116
-msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
-msgstr "توفر إعدادات Space الافتراضية تجربة دردشة نموذجية، ولكن للحصول على ضمانات خصوصية أعلى، راجع الإعدادات المتقدمة."
+#: src/components/modals/CreateSpaceModal.tsx:159
+msgid ""
+"Default Space settings provide the most typical chat experience, but for "
+"higher privacy guarantees, review Advanced Settings."
+msgstr ""
+"توفر إعدادات Space الافتراضية تجربة دردشة نموذجية، ولكن للحصول على ضمانات "
+"خصوصية أعلى، راجع الإعدادات المتقدمة."
 
-#: src/components/channel/ChannelEditor.tsx:152
+#: src/components/channel/ChannelEditor.tsx:167
 msgid "Delete Channel"
 msgstr "حذف القناة"
 
-#: src/components/channel/GroupEditor.tsx:106
+#: src/components/channel/GroupEditor.tsx:121
 msgid "Delete Group"
 msgstr "حذف المجموعة"
 
-#: src/components/message/Message.tsx:482
+#: src/components/message/MessageActionsDrawer.tsx:124
+#: src/components/message/Message.tsx:275
 msgid "Delete message"
 msgstr "حذف الرسالة"
 
-#: src/components/search/SearchResultItem.tsx:49
+#: src/components/channel/SpaceEditor.tsx:453
+#: src/components/channel/SpaceEditor.tsx:501
+#: src/components/channel/SpaceEditor.tsx:1375
+msgid "Delete Space"
+msgstr "احذف Espacio"
+
+#: src/components/channel/SpaceEditor.tsx:1347
+msgid "Delete this space"
+msgstr "احذف هذا الفضاء"
+
+#: src/components/search/SearchResultItem.tsx:51
 msgid "Direct Message"
 msgstr "رسالة مباشرة"
 
 #: src/components/navbar/NavMenu.tsx:99
-#: src/components/direct/EmptyDirectMessage.tsx:28
-#: src/components/direct/DirectMessageContactsList.tsx:27
+#: src/components/direct/DirectMessageContactsList.tsx:35
 msgid "Direct Messages"
 msgstr "الرسائل المباشرة"
 
-#: src/components/modals/UserSettingsModal.tsx:258
+#: src/components/modals/UserSettingsModal.tsx:326
 msgid "Display Name"
 msgstr "اسم العرض"
 
-#: src/components/modals/KickUserModal.tsx:51
-msgid "Do it!"
-msgstr "افعلها!"
+#: src/components/MobileDrawer.tsx:125
+msgid "Drawer"
+msgstr "درج"
 
 #: src/components/onboarding/Onboarding.tsx:166
 msgid "Drop your profile photo here"
 msgstr "اسحب صورة ملفك الشخصي هنا"
 
-#: src/components/user/UserStatus.tsx:70
-msgid "Edit Profile"
-msgstr "تعديل الملف الشخصي"
+#: src/components/message/EmojiPickerDrawer.tsx:38
+msgid "Emoji picker"
+msgstr "اختيار رمز تعبيري"
 
-#: src/components/channel/ChannelList.tsx:82
-msgid "Edit Space"
-msgstr "تعديل Space"
-
-#: src/components/channel/SpaceEditor.tsx:310
-#: src/components/channel/SpaceEditor.tsx:356
-#: src/components/channel/SpaceEditor.tsx:671
+#: src/components/channel/SpaceEditor.tsx:431
+#: src/components/channel/SpaceEditor.tsx:493
+#: src/components/channel/SpaceEditor.tsx:870
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal.tsx:376
+#: src/components/modals/UserSettingsModal.tsx:485
 msgid "Enable sync"
 msgstr "تمكين المزامنة"
 
-#: src/components/modals/CreateSpaceModal.tsx:112
+#: src/components/modals/CreateSpaceModal.tsx:155
 msgid "Enter a name for your new Space"
 msgstr "أدخل اسمًا لمساحتك الجديدة"
 
-#: src/components/modals/NewDirectMessageModal.tsx:56
+#: src/components/modals/NewDirectMessageModal.tsx:105
 msgid "Enter a user's address to start messaging them."
 msgstr "أدخل عنوان المستخدم لبدء مراسلته."
 
-#: src/components/channel/SpaceEditor.tsx:996
+#: src/components/channel/SpaceEditor.tsx:1197
 msgid "Enter Address Manually"
 msgstr "أدخل العنوان يدويًا"
 
@@ -345,17 +402,22 @@ msgstr "خطأ في معالجة الصادر:"
 msgid "Error processing queue:"
 msgstr "خطأ في معالجة قائمة الانتظار:"
 
-#: src/components/channel/SpaceEditor.tsx:891
+#: src/components/channel/SpaceEditor.tsx:1082
 msgid "Existing Conversations"
 msgstr "المحادثات الحالية"
 
-#: src/components/modals/UserSettingsModal.tsx:362
+#: src/components/modals/UserSettingsModal.tsx:471
 msgid "Export"
 msgstr "تصدير"
 
-#: src/components/modals/UserSettingsModal.tsx:353
-msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
-msgstr "قم بتصدير مفتاحك إلى ملف من خلال النقر على هذا الزر. لا تشارك هذا الملف مع أي شخص آخر وإلا يمكنهم انتحال شخصيتك أو سرقة أرباح Apex الخاصة بمساحتك."
+#: src/components/modals/UserSettingsModal.tsx:462
+msgid ""
+"Export your key to a file by clicking this button. Do not share this file "
+"with anyone else or they can impersonate you or steal your Space's Apex "
+"earnings."
+msgstr ""
+"قم بتصدير مفتاحك إلى ملف من خلال النقر على هذا الزر. لا تشارك هذا الملف مع "
+"أي شخص آخر وإلا يمكنهم انتحال شخصيتك أو سرقة أرباح Apex الخاصة بمساحتك."
 
 #: src/components/context/MessageDB.tsx:840
 msgid "Failed to decrypt message with any known state"
@@ -365,15 +427,31 @@ msgstr "فشل في فك تشفير الرسالة بأي حالة معروفة"
 msgid "Failed to parse WebSocket message:"
 msgstr "فشل في تحليل رسالة WebSocket:"
 
-#: src/components/modals/CreateSpaceModal.tsx:55
-#: src/components/direct/DirectMessage.tsx:71
+#: src/components/modals/UserSettingsModal.tsx:140
+#: src/components/modals/CreateSpaceModal.tsx:57
+#: src/components/channel/SpaceEditor.tsx:144
+#: src/components/channel/SpaceEditor.tsx:184
+msgid "File cannot be larger than 1MB"
+msgstr "لا يمكن أن يكون حجم الملف أكبر من 1 ميغابايت"
+
+#: src/components/channel/SpaceEditor.tsx:223
+#: src/components/channel/SpaceEditor.tsx:249
+msgid "File cannot be larger than 256KB"
+msgstr "لا يمكن أن يكون حجم الملف أكبر من 256 كيلوبايت"
+
+#: src/components/direct/DirectMessage.tsx:70
 #: src/components/channel/Channel.tsx:102
 msgid "File cannot be larger than 2MB"
 msgstr "لا يمكن أن يكون حجم الملف أكبر من 2 ميغابايت"
 
 #: src/components/onboarding/Onboarding.tsx:90
-#: src/components/modals/CreateSpaceModal.tsx:57
-#: src/components/direct/DirectMessage.tsx:73
+#: src/components/modals/UserSettingsModal.tsx:142
+#: src/components/modals/CreateSpaceModal.tsx:59
+#: src/components/direct/DirectMessage.tsx:72
+#: src/components/channel/SpaceEditor.tsx:146
+#: src/components/channel/SpaceEditor.tsx:186
+#: src/components/channel/SpaceEditor.tsx:225
+#: src/components/channel/SpaceEditor.tsx:251
 #: src/components/channel/Channel.tsx:104
 msgid "File rejected"
 msgstr "تم رفض الملف"
@@ -382,10 +460,10 @@ msgstr "تم رفض الملف"
 msgid "general"
 msgstr "عام"
 
-#: src/components/modals/UserSettingsModal.tsx:196
-#: src/components/modals/UserSettingsModal.tsx:218
-#: src/components/channel/SpaceEditor.tsx:298
-#: src/components/channel/SpaceEditor.tsx:332
+#: src/components/modals/UserSettingsModal.tsx:249
+#: src/components/modals/UserSettingsModal.tsx:274
+#: src/components/channel/SpaceEditor.tsx:417
+#: src/components/channel/SpaceEditor.tsx:465
 msgid "General"
 msgstr "عام"
 
@@ -393,17 +471,25 @@ msgstr "عام"
 msgid "General Chat"
 msgstr "دردشة عامة"
 
-#: src/components/channel/SpaceEditor.tsx:1109
+#: src/components/channel/SpaceEditor.tsx:1313
 msgid "Generate New Invite Link"
 msgstr "إنشاء رابط دعوة جديد"
 
-#: src/components/channel/SpaceEditor.tsx:1107
+#: src/components/channel/SpaceEditor.tsx:1311
 msgid "Generating link..."
-msgstr ""
+msgstr "جارٍ إنشاء الرابط..."
 
-#: src/components/channel/GroupEditor.tsx:83
+#: src/components/modals/NewDirectMessageModal.tsx:81
+msgid "Go to conversation"
+msgstr "اذهب إلى المحادثة"
+
+#: src/components/channel/GroupEditor.tsx:98
 msgid "Group Name"
 msgstr "اسم المجموعة"
+
+#: src/components/direct/EmptyDirectMessage.tsx:70
+msgid "hide home screen"
+msgstr "اخفِ الشاشة الرئيسية"
 
 #: src/components/onboarding/Onboarding.tsx:227
 msgid "I already saved mine"
@@ -412,14 +498,21 @@ msgstr "لقد حفظت خاصتي بالفعل"
 #: src/components/onboarding/Onboarding.tsx:359
 #: src/components/onboarding/Onboarding.tsx:366
 msgid "If skipped, you'll get the default profile image and can set it later"
-msgstr "إذا تم تخطيه، ستحصل على صورة الملف الشخصي الافتراضية ويمكنك تعيينها لاحقًا"
+msgstr ""
+"إذا تم تخطيه، ستحصل على صورة الملف الشخصي الافتراضية ويمكنك تعيينها لاحقًا"
 
 #: src/components/onboarding/Onboarding.tsx:192
-msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
-msgstr "إذا قمت بمسح تخزين المتصفح الخاص بك أو تغيير المتصفحات، قد تختفي رسائلك ومفاتيحك القديمة."
+msgid ""
+"If you clear your browser storage or switch browsers, your old messages and "
+"keys may disappear."
+msgstr ""
+"إذا قمت بمسح تخزين المتصفح الخاص بك أو تغيير المتصفحات، قد تختفي رسائلك "
+"ومفاتيحك القديمة."
 
 #: src/components/onboarding/Onboarding.tsx:199
-msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+msgid ""
+"If you uninstall the app from your device, you will lose your old messages "
+"and keys."
 msgstr "إذا قمت بإلغاء تثبيت التطبيق من جهازك، ستفقد رسائلك ومفاتيحك القديمة."
 
 #: src/components/onboarding/Login.tsx:74
@@ -433,6 +526,12 @@ msgstr "معلومات مهمة للمستخدمين الجدد:"
 #: src/components/context/MessageDB.tsx:1020
 msgid "invalid address for signature"
 msgstr "عنوان غير صالح للتوقيع"
+
+#: src/components/modals/NewDirectMessageModal.tsx:92
+msgid ""
+"Invalid address format. Addresses must use valid alphanumeric characters."
+msgstr ""
+"تنسيق العنوان غير صالح. يجب أن تستخدم العناوين أحرف أبجدية رقمية صالحة."
 
 #: src/components/context/MessageDB.tsx:4244
 #: src/components/context/MessageDB.tsx:4281
@@ -451,9 +550,9 @@ msgstr "نوع رسالة غير صالح"
 msgid "invalid response"
 msgstr "استجابة غير صالحة"
 
-#: src/components/channel/SpaceEditor.tsx:322
-#: src/components/channel/SpaceEditor.tsx:350
-#: src/components/channel/SpaceEditor.tsx:875
+#: src/components/channel/SpaceEditor.tsx:445
+#: src/components/channel/SpaceEditor.tsx:486
+#: src/components/channel/SpaceEditor.tsx:1066
 msgid "Invites"
 msgstr "دعوات"
 
@@ -463,7 +562,7 @@ msgstr "انضم"
 
 #: src/components/modals/JoinSpaceModal.tsx:149
 #: src/components/modals/JoinSpaceModal.tsx:158
-#: src/components/modals/JoinSpaceModal.tsx:199
+#: src/components/modals/JoinSpaceModal.tsx:201
 msgid "Join Space"
 msgstr "انضم إلى الفضاء"
 
@@ -471,29 +570,36 @@ msgstr "انضم إلى الفضاء"
 msgid "Joined"
 msgstr "تم الانضمام"
 
-#: src/components/modals/UserSettingsModal.tsx:350
+#: src/components/modals/UserSettingsModal.tsx:459
 msgid "Key Export"
 msgstr "تصدير المفتاح"
 
-#: src/components/user/UserProfile.tsx:326
-#: src/components/modals/KickUserModal.tsx:29
+#: src/components/user/UserProfile.tsx:335
+#: src/components/modals/KickUserModal.tsx:30
 msgid "Kick User"
 msgstr "طرد المستخدم"
 
-#: src/components/modals/UserSettingsModal.tsx:456
+#: src/components/modals/KickUserModal.tsx:58
+msgid "Kick!"
+msgstr "اطرد!"
+
+#: src/components/modals/UserSettingsModal.tsx:567
 msgid "Language"
 msgstr "اللغة"
 
-#: src/components/channel/LeaveSpace.tsx:29
-#: src/components/channel/LeaveSpace.tsx:48
-#: src/components/channel/ChannelList.tsx:95
+#: src/components/modals/LeaveSpaceModal.tsx:33
+#: src/components/modals/LeaveSpaceModal.tsx:55
 msgid "Leave Space"
 msgstr "اغادر الفضاء"
 
 #. placeholder {0}: currentPasskeyInfo?.address
 #: src/components/onboarding/Onboarding.tsx:240
-msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
-msgstr "دع أصدقائك يعرفون من أنت! اختر اسمًا ودودًا ليظهر في محادثاتك، شيء أسهل للقراءة من {0}"
+msgid ""
+"Let your friends know who you are! Pick a friendly name to display in your "
+"conversations, something easier to read than {0}"
+msgstr ""
+"دع أصدقائك يعرفون من أنت! اختر اسمًا ودودًا ليظهر في محادثاتك، شيء أسهل "
+"للقراءة من {0}"
 
 #: src/components/onboarding/Onboarding.tsx:414
 msgid "Let's gooooooooo"
@@ -503,40 +609,50 @@ msgstr "لنذهب"
 msgid "light"
 msgstr "فاتح"
 
+#: src/components/modals/NewDirectMessageModal.tsx:39
+msgid "Looking up user..."
+msgstr "جارٍ البحث عن المستخدم..."
+
 #: src/components/Maintenance.tsx:16
 msgid "Maintenance in Progress"
 msgstr "الصيانة جارية"
 
 #: src/components/onboarding/Onboarding.tsx:285
-msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
-msgstr "اجعل حسابك فريدًا لك – قم بتعيين صورة جهة اتصال. هذه المعلومات تُقدم فقط للأماكن التي تنضم إليها."
+msgid ""
+"Make your account uniquely yours – set a contact photo. This information is "
+"only provided to the Spaces you join."
+msgstr ""
+"اجعل حسابك فريدًا لك – قم بتعيين صورة جهة اتصال. هذه المعلومات تُقدم فقط "
+"للأماكن التي تنضم إليها."
 
-#: src/components/modals/UserSettingsModal.tsx:301
-msgid "Manage devices, and privacy conditions for messaging and synchronization."
+#: src/components/modals/UserSettingsModal.tsx:404
+msgid ""
+"Manage devices, and privacy conditions for messaging and synchronization."
 msgstr "إدارة الأجهزة، وظروف الخصوصية للمراسلة والمزامنة."
 
-#: src/components/channel/SpaceEditor.tsx:686
-#: src/components/channel/SpaceEditor.tsx:788
-msgid "Max file size: 256kB"
-msgstr "أقصى حجم للملف: 256 كيلوبايت"
+#: src/components/message/MessageActionsDrawer.tsx:78
+msgid "Message actions"
+msgstr "إجراءات الرسالة"
 
-#: src/components/message/Message.tsx:494
-msgid "Message does not have a valid signature, this may not be from the sender"
+#: src/components/message/Message.tsx:676
+msgid ""
+"Message does not have a valid signature, this may not be from the sender"
 msgstr "الرسالة لا تحتوي على توقيع صالح، قد لا تكون من المرسل"
 
-#: src/components/message/Message.tsx:402
+#: src/components/message/MessageActionsDrawer.tsx:97
+#: src/components/message/Message.tsx:269
 msgid "More reactions"
 msgstr "مزيد من ردود الفعل"
 
-#: src/components/modals/NewDirectMessageModal.tsx:52
+#: src/components/modals/NewDirectMessageModal.tsx:101
 msgid "New Direct Message"
 msgstr "رسالة مباشرة جديدة"
 
-#: src/components/search/SearchResults.tsx:172
+#: src/components/search/SearchResults.tsx:190
 msgid "No messages found"
 msgstr "لا توجد رسائل"
 
-#: src/components/modals/UserSettingsModal.tsx:403
+#: src/components/modals/UserSettingsModal.tsx:513
 msgid "Non-repudiability"
 msgstr "عدم الإنكار"
 
@@ -556,35 +672,58 @@ msgstr "متصل"
 msgid "Personalize your account"
 msgstr "خصص حسابك"
 
-#: src/components/channel/SpaceEditor.tsx:476
+#: src/components/channel/SpaceEditor.tsx:675
 msgid "Privacy Settings"
 msgstr "إعدادات الخصوصية"
 
-#: src/components/modals/UserSettingsModal.tsx:202
-#: src/components/modals/UserSettingsModal.tsx:224
-#: src/components/modals/UserSettingsModal.tsx:299
+#: src/components/modals/UserSettingsModal.tsx:256
+#: src/components/modals/UserSettingsModal.tsx:281
+#: src/components/modals/UserSettingsModal.tsx:402
 msgid "Privacy/Security"
 msgstr "الخصوصية/الأمان"
 
-#: src/components/channel/SpaceEditor.tsx:1019
+#: src/components/channel/SpaceEditor.tsx:1222
 msgid "Public Invite Link"
 msgstr "رابط دعوة عام"
 
-#: src/components/channel/SpaceEditor.tsx:1021
-msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
-msgstr "تسمح روابط الدعوة العامة لأي شخص لديه وصول إلى الرابط بالانضمام إلى الفضاء الخاص بك. افهم مخاطر تمكين ذلك، ولمن وأين تشارك الرابط."
+#: src/components/channel/SpaceEditor.tsx:1224
+msgid ""
+"Public invite links allow anyone with access to the link join your Space. "
+"Understand the risks of enabling this, and to whom and where you share the "
+"link."
+msgstr ""
+"تسمح روابط الدعوة العامة لأي شخص لديه وصول إلى الرابط بالانضمام إلى الفضاء "
+"الخاص بك. افهم مخاطر تمكين ذلك، ولمن وأين تشارك الرابط."
 
 #: src/components/Maintenance.tsx:30
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
-msgstr "تحتوي بنية Quorum على نشر في هذا الوقت. يرجى محاولة التحديث، والتحقق من <0>https://status.quilibrium.com/</0> للحصول على التحديثات."
+msgid ""
+"Quorum infrastructure is being deployed at this time. Please try refreshing,"
+" and check <0>https://status.quilibrium.com/</0> for updates."
+msgstr ""
+"تحتوي بنية Quorum على نشر في هذا الوقت. يرجى محاولة التحديث، والتحقق من "
+"<0>https://status.quilibrium.com/</0> للحصول على التحديثات."
 
 #: src/components/onboarding/Onboarding.tsx:180
-msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
-msgstr "Quorum هو نظير إلى نظير ومشفر من النهاية إلى النهاية. هذا يعني أن رسائلك تبقى خاصة، ولكن الأهم من ذلك، أنها تعيش فقط على الشبكة للمدة المطلوبة للوصول إليك وإلى مستلمي رسائلك."
+msgid ""
+"Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
+"stay private, but equally important, they only live on the network for the "
+"time required to reach you and your recipients."
+msgstr ""
+"Quorum هو نظير إلى نظير ومشفر من النهاية إلى النهاية. هذا يعني أن رسائلك "
+"تبقى خاصة، ولكن الأهم من ذلك، أنها تعيش فقط على الشبكة للمدة المطلوبة للوصول"
+" إليك وإلى مستلمي رسائلك."
 
 #: src/components/context/RegistrationPersister.tsx:272
-msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
-msgstr "تم تحميل Quorum بينما لم يكن المتصفح في التركيز أو تم رفض طلب مفتاح المرور. يرجى إعادة التفويض للوصول إلى رسائلك."
+msgid ""
+"Quorum was loaded while the browser was not in focus or a passkey request "
+"was rejected. Please reauthorize to access your messages."
+msgstr ""
+"تم تحميل Quorum بينما لم يكن المتصفح في التركيز أو تم رفض طلب مفتاح المرور. "
+"يرجى إعادة التفويض للوصول إلى رسائلك."
+
+#: src/components/direct/DirectMessageContactsList.tsx:56
+msgid "Ready to start a truly private conversation?"
+msgstr "هل أنت مستعد لبدء محادثة خاصة حقًا؟"
 
 #: src/components/context/RegistrationPersister.tsx:287
 msgid "Reauthorize"
@@ -595,48 +734,51 @@ msgid "received config with invalid signature!"
 msgstr "تم استلام تكوين بتوقيع غير صالح!"
 
 #: src/components/Maintenance.tsx:54
-#: src/components/modals/UserSettingsModal.tsx:486
+#: src/components/modals/UserSettingsModal.tsx:597
 msgid "Refresh"
 msgstr "تحديث"
 
-#: src/components/modals/UserSettingsModal.tsx:335
+#: src/components/modals/UserSettingsModal.tsx:438
 msgid "Remove"
 msgstr "إزالة"
 
-#: src/components/message/Message.tsx:422
+#: src/components/message/MessageActionsDrawer.tsx:111
+#: src/components/message/Message.tsx:271
 msgid "Reply"
 msgstr "رد"
 
-#: src/components/modals/CreateSpaceModal.tsx:127
-#: src/components/channel/SpaceEditor.tsx:482
+#: src/components/modals/CreateSpaceModal.tsx:170
+#: src/components/channel/SpaceEditor.tsx:681
 msgid "Repudiability"
 msgstr "قابلية الإنكار"
 
-#: src/components/modals/CreateSpaceModal.tsx:140
-#: src/components/channel/SpaceEditor.tsx:497
-msgid "Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
-msgstr "قابلية الإنكار هي إعداد يجعل المحادثات في هذه المساحة غير قابلة للتحقق من أنها تأتي من المرسل المسمى. يمكن أن يكون هذا مفيدًا في المواقف الحساسة، ولكنه يعني أيضًا أن الآخرين قد يزورون رسائل تبدو وكأنها تأتي منك."
+#: src/components/modals/CreateSpaceModal.tsx:182
+#: src/components/channel/SpaceEditor.tsx:693
+msgid ""
+"Repudiability is a setting that makes conversations in this Space "
+"unverifiable as originating from the named sender. This can be useful in "
+"sensitive situations, but it also means others may forge messages that "
+"appear to come from you."
+msgstr ""
+"قابلية الإنكار هي إعداد يجعل المحادثات في هذه المساحة غير قابلة للتحقق من "
+"أنها تأتي من المرسل المسمى. يمكن أن يكون هذا مفيدًا في المواقف الحساسة، "
+"ولكنه يعني أيضًا أن الآخرين قد يزورون رسائل تبدو وكأنها تأتي منك."
 
-#: src/components/channel/SpaceEditor.tsx:680
-#: src/components/channel/SpaceEditor.tsx:782
-msgid "Requirements:"
-msgstr "المتطلبات:"
-
-#: src/components/channel/SpaceEditor.tsx:304
-#: src/components/channel/SpaceEditor.tsx:344
-#: src/components/channel/SpaceEditor.tsx:524
+#: src/components/channel/SpaceEditor.tsx:424
+#: src/components/channel/SpaceEditor.tsx:479
+#: src/components/channel/SpaceEditor.tsx:722
 msgid "Roles"
 msgstr "الأدوار"
 
-#: src/components/user/UserProfile.tsx:246
-#: src/components/modals/UserSettingsModal.tsx:288
-#: src/components/modals/UserSettingsModal.tsx:435
-#: src/components/channel/SpaceEditor.tsx:512
-#: src/components/channel/SpaceEditor.tsx:659
-#: src/components/channel/SpaceEditor.tsx:761
-#: src/components/channel/SpaceEditor.tsx:863
-#: src/components/channel/GroupEditor.tsx:110
-#: src/components/channel/ChannelEditor.tsx:156
+#: src/components/user/UserProfile.tsx:248
+#: src/components/modals/UserSettingsModal.tsx:391
+#: src/components/modals/UserSettingsModal.tsx:546
+#: src/components/channel/SpaceEditor.tsx:710
+#: src/components/channel/SpaceEditor.tsx:858
+#: src/components/channel/SpaceEditor.tsx:956
+#: src/components/channel/SpaceEditor.tsx:1054
+#: src/components/channel/GroupEditor.tsx:125
+#: src/components/channel/ChannelEditor.tsx:171
 msgid "Save Changes"
 msgstr "حفظ التغييرات"
 
@@ -653,57 +795,53 @@ msgid "saved config is out of date"
 msgstr "التكوين المحفوظ قديم"
 
 #. placeholder {0}: error?.message || 'Unknown error'
-#: src/components/search/SearchResults.tsx:163
+#: src/components/search/SearchResults.tsx:181
 msgid "Search failed: {0}"
 msgstr "فشل البحث: {0}"
 
-#: src/hooks/useSearchContext.ts:118
+#: src/hooks/useSearchContext.ts:94
 msgid "Search here"
-msgstr ""
+msgstr "ابحث هنا"
 
 #: src/hooks/useSearchContext.ts:92
-#~ msgid "Search in direct messages"
-#~ msgstr "البحث في الرسائل المباشرة"
-
-#: src/hooks/useSearchContext.ts:116
 msgid "Search in this Space"
 msgstr "البحث في هذه Space"
-
-#: src/hooks/useSearchContext.ts:94
-#~ msgid "Search messages"
-#~ msgstr "البحث عن الرسائل"
 
 #: src/components/search/SearchBar.tsx:22
 msgid "Search messages..."
 msgstr "البحث عن الرسائل..."
 
-#: src/components/search/SearchResults.tsx:150
+#: src/components/search/SearchResults.tsx:168
 msgid "Searching..."
 msgstr "جارٍ البحث..."
 
-#: src/components/modals/UserSettingsModal.tsx:367
+#: src/components/modals/UserSettingsModal.tsx:476
 msgid "Security"
 msgstr "الأمان"
 
-#: src/components/channel/SpaceEditor.tsx:932
+#: src/components/channel/SpaceEditor.tsx:1124
 msgid "Select conversation"
-msgstr ""
+msgstr "اختر المحادثة"
 
-#: src/components/AddressLookup.tsx:28
-#: src/components/modals/NewDirectMessageModal.tsx:74
-#: src/components/modals/NewDirectMessageModal.tsx:89
+#: src/components/modals/NewDirectMessageModal.tsx:24
+#: src/components/modals/NewDirectMessageModal.tsx:47
+#: src/components/modals/NewDirectMessageModal.tsx:53
 msgid "Send"
 msgstr "إرسال"
 
-#: src/components/channel/SpaceEditor.tsx:1131
+#: src/components/channel/SpaceEditor.tsx:1335
 msgid "Send Invite"
 msgstr "إرسال دعوة"
 
-#: src/components/channel/SpaceEditor.tsx:878
-msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
-msgstr "أرسل دعوات إلى الأشخاص الذين كنت قد أجريت معهم محادثات سابقًا. ستظهر زر الدعوة في صندوق الوارد الخاص بهم."
+#: src/components/channel/SpaceEditor.tsx:1069
+msgid ""
+"Send invites to people you've previously had conversations with. An invite "
+"button will appear in their inbox."
+msgstr ""
+"أرسل دعوات إلى الأشخاص الذين كنت قد أجريت معهم محادثات سابقًا. ستظهر زر "
+"الدعوة في صندوق الوارد الخاص بهم."
 
-#: src/components/user/UserProfile.tsx:312
+#: src/components/user/UserProfile.tsx:323
 msgid "Send Message"
 msgstr "إرسال رسالة"
 
@@ -715,53 +853,52 @@ msgstr "الجلسة مشفرة"
 msgid "Set Display Name"
 msgstr "تعيين اسم العرض"
 
-#: src/components/modals/UserSettingsModal.tsx:191
+#: src/components/modals/UserSettingsModal.tsx:243
 msgid "Settings"
 msgstr "الإعدادات"
+
+#: src/components/direct/EmptyDirectMessage.tsx:90
+msgid "show home screen"
+msgstr "اعرض الشاشة الرئيسية"
 
 #: src/components/onboarding/Onboarding.tsx:351
 msgid "Skip Adding Photo"
 msgstr "تخطي إضافة صورة"
 
-#: src/components/channel/SpaceEditor.tsx:395
+#: src/components/channel/SpaceEditor.tsx:551
 msgid "Space Banner"
 msgstr "لافتة المساحة"
 
-#: src/components/modals/CreateSpaceModal.tsx:104
+#: src/components/modals/CreateSpaceModal.tsx:138
 msgid "Space Icon Attachment"
 msgstr "إرفاق أيقونة المساحة"
 
-#: src/components/channel/SpaceEditor.tsx:384
+#: src/components/channel/SpaceEditor.tsx:540
 msgid "Space Name"
 msgstr "اسم المساحة"
 
-#: src/components/search/SearchResults.tsx:141
+#: src/components/search/SearchResults.tsx:159
 msgid "Start typing to search messages..."
 msgstr "ابدأ الكتابة للبحث عن الرسائل..."
 
-#: src/components/direct/EmptyDirectMessage.tsx:45
-msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
-msgstr "ابدأ برسالة إلى صديق. انقر على زر الإضافة بجوار قائمة الرسائل المباشرة."
-
-#: src/components/user/UserProfile.tsx:189
+#: src/components/user/UserProfile.tsx:191
 msgid "Status goes here"
 msgstr "الحالة تذهب هنا"
 
-#: src/components/channel/SpaceEditor.tsx:316
-#: src/components/channel/SpaceEditor.tsx:338
-#: src/components/channel/SpaceEditor.tsx:773
+#: src/components/direct/EmptyDirectMessage.tsx:61
+msgid "Stay Connected, Stay Invisible"
+msgstr "ابق متصلًا، ابق غير مرئي"
+
+#: src/components/channel/SpaceEditor.tsx:438
+#: src/components/channel/SpaceEditor.tsx:472
+#: src/components/channel/SpaceEditor.tsx:968
 msgid "Stickers"
 msgstr "ملصقات"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:1009
+#: src/components/channel/SpaceEditor.tsx:1212
 msgid "Successfully sent invite to {0}"
 msgstr "تم إرسال الدعوة بنجاح إلى {0}"
-
-#: src/components/channel/SpaceEditor.tsx:683
-#: src/components/channel/SpaceEditor.tsx:785
-msgid "Supported types: PNG, JPG, GIF"
-msgstr "الأنواع المدعومة: PNG، JPG، GIF"
 
 #: src/components/ThemeRadioGroup.tsx:18
 msgid "system"
@@ -771,19 +908,35 @@ msgstr "نظام"
 msgid "The invite link has expired or is invalid."
 msgstr "رابط الدعوة قد انتهت صلاحيته أو غير صالح."
 
+#: src/components/modals/UserSettingsModal.tsx:449
+msgid "This device"
+msgstr "هذا الجهاز"
+
 #: src/components/onboarding/Onboarding.tsx:246
 msgid "This information is only provided to the Spaces you join."
 msgstr "هذه المعلومات مقدمة فقط للمساحات التي تنضم إليها."
 
-#: src/components/channel/SpaceEditor.tsx:1057
-msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
-msgstr "هذا الرابط لن تنتهي صلاحيته، ولكن يمكنك إنشاء رابط جديد في أي وقت، مما سيؤدي إلى إبطال الرابط القديم. لن يتم إزالة الأعضاء الحاليين في المساحة من المساحة."
+#: src/components/modals/UserSettingsModal.tsx:350
+msgid ""
+"This is your public address and is safe to share with anyone you want to "
+"interact with."
+msgstr "هذه هي عنوانك العام وهو آمن لمشاركته مع أي شخص تريد التفاعل معه."
 
-#: src/components/message/Message.tsx:129
+#: src/components/channel/SpaceEditor.tsx:1260
+msgid ""
+"This link will not expire, but you can generate a new one at any time, which"
+" will invalidate the old link. Current Space members will not be removed "
+"from the Space."
+msgstr ""
+"هذا الرابط لن تنتهي صلاحيته، ولكن يمكنك إنشاء رابط جديد في أي وقت، مما سيؤدي"
+" إلى إبطال الرابط القديم. لن يتم إزالة الأعضاء الحاليين في المساحة من "
+"المساحة."
+
+#: src/components/message/Message.tsx:169
 msgid "Today at {timeFormatted}"
 msgstr "اليوم في {timeFormatted}"
 
-#: src/components/search/SearchResults.tsx:174
+#: src/components/search/SearchResults.tsx:192
 msgid "Try different keywords or check your spelling"
 msgstr "حاول كلمات مفتاحية مختلفة أو تحقق من تهجئتك"
 
@@ -791,14 +944,14 @@ msgstr "حاول كلمات مفتاحية مختلفة أو تحقق من ته�
 msgid "Unknown"
 msgstr "غير معروف"
 
-#: src/components/search/SearchResultItem.tsx:85
+#: src/components/search/SearchResultItem.tsx:89
 msgid "Unknown Space"
 msgstr "Space غير معروف"
 
-#: src/components/search/SearchResultItem.tsx:40
-#: src/components/search/SearchResultItem.tsx:84
-#: src/components/direct/DirectMessage.tsx:140
-#: src/components/direct/DirectMessage.tsx:208
+#: src/components/search/SearchResultItem.tsx:42
+#: src/components/search/SearchResultItem.tsx:88
+#: src/components/direct/DirectMessage.tsx:139
+#: src/components/direct/DirectMessage.tsx:207
 #: src/components/context/MessageDB.tsx:817
 #: src/components/context/MessageDB.tsx:836
 #: src/components/context/MessageDB.tsx:2618
@@ -809,28 +962,31 @@ msgid "Unknown User"
 msgstr "مستخدم غير معروف"
 
 #: src/components/direct/DirectMessage.tsx:384
-msgid "Until you reply, this sender will not see your display name or profile picture"
+msgid ""
+"Until you reply, this sender will not see your display name or profile "
+"picture"
 msgstr "حتى ترد، لن يرى هذا المرسل اسم العرض أو صورة الملف الشخصي الخاصة بك"
 
-#: src/components/channel/SpaceEditor.tsx:699
+#: src/components/channel/SpaceEditor.tsx:888
 msgid "Upload Emoji"
 msgstr "رفع رمز تعبيري"
 
-#: src/components/channel/SpaceEditor.tsx:801
+#: src/components/channel/SpaceEditor.tsx:986
 msgid "Upload Sticker"
 msgstr "رفع ملصق"
 
-#: src/components/modals/KickUserModal.tsx:32
+#: src/components/modals/KickUserModal.tsx:33
 msgid "Use the below button to kick this user out of the Space"
 msgstr "استخدم الزر أدناه لطرد هذا المستخدم من الفضاء"
 
-#: src/components/modals/NewDirectMessageModal.tsx:62
+#: src/components/modals/NewDirectMessageModal.tsx:111
 msgid "User address here"
-msgstr ""
+msgstr "عنوان المستخدم هنا"
 
-#: src/components/AddressLookup.tsx:14
-msgid "User does not exist"
-msgstr "المستخدم غير موجود"
+#: src/components/modals/NewDirectMessageModal.tsx:44
+#: src/components/modals/NewDirectMessageModal.tsx:86
+msgid "User does not exist."
+msgstr "المستخدم غير موجود."
 
 #: src/components/context/WebsocketProvider.tsx:196
 msgid "useWebSocket must be used within a WebSocketProvider"
@@ -840,46 +996,64 @@ msgstr "useWebSocket يجب أن يُستخدم داخل WebSocketProvider"
 msgid "Welcome to Quorum!"
 msgstr "مرحبًا بك في Quorum!"
 
-#: src/components/direct/EmptyDirectMessage.tsx:46
+#: src/components/direct/EmptyDirectMessage.tsx:83
 msgid "What's on your mind today?"
 msgstr "ما الذي يدور في ذهنك اليوم؟"
 
-#: src/components/modals/UserSettingsModal.tsx:415
+#: src/components/modals/UserSettingsModal.tsx:524
 msgid "When enabled, direct messages are not signed by your user key..."
-msgstr "عند التمكين، لا تُوقَّع الرسائل المباشرة بواسطة مفتاح المستخدم الخاص بك..."
+msgstr ""
+"عند التمكين، لا تُوقَّع الرسائل المباشرة بواسطة مفتاح المستخدم الخاص بك..."
 
-#: src/components/modals/UserSettingsModal.tsx:388
-msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
-msgstr "عند التمكين، يتم مزامنة بيانات المستخدم الخاصة بك، والفضاءات، ومفاتيح الفضاء بين الأجهزة. يؤدي تمكين هذا إلى زيادة رؤية البيانات الوصفية لحسابك، مما يمكن أن يكشف متى انضممت إلى فضاءات جديدة، على الرغم من عدم فضاءات التي انضممت إليها."
+#: src/components/modals/UserSettingsModal.tsx:496
+msgid ""
+"When enabled, synchronizes your user data, Spaces, and Space keys between "
+"devices. Enabling this increases metadata visibility of your account, which "
+"can reveal when you have joined new Spaces, although not the Spaces you have"
+" joined."
+msgstr ""
+"عند التمكين، يتم مزامنة بيانات المستخدم الخاصة بك، والفضاءات، ومفاتيح الفضاء"
+" بين الأجهزة. يؤدي تمكين هذا إلى زيادة رؤية البيانات الوصفية لحسابك، مما "
+"يمكن أن يكشف متى انضممت إلى فضاءات جديدة، على الرغم من عدم فضاءات التي "
+"انضممت إليها."
 
-#: src/components/modals/CreateSpaceModal.tsx:168
-msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
-msgstr "عند تمكين هذا الإعداد، ستسمح روابط الدعوة تلقائيًا لمستخدم بالانضمام إلى فضائك. عندما لا يتم تمكينه، سيرسل المستخدمون الذين يتبعون رابط الدعوة طلبًا للانضمام إلى فضائك يجب عليك الموافقة عليه يدويًا. تتطلب الروابط العامة وجود بعض المواد الأساسية في الرابط - كن على علم أن امتلاك رابط فضاء عام يمكن أن يسمح لأي شخص لديه الرابط بقراءة الرسائل على الفضاء طوال مدة صلاحية الرابط."
+#: src/components/modals/CreateSpaceModal.tsx:210
+msgid ""
+"When this setting is enabled, invite links will automatically allow a user "
+"to join your Space. When it is not enabled, users following an invite link "
+"will send you a request to join your Space that you must manually approve. "
+"Public links require some key material to be present in the link – be aware "
+"that possession of a public Space link can allow anyone with the link to "
+"read messages on the Space for the duration of the link being valid."
+msgstr ""
+"عند تمكين هذا الإعداد، ستسمح روابط الدعوة تلقائيًا لمستخدم بالانضمام إلى "
+"فضائك. عندما لا يتم تمكينه، سيرسل المستخدمون الذين يتبعون رابط الدعوة طلبًا "
+"للانضمام إلى فضائك يجب عليك الموافقة عليه يدويًا. تتطلب الروابط العامة وجود "
+"بعض المواد الأساسية في الرابط - كن على علم أن امتلاك رابط فضاء عام يمكن أن "
+"يسمح لأي شخص لديه الرابط بقراءة الرسائل على الفضاء طوال مدة صلاحية الرابط."
 
 #: src/components/onboarding/Onboarding.tsx:188
-msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+msgid ""
+"When using Quorum on a browser, your messages are saved locally to your "
+"browser."
 msgstr "عند استخدام Quorum على متصفح، يتم حفظ رسائلك محليًا على متصفحك."
 
-#: src/components/search/SearchResultItem.tsx:152
+#: src/components/search/SearchResultItem.tsx:159
 msgid "Yesterday"
 msgstr "أمس"
 
-#: src/components/message/Message.tsx:132
+#: src/components/message/Message.tsx:172
 msgid "Yesterday at {timeFormatted}"
 msgstr "أمس في {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:177
-#: src/components/direct/DirectMessage.tsx:554
+#: src/components/direct/DirectMessage.tsx:176
+#: src/components/direct/DirectMessage.tsx:553
 msgid "You"
 msgstr "أنت"
 
-#: src/components/onboarding/Onboarding.tsx:288
-#~ msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
-#~ msgstr "يمكنك النقر على الصورة الافتراضية أدناه لاختيارها باستخدام حوار ملفات نظامك أو سحب وإفلات واحدة جديدة."
-
-#: src/components/onboarding/Onboarding.tsx:291
-#~ msgid "You will be able to change this later in your settings."
-#~ msgstr "ستتمكن من تغيير هذا لاحقًا في إعداداتك."
+#: src/components/modals/NewDirectMessageModal.tsx:63
+msgid "You cannot send a direct message to yourself."
+msgstr "لا يمكنك إرسال رسالة مباشرة لنفسك."
 
 #: src/components/onboarding/Onboarding.tsx:391
 msgid "You're all set. Welcome to Quorum!"
@@ -888,3 +1062,70 @@ msgstr "أنت جاهز. مرحبًا بك في Quorum!"
 #: src/components/message/InviteLink.tsx:59
 msgid "You've been invited to join a Space"
 msgstr "لقد تم دعوتك للانضمام إلى فضاء"
+
+#~ msgid "Add Space"
+#~ msgstr "إضافة مساحة"
+
+#~ msgid ""
+#~ "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
+#~ msgstr ""
+#~ "أضف ما يصل إلى 50 رمز تعبيري مخصص. يمكن استخدام الرموز التعبيرية المخصصة فقط"
+#~ " داخل مساحة."
+
+#~ msgid ""
+#~ "Add up to 50 custom stickers. Custom stickers can only be used within a "
+#~ "Space."
+#~ msgstr ""
+#~ "أضف ما يصل إلى 50 ملصق مخصص. يمكن استخدام الملصقات المخصصة فقط داخل مساحة."
+
+#~ msgid "Cancel"
+#~ msgstr "إلغاء"
+
+#~ msgid "Copy address to clipboard"
+#~ msgstr "نسخ العنوان إلى الحافظة"
+
+#~ msgid "Copy to clipboard"
+#~ msgstr "نسخ إلى الحافظة"
+
+#~ msgid "Do it!"
+#~ msgstr "افعلها!"
+
+#~ msgid "Edit Profile"
+#~ msgstr "تعديل الملف الشخصي"
+
+#~ msgid "Edit Space"
+#~ msgstr "تعديل Space"
+
+#~ msgid "Max file size: 256kB"
+#~ msgstr "أقصى حجم للملف: 256 كيلوبايت"
+
+#~ msgid "Requirements:"
+#~ msgstr "المتطلبات:"
+
+#~ msgid "Search in direct messages"
+#~ msgstr "البحث في الرسائل المباشرة"
+
+#~ msgid "Search messages"
+#~ msgstr "البحث عن الرسائل"
+
+#~ msgid ""
+#~ "Start with a message to a friend. Click on the add button next to the direct"
+#~ " messages list."
+#~ msgstr ""
+#~ "ابدأ برسالة إلى صديق. انقر على زر الإضافة بجوار قائمة الرسائل المباشرة."
+
+#~ msgid "Supported types: PNG, JPG, GIF"
+#~ msgstr "الأنواع المدعومة: PNG، JPG، GIF"
+
+#~ msgid "User does not exist"
+#~ msgstr "المستخدم غير موجود"
+
+#~ msgid ""
+#~ "You can click the default image below to select it with your system's file "
+#~ "dialog or drag and drop a new one."
+#~ msgstr ""
+#~ "يمكنك النقر على الصورة الافتراضية أدناه لاختيارها باستخدام حوار ملفات نظامك "
+#~ "أو سحب وإفلات واحدة جديدة."
+
+#~ msgid "You will be able to change this later in your settings."
+#~ msgstr "ستتمكن من تغيير هذا لاحقًا في إعداداتك."
