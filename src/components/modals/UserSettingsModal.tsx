@@ -364,6 +364,23 @@ const UserSettingsModal: React.FunctionComponent<{
                           </ClickToCopyContent>
                         </div>
                       </div>
+                      {/* <div className="modal-content-info">
+                        <div className="modal-text-label">{t`Status`}</div>
+                        <div className="pt-2 mb-4 modal-text-small text-main">
+                          {t`Set a custom status message that others can see.`}
+                        </div>
+                        <input
+                          className="w-full quorum-input modal-input-text"
+                          style={{ background: 'var(--color-bg-input)' }}
+                          value={status}
+                          onChange={(e) => setStatus(e.target.value.slice(0, 100))}
+                          placeholder={t`What's on your mind?`}
+                          maxLength={100}
+                        />
+                        <div className="text-xs text-subtle mt-1">
+                          {status.length}/100 {t`characters`}
+                        </div>
+                      </div> */}
                       <div className="modal-content-actions">
                         <Button
                           type="primary"

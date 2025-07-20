@@ -42,6 +42,11 @@ Comprehensive guides and documentation for various features and components.
   *Global search implementation with keyboard shortcuts*  
   Keywords: `search`, `global-search`, `cmd+k`, `ctrl+k`, `minisearch`
 
+### System Architecture
+- **[data-management-architecture.md](docs/data-management-architecture.md)**  
+  *Comprehensive guide to data storage, management, and flow patterns in Quorum*  
+  Keywords: `data`, `architecture`, `indexeddb`, `websocket`, `encryption`, `messages`, `spaces`, `users`
+
 ## 🐛 Bug Reports (.claude/bugs/)
 
 Tracking of bugs, both solved and active.
@@ -112,6 +117,7 @@ Use these keywords to find related content:
 - **Search**: `search`, `global-search`, `cmd+k`, `minisearch`
 - **Components**: `component`, `emoji`, `tooltip`, `message`
 - **Bugs**: `SOLVED`, `hooks`, `z-index`, `focus`
+- **Architecture**: `architecture`, `data`, `storage`, `flow`, `indexeddb`, `websocket`, `encryption`
 - **CSS**: `css`, `refactor`, `styles`, `tailwind`
 
 ## 📁 Directory Structure
@@ -127,7 +133,8 @@ Use these keywords to find related content:
 │   ├── new-modal-component.md
 │   ├── reacttooltip-mobile.md
 │   ├── responsive-layout.md
-│   └── search-feature.md
+│   ├── search-feature.md
+│   └── data-management-architecture.md
 ├── bugs/
 │   ├── SOLVED_modal-navmenu-zindex-stacking.md
 │   ├── SOLVED_newdirectmessage-modal-url-to-state-conversion.md
