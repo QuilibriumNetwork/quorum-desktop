@@ -70,9 +70,7 @@ const App = () => {
   const [landing, setLanding] = useState(false);
   const [kickUserAddress, setKickUserAddress] = useState<string>();
 
-  const isElementsPage = window.location.pathname === '/elements';
-  if (isElementsPage) return <Elements />;
-
+  // All hooks must be called before any conditional returns
   useEffect(() => {
     if (!init) {
       setInit(true);
@@ -95,6 +93,10 @@ const App = () => {
       });
     }
   }, [currentPasskeyInfo, passkeyRegistrationComplete, setUser, user]);
+
+  // Conditional return must come after all hooks
+  const isElementsPage = window.location.pathname === '/elements';
+  if (isElementsPage) return <Elements />;
 
   return (
     <>

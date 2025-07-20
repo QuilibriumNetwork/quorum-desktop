@@ -35,6 +35,25 @@ The main dependencies are:
 - When editign anything, you must be very careful to not cause destructive changes or conflicts with other functionalities, as the app is pretty complex with many shared styles and features
 - Think always mobile first, and when making layout/css edits, always think at the final result for both desktop and mobile users for an optimal UX/UI
 
+## React Hooks Rules - IMPORTANT
+
+**NEVER violate React's Rules of Hooks:**
+- Call all hooks at the top level of components (not inside functions, conditionals, or loops)
+- Call hooks in the same order on every render
+- NEVER put conditional returns (early exits) before any hooks
+- If you need conditional logic, put it AFTER all hooks or inside the hooks themselves
+
+Example of what NOT to do:
+```tsx
+// ❌ BAD - Conditional return before hooks
+if (someCondition) return <SomeComponent />;
+useEffect(() => {...}, []);  // This hook is called conditionally!
+
+// ✅ GOOD - All hooks before conditionals
+useEffect(() => {...}, []);
+if (someCondition) return <SomeComponent />;
+```
+
 ## Claude Code Development Resources
 
 The `.claude/` folder tracks tasks, bugs, features, and development context.
