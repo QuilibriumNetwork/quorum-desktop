@@ -31,7 +31,6 @@ The main dependencies are:
 - Follow the existing coding style
 - Run `yarn lint` and `yarn format` only on the files you modified during each task
 - When you insert any new text that must be readby users, always use the Lingui sintax for localization
-- Look for documentation files in `.claude/docs/` whne you work on specific things (e.g. Modals, Search, etc.)
 - When editign anything, you must be very careful to not cause destructive changes or conflicts with other functionalities, as the app is pretty complex with many shared styles and features
 - Think always mobile first, and when making layout/css edits, always think at the final result for both desktop and mobile users for an optimal UX/UI
 
@@ -61,7 +60,8 @@ The `.claude/` folder tracks tasks, bugs, features, and development context.
 ### Important Claude Locations
 
 - `.claude/` — Main Claude context
-- `.claude/docs/` — Documentation on custom features
+- `.claude/INDEX.md` - Index of all the docs available in `.claude/`
+- `.claude/docs/` — Documentation on custom features (Look here when you work on specific things (e.g. Modals, Search, etc.))
 - `.claude/bugs/` — Bug reports and solutions
 - `.claude/screenshots/` — Debug/reference screenshots (use the image with the highest number when referenced)
 - `.claude/tasks/` — Task management folders:
