@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Button from '../Button';
-import './GroupEditor.scss';
+import '../../styles/_modal_common.scss';
 import { useSpace } from '../../hooks';
 import { useMessageDB } from '../context/MessageDB';
 import { useNavigate, useParams } from 'react-router';
@@ -19,9 +19,12 @@ const GroupEditor: React.FunctionComponent<{
   let [group, setGroup] = React.useState<string>(groupName || '');
   let { channelId } = useParams();
   let [deleteStatus, setDeleteStatus] = React.useState<boolean>(false);
+  let [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
+  let [hasMessages, setHasMessages] = React.useState<boolean>(false);
+  let [showWarning, setShowWarning] = React.useState<boolean>(false);
   let [closing, setClosing] = React.useState<boolean>(false);
   let navigate = useNavigate();
-  const { updateSpace } = useMessageDB();
+  const { updateSpace, messageDB } = useMessageDB();
 
   const handleDismiss = () => {
     setClosing(true);
@@ -29,6 +32,33 @@ const GroupEditor: React.FunctionComponent<{
       dismiss();
     }, 300);
   };
+
+  // Check if any channel in the group has messages
+  React.useEffect(() => {
+    const checkGroupMessages = async () => {
+      if (groupName && space && messageDB) {
+        try {
+          const group = space.groups.find(g => g.groupName === groupName);
+          if (group) {
+            for (const channel of group.channels) {
+              const messages = await messageDB.getMessages({
+                spaceId,
+                channelId: channel.channelId,
+                limit: 1
+              });
+              if (messages.messages.length > 0) {
+                setHasMessages(true);
+                break;
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Error checking group messages:', error);
+        }
+      }
+    };
+    checkGroupMessages();
+  }, [groupName, space, spaceId, messageDB]);
 
   const saveChanges = React.useCallback(async () => {
     if (
@@ -86,39 +116,55 @@ const GroupEditor: React.FunctionComponent<{
 
   return (
     <div
-      className={`group-editor flex flex-row modal-width-medium${closing ? ' group-editor-closing' : ''}`}
+      className={`modal-small-container${closing ? ' modal-small-closing' : ''}`}
     >
-      <div className="group-editor-close-button" onClick={handleDismiss}>
+      <div className="modal-small-close-button" onClick={handleDismiss}>
         <FontAwesomeIcon icon={faTimes} />
       </div>
-      <div className="flex flex-col grow overflow-y-scroll rounded-xl">
-        <div className="group-editor-header">
-          <div className="group-editor-text flex flex-col grow px-4">
-            <div className="small-caps">
-              <Trans>Group Name</Trans>
+      <div className="modal-small-layout">
+        <div className="modal-small-content">
+          <div className="modal-content-section">
+            <div className="modal-content-info">
+              <div className="small-caps">
+                <Trans>Group Name</Trans>
+              </div>
+              <input
+                className="w-full quorum-input"
+                value={group}
+                onChange={(e) => setGroup(e.target.value)}
+              />
             </div>
-            <input
-              className="w-full quorum-input"
-              value={group}
-              onChange={(e) => setGroup(e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="group-editor-content flex flex-col grow">
-          <div className="grow flex flex-col">
-            <div className="group-editor-editor-actions modal-buttons-responsive">
+            {hasMessages && showWarning && (
+              <div className="error-label mb-3 relative pr-8">
+                <Trans>Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!</Trans>
+                <FontAwesomeIcon 
+                  icon={faTimes} 
+                  className="absolute top-2 right-2 cursor-pointer hover:opacity-70" 
+                  onClick={() => setShowWarning(false)}
+                />
+              </div>
+            )}
+            <div className="modal-small-actions">
               {groupName && (
                 <Button
                   type="danger"
                   onClick={() => {
-                    if (!deleteStatus) {
-                      setDeleteStatus(true);
+                    if (deleteConfirmationStep === 0) {
+                      setDeleteConfirmationStep(1);
+                      if (hasMessages) {
+                        setShowWarning(true);
+                      }
+                      // Reset confirmation after 5 seconds
+                      setTimeout(
+                        () => setDeleteConfirmationStep(0),
+                        5000
+                      );
                     } else {
                       deleteGroup();
                     }
                   }}
                 >
-                  {!deleteStatus ? t`Delete Group` : t`Confirm Deletion`}
+                  {deleteConfirmationStep === 0 ? t`Delete Group` : t`Click again to confirm`}
                 </Button>
               )}
               <Button type="primary" onClick={() => saveChanges()}>

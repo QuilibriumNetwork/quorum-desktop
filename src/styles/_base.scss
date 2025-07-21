@@ -84,12 +84,18 @@ mark {
 }
 
 .error-label {
-  background-color: #e97e7e;
-  color: #641010;
-  border-radius: 4px;
+  background-color: #f1a7a7;
+  color: #610707;
+  border-radius: 10px;
   padding: 5px 8px;
   font-style: normal;
-  font-size: 0.9rem;
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem; /* 20px */
+}
+
+html.dark .error-label {
+  background-color: rgb(var(--danger) / 0.5);
+  color: #f1c0c0;
 }
 
 .card {

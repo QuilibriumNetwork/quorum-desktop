@@ -30,9 +30,12 @@ const ChannelEditor: React.FunctionComponent<{
       ?.channels.find((c) => c.channelId === channelId)?.channelTopic || ''
   );
   let [deleteStatus, setDeleteStatus] = React.useState<boolean>(false);
+  let [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
+  let [hasMessages, setHasMessages] = React.useState<boolean>(false);
+  let [showWarning, setShowWarning] = React.useState<boolean>(false);
   let [closing, setClosing] = React.useState<boolean>(false);
   let navigate = useNavigate();
-  const { updateSpace, createChannel } = useMessageDB();
+  const { updateSpace, createChannel, messageDB } = useMessageDB();
 
   const handleDismiss = () => {
     setClosing(true);
@@ -40,6 +43,25 @@ const ChannelEditor: React.FunctionComponent<{
       dismiss();
     }, 300);
   };
+
+  // Check if channel has messages
+  React.useEffect(() => {
+    const checkMessages = async () => {
+      if (channelId && messageDB) {
+        try {
+          const messages = await messageDB.getMessages({
+            spaceId,
+            channelId,
+            limit: 1
+          });
+          setHasMessages(messages.messages.length > 0);
+        } catch (error) {
+          console.error('Error checking messages:', error);
+        }
+      }
+    };
+    checkMessages();
+  }, [channelId, spaceId, messageDB]);
 
   const saveChanges = React.useCallback(async () => {
     if (channelId) {
@@ -152,19 +174,37 @@ const ChannelEditor: React.FunctionComponent<{
                 onChange={(e) => setChannelTopic(e.target.value)}
               />
             </div>
+            {hasMessages && showWarning && (
+              <div className="error-label mb-3 relative pr-8">
+                <Trans>Are you sure? This channel contains messages. Deleting it will cause all content to be lost forever!</Trans>
+                <FontAwesomeIcon 
+                  icon={faTimes} 
+                  className="absolute top-2 right-2 cursor-pointer hover:opacity-70" 
+                  onClick={() => setShowWarning(false)}
+                />
+              </div>
+            )}
             <div className="modal-small-actions">
               {channelId && (
                 <Button
                   type="danger"
                   onClick={() => {
-                    if (!deleteStatus) {
-                      setDeleteStatus(true);
+                    if (deleteConfirmationStep === 0) {
+                      setDeleteConfirmationStep(1);
+                      if (hasMessages) {
+                        setShowWarning(true);
+                      }
+                      // Reset confirmation after 5 seconds
+                      setTimeout(
+                        () => setDeleteConfirmationStep(0),
+                        5000
+                      );
                     } else {
                       deleteChannel();
                     }
                   }}
                 >
-                  {!deleteStatus ? t`Delete Channel` : t`Confirm Deletion`}
+                  {deleteConfirmationStep === 0 ? t`Delete Channel` : t`Click again to confirm`}
                 </Button>
               )}
               <Button type="primary" onClick={() => saveChanges()}>
