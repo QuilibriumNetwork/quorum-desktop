@@ -145,7 +145,6 @@ Use these keywords to find related content:
 │   ├── done/
 │   ├── ongoing/
 │   └── todo/
-└── screenshots/
 ```
 
 ---

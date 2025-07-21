@@ -63,7 +63,6 @@ The `.claude/` folder tracks tasks, bugs, features, and development context.
 - `.claude/INDEX.md` - Index of all the docs available in `.claude/`
 - `.claude/docs/` — Documentation on custom features (Look here when you work on specific things (e.g. Modals, Search, etc.))
 - `.claude/bugs/` — Bug reports and solutions
-- `.claude/screenshots/` — Debug/reference screenshots (use the image with the highest number when referenced)
 - `.claude/tasks/` — Task management folders:
   - `todo/`: Future tasks
   - `ongoing/`: Tasks in progress
