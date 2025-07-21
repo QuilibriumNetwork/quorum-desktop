@@ -10,7 +10,8 @@
 
 @media (max-width: 1023px) {
   .user-status {
-    width: var(--sidebar-left-width);
+    display: none;
+    width: var(--sidebar-left-width); // if visible
   }
 }
 
