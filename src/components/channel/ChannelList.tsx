@@ -12,6 +12,7 @@ import { useModalContext } from '../AppWithSearch';
 import GroupEditor from './GroupEditor';
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import { t } from '@lingui/core/macro';
+import Button from '../Button';
 
 type ChannelListProps = { spaceId: string };
 
@@ -88,18 +89,16 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
           />
         ))}
         {isSpaceOwner && (
-          <div
-            className="channel-group-name small-caps flex flex-row px-4 cursor-pointer hover:text-main"
-            onClick={() => setIsGroupEditorOpen({})}
-          >
-            <div className="truncate">{t`Add Group`}</div>
-            <div className="pt-[.15rem] pl-1">
-              <FontAwesomeIcon
-                onClick={() => setIsGroupEditorOpen({})}
-                size={'2xs'}
-                icon={faPlus}
-              />
-            </div>
+          <div className="px-4 py-2">
+            <Button
+              type="subtle-outline"
+              size="small"
+              onClick={() => setIsGroupEditorOpen({})}
+              className="w-full justify-start"
+            >
+              <FontAwesomeIcon icon={faPlus} className="mr-2" />
+              {t`Add Group`}
+            </Button>
           </div>
         )}
       </div>

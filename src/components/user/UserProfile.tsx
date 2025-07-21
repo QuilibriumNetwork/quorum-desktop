@@ -117,9 +117,17 @@ const UserProfile: React.FunctionComponent<{
 
   return (
     <div
-      className="user-profile shadow-md"
+      className="user-profile"
       onClick={(e) => e.stopPropagation()}
     >
+      {props.dismiss && (
+        <div
+          className="absolute right-3 top-3 cursor-pointer text-subtle hover:text-main z-10"
+          onClick={props.dismiss}
+        >
+          <FontAwesomeIcon icon={faTimes} />
+        </div>
+      )}
       <div className="user-profile-header">
         {props.editMode ? (
           <div
@@ -253,7 +261,7 @@ const UserProfile: React.FunctionComponent<{
         <div>
           <div
             className={
-              'p-2 ' +
+              'p-2 pb-4 ' +
               (currentPasskeyInfo!.address !== props.user.address
                 ? ''
                 : 'rounded-b-xl')
@@ -294,14 +302,15 @@ const UserProfile: React.FunctionComponent<{
                   .map((r) => (
                     <div
                       key={'user-profile-add-role-' + r.roleId}
-                      className="w-full sm:w-auto sm:inline-block"
+                      className="w-full sm:w-auto sm:inline-block mb-2"
                     >
                       <Button
-                        className="!py-0 w-full sm:w-auto"
+                        className="w-full sm:w-auto"
                         onClick={() => {
                           addRole(r.roleId);
                         }}
-                        type="primary"
+                        type="secondary"
+                        size="small"
                       >
                         + {r.roleTag}
                       </Button>
@@ -310,7 +319,7 @@ const UserProfile: React.FunctionComponent<{
             </div>
           </div>
           {currentPasskeyInfo!.address !== props.user.address && (
-            <div className="bg-tooltip rounded-b-xl p-3">
+            <div className="bg-surface-0 rounded-b-xl p-3">
               <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2">
                 <Button
                   size="small"

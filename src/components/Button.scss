@@ -42,6 +42,24 @@
   }
 }
 
+.btn-subtle {
+  @extend %btn-base;
+  @apply bg-surface-6 border-2 border-surface-6 cursor-pointer text-main shadow-sm;
+
+  &:hover {
+    @apply bg-surface-7 border-surface-7;
+  }
+}
+
+.btn-subtle-outline {
+  @extend %btn-base;
+  @apply bg-transparent border-2 border-surface-6 cursor-pointer text-subtle shadow-sm;
+
+  &:hover {
+    @apply bg-surface-6 border-surface-6 text-main;
+  }
+}
+
 .btn-danger {
   @extend %btn-base;
   @apply border-2 border-transparent cursor-pointer bg-danger/80;

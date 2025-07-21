@@ -47,6 +47,8 @@ Button.propTypes = {
     'secondary',
     'light',
     'light-outline',
+    'subtle',
+    'subtle-outline',
     'danger',
     'primary-white',
     'secondary-white',

@@ -6,6 +6,7 @@
   border-radius: 10px;
   color: var(--color-text-main);
   user-select: none;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
 
 .user-profile-header {
@@ -86,10 +87,10 @@
 }
 
 .user-profile-content-section-header {
-  font-weight: 700;
+  font-weight: 500;
   border-top: 1px solid var(--surface-6);
-  padding-top: 7px;
-  margin-top: 7px;
+  padding: 8px 0px 4px 0px;
+  margin-top: 8px;
 }
 
 .user-profile-content-section-header:first-child {

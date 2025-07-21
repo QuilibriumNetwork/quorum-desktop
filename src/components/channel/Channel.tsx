@@ -217,19 +217,18 @@ const Channel: React.FC<ChannelProps> = ({
                   })}
                 </div>
                 {roleMembers.map((s) => (
-                  <div key={s} className="w-full flex flex-row mb-2">
+                  <div key={s} className="w-full flex flex-row items-center mb-2">
                     <div
-                      className="rounded-full w-[40px] h-[40px] mt-[2px]"
+                      className="rounded-full w-[40px] h-[40px]"
                       style={{
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
-                        backgroundImage: `url(${
+                        backgroundImage:
                           members[s]?.userIcon?.includes(
                             DefaultImages.UNKNOWN_USER
                           )
                             ? 'var(--unknown-icon)'
-                            : `url(${members[s]?.userIcon})`
-                        })`,
+                            : `url(${members[s]?.userIcon})`,
                       }}
                     />
                     <div className="flex flex-col ml-2 text-main">
@@ -247,9 +246,9 @@ const Channel: React.FC<ChannelProps> = ({
             {i18n._('No Role - {count}', { count: noRoleMembers.length })}
           </div>
           {noRoleMembers.map((s) => (
-            <div key={s} className="w-full flex flex-row mb-2">
+            <div key={s} className="w-full flex flex-row items-center mb-2">
               <div
-                className="rounded-full w-[40px] h-[40px] mt-[2px]"
+                className="rounded-full w-[40px] h-[40px]"
                 style={{
                   backgroundPosition: 'center',
                   backgroundSize: 'cover',
@@ -620,19 +619,18 @@ const Channel: React.FC<ChannelProps> = ({
                   })}
                 </div>
                 {roleMembers.map((s) => (
-                  <div key={s} className="w-full flex flex-row mb-2">
+                  <div key={s} className="w-full flex flex-row items-center mb-2">
                     <div
-                      className="rounded-full w-[40px] h-[40px] mt-[2px]"
+                      className="rounded-full w-[40px] h-[40px]"
                       style={{
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
-                        backgroundImage: `url(${
+                        backgroundImage:
                           members[s]?.userIcon?.includes(
                             DefaultImages.UNKNOWN_USER
                           )
                             ? 'var(--unknown-icon)'
-                            : `url(${members[s]?.userIcon})`
-                        })`,
+                            : `url(${members[s]?.userIcon})`,
                       }}
                     />
                     <div className="flex flex-col ml-2 text-main">
@@ -650,9 +648,9 @@ const Channel: React.FC<ChannelProps> = ({
             {i18n._('No Role - {count}', { count: noRoleMembers.length })}
           </div>
           {noRoleMembers.map((s) => (
-            <div key={s} className="w-full flex flex-row mb-2">
+            <div key={s} className="w-full flex flex-row items-center mb-2">
               <div
-                className="rounded-full w-[40px] h-[40px] mt-[2px]"
+                className="rounded-full w-[40px] h-[40px]"
                 style={{
                   backgroundPosition: 'center',
                   backgroundSize: 'cover',
