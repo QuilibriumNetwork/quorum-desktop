@@ -157,6 +157,22 @@ msgstr ""
 "Er du sikker på at du vil forlate {0}? Du vil ikke kunne bli med igjen med "
 "mindre du blir invitert på nytt."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Er du sikker? Denne kanalen inneholder meldinger. Å slette den vil føre til "
+"at alt innhold går tapt for alltid!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Er du sikker? Denne gruppen inneholder kanaler med meldinger. Å slette den "
+"vil føre til at alt innhold går tapt for alltid!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -186,11 +202,11 @@ msgstr ""
 "Endringer gjøres automatisk, men den aktive siden kan hende ikke er "
 "oppdatert. Oppdater siden for å bruke det nye språket."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Kanalnavn"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Kanaltema"
 
@@ -205,6 +221,8 @@ msgstr "Fjern søk"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Klikk igjen for å bekrefte"
 
@@ -228,11 +246,6 @@ msgstr "Klikk for å kopiere"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Lukk"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Bekreft sletting"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -322,11 +335,11 @@ msgstr ""
 "Standard Space-innstillinger gir den mest typiske chatteopplevelsen, men for"
 " høyere personverngarantier, se gjennom avanserte innstillinger."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Slett kanal"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Slett gruppe"
 
@@ -486,7 +499,7 @@ msgstr "Genererer lenke..."
 msgid "Go to conversation"
 msgstr "Gå til samtale"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Gruppenavn"
 
@@ -788,8 +801,8 @@ msgstr "Roller"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Lagre endringer"
 
@@ -1100,6 +1113,9 @@ msgstr "Du har blitt invitert til å bli med i en Space"
 
 #~ msgid "Cancel"
 #~ msgstr "Avbryt"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Bekreft sletting"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Kopier adresse til utklippstavle"

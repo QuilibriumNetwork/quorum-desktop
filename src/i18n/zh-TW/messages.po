@@ -147,6 +147,18 @@ msgid ""
 "are re-invited."
 msgstr "確定要離開 {0} 嗎？除非重新收到邀請，否則將無法重新加入。"
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr "你確定嗎？這個頻道包含消息。刪除它將導致所有內容永遠丟失！"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr "你確定嗎？這個群組包含帶有消息的頻道。刪除它將導致所有內容永遠丟失！"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -174,11 +186,11 @@ msgid ""
 "Refresh the page to apply the new language."
 msgstr "變更會自動進行，但當前頁面可能未更新。請刷新頁面以應用新語言。"
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "頻道名稱"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "頻道主題"
 
@@ -193,6 +205,8 @@ msgstr "清除搜尋"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "再次點擊以確認"
 
@@ -213,11 +227,6 @@ msgstr "點擊以複製"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "關閉"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "確認刪除"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -305,11 +314,11 @@ msgid ""
 "higher privacy guarantees, review Advanced Settings."
 msgstr "預設的空間設定提供最典型的聊天體驗，但為了更高的隱私保證，請檢查進階設定。"
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "刪除頻道"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "刪除群組"
 
@@ -466,7 +475,7 @@ msgstr "生成鏈接中..."
 msgid "Go to conversation"
 msgstr "前往對話"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "群組名稱"
 
@@ -740,8 +749,8 @@ msgstr "角色"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "儲存變更"
 
@@ -1028,6 +1037,9 @@ msgstr "你已被邀請加入一個 Space"
 
 #~ msgid "Cancel"
 #~ msgstr "取消"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "確認刪除"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "將地址複製到剪貼簿"

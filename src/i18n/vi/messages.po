@@ -156,6 +156,22 @@ msgstr ""
 "Bạn có chắc chắn muốn rời khỏi {0}? Bạn sẽ không thể tham gia lại trừ khi "
 "bạn được mời lại."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Bạn có chắc không? Kênh này chứa tin nhắn. Xóa nó sẽ khiến tất cả nội dung "
+"bị mất mãi mãi!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Bạn có chắc không? Nhóm này chứa các kênh có tin nhắn. Xóa nó sẽ khiến tất "
+"cả nội dung bị mất mãi mãi!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -185,11 +201,11 @@ msgstr ""
 "Các thay đổi được thực hiện tự động, nhưng trang đang hoạt động có thể không"
 " được cập nhật. Làm mới trang để áp dụng ngôn ngữ mới."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Tên Kênh"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Chủ đề Kênh"
 
@@ -204,6 +220,8 @@ msgstr "Xóa tìm kiếm"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Nhấn lại để xác nhận"
 
@@ -227,11 +245,6 @@ msgstr "Nhấp để sao chép"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Đóng"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Xác nhận xóa"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -321,11 +334,11 @@ msgstr ""
 "Cài đặt Space mặc định cung cấp trải nghiệm trò chuyện điển hình nhất, nhưng"
 " để có sự đảm bảo quyền riêng tư cao hơn, hãy xem lại Cài đặt Nâng cao."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Xóa Kênh"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Xóa Nhóm"
 
@@ -485,7 +498,7 @@ msgstr "Đang tạo liên kết..."
 msgid "Go to conversation"
 msgstr "Đi đến cuộc trò chuyện"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Tên nhóm"
 
@@ -787,8 +800,8 @@ msgstr "Các vai trò"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Lưu thay đổi"
 
@@ -1100,6 +1113,9 @@ msgstr "Bạn đã được mời tham gia một Space"
 
 #~ msgid "Cancel"
 #~ msgstr "Hủy"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Xác nhận xóa"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Sao chép địa chỉ vào clipboard"

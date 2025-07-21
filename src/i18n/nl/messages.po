@@ -157,6 +157,22 @@ msgstr ""
 "Ben je zeker dat je {0} wilt verlaten? Je kunt niet opnieuw deelnemen tenzij"
 " je opnieuw wordt uitgenodigd."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Weet je het zeker? Dit kanaal bevat berichten. Het verwijderen ervan zal "
+"ervoor zorgen dat alle inhoud voor altijd verloren gaat!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Weet je het zeker? Deze groep bevat kanalen met berichten. Het verwijderen "
+"ervan zal ervoor zorgen dat alle inhoud voor altijd verloren gaat!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -187,11 +203,11 @@ msgstr ""
 "mogelijk niet bijgewerkt. Vernieuw de pagina om de nieuwe taal toe te "
 "passen."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Kanaalnaam"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Kanaalonderwerp"
 
@@ -206,6 +222,8 @@ msgstr "Zoekopdracht wissen"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Klik opnieuw om te bevestigen"
 
@@ -229,11 +247,6 @@ msgstr "Klik om te kopiëren"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Sluiten"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Bevestig Verwijdering"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -323,11 +336,11 @@ msgstr ""
 "Standaard Space-instellingen bieden de meest typische chatervaring, maar "
 "voor hogere privacygaranties, bekijk Geavanceerde Instellingen."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Verwijder Kanaal"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Verwijder Groep"
 
@@ -488,7 +501,7 @@ msgstr "Link aanmaken..."
 msgid "Go to conversation"
 msgstr "Ga naar gesprek"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Groepsnaam"
 
@@ -792,8 +805,8 @@ msgstr "Rollen"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Wijzigingen Opslaan"
 
@@ -1106,6 +1119,9 @@ msgstr "Je bent uitgenodigd om een Space te betreden"
 
 #~ msgid "Cancel"
 #~ msgstr "Annuleren"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Bevestig Verwijdering"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Kopieer adres naar klembord"

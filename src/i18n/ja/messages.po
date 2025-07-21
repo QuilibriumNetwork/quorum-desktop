@@ -149,6 +149,18 @@ msgid ""
 "are re-invited."
 msgstr "{0} を離れてもよろしいですか？再招待されない限り、再参加することはできません。"
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr "本当にいいですか？このチャンネルにはメッセージが含まれています。削除するとすべてのコンテンツが永遠に失われます！"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr "本当にいいですか？このグループにはメッセージがあるチャンネルが含まれています。削除するとすべてのコンテンツが永遠に失われます！"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -176,11 +188,11 @@ msgid ""
 "Refresh the page to apply the new language."
 msgstr "変更は自動的に行われますが、アクティブなページが更新されない場合があります。新しい言語を適用するにはページを更新してください。"
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "チャンネル名"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "チャンネルトピック"
 
@@ -195,6 +207,8 @@ msgstr "検索をクリア"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "再度クリックして確認してください"
 
@@ -215,11 +229,6 @@ msgstr "コピーするにはクリック"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "閉じる"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "削除を確認"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -307,11 +316,11 @@ msgid ""
 "higher privacy guarantees, review Advanced Settings."
 msgstr "デフォルトのスペース設定は最も一般的なチャット体験を提供しますが、より高いプライバシー保証のために、詳細設定を確認してください。"
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "チャンネルを削除"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "グループを削除"
 
@@ -469,7 +478,7 @@ msgstr "リンクを生成中..."
 msgid "Go to conversation"
 msgstr "会話に移動"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "グループ名"
 
@@ -748,8 +757,8 @@ msgstr "役割"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "変更を保存"
 
@@ -1036,6 +1045,9 @@ msgstr "スペースに参加するよう招待されました"
 
 #~ msgid "Cancel"
 #~ msgstr "キャンセル"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "削除を確認"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "アドレスをクリップボードにコピー"

@@ -147,6 +147,18 @@ msgid ""
 "are re-invited."
 msgstr "您确定要离开 {0}？除非再次被邀请，否则您将无法重新加入。"
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr "你确定吗？这个频道包含消息。删除它将导致所有内容永远丢失！"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr "你确定吗？这个群组包含带有消息的频道。删除它将导致所有内容永远丢失！"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -174,11 +186,11 @@ msgid ""
 "Refresh the page to apply the new language."
 msgstr "更改会自动进行，但活动页面可能不会更新。刷新页面以应用新语言。"
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "频道名称"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "频道主题"
 
@@ -193,6 +205,8 @@ msgstr "清除搜索"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "再次点击以确认"
 
@@ -213,11 +227,6 @@ msgstr "点击复制"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "关闭"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "确认删除"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -305,11 +314,11 @@ msgid ""
 "higher privacy guarantees, review Advanced Settings."
 msgstr "默认空间设置提供最典型的聊天体验，但为了更高的隐私保障，请查看高级设置。"
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "删除频道"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "删除组"
 
@@ -466,7 +475,7 @@ msgstr "生成链接..."
 msgid "Go to conversation"
 msgstr "前往对话"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "组名"
 
@@ -741,8 +750,8 @@ msgstr "职责"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "保存更改"
 
@@ -1029,6 +1038,9 @@ msgstr "你已被邀请加入一个 Space"
 
 #~ msgid "Cancel"
 #~ msgstr "取消"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "确认删除"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "复制地址到剪贴板"

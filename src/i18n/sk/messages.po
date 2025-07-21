@@ -156,6 +156,22 @@ msgstr ""
 "Ste si istí, že chcete opustiť {0}? Nebudete sa môcť znovu pripojiť, pokiaľ "
 "nebudete znovu pozvaní."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Si si si? Tento kanál obsahuje správy. Jeho odstránením sa všetok obsah "
+"navždy stratí!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Si si si? Táto skupina obsahuje kanály so správami. Jej odstránením sa "
+"všetok obsah navždy stratí!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -185,11 +201,11 @@ msgstr ""
 "Zmeny sa vykonávajú automaticky, ale aktívna stránka sa nemusí aktualizovať."
 " Obnovte stránku, aby ste použili nový jazyk."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Názov kanála"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Téma kanála"
 
@@ -204,6 +220,8 @@ msgstr "Vymazať vyhľadávanie"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Kliknite znova na potvrdenie"
 
@@ -227,11 +245,6 @@ msgstr "Kliknite na skopírovanie"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Zavrieť"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Potvrdiť vymazanie"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -321,11 +334,11 @@ msgstr ""
 "Nastavenia predvoleného Space poskytujú najtypickejší chatový zážitok, ale "
 "pre vyššie záruky súkromia si preštudujte pokročilé nastavenia."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Vymazať kanál"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Vymazať skupinu"
 
@@ -485,7 +498,7 @@ msgstr "Generovanie odkazu..."
 msgid "Go to conversation"
 msgstr "Prejdite na konverzáciu"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Názov skupiny"
 
@@ -787,8 +800,8 @@ msgstr "Úlohy"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Uložiť zmeny"
 
@@ -1100,6 +1113,9 @@ msgstr "Boli ste pozvaní pripojiť sa k Space"
 
 #~ msgid "Cancel"
 #~ msgstr "Zrušiť"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Potvrdiť vymazanie"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Skopírovať adresu do schránky"

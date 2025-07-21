@@ -157,6 +157,22 @@ msgstr ""
 "Er du sikker på, at du vil forlade {0}? Du kan ikke komme med igen, "
 "medmindre du bliver inviteret igen."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Er du sikker? Denne kanal indeholder beskeder. Sletning af den vil få alt "
+"indhold til at gå tabt for evigt!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Er du sikker? Denne gruppe indeholder kanaler med beskeder. Sletning af den "
+"vil få alt indhold til at gå tabt for evigt!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -186,11 +202,11 @@ msgstr ""
 "Ændringer foretages automatisk, men den aktive side opdateres muligvis ikke."
 " Opdater siden for at anvende det nye sprog."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Kanalens navn"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Kanal-emne"
 
@@ -205,6 +221,8 @@ msgstr "Ryd søgning"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Klik igen for at bekræfte"
 
@@ -228,11 +246,6 @@ msgstr "Klik for at kopiere"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Luk"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Bekræft sletning"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -322,11 +335,11 @@ msgstr ""
 "Standard rumindstillinger giver den mest typiske chatoplevelse, men for "
 "højere privatlivsgarantier, gennemgå avancerede indstillinger."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Slet kanal"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Slet gruppe"
 
@@ -486,7 +499,7 @@ msgstr "Genererer link..."
 msgid "Go to conversation"
 msgstr "Gå til samtale"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Gruppens navn"
 
@@ -787,8 +800,8 @@ msgstr "Roller"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Gem ændringer"
 
@@ -1100,6 +1113,9 @@ msgstr "Du er blevet inviteret til at deltage i et Space"
 
 #~ msgid "Cancel"
 #~ msgstr "Annuller"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Bekræft sletning"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Kopier adresse til udklipsholder"

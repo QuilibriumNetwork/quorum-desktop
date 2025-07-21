@@ -156,6 +156,22 @@ msgstr ""
 "هل أنت متأكد أنك تريد مغادرة {0}؟ لن تتمكن من إعادة الانضمام ما لم يتم دعوتك"
 " مرة أخرى."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"هل أنت متأكد؟ هذه القناة تحتوي على رسائل. حذفها سيؤدي إلى فقدان كل المحتوى "
+"إلى الأبد!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"هل أنت متأكد؟ هذه المجموعة تحتوي على قنوات بها رسائل. حذفها سيؤدي إلى فقدان "
+"كل المحتوى إلى الأبد!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -185,11 +201,11 @@ msgstr ""
 "تُجرى التغييرات تلقائيًا، لكن قد لا يتم تحديث الصفحة النشطة. قم بتحديث "
 "الصفحة لتطبيق اللغة الجديدة."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "اسم القناة"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "موضوع القناة"
 
@@ -204,6 +220,8 @@ msgstr "مسح البحث"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "انقر مرة أخرى للتأكيد"
 
@@ -226,11 +244,6 @@ msgstr "انقر لنسخ"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "أغلق"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "تأكيد الحذف"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -320,11 +333,11 @@ msgstr ""
 "توفر إعدادات Space الافتراضية تجربة دردشة نموذجية، ولكن للحصول على ضمانات "
 "خصوصية أعلى، راجع الإعدادات المتقدمة."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "حذف القناة"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "حذف المجموعة"
 
@@ -483,7 +496,7 @@ msgstr "جارٍ إنشاء الرابط..."
 msgid "Go to conversation"
 msgstr "اذهب إلى المحادثة"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "اسم المجموعة"
 
@@ -777,8 +790,8 @@ msgstr "الأدوار"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "حفظ التغييرات"
 
@@ -1080,6 +1093,9 @@ msgstr "لقد تم دعوتك للانضمام إلى فضاء"
 
 #~ msgid "Cancel"
 #~ msgstr "إلغاء"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "تأكيد الحذف"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "نسخ العنوان إلى الحافظة"

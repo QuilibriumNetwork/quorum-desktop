@@ -157,6 +157,22 @@ msgstr ""
 "Da li ste sigurni da želite napustiti {0}? Nećete moći ponovo da se "
 "pridružite osim ako ne budete ponovo pozvani."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Da li si siguran? Ovaj kanal sadrži poruke. Brisanjem će se sav sadržaj "
+"zauvek izgubiti!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Da li si siguran? Ova grupa sadrži kanale sa porukama. Brisanjem će se sav "
+"sadržaj zauvek izgubiti!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -186,11 +202,11 @@ msgstr ""
 "Promene se automatski primenjuju, ali aktivna stranica možda nije ažurirana."
 " Osveži stranicu da bi primenio novi jezik."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Naziv kanala"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Tema kanala"
 
@@ -205,6 +221,8 @@ msgstr "Obriši pretragu"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Kliknite ponovo da potvrdite"
 
@@ -228,11 +246,6 @@ msgstr "Kliknite da kopirate"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Zatvori"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Potvrdi brisanje"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -322,11 +335,11 @@ msgstr ""
 "Podrazumevane postavke Space-a pružaju najtipičnije iskustvo četa, ali za "
 "veće garancije privatnosti, pregledajte napredne postavke."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Obriši kanal"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Obriši grupu"
 
@@ -485,7 +498,7 @@ msgstr "Generišem link..."
 msgid "Go to conversation"
 msgstr "Idite na razgovor"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Ime grupe"
 
@@ -786,8 +799,8 @@ msgstr "Uloge"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Sačuvaj promene"
 
@@ -1098,6 +1111,9 @@ msgstr "Pozvani ste da se pridružite Space-u"
 
 #~ msgid "Cancel"
 #~ msgstr "Otkaži"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Potvrdi brisanje"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Kopiraj adresu u međuspremnik"

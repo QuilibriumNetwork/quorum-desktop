@@ -147,6 +147,14 @@ msgstr ""
 msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
 msgstr ""
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid "Are you sure? This channel contains messages. Deleting it will cause all content to be lost forever!"
+msgstr ""
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid "Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!"
+msgstr ""
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -176,11 +184,11 @@ msgstr ""
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 msgstr ""
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr ""
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr ""
 
@@ -195,6 +203,8 @@ msgstr ""
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr ""
 
@@ -216,8 +226,8 @@ msgstr ""
 
 #: src/components/channel/GroupEditor.tsx:121
 #: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr ""
+#~ msgid "Confirm Deletion"
+#~ msgstr ""
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -315,11 +325,11 @@ msgstr ""
 msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
 msgstr ""
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr ""
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr ""
 
@@ -485,7 +495,7 @@ msgstr ""
 msgid "Go to conversation"
 msgstr ""
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr ""
 
@@ -744,8 +754,8 @@ msgstr ""
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr ""
 

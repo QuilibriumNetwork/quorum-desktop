@@ -157,6 +157,22 @@ msgstr ""
 "Você tem certeza de que deseja sair de {0}? Você não poderá reentrar a menos"
 " que seja reinvidado."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Você tem certeza? Este canal contém mensagens. Excluí-lo fará com que todo o"
+" conteúdo seja perdido para sempre!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Você tem certeza? Este grupo contém canais com mensagens. Excluí-lo fará com"
+" que todo o conteúdo seja perdido para sempre!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -186,11 +202,11 @@ msgstr ""
 "As alterações são feitas automaticamente, mas a página ativa pode não ser "
 "atualizada. Atualize a página para aplicar o novo idioma."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Nome do Canal"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Tópico do Canal"
 
@@ -205,6 +221,8 @@ msgstr "Limpar pesquisa"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Clique novamente para confirmar"
 
@@ -228,11 +246,6 @@ msgstr "Clique para copiar"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Fechar"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Confirmar Exclusão"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -323,11 +336,11 @@ msgstr ""
 " mas para garantias de privacidade mais altas, revise as Configurações "
 "Avançadas."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Excluir Canal"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Excluir Grupo"
 
@@ -487,7 +500,7 @@ msgstr "Gerando link..."
 msgid "Go to conversation"
 msgstr "Ir para a conversa"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Nome do Grupo"
 
@@ -791,8 +804,8 @@ msgstr "Funções"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Salvar Alterações"
 
@@ -1105,6 +1118,9 @@ msgstr "Você foi convidado a se juntar a um Espaço"
 
 #~ msgid "Cancel"
 #~ msgstr "Cancelar"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Confirmar Exclusão"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Copiar endereço para a área de transferência"

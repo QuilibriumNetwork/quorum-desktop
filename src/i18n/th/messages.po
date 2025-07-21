@@ -159,6 +159,22 @@ msgstr ""
 "คุณแน่ใจหรือไม่ว่าต้องการออกจาก {0}? คุณจะไม่สามารถเข้าร่วมใหม่ได้ "
 "เว้นแต่จะได้รับการเชิญใหม่."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"คุณแน่ใจหรือ? ช่องนี้มีข้อความอยู่ "
+"การลบมันจะทำให้เนื้อหาทั้งหมดสูญหายไปตลอดกาล!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"คุณแน่ใจหรือ? กลุ่มนี้มีช่องที่มีข้อความอยู่ "
+"การลบมันจะทำให้เนื้อหาทั้งหมดสูญหายไปตลอดกาล!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -189,11 +205,11 @@ msgstr ""
 "แต่หน้าเว็บที่ใช้งานอยู่อาจไม่ได้รับการอัปเดต "
 "รีเฟรชหน้าเว็บเพื่อใช้ภาษาที่ใหม่"
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "ชื่อช่อง"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "หัวข้อช่อง"
 
@@ -208,6 +224,8 @@ msgstr "ล้างการค้นหา"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "คลิกอีกครั้งเพื่อยืนยัน"
 
@@ -230,11 +248,6 @@ msgstr "คลิกเพื่อคัดลอก"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "ปิด"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "ยืนยันการลบ"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -324,11 +337,11 @@ msgstr ""
 "การตั้งค่า Space เริ่มต้นให้ประสบการณ์การแชทที่เป็นมาตรฐานที่สุด "
 "แต่เพื่อความเป็นส่วนตัวที่สูงขึ้น ให้ตรวจสอบการตั้งค่าขั้นสูง."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "ลบช่องทาง"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "ลบกลุ่ม"
 
@@ -488,7 +501,7 @@ msgstr "กำลังสร้างลิงก์..."
 msgid "Go to conversation"
 msgstr "ไปที่การสนทนา"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "ชื่อกลุ่ม"
 
@@ -783,8 +796,8 @@ msgstr "บทบาท"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "บันทึกการเปลี่ยนแปลง"
 
@@ -1092,6 +1105,9 @@ msgstr "คุณได้รับเชิญให้เข้าร่วม
 
 #~ msgid "Cancel"
 #~ msgstr "ยกเลิก"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "ยืนยันการลบ"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "คัดลอกที่อยู่ไปยังคลิปบอร์ด"

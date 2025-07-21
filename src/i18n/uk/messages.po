@@ -158,6 +158,22 @@ msgstr ""
 "Ви впевнені, що хочете покинути {0}? Ви не зможете приєднатися знову, якщо "
 "вас не запросили знову."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Ви впевнені? Цей канал містить повідомлення. Видалення призведе до втрати "
+"всього вмісту назавжди!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Ви впевнені? Ця група містить канали з повідомленнями. Видалення призведе до"
+" втрати всього вмісту назавжди!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -187,11 +203,11 @@ msgstr ""
 "Зміни вносяться автоматично, але активна сторінка може не оновитися. Оновіть"
 " сторінку, щоб застосувати нову мову."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Назва каналу"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Тема каналу"
 
@@ -206,6 +222,8 @@ msgstr "Очистити пошук"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Натисніть ще раз, щоб підтвердити"
 
@@ -229,11 +247,6 @@ msgstr "Натисніть, щоб скопіювати"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Закрити"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Підтвердити видалення"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -323,11 +336,11 @@ msgstr ""
 "Типові налаштування Space забезпечують найтиповіший досвід чату, але для "
 "вищих гарантій конфіденційності перегляньте розширені налаштування."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Видалити канал"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Видалити групу"
 
@@ -487,7 +500,7 @@ msgstr "Генерація посилання..."
 msgid "Go to conversation"
 msgstr "Перейти до розмови"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Назва групи"
 
@@ -789,8 +802,8 @@ msgstr "Ролі"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Зберегти зміни"
 
@@ -1103,6 +1116,9 @@ msgstr "Вас запросили приєднатися до Простору"
 
 #~ msgid "Cancel"
 #~ msgstr "Скасувати"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Підтвердити видалення"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Скопіювати адресу в буфер обміну"

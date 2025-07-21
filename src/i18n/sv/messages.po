@@ -157,6 +157,22 @@ msgstr ""
 "Är du säker på att du vill lämna {0}? Du kommer inte kunna återansluta om du"
 " inte blir inbjuden igen."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Är du säker? Denna kanal innehåller meddelanden. Att radera den kommer att "
+"orsaka att allt innehåll går förlorat för alltid!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Är du säker? Denna grupp innehåller kanaler med meddelanden. Att radera den "
+"kommer att orsaka att allt innehåll går förlorat för alltid!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -186,11 +202,11 @@ msgstr ""
 "Ändringar görs automatiskt, men den aktiva sidan kanske inte uppdateras. "
 "Uppdatera sidan för att tillämpa det nya språket."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Kanalnamn"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Kanalämne"
 
@@ -205,6 +221,8 @@ msgstr "Rensa sökning"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Klicka igen för att bekräfta"
 
@@ -228,11 +246,6 @@ msgstr "Klicka för att kopiera"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Stäng"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Bekräfta radering"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -322,11 +335,11 @@ msgstr ""
 "Standardinställningar för Space ger den mest typiska chatupplevelsen, men "
 "för högre integritetsskydd, granska avancerade inställningar."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Ta bort kanal"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Ta bort grupp"
 
@@ -486,7 +499,7 @@ msgstr "Genererar länk..."
 msgid "Go to conversation"
 msgstr "Gå till konversation"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Gruppnamn"
 
@@ -790,8 +803,8 @@ msgstr "Roller"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Spara ändringar"
 
@@ -1103,6 +1116,9 @@ msgstr "Du har blivit inbjuden att gå med i en Space"
 
 #~ msgid "Cancel"
 #~ msgstr "Avbryt"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Bekräfta radering"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Kopiera adress till urklipp"

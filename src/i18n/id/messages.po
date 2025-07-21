@@ -158,6 +158,22 @@ msgstr ""
 "Apakah Anda yakin ingin meninggalkan {0}? Anda tidak akan dapat bergabung "
 "kembali kecuali Anda diundang lagi."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Apakah Anda yakin? Saluran ini berisi pesan. Menghapusnya akan menyebabkan "
+"semua konten hilang selamanya!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Apakah Anda yakin? Grup ini berisi saluran dengan pesan. Menghapusnya akan "
+"menyebabkan semua konten hilang selamanya!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -187,11 +203,11 @@ msgstr ""
 "Perubahan dilakukan secara otomatis, tetapi halaman aktif mungkin tidak "
 "diperbarui. Segarkan halaman untuk menerapkan bahasa baru."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Nama Saluran"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Topik Saluran"
 
@@ -206,6 +222,8 @@ msgstr "Kosongkan pencarian"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Klik lagi untuk mengonfirmasi"
 
@@ -229,11 +247,6 @@ msgstr "Klik untuk menyalin"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Tutup"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Konfirmasi Penghapusan"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -323,11 +336,11 @@ msgstr ""
 "Pengaturan Space default memberikan pengalaman obrolan yang paling umum, "
 "tetapi untuk jaminan privasi yang lebih tinggi, tinjau Pengaturan Lanjutan."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Hapus Kanal"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Hapus Grup"
 
@@ -487,7 +500,7 @@ msgstr "Menghasilkan tautan..."
 msgid "Go to conversation"
 msgstr "Pergi ke percakapan"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Nama Grup"
 
@@ -789,8 +802,8 @@ msgstr "Peran"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Simpan Perubahan"
 
@@ -1104,6 +1117,9 @@ msgstr "Kamu telah diundang untuk bergabung dengan Space"
 
 #~ msgid "Cancel"
 #~ msgstr "Batal"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Konfirmasi Penghapusan"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Salin alamat ke papan klip"

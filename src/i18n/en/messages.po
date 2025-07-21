@@ -148,6 +148,14 @@ msgstr "Appearance"
 msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
 msgstr "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid "Are you sure? This channel contains messages. Deleting it will cause all content to be lost forever!"
+msgstr "Are you sure? This channel contains messages. Deleting it will cause all content to be lost forever!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid "Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!"
+msgstr "Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -177,11 +185,11 @@ msgstr "Can delete messages?"
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 msgstr "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Channel Name"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Channel Topic"
 
@@ -196,6 +204,8 @@ msgstr "Clear search"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Click again to confirm"
 
@@ -217,8 +227,8 @@ msgstr "Close"
 
 #: src/components/channel/GroupEditor.tsx:121
 #: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Confirm Deletion"
+#~ msgid "Confirm Deletion"
+#~ msgstr "Confirm Deletion"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -316,11 +326,11 @@ msgstr "Default Channel"
 msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
 msgstr "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Delete Channel"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Delete Group"
 
@@ -486,7 +496,7 @@ msgstr "Generating link..."
 msgid "Go to conversation"
 msgstr "Go to conversation"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Group Name"
 
@@ -745,8 +755,8 @@ msgstr "Roles"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Save Changes"
 

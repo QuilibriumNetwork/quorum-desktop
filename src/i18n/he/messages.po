@@ -155,6 +155,20 @@ msgid ""
 msgstr ""
 "האם אתה בטוח שאתה רוצה לעזוב את {0}? לא תוכל להצטרף שוב אלא אם תוזמן מחדש."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr "אתה בטוח? הערוץ הזה מכיל הודעות. מחיקתו תגרום לאובדן כל התוכן לנצח!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"אתה בטוח? הקבוצה הזו מכילה ערוצים עם הודעות. מחיקתה תגרום לאובדן כל התוכן "
+"לנצח!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -184,11 +198,11 @@ msgstr ""
 "שינויים מתבצעים אוטומטית, אך הדף הפעיל עשוי לא להתעדכן. רענן את הדף כדי "
 "להחיל את השפה החדשה."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "שם ערוץ"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "נושא ערוץ"
 
@@ -203,6 +217,8 @@ msgstr "נקה חיפוש"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "לחץ שוב כדי לאשר"
 
@@ -225,11 +241,6 @@ msgstr "לחץ כדי להעתיק"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "סגור"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "אשר מחיקה"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -319,11 +330,11 @@ msgstr ""
 "הגדרות Space ברירת המחדל מספקות את חווית הצ'אט הטיפוסית ביותר, אך עבור "
 "ערבויות פרטיות גבוהות יותר, עיין בהגדרות מתקדמות."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "מחוק ערוץ"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "מחוק קבוצה"
 
@@ -482,7 +493,7 @@ msgstr "מייצר קישור..."
 msgid "Go to conversation"
 msgstr "לך לשיחה"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "שם הקבוצה"
 
@@ -775,8 +786,8 @@ msgstr "תפקידים"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "שמור שינויים"
 
@@ -1076,6 +1087,9 @@ msgstr "נשלחת אליך הזמנה להצטרף למרחב"
 
 #~ msgid "Cancel"
 #~ msgstr "ביטול"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "אשר מחיקה"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "להעתיק כתובת ללוח"

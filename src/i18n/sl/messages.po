@@ -156,6 +156,22 @@ msgstr ""
 "Ali ste prepričani, da želite zapustiti {0}? Ponovno se ne boste mogli "
 "pridružiti, razen če vas ponovno povabijo."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Si prepričan? Ta kanal vsebuje sporočila. Njegovo brisanje bo povzročilo, da"
+" se vsebina izgubi za vedno!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Si prepričan? Ta skupina vsebuje kanale s sporočili. Njegovo brisanje bo "
+"povzročilo, da se vsebina izgubi za vedno!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -185,11 +201,11 @@ msgstr ""
 "Spremembe se izvajajo samodejno, vendar aktivna stran morda ni posodobljena."
 " Osveži stran, da uporabiš nov jezik."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Ime kanala"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Tematika kanala"
 
@@ -204,6 +220,8 @@ msgstr "Počisti iskanje"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Kliknite znova za potrditev"
 
@@ -227,11 +245,6 @@ msgstr "Kliknite za kopiranje"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Zapri"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Potrdi izbris"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -321,11 +334,11 @@ msgstr ""
 "Privzete nastavitve Space zagotavljajo najbolj tipično izkušnjo klepeta, "
 "vendar za višje garancije zasebnosti preglejte napredne nastavitve."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Izbriši kanal"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Izbriši skupino"
 
@@ -485,7 +498,7 @@ msgstr "Generiranje povezave..."
 msgid "Go to conversation"
 msgstr "Pojdi na pogovor"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Ime skupine"
 
@@ -786,8 +799,8 @@ msgstr "Vloge"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Shrani spremembe"
 
@@ -1099,6 +1112,9 @@ msgstr "Bili ste povabljeni, da se pridružite Space"
 
 #~ msgid "Cancel"
 #~ msgstr "Prekliči"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Potrdi izbris"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Kopiraj naslov v odložišče"

@@ -156,6 +156,22 @@ msgstr ""
 "{0}'dan ayrılmak istediğinize emin misiniz? Yeniden davet edilmedikçe tekrar"
 " katılamayacaksınız."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Emin misin? Bu kanal mesajlar içeriyor. Silinmesi tüm içeriğin sonsuza dek "
+"kaybolmasına neden olacak!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Emin misin? Bu grup mesaj içeren kanallar içeriyor. Silinmesi tüm içeriğin "
+"sonsuza dek kaybolmasına neden olacak!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -185,11 +201,11 @@ msgstr ""
 "Değişiklikler otomatik olarak yapılır, ancak aktif sayfa güncellenmeyebilir."
 " Yeni dili uygulamak için sayfayı yenileyin."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Kanal Adı"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Kanal Konusu"
 
@@ -204,6 +220,8 @@ msgstr "arama temizle"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Onaylamak için tekrar tıklayın"
 
@@ -227,11 +245,6 @@ msgstr "Kopyalamak için tıklayın"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Kapat"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Silme Onayla"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -321,11 +334,11 @@ msgstr ""
 "Varsayılan Alan ayarları en tipik sohbet deneyimini sağlar, ancak daha "
 "yüksek gizlilik garantileri için Gelişmiş Ayarları gözden geçirin."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Kanalı Sil"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Grubu Sil"
 
@@ -485,7 +498,7 @@ msgstr "Bağlantı oluşturuluyor..."
 msgid "Go to conversation"
 msgstr "Sohbete git"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Grup Adı"
 
@@ -788,8 +801,8 @@ msgstr "Roller"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Değişiklikleri Kaydet"
 
@@ -1101,6 +1114,9 @@ msgstr "Bir Space'e katılmanız için davet edildiniz"
 
 #~ msgid "Cancel"
 #~ msgstr "Iptal"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Silme Onayla"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Adres panoya kopyala"

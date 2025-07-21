@@ -150,6 +150,18 @@ msgid ""
 "are re-invited."
 msgstr "{0}를 나가시겠습니까? 다시 초대받지 않는 한 재참여할 수 없습니다."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr "정말 확실합니까? 이 채널에는 메시지가 포함되어 있습니다. 삭제하면 모든 콘텐츠가 영원히 사라집니다!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr "정말 확실합니까? 이 그룹에는 메시지가 있는 채널이 포함되어 있습니다. 삭제하면 모든 콘텐츠가 영원히 사라집니다!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -178,11 +190,11 @@ msgid ""
 msgstr ""
 "변경 사항은 자동으로 적용되지만, 활성 페이지가 업데이트되지 않을 수 있습니다. 새 언어를 적용하려면 페이지를 새로 고치세요."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "채널 이름"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "채널 주제"
 
@@ -197,6 +209,8 @@ msgstr "검색 지우기"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "다시 클릭하여 확인하세요"
 
@@ -218,11 +232,6 @@ msgstr "복사하려면 클릭"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "닫기"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "삭제 확인"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -311,11 +320,11 @@ msgid ""
 msgstr ""
 "기본 스페이스 설정은 가장 일반적인 채팅 경험을 제공하지만, 더 높은 개인 정보 보호 보장을 원하시면 고급 설정을 검토하세요."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "채널 삭제"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "그룹 삭제"
 
@@ -474,7 +483,7 @@ msgstr "링크 생성 중..."
 msgid "Go to conversation"
 msgstr "대화로 이동"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "그룹 이름"
 
@@ -756,8 +765,8 @@ msgstr "역할"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "변경 사항 저장"
 
@@ -1048,6 +1057,9 @@ msgstr "당신은 공간에 가입하라는 초대를 받았습니다."
 
 #~ msgid "Cancel"
 #~ msgstr "취소"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "삭제 확인"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "주소를 클립보드에 복사"

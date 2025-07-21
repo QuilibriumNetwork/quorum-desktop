@@ -156,6 +156,22 @@ msgstr ""
 "Art thou certain thou wishest to leave {0}? Thou shalt not be able to rejoin"
 " unless thou art re-invited."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Arr ye sure? This channel be havin' messages. Deletin' it will cause all "
+"content to be lost fer good!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Arr ye sure? This group be havin' channels with messages. Deletin' it will "
+"cause all content to be lost fer good!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -185,11 +201,11 @@ msgstr ""
 "Changes be made automatically, but the active page may not be updated. "
 "Refresh the page t' apply the new language."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Channel Name"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Channel Topic"
 
@@ -204,6 +220,8 @@ msgstr "Clear search"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Click again to confirm"
 
@@ -226,11 +244,6 @@ msgstr "Give it a press to copy"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Close"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Confirm yer Deletion"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -320,11 +333,11 @@ msgstr ""
 "Default Space settings provide the most typical chat experience, but fer "
 "higher privacy guarantees, review Advanced Settings, savvy?"
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Delete Channel, walkin' the plank!"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Delete Group, send 'em to Davy Jones!"
 
@@ -484,7 +497,7 @@ msgstr "Generating link..."
 msgid "Go to conversation"
 msgstr "Go to conversation"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Group Name, ho!"
 
@@ -783,8 +796,8 @@ msgstr "Roles, matey"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Save yer changes"
 
@@ -1092,6 +1105,9 @@ msgstr "Ye've been invited to join a Space"
 
 #~ msgid "Cancel"
 #~ msgstr "Cancel"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Confirm yer Deletion"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Copy address to yer treasure map"

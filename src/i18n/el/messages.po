@@ -159,6 +159,22 @@ msgstr ""
 "Είστε σίγουροι ότι θέλετε να αποχωρήσετε από το {0}; Δεν θα μπορείτε να "
 "επανενωθείτε εκτός αν σας ξανακαλέσουν."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Είσαι σίγουρος; Αυτό το κανάλι περιέχει μηνύματα. Η διαγραφή του θα "
+"προκαλέσει την απώλεια όλων των περιεχομένων για πάντα!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Είσαι σίγουρος; Αυτή η ομάδα περιέχει κανάλια με μηνύματα. Η διαγραφή της θα"
+" προκαλέσει την απώλεια όλων των περιεχομένων για πάντα!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -189,11 +205,11 @@ msgstr ""
 "Οι αλλαγές γίνονται αυτόματα, αλλά η ενεργή σελίδα μπορεί να μην έχει "
 "ενημερωθεί. Ανανεώστε τη σελίδα για να εφαρμόσετε τη νέα γλώσσα."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Όνομα Καναλιού"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Θέμα Καναλιού"
 
@@ -208,6 +224,8 @@ msgstr "Καθαρισμός αναζήτησης"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Κάντε κλικ ξανά για επιβεβαίωση"
 
@@ -232,11 +250,6 @@ msgstr "Κάντε κλικ για αντιγραφή"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Κλείσιμο"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Επιβεβαίωση Διαγραφής"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -327,11 +340,11 @@ msgstr ""
 "συνομιλίας, αλλά για υψηλότερες εγγυήσεις ιδιωτικότητας, αναθεωρήστε τις "
 "Προηγμένες Ρυθμίσεις."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Διαγραφή Καναλιού"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Διαγραφή Ομάδας"
 
@@ -493,7 +506,7 @@ msgstr "Δημιουργία συνδέσμου..."
 msgid "Go to conversation"
 msgstr "Μετάβαση στη συνομιλία"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Όνομα Ομάδας"
 
@@ -798,8 +811,8 @@ msgstr "Ρόλοι"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Αποθήκευση Αλλαγών"
 
@@ -1114,6 +1127,9 @@ msgstr "Έχεις προσκληθεί να ενταχθείς σε ένα Spac
 
 #~ msgid "Cancel"
 #~ msgstr "Ακύρωση"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Επιβεβαίωση Διαγραφής"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Αντιγραφή διεύθυνσης στο πρόχειρο"

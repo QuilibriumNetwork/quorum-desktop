@@ -156,6 +156,22 @@ msgstr ""
 "Oletko varma, että haluat lähteä {0}? Et voi liittyä takaisin, ellei sinua "
 "kutsuta uudelleen."
 
+#: src/components/channel/ChannelEditor.tsx:179
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
+msgstr ""
+"Oletko varma? Tämä kanava sisältää viestejä. Sen poistaminen aiheuttaa "
+"kaiken sisällön katoamisen ikuisesti!"
+
+#: src/components/channel/GroupEditor.tsx:139
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
+msgstr ""
+"Oletko varma? Tämä ryhmä sisältää kanavia, joissa on viestejä. Sen "
+"poistaminen aiheuttaa kaiken sisällön katoamisen ikuisesti!"
+
 #: src/components/direct/DirectMessage.tsx:574
 #: src/components/channel/Channel.tsx:674
 msgid "attach image"
@@ -185,11 +201,11 @@ msgstr ""
 "Muutokset tehdään automaattisesti, mutta aktiivista sivua ei ehkä päivitetä."
 " Päivitä sivu ottaaksesi uuden kielen käyttöön."
 
-#: src/components/channel/ChannelEditor.tsx:133
+#: src/components/channel/ChannelEditor.tsx:155
 msgid "Channel Name"
 msgstr "Kanavan Nimi"
 
-#: src/components/channel/ChannelEditor.tsx:147
+#: src/components/channel/ChannelEditor.tsx:169
 msgid "Channel Topic"
 msgstr "Kanavan aihe"
 
@@ -204,6 +220,8 @@ msgstr "Tyhjennä haku"
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
+#: src/components/channel/GroupEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Click again to confirm"
 msgstr "Napsauta uudelleen vahvistaaksesi"
 
@@ -227,11 +245,6 @@ msgstr "Napsauta kopioidaksesi"
 #: src/components/MobileDrawer.tsx:145
 msgid "Close"
 msgstr "Sulje"
-
-#: src/components/channel/GroupEditor.tsx:121
-#: src/components/channel/ChannelEditor.tsx:167
-msgid "Confirm Deletion"
-msgstr "Vahvista poisto"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -321,11 +334,11 @@ msgstr ""
 "Oletus Tila-asetukset tarjoavat tyypillisimman keskustelukokemuksen, mutta "
 "korkeampien yksityisyystakuiden vuoksi tarkista Laajennetut asetukset."
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:207
 msgid "Delete Channel"
 msgstr "Poista kanava"
 
-#: src/components/channel/GroupEditor.tsx:121
+#: src/components/channel/GroupEditor.tsx:167
 msgid "Delete Group"
 msgstr "Poista ryhmä"
 
@@ -485,7 +498,7 @@ msgstr "Linkkiä luodaan..."
 msgid "Go to conversation"
 msgstr "Siirry keskusteluun"
 
-#: src/components/channel/GroupEditor.tsx:98
+#: src/components/channel/GroupEditor.tsx:129
 msgid "Group Name"
 msgstr "Ryhmän nimi"
 
@@ -786,8 +799,8 @@ msgstr "Roolit"
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
 #: src/components/channel/SpaceEditor.tsx:1054
-#: src/components/channel/GroupEditor.tsx:125
-#: src/components/channel/ChannelEditor.tsx:171
+#: src/components/channel/GroupEditor.tsx:171
+#: src/components/channel/ChannelEditor.tsx:211
 msgid "Save Changes"
 msgstr "Tallenna muutokset"
 
@@ -1098,6 +1111,9 @@ msgstr "Olet saanut kutsun liittyä Spaceen"
 
 #~ msgid "Cancel"
 #~ msgstr "Peruuta"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Vahvista poisto"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Kopioi osoite leikepöydälle"
