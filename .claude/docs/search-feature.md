@@ -325,7 +325,7 @@ mark {
   background-color: rgba(var(--accent-rgb), 0.5) !important;
   color: var(--color-text-strong) !important;
   padding: 1px 2px;
-  border-radius: 2px;
+  border-radius: 0.125rem;
   font-weight: 500;
 }
 ```

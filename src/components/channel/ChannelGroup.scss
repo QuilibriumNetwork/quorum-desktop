@@ -26,7 +26,7 @@
   background: var(--surface-2);
   padding: 0px 15px;
   margin: 0px -15px;
-  border-radius: 10px 0px 0px 10px;
+  border-radius: 0.5rem 0rem 0rem 0.5rem;
   opacity: 1;
 
   .channel-configure {
@@ -40,7 +40,7 @@
   padding: 0px 15px;
   margin: 0px -15px;
   opacity: 1;
-  border-radius: 10px 0px 0px 10px;
+  border-radius: 0.5rem 0rem 0rem 0.5rem;
 }
 
 .channel-group-channel-name-focused:hover {
@@ -53,7 +53,7 @@
 .channel-group-channel-name-mentions-role {
   display: inline-block;
   padding: 0px 6px;
-  border-radius: 15px;
+  border-radius: 1rem;
   line-height: 20px;
   margin-top: 4px;
   margin-left: 8px;
@@ -75,10 +75,10 @@
   }
 
   .channel-group-channel-name:hover {
-    border-radius: 10px;
+    border-radius: 0.5rem;
   }
 
   .channel-group-channel-name-focused {
-    border-radius: 10px;
+    border-radius: 0.5rem;
   }
 }

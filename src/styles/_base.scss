@@ -50,7 +50,7 @@ mark {
   background-color: rgba(var(--accent-rgb), 0.5) !important;
   color: var(--color-text-strong) !important;
   padding: 1px 2px;
-  border-radius: 2px;
+  border-radius: 0.125rem;
   font-weight: 500;
 }
 
@@ -86,7 +86,7 @@ mark {
 .error-label {
   background-color: #f1a7a7;
   color: #610707;
-  border-radius: 10px;
+  border-radius: 0.5rem;
   padding: 5px 8px;
   font-style: normal;
   font-size: 0.875rem; /* 14px */
@@ -99,7 +99,7 @@ html.dark .error-label {
 }
 
 .card {
-  border-radius: 10px;
+  border-radius: 0.5rem;
   padding: 1.5rem;
   background-color: transparent;
   border: 1px solid var(--surface-7);
@@ -123,7 +123,7 @@ button {
 }
 
 button {
-  border-radius: 8px;
+  border-radius: 0.5rem;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;

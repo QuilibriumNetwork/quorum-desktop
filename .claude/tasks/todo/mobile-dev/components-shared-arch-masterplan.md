@@ -516,7 +516,7 @@ export function Button({ type, size, children, className }: ButtonProps) {
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
-  border-radius: 6px;
+  border-radius: 0.375rem;
   font-weight: 500;
 }
 ```

@@ -1,7 +1,7 @@
 .quorum-modal {
   position: relative;
   background-color: var(--color-bg-modal);
-  border-radius: 10px;
+  border-radius: 0.5rem;
   padding: 26px;
   animation: modalOpen 0.3s ease-out;
   max-width: 90vw;
@@ -11,7 +11,7 @@
   @media (max-width: 768px) {
     margin: 16px;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 0.5rem;
     max-width: calc(100vw - 32px);
     max-height: calc(100vh - 32px);
   }

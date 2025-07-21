@@ -313,7 +313,7 @@ Well-structured semantic classes already following best practices:
 .input-base {
   padding: 12px 16px;
   border: 1px solid #ccc;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   background: var(--color-bg-input);
   color: var(--color-text-main);
 }
