@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { useQuorumApiClient } from './QuorumApiContext';
 import { getConfig } from '../../config/config';
-import { EncryptedMessage } from '../../db/messages';
+import { EncryptedMessage } from '../../db/db';
 import { t } from '@lingui/core/macro';
 
 type MessageHandler = (message: EncryptedMessage) => Promise<void>;

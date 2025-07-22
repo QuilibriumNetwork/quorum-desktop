@@ -1,6 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import * as moment from 'moment-timezone';
 import { Message } from './Message';
 import {
   Emoji,

@@ -6,7 +6,7 @@ import './NewDirectMessageModal.scss';
 import { t } from '@lingui/core/macro';
 import { base58btc } from 'multiformats/bases/base58';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { useConversations, useRegistration } from '../../hooks';
+import { useConversations } from '../../hooks';
 import { useNavigate } from 'react-router';
 import { useModalContext } from '../AppWithSearch';
 import { useQuorumApiClient } from '../context/QuorumApiContext';

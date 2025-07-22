@@ -6,7 +6,7 @@ import {
   OnSuccess,
   OnTimeout,
 } from '../../api/baseTypes';
-import React, {
+import {
   createContext,
   memo,
   ReactNode,

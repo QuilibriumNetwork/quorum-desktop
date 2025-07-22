@@ -1,4 +1,4 @@
-import { MessageDB } from '../../../db/messages';
+import { QuorumDB } from '../../../db/db';
 import { wrapPaginatedFetcher } from '../../utils';
 
 const buildMessagesFetcher = ({
@@ -6,7 +6,7 @@ const buildMessagesFetcher = ({
   spaceId,
   channelId,
 }: {
-  messageDB: MessageDB;
+  messageDB: QuorumDB;
   spaceId: string;
   channelId: string;
 }) =>

@@ -2,7 +2,7 @@
 
 A comprehensive guide to data storage, management, and flow patterns in the Quorum desktop application.
 
-**Created**: 2025-01-20  
+**Created**: 2025-01-20
 **Last Updated**: 2025-01-20
 
 ## Table of Contents
@@ -202,8 +202,8 @@ export type Message = {
   createdDate: number;
   modifiedDate: number;
   lastModifiedHash: string;
-  content: PostMessage | EventMessage | EmbedMessage | ReactionMessage | 
-           RemoveReactionMessage | RemoveMessage | JoinMessage | 
+  content: PostMessage | EventMessage | EmbedMessage | ReactionMessage |
+           RemoveReactionMessage | RemoveMessage | JoinMessage |
            LeaveMessage | KickMessage | UpdateProfileMessage | StickerMessage;
   reactions: Reaction[];
   mentions: Mentions;
@@ -460,14 +460,14 @@ const outboundQueue = useRef<OutboundMessage[]>([]);
 const processQueue = async () => {
   // Process inbound messages by inbox
   let inboxMap = new Map<string, EncryptedMessage[]>();
-  
+
   // Batch process messages per inbox
   for (const [_, messages] of inboxMap) {
     for (const message of messages) {
       await handlerRef.current!(message);
     }
   }
-  
+
   // Process outbound messages
   while ((outbound = dequeueOutbound())) {
     const messages = await outbound();
@@ -496,7 +496,7 @@ const processQueue = async () => {
 // Message queries
 buildMessagesKey({ spaceId, channelId, cursor });
 
-// Space queries  
+// Space queries
 buildSpaceKey({ spaceId });
 buildSpaceMembersKey({ spaceId });
 
@@ -575,12 +575,12 @@ interface KeysetInfo {
 
 **Key Storage**:
 - User keys: Stored in `user_config` object store
-- Space keys: Stored in `space_keys` object store  
+- Space keys: Stored in `space_keys` object store
 - Device keys: Generated per session
 
 ### Encryption States
 
-**State Tracking**: 
+**State Tracking**:
 ```typescript
 interface EncryptionState {
   state: string;
@@ -653,7 +653,7 @@ export const getQuorumApiConfig = function () {
 
 ```typescript
 export class SearchService {
-  private messageDB: MessageDB;
+  private messageDB: QuorumDB;
   private searchCache: Map<string, CachedSearchResult> = new Map();
   private debounceTimers: Map<string, NodeJS.Timeout> = new Map();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
@@ -734,7 +734,7 @@ class ErrorBoundary extends React.Component {
   static getDerivedStateFromError(error: any) {
     return { hasError: true };
   }
-  
+
   componentDidCatch(error: any, info: any) {
     // Log error for debugging
     console.log(error, info);

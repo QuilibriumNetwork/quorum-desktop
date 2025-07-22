@@ -29,7 +29,7 @@ import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 const DirectMessage: React.FC<{}> = (p: {}) => {
-  const { isDesktop, isMobile, isTablet, toggleLeftSidebar } = useResponsiveLayoutContext();
+  const { isMobile, isTablet, toggleLeftSidebar } = useResponsiveLayoutContext();
   const [fileError, setFileError] = useState<string | null>(null);
   let { address } = useParams<{ address: string }>();
   const conversationId = address! + '/' + address!;
@@ -229,7 +229,6 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     );
 
     // if the user has sent any messages, do not show the accept chat message
-    console.log(userMessages);
     if (userMessages.length > 0) {
       setAcceptChat(true);
     }
@@ -253,7 +252,6 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   const icon = userIcon?.includes(DefaultImages.UNKNOWN_USER)
     ? 'var(--unknown-icon)'
     : 'url(' + userIcon + ')';
-  console.log('userIcon', icon);
   return (
     <div className="chat-container">
       <div className="flex flex-col">
@@ -271,7 +269,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
             </div>
             <FontAwesomeIcon
               onClick={() => {
-                setShowUsers((prev) => !prev);
+                setShowUsers(!showUsers);
               }}
               className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"
               icon={faUsers}

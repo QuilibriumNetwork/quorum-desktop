@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState, useCallback, useEffect } from 'react';
-import { SearchContext, SearchResult } from '../../../db/messages';
+import { SearchContext, SearchResult } from '../../../db/db';
 import { SearchService } from '../../../services/searchService';
 import { buildSearchKey } from './buildSearchKey';
 import { buildSearchFetcher } from './buildSearchFetcher';

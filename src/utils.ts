@@ -1,4 +1,4 @@
-import { UserConfig } from '../src/db/messages';
+import { UserConfig } from './db/db';
 
 export enum DefaultImages {
   UNKNOWN_USER = '/unknown.png',

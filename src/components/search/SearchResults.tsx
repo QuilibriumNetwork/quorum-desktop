@@ -7,7 +7,7 @@ import {
   faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/core/macro';
-import { SearchResult } from '../../db/messages';
+import { SearchResult } from '../../db/search';
 import { SearchResultItem } from './SearchResultItem';
 import './SearchResults.scss';
 
@@ -46,10 +46,10 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   // Debounced dimension update function
   const updateDimensions = useCallback(() => {
     if (!containerRef.current) return;
-    
+
     requestAnimationFrame(() => {
       if (!containerRef.current) return;
-      
+
       const viewportWidth = window.innerWidth;
       const isMobile = viewportWidth <= 1023;
       const navMenuWidth = isMobile ? 74 : 0;

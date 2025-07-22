@@ -1,4 +1,4 @@
-import { SearchContext } from '../../../db/messages';
+import { SearchContext } from '../../../db/db';
 
 const buildSearchKey = ({
   query,

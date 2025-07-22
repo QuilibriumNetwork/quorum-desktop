@@ -24,7 +24,6 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
     { groupName?: string } | undefined
   >();
   let { data: isSpaceOwner } = useSpaceOwner({ spaceId });
-  let { data: members } = useSpaceMembers({ spaceId });
 
   return (
     <>

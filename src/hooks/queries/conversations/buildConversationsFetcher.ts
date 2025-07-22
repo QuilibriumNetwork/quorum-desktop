@@ -1,11 +1,11 @@
-import { MessageDB } from '../../../db/messages';
+import { QuorumDB } from '../../../db/db';
 import { wrapPaginatedFetcher } from '../../utils';
 
 const buildConversationsFetcher = ({
   messageDB,
   type,
 }: {
-  messageDB: MessageDB;
+  messageDB: QuorumDB;
   type: 'direct' | 'group';
 }) =>
   wrapPaginatedFetcher(async ({ pageParam: cursor }) => {

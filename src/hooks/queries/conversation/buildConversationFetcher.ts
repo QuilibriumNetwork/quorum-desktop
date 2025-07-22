@@ -1,11 +1,11 @@
-import { MessageDB } from '../../../db/messages';
+import { QuorumDB } from '../../../db/db';
 
 const buildConversationFetcher =
   ({
     messageDB,
     conversationId,
   }: {
-    messageDB: MessageDB;
+    messageDB: QuorumDB;
     conversationId: string;
   }) =>
   async () => {

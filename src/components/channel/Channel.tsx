@@ -147,7 +147,7 @@ const Channel: React.FC<ChannelProps> = ({
 
   const members = useMemo(() => {
     return spaceMembers.reduce(
-      (prev, curr) =>
+      (prev: any, curr: any) =>
         Object.assign(prev, {
           [curr.user_address]: {
             address: curr.user_address,
@@ -167,7 +167,7 @@ const Channel: React.FC<ChannelProps> = ({
 
   const activeMembers = useMemo(() => {
     return spaceMembers.reduce(
-      (prev, curr) =>
+      (prev: any, curr: any) =>
         Object.assign(prev, {
           [curr.user_address]: {
             address: curr.user_address,
@@ -321,7 +321,6 @@ const Channel: React.FC<ChannelProps> = ({
   }, [space]);
 
   const sendSticker = async (stickerId: string) => {
-    console.log('Sending sticker:', stickerId);
     setIsSubmitting(true);
     submitChannelMessage(
       spaceId,
@@ -361,7 +360,7 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
             <FontAwesomeIcon
               onClick={() => {
-                setShowUsers((prev) => !prev);
+                setShowUsers(!showUsers);
               }}
               className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"
               icon={faUsers}
@@ -701,9 +700,9 @@ const Channel: React.FC<ChannelProps> = ({
                         sendSticker(s.id);
                       }}
                     >
-                      <img 
-                        src={s.imgUrl} 
-                        className="max-w-full max-h-full object-contain rounded-md" 
+                      <img
+                        src={s.imgUrl}
+                        className="max-w-full max-h-full object-contain rounded-md"
                         alt="sticker"
                       />
                     </div>

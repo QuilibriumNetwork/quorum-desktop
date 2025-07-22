@@ -6,7 +6,7 @@ import {
   faCalendarAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/core/macro';
-import { SearchResult } from '../../db/messages';
+import { SearchResult } from '../../db/search';
 import { Message } from '../../api/quorumApi';
 import { useUserInfo } from '../../hooks/queries/userInfo/useUserInfo';
 import { useSpace } from '../../hooks/queries/space/useSpace';
@@ -33,13 +33,9 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   // Fetch user info for the sender
   const { data: userInfo } = useUserInfo({
     address: message.content.senderId,
-    enabled: !!message.content.senderId,
   });
 
-  const displayName =
-    userInfo?.userProfile?.displayName ||
-    userInfo?.userProfile?.display_name ||
-    t`Unknown User`;
+  const displayName = userInfo?.display_name || t`Unknown User`;
 
   return (
     <SearchResultItemContent
@@ -69,7 +65,6 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   // Fetch user info for the sender
   const { data: userInfo } = useUserInfo({
     address: message.content.senderId,
-    enabled: !!message.content.senderId,
   });
 
   // Fetch space info
@@ -82,10 +77,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
     .find((g) => g.channels.find((c) => c.channelId === message.channelId))
     ?.channels.find((c) => c.channelId === message.channelId);
 
-  const displayName =
-    userInfo?.userProfile?.displayName ||
-    userInfo?.userProfile?.display_name ||
-    t`Unknown User`;
+  const displayName = userInfo?.display_name || t`Unknown User`;
   const spaceName = spaceInfo?.spaceName || t`Unknown Space`;
   const channelName = channel?.channelName || message.channelId;
 
@@ -182,17 +174,17 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
     maxLength: number = 200
   ): string => {
     if (!searchTerms.length || !text.trim()) {
-      return text.length > maxLength 
-        ? text.substring(0, maxLength) + '...' 
+      return text.length > maxLength
+        ? text.substring(0, maxLength) + '...'
         : text;
     }
 
     // Split text into words
     const words = text.split(/\s+/);
-    
+
     // Find the first occurrence of any search term
     let foundIndex = -1;
-    
+
     for (const term of searchTerms) {
       const termLower = term.toLowerCase();
       for (let i = 0; i < words.length; i++) {
@@ -206,18 +198,18 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
 
     // If no terms found, return truncated text from beginning
     if (foundIndex === -1) {
-      return text.length > maxLength 
-        ? text.substring(0, maxLength) + '...' 
+      return text.length > maxLength
+        ? text.substring(0, maxLength) + '...'
         : text;
     }
 
     // Calculate snippet boundaries
     const startIndex = Math.max(0, foundIndex - contextWords);
     const endIndex = Math.min(words.length, foundIndex + contextWords + 1);
-    
+
     // Extract snippet
     let snippet = words.slice(startIndex, endIndex).join(' ');
-    
+
     // Add ellipsis if we're not at the start/end
     if (startIndex > 0) {
       snippet = '...' + snippet;

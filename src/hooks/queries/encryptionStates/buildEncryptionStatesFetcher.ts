@@ -1,12 +1,12 @@
 import { QuorumApiClient } from '../../../api/baseTypes';
-import { MessageDB } from '../../../db/messages';
+import { QuorumDB } from '../../../db/db';
 
 const buildEncryptionStatesFetcher =
   ({
     messageDB,
     conversationId,
   }: {
-    messageDB: MessageDB;
+    messageDB: QuorumDB;
     conversationId: string;
   }) =>
   async () => {

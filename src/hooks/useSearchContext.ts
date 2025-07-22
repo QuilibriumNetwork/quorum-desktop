@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
-import { SearchContext } from '../db/messages';
+import { SearchContext } from '../db/db';
 
 interface RouteParams {
   spaceId?: string;

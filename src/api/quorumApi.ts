@@ -1,5 +1,3 @@
-import { getConfig } from '../config/config';
-
 export type Permission = 'message:delete';
 
 export type Role = {

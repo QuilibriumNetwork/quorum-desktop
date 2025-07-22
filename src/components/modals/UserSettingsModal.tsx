@@ -8,7 +8,7 @@ import { useRegistrationContext } from '../context/RegistrationPersister';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../context/MessageDB';
 import ToggleSwitch from '../ToggleSwitch';
-import { UserConfig } from '../../db/messages';
+import { UserConfig } from '../../db/users';
 import ThemeRadioGroup from '../ThemeRadioGroup';
 import AccentColorSwitcher from '../AccentColorSwitcher';
 import { t } from '@lingui/core/macro';
@@ -79,7 +79,6 @@ const UserSettingsModal: React.FunctionComponent<{
   };
 
   React.useEffect(() => {
-    console.log('Language changed to:', language);
     dynamicActivate(language);
     setLanguageChanged(true);
     saveUserLocale(language);

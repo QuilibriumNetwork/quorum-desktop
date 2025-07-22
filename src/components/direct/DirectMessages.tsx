@@ -34,7 +34,7 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
 ) => {
   let { address } = useParams<{ address: string }>();
   const { keyset } = useRegistrationContext();
-  const { isMobile, isTablet, leftSidebarOpen, closeLeftSidebar, openLeftSidebar } =
+  const { isMobile, isTablet, leftSidebarOpen, closeLeftSidebar } =
     useResponsiveLayoutContext();
 
   // Removed automatic sidebar opening behavior - sidebar now opens only when user clicks burger menu

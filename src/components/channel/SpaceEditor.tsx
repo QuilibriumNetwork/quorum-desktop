@@ -18,7 +18,6 @@ import {
   faEnvelope,
   faExclamationTriangle,
 } from '@fortawesome/free-solid-svg-icons';
-
 import { useMessageDB } from '../context/MessageDB';
 import '../../styles/_modal_common.scss';
 import Button from '../Button';
@@ -33,10 +32,8 @@ import {
   Conversation,
 } from '../../api/quorumApi';
 import ToggleSwitch from '../ToggleSwitch';
-import Input from '../Input';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useRegistrationContext } from '../context/RegistrationPersister';
-import { Loading } from '../Loading';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import ClickToCopyContent from '../ClickToCopyContent';

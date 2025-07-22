@@ -4,7 +4,6 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import Modal from '../Modal';
 import Button from '../Button';
 import { useRegistration } from '../../hooks';
-import { getConfig } from '../../config/config';
 import { useMessageDB } from '../context/MessageDB';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { t } from '@lingui/core/macro';

@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Space } from '../../api/quorumApi';
-import SpaceIcon from '../navbar/SpaceIcon';
 import { useSpaces } from '../../hooks';
 import Button from '../Button';
 import { useMessageDB } from '../context/MessageDB';
@@ -83,10 +82,10 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
                 }}
                 type="primary"
                 disabled={
-                  joining || !!spaces.find((s) => s.spaceId === space.spaceId)
+                  joining || !!spaces.find((s: Space) => s.spaceId === space.spaceId)
                 }
               >
-                {spaces.find((s) => s.spaceId === space.spaceId)
+                {spaces.find((s: Space) => s.spaceId === space.spaceId)
                   ? t`Joined`
                   : t`Join`}
               </Button>

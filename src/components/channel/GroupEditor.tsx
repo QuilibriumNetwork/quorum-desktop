@@ -18,7 +18,6 @@ const GroupEditor: React.FunctionComponent<{
   let { data: space } = useSpace({ spaceId });
   let [group, setGroup] = React.useState<string>(groupName || '');
   let { channelId } = useParams();
-  let [deleteStatus, setDeleteStatus] = React.useState<boolean>(false);
   let [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
   let [hasMessages, setHasMessages] = React.useState<boolean>(false);
   let [showWarning, setShowWarning] = React.useState<boolean>(false);
@@ -137,9 +136,9 @@ const GroupEditor: React.FunctionComponent<{
             {hasMessages && showWarning && (
               <div className="error-label mb-3 relative pr-8">
                 <Trans>Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!</Trans>
-                <FontAwesomeIcon 
-                  icon={faTimes} 
-                  className="absolute top-2 right-2 cursor-pointer hover:opacity-70" 
+                <FontAwesomeIcon
+                  icon={faTimes}
+                  className="absolute top-2 right-2 cursor-pointer hover:opacity-70"
                   onClick={() => setShowWarning(false)}
                 />
               </div>

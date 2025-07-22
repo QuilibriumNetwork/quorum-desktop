@@ -1,4 +1,4 @@
-import qs from 'qs';
+import { stringify } from 'qs';
 import { getConfig } from '../config/config';
 import {
   getHubAddUrl,
@@ -166,7 +166,7 @@ abstract class AbstractQuorumApiClient {
     let response: Response | undefined;
     let responseData: T | undefined;
 
-    const stringifiedParams = qs.stringify(params);
+    const stringifiedParams = stringify(params);
     const url = `${baseUrl || this.options.baseUrl}${relativeUrl}${
       stringifiedParams ? `?${stringifiedParams}` : ''
     }`;

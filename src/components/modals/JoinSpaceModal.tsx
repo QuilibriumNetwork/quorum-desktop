@@ -10,7 +10,6 @@ import Button from '../Button';
 import SpaceIcon from '../navbar/SpaceIcon';
 import './JoinSpaceModal.scss';
 import { useLocation, useNavigate } from 'react-router';
-import { getConfig } from '../../config/config';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { Space } from '../../api/quorumApi';
 import { useMessageDB } from '../context/MessageDB';

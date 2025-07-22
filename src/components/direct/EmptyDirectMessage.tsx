@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './DirectMessage.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -7,14 +7,10 @@ import {
   faEye,
   faEyeSlash,
 } from '@fortawesome/free-solid-svg-icons';
-import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { useConversations } from '../../hooks';
 import { t } from '@lingui/core/macro';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 export const EmptyDirectMessage = () => {
-  const user = usePasskeysContext();
-  const { data: conversations } = useConversations({ type: 'direct' });
   const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
   const [showHomeScreen, setShowHomeScreen] = useState(() => {
     const saved = localStorage.getItem('quilibrium-show-home-screen');
@@ -92,7 +88,7 @@ export const EmptyDirectMessage = () => {
                 </div>
               </>
             )}
-            {/* 
+            {/*
             <div className="flex flex-row justify-center text-lg pt-4">
               <div className="max-w-[500px] text-center">
                 {conversations.pages.flatMap((p: any) => p.conversations)

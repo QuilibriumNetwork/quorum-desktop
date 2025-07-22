@@ -1,4 +1,4 @@
-import { MessageDB } from '../../../db/messages';
+import { QuorumDB } from '../../../db/db';
 
 const buildSpacesFetcher =
   ({ messageDB }: { messageDB: MessageDB }) =>

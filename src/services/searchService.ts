@@ -1,4 +1,5 @@
-import { MessageDB, SearchContext, SearchResult } from '../db/messages';
+import { QuorumDB } from '../db/db';
+import { SearchContext, SearchResult } from '../db/search';
 
 export interface SearchServiceConfig {
   debounceMs: number;
@@ -20,13 +21,13 @@ export interface CachedSearchResult {
 }
 
 export class SearchService {
-  private messageDB: MessageDB;
+  private messageDB: QuorumDB;
   private config: SearchServiceConfig;
   private searchCache: Map<string, CachedSearchResult> = new Map();
   private debounceTimers: Map<string, NodeJS.Timeout> = new Map();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-  constructor(messageDB: MessageDB, config?: Partial<SearchServiceConfig>) {
+  constructor(messageDB: QuorumDB, config?: Partial<SearchServiceConfig>) {
     this.messageDB = messageDB;
     this.config = {
       debounceMs: 300,

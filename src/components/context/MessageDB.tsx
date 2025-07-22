@@ -10,12 +10,6 @@ import React, {
   useState,
 } from 'react';
 import {
-  EncryptedMessage,
-  EncryptionState,
-  MessageDB,
-  UserConfig,
-} from '../../db/messages';
-import {
   buildConversationsKey,
   buildMessagesKey,
   buildSpaceKey,
@@ -55,9 +49,13 @@ import { base58btc } from 'multiformats/bases/base58';
 import { buildConfigKey } from '../../hooks/queries/config/buildConfigKey';
 import { t } from '@lingui/core/macro';
 import { DefaultImages, getDefaultUserConfig } from '../../utils';
+import { UserConfig } from '../../db/users';
+import { QuorumDB } from '../../db/db';
+import { EncryptedMessage } from '../../db/messages';
+import { EncryptionState } from '../../db/encryptionStates';
 
 type MessageDBContextValue = {
-  messageDB: MessageDB;
+  messageDB: QuorumDB;
   keyset: {
     userKeyset: secureChannel.UserKeyset;
     deviceKeyset: secureChannel.DeviceKeyset;
@@ -200,7 +198,7 @@ type MessageDBContextProps = {
 
 const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   const messageDB = useMemo(() => {
-    return new MessageDB();
+    return new QuorumDB();
   }, []);
   const queryClient = useQueryClient();
   const { apiClient } = useQuorumApiClient();
@@ -231,7 +229,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
   const saveMessage = async (
     decryptedContent: Message,
-    messageDB: MessageDB,
+    messageDB: QuorumDB,
     spaceId: string,
     channelId: string,
     conversationType: string,
@@ -5163,7 +5161,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       config.timestamp = ts;
 
       if (config.allowSync) {
-        console.log('syncing config', config);
         const userKey = keyset.userKeyset;
         const derived = await crypto.subtle.digest(
           'SHA-512',

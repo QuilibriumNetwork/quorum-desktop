@@ -1,7 +1,7 @@
-import { MessageDB } from '../../../db/messages';
+import { QuorumDB } from '../../../db/db';
 
 const buildSpaceOwnerFetcher =
-  ({ messageDB, spaceId }: { messageDB: MessageDB; spaceId: string }) =>
+  ({ messageDB, spaceId }: { messageDB: QuorumDB; spaceId: string }) =>
   async () => {
     const response = await messageDB.getSpaceKey(spaceId, 'owner');
 
