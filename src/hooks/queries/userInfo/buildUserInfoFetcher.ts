@@ -1,4 +1,5 @@
 import { MessageDB } from '../../../db/messages';
+import { t } from '@lingui/core/macro';
 
 const buildUserInfoFetcher =
   ({ messageDB, address }: { messageDB: MessageDB; address: string }) =>
@@ -10,8 +11,8 @@ const buildUserInfoFetcher =
         ...response.userProfile,
       };
     } catch (e) {
-      if (e.status === 404) {
-        return { address };
+      if (e instanceof Error && 'status' in e && e.status === 404) {
+        return { address, display_name: t`Unknown User` };
       } else {
         throw e;
       }

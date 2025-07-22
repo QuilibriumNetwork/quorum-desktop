@@ -990,8 +990,8 @@ export class MessageDB {
     for (const result of searchResults.slice(0, limit)) {
       try {
         const message = await this.getMessage({
-          spaceId: result.match?.spaceId?.[0] || result.spaceId || '',
-          channelId: result.match?.channelId?.[0] || result.channelId || '',
+          spaceId: result.spaceId || '',
+          channelId: result.channelId ||  '',
           messageId: result.id,
         });
 
