@@ -49,10 +49,10 @@ export const Login = ({
           <div className="flex flex-col grow"></div>
         </div>
         <div className="flex flex-row justify-center">
-          <div className="flex flex-col justify-center py-8">
+          <div className="flex flex-col justify-center py-8 w-full max-w-sm px-4">
             <Button
               type="primary-white"
-              className="w-80 mt-2"
+              className="w-full sm:w-80 mt-2"
               onClick={() => {
                 setShowPasskeyPrompt({
                   value: true,
@@ -63,7 +63,7 @@ export const Login = ({
             </Button>
             <Button
               type="light-outline-white"
-              className="w-80 mt-4"
+              className="w-full sm:w-80 mt-4"
               onClick={() => {
                 //@ts-ignore
                 setShowPasskeyPrompt({
