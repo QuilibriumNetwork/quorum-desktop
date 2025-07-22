@@ -9,6 +9,7 @@ import { useQuorumApiClient } from './QuorumApiContext';
 import { getConfig } from '../../config/config';
 import { EncryptedMessage } from '../../db/messages';
 import { t } from '@lingui/core/macro';
+import { notificationService } from '../../services/notificationService';
 
 type MessageHandler = (message: EncryptedMessage) => Promise<void>;
 type OutboundMessage = () => Promise<string[]>;
@@ -32,6 +33,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
   const handlerRef = useRef<MessageHandler | null>(null);
   const resubscribeRef = useRef<(() => Promise<void>) | null>(null);
   const processingRef = useRef(false);
+  const lastNotificationTime = useRef<number>(0);
 
   const messageQueue = useRef<EncryptedMessage[]>([]);
   const outboundQueue = useRef<OutboundMessage[]>([]);
@@ -54,6 +56,19 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
     outboundQueue.current = outboundQueue.current.slice(1);
 
     return message;
+  };
+
+  const showNotificationForNewMessages = (messageCount: number) => {
+    const now = Date.now();
+    const timeSinceLastNotification = now - lastNotificationTime.current;
+
+    // Throttle notifications to avoid spam - only show one notification per 5 seconds
+    if (timeSinceLastNotification < 5000) {
+      return;
+    }
+
+    lastNotificationTime.current = now;
+    notificationService.showUnreadMessagesNotification(messageCount);
   };
 
   const processQueue = async () => {
@@ -80,7 +95,10 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
       }
 
       let allPromises = [] as Promise<void>[];
+      let totalNewMessages = 0;
+
       for (const [_, messages] of inboxMap) {
+        totalNewMessages += messages.length;
         allPromises.push(
           new Promise(async (resolve) => {
             for (const message of messages) {
@@ -96,6 +114,11 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
       }
 
       await Promise.allSettled(allPromises);
+
+      // Show notification for new messages if any were processed
+      if (totalNewMessages > 0) {
+        showNotificationForNewMessages(totalNewMessages);
+      }
 
       // Process outbound messages only if socket is open
       if (wsRef.current?.readyState === WebSocket.OPEN) {
