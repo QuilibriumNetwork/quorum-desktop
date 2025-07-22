@@ -69,6 +69,7 @@ export const Onboarding = ({
   };
 
   const [tooltipVisible, setTooltipVisible] = useState(false);
+  const [alreadySavedConfirmationStep, setAlreadySavedConfirmationStep] = useState(0);
 
   const { getRootProps, getInputProps, acceptedFiles, isDragActive } =
     useDropzone({
@@ -145,16 +146,14 @@ export const Onboarding = ({
       <div className="flex flex-col grow"></div>
       <div className="flex flex-col select-none">
         <div className="flex flex-row grow"></div>
-        <div className="flex flex-row grow font-semibold text-2xl">
-          <div className="flex flex-col grow"></div>
-          <div className="flex flex-col text-white">
+        <div className="flex flex-row grow font-semibold text-2xl justify-center px-4">
+          <div className="flex flex-col text-white text-center">
             {!exported
               ? t`Welcome to Quorum!`
               : currentPasskeyInfo?.pfpUrl && currentPasskeyInfo.displayName
                 ? t`One of us, one of us!`
                 : t`Personalize your account`}
           </div>
-          <div className="flex flex-col grow"></div>
         </div>
         {isDragActive && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay pointer-events-none">
@@ -173,7 +172,7 @@ export const Onboarding = ({
           <>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
-              <div className="w-[460px] py-4 text-justify text-white">
+              <div className="w-full max-w-[460px] px-4 py-4 text-justify text-white">
                 <p className="py-4">
                   <b>{t`Important first-time user information:`}</b>
                 </p>
@@ -212,21 +211,35 @@ export const Onboarding = ({
             </div>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
-              <div className="w-[460px] pt-4 text-center">
+              <div className="w-full max-w-[460px] px-4 pt-4 text-center">
                 <Button
                   type="primary-white"
-                  className="px-8 mb-4"
+                  className="px-8 mb-4 w-full sm:w-auto"
                   onClick={downloadKey}
                 >
                   {t`Save User Key`}
                 </Button>
-                <Button
-                  type="light-outline-white"
-                  className="px-8"
-                  onClick={() => setExported(true)}
-                >
-                  {t`I already saved mine`}
-                </Button>
+                <div className="pt-4">
+                  <Button
+                    type="light-outline-white"
+                    className="px-8 w-full sm:!w-auto sm:!inline-flex"
+                    onClick={() => {
+                      if (alreadySavedConfirmationStep === 0) {
+                        setAlreadySavedConfirmationStep(1);
+                        // Reset confirmation after 5 seconds
+                        setTimeout(() => setAlreadySavedConfirmationStep(0), 5000);
+                      } else {
+                        setExported(true);
+                      }
+                    }}
+                  >
+                    {alreadySavedConfirmationStep === 0 ? (
+                      t`I already saved mine`
+                    ) : (
+                      t`Click again to confirm`
+                    )}
+                  </Button>
+                </div>
               </div>
               <div className="grow"></div>
             </div>
@@ -236,33 +249,35 @@ export const Onboarding = ({
           <>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
-              <div className="w-[460px] py-4 text-justify text-white">
+              <div className="w-full max-w-[460px] px-4 py-4 text-center text-white">
                 <p className="pb-4">
                   <Trans>
                     Let your friends know who you are! Pick a friendly name to
-                    display in your conversations, something easier to read than{' '}
-                    {currentPasskeyInfo?.address}
+                    display in your conversations, something easier to read than:
                   </Trans>
                 </p>
-                <p>{t`This information is only provided to the Spaces you join.`}</p>
+                <pre className="text-sm font-mono bg-black bg-opacity-20 p-2 rounded mb-4 break-all whitespace-pre-wrap word-break overflow-wrap-anywhere">
+                  {currentPasskeyInfo?.address}
+                </pre>
+                <p className="text-sm">{t`This information is only provided to the Spaces you join.`}</p>
               </div>
 
               <div className="grow"></div>
             </div>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
-              <div className="w-[460px] pt-4 text-center flex flex-row justify-between">
+              <div className="w-full max-w-[460px] px-4 pt-4 text-center flex flex-col sm:flex-row justify-between gap-4">
                 <Input
                   className="onboarding-input !bg-white grow"
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Bongocat"
                 />
-                <div className="flex flex-col justify-around pl-2">
+                <div className="flex flex-col justify-around sm:pl-2">
                   <Button
                     type="primary-white"
                     disabled={displayName.length === 0}
-                    className={`px-8 ${displayName.length === 0 ? 'btn-disabled-onboarding ' : ''}`}
+                    className={`px-8 w-full sm:w-auto ${displayName.length === 0 ? 'btn-disabled-onboarding ' : ''}`}
                     onClick={() =>
                       updateUserStoredInfo({ displayName, pfpUrl: undefined })
                     }
@@ -281,7 +296,7 @@ export const Onboarding = ({
             <>
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
-                <div className="w-[460px] flex flex-col justify-center py-4 text-white">
+                <div className="w-full max-w-[460px] px-4 flex flex-col justify-center py-4 text-white">
                   <div className="mb-2 text-center">
                     {t`Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join.`}
                   </div>
@@ -306,7 +321,7 @@ export const Onboarding = ({
               </div>
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
-                <div className="w-[460px] py-4  text-center flex flex-row justify-around">
+                <div className="w-full max-w-[460px] px-4 py-4 text-center flex flex-row justify-around">
                   {acceptedFiles.length != 0 ? (
                     <div {...getRootProps()}>
                       <input {...getInputProps()} />
@@ -372,7 +387,7 @@ export const Onboarding = ({
                   <Button
                     type="primary-white"
                     disabled={!fileData || !!fileError}
-                    className={`px-8 mt-4 ${!fileData || !!fileError ? 'btn-disabled-onboarding' : ''}`}
+                    className={`px-8 mt-4 w-full sm:w-auto ${!fileData || !!fileError ? 'btn-disabled-onboarding' : ''}`}
                     onClick={setPfpImage}
                   >
                     {t`Save Contact Photo`}
@@ -388,7 +403,7 @@ export const Onboarding = ({
             <>
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
-                <div className="w-[460px] py-4 text-center text-white">
+                <div className="w-full max-w-[460px] px-4 py-4 text-center text-white">
                   {t`You're all set. Welcome to Quorum!`}
                 </div>
                 <div className="grow"></div>
@@ -398,7 +413,7 @@ export const Onboarding = ({
                 <div className="flex flex-col justify-around pl-2">
                   <Button
                     type="primary-white"
-                    className="px-8"
+                    className="px-8 w-full sm:w-auto"
                     onClick={() => {
                       updateUserStoredInfo({ completedOnboarding: true });
                       setUser({

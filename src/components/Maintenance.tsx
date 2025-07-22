@@ -19,14 +19,14 @@ export const Maintenance = () => {
         </div>
         <div className="flex flex-row justify-center">
           <div className="grow"></div>
-          <div className="w-[460px] py-4 text-center text-white">
+          <div className="w-full max-w-[460px] px-4 py-4 text-center text-white">
             <FontAwesomeIcon size="4x" icon={faTools} />
           </div>
           <div className="grow"></div>
         </div>
         <div className="flex flex-row justify-center">
           <div className="grow"></div>
-          <div className="w-[460px] py-4 text-justify text-white">
+          <div className="w-full max-w-[460px] px-4 py-4 text-justify text-white">
             <Trans>
               Quorum infrastructure is being deployed at this time. Please try
               refreshing, and check{' '}
@@ -45,10 +45,10 @@ export const Maintenance = () => {
         </div>
         <div className="flex flex-row justify-center">
           <div className="grow"></div>
-          <div className="w-[460px] pt-4 text-center">
+          <div className="w-full max-w-[460px] px-4 pt-4 text-center">
             <Button
               type="secondary-white"
-              className="px-8"
+              className="px-8 w-full sm:w-auto"
               onClick={() => window.location.reload()}
             >
               <Trans>Refresh</Trans>
