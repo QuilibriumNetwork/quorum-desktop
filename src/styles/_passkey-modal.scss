@@ -1,0 +1,240 @@
+/* === PASSKEY MODAL STYLES (SDK-GENERATED) === */
+/* 
+ * This file contains the compiled CSS styles for the PasskeyModal component from the 
+ * @quilibrium/quilibrium-js-sdk-channels package. 
+ * 
+ * These styles are generated from PasskeyModal.css in the SDK and copied here to ensure
+ * they are properly bundled in the main application, avoiding Tailwind purging issues.
+ * 
+ * Original source: quilibrium-js-sdk-channels/src/components/modals/PasskeyModal.css
+ * 
+ * You can directly edit this file to modify PasskeyModal styles - changes will apply immediately.
+ * 
+ * This file will NOT be automatically updated when the SDK changes.
+ * To sync with SDK updates: manually copy new CSS from the SDK's dist/index.css after rebuilding the SDK.
+ */
+
+.passkey-modal-backdrop {
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.4);
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  transition: opacity 0.6s ease-in-out;
+  width: 100%;
+  z-index: 10000;
+}
+.passkey-modal-backdrop.hidden {
+  display: none;
+}
+.passkey-modal-container {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  background-color: hsla(0, 0%, 100%, 0.9);
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  color: #1f2937;
+  font-family: Sen, sans-serif;
+  left: 50%;
+  max-height: 90vh;
+  max-width: 480px;
+  overflow-y: auto;
+  position: fixed;
+  text-align: center;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100vw - 2rem);
+}
+.passkey-modal-header {
+  color: #111827;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 28px;
+  margin: 0;
+  padding: 16px;
+  text-align: center;
+}
+@media (min-width: 640px) {
+  .passkey-modal-header {
+    font-size: 20px;
+    line-height: 28px;
+  }
+}
+.passkey-modal-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.passkey-modal-icon {
+  align-items: center;
+  background-position: 50%;
+  background-size: cover;
+  border: 1px solid #e5e7eb;
+  border-radius: 50%;
+  display: flex;
+  font-size: 23pt;
+  font-weight: 700;
+  height: 60px;
+  width: 60px !important;
+  justify-content: center;
+  padding: 8px;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+  width: 60px;
+  z-index: 100;
+}
+
+@media (min-width: 640px) {
+  .passkey-modal-icon {
+    height: 80px;
+    width: 80px !important;
+  }
+}
+
+.passkey-modal-icon.success {
+  background-color: #22c55e;
+  border-color: #86efac;
+  color: #fff;
+}
+.passkey-modal-icon.error {
+  background-color: #ef4444;
+  border-color: #fca5a5;
+  color: #fff;
+  font-weight: 400;
+}
+.passkey-modal-icon.default {
+  background-color: #0287f2;
+  background-size: cover;
+  border-color: #0266cc;
+}
+.passkey-modal-icon.pulsating {
+  animation: pulsate 2s ease-in-out infinite;
+}
+@keyframes pulsate {
+  0%,
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+.passkey-modal-content {
+  font-size: 14px;
+  margin-bottom: 16px;
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.passkey-modal-error {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  color: #374151;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    Monaco,
+    Consolas,
+    Liberation Mono,
+    Courier New,
+    monospace;
+  font-size: 12px;
+  line-height: 16px;
+  margin-top: 16px;
+  padding: 16px;
+}
+.passkey-modal-dropzone {
+  background-color: rgba(249, 250, 251, 0.5);
+  border: 2px dashed #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 8px;
+  text-overflow: ellipsis;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
+  width: 100%;
+}
+.passkey-modal-dropzone:hover {
+  background-color: rgba(219, 234, 254, 0.5);
+  border-color: #60a5fa;
+}
+.passkey-modal-dropzone-text {
+  font-size: 14px;
+  text-align: center;
+}
+@media (min-width: 640px) {
+  .passkey-modal-dropzone-text {
+    font-size: 16px;
+  }
+}
+.passkey-modal-btn {
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  color: #fff;
+  cursor: pointer;
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin: 8px 16px 16px;
+  padding: 8px 16px;
+  text-align: center;
+  transition: all 0.3s ease-in-out;
+}
+@media (min-width: 640px) {
+  .passkey-modal-btn {
+    font-size: 16px;
+  }
+}
+.passkey-modal-btn.primary {
+  background-color: #0287f2;
+}
+.passkey-modal-btn.primary:hover {
+  background-color: #0266cc;
+}
+.passkey-modal-btn.warning {
+  background-color: #d97706;
+}
+.passkey-modal-btn.warning:hover {
+  background-color: #b45309;
+}
+.passkey-modal-btn.secondary {
+  background-color: #9ca3af;
+}
+.passkey-modal-btn.secondary:hover {
+  background-color: #6b7280;
+}
+.passkey-modal-text-center {
+  text-align: center;
+}
+.passkey-modal-mt-4 {
+  margin-top: 16px;
+}
+.passkey-modal-hidden {
+  display: none;
+}
+
+// Passkey Modal Animation
+@keyframes pulsate {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+.pulsating {
+  animation: pulsate 2s ease-in-out infinite;
+}

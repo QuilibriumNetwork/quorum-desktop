@@ -3,6 +3,7 @@ import {
   PasskeyModal,
   usePasskeysContext,
 } from '@quilibrium/quilibrium-js-sdk-channels';
+import '../../styles/_passkey-modal.scss';
 import Button from '../Button';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
