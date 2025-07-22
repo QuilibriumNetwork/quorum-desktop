@@ -229,7 +229,6 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     );
 
     // if the user has sent any messages, do not show the accept chat message
-    console.log(userMessages);
     if (userMessages.length > 0) {
       setAcceptChat(true);
     }
@@ -253,7 +252,6 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   const icon = userIcon?.includes(DefaultImages.UNKNOWN_USER)
     ? 'var(--unknown-icon)'
     : 'url(' + userIcon + ')';
-  console.log('userIcon', icon);
   return (
     <div className="chat-container">
       <div className="flex flex-col">

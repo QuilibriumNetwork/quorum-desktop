@@ -13,6 +13,8 @@ declare module 'minisearch' {
     score: number;
     terms: string[];
     match: Record<string, string[]>;
+    spaceId: string;
+    channelId: string;
   }
 
   export interface AutoSuggestOptions {
