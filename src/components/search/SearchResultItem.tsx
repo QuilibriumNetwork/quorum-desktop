@@ -11,6 +11,9 @@ import { Message } from '../../api/quorumApi';
 import { useUserInfo } from '../../hooks/queries/userInfo/useUserInfo';
 import { useSpace } from '../../hooks/queries/space/useSpace';
 import './SearchResultItem.scss';
+import { useMessageDB } from '../context/MessageDB';
+import { DefaultImages } from '../../utils';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 
 interface SearchResultItemProps {
   result: SearchResult;
@@ -21,7 +24,7 @@ interface SearchResultItemProps {
 }
 
 // Component for DM search results
-const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
+const DMSearchResultItem: React.FC<SearchResultItemProps> =({
   result,
   onNavigate,
   highlightTerms,
@@ -29,17 +32,35 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   searchTerms,
 }) => {
   const { message } = result;
+  const { messageDB } = useMessageDB();
+  const [icon, setIcon] = React.useState<string >(DefaultImages.UNKNOWN_USER);
+  const [displayName, setDisplayName] = React.useState<string>(t`Unknown User`);
+  const { currentPasskeyInfo } = usePasskeysContext();
 
-  // Fetch user info for the sender
-  const { data: userInfo } = useUserInfo({
-    address: message.content.senderId,
-    enabled: !!message.content.senderId,
-  });
-
-  const displayName =
-    userInfo?.userProfile?.displayName ||
-    userInfo?.userProfile?.display_name ||
-    t`Unknown User`;
+  React.useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        // For DMs, conversationId format is spaceId/channelId
+        const conversationId = `${message.content.senderId}/${message.content.senderId}`;
+        console.log('conversationId', conversationId);
+        const { conversation } = await messageDB.getConversation({
+          conversationId
+        });
+        if (conversation) {
+          setIcon(conversation.icon);
+          setDisplayName(conversation.displayName);
+        }
+      } catch (error) {
+        console.error('Failed to fetch conversation:', error);
+      }
+    };
+    if (message.content.senderId !== currentPasskeyInfo!.address) {
+      fetchUserInfo();
+    } else if (currentPasskeyInfo && currentPasskeyInfo.pfpUrl && currentPasskeyInfo.displayName) {
+      setIcon(currentPasskeyInfo.pfpUrl);
+      setDisplayName(currentPasskeyInfo.displayName);
+    }
+  }, [messageDB, message.spaceId, message.channelId]);
 
   return (
     <SearchResultItemContent
@@ -48,6 +69,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
       highlightTerms={highlightTerms}
       className={className}
       displayName={displayName}
+      icon={icon}
       spaceName={t`Direct Message`}
       channelName={displayName} // Use sender name for both
       isDM={true}
@@ -69,7 +91,6 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   // Fetch user info for the sender
   const { data: userInfo } = useUserInfo({
     address: message.content.senderId,
-    enabled: !!message.content.senderId,
   });
 
   // Fetch space info
@@ -83,8 +104,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
     ?.channels.find((c) => c.channelId === message.channelId);
 
   const displayName =
-    userInfo?.userProfile?.displayName ||
-    userInfo?.userProfile?.display_name ||
+    userInfo.display_name ||
     t`Unknown User`;
   const spaceName = spaceInfo?.spaceName || t`Unknown Space`;
   const channelName = channel?.channelName || message.channelId;
@@ -128,6 +148,7 @@ interface SearchResultItemContentProps extends SearchResult {
   spaceName: string;
   channelName: string;
   isDM: boolean;
+  icon?: string;
   searchTerms: string[];
 }
 
@@ -139,6 +160,7 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
   highlightTerms,
   className,
   displayName,
+  icon,
   spaceName,
   channelName,
   isDM,
@@ -182,17 +204,17 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
     maxLength: number = 200
   ): string => {
     if (!searchTerms.length || !text.trim()) {
-      return text.length > maxLength 
-        ? text.substring(0, maxLength) + '...' 
+      return text.length > maxLength
+        ? text.substring(0, maxLength) + '...'
         : text;
     }
 
     // Split text into words
     const words = text.split(/\s+/);
-    
+
     // Find the first occurrence of any search term
     let foundIndex = -1;
-    
+
     for (const term of searchTerms) {
       const termLower = term.toLowerCase();
       for (let i = 0; i < words.length; i++) {
@@ -206,18 +228,18 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
 
     // If no terms found, return truncated text from beginning
     if (foundIndex === -1) {
-      return text.length > maxLength 
-        ? text.substring(0, maxLength) + '...' 
+      return text.length > maxLength
+        ? text.substring(0, maxLength) + '...'
         : text;
     }
 
     // Calculate snippet boundaries
     const startIndex = Math.max(0, foundIndex - contextWords);
     const endIndex = Math.min(words.length, foundIndex + contextWords + 1);
-    
+
     // Extract snippet
     let snippet = words.slice(startIndex, endIndex).join(' ');
-    
+
     // Add ellipsis if we're not at the start/end
     if (startIndex > 0) {
       snippet = '...' + snippet;
@@ -267,10 +289,11 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
     >
       <div className="result-header">
         <div className="result-meta">
-          <FontAwesomeIcon
+          {isDM && icon && <div className="result-user-profile-image" style={{ backgroundImage: `url(${icon})` }} />}
+          {!isDM && <FontAwesomeIcon
             icon={isDM ? faUser : getMessageTypeIcon(message)}
             className="result-type-icon"
-          />
+          />}
           <span className="result-channel mr-2">{channelName}</span>
 
           {!isDM && (
