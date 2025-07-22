@@ -5,6 +5,7 @@ import {
   usePasskeysContext,
   passkey,
 } from '@quilibrium/quilibrium-js-sdk-channels';
+import '../../styles/_passkey-modal.scss';
 import Input from '../Input';
 import { useDropzone } from 'react-dropzone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
