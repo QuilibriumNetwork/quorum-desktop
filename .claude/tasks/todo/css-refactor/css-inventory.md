@@ -389,4 +389,35 @@ Well-structured semantic classes already following best practices:
 
 ---
 
+## 🔄 Recently Added Styles
+
+### **src/styles/_passkey-modal.scss** ⚠️ SPECIAL HANDLING REQUIRED
+**Status:** EXTERNAL DEPENDENCY - DO NOT CONVERT
+
+**Background:** This file contains CSS styles for PasskeyModal component imported from `@quilibrium/quilibrium-js-sdk-channels` package. The styles were originally created as pure CSS in the SDK and copied here to avoid Tailwind purging issues.
+
+**Key Selectors:**
+- `.passkey-modal-backdrop` - **custom-logic** - Fixed backdrop with blur and z-index
+- `.passkey-modal-container` - **custom-logic** - Centered modal with backdrop-filter, using Sen font family
+- `.passkey-modal-header` - **custom-logic** - Modal title with responsive font sizing
+- `.passkey-modal-icon-wrapper`, `.passkey-modal-icon` - **custom-logic** - Icon container with states (success, error, default) and animation
+- `.passkey-modal-content` - **custom-logic** - Content area with responsive typography
+- `.passkey-modal-error` - **custom-logic** - Error display with monospace font (preserved)
+- `.passkey-modal-dropzone` - **custom-logic** - File upload zone with hover states
+- `.passkey-modal-btn` - **custom-logic** - Button variants (primary, warning, secondary) with hover states
+- `.pulsating`, `@keyframes pulsate` - **custom-logic** - Animation for modal icons
+
+**Critical Notes:**
+- **DO NOT CONVERT TO TAILWIND** - This file must remain as pure CSS
+- Font family: Uses app's 'Sen' font for all elements except `.passkey-modal-error` (monospace)
+- File can be edited directly for immediate style changes
+- Not automatically synced with SDK updates
+- Contains approximately ~30 CSS selectors with complex styling
+
+**Total Updated Inventory:**
+- **Total selectors:** ~480 CSS selectors classified (+30 from passkey modal)
+- **Custom-logic category:** ~95 selectors (+30) - Components that must remain as custom CSS
+
+---
+
 **This inventory provides a comprehensive foundation for systematic Tailwind CSS conversion while preserving the sophisticated theming system and responsive design that makes this application exceptional.**

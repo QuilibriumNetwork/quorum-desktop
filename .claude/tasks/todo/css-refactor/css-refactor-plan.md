@@ -812,4 +812,30 @@ The existing `tailwind.config.js` already includes:
 - 🔄 Updated `CLAUDE.md` - New styling approach and patterns
 - 🔄 Updated SCSS files with @apply integration (completed across all phases)
 
+---
+
+## ⚠️ CRITICAL WARNING: PasskeyModal Styles - Special Handling Required
+
+**IMPORTANT ADDITION - January 22, 2025:**
+
+The file `src/styles/_passkey-modal.scss` contains styles for PasskeyModal component imported from `@quilibrium/quilibrium-js-sdk-channels` package. **THIS FILE MUST BE HANDLED WITH EXTREME CARE** during CSS refactoring:
+
+**DO NOT CONVERT TO TAILWIND:**
+- This file contains ~30 CSS selectors for an external SDK component
+- Originally created as pure CSS in SDK and copied here to avoid Tailwind purging issues
+- Converting to Tailwind would break the modal styling completely
+- File can be edited directly for immediate style changes but should not be migrated to `@apply` patterns
+
+**Why it's in the main repo:**
+- SDK uses pure CSS to avoid Tailwind dependency conflicts
+- Main app imports these styles to ensure proper bundling
+- Provides self-contained modal styling that works reliably
+
+**Classification:** All selectors are **custom-logic** and must remain as raw CSS
+**Impact on refactor:** -30 selectors from conversion targets, +30 to preserve-as-is list
+
+This represents a **critical exception** to the Tailwind migration strategy and must be documented in all refactoring phases.
+
+---
+
 **Ready to begin Phase 1 when you give the go-ahead!**
