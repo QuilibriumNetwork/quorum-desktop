@@ -143,12 +143,8 @@ export class NotificationService {
       tag: options.tag,
       requireInteraction: options.requireInteraction || false,
       silent: options.silent || false,
+      icon: options.icon,
     };
-
-    // Only add icon if not Safari and icon is provided
-    if (!this.isSafari() && options.icon) {
-      notificationOptions.icon = options.icon;
-    }
 
     try {
       const notification = new Notification(options.title, notificationOptions);
