@@ -23,7 +23,8 @@ import locales from '../../i18n/locales';
 import useForceUpdate from '../hooks/forceUpdate';
 import ReactTooltip from '../ReactTooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faInfoCircle, faUser, faShield, faPalette } from '@fortawesome/free-solid-svg-icons';
+import { faTimes, faInfoCircle, faUser, faShield, faPalette, faBell } from '@fortawesome/free-solid-svg-icons';
+import { notificationService } from '../../services/notificationService';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -68,6 +69,9 @@ const UserSettingsModal: React.FunctionComponent<{
   >(null);
   const [isUserIconUploading, setIsUserIconUploading] =
     React.useState<boolean>(false);
+  const [notificationsEnabled, setNotificationsEnabled] = React.useState<boolean>(
+    notificationService.getPermissionStatus() === 'granted'
+  );
 
   const forceUpdate = useForceUpdate();
 
@@ -76,6 +80,31 @@ const UserSettingsModal: React.FunctionComponent<{
     setTimeout(() => {
       dismiss();
     }, 300);
+  };
+
+  const handleNotificationToggle = async () => {
+    if (!notificationService.isNotificationSupported()) {
+      // Show some feedback that notifications aren't supported
+      return;
+    }
+
+    const currentStatus = notificationService.getPermissionStatus();
+
+    if (currentStatus === 'granted') {
+      // Can't revoke permission programmatically, inform user
+      alert(t`To disable notifications, please change the notification settings in your browser for this site.`);
+      return;
+    }
+
+    if (currentStatus === 'denied') {
+      // Can't request again if denied, inform user
+      alert(t`Notifications are blocked. Please enable them in your browser settings for this site.`);
+      return;
+    }
+
+    // Request permission
+    const permission = await notificationService.requestPermission();
+    setNotificationsEnabled(permission === 'granted');
   };
 
   React.useEffect(() => {
@@ -256,6 +285,13 @@ const UserSettingsModal: React.FunctionComponent<{
             {t`Privacy/Security`}
           </div>
           <div
+            onClick={() => setSelectedCategory('notifications')}
+            className={`modal-nav-category ${selectedCategory === 'notifications' ? 'active' : ''}`}
+          >
+            <FontAwesomeIcon icon={faBell} className="mr-2 text-accent" />
+            {t`Notifications`}
+          </div>
+          <div
             onClick={() => setSelectedCategory('appearance')}
             className={`modal-nav-category ${selectedCategory === 'appearance' ? 'active' : ''}`}
           >
@@ -279,6 +315,13 @@ const UserSettingsModal: React.FunctionComponent<{
           >
             <FontAwesomeIcon icon={faShield} className="mr-2 text-accent" />
             {t`Privacy/Security`}
+          </div>
+          <div
+            onClick={() => setSelectedCategory('notifications')}
+            className={`modal-nav-category ${selectedCategory === 'notifications' ? 'active' : ''}`}
+          >
+            <FontAwesomeIcon icon={faBell} className="mr-2 text-accent" />
+            {t`Notifications`}
           </div>
           <div
             onClick={() => setSelectedCategory('appearance')}
@@ -545,6 +588,63 @@ const UserSettingsModal: React.FunctionComponent<{
                         >
                           {t`Save Changes`}
                         </Button>
+                      </div>
+                    </div>
+                  </>
+                );
+              case 'notifications':
+                return (
+                  <>
+                    <div className="modal-content-header">
+                      <div className="modal-text-section">
+                        <div className="modal-text-section-header">{t`Notifications`}</div>
+                        <div className="pt-2 modal-text-small text-main">
+                          {t`Manage desktop notification preferences for new messages.`}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="modal-content-section">
+                      <div className="modal-content-info">
+                        <div className="flex flex-row justify-between pb-2">
+                          <div className="text-sm flex flex-row">
+                            <div className="text-sm flex flex-col justify-around">
+                              {t`Desktop Notifications`}
+                            </div>
+                            <>
+                              <FontAwesomeIcon
+                                id="notifications-tooltip-anchor"
+                                icon={faInfoCircle}
+                                className="info-icon-tooltip mt-2 ml-2"
+                              />
+                              <ReactTooltip
+                                id="notifications-tooltip"
+                                anchorSelect="#notifications-tooltip-anchor"
+                                content={t`Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature.`}
+                                place="right"
+                                className="!w-[400px]"
+                                showOnTouch
+                                touchTrigger="click"
+                              />
+                            </>
+                          </div>
+
+                          <ToggleSwitch
+                            onClick={handleNotificationToggle}
+                            active={notificationsEnabled}
+                          />
+                        </div>
+
+                        {!notificationService.isNotificationSupported() && (
+                          <div className="pt-2 text-sm text-amber-600">
+                            {t`Desktop notifications are not supported in this browser.`}
+                          </div>
+                        )}
+
+                        {notificationService.getPermissionStatus() === 'denied' && (
+                          <div className="pt-2 text-sm text-red-600">
+                            {t`Notifications are blocked. Please enable them in your browser settings.`}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </>
