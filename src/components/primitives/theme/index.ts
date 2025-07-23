@@ -1,2 +1,8 @@
-export { colors, getColor } from './colors';
-export type { Theme } from './colors';
+export { getColors, getColor, themeColors, accentColors } from './colors';
+export type { Theme, AccentColor } from './colors';
+export { 
+  CrossPlatformThemeProvider, 
+  useCrossPlatformTheme,
+  ThemeProvider,
+  useTheme 
+} from './ThemeProvider';

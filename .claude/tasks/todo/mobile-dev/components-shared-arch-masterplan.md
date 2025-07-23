@@ -243,6 +243,24 @@ export const ThemeProvider = ({ children }) => {
 3. **Synchronized Switching**: Theme changes apply to both platforms identically  
 4. **Preserved Features**: Keep accent color switcher, light/dark mode, localStorage persistence
 
+### Color Synchronization Challenge
+
+**The Problem**: React Native cannot read CSS variables, requiring parallel JavaScript color definitions.
+
+**Current State**: Manual synchronization between `_colors.scss` and `colors.ts`
+- Changing CSS colors requires manually updating JavaScript objects
+- Risk of inconsistencies between web and native platforms
+- Maintenance burden as color system evolves
+
+**Future Solution**: Automated synchronization system (implemented after core architecture is stable)
+- **Option 1**: Build script that parses CSS variables and generates JavaScript colors
+- **Option 2**: Single JavaScript source that generates both CSS and native colors  
+- **Option 3**: Design token pipeline using tools like Style Dictionary
+
+**Recommended Approach**: Maintain `_colors.scss` as source of truth, automate generation of `colors.ts`
+
+This ensures the sophisticated existing theming system remains the authoritative source while eliminating manual synchronization work.
+
 ## Platform-Specific Considerations
 
 ### Large Tablet Optimization

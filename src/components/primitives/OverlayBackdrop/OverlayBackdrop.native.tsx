@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, View, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { OverlayBackdropProps } from './types';
+import { useCrossPlatformTheme } from '../theme/ThemeProvider';
 
 export const OverlayBackdrop: React.FC<OverlayBackdropProps> = ({
   visible = true,
@@ -10,6 +11,7 @@ export const OverlayBackdrop: React.FC<OverlayBackdropProps> = ({
   children,
   closeOnBackdropClick = true,
 }) => {
+  const { colors } = useCrossPlatformTheme();
   const handleBackdropPress = () => {
     if (closeOnBackdropClick && onBackdropClick) {
       onBackdropClick();
@@ -24,7 +26,7 @@ export const OverlayBackdrop: React.FC<OverlayBackdropProps> = ({
       onRequestClose={onBackdropClick}
     >
       <TouchableWithoutFeedback onPress={handleBackdropPress}>
-        <View style={[styles.backdrop, { backgroundColor: `rgba(0, 0, 0, ${opacity})` }]}>
+        <View style={[styles.backdrop, { backgroundColor: colors.bg.overlay }]}>
           <TouchableWithoutFeedback>
             <View>{children}</View>
           </TouchableWithoutFeedback>

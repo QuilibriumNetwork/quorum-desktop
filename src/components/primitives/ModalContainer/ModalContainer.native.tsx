@@ -9,6 +9,7 @@ import {
   Dimensions
 } from 'react-native';
 import { ModalContainerProps } from './types';
+import { useCrossPlatformTheme } from '../theme/ThemeProvider';
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -21,6 +22,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   animationDuration = 300,
   closeOnEscape = true, // On mobile, this translates to back button
 }) => {
+  const { colors } = useCrossPlatformTheme();
   const translateY = useRef(new Animated.Value(screenHeight)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -87,7 +89,10 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
             <Animated.View 
               style={[
                 styles.backdrop, 
-                { opacity: opacity }
+                { 
+                  backgroundColor: colors.bg.overlay,
+                  opacity: opacity 
+                }
               ]} 
             />
           </TouchableWithoutFeedback>
@@ -97,6 +102,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
           style={[
             styles.content,
             {
+              backgroundColor: colors.bg.app,
               transform: [{ translateY }],
               opacity,
             },
@@ -118,10 +124,10 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    // backgroundColor will be set dynamically from theme
   },
   content: {
-    backgroundColor: '#ffffff',
+    // backgroundColor will be set dynamically from theme
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     minHeight: 200,

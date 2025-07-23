@@ -5,6 +5,7 @@ import { FlexRow } from './primitives/FlexRow';
 import { FlexBetween } from './primitives/FlexBetween';
 import { FlexCenter } from './primitives/FlexCenter';
 import Button from './primitives/Button';
+import Modal from './primitives/Modal';
 import ThemeRadioGroup from './ThemeRadioGroup';
 import AccentColorSwitcher from './AccentColorSwitcher';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,6 +19,7 @@ export const PrimitivesPlayground: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [showNoBackdropModal, setShowNoBackdropModal] = useState(false);
+  const [showModalPrimitive, setShowModalPrimitive] = useState(false);
 
   return (
     <div className="p-8 space-y-8 h-full overflow-y-auto">
@@ -338,6 +340,68 @@ export const PrimitivesPlayground: React.FC = () => {
             </FlexRow>
           </div>
         </div>
+      </section>
+
+      {/* Section: Modal Primitive */}
+      <section className="border border-default rounded-lg p-6 space-y-6">
+        <h2 className="text-xl font-semibold text-strong">Modal Primitive</h2>
+        
+        {/* Modal Types */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Modal Variants</h3>
+          
+          <div className="space-y-2">
+            <p className="text-sm text-subtle">Using ModalContainer primitive:</p>
+            <FlexRow gap="md" className="p-4 bg-surface-3 rounded-xl" wrap>
+              <Button onClick={() => setShowModalPrimitive(true)}>
+                Show Modal Primitive
+              </Button>
+            </FlexRow>
+          </div>
+        </div>
+
+        {/* Modal Primitive Demo */}
+        <Modal
+          title="Modal Primitive Demo"
+          visible={showModalPrimitive}
+          onClose={() => setShowModalPrimitive(false)}
+          size="medium"
+        >
+          <div className="space-y-4">
+            <p className="text-main">
+              This modal is built using the Modal primitive, which internally uses 
+              the ModalContainer primitive for backdrop and animations.
+            </p>
+            
+            <div className="space-y-2">
+              <h4 className="font-semibold text-strong">Key Features:</h4>
+              <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
+                <li>Uses ModalContainer for consistent backdrop behavior</li>
+                <li>Smooth open/close animations</li>
+                <li>ESC key and backdrop click to close</li>
+                <li>Size variants (small, medium, large, full)</li>
+                <li>Desktop modal → Mobile drawer transformation</li>
+              </ul>
+            </div>
+            
+            <FlexRow gap="md" justify="end">
+              <Button type="secondary" onClick={() => {
+                // Trigger ESC key event to use ModalContainer's animation
+                const escEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+                document.dispatchEvent(escEvent);
+              }}>
+                Cancel
+              </Button>
+              <Button type="primary" onClick={() => {
+                // Trigger ESC key event to use ModalContainer's animation
+                const escEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+                document.dispatchEvent(escEvent);
+              }}>
+                Confirm
+              </Button>
+            </FlexRow>
+          </div>
+        </Modal>
       </section>
 
       {/* Section: ResponsiveContainer (placeholder) */}

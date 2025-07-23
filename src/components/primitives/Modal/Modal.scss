@@ -1,0 +1,96 @@
+// Modal primitive styles - matches original Modal.scss
+.quorum-modal {
+  position: relative;
+  background-color: var(--color-bg-modal);
+  border-radius: 0.5rem;
+  padding: 26px;
+  animation: modalOpen 0.3s ease-out;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+
+  @media (max-width: 768px) {
+    margin: 16px;
+    padding: 20px;
+    border-radius: 0.5rem;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 32px);
+  }
+}
+
+// Size variants
+.quorum-modal-small {
+  max-width: 400px;
+  max-height: 300px;
+}
+
+.quorum-modal-medium {
+  max-width: 600px;
+  max-height: 70vh;
+}
+
+.quorum-modal-large {
+  max-width: 800px;
+  max-height: 85vh;
+}
+
+.quorum-modal-full {
+  max-width: 95vw;
+  max-height: 95vh;
+  
+  @media (max-width: 768px) {
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+    margin: 8px;
+  }
+}
+
+.quorum-modal-closing {
+  opacity: 0;
+  transform: scale(0.95);
+  transition:
+    opacity 0.3s ease-out,
+    transform 0.3s ease-out;
+}
+
+@keyframes modalOpen {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.quorum-modal-close {
+  position: absolute;
+  right: 14px;
+  top: 10px;
+  color: var(--color-text-subtle);
+  transition: color 0.2s ease;
+  
+  &:hover {
+    color: var(--color-text-strong);
+  }
+}
+
+.quorum-modal-title {
+  font-size: 24px;
+  text-align: left;
+  padding-bottom: 20px;
+  color: var(--color-text-strong);
+
+  @media (max-width: 640px) {
+    font-size: 20px;
+    padding-bottom: 16px;
+    text-align: center;
+  }
+}
+
+.quorum-modal-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
