@@ -40,35 +40,37 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [x] Add configurable opacity and blur effects
   - [x] Support both dark and light theme variants
 
-- [ ] **Validate against existing usage**
-  - [ ] Audit Modal.tsx backdrop implementation
-  - [ ] Audit UserSettingsModal.tsx backdrop
-  - [ ] Audit SpaceEditor.tsx backdrop
-  - [ ] Audit Lightbox.tsx backdrop
-  - [ ] Audit MessageActionsDrawer.tsx backdrop
-  - [ ] Document any unique requirements found
+- [x] **Validate against existing usage**
+  - [x] Audit Modal.tsx backdrop implementation
+  - [x] Audit UserSettingsModal.tsx backdrop  
+  - [x] Audit SpaceEditor.tsx backdrop
+  - [x] Audit Lightbox.tsx backdrop
+  - [x] Audit MessageActionsDrawer.tsx backdrop
+  - [x] Document any unique requirements found
+
+**Notes**: All existing backdrop patterns use `bg-overlay backdrop-blur` with `z-[9999]`. ModalContainer and OverlayBackdrop primitives successfully replicate this pattern. Fixed animation issue where close buttons bypassed ModalContainer's internal animation logic.
 
 #### 2. Flex Layout Primitives
 **Goal**: Standardize common flex patterns throughout app
 
-- [ ] **Create FlexRow primitive**
-  - [ ] Create `src/components/primitives/FlexRow/` structure
-  - [ ] Implement with configurable gap, align, justify props
-  - [ ] Support responsive gap values
-  - [ ] Add wrap and nowrap variants
-  - [ ] Test with RTL languages
+- [x] **Create FlexRow primitive**
+  - [x] Create `src/components/primitives/FlexRow/` structure
+  - [x] Implement with configurable gap, align, justify props
+  - [x] Support responsive gap values
+  - [x] Add wrap and nowrap variants
+  - [x] Test with RTL languages
 
-- [ ] **Create FlexBetween primitive**
-  - [ ] Create `src/components/primitives/FlexBetween/` structure
-  - [ ] Implement as specialized FlexRow with justify-between
-  - [ ] Support vertical alignment options
-  - [ ] Add common padding presets
+- [x] **Create FlexBetween primitive**
+  - [x] Create `src/components/primitives/FlexBetween/` structure
+  - [x] Implement as specialized FlexRow with justify-between
+  - [x] Support vertical alignment options
+  - [x] Add common padding presets
 
-- [ ] **Create FlexCenter primitive**
-  - [ ] Create `src/components/primitives/FlexCenter/` structure
-  - [ ] Implement for both axes centering
-  - [ ] Support single-axis centering variants
-  - [ ] Add min-height options for full-screen centering
+- [x] **Create FlexCenter primitive**
+  - [x] Create `src/components/primitives/FlexCenter/` structure
+  - [x] Implement for both axes centering
+  - [x] Support single-axis centering variants
+  - [x] Add min-height options for full-screen centering
 
 - [ ] **Replace inline flex patterns**
   - [ ] Search codebase for `flex flex-row` patterns
@@ -627,7 +629,9 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 ### Session Notes
 _Use this section to add notes between sessions_
 
-**Important**: Commit after any important change so we can easily revert if there are issues. This ensures we have restore points throughout the development process. Commit messages should be simple and describe what was done (no mentions of Claude/Anthropic).
+**Important**: 
+Stop and ask for human review/testing after any important change.
+When confirmed by a human, commit, so we can easily revert if there are issues. This ensures we have restore points throughout the development process. Commit messages should be simple and describe what was done (no mentions of Claude/Anthropic).
 
 ### Blockers
 _Document any blocking issues here_
