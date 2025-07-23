@@ -72,39 +72,9 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [x] Support single-axis centering variants
   - [x] Add min-height options for full-screen centering
 
-- [ ] **Replace inline flex patterns**
-  - [ ] Search codebase for `flex flex-row` patterns
-  - [ ] Search codebase for `flex justify-between` patterns
-  - [ ] Search codebase for `flex items-center justify-center` patterns
-  - [ ] Create migration list of components to update
-  - [ ] Test each replacement maintains exact behavior
-
-#### 3. ResponsiveContainer Primitive
-**Goal**: Centralize complex responsive width calculations
-
-- [ ] **Extract Container.tsx logic**
-  - [ ] Analyze current Container.tsx implementation
-  - [ ] Identify all responsive breakpoints used
-  - [ ] Document max-width behavior at each breakpoint
-  - [ ] Note any special cases or overrides
-
-- [ ] **Create ResponsiveContainer primitive**
-  - [ ] Create `src/components/primitives/ResponsiveContainer/` structure
-  - [ ] Implement breakpoint system matching Container.tsx
-  - [ ] Add support for custom max-widths per breakpoint
-  - [ ] Implement native version with proper SafeAreaView
-  - [ ] Add padding and margin presets
-
-- [ ] **Test responsive behavior**
-  - [ ] Test at mobile viewport (< 640px)
-  - [ ] Test at tablet viewport (640px - 1024px)
-  - [ ] Test at desktop viewport (> 1024px)
-  - [ ] Verify smooth transitions between breakpoints
-  - [ ] Check performance of resize listeners
-
 ### Phase 1B: Critical Component Validation
 
-#### 4. Convert Button.jsx to Primitive
+#### 1. Convert Button.jsx to Primitive
 **Goal**: Validate primitive architecture with most-used component
 
 - [ ] **Analyze current Button.jsx**
@@ -141,7 +111,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [ ] Run full test suite after each update
   - [ ] Document any behavioral differences
 
-#### 5. Convert Modal.tsx to Primitive
+#### 2. Convert Modal.tsx to Primitive
 **Goal**: Prove primitive composition and Modal-to-Drawer transformation
 
 - [ ] **Deep analysis of Modal.tsx**
@@ -178,28 +148,80 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [ ] Validate content scrolling behavior
   - [ ] Ensure proper safe area handling
 
-### Phase 1 Success Validation
+### Phase 1B Success Validation
+
+**⚠️ CHECKPOINT**: Before proceeding to Phase 1C, ensure Phase 1B is complete and validated.
 
 - [ ] **Desktop regression testing**
   - [ ] Run full application test suite
-  - [ ] Manual test of all converted components
-  - [ ] Check for any visual differences
+  - [ ] Manual test all Button and Modal usage throughout app
+  - [ ] Check for any visual differences in converted components
   - [ ] Verify no performance degradation
-  - [ ] Get team approval on changes
+  - [ ] Get team approval on Button and Modal primitive implementations
 
-- [ ] **Mobile proof of concept**
+- [ ] **Primitive composition validation**
+  - [ ] Confirm Button primitive works identically to Button.jsx
+  - [ ] Verify Modal primitive uses ModalContainer correctly
+  - [ ] Test Modal-to-Drawer transformation on mobile viewport
+  - [ ] Check that primitive composition approach is sound
+  - [ ] Document any architectural lessons learned
+
+- [ ] **Mobile proof of concept testing**
   - [ ] Create minimal React Native test app
-  - [ ] Import and test all Phase 1 primitives
-  - [ ] Verify touch interactions work
-  - [ ] Check responsive behavior
-  - [ ] Document any issues found
+  - [ ] Import and test Button and Modal primitives
+  - [ ] Verify touch interactions and animations work
+  - [ ] Test drawer behavior on mobile
+  - [ ] Document any platform-specific issues found
 
-- [ ] **Architecture validation**
-  - [ ] Confirm primitive composition works
-  - [ ] Validate style system approach
-  - [ ] Check bundle size impact
-  - [ ] Measure build time changes
-  - [ ] Document lessons learned
+**Success Criteria**: Button and Modal primitives working in production with zero regressions before continuing to Phase 1C.
+
+---
+
+## Phase 1C: Architecture Validation and Pattern Replacement
+
+**⚠️ IMPORTANT**: This phase should only begin after Phase 1B (Button and Modal primitives) are successfully validated and working in production.
+
+### ResponsiveContainer Primitive
+**Goal**: Centralize responsive width calculations to replace Container.tsx
+
+- [ ] **Extract Container.tsx logic**
+  - [ ] Analyze current Container.tsx implementation
+  - [ ] Document fixed positioning and viewport calculations
+  - [ ] Map responsive breakpoints: mobile (< 1024px), phone (< 480px)
+  - [ ] Note NavMenu width dependencies (72px desktop, 74px tablet, 50px phone)
+  - [ ] Understand border-radius and background-color usage
+
+- [ ] **Create ResponsiveContainer primitive**
+  - [ ] Create `src/components/primitives/ResponsiveContainer/` structure
+  - [ ] Implement web version matching Container.scss exactly
+  - [ ] Create native version with proper SafeAreaView and flex layouts
+  - [ ] Add support for custom positioning and sizing
+  - [ ] Add padding and margin presets for content spacing
+
+- [ ] **Test responsive behavior**
+  - [ ] Test at phone viewport (< 480px) - should use 50px NavMenu offset
+  - [ ] Test at tablet viewport (480px - 1024px) - should use 74px offset
+  - [ ] Test at desktop viewport (> 1024px) - should use 72px offset
+  - [ ] Verify border-radius and background colors match exactly
+  - [ ] Check smooth transitions between breakpoints
+
+### Replace Inline Flex Patterns
+**Goal**: Replace common flex patterns throughout the app with primitives
+
+- [ ] **Search and catalog patterns**
+  - [ ] Search codebase for `flex flex-row` patterns (→ FlexRow)
+  - [ ] Search codebase for `flex justify-between` patterns (→ FlexBetween)
+  - [ ] Search codebase for `flex items-center justify-center` patterns (→ FlexCenter)
+  - [ ] Create prioritized migration list (start with low-risk components)
+
+- [ ] **Gradual replacement strategy**
+  - [ ] Phase 1: Replace patterns in utility components and shared UI
+  - [ ] Phase 2: Replace patterns in business logic components
+  - [ ] Phase 3: Replace patterns in critical user-facing components
+  - [ ] Test each replacement maintains exact visual behavior
+  - [ ] Commit after each successful batch of replacements
+
+**Success Criteria**: All common flex patterns replaced, no visual regressions, improved code consistency.
 
 ---
 
@@ -644,4 +666,4 @@ _Add helpful links discovered during development_
 
 ---
 
-*Last updated: 2025-07-23 00:15 UTC*
+*Last updated: 2025-07-23 01:30 UTC*
