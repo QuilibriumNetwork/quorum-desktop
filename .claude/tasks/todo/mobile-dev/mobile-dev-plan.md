@@ -263,35 +263,6 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 
 ---
 
-## Phase 1D: Automated Theme Synchronization
-
-### Color Sync Automation
-**Goal**: Eliminate manual synchronization between CSS variables and JavaScript theme objects
-
-- [ ] **Create automated color sync system**
-  - [ ] Design build script to parse `_colors.scss` CSS variables
-  - [ ] Generate `colors.ts` automatically from CSS source of truth
-  - [ ] Integrate script into build pipeline (`npm run build`)
-  - [ ] Add validation to ensure color parity between platforms
-  - [ ] Test script with all accent color variants and light/dark themes
-
-- [ ] **Establish workflow for theme changes**
-  - [ ] Document process: modify `_colors.scss` → script auto-generates `colors.ts`
-  - [ ] Add pre-commit hooks to run sync script when CSS changes
-  - [ ] Create validation tests to catch sync issues
-  - [ ] Add script to `package.json` scripts section
-
-**Important Context**: Currently, changes to `_colors.scss` require manual updates to `colors.ts`. This creates a maintenance burden and risk of color inconsistencies between web and native platforms. The build script will maintain `_colors.scss` as the single source of truth while automatically keeping React Native colors synchronized.
-
-**Implementation Options**:
-1. **Build Script** (Recommended): Parse CSS variables, generate JavaScript objects
-2. **CSS-in-JS**: Single JavaScript source generating both CSS and native objects  
-3. **Design Token Pipeline**: External tools like Style Dictionary
-
-**Success Criteria**: Developers only need to modify `_colors.scss`, and React Native colors automatically stay in sync.
-
----
-
 ## Phase 2: Core Primitives Conversion
 
 ### Input Primitives
@@ -356,22 +327,23 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 
 ### Interactive Primitives
 
-#### 4. Convert ReactTooltip.tsx
-**Goal**: Create accessible tooltip primitive
+#### 4. Convert ReactTooltip.tsx (Third-Party Wrapper)
+**Goal**: Create accessible tooltip primitive wrapping third-party library
 
-- [ ] **Analyze tooltip patterns**
-  - [ ] Document all tooltip triggers
-  - [ ] List positioning strategies
-  - [ ] Note delay configurations
-  - [ ] Check for custom content needs
-  - [ ] Find mobile alternatives used
+**⚠️ Third-Party Library**: This wraps the `react-tooltip` package, not a custom component.
 
-- [ ] **Create Tooltip primitive**
-  - [ ] Web: hover/focus triggered
-  - [ ] Native: long-press triggered
-  - [ ] Implement smart positioning
-  - [ ] Add arrow pointing option
-  - [ ] Test with screen readers
+- [ ] **Analyze current react-tooltip usage**
+  - [ ] Document all tooltip triggers and positioning
+  - [ ] List delay configurations and custom content
+  - [ ] Note ReactTooltip.tsx wrapper implementation
+  - [ ] Check mobile touch handling patterns
+
+- [ ] **Create Tooltip primitive wrapper**
+  - [ ] Web: Continue using `react-tooltip` library (no changes)
+  - [ ] Native: Custom implementation with long-press triggers
+  - [ ] Maintain identical API for both platforms
+  - [ ] Implement smart positioning for mobile
+  - [ ] Add arrow pointing and accessibility support
 
 #### 5. Convert ToggleSwitch.tsx
 **Goal**: Create accessible switch primitive
@@ -408,6 +380,125 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [ ] Responsive column counts
   - [ ] Gap configuration
   - [ ] Alignment options
+
+### Third-Party Component Wrappers
+**Goal**: Create primitive wrappers for essential third-party UI libraries that need mobile equivalents
+
+**📋 Detailed Analysis**: See [`third-party-component-migration-report.md`](./third-party-component-migration-report.md) for comprehensive implementation strategies.
+
+**⚠️ Implementation Order**: Prioritized by complexity and app impact.
+
+#### 6. VirtualList Wrapper (react-virtuoso) - **HIGH PRIORITY**
+**Goal**: Wrap react-virtuoso for high-performance lists
+**Complexity**: **MEDIUM-HIGH** - Performance critical for chat
+
+- [ ] **Analyze virtual scrolling usage**
+  - [ ] Document MessageList.tsx virtual scrolling implementation
+  - [ ] Map SearchResults.tsx virtual list patterns
+  - [ ] Note performance requirements for large datasets (1000+ messages)
+  - [ ] Check scroll position restoration and caching patterns
+
+- [ ] **Create VirtualList primitive wrapper**
+  - [ ] Web: Continue using react-virtuoso (no changes)
+  - [ ] Native: Use FlatList with VirtualizedList optimizations
+  - [ ] Maintain scroll performance for 1000+ items at 60fps
+  - [ ] Implement identical APIs for both platforms
+  - [ ] Test with large message histories and real-time updates
+
+**Success Criteria**: MessageList handles 1000+ messages smoothly on mobile
+
+#### 7. Icon Wrapper (@fortawesome/react-fontawesome) - **HIGH PRIORITY**
+**Goal**: Wrap FontAwesome icons for cross-platform consistency
+**Complexity**: **MEDIUM** - Visual consistency critical
+
+- [ ] **Analyze icon usage**
+  - [ ] Audit all FontAwesome icon imports (35+ components)
+  - [ ] List frequently used icons (faTimes, faSearch, faUser, etc.)
+  - [ ] Document icon sizing and styling patterns
+  - [ ] Check for custom icon colors and animations
+
+- [ ] **Create Icon primitive wrapper**
+  - [ ] Web: Continue using @fortawesome/react-fontawesome (no changes)
+  - [ ] Native: Use react-native-vector-icons (Feather or FontAwesome)
+  - [ ] Create icon mapping table (FontAwesome → native equivalents)
+  - [ ] Maintain identical API (icon prop, size, color, etc.)
+  - [ ] Test icon rendering consistency across platforms
+
+**Success Criteria**: All icons render identically on web and mobile
+
+#### 8. FileUpload Wrapper (react-dropzone) - **MEDIUM PRIORITY**
+**Goal**: Wrap react-dropzone for cross-platform file uploads
+**Complexity**: **MEDIUM-HIGH** - Platform permissions complexity
+
+- [ ] **Analyze dropzone usage**
+  - [ ] Document file upload patterns in UserSettingsModal, DirectMessage, Channel
+  - [ ] Note drag-and-drop vs click-to-upload behaviors
+  - [ ] Check file type restrictions and validation patterns
+  - [ ] Map error handling and progress indicators
+
+- [ ] **Create FileUpload primitive wrapper**
+  - [ ] Web: Continue using react-dropzone (no changes)
+  - [ ] Native: Use react-native-document-picker and react-native-image-picker
+  - [ ] Replace drag-and-drop with tap-to-select on mobile
+  - [ ] Handle platform permissions (camera, photo library, files)
+  - [ ] Add progress indicators and error handling
+  - [ ] Test file upload workflows across all usage points
+
+**Success Criteria**: File uploads work seamlessly across platforms
+
+#### 9. EmojiPicker Wrapper (emoji-picker-react) - **MEDIUM PRIORITY**
+**Goal**: Wrap emoji-picker-react for cross-platform emoji selection
+**Complexity**: **MEDIUM** - Library integration and UX matching
+
+- [ ] **Analyze emoji picker usage**
+  - [ ] Document EmojiPickerDrawer.tsx implementation
+  - [ ] Map emoji selection patterns in Message.tsx
+  - [ ] Note emoji categories, search functionality, skin tone support
+  - [ ] Check custom emoji handling
+
+- [ ] **Create EmojiPicker primitive wrapper**
+  - [ ] Web: Continue using emoji-picker-react (no changes)
+  - [ ] Native: Use react-native-emoji-board or custom implementation
+  - [ ] Maintain drawer/modal presentation pattern
+  - [ ] Ensure emoji rendering consistency across platforms
+  - [ ] Test emoji insertion workflows and performance
+
+**Success Criteria**: Emoji selection works identically on both platforms
+
+### Components That Work As-Is
+**Goal**: Document third-party libraries that are already cross-platform compatible
+
+#### ✅ MiniSearch (Search Library)
+- **Status**: **FULLY COMPATIBLE** - Pure JavaScript, no DOM dependencies
+- **Action**: No changes needed - works identically on both platforms
+- **Usage**: Search indexing, full-text search, autocomplete suggestions
+
+#### ✅ @lingui/react (Internationalization)
+- **Status**: **FULLY COMPATIBLE** - React Native has full i18n support
+- **Action**: No changes needed - locale switching works on both platforms
+- **Usage**: Message translations, UI localization
+
+#### ✅ @tanstack/react-query (Data Fetching)
+- **Status**: **FULLY COMPATIBLE** - Platform-agnostic data management
+- **Action**: No changes needed - caching and sync work identically
+- **Usage**: API calls, data caching, background sync
+
+### Desktop-Only Features (No Mobile Equivalent)
+
+#### Navigation (react-router)
+**Status**: **DEFERRED** - Mobile will use completely different navigation architecture
+- Web continues using react-router/react-router-dom
+- Mobile will use @react-navigation/native with stack/tab navigators
+- No primitive wrapper needed - entirely different paradigms
+
+#### Drag & Drop (@dnd-kit)
+**Status**: **DESKTOP-ONLY** - Not appropriate for mobile UX
+- Web continues using @dnd-kit for space reordering
+- Mobile will use alternative UI patterns:
+  - Edit mode with up/down buttons
+  - Settings screen with reorder controls
+  - Long-press menu with "Move up/Move down" options
+- No primitive wrapper needed - different mobile UX approach
 
 ### Phase 2 Validation
 
@@ -710,6 +801,37 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 - [ ] Documentation updated
 - [ ] Code reviewed
 - [ ] Stakeholder sign-off
+
+---
+
+## Phase 7: Automated Theme Synchronization (Final Enhancement)
+
+### Color Sync Automation
+**Goal**: Eliminate manual synchronization between CSS variables and JavaScript theme objects
+
+**⚠️ IMPORTANT**: This phase should only be implemented after all core architecture (Phases 1-6) is complete, tested, and stable. This is a build automation enhancement, not a core requirement.
+
+- [ ] **Create automated color sync system**
+  - [ ] Design build script to parse `_colors.scss` CSS variables
+  - [ ] Generate `colors.ts` automatically from CSS source of truth
+  - [ ] Integrate script into build pipeline (`npm run build`)
+  - [ ] Add validation to ensure color parity between platforms
+  - [ ] Test script with all accent color variants and light/dark themes
+
+- [ ] **Establish workflow for theme changes**
+  - [ ] Document process: modify `_colors.scss` → script auto-generates `colors.ts`
+  - [ ] Add pre-commit hooks to run sync script when CSS changes
+  - [ ] Create validation tests to catch sync issues
+  - [ ] Add script to `package.json` scripts section
+
+**Current Context**: Manual synchronization between `_colors.scss` and `colors.ts` works fine during development. This automation eliminates maintenance burden once the architecture is mature.
+
+**Implementation Options**:
+1. **Build Script** (Recommended): Parse CSS variables, generate JavaScript objects
+2. **CSS-in-JS**: Single JavaScript source generating both CSS and native objects  
+3. **Design Token Pipeline**: External tools like Style Dictionary
+
+**Success Criteria**: Developers only need to modify `_colors.scss`, and React Native colors automatically stay in sync.
 
 ---
 
