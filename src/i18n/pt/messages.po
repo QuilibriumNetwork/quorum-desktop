@@ -15,12 +15,12 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:85
+#: src/components/onboarding/Onboarding.tsx:87
 msgid "File cannot be larger than {maxFileSize}"
 msgstr "O arquivo não pode ser maior que {maxFileSize}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:294
+#: src/components/onboarding/Onboarding.tsx:310
 msgid ""
 "Your profile image size must be {maxFileSize} or less and must be a PNG, "
 "JPG, or JPEG file extension."
@@ -44,30 +44,30 @@ msgid "{user} has been kicked"
 msgstr "{user} foi expulso"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:341
-#: src/components/channel/Channel.tsx:419
+#: src/components/direct/DirectMessage.tsx:339
+#: src/components/channel/Channel.tsx:418
 msgid "Replying to {user}"
 msgstr "Respondendo a {user}"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:407
+#: src/components/direct/DirectMessage.tsx:405
 msgid "Send a message to {user}"
 msgstr "Enviar uma mensagem para {user}"
 
 #. js-lingui-explicit-id
 #: src/components/channel/Channel.tsx:214
-#: src/components/channel/Channel.tsx:617
+#: src/components/channel/Channel.tsx:616
 msgid "{role} - {count}"
 msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:247
-#: src/components/channel/Channel.tsx:650
+#: src/components/channel/Channel.tsx:246
+#: src/components/channel/Channel.tsx:648
 msgid "No Role - {count}"
 msgstr "Sem Papel - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:474
+#: src/components/channel/Channel.tsx:473
 msgid "Send a message to #{channel_name}"
 msgstr "Enviar uma mensagem para #{channel_name}"
 
@@ -85,7 +85,7 @@ msgstr "{0} resultados"
 msgid "+ Add a friend"
 msgstr "Adicionar um amigo"
 
-#: src/components/modals/UserSettingsModal.tsx:348
+#: src/components/modals/UserSettingsModal.tsx:391
 msgid "Account Address"
 msgstr "Endereço da Conta"
 
@@ -93,7 +93,7 @@ msgstr "Endereço da Conta"
 msgid "Add friend"
 msgstr "Adicionar amigo"
 
-#: src/components/channel/ChannelList.tsx:95
+#: src/components/channel/ChannelList.tsx:100
 msgid "Add Group"
 msgstr "Adicionar Grupo"
 
@@ -101,7 +101,7 @@ msgstr "Adicionar Grupo"
 msgid "Add Role"
 msgstr "Adicionar Papel"
 
-#: src/components/channel/Channel.tsx:679
+#: src/components/channel/Channel.tsx:677
 msgid "add sticker"
 msgstr "adicionar adesivo"
 
@@ -130,7 +130,7 @@ msgstr "Os endereços devem ter exatamente 46 caracteres."
 msgid "Addresses start with \"Qm\"."
 msgstr "Os endereços começam com \"Qm\"."
 
-#: src/components/modals/UserSettingsModal.tsx:479
+#: src/components/modals/UserSettingsModal.tsx:522
 msgid ""
 "Adjust security-related settings, which may impact user  experience but "
 "increase the security of your Quorum account."
@@ -142,9 +142,9 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr "Configurações Avançadas"
 
-#: src/components/modals/UserSettingsModal.tsx:263
-#: src/components/modals/UserSettingsModal.tsx:288
-#: src/components/modals/UserSettingsModal.tsx:555
+#: src/components/modals/UserSettingsModal.tsx:299
+#: src/components/modals/UserSettingsModal.tsx:331
+#: src/components/modals/UserSettingsModal.tsx:655
 msgid "Appearance"
 msgstr "Aparência"
 
@@ -173,8 +173,8 @@ msgstr ""
 "Você tem certeza? Este grupo contém canais com mensagens. Excluí-lo fará com"
 " que todo o conteúdo seja perdido para sempre!"
 
-#: src/components/direct/DirectMessage.tsx:574
-#: src/components/channel/Channel.tsx:674
+#: src/components/direct/DirectMessage.tsx:572
+#: src/components/channel/Channel.tsx:672
 msgid "attach image"
 msgstr "anexar imagem"
 
@@ -194,7 +194,7 @@ msgstr "Ocupado"
 msgid "Can delete messages?"
 msgstr "Pode deletar mensagens?"
 
-#: src/components/modals/UserSettingsModal.tsx:588
+#: src/components/modals/UserSettingsModal.tsx:688
 msgid ""
 "Changes are made automatically, but the active page may not be updated. "
 "Refresh the page to apply the new language."
@@ -210,7 +210,7 @@ msgstr "Nome do Canal"
 msgid "Channel Topic"
 msgstr "Tópico do Canal"
 
-#: src/components/modals/UserSettingsModal.tsx:557
+#: src/components/modals/UserSettingsModal.tsx:657
 msgid "Choose your preferred theme for Quorum."
 msgstr "Escolha seu tema preferido para Quorum."
 
@@ -218,6 +218,11 @@ msgstr "Escolha seu tema preferido para Quorum."
 msgid "Clear search"
 msgstr "Limpar pesquisa"
 
+#: src/services/notificationService.ts:198
+msgid "Clearing notifications with tag: {tag}"
+msgstr "Limpar notificações com a tag: {tag}"
+
+#: src/components/onboarding/Onboarding.tsx:239
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
@@ -257,11 +262,11 @@ msgid "Copied!"
 msgstr "Copiado!"
 
 #: src/components/user/UserStatus.tsx:48
-#: src/components/user/UserProfile.tsx:170
-#: src/components/modals/UserSettingsModal.tsx:358
+#: src/components/user/UserProfile.tsx:178
+#: src/components/modals/UserSettingsModal.tsx:401
 #: src/components/direct/DirectMessage.tsx:182
-#: src/components/direct/DirectMessage.tsx:297
-#: src/components/direct/DirectMessage.tsx:559
+#: src/components/direct/DirectMessage.tsx:295
+#: src/components/direct/DirectMessage.tsx:557
 msgid "Copy address"
 msgstr "Copiar endereço"
 
@@ -295,7 +300,7 @@ msgstr "Criar um novo Espaco"
 msgid "Create a Space"
 msgstr "Criar um Space"
 
-#: src/components/onboarding/Login.tsx:61
+#: src/components/onboarding/Login.tsx:62
 msgid "Create New Account"
 msgstr "Criar Nova Conta"
 
@@ -359,7 +364,15 @@ msgstr "Excluir Espaco"
 msgid "Delete this space"
 msgstr "Excluir este espaço"
 
-#: src/components/search/SearchResultItem.tsx:51
+#: src/components/modals/UserSettingsModal.tsx:611
+msgid "Desktop Notifications"
+msgstr "Notificações de Desktop"
+
+#: src/components/modals/UserSettingsModal.tsx:639
+msgid "Desktop notifications are not supported in this browser."
+msgstr "Notificações de desktop não são suportadas neste navegador."
+
+#: src/components/search/SearchResultItem.tsx:73
 msgid "Direct Message"
 msgstr "Mensagem Direta"
 
@@ -368,7 +381,7 @@ msgstr "Mensagem Direta"
 msgid "Direct Messages"
 msgstr "Mensagens Diretas"
 
-#: src/components/modals/UserSettingsModal.tsx:326
+#: src/components/modals/UserSettingsModal.tsx:369
 msgid "Display Name"
 msgstr "Nome de Exibição"
 
@@ -390,7 +403,7 @@ msgstr "Seletor de emojis"
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal.tsx:485
+#: src/components/modals/UserSettingsModal.tsx:528
 msgid "Enable sync"
 msgstr "Ativar sincronização"
 
@@ -406,27 +419,36 @@ msgstr "Digite o endereço de um usuário para começar a enviar mensagens."
 msgid "Enter Address Manually"
 msgstr "Digite o endereço manualmente"
 
-#: src/components/context/WebsocketProvider.tsx:90
+#: src/components/context/WebsocketProvider.tsx:108
 msgid "Error processing inbound:"
 msgstr "Erro ao processar entrada:"
 
-#: src/components/context/WebsocketProvider.tsx:109
+#: src/components/context/WebsocketProvider.tsx:132
 msgid "Error processing outbound:"
 msgstr "Erro ao processar saída:"
 
-#: src/components/context/WebsocketProvider.tsx:114
+#: src/components/context/WebsocketProvider.tsx:137
 msgid "Error processing queue:"
 msgstr "Erro ao processar fila:"
+
+#: src/services/notificationService.ts:75
+msgid "Error requesting notification permission:"
+msgstr "Erro ao solicitar permissão para notificações:"
+
+#: src/services/notificationService.ts:128
+#: src/services/notificationService.ts:165
+msgid "Error showing notification:"
+msgstr "Erro ao mostrar notificação:"
 
 #: src/components/channel/SpaceEditor.tsx:1082
 msgid "Existing Conversations"
 msgstr "Conversas Existentes"
 
-#: src/components/modals/UserSettingsModal.tsx:471
+#: src/components/modals/UserSettingsModal.tsx:514
 msgid "Export"
 msgstr "Exportar"
 
-#: src/components/modals/UserSettingsModal.tsx:462
+#: src/components/modals/UserSettingsModal.tsx:505
 msgid ""
 "Export your key to a file by clicking this button. Do not share this file "
 "with anyone else or they can impersonate you or steal your Space's Apex "
@@ -440,11 +462,11 @@ msgstr ""
 msgid "Failed to decrypt message with any known state"
 msgstr "Falha ao descriptografar a mensagem com qualquer estado conhecido"
 
-#: src/components/context/WebsocketProvider.tsx:141
+#: src/components/context/WebsocketProvider.tsx:164
 msgid "Failed to parse WebSocket message:"
 msgstr "Falha ao analisar a mensagem WebSocket:"
 
-#: src/components/modals/UserSettingsModal.tsx:140
+#: src/components/modals/UserSettingsModal.tsx:169
 #: src/components/modals/CreateSpaceModal.tsx:57
 #: src/components/channel/SpaceEditor.tsx:144
 #: src/components/channel/SpaceEditor.tsx:184
@@ -461,8 +483,8 @@ msgstr "O arquivo não pode ser maior que 256KB"
 msgid "File cannot be larger than 2MB"
 msgstr "O arquivo não pode ser maior que 2MB"
 
-#: src/components/onboarding/Onboarding.tsx:90
-#: src/components/modals/UserSettingsModal.tsx:142
+#: src/components/onboarding/Onboarding.tsx:92
+#: src/components/modals/UserSettingsModal.tsx:171
 #: src/components/modals/CreateSpaceModal.tsx:59
 #: src/components/direct/DirectMessage.tsx:72
 #: src/components/channel/SpaceEditor.tsx:146
@@ -477,8 +499,8 @@ msgstr "Arquivo rejeitado"
 msgid "general"
 msgstr "geral"
 
-#: src/components/modals/UserSettingsModal.tsx:249
-#: src/components/modals/UserSettingsModal.tsx:274
+#: src/components/modals/UserSettingsModal.tsx:278
+#: src/components/modals/UserSettingsModal.tsx:310
 #: src/components/channel/SpaceEditor.tsx:417
 #: src/components/channel/SpaceEditor.tsx:465
 msgid "General"
@@ -508,12 +530,12 @@ msgstr "Nome do Grupo"
 msgid "hide home screen"
 msgstr "ocultar tela inicial"
 
-#: src/components/onboarding/Onboarding.tsx:227
+#: src/components/onboarding/Onboarding.tsx:237
 msgid "I already saved mine"
 msgstr "Eu já salvei o meu"
 
-#: src/components/onboarding/Onboarding.tsx:359
-#: src/components/onboarding/Onboarding.tsx:366
+#: src/components/onboarding/Onboarding.tsx:375
+#: src/components/onboarding/Onboarding.tsx:382
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr ""
 "Se pulado, você receberá a imagem de perfil padrão e poderá configurá-la "
@@ -535,7 +557,7 @@ msgstr ""
 "Se você desinstalar o aplicativo do seu dispositivo, você perderá suas "
 "mensagens e chaves antigas."
 
-#: src/components/onboarding/Login.tsx:74
+#: src/components/onboarding/Login.tsx:75
 msgid "Import Existing Key"
 msgstr "Importar Chave Existente"
 
@@ -591,11 +613,11 @@ msgstr "Junte-se ao Espaço"
 msgid "Joined"
 msgstr "Juntou-se"
 
-#: src/components/modals/UserSettingsModal.tsx:459
+#: src/components/modals/UserSettingsModal.tsx:502
 msgid "Key Export"
 msgstr "Exportar Chave"
 
-#: src/components/user/UserProfile.tsx:335
+#: src/components/user/UserProfile.tsx:344
 #: src/components/modals/KickUserModal.tsx:30
 msgid "Kick User"
 msgstr "Expulsar Usuário"
@@ -604,7 +626,7 @@ msgstr "Expulsar Usuário"
 msgid "Kick!"
 msgstr "Expulsar!"
 
-#: src/components/modals/UserSettingsModal.tsx:567
+#: src/components/modals/UserSettingsModal.tsx:667
 msgid "Language"
 msgstr "Linguagem"
 
@@ -613,16 +635,15 @@ msgstr "Linguagem"
 msgid "Leave Space"
 msgstr "Sair do Espaço"
 
-#. placeholder {0}: currentPasskeyInfo?.address
-#: src/components/onboarding/Onboarding.tsx:240
+#: src/components/onboarding/Onboarding.tsx:254
 msgid ""
 "Let your friends know who you are! Pick a friendly name to display in your "
-"conversations, something easier to read than {0}"
+"conversations, something easier to read than:"
 msgstr ""
 "Deixe seus amigos saberem quem você é! Escolha um nome amigável para exibir "
-"em suas conversas, algo mais fácil de ler do que {0}"
+"em suas conversas, algo mais fácil de ler do que:"
 
-#: src/components/onboarding/Onboarding.tsx:414
+#: src/components/onboarding/Onboarding.tsx:430
 msgid "Let's gooooooooo"
 msgstr "Vamos láaaaaaa"
 
@@ -638,7 +659,7 @@ msgstr "Procurando usuário..."
 msgid "Maintenance in Progress"
 msgstr "Manutenção em Andamento"
 
-#: src/components/onboarding/Onboarding.tsx:285
+#: src/components/onboarding/Onboarding.tsx:301
 msgid ""
 "Make your account uniquely yours – set a contact photo. This information is "
 "only provided to the Spaces you join."
@@ -646,7 +667,12 @@ msgstr ""
 "Faça sua conta ser exclusivamente sua – defina uma foto de contato. Essas "
 "informações são fornecidas apenas para os Espaços que você ingressa."
 
-#: src/components/modals/UserSettingsModal.tsx:404
+#: src/components/modals/UserSettingsModal.tsx:602
+msgid "Manage desktop notification preferences for new messages."
+msgstr ""
+"Gerenciar preferências de notificações de desktop para novas mensagens."
+
+#: src/components/modals/UserSettingsModal.tsx:447
 msgid ""
 "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr ""
@@ -676,15 +702,45 @@ msgstr "Nova Mensagem Direta"
 msgid "No messages found"
 msgstr "Nenhuma mensagem encontrada"
 
-#: src/components/modals/UserSettingsModal.tsx:513
+#: src/components/modals/UserSettingsModal.tsx:556
 msgid "Non-repudiability"
 msgstr "Não-repudiabilidade"
+
+#: src/services/notificationService.ts:180
+msgid "Notification permission not granted"
+msgstr "Permissão para notificações não concedida"
+
+#: src/components/modals/UserSettingsModal.tsx:292
+#: src/components/modals/UserSettingsModal.tsx:324
+#: src/components/modals/UserSettingsModal.tsx:600
+msgid "Notifications"
+msgstr "Notificações"
+
+#: src/components/modals/UserSettingsModal.tsx:101
+msgid ""
+"Notifications are blocked. Please enable them in your browser settings for "
+"this site."
+msgstr ""
+"Notificações estão bloqueadas. Por favor, ative-as nas configurações do seu "
+"navegador para este site."
+
+#: src/components/modals/UserSettingsModal.tsx:645
+msgid ""
+"Notifications are blocked. Please enable them in your browser settings."
+msgstr ""
+"Notificações estão bloqueadas. Por favor, ative-as nas configurações do seu "
+"navegador."
+
+#: src/services/notificationService.ts:55
+#: src/services/notificationService.ts:175
+msgid "Notifications are not supported in this browser"
+msgstr "Notificações não são suportadas neste navegador"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:18
 msgid "Offline"
 msgstr "Offline"
 
-#: src/components/onboarding/Onboarding.tsx:153
+#: src/components/onboarding/Onboarding.tsx:154
 msgid "One of us, one of us!"
 msgstr "Um de nós, um de nós!"
 
@@ -692,7 +748,7 @@ msgstr "Um de nós, um de nós!"
 msgid "Online"
 msgstr "Online"
 
-#: src/components/onboarding/Onboarding.tsx:154
+#: src/components/onboarding/Onboarding.tsx:155
 msgid "Personalize your account"
 msgstr "Personalize sua conta"
 
@@ -700,9 +756,9 @@ msgstr "Personalize sua conta"
 msgid "Privacy Settings"
 msgstr "Configurações de Privacidade"
 
-#: src/components/modals/UserSettingsModal.tsx:256
-#: src/components/modals/UserSettingsModal.tsx:281
-#: src/components/modals/UserSettingsModal.tsx:402
+#: src/components/modals/UserSettingsModal.tsx:285
+#: src/components/modals/UserSettingsModal.tsx:317
+#: src/components/modals/UserSettingsModal.tsx:445
 msgid "Privacy/Security"
 msgstr "Privacidade/Segurança"
 
@@ -760,11 +816,11 @@ msgid "received config with invalid signature!"
 msgstr "configuração recebida com assinatura inválida!"
 
 #: src/components/Maintenance.tsx:54
-#: src/components/modals/UserSettingsModal.tsx:597
+#: src/components/modals/UserSettingsModal.tsx:697
 msgid "Refresh"
 msgstr "Atualizar"
 
-#: src/components/modals/UserSettingsModal.tsx:438
+#: src/components/modals/UserSettingsModal.tsx:481
 msgid "Remove"
 msgstr "Remover"
 
@@ -797,9 +853,9 @@ msgstr ""
 msgid "Roles"
 msgstr "Funções"
 
-#: src/components/user/UserProfile.tsx:248
-#: src/components/modals/UserSettingsModal.tsx:391
-#: src/components/modals/UserSettingsModal.tsx:546
+#: src/components/user/UserProfile.tsx:256
+#: src/components/modals/UserSettingsModal.tsx:434
+#: src/components/modals/UserSettingsModal.tsx:589
 #: src/components/channel/SpaceEditor.tsx:710
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
@@ -809,7 +865,7 @@ msgstr "Funções"
 msgid "Save Changes"
 msgstr "Salvar Alterações"
 
-#: src/components/onboarding/Onboarding.tsx:377
+#: src/components/onboarding/Onboarding.tsx:393
 msgid "Save Contact Photo"
 msgstr "Salvar Foto de Contato"
 
@@ -842,7 +898,7 @@ msgstr "Pesquisar mensagens..."
 msgid "Searching..."
 msgstr "Pesquisando..."
 
-#: src/components/modals/UserSettingsModal.tsx:476
+#: src/components/modals/UserSettingsModal.tsx:519
 msgid "Security"
 msgstr "Segurança"
 
@@ -868,7 +924,7 @@ msgstr ""
 "Envie convites para pessoas com quem você já teve conversas anteriormente. "
 "Um botão de convite aparecerá na caixa de entrada delas."
 
-#: src/components/user/UserProfile.tsx:323
+#: src/components/user/UserProfile.tsx:332
 msgid "Send Message"
 msgstr "Enviar Mensagem"
 
@@ -876,19 +932,29 @@ msgstr "Enviar Mensagem"
 msgid "Session Encrypted"
 msgstr "Sessão Criptografada"
 
-#: src/components/onboarding/Onboarding.tsx:269
+#: src/components/onboarding/Onboarding.tsx:285
 msgid "Set Display Name"
 msgstr "Definir Nome de Exibição"
 
-#: src/components/modals/UserSettingsModal.tsx:243
+#: src/components/modals/UserSettingsModal.tsx:272
 msgid "Settings"
 msgstr "Configurações"
+
+#: src/components/modals/UserSettingsModal.tsx:622
+msgid ""
+"Show desktop notifications when you receive new messages while Quorum is in "
+"the background. Your browser will ask for permission when you enable this "
+"feature."
+msgstr ""
+"Mostrar notificações de desktop quando você receber novas mensagens enquanto"
+" o Quorum estiver em segundo plano. Seu navegador pedirá permissão quando "
+"você ativar este recurso."
 
 #: src/components/direct/EmptyDirectMessage.tsx:90
 msgid "show home screen"
 msgstr "mostrar tela inicial"
 
-#: src/components/onboarding/Onboarding.tsx:351
+#: src/components/onboarding/Onboarding.tsx:367
 msgid "Skip Adding Photo"
 msgstr "Pular Adicionar Foto"
 
@@ -908,7 +974,7 @@ msgstr "Nome do Espaço"
 msgid "Start typing to search messages..."
 msgstr "Comece a digitar para pesquisar mensagens..."
 
-#: src/components/user/UserProfile.tsx:191
+#: src/components/user/UserProfile.tsx:199
 msgid "Status goes here"
 msgstr "O status vai aqui"
 
@@ -935,15 +1001,15 @@ msgstr "sistema"
 msgid "The invite link has expired or is invalid."
 msgstr "O link de convite expirou ou é inválido."
 
-#: src/components/modals/UserSettingsModal.tsx:449
+#: src/components/modals/UserSettingsModal.tsx:492
 msgid "This device"
 msgstr "Este dispositivo"
 
-#: src/components/onboarding/Onboarding.tsx:246
+#: src/components/onboarding/Onboarding.tsx:262
 msgid "This information is only provided to the Spaces you join."
 msgstr "Esta informação é fornecida apenas para os Espaços que você ingressa."
 
-#: src/components/modals/UserSettingsModal.tsx:350
+#: src/components/modals/UserSettingsModal.tsx:393
 msgid ""
 "This is your public address and is safe to share with anyone you want to "
 "interact with."
@@ -961,6 +1027,14 @@ msgstr ""
 "que invalidará o link antigo. Os membros atuais do Espaço não serão "
 "removidos do Espaço."
 
+#: src/components/modals/UserSettingsModal.tsx:95
+msgid ""
+"To disable notifications, please change the notification settings in your "
+"browser for this site."
+msgstr ""
+"Para desativar notificações, por favor, altere as configurações de "
+"notificação no seu navegador para este site."
+
 #: src/components/message/Message.tsx:169
 msgid "Today at {timeFormatted}"
 msgstr "Hoje às {timeFormatted}"
@@ -973,12 +1047,13 @@ msgstr "Tente palavras-chave diferentes ou verifique sua ortografia"
 msgid "Unknown"
 msgstr "Desconhecido"
 
-#: src/components/search/SearchResultItem.tsx:89
+#: src/components/search/SearchResultItem.tsx:109
 msgid "Unknown Space"
 msgstr "Espaço desconhecido"
 
-#: src/components/search/SearchResultItem.tsx:42
-#: src/components/search/SearchResultItem.tsx:88
+#: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
+#: src/components/search/SearchResultItem.tsx:37
+#: src/components/search/SearchResultItem.tsx:108
 #: src/components/direct/DirectMessage.tsx:139
 #: src/components/direct/DirectMessage.tsx:207
 #: src/components/context/MessageDB.tsx:817
@@ -986,11 +1061,11 @@ msgstr "Espaço desconhecido"
 #: src/components/context/MessageDB.tsx:2618
 #: src/components/context/MessageDB.tsx:3638
 #: src/components/context/MessageDB.tsx:4860
-#: src/components/channel/Channel.tsx:281
+#: src/components/channel/Channel.tsx:280
 msgid "Unknown User"
 msgstr "Usuário Desconhecido"
 
-#: src/components/direct/DirectMessage.tsx:384
+#: src/components/direct/DirectMessage.tsx:382
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -1019,11 +1094,11 @@ msgstr "Endereço do usuário aqui"
 msgid "User does not exist."
 msgstr "Usuário não existe."
 
-#: src/components/context/WebsocketProvider.tsx:196
+#: src/components/context/WebsocketProvider.tsx:219
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr "useWebSocket deve ser usado dentro de um WebSocketProvider"
 
-#: src/components/onboarding/Onboarding.tsx:151
+#: src/components/onboarding/Onboarding.tsx:152
 msgid "Welcome to Quorum!"
 msgstr "Bem-vindo ao Quorum!"
 
@@ -1031,13 +1106,13 @@ msgstr "Bem-vindo ao Quorum!"
 msgid "What's on your mind today?"
 msgstr "O que você está pensando hoje?"
 
-#: src/components/modals/UserSettingsModal.tsx:524
+#: src/components/modals/UserSettingsModal.tsx:567
 msgid "When enabled, direct messages are not signed by your user key..."
 msgstr ""
 "Quando ativado, mensagens diretas não são assinadas pela sua chave de "
 "usuário..."
 
-#: src/components/modals/UserSettingsModal.tsx:496
+#: src/components/modals/UserSettingsModal.tsx:539
 msgid ""
 "When enabled, synchronizes your user data, Spaces, and Space keys between "
 "devices. Enabling this increases metadata visibility of your account, which "
@@ -1075,7 +1150,7 @@ msgstr ""
 "Quando usar o Quorum em um navegador, suas mensagens são salvas localmente "
 "no seu navegador."
 
-#: src/components/search/SearchResultItem.tsx:159
+#: src/components/search/SearchResultItem.tsx:181
 msgid "Yesterday"
 msgstr "Ontem"
 
@@ -1084,7 +1159,7 @@ msgid "Yesterday at {timeFormatted}"
 msgstr "Ontem às {timeFormatted}"
 
 #: src/components/direct/DirectMessage.tsx:176
-#: src/components/direct/DirectMessage.tsx:553
+#: src/components/direct/DirectMessage.tsx:551
 msgid "You"
 msgstr "Você"
 
@@ -1092,7 +1167,15 @@ msgstr "Você"
 msgid "You cannot send a direct message to yourself."
 msgstr "Você não pode enviar uma mensagem direta para si mesmo."
 
-#: src/components/onboarding/Onboarding.tsx:391
+#: src/services/notificationService.ts:97
+msgid "You have a new unread message"
+msgstr "Você tem uma nova mensagem não lida"
+
+#: src/services/notificationService.ts:98
+msgid "You have new unread messages"
+msgstr "Você tem novas mensagens não lidas"
+
+#: src/components/onboarding/Onboarding.tsx:407
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Você está pronto. Bem-vindo ao Quorum!"
 
@@ -1136,6 +1219,13 @@ msgstr "Você foi convidado a se juntar a um Espaço"
 
 #~ msgid "Edit Space"
 #~ msgstr "Editar Space"
+
+#~ msgid ""
+#~ "Let your friends know who you are! Pick a friendly name to display in your "
+#~ "conversations, something easier to read than {0}"
+#~ msgstr ""
+#~ "Deixe seus amigos saberem quem você é! Escolha um nome amigável para exibir "
+#~ "em suas conversas, algo mais fácil de ler do que {0}"
 
 #~ msgid "Max file size: 256kB"
 #~ msgstr "Tamanho máximo do arquivo: 256kB"

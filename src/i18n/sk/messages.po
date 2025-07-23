@@ -15,12 +15,12 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:85
+#: src/components/onboarding/Onboarding.tsx:87
 msgid "File cannot be larger than {maxFileSize}"
 msgstr "Súbor nemôže byť väčší ako {maxFileSize}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:294
+#: src/components/onboarding/Onboarding.tsx:310
 msgid ""
 "Your profile image size must be {maxFileSize} or less and must be a PNG, "
 "JPG, or JPEG file extension."
@@ -44,30 +44,30 @@ msgid "{user} has been kicked"
 msgstr "{user} bol vykopnutý"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:341
-#: src/components/channel/Channel.tsx:419
+#: src/components/direct/DirectMessage.tsx:339
+#: src/components/channel/Channel.tsx:418
 msgid "Replying to {user}"
 msgstr "Odpovedám {user}"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:407
+#: src/components/direct/DirectMessage.tsx:405
 msgid "Send a message to {user}"
 msgstr "Poslať správu {user}"
 
 #. js-lingui-explicit-id
 #: src/components/channel/Channel.tsx:214
-#: src/components/channel/Channel.tsx:617
+#: src/components/channel/Channel.tsx:616
 msgid "{role} - {count}"
 msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:247
-#: src/components/channel/Channel.tsx:650
+#: src/components/channel/Channel.tsx:246
+#: src/components/channel/Channel.tsx:648
 msgid "No Role - {count}"
 msgstr "Bez úlohy - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:474
+#: src/components/channel/Channel.tsx:473
 msgid "Send a message to #{channel_name}"
 msgstr "Poslať správu #{channel_name}"
 
@@ -85,7 +85,7 @@ msgstr "{0} výsledky"
 msgid "+ Add a friend"
 msgstr "Pridať priateľa"
 
-#: src/components/modals/UserSettingsModal.tsx:348
+#: src/components/modals/UserSettingsModal.tsx:391
 msgid "Account Address"
 msgstr "Adresa účtu"
 
@@ -93,7 +93,7 @@ msgstr "Adresa účtu"
 msgid "Add friend"
 msgstr "Pridať priateľa"
 
-#: src/components/channel/ChannelList.tsx:95
+#: src/components/channel/ChannelList.tsx:100
 msgid "Add Group"
 msgstr "Pridať skupinu"
 
@@ -101,7 +101,7 @@ msgstr "Pridať skupinu"
 msgid "Add Role"
 msgstr "Pridať úlohu"
 
-#: src/components/channel/Channel.tsx:679
+#: src/components/channel/Channel.tsx:677
 msgid "add sticker"
 msgstr "pridať nálepku"
 
@@ -129,7 +129,7 @@ msgstr "Adresy musia mať presne 46 znakov."
 msgid "Addresses start with \"Qm\"."
 msgstr "Adresy začínajú na \"Qm\"."
 
-#: src/components/modals/UserSettingsModal.tsx:479
+#: src/components/modals/UserSettingsModal.tsx:522
 msgid ""
 "Adjust security-related settings, which may impact user  experience but "
 "increase the security of your Quorum account."
@@ -141,9 +141,9 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr "Pokročilé nastavenia"
 
-#: src/components/modals/UserSettingsModal.tsx:263
-#: src/components/modals/UserSettingsModal.tsx:288
-#: src/components/modals/UserSettingsModal.tsx:555
+#: src/components/modals/UserSettingsModal.tsx:299
+#: src/components/modals/UserSettingsModal.tsx:331
+#: src/components/modals/UserSettingsModal.tsx:655
 msgid "Appearance"
 msgstr "Vzhľad"
 
@@ -172,8 +172,8 @@ msgstr ""
 "Si si si? Táto skupina obsahuje kanály so správami. Jej odstránením sa "
 "všetok obsah navždy stratí!"
 
-#: src/components/direct/DirectMessage.tsx:574
-#: src/components/channel/Channel.tsx:674
+#: src/components/direct/DirectMessage.tsx:572
+#: src/components/channel/Channel.tsx:672
 msgid "attach image"
 msgstr "pripojiť obrázok"
 
@@ -193,7 +193,7 @@ msgstr "Zaneprázdnený"
 msgid "Can delete messages?"
 msgstr "Môže mazať správy?"
 
-#: src/components/modals/UserSettingsModal.tsx:588
+#: src/components/modals/UserSettingsModal.tsx:688
 msgid ""
 "Changes are made automatically, but the active page may not be updated. "
 "Refresh the page to apply the new language."
@@ -209,7 +209,7 @@ msgstr "Názov kanála"
 msgid "Channel Topic"
 msgstr "Téma kanála"
 
-#: src/components/modals/UserSettingsModal.tsx:557
+#: src/components/modals/UserSettingsModal.tsx:657
 msgid "Choose your preferred theme for Quorum."
 msgstr "Vyberte si preferovanú tému pre Quorum."
 
@@ -217,6 +217,11 @@ msgstr "Vyberte si preferovanú tému pre Quorum."
 msgid "Clear search"
 msgstr "Vymazať vyhľadávanie"
 
+#: src/services/notificationService.ts:198
+msgid "Clearing notifications with tag: {tag}"
+msgstr "Vymazanie oznámení s tagom: {tag}"
+
+#: src/components/onboarding/Onboarding.tsx:239
 #: src/components/modals/LeaveSpaceModal.tsx:57
 #: src/components/modals/KickUserModal.tsx:58
 #: src/components/channel/SpaceEditor.tsx:1377
@@ -256,11 +261,11 @@ msgid "Copied!"
 msgstr "Skopírované!"
 
 #: src/components/user/UserStatus.tsx:48
-#: src/components/user/UserProfile.tsx:170
-#: src/components/modals/UserSettingsModal.tsx:358
+#: src/components/user/UserProfile.tsx:178
+#: src/components/modals/UserSettingsModal.tsx:401
 #: src/components/direct/DirectMessage.tsx:182
-#: src/components/direct/DirectMessage.tsx:297
-#: src/components/direct/DirectMessage.tsx:559
+#: src/components/direct/DirectMessage.tsx:295
+#: src/components/direct/DirectMessage.tsx:557
 msgid "Copy address"
 msgstr "Kopírovať adresu"
 
@@ -294,7 +299,7 @@ msgstr "Vytvoriť nový Space"
 msgid "Create a Space"
 msgstr "Vytvoriť Space"
 
-#: src/components/onboarding/Login.tsx:61
+#: src/components/onboarding/Login.tsx:62
 msgid "Create New Account"
 msgstr "Vytvoriť nový účet"
 
@@ -357,7 +362,15 @@ msgstr "Zmazať Space"
 msgid "Delete this space"
 msgstr "Zmazať túto Space"
 
-#: src/components/search/SearchResultItem.tsx:51
+#: src/components/modals/UserSettingsModal.tsx:611
+msgid "Desktop Notifications"
+msgstr "Oznámenia na pracovnej ploche"
+
+#: src/components/modals/UserSettingsModal.tsx:639
+msgid "Desktop notifications are not supported in this browser."
+msgstr "Oznámenia na pracovnej ploche nie sú v tomto prehliadači podporované."
+
+#: src/components/search/SearchResultItem.tsx:73
 msgid "Direct Message"
 msgstr "Priama správa"
 
@@ -366,7 +379,7 @@ msgstr "Priama správa"
 msgid "Direct Messages"
 msgstr "Priame správy"
 
-#: src/components/modals/UserSettingsModal.tsx:326
+#: src/components/modals/UserSettingsModal.tsx:369
 msgid "Display Name"
 msgstr "Zobrazované meno"
 
@@ -388,7 +401,7 @@ msgstr "Výber emoji"
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal.tsx:485
+#: src/components/modals/UserSettingsModal.tsx:528
 msgid "Enable sync"
 msgstr "Povoliť synchronizáciu"
 
@@ -404,27 +417,36 @@ msgstr "Zadajte adresu používateľa, aby ste s ním mohli začať komunikovať
 msgid "Enter Address Manually"
 msgstr "Zadajte adresu ručne"
 
-#: src/components/context/WebsocketProvider.tsx:90
+#: src/components/context/WebsocketProvider.tsx:108
 msgid "Error processing inbound:"
 msgstr "Chyba pri spracovaní prichádzajúceho:"
 
-#: src/components/context/WebsocketProvider.tsx:109
+#: src/components/context/WebsocketProvider.tsx:132
 msgid "Error processing outbound:"
 msgstr "Chyba pri spracovaní odchádzajúceho:"
 
-#: src/components/context/WebsocketProvider.tsx:114
+#: src/components/context/WebsocketProvider.tsx:137
 msgid "Error processing queue:"
 msgstr "Chyba pri spracovaní fronty:"
+
+#: src/services/notificationService.ts:75
+msgid "Error requesting notification permission:"
+msgstr "Chyba pri žiadosti o povolenie na oznámenia:"
+
+#: src/services/notificationService.ts:128
+#: src/services/notificationService.ts:165
+msgid "Error showing notification:"
+msgstr "Chyba pri zobrazovaní oznámenia:"
 
 #: src/components/channel/SpaceEditor.tsx:1082
 msgid "Existing Conversations"
 msgstr "Existujúce konverzácie"
 
-#: src/components/modals/UserSettingsModal.tsx:471
+#: src/components/modals/UserSettingsModal.tsx:514
 msgid "Export"
 msgstr "Exportovať"
 
-#: src/components/modals/UserSettingsModal.tsx:462
+#: src/components/modals/UserSettingsModal.tsx:505
 msgid ""
 "Export your key to a file by clicking this button. Do not share this file "
 "with anyone else or they can impersonate you or steal your Space's Apex "
@@ -438,11 +460,11 @@ msgstr ""
 msgid "Failed to decrypt message with any known state"
 msgstr "Nepodarilo sa dešifrovať správu s akýmkoľvek známym stavom"
 
-#: src/components/context/WebsocketProvider.tsx:141
+#: src/components/context/WebsocketProvider.tsx:164
 msgid "Failed to parse WebSocket message:"
 msgstr "Nepodarilo sa analyzovať WebSocket správu:"
 
-#: src/components/modals/UserSettingsModal.tsx:140
+#: src/components/modals/UserSettingsModal.tsx:169
 #: src/components/modals/CreateSpaceModal.tsx:57
 #: src/components/channel/SpaceEditor.tsx:144
 #: src/components/channel/SpaceEditor.tsx:184
@@ -459,8 +481,8 @@ msgstr "Súbor nemôže byť väčší ako 256KB"
 msgid "File cannot be larger than 2MB"
 msgstr "Súbor nemôže byť väčší ako 2MB"
 
-#: src/components/onboarding/Onboarding.tsx:90
-#: src/components/modals/UserSettingsModal.tsx:142
+#: src/components/onboarding/Onboarding.tsx:92
+#: src/components/modals/UserSettingsModal.tsx:171
 #: src/components/modals/CreateSpaceModal.tsx:59
 #: src/components/direct/DirectMessage.tsx:72
 #: src/components/channel/SpaceEditor.tsx:146
@@ -475,8 +497,8 @@ msgstr "Súbor bol zamietnutý"
 msgid "general"
 msgstr "všeobecné"
 
-#: src/components/modals/UserSettingsModal.tsx:249
-#: src/components/modals/UserSettingsModal.tsx:274
+#: src/components/modals/UserSettingsModal.tsx:278
+#: src/components/modals/UserSettingsModal.tsx:310
 #: src/components/channel/SpaceEditor.tsx:417
 #: src/components/channel/SpaceEditor.tsx:465
 msgid "General"
@@ -506,12 +528,12 @@ msgstr "Názov skupiny"
 msgid "hide home screen"
 msgstr "skryť domovskú obrazovku"
 
-#: src/components/onboarding/Onboarding.tsx:227
+#: src/components/onboarding/Onboarding.tsx:237
 msgid "I already saved mine"
 msgstr "Už som si uložil svoj"
 
-#: src/components/onboarding/Onboarding.tsx:359
-#: src/components/onboarding/Onboarding.tsx:366
+#: src/components/onboarding/Onboarding.tsx:375
+#: src/components/onboarding/Onboarding.tsx:382
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr ""
 "Ak preskočíte, dostanete predvolený profilový obrázok a môžete ho nastaviť "
@@ -533,7 +555,7 @@ msgstr ""
 "Ak odinštalujete aplikáciu zo svojho zariadenia, stratíte svoje staré správy"
 " a kľúče."
 
-#: src/components/onboarding/Login.tsx:74
+#: src/components/onboarding/Login.tsx:75
 msgid "Import Existing Key"
 msgstr "Importovať existujúci kľúč"
 
@@ -588,11 +610,11 @@ msgstr "Pridaj sa do Space"
 msgid "Joined"
 msgstr "Pridané"
 
-#: src/components/modals/UserSettingsModal.tsx:459
+#: src/components/modals/UserSettingsModal.tsx:502
 msgid "Key Export"
 msgstr "Export kľúča"
 
-#: src/components/user/UserProfile.tsx:335
+#: src/components/user/UserProfile.tsx:344
 #: src/components/modals/KickUserModal.tsx:30
 msgid "Kick User"
 msgstr "Vykopni používateľa"
@@ -601,7 +623,7 @@ msgstr "Vykopni používateľa"
 msgid "Kick!"
 msgstr "Vyhodiť!"
 
-#: src/components/modals/UserSettingsModal.tsx:567
+#: src/components/modals/UserSettingsModal.tsx:667
 msgid "Language"
 msgstr "Jazyk"
 
@@ -610,16 +632,15 @@ msgstr "Jazyk"
 msgid "Leave Space"
 msgstr "Opusti Space"
 
-#. placeholder {0}: currentPasskeyInfo?.address
-#: src/components/onboarding/Onboarding.tsx:240
+#: src/components/onboarding/Onboarding.tsx:254
 msgid ""
 "Let your friends know who you are! Pick a friendly name to display in your "
-"conversations, something easier to read than {0}"
+"conversations, something easier to read than:"
 msgstr ""
-"Informuj svojich priateľov, kto si! Vyber si priateľské meno, ktoré sa bude "
-"zobrazovať v tvojich konverzáciách, niečo, čo sa ľahšie číta ako {0}"
+"Daj svojim priateľom vedieť, kto si! Vyber si priateľské meno na zobrazenie "
+"vo svojich konverzáciách, niečo ľahšie čitateľné ako:"
 
-#: src/components/onboarding/Onboarding.tsx:414
+#: src/components/onboarding/Onboarding.tsx:430
 msgid "Let's gooooooooo"
 msgstr "Ideme!"
 
@@ -635,7 +656,7 @@ msgstr "Hľadám používateľa..."
 msgid "Maintenance in Progress"
 msgstr "Údržba prebieha"
 
-#: src/components/onboarding/Onboarding.tsx:285
+#: src/components/onboarding/Onboarding.tsx:301
 msgid ""
 "Make your account uniquely yours – set a contact photo. This information is "
 "only provided to the Spaces you join."
@@ -643,7 +664,11 @@ msgstr ""
 "Urob si svoj účet jedinečným – nastav si kontaktnú fotografiu. Tieto "
 "informácie sú poskytované iba Spaces, do ktorých sa pripojíš."
 
-#: src/components/modals/UserSettingsModal.tsx:404
+#: src/components/modals/UserSettingsModal.tsx:602
+msgid "Manage desktop notification preferences for new messages."
+msgstr "Spravujte preferencie oznámení na pracovnej ploche pre nové správy."
+
+#: src/components/modals/UserSettingsModal.tsx:447
 msgid ""
 "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr ""
@@ -672,15 +697,45 @@ msgstr "Nová priama správa"
 msgid "No messages found"
 msgstr "Žiadne správy nenájdené"
 
-#: src/components/modals/UserSettingsModal.tsx:513
+#: src/components/modals/UserSettingsModal.tsx:556
 msgid "Non-repudiability"
 msgstr "Nemožnosť poprieť"
+
+#: src/services/notificationService.ts:180
+msgid "Notification permission not granted"
+msgstr "Povolenie na oznámenia nebolo udelené"
+
+#: src/components/modals/UserSettingsModal.tsx:292
+#: src/components/modals/UserSettingsModal.tsx:324
+#: src/components/modals/UserSettingsModal.tsx:600
+msgid "Notifications"
+msgstr "Oznámenia"
+
+#: src/components/modals/UserSettingsModal.tsx:101
+msgid ""
+"Notifications are blocked. Please enable them in your browser settings for "
+"this site."
+msgstr ""
+"Oznámenia sú zablokované. Prosím, povoľte ich vo svojich nastaveniach "
+"prehliadača pre túto stránku."
+
+#: src/components/modals/UserSettingsModal.tsx:645
+msgid ""
+"Notifications are blocked. Please enable them in your browser settings."
+msgstr ""
+"Oznámenia sú zablokované. Prosím, povoľte ich vo svojich nastaveniach "
+"prehliadača."
+
+#: src/services/notificationService.ts:55
+#: src/services/notificationService.ts:175
+msgid "Notifications are not supported in this browser"
+msgstr "Oznámenia nie sú v tomto prehliadači podporované"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:18
 msgid "Offline"
 msgstr "Offline"
 
-#: src/components/onboarding/Onboarding.tsx:153
+#: src/components/onboarding/Onboarding.tsx:154
 msgid "One of us, one of us!"
 msgstr "Jeden z nás, jeden z nás!"
 
@@ -688,7 +743,7 @@ msgstr "Jeden z nás, jeden z nás!"
 msgid "Online"
 msgstr "Online"
 
-#: src/components/onboarding/Onboarding.tsx:154
+#: src/components/onboarding/Onboarding.tsx:155
 msgid "Personalize your account"
 msgstr "Personalizuj si svoj účet"
 
@@ -696,9 +751,9 @@ msgstr "Personalizuj si svoj účet"
 msgid "Privacy Settings"
 msgstr "Nastavenia ochrany súkromia"
 
-#: src/components/modals/UserSettingsModal.tsx:256
-#: src/components/modals/UserSettingsModal.tsx:281
-#: src/components/modals/UserSettingsModal.tsx:402
+#: src/components/modals/UserSettingsModal.tsx:285
+#: src/components/modals/UserSettingsModal.tsx:317
+#: src/components/modals/UserSettingsModal.tsx:445
 msgid "Privacy/Security"
 msgstr "Ochrana súkromia/Bezpečnosť"
 
@@ -756,11 +811,11 @@ msgid "received config with invalid signature!"
 msgstr "prijatá konfigurácia s neplatným podpisom!"
 
 #: src/components/Maintenance.tsx:54
-#: src/components/modals/UserSettingsModal.tsx:597
+#: src/components/modals/UserSettingsModal.tsx:697
 msgid "Refresh"
 msgstr "Obnoviť"
 
-#: src/components/modals/UserSettingsModal.tsx:438
+#: src/components/modals/UserSettingsModal.tsx:481
 msgid "Remove"
 msgstr "Odstrániť"
 
@@ -793,9 +848,9 @@ msgstr ""
 msgid "Roles"
 msgstr "Úlohy"
 
-#: src/components/user/UserProfile.tsx:248
-#: src/components/modals/UserSettingsModal.tsx:391
-#: src/components/modals/UserSettingsModal.tsx:546
+#: src/components/user/UserProfile.tsx:256
+#: src/components/modals/UserSettingsModal.tsx:434
+#: src/components/modals/UserSettingsModal.tsx:589
 #: src/components/channel/SpaceEditor.tsx:710
 #: src/components/channel/SpaceEditor.tsx:858
 #: src/components/channel/SpaceEditor.tsx:956
@@ -805,7 +860,7 @@ msgstr "Úlohy"
 msgid "Save Changes"
 msgstr "Uložiť zmeny"
 
-#: src/components/onboarding/Onboarding.tsx:377
+#: src/components/onboarding/Onboarding.tsx:393
 msgid "Save Contact Photo"
 msgstr "Uložiť fotografiu kontaktu"
 
@@ -838,7 +893,7 @@ msgstr "Vyhľadávanie správ..."
 msgid "Searching..."
 msgstr "Hľadám..."
 
-#: src/components/modals/UserSettingsModal.tsx:476
+#: src/components/modals/UserSettingsModal.tsx:519
 msgid "Security"
 msgstr "Bezpečnosť"
 
@@ -864,7 +919,7 @@ msgstr ""
 "Odoslať pozvánky ľuďom, s ktorými ste predtým mali konverzácie. Tlačidlo "
 "pozvánky sa objaví v ich doručenej pošte."
 
-#: src/components/user/UserProfile.tsx:323
+#: src/components/user/UserProfile.tsx:332
 msgid "Send Message"
 msgstr "Odoslať správu"
 
@@ -872,19 +927,29 @@ msgstr "Odoslať správu"
 msgid "Session Encrypted"
 msgstr "Relácia šifrovaná"
 
-#: src/components/onboarding/Onboarding.tsx:269
+#: src/components/onboarding/Onboarding.tsx:285
 msgid "Set Display Name"
 msgstr "Nastaviť zobrazené meno"
 
-#: src/components/modals/UserSettingsModal.tsx:243
+#: src/components/modals/UserSettingsModal.tsx:272
 msgid "Settings"
 msgstr "Nastavenia"
+
+#: src/components/modals/UserSettingsModal.tsx:622
+msgid ""
+"Show desktop notifications when you receive new messages while Quorum is in "
+"the background. Your browser will ask for permission when you enable this "
+"feature."
+msgstr ""
+"Zobrazujte oznámenia na pracovnej ploche, keď dostanete nové správy, zatiaľ "
+"čo je Quorum na pozadí. Váš prehliadač sa opýta na povolenie, keď túto "
+"funkciu povolíte."
 
 #: src/components/direct/EmptyDirectMessage.tsx:90
 msgid "show home screen"
 msgstr "zobraziť domovskú obrazovku"
 
-#: src/components/onboarding/Onboarding.tsx:351
+#: src/components/onboarding/Onboarding.tsx:367
 msgid "Skip Adding Photo"
 msgstr "Preskočiť pridanie fotografie"
 
@@ -904,7 +969,7 @@ msgstr "Názov Space"
 msgid "Start typing to search messages..."
 msgstr "Začnite písať, aby ste vyhľadali správy..."
 
-#: src/components/user/UserProfile.tsx:191
+#: src/components/user/UserProfile.tsx:199
 msgid "Status goes here"
 msgstr "Štatút ide sem"
 
@@ -931,15 +996,15 @@ msgstr "systém"
 msgid "The invite link has expired or is invalid."
 msgstr "Pozvánkový odkaz vypršal alebo je neplatný."
 
-#: src/components/modals/UserSettingsModal.tsx:449
+#: src/components/modals/UserSettingsModal.tsx:492
 msgid "This device"
 msgstr "Toto zariadenie"
 
-#: src/components/onboarding/Onboarding.tsx:246
+#: src/components/onboarding/Onboarding.tsx:262
 msgid "This information is only provided to the Spaces you join."
 msgstr "Tieto informácie sú poskytované iba pre Spaces, ktoré sa pripojíte."
 
-#: src/components/modals/UserSettingsModal.tsx:350
+#: src/components/modals/UserSettingsModal.tsx:393
 msgid ""
 "This is your public address and is safe to share with anyone you want to "
 "interact with."
@@ -956,6 +1021,14 @@ msgstr ""
 "Tento odkaz nevyprší, ale môžete kedykoľvek vygenerovať nový, ktorý "
 "zneplatní starý odkaz. Aktuálni členovia Space nebudú odstránení zo Space."
 
+#: src/components/modals/UserSettingsModal.tsx:95
+msgid ""
+"To disable notifications, please change the notification settings in your "
+"browser for this site."
+msgstr ""
+"Ak chcete oznámenia zakázať, prosím, zmeňte nastavenia oznámení vo svojom "
+"prehliadači pre túto stránku."
+
 #: src/components/message/Message.tsx:169
 msgid "Today at {timeFormatted}"
 msgstr "Dnes o {timeFormatted}"
@@ -968,12 +1041,13 @@ msgstr "Skúste iné kľúčové slová alebo skontrolujte pravopis"
 msgid "Unknown"
 msgstr "Neznáme"
 
-#: src/components/search/SearchResultItem.tsx:89
+#: src/components/search/SearchResultItem.tsx:109
 msgid "Unknown Space"
 msgstr "Neznáma Space"
 
-#: src/components/search/SearchResultItem.tsx:42
-#: src/components/search/SearchResultItem.tsx:88
+#: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
+#: src/components/search/SearchResultItem.tsx:37
+#: src/components/search/SearchResultItem.tsx:108
 #: src/components/direct/DirectMessage.tsx:139
 #: src/components/direct/DirectMessage.tsx:207
 #: src/components/context/MessageDB.tsx:817
@@ -981,11 +1055,11 @@ msgstr "Neznáma Space"
 #: src/components/context/MessageDB.tsx:2618
 #: src/components/context/MessageDB.tsx:3638
 #: src/components/context/MessageDB.tsx:4860
-#: src/components/channel/Channel.tsx:281
+#: src/components/channel/Channel.tsx:280
 msgid "Unknown User"
 msgstr "Neznámy používateľ"
 
-#: src/components/direct/DirectMessage.tsx:384
+#: src/components/direct/DirectMessage.tsx:382
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -1015,11 +1089,11 @@ msgstr "Adresa používateľa tu"
 msgid "User does not exist."
 msgstr "Používateľ neexistuje."
 
-#: src/components/context/WebsocketProvider.tsx:196
+#: src/components/context/WebsocketProvider.tsx:219
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr "useWebSocket musí byť použitý v rámci WebSocketProvider"
 
-#: src/components/onboarding/Onboarding.tsx:151
+#: src/components/onboarding/Onboarding.tsx:152
 msgid "Welcome to Quorum!"
 msgstr "Vitajte v Quorum!"
 
@@ -1027,13 +1101,13 @@ msgstr "Vitajte v Quorum!"
 msgid "What's on your mind today?"
 msgstr "Čo máte dnes na mysli?"
 
-#: src/components/modals/UserSettingsModal.tsx:524
+#: src/components/modals/UserSettingsModal.tsx:567
 msgid "When enabled, direct messages are not signed by your user key..."
 msgstr ""
 "Keď je povolené, priame správy nie sú podpísané vaším používateľským "
 "kľúčom..."
 
-#: src/components/modals/UserSettingsModal.tsx:496
+#: src/components/modals/UserSettingsModal.tsx:539
 msgid ""
 "When enabled, synchronizes your user data, Spaces, and Space keys between "
 "devices. Enabling this increases metadata visibility of your account, which "
@@ -1070,7 +1144,7 @@ msgstr ""
 "Keď používate Quorum v prehliadači, vaše správy sú uložené lokálne vo vašom "
 "prehliadači."
 
-#: src/components/search/SearchResultItem.tsx:159
+#: src/components/search/SearchResultItem.tsx:181
 msgid "Yesterday"
 msgstr "Včera"
 
@@ -1079,7 +1153,7 @@ msgid "Yesterday at {timeFormatted}"
 msgstr "Včera o {timeFormatted}"
 
 #: src/components/direct/DirectMessage.tsx:176
-#: src/components/direct/DirectMessage.tsx:553
+#: src/components/direct/DirectMessage.tsx:551
 msgid "You"
 msgstr "Vy"
 
@@ -1087,7 +1161,15 @@ msgstr "Vy"
 msgid "You cannot send a direct message to yourself."
 msgstr "Nemôžete si poslať priamu správu."
 
-#: src/components/onboarding/Onboarding.tsx:391
+#: src/services/notificationService.ts:97
+msgid "You have a new unread message"
+msgstr "Máte novú neprečítanú správu"
+
+#: src/services/notificationService.ts:98
+msgid "You have new unread messages"
+msgstr "Máte nové neprečítané správy"
+
+#: src/components/onboarding/Onboarding.tsx:407
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Ste pripravení. Vitajte v Quorum!"
 
@@ -1131,6 +1213,13 @@ msgstr "Boli ste pozvaní pripojiť sa k Space"
 
 #~ msgid "Edit Space"
 #~ msgstr "Upraviť Space"
+
+#~ msgid ""
+#~ "Let your friends know who you are! Pick a friendly name to display in your "
+#~ "conversations, something easier to read than {0}"
+#~ msgstr ""
+#~ "Informuj svojich priateľov, kto si! Vyber si priateľské meno, ktoré sa bude "
+#~ "zobrazovať v tvojich konverzáciách, niečo, čo sa ľahšie číta ako {0}"
 
 #~ msgid "Max file size: 256kB"
 #~ msgstr "Maximálna veľkosť súboru: 256kB"
