@@ -59,10 +59,17 @@ export const PrimitivesPlayground: React.FC = () => {
           closeOnEscape={true}
         >
           <div className="quorum-modal text-subtle relative pointer-events-auto">
-            {/* Close button like existing modals */}
+            {/* Close button - needs to trigger animation like ESC/backdrop */}
             <div
               className="quorum-modal-close select-none cursor-pointer"
-              onClick={() => setShowModal(false)}
+              onClick={(e) => {
+                // Stop propagation to prevent backdrop click
+                e.stopPropagation();
+                // Need to trigger ModalContainer's handleClose, not direct state change
+                // For now, let's see if we can trigger ESC key event
+                const escEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+                document.dispatchEvent(escEvent);
+              }}
             >
               <FontAwesomeIcon icon={faTimes} />
             </div>
@@ -76,7 +83,11 @@ export const PrimitivesPlayground: React.FC = () => {
                 This modal uses the ModalContainer primitive with backdrop.
                 Click outside, press Escape, or click the X to close.
               </p>
-              <Button onClick={() => setShowModal(false)}>Close Modal</Button>
+              <Button onClick={() => {
+                // Trigger same animation as ESC key
+                const escEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+                document.dispatchEvent(escEvent);
+              }}>Close Modal</Button>
             </div>
           </div>
         </ModalContainer>
@@ -95,7 +106,12 @@ export const PrimitivesPlayground: React.FC = () => {
                 {/* Close button like existing modals */}
                 <div
                   className="quorum-modal-close select-none cursor-pointer"
-                  onClick={() => setShowNoBackdropModal(false)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Trigger same animation as ESC key
+                    const escEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+                    document.dispatchEvent(escEvent);
+                  }}
                 >
                   <FontAwesomeIcon icon={faTimes} />
                 </div>
@@ -108,7 +124,11 @@ export const PrimitivesPlayground: React.FC = () => {
                   <p className="text-main mb-4">
                     This modal has no backdrop. Press Escape or click the X to close.
                   </p>
-                  <Button onClick={() => setShowNoBackdropModal(false)}>
+                  <Button onClick={() => {
+                    // Trigger same animation as ESC key
+                    const escEvent = new KeyboardEvent('keydown', { key: 'Escape' });
+                    document.dispatchEvent(escEvent);
+                  }}>
                     Close Modal
                   </Button>
                 </div>
