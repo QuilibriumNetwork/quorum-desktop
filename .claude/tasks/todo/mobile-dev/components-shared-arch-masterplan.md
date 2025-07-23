@@ -124,6 +124,125 @@ export function MyFeature({ visible, onClose }) {
 
 **Result**: Desktop modal, mobile drawer - same code, platform-appropriate UX.
 
+## Cross-Platform Theming System
+
+**⚠️ CRITICAL**: The existing sophisticated theming system MUST be preserved and extended, not replaced.
+
+### Current Theming Architecture
+
+The desktop app uses a sophisticated multi-layer theming system:
+
+1. **CSS Variables Foundation** (`src/styles/_colors.scss`)
+   - Light/dark theme definitions with CSS variables
+   - Dynamic accent color system (blue, purple, fuchsia, orange, green, yellow)
+   - Semantic color naming (text-strong, bg-sidebar, surface-0 to surface-10)
+
+2. **Tailwind Integration** (`tailwind.config.js`)
+   - Maps CSS variables to Tailwind classes
+   - Enables classes like `bg-accent`, `text-strong`, `bg-surface-3`
+   - Supports opacity with `withOpacityValue` helper
+
+3. **Dynamic Theme Switching**
+   - **ThemeProvider**: Manages light/dark/system mode via HTML classes
+   - **AccentColorSwitcher**: Dynamically applies accent-{color} classes
+   - **LocalStorage persistence**: Remembers user preferences
+
+4. **Semantic Color System**
+   - Raw colors: `surface-0` to `surface-10`, `accent-50` to `accent-900`
+   - Semantic colors: `text-strong`, `bg-sidebar`, `bg-chat`, etc.
+   - Utility colors: `danger`, `warning`, `success`, `info`
+
+### Cross-Platform Theming Strategy
+
+**Preserve Web System**: Keep existing CSS variables, Tailwind config, and theme switching intact.
+
+**Extend for Native**: Create parallel JavaScript theme system that mirrors CSS variables exactly.
+
+#### Layer 1: Shared Theme Definition
+
+```typescript
+// src/components/primitives/theme/colors.ts
+export const themeColors = {
+  light: {
+    accent: {
+      50: '#eef7ff',
+      100: '#daeeff', 
+      // ... matches CSS variables exactly
+      500: '#0287f2',
+      DEFAULT: '#0287f2',
+    },
+    surface: {
+      0: '#fefeff',
+      1: '#f6f6f9',
+      // ... matches CSS variables exactly
+    },
+    text: {
+      strong: '#3b3b3b',
+      main: '#363636',
+      subtle: '#818181',
+      muted: '#b6b6b6',
+    },
+  },
+  dark: {
+    // ... dark theme variants
+  },
+  accents: {
+    blue: { /* accent color variations */ },
+    purple: { /* accent color variations */ },
+    // ... all accent colors
+  }
+};
+```
+
+#### Layer 2: Platform-Specific Theme Access
+
+**Web**: Continue using CSS variables + Tailwind classes
+```tsx
+// Button.web.tsx - NO CHANGES to existing approach
+<span className="bg-accent text-white hover:bg-accent-400">
+  {children}
+</span>
+```
+
+**Native**: Use shared theme via React Context
+```tsx
+// Button.native.tsx - Uses shared theme system
+const { theme, accent } = useTheme();
+const colors = getColors(theme, accent);
+
+<Pressable style={{ backgroundColor: colors.accent.DEFAULT }}>
+  <Text style={{ color: colors.white }}>
+    {children}
+  </Text>
+</Pressable>
+```
+
+#### Layer 3: Unified Theme Context
+
+```tsx
+// Cross-platform theme context
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [accent, setAccent] = useState<AccentColor>('blue');
+  
+  // Web: Apply CSS classes (existing behavior)
+  // Native: Provide theme values via context
+  
+  return (
+    <ThemeContext.Provider value={{ theme, accent, setTheme, setAccent }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+};
+```
+
+### Implementation Requirements
+
+1. **Zero Breaking Changes**: All existing web styling continues working
+2. **Exact Color Matching**: Native colors precisely match CSS variable values
+3. **Synchronized Switching**: Theme changes apply to both platforms identically  
+4. **Preserved Features**: Keep accent color switcher, light/dark mode, localStorage persistence
+
 ## Platform-Specific Considerations
 
 ### Large Tablet Optimization
@@ -136,10 +255,17 @@ Mobile primitives detect large tablets and apply appropriate sizing:
 - **Small tablet**: Full-width drawer (acceptable)  
 - **Large tablet**: Centered drawer with max-width constraint
 
-### Styling Unit Differences
+### Styling System Differences
 
-**Web Platforms** (`.web.tsx`): Use CSS units (`px`, `rem`, `em`, `%`, `vh`, `vw`)
-**React Native** (`.native.tsx`): Use density-independent pixels (dp) - just numbers, no units
+**Web Platforms** (`.web.tsx`): 
+- CSS units (`px`, `rem`, `em`, `%`, `vh`, `vw`)
+- CSS variables via Tailwind classes (`bg-accent`, `text-strong`)
+- SCSS files for complex styling
+
+**React Native** (`.native.tsx`): 
+- Density-independent pixels (dp) - just numbers, no units
+- JavaScript objects from shared theme system
+- StyleSheet API for styling
 
 ### Platform File Extensions
 

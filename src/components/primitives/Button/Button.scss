@@ -1,0 +1,116 @@
+// Button primitive styles - copied from original Button.scss
+%btn-base {
+  @apply flex items-center justify-center py-2 px-4 rounded-full shadow-lg font-medium text-sm text-center select-none transition duration-300 text-white;
+}
+
+.btn-primary {
+  @extend %btn-base;
+  @apply bg-accent border-2 border-accent cursor-pointer;
+
+  &:hover {
+    @apply bg-accent-400 border-accent-400 text-white;
+  }
+}
+
+.btn-secondary {
+  @extend %btn-base;
+  @apply bg-transparent border-2 border-accent-500 cursor-pointer text-accent-500;
+
+  &:hover {
+    @apply bg-accent border-accent text-white;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    @apply border-accent-400 text-accent-400;
+  }
+}
+
+.btn-light {
+  @extend %btn-base;
+  @apply bg-accent-100 border-2 border-accent-100 cursor-pointer text-accent-700;
+
+  &:hover {
+    @apply bg-transparent border-2 border-accent-100 text-accent-100;
+  }
+}
+
+.btn-light-outline {
+  @extend %btn-base;
+  @apply bg-transparent border-2 border-accent-100 cursor-pointer text-accent-100;
+
+  &:hover {
+    @apply bg-accent-100 border-2 border-accent-100 text-accent-700;
+  }
+}
+
+.btn-subtle {
+  @extend %btn-base;
+  @apply bg-surface-6 border-2 border-surface-6 cursor-pointer text-main shadow-sm;
+
+  &:hover {
+    @apply bg-surface-7 border-surface-7;
+  }
+}
+
+.btn-subtle-outline {
+  @extend %btn-base;
+  @apply bg-transparent border-2 border-surface-6 cursor-pointer text-subtle shadow-sm;
+
+  &:hover {
+    @apply bg-surface-6 border-surface-6 text-main;
+  }
+}
+
+.btn-danger {
+  @extend %btn-base;
+  @apply border-2 border-transparent cursor-pointer bg-danger/80;
+
+  &:hover {
+    @apply border-2 border-transparent bg-danger;
+  }
+}
+
+.btn-small {
+  @apply py-1 px-2 text-xs shadow-sm;
+}
+
+.btn-disabled {
+  @extend %btn-base;
+  @apply bg-surface-9 border-2 border-transparent text-surface-3 cursor-default pointer-events-none;
+}
+
+.btn-disabled-onboarding {
+  @extend %btn-base;
+  @apply border-2 border-transparent text-white cursor-default pointer-events-none bg-white/30;
+}
+
+/* === WHITE BUTTON VARIANTS === */
+/* These buttons use white backgrounds with opacity and hardcoded accent colors */
+/* Used in Onboarding.tsx and Maintenance.tsx - no dark mode variants needed */
+
+.btn-primary-white {
+  @extend %btn-base;
+  @apply bg-white border-2 border-white cursor-pointer text-[#0287f2];
+
+  &:hover {
+    @apply border-2 bg-[#d6ee93] border-[#d6ee93] text-[#025ead];
+  }
+}
+
+.btn-secondary-white {
+  @extend %btn-base;
+  @apply bg-transparent border-2 border-white cursor-pointer text-white;
+
+  &:hover {
+    @apply border-2 bg-[#d6ee93] border-[#d6ee93] text-[#025ead];
+  }
+}
+
+.btn-light-outline-white {
+  @extend %btn-base;
+  @apply bg-transparent border-2 cursor-pointer border-white/80 text-white/80;
+
+  &:hover {
+    @apply border-2 bg-[#d6ee93] border-[#d6ee93] text-[#025ead];
+  }
+}

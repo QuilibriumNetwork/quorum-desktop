@@ -17,6 +17,38 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 
 ### Phase 1A: Foundation Layout Primitives
 
+#### 0. Cross-Platform Theming Foundation
+**Goal**: Preserve existing theming system and extend for React Native compatibility
+
+- [x] **Audit current theming system**
+  - [x] Document CSS variables system in `_colors.scss`
+  - [x] Understand Tailwind integration via `tailwind.config.js`
+  - [x] Analyze AccentColorSwitcher dynamic class system
+  - [x] Review ThemeProvider light/dark mode management
+  - [x] Map semantic color usage (text-strong, bg-sidebar, etc.)
+
+- [x] **Create shared theme system**
+  - [x] Create comprehensive `src/components/primitives/theme/colors.ts`
+  - [x] Mirror ALL CSS variables exactly in JavaScript objects
+  - [x] Include all accent color variants (blue, purple, fuchsia, orange, green, yellow)
+  - [x] Add light/dark theme variants
+  - [x] Create utility functions for theme access
+
+- [ ] **Extend ThemeProvider for cross-platform**
+  - [ ] Enhance existing ThemeProvider to support React Native
+  - [ ] Preserve all existing web functionality (localStorage, CSS classes)
+  - [ ] Add React Context for native theme access
+  - [ ] Ensure accent color switching works on both platforms
+  - [ ] Test theme synchronization between web and native
+
+- [x] **Update existing primitives to use shared theme**
+  - [x] Update Button primitive to use shared colors
+  - [ ] Update ModalContainer to use shared colors
+  - [ ] Update OverlayBackdrop to use shared colors
+  - [ ] Ensure FlexRow/FlexBetween/FlexCenter remain theme-compatible
+
+**Notes**: The existing theming system is sophisticated with CSS variables, Tailwind integration, and dynamic switching. This must be preserved exactly while extending for React Native compatibility. NO breaking changes to existing web styling.
+
 #### 1. ModalContainer/OverlayBackdrop Primitives
 **Goal**: Eliminate repeated backdrop patterns across 5+ components
 
@@ -222,6 +254,35 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [ ] Commit after each successful batch of replacements
 
 **Success Criteria**: All common flex patterns replaced, no visual regressions, improved code consistency.
+
+---
+
+## Phase 1D: Automated Theme Synchronization
+
+### Color Sync Automation
+**Goal**: Eliminate manual synchronization between CSS variables and JavaScript theme objects
+
+- [ ] **Create automated color sync system**
+  - [ ] Design build script to parse `_colors.scss` CSS variables
+  - [ ] Generate `colors.ts` automatically from CSS source of truth
+  - [ ] Integrate script into build pipeline (`npm run build`)
+  - [ ] Add validation to ensure color parity between platforms
+  - [ ] Test script with all accent color variants and light/dark themes
+
+- [ ] **Establish workflow for theme changes**
+  - [ ] Document process: modify `_colors.scss` → script auto-generates `colors.ts`
+  - [ ] Add pre-commit hooks to run sync script when CSS changes
+  - [ ] Create validation tests to catch sync issues
+  - [ ] Add script to `package.json` scripts section
+
+**Important Context**: Currently, changes to `_colors.scss` require manual updates to `colors.ts`. This creates a maintenance burden and risk of color inconsistencies between web and native platforms. The build script will maintain `_colors.scss` as the single source of truth while automatically keeping React Native colors synchronized.
+
+**Implementation Options**:
+1. **Build Script** (Recommended): Parse CSS variables, generate JavaScript objects
+2. **CSS-in-JS**: Single JavaScript source generating both CSS and native objects  
+3. **Design Token Pipeline**: External tools like Style Dictionary
+
+**Success Criteria**: Developers only need to modify `_colors.scss`, and React Native colors automatically stay in sync.
 
 ---
 

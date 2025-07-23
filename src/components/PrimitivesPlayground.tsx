@@ -4,7 +4,7 @@ import { OverlayBackdrop } from './primitives/OverlayBackdrop';
 import { FlexRow } from './primitives/FlexRow';
 import { FlexBetween } from './primitives/FlexBetween';
 import { FlexCenter } from './primitives/FlexCenter';
-import Button from './Button';
+import Button from './primitives/Button';
 import ThemeRadioGroup from './ThemeRadioGroup';
 import AccentColorSwitcher from './AccentColorSwitcher';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -258,6 +258,84 @@ export const PrimitivesPlayground: React.FC = () => {
             <FlexCenter direction="vertical" className="p-4 bg-surface-3 rounded-xl h-20">
               <Button className="w-auto" onClick={() => {}}>Vertically Centered</Button>
             </FlexCenter>
+          </div>
+        </div>
+      </section>
+
+      {/* Section: Button Primitive */}
+      <section className="border border-default rounded-lg p-6 space-y-6">
+        <h2 className="text-xl font-semibold text-strong">Button Primitive</h2>
+        
+        {/* Button Types */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Button Types</h3>
+          
+          <div className="space-y-2">
+            <p className="text-sm text-subtle">Primary variants:</p>
+            <FlexRow gap="md" className="p-4 bg-surface-3 rounded-xl" wrap>
+              <Button type="primary" onClick={() => {}}>Primary</Button>
+              <Button type="secondary" onClick={() => {}}>Secondary</Button>
+              <Button type="light" onClick={() => {}}>Light</Button>
+              <Button type="light-outline" onClick={() => {}}>Light Outline</Button>
+            </FlexRow>
+          </div>
+          
+          <div className="space-y-2">
+            <p className="text-sm text-subtle">Subtle and utility variants:</p>
+            <FlexRow gap="md" className="p-4 bg-surface-3 rounded-xl" wrap>
+              <Button type="subtle" onClick={() => {}}>Subtle</Button>
+              <Button type="subtle-outline" onClick={() => {}}>Subtle Outline</Button>
+              <Button type="danger" onClick={() => {}}>Danger</Button>
+            </FlexRow>
+          </div>
+          
+          <div className="space-y-2">
+            <p className="text-sm text-subtle">White variants (special use):</p>
+            <div className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl">
+              <FlexRow gap="md" wrap>
+                <Button type="primary-white" onClick={() => {}}>Primary White</Button>
+                <Button type="secondary-white" onClick={() => {}}>Secondary White</Button>
+                <Button type="light-outline-white" onClick={() => {}}>Light Outline White</Button>
+              </FlexRow>
+            </div>
+          </div>
+        </div>
+
+        {/* Button Sizes and States */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Sizes and States</h3>
+          
+          <div className="space-y-2">
+            <p className="text-sm text-subtle">Size variants:</p>
+            <FlexRow gap="md" align="center" className="p-4 bg-surface-3 rounded-xl">
+              <Button type="primary" size="normal" onClick={() => {}}>Normal Size</Button>
+              <Button type="primary" size="small" onClick={() => {}}>Small Size</Button>
+            </FlexRow>
+          </div>
+          
+          <div className="space-y-2">
+            <p className="text-sm text-subtle">Disabled states:</p>
+            <FlexRow gap="md" className="p-4 bg-surface-3 rounded-xl">
+              <Button type="primary" disabled onClick={() => {}}>Disabled Primary</Button>
+              <Button type="secondary" disabled onClick={() => {}}>Disabled Secondary</Button>
+            </FlexRow>
+          </div>
+        </div>
+
+        {/* Button with Tooltips */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Interactive Features</h3>
+          
+          <div className="space-y-2">
+            <p className="text-sm text-subtle">Buttons with tooltips:</p>
+            <FlexRow gap="md" className="p-4 bg-surface-3 rounded-xl">
+              <Button type="primary" tooltip="This is a helpful tooltip" onClick={() => {}}>
+                Hover for Tooltip
+              </Button>
+              <Button type="secondary" tooltip="Highlighted tooltip!" highlightedTooltip onClick={() => {}}>
+                Highlighted Tooltip
+              </Button>
+            </FlexRow>
           </div>
         </div>
       </section>
