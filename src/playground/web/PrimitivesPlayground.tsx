@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { ModalContainer } from './primitives/ModalContainer';
-import { OverlayBackdrop } from './primitives/OverlayBackdrop';
-import { FlexRow } from './primitives/FlexRow';
-import { FlexBetween } from './primitives/FlexBetween';
-import { FlexCenter } from './primitives/FlexCenter';
-import Button from './primitives/Button';
-import Modal from './primitives/Modal';
-import ThemeRadioGroup from './ThemeRadioGroup';
-import AccentColorSwitcher from './AccentColorSwitcher';
+import { ModalContainer } from '../../components/primitives/ModalContainer';
+import { OverlayBackdrop } from '../../components/primitives/OverlayBackdrop';
+import { FlexRow } from '../../components/primitives/FlexRow';
+import { FlexBetween } from '../../components/primitives/FlexBetween';
+import { FlexCenter } from '../../components/primitives/FlexCenter';
+import Button from '../../components/primitives/Button';
+import Modal from '../../components/primitives/Modal';
+import ThemeRadioGroup from '../../components/ThemeRadioGroup';
+import AccentColorSwitcher from '../../components/AccentColorSwitcher';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 

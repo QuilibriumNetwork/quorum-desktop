@@ -136,12 +136,6 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [x] Ensure proper disabled state styling
   - [x] Test on both iOS and Android styles
 
-- [ ] **Migration and testing**
-  - [ ] Find all Button.jsx imports in codebase
-  - [ ] Create codemod script for import updates
-  - [ ] Update one low-risk component first
-  - [ ] Run full test suite after each update
-  - [ ] Document any behavioral differences
 
 **Status**: Button primitive created and integrated into PrimitivesPlayground. Ready for migration testing.
 
@@ -198,29 +192,17 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [x] Production build includes all primitives without errors
   - [x] No visual regressions in existing web functionality
 
-- [ ] **Desktop regression testing (optional now)**
-  - [ ] Manual test Button/Modal usage throughout existing app
-  - [ ] Run full application test suite if available
-  - [ ] Verify no performance degradation in production
-  - [ ] Get team approval on primitive implementations
-
-- [ ] **Native primitives validation (Phase 3)**
-  - [ ] Create React Native test environment
-  - [ ] Test Modal → bottom drawer transformation  
-  - [ ] Test Button → native touch feedback
-  - [ ] Verify React Native styling and animations
-  - [ ] Document platform-specific behavior differences
 
 **Success Criteria**: Web primitives working perfectly in both dev and production. Native validation deferred to Phase 3 when React Native environment is available.
 
 ---
 
-## Phase 1C: Architecture Validation and Pattern Replacement
+## Phase 1C: Complete Foundation Primitives
 
 **⚠️ IMPORTANT**: This phase should only begin after Phase 1B (Button and Modal primitives) are successfully validated and working in production.
 
 ### ResponsiveContainer Primitive
-**Goal**: Centralize responsive width calculations to replace Container.tsx
+**Goal**: Complete the foundation primitive set before any pattern replacement
 
 - [ ] **Extract Container.tsx logic**
   - [ ] Analyze current Container.tsx implementation
@@ -243,31 +225,177 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [ ] Verify border-radius and background colors match exactly
   - [ ] Check smooth transitions between breakpoints
 
-### Replace Inline Flex Patterns
-**Goal**: Replace common flex patterns throughout the app with primitives
-
-- [ ] **Search and catalog patterns**
-  - [ ] Search codebase for `flex flex-row` patterns (→ FlexRow)
-  - [ ] Search codebase for `flex justify-between` patterns (→ FlexBetween)
-  - [ ] Search codebase for `flex items-center justify-center` patterns (→ FlexCenter)
-  - [ ] Create prioritized migration list (start with low-risk components)
-
-- [ ] **Gradual replacement strategy**
-  - [ ] Phase 1: Replace patterns in utility components and shared UI
-  - [ ] Phase 2: Replace patterns in business logic components
-  - [ ] Phase 3: Replace patterns in critical user-facing components
-  - [ ] Test each replacement maintains exact visual behavior
-  - [ ] Commit after each successful batch of replacements
-
-**Success Criteria**: All common flex patterns replaced, no visual regressions, improved code consistency.
+**Success Criteria**: Foundation primitives complete - ready for mobile validation in Phase 1D.
 
 ---
 
-## Phase 2: Core Primitives Conversion
+## Phase 1D: Early Mobile Validation (Critical Risk Reduction)
 
-### Input Primitives
+**Best Practice**: Test mobile architecture with existing primitives BEFORE building the complete system. This catches architectural issues with 5 primitives instead of 15+.
 
-#### 1. Convert Input.tsx
+### Mobile Test Environment Setup
+
+- [x] **Create playground folder structure**
+  - [x] Create `src/playground/` directory 
+  - [x] Move existing PrimitivesPlayground.tsx to `src/playground/web/`
+  - [x] Update web playground route to use new location
+  - [x] Create `src/playground/mobile/` directory for mobile test environment
+  - [x] Fix import paths in PrimitivesPlayground.tsx
+  - [x] Create playground README.md with structure documentation
+  - [x] Fix CSS processing issues by keeping playground in src directory
+
+- [ ] **Create isolated mobile test environment**
+  - [ ] Run `npx create-expo-app src/playground/mobile/quorum-mobile-test` 
+  - [ ] Configure TypeScript and path aliases
+  - [ ] Install required dependencies (react-native-vector-icons, react-native-gesture-handler)
+  - [ ] Set up Metro bundler configuration
+  - [ ] Configure iOS and Android simulators/emulators
+
+- [ ] **Set up project structure**
+  - [ ] Create `screens/` directory for test screens
+  - [ ] Create `components/primitives/` directory
+  - [ ] Set up navigation between test screens
+  - [ ] Configure theme provider at app root
+
+- [ ] **Copy existing primitives for testing**
+  - [ ] Copy all Phase 1 primitives to test environment:
+    - [ ] ModalContainer, OverlayBackdrop
+    - [ ] FlexRow, FlexBetween, FlexCenter  
+    - [ ] Button primitive
+    - [ ] Modal primitive
+    - [ ] ResponsiveContainer
+  - [ ] Set up mock imports for desktop-only dependencies
+  - [ ] Configure shared theme system for React Native
+  - [ ] Test basic imports work without errors
+
+### Build Mobile Test Playground
+
+- [ ] **Create PrimitivesTestScreen**
+  - [ ] Build comprehensive test interface for each primitive
+  - [ ] Test all Button variants and states on mobile
+  - [ ] Test Modal → drawer transformation behavior
+  - [ ] Test all FlexRow/FlexBetween/FlexCenter layouts
+  - [ ] Include touch target validation helpers
+  - [ ] Add performance monitoring (fps counter, memory usage)
+
+- [ ] **Create ThemeTestScreen**
+  - [ ] Build theme switching test interface
+  - [ ] Test light/dark mode switching on mobile
+  - [ ] Test all accent color variations (blue, purple, fuchsia, etc.)
+  - [ ] Validate CSS variables → React Native color conversion
+  - [ ] Test theme persistence across app restarts
+  - [ ] Include visual comparison tools (side-by-side web/mobile)
+
+- [ ] **Create CompositionTestScreen**
+  - [ ] Test primitives working together in complex layouts
+  - [ ] Modal containing FlexRow layouts with Buttons
+  - [ ] Nested ResponsiveContainer with themed content
+  - [ ] Complex compositions that mirror real app usage
+  - [ ] Test for layout conflicts and z-index issues
+
+- [ ] **Create PerformanceTestScreen**
+  - [ ] Test animation performance (Modal open/close, theme switches)
+  - [ ] Test with many primitives rendered simultaneously
+  - [ ] Memory usage monitoring with primitive creation/destruction
+  - [ ] Touch responsiveness testing (tap delay measurements)
+  - [ ] ScrollView performance with many Button primitives
+
+### Mobile Test App Navigation
+
+- [ ] **Set up tab navigation**
+  - [ ] Tab 1: Individual Primitives Testing
+  - [ ] Tab 2: Theme System Testing
+  - [ ] Tab 3: Complex Compositions Testing
+  - [ ] Tab 4: Performance Testing
+  - [ ] Include navigation to easily switch between test scenarios
+
+### Test Current Primitives on Mobile
+
+- [ ] **ModalContainer/OverlayBackdrop validation**
+  - [ ] Test modal rendering on iOS and Android
+  - [ ] Verify backdrop touch handling and animations
+  - [ ] Check z-index behavior and overlay positioning
+  - [ ] Test keyboard handling (dismiss on hardware back button)
+  - [ ] Validate safe area handling (notches, home indicators)
+
+- [ ] **FlexRow/FlexBetween/FlexCenter validation**
+  - [ ] Test flex layouts on different screen sizes
+  - [ ] Verify gap spacing translates correctly to React Native
+  - [ ] Check alignment and justify properties work
+  - [ ] Test responsive behavior on tablet vs phone
+  - [ ] Validate RTL language support
+
+- [ ] **Button primitive validation**
+  - [ ] Test all button variants and sizes on mobile
+  - [ ] Verify touch targets meet 44pt minimum iOS guidelines
+  - [ ] Check button press feedback and animations
+  - [ ] Test tooltip behavior (hover → long-press conversion)
+  - [ ] Validate disabled states and loading indicators
+
+- [ ] **Modal primitive validation**
+  - [ ] Test Modal → MobileDrawer transformation
+  - [ ] Verify drawer slides up from bottom smoothly
+  - [ ] Check swipe-to-dismiss gesture handling
+  - [ ] Test modal sizes adapt correctly to mobile screens
+  - [ ] Validate keyboard avoidance behavior
+
+- [ ] **ResponsiveContainer validation**
+  - [ ] Test responsive breakpoints on mobile devices
+  - [ ] Verify SafeAreaView integration works correctly
+  - [ ] Check padding and margin calculations
+  - [ ] Test landscape vs portrait orientation handling
+  - [ ] Validate large tablet behavior (iPad Pro)
+
+### Cross-Platform Theme System Validation
+
+- [ ] **Theme switching on mobile**
+  - [ ] Test light/dark mode switching works
+  - [ ] Verify accent color changes apply correctly
+  - [ ] Check CSS variables → React Native color conversion
+  - [ ] Test theme persistence across app restarts
+  - [ ] Validate color consistency between web and mobile
+
+### Critical Issues Discovery and Resolution
+
+- [ ] **Document all mobile-specific issues found**
+  - [ ] Touch target sizing problems
+  - [ ] Animation performance issues  
+  - [ ] Color/styling inconsistencies
+  - [ ] Layout problems on different screen sizes
+  - [ ] Keyboard/input handling issues
+
+- [ ] **Fix architectural issues immediately**
+  - [ ] Update primitive implementations based on mobile testing
+  - [ ] Adjust theming system if color conversion fails
+  - [ ] Fix any React Native compatibility issues
+  - [ ] Update primitive APIs if mobile requires different patterns
+
+### Early Validation Success Criteria
+
+- [ ] **All existing primitives work smoothly on mobile**
+  - [ ] No crashes or React Native errors
+  - [ ] Touch interactions feel native and responsive
+  - [ ] Visual consistency matches web design
+  - [ ] Performance is acceptable (60fps animations)
+  - [ ] Theme system works identically on both platforms
+
+- [ ] **Architecture validation complete**
+  - [ ] Primitive wrapper approach proven to work
+  - [ ] Theme system successfully bridges web/mobile
+  - [ ] No fundamental architectural changes needed
+  - [ ] Clear understanding of mobile-specific requirements
+
+**⚠️ CRITICAL DECISION POINT**: If major issues are discovered, pause and fix the architecture before proceeding to Phase 2. Better to solve problems with 5 primitives than 15+.
+
+---
+
+## Phase 2: Mobile-Informed Primitive System Creation
+
+**🎯 New Strategy**: Create each primitive, then immediately test on mobile. Fix issues before building the next primitive. This prevents architectural problems from compounding.
+
+### Phase 2A: Core UI Primitives (Mobile-Validated)
+
+#### 1. Convert Input.tsx (with Mobile Validation)
 **Goal**: Create reusable input primitive for all text inputs
 
 - [ ] **Analyze Input.tsx usage**
@@ -290,6 +418,15 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [ ] Add proper keyboard type support
   - [ ] Implement secure text entry
   - [ ] Test auto-complete behavior
+
+- [ ] **Immediate mobile testing**
+  - [ ] Add Input primitive to mobile test environment
+  - [ ] Test keyboard types (email, numeric, etc.) on iOS/Android
+  - [ ] Verify focus/blur behavior and styling
+  - [ ] Check error state display on mobile
+  - [ ] Test input accessibility (screen readers)
+  - [ ] Validate touch target sizes for icons
+  - [ ] Fix any issues before proceeding to next primitive
 
 #### 2. Create TextArea primitive
 **Goal**: Replace all raw `<textarea>` elements
@@ -500,39 +637,75 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - Long-press menu with "Move up/Move down" options
 - No primitive wrapper needed - different mobile UX approach
 
-### Phase 2 Validation
+### Phase 2B: Mass Pattern Replacement
+**Goal**: Replace ALL raw HTML and inline patterns with primitives in one systematic wave
+
+**⚠️ CRITICAL**: Only begin after ALL primitives from Phase 2A are created and tested.
+
+- [ ] **Create comprehensive replacement plan**
+  - [ ] Search codebase for ALL raw HTML elements (`<button>`, `<input>`, `<select>`, `<textarea>`)
+  - [ ] Search for ALL inline flex patterns (`flex flex-row`, `flex justify-between`, etc.)
+  - [ ] Search for ALL FontAwesome icon usage (`<FontAwesome>` → Icon primitive)
+  - [ ] Search for ALL third-party component usage (react-virtuoso, react-dropzone, etc.)
+  - [ ] Create prioritized replacement list (start with low-risk components)
+
+- [ ] **Execute mass replacement**
+  - [ ] Replace raw HTML elements with primitives across entire codebase
+  - [ ] Replace inline flex patterns with FlexRow/FlexBetween/FlexCenter
+  - [ ] Replace FontAwesome icons with Icon primitive
+  - [ ] Replace third-party components with primitive wrappers
+  - [ ] Update all import statements throughout the app
+
+- [ ] **Single comprehensive test cycle**
+  - [ ] Test entire application with new primitive system
+  - [ ] Run full regression test suite
+  - [ ] Test in both development and production builds
+  - [ ] Fix any issues found during testing
+  - [ ] Validate visual consistency across all components
+
+**Success Criteria**: 95%+ of raw HTML eliminated, all patterns use primitives, zero visual regressions
+
+### Phase 2C: System Validation
 
 - [ ] **Component coverage audit**
-  - [ ] Count remaining raw HTML elements
-  - [ ] List components still using raw elements
-  - [ ] Calculate coverage percentage
-  - [ ] Identify blocking issues
+  - [ ] Count remaining raw HTML elements (target: <5%)
+  - [ ] List any components still using raw elements
+  - [ ] Calculate primitive adoption percentage
+  - [ ] Identify any blocking issues or edge cases
 
-- [ ] **Import migration**
-  - [ ] Update all component imports
-  - [ ] Remove old component files
-  - [ ] Update test imports
+- [ ] **Import and dependency cleanup**
+  - [ ] Remove old component files that were replaced
+  - [ ] Update test imports throughout codebase
   - [ ] Fix any circular dependencies
+  - [ ] Clean up unused third-party library imports
+
+- [ ] **Performance and quality validation**
+  - [ ] Run performance benchmarks (load times, render performance)
+  - [ ] Execute full test suite and ensure 100% pass rate
+  - [ ] Validate with yarn lint and yarn format
+  - [ ] Test production build and deployment
+
+**Success Criteria**: Clean, primitive-based codebase ready for mobile implementation
 
 ---
 
-## Phase 3: Mobile Environment Setup
+## Phase 3: Comprehensive Mobile System Testing
 
-### Test Environment Creation
+**Note**: Mobile environment was already set up in Phase 1D. This phase focuses on testing the complete primitive system.
 
-- [ ] **Setup Expo project**
-  - [ ] Run `npx create-expo-app quorum-mobile-test`
-  - [ ] Configure TypeScript
-  - [ ] Setup path aliases matching main project
-  - [ ] Install required dependencies
-  - [ ] Configure metro bundler
+### Complete System Validation
 
-- [ ] **Import primitives**
-  - [ ] Copy primitives directory
-  - [ ] Setup mock desktop-only imports
-  - [ ] Configure style system
-  - [ ] Add theme provider
-  - [ ] Test initial render
+- [ ] **Test entire primitive system on mobile**
+  - [ ] All primitives work together without conflicts
+  - [ ] Complex component compositions render correctly
+  - [ ] No performance degradation with full primitive set
+  - [ ] Memory usage acceptable on older devices
+
+- [ ] **Cross-platform consistency validation**
+  - [ ] Visual comparison between web and mobile versions
+  - [ ] Interaction patterns feel native on both platforms
+  - [ ] Theme switching works identically
+  - [ ] All animations and transitions smooth on mobile
 
 ### iOS Testing
 

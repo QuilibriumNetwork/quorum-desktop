@@ -18,7 +18,7 @@ import DirectMessages from './components/direct/DirectMessages';
 import { Maintenance } from './components/Maintenance';
 import { RegistrationProvider } from './components/context/RegistrationPersister';
 import { ResponsiveLayoutProvider } from './components/context/ResponsiveLayoutProvider';
-import { PrimitivesPlayground } from './components/PrimitivesPlayground';
+import { PrimitivesPlayground } from './playground/web/PrimitivesPlayground';
 import JoinSpaceModal from './components/modals/JoinSpaceModal';
 import Elements from './components/Elements';
 import { DefaultImages } from './utils';
@@ -204,7 +204,7 @@ const App = () => {
                           }
                         />
                         <Route
-                          path="/primitives"
+                          path="/playground"
                           element={
                             <AppWithSearch
                               kickUserAddress={kickUserAddress}
