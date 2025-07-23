@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { ModalContainer } from './primitives/ModalContainer';
 import { OverlayBackdrop } from './primitives/OverlayBackdrop';
 import Button from './Button';
+import ThemeRadioGroup from './ThemeRadioGroup';
+import AccentColorSwitcher from './AccentColorSwitcher';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 /**
  * Playground for testing primitives during development
@@ -16,21 +20,33 @@ export const PrimitivesPlayground: React.FC = () => {
     <div className="p-8 space-y-8">
       <div>
         <h1 className="text-2xl font-bold text-strong mb-4">Primitives Playground</h1>
-        <p className="text-main mb-8">
+        <p className="text-main mb-4">
           Test and validate primitive components for the mobile architecture
         </p>
+        
+        {/* Theme and Color Controls */}
+        <div className="flex flex-wrap items-center gap-6 p-4 bg-surface-1 rounded-lg mb-8">
+          <ThemeRadioGroup horizontal />
+          <AccentColorSwitcher />
+        </div>
       </div>
 
       {/* Section: ModalContainer */}
       <section className="border border-default rounded-lg p-6 space-y-4">
         <h2 className="text-xl font-semibold text-strong">ModalContainer</h2>
         
-        <div className="space-x-4">
-          <Button onClick={() => setShowModal(true)}>
+        <div className="flex flex-wrap gap-3">
+          <Button 
+            className="w-auto"
+            onClick={() => setShowModal(true)}
+          >
             Show Modal with Backdrop
           </Button>
           
-          <Button onClick={() => setShowNoBackdropModal(true)}>
+          <Button 
+            className="w-auto"
+            onClick={() => setShowNoBackdropModal(true)}
+          >
             Show Modal without Backdrop
           </Button>
         </div>
@@ -42,15 +58,26 @@ export const PrimitivesPlayground: React.FC = () => {
           closeOnBackdropClick={true}
           closeOnEscape={true}
         >
-          <div className="bg-modal rounded-lg p-6 max-w-md">
-            <h3 className="text-lg font-semibold text-strong mb-4">
+          <div className="quorum-modal text-subtle relative pointer-events-auto">
+            {/* Close button like existing modals */}
+            <div
+              className="quorum-modal-close select-none cursor-pointer"
+              onClick={() => setShowModal(false)}
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </div>
+            
+            <div className="quorum-modal-title select-none cursor-default">
               Modal with Backdrop
-            </h3>
-            <p className="text-main mb-4">
-              This modal uses the ModalContainer primitive with backdrop.
-              Click outside or press Escape to close.
-            </p>
-            <Button onClick={() => setShowModal(false)}>Close Modal</Button>
+            </div>
+            
+            <div className="quorum-modal-container">
+              <p className="text-main mb-4">
+                This modal uses the ModalContainer primitive with backdrop.
+                Click outside, press Escape, or click the X to close.
+              </p>
+              <Button onClick={() => setShowModal(false)}>Close Modal</Button>
+            </div>
           </div>
         </ModalContainer>
 
@@ -64,16 +91,27 @@ export const PrimitivesPlayground: React.FC = () => {
               closeOnEscape={true}
               className="pointer-events-auto"
             >
-              <div className="bg-modal rounded-lg p-6 max-w-md shadow-xl">
-                <h3 className="text-lg font-semibold text-strong mb-4">
+              <div className="quorum-modal text-subtle relative pointer-events-auto shadow-xl">
+                {/* Close button like existing modals */}
+                <div
+                  className="quorum-modal-close select-none cursor-pointer"
+                  onClick={() => setShowNoBackdropModal(false)}
+                >
+                  <FontAwesomeIcon icon={faTimes} />
+                </div>
+                
+                <div className="quorum-modal-title select-none cursor-default">
                   Modal without Backdrop
-                </h3>
-                <p className="text-main mb-4">
-                  This modal has no backdrop. Press Escape to close.
-                </p>
-                <Button onClick={() => setShowNoBackdropModal(false)}>
-                  Close Modal
-                </Button>
+                </div>
+                
+                <div className="quorum-modal-container">
+                  <p className="text-main mb-4">
+                    This modal has no backdrop. Press Escape or click the X to close.
+                  </p>
+                  <Button onClick={() => setShowNoBackdropModal(false)}>
+                    Close Modal
+                  </Button>
+                </div>
               </div>
             </ModalContainer>
           </div>
@@ -84,9 +122,14 @@ export const PrimitivesPlayground: React.FC = () => {
       <section className="border border-default rounded-lg p-6 space-y-4">
         <h2 className="text-xl font-semibold text-strong">OverlayBackdrop</h2>
         
-        <Button onClick={() => setShowBackdrop(true)}>
-          Show Backdrop Only
-        </Button>
+        <div className="flex flex-wrap gap-3">
+          <Button 
+            className="w-auto"
+            onClick={() => setShowBackdrop(true)}
+          >
+            Show Backdrop Only
+          </Button>
+        </div>
 
         <OverlayBackdrop
           visible={showBackdrop}
