@@ -1,416 +1,643 @@
-# Mobile Development Plan
+# Mobile Development Plan - Improved Version
 
 ## Overview
 
-This plan outlines the **execution timeline and phase-by-phase approach** for implementing the cross-platform architecture described in [`components-shared-arch-masterplan.md`](./components-shared-arch-masterplan.md).
+This improved plan provides precise, trackable tasks with checkboxes for implementing the cross-platform architecture. Each task includes specific subtasks to ensure thorough completion across multiple sessions.
 
-**For detailed development workflows and code examples**, see [`component-dev-guidelines.md`](../../docs/component-dev-guidelines.md).
+**Architecture Details**: See [`components-shared-arch-masterplan.md`](./components-shared-arch-masterplan.md)  
+**Development Guidelines**: See [`component-dev-guidelines.md`](../../docs/component-dev-guidelines.md)
 
 ## Current State
-✅ **Desktop app finished and stable**
-
-## Development Phases
-
-### Phase 1: Architecture Validation
-🎯 **Goal**: Validate primitive architecture with minimal risk
-
-**Architecture Rationale**: See the [masterplan](./components-shared-arch-masterplan.md) for detailed architecture reasoning and the Modal-to-Drawer transformation concept.
-
-#### Phase 1A: Foundation Layout Primitives (Low Risk)
-**Priority Order Based on Codebase Audit**:
-
-1. **ModalContainer/OverlayBackdrop Primitives**
-   - **Impact**: Eliminates repeated backdrop patterns across 5+ components
-   - **Risk**: Low - purely layout consolidation
-
-2. **Flex Layout Primitives (FlexRow/FlexBetween/FlexCenter)**
-   - **Impact**: Standardizes common flex patterns throughout app
-   - **Risk**: Low - simple layout primitives
-
-3. **ResponsiveContainer Primitive**
-   - **Impact**: Centralizes complex responsive width calculations
-   - **Risk**: Low - extracts existing Container.tsx logic
-
-#### Phase 1B: Critical Component Validation (Higher Risk)
-
-4. **Convert Button.jsx to Primitive**
-   - **Why Critical**: Most used component, validates entire approach
-   - **Risk**: Medium - high usage requires careful testing
-
-5. **Convert Modal.tsx to Primitive**  
-   - **Why Critical**: Proves primitive composition + Modal-to-Drawer concept
-   - **Risk**: Medium - complex transformation, multiple usage patterns
-
-#### Success Criteria
-- [ ] ModalContainer eliminates repeated backdrop patterns across 5+ components
-- [ ] Flex primitives successfully replace inline flex classes
-- [ ] ResponsiveContainer maintains current responsive behavior
-- [ ] Button works identically on desktop after conversion
-- [ ] Modal uses primitive composition successfully
-- [ ] No regressions in existing functionality
-- [ ] Foundation proves primitive architecture viability
-
-#### Phase 1A Mobile Testing Strategy
-
-**Important**: After Phase 1A, you'll have layout primitives ready for mobile but business components still contain raw HTML. Here's how to test the primitives without breaking the mobile build:
-
-##### What You CAN Test on Mobile After Phase 1A
-
-**✅ Layout Primitives Work Correctly**:
-- ModalContainer → renders as proper mobile overlay
-- FlexRow/FlexBetween → work as React Native Views
-- ResponsiveContainer → adapts to mobile screen sizes
-
-**❌ What WON'T Work Yet**:
-- Raw HTML elements (`<button>`, `<input>`, `<div>`) cause React Native errors
-- Business components (Message.tsx, Channel.tsx) won't render until HTML is replaced
-
-##### Mobile Testing Environment Setup
-
-```bash
-# Create isolated mobile test environment
-npx create-expo-app quorum-primitives-test
-cd quorum-primitives-test
-yarn start
-```
-
-**Copy primitives for testing**:
-```bash
-# Copy your completed primitives to test app
-cp -r src/components/primitives/ quorum-primitives-test/components/primitives/
-```
-
-##### Testing Approach for Each Primitive
-
-**1. Individual Primitive Testing**:
-```tsx
-// Test ModalContainer in isolation
-import { ModalContainer } from '../primitives/ModalContainer';
-
-function TestModalContainer() {
-  return (
-    <ModalContainer>
-      <Text>Testing modal container on mobile!</Text>
-    </ModalContainer>
-  );
-}
-```
-
-**2. Primitive Composition Testing**:
-```tsx
-// Test primitives working together
-import { ModalContainer } from '../primitives/ModalContainer';
-import { FlexRow } from '../primitives/FlexRow';
-
-function TestComposition() {
-  return (
-    <ModalContainer>
-      <FlexRow>
-        <Text>Left</Text>
-        <Text>Right</Text>
-      </FlexRow>
-    </ModalContainer>
-  );
-}
-```
-
-**3. Business Logic Integration Testing**:
-```tsx
-// Test shared business logic with mobile-safe UI
-import { useMessageActions } from '../hooks/useMessageActions';
-
-function TestBusinessLogic() {
-  const { actions, handleAction } = useMessageActions();
-  
-  return (
-    <FlexRow>
-      {actions.map(action => (
-        <Pressable key={action.id} onPress={() => handleAction(action)}>
-          <Text>{action.label}</Text>
-        </Pressable>
-      ))}
-    </FlexRow>
-  );
-}
-```
-
-##### Testing Checklist for Phase 1A
-
-**For Each Primitive**:
-- [ ] Renders without errors on iOS Simulator
-- [ ] Renders without errors on Android Emulator  
-- [ ] Touch interactions work smoothly
-- [ ] Styling matches desktop appearance
-- [ ] Responsive behavior works on different screen sizes
-- [ ] Performance is acceptable on device
-
-**For Primitive Composition**:
-- [ ] Multiple primitives work together
-- [ ] No layout conflicts or overlapping
-- [ ] Consistent spacing and alignment
-- [ ] Proper z-index behavior for modals
-
-**For Business Logic Integration**:
-- [ ] Shared hooks work unchanged
-- [ ] State management works correctly
-- [ ] Event handlers function properly
-- [ ] Data flow is consistent with desktop
-
-##### Expected Testing Outcomes
-
-**After Phase 1A Testing, You Should Have**:
-- [ ] Validated that primitive architecture works on mobile
-- [ ] Confirmed styling system translates correctly
-- [ ] Identified any mobile-specific adjustments needed
-- [ ] Documented performance characteristics
-- [ ] Proved business logic can be shared
-- [ ] Built confidence for Phase 1B conversion
-
-**Phase 1A Testing Validates**:
-- ✅ Architecture concept works
-- ✅ Styling approach is sound  
-- ✅ Primitives compose correctly
-- ✅ Foundation is ready for Button/Modal conversion
-
-This testing approach ensures Phase 1A work is validated before committing to full component conversion in Phase 1B.
-
-#### Implementation Commands
-```bash
-# Create primitive structure based on audit findings
-mkdir -p src/components/primitives/{ModalContainer,OverlayBackdrop,FlexRow,FlexBetween,FlexCenter,ResponsiveContainer,Button,Modal}
-
-# Phase 1A: Foundation (low risk, immediate impact)
-# 1. Create ModalContainer → replace repeated backdrop patterns
-# 2. Create FlexRow/FlexBetween → replace common flex patterns  
-# 3. Create ResponsiveContainer → replace Container.tsx logic
-
-# Phase 1B: Critical validation (validates architecture)
-# 4. Convert Button.jsx → primitives/Button/
-# 5. Convert Modal.tsx → primitives/Modal/ (using ModalContainer)
-```
-
-**For detailed component creation workflows**, see [`component-dev-guidelines.md`](../../docs/component-dev-guidelines.md) - Workflow B: Converting Existing Components.
-
-### Phase 2: Core Primitives Conversion
-🎯 **Goal**: Eliminate raw HTML from business components
-
-#### High Priority Conversions
-1. **Input.tsx** → `primitives/Input/`
-2. **ReactTooltip.tsx** → `primitives/Tooltip/`
-3. **ToggleSwitch.tsx** → `primitives/Switch/`
-
-#### Medium Priority Conversions
-4. **Raw `<textarea>` elements** → `primitives/TextArea/`
-5. **Raw `<select>` elements** → `primitives/Select/`
-6. **Container/layout patterns** → `primitives/Container/`
-
-#### Success Criteria
-- [ ] 90%+ of raw HTML elements eliminated from business components
-- [ ] All primitives have both .web.tsx and .native.tsx implementations
-- [ ] Business components only import from primitives
-- [ ] Desktop functionality remains unchanged
-
-### Phase 3: Mobile Environment Setup
-🎯 **Goal**: Test primitives in actual React Native environment
-
-#### Setup Tasks
-1. **Create React Native Test Environment**
-   ```bash
-   npx create-expo-app quorum-mobile-test
-   cd quorum-mobile-test
-   yarn start
-   ```
-
-2. **Import and Test Primitives**
-   - Copy primitive components to test environment
-   - Test each primitive on iOS Simulator
-   - Test each primitive on Android Emulator
-   - Verify styling matches design intentions
-
-3. **Identify Required Adjustments**
-   - Note touch target size issues
-   - Document large tablet optimization needs
-   - List styling inconsistencies
-   - Record performance issues
-
-#### Success Criteria
-- [ ] All primitives render correctly in React Native
-- [ ] Touch interactions work smoothly
-- [ ] Styling is consistent with desktop design
-- [ ] Performance is acceptable on devices
-
-### Phase 4: Mobile-Specific Component Identification
-🎯 **Goal**: Identify components needing different mobile behavior
-
-#### Analysis Process
-Test each major business component in mobile environment and document:
-
-1. **Navigation Components**
-   - Desktop: Sidebar navigation, expandable nav menu
-   - Mobile: Bottom tabs, hamburger menu, or drawer navigation
-   - **Decision Needed**: Navigation pattern for mobile
-
-2. **Search Components**
-   - Desktop: Always-visible search bar
-   - Mobile: Expandable search, search modal, or dedicated search screen
-   - **Decision Needed**: Search UX pattern for mobile
-
-3. **Message Actions**
-   - Desktop: Hover to reveal action buttons
-   - Mobile: Long-press → action drawer, or always-visible buttons
-   - **Current**: Already has MessageActionsDrawer for mobile
-
-4. **User Interaction Patterns**
-   - Desktop: Hover tooltips, right-click context menus
-   - Mobile: Tap actions, long-press menus, swipe gestures
-   - **Review**: All hover-dependent interactions
-
-5. **Settings and Configuration**
-   - Desktop: Modal with sidebar navigation (UserSettingsModal, SpaceEditor)
-   - Mobile: Full-screen navigation or tabbed interface
-   - **Decision Needed**: Complex modal → mobile navigation pattern
-
-#### Documentation Output
-Create list of components requiring mobile-specific behavior:
-- Component name
-- Current desktop behavior  
-- Required mobile behavior
-- Implementation approach (shared logic + platform UI)
-
-### Phase 5: Mobile-Specific Implementation
-🎯 **Goal**: Build components with different mobile behavior
-
-#### Implementation Strategy
-For each identified component:
-
-1. **Keep Shared Business Logic**
-   ```tsx
-   // Shared hook or context
-   export function useMessageActions() {
-     // All business logic here
-     return { actions, handleAction, ... };
-   }
-   ```
-
-2. **Create Platform-Specific UI**
-   ```tsx
-   // MessageActions.web.tsx - hover buttons
-   // MessageActions.native.tsx - long-press drawer
-   ```
-
-3. **Use Primitives for All Rendering**
-   - Both platforms use same Button, Modal, etc.
-   - Different layout and interaction patterns
-   - Consistent visual design
-
-#### Key Components to Implement
-Based on common mobile UX patterns:
-
-1. **Navigation System**
-   - Mobile-specific navigation primitives
-   - Bottom tab bar or drawer navigation
-   - Integration with existing routing
-
-2. **Search Experience**
-   - Mobile-optimized search interface
-   - Touch-friendly search results
-   - Search history and suggestions
-
-3. **Complex Modals → Mobile Navigation**
-   - UserSettingsModal → Settings screen stack
-   - SpaceEditor → Multi-screen editor flow
-   - Responsive layout detection (`useResponsiveLayout`)
-
-### Phase 6: Full Mobile Application
-🎯 **Goal**: Complete, shippable mobile application
-
-#### Mobile App Structure
-```
-mobile-app/
-├── App.tsx                 # Root component
-├── navigation/             # Mobile navigation
-│   ├── TabNavigator.tsx
-│   ├── StackNavigator.tsx
-│   └── DrawerNavigator.tsx
-├── screens/                # Mobile-specific screens
-│   ├── MessagesScreen.tsx
-│   ├── SpacesScreen.tsx
-│   ├── SettingsScreen.tsx
-│   └── SearchScreen.tsx
-└── components/             # Shared primitives & business components
-    ├── primitives/         # Platform-specific primitives
-    └── shared/             # Business logic components
-```
-
-#### Integration Tasks
-1. **Mobile Navigation Setup**
-   - React Navigation or similar
-   - Tab bar with Messages, Spaces, Profile
-   - Stack navigation for detailed views
-
-2. **Mobile-Specific Screens**
-   - Adapt existing business components to mobile layout
-   - Full-screen implementations of complex modals
-   - Touch-optimized interactions
-
-3. **Platform Services Integration**
-   - Push notifications
-   - Deep linking
-   - App state management
-   - Background task handling
-
-4. **Performance Optimization**
-   - Image optimization
-   - Bundle size optimization
-   - Lazy loading of screens
-   - Memory usage optimization
-
-5. **Testing and Polish**
-   - Device testing on various screen sizes
-   - Performance testing
-   - Accessibility testing
-   - User acceptance testing
-
-## Risk Mitigation
-
-### Phase 1 Validation is Critical
-- If Button or Modal conversion fails, pause and reassess approach
-- Small scope allows for quick iteration and fixes
-- Validates entire primitive architecture concept
-
-### Rollback Plans
-- Keep original components until primitive versions are fully tested
-- Gradual import updates allow for easy reversion
-- Desktop functionality must never be broken
-
-### Testing Strategy
-- Test each primitive immediately after creation
-- Maintain desktop functionality throughout process
-- Use React Native test environment early and often
-
-## Success Metrics
-
-### Architecture Success
-- [ ] 95%+ code sharing between desktop and mobile
-- [ ] Zero breaking changes to existing desktop functionality
-- [ ] Clean separation between primitives and business logic
-
-### Development Velocity
-- [ ] New features can be built for both platforms simultaneously
-- [ ] Bug fixes apply to both platforms automatically
-- [ ] Mobile-specific features don't impact desktop
-
-### User Experience
-- [ ] Mobile app feels native, not like "web in app"
-- [ ] Consistent design language across platforms
-- [ ] Platform-appropriate interactions and patterns
-
-## Next Steps
-
-1. **Start with Phase 1**: Convert Button.jsx to primitive
-2. **Validate approach**: Test thoroughly on desktop
-3. **Continue systematically**: Follow phase order
-4. **Document learnings**: Update this plan based on discoveries
-5. **Maintain quality**: Never sacrifice desktop stability for mobile progress
-
-The key to success is the incremental approach - validating the architecture early with Button and Modal before committing to full conversion.
+✅ **Desktop app finished and stable**  
+⏳ **Mobile development starting**
+
+---
+
+## Phase 1: Architecture Validation (Critical Foundation)
+
+### Phase 1A: Foundation Layout Primitives
+
+#### 1. ModalContainer/OverlayBackdrop Primitives
+**Goal**: Eliminate repeated backdrop patterns across 5+ components
+
+- [x] **Setup primitive structure**
+  - [x] Create `src/components/primitives/ModalContainer/index.ts`
+  - [x] Create `src/components/primitives/ModalContainer/ModalContainer.web.tsx`
+  - [x] Create `src/components/primitives/ModalContainer/ModalContainer.native.tsx`
+  - [x] Create `src/components/primitives/ModalContainer/types.ts`
+  - [x] Create `src/components/primitives/ModalContainer/styles.ts`
+
+- [x] **Implement ModalContainer primitive**
+  - [x] Define TypeScript interface for props in `types.ts`
+  - [x] Implement web version with backdrop, z-index, and animations
+  - [x] Implement native version using React Native Modal
+  - [x] Add proper event handling (onBackdropPress, onRequestClose)
+  - [x] Test keyboard accessibility (Escape key on web)
+
+- [x] **Create OverlayBackdrop companion primitive**
+  - [x] Create separate OverlayBackdrop primitive for reusability
+  - [x] Implement click-outside detection
+  - [x] Add configurable opacity and blur effects
+  - [x] Support both dark and light theme variants
+
+- [ ] **Validate against existing usage**
+  - [ ] Audit Modal.tsx backdrop implementation
+  - [ ] Audit UserSettingsModal.tsx backdrop
+  - [ ] Audit SpaceEditor.tsx backdrop
+  - [ ] Audit Lightbox.tsx backdrop
+  - [ ] Audit MessageActionsDrawer.tsx backdrop
+  - [ ] Document any unique requirements found
+
+#### 2. Flex Layout Primitives
+**Goal**: Standardize common flex patterns throughout app
+
+- [ ] **Create FlexRow primitive**
+  - [ ] Create `src/components/primitives/FlexRow/` structure
+  - [ ] Implement with configurable gap, align, justify props
+  - [ ] Support responsive gap values
+  - [ ] Add wrap and nowrap variants
+  - [ ] Test with RTL languages
+
+- [ ] **Create FlexBetween primitive**
+  - [ ] Create `src/components/primitives/FlexBetween/` structure
+  - [ ] Implement as specialized FlexRow with justify-between
+  - [ ] Support vertical alignment options
+  - [ ] Add common padding presets
+
+- [ ] **Create FlexCenter primitive**
+  - [ ] Create `src/components/primitives/FlexCenter/` structure
+  - [ ] Implement for both axes centering
+  - [ ] Support single-axis centering variants
+  - [ ] Add min-height options for full-screen centering
+
+- [ ] **Replace inline flex patterns**
+  - [ ] Search codebase for `flex flex-row` patterns
+  - [ ] Search codebase for `flex justify-between` patterns
+  - [ ] Search codebase for `flex items-center justify-center` patterns
+  - [ ] Create migration list of components to update
+  - [ ] Test each replacement maintains exact behavior
+
+#### 3. ResponsiveContainer Primitive
+**Goal**: Centralize complex responsive width calculations
+
+- [ ] **Extract Container.tsx logic**
+  - [ ] Analyze current Container.tsx implementation
+  - [ ] Identify all responsive breakpoints used
+  - [ ] Document max-width behavior at each breakpoint
+  - [ ] Note any special cases or overrides
+
+- [ ] **Create ResponsiveContainer primitive**
+  - [ ] Create `src/components/primitives/ResponsiveContainer/` structure
+  - [ ] Implement breakpoint system matching Container.tsx
+  - [ ] Add support for custom max-widths per breakpoint
+  - [ ] Implement native version with proper SafeAreaView
+  - [ ] Add padding and margin presets
+
+- [ ] **Test responsive behavior**
+  - [ ] Test at mobile viewport (< 640px)
+  - [ ] Test at tablet viewport (640px - 1024px)
+  - [ ] Test at desktop viewport (> 1024px)
+  - [ ] Verify smooth transitions between breakpoints
+  - [ ] Check performance of resize listeners
+
+### Phase 1B: Critical Component Validation
+
+#### 4. Convert Button.jsx to Primitive
+**Goal**: Validate primitive architecture with most-used component
+
+- [ ] **Analyze current Button.jsx**
+  - [ ] Document all props and their types
+  - [ ] List all style variants (primary, secondary, danger, etc.)
+  - [ ] Identify all size options
+  - [ ] Note icon support and positioning
+  - [ ] Check for any animation or transition effects
+
+- [ ] **Create Button primitive structure**
+  - [ ] Create `src/components/primitives/Button/` directory
+  - [ ] Create comprehensive `types.ts` with all variants
+  - [ ] Plan style system for consistency
+  - [ ] Design native touch feedback approach
+
+- [ ] **Implement Button.web.tsx**
+  - [ ] Port all existing button styles
+  - [ ] Maintain exact className compatibility
+  - [ ] Preserve all event handlers
+  - [ ] Keep loading state animations
+  - [ ] Test keyboard navigation (Tab, Enter, Space)
+
+- [ ] **Implement Button.native.tsx**
+  - [ ] Use Pressable for proper touch feedback
+  - [ ] Implement native loading indicator
+  - [ ] Add haptic feedback for premium feel
+  - [ ] Ensure proper disabled state styling
+  - [ ] Test on both iOS and Android styles
+
+- [ ] **Migration and testing**
+  - [ ] Find all Button.jsx imports in codebase
+  - [ ] Create codemod script for import updates
+  - [ ] Update one low-risk component first
+  - [ ] Run full test suite after each update
+  - [ ] Document any behavioral differences
+
+#### 5. Convert Modal.tsx to Primitive
+**Goal**: Prove primitive composition and Modal-to-Drawer transformation
+
+- [ ] **Deep analysis of Modal.tsx**
+  - [ ] Map all current modal configurations
+  - [ ] Document animation behaviors
+  - [ ] List all size variants (small, medium, large, full)
+  - [ ] Note keyboard trap implementation
+  - [ ] Check focus management requirements
+
+- [ ] **Design Modal primitive architecture**
+  - [ ] Plan composition with ModalContainer primitive
+  - [ ] Design header/body/footer slot system
+  - [ ] Plan mobile drawer transformation logic
+  - [ ] Create responsive behavior specifications
+
+- [ ] **Implement Modal.web.tsx**
+  - [ ] Use ModalContainer for backdrop
+  - [ ] Implement size variants with CSS
+  - [ ] Add smooth open/close animations
+  - [ ] Implement focus trap with react-focus-lock
+  - [ ] Test with screen readers
+
+- [ ] **Implement Modal.native.tsx**
+  - [ ] Transform to bottom drawer on mobile
+  - [ ] Add drag-to-dismiss gesture
+  - [ ] Implement iOS-style backdrop blur
+  - [ ] Add Android back button handling
+  - [ ] Test keyboard avoidance behavior
+
+- [ ] **Test Modal-to-Drawer transformation**
+  - [ ] Verify desktop modal behavior unchanged
+  - [ ] Test mobile drawer appears from bottom
+  - [ ] Check gesture dismissal smoothness
+  - [ ] Validate content scrolling behavior
+  - [ ] Ensure proper safe area handling
+
+### Phase 1 Success Validation
+
+- [ ] **Desktop regression testing**
+  - [ ] Run full application test suite
+  - [ ] Manual test of all converted components
+  - [ ] Check for any visual differences
+  - [ ] Verify no performance degradation
+  - [ ] Get team approval on changes
+
+- [ ] **Mobile proof of concept**
+  - [ ] Create minimal React Native test app
+  - [ ] Import and test all Phase 1 primitives
+  - [ ] Verify touch interactions work
+  - [ ] Check responsive behavior
+  - [ ] Document any issues found
+
+- [ ] **Architecture validation**
+  - [ ] Confirm primitive composition works
+  - [ ] Validate style system approach
+  - [ ] Check bundle size impact
+  - [ ] Measure build time changes
+  - [ ] Document lessons learned
+
+---
+
+## Phase 2: Core Primitives Conversion
+
+### Input Primitives
+
+#### 1. Convert Input.tsx
+**Goal**: Create reusable input primitive for all text inputs
+
+- [ ] **Analyze Input.tsx usage**
+  - [ ] Find all Input component imports
+  - [ ] Document all prop variations used
+  - [ ] List validation requirements
+  - [ ] Note error state displays
+  - [ ] Check for custom input types
+
+- [ ] **Create Input primitive**
+  - [ ] Design comprehensive props interface
+  - [ ] Plan validation system
+  - [ ] Design error message display
+  - [ ] Plan icon support (left/right)
+  - [ ] Consider multiline variant needs
+
+- [ ] **Implement platform versions**
+  - [ ] Web: maintain current styling exactly
+  - [ ] Native: use TextInput with custom styling
+  - [ ] Add proper keyboard type support
+  - [ ] Implement secure text entry
+  - [ ] Test auto-complete behavior
+
+#### 2. Create TextArea primitive
+**Goal**: Replace all raw `<textarea>` elements
+
+- [ ] **Audit textarea usage**
+  - [ ] Search for all `<textarea` in codebase
+  - [ ] Document different configurations
+  - [ ] Note auto-resize behaviors
+  - [ ] Check character limit implementations
+  - [ ] Find markdown editor integrations
+
+- [ ] **Implement TextArea primitive**
+  - [ ] Support auto-resize functionality
+  - [ ] Add character counter option
+  - [ ] Implement native with proper scrolling
+  - [ ] Add mention/hashtag support hooks
+  - [ ] Test with long text content
+
+#### 3. Create Select primitive
+**Goal**: Replace all raw `<select>` elements
+
+- [ ] **Audit select usage**
+  - [ ] Find all `<select` elements
+  - [ ] Document option data structures
+  - [ ] Note any custom styling needs
+  - [ ] Check for multi-select usage
+  - [ ] Find searchable select needs
+
+- [ ] **Implement Select primitive**
+  - [ ] Create web version with native select
+  - [ ] Create native version with picker/modal
+  - [ ] Add search functionality option
+  - [ ] Support option groups
+  - [ ] Test keyboard navigation
+
+### Interactive Primitives
+
+#### 4. Convert ReactTooltip.tsx
+**Goal**: Create accessible tooltip primitive
+
+- [ ] **Analyze tooltip patterns**
+  - [ ] Document all tooltip triggers
+  - [ ] List positioning strategies
+  - [ ] Note delay configurations
+  - [ ] Check for custom content needs
+  - [ ] Find mobile alternatives used
+
+- [ ] **Create Tooltip primitive**
+  - [ ] Web: hover/focus triggered
+  - [ ] Native: long-press triggered
+  - [ ] Implement smart positioning
+  - [ ] Add arrow pointing option
+  - [ ] Test with screen readers
+
+#### 5. Convert ToggleSwitch.tsx
+**Goal**: Create accessible switch primitive
+
+- [ ] **Analyze current implementation**
+  - [ ] Document animation details
+  - [ ] Check accessibility implementation
+  - [ ] Note size variants
+  - [ ] List label positioning options
+
+- [ ] **Implement Switch primitive**
+  - [ ] Match current animation exactly
+  - [ ] Add haptic feedback on native
+  - [ ] Implement proper ARIA roles
+  - [ ] Support RTL layouts
+  - [ ] Test with assistive technologies
+
+### Layout Primitives
+
+#### 6. Additional layout patterns
+**Goal**: Complete primitive coverage
+
+- [ ] **Create Spacer primitive**
+  - [ ] Fixed and flexible spacing
+  - [ ] Responsive space values
+  - [ ] Horizontal and vertical variants
+
+- [ ] **Create Divider primitive**
+  - [ ] Horizontal and vertical options
+  - [ ] Theme-aware styling
+  - [ ] Optional text in divider
+
+- [ ] **Create Grid primitive**
+  - [ ] Responsive column counts
+  - [ ] Gap configuration
+  - [ ] Alignment options
+
+### Phase 2 Validation
+
+- [ ] **Component coverage audit**
+  - [ ] Count remaining raw HTML elements
+  - [ ] List components still using raw elements
+  - [ ] Calculate coverage percentage
+  - [ ] Identify blocking issues
+
+- [ ] **Import migration**
+  - [ ] Update all component imports
+  - [ ] Remove old component files
+  - [ ] Update test imports
+  - [ ] Fix any circular dependencies
+
+---
+
+## Phase 3: Mobile Environment Setup
+
+### Test Environment Creation
+
+- [ ] **Setup Expo project**
+  - [ ] Run `npx create-expo-app quorum-mobile-test`
+  - [ ] Configure TypeScript
+  - [ ] Setup path aliases matching main project
+  - [ ] Install required dependencies
+  - [ ] Configure metro bundler
+
+- [ ] **Import primitives**
+  - [ ] Copy primitives directory
+  - [ ] Setup mock desktop-only imports
+  - [ ] Configure style system
+  - [ ] Add theme provider
+  - [ ] Test initial render
+
+### iOS Testing
+
+- [ ] **Simulator setup**
+  - [ ] Test on iPhone SE (small screen)
+  - [ ] Test on iPhone 14 (standard)
+  - [ ] Test on iPad (tablet)
+  - [ ] Check safe area handling
+  - [ ] Verify keyboard behavior
+
+- [ ] **Component testing checklist**
+  - [ ] All primitives render correctly
+  - [ ] Touch targets meet 44pt minimum
+  - [ ] Animations run at 60fps
+  - [ ] No layout shifts or flickers
+  - [ ] Proper status bar handling
+
+### Android Testing
+
+- [ ] **Emulator setup**
+  - [ ] Test on Pixel 4a (standard)
+  - [ ] Test on Pixel C (tablet)
+  - [ ] Test on Galaxy Fold (foldable)
+  - [ ] Check back button handling
+  - [ ] Verify keyboard behavior
+
+- [ ] **Component testing checklist**
+  - [ ] All primitives render correctly
+  - [ ] Touch feedback works properly
+  - [ ] No overdraw issues
+  - [ ] Proper navigation bar handling
+  - [ ] Material Design compliance
+
+### Performance Testing
+
+- [ ] **Measure and optimize**
+  - [ ] Profile initial render time
+  - [ ] Check JS bundle size
+  - [ ] Measure memory usage
+  - [ ] Test with 100+ list items
+  - [ ] Optimize re-renders
+
+---
+
+## Phase 4: Mobile-Specific Component Analysis
+
+### Navigation Analysis
+
+- [ ] **Current navigation audit**
+  - [ ] Map all navigation paths
+  - [ ] Document sidebar structure
+  - [ ] List keyboard shortcuts used
+  - [ ] Note breadcrumb patterns
+  - [ ] Check deep linking needs
+
+- [ ] **Mobile navigation design**
+  - [ ] Choose tab bar vs drawer
+  - [ ] Design navigation hierarchy
+  - [ ] Plan gesture navigation
+  - [ ] Design back button behavior
+  - [ ] Create navigation prototype
+
+### Search Experience
+
+- [ ] **Current search analysis**
+  - [ ] Document search UI locations
+  - [ ] Map search result types
+  - [ ] Check filter capabilities
+  - [ ] Note real-time search needs
+  - [ ] Find search shortcuts
+
+- [ ] **Mobile search design**
+  - [ ] Design search activation
+  - [ ] Plan results display
+  - [ ] Design filter UI
+  - [ ] Add voice search option
+  - [ ] Create search prototype
+
+### Interaction Patterns
+
+- [ ] **Hover interaction audit**
+  - [ ] Find all hover-dependent UI
+  - [ ] List tooltip triggers
+  - [ ] Check hover menus
+  - [ ] Note hover states
+  - [ ] Document preview hovers
+
+- [ ] **Touch alternatives design**
+  - [ ] Map hover to long-press
+  - [ ] Design context menus
+  - [ ] Plan swipe gestures
+  - [ ] Add touch feedback
+  - [ ] Create interaction guide
+
+### Complex UI Patterns
+
+- [ ] **Modal-heavy UI analysis**
+  - [ ] List all modal types
+  - [ ] Check modal nesting
+  - [ ] Find full-screen modals
+  - [ ] Note modal workflows
+  - [ ] Document form modals
+
+- [ ] **Mobile UI transformation**
+  - [ ] Design screen-based flows
+  - [ ] Plan form workflows
+  - [ ] Design settings screens
+  - [ ] Create navigation maps
+  - [ ] Build UI prototypes
+
+---
+
+## Phase 5: Mobile-Specific Implementation
+
+### Business Logic Extraction
+
+- [ ] **Create shared hooks**
+  - [ ] Extract message actions logic
+  - [ ] Extract space management logic
+  - [ ] Extract user settings logic
+  - [ ] Extract search logic
+  - [ ] Test hook isolation
+
+- [ ] **Create shared contexts**
+  - [ ] Authentication context
+  - [ ] Theme context
+  - [ ] Navigation context
+  - [ ] Data cache context
+  - [ ] WebSocket context
+
+### Platform-Specific Components
+
+- [ ] **Navigation components**
+  - [ ] Implement tab bar navigation
+  - [ ] Create stack navigators
+  - [ ] Add drawer if needed
+  - [ ] Implement deep linking
+  - [ ] Test navigation state
+
+- [ ] **Screen implementations**
+  - [ ] Messages screen with tabs
+  - [ ] Spaces list and detail
+  - [ ] Settings screen hierarchy
+  - [ ] Search screen with results
+  - [ ] Profile and preferences
+
+- [ ] **Mobile-specific features**
+  - [ ] Pull-to-refresh
+  - [ ] Infinite scroll
+  - [ ] Swipe actions
+  - [ ] Floating action buttons
+  - [ ] Bottom sheets
+
+### Integration Points
+
+- [ ] **API integration**
+  - [ ] Share API clients
+  - [ ] Handle offline state
+  - [ ] Implement sync logic
+  - [ ] Add request caching
+  - [ ] Test error handling
+
+- [ ] **State management**
+  - [ ] Share Redux/Zustand stores
+  - [ ] Add persistence layer
+  - [ ] Handle background state
+  - [ ] Implement optimistic updates
+  - [ ] Test state synchronization
+
+---
+
+## Phase 6: Full Mobile Application
+
+### App Infrastructure
+
+- [ ] **Project setup**
+  - [ ] Initialize React Native project
+  - [ ] Configure build systems
+  - [ ] Setup CI/CD pipelines
+  - [ ] Configure code signing
+  - [ ] Setup crash reporting
+
+- [ ] **Development environment**
+  - [ ] Configure debugging tools
+  - [ ] Setup hot reload
+  - [ ] Add development menu
+  - [ ] Configure simulators
+  - [ ] Document setup process
+
+### Core Features
+
+- [ ] **Authentication flow**
+  - [ ] Implement login screen
+  - [ ] Add biometric authentication
+  - [ ] Handle token storage
+  - [ ] Implement auto-login
+  - [ ] Test session management
+
+- [ ] **Main app features**
+  - [ ] Message viewing and sending
+  - [ ] Space browsing and joining
+  - [ ] User profile management
+  - [ ] Settings and preferences
+  - [ ] Search functionality
+
+- [ ] **Platform features**
+  - [ ] Push notifications
+  - [ ] Background sync
+  - [ ] Offline support
+  - [ ] Deep linking
+  - [ ] Share extensions
+
+### Quality Assurance
+
+- [ ] **Testing**
+  - [ ] Unit test coverage >80%
+  - [ ] Integration test flows
+  - [ ] E2E test critical paths
+  - [ ] Performance testing
+  - [ ] Accessibility testing
+
+- [ ] **Device testing**
+  - [ ] Test on 10+ iOS devices
+  - [ ] Test on 10+ Android devices
+  - [ ] Test on tablets
+  - [ ] Test on foldables
+  - [ ] Document device issues
+
+### Release Preparation
+
+- [ ] **App store setup**
+  - [ ] Create app store listings
+  - [ ] Prepare screenshots
+  - [ ] Write app descriptions
+  - [ ] Setup app previews
+  - [ ] Configure pricing
+
+- [ ] **Release process**
+  - [ ] Beta testing program
+  - [ ] Staged rollout plan
+  - [ ] Monitor crash rates
+  - [ ] Gather user feedback
+  - [ ] Plan update cycle
+
+---
+
+## Progress Tracking
+
+### Daily Checklist
+- [ ] Update completed tasks
+- [ ] Document blockers
+- [ ] Note decisions made
+- [ ] Update time estimates
+- [ ] Plan next session
+
+### Weekly Review
+- [ ] Calculate completion percentage
+- [ ] Review architecture decisions
+- [ ] Update stakeholders
+- [ ] Adjust timeline if needed
+- [ ] Plan upcoming week
+
+### Phase Completion
+- [ ] All tasks checked off
+- [ ] Tests passing
+- [ ] Documentation updated
+- [ ] Code reviewed
+- [ ] Stakeholder sign-off
+
+---
+
+## Notes Section
+
+### Session Notes
+_Use this section to add notes between sessions_
+
+**Important**: Commit after any important change so we can easily revert if there are issues. This ensures we have restore points throughout the development process. Commit messages should be simple and describe what was done (no mentions of Claude/Anthropic).
+
+### Blockers
+_Document any blocking issues here_
+
+### Decisions Log
+_Record important decisions made_
+
+### Links and References
+_Add helpful links discovered during development_
+
+---
+
+*Last updated: 2025-07-23 00:15 UTC*
