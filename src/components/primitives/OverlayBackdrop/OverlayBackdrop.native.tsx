@@ -5,7 +5,7 @@ import { OverlayBackdropProps } from './types';
 export const OverlayBackdrop: React.FC<OverlayBackdropProps> = ({
   visible = true,
   onBackdropClick,
-  blur = true,
+  blur = true, // Note: blur is not supported in React Native Modal
   opacity = 0.6,
   children,
   closeOnBackdropClick = true,
