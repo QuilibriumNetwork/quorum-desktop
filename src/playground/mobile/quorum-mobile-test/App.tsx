@@ -2,54 +2,35 @@ import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { PrimitiveListScreen } from './screens/PrimitiveListScreen';
 import { InputTestScreen } from './screens/InputTestScreen';
 import { TextAreaTestScreen } from './screens/TextAreaTestScreen';
 import { SimpleButtonTestScreen } from './screens/SimpleButtonTestScreen';
 
-type Screen = 'basic' | 'input' | 'textarea' | 'button';
+type Screen = 'list' | 'basic' | 'input' | 'textarea' | 'button';
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>('basic');
+  const [currentScreen, setCurrentScreen] = useState<Screen>('list');
 
-  const renderTabBar = () => (
-    <View style={styles.tabBar}>
-      <TouchableOpacity
-        style={[styles.tab, currentScreen === 'basic' && styles.activeTab]}
-        onPress={() => setCurrentScreen('basic')}
-      >
-        <Text style={[styles.tabText, currentScreen === 'basic' && styles.activeTabText]}>
-          Basic Test
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.tab, currentScreen === 'input' && styles.activeTab]}
-        onPress={() => setCurrentScreen('input')}
-      >
-        <Text style={[styles.tabText, currentScreen === 'input' && styles.activeTabText]}>
-          Input Test
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.tab, currentScreen === 'textarea' && styles.activeTab]}
-        onPress={() => setCurrentScreen('textarea')}
-      >
-        <Text style={[styles.tabText, currentScreen === 'textarea' && styles.activeTabText]}>
-          TextArea Test
-        </Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.tab, currentScreen === 'button' && styles.activeTab]}
-        onPress={() => setCurrentScreen('button')}
-      >
-        <Text style={[styles.tabText, currentScreen === 'button' && styles.activeTabText]}>
-          Button Test
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
+  const renderBackButton = () => {
+    if (currentScreen === 'list') return null;
+    
+    return (
+      <View style={styles.backBar}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => setCurrentScreen('list')}
+        >
+          <Text style={styles.backButtonText}>← Back to Primitives</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  };
 
   const renderScreen = () => {
     switch (currentScreen) {
+      case 'list':
+        return <PrimitiveListScreen onSelectPrimitive={setCurrentScreen} />;
       case 'input':
         return <InputTestScreen />;
       case 'textarea':
@@ -105,7 +86,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <View style={styles.appContainer}>
-        {renderTabBar()}
+        {renderBackButton()}
         {renderScreen()}
         <StatusBar style="auto" />
       </View>
@@ -118,30 +99,25 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  tabBar: {
-    flexDirection: 'row',
+  backBar: {
     backgroundColor: '#ffffff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
-    paddingTop: 30,
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 20,
   },
-  tab: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
+  backButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    alignSelf: 'flex-start',
   },
-  activeTab: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#1976d2',
-  },
-  tabText: {
+  backButtonText: {
     fontSize: 16,
-    color: '#666',
-    fontWeight: '500',
-  },
-  activeTabText: {
     color: '#1976d2',
-    fontWeight: '600',
+    fontWeight: '500',
   },
   container: {
     flex: 1,
