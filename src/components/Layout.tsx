@@ -1,7 +1,7 @@
 import * as React from 'react';
 import NavMenu from './navbar/NavMenu';
 import CloseButton from './CloseButton';
-import Container from './Container';
+import { ResponsiveContainer } from './primitives/ResponsiveContainer';
 import CreateSpaceModal from './modals/CreateSpaceModal';
 import NewDirectMessageModal from './modals/NewDirectMessageModal';
 import Connecting from './Connecting';
@@ -55,7 +55,7 @@ const Layout: React.FunctionComponent<{
         ) : (
           <></>
         ))()}
-      <Container>{props.children}</Container>
+      <ResponsiveContainer>{props.children}</ResponsiveContainer>
     </React.Suspense>
   );
 };

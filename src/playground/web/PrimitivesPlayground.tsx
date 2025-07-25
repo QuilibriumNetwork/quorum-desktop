@@ -4,6 +4,7 @@ import { OverlayBackdrop } from '../../components/primitives/OverlayBackdrop';
 import { FlexRow } from '../../components/primitives/FlexRow';
 import { FlexBetween } from '../../components/primitives/FlexBetween';
 import { FlexCenter } from '../../components/primitives/FlexCenter';
+import { ResponsiveContainer } from '../../components/primitives/ResponsiveContainer';
 import Button from '../../components/primitives/Button';
 import Modal from '../../components/primitives/Modal';
 import ThemeRadioGroup from '../../components/ThemeRadioGroup';
@@ -260,6 +261,70 @@ export const PrimitivesPlayground: React.FC = () => {
             <FlexCenter direction="vertical" className="p-4 bg-surface-3 rounded-xl h-20">
               <Button className="w-auto" onClick={() => {}}>Vertically Centered</Button>
             </FlexCenter>
+          </div>
+        </div>
+      </section>
+
+      {/* Section: ResponsiveContainer */}
+      <section className="border border-default rounded-lg p-6 space-y-4">
+        <h2 className="text-xl font-semibold text-strong">ResponsiveContainer</h2>
+        
+        <div className="space-y-3">
+          <div className="p-4 bg-warning/10 border border-warning/20 rounded-lg">
+            <p className="text-main mb-2">
+              <strong>ℹ️ Layout Primitive (Working Behind the Scenes)</strong>
+            </p>
+            <p className="text-subtle text-sm">
+              ResponsiveContainer is the invisible main content area that wraps this entire playground. 
+              It works behind the scenes - you won't see visual changes because you're already inside it!
+            </p>
+          </div>
+          
+          <div className="space-y-2">
+            <p className="text-sm text-subtle">What ResponsiveContainer Fixed:</p>
+            <div className="p-4 bg-surface-1 rounded-lg text-sm">
+              <ul className="space-y-1 text-subtle">
+                <li>• <strong>Bug Fix:</strong> Desktop now uses 74px (was incorrectly 72px)</li>
+                <li>• <strong>Consistency:</strong> Desktop & Tablet both use 74px nav offset</li>
+                <li>• <strong>Accuracy:</strong> Matches actual NavMenu.scss widths exactly</li>
+                <li>• <strong>Cross-platform:</strong> React Native implementation for mobile</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <p className="text-sm text-subtle">How it works (invisible to you):</p>
+            <div className="p-4 bg-surface-1 rounded-lg text-sm">
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <div className="font-medium text-main">Phone</div>
+                  <div className="text-subtle">≤ 480px</div>
+                  <div className="text-subtle">Container: calc(100vw - 50px)</div>
+                </div>
+                <div>
+                  <div className="font-medium text-main">Tablet</div>
+                  <div className="text-subtle">481px - 1023px</div>
+                  <div className="text-subtle">Container: calc(100vw - 74px)</div>
+                </div>
+                <div>
+                  <div className="font-medium text-main">Desktop</div>
+                  <div className="text-subtle">≥ 1024px</div>
+                  <div className="text-subtle">Container: calc(100vw - 74px)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <p className="text-sm text-subtle">This primitive is used in Layout.tsx and provides:</p>
+            <div className="p-4 bg-surface-1 rounded-lg text-sm">
+              <ul className="space-y-1 text-subtle">
+                <li>• Fixed positioning for the main content area</li>
+                <li>• Automatic width calculation based on NavMenu size</li>
+                <li>• Responsive breakpoints that adjust container bounds</li>
+                <li>• Cross-platform layout system for web and React Native</li>
+              </ul>
+            </div>
           </div>
         </div>
       </section>
