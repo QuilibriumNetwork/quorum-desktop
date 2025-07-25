@@ -3,8 +3,9 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { InputTestScreen } from './screens/InputTestScreen';
+import { TextAreaTestScreen } from './screens/TextAreaTestScreen';
 
-type Screen = 'basic' | 'input';
+type Screen = 'basic' | 'input' | 'textarea';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('basic');
@@ -27,6 +28,14 @@ export default function App() {
           Input Test
         </Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.tab, currentScreen === 'textarea' && styles.activeTab]}
+        onPress={() => setCurrentScreen('textarea')}
+      >
+        <Text style={[styles.tabText, currentScreen === 'textarea' && styles.activeTabText]}>
+          TextArea Test
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -34,6 +43,8 @@ export default function App() {
     switch (currentScreen) {
       case 'input':
         return <InputTestScreen />;
+      case 'textarea':
+        return <TextAreaTestScreen />;
       case 'basic':
       default:
         return (
@@ -71,7 +82,7 @@ export default function App() {
                   ✅ If you see this, React Native is working!
                 </Text>
                 <Text style={styles.infoMessage}>
-                  Next step: Test our cross-platform primitives. Tap "Input Test" tab above.
+                  Next step: Test our cross-platform primitives. Tap "Input Test" or "TextArea Test" tabs above.
                 </Text>
               </View>
             </ScrollView>
