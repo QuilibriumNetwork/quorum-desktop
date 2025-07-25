@@ -6,6 +6,8 @@ import { FlexBetween } from '../../components/primitives/FlexBetween';
 import { FlexCenter } from '../../components/primitives/FlexCenter';
 import { ResponsiveContainer } from '../../components/primitives/ResponsiveContainer';
 import { Input } from '../../components/primitives/Input';
+import { TextArea } from '../../components/primitives/TextArea';
+import { Switch } from '../../components/primitives/Switch';
 import Button from '../../components/primitives/Button';
 import Modal from '../../components/primitives/Modal';
 import ThemeRadioGroup from '../../components/ThemeRadioGroup';
@@ -29,6 +31,21 @@ export const PrimitivesPlayground: React.FC = () => {
   const [passwordValue, setPasswordValue] = useState('');
   const [errorInput, setErrorInput] = useState('');
   const [showInputError, setShowInputError] = useState(false);
+  
+  // TextArea testing state
+  const [textAreaValue, setTextAreaValue] = useState('');
+  const [autoResizeValue, setAutoResizeValue] = useState('');
+  const [errorTextArea, setErrorTextArea] = useState('');
+  const [showTextAreaError, setShowTextAreaError] = useState(false);
+  
+  // Switch testing state
+  const [basicSwitch, setBasicSwitch] = useState(false);
+  const [switchSizes, setSwitchSizes] = useState({
+    small: false,
+    medium: true,
+    large: false,
+  });
+  const [disabledSwitch, setDisabledSwitch] = useState(true);
 
   return (
     <div className="p-8 space-y-8 h-full overflow-y-auto">
@@ -630,6 +647,272 @@ export const PrimitivesPlayground: React.FC = () => {
             <li>Focus states use platform-appropriate styling</li>
             <li>Error messages display below input on both platforms</li>
             <li>This Input primitive is NOT for chat/message inputs (see MessageInput business component)</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* Section: TextArea Primitive */}
+      <section className="border border-default rounded-lg p-6 space-y-4">
+        <h2 className="text-xl font-semibold text-strong">TextArea Primitive</h2>
+        <p className="text-subtle">Cross-platform multiline text input primitive with auto-resize support</p>
+        
+        {/* Basic TextArea Types */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Basic TextArea</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Standard TextArea:</label>
+              <TextArea
+                value={textAreaValue}
+                onChange={setTextAreaValue}
+                placeholder="Enter your message here..."
+                rows={3}
+              />
+              <p className="text-xs text-subtle">
+                Lines: {textAreaValue.split('\n').length} | Chars: {textAreaValue.length}
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Auto-Resize TextArea:</label>
+              <TextArea
+                value={autoResizeValue}
+                onChange={setAutoResizeValue}
+                placeholder="Type multiple lines to see auto-resize..."
+                autoResize
+                minRows={2}
+                maxRows={6}
+              />
+              <p className="text-xs text-subtle">Auto-resizes between 2-6 rows</p>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Large TextArea:</label>
+              <TextArea
+                placeholder="Large text area for longer content..."
+                rows={5}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Disabled TextArea:</label>
+              <TextArea
+                value="This content cannot be edited"
+                placeholder="Disabled text area..."
+                disabled
+                rows={3}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Error States */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Error States</h3>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">TextArea with Error (type less than 10 chars):</label>
+              <TextArea
+                value={errorTextArea}
+                onChange={(value) => {
+                  setErrorTextArea(value);
+                  setShowTextAreaError(value.length > 0 && value.length < 10);
+                }}
+                placeholder="Type less than 10 characters to see error..."
+                error={showTextAreaError}
+                errorMessage={showTextAreaError ? "Text must be at least 10 characters long" : undefined}
+                rows={4}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Always Error:</label>
+              <TextArea
+                value=""
+                placeholder="This textarea is always in error state"
+                error={true}
+                errorMessage="This is a persistent error message for textarea"
+                rows={3}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Onboarding Variant */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Onboarding Variant</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Onboarding Style:</label>
+              <TextArea
+                variant="onboarding"
+                placeholder="Tell us about yourself..."
+                className="!bg-white"
+                rows={4}
+              />
+              <p className="text-xs text-subtle">Rounded corners with accent colors (for Login/Onboarding pages)</p>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Onboarding Auto-Resize:</label>
+              <TextArea
+                variant="onboarding"
+                placeholder="Type multiple lines..."
+                autoResize
+                minRows={3}
+                maxRows={7}
+                className="!bg-white"
+              />
+              <p className="text-xs text-subtle">Onboarding style with auto-resize</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Focus and Styling */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Focus & Styling</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Auto Focus TextArea:</label>
+              <TextArea
+                placeholder="This textarea auto-focuses"
+                autoFocus
+                rows={3}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">No Focus Style:</label>
+              <TextArea
+                placeholder="This textarea has no focus styling"
+                noFocusStyle
+                rows={3}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Resizable TextArea:</label>
+              <TextArea
+                placeholder="You can manually resize this textarea"
+                resize={true}
+                rows={3}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Non-Resizable (default):</label>
+              <TextArea
+                placeholder="This textarea cannot be manually resized"
+                rows={3}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Testing Notes */}
+        <div className="p-4 bg-surface-1 rounded-lg">
+          <h4 className="font-semibold text-strong mb-2">📱 Mobile Testing Notes</h4>
+          <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
+            <li>Auto-resize functionality works on both web and mobile</li>
+            <li>Touch targets are optimized for mobile accessibility</li>
+            <li>Focus states use platform-appropriate styling</li>
+            <li>Error messages display below textarea on both platforms</li>
+            <li>This TextArea primitive is NOT the auto-growing MessageInput (see business component later)</li>
+            <li>Multiline text input works correctly on mobile keyboards</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* Section: Switch Primitive */}
+      <section className="border border-default rounded-lg p-6 space-y-4">
+        <h2 className="text-xl font-semibold text-strong">Switch Primitive</h2>
+        <p className="text-subtle">Cross-platform toggle switch with multiple sizes and variants</p>
+        
+        {/* Basic Switch */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Basic Switch</h3>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong flex items-center gap-3">
+                <Switch
+                  value={basicSwitch}
+                  onChange={setBasicSwitch}
+                />
+                Basic Switch {basicSwitch ? '(ON)' : '(OFF)'}
+              </label>
+              <p className="text-xs text-subtle">Click to toggle</p>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong flex items-center gap-3">
+                <Switch
+                  value={disabledSwitch}
+                  onChange={setDisabledSwitch}
+                  disabled
+                />
+                Disabled Switch (ON)
+              </label>
+              <p className="text-xs text-subtle">Cannot be toggled</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Switch Sizes */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Switch Sizes</h3>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong flex items-center gap-3">
+                <Switch
+                  value={switchSizes.small}
+                  onChange={(value) => setSwitchSizes(prev => ({ ...prev, small: value }))}
+                  size="small"
+                />
+                Small
+              </label>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong flex items-center gap-3">
+                <Switch
+                  value={switchSizes.medium}
+                  onChange={(value) => setSwitchSizes(prev => ({ ...prev, medium: value }))}
+                  size="medium"
+                />
+                Medium (default)
+              </label>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong flex items-center gap-3">
+                <Switch
+                  value={switchSizes.large}
+                  onChange={(value) => setSwitchSizes(prev => ({ ...prev, large: value }))}
+                  size="large"
+                />
+                Large
+              </label>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Mobile Testing Notes */}
+        <div className="p-4 bg-surface-1 rounded-lg">
+          <h4 className="font-semibold text-strong mb-2">📱 Mobile Testing Notes</h4>
+          <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
+            <li>Web: Custom styled switch with smooth animations and accent color</li>
+            <li>Mobile: Native platform Switch component (iOS/Android styles)</li>
+            <li>Three sizes available: small, medium (default), large</li>
+            <li>Touch targets are optimized for mobile accessibility</li>
+            <li>Platform-specific colors and haptic feedback (iOS)</li>
+            <li>Focus states work with keyboard navigation on web</li>
           </ul>
         </div>
       </section>

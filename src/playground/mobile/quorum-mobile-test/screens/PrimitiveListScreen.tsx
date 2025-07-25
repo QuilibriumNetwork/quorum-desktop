@@ -44,6 +44,13 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({ onSele
       emoji: '🔘',
       onPress: () => onSelectPrimitive('button'),
     },
+    {
+      id: 'switch',
+      title: 'Switch Primitive',
+      description: 'Toggle switches with proper spacing and consistent behavior',
+      emoji: '🔛',
+      onPress: () => onSelectPrimitive('switch'),
+    },
   ];
 
   const renderPrimitiveCard = (primitive: PrimitiveItem) => (
