@@ -3,14 +3,14 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Import primitives for theme testing
-import { FlexRow } from '@/primitives/FlexRow';
-import { FlexBetween } from '@/primitives/FlexBetween';
-import { FlexCenter } from '@/primitives/FlexCenter';
-import Button from '@/primitives/Button';
-import Modal from '@/primitives/Modal';
+import { FlexRow } from '../components/primitives/FlexRow';
+import { FlexBetween } from '../components/primitives/FlexBetween';
+import { FlexCenter } from '../components/primitives/FlexCenter';
+import Button from '../components/primitives/Button';
+import Modal from '../components/primitives/Modal';
 
 // Import theme system
-import { useTheme } from '@/primitives/theme';
+import { useTheme } from '../components/primitives/theme';
 
 /**
  * Mobile theme testing screen
@@ -68,7 +68,7 @@ export const ThemeTestScreen: React.FC = () => {
 
           <Button 
             type="primary" 
-            onPress={toggleTheme}
+            onClick={toggleTheme}
             style={styles.actionButton}
           >
             Toggle {currentTheme.mode === 'light' ? 'Dark' : 'Light'} Mode
@@ -86,7 +86,7 @@ export const ThemeTestScreen: React.FC = () => {
               <Button
                 key={color.value}
                 type={accentColor === color.value ? 'primary' : 'secondary'}
-                onPress={() => setAccentColor(color.value as any)}
+                onClick={() => setAccentColor(color.value as any)}
                 style={styles.colorButton}
               >
                 {color.name}
@@ -166,7 +166,7 @@ export const ThemeTestScreen: React.FC = () => {
           
           <Button 
             type="primary" 
-            onPress={() => setShowThemeModal(true)}
+            onClick={() => setShowThemeModal(true)}
             style={styles.actionButton}
           >
             Open Themed Modal
@@ -201,10 +201,10 @@ export const ThemeTestScreen: React.FC = () => {
           </View>
           
           <FlexRow gap="md" justify="end" style={styles.modalActions}>
-            <Button type="secondary" onPress={() => setShowThemeModal(false)}>
+            <Button type="secondary" onClick={() => setShowThemeModal(false)}>
               Close
             </Button>
-            <Button type="primary" onPress={toggleTheme}>
+            <Button type="primary" onClick={toggleTheme}>
               Toggle Theme
             </Button>
           </FlexRow>

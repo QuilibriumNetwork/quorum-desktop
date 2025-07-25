@@ -33,8 +33,10 @@ const Button: React.FC<NativeButtonProps> = (props) => {
         break;
       case 'secondary':
         style.push({
-          backgroundColor: colors.transparent,
+          backgroundColor: 'transparent',
           borderColor: colors.accent.DEFAULT,
+          shadowOpacity: 0, // Remove shadow for transparent background
+          elevation: 0, // Remove elevation for transparent background
         });
         break;
       case 'light':
@@ -43,10 +45,54 @@ const Button: React.FC<NativeButtonProps> = (props) => {
           borderColor: colors.accent[100],
         });
         break;
+      case 'light-outline':
+        style.push({
+          backgroundColor: 'transparent',
+          borderColor: colors.accent[100],
+          shadowOpacity: 0,
+          elevation: 0,
+        });
+        break;
+      case 'subtle':
+        style.push({
+          backgroundColor: colors.surface[6],
+          borderColor: colors.surface[6],
+        });
+        break;
+      case 'subtle-outline':
+        style.push({
+          backgroundColor: 'transparent',
+          borderColor: colors.surface[6],
+          shadowOpacity: 0,
+          elevation: 0,
+        });
+        break;
       case 'danger':
         style.push({
           backgroundColor: colors.utilities.danger,
-          borderColor: colors.transparent,
+          borderColor: 'transparent',
+        });
+        break;
+      case 'primary-white':
+        style.push({
+          backgroundColor: colors.white,
+          borderColor: colors.white,
+        });
+        break;
+      case 'secondary-white':
+        style.push({
+          backgroundColor: 'transparent',
+          borderColor: colors.white,
+          shadowOpacity: 0,
+          elevation: 0,
+        });
+        break;
+      case 'light-outline-white':
+        style.push({
+          backgroundColor: 'transparent',
+          borderColor: 'rgba(255, 255, 255, 0.8)',
+          shadowOpacity: 0,
+          elevation: 0,
         });
         break;
       default:
@@ -93,12 +139,28 @@ const Button: React.FC<NativeButtonProps> = (props) => {
       case 'light':
         style.push({ color: colors.accent[700] });
         break;
+      case 'light-outline':
+        style.push({ color: colors.accent[100] });
+        break;
+      case 'subtle':
+        style.push({ color: colors.text.main });
+        break;
+      case 'subtle-outline':
+        style.push({ color: colors.text.subtle });
+        break;
+      case 'primary-white':
+        style.push({ color: '#0287f2' }); // Hardcoded blue as in CSS
+        break;
+      case 'secondary-white':
+      case 'light-outline-white':
+        style.push({ color: colors.white });
+        break;
       default:
         style.push({ color: colors.white });
     }
     
     if (props.disabled) {
-      style.push({ color: colors.surface[5] });
+      style.push({ color: colors.surface[8] }); // Darker grey for disabled text
     }
     
     return style;

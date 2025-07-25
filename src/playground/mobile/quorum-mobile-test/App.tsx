@@ -4,8 +4,9 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-nati
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { InputTestScreen } from './screens/InputTestScreen';
 import { TextAreaTestScreen } from './screens/TextAreaTestScreen';
+import { SimpleButtonTestScreen } from './screens/SimpleButtonTestScreen';
 
-type Screen = 'basic' | 'input' | 'textarea';
+type Screen = 'basic' | 'input' | 'textarea' | 'button';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('basic');
@@ -36,6 +37,14 @@ export default function App() {
           TextArea Test
         </Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.tab, currentScreen === 'button' && styles.activeTab]}
+        onPress={() => setCurrentScreen('button')}
+      >
+        <Text style={[styles.tabText, currentScreen === 'button' && styles.activeTabText]}>
+          Button Test
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 
@@ -45,6 +54,8 @@ export default function App() {
         return <InputTestScreen />;
       case 'textarea':
         return <TextAreaTestScreen />;
+      case 'button':
+        return <SimpleButtonTestScreen />;
       case 'basic':
       default:
         return (
@@ -82,7 +93,7 @@ export default function App() {
                   ✅ If you see this, React Native is working!
                 </Text>
                 <Text style={styles.infoMessage}>
-                  Next step: Test our cross-platform primitives. Tap "Input Test" or "TextArea Test" tabs above.
+                  Next step: Test our cross-platform primitives. Tap "Input Test", "TextArea Test", or "Button Test" tabs above.
                 </Text>
               </View>
             </ScrollView>
@@ -112,7 +123,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
-    paddingTop: 10,
+    paddingTop: 30,
   },
   tab: {
     flex: 1,

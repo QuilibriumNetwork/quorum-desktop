@@ -3,14 +3,14 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Import our primitives
-import { ModalContainer } from '@/primitives/ModalContainer';
-import { OverlayBackdrop } from '@/primitives/OverlayBackdrop';
-import { FlexRow } from '@/primitives/FlexRow';
-import { FlexBetween } from '@/primitives/FlexBetween';
-import { FlexCenter } from '@/primitives/FlexCenter';
-import { ResponsiveContainer } from '@/primitives/ResponsiveContainer';
-import Button from '@/primitives/Button';
-import Modal from '@/primitives/Modal';
+import { ModalContainer } from '../components/primitives/ModalContainer';
+import { OverlayBackdrop } from '../components/primitives/OverlayBackdrop';
+import { FlexRow } from '../components/primitives/FlexRow';
+import { FlexBetween } from '../components/primitives/FlexBetween';
+import { FlexCenter } from '../components/primitives/FlexCenter';
+import { ResponsiveContainer } from '../components/primitives/ResponsiveContainer';
+import Button from '../components/primitives/Button';
+import Modal from '../components/primitives/Modal';
 
 /**
  * Mobile test screen for all primitives
@@ -40,13 +40,13 @@ export const PrimitivesTestScreen: React.FC = () => {
           <View style={styles.testGroup}>
             <Text style={styles.testLabel}>Button Types:</Text>
             <FlexRow gap="md" wrap style={styles.buttonRow}>
-              <Button type="primary" onPress={() => console.log('Primary pressed')}>
+              <Button type="primary" onClick={() => console.log('Primary pressed')}>
                 Primary
               </Button>
-              <Button type="secondary" onPress={() => console.log('Secondary pressed')}>
+              <Button type="secondary" onClick={() => console.log('Secondary pressed')}>
                 Secondary
               </Button>
-              <Button type="light" onPress={() => console.log('Light pressed')}>
+              <Button type="light" onClick={() => console.log('Light pressed')}>
                 Light
               </Button>
             </FlexRow>
@@ -55,10 +55,10 @@ export const PrimitivesTestScreen: React.FC = () => {
           <View style={styles.testGroup}>
             <Text style={styles.testLabel}>Button Sizes:</Text>
             <FlexRow gap="md" align="center" style={styles.buttonRow}>
-              <Button type="primary" size="normal" onPress={() => {}}>
+              <Button type="primary" size="normal" onClick={() => {}}>
                 Normal Size
               </Button>
-              <Button type="primary" size="small" onPress={() => {}}>
+              <Button type="primary" size="small" onClick={() => {}}>
                 Small Size
               </Button>
             </FlexRow>
@@ -67,10 +67,10 @@ export const PrimitivesTestScreen: React.FC = () => {
           <View style={styles.testGroup}>
             <Text style={styles.testLabel}>Disabled State:</Text>
             <FlexRow gap="md" style={styles.buttonRow}>
-              <Button type="primary" disabled onPress={() => {}}>
+              <Button type="primary" disabled onClick={() => {}}>
                 Disabled Primary
               </Button>
-              <Button type="secondary" disabled onPress={() => {}}>
+              <Button type="secondary" disabled onClick={() => {}}>
                 Disabled Secondary
               </Button>
             </FlexRow>
@@ -94,7 +94,7 @@ export const PrimitivesTestScreen: React.FC = () => {
             <Text style={styles.testLabel}>FlexBetween:</Text>
             <FlexBetween style={styles.flexDemo}>
               <Text style={styles.flexText}>Left Content</Text>
-              <Button type="secondary" size="small" onPress={() => {}}>
+              <Button type="secondary" size="small" onClick={() => {}}>
                 Right Action
               </Button>
             </FlexBetween>
@@ -117,14 +117,14 @@ export const PrimitivesTestScreen: React.FC = () => {
             <FlexRow gap="md" wrap style={styles.buttonRow}>
               <Button 
                 type="primary"
-                onPress={() => setShowModal(true)}
+                onClick={() => setShowModal(true)}
               >
                 Show Modal with Backdrop
               </Button>
               
               <Button 
                 type="secondary"
-                onPress={() => setShowModalPrimitive(true)}
+                onClick={() => setShowModalPrimitive(true)}
               >
                 Show Modal Primitive
               </Button>
@@ -135,7 +135,7 @@ export const PrimitivesTestScreen: React.FC = () => {
             <Text style={styles.testLabel}>Backdrop Test:</Text>
             <Button 
               type="light"
-              onPress={() => setShowBackdrop(true)}
+              onClick={() => setShowBackdrop(true)}
             >
               Show Backdrop Only
             </Button>
@@ -168,7 +168,7 @@ export const PrimitivesTestScreen: React.FC = () => {
             This modal uses the ModalContainer primitive with backdrop.
             Tap outside or press the close button to close.
           </Text>
-          <Button onPress={() => setShowModal(false)}>
+          <Button onClick={() => setShowModal(false)}>
             Close Modal
           </Button>
         </View>
@@ -212,10 +212,10 @@ export const PrimitivesTestScreen: React.FC = () => {
           </View>
           
           <FlexRow gap="md" justify="end" style={styles.modalActions}>
-            <Button type="secondary" onPress={() => setShowModalPrimitive(false)}>
+            <Button type="secondary" onClick={() => setShowModalPrimitive(false)}>
               Cancel
             </Button>
-            <Button type="primary" onPress={() => setShowModalPrimitive(false)}>
+            <Button type="primary" onClick={() => setShowModalPrimitive(false)}>
               Confirm
             </Button>
           </FlexRow>
