@@ -556,7 +556,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 
 - [ ] **Create Icon primitive wrapper**
   - [ ] Web: Continue using @fortawesome/react-fontawesome (no changes)
-  - [ ] Native: Use react-native-vector-icons (Feather or FontAwesome)
+  - [ ] Native: Use react-native-vector-icons/FontAwesome
   - [ ] Create icon mapping table (FontAwesome → native equivalents)
   - [ ] Maintain identical API (icon prop, size, color, etc.)
   - [ ] Test icon rendering consistency across platforms
@@ -595,7 +595,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 
 - [ ] **Create EmojiPicker primitive wrapper**
   - [ ] Web: Continue using emoji-picker-react (no changes)
-  - [ ] Native: Use react-native-emoji-board or custom implementation
+  - [ ] Native: Use react-native-emoji-selector or custom implementation
   - [ ] Maintain drawer/modal presentation pattern
   - [ ] Ensure emoji rendering consistency across platforms
   - [ ] Test emoji insertion workflows and performance

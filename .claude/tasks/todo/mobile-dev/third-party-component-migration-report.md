@@ -134,15 +134,18 @@ export const EmojiPicker = ({ onEmojiClick, ...props }) => (
 
 **Native Implementation Options**:
 
-**Option A**: Use `react-native-emoji-board` (Recommended)
+**Option A**: Use `react-native-emoji-selector` (Recommended)
 ```tsx
 // EmojiPicker.native.tsx
-import { EmojiBoard } from 'react-native-emoji-board';
+import EmojiSelector from 'react-native-emoji-selector';
 
 export const EmojiPicker = ({ onEmojiClick, ...props }) => (
-  <EmojiBoard
-    onPress={onEmojiClick}
-    containerStyle={styles.container}
+  <EmojiSelector
+    onEmojiSelected={(emoji) => onEmojiClick({ emoji })}
+    showSearchBar={true}
+    showHistory={true}
+    showSectionTitles={true}
+    category={Categories.all}
     {...props}
   />
 );
@@ -317,18 +320,23 @@ export const Icon = ({ icon, size, color, ...props }) => (
 **Native Implementation**:
 ```tsx
 // Icon.native.tsx
-import FeatherIcon from 'react-native-vector-icons/Feather';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+// Map FontAwesome 5 names to FontAwesome 4 names (react-native-vector-icons uses v4)
 const iconMap = {
-  'faTimes': 'x',
+  'faTimes': 'times',
   'faSearch': 'search',
   'faUser': 'user',
-  // ... map all FontAwesome icons to Feather equivalents
+  'faShield': 'shield',
+  'faPalette': 'paint-brush',
+  'faBell': 'bell',
+  'faInfoCircle': 'info-circle',
+  // ... map all FontAwesome 5 icons to FontAwesome 4 equivalents
 };
 
 export const Icon = ({ icon, size = 16, color = '#666', ...props }) => (
-  <FeatherIcon
-    name={iconMap[icon.iconName] || 'help-circle'}
+  <FontAwesome
+    name={iconMap[icon.iconName] || icon.iconName}
     size={size}
     color={color}
     {...props}
