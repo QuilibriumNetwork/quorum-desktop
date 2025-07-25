@@ -9,6 +9,7 @@ export { ResponsiveContainer } from './ResponsiveContainer';
 // UI Primitives
 export { default as Button } from './Button';
 export { default as Modal } from './Modal';
+export { Input } from './Input';
 
 // Theme System
 export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
@@ -22,3 +23,4 @@ export type { FlexCenterProps } from './FlexCenter';
 export type { ResponsiveContainerProps } from './ResponsiveContainer';
 export type { ButtonProps } from './Button';
 export type { ModalProps } from './Modal';
+export type { InputProps, InputNativeProps } from './Input';

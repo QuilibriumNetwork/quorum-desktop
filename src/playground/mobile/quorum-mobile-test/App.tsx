@@ -1,56 +1,126 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { InputTestScreen } from './screens/InputTestScreen';
+
+type Screen = 'basic' | 'input';
 
 export default function App() {
+  const [currentScreen, setCurrentScreen] = useState<Screen>('basic');
+
+  const renderTabBar = () => (
+    <View style={styles.tabBar}>
+      <TouchableOpacity
+        style={[styles.tab, currentScreen === 'basic' && styles.activeTab]}
+        onPress={() => setCurrentScreen('basic')}
+      >
+        <Text style={[styles.tabText, currentScreen === 'basic' && styles.activeTabText]}>
+          Basic Test
+        </Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.tab, currentScreen === 'input' && styles.activeTab]}
+        onPress={() => setCurrentScreen('input')}
+      >
+        <Text style={[styles.tabText, currentScreen === 'input' && styles.activeTabText]}>
+          Input Test
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'input':
+        return <InputTestScreen />;
+      case 'basic':
+      default:
+        return (
+          <SafeAreaView style={styles.container}>
+            <ScrollView contentContainerStyle={styles.content}>
+              <Text style={styles.title}>🚀 Basic React Native Test</Text>
+              <Text style={styles.subtitle}>Testing if React Native works on this platform</Text>
+              
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Flex Layout Test</Text>
+                <View style={[styles.testContainer, { flexDirection: 'row', gap: 16 }]}>
+                  <View style={styles.item}><Text style={styles.itemText}>Item 1</Text></View>
+                  <View style={styles.item}><Text style={styles.itemText}>Item 2</Text></View>
+                  <View style={styles.item}><Text style={styles.itemText}>Item 3</Text></View>
+                </View>
+              </View>
+
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Space Between Test</Text>
+                <View style={[styles.testContainer, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+                  <Text style={styles.betweenText}>Left Side</Text>
+                  <Text style={styles.betweenText}>Right Side</Text>
+                </View>
+              </View>
+
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Center Test</Text>
+                <View style={[styles.centerContainer, { justifyContent: 'center', alignItems: 'center' }]}>
+                  <Text style={styles.centerText}>Perfectly Centered! 🎯</Text>
+                </View>
+              </View>
+
+              <View style={styles.section}>
+                <Text style={styles.successMessage}>
+                  ✅ If you see this, React Native is working!
+                </Text>
+                <Text style={styles.infoMessage}>
+                  Next step: Test our cross-platform primitives. Tap "Input Test" tab above.
+                </Text>
+              </View>
+            </ScrollView>
+          </SafeAreaView>
+        );
+    }
+  };
+
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <ScrollView contentContainerStyle={styles.content}>
-          <Text style={styles.title}>🚀 Basic React Native Test</Text>
-          <Text style={styles.subtitle}>Testing if React Native works on this platform</Text>
-          
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Flex Layout Test</Text>
-            <View style={[styles.testContainer, { flexDirection: 'row', gap: 16 }]}>
-              <View style={styles.item}><Text style={styles.itemText}>Item 1</Text></View>
-              <View style={styles.item}><Text style={styles.itemText}>Item 2</Text></View>
-              <View style={styles.item}><Text style={styles.itemText}>Item 3</Text></View>
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Space Between Test</Text>
-            <View style={[styles.testContainer, { flexDirection: 'row', justifyContent: 'space-between' }]}>
-              <Text style={styles.betweenText}>Left Side</Text>
-              <Text style={styles.betweenText}>Right Side</Text>
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Center Test</Text>
-            <View style={[styles.centerContainer, { justifyContent: 'center', alignItems: 'center' }]}>
-              <Text style={styles.centerText}>Perfectly Centered! 🎯</Text>
-            </View>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.successMessage}>
-              ✅ If you see this, React Native is working!
-            </Text>
-            <Text style={styles.infoMessage}>
-              Next step: Test our cross-platform primitives once this loads successfully.
-            </Text>
-          </View>
-        </ScrollView>
+      <View style={styles.appContainer}>
+        {renderTabBar()}
+        {renderScreen()}
         <StatusBar style="auto" />
-      </SafeAreaView>
+      </View>
     </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
+  appContainer: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  tabBar: {
+    flexDirection: 'row',
+    backgroundColor: '#ffffff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+    paddingTop: 10,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  activeTab: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#1976d2',
+  },
+  tabText: {
+    fontSize: 16,
+    color: '#666',
+    fontWeight: '500',
+  },
+  activeTabText: {
+    color: '#1976d2',
+    fontWeight: '600',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
