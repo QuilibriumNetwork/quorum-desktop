@@ -46,24 +46,55 @@ export const PrimitivesPlayground: React.FC = () => {
     large: false,
   });
   const [disabledSwitch, setDisabledSwitch] = useState(true);
+  const [activeSection, setActiveSection] = useState('modalcontainer');
+
+  const scrollToSection = (sectionId: string) => {
+    setActiveSection(sectionId);
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const navigationItems = [
+    { id: 'modalcontainer', label: 'ModalContainer' },
+    { id: 'overlaybackdrop', label: 'OverlayBackdrop' },
+    { id: 'flex-primitives', label: 'Flex Primitives' },
+    { id: 'responsivecontainer', label: 'ResponsiveContainer' },
+    { id: 'button-primitive', label: 'Button Primitive' },
+    { id: 'modal-primitive', label: 'Modal Primitive' },
+    { id: 'input-primitive', label: 'Input Primitive' },
+    { id: 'textarea-primitive', label: 'TextArea Primitive' },
+    { id: 'switch-primitive', label: 'Switch Primitive' },
+  ];
 
   return (
-    <div className="p-8 space-y-8 h-full overflow-y-auto">
-      <div>
-        <h1 className="text-2xl font-bold text-strong mb-4">Primitives Playground</h1>
-        <p className="text-main mb-4">
-          Test and validate primitive components for the mobile architecture
-        </p>
-        
-        {/* Theme and Color Controls */}
-        <div className="flex flex-wrap items-center gap-6 p-4 bg-surface-1 rounded-lg mb-8">
-          <ThemeRadioGroup horizontal />
-          <AccentColorSwitcher />
+    <div className="h-full flex flex-col">
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-20 bg-surface-2 p-6 pr-8 rounded-tl-lg">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-strong mb-2">Primitives Playground</h1>
+            <p className="text-main text-sm">
+              Test and validate primitive components. For mobile testing use the dedicated playground and the Expo native app.
+            </p>
+          </div>
+          
+          {/* Theme and Color Controls */}
+          <div className="flex items-center gap-6 ml-auto">
+            <ThemeRadioGroup horizontal />
+            <AccentColorSwitcher />
+          </div>
         </div>
       </div>
 
-      {/* Section: ModalContainer */}
-      <section className="border border-default rounded-lg p-6 space-y-4">
+      {/* Main Content Area */}
+      <div className="flex flex-1 overflow-hidden bg-surface-1">
+        {/* Components Content */}
+        <div className="flex-1 p-8 space-y-8 overflow-y-auto pr-80">
+
+        {/* Section: ModalContainer */}
+        <section id="modalcontainer" className="border border-default rounded-lg p-6 space-y-4">
         <h2 className="text-xl font-semibold text-strong">ModalContainer</h2>
         
         <div className="flex flex-wrap gap-3">
@@ -169,8 +200,8 @@ export const PrimitivesPlayground: React.FC = () => {
         )}
       </section>
 
-      {/* Section: OverlayBackdrop */}
-      <section className="border border-default rounded-lg p-6 space-y-4">
+        {/* Section: OverlayBackdrop */}
+        <section id="overlaybackdrop" className="border border-default rounded-lg p-6 space-y-4">
         <h2 className="text-xl font-semibold text-strong">OverlayBackdrop</h2>
         
         <div className="flex flex-wrap gap-3">
@@ -199,8 +230,8 @@ export const PrimitivesPlayground: React.FC = () => {
         </OverlayBackdrop>
       </section>
 
-      {/* Section: Flex Primitives */}
-      <section className="border border-default rounded-lg p-6 space-y-6">
+        {/* Section: Flex Primitives */}
+        <section id="flex-primitives" className="border border-default rounded-lg p-6 space-y-6">
         <h2 className="text-xl font-semibold text-strong">Flex Primitives</h2>
         
         {/* FlexRow Examples */}
@@ -290,8 +321,8 @@ export const PrimitivesPlayground: React.FC = () => {
         </div>
       </section>
 
-      {/* Section: ResponsiveContainer */}
-      <section className="border border-default rounded-lg p-6 space-y-4">
+        {/* Section: ResponsiveContainer */}
+        <section id="responsivecontainer" className="border border-default rounded-lg p-6 space-y-4">
         <h2 className="text-xl font-semibold text-strong">ResponsiveContainer</h2>
         
         <div className="space-y-3">
@@ -354,8 +385,8 @@ export const PrimitivesPlayground: React.FC = () => {
         </div>
       </section>
 
-      {/* Section: Button Primitive */}
-      <section className="border border-default rounded-lg p-6 space-y-6">
+        {/* Section: Button Primitive */}
+        <section id="button-primitive" className="border border-default rounded-lg p-6 space-y-6">
         <h2 className="text-xl font-semibold text-strong">Button Primitive</h2>
         
         {/* Button Types */}
@@ -432,8 +463,8 @@ export const PrimitivesPlayground: React.FC = () => {
         </div>
       </section>
 
-      {/* Section: Modal Primitive */}
-      <section className="border border-default rounded-lg p-6 space-y-6">
+        {/* Section: Modal Primitive */}
+        <section id="modal-primitive" className="border border-default rounded-lg p-6 space-y-6">
         <h2 className="text-xl font-semibold text-strong">Modal Primitive</h2>
         
         {/* Modal Types */}
@@ -494,8 +525,8 @@ export const PrimitivesPlayground: React.FC = () => {
         </Modal>
       </section>
 
-      {/* Section: Input Primitive */}
-      <section className="border border-default rounded-lg p-6 space-y-4">
+        {/* Section: Input Primitive */}
+        <section id="input-primitive" className="border border-default rounded-lg p-6 space-y-4">
         <h2 className="text-xl font-semibold text-strong">Input Primitive</h2>
         <p className="text-subtle">Cross-platform input field primitive with error handling</p>
         
@@ -651,8 +682,8 @@ export const PrimitivesPlayground: React.FC = () => {
         </div>
       </section>
 
-      {/* Section: TextArea Primitive */}
-      <section className="border border-default rounded-lg p-6 space-y-4">
+        {/* Section: TextArea Primitive */}
+        <section id="textarea-primitive" className="border border-default rounded-lg p-6 space-y-4">
         <h2 className="text-xl font-semibold text-strong">TextArea Primitive</h2>
         <p className="text-subtle">Cross-platform multiline text input primitive with auto-resize support</p>
         
@@ -827,8 +858,8 @@ export const PrimitivesPlayground: React.FC = () => {
         </div>
       </section>
 
-      {/* Section: Switch Primitive */}
-      <section className="border border-default rounded-lg p-6 space-y-4">
+        {/* Section: Switch Primitive */}
+        <section id="switch-primitive" className="border border-default rounded-lg p-6 space-y-4">
         <h2 className="text-xl font-semibold text-strong">Switch Primitive</h2>
         <p className="text-subtle">Cross-platform toggle switch with multiple sizes and variants</p>
         
@@ -917,13 +948,44 @@ export const PrimitivesPlayground: React.FC = () => {
         </div>
       </section>
 
-      {/* Section: ResponsiveContainer (placeholder) */}
-      <section className="border border-default rounded-lg p-6 space-y-4 opacity-50">
-        <h2 className="text-xl font-semibold text-strong">
-          ResponsiveContainer (Coming Soon)
-        </h2>
-        <p className="text-subtle">ResponsiveContainer primitive will appear here</p>
-      </section>
+        </div>
+      </div>
+
+      {/* Right Sidebar Navigation */}
+      <div className="fixed right-0 top-[120px] h-[calc(100vh-120px)] w-80 p-6 overflow-y-auto z-10">
+        <div className="mt-2">
+          <div className="border border-default rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-strong mb-4">Quick Navigation</h3>
+            <nav className="space-y-2">
+              {navigationItems.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className={`w-full text-left px-3 py-2 text-sm hover:bg-surface-3 hover:text-strong rounded-lg transition-colors duration-150 cursor-pointer ${
+                    activeSection === item.id 
+                      ? 'border border-accent-500 text-strong bg-surface-2' 
+                      : 'text-main'
+                  }`}
+                >
+                  {item.label}
+                </div>
+              ))}
+            </nav>
+            
+            {/* Quick Actions */}
+            <div className="mt-8 pt-6 border-t border-default">
+              <div className="space-y-2">
+                <div
+                  onClick={() => scrollToSection('modalcontainer')}
+                  className="w-full text-left px-3 py-2 text-sm text-subtle hover:bg-surface-3 hover:text-main rounded-lg transition-colors duration-150 cursor-pointer"
+                >
+                  ↑ Back to Top
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

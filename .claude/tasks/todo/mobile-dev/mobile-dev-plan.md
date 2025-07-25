@@ -486,11 +486,25 @@ This is NOT part of the base TextArea primitive - keep TextArea simple and reusa
 
 **Why Now**: Tests transformation pattern (modal → drawer)
 
-- [ ] **Enhance existing Modal**
-  - [ ] Remove FontAwesome close button for mobile
-  - [ ] Implement drawer transformation for mobile
-  - [ ] Add gesture support
-  - [ ] Test on both platforms immediately
+- [x] **Enhance existing Modal**
+  - [x] Remove FontAwesome close button for mobile (uses ✕ character instead)
+  - [x] Implement drawer transformation for mobile (bottom sheet behavior)
+  - [x] Add gesture support (swipe to dismiss, pan responder)
+  - [x] Test on both platforms immediately
+
+- [x] **Mobile-specific features implemented**
+  - [x] Proper safe area handling with useSafeAreaInsets
+  - [x] Modal extends to bottom edge (no transparent gap)
+  - [x] KeyboardAvoidingView for form inputs
+  - [x] Tablet support with max-width constraint (600px)
+  - [x] Theme-aware text colors throughout
+  - [x] Navigation example for complex flows (like UserSettingsModal)
+
+- [x] **Android testing completed**
+  - [x] All modal sizes work correctly (small, medium, large, full)
+  - [x] Swipe gestures feel native
+  - [x] Touch feedback is responsive
+  - [x] Safe areas handled properly on different screen sizes
 
 #### 6. Select/Dropdown Primitive
 
