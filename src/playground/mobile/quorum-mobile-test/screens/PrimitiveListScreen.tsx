@@ -51,6 +51,13 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({ onSele
       emoji: '🔛',
       onPress: () => onSelectPrimitive('switch'),
     },
+    {
+      id: 'modal',
+      title: 'Modal Primitive',
+      description: 'Cross-platform modal that transforms to drawer on mobile',
+      emoji: '📋',
+      onPress: () => onSelectPrimitive('modal'),
+    },
   ];
 
   const renderPrimitiveCard = (primitive: PrimitiveItem) => (

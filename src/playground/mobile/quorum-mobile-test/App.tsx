@@ -7,8 +7,9 @@ import { InputTestScreen } from './screens/InputTestScreen';
 import { TextAreaTestScreen } from './screens/TextAreaTestScreen';
 import { SimpleButtonTestScreen } from './screens/SimpleButtonTestScreen';
 import { SwitchTestScreen } from './screens/SwitchTestScreen';
+import { ModalTestScreen } from './screens/ModalTestScreen';
 
-type Screen = 'list' | 'basic' | 'input' | 'textarea' | 'button' | 'switch';
+type Screen = 'list' | 'basic' | 'input' | 'textarea' | 'button' | 'switch' | 'modal';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('list');
@@ -40,6 +41,8 @@ export default function App() {
         return <SimpleButtonTestScreen />;
       case 'switch':
         return <SwitchTestScreen />;
+      case 'modal':
+        return <ModalTestScreen />;
       case 'basic':
       default:
         return (

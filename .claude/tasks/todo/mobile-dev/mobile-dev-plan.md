@@ -512,10 +512,10 @@ Before proceeding, ensure:
 
 Only build these after core primitives are stable:
 
-- [ ] **Tooltip** (long-press on mobile)
-- [ ] **Tabs** (native navigation pattern)
-- [ ] **Accordion** (expand/collapse)
-- [ ] **DatePicker** (platform-specific)
+- [ ] **Tooltip** (short tap to open on mobile) - web app uses ReactTooltip - native app will only need tooltip for special cases, these tooltips must open on short tap and remain open until the user taps out of the tooltip area
+- [ ] **Tabs** (native navigation pattern) - no need for now
+- [ ] **Accordion** (expand/collapse) - no need for now
+- [ ] **DatePicker** (platform-specific) - no need for now
 
 ### When to Build Test Screens
 

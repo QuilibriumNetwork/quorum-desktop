@@ -1,8 +1,6 @@
 import React from 'react';
 import { WebModalProps } from './types';
 import { ModalContainer } from '../ModalContainer';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './Modal.scss';
 
 const Modal: React.FC<WebModalProps> = ({
@@ -37,7 +35,7 @@ const Modal: React.FC<WebModalProps> = ({
               document.dispatchEvent(escEvent);
             }}
           >
-            <FontAwesomeIcon icon={faTimes} />
+            ✕
           </div>
         )}
         

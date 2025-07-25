@@ -1,8 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useCallback, useMemo, useRef, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
 import { NativeModalProps } from './types';
-import { ModalContainer } from '../ModalContainer';
-import { useCrossPlatformTheme } from '../theme/ThemeProvider';
+import { useTheme } from '../theme';
+import { getColors } from '../theme/colors';
 
 const Modal: React.FC<NativeModalProps> = ({
   title,
@@ -16,86 +17,139 @@ const Modal: React.FC<NativeModalProps> = ({
   swipeToClose = true,
   keyboardAvoidingView = true,
 }) => {
-  const { colors } = useCrossPlatformTheme();
+  const theme = useTheme();
+  const colors = getColors(theme.mode, theme.accentColor);
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
-  const getSizeStyles = () => {
+  // Convert size to snap points
+  const snapPoints = useMemo(() => {
     switch (size) {
       case 'small':
-        return { maxHeight: '40%' };
+        return ['40%'];
       case 'medium':
-        return { maxHeight: '70%' };
+        return ['70%'];
       case 'large':
-        return { maxHeight: '90%' };
+        return ['90%'];
       case 'full':
-        return { height: '100%', borderTopLeftRadius: 0, borderTopRightRadius: 0 };
+        return ['100%'];
       default:
-        return { maxHeight: '70%' };
+        return ['70%'];
     }
-  };
+  }, [size]);
+
+  // Handle modal visibility changes
+  useEffect(() => {
+    if (visible) {
+      bottomSheetRef.current?.snapToIndex(0);
+    } else {
+      bottomSheetRef.current?.close();
+    }
+  }, [visible]);
+
+  // Handle close events
+  const handleClose = useCallback(() => {
+    onClose();
+  }, [onClose]);
+
+  // Handle sheet changes
+  const handleSheetChanges = useCallback((index: number) => {
+    if (index === -1) {
+      // Sheet closed
+      handleClose();
+    }
+  }, [handleClose]);
+
+  // Custom backdrop component
+  const renderBackdrop = useCallback(
+    (props: any) => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={0}
+        opacity={0.5}
+        onPress={closeOnBackdropClick ? handleClose : undefined}
+      />
+    ),
+    [closeOnBackdropClick, handleClose]
+  );
+
+  if (!visible) {
+    return null;
+  }
 
   return (
-    <ModalContainer
-      visible={visible}
-      onClose={onClose}
-      closeOnBackdropClick={closeOnBackdropClick && !hideClose}
-      closeOnEscape={closeOnEscape && !hideClose}
-      animationDuration={300}
+    <BottomSheet
+      ref={bottomSheetRef}
+      index={-1}
+      snapPoints={snapPoints}
+      onChange={handleSheetChanges}
+      enablePanDownToClose={swipeToClose}
+      backdropComponent={renderBackdrop}
+      backgroundStyle={{ backgroundColor: colors.surface[1] }}
+      handleIndicatorStyle={{ 
+        backgroundColor: colors.surface[5],
+        opacity: swipeToClose ? 0.6 : 0,
+      }}
     >
-      <View style={[styles.modalContent, getSizeStyles(), { backgroundColor: colors.bg.modal }]}>
+      <BottomSheetView style={styles.contentContainer}>
         {/* Header */}
-        <View style={[styles.header, { borderBottomColor: colors.border.default }]}>
-          <Text style={[styles.title, { color: colors.text.strong }]}>
-            {title}
-          </Text>
-          
-          {!hideClose && (
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={onClose}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-            >
-              <Text style={[styles.closeText, { color: colors.text.subtle }]}>✕</Text>
-            </TouchableOpacity>
-          )}
-        </View>
+        {(title || !hideClose) && (
+          <View style={styles.header}>
+            {title && (
+              <Text style={[styles.title, { color: colors.text.strong }]}>
+                {title}
+              </Text>
+            )}
+            
+            {!hideClose && (
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={handleClose}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Text style={[styles.closeText, { color: colors.text.main }]}>✕</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
 
         {/* Content */}
-        <ScrollView 
-          style={styles.content}
-          showsVerticalScrollIndicator={false}
-          bounces={false}
-        >
-          <View style={styles.contentContainer}>
-            {children}
-          </View>
-        </ScrollView>
-      </View>
-    </ModalContainer>
+        <View style={styles.content}>
+          {children}
+        </View>
+      </BottomSheetView>
+    </BottomSheet>
   );
 };
 
 const styles = StyleSheet.create({
-  modalContent: {
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    overflow: 'hidden',
+  contentContainer: {
+    flex: 1,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    paddingTop: 8,
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
     flex: 1,
+    margin: 0,
   },
   closeButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 0,
     padding: 4,
     marginLeft: 16,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   closeText: {
     fontSize: 18,
@@ -103,9 +157,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-  },
-  contentContainer: {
-    padding: 20,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
 });
 
