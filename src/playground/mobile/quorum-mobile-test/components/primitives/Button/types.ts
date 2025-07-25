@@ -1,0 +1,34 @@
+export interface BaseButtonProps {
+  id?: string;
+  type?: 
+    | 'primary'
+    | 'secondary'
+    | 'light'
+    | 'light-outline'
+    | 'subtle'
+    | 'subtle-outline'
+    | 'danger'
+    | 'primary-white'
+    | 'secondary-white'
+    | 'light-white'
+    | 'light-outline-white'
+    | 'disabled-onboarding';
+  size?: 'normal' | 'small';
+  disabled?: boolean;
+  icon?: boolean;
+  className?: string;
+  onClick: () => void;
+  tooltip?: string;
+  highlightedTooltip?: boolean;
+  children?: React.ReactNode;
+}
+
+export interface WebButtonProps extends BaseButtonProps {
+  // Web-specific props if needed
+}
+
+export interface NativeButtonProps extends BaseButtonProps {
+  // Native-specific props
+  hapticFeedback?: boolean;
+  accessibilityLabel?: string;
+}
