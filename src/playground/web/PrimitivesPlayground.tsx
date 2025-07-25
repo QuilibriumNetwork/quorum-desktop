@@ -5,6 +5,7 @@ import { FlexRow } from '../../components/primitives/FlexRow';
 import { FlexBetween } from '../../components/primitives/FlexBetween';
 import { FlexCenter } from '../../components/primitives/FlexCenter';
 import { ResponsiveContainer } from '../../components/primitives/ResponsiveContainer';
+import { Input } from '../../components/primitives/Input';
 import Button from '../../components/primitives/Button';
 import Modal from '../../components/primitives/Modal';
 import ThemeRadioGroup from '../../components/ThemeRadioGroup';
@@ -21,6 +22,13 @@ export const PrimitivesPlayground: React.FC = () => {
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [showNoBackdropModal, setShowNoBackdropModal] = useState(false);
   const [showModalPrimitive, setShowModalPrimitive] = useState(false);
+  
+  // Input testing state
+  const [textValue, setTextValue] = useState('');
+  const [emailValue, setEmailValue] = useState('');
+  const [passwordValue, setPasswordValue] = useState('');
+  const [errorInput, setErrorInput] = useState('');
+  const [showInputError, setShowInputError] = useState(false);
 
   return (
     <div className="p-8 space-y-8 h-full overflow-y-auto">
@@ -467,6 +475,163 @@ export const PrimitivesPlayground: React.FC = () => {
             </FlexRow>
           </div>
         </Modal>
+      </section>
+
+      {/* Section: Input Primitive */}
+      <section className="border border-default rounded-lg p-6 space-y-4">
+        <h2 className="text-xl font-semibold text-strong">Input Primitive</h2>
+        <p className="text-subtle">Cross-platform input field primitive with error handling</p>
+        
+        {/* Input Types */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Input Types</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Text Input:</label>
+              <Input
+                value={textValue}
+                onChange={setTextValue}
+                placeholder="Enter some text..."
+                type="text"
+              />
+              <p className="text-xs text-subtle">Value: "{textValue}"</p>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Email Input:</label>
+              <Input
+                value={emailValue}
+                onChange={setEmailValue}
+                placeholder="Enter your email..."
+                type="email"
+              />
+              <p className="text-xs text-subtle">Value: "{emailValue}"</p>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Password Input:</label>
+              <Input
+                value={passwordValue}
+                onChange={setPasswordValue}
+                placeholder="Enter password..."
+                type="password"
+              />
+              <p className="text-xs text-subtle">Value: "{passwordValue ? '•'.repeat(passwordValue.length) : ''}"</p>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Disabled Input:</label>
+              <Input
+                value="Cannot edit this"
+                placeholder="Disabled input..."
+                disabled
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Error States */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Error States</h3>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Input with Error:</label>
+              <Input
+                value={errorInput}
+                onChange={(value) => {
+                  setErrorInput(value);
+                  setShowInputError(value.length > 0 && value.length < 3);
+                }}
+                placeholder="Type less than 3 characters to see error..."
+                error={showInputError}
+                errorMessage={showInputError ? "Input must be at least 3 characters long" : undefined}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Always Error:</label>
+              <Input
+                value=""
+                placeholder="This input is always in error state"
+                error={true}
+                errorMessage="This is a persistent error message"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Focus and Styling */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Focus & Styling</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Auto Focus Input:</label>
+              <Input
+                placeholder="This input auto-focuses"
+                autoFocus
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Custom Style:</label>
+              <Input
+                placeholder="Custom styled input"
+                style={{ borderRadius: '20px', backgroundColor: 'var(--accent-50)' }}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">No Focus Style:</label>
+              <Input
+                placeholder="This input has no focus border/shadow"
+                noFocusStyle
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Onboarding Variant */}
+        <div className="space-y-3">
+          <h3 className="text-lg font-medium text-strong">Onboarding Variant</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Onboarding Style:</label>
+              <Input
+                variant="onboarding"
+                placeholder="Bongocat"
+                className="!bg-white"
+              />
+              <p className="text-xs text-subtle">Full pill shape with accent colors (for Login/Onboarding pages)</p>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-strong">Onboarding with Legacy onChange:</label>
+              <Input
+                variant="onboarding"
+                placeholder="Test legacy onChange"
+                onChange={(e) => console.log('Legacy onChange:', e.target.value)}
+                className="!bg-white"
+              />
+              <p className="text-xs text-subtle">Tests backward compatibility with (e) =&gt; e.target.value pattern</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Testing Notes */}
+        <div className="p-4 bg-surface-1 rounded-lg">
+          <h4 className="font-semibold text-strong mb-2">📱 Mobile Testing Notes</h4>
+          <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
+            <li>Input types (email, password) should trigger appropriate mobile keyboards</li>
+            <li>Touch targets are 42px high for accessibility</li>
+            <li>Focus states use platform-appropriate styling</li>
+            <li>Error messages display below input on both platforms</li>
+            <li>This Input primitive is NOT for chat/message inputs (see MessageInput business component)</li>
+          </ul>
+        </div>
       </section>
 
       {/* Section: ResponsiveContainer (placeholder) */}

@@ -1,0 +1,59 @@
+.input-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.quorum-input {
+  background-color: var(--color-bg-input);
+  border-radius: 0.5rem;
+  padding: 10px 16px;
+  height: 42px;
+  font-size: 16px;
+  margin: 0px;
+  border: 1px solid transparent;
+  color: var(--color-text-main);
+  outline: 0px none;
+  width: 100%;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:focus {
+    border-color: var(--accent-400);
+    box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.error {
+    border-color: var(--danger-hex);
+  }
+
+  &.error:focus {
+    border-color: var(--danger-hex);
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+  }
+
+  &.no-focus-style:focus {
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  &.no-focus-style.error:focus {
+    border-color: var(--danger-hex);
+    box-shadow: none;
+  }
+}
+
+.input-error-message {
+  font-size: 14px;
+  color: var(--danger-hex);
+  margin-top: 4px;
+  padding-left: 4px;
+}

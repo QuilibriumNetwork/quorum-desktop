@@ -33,7 +33,7 @@ The main dependencies are:
 - When you insert any new text that must be readby users, always use the Lingui sintax for localization
 - When editign anything, you must be very careful to not cause destructive changes or conflicts with other functionalities, as the app is pretty complex with many shared styles and features
 - Think always mobile first, and when making layout/css edits, always think at the final result for both desktop and mobile users for an optimal UX/UI
-- When committing, never mention Claude or Anthropic
+- When committing, NEVER mention Claude or Anthropic
 
 ## React Hooks Rules - IMPORTANT
 
