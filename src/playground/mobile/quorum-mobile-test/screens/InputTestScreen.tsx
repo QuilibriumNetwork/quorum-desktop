@@ -13,7 +13,7 @@ export const InputTestScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>📱 Input Primitive Test</Text>
+        <Text style={styles.title}>📱 Input</Text>
         <Text style={styles.subtitle}>
           Testing Input primitive on React Native
         </Text>

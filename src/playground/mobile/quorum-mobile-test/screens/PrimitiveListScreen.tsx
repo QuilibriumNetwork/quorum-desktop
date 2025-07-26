@@ -34,14 +34,14 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
     },
     {
       id: 'input',
-      title: 'Input Primitive',
+      title: 'Input',
       description: 'Cross-platform text input with error states and variants',
       emoji: '📝',
       onPress: () => onSelectPrimitive('input'),
     },
     {
       id: 'textarea',
-      title: 'TextArea Primitive',
+      title: 'TextArea',
       description:
         'Multiline text input with auto-resize and onboarding variant',
       emoji: '📄',
@@ -49,14 +49,14 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
     },
     {
       id: 'button',
-      title: 'Button Primitive',
+      title: 'Button',
       description: 'Complete button system with 11 variants and all sizes',
       emoji: '🔘',
       onPress: () => onSelectPrimitive('button'),
     },
     {
       id: 'switch',
-      title: 'Switch Primitive',
+      title: 'Switch',
       description:
         'Toggle switches with proper spacing and consistent behavior',
       emoji: '🔛',
@@ -64,38 +64,45 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
     },
     {
       id: 'modal',
-      title: 'Modal Primitive',
+      title: 'Modal',
       description: 'Cross-platform modal that transforms to drawer on mobile',
       emoji: '📋',
       onPress: () => onSelectPrimitive('modal'),
     },
     {
       id: 'select',
-      title: 'Select Primitive',
+      title: 'Select',
       description: 'Dropdown/picker component with modal overlay for mobile',
       emoji: '📋',
       onPress: () => onSelectPrimitive('select'),
     },
     {
       id: 'colorswatch',
-      title: 'ColorSwatch Primitive',
+      title: 'ColorSwatch',
       description: 'Touch-optimized color picker for accent selection',
       emoji: '🎨',
       onPress: () => onSelectPrimitive('colorswatch'),
     },
     {
       id: 'radiogroup',
-      title: 'RadioGroup Primitive',
+      title: 'RadioGroup',
       description: 'Accessible radio button group with icon support',
       emoji: '🔘',
       onPress: () => onSelectPrimitive('radiogroup'),
     },
     {
       id: 'tooltip',
-      title: 'Tooltip Primitive',
+      title: 'Tooltip',
       description: 'Cross-platform tooltip for info icons in modals',
       emoji: '💬',
       onPress: () => onSelectPrimitive('tooltip'),
+    },
+    {
+      id: 'icon',
+      title: 'Icon',
+      description: 'Cross-platform icon system using FontAwesome',
+      emoji: '🎯',
+      onPress: () => onSelectPrimitive('icon'),
     },
   ];
 

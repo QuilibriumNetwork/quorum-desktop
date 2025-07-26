@@ -14,6 +14,7 @@ import Select from '../../components/primitives/Select';
 import { ColorSwatch } from '../../components/primitives/ColorSwatch';
 import { RadioGroup } from '../../components/primitives/RadioGroup';
 import { Tooltip } from '../../components/primitives/Tooltip';
+import { Icon } from '../../components/primitives/Icon';
 import ThemeRadioGroup from '../../components/ThemeRadioGroup';
 import AccentColorSwitcher from '../../components/AccentColorSwitcher';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -79,15 +80,16 @@ export const PrimitivesPlayground: React.FC = () => {
     { id: 'overlaybackdrop', label: 'OverlayBackdrop' },
     { id: 'flex-primitives', label: 'Flex Primitives' },
     { id: 'responsivecontainer', label: 'ResponsiveContainer' },
-    { id: 'button-primitive', label: 'Button Primitive' },
-    { id: 'modal-primitive', label: 'Modal Primitive' },
-    { id: 'input-primitive', label: 'Input Primitive' },
-    { id: 'textarea-primitive', label: 'TextArea Primitive' },
-    { id: 'switch-primitive', label: 'Switch Primitive' },
-    { id: 'select-primitive', label: 'Select Primitive' },
-    { id: 'colorswatch-primitive', label: 'ColorSwatch Primitive' },
-    { id: 'radiogroup-primitive', label: 'RadioGroup Primitive' },
-    { id: 'tooltip-primitive', label: 'Tooltip Primitive' },
+    { id: 'button-primitive', label: 'Button' },
+    { id: 'modal-primitive', label: 'Modal' },
+    { id: 'input-primitive', label: 'Input' },
+    { id: 'textarea-primitive', label: 'TextArea' },
+    { id: 'switch-primitive', label: 'Switch' },
+    { id: 'select-primitive', label: 'Select' },
+    { id: 'colorswatch-primitive', label: 'ColorSwatch' },
+    { id: 'radiogroup-primitive', label: 'RadioGroup' },
+    { id: 'tooltip-primitive', label: 'Tooltip' },
+    { id: 'icon-primitive', label: 'Icon' },
   ];
 
   return (
@@ -525,7 +527,7 @@ export const PrimitivesPlayground: React.FC = () => {
             className="border border-default rounded-lg p-6 space-y-6"
           >
             <h2 className="text-xl font-semibold text-strong">
-              Button Primitive
+              Button
             </h2>
 
             {/* Button Types */}
@@ -657,7 +659,7 @@ export const PrimitivesPlayground: React.FC = () => {
             className="border border-default rounded-lg p-6 space-y-6"
           >
             <h2 className="text-xl font-semibold text-strong">
-              Modal Primitive
+              Modal
             </h2>
 
             {/* Modal Types */}
@@ -741,7 +743,7 @@ export const PrimitivesPlayground: React.FC = () => {
             className="border border-default rounded-lg p-6 space-y-4 bg-surface-5"
           >
             <h2 className="text-xl font-semibold text-strong">
-              Input Primitive
+              Input
             </h2>
             <p className="text-subtle">
               Cross-platform input field primitive with error handling
@@ -954,7 +956,7 @@ export const PrimitivesPlayground: React.FC = () => {
             className="border border-default rounded-lg p-6 space-y-4 bg-surface-5"
           >
             <h2 className="text-xl font-semibold text-strong">
-              TextArea Primitive
+              TextArea
             </h2>
             <p className="text-subtle">
               Cross-platform multiline text input primitive with auto-resize
@@ -1189,7 +1191,7 @@ export const PrimitivesPlayground: React.FC = () => {
             className="border border-default rounded-lg p-6 space-y-4"
           >
             <h2 className="text-xl font-semibold text-strong">
-              Switch Primitive
+              Switch
             </h2>
             <p className="text-subtle">
               Cross-platform toggle switch with multiple sizes and variants
@@ -1295,7 +1297,7 @@ export const PrimitivesPlayground: React.FC = () => {
             className="border border-default rounded-lg p-6 space-y-4 bg-surface-5"
           >
             <h2 className="text-xl font-semibold text-strong">
-              Select Primitive
+              Select
             </h2>
             <p className="text-subtle">
               Cross-platform dropdown/picker component with rich options and
@@ -1646,7 +1648,7 @@ export const PrimitivesPlayground: React.FC = () => {
             className="border border-default rounded-lg p-6 space-y-4"
           >
             <h2 className="text-xl font-semibold text-strong">
-              ColorSwatch Primitive
+              ColorSwatch
             </h2>
             <p className="text-subtle">
               Color picker component for selecting accent colors with visual
@@ -1803,7 +1805,7 @@ export const PrimitivesPlayground: React.FC = () => {
             className="border border-default rounded-lg p-6 space-y-4"
           >
             <h2 className="text-xl font-semibold text-strong">
-              RadioGroup Primitive
+              RadioGroup
             </h2>
             <p className="text-subtle">
               Accessible radio button group with icon support and flexible layouts
@@ -1898,7 +1900,7 @@ export const PrimitivesPlayground: React.FC = () => {
             className="border border-default rounded-lg p-6 space-y-4"
           >
             <h2 className="text-xl font-semibold text-strong">
-              Tooltip Primitive
+              Tooltip
             </h2>
             <p className="text-subtle">
               Cross-platform tooltip for information icons in modals and special cases
@@ -2079,6 +2081,170 @@ export const PrimitivesPlayground: React.FC = () => {
                 <li>Default close button on mobile for better UX</li>
                 <li>Ideal for info icons in UserSettingsModal and SpaceEditor</li>
                 <li>Supports all 12 positioning options (top, bottom, left, right + variants)</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Section: Icon Primitive */}
+          <section
+            id="icon-primitive"
+            className="border border-default rounded-lg p-6 space-y-4"
+          >
+            <h2 className="text-xl font-semibold text-strong">
+              Icon
+            </h2>
+            <p className="text-subtle">
+              Cross-platform icon system using FontAwesome with unified API
+            </p>
+
+            {/* Icon Examples */}
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Basic Icons</h3>
+                <div className="flex items-center gap-4 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <Icon name="check" />
+                    <span className="text-sm text-subtle">check</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="times" />
+                    <span className="text-sm text-subtle">times</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="info-circle" />
+                    <span className="text-sm text-subtle">info-circle</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="search" />
+                    <span className="text-sm text-subtle">search</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="user" />
+                    <span className="text-sm text-subtle">user</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="cog" />
+                    <span className="text-sm text-subtle">cog</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Theme Icons</h3>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Icon name="sun" color="#f59e0b" />
+                    <span className="text-sm text-subtle">sun (light theme)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="moon" color="#6366f1" />
+                    <span className="text-sm text-subtle">moon (dark theme)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="desktop" color="#6b7280" />
+                    <span className="text-sm text-subtle">desktop (system)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Sizes</h3>
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Icon name="heart" size="xs" />
+                    <span className="text-sm text-subtle">xs</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="heart" size="sm" />
+                    <span className="text-sm text-subtle">sm</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="heart" size="md" />
+                    <span className="text-sm text-subtle">md (default)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="heart" size="lg" />
+                    <span className="text-sm text-subtle">lg</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="heart" size="xl" />
+                    <span className="text-sm text-subtle">xl</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="heart" size={32} />
+                    <span className="text-sm text-subtle">32px (custom)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Actions & States</h3>
+                <div className="flex items-center gap-4 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <Icon name="reply" color="#10b981" />
+                    <span className="text-sm text-subtle">reply</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="trash" color="#ef4444" />
+                    <span className="text-sm text-subtle">trash</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="link" color="#3b82f6" />
+                    <span className="text-sm text-subtle">link</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="spinner" spin />
+                    <span className="text-sm text-subtle">spinner (animated)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="bell" disabled />
+                    <span className="text-sm text-subtle">bell (disabled)</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Navigation Icons</h3>
+                <div className="flex items-center gap-4 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <Icon name="chevron-left" />
+                    <span className="text-sm text-subtle">chevron-left</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="chevron-right" />
+                    <span className="text-sm text-subtle">chevron-right</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="arrow-up" />
+                    <span className="text-sm text-subtle">arrow-up</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="arrow-down" />
+                    <span className="text-sm text-subtle">arrow-down</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="home" />
+                    <span className="text-sm text-subtle">home</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="menu" />
+                    <span className="text-sm text-subtle">menu</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Implementation Notes */}
+            <div className="bg-surface-1 p-4 rounded-lg">
+              <h4 className="font-medium text-strong mb-2">Implementation Notes</h4>
+              <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
+                <li>Web: Uses FontAwesome React components with full feature support</li>
+                <li>Native: Uses react-native-vector-icons with FontAwesome font</li>
+                <li>Unified API: Same props work across both platforms</li>
+                <li>60+ icons mapped from comprehensive codebase audit</li>
+                <li>Supports all FontAwesome features: spin, pulse, rotation, etc.</li>
+                <li>Automatic theme color integration on mobile</li>
+                <li>Ready to replace all current FontAwesome usage</li>
               </ul>
             </div>
           </section>

@@ -18,7 +18,7 @@ export const RadioGroupTestScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>🔘 RadioGroup Primitive</Text>
+          <Text style={styles.headerTitle}>🔘 RadioGroup</Text>
           <Text style={styles.headerSubtitle}>
             Accessible radio button group with icon support and flexible layouts
           </Text>

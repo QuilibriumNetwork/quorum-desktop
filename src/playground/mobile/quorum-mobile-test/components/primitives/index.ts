@@ -16,6 +16,7 @@ export { default as Select } from './Select';
 export { ColorSwatch } from './ColorSwatch';
 export { RadioGroup } from './RadioGroup';
 export { Tooltip } from './Tooltip';
+export { Icon } from './Icon';
 
 // Theme System
 export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
@@ -49,3 +50,10 @@ export type {
   TooltipWebProps,
   TooltipNativeProps,
 } from './Tooltip';
+export type {
+  IconProps,
+  IconWebProps,
+  IconNativeProps,
+  IconName,
+  IconSize,
+} from './Icon';

@@ -65,7 +65,7 @@ export const SelectTestScreen: React.FC = () => {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>📋 Select Primitive</Text>
+          <Text style={styles.title}>📋 Select</Text>
           <Text style={styles.subtitle}>
             Mobile dropdown/picker component with modal overlay
           </Text>

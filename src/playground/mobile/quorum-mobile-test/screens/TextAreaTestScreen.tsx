@@ -12,7 +12,7 @@ export const TextAreaTestScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>📝 TextArea Primitive Test</Text>
+        <Text style={styles.title}>📝 TextArea</Text>
         <Text style={styles.subtitle}>
           Testing TextArea primitive on React Native
         </Text>

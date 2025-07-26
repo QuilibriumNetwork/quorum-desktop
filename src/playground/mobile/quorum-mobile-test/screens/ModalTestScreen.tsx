@@ -44,7 +44,7 @@ export const ModalTestScreen: React.FC = () => {
           marginBottom: 10,
         }}
       >
-        Modal Primitive
+        Modal
       </Text>
       <Text
         style={{ color: colors.text.subtle, fontSize: 16, marginBottom: 30 }}

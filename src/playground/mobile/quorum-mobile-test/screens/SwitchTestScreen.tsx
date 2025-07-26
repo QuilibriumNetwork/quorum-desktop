@@ -19,7 +19,7 @@ export const SwitchTestScreen: React.FC = () => {
           marginBottom: 10,
         }}
       >
-        Switch Primitive
+        Switch
       </Text>
       <Text style={{ color: '#888', fontSize: 16, marginBottom: 30 }}>
         Cross-platform toggle switch with multiple sizes and variants

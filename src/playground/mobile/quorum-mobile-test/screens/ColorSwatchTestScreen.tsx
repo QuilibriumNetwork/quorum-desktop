@@ -24,7 +24,7 @@ export const ColorSwatchTestScreen: React.FC = () => {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>🎨 ColorSwatch Primitive</Text>
+          <Text style={styles.title}>🎨 ColorSwatch</Text>
           <Text style={styles.subtitle}>
             Touch-optimized color picker for accent selection
           </Text>

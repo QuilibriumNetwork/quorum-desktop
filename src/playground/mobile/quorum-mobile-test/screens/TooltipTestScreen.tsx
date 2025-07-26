@@ -18,7 +18,7 @@ export const TooltipTestScreen: React.FC = () => {
       }}
     >
       <Text style={[styles.title, { color: colors.text.strong }]}>
-        Tooltip Primitive
+        Tooltip
       </Text>
       <Text style={[styles.subtitle, { color: colors.text.subtle }]}>
         Cross-platform tooltip for info icons in modals

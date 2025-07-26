@@ -18,6 +18,7 @@ import { SelectTestScreen } from './screens/SelectTestScreen';
 import { ColorSwatchTestScreen } from './screens/ColorSwatchTestScreen';
 import { RadioGroupTestScreen } from './screens/RadioGroupTestScreen';
 import { TooltipTestScreen } from './screens/TooltipTestScreen';
+import { IconTestScreen } from './screens/IconTestScreen';
 
 type Screen =
   | 'list'
@@ -30,7 +31,8 @@ type Screen =
   | 'select'
   | 'colorswatch'
   | 'radiogroup'
-  | 'tooltip';
+  | 'tooltip'
+  | 'icon';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('list');
@@ -72,6 +74,8 @@ export default function App() {
         return <RadioGroupTestScreen />;
       case 'tooltip':
         return <TooltipTestScreen />;
+      case 'icon':
+        return <IconTestScreen />;
       case 'basic':
       default:
         return (
