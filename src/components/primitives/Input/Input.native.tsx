@@ -29,7 +29,7 @@ export const Input: React.FC<InputNativeProps> = ({
   // Map type to keyboardType if not explicitly provided
   const getKeyboardType = () => {
     if (keyboardType !== 'default') return keyboardType;
-    
+
     switch (type) {
       case 'email':
         return 'email-address';
@@ -44,14 +44,11 @@ export const Input: React.FC<InputNativeProps> = ({
     }
   };
 
-  const containerStyle = [
-    styles.container,
-    style,
-  ];
+  const containerStyle = [styles.container, style];
 
   const getInputStyles = () => {
     const baseStyles = [styles.input];
-    
+
     if (variant === 'onboarding') {
       return [
         ...baseStyles,
@@ -65,7 +62,7 @@ export const Input: React.FC<InputNativeProps> = ({
         disabled && styles.inputDisabled,
       ];
     }
-    
+
     return [
       ...baseStyles,
       {
@@ -86,7 +83,11 @@ export const Input: React.FC<InputNativeProps> = ({
         style={inputStyle}
         value={value}
         placeholder={placeholder}
-        placeholderTextColor={variant === 'onboarding' ? theme.colors.accent[200] : theme.colors.text.muted}
+        placeholderTextColor={
+          variant === 'onboarding'
+            ? theme.colors.accent[200]
+            : theme.colors.text.muted
+        }
         onChangeText={onChange}
         onBlur={onBlur}
         onFocus={onFocus}
@@ -100,7 +101,10 @@ export const Input: React.FC<InputNativeProps> = ({
         accessibilityLabel={accessibilityLabel}
       />
       {error && errorMessage && (
-        <Text style={[styles.errorMessage, { color: theme.colors.danger }]} role="alert">
+        <Text
+          style={[styles.errorMessage, { color: theme.colors.danger }]}
+          role="alert"
+        >
           {errorMessage}
         </Text>
       )}

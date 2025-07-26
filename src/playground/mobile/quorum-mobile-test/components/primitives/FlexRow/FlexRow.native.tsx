@@ -21,7 +21,7 @@ const alignMap = {
 
 const gapToNumber = (gap: string | number): number => {
   if (typeof gap === 'number') return gap;
-  
+
   const gapValues = {
     none: 0,
     xs: 4,
@@ -30,7 +30,7 @@ const gapToNumber = (gap: string | number): number => {
     lg: 24,
     xl: 32,
   };
-  
+
   return gapValues[gap as keyof typeof gapValues] || 0;
 };
 
@@ -44,7 +44,7 @@ export const FlexRow: React.FC<FlexRowProps> = ({
   ...rest
 }) => {
   const gapValue = gapToNumber(gap as string | number);
-  
+
   const viewStyle: ViewStyle = {
     flexDirection: 'row',
     justifyContent: justifyMap[justify],

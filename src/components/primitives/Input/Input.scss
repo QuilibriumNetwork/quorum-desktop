@@ -5,25 +5,26 @@
 }
 
 .quorum-input {
-  background-color: var(--color-bg-input);
+  background-color: var(--color-field-bg);
   border-radius: 0.5rem;
   padding: 10px 16px;
   height: 42px;
   font-size: 16px;
   margin: 0px;
-  border: 1px solid transparent;
-  color: var(--color-text-main);
+  border: 1px solid var(--color-field-border);
+  color: var(--color-field-text);
   outline: 0px none;
   width: 100%;
   box-sizing: border-box;
 
   &::placeholder {
-    color: var(--color-text-muted);
+    color: var(--color-field-placeholder);
   }
 
   &:focus {
-    border-color: var(--accent-400);
-    box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.1);
+    border-color: var(--color-field-border-focus);
+    background-color: var(--color-field-bg-focus);
+    box-shadow: 0 0 0 2px var(--color-field-focus-shadow);
   }
 
   &:disabled {
@@ -32,12 +33,12 @@
   }
 
   &.error {
-    border-color: var(--danger-hex);
+    border-color: var(--color-field-border-error);
   }
 
   &.error:focus {
-    border-color: var(--danger-hex);
-    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+    border-color: var(--color-field-border-error);
+    box-shadow: 0 0 0 2px var(--color-field-error-focus-shadow);
   }
 
   &.no-focus-style:focus {
@@ -46,14 +47,14 @@
   }
 
   &.no-focus-style.error:focus {
-    border-color: var(--danger-hex);
+    border-color: var(--color-field-border-error);
     box-shadow: none;
   }
 }
 
 .input-error-message {
   font-size: 14px;
-  color: var(--danger-hex);
+  color: var(--color-field-border-error);
   margin-top: 4px;
   padding-left: 4px;
 }

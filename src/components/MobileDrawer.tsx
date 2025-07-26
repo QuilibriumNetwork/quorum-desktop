@@ -29,7 +29,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
 }) => {
   const [isClosing, setIsClosing] = useState(false);
   const [shouldRender, setShouldRender] = useState(isOpen);
-  
+
   // Swipe gesture state
   const [startY, setStartY] = useState<number | null>(null);
   const [currentY, setCurrentY] = useState<number | null>(null);
@@ -60,15 +60,15 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
   // Swipe gesture handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     if (!enableSwipeToClose) return;
-    
+
     // Only start swipe detection if touching near the top of the drawer
     const drawerRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const touch = e.touches[0];
     const relativeY = touch.clientY - drawerRect.top;
-    
+
     // Only allow swipe from the top 60px of the drawer (handle + header area)
     if (relativeY > 60) return;
-    
+
     setStartY(touch.clientY);
     setCurrentY(touch.clientY);
     setIsDragging(true);
@@ -76,12 +76,12 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!enableSwipeToClose || !isDragging || startY === null) return;
-    
+
     const touch = e.touches[0];
     setCurrentY(touch.clientY);
-    
+
     const deltaY = touch.clientY - startY;
-    
+
     // Only allow downward swipes (positive deltaY)
     if (deltaY > 0) {
       // Add visual feedback by slightly moving the drawer
@@ -92,23 +92,28 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (!enableSwipeToClose || !isDragging || startY === null || currentY === null) {
+    if (
+      !enableSwipeToClose ||
+      !isDragging ||
+      startY === null ||
+      currentY === null
+    ) {
       setIsDragging(false);
       return;
     }
-    
+
     const deltaY = currentY - startY;
     const swipeThreshold = 100; // Minimum distance for swipe to close
-    
+
     // Reset transform
     const drawer = e.currentTarget as HTMLElement;
     drawer.style.transform = '';
-    
+
     if (deltaY > swipeThreshold) {
       // Swipe down detected - close drawer
       handleClose();
     }
-    
+
     // Reset swipe state
     setStartY(null);
     setCurrentY(null);
@@ -131,13 +136,11 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
       {enableSwipeToClose && (
         <div className="mobile-drawer__handle" aria-hidden="true" />
       )}
-      
+
       {/* Header */}
       {(title || showCloseButton) && (
         <div className="mobile-drawer__header">
-          {title && (
-            <h2 className="mobile-drawer__title">{title}</h2>
-          )}
+          {title && <h2 className="mobile-drawer__title">{title}</h2>}
           {showCloseButton && (
             <button
               className="mobile-drawer__close"
@@ -151,7 +154,9 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
       )}
 
       {/* Content */}
-      <div className={`mobile-drawer__content ${!(title || showCloseButton) ? 'mobile-drawer__content--no-header' : ''}`}>
+      <div
+        className={`mobile-drawer__content ${!(title || showCloseButton) ? 'mobile-drawer__content--no-header' : ''}`}
+      >
         {children}
       </div>
     </div>

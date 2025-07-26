@@ -4,7 +4,7 @@
 **Issue**: Modal reopening/flickering when closing from existing conversations  
 **Solution**: Converted from URL-based to state-based modal management  
 **Status**: Resolved - Additional React hooks issue fixed  
-**Last Updated**: 2025-01-20  
+**Last Updated**: 2025-01-20
 
 ## Resolution Summary
 
@@ -14,11 +14,12 @@ The modal had two separate issues that were both resolved:
 
 2. **Secondary Issue (React hooks violation)**: After the URL-to-state conversion, another developer introduced a bug by incorrectly using the `useRegistration` hook inside a regular function (`lookupUser`), violating React's Rules of Hooks. This was fixed by converting the hook call to a raw API call.
 
-**Final Status**: Both issues are now resolved. The modal uses state-based management (no URL changes) and properly handles user registration lookups without hook violations.  
+**Final Status**: Both issues are now resolved. The modal uses state-based management (no URL changes) and properly handles user registration lookups without hook violations.
 
 ## Original Problem
 
 The NewDirectMessage modal had a reopening issue when:
+
 1. User was on an existing conversation (e.g., `/messages/QmV5xWMo5CYSxgAAy6emKFZZPCPKwCsBZKZxXD3mCUZF2n`)
 2. Clicked to open modal → URL changed to `/messages/new`
 3. Closed modal → `navigate(-1)` caused brief reopen before landing on original conversation
@@ -28,6 +29,7 @@ This didn't happen from EmptyDirectMessage (`/messages/`) because no route confl
 ## Root Cause Analysis
 
 The modal visibility was controlled by URL route `/messages/new`:
+
 - Route change triggered React re-renders
 - Modal's 300ms close animation conflicted with navigation timing
 - `navigate(-1)` caused race conditions during route transitions
@@ -37,6 +39,7 @@ The modal visibility was controlled by URL route `/messages/new`:
 ### 1. Removed URL-Based Modal Control
 
 **File**: `src/App.tsx`
+
 ```diff
 - <Route
 -   path="/messages/new"
@@ -49,6 +52,7 @@ The modal visibility was controlled by URL route `/messages/new`:
 ### 2. Added State-Based Modal Management
 
 **File**: `src/components/AppWithSearch.tsx`
+
 ```diff
 + interface ModalContextType {
 +   isNewDirectMessageOpen: boolean;
@@ -68,6 +72,7 @@ The modal visibility was controlled by URL route `/messages/new`:
 ### 3. Updated Modal Triggers
 
 **File**: `src/components/direct/DirectMessageContactsList.tsx`
+
 ```diff
 - <Link to="/messages/new">
 -   <FontAwesomeIcon ... />
@@ -90,6 +95,7 @@ The modal visibility was controlled by URL route `/messages/new`:
 ### 4. Updated Layout Modal Control
 
 **File**: `src/components/Layout.tsx`
+
 ```diff
 - const Layout: React.FunctionComponent<{
 -   newDirectMessage?: boolean;
@@ -119,6 +125,7 @@ The modal visibility was controlled by URL route `/messages/new`:
 ### 5. Updated Modal Navigation
 
 **File**: `src/components/modals/NewDirectMessageModal.tsx`
+
 ```diff
 + import { useModalContext } from '../AppWithSearch';
 + const { closeNewDirectMessage } = useModalContext();
@@ -149,13 +156,16 @@ The modal visibility was controlled by URL route `/messages/new`:
 ## Potential Issue Discovered
 
 After implementation, testing locally shows constant "User does not exist" errors. This might be:
+
 1. **Expected**: Local development without backend API
 2. **Regression**: Previous setup allowed local testing with different browsers/profiles
 
 ## Rollback Instructions (If Needed)
 
 ### Simplest Rollback (Recommended)
+
 Since commit `b04c61534831fe8e8a1c6a9ba74cb6208a478e73` only modified our modal files:
+
 ```bash
 # Simple revert of the entire commit
 git revert b04c61534831fe8e8a1c6a9ba74cb6208a478e73
@@ -166,6 +176,7 @@ git reset HEAD  # if you want to review changes first
 ```
 
 ### Alternative: File-Specific Rollback
+
 ```bash
 git checkout HEAD~1 -- src/App.tsx src/components/AppWithSearch.tsx src/components/Layout.tsx src/components/direct/DirectMessageContactsList.tsx src/components/modals/NewDirectMessageModal.tsx
 ```
@@ -173,6 +184,7 @@ git checkout HEAD~1 -- src/App.tsx src/components/AppWithSearch.tsx src/componen
 ### Manual Rollback Steps
 
 1. **Restore `/messages/new` route in App.tsx**:
+
 ```tsx
 <Route
   path="/messages/new"
@@ -229,15 +241,15 @@ git checkout HEAD~1 -- src/App.tsx src/components/AppWithSearch.tsx src/componen
 
 The dev who worked on this modal and fixed the issue: fixed version src\components\modals\NewDirectMessageModal.tsx
 
-*Dev comment: you can't use hooks in functions in a component, I had to convert the registration hook to the underlying raw api call.*
+_Dev comment: you can't use hooks in functions in a component, I had to convert the registration hook to the underlying raw api call._
 
 I did some testing though and looks like the version right after their first edit (and before mine) was already showing the issue:
 
 This is what I see:
+
 - current version: working
 - before my edits to the modal and after the dev edits: NOT working
 - before all edits: working
-
 
 Please compare all the version to see what chnages and identify the real issue:
 
@@ -270,8 +282,7 @@ const NewDirectMessageModal: React.FunctionComponent<
   let [buttonText, setButtonText] = React.useState<string>(t`Send`);
   let navigate = useNavigate();
 
-  const { data: conversations } =
-    useConversations({ type: 'direct' });
+  const { data: conversations } = useConversations({ type: 'direct' });
   const conversationsList = [
     ...conversations.pages.flatMap((c: any) => c.conversations),
   ];
@@ -279,16 +290,16 @@ const NewDirectMessageModal: React.FunctionComponent<
   const ownAddress = currentPasskeyInfo?.address;
 
   const lookupUser = async (): Promise<boolean> => {
-      setButtonText(t`Looking up user...`);
-      try {
-        const { data: registration } = await useRegistration({ address });
-        return registration.registered;
-      } catch {
-        setError(t`User does not exist.`);
-        return false;
-      } finally {
-        setButtonText(t`Send`);
-      }
+    setButtonText(t`Looking up user...`);
+    try {
+      const { data: registration } = await useRegistration({ address });
+      return registration.registered;
+    } catch {
+      setError(t`User does not exist.`);
+      return false;
+    } finally {
+      setButtonText(t`Send`);
+    }
   };
 
   const resetState = () => {
@@ -332,7 +343,9 @@ const NewDirectMessageModal: React.FunctionComponent<
     try {
       base58btc.baseDecode(address);
     } catch {
-      setError(t`Invalid address format. Addresses must use valid alphanumeric characters.`);
+      setError(
+        t`Invalid address format. Addresses must use valid alphanumeric characters.`
+      );
       return;
     }
   }, [address, ownAddress]);
@@ -353,7 +366,6 @@ const NewDirectMessageModal: React.FunctionComponent<
             onChange={(e) => setAddress(e.target.value.trim())}
             placeholder={t`User address here`}
           />
-
         </div>
         {error && <div className="modal-new-direct-message-error">{error}</div>}
         <React.Suspense
@@ -391,16 +403,11 @@ const NewDirectMessageModal: React.FunctionComponent<
 };
 
 export default NewDirectMessageModal;
-
-
-
 ```
-
 
 VERSION 1: before all edits: working
 
 ```tsx
-
 import * as React from 'react';
 import Modal from '../Modal';
 import Input from '../Input';
@@ -423,8 +430,7 @@ const NewDirectMessageModal: React.FunctionComponent<
   let [address, setAddress] = React.useState<string>('');
   let [error, setError] = React.useState<string | null>(null);
 
-  const { data: conversations } =
-    useConversations({ type: 'direct' });
+  const { data: conversations } = useConversations({ type: 'direct' });
 
   const conversationsList = [
     ...conversations.pages.flatMap((c: any) => c.conversations),
@@ -469,7 +475,9 @@ const NewDirectMessageModal: React.FunctionComponent<
     try {
       base58btc.baseDecode(address);
     } catch {
-      setError(t`Invalid address format. Addresses must use valid alphanumeric characters.`);
+      setError(
+        t`Invalid address format. Addresses must use valid alphanumeric characters.`
+      );
       return;
     }
   }, [address, ownAddress]);
@@ -490,7 +498,9 @@ const NewDirectMessageModal: React.FunctionComponent<
             onChange={(e) => lookupUser(e.target.value)}
             placeholder={t`User address here`}
           />
-          {error && <div className="modal-new-direct-message-error">{error}</div>}
+          {error && (
+            <div className="modal-new-direct-message-error">{error}</div>
+          )}
         </div>
         <React.Suspense
           fallback={
@@ -506,9 +516,11 @@ const NewDirectMessageModal: React.FunctionComponent<
             </div>
           }
         >
-          {address.length === 46 && !error && <AddressLookup address={address} />}
+          {address.length === 46 && !error && (
+            <AddressLookup address={address} />
+          )}
         </React.Suspense>
-        { (address.length !== 46 || error) && (
+        {(address.length !== 46 || error) && (
           <div className="modal-new-direct-message-actions">
             <Button
               className="w-full sm:max-w-32 sm:inline-block"
@@ -526,6 +538,4 @@ const NewDirectMessageModal: React.FunctionComponent<
 };
 
 export default NewDirectMessageModal;
-
-
 ```

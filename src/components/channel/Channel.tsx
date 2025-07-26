@@ -217,18 +217,20 @@ const Channel: React.FC<ChannelProps> = ({
                   })}
                 </div>
                 {roleMembers.map((s) => (
-                  <div key={s} className="w-full flex flex-row items-center mb-2">
+                  <div
+                    key={s}
+                    className="w-full flex flex-row items-center mb-2"
+                  >
                     <div
                       className="rounded-full w-[40px] h-[40px]"
                       style={{
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
-                        backgroundImage:
-                          members[s]?.userIcon?.includes(
-                            DefaultImages.UNKNOWN_USER
-                          )
-                            ? 'var(--unknown-icon)'
-                            : `url(${members[s]?.userIcon})`,
+                        backgroundImage: members[s]?.userIcon?.includes(
+                          DefaultImages.UNKNOWN_USER
+                        )
+                          ? 'var(--unknown-icon)'
+                          : `url(${members[s]?.userIcon})`,
                       }}
                     />
                     <div className="flex flex-col ml-2 text-main">
@@ -453,7 +455,10 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
           </div>
         )}
-        <div {...getRootProps()} className="message-editor-container pr-6 lg:pr-8">
+        <div
+          {...getRootProps()}
+          className="message-editor-container pr-6 lg:pr-8"
+        >
           <div
             className={
               'message-editor w-full flex items-center gap-2 ' +
@@ -619,18 +624,20 @@ const Channel: React.FC<ChannelProps> = ({
                   })}
                 </div>
                 {roleMembers.map((s) => (
-                  <div key={s} className="w-full flex flex-row items-center mb-2">
+                  <div
+                    key={s}
+                    className="w-full flex flex-row items-center mb-2"
+                  >
                     <div
                       className="rounded-full w-[40px] h-[40px]"
                       style={{
                         backgroundPosition: 'center',
                         backgroundSize: 'cover',
-                        backgroundImage:
-                          members[s]?.userIcon?.includes(
-                            DefaultImages.UNKNOWN_USER
-                          )
-                            ? 'var(--unknown-icon)'
-                            : `url(${members[s]?.userIcon})`,
+                        backgroundImage: members[s]?.userIcon?.includes(
+                          DefaultImages.UNKNOWN_USER
+                        )
+                          ? 'var(--unknown-icon)'
+                          : `url(${members[s]?.userIcon})`,
                       }}
                     />
                     <div className="flex flex-col ml-2 text-main">
@@ -685,7 +692,9 @@ const Channel: React.FC<ChannelProps> = ({
             className="fixed inset-0 top-16 z-[9990]"
             onClick={() => setShowStickers(false)}
           />
-          <div className={`fixed bottom-20 z-[9999] pointer-events-none ${showUsers ? 'right-[300px]' : 'right-6'} transition-all duration-300`}>
+          <div
+            className={`fixed bottom-20 z-[9999] pointer-events-none ${showUsers ? 'right-[300px]' : 'right-6'} transition-all duration-300`}
+          >
             <div className="flex flex-col border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4 pointer-events-auto">
               <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">
                 Stickers
@@ -701,9 +710,9 @@ const Channel: React.FC<ChannelProps> = ({
                         sendSticker(s.id);
                       }}
                     >
-                      <img 
-                        src={s.imgUrl} 
-                        className="max-w-full max-h-full object-contain rounded-md" 
+                      <img
+                        src={s.imgUrl}
+                        className="max-w-full max-h-full object-contain rounded-md"
                         alt="sticker"
                       />
                     </div>

@@ -38,12 +38,14 @@ The main dependencies are:
 ## React Hooks Rules - IMPORTANT
 
 **NEVER violate React's Rules of Hooks:**
+
 - Call all hooks at the top level of components (not inside functions, conditionals, or loops)
 - Call hooks in the same order on every render
 - NEVER put conditional returns (early exits) before any hooks
 - If you need conditional logic, put it AFTER all hooks or inside the hooks themselves
 
 Example of what NOT to do:
+
 ```tsx
 // ❌ BAD - Conditional return before hooks
 if (someCondition) return <SomeComponent />;

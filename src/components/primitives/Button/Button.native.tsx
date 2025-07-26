@@ -5,7 +5,7 @@ import { useCrossPlatformTheme } from '../theme/ThemeProvider';
 
 const Button: React.FC<NativeButtonProps> = (props) => {
   const { colors } = useCrossPlatformTheme();
-  
+
   const handlePress = () => {
     if (!props.disabled) {
       // Add haptic feedback if enabled
@@ -20,9 +20,9 @@ const Button: React.FC<NativeButtonProps> = (props) => {
   const getButtonStyle = () => {
     const type = props.type || 'primary';
     const size = props.size || 'normal';
-    
+
     let style = [styles.base];
-    
+
     // Add type-specific styles using dynamic colors
     switch (type) {
       case 'primary':
@@ -55,12 +55,21 @@ const Button: React.FC<NativeButtonProps> = (props) => {
           borderColor: colors.accent.DEFAULT,
         });
     }
-    
+
     // Add size-specific styles
     if (size === 'small') {
       style.push(styles.small);
     }
-    
+
+    // Remove shadows for transparent background types (must come after size styles)
+    if (type === 'secondary') {
+      style.push({
+        shadowOpacity: 0,
+        shadowRadius: 0,
+        elevation: 0,
+      });
+    }
+
     // Add disabled styles
     if (props.disabled) {
       style.push({
@@ -70,21 +79,21 @@ const Button: React.FC<NativeButtonProps> = (props) => {
         elevation: 0,
       });
     }
-    
+
     return style;
   };
 
   const getTextStyle = () => {
     const type = props.type || 'primary';
     const size = props.size || 'normal';
-    
+
     let style = [styles.text];
-    
+
     // Add size-specific text styles
     if (size === 'small') {
       style.push(styles.textSmall);
     }
-    
+
     // Add type-specific text styles using dynamic colors
     switch (type) {
       case 'secondary':
@@ -96,11 +105,11 @@ const Button: React.FC<NativeButtonProps> = (props) => {
       default:
         style.push({ color: colors.white });
     }
-    
+
     if (props.disabled) {
       style.push({ color: colors.surface[5] });
     }
-    
+
     return style;
   };
 
@@ -108,7 +117,7 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     <Pressable
       style={({ pressed }) => [
         ...getButtonStyle(),
-        pressed && !props.disabled && styles.pressed
+        pressed && !props.disabled && styles.pressed,
       ]}
       onPress={handlePress}
       disabled={props.disabled}
@@ -116,9 +125,7 @@ const Button: React.FC<NativeButtonProps> = (props) => {
       accessibilityRole="button"
       accessibilityState={{ disabled: props.disabled }}
     >
-      <Text style={getTextStyle()}>
-        {props.children}
-      </Text>
+      <Text style={getTextStyle()}>{props.children}</Text>
     </Pressable>
   );
 };

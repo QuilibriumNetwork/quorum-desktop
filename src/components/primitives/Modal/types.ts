@@ -4,7 +4,7 @@ export interface BaseModalProps {
   onClose: () => void;
   hideClose?: boolean;
   children: React.ReactNode;
-  
+
   // Additional props for enhanced functionality
   size?: 'small' | 'medium' | 'large' | 'full';
   closeOnBackdropClick?: boolean;

@@ -449,7 +449,10 @@ const SpaceEditor: React.FunctionComponent<{
               onClick={() => setSelectedCategory('danger')}
               className={`modal-nav-category text-danger ${selectedCategory === 'danger' ? 'active' : ''}`}
             >
-              <FontAwesomeIcon icon={faExclamationTriangle} className="mr-2 text-accent" />
+              <FontAwesomeIcon
+                icon={faExclamationTriangle}
+                className="mr-2 text-accent"
+              />
               <Trans>Delete Space</Trans>
             </div>
           )}
@@ -497,7 +500,10 @@ const SpaceEditor: React.FunctionComponent<{
               onClick={() => setSelectedCategory('danger')}
               className={`modal-nav-category text-danger ${selectedCategory === 'danger' ? 'active' : ''}`}
             >
-              <FontAwesomeIcon icon={faExclamationTriangle} className="mr-2 text-accent" />
+              <FontAwesomeIcon
+                icon={faExclamationTriangle}
+                className="mr-2 text-accent"
+              />
               <Trans>Delete Space</Trans>
             </div>
           )}

@@ -58,16 +58,18 @@ export class NotificationService {
 
     try {
       // Use promise-based version with fallback to callback for older browsers
-      const permission = await new Promise<NotificationPermission>((resolve) => {
-        const result = Notification.requestPermission((result) => {
-          resolve(result);
-        });
+      const permission = await new Promise<NotificationPermission>(
+        (resolve) => {
+          const result = Notification.requestPermission((result) => {
+            resolve(result);
+          });
 
-        // Handle promise-based version
-        if (result && typeof result.then === 'function') {
-          result.then(resolve);
+          // Handle promise-based version
+          if (result && typeof result.then === 'function') {
+            result.then(resolve);
+          }
         }
-      });
+      );
 
       this.permission = permission;
       return permission;
@@ -87,15 +89,18 @@ export class NotificationService {
   /**
    * Show a notification for unread messages
    */
-  public showUnreadMessagesNotification(unreadCount: number): Notification | null {
+  public showUnreadMessagesNotification(
+    unreadCount: number
+  ): Notification | null {
     if (!this.canShowNotifications()) {
       return null;
     }
 
     const title = 'Quorum';
-    const body = unreadCount === 1
-      ? t`You have a new unread message`
-      : t`You have new unread messages`;
+    const body =
+      unreadCount === 1
+        ? t`You have a new unread message`
+        : t`You have new unread messages`;
 
     const options: any = {
       body,

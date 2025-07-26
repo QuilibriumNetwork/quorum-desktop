@@ -12,7 +12,7 @@ export const FlexCenter: React.FC<FlexCenterProps> = ({
 }) => {
   const justifyContent = direction === 'vertical' ? undefined : 'center';
   const alignItems = direction === 'horizontal' ? undefined : 'center';
-  
+
   const viewStyle: ViewStyle = {
     display: 'flex',
     justifyContent,

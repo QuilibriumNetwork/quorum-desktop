@@ -38,14 +38,12 @@ const Modal: React.FC<WebModalProps> = ({
             ✕
           </div>
         )}
-        
+
         <div className="quorum-modal-title select-none cursor-default">
           {title}
         </div>
-        
-        <div className="quorum-modal-container">
-          {children}
-        </div>
+
+        <div className="quorum-modal-container">{children}</div>
       </div>
     </ModalContainer>
   );

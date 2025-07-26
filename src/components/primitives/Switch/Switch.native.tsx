@@ -56,7 +56,9 @@ export const Switch: React.FC<NativeSwitchProps> = ({
 
   const getIOSBackgroundColor = () => {
     if (Platform.OS === 'ios') {
-      return value ? (trackColorTrue || colors.accent.DEFAULT) : (trackColorFalse || colors.surface[4]);
+      return value
+        ? trackColorTrue || colors.accent.DEFAULT
+        : trackColorFalse || colors.surface[4];
     }
     return undefined;
   };

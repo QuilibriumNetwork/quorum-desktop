@@ -5,7 +5,7 @@ import { useCrossPlatformTheme } from '../theme';
 
 /**
  * ResponsiveContainer React Native Implementation
- * 
+ *
  * Provides proper layout for mobile screens.
  * Note: SafeAreaView will be added when React Native environment is available.
  */

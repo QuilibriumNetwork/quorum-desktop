@@ -55,7 +55,11 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
           <div className="w-full text-center mb-4 text-subtle">
             <Trans>Ready to start a truly private conversation?</Trans>
           </div>
-          <Button type="primary" className="max-w-full" onClick={openNewDirectMessage}>
+          <Button
+            type="primary"
+            className="max-w-full"
+            onClick={openNewDirectMessage}
+          >
             <Trans>+ Add a friend</Trans>
           </Button>
         </div>

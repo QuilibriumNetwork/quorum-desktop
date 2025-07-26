@@ -48,7 +48,7 @@ const handleInputBlur = () => {
     }, 10);
     return;
   }
-  
+
   // Delay to allow suggestion clicks
   setTimeout(() => {
     setIsFocused(false);
@@ -61,30 +61,33 @@ const handleInputBlur = () => {
 ## Failed Attempts During This Session
 
 ### Attempt 1: Enhanced Emergency Restoration Mechanism
+
 **Goal**: Fix mobile focus stealing by improving emergency restoration  
 **Implementation**:
+
 - Global focus tracking with 100ms interval monitoring
 - Multi-strategy focus restoration (immediate, 0ms, 10ms, 50ms timeouts)
 - Mobile-specific fallback detection when element reference comparison fails
 - Comprehensive focus debugging system
 
 **Key Changes Made**:
+
 ```typescript
 // Global focus tracking in useEffect
 const trackFocusChanges = () => {
   if (wasSearchInput && !isSearchInput) {
     // Emergency restoration with multiple retry strategies
-    const shouldRestoreFocus = inputRef.current && (
-      lastActiveElement === inputRef.current ||
-      (wasSearchInput && isTouchDevice()) // Mobile fallback
-    );
-    
+    const shouldRestoreFocus =
+      inputRef.current &&
+      (lastActiveElement === inputRef.current ||
+        (wasSearchInput && isTouchDevice())); // Mobile fallback
+
     if (shouldRestoreFocus) {
       inputRef.current.focus(); // Immediate
       setTimeout(() => inputRef.current.focus(), 0); // Next tick
       setTimeout(() => inputRef.current.focus(), 10); // After React effects
       setTimeout(() => inputRef.current.focus(), 50); // Aggressive retry
-      
+
       // Mobile-specific: synthetic click + focus
       if (isTouchDevice()) {
         setTimeout(() => {
@@ -99,29 +102,33 @@ const trackFocusChanges = () => {
 ```
 
 **Result**: ❌ FAILED
+
 - Emergency mechanism worked on desktop but not mobile
 - Created conflict with normal blur behavior
 - User reported: "focus remain on the search input" when clicking outside
 
 ### Attempt 2: Smart Blur Detection
+
 **Goal**: Fix the "focus not released" issue by improving blur logic  
 **Implementation**:
+
 - Enhanced blur handler with relatedTarget analysis
 - Immediate blur for clicks outside search area
 - Delayed blur only for search suggestions
 - Reduced timeout from 200ms to 100ms
 
 **Key Changes Made**:
+
 ```typescript
 const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
   const relatedTarget = e.relatedTarget as HTMLElement;
-  
-  const isClickingSearchRelated = relatedTarget && (
-    relatedTarget.closest('.search-suggestions') ||
-    relatedTarget.closest('.search-results') ||
-    relatedTarget.classList.contains('search-clear-button')
-  );
-  
+
+  const isClickingSearchRelated =
+    relatedTarget &&
+    (relatedTarget.closest('.search-suggestions') ||
+      relatedTarget.closest('.search-results') ||
+      relatedTarget.classList.contains('search-clear-button'));
+
   if (isClickingSearchRelated) {
     return; // Maintain focus
   } else {
@@ -134,17 +141,21 @@ const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
 ```
 
 **Result**: ❌ FAILED
+
 - Still had issues with focus not being released properly
 - User feedback: "same issue" persisted
 
 ### Attempt 3: Ultra-Simplified Blur Logic
+
 **Goal**: Strip all complexity and use simple, immediate blur  
 **Implementation**:
+
 - Removed all complex relatedTarget logic
 - Always blur immediately when clicking/touching anywhere else
 - No delays except minimal 150ms for suggestion clicks
 
 **Key Changes Made**:
+
 ```typescript
 const handleInputBlur = () => {
   // Simple: always blur when user clicks/touches anywhere else
@@ -155,17 +166,21 @@ const handleInputBlur = () => {
 ```
 
 **Result**: ❌ FAILED
+
 - Emergency mechanism still fought against blur behavior
 - User reported seeing screenshot evidence of focus being restored
 
 ### Attempt 4: Intentional Blur Flag System
+
 **Goal**: Coordinate between emergency restoration and normal blur  
 **Implementation**:
+
 - Added `intentionalBlurRef` to track user-initiated blurs
 - Emergency restoration only activates when blur was NOT intentional
 - Flag cleared when user types or focuses (indicating they want focus)
 
 **Key Changes Made**:
+
 ```typescript
 const intentionalBlurRef = useRef(false);
 
@@ -174,7 +189,7 @@ const handleInputBlur = () => {
   setIsFocused(false);
   setShowSuggestions(false);
   setSelectedSuggestionIndex(-1);
-  
+
   setTimeout(() => {
     intentionalBlurRef.current = false; // Reset after 500ms
   }, 500);
@@ -185,12 +200,14 @@ const shouldRestoreFocus = !intentionalBlurRef.current && /* other conditions */
 ```
 
 **Result**: ❌ FAILED
+
 - User reported: "mechanism seems to not work anymore"
 - Flag system broke the emergency restoration entirely
 
 ## Root Cause Analysis
 
 ### Core Problem
+
 **Fundamental architectural issue**: Two competing systems trying to manage the same focus state:
 
 1. **Normal browser blur behavior**: User clicks outside → input should blur
@@ -215,6 +232,7 @@ These systems cannot coexist without sophisticated coordination.
 ## User Requirements (Clarified)
 
 Simple, clear focus behavior:
+
 - **Keep focus**: When typing OR doing nothing (idle with focus)
 - **Remove focus**: When clicking/touching anywhere else (suggestions, results, outside area, other elements)
 
@@ -234,13 +252,20 @@ Comprehensive focus debugging system was implemented in `utils.ts`:
 const FOCUS_DEBUG_ENABLED = true;
 
 export const focusDebug = {
-  log: (event: string, details?: any) => { /* detailed logging */ },
-  warn: (event: string, details?: any) => { /* warning logging */ },
-  error: (event: string, details?: any) => { /* error logging */ }
+  log: (event: string, details?: any) => {
+    /* detailed logging */
+  },
+  warn: (event: string, details?: any) => {
+    /* warning logging */
+  },
+  error: (event: string, details?: any) => {
+    /* error logging */
+  },
 };
 ```
 
 This system provided detailed console logs showing:
+
 - Focus change events with timestamps
 - Element details (tagName, className, id)
 - Touch device detection
@@ -249,12 +274,14 @@ This system provided detailed console logs showing:
 ## Lessons Learned
 
 ### What NOT to Do
+
 1. **Don't create competing mechanisms** - Emergency restoration + normal blur = conflict
 2. **Don't over-engineer** - Complex conditional logic creates more bugs than it solves
 3. **Don't use multiple timeouts** - Race conditions are inevitable
 4. **Don't treat mobile differently without clear reason** - Often the issue affects all platforms
 
 ### Key Insights
+
 1. **Browser focus behavior is complex** - Different platforms handle focus events differently
 2. **React and DOM focus don't always align** - Timing issues between React state and DOM state
 3. **Prevention is better than restoration** - Fix the root cause instead of patching symptoms

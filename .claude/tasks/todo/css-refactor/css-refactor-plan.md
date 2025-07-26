@@ -77,6 +77,7 @@ Migrate the existing SCSS-based styling system (using semantic class names and r
 **Total:** ~450 CSS selectors across 40 SCSS files
 
 ### **Key Recent Changes:**
+
 - **Button.scss successfully converted** - Now serves as reference pattern for `@apply` usage
 - **Search components identified** - Clean, minimal CSS perfect for Phase 1 conversion
 - **Mobile drawer system documented** - Well-architected modern components to preserve
@@ -176,24 +177,28 @@ When converting a raw SCSS file to use Tailwind's utility classes via `@apply`, 
 From css-inventory.md, targeting the **highest priority @apply-convertible selectors**:
 
 **Priority 1: Search Components (Clean, minimal CSS)**
+
 - `.search-bar` - Search input → `@apply flex items-center gap-2 p-2`
-- `.search-results` - Results container → `@apply absolute w-full bg-white shadow-lg`  
+- `.search-results` - Results container → `@apply absolute w-full bg-white shadow-lg`
 - `.search-result-item` - Result item → `@apply p-2 hover:bg-gray-100 cursor-pointer`
 - `.global-search` - Global search layout → `@apply fixed inset-0 bg-black/50`
 
 **Priority 2: Basic Layout Utilities**
+
 - `.chat-input-container` - Container → `@apply flex items-center gap-2 p-2`
 - `.chat-input-wrapper` - Wrapper → `@apply flex-1 relative`
 - `.chat-messages` - Messages container → `@apply flex flex-col gap-2 overflow-y-auto`
 - `.chat-message-content` - Message content → `@apply flex flex-col gap-1`
 
-**Priority 3: User Status & Simple Components** 
+**Priority 3: User Status & Simple Components**
+
 - `.user-status` - Status indicator → `@apply flex items-center gap-1`
 - `.status-dot` - Status dot → `@apply w-2 h-2 rounded-full`
 - `.user-avatar` - Avatar sizing → `@apply w-10 h-10 rounded-full`
 - `.user-details` - Details layout → `@apply flex flex-col gap-1`
 
 **Priority 4: Space Layout Components**
+
 - `.space-header` - Header layout → `@apply flex justify-between items-center p-4`
 - `.space-content` - Content area → `@apply flex-1 overflow-hidden`
 - `.channel-header` - Header layout → `@apply flex justify-between items-center p-2`
@@ -298,8 +303,9 @@ From css-inventory.md, targeting the **highest priority @apply-convertible selec
 **Already Completed:** `src/components/Button.scss` has been successfully converted to Tailwind using the `@apply` pattern with semantic classes. This serves as the **proven reference pattern** for all future conversions.
 
 **Key learnings from Button.scss conversion:**
+
 - ✅ **Semantic class names preserved** (`.btn-primary`, `.btn-secondary`, etc.)
-- ✅ **Theme colors preserved** using CSS custom properties 
+- ✅ **Theme colors preserved** using CSS custom properties
 - ✅ **@apply usage works perfectly** for layout/spacing properties
 - ✅ **SCSS placeholder pattern** (`%btn-base`) provides efficient shared styles
 - ✅ **No functionality regressions** - all button variants work identically
@@ -319,20 +325,24 @@ This refactor can proceed in parallel with or after mobile development. The Tail
 From css-inventory.md, targeting theme-token selectors **following Button.scss pattern** while preserving CSS custom properties:
 
 **Priority 1: Input Components (Following Button Pattern)**
+
 - `.input-base` - Base input → `@apply px-3 py-2 border rounded-md` (preserve theme background/colors)
-- `.input-error` - Error state → `@apply border-red-500` 
+- `.input-error` - Error state → `@apply border-red-500`
 - `.input-disabled` - Disabled state → `@apply opacity-50 cursor-not-allowed`
 
 **Priority 2: Message Layout Components**
+
 - `.message-content` - Content layout → `@apply flex flex-col gap-1` (preserve theme background)
 - `.message-actions` - Actions container → `@apply flex gap-1 opacity-0 group-hover:opacity-100`
 - `.message-actions-grid` - Action grid → `@apply grid grid-cols-3 gap-2`
 
 **Priority 3: Navigation Layout Elements**
+
 - `.nav-item` - Nav item → `@apply flex items-center gap-2 p-2` (preserve theme background/colors)
 - `.space-button-icon` - Icon sizing → `@apply w-6 h-6`
 
 **Priority 4: Modal Layout Utilities**
+
 - `.modal-container` - Layout container → `@apply fixed inset-0 flex items-center justify-center` (preserve theme backdrop)
 - `.modal-header` - Header layout → `@apply flex justify-between items-center p-4`
 - `.modal-body` - Body layout → `@apply flex flex-col gap-4 p-4`
@@ -742,17 +752,20 @@ If any phase causes issues:
 **This CSS refactor can be paused or run in parallel with mobile development.** The current CSS state (hybrid Tailwind + raw CSS) is perfectly suitable for mobile primitive development. Key considerations:
 
 ### **If Mobile Development Proceeds First:**
+
 - ✅ **Current CSS works fine** for React Native conversion
 - ✅ **Semantic class names** provide perfect abstraction layer
 - ✅ **Button.scss pattern** already established for future reference
 - ✅ **No blocking dependencies** - mobile primitives work with any CSS implementation
 
 ### **If CSS Refactor Proceeds First:**
-- ✅ **Enhanced mobile development** with cleaner Tailwind patterns  
+
+- ✅ **Enhanced mobile development** with cleaner Tailwind patterns
 - ✅ **Better design token consistency** across platforms
 - ✅ **Proven conversion patterns** for mobile primitive styling
 
 ### **Recommended Approach:**
+
 **Start mobile development with current CSS state. Complete CSS refactor later with mobile learnings for better-informed Tailwind patterns.**
 
 ---
@@ -821,12 +834,14 @@ The existing `tailwind.config.js` already includes:
 The file `src/styles/_passkey-modal.scss` contains styles for PasskeyModal component imported from `@quilibrium/quilibrium-js-sdk-channels` package. **THIS FILE MUST BE HANDLED WITH EXTREME CARE** during CSS refactoring:
 
 **DO NOT CONVERT TO TAILWIND:**
+
 - This file contains ~30 CSS selectors for an external SDK component
 - Originally created as pure CSS in SDK and copied here to avoid Tailwind purging issues
 - Converting to Tailwind would break the modal styling completely
 - File can be edited directly for immediate style changes but should not be migrated to `@apply` patterns
 
 **Why it's in the main repo:**
+
 - SDK uses pure CSS to avoid Tailwind dependency conflicts
 - Main app imports these styles to ensure proper bundling
 - Provides self-contained modal styling that works reliably

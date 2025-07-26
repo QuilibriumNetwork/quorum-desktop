@@ -14,12 +14,14 @@ export const InputTestScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>📱 Input Primitive Test</Text>
-        <Text style={styles.subtitle}>Testing Input primitive on React Native</Text>
-        
+        <Text style={styles.subtitle}>
+          Testing Input primitive on React Native
+        </Text>
+
         {/* Basic Input Types */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Input Types</Text>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Text Input:</Text>
             <Input
@@ -30,7 +32,7 @@ export const InputTestScreen: React.FC = () => {
             />
             <Text style={styles.valueText}>Value: "{textValue}"</Text>
           </View>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Email Input:</Text>
             <Input
@@ -41,7 +43,7 @@ export const InputTestScreen: React.FC = () => {
             />
             <Text style={styles.valueText}>Value: "{emailValue}"</Text>
           </View>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Password Input:</Text>
             <Input
@@ -54,7 +56,7 @@ export const InputTestScreen: React.FC = () => {
               Value: "{passwordValue ? '•'.repeat(passwordValue.length) : ''}"
             </Text>
           </View>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Disabled Input:</Text>
             <Input
@@ -68,9 +70,11 @@ export const InputTestScreen: React.FC = () => {
         {/* Error States */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Error States</Text>
-          
+
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Input with Error (type less than 3 chars):</Text>
+            <Text style={styles.label}>
+              Input with Error (type less than 3 chars):
+            </Text>
             <Input
               value={errorInput}
               onChange={(value) => {
@@ -79,10 +83,14 @@ export const InputTestScreen: React.FC = () => {
               }}
               placeholder="Type less than 3 characters..."
               error={showInputError}
-              errorMessage={showInputError ? "Input must be at least 3 characters long" : undefined}
+              errorMessage={
+                showInputError
+                  ? 'Input must be at least 3 characters long'
+                  : undefined
+              }
             />
           </View>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Always Error:</Text>
             <Input
@@ -97,47 +105,52 @@ export const InputTestScreen: React.FC = () => {
         {/* Onboarding Variant */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Onboarding Variant</Text>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Onboarding Style (pill shape):</Text>
-            <Input
-              variant="onboarding"
-              placeholder="Bongocat"
-            />
-            <Text style={styles.infoText}>Full pill shape with accent colors</Text>
+            <Input variant="onboarding" placeholder="Bongocat" />
+            <Text style={styles.infoText}>
+              Full pill shape with accent colors
+            </Text>
           </View>
         </View>
 
         {/* Focus and Styling */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Focus Features</Text>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Auto Focus Input:</Text>
-            <Input
-              placeholder="This input auto-focuses"
-              autoFocus
-            />
+            <Input placeholder="This input auto-focuses" autoFocus />
           </View>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>No Focus Style:</Text>
-            <Input
-              placeholder="This input has no focus styling"
-              noFocusStyle
-            />
+            <Input placeholder="This input has no focus styling" noFocusStyle />
           </View>
         </View>
 
         {/* Mobile Testing Notes */}
         <View style={styles.notesSection}>
           <Text style={styles.notesTitle}>📋 Mobile Testing Checklist</Text>
-          <Text style={styles.notesText}>✅ Input types trigger correct mobile keyboards</Text>
-          <Text style={styles.notesText}>✅ Touch targets are 42px high for accessibility</Text>
-          <Text style={styles.notesText}>✅ Focus states work without web-style borders</Text>
-          <Text style={styles.notesText}>✅ Error messages display below inputs</Text>
-          <Text style={styles.notesText}>✅ Onboarding variant matches desktop pill shape</Text>
-          <Text style={styles.notesText}>✅ Platform-specific keyboard types work</Text>
+          <Text style={styles.notesText}>
+            ✅ Input types trigger correct mobile keyboards
+          </Text>
+          <Text style={styles.notesText}>
+            ✅ Touch targets are 42px high for accessibility
+          </Text>
+          <Text style={styles.notesText}>
+            ✅ Focus states work without web-style borders
+          </Text>
+          <Text style={styles.notesText}>
+            ✅ Error messages display below inputs
+          </Text>
+          <Text style={styles.notesText}>
+            ✅ Onboarding variant matches desktop pill shape
+          </Text>
+          <Text style={styles.notesText}>
+            ✅ Platform-specific keyboard types work
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>

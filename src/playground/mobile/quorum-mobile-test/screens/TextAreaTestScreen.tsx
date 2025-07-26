@@ -13,12 +13,14 @@ export const TextAreaTestScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>📝 TextArea Primitive Test</Text>
-        <Text style={styles.subtitle}>Testing TextArea primitive on React Native</Text>
-        
+        <Text style={styles.subtitle}>
+          Testing TextArea primitive on React Native
+        </Text>
+
         {/* Basic TextArea Types */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Basic TextArea</Text>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Standard TextArea (3 rows):</Text>
             <TextArea
@@ -28,10 +30,11 @@ export const TextAreaTestScreen: React.FC = () => {
               rows={3}
             />
             <Text style={styles.valueText}>
-              Lines: {textAreaValue.split('\n').length} | Chars: {textAreaValue.length}
+              Lines: {textAreaValue.split('\n').length} | Chars:{' '}
+              {textAreaValue.length}
             </Text>
           </View>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Auto-Resize TextArea (2-6 rows):</Text>
             <TextArea
@@ -44,7 +47,7 @@ export const TextAreaTestScreen: React.FC = () => {
             />
             <Text style={styles.infoText}>Auto-resizes between 2-6 rows</Text>
           </View>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Large TextArea (5 rows):</Text>
             <TextArea
@@ -52,7 +55,7 @@ export const TextAreaTestScreen: React.FC = () => {
               rows={5}
             />
           </View>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Disabled TextArea:</Text>
             <TextArea
@@ -67,9 +70,11 @@ export const TextAreaTestScreen: React.FC = () => {
         {/* Error States */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Error States</Text>
-          
+
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>TextArea with Error (type less than 10 chars):</Text>
+            <Text style={styles.label}>
+              TextArea with Error (type less than 10 chars):
+            </Text>
             <TextArea
               value={errorTextArea}
               onChange={(value) => {
@@ -78,11 +83,15 @@ export const TextAreaTestScreen: React.FC = () => {
               }}
               placeholder="Type less than 10 characters..."
               error={showTextAreaError}
-              errorMessage={showTextAreaError ? "Text must be at least 10 characters long" : undefined}
+              errorMessage={
+                showTextAreaError
+                  ? 'Text must be at least 10 characters long'
+                  : undefined
+              }
               rows={4}
             />
           </View>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Always Error:</Text>
             <TextArea
@@ -98,17 +107,21 @@ export const TextAreaTestScreen: React.FC = () => {
         {/* Onboarding Variant */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Onboarding Variant</Text>
-          
+
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Onboarding Style (rounded corners):</Text>
+            <Text style={styles.label}>
+              Onboarding Style (rounded corners):
+            </Text>
             <TextArea
               variant="onboarding"
               placeholder="Tell us about yourself..."
               rows={4}
             />
-            <Text style={styles.infoText}>Rounded corners with accent colors</Text>
+            <Text style={styles.infoText}>
+              Rounded corners with accent colors
+            </Text>
           </View>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Onboarding Auto-Resize:</Text>
             <TextArea
@@ -118,14 +131,16 @@ export const TextAreaTestScreen: React.FC = () => {
               minRows={3}
               maxRows={7}
             />
-            <Text style={styles.infoText}>Onboarding style with auto-resize</Text>
+            <Text style={styles.infoText}>
+              Onboarding style with auto-resize
+            </Text>
           </View>
         </View>
 
         {/* Focus Features */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Focus Features</Text>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Auto Focus TextArea:</Text>
             <TextArea
@@ -134,7 +149,7 @@ export const TextAreaTestScreen: React.FC = () => {
               rows={3}
             />
           </View>
-          
+
           <View style={styles.inputGroup}>
             <Text style={styles.label}>No Focus Style:</Text>
             <TextArea
@@ -148,13 +163,27 @@ export const TextAreaTestScreen: React.FC = () => {
         {/* Mobile Testing Notes */}
         <View style={styles.notesSection}>
           <Text style={styles.notesTitle}>📋 Mobile Testing Checklist</Text>
-          <Text style={styles.notesText}>✅ Auto-resize functionality works on mobile</Text>
-          <Text style={styles.notesText}>✅ Touch targets optimized for mobile</Text>
-          <Text style={styles.notesText}>✅ Focus states work without web-style borders</Text>
-          <Text style={styles.notesText}>✅ Error messages display below textarea</Text>
-          <Text style={styles.notesText}>✅ Onboarding variant matches desktop style</Text>
-          <Text style={styles.notesText}>✅ Multiline text input with mobile keyboard</Text>
-          <Text style={styles.notesText}>✅ Text alignment starts at top for multiline</Text>
+          <Text style={styles.notesText}>
+            ✅ Auto-resize functionality works on mobile
+          </Text>
+          <Text style={styles.notesText}>
+            ✅ Touch targets optimized for mobile
+          </Text>
+          <Text style={styles.notesText}>
+            ✅ Focus states work without web-style borders
+          </Text>
+          <Text style={styles.notesText}>
+            ✅ Error messages display below textarea
+          </Text>
+          <Text style={styles.notesText}>
+            ✅ Onboarding variant matches desktop style
+          </Text>
+          <Text style={styles.notesText}>
+            ✅ Multiline text input with mobile keyboard
+          </Text>
+          <Text style={styles.notesText}>
+            ✅ Text alignment starts at top for multiline
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>

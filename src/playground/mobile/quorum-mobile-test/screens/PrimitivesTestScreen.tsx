@@ -24,8 +24,10 @@ export const PrimitivesTestScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
-        
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+      >
         <View style={styles.header}>
           <Text style={styles.title}>Mobile Primitives Test</Text>
           <Text style={styles.subtitle}>
@@ -36,14 +38,20 @@ export const PrimitivesTestScreen: React.FC = () => {
         {/* Button Primitive Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Button Primitive</Text>
-          
+
           <View style={styles.testGroup}>
             <Text style={styles.testLabel}>Button Types:</Text>
             <FlexRow gap="md" wrap style={styles.buttonRow}>
-              <Button type="primary" onClick={() => console.log('Primary pressed')}>
+              <Button
+                type="primary"
+                onClick={() => console.log('Primary pressed')}
+              >
                 Primary
               </Button>
-              <Button type="secondary" onClick={() => console.log('Secondary pressed')}>
+              <Button
+                type="secondary"
+                onClick={() => console.log('Secondary pressed')}
+              >
                 Secondary
               </Button>
               <Button type="light" onClick={() => console.log('Light pressed')}>
@@ -80,13 +88,19 @@ export const PrimitivesTestScreen: React.FC = () => {
         {/* Flex Primitives Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Flex Primitives</Text>
-          
+
           <View style={styles.testGroup}>
             <Text style={styles.testLabel}>FlexRow with gap:</Text>
             <FlexRow gap="md" style={styles.flexDemo}>
-              <View style={styles.flexItem}><Text>Item 1</Text></View>
-              <View style={styles.flexItem}><Text>Item 2</Text></View>
-              <View style={styles.flexItem}><Text>Item 3</Text></View>
+              <View style={styles.flexItem}>
+                <Text>Item 1</Text>
+              </View>
+              <View style={styles.flexItem}>
+                <Text>Item 2</Text>
+              </View>
+              <View style={styles.flexItem}>
+                <Text>Item 3</Text>
+              </View>
             </FlexRow>
           </View>
 
@@ -111,18 +125,15 @@ export const PrimitivesTestScreen: React.FC = () => {
         {/* Modal Primitives Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Modal Primitives</Text>
-          
+
           <View style={styles.testGroup}>
             <Text style={styles.testLabel}>Modal Tests:</Text>
             <FlexRow gap="md" wrap style={styles.buttonRow}>
-              <Button 
-                type="primary"
-                onClick={() => setShowModal(true)}
-              >
+              <Button type="primary" onClick={() => setShowModal(true)}>
                 Show Modal with Backdrop
               </Button>
-              
-              <Button 
+
+              <Button
                 type="secondary"
                 onClick={() => setShowModalPrimitive(true)}
               >
@@ -133,10 +144,7 @@ export const PrimitivesTestScreen: React.FC = () => {
 
           <View style={styles.testGroup}>
             <Text style={styles.testLabel}>Backdrop Test:</Text>
-            <Button 
-              type="light"
-              onClick={() => setShowBackdrop(true)}
-            >
+            <Button type="light" onClick={() => setShowBackdrop(true)}>
               Show Backdrop Only
             </Button>
           </View>
@@ -147,12 +155,12 @@ export const PrimitivesTestScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>ResponsiveContainer</Text>
           <View style={styles.infoBox}>
             <Text style={styles.infoText}>
-              ResponsiveContainer is a layout primitive that works behind the scenes.
-              On mobile, it provides SafeAreaView integration and proper content positioning.
+              ResponsiveContainer is a layout primitive that works behind the
+              scenes. On mobile, it provides SafeAreaView integration and proper
+              content positioning.
             </Text>
           </View>
         </View>
-
       </ScrollView>
 
       {/* Modal with backdrop */}
@@ -165,12 +173,10 @@ export const PrimitivesTestScreen: React.FC = () => {
         <View style={styles.modalContent}>
           <Text style={styles.modalTitle}>Modal with Backdrop</Text>
           <Text style={styles.modalText}>
-            This modal uses the ModalContainer primitive with backdrop.
-            Tap outside or press the close button to close.
+            This modal uses the ModalContainer primitive with backdrop. Tap
+            outside or press the close button to close.
           </Text>
-          <Button onClick={() => setShowModal(false)}>
-            Close Modal
-          </Button>
+          <Button onClick={() => setShowModal(false)}>Close Modal</Button>
         </View>
       </ModalContainer>
 
@@ -183,8 +189,8 @@ export const PrimitivesTestScreen: React.FC = () => {
         <View style={styles.backdropContent}>
           <Text style={styles.modalTitle}>Content on Backdrop</Text>
           <Text style={styles.modalText}>
-            This demonstrates the OverlayBackdrop primitive.
-            Tap the dark area to close.
+            This demonstrates the OverlayBackdrop primitive. Tap the dark area
+            to close.
           </Text>
         </View>
       </OverlayBackdrop>
@@ -198,21 +204,34 @@ export const PrimitivesTestScreen: React.FC = () => {
       >
         <View style={styles.modalPrimitiveContent}>
           <Text style={styles.modalText}>
-            This modal is built using the Modal primitive, which internally uses 
+            This modal is built using the Modal primitive, which internally uses
             the ModalContainer primitive for backdrop and animations.
           </Text>
-          
+
           <View style={styles.modalFeatures}>
             <Text style={styles.featuresTitle}>Key Features:</Text>
-            <Text style={styles.featureItem}>• Uses ModalContainer for consistent backdrop behavior</Text>
-            <Text style={styles.featureItem}>• Smooth open/close animations</Text>
-            <Text style={styles.featureItem}>• Cross-platform React Native implementation</Text>
-            <Text style={styles.featureItem}>• Size variants (small, medium, large, full)</Text>
-            <Text style={styles.featureItem}>• Desktop modal → Mobile drawer transformation</Text>
+            <Text style={styles.featureItem}>
+              • Uses ModalContainer for consistent backdrop behavior
+            </Text>
+            <Text style={styles.featureItem}>
+              • Smooth open/close animations
+            </Text>
+            <Text style={styles.featureItem}>
+              • Cross-platform React Native implementation
+            </Text>
+            <Text style={styles.featureItem}>
+              • Size variants (small, medium, large, full)
+            </Text>
+            <Text style={styles.featureItem}>
+              • Desktop modal → Mobile drawer transformation
+            </Text>
           </View>
-          
+
           <FlexRow gap="md" justify="end" style={styles.modalActions}>
-            <Button type="secondary" onClick={() => setShowModalPrimitive(false)}>
+            <Button
+              type="secondary"
+              onClick={() => setShowModalPrimitive(false)}
+            >
               Cancel
             </Button>
             <Button type="primary" onClick={() => setShowModalPrimitive(false)}>
@@ -221,7 +240,6 @@ export const PrimitivesTestScreen: React.FC = () => {
           </FlexRow>
         </View>
       </Modal>
-
     </SafeAreaView>
   );
 };

@@ -43,15 +43,15 @@ export const TextArea: React.FC<TextAreaProps> = ({
   useEffect(() => {
     if (autoResize && textAreaRef.current) {
       const textArea = textAreaRef.current;
-      
+
       // Reset height to calculate new height
       textArea.style.height = 'auto';
-      
+
       // Calculate the number of lines
       const lineHeight = 24; // Base line height in pixels
       const paddingHeight = 20; // Top + bottom padding
       const borderHeight = 2; // Top + bottom border
-      
+
       const scrollHeight = textArea.scrollHeight;
       const calculatedRows = Math.max(
         minRows || 1,
@@ -60,8 +60,9 @@ export const TextArea: React.FC<TextAreaProps> = ({
           Math.round((scrollHeight - paddingHeight - borderHeight) / lineHeight)
         )
       );
-      
-      const newHeight = calculatedRows * lineHeight + paddingHeight + borderHeight;
+
+      const newHeight =
+        calculatedRows * lineHeight + paddingHeight + borderHeight;
       textArea.style.height = `${newHeight}px`;
     }
   }, [value, autoResize, minRows, maxRows]);

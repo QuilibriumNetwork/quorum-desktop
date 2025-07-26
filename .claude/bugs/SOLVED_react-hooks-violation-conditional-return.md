@@ -4,7 +4,7 @@
 **Issue**: React hooks called conditionally due to early return statement  
 **Files Affected**: src/App.tsx, src/App-prod-new.tsx  
 **Status**: Fixed in App.tsx, App-prod-new.tsx still needs fix  
-**Severity**: High - Can cause React errors and unpredictable behavior  
+**Severity**: High - Can cause React errors and unpredictable behavior
 
 ## Problem Description
 
@@ -48,11 +48,13 @@ const App = () => {
 ### Consequences of the Violation
 
 When visiting `/elements` page:
+
 - ❌ WASM module never initializes
 - ❌ User authentication state never sets up
 - ❌ React's hook order tracking gets corrupted
 
 This can cause:
+
 - State corruption between renders
 - Memory leaks
 - React development mode warnings/errors
@@ -99,15 +101,16 @@ const App = () => {
 
 ## Files Status
 
-| File | Status | Notes |
-|------|--------|-------|
-| src/App.tsx | ✅ Fixed | Hooks moved before conditional return |
-| src/App-prod.tsx | ✅ Safe | No violation (no Elements page check) |
-| src/App-prod-new.tsx | ❌ Needs Fix | Has the same violation |
+| File                 | Status       | Notes                                 |
+| -------------------- | ------------ | ------------------------------------- |
+| src/App.tsx          | ✅ Fixed     | Hooks moved before conditional return |
+| src/App-prod.tsx     | ✅ Safe      | No violation (no Elements page check) |
+| src/App-prod-new.tsx | ❌ Needs Fix | Has the same violation                |
 
 ## Prevention
 
 To prevent this in the future:
+
 1. Always call all hooks at the top of components
 2. Never put conditional returns before hooks
 3. Use ESLint rule `react-hooks/rules-of-hooks`
@@ -121,4 +124,5 @@ To prevent this in the future:
 This was discovered while investigating React hooks violations after fixing the NewDirectMessage modal hook issue (see `newdirectmessage-modal-url-to-state-conversion.md`).
 
 ---
-*Last updated: 2025-01-20*
+
+_Last updated: 2025-01-20_

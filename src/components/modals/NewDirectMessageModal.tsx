@@ -25,8 +25,7 @@ const NewDirectMessageModal: React.FunctionComponent<
   let navigate = useNavigate();
   const { closeNewDirectMessage } = useModalContext();
 
-  const { data: conversations } =
-    useConversations({ type: 'direct' });
+  const { data: conversations } = useConversations({ type: 'direct' });
   const conversationsList = [
     ...conversations.pages.flatMap((c: any) => c.conversations),
   ];
@@ -36,16 +35,16 @@ const NewDirectMessageModal: React.FunctionComponent<
   const { apiClient } = useQuorumApiClient();
 
   const lookupUser = async (): Promise<boolean> => {
-      setButtonText(t`Looking up user...`);
-      try {
-        await apiClient.getUser(address);
-        return true;
-      } catch (e) {
-        setError(t`User does not exist.`);
-        return false;
-      } finally {
-        setButtonText(t`Send`);
-      }
+    setButtonText(t`Looking up user...`);
+    try {
+      await apiClient.getUser(address);
+      return true;
+    } catch (e) {
+      setError(t`User does not exist.`);
+      return false;
+    } finally {
+      setButtonText(t`Send`);
+    }
   };
 
   const resetState = () => {
@@ -89,7 +88,9 @@ const NewDirectMessageModal: React.FunctionComponent<
     try {
       base58btc.baseDecode(address);
     } catch {
-      setError(t`Invalid address format. Addresses must use valid alphanumeric characters.`);
+      setError(
+        t`Invalid address format. Addresses must use valid alphanumeric characters.`
+      );
       return;
     }
   }, [address, ownAddress]);
@@ -110,7 +111,6 @@ const NewDirectMessageModal: React.FunctionComponent<
             onChange={(e) => setAddress(e.target.value.trim())}
             placeholder={t`User address here`}
           />
-
         </div>
         {error && <div className="modal-new-direct-message-error">{error}</div>}
         <React.Suspense

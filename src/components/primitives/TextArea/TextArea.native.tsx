@@ -30,7 +30,9 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
   const theme = useTheme();
   const colors = getColors('light', 'blue'); // Use default light theme with blue accent
   const [isFocused, setIsFocused] = useState(false);
-  const [textAreaHeight, setTextAreaHeight] = useState<number | undefined>(undefined);
+  const [textAreaHeight, setTextAreaHeight] = useState<number | undefined>(
+    undefined
+  );
   const textInputRef = useRef<TextInput>(null);
 
   const getBorderColor = () => {
@@ -45,23 +47,26 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
       const { height } = event.nativeEvent.contentSize;
       const lineHeight = 20; // Line height for React Native
       const paddingHeight = 20; // Top + bottom padding
-      
+
       const minHeight = (minRows || 1) * lineHeight + paddingHeight;
       const maxHeight = (maxRows || 10) * lineHeight + paddingHeight;
-      
-      const newHeight = Math.max(minHeight, Math.min(maxHeight, height + paddingHeight));
+
+      const newHeight = Math.max(
+        minHeight,
+        Math.min(maxHeight, height + paddingHeight)
+      );
       setTextAreaHeight(newHeight);
     }
   };
 
   const getTextAreaStyles = () => {
     const baseStyles = [styles.textArea];
-    
+
     // Calculate height based on rows if not auto-resizing
-    const calculatedHeight = autoResize 
-      ? textAreaHeight 
+    const calculatedHeight = autoResize
+      ? textAreaHeight
       : Math.max(rows || 3, 1) * 20 + 20; // 20px line height + padding
-    
+
     if (variant === 'onboarding') {
       return [
         ...baseStyles,
@@ -76,7 +81,7 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
         disabled && styles.textAreaDisabled,
       ];
     }
-    
+
     return [
       ...baseStyles,
       {
@@ -90,10 +95,7 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
     ];
   };
 
-  const containerStyle = [
-    styles.container,
-    style,
-  ];
+  const containerStyle = [styles.container, style];
 
   const textAreaStyle = getTextAreaStyles();
 
@@ -104,7 +106,9 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
         style={textAreaStyle}
         value={value}
         placeholder={placeholder}
-        placeholderTextColor={variant === 'onboarding' ? colors.accent[200] : colors.text.muted}
+        placeholderTextColor={
+          variant === 'onboarding' ? colors.accent[200] : colors.text.muted
+        }
         onChangeText={onChange}
         onBlur={() => {
           setIsFocused(false);
@@ -125,7 +129,10 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
         textAlignVertical="top" // Start text at top for multiline
       />
       {error && errorMessage && (
-        <Text style={[styles.errorMessage, { color: colors.utilities.danger }]} role="alert">
+        <Text
+          style={[styles.errorMessage, { color: colors.utilities.danger }]}
+          role="alert"
+        >
           {errorMessage}
         </Text>
       )}

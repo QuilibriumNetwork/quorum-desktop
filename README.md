@@ -7,8 +7,6 @@ Powered by Quilibrium and the libp2p stack, Quorum can be used over TCP, QUIC, W
 - [Web app (beta)](https://app.quorummessenger.com/)
 - Mobile App: coming soon...
 
-
-
 ## Documentation
 
 For detailed documentation on specific features and components, please refer to the `.claude/docs` directory. You can find the complete index of available documentation in `.claude/INDEX.md`.
@@ -17,7 +15,6 @@ A complete documentation website will be created at a later time.
 ## Set up and local testing
 
 Requires Node.js, and quilibrium-js-sdk-channels cloned alongside it. Running locally in a browser against prod Quorum API requires CORS to be disabled, consult your extensions or settings to perform this.
-
 
 ```
 cd ../quilibrium-js-sdk-channels/
@@ -46,12 +43,12 @@ and in another terminal:
 yarn electron:dev
 ```
 
-*If you are on Windows, we suggest testing on WSL for better performance*.
+_If you are on Windows, we suggest testing on WSL for better performance_.
 
 ## Translation Workflow
 
 > All the existing translations (apart from English) have been created using an LLM.  
-> Communities are welcome to proofread and correct them. We are setting up a dedicated platform to do just that. 
+> Communities are welcome to proofread and correct them. We are setting up a dedicated platform to do just that.
 > **Proofreading completed for**: English, Italian.
 
 ### To Correct an Existing Language

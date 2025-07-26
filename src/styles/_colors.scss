@@ -58,6 +58,35 @@
   --color-bg-icon: var(--surface-00);
   --color-bg-input: var(--surface-3);
 
+  /* === FORM FIELD SEMANTIC COLORS === */
+  /* Field backgrounds - optimized for surface-5 containers */
+  --color-field-bg: var(--surface-3);
+  --color-field-bg-focus: var(--surface-2);
+  --color-field-bg-filled: var(--surface-2);
+  --color-field-bg-filled-focus: var(--surface-1);
+  --color-field-bg-error: var(--surface-3);
+
+  /* Field borders - using border-strong for proper contrast on surface-5 */
+  --color-field-border: var(--color-border-strong);
+  --color-field-border-hover: var(--color-border-stronger);
+  --color-field-border-focus: var(--accent);
+  --color-field-border-error: var(--danger-hex);
+
+  /* Field text colors */
+  --color-field-text: var(--color-text-main);
+  --color-field-placeholder: var(--color-text-subtle);
+
+  /* Field focus shadows */
+  --color-field-focus-shadow: rgba(var(--accent-rgb), 0.1);
+  --color-field-error-focus-shadow: rgba(var(--danger), 0.1);
+
+  /* Field dropdown/options (for Select component) */
+  --color-field-options-bg: var(--surface-1);
+  --color-field-option-hover: var(--surface-3);
+  --color-field-option-selected: var(--surface-2);
+  --color-field-option-text: var(--color-text-main);
+  --color-field-option-text-selected: var(--accent);
+
   --color-border-default: var(--surface-6);
   --color-border-strong: var(--surface-7);
   --color-border-stronger: var(--surface-8);
@@ -108,6 +137,9 @@ html.dark {
   --color-text-subtle: #bfb5c8;
   --color-text-muted: #84788b;
   --color-link-hover: var(--accent-200);
+
+  /* Field semantic - dark theme override */
+  --color-field-placeholder: var(--color-text-muted);
 
   /* utilities */
   --danger-hex: #c73737;

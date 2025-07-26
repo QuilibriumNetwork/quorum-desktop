@@ -19,17 +19,19 @@ export interface LongPressHandlers {
 
 /**
  * Custom hook for handling long-press gestures with touch and mouse support
- * 
+ *
  * @param options Configuration object for long-press behavior
  * @returns Object containing event handlers for touch and mouse events
  */
-export const useLongPress = (options: LongPressOptions = {}): LongPressHandlers => {
+export const useLongPress = (
+  options: LongPressOptions = {}
+): LongPressHandlers => {
   const {
     delay = 500,
     onLongPress,
     onTap,
     shouldPreventDefault = true,
-    threshold = 10
+    threshold = 10,
   } = options;
 
   const [longPressTriggered, setLongPressTriggered] = useState(false);
@@ -37,48 +39,61 @@ export const useLongPress = (options: LongPressOptions = {}): LongPressHandlers 
   const target = useRef<EventTarget>();
   const startPoint = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  const start = useCallback((event: React.TouchEvent | React.MouseEvent) => {
-    if (shouldPreventDefault && event.target) {
-      event.preventDefault();
-    }
-
-    const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
-    const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
-
-    startPoint.current = { x: clientX, y: clientY };
-    target.current = event.target;
-    setLongPressTriggered(false);
-
-    timeout.current = setTimeout(() => {
-      if (onLongPress) {
-        onLongPress();
-        setLongPressTriggered(true);
+  const start = useCallback(
+    (event: React.TouchEvent | React.MouseEvent) => {
+      if (shouldPreventDefault && event.target) {
+        event.preventDefault();
       }
-    }, delay);
-  }, [delay, onLongPress, shouldPreventDefault]);
 
-  const clear = useCallback((event: React.TouchEvent | React.MouseEvent, shouldTriggerClick = true) => {
-    timeout.current && clearTimeout(timeout.current);
-    
-    if (shouldTriggerClick && !longPressTriggered && onTap) {
-      onTap();
-    }
-    
-    setLongPressTriggered(false);
-  }, [longPressTriggered, onTap]);
+      const clientX =
+        'touches' in event ? event.touches[0].clientX : event.clientX;
+      const clientY =
+        'touches' in event ? event.touches[0].clientY : event.clientY;
 
-  const move = useCallback((event: React.TouchEvent | React.MouseEvent) => {
-    const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
-    const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
+      startPoint.current = { x: clientX, y: clientY };
+      target.current = event.target;
+      setLongPressTriggered(false);
 
-    const deltaX = Math.abs(clientX - startPoint.current.x);
-    const deltaY = Math.abs(clientY - startPoint.current.y);
+      timeout.current = setTimeout(() => {
+        if (onLongPress) {
+          onLongPress();
+          setLongPressTriggered(true);
+        }
+      }, delay);
+    },
+    [delay, onLongPress, shouldPreventDefault]
+  );
 
-    // If user moves finger/mouse too much, cancel long press
-    if (deltaX > threshold || deltaY > threshold) {
+  const clear = useCallback(
+    (event: React.TouchEvent | React.MouseEvent, shouldTriggerClick = true) => {
       timeout.current && clearTimeout(timeout.current);
-    }
-  }, [threshold]);
+
+      if (shouldTriggerClick && !longPressTriggered && onTap) {
+        onTap();
+      }
+
+      setLongPressTriggered(false);
+    },
+    [longPressTriggered, onTap]
+  );
+
+  const move = useCallback(
+    (event: React.TouchEvent | React.MouseEvent) => {
+      const clientX =
+        'touches' in event ? event.touches[0].clientX : event.clientX;
+      const clientY =
+        'touches' in event ? event.touches[0].clientY : event.clientY;
+
+      const deltaX = Math.abs(clientX - startPoint.current.x);
+      const deltaY = Math.abs(clientY - startPoint.current.y);
+
+      // If user moves finger/mouse too much, cancel long press
+      if (deltaX > threshold || deltaY > threshold) {
+        timeout.current && clearTimeout(timeout.current);
+      }
+    },
+    [threshold]
+  );
 
   return {
     onTouchStart: (e: React.TouchEvent) => start(e),
@@ -86,6 +101,6 @@ export const useLongPress = (options: LongPressOptions = {}): LongPressHandlers 
     onTouchMove: (e: React.TouchEvent) => move(e),
     onMouseDown: (e: React.MouseEvent) => start(e),
     onMouseUp: (e: React.MouseEvent) => clear(e),
-    onMouseLeave: (e: React.MouseEvent) => clear(e, false)
+    onMouseLeave: (e: React.MouseEvent) => clear(e, false),
   };
 };

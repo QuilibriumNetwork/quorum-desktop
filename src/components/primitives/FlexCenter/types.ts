@@ -22,7 +22,7 @@ export interface FlexCenterProps {
    */
   className?: string;
   /**
-   * Inline styles  
+   * Inline styles
    */
   style?: CSSProperties;
   /**

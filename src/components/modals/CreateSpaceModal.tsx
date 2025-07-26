@@ -16,7 +16,11 @@ import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../utils';
 import ReactTooltip from '../ReactTooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileImage, faTimes, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFileImage,
+  faTimes,
+  faInfoCircle,
+} from '@fortawesome/free-solid-svg-icons';
 
 type CreateSpaceModalProps = {
   visible: boolean;

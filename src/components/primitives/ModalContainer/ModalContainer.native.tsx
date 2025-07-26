@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { 
-  Modal, 
-  View, 
-  Animated, 
-  StyleSheet, 
+import {
+  Modal,
+  View,
+  Animated,
+  StyleSheet,
   TouchableWithoutFeedback,
   BackHandler,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { ModalContainerProps } from './types';
 import { useCrossPlatformTheme } from '../theme/ThemeProvider';
@@ -62,10 +62,13 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   useEffect(() => {
     if (!visible || !closeOnEscape || !onClose) return;
 
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      onClose();
-      return true;
-    });
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        onClose();
+        return true;
+      }
+    );
 
     return () => backHandler.remove();
   }, [visible, closeOnEscape, onClose]);
@@ -86,18 +89,18 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
       <View style={styles.container}>
         {showBackdrop && (
           <TouchableWithoutFeedback onPress={handleBackdropPress}>
-            <Animated.View 
+            <Animated.View
               style={[
-                styles.backdrop, 
-                { 
+                styles.backdrop,
+                {
                   backgroundColor: colors.bg.overlay,
-                  opacity: opacity 
-                }
-              ]} 
+                  opacity: opacity,
+                },
+              ]}
             />
           </TouchableWithoutFeedback>
         )}
-        
+
         <Animated.View
           style={[
             styles.content,

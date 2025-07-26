@@ -24,7 +24,7 @@ interface SearchResultItemProps {
 }
 
 // Component for DM search results
-const DMSearchResultItem: React.FC<SearchResultItemProps> =({
+const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   result,
   onNavigate,
   highlightTerms,
@@ -33,7 +33,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> =({
 }) => {
   const { message } = result;
   const { messageDB } = useMessageDB();
-  const [icon, setIcon] = React.useState<string >(DefaultImages.UNKNOWN_USER);
+  const [icon, setIcon] = React.useState<string>(DefaultImages.UNKNOWN_USER);
   const [displayName, setDisplayName] = React.useState<string>(t`Unknown User`);
   const { currentPasskeyInfo } = usePasskeysContext();
 
@@ -44,7 +44,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> =({
         const conversationId = `${message.content.senderId}/${message.content.senderId}`;
         console.log('conversationId', conversationId);
         const { conversation } = await messageDB.getConversation({
-          conversationId
+          conversationId,
         });
         if (conversation) {
           setIcon(conversation.icon);
@@ -56,7 +56,11 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> =({
     };
     if (message.content.senderId !== currentPasskeyInfo!.address) {
       fetchUserInfo();
-    } else if (currentPasskeyInfo && currentPasskeyInfo.pfpUrl && currentPasskeyInfo.displayName) {
+    } else if (
+      currentPasskeyInfo &&
+      currentPasskeyInfo.pfpUrl &&
+      currentPasskeyInfo.displayName
+    ) {
       setIcon(currentPasskeyInfo.pfpUrl);
       setDisplayName(currentPasskeyInfo.displayName);
     }
@@ -103,9 +107,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
     .find((g) => g.channels.find((c) => c.channelId === message.channelId))
     ?.channels.find((c) => c.channelId === message.channelId);
 
-  const displayName =
-    userInfo.display_name ||
-    t`Unknown User`;
+  const displayName = userInfo.display_name || t`Unknown User`;
   const spaceName = spaceInfo?.spaceName || t`Unknown Space`;
   const channelName = channel?.channelName || message.channelId;
 
@@ -289,11 +291,18 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
     >
       <div className="result-header">
         <div className="result-meta">
-          {isDM && icon && <div className="result-user-profile-image" style={{ backgroundImage: `url(${icon})` }} />}
-          {!isDM && <FontAwesomeIcon
-            icon={isDM ? faUser : getMessageTypeIcon(message)}
-            className="result-type-icon"
-          />}
+          {isDM && icon && (
+            <div
+              className="result-user-profile-image"
+              style={{ backgroundImage: `url(${icon})` }}
+            />
+          )}
+          {!isDM && (
+            <FontAwesomeIcon
+              icon={isDM ? faUser : getMessageTypeIcon(message)}
+              className="result-type-icon"
+            />
+          )}
           <span className="result-channel mr-2">{channelName}</span>
 
           {!isDM && (

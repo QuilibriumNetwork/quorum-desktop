@@ -6,7 +6,9 @@ export interface InputProps {
   /** Placeholder text */
   placeholder?: string;
   /** Change handler - can be either string value or React event */
-  onChange?: ((value: string) => void) | ((e: React.ChangeEvent<HTMLInputElement>) => void);
+  onChange?:
+    | ((value: string) => void)
+    | ((e: React.ChangeEvent<HTMLInputElement>) => void);
   /** Input variant */
   variant?: 'default' | 'onboarding';
   /** Blur handler */
@@ -38,7 +40,14 @@ export interface InputProps {
 // React Native specific props
 export interface InputNativeProps extends Omit<InputProps, 'className'> {
   /** Keyboard type for React Native */
-  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'number-pad' | 'decimal-pad' | 'url';
+  keyboardType?:
+    | 'default'
+    | 'email-address'
+    | 'numeric'
+    | 'phone-pad'
+    | 'number-pad'
+    | 'decimal-pad'
+    | 'url';
   /** Return key type */
   returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
   /** Auto complete type */

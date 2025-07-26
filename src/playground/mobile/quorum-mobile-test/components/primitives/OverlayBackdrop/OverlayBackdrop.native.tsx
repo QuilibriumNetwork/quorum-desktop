@@ -1,5 +1,10 @@
 import React from 'react';
-import { Modal, View, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import {
+  Modal,
+  View,
+  TouchableWithoutFeedback,
+  StyleSheet,
+} from 'react-native';
 import { OverlayBackdropProps } from './types';
 import { useCrossPlatformTheme } from '../theme/ThemeProvider';
 

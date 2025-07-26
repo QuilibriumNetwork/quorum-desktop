@@ -13,7 +13,7 @@ export const FlexCenter: React.FC<FlexCenterProps> = ({
 }) => {
   const justifyClass = direction === 'vertical' ? '' : 'justify-center';
   const alignClass = direction === 'horizontal' ? '' : 'items-center';
-  
+
   const classes = clsx(
     'flex',
     justifyClass,

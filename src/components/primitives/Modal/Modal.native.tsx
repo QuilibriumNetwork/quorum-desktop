@@ -1,6 +1,15 @@
 import React, { useCallback, useMemo, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import BottomSheet, { BottomSheetView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
+import BottomSheet, {
+  BottomSheetView,
+  BottomSheetBackdrop,
+} from '@gorhom/bottom-sheet';
 import { NativeModalProps } from './types';
 import { useTheme } from '../theme';
 import { getColors } from '../theme/colors';
@@ -52,12 +61,15 @@ const Modal: React.FC<NativeModalProps> = ({
   }, [onClose]);
 
   // Handle sheet changes
-  const handleSheetChanges = useCallback((index: number) => {
-    if (index === -1) {
-      // Sheet closed
-      handleClose();
-    }
-  }, [handleClose]);
+  const handleSheetChanges = useCallback(
+    (index: number) => {
+      if (index === -1) {
+        // Sheet closed
+        handleClose();
+      }
+    },
+    [handleClose]
+  );
 
   // Custom backdrop component
   const renderBackdrop = useCallback(
@@ -86,7 +98,7 @@ const Modal: React.FC<NativeModalProps> = ({
       enablePanDownToClose={swipeToClose}
       backdropComponent={renderBackdrop}
       backgroundStyle={{ backgroundColor: colors.surface[1] }}
-      handleIndicatorStyle={{ 
+      handleIndicatorStyle={{
         backgroundColor: colors.surface[5],
         opacity: swipeToClose ? 0.6 : 0,
       }}
@@ -100,23 +112,23 @@ const Modal: React.FC<NativeModalProps> = ({
                 {title}
               </Text>
             )}
-            
+
             {!hideClose && (
               <TouchableOpacity
                 style={styles.closeButton}
                 onPress={handleClose}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Text style={[styles.closeText, { color: colors.text.main }]}>✕</Text>
+                <Text style={[styles.closeText, { color: colors.text.main }]}>
+                  ✕
+                </Text>
               </TouchableOpacity>
             )}
           </View>
         )}
 
         {/* Content */}
-        <View style={styles.content}>
-          {children}
-        </View>
+        <View style={styles.content}>{children}</View>
       </BottomSheetView>
     </BottomSheet>
   );

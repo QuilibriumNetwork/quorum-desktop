@@ -7,6 +7,7 @@ During development, you can test all primitives by navigating to:
 **URL**: `/primitives`
 
 Example: If running locally on port 5173, visit:
+
 ```
 http://localhost:5173/primitives
 ```
@@ -16,17 +17,20 @@ http://localhost:5173/primitives
 The Primitives Playground includes:
 
 ### 1. ModalContainer Testing
+
 - Modal with backdrop (click outside or ESC to close)
 - Modal without backdrop (ESC only)
 - Tests animation states
 - Verifies z-index layering
 
 ### 2. OverlayBackdrop Testing
+
 - Standalone backdrop with content
 - Click-outside functionality
 - Blur effect verification
 
 ### 3. Future Primitives (Placeholders)
+
 - FlexRow, FlexBetween, FlexCenter
 - ResponsiveContainer
 - Button primitive
@@ -62,6 +66,7 @@ When you create a new primitive:
 - Test with keyboard-only navigation
 
 ---
+
 ---
 
 # Mobile Testing Workflow - Complete Beginner's Guide
@@ -73,11 +78,13 @@ This guide explains how to test the primitives we're building for both web (desk
 ## Part 1: Testing on Desktop (What You're Doing Now)
 
 ### Current Setup
+
 - **Where**: Your browser at `http://localhost:5173/primitives`
 - **What**: Testing that primitives work correctly on desktop
 - **Why**: Ensure no regressions in existing desktop functionality
 
 ### Desktop Testing Checklist
+
 1. ✅ Visual appearance matches current app style
 2. ✅ Animations are smooth
 3. ✅ Click interactions work
@@ -92,6 +99,7 @@ This guide explains how to test the primitives we're building for both web (desk
 We successfully implemented mobile testing during **Phase 1D**. Our primitives now work on both desktop and mobile!
 
 **Current Status**:
+
 - `.web.tsx` - Desktop versions (what you see on web)
 - `.native.tsx` - Mobile versions (working on React Native)
 - **Cross-platform architecture proven** ✅
@@ -113,6 +121,7 @@ We successfully implemented mobile testing during **Phase 1D**. Our primitives n
 ### Step-by-Step Mobile Testing
 
 #### 1. Start the Mobile Test Environment
+
 ```bash
 cd src/playground/mobile/quorum-mobile-test
 yarn start --tunnel
@@ -123,23 +132,27 @@ yarn start --tunnel
 #### 2. Connect Your Mobile Device
 
 **Option A - QR Code (Preferred)**:
+
 1. QR code appears in terminal after `yarn start --tunnel`
 2. Open Expo Go app on your device
 3. Scan QR code with Expo Go camera
 
 **Option B - Manual URL Entry**:
+
 1. Look for tunnel URL in terminal: `exp://xyz-abc.tunnel.exp.direct:80`
-2. Open Expo Go app → "Enter URL manually" 
+2. Open Expo Go app → "Enter URL manually"
 3. Type the exact tunnel URL
 
 #### 3. Test Both Platforms
 
 **Web Testing (Quick Development)**:
+
 - Access `http://localhost:8081` in browser
 - Shows React Native components via react-native-web
 - Good for rapid iteration and layout checks
 
 **Mobile Testing (Full Validation)**:
+
 - Use Expo Go app with tunnel URL
 - Tests actual React Native implementations (.native.tsx files)
 - Essential for touch interactions, performance, native behaviors
@@ -153,6 +166,7 @@ yarn start --tunnel
 **Testing Coverage**: 90% of mobile validation needs
 
 **What Android testing validates**:
+
 - ✅ Cross-platform primitive architecture
 - ✅ React Native performance and rendering
 - ✅ Touch interactions and gestures
@@ -167,6 +181,7 @@ yarn start --tunnel
 **Testing Coverage**: Platform-specific iOS behaviors
 
 **What iPhone testing adds**:
+
 - 🍎 iOS-specific touch handling and gestures
 - 🍎 iPhone notch/Dynamic Island SafeAreaView differences
 - 🍎 iOS navigation patterns and back gestures
@@ -176,14 +191,17 @@ yarn start --tunnel
 #### Testing Strategy by Development Phase
 
 **Phase 1-2 (Primitive Development)**:
+
 - **Android testing sufficient** for validating core architecture
 - **iPhone testing optional** - primitives work identically on both platforms
 
 **Phase 3-4 (Advanced Features)**:
+
 - **Android testing required** for continued development
 - **iPhone testing recommended** for platform-specific behaviors
 
 **Phase 5-6 (Production Ready)**:
+
 - **Both platforms required** for app store submission
 - **iPhone testing essential** for iOS-specific polish
 
@@ -197,6 +215,7 @@ yarn start --tunnel
 4. **Test**: Same primitives testing as Android, but note iOS-specific behaviors
 
 **What to ask iPhone testers to check**:
+
 - Does the app load and display correctly?
 - Do touch interactions feel natural and responsive?
 - Are there any layout issues specific to iPhone screen sizes?
@@ -204,6 +223,7 @@ yarn start --tunnel
 - Any performance issues or frame drops?
 
 **When to involve iPhone testers**:
+
 - After major primitive additions
 - Before important milestones
 - When testing advanced gestures or navigation
@@ -212,6 +232,7 @@ yarn start --tunnel
 #### Testing Parity
 
 **Important**: Both Android and iPhone run **identical React Native code** (.native.tsx files). The differences are in:
+
 - Platform-specific styling nuances
 - Touch feedback timing
 - Native gesture recognition
@@ -222,9 +243,10 @@ yarn start --tunnel
 ### What You'll See on Mobile
 
 Our current mobile test app shows:
+
 - 🚀 **Mobile Primitives Test** title
 - **Flex Layout Test**: FlexRow primitive with 3 items
-- **Space Between Test**: FlexBetween primitive  
+- **Space Between Test**: FlexBetween primitive
 - **Center Test**: FlexCenter primitive
 - **Success message** confirming architecture works
 
@@ -255,11 +277,13 @@ Our current mobile test app shows:
 ### Quick vs Full Testing
 
 **🚀 Quick Development (Web)**:
+
 - Use `http://localhost:8081` (mobile test environment web view)
 - Rapid iteration for layout and basic functionality
 - React Native components rendered via react-native-web
 
 **📱 Full Validation (Mobile)**:
+
 - Use Expo Go app with tunnel URL
 - Essential for touch interactions and native behaviors
 - Tests actual React Native (.native.tsx) implementations
@@ -267,11 +291,13 @@ Our current mobile test app shows:
 ### How to Report Issues
 
 **Desktop Issues**:
+
 - Test in main app primitives playground
 - Note browser console errors
 - Check responsive behavior
 
 **Mobile Issues**:
+
 - Test in Expo Go app
 - Note touch interaction problems
 - Check performance and animations
@@ -303,6 +329,7 @@ Our current mobile test app shows:
 
 **Problem**: React Native bundling errors  
 **Solution**: Use Expo-compatible versions:
+
 ```bash
 npx expo install react-dom@19.0.0 react-native-gesture-handler@~2.24.0
 ```
@@ -316,7 +343,7 @@ npx expo install react-dom@19.0.0 react-native-gesture-handler@~2.24.0
 ✅ **Mobile Test Environment Functional**  
 ✅ **Tunnel Mode for WSL2 Compatibility**
 
-### Testing Workflow 
+### Testing Workflow
 
 ```
 Desktop Development → Quick Web Check → Mobile Validation → Commit
@@ -368,18 +395,21 @@ A: FlexRow, FlexBetween, FlexCenter are proven working. Button and Modal need mo
 ## Development Tips
 
 ### For Quick Iteration
+
 1. **Develop on Desktop**: Use main app `/primitives` playground
 2. **Quick Check on Web**: Use `http://localhost:8081` mobile test web view
 3. **Mobile Validation**: Test on device every few changes
 4. **Commit When Both Work**: Ensure cross-platform consistency
 
 ### For Mobile-Specific Features
+
 - **SafeAreaView integration**: Test with real device notches
 - **Touch target sizes**: Ensure 44pt minimum for accessibility
 - **Performance monitoring**: Watch for frame drops on older devices
 - **Platform-specific behaviors**: Android back button, iOS gestures
 
 ### For iPhone Testing Collaboration
+
 1. **Share tunnel URL**: Send `exp://xyz-abc.tunnel.exp.direct:80` to iPhone user
 2. **Simple instructions**: "Install Expo Go app, enter URL manually"
 3. **Test same features**: iPhone users test identical primitive functionality
@@ -387,4 +417,4 @@ A: FlexRow, FlexBetween, FlexCenter are proven working. Button and Modal need mo
 
 ---
 
-*Last updated: 2025-07-25 (Phase 1D mobile testing implementation)*
+_Last updated: 2025-07-25 (Phase 1D mobile testing implementation)_

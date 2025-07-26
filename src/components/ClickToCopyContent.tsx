@@ -75,7 +75,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
       setCopied(true);
       setHideTooltip(false);
       if (onCopy) onCopy();
-      
+
       if (isTouchDevice()) {
         setTimeout(() => {
           setHideTooltip(true);

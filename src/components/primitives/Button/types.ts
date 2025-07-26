@@ -1,6 +1,6 @@
 export interface BaseButtonProps {
   id?: string;
-  type?: 
+  type?:
     | 'primary'
     | 'secondary'
     | 'light'

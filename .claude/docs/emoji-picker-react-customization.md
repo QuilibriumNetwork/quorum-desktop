@@ -9,12 +9,14 @@
 ## Available CSS Variables
 
 ### Core Styling
+
 - `--epr-emoji-size`: Controls emoji size
 - `--epr-emoji-gap`: Space between emojis
 - `--epr-bg-color`: Picker background color
 - `--epr-text-color`: Text color in the picker
 
 ### Interactive States
+
 - `--epr-hover-bg-color`: Hovered emoji background color
 - `--epr-category-label-bg-color`: Category label background (should match bg-color)
 

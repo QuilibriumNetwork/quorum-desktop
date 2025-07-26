@@ -38,13 +38,13 @@ const GroupEditor: React.FunctionComponent<{
     const checkGroupMessages = async () => {
       if (groupName && space && messageDB) {
         try {
-          const group = space.groups.find(g => g.groupName === groupName);
+          const group = space.groups.find((g) => g.groupName === groupName);
           if (group) {
             for (const channel of group.channels) {
               const messages = await messageDB.getMessages({
                 spaceId,
                 channelId: channel.channelId,
-                limit: 1
+                limit: 1,
               });
               if (messages.messages.length > 0) {
                 setHasMessages(true);
@@ -136,10 +136,13 @@ const GroupEditor: React.FunctionComponent<{
             </div>
             {hasMessages && showWarning && (
               <div className="error-label mb-3 relative pr-8">
-                <Trans>Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!</Trans>
-                <FontAwesomeIcon 
-                  icon={faTimes} 
-                  className="absolute top-2 right-2 cursor-pointer hover:opacity-70" 
+                <Trans>
+                  Are you sure? This group contains channels with messages.
+                  Deleting it will cause all content to be lost forever!
+                </Trans>
+                <FontAwesomeIcon
+                  icon={faTimes}
+                  className="absolute top-2 right-2 cursor-pointer hover:opacity-70"
                   onClick={() => setShowWarning(false)}
                 />
               </div>
@@ -155,16 +158,15 @@ const GroupEditor: React.FunctionComponent<{
                         setShowWarning(true);
                       }
                       // Reset confirmation after 5 seconds
-                      setTimeout(
-                        () => setDeleteConfirmationStep(0),
-                        5000
-                      );
+                      setTimeout(() => setDeleteConfirmationStep(0), 5000);
                     } else {
                       deleteGroup();
                     }
                   }}
                 >
-                  {deleteConfirmationStep === 0 ? t`Delete Group` : t`Click again to confirm`}
+                  {deleteConfirmationStep === 0
+                    ? t`Delete Group`
+                    : t`Click again to confirm`}
                 </Button>
               )}
               <Button type="primary" onClick={() => saveChanges()}>

@@ -6,7 +6,9 @@ export interface TextAreaProps {
   /** Placeholder text */
   placeholder?: string;
   /** Change handler - can be either string value or React event */
-  onChange?: ((value: string) => void) | ((e: React.ChangeEvent<HTMLTextAreaElement>) => void);
+  onChange?:
+    | ((value: string) => void)
+    | ((e: React.ChangeEvent<HTMLTextAreaElement>) => void);
   /** TextArea variant */
   variant?: 'default' | 'onboarding';
   /** Blur handler */
@@ -44,7 +46,8 @@ export interface TextAreaProps {
 }
 
 // React Native specific props
-export interface TextAreaNativeProps extends Omit<TextAreaProps, 'className' | 'resize'> {
+export interface TextAreaNativeProps
+  extends Omit<TextAreaProps, 'className' | 'resize'> {
   /** Return key type */
   returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send' | 'default';
   /** Auto complete type */

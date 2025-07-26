@@ -37,7 +37,10 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   maxHeight = 400,
 }) => {
   // Extract search terms from query
-  const searchTerms = query.trim().split(/\s+/).filter(term => term.length > 0);
+  const searchTerms = query
+    .trim()
+    .split(/\s+/)
+    .filter((term) => term.length > 0);
   const containerRef = useRef<HTMLDivElement>(null);
   const updateTimeoutRef = useRef<NodeJS.Timeout>();
 
@@ -46,10 +49,10 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   // Debounced dimension update function
   const updateDimensions = useCallback(() => {
     if (!containerRef.current) return;
-    
+
     requestAnimationFrame(() => {
       if (!containerRef.current) return;
-      
+
       const viewportWidth = window.innerWidth;
       const isMobile = viewportWidth <= 1023;
       const navMenuWidth = isMobile ? 74 : 0;

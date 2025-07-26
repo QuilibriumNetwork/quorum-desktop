@@ -38,13 +38,14 @@ export const FlexRow: React.FC<FlexRowProps> = ({
   style,
   ...rest
 }) => {
-  const gapClass = typeof gap === 'string' && gap in gapMap 
-    ? gapMap[gap as keyof typeof gapMap]
-    : typeof gap === 'number' 
-    ? `gap-${gap}`
-    : typeof gap === 'string'
-    ? gap
-    : 'gap-0';
+  const gapClass =
+    typeof gap === 'string' && gap in gapMap
+      ? gapMap[gap as keyof typeof gapMap]
+      : typeof gap === 'number'
+        ? `gap-${gap}`
+        : typeof gap === 'string'
+          ? gap
+          : 'gap-0';
 
   const classes = clsx(
     'flex flex-row',

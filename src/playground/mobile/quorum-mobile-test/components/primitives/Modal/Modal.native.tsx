@@ -1,17 +1,17 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  Animated, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
   Dimensions,
   Modal as RNModal,
   TouchableWithoutFeedback,
   PanResponder,
   ScrollView,
   KeyboardAvoidingView,
-  Platform
+  Platform,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeModalProps } from './types';
@@ -35,7 +35,7 @@ const Modal: React.FC<NativeModalProps> = ({
   const insets = useSafeAreaInsets();
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width;
-  
+
   const translateY = useRef(new Animated.Value(screenHeight)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
 
@@ -56,7 +56,7 @@ const Modal: React.FC<NativeModalProps> = ({
   };
 
   const modalHeight = getModalHeight();
-  
+
   // Determine if we're on a tablet based on screen width
   const isTablet = screenWidth >= 768;
 
@@ -137,14 +137,11 @@ const Modal: React.FC<NativeModalProps> = ({
     >
       <View style={styles.container}>
         {/* Backdrop */}
-        <TouchableWithoutFeedback 
+        <TouchableWithoutFeedback
           onPress={closeOnBackdropClick ? handleClose : undefined}
         >
-          <Animated.View 
-            style={[
-              styles.backdrop,
-              { opacity: backdropOpacity }
-            ]} 
+          <Animated.View
+            style={[styles.backdrop, { opacity: backdropOpacity }]}
           />
         </TouchableWithoutFeedback>
 
@@ -164,7 +161,9 @@ const Modal: React.FC<NativeModalProps> = ({
         >
           {/* Handle indicator */}
           {swipeToClose && (
-            <View style={[styles.handle, { backgroundColor: colors.surface[5] }]} />
+            <View
+              style={[styles.handle, { backgroundColor: colors.surface[5] }]}
+            />
           )}
 
           {/* Header */}
@@ -175,30 +174,34 @@ const Modal: React.FC<NativeModalProps> = ({
                   {title}
                 </Text>
               )}
-              
+
               {!hideClose && (
                 <TouchableOpacity
                   style={styles.closeButton}
                   onPress={handleClose}
                   hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                 >
-                  <Text style={[styles.closeText, { color: colors.text.main }]}>✕</Text>
+                  <Text style={[styles.closeText, { color: colors.text.main }]}>
+                    ✕
+                  </Text>
                 </TouchableOpacity>
               )}
             </View>
           )}
 
           {/* Content */}
-          <KeyboardAvoidingView 
+          <KeyboardAvoidingView
             style={styles.content}
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             enabled={keyboardAvoidingView}
           >
-            <ScrollView 
-              showsVerticalScrollIndicator={false}
-              bounces={false}
-            >
-              <View style={[styles.contentContainer, { paddingBottom: insets.bottom + 16 }]}>
+            <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+              <View
+                style={[
+                  styles.contentContainer,
+                  { paddingBottom: insets.bottom + 16 },
+                ]}
+              >
                 {children}
               </View>
             </ScrollView>

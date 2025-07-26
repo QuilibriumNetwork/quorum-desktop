@@ -54,6 +54,7 @@ class MessageDB {
 ```
 
 **Object Stores**:
+
 - `messages` - All chat messages with full content
 - `conversations` - Direct message conversations
 - `encryption_states` - Encryption state management
@@ -69,12 +70,14 @@ class MessageDB {
 ### 2. localStorage (Preferences & Settings)
 
 **Usage Locations**:
+
 - `src/components/context/ThemeProvider.tsx` - Theme preferences
 - `src/components/AccentColorSwitcher.tsx` - Accent color selection
 - `src/i18n/i18n.ts` - Language preferences
 - Various components for temporary state
 
 **Stored Data**:
+
 ```typescript
 // Theme and visual preferences
 localStorage.setItem('theme', 'dark|light|system');
@@ -88,6 +91,7 @@ localStorage.setItem(`userStatus_${address}`, status);
 ### 3. Memory Storage (React State)
 
 **Context Providers**: Manage in-memory state and provide data access patterns
+
 - **MessageDB Context** (`src/components/context/MessageDB.tsx`)
 - **WebSocket Context** (`src/components/context/WebsocketProvider.tsx`)
 - **Registration Context** (`src/components/context/RegistrationPersister.tsx`)
@@ -111,6 +115,7 @@ class QuorumApiClient {
 ### IndexedDB Schema (Version 2)
 
 #### Messages Store
+
 ```typescript
 {
   keyPath: 'messageId',
@@ -121,6 +126,7 @@ class QuorumApiClient {
 ```
 
 #### Conversations Store
+
 ```typescript
 {
   keyPath: ['conversationId'],
@@ -131,20 +137,23 @@ class QuorumApiClient {
 ```
 
 #### Encryption States Store
+
 ```typescript
 {
-  keyPath: ['conversationId', 'inboxId']
+  keyPath: ['conversationId', 'inboxId'];
 }
 ```
 
 #### Spaces Store
+
 ```typescript
 {
-  keyPath: 'spaceId'
+  keyPath: 'spaceId';
 }
 ```
 
 #### Space Members Store
+
 ```typescript
 {
   keyPath: ['spaceId', 'user_address'],
@@ -155,15 +164,17 @@ class QuorumApiClient {
 ```
 
 #### User Config Store
+
 ```typescript
 {
-  keyPath: 'address'
+  keyPath: 'address';
 }
 ```
 
 ### Database Operations
 
 **Message Retrieval**:
+
 ```typescript
 async getMessages({
   spaceId,
@@ -179,6 +190,7 @@ async getMessages({
 ```
 
 **Space Management**:
+
 ```typescript
 async getSpace(spaceId: string): Promise<Space | undefined>
 async saveSpace(space: Space): Promise<void>
@@ -192,6 +204,7 @@ async deleteSpace(spaceId: string): Promise<void>
 ### Message Types
 
 **Core Message Interface** (`src/api/quorumApi.ts`):
+
 ```typescript
 export type Message = {
   channelId: string;
@@ -202,9 +215,18 @@ export type Message = {
   createdDate: number;
   modifiedDate: number;
   lastModifiedHash: string;
-  content: PostMessage | EventMessage | EmbedMessage | ReactionMessage | 
-           RemoveReactionMessage | RemoveMessage | JoinMessage | 
-           LeaveMessage | KickMessage | UpdateProfileMessage | StickerMessage;
+  content:
+    | PostMessage
+    | EventMessage
+    | EmbedMessage
+    | ReactionMessage
+    | RemoveReactionMessage
+    | RemoveMessage
+    | JoinMessage
+    | LeaveMessage
+    | KickMessage
+    | UpdateProfileMessage
+    | StickerMessage;
   reactions: Reaction[];
   mentions: Mentions;
   publicKey?: string;
@@ -213,6 +235,7 @@ export type Message = {
 ```
 
 **Message Content Types**:
+
 - `PostMessage` - Regular text messages
 - `EventMessage` - System events
 - `EmbedMessage` - Rich content embeds
@@ -247,12 +270,13 @@ submitMessage: (
   currentPasskeyInfo: PasskeyInfo,
   keyset: KeysetInfo,
   inReplyTo?: string
-) => Promise<void>
+) => Promise<void>;
 ```
 
 ### Encryption & Decryption
 
 **Encrypted Message Structure**:
+
 ```typescript
 interface EncryptedMessage {
   encryptedContent: string;
@@ -275,12 +299,14 @@ interface DecryptionResult {
 **Passkey-Based Authentication**: Uses Web Authentication API through Quilibrium SDK
 
 **User Registration Flow**:
+
 1. Passkey creation/selection
 2. User registration with server
 3. Local keyset generation
 4. Profile configuration
 
 **Registration Context** (`src/components/context/RegistrationPersister.tsx`):
+
 ```typescript
 type RegistrationContextValue = {
   keyset: {
@@ -293,6 +319,7 @@ type RegistrationContextValue = {
 ### User Configuration
 
 **User Config Structure**:
+
 ```typescript
 export type UserConfig = {
   address: string;
@@ -322,6 +349,7 @@ export type UserConfig = {
 ### Profile Management
 
 **User Profile Data**:
+
 - Display name
 - Profile picture URL
 - Online status
@@ -380,6 +408,7 @@ export type Channel = {
 ### Permission System
 
 **Role-Based Access Control**:
+
 ```typescript
 export type Role = {
   roleId: string;
@@ -396,6 +425,7 @@ export type Permission = 'message:delete';
 ### Space Operations
 
 **Space Creation** (`src/components/context/MessageDB.tsx`):
+
 ```typescript
 createSpace: (
   spaceName: string,
@@ -404,7 +434,7 @@ createSpace: (
   registration: secureChannel.UserRegistration,
   isRepudiable: boolean,
   isPublic: boolean
-) => Promise<void>
+) => Promise<void>;
 ```
 
 **Space Membership**: Managed through `space_members` object store with efficient indexing for membership queries.
@@ -418,6 +448,7 @@ createSpace: (
 **Location**: `src/components/context/WebsocketProvider.tsx`
 
 **Key Features**:
+
 - Persistent connection management
 - Message queuing for reliability
 - Automatic reconnection
@@ -435,6 +466,7 @@ interface WebSocketContextValue {
 ### Message Processing
 
 **Inbound Message Flow**:
+
 1. Receive encrypted message via WebSocket
 2. Queue message for processing
 3. Decrypt message content
@@ -443,6 +475,7 @@ interface WebSocketContextValue {
 6. Trigger UI updates
 
 **Outbound Message Flow**:
+
 1. Compose message in UI
 2. Encrypt message content
 3. Store locally first
@@ -453,6 +486,7 @@ interface WebSocketContextValue {
 ### Queue Management
 
 **Message Queuing System**:
+
 ```typescript
 const messageQueue = useRef<EncryptedMessage[]>([]);
 const outboundQueue = useRef<OutboundMessage[]>([]);
@@ -460,14 +494,14 @@ const outboundQueue = useRef<OutboundMessage[]>([]);
 const processQueue = async () => {
   // Process inbound messages by inbox
   let inboxMap = new Map<string, EncryptedMessage[]>();
-  
+
   // Batch process messages per inbox
   for (const [_, messages] of inboxMap) {
     for (const message of messages) {
       await handlerRef.current!(message);
     }
   }
-  
+
   // Process outbound messages
   while ((outbound = dequeueOutbound())) {
     const messages = await outbound();
@@ -485,6 +519,7 @@ const processQueue = async () => {
 **Query Organization**: Structured query hooks in `src/hooks/queries/`
 
 **Key Query Types**:
+
 - **Messages**: `useMessages`, `useInvalidateMessages`
 - **Spaces**: `useSpaces`, `useSpace`, `useSpaceMembers`
 - **Conversations**: `useConversations`, `useConversation`
@@ -492,11 +527,12 @@ const processQueue = async () => {
 - **Configuration**: `useConfig`
 
 **Query Key Patterns**:
+
 ```typescript
 // Message queries
 buildMessagesKey({ spaceId, channelId, cursor });
 
-// Space queries  
+// Space queries
 buildSpaceKey({ spaceId });
 buildSpaceMembersKey({ spaceId });
 
@@ -525,6 +561,7 @@ buildConversationKey({ conversationId });
 ### Data Invalidation
 
 **Cache Invalidation Patterns**:
+
 ```typescript
 // Invalidate specific queries
 const invalidateMessages = useInvalidateMessages();
@@ -558,6 +595,7 @@ await submitMessage(...);
 **Quilibrium SDK Integration**: `@quilibrium/quilibrium-js-sdk-channels`
 
 **Key Components**:
+
 - User keysets for identity
 - Device keysets for sessions
 - Per-space encryption keys
@@ -566,6 +604,7 @@ await submitMessage(...);
 ### Key Management
 
 **Keyset Structure**:
+
 ```typescript
 interface KeysetInfo {
   userKeyset: secureChannel.UserKeyset;
@@ -574,13 +613,15 @@ interface KeysetInfo {
 ```
 
 **Key Storage**:
+
 - User keys: Stored in `user_config` object store
-- Space keys: Stored in `space_keys` object store  
+- Space keys: Stored in `space_keys` object store
 - Device keys: Generated per session
 
 ### Encryption States
 
-**State Tracking**: 
+**State Tracking**:
+
 ```typescript
 interface EncryptionState {
   state: string;
@@ -609,11 +650,13 @@ interface EncryptionState {
 **Location**: `src/config/`
 
 **Configuration Files**:
+
 - `config.ts` - Main configuration entry point
 - `config.quorum.ts` - Production Quorum API endpoints
 - `config.local.ts` - Local development endpoints
 
 **Production Config**:
+
 ```typescript
 export const getQuorumApiConfig = function () {
   return {
@@ -628,11 +671,13 @@ export const getQuorumApiConfig = function () {
 ### User Preferences
 
 **Theme Management** (`src/components/context/ThemeProvider.tsx`):
+
 - Light/dark/system theme selection
 - Accent color customization
 - Automatic system theme detection
 
 **Internationalization** (`src/i18n/`):
+
 - Multi-language support via Lingui
 - Dynamic locale switching
 - Persistent language preferences
@@ -646,6 +691,7 @@ export const getQuorumApiConfig = function () {
 **Location**: `src/services/searchService.ts`
 
 **Search Service Features**:
+
 - Full-text search using MiniSearch
 - Context-aware search (space/DM scoped)
 - Debounced queries for performance
@@ -663,6 +709,7 @@ export class SearchService {
 ### Search Index Management
 
 **Searchable Message Structure**:
+
 ```typescript
 interface SearchableMessage {
   id: string;
@@ -677,6 +724,7 @@ interface SearchableMessage {
 ```
 
 **Index Initialization**:
+
 ```typescript
 // Per-context search indices
 private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
@@ -688,6 +736,7 @@ await this.messageDB.initializeSearchIndices();
 ### Search Context
 
 **Context Types**:
+
 ```typescript
 interface SearchContext {
   type: 'space' | 'dm';
@@ -698,6 +747,7 @@ interface SearchContext {
 ```
 
 **Search Execution**:
+
 - Scope search to current context
 - Return ranked results with highlighting
 - Cache results for performance
@@ -719,6 +769,7 @@ interface SearchContext {
 ### State Synchronization
 
 **Cross-Component State Flow**:
+
 1. User action triggers state change
 2. Context provider updates internal state
 3. React Query cache updated/invalidated
@@ -729,12 +780,13 @@ interface SearchContext {
 ### Error Handling
 
 **Error Boundary Implementation**:
+
 ```typescript
 class ErrorBoundary extends React.Component {
   static getDerivedStateFromError(error: any) {
     return { hasError: true };
   }
-  
+
   componentDidCatch(error: any, info: any) {
     // Log error for debugging
     console.log(error, info);
@@ -743,6 +795,7 @@ class ErrorBoundary extends React.Component {
 ```
 
 **Network Error Handling**:
+
 - Automatic retry with exponential backoff
 - Offline state detection
 - Queue management for failed operations
@@ -755,11 +808,13 @@ class ErrorBoundary extends React.Component {
 ### Database Optimization
 
 **Indexing Strategy**:
+
 - Composite indexes for common query patterns
 - Time-based ordering for message pagination
 - User-based indexes for membership queries
 
 **Query Optimization**:
+
 - Cursor-based pagination for large datasets
 - Lazy loading of message content
 - Efficient range queries using IDBKeyRange
@@ -767,6 +822,7 @@ class ErrorBoundary extends React.Component {
 ### Caching Strategy
 
 **Cache Layers**:
+
 1. **Browser Cache** - Static assets
 2. **React Query** - API responses and computed data
 3. **IndexedDB** - Persistent application data
@@ -775,6 +831,7 @@ class ErrorBoundary extends React.Component {
 ### Network Optimization
 
 **WebSocket Management**:
+
 - Connection pooling and reuse
 - Message batching for efficiency
 - Compression for large payloads
@@ -787,6 +844,7 @@ class ErrorBoundary extends React.Component {
 ### Data Access Patterns
 
 **Recommended Patterns**:
+
 1. Use React Query hooks for server state
 2. Use Context providers for cross-component state
 3. Use IndexedDB directly only through MessageDB class
@@ -795,6 +853,7 @@ class ErrorBoundary extends React.Component {
 ### Error Handling
 
 **Best Practices**:
+
 - Always handle async operation failures
 - Provide meaningful user feedback
 - Log errors for debugging
@@ -803,6 +862,7 @@ class ErrorBoundary extends React.Component {
 ### Security Considerations
 
 **Development Guidelines**:
+
 - Never store sensitive data in localStorage
 - Always encrypt data before network transmission
 - Validate all user inputs
@@ -840,4 +900,4 @@ class ErrorBoundary extends React.Component {
 
 ---
 
-*Last updated: 2025-01-20*
+_Last updated: 2025-01-20_

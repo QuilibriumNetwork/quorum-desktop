@@ -69,7 +69,8 @@ export const Onboarding = ({
   };
 
   const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [alreadySavedConfirmationStep, setAlreadySavedConfirmationStep] = useState(0);
+  const [alreadySavedConfirmationStep, setAlreadySavedConfirmationStep] =
+    useState(0);
 
   const { getRootProps, getInputProps, acceptedFiles, isDragActive } =
     useDropzone({
@@ -227,17 +228,18 @@ export const Onboarding = ({
                       if (alreadySavedConfirmationStep === 0) {
                         setAlreadySavedConfirmationStep(1);
                         // Reset confirmation after 5 seconds
-                        setTimeout(() => setAlreadySavedConfirmationStep(0), 5000);
+                        setTimeout(
+                          () => setAlreadySavedConfirmationStep(0),
+                          5000
+                        );
                       } else {
                         setExported(true);
                       }
                     }}
                   >
-                    {alreadySavedConfirmationStep === 0 ? (
-                      t`I already saved mine`
-                    ) : (
-                      t`Click again to confirm`
-                    )}
+                    {alreadySavedConfirmationStep === 0
+                      ? t`I already saved mine`
+                      : t`Click again to confirm`}
                   </Button>
                 </div>
               </div>
@@ -253,7 +255,8 @@ export const Onboarding = ({
                 <p className="pb-4">
                   <Trans>
                     Let your friends know who you are! Pick a friendly name to
-                    display in your conversations, something easier to read than:
+                    display in your conversations, something easier to read
+                    than:
                   </Trans>
                 </p>
                 <pre className="text-sm font-mono bg-black bg-opacity-20 p-2 rounded mb-4 break-all whitespace-pre-wrap word-break overflow-wrap-anywhere">

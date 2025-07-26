@@ -13,11 +13,13 @@
 ## 📊 Executive Summary
 
 ### **Codebase Statistics**
+
 - **Total SCSS files:** 40 files analyzed
 - **Total selectors:** ~450 CSS selectors classified
 - **Recent improvements:** Button.scss successfully converted to Tailwind pattern
 
 ### **Classification Distribution**
+
 - **@apply-convertible:** ~135 selectors (30%) - Quick conversion candidates
 - **theme-token:** ~200 selectors (44%) - Require theme integration care
 - **custom-logic:** ~65 selectors (14%) - Keep as custom CSS
@@ -29,33 +31,43 @@
 ## 🎯 Classification Legend
 
 ### **@apply-convertible**
+
 Simple CSS properties that map directly to Tailwind utilities:
+
 - Basic layout (display, flex, grid)
 - Spacing (margin, padding, gap)
 - Sizing (width, height, max-width)
 - Basic positioning (relative, absolute positioning)
 
 ### **theme-token**
+
 Selectors using CSS custom properties and theme system:
+
 - Color properties using `var(--accent)`, `var(--surface-*)`, etc.
 - Theme-dependent backgrounds and borders
 - Properties that change with light/dark mode or accent colors
 
 ### **custom-logic**
+
 Complex CSS that should remain custom:
+
 - Keyframe animations and complex transitions
 - Complex calculations (calc(), clamp())
 - Browser-specific hacks and vendor prefixes
 - Third-party library overrides with specific requirements
 
 ### **responsive**
+
 Selectors containing media queries:
+
 - Breakpoint-specific styling
 - Mobile-first responsive patterns
 - Device-specific adaptations
 
 ### **semantic-class**
+
 Well-structured semantic classes already following best practices:
+
 - Clear naming conventions
 - Reusable component patterns
 - Good abstraction levels
@@ -64,7 +76,8 @@ Well-structured semantic classes already following best practices:
 
 ## 🔧 Core Style Files Analysis
 
-### **src/styles/_base.scss**
+### **src/styles/\_base.scss**
+
 **Status:** Foundation styles - Mixed conversion priority
 
 - `html` - **theme-token** - Root theme variables, preserve CSS properties
@@ -79,17 +92,19 @@ Well-structured semantic classes already following best practices:
 - `.error-label` - **semantic-class** - Error styling → `@apply text-red-500 text-sm`
 - `.card` - **theme-token** - Component with theme background, convert layout only
 
-### **src/styles/_colors.scss**
+### **src/styles/\_colors.scss**
+
 **Status:** PRESERVE AS-IS - Critical theme architecture
 
 - `:root` - **custom-logic** - Master color system with 6 accent themes
 - `:root[data-theme="light"]` - **custom-logic** - Light mode color definitions
-- `:root[data-theme="dark"]` - **custom-logic** - Dark mode color definitions  
+- `:root[data-theme="dark"]` - **custom-logic** - Dark mode color definitions
 - `:root[data-accent="*"]` - **custom-logic** - Accent color variants (blue, purple, fuchsia, orange, green, yellow)
 
 **Analysis:** Sophisticated theming system with 12 total theme combinations. DO NOT CONVERT.
 
-### **src/styles/_components.scss**
+### **src/styles/\_components.scss**
+
 **Status:** Mixed - Component utilities and theme integration
 
 - `.titlebar` - **theme-token** - App titlebar with theme background
@@ -98,7 +113,8 @@ Well-structured semantic classes already following best practices:
 - `.bg-mobile-sidebar` - **semantic-class** - Mobile sidebar background utility
 - `.bg-radial--accent-noise` - **custom-logic** - Complex radial gradient with accent
 
-### **src/styles/_modal_common.scss**
+### **src/styles/\_modal_common.scss**
+
 **Status:** HIGH COMPLEXITY - Approach with caution
 
 - `.modal-overlay` - **theme-token** - Backdrop with theme colors
@@ -111,7 +127,8 @@ Well-structured semantic classes already following best practices:
 - `.modal-2-column` - **responsive** - Two-column layout with breakpoints
 - `.modal-mobile-nav` - **responsive** - Mobile navigation patterns
 
-### **src/styles/_chat.scss**
+### **src/styles/\_chat.scss**
+
 **Status:** Mixed - Layout conversion opportunities
 
 - `.chat-input-container` - **@apply-convertible** - Container → `@apply flex items-center gap-2 p-2`
@@ -128,6 +145,7 @@ Well-structured semantic classes already following best practices:
 ## 🧩 Component-Specific Analysis
 
 ### **src/components/Button.scss** ✅
+
 **Status:** SUCCESSFULLY CONVERTED - Pattern reference
 
 **Previous state:** Raw CSS with color properties  
@@ -141,6 +159,7 @@ Well-structured semantic classes already following best practices:
 **Key learnings:** Successfully preserved semantic naming while converting layout/spacing to Tailwind utilities. Theme colors preserved with CSS custom properties.
 
 ### **src/components/Modal.scss**
+
 **Status:** High conversion potential
 
 - `.modal` - **theme-token** - Base modal with theme background
@@ -149,6 +168,7 @@ Well-structured semantic classes already following best practices:
 - `.modal-content` - **theme-token** - Content area with theme styling
 
 ### **src/components/Input.scss**
+
 **Status:** Good conversion candidate following Button pattern
 
 - `.input-base` - **@apply-convertible** - Base input → `@apply px-3 py-2 border rounded-md`
@@ -156,6 +176,7 @@ Well-structured semantic classes already following best practices:
 - `.input-disabled` - **semantic-class** - Disabled state → `@apply opacity-50 cursor-not-allowed`
 
 ### **src/components/MobileDrawer.scss**
+
 **Status:** PRESERVE - Well-architected modern component
 
 - `.mobile-drawer` - **custom-logic** - Sophisticated slide animations and transforms
@@ -164,7 +185,8 @@ Well-structured semantic classes already following best practices:
 
 **Analysis:** Modern, well-implemented mobile drawer with complex animations. Low priority for conversion.
 
-### **src/components/search/* (Multiple files)**
+### **src/components/search/\* (Multiple files)**
+
 **Status:** High conversion potential - Clean, minimal CSS
 
 - `.search-bar` - **@apply-convertible** - Search input → `@apply flex items-center gap-2 p-2`
@@ -173,89 +195,111 @@ Well-structured semantic classes already following best practices:
 - `.global-search` - **@apply-convertible** - Global search layout → `@apply fixed inset-0 bg-black/50`
 
 ### **Navigation Components**
+
 **Status:** Mixed - Theme integration required
 
 #### **src/components/navbar/NavMenu.scss**
+
 - `.nav-menu` - **theme-token** - Navigation with theme background
 - `.nav-item` - **@apply-convertible** - Nav item → `@apply flex items-center gap-2 p-2`
 - `.nav-item-active` - **theme-token** - Active state with theme accent
 
 #### **src/components/navbar/SpaceButton.scss**
+
 - `.space-button` - **theme-token** - Space button with theme colors
 - `.space-button-icon` - **@apply-convertible** - Icon sizing → `@apply w-6 h-6`
 
 ### **Message Components**
+
 **Status:** Theme-heavy - Careful conversion needed
 
 #### **src/components/message/Message.scss**
+
 - `.message` - **theme-token** - Message bubble with theme background
 - `.message-content` - **@apply-convertible** - Content layout → `@apply flex flex-col gap-1`
 - `.message-actions` - **@apply-convertible** - Actions container → `@apply flex gap-1 opacity-0 group-hover:opacity-100`
 - `.message-timestamp` - **theme-token** - Timestamp with theme colors
 
 #### **src/components/message/MessageActionsDrawer.scss**
+
 - `.message-actions-drawer` - **theme-token** - Drawer with theme background
 - `.message-actions-grid` - **@apply-convertible** - Action grid → `@apply grid grid-cols-3 gap-2`
 
 #### **src/components/message/EmojiPickerDrawer.scss**
+
 - `.emoji-picker-drawer` - **theme-token** - Drawer with theme background
 - `.emoji-picker-grid` - **@apply-convertible** - Emoji grid → `@apply grid grid-cols-8 gap-1`
 
 ### **Direct Message Components**
+
 **Status:** Layout conversion opportunities
 
 #### **src/components/direct/DirectMessages.scss**
+
 - `.direct-messages` - **@apply-convertible** - Container → `@apply flex flex-col h-full`
 - `.direct-messages-list` - **@apply-convertible** - List container → `@apply flex flex-col gap-1`
 
 #### **src/components/direct/DirectMessageContactsList.scss**
+
 - `.direct-message-contacts` - **@apply-convertible** - Contacts container → `@apply flex flex-col gap-1 overflow-y-auto`
 - `.direct-message-contact` - **theme-token** - Contact item with theme hover
 
 ### **Modal Components**
+
 **Status:** High complexity - Phase 2-3 targets
 
 #### **src/components/modals/CreateSpaceModal.scss**
+
 - `.create-space-modal` - **theme-token** - Modal with theme background
 - `.create-space-form` - **@apply-convertible** - Form layout → `@apply flex flex-col gap-4`
 
 #### **src/components/modals/UserSettingsModal.scss**
+
 - `.user-settings-modal` - **theme-token** - Settings modal with theme background
 - `.settings-tabs` - **@apply-convertible** - Tab layout → `@apply flex border-b`
 - `.settings-content` - **@apply-convertible** - Content area → `@apply p-4`
 
 #### **src/components/modals/JoinSpaceModal.scss**
+
 - `.join-space-modal` - **theme-token** - Modal with theme background
 - `.join-space-form` - **@apply-convertible** - Form layout → `@apply flex flex-col gap-4`
 
 ### **User Components**
+
 **Status:** Mixed - Simple layout with theme integration
 
 #### **src/components/user/UserProfile.scss**
+
 - `.user-profile` - **theme-token** - Profile card with theme background
 - `.user-avatar` - **@apply-convertible** - Avatar sizing → `@apply w-10 h-10 rounded-full`
 - `.user-details` - **@apply-convertible** - Details layout → `@apply flex flex-col gap-1`
 
 #### **src/components/user/UserStatus.scss**
+
 - `.user-status` - **@apply-convertible** - Status indicator → `@apply flex items-center gap-1`
 - `.status-dot` - **@apply-convertible** - Status dot → `@apply w-2 h-2 rounded-full`
 
 ### **Channel Components**
+
 **Status:** Complex layouts - Careful conversion needed
 
 #### **src/components/channel/Channel.scss**
+
 - `.channel` - **theme-token** - Channel container with theme background
 - `.channel-header` - **@apply-convertible** - Header layout → `@apply flex justify-between items-center p-2`
 - `.channel-messages` - **@apply-convertible** - Messages area → `@apply flex-1 overflow-y-auto`
 
 #### **src/components/channel/ChannelList.scss**
+
 - `.channel-list` - **@apply-convertible** - Channel list → `@apply flex flex-col gap-1`
 - `.channel-item` - **theme-token** - Channel item with theme hover
 
 ### **Space Components**
+
 **Status:** Layout-heavy - Good conversion targets
 
 #### **src/components/space/Space.scss**
+
 - `.space` - **theme-token** - Space container with theme background
 - `.space-header` - **@apply-convertible** - Header layout → `@apply flex justify-between items-center p-4`
 - `.space-content` - **@apply-convertible** - Content area → `@apply flex-1 overflow-hidden`
@@ -265,24 +309,28 @@ Well-structured semantic classes already following best practices:
 ## 📈 Conversion Priority Matrix
 
 ### **Phase 1: Quick Wins (Low Risk)**
+
 1. **Search components** - Clean, minimal CSS
 2. **Basic layout utilities** - Simple flex/grid layouts
 3. **User status indicators** - Simple positioning and sizing
 4. **Space layouts** - Container and header layouts
 
 ### **Phase 2: Medium Complexity (Moderate Risk)**
+
 1. **Input components** - Following Button.scss pattern
 2. **Message layouts** - Content and action layouts (preserve theme colors)
 3. **Navigation layouts** - Menu and item positioning (preserve theme integration)
 4. **Modal layouts** - Header, body, footer structure (preserve theme backgrounds)
 
 ### **Phase 3: High Complexity (High Risk)**
+
 1. **Modal system integration** - Complex responsive patterns
 2. **Channel components** - Intricate layout systems
 3. **Theme-heavy components** - Requires careful theme preservation
 
 ### **PRESERVE AS-IS**
-1. **Color system** (_colors.scss) - Critical theme architecture
+
+1. **Color system** (\_colors.scss) - Critical theme architecture
 2. **Mobile drawer system** - Well-architected modern components
 3. **Complex animations** - Keyframes and sophisticated transitions
 4. **Third-party overrides** - Emoji picker and library customizations
@@ -292,6 +340,7 @@ Well-structured semantic classes already following best practices:
 ## 🎯 Recommended Conversion Patterns
 
 ### **Pattern 1: Simple Layout Conversion**
+
 ```scss
 // Before
 .search-bar {
@@ -308,6 +357,7 @@ Well-structured semantic classes already following best practices:
 ```
 
 ### **Pattern 2: Theme Integration (Button.scss pattern)**
+
 ```scss
 // Before
 .input-base {
@@ -327,12 +377,13 @@ Well-structured semantic classes already following best practices:
 ```
 
 ### **Pattern 3: Responsive Conversion**
+
 ```scss
 // Before
 .modal-2-column {
   display: flex;
   flex-direction: column;
-  
+
   @media (min-width: 768px) {
     flex-direction: row;
     gap: 24px;
@@ -342,7 +393,7 @@ Well-structured semantic classes already following best practices:
 // After
 .modal-2-column {
   @apply flex flex-col;
-  
+
   @screen md {
     @apply flex-row gap-6;
   }
@@ -354,12 +405,14 @@ Well-structured semantic classes already following best practices:
 ## 📋 Success Metrics
 
 ### **Conversion Targets**
+
 - **Phase 1:** 35 selectors (~8% of total)
-- **Phase 2:** 65 selectors (~14% of total)  
+- **Phase 2:** 65 selectors (~14% of total)
 - **Phase 3:** 35 selectors (~8% of total)
 - **Total conversion goal:** ~135 selectors (~30% of codebase)
 
 ### **Preservation Targets**
+
 - **Theme system:** 100% preserved (all CSS custom properties)
 - **Responsive behavior:** 100% maintained (all breakpoints working)
 - **Component functionality:** 100% preserved (no regressions)
@@ -370,18 +423,21 @@ Well-structured semantic classes already following best practices:
 ## 🚀 Implementation Recommendations
 
 ### **Immediate Next Steps**
+
 1. **Start with search components** - Cleanest conversion candidates
 2. **Establish conversion patterns** - Document successful approaches
 3. **Create testing protocols** - Visual regression testing setup
 4. **Phase-based approach** - Systematic progression through complexity levels
 
 ### **Risk Mitigation**
+
 1. **Backup strategy** - Branch-based rollback capability
 2. **Component isolation** - Test individual components thoroughly
 3. **Theme testing** - Verify all 12 theme combinations
 4. **Mobile testing** - Ensure responsive behavior preservation
 
 ### **Long-term Benefits**
+
 1. **Reduced CSS duplication** - Consolidated utility usage
 2. **Improved maintainability** - Consistent design system
 3. **Enhanced developer experience** - Unified styling approach
@@ -391,12 +447,14 @@ Well-structured semantic classes already following best practices:
 
 ## 🔄 Recently Added Styles
 
-### **src/styles/_passkey-modal.scss** ⚠️ SPECIAL HANDLING REQUIRED
+### **src/styles/\_passkey-modal.scss** ⚠️ SPECIAL HANDLING REQUIRED
+
 **Status:** EXTERNAL DEPENDENCY - DO NOT CONVERT
 
 **Background:** This file contains CSS styles for PasskeyModal component imported from `@quilibrium/quilibrium-js-sdk-channels` package. The styles were originally created as pure CSS in the SDK and copied here to avoid Tailwind purging issues.
 
 **Key Selectors:**
+
 - `.passkey-modal-backdrop` - **custom-logic** - Fixed backdrop with blur and z-index
 - `.passkey-modal-container` - **custom-logic** - Centered modal with backdrop-filter, using Sen font family
 - `.passkey-modal-header` - **custom-logic** - Modal title with responsive font sizing
@@ -408,6 +466,7 @@ Well-structured semantic classes already following best practices:
 - `.pulsating`, `@keyframes pulsate` - **custom-logic** - Animation for modal icons
 
 **Critical Notes:**
+
 - **DO NOT CONVERT TO TAILWIND** - This file must remain as pure CSS
 - Font family: Uses app's 'Sen' font for all elements except `.passkey-modal-error` (monospace)
 - File can be edited directly for immediate style changes
@@ -415,6 +474,7 @@ Well-structured semantic classes already following best practices:
 - Contains approximately ~30 CSS selectors with complex styling
 
 **Total Updated Inventory:**
+
 - **Total selectors:** ~480 CSS selectors classified (+30 from passkey modal)
 - **Custom-logic category:** ~95 selectors (+30) - Components that must remain as custom CSS
 

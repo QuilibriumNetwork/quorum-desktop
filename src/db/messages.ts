@@ -991,7 +991,7 @@ export class MessageDB {
       try {
         const message = await this.getMessage({
           spaceId: result.spaceId || '',
-          channelId: result.channelId ||  '',
+          channelId: result.channelId || '',
           messageId: result.id,
         });
 

@@ -8,31 +8,42 @@ export const SimpleButtonTestScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>🔘 Simple Button Test</Text>
-        <Text style={styles.subtitle}>Testing Button primitive without flex layouts</Text>
-        
+        <Text style={styles.subtitle}>
+          Testing Button primitive without flex layouts
+        </Text>
+
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Primary Variants</Text>
-          
+
           <View style={styles.buttonContainer}>
-            <Button type="primary" onClick={() => console.log('Primary clicked')}>
+            <Button
+              type="primary"
+              onClick={() => console.log('Primary clicked')}
+            >
               Primary
             </Button>
           </View>
-          
+
           <View style={styles.buttonContainer}>
-            <Button type="secondary" onClick={() => console.log('Secondary clicked')}>
+            <Button
+              type="secondary"
+              onClick={() => console.log('Secondary clicked')}
+            >
               Secondary
             </Button>
           </View>
-          
+
           <View style={styles.buttonContainer}>
             <Button type="light" onClick={() => console.log('Light clicked')}>
               Light
             </Button>
           </View>
-          
+
           <View style={styles.buttonContainer}>
-            <Button type="light-outline" onClick={() => console.log('Light Outline clicked')}>
+            <Button
+              type="light-outline"
+              onClick={() => console.log('Light Outline clicked')}
+            >
               Light Outline
             </Button>
           </View>
@@ -40,19 +51,22 @@ export const SimpleButtonTestScreen: React.FC = () => {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Subtle & Utility Variants</Text>
-          
+
           <View style={styles.buttonContainer}>
             <Button type="subtle" onClick={() => console.log('Subtle clicked')}>
               Subtle
             </Button>
           </View>
-          
+
           <View style={styles.buttonContainer}>
-            <Button type="subtle-outline" onClick={() => console.log('Subtle Outline clicked')}>
+            <Button
+              type="subtle-outline"
+              onClick={() => console.log('Subtle Outline clicked')}
+            >
               Subtle Outline
             </Button>
           </View>
-          
+
           <View style={styles.buttonContainer}>
             <Button type="danger" onClick={() => console.log('Danger clicked')}>
               Danger
@@ -61,22 +75,33 @@ export const SimpleButtonTestScreen: React.FC = () => {
         </View>
 
         <View style={[styles.section, { backgroundColor: '#4A90E2' }]}>
-          <Text style={[styles.sectionTitle, { color: 'white' }]}>White Variants (on colored bg)</Text>
-          
+          <Text style={[styles.sectionTitle, { color: 'white' }]}>
+            White Variants (on colored bg)
+          </Text>
+
           <View style={styles.buttonContainer}>
-            <Button type="primary-white" onClick={() => console.log('Primary White clicked')}>
+            <Button
+              type="primary-white"
+              onClick={() => console.log('Primary White clicked')}
+            >
               Primary White
             </Button>
           </View>
-          
+
           <View style={styles.buttonContainer}>
-            <Button type="secondary-white" onClick={() => console.log('Secondary White clicked')}>
+            <Button
+              type="secondary-white"
+              onClick={() => console.log('Secondary White clicked')}
+            >
               Secondary White
             </Button>
           </View>
-          
+
           <View style={styles.buttonContainer}>
-            <Button type="light-outline-white" onClick={() => console.log('Light Outline White clicked')}>
+            <Button
+              type="light-outline-white"
+              onClick={() => console.log('Light Outline White clicked')}
+            >
               Light Outline White
             </Button>
           </View>
@@ -84,15 +109,23 @@ export const SimpleButtonTestScreen: React.FC = () => {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Button Sizes</Text>
-          
+
           <View style={styles.buttonContainer}>
-            <Button type="primary" size="normal" onClick={() => console.log('Normal size')}>
+            <Button
+              type="primary"
+              size="normal"
+              onClick={() => console.log('Normal size')}
+            >
               Normal Size
             </Button>
           </View>
-          
+
           <View style={styles.buttonContainer}>
-            <Button type="primary" size="small" onClick={() => console.log('Small size')}>
+            <Button
+              type="primary"
+              size="small"
+              onClick={() => console.log('Small size')}
+            >
               Small Size
             </Button>
           </View>
@@ -100,9 +133,13 @@ export const SimpleButtonTestScreen: React.FC = () => {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Disabled State</Text>
-          
+
           <View style={styles.buttonContainer}>
-            <Button type="primary" disabled onClick={() => console.log('Should not fire')}>
+            <Button
+              type="primary"
+              disabled
+              onClick={() => console.log('Should not fire')}
+            >
               Disabled Button
             </Button>
           </View>

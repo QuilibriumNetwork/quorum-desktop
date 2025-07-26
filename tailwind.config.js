@@ -11,8 +11,7 @@ export default {
   darkMode: 'class',
   content: [
     './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
-    './node_modules/@quilibrium/quilibium-js-sdk-channels/dist/**/*.{js,ts,jsx,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
   safelist: [
     // === LEGACY/OLD PASSKEY MODAL STYLES (keep until new modal style is live) ===

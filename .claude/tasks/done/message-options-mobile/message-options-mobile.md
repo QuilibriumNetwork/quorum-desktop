@@ -1,10 +1,10 @@
 # Mobile Message Options UX Enhancement
 
 > **🎯 IMPLEMENTATION PROGRESS TRACKER**
-> 
+>
 > **IMPORTANT**: This plan must be kept updated by checking off completed tasks during implementation.
 > When working on this task across multiple sessions, use this plan as context and update progress.
-> 
+>
 > **Current Status**: Core Implementation Complete - Ready for Testing
 > **Last Updated**: 2025-07-18
 
@@ -27,6 +27,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ### Existing Emoji Picker Implementation ✅
 
 **Research Complete**: The app uses `emoji-picker-react` v4.12.0 with:
+
 - State managed in `MessageList.tsx` with `emojiPickerOpen` and `emojiPickerOpenDirection`
 - Custom theming with CSS variables for dark mode
 - Custom emoji support through `CustomEmoji` interface
@@ -44,8 +45,8 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ### Reference Screenshots Analysis
 
 - **.claude\tasks\todo\message-options-mobile\message-options-drawer.jpg**: Discord mobile long-press drawer showing:
-    - Quick reaction bar at top (❤️, 👍, 🔥, etc.)
-    - Action menu below: Reply, Forward, Copy Link, Copy Text, Reactions, Delete (if permitted)
+  - Quick reaction bar at top (❤️, 👍, 🔥, etc.)
+  - Action menu below: Reply, Forward, Copy Link, Copy Text, Reactions, Delete (if permitted)
 - **.claude\tasks\todo\message-options-mobile\emojipicker-drawer.jpg**: Discord emoji picker with search and organized categories
 
 ### Proposed Responsive Flow
@@ -59,6 +60,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ## 🚀 IMPLEMENTATION PLAN WITH CHECKBOXES
 
 ### Phase 1: Research & Analysis
+
 - [x] ✅ Analyze existing emoji picker implementation
 - [x] ✅ Research emoji-picker-react API for mobile optimization
 - [x] ✅ Confirm reusability of existing components
@@ -67,6 +69,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ### Phase 2: Core Infrastructure
 
 #### 2.1 Long-Press Hook
+
 - [x] ✅ Create `src/hooks/useLongPress.ts`
   - [x] ✅ Implement touch event handling
   - [x] ✅ Add configurable delay (default 500ms)
@@ -75,6 +78,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
   - [x] ✅ Add JSDoc documentation
 
 #### 2.2 Device Detection Logic
+
 - [x] ✅ Verify `useResponsiveLayout` hook breakpoint is `768px` for `isMobile` (Updated from 1024px to 768px)
 - [x] ✅ Test touch device detection: `'ontouchstart' in window`
 - [x] ✅ Document interaction modes in `Message.tsx`:
@@ -85,6 +89,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ### Phase 3: Mobile Drawer Components
 
 #### 3.1 Message Actions Drawer
+
 - [x] ✅ Create `src/components/message/MessageActionsDrawer.tsx`
   - [x] ✅ Define TypeScript interfaces
   - [x] ✅ Implement drawer animation (slide up from bottom)
@@ -99,6 +104,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - [x] ✅ Import styles in `src/index.scss`
 
 #### 3.2 Quick Reaction Component
+
 - [x] ✅ Create `src/components/message/QuickReactionButton.tsx`
   - [x] ✅ Large touch targets (44px minimum)
   - [x] ✅ Emoji rendering with proper sizing
@@ -107,6 +113,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
   - [x] ✅ Support for custom emojis
 
 #### 3.3 Action Menu Item Component
+
 - [x] ✅ Create `src/components/message/ActionMenuItem.tsx`
   - [x] ✅ Consistent styling with existing UI
   - [x] ✅ FontAwesome icon integration
@@ -115,6 +122,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
   - [x] ✅ Accessibility support
 
 #### 3.4 Emoji Picker Integration
+
 - [x] ✅ **REUSE EXISTING**: Modify emoji picker for mobile drawer
   - [x] ✅ Remove CSS `scale` transforms from `_components.scss`
   - [x] ✅ Wrap existing `EmojiPicker` in `Modal` component for mobile
@@ -125,12 +133,14 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ### Phase 4: Message.tsx Integration
 
 #### 4.1 State Management
+
 - [x] ✅ Add state for desktop tap interaction: `actionsVisibleOnTap`
 - [x] ✅ Add state for mobile drawers: `showActionsDrawer`
 - [x] ✅ Keep existing emoji picker state management
 - [x] ✅ Ensure proper cleanup on component unmount
 
 #### 4.2 Event Handlers
+
 - [x] ✅ Integrate long-press handler for mobile
 - [x] ✅ Add tap handler for desktop touch devices
 - [x] ✅ Preserve existing hover handlers for desktop mouse
@@ -138,6 +148,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - [x] ✅ Handle event conflicts and bubbling
 
 #### 4.3 Conditional Rendering
+
 - [x] ✅ Implement mobile drawer rendering
 - [x] ✅ Maintain existing desktop/tablet inline menu
 - [x] ✅ Add proper conditional logic for interaction modes
@@ -146,6 +157,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ### Phase 5: Styling & Responsiveness
 
 #### 5.1 Mobile Drawer Styles
+
 - [x] ✅ Bottom drawer with proper z-index
 - [x] ✅ Smooth slide animations
 - [x] ✅ Backdrop with blur effect
@@ -153,12 +165,14 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - [x] ✅ Safe area handling for mobile devices
 
 #### 5.2 Responsive Breakpoints
+
 - [x] ✅ Mobile: `≤ 768px` (drawer pattern)
 - [x] ✅ Tablet/Desktop: `> 768px` (inline menu)
 - [ ] Test across different screen sizes
 - [ ] Ensure smooth transitions between modes
 
 #### 5.3 Emoji Picker Mobile Optimization
+
 - [x] ✅ Remove problematic CSS scaling
 - [x] ✅ Implement proper responsive sizing
 - [ ] Test touch targets on mobile devices
@@ -167,6 +181,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ### Phase 6: Testing & Validation
 
 #### 6.1 Mobile Testing (`<= 768px`)
+
 - [ ] Long-press gesture opens drawer reliably
 - [ ] Drawer animations are smooth (60fps)
 - [ ] All actions work correctly (reply, react, copy, delete)
@@ -175,6 +190,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - [ ] Haptic feedback works on supported devices
 
 #### 6.2 Cross-Device Testing (`> 768px`)
+
 - [ ] **CRITICAL**: Tablet tap reveals/hides action menu
 - [ ] **CRITICAL**: Desktop mouse hover reveals/hides action menu
 - [ ] Hover disabled on touch-screen devices
@@ -182,6 +198,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - [ ] Existing emoji picker positioning works
 
 #### 6.3 Accessibility Testing
+
 - [ ] Screen reader compatibility for all modes
 - [ ] Focus management in drawers
 - [ ] Keyboard navigation support
@@ -189,6 +206,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - [ ] Color contrast compliance
 
 #### 6.4 Performance Testing
+
 - [ ] No memory leaks from event listeners
 - [ ] Smooth animations on low-end devices
 - [ ] Emoji picker lazy loading works
@@ -197,6 +215,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ### Phase 7: Final Integration & Cleanup
 
 #### 7.1 Code Quality
+
 - [x] ✅ Run `yarn lint` on modified files (checked TypeScript compilation)
 - [ ] Run `yarn format` on modified files
 - [x] ✅ Add proper TypeScript types
@@ -204,12 +223,14 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - [x] ✅ Update component imports/exports
 
 #### 7.2 Documentation
+
 - [x] ✅ Update component JSDoc comments
 - [x] ✅ Add usage examples in code comments
 - [x] ✅ Document interaction modes
 - [x] ✅ Note any breaking changes
 
 #### 7.3 Final Testing
+
 - [ ] Test on actual mobile devices
 - [ ] Test on tablets
 - [ ] Test on touch-screen laptops
@@ -221,13 +242,15 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ## 📁 FILES TO CREATE/MODIFY
 
 ### New Files
+
 - [x] ✅ `src/hooks/useLongPress.ts` - Long-press gesture handler
 - [x] ✅ `src/components/message/MessageActionsDrawer.tsx` - Mobile drawer component
-- [x] ✅ `src/components/message/MessageActionsDrawer.scss` - Mobile drawer styles  
+- [x] ✅ `src/components/message/MessageActionsDrawer.scss` - Mobile drawer styles
 - [x] ✅ `src/components/message/QuickReactionButton.tsx` - Quick reaction component
 - [x] ✅ `src/components/message/ActionMenuItem.tsx` - Action menu item component
 
 ### Modified Files
+
 - [x] ✅ `src/components/message/Message.tsx` - **MAJOR**: Add hybrid interaction logic
 - [ ] `src/components/message/MessageList.tsx` - **MINOR**: Emoji picker state updates (Not needed - reused existing)
 - [x] ✅ `src/styles/_components.scss` - **MINOR**: Remove CSS scaling for emoji picker
@@ -239,6 +262,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ## 🎨 STYLING REQUIREMENTS
 
 ### Mobile Drawer Specifications
+
 - **Position**: Fixed bottom drawer
 - **Height**: Auto-sizing based on content
 - **Animation**: Slide up from bottom (0.3s ease-out)
@@ -247,6 +271,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - **Safe Areas**: Proper padding for mobile devices
 
 ### Emoji Picker Mobile Optimization
+
 - **Size**: `width="100%"`, `height={300}`
 - **Container**: Modal wrapper for mobile
 - **Scaling**: Remove CSS transforms, use proper responsive sizing
@@ -257,6 +282,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ## ✅ SUCCESS CRITERIA
 
 ### User Experience
+
 - [ ] Long-press reliably opens actions on mobile
 - [ ] Touch targets are appropriately sized
 - [ ] Animations are smooth and performant
@@ -264,6 +290,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - [ ] Emoji picker is easily usable on mobile
 
 ### Technical Requirements
+
 - [ ] No performance regressions
 - [ ] Existing functionality preserved
 - [ ] Responsive design works across devices
@@ -271,6 +298,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - [ ] Code follows existing patterns
 
 ### Cross-Device Compatibility
+
 - [ ] Mobile: Long-press → drawer
 - [ ] Tablet: Tap → inline menu
 - [ ] Desktop: Hover → inline menu
@@ -281,6 +309,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 ## 🔄 NOTES FOR FUTURE SESSIONS
 
 **When continuing work on this task:**
+
 1. Check the checkbox status above to see current progress
 2. Update checkboxes as tasks are completed
 3. Note any blockers or changes in approach
@@ -288,6 +317,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 5. Keep the "Current Status" updated
 
 **Implementation Tips:**
+
 - Test on real devices early and often
 - Prioritize mobile UX over desktop feature parity
 - Reuse existing components wherever possible
@@ -295,6 +325,7 @@ Currently in `Message.tsx` (lines 284-448), message actions appear on hover:
 - Focus on performance and accessibility
 
 **Dependencies:**
+
 - Existing `emoji-picker-react` library
 - Current `Modal.tsx` component
 - Existing `useResponsiveLayout` hook

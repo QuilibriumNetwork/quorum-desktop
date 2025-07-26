@@ -8,6 +8,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 **Development Guidelines**: See [`component-dev-guidelines.md`](../../docs/component-dev-guidelines.md)
 
 ## Current State
+
 ✅ **Desktop app finished and stable**  
 ⏳ **Mobile development starting**
 
@@ -18,6 +19,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 ### Phase 1A: Foundation Layout Primitives
 
 #### 0. Cross-Platform Theming Foundation
+
 **Goal**: Preserve existing theming system and extend for React Native compatibility
 
 - [x] **Audit current theming system**
@@ -50,6 +52,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 **Notes**: The existing theming system is sophisticated with CSS variables, Tailwind integration, and dynamic switching. This must be preserved exactly while extending for React Native compatibility. NO breaking changes to existing web styling.
 
 #### 1. ModalContainer/OverlayBackdrop Primitives
+
 **Goal**: Eliminate repeated backdrop patterns across 5+ components
 
 - [x] **Setup primitive structure**
@@ -74,7 +77,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 
 - [x] **Validate against existing usage**
   - [x] Audit Modal.tsx backdrop implementation
-  - [x] Audit UserSettingsModal.tsx backdrop  
+  - [x] Audit UserSettingsModal.tsx backdrop
   - [x] Audit SpaceEditor.tsx backdrop
   - [x] Audit Lightbox.tsx backdrop
   - [x] Audit MessageActionsDrawer.tsx backdrop
@@ -83,6 +86,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 **Notes**: All existing backdrop patterns use `bg-overlay backdrop-blur` with `z-[9999]`. ModalContainer and OverlayBackdrop primitives successfully replicate this pattern. Fixed animation issue where close buttons bypassed ModalContainer's internal animation logic.
 
 #### 2. Flex Layout Primitives
+
 **Goal**: Standardize common flex patterns throughout app
 
 - [x] **Create FlexRow primitive**
@@ -107,6 +111,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 ### Phase 1B: Critical Component Validation
 
 #### 1. Convert Button.jsx to Primitive
+
 **Goal**: Validate primitive architecture with most-used component
 
 - [x] **Analyze current Button.jsx**
@@ -136,10 +141,10 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [x] Ensure proper disabled state styling
   - [x] Test on both iOS and Android styles
 
-
 **Status**: Button primitive created and integrated into PrimitivesPlayground. Ready for migration testing.
 
 #### 2. Convert Modal.tsx to Primitive
+
 **Goal**: Prove primitive composition and Modal-to-Drawer transformation
 
 - [x] **Deep analysis of Modal.tsx**
@@ -192,7 +197,6 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [x] Production build includes all primitives without errors
   - [x] No visual regressions in existing web functionality
 
-
 **Success Criteria**: Web primitives working perfectly in both dev and production. Native validation deferred to Phase 3 when React Native environment is available.
 
 ---
@@ -202,6 +206,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 **⚠️ IMPORTANT**: This phase should only begin after Phase 1B (Button and Modal primitives) are successfully validated and working in production.
 
 ### ResponsiveContainer Primitive
+
 **Goal**: Complete the foundation primitive set before any pattern replacement
 
 - [x] **Extract Container.tsx logic**
@@ -220,7 +225,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 
 - [x] **Test responsive behavior**
   - [x] Test at phone viewport (< 480px) - uses 50px NavMenu offset
-  - [x] Test at tablet viewport (480px - 1024px) - uses 74px offset  
+  - [x] Test at tablet viewport (480px - 1024px) - uses 74px offset
   - [x] Test at desktop viewport (> 1024px) - uses 74px offset (fixed from 72px)
   - [x] Verify border-radius and background colors match exactly
   - [x] Check Layout.tsx integration and playground testing
@@ -236,7 +241,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 ### Mobile Test Environment Setup
 
 - [x] **Create playground folder structure**
-  - [x] Create `src/playground/` directory 
+  - [x] Create `src/playground/` directory
   - [x] Move existing PrimitivesPlayground.tsx to `src/playground/web/`
   - [x] Update web playground route to use new location
   - [x] Create `src/playground/mobile/` directory for mobile test environment
@@ -245,7 +250,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [x] Fix CSS processing issues by keeping playground in src directory
 
 - [x] **Create isolated mobile test environment**
-  - [x] Run `npx create-expo-app src/playground/mobile/quorum-mobile-test` 
+  - [x] Run `npx create-expo-app src/playground/mobile/quorum-mobile-test`
   - [x] Configure TypeScript and path aliases
   - [x] Install required dependencies (react-native-vector-icons, react-native-gesture-handler)
   - [x] Set up Metro bundler configuration
@@ -260,7 +265,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
 - [x] **Copy existing primitives for testing**
   - [x] All Phase 1 primitives created and ready for testing:
     - [x] ModalContainer, OverlayBackdrop
-    - [x] FlexRow, FlexBetween, FlexCenter  
+    - [x] FlexRow, FlexBetween, FlexCenter
     - [x] Button primitive
     - [x] Modal primitive
     - [x] ResponsiveContainer
@@ -335,11 +340,13 @@ yarn start --tunnel
 #### **Solution Stability Assessment**:
 
 **✅ Solid & Final Solutions**:
+
 - **Tunnel mode**: Permanent fix for WSL2 networking - no further work needed
 - **Dependency alignment**: Stable with Expo 53 - works reliably
 - **Mobile test environment**: Fully functional for primitive validation
 
 **⚠️ Areas Requiring Future Work**:
+
 - **Third-party components**: FontAwesome icons need mobile-specific implementations (Phase 2)
 - **Complex primitives**: Button/Modal need versions without web-only dependencies
 - **iOS testing**: Currently validated on Android only - iPhone testing pending
@@ -347,6 +354,7 @@ yarn start --tunnel
 #### **Architecture Validation Results**:
 
 ✅ **Cross-platform primitive system WORKS**
+
 - FlexRow, FlexBetween, FlexCenter render identically on web and mobile
 - Platform resolution (`.web.tsx` vs `.native.tsx`) functions correctly
 - React Native performance is smooth (60fps)
@@ -370,6 +378,7 @@ yarn start --tunnel
 **Core Principle**: Build → Test Desktop → Test Mobile → Fix → Commit → Repeat
 
 **Why This Works Better**:
+
 - Immediate mobile validation for each primitive
 - Catches platform-specific issues early
 - No big bang integration problems later
@@ -394,6 +403,7 @@ yarn start --tunnel
 **📝 Note**: Chat input fields (DirectMessage.tsx/Channel.tsx) will need a separate **MessageInput business component** that uses TextArea primitive + platform-specific behavior:
 
 **Auto-Growing Requirements** (based on current implementation):
+
 - **Current**: Maximum 4 rows → **New**: Maximum 5 rows
 - **Algorithm**: `Math.min(5, Math.max(rowCount, Math.round(scrollHeight / 28)))`
 - **Line calculation**: Count newlines + 1, or use scrollHeight/28px
@@ -402,8 +412,9 @@ yarn start --tunnel
 - **Integration**: File attachment button, emoji picker, Enter-to-send
 
 **Platform-specific behavior**:
-- **Mobile**: Input expands on focus, emoji/sticker buttons hide  
-- **Desktop**: Input stays fixed size, buttons always visible in different positions  
+
+- **Mobile**: Input expands on focus, emoji/sticker buttons hide
+- **Desktop**: Input stays fixed size, buttons always visible in different positions
 
 This is NOT part of the base TextArea primitive - keep TextArea simple and reusable. The MessageInput business component will be built after core primitives are complete.
 
@@ -508,15 +519,48 @@ This is NOT part of the base TextArea primitive - keep TextArea simple and reusa
 
 #### 6. Select/Dropdown Primitive
 
-- [ ] **Build Select primitive**
-  - [ ] Web: Styled select element
-  - [ ] Native: Picker or action sheet
-  - [ ] Handle platform UI differences
-  - [ ] Immediate mobile testing
+- [x] **Build Select primitive**
+  - [x] Web: Styled select element with custom dropdown
+  - [x] Native: Modal-based dropdown for consistent cross-platform UX
+  - [x] Handle platform UI differences
+  - [x] Support for icons and custom rendering
+  - [x] Immediate mobile testing
+  - [x] Create comprehensive test screen with all variants
+  - [x] Support multiple sizes (small, medium, large)
+  - [x] Support variants (default bordered, filled)
+  - [x] Error states with validation
+  - [x] Disabled options support
+  - [x] Custom width and full-width options
+  - [x] Text truncation for long options
+  - [x] Consistent field color system with Input/TextArea
+
+#### 7. ColorSwatch Primitive (for AccentColorSwitcher)
+
+- [ ] **Build ColorSwatch primitive**
+  - [ ] Extract from AccentColorSwitcher logic
+  - [ ] Web: Circular color buttons with CSS
+  - [ ] Native: TouchableOpacity with View circles
+  - [ ] Support for checkmark overlay (✓ character as TEMPORARY placeholder for FontAwesome faCheck)
+  - [ ] Active state with border highlight
+  - [ ] Test color selection on both platforms
+  - [ ] NOTE: Will replace ✓ with FontAwesome icon once mobile icon system is implemented
+
+#### 8. RadioGroup Primitive (for ThemeRadioGroup)
+
+- [ ] **Build RadioGroup primitive**
+  - [ ] Extract from ThemeRadioGroup logic
+  - [ ] Web: Styled radio inputs with labels
+  - [ ] Native: Custom radio button implementation
+  - [ ] Support for icons (☀️🌙💻 emojis as TEMPORARY placeholders for FontAwesome faSun, faMoon, faDesktop)
+  - [ ] Horizontal and vertical layouts
+  - [ ] Active state styling
+  - [ ] Test theme switching on both platforms
+  - [ ] NOTE: Will replace emojis with FontAwesome icons once mobile icon system is implemented
 
 ### 🛑 **Checkpoint: Primitive Foundation Complete**
 
 Before proceeding, ensure:
+
 - [ ] All primitives work on both desktop and mobile
 - [ ] No third-party dependency issues
 - [ ] Touch interactions feel native
@@ -544,6 +588,7 @@ Build test screens only when you have enough primitives to test meaningful combi
 **Target**: 10-12 core primitives working perfectly on both platforms
 
 **Quality Criteria**:
+
 - [ ] Each primitive tested on both desktop and mobile
 - [ ] Touch interactions feel native
 - [ ] No platform-specific bugs remain
@@ -583,10 +628,11 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 ### Systematic Replacement Process
 
 1. **Audit Current Usage**
+
    ```bash
    # Search for raw HTML elements
    grep -r "<button\|<input\|<select\|<textarea" src/
-   
+
    # Search for inline styles
    grep -r "style={{" src/
    ```
@@ -866,6 +912,7 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 ## Progress Tracking
 
 ### Daily Checklist
+
 - [ ] Update completed tasks
 - [ ] Document blockers
 - [ ] Note decisions made
@@ -873,6 +920,7 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 - [ ] Plan next session
 
 ### Weekly Review
+
 - [ ] Calculate completion percentage
 - [ ] Review architecture decisions
 - [ ] Update stakeholders
@@ -880,6 +928,7 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 - [ ] Plan upcoming week
 
 ### Phase Completion
+
 - [ ] All tasks checked off
 - [ ] Tests passing
 - [ ] Documentation updated
@@ -891,6 +940,7 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 ## Phase 7: Automated Theme Synchronization (Final Enhancement)
 
 ### Color Sync Automation
+
 **Goal**: Eliminate manual synchronization between CSS variables and JavaScript theme objects
 
 **⚠️ IMPORTANT**: This phase should only be implemented after all core architecture (Phases 1-6) is complete, tested, and stable. This is a build automation enhancement, not a core requirement.
@@ -911,8 +961,9 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 **Current Context**: Manual synchronization between `_colors.scss` and `colors.ts` works fine during development. This automation eliminates maintenance burden once the architecture is mature.
 
 **Implementation Options**:
+
 1. **Build Script** (Recommended): Parse CSS variables, generate JavaScript objects
-2. **CSS-in-JS**: Single JavaScript source generating both CSS and native objects  
+2. **CSS-in-JS**: Single JavaScript source generating both CSS and native objects
 3. **Design Token Pipeline**: External tools like Style Dictionary
 
 **Success Criteria**: Developers only need to modify `_colors.scss`, and React Native colors automatically stay in sync.
@@ -922,21 +973,25 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 ## Notes Section
 
 ### Session Notes
+
 _Use this section to add notes between sessions_
 
-**Important**: 
+**Important**:
 Stop and ask for human review/testing after any important change.
 When confirmed by a human, commit, so we can easily revert if there are issues. This ensures we have restore points throughout the development process. Commit messages should be simple and describe what was done (no mentions of Claude/Anthropic).
 
 ### Blockers
+
 _Document any blocking issues here_
 
 ### Decisions Log
+
 _Record important decisions made_
 
 ### Links and References
+
 _Add helpful links discovered during development_
 
 ---
 
-*Last updated: 2025-07-25 - Phase 1D completed with mobile testing fully functional*
+_Last updated: 2025-07-26 - Select/Dropdown primitive completed with comprehensive features and mobile field color system_

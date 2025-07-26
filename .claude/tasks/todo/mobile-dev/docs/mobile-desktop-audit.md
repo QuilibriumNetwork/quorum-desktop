@@ -1,6 +1,7 @@
 # Mobile/Desktop Behavioral Differences Audit Plan
 
 ## Objective
+
 Systematically audit the codebase to identify elements that behave differently between desktop and mobile platforms, and categorize them for potential extraction into platform-specific primitive components.
 
 ## Instructions for Claude Code
@@ -17,23 +18,27 @@ Systematically audit the codebase to identify elements that behave differently b
 For each identified element, categorize using this decision tree:
 
 #### A. Visual-Only Differences (CSS/SCSS)
+
 - Elements that only change size, spacing, or colors
 - Responsive design handled purely through media queries
 - **Action**: Keep as-is, no extraction needed
 
 #### B. Interaction Differences (Primitive Candidates)
+
 - Elements with hover states vs touch states
 - Different event handlers (click vs long-press)
 - Platform-specific user interactions
 - **Action**: Extract to platform-specific primitive components
 
 #### C. Layout Rearrangement (Layout Component Candidates)
+
 - Elements that change position or structure
 - Components that show/hide different child elements
 - Different arrangements of the same content
 - **Action**: Extract to platform-specific layout components
 
 #### D. Complex Behavioral Differences (Business Logic)
+
 - Components with fundamentally different state management
 - Different workflows or user flows
 - **Action**: Consider platform-specific business logic components
@@ -41,24 +46,28 @@ For each identified element, categorize using this decision tree:
 ### Phase 3: Specific Patterns to Look For
 
 #### Input/Form Elements
+
 - [ ] Text inputs and textareas (expansion behavior)
 - [ ] File upload interfaces
 - [ ] Form layouts and button arrangements
 - [ ] Search inputs and their associated controls
 
 #### Navigation/Interaction Elements
+
 - [ ] Menu systems (hover menus vs touch menus)
 - [ ] Sidebar behaviors (slide vs fixed)
 - [ ] Modal/drawer positioning and sizing
 - [ ] Context menus and action sheets
 
 #### Layout Components
+
 - [ ] Header/toolbar arrangements
 - [ ] Content containers that stack vs inline
 - [ ] Grid/list view toggles
 - [ ] Chat/message interfaces
 
 #### Visual Feedback Elements
+
 - [ ] Tooltip systems
 - [ ] Loading states and spinners
 - [ ] Hover effects and focus states
@@ -68,10 +77,11 @@ For each identified element, categorize using this decision tree:
 
 Create an audit file (`MOBILE_DESKTOP_AUDIT.md`) with the following structure:
 
-```markdown
+````markdown
 # Mobile/Desktop Behavioral Differences Audit
 
 ## Summary
+
 - Total components analyzed: X
 - Visual-only differences: X
 - Interaction differences (primitive candidates): X
@@ -79,7 +89,9 @@ Create an audit file (`MOBILE_DESKTOP_AUDIT.md`) with the following structure:
 - Complex behavioral differences: X
 
 ## High Priority Extractions
+
 ### Message Input System
+
 - **File**: `src/components/Channel.tsx` (lines X-Y)
 - **Current behavior**: [describe current implementation]
 - **Desktop UX**: [describe desktop behavior]
@@ -88,23 +100,30 @@ Create an audit file (`MOBILE_DESKTOP_AUDIT.md`) with the following structure:
 - **Impact**: High (core user interaction)
 
 ## Medium Priority Extractions
+
 [Similar format for medium priority items]
 
 ## Low Priority Extractions
+
 [Similar format for low priority items]
 
 ## Visual-Only Changes (No Extraction Needed)
+
 [List items that only need CSS updates]
 
 ## Detailed Analysis
 
 ### Component: [ComponentName]
+
 **File**: `path/to/component.tsx`
 **Lines**: X-Y
 **Current Implementation**:
+
 ```tsx
 [relevant code snippet]
 ```
+````
+
 **Desktop Behavior**: [description]
 **Mobile Behavior Needed**: [description]
 **Recommended Action**: [Extract to primitive/layout/keep as-is]
@@ -139,17 +158,20 @@ Create a suggested implementation order:
 ## Specific Files to Analyze
 
 ### Core Components
+
 - `src/components/Channel.tsx` (message interface)
 - `src/components/message/MessageList.tsx` (message display)
 - `src/components/search/GlobalSearch.tsx` (search interface)
 - Any sidebar/navigation components
 
 ### Layout Components
+
 - Components handling responsive layout
 - Modal and drawer implementations
 - Header/toolbar components
 
 ### Interactive Elements
+
 - Button implementations
 - Form inputs and controls
 - Context menus and action sheets
@@ -165,6 +187,7 @@ Create a suggested implementation order:
 ## Success Criteria
 
 The audit should identify:
+
 - All elements requiring platform-specific behavior
 - Clear categorization of extraction types needed
 - Realistic implementation timeline

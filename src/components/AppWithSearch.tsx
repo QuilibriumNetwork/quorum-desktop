@@ -71,7 +71,8 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
   const [showRightSidebar, setShowRightSidebar] = useState(false);
   const [rightSidebarContent, setRightSidebarContent] =
     useState<React.ReactNode>(null);
-  const [mobileActionsDrawerData, setMobileActionsDrawerData] = useState<any>(null);
+  const [mobileActionsDrawerData, setMobileActionsDrawerData] =
+    useState<any>(null);
   const [drawerClosing, setDrawerClosing] = useState(false);
   const [mobileEmojiDrawerData, setMobileEmojiDrawerData] = useState<any>(null);
   const [emojiDrawerClosing, setEmojiDrawerClosing] = useState(false);
@@ -90,7 +91,8 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
     setShowRightSidebar,
     rightSidebarContent,
     setRightSidebarContent,
-    openMobileActionsDrawer: (messageData: any) => setMobileActionsDrawerData(messageData),
+    openMobileActionsDrawer: (messageData: any) =>
+      setMobileActionsDrawerData(messageData),
     closeMobileActionsDrawer: () => {
       setDrawerClosing(true);
       setTimeout(() => {
@@ -98,7 +100,8 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
         setDrawerClosing(false);
       }, 300);
     },
-    openMobileEmojiDrawer: (emojiData: any) => setMobileEmojiDrawerData(emojiData),
+    openMobileEmojiDrawer: (emojiData: any) =>
+      setMobileEmojiDrawerData(emojiData),
     closeMobileEmojiDrawer: () => {
       setEmojiDrawerClosing(true);
       setTimeout(() => {

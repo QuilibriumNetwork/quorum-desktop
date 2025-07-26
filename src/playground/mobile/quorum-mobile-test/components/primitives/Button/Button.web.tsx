@@ -5,7 +5,9 @@ import './Button.scss';
 
 const Button: React.FC<WebButtonProps> = (props) => {
   const baseClass = props.disabled
-    ? (props.type === 'disabled-onboarding' ? 'btn-disabled-onboarding' : 'btn-disabled')
+    ? props.type === 'disabled-onboarding'
+      ? 'btn-disabled-onboarding'
+      : 'btn-disabled'
     : `btn-${props.type || 'primary'}`;
 
   const buttonId =

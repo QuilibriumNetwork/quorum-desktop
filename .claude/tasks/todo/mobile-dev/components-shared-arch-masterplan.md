@@ -10,12 +10,14 @@ This masterplan defines the **architectural philosophy and technical approach** 
 ## Current State Analysis
 
 ### Problems Identified
+
 1. **Direct HTML Usage**: 20+ instances of raw `<button>`, `<input>`, `<select>`, `<textarea>` scattered throughout components
 2. **Inconsistent Patterns**: Some components use `Button.jsx`, others use raw `<button>`
 3. **Modal Complexity**: 3 different modal implementation patterns
 4. **Code Duplication**: Mobile would need to mirror complex components like Message.tsx (850+ lines)
 
 ### Architecture Opportunities
+
 - **90% of code is business logic** that can be shared as-is
 - **Only 10% is raw HTML rendering** that needs platform-specific implementation
 - **Existing component APIs** can be preserved for zero-breaking changes
@@ -23,9 +25,11 @@ This masterplan defines the **architectural philosophy and technical approach** 
 ## Proposed Architecture
 
 ### Layer 1: Platform-Specific Primitives
+
 Extract **only raw HTML/React Native rendering** into tightly contained components with identical APIs.
 
 ### Layer 2: Shared Business Logic
+
 All existing complex components remain **completely unchanged** and work on both platforms.
 
 ## Architecture Concepts
@@ -33,11 +37,13 @@ All existing complex components remain **completely unchanged** and work on both
 ### Primitive vs Business Component Classification
 
 **Primitives** - Platform-specific rendering components:
+
 - Contain raw HTML elements (`<div>`, `<span>`, `<button>`) or React Native components
-- Minimal business logic, focus on rendering and basic interactions  
+- Minimal business logic, focus on rendering and basic interactions
 - Examples: Button, Input, Modal, Container, Card
 
 **Business Components** - Shared logic components:
+
 - Use other components (primitives or business components)
 - Contain complex logic, state management, data fetching
 - Work identically on both platforms
@@ -50,7 +56,7 @@ Each primitive has platform-specific implementations that maintain identical API
 ```
 Primitive Structure:
 ├── ComponentName.web.tsx      # Desktop implementation
-├── ComponentName.native.tsx   # Mobile implementation  
+├── ComponentName.native.tsx   # Mobile implementation
 ├── ComponentName.types.ts     # Shared interface
 ├── ComponentName.scss         # Web-only styles
 └── index.ts                  # Platform resolution
@@ -63,18 +69,21 @@ Primitive Structure:
 Based on codebase audit, primitives fall into these categories:
 
 #### Layout Primitives
+
 - **ModalContainer/OverlayBackdrop** - Backdrop and overlay patterns
 - **FlexRow/FlexBetween/FlexCenter** - Common flexbox layouts
 - **ResponsiveContainer** - Responsive width calculations
 - **Card** - Content containers with consistent styling
 
-#### Interaction Primitives  
+#### Interaction Primitives
+
 - **Button** - All button variants and interactions
 - **Input/TextArea** - Form input elements
 - **Select** - Dropdown selections
 - **Modal** - Overlay content (desktop modal, mobile drawer)
 
 #### Specialized Primitives
+
 - **Tooltip** - Hover/tap information displays
 - **Switch/Toggle** - Boolean controls
 - **IconButton** - Icon-based interactions
@@ -98,11 +107,13 @@ The Modal primitive represents the **most impactful architectural transformation
 ### Universal Modal Benefits
 
 **Simple Modals** automatically become mobile-optimized:
+
 - CreateSpaceModal → Space creation drawer
-- KickUserModal → Confirmation drawer  
+- KickUserModal → Confirmation drawer
 - NewDirectMessageModal → Address input drawer
 
 **Complex Modals** may need responsive layout adjustments:
+
 - UserSettingsModal → Multi-tab interface in full-height drawer
 - SpaceEditor → Complex editor as mobile navigation flow
 - JoinSpaceModal → Join flow in drawer format
@@ -166,7 +177,7 @@ export const themeColors = {
   light: {
     accent: {
       50: '#eef7ff',
-      100: '#daeeff', 
+      100: '#daeeff',
       // ... matches CSS variables exactly
       500: '#0287f2',
       DEFAULT: '#0287f2',
@@ -187,34 +198,36 @@ export const themeColors = {
     // ... dark theme variants
   },
   accents: {
-    blue: { /* accent color variations */ },
-    purple: { /* accent color variations */ },
+    blue: {
+      /* accent color variations */
+    },
+    purple: {
+      /* accent color variations */
+    },
     // ... all accent colors
-  }
+  },
 };
 ```
 
 #### Layer 2: Platform-Specific Theme Access
 
 **Web**: Continue using CSS variables + Tailwind classes
+
 ```tsx
 // Button.web.tsx - NO CHANGES to existing approach
-<span className="bg-accent text-white hover:bg-accent-400">
-  {children}
-</span>
+<span className="bg-accent text-white hover:bg-accent-400">{children}</span>
 ```
 
 **Native**: Use shared theme via React Context
+
 ```tsx
 // Button.native.tsx - Uses shared theme system
 const { theme, accent } = useTheme();
 const colors = getColors(theme, accent);
 
 <Pressable style={{ backgroundColor: colors.accent.DEFAULT }}>
-  <Text style={{ color: colors.white }}>
-    {children}
-  </Text>
-</Pressable>
+  <Text style={{ color: colors.white }}>{children}</Text>
+</Pressable>;
 ```
 
 #### Layer 3: Unified Theme Context
@@ -224,10 +237,10 @@ const colors = getColors(theme, accent);
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [accent, setAccent] = useState<AccentColor>('blue');
-  
+
   // Web: Apply CSS classes (existing behavior)
   // Native: Provide theme values via context
-  
+
   return (
     <ThemeContext.Provider value={{ theme, accent, setTheme, setAccent }}>
       {children}
@@ -240,7 +253,7 @@ export const ThemeProvider = ({ children }) => {
 
 1. **Zero Breaking Changes**: All existing web styling continues working
 2. **Exact Color Matching**: Native colors precisely match CSS variable values
-3. **Synchronized Switching**: Theme changes apply to both platforms identically  
+3. **Synchronized Switching**: Theme changes apply to both platforms identically
 4. **Preserved Features**: Keep accent color switcher, light/dark mode, localStorage persistence
 
 ### Color Synchronization Challenge
@@ -248,13 +261,15 @@ export const ThemeProvider = ({ children }) => {
 **The Problem**: React Native cannot read CSS variables, requiring parallel JavaScript color definitions.
 
 **Current State**: Manual synchronization between `_colors.scss` and `colors.ts`
+
 - Changing CSS colors requires manually updating JavaScript objects
 - Risk of inconsistencies between web and native platforms
 - Maintenance burden as color system evolves
 
 **Future Solution**: Automated synchronization system (implemented after core architecture is stable)
+
 - **Option 1**: Build script that parses CSS variables and generates JavaScript colors
-- **Option 2**: Single JavaScript source that generates both CSS and native colors  
+- **Option 2**: Single JavaScript source that generates both CSS and native colors
 - **Option 3**: Design token pipeline using tools like Style Dictionary
 
 **Recommended Approach**: Maintain `_colors.scss` as source of truth, automate generation of `colors.ts`
@@ -269,18 +284,21 @@ This ensures the sophisticated existing theming system remains the authoritative
 **Solution**: Responsive width constraints in primitive implementations
 
 Mobile primitives detect large tablets and apply appropriate sizing:
+
 - **Phone**: Full-width drawer (natural)
-- **Small tablet**: Full-width drawer (acceptable)  
+- **Small tablet**: Full-width drawer (acceptable)
 - **Large tablet**: Centered drawer with max-width constraint
 
 ### Styling System Differences
 
-**Web Platforms** (`.web.tsx`): 
+**Web Platforms** (`.web.tsx`):
+
 - CSS units (`px`, `rem`, `em`, `%`, `vh`, `vw`)
 - CSS variables via Tailwind classes (`bg-accent`, `text-strong`)
 - SCSS files for complex styling
 
-**React Native** (`.native.tsx`): 
+**React Native** (`.native.tsx`):
+
 - Density-independent pixels (dp) - just numbers, no units
 - JavaScript objects from shared theme system
 - StyleSheet API for styling
@@ -288,6 +306,7 @@ Mobile primitives detect large tablets and apply appropriate sizing:
 ### Platform File Extensions
 
 **Standard React Native Conventions**:
+
 - ✅ `.web.tsx` for web-specific code
 - ✅ `.native.tsx` for React Native code (iOS + Android)
 - ✅ `.ios.tsx` for iOS-specific code (optional)
@@ -304,7 +323,7 @@ These complex business components work perfectly on both platforms once primitiv
    - Long-press interactions
    - Just needs primitive buttons/inputs
 
-2. **Channel.tsx** 
+2. **Channel.tsx**
    - Permission management
    - Role handling
    - Channel state logic
@@ -332,6 +351,7 @@ These complex business components work perfectly on both platforms once primitiv
 ### Complex Modals That Need Adjustments
 
 #### UserSettingsModal & SpaceEditor
+
 These complex modals with sidebar navigation need special handling:
 
 **Desktop**: Side-by-side layout with sidebar
@@ -341,7 +361,7 @@ These complex modals with sidebar navigation need special handling:
 // Shared business component detects mobile and adjusts layout
 export function UserSettingsModal() {
   const { isMobile } = useResponsiveLayout();
-  
+
   return (
     <Modal title={t`Settings`} visible={visible} onClose={onClose}>
       <div className={isMobile ? 'settings-mobile' : 'settings-desktop'}>
@@ -360,15 +380,15 @@ export function UserSettingsModal() {
 
 ### Modal Behavior Differences
 
-| Feature | Desktop Modal | Mobile Drawer | Large Tablet Native |
-|---------|---------------|---------------|-------------------|
-| Position | Centered | Bottom sheet | Bottom sheet (centered) |
-| Width | Auto/max-width | 100% screen | Max 500px centered |
-| Backdrop | Click to close | Swipe down or tap backdrop | Tap backdrop |
-| Animation | Fade in | Slide up | Slide up |
-| Max Height | 90vh | 100vh - safe area | 80vh |
-| Scrolling | Content scrolls | Entire drawer scrolls | Entire drawer scrolls |
-| Close Button | Top right X | Header X + swipe | Header X + swipe |
+| Feature      | Desktop Modal   | Mobile Drawer              | Large Tablet Native     |
+| ------------ | --------------- | -------------------------- | ----------------------- |
+| Position     | Centered        | Bottom sheet               | Bottom sheet (centered) |
+| Width        | Auto/max-width  | 100% screen                | Max 500px centered      |
+| Backdrop     | Click to close  | Swipe down or tap backdrop | Tap backdrop            |
+| Animation    | Fade in         | Slide up                   | Slide up                |
+| Max Height   | 90vh            | 100vh - safe area          | 80vh                    |
+| Scrolling    | Content scrolls | Entire drawer scrolls      | Entire drawer scrolls   |
+| Close Button | Top right X     | Header X + swipe           | Header X + swipe        |
 
 ### Large Tablet Considerations (iPad Pro, Galaxy Tab)
 
@@ -384,7 +404,7 @@ import { Dimensions } from 'react-native';
 export function Modal({ title, visible, onClose, children }: ModalProps) {
   const screenWidth = Dimensions.get('window').width;
   const isLargeTablet = screenWidth > 768;
-  
+
   return (
     <MobileDrawer
       isOpen={visible}
@@ -401,14 +421,15 @@ export function Modal({ title, visible, onClose, children }: ModalProps) {
 const styles = StyleSheet.create({
   largeTabletDrawer: {
     alignSelf: 'center',
-    maxWidth: 500,        // 500dp max width for large tablets
+    maxWidth: 500, // 500dp max width for large tablets
     width: '100%',
     marginHorizontal: 'auto',
-  }
+  },
 });
 ```
 
 This ensures optimal UX across all device sizes:
+
 - **Phone**: Full-width drawer (natural)
 - **Small tablet**: Full-width drawer (still good)
 - **Large tablet**: Constrained width drawer (prevents awkward stretching)
@@ -452,6 +473,7 @@ src/
 ## Migration Strategy
 
 ### Phase 1: Create Core Primitives (Week 1)
+
 1. Button (already exists, just reorganize)
 2. Input
 3. TextArea
@@ -459,6 +481,7 @@ src/
 5. IconButton
 
 ### Phase 2: Create UI Primitives (Week 2)
+
 1. Select/Dropdown
 2. Modal
 3. Card
@@ -466,12 +489,14 @@ src/
 5. Drawer (for mobile)
 
 ### Phase 3: Refactor Components (Week 3-4)
+
 1. Replace all raw HTML with primitives
 2. Start with simple components (SearchBar)
 3. Move to complex components (Message actions)
 4. Test thoroughly on web first
 
 ### Phase 4: Mobile Implementation (Week 5-6)
+
 1. Implement .native.tsx versions
 2. Test with React Native
 3. Adjust styling for mobile
@@ -482,12 +507,14 @@ src/
 ### 1. Identify Component Type
 
 **Is it a Primitive?**
+
 - Contains raw HTML elements (`<div>`, `<span>`, `<button>`, etc.)
 - Has minimal business logic
 - Focuses on rendering and basic interactions
 - Examples: Button, Input, Card
 
 **Is it a Business Component?**
+
 - Uses other components (primitives or business)
 - Contains complex logic, state management
 - Handles data fetching, transformations
@@ -502,6 +529,7 @@ cd src/components/primitives/MyPrimitive
 ```
 
 Create these files:
+
 1. **MyPrimitive.types.ts** - Define the interface
 2. **MyPrimitive.web.tsx** - Web implementation
 3. **MyPrimitive.native.tsx** - Mobile implementation
@@ -518,7 +546,7 @@ import { Container } from '../primitives/Container';
 
 export function MyFeature() {
   // Complex business logic here
-  
+
   return (
     <Container>
       <Input value={value} onChange={setValue} />
@@ -540,6 +568,7 @@ export function MyFeature() {
 ### 5. Best Practices
 
 **DO:**
+
 - ✅ Use primitives for ALL UI elements
 - ✅ Keep business logic in shared components
 - ✅ Maintain identical APIs across platforms
@@ -552,6 +581,7 @@ export function MyFeature() {
 - ✅ **Styling**: Use existing design tokens (accent, surface, text colors)
 
 **DON'T:**
+
 - ❌ Use raw HTML in business components
 - ❌ Put business logic in primitives
 - ❌ Create platform-specific business components
@@ -576,17 +606,21 @@ export function MyFeature() {
 ### Related Documentation
 
 **For Step-by-Step Implementation**:
+
 - [`mobile-dev-plan.md`](./mobile-dev-plan.md) - Detailed phase-by-phase execution plan
 - [`component-dev-guidelines.md`](../../docs/component-dev-guidelines.md) - Development workflows and code examples
 
 **For Understanding the Architecture**:
+
 - This document provides the conceptual foundation and reasoning
 - Implementation documents reference this for architectural context
 
 ## Key Architectural Insights
 
 ### The Modal-to-Drawer Pattern
+
 The Modal primitive transformation is the **crown jewel** of this architecture:
+
 - **Zero code changes** in business components
 - **Automatic mobile optimization** for all modals
 - **Native mobile UX** with swipe gestures
@@ -608,6 +642,7 @@ For all web components (`.web.tsx`), follow this styling hierarchy:
 #### Styling Best Practices
 
 **✅ Good: Tailwind-first approach**
+
 ```tsx
 // Button.web.tsx
 export function Button({ type, size, children, className }: ButtonProps) {
@@ -631,6 +666,7 @@ export function Button({ type, size, children, className }: ButtonProps) {
 ```
 
 **✅ Good: @apply for reusable patterns**
+
 ```scss
 // Button.scss - semantic classes using @apply
 .btn-base {
@@ -653,6 +689,7 @@ export function Button({ type, size, children, className }: ButtonProps) {
 ```
 
 **❌ Avoid: Raw CSS for basic styling**
+
 ```scss
 // Don't do this - use Tailwind instead
 .button {
@@ -666,11 +703,12 @@ export function Button({ type, size, children, className }: ButtonProps) {
 ```
 
 **✅ Good: Raw CSS for complex patterns Tailwind can't handle**
+
 ```scss
 // Modal.scss - complex animations and effects
 .quorum-modal {
   @apply bg-surface-0 rounded-lg shadow-2xl;
-  
+
   /* Custom animation that Tailwind can't handle cleanly */
   animation: modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   backdrop-filter: blur(8px);
@@ -691,7 +729,7 @@ export function Button({ type, size, children, className }: ButtonProps) {
 #### Gradual Migration Strategy
 
 **Phase 1**: New components use Tailwind-first approach
-**Phase 2**: Refactor existing SCSS files to use `@apply` 
+**Phase 2**: Refactor existing SCSS files to use `@apply`
 **Phase 3**: Convert remaining raw CSS to Tailwind utilities where possible
 **Phase 4**: Keep only complex CSS that Tailwind can't handle
 
@@ -705,16 +743,14 @@ export function Modal({ title, visible, onClose, children }: ModalProps) {
       <div className="quorum-modal">
         <div className="flex items-center justify-between p-4 border-b border-default">
           <h2 className="text-lg font-semibold text-strong">{title}</h2>
-          <button 
+          <button
             onClick={onClose}
             className="p-1 rounded hover:bg-surface-2 transition-colors"
           >
             <FontAwesomeIcon icon={faTimes} className="w-4 h-4 text-subtle" />
           </button>
         </div>
-        <div className="p-4">
-          {children}
-        </div>
+        <div className="p-4">{children}</div>
       </div>
     </div>
   );
@@ -725,7 +761,7 @@ export function Modal({ title, visible, onClose, children }: ModalProps) {
 // Modal.scss - @apply for complex patterns + custom animations
 .quorum-modal {
   @apply bg-surface-0 rounded-lg shadow-2xl max-w-md w-full mx-4;
-  
+
   /* Keep custom animation - Tailwind can't handle this cleanly */
   animation: modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -744,6 +780,6 @@ export function Modal({ title, visible, onClose, children }: ModalProps) {
 
 ## Conclusion
 
-This architecture achieves the vision of *"everything else can then be shared instead of being mirrors"* while requiring minimal changes to the existing codebase. By extracting only the raw HTML portions into primitives, we enable massive code reuse while maintaining platform-specific optimizations where needed.
+This architecture achieves the vision of _"everything else can then be shared instead of being mirrors"_ while requiring minimal changes to the existing codebase. By extracting only the raw HTML portions into primitives, we enable massive code reuse while maintaining platform-specific optimizations where needed.
 
 The Modal-to-Drawer transformation exemplifies the power of this approach: complex features like CreateSpaceModal, UserSettingsModal, and SpaceEditor automatically become mobile-optimized without changing a single line of their business logic.

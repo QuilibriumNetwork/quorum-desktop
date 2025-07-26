@@ -26,13 +26,13 @@ export const Input: React.FC<InputNativeProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
-  const colors = getColors('light', 'blue'); // Use default light theme with blue accent
+  const colors = getColors(theme.mode, theme.accentColor);
   const [isFocused, setIsFocused] = React.useState(false);
 
   // Map type to keyboardType if not explicitly provided
   const getKeyboardType = () => {
     if (keyboardType !== 'default') return keyboardType;
-    
+
     switch (type) {
       case 'email':
         return 'email-address';
@@ -47,20 +47,17 @@ export const Input: React.FC<InputNativeProps> = ({
     }
   };
 
-  const containerStyle = [
-    styles.container,
-    style,
-  ];
+  const containerStyle = [styles.container, style];
 
   const getBorderColor = () => {
-    if (error) return colors.utilities.danger;
-    if (isFocused && !noFocusStyle) return colors.accent.DEFAULT;
-    return 'transparent';
+    if (error) return colors.field.borderError;
+    if (isFocused && !noFocusStyle) return colors.field.borderFocus;
+    return colors.field.border;
   };
 
   const getInputStyles = () => {
     const baseStyles = [styles.input];
-    
+
     if (variant === 'onboarding') {
       return [
         ...baseStyles,
@@ -74,12 +71,12 @@ export const Input: React.FC<InputNativeProps> = ({
         disabled && styles.inputDisabled,
       ];
     }
-    
+
     return [
       ...baseStyles,
       {
-        backgroundColor: colors.bg.input,
-        color: colors.text.main,
+        backgroundColor: colors.field.bg,
+        color: colors.field.text,
         borderColor: getBorderColor(),
       },
       error && styles.inputError,
@@ -95,7 +92,9 @@ export const Input: React.FC<InputNativeProps> = ({
         style={inputStyle}
         value={value}
         placeholder={placeholder}
-        placeholderTextColor={variant === 'onboarding' ? colors.accent[200] : colors.text.muted}
+        placeholderTextColor={
+          variant === 'onboarding' ? colors.accent[200] : colors.field.placeholder
+        }
         onChangeText={onChange}
         onBlur={() => {
           setIsFocused(false);
@@ -115,7 +114,10 @@ export const Input: React.FC<InputNativeProps> = ({
         accessibilityLabel={accessibilityLabel}
       />
       {error && errorMessage && (
-        <Text style={[styles.errorMessage, { color: colors.utilities.danger }]} role="alert">
+        <Text
+          style={[styles.errorMessage, { color: colors.field.borderError }]}
+          role="alert"
+        >
           {errorMessage}
         </Text>
       )}

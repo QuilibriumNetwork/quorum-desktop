@@ -6,7 +6,12 @@ declare module 'react-native' {
 
   export interface ViewStyle {
     flex?: number;
-    justifyContent?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around';
+    justifyContent?:
+      | 'center'
+      | 'flex-start'
+      | 'flex-end'
+      | 'space-between'
+      | 'space-around';
     alignItems?: 'center' | 'flex-start' | 'flex-end' | 'stretch';
     backgroundColor?: string;
     borderTopLeftRadius?: number;
@@ -39,7 +44,7 @@ declare module 'react-native' {
   export const View: ComponentType<ViewProps>;
   export const Modal: ComponentType<ModalProps>;
   export const TouchableWithoutFeedback: ComponentType<TouchableWithoutFeedbackProps>;
-  
+
   export const StyleSheet = {
     create: <T extends { [key: string]: ViewStyle }>(styles: T) => T,
     absoluteFillObject: {
@@ -56,7 +61,9 @@ declare module 'react-native' {
     Value: class {
       constructor(value: number) {}
     },
-    timing: (value: any, config: any) => ({ start: (callback?: () => void) => {} }),
+    timing: (value: any, config: any) => ({
+      start: (callback?: () => void) => {},
+    }),
     parallel: (animations: any[]) => ({ start: (callback?: () => void) => {} }),
   };
 

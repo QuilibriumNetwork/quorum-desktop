@@ -36,7 +36,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const focusInputSafely = () => {
     // Don't steal focus if user is actively typing
     if (isUserTyping.current) return;
-    
+
     // Prevent focus if mobile overlay is active
     if (window.innerWidth < 1024) {
       const mobileOverlay = document.querySelector('.bg-mobile-overlay');
@@ -106,12 +106,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Mark user as actively typing
     isUserTyping.current = true;
-    
+
     const value = e.target.value;
     onQueryChange(value);
     setSelectedSuggestionIndex(-1);
     setShowSuggestions(value.length > 0 && suggestions.length > 0);
-    
+
     // Reset typing state after a short delay
     setTimeout(() => {
       isUserTyping.current = false;
@@ -134,7 +134,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       }, 10);
       return;
     }
-    
+
     // Delay to allow suggestion clicks
     setTimeout(() => {
       setIsFocused(false);

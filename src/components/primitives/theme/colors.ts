@@ -3,7 +3,13 @@
 // DO NOT modify without updating CSS variables accordingly
 
 export type Theme = 'light' | 'dark';
-export type AccentColor = 'blue' | 'purple' | 'fuchsia' | 'orange' | 'green' | 'yellow';
+export type AccentColor =
+  | 'blue'
+  | 'purple'
+  | 'fuchsia'
+  | 'orange'
+  | 'green'
+  | 'yellow';
 
 // Base theme definitions that mirror _colors.scss exactly
 export const themeColors = {
@@ -75,6 +81,38 @@ export const themeColors = {
       success: 'rgb(70, 194, 54)',
       info: 'rgb(48, 149, 189)',
     },
+
+    // === MOBILE-SPECIFIC FIELD COLORS (DO NOT SYNC) ===
+    // Optimized for mobile modal backgrounds (surface-1: #f6f6f9)
+    field: {
+      // Background colors - need good contrast on surface-1
+      bg: '#e6e6eb', // surface-3 - provides visible contrast on surface-1
+      bgFocus: '#eeeef3', // surface-2 - lighter focus state
+      bgFilled: '#eeeef3', // surface-2 - filled variant
+      bgFilledFocus: '#f6f6f9', // surface-1 - subtle filled focus
+      bgError: '#e6e6eb', // surface-3 - same as default
+
+      // Border colors - lighter borders for surface-1 background
+      border: '#cdccd3', // surface-6 - visible but not too strong
+      borderHover: '#c4c4cb', // surface-7 - slightly stronger on hover
+      borderFocus: '#0287f2', // accent blue - focus state
+      borderError: '#e74a4a', // danger color
+
+      // Text colors
+      text: '#363636', // same as text.main
+      placeholder: '#818181', // same as text.subtle
+
+      // Focus shadows (using rgba for opacity)
+      focusShadow: 'rgba(2, 135, 242, 0.1)', // accent with opacity
+      errorFocusShadow: 'rgba(231, 74, 74, 0.1)', // danger with opacity
+
+      // Dropdown/options colors (for Select component)
+      optionsBg: '#ffffff', // surface-00 - clean white dropdown
+      optionHover: '#e6e6eb', // surface-3 - hover state
+      optionSelected: '#eeeef3', // surface-2 - selected state
+      optionText: '#363636', // text.main
+      optionTextSelected: '#0287f2', // accent blue
+    },
   },
 
   dark: {
@@ -144,6 +182,38 @@ export const themeColors = {
       warning: 'rgb(208, 154, 61)',
       success: 'rgb(55, 158, 43)',
       info: 'rgb(38, 123, 158)',
+    },
+
+    // === MOBILE-SPECIFIC FIELD COLORS (DO NOT SYNC) ===
+    // Optimized for mobile modal backgrounds (surface-1: #241f27)
+    field: {
+      // Background colors - need good contrast on dark surface-1
+      bg: '#312935', // surface-3 - provides visible contrast on dark surface-1
+      bgFocus: '#2c252e', // surface-2 - lighter focus state
+      bgFilled: '#2c252e', // surface-2 - filled variant
+      bgFilledFocus: '#241f27', // surface-1 - subtle filled focus
+      bgError: '#312935', // surface-3 - same as default
+
+      // Border colors - need visibility on dark surface-1 background
+      border: '#584d5e', // surface-6 - visible on dark background
+      borderHover: '#716379', // surface-7 - stronger on hover
+      borderFocus: '#0287f2', // accent blue - same as light
+      borderError: '#c73737', // danger color for dark theme
+
+      // Text colors
+      text: '#f4f1f6', // same as text.main
+      placeholder: '#bfb5c8', // same as text.subtle
+
+      // Focus shadows (using rgba for opacity)
+      focusShadow: 'rgba(2, 135, 242, 0.1)', // accent with opacity
+      errorFocusShadow: 'rgba(199, 55, 55, 0.1)', // dark danger with opacity
+
+      // Dropdown/options colors (for Select component)
+      optionsBg: '#100f11', // surface-00 - dark dropdown background
+      optionHover: '#312935', // surface-3 - hover state
+      optionSelected: '#2c252e', // surface-2 - selected state
+      optionText: '#f4f1f6', // text.main
+      optionTextSelected: '#0287f2', // accent blue
     },
   },
 };
@@ -250,7 +320,10 @@ export const commonColors = {
  * Get colors for a specific theme and accent combination
  * This is the main function React Native components should use
  */
-export const getColors = (theme: Theme = 'light', accent: AccentColor = 'blue') => {
+export const getColors = (
+  theme: Theme = 'light',
+  accent: AccentColor = 'blue'
+) => {
   return {
     ...themeColors[theme],
     accent: accentColors[accent],
@@ -263,13 +336,13 @@ export const getColors = (theme: Theme = 'light', accent: AccentColor = 'blue') 
  * Example: getColor('surface.3', 'dark') returns '#312935'
  */
 export const getColor = (
-  colorPath: string, 
-  theme: Theme = 'light', 
+  colorPath: string,
+  theme: Theme = 'light',
   accent: AccentColor = 'blue'
 ): string => {
   const colors = getColors(theme, accent);
   const path = colorPath.split('.');
-  
+
   let current: any = colors;
   for (const key of path) {
     current = current[key];
@@ -278,6 +351,6 @@ export const getColor = (
       return colors.accent.DEFAULT; // Fallback
     }
   }
-  
+
   return current;
 };

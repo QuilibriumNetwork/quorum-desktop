@@ -15,14 +15,18 @@ src/playground/
 ## Usage
 
 ### Web Playground
+
 The web playground is accessible through the main application at `/playground` route. It provides:
+
 - Interactive testing of all primitives
 - Theme and accent color switching
 - Visual validation of primitive behavior
 - Real-time testing during development
 
 ### Mobile Playground (Phase 1D)
+
 The mobile playground will be created as a separate React Native app for testing primitives on mobile devices:
+
 - Individual primitive testing screens
 - Theme system validation
 - Performance testing
@@ -39,4 +43,4 @@ This ensures cross-platform compatibility is validated early and often during de
 
 ---
 
-*Last updated: 2025-07-23*
+_Last updated: 2025-07-23_

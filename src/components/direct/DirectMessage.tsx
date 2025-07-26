@@ -29,7 +29,8 @@ import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 const DirectMessage: React.FC<{}> = (p: {}) => {
-  const { isDesktop, isMobile, isTablet, toggleLeftSidebar } = useResponsiveLayoutContext();
+  const { isDesktop, isMobile, isTablet, toggleLeftSidebar } =
+    useResponsiveLayoutContext();
   const [fileError, setFileError] = useState<string | null>(null);
   let { address } = useParams<{ address: string }>();
   const conversationId = address! + '/' + address!;
@@ -385,7 +386,10 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           </div>
         )}
 
-        <div {...getRootProps()} className="message-editor-container pr-6 lg:pr-8">
+        <div
+          {...getRootProps()}
+          className="message-editor-container pr-6 lg:pr-8"
+        >
           <div
             className={
               'message-editor w-full flex items-center gap-2 ' +

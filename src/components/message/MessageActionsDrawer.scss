@@ -40,7 +40,7 @@
   &--active {
     border-color: var(--accent-500);
     background: var(--surface-2); // Keep same background as default
-    
+
     .quick-reaction-button__emoji {
       filter: brightness(1.2);
     }
@@ -56,12 +56,12 @@
 .quick-reaction-button--more {
   // Special styling for the "more reactions" button
   border-style: dashed; // Distinguish from reaction buttons
-  
+
   .quick-reaction-button__more-icon {
     font-size: 20px;
     color: var(--color-text-main);
   }
-  
+
   &:hover .quick-reaction-button__more-icon {
     color: var(--color-text-strong);
   }
@@ -100,7 +100,7 @@
 
   &--danger {
     color: var(--danger-hex);
-    
+
     &:hover {
       background: rgb(var(--danger) / 0.1);
     }
@@ -109,7 +109,7 @@
   &--disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    
+
     &:hover {
       background: none;
     }
@@ -157,7 +157,7 @@
 
   .action-menu-item {
     border: 1px solid transparent;
-    
+
     &:hover {
       border-color: var(--color-text-main);
     }

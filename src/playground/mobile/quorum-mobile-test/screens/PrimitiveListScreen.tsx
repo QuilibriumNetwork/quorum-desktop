@@ -1,5 +1,11 @@
 import React from 'react';
-import { ScrollView, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  ScrollView,
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface PrimitiveItem {
@@ -14,12 +20,15 @@ interface PrimitiveListScreenProps {
   onSelectPrimitive: (screen: string) => void;
 }
 
-export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({ onSelectPrimitive }) => {
+export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
+  onSelectPrimitive,
+}) => {
   const primitives: PrimitiveItem[] = [
     {
       id: 'basic',
       title: 'Basic React Native Test',
-      description: 'Verify React Native is working with basic layouts and components',
+      description:
+        'Verify React Native is working with basic layouts and components',
       emoji: '🚀',
       onPress: () => onSelectPrimitive('basic'),
     },
@@ -33,7 +42,8 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({ onSele
     {
       id: 'textarea',
       title: 'TextArea Primitive',
-      description: 'Multiline text input with auto-resize and onboarding variant',
+      description:
+        'Multiline text input with auto-resize and onboarding variant',
       emoji: '📄',
       onPress: () => onSelectPrimitive('textarea'),
     },
@@ -47,7 +57,8 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({ onSele
     {
       id: 'switch',
       title: 'Switch Primitive',
-      description: 'Toggle switches with proper spacing and consistent behavior',
+      description:
+        'Toggle switches with proper spacing and consistent behavior',
       emoji: '🔛',
       onPress: () => onSelectPrimitive('switch'),
     },
@@ -57,6 +68,13 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({ onSele
       description: 'Cross-platform modal that transforms to drawer on mobile',
       emoji: '📋',
       onPress: () => onSelectPrimitive('modal'),
+    },
+    {
+      id: 'select',
+      title: 'Select Primitive',
+      description: 'Dropdown/picker component with modal overlay for mobile',
+      emoji: '📋',
+      onPress: () => onSelectPrimitive('select'),
     },
   ];
 
@@ -93,14 +111,15 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({ onSele
           <Text style={styles.sectionSubtitle}>
             Tap any card to test that primitive on React Native
           </Text>
-          
+
           {primitives.map(renderPrimitiveCard)}
         </View>
 
         <View style={styles.infoSection}>
           <Text style={styles.infoTitle}>📱 Testing Notes</Text>
           <Text style={styles.infoText}>
-            • Each primitive has both web (.web.tsx) and mobile (.native.tsx) implementations
+            • Each primitive has both web (.web.tsx) and mobile (.native.tsx)
+            implementations
           </Text>
           <Text style={styles.infoText}>
             • All primitives maintain identical APIs across platforms

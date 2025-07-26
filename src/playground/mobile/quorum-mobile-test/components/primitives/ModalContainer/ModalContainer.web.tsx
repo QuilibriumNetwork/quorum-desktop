@@ -46,7 +46,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
 
   const handleClose = () => {
     if (!onClose) return;
-    
+
     setIsClosing(true);
     setTimeout(() => {
       setShouldRender(false);
@@ -73,7 +73,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
 
   if (!showBackdrop) {
     return (
-      <div 
+      <div
         ref={containerRef}
         className={contentClasses}
         style={{ animationDuration: `${animationDuration}ms` }}
@@ -91,7 +91,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
       blur={backdropBlur}
       closeOnBackdropClick={closeOnBackdropClick}
     >
-      <div 
+      <div
         ref={containerRef}
         className={contentClasses}
         onClick={(e) => e.stopPropagation()}

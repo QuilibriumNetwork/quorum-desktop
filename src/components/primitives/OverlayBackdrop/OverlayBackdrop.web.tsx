@@ -16,7 +16,11 @@ export const OverlayBackdrop: React.FC<OverlayBackdropProps> = ({
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     // Only trigger if clicking the backdrop itself, not children
-    if (e.target === e.currentTarget && closeOnBackdropClick && onBackdropClick) {
+    if (
+      e.target === e.currentTarget &&
+      closeOnBackdropClick &&
+      onBackdropClick
+    ) {
       onBackdropClick();
     }
   };
@@ -30,11 +34,14 @@ export const OverlayBackdrop: React.FC<OverlayBackdropProps> = ({
     className
   );
 
-  const style = opacity !== undefined ? { backgroundColor: `rgba(0, 0, 0, ${opacity})` } : undefined;
+  const style =
+    opacity !== undefined
+      ? { backgroundColor: `rgba(0, 0, 0, ${opacity})` }
+      : undefined;
 
   return (
-    <div 
-      className={backdropClasses} 
+    <div
+      className={backdropClasses}
       onClick={handleBackdropClick}
       style={style}
     >

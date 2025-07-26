@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { PrimitiveListScreen } from './screens/PrimitiveListScreen';
 import { InputTestScreen } from './screens/InputTestScreen';
@@ -8,15 +14,24 @@ import { TextAreaTestScreen } from './screens/TextAreaTestScreen';
 import { SimpleButtonTestScreen } from './screens/SimpleButtonTestScreen';
 import { SwitchTestScreen } from './screens/SwitchTestScreen';
 import { ModalTestScreen } from './screens/ModalTestScreen';
+import { SelectTestScreen } from './screens/SelectTestScreen';
 
-type Screen = 'list' | 'basic' | 'input' | 'textarea' | 'button' | 'switch' | 'modal';
+type Screen =
+  | 'list'
+  | 'basic'
+  | 'input'
+  | 'textarea'
+  | 'button'
+  | 'switch'
+  | 'modal'
+  | 'select';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('list');
 
   const renderBackButton = () => {
     if (currentScreen === 'list') return null;
-    
+
     return (
       <View style={styles.backBar}>
         <TouchableOpacity
@@ -43,26 +58,46 @@ export default function App() {
         return <SwitchTestScreen />;
       case 'modal':
         return <ModalTestScreen />;
+      case 'select':
+        return <SelectTestScreen />;
       case 'basic':
       default:
         return (
           <SafeAreaView style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
               <Text style={styles.title}>🚀 Basic React Native Test</Text>
-              <Text style={styles.subtitle}>Testing if React Native works on this platform</Text>
-              
+              <Text style={styles.subtitle}>
+                Testing if React Native works on this platform
+              </Text>
+
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Flex Layout Test</Text>
-                <View style={[styles.testContainer, { flexDirection: 'row', gap: 16 }]}>
-                  <View style={styles.item}><Text style={styles.itemText}>Item 1</Text></View>
-                  <View style={styles.item}><Text style={styles.itemText}>Item 2</Text></View>
-                  <View style={styles.item}><Text style={styles.itemText}>Item 3</Text></View>
+                <View
+                  style={[
+                    styles.testContainer,
+                    { flexDirection: 'row', gap: 16 },
+                  ]}
+                >
+                  <View style={styles.item}>
+                    <Text style={styles.itemText}>Item 1</Text>
+                  </View>
+                  <View style={styles.item}>
+                    <Text style={styles.itemText}>Item 2</Text>
+                  </View>
+                  <View style={styles.item}>
+                    <Text style={styles.itemText}>Item 3</Text>
+                  </View>
                 </View>
               </View>
 
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Space Between Test</Text>
-                <View style={[styles.testContainer, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+                <View
+                  style={[
+                    styles.testContainer,
+                    { flexDirection: 'row', justifyContent: 'space-between' },
+                  ]}
+                >
                   <Text style={styles.betweenText}>Left Side</Text>
                   <Text style={styles.betweenText}>Right Side</Text>
                 </View>
@@ -70,7 +105,12 @@ export default function App() {
 
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Center Test</Text>
-                <View style={[styles.centerContainer, { justifyContent: 'center', alignItems: 'center' }]}>
+                <View
+                  style={[
+                    styles.centerContainer,
+                    { justifyContent: 'center', alignItems: 'center' },
+                  ]}
+                >
                   <Text style={styles.centerText}>Perfectly Centered! 🎯</Text>
                 </View>
               </View>
@@ -80,7 +120,8 @@ export default function App() {
                   ✅ If you see this, React Native is working!
                 </Text>
                 <Text style={styles.infoMessage}>
-                  Next step: Test our cross-platform primitives. Tap "Input Test", "TextArea Test", or "Button Test" tabs above.
+                  Next step: Test our cross-platform primitives. Tap "Input
+                  Test", "TextArea Test", or "Button Test" tabs above.
                 </Text>
               </View>
             </ScrollView>

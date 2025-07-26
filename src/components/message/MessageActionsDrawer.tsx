@@ -96,8 +96,8 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
             onClick={handleMoreReactions}
             aria-label={t`More reactions`}
           >
-            <FontAwesomeIcon 
-              icon={faFaceSmileBeam} 
+            <FontAwesomeIcon
+              icon={faFaceSmileBeam}
               className="quick-reaction-button__more-icon"
             />
           </button>
@@ -106,12 +106,8 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
 
       {/* Actions menu */}
       <div className="message-actions-drawer__actions">
-        <ActionMenuItem
-          icon={faReply}
-          label={t`Reply`}
-          onClick={handleReply}
-        />
-        
+        <ActionMenuItem icon={faReply} label={t`Reply`} onClick={handleReply} />
+
         <ActionMenuItem
           icon={faLink}
           label={t`Copy message link`}

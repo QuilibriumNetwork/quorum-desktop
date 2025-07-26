@@ -23,7 +23,14 @@ import locales from '../../i18n/locales';
 import useForceUpdate from '../hooks/forceUpdate';
 import ReactTooltip from '../ReactTooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faInfoCircle, faUser, faShield, faPalette, faBell } from '@fortawesome/free-solid-svg-icons';
+import {
+  faTimes,
+  faInfoCircle,
+  faUser,
+  faShield,
+  faPalette,
+  faBell,
+} from '@fortawesome/free-solid-svg-icons';
 import { notificationService } from '../../services/notificationService';
 
 const UserSettingsModal: React.FunctionComponent<{
@@ -69,9 +76,10 @@ const UserSettingsModal: React.FunctionComponent<{
   >(null);
   const [isUserIconUploading, setIsUserIconUploading] =
     React.useState<boolean>(false);
-  const [notificationsEnabled, setNotificationsEnabled] = React.useState<boolean>(
-    notificationService.getPermissionStatus() === 'granted'
-  );
+  const [notificationsEnabled, setNotificationsEnabled] =
+    React.useState<boolean>(
+      notificationService.getPermissionStatus() === 'granted'
+    );
 
   const forceUpdate = useForceUpdate();
 
@@ -92,13 +100,17 @@ const UserSettingsModal: React.FunctionComponent<{
 
     if (currentStatus === 'granted') {
       // Can't revoke permission programmatically, inform user
-      alert(t`To disable notifications, please change the notification settings in your browser for this site.`);
+      alert(
+        t`To disable notifications, please change the notification settings in your browser for this site.`
+      );
       return;
     }
 
     if (currentStatus === 'denied') {
       // Can't request again if denied, inform user
-      alert(t`Notifications are blocked. Please enable them in your browser settings for this site.`);
+      alert(
+        t`Notifications are blocked. Please enable them in your browser settings for this site.`
+      );
       return;
     }
 
@@ -640,7 +652,8 @@ const UserSettingsModal: React.FunctionComponent<{
                           </div>
                         )}
 
-                        {notificationService.getPermissionStatus() === 'denied' && (
+                        {notificationService.getPermissionStatus() ===
+                          'denied' && (
                           <div className="pt-2 text-sm text-red-600">
                             {t`Notifications are blocked. Please enable them in your browser settings.`}
                           </div>

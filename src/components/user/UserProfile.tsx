@@ -116,10 +116,7 @@ const UserProfile: React.FunctionComponent<{
   }, [acceptedFiles]);
 
   return (
-    <div
-      className="user-profile"
-      onClick={(e) => e.stopPropagation()}
-    >
+    <div className="user-profile" onClick={(e) => e.stopPropagation()}>
       {props.dismiss && (
         <div
           className="absolute right-3 top-3 cursor-pointer text-subtle hover:text-main z-10"

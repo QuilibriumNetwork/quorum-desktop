@@ -8,9 +8,11 @@
  */
 .responsive-container {
   position: fixed;
-  width: calc(100vw - 74px);  /* Fixed: Desktop & Tablet use 74px (matching NavMenu) */
+  width: calc(
+    100vw - 74px
+  ); /* Fixed: Desktop & Tablet use 74px (matching NavMenu) */
   height: calc(100vh - 14px);
-  left: 74px;                 /* Fixed: Match the NavMenu width exactly */
+  left: 74px; /* Fixed: Match the NavMenu width exactly */
   top: 14px;
   border-top-left-radius: 0.75rem;
   background-color: var(--color-bg-sidebar);

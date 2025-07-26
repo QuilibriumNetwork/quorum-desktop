@@ -120,7 +120,11 @@ export const Message = ({
 
   // Effect to handle hiding tablet actions when clicking elsewhere
   React.useEffect(() => {
-    if (useDesktopTap && actionsVisibleOnTap && hoverTarget === message.messageId) {
+    if (
+      useDesktopTap &&
+      actionsVisibleOnTap &&
+      hoverTarget === message.messageId
+    ) {
       const handleClickOutside = (event: MouseEvent) => {
         const target = event.target as Element;
         if (!target.closest(`#msg-${message.messageId}`)) {
@@ -215,7 +219,11 @@ export const Message = ({
 
   // Action handlers
   const handleReaction = (emoji: string) => {
-    if (!message.reactions?.find(r => r.emojiId === emoji)?.memberIds.includes(user.currentPasskeyInfo!.address)) {
+    if (
+      !message.reactions
+        ?.find((r) => r.emojiId === emoji)
+        ?.memberIds.includes(user.currentPasskeyInfo!.address)
+    ) {
       submitMessage({
         type: 'reaction',
         messageId: message.messageId,
@@ -240,7 +248,7 @@ export const Message = ({
     navigator.clipboard.writeText(url);
     setCopiedLinkId(message.messageId);
     setTimeout(() => {
-      setCopiedLinkId(prev => prev === message.messageId ? null : prev);
+      setCopiedLinkId((prev) => (prev === message.messageId ? null : prev));
     }, 1500);
   };
 
@@ -270,7 +278,9 @@ export const Message = ({
       case 'reply':
         return t`Reply`;
       case 'copy':
-        return copiedLinkId === message.messageId ? t`Copied!` : t`Copy message link`;
+        return copiedLinkId === message.messageId
+          ? t`Copied!`
+          : t`Copy message link`;
       case 'delete':
         return t`Delete message`;
       default:
@@ -455,7 +465,10 @@ export const Message = ({
             }}
           />
           <div className="message-content">
-            {((hoverTarget === message.messageId && useDesktopHover) || (hoverTarget === message.messageId && actionsVisibleOnTap && useDesktopTap)) && (
+            {((hoverTarget === message.messageId && useDesktopHover) ||
+              (hoverTarget === message.messageId &&
+                actionsVisibleOnTap &&
+                useDesktopTap)) && (
               <div
                 onClick={(e) => {
                   e.stopPropagation();
@@ -592,17 +605,21 @@ export const Message = ({
                 )}
               </div>
             )}
-            
+
             {/* Shared tooltip for all action icons to avoid flashing issues */}
-            {((hoverTarget === message.messageId && useDesktopHover) || (hoverTarget === message.messageId && actionsVisibleOnTap && useDesktopTap)) && hoveredAction && (
-              <ReactTooltip
-                id={`shared-action-tooltip-${message.messageId}`}
-                content={getTooltipContent(hoveredAction)}
-                place={getTooltipPlacement(hoveredAction) as any}
-                anchorSelect={getTooltipAnchorId(hoveredAction)}
-              />
-            )}
-            
+            {((hoverTarget === message.messageId && useDesktopHover) ||
+              (hoverTarget === message.messageId &&
+                actionsVisibleOnTap &&
+                useDesktopTap)) &&
+              hoveredAction && (
+                <ReactTooltip
+                  id={`shared-action-tooltip-${message.messageId}`}
+                  content={getTooltipContent(hoveredAction)}
+                  place={getTooltipPlacement(hoveredAction) as any}
+                  anchorSelect={getTooltipAnchorId(hoveredAction)}
+                />
+              )}
+
             {emojiPickerOpen === message.messageId && (
               <div
                 onClick={(e) => e.stopPropagation()}

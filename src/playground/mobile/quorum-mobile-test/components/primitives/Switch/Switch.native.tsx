@@ -15,7 +15,7 @@ export const Switch: React.FC<NativeSwitchProps> = ({
 }) => {
   const theme = useTheme();
   const colors = getColors(theme.mode, theme.accentColor);
-  
+
   // Animation value for thumb position
   const animatedValue = React.useRef(new Animated.Value(value ? 1 : 0)).current;
 
@@ -41,7 +41,7 @@ export const Switch: React.FC<NativeSwitchProps> = ({
   // Mobile uses single size that matches platform standards (closest to iOS/Android native)
   // This matches the "large" size from web which you already use there
   const sizes = { width: 52, height: 28, thumbSize: 24, padding: 2 };
-  
+
   const thumbLeftPosition = animatedValue.interpolate({
     inputRange: [0, 1],
     outputRange: [sizes.padding, sizes.width - sizes.thumbSize - sizes.padding],

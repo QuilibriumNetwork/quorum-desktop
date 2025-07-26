@@ -66,9 +66,7 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
         style={{
           backgroundImage:
             user?.currentPasskeyInfo?.pfpUrl &&
-            !user.currentPasskeyInfo.pfpUrl.includes(
-              DefaultImages.UNKNOWN_USER
-            )
+            !user.currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)
               ? `url(${user.currentPasskeyInfo.pfpUrl})`
               : 'var(--unknown-icon)',
         }}

@@ -59,7 +59,7 @@ The WebSocket provider integrates with the notification service to automatically
 The User Settings modal includes a new "Notifications" category with:
 
 - **Toggle Switch**: Enable/disable desktop notifications
-- **Permission Handling**: 
+- **Permission Handling**:
   - Automatically requests permission when user enables notifications
   - Shows appropriate messages for different permission states
   - Informs users how to change browser settings if needed
@@ -76,14 +76,16 @@ The User Settings modal includes a new "Notifications" category with:
 ## Notification Behavior
 
 ### Display Rules:
+
 - Only show when document is not visible or doesn't have focus
 - Auto-dismiss after 5 seconds
 - Use consistent "quorum-unread-messages" tag to prevent duplicate notifications
 - Click action focuses the app window
 
 ### Message Content:
+
 - **Title**: "Quorum"
-- **Body**: 
+- **Body**:
   - Single message: "You have a new unread message"
   - Multiple messages: "You have new unread messages"
 - **Icon**: Quorum logo (`/quorumicon-blue.png`) - except on Safari
@@ -91,6 +93,7 @@ The User Settings modal includes a new "Notifications" category with:
 ## Internationalization
 
 All user-facing strings use Lingui for proper localization:
+
 - Notification permission messages
 - Settings UI text
 - Notification content
@@ -132,4 +135,4 @@ When testing the notification feature:
 
 ---
 
-*Last updated: 2025-07-23*
+_Last updated: 2025-07-23_
