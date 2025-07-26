@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeModalProps } from './types';
 import { useTheme } from '../theme';
 import { getColors } from '../theme/colors';
+import { Icon } from '../Icon';
 
 const Modal: React.FC<NativeModalProps> = ({
   title,
@@ -48,8 +49,6 @@ const Modal: React.FC<NativeModalProps> = ({
         return screenHeight * 0.7;
       case 'large':
         return screenHeight * 0.9;
-      case 'full':
-        return screenHeight - insets.top; // Full height minus status bar
       default:
         return screenHeight * 0.7;
     }
@@ -157,37 +156,37 @@ const Modal: React.FC<NativeModalProps> = ({
               alignSelf: 'center',
             },
           ]}
-          {...(swipeToClose ? panResponder.panHandlers : {})}
         >
-          {/* Handle indicator */}
-          {swipeToClose && (
-            <View
-              style={[styles.handle, { backgroundColor: colors.surface[5] }]}
-            />
-          )}
+          {/* Handle indicator and header with pan responder for swipe to close */}
+          <View {...(swipeToClose ? panResponder.panHandlers : {})}>
+            {/* Handle indicator */}
+            {swipeToClose && (
+              <View
+                style={[styles.handle, { backgroundColor: colors.surface[5] }]}
+              />
+            )}
 
-          {/* Header */}
-          {(title || !hideClose) && (
-            <View style={styles.header}>
-              {title && (
-                <Text style={[styles.title, { color: colors.text.strong }]}>
-                  {title}
-                </Text>
-              )}
-
-              {!hideClose && (
-                <TouchableOpacity
-                  style={styles.closeButton}
-                  onPress={handleClose}
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                >
-                  <Text style={[styles.closeText, { color: colors.text.main }]}>
-                    ✕
+            {/* Header */}
+            {(title || !hideClose) && (
+              <View style={styles.header}>
+                {title && (
+                  <Text style={[styles.title, { color: colors.text.strong }]}>
+                    {title}
                   </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
+                )}
+
+                {!hideClose && !swipeToClose && (
+                  <TouchableOpacity
+                    style={styles.closeButton}
+                    onPress={handleClose}
+                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  >
+                    <Icon name="times" size="sm" color={colors.text.subtle} />
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
+          </View>
 
           {/* Content */}
           <KeyboardAvoidingView

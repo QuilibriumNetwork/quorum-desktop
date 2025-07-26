@@ -109,7 +109,7 @@
   &__value {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0;
     flex: 1;
     text-align: left;
     min-width: 0; // Allow flex item to shrink below content size
@@ -127,10 +127,18 @@
     color: var(--color-field-placeholder);
   }
 
-  &__icon,
+  &__icon {
+    font-size: 1.125rem;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-right: 0.5rem;
+  }
+
   &__option-icon {
     font-size: 1.125rem;
     line-height: 1;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
   }
 
   &__arrow {
@@ -185,19 +193,12 @@
   &__option {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: space-between;
     padding: 0.5rem 0.75rem;
     cursor: pointer;
     transition: background-color 0.1s ease;
     font-size: 0.875rem; // Default medium size
     white-space: nowrap;
-
-    span {
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      min-width: 0;
-    }
 
     &:hover:not(&--disabled) {
       background-color: var(--color-field-option-hover);
@@ -215,10 +216,25 @@
     }
   }
 
+  &__option-content {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex: 1;
+    overflow: hidden;
+    
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
   &__checkmark {
-    margin-left: auto;
+    margin-left: 0.5rem;
     color: var(--accent);
     font-weight: bold;
+    flex-shrink: 0;
   }
 
   // Error message

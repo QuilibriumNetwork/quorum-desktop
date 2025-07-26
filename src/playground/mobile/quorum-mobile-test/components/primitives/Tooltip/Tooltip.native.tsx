@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { TooltipNativeProps } from './types';
 import { useCrossPlatformTheme } from '../theme/ThemeProvider';
+import { Icon } from '../Icon';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -26,9 +27,14 @@ export function Tooltip({
 }: TooltipNativeProps) {
   const theme = useCrossPlatformTheme();
   const colors = theme.colors;
-  
+
   const [visible, setVisible] = useState(false);
-  const [childLayout, setChildLayout] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [childLayout, setChildLayout] = useState({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+  });
   const [tooltipLayout, setTooltipLayout] = useState({ width: 0, height: 0 });
   const childRef = useRef<any>(null);
 
@@ -38,11 +44,22 @@ export function Tooltip({
 
   const handleChildPress = () => {
     if (childRef.current) {
-      childRef.current.measure((_fx: number, _fy: number, width: number, height: number, px: number, py: number) => {
-        console.log(`[Tooltip ${place}] Element: x=${px}, y=${py}, w=${width}, h=${height}`);
-        setChildLayout({ x: px, y: py, width, height });
-        setVisible(true);
-      });
+      childRef.current.measure(
+        (
+          _fx: number,
+          _fy: number,
+          width: number,
+          height: number,
+          px: number,
+          py: number
+        ) => {
+          console.log(
+            `[Tooltip ${place}] Element: x=${px}, y=${py}, w=${width}, h=${height}`
+          );
+          setChildLayout({ x: px, y: py, width, height });
+          setVisible(true);
+        }
+      );
     }
   };
 
@@ -60,11 +77,11 @@ export function Tooltip({
   const getTooltipPosition = () => {
     const { x, y, width, height } = childLayout;
     const { width: tooltipWidth, height: tooltipHeight } = tooltipLayout;
-    
+
     const spacing = 8; // Standard spacing
     // Compensate for systematic downward offset (status bar, headers, etc.)
     const verticalOffset = 40; // Adjust this value to compensate for the downward push
-    
+
     let top = 0;
     let left = 0;
 
@@ -73,34 +90,46 @@ export function Tooltip({
       case 'top-start':
       case 'top-end':
         top = y - tooltipHeight - spacing - verticalOffset; // Compensate for downward push
-        left = place === 'top-start' ? x : 
-              place === 'top-end' ? x + width - tooltipWidth :
-              x + width / 2 - tooltipWidth / 2;
+        left =
+          place === 'top-start'
+            ? x
+            : place === 'top-end'
+              ? x + width - tooltipWidth
+              : x + width / 2 - tooltipWidth / 2;
         break;
       case 'bottom':
       case 'bottom-start':
       case 'bottom-end':
         top = y + height + spacing - verticalOffset; // Compensate for downward push
-        left = place === 'bottom-start' ? x : 
-              place === 'bottom-end' ? x + width - tooltipWidth :
-              x + width / 2 - tooltipWidth / 2;
+        left =
+          place === 'bottom-start'
+            ? x
+            : place === 'bottom-end'
+              ? x + width - tooltipWidth
+              : x + width / 2 - tooltipWidth / 2;
         break;
       case 'left':
       case 'left-start':
       case 'left-end':
         // Better vertical alignment with element center, compensating for offset
-        top = place === 'left-start' ? y - verticalOffset :
-              place === 'left-end' ? y + height - tooltipHeight - verticalOffset :
-              y + (height / 2) - (tooltipHeight / 2) - verticalOffset; // Center-aligned with element
+        top =
+          place === 'left-start'
+            ? y - verticalOffset
+            : place === 'left-end'
+              ? y + height - tooltipHeight - verticalOffset
+              : y + height / 2 - tooltipHeight / 2 - verticalOffset; // Center-aligned with element
         left = x - tooltipWidth - spacing;
         break;
       case 'right':
       case 'right-start':
       case 'right-end':
         // Better vertical alignment with element center, compensating for offset
-        top = place === 'right-start' ? y - verticalOffset :
-              place === 'right-end' ? y + height - tooltipHeight - verticalOffset :
-              y + (height / 2) - (tooltipHeight / 2) - verticalOffset; // Center-aligned with element
+        top =
+          place === 'right-start'
+            ? y - verticalOffset
+            : place === 'right-end'
+              ? y + height - tooltipHeight - verticalOffset
+              : y + height / 2 - tooltipHeight / 2 - verticalOffset; // Center-aligned with element
         left = x + width + spacing;
         break;
       default:
@@ -110,11 +139,19 @@ export function Tooltip({
 
     // Keep tooltip within screen bounds with minimum padding
     const minPadding = 8;
-    const finalTop = Math.max(minPadding, Math.min(top, screenHeight - tooltipHeight - minPadding));
-    const finalLeft = Math.max(minPadding, Math.min(left, screenWidth - tooltipWidth - minPadding));
-    
-    console.log(`[Tooltip ${place}] Calculated position: top=${finalTop}, left=${finalLeft}`);
-    
+    const finalTop = Math.max(
+      minPadding,
+      Math.min(top, screenHeight - tooltipHeight - minPadding)
+    );
+    const finalLeft = Math.max(
+      minPadding,
+      Math.min(left, screenWidth - tooltipWidth - minPadding)
+    );
+
+    console.log(
+      `[Tooltip ${place}] Calculated position: top=${finalTop}, left=${finalLeft}`
+    );
+
     return { top: finalTop, left: finalLeft };
   };
 
@@ -122,11 +159,19 @@ export function Tooltip({
 
   // Wrap the child in a TouchableOpacity to handle press
   const touchableChild = React.isValidElement(children) ? (
-    <TouchableOpacity ref={childRef} onPress={handleChildPress} activeOpacity={0.7}>
+    <TouchableOpacity
+      ref={childRef}
+      onPress={handleChildPress}
+      activeOpacity={0.7}
+    >
       {children}
     </TouchableOpacity>
   ) : (
-    <TouchableOpacity ref={childRef} onPress={handleChildPress} activeOpacity={0.7}>
+    <TouchableOpacity
+      ref={childRef}
+      onPress={handleChildPress}
+      activeOpacity={0.7}
+    >
       <Text style={[styles.fallbackText, { color: colors.text.main }]}>
         {String(children)}
       </Text>
@@ -136,7 +181,7 @@ export function Tooltip({
   return (
     <>
       {touchableChild}
-      
+
       <Modal
         visible={visible}
         transparent
@@ -162,16 +207,14 @@ export function Tooltip({
                 <Text style={[styles.content, { color: colors.text.main }]}>
                   {content}
                 </Text>
-                
+
                 {showCloseButton && (
                   <TouchableOpacity
-                    style={[styles.closeButton, { backgroundColor: colors.surface[3] }]}
+                    style={styles.closeButton}
                     onPress={closeTooltip}
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
-                    <Text style={[styles.closeText, { color: colors.text.subtle }]}>
-                      ✕
-                    </Text>
+                    <Icon name="times" size="xs" color={colors.text.subtle} />
                   </TouchableOpacity>
                 )}
               </View>
@@ -210,15 +253,10 @@ const styles = StyleSheet.create({
     right: 6,
     width: 20,
     height: 20,
-    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 2, // Add padding inside the circle
+    padding: 2,
   } as ViewStyle,
-  closeText: {
-    fontSize: 10,
-    fontWeight: 'bold',
-  } as TextStyle,
   fallbackText: {
     fontSize: 16,
   } as TextStyle,

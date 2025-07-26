@@ -1,7 +1,6 @@
 import React from 'react';
 import { ColorSwatchWebProps } from './types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from '../Icon';
 import './ColorSwatch.scss';
 
 export const ColorSwatch: React.FC<ColorSwatchWebProps> = ({
@@ -46,7 +45,11 @@ export const ColorSwatch: React.FC<ColorSwatchWebProps> = ({
       }}
     >
       {isActive && showCheckmark && (
-        <FontAwesomeIcon icon={faCheck} className="color-swatch__checkmark" />
+        <Icon
+          name="check"
+          size={size === 'small' ? 'xs' : size === 'large' ? 'lg' : 'sm'}
+          className="color-swatch__checkmark"
+        />
       )}
     </div>
   );

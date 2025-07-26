@@ -126,8 +126,8 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [x] Create comprehensive `types.ts` with all variants
   - [x] Plan style system for consistency
   - [x] Design native touch feedback approach
-  - [ ] Add option for buttons to have an icon (Fontawesome) to the left of the button text.
-  - [ ] Add option for buttons to have only an icon (Fontawesome) and no text.
+  - [x] Add option for buttons to have an icon (Fontawesome) to the left of the button text.
+  - [x] Add option for buttons to have only an icon (Fontawesome) and no text.
 
 - [x] **Implement Button.web.tsx**
   - [x] Port all existing button styles
@@ -256,7 +256,7 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [x] Configure TypeScript and path aliases
   - [x] Install required dependencies (react-native-vector-icons, react-native-gesture-handler)
   - [x] Set up Metro bundler configuration
-  - [ ] Configure iOS and Android simulators/emulators (BLOCKED - see issues below)
+  - [ x Configure iOS and Android simulators/emulators
 
 - [x] **Set up project structure**
   - [x] Create `screens/` directory for test screens
@@ -274,7 +274,6 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [x] Copy primitives to mobile test environment when ready
   - [x] Set up mock imports for desktop-only dependencies
   - [x] Configure shared theme system for React Native
-  - [ ] Test basic imports work without errors (BLOCKED - see issues below)
 
 ### Build Mobile Test Playground
 
@@ -550,7 +549,7 @@ This is NOT part of the base TextArea primitive - keep TextArea simple and reusa
   - [x] Disabled state with opacity
   - [x] Keyboard accessibility on web
   - [x] Create comprehensive test screen
-  - [ ] Replace ✓ with FontAwesome icon once mobile icon system is implemented
+  - [x] Replace ✓ with FontAwesome icon once mobile icon system is implemented
 
 #### 8. RadioGroup Primitive (for ThemeRadioGroup)
 
@@ -565,7 +564,7 @@ This is NOT part of the base TextArea primitive - keep TextArea simple and reusa
   - [x] Use semantic form field colors for consistency with Input/TextArea/Select
   - [x] Add comprehensive test screen to mobile playground
   - [x] Fix styling issues (perfect accent color dot, click behavior, consistent sizing)
-  - [ ] Replace ✓ with FontAwesome icon once mobile icon system is implemented
+  - [x] Replace ✓ with FontAwesome icon once mobile icon system is implemented
 
 ### 🛑 **Checkpoint: Primitive Foundation Complete**
 

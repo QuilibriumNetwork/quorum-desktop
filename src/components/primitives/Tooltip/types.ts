@@ -4,7 +4,7 @@ export interface TooltipProps {
   id: string;
   content: string;
   children: ReactNode;
-  place?: 
+  place?:
     | 'top'
     | 'top-start'
     | 'top-end'

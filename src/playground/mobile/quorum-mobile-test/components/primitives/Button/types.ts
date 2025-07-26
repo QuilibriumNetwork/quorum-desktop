@@ -1,3 +1,5 @@
+import { IconName } from '../Icon/types';
+
 export interface BaseButtonProps {
   id?: string;
   type?:
@@ -15,7 +17,9 @@ export interface BaseButtonProps {
     | 'disabled-onboarding';
   size?: 'normal' | 'small';
   disabled?: boolean;
-  icon?: boolean;
+  icon?: boolean; // Legacy prop for existing compatibility
+  iconName?: IconName; // FontAwesome icon to display (left of text or icon-only)
+  iconOnly?: boolean; // If true, only show icon without text
   className?: string;
   onClick: () => void;
   tooltip?: string;

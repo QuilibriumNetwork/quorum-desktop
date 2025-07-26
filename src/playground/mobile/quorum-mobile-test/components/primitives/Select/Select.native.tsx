@@ -12,6 +12,8 @@ import {
 import { NativeSelectProps } from './types';
 import { useTheme } from '../theme';
 import { getColors } from '../theme/colors';
+import { Icon } from '../Icon';
+import { isValidIconName } from '../Icon/iconMapping';
 
 const Select: React.FC<NativeSelectProps> = ({
   value,
@@ -122,11 +124,17 @@ const Select: React.FC<NativeSelectProps> = ({
       >
         <View style={styles.valueContainer}>
           {selectedOption?.icon && (
-            <Text
-              style={[styles.icon, { fontSize: sizeStyles.fontSize * 1.25 }]}
-            >
-              {selectedOption.icon}
-            </Text>
+            <View style={styles.icon}>
+              {isValidIconName(selectedOption.icon) ? (
+                <Icon name={selectedOption.icon} size="sm" color={colors.text.subtle} />
+              ) : (
+                <Text
+                  style={{ fontSize: sizeStyles.fontSize * 1.25, color: colors.text.subtle }}
+                >
+                  {selectedOption.icon}
+                </Text>
+              )}
+            </View>
           )}
           <Text
             style={[
@@ -143,9 +151,7 @@ const Select: React.FC<NativeSelectProps> = ({
             {displayText}
           </Text>
         </View>
-        <Text style={[styles.arrow, { color: colors.field.placeholder }]}>
-          ▼
-        </Text>
+        <Icon name="chevron-down" size="xs" color={colors.field.placeholder} />
       </TouchableOpacity>
 
       {error && errorMessage && (
@@ -192,7 +198,13 @@ const Select: React.FC<NativeSelectProps> = ({
                       ]}
                     >
                       {option.icon && (
-                        <Text style={styles.optionIcon}>{option.icon}</Text>
+                        <View style={styles.optionIcon}>
+                          {isValidIconName(option.icon) ? (
+                            <Icon name={option.icon} size="sm" color={colors.text.subtle} />
+                          ) : (
+                            <Text style={{ color: colors.text.subtle, fontSize: 18 }}>{option.icon}</Text>
+                          )}
+                        </View>
                       )}
                       <Text
                         style={[
@@ -211,14 +223,12 @@ const Select: React.FC<NativeSelectProps> = ({
                         {option.label}
                       </Text>
                       {option.value === selectedValue && (
-                        <Text
-                          style={[
-                            styles.checkmark,
-                            { color: colors.field.optionTextSelected },
-                          ]}
-                        >
-                          ✓
-                        </Text>
+                        <Icon 
+                          name="check" 
+                          size="sm" 
+                          color={colors.field.optionTextSelected} 
+                          style={styles.checkmark}
+                        />
                       )}
                     </TouchableOpacity>
                   ))}
@@ -304,7 +314,6 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   optionIcon: {
-    fontSize: 18,
     marginRight: 12,
   },
   optionText: {

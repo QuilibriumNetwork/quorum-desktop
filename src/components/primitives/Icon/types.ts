@@ -1,16 +1,16 @@
 import { ReactNode } from 'react';
 
-export type IconName = 
+export type IconName =
   // Essential icons (currently used in primitives)
   | 'check'
-  | 'times' 
+  | 'times'
   | 'close'
   | 'sun'
   | 'moon'
   | 'desktop'
   | 'search'
   | 'info-circle'
-  
+
   // Navigation & UI
   | 'plus'
   | 'minus'
@@ -20,14 +20,14 @@ export type IconName =
   | 'arrow-down'
   | 'chevron-left'
   | 'chevron-right'
-  | 'chevron-up' 
+  | 'chevron-up'
   | 'chevron-down'
   | 'bars'
   | 'x'
   | 'compress-alt'
   | 'door-open'
   | 'sliders'
-  
+
   // Actions & Communication
   | 'reply'
   | 'link'
@@ -38,10 +38,11 @@ export type IconName =
   | 'share'
   | 'download'
   | 'upload'
+  | 'save'
   | 'clipboard'
   | 'envelope'
   | 'comment-dots'
-  
+
   // User & Social
   | 'user'
   | 'users'
@@ -52,7 +53,7 @@ export type IconName =
   | 'star'
   | 'eye'
   | 'eye-slash'
-  
+
   // Settings & Security
   | 'cog'
   | 'gear'
@@ -63,7 +64,7 @@ export type IconName =
   | 'unlock'
   | 'palette'
   | 'bell'
-  
+
   // Status & Alerts
   | 'info'
   | 'warning'
@@ -72,14 +73,14 @@ export type IconName =
   | 'exclamation-triangle'
   | 'circle-info'
   | 'spinner'
-  
+
   // Files & Media
   | 'image'
   | 'file-image'
   | 'tools'
   | 'hashtag'
   | 'calendar-alt'
-  
+
   // Common additions for future use
   | 'home'
   | 'menu'

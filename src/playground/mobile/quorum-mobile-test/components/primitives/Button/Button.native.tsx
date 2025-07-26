@@ -1,7 +1,8 @@
 import React from 'react';
-import { Pressable, Text, StyleSheet } from 'react-native';
+import { Pressable, Text, StyleSheet, View } from 'react-native';
 import { NativeButtonProps } from './types';
 import { useCrossPlatformTheme } from '../theme/ThemeProvider';
+import { Icon } from '../Icon';
 
 const Button: React.FC<NativeButtonProps> = (props) => {
   const { colors } = useCrossPlatformTheme();
@@ -103,6 +104,18 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     // Add size-specific styles
     if (size === 'small') {
       style.push(styles.small);
+    } else if (size === 'large') {
+      style.push(styles.large);
+    }
+
+    // Add icon-only specific styles
+    if (props.iconOnly) {
+      style.push(styles.iconOnly);
+      if (size === 'small') {
+        style.push(styles.iconOnlySmall);
+      } else if (size === 'large') {
+        style.push(styles.iconOnlyLarge);
+      }
     }
 
     // Remove shadows for transparent background types (must come after size styles)
@@ -133,48 +146,48 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     return style;
   };
 
-  const getTextStyle = () => {
+  const getTextColor = () => {
     const type = props.type || 'primary';
-    const size = props.size || 'normal';
 
+    if (props.disabled) {
+      return colors.surface[8]; // Darker grey for disabled text
+    }
+
+    // Get text color based on button type
+    switch (type) {
+      case 'secondary':
+        return colors.accent.DEFAULT;
+      case 'light':
+        return colors.accent[700];
+      case 'light-outline':
+        return colors.accent[100];
+      case 'subtle':
+        return colors.text.main;
+      case 'subtle-outline':
+        return colors.text.subtle;
+      case 'primary-white':
+        return '#0287f2'; // Hardcoded blue as in CSS
+      case 'secondary-white':
+      case 'light-outline-white':
+        return colors.white;
+      default:
+        return colors.white;
+    }
+  };
+
+  const getTextStyle = () => {
+    const size = props.size || 'normal';
     let style = [styles.text];
 
     // Add size-specific text styles
     if (size === 'small') {
       style.push(styles.textSmall);
+    } else if (size === 'large') {
+      style.push(styles.textLarge);
     }
 
-    // Add type-specific text styles using dynamic colors
-    switch (type) {
-      case 'secondary':
-        style.push({ color: colors.accent.DEFAULT });
-        break;
-      case 'light':
-        style.push({ color: colors.accent[700] });
-        break;
-      case 'light-outline':
-        style.push({ color: colors.accent[100] });
-        break;
-      case 'subtle':
-        style.push({ color: colors.text.main });
-        break;
-      case 'subtle-outline':
-        style.push({ color: colors.text.subtle });
-        break;
-      case 'primary-white':
-        style.push({ color: '#0287f2' }); // Hardcoded blue as in CSS
-        break;
-      case 'secondary-white':
-      case 'light-outline-white':
-        style.push({ color: colors.white });
-        break;
-      default:
-        style.push({ color: colors.white });
-    }
-
-    if (props.disabled) {
-      style.push({ color: colors.surface[8] }); // Darker grey for disabled text
-    }
+    // Add color
+    style.push({ color: getTextColor() });
 
     return style;
   };
@@ -191,7 +204,20 @@ const Button: React.FC<NativeButtonProps> = (props) => {
       accessibilityRole="button"
       accessibilityState={{ disabled: props.disabled }}
     >
-      <Text style={getTextStyle()}>{props.children}</Text>
+      <View style={styles.content}>
+        {props.iconName && (
+          <View style={!props.iconOnly ? styles.iconWithText : undefined}>
+            <Icon 
+              name={props.iconName} 
+              size={props.size === 'small' ? 'sm' : props.size === 'large' ? 'lg' : 'md'} 
+              color={getTextColor()}
+            />
+          </View>
+        )}
+        {!props.iconOnly && (
+          <Text style={getTextStyle()}>{props.children}</Text>
+        )}
+      </View>
     </Pressable>
   );
 };
@@ -227,6 +253,38 @@ const styles = StyleSheet.create({
   },
   textSmall: {
     fontSize: 12,
+  },
+  textLarge: {
+    fontSize: 16,
+  },
+  large: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 26,
+  },
+  content: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  iconWithText: {
+    marginRight: 8,
+  },
+  iconOnly: {
+    width: 44,
+    height: 44,
+    paddingHorizontal: 0,
+    borderRadius: 22,
+  },
+  iconOnlySmall: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+  },
+  iconOnlyLarge: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
   },
 });
 

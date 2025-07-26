@@ -12,7 +12,6 @@ export const ModalTestScreen: React.FC = () => {
   const [smallModal, setSmallModal] = useState(false);
   const [mediumModal, setMediumModal] = useState(false);
   const [largeModal, setLargeModal] = useState(false);
-  const [fullModal, setFullModal] = useState(false);
   const [noCloseModal, setNoCloseModal] = useState(false);
   const [noSwipeModal, setNoSwipeModal] = useState(false);
   const [navigationModal, setNavigationModal] = useState(false);
@@ -104,13 +103,6 @@ export const ModalTestScreen: React.FC = () => {
         >
           <Text style={buttonText}>Large Modal (90% height)</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          style={buttonStyle}
-          onPress={() => setFullModal(true)}
-        >
-          <Text style={buttonText}>Full Modal (100% height)</Text>
-        </TouchableOpacity>
       </View>
 
       <View style={{ marginBottom: 30 }}>
@@ -168,11 +160,6 @@ export const ModalTestScreen: React.FC = () => {
           >
             This is a basic modal that transforms into a drawer on mobile. You
             can close it by:
-          </Text>
-          <Text
-            style={{ color: colors.text.subtle, fontSize: 14, marginBottom: 8 }}
-          >
-            • Tapping the ✕ button
           </Text>
           <Text
             style={{ color: colors.text.subtle, fontSize: 14, marginBottom: 8 }}
@@ -278,12 +265,12 @@ export const ModalTestScreen: React.FC = () => {
         size="large"
       >
         <ScrollView style={{ padding: 20 }}>
-          <Text style={{ color: 'white', fontSize: 16, marginBottom: 16 }}>
+          <Text style={{ color: colors.text.main, fontSize: 16, marginBottom: 16 }}>
             This is a large modal that takes up 90% of the screen height.
           </Text>
           <Text
             style={{
-              color: '#ccc',
+              color: colors.text.subtle,
               fontSize: 14,
               marginBottom: 16,
               lineHeight: 20,
@@ -293,9 +280,46 @@ export const ModalTestScreen: React.FC = () => {
             needs more space. Notice how the content area is scrollable if it
             exceeds the available height.
           </Text>
+          
+          {/* Extended scrollable content to test scrolling */}
+          {Array.from({ length: 5 }, (_, index) => (
+            <View
+              key={index}
+              style={{
+                backgroundColor: colors.surface[3],
+                padding: 16,
+                borderRadius: 8,
+                marginBottom: 16,
+              }}
+            >
+              <Text
+                style={{
+                  color: colors.text.strong,
+                  fontSize: 16,
+                  fontWeight: 'bold',
+                  marginBottom: 8,
+                }}
+              >
+                Scrollable Section {index + 1}
+              </Text>
+              <Text style={{ color: colors.text.main, fontSize: 14, lineHeight: 20, marginBottom: 12 }}>
+                This is section {index + 1} of the scrollable content. Each section contains enough 
+                text and content to demonstrate the scrolling functionality properly. 
+                The modal should maintain smooth scrolling while keeping the header fixed.
+              </Text>
+              <Text style={{ color: colors.text.subtle, fontSize: 13, lineHeight: 18 }}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod 
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
+                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore 
+                eu fugiat nulla pariatur.
+              </Text>
+            </View>
+          ))}
+          
           <View
             style={{
-              backgroundColor: '#1E3A8A',
+              backgroundColor: colors.surface[4],
               padding: 16,
               borderRadius: 8,
               marginBottom: 16,
@@ -303,19 +327,19 @@ export const ModalTestScreen: React.FC = () => {
           >
             <Text
               style={{
-                color: 'white',
+                color: colors.text.strong,
                 fontSize: 16,
                 fontWeight: 'bold',
                 marginBottom: 8,
               }}
             >
-              Scrollable Content
+              Final Scrollable Section
             </Text>
-            <Text style={{ color: '#E5E7EB', fontSize: 14, lineHeight: 20 }}>
-              This content demonstrates that the modal content area is
-              scrollable when it exceeds the available height. You can scroll
-              through long content while maintaining the header and
-              swipe-to-close functionality.
+            <Text style={{ color: colors.text.main, fontSize: 14, lineHeight: 20 }}>
+              This is the final section that demonstrates the modal content area is
+              fully scrollable when it exceeds the available height. You can scroll
+              through all this content while maintaining the header and
+              swipe-to-close functionality at the top.
             </Text>
           </View>
           <TouchableOpacity
@@ -327,43 +351,6 @@ export const ModalTestScreen: React.FC = () => {
         </ScrollView>
       </Modal>
 
-      {/* Full Modal */}
-      <Modal
-        title="Full Screen Modal"
-        visible={fullModal}
-        onClose={() => setFullModal(false)}
-        size="full"
-      >
-        <View style={{ padding: 20, flex: 1 }}>
-          <Text style={{ color: 'white', fontSize: 16, marginBottom: 16 }}>
-            This is a full-screen modal that takes up 100% of the screen height.
-          </Text>
-          <Text
-            style={{
-              color: '#ccc',
-              fontSize: 14,
-              marginBottom: 16,
-              lineHeight: 20,
-            }}
-          >
-            Full-screen modals remove the rounded corners and extend to the full
-            height. Perfect for immersive experiences or complex workflows.
-          </Text>
-          <View
-            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-          >
-            <Text style={{ color: '#888', fontSize: 18, textAlign: 'center' }}>
-              Full Screen Content Area
-            </Text>
-          </View>
-          <TouchableOpacity
-            style={[buttonStyle, { backgroundColor: '#FF3B30' }]}
-            onPress={() => setFullModal(false)}
-          >
-            <Text style={buttonText}>Close Full Modal</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
 
       {/* No Close Button Modal */}
       <Modal
@@ -374,14 +361,14 @@ export const ModalTestScreen: React.FC = () => {
         size="medium"
       >
         <View style={{ padding: 20 }}>
-          <Text style={{ color: 'white', fontSize: 16, marginBottom: 16 }}>
+          <Text style={{ color: colors.text.main, fontSize: 16, marginBottom: 16 }}>
             This modal has no close button in the header. You can still close it
             by:
           </Text>
-          <Text style={{ color: '#ccc', fontSize: 14, marginBottom: 8 }}>
+          <Text style={{ color: colors.text.subtle, fontSize: 14, marginBottom: 8 }}>
             • Tapping outside the modal
           </Text>
-          <Text style={{ color: '#ccc', fontSize: 14, marginBottom: 16 }}>
+          <Text style={{ color: colors.text.subtle, fontSize: 14, marginBottom: 16 }}>
             • Swiping down from the handle area
           </Text>
           <TouchableOpacity
@@ -579,10 +566,10 @@ export const ModalTestScreen: React.FC = () => {
         >
           • Web: Centered modal with backdrop and ESC key support{'\n'}• Mobile:
           Bottom drawer with slide-up animation and swipe gestures{'\n'}• All
-          sizes adapt to mobile screen dimensions (40%, 70%, 90%, 100%){'\n'}•
+          sizes adapt to mobile screen dimensions (40%, 70%, 90%){'\n'}•
           Swipe gestures work from handle and header area only{'\n'}•
-          Theme-aware colors adapt to light/dark mode automatically{'\n'}• No
-          FontAwesome dependencies - uses simple ✕ character
+          Theme-aware colors adapt to light/dark mode automatically{'\n'}• Uses
+          FontAwesome icons for consistent cross-platform design
         </Text>
       </View>
     </ScrollView>

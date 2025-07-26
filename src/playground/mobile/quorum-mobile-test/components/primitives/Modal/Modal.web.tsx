@@ -1,6 +1,7 @@
 import React from 'react';
 import { WebModalProps } from './types';
 import { ModalContainer } from '../ModalContainer';
+import { Icon } from '../Icon';
 import './Modal.scss';
 
 const Modal: React.FC<WebModalProps> = ({
@@ -35,7 +36,7 @@ const Modal: React.FC<WebModalProps> = ({
               document.dispatchEvent(escEvent);
             }}
           >
-            ✕
+            <Icon name="times" size="md" />
           </div>
         )}
 

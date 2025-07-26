@@ -27,12 +27,12 @@ export const RadioGroupTestScreen: React.FC = () => {
         {/* Theme Selection */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Theme Selection</Text>
-          <Text style={styles.sectionSubtitle}>Using emojis as temporary icons:</Text>
+          <Text style={styles.sectionSubtitle}>Using FontAwesome icons:</Text>
           <RadioGroup
             options={[
-              { value: 'light', label: 'Light', icon: '☀️' },
-              { value: 'dark', label: 'Dark', icon: '🌙' },
-              { value: 'system', label: 'System', icon: '💻' },
+              { value: 'light', label: 'Light', icon: 'sun' },
+              { value: 'dark', label: 'Dark', icon: 'moon' },
+              { value: 'system', label: 'System', icon: 'desktop' },
             ]}
             value={selectedTheme}
             onChange={setSelectedTheme}
@@ -59,7 +59,9 @@ export const RadioGroupTestScreen: React.FC = () => {
         {/* Disabled Options */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Disabled Options</Text>
-          <Text style={styles.sectionSubtitle}>Some options can be disabled:</Text>
+          <Text style={styles.sectionSubtitle}>
+            Some options can be disabled:
+          </Text>
           <RadioGroup
             options={[
               { value: 'basic', label: 'Basic Plan' },
@@ -74,7 +76,9 @@ export const RadioGroupTestScreen: React.FC = () => {
         {/* Without Icons */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Without Icons</Text>
-          <Text style={styles.sectionSubtitle}>Simple text-only radio group:</Text>
+          <Text style={styles.sectionSubtitle}>
+            Simple text-only radio group:
+          </Text>
           <RadioGroup
             options={[
               { value: 'option1', label: 'Option 1' },
@@ -96,7 +100,7 @@ export const RadioGroupTestScreen: React.FC = () => {
             • Mobile: Custom radio implementation with TouchableOpacity
           </Text>
           <Text style={styles.infoText}>
-            • Icons use emojis temporarily (FontAwesome pending on mobile)
+            • Icons now use FontAwesome icon system
           </Text>
           <Text style={styles.infoText}>
             • Both horizontal and vertical layouts supported

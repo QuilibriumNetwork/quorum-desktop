@@ -6,7 +6,7 @@ export interface BaseModalProps {
   children: React.ReactNode;
 
   // Additional props for enhanced functionality
-  size?: 'small' | 'medium' | 'large' | 'full';
+  size?: 'small' | 'medium' | 'large';
   closeOnBackdropClick?: boolean;
   closeOnEscape?: boolean;
   className?: string;

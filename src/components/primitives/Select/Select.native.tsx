@@ -12,6 +12,8 @@ import {
 import { NativeSelectProps } from './types';
 import { useTheme } from '../theme';
 import { getColors } from '../theme/colors';
+import { Icon } from '../Icon';
+import { isValidIconName } from '../Icon/iconMapping';
 
 const Select: React.FC<NativeSelectProps> = ({
   value,
@@ -121,11 +123,15 @@ const Select: React.FC<NativeSelectProps> = ({
       >
         <View style={styles.valueContainer}>
           {selectedOption?.icon && (
-            <Text
-              style={[styles.icon, { fontSize: sizeStyles.fontSize * 1.25 }]}
-            >
-              {selectedOption.icon}
-            </Text>
+            isValidIconName(selectedOption.icon) ? (
+              <Icon name={selectedOption.icon} size="sm" color={colors.text.subtle} />
+            ) : (
+              <Text
+                style={[styles.icon, { fontSize: sizeStyles.fontSize * 1.25, color: colors.text.subtle }]}
+              >
+                {selectedOption.icon}
+              </Text>
+            )
           )}
           <Text
             style={[
@@ -140,7 +146,7 @@ const Select: React.FC<NativeSelectProps> = ({
             {displayText}
           </Text>
         </View>
-        <Text style={[styles.arrow, { color: colors.text.subtle }]}>▼</Text>
+        <Icon name="chevron-down" size="xs" color={colors.text.subtle} />
       </TouchableOpacity>
 
       {error && errorMessage && (
@@ -181,34 +187,38 @@ const Select: React.FC<NativeSelectProps> = ({
                         option.disabled && styles.disabledOption,
                       ]}
                     >
-                      {option.icon && (
-                        <Text style={styles.optionIcon}>{option.icon}</Text>
-                      )}
-                      <Text
-                        style={[
-                          styles.optionText,
-                          {
-                            color:
-                              option.value === selectedValue
-                                ? colors.accent.DEFAULT
-                                : colors.text.main,
-                            fontWeight:
-                              option.value === selectedValue ? '500' : '400',
-                          },
-                          option.disabled && { opacity: 0.5 },
-                        ]}
-                      >
-                        {option.label}
-                      </Text>
-                      {option.value === selectedValue && (
+                      <View style={styles.optionContent}>
+                        {option.icon && (
+                          isValidIconName(option.icon) ? (
+                            <Icon name={option.icon} size="sm" color={colors.text.subtle} />
+                          ) : (
+                            <Text style={[styles.optionIcon, { color: colors.text.subtle }]}>{option.icon}</Text>
+                          )
+                        )}
                         <Text
                           style={[
-                            styles.checkmark,
-                            { color: colors.accent.DEFAULT },
+                            styles.optionText,
+                            {
+                              color:
+                                option.value === selectedValue
+                                  ? colors.accent.DEFAULT
+                                  : colors.text.main,
+                              fontWeight:
+                                option.value === selectedValue ? '500' : '400',
+                            },
+                            option.disabled && { opacity: 0.5 },
                           ]}
                         >
-                          ✓
+                          {option.label}
                         </Text>
+                      </View>
+                      {option.value === selectedValue && (
+                        <Icon
+                          name="check"
+                          size="sm"
+                          color={colors.accent.DEFAULT}
+                          style={styles.checkmark}
+                        />
                       )}
                     </TouchableOpacity>
                   ))}
@@ -251,9 +261,6 @@ const styles = StyleSheet.create({
   text: {
     flex: 1,
   },
-  arrow: {
-    fontSize: 10,
-  },
   errorMessage: {
     marginTop: 4,
     fontSize: 12,
@@ -286,24 +293,29 @@ const styles = StyleSheet.create({
   option: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingVertical: 12,
     paddingHorizontal: 16,
+  },
+  optionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
   disabledOption: {
     opacity: 0.5,
   },
   optionIcon: {
     fontSize: 18,
-    marginRight: 12,
+    marginRight: 8,
   },
   optionText: {
     flex: 1,
     fontSize: 16,
   },
   checkmark: {
-    fontSize: 16,
-    fontWeight: 'bold',
     marginLeft: 8,
+    flexShrink: 0,
   },
 });
 

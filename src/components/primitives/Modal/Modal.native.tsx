@@ -13,6 +13,7 @@ import BottomSheet, {
 import { NativeModalProps } from './types';
 import { useTheme } from '../theme';
 import { getColors } from '../theme/colors';
+import { Icon } from '../Icon';
 
 const Modal: React.FC<NativeModalProps> = ({
   title,
@@ -39,8 +40,6 @@ const Modal: React.FC<NativeModalProps> = ({
         return ['70%'];
       case 'large':
         return ['90%'];
-      case 'full':
-        return ['100%'];
       default:
         return ['70%'];
     }
@@ -113,15 +112,13 @@ const Modal: React.FC<NativeModalProps> = ({
               </Text>
             )}
 
-            {!hideClose && (
+            {!hideClose && !swipeToClose && (
               <TouchableOpacity
                 style={styles.closeButton}
                 onPress={handleClose}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Text style={[styles.closeText, { color: colors.text.main }]}>
-                  ✕
-                </Text>
+                <Icon name="times" size="md" color={colors.text.subtle} />
               </TouchableOpacity>
             )}
           </View>
@@ -162,10 +159,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  closeText: {
-    fontSize: 18,
-    fontWeight: '500',
   },
   content: {
     flex: 1,

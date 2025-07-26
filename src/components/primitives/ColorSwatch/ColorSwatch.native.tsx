@@ -3,6 +3,7 @@ import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { ColorSwatchNativeProps } from './types';
 import { useTheme } from '../theme';
 import { getColors } from '../theme/colors';
+import { Icon } from '../Icon';
 
 export const ColorSwatch: React.FC<ColorSwatchNativeProps> = ({
   color,
@@ -30,7 +31,6 @@ export const ColorSwatch: React.FC<ColorSwatchNativeProps> = ({
   };
 
   const sizeStyle = getSizeStyle();
-  const checkmarkSize = size === 'small' ? 12 : size === 'large' ? 20 : 16;
 
   return (
     <TouchableOpacity
@@ -58,7 +58,11 @@ export const ColorSwatch: React.FC<ColorSwatchNativeProps> = ({
       ]}
     >
       {isActive && showCheckmark && (
-        <Text style={[styles.checkmark, { fontSize: checkmarkSize }]}>✓</Text>
+        <Icon
+          name="check"
+          size={size === 'small' ? 'xs' : size === 'large' ? 'lg' : 'sm'}
+          color="#ffffff"
+        />
       )}
     </TouchableOpacity>
   );
@@ -70,9 +74,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden', // Ensure content doesn't break the circle
-  },
-  checkmark: {
-    color: '#ffffff',
-    fontWeight: 'bold',
   },
 });

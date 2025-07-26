@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { WebButtonProps } from './types';
 import ReactTooltip from '../../ReactTooltip';
+import { Icon } from '../Icon';
 import './Button.scss';
 
 const Button: React.FC<WebButtonProps> = (props) => {
@@ -20,14 +21,25 @@ const Button: React.FC<WebButtonProps> = (props) => {
         className={
           baseClass +
           (props.size === 'small' ? ' btn-small' : '') +
+          (props.size === 'large' ? ' btn-large' : '') +
           (props.icon ? ' quorum-button-icon' : '') +
+          (props.iconName && props.iconOnly ? ' quorum-button-icon-only' : '') +
+          (props.iconName && !props.iconOnly ? ' quorum-button-with-icon' : '') +
           (props.className ? ' ' + props.className : '')
         }
         onClick={() => {
           if (!props.disabled) props.onClick();
         }}
       >
-        {props.children}
+        {props.iconName && (
+          <Icon 
+            name={props.iconName} 
+            size={props.size === 'small' ? 'sm' : props.size === 'large' ? 'lg' : 'md'} 
+            className="quorum-button-icon-element"
+            style={{ color: 'inherit' }}
+          />
+        )}
+        {!props.iconOnly && props.children}
       </span>
       {props.tooltip && (
         <ReactTooltip

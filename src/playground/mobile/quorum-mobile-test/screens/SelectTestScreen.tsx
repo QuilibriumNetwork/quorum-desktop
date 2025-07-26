@@ -13,7 +13,7 @@ import Button from '../components/primitives/Button';
 export const SelectTestScreen: React.FC = () => {
   // Select testing state
   const [basicValue, setBasicValue] = useState('');
-  const [iconValue, setIconValue] = useState('react');
+  const [iconValue, setIconValue] = useState('edit');
   const [errorValue, setErrorValue] = useState('');
   const [showError, setShowError] = useState(false);
   const [sizeTestValue, setSizeTestValue] = useState('');
@@ -29,10 +29,11 @@ export const SelectTestScreen: React.FC = () => {
   ];
 
   const iconOptions = [
-    { value: 'react', label: 'React', icon: '⚛️' },
-    { value: 'vue', label: 'Vue.js', icon: '💚' },
-    { value: 'angular', label: 'Angular', icon: '🅰️' },
-    { value: 'svelte', label: 'Svelte', icon: '🔥' },
+    { value: 'edit', label: 'Edit', icon: 'edit' },
+    { value: 'copy', label: 'Copy', icon: 'copy' },
+    { value: 'share', label: 'Share', icon: 'share' },
+    { value: 'download', label: 'Download', icon: 'download' },
+    { value: 'trash', label: 'Delete', icon: 'trash' },
   ];
 
   const sizeOptions = [
@@ -86,11 +87,11 @@ export const SelectTestScreen: React.FC = () => {
         {/* Select with Icons */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>With Icons</Text>
-          <Text style={styles.label}>Framework Picker</Text>
+          <Text style={styles.label}>Action Picker</Text>
           <Select
             value={iconValue}
             onChange={setIconValue}
-            placeholder="Choose a framework"
+            placeholder="Choose an action"
             options={iconOptions}
           />
         </View>

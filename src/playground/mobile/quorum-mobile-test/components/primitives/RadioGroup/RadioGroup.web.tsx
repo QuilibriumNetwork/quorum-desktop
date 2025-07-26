@@ -36,7 +36,7 @@ export function RadioGroup<T extends string = string>({
       {options.map((option) => {
         const isSelected = value === option.value;
         const isDisabled = disabled || option.disabled;
-        
+
         return (
           <label
             key={option.value}
@@ -60,7 +60,7 @@ export function RadioGroup<T extends string = string>({
               )}
               <span className="radio-group__label">{option.label}</span>
             </div>
-            
+
             <input
               type="radio"
               name={name}

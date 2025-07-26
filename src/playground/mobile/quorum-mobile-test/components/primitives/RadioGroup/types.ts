@@ -24,7 +24,7 @@ export interface RadioGroupWebProps<T = string> extends RadioGroupProps<T> {
   name?: string; // For form integration
 }
 
-// Native-specific props  
+// Native-specific props
 export interface RadioGroupNativeProps<T = string> extends RadioGroupProps<T> {
   style?: ViewStyle;
 }

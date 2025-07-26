@@ -8,7 +8,7 @@ const getSizeValue = (size: IconSize): any => {
   if (typeof size === 'number') {
     return { fontSize: `${size}px` };
   }
-  
+
   const sizeMap = {
     xs: 'xs',
     sm: 'sm',
@@ -16,7 +16,7 @@ const getSizeValue = (size: IconSize): any => {
     lg: 'lg',
     xl: 'xl',
   };
-  
+
   return sizeMap[size] || '1x';
 };
 
@@ -34,7 +34,7 @@ export function Icon({
   fixedWidth = false,
 }: IconWebProps) {
   const fontAwesomeIcon = fontAwesomeIconMap[name];
-  
+
   if (!fontAwesomeIcon) {
     console.warn(`Icon "${name}" not found in fontAwesome mapping`);
     return null;

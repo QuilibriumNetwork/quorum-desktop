@@ -9,6 +9,8 @@ import {
 import { RadioGroupNativeProps } from './types';
 import { useTheme } from '../theme';
 import { getColors } from '../theme/colors';
+import { Icon } from '../Icon';
+import { isValidIconName } from '../Icon/iconMapping';
 
 export function RadioGroup<T extends string = string>({
   options,
@@ -49,17 +51,32 @@ export function RadioGroup<T extends string = string>({
             style={[
               styles.item,
               {
-                borderColor: isSelected ? colors.field.borderFocus : colors.field.border,
-                backgroundColor: isSelected ? colors.field.bgFocus : colors.field.bg,
+                borderColor: isSelected
+                  ? colors.field.borderFocus
+                  : colors.field.border,
+                backgroundColor: isSelected
+                  ? colors.field.bgFocus
+                  : colors.field.bg,
               },
               isDisabled && styles.itemDisabled,
             ]}
           >
             <View style={styles.content}>
               {option.icon && (
-                <Text style={[styles.icon, { color: colors.surface[9] }]}>
-                  {option.icon}
-                </Text>
+                <View style={styles.iconContainer}>
+                  {/* Check if it's a valid icon name, otherwise render as text (emoji) */}
+                  {isValidIconName(option.icon) ? (
+                    <Icon
+                      name={option.icon}
+                      size="sm"
+                      color={colors.text.main}
+                    />
+                  ) : (
+                    <Text style={[styles.icon, { color: colors.text.main }]}>
+                      {option.icon}
+                    </Text>
+                  )}
+                </View>
               )}
               <Text
                 style={[
@@ -127,6 +144,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     flex: 1,
+  },
+  iconContainer: {
+    // Container for icon alignment
   },
   icon: {
     fontSize: 18,

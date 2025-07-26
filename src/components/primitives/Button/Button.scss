@@ -114,3 +114,36 @@
     @apply border-2 bg-[#d6ee93] border-[#d6ee93] text-[#025ead];
   }
 }
+
+// Icon button styles
+.quorum-button-with-icon {
+  .quorum-button-icon-element {
+    @apply mr-2;
+  }
+}
+
+// Button sizes
+.btn-small {
+  @apply py-1 px-3 text-xs;
+}
+
+.btn-large {
+  @apply py-3 px-6 text-base;
+}
+
+.quorum-button-icon-only {
+  @apply w-10 h-10 !px-0;
+  border-radius: 50% !important;
+  
+  &.btn-small {
+    @apply w-8 h-8;
+  }
+  
+  &.btn-large {
+    @apply w-12 h-12;
+  }
+  
+  .quorum-button-icon-element {
+    @apply mr-0;
+  }
+}

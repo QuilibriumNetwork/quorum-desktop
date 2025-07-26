@@ -1,7 +1,7 @@
 import React from 'react';
 import { RadioGroupWebProps } from './types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { Icon } from '../Icon';
+import { isValidIconName } from '../Icon/iconMapping';
 import './RadioGroup.scss';
 
 export function RadioGroup<T extends string = string>({
@@ -36,7 +36,7 @@ export function RadioGroup<T extends string = string>({
       {options.map((option) => {
         const isSelected = value === option.value;
         const isDisabled = disabled || option.disabled;
-        
+
         return (
           <label
             key={option.value}
@@ -50,9 +50,9 @@ export function RadioGroup<T extends string = string>({
             <div className="radio-group__content">
               {option.icon && (
                 <span className="radio-group__icon">
-                  {/* Check if it's a FontAwesome icon or emoji */}
-                  {typeof option.icon === 'object' ? (
-                    <FontAwesomeIcon icon={option.icon as IconDefinition} />
+                  {/* Check if it's a valid icon name, otherwise render as text (emoji) */}
+                  {isValidIconName(option.icon) ? (
+                    <Icon name={option.icon} size="sm" />
                   ) : (
                     option.icon
                   )}
@@ -60,7 +60,7 @@ export function RadioGroup<T extends string = string>({
               )}
               <span className="radio-group__label">{option.label}</span>
             </div>
-            
+
             <input
               type="radio"
               name={name}

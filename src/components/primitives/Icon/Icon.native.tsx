@@ -9,7 +9,7 @@ const getSizeValue = (size: IconSize): number => {
   if (typeof size === 'number') {
     return size;
   }
-  
+
   const sizeMap = {
     xs: 12,
     sm: 14,
@@ -17,7 +17,7 @@ const getSizeValue = (size: IconSize): number => {
     lg: 20,
     xl: 24,
   };
-  
+
   return sizeMap[size] || 16;
 };
 
@@ -32,9 +32,9 @@ export function Icon({
 }: IconNativeProps) {
   const theme = useCrossPlatformTheme();
   const colors = theme.colors;
-  
+
   const iconName = reactNativeIconMap[name];
-  
+
   if (!iconName) {
     console.warn(`Icon "${name}" not found in reactNative mapping`);
     return null;

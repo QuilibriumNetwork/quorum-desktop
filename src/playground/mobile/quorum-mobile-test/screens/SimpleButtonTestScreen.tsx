@@ -113,6 +113,16 @@ export const SimpleButtonTestScreen: React.FC = () => {
           <View style={styles.buttonContainer}>
             <Button
               type="primary"
+              size="large"
+              onClick={() => console.log('Large size')}
+            >
+              Large Size
+            </Button>
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <Button
+              type="primary"
               size="normal"
               onClick={() => console.log('Normal size')}
             >
@@ -128,6 +138,50 @@ export const SimpleButtonTestScreen: React.FC = () => {
             >
               Small Size
             </Button>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Buttons with Icons</Text>
+
+          <View style={styles.buttonContainer}>
+            <Button
+              type="primary"
+              iconName="plus"
+              onClick={() => console.log('Add item')}
+            >
+              Add Item
+            </Button>
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <Button
+              type="primary"
+              iconName="edit"
+              iconOnly
+              onClick={() => console.log('Edit')}
+            />
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <Button
+              type="secondary"
+              iconName="save"
+              size="large"
+              onClick={() => console.log('Save large')}
+            >
+              Save Document
+            </Button>
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <Button
+              type="primary"
+              iconName="download"
+              iconOnly
+              size="large"
+              onClick={() => console.log('Download large')}
+            />
           </View>
         </View>
 

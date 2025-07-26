@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { WebSelectProps } from './types';
 import { useTheme } from '../theme';
+import { Icon } from '../Icon';
+import { isValidIconName } from '../Icon/iconMapping';
 import './Select.scss';
 
 const Select: React.FC<WebSelectProps> = ({
@@ -105,7 +107,11 @@ const Select: React.FC<WebSelectProps> = ({
         >
           <span className="quorum-select__value">
             {selectedOption?.icon && (
-              <span className="quorum-select__icon">{selectedOption.icon}</span>
+              isValidIconName(selectedOption.icon) ? (
+                <Icon name={selectedOption.icon} size="sm" className="text-subtle quorum-select__icon" />
+              ) : (
+                <span className="quorum-select__icon">{selectedOption.icon}</span>
+              )
             )}
             <span
               className={!selectedOption ? 'quorum-select__placeholder' : ''}
@@ -113,7 +119,7 @@ const Select: React.FC<WebSelectProps> = ({
               {displayText}
             </span>
           </span>
-          <span className="quorum-select__arrow">▼</span>
+          <Icon name="chevron-down" size="xs" className="quorum-select__arrow" />
         </button>
 
         {isOpen && (
@@ -133,14 +139,22 @@ const Select: React.FC<WebSelectProps> = ({
                 role="option"
                 aria-selected={option.value === selectedValue}
               >
-                {option.icon && (
-                  <span className="quorum-select__option-icon">
-                    {option.icon}
-                  </span>
-                )}
-                <span>{option.label}</span>
+                <div className="quorum-select__option-content">
+                  {option.icon && (
+                    isValidIconName(option.icon) ? (
+                      <Icon name={option.icon} size="sm" className="text-subtle quorum-select__option-icon" />
+                    ) : (
+                      <span className="quorum-select__option-icon">{option.icon}</span>
+                    )
+                  )}
+                  <span>{option.label}</span>
+                </div>
                 {option.value === selectedValue && (
-                  <span className="quorum-select__checkmark">✓</span>
+                  <Icon
+                    name="check"
+                    size="sm"
+                    className="quorum-select__checkmark"
+                  />
                 )}
               </div>
             ))}

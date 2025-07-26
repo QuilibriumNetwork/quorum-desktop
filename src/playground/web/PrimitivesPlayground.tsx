@@ -32,7 +32,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
   // ColorSwatch state
   const [activeColor, setActiveColor] = useState('blue');
-  
+
   // RadioGroup state
   const [selectedTheme, setSelectedTheme] = useState('light');
   const [selectedSize, setSelectedSize] = useState('medium');
@@ -63,7 +63,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
   // Select testing state
   const [selectValue, setSelectValue] = useState('');
-  const [iconSelectValue, setIconSelectValue] = useState('react');
+  const [iconSelectValue, setIconSelectValue] = useState('edit');
   const [errorSelectValue, setErrorSelectValue] = useState('');
   const [showSelectError, setShowSelectError] = useState(false);
 
@@ -526,9 +526,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="button-primitive"
             className="border border-default rounded-lg p-6 space-y-6"
           >
-            <h2 className="text-xl font-semibold text-strong">
-              Button
-            </h2>
+            <h2 className="text-xl font-semibold text-strong">Button</h2>
 
             {/* Button Types */}
             <div className="space-y-3">
@@ -595,62 +593,121 @@ export const PrimitivesPlayground: React.FC = () => {
                 Sizes and States
               </h3>
 
-              <div className="space-y-2">
-                <p className="text-sm text-subtle">Size variants:</p>
-                <FlexRow
-                  gap="md"
-                  align="center"
-                  className="p-4 bg-surface-3 rounded-xl"
-                >
-                  <Button type="primary" size="normal" onClick={() => {}}>
-                    Normal Size
-                  </Button>
-                  <Button type="primary" size="small" onClick={() => {}}>
-                    Small Size
-                  </Button>
-                </FlexRow>
-              </div>
+              {/* 3x1 Grid with only first 2 cells occupied */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <p className="text-sm text-subtle">Size variants:</p>
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <FlexRow gap="md" align="center">
+                      <Button type="primary" size="large" onClick={() => {}}>
+                        Large
+                      </Button>
+                      <Button type="primary" size="normal" onClick={() => {}}>
+                        Normal
+                      </Button>
+                      <Button type="primary" size="small" onClick={() => {}}>
+                        Small
+                      </Button>
+                    </FlexRow>
+                  </div>
+                </div>
 
-              <div className="space-y-2">
-                <p className="text-sm text-subtle">Disabled states:</p>
-                <FlexRow gap="md" className="p-4 bg-surface-3 rounded-xl">
-                  <Button type="primary" disabled onClick={() => {}}>
-                    Disabled Primary
-                  </Button>
-                  <Button type="secondary" disabled onClick={() => {}}>
-                    Disabled Secondary
-                  </Button>
-                </FlexRow>
+                <div className="space-y-2">
+                  <p className="text-sm text-subtle">Disabled states:</p>
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <FlexRow gap="md">
+                      <Button type="primary" disabled onClick={() => {}}>
+                        Disabled Primary
+                      </Button>
+                      <Button type="secondary" disabled onClick={() => {}}>
+                        Disabled Secondary
+                      </Button>
+                    </FlexRow>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-sm text-subtle">Buttons with tooltips:</p>
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <FlexRow gap="md">
+                      <Button
+                        type="primary"
+                        tooltip="This is a helpful tooltip"
+                        onClick={() => {}}
+                      >
+                        Hover for Tooltip
+                      </Button>
+                      <Button
+                        type="secondary"
+                        tooltip="Highlighted tooltip!"
+                        highlightedTooltip
+                        onClick={() => {}}
+                      >
+                        Highlighted Tooltip
+                      </Button>
+                    </FlexRow>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Button with Tooltips */}
+            {/* Button with Icons */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">
-                Interactive Features
-              </h3>
+              <h3 className="text-lg font-medium text-strong">Buttons with Icons</h3>
 
-              <div className="space-y-2">
-                <p className="text-sm text-subtle">Buttons with tooltips:</p>
-                <FlexRow gap="md" className="p-4 bg-surface-3 rounded-xl">
-                  <Button
-                    type="primary"
-                    tooltip="This is a helpful tooltip"
-                    onClick={() => {}}
-                  >
-                    Hover for Tooltip
-                  </Button>
-                  <Button
-                    type="secondary"
-                    tooltip="Highlighted tooltip!"
-                    highlightedTooltip
-                    onClick={() => {}}
-                  >
-                    Highlighted Tooltip
-                  </Button>
-                </FlexRow>
+              {/* 3x1 Grid with only first 2 cells occupied */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <p className="text-sm text-subtle">Button with icon and text:</p>
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <div className="inline-block">
+                      <Button
+                        type="primary"
+                        iconName="plus"
+                        onClick={() => {}}
+                      >
+                        Add Item
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-sm text-subtle">Icon-only buttons:</p>
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <FlexRow gap="sm">
+                      <Button
+                        type="primary"
+                        iconName="edit"
+                        iconOnly
+                        size="small"
+                        tooltip="Edit (small)"
+                        onClick={() => {}}
+                      />
+                      <Button
+                        type="primary"
+                        iconName="edit"
+                        iconOnly
+                        tooltip="Edit (normal)"
+                        onClick={() => {}}
+                      />
+                      <Button
+                        type="primary"
+                        iconName="edit"
+                        iconOnly
+                        size="large"
+                        tooltip="Edit (large)"
+                        onClick={() => {}}
+                      />
+                    </FlexRow>
+                  </div>
+                </div>
+
+                {/* Third cell - empty space */}
+                <div></div>
               </div>
             </div>
+
           </section>
 
           {/* Section: Modal Primitive */}
@@ -658,9 +715,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="modal-primitive"
             className="border border-default rounded-lg p-6 space-y-6"
           >
-            <h2 className="text-xl font-semibold text-strong">
-              Modal
-            </h2>
+            <h2 className="text-xl font-semibold text-strong">Modal</h2>
 
             {/* Modal Types */}
             <div className="space-y-3">
@@ -742,9 +797,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="input-primitive"
             className="border border-default rounded-lg p-6 space-y-4 bg-surface-5"
           >
-            <h2 className="text-xl font-semibold text-strong">
-              Input
-            </h2>
+            <h2 className="text-xl font-semibold text-strong">Input</h2>
             <p className="text-subtle">
               Cross-platform input field primitive with error handling
             </p>
@@ -955,9 +1008,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="textarea-primitive"
             className="border border-default rounded-lg p-6 space-y-4 bg-surface-5"
           >
-            <h2 className="text-xl font-semibold text-strong">
-              TextArea
-            </h2>
+            <h2 className="text-xl font-semibold text-strong">TextArea</h2>
             <p className="text-subtle">
               Cross-platform multiline text input primitive with auto-resize
               support
@@ -1190,9 +1241,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="switch-primitive"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">
-              Switch
-            </h2>
+            <h2 className="text-xl font-semibold text-strong">Switch</h2>
             <p className="text-subtle">
               Cross-platform toggle switch with multiple sizes and variants
             </p>
@@ -1296,9 +1345,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="select-primitive"
             className="border border-default rounded-lg p-6 space-y-4 bg-surface-5"
           >
-            <h2 className="text-xl font-semibold text-strong">
-              Select
-            </h2>
+            <h2 className="text-xl font-semibold text-strong">Select</h2>
             <p className="text-subtle">
               Cross-platform dropdown/picker component with rich options and
               customization
@@ -1333,18 +1380,18 @@ export const PrimitivesPlayground: React.FC = () => {
                   Hidden
                 </h3>
                 <label className="text-sm font-medium text-strong mb-2 block">
-                  With Icons (Temp Emoji)
+                  With Icons (FontAwesome)
                 </label>
                 <Select
                   value={iconSelectValue}
                   onChange={setIconSelectValue}
-                  placeholder="Choose a framework"
+                  placeholder="Choose an action"
                   options={[
-                    { value: 'react', label: 'React', icon: '⚛️' },
-                    { value: 'vue', label: 'Vue.js', icon: '💚' },
-                    { value: 'angular', label: 'Angular', icon: '🅰️' },
-                    { value: 'svelte', label: 'Svelte', icon: '🧡' },
-                    { value: 'nextjs', label: 'Next.js', icon: '▲' },
+                    { value: 'edit', label: 'Edit', icon: 'edit' },
+                    { value: 'copy', label: 'Copy', icon: 'copy' },
+                    { value: 'share', label: 'Share', icon: 'share' },
+                    { value: 'download', label: 'Download', icon: 'download' },
+                    { value: 'trash', label: 'Delete', icon: 'trash' },
                   ]}
                 />
               </div>
@@ -1647,9 +1694,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="colorswatch-primitive"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">
-              ColorSwatch
-            </h2>
+            <h2 className="text-xl font-semibold text-strong">ColorSwatch</h2>
             <p className="text-subtle">
               Color picker component for selecting accent colors with visual
               feedback
@@ -1742,10 +1787,14 @@ export const PrimitivesPlayground: React.FC = () => {
                         isActive={true}
                         onPress={() => {}}
                       />
-                      <span className="text-sm text-muted">Shows checkmark</span>
+                      <span className="text-sm text-muted">
+                        Shows checkmark
+                      </span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-sm text-subtle w-16">Disabled:</span>
+                      <span className="text-sm text-subtle w-16">
+                        Disabled:
+                      </span>
                       <ColorSwatch
                         color="purple"
                         disabled={true}
@@ -1804,23 +1853,26 @@ export const PrimitivesPlayground: React.FC = () => {
             id="radiogroup-primitive"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">
-              RadioGroup
-            </h2>
+            <h2 className="text-xl font-semibold text-strong">RadioGroup</h2>
             <p className="text-subtle">
-              Accessible radio button group with icon support and flexible layouts
+              Accessible radio button group with icon support and flexible
+              layouts
             </p>
 
             {/* RadioGroup Examples in 2x2 Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Theme Selection</h3>
-                <p className="text-sm text-subtle">Using emojis as temporary icons:</p>
+                <h3 className="text-lg font-medium text-strong">
+                  Theme Selection
+                </h3>
+                <p className="text-sm text-subtle">
+                  Using FontAwesome icons:
+                </p>
                 <RadioGroup
                   options={[
-                    { value: 'light', label: 'Light', icon: '☀️' },
-                    { value: 'dark', label: 'Dark', icon: '🌙' },
-                    { value: 'system', label: 'System', icon: '💻' },
+                    { value: 'light', label: 'Light', icon: 'sun' },
+                    { value: 'dark', label: 'Dark', icon: 'moon' },
+                    { value: 'system', label: 'System', icon: 'desktop' },
                   ]}
                   value={selectedTheme}
                   onChange={setSelectedTheme}
@@ -1829,8 +1881,12 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Horizontal Layout</h3>
-                <p className="text-sm text-subtle">Horizontal layout example:</p>
+                <h3 className="text-lg font-medium text-strong">
+                  Horizontal Layout
+                </h3>
+                <p className="text-sm text-subtle">
+                  Horizontal layout example:
+                </p>
                 <RadioGroup
                   options={[
                     { value: 'option1', label: 'Option 1' },
@@ -1844,13 +1900,21 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Disabled Options</h3>
-                <p className="text-sm text-subtle">Some options can be disabled:</p>
+                <h3 className="text-lg font-medium text-strong">
+                  Disabled Options
+                </h3>
+                <p className="text-sm text-subtle">
+                  Some options can be disabled:
+                </p>
                 <RadioGroup
                   options={[
                     { value: 'basic', label: 'Basic Plan' },
                     { value: 'pro', label: 'Pro Plan', disabled: true },
-                    { value: 'enterprise', label: 'Enterprise', disabled: true },
+                    {
+                      value: 'enterprise',
+                      label: 'Enterprise',
+                      disabled: true,
+                    },
                   ]}
                   value="basic"
                   onChange={() => {}}
@@ -1858,8 +1922,12 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Without Icons</h3>
-                <p className="text-sm text-subtle">Simple text-only radio group:</p>
+                <h3 className="text-lg font-medium text-strong">
+                  Without Icons
+                </h3>
+                <p className="text-sm text-subtle">
+                  Simple text-only radio group:
+                </p>
                 <RadioGroup
                   options={[
                     { value: 'option1', label: 'Option 1' },
@@ -1878,13 +1946,13 @@ export const PrimitivesPlayground: React.FC = () => {
                 📱 Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
-                <li>
-                  Web: Native HTML radio inputs with custom styling
-                </li>
+                <li>Web: Native HTML radio inputs with custom styling</li>
                 <li>
                   Mobile: Custom radio implementation with TouchableOpacity
                 </li>
-                <li>Icons use emojis temporarily (FontAwesome pending on mobile)</li>
+                <li>
+                  Icons use emojis temporarily (FontAwesome pending on mobile)
+                </li>
                 <li>Both horizontal and vertical layouts supported</li>
                 <li>Keyboard navigation works on web (Tab, Arrow keys)</li>
                 <li>Touch targets optimized for mobile (min 44x44)</li>
@@ -1899,17 +1967,18 @@ export const PrimitivesPlayground: React.FC = () => {
             id="tooltip-primitive"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">
-              Tooltip
-            </h2>
+            <h2 className="text-xl font-semibold text-strong">Tooltip</h2>
             <p className="text-subtle">
-              Cross-platform tooltip for information icons in modals and special cases
+              Cross-platform tooltip for information icons in modals and special
+              cases
             </p>
 
             {/* Tooltip Examples */}
             <div className="space-y-6">
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Basic Tooltips</h3>
+                <h3 className="text-lg font-medium text-strong">
+                  Basic Tooltips
+                </h3>
                 <div className="flex items-center gap-6 flex-wrap">
                   <Tooltip
                     id="basic-tooltip"
@@ -1954,11 +2023,7 @@ export const PrimitivesPlayground: React.FC = () => {
                     </button>
                   </Tooltip>
 
-                  <Tooltip
-                    id="short-tooltip"
-                    content="Short"
-                    place="bottom"
-                  >
+                  <Tooltip id="short-tooltip" content="Short" place="bottom">
                     <button className="bg-surface-5 text-main px-3 py-2 rounded border border-default">
                       Auto Width
                     </button>
@@ -2012,9 +2077,12 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Modal Use Cases</h3>
+                <h3 className="text-lg font-medium text-strong">
+                  Modal Use Cases
+                </h3>
                 <p className="text-sm text-subtle">
-                  Examples simulating UserSettingsModal and SpaceEditor info icons:
+                  Examples simulating UserSettingsModal and SpaceEditor info
+                  icons:
                 </p>
                 <div className="space-y-4 p-4 bg-surface-1 rounded-lg">
                   <div className="flex items-center gap-2">
@@ -2068,19 +2136,23 @@ export const PrimitivesPlayground: React.FC = () => {
                 📱 Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
-                <li>
-                  Web: Uses existing ReactTooltip with touch support
-                </li>
-                <li>
-                  Mobile: Custom modal-based tooltip with positioning
-                </li>
+                <li>Web: Uses existing ReactTooltip with touch support</li>
+                <li>Mobile: Custom modal-based tooltip with positioning</li>
                 <li>Short tap opens tooltip, tap outside or X button closes</li>
-                <li>Tooltips automatically size to content with configurable max-width</li>
+                <li>
+                  Tooltips automatically size to content with configurable
+                  max-width
+                </li>
                 <li>Highlighted variant adds border for emphasis</li>
                 <li>Automatically positions to stay within screen bounds</li>
                 <li>Default close button on mobile for better UX</li>
-                <li>Ideal for info icons in UserSettingsModal and SpaceEditor</li>
-                <li>Supports all 12 positioning options (top, bottom, left, right + variants)</li>
+                <li>
+                  Ideal for info icons in UserSettingsModal and SpaceEditor
+                </li>
+                <li>
+                  Supports all 12 positioning options (top, bottom, left, right
+                  + variants)
+                </li>
               </ul>
             </div>
           </section>
@@ -2090,9 +2162,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="icon-primitive"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">
-              Icon
-            </h2>
+            <h2 className="text-xl font-semibold text-strong">Icon</h2>
             <p className="text-subtle">
               Cross-platform icon system using FontAwesome with unified API
             </p>
@@ -2134,15 +2204,21 @@ export const PrimitivesPlayground: React.FC = () => {
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <Icon name="sun" color="#f59e0b" />
-                    <span className="text-sm text-subtle">sun (light theme)</span>
+                    <span className="text-sm text-subtle">
+                      sun (light theme)
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Icon name="moon" color="#6366f1" />
-                    <span className="text-sm text-subtle">moon (dark theme)</span>
+                    <span className="text-sm text-subtle">
+                      moon (dark theme)
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Icon name="desktop" color="#6b7280" />
-                    <span className="text-sm text-subtle">desktop (system)</span>
+                    <span className="text-sm text-subtle">
+                      desktop (system)
+                    </span>
                   </div>
                 </div>
               </div>
@@ -2178,7 +2254,9 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Actions & States</h3>
+                <h3 className="text-lg font-medium text-strong">
+                  Actions & States
+                </h3>
                 <div className="flex items-center gap-4 flex-wrap">
                   <div className="flex items-center gap-2">
                     <Icon name="reply" color="#10b981" />
@@ -2194,7 +2272,9 @@ export const PrimitivesPlayground: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Icon name="spinner" spin />
-                    <span className="text-sm text-subtle">spinner (animated)</span>
+                    <span className="text-sm text-subtle">
+                      spinner (animated)
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Icon name="bell" disabled />
@@ -2204,7 +2284,9 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Navigation Icons</h3>
+                <h3 className="text-lg font-medium text-strong">
+                  Navigation Icons
+                </h3>
                 <div className="flex items-center gap-4 flex-wrap">
                   <div className="flex items-center gap-2">
                     <Icon name="chevron-left" />
@@ -2236,13 +2318,22 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Implementation Notes */}
             <div className="bg-surface-1 p-4 rounded-lg">
-              <h4 className="font-medium text-strong mb-2">Implementation Notes</h4>
+              <h4 className="font-medium text-strong mb-2">
+                Implementation Notes
+              </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
-                <li>Web: Uses FontAwesome React components with full feature support</li>
-                <li>Native: Uses react-native-vector-icons with FontAwesome font</li>
+                <li>
+                  Web: Uses FontAwesome React components with full feature
+                  support
+                </li>
+                <li>
+                  Native: Uses react-native-vector-icons with FontAwesome font
+                </li>
                 <li>Unified API: Same props work across both platforms</li>
                 <li>60+ icons mapped from comprehensive codebase audit</li>
-                <li>Supports all FontAwesome features: spin, pulse, rotation, etc.</li>
+                <li>
+                  Supports all FontAwesome features: spin, pulse, rotation, etc.
+                </li>
                 <li>Automatic theme color integration on mobile</li>
                 <li>Ready to replace all current FontAwesome usage</li>
               </ul>

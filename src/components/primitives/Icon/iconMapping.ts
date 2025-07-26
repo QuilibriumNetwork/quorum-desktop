@@ -68,6 +68,7 @@ import {
   faFilter,
   faSort,
   faPrint,
+  faSave,
 } from '@fortawesome/free-solid-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { IconName } from './types';
@@ -75,18 +76,18 @@ import { IconName } from './types';
 // Map our semantic icon names to FontAwesome icons
 export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   // Essential icons
-  'check': faCheck,
-  'times': faTimes,
-  'close': faTimes, // alias for times
-  'sun': faSun,
-  'moon': faMoon,
-  'desktop': faDesktop,
-  'search': faSearch,
+  check: faCheck,
+  times: faTimes,
+  close: faTimes, // alias for times
+  sun: faSun,
+  moon: faMoon,
+  desktop: faDesktop,
+  search: faSearch,
   'info-circle': faInfoCircle,
-  
+
   // Navigation & UI
-  'plus': faPlus,
-  'minus': faMinus,
+  plus: faPlus,
+  minus: faMinus,
   'arrow-left': faArrowLeft,
   'arrow-right': faArrowRight,
   'arrow-up': faArrowUp,
@@ -95,75 +96,76 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   'chevron-right': faChevronRight,
   'chevron-up': faChevronUp,
   'chevron-down': faChevronDown,
-  'bars': faBars,
-  'x': faX,
+  bars: faBars,
+  x: faX,
   'compress-alt': faCompressAlt,
   'door-open': faDoorOpen,
-  'sliders': faSliders,
-  
+  sliders: faSliders,
+
   // Actions & Communication
-  'reply': faReply,
-  'link': faLink,
-  'trash': faTrash,
-  'edit': faEdit,
-  'delete': faTrash, // alias for trash
-  'copy': faCopy,
-  'share': faShare,
-  'download': faDownload,
-  'upload': faUpload,
-  'clipboard': faClipboard,
-  'envelope': faEnvelope,
+  reply: faReply,
+  link: faLink,
+  trash: faTrash,
+  edit: faEdit,
+  delete: faTrash, // alias for trash
+  copy: faCopy,
+  share: faShare,
+  download: faDownload,
+  upload: faUpload,
+  save: faSave,
+  clipboard: faClipboard,
+  envelope: faEnvelope,
   'comment-dots': faCommentDots,
-  
+
   // User & Social
-  'user': faUser,
-  'users': faUsers,
+  user: faUser,
+  users: faUsers,
   'user-plus': faUserPlus,
-  'smile': faSmile,
+  smile: faSmile,
   'face-smile-beam': faFaceSmileBeam,
-  'heart': faHeart,
-  'star': faStar,
-  'eye': faEye,
+  heart: faHeart,
+  star: faStar,
+  eye: faEye,
   'eye-slash': faEyeSlash,
-  
+
   // Settings & Security
-  'cog': faCog,
-  'gear': faGear,
-  'settings': faCog, // alias for cog
-  'shield': faShield,
+  cog: faCog,
+  gear: faGear,
+  settings: faCog, // alias for cog
+  shield: faShield,
   'shield-alt': faShieldAlt,
-  'lock': faLock,
-  'unlock': faUnlock,
-  'palette': faPalette,
-  'bell': faBell,
-  
+  lock: faLock,
+  unlock: faUnlock,
+  palette: faPalette,
+  bell: faBell,
+
   // Status & Alerts
-  'info': faInfoCircle, // alias for info-circle
-  'warning': faExclamationTriangle,
-  'error': faExclamationTriangle, // alias for warning
-  'success': faCheck, // alias for check
+  info: faInfoCircle, // alias for info-circle
+  warning: faExclamationTriangle,
+  error: faExclamationTriangle, // alias for warning
+  success: faCheck, // alias for check
   'exclamation-triangle': faExclamationTriangle,
   'circle-info': faCircleInfo,
-  'spinner': faSpinner,
-  
+  spinner: faSpinner,
+
   // Files & Media
-  'image': faImage,
+  image: faImage,
   'file-image': faFileImage,
-  'tools': faTools,
-  'hashtag': faHashtag,
+  tools: faTools,
+  hashtag: faHashtag,
   'calendar-alt': faCalendarAlt,
-  
+
   // Common additions
-  'home': faHome,
-  'menu': faBars, // alias for bars
-  'dots': faEllipsisH,
+  home: faHome,
+  menu: faBars, // alias for bars
+  dots: faEllipsisH,
   'dots-vertical': faEllipsisV,
-  'refresh': faSync,
+  refresh: faSync,
   'external-link': faExternalLinkAlt,
-  'bookmark': faBookmark,
-  'filter': faFilter,
-  'sort': faSort,
-  'print': faPrint,
+  bookmark: faBookmark,
+  filter: faFilter,
+  sort: faSort,
+  print: faPrint,
   'download-alt': faDownload, // alias for download
   'upload-alt': faUpload, // alias for upload
 };
@@ -171,18 +173,18 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
 // React Native vector icon names (using FontAwesome family from react-native-vector-icons)
 export const reactNativeIconMap: Record<IconName, string> = {
   // Essential icons
-  'check': 'check',
-  'times': 'times',
-  'close': 'times',
-  'sun': 'sun-o',
-  'moon': 'moon-o',
-  'desktop': 'desktop',
-  'search': 'search',
+  check: 'check',
+  times: 'times',
+  close: 'times',
+  sun: 'sun-o',
+  moon: 'moon-o',
+  desktop: 'desktop',
+  search: 'search',
   'info-circle': 'info-circle',
-  
+
   // Navigation & UI
-  'plus': 'plus',
-  'minus': 'minus',
+  plus: 'plus',
+  minus: 'minus',
   'arrow-left': 'arrow-left',
   'arrow-right': 'arrow-right',
   'arrow-up': 'arrow-up',
@@ -191,75 +193,81 @@ export const reactNativeIconMap: Record<IconName, string> = {
   'chevron-right': 'chevron-right',
   'chevron-up': 'chevron-up',
   'chevron-down': 'chevron-down',
-  'bars': 'bars',
-  'x': 'close',
+  bars: 'bars',
+  x: 'close',
   'compress-alt': 'compress',
   'door-open': 'sign-out',
-  'sliders': 'sliders',
-  
+  sliders: 'sliders',
+
   // Actions & Communication
-  'reply': 'reply',
-  'link': 'link',
-  'trash': 'trash',
-  'edit': 'edit',
-  'delete': 'trash',
-  'copy': 'copy',
-  'share': 'share',
-  'download': 'download',
-  'upload': 'upload',
-  'clipboard': 'clipboard',
-  'envelope': 'envelope',
+  reply: 'reply',
+  link: 'link',
+  trash: 'trash',
+  edit: 'edit',
+  delete: 'trash',
+  copy: 'copy',
+  share: 'share',
+  download: 'download',
+  upload: 'upload',
+  save: 'save',
+  clipboard: 'clipboard',
+  envelope: 'envelope',
   'comment-dots': 'comment',
-  
+
   // User & Social
-  'user': 'user',
-  'users': 'users',
+  user: 'user',
+  users: 'users',
   'user-plus': 'user-plus',
-  'smile': 'smile-o',
+  smile: 'smile-o',
   'face-smile-beam': 'smile-o',
-  'heart': 'heart',
-  'star': 'star',
-  'eye': 'eye',
+  heart: 'heart',
+  star: 'star',
+  eye: 'eye',
   'eye-slash': 'eye-slash',
-  
+
   // Settings & Security
-  'cog': 'cog',
-  'gear': 'cog',
-  'settings': 'cog',
-  'shield': 'shield',
+  cog: 'cog',
+  gear: 'cog',
+  settings: 'cog',
+  shield: 'shield',
   'shield-alt': 'shield',
-  'lock': 'lock',
-  'unlock': 'unlock',
-  'palette': 'palette',
-  'bell': 'bell',
-  
+  lock: 'lock',
+  unlock: 'unlock',
+  palette: 'palette',
+  bell: 'bell',
+
   // Status & Alerts
-  'info': 'info-circle',
-  'warning': 'exclamation-triangle',
-  'error': 'exclamation-triangle',
-  'success': 'check',
+  info: 'info-circle',
+  warning: 'exclamation-triangle',
+  error: 'exclamation-triangle',
+  success: 'check',
   'exclamation-triangle': 'exclamation-triangle',
   'circle-info': 'info-circle',
-  'spinner': 'spinner',
-  
+  spinner: 'spinner',
+
   // Files & Media
-  'image': 'image',
+  image: 'image',
   'file-image': 'file-image-o',
-  'tools': 'wrench',
-  'hashtag': 'hashtag',
+  tools: 'wrench',
+  hashtag: 'hashtag',
   'calendar-alt': 'calendar',
-  
+
   // Common additions
-  'home': 'home',
-  'menu': 'bars',
-  'dots': 'ellipsis-h',
+  home: 'home',
+  menu: 'bars',
+  dots: 'ellipsis-h',
   'dots-vertical': 'ellipsis-v',
-  'refresh': 'refresh',
+  refresh: 'refresh',
   'external-link': 'external-link',
-  'bookmark': 'bookmark',
-  'filter': 'filter',
-  'sort': 'sort',
-  'print': 'print',
+  bookmark: 'bookmark',
+  filter: 'filter',
+  sort: 'sort',
+  print: 'print',
   'download-alt': 'download',
   'upload-alt': 'upload',
 };
+
+// Helper function to check if a string is a valid icon name
+export function isValidIconName(name: string): name is IconName {
+  return name in fontAwesomeIconMap;
+}
