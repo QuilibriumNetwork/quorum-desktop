@@ -13,6 +13,7 @@ import Modal from '../../components/primitives/Modal';
 import Select from '../../components/primitives/Select';
 import { ColorSwatch } from '../../components/primitives/ColorSwatch';
 import { RadioGroup } from '../../components/primitives/RadioGroup';
+import { Tooltip } from '../../components/primitives/Tooltip';
 import ThemeRadioGroup from '../../components/ThemeRadioGroup';
 import AccentColorSwitcher from '../../components/AccentColorSwitcher';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -86,6 +87,7 @@ export const PrimitivesPlayground: React.FC = () => {
     { id: 'select-primitive', label: 'Select Primitive' },
     { id: 'colorswatch-primitive', label: 'ColorSwatch Primitive' },
     { id: 'radiogroup-primitive', label: 'RadioGroup Primitive' },
+    { id: 'tooltip-primitive', label: 'Tooltip Primitive' },
   ];
 
   return (
@@ -1886,6 +1888,197 @@ export const PrimitivesPlayground: React.FC = () => {
                 <li>Touch targets optimized for mobile (min 44x44)</li>
                 <li>Active state has accent color border and background</li>
                 <li>Ready for ThemeRadioGroup integration</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Section: Tooltip Primitive */}
+          <section
+            id="tooltip-primitive"
+            className="border border-default rounded-lg p-6 space-y-4"
+          >
+            <h2 className="text-xl font-semibold text-strong">
+              Tooltip Primitive
+            </h2>
+            <p className="text-subtle">
+              Cross-platform tooltip for information icons in modals and special cases
+            </p>
+
+            {/* Tooltip Examples */}
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Basic Tooltips</h3>
+                <div className="flex items-center gap-6 flex-wrap">
+                  <Tooltip
+                    id="basic-tooltip"
+                    content="This is a basic tooltip that appears on hover (desktop) or tap (mobile)"
+                    place="top"
+                  >
+                    <button className="bg-accent text-white px-4 py-2 rounded">
+                      Hover/Tap for Info
+                    </button>
+                  </Tooltip>
+
+                  <Tooltip
+                    id="info-icon-tooltip"
+                    content="This tooltip simulates the info icons used in UserSettingsModal and SpaceEditor. Click the icon to see the tooltip."
+                    place="bottom"
+                    maxWidth={300}
+                  >
+                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-accent text-white text-sm cursor-pointer">
+                      i
+                    </span>
+                  </Tooltip>
+
+                  <Tooltip
+                    id="long-content-tooltip"
+                    content="This is a longer tooltip with more detailed information. It demonstrates how the tooltip handles wrapping text and maintains good readability across different screen sizes. The content automatically adjusts to the specified maximum width."
+                    place="right"
+                    maxWidth={250}
+                  >
+                    <button className="bg-surface-5 text-main px-3 py-2 rounded border border-default">
+                      Long Content
+                    </button>
+                  </Tooltip>
+
+                  <Tooltip
+                    id="highlighted-tooltip"
+                    content="This is a highlighted tooltip with a border"
+                    place="top"
+                    highlighted={true}
+                  >
+                    <button className="bg-warning-hex text-white px-3 py-2 rounded">
+                      Highlighted
+                    </button>
+                  </Tooltip>
+
+                  <Tooltip
+                    id="short-tooltip"
+                    content="Short"
+                    place="bottom"
+                  >
+                    <button className="bg-surface-5 text-main px-3 py-2 rounded border border-default">
+                      Auto Width
+                    </button>
+                  </Tooltip>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Positioning</h3>
+                <div className="flex flex-wrap gap-4 justify-center py-8">
+                  <Tooltip
+                    id="tooltip-top"
+                    content="Tooltip positioned at the top"
+                    place="top"
+                  >
+                    <button className="bg-surface-3 px-3 py-2 rounded text-sm">
+                      Top
+                    </button>
+                  </Tooltip>
+
+                  <Tooltip
+                    id="tooltip-right"
+                    content="Tooltip positioned to the right"
+                    place="right"
+                  >
+                    <button className="bg-surface-3 px-3 py-2 rounded text-sm">
+                      Right
+                    </button>
+                  </Tooltip>
+
+                  <Tooltip
+                    id="tooltip-bottom"
+                    content="Tooltip positioned at the bottom"
+                    place="bottom"
+                  >
+                    <button className="bg-surface-3 px-3 py-2 rounded text-sm">
+                      Bottom
+                    </button>
+                  </Tooltip>
+
+                  <Tooltip
+                    id="tooltip-left"
+                    content="Tooltip positioned to the left"
+                    place="left"
+                  >
+                    <button className="bg-surface-3 px-3 py-2 rounded text-sm">
+                      Left
+                    </button>
+                  </Tooltip>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Modal Use Cases</h3>
+                <p className="text-sm text-subtle">
+                  Examples simulating UserSettingsModal and SpaceEditor info icons:
+                </p>
+                <div className="space-y-4 p-4 bg-surface-1 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">Allow Cross-Space Sync</span>
+                    <Tooltip
+                      id="sync-tooltip"
+                      content="This setting allows synchronization of messages and data across different spaces you're a member of. Enabling this improves your experience but may use more bandwidth."
+                      place="right"
+                      maxWidth={320}
+                    >
+                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-surface-6 text-subtle text-xs cursor-pointer">
+                        i
+                      </span>
+                    </Tooltip>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">Non-repudiable Messages</span>
+                    <Tooltip
+                      id="repudiation-tooltip"
+                      content="Non-repudiation ensures that sent messages cannot be denied by the sender. This provides stronger proof of authenticity but may not be suitable for all use cases."
+                      place="right"
+                      maxWidth={320}
+                    >
+                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-surface-6 text-subtle text-xs cursor-pointer">
+                        i
+                      </span>
+                    </Tooltip>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">Notifications</span>
+                    <Tooltip
+                      id="notifications-tooltip"
+                      content="Configure how and when you receive notifications for new messages, mentions, and other activities in your spaces."
+                      place="right"
+                      maxWidth={320}
+                    >
+                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-surface-6 text-subtle text-xs cursor-pointer">
+                        i
+                      </span>
+                    </Tooltip>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Testing Notes */}
+            <div className="p-4 bg-surface-1 rounded-lg">
+              <h4 className="font-semibold text-strong mb-2">
+                📱 Mobile Testing Notes
+              </h4>
+              <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
+                <li>
+                  Web: Uses existing ReactTooltip with touch support
+                </li>
+                <li>
+                  Mobile: Custom modal-based tooltip with positioning
+                </li>
+                <li>Short tap opens tooltip, tap outside or X button closes</li>
+                <li>Tooltips automatically size to content with configurable max-width</li>
+                <li>Highlighted variant adds border for emphasis</li>
+                <li>Automatically positions to stay within screen bounds</li>
+                <li>Default close button on mobile for better UX</li>
+                <li>Ideal for info icons in UserSettingsModal and SpaceEditor</li>
+                <li>Supports all 12 positioning options (top, bottom, left, right + variants)</li>
               </ul>
             </div>
           </section>

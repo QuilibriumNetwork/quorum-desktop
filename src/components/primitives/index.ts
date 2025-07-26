@@ -14,6 +14,7 @@ export { TextArea } from './TextArea';
 export { Switch } from './Switch';
 export { ColorSwatch } from './ColorSwatch';
 export { RadioGroup } from './RadioGroup';
+export { Tooltip } from './Tooltip';
 
 // Theme System
 export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
@@ -41,3 +42,8 @@ export type {
   RadioGroupNativeProps,
   RadioOption,
 } from './RadioGroup';
+export type {
+  TooltipProps,
+  TooltipWebProps,
+  TooltipNativeProps,
+} from './Tooltip';

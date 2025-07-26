@@ -571,19 +571,26 @@ This is NOT part of the base TextArea primitive - keep TextArea simple and reusa
 
 Before proceeding, ensure:
 
-- [ ] All primitives work on both desktop and mobile
-- [ ] No third-party dependency issues
-- [ ] Touch interactions feel native
-- [ ] Performance is acceptable on mobile
+- [x] All primitives work on both desktop and mobile
+- [x] No third-party dependency issues
+- [x] Touch interactions feel native
+- [x] Performance is acceptable on mobile
 
 ### Phase 2C: Advanced Primitives (As Needed)
 
-Only build these after core primitives are stable:
+#### 1. Tooltip
 
-- [ ] **Tooltip** (short tap to open on mobile) - web app uses ReactTooltip - native app will only need tooltip for special cases, these tooltips must open on short tap and remain open until the user taps out of the tooltip area
-- [ ] **Tabs** (native navigation pattern) - no need for now
-- [ ] **Accordion** (expand/collapse) - no need for now
-- [ ] **DatePicker** (platform-specific) - no need for now
+- [ ] **Build Tooltip primitive**
+  - [x] Web: Uses existing ReactTooltip with touch support
+  - [x] Native: Custom modal-based tooltip with positioning
+  - [x] Support all 12 positioning options (top, bottom, left, right + variants)
+  - [x] Short tap opens tooltip, tap outside or X button closes
+  - [x] Automatically positions to stay within screen bounds
+  - [x] Default close button on mobile for better UX
+  - [x] Configurable max width for content wrapping
+  - [x] Add comprehensive test screen to mobile playground
+  - [x] Test positioning and interaction behavior on both platforms
+  - [x] Ideal for info icons in UserSettingsModal and SpaceEditor
 
 ### When to Build Test Screens
 

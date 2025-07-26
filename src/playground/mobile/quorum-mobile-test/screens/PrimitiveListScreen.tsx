@@ -90,6 +90,13 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
       emoji: '🔘',
       onPress: () => onSelectPrimitive('radiogroup'),
     },
+    {
+      id: 'tooltip',
+      title: 'Tooltip Primitive',
+      description: 'Cross-platform tooltip for info icons in modals',
+      emoji: '💬',
+      onPress: () => onSelectPrimitive('tooltip'),
+    },
   ];
 
   const renderPrimitiveCard = (primitive: PrimitiveItem) => (

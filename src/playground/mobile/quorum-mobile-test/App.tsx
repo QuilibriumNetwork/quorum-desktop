@@ -17,6 +17,7 @@ import { ModalTestScreen } from './screens/ModalTestScreen';
 import { SelectTestScreen } from './screens/SelectTestScreen';
 import { ColorSwatchTestScreen } from './screens/ColorSwatchTestScreen';
 import { RadioGroupTestScreen } from './screens/RadioGroupTestScreen';
+import { TooltipTestScreen } from './screens/TooltipTestScreen';
 
 type Screen =
   | 'list'
@@ -28,7 +29,8 @@ type Screen =
   | 'modal'
   | 'select'
   | 'colorswatch'
-  | 'radiogroup';
+  | 'radiogroup'
+  | 'tooltip';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('list');
@@ -68,6 +70,8 @@ export default function App() {
         return <ColorSwatchTestScreen />;
       case 'radiogroup':
         return <RadioGroupTestScreen />;
+      case 'tooltip':
+        return <TooltipTestScreen />;
       case 'basic':
       default:
         return (
