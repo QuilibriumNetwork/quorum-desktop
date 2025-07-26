@@ -93,7 +93,9 @@ export const Input: React.FC<InputNativeProps> = ({
         value={value}
         placeholder={placeholder}
         placeholderTextColor={
-          variant === 'onboarding' ? colors.accent[200] : colors.field.placeholder
+          variant === 'onboarding'
+            ? colors.accent[200]
+            : colors.field.placeholder
         }
         onChangeText={onChange}
         onBlur={() => {

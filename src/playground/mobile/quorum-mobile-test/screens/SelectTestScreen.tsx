@@ -175,7 +175,11 @@ export const SelectTestScreen: React.FC = () => {
               }}
               placeholder="Select with error"
               error={showError}
-              errorMessage={showError ? "Invalid selection - please choose a valid option" : "This field is required"}
+              errorMessage={
+                showError
+                  ? 'Invalid selection - please choose a valid option'
+                  : 'This field is required'
+              }
               options={[
                 { value: 'valid', label: 'Valid Option' },
                 { value: 'invalid', label: 'Invalid Option' },

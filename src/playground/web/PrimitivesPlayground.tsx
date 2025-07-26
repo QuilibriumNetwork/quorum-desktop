@@ -11,6 +11,7 @@ import { Switch } from '../../components/primitives/Switch';
 import Button from '../../components/primitives/Button';
 import Modal from '../../components/primitives/Modal';
 import Select from '../../components/primitives/Select';
+import { ColorSwatch } from '../../components/primitives/ColorSwatch';
 import ThemeRadioGroup from '../../components/ThemeRadioGroup';
 import AccentColorSwitcher from '../../components/AccentColorSwitcher';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -25,6 +26,9 @@ export const PrimitivesPlayground: React.FC = () => {
   const [showBackdrop, setShowBackdrop] = useState(false);
   const [showNoBackdropModal, setShowNoBackdropModal] = useState(false);
   const [showModalPrimitive, setShowModalPrimitive] = useState(false);
+
+  // ColorSwatch state
+  const [activeColor, setActiveColor] = useState('blue');
 
   // Input testing state
   const [textValue, setTextValue] = useState('');
@@ -74,6 +78,7 @@ export const PrimitivesPlayground: React.FC = () => {
     { id: 'textarea-primitive', label: 'TextArea Primitive' },
     { id: 'switch-primitive', label: 'Switch Primitive' },
     { id: 'select-primitive', label: 'Select Primitive' },
+    { id: 'colorswatch-primitive', label: 'ColorSwatch Primitive' },
   ];
 
   return (
@@ -1622,6 +1627,163 @@ export const PrimitivesPlayground: React.FC = () => {
                 <li>Click-outside detection and escape key support</li>
                 <li>Consistent theme integration across platforms</li>
                 <li>Support for disabled options and error states</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Section: ColorSwatch Primitive */}
+          <section
+            id="colorswatch-primitive"
+            className="border border-default rounded-lg p-6 space-y-4"
+          >
+            <h2 className="text-xl font-semibold text-strong">
+              ColorSwatch Primitive
+            </h2>
+            <p className="text-subtle">
+              Color picker component for selecting accent colors with visual
+              feedback
+            </p>
+
+            {/* Basic ColorSwatch Examples */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-strong">Basic Usage</h3>
+
+              <div className="space-y-2">
+                <p className="text-sm text-subtle">Click to select colors:</p>
+                <div className="flex gap-3 p-4 bg-surface-1 rounded-lg">
+                  {[
+                    'blue',
+                    'purple',
+                    'fuchsia',
+                    'orange',
+                    'green',
+                    'yellow',
+                  ].map((color) => (
+                    <ColorSwatch
+                      key={color}
+                      color={color}
+                      isActive={activeColor === color}
+                      onPress={() => setActiveColor(color)}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Size Variants */}
+              <div className="space-y-2">
+                <h4 className="text-md font-medium text-strong">
+                  Size Variants
+                </h4>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-subtle w-20">Small:</span>
+                    <div className="flex gap-2">
+                      {['blue', 'purple', 'green'].map((color) => (
+                        <ColorSwatch
+                          key={color}
+                          color={color}
+                          size="small"
+                          isActive={false}
+                          onPress={() => {}}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-subtle w-20">Medium:</span>
+                    <div className="flex gap-2">
+                      {['blue', 'purple', 'green'].map((color) => (
+                        <ColorSwatch
+                          key={color}
+                          color={color}
+                          size="medium"
+                          isActive={false}
+                          onPress={() => {}}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-subtle w-20">Large:</span>
+                    <div className="flex gap-2">
+                      {['blue', 'purple', 'green'].map((color) => (
+                        <ColorSwatch
+                          key={color}
+                          color={color}
+                          size="large"
+                          isActive={false}
+                          onPress={() => {}}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* States */}
+              <div className="space-y-2">
+                <h4 className="text-md font-medium text-strong">States</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-subtle w-20">Active:</span>
+                    <ColorSwatch
+                      color="blue"
+                      isActive={true}
+                      onPress={() => {}}
+                    />
+                    <span className="text-sm text-muted">Shows checkmark</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-subtle w-20">Disabled:</span>
+                    <ColorSwatch
+                      color="purple"
+                      disabled={true}
+                      onPress={() => {}}
+                    />
+                    <span className="text-sm text-muted">
+                      50% opacity, no interaction
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Without Checkmark */}
+              <div className="space-y-2">
+                <h4 className="text-md font-medium text-strong">
+                  Custom Options
+                </h4>
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-subtle w-32">
+                    No checkmark:
+                  </span>
+                  <ColorSwatch
+                    color="orange"
+                    isActive={true}
+                    showCheckmark={false}
+                    onPress={() => {}}
+                  />
+                  <span className="text-sm text-muted">
+                    Active without checkmark icon
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Testing Notes */}
+            <div className="p-4 bg-surface-1 rounded-lg">
+              <h4 className="font-semibold text-strong mb-2">
+                📱 Mobile Testing Notes
+              </h4>
+              <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
+                <li>Web: Uses FontAwesome check icon in selected state</li>
+                <li>
+                  Mobile: Uses ✓ character temporarily (FontAwesome pending)
+                </li>
+                <li>Touch targets optimized for mobile interaction</li>
+                <li>Active state includes border and shadow for visibility</li>
+                <li>Keyboard accessible with Enter/Space key support on web</li>
+                <li>ARIA attributes for screen reader accessibility</li>
+                <li>Hover effects on web, press feedback on mobile</li>
               </ul>
             </div>
           </section>

@@ -115,7 +115,7 @@ const Select: React.FC<NativeSelectProps> = ({
             borderColor: error
               ? colors.field.borderError
               : variantStyles.borderColor,
-            borderWidth: error ? 2 : (variantStyles.borderWidth || 1),
+            borderWidth: error ? 2 : variantStyles.borderWidth || 1,
             opacity: disabled ? 0.5 : 1,
           },
         ]}
@@ -133,7 +133,9 @@ const Select: React.FC<NativeSelectProps> = ({
               styles.text,
               {
                 fontSize: sizeStyles.fontSize,
-                color: selectedOption ? colors.field.text : colors.field.placeholder,
+                color: selectedOption
+                  ? colors.field.text
+                  : colors.field.placeholder,
               },
             ]}
             numberOfLines={1}
@@ -141,11 +143,15 @@ const Select: React.FC<NativeSelectProps> = ({
             {displayText}
           </Text>
         </View>
-        <Text style={[styles.arrow, { color: colors.field.placeholder }]}>▼</Text>
+        <Text style={[styles.arrow, { color: colors.field.placeholder }]}>
+          ▼
+        </Text>
       </TouchableOpacity>
 
       {error && errorMessage && (
-        <Text style={[styles.errorMessage, { color: colors.field.borderError }]}>
+        <Text
+          style={[styles.errorMessage, { color: colors.field.borderError }]}
+        >
           {errorMessage}
         </Text>
       )}
@@ -160,7 +166,10 @@ const Select: React.FC<NativeSelectProps> = ({
           <View style={styles.modalOverlay}>
             <TouchableWithoutFeedback>
               <View
-                style={[styles.dropdown, { backgroundColor: colors.field.optionsBg }]}
+                style={[
+                  styles.dropdown,
+                  { backgroundColor: colors.field.optionsBg },
+                ]}
               >
                 <ScrollView
                   showsVerticalScrollIndicator={true}

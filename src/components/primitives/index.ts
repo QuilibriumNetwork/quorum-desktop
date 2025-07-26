@@ -12,6 +12,7 @@ export { default as Modal } from './Modal';
 export { Input } from './Input';
 export { TextArea } from './TextArea';
 export { Switch } from './Switch';
+export { ColorSwatch } from './ColorSwatch';
 
 // Theme System
 export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
@@ -28,3 +29,8 @@ export type { ModalProps } from './Modal';
 export type { InputProps, InputNativeProps } from './Input';
 export type { TextAreaProps, TextAreaNativeProps } from './TextArea';
 export type { SwitchProps, BaseSwitchProps } from './Switch';
+export type {
+  ColorSwatchProps,
+  ColorSwatchWebProps,
+  ColorSwatchNativeProps,
+} from './ColorSwatch';

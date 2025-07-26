@@ -11,6 +11,9 @@ export { default as Button } from './Button';
 export { default as Modal } from './Modal';
 export { Input } from './Input';
 export { TextArea } from './TextArea';
+export { Switch } from './Switch';
+export { default as Select } from './Select';
+export { ColorSwatch } from './ColorSwatch';
 
 // Theme System
 export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
@@ -26,3 +29,10 @@ export type { ButtonProps } from './Button';
 export type { ModalProps } from './Modal';
 export type { InputProps, InputNativeProps } from './Input';
 export type { TextAreaProps, TextAreaNativeProps } from './TextArea';
+export type { SwitchProps, BaseSwitchProps } from './Switch';
+export type { SelectProps, NativeSelectProps } from './Select';
+export type {
+  ColorSwatchProps,
+  ColorSwatchWebProps,
+  ColorSwatchNativeProps,
+} from './ColorSwatch';

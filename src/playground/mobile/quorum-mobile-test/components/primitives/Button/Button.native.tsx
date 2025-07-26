@@ -106,7 +106,13 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     }
 
     // Remove shadows for transparent background types (must come after size styles)
-    if (type === 'secondary' || type === 'light-outline' || type === 'subtle-outline' || type === 'secondary-white' || type === 'light-outline-white') {
+    if (
+      type === 'secondary' ||
+      type === 'light-outline' ||
+      type === 'subtle-outline' ||
+      type === 'secondary-white' ||
+      type === 'light-outline-white'
+    ) {
       style.push({
         shadowOpacity: 0,
         shadowRadius: 0,

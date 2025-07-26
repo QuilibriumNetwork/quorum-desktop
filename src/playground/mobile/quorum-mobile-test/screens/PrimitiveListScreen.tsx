@@ -76,6 +76,13 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
       emoji: '📋',
       onPress: () => onSelectPrimitive('select'),
     },
+    {
+      id: 'colorswatch',
+      title: 'ColorSwatch Primitive',
+      description: 'Touch-optimized color picker for accent selection',
+      emoji: '🎨',
+      onPress: () => onSelectPrimitive('colorswatch'),
+    },
   ];
 
   const renderPrimitiveCard = (primitive: PrimitiveItem) => (

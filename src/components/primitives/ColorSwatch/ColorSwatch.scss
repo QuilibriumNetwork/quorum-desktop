@@ -1,0 +1,47 @@
+.color-swatch {
+  @apply rounded-full cursor-pointer border-2 flex items-center justify-center transition-all;
+  border-color: transparent;
+  background-color: var(--accent);
+
+  &:hover:not(&--disabled) {
+    @apply scale-110;
+  }
+
+  &:focus-visible {
+    @apply outline-none ring-2 ring-offset-2;
+    ring-color: var(--accent);
+    ring-offset-color: var(--surface-1);
+  }
+
+  // Size variants
+  &--small {
+    @apply w-6 h-6;
+  }
+
+  &--medium {
+    @apply w-8 h-8;
+  }
+
+  &--large {
+    @apply w-10 h-10;
+  }
+
+  // Active state
+  &--active {
+    border-color: var(--accent-600);
+    box-shadow:
+      0 0 0 2px var(--surface-1),
+      0 0 0 4px var(--accent-600);
+  }
+
+  // Disabled state
+  &--disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+
+  // Checkmark icon
+  &__checkmark {
+    @apply text-white;
+    font-size: 0.75em;
+  }
+}

@@ -15,6 +15,7 @@ import { SimpleButtonTestScreen } from './screens/SimpleButtonTestScreen';
 import { SwitchTestScreen } from './screens/SwitchTestScreen';
 import { ModalTestScreen } from './screens/ModalTestScreen';
 import { SelectTestScreen } from './screens/SelectTestScreen';
+import { ColorSwatchTestScreen } from './screens/ColorSwatchTestScreen';
 
 type Screen =
   | 'list'
@@ -24,7 +25,8 @@ type Screen =
   | 'button'
   | 'switch'
   | 'modal'
-  | 'select';
+  | 'select'
+  | 'colorswatch';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('list');
@@ -60,6 +62,8 @@ export default function App() {
         return <ModalTestScreen />;
       case 'select':
         return <SelectTestScreen />;
+      case 'colorswatch':
+        return <ColorSwatchTestScreen />;
       case 'basic':
       default:
         return (
