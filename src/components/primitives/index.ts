@@ -13,6 +13,7 @@ export { Input } from './Input';
 export { TextArea } from './TextArea';
 export { Switch } from './Switch';
 export { ColorSwatch } from './ColorSwatch';
+export { RadioGroup } from './RadioGroup';
 
 // Theme System
 export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
@@ -34,3 +35,9 @@ export type {
   ColorSwatchWebProps,
   ColorSwatchNativeProps,
 } from './ColorSwatch';
+export type {
+  RadioGroupProps,
+  RadioGroupWebProps,
+  RadioGroupNativeProps,
+  RadioOption,
+} from './RadioGroup';

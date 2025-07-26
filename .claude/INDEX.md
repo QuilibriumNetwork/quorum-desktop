@@ -2,7 +2,7 @@
 
 This index provides quick access to all documentation, bug reports, and task tracking files in the .claude directory. Use Ctrl+F to search for specific topics or keywords.
 
-**Last Updated**: 2025-01-20
+**Last Updated**: 2025-07-26
 
 ## 📚 Documentation (.claude/docs/)
 
@@ -13,6 +13,10 @@ Comprehensive guides and documentation for various features and components.
 - **[component-dev-guidelines.md](docs/component-dev-guidelines.md)**  
   _Guidelines for developing components with mobile-first approach_  
   Keywords: `components`, `mobile-first`, `responsive`, `best-practices`
+
+- **[primitive-styling-guidelines.md](docs/primitive-styling-guidelines.md)**  
+  _🚨 CRITICAL: Form field consistency rules and semantic color usage for all primitives_  
+  Keywords: `primitives`, `styling`, `consistency`, `form-fields`, `semantic-colors`, `input`, `textarea`, `select`, `radiogroup`
 
 ### Feature Documentation
 
@@ -126,7 +130,8 @@ Use these keywords to find related content:
 - **Mobile**: `mobile`, `responsive`, `touch`, `drawer`, `sidebar`
 - **Modals**: `modal`, `dialog`, `overlay`, `z-index`, `stacking`
 - **Search**: `search`, `global-search`, `cmd+k`, `minisearch`
-- **Components**: `component`, `emoji`, `tooltip`, `message`
+- **Components**: `component`, `emoji`, `tooltip`, `message`, `primitives`
+- **Styling**: `styling`, `consistency`, `semantic-colors`, `form-fields`, `input`, `textarea`, `select`, `radiogroup`
 - **Bugs**: `SOLVED`, `hooks`, `z-index`, `focus`
 - **Architecture**: `architecture`, `data`, `storage`, `flow`, `indexeddb`, `websocket`, `encryption`
 - **CSS**: `css`, `refactor`, `styles`, `tailwind`
@@ -138,6 +143,7 @@ Use these keywords to find related content:
 ├── INDEX.md (this file)
 ├── docs/
 │   ├── component-dev-guidelines.md
+│   ├── primitive-styling-guidelines.md
 │   ├── emoji-picker-react-customization.md
 │   ├── message-actions-mobile.md
 │   ├── modals.md
@@ -160,4 +166,4 @@ Use these keywords to find related content:
 
 ---
 
-_Last updated: 2025-01-20_
+_Last updated: 2025-07-26_

@@ -126,6 +126,8 @@ This improved plan provides precise, trackable tasks with checkboxes for impleme
   - [x] Create comprehensive `types.ts` with all variants
   - [x] Plan style system for consistency
   - [x] Design native touch feedback approach
+  - [ ] Add option for buttons to have an icon (Fontawesome) to the left of the button text.
+  - [ ] Add option for buttons to have only an icon (Fontawesome) and no text.
 
 - [x] **Implement Button.web.tsx**
   - [x] Port all existing button styles
@@ -543,24 +545,27 @@ This is NOT part of the base TextArea primitive - keep TextArea simple and reusa
   - [x] Support for checkmark overlay (✓ character as TEMPORARY placeholder for FontAwesome faCheck)
   - [x] Active state with border highlight
   - [x] Test color selection on both platforms
-  - [x] NOTE: Will replace ✓ with FontAwesome icon once mobile icon system is implemented
   - [x] Fix Android circle rendering issue with dynamic borderRadius
   - [x] Support three sizes (small, medium, large)
   - [x] Disabled state with opacity
   - [x] Keyboard accessibility on web
   - [x] Create comprehensive test screen
+  - [ ] Replace ✓ with FontAwesome icon once mobile icon system is implemented
 
 #### 8. RadioGroup Primitive (for ThemeRadioGroup)
 
-- [ ] **Build RadioGroup primitive**
-  - [ ] Extract from ThemeRadioGroup logic
-  - [ ] Web: Styled radio inputs with labels
-  - [ ] Native: Custom radio button implementation
-  - [ ] Support for icons (☀️🌙💻 emojis as TEMPORARY placeholders for FontAwesome faSun, faMoon, faDesktop)
-  - [ ] Horizontal and vertical layouts
-  - [ ] Active state styling
-  - [ ] Test theme switching on both platforms
-  - [ ] NOTE: Will replace emojis with FontAwesome icons once mobile icon system is implemented
+- [x] **Build RadioGroup primitive**
+  - [x] Extract from ThemeRadioGroup logic
+  - [x] Web: Styled radio inputs with labels
+  - [x] Native: Custom radio button implementation
+  - [x] Support for icons (☀️🌙💻 emojis as TEMPORARY placeholders for FontAwesome faSun, faMoon, faDesktop)
+  - [x] Horizontal and vertical layouts
+  - [x] Active state styling
+  - [x] Test theme switching on both platforms
+  - [x] Use semantic form field colors for consistency with Input/TextArea/Select
+  - [x] Add comprehensive test screen to mobile playground
+  - [x] Fix styling issues (perfect accent color dot, click behavior, consistent sizing)
+  - [ ] Replace ✓ with FontAwesome icon once mobile icon system is implemented
 
 ### 🛑 **Checkpoint: Primitive Foundation Complete**
 

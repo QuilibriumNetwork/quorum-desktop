@@ -12,6 +12,7 @@ import Button from '../../components/primitives/Button';
 import Modal from '../../components/primitives/Modal';
 import Select from '../../components/primitives/Select';
 import { ColorSwatch } from '../../components/primitives/ColorSwatch';
+import { RadioGroup } from '../../components/primitives/RadioGroup';
 import ThemeRadioGroup from '../../components/ThemeRadioGroup';
 import AccentColorSwitcher from '../../components/AccentColorSwitcher';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -29,6 +30,11 @@ export const PrimitivesPlayground: React.FC = () => {
 
   // ColorSwatch state
   const [activeColor, setActiveColor] = useState('blue');
+  
+  // RadioGroup state
+  const [selectedTheme, setSelectedTheme] = useState('light');
+  const [selectedSize, setSelectedSize] = useState('medium');
+  const [selectedOption, setSelectedOption] = useState('option1');
 
   // Input testing state
   const [textValue, setTextValue] = useState('');
@@ -79,6 +85,7 @@ export const PrimitivesPlayground: React.FC = () => {
     { id: 'switch-primitive', label: 'Switch Primitive' },
     { id: 'select-primitive', label: 'Select Primitive' },
     { id: 'colorswatch-primitive', label: 'ColorSwatch Primitive' },
+    { id: 'radiogroup-primitive', label: 'RadioGroup Primitive' },
   ];
 
   return (
@@ -1669,102 +1676,102 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
               </div>
 
-              {/* Size Variants */}
-              <div className="space-y-2">
-                <h4 className="text-md font-medium text-strong">
-                  Size Variants
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-subtle w-20">Small:</span>
-                    <div className="flex gap-2">
-                      {['blue', 'purple', 'green'].map((color) => (
-                        <ColorSwatch
-                          key={color}
-                          color={color}
-                          size="small"
-                          isActive={false}
-                          onPress={() => {}}
-                        />
-                      ))}
+              {/* Size Variants, States, and Custom Options in 3x1 Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <h4 className="text-md font-medium text-strong">
+                    Size Variants
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-subtle w-16">Small:</span>
+                      <div className="flex gap-2">
+                        {['blue', 'purple', 'green'].map((color) => (
+                          <ColorSwatch
+                            key={color}
+                            color={color}
+                            size="small"
+                            isActive={false}
+                            onPress={() => {}}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-subtle w-20">Medium:</span>
-                    <div className="flex gap-2">
-                      {['blue', 'purple', 'green'].map((color) => (
-                        <ColorSwatch
-                          key={color}
-                          color={color}
-                          size="medium"
-                          isActive={false}
-                          onPress={() => {}}
-                        />
-                      ))}
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-subtle w-16">Medium:</span>
+                      <div className="flex gap-2">
+                        {['blue', 'purple', 'green'].map((color) => (
+                          <ColorSwatch
+                            key={color}
+                            color={color}
+                            size="medium"
+                            isActive={false}
+                            onPress={() => {}}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-subtle w-20">Large:</span>
-                    <div className="flex gap-2">
-                      {['blue', 'purple', 'green'].map((color) => (
-                        <ColorSwatch
-                          key={color}
-                          color={color}
-                          size="large"
-                          isActive={false}
-                          onPress={() => {}}
-                        />
-                      ))}
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-subtle w-16">Large:</span>
+                      <div className="flex gap-2">
+                        {['blue', 'purple', 'green'].map((color) => (
+                          <ColorSwatch
+                            key={color}
+                            color={color}
+                            size="large"
+                            isActive={false}
+                            onPress={() => {}}
+                          />
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* States */}
-              <div className="space-y-2">
-                <h4 className="text-md font-medium text-strong">States</h4>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-subtle w-20">Active:</span>
-                    <ColorSwatch
-                      color="blue"
-                      isActive={true}
-                      onPress={() => {}}
-                    />
-                    <span className="text-sm text-muted">Shows checkmark</span>
+                <div className="space-y-2">
+                  <h4 className="text-md font-medium text-strong">States</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-subtle w-16">Active:</span>
+                      <ColorSwatch
+                        color="blue"
+                        isActive={true}
+                        onPress={() => {}}
+                      />
+                      <span className="text-sm text-muted">Shows checkmark</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm text-subtle w-16">Disabled:</span>
+                      <ColorSwatch
+                        color="purple"
+                        disabled={true}
+                        onPress={() => {}}
+                      />
+                      <span className="text-sm text-muted">
+                        50% opacity, no interaction
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-subtle w-20">Disabled:</span>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="text-md font-medium text-strong">
+                    Custom Options
+                  </h4>
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm text-subtle w-20">
+                      No checkmark:
+                    </span>
                     <ColorSwatch
-                      color="purple"
-                      disabled={true}
+                      color="orange"
+                      isActive={true}
+                      showCheckmark={false}
                       onPress={() => {}}
                     />
                     <span className="text-sm text-muted">
-                      50% opacity, no interaction
+                      Active without checkmark icon
                     </span>
                   </div>
-                </div>
-              </div>
-
-              {/* Without Checkmark */}
-              <div className="space-y-2">
-                <h4 className="text-md font-medium text-strong">
-                  Custom Options
-                </h4>
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-subtle w-32">
-                    No checkmark:
-                  </span>
-                  <ColorSwatch
-                    color="orange"
-                    isActive={true}
-                    showCheckmark={false}
-                    onPress={() => {}}
-                  />
-                  <span className="text-sm text-muted">
-                    Active without checkmark icon
-                  </span>
                 </div>
               </div>
             </div>
@@ -1784,6 +1791,101 @@ export const PrimitivesPlayground: React.FC = () => {
                 <li>Keyboard accessible with Enter/Space key support on web</li>
                 <li>ARIA attributes for screen reader accessibility</li>
                 <li>Hover effects on web, press feedback on mobile</li>
+              </ul>
+            </div>
+          </section>
+
+          {/* Section: RadioGroup Primitive */}
+          <section
+            id="radiogroup-primitive"
+            className="border border-default rounded-lg p-6 space-y-4"
+          >
+            <h2 className="text-xl font-semibold text-strong">
+              RadioGroup Primitive
+            </h2>
+            <p className="text-subtle">
+              Accessible radio button group with icon support and flexible layouts
+            </p>
+
+            {/* RadioGroup Examples in 2x2 Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Theme Selection</h3>
+                <p className="text-sm text-subtle">Using emojis as temporary icons:</p>
+                <RadioGroup
+                  options={[
+                    { value: 'light', label: 'Light', icon: '☀️' },
+                    { value: 'dark', label: 'Dark', icon: '🌙' },
+                    { value: 'system', label: 'System', icon: '💻' },
+                  ]}
+                  value={selectedTheme}
+                  onChange={setSelectedTheme}
+                  direction="vertical"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Horizontal Layout</h3>
+                <p className="text-sm text-subtle">Horizontal layout example:</p>
+                <RadioGroup
+                  options={[
+                    { value: 'option1', label: 'Option 1' },
+                    { value: 'option2', label: 'Option 2' },
+                    { value: 'option3', label: 'Option 3' },
+                  ]}
+                  value={selectedSize}
+                  onChange={setSelectedSize}
+                  direction="horizontal"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Disabled Options</h3>
+                <p className="text-sm text-subtle">Some options can be disabled:</p>
+                <RadioGroup
+                  options={[
+                    { value: 'basic', label: 'Basic Plan' },
+                    { value: 'pro', label: 'Pro Plan', disabled: true },
+                    { value: 'enterprise', label: 'Enterprise', disabled: true },
+                  ]}
+                  value="basic"
+                  onChange={() => {}}
+                />
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Without Icons</h3>
+                <p className="text-sm text-subtle">Simple text-only radio group:</p>
+                <RadioGroup
+                  options={[
+                    { value: 'option1', label: 'Option 1' },
+                    { value: 'option2', label: 'Option 2' },
+                    { value: 'option3', label: 'Option 3' },
+                  ]}
+                  value={selectedOption}
+                  onChange={setSelectedOption}
+                />
+              </div>
+            </div>
+
+            {/* Mobile Testing Notes */}
+            <div className="p-4 bg-surface-1 rounded-lg">
+              <h4 className="font-semibold text-strong mb-2">
+                📱 Mobile Testing Notes
+              </h4>
+              <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
+                <li>
+                  Web: Native HTML radio inputs with custom styling
+                </li>
+                <li>
+                  Mobile: Custom radio implementation with TouchableOpacity
+                </li>
+                <li>Icons use emojis temporarily (FontAwesome pending on mobile)</li>
+                <li>Both horizontal and vertical layouts supported</li>
+                <li>Keyboard navigation works on web (Tab, Arrow keys)</li>
+                <li>Touch targets optimized for mobile (min 44x44)</li>
+                <li>Active state has accent color border and background</li>
+                <li>Ready for ThemeRadioGroup integration</li>
               </ul>
             </div>
           </section>

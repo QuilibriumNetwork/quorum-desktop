@@ -83,6 +83,13 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
       emoji: '🎨',
       onPress: () => onSelectPrimitive('colorswatch'),
     },
+    {
+      id: 'radiogroup',
+      title: 'RadioGroup Primitive',
+      description: 'Accessible radio button group with icon support',
+      emoji: '🔘',
+      onPress: () => onSelectPrimitive('radiogroup'),
+    },
   ];
 
   const renderPrimitiveCard = (primitive: PrimitiveItem) => (
