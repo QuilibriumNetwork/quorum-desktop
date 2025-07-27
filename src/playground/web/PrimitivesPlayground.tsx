@@ -653,19 +653,19 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Button with Icons */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">Buttons with Icons</h3>
+              <h3 className="text-lg font-medium text-strong">
+                Buttons with Icons
+              </h3>
 
               {/* 3x1 Grid with only first 2 cells occupied */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <p className="text-sm text-subtle">Button with icon and text:</p>
+                  <p className="text-sm text-subtle">
+                    Button with icon and text:
+                  </p>
                   <div className="p-4 bg-surface-3 rounded-xl">
                     <div className="inline-block">
-                      <Button
-                        type="primary"
-                        iconName="plus"
-                        onClick={() => {}}
-                      >
+                      <Button type="primary" iconName="plus" onClick={() => {}}>
                         Add Item
                       </Button>
                     </div>
@@ -707,7 +707,6 @@ export const PrimitivesPlayground: React.FC = () => {
                 <div></div>
               </div>
             </div>
-
           </section>
 
           {/* Section: Modal Primitive */}
@@ -996,7 +995,7 @@ export const PrimitivesPlayground: React.FC = () => {
             </div>
 
             {/* Mobile Testing Notes */}
-            <div className="p-4 bg-surface-1 rounded-lg">
+            <div className="p-4 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
                 📱 Mobile Testing Notes
               </h4>
@@ -1095,7 +1094,7 @@ export const PrimitivesPlayground: React.FC = () => {
             <div className="space-y-3">
               <h3 className="text-lg font-medium text-strong">Error States</h3>
 
-              <div className="space-y-4">
+              <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-strong">
                     TextArea with Error (type less than 10 chars):
@@ -1243,7 +1242,7 @@ export const PrimitivesPlayground: React.FC = () => {
             </div>
 
             {/* Mobile Testing Notes */}
-            <div className="p-4 bg-surface-1 rounded-lg">
+            <div className="p-4 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
                 📱 Mobile Testing Notes
               </h4>
@@ -1272,76 +1271,81 @@ export const PrimitivesPlayground: React.FC = () => {
             <p className="text-subtle">
               Cross-platform toggle switch with multiple sizes and variants
             </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Basic Switch */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">
+                  Basic Switch
+                </h3>
 
-            {/* Basic Switch */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">Basic Switch</h3>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-strong flex items-center gap-3">
+                      <Switch value={basicSwitch} onChange={setBasicSwitch} />
+                      Basic Switch {basicSwitch ? '(ON)' : '(OFF)'}
+                    </label>
+                    <p className="text-xs text-subtle">Click to toggle</p>
+                  </div>
 
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong flex items-center gap-3">
-                    <Switch value={basicSwitch} onChange={setBasicSwitch} />
-                    Basic Switch {basicSwitch ? '(ON)' : '(OFF)'}
-                  </label>
-                  <p className="text-xs text-subtle">Click to toggle</p>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong flex items-center gap-3">
-                    <Switch
-                      value={disabledSwitch}
-                      onChange={setDisabledSwitch}
-                      disabled
-                    />
-                    Disabled Switch (ON)
-                  </label>
-                  <p className="text-xs text-subtle">Cannot be toggled</p>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-strong flex items-center gap-3">
+                      <Switch
+                        value={disabledSwitch}
+                        onChange={setDisabledSwitch}
+                        disabled
+                      />
+                      Disabled Switch (ON)
+                    </label>
+                    <p className="text-xs text-subtle">Cannot be toggled</p>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Switch Sizes */}
-            <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">Switch Sizes</h3>
+              {/* Switch Sizes */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">
+                  Switch Sizes
+                </h3>
 
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong flex items-center gap-3">
-                    <Switch
-                      value={switchSizes.small}
-                      onChange={(value) =>
-                        setSwitchSizes((prev) => ({ ...prev, small: value }))
-                      }
-                      size="small"
-                    />
-                    Small
-                  </label>
-                </div>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-strong flex items-center gap-3">
+                      <Switch
+                        value={switchSizes.small}
+                        onChange={(value) =>
+                          setSwitchSizes((prev) => ({ ...prev, small: value }))
+                        }
+                        size="small"
+                      />
+                      Small
+                    </label>
+                  </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong flex items-center gap-3">
-                    <Switch
-                      value={switchSizes.medium}
-                      onChange={(value) =>
-                        setSwitchSizes((prev) => ({ ...prev, medium: value }))
-                      }
-                      size="medium"
-                    />
-                    Medium (default)
-                  </label>
-                </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-strong flex items-center gap-3">
+                      <Switch
+                        value={switchSizes.medium}
+                        onChange={(value) =>
+                          setSwitchSizes((prev) => ({ ...prev, medium: value }))
+                        }
+                        size="medium"
+                      />
+                      Medium (default)
+                    </label>
+                  </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong flex items-center gap-3">
-                    <Switch
-                      value={switchSizes.large}
-                      onChange={(value) =>
-                        setSwitchSizes((prev) => ({ ...prev, large: value }))
-                      }
-                      size="large"
-                    />
-                    Large
-                  </label>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-strong flex items-center gap-3">
+                      <Switch
+                        value={switchSizes.large}
+                        onChange={(value) =>
+                          setSwitchSizes((prev) => ({ ...prev, large: value }))
+                        }
+                        size="large"
+                      />
+                      Large
+                    </label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1684,9 +1688,9 @@ export const PrimitivesPlayground: React.FC = () => {
               <h3 className="text-lg font-medium text-strong">
                 Enhanced Features
               </h3>
-              
+
               {/* Grouped Options */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-strong mb-2 block">
                     Grouped Options (SpaceEditor Style)
@@ -1697,27 +1701,27 @@ export const PrimitivesPlayground: React.FC = () => {
                     placeholder="Select a channel"
                     groups={[
                       {
-                        groupLabel: "General",
+                        groupLabel: 'General',
                         options: [
                           { value: 'general', label: '#general' },
                           { value: 'announcements', label: '#announcements' },
-                        ]
+                        ],
                       },
                       {
-                        groupLabel: "Development",
+                        groupLabel: 'Development',
                         options: [
                           { value: 'dev-frontend', label: '#dev-frontend' },
                           { value: 'dev-backend', label: '#dev-backend' },
                           { value: 'dev-mobile', label: '#dev-mobile' },
-                        ]
+                        ],
                       },
                       {
-                        groupLabel: "Community",
+                        groupLabel: 'Community',
                         options: [
                           { value: 'random', label: '#random' },
                           { value: 'help', label: '#help' },
-                        ]
-                      }
+                        ],
+                      },
                     ]}
                     width="300px"
                   />
@@ -1732,32 +1736,34 @@ export const PrimitivesPlayground: React.FC = () => {
                     onChange={() => {}}
                     placeholder="Select conversation"
                     options={[
-                      { 
-                        value: 'alice', 
+                      {
+                        value: 'alice',
                         label: 'Alice Johnson',
                         subtitle: '0x1234...5678',
-                        avatar: 'https://i.pravatar.cc/150?img=1'
+                        avatar: 'https://i.pravatar.cc/150?img=1',
                       },
-                      { 
-                        value: 'bob', 
+                      {
+                        value: 'bob',
                         label: 'Bob Smith',
-                        subtitle: '0x9876...4321', 
-                        avatar: 'https://i.pravatar.cc/150?img=2'
+                        subtitle: '0x9876...4321',
+                        avatar: 'https://i.pravatar.cc/150?img=2',
                       },
-                      { 
-                        value: 'charlie', 
+                      {
+                        value: 'charlie',
                         label: 'Charlie Brown',
                         subtitle: '0xabcd...efgh',
-                        avatar: 'https://i.pravatar.cc/150?img=3'
+                        avatar: 'https://i.pravatar.cc/150?img=3',
                       },
                     ]}
                     width="300px"
                   />
                 </div>
+                <div />
+                <div />
               </div>
 
               {/* Dropdown Placement */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-strong mb-2 block">
                     Auto Placement
@@ -1773,7 +1779,9 @@ export const PrimitivesPlayground: React.FC = () => {
                       { value: 'option3', label: 'Option 3' },
                     ]}
                   />
-                  <p className="text-xs text-subtle">Automatically positions based on available space</p>
+                  <p className="text-xs text-subtle">
+                    Automatically positions based on available space
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -1791,7 +1799,9 @@ export const PrimitivesPlayground: React.FC = () => {
                       { value: 'option3', label: 'Option 3' },
                     ]}
                   />
-                  <p className="text-xs text-subtle">Always opens below (UserSettings style)</p>
+                  <p className="text-xs text-subtle">
+                    Always opens below (UserSettings style)
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -1811,6 +1821,7 @@ export const PrimitivesPlayground: React.FC = () => {
                   />
                   <p className="text-xs text-subtle">Always opens above</p>
                 </div>
+                <div />
               </div>
             </div>
 
@@ -2026,9 +2037,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 <h3 className="text-lg font-medium text-strong">
                   Theme Selection
                 </h3>
-                <p className="text-sm text-subtle">
-                  Using FontAwesome icons:
-                </p>
+                <p className="text-sm text-subtle">Using FontAwesome icons:</p>
                 <RadioGroup
                   options={[
                     { value: 'light', label: 'Light', icon: 'sun' },
@@ -2194,7 +2203,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
               <div className="space-y-3">
                 <h3 className="text-lg font-medium text-strong">Positioning</h3>
-                <div className="flex flex-wrap gap-4 justify-center py-8">
+                <div className="flex flex-wrap gap-4 justify-left py-8">
                   <Tooltip
                     id="tooltip-top"
                     content="Tooltip positioned at the top"
@@ -2234,59 +2243,6 @@ export const PrimitivesPlayground: React.FC = () => {
                       Left
                     </button>
                   </Tooltip>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
-                  Modal Use Cases
-                </h3>
-                <p className="text-sm text-subtle">
-                  Examples simulating UserSettingsModal and SpaceEditor info
-                  icons:
-                </p>
-                <div className="space-y-4 p-4 bg-surface-1 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">Allow Cross-Space Sync</span>
-                    <Tooltip
-                      id="sync-tooltip"
-                      content="This setting allows synchronization of messages and data across different spaces you're a member of. Enabling this improves your experience but may use more bandwidth."
-                      place="right"
-                      maxWidth={320}
-                    >
-                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-surface-6 text-subtle text-xs cursor-pointer">
-                        i
-                      </span>
-                    </Tooltip>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">Non-repudiable Messages</span>
-                    <Tooltip
-                      id="repudiation-tooltip"
-                      content="Non-repudiation ensures that sent messages cannot be denied by the sender. This provides stronger proof of authenticity but may not be suitable for all use cases."
-                      place="right"
-                      maxWidth={320}
-                    >
-                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-surface-6 text-subtle text-xs cursor-pointer">
-                        i
-                      </span>
-                    </Tooltip>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">Notifications</span>
-                    <Tooltip
-                      id="notifications-tooltip"
-                      content="Configure how and when you receive notifications for new messages, mentions, and other activities in your spaces."
-                      place="right"
-                      maxWidth={320}
-                    >
-                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-surface-6 text-subtle text-xs cursor-pointer">
-                        i
-                      </span>
-                    </Tooltip>
-                  </div>
                 </div>
               </div>
             </div>
