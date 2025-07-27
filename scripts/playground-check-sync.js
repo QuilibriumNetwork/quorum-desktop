@@ -24,6 +24,20 @@ const colors = {
   dim: '\x1b[2m',
 };
 
+// Files to automatically skip during sync (architectural differences by design)
+const ROUTING_FILES = [
+  'index.ts',           // Different export patterns (main: .web, mobile: .native)
+  /^[A-Z]\w+\.tsx$/,    // Component routing files (e.g., Button.tsx, Modal.tsx)
+  'ThemeProvider.tsx'   // Environment-specific setup
+];
+
+// Check if a file should be skipped due to architectural differences
+function isRoutingFile(filename) {
+  return ROUTING_FILES.some(pattern => 
+    typeof pattern === 'string' ? filename === pattern : pattern.test(filename)
+  );
+}
+
 // Helper functions
 function getFileChecksum(filePath) {
   try {
@@ -86,7 +100,8 @@ function checkComponentSync(componentName) {
   // Check files in main component directory
   if (fs.existsSync(mainComponentPath)) {
     const mainFiles = fs.readdirSync(mainComponentPath)
-      .filter(file => fileExtensions.some(ext => file.endsWith(ext)));
+      .filter(file => fileExtensions.some(ext => file.endsWith(ext)))
+      .filter(file => !isRoutingFile(file)); // Skip architectural differences
     
     mainFiles.forEach(file => {
       checkedFiles.add(file);
@@ -120,7 +135,8 @@ function checkComponentSync(componentName) {
   // Check for files that only exist in playground
   if (fs.existsSync(playgroundComponentPath)) {
     const playgroundFiles = fs.readdirSync(playgroundComponentPath)
-      .filter(file => fileExtensions.some(ext => file.endsWith(ext)));
+      .filter(file => fileExtensions.some(ext => file.endsWith(ext)))
+      .filter(file => !isRoutingFile(file)); // Skip architectural differences
     
     playgroundFiles.forEach(file => {
       if (!checkedFiles.has(file)) {

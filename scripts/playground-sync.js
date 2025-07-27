@@ -26,6 +26,20 @@ const colors = {
   dim: '\x1b[2m',
 };
 
+// Files to automatically skip during sync (architectural differences by design)
+const ROUTING_FILES = [
+  'index.ts',           // Different export patterns (main: .web, mobile: .native)
+  /^[A-Z]\w+\.tsx$/,    // Component routing files (e.g., Button.tsx, Modal.tsx)
+  'ThemeProvider.tsx'   // Environment-specific setup
+];
+
+// Check if a file should be skipped due to architectural differences
+function isRoutingFile(filename) {
+  return ROUTING_FILES.some(pattern => 
+    typeof pattern === 'string' ? filename === pattern : pattern.test(filename)
+  );
+}
+
 // Parse command line arguments
 const args = process.argv.slice(2);
 const toPlayground = args.includes('--to-playground');
@@ -269,9 +283,9 @@ async function syncComponent(componentName, direction) {
   let syncedCount = 0;
   
   for (const file of files) {
-    // Skip index.ts files as they might have different exports
-    if (file === 'index.ts' && !force) {
-      console.log(`  ${colors.dim}Skipping ${file} (use --force to sync)${colors.reset}`);
+    // Skip routing files as they have different architectures by design
+    if (isRoutingFile(file) && !force) {
+      console.log(`  ${colors.dim}Skipping ${file} (architectural difference - use --force to override)${colors.reset}`);
       continue;
     }
     
@@ -338,9 +352,9 @@ async function syncComponentByNewerFiles(componentName, mainComponentPath, playg
   let playgroundToMain = 0;
   
   for (const file of allFiles) {
-    // Skip index.ts files as they might have different exports
-    if (file === 'index.ts' && !force) {
-      console.log(`  ${colors.dim}Skipping ${file} (use --force to sync)${colors.reset}`);
+    // Skip routing files as they have different architectures by design
+    if (isRoutingFile(file) && !force) {
+      console.log(`  ${colors.dim}Skipping ${file} (architectural difference - use --force to override)${colors.reset}`);
       continue;
     }
     

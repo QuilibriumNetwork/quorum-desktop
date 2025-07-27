@@ -316,6 +316,79 @@ A: Platform-specific optimizations and behaviors. Web uses CSS, mobile uses Styl
 **Q: How do I share mobile testing with team members?**  
 A: Share the tunnel URL from Expo. They need Expo Go app installed.
 
+## Architectural Differences
+
+### Why Main App and Mobile Playground Have Different Architectures
+
+The main app and mobile playground use **different component resolution strategies** by design:
+
+#### Main App (Production Cross-Platform)
+```typescript
+// Button.tsx - Metro bundler resolution
+export { default } from './Button.web';
+
+// Build process:
+// - Web build: Uses Button.web.tsx
+// - Mobile build: Metro automatically chooses Button.native.tsx
+```
+
+#### Mobile Playground (React Native Testing Environment)
+```typescript
+// Button.tsx - Always native
+export { default } from './Button.native';
+
+// Testing process:
+// - Android device: Uses Button.native.tsx
+// - Expo web preview: Uses Button.native.tsx via React Native Web
+```
+
+### Why This Architecture Was Chosen
+
+**Main App Requirements:**
+- Must build for web (Electron) in production
+- Must support future mobile builds via Metro bundler
+- Uses Vite + Tailwind + SCSS for web builds
+- Needs optimal bundle splitting between platforms
+
+**Mobile Playground Requirements:**
+- Pure React Native testing environment
+- Consistent behavior between Android and Expo web preview
+- No CSS conflicts or web-specific dependencies
+- Optimized for mobile development workflow
+
+### Sync Script Behavior
+
+The sync script **automatically skips routing files** that have architectural differences:
+
+#### Files Automatically Skipped
+- `index.ts` - Different export patterns
+- `Button.tsx`, `Modal.tsx`, etc. - Different platform routing
+- `ThemeProvider.tsx` - Environment-specific setup
+
+#### Files Always Synced
+- `Button.web.tsx` - Web implementation
+- `Button.native.tsx` - Mobile implementation  
+- `types.ts` - Shared TypeScript interfaces
+- `Button.scss` - Styling definitions
+
+### Override Behavior
+
+Use `--force` flag to sync routing files if needed:
+```bash
+# Force sync routing files (rarely needed)
+yarn playground:sync --to-playground Button --force
+```
+
+**Note**: Forcing sync of routing files will break the mobile playground's React Native-only architecture. Only use when you specifically need to test architectural changes.
+
+### Benefits of This Approach
+
+✅ **Perfect mobile testing** - All components use React Native implementations  
+✅ **No CSS conflicts** - React Native Web handles styling consistently  
+✅ **True sync status** - Only implementation files show sync warnings  
+✅ **Clean separation** - Routing vs implementation concerns separated  
+✅ **Production ready** - Main app architecture optimized for builds
+
 ---
 
-_Last updated: 2025-07-27 13:30 UTC_
+_Last updated: 2025-07-27 16:15 UTC_

@@ -1,3 +1,3 @@
 // Mobile playground always uses native version for both Android and Expo Web
 // This ensures consistent React Native behavior across all mobile testing environments
-export { Tooltip } from './Tooltip.native';
+export { default } from './Button.native';
