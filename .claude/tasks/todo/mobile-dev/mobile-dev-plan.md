@@ -636,44 +636,216 @@ Build test screens only when you have enough primitives to test meaningful combi
      - [x] Cross-platform validation: Verified icons render correctly on both platforms
      - [x] Ready to replace placeholder characters in ColorSwatch, RadioGroup, Modal, Tooltip
 
-2. **VirtualList** (High complexity)
+2. **VirtualList** (High complexity) - **DEFERRED**
    - [ ] Wrap react-virtuoso for web
-   - [ ] Use FlatList for mobile
+   - [ ] Use FlatList for mobile  
    - [ ] Performance test with 1000+ items
+   
+   **Note**: Moving to Phase 6 after web migration validates primitive architecture
 
-3. **FileUpload** (High complexity)
+3. **FileUpload** (High complexity) - **DEFERRED** 
    - [ ] Different implementations per platform
    - [ ] Handle permissions properly
+   
+   **Note**: Moving to Phase 6 after web migration validates primitive architecture
 
 See `third-party-component-migration-report.md` for detailed implementation strategies.
 
 ---
 
-## Phase 4: Pattern Replacement
+## Phase 4: Web Component Migration Strategy
 
-**When**: After 80% of primitives are built and tested
+**When**: NOW - After 15+ primitives are complete and tested
 
-### Systematic Replacement Process
+**Why**: Validate primitive architecture with real usage before building complex components
 
-1. **Audit Current Usage**
+### Phase 4A: Foundation & Conflict Resolution
 
-   ```bash
-   # Search for raw HTML elements
-   grep -r "<button\|<input\|<select\|<textarea" src/
+**Goal**: Safely replace conflicting components one by one with testing between each
 
-   # Search for inline styles
-   grep -r "style={{" src/
-   ```
+**Strategy**: Rename → Import → Test → Remove → Next component
 
-2. **Replace in Batches**
-   - [ ] Low-risk components first (static pages)
-   - [ ] High-traffic components next (chat, messages)
-   - [ ] Critical paths last (auth, payments)
+#### Step 1: Button Component Replacement
+- [ ] **Rename old component**: `Button.jsx` → `Button-OLD.jsx` 
+- [ ] **Update imports**: Change imports to use `import { Button } from '@/components/primitives'`
+- [ ] **Test thoroughly**:
+  - [ ] App builds successfully
+  - [ ] All buttons render correctly
+  - [ ] Button clicks work (navigation, forms, modals)
+  - [ ] Button styles look identical to before
+- [ ] **If tests pass**: Delete `Button-OLD.jsx`
+- [ ] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
 
-3. **Test After Each Batch**
-   - [ ] Desktop regression testing
-   - [ ] Mobile smoke testing
-   - [ ] Performance validation
+#### Step 2: Input Component Replacement
+- [ ] **Rename old component**: `Input.tsx` → `Input-OLD.tsx`
+- [ ] **Update imports**: Change imports to use `import { Input } from '@/components/primitives'`
+- [ ] **Test thoroughly**:
+  - [ ] All input fields render correctly
+  - [ ] Text entry works in all forms
+  - [ ] Form submission works
+  - [ ] Input validation still works
+  - [ ] Placeholder text displays correctly
+- [ ] **If tests pass**: Delete `Input-OLD.tsx`
+- [ ] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
+
+#### Step 3: Modal Component Replacement
+- [ ] **Rename old component**: `Modal.tsx` → `Modal-OLD.tsx`
+- [ ] **Update imports**: Change imports to use `import { Modal } from '@/components/primitives'`
+- [ ] **Test thoroughly**:
+  - [ ] All modals open correctly
+  - [ ] Modal close buttons work
+  - [ ] Modal backdrop close works
+  - [ ] Modal animations work
+  - [ ] Modal content displays correctly
+  - [ ] Focus handling works properly
+- [ ] **If tests pass**: Delete `Modal-OLD.tsx`
+- [ ] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
+
+#### Step 4: Cleanup Remaining Conflicts
+- [ ] **Delete**: `Modal-OLD.tsx` (already superseded)
+- [ ] **Verify**: No more component name conflicts exist
+- [ ] **Test**: Final smoke test of entire app
+
+#### Final Validation
+- [ ] **Full app test**: Launch app and test core user flows
+- [ ] **Performance check**: No noticeable performance regressions
+- [ ] **Build test**: Production build works without errors
+- [ ] **Import cleanup**: All components now use primitive imports consistently
+
+### Phase 4B: Gradual Component Migration
+
+**Strategy**: Start simple, add complexity gradually, test after each step
+
+#### Batch 1: Simple Display Components
+**Low risk, immediate validation of primitive quality**
+
+- [ ] **UserProfile.tsx** - Replace with Avatar + Text + FlexColumn primitives
+  - Expected: Simple primitive replacement, no platform differences needed
+  - Test: User profile displays correctly
+  
+- [ ] **UserStatus.tsx** - Replace with Text + Icon primitives 
+  - Expected: Online/offline status shows correctly
+  - Test: Status updates work
+  
+- [ ] **SearchResultItem.tsx** - Replace with FlexRow + Text + Button primitives
+  - Expected: Search results display correctly
+  - Test: Search and click behavior works
+
+#### Batch 2: Modal Components  
+**Test Modal primitive with real business logic**
+
+- [ ] **CreateSpaceModal.tsx** - Replace with Modal + Input + Button primitives
+  - Expected: Form submission works identical to before
+  - Test: Space creation flow works end-to-end
+  
+- [ ] **JoinSpaceModal.tsx** - Replace with Modal + Input + Button primitives
+  - Expected: Join flow works identical to before
+  - Test: Space joining works end-to-end
+  
+- [ ] **UserSettingsModal.tsx** - Replace with Modal + various form primitives
+  - Expected: All settings save correctly
+  - Test: Settings persist after modal close
+
+#### Batch 3: Form Components
+**Test Input/TextArea/Select primitives with real data handling**
+
+- [ ] **SearchBar.tsx** - Replace with Input + FlexRow + Button primitives
+  - Expected: Search functionality works identical to before
+  - Test: Global search returns correct results
+  
+- [ ] **ChannelEditor.tsx** - Replace with Input + TextArea + Button primitives
+  - Expected: Channel editing works identical to before
+  - Test: Channel updates save correctly
+  
+- [ ] **GroupEditor.tsx** - Replace with form primitives
+  - Expected: Group management works identical to before  
+  - Test: Group operations work end-to-end
+
+#### Batch 4: Navigation Components
+**Most complex - test Button variants and interaction patterns**
+
+- [ ] **SpaceButton.tsx** - Replace with Button + Icon + Tooltip primitives
+  - Expected: Space switching works identical to before
+  - Test: Space navigation and tooltips work
+  
+- [ ] **NavMenu.tsx** - Replace with FlexColumn + Button + Icon primitives
+  - Expected: Navigation works identical to before
+  - Test: All menu items navigate correctly
+  
+- [ ] **ExpandableNavMenu.tsx** - Replace with Button + Icon + conditional rendering
+  - Expected: Expand/collapse works identical to before
+  - Test: Menu state persistence works
+
+### Phase 4C: Complex Component Analysis
+
+**Goal**: Identify which components need platform-specific implementations
+
+#### Category A: Shared Components (Keep as single .tsx)
+Components that work identically on both platforms using only primitives:
+
+- [ ] **Message content rendering** - Just Text + FlexColumn
+- [ ] **Channel list** - Just VirtualList + Text (when VirtualList ready)
+- [ ] **User avatar display** - Just Avatar primitive
+- [ ] **Form inputs** - Just Input/TextArea/Select primitives
+
+#### Category B: Platform-Specific UI (Split into .web/.native)
+Components needing different interaction patterns:
+
+- [ ] **MessageActionsDrawer.tsx** 
+  - Web: Hover menu with quick actions
+  - Mobile: Bottom drawer with touch-optimized buttons
+  - Shared: Business logic in `useMessageActions` hook
+  
+- [ ] **ChannelHeader.tsx**
+  - Web: Full header with all controls visible
+  - Mobile: Compact header with menu drawer
+  - Shared: Channel data and navigation logic
+  
+- [ ] **Space navigation**
+  - Web: Sidebar with all spaces visible
+  - Mobile: Bottom tabs with space selector
+  - Shared: Space switching logic
+
+#### Category C: Complex Refactoring Needed
+Large components to break into smaller pieces:
+
+- [ ] **Message.tsx** - Split into MessageHeader + MessageContent + MessageActions
+- [ ] **Channel.tsx** - Split into ChannelHeader + MessageList + MessageInput  
+- [ ] **DirectMessage.tsx** - Split into similar smaller components
+
+### Testing Strategy
+
+#### After Each Batch:
+1. **Functionality Test**: All features work identical to before migration
+2. **Visual Test**: No visual regressions on web
+3. **Performance Test**: No performance degradation 
+4. **Primitive Issue Documentation**: Track any primitive bugs found
+
+#### After Each Component:
+- [ ] Test on desktop web browser
+- [ ] Test responsive behavior 
+- [ ] Document any primitive API improvements needed
+- [ ] Fix primitive issues before continuing
+
+### Success Metrics
+
+**Short-term Goals:**
+- [ ] Foundation clean (no import conflicts)
+- [ ] 5-8 simple components migrated (Batches 1-2)
+- [ ] 0 breaking changes to user experience
+- [ ] 3+ primitive issues identified and fixed
+
+**Medium-term Goals:**
+- [ ] 80% of current web components using primitives
+- [ ] All form flows working identically to before
+- [ ] Navigation components using primitives
+- [ ] Primitive API stabilized based on real usage
+
+**Long-term Goals:**
+- [ ] Category B components analyzed and documented
+- [ ] Business logic hooks extracted for platform-specific components
+- [ ] Ready to start mobile development with proven architecture
+- [ ] VirtualList/FileUpload implementation can begin confidently
 
 ---
 
