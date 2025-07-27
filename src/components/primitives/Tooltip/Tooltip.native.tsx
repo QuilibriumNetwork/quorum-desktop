@@ -8,6 +8,8 @@ import {
   StyleSheet,
   Dimensions,
   LayoutChangeEvent,
+  ViewStyle,
+  TextStyle,
 } from 'react-native';
 import { TooltipNativeProps } from './types';
 import { useCrossPlatformTheme } from '../theme/ThemeProvider';
@@ -23,7 +25,8 @@ export function Tooltip({
   maxWidth = 300,
   disabled = false,
 }: TooltipNativeProps) {
-  const { colors } = useCrossPlatformTheme();
+  const theme = useCrossPlatformTheme();
+  const colors = theme.colors;
 
   const [visible, setVisible] = useState(false);
   const [childLayout, setChildLayout] = useState({
@@ -33,7 +36,7 @@ export function Tooltip({
     height: 0,
   });
   const [tooltipLayout, setTooltipLayout] = useState({ width: 0, height: 0 });
-  const childRef = useRef<TouchableOpacity>(null);
+  const childRef = useRef<any>(null);
 
   if (disabled) {
     return <>{children}</>;
@@ -50,6 +53,9 @@ export function Tooltip({
           px: number,
           py: number
         ) => {
+          console.log(
+            `[Tooltip ${place}] Element: x=${px}, y=${py}, w=${width}, h=${height}`
+          );
           setChildLayout({ x: px, y: py, width, height });
           setVisible(true);
         }
@@ -63,6 +69,7 @@ export function Tooltip({
 
   const handleTooltipLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
+    console.log(`[Tooltip ${place}] Tooltip size: w=${width}, h=${height}`);
     setTooltipLayout({ width, height });
   };
 
@@ -71,7 +78,10 @@ export function Tooltip({
     const { x, y, width, height } = childLayout;
     const { width: tooltipWidth, height: tooltipHeight } = tooltipLayout;
 
-    const padding = 8;
+    const spacing = 8; // Standard spacing
+    // Compensate for systematic downward offset (status bar, headers, etc.)
+    const verticalOffset = 40; // Adjust this value to compensate for the downward push
+
     let top = 0;
     let left = 0;
 
@@ -79,7 +89,7 @@ export function Tooltip({
       case 'top':
       case 'top-start':
       case 'top-end':
-        top = y - tooltipHeight - padding;
+        top = y - tooltipHeight - spacing - verticalOffset; // Compensate for downward push
         left =
           place === 'top-start'
             ? x
@@ -90,7 +100,7 @@ export function Tooltip({
       case 'bottom':
       case 'bottom-start':
       case 'bottom-end':
-        top = y + height + padding;
+        top = y + height + spacing - verticalOffset; // Compensate for downward push
         left =
           place === 'bottom-start'
             ? x
@@ -101,41 +111,48 @@ export function Tooltip({
       case 'left':
       case 'left-start':
       case 'left-end':
+        // Better vertical alignment with element center, compensating for offset
         top =
           place === 'left-start'
-            ? y
+            ? y - verticalOffset
             : place === 'left-end'
-              ? y + height - tooltipHeight
-              : y + height / 2 - tooltipHeight / 2;
-        left = x - tooltipWidth - padding;
+              ? y + height - tooltipHeight - verticalOffset
+              : y + height / 2 - tooltipHeight / 2 - verticalOffset; // Center-aligned with element
+        left = x - tooltipWidth - spacing;
         break;
       case 'right':
       case 'right-start':
       case 'right-end':
+        // Better vertical alignment with element center, compensating for offset
         top =
           place === 'right-start'
-            ? y
+            ? y - verticalOffset
             : place === 'right-end'
-              ? y + height - tooltipHeight
-              : y + height / 2 - tooltipHeight / 2;
-        left = x + width + padding;
+              ? y + height - tooltipHeight - verticalOffset
+              : y + height / 2 - tooltipHeight / 2 - verticalOffset; // Center-aligned with element
+        left = x + width + spacing;
         break;
       default:
-        top = y - tooltipHeight - padding;
+        top = y - tooltipHeight - spacing - verticalOffset;
         left = x + width / 2 - tooltipWidth / 2;
     }
 
-    // Keep tooltip within screen bounds
-    top = Math.max(
-      padding,
-      Math.min(top, screenHeight - tooltipHeight - padding)
+    // Keep tooltip within screen bounds with minimum padding
+    const minPadding = 8;
+    const finalTop = Math.max(
+      minPadding,
+      Math.min(top, screenHeight - tooltipHeight - minPadding)
     );
-    left = Math.max(
-      padding,
-      Math.min(left, screenWidth - tooltipWidth - padding)
+    const finalLeft = Math.max(
+      minPadding,
+      Math.min(left, screenWidth - tooltipWidth - minPadding)
     );
 
-    return { top, left };
+    console.log(
+      `[Tooltip ${place}] Calculated position: top=${finalTop}, left=${finalLeft}`
+    );
+
+    return { top: finalTop, left: finalLeft };
   };
 
   const { top, left } = getTooltipPosition();
@@ -178,14 +195,14 @@ export function Tooltip({
                 style={[
                   styles.tooltip,
                   {
-                    backgroundColor: colors.surface[9],
-                    borderColor: colors.surface[7],
+                    backgroundColor: colors.surface['00'], // Match web --color-bg-tooltip: var(--surface-00)
+                    borderColor: colors.surface[6],
                     maxWidth,
                     top,
                     left,
                   },
                 ]}
-                onLayout={handleTooltipLayout}
+                {...({ onLayout: handleTooltipLayout } as any)}
               >
                 <Text style={[styles.content, { color: colors.text.main }]}>
                   {content}
@@ -213,7 +230,7 @@ const styles = StyleSheet.create({
   overlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
-  },
+  } as ViewStyle,
   tooltip: {
     position: 'absolute',
     padding: 12,
@@ -224,22 +241,23 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-  },
+  } as ViewStyle,
   content: {
     fontSize: 14,
     lineHeight: 20,
     paddingRight: 20, // Space for close button
-  },
+  } as TextStyle,
   closeButton: {
     position: 'absolute',
-    top: 8,
-    right: 8,
+    top: 6,
+    right: 6,
     width: 20,
     height: 20,
     alignItems: 'center',
     justifyContent: 'center',
-  },
+    padding: 2,
+  } as ViewStyle,
   fallbackText: {
     fontSize: 16,
-  },
+  } as TextStyle,
 });

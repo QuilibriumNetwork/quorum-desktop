@@ -16,7 +16,7 @@ export interface BaseSelectProps {
   className?: string;
   style?: React.CSSProperties;
   size?: 'small' | 'medium' | 'large';
-  variant?: 'default' | 'outline' | 'filled';
+  variant?: 'default' | 'filled';
   fullWidth?: boolean;
   width?: string | number; // Custom width (CSS value for web, number for RN)
 }

@@ -8,7 +8,7 @@ const Button: React.FC<NativeButtonProps> = (props) => {
   const { colors } = useCrossPlatformTheme();
 
   const handlePress = () => {
-    if (!props.disabled) {
+    if (!props.disabled && props.onClick) {
       // Add haptic feedback if enabled
       if (props.hapticFeedback) {
         // Note: Would require expo-haptics or similar
@@ -34,7 +34,7 @@ const Button: React.FC<NativeButtonProps> = (props) => {
         break;
       case 'secondary':
         style.push({
-          backgroundColor: colors.transparent,
+          backgroundColor: 'transparent',
           borderColor: colors.accent.DEFAULT,
         });
         break;
@@ -44,10 +44,54 @@ const Button: React.FC<NativeButtonProps> = (props) => {
           borderColor: colors.accent[100],
         });
         break;
+      case 'light-outline':
+        style.push({
+          backgroundColor: 'transparent',
+          borderColor: colors.accent[100],
+          shadowOpacity: 0,
+          elevation: 0,
+        });
+        break;
+      case 'subtle':
+        style.push({
+          backgroundColor: colors.surface[6],
+          borderColor: colors.surface[6],
+        });
+        break;
+      case 'subtle-outline':
+        style.push({
+          backgroundColor: 'transparent',
+          borderColor: colors.surface[6],
+          shadowOpacity: 0,
+          elevation: 0,
+        });
+        break;
       case 'danger':
         style.push({
           backgroundColor: colors.utilities.danger,
-          borderColor: colors.transparent,
+          borderColor: 'transparent',
+        });
+        break;
+      case 'primary-white':
+        style.push({
+          backgroundColor: colors.white,
+          borderColor: colors.white,
+        });
+        break;
+      case 'secondary-white':
+        style.push({
+          backgroundColor: 'transparent',
+          borderColor: colors.white,
+          shadowOpacity: 0,
+          elevation: 0,
+        });
+        break;
+      case 'light-outline-white':
+        style.push({
+          backgroundColor: 'transparent',
+          borderColor: 'rgba(255, 255, 255, 0.8)',
+          shadowOpacity: 0,
+          elevation: 0,
         });
         break;
       default:
@@ -75,7 +119,13 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     }
 
     // Remove shadows for transparent background types (must come after size styles)
-    if (type === 'secondary') {
+    if (
+      type === 'secondary' ||
+      type === 'light-outline' ||
+      type === 'subtle-outline' ||
+      type === 'secondary-white' ||
+      type === 'light-outline-white'
+    ) {
       style.push({
         shadowOpacity: 0,
         shadowRadius: 0,
@@ -100,7 +150,7 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     const type = props.type || 'primary';
 
     if (props.disabled) {
-      return colors.surface[5];
+      return colors.surface[8]; // Darker grey for disabled text
     }
 
     // Get text color based on button type
@@ -109,6 +159,17 @@ const Button: React.FC<NativeButtonProps> = (props) => {
         return colors.accent.DEFAULT;
       case 'light':
         return colors.accent[700];
+      case 'light-outline':
+        return colors.accent[100];
+      case 'subtle':
+        return colors.text.main;
+      case 'subtle-outline':
+        return colors.text.subtle;
+      case 'primary-white':
+        return '#0287f2'; // Hardcoded blue as in CSS
+      case 'secondary-white':
+      case 'light-outline-white':
+        return colors.white;
       default:
         return colors.white;
     }
@@ -130,7 +191,6 @@ const Button: React.FC<NativeButtonProps> = (props) => {
 
     return style;
   };
-
 
   return (
     <Pressable

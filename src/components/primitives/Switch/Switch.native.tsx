@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch as RNSwitch, Platform } from 'react-native';
+import { Pressable, View, Animated, Platform } from 'react-native';
 import { NativeSwitchProps } from './types';
 import { useTheme } from '../theme';
 import { getColors } from '../theme/colors';
@@ -9,76 +9,85 @@ export const Switch: React.FC<NativeSwitchProps> = ({
   onChange,
   disabled = false,
   hapticFeedback = false,
-  trackColorFalse,
-  trackColorTrue,
-  thumbColor,
   accessibilityLabel,
   style,
   testID,
 }) => {
   const theme = useTheme();
-  const colors = getColors('light', 'blue'); // Use default theme
+  const colors = getColors(theme.mode, theme.accentColor);
 
-  const handleValueChange = (newValue: boolean) => {
+  // Animation value for thumb position
+  const animatedValue = React.useRef(new Animated.Value(value ? 1 : 0)).current;
+
+  React.useEffect(() => {
+    Animated.timing(animatedValue, {
+      toValue: value ? 1 : 0,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  }, [value, animatedValue]);
+
+  const handlePress = () => {
     if (!disabled) {
       // Add haptic feedback on iOS if enabled
       if (hapticFeedback && Platform.OS === 'ios') {
         // Note: Would require expo-haptics for actual implementation
         // HapticFeedback.impactAsync(HapticFeedback.ImpactFeedbackStyle.Light);
       }
-      onChange(newValue);
+      onChange(!value);
     }
   };
 
-  // Platform-specific colors
-  const getTrackColor = () => {
-    if (Platform.OS === 'ios') {
-      // iOS uses a single trackColor
-      return undefined;
-    } else {
-      // Android uses separate colors for true/false states
-      return {
-        false: trackColorFalse || colors.surface[4],
-        true: trackColorTrue || colors.accent.DEFAULT,
-      };
-    }
-  };
+  // Mobile uses single size that matches platform standards (closest to iOS/Android native)
+  // This matches the "large" size from web which you already use there
+  const sizes = { width: 52, height: 28, thumbSize: 24, padding: 2 };
 
-  const getThumbColor = () => {
-    if (Platform.OS === 'ios') {
-      // iOS thumb is always white
-      return thumbColor || 'white';
-    } else {
-      // Android thumb color
-      return thumbColor || 'white';
-    }
-  };
+  const thumbLeftPosition = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [sizes.padding, sizes.width - sizes.thumbSize - sizes.padding],
+  });
 
-  const getIOSBackgroundColor = () => {
-    if (Platform.OS === 'ios') {
-      return value
-        ? trackColorTrue || colors.accent.DEFAULT
-        : trackColorFalse || colors.surface[4];
-    }
-    return undefined;
-  };
+  const backgroundColor = value ? colors.accent.DEFAULT : colors.surface[4];
 
   return (
-    <RNSwitch
-      value={value}
-      onValueChange={handleValueChange}
+    <Pressable
+      onPress={handlePress}
       disabled={disabled}
-      trackColor={getTrackColor()}
-      thumbColor={getThumbColor()}
-      ios_backgroundColor={getIOSBackgroundColor()}
-      accessibilityLabel={accessibilityLabel}
       testID={testID}
+      accessibilityRole="switch"
+      accessibilityState={{ checked: value }}
+      accessibilityLabel={accessibilityLabel}
       style={[
         {
+          width: sizes.width,
+          height: sizes.height,
+          borderRadius: sizes.height / 2,
+          backgroundColor,
+          padding: sizes.padding,
+          justifyContent: 'center',
           opacity: disabled ? 0.6 : 1,
         },
         style,
       ]}
-    />
+    >
+      <Animated.View
+        style={{
+          width: sizes.thumbSize,
+          height: sizes.thumbSize,
+          borderRadius: sizes.thumbSize / 2,
+          backgroundColor: 'white',
+          position: 'absolute',
+          left: thumbLeftPosition,
+          shadowColor: '#000',
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.2,
+          shadowRadius: 2,
+          elevation: 2,
+        }}
+      />
+    </Pressable>
   );
 };

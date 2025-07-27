@@ -2,6 +2,7 @@ import React from 'react';
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import { InputNativeProps } from './types';
 import { useTheme } from '../theme';
+import { getColors } from '../theme/colors';
 
 export const Input: React.FC<InputNativeProps> = ({
   value,
@@ -25,6 +26,8 @@ export const Input: React.FC<InputNativeProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
+  const colors = getColors(theme.mode, theme.accentColor);
+  const [isFocused, setIsFocused] = React.useState(false);
 
   // Map type to keyboardType if not explicitly provided
   const getKeyboardType = () => {
@@ -46,6 +49,12 @@ export const Input: React.FC<InputNativeProps> = ({
 
   const containerStyle = [styles.container, style];
 
+  const getBorderColor = () => {
+    if (error) return colors.field.borderError;
+    if (isFocused && !noFocusStyle) return colors.field.borderFocus;
+    return colors.field.border;
+  };
+
   const getInputStyles = () => {
     const baseStyles = [styles.input];
 
@@ -55,8 +64,8 @@ export const Input: React.FC<InputNativeProps> = ({
         styles.inputOnboarding,
         {
           backgroundColor: '#ffffff',
-          color: theme.colors.accent[700],
-          borderColor: error ? theme.colors.danger : 'transparent',
+          color: colors.accent[700],
+          borderColor: getBorderColor(),
         },
         error && styles.inputError,
         disabled && styles.inputDisabled,
@@ -66,9 +75,9 @@ export const Input: React.FC<InputNativeProps> = ({
     return [
       ...baseStyles,
       {
-        backgroundColor: theme.colors.surface[3],
-        color: theme.colors.text.main,
-        borderColor: error ? theme.colors.danger : 'transparent',
+        backgroundColor: colors.field.bg,
+        color: colors.field.text,
+        borderColor: getBorderColor(),
       },
       error && styles.inputError,
       disabled && styles.inputDisabled,
@@ -85,12 +94,18 @@ export const Input: React.FC<InputNativeProps> = ({
         placeholder={placeholder}
         placeholderTextColor={
           variant === 'onboarding'
-            ? theme.colors.accent[200]
-            : theme.colors.text.muted
+            ? colors.accent[200]
+            : colors.field.placeholder
         }
         onChangeText={onChange}
-        onBlur={onBlur}
-        onFocus={onFocus}
+        onBlur={() => {
+          setIsFocused(false);
+          onBlur?.();
+        }}
+        onFocus={() => {
+          setIsFocused(true);
+          onFocus?.();
+        }}
         keyboardType={getKeyboardType()}
         returnKeyType={returnKeyType}
         autoComplete={autoComplete}
@@ -102,7 +117,7 @@ export const Input: React.FC<InputNativeProps> = ({
       />
       {error && errorMessage && (
         <Text
-          style={[styles.errorMessage, { color: theme.colors.danger }]}
+          style={[styles.errorMessage, { color: colors.field.borderError }]}
           role="alert"
         >
           {errorMessage}

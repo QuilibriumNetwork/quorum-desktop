@@ -15,7 +15,7 @@ export interface BaseButtonProps {
     | 'light-white'
     | 'light-outline-white'
     | 'disabled-onboarding';
-  size?: 'normal' | 'small';
+  size?: 'small' | 'normal' | 'large';
   disabled?: boolean;
   icon?: boolean; // Legacy prop for existing compatibility
   iconName?: IconName; // FontAwesome icon to display (left of text or icon-only)

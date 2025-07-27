@@ -28,7 +28,7 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
-  const colors = getColors('light', 'blue'); // Use default light theme with blue accent
+  const colors = getColors(theme.mode, theme.accentColor);
   const [isFocused, setIsFocused] = useState(false);
   const [textAreaHeight, setTextAreaHeight] = useState<number | undefined>(
     undefined
@@ -36,9 +36,9 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
   const textInputRef = useRef<TextInput>(null);
 
   const getBorderColor = () => {
-    if (error) return colors.utilities.danger;
-    if (isFocused && !noFocusStyle) return colors.accent.DEFAULT;
-    return 'transparent';
+    if (error) return colors.field.borderError;
+    if (isFocused && !noFocusStyle) return colors.field.borderFocus;
+    return colors.field.border;
   };
 
   // Auto-resize functionality for React Native
@@ -85,8 +85,8 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
     return [
       ...baseStyles,
       {
-        backgroundColor: colors.bg.input,
-        color: colors.text.main,
+        backgroundColor: colors.field.bg,
+        color: colors.field.text,
         borderColor: getBorderColor(),
         height: calculatedHeight,
       },
@@ -107,7 +107,9 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
         value={value}
         placeholder={placeholder}
         placeholderTextColor={
-          variant === 'onboarding' ? colors.accent[200] : colors.text.muted
+          variant === 'onboarding'
+            ? colors.accent[200]
+            : colors.field.placeholder
         }
         onChangeText={onChange}
         onBlur={() => {
@@ -130,7 +132,7 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
       />
       {error && errorMessage && (
         <Text
-          style={[styles.errorMessage, { color: colors.utilities.danger }]}
+          style={[styles.errorMessage, { color: colors.field.borderError }]}
           role="alert"
         >
           {errorMessage}

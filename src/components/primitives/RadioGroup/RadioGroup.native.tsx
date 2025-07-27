@@ -64,7 +64,6 @@ export function RadioGroup<T extends string = string>({
             <View style={styles.content}>
               {option.icon && (
                 <View style={styles.iconContainer}>
-                  {/* Check if it's a valid icon name, otherwise render as text (emoji) */}
                   {isValidIconName(option.icon) ? (
                     <Icon
                       name={option.icon}

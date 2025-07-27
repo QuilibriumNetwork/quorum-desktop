@@ -81,13 +81,13 @@ const Select: React.FC<NativeSelectProps> = ({
     switch (variant) {
       case 'filled':
         return {
-          backgroundColor: colors.surface[2],
+          backgroundColor: colors.field.bgFilled,
           borderColor: 'transparent',
         };
       default:
         return {
-          backgroundColor: colors.bg.input,
-          borderColor: colors.border.default,
+          backgroundColor: colors.field.bg,
+          borderColor: colors.field.border,
         };
     }
   };
@@ -115,30 +115,35 @@ const Select: React.FC<NativeSelectProps> = ({
             paddingVertical: sizeStyles.paddingVertical,
             paddingHorizontal: sizeStyles.paddingHorizontal,
             borderColor: error
-              ? colors.utilities.danger
+              ? colors.field.borderError
               : variantStyles.borderColor,
+            borderWidth: error ? 2 : variantStyles.borderWidth || 1,
             opacity: disabled ? 0.5 : 1,
           },
         ]}
       >
         <View style={styles.valueContainer}>
           {selectedOption?.icon && (
-            isValidIconName(selectedOption.icon) ? (
-              <Icon name={selectedOption.icon} size="sm" color={colors.text.subtle} />
-            ) : (
-              <Text
-                style={[styles.icon, { fontSize: sizeStyles.fontSize * 1.25, color: colors.text.subtle }]}
-              >
-                {selectedOption.icon}
-              </Text>
-            )
+            <View style={styles.icon}>
+              {isValidIconName(selectedOption.icon) ? (
+                <Icon name={selectedOption.icon} size="sm" color={colors.text.subtle} />
+              ) : (
+                <Text
+                  style={{ fontSize: sizeStyles.fontSize * 1.25, color: colors.text.subtle }}
+                >
+                  {selectedOption.icon}
+                </Text>
+              )}
+            </View>
           )}
           <Text
             style={[
               styles.text,
               {
                 fontSize: sizeStyles.fontSize,
-                color: selectedOption ? colors.text.main : colors.text.subtle,
+                color: selectedOption
+                  ? colors.field.text
+                  : colors.field.placeholder,
               },
             ]}
             numberOfLines={1}
@@ -146,11 +151,13 @@ const Select: React.FC<NativeSelectProps> = ({
             {displayText}
           </Text>
         </View>
-        <Icon name="chevron-down" size="xs" color={colors.text.subtle} />
+        <Icon name="chevron-down" size="xs" color={colors.field.placeholder} />
       </TouchableOpacity>
 
       {error && errorMessage && (
-        <Text style={[styles.errorMessage, { color: colors.utilities.danger }]}>
+        <Text
+          style={[styles.errorMessage, { color: colors.field.borderError }]}
+        >
           {errorMessage}
         </Text>
       )}
@@ -165,7 +172,10 @@ const Select: React.FC<NativeSelectProps> = ({
           <View style={styles.modalOverlay}>
             <TouchableWithoutFeedback>
               <View
-                style={[styles.dropdown, { backgroundColor: colors.bg.modal }]}
+                style={[
+                  styles.dropdown,
+                  { backgroundColor: colors.field.optionsBg },
+                ]}
               >
                 <ScrollView
                   showsVerticalScrollIndicator={true}
@@ -182,41 +192,41 @@ const Select: React.FC<NativeSelectProps> = ({
                       style={[
                         styles.option,
                         option.value === selectedValue && {
-                          backgroundColor: colors.surface[2],
+                          backgroundColor: colors.field.optionSelected,
                         },
                         option.disabled && styles.disabledOption,
                       ]}
                     >
-                      <View style={styles.optionContent}>
-                        {option.icon && (
-                          isValidIconName(option.icon) ? (
+                      {option.icon && (
+                        <View style={styles.optionIcon}>
+                          {isValidIconName(option.icon) ? (
                             <Icon name={option.icon} size="sm" color={colors.text.subtle} />
                           ) : (
-                            <Text style={[styles.optionIcon, { color: colors.text.subtle }]}>{option.icon}</Text>
-                          )
-                        )}
-                        <Text
-                          style={[
-                            styles.optionText,
-                            {
-                              color:
-                                option.value === selectedValue
-                                  ? colors.accent.DEFAULT
-                                  : colors.text.main,
-                              fontWeight:
-                                option.value === selectedValue ? '500' : '400',
-                            },
-                            option.disabled && { opacity: 0.5 },
-                          ]}
-                        >
-                          {option.label}
-                        </Text>
-                      </View>
+                            <Text style={{ color: colors.text.subtle, fontSize: 18 }}>{option.icon}</Text>
+                          )}
+                        </View>
+                      )}
+                      <Text
+                        style={[
+                          styles.optionText,
+                          {
+                            color:
+                              option.value === selectedValue
+                                ? colors.field.optionTextSelected
+                                : colors.field.optionText,
+                            fontWeight:
+                              option.value === selectedValue ? '500' : '400',
+                          },
+                          option.disabled && { opacity: 0.5 },
+                        ]}
+                      >
+                        {option.label}
+                      </Text>
                       {option.value === selectedValue && (
-                        <Icon
-                          name="check"
-                          size="sm"
-                          color={colors.accent.DEFAULT}
+                        <Icon 
+                          name="check" 
+                          size="sm" 
+                          color={colors.field.optionTextSelected} 
                           style={styles.checkmark}
                         />
                       )}
@@ -261,8 +271,12 @@ const styles = StyleSheet.create({
   text: {
     flex: 1,
   },
+  arrow: {
+    fontSize: 10,
+  },
   errorMessage: {
     marginTop: 4,
+    marginBottom: 8,
     fontSize: 12,
   },
   modalOverlay: {
@@ -293,29 +307,23 @@ const styles = StyleSheet.create({
   option: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingVertical: 12,
     paddingHorizontal: 16,
-  },
-  optionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
   },
   disabledOption: {
     opacity: 0.5,
   },
   optionIcon: {
-    fontSize: 18,
-    marginRight: 8,
+    marginRight: 12,
   },
   optionText: {
     flex: 1,
     fontSize: 16,
   },
   checkmark: {
+    fontSize: 16,
+    fontWeight: 'bold',
     marginLeft: 8,
-    flexShrink: 0,
   },
 });
 

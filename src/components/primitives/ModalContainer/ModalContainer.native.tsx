@@ -133,8 +133,6 @@ const styles = StyleSheet.create({
     // backgroundColor will be set dynamically from theme
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    minHeight: 200,
-    maxHeight: screenHeight * 0.9,
     paddingBottom: 34, // Safe area
   },
 });

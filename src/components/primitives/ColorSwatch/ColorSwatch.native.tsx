@@ -58,10 +58,10 @@ export const ColorSwatch: React.FC<ColorSwatchNativeProps> = ({
       ]}
     >
       {isActive && showCheckmark && (
-        <Icon
-          name="check"
-          size={size === 'small' ? 'xs' : size === 'large' ? 'lg' : 'sm'}
-          color="#ffffff"
+        <Icon 
+          name="check" 
+          size={size === 'small' ? 'xs' : size === 'large' ? 'lg' : 'sm'} 
+          color="#ffffff" 
         />
       )}
     </TouchableOpacity>
