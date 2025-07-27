@@ -1,7 +1,7 @@
 import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Button } from '../primitives';
+import { Button, Select } from '../primitives';
 import '../../styles/_modal_common.scss';
 import { useRegistration } from '../../hooks';
 import { useRegistrationContext } from '../context/RegistrationPersister';
@@ -679,22 +679,19 @@ const UserSettingsModal: React.FunctionComponent<{
                       <div className="modal-content-section-header" />
                       <div className="modal-text-label pb-2">{t`Language`}</div>
                       <div className="flex flex-row gap-2 items-center">
-                        <select
-                          className="quorum-input modal-input-select"
-                          style={{ width: '300px' }}
+                        <Select
                           value={language}
-                          onChange={async (e) => {
-                            const selected =
-                              e.target.value.toString() as keyof typeof locales;
+                          options={Object.entries(locales).map(([code, label]) => ({
+                            value: code,
+                            label: label,
+                          }))}
+                          onChange={(value) => {
+                            const selected = value as keyof typeof locales;
                             setLanguage(selected);
                           }}
-                        >
-                          {Object.entries(locales).map(([code, label]) => (
-                            <option key={code} value={code}>
-                              {label}
-                            </option>
-                          ))}
-                        </select>
+                          width="300px"
+                          dropdownPlacement="bottom"
+                        />
                         <ReactTooltip
                           id="language-refresh-tooltip"
                           place="top"

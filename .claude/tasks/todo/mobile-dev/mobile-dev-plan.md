@@ -688,7 +688,7 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 - [ ] **If tests pass**: Delete `Input-OLD.tsx`(as well as any .scss file connected ot it if it's not needed anymore) **(PENDING - needs verification)**
 - [x] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
 
-#### Step 2.5: Select Elements Migration
+#### Step 3: Select Elements Migration
 - [ ] **Search for HTML select elements**: Find all `<select>` elements in the codebase
 - [ ] **Replace with Select primitive**: Update each `<select>` to use `import { Select } from '@/components/primitives'`
 - [ ] **Test thoroughly**:
@@ -703,7 +703,7 @@ See `third-party-component-migration-report.md` for detailed implementation stra
   - [ ] Any navigation or filter selects
 - [ ] **If tests fail**: Revert to HTML select, investigate primitive issues, fix, retry
 
-#### Step 3: Modal Component Replacement
+#### Step 4: Modal Component Replacement
 - [ ] **Rename old component**: `Modal.tsx` → `Modal-OLD.tsx`
 - [ ] **Update imports**: Change imports to use `import { Modal } from '@/components/primitives'`
 - [ ] **Test thoroughly**:
@@ -715,11 +715,6 @@ See `third-party-component-migration-report.md` for detailed implementation stra
   - [ ] Focus handling works properly
 - [ ] **If tests pass**: Delete `Modal-OLD.tsx` (as well as any .scss file connected ot it if it's not needed anymore)
 - [ ] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
-
-#### Step 4: Cleanup Remaining Conflicts
-- [ ] **Delete**: `Modal-OLD.tsx` (already superseded)
-- [ ] **Verify**: No more component name conflicts exist
-- [ ] **Test**: Final smoke test of entire app
 
 #### Final Validation
 - [ ] **Full app test**: Launch app and test core user flows
