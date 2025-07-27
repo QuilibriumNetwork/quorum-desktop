@@ -19,6 +19,8 @@ export const SelectTestScreen: React.FC = () => {
   const [sizeTestValue, setSizeTestValue] = useState('');
   const [variantTestValue, setVariantTestValue] = useState('');
   const [customWidthValue, setCustomWidthValue] = useState('');
+  const [groupedValue, setGroupedValue] = useState('');
+  const [userValue, setUserValue] = useState('');
 
   const basicOptions = [
     { value: 'apple', label: 'Apple' },
@@ -54,6 +56,60 @@ export const SelectTestScreen: React.FC = () => {
       value: 'extremely-long',
       label:
         'Extremely Long Text Example That Demonstrates Text Overflow Behavior',
+    },
+  ];
+
+  // Grouped options (like SpaceEditor channels)
+  const channelGroups = [
+    {
+      groupLabel: 'Text Channels',
+      options: [
+        { value: 'general', label: '#general', icon: '#' },
+        { value: 'announcements', label: '#announcements', icon: '#' },
+        { value: 'questions', label: '#questions', icon: '#' },
+      ],
+    },
+    {
+      groupLabel: 'Voice Channels',
+      options: [
+        { value: 'voice-general', label: 'General Voice', icon: '🔊' },
+        { value: 'voice-meeting', label: 'Meeting Room', icon: '🔊' },
+      ],
+    },
+    {
+      groupLabel: 'Private Channels',
+      options: [
+        { value: 'team-leads', label: '#team-leads', icon: '🔒' },
+        { value: 'admins', label: '#admins', icon: '🔒' },
+      ],
+    },
+  ];
+
+  // User options with avatars
+  const userOptions = [
+    {
+      value: 'alice',
+      label: 'Alice Johnson',
+      avatar: 'https://i.pravatar.cc/150?img=1',
+      subtitle: '0x1234...5678',
+    },
+    {
+      value: 'bob',
+      label: 'Bob Smith',
+      avatar: 'https://i.pravatar.cc/150?img=3',
+      subtitle: '0x9876...4321',
+    },
+    {
+      value: 'charlie',
+      label: 'Charlie Brown',
+      avatar: 'https://i.pravatar.cc/150?img=5',
+      subtitle: '0xabcd...efgh',
+    },
+    {
+      value: 'diana',
+      label: 'Diana Prince',
+      avatar: 'https://i.pravatar.cc/150?img=9',
+      subtitle: '0xijkl...mnop',
     },
   ];
 
@@ -280,6 +336,38 @@ export const SelectTestScreen: React.FC = () => {
           </View>
         </View>
 
+        {/* Grouped Options */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Grouped Options (SpaceEditor Style)</Text>
+          <Text style={styles.label}>Select Channel</Text>
+          <Select
+            value={groupedValue}
+            onChange={setGroupedValue}
+            placeholder="Choose a channel"
+            groups={channelGroups}
+            fullWidth
+          />
+          <Text style={styles.helpText}>
+            Options organized by category with group headers
+          </Text>
+        </View>
+
+        {/* User Selection with Avatars */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>User Selection with Avatars</Text>
+          <Text style={styles.label}>Select Conversation</Text>
+          <Select
+            value={userValue}
+            onChange={setUserValue}
+            placeholder="Select conversation"
+            options={userOptions}
+            fullWidth
+          />
+          <Text style={styles.helpText}>
+            Shows user avatars and addresses (subtitle)
+          </Text>
+        </View>
+
         {/* Implementation Notes */}
         <View style={styles.notesSection}>
           <Text style={styles.notesTitle}>📱 Mobile Implementation</Text>
@@ -297,6 +385,15 @@ export const SelectTestScreen: React.FC = () => {
           </Text>
           <Text style={styles.noteText}>
             • Custom width support via numeric prop
+          </Text>
+          <Text style={styles.noteText}>
+            • Grouped options with sticky headers
+          </Text>
+          <Text style={styles.noteText}>
+            • Avatar support with 32px circular images
+          </Text>
+          <Text style={styles.noteText}>
+            • Subtitle text for secondary information
           </Text>
           <Text style={styles.noteText}>
             • Icons are temporary emoji (FontAwesome pending)

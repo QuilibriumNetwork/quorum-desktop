@@ -279,7 +279,7 @@ const Select: React.FC<WebSelectProps> = ({
           disabled={disabled}
         >
           <option value="">{placeholder}</option>
-          {options.map((opt) => (
+          {allOptions.map((opt) => (
             <option key={opt.value} value={opt.value} disabled={opt.disabled}>
               {opt.label}
             </option>

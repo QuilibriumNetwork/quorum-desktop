@@ -8,6 +8,7 @@ import {
   ScrollView,
   Platform,
   TouchableWithoutFeedback,
+  Image,
 } from 'react-native';
 import { NativeSelectProps } from './types';
 import { useTheme } from '../theme';
@@ -20,6 +21,7 @@ import { isValidIconName } from '../Icon/iconMapping';
 const Select: React.FC<NativeSelectProps> = ({
   value,
   options,
+  groups,
   onChange,
   placeholder = 'Select an option',
   disabled = false,
@@ -43,6 +45,14 @@ const Select: React.FC<NativeSelectProps> = ({
     }
   }, [value]);
 
+  // Helper function to get all options (flattened from groups or direct options)
+  const getAllOptions = () => {
+    if (groups) {
+      return groups.flatMap(group => group.options);
+    }
+    return options || [];
+  };
+
   const handleSelect = (optionValue: string) => {
     if (!disabled) {
       setSelectedValue(optionValue);
@@ -51,7 +61,8 @@ const Select: React.FC<NativeSelectProps> = ({
     }
   };
 
-  const selectedOption = options.find((opt) => opt.value === selectedValue);
+  const allOptions = getAllOptions();
+  const selectedOption = allOptions.find((opt) => opt.value === selectedValue);
   const displayText = selectedOption ? selectedOption.label : placeholder;
 
   const getSizeStyles = () => {
@@ -126,7 +137,13 @@ const Select: React.FC<NativeSelectProps> = ({
         ]}
       >
         <View style={styles.valueContainer}>
-          {selectedOption?.icon && (
+          {selectedOption?.avatar && (
+            <Image
+              source={{ uri: selectedOption.avatar }}
+              style={styles.selectedAvatar}
+            />
+          )}
+          {selectedOption?.icon && !selectedOption?.avatar && (
             <View style={styles.icon}>
               {isValidIconName(selectedOption.icon) ? (
                 <Icon name={selectedOption.icon} size="sm" color={colors.text.subtle} />
@@ -139,20 +156,36 @@ const Select: React.FC<NativeSelectProps> = ({
               )}
             </View>
           )}
-          <Text
-            style={[
-              styles.text,
-              {
-                fontSize: sizeStyles.fontSize,
-                color: selectedOption
-                  ? colors.field.text
-                  : colors.field.placeholder,
-              },
-            ]}
-            numberOfLines={1}
-          >
-            {displayText}
-          </Text>
+          <View style={styles.textContainer}>
+            <Text
+              style={[
+                styles.text,
+                {
+                  fontSize: sizeStyles.fontSize,
+                  color: selectedOption
+                    ? colors.field.text
+                    : colors.field.placeholder,
+                },
+              ]}
+              numberOfLines={1}
+            >
+              {displayText}
+            </Text>
+            {selectedOption?.subtitle && (
+              <Text
+                style={[
+                  styles.subtitleText,
+                  {
+                    fontSize: sizeStyles.fontSize * 0.85,
+                    color: colors.text.subtle,
+                  },
+                ]}
+                numberOfLines={1}
+              >
+                {selectedOption.subtitle}
+              </Text>
+            )}
+          </View>
         </View>
         <Icon name="chevron-down" size="xs" color={colors.field.placeholder} />
       </TouchableOpacity>
@@ -185,56 +218,163 @@ const Select: React.FC<NativeSelectProps> = ({
                   bounces={false}
                   style={styles.scrollView}
                 >
-                  {options.map((option) => (
-                    <TouchableOpacity
-                      key={option.value}
-                      onPress={() =>
-                        !option.disabled && handleSelect(option.value)
-                      }
-                      disabled={option.disabled}
-                      style={[
-                        styles.option,
-                        option.value === selectedValue && {
-                          backgroundColor: colors.field.optionSelected,
-                        },
-                        option.disabled && styles.disabledOption,
-                      ]}
-                    >
-                      {option.icon && (
-                        <View style={styles.optionIcon}>
-                          {isValidIconName(option.icon) ? (
-                            <Icon name={option.icon} size="sm" color={colors.text.subtle} />
-                          ) : (
-                            <Text style={{ color: colors.text.subtle, fontSize: 18 }}>{option.icon}</Text>
-                          )}
+                  {groups && groups.length > 0 ? (
+                    // Render grouped options
+                    groups.map((group, groupIndex) => (
+                      <View key={groupIndex} style={styles.group}>
+                        <View style={[styles.groupLabel, { backgroundColor: colors.field.bg }]}>
+                          <Text style={[styles.groupLabelText, { color: colors.text.subtle }]}>
+                            {group.groupLabel}
+                          </Text>
                         </View>
-                      )}
-                      <Text
+                        {group.options.map((option) => (
+                          <TouchableOpacity
+                            key={option.value}
+                            onPress={() =>
+                              !option.disabled && handleSelect(option.value)
+                            }
+                            disabled={option.disabled}
+                            style={[
+                              styles.option,
+                              styles.groupedOption,
+                              option.value === selectedValue && {
+                                backgroundColor: colors.field.optionSelected,
+                              },
+                              option.disabled && styles.disabledOption,
+                            ]}
+                          >
+                            <View style={styles.optionContent}>
+                              {option.avatar && (
+                                <Image
+                                  source={{ uri: option.avatar }}
+                                  style={styles.optionAvatar}
+                                />
+                              )}
+                              {option.icon && !option.avatar && (
+                                <View style={styles.optionIcon}>
+                                  {isValidIconName(option.icon) ? (
+                                    <Icon name={option.icon} size="sm" color={colors.text.subtle} />
+                                  ) : (
+                                    <Text style={{ color: colors.text.subtle, fontSize: 18 }}>{option.icon}</Text>
+                                  )}
+                                </View>
+                              )}
+                              <View style={styles.optionTextContainer}>
+                                <Text
+                                  style={[
+                                    styles.optionText,
+                                    {
+                                      color:
+                                        option.value === selectedValue
+                                          ? colors.field.optionTextSelected
+                                          : colors.field.optionText,
+                                      fontWeight:
+                                        option.value === selectedValue ? '500' : '400',
+                                    },
+                                    option.disabled && { opacity: 0.5 },
+                                  ]}
+                                >
+                                  {option.label}
+                                </Text>
+                                {option.subtitle && (
+                                  <Text
+                                    style={[
+                                      styles.optionSubtitle,
+                                      { color: colors.text.subtle },
+                                      option.disabled && { opacity: 0.5 },
+                                    ]}
+                                  >
+                                    {option.subtitle}
+                                  </Text>
+                                )}
+                              </View>
+                            </View>
+                            {option.value === selectedValue && (
+                              <Icon 
+                                name="check" 
+                                size="sm" 
+                                color={colors.field.optionTextSelected} 
+                                style={styles.checkmark}
+                              />
+                            )}
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    ))
+                  ) : (
+                    // Render simple options
+                    allOptions.map((option) => (
+                      <TouchableOpacity
+                        key={option.value}
+                        onPress={() =>
+                          !option.disabled && handleSelect(option.value)
+                        }
+                        disabled={option.disabled}
                         style={[
-                          styles.optionText,
-                          {
-                            color:
-                              option.value === selectedValue
-                                ? colors.field.optionTextSelected
-                                : colors.field.optionText,
-                            fontWeight:
-                              option.value === selectedValue ? '500' : '400',
+                          styles.option,
+                          option.value === selectedValue && {
+                            backgroundColor: colors.field.optionSelected,
                           },
-                          option.disabled && { opacity: 0.5 },
+                          option.disabled && styles.disabledOption,
                         ]}
                       >
-                        {option.label}
-                      </Text>
-                      {option.value === selectedValue && (
-                        <Icon 
-                          name="check" 
-                          size="sm" 
-                          color={colors.field.optionTextSelected} 
-                          style={styles.checkmark}
-                        />
-                      )}
-                    </TouchableOpacity>
-                  ))}
+                        <View style={styles.optionContent}>
+                          {option.avatar && (
+                            <Image
+                              source={{ uri: option.avatar }}
+                              style={styles.optionAvatar}
+                            />
+                          )}
+                          {option.icon && !option.avatar && (
+                            <View style={styles.optionIcon}>
+                              {isValidIconName(option.icon) ? (
+                                <Icon name={option.icon} size="sm" color={colors.text.subtle} />
+                              ) : (
+                                <Text style={{ color: colors.text.subtle, fontSize: 18 }}>{option.icon}</Text>
+                              )}
+                            </View>
+                          )}
+                          <View style={styles.optionTextContainer}>
+                            <Text
+                              style={[
+                                styles.optionText,
+                                {
+                                  color:
+                                    option.value === selectedValue
+                                      ? colors.field.optionTextSelected
+                                      : colors.field.optionText,
+                                  fontWeight:
+                                    option.value === selectedValue ? '500' : '400',
+                                },
+                                option.disabled && { opacity: 0.5 },
+                              ]}
+                            >
+                              {option.label}
+                            </Text>
+                            {option.subtitle && (
+                              <Text
+                                style={[
+                                  styles.optionSubtitle,
+                                  { color: colors.text.subtle },
+                                  option.disabled && { opacity: 0.5 },
+                                ]}
+                              >
+                                {option.subtitle}
+                              </Text>
+                            )}
+                          </View>
+                        </View>
+                        {option.value === selectedValue && (
+                          <Icon 
+                            name="check" 
+                            size="sm" 
+                            color={colors.field.optionTextSelected} 
+                            style={styles.checkmark}
+                          />
+                        )}
+                      </TouchableOpacity>
+                    ))
+                  )}
                 </ScrollView>
               </View>
             </TouchableWithoutFeedback>
@@ -268,11 +408,23 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 8,
   },
+  selectedAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    marginRight: 12,
+  },
   icon: {
     marginRight: 8,
   },
+  textContainer: {
+    flex: 1,
+  },
   text: {
     flex: 1,
+  },
+  subtitleText: {
+    marginTop: 2,
   },
   arrow: {
     fontSize: 10,
@@ -307,21 +459,57 @@ const styles = StyleSheet.create({
   scrollView: {
     maxHeight: 300,
   },
+  group: {
+    marginBottom: 8,
+  },
+  groupLabel: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginBottom: 4,
+  },
+  groupLabelText: {
+    fontSize: 12,
+    fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingVertical: 12,
     paddingHorizontal: 16,
   },
-  disabledOption: {
-    opacity: 0.5,
+  groupedOption: {
+    paddingLeft: 24, // Indent grouped options
+  },
+  optionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  optionAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    marginRight: 12,
   },
   optionIcon: {
     marginRight: 12,
   },
-  optionText: {
+  optionTextContainer: {
     flex: 1,
+  },
+  optionText: {
     fontSize: 16,
+    fontWeight: '500',
+  },
+  optionSubtitle: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  disabledOption: {
+    opacity: 0.5,
   },
   checkmark: {
     fontSize: 16,

@@ -1382,216 +1382,13 @@ export const PrimitivesPlayground: React.FC = () => {
               customization
             </p>
 
-            {/* All Select Examples in 4-Column Grid */}
+            {/* All Select Examples in single grid as per screenshot */}
+            <h3 className="text-lg font-medium text-strong mb-3">
+              Advanced Features
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {/* Row 1: Basic Select (2 cells) */}
+              {/* Row 1: Advanced Features (all 4 cells) */}
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong mb-3">
-                  Basic Select
-                </h3>
-                <label className="text-sm font-medium text-strong mb-2 block">
-                  Simple Select
-                </label>
-                <Select
-                  value={selectValue}
-                  onChange={setSelectValue}
-                  placeholder="Choose an option"
-                  options={[
-                    { value: 'apple', label: 'Apple' },
-                    { value: 'banana', label: 'Banana' },
-                    { value: 'cherry', label: 'Cherry' },
-                    { value: 'date', label: 'Date' },
-                    { value: 'elderberry', label: 'Elderberry' },
-                  ]}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong mb-3 opacity-0">
-                  Hidden
-                </h3>
-                <label className="text-sm font-medium text-strong mb-2 block">
-                  With Icons (FontAwesome)
-                </label>
-                <Select
-                  value={iconSelectValue}
-                  onChange={setIconSelectValue}
-                  placeholder="Choose an action"
-                  options={[
-                    { value: 'edit', label: 'Edit', icon: 'edit' },
-                    { value: 'copy', label: 'Copy', icon: 'copy' },
-                    { value: 'share', label: 'Share', icon: 'share' },
-                    { value: 'download', label: 'Download', icon: 'download' },
-                    { value: 'trash', label: 'Delete', icon: 'trash' },
-                  ]}
-                />
-              </div>
-
-              {/* Empty cells for row 1 */}
-              <div></div>
-              <div></div>
-
-              {/* Row 2: Select Sizes (3 cells) */}
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong mb-3">
-                  Select Sizes
-                </h3>
-                <label className="text-sm font-medium text-strong mb-2 block">
-                  Small
-                </label>
-                <Select
-                  size="small"
-                  value=""
-                  onChange={() => {}}
-                  placeholder="Small select"
-                  options={[
-                    { value: 'option1', label: 'Option 1' },
-                    { value: 'option2', label: 'Option 2' },
-                  ]}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong mb-3 opacity-0">
-                  Hidden
-                </h3>
-                <label className="text-sm font-medium text-strong mb-2 block">
-                  Medium (Default)
-                </label>
-                <Select
-                  size="medium"
-                  value=""
-                  onChange={() => {}}
-                  placeholder="Medium select"
-                  options={[
-                    { value: 'option1', label: 'Option 1' },
-                    { value: 'option2', label: 'Option 2' },
-                  ]}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong mb-3 opacity-0">
-                  Hidden
-                </h3>
-                <label className="text-sm font-medium text-strong mb-2 block">
-                  Large
-                </label>
-                <Select
-                  size="large"
-                  value=""
-                  onChange={() => {}}
-                  placeholder="Large select"
-                  options={[
-                    { value: 'option1', label: 'Option 1' },
-                    { value: 'option2', label: 'Option 2' },
-                  ]}
-                />
-              </div>
-
-              {/* Empty cell for row 2 */}
-              <div></div>
-
-              {/* Row 3: Select Variants (2 cells) */}
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong mb-3">
-                  Select Variants
-                </h3>
-                <label className="text-sm font-medium text-strong mb-2 block">
-                  Bordered
-                </label>
-                <Select
-                  variant="bordered"
-                  value=""
-                  onChange={() => {}}
-                  placeholder="Default style"
-                  options={[
-                    { value: 'option1', label: 'Option 1' },
-                    { value: 'option2', label: 'Option 2' },
-                  ]}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong mb-3 opacity-0">
-                  Hidden
-                </h3>
-                <label className="text-sm font-medium text-strong mb-2 block">
-                  Filled (Default)
-                </label>
-                <Select
-                  value=""
-                  onChange={() => {}}
-                  placeholder="Filled style"
-                  options={[
-                    { value: 'option1', label: 'Option 1' },
-                    { value: 'option2', label: 'Option 2' },
-                  ]}
-                />
-              </div>
-
-              {/* Empty cells for row 3 */}
-              <div></div>
-
-              {/* Empty cell for row 3 */}
-              <div></div>
-
-              {/* Row 4: Error States (2 cells) */}
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong mb-3">
-                  Error States
-                </h3>
-                <label className="text-sm font-medium text-strong mb-2 block">
-                  With Error
-                </label>
-                <Select
-                  value={errorSelectValue}
-                  onChange={setErrorSelectValue}
-                  placeholder="Select with error"
-                  error={showSelectError}
-                  errorMessage="This field is required"
-                  options={[
-                    { value: 'valid', label: 'Valid Option' },
-                    { value: 'invalid', label: 'Invalid Option' },
-                  ]}
-                />
-                <Button
-                  size="small"
-                  type="secondary"
-                  className="w-[150px]"
-                  onClick={() => setShowSelectError(!showSelectError)}
-                >
-                  Toggle Error
-                </Button>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong mb-3 opacity-0">
-                  Hidden
-                </h3>
-                <label className="text-sm font-medium text-strong mb-2 block">
-                  Disabled
-                </label>
-                <Select
-                  value="disabled"
-                  onChange={() => {}}
-                  disabled
-                  options={[
-                    { value: 'disabled', label: 'Cannot change this' },
-                    { value: 'option2', label: 'Option 2' },
-                  ]}
-                />
-              </div>
-
-              {/* Empty cells for row 4 */}
-              <div></div>
-              <div></div>
-
-              {/* Row 5: Advanced Features (2 cells) */}
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong mb-3">
-                  Advanced Features
-                </h3>
                 <label className="text-sm font-medium text-strong mb-2 block">
                   Full Width
                 </label>
@@ -1608,9 +1405,6 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong mb-3 opacity-0">
-                  Hidden
-                </h3>
                 <label className="text-sm font-medium text-strong mb-2 block">
                   With Disabled Options
                 </label>
@@ -1635,11 +1429,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 />
               </div>
 
-              {/* Row 6: Custom Width Examples (2 cells) */}
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong mb-3">
-                  Custom Width
-                </h3>
                 <label className="text-sm font-medium text-strong mb-2 block">
                   Custom 200px
                 </label>
@@ -1657,9 +1447,6 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong mb-3 opacity-0">
-                  Hidden
-                </h3>
                 <label className="text-sm font-medium text-strong mb-2 block">
                   Custom 100px (Narrow)
                 </label>
@@ -1678,152 +1465,142 @@ export const PrimitivesPlayground: React.FC = () => {
                 </p>
               </div>
 
-              {/* Empty cells for row 6 */}
-              <div></div>
-              <div></div>
-            </div>
-
-            {/* New Enhanced Features */}
-            <div className="space-y-6">
-              <h3 className="text-lg font-medium text-strong">
-                Enhanced Features
-              </h3>
-
-              {/* Grouped Options */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong mb-2 block">
-                    Grouped Options (SpaceEditor Style)
-                  </label>
-                  <Select
-                    value=""
-                    onChange={() => {}}
-                    placeholder="Select a channel"
-                    groups={[
-                      {
-                        groupLabel: 'General',
-                        options: [
-                          { value: 'general', label: '#general' },
-                          { value: 'announcements', label: '#announcements' },
-                        ],
-                      },
-                      {
-                        groupLabel: 'Development',
-                        options: [
-                          { value: 'dev-frontend', label: '#dev-frontend' },
-                          { value: 'dev-backend', label: '#dev-backend' },
-                          { value: 'dev-mobile', label: '#dev-mobile' },
-                        ],
-                      },
-                      {
-                        groupLabel: 'Community',
-                        options: [
-                          { value: 'random', label: '#random' },
-                          { value: 'help', label: '#help' },
-                        ],
-                      },
-                    ]}
-                    width="300px"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong mb-2 block">
-                    User Selection with Avatars
-                  </label>
-                  <Select
-                    value=""
-                    onChange={() => {}}
-                    placeholder="Select conversation"
-                    options={[
-                      {
-                        value: 'alice',
-                        label: 'Alice Johnson',
-                        subtitle: '0x1234...5678',
-                        avatar: 'https://i.pravatar.cc/150?img=1',
-                      },
-                      {
-                        value: 'bob',
-                        label: 'Bob Smith',
-                        subtitle: '0x9876...4321',
-                        avatar: 'https://i.pravatar.cc/150?img=2',
-                      },
-                      {
-                        value: 'charlie',
-                        label: 'Charlie Brown',
-                        subtitle: '0xabcd...efgh',
-                        avatar: 'https://i.pravatar.cc/150?img=3',
-                      },
-                    ]}
-                    width="300px"
-                  />
-                </div>
-                <div />
-                <div />
+              {/* Row 2: Grouped Options and User Selection (first 2 cells only) */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-strong mb-2 block">
+                  Grouped Options (SpaceEditor Style)
+                </label>
+                <Select
+                  value=""
+                  onChange={() => {}}
+                  placeholder="Select a channel"
+                  fullWidth
+                  groups={[
+                    {
+                      groupLabel: 'General',
+                      options: [
+                        { value: 'general', label: '#general' },
+                        { value: 'announcements', label: '#announcements' },
+                      ],
+                    },
+                    {
+                      groupLabel: 'Development',
+                      options: [
+                        { value: 'dev-frontend', label: '#dev-frontend' },
+                        { value: 'dev-backend', label: '#dev-backend' },
+                        { value: 'dev-mobile', label: '#dev-mobile' },
+                      ],
+                    },
+                    {
+                      groupLabel: 'Community',
+                      options: [
+                        { value: 'random', label: '#random' },
+                        { value: 'help', label: '#help' },
+                      ],
+                    },
+                  ]}
+                />
               </div>
 
-              {/* Dropdown Placement */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong mb-2 block">
-                    Auto Placement
-                  </label>
-                  <Select
-                    value=""
-                    onChange={() => {}}
-                    placeholder="Auto placement"
-                    dropdownPlacement="auto"
-                    options={[
-                      { value: 'option1', label: 'Option 1' },
-                      { value: 'option2', label: 'Option 2' },
-                      { value: 'option3', label: 'Option 3' },
-                    ]}
-                  />
-                  <p className="text-xs text-subtle">
-                    Automatically positions based on available space
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong mb-2 block">
-                    Force Bottom
-                  </label>
-                  <Select
-                    value=""
-                    onChange={() => {}}
-                    placeholder="Always below"
-                    dropdownPlacement="bottom"
-                    options={[
-                      { value: 'option1', label: 'Option 1' },
-                      { value: 'option2', label: 'Option 2' },
-                      { value: 'option3', label: 'Option 3' },
-                    ]}
-                  />
-                  <p className="text-xs text-subtle">
-                    Always opens below (UserSettings style)
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong mb-2 block">
-                    Force Top
-                  </label>
-                  <Select
-                    value=""
-                    onChange={() => {}}
-                    placeholder="Always above"
-                    dropdownPlacement="top"
-                    options={[
-                      { value: 'option1', label: 'Option 1' },
-                      { value: 'option2', label: 'Option 2' },
-                      { value: 'option3', label: 'Option 3' },
-                    ]}
-                  />
-                  <p className="text-xs text-subtle">Always opens above</p>
-                </div>
-                <div />
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-strong mb-2 block">
+                  User Selection with Avatars
+                </label>
+                <Select
+                  value=""
+                  onChange={() => {}}
+                  placeholder="Select conversation"
+                  fullWidth
+                  options={[
+                    {
+                      value: 'alice',
+                      label: 'Alice Johnson',
+                      subtitle: '0x1234...5678',
+                      avatar: 'https://i.pravatar.cc/150?img=1',
+                    },
+                    {
+                      value: 'bob',
+                      label: 'Bob Smith',
+                      subtitle: '0x9876...4321',
+                      avatar: 'https://i.pravatar.cc/150?img=2',
+                    },
+                    {
+                      value: 'charlie',
+                      label: 'Charlie Brown',
+                      subtitle: '0xabcd...efgh',
+                      avatar: 'https://i.pravatar.cc/150?img=3',
+                    },
+                  ]}
+                />
               </div>
+              
+              {/* Empty cells for row 2 */}
+              <div></div>
+              <div></div>
+
+              {/* Row 3: Dropdown Placement (first 3 cells only) */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-strong mb-2 block">
+                  Auto Placement
+                </label>
+                <Select
+                  value=""
+                  onChange={() => {}}
+                  placeholder="Auto placement"
+                  dropdownPlacement="auto"
+                  options={[
+                    { value: 'option1', label: 'Option 1' },
+                    { value: 'option2', label: 'Option 2' },
+                    { value: 'option3', label: 'Option 3' },
+                  ]}
+                />
+                <p className="text-xs text-subtle">
+                  Automatically positions based on available space
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-strong mb-2 block">
+                  Force Bottom
+                </label>
+                <Select
+                  value=""
+                  onChange={() => {}}
+                  placeholder="Always below"
+                  dropdownPlacement="bottom"
+                  options={[
+                    { value: 'option1', label: 'Option 1' },
+                    { value: 'option2', label: 'Option 2' },
+                    { value: 'option3', label: 'Option 3' },
+                  ]}
+                />
+                <p className="text-xs text-subtle">
+                  Always opens below (UserSettings style)
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-strong mb-2 block">
+                  Force Top
+                </label>
+                <Select
+                  value=""
+                  onChange={() => {}}
+                  placeholder="Always above"
+                  dropdownPlacement="top"
+                  options={[
+                    { value: 'option1', label: 'Option 1' },
+                    { value: 'option2', label: 'Option 2' },
+                    { value: 'option3', label: 'Option 3' },
+                  ]}
+                />
+                <p className="text-xs text-subtle">Always opens above</p>
+              </div>
+              
+              {/* Empty cell for row 3 */}
+              <div></div>
             </div>
+           
 
             {/* Implementation Notes */}
             <div className="space-y-3">
