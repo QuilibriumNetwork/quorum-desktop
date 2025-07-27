@@ -275,10 +275,12 @@ async function syncComponent(componentName, direction) {
   
   console.log(`\n${colors.blue}Syncing ${componentName}${colors.reset} ${direction === 'to-playground' ? '→ playground' : '← playground'}`);
   
-  // Get all relevant files
-  const fileExtensions = ['.web.tsx', '.native.tsx', '.tsx', '.ts', '.scss'];
+  // Get files relevant for mobile playground (native-only architecture)
+  const fileExtensions = direction === 'to-playground' 
+    ? ['.native.tsx', '.ts'] // Only sync native implementations and types to playground
+    : ['.web.tsx', '.native.tsx', '.tsx', '.ts', '.scss']; // Sync all files from playground back to main
   const files = fs.readdirSync(sourcePath)
-    .filter(file => fileExtensions.some(ext => file.endsWith(ext)) || file === 'types.ts' || file === 'index.ts');
+    .filter(file => fileExtensions.some(ext => file.endsWith(ext)) || file === 'types.ts');
   
   let syncedCount = 0;
   
@@ -324,8 +326,8 @@ async function syncComponent(componentName, direction) {
 async function syncComponentByNewerFiles(componentName, mainComponentPath, playgroundComponentPath) {
   console.log(`\n${colors.blue}Syncing ${componentName}${colors.reset} ${colors.cyan}(sync newer files)${colors.reset}`);
   
-  // Get all files from both locations
-  const fileExtensions = ['.web.tsx', '.native.tsx', '.tsx', '.ts', '.scss'];
+  // Get all files from both locations (mobile playground uses native-only architecture)
+  const fileExtensions = ['.native.tsx', '.ts']; // Only native implementations and types
   const allFiles = new Set();
   
   // Collect files from main component

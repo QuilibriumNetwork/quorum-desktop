@@ -93,8 +93,8 @@ function checkComponentSync(componentName) {
   };
 
   // Get all files from both locations
-  // Mobile playground mirrors complete component structure to test platform resolution
-  const fileExtensions = ['.web.tsx', '.native.tsx', '.tsx', '.ts', '.scss'];
+  // Mobile playground uses native-only architecture, only check relevant files
+  const fileExtensions = ['.native.tsx', '.ts']; // Only native implementations and types
   const checkedFiles = new Set();
 
   // Check files in main component directory

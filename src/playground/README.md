@@ -366,10 +366,12 @@ The sync script **automatically skips routing files** that have architectural di
 - `ThemeProvider.tsx` - Environment-specific setup
 
 #### Files Always Synced
-- `Button.web.tsx` - Web implementation
-- `Button.native.tsx` - Mobile implementation  
+- `Button.native.tsx` - Mobile implementation (only version used in playground)
 - `types.ts` - Shared TypeScript interfaces
-- `Button.scss` - Styling definitions
+
+#### Files Never Synced (Not Needed in Mobile Playground)
+- `Button.web.tsx` - Web implementation (not used in React Native environment)
+- `Button.scss` - CSS styling (React Native uses StyleSheet instead)
 
 ### Override Behavior
 
@@ -385,9 +387,10 @@ yarn playground:sync --to-playground Button --force
 
 ✅ **Perfect mobile testing** - All components use React Native implementations  
 ✅ **No CSS conflicts** - React Native Web handles styling consistently  
-✅ **True sync status** - Only implementation files show sync warnings  
-✅ **Clean separation** - Routing vs implementation concerns separated  
-✅ **Production ready** - Main app architecture optimized for builds
+✅ **True sync status** - Only files that matter show sync warnings  
+✅ **Clean separation** - Only relevant files in each environment  
+✅ **Production ready** - Main app architecture optimized for builds  
+✅ **Minimal noise** - No unused web/CSS files cluttering mobile playground
 
 ---
 
