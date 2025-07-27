@@ -40,11 +40,12 @@ These modals use the standard `<Modal>` wrapper and have straightforward content
 - **Risk Level**: Medium (more complex form handling)
 - **Issue Fixed**: Input onChange handler updated to accept string value directly
 
-#### **📝 Image Viewer Modal** - `src/components/message/Message.tsx`
-- **Status**: Ready for conversion
+#### **✅ Image Viewer Modal** - `src/components/message/Message.tsx`
+- **Status**: CONVERTED & TESTED ✅
 - **Complexity**: Simple (just image display)
 - **Features**: Full-size image display with close functionality
 - **Risk Level**: Low (minimal functionality)
+- **Conversion Notes**: Trivial conversion - just import change, no other modifications needed
 
 ### 🟡 Category 2: Complex Modals (Need Assessment)
 
@@ -264,15 +265,135 @@ import { Modal } from '../primitives';  // New primitive
 
 ---
 
+## Lessons Learned & Technical Notes
+
+### 🔧 Input Primitive Integration Issues
+
+**Problem**: Input primitive uses different onChange signature than standard HTML inputs
+- **Standard HTML**: `onChange={(e) => setValue(e.target.value)}`
+- **Input Primitive**: `onChange={(value) => setValue(value)}`
+
+**Solution**: Update all modal forms to use string value directly instead of event objects
+- ✅ Fixed in NewDirectMessageModal and CreateSpaceModal
+- ⚠️ **Note for future**: Always check onChange handlers when converting modals with forms
+
+### 🖼️ File Upload Component Compatibility
+
+**Problem**: SpaceIcon expected `Promise<ArrayBuffer>` but CreateSpaceModal was passing inconsistent data types
+- **Root cause**: `acceptedFiles[0].arrayBuffer()` called in render creates new Promise each time
+- **Side effect**: Non-deterministic file display behavior, wrong images showing
+
+**⚠️ Widespread Issue**: Found same pattern in multiple components that will need similar fixes:
+- ✅ `src/components/modals/CreateSpaceModal.tsx` (FIXED)
+- ❌ `src/components/channel/SpaceEditor.tsx` (needs fix)
+- ❌ `src/components/modals/UserSettingsModal.tsx` (needs fix)  
+- ❌ `src/components/onboarding/Onboarding.tsx` (needs fix)
+- ❌ `src/components/user/UserProfile.tsx` (needs fix)
+
+**Solution**: Proper state management pattern for file uploads:
+```typescript
+const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
+const [currentFile, setCurrentFile] = React.useState<File | undefined>();
+
+// In onDropAccepted:
+setFileData(undefined); // Clear immediately
+setCurrentFile(files[0]); // Set new file
+
+// In useEffect:
+if (currentFile) {
+  const arrayBuffer = await currentFile.arrayBuffer();
+  setFileData(arrayBuffer);
+}
+
+// In render:
+iconData={Promise.resolve(fileData)}
+key={currentFile?.name + currentFile?.lastModified} // Force re-render
+```
+
+**⚠️ Key Lessons**:
+1. Never call async functions (like `arrayBuffer()`) directly in render
+2. Always clear previous state when accepting new files
+3. Use `key` prop to force re-render of components with cached internal state
+4. Check component prop types - some expect Promises, others expect resolved values
+
+### 🎨 Styling Consistency Patterns
+
+**Error Message Alignment**: Input primitives had centered error text by default
+- **Fix**: Add `text-align: left` to both web (.scss) and native (StyleSheet) versions
+- **Pattern**: Always check cross-platform styling when updating primitives
+
+### 📝 Import Consolidation Strategy
+
+**Before**:
+```typescript
+import Modal from '../Modal';
+import { Input } from '../primitives';
+import { Button } from '../primitives';
+```
+
+**After**:
+```typescript
+import { Input, Button, Modal } from '../primitives';
+```
+
+**Benefits**: Cleaner imports, easier to track primitive usage, preparation for tree-shaking
+
+### 🔄 State Management Anti-Patterns Found
+
+**Dropzone State Issues**:
+- `acceptedFiles` array doesn't automatically clear when new files are selected
+- Multiple state sources (acceptedFiles, fileData, isUploading) can get out of sync
+- File dialog events vs drag-drop events have different timing
+
+**Best Practice**: Single source of truth with explicit state clearing:
+- Use controlled state (`currentFile`) instead of relying on `acceptedFiles` array
+- Clear all related state together when new file is accepted
+- Handle async operations in useEffect, not in event handlers
+
+**🔄 Codebase-Wide File Upload Audit Needed**:
+All components with file uploads should be reviewed and potentially fixed with the same pattern. The issue may not surface immediately but will cause user experience problems under certain conditions (rapid file selection, file replacement, etc.).
+
+---
+
+## Future Conversion Checklist
+
+When converting modals to Modal primitive:
+
+### ✅ Pre-Conversion Checks
+- [ ] Identify all form inputs and their onChange patterns
+- [ ] Check for file upload components and their data flow (look for useDropzone, acceptedFiles, arrayBuffer patterns)
+- [ ] Review any third-party component integrations
+- [ ] Note custom styling classes that might conflict
+- [ ] **Special attention**: Search for `acceptedFiles[0].arrayBuffer()` calls in render or SpaceIcon usage
+
+### ✅ During Conversion
+- [ ] Update import statements to use primitives
+- [ ] Convert onChange handlers from event-based to value-based
+- [ ] Update error handling to use Input primitive's built-in error display
+- [ ] Test file upload flows thoroughly if present
+- [ ] Verify cross-platform styling consistency
+
+### ✅ Post-Conversion Testing
+- [ ] Test all form submissions and validations
+- [ ] Verify file uploads work reliably (multiple attempts)
+- [ ] Check error message styling and alignment
+- [ ] Test modal open/close behavior
+- [ ] Verify responsive behavior on mobile viewport
+
+---
+
 ## References
 
 - **Modal Inventory**: `.claude/docs/modals.md` (lines 156-239)
 - **Mobile Dev Plan**: `.claude/tasks/todo/mobile-dev/mobile-dev-plan.md` (Step 4)
 - **Modal Primitive**: `src/components/primitives/Modal/`
-- **Test Case**: `src/components/modals/KickUserModal.tsx` (successfully converted)
+- **Test Cases**: 
+  - `src/components/modals/KickUserModal.tsx` (simple conversion)
+  - `src/components/modals/NewDirectMessageModal.tsx` (form with validation)
+  - `src/components/modals/CreateSpaceModal.tsx` (complex form with file upload)
 
 ---
 
 *Document created: 2025-01-27*
 *Last updated: 2025-01-27*
-*Status: Phase 1 in progress - KickUserModal conversion successful*
+*Status: Phase 1 completed - 3 simple modals successfully converted*
