@@ -11,6 +11,7 @@ const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
 // Define paths
+// Note: Only mobile playground needs sync - web playground imports directly from main app
 const MAIN_PRIMITIVES_PATH = path.join(projectRoot, 'src/components/primitives');
 const MOBILE_PLAYGROUND_PATH = path.join(projectRoot, 'src/playground/mobile/quorum-mobile-test/components/primitives');
 
@@ -390,7 +391,8 @@ async function main() {
   
   const direction = toPlayground ? 'to-playground' : fromPlayground ? 'from-playground' : syncNewer ? 'sync-newer' : 'interactive';
   
-  console.log(`\n${colors.blue}🔄 Playground Component Sync${colors.reset}`);
+  console.log(`\n${colors.blue}🔄 Mobile Playground Component Sync${colors.reset}`);
+  console.log(`${colors.dim}Note: Web playground imports directly from main app (no sync needed)${colors.reset}`);
   const directionLabel = {
     'to-playground': 'Main App → Playground',
     'from-playground': 'Playground → Main App',

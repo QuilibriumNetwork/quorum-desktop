@@ -9,6 +9,7 @@ const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
 // Define paths
+// Note: Only mobile playground needs sync - web playground imports directly from main app
 const MAIN_PRIMITIVES_PATH = path.join(projectRoot, 'src/components/primitives');
 const MOBILE_PLAYGROUND_PATH = path.join(projectRoot, 'src/playground/mobile/quorum-mobile-test/components/primitives');
 
@@ -83,7 +84,8 @@ function formatAge(days) {
 }
 
 function main() {
-  console.log(`\n${colors.blue}🧹 Playground Backup Cleanup${colors.reset}\n`);
+  console.log(`\n${colors.blue}🧹 Mobile Playground Backup Cleanup${colors.reset}`);
+  console.log(`${colors.dim}Note: Web playground imports directly from main app (no backups created)${colors.reset}\n`);
   
   if (dryRun) {
     console.log(`${colors.yellow}🔍 DRY RUN MODE - No files will be deleted${colors.reset}\n`);

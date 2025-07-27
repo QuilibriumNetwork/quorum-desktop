@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, '..');
 
 // Define paths
+// Note: Only mobile playground needs sync - web playground imports directly from main app
 const MAIN_PRIMITIVES_PATH = path.join(projectRoot, 'src/components/primitives');
 const MOBILE_PLAYGROUND_PATH = path.join(projectRoot, 'src/playground/mobile/quorum-mobile-test/components/primitives');
 
@@ -78,6 +79,7 @@ function checkComponentSync(componentName) {
   };
 
   // Get all files from both locations
+  // Mobile playground mirrors complete component structure to test platform resolution
   const fileExtensions = ['.web.tsx', '.native.tsx', '.tsx', '.ts', '.scss'];
   const checkedFiles = new Set();
 
@@ -146,7 +148,8 @@ function checkComponentSync(componentName) {
 
 // Main function
 function main() {
-  console.log(`\n${colors.blue}🔍 Checking Playground Component Sync Status${colors.reset}\n`);
+  console.log(`\n${colors.blue}🔍 Checking Mobile Playground Component Sync Status${colors.reset}`);
+  console.log(`${colors.dim}Note: Web playground imports directly from main app (no sync needed)${colors.reset}\n`);
   
   // Get all primitives from both locations
   const mainPrimitives = new Set(getPrimitiveDirectories(MAIN_PRIMITIVES_PATH));
@@ -201,12 +204,16 @@ function main() {
   
   if (totalOutOfSync > 0) {
     console.log(`\n${colors.yellow}💡 To sync components, run:${colors.reset}`);
-    console.log(`   yarn playground:sync --to-playground    ${colors.dim}# Copy from main app to playground${colors.reset}`);
-    console.log(`   yarn playground:sync --from-playground  ${colors.dim}# Copy from playground to main app${colors.reset}`);
-    console.log(`   yarn playground:sync --interactive     ${colors.dim}# Choose direction for each file${colors.reset}`);
+    console.log(`   yarn playground:sync --sync-newer --all     ${colors.dim}# Auto-sync based on newer files (recommended)${colors.reset}`);
+    console.log(`   yarn playground:sync --to-playground --all  ${colors.dim}# Copy all from main app to playground${colors.reset}`);
+    console.log(`   yarn playground:sync --from-playground --all ${colors.dim}# Copy all from playground to main app${colors.reset}`);
+    console.log(`   yarn playground:sync --interactive          ${colors.dim}# Choose direction for each component${colors.reset}`);
   }
   
-  // Exit with error code if out of sync
+  // Exit with code 1 if out of sync (useful for scripts/CI)
+  if (totalOutOfSync > 0) {
+    console.log(`\n${colors.dim}Note: Exiting with code 1 to indicate out-of-sync status${colors.reset}`);
+  }
   process.exit(totalOutOfSync > 0 ? 1 : 0);
 }
 

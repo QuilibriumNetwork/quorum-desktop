@@ -203,9 +203,17 @@ When testing primitives:
 
 ## Component Synchronization
 
+**Important**: Only the **mobile playground** needs component synchronization. The web playground directly imports components from the main app, so it's always in sync automatically.
+
+### What Gets Synced
+
+- **Main App**: `src/components/primitives/` 
+- **Mobile Playground**: `src/playground/mobile/quorum-mobile-test/components/primitives/`
+- **Web Playground**: No sync needed - imports directly from main app
+
 ### Sync Status Checking
 
-To check if playground components are in sync with main app components:
+To check if mobile playground components are in sync with main app components:
 
 ```bash
 # Check sync status of all components
@@ -220,7 +228,7 @@ This will show you:
 
 ### Syncing Components
 
-The playground contains copies of components for testing. Use these commands to keep them synchronized:
+The mobile playground contains copies of components for testing. Use these commands to keep them synchronized:
 
 ```bash
 # Copy from main app to playground (most common)
@@ -277,9 +285,9 @@ yarn playground:cleanup --dry-run --all
 - Before testing new component features
 - When playground components are outdated
 
-**From Playground** (playground → main app):
-- After testing and perfecting components in playground
-- When playground has newer/better implementations
+**From Mobile Playground** (mobile playground → main app):
+- After testing and perfecting components in mobile playground
+- When mobile playground has newer/better implementations
 - After mobile-specific optimizations
 
 ## Frequently Asked Questions
@@ -288,7 +296,7 @@ yarn playground:cleanup --dry-run --all
 A: To reduce bundle size and keep production builds clean. Use `--playground` flag if needed.
 
 **Q: Do I need to manually sync components?**  
-A: Yes, for safety. Use `yarn playground:check` to see status and `yarn playground:sync` when needed.
+A: Only for mobile playground components. Web playground automatically uses the latest main app components. Use `yarn playground:check` to see mobile sync status.
 
 **Q: What if I accidentally overwrite a newer component?**  
 A: Each sync creates timestamped `.backup-YYYY-MM-DD` files. You can restore from the most recent backup or use `yarn playground:cleanup` to manage them.
