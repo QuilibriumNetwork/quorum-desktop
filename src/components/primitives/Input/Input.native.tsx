@@ -165,5 +165,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
     paddingHorizontal: 4,
+    textAlign: 'left',
   },
 });

@@ -1,7 +1,5 @@
 import * as React from 'react';
-import Modal from '../Modal';
-import { Input } from '../primitives';
-import { Button } from '../primitives';
+import { Input, Button, Modal } from '../primitives';
 import './NewDirectMessageModal.scss';
 import { t } from '@lingui/core/macro';
 import { base58btc } from 'multiformats/bases/base58';
@@ -107,12 +105,13 @@ const NewDirectMessageModal: React.FunctionComponent<
         </div>
         <div>
           <Input
-            className={`w-full !text-xs sm:!text-sm ${error ? 'error' : ''}`}
-            onChange={(e) => setAddress(e.target.value.trim())}
+            className="w-full !text-xs sm:!text-sm"
+            onChange={(value) => setAddress(value.trim())}
             placeholder={t`User address here`}
+            error={!!error}
+            errorMessage={error || undefined}
           />
         </div>
-        {error && <div className="modal-new-direct-message-error">{error}</div>}
         <React.Suspense
           fallback={
             <div className="modal-new-direct-message-actions">

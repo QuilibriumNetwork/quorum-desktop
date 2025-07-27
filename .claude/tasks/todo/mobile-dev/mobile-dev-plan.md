@@ -688,20 +688,22 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 - [ ] **If tests pass**: Delete `Input-OLD.tsx`(as well as any .scss file connected ot it if it's not needed anymore) **(PENDING - needs verification)**
 - [x] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
 
-#### Step 3: Select Elements Migration
-- [ ] **Search for HTML select elements**: Find all `<select>` elements in the codebase
-- [ ] **Replace with Select primitive**: Update each `<select>` to use `import { Select } from '@/components/primitives'`
-- [ ] **Test thoroughly**:
-  - [ ] All dropdowns render correctly
-  - [ ] Selection functionality works
-  - [ ] Dropdown styling matches design (filled variant by default)
-  - [ ] Dropdown positioning works (top/bottom placement)
-  - [ ] Option selection updates state correctly
-- [ ] **Verify specific cases**:
-  - [ ] Language selector in UserSettingsModal (300px width, opens below)
-  - [ ] Any form selects in modals
-  - [ ] Any navigation or filter selects
-- [ ] **If tests fail**: Revert to HTML select, investigate primitive issues, fix, retry
+#### Step 3: Select Elements Migration ✅ **COMPLETED**
+- [x] **Enhanced Select primitive**: Added groups, avatars, subtitles, and dropdown placement
+- [x] **Search for HTML select elements**: Found HTML selects and complex custom dropdowns
+- [x] **Replace with Select primitive**: Updated to use `import { Select } from '@/components/primitives'`
+- [x] **Test thoroughly**:
+  - [x] All dropdowns render correctly with proper spacing
+  - [x] Selection functionality works
+  - [x] Dropdown styling matches design (filled variant by default)
+  - [x] Dropdown positioning works (top/bottom/auto placement)
+  - [x] Option selection updates state correctly
+- [x] **Enhanced specific cases completed**:
+  - [x] SpaceEditor Default Channel dropdown (grouped channels by category)
+  - [x] SpaceEditor Existing Conversations dropdown (user avatars + addresses)
+  - [x] Language selector in UserSettingsModal (300px width, opens below)
+- [x] **Cross-platform compatibility**: Both web and native implementations updated
+- [x] **Fixed styling issues**: Tighter spacing between icons and text, proper left alignment
 
 #### Step 4: Modal Component Replacement
 - [ ] **Rename old component**: `Modal.tsx` → `Modal-OLD.tsx`

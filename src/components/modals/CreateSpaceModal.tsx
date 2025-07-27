@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import Modal from '../Modal';
-import { Input } from '../primitives';
-import { Button } from '../primitives';
+import { Input, Button, Modal } from '../primitives';
 import './CreateSpaceModal.scss';
 import ToggleSwitch from '../ToggleSwitch';
 import { useDropzone } from 'react-dropzone';
@@ -44,6 +42,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
     address: currentPasskeyInfo!.address,
   });
   const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
+  const [currentFile, setCurrentFile] = React.useState<File | undefined>();
   const navigate = useNavigate();
 
   const { getRootProps, getInputProps, acceptedFiles, isDragActive } =
@@ -52,6 +51,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
         'image/png': ['.png'],
         'image/jpeg': ['.jpg', '.jpeg'],
       },
+      multiple: false,
       minSize: 0,
       maxSize: 1 * 1024 * 1024,
       onDropRejected: (fileRejections) => {
@@ -64,9 +64,12 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           }
         }
       },
-      onDropAccepted: () => {
+      onDropAccepted: (files) => {
         setIsUploading(true);
         setFileError(null);
+        // Clear previous file data immediately when new file is accepted
+        setFileData(undefined);
+        setCurrentFile(files[0]);
       },
       onDragEnter: () => {
         setIsUploading(true);
@@ -83,13 +86,20 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
     });
 
   React.useEffect(() => {
-    if (acceptedFiles.length > 0) {
+    if (currentFile) {
       (async () => {
-        setFileData(await acceptedFiles[0].arrayBuffer());
-        setIsUploading(false);
+        try {
+          const arrayBuffer = await currentFile.arrayBuffer();
+          setFileData(arrayBuffer);
+          setIsUploading(false);
+        } catch (error) {
+          console.error('Error reading file:', error);
+          setFileError(t`Error reading file`);
+          setIsUploading(false);
+        }
       })();
     }
-  }, [acceptedFiles]);
+  }, [currentFile]);
 
   return (
     <Modal
@@ -99,7 +109,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
     >
       <div className="modal-width-large">
         <div className="flex flex-row justify-around pb-4">
-          {acceptedFiles.length != 0 ? (
+          {fileData ? (
             <div
               id="space-icon-tooltip-target"
               className="cursor-pointer"
@@ -112,8 +122,9 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                 spaceName={'Unknown'}
                 size="large"
                 selected={false}
-                iconData={acceptedFiles[0].arrayBuffer()}
+                iconData={Promise.resolve(fileData)}
                 spaceId="create-space-preview"
+                key={currentFile?.name + currentFile?.lastModified} // Force re-render when file changes
               />
             </div>
           ) : (
@@ -155,7 +166,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
         <div className="select-none cursor-default">
           <Input
             value={spaceName}
-            onChange={(e) => setSpaceName(e.target.value)}
+            onChange={(value) => setSpaceName(value)}
             placeholder={t`Enter a name for your new Space`}
             className="w-full"
           />
@@ -235,9 +246,9 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               setCreating(true);
               const { spaceId, channelId } = await createSpace(
                 spaceName,
-                fileData != undefined
+                fileData != undefined && currentFile
                   ? 'data:' +
-                      acceptedFiles[0].type +
+                      currentFile.type +
                       ';base64,' +
                       Buffer.from(fileData).toString('base64')
                   : DefaultImages.UNKNOWN_USER,
