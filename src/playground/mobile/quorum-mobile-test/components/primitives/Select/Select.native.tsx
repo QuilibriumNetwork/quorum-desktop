@@ -415,13 +415,13 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   icon: {
-    marginRight: 8,
+    marginRight: 4, // Smaller gap (0.25rem equivalent) like web version
   },
   textContainer: {
-    flex: 1,
+    flexShrink: 1, // Allow shrinking but don't expand to fill space
   },
   text: {
-    flex: 1,
+    flexShrink: 1, // Allow shrinking but don't expand to fill space
   },
   subtitleText: {
     marginTop: 2,

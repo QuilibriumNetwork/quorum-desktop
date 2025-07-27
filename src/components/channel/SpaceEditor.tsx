@@ -21,7 +21,7 @@ import {
 
 import { useMessageDB } from '../context/MessageDB';
 import '../../styles/_modal_common.scss';
-import { Button } from '../primitives';
+import { Button, Select } from '../primitives';
 import { useConversations, useRegistration, useSpace } from '../../hooks';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
 import {
@@ -57,8 +57,7 @@ const SpaceEditor: React.FunctionComponent<{
   const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
   const [closing, setClosing] = React.useState<boolean>(false);
   const [bannerData, setBannerData] = React.useState<ArrayBuffer | undefined>();
-  const [isDefaultChannelListExpanded, setIsDefaultChannelListExpanded] =
-    React.useState<boolean>(false);
+  // Removed isDefaultChannelListExpanded - using Select primitive instead
 
   const handleDismiss = () => {
     setClosing(true);
@@ -66,8 +65,7 @@ const SpaceEditor: React.FunctionComponent<{
       dismiss();
     }, 300);
   };
-  const [isInviteListExpanded, setIsInviteListExpanded] =
-    React.useState<boolean>(false);
+  // Removed isInviteListExpanded - using Select primitive instead
   const [roles, setRoles] = React.useState<Role[]>(space?.roles || []);
   const [emojis, setEmojis] = React.useState<Emoji[]>(space?.emojis || []);
   const [stickers, setStickers] = React.useState<Sticker[]>(
@@ -124,6 +122,32 @@ const SpaceEditor: React.FunctionComponent<{
   const { data: conversations } = useConversations({ type: 'direct' });
   const { apiClient } = useQuorumApiClient();
   const navigate = useNavigate();
+
+  // Helper functions for Select primitive
+  const getChannelGroups = React.useMemo(() => {
+    if (!space?.groups) return [];
+    return space.groups.map(group => ({
+      groupLabel: group.groupName,
+      options: group.channels.map(channel => ({
+        value: channel.channelId,
+        label: channel.channelName, // Channel name without # symbol
+        icon: '#' // Just the # symbol as icon
+      }))
+    }));
+  }, [space?.groups]);
+
+  const getUserOptions = React.useMemo(() => {
+    if (!conversations?.pages) return [];
+    return conversations.pages
+      .flatMap((c: any) => c.conversations as Conversation[])
+      .toReversed()
+      .map(conversation => ({
+        value: conversation.address,
+        label: conversation.displayName,
+        avatar: conversation.icon,
+        subtitle: conversation.address
+      }));
+  }, [conversations]);
 
   const {
     getRootProps,
@@ -618,64 +642,21 @@ const SpaceEditor: React.FunctionComponent<{
                         <Trans>Default Channel</Trans>
                       </div>
                       <div className="modal-content-info">
-                        <div
-                          className="w-full quorum-input !font-bold flex flex-row justify-between cursor-pointer"
-                          style={{ backgroundColor: 'var(--color-bg-input)' }}
-                          onClick={() =>
-                            setIsDefaultChannelListExpanded((prev) => !prev)
-                          }
-                        >
-                          <div className="flex flex-col justify-around w-[calc(100%-30px)]">
-                            #{defaultChannel?.channelName}
-                          </div>
-                          <div className="space-context-menu-toggle-button">
-                            <FontAwesomeIcon icon={faChevronDown} />
-                          </div>
-                        </div>
-                        {isDefaultChannelListExpanded && (
-                          <>
-                            <div
-                              className="fixed inset-0 z-[1]"
-                              onClick={() =>
-                                setIsDefaultChannelListExpanded(false)
-                              }
-                            />
-                            <div className="absolute pr-[227px] w-full z-[2]">
-                              <div className="bg-input max-w-[350px] mt-1 max-h-[200px] rounded-xl overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
-                                {space?.groups.map((g, i) => {
-                                  return (
-                                    <React.Fragment key={'group-select-' + i}>
-                                      <div className="small-caps py-2 px-3">
-                                        {g.groupName}
-                                      </div>
-                                      {g.channels.map((c, j) => {
-                                        return (
-                                          <div
-                                            onClick={() => {
-                                              setDefaultChannel(c);
-                                              setIsDefaultChannelListExpanded(
-                                                false
-                                              );
-                                            }}
-                                            className="py-2 px-2 mx-1 my-1 text-main hover:bg-surface-4 rounded-lg cursor-pointer !font-bold"
-                                            key={
-                                              'group-select-' +
-                                              i +
-                                              '-channel-' +
-                                              i
-                                            }
-                                          >
-                                            #{c.channelName}
-                                          </div>
-                                        );
-                                      })}
-                                    </React.Fragment>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          </>
-                        )}
+                        <Select
+                          fullWidth
+                          groups={getChannelGroups}
+                          value={defaultChannel?.channelId || ''}
+                          onChange={(channelId) => {
+                            const channel = space?.groups
+                              .flatMap(g => g.channels)
+                              .find(c => c.channelId === channelId);
+                            if (channel) {
+                              setDefaultChannel(channel);
+                            }
+                          }}
+                          placeholder={t`Select default channel`}
+                          style={{ textAlign: 'left' }}
+                        />
                       </div>
                       <div className="modal-content-section-header small-caps">
                         <Trans>Privacy Settings</Trans>
@@ -1087,118 +1068,23 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="small-caps">
                           <Trans>Existing Conversations</Trans>
                         </div>
-                        <div className="relative">
-                          <div
-                            className="w-full quorum-input !font-bold flex flex-row justify-between cursor-pointer"
-                            style={{ backgroundColor: 'var(--color-bg-input)' }}
-                            onClick={() => {
+                        <Select
+                          fullWidth
+                          options={getUserOptions}
+                          value={selectedUser?.address || ''}
+                          onChange={(address) => {
+                            const conversation = conversations?.pages
+                              ?.flatMap((c: any) => c.conversations as Conversation[])
+                              ?.find(c => c.address === address);
+                            if (conversation) {
+                              setSelectedUser(conversation);
+                              setResolvedUser(undefined);
+                              setManualAddress('');
                               setSuccess(false);
-                              setIsInviteListExpanded((prev) => !prev);
-                            }}
-                          >
-                            {selectedUser && (
-                              <div className="flex flex-row">
-                                <div className="flex flex-col justify-around">
-                                  <div
-                                    className="rounded-full w-[24px] h-[24px] mt-[2px]"
-                                    style={{
-                                      backgroundPosition: 'center',
-                                      backgroundSize: 'cover',
-                                      backgroundImage: `url(${selectedUser.icon})`,
-                                    }}
-                                  />
-                                </div>
-                                <div className="flex flex-col justify-around pl-2">
-                                  <div>
-                                    {selectedUser.displayName}{' '}
-                                    <span className="font-light">
-                                      (
-                                      <span className="hidden md:inline">
-                                        {selectedUser.address}
-                                      </span>
-                                      <span className="md:hidden">
-                                        {truncateAddress(selectedUser.address)}
-                                      </span>
-                                      )
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            {!selectedUser && (
-                              <div className="font-normal text-subtle">
-                                {t`Select conversation`}
-                              </div>
-                            )}
-                            <div className="space-context-menu-toggle-button">
-                              <FontAwesomeIcon icon={faChevronDown} />
-                            </div>
-                          </div>
-                          {isInviteListExpanded && (
-                            <>
-                              <div
-                                className="fixed inset-0 z-[5]"
-                                onClick={() => setIsInviteListExpanded(false)}
-                              />
-                              <div className="absolute top-full left-0 right-0 z-10 mt-1">
-                                <div className="bg-input w-full max-h-[200px] md:max-h-[300px] rounded-xl overflow-y-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] shadow-md">
-                                  {conversations.pages
-                                    .flatMap(
-                                      (c: any) =>
-                                        c.conversations as Conversation[]
-                                    )
-                                    .toReversed()
-                                    .map((c, i) => {
-                                      return (
-                                        <div
-                                          onClick={() => {
-                                            setSelectedUser(c);
-                                            setResolvedUser(undefined);
-                                            setManualAddress('');
-                                            setSuccess(false);
-                                            setIsInviteListExpanded(false);
-                                          }}
-                                          className="py-2 px-2 mx-1 my-1 text-main hover:bg-surface-4 rounded-lg cursor-pointer !font-bold flex flex-row"
-                                          key={
-                                            'group-select-' +
-                                            i +
-                                            '-channel-' +
-                                            i
-                                          }
-                                        >
-                                          <div className="flex flex-col justify-around">
-                                            <div
-                                              className="rounded-full w-[24px] h-[24px] mt-[2px]"
-                                              style={{
-                                                backgroundPosition: 'center',
-                                                backgroundSize: 'cover',
-                                                backgroundImage: `url(${c.icon})`,
-                                              }}
-                                            />
-                                          </div>
-                                          <div className="flex flex-col justify-around pl-2">
-                                            <div>
-                                              {c.displayName}{' '}
-                                              <span className="font-light">
-                                                (
-                                                <span className="hidden md:inline">
-                                                  {c.address}
-                                                </span>
-                                                <span className="md:hidden">
-                                                  {truncateAddress(c.address)}
-                                                </span>
-                                                )
-                                              </span>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      );
-                                    })}
-                                </div>
-                              </div>
-                            </>
-                          )}
-                        </div>
+                            }
+                          }}
+                          placeholder={t`Select conversation`}
+                        />
                         <div className="small-caps mt-2">
                           <Trans>Enter Address Manually</Trans>
                         </div>

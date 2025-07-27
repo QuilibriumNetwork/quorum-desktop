@@ -150,7 +150,7 @@
   &__value {
     display: flex;
     align-items: center;
-    gap: 0;
+    gap: 0.25rem; // Smaller gap between icon and text for tighter grouping
     flex: 1;
     text-align: left;
     min-width: 0; // Allow flex item to shrink below content size
@@ -159,8 +159,8 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      flex: 1;
       min-width: 0;
+      flex-shrink: 1; // Allow text to shrink but don't use flex: 1 to avoid expansion
     }
   }
 
@@ -172,7 +172,7 @@
     font-size: 1.125rem;
     line-height: 1;
     flex-shrink: 0;
-    margin-right: 0.5rem;
+    margin-right: 0; // Remove margin since we now use gap in __value
   }
 
   &__option-icon {

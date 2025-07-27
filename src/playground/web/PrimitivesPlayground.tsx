@@ -1389,7 +1389,7 @@ export const PrimitivesPlayground: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {/* Row 1: Advanced Features (all 4 cells) */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm font-medium text-strong mb-2 mt-2 block">
                   Full Width
                 </label>
                 <Select
