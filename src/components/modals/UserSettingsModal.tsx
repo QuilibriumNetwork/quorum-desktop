@@ -680,7 +680,8 @@ const UserSettingsModal: React.FunctionComponent<{
                       <div className="modal-text-label pb-2">{t`Language`}</div>
                       <div className="flex flex-row gap-2 items-center">
                         <select
-                          className="quorum-input w-56 modal-input-select"
+                          className="quorum-input modal-input-select"
+                          style={{ width: '300px' }}
                           value={language}
                           onChange={async (e) => {
                             const selected =

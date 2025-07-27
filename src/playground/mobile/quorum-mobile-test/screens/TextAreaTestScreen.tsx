@@ -104,9 +104,29 @@ export const TextAreaTestScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Onboarding Variant */}
+        {/* TextArea Variants */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Onboarding Variant</Text>
+          <Text style={styles.sectionTitle}>TextArea Variants</Text>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Filled (Default):</Text>
+            <TextArea placeholder="Default filled style..." rows={4} />
+            <Text style={styles.infoText}>
+              Filled background, accent border on focus
+            </Text>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Bordered Variant:</Text>
+            <TextArea
+              variant="bordered"
+              placeholder="Bordered textarea style..."
+              rows={4}
+            />
+            <Text style={styles.infoText}>
+              Traditional bordered style (explicit variant)
+            </Text>
+          </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>
@@ -118,7 +138,7 @@ export const TextAreaTestScreen: React.FC = () => {
               rows={4}
             />
             <Text style={styles.infoText}>
-              Rounded corners with accent colors
+              Rounded corners with brand blue colors
             </Text>
           </View>
 

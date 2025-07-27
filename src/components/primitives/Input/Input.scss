@@ -5,40 +5,97 @@
 }
 
 .quorum-input {
+  // Default filled style (matches Select default)
   background-color: var(--color-field-bg);
+  border: 1px solid transparent;
   border-radius: 0.5rem;
   padding: 10px 16px;
   height: 42px;
   font-size: 16px;
   margin: 0px;
-  border: 1px solid var(--color-field-border);
   color: var(--color-field-text);
   outline: 0px none;
   width: 100%;
   box-sizing: border-box;
+  transition: all 0.15s ease-in-out;
 
   &::placeholder {
     color: var(--color-field-placeholder);
   }
 
-  &:focus {
-    border-color: var(--color-field-border-focus);
+  &:hover:not(:disabled):not(:focus) {
     background-color: var(--color-field-bg-focus);
-    box-shadow: 0 0 0 2px var(--color-field-focus-shadow);
+    border-color: transparent; // Keep border transparent on hover only when not focused
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-field-border-focus) !important; // Show accent border on focus, override hover
+    background-color: var(--color-field-bg-focus);
+    box-shadow: 0 0 0 3px var(--color-field-focus-shadow); // Keep focus glow
   }
 
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+    background-color: var(--color-field-bg) !important;
+    border-color: transparent !important;
+    
+    &:hover {
+      background-color: var(--color-field-bg) !important;
+      border-color: transparent !important;
+    }
+    
+    &:focus {
+      border-color: transparent !important;
+      box-shadow: none !important;
+    }
   }
 
+  // Bordered variant (explicit bordered style)
+  &--bordered {
+    background-color: var(--color-field-bg); // Same bg as default
+    border-color: var(--color-field-border);
+
+    &:hover:not(:disabled):not(:focus) {
+      border-color: var(--color-field-border-hover);
+      background-color: var(--color-field-bg-focus); // Same bg as default
+    }
+
+    &:focus {
+      border-color: var(--color-field-border-focus) !important; // Override hover state
+      background-color: var(--color-field-bg-focus); // Same bg as default
+      box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
+    }
+
+    &:disabled {
+      border-color: var(--color-field-border) !important;
+      background-color: var(--color-field-bg) !important; // Same bg as default
+      
+      &:hover {
+        border-color: var(--color-field-border) !important;
+        background-color: var(--color-field-bg) !important; // Same bg as default
+      }
+      
+      &:focus {
+        border-color: var(--color-field-border) !important;
+        box-shadow: none !important;
+      }
+    }
+  }
+
+  // Error state - must come after variants for proper specificity
   &.error {
-    border-color: var(--color-field-border-error);
-  }
+    border-color: var(--danger-hex) !important;
 
-  &.error:focus {
-    border-color: var(--color-field-border-error);
-    box-shadow: 0 0 0 2px var(--color-field-error-focus-shadow);
+    &:focus {
+      border-color: var(--danger-hex) !important;
+      box-shadow: 0 0 0 3px var(--color-field-error-focus-shadow);
+    }
+
+    &:hover:not(:disabled) {
+      border-color: var(--danger-hex) !important;
+    }
   }
 
   &.no-focus-style:focus {
@@ -47,14 +104,86 @@
   }
 
   &.no-focus-style.error:focus {
-    border-color: var(--color-field-border-error);
+    border-color: var(--danger-hex);
+    box-shadow: none;
+  }
+}
+
+.onboarding-input {
+  // Onboarding style with hardcoded brand blue colors
+  background-color: #ffffff !important;
+  border: 1px solid transparent;
+  border-radius: 9999px; // Full pill shape
+  padding: 10px 16px;
+  height: 42px;
+  font-size: 16px;
+  margin: 0px;
+  color: #034081; // Brand blue-700 for text
+  outline: 0px none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.15s ease-in-out;
+
+  &::placeholder {
+    color: #6fc3ff; // Brand blue-200 for placeholder
+    opacity: 1;
+  }
+
+  &:hover:not(:disabled):not(:focus) {
+    background-color: #ffffff !important;
+    border-color: transparent;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #3aa9f8 !important; // Brand blue-400 for focus border, override hover
+    background-color: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(58, 169, 248, 0.1); // Brand blue focus shadow
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: #ffffff !important;
+    border-color: transparent !important;
+    
+    &:hover {
+      background-color: #ffffff !important;
+      border-color: transparent !important;
+    }
+    
+    &:focus {
+      border-color: transparent !important;
+      box-shadow: none !important;
+    }
+  }
+
+  &.error {
+    border-color: var(--danger-hex) !important;
+
+    &:focus {
+      border-color: var(--danger-hex) !important;
+      box-shadow: 0 0 0 3px var(--color-field-error-focus-shadow);
+    }
+
+    &:hover:not(:disabled) {
+      border-color: var(--danger-hex) !important;
+    }
+  }
+
+  &.no-focus-style:focus {
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  &.no-focus-style.error:focus {
+    border-color: var(--danger-hex);
     box-shadow: none;
   }
 }
 
 .input-error-message {
-  font-size: 14px;
-  color: var(--color-field-border-error);
-  margin-top: 4px;
-  padding-left: 4px;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-text-danger);
 }

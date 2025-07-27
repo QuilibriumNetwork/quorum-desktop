@@ -6,7 +6,7 @@ export const Input: React.FC<InputProps> = ({
   value,
   placeholder,
   onChange,
-  variant = 'default',
+  variant = 'filled',
   onBlur,
   onFocus,
   type = 'text',
@@ -35,6 +35,7 @@ export const Input: React.FC<InputProps> = ({
 
   const classes = clsx(
     variant === 'onboarding' ? 'onboarding-input' : 'quorum-input',
+    variant === 'bordered' && 'quorum-input--bordered',
     error && 'error',
     noFocusStyle && 'no-focus-style',
     className

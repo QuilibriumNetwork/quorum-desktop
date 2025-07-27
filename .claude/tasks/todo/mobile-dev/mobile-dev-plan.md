@@ -665,28 +665,43 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 
 **Strategy**: Rename → Import → Test → Remove → Next component
 
-#### Step 1: Button Component Replacement
-- [ ] **Rename old component**: `Button.jsx` → `Button-OLD.jsx` 
-- [ ] **Update imports**: Change imports to use `import { Button } from '@/components/primitives'`
-- [ ] **Test thoroughly**:
-  - [ ] App builds successfully
-  - [ ] All buttons render correctly
-  - [ ] Button clicks work (navigation, forms, modals)
-  - [ ] Button styles look identical to before
-- [ ] **If tests pass**: Delete `Button-OLD.jsx` (as well as any .scss file connected ot it if it's not needed anymore)
-- [ ] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
+#### Step 1: Button Component Replacement ✅ **COMPLETED**
+- [x] **Rename old component**: `Button.jsx` → `Button-OLD.jsx` 
+- [x] **Update imports**: Change imports to use `import { Button } from '@/components/primitives'`
+- [x] **Test thoroughly**:
+  - [x] App builds successfully
+  - [x] All buttons render correctly
+  - [x] Button clicks work (navigation, forms, modals)
+  - [x] Button styles look identical to before
+- [x] **If tests pass**: Delete `Button-OLD.jsx` (as well as any .scss file connected ot it if it's not needed anymore)
+- [x] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
 
-#### Step 2: Input Component Replacement
-- [ ] **Rename old component**: `Input.tsx` → `Input-OLD.tsx`
-- [ ] **Update imports**: Change imports to use `import { Input } from '@/components/primitives'`
+#### Step 2: Input Component Replacement ✅ **COMPLETED** 
+- [x] **Rename old component**: `Input.tsx` → `Input-OLD.tsx`
+- [x] **Update imports**: Change imports to use `import { Input } from '@/components/primitives'`
+- [x] **Test thoroughly**:
+  - [x] All input fields render correctly
+  - [x] Text entry works in all forms
+  - [x] Form submission works
+  - [x] Input validation still works
+  - [x] Placeholder text displays correctly
+- [ ] **If tests pass**: Delete `Input-OLD.tsx`(as well as any .scss file connected ot it if it's not needed anymore) **(PENDING - needs verification)**
+- [x] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
+
+#### Step 2.5: Select Elements Migration
+- [ ] **Search for HTML select elements**: Find all `<select>` elements in the codebase
+- [ ] **Replace with Select primitive**: Update each `<select>` to use `import { Select } from '@/components/primitives'`
 - [ ] **Test thoroughly**:
-  - [ ] All input fields render correctly
-  - [ ] Text entry works in all forms
-  - [ ] Form submission works
-  - [ ] Input validation still works
-  - [ ] Placeholder text displays correctly
-- [ ] **If tests pass**: Delete `Input-OLD.tsx`(as well as any .scss file connected ot it if it's not needed anymore)
-- [ ] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
+  - [ ] All dropdowns render correctly
+  - [ ] Selection functionality works
+  - [ ] Dropdown styling matches design (filled variant by default)
+  - [ ] Dropdown positioning works (top/bottom placement)
+  - [ ] Option selection updates state correctly
+- [ ] **Verify specific cases**:
+  - [ ] Language selector in UserSettingsModal (300px width, opens below)
+  - [ ] Any form selects in modals
+  - [ ] Any navigation or filter selects
+- [ ] **If tests fail**: Revert to HTML select, investigate primitive issues, fix, retry
 
 #### Step 3: Modal Component Replacement
 - [ ] **Rename old component**: `Modal.tsx` → `Modal-OLD.tsx`

@@ -27,7 +27,7 @@
     justify-content: space-between;
     width: 100%;
     padding: 0.5rem 0.75rem;
-    background-color: var(--color-field-bg-filled);
+    background-color: var(--color-field-bg);
     border: 1px solid transparent;
     border-radius: 0.5rem;
     color: var(--color-field-text);
@@ -37,7 +37,7 @@
     transition: all 0.15s ease-in-out;
 
     &:hover:not(:disabled) {
-      background-color: var(--color-field-bg-filled-focus);
+      background-color: var(--color-field-bg-focus);
       border-color: transparent; // Keep border transparent on hover
     }
 
@@ -90,26 +90,27 @@
 
   // Bordered variant (explicit bordered style)
   &--bordered &__trigger {
-    background-color: var(--color-field-bg);
+    background-color: var(--color-field-bg); // Same bg as default
     border-color: var(--color-field-border);
 
     &:hover:not(:disabled) {
       border-color: var(--color-field-border-hover);
-      background-color: var(--color-field-bg-focus);
+      background-color: var(--color-field-bg-focus); // Same bg as default
     }
 
     &:focus {
       border-color: var(--color-field-border-focus);
+      background-color: var(--color-field-bg-focus); // Same bg as default
       box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
     }
 
     &:disabled {
       border-color: var(--color-field-border) !important;
-      background-color: var(--color-field-bg) !important;
+      background-color: var(--color-field-bg) !important; // Same bg as default
       
       &:hover {
         border-color: var(--color-field-border) !important;
-        background-color: var(--color-field-bg) !important;
+        background-color: var(--color-field-bg) !important; // Same bg as default
       }
       
       &:focus {

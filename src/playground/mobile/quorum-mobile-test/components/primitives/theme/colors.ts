@@ -36,6 +36,7 @@ export const themeColors = {
       main: '#363636', // rgb(54 54 54) from CSS
       subtle: '#818181',
       muted: '#b6b6b6',
+      danger: '#e74a4a', // matches --color-text-danger in light theme
     },
 
     // Semantic background colors (matches CSS --color-bg-* variables)
@@ -82,15 +83,13 @@ export const themeColors = {
       info: 'rgb(48, 149, 189)',
     },
 
-    // === MOBILE-SPECIFIC FIELD COLORS (DO NOT SYNC) ===
+    // === MOBILE-SPECIFIC FIELD COLORS (DO NOT SYNC WITH WEB APP COLORS) ===
     // Optimized for mobile modal backgrounds (surface-1: #f6f6f9)
     field: {
       // Background colors - need good contrast on surface-1
-      bg: '#e6e6eb', // surface-3 - provides visible contrast on surface-1
-      bgFocus: '#eeeef3', // surface-2 - lighter focus state
-      bgFilled: '#eeeef3', // surface-2 - filled variant
-      bgFilledFocus: '#f6f6f9', // surface-1 - subtle filled focus
-      bgError: '#e6e6eb', // surface-3 - same as default
+      bg: '#eeeef3', // surface-2 - provides visible contrast on surface-1
+      bgFocus: '#f6f6f9', // surface-1 - lighter focus state
+      bgError: '#eeeef3', // surface-2 - same as default
 
       // Border colors - lighter borders for surface-1 background
       border: '#cdccd3', // surface-6 - visible but not too strong
@@ -138,6 +137,7 @@ export const themeColors = {
       main: '#f4f1f6', // rgb(244 241 246) from CSS
       subtle: '#bfb5c8',
       muted: '#84788b',
+      danger: '#c73737', // matches --color-text-danger in dark theme
     },
 
     // Dark theme semantic backgrounds
@@ -188,11 +188,9 @@ export const themeColors = {
     // Optimized for mobile modal backgrounds (surface-1: #241f27)
     field: {
       // Background colors - need good contrast on dark surface-1
-      bg: '#312935', // surface-3 - provides visible contrast on dark surface-1
-      bgFocus: '#2c252e', // surface-2 - lighter focus state
-      bgFilled: '#2c252e', // surface-2 - filled variant
-      bgFilledFocus: '#241f27', // surface-1 - subtle filled focus
-      bgError: '#312935', // surface-3 - same as default
+      bg: '#2c252e', // surface-2 - provides visible contrast on dark surface-1
+      bgFocus: '#241f27', // surface-1 - lighter focus state
+      bgError: '#2c252e', // surface-2 - same as default
 
       // Border colors - need visibility on dark surface-1 background
       border: '#584d5e', // surface-6 - visible on dark background

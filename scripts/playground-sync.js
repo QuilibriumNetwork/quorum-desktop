@@ -29,8 +29,7 @@ const colors = {
 // Files to automatically skip during sync (architectural differences by design)
 const ROUTING_FILES = [
   'index.ts',           // Different export patterns (main: .web, mobile: .native)
-  /^[A-Z]\w+\.tsx$/,    // Component routing files (e.g., Button.tsx, Modal.tsx)
-  'ThemeProvider.tsx'   // Environment-specific setup
+  /^[A-Z]\w+\.tsx$/     // Component routing files (e.g., Button.tsx, Modal.tsx)
 ];
 
 // Check if a file should be skipped due to architectural differences
@@ -313,7 +312,7 @@ function getPrimitiveDirectories(basePath) {
     return items
       .filter(item => item.isDirectory() && !item.name.startsWith('.'))
       .map(item => item.name)
-      .filter(name => name !== 'index.ts' && name !== 'theme');
+      .filter(name => name !== 'index.ts'); // Exclude index file
   } catch (error) {
     return [];
   }

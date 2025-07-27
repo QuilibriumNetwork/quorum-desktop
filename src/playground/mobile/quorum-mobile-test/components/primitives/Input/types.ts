@@ -10,7 +10,7 @@ export interface InputProps {
     | ((value: string) => void)
     | ((e: React.ChangeEvent<HTMLInputElement>) => void);
   /** Input variant */
-  variant?: 'default' | 'onboarding';
+  variant?: 'filled' | 'bordered' | 'onboarding';
   /** Blur handler */
   onBlur?: () => void;
   /** Focus handler */

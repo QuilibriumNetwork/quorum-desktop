@@ -8,7 +8,7 @@ export const Input: React.FC<InputNativeProps> = ({
   value,
   placeholder,
   onChange,
-  variant = 'default',
+  variant = 'filled',
   onBlur,
   onFocus,
   type = 'text',
@@ -50,9 +50,20 @@ export const Input: React.FC<InputNativeProps> = ({
   const containerStyle = [styles.container, style];
 
   const getBorderColor = () => {
-    if (error) return colors.field.borderError;
-    if (isFocused && !noFocusStyle) return colors.field.borderFocus;
-    return colors.field.border;
+    if (error) return colors.utilities.danger;
+    if (isFocused && !noFocusStyle) {
+      if (variant === 'onboarding') return '#3aa9f8'; // Hardcoded brand blue-400
+      return colors.field.borderFocus;
+    }
+    if (variant === 'bordered') return colors.field.border;
+    return 'transparent'; // filled and onboarding variants have transparent border by default
+  };
+
+  const getBackgroundColor = () => {
+    if (variant === 'onboarding') return '#ffffff'; // Always white for onboarding
+    // All variants use the same background colors
+    if (isFocused && !disabled) return colors.field.bgFocus;
+    return colors.field.bg;
   };
 
   const getInputStyles = () => {
@@ -63,8 +74,8 @@ export const Input: React.FC<InputNativeProps> = ({
         ...baseStyles,
         styles.inputOnboarding,
         {
-          backgroundColor: '#ffffff',
-          color: colors.accent[700],
+          backgroundColor: getBackgroundColor(),
+          color: '#034081', // Hardcoded brand blue-700
           borderColor: getBorderColor(),
         },
         error && styles.inputError,
@@ -75,7 +86,7 @@ export const Input: React.FC<InputNativeProps> = ({
     return [
       ...baseStyles,
       {
-        backgroundColor: colors.field.bg,
+        backgroundColor: getBackgroundColor(),
         color: colors.field.text,
         borderColor: getBorderColor(),
       },
@@ -94,7 +105,7 @@ export const Input: React.FC<InputNativeProps> = ({
         placeholder={placeholder}
         placeholderTextColor={
           variant === 'onboarding'
-            ? colors.accent[200]
+            ? '#6fc3ff' // Hardcoded brand blue-200
             : colors.field.placeholder
         }
         onChangeText={onChange}
@@ -117,7 +128,7 @@ export const Input: React.FC<InputNativeProps> = ({
       />
       {error && errorMessage && (
         <Text
-          style={[styles.errorMessage, { color: colors.field.borderError }]}
+          style={[styles.errorMessage, { color: colors.text.danger }]}
           role="alert"
         >
           {errorMessage}
@@ -151,7 +162,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   errorMessage: {
-    fontSize: 14,
+    fontSize: 12,
     marginTop: 4,
     paddingHorizontal: 4,
   },

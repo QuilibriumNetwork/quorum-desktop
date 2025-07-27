@@ -1,23 +1,21 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { TextInput, View, Text, StyleSheet } from 'react-native';
-import { TextAreaNativeProps } from './types';
+import { InputNativeProps } from './types';
 import { useTheme } from '../theme';
 import { getColors } from '../theme/colors';
 
-export const TextArea: React.FC<TextAreaNativeProps> = ({
+export const Input: React.FC<InputNativeProps> = ({
   value,
   placeholder,
   onChange,
   variant = 'filled',
   onBlur,
   onFocus,
-  rows = 3,
-  minRows = 1,
-  maxRows = 10,
-  autoResize = false,
-  returnKeyType = 'default',
+  type = 'text',
+  keyboardType = 'default',
+  returnKeyType = 'done',
   autoComplete = 'off',
-  multiline = true,
+  secureTextEntry = false,
   error = false,
   errorMessage,
   disabled = false,
@@ -29,11 +27,27 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
 }) => {
   const theme = useTheme();
   const colors = getColors(theme.mode, theme.accentColor);
-  const [isFocused, setIsFocused] = useState(false);
-  const [textAreaHeight, setTextAreaHeight] = useState<number | undefined>(
-    undefined
-  );
-  const textInputRef = useRef<TextInput>(null);
+  const [isFocused, setIsFocused] = React.useState(false);
+
+  // Map type to keyboardType if not explicitly provided
+  const getKeyboardType = () => {
+    if (keyboardType !== 'default') return keyboardType;
+
+    switch (type) {
+      case 'email':
+        return 'email-address';
+      case 'number':
+        return 'numeric';
+      case 'tel':
+        return 'phone-pad';
+      case 'url':
+        return 'url';
+      default:
+        return 'default';
+    }
+  };
+
+  const containerStyle = [styles.container, style];
 
   const getBorderColor = () => {
     if (error) return colors.utilities.danger;
@@ -47,49 +61,30 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
 
   const getBackgroundColor = () => {
     if (variant === 'onboarding') return '#ffffff'; // Always white for onboarding
-    // All variants use the same background colors
-    if (isFocused && !disabled) return colors.field.bgFocus;
-    return colors.field.bg;
-  };
-
-  // Auto-resize functionality for React Native
-  const handleContentSizeChange = (event: any) => {
-    if (autoResize) {
-      const { height } = event.nativeEvent.contentSize;
-      const lineHeight = 20; // Line height for React Native
-      const paddingHeight = 20; // Top + bottom padding
-
-      const minHeight = (minRows || 1) * lineHeight + paddingHeight;
-      const maxHeight = (maxRows || 10) * lineHeight + paddingHeight;
-
-      const newHeight = Math.max(
-        minHeight,
-        Math.min(maxHeight, height + paddingHeight)
-      );
-      setTextAreaHeight(newHeight);
+    if (variant === 'bordered') {
+      // Bordered: different background on focus (like web hover->focus)
+      if (isFocused && !disabled) return colors.field.bgFocus;
+      return colors.field.bg;
     }
+    // Filled variant (default): like web, background changes subtly on focus
+    if (isFocused && !disabled) return colors.field.bgFilledFocus;
+    return colors.field.bgFilled;
   };
 
-  const getTextAreaStyles = () => {
-    const baseStyles = [styles.textArea];
-
-    // Calculate height based on rows if not auto-resizing
-    const calculatedHeight = autoResize
-      ? textAreaHeight
-      : Math.max(rows || 3, 1) * 20 + 20; // 20px line height + padding
+  const getInputStyles = () => {
+    const baseStyles = [styles.input];
 
     if (variant === 'onboarding') {
       return [
         ...baseStyles,
-        styles.textAreaOnboarding,
+        styles.inputOnboarding,
         {
           backgroundColor: getBackgroundColor(),
           color: '#034081', // Hardcoded brand blue-700
           borderColor: getBorderColor(),
-          height: calculatedHeight,
         },
-        error && styles.textAreaError,
-        disabled && styles.textAreaDisabled,
+        error && styles.inputError,
+        disabled && styles.inputDisabled,
       ];
     }
 
@@ -99,22 +94,18 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
         backgroundColor: getBackgroundColor(),
         color: colors.field.text,
         borderColor: getBorderColor(),
-        height: calculatedHeight,
       },
-      error && styles.textAreaError,
-      disabled && styles.textAreaDisabled,
+      error && styles.inputError,
+      disabled && styles.inputDisabled,
     ];
   };
 
-  const containerStyle = [styles.container, style];
-
-  const textAreaStyle = getTextAreaStyles();
+  const inputStyle = getInputStyles();
 
   return (
     <View style={containerStyle}>
       <TextInput
-        ref={textInputRef}
-        style={textAreaStyle}
+        style={inputStyle}
         value={value}
         placeholder={placeholder}
         placeholderTextColor={
@@ -131,15 +122,14 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
           setIsFocused(true);
           onFocus?.();
         }}
-        onContentSizeChange={handleContentSizeChange}
+        keyboardType={getKeyboardType()}
         returnKeyType={returnKeyType}
         autoComplete={autoComplete}
-        multiline={multiline}
+        secureTextEntry={secureTextEntry || type === 'password'}
         editable={!disabled}
         autoFocus={autoFocus}
         testID={testID}
         accessibilityLabel={accessibilityLabel}
-        textAlignVertical="top" // Start text at top for multiline
       />
       {error && errorMessage && (
         <Text
@@ -157,23 +147,23 @@ const styles = StyleSheet.create({
   container: {
     // No additional container styling needed
   },
-  textArea: {
+  input: {
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 10,
+    height: 42,
     fontSize: 16,
     borderWidth: 1,
     borderColor: 'transparent',
-    textAlignVertical: 'top',
   },
-  textAreaOnboarding: {
-    borderRadius: 16, // More rounded for onboarding
+  inputOnboarding: {
+    borderRadius: 9999, // full pill shape like CSS border-radius: 9999px
   },
-  textAreaError: {
+  inputError: {
     borderWidth: 1,
     // borderColor set dynamically from theme
   },
-  textAreaDisabled: {
+  inputDisabled: {
     opacity: 0.6,
   },
   errorMessage: {

@@ -47,9 +47,14 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
 
   const getBackgroundColor = () => {
     if (variant === 'onboarding') return '#ffffff'; // Always white for onboarding
-    // All variants use the same background colors
-    if (isFocused && !disabled) return colors.field.bgFocus;
-    return colors.field.bg;
+    if (variant === 'bordered') {
+      // Bordered: different background on focus (like web hover->focus)
+      if (isFocused && !disabled) return colors.field.bgFocus;
+      return colors.field.bg;
+    }
+    // Filled variant (default): like web, background changes subtly on focus
+    if (isFocused && !disabled) return colors.field.bgFilledFocus;
+    return colors.field.bgFilled;
   };
 
   // Auto-resize functionality for React Native

@@ -11,6 +11,7 @@ export { default as Button } from './Button';
 export { default as Modal } from './Modal';
 export { Input } from './Input';
 export { TextArea } from './TextArea';
+export { default as Select } from './Select';
 export { Switch } from './Switch';
 export { ColorSwatch } from './ColorSwatch';
 export { RadioGroup } from './RadioGroup';
@@ -31,6 +32,7 @@ export type { ButtonProps } from './Button';
 export type { ModalProps } from './Modal';
 export type { InputProps, InputNativeProps } from './Input';
 export type { TextAreaProps, TextAreaNativeProps } from './TextArea';
+export type { BaseSelectProps as SelectProps, WebSelectProps, NativeSelectProps } from './Select';
 export type { SwitchProps, BaseSwitchProps } from './Switch';
 export type {
   ColorSwatchProps,

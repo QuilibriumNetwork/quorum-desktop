@@ -88,7 +88,7 @@ const Select: React.FC<NativeSelectProps> = ({
       case 'filled':
       default:
         return {
-          backgroundColor: colors.field.bgFilled,
+          backgroundColor: colors.field.bg,
           borderColor: 'transparent',
         };
     }

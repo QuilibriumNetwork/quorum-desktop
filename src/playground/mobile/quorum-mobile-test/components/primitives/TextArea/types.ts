@@ -10,7 +10,7 @@ export interface TextAreaProps {
     | ((value: string) => void)
     | ((e: React.ChangeEvent<HTMLTextAreaElement>) => void);
   /** TextArea variant */
-  variant?: 'default' | 'onboarding';
+  variant?: 'filled' | 'bordered' | 'onboarding';
   /** Blur handler */
   onBlur?: () => void;
   /** Focus handler */

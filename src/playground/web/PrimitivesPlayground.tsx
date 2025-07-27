@@ -940,13 +940,26 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
             </div>
 
-            {/* Onboarding Variant */}
+            {/* Input Variants */}
             <div className="space-y-3">
               <h3 className="text-lg font-medium text-strong">
-                Onboarding Variant
+                Input Variants
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-strong">
+                    Bordered Variant:
+                  </label>
+                  <Input
+                    variant="bordered"
+                    placeholder="Bordered input style"
+                  />
+                  <p className="text-xs text-subtle">
+                    Traditional bordered style (explicit variant)
+                  </p>
+                </div>
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-strong">
                     Onboarding Style:
@@ -1121,13 +1134,27 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
             </div>
 
-            {/* Onboarding Variant */}
+            {/* TextArea Variants */}
             <div className="space-y-3">
               <h3 className="text-lg font-medium text-strong">
-                Onboarding Variant
+                TextArea Variants
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-strong">
+                    Bordered Variant:
+                  </label>
+                  <TextArea
+                    variant="bordered"
+                    placeholder="Bordered textarea style..."
+                    rows={4}
+                  />
+                  <p className="text-xs text-subtle">
+                    Traditional bordered style (explicit variant)
+                  </p>
+                </div>
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-strong">
                     Onboarding Style:

@@ -6,7 +6,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
   value,
   placeholder,
   onChange,
-  variant = 'default',
+  variant = 'filled',
   onBlur,
   onFocus,
   rows = 3,
@@ -70,6 +70,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
   const classes = clsx(
     'textarea-container',
     variant === 'onboarding' ? 'onboarding-textarea' : 'quorum-textarea',
+    variant === 'bordered' && 'quorum-textarea--bordered',
     error && 'error',
     noFocusStyle && 'no-focus-style',
     !resize && 'no-resize',

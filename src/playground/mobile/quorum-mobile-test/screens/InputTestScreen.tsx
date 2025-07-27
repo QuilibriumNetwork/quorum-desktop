@@ -102,15 +102,31 @@ export const InputTestScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Onboarding Variant */}
+        {/* Input Variants */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Onboarding Variant</Text>
+          <Text style={styles.sectionTitle}>Input Variants</Text>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Filled (Default):</Text>
+            <Input placeholder="Default filled style" />
+            <Text style={styles.infoText}>
+              Filled background, accent border on focus
+            </Text>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Bordered Variant:</Text>
+            <Input variant="bordered" placeholder="Bordered input style" />
+            <Text style={styles.infoText}>
+              Traditional bordered style (explicit variant)
+            </Text>
+          </View>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Onboarding Style (pill shape):</Text>
             <Input variant="onboarding" placeholder="Bongocat" />
             <Text style={styles.infoText}>
-              Full pill shape with accent colors
+              Full pill shape with brand blue colors
             </Text>
           </View>
         </View>
