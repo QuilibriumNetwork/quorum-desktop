@@ -14,18 +14,19 @@ import { useTheme } from '../theme';
 import { getColors } from '../theme/colors';
 import { Icon } from '../Icon';
 import { isValidIconName } from '../Icon/iconMapping';
+import { t } from '@lingui/core/macro';
 
 const Select: React.FC<NativeSelectProps> = ({
   value,
   options,
   onChange,
-  placeholder = 'Select an option',
+  placeholder = t`Select an option`,
   disabled = false,
   error = false,
   errorMessage,
   style,
   size = 'medium',
-  variant = 'default',
+  variant = 'filled',
   fullWidth = false,
   width,
   testID,
@@ -79,15 +80,16 @@ const Select: React.FC<NativeSelectProps> = ({
 
   const getVariantStyles = () => {
     switch (variant) {
-      case 'filled':
-        return {
-          backgroundColor: colors.field.bgFilled,
-          borderColor: 'transparent',
-        };
-      default:
+      case 'bordered':
         return {
           backgroundColor: colors.field.bg,
           borderColor: colors.field.border,
+        };
+      case 'filled':
+      default:
+        return {
+          backgroundColor: colors.field.bgFilled,
+          borderColor: 'transparent',
         };
     }
   };
@@ -156,7 +158,7 @@ const Select: React.FC<NativeSelectProps> = ({
 
       {error && errorMessage && (
         <Text
-          style={[styles.errorMessage, { color: colors.field.borderError }]}
+          style={[styles.errorMessage, { color: colors.text.danger }]}
         >
           {errorMessage}
         </Text>

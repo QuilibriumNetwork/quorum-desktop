@@ -7,8 +7,8 @@ import {
 import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import Button from '../Button';
-import Input from '../Input';
+import { Button } from '../primitives';
+import { Input } from '../primitives';
 import UserOnlineStateIndicator from './UserOnlineStateIndicator';
 import ClickToCopyContent from '../ClickToCopyContent';
 import './UserProfile.scss';

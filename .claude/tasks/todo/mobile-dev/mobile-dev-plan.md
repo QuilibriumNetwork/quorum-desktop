@@ -673,7 +673,7 @@ See `third-party-component-migration-report.md` for detailed implementation stra
   - [ ] All buttons render correctly
   - [ ] Button clicks work (navigation, forms, modals)
   - [ ] Button styles look identical to before
-- [ ] **If tests pass**: Delete `Button-OLD.jsx`
+- [ ] **If tests pass**: Delete `Button-OLD.jsx` (as well as any .scss file connected ot it if it's not needed anymore)
 - [ ] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
 
 #### Step 2: Input Component Replacement
@@ -685,7 +685,7 @@ See `third-party-component-migration-report.md` for detailed implementation stra
   - [ ] Form submission works
   - [ ] Input validation still works
   - [ ] Placeholder text displays correctly
-- [ ] **If tests pass**: Delete `Input-OLD.tsx`
+- [ ] **If tests pass**: Delete `Input-OLD.tsx`(as well as any .scss file connected ot it if it's not needed anymore)
 - [ ] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
 
 #### Step 3: Modal Component Replacement
@@ -698,7 +698,7 @@ See `third-party-component-migration-report.md` for detailed implementation stra
   - [ ] Modal animations work
   - [ ] Modal content displays correctly
   - [ ] Focus handling works properly
-- [ ] **If tests pass**: Delete `Modal-OLD.tsx`
+- [ ] **If tests pass**: Delete `Modal-OLD.tsx` (as well as any .scss file connected ot it if it's not needed anymore)
 - [ ] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
 
 #### Step 4: Cleanup Remaining Conflicts

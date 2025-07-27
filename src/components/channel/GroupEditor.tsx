@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Button from '../Button';
+import { Button } from '../primitives';
 import '../../styles/_modal_common.scss';
 import { useSpace } from '../../hooks';
 import { useMessageDB } from '../context/MessageDB';

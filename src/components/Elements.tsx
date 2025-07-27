@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ThemeRadioGroup from './ThemeRadioGroup';
 import AccentColorSwitcher from './AccentColorSwitcher';
-import Button from './Button';
+import { Button } from './primitives';
 import ToggleSwitch from './ToggleSwitch';
 import ReactTooltip from './ReactTooltip';
 

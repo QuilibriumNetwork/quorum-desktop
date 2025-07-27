@@ -50,6 +50,8 @@ const dryRun = args.includes('--dry-run');
 const all = args.includes('--all');
 const force = args.includes('--force');
 const noBackup = args.includes('--no-backup');
+const ignoreLingui = !args.includes('--force-lingui'); // Default: ignore Lingui differences
+const forceLingui = args.includes('--force-lingui');
 
 // Get specific components from args
 const components = args.filter(arg => !arg.startsWith('--'));
@@ -58,6 +60,7 @@ const components = args.filter(arg => !arg.startsWith('--'));
 if (!toPlayground && !fromPlayground && !interactive && !syncNewer) {
   console.error(`${colors.red}Error: You must specify a sync direction${colors.reset}`);
   console.error('Use --to-playground, --from-playground, --sync-newer, or --interactive');
+  console.error(`${colors.dim}Optional flags: --force-lingui (sync Lingui-equivalent files), --dry-run, --no-backup${colors.reset}`);
   process.exit(1);
 }
 
@@ -174,6 +177,38 @@ function adjustImportPaths(content, fromPlayground) {
   return content;
 }
 
+function normalizeLinguiContent(content) {
+  // Normalize Lingui imports and usage for comparison
+  // This allows detecting when files are functionally identical except for Lingui vs hardcoded strings
+  
+  let normalized = content;
+  
+  // Remove Lingui import lines
+  normalized = normalized.replace(/import\s+\{\s*t\s*\}\s+from\s+['"]@lingui\/core\/macro['"];\s*\n?/g, '');
+  normalized = normalized.replace(/import\s+\{\s*Trans\s*\}\s+from\s+['"]@lingui\/react\/macro['"];\s*\n?/g, '');
+  
+  // Convert Lingui template literals to regular strings
+  // Handle t`text` -> 'text'
+  normalized = normalized.replace(/t`([^`]*)`/g, "'$1'");
+  
+  // Handle t`text ${variable}` -> 'text ' + variable (simplified)
+  normalized = normalized.replace(/t`([^`]*\$\{[^}]+\}[^`]*)`/g, (match, content) => {
+    // For complex interpolations, just replace with a placeholder
+    return "'[INTERPOLATED_TEXT]'";
+  });
+  
+  // Remove playground-specific comments
+  normalized = normalized.replace(/\/\/ Playground-specific: Skip Lingui for demo purposes\s*\n\/\/ Real mobile app will use full Lingui integration\s*\n?/g, '');
+  
+  // Remove empty lines that might be left after import removal
+  normalized = normalized.replace(/\n\s*\n\s*\n/g, '\n\n');
+  
+  // Remove leading/trailing whitespace for consistent comparison
+  normalized = normalized.trim();
+  
+  return normalized;
+}
+
 function getFileTimestamp(filePath) {
   try {
     const stats = fs.statSync(filePath);
@@ -192,6 +227,35 @@ function determineNewerFile(mainPath, playgroundPath) {
   if (!playgroundTime) return 'main';
   
   return mainTime > playgroundTime ? 'main' : 'playground';
+}
+
+function compareFilesLinguiAware(mainPath, playgroundPath) {
+  // Compare files with Lingui awareness
+  // Returns: 'identical', 'lingui-equivalent', 'different', or 'missing'
+  
+  try {
+    const mainExists = fs.existsSync(mainPath);
+    const playgroundExists = fs.existsSync(playgroundPath);
+    
+    if (!mainExists && !playgroundExists) return 'missing';
+    if (!mainExists || !playgroundExists) return 'different';
+    
+    const mainContent = fs.readFileSync(mainPath, 'utf8');
+    const playgroundContent = fs.readFileSync(playgroundPath, 'utf8');
+    
+    // First check if they're identical
+    if (mainContent === playgroundContent) return 'identical';
+    
+    // Check if they're Lingui-equivalent (same after normalization)
+    const mainNormalized = normalizeLinguiContent(mainContent);
+    const playgroundNormalized = normalizeLinguiContent(playgroundContent);
+    
+    if (mainNormalized === playgroundNormalized) return 'lingui-equivalent';
+    
+    return 'different';
+  } catch (error) {
+    return 'different';
+  }
 }
 
 function syncFile(sourcePath, destPath, direction) {
@@ -363,6 +427,25 @@ async function syncComponentByNewerFiles(componentName, mainComponentPath, playg
     const mainFile = path.join(mainComponentPath, file);
     const playgroundFile = path.join(playgroundComponentPath, file);
     
+    // Check Lingui-aware file comparison first
+    const comparison = compareFilesLinguiAware(mainFile, playgroundFile);
+    
+    if (comparison === 'identical') {
+      console.log(`  ${colors.green}✓${colors.reset} ${file} ${colors.dim}(identical)${colors.reset}`);
+      continue;
+    }
+    
+    if (comparison === 'lingui-equivalent' && ignoreLingui) {
+      console.log(`  ${colors.green}≈${colors.reset} ${file} ${colors.dim}(Lingui-equivalent, skipped)${colors.reset}`);
+      continue;
+    }
+    
+    if (comparison === 'missing') {
+      console.log(`  ${colors.dim}Skipping ${file} (file not found in either location)${colors.reset}`);
+      continue;
+    }
+    
+    // Determine which file is newer for sync direction
     const newerLocation = determineNewerFile(mainFile, playgroundFile);
     
     if (!newerLocation) {
@@ -370,14 +453,17 @@ async function syncComponentByNewerFiles(componentName, mainComponentPath, playg
       continue;
     }
     
+    // Show file status in sync messages
+    const statusSuffix = comparison === 'lingui-equivalent' ? ' (Lingui-equivalent)' : '';
+    
     if (newerLocation === 'main') {
-      console.log(`  ${colors.cyan}→${colors.reset} ${file} ${colors.dim}(main app → playground)${colors.reset}`);
+      console.log(`  ${colors.cyan}→${colors.reset} ${file} ${colors.dim}(main app → playground)${statusSuffix}${colors.reset}`);
       if (syncFile(mainFile, playgroundFile, 'to-playground')) {
         syncedCount++;
         mainToPlayground++;
       }
     } else {
-      console.log(`  ${colors.cyan}←${colors.reset} ${file} ${colors.dim}(playground → main app)${colors.reset}`);
+      console.log(`  ${colors.cyan}←${colors.reset} ${file} ${colors.dim}(playground → main app)${statusSuffix}${colors.reset}`);
       if (syncFile(playgroundFile, mainFile, 'from-playground')) {
         syncedCount++;
         playgroundToMain++;
@@ -468,6 +554,12 @@ async function main() {
   // Summary
   console.log(`\n${colors.blue}📊 Summary${colors.reset}`);
   console.log(`${colors.green}Components synced:${colors.reset} ${totalSynced}`);
+  
+  if (ignoreLingui) {
+    console.log(`${colors.dim}Lingui awareness: Enabled (Lingui-equivalent files skipped by default)${colors.reset}`);
+  } else {
+    console.log(`${colors.dim}Lingui awareness: Disabled (--force-lingui used)${colors.reset}`);
+  }
   
   if (totalSynced > 0 && !dryRun) {
     console.log(`\n${colors.yellow}💡 Don't forget to:${colors.reset}`);

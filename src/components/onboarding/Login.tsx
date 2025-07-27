@@ -4,7 +4,7 @@ import {
   usePasskeysContext,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import '../../styles/_passkey-modal.scss';
-import Button from '../Button';
+import { Button } from '../primitives';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
 import { t } from '@lingui/core/macro';

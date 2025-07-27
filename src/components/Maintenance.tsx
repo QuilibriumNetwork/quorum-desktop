@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from './Button';
+import { Button } from './primitives';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTools } from '@fortawesome/free-solid-svg-icons';
 import { Trans } from '@lingui/react/macro';

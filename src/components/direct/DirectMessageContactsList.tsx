@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { useConversations } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
-import Button from '../Button';
+import { Button } from '../primitives';
 import { useModalContext } from '../AppWithSearch';
 
 const DirectMessageContactsList: React.FC<{}> = ({}) => {

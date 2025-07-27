@@ -21,7 +21,7 @@ import {
 
 import { useMessageDB } from '../context/MessageDB';
 import '../../styles/_modal_common.scss';
-import Button from '../Button';
+import { Button } from '../primitives';
 import { useConversations, useRegistration, useSpace } from '../../hooks';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
 import {
@@ -33,7 +33,7 @@ import {
   Conversation,
 } from '../../api/quorumApi';
 import ToggleSwitch from '../ToggleSwitch';
-import Input from '../Input';
+import { Input } from '../primitives';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { Loading } from '../Loading';

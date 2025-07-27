@@ -139,20 +139,19 @@ export const SelectTestScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>Select Variants</Text>
 
           <View style={styles.subSection}>
-            <Text style={styles.label}>Default (Bordered)</Text>
+            <Text style={styles.label}>Bordered</Text>
             <Select
-              variant="default"
+              variant="bordered"
               value={variantTestValue}
               onChange={setVariantTestValue}
-              placeholder="Default style"
+              placeholder="Bordered style"
               options={basicOptions}
             />
           </View>
 
           <View style={styles.subSection}>
-            <Text style={styles.label}>Filled</Text>
+            <Text style={styles.label}>Filled (Default)</Text>
             <Select
-              variant="filled"
               value={variantTestValue}
               onChange={setVariantTestValue}
               placeholder="Filled style"

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import Button from '../Button';
+import { Button } from '../primitives';
 import {
   PasskeyModal,
   usePasskeysContext,
   passkey,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import '../../styles/_passkey-modal.scss';
-import Input from '../Input';
+import { Input } from '../primitives';
 import { useDropzone } from 'react-dropzone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileImage, faCircleInfo } from '@fortawesome/free-solid-svg-icons';

@@ -251,6 +251,9 @@ yarn playground:sync --dry-run --sync-newer --all
 
 # Sync without creating backups (faster, but no safety net)
 yarn playground:sync --to-playground Button --no-backup
+
+# Force sync even Lingui-equivalent files (when main app uses Lingui, playground uses hardcoded strings)
+yarn playground:sync --to-playground --all --force-lingui
 ```
 
 ### Sync Safety Features
@@ -261,6 +264,7 @@ yarn playground:sync --to-playground Button --no-backup
 - **Import path adjustment**: Automatically fixes import paths between environments
 - **File-by-file control**: Skip specific files with interactive mode
 - **Backup management**: `--no-backup` flag to disable backups entirely
+- **Lingui awareness**: Intelligently handles localization differences between main app and playground
 
 ### Backup Management
 
@@ -276,6 +280,29 @@ yarn playground:cleanup --all
 
 # See what would be deleted without actually deleting
 yarn playground:cleanup --dry-run --all
+```
+
+### Lingui Awareness
+
+The sync system intelligently handles differences between Lingui localization (main app) and hardcoded strings (playground):
+
+**File Comparison Types:**
+- `✓ Component (in sync)` - Files are identical
+- `≈ Component (Lingui-equivalent)` - Files differ only in Lingui vs hardcoded strings
+- `✗ Component (out of sync)` - Files have meaningful differences
+
+**Default Behavior:**
+- Lingui-equivalent files are **skipped** by default (considered in-sync)
+- Only truly different files are synced
+- Use `--force-lingui` to sync even Lingui-equivalent files
+
+**Examples:**
+```bash
+# Default: Skip Lingui-equivalent files (recommended)
+yarn playground:sync --sync-newer --all
+
+# Force sync Lingui-equivalent files
+yarn playground:sync --sync-newer --all --force-lingui
 ```
 
 ### When to Sync
@@ -303,6 +330,12 @@ A: Each sync creates timestamped `.backup-YYYY-MM-DD` files. You can restore fro
 
 **Q: Should I use --sync-newer for mixed scenarios?**  
 A: Yes! `--sync-newer` automatically copies each file from whichever location is newer, perfect when some main app components are newer and some playground components are newer.
+
+**Q: Why does my component show as "Lingui-equivalent" instead of "out of sync"?**  
+A: The sync system detects that your files are functionally identical except for Lingui imports (`import { t }`) vs hardcoded strings. This is expected and considered in-sync by default.
+
+**Q: When should I use --force-lingui?**  
+A: Use `--force-lingui` when you specifically need to sync the Lingui vs hardcoded string differences, such as when testing localization changes in the playground.
 
 **Q: Do I need a Mac for iOS testing?**  
 A: No! Expo Go works on any iPhone. Only iOS Simulator requires a Mac.
@@ -390,8 +423,9 @@ yarn playground:sync --to-playground Button --force
 ✅ **True sync status** - Only files that matter show sync warnings  
 ✅ **Clean separation** - Only relevant files in each environment  
 ✅ **Production ready** - Main app architecture optimized for builds  
-✅ **Minimal noise** - No unused web/CSS files cluttering mobile playground
+✅ **Minimal noise** - No unused web/CSS files cluttering mobile playground  
+✅ **Lingui awareness** - Intelligently handles localization differences between environments
 
 ---
 
-_Last updated: 2025-07-27 16:15 UTC_
+_Last updated: 2025-07-27 18:45 UTC_

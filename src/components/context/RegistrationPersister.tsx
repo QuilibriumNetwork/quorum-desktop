@@ -15,7 +15,7 @@ import {
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
-import Button from '../Button';
+import { Button } from '../primitives';
 import { useMessageDB } from './MessageDB';
 import { useQuorumApiClient } from './QuorumApiContext';
 import { t } from '@lingui/core/macro';

@@ -5,8 +5,8 @@ import {
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Input from '../Input';
-import Button from '../Button';
+import { Input } from '../primitives';
+import { Button } from '../primitives';
 import SpaceIcon from '../navbar/SpaceIcon';
 import './JoinSpaceModal.scss';
 import { useLocation, useNavigate } from 'react-router';

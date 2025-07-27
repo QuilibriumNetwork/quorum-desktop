@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import Modal from '../Modal';
-import Button from '../Button';
+import { Button } from '../primitives';
 import { useRegistration } from '../../hooks';
 import { getConfig } from '../../config/config';
 import { useMessageDB } from '../context/MessageDB';

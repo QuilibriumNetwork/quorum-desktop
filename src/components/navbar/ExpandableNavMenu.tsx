@@ -5,7 +5,7 @@ import {
   faPlus,
   faSearch,
 } from '@fortawesome/free-solid-svg-icons';
-import Button from '../Button';
+import { Button } from '../primitives';
 import './ExpandableNavMenu.scss';
 import { getConfig } from '../../config/config';
 import { t } from '@lingui/core/macro';

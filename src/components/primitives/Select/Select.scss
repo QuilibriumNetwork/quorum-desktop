@@ -20,15 +20,15 @@
     max-width: none;
   }
 
-  // Trigger button - default bordered style
+  // Trigger button - default filled style (new default)
   &__trigger {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
     padding: 0.5rem 0.75rem;
-    background-color: var(--color-field-bg);
-    border: 1px solid var(--color-field-border);
+    background-color: var(--color-field-bg-filled);
+    border: 1px solid transparent;
     border-radius: 0.5rem;
     color: var(--color-field-text);
     font-size: 0.875rem;
@@ -37,19 +37,32 @@
     transition: all 0.15s ease-in-out;
 
     &:hover:not(:disabled) {
-      border-color: var(--color-field-border-hover);
-      background-color: var(--color-field-bg-focus);
+      background-color: var(--color-field-bg-filled-focus);
+      border-color: transparent; // Keep border transparent on hover
     }
 
     &:focus {
       outline: none;
-      border-color: var(--color-field-border-focus);
-      box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
+      border-color: var(--color-field-border-focus); // Show accent border on focus
+      box-shadow: 0 0 0 3px var(--color-field-focus-shadow); // Keep focus glow
     }
 
     &:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      border-color: transparent !important; // Keep transparent border for filled default
+      background-color: var(--color-field-bg-filled) !important; // Keep filled background
+      
+      &:hover {
+        border-color: transparent !important; // No hover border change
+        background-color: var(--color-field-bg-filled) !important; // No hover background change
+      }
+      
+      &:focus {
+        border-color: transparent !important; // No focus accent border
+        box-shadow: none !important; // No focus glow
+        outline: none;
+      }
     }
   }
 
@@ -75,18 +88,45 @@
     padding: 0.75rem 1rem;
   }
 
-  // Filled variant
-  &--filled &__trigger {
-    background-color: var(--color-field-bg-filled);
-    border-color: transparent;
+  // Bordered variant (explicit bordered style)
+  &--bordered &__trigger {
+    background-color: var(--color-field-bg);
+    border-color: var(--color-field-border);
 
     &:hover:not(:disabled) {
-      background-color: var(--color-field-bg-filled-focus);
+      border-color: var(--color-field-border-hover);
+      background-color: var(--color-field-bg-focus);
+    }
+
+    &:focus {
+      border-color: var(--color-field-border-focus);
+      box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
+    }
+
+    &:disabled {
+      border-color: var(--color-field-border) !important;
+      background-color: var(--color-field-bg) !important;
+      
+      &:hover {
+        border-color: var(--color-field-border) !important;
+        background-color: var(--color-field-bg) !important;
+      }
+      
+      &:focus {
+        border-color: var(--color-field-border) !important;
+        box-shadow: none !important;
+      }
     }
   }
 
-  // Open state
+  // Open state - default (filled)
   &--open &__trigger {
+    border-color: var(--color-field-border-focus);
+    box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
+  }
+
+  // Bordered variant open state
+  &--bordered.quorum-select--open &__trigger {
     border-color: var(--color-field-border-focus);
     box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
   }
@@ -152,7 +192,7 @@
     transform: rotate(180deg);
   }
 
-  // Dropdown
+  // Dropdown - default (filled) style
   &__dropdown {
     position: absolute;
     top: calc(100% + 0.25rem);
@@ -163,7 +203,7 @@
     overflow-y: auto;
     overflow-x: hidden; // Prevent horizontal scroll
     background-color: var(--color-field-options-bg);
-    border: 1px solid var(--color-field-border);
+    border: none; // Default filled style - no border
     border-radius: 0.5rem;
     box-shadow:
       0 4px 6px -1px rgba(0, 0, 0, 0.1),
@@ -187,6 +227,11 @@
         background: var(--surface-6);
       }
     }
+  }
+
+  // Bordered variant dropdown - has border
+  &--bordered &__dropdown {
+    border: 1px solid var(--color-field-border);
   }
 
   // Options
@@ -213,6 +258,9 @@
     &--disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      font-weight: normal; // Ensure disabled options always use normal font weight
+      background-color: transparent !important; // No background changes
+      color: inherit !important; // No accent color changes
     }
   }
 
@@ -241,6 +289,6 @@
   &__error-message {
     margin-top: 0.25rem;
     font-size: 0.75rem;
-    color: var(--danger);
+    color: var(--color-text-danger);
   }
 }

@@ -36,6 +36,7 @@ export const themeColors = {
       main: '#363636', // rgb(54 54 54) from CSS
       subtle: '#818181',
       muted: '#b6b6b6',
+      danger: '#e74a4a', // matches --color-text-danger in light theme
     },
 
     // Semantic background colors (matches CSS --color-bg-* variables)
@@ -138,6 +139,7 @@ export const themeColors = {
       main: '#f4f1f6', // rgb(244 241 246) from CSS
       subtle: '#bfb5c8',
       muted: '#84788b',
+      danger: '#c73737', // matches --color-text-danger in dark theme
     },
 
     // Dark theme semantic backgrounds

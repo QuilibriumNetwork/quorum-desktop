@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useTheme, Theme } from './context/ThemeProvider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSun, faMoon, faDesktop } from '@fortawesome/free-solid-svg-icons';
-import { t } from '@lingui/core/macro';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 
 type ThemeOption = { text: string; icon: IconDefinition };
@@ -12,10 +11,11 @@ const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({
 }) => {
   const { theme, setTheme } = useTheme();
 
+  // Playground-specific: Skip Lingui for demo purposes
   const options: { [key: string]: ThemeOption } = {
-    light: { text: t`light`, icon: faSun },
-    dark: { text: t`dark`, icon: faMoon },
-    system: { text: t`system`, icon: faDesktop },
+    light: { text: 'light', icon: faSun },
+    dark: { text: 'dark', icon: faMoon },
+    system: { text: 'system', icon: faDesktop },
   };
 
   return (

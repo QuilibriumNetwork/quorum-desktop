@@ -3,7 +3,7 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Space } from '../../api/quorumApi';
 import SpaceIcon from '../navbar/SpaceIcon';
 import { useSpaces } from '../../hooks';
-import Button from '../Button';
+import { Button } from '../primitives';
 import { useMessageDB } from '../context/MessageDB';
 import { useNavigate } from 'react-router';
 import { Trans } from '@lingui/react/macro';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Modal from '../Modal';
-import Input from '../Input';
-import Button from '../Button';
+import { Input } from '../primitives';
+import { Button } from '../primitives';
 import './NewDirectMessageModal.scss';
 import { t } from '@lingui/core/macro';
 import { base58btc } from 'multiformats/bases/base58';

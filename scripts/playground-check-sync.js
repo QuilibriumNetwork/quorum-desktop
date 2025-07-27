@@ -48,6 +48,67 @@ function getFileChecksum(filePath) {
   }
 }
 
+function normalizeLinguiContent(content) {
+  // Normalize Lingui imports and usage for comparison
+  // This allows detecting when files are functionally identical except for Lingui vs hardcoded strings
+  
+  let normalized = content;
+  
+  // Remove Lingui import lines
+  normalized = normalized.replace(/import\s+\{\s*t\s*\}\s+from\s+['"]@lingui\/core\/macro['"];\s*\n?/g, '');
+  normalized = normalized.replace(/import\s+\{\s*Trans\s*\}\s+from\s+['"]@lingui\/react\/macro['"];\s*\n?/g, '');
+  
+  // Convert Lingui template literals to regular strings
+  // Handle t`text` -> 'text'
+  normalized = normalized.replace(/t`([^`]*)`/g, "'$1'");
+  
+  // Handle t`text ${variable}` -> 'text ' + variable (simplified)
+  normalized = normalized.replace(/t`([^`]*\$\{[^}]+\}[^`]*)`/g, (match, content) => {
+    // For complex interpolations, just replace with a placeholder
+    return "'[INTERPOLATED_TEXT]'";
+  });
+  
+  // Remove playground-specific comments
+  normalized = normalized.replace(/\/\/ Playground-specific: Skip Lingui for demo purposes\s*\n\/\/ Real mobile app will use full Lingui integration\s*\n?/g, '');
+  
+  // Remove empty lines that might be left after import removal
+  normalized = normalized.replace(/\n\s*\n\s*\n/g, '\n\n');
+  
+  // Remove leading/trailing whitespace for consistent comparison
+  normalized = normalized.trim();
+  
+  return normalized;
+}
+
+function compareFilesLinguiAware(mainPath, playgroundPath) {
+  // Compare files with Lingui awareness
+  // Returns: 'identical', 'lingui-equivalent', 'different', or 'missing'
+  
+  try {
+    const mainExists = fs.existsSync(mainPath);
+    const playgroundExists = fs.existsSync(playgroundPath);
+    
+    if (!mainExists && !playgroundExists) return 'missing';
+    if (!mainExists || !playgroundExists) return 'different';
+    
+    const mainContent = fs.readFileSync(mainPath, 'utf8');
+    const playgroundContent = fs.readFileSync(playgroundPath, 'utf8');
+    
+    // First check if they're identical
+    if (mainContent === playgroundContent) return 'identical';
+    
+    // Check if they're Lingui-equivalent (same after normalization)
+    const mainNormalized = normalizeLinguiContent(mainContent);
+    const playgroundNormalized = normalizeLinguiContent(playgroundContent);
+    
+    if (mainNormalized === playgroundNormalized) return 'lingui-equivalent';
+    
+    return 'different';
+  } catch (error) {
+    return 'different';
+  }
+}
+
 function getFileMtime(filePath) {
   try {
     const stats = fs.statSync(filePath);
@@ -113,11 +174,15 @@ function checkComponentSync(componentName) {
       const mainMtime = getFileMtime(mainFilePath);
       const playgroundMtime = getFileMtime(playgroundFilePath);
       
+      // Lingui-aware comparison
+      const comparison = compareFilesLinguiAware(mainFilePath, playgroundFilePath);
+      
       const fileResult = {
         fileName: file,
         mainExists: !!mainChecksum,
         playgroundExists: !!playgroundChecksum,
-        inSync: mainChecksum === playgroundChecksum && !!mainChecksum && !!playgroundChecksum,
+        inSync: comparison === 'identical' || comparison === 'lingui-equivalent',
+        comparison: comparison, // New field to track comparison status
         mainMtime,
         playgroundMtime,
         mainSize: mainChecksum ? fs.statSync(mainFilePath).size : null,
@@ -180,9 +245,24 @@ function main() {
   allPrimitives.forEach(primitive => {
     const syncStatus = checkComponentSync(primitive);
     
+    // Check if component has any Lingui-equivalent files
+    const hasLinguiEquivalent = syncStatus.files.some(file => file.comparison === 'lingui-equivalent');
+    
+    // Check if all files are either identical or lingui-equivalent
+    const allFilesInSyncOrLinguiEquivalent = syncStatus.files.length > 0 && 
+      syncStatus.files.every(file => file.comparison === 'identical' || file.comparison === 'lingui-equivalent');
+    
     if (syncStatus.inSync && syncStatus.files.length > 0) {
       totalInSync++;
-      console.log(`${colors.green}✓${colors.reset} ${primitive} ${colors.dim}(in sync)${colors.reset}`);
+      if (hasLinguiEquivalent) {
+        console.log(`${colors.green}≈${colors.reset} ${primitive} ${colors.dim}(Lingui-equivalent)${colors.reset}`);
+      } else {
+        console.log(`${colors.green}✓${colors.reset} ${primitive} ${colors.dim}(in sync)${colors.reset}`);
+      }
+    } else if (allFilesInSyncOrLinguiEquivalent) {
+      // Component is Lingui-equivalent (treat as in sync)
+      totalInSync++;
+      console.log(`${colors.green}≈${colors.reset} ${primitive} ${colors.dim}(Lingui-equivalent)${colors.reset}`);
     } else if (!syncStatus.inSync || syncStatus.files.length === 0) {
       totalOutOfSync++;
       outOfSyncComponents.push(syncStatus);
@@ -196,6 +276,10 @@ function main() {
             status = `${colors.yellow}only in playground${colors.reset}`;
           } else if (!file.playgroundExists) {
             status = `${colors.yellow}only in main app${colors.reset}`;
+          } else if (file.comparison === 'different') {
+            const mainNewer = file.mainMtime > file.playgroundMtime;
+            const newerLocation = mainNewer ? 'main app' : 'playground';
+            status = `${colors.yellow}${newerLocation} is newer (different content)${colors.reset}`;
           } else {
             const mainNewer = file.mainMtime > file.playgroundMtime;
             const newerLocation = mainNewer ? 'main app' : 'playground';
@@ -217,6 +301,7 @@ function main() {
   console.log(`\n${colors.blue}📊 Summary${colors.reset}`);
   console.log(`${colors.green}In sync:${colors.reset} ${totalInSync} components`);
   console.log(`${colors.red}Out of sync:${colors.reset} ${totalOutOfSync} components`);
+  console.log(`${colors.dim}Lingui awareness: Enabled (Lingui-equivalent files treated as in-sync)${colors.reset}`);
   
   if (totalOutOfSync > 0) {
     console.log(`\n${colors.yellow}💡 To sync components, run:${colors.reset}`);
@@ -224,6 +309,7 @@ function main() {
     console.log(`   yarn playground:sync --to-playground --all  ${colors.dim}# Copy all from main app to playground${colors.reset}`);
     console.log(`   yarn playground:sync --from-playground --all ${colors.dim}# Copy all from playground to main app${colors.reset}`);
     console.log(`   yarn playground:sync --interactive          ${colors.dim}# Choose direction for each component${colors.reset}`);
+    console.log(`   yarn playground:sync --force-lingui --all   ${colors.dim}# Force sync even Lingui-equivalent files${colors.reset}`);
   }
   
   // Exit with code 1 if out of sync (useful for scripts/CI)

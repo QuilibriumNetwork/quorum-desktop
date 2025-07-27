@@ -12,7 +12,7 @@ import { useModalContext } from '../AppWithSearch';
 import GroupEditor from './GroupEditor';
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import { t } from '@lingui/core/macro';
-import Button from '../Button';
+import { Button } from '../primitives';
 
 type ChannelListProps = { spaceId: string };
 

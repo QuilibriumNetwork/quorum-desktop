@@ -3,20 +3,21 @@ import { WebSelectProps } from './types';
 import { useTheme } from '../theme';
 import { Icon } from '../Icon';
 import { isValidIconName } from '../Icon/iconMapping';
+import { t } from '@lingui/core/macro';
 import './Select.scss';
 
 const Select: React.FC<WebSelectProps> = ({
   value,
   options,
   onChange,
-  placeholder = 'Select an option',
+  placeholder = t`Select an option`,
   disabled = false,
   error = false,
   errorMessage,
   className = '',
   style,
   size = 'medium',
-  variant = 'default',
+  variant = 'filled',
   fullWidth = false,
   width,
   name,

@@ -1467,10 +1467,10 @@ export const PrimitivesPlayground: React.FC = () => {
                   Select Variants
                 </h3>
                 <label className="text-sm font-medium text-strong mb-2 block">
-                  Default (Bordered)
+                  Bordered
                 </label>
                 <Select
-                  variant="default"
+                  variant="bordered"
                   value=""
                   onChange={() => {}}
                   placeholder="Default style"
@@ -1486,10 +1486,9 @@ export const PrimitivesPlayground: React.FC = () => {
                   Hidden
                 </h3>
                 <label className="text-sm font-medium text-strong mb-2 block">
-                  Filled
+                  Filled (Default)
                 </label>
                 <Select
-                  variant="filled"
                   value=""
                   onChange={() => {}}
                   placeholder="Filled style"
