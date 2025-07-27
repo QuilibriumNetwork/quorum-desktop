@@ -2,12 +2,20 @@ export interface SelectOption {
   value: string;
   label: string;
   icon?: string; // Temporary: emoji or Unicode character, will be FontAwesome icon name later
+  avatar?: string; // URL for user avatars (for conversation dropdowns)
+  subtitle?: string; // Secondary text (like user addresses)
   disabled?: boolean;
+}
+
+export interface SelectOptionGroup {
+  groupLabel: string;
+  options: SelectOption[];
 }
 
 export interface BaseSelectProps {
   value?: string;
-  options: SelectOption[];
+  options?: SelectOption[]; // Simple options (alternative to groups)
+  groups?: SelectOptionGroup[]; // Grouped options (alternative to options)
   onChange?: (value: string) => void;
   placeholder?: string;
   disabled?: boolean;
@@ -19,6 +27,7 @@ export interface BaseSelectProps {
   variant?: 'filled' | 'bordered';
   fullWidth?: boolean;
   width?: string | number; // Custom width (CSS value for web, number for RN)
+  dropdownPlacement?: 'top' | 'bottom' | 'auto'; // Dropdown positioning
 }
 
 export interface WebSelectProps extends BaseSelectProps {

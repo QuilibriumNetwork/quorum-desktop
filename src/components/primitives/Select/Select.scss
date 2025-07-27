@@ -235,6 +235,17 @@
     border: 1px solid var(--color-field-border);
   }
 
+  // Dropdown placement
+  &--placement-top &__dropdown {
+    top: auto;
+    bottom: calc(100% + 0.25rem);
+  }
+
+  &--placement-bottom &__dropdown {
+    top: calc(100% + 0.25rem);
+    bottom: auto;
+  }
+
   // Options
   &__option {
     display: flex;
@@ -291,5 +302,76 @@
     margin-top: 0.25rem;
     font-size: 0.75rem;
     color: var(--color-text-danger);
+  }
+
+  // Group support
+  &__group {
+    &:not(:first-child) {
+      margin-top: 0.5rem;
+    }
+  }
+
+  &__group-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 0.75rem 0.25rem 0.75rem;
+    margin-bottom: 0.25rem;
+    background-color: var(--color-field-bg);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  &__option--grouped {
+    padding-left: 1rem; // Indent grouped options slightly
+  }
+
+  // Avatar support
+  &__option-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+    border: 1px solid var(--color-border-default);
+  }
+
+  // Enhanced text layout for subtitles
+  &__option-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__option-label {
+    font-weight: 500;
+    color: var(--color-text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__option-subtitle {
+    font-size: 0.75rem;
+    color: var(--color-text-subtle);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 0.125rem;
+  }
+
+  // Adjust content layout when avatars or subtitles are present
+  &__option-content {
+    .quorum-select__option-avatar + .quorum-select__option-text,
+    .quorum-select__option-icon + .quorum-select__option-text {
+      margin-left: 0; // Reset margin since icon/avatar has margin-right
+    }
   }
 }

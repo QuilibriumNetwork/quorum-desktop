@@ -1679,6 +1679,141 @@ export const PrimitivesPlayground: React.FC = () => {
               <div></div>
             </div>
 
+            {/* New Enhanced Features */}
+            <div className="space-y-6">
+              <h3 className="text-lg font-medium text-strong">
+                Enhanced Features
+              </h3>
+              
+              {/* Grouped Options */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-strong mb-2 block">
+                    Grouped Options (SpaceEditor Style)
+                  </label>
+                  <Select
+                    value=""
+                    onChange={() => {}}
+                    placeholder="Select a channel"
+                    groups={[
+                      {
+                        groupLabel: "General",
+                        options: [
+                          { value: 'general', label: '#general' },
+                          { value: 'announcements', label: '#announcements' },
+                        ]
+                      },
+                      {
+                        groupLabel: "Development",
+                        options: [
+                          { value: 'dev-frontend', label: '#dev-frontend' },
+                          { value: 'dev-backend', label: '#dev-backend' },
+                          { value: 'dev-mobile', label: '#dev-mobile' },
+                        ]
+                      },
+                      {
+                        groupLabel: "Community",
+                        options: [
+                          { value: 'random', label: '#random' },
+                          { value: 'help', label: '#help' },
+                        ]
+                      }
+                    ]}
+                    width="300px"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-strong mb-2 block">
+                    User Selection with Avatars
+                  </label>
+                  <Select
+                    value=""
+                    onChange={() => {}}
+                    placeholder="Select conversation"
+                    options={[
+                      { 
+                        value: 'alice', 
+                        label: 'Alice Johnson',
+                        subtitle: '0x1234...5678',
+                        avatar: 'https://i.pravatar.cc/150?img=1'
+                      },
+                      { 
+                        value: 'bob', 
+                        label: 'Bob Smith',
+                        subtitle: '0x9876...4321', 
+                        avatar: 'https://i.pravatar.cc/150?img=2'
+                      },
+                      { 
+                        value: 'charlie', 
+                        label: 'Charlie Brown',
+                        subtitle: '0xabcd...efgh',
+                        avatar: 'https://i.pravatar.cc/150?img=3'
+                      },
+                    ]}
+                    width="300px"
+                  />
+                </div>
+              </div>
+
+              {/* Dropdown Placement */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-strong mb-2 block">
+                    Auto Placement
+                  </label>
+                  <Select
+                    value=""
+                    onChange={() => {}}
+                    placeholder="Auto placement"
+                    dropdownPlacement="auto"
+                    options={[
+                      { value: 'option1', label: 'Option 1' },
+                      { value: 'option2', label: 'Option 2' },
+                      { value: 'option3', label: 'Option 3' },
+                    ]}
+                  />
+                  <p className="text-xs text-subtle">Automatically positions based on available space</p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-strong mb-2 block">
+                    Force Bottom
+                  </label>
+                  <Select
+                    value=""
+                    onChange={() => {}}
+                    placeholder="Always below"
+                    dropdownPlacement="bottom"
+                    options={[
+                      { value: 'option1', label: 'Option 1' },
+                      { value: 'option2', label: 'Option 2' },
+                      { value: 'option3', label: 'Option 3' },
+                    ]}
+                  />
+                  <p className="text-xs text-subtle">Always opens below (UserSettings style)</p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-strong mb-2 block">
+                    Force Top
+                  </label>
+                  <Select
+                    value=""
+                    onChange={() => {}}
+                    placeholder="Always above"
+                    dropdownPlacement="top"
+                    options={[
+                      { value: 'option1', label: 'Option 1' },
+                      { value: 'option2', label: 'Option 2' },
+                      { value: 'option3', label: 'Option 3' },
+                    ]}
+                  />
+                  <p className="text-xs text-subtle">Always opens above</p>
+                </div>
+              </div>
+            </div>
+
             {/* Implementation Notes */}
             <div className="space-y-3">
               <h3 className="text-lg font-medium text-strong">
