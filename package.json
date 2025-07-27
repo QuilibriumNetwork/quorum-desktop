@@ -13,7 +13,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "node scripts/build.js",
     "build:preview": "yarn build && yarn preview",
     "electron:dev": "NODE_ENV=development electron electron/main.cjs",
     "electron:build": "vite build && electron-builder",
@@ -22,7 +22,10 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lingui:extract": "lingui extract",
-    "lingui:compile": "lingui compile"
+    "lingui:compile": "lingui compile",
+    "playground:check": "node scripts/playground-check-sync.js",
+    "playground:sync": "node scripts/playground-sync.js",
+    "playground:cleanup": "node scripts/playground-cleanup-backups.js"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

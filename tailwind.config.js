@@ -9,7 +9,11 @@ function withOpacityValue(variable) {
 
 export default {
   darkMode: 'class',
-  content: ['./index.html', './src/**/*.{ts,tsx}'],
+  content: [
+    './index.html',
+    './src/**/*.{js,jsx,ts,tsx}',
+    '!./node_modules/**',
+  ],
   safelist: [
     // === LEGACY/OLD PASSKEY MODAL STYLES (keep until new modal style is live) ===
     {

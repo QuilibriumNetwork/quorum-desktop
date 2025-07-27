@@ -18,7 +18,10 @@ import DirectMessages from './components/direct/DirectMessages';
 import { Maintenance } from './components/Maintenance';
 import { RegistrationProvider } from './components/context/RegistrationPersister';
 import { ResponsiveLayoutProvider } from './components/context/ResponsiveLayoutProvider';
-import { PrimitivesPlayground } from './playground/web/PrimitivesPlayground';
+// Conditionally import playground - excluded if EXCLUDE_PLAYGROUND_WEB=true
+const PrimitivesPlayground = __INCLUDE_PLAYGROUND_WEB__
+  ? React.lazy(() => import('./playground/web/PrimitivesPlayground').then(m => ({ default: m.PrimitivesPlayground })))
+  : null;
 import JoinSpaceModal from './components/modals/JoinSpaceModal';
 import Elements from './components/Elements';
 import { DefaultImages } from './utils';
@@ -203,19 +206,23 @@ const App = () => {
                             />
                           }
                         />
-                        <Route
-                          path="/playground"
-                          element={
-                            <AppWithSearch
-                              kickUserAddress={kickUserAddress}
-                              setKickUserAddress={setKickUserAddress}
-                              user={user}
-                              setUser={setUser}
-                            >
-                              <PrimitivesPlayground />
-                            </AppWithSearch>
-                          }
-                        />
+                        {__INCLUDE_PLAYGROUND_WEB__ && PrimitivesPlayground && (
+                          <Route
+                            path="/playground"
+                            element={
+                              <AppWithSearch
+                                kickUserAddress={kickUserAddress}
+                                setKickUserAddress={setKickUserAddress}
+                                user={user}
+                                setUser={setUser}
+                              >
+                                <Suspense fallback={<div>Loading playground...</div>}>
+                                  <PrimitivesPlayground />
+                                </Suspense>
+                              </AppWithSearch>
+                            }
+                          />
+                        )}
                         <Route
                           path="/*"
                           element={
