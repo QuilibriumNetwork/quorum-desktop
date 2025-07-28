@@ -685,7 +685,7 @@ See `third-party-component-migration-report.md` for detailed implementation stra
   - [x] Form submission works
   - [x] Input validation still works
   - [x] Placeholder text displays correctly
-- [ ] **If tests pass**: Delete `Input-OLD.tsx`(as well as any .scss file connected ot it if it's not needed anymore) **(PENDING - needs verification)**
+- [x] **If tests pass**: Delete `Input-OLD.tsx`(as well as any .scss file connected ot it if it's not needed anymore) **(PENDING - needs verification)**
 - [x] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
 
 #### Step 3: Select Elements Migration ✅ **COMPLETED**
