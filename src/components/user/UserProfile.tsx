@@ -7,8 +7,7 @@ import {
 import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Button } from '../primitives';
-import { Input } from '../primitives';
+import { Button, Input } from '../primitives';
 import UserOnlineStateIndicator from './UserOnlineStateIndicator';
 import ClickToCopyContent from '../ClickToCopyContent';
 import './UserProfile.scss';
@@ -156,10 +155,10 @@ const UserProfile: React.FunctionComponent<{
         )}
         <div className="user-profile-text">
           {props.editMode ? (
-            <input
-              className="w-[190px] quorum-input"
+            <Input
+              className="w-[190px]"
               value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
+              onChange={setDisplayName}
             />
           ) : (
             <div className="user-profile-username break-words">

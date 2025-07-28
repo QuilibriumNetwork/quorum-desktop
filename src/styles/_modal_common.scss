@@ -424,20 +424,10 @@
   font-size: 13px;
   margin-bottom: 16px;
 
-  .quorum-input {
-    width: 100%;
-    background: var(--color-bg-input);
-    padding: 10px;
-    font-size: 13px;
-  }
+  // quorum-input styles now handled by Input primitive
 
   @media (max-width: 768px) {
     margin-bottom: 12px;
-
-    .quorum-input {
-      padding: 12px;
-      font-size: 14px;
-    }
   }
 }
 

@@ -440,11 +440,11 @@ const UserSettingsModal: React.FunctionComponent<{
                         <div className="pt-2 mb-4 modal-text-small text-main">
                           {t`Set a custom status message that others can see.`}
                         </div>
-                        <input
-                          className="w-full quorum-input modal-input-text"
+                        <Input
+                          className="w-full modal-input-text"
                           style={{ background: 'var(--color-bg-input)' }}
                           value={status}
-                          onChange={(e) => setStatus(e.target.value.slice(0, 100))}
+                          onChange={(value) => setStatus(value.slice(0, 100))}
                           placeholder={t`What's on your mind?`}
                           maxLength={100}
                         />
