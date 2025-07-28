@@ -10,6 +10,7 @@ export interface BaseModalProps {
   closeOnBackdropClick?: boolean;
   closeOnEscape?: boolean;
   className?: string;
+  noPadding?: boolean;
 }
 
 export interface WebModalProps extends BaseModalProps {

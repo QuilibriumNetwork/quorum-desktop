@@ -1,7 +1,7 @@
 import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Button, Select } from '../primitives';
+import { Button, Select, Modal } from '../primitives';
 import '../../styles/_modal_common.scss';
 import { useRegistration } from '../../hooks';
 import { useRegistrationContext } from '../context/RegistrationPersister';
@@ -60,6 +60,7 @@ const UserSettingsModal: React.FunctionComponent<{
     address: currentPasskeyInfo?.address!,
   });
   const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
+  const [currentFile, setCurrentFile] = React.useState<File | undefined>();
   const { keyset } = useRegistrationContext();
   const { saveConfig, getConfig, updateUserProfile } = useMessageDB();
   const [stagedRegistration, setStagedRegistration] = React.useState<
@@ -184,9 +185,12 @@ const UserSettingsModal: React.FunctionComponent<{
         }
       }
     },
-    onDropAccepted: () => {
+    onDropAccepted: (files) => {
       setIsUserIconUploading(true); // Keep uploading state during processing
       setUserIconFileError(null);
+      // Clear previous file data immediately when new file is accepted
+      setFileData(undefined);
+      setCurrentFile(files[0]);
     },
     onDragEnter: () => {
       setIsUserIconUploading(true);
@@ -203,13 +207,20 @@ const UserSettingsModal: React.FunctionComponent<{
   });
 
   React.useEffect(() => {
-    if (acceptedFiles.length > 0) {
+    if (currentFile) {
       (async () => {
-        setFileData(await acceptedFiles[0].arrayBuffer());
-        setIsUserIconUploading(false); // Reset after processing
+        try {
+          const arrayBuffer = await currentFile.arrayBuffer();
+          setFileData(arrayBuffer);
+          setIsUserIconUploading(false);
+        } catch (error) {
+          console.error('Error reading file:', error);
+          setUserIconFileError(t`Error reading file`);
+          setIsUserIconUploading(false);
+        }
       })();
     }
-  }, [acceptedFiles]);
+  }, [currentFile]);
 
   const removeDevice = (identityKey: string) => {
     setStagedRegistration((reg: secureChannel.UserRegistration | undefined) => {
@@ -229,9 +240,9 @@ const UserSettingsModal: React.FunctionComponent<{
       publicKey: currentPasskeyInfo!.publicKey,
       displayName: displayName,
       pfpUrl:
-        acceptedFiles.length > 0 && fileData
+        currentFile && fileData
           ? 'data:' +
-            acceptedFiles[0].type +
+            currentFile.type +
             ';base64,' +
             Buffer.from(fileData).toString('base64')
           : currentPasskeyInfo!.pfpUrl,
@@ -242,9 +253,9 @@ const UserSettingsModal: React.FunctionComponent<{
       state: 'online',
       status: '',
       userIcon:
-        acceptedFiles.length > 0 && fileData
+        currentFile && fileData
           ? 'data:' +
-            acceptedFiles[0].type +
+            currentFile.type +
             ';base64,' +
             Buffer.from(fileData).toString('base64')
           : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
@@ -252,9 +263,9 @@ const UserSettingsModal: React.FunctionComponent<{
     });
     updateUserProfile(
       displayName,
-      acceptedFiles.length > 0 && fileData
+      currentFile && fileData
         ? 'data:' +
-            acceptedFiles[0].type +
+            currentFile.type +
             ';base64,' +
             Buffer.from(fileData).toString('base64')
         : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
@@ -272,13 +283,22 @@ const UserSettingsModal: React.FunctionComponent<{
   };
 
   return (
-    <div
-      className={`modal-complex-container${closing ? ' modal-complex-closing' : ''}`}
+    <Modal
+      title=""
+      visible={true}
+      onClose={handleDismiss}
+      size="large"
+      className="modal-complex-wrapper"
+      hideClose={true}
+      noPadding={true}
     >
-      <div className="modal-complex-close-button" onClick={handleDismiss}>
-        <FontAwesomeIcon icon={faTimes} />
-      </div>
-      <div className="modal-complex-layout">
+      <div 
+        className={`modal-complex-container-inner${closing ? ' modal-complex-closing' : ''}`}
+      >
+        <div className="modal-complex-close-button" onClick={handleDismiss}>
+          <FontAwesomeIcon icon={faTimes} />
+        </div>
+        <div className="modal-complex-layout">
         {/* Desktop/Tablet Sidebar */}
         <div className="modal-complex-sidebar">
           <div className="modal-nav-title">{t`Settings`}</div>
@@ -355,8 +375,8 @@ const UserSettingsModal: React.FunctionComponent<{
                         className="modal-icon-editable"
                         style={{
                           backgroundImage:
-                            fileData !== undefined && acceptedFiles.length !== 0
-                              ? `url(data:${acceptedFiles[0].type};base64,${Buffer.from(fileData).toString('base64')})`
+                            fileData !== undefined && currentFile
+                              ? `url(data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')})`
                               : currentPasskeyInfo?.pfpUrl &&
                                   !currentPasskeyInfo.pfpUrl.includes(
                                     DefaultImages.UNKNOWN_USER
@@ -715,7 +735,8 @@ const UserSettingsModal: React.FunctionComponent<{
           })()}
         </div>
       </div>
-    </div>
+      </div>
+    </Modal>
   );
 };
 

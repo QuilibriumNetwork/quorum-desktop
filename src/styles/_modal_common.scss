@@ -154,6 +154,47 @@
   }
 }
 
+.modal-complex-container-inner {
+  background: var(--surface-3);
+  color: var(--color-text-main);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+}
+
+// Override Modal primitive styles for complex modals
+.modal-complex-wrapper {
+  &.quorum-modal-large {
+    padding: 0 !important;
+    overflow: hidden;
+    width: 800px !important;
+    max-width: 90vw !important;
+    max-height: 90vh !important;
+    
+    // Desktop: consistent 800px height, max 90vh for very short screens
+    @media (min-width: 768px) {
+      height: min(800px, 90vh) !important;
+    }
+    
+    // Mobile/Tablet: fixed 90vh height
+    @media (max-width: 767px) {
+      height: 90vh !important;
+    }
+  }
+  
+  .quorum-modal-title {
+    display: none; // Hide Modal primitive title
+  }
+  
+  .quorum-modal-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 .modal-complex-container.modal-complex-closing {
   opacity: 0;
   transform: scale(0.95);
@@ -204,6 +245,8 @@
   color: var(--color-text-main);
   width: 200px;
   flex-shrink: 0;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-right: 1px solid var(--color-border-subtle);
 
   @media (max-width: 768px) {
     display: none;
@@ -247,6 +290,7 @@
 
   &.active {
     background-color: var(--color-bg-modal-cat-active);
+    color: var(--color-text-strong);
   }
 }
 

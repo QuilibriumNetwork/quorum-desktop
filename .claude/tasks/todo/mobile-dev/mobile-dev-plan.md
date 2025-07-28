@@ -706,6 +706,7 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 - [x] **Fixed styling issues**: Tighter spacing between icons and text, proper left alignment
 
 #### Step 4: Modal Component Replacement
+Detailed plan: .claude/tasks/todo/mobile-dev/modal-migration-plan.md
 - [ ] **Rename old component**: `Modal.tsx` → `Modal-OLD.tsx`
 - [ ] **Update imports**: Change imports to use `import { Modal } from '@/components/primitives'`
 - [ ] **Test thoroughly**:

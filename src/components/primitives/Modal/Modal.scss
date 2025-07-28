@@ -18,6 +18,17 @@
   }
 }
 
+// No padding variant
+.quorum-modal-no-padding {
+  padding: 0;
+  
+  .quorum-modal-close {
+    right: 12px;
+    top: 12px;
+    z-index: 10;
+  }
+}
+
 // Size variants
 .quorum-modal-small {
   max-width: 400px;

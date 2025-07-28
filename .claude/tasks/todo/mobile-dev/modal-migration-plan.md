@@ -156,6 +156,13 @@ interface BaseModalProps {
 - **Option B**: Create specialized `ComplexModal` primitive
 - **Option C**: Keep complex modals as custom implementations with shared styling
 
+**Note by LaMat:**
+These complex modals in mobile will be bottom sheets with navigation (the current modal categories will becomee  the  navigation items, in the mobile playground you already cerated a very basic example of bopttom shett with navigation). We have 2 of these complex modals with categories: UserSettingsModal.tsx, SpaceEditor.tsx - We will probably never have more than these 2 - 
+On the web app, tehse 2 modals have a different layout depending on screen size (we want to maintain that so they are fully responsive).
+Q: Can't we simply use the modal primitive as a container which contains custom code to create all the complexity of these modals?
+Please asses the situation carefully and come up with a plan that is simple and elegant to solve all of our requests.
+
+
 ### 🎯 Phase 3: Custom Small Modal Migration (Future)
 
 **Approach**: Case-by-case evaluation
@@ -165,7 +172,7 @@ interface BaseModalProps {
 - GroupEditor
 
 **Options**:
-1. Create `size="tiny"` variant for Modal primitive
+1. Create `size="small"` variant for Modal primitive
 2. Add specialized small modal layout support
 3. Maintain as custom implementations if too specialized
 

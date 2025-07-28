@@ -117,29 +117,17 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
   return (
     <div className="app-with-search">
       {isUserSettingsOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
-          <UserSettingsModal
-            setUser={setUser}
-            dismiss={() => setIsUserSettingsOpen(false)}
-          />
-          <div
-            className="fixed inset-0 -z-10"
-            onClick={() => setIsUserSettingsOpen(false)}
-          />
-        </div>
+        <UserSettingsModal
+          setUser={setUser}
+          dismiss={() => setIsUserSettingsOpen(false)}
+        />
       )}
 
       {spaceEditorData && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
-          <SpaceEditor
-            spaceId={spaceEditorData.spaceId}
-            dismiss={() => setSpaceEditorData(null)}
-          />
-          <div
-            className="fixed inset-0 -z-10"
-            onClick={() => setSpaceEditorData(null)}
-          />
-        </div>
+        <SpaceEditor
+          spaceId={spaceEditorData.spaceId}
+          dismiss={() => setSpaceEditorData(null)}
+        />
       )}
 
       {channelEditorData && (

@@ -281,11 +281,7 @@ const InviteRoute: React.FC<{
 
   return (
     <div className="app-with-search">
-      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
-        <JoinSpaceModal visible={true} onClose={handleClose} />
-        <div className="fixed inset-0 -z-10" onClick={handleClose} />
-      </div>
-
+      <JoinSpaceModal visible={true} onClose={handleClose} />
       <AppWithSearch
         kickUserAddress={kickUserAddress}
         setKickUserAddress={setKickUserAddress}

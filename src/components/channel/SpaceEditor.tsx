@@ -21,7 +21,7 @@ import {
 
 import { useMessageDB } from '../context/MessageDB';
 import '../../styles/_modal_common.scss';
-import { Button, Select } from '../primitives';
+import { Button, Select, Modal } from '../primitives';
 import { useConversations, useRegistration, useSpace } from '../../hooks';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
 import {
@@ -55,8 +55,12 @@ const SpaceEditor: React.FunctionComponent<{
   let [selectedCategory, setSelectedCategory] =
     React.useState<string>('general');
   const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
+  const [currentFile, setCurrentFile] = React.useState<File | undefined>();
   const [closing, setClosing] = React.useState<boolean>(false);
   const [bannerData, setBannerData] = React.useState<ArrayBuffer | undefined>();
+  const [currentBannerFile, setCurrentBannerFile] = React.useState<File | undefined>();
+  const [currentEmojiFile, setCurrentEmojiFile] = React.useState<File[] | undefined>();
+  const [currentStickerFile, setCurrentStickerFile] = React.useState<File[] | undefined>();
   // Removed isDefaultChannelListExpanded - using Select primitive instead
 
   const handleDismiss = () => {
@@ -171,9 +175,12 @@ const SpaceEditor: React.FunctionComponent<{
         }
       }
     },
-    onDropAccepted: () => {
+    onDropAccepted: (files) => {
       setIsIconUploading(true); // Keep uploading state during processing
       setIconFileError(null);
+      // Clear previous file data immediately when new file is accepted
+      setFileData(undefined);
+      setCurrentFile(files[0]);
     },
     onDragEnter: () => {
       setIsIconUploading(true);
@@ -211,9 +218,12 @@ const SpaceEditor: React.FunctionComponent<{
         }
       }
     },
-    onDropAccepted: () => {
+    onDropAccepted: (files) => {
       setIsBannerUploading(true); // Keep uploading state during processing
       setBannerFileError(null);
+      // Clear previous file data immediately when new file is accepted
+      setBannerData(undefined);
+      setCurrentBannerFile(files[0]);
     },
     onDragEnter: () => {
       setIsBannerUploading(true);
@@ -239,19 +249,28 @@ const SpaceEditor: React.FunctionComponent<{
       'image/jpeg': ['.jpg', '.jpeg'],
       'image/gif': ['.gif'],
     },
+    multiple: true,
+    maxFiles: Math.min(10, 50 - emojis.length), // Allow up to 10 files, but not exceed 50 total
     minSize: 0,
     maxSize: 256 * 1024,
+    disabled: emojis.length >= 50, // Disable when limit reached
     onDropRejected: (fileRejections) => {
       for (const rejection of fileRejections) {
         if (rejection.errors.some((err) => err.code === 'file-too-large')) {
           setEmojiFileError(t`File cannot be larger than 256KB`);
+        } else if (rejection.errors.some((err) => err.code === 'too-many-files')) {
+          const remaining = 50 - emojis.length;
+          setEmojiFileError(t`Cannot upload more than ${Math.min(10, remaining)} files at once (${remaining} slots remaining)`);
         } else {
           setEmojiFileError(t`File rejected`);
         }
       }
     },
-    onDropAccepted: () => {
+    onDropAccepted: (files) => {
       setEmojiFileError(null);
+      // Double-check we don't exceed the limit
+      const allowedFiles = files.slice(0, 50 - emojis.length);
+      setCurrentEmojiFile(allowedFiles);
     },
   });
 
@@ -265,39 +284,62 @@ const SpaceEditor: React.FunctionComponent<{
       'image/jpeg': ['.jpg', '.jpeg'],
       'image/gif': ['.gif'],
     },
+    multiple: true,
+    maxFiles: Math.min(10, 50 - stickers.length), // Allow up to 10 files, but not exceed 50 total
     minSize: 0,
     maxSize: 256 * 1024,
+    disabled: stickers.length >= 50, // Disable when limit reached
     onDropRejected: (fileRejections) => {
       for (const rejection of fileRejections) {
         if (rejection.errors.some((err) => err.code === 'file-too-large')) {
           setStickerFileError(t`File cannot be larger than 256KB`);
+        } else if (rejection.errors.some((err) => err.code === 'too-many-files')) {
+          const remaining = 50 - stickers.length;
+          setStickerFileError(t`Cannot upload more than ${Math.min(10, remaining)} files at once (${remaining} slots remaining)`);
         } else {
           setStickerFileError(t`File rejected`);
         }
       }
     },
-    onDropAccepted: () => {
+    onDropAccepted: (files) => {
       setStickerFileError(null);
+      // Double-check we don't exceed the limit
+      const allowedFiles = files.slice(0, 50 - stickers.length);
+      setCurrentStickerFile(allowedFiles);
     },
   });
 
   React.useEffect(() => {
-    if (acceptedFiles.length > 0) {
+    if (currentFile) {
       (async () => {
-        setFileData(await acceptedFiles[0].arrayBuffer());
-        setIsIconUploading(false); // Reset after processing
+        try {
+          const arrayBuffer = await currentFile.arrayBuffer();
+          setFileData(arrayBuffer);
+          setIsIconUploading(false);
+        } catch (error) {
+          console.error('Error reading file:', error);
+          setIconFileError(t`Error reading file`);
+          setIsIconUploading(false);
+        }
       })();
     }
-  }, [acceptedFiles]);
+  }, [currentFile]);
 
   React.useEffect(() => {
-    if (bannerAcceptedFiles.length > 0) {
+    if (currentBannerFile) {
       (async () => {
-        setBannerData(await bannerAcceptedFiles[0].arrayBuffer());
-        setIsBannerUploading(false); // Reset after processing
+        try {
+          const arrayBuffer = await currentBannerFile.arrayBuffer();
+          setBannerData(arrayBuffer);
+          setIsBannerUploading(false);
+        } catch (error) {
+          console.error('Error reading banner file:', error);
+          setBannerFileError(t`Error reading file`);
+          setIsBannerUploading(false);
+        }
       })();
     }
-  }, [bannerAcceptedFiles]);
+  }, [currentBannerFile]);
 
   React.useEffect(() => {
     (async () => {
@@ -317,50 +359,56 @@ const SpaceEditor: React.FunctionComponent<{
   }, [manualAddress]);
 
   React.useEffect(() => {
-    if (emojiAcceptedFiles.length > 0) {
+    if (currentEmojiFile && currentEmojiFile.length > 0) {
       (async () => {
-        const file = await emojiAcceptedFiles[0].arrayBuffer();
-        setEmojis((prev) => [
-          ...prev,
-          {
-            id: crypto.randomUUID(),
-            name: emojiAcceptedFiles[0].name
-              .split('.')[0]
-              .toLowerCase()
-              .replace(/[^a-z0-9\-]/gi, ''),
-            imgUrl:
-              'data:' +
-              emojiAcceptedFiles[0].type +
-              ';base64,' +
-              Buffer.from(file).toString('base64'),
-          },
-        ]);
+        const newEmojis = await Promise.all(
+          currentEmojiFile.map(async (file) => {
+            const arrayBuffer = await file.arrayBuffer();
+            return {
+              id: crypto.randomUUID(),
+              name: file.name
+                .split('.')[0]
+                .toLowerCase()
+                .replace(/[^a-z0-9\-]/gi, ''),
+              imgUrl:
+                'data:' +
+                file.type +
+                ';base64,' +
+                Buffer.from(arrayBuffer).toString('base64'),
+            };
+          })
+        );
+        setEmojis((prev) => [...prev, ...newEmojis]);
+        setCurrentEmojiFile(undefined); // Clear after processing
       })();
     }
-  }, [emojiAcceptedFiles]);
+  }, [currentEmojiFile]);
 
   React.useEffect(() => {
-    if (stickerAcceptedFiles.length > 0) {
+    if (currentStickerFile && currentStickerFile.length > 0) {
       (async () => {
-        const file = await stickerAcceptedFiles[0].arrayBuffer();
-        setStickers((prev) => [
-          ...prev,
-          {
-            id: crypto.randomUUID(),
-            name: stickerAcceptedFiles[0].name
-              .split('.')[0]
-              .toLowerCase()
-              .replace(/[^a-z0-9\-]/gi, ''),
-            imgUrl:
-              'data:' +
-              stickerAcceptedFiles[0].type +
-              ';base64,' +
-              Buffer.from(file).toString('base64'),
-          },
-        ]);
+        const newStickers = await Promise.all(
+          currentStickerFile.map(async (file) => {
+            const arrayBuffer = await file.arrayBuffer();
+            return {
+              id: crypto.randomUUID(),
+              name: file.name
+                .split('.')[0]
+                .toLowerCase()
+                .replace(/[^a-z0-9\-]/gi, ''),
+              imgUrl:
+                'data:' +
+                file.type +
+                ';base64,' +
+                Buffer.from(arrayBuffer).toString('base64'),
+            };
+          })
+        );
+        setStickers((prev) => [...prev, ...newStickers]);
+        setCurrentStickerFile(undefined); // Clear after processing
       })();
     }
-  }, [stickerAcceptedFiles]);
+  }, [currentStickerFile]);
 
   const invite = React.useCallback(
     async (address: string) => {
@@ -390,9 +438,9 @@ const SpaceEditor: React.FunctionComponent<{
       defaultChannelId: defaultChannel.channelId,
       isRepudiable: isRepudiable,
       iconUrl:
-        fileData && acceptedFiles.length
+        fileData && currentFile
           ? 'data:' +
-            acceptedFiles[0].type +
+            currentFile.type +
             ';base64,' +
             Buffer.from(fileData).toString('base64')
           : space!.iconUrl,
@@ -424,13 +472,22 @@ const SpaceEditor: React.FunctionComponent<{
   ]);
 
   return (
-    <div
-      className={`modal-complex-container${closing ? ' modal-complex-closing' : ''}`}
+    <Modal
+      title=""
+      visible={true}
+      onClose={handleDismiss}
+      size="large"
+      className="modal-complex-wrapper"
+      hideClose={true}
+      noPadding={true}
     >
-      <div className="modal-complex-close-button" onClick={handleDismiss}>
-        <FontAwesomeIcon icon={faTimes} />
-      </div>
-      <div className="modal-complex-layout">
+      <div 
+        className={`modal-complex-container-inner${closing ? ' modal-complex-closing' : ''}`}
+      >
+        <div className="modal-complex-close-button" onClick={handleDismiss}>
+          <FontAwesomeIcon icon={faTimes} />
+        </div>
+        <div className="modal-complex-layout">
         <div className="modal-complex-sidebar">
           <div className="modal-nav-title">Settings</div>
           <div
@@ -544,9 +601,9 @@ const SpaceEditor: React.FunctionComponent<{
                         className="modal-icon-editable cursor-pointer"
                         style={{
                           backgroundImage:
-                            fileData != undefined && acceptedFiles.length != 0
+                            fileData != undefined && currentFile
                               ? 'url(data:' +
-                                acceptedFiles[0].type +
+                                currentFile.type +
                                 ';base64,' +
                                 Buffer.from(fileData).toString('base64') +
                                 ')'
@@ -585,16 +642,16 @@ const SpaceEditor: React.FunctionComponent<{
                           id="space-banner-tooltip-target"
                           className={
                             'modal-banner-editable ' +
-                            (space?.bannerUrl || bannerAcceptedFiles.length != 0
+                            (space?.bannerUrl || currentBannerFile
                               ? ''
                               : 'border-2 border-dashed border-accent-200')
                           }
                           style={{
                             backgroundImage:
                               bannerData != undefined &&
-                              bannerAcceptedFiles.length != 0
+                              currentBannerFile
                                 ? 'url(data:' +
-                                  bannerAcceptedFiles[0].type +
+                                  currentBannerFile.type +
                                   ';base64,' +
                                   Buffer.from(bannerData).toString('base64') +
                                   ')'
@@ -1282,7 +1339,8 @@ const SpaceEditor: React.FunctionComponent<{
           })()}
         </div>
       </div>
-    </div>
+      </div>
+    </Modal>
   );
 };
 

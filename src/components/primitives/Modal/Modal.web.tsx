@@ -14,6 +14,7 @@ const Modal: React.FC<WebModalProps> = ({
   closeOnBackdropClick = true,
   closeOnEscape = true,
   className = '',
+  noPadding = false,
 }) => {
   return (
     <ModalContainer
@@ -24,7 +25,7 @@ const Modal: React.FC<WebModalProps> = ({
       animationDuration={300}
     >
       <div
-        className={`quorum-modal text-subtle relative pointer-events-auto quorum-modal-${size} ${className}`}
+        className={`quorum-modal text-subtle relative pointer-events-auto quorum-modal-${size} ${noPadding ? 'quorum-modal-no-padding' : ''} ${className}`}
       >
         {!hideClose && (
           <div
