@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Button } from '../primitives';
-import Modal from '../Modal';
+import { Button, Modal } from '../primitives';
 import { useSpace } from '../../hooks';
 import { useMessageDB } from '../context/MessageDB';
 import { useNavigate } from 'react-router';
@@ -30,11 +29,11 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
   }, [space, deleteSpace, navigate, onClose]);
 
   return (
-    <Modal visible={visible} onClose={onClose} title={t`Leave Space`}>
+    <Modal visible={visible} onClose={onClose} title={t`Leave ${space?.spaceName || 'Space'}`} size="medium">
       <div className="w-full max-w-[400px] mx-auto">
         <div className="mb-6 text-sm text-subtle text-left max-sm:text-center">
           <Trans>
-            Are you sure you want to leave {space?.spaceName}? You won't be able
+            Are you sure you want to leave this Space? You won't be able
             to rejoin unless you are re-invited.
           </Trans>
         </div>

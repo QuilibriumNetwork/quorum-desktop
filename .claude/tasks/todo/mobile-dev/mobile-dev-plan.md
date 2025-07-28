@@ -706,7 +706,7 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 - [x] **Fixed styling issues**: Tighter spacing between icons and text, proper left alignment
 
 
-IMPORTANT: there are still many elements that need to be switvhed to using our primitives (button,selecte,textarea,input): see .claude/tasks/todo/mobile-dev/primitive-migration-audit.md
+IMPORTANT: there are still many elements that need to be switched to using our primitives (button,select,textarea,input): see .claude/tasks/todo/mobile-dev/primitive-migration-audit.md
 
 #### Step 4: Modal Component Replacement
 Detailed plan: .claude/tasks/todo/mobile-dev/modal-migration-plan.md
@@ -732,7 +732,22 @@ Detailed plan: .claude/tasks/todo/mobile-dev/modal-migration-plan.md
 
 **Strategy**: Start simple, add complexity gradually, test after each step
 
-#### Batch 1: Simple Display Components
+#### Batch 1: Modal Components  
+**Test Modal primitive with real business logic**
+
+- [ ] **CreateSpaceModal.tsx** - Replace with Modal + Input + Button primitives
+  - Expected: Form submission works identical to before
+  - Test: Space creation flow works end-to-end
+  
+- [ ] **JoinSpaceModal.tsx** - Replace with Modal + Input + Button primitives
+  - Expected: Join flow works identical to before
+  - Test: Space joining works end-to-end
+  
+- [ ] **UserSettingsModal.tsx** - Replace with Modal + various form primitives
+  - Expected: All settings save correctly
+  - Test: Settings persist after modal close
+
+#### Batch 2: Simple Display Components
 **Low risk, immediate validation of primitive quality**
 
 - [ ] **UserProfile.tsx** - Replace with Avatar + Text + FlexColumn primitives
@@ -747,20 +762,6 @@ Detailed plan: .claude/tasks/todo/mobile-dev/modal-migration-plan.md
   - Expected: Search results display correctly
   - Test: Search and click behavior works
 
-#### Batch 2: Modal Components  
-**Test Modal primitive with real business logic**
-
-- [ ] **CreateSpaceModal.tsx** - Replace with Modal + Input + Button primitives
-  - Expected: Form submission works identical to before
-  - Test: Space creation flow works end-to-end
-  
-- [ ] **JoinSpaceModal.tsx** - Replace with Modal + Input + Button primitives
-  - Expected: Join flow works identical to before
-  - Test: Space joining works end-to-end
-  
-- [ ] **UserSettingsModal.tsx** - Replace with Modal + various form primitives
-  - Expected: All settings save correctly
-  - Test: Settings persist after modal close
 
 #### Batch 3: Form Components
 **Test Input/TextArea/Select primitives with real data handling**

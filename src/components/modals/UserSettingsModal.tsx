@@ -61,7 +61,6 @@ const UserSettingsModal: React.FunctionComponent<{
   const [allowSync, setAllowSync] = React.useState<boolean>(false);
   const [language, setLanguage] = React.useState(getUserLocale());
   const [languageChanged, setLanguageChanged] = React.useState<boolean>(false);
-  const [closing, setClosing] = React.useState<boolean>(false);
   const [userIconFileError, setUserIconFileError] = React.useState<
     string | null
   >(null);
@@ -74,12 +73,6 @@ const UserSettingsModal: React.FunctionComponent<{
 
   const forceUpdate = useForceUpdate();
 
-  const handleDismiss = () => {
-    setClosing(true);
-    setTimeout(() => {
-      dismiss();
-    }, 300);
-  };
 
   const handleNotificationToggle = async () => {
     if (!notificationService.isNotificationSupported()) {
@@ -283,25 +276,24 @@ const UserSettingsModal: React.FunctionComponent<{
       },
       keyset: keyset,
     });
-    handleDismiss();
+    dismiss();
   };
 
   return (
     <Modal
       title=""
       visible={true}
-      onClose={handleDismiss}
+      onClose={dismiss}
       size="large"
       className="modal-complex-wrapper"
-      hideClose={true}
+      hideClose={false}
       noPadding={true}
+      closeOnBackdropClick={true}
+      closeOnEscape={true}
     >
       <div 
-        className={`modal-complex-container-inner${closing ? ' modal-complex-closing' : ''}`}
+        className="modal-complex-container-inner"
       >
-        <div className="modal-complex-close-button" onClick={handleDismiss}>
-          <Icon name="times" />
-        </div>
         <div className="modal-complex-layout">
         {/* Desktop/Tablet Sidebar */}
         <div className="modal-complex-sidebar">

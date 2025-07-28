@@ -20,8 +20,8 @@ const Modal: React.FC<WebModalProps> = ({
     <ModalContainer
       visible={visible}
       onClose={onClose}
-      closeOnBackdropClick={closeOnBackdropClick && !hideClose}
-      closeOnEscape={closeOnEscape && !hideClose}
+      closeOnBackdropClick={closeOnBackdropClick}
+      closeOnEscape={closeOnEscape}
       animationDuration={300}
     >
       <div

@@ -1,3 +1,15 @@
+/**
+ * Application-Specific Modal Patterns
+ * 
+ * PURPOSE: Complex modal layouts and content patterns specific to Quorum app
+ * CONTAINS: Complex/small modal layouts, content sections, navigation, business logic styling
+ * EXCLUDES: Basic modal structure, size variants, core animations (see Modal.scss)
+ * 
+ * SEPARATION OF CONCERNS:
+ * - Modal.scss (primitive): Reusable modal foundation
+ * - _modal_common.scss (app): Application-specific patterns and layouts
+ */
+
 // Simple Modal Classes (for basic modals like CreateSpace, JoinSpace, etc.)
 .modal-body {
   display: flex;
@@ -10,30 +22,7 @@
   }
 }
 
-// Standard Modal Width Classes
-.modal-width-large {
-  width: 100%;
-  max-width: 500px;
-  min-width: 490px;
-  margin: 0 auto;
-
-  @media (max-width: 640px) {
-    max-width: 95vw;
-    min-width: 200px;
-  }
-}
-
-.modal-width-medium {
-  width: 100%;
-  max-width: 400px;
-  min-width: 390px;
-  margin: 0 auto;
-
-  @media (max-width: 640px) {
-    max-width: 95vw;
-    min-width: 200px;
-  }
-}
+// Standard Modal Width Classes (moved to Modal.scss)
 
 // Standard Button Layout Classes
 .modal-buttons-responsive {
@@ -195,40 +184,9 @@
   }
 }
 
-.modal-complex-container.modal-complex-closing {
-  opacity: 0;
-  transform: scale(0.95);
-  transition:
-    opacity 0.3s ease-out,
-    transform 0.3s ease-out;
-}
+// Complex modal closing animation handled by Modal primitive
 
-.modal-complex-close-button {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: var(--color-text-subtle);
-  transition: all 0.2s ease;
-  z-index: 10;
-
-  &:hover {
-    color: var(--color-text-main);
-    transform: scale(1.1);
-  }
-
-  @media (max-width: 768px) {
-    top: 10px;
-    right: 10px;
-    width: 20px;
-    height: 20px;
-  }
-}
+// Close button handled by Modal primitive
 
 .modal-complex-layout {
   display: flex;
@@ -520,13 +478,7 @@
   }
 }
 
-.modal-small-container.modal-small-closing {
-  opacity: 0;
-  transform: scale(0.95);
-  transition:
-    opacity 0.3s ease-out,
-    transform 0.3s ease-out;
-}
+// Small modal closing animation handled by Modal primitive
 
 .modal-small-close-button {
   position: absolute;

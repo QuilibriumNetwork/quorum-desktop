@@ -56,19 +56,12 @@ const SpaceEditor: React.FunctionComponent<{
     React.useState<string>('general');
   const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
   const [currentFile, setCurrentFile] = React.useState<File | undefined>();
-  const [closing, setClosing] = React.useState<boolean>(false);
   const [bannerData, setBannerData] = React.useState<ArrayBuffer | undefined>();
   const [currentBannerFile, setCurrentBannerFile] = React.useState<File | undefined>();
   const [currentEmojiFile, setCurrentEmojiFile] = React.useState<File[] | undefined>();
   const [currentStickerFile, setCurrentStickerFile] = React.useState<File[] | undefined>();
   // Removed isDefaultChannelListExpanded - using Select primitive instead
 
-  const handleDismiss = () => {
-    setClosing(true);
-    setTimeout(() => {
-      dismiss();
-    }, 300);
-  };
   // Removed isInviteListExpanded - using Select primitive instead
   const [roles, setRoles] = React.useState<Role[]>(space?.roles || []);
   const [emojis, setEmojis] = React.useState<Emoji[]>(space?.emojis || []);
@@ -455,7 +448,7 @@ const SpaceEditor: React.FunctionComponent<{
       emojis: emojis,
       stickers: stickers,
     });
-    handleDismiss();
+    dismiss();
   }, [
     space,
     displayName,
@@ -475,18 +468,17 @@ const SpaceEditor: React.FunctionComponent<{
     <Modal
       title=""
       visible={true}
-      onClose={handleDismiss}
+      onClose={dismiss}
       size="large"
       className="modal-complex-wrapper"
-      hideClose={true}
+      hideClose={false}
       noPadding={true}
+      closeOnBackdropClick={true}
+      closeOnEscape={true}
     >
       <div 
-        className={`modal-complex-container-inner${closing ? ' modal-complex-closing' : ''}`}
+        className="modal-complex-container-inner"
       >
-        <div className="modal-complex-close-button" onClick={handleDismiss}>
-          <FontAwesomeIcon icon={faTimes} />
-        </div>
         <div className="modal-complex-layout">
         <div className="modal-complex-sidebar">
           <div className="modal-nav-title">Settings</div>

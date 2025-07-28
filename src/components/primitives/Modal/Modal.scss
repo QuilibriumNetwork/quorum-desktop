@@ -1,4 +1,12 @@
-// Modal primitive styles - matches original Modal.scss
+/**
+ * Modal Primitive Styles
+ * 
+ * PURPOSE: Core modal functionality, reusable across platforms
+ * CONTAINS: Basic structure, size variants, animations, close buttons, width utilities
+ * EXCLUDES: Application-specific layouts, content patterns, navigation styles
+ * 
+ * See: _modal_common.scss for application-specific modal patterns
+ */
 .quorum-modal {
   position: relative;
   background-color: var(--color-bg-modal);
@@ -168,4 +176,29 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+
+// Reusable Modal Width Classes (moved from _modal_common.scss)
+.modal-width-large {
+  width: 100%;
+  max-width: 500px;
+  min-width: 490px;
+  margin: 0 auto;
+
+  @media (max-width: 640px) {
+    max-width: 95vw;
+    min-width: 200px;
+  }
+}
+
+.modal-width-medium {
+  width: 100%;
+  max-width: 400px;
+  min-width: 390px;
+  margin: 0 auto;
+
+  @media (max-width: 640px) {
+    max-width: 95vw;
+    min-width: 200px;
+  }
 }
