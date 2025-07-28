@@ -72,7 +72,7 @@
   align-items: center;
   background-position: 50%;
   background-size: cover;
-  border: 1px solid #e5e7eb;
+  border: none;
   border-radius: 50%;
   display: flex;
   font-size: 23pt;
@@ -96,19 +96,16 @@
 
 .passkey-modal-icon.success {
   background-color: #22c55e;
-  border-color: #86efac;
   color: #fff;
 }
 .passkey-modal-icon.error {
   background-color: #ef4444;
-  border-color: #fca5a5;
   color: #fff;
   font-weight: 400;
 }
 .passkey-modal-icon.default {
   background-color: #0287f2;
   background-size: cover;
-  border-color: #0266cc;
 }
 .passkey-modal-icon.pulsating {
   animation: pulsate 2s ease-in-out infinite;

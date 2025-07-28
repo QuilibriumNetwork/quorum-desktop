@@ -756,6 +756,10 @@ Detailed plan: .claude/tasks/todo/mobile-dev/modal-migration-plan.md
 #### Batch 2: Simple Display Components
 **Low risk, immediate validation of primitive quality**
 
+- [x] **OnBoarding/login/Maintenance pages** - Replace with Button + Input + Tooltip primitives
+  - Expected: Simple primitive replacement, no platform differences needed
+  - Test: User profile displays correctly
+
 - [ ] **UserProfile.tsx** - Replace with Avatar + Text + FlexColumn primitives
   - Expected: Simple primitive replacement, no platform differences needed
   - Test: User profile displays correctly

@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '../primitives';
 import {
   PasskeyModal,
   usePasskeysContext,
   passkey,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import '../../styles/_passkey-modal.scss';
-import { Input } from '../primitives';
+import { Input, Icon, Button } from '../primitives';
 import { useDropzone } from 'react-dropzone';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileImage, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
 import { t } from '@lingui/core/macro';
@@ -43,6 +40,7 @@ export const Onboarding = ({
     currentPasskeyInfo?.displayName ?? ''
   );
   const [fileData, setFileData] = useState<ArrayBuffer | undefined>();
+  const [currentFile, setCurrentFile] = useState<File | undefined>();
   const [fileError, setFileError] = useState<string | null>(null);
 
   const { apiClient } = useQuorumApiClient();
@@ -75,7 +73,8 @@ export const Onboarding = ({
   const { getRootProps, getInputProps, acceptedFiles, isDragActive } =
     useDropzone({
       accept: {
-        'image/*': ['.png', '.jpg', '.jpeg'],
+        'image/png': ['.png'],
+        'image/jpeg': ['.jpg', '.jpeg'],
       },
       minSize: 0,
       maxSize: maxImageSize,
@@ -94,20 +93,23 @@ export const Onboarding = ({
           }
         }
       },
-      onDropAccepted: () => {
+      onDropAccepted: (files) => {
         setFileError(null);
+        // Clear previous file data immediately when new file is accepted
+        setFileData(undefined);
+        setCurrentFile(files[0]);
       },
     });
 
   const setPfpImage = async () => {
     let pfpUrl: string = String(DefaultImages.UNKNOWN_USER);
 
-    if (acceptedFiles.length > 0) {
+    if (currentFile && fileData) {
       pfpUrl =
         'data:' +
-        acceptedFiles[0].type +
+        currentFile.type +
         ';base64,' +
-        Buffer.from(fileData!).toString('base64');
+        Buffer.from(fileData).toString('base64');
     }
 
     updateUserStoredInfo({ pfpUrl });
@@ -128,12 +130,18 @@ export const Onboarding = ({
   };
 
   useEffect(() => {
-    if (acceptedFiles.length > 0) {
+    if (currentFile) {
       (async () => {
-        setFileData(await acceptedFiles[0].arrayBuffer());
+        try {
+          const arrayBuffer = await currentFile.arrayBuffer();
+          setFileData(arrayBuffer);
+        } catch (error) {
+          console.error('Error reading file:', error);
+          setFileError(t`Error reading file`);
+        }
       })();
     }
-  }, [acceptedFiles]);
+  }, [currentFile]);
 
   return (
     <>
@@ -159,8 +167,8 @@ export const Onboarding = ({
         {isDragActive && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay pointer-events-none">
             <div className="flex flex-col p-8 border-2 border-dashed border-white rounded-lg bg-white bg-opacity-50 items-center">
-              <FontAwesomeIcon
-                icon={faFileImage}
+              <Icon
+                name="file-image"
                 className="text-4xl text-gray-700 mb-4"
               />
               <p className="text-xl font-semibold text-gray-800">
@@ -270,17 +278,19 @@ export const Onboarding = ({
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
               <div className="w-full max-w-[460px] px-4 pt-4 text-center flex flex-col sm:flex-row justify-between gap-4">
-                <Input
-                  className="onboarding-input !bg-white grow"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Bongocat"
-                />
-                <div className="flex flex-col justify-around sm:pl-2">
+                <div className="flex-1 min-w-0">
+                  <Input
+                    className="onboarding-input !bg-white w-full"
+                    value={displayName}
+                    onChange={setDisplayName}
+                    placeholder="Bongocat"
+                  />
+                </div>
+                <div className="flex flex-col justify-center sm:min-w-[180px] sm:pl-2">
                   <Button
                     type="primary-white"
                     disabled={displayName.length === 0}
-                    className={`px-8 w-full sm:w-auto ${displayName.length === 0 ? 'btn-disabled-onboarding ' : ''}`}
+                    className={`px-8 w-full ${displayName.length === 0 ? 'btn-disabled-onboarding ' : ''}`}
                     onClick={() =>
                       updateUserStoredInfo({ displayName, pfpUrl: undefined })
                     }
@@ -325,17 +335,14 @@ export const Onboarding = ({
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
                 <div className="w-full max-w-[460px] px-4 py-4 text-center flex flex-row justify-around">
-                  {acceptedFiles.length != 0 ? (
+                  {currentFile && fileData ? (
                     <div {...getRootProps()}>
                       <input {...getInputProps()} />
                       <img
                         className="max-w-[200px] max-h-[200px] object-cover rounded-full mx-auto"
                         src={
-                          fileData != undefined
-                            ? 'data:' +
-                              acceptedFiles[0].type +
-                              ';base64,' +
-                              Buffer.from(fileData).toString('base64')
+                          fileData !== undefined && currentFile
+                            ? `data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')}`
                             : DefaultImages.UNKNOWN_USER
                         }
                       />
@@ -369,23 +376,22 @@ export const Onboarding = ({
                     >
                       {t`Skip Adding Photo`}
                     </Button>
-                    <>
-                      <div className="flex flex-row justify-between">
-                        <FontAwesomeIcon
-                          icon={faCircleInfo}
-                          id="profile-image-info-tooltip-anchor"
-                          className="text-white/80 hover:text-white/60 cursor-pointer ml-2 my-auto"
-                          aria-label={t`If skipped, you'll get the default profile image and can set it later`}
-                        />
-                      </div>
-
-                      <ReactTooltip
-                        id="profile-image-info-tooltip"
-                        anchorSelect="#profile-image-info-tooltip-anchor"
-                        content={t`If skipped, you'll get the default profile image and can set it later`}
-                        place="right"
+                    <div className="flex flex-row justify-between">
+                      <Icon
+                        name="circle-info"
+                        id="profile-image-info-tooltip-anchor"
+                        className="text-white/80 hover:text-white/60 cursor-pointer ml-2 my-auto"
+                        aria-label={t`If skipped, you'll get the default profile image and can set it later`}
                       />
-                    </>
+                    </div>
+
+                    <ReactTooltip
+                      id="profile-image-info-tooltip"
+                      anchorSelect="#profile-image-info-tooltip-anchor"
+                      content={t`If skipped, you'll get the default profile image and can set it later`}
+                      place="right"
+                      className="!w-[300px]"
+                    />
                   </div>
                   <Button
                     type="primary-white"

@@ -1,7 +1,5 @@
 import React from 'react';
-import { Button } from './primitives';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTools } from '@fortawesome/free-solid-svg-icons';
+import { Button, Icon } from './primitives';
 import { Trans } from '@lingui/react/macro';
 
 export const Maintenance = () => {
@@ -20,13 +18,13 @@ export const Maintenance = () => {
         <div className="flex flex-row justify-center">
           <div className="grow"></div>
           <div className="w-full max-w-[460px] px-4 py-4 text-center text-white">
-            <FontAwesomeIcon size="4x" icon={faTools} />
+            <Icon name="tools" className="text-4xl" />
           </div>
           <div className="grow"></div>
         </div>
         <div className="flex flex-row justify-center">
           <div className="grow"></div>
-          <div className="w-full max-w-[460px] px-4 py-4 text-justify text-white">
+          <div className="w-full max-w-[460px] px-4 py-4 text-left text-white">
             <Trans>
               Quorum infrastructure is being deployed at this time. Please try
               refreshing, and check{' '}
