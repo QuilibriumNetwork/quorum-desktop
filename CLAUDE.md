@@ -1,6 +1,17 @@
 # CLAUDE.md
 
-This is a React project using Vite and Electron.
+This is a React project using Vite and Electron with a **cross-platform web + mobile architecture**.
+
+## Cross-Platform Architecture - CRITICAL
+
+**IMPORTANT**: This project uses a shared codebase with primitive components designed for both web and mobile platforms. All development must consider mobile compatibility from the start.
+
+- **Shared Code Architecture**: Components are built using custom primitives that abstract platform differences
+- **Mobile-First Approach**: Every UI change must work on both desktop and mobile
+- **Primitive Components**: Use components from `src/components/primitives/` (Input, Button, Modal, FlexRow, etc.) instead of raw HTML elements
+- **Reference Documentation**: See `.claude/tasks/todo/mobile-dev/docs/component-architecture-workflow-explained.md` for detailed architecture explanation
+
+**When making any changes, always ask**: "Will this work on mobile?" If uncertain, use primitives and follow mobile-first design principles.
 
 ## Dependencies
 
@@ -27,13 +38,16 @@ The main dependencies are:
 
 ## Instructions
 
+- IMPORTANT: When committing, NEVER mention Claude or Anthropic
 - Use `yarn` for package management
 - Follow the existing coding style
 - Run `yarn lint` and `yarn format` only on the files you modified during each task
+- Do not run `yarn dev` but ask the user to do it manually for testing
+- You can run `yarn build` to check if the production build has any issues
 - When you insert any new text that must be readby users, always use the Lingui sintax for localization
 - When editign anything, you must be very careful to not cause destructive changes or conflicts with other functionalities, as the app is pretty complex with many shared styles and features
 - Think always mobile first, and when making layout/css edits, always think at the final result for both desktop and mobile users for an optimal UX/UI
-- When committing, NEVER mention Claude or Anthropic
+
 
 ## React Hooks Rules - IMPORTANT
 
