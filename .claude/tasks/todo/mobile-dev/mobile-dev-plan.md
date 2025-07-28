@@ -705,19 +705,22 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 - [x] **Cross-platform compatibility**: Both web and native implementations updated
 - [x] **Fixed styling issues**: Tighter spacing between icons and text, proper left alignment
 
+
+IMPORTANT: there are still many elements that need to be switvhed to using our primitives (button,selecte,textarea,input): see .claude/tasks/todo/mobile-dev/primitive-migration-audit.md
+
 #### Step 4: Modal Component Replacement
 Detailed plan: .claude/tasks/todo/mobile-dev/modal-migration-plan.md
-- [ ] **Rename old component**: `Modal.tsx` → `Modal-OLD.tsx`
-- [ ] **Update imports**: Change imports to use `import { Modal } from '@/components/primitives'`
-- [ ] **Test thoroughly**:
-  - [ ] All modals open correctly
-  - [ ] Modal close buttons work
-  - [ ] Modal backdrop close works
-  - [ ] Modal animations work
-  - [ ] Modal content displays correctly
-  - [ ] Focus handling works properly
-- [ ] **If tests pass**: Delete `Modal-OLD.tsx` (as well as any .scss file connected ot it if it's not needed anymore)
-- [ ] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
+- [x] **Rename old component**: `Modal.tsx` → `Modal-OLD.tsx`
+- [x] **Update imports**: Change imports to use `import { Modal } from '@/components/primitives'`
+- [x] **Test thoroughly**:
+  - [x] All modals open correctly
+  - [x] Modal close buttons work
+  - [x] Modal backdrop close works
+  - [x] Modal animations work
+  - [x] Modal content displays correctly
+  - [x] Focus handling works properly
+- [x] **If tests pass**: Delete `Modal-OLD.tsx` (as well as any .scss file connected ot it if it's not needed anymore)
+- [x] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
 
 #### Final Validation
 - [ ] **Full app test**: Launch app and test core user flows

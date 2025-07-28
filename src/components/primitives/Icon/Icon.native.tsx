@@ -29,6 +29,7 @@ export function Icon({
   style = {},
   disabled = false,
   allowFontScaling = true,
+  id, // Ignored on native - for API consistency
 }: IconNativeProps) {
   const theme = useCrossPlatformTheme();
   const colors = theme.colors;

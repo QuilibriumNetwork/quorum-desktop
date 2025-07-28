@@ -1,9 +1,9 @@
 .color-swatch {
-  @apply rounded-full cursor-pointer border-2 flex items-center justify-center transition-all;
+  @apply rounded-full cursor-pointer border-2 flex items-center justify-center transition-all relative;
   border-color: transparent;
-  background-color: var(--accent);
+  // background-color set via inline style for specific color
 
-  &:hover:not(&--disabled) {
+  &:hover:not(&--disabled):not(&--active) {
     @apply scale-110;
   }
 
@@ -41,7 +41,10 @@
 
   // Checkmark icon
   &__checkmark {
-    @apply text-white;
+    @apply text-white absolute;
     font-size: 0.75em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 }

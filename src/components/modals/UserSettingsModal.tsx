@@ -1,13 +1,12 @@
 import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Button, Select, Modal } from '../primitives';
+import { Button, Select, Modal, Switch, Input, Icon, Tooltip } from '../primitives';
 import '../../styles/_modal_common.scss';
 import { useRegistration } from '../../hooks';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../context/MessageDB';
-import ToggleSwitch from '../ToggleSwitch';
 import { UserConfig } from '../../db/messages';
 import ThemeRadioGroup from '../ThemeRadioGroup';
 import AccentColorSwitcher from '../AccentColorSwitcher';
@@ -21,17 +20,8 @@ import {
 } from '../../i18n/i18n.ts';
 import locales from '../../i18n/locales';
 import useForceUpdate from '../hooks/forceUpdate';
-import ReactTooltip from '../ReactTooltip';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faTimes,
-  faInfoCircle,
-  faUser,
-  faShield,
-  faPalette,
-  faBell,
-} from '@fortawesome/free-solid-svg-icons';
 import { notificationService } from '../../services/notificationService';
+import ReactTooltip from '../ReactTooltip';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -101,23 +91,17 @@ const UserSettingsModal: React.FunctionComponent<{
 
     if (currentStatus === 'granted') {
       // Can't revoke permission programmatically, inform user
-      alert(
-        t`To disable notifications, please change the notification settings in your browser for this site.`
-      );
+      // Just show the message below, don't use alert
       return;
     }
 
-    if (currentStatus === 'denied') {
-      // Can't request again if denied, inform user
-      alert(
-        t`Notifications are blocked. Please enable them in your browser settings for this site.`
-      );
-      return;
-    }
-
-    // Request permission
+    // For 'default' or 'denied' status, try to request permission
+    // Some browsers allow re-requesting even after denial
     const permission = await notificationService.requestPermission();
     setNotificationsEnabled(permission === 'granted');
+    
+    // The error messages will be shown by the conditional rendering below
+    // No need for alerts that interrupt the UX
   };
 
   React.useEffect(() => {
@@ -144,6 +128,26 @@ const UserSettingsModal: React.FunctionComponent<{
       })();
     }
   }, [init]);
+
+  // Refresh notification permission status when modal opens or focus returns
+  React.useEffect(() => {
+    const checkNotificationStatus = () => {
+      const currentStatus = notificationService.getPermissionStatus();
+      setNotificationsEnabled(currentStatus === 'granted');
+    };
+
+    // Check immediately when component mounts
+    checkNotificationStatus();
+
+    // Check when focus returns to the page (in case user changed browser settings)
+    window.addEventListener('focus', checkNotificationStatus);
+    document.addEventListener('visibilitychange', checkNotificationStatus);
+
+    return () => {
+      window.removeEventListener('focus', checkNotificationStatus);
+      document.removeEventListener('visibilitychange', checkNotificationStatus);
+    };
+  }, []);
 
   const downloadKey = async () => {
     let content = await exportKey(currentPasskeyInfo!.address);
@@ -296,7 +300,7 @@ const UserSettingsModal: React.FunctionComponent<{
         className={`modal-complex-container-inner${closing ? ' modal-complex-closing' : ''}`}
       >
         <div className="modal-complex-close-button" onClick={handleDismiss}>
-          <FontAwesomeIcon icon={faTimes} />
+          <Icon name="times" />
         </div>
         <div className="modal-complex-layout">
         {/* Desktop/Tablet Sidebar */}
@@ -306,28 +310,28 @@ const UserSettingsModal: React.FunctionComponent<{
             onClick={() => setSelectedCategory('general')}
             className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faUser} className="mr-2 text-accent" />
+            <Icon name="user" className="mr-2 text-accent" />
             {t`General`}
           </div>
           <div
             onClick={() => setSelectedCategory('privacy')}
             className={`modal-nav-category ${selectedCategory === 'privacy' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faShield} className="mr-2 text-accent" />
+            <Icon name="shield" className="mr-2 text-accent" />
             {t`Privacy/Security`}
           </div>
           <div
             onClick={() => setSelectedCategory('notifications')}
             className={`modal-nav-category ${selectedCategory === 'notifications' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faBell} className="mr-2 text-accent" />
+            <Icon name="bell" className="mr-2 text-accent" />
             {t`Notifications`}
           </div>
           <div
             onClick={() => setSelectedCategory('appearance')}
             className={`modal-nav-category ${selectedCategory === 'appearance' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faPalette} className="mr-2 text-accent" />
+            <Icon name="palette" className="mr-2 text-accent" />
             {t`Appearance`}
           </div>
         </div>
@@ -338,28 +342,28 @@ const UserSettingsModal: React.FunctionComponent<{
             onClick={() => setSelectedCategory('general')}
             className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faUser} className="mr-2 text-accent" />
+            <Icon name="user" className="mr-2 text-accent" />
             {t`General`}
           </div>
           <div
             onClick={() => setSelectedCategory('privacy')}
             className={`modal-nav-category ${selectedCategory === 'privacy' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faShield} className="mr-2 text-accent" />
+            <Icon name="shield" className="mr-2 text-accent" />
             {t`Privacy/Security`}
           </div>
           <div
             onClick={() => setSelectedCategory('notifications')}
             className={`modal-nav-category ${selectedCategory === 'notifications' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faBell} className="mr-2 text-accent" />
+            <Icon name="bell" className="mr-2 text-accent" />
             {t`Notifications`}
           </div>
           <div
             onClick={() => setSelectedCategory('appearance')}
             className={`modal-nav-category ${selectedCategory === 'appearance' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faPalette} className="mr-2 text-accent" />
+            <Icon name="palette" className="mr-2 text-accent" />
             {t`Appearance`}
           </div>
         </div>
@@ -399,10 +403,10 @@ const UserSettingsModal: React.FunctionComponent<{
                       )}
                       <div className="modal-text-section sm:mt-6">
                         <div className="modal-text-label">{t`Display Name`}</div>
-                        <input
-                          className="w-full quorum-input modal-input-text"
+                        <Input
+                          className="w-full modal-input-text"
                           value={displayName}
-                          onChange={(e) => setDisplayName(e.target.value)}
+                          onChange={setDisplayName}
                         />
                       </div>
                     </div>
@@ -411,8 +415,8 @@ const UserSettingsModal: React.FunctionComponent<{
                         <div className="mb-4">
                           <div className="error-label flex items-center justify-between">
                             <span>{userIconFileError}</span>
-                            <FontAwesomeIcon
-                              icon={faTimes}
+                            <Icon
+                              name="times"
                               className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                               onClick={() => setUserIconFileError(null)}
                             />
@@ -559,27 +563,21 @@ const UserSettingsModal: React.FunctionComponent<{
                             <div className="text-sm flex flex-col justify-around">
                               {t`Enable sync`}
                             </div>
-                            <>
-                              <FontAwesomeIcon
-                                id="allow-sync-tooltip-anchor"
-                                icon={faInfoCircle}
+                            <Tooltip
+                              id="settings-allow-sync-tooltip"
+                              content={t`When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined.`}
+                              place="right"
+                            >
+                              <Icon
+                                name="info-circle"
                                 className="info-icon-tooltip mt-2 ml-2"
                               />
-                              <ReactTooltip
-                                id="allow-sync-tooltip"
-                                anchorSelect="#allow-sync-tooltip-anchor"
-                                content={t`When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined.`}
-                                place="right"
-                                className="!w-[400px]"
-                                showOnTouch
-                                touchTrigger="click"
-                              />
-                            </>
+                            </Tooltip>
                           </div>
 
-                          <ToggleSwitch
-                            onClick={() => setAllowSync((prev) => !prev)}
-                            active={allowSync}
+                          <Switch
+                            value={allowSync}
+                            onChange={setAllowSync}
                           />
                         </div>
                         <div className="flex flex-row justify-between">
@@ -587,27 +585,21 @@ const UserSettingsModal: React.FunctionComponent<{
                             <div className="text-sm flex flex-col justify-around">
                               {t`Non-repudiability`}
                             </div>
-                            <>
-                              <FontAwesomeIcon
-                                id="non-repudiable-tooltip-anchor"
-                                icon={faInfoCircle}
+                            <Tooltip
+                              id="settings-non-repudiable-tooltip"
+                              content={t`When enabled, direct messages are not signed by your user key...`}
+                              place="right"
+                            >
+                              <Icon
+                                name="info-circle"
                                 className="info-icon-tooltip mt-2 ml-2"
                               />
-                              <ReactTooltip
-                                id="non-repudiable-tooltip"
-                                anchorSelect="#non-repudiable-tooltip-anchor"
-                                content={t`When enabled, direct messages are not signed by your user key...`}
-                                place="right"
-                                className="!w-[400px]"
-                                showOnTouch
-                                touchTrigger="click"
-                              />
-                            </>
+                            </Tooltip>
                           </div>
 
-                          <ToggleSwitch
-                            onClick={() => setNonRepudiable((prev) => !prev)}
-                            active={nonRepudiable}
+                          <Switch
+                            value={nonRepudiable}
+                            onChange={setNonRepudiable}
                           />
                         </div>
                       </div>
@@ -642,27 +634,21 @@ const UserSettingsModal: React.FunctionComponent<{
                             <div className="text-sm flex flex-col justify-around">
                               {t`Desktop Notifications`}
                             </div>
-                            <>
-                              <FontAwesomeIcon
-                                id="notifications-tooltip-anchor"
-                                icon={faInfoCircle}
+                            <Tooltip
+                              id="settings-notifications-tooltip"
+                              content={t`Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature.`}
+                              place="right"
+                            >
+                              <Icon
+                                name="info-circle"
                                 className="info-icon-tooltip mt-2 ml-2"
                               />
-                              <ReactTooltip
-                                id="notifications-tooltip"
-                                anchorSelect="#notifications-tooltip-anchor"
-                                content={t`Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature.`}
-                                place="right"
-                                className="!w-[400px]"
-                                showOnTouch
-                                touchTrigger="click"
-                              />
-                            </>
+                            </Tooltip>
                           </div>
 
-                          <ToggleSwitch
-                            onClick={handleNotificationToggle}
-                            active={notificationsEnabled}
+                          <Switch
+                            value={notificationsEnabled}
+                            onChange={handleNotificationToggle}
                           />
                         </div>
 
@@ -674,7 +660,7 @@ const UserSettingsModal: React.FunctionComponent<{
 
                         {notificationService.getPermissionStatus() ===
                           'denied' && (
-                          <div className="pt-2 text-sm text-red-600">
+                          <div className="pt-2 text-sm" style={{ color: 'var(--color-text-danger)' }}>
                             {t`Notifications are blocked. Please enable them in your browser settings.`}
                           </div>
                         )}
@@ -712,21 +698,19 @@ const UserSettingsModal: React.FunctionComponent<{
                           width="300px"
                           dropdownPlacement="bottom"
                         />
-                        <ReactTooltip
-                          id="language-refresh-tooltip"
-                          place="top"
-                          anchorSelect="#language-refresh-button"
+                        <Tooltip
+                          id="settings-language-refresh-tooltip"
                           content={t`Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language.`}
-                          className="!bg-surface-5 !text-main !w-[400px]"
-                        />
-                        <Button
-                          id="language-refresh-button"
-                          type="secondary"
-                          disabled={!languageChanged}
-                          onClick={forceUpdate}
+                          place="top"
                         >
-                          {t`Refresh`}
-                        </Button>
+                          <Button
+                            type="secondary"
+                            disabled={!languageChanged}
+                            onClick={forceUpdate}
+                          >
+                            {t`Refresh`}
+                          </Button>
+                        </Tooltip>
                       </div>
                     </div>
                   </div>

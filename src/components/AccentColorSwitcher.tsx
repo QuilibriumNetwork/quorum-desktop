@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { ColorSwatch } from './primitives';
 
 const ACCENT_COLORS = [
   'blue',
-  'purple',
+  'purple', 
   'fuchsia',
   'orange',
   'green',
@@ -31,15 +30,13 @@ const AccentColorSwitcher: React.FC = () => {
   return (
     <div className="flex gap-3">
       {ACCENT_COLORS.map((color) => (
-        <div
+        <ColorSwatch
           key={color}
-          onClick={() => setAccent(color)}
-          className={`w-8 h-8 rounded-full cursor-pointer border-2 flex items-center justify-center ${activeAccent === color ? `border-accent-500` : 'border-transparent'} accent-${color}`}
-        >
-          {activeAccent === color && (
-            <FontAwesomeIcon icon={faCheck} className="text-white" />
-          )}
-        </div>
+          color={color}  // Pass color name, not hex value
+          isActive={activeAccent === color}  // Use isActive prop
+          onPress={() => setAccent(color)}   // Use onPress prop
+          size="large"
+        />
       ))}
     </div>
   );
