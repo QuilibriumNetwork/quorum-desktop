@@ -722,11 +722,6 @@ Detailed plan: .claude/tasks/todo/mobile-dev/modal-migration-plan.md
 - [x] **If tests pass**: Delete `Modal-OLD.tsx` (as well as any .scss file connected ot it if it's not needed anymore)
 - [x] **If tests fail**: Revert imports, investigate primitive issues, fix, retry
 
-#### Final Validation
-- [ ] **Full app test**: Launch app and test core user flows
-- [ ] **Performance check**: No noticeable performance regressions
-- [ ] **Build test**: Production build works without errors
-- [ ] **Import cleanup**: All components now use primitive imports consistently
 
 ### Phase 4B: Gradual Component Migration
 
@@ -735,17 +730,28 @@ Detailed plan: .claude/tasks/todo/mobile-dev/modal-migration-plan.md
 #### Batch 1: Modal Components  
 **Test Modal primitive with real business logic**
 
-- [ ] **CreateSpaceModal.tsx** - Replace with Modal + Input + Button primitives
+- [x] **UserSettingsModal.tsx** - Replace with Modal + various form primitives
+  - Expected: All settings save correctly
+  - Test: Settings persist after modal close
+
+- [x] **CreateSpaceModal.tsx** - Replace with Modal + Input + Button primitives
   - Expected: Form submission works identical to before
   - Test: Space creation flow works end-to-end
   
-- [ ] **JoinSpaceModal.tsx** - Replace with Modal + Input + Button primitives
+- [x] **JoinSpaceModal.tsx** - Replace with Modal + Input + Button primitives
   - Expected: Join flow works identical to before
   - Test: Space joining works end-to-end
+
+- [x] **ChannelEditor.tsx** - Replace with Input + TextArea + Button primitives
+  - Expected: Channel editing works identical to before
+  - Test: Channel updates save correctly
   
-- [ ] **UserSettingsModal.tsx** - Replace with Modal + various form primitives
-  - Expected: All settings save correctly
-  - Test: Settings persist after modal close
+- [x] **GroupEditor.tsx** - Replace with form primitives
+  - Expected: Group management works identical to before  
+  - Test: Group operations work end-to-end
+
+- [x] All other existing modals tested with new primitives
+  
 
 #### Batch 2: Simple Display Components
 **Low risk, immediate validation of primitive quality**
@@ -770,13 +776,6 @@ Detailed plan: .claude/tasks/todo/mobile-dev/modal-migration-plan.md
   - Expected: Search functionality works identical to before
   - Test: Global search returns correct results
   
-- [ ] **ChannelEditor.tsx** - Replace with Input + TextArea + Button primitives
-  - Expected: Channel editing works identical to before
-  - Test: Channel updates save correctly
-  
-- [ ] **GroupEditor.tsx** - Replace with form primitives
-  - Expected: Group management works identical to before  
-  - Test: Group operations work end-to-end
 
 #### Batch 4: Navigation Components
 **Most complex - test Button variants and interaction patterns**

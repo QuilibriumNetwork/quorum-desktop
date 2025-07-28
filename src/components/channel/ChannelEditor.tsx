@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Input } from '../primitives';
+import { Button, Modal, Input, Icon } from '../primitives';
 import '../../styles/_modal_common.scss';
 import { useSpace } from '../../hooks';
 import { useMessageDB } from '../context/MessageDB';
@@ -7,8 +7,6 @@ import { Channel } from '../../api/quorumApi';
 import { useNavigate, useParams } from 'react-router';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const ChannelEditor: React.FunctionComponent<{
   spaceId: string;
@@ -135,7 +133,7 @@ const ChannelEditor: React.FunctionComponent<{
 
   return (
     <Modal
-      title=""
+      title={channelId ? t`Edit Channel` : t`Add Channel`}
       visible={true}
       onClose={dismiss}
     >
@@ -170,8 +168,8 @@ const ChannelEditor: React.FunctionComponent<{
               Are you sure? This channel contains messages. Deleting it will
               cause all content to be lost forever!
             </Trans>
-            <FontAwesomeIcon
-              icon={faTimes}
+            <Icon
+              name="times"
               className="absolute top-2 right-2 cursor-pointer hover:opacity-70"
               onClick={() => setShowWarning(false)}
             />

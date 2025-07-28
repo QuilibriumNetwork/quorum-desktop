@@ -2,118 +2,91 @@
 
 ## Overview
 
-The Quorum Desktop app uses a sophisticated modal system designed to handle various types of user interactions, from simple confirmations to complex multi-step workflows. This document provides comprehensive information about our modal architecture, implementation patterns, and all existing modal components.
+The Quorum Desktop app uses a unified primitive-based modal system designed for cross-platform compatibility and consistent user experience. All modals use the Modal primitive from `src/components/primitives/Modal` and leverage other primitives for forms, buttons, and interactions.
 
 ## Modal System Architecture
 
 ### Core Components
 
-#### **1. Modal Wrapper Component** (`src/components/Modal.tsx`)
+#### **1. Modal Primitive** (`src/components/primitives/Modal`)
 
-The main modal wrapper that provides:
+The foundation of all modals, providing:
 
-- Consistent styling and animations
-- Close button functionality
-- Click-outside-to-close behavior
-- Backdrop with blur effect
-- High z-index (`z-[9999]`) to appear above all UI elements
+- Consistent styling and animations (300ms transitions)
+- Built-in close button with ESC key and backdrop click support
+- Responsive sizing with predefined size variants
+- Cross-platform compatibility (web/mobile)
+- Proper z-index management and backdrop blur
 
 ```tsx
-<Modal title="Title" visible={visible} onClose={onClose}>
+import { Modal } from '../primitives';
+
+<Modal
+  title="Modal Title"
+  visible={visible}
+  onClose={onClose}
+  size="medium" // small | medium | large | full
+  closeOnBackdropClick={true}
+  closeOnEscape={true}
+>
   <div className="modal-content">{/* Modal content */}</div>
 </Modal>
 ```
 
-#### **2. AppWithSearch Level Rendering** (`src/components/AppWithSearch.tsx`)
+#### **2. Supporting Primitives**
 
-For complex modals that need to avoid z-index conflicts with NavMenu:
+All modals use these primitives for consistency:
 
-- Renders modals at the AppWithSearch level
-- Uses custom backdrop wrapper with `z-[9999]`
-- Provides click-outside functionality
-- Manages modal state through context
-
-```tsx
-<div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
-  <ModalComponent {...props} />
-  <div className="fixed inset-0 -z-10" onClick={onClose} />
-</div>
-```
-
-#### **3. Modal Context System**
-
-The AppWithSearch component provides a modal context for managing complex modals:
-
-- `useModalContext()` hook for accessing modal functions
-- Centralized state management for UserSettingsModal, SpaceEditor, ChannelEditor
-- Prevents z-index conflicts with NavMenu elements
+- **Button** - All buttons use Button primitive
+- **Input** - All text inputs use Input primitive  
+- **Switch** - All toggles use Switch primitive
+- **Icon** - All icons use Icon primitive (no FontAwesome)
+- **Tooltip** - Most tooltips use Tooltip primitive
+- **Select** - All dropdowns use Select primitive
 
 ### CSS Architecture
 
-#### **Modal Styling Classes**
+#### **Modal Primitive Styles** (`src/components/primitives/Modal/Modal.scss`)
 
-- `.quorum-modal` - Main modal container styling
-- `.quorum-modal-title` - Modal title styling
-- `.quorum-modal-close` - Close button styling
-- `.quorum-modal-container` - Content wrapper
+Core modal functionality:
+- Size variants: `.quorum-modal-small`, `.quorum-modal-medium`, `.quorum-modal-large`
+- Animation keyframes and transitions
+- Close button positioning
+- Responsive breakpoints
+- Width utility classes (`.modal-width-large`, `.modal-width-medium`)
 
-#### **Responsive Design Patterns**
+#### **Application-Specific Styles** (`src/styles/_modal_common.scss`)
 
-- Mobile-first approach with breakpoints
-- Responsive button patterns: `w-full sm:max-w-32 sm:inline-block`
-- Centered layouts on mobile with `justify-content: center`
-- Flexible container sizing with `min-w-[200px] max-w-[90vw]`
+Complex modal layouts and business logic styling:
+- `.modal-complex-*` - Complex modal layouts (UserSettingsModal, SpaceEditor)
+- `.modal-content-*` - Content section patterns
+- `.modal-nav-*` - Navigation and sidebar patterns
+- Form styling patterns and responsive layouts
 
-#### **Modal Common Styles** (`src/styles/_modal_common.scss`)
+### Modal Size Variants
 
-Shared styling patterns for consistent modal appearance:
-
-- `.modal-body` - Standard modal body layout
-- `.modal-actions` - Button container with responsive behavior
-- `.modal-icon-section` - Icon display area
-- `.modal-complex-container` - Complex modal layout system
-
-### Navigation Integration
-
-#### **Route-Based Modals**
-
-Some modals are tied to specific routes:
-
-- **JoinSpaceModal**: Rendered on `/invite/` route
-- Uses React Router's `useNavigate()` for proper navigation
-- Implements hybrid close behavior (back navigation vs fallback)
-
-#### **Modal Close Behavior**
-
-```tsx
-const handleClose = () => {
-  if (window.history.length > 1 && document.referrer) {
-    window.history.back(); // Go back if there's meaningful history
-  } else {
-    navigate('/messages'); // Fallback to messages
-  }
-};
-```
+- **`small`** - 400px max-width, for simple editors (ChannelEditor, GroupEditor)
+- **`medium`** - 600px max-width, for standard forms (CreateSpaceModal, JoinSpaceModal)
+- **`large`** - 800px max-width, for complex modals (UserSettingsModal, SpaceEditor)
+- **`full`** - 95vw max-width, for content-heavy modals
 
 ## Modal Implementation Patterns
 
-### **Pattern 1: Standard Modal Wrapper**
+### **Pattern 1: Simple Modal**
 
-**Best for**: Simple forms, confirmations, basic interactions
-**Components**: CreateSpaceModal, KickUserModal, NewDirectMessageModal, Image Viewer Modal
+**Best for**: Basic forms, confirmations, simple interactions
+**Components**: CreateSpaceModal, KickUserModal, NewDirectMessageModal, LeaveSpaceModal
 
 ```tsx
-import Modal from '../Modal';
+import { Modal, Button, Input } from '../primitives';
 
-const MyModal = ({ visible, onClose }) => {
+const SimpleModal = ({ visible, onClose }) => {
   return (
-    <Modal title="My Modal" visible={visible} onClose={onClose}>
-      <div className="modal-my-modal">
-        {/* Modal content */}
-        <div className="modal-my-modal-actions">
-          <Button className="w-full sm:max-w-32 sm:inline-block" type="primary">
-            Action
-          </Button>
+    <Modal title="Simple Modal" visible={visible} onClose={onClose} size="medium">
+      <div className="modal-body">
+        <Input value={value} onChange={setValue} />
+        <div className="modal-buttons-responsive">
+          <Button type="primary" onClick={handleSubmit}>Submit</Button>
         </div>
       </div>
     </Modal>
@@ -121,230 +94,315 @@ const MyModal = ({ visible, onClose }) => {
 };
 ```
 
-### **Pattern 2: AppWithSearch Level Rendering**
+### **Pattern 2: Complex Modal with Navigation**
 
-**Best for**: Complex modals that need to avoid z-index conflicts
-**Components**: UserSettingsModal, SpaceEditor, JoinSpaceModal
-
-```tsx
-// In AppWithSearch.tsx
-{
-  isModalOpen && (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
-      <MyComplexModal {...props} />
-      <div className="fixed inset-0 -z-10" onClick={onClose} />
-    </div>
-  );
-}
-```
-
-### **Pattern 3: Custom Small Modal**
-
-**Best for**: Simple editors, small forms
-**Components**: ChannelEditor, GroupEditor
+**Best for**: Multi-section modals with sidebar navigation
+**Components**: UserSettingsModal, SpaceEditor
 
 ```tsx
-const MySmallModal = ({ onClose }) => {
+import { Modal, Button, Switch, Icon } from '../primitives';
+
+const ComplexModal = ({ visible, onClose }) => {
   return (
-    <div className="modal-small-container">
-      <div className="modal-small-content">{/* Modal content */}</div>
-    </div>
+    <Modal 
+      title=""
+      visible={visible} 
+      onClose={onClose} 
+      size="large"
+      className="modal-complex-wrapper"
+      noPadding={true}
+    >
+      <div className="modal-complex-container-inner">
+        <div className="modal-complex-layout">
+          <div className="modal-complex-sidebar">
+            {/* Navigation */}
+            <div className="modal-nav-category" onClick={() => setSection('general')}>
+              <Icon name="cog" className="mr-2 text-accent" />
+              General
+            </div>
+          </div>
+          <div className="modal-complex-content">
+            {/* Content sections */}
+          </div>
+        </div>
+      </div>
+    </Modal>
   );
 };
 ```
 
-## Comprehensive Modal Component Inventory
+### **Pattern 3: Small Editor Modal**
 
-### **Category 1: Simple Modals (using Modal wrapper)**
+**Best for**: Simple editors, quick configuration
+**Components**: ChannelEditor, GroupEditor
+
+```tsx
+import { Modal, Button, Input, Icon } from '../primitives';
+
+const EditorModal = ({ visible, onClose, isEdit, itemName }) => {
+  return (
+    <Modal 
+      title={isEdit ? t`Edit Item` : t`Add Item`}
+      visible={visible} 
+      onClose={onClose} 
+      size="small"
+    >
+      <div className="modal-body" data-small-modal>
+        <Input value={name} onChange={setName} />
+        <div className="modal-actions">
+          <Button type="primary" onClick={handleSave}>Save</Button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+```
+
+## Modal Component Inventory
+
+### **Simple Modals (Standard Pattern)**
 
 #### **1. CreateSpaceModal** - `src/components/modals/CreateSpaceModal.tsx`
+- **Purpose**: Create new space with icon, name, and privacy settings
+- **Size**: Medium
+- **Primitives**: Modal, Input, Button, Switch, Icon, Tooltip
+- **Special**: File upload (ReactTooltip for dropzone), Tooltip primitive for info icons
+- **Title**: "Create a Space"
 
-- **Purpose**: Create a new space with icon upload, name, and advanced settings
-- **Complexity**: Complex (multiple form fields, file upload, conditional settings)
-- **Features**: Icon upload with drag-and-drop, privacy settings, validation
-- **Usage**: Triggered from NavMenu "Create Space" button
-- **Navigation**: Redirects to created space on success
+#### **2. JoinSpaceModal** - `src/components/modals/JoinSpaceModal.tsx`
+- **Purpose**: Join space via invite link with preview
+- **Size**: Medium  
+- **Primitives**: Modal, Input, Button
+- **Special**: Space manifest decryption, custom SpaceIcon component
+- **Title**: "Join Space"
 
-#### **2. KickUserModal** - `src/components/modals/KickUserModal.tsx`
+#### **3. LeaveSpaceModal** - `src/components/modals/LeaveSpaceModal.tsx`
+- **Purpose**: Confirmation for leaving a space
+- **Size**: Medium
+- **Primitives**: Modal, Button
+- **Special**: Dynamic title with space name, double-click confirmation
+- **Title**: "Leave {spaceName}"
 
-- **Purpose**: Confirmation dialog for removing a user from a space
-- **Complexity**: Simple (single action confirmation)
-- **Features**: User info display, danger button confirmation
-- **Usage**: Triggered from user context menu in space member list
-- **Navigation**: Stays on current page after action
+#### **4. NewDirectMessageModal** - `src/components/modals/NewDirectMessageModal.tsx`
+- **Purpose**: Start DM by entering user address
+- **Size**: Standard
+- **Primitives**: Modal, Input, Button
+- **Title**: "New Direct Message"
 
-#### **3. NewDirectMessageModal** - `src/components/modals/NewDirectMessageModal.tsx`
+#### **5. KickUserModal** - `src/components/modals/KickUserModal.tsx`
+- **Purpose**: Remove user from space confirmation
+- **Size**: Standard
+- **Primitives**: Modal, Button
+- **Title**: "Kick User"
 
-- **Purpose**: Start a new direct message conversation by entering user address
-- **Complexity**: Simple (single input with validation)
-- **Features**: Address validation, user lookup with Suspense, responsive buttons
-- **Usage**: Triggered from direct messages section
-- **Navigation**: Redirects to new conversation on success
+### **Complex Modals (Multi-Section Pattern)**
 
-#### **4. Image Viewer Modal** - `src/components/message/Message.tsx`
+#### **6. UserSettingsModal** - `src/components/modals/UserSettingsModal.tsx`
+- **Purpose**: User account settings and preferences
+- **Size**: Large
+- **Primitives**: Modal, Switch, Input, Icon, Tooltip, Select
+- **Sections**: General, Privacy/Security, Notifications, Appearance
+- **Special**: File upload (ReactTooltip), ThemeRadioGroup, AccentColorSwitcher, ClickToCopyContent
+- **Title**: Hidden (custom layout)
 
-- **Purpose**: Display full-size images when clicked in messages
-- **Complexity**: Simple (just image display)
-- **Features**: Full-size image display with close functionality
-- **Usage**: Embedded in Message component, triggered by image clicks
-- **Navigation**: Closes to return to message view
+#### **7. SpaceEditor** - `src/components/channel/SpaceEditor.tsx`
+- **Purpose**: Comprehensive space management
+- **Size**: Large  
+- **Primitives**: Modal, Switch, Input, Icon, Tooltip, Select, Button
+- **Sections**: General, Roles, Emojis, Stickers, Invites
+- **Special**: File uploads (ReactTooltip), complex role management
+- **Title**: Hidden (custom layout)
 
-### **Category 2: Complex Modals (using AppWithSearch level rendering)**
-
-#### **5. UserSettingsModal** - `src/components/modals/UserSettingsModal.tsx`
-
-- **Purpose**: User account settings with profile editing and preferences
-- **Complexity**: Complex (multi-category tabbed interface)
-- **Features**: Profile editing, device management, theme/language settings, responsive sidebar
-- **Usage**: Triggered from user avatar menu
-- **Navigation**: Stays on current page, manages own state
-- **Layout**: Uses `modal-complex-container` with sidebar navigation
-
-#### **6. SpaceEditor** - `src/components/channel/SpaceEditor.tsx`
-
-- **Purpose**: Comprehensive space management (settings, roles, emojis, invites)
-- **Complexity**: Complex (most complex modal with 5 sections)
-- **Features**: Multi-category tabs, file uploads, role management, invite system
-- **Usage**: Triggered from space context menu
-- **Navigation**: Stays on current space, manages extensive state
-- **Layout**: Uses `modal-complex-container` with 5 different sections
-
-#### **7. JoinSpaceModal** - `src/components/modals/JoinSpaceModal.tsx`
-
-- **Purpose**: Join a space via invite link with validation and preview
-- **Complexity**: Complex (link parsing, space manifest decryption, API calls)
-- **Features**: Link validation, space preview, error handling, responsive layout
-- **Usage**: Rendered on `/invite/` route
-- **Navigation**: Hybrid close behavior (back navigation vs fallback to `/messages`)
-- **Layout**: Custom `quorum-modal` styling without Modal wrapper
-
-### **Category 3: Small Custom Modals**
+### **Small Editor Modals**
 
 #### **8. ChannelEditor** - `src/components/channel/ChannelEditor.tsx`
-
-- **Purpose**: Create or edit channel settings (name, topic) with deletion
-- **Complexity**: Simple (basic form with delete confirmation)
-- **Features**: Name/topic fields, delete capability, responsive layout
-- **Usage**: Triggered from channel context menu
-- **Navigation**: Stays on current space, refreshes channel list
-- **Layout**: Uses `modal-small-container` custom layout
+- **Purpose**: Create/edit channels
+- **Size**: Small
+- **Primitives**: Modal, Input, Button, Icon
+- **Special**: Dynamic title, delete warnings with custom close icons
+- **Title**: "Add Channel" / "Edit Channel"
 
 #### **9. GroupEditor** - `src/components/channel/GroupEditor.tsx`
-
-- **Purpose**: Create or edit channel groups with deletion capability
-- **Complexity**: Simple (single input field with delete confirmation)
-- **Features**: Group name input, delete confirmation, custom styling
-- **Usage**: Triggered from group context menu
-- **Navigation**: Stays on current space, refreshes group list
-- **Layout**: Uses completely custom `group-editor` styling
+- **Purpose**: Create/edit channel groups
+- **Size**: Small
+- **Primitives**: Modal, Input, Button, Icon  
+- **Special**: Dynamic title, delete warnings with custom close icons
+- **Title**: "Add Group" / "Edit Group"
 
 ## Development Guidelines
 
-### **When to Use Each Pattern**
+### **Primitive Usage Requirements**
 
-#### **Use Modal Wrapper Pattern When:**
+#### **Always Use Primitives For:**
+- ✅ **Buttons** - Use Button primitive (all instances)
+- ✅ **Text Inputs** - Use Input primitive (replaces raw `<input>`)
+- ✅ **Toggles** - Use Switch primitive (replaces ToggleSwitch)
+- ✅ **Icons** - Use Icon primitive (replaces FontAwesome)
+- ✅ **Dropdowns** - Use Select primitive
+- ✅ **Tooltips** - Use Tooltip primitive (simple cases)
 
-- Simple forms or confirmations
-- Single-step interactions
-- Basic input/output workflows
-- No complex layout requirements
+#### **Exception Cases:**
+- ❌ **File Upload Areas** - Keep ReactTooltip (conflicts with react-dropzone)
+- ❌ **Complex Custom Components** - ClickToCopyContent, ThemeRadioGroup, etc.
+- ❌ **Third-party Integrations** - When primitives conflict with external libraries
 
-#### **Use AppWithSearch Level Rendering When:**
+### **Modal Creation Checklist**
 
-- Complex multi-step workflows
-- Tabbed interfaces
-- Z-index conflicts with NavMenu
-- Extensive state management needs
+#### **1. Choose Appropriate Pattern**
+- Simple form → Standard Modal (size: small/medium)
+- Multi-section interface → Complex Modal (size: large)
+- Quick editor → Small Editor Modal (size: small)
 
-#### **Use Custom Small Modal When:**
+#### **2. Import Primitives**
+```tsx
+import { Modal, Button, Input, Icon, Switch, Tooltip } from '../primitives';
+```
 
-- Simple editors
-- Quick configuration dialogs
-- Minimal UI requirements
+#### **3. Implement Proper Props**
+- `visible` - Boolean visibility state
+- `onClose` - Close handler function
+- `title` - Localized title with `t` macro
+- `size` - Appropriate size variant
+- `closeOnBackdropClick={true}` - Enable backdrop close
+- `closeOnEscape={true}` - Enable ESC key close
+
+#### **4. Use Responsive Classes**
+- Buttons: `modal-buttons-responsive` or `w-full sm:max-w-32`
+- Layout: `modal-body` for standard modals
+- Width: `modal-width-medium` or `modal-width-large` when needed
+
+#### **5. Implement Localization**
+```tsx
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+
+// For titles
+title={t`My Modal Title`}
+
+// For content  
+<Trans>My translatable content</Trans>
+```
 
 ### **Best Practices**
 
 #### **Responsive Design**
-
-- Always use responsive button patterns: `w-full sm:max-w-32 sm:inline-block`
-- Center buttons on mobile with CSS flexbox
-- Use appropriate breakpoints (`640px` for mobile)
-- Test on multiple screen sizes
+- Always test on mobile (768px breakpoint)
+- Use `modal-buttons-responsive` for button layouts
+- Center content appropriately on small screens
+- Ensure touch-friendly interactions
 
 #### **Accessibility**
-
-- Ensure proper focus management
-- Include keyboard navigation support
-- Use semantic HTML elements
-- Provide clear close mechanisms
+- Modal primitive handles focus management
+- Use semantic titles with `t` macro
+- Ensure proper contrast and font sizes
+- Test keyboard navigation (Tab, ESC, Enter)
 
 #### **State Management**
+- Use React hooks for modal state
+- Implement proper loading/error states
+- Clean up state on modal close
+- Handle async operations properly
 
-- Use React hooks for local state
-- Leverage context for complex modal state
-- Implement proper cleanup on unmount
-- Handle loading and error states
+#### **Cross-Platform Compatibility**
+- Primitives ensure mobile compatibility
+- Avoid platform-specific CSS
+- Test on both web and mobile builds
+- Use primitive props instead of custom styling
 
-#### **Navigation**
+### **Common Patterns**
 
-- Implement proper close behavior
-- Use React Router for navigation
-- Consider back button behavior
-- Handle deep linking appropriately
+#### **Dynamic Titles**
+```tsx
+// For edit vs create scenarios
+title={itemId ? t`Edit Item` : t`Add Item`}
 
-### **Testing Considerations**
+// With dynamic content
+title={t`Leave ${spaceName}`}
+```
 
-#### **Z-Index Testing**
+#### **Form Handling**
+```tsx
+<Input 
+  value={formData.name}
+  onChange={(value) => setFormData(prev => ({...prev, name: value}))}
+  placeholder={t`Enter name`}
+/>
+```
 
-- Test modal overlay above NavMenu
-- Verify backdrop functionality
-- Check mobile responsive behavior
-- Test keyboard navigation
+#### **Button Layouts**
+```tsx
+<div className="modal-buttons-responsive">
+  <Button type="secondary" onClick={onClose}>Cancel</Button>
+  <Button type="primary" onClick={handleSubmit}>Save</Button>
+</div>
+```
 
-#### **Cross-Browser Compatibility**
+#### **Tooltip Hybrid Approach**
+```tsx
+// Use Tooltip primitive for simple cases
+<Tooltip id="info-tooltip" content="Information text">
+  <Icon name="info-circle" />
+</Tooltip>
 
-- Test close behavior across browsers
-- Verify responsive layout consistency
-- Check animation performance
-- Test touch interactions on mobile
-
+// Keep ReactTooltip for file uploads
+{!isDragActive && (
+  /* Keep ReactTooltip for file upload - conflicts with react-dropzone */
+  <ReactTooltip id="upload-tooltip" content="Upload instructions" />
+)}
 ```
 
 ## Troubleshooting
 
 ### **Common Issues**
 
-#### **Modal Not Appearing Above NavMenu**
-- Check if using correct z-index (`z-[9999]`)
-- Consider moving to AppWithSearch level rendering
-- Verify backdrop implementation
+#### **Import Errors**
+- Ensure all primitives are imported from `../primitives`
+- Check that primitive components exist and are exported
+- Verify correct primitive prop interfaces
 
-#### **Responsive Layout Issues**
-- Check button responsive classes
-- Verify mobile breakpoints
-- Test on actual devices
+#### **Styling Issues**
+- Use size prop instead of custom CSS for modal dimensions
+- Check that `modal-body` and responsive classes are applied
+- Ensure no conflicting z-index styles
 
-#### **Navigation Problems**
-- Implement proper close handlers
-- Use React Router hooks correctly
-- Test back button behavior
+#### **Functionality Problems**
+- Verify `visible` and `onClose` props are properly connected
+- Check that primitive props match expected interfaces (value/onChange vs active/onClick)
+- Test backdrop and ESC key functionality
+
+#### **Mobile Compatibility**
+- Test responsive breakpoints on actual devices
+- Ensure touch interactions work with primitives
+- Check that mobile drawer patterns work correctly
+
+### **Migration from Old System**
+If upgrading existing modals:
+
+1. Replace Modal wrapper import with primitive
+2. Convert ToggleSwitch → Switch primitive  
+3. Convert raw inputs → Input primitive
+4. Convert FontAwesome → Icon primitive
+5. Convert simple tooltips → Tooltip primitive
+6. Keep ReactTooltip for file uploads
+7. Add proper size prop and responsive classes
 
 ## Future Improvements
 
 ### **Planned Enhancements**
-- Standardize animation timing
-- Improve accessibility features
-- Add modal stacking support
-- Enhance keyboard navigation
-- Implement focus trap system
+- Enhanced mobile drawer patterns
+- Improved animation consistency
+- Better focus trap implementation
+- Advanced tooltip positioning
+- Modal stacking support
 
-### **Performance Optimizations**
-- Lazy load complex modals
-- Optimize re-renders
-- Improve animation performance
-- Reduce bundle size impact
+### **Cross-Platform Goals**
+- Zero-change mobile compatibility
+- Consistent primitive behavior
+- Unified styling system
+- Shared component architecture
 
 ---
 
-This documentation serves as the definitive guide for understanding and working with the Quorum Desktop modal system. For questions or updates, please refer to the development team or update this documentation accordingly.
-```
+**Last Updated:** 2025-07-28
+
+This documentation reflects the current primitive-based modal architecture. All modals should follow these patterns for consistency, maintainability, and cross-platform compatibility.

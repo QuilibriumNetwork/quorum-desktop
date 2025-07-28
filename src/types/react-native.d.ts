@@ -45,35 +45,35 @@ declare module 'react-native' {
   export const Modal: ComponentType<ModalProps>;
   export const TouchableWithoutFeedback: ComponentType<TouchableWithoutFeedbackProps>;
 
-  export const StyleSheet = {
-    create: <T extends { [key: string]: ViewStyle }>(styles: T) => T,
-    absoluteFillObject: {
-      position: 'absolute' as const,
-      left: 0,
-      right: 0,
-      top: 0,
-      bottom: 0,
-    },
-  };
+  export namespace StyleSheet {
+    export function create<T extends { [key: string]: ViewStyle }>(styles: T): T;
+    export const absoluteFillObject: {
+      position: 'absolute';
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+    };
+  }
 
-  export const Animated = {
-    View: View as ComponentType<ViewProps & { style?: any }>,
-    Value: class {
-      constructor(value: number) {}
-    },
-    timing: (value: any, config: any) => ({
-      start: (callback?: () => void) => {},
-    }),
-    parallel: (animations: any[]) => ({ start: (callback?: () => void) => {} }),
-  };
+  export namespace Animated {
+    export const View: ComponentType<ViewProps & { style?: any }>;
+    export class Value {
+      constructor(value: number);
+    }
+    export function timing(value: any, config: any): {
+      start: (callback?: () => void) => void;
+    };
+    export function parallel(animations: any[]): { start: (callback?: () => void) => void };
+  }
 
-  export const Dimensions = {
-    get: (dim: 'window' | 'screen') => ({ width: 375, height: 812 }),
-  };
+  export namespace Dimensions {
+    export function get(dim: 'window' | 'screen'): { width: number; height: number };
+  }
 
-  export const BackHandler = {
-    addEventListener: (event: string, handler: () => boolean) => ({
-      remove: () => {},
-    }),
-  };
+  export namespace BackHandler {
+    export function addEventListener(event: string, handler: () => boolean): {
+      remove: () => void;
+    };
+  }
 }

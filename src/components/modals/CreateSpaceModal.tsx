@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Input, Button, Modal } from '../primitives';
+import { Input, Button, Modal, Switch, Icon, Tooltip } from '../primitives';
 import './CreateSpaceModal.scss';
-import ToggleSwitch from '../ToggleSwitch';
 import { useDropzone } from 'react-dropzone';
 import SpaceIcon from '../navbar/SpaceIcon';
 import { useMessageDB } from '../context/MessageDB';
@@ -13,12 +12,6 @@ import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../utils';
 import ReactTooltip from '../ReactTooltip';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faFileImage,
-  faTimes,
-  faInfoCircle,
-} from '@fortawesome/free-solid-svg-icons';
 
 type CreateSpaceModalProps = {
   visible: boolean;
@@ -135,16 +128,17 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
             >
               <span className="attachment-drop-icon inline-block justify-around w-20 h-20 flex flex-col">
                 <input {...getInputProps()} />
-                <FontAwesomeIcon icon={faFileImage} />
+                <Icon name="image" />
               </span>
             </div>
           )}
           {!isUploading && !isDragActive && (
+            /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */
             <ReactTooltip
               id="space-icon-tooltip"
               content="Upload an avatar for this Space - PNG or JPG, Max 1MB, Optimal size 123×123px"
-              place="top"
-              className="w-[300px] sm:w-[400px] whitespace-normal"
+              place="bottom"
+              className="!w-[400px]"
               anchorSelect="#space-icon-tooltip-target"
             />
           )}
@@ -154,8 +148,8 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           {fileError && (
             <div className="error-label flex items-center justify-between">
               <span>{fileError}</span>
-              <FontAwesomeIcon
-                icon={faTimes}
+              <Icon
+                name="times"
                 className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                 onClick={() => setFileError(null)}
               />
@@ -185,26 +179,23 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                   <Trans>Repudiability</Trans>
                 </div>
                 <div className="text-sm flex flex-col justify-around ml-2">
-                  <FontAwesomeIcon
-                    id="repudiability-tooltip-icon"
-                    icon={faInfoCircle}
-                    className="info-icon-tooltip  hover:text-main cursor-pointer"
-                  />
-                </div>
-                <div className="absolute left-[147px]">
-                  <ReactTooltip
+                  <Tooltip
                     id="repudiability-tooltip"
                     content={t`Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.`}
                     place="top"
-                    anchorSelect="#repudiability-tooltip-icon"
-                    showOnTouch
-                    touchTrigger="click"
-                  />
+                    className="!w-[400px]"
+                    maxWidth={400}
+                  >
+                    <Icon
+                      name="info-circle"
+                      className="info-icon-tooltip hover:text-main cursor-pointer"
+                    />
+                  </Tooltip>
                 </div>
               </div>
-              <ToggleSwitch
-                onClick={() => setRepudiable((prev) => !prev)}
-                active={repudiable}
+              <Switch
+                onChange={setRepudiable}
+                value={repudiable}
               />
             </div>
             <div className="flex flex-row justify-between pb-2">
@@ -213,26 +204,23 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                   Directly joinable by link
                 </div>
                 <div className="text-sm flex flex-col justify-around ml-2">
-                  <FontAwesomeIcon
-                    id="public-tooltip-icon"
-                    icon={faInfoCircle}
-                    className="info-icon-tooltip  hover:text-main cursor-pointer"
-                  />
-                </div>
-                <div className="absolute left-[216px]">
-                  <ReactTooltip
+                  <Tooltip
                     id="public-tooltip"
                     content={t`When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid.`}
                     place="bottom"
-                    anchorSelect="#public-tooltip-icon"
-                    showOnTouch
-                    touchTrigger="click"
-                  />
+                    className="!w-[400px]"
+                    maxWidth={400}
+                  >
+                    <Icon
+                      name="info-circle"
+                      className="info-icon-tooltip hover:text-main cursor-pointer"
+                    />
+                  </Tooltip>
                 </div>
               </div>
-              <ToggleSwitch
-                onClick={() => setPublic((prev) => !prev)}
-                active={pub}
+              <Switch
+                onChange={setPublic}
+                value={pub}
               />
             </div>
           </div>

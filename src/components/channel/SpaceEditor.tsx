@@ -1,27 +1,14 @@
 import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   usePasskeysContext,
   channel,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useNavigate } from 'react-router';
-import {
-  faChevronDown,
-  faTrash,
-  faInfoCircle,
-  faTimes,
-  faCog,
-  faUsers,
-  faSmile,
-  faImage,
-  faEnvelope,
-  faExclamationTriangle,
-} from '@fortawesome/free-solid-svg-icons';
 
 import { useMessageDB } from '../context/MessageDB';
 import '../../styles/_modal_common.scss';
-import { Button, Select, Modal } from '../primitives';
+import { Button, Select, Modal, Switch, Input, Icon, Tooltip } from '../primitives';
 import { useConversations, useRegistration, useSpace } from '../../hooks';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
 import {
@@ -32,8 +19,6 @@ import {
   Permission,
   Conversation,
 } from '../../api/quorumApi';
-import ToggleSwitch from '../ToggleSwitch';
-import { Input } from '../primitives';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { useRegistrationContext } from '../context/RegistrationPersister';
 import { Loading } from '../Loading';
@@ -92,7 +77,7 @@ const SpaceEditor: React.FunctionComponent<{
   const [sendingInvite, setSendingInvite] = React.useState<boolean>(false);
   const [generating, setGenerating] = React.useState<boolean>(false);
   const [copied, setCopied] = React.useState(false);
-  const [manualAddress, setManualAddress] = React.useState<string>();
+  const [manualAddress, setManualAddress] = React.useState<string>('');
   const [resolvedUser, setResolvedUser] =
     React.useState<channel.UserRegistration>();
   const [isRepudiable, setIsRepudiable] = React.useState<boolean>(
@@ -486,35 +471,35 @@ const SpaceEditor: React.FunctionComponent<{
             onClick={() => setSelectedCategory('general')}
             className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faCog} className="mr-2 text-accent" />
+            <Icon name="cog" className="mr-2 text-accent" />
             <Trans>General</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('roles')}
             className={`modal-nav-category ${selectedCategory === 'roles' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faUsers} className="mr-2 text-accent" />
+            <Icon name="users" className="mr-2 text-accent" />
             <Trans>Roles</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('emojis')}
             className={`modal-nav-category ${selectedCategory === 'emojis' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faSmile} className="mr-2 text-accent" />
+            <Icon name="smile" className="mr-2 text-accent" />
             <Trans>Emojis</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('stickers')}
             className={`modal-nav-category ${selectedCategory === 'stickers' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faImage} className="mr-2 text-accent" />
+            <Icon name="image" className="mr-2 text-accent" />
             <Trans>Stickers</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('invites')}
             className={`modal-nav-category ${selectedCategory === 'invites' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-accent" />
+            <Icon name="envelope" className="mr-2 text-accent" />
             <Trans>Invites</Trans>
           </div>
           {spaceMembers && spaceMembers.length === 1 && (
@@ -522,8 +507,8 @@ const SpaceEditor: React.FunctionComponent<{
               onClick={() => setSelectedCategory('danger')}
               className={`modal-nav-category text-danger ${selectedCategory === 'danger' ? 'active' : ''}`}
             >
-              <FontAwesomeIcon
-                icon={faExclamationTriangle}
+              <Icon
+                name="exclamation-triangle"
                 className="mr-2 text-accent"
               />
               <Trans>Delete Space</Trans>
@@ -537,35 +522,35 @@ const SpaceEditor: React.FunctionComponent<{
             onClick={() => setSelectedCategory('general')}
             className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faCog} className="mr-2 text-accent" />
+            <Icon name="cog" className="mr-2 text-accent" />
             <Trans>General</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('stickers')}
             className={`modal-nav-category ${selectedCategory === 'stickers' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faImage} className="mr-2 text-accent" />
+            <Icon name="image" className="mr-2 text-accent" />
             <Trans>Stickers</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('roles')}
             className={`modal-nav-category ${selectedCategory === 'roles' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faUsers} className="mr-2 text-accent" />
+            <Icon name="users" className="mr-2 text-accent" />
             <Trans>Roles</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('invites')}
             className={`modal-nav-category ${selectedCategory === 'invites' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faEnvelope} className="mr-2 text-accent" />
+            <Icon name="envelope" className="mr-2 text-accent" />
             <Trans>Invites</Trans>
           </div>
           <div
             onClick={() => setSelectedCategory('emojis')}
             className={`modal-nav-category ${selectedCategory === 'emojis' ? 'active' : ''}`}
           >
-            <FontAwesomeIcon icon={faSmile} className="mr-2 text-accent" />
+            <Icon name="smile" className="mr-2 text-accent" />
             <Trans>Emojis</Trans>
           </div>
           {spaceMembers && spaceMembers.length === 1 && (
@@ -573,8 +558,8 @@ const SpaceEditor: React.FunctionComponent<{
               onClick={() => setSelectedCategory('danger')}
               className={`modal-nav-category text-danger ${selectedCategory === 'danger' ? 'active' : ''}`}
             >
-              <FontAwesomeIcon
-                icon={faExclamationTriangle}
+              <Icon
+                name="exclamation-triangle"
                 className="mr-2 text-accent"
               />
               <Trans>Delete Space</Trans>
@@ -606,6 +591,7 @@ const SpaceEditor: React.FunctionComponent<{
                         <input {...getInputProps()} />
                       </div>
                       {!isIconUploading && !isIconDragActive && (
+                        /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */
                         <ReactTooltip
                           id="space-icon-tooltip"
                           content="Upload an avatar for this Space - PNG or JPG, Max 1MB, Optimal size 123×123px"
@@ -618,10 +604,10 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="small-caps">
                           <Trans>Space Name</Trans>
                         </div>
-                        <input
-                          className="w-full quorum-input"
+                        <Input
+                          className="w-full"
                           value={displayName}
-                          onChange={(e) => setDisplayName(e.target.value)}
+                          onChange={setDisplayName}
                         />
                       </div>
                     </div>
@@ -654,6 +640,7 @@ const SpaceEditor: React.FunctionComponent<{
                           <input {...getBannerInputProps()} />
                         </div>
                         {!isBannerUploading && !isBannerDragActive && (
+                          /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */
                           <ReactTooltip
                             id="space-banner-tooltip"
                             content="Upload a banner for this Space - PNG or JPG, Max 1MB, Optimal size 450×180px"
@@ -667,8 +654,8 @@ const SpaceEditor: React.FunctionComponent<{
                             {iconFileError && (
                               <div className="error-label flex items-center justify-between">
                                 <span>{iconFileError}</span>
-                                <FontAwesomeIcon
-                                  icon={faTimes}
+                                <Icon
+                                  name="times"
                                   className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                                   onClick={() => setIconFileError(null)}
                                 />
@@ -677,8 +664,8 @@ const SpaceEditor: React.FunctionComponent<{
                             {bannerFileError && (
                               <div className="error-label flex items-center justify-between">
                                 <span>{bannerFileError}</span>
-                                <FontAwesomeIcon
-                                  icon={faTimes}
+                                <Icon
+                                  name="times"
                                   className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                                   onClick={() => setBannerFileError(null)}
                                 />
@@ -717,27 +704,23 @@ const SpaceEditor: React.FunctionComponent<{
                               <Trans>Repudiability</Trans>
                             </div>
                             <div className="text-sm flex flex-col justify-around ml-2">
-                              <FontAwesomeIcon
-                                id="repudiability-tooltip-icon"
-                                icon={faInfoCircle}
-                                className="info-icon-tooltip"
-                              />
-                            </div>
-                            <div className="absolute left-[340px]">
-                              <ReactTooltip
+                              <Tooltip
                                 id="repudiability-tooltip"
                                 content={t`Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.`}
                                 place="bottom"
                                 className="!w-[400px]"
-                                anchorSelect="#repudiability-tooltip-icon"
-                                showOnTouch
-                                touchTrigger="click"
-                              />
+                                maxWidth={400}
+                              >
+                                <Icon
+                                  name="info-circle"
+                                  className="info-icon-tooltip"
+                                />
+                              </Tooltip>
                             </div>
                           </div>
-                          <ToggleSwitch
-                            onClick={() => setIsRepudiable((prev) => !prev)}
-                            active={isRepudiable}
+                          <Switch
+                            onChange={setIsRepudiable}
+                            value={isRepudiable}
                           />
                         </div>
                       </div>
@@ -841,8 +824,8 @@ const SpaceEditor: React.FunctionComponent<{
                               />
                             </span>
                             <span className="float-right">
-                              <FontAwesomeIcon
-                                icon={faTrash}
+                              <Icon
+                                name="trash"
                                 title="Delete role"
                                 className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
                                 onClick={() =>
@@ -930,8 +913,8 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="mt-2">
                           <div className="error-label flex items-center justify-between">
                             <span>{emojiFileError}</span>
-                            <FontAwesomeIcon
-                              icon={faTimes}
+                            <Icon
+                              name="times"
                               className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                               onClick={() => setEmojiFileError(null)}
                             />
@@ -972,8 +955,8 @@ const SpaceEditor: React.FunctionComponent<{
                                 </span>
                               </div>
                               <div className="flex flex-col grow justify-around items-end">
-                                <FontAwesomeIcon
-                                  icon={faTrash}
+                                <Icon
+                                  name="trash"
                                   className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
                                   onClick={() =>
                                     setEmojis((prev) => [
@@ -1028,8 +1011,8 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="mt-2">
                           <div className="error-label flex items-center justify-between">
                             <span>{stickerFileError}</span>
-                            <FontAwesomeIcon
-                              icon={faTimes}
+                            <Icon
+                              name="times"
                               className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                               onClick={() => setStickerFileError(null)}
                             />
@@ -1070,8 +1053,8 @@ const SpaceEditor: React.FunctionComponent<{
                                 </span>
                               </div>
                               <div className="flex flex-col grow justify-around items-end">
-                                <FontAwesomeIcon
-                                  icon={faTrash}
+                                <Icon
+                                  name="trash"
                                   className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
                                   onClick={() =>
                                     setStickers((prev) => [
@@ -1137,15 +1120,13 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="small-caps mt-2">
                           <Trans>Enter Address Manually</Trans>
                         </div>
-                        <input
-                          className="w-full quorum-input placeholder:text-subtle"
-                          style={{ backgroundColor: 'var(--color-bg-input)' }}
+                        <Input
+                          className="w-full placeholder:text-subtle"
                           value={manualAddress}
                           placeholder="Type the address of the user you want to send to"
-                          onChange={(e) => {
-                            setManualAddress(e.target.value);
+                          onChange={(value) => {
+                            setManualAddress(value);
                             setSuccess(false);
-                            setIsInviteListExpanded(false);
                           }}
                         />
                         {success && (
@@ -1172,9 +1153,9 @@ const SpaceEditor: React.FunctionComponent<{
                             </div>
                           </div>
                           <div className="flex flex-col justify-center pt-2">
-                            <ToggleSwitch
-                              onClick={() => setPublicInvite((prev) => !prev)}
-                              active={publicInvite}
+                            <Switch
+                              onChange={setPublicInvite}
+                              value={publicInvite}
                             />
                           </div>
                         </div>
@@ -1188,20 +1169,18 @@ const SpaceEditor: React.FunctionComponent<{
                                       <Trans>Current Invite Link</Trans>
                                     </div>
                                     <div className="flex flex-col justify-around ml-2">
-                                      <FontAwesomeIcon
-                                        id="current-invite-link-tooltip-icon"
-                                        icon={faInfoCircle}
-                                        className="info-icon-tooltip"
-                                      />
-                                      <ReactTooltip
+                                      <Tooltip
                                         id="current-invite-link-tooltip"
-                                        anchorSelect="#current-invite-link-tooltip-icon"
-                                        className="flex flex-col justify-around pt-3 pb-1 !w-[400px] cursor-pointer"
-                                        place="bottom"
                                         content={t`This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space.`}
-                                        showOnTouch
-                                        touchTrigger="click"
-                                      />
+                                        place="bottom"
+                                        className="flex flex-col justify-around pt-3 pb-1 !w-[400px] cursor-pointer"
+                                        maxWidth={400}
+                                      >
+                                        <Icon
+                                          name="info-circle"
+                                          className="info-icon-tooltip"
+                                        />
+                                      </Tooltip>
                                     </div>
                                   </div>
                                 </div>
