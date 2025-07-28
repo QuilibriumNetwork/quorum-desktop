@@ -16,9 +16,16 @@
   }
 }
 
+// No rounded border with Space Image visible and above 1023px
+// Scope to Channel component only to avoid affecting DirectMessage
+.space-container .chat-container {
+  border-top-left-radius: 0;
+}
+
 // Mobile layout - ensure chat container fills available space
 @media (max-width: 1023px) {
-  .chat-container {
+  .space-container .chat-container {
+    border-top-left-radius: 0.75rem;
     position: relative;
     overflow: hidden;
     flex: 1; // Expand to fill available space when sidebar is hidden
@@ -28,7 +35,7 @@
   }
 
   // Force full width for all chat content
-  .chat-container * {
+  .space-container .chat-container * {
     max-width: 100%;
   }
 }

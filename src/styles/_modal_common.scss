@@ -203,7 +203,7 @@
   color: var(--color-text-main);
   width: 200px;
   flex-shrink: 0;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: var(--surface-3);
   border-right: 1px solid var(--color-border-subtle);
 
   @media (max-width: 768px) {
@@ -365,7 +365,7 @@
   }
 
   &:last-child {
-    border-radius: 0px 0px 10px 10px;
+    border-radius: 0px;
   }
 
   /* Ensure Save button stays at bottom right for all categories */
