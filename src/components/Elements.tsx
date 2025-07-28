@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import ThemeRadioGroup from './ThemeRadioGroup';
 import AccentColorSwitcher from './AccentColorSwitcher';
-import { Button } from './primitives';
-import ToggleSwitch from './ToggleSwitch';
+import { Button, Switch } from './primitives';
 import ReactTooltip from './ReactTooltip';
 
 const Elements = () => {
@@ -154,15 +153,19 @@ const Elements = () => {
       </section>
 
       <section className="card mb-4">
-        <h2 className="text-2xl mb-4">Toggle Switch</h2>
+        <h2 className="text-2xl mb-4">Switch</h2>
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-2">
             <span>Off</span>
-            <ToggleSwitch active={false} onClick={() => setToggle(false)} />
+            <Switch value={false} onChange={() => setToggle(false)} />
           </div>
           <div className="flex items-center gap-2">
             <span>On</span>
-            <ToggleSwitch active={true} onClick={() => setToggle(true)} />
+            <Switch value={true} onChange={() => setToggle(true)} />
+          </div>
+          <div className="flex items-center gap-2">
+            <span>Dynamic: {toggle ? 'On' : 'Off'}</span>
+            <Switch value={toggle} onChange={setToggle} />
           </div>
         </div>
       </section>
