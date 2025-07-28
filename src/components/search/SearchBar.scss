@@ -7,8 +7,7 @@
 
 .search-input-container {
   position: relative;
-  display: flex;
-  align-items: center;
+  // flex layout handled by FlexRow primitive
   background-color: var(--surface-1);
   border-radius: 0.5rem;
   padding: 0 10px;
@@ -22,7 +21,7 @@
 
   &.focused {
     background-color: var(--surface-00);
-    border: 1px solid transparent;
+    border: 1px solid var(--accent);
   }
 }
 
@@ -39,16 +38,18 @@
 
 .search-input {
   flex: 1;
-  background-color: transparent;
-  border: none;
-  outline: none;
-  padding: 0;
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important;
+  padding: 0 !important;
   height: 32px;
   line-height: 32px;
   color: var(--color-text-main);
   font-size: 14px;
   font-family: inherit;
   font-weight: normal;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 
   &::placeholder {
     color: var(--color-text-subtle);
@@ -59,25 +60,48 @@
     opacity: 0.6;
     cursor: not-allowed;
   }
+
+  // Override Input primitive states
+  &:hover {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  &:focus {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+}
+
+.search-clear-button-wrapper {
+  margin-left: 4px;
+  flex-shrink: 0;
 }
 
 .search-clear-button {
-  background-color: none;
-  border: none;
-  color: var(--color-text-subtle);
+  background-color: transparent !important;
+  border: none !important;
+  color: var(--color-text-subtle) !important;
   cursor: pointer;
-  padding: 4px;
-  border-radius: 0.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 4px;
-  flex-shrink: 0;
+  padding: 4px !important;
+  border-radius: 0.25rem !important;
+  // flex layout handled by FlexCenter primitive
   font-size: 12px;
+  min-width: auto !important;
+  height: auto !important;
+  box-shadow: none !important;
 
   &:hover {
-    background-color: var(--surface-4);
-    color: var(--color-text-main);
+    background-color: var(--surface-4) !important;
+    color: var(--color-text-main) !important;
+    box-shadow: none !important;
+  }
+
+  &:focus {
+    background-color: var(--surface-4) !important;
+    box-shadow: none !important;
   }
 }
 
@@ -101,8 +125,7 @@
 }
 
 .search-suggestion {
-  display: flex;
-  align-items: center;
+  // flex layout handled by FlexRow primitive
   padding: 10px 12px;
   cursor: pointer;
   color: var(--color-text-main);

@@ -1,14 +1,9 @@
 import React, { useRef, useEffect, useCallback } from 'react';
 import { Virtuoso } from 'react-virtuoso';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faSearch,
-  faSpinner,
-  faExclamationTriangle,
-} from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../db/messages';
 import { SearchResultItem } from './SearchResultItem';
+import { Icon, FlexCenter } from '../primitives';
 import './SearchResults.scss';
 
 interface SearchResultsProps {
@@ -157,44 +152,44 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   const renderEmptyState = () => {
     if (!query.trim()) {
       return (
-        <div className="search-empty-state">
-          <FontAwesomeIcon icon={faSearch} className="empty-icon" />
+        <FlexCenter className="search-empty-state">
+          <Icon name="search" className="empty-icon" />
           <p className="empty-message">{t`Start typing to search messages...`}</p>
-        </div>
+        </FlexCenter>
       );
     }
 
     if (isLoading) {
       return (
-        <div className="search-loading-state">
-          <FontAwesomeIcon icon={faSpinner} className="loading-icon" spin />
+        <FlexCenter className="search-loading-state">
+          <Icon name="spinner" className="loading-icon" spin />
           <p className="loading-message">{t`Searching...`}</p>
-        </div>
+        </FlexCenter>
       );
     }
 
     if (isError) {
       return (
-        <div className="search-error-state">
-          <FontAwesomeIcon
-            icon={faExclamationTriangle}
+        <FlexCenter className="search-error-state">
+          <Icon
+            name="exclamation-triangle"
             className="error-icon"
           />
           <p className="error-message">
             {t`Search failed: ${error?.message || 'Unknown error'}`}
           </p>
-        </div>
+        </FlexCenter>
       );
     }
 
     return (
-      <div className="search-no-results">
-        <FontAwesomeIcon icon={faSearch} className="empty-icon" />
+      <FlexCenter className="search-no-results">
+        <Icon name="search" className="empty-icon" />
         <p className="empty-message">{t`No messages found`}</p>
         <p className="empty-hint">
           {t`Try different keywords or check your spelling`}
         </p>
-      </div>
+      </FlexCenter>
     );
   };
 

@@ -28,7 +28,9 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
     if (!messageDB) return null;
     const service = new SearchService(messageDB);
     // Initialize search indices
-    service.initialize().catch(console.error);
+    service.initialize().catch(() => {
+      // Search initialization failed - service will handle gracefully
+    });
     return service;
   }, [messageDB]);
 

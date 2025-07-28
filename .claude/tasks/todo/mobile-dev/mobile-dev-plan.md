@@ -760,15 +760,19 @@ Detailed plan: .claude/tasks/todo/mobile-dev/modal-migration-plan.md
   - Expected: Simple primitive replacement, no platform differences needed
   - Test: User profile displays correctly
 
-- [ ] **UserProfile.tsx** - Replace with Avatar + Text + FlexColumn primitives
+- [ ] **UserProfile.tsx - IS NOT CURRENTLY USED IN THE LIVE APP** - Replace with Avatar + Text + FlexColumn primitives
   - Expected: Simple primitive replacement, no platform differences needed
   - Test: User profile displays correctly
   
 - [ ] **UserStatus.tsx** - Replace with Text + Icon primitives 
   - Expected: Online/offline status shows correctly
   - Test: Status updates work
+
+- [x] **SearchBar.tsx** - Replace with FlexRow + Input + Button + Icon primitives
+  - Expected: Search functionality works identical to before
+  - Test: Global search returns correct results
   
-- [ ] **SearchResultItem.tsx** - Replace with FlexRow + Text + Button primitives
+- [x] **SearchResultItem.tsx** - Replace with FlexRow + Input + Button + Icon primitives
   - Expected: Search results display correctly
   - Test: Search and click behavior works
 
@@ -776,9 +780,7 @@ Detailed plan: .claude/tasks/todo/mobile-dev/modal-migration-plan.md
 #### Batch 3: Form Components
 **Test Input/TextArea/Select primitives with real data handling**
 
-- [ ] **SearchBar.tsx** - Replace with Input + FlexRow + Button primitives
-  - Expected: Search functionality works identical to before
-  - Test: Global search returns correct results
+
   
 
 #### Batch 4: Navigation Components

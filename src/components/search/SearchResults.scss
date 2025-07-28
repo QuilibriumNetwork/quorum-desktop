@@ -40,10 +40,8 @@
 .search-loading-state,
 .search-error-state,
 .search-no-results {
-  display: flex;
+  // flex layout handled by FlexCenter primitive
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   padding: 40px 20px;
   text-align: center;
 }

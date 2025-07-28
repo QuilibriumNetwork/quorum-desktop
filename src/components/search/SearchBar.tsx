@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/core/macro';
+import { Input, Button, Icon, FlexRow, FlexCenter } from '../primitives';
 import './SearchBar.scss';
 
 interface SearchBarProps {
@@ -29,6 +28,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
+  const inputContainerRef = useRef<HTMLDivElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const isUserTyping = useRef(false);
 
@@ -42,7 +42,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       const mobileOverlay = document.querySelector('.bg-mobile-overlay');
       if (mobileOverlay) return; // Don't focus
     }
-    inputRef.current?.focus();
+    
+    // Find the actual input element within the Input primitive
+    const inputElement = inputContainerRef.current?.querySelector('input');
+    inputElement?.focus();
   };
 
   // Handle keyboard shortcuts
@@ -56,7 +59,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
       // Escape to blur search
       if (e.key === 'Escape' && isFocused) {
-        inputRef.current?.blur();
+        const inputElement = inputContainerRef.current?.querySelector('input');
+        inputElement?.blur();
         setShowSuggestions(false);
       }
     };
@@ -103,11 +107,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (value: string) => {
     // Mark user as actively typing
     isUserTyping.current = true;
 
-    const value = e.target.value;
     onQueryChange(value);
     setSelectedSuggestionIndex(-1);
     setShowSuggestions(value.length > 0 && suggestions.length > 0);
@@ -128,8 +131,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     if (isUserTyping.current) {
       // Try to restore focus
       setTimeout(() => {
-        if (isUserTyping.current && inputRef.current) {
-          inputRef.current.focus();
+        if (isUserTyping.current) {
+          const inputElement = inputContainerRef.current?.querySelector('input');
+          inputElement?.focus();
         }
       }, 10);
       return;
@@ -159,46 +163,48 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <div className={`search-bar ${className || ''}`}>
-      <div className={`search-input-container ${isFocused ? 'focused' : ''}`}>
-        <FontAwesomeIcon
-          icon={faSearch}
+      <FlexRow
+        ref={inputContainerRef}
+        className={`search-input-container ${isFocused ? 'focused' : ''}`}
+        onKeyDown={handleInputKeyDown}
+      >
+        <Icon
+          name="search"
           className={`search-icon ${isFocused ? 'search-icon-focused' : ''}`}
         />
-        <input
-          ref={inputRef}
-          type="text"
+        <Input
           className="search-input"
           placeholder={placeholder}
           value={query}
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           onBlur={handleInputBlur}
-          onKeyDown={handleInputKeyDown}
           disabled={disabled}
-          autoComplete="off"
-          spellCheck={false}
         />
         {query && (
-          <button
-            className="search-clear-button"
-            onClick={handleClear}
-            type="button"
-            aria-label={t`Clear search`}
-          >
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
+          <FlexCenter className="search-clear-button-wrapper">
+            <Button
+              variant="ghost"
+              size="small"
+              className="search-clear-button"
+              onClick={handleClear}
+              aria-label={t`Clear search`}
+            >
+              <Icon name="times" />
+            </Button>
+          </FlexCenter>
         )}
         {!query && (
           <span className="search-shortcut invisible">
             {navigator.platform.toLowerCase().includes('mac') ? '⌘K' : 'Ctrl+K'}
           </span>
         )}
-      </div>
+      </FlexRow>
 
       {showSuggestions && suggestions.length > 0 && (
         <div ref={suggestionsRef} className="search-suggestions" role="listbox">
           {suggestions.map((suggestion, index) => (
-            <div
+            <FlexRow
               key={suggestion}
               className={`search-suggestion ${
                 index === selectedSuggestionIndex ? 'selected' : ''
@@ -207,9 +213,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               role="option"
               aria-selected={index === selectedSuggestionIndex}
             >
-              <FontAwesomeIcon icon={faSearch} className="suggestion-icon" />
+              <Icon name="search" className="suggestion-icon" />
               {suggestion}
-            </div>
+            </FlexRow>
           ))}
         </div>
       )}

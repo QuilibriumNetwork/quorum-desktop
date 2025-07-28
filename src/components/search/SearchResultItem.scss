@@ -22,15 +22,12 @@
 }
 
 .result-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  // flex layout handled by FlexBetween primitive
   margin-bottom: 8px;
 }
 
 .result-meta {
-  display: flex;
-  align-items: center;
+  // flex layout handled by FlexRow primitive
   font-size: 12px;
   color: var(--color-text-subtle);
   gap: 6px;
@@ -65,20 +62,6 @@
   font-weight: 500;
 }
 
-.result-separator {
-  color: var(--color-text-muted);
-  font-size: 10px;
-}
-
-.result-score {
-  font-size: 11px;
-  color: var(--color-text-muted);
-  background-color: var(--surface-4);
-  padding: 2px 6px;
-  border-radius: 0.5rem;
-  font-weight: 500;
-}
-
 .result-content {
   margin-bottom: 8px;
 }
@@ -90,41 +73,8 @@
   word-wrap: break-word;
 }
 
-.result-highlights {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.highlights-label {
-  font-size: 11px;
-  color: var(--color-text-muted);
-  font-weight: 500;
-}
-
-.highlight-term {
-  font-size: 11px;
-  background-color: var(--surface-4);
-  color: var(--color-text-main);
-  padding: 2px 6px;
-  border-radius: 0.5rem;
-  font-weight: 500;
-}
-
-.highlights-more {
-  font-size: 11px;
-  color: var(--color-text-subtle);
-  font-style: italic;
-}
-
-// Dark theme adjustments
-.dark .result-score {
-  background-color: var(--surface-6);
-}
-
-.dark .highlight-term {
-  background-color: var(--surface-6);
+.result-footer {
+  // flex layout handled by FlexBetween primitive
 }
 
 // Responsive design
@@ -142,8 +92,4 @@
     font-size: 13px;
   }
 
-  .result-score {
-    font-size: 10px;
-    padding: 1px 4px;
-  }
 }

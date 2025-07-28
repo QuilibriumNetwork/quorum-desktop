@@ -1,15 +1,10 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faHashtag,
-  faUser,
-  faCalendarAlt,
-} from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../db/messages';
 import { Message } from '../../api/quorumApi';
 import { useUserInfo } from '../../hooks/queries/userInfo/useUserInfo';
 import { useSpace } from '../../hooks/queries/space/useSpace';
+import { Icon, FlexBetween, FlexRow } from '../primitives';
 import './SearchResultItem.scss';
 import { useMessageDB } from '../context/MessageDB';
 import { DefaultImages } from '../../utils';
@@ -42,7 +37,6 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
       try {
         // For DMs, conversationId format is spaceId/channelId
         const conversationId = `${message.content.senderId}/${message.content.senderId}`;
-        console.log('conversationId', conversationId);
         const { conversation } = await messageDB.getConversation({
           conversationId,
         });
@@ -189,12 +183,10 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
   };
 
   const getMessageText = (message: Message): string => {
+    // Only 'post' messages are searchable and appear in search results
     if (message.content.type === 'post') {
       const content = message.content.text;
       return Array.isArray(content) ? content.join(' ') : content;
-    }
-    if (message.content.type === 'event') {
-      return message.content.text;
     }
     return '';
   };
@@ -258,15 +250,9 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
     return snippet;
   };
 
-  const getMessageTypeIcon = (message: Message) => {
-    switch (message.content.type) {
-      case 'post':
-        return faHashtag;
-      case 'event':
-        return faCalendarAlt;
-      default:
-        return faHashtag;
-    }
+  const getMessageTypeIconName = (message: Message): string => {
+    // Only 'post' messages are searchable and appear in search results
+    return 'hashtag';
   };
 
   const handleClick = () => {
@@ -289,8 +275,8 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
         }
       }}
     >
-      <div className="result-header">
-        <div className="result-meta">
+      <FlexBetween className="result-header">
+        <FlexRow className="result-meta">
           {isDM && icon && (
             <div
               className="result-user-profile-image"
@@ -298,8 +284,8 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
             />
           )}
           {!isDM && (
-            <FontAwesomeIcon
-              icon={isDM ? faUser : getMessageTypeIcon(message)}
+            <Icon
+              name={getMessageTypeIconName(message)}
               className="result-type-icon"
             />
           )}
@@ -307,12 +293,12 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
 
           {!isDM && (
             <>
-              <FontAwesomeIcon icon={faUser} className="result-user-icon" />
+              <Icon name="user" className="result-user-icon" />
               <span className=" result-sender">{displayName}</span>
             </>
           )}
-        </div>
-      </div>
+        </FlexRow>
+      </FlexBetween>
 
       <div className="result-content">
         <div
@@ -323,9 +309,9 @@ const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
         />
       </div>
 
-      <div className="result-footer">
+      <FlexBetween className="result-footer">
         <span className="result-date">{formatDate(message.createdDate)}</span>
-      </div>
+      </FlexBetween>
     </div>
   );
 };

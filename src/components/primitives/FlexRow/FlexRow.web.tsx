@@ -28,7 +28,7 @@ const gapMap = {
   xl: 'gap-8',
 };
 
-export const FlexRow: React.FC<FlexRowProps> = ({
+export const FlexRow = React.forwardRef<HTMLDivElement, FlexRowProps>(({
   children,
   justify = 'start',
   align = 'center',
@@ -37,7 +37,7 @@ export const FlexRow: React.FC<FlexRowProps> = ({
   className,
   style,
   ...rest
-}) => {
+}, ref) => {
   const gapClass =
     typeof gap === 'string' && gap in gapMap
       ? gapMap[gap as keyof typeof gapMap]
@@ -57,8 +57,8 @@ export const FlexRow: React.FC<FlexRowProps> = ({
   );
 
   return (
-    <div className={classes} style={style} {...rest}>
+    <div ref={ref} className={classes} style={style} {...rest}>
       {children}
     </div>
   );
-};
+});
