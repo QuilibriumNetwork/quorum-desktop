@@ -30,22 +30,45 @@
 }
 
 // Size variants
-.quorum-modal-small {
+.quorum-modal.quorum-modal-small {
+  width: 90vw;
   max-width: 400px;
-  max-height: 300px;
+  height: auto;
+  max-height: 70vh;
+  padding: 0; // Remove default padding for small modals
+  
+  .quorum-modal-title {
+    display: none; // Hide title for small modals (they have their own content structure)
+  }
+  
+  .quorum-modal-container {
+    height: 100%;
+    padding: 20px; // Standard padding for small modals
+    
+    @media (max-width: 768px) {
+      padding: 16px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 95vw;
+    max-width: 400px; // Keep 400px limit on mobile too
+    max-height: 60vh;
+    border-radius: 0.5rem;
+  }
 }
 
-.quorum-modal-medium {
+.quorum-modal.quorum-modal-medium {
   max-width: 600px;
   max-height: 70vh;
 }
 
-.quorum-modal-large {
+.quorum-modal.quorum-modal-large {
   max-width: 800px;
   max-height: 85vh;
 }
 
-.quorum-modal-full {
+.quorum-modal.quorum-modal-full {
   max-width: 95vw;
   max-height: 95vh;
 
@@ -53,6 +76,47 @@
     max-width: calc(100vw - 16px);
     max-height: calc(100vh - 16px);
     margin: 8px;
+  }
+}
+
+// Override gap for small modals on mobile
+[data-small-modal].modal-body {
+  @media (max-width: 640px) {
+    gap: 4px !important;
+  }
+}
+
+// Small modal specific layout styles (for ChannelEditor, GroupEditor)
+.quorum-modal-small-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.quorum-modal-small-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.quorum-modal-small-actions {
+  display: flex;
+  justify-content: right;
+  gap: 8px;
+  margin-top: 10px;
+
+  .quorum-button {
+    height: 38px;
+    font-size: 13px;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    justify-content: left;
+    margin-top: 16px;
+    margin-bottom: 20px;
+    gap: 12px;
   }
 }
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from '../primitives';
+import { Button, Modal, Input } from '../primitives';
 import '../../styles/_modal_common.scss';
 import { useSpace } from '../../hooks';
 import { useMessageDB } from '../context/MessageDB';
@@ -25,13 +25,6 @@ const GroupEditor: React.FunctionComponent<{
   let [closing, setClosing] = React.useState<boolean>(false);
   let navigate = useNavigate();
   const { updateSpace, messageDB } = useMessageDB();
-
-  const handleDismiss = () => {
-    setClosing(true);
-    setTimeout(() => {
-      dismiss();
-    }, 300);
-  };
 
   // Check if any channel in the group has messages
   React.useEffect(() => {
@@ -83,7 +76,7 @@ const GroupEditor: React.FunctionComponent<{
         });
       }
     }
-    handleDismiss();
+    dismiss();
   }, [space, group]);
 
   const deleteGroup = React.useCallback(async () => {
@@ -111,72 +104,72 @@ const GroupEditor: React.FunctionComponent<{
         groups: space!.groups.filter((g) => g.groupName !== groupName),
       });
     }
-    handleDismiss();
+    dismiss();
   }, [space, group]);
 
   return (
-    <div
-      className={`modal-small-container${closing ? ' modal-small-closing' : ''}`}
+    <Modal
+      title=""
+      visible={true}
+      onClose={dismiss}
     >
-      <div className="modal-small-close-button" onClick={handleDismiss}>
-        <FontAwesomeIcon icon={faTimes} />
-      </div>
-      <div className="modal-small-layout">
-        <div className="modal-small-content">
-          <div className="modal-content-section">
-            <div className="modal-content-info">
-              <div className="small-caps">
-                <Trans>Group Name</Trans>
-              </div>
-              <input
-                className="w-full quorum-input"
-                value={group}
-                onChange={(e) => setGroup(e.target.value)}
-              />
-            </div>
-            {hasMessages && showWarning && (
-              <div className="error-label mb-3 relative pr-8">
-                <Trans>
-                  Are you sure? This group contains channels with messages.
-                  Deleting it will cause all content to be lost forever!
-                </Trans>
-                <FontAwesomeIcon
-                  icon={faTimes}
-                  className="absolute top-2 right-2 cursor-pointer hover:opacity-70"
-                  onClick={() => setShowWarning(false)}
-                />
-              </div>
-            )}
-            <div className="modal-small-actions">
-              {groupName && (
-                <Button
-                  type="danger"
-                  onClick={() => {
-                    if (deleteConfirmationStep === 0) {
-                      setDeleteConfirmationStep(1);
-                      if (hasMessages) {
-                        setShowWarning(true);
-                      }
-                      // Reset confirmation after 5 seconds
-                      setTimeout(() => setDeleteConfirmationStep(0), 5000);
-                    } else {
-                      deleteGroup();
-                    }
-                  }}
-                >
-                  {deleteConfirmationStep === 0
-                    ? t`Delete Group`
-                    : t`Click again to confirm`}
-                </Button>
-              )}
-              <Button type="primary" onClick={() => saveChanges()}>
-                {t`Save Changes`}
-              </Button>
-            </div>
+      <div className="modal-body modal-width-medium" style={{ textAlign: 'left' }} data-small-modal>
+        <div className="modal-content-info max-sm:mb-1">
+          <div className="small-caps">
+            <Trans>Group Name</Trans>
           </div>
+          <Input
+            fullWidth
+            value={group}
+            onChange={(value) => setGroup(value)}
+          />
+        </div>
+        {hasMessages && showWarning && (
+          <div className="error-label mb-3 relative pr-8">
+            <Trans>
+              Are you sure? This group contains channels with messages.
+              Deleting it will cause all content to be lost forever!
+            </Trans>
+            <FontAwesomeIcon
+              icon={faTimes}
+              className="absolute top-2 right-2 cursor-pointer hover:opacity-70"
+              onClick={() => setShowWarning(false)}
+            />
+          </div>
+        )}
+        <div className="flex justify-end gap-2 mt-4 max-sm:flex-col max-sm:gap-4">
+          {groupName && (
+            <Button
+              type="danger"
+              className="max-sm:w-full max-sm:order-2"
+              onClick={() => {
+                if (deleteConfirmationStep === 0) {
+                  setDeleteConfirmationStep(1);
+                  if (hasMessages) {
+                    setShowWarning(true);
+                  }
+                  // Reset confirmation after 5 seconds
+                  setTimeout(() => setDeleteConfirmationStep(0), 5000);
+                } else {
+                  deleteGroup();
+                }
+              }}
+            >
+              {deleteConfirmationStep === 0
+                ? t`Delete Group`
+                : t`Click again to confirm`}
+            </Button>
+          )}
+          <Button 
+            type="primary" 
+            className="max-sm:w-full max-sm:order-1"
+            onClick={() => saveChanges()}
+          >
+            {t`Save Changes`}
+          </Button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 

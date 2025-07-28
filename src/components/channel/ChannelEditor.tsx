@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button } from '../primitives';
+import { Button, Modal, Input } from '../primitives';
 import '../../styles/_modal_common.scss';
 import { useSpace } from '../../hooks';
 import { useMessageDB } from '../context/MessageDB';
@@ -36,13 +36,6 @@ const ChannelEditor: React.FunctionComponent<{
   let [closing, setClosing] = React.useState<boolean>(false);
   let navigate = useNavigate();
   const { updateSpace, createChannel, messageDB } = useMessageDB();
-
-  const handleDismiss = () => {
-    setClosing(true);
-    setTimeout(() => {
-      dismiss();
-    }, 300);
-  };
 
   // Check if channel has messages
   React.useEffect(() => {
@@ -111,7 +104,7 @@ const ChannelEditor: React.FunctionComponent<{
         }),
       });
     }
-    handleDismiss();
+    dismiss();
   }, [space, channelName, channelTopic]);
 
   const deleteChannel = React.useCallback(async () => {
@@ -136,87 +129,87 @@ const ChannelEditor: React.FunctionComponent<{
           };
         }),
       });
-      handleDismiss();
+      dismiss();
     }
   }, [space, channelName, channelTopic]);
 
   return (
-    <div
-      className={`modal-small-container${closing ? ' modal-small-closing' : ''}`}
+    <Modal
+      title=""
+      visible={true}
+      onClose={dismiss}
     >
-      <div className="modal-small-close-button" onClick={handleDismiss}>
-        <FontAwesomeIcon icon={faTimes} />
-      </div>
-      <div className="modal-small-layout">
-        <div className="modal-small-content">
-          <div className="modal-content-section">
-            <div className="modal-content-info">
-              <div className="small-caps">
-                <Trans>Channel Name</Trans>
-              </div>
-              <input
-                className="w-full quorum-input"
-                value={channelName}
-                onChange={(e) =>
-                  setChannelName(
-                    e.target.value.toLowerCase().replace(/[^a-z0-9\-]/gi, '')
-                  )
-                }
-              />
-            </div>
-            <div className="modal-content-info">
-              <div className="small-caps">
-                <Trans>Channel Topic</Trans>
-              </div>
-              <input
-                className="w-full quorum-input"
-                value={channelTopic}
-                onChange={(e) => setChannelTopic(e.target.value)}
-              />
-            </div>
-            {hasMessages && showWarning && (
-              <div className="error-label mb-3 relative pr-8">
-                <Trans>
-                  Are you sure? This channel contains messages. Deleting it will
-                  cause all content to be lost forever!
-                </Trans>
-                <FontAwesomeIcon
-                  icon={faTimes}
-                  className="absolute top-2 right-2 cursor-pointer hover:opacity-70"
-                  onClick={() => setShowWarning(false)}
-                />
-              </div>
-            )}
-            <div className="modal-small-actions">
-              {channelId && (
-                <Button
-                  type="danger"
-                  onClick={() => {
-                    if (deleteConfirmationStep === 0) {
-                      setDeleteConfirmationStep(1);
-                      if (hasMessages) {
-                        setShowWarning(true);
-                      }
-                      // Reset confirmation after 5 seconds
-                      setTimeout(() => setDeleteConfirmationStep(0), 5000);
-                    } else {
-                      deleteChannel();
-                    }
-                  }}
-                >
-                  {deleteConfirmationStep === 0
-                    ? t`Delete Channel`
-                    : t`Click again to confirm`}
-                </Button>
-              )}
-              <Button type="primary" onClick={() => saveChanges()}>
-                <Trans>Save Changes</Trans>
-              </Button>
-            </div>
+      <div className="modal-body modal-width-medium" style={{ textAlign: 'left' }} data-small-modal>
+        <div className="modal-content-info max-sm:mb-1">
+          <div className="small-caps">
+            <Trans>Channel Name</Trans>
           </div>
+          <Input
+            fullWidth
+            value={channelName}
+            onChange={(value) =>
+              setChannelName(
+                value.toLowerCase().replace(/[^a-z0-9\-]/gi, '')
+              )
+            }
+          />
+        </div>
+        <div className="modal-content-info max-sm:mb-1">
+          <div className="small-caps">
+            <Trans>Channel Topic</Trans>
+          </div>
+          <Input
+            fullWidth
+            value={channelTopic}
+            onChange={(value) => setChannelTopic(value)}
+          />
+        </div>
+        {hasMessages && showWarning && (
+          <div className="error-label mb-3 relative pr-8">
+            <Trans>
+              Are you sure? This channel contains messages. Deleting it will
+              cause all content to be lost forever!
+            </Trans>
+            <FontAwesomeIcon
+              icon={faTimes}
+              className="absolute top-2 right-2 cursor-pointer hover:opacity-70"
+              onClick={() => setShowWarning(false)}
+            />
+          </div>
+        )}
+        <div className="flex justify-end gap-2 mt-4 max-sm:flex-col max-sm:gap-4">
+          {channelId && (
+            <Button
+              type="danger"
+              className="max-sm:w-full max-sm:order-2"
+              onClick={() => {
+                if (deleteConfirmationStep === 0) {
+                  setDeleteConfirmationStep(1);
+                  if (hasMessages) {
+                    setShowWarning(true);
+                  }
+                  // Reset confirmation after 5 seconds
+                  setTimeout(() => setDeleteConfirmationStep(0), 5000);
+                } else {
+                  deleteChannel();
+                }
+              }}
+            >
+              {deleteConfirmationStep === 0
+                ? t`Delete Channel`
+                : t`Click again to confirm`}
+            </Button>
+          )}
+          <Button 
+            type="primary" 
+            className="max-sm:w-full max-sm:order-1"
+            onClick={() => saveChanges()}
+          >
+            <Trans>Save Changes</Trans>
+          </Button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 
