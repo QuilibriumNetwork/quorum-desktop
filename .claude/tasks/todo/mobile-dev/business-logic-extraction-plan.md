@@ -12,39 +12,11 @@
 
 ### Target: 38 components need business logic extracted
 
-**Priority Order**: High-impact, reusable patterns first
+### Modal Business Logic
 
-### 🔥 **Week 1-2: Modal Business Logic (Highest Impact)**
-
-#### CreateSpaceModal.tsx
-- [ ] Extract `useSpaceCreation` hook
-  - Space creation API calls
-  - Form validation logic
-  - Success/error handling
-- [ ] Extract `useFileUpload` hook
-  - File dropzone logic
-  - Image compression
-  - Upload error handling
-- [ ] Extract `useSpaceSettings` hook
-  - Advanced settings state
-  - Permission configuration
-  - Public/private toggle logic
-- [ ] Test web app functionality unchanged
-
-#### UserSettingsModal.tsx
-- [ ] Extract `useUserSettings` hook
-  - Settings form state management
-  - API calls for user preferences
-  - Validation logic
-- [ ] Extract `useProfileImage` hook
-  - Profile image upload
-  - Image processing
-  - Preview functionality
-- [ ] Extract `useThemeSettings` hook
-  - Theme selection logic
-  - Accent color management
-  - System theme detection
-- [ ] Test web app functionality unchanged
+- [x] CreateSpaceModal.tsx
+- [x] UserSettingsModal.tsx
+- [ ] SpaceEditor.tsx
 
 #### JoinSpaceModal.tsx
 - [ ] Extract `useSpaceJoining` hook
@@ -67,6 +39,8 @@
   - User lookup
   - Error states
 - [ ] Test web app functionality unchanged
+
+IMPORTANT: do also all other modals (list .claude/docs/features/modals.md)
 
 ### 🚀 **Week 3-4: Core UI & Search Logic**
 

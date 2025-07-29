@@ -1,26 +1,18 @@
-import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
-import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Button, Select, Modal, Switch, Input, Icon, Tooltip } from '../primitives';
 import '../../styles/_modal_common.scss';
-import { useRegistration } from '../../hooks';
-import { useRegistrationContext } from '../context/RegistrationPersister';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
-import { useMessageDB } from '../context/MessageDB';
-import { UserConfig } from '../../db/messages';
 import ThemeRadioGroup from '../ThemeRadioGroup';
 import AccentColorSwitcher from '../AccentColorSwitcher';
 import { t } from '@lingui/core/macro';
 import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages } from '../../utils';
-import {
-  dynamicActivate,
-  getUserLocale,
-  saveUserLocale,
-} from '../../i18n/i18n.ts';
-import locales from '../../i18n/locales';
-import useForceUpdate from '../hooks/forceUpdate';
-import { notificationService } from '../../services/notificationService';
+import { 
+  useUserSettings, 
+  useProfileImage, 
+  useLocaleSettings, 
+  useNotificationSettings 
+} from '../../hooks';
 import ReactTooltip from '../ReactTooltip';
 
 const UserSettingsModal: React.FunctionComponent<{
@@ -39,244 +31,72 @@ const UserSettingsModal: React.FunctionComponent<{
     >
   >;
 }> = ({ dismiss, setUser }) => {
-  let { currentPasskeyInfo, updateStoredPasskey, exportKey } =
-    usePasskeysContext();
-  let [displayName, setDisplayName] = React.useState<string>(
-    currentPasskeyInfo?.displayName || ''
-  );
-  let [selectedCategory, setSelectedCategory] =
-    React.useState<string>('general');
-  let { data: registration } = useRegistration({
-    address: currentPasskeyInfo?.address!,
+  // Use our extracted hooks
+  const {
+    displayName,
+    setDisplayName,
+    selectedCategory,
+    setSelectedCategory,
+    allowSync,
+    setAllowSync,
+    nonRepudiable,
+    setNonRepudiable,
+    saveChanges: saveUserChanges,
+    currentPasskeyInfo,
+    stagedRegistration,
+    setStagedRegistration,
+    removeDevice,
+    downloadKey,
+    keyset,
+  } = useUserSettings({
+    onSave: dismiss,
   });
-  const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
-  const [currentFile, setCurrentFile] = React.useState<File | undefined>();
-  const { keyset } = useRegistrationContext();
-  const { saveConfig, getConfig, updateUserProfile } = useMessageDB();
-  const [stagedRegistration, setStagedRegistration] = React.useState<
-    secureChannel.UserRegistration | undefined
-  >(registration.registration);
-  const [init, setInit] = React.useState<boolean>(false);
-  const existingConfig = React.useRef<UserConfig | null>(null);
-  const [allowSync, setAllowSync] = React.useState<boolean>(false);
-  const [language, setLanguage] = React.useState(getUserLocale());
-  const [languageChanged, setLanguageChanged] = React.useState<boolean>(false);
-  const [userIconFileError, setUserIconFileError] = React.useState<
-    string | null
-  >(null);
-  const [isUserIconUploading, setIsUserIconUploading] =
-    React.useState<boolean>(false);
-  const [notificationsEnabled, setNotificationsEnabled] =
-    React.useState<boolean>(
-      notificationService.getPermissionStatus() === 'granted'
-    );
-
-  const forceUpdate = useForceUpdate();
-
-
-  const handleNotificationToggle = async () => {
-    if (!notificationService.isNotificationSupported()) {
-      // Show some feedback that notifications aren't supported
-      return;
-    }
-
-    const currentStatus = notificationService.getPermissionStatus();
-
-    if (currentStatus === 'granted') {
-      // Can't revoke permission programmatically, inform user
-      // Just show the message below, don't use alert
-      return;
-    }
-
-    // For 'default' or 'denied' status, try to request permission
-    // Some browsers allow re-requesting even after denial
-    const permission = await notificationService.requestPermission();
-    setNotificationsEnabled(permission === 'granted');
-    
-    // The error messages will be shown by the conditional rendering below
-    // No need for alerts that interrupt the UX
-  };
-
-  React.useEffect(() => {
-    console.log('Language changed to:', language);
-    dynamicActivate(language);
-    setLanguageChanged(true);
-    saveUserLocale(language);
-    forceUpdate();
-  }, [language]);
-
-  const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
-
-  React.useEffect(() => {
-    if (!init) {
-      setInit(true);
-      (async () => {
-        const config = await getConfig({
-          address: currentPasskeyInfo!.address,
-          userKey: keyset.userKeyset,
-        });
-        existingConfig.current = config;
-        setAllowSync(config?.allowSync ?? allowSync);
-        setNonRepudiable(config?.nonRepudiable ?? nonRepudiable);
-      })();
-    }
-  }, [init]);
-
-  // Refresh notification permission status when modal opens or focus returns
-  React.useEffect(() => {
-    const checkNotificationStatus = () => {
-      const currentStatus = notificationService.getPermissionStatus();
-      setNotificationsEnabled(currentStatus === 'granted');
-    };
-
-    // Check immediately when component mounts
-    checkNotificationStatus();
-
-    // Check when focus returns to the page (in case user changed browser settings)
-    window.addEventListener('focus', checkNotificationStatus);
-    document.addEventListener('visibilitychange', checkNotificationStatus);
-
-    return () => {
-      window.removeEventListener('focus', checkNotificationStatus);
-      document.removeEventListener('visibilitychange', checkNotificationStatus);
-    };
-  }, []);
-
-  const downloadKey = async () => {
-    let content = await exportKey(currentPasskeyInfo!.address);
-    let fileName = currentPasskeyInfo!.address + '.key';
-    const blob = new Blob([content], { type: 'text/plain' });
-
-    const url = window.URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-
-    document.body.appendChild(link);
-    link.click();
-
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-  };
 
   const {
+    fileData,
+    currentFile,
+    userIconFileError,
+    isUserIconUploading,
+    isDragActive: isUserIconDragActive,
     getRootProps,
     getInputProps,
-    acceptedFiles,
-    isDragActive: isUserIconDragActive,
-  } = useDropzone({
-    accept: {
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg', '.jpeg'],
-    },
-    minSize: 0,
-    maxSize: 1 * 1024 * 1024,
-    onDropRejected: (fileRejections) => {
-      setIsUserIconUploading(false);
-      for (const rejection of fileRejections) {
-        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          setUserIconFileError(t`File cannot be larger than 1MB`);
-        } else {
-          setUserIconFileError(t`File rejected`);
-        }
-      }
-    },
-    onDropAccepted: (files) => {
-      setIsUserIconUploading(true); // Keep uploading state during processing
-      setUserIconFileError(null);
-      // Clear previous file data immediately when new file is accepted
-      setFileData(undefined);
-      setCurrentFile(files[0]);
-    },
-    onDragEnter: () => {
-      setIsUserIconUploading(true);
-    },
-    onDragLeave: () => {
-      setIsUserIconUploading(false);
-    },
-    onFileDialogOpen: () => {
-      setIsUserIconUploading(true);
-    },
-    onFileDialogCancel: () => {
-      setIsUserIconUploading(false);
-    },
-  });
+    clearFileError,
+    getProfileImageUrl,
+  } = useProfileImage();
 
-  React.useEffect(() => {
-    if (currentFile) {
-      (async () => {
-        try {
-          const arrayBuffer = await currentFile.arrayBuffer();
-          setFileData(arrayBuffer);
-          setIsUserIconUploading(false);
-        } catch (error) {
-          console.error('Error reading file:', error);
-          setUserIconFileError(t`Error reading file`);
-          setIsUserIconUploading(false);
-        }
-      })();
-    }
-  }, [currentFile]);
+  const {
+    language,
+    setLanguage,
+    languageChanged,
+    localeOptions,
+    forceUpdate,
+  } = useLocaleSettings();
 
-  const removeDevice = (identityKey: string) => {
-    setStagedRegistration((reg: secureChannel.UserRegistration | undefined) => {
-      return {
-        ...reg!,
-        device_registrations: reg!.device_registrations.filter(
-          (d) => d.identity_public_key !== identityKey
-        ),
-      };
-    });
-  };
+  const {
+    notificationsEnabled,
+    handleNotificationToggle,
+    isNotificationSupported,
+    permissionStatus,
+    showRevokeMessage,
+  } = useNotificationSettings();
 
+  // Custom save handler that updates setUser callback
   const saveChanges = async () => {
-    updateStoredPasskey(currentPasskeyInfo!.credentialId, {
-      credentialId: currentPasskeyInfo!.credentialId,
-      address: currentPasskeyInfo!.address,
-      publicKey: currentPasskeyInfo!.publicKey,
-      displayName: displayName,
-      pfpUrl:
-        currentFile && fileData
-          ? 'data:' +
-            currentFile.type +
-            ';base64,' +
-            Buffer.from(fileData).toString('base64')
-          : currentPasskeyInfo!.pfpUrl,
-      completedOnboarding: true,
-    });
+    await saveUserChanges(fileData, currentFile);
+    
+    // Update parent component's user state
     setUser!({
       displayName: displayName,
       state: 'online',
       status: '',
-      userIcon:
-        currentFile && fileData
-          ? 'data:' +
-            currentFile.type +
-            ';base64,' +
-            Buffer.from(fileData).toString('base64')
-          : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
+      userIcon: fileData && currentFile
+        ? 'data:' +
+          currentFile.type +
+          ';base64,' +
+          Buffer.from(fileData).toString('base64')
+        : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
       address: currentPasskeyInfo!.address,
     });
-    updateUserProfile(
-      displayName,
-      currentFile && fileData
-        ? 'data:' +
-            currentFile.type +
-            ';base64,' +
-            Buffer.from(fileData).toString('base64')
-        : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
-      currentPasskeyInfo!
-    );
-    await saveConfig({
-      config: {
-        ...existingConfig.current!,
-        allowSync,
-        nonRepudiable: nonRepudiable,
-      },
-      keyset: keyset,
-    });
-    dismiss();
   };
 
   return (
@@ -370,15 +190,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         id="user-icon-tooltip-target"
                         className="modal-icon-editable"
                         style={{
-                          backgroundImage:
-                            fileData !== undefined && currentFile
-                              ? `url(data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')})`
-                              : currentPasskeyInfo?.pfpUrl &&
-                                  !currentPasskeyInfo.pfpUrl.includes(
-                                    DefaultImages.UNKNOWN_USER
-                                  )
-                                ? `url(${currentPasskeyInfo.pfpUrl})`
-                                : 'var(--unknown-icon)',
+                          backgroundImage: `url(${getProfileImageUrl()})`,
                         }}
                         {...getRootProps()}
                       >
@@ -410,7 +222,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             <Icon
                               name="times"
                               className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
-                              onClick={() => setUserIconFileError(null)}
+                              onClick={clearFileError}
                             />
                           </div>
                         </div>
@@ -644,16 +456,21 @@ const UserSettingsModal: React.FunctionComponent<{
                           />
                         </div>
 
-                        {!notificationService.isNotificationSupported() && (
+                        {!isNotificationSupported && (
                           <div className="pt-2 text-sm text-amber-600">
                             {t`Desktop notifications are not supported in this browser.`}
                           </div>
                         )}
 
-                        {notificationService.getPermissionStatus() ===
-                          'denied' && (
+                        {permissionStatus === 'denied' && (
                           <div className="pt-2 text-sm" style={{ color: 'var(--color-text-danger)' }}>
                             {t`Notifications are blocked. Please enable them in your browser settings.`}
+                          </div>
+                        )}
+
+                        {showRevokeMessage && (
+                          <div className="pt-2 text-sm text-amber-600">
+                            {t`To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically.`}
                           </div>
                         )}
                       </div>
@@ -679,13 +496,9 @@ const UserSettingsModal: React.FunctionComponent<{
                       <div className="flex flex-row gap-2 items-center">
                         <Select
                           value={language}
-                          options={Object.entries(locales).map(([code, label]) => ({
-                            value: code,
-                            label: label,
-                          }))}
+                          options={localeOptions}
                           onChange={(value) => {
-                            const selected = value as keyof typeof locales;
-                            setLanguage(selected);
+                            setLanguage(value);
                           }}
                           width="300px"
                           dropdownPlacement="bottom"

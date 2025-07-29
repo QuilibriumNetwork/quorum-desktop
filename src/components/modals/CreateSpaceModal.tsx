@@ -1,16 +1,10 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router';
-import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Input, Button, Modal, Switch, Icon, Tooltip } from '../primitives';
 import './CreateSpaceModal.scss';
-import { useDropzone } from 'react-dropzone';
 import SpaceIcon from '../navbar/SpaceIcon';
-import { useMessageDB } from '../context/MessageDB';
-import { useRegistrationContext } from '../context/RegistrationPersister';
-import { useRegistration } from '../../hooks';
+import { useSpaceCreation, useFileUpload, useSpaceSettings } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
-import { DefaultImages } from '../../utils';
 import ReactTooltip from '../ReactTooltip';
 
 type CreateSpaceModalProps = {
@@ -21,78 +15,30 @@ type CreateSpaceModalProps = {
 const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
   props
 ) => {
-  const [advancedMode, setAdvancedMode] = React.useState(false);
-  const [repudiable, setRepudiable] = React.useState(false);
-  const [pub, setPublic] = React.useState(true);
-  const [spaceName, setSpaceName] = React.useState('');
-  const [creating, setCreating] = React.useState(false);
-  const { createSpace } = useMessageDB();
-  const { currentPasskeyInfo } = usePasskeysContext();
-  const { keyset } = useRegistrationContext();
-  const [fileError, setFileError] = React.useState<string | null>(null);
-  const [isUploading, setIsUploading] = React.useState<boolean>(false);
-  const { data: registration } = useRegistration({
-    address: currentPasskeyInfo!.address,
+  // Use our extracted hooks
+  const { spaceName, setSpaceName, creating, createSpace, canCreate } = useSpaceCreation({
+    onSuccess: props.onClose,
   });
-  const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
-  const [currentFile, setCurrentFile] = React.useState<File | undefined>();
-  const navigate = useNavigate();
+  
+  const {
+    fileData,
+    currentFile,
+    fileError,
+    isUploading,
+    isDragActive,
+    getRootProps,
+    getInputProps,
+    clearFileError,
+  } = useFileUpload();
 
-  const { getRootProps, getInputProps, acceptedFiles, isDragActive } =
-    useDropzone({
-      accept: {
-        'image/png': ['.png'],
-        'image/jpeg': ['.jpg', '.jpeg'],
-      },
-      multiple: false,
-      minSize: 0,
-      maxSize: 1 * 1024 * 1024,
-      onDropRejected: (fileRejections) => {
-        setIsUploading(false);
-        for (const rejection of fileRejections) {
-          if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-            setFileError(t`File cannot be larger than 1MB`);
-          } else {
-            setFileError(t`File rejected`);
-          }
-        }
-      },
-      onDropAccepted: (files) => {
-        setIsUploading(true);
-        setFileError(null);
-        // Clear previous file data immediately when new file is accepted
-        setFileData(undefined);
-        setCurrentFile(files[0]);
-      },
-      onDragEnter: () => {
-        setIsUploading(true);
-      },
-      onDragLeave: () => {
-        setIsUploading(false);
-      },
-      onFileDialogOpen: () => {
-        setIsUploading(true);
-      },
-      onFileDialogCancel: () => {
-        setIsUploading(false);
-      },
-    });
-
-  React.useEffect(() => {
-    if (currentFile) {
-      (async () => {
-        try {
-          const arrayBuffer = await currentFile.arrayBuffer();
-          setFileData(arrayBuffer);
-          setIsUploading(false);
-        } catch (error) {
-          console.error('Error reading file:', error);
-          setFileError(t`Error reading file`);
-          setIsUploading(false);
-        }
-      })();
-    }
-  }, [currentFile]);
+  const {
+    advancedMode,
+    setAdvancedMode,
+    repudiable,
+    setRepudiable,
+    pub,
+    setPublic,
+  } = useSpaceSettings();
 
   return (
     <Modal
@@ -151,7 +97,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               <Icon
                 name="times"
                 className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
-                onClick={() => setFileError(null)}
+                onClick={clearFileError}
               />
             </div>
           )}
@@ -229,28 +175,8 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
         <div className="mt-6 pt-6 rounded-b-xl border-t border-t-surface-1 modal-buttons-responsive">
           <Button
             type="primary"
-            disabled={creating || !fileData || !spaceName}
-            onClick={async () => {
-              setCreating(true);
-              const { spaceId, channelId } = await createSpace(
-                spaceName,
-                fileData != undefined && currentFile
-                  ? 'data:' +
-                      currentFile.type +
-                      ';base64,' +
-                      Buffer.from(fileData).toString('base64')
-                  : DefaultImages.UNKNOWN_USER,
-                keyset,
-                registration.registration!,
-                repudiable,
-                pub,
-                currentPasskeyInfo?.pfpUrl!,
-                currentPasskeyInfo?.displayName!
-              );
-              navigate(`/spaces/${spaceId}/${channelId}`);
-              props.onClose();
-              setCreating(false);
-            }}
+            disabled={!canCreate || !fileData}
+            onClick={() => createSpace(spaceName, fileData, currentFile, repudiable, pub)}
           >
             {creating ? t`Creating Space...` : t`Create Space`}
           </Button>
