@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import ThemeRadioGroup from './ThemeRadioGroup';
-import AccentColorSwitcher from './AccentColorSwitcher';
-import { Button, Switch } from './primitives';
-import ReactTooltip from './ReactTooltip';
+import ThemeRadioGroup from '../components/ThemeRadioGroup';
+import AccentColorSwitcher from '../components/AccentColorSwitcher';
+import { Button, Switch } from '../components/primitives';
+import ReactTooltip from '../components/ReactTooltip';
 
 const Elements = () => {
   const [toggle, setToggle] = React.useState(false);

@@ -28,7 +28,7 @@ const ComponentAuditViewer = process.env.NODE_ENV === 'development'
   ? React.lazy(() => import('./dev/components-audit').then(m => ({ default: m.ComponentAuditViewer })))
   : null;
 import JoinSpaceModal from './components/modals/JoinSpaceModal';
-import Elements from './components/Elements';
+import Elements from './dev/Elements';
 import { DefaultImages } from './utils';
 import { i18n } from './i18n';
 import { I18nProvider } from '@lingui/react';
@@ -232,16 +232,9 @@ const App = () => {
                           <Route
                             path="/dev/audit"
                             element={
-                              <AppWithSearch
-                                kickUserAddress={kickUserAddress}
-                                setKickUserAddress={setKickUserAddress}
-                                user={user}
-                                setUser={setUser}
-                              >
-                                <Suspense fallback={<div>Loading audit viewer...</div>}>
-                                  <ComponentAuditViewer />
-                                </Suspense>
-                              </AppWithSearch>
+                              <Suspense fallback={<div>Loading audit viewer...</div>}>
+                                <ComponentAuditViewer />
+                              </Suspense>
                             }
                           />
                         )}

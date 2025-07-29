@@ -1,7 +1,9 @@
 // Layout Primitives
 export { ModalContainer } from './ModalContainer';
 export { OverlayBackdrop } from './OverlayBackdrop';
+export { Container } from './Container';
 export { FlexRow } from './FlexRow';
+export { FlexColumn } from './FlexColumn';
 export { FlexBetween } from './FlexBetween';
 export { FlexCenter } from './FlexCenter';
 export { ResponsiveContainer } from './ResponsiveContainer';
@@ -17,6 +19,7 @@ export { ColorSwatch } from './ColorSwatch';
 export { RadioGroup } from './RadioGroup';
 export { Tooltip } from './Tooltip';
 export { Icon } from './Icon';
+export { Text } from './Text';
 
 // Theme System
 export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
@@ -24,7 +27,9 @@ export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
 // Types
 export type { ModalContainerProps } from './ModalContainer';
 export type { OverlayBackdropProps } from './OverlayBackdrop';
+export type { ContainerProps, WebContainerProps, NativeContainerProps } from './Container';
 export type { FlexRowProps } from './FlexRow';
+export type { FlexColumnProps } from './FlexColumn';
 export type { FlexBetweenProps } from './FlexBetween';
 export type { FlexCenterProps } from './FlexCenter';
 export type { ResponsiveContainerProps } from './ResponsiveContainer';
@@ -57,3 +62,8 @@ export type {
   IconName,
   IconSize,
 } from './Icon';
+export type {
+  TextProps,
+  WebTextProps,
+  NativeTextProps,
+} from './Text';

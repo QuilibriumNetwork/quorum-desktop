@@ -288,7 +288,7 @@ export const FileUpload = ({ onFilesSelected, accept, children }) => {
 
 ---
 
-### 4. @fortawesome/react-fontawesome (Icons)
+### 4. @fortawesome/react-fontawesome (Icons) - DONE
 
 #### Current Usage
 
@@ -375,7 +375,7 @@ export const Icon = ({ icon, size = 16, color = '#666', ...props }) => (
 
 ---
 
-### 5. react-tooltip (Tooltips)
+### 5. react-tooltip (Tooltips) - DONE
 
 #### Current Usage
 

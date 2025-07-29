@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import auditData from './audit.json';
 
-type AuditStatus = 'todo' | 'in_progress' | 'done' | 'ready' | 'unknown';
+type AuditStatus = 'todo' | 'in_progress' | 'done' | 'ready' | 'partial' | 'unknown';
 type ComponentCategory = 'shared' | 'platform_specific' | 'complex_refactor' | 'unknown';
 
 interface ComponentAudit {
@@ -44,11 +44,15 @@ const StatusBadge: React.FC<{ status: AuditStatus }> = ({ status }) => {
     switch (status) {
       case 'done':
       case 'ready':
-        return 'bg-success text-white';
+        return 'bg-green-500/70 text-white';
       case 'in_progress':
-        return 'bg-warning text-black';
+        return 'bg-yellow-500/70 text-black';
       case 'todo':
-        return 'bg-surface-3 text-subtle';
+        return 'bg-blue-500/70 text-white';
+      case 'partial':
+        return 'bg-orange-500/70 text-white';
+      case 'unknown':
+        return 'bg-gray-500/70 text-white';
       default:
         return 'bg-surface-2 text-muted';
     }
@@ -65,13 +69,13 @@ const CategoryBadge: React.FC<{ category: ComponentCategory }> = ({ category }) 
   const getCategoryClass = () => {
     switch (category) {
       case 'shared':
-        return 'bg-accent/20 text-accent-600 dark:text-accent-400';
+        return 'bg-purple-500/70 text-white';
       case 'platform_specific':
-        return 'bg-warning/20 text-warning-600 dark:text-warning-400';
+        return 'bg-yellow-600/70 text-white';
       case 'complex_refactor':
-        return 'bg-danger/20 text-danger-600 dark:text-danger-400';
+        return 'bg-red-500/70 text-white';
       default:
-        return 'bg-surface-2 text-muted';
+        return 'bg-gray-400/70 text-white';
     }
   };
 
@@ -95,11 +99,46 @@ const CategoryBadge: React.FC<{ category: ComponentCategory }> = ({ category }) 
   );
 };
 
+const UsageBadge: React.FC<{ used: string }> = ({ used }) => {
+  const getUsageClass = () => {
+    switch (used) {
+      case 'yes':
+        return 'bg-green-500/70 text-white';
+      case 'no':
+        return 'bg-red-500/70 text-white';
+      case 'unknown':
+        return 'bg-amber-500/70 text-white';
+      default:
+        return 'bg-gray-400/70 text-white';
+    }
+  };
+
+  const getUsageLabel = () => {
+    switch (used) {
+      case 'yes':
+        return 'Used';
+      case 'no':
+        return 'Unused';
+      case 'unknown':
+        return 'Unknown';
+      default:
+        return 'Unknown';
+    }
+  };
+
+  return (
+    <span className={`px-2 py-1 rounded text-xs font-medium ${getUsageClass()}`}>
+      {getUsageLabel()}
+    </span>
+  );
+};
+
 export const ComponentAuditViewer: React.FC = () => {
   const data = auditData as AuditData;
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<ComponentCategory | 'all'>('all');
   const [statusFilter, setStatusFilter] = useState<AuditStatus | 'all'>('all');
+  const [usageFilter, setUsageFilter] = useState<'yes' | 'no' | 'unknown' | 'all'>('all');
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   const filteredComponents = useMemo(() => {
@@ -116,9 +155,11 @@ export const ComponentAuditViewer: React.FC = () => {
         component.logic_extraction === statusFilter ||
         component.native === statusFilter;
       
-      return matchesSearch && matchesCategory && matchesStatus;
+      const matchesUsage = usageFilter === 'all' || (component as any).used === usageFilter;
+      
+      return matchesSearch && matchesCategory && matchesStatus && matchesUsage;
     });
-  }, [data.components, searchTerm, categoryFilter, statusFilter]);
+  }, [data.components, searchTerm, categoryFilter, statusFilter, usageFilter]);
 
   const toggleRowExpansion = (componentKey: string) => {
     const newExpanded = new Set(expandedRows);
@@ -142,8 +183,9 @@ export const ComponentAuditViewer: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6 text-strong">Component Audit Dashboard</h1>
+    <div className="min-h-screen bg-app overflow-y-auto">
+      <div className="p-6 max-w-7xl mx-auto">
+        <h1 className="text-2xl font-bold mb-6 text-strong">Component Audit Dashboard</h1>
       
       {/* Stats Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -193,7 +235,7 @@ export const ComponentAuditViewer: React.FC = () => {
       </div>
 
       {/* Category Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-surface-1 rounded-lg p-4 border border-default">
           <h3 className="text-sm font-medium text-subtle mb-2">Shared Components</h3>
           <p className="text-xl font-bold text-strong">{data.stats.by_category.shared}</p>
@@ -205,6 +247,25 @@ export const ComponentAuditViewer: React.FC = () => {
         <div className="bg-surface-1 rounded-lg p-4 border border-default">
           <h3 className="text-sm font-medium text-subtle mb-2">Complex Refactor</h3>
           <p className="text-xl font-bold text-strong">{data.stats.by_category.complex_refactor}</p>
+        </div>
+      </div>
+
+      {/* Usage Breakdown */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="bg-surface-1 rounded-lg p-4 border border-default">
+          <h3 className="text-sm font-medium text-subtle mb-2">Used Components</h3>
+          <p className="text-xl font-bold text-success">{data.stats.by_usage?.used || 0}</p>
+          <p className="text-xs text-subtle">Active in codebase</p>
+        </div>
+        <div className="bg-surface-1 rounded-lg p-4 border border-default">
+          <h3 className="text-sm font-medium text-subtle mb-2">Unused Components</h3>
+          <p className="text-xl font-bold text-danger">{data.stats.by_usage?.unused || 0}</p>
+          <p className="text-xs text-subtle">Can be deleted</p>
+        </div>
+        <div className="bg-surface-1 rounded-lg p-4 border border-default">
+          <h3 className="text-sm font-medium text-subtle mb-2">Unknown Usage</h3>
+          <p className="text-xl font-bold text-warning">{data.stats.by_usage?.unknown || 0}</p>
+          <p className="text-xs text-subtle">Needs analysis</p>
         </div>
       </div>
 
@@ -240,15 +301,28 @@ export const ComponentAuditViewer: React.FC = () => {
           <option value="done">Done</option>
           <option value="ready">Ready</option>
         </select>
+        
+        <select
+          className="px-4 py-2 rounded-lg bg-surface-1 border border-default text-main focus:outline-none focus:border-accent"
+          value={usageFilter}
+          onChange={(e) => setUsageFilter(e.target.value as 'yes' | 'no' | 'unknown' | 'all')}
+        >
+          <option value="all">All Usage</option>
+          <option value="yes">Used</option>
+          <option value="no">Unused</option>
+          <option value="unknown">Unknown</option>
+        </select>
       </div>
 
       {/* Component Table */}
       <div className="bg-surface-1 rounded-lg border border-default overflow-hidden">
-        <table className="w-full">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[800px]">
           <thead>
             <tr className="bg-surface-2 border-b border-default">
               <th className="px-4 py-3 text-left text-sm font-medium text-subtle">Component</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-subtle">Category</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-subtle">Used</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-subtle">Primitives</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-subtle">Logic</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-subtle">Native</th>
@@ -269,6 +343,9 @@ export const ComponentAuditViewer: React.FC = () => {
                   </td>
                   <td className="px-4 py-3">
                     <CategoryBadge category={component.category} />
+                  </td>
+                  <td className="px-4 py-3">
+                    <UsageBadge used={(component as any).used || 'unknown'} />
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={component.primitives} />
@@ -302,7 +379,7 @@ export const ComponentAuditViewer: React.FC = () => {
                 
                 {expandedRows.has(key) && (
                   <tr className="bg-surface-2/30">
-                    <td colSpan={7} className="px-4 py-4">
+                    <td colSpan={8} className="px-4 py-4">
                       <div className="space-y-3">
                         <div>
                           <h4 className="text-sm font-medium text-strong mb-1">Notes</h4>
@@ -331,21 +408,38 @@ export const ComponentAuditViewer: React.FC = () => {
                 )}
               </React.Fragment>
             ))}
+            {filteredComponents.length === 0 && (
+              <tr>
+                <td colSpan={8} className="text-center py-8 text-subtle">
+                  No components match your filters
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
-        
-        {filteredComponents.length === 0 && (
-          <div className="text-center py-8 text-subtle">
-            No components match your filters
-          </div>
-        )}
+        </div>
       </div>
 
-      {/* Metadata Footer */}
-      <div className="mt-6 text-xs text-subtle">
-        <p>Audit Version: {data.metadata.audit_version}</p>
-        <p>Last Updated: {data.stats.last_updated}</p>
-        <p>Scan Scope: {data.metadata.scan_scope.join(', ')}</p>
+        {/* Metadata Footer */}
+        <div className="mt-6 text-xs text-subtle">
+          <p>Audit Version: {data.metadata.audit_version}</p>
+          <p>Last Updated: {data.stats.last_updated}</p>
+          <p>Scan Scope: {data.metadata.scan_scope.join(', ')}</p>
+        </div>
+
+        {/* Back to Top Link */}
+        <div className="mt-8 flex justify-center">
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="text-accent hover:text-accent-600 underline"
+          >
+            Back to Top
+          </a>
+        </div>
       </div>
     </div>
   );

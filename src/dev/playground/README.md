@@ -5,7 +5,7 @@ This directory contains testing environments for validating cross-platform primi
 ## Directory Structure
 
 ```
-src/playground/
+src/dev/playground/
 ├── web/                      # Web playground for testing primitives in browser
 │   └── PrimitivesPlayground.tsx  # Web playground component
 └── mobile/                   # Mobile playground for React Native testing
@@ -18,22 +18,9 @@ src/playground/
 ```bash
 yarn dev
 ```
-- Playground is **always included** and available at `/playground` route
-- No configuration needed
+- Web Playground is **always included** and available at `/playground` route
+- Mobile playground is **always excluded** from all builds
 
-### Production Build
-```bash
-# Default: playground excluded (reduces bundle size)
-yarn build
-
-# Include playground in production (for testing/demos)
-yarn build --playground
-```
-
-### Build Impact
-- **Default build**: 696 modules (playground excluded)
-- **With playground**: 742 modules (~75KB additional JavaScript)
-- **Mobile playground**: Always excluded from all builds
 
 ## Web Playground
 
@@ -283,6 +270,8 @@ yarn playground:cleanup --dry-run --all
 ```
 
 ### Lingui Awareness
+
+In the mobile playground we have disabled Lingui becaused itcaused conflcits with Expo Go.
 
 The sync system intelligently handles differences between Lingui localization (main app) and hardcoded strings (playground):
 

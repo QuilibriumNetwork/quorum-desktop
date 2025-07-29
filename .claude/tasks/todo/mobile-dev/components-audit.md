@@ -1,146 +1,175 @@
-# Cross-Platform Component Audit Plan
+# Cross-Platform Component Audit
 
-## Mission Overview
+## Current Status
 
-We need to conduct a comprehensive audit of all existing components to support our cross-platform migration strategy (see .claude/tasks/todo/mobile-dev/components-shared-arch-masterplan.md). This audit will track progress through three critical phases of our architecture transformation.
+**✅ Phase 1 Complete**: Infrastructure built and 25 components analyzed
+- Interactive dashboard available at `/dev/audit`
+- Categorization system validated with real data
+- Template patterns identified for migration
+- **See**: `.claude/tasks/done/mobile-dev-audit-phase1-complete.md` for full Phase 1 results
 
-## Why This Audit Is Critical
+**🔄 Phase 2 In Progress**: Full component discovery and analysis
 
-### **The Cross-Platform Challenge**
-Our application currently uses a mix of:
-- Raw HTML elements (`<button>`, `<input>`, `<div>`, etc.)
-- Old component implementations (Button.jsx, Modal.tsx)
-- Mixed business logic and UI concerns
-- No clear separation for cross-platform compatibility
+## Quick Reference
 
-### **Our Architecture Goal**
-Transform to a clean three-layer architecture:
-1. **Primitives Layer**: Platform-specific UI components (✅ Already built and tested)
-2. **Business Logic Layer**: Shared hooks and functions (🔄 Needs extraction)
-3. **Component Layer**: Clean UI components using primitives (🔄 Needs migration)
+**Dashboard**: Visit `/dev/audit` for live component status  
+**Architecture Guide**: `.claude/tasks/todo/mobile-dev/components-shared-arch-masterplan.md`  
+**Categorization Rules**: See section below for detailed criteria
 
-### **The Migration Path**
-1. **Primitives Migration**: Replace all raw HTML with our new primitives
-2. **Logic Extraction**: Extract business logic to shared hooks
-3. **Native Implementation**: Create mobile versions where platform-specific UX is needed
+## Component Categorization Rules
 
-## What you need to Do
+**⚠️ CRITICAL**: Follow these rules exactly to avoid categorization errors.
 
-### **Phase 1: Audit Preparation**
+## Phase 2: Full Component Discovery
 
-#### **1.1 Create the Audit Infrastructure**
+### **Current Goal**: Expand audit to remaining ~50+ components in codebase
 
-**File: `src/audit.json`**
-```json
-{
-  "components": {},
-  "stats": {
-    "total": 0,
-    "primitives_done": 0,
-    "logic_extraction_done": 0,
-    "native_ready": 0,
-    "by_category": {
-      "shared": 0,
-      "platform_specific": 0,
-      "complex_refactor": 0
-    },
-    "last_updated": "2025-01-29"
-  },
-  "metadata": {
-    "audit_version": "1.0",
-    "last_full_scan": null,
-    "scan_scope": [
-      "src/components/**/*.tsx",
-      "src/components/**/*.jsx"
-    ]
-  }
-}
-```
+**Process**:
+1. **Scan all components** in `src/components/` and subdirectories
+2. **Apply categorization rules** (see below) to classify each component
+3. **Analyze primitive usage** and identify raw HTML elements
+4. **Detect business logic** patterns for extraction opportunities
+5. **Update audit dashboard** with comprehensive data
 
-**File: `src/dev/ComponentAuditViewer.tsx`**
-Create the complete frontend viewer component with:
-- Stats dashboard (including category breakdown)
-- Filterable/sortable component table
-- Category filter (shared/platform_specific/complex_refactor)
-- Status badges and progress indicators
-- Description and notes display
-- Hook listings
+### **"Shared" Components Criteria (Single component works on both platforms)**
 
-**File: `src/dev/index.ts`**
-Export the audit viewer for easy importing
+**MUST meet ALL of these requirements:**
 
-#### **1.2 Add Development Route**
-Add audit viewer to the application routing (development only):
-```tsx
-// In your main routing file, add:
-{process.env.NODE_ENV === 'development' && (
-  <Route path="/dev/audit" component={ComponentAuditViewer} />
-)}
-```
+✅ **100% Primitive Usage**:
+- **NO raw HTML elements** whatsoever (`<div>`, `<span>`, `<button>`, `<input>`, `<a>`, `<img>`, etc.)
+- **ALL layout must use Flex primitives**: FlexColumn, FlexRow, FlexCenter, FlexBetween, Container
+- **ALL interactive elements** must use primitives: Button, Input, Modal, Select, etc.
+- **ALL text must use Text primitive** (not raw text in divs)
 
-#### **1.3 Exclude "dev" folder from production builds (only keep it in dev builds) and exclude it from lingui extraction process**
+✅ **NO Web-Specific Code**:
+- **NO Tailwind classes** (React Native doesn't support them)
+- **NO raw CSS classes** or inline styles  
+- **NO web-specific APIs** (DOM manipulation, localStorage without abstraction)
+- **NO third-party web libraries** (unless they have React Native equivalents)
 
-#### **1.4 Populate the json with some demo datat for testing purposes**
+✅ **Platform-Agnostic Logic**:
+- **Business logic works identically** on both platforms
+- **NO platform-specific interaction patterns** (hover states, drag/drop)
+- **Data handling is identical** on both platforms
 
-```json
-{
-  "ComponentName.tsx": {
-    "name": "ComponentName",
-    "path": "src/components/path/ComponentName.tsx",
-    "description": "Brief description of component function",  // What the component does
-    "category": "unknown",       // shared|platform_specific|complex_refactor
-    "primitives": "todo",        // Based on raw HTML analysis
-    "web_native": "unknown",     // Needs human decision
-    "logic_extraction": "todo",  // Based on business logic analysis
-    "hooks": [],                 // Potential hooks identified
-    "native": "todo",           // Will be determined after logic extraction
-    "notes": "Auto-generated: Uses raw <button>, <input>. Has API calls in useEffect.",
-    "updated": "2025-01-29"
-  }
-}
-```
+**Examples**: Components that use only primitives with shared business logic
 
-we need
+### **"Platform Specific" Components Criteria (Shared logic, different UI)**
 
-- ✅ `src/audit.json` with demo data for one component
-- ✅ `src/dev/ComponentAuditViewer.tsx` fully functional
-- ✅ Development route configured at `/dev/audit`
+**Characteristics**:
+- **Shared business logic** can be extracted to hooks
+- **Different UI layouts** needed for optimal UX per platform
+- **Different interaction patterns**: hover vs touch, drag vs swipe, sidebar vs tabs
+- **Platform-specific features**: drag/drop (web), gestures (mobile), navigation patterns
 
-## IMPORTANT! STOP HERE - ask for a review before proceeding 
+**Implementation Pattern**:
+- `Component.web.tsx` - Desktop-optimized UI
+- `Component.native.tsx` - Mobile-optimized UI  
+- `useComponentLogic.ts` - Shared business logic hook
 
-### **Phase 2: Comprehensive Component Discovery**
+**Examples**: 
+- Navigation with drag/drop (web) vs touch navigation (mobile)
+- Complex modals with sidebar (web) vs tabs (mobile)
+- Animations using CSS (web) vs React Native Animated (mobile)
 
-#### **2.1 Scan and Catalog All Components**
+### **"Complex Refactor" Components Criteria (Need breakdown first)**
 
-**Scope**: Scan all `.tsx` and `.jsx` files in:
-- `src/components/`
-- Any other directories containing React components
+**Characteristics**:
+- **Large components** (typically 200+ lines)
+- **Multiple responsibilities** mixed in one component
+- **Hard to categorize** as shared vs platform-specific due to complexity
+- **Mix UI and business logic** extensively
 
-**For Each Component Discovered**:
-1. **Extract basic info**: name, path, file size
-2. **Analyze imports**: What it currently imports and uses
-3. **Scan for raw HTML**: `<button>`, `<input>`, `<select>`, `<textarea>`, `<div>`, etc.
-4. **Identify complexity**: Lines of code, number of useEffect/useState calls
-5. **Detect business logic patterns**: API calls, complex state management
+**Required Action**: Break down into smaller components first, then categorize each piece
 
-#### **2.2 Component Classification**
+**Examples**: Channel.tsx (800+ lines), Message.tsx with many features
 
-**Categorize each component based on the architecture workflow**:
+### **Primitive Usage Assessment Rules**
 
-- **Category A: Shared** (`shared`)
-  - Components that work identically on both platforms using only primitives
-  - No platform-specific UI differences needed
-  - Examples: MessageInput, UserProfile, ChannelList
-  
-- **Category B: Platform-Specific** (`platform_specific`)
-  - Components that need different UI layouts but share business logic
-  - Require .web.tsx and .native.tsx implementations
-  - Examples: MessageActions (hover vs drawer), ChannelHeader (full vs compact)
-  
-- **Category C: Complex Refactor** (`complex_refactor`)
-  - Large components that need to be broken down into smaller pieces
-  - Mix multiple concerns and responsibilities
-  - Examples: Message.tsx (850+ lines), Channel.tsx, SpaceSettings.tsx
+**`primitives: "done"`** - Component uses ONLY primitives:
+- ✅ Zero raw HTML elements
+- ✅ All layout uses Flex primitives  
+- ✅ All interactions use primitives
+- ✅ Ready for primitive categorization
+
+**`primitives: "todo"`** - Component uses ANY raw HTML:
+- ❌ ANY `<div>`, `<span>`, `<button>`, `<input>`, `<a>`, `<img>`, etc.
+- ❌ ANY Tailwind classes or CSS classes
+- ❌ ANY web-specific styling or APIs
+
+**`primitives: "unknown"`** - Needs code inspection to determine
+
+### **Native Readiness Assessment Rules**
+
+**`native: "ready"`** - Component can work on React Native:
+- ✅ `primitives: "done"` (100% primitives)
+- ✅ No Tailwind classes or web-specific CSS
+- ✅ No web-specific APIs or libraries
+- ✅ Platform-agnostic business logic
+
+**`native: "todo"`** - Component needs work for React Native:
+- ❌ Uses any raw HTML elements
+- ❌ Uses Tailwind classes or web CSS
+- ❌ Uses web-specific APIs
+- ❌ Has platform-specific code that needs extraction
+
+### **Common Categorization Mistakes to Avoid**
+
+❌ **Assuming Flexbox = Ready**: Just because a component uses flexbox layout doesn't mean it's ready - it must use FlexColumn/FlexRow primitives, not `<div className="flex">`
+
+❌ **Partial Primitive Usage = Done**: If a component uses some primitives (Button, Icon) but still has raw `<div>` elements, it's `primitives: "todo"`
+
+❌ **Simple = Shared**: Simple components can still be platform-specific if they use animations, hover states, or web-specific features
+
+❌ **Modal = Automatic**: Modals aren't automatically shared just because Modal primitive exists - the content must also be 100% primitives
+
+### **Logic Extraction Guidelines for Shared Components**
+
+**Extract to Hooks When:**
+- Logic is >10 lines
+- Has multiple useState/useEffect calls
+- Makes API calls or external data fetching
+- Has complex business rules or validation
+- Could be reused elsewhere in the app
+
+**Keep in Component When:**
+- Simple event handlers (`onClick`, `onChange`)
+- Pure UI state (show/hide, toggle visibility)
+- No external dependencies
+- <5 lines of logic
+- Simple form validation
+
+**Examples:**
+- **Extract**: `useSearchSuggestions` (API calls), `useAccentColor` (localStorage + theme)
+- **Keep**: Close button onClick, simple form toggles
+
+### **Quick Categorization Checklist**
+
+For each component, ask:
+
+1. **Any raw HTML?** → If yes: `primitives: "todo"`
+2. **Any Tailwind classes?** → If yes: `native: "todo"`  
+3. **Any web-specific APIs?** → If yes: needs platform-specific handling
+4. **Complex/large (200+ lines)?** → Consider "complex_refactor"
+5. **Different UX needed per platform?** → "platform_specific"
+6. **100% primitives + platform-agnostic?** → "shared"
+7. **Complex business logic?** → `logic_needs: "extract"`, else `logic_needs: "keep"`
+
+#### **2.2.2 Special Case: Modal Components**
+
+**Modal-to-Drawer Architecture**: The Modal primitive automatically transforms:
+- **Web** (`Modal.web.tsx`): Traditional centered modal with backdrop  
+- **Native** (`Modal.native.tsx`): Native bottom drawer implementation
+
+**Modal Categorization Rules**:
+- **Shared Modals**: Simple content that works well in both modal and drawer formats
+  - Forms, confirmations, simple settings
+  - Must still meet ALL "shared" criteria (100% primitives, no Tailwind, etc.)
+  - Example: KickUserModal - confirmation dialog works identically
+- **Platform-Specific Modals**: Complex layouts needing different arrangements  
+  - Desktop: Side-by-side layouts, wide content, sidebar navigation
+  - Mobile: Stacked layouts, full-width, tab navigation
+  - Example: UserSettingsModal - desktop sidebar vs mobile tabs
 
 **Also identify component types**:
 - **Primitive**: Already our new primitive components (skip these)
@@ -149,178 +178,62 @@ we need
 - **Layout**: Components focused on layout/navigation
 - **Complex**: Large components mixing multiple concerns
 
-### **Phase 3: Detailed Analysis Per Component**
+#### **2.3 Usage Detection**
 
-#### **3.1 Primitives Usage Analysis**
+**Critical for Migration Planning**: Identify unused components that can be deleted instead of migrated.
 
-**For each component, determine**:
-- **Current primitive usage**: What primitives it already uses
-- **Raw HTML elements**: What needs to be replaced
-- **Target primitives**: What primitives should replace raw HTML
-- **Completion estimate**: Percentage of primitive migration needed
+**Usage Status Values**:
+- **`yes`** - Component is actively imported and used in the codebase
+- **`no`** - Component exists but is not referenced anywhere (dead code)
+- **`unknown`** - Usage status needs to be determined
 
-**Example Analysis**:
-```javascript
-// Component: MessageInput.tsx
-// Raw HTML found: <textarea>, <button>, <div>
-// Current primitives: None
-// Target primitives: TextArea, Button, FlexRow
-// Estimated completion: 0% (needs full migration)
-```
+**Detection Method**:
+1. **Search for imports**: `grep -r "import.*ComponentName" src/`
+2. **Search for direct usage**: `grep -r "ComponentName" src/ --exclude-dir=node_modules`
+3. **Check export patterns**: Look for re-exports in index files
+4. **Verify actual usage**: Ensure imports are actually used, not just imported
 
-#### **3.2 Business Logic Assessment**
+**Benefits**:
+- **Reduce migration scope**: Skip unused components entirely
+- **Clean up codebase**: Identify dead code for deletion
+- **Prioritize work**: Focus on components that actually matter
+- **Accurate estimates**: Get realistic migration effort calculations
 
-**Identify components that have**:
-- **State management**: Multiple useState calls, complex state
-- **Side effects**: useEffect with API calls, subscriptions
-- **Business rules**: Permission checking, validation logic
-- **Data transformation**: Complex data processing
+## Migration Workflow
 
-**For each component with business logic**:
-- **Extraction needed**: Yes/No assessment
-- **Potential hooks**: List of hooks that should be extracted
-- **Complexity level**: Simple/Medium/Complex extraction
+### **Phase 3: Component Implementation**
+1. **Migrate "shared" components**: Replace raw HTML with primitives
+2. **Extract platform-specific logic**: Create shared hooks for business logic
+3. **Implement native versions**: Build .native.tsx for platform-specific components
+4. **Refactor complex components**: Break down large components first
 
-#### **3.3 Cross-Platform Strategy**
+### **Priority Order**
+**High Priority**: Components with no dependencies, frequently used, simple primitive replacements  
+**Medium Priority**: Moderate complexity, clear logic extraction opportunities  
+**Low Priority**: Complex refactoring, unclear strategy, edge cases
 
-**For each component, determine**:
-- **Shared vs Separate**: Can one component work on both platforms?
-- **Platform differences**: What aspects need platform-specific implementation?
-- **Mobile considerations**: Touch interactions, navigation patterns, gestures
 
-**Decision factors**:
-- Layout complexity (simple forms vs complex dashboards)
-- Interaction patterns (hover vs touch, keyboard vs gesture)
-- Navigation integration (modal vs screen, sidebar vs tabs)
+## Current Progress
 
-### **Phase 4: Priority Assessment**
+**25 Components Analyzed** | **~50+ Remaining**
 
-#### **4.1 Dependency Analysis**
-- **Component dependencies**: What components does each one import/use?
-- **Dependency chain**: Which components block others?
-- **Critical path**: High-impact components that affect many others
+### **Key Metrics**
+- **24% primitive adoption** already achieved (6/25 components)
+- **52% shared component potential** (13/25 components)
+- **100% usage verification** - all analyzed components are actively used
 
-#### **4.2 Migration Priority**
-**High Priority** (migrate first):
-- Components with no dependencies
-- Frequently used across the app
-- Simple components with clear primitive replacements
+### **Template Examples Available**
+- **Shared**: SearchBar, KickUserModal, AccentColorSwitcher
+- **Platform-Specific**: UserSettingsModal, Loading, SpaceButton  
+- **Complex Refactor**: Channel.tsx, Layout.tsx, AppWithSearch.tsx
 
-**Medium Priority**:
-- Components with moderate complexity
-- Clear business logic extraction opportunities
-- Important but not blocking other work
-
-**Low Priority**:
-- Complex components requiring significant refactoring
-- Components with unclear cross-platform strategy
-- Edge case or rarely used components
-
-### **Phase 5: Generate Initial Audit Data**
-
-#### **5.1 Populate audit.json**
-
-**For each discovered component, create entry**:
-```json
-{
-  "ComponentName.tsx": {
-    "name": "ComponentName",
-    "path": "src/components/path/ComponentName.tsx",
-    "description": "Brief description of component function",  // What the component does
-    "category": "unknown",       // shared|platform_specific|complex_refactor
-    "primitives": "todo",        // Based on raw HTML analysis
-    "web_native": "unknown",     // Needs human decision
-    "logic_extraction": "todo",  // Based on business logic analysis
-    "hooks": [],                 // Potential hooks identified
-    "native": "todo",           // Will be determined after logic extraction
-    "notes": "Auto-generated: Uses raw <button>, <input>. Has API calls in useEffect.",
-    "updated": "2025-01-29"
-  }
-}
-```
-
-#### **5.2 Generate Summary Statistics**
-Update stats section with:
-- Total components found
-- Components by category
-- Estimated work by phase
-- Dependency relationships
-
-#### **5.3 Create Initial Recommendations**
-
-**In the notes field, include**:
-- Specific raw HTML elements to replace
-- Identified business logic patterns
-- Potential hooks to extract
-- Cross-platform considerations discovered
-
-## Expected Deliverables
-
-### **1. Complete Audit Infrastructure**
-- ✅ `src/audit.json` with comprehensive component data
-- ✅ `src/dev/ComponentAuditViewer.tsx` fully functional
-- ✅ Development route configured at `/dev/audit`
-
-### **2. Component Discovery Report**
-- ✅ All React components cataloged
-- ✅ Raw HTML usage mapped
-- ✅ Business logic patterns identified
-- ✅ Cross-platform strategy recommendations
-
-### **3. Migration Roadmap Data**
-- ✅ Priority ordering for component migration
-- ✅ Dependency chain analysis
-- ✅ Work estimates per component
-- ✅ Risk assessment for complex components
-
-## Quality Standards
-
-### **Accuracy Requirements**
-- **100% component discovery**: No React components missed
-- **Accurate HTML detection**: All raw HTML elements identified
-- **Complete import analysis**: All dependencies mapped
-- **Reliable classification**: Consistent categorization logic
-
-### **Useful Analysis**
-- **Actionable notes**: Specific next steps for each component
-- **Realistic estimates**: Honest assessment of migration complexity
-- **Clear priorities**: Logical ordering based on dependencies and impact
-- **Human-readable**: Notes that developers can immediately understand and act on
-
-## Success Criteria
-
-**The audit is complete when**:
-1. ✅ Every React component in the codebase is cataloged
-2. ✅ Frontend viewer displays comprehensive, accurate data
-3. ✅ Migration path is clear for each component
-4. ✅ Priority order enables efficient migration workflow
-5. ✅ Human team can immediately begin migration work based on audit data
-
-## Instructions for Claude Code
-
-### **Start Signal**
-Wait for explicit instruction: *"Begin the comprehensive component audit"*
-
-### **Execution Approach**
-1. **Start with audit infrastructure**: Create JSON schema and frontend viewer first
-2. **Systematic scanning**: Process components methodically, not randomly
-3. **Detailed analysis**: Don't just count files - analyze content and patterns
-4. **Clear documentation**: Every decision and finding should be documented
-5. **Human validation**: Pause for validation after infrastructure is ready
-
-### **Communication Protocol**
-- **Progress updates**: Report findings as you discover them
-- **Questions**: Ask for clarification on ambiguous components
-- **Recommendations**: Provide specific suggestions for complex cases
-- **Summary**: Provide overview of findings and recommendations
-
-### **Key Deliverable**
-A fully functional audit system that enables the human team to:
-- ✅ See complete migration status at a glance
-- ✅ Understand exactly what work needs to be done for each component
-- ✅ Make informed decisions about cross-platform strategies
-- ✅ Track progress as migration work proceeds
+### **Next Actions**
+1. **Continue component discovery** to remaining codebase
+2. **Apply categorization rules** consistently
+3. **Prioritize migration work** based on audit data
 
 ---
 
-**Note**: This audit is the foundation for our entire cross-platform strategy. Accuracy and completeness are more important than speed. The time invested in a thorough audit will save weeks of confusion and rework during actual migration.
+---
+
+_Last updated: 2025-07-29_

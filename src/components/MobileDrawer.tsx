@@ -1,3 +1,5 @@
+// This is for mobile users using the web app, for the native app we have /primitives/Modal/Modal.native.tsx
+
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';

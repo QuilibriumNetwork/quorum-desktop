@@ -1,3 +1,5 @@
+// This is for mobile users using the web app, for the native app we have /primitives/Modal/Modal.native.tsx and we need to add another emojipicker there (compatibel with react native)
+
 import React from 'react';
 import { t } from '@lingui/core/macro';
 import EmojiPicker, {
