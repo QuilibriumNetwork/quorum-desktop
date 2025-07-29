@@ -20,6 +20,7 @@ export interface UseCustomAssetsReturn {
   getEmojiInputProps: () => any;
   clearEmojiFileError: () => void;
   removeEmoji: (index: number) => void;
+  updateEmoji: (index: number, updates: Partial<Emoji>) => void;
   canAddMoreEmojis: boolean;
   
   // Sticker management
@@ -31,6 +32,7 @@ export interface UseCustomAssetsReturn {
   getStickerInputProps: () => any;
   clearStickerFileError: () => void;
   removeSticker: (index: number) => void;
+  updateSticker: (index: number, updates: Partial<Sticker>) => void;
   canAddMoreStickers: boolean;
 }
 
@@ -211,6 +213,18 @@ export const useCustomAssets = (
     setStickers(prev => prev.filter((_, i) => i !== index));
   };
 
+  const updateEmoji = (index: number, updates: Partial<Emoji>) => {
+    setEmojis(prev => prev.map((emoji, i) => 
+      i === index ? { ...emoji, ...updates } : emoji
+    ));
+  };
+
+  const updateSticker = (index: number, updates: Partial<Sticker>) => {
+    setStickers(prev => prev.map((sticker, i) => 
+      i === index ? { ...sticker, ...updates } : sticker
+    ));
+  };
+
   const clearEmojiFileError = () => {
     setEmojiFileError(null);
     onEmojiFileError?.(null);
@@ -230,6 +244,7 @@ export const useCustomAssets = (
     getEmojiInputProps,
     clearEmojiFileError,
     removeEmoji,
+    updateEmoji,
     canAddMoreEmojis,
     
     stickers,
@@ -240,6 +255,7 @@ export const useCustomAssets = (
     getStickerInputProps,
     clearStickerFileError,
     removeSticker,
+    updateSticker,
     canAddMoreStickers,
   };
 };

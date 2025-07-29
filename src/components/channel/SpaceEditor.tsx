@@ -4,7 +4,6 @@ import { useSpace } from '../../hooks';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
 import { useMessageDB } from '../context/MessageDB';
 import { Channel } from '../../api/quorumApi';
-import { Loading } from '../Loading';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import ClickToCopyContent from '../ClickToCopyContent';
@@ -44,11 +43,7 @@ const SpaceEditor: React.FunctionComponent<{
     setSelectedCategory,
     isRepudiable,
     setIsRepudiable,
-    saving,
-    saveChanges: saveSpaceChanges,
     handleDeleteSpace,
-    isOwner,
-    currentPasskeyInfo,
   } = useSpaceManagement({
     spaceId,
     onClose: dismiss,
@@ -58,7 +53,6 @@ const SpaceEditor: React.FunctionComponent<{
   // Role management hook
   const {
     roles,
-    setRoles,
     addRole,
     deleteRole,
     updateRoleTag,
@@ -92,21 +86,21 @@ const SpaceEditor: React.FunctionComponent<{
   // Custom assets hook
   const {
     emojis,
-    setEmojis,
     emojiFileError,
     getEmojiRootProps,
     getEmojiInputProps,
     clearEmojiFileError,
     removeEmoji,
+    updateEmoji,
     canAddMoreEmojis,
     
     stickers,
-    setStickers,
     stickerFileError,
     getStickerRootProps,
     getStickerInputProps,
     clearStickerFileError,
     removeSticker,
+    updateSticker,
     canAddMoreStickers,
   } = useCustomAssets({
     initialEmojis: space?.emojis || [],
@@ -545,7 +539,6 @@ const SpaceEditor: React.FunctionComponent<{
                             <span className="float-right">
                               <Icon
                                 name="trash"
-                                title="Delete role"
                                 className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
                                 onClick={() => deleteRole(i)}
                               />
@@ -634,9 +627,7 @@ const SpaceEditor: React.FunctionComponent<{
                                       const sanitizedName = e.target.value
                                         .toLowerCase()
                                         .replace(/[^a-z0-9\_]/gi, '');
-                                      setEmojis(prev => prev.map((p, pi) =>
-                                        pi === i ? { ...p, name: sanitizedName } : p
-                                      ));
+                                      updateEmoji(i, { name: sanitizedName });
                                     }}
                                     value={em.name}
                                   />
@@ -722,9 +713,7 @@ const SpaceEditor: React.FunctionComponent<{
                                       const sanitizedName = e.target.value
                                         .toLowerCase()
                                         .replace(/[^a-z0-9\_]/gi, '');
-                                      setStickers(prev => prev.map((p, pi) =>
-                                        pi === i ? { ...p, name: sanitizedName } : p
-                                      ));
+                                      updateSticker(i, { name: sanitizedName });
                                     }}
                                     value={em.name}
                                   />
