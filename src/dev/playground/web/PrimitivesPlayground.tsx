@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
-import { ModalContainer } from '../../components/primitives/ModalContainer';
-import { OverlayBackdrop } from '../../components/primitives/OverlayBackdrop';
-import { FlexRow } from '../../components/primitives/FlexRow';
-import { FlexBetween } from '../../components/primitives/FlexBetween';
-import { FlexCenter } from '../../components/primitives/FlexCenter';
-import { ResponsiveContainer } from '../../components/primitives/ResponsiveContainer';
-import { Input } from '../../components/primitives/Input';
-import { TextArea } from '../../components/primitives/TextArea';
-import { Switch } from '../../components/primitives/Switch';
-import Button from '../../components/primitives/Button';
-import Modal from '../../components/primitives/Modal';
-import Select from '../../components/primitives/Select';
-import { ColorSwatch } from '../../components/primitives/ColorSwatch';
-import { RadioGroup } from '../../components/primitives/RadioGroup';
-import { Tooltip } from '../../components/primitives/Tooltip';
-import { Icon } from '../../components/primitives/Icon';
-import ThemeRadioGroup from '../../components/ThemeRadioGroup';
-import AccentColorSwitcher from '../../components/AccentColorSwitcher';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import {
+  ModalContainer,
+  OverlayBackdrop,
+  FlexRow,
+  FlexBetween,
+  FlexCenter,
+  ResponsiveContainer,
+  Input,
+  TextArea,
+  Switch,
+  Button,
+  Modal,
+  Select,
+  ColorSwatch,
+  RadioGroup,
+  Tooltip,
+  Icon,
+} from '../../../components/primitives';
+import ThemeRadioGroup from '../../../components/ThemeRadioGroup';
+import AccentColorSwitcher from '../../../components/AccentColorSwitcher';
 
 /**
  * Playground for testing primitives during development
@@ -163,7 +163,7 @@ export const PrimitivesPlayground: React.FC = () => {
                     document.dispatchEvent(escEvent);
                   }}
                 >
-                  <FontAwesomeIcon icon={faTimes} />
+                  <Icon name="close" />
                 </div>
 
                 <div className="quorum-modal-title select-none cursor-default">
@@ -213,7 +213,7 @@ export const PrimitivesPlayground: React.FC = () => {
                         document.dispatchEvent(escEvent);
                       }}
                     >
-                      <FontAwesomeIcon icon={faTimes} />
+                      <Icon name="close" />
                     </div>
 
                     <div className="quorum-modal-title select-none cursor-default">
