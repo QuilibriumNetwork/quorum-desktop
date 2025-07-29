@@ -2,7 +2,7 @@
 
 This index provides quick access to all documentation, bug reports, and task tracking files in the .claude directory. Use Ctrl+F to search for specific topics or keywords.
 
-**Last Updated**: 2025-07-26
+**Last Updated**: 2025-07-29
 
 ## 📚 Documentation (.claude/docs/)
 
@@ -10,47 +10,51 @@ Comprehensive guides and documentation for various features and components.
 
 ### Component Development
 
-- **[component-dev-guidelines.md](docs/component-dev-guidelines.md)**  
+- **[component-development-guide.md](docs/component-development-guide.md)**  
   _Guidelines for developing components with mobile-first approach_  
   Keywords: `components`, `mobile-first`, `responsive`, `best-practices`
 
-- **[primitive-styling-guidelines.md](docs/primitive-styling-guidelines.md)**  
+- **[cross-platform-components-guide.md](docs/cross-platform-components-guide.md)**  
+  _Cross-platform component architecture and implementation guide_  
+  Keywords: `cross-platform`, `components`, `mobile`, `web`, `primitives`
+
+- **[primitive-styling-guide.md](docs/primitive-styling-guide.md)**  
   _🚨 CRITICAL: Form field consistency rules and semantic color usage for all primitives_  
   Keywords: `primitives`, `styling`, `consistency`, `form-fields`, `semantic-colors`, `input`, `textarea`, `select`, `radiogroup`
 
 ### Feature Documentation
 
-- **[emoji-picker-react-customization.md](docs/emoji-picker-react-customization.md)**  
+- **[desktop-notifications.md](docs/features/desktop-notifications.md)**  
+  _Desktop notification system implementation and configuration_  
+  Keywords: `notifications`, `desktop`, `system`, `alerts`
+
+- **[emoji-picker-react-customization.md](docs/features/emoji-picker-react-customization.md)**  
   _Custom emoji picker implementation with responsive design_  
   Keywords: `emoji`, `picker`, `mobile`, `customization`
 
-- **[message-actions-mobile.md](docs/message-actions-mobile.md)**  
+- **[message-actions-mobile.md](docs/features/message-actions-mobile.md)**  
   _Mobile-friendly message action menus and drawers_  
   Keywords: `messages`, `actions`, `mobile`, `drawer`, `long-press`
 
-- **[modals.md](docs/modals.md)**  
+- **[modals.md](docs/features/modals.md)**  
   _Complete modal system architecture and patterns_  
   Keywords: `modals`, `dialog`, `overlay`, `z-index`
 
-- **[new-modal-component.md](docs/new-modal-component.md)**  
-  _Details about the modal component redesign to fix z-index issues_  
-  Keywords: `modals`, `z-index`, `stacking-context`, `portal`, `navmenu`
-
-- **[reacttooltip-mobile.md](docs/reacttooltip-mobile.md)**  
+- **[reacttooltip-mobile.md](docs/features/reacttooltip-mobile.md)**  
   _React Tooltip implementation for mobile devices_  
   Keywords: `tooltip`, `mobile`, `touch`, `hover`
 
-- **[responsive-layout.md](docs/responsive-layout.md)**  
+- **[responsive-layout.md](docs/features/responsive-layout.md)**  
   _Responsive layout system with mobile sidebar navigation_  
   Keywords: `responsive`, `layout`, `sidebar`, `mobile`, `desktop`
 
-- **[search-feature.md](docs/search-feature.md)**  
+- **[search-feature.md](docs/features/search-feature.md)**  
   _Global search implementation with keyboard shortcuts_  
   Keywords: `search`, `global-search`, `cmd+k`, `ctrl+k`, `minisearch`
 
 ### System Architecture
 
-- **[data-management-architecture.md](docs/data-management-architecture.md)**  
+- **[data-management-architecture-guide.md](docs/data-management-architecture-guide.md)**  
   _Comprehensive guide to data storage, management, and flow patterns in Quorum_  
   Keywords: `data`, `architecture`, `indexeddb`, `websocket`, `encryption`, `messages`, `spaces`, `users`
 
@@ -142,16 +146,18 @@ Use these keywords to find related content:
 .claude/
 ├── INDEX.md (this file)
 ├── docs/
-│   ├── component-dev-guidelines.md
-│   ├── primitive-styling-guidelines.md
-│   ├── emoji-picker-react-customization.md
-│   ├── message-actions-mobile.md
-│   ├── modals.md
-│   ├── new-modal-component.md
-│   ├── reacttooltip-mobile.md
-│   ├── responsive-layout.md
-│   ├── search-feature.md
-│   └── data-management-architecture.md
+│   ├── component-development-guide.md
+│   ├── cross-platform-components-guide.md
+│   ├── primitive-styling-guide.md
+│   ├── data-management-architecture-guide.md
+│   └── features/
+│       ├── desktop-notifications.md
+│       ├── emoji-picker-react-customization.md
+│       ├── message-actions-mobile.md
+│       ├── modals.md
+│       ├── reacttooltip-mobile.md
+│       ├── responsive-layout.md
+│       └── search-feature.md
 ├── bugs/
 │   ├── SOLVED_modal-navmenu-zindex-stacking.md
 │   ├── SOLVED_newdirectmessage-modal-url-to-state-conversion.md
@@ -166,4 +172,4 @@ Use these keywords to find related content:
 
 ---
 
-_Last updated: 2025-07-26_
+_Last updated: 2025-07-29_
