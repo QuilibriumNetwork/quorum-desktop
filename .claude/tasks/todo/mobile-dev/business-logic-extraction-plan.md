@@ -304,6 +304,103 @@
 
 ---
 
+## Hooks Structure Organization (Reference)
+
+### Current Structure Analysis
+
+Your hooks are well-organized with:
+- **`queries/`** - Data fetching hooks (by domain: spaces, messages, etc.)
+- **`mutations/`** - Data mutation hooks  
+- **`utils/`** - Utility hooks
+- **Root level** - General-purpose hooks (responsive, longpress, search)
+
+### Recommended Organization for Business Logic Extraction
+
+```
+src/hooks/
+├── index.ts                    # Main exports
+├── queries/                    # Data fetching (existing)
+├── mutations/                  # Data mutations (existing)  
+├── business/                   # 🆕 Business logic hooks
+│   ├── index.ts
+│   ├── chat/
+│   │   ├── useChatLogic.ts
+│   │   ├── useMessageComposer.ts
+│   │   └── useEmojiPicker.ts
+│   ├── spaces/
+│   │   ├── useSpaceLogic.ts
+│   │   ├── useSpaceCreation.ts
+│   │   └── useSpaceNavigation.ts
+│   ├── auth/
+│   │   ├── useAuthFlow.ts
+│   │   └── useRegistrationFlow.ts
+│   └── modals/
+│       ├── useModalLogic.ts
+│       └── useSettingsModal.ts
+├── ui/                         # 🆕 UI-specific business logic
+│   ├── index.ts
+│   ├── useDrawerLogic.ts
+│   ├── useSearchUI.ts
+│   ├── useNotifications.ts
+│   └── useThemeToggle.ts
+├── forms/                      # 🆕 Form logic hooks
+│   ├── index.ts
+│   ├── useFormValidation.ts
+│   └── useFormState.ts
+├── useResponsiveLayout.ts      # Keep existing
+├── useLongPress.ts            # Keep existing  
+├── useSearchContext.ts        # Keep existing
+└── utils/                     # Keep existing
+```
+
+### Guidelines for Business Logic Extraction
+
+#### 1. **Domain-Based Organization**
+Group hooks by business domain (chat, spaces, auth) rather than technical concerns.
+
+#### 2. **Naming Conventions**
+- `useXxxLogic.ts` - Main business logic for a domain
+- `useXxxFlow.ts` - Multi-step processes  
+- `useXxxState.ts` - Complex state management
+- `useXxxUI.ts` - UI-specific business logic
+
+#### 3. **Hook Categories**
+
+**Business Logic (`business/`)**:
+- Complex component state management
+- Business rules and validation
+- Multi-step workflows
+- Cross-component logic coordination
+
+**UI Logic (`ui/`)**:
+- Drawer/modal open/close logic
+- Theme and styling logic  
+- Notification display logic
+- Search UI state
+
+**Forms (`forms/`)**:
+- Form state management
+- Validation logic
+- Form submission flows
+
+#### 4. **Keep Existing Structure**
+- `queries/` - Continue using for data fetching
+- `mutations/` - Continue using for data mutations
+- Root level - Keep general-purpose hooks (responsive, longpress)
+
+### Implementation Strategy
+
+This organization separates concerns cleanly while building on your existing well-structured foundation. The new structure allows for:
+
+1. **Clean separation** between data access (queries/mutations) and business logic
+2. **Domain-focused** organization that matches your app's architecture
+3. **Easy testing** of isolated business logic
+4. **Better reusability** across web and mobile platforms
+5. **Gradual migration** without disrupting existing code
+
+---
+
 _Created: 2025-07-29_
+_Updated: 2025-07-29_
 _Priority: Business Logic First → Native Preparation Second_
 _Objective: Fully working web app ready for native components_

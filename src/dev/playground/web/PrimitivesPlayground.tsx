@@ -771,14 +771,6 @@ export const PrimitivesPlayground: React.FC = () => {
                   </div>
                   
                   <div className="p-4 bg-surface-3 rounded-xl">
-                    <Text variant="error">Error variant - Error messages</Text>
-                  </div>
-                  
-                  <div className="p-4 bg-surface-3 rounded-xl">
-                    <Text variant="success">Success variant - Success messages</Text>
-                  </div>
-                  
-                  <div className="p-4 bg-surface-3 rounded-xl">
                     <Text variant="warning">Warning variant - Warning messages</Text>
                   </div>
                 </div>
@@ -899,20 +891,6 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
             </div>
 
-            {/* React Native Critical Info */}
-            <div className="p-4 bg-warning/10 border border-warning/20 rounded-lg">
-              <h4 className="font-semibold text-strong mb-2">
-                ⚠️ Critical for React Native
-              </h4>
-              <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
-                <li>ALL text must be wrapped in Text components for React Native</li>
-                <li>Raw text in div/View components will crash mobile apps</li>
-                <li>Use Text instead of span, p, h1-h6 tags</li>
-                <li>The `as` prop on web allows semantic HTML elements</li>
-                <li>Text components can be nested for styling</li>
-                <li>Essential for cross-platform typography consistency</li>
-              </ul>
-            </div>
           </section>
 
           {/* Section: Button Primitive */}
