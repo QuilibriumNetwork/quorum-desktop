@@ -5,7 +5,7 @@ import {
   saveUserLocale,
 } from '../../../i18n/i18n.ts';
 import locales from '../../../i18n/locales';
-import useForceUpdate from '../../../components/hooks/forceUpdate';
+import useForceUpdate from '../../utils/forceUpdate';
 
 export interface UseLocaleSettingsReturn {
   language: string;
