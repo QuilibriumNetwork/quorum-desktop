@@ -1,4 +1,5 @@
 import React from 'react';
+import { TouchableOpacity } from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { IconNativeProps, IconSize } from './types';
 import { reactNativeIconMap } from './iconMapping';
@@ -30,6 +31,7 @@ export function Icon({
   disabled = false,
   allowFontScaling = true,
   id, // Ignored on native - for API consistency
+  onClick,
 }: IconNativeProps) {
   const theme = useCrossPlatformTheme();
   const colors = theme.colors;
@@ -49,7 +51,7 @@ export function Icon({
     ...style,
   };
 
-  return (
+  const iconComponent = (
     <FontAwesomeIcon
       name={iconName}
       size={iconSize}
@@ -58,4 +60,15 @@ export function Icon({
       allowFontScaling={allowFontScaling}
     />
   );
+
+  // If onClick is provided, wrap in TouchableOpacity
+  if (onClick && !disabled) {
+    return (
+      <TouchableOpacity onPress={onClick} activeOpacity={0.7}>
+        {iconComponent}
+      </TouchableOpacity>
+    );
+  }
+
+  return iconComponent;
 }

@@ -33,6 +33,7 @@ export function Icon({
   pulse = false,
   fixedWidth = false,
   id,
+  onClick,
 }: IconWebProps) {
   const fontAwesomeIcon = fontAwesomeIconMap[name];
 
@@ -64,6 +65,7 @@ export function Icon({
       pulse={pulse}
       fixedWidth={fixedWidth}
       id={id}
+      onClick={onClick}
     />
   );
 }

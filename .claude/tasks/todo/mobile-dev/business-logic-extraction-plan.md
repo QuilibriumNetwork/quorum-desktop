@@ -16,7 +16,9 @@
 
 - [x] CreateSpaceModal.tsx
 - [x] UserSettingsModal.tsx
-- [ ] SpaceEditor.tsx
+- [x] SpaceEditor.tsx (very complex)
+- [ ] JoinSpaceModal.tsx
+- [ ] NewDirectMessageModal.tsx
 
 #### JoinSpaceModal.tsx
 - [ ] Extract `useSpaceJoining` hook
@@ -462,7 +464,164 @@ This organization separates concerns cleanly while building on your existing wel
 
 ---
 
+## Business Logic Extraction - Lessons Learned
+
+### Key Patterns & Best Practices
+
+#### 1. State Synchronization with Async Data
+**Problem**: States initialized with default values don't sync with loaded data.
+**Solution**: Use `useEffect` with careful dependency management:
+```tsx
+// ✅ Good - Only runs when data loads/changes
+useEffect(() => {
+  if (space) {
+    setSpaceName(space.spaceName || '');
+    setIsRepudiable(space.isRepudiable || false);
+  }
+}, [space?.spaceId]); // Key: Use ID, not the whole object
+
+// ❌ Bad - Creates infinite loops
+useEffect(() => {
+  setSpaceName(space.spaceName);
+}, [space, spaceName]); // Runs every time spaceName changes
+```
+
+#### 2. React Hooks Rules Compliance
+**Critical**: Always call hooks at the top level, never after conditional returns.
+```tsx
+// ❌ Bad - Violates Rules of Hooks
+if (someCondition) return <SomeComponent />;
+useEffect(() => {...}, []); // This hook is called conditionally!
+
+// ✅ Good - All hooks before conditionals
+useEffect(() => {...}, []);
+if (someCondition) return <SomeComponent />;
+```
+
+#### 3. Cross-Platform Primitive Components
+**Issue**: Primitive components must support all required props across platforms.
+**Learning**: When extracting business logic, check that primitives handle all interactions:
+- Web: Pass `onClick` directly to underlying component
+- Native: Wrap with `TouchableOpacity` when `onClick` provided
+
+#### 4. Database Operation Validation
+**Problem**: Empty arrays/undefined values cause IndexedDB key errors.
+**Solution**: Always validate data before database operations:
+```tsx
+// ✅ Add guards for empty data
+if (!space || !space.groups || space.groups.length === 0) {
+  resolve([]);
+  return;
+}
+
+const channelIds = space.groups.flatMap(g => g.channels.map(c => c.channelId));
+if (channelIds.length === 0) {
+  resolve([]);
+  return;
+}
+```
+
+#### 5. Hook Extraction Strategy
+**Approach**: Extract by feature domain, not by UI section:
+- `useSpaceManagement` - Core space operations
+- `useRoleManagement` - Role CRUD operations  
+- `useCustomAssets` - Emoji/sticker management
+- `useFileUploads` - File handling logic
+- `useInviteManagement` - Invitation workflows
+
+#### 6. Context Integration Patterns
+**Pattern**: Extract context functions at hook level, not in callbacks:
+```tsx
+// ✅ Good - Extract at hook level
+const { updateSpace, deleteSpace } = useMessageDB();
+
+const handleDelete = useCallback(async () => {
+  await deleteSpace(spaceId);
+}, [deleteSpace, spaceId]);
+
+// ❌ Bad - Extract in callback (hooks rules violation)
+const handleDelete = useCallback(async () => {
+  const { deleteSpace } = useMessageDB(); // Hook in callback!
+  await deleteSpace(spaceId);
+}, [spaceId]);
+```
+
+#### 7. State Management for Complex Modals
+**Learning**: Keep UI-specific state in components, extract business logic to hooks:
+- ✅ Component: `deleteConfirmationStep`, modal visibility
+- ✅ Hook: Data operations, validation, API calls
+
+### Common Pitfalls
+
+1. **Fast Refresh Issues**: Context export changes require dev server restart
+2. **Dependency Array Management**: Avoid objects in dependencies, use IDs/primitives
+3. **State Initialization**: Don't assume data is immediately available
+4. **Error Boundaries**: Add proper error handling for async operations
+5. **Type Safety**: Validate data shapes before operations
+
+### Migration Checklist
+
+- [ ] Identify business logic vs UI logic
+- [ ] Extract hooks by feature domain
+- [ ] Validate all primitive component props work cross-platform
+- [ ] Add proper state synchronization with useEffect
+- [ ] Test empty/undefined data scenarios
+- [ ] Verify React Hooks Rules compliance
+- [ ] Add error handling for async operations
+
+### Hook Sharing & Complexity Reduction Strategy
+
+**Observation**: After extracting SpaceEditor and UserSettingsModal hooks, clear patterns emerge for potential sharing.
+
+#### High Potential for Shared Hooks
+
+**1. File Upload Patterns**
+- `useSpaceFileUploads` vs `useProfileImage` both handle image uploads with validation
+- **Future shared hook**: `useImageUpload({ type: 'avatar' | 'banner' | 'profile', maxSize, dimensions })`
+
+**2. Settings Management Pattern**
+- Both modals follow: Load → Edit → Save → Close pattern
+- State sync with async data, form validation, error handling
+- **Future shared hook**: `useSettingsForm({ loadFn, saveFn, validator })`
+
+**3. Asset Collection Management**
+- `useCustomAssets` (emojis/stickers) could generalize to badges, reactions, themes
+- **Future shared hook**: `useAssetCollection({ type, maxCount, validations })`
+
+#### Implementation Strategy
+
+**Phase 1: Pattern Recognition (Current)**
+- Continue extracting 2-3 more modals (JoinSpaceModal, NewDirectMessageModal)
+- Document recurring patterns as they emerge
+
+**Phase 2: Base Hook Creation (After 4-5 extractions)**
+```tsx
+// Create configurable base hooks
+const useFormWithAsyncData = ({ loadFn, saveFn, validator }) => { ... };
+const useFileUpload = ({ accept, maxSize, transform }) => { ... };
+const useCollectionManager = ({ maxItems, validator, itemType }) => { ... };
+```
+
+**Phase 3: Refactor to Shared Hooks**
+```tsx
+// Build specialized hooks on shared foundations
+const useSpaceManagement = (options) => {
+  const form = useFormWithAsyncData({
+    loadFn: () => useSpace(options.spaceId).data,
+    saveFn: updateSpace,
+    validator: spaceValidator
+  });
+  return { ...form, handleDeleteSpace, isOwner };
+};
+```
+
+**Benefits**: Reduced code duplication, consistent UX patterns, better testability, easier maintenance.
+
+**Timeline**: Evaluate for shared hooks after extracting JoinSpaceModal and NewDirectMessageModal to confirm patterns.
+
+---
+
 _Created: 2025-07-29_
-_Updated: 2025-07-29_
+_Updated: 2025-01-29_
 _Priority: Business Logic First → Native Preparation Second_
 _Objective: Fully working web app ready for native components_

@@ -1,58 +1,33 @@
-import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
-import {
-  usePasskeysContext,
-  channel,
-} from '@quilibrium/quilibrium-js-sdk-channels';
-import { useNavigate } from 'react-router';
-
-import { useMessageDB } from '../context/MessageDB';
-import '../../styles/_modal_common.scss';
 import { Button, Select, Modal, Switch, Input, Icon, Tooltip } from '../primitives';
-import { useConversations, useRegistration, useSpace } from '../../hooks';
+import { useSpace } from '../../hooks';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
-import {
-  Channel,
-  Emoji,
-  Role,
-  Sticker,
-  Permission,
-  Conversation,
-} from '../../api/quorumApi';
-import { useQuorumApiClient } from '../context/QuorumApiContext';
-import { useRegistrationContext } from '../context/RegistrationPersister';
+import { useMessageDB } from '../context/MessageDB';
+import { Channel } from '../../api/quorumApi';
 import { Loading } from '../Loading';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import ClickToCopyContent from '../ClickToCopyContent';
 import ReactTooltip from '../ReactTooltip';
-import { truncateAddress } from '../../utils';
+import { 
+  useSpaceManagement, 
+  useRoleManagement, 
+  useSpaceFileUploads, 
+  useCustomAssets, 
+  useInviteManagement 
+} from '../../hooks';
+import '../../styles/_modal_common.scss';
 
 const SpaceEditor: React.FunctionComponent<{
   spaceId: string;
   dismiss: () => void;
   onEditModeClick?: () => void;
 }> = ({ spaceId, dismiss }) => {
-  let { data: space } = useSpace({ spaceId });
-  let [displayName, setDisplayName] = React.useState<string>(
-    space?.spaceName || ''
-  );
-  let [selectedCategory, setSelectedCategory] =
-    React.useState<string>('general');
-  const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
-  const [currentFile, setCurrentFile] = React.useState<File | undefined>();
-  const [bannerData, setBannerData] = React.useState<ArrayBuffer | undefined>();
-  const [currentBannerFile, setCurrentBannerFile] = React.useState<File | undefined>();
-  const [currentEmojiFile, setCurrentEmojiFile] = React.useState<File[] | undefined>();
-  const [currentStickerFile, setCurrentStickerFile] = React.useState<File[] | undefined>();
-  // Removed isDefaultChannelListExpanded - using Select primitive instead
-
-  // Removed isInviteListExpanded - using Select primitive instead
-  const [roles, setRoles] = React.useState<Role[]>(space?.roles || []);
-  const [emojis, setEmojis] = React.useState<Emoji[]>(space?.emojis || []);
-  const [stickers, setStickers] = React.useState<Sticker[]>(
-    space?.stickers || []
-  );
+  const { data: space } = useSpace({ spaceId });
+  const { data: spaceMembers } = useSpaceMembers({ spaceId });
+  const { updateSpace } = useMessageDB();
+  
+  // Default channel state
   const [defaultChannel, setDefaultChannel] = React.useState<Channel>(
     space?.groups
       .find((g) =>
@@ -60,50 +35,109 @@ const SpaceEditor: React.FunctionComponent<{
       )
       ?.channels.find((c) => c.channelId === space.defaultChannelId)!
   );
-  const { currentPasskeyInfo } = usePasskeysContext();
+  
+  // Space management hook
   const {
-    updateSpace,
-    ensureKeyForSpace,
-    sendInviteToUser,
-    generateNewInviteLink,
-    deleteSpace,
-  } = useMessageDB();
-  const { data: registration } = useRegistration({
-    address: currentPasskeyInfo!.address,
+    spaceName,
+    setSpaceName,
+    selectedCategory,
+    setSelectedCategory,
+    isRepudiable,
+    setIsRepudiable,
+    saving,
+    saveChanges: saveSpaceChanges,
+    handleDeleteSpace,
+    isOwner,
+    currentPasskeyInfo,
+  } = useSpaceManagement({
+    spaceId,
+    onClose: dismiss,
   });
-  const { keyset } = useRegistrationContext();
-  const [selectedUser, setSelectedUser] = React.useState<Conversation>();
-  const [success, setSuccess] = React.useState<boolean>(false);
-  const [sendingInvite, setSendingInvite] = React.useState<boolean>(false);
-  const [generating, setGenerating] = React.useState<boolean>(false);
-  const [copied, setCopied] = React.useState(false);
-  const [manualAddress, setManualAddress] = React.useState<string>('');
-  const [resolvedUser, setResolvedUser] =
-    React.useState<channel.UserRegistration>();
-  const [isRepudiable, setIsRepudiable] = React.useState<boolean>(
-    space?.isRepudiable || false
-  );
-  const { data: spaceMembers } = useSpaceMembers({ spaceId });
+
+
+  // Role management hook
+  const {
+    roles,
+    setRoles,
+    addRole,
+    deleteRole,
+    updateRoleTag,
+    updateRoleDisplayName,
+    toggleRolePermission,
+  } = useRoleManagement({
+    initialRoles: space?.roles || [],
+  });
+
+  // File uploads hook
+  const {
+    iconData,
+    currentIconFile,
+    iconFileError,
+    isIconUploading,
+    isIconDragActive,
+    getIconRootProps,
+    getIconInputProps,
+    clearIconFileError,
+    
+    bannerData,
+    currentBannerFile,
+    bannerFileError,
+    isBannerUploading,
+    isBannerDragActive,
+    getBannerRootProps,
+    getBannerInputProps,
+    clearBannerFileError,
+  } = useSpaceFileUploads();
+
+  // Custom assets hook
+  const {
+    emojis,
+    setEmojis,
+    emojiFileError,
+    getEmojiRootProps,
+    getEmojiInputProps,
+    clearEmojiFileError,
+    removeEmoji,
+    canAddMoreEmojis,
+    
+    stickers,
+    setStickers,
+    stickerFileError,
+    getStickerRootProps,
+    getStickerInputProps,
+    clearStickerFileError,
+    removeSticker,
+    canAddMoreStickers,
+  } = useCustomAssets({
+    initialEmojis: space?.emojis || [],
+    initialStickers: space?.stickers || [],
+  });
+
+  // Invite management hook
+  const {
+    selectedUser,
+    setSelectedUser,
+    manualAddress,
+    setManualAddress,
+    resolvedUser,
+    getUserOptions,
+    sendingInvite,
+    success,
+    invite,
+    publicInvite,
+    setPublicInvite,
+    generating,
+    generateNewInviteLink,
+  } = useInviteManagement({
+    spaceId,
+    space,
+    defaultChannel,
+  });
+
+  // Space name and repudiability are now synced in useSpaceManagement hook
+
+  // Delete confirmation state - kept local as it's UI-specific
   const [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
-  const [iconFileError, setIconFileError] = React.useState<string | null>(null);
-  const [bannerFileError, setBannerFileError] = React.useState<string | null>(
-    null
-  );
-  const [isIconUploading, setIsIconUploading] = React.useState<boolean>(false);
-  const [isBannerUploading, setIsBannerUploading] =
-    React.useState<boolean>(false);
-  const [emojiFileError, setEmojiFileError] = React.useState<string | null>(
-    null
-  );
-  const [stickerFileError, setStickerFileError] = React.useState<string | null>(
-    null
-  );
-  const [publicInvite, setPublicInvite] = React.useState(
-    space?.isPublic || false
-  );
-  const { data: conversations } = useConversations({ type: 'direct' });
-  const { apiClient } = useQuorumApiClient();
-  const navigate = useNavigate();
 
   // Helper functions for Select primitive
   const getChannelGroups = React.useMemo(() => {
@@ -118,336 +152,49 @@ const SpaceEditor: React.FunctionComponent<{
     }));
   }, [space?.groups]);
 
-  const getUserOptions = React.useMemo(() => {
-    if (!conversations?.pages) return [];
-    return conversations.pages
-      .flatMap((c: any) => c.conversations as Conversation[])
-      .toReversed()
-      .map(conversation => ({
-        value: conversation.address,
-        label: conversation.displayName,
-        avatar: conversation.icon,
-        subtitle: conversation.address
-      }));
-  }, [conversations]);
-
-  const {
-    getRootProps,
-    getInputProps,
-    acceptedFiles,
-    isDragActive: isIconDragActive,
-  } = useDropzone({
-    accept: {
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg', '.jpeg'],
-    },
-    minSize: 0,
-    maxSize: 1 * 1024 * 1024,
-    onDropRejected: (fileRejections) => {
-      setIsIconUploading(false);
-      for (const rejection of fileRejections) {
-        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          setIconFileError(t`File cannot be larger than 1MB`);
-        } else {
-          setIconFileError(t`File rejected`);
-        }
-      }
-    },
-    onDropAccepted: (files) => {
-      setIsIconUploading(true); // Keep uploading state during processing
-      setIconFileError(null);
-      // Clear previous file data immediately when new file is accepted
-      setFileData(undefined);
-      setCurrentFile(files[0]);
-    },
-    onDragEnter: () => {
-      setIsIconUploading(true);
-    },
-    onDragLeave: () => {
-      setIsIconUploading(false);
-    },
-    onFileDialogOpen: () => {
-      setIsIconUploading(true);
-    },
-    onFileDialogCancel: () => {
-      setIsIconUploading(false);
-    },
-  });
-
-  const {
-    getRootProps: getBannerRootProps,
-    getInputProps: getBannerInputProps,
-    acceptedFiles: bannerAcceptedFiles,
-    isDragActive: isBannerDragActive,
-  } = useDropzone({
-    accept: {
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg', '.jpeg'],
-    },
-    minSize: 0,
-    maxSize: 1 * 1024 * 1024,
-    onDropRejected: (fileRejections) => {
-      setIsBannerUploading(false);
-      for (const rejection of fileRejections) {
-        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          setBannerFileError(t`File cannot be larger than 1MB`);
-        } else {
-          setBannerFileError(t`File rejected`);
-        }
-      }
-    },
-    onDropAccepted: (files) => {
-      setIsBannerUploading(true); // Keep uploading state during processing
-      setBannerFileError(null);
-      // Clear previous file data immediately when new file is accepted
-      setBannerData(undefined);
-      setCurrentBannerFile(files[0]);
-    },
-    onDragEnter: () => {
-      setIsBannerUploading(true);
-    },
-    onDragLeave: () => {
-      setIsBannerUploading(false);
-    },
-    onFileDialogOpen: () => {
-      setIsBannerUploading(true);
-    },
-    onFileDialogCancel: () => {
-      setIsBannerUploading(false);
-    },
-  });
-
-  const {
-    getRootProps: getEmojiRootProps,
-    getInputProps: getEmojiInputProps,
-    acceptedFiles: emojiAcceptedFiles,
-  } = useDropzone({
-    accept: {
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg', '.jpeg'],
-      'image/gif': ['.gif'],
-    },
-    multiple: true,
-    maxFiles: Math.min(10, 50 - emojis.length), // Allow up to 10 files, but not exceed 50 total
-    minSize: 0,
-    maxSize: 256 * 1024,
-    disabled: emojis.length >= 50, // Disable when limit reached
-    onDropRejected: (fileRejections) => {
-      for (const rejection of fileRejections) {
-        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          setEmojiFileError(t`File cannot be larger than 256KB`);
-        } else if (rejection.errors.some((err) => err.code === 'too-many-files')) {
-          const remaining = 50 - emojis.length;
-          setEmojiFileError(t`Cannot upload more than ${Math.min(10, remaining)} files at once (${remaining} slots remaining)`);
-        } else {
-          setEmojiFileError(t`File rejected`);
-        }
-      }
-    },
-    onDropAccepted: (files) => {
-      setEmojiFileError(null);
-      // Double-check we don't exceed the limit
-      const allowedFiles = files.slice(0, 50 - emojis.length);
-      setCurrentEmojiFile(allowedFiles);
-    },
-  });
-
-  const {
-    getRootProps: getStickerRootProps,
-    getInputProps: getStickerInputProps,
-    acceptedFiles: stickerAcceptedFiles,
-  } = useDropzone({
-    accept: {
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg', '.jpeg'],
-      'image/gif': ['.gif'],
-    },
-    multiple: true,
-    maxFiles: Math.min(10, 50 - stickers.length), // Allow up to 10 files, but not exceed 50 total
-    minSize: 0,
-    maxSize: 256 * 1024,
-    disabled: stickers.length >= 50, // Disable when limit reached
-    onDropRejected: (fileRejections) => {
-      for (const rejection of fileRejections) {
-        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          setStickerFileError(t`File cannot be larger than 256KB`);
-        } else if (rejection.errors.some((err) => err.code === 'too-many-files')) {
-          const remaining = 50 - stickers.length;
-          setStickerFileError(t`Cannot upload more than ${Math.min(10, remaining)} files at once (${remaining} slots remaining)`);
-        } else {
-          setStickerFileError(t`File rejected`);
-        }
-      }
-    },
-    onDropAccepted: (files) => {
-      setStickerFileError(null);
-      // Double-check we don't exceed the limit
-      const allowedFiles = files.slice(0, 50 - stickers.length);
-      setCurrentStickerFile(allowedFiles);
-    },
-  });
-
-  React.useEffect(() => {
-    if (currentFile) {
-      (async () => {
-        try {
-          const arrayBuffer = await currentFile.arrayBuffer();
-          setFileData(arrayBuffer);
-          setIsIconUploading(false);
-        } catch (error) {
-          console.error('Error reading file:', error);
-          setIconFileError(t`Error reading file`);
-          setIsIconUploading(false);
-        }
-      })();
-    }
-  }, [currentFile]);
-
-  React.useEffect(() => {
-    if (currentBannerFile) {
-      (async () => {
-        try {
-          const arrayBuffer = await currentBannerFile.arrayBuffer();
-          setBannerData(arrayBuffer);
-          setIsBannerUploading(false);
-        } catch (error) {
-          console.error('Error reading banner file:', error);
-          setBannerFileError(t`Error reading file`);
-          setIsBannerUploading(false);
-        }
-      })();
-    }
-  }, [currentBannerFile]);
-
-  React.useEffect(() => {
-    (async () => {
-      if (manualAddress?.length === 46) {
-        try {
-          const reg = await apiClient.getUser(manualAddress);
-          if (reg.data) {
-            setResolvedUser(reg.data);
-          }
-        } catch {
-          setResolvedUser(undefined);
-        }
-      } else {
-        setResolvedUser(undefined);
-      }
-    })();
-  }, [manualAddress]);
-
-  React.useEffect(() => {
-    if (currentEmojiFile && currentEmojiFile.length > 0) {
-      (async () => {
-        const newEmojis = await Promise.all(
-          currentEmojiFile.map(async (file) => {
-            const arrayBuffer = await file.arrayBuffer();
-            return {
-              id: crypto.randomUUID(),
-              name: file.name
-                .split('.')[0]
-                .toLowerCase()
-                .replace(/[^a-z0-9\-]/gi, ''),
-              imgUrl:
-                'data:' +
-                file.type +
-                ';base64,' +
-                Buffer.from(arrayBuffer).toString('base64'),
-            };
-          })
-        );
-        setEmojis((prev) => [...prev, ...newEmojis]);
-        setCurrentEmojiFile(undefined); // Clear after processing
-      })();
-    }
-  }, [currentEmojiFile]);
-
-  React.useEffect(() => {
-    if (currentStickerFile && currentStickerFile.length > 0) {
-      (async () => {
-        const newStickers = await Promise.all(
-          currentStickerFile.map(async (file) => {
-            const arrayBuffer = await file.arrayBuffer();
-            return {
-              id: crypto.randomUUID(),
-              name: file.name
-                .split('.')[0]
-                .toLowerCase()
-                .replace(/[^a-z0-9\-]/gi, ''),
-              imgUrl:
-                'data:' +
-                file.type +
-                ';base64,' +
-                Buffer.from(arrayBuffer).toString('base64'),
-            };
-          })
-        );
-        setStickers((prev) => [...prev, ...newStickers]);
-        setCurrentStickerFile(undefined); // Clear after processing
-      })();
-    }
-  }, [currentStickerFile]);
-
-  const invite = React.useCallback(
-    async (address: string) => {
-      setSendingInvite(true);
-      try {
-        const spaceAddress = await ensureKeyForSpace(
-          currentPasskeyInfo!.address,
-          space!
-        );
-        if (spaceAddress != spaceId) {
-          navigate('/spaces/' + spaceAddress + '/' + defaultChannel.channelId);
-        }
-
-        await sendInviteToUser(address, spaceAddress, currentPasskeyInfo!);
-        setSuccess(true);
-      } finally {
-        setSendingInvite(false);
-      }
-    },
-    [ensureKeyForSpace, currentPasskeyInfo, space]
-  );
-
+  // Custom save function that integrates all hooks
   const saveChanges = React.useCallback(() => {
+    if (!space) return;
+    
+    // Prepare all the data from our hooks
+    const iconUrl = iconData && currentIconFile
+      ? 'data:' + currentIconFile.type + ';base64,' + Buffer.from(iconData).toString('base64')
+      : space.iconUrl;
+
+    const bannerUrl = bannerData && currentBannerFile
+      ? 'data:' + currentBannerFile.type + ';base64,' + Buffer.from(bannerData).toString('base64')
+      : space.bannerUrl;
+
+    // Use the original updateSpace call with all our hook data
     updateSpace({
-      ...space!,
-      spaceName: displayName,
+      ...space,
+      spaceName,
       defaultChannelId: defaultChannel.channelId,
-      isRepudiable: isRepudiable,
-      iconUrl:
-        fileData && currentFile
-          ? 'data:' +
-            currentFile.type +
-            ';base64,' +
-            Buffer.from(fileData).toString('base64')
-          : space!.iconUrl,
-      bannerUrl:
-        bannerData && bannerAcceptedFiles.length
-          ? 'data:' +
-            bannerAcceptedFiles[0].type +
-            ';base64,' +
-            Buffer.from(bannerData).toString('base64')
-          : space!.bannerUrl,
-      roles: roles,
-      emojis: emojis,
-      stickers: stickers,
+      isRepudiable,
+      iconUrl,
+      bannerUrl,
+      roles,
+      emojis,
+      stickers,
     });
+    
     dismiss();
   }, [
     space,
-    displayName,
+    spaceName,
     defaultChannel,
-    fileData,
-    acceptedFiles,
-    bannerAcceptedFiles,
+    isRepudiable,
+    iconData,
+    currentIconFile,
     bannerData,
+    currentBannerFile,
     roles,
     emojis,
     stickers,
-    spaceId,
-    isRepudiable,
+    updateSpace,
+    dismiss
   ]);
+
 
   return (
     <Modal
@@ -502,7 +249,7 @@ const SpaceEditor: React.FunctionComponent<{
             <Icon name="envelope" className="mr-2 text-accent" />
             <Trans>Invites</Trans>
           </div>
-          {spaceMembers && spaceMembers.length === 1 && (
+          {((spaceMembers && spaceMembers.length === 1) || (space?.groups?.length === 0)) && (
             <div
               onClick={() => setSelectedCategory('danger')}
               className={`modal-nav-category text-danger ${selectedCategory === 'danger' ? 'active' : ''}`}
@@ -553,7 +300,7 @@ const SpaceEditor: React.FunctionComponent<{
             <Icon name="smile" className="mr-2 text-accent" />
             <Trans>Emojis</Trans>
           </div>
-          {spaceMembers && spaceMembers.length === 1 && (
+          {((spaceMembers && spaceMembers.length === 1) || (space?.groups?.length === 0)) && (
             <div
               onClick={() => setSelectedCategory('danger')}
               className={`modal-nav-category text-danger ${selectedCategory === 'danger' ? 'active' : ''}`}
@@ -578,17 +325,17 @@ const SpaceEditor: React.FunctionComponent<{
                         className="modal-icon-editable cursor-pointer"
                         style={{
                           backgroundImage:
-                            fileData != undefined && currentFile
+                            iconData != undefined && currentIconFile
                               ? 'url(data:' +
-                                currentFile.type +
+                                currentIconFile.type +
                                 ';base64,' +
-                                Buffer.from(fileData).toString('base64') +
+                                Buffer.from(iconData).toString('base64') +
                                 ')'
                               : `url(${space?.iconUrl})`,
                         }}
-                        {...getRootProps()}
+                        {...getIconRootProps()}
                       >
-                        <input {...getInputProps()} />
+                        <input {...getIconInputProps()} />
                       </div>
                       {!isIconUploading && !isIconDragActive && (
                         /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */
@@ -606,8 +353,8 @@ const SpaceEditor: React.FunctionComponent<{
                         </div>
                         <Input
                           className="w-full"
-                          value={displayName}
-                          onChange={setDisplayName}
+                          value={spaceName}
+                          onChange={setSpaceName}
                         />
                       </div>
                     </div>
@@ -657,7 +404,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 <Icon
                                   name="times"
                                   className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
-                                  onClick={() => setIconFileError(null)}
+                                  onClick={clearIconFileError}
                                 />
                               </div>
                             )}
@@ -667,7 +414,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 <Icon
                                   name="times"
                                   className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
-                                  onClick={() => setBannerFileError(null)}
+                                  onClick={clearBannerFileError}
                                 />
                               </div>
                             )}
@@ -752,19 +499,7 @@ const SpaceEditor: React.FunctionComponent<{
                         <Button
                           type="secondary"
                           className="!w-auto !inline-flex"
-                          onClick={() => {
-                            setRoles((prev) => [
-                              ...prev,
-                              {
-                                roleId: crypto.randomUUID(),
-                                roleTag: 'New Role' + (prev.length + 1),
-                                displayName: 'New Role',
-                                color: 'var(--success-hex)',
-                                members: [],
-                                permissions: [],
-                              },
-                            ]);
-                          }}
+                          onClick={addRole}
                         >
                           <Trans>Add Role</Trans>
                         </Button>
@@ -786,15 +521,7 @@ const SpaceEditor: React.FunctionComponent<{
                                   11 +
                                   'px',
                               }}
-                              onChange={(e) =>
-                                setRoles((prev) => [
-                                  ...prev.map((p, pi) =>
-                                    pi == i
-                                      ? { ...p, roleTag: e.target.value }
-                                      : p
-                                  ),
-                                ])
-                              }
+                              onChange={(e) => updateRoleTag(i, e.target.value)}
                               value={r.roleTag}
                             />
                             <span
@@ -811,15 +538,7 @@ const SpaceEditor: React.FunctionComponent<{
                                     10 +
                                     'px',
                                 }}
-                                onChange={(e) =>
-                                  setRoles((prev) => [
-                                    ...prev.map((p, pi) =>
-                                      pi == i
-                                        ? { ...p, displayName: e.target.value }
-                                        : p
-                                    ),
-                                  ])
-                                }
+                                onChange={(e) => updateRoleDisplayName(i, e.target.value)}
                                 value={r.displayName}
                               />
                             </span>
@@ -828,11 +547,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 name="trash"
                                 title="Delete role"
                                 className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
-                                onClick={() =>
-                                  setRoles((prev) => [
-                                    ...prev.filter((p, pi) => i !== pi),
-                                  ])
-                                }
+                                onClick={() => deleteRole(i)}
                               />
                             </span>
                             <span className="float-right pr-10 flex items-center">
@@ -844,28 +559,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 checked={roles
                                   .find((_, pi) => i == pi)
                                   ?.permissions.includes('message:delete')}
-                                onChange={() =>
-                                  setRoles((prev) => [
-                                    ...prev.map((p, pi) =>
-                                      pi == i
-                                        ? {
-                                            ...p,
-                                            permissions: p.permissions.includes(
-                                              'message:delete'
-                                            )
-                                              ? p.permissions.filter(
-                                                  (pr: Permission) =>
-                                                    pr !== 'message:delete'
-                                                )
-                                              : ([
-                                                  ...p.permissions,
-                                                  'message:delete',
-                                                ] as Permission[]),
-                                          }
-                                        : p
-                                    ),
-                                  ])
-                                }
+                                onChange={() => toggleRolePermission(i, 'message:delete')}
                               />
                             </span>
                           </div>
@@ -899,7 +593,7 @@ const SpaceEditor: React.FunctionComponent<{
                     </div>
                     <div className="modal-content-section">
                       <div className="flex">
-                        {emojis.length < 50 && (
+                        {canAddMoreEmojis && (
                           <div
                             className="btn-secondary"
                             {...getEmojiRootProps()}
@@ -916,7 +610,7 @@ const SpaceEditor: React.FunctionComponent<{
                             <Icon
                               name="times"
                               className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
-                              onClick={() => setEmojiFileError(null)}
+                              onClick={clearEmojiFileError}
                             />
                           </div>
                         </div>
@@ -936,20 +630,14 @@ const SpaceEditor: React.FunctionComponent<{
                                       'border-0 bg-[rgba(0,0,0,0)] max-w-48 truncate'
                                     }
                                     title={em.name}
-                                    onChange={(e) =>
-                                      setEmojis((prev) => [
-                                        ...prev.map((p, pi) =>
-                                          pi == i
-                                            ? {
-                                                ...p,
-                                                name: e.target.value
-                                                  .toLowerCase()
-                                                  .replace(/[^a-z0-9\_]/gi, ''),
-                                              }
-                                            : p
-                                        ),
-                                      ])
-                                    }
+                                    onChange={(e) => {
+                                      const sanitizedName = e.target.value
+                                        .toLowerCase()
+                                        .replace(/[^a-z0-9\_]/gi, '');
+                                      setEmojis(prev => prev.map((p, pi) =>
+                                        pi === i ? { ...p, name: sanitizedName } : p
+                                      ));
+                                    }}
                                     value={em.name}
                                   />
                                 </span>
@@ -958,11 +646,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 <Icon
                                   name="trash"
                                   className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
-                                  onClick={() =>
-                                    setEmojis((prev) => [
-                                      ...prev.filter((p, pi) => i !== pi),
-                                    ])
-                                  }
+                                  onClick={() => removeEmoji(i)}
                                 />
                               </div>
                             </div>
@@ -997,7 +681,7 @@ const SpaceEditor: React.FunctionComponent<{
                     </div>
                     <div className="modal-content-section">
                       <div className="flex">
-                        {stickers.length < 50 && (
+                        {canAddMoreStickers && (
                           <div
                             className="btn-secondary"
                             {...getStickerRootProps()}
@@ -1014,7 +698,7 @@ const SpaceEditor: React.FunctionComponent<{
                             <Icon
                               name="times"
                               className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
-                              onClick={() => setStickerFileError(null)}
+                              onClick={clearStickerFileError}
                             />
                           </div>
                         </div>
@@ -1034,20 +718,14 @@ const SpaceEditor: React.FunctionComponent<{
                                       'border-0 bg-[rgba(0,0,0,0)] max-w-48 truncate'
                                     }
                                     title={em.name}
-                                    onChange={(e) =>
-                                      setStickers((prev) => [
-                                        ...prev.map((p, pi) =>
-                                          pi == i
-                                            ? {
-                                                ...p,
-                                                name: e.target.value
-                                                  .toLowerCase()
-                                                  .replace(/[^a-z0-9\_]/gi, ''),
-                                              }
-                                            : p
-                                        ),
-                                      ])
-                                    }
+                                    onChange={(e) => {
+                                      const sanitizedName = e.target.value
+                                        .toLowerCase()
+                                        .replace(/[^a-z0-9\_]/gi, '');
+                                      setStickers(prev => prev.map((p, pi) =>
+                                        pi === i ? { ...p, name: sanitizedName } : p
+                                      ));
+                                    }}
                                     value={em.name}
                                   />
                                 </span>
@@ -1056,11 +734,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 <Icon
                                   name="trash"
                                   className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
-                                  onClick={() =>
-                                    setStickers((prev) => [
-                                      ...prev.filter((p, pi) => i !== pi),
-                                    ])
-                                  }
+                                  onClick={() => removeSticker(i)}
                                 />
                               </div>
                             </div>
@@ -1102,17 +776,19 @@ const SpaceEditor: React.FunctionComponent<{
                         </div>
                         <Select
                           fullWidth
-                          options={getUserOptions}
+                          options={getUserOptions()}
                           value={selectedUser?.address || ''}
                           onChange={(address) => {
-                            const conversation = conversations?.pages
-                              ?.flatMap((c: any) => c.conversations as Conversation[])
-                              ?.find(c => c.address === address);
+                            // Find conversation and set selected user
+                            const allConversations = getUserOptions();
+                            const conversation = allConversations.find(c => c.value === address);
                             if (conversation) {
-                              setSelectedUser(conversation);
-                              setResolvedUser(undefined);
+                              setSelectedUser({
+                                address: conversation.value,
+                                displayName: conversation.label,
+                                icon: conversation.avatar
+                              } as any);
                               setManualAddress('');
-                              setSuccess(false);
                             }
                           }}
                           placeholder={t`Select conversation`}
@@ -1124,10 +800,7 @@ const SpaceEditor: React.FunctionComponent<{
                           className="w-full placeholder:text-subtle"
                           value={manualAddress}
                           placeholder="Type the address of the user you want to send to"
-                          onChange={(value) => {
-                            setManualAddress(value);
-                            setSuccess(false);
-                          }}
+                          onChange={setManualAddress}
                         />
                         {success && (
                           <div className="text-success-hex">
@@ -1210,22 +883,7 @@ const SpaceEditor: React.FunctionComponent<{
                               <Button
                                 type="danger"
                                 disabled={generating}
-                                onClick={async () => {
-                                  setGenerating(true);
-                                  try {
-                                    await new Promise<void>((resolve) =>
-                                      setTimeout(() => resolve(), 200)
-                                    );
-                                    await generateNewInviteLink(
-                                      space.spaceId,
-                                      keyset.userKeyset,
-                                      keyset.deviceKeyset,
-                                      registration.registration!
-                                    );
-                                  } finally {
-                                    setGenerating(false);
-                                  }
-                                }}
+                                onClick={generateNewInviteLink}
                               >
                                 {generating ? (
                                   t`Generating link...`
@@ -1285,9 +943,7 @@ const SpaceEditor: React.FunctionComponent<{
                                   5000
                                 );
                               } else {
-                                deleteSpace(spaceId);
-                                navigate('/messages');
-                                dismiss();
+                                handleDeleteSpace();
                               }
                             }}
                           >
