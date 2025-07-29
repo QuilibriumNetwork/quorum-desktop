@@ -1,0 +1,37 @@
+{
+  "components": {
+    "MessageInput.tsx": {
+      "name": "MessageInput",
+      "path": "src/components/channel/MessageInput.tsx",
+      "description": "Text input for composing and sending messages in channels",
+      "category": "shared",
+      "primitives": "todo",
+      "web_native": "shared",
+      "logic_extraction": "done",
+      "hooks": ["useMessageComposer", "useChannelPermissions"],
+      "native": "ready",
+      "notes": "Auto-generated: Uses raw <textarea>, <button>. Clean component that should work on both platforms with primitives.",
+      "updated": "2025-01-29"
+    }
+  },
+  "stats": {
+    "total": 1,
+    "primitives_done": 0,
+    "logic_extraction_done": 1,
+    "native_ready": 0,
+    "by_category": {
+      "shared": 1,
+      "platform_specific": 0,
+      "complex_refactor": 0
+    },
+    "last_updated": "2025-01-29"
+  },
+  "metadata": {
+    "audit_version": "1.0",
+    "last_full_scan": null,
+    "scan_scope": [
+      "src/components/**/*.tsx",
+      "src/components/**/*.jsx"
+    ]
+  }
+}

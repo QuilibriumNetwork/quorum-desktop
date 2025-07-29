@@ -10,6 +10,15 @@ import { lingui } from '@lingui/vite-plugin';
 export default defineConfig({
   build: {
     target: 'es2022', // Support top-level await or error on build for i18n
+    rollupOptions: {
+      external: (id) => {
+        // Exclude dev folder from production builds
+        if (process.env.NODE_ENV === 'production' && id.includes('/dev/')) {
+          return true;
+        }
+        return false;
+      },
+    },
   },
   define: {
     // Define compile-time constants

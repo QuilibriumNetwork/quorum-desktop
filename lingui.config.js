@@ -20,7 +20,7 @@ export default defineConfig({
         '**/public/**',
         '**/src/wasm/**',
         '**/src/locales/**',
-        '**/src/playground/**',
+        '**/src/dev/**',
         '**/*.flow.js',
       ],
     },

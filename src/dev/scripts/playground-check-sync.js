@@ -7,12 +7,12 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const projectRoot = path.resolve(__dirname, '..');
+const projectRoot = path.resolve(__dirname, '../../..');
 
 // Define paths
 // Note: Only mobile playground needs sync - web playground imports directly from main app
 const MAIN_PRIMITIVES_PATH = path.join(projectRoot, 'src/components/primitives');
-const MOBILE_PLAYGROUND_PATH = path.join(projectRoot, 'src/playground/mobile/quorum-mobile-test/components/primitives');
+const MOBILE_PLAYGROUND_PATH = path.join(projectRoot, 'src/dev/playground/mobile/quorum-mobile-test/components/primitives');
 
 // Colors for console output
 const colors = {

@@ -20,7 +20,12 @@ import { RegistrationProvider } from './components/context/RegistrationPersister
 import { ResponsiveLayoutProvider } from './components/context/ResponsiveLayoutProvider';
 // Conditionally import playground - excluded if EXCLUDE_PLAYGROUND_WEB=true
 const PrimitivesPlayground = __INCLUDE_PLAYGROUND_WEB__
-  ? React.lazy(() => import('./playground/web/PrimitivesPlayground').then(m => ({ default: m.PrimitivesPlayground })))
+  ? React.lazy(() => import('./dev/playground/web/PrimitivesPlayground').then(m => ({ default: m.PrimitivesPlayground })))
+  : null;
+
+// Conditionally import dev tools in development mode
+const ComponentAuditViewer = process.env.NODE_ENV === 'development'
+  ? React.lazy(() => import('./dev/components-audit').then(m => ({ default: m.ComponentAuditViewer })))
   : null;
 import JoinSpaceModal from './components/modals/JoinSpaceModal';
 import Elements from './components/Elements';
@@ -218,6 +223,23 @@ const App = () => {
                               >
                                 <Suspense fallback={<div>Loading playground...</div>}>
                                   <PrimitivesPlayground />
+                                </Suspense>
+                              </AppWithSearch>
+                            }
+                          />
+                        )}
+                        {process.env.NODE_ENV === 'development' && ComponentAuditViewer && (
+                          <Route
+                            path="/dev/audit"
+                            element={
+                              <AppWithSearch
+                                kickUserAddress={kickUserAddress}
+                                setKickUserAddress={setKickUserAddress}
+                                user={user}
+                                setUser={setUser}
+                              >
+                                <Suspense fallback={<div>Loading audit viewer...</div>}>
+                                  <ComponentAuditViewer />
                                 </Suspense>
                               </AppWithSearch>
                             }

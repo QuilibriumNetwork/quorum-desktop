@@ -1,4 +1,4 @@
-# Claude Code: Cross-Platform Component Audit Plan
+# Cross-Platform Component Audit Plan
 
 ## Mission Overview
 
@@ -39,6 +39,11 @@ Transform to a clean three-layer architecture:
     "primitives_done": 0,
     "logic_extraction_done": 0,
     "native_ready": 0,
+    "by_category": {
+      "shared": 0,
+      "platform_specific": 0,
+      "complex_refactor": 0
+    },
     "last_updated": "2025-01-29"
   },
   "metadata": {
@@ -54,10 +59,11 @@ Transform to a clean three-layer architecture:
 
 **File: `src/dev/ComponentAuditViewer.tsx`**
 Create the complete frontend viewer component with:
-- Stats dashboard
+- Stats dashboard (including category breakdown)
 - Filterable/sortable component table
+- Category filter (shared/platform_specific/complex_refactor)
 - Status badges and progress indicators
-- Notes display functionality
+- Description and notes display
 - Hook listings
 
 **File: `src/dev/index.ts`**
@@ -81,6 +87,8 @@ Add audit viewer to the application routing (development only):
   "ComponentName.tsx": {
     "name": "ComponentName",
     "path": "src/components/path/ComponentName.tsx",
+    "description": "Brief description of component function",  // What the component does
+    "category": "unknown",       // shared|platform_specific|complex_refactor
     "primitives": "todo",        // Based on raw HTML analysis
     "web_native": "unknown",     // Needs human decision
     "logic_extraction": "todo",  // Based on business logic analysis
@@ -117,7 +125,24 @@ we need
 
 #### **2.2 Component Classification**
 
-**Categorize each component as**:
+**Categorize each component based on the architecture workflow**:
+
+- **Category A: Shared** (`shared`)
+  - Components that work identically on both platforms using only primitives
+  - No platform-specific UI differences needed
+  - Examples: MessageInput, UserProfile, ChannelList
+  
+- **Category B: Platform-Specific** (`platform_specific`)
+  - Components that need different UI layouts but share business logic
+  - Require .web.tsx and .native.tsx implementations
+  - Examples: MessageActions (hover vs drawer), ChannelHeader (full vs compact)
+  
+- **Category C: Complex Refactor** (`complex_refactor`)
+  - Large components that need to be broken down into smaller pieces
+  - Mix multiple concerns and responsibilities
+  - Examples: Message.tsx (850+ lines), Channel.tsx, SpaceSettings.tsx
+
+**Also identify component types**:
 - **Primitive**: Already our new primitive components (skip these)
 - **Simple**: Basic UI components, minimal logic
 - **Business**: Components with significant business logic
@@ -201,6 +226,8 @@ we need
   "ComponentName.tsx": {
     "name": "ComponentName",
     "path": "src/components/path/ComponentName.tsx",
+    "description": "Brief description of component function",  // What the component does
+    "category": "unknown",       // shared|platform_specific|complex_refactor
     "primitives": "todo",        // Based on raw HTML analysis
     "web_native": "unknown",     // Needs human decision
     "logic_extraction": "todo",  // Based on business logic analysis
