@@ -298,7 +298,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 <div className="space-y-4">
                   <div>
                     <p className="text-sm text-subtle mb-2">Container with padding:</p>
-                    <Container padding="md" backgroundColor="var(--accent-100)">
+                    <Container padding="md" backgroundColor="var(--surface-4)">
                       <Text>Container with medium padding</Text>
                     </Container>
                   </div>
@@ -309,7 +309,7 @@ export const PrimitivesPlayground: React.FC = () => {
                       width="full" 
                       margin="sm" 
                       padding="lg" 
-                      backgroundColor="var(--surface-3)"
+                      backgroundColor="var(--surface-4)"
                     >
                       <Text>Full width container with margin and large padding</Text>
                     </Container>
@@ -321,7 +321,7 @@ export const PrimitivesPlayground: React.FC = () => {
                       width="full"
                       maxWidth="md" 
                       padding="md" 
-                      backgroundColor="var(--accent-50)"
+                      backgroundColor="var(--surface-4)"
                       className="mx-auto"
                     >
                       <Text>Container with max-width md (768px)</Text>
@@ -339,7 +339,7 @@ export const PrimitivesPlayground: React.FC = () => {
                     <p className="text-sm text-subtle mb-2">Clickable Container:</p>
                     <Container 
                       padding="md" 
-                      backgroundColor="var(--surface-3)"
+                      backgroundColor="var(--surface-4)"
                       onClick={() => alert('Container clicked!')}
                       className="cursor-pointer hover:bg-surface-4 transition-colors"
                     >
@@ -351,9 +351,9 @@ export const PrimitivesPlayground: React.FC = () => {
                     <p className="text-sm text-subtle mb-2">Container with hover effects:</p>
                     <Container 
                       padding="lg" 
-                      backgroundColor="var(--accent-100)"
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-200)'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-100)'}
+                      backgroundColor="var(--surface-4)"
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-700)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-900)'}
                       className="transition-all duration-200"
                     >
                       <Text>Hover over this container to see color change</Text>
@@ -368,7 +368,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 
                 <Container 
                   padding="xl" 
-                  backgroundColor="var(--surface-2)"
+                  backgroundColor="var(--surface-4)"
                   className="space-y-4"
                 >
                   <Text weight="semibold">Parent Container (XL padding)</Text>
@@ -376,7 +376,7 @@ export const PrimitivesPlayground: React.FC = () => {
                   <Container 
                     padding="md" 
                     margin="sm"
-                    backgroundColor="var(--surface-3)"
+                    backgroundColor="var(--surface-5)"
                   >
                     <Text>Child Container 1 (MD padding, SM margin)</Text>
                   </Container>
@@ -384,7 +384,7 @@ export const PrimitivesPlayground: React.FC = () => {
                   <Container 
                     padding="sm" 
                     margin="md"
-                    backgroundColor="var(--accent-50)"
+                    backgroundColor="var(--surface-6)"
                   >
                     <Text>Child Container 2 (SM padding, MD margin)</Text>
                   </Container>
@@ -392,14 +392,14 @@ export const PrimitivesPlayground: React.FC = () => {
                   <FlexRow gap="md">
                     <Container 
                       padding="sm" 
-                      backgroundColor="var(--surface-3)"
+                      backgroundColor="var(--surface-7)"
                       className="flex-1"
                     >
                       <Text size="sm">Flex item 1</Text>
                     </Container>
                     <Container 
                       padding="sm" 
-                      backgroundColor="var(--surface-3)"
+                      backgroundColor="var(--surface-7)"
                       className="flex-1"
                     >
                       <Text size="sm">Flex item 2</Text>
