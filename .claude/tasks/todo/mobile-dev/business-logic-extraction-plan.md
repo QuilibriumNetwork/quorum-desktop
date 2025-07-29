@@ -319,44 +319,132 @@ Your hooks are well-organized with:
 ```
 src/hooks/
 ├── index.ts                    # Main exports
-├── queries/                    # Data fetching (existing)
-├── mutations/                  # Data mutations (existing)  
-├── business/                   # 🆕 Business logic hooks
-│   ├── index.ts
-│   ├── chat/
-│   │   ├── useChatLogic.ts
-│   │   ├── useMessageComposer.ts
-│   │   └── useEmojiPicker.ts
+├── queries/                    # Data fetching (existing nested structure)
+│   ├── channels/
+│   ├── conversations/ 
 │   ├── spaces/
-│   │   ├── useSpaceLogic.ts
+│   ├── etc...
+├── mutations/                  # Data mutations (existing)
+├── business/                   # 🆕 Business logic hooks (nested like queries)
+│   ├── index.ts
+│   ├── spaces/
+│   │   ├── index.ts
 │   │   ├── useSpaceCreation.ts
-│   │   └── useSpaceNavigation.ts
+│   │   ├── useSpaceSettings.ts
+│   │   ├── useSpaceJoining.ts
+│   │   ├── useSpaceLeaving.ts
+│   │   ├── useSpaceNavigation.ts
+│   │   ├── useSpacePermissions.ts
+│   │   └── useInviteValidation.ts
+│   ├── messages/
+│   │   ├── index.ts
+│   │   ├── useMessageActions.ts
+│   │   ├── useMessageComposer.ts
+│   │   ├── useMessageRendering.ts
+│   │   ├── useReactions.ts
+│   │   └── useEmojiPicker.ts
+│   ├── channels/
+│   │   ├── index.ts
+│   │   ├── useChannelManagement.ts
+│   │   ├── useChannelData.ts
+│   │   └── useGroupManagement.ts
+│   ├── search/
+│   │   ├── index.ts
+│   │   ├── useSearchSuggestions.ts
+│   │   ├── useKeyboardNavigation.ts
+│   │   ├── useGlobalSearchLogic.ts
+│   │   ├── useSearchState.ts
+│   │   ├── useSearchNavigation.ts
+│   │   └── useResultsVirtualization.ts
+│   ├── user/
+│   │   ├── index.ts
+│   │   ├── useUserSettings.ts
+│   │   ├── useUserProfile.ts
+│   │   ├── useProfileImage.ts
+│   │   ├── useRoleManagement.ts
+│   │   └── useThemeSettings.ts
+│   ├── conversations/
+│   │   ├── index.ts
+│   │   ├── useDirectMessageCreation.ts
+│   │   ├── useConversationPolling.ts
+│   │   ├── useConversationsData.ts
+│   │   └── useShowHomeScreen.ts
 │   ├── auth/
-│   │   ├── useAuthFlow.ts
-│   │   └── useRegistrationFlow.ts
-│   └── modals/
-│       ├── useModalLogic.ts
-│       └── useSettingsModal.ts
-├── ui/                         # 🆕 UI-specific business logic
-│   ├── index.ts
-│   ├── useDrawerLogic.ts
-│   ├── useSearchUI.ts
-│   ├── useNotifications.ts
-│   └── useThemeToggle.ts
-├── forms/                      # 🆕 Form logic hooks
-│   ├── index.ts
-│   ├── useFormValidation.ts
-│   └── useFormState.ts
+│   │   ├── index.ts
+│   │   ├── useAuthentication.ts
+│   │   ├── useRegistrationFlow.ts
+│   │   ├── useProfileSetup.ts
+│   │   └── usePasskeyFlow.ts
+│   ├── modals/
+│   │   ├── index.ts
+│   │   ├── useModalManagement.ts
+│   │   ├── useModalContext.ts
+│   │   ├── useKickUser.ts
+│   │   └── useConfirmationFlow.ts
+│   ├── ui/
+│   │   ├── index.ts
+│   │   ├── useFileUpload.ts
+│   │   ├── useImageLoading.ts
+│   │   ├── useCopyToClipboard.ts
+│   │   ├── useTooltipInteraction.ts
+│   │   ├── useAccentColor.ts
+│   │   ├── useDragAndDrop.ts
+│   │   └── useLayoutState.ts
+│   └── validation/
+│       ├── index.ts
+│       ├── useAddressValidation.ts
+│       └── useInviteProcessing.ts
 ├── useResponsiveLayout.ts      # Keep existing
 ├── useLongPress.ts            # Keep existing  
 ├── useSearchContext.ts        # Keep existing
 └── utils/                     # Keep existing
 ```
 
+### Domain Mapping from Components
+
+Based on the actual components that need extraction (from audit.json):
+
+**Spaces Domain (`business/spaces/`):**
+- CreateSpaceModal → `useSpaceCreation`, `useSpaceSettings`
+- JoinSpaceModal → `useSpaceJoining`, `useInviteValidation`
+- LeaveSpaceModal → `useSpaceLeaving`, `useConfirmationFlow`
+- SpaceButton/NavMenu → `useSpaceNavigation`, `useDragAndDrop`
+- ChannelList → `useSpacePermissions`
+
+**Messages Domain (`business/messages/`):**
+- Channel.tsx → `useMessageComposer`, `useMessageActions`
+- Message.tsx → `useMessageRendering`, `useReactions`, `useEmojiPicker`
+- MessageList.tsx → Already has hooks extracted
+
+**User Domain (`business/user/`):**
+- UserSettingsModal → `useUserSettings`, `useProfileImage`, `useThemeSettings`
+- UserProfile → `useUserProfile`, `useRoleManagement`
+
+**Search Domain (`business/search/`):**
+- SearchBar → `useSearchSuggestions`, `useKeyboardNavigation`
+- GlobalSearch → `useGlobalSearchLogic`, `useSearchState`
+- SearchResults → `useResultsVirtualization`, `useSearchNavigation`
+
+**Conversations Domain (`business/conversations/`):**
+- NewDirectMessageModal → `useDirectMessageCreation`
+- DirectMessageContactsList → `useConversationPolling`
+- EmptyDirectMessage → `useShowHomeScreen`, `useConversationsData`
+
+**Auth Domain (`business/auth/`):**
+- Onboarding → `useRegistrationFlow`, `useProfileSetup`
+- Login → `useAuthentication`, `usePasskeyFlow`
+
+**UI Domain (`business/ui/`):**
+- File upload components → `useFileUpload`
+- ClickToCopyContent → `useCopyToClipboard`, `useTooltipInteraction`
+- SpaceIcon → `useImageLoading`
+- AccentColorSwitcher → `useAccentColor`
+- Drag/drop components → `useDragAndDrop`
+
 ### Guidelines for Business Logic Extraction
 
 #### 1. **Domain-Based Organization**
-Group hooks by business domain (chat, spaces, auth) rather than technical concerns.
+Group hooks by business domain (spaces, messages, auth) to match existing queries structure.
 
 #### 2. **Naming Conventions**
 - `useXxxLogic.ts` - Main business logic for a domain
