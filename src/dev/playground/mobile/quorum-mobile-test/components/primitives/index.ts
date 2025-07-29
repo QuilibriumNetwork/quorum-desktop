@@ -4,7 +4,9 @@ export { OverlayBackdrop } from './OverlayBackdrop';
 export { FlexRow } from './FlexRow';
 export { FlexBetween } from './FlexBetween';
 export { FlexCenter } from './FlexCenter';
+export { FlexColumn } from './FlexColumn';
 export { ResponsiveContainer } from './ResponsiveContainer';
+export { Container } from './Container';
 
 // UI Primitives
 export { default as Button } from './Button';
@@ -17,6 +19,7 @@ export { ColorSwatch } from './ColorSwatch';
 export { RadioGroup } from './RadioGroup';
 export { Tooltip } from './Tooltip';
 export { Icon } from './Icon';
+export { Text } from './Text';
 
 // Theme System
 export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
@@ -27,7 +30,9 @@ export type { OverlayBackdropProps } from './OverlayBackdrop';
 export type { FlexRowProps } from './FlexRow';
 export type { FlexBetweenProps } from './FlexBetween';
 export type { FlexCenterProps } from './FlexCenter';
+export type { FlexColumnProps } from './FlexColumn';
 export type { ResponsiveContainerProps } from './ResponsiveContainer';
+export type { ContainerProps, NativeContainerProps } from './Container';
 export type { ButtonProps } from './Button';
 export type { ModalProps } from './Modal';
 export type { InputProps, InputNativeProps } from './Input';
@@ -57,3 +62,4 @@ export type {
   IconName,
   IconSize,
 } from './Icon';
+export type { TextProps, NativeTextProps } from './Text';
