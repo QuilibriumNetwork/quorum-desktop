@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import {
   ModalContainer,
   OverlayBackdrop,
+  Container,
   FlexRow,
+  FlexColumn,
   FlexBetween,
   FlexCenter,
   ResponsiveContainer,
@@ -16,6 +18,7 @@ import {
   RadioGroup,
   Tooltip,
   Icon,
+  Text,
 } from '../../../components/primitives';
 import ThemeRadioGroup from '../../../components/ThemeRadioGroup';
 import AccentColorSwitcher from '../../../components/AccentColorSwitcher';
@@ -78,8 +81,10 @@ export const PrimitivesPlayground: React.FC = () => {
   const navigationItems = [
     { id: 'modalcontainer', label: 'ModalContainer' },
     { id: 'overlaybackdrop', label: 'OverlayBackdrop' },
+    { id: 'container-primitive', label: 'Container' },
     { id: 'flex-primitives', label: 'Flex Primitives' },
     { id: 'responsivecontainer', label: 'ResponsiveContainer' },
+    { id: 'text-primitive', label: 'Text' },
     { id: 'button-primitive', label: 'Button' },
     { id: 'modal-primitive', label: 'Modal' },
     { id: 'input-primitive', label: 'Input' },
@@ -275,6 +280,151 @@ export const PrimitivesPlayground: React.FC = () => {
             </OverlayBackdrop>
           </section>
 
+          {/* Section: Container Primitive */}
+          <section
+            id="container-primitive"
+            className="border border-default rounded-lg p-6 space-y-4"
+          >
+            <h2 className="text-xl font-semibold text-strong">Container</h2>
+            <p className="text-subtle">
+              Flexible container primitive with width, padding, margin, and background options
+            </p>
+
+            <div className="space-y-6">
+              {/* Basic Container Examples */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Basic Containers</h3>
+                
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-subtle mb-2">Container with padding:</p>
+                    <Container padding="md" backgroundColor="var(--accent-100)">
+                      <Text>Container with medium padding</Text>
+                    </Container>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-subtle mb-2">Container with margin and full width:</p>
+                    <Container 
+                      width="full" 
+                      margin="sm" 
+                      padding="lg" 
+                      backgroundColor="var(--surface-3)"
+                    >
+                      <Text>Full width container with margin and large padding</Text>
+                    </Container>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-subtle mb-2">Container with max width:</p>
+                    <Container 
+                      width="full"
+                      maxWidth="md" 
+                      padding="md" 
+                      backgroundColor="var(--accent-50)"
+                      className="mx-auto"
+                    >
+                      <Text>Container with max-width md (768px)</Text>
+                    </Container>
+                  </div>
+                </div>
+              </div>
+
+              {/* Interactive Containers */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Interactive Containers</h3>
+                
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-subtle mb-2">Clickable Container:</p>
+                    <Container 
+                      padding="md" 
+                      backgroundColor="var(--surface-3)"
+                      onClick={() => alert('Container clicked!')}
+                      className="cursor-pointer hover:bg-surface-4 transition-colors"
+                    >
+                      <Text>Click this container!</Text>
+                    </Container>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-subtle mb-2">Container with hover effects:</p>
+                    <Container 
+                      padding="lg" 
+                      backgroundColor="var(--accent-100)"
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-200)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-100)'}
+                      className="transition-all duration-200"
+                    >
+                      <Text>Hover over this container to see color change</Text>
+                    </Container>
+                  </div>
+                </div>
+              </div>
+
+              {/* Nested Containers */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Nested Containers</h3>
+                
+                <Container 
+                  padding="xl" 
+                  backgroundColor="var(--surface-2)"
+                  className="space-y-4"
+                >
+                  <Text weight="semibold">Parent Container (XL padding)</Text>
+                  
+                  <Container 
+                    padding="md" 
+                    margin="sm"
+                    backgroundColor="var(--surface-3)"
+                  >
+                    <Text>Child Container 1 (MD padding, SM margin)</Text>
+                  </Container>
+
+                  <Container 
+                    padding="sm" 
+                    margin="md"
+                    backgroundColor="var(--accent-50)"
+                  >
+                    <Text>Child Container 2 (SM padding, MD margin)</Text>
+                  </Container>
+
+                  <FlexRow gap="md">
+                    <Container 
+                      padding="sm" 
+                      backgroundColor="var(--surface-3)"
+                      className="flex-1"
+                    >
+                      <Text size="sm">Flex item 1</Text>
+                    </Container>
+                    <Container 
+                      padding="sm" 
+                      backgroundColor="var(--surface-3)"
+                      className="flex-1"
+                    >
+                      <Text size="sm">Flex item 2</Text>
+                    </Container>
+                  </FlexRow>
+                </Container>
+              </div>
+            </div>
+
+            {/* Mobile Testing Notes */}
+            <div className="p-4 bg-surface-1 rounded-lg">
+              <h4 className="font-semibold text-strong mb-2">
+                📱 Mobile Testing Notes
+              </h4>
+              <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
+                <li>Web: Uses div with CSS classes for styling</li>
+                <li>Mobile: Uses View with StyleSheet for React Native</li>
+                <li>TouchableOpacity wrapper when onPress is provided</li>
+                <li>Padding/margin values map to consistent spacing scale</li>
+                <li>Width and maxWidth props work across both platforms</li>
+                <li>Essential building block for layouts</li>
+              </ul>
+            </div>
+          </section>
+
           {/* Section: Flex Primitives */}
           <section
             id="flex-primitives"
@@ -419,6 +569,73 @@ export const PrimitivesPlayground: React.FC = () => {
                 </FlexCenter>
               </div>
             </div>
+
+            {/* FlexColumn Examples */}
+            <div className="space-y-3">
+              <h3 className="text-lg font-medium text-strong">FlexColumn</h3>
+
+              <div className="space-y-2">
+                <p className="text-sm text-subtle">Basic column with gap:</p>
+                <FlexColumn gap="md" className="p-4 bg-surface-3 rounded-xl">
+                  <Button className="w-full" onClick={() => {}}>
+                    Item 1
+                  </Button>
+                  <Button className="w-full" onClick={() => {}}>
+                    Item 2
+                  </Button>
+                  <Button className="w-full" onClick={() => {}}>
+                    Item 3
+                  </Button>
+                </FlexColumn>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-sm text-subtle">
+                  Column with different alignments:
+                </p>
+                <FlexColumn
+                  align="center"
+                  gap="lg"
+                  className="p-4 bg-surface-3 rounded-xl"
+                >
+                  <Text>Centered items</Text>
+                  <Button className="w-auto" onClick={() => {}}>
+                    Centered Button
+                  </Button>
+                  <Text size="sm" variant="subtle">All items centered</Text>
+                </FlexColumn>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-sm text-subtle">Column with justify-between:</p>
+                <FlexColumn
+                  justify="between"
+                  className="p-4 bg-surface-3 rounded-xl h-48"
+                >
+                  <Text>Top item</Text>
+                  <Text>Middle gets pushed apart</Text>
+                  <Button className="w-auto" onClick={() => {}}>
+                    Bottom item
+                  </Button>
+                </FlexColumn>
+              </div>
+
+              <div className="space-y-2">
+                <p className="text-sm text-subtle">Wrapping column (rare use case):</p>
+                <FlexColumn
+                  gap="sm"
+                  wrap
+                  className="p-4 bg-surface-3 rounded-xl h-32"
+                >
+                  <span className="px-3 py-1 bg-accent-100 rounded">Tag 1</span>
+                  <span className="px-3 py-1 bg-accent-100 rounded">Tag 2</span>
+                  <span className="px-3 py-1 bg-accent-100 rounded">Tag 3</span>
+                  <span className="px-3 py-1 bg-accent-100 rounded">Tag 4</span>
+                  <span className="px-3 py-1 bg-accent-100 rounded">Tag 5</span>
+                  <span className="px-3 py-1 bg-accent-100 rounded">Tag 6</span>
+                </FlexColumn>
+              </div>
+            </div>
           </section>
 
           {/* Section: ResponsiveContainer */}
@@ -518,6 +735,183 @@ export const PrimitivesPlayground: React.FC = () => {
                   </ul>
                 </div>
               </div>
+            </div>
+          </section>
+
+          {/* Section: Text Primitive */}
+          <section
+            id="text-primitive"
+            className="border border-default rounded-lg p-6 space-y-4"
+          >
+            <h2 className="text-xl font-semibold text-strong">Text</h2>
+            <p className="text-subtle">
+              Essential text component for React Native compatibility with variants, sizes, and weights
+            </p>
+
+            <div className="space-y-6">
+              {/* Text Variants */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Text Variants</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <Text variant="default">Default variant - Regular text for content</Text>
+                  </div>
+                  
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <Text variant="strong">Strong variant - Important emphasis</Text>
+                  </div>
+                  
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <Text variant="subtle">Subtle variant - Secondary information</Text>
+                  </div>
+                  
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <Text variant="muted">Muted variant - Less important details</Text>
+                  </div>
+                  
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <Text variant="error">Error variant - Error messages</Text>
+                  </div>
+                  
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <Text variant="success">Success variant - Success messages</Text>
+                  </div>
+                  
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <Text variant="warning">Warning variant - Warning messages</Text>
+                  </div>
+                </div>
+              </div>
+
+              {/* Text Sizes and Weights */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <h3 className="text-lg font-medium text-strong">Text Sizes</h3>
+                  
+                  <div className="p-4 bg-surface-3 rounded-xl space-y-2">
+                    <div><Text size="xs">Extra small text (xs) - 12px</Text></div>
+                    <div><Text size="sm">Small text (sm) - 14px</Text></div>
+                    <div><Text size="base">Base text (base) - 16px default</Text></div>
+                    <div><Text size="lg">Large text (lg) - 18px</Text></div>
+                    <div><Text size="xl">Extra large text (xl) - 20px</Text></div>
+                    <div><Text size="2xl">2X large text (2xl) - 24px</Text></div>
+                    <div><Text size="3xl">3X large text (3xl) - 30px</Text></div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h3 className="text-lg font-medium text-strong">Text Weights</h3>
+                  
+                  <div className="p-4 bg-surface-3 rounded-xl space-y-2">
+                    <div><Text weight="normal">Normal weight (400) - Default body text</Text></div>
+                    <div><Text weight="medium">Medium weight (500) - Slightly emphasized</Text></div>
+                    <div><Text weight="semibold">Semibold weight (600) - Headings</Text></div>
+                    <div><Text weight="bold">Bold weight (700) - Strong emphasis</Text></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Text Alignment & Interaction */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <h4 className="text-md font-medium text-strong">Text Alignment</h4>
+                  
+                  <div className="space-y-2">
+                    <div className="p-4 bg-surface-3 rounded-xl">
+                      <div style={{ textAlign: 'left' }}>
+                        <Text align="left">Left aligned text (default)</Text>
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 bg-surface-3 rounded-xl">
+                      <div style={{ textAlign: 'center' }}>
+                        <Text align="center">Center aligned text</Text>
+                      </div>
+                    </div>
+                    
+                    <div className="p-4 bg-surface-3 rounded-xl">
+                      <div style={{ textAlign: 'right' }}>
+                        <Text align="right">Right aligned text</Text>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="text-md font-medium text-strong">Interactive Text</h4>
+                  
+                  <div className="space-y-2">
+                    <div className="p-4 bg-surface-3 rounded-xl">
+                      <Text 
+                        onClick={() => alert('Text clicked!')}
+                        className="cursor-pointer hover:underline"
+                      >
+                        Click this text to trigger an action
+                      </Text>
+                    </div>
+                    
+                    <div className="p-4 bg-surface-3 rounded-xl">
+                      <Text 
+                        color="var(--accent)"
+                        weight="medium"
+                        onClick={() => alert('Link clicked!')}
+                        className="cursor-pointer hover:underline"
+                      >
+                        Custom blue link-style text
+                      </Text>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Combined Examples */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Combined Properties</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <div>
+                      <Text size="2xl" weight="bold" variant="strong">
+                        Large Bold Title
+                      </Text>
+                    </div>
+                    <div className="mt-2">
+                      <Text size="sm" variant="subtle">
+                        Subtitle with smaller text
+                      </Text>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <div style={{ textAlign: 'center' }}>
+                      <Text size="lg" weight="semibold" align="center">
+                        Centered Heading
+                      </Text>
+                    </div>
+                    <div style={{ textAlign: 'center' }} className="mt-2">
+                      <Text variant="default" align="center">
+                        Centered paragraph text below
+                      </Text>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* React Native Critical Info */}
+            <div className="p-4 bg-warning/10 border border-warning/20 rounded-lg">
+              <h4 className="font-semibold text-strong mb-2">
+                ⚠️ Critical for React Native
+              </h4>
+              <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
+                <li>ALL text must be wrapped in Text components for React Native</li>
+                <li>Raw text in div/View components will crash mobile apps</li>
+                <li>Use Text instead of span, p, h1-h6 tags</li>
+                <li>The `as` prop on web allows semantic HTML elements</li>
+                <li>Text components can be nested for styling</li>
+                <li>Essential for cross-platform typography consistency</li>
+              </ul>
             </div>
           </section>
 

@@ -9,7 +9,7 @@ src/dev/playground/
 ├── web/                      # Web playground for testing primitives in browser
 │   └── PrimitivesPlayground.tsx  # Web playground component
 └── mobile/                   # Mobile playground for React Native testing
-    └── quorum-mobile-test/   # React Native test environment
+                              # React Native test environment
 ```
 
 ## Build Configuration
@@ -70,7 +70,7 @@ When testing primitives:
 
 ### Mobile Test Environment
 
-**Path**: `src/playground/mobile/quorum-mobile-test/`  
+**Path**: `src/dev/playground/mobile/`  
 **Tool**: Expo Go app with tunnel mode  
 **Status**: Fully functional for primitive testing
 
@@ -83,7 +83,7 @@ When testing primitives:
 
 1. **Navigate to mobile test directory**:
    ```bash
-   cd src/playground/mobile/quorum-mobile-test
+   cd src/dev/playground/mobile
    ```
 
 2. **Start with tunnel mode** (required for WSL2):
@@ -195,7 +195,7 @@ When testing primitives:
 ### What Gets Synced
 
 - **Main App**: `src/components/primitives/` 
-- **Mobile Playground**: `src/playground/mobile/quorum-mobile-test/components/primitives/`
+- **Mobile Playground**: `src/dev/playground/mobile/components/primitives/`
 - **Web Playground**: No sync needed - imports directly from main app
 
 ### Sync Status Checking
@@ -417,4 +417,4 @@ yarn playground:sync --to-playground Button --force
 
 ---
 
-_Last updated: 2025-07-27 18:45 UTC_
+_Last updated: 2025-07-29 18:30 UTC_

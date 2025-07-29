@@ -5,7 +5,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 // Import our primitives
 import { ModalContainer } from '../components/primitives/ModalContainer';
 import { OverlayBackdrop } from '../components/primitives/OverlayBackdrop';
+import { Container } from '../components/primitives/Container';
 import { FlexRow } from '../components/primitives/FlexRow';
+import { FlexColumn } from '../components/primitives/FlexColumn';
 import { FlexBetween } from '../components/primitives/FlexBetween';
 import { FlexCenter } from '../components/primitives/FlexCenter';
 import { ResponsiveContainer } from '../components/primitives/ResponsiveContainer';
@@ -29,9 +31,9 @@ export const PrimitivesTestScreen: React.FC = () => {
         contentContainerStyle={styles.content}
       >
         <View style={styles.header}>
-          <Text style={styles.title}>Mobile Primitives Test</Text>
+          <Text style={styles.title}>Layout Primitives Test</Text>
           <Text style={styles.subtitle}>
-            Testing React Native implementations of cross-platform primitives
+            Testing Container, Flex components, and ResponsiveContainer
           </Text>
         </View>
 
@@ -85,6 +87,43 @@ export const PrimitivesTestScreen: React.FC = () => {
           </View>
         </View>
 
+        {/* Container Primitive Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Container Primitive</Text>
+
+          <View style={styles.testGroup}>
+            <Text style={styles.testLabel}>Container with padding:</Text>
+            <Container padding="md" backgroundColor="#e3f2fd" style={styles.containerDemo}>
+              <Text>Container with medium padding</Text>
+            </Container>
+          </View>
+
+          <View style={styles.testGroup}>
+            <Text style={styles.testLabel}>Container with margin and width:</Text>
+            <Container 
+              width="full" 
+              margin="sm" 
+              padding="lg" 
+              backgroundColor="#f3e5f5"
+              style={styles.containerDemo}
+            >
+              <Text>Full width container with margin</Text>
+            </Container>
+          </View>
+
+          <View style={styles.testGroup}>
+            <Text style={styles.testLabel}>Touchable Container:</Text>
+            <Container 
+              padding="md" 
+              backgroundColor="#e8f5e9"
+              onPress={() => console.log('Container pressed!')}
+              style={styles.containerDemo}
+            >
+              <Text>Tap this container!</Text>
+            </Container>
+          </View>
+        </View>
+
         {/* Flex Primitives Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Flex Primitives</Text>
@@ -119,6 +158,32 @@ export const PrimitivesTestScreen: React.FC = () => {
             <FlexCenter style={[styles.flexDemo, styles.centerDemo]}>
               <Text style={styles.flexText}>Centered Content</Text>
             </FlexCenter>
+          </View>
+
+          <View style={styles.testGroup}>
+            <Text style={styles.testLabel}>FlexColumn with gap:</Text>
+            <FlexColumn gap="md" style={styles.flexDemo}>
+              <View style={styles.flexItem}>
+                <Text>Item 1</Text>
+              </View>
+              <View style={styles.flexItem}>
+                <Text>Item 2</Text>
+              </View>
+              <View style={styles.flexItem}>
+                <Text>Item 3</Text>
+              </View>
+            </FlexColumn>
+          </View>
+
+          <View style={styles.testGroup}>
+            <Text style={styles.testLabel}>FlexColumn with alignment:</Text>
+            <FlexColumn gap="sm" align="center" style={[styles.flexDemo, { minHeight: 120 }]}>
+              <Text style={styles.flexText}>Centered items</Text>
+              <Button type="primary" size="small" onClick={() => {}}>
+                Button
+              </Button>
+              <Text style={styles.flexText}>In column</Text>
+            </FlexColumn>
           </View>
         </View>
 
@@ -320,6 +385,9 @@ const styles = StyleSheet.create({
   flexText: {
     color: '#333',
     fontSize: 14,
+  },
+  containerDemo: {
+    borderRadius: 8,
   },
   infoBox: {
     backgroundColor: '#fff3cd',

@@ -26,10 +26,10 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
   const primitives: PrimitiveItem[] = [
     {
       id: 'basic',
-      title: 'Basic React Native Test',
+      title: 'Layout',
       description:
-        'Verify React Native is working with basic layouts and components',
-      emoji: '🚀',
+        'Container, FlexRow, FlexColumn, FlexBetween, FlexCenter, and ResponsiveContainer',
+      emoji: '📐',
       onPress: () => onSelectPrimitive('basic'),
     },
     {
@@ -103,6 +103,13 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
       description: 'Cross-platform icon system using FontAwesome',
       emoji: '🎯',
       onPress: () => onSelectPrimitive('icon'),
+    },
+    {
+      id: 'text',
+      title: 'Text',
+      description: 'Essential text component with variants, sizes, and weights',
+      emoji: '✏️',
+      onPress: () => onSelectPrimitive('text'),
     },
   ];
 

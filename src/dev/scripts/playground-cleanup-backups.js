@@ -11,7 +11,7 @@ const projectRoot = path.resolve(__dirname, '../../..');
 // Define paths
 // Note: Only mobile playground needs sync - web playground imports directly from main app
 const MAIN_PRIMITIVES_PATH = path.join(projectRoot, 'src/components/primitives');
-const MOBILE_PLAYGROUND_PATH = path.join(projectRoot, 'src/dev/playground/mobile/quorum-mobile-test/components/primitives');
+const MOBILE_PLAYGROUND_PATH = path.join(projectRoot, 'src/dev/playground/mobile/components/primitives');
 
 // Colors for console output
 const colors = {

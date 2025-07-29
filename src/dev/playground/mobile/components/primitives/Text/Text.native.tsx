@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text as RNText, TextStyle, TouchableOpacity } from 'react-native';
 import { NativeTextProps } from './types';
+import { useCrossPlatformTheme } from '../theme/ThemeProvider';
 
 const sizeMap = {
   xs: 12,
@@ -25,17 +26,6 @@ const alignMap = {
   right: 'right',
 };
 
-// These would map to your theme colors
-const variantColorMap = {
-  default: '#000000', // This should come from your theme
-  strong: '#000000',
-  subtle: '#666666',
-  muted: '#999999',
-  error: '#dc2626',
-  success: '#16a34a',
-  warning: '#ca8a04',
-};
-
 export const Text: React.FC<NativeTextProps> = ({
   children,
   variant = 'default',
@@ -50,11 +40,34 @@ export const Text: React.FC<NativeTextProps> = ({
   accessibilityLabel,
   testId,
 }) => {
+  const theme = useCrossPlatformTheme();
+  const colors = theme.colors;
+
+  // Map variants to theme colors
+  const getVariantColor = () => {
+    switch (variant) {
+      case 'strong':
+        return colors.text.strong;
+      case 'subtle':
+        return colors.text.subtle;
+      case 'muted':
+        return colors.text.muted;
+      case 'error':
+        return colors.utilities.danger;
+      case 'success':
+        return colors.utilities.success;
+      case 'warning':
+        return colors.utilities.warning;
+      default:
+        return colors.text.main;
+    }
+  };
+
   const textStyle: TextStyle = {
     fontSize: sizeMap[size],
     fontWeight: weightMap[weight] as any,
     textAlign: alignMap[align] as any,
-    color: color || variantColorMap[variant],
+    color: color || getVariantColor(),
   };
 
   const textContent = (
