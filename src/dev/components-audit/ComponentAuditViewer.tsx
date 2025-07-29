@@ -1,5 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import auditData from './audit.json';
+import {
+  Input,
+  Select,
+  Button,
+  FlexRow,
+  FlexColumn,
+  Container,
+  Text
+} from '../../components/primitives';
+import type { SelectOption } from '../../components/primitives';
 
 type AuditStatus = 'todo' | 'in_progress' | 'done' | 'ready' | 'partial' | 'unknown';
 type ComponentCategory = 'shared' | 'platform_specific' | 'complex_refactor' | 'unknown';
@@ -59,9 +69,9 @@ const StatusBadge: React.FC<{ status: AuditStatus }> = ({ status }) => {
   };
 
   return (
-    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusClass()}`}>
+    <Text className={`px-2 py-1 rounded text-xs font-medium ${getStatusClass()}`}>
       {status}
-    </span>
+    </Text>
   );
 };
 
@@ -93,9 +103,9 @@ const CategoryBadge: React.FC<{ category: ComponentCategory }> = ({ category }) 
   };
 
   return (
-    <span className={`px-2 py-1 rounded text-xs font-medium ${getCategoryClass()}`}>
+    <Text className={`px-2 py-1 rounded text-xs font-medium ${getCategoryClass()}`}>
       {getCategoryLabel()}
-    </span>
+    </Text>
   );
 };
 
@@ -127,9 +137,9 @@ const UsageBadge: React.FC<{ used: string }> = ({ used }) => {
   };
 
   return (
-    <span className={`px-2 py-1 rounded text-xs font-medium ${getUsageClass()}`}>
+    <Text className={`px-2 py-1 rounded text-xs font-medium ${getUsageClass()}`}>
       {getUsageLabel()}
-    </span>
+    </Text>
   );
 };
 
@@ -137,7 +147,9 @@ export const ComponentAuditViewer: React.FC = () => {
   const data = auditData as AuditData;
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<ComponentCategory | 'all'>('all');
-  const [statusFilter, setStatusFilter] = useState<AuditStatus | 'all'>('all');
+  const [primitivesFilter, setPrimitivesFilter] = useState<AuditStatus | 'all'>('all');
+  const [logicFilter, setLogicFilter] = useState<AuditStatus | 'all'>('all');
+  const [nativeFilter, setNativeFilter] = useState<AuditStatus | 'all'>('all');
   const [usageFilter, setUsageFilter] = useState<'yes' | 'no' | 'unknown' | 'all'>('all');
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
@@ -150,16 +162,15 @@ export const ComponentAuditViewer: React.FC = () => {
       
       const matchesCategory = categoryFilter === 'all' || component.category === categoryFilter;
       
-      const matchesStatus = statusFilter === 'all' || 
-        component.primitives === statusFilter ||
-        component.logic_extraction === statusFilter ||
-        component.native === statusFilter;
+      const matchesPrimitives = primitivesFilter === 'all' || component.primitives === primitivesFilter;
+      const matchesLogic = logicFilter === 'all' || component.logic_extraction === logicFilter;
+      const matchesNative = nativeFilter === 'all' || component.native === nativeFilter;
       
       const matchesUsage = usageFilter === 'all' || (component as any).used === usageFilter;
       
-      return matchesSearch && matchesCategory && matchesStatus && matchesUsage;
+      return matchesSearch && matchesCategory && matchesPrimitives && matchesLogic && matchesNative && matchesUsage;
     });
-  }, [data.components, searchTerm, categoryFilter, statusFilter, usageFilter]);
+  }, [data.components, searchTerm, categoryFilter, primitivesFilter, logicFilter, nativeFilter, usageFilter]);
 
   const toggleRowExpansion = (componentKey: string) => {
     const newExpanded = new Set(expandedRows);
@@ -183,22 +194,22 @@ export const ComponentAuditViewer: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-app overflow-y-auto">
-      <div className="p-6 max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6 text-strong">Component Audit Dashboard</h1>
+    <Container className="min-h-screen bg-app overflow-y-auto">
+      <Container padding="lg" className="mx-auto max-w-screen-2xl">
+        <Text as="h1" variant="strong" size="3xl" weight="bold" className="my-6">Component Audit Dashboard</Text>
       
       {/* Stats Dashboard */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-surface-1 rounded-lg p-4 border border-default">
-          <h3 className="text-sm font-medium text-subtle mb-2">Total Components</h3>
-          <p className="text-2xl font-bold text-strong">{data.stats.total}</p>
+          <Text as="h3" variant="subtle" size="sm" weight="medium" className="mb-2">Total Components</Text>
+          <Text variant="strong" size="2xl" weight="bold">{data.stats.total}</Text>
         </div>
         
         <div className="bg-surface-1 rounded-lg p-4 border border-default">
-          <h3 className="text-sm font-medium text-subtle mb-2">Primitives Migrated</h3>
-          <p className="text-2xl font-bold text-strong">
+          <Text as="h3" variant="subtle" size="sm" weight="medium" className="mb-2">Primitives Migrated</Text>
+          <Text variant="strong" size="2xl" weight="bold">
             {data.stats.primitives_done}/{data.stats.total}
-          </p>
+          </Text>
           <div className="mt-2 bg-surface-3 rounded-full h-2 overflow-hidden">
             <div 
               className="bg-accent h-full transition-all duration-300"
@@ -208,10 +219,10 @@ export const ComponentAuditViewer: React.FC = () => {
         </div>
         
         <div className="bg-surface-1 rounded-lg p-4 border border-default">
-          <h3 className="text-sm font-medium text-subtle mb-2">Logic Extracted</h3>
-          <p className="text-2xl font-bold text-strong">
+          <Text as="h3" variant="subtle" size="sm" weight="medium" className="mb-2">Logic Extracted</Text>
+          <Text variant="strong" size="2xl" weight="bold">
             {data.stats.logic_extraction_done}/{data.stats.total}
-          </p>
+          </Text>
           <div className="mt-2 bg-surface-3 rounded-full h-2 overflow-hidden">
             <div 
               className="bg-success h-full transition-all duration-300"
@@ -221,10 +232,10 @@ export const ComponentAuditViewer: React.FC = () => {
         </div>
         
         <div className="bg-surface-1 rounded-lg p-4 border border-default">
-          <h3 className="text-sm font-medium text-subtle mb-2">Native Ready</h3>
-          <p className="text-2xl font-bold text-strong">
+          <Text as="h3" variant="subtle" size="sm" weight="medium" className="mb-2">Native Ready</Text>
+          <Text variant="strong" size="2xl" weight="bold">
             {data.stats.native_ready}/{data.stats.total}
-          </p>
+          </Text>
           <div className="mt-2 bg-surface-3 rounded-full h-2 overflow-hidden">
             <div 
               className="bg-info h-full transition-all duration-300"
@@ -234,8 +245,8 @@ export const ComponentAuditViewer: React.FC = () => {
         </div>
       </div>
 
-      {/* Category Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      {/* Category & Usage Breakdown */}
+      <div className="grid grid-cols-1 md:grid-cols-3 2xl:grid-cols-6 gap-4 mb-8">
         <div className="bg-surface-1 rounded-lg p-4 border border-default">
           <h3 className="text-sm font-medium text-subtle mb-2">Shared Components</h3>
           <p className="text-xl font-bold text-strong">{data.stats.by_category.shared}</p>
@@ -248,10 +259,6 @@ export const ComponentAuditViewer: React.FC = () => {
           <h3 className="text-sm font-medium text-subtle mb-2">Complex Refactor</h3>
           <p className="text-xl font-bold text-strong">{data.stats.by_category.complex_refactor}</p>
         </div>
-      </div>
-
-      {/* Usage Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div className="bg-surface-1 rounded-lg p-4 border border-default">
           <h3 className="text-sm font-medium text-subtle mb-2">Used Components</h3>
           <p className="text-xl font-bold text-success">{data.stats.by_usage?.used || 0}</p>
@@ -270,49 +277,96 @@ export const ComponentAuditViewer: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="mb-6 flex flex-wrap gap-4">
-        <input
-          type="text"
-          placeholder="Search components..."
-          className="px-4 py-2 rounded-lg bg-surface-1 border border-default text-main focus:outline-none focus:border-accent"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      <FlexRow gap="md" wrap className="mb-6">
+        <FlexColumn className="w-[250px] flex-shrink-0">
+          <Text variant="subtle" size="xs" className="mb-1">Search</Text>
+          <Input
+            type="text"
+            placeholder="Search components..."
+            variant="bordered"
+            value={searchTerm}
+            onChange={(value: string) => setSearchTerm(value)}
+          />
+        </FlexColumn>
         
-        <select
-          className="px-4 py-2 rounded-lg bg-surface-1 border border-default text-main focus:outline-none focus:border-accent"
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value as ComponentCategory | 'all')}
-        >
-          <option value="all">All Categories</option>
-          <option value="shared">Shared</option>
-          <option value="platform_specific">Platform Specific</option>
-          <option value="complex_refactor">Complex Refactor</option>
-        </select>
+        <FlexColumn className="min-w-[160px]">
+          <Text variant="subtle" size="xs" className="mb-1">Categories</Text>
+          <Select
+            variant="bordered"
+            value={categoryFilter}
+            onChange={(value: string) => setCategoryFilter(value as ComponentCategory | 'all')}
+            options={[
+              { value: 'all', label: 'All' },
+              { value: 'shared', label: 'Shared' },
+              { value: 'platform_specific', label: 'Platform Specific' },
+              { value: 'complex_refactor', label: 'Complex Refactor' }
+            ]}
+          />
+        </FlexColumn>
         
-        <select
-          className="px-4 py-2 rounded-lg bg-surface-1 border border-default text-main focus:outline-none focus:border-accent"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as AuditStatus | 'all')}
-        >
-          <option value="all">All Statuses</option>
-          <option value="todo">Todo</option>
-          <option value="in_progress">In Progress</option>
-          <option value="done">Done</option>
-          <option value="ready">Ready</option>
-        </select>
+        <FlexColumn className="min-w-[140px]">
+          <Text variant="subtle" size="xs" className="mb-1">Primitives</Text>
+          <Select
+            variant="bordered"
+            value={primitivesFilter}
+            onChange={(value: string) => setPrimitivesFilter(value as AuditStatus | 'all')}
+            options={[
+              { value: 'all', label: 'All' },
+              { value: 'todo', label: 'Todo' },
+              { value: 'in_progress', label: 'In Progress' },
+              { value: 'done', label: 'Done' },
+              { value: 'ready', label: 'Ready' }
+            ]}
+          />
+        </FlexColumn>
         
-        <select
-          className="px-4 py-2 rounded-lg bg-surface-1 border border-default text-main focus:outline-none focus:border-accent"
-          value={usageFilter}
-          onChange={(e) => setUsageFilter(e.target.value as 'yes' | 'no' | 'unknown' | 'all')}
-        >
-          <option value="all">All Usage</option>
-          <option value="yes">Used</option>
-          <option value="no">Unused</option>
-          <option value="unknown">Unknown</option>
-        </select>
-      </div>
+        <FlexColumn className="min-w-[120px]">
+          <Text variant="subtle" size="xs" className="mb-1">Logic</Text>
+          <Select
+            variant="bordered"
+            value={logicFilter}
+            onChange={(value: string) => setLogicFilter(value as AuditStatus | 'all')}
+            options={[
+              { value: 'all', label: 'All' },
+              { value: 'todo', label: 'Todo' },
+              { value: 'in_progress', label: 'In Progress' },
+              { value: 'done', label: 'Done' },
+              { value: 'ready', label: 'Ready' }
+            ]}
+          />
+        </FlexColumn>
+        
+        <FlexColumn className="min-w-[120px]">
+          <Text variant="subtle" size="xs" className="mb-1">Native</Text>
+          <Select
+            variant="bordered"
+            value={nativeFilter}
+            onChange={(value: string) => setNativeFilter(value as AuditStatus | 'all')}
+            options={[
+              { value: 'all', label: 'All' },
+              { value: 'todo', label: 'Todo' },
+              { value: 'in_progress', label: 'In Progress' },
+              { value: 'done', label: 'Done' },
+              { value: 'ready', label: 'Ready' }
+            ]}
+          />
+        </FlexColumn>
+        
+        <FlexColumn className="min-w-[120px]">
+          <Text variant="subtle" size="xs" className="mb-1">Usage</Text>
+          <Select
+            variant="bordered"
+            value={usageFilter}
+            onChange={(value: string) => setUsageFilter(value as 'yes' | 'no' | 'unknown' | 'all')}
+            options={[
+              { value: 'all', label: 'All' },
+              { value: 'yes', label: 'Used' },
+              { value: 'no', label: 'Unused' },
+              { value: 'unknown', label: 'Unknown' }
+            ]}
+          />
+        </FlexColumn>
+      </FlexRow>
 
       {/* Component Table */}
       <div className="bg-surface-1 rounded-lg border border-default overflow-hidden">
@@ -368,17 +422,19 @@ export const ComponentAuditViewer: React.FC = () => {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <button
+                    <Button
+                      type="subtle"
+                      size="small"
                       onClick={() => toggleRowExpansion(key)}
-                      className="text-accent hover:text-accent-600 text-sm font-medium"
+                      className="text-sm"
                     >
                       {expandedRows.has(key) ? 'Hide' : 'Details'}
-                    </button>
+                    </Button>
                   </td>
                 </tr>
                 
                 {expandedRows.has(key) && (
-                  <tr className="bg-surface-2/30">
+                  <tr className="bg-surface-2/30 border-b border-default">
                     <td colSpan={8} className="px-4 py-4">
                       <div className="space-y-3">
                         <div>
@@ -421,14 +477,14 @@ export const ComponentAuditViewer: React.FC = () => {
       </div>
 
         {/* Metadata Footer */}
-        <div className="mt-6 text-xs text-subtle">
+        <Container className="mt-6 text-xs text-subtle">
           <p>Audit Version: {data.metadata.audit_version}</p>
           <p>Last Updated: {data.stats.last_updated}</p>
           <p>Scan Scope: {data.metadata.scan_scope.join(', ')}</p>
-        </div>
+        </Container>
 
         {/* Back to Top Link */}
-        <div className="mt-8 flex justify-center">
+        <FlexRow justify="center" className="mt-8">
           <a
             href="#"
             onClick={(e) => {
@@ -439,8 +495,8 @@ export const ComponentAuditViewer: React.FC = () => {
           >
             Back to Top
           </a>
-        </div>
-      </div>
-    </div>
+        </FlexRow>
+      </Container>
+    </Container>
   );
 };
