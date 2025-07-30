@@ -20,7 +20,7 @@
 - [x] JoinSpaceModal.tsx
 - [x] NewDirectMessageModal.tsx
 - [x] LeaveSpaceModal.tsx
-- [ ] KickUserModal.tsx
+- [x] KickUserModal.tsx
 - [ ] ChannelEditor.tsx
 - [ ] GroupEditor.tsx
 

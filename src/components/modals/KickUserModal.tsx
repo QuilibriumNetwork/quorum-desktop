@@ -1,11 +1,6 @@
 import * as React from 'react';
-import { useParams } from 'react-router';
-import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Button, Modal } from '../primitives';
-import { useRegistration } from '../../hooks';
-import { getConfig } from '../../config/config';
-import { useMessageDB } from '../context/MessageDB';
-import { useRegistrationContext } from '../context/RegistrationPersister';
+import { Button, Modal, Container, Text, FlexRow } from '../primitives';
+import { useUserKicking } from '../../hooks';
 import { t } from '@lingui/core/macro';
 
 type KickUserModalProps = {
@@ -15,49 +10,36 @@ type KickUserModalProps = {
 };
 
 const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
-  const [kicking, setKicking] = React.useState(false);
-  const [confirmationStep, setConfirmationStep] = React.useState(0); // 0: initial, 1: awaiting confirmation
-  const { kickUser } = useMessageDB();
-  const { currentPasskeyInfo } = usePasskeysContext();
-  const { keyset } = useRegistrationContext();
-  const { data: registration } = useRegistration({
-    address: currentPasskeyInfo!.address,
-  });
-  const { spaceId } = useParams();
+  const { kicking, confirmationStep, handleKickClick, resetConfirmation } = useUserKicking();
+
+  // Reset confirmation when modal closes
+  React.useEffect(() => {
+    if (!props.visible) {
+      resetConfirmation();
+    }
+  }, [props.visible, resetConfirmation]);
 
   return (
     <Modal visible={props.visible} onClose={props.onClose} title={t`Kick User`}>
-      <div className="w-full max-w-[400px] mx-auto">
-        <div className="mb-4 text-sm text-subtle text-left max-sm:text-center">
-          {t`Use the below button to kick this user out of the Space`}
-        </div>
-        <div className="flex justify-start max-sm:justify-center">
+      <Container width="full" maxWidth="400px" margin="auto">
+        <Container margin="none" className="mb-4 text-left max-sm:text-center">
+          <Text 
+            size="sm" 
+            variant="subtle"
+          >
+            {t`Use the below button to kick this user out of the Space`}
+          </Text>
+        </Container>
+        <FlexRow className="justify-start max-sm:justify-center">
           <Button
             type="danger"
             disabled={kicking}
-            onClick={async () => {
-              if (confirmationStep === 0) {
-                setConfirmationStep(1);
-                // Reset confirmation after 5 seconds
-                setTimeout(() => setConfirmationStep(0), 5000);
-              } else {
-                setKicking(true);
-                await kickUser(
-                  spaceId!,
-                  props.kickUserAddress!,
-                  keyset.userKeyset,
-                  keyset.deviceKeyset,
-                  registration.registration!
-                );
-                setKicking(false);
-                props.onClose();
-              }
-            }}
+            onClick={() => handleKickClick(props.kickUserAddress!, props.onClose)}
           >
             {confirmationStep === 0 ? t`Kick!` : t`Click again to confirm`}
           </Button>
-        </div>
-      </div>
+        </FlexRow>
+      </Container>
     </Modal>
   );
 };

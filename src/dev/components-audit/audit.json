@@ -126,14 +126,14 @@
       "description": "Modal for kicking users from spaces with confirmation flow",
       "category": "shared",
       "used": "yes",
-      "primitives": "partial",
+      "primitives": "done",
       "web_native": "shared",
       "logic_extraction": "done",
-      "logic_needs": "extract",
-      "hooks": ["useKickUser", "useConfirmationFlow"],
-      "native": "todo",
-      "notes": "CORRECTION: Uses Modal, Button primitives BUT has raw <div> elements with Tailwind classes (max-w-[400px], flex justify-start, etc.). Needs layout primitives.",
-      "updated": "2025-07-29"
+      "logic_needs": "done",
+      "hooks": ["useUserKicking"],
+      "native": "ready",
+      "notes": "COMPLETED: Business logic extracted into useUserKicking hook with confirmation flow, timeout management, and kick user API calls. All raw HTML replaced with Container, Text, FlexRow primitives. Fully cross-platform compatible with responsive text alignment.",
+      "updated": "2025-07-30"
     },
     "UserSettingsModal.tsx": {
       "name": "UserSettingsModal",
@@ -888,9 +888,9 @@
   },
   "stats": {
     "total": 69,
-    "primitives_done": 15,
-    "logic_extraction_done": 48,
-    "native_ready": 13,
+    "primitives_done": 16,
+    "logic_extraction_done": 49,
+    "native_ready": 14,
     "by_category": {
       "shared": 43,
       "platform_specific": 21,
@@ -902,7 +902,7 @@
       "unknown": 1
     },
     "by_logic_needs": {
-      "extract": 35,
+      "extract": 34,
       "keep": 31
     },
     "last_updated": "2025-07-30"
