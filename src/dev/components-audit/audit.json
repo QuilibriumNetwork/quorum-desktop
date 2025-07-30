@@ -289,16 +289,16 @@
       "name": "Maintenance",
       "path": "src/components/Maintenance.tsx",
       "description": "Maintenance mode display with icon and message",
-      "category": "shared", 
+      "category": "platform_specific", 
       "used": "yes",
       "primitives": "todo",
-      "web_native": "shared",
+      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
-      "notes": "Simple maintenance display (<5 lines of logic). Just renders static content - no extraction needed.",
-      "updated": "2025-07-29"
+      "notes": "MOVED TO PLATFORM_SPECIFIC: Heavy Tailwind usage with raw divs throughout (flex flex-col grow, etc.). Simple maintenance display (<5 lines of logic).",
+      "updated": "2025-07-30"
     },
     "ClickToCopyContent.tsx": {
       "name": "ClickToCopyContent",
@@ -319,16 +319,16 @@
       "name": "ThemeRadioGroup",
       "path": "src/components/ThemeRadioGroup.tsx",
       "description": "Radio button group for selecting light/dark theme modes",
-      "category": "shared",
+      "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
+      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": ["useThemeSelection"],
-      "native": "ready",
-      "notes": "Theme selection logic with localStorage integration (>10 lines, reusable). Already extracted: useThemeSelection. Perfect shared example.",
-      "updated": "2025-07-29"
+      "native": "todo",
+      "notes": "MOVED TO PLATFORM_SPECIFIC: Uses Tailwind className. Theme selection logic with localStorage integration (>10 lines, reusable). Already extracted: useThemeSelection.",
+      "updated": "2025-07-30"
     },
     "ReactTooltip.tsx": {
       "name": "ReactTooltip",
@@ -409,16 +409,16 @@
       "name": "ActionMenuItem",
       "path": "src/components/message/ActionMenuItem.tsx",
       "description": "Reusable action menu item for mobile drawer actions",
-      "category": "shared",
+      "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "shared",
+      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
-      "notes": "Simple menu item with icon, label, onClick. Uses FontAwesome icon - should use Icon primitive. Simple component logic.",
-      "updated": "2025-07-29"
+      "notes": "MOVED TO PLATFORM_SPECIFIC: Uses FontAwesome (@fortawesome/react-fontawesome) and custom CSS classes (action-menu-item). Simple menu item with icon, label, onClick.",
+      "updated": "2025-07-30"
     },
     "MessageActionsDrawer.tsx": {
       "name": "MessageActionsDrawer",
@@ -439,16 +439,16 @@
       "name": "UserStatus",
       "path": "src/components/user/UserStatus.tsx",
       "description": "User status display with avatar, name, and online indicator",
-      "category": "shared",
+      "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "shared",
+      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
-      "notes": "Uses ClickToCopyContent component. Partially uses primitives. Simple status display logic - no extraction needed.",
-      "updated": "2025-07-29"
+      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports './UserStatus.scss'. Uses ClickToCopyContent component and partially uses primitives. Has SCSS dependencies.",
+      "updated": "2025-07-30"
     },
     "UserOnlineStateIndicator.tsx": {
       "name": "UserOnlineStateIndicator",
@@ -484,16 +484,16 @@
       "name": "SpaceIcon",
       "path": "src/components/navbar/SpaceIcon.tsx",
       "description": "Space icon display with image loading and tooltip",
-      "category": "shared",
+      "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "shared",
+      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": ["useImageLoading"],
       "native": "todo",
-      "notes": "Image loading logic with ArrayBuffer handling (>10 lines, reusable). Uses ReactTooltip - should migrate to Tooltip primitive.",
-      "updated": "2025-07-29"
+      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports './SpaceIcon.scss' and uses custom CSS classes (space-icon-selected). Image loading logic with ArrayBuffer handling (>10 lines, reusable). Uses ReactTooltip.",
+      "updated": "2025-07-30"
     },
     "ChannelGroup.tsx": {
       "name": "ChannelGroup",
@@ -634,31 +634,31 @@
       "name": "Onboarding",
       "path": "src/components/onboarding/Onboarding.tsx",
       "description": "User registration and onboarding flow with profile setup",
-      "category": "shared",
+      "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "shared",
+      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": ["useRegistrationFlow", "useProfileSetup", "useImageUpload"],
       "native": "todo",
-      "notes": "Complex registration logic with file upload, passkey integration (>10 lines, reusable). Uses some primitives (Input, Icon, Button).",
-      "updated": "2025-07-29"
+      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '_passkey-modal.scss' and 'react-dropzone', heavy Tailwind usage throughout. Complex registration logic with file upload, passkey integration (>10 lines, reusable).",
+      "updated": "2025-07-30"
     },
     "Login.tsx": {
       "name": "Login",
       "path": "src/components/onboarding/Login.tsx",
       "description": "User login component with passkey authentication",
-      "category": "shared",
+      "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "shared",
+      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": ["useAuthentication", "usePasskeyFlow"],
       "native": "todo",
-      "notes": "Authentication logic with passkey integration (>10 lines, reusable). Uses Button primitive. Passkey logic can be shared.",
-      "updated": "2025-07-29"
+      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '_passkey-modal.scss', heavy Tailwind usage throughout. Authentication logic with passkey integration (>10 lines, reusable). Uses Button primitive.",
+      "updated": "2025-07-30"
     },
     "MobileDrawer.tsx": {
       "name": "MobileDrawer",
@@ -709,46 +709,46 @@
       "name": "SpaceEditor",
       "path": "src/components/channel/SpaceEditor.tsx",
       "description": "Complex space settings modal with permissions, roles, and file upload",
-      "category": "shared",
+      "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
+      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": ["useSpaceManagement", "usePermissions", "useRoleManagement", "useFileUpload"],
-      "native": "ready",
-      "notes": "Already uses many primitives (Button, Select, Modal, Switch, Input, Icon, Tooltip)! Complex space management logic (>10 lines, reusable). Ready for mobile.",
-      "updated": "2025-07-29"
+      "native": "todo",
+      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '../../styles/_modal_common.scss'. Uses many primitives but has SCSS dependencies. Business logic extraction already done.",
+      "updated": "2025-07-30"
     },
     "ChannelEditor.tsx": {
       "name": "ChannelEditor",
       "path": "src/components/channel/ChannelEditor.tsx",
       "description": "Channel creation and editing modal",
-      "category": "shared",
+      "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
+      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": ["useChannelManagement"],
-      "native": "ready",
-      "notes": "Already uses primitives (Button, Modal, Input, Icon)! Channel create/edit logic (>10 lines, reusable). Ready for mobile.",
-      "updated": "2025-07-29"
+      "native": "todo",
+      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '../../styles/_modal_common.scss'. Uses primitives but has SCSS dependencies. Channel create/edit logic (>10 lines, reusable).",
+      "updated": "2025-07-30"
     },
     "GroupEditor.tsx": {
       "name": "GroupEditor",
       "path": "src/components/channel/GroupEditor.tsx",
       "description": "Channel group creation and editing modal",
-      "category": "shared",
+      "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
+      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": ["useGroupManagement"],
-      "native": "ready",
-      "notes": "Already uses primitives (Button, Modal, Input, Icon)! Group create/edit logic with deletion flow (>10 lines, reusable). Ready for mobile.",
-      "updated": "2025-07-29"
+      "native": "todo",
+      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '../../styles/_modal_common.scss'. Uses primitives but has SCSS dependencies. Group create/edit logic with deletion flow (>10 lines, reusable).",
+      "updated": "2025-07-30"
     },
     "EmojiPickerDrawer.tsx": {
       "name": "EmojiPickerDrawer",
@@ -892,8 +892,8 @@
     "logic_extraction_done": 49,
     "native_ready": 14,
     "by_category": {
-      "shared": 25,
-      "platform_specific": 39,
+      "shared": 15,
+      "platform_specific": 49,
       "complex_refactor": 5
     },
     "by_usage": {
@@ -905,7 +905,7 @@
       "extract": 34,
       "keep": 31
     },
-    "analysis_notes": "MAJOR UPDATE: Moved 18 components from 'shared' to 'platform_specific' after analyzing CSS/SCSS dependencies. Components with custom styling, web-specific libraries, or complex UI patterns are easier to build separately for web/native than to make truly cross-platform.",
+    "analysis_notes": "MAJOR UPDATE: Moved 28 total components from 'shared' to 'platform_specific' after analyzing CSS/SCSS dependencies. Latest batches: SpaceEditor, ChannelEditor, GroupEditor, UserStatus (SCSS imports), Maintenance/ThemeRadioGroup (Tailwind), ActionMenuItem (FontAwesome), SpaceIcon (SCSS), Onboarding/Login (SCSS + react-dropzone). Components with custom styling, web-specific libraries, or complex UI patterns are easier to build separately for web/native than to make truly cross-platform.",
     "last_updated": "2025-07-30"
   },
   "metadata": {
