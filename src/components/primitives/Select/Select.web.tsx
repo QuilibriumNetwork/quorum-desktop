@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { WebSelectProps } from './types';
-import { useTheme } from '../theme';
 import { Icon } from '../Icon';
 import { isValidIconName } from '../Icon/iconMapping';
 import { t } from '@lingui/core/macro';
@@ -32,7 +31,6 @@ const Select: React.FC<WebSelectProps> = ({
   const selectRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const theme = useTheme();
 
   useEffect(() => {
     if (value !== undefined) {

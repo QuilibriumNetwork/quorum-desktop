@@ -21,8 +21,18 @@ export { Tooltip } from './Tooltip';
 export { Icon } from './Icon';
 export { Text } from './Text';
 
-// Theme System
-export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
+// Theme System - Factory Functions (Mobile Development)
+// These functions dynamically import theme components to avoid loading React hooks during module initialization
+// This fixes Brave browser hook errors while keeping mobile development capabilities ready
+export const createCrossPlatformThemeProvider = () => {
+  const { CrossPlatformThemeProvider } = require('./theme/ThemeProvider');
+  return CrossPlatformThemeProvider;
+};
+
+export const createCrossPlatformThemeHook = () => {
+  const { useCrossPlatformTheme } = require('./theme/ThemeProvider');
+  return useCrossPlatformTheme;
+};
 
 // Types
 export type { ModalContainerProps } from './ModalContainer';
