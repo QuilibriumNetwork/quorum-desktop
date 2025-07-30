@@ -22,11 +22,6 @@ export default defineConfig({
   },
   define: {
     // Define compile-time constants
-    // In production: exclude playground by default (unless INCLUDE_PLAYGROUND=true)
-    // In development: always include playground
-    __INCLUDE_PLAYGROUND_WEB__: process.env.NODE_ENV === 'development' 
-      ? true 
-      : process.env.INCLUDE_PLAYGROUND === 'true',
   },
   plugins: [
     lingui(),

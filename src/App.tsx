@@ -18,8 +18,8 @@ import DirectMessages from './components/direct/DirectMessages';
 import { Maintenance } from './components/Maintenance';
 import { RegistrationProvider } from './components/context/RegistrationPersister';
 import { ResponsiveLayoutProvider } from './components/context/ResponsiveLayoutProvider';
-// Conditionally import playground - excluded if EXCLUDE_PLAYGROUND_WEB=true
-const PrimitivesPlayground = __INCLUDE_PLAYGROUND_WEB__
+// Conditionally import playground in development mode
+const PrimitivesPlayground = process.env.NODE_ENV === 'development'
   ? React.lazy(() => import('./dev/playground/web/PrimitivesPlayground').then(m => ({ default: m.PrimitivesPlayground })))
   : null;
 
@@ -27,8 +27,10 @@ const PrimitivesPlayground = __INCLUDE_PLAYGROUND_WEB__
 const ComponentAuditViewer = process.env.NODE_ENV === 'development'
   ? React.lazy(() => import('./dev/components-audit').then(m => ({ default: m.ComponentAuditViewer })))
   : null;
+const Elements = process.env.NODE_ENV === 'development'
+  ? React.lazy(() => import('./dev/Elements'))
+  : null;
 import JoinSpaceModal from './components/modals/JoinSpaceModal';
-import Elements from './dev/Elements';
 import { DefaultImages } from './utils';
 import { i18n } from './i18n';
 import { I18nProvider } from '@lingui/react';
@@ -103,9 +105,6 @@ const App = () => {
     }
   }, [currentPasskeyInfo, passkeyRegistrationComplete, setUser, user]);
 
-  // Conditional return must come after all hooks
-  const isElementsPage = window.location.pathname === '/elements';
-  if (isElementsPage) return <Elements />;
 
   return (
     <>
@@ -211,7 +210,7 @@ const App = () => {
                             />
                           }
                         />
-                        {__INCLUDE_PLAYGROUND_WEB__ && PrimitivesPlayground && (
+                        {process.env.NODE_ENV === 'development' && PrimitivesPlayground && (
                           <Route
                             path="/playground"
                             element={
@@ -234,6 +233,16 @@ const App = () => {
                             element={
                               <Suspense fallback={<div>Loading audit viewer...</div>}>
                                 <ComponentAuditViewer />
+                              </Suspense>
+                            }
+                          />
+                        )}
+                        {process.env.NODE_ENV === 'development' && Elements && (
+                          <Route
+                            path="/elements"
+                            element={
+                              <Suspense fallback={<div>Loading Elements...</div>}>
+                                <Elements />
                               </Suspense>
                             }
                           />
