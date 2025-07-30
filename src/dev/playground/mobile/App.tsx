@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { CrossPlatformThemeProvider } from './components/primitives/theme';
 import { PrimitiveListScreen } from './screens/PrimitiveListScreen';
 import { PrimitivesTestScreen } from './screens/PrimitivesTestScreen';
 import { TextTestScreen } from './screens/TextTestScreen';
@@ -90,11 +91,13 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <View style={styles.appContainer}>
-        {renderBackButton()}
-        {renderScreen()}
-        <StatusBar style="auto" />
-      </View>
+      <CrossPlatformThemeProvider disableWebFeatures={true}>
+        <View style={styles.appContainer}>
+          {renderBackButton()}
+          {renderScreen()}
+          <StatusBar style="auto" />
+        </View>
+      </CrossPlatformThemeProvider>
     </SafeAreaProvider>
   );
 }

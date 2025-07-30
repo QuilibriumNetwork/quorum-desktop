@@ -21,7 +21,7 @@ export { Tooltip } from './Tooltip';
 export { Icon } from './Icon';
 export { Text } from './Text';
 
-// Theme System
+// Theme System - Environment-aware exports
 export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
 
 // Types

@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import { NativeSelectProps } from './types';
 import { useTheme } from '../theme';
-import { getColors } from '../theme/colors';
 import { Icon } from '../Icon';
 import { isValidIconName } from '../Icon/iconMapping';
 // Playground-specific: Skip Lingui for demo purposes
@@ -36,8 +35,8 @@ const Select: React.FC<NativeSelectProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || '');
-  const theme = useTheme();
-  const colors = getColors(theme.mode, theme.accentColor);
+  
+  const { colors } = useTheme();
 
   useEffect(() => {
     if (value !== undefined) {

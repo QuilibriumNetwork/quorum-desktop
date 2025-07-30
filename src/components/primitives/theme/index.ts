@@ -1,24 +1,19 @@
+import { lazy } from 'react';
+
 // Static color exports (safe - no hooks)
 export { getColors, getColor, themeColors, accentColors } from './colors';
 export type { Theme, AccentColor } from './colors';
 
-// Factory functions for theme providers (prevents hook loading during module init)
-export const createThemeProvider = () => {
-  const { ThemeProvider } = require('./ThemeProvider');
-  return ThemeProvider;
-};
+// Environment-aware theme providers
+// For web: lazy-loaded to prevent hook loading during module init
+// For React Native: direct exports work fine
+export const CrossPlatformThemeProvider = typeof window !== 'undefined' 
+  ? lazy(() => import('./ThemeProvider').then(m => ({ default: m.CrossPlatformThemeProvider })))
+  : require('./ThemeProvider').CrossPlatformThemeProvider;
 
-export const createCrossPlatformThemeProvider = () => {
-  const { CrossPlatformThemeProvider } = require('./ThemeProvider');
-  return CrossPlatformThemeProvider;
-};
+export const ThemeProvider = typeof window !== 'undefined'
+  ? lazy(() => import('./ThemeProvider').then(m => ({ default: m.ThemeProvider })))
+  : require('./ThemeProvider').ThemeProvider;
 
-export const createThemeHook = () => {
-  const { useTheme } = require('./ThemeProvider');
-  return useTheme;
-};
-
-export const createCrossPlatformThemeHook = () => {
-  const { useCrossPlatformTheme } = require('./ThemeProvider');
-  return useCrossPlatformTheme;
-};
+// Hooks are always direct exports (used inside components, not during module init)
+export { useCrossPlatformTheme, useTheme } from './ThemeProvider';
