@@ -17,30 +17,12 @@
 - [x] CreateSpaceModal.tsx
 - [x] UserSettingsModal.tsx
 - [x] SpaceEditor.tsx (very complex)
-- [ ] JoinSpaceModal.tsx
-- [ ] NewDirectMessageModal.tsx
-
-#### JoinSpaceModal.tsx
-- [ ] Extract `useSpaceJoining` hook
-  - Invite code processing
-  - Space validation
-  - Join API calls
-- [ ] Extract `useInviteValidation` hook
-  - Invite link parsing
-  - Validation rules
-  - Error messaging
-- [ ] Test web app functionality unchanged
-
-#### NewDirectMessageModal.tsx
-- [ ] Extract `useDirectMessageCreation` hook
-  - Address input handling
-  - Conversation creation
-  - Navigation logic
-- [ ] Extract `useAddressValidation` hook
-  - Address format validation
-  - User lookup
-  - Error states
-- [ ] Test web app functionality unchanged
+- [x] JoinSpaceModal.tsx
+- [x] NewDirectMessageModal.tsx
+- [x] LeaveSpaceModal.tsx
+- [ ] KickUserModal.tsx
+- [ ] ChannelEditor.tsx
+- [ ] GroupEditor.tsx
 
 IMPORTANT: do also all other modals (list .claude/docs/features/modals.md)
 

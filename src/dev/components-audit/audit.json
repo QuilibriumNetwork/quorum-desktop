@@ -546,14 +546,14 @@
       "description": "Modal for starting new direct message conversations",
       "category": "shared",
       "used": "yes",
-      "primitives": "partial",
+      "primitives": "done",
       "web_native": "shared",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
+      "logic_extraction": "done",
+      "logic_needs": "done",
       "hooks": ["useDirectMessageCreation", "useAddressValidation"],
-      "native": "todo",
-      "notes": "CORRECTION: Uses Modal, Input, Button primitives BUT has multiple raw <div> elements with Tailwind classes. Needs layout primitives for native compatibility.",
-      "updated": "2025-07-29"
+      "native": "ready",
+      "notes": "COMPLETED: Business logic extracted into useDirectMessageCreation and useAddressValidation hooks. All raw HTML replaced with Container and Text primitives. Fully cross-platform compatible.",
+      "updated": "2025-07-30"
     },
     "JoinSpaceModal.tsx": {
       "name": "JoinSpaceModal",
@@ -561,14 +561,14 @@
       "description": "Modal for joining spaces via invite codes or links",
       "category": "shared",
       "used": "yes",
-      "primitives": "partial",
+      "primitives": "done",
       "web_native": "shared",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
+      "logic_extraction": "done",
+      "logic_needs": "done",
       "hooks": ["useSpaceJoining", "useInviteValidation"],
-      "native": "todo",
-      "notes": "CORRECTION: Uses Modal, Input, Button primitives BUT has multiple raw <div> elements with Tailwind classes. Needs layout primitives for native compatibility.",
-      "updated": "2025-07-29"
+      "native": "ready",
+      "notes": "COMPLETED: Business logic extracted into useSpaceJoining and useInviteValidation hooks. All raw HTML replaced with Container, FlexCenter, and Text primitives. Fully cross-platform compatible.",
+      "updated": "2025-07-30"
     },
     "LeaveSpaceModal.tsx": {
       "name": "LeaveSpaceModal",
@@ -576,14 +576,14 @@
       "description": "Confirmation modal for leaving spaces",
       "category": "shared",
       "used": "yes",
-      "primitives": "partial",
+      "primitives": "done",
       "web_native": "shared",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
-      "hooks": ["useSpaceLeaving", "useConfirmationFlow"],
-      "native": "todo",
-      "notes": "CORRECTION: Uses Modal, Button primitives BUT likely has raw <div> elements with Tailwind classes (needs verification).",
-      "updated": "2025-07-29"
+      "logic_extraction": "done",
+      "logic_needs": "done",
+      "hooks": ["useSpaceLeaving"],
+      "native": "ready",
+      "notes": "COMPLETED: Business logic extracted into useSpaceLeaving hook with confirmation flow and timeout management. All raw HTML replaced with Container, Text, FlexRow, and other primitives. Fully cross-platform compatible with responsive text alignment.",
+      "updated": "2025-07-30"
     },
     "GlobalSearch.tsx": {
       "name": "GlobalSearch",
@@ -888,9 +888,9 @@
   },
   "stats": {
     "total": 69,
-    "primitives_done": 13,
-    "logic_extraction_done": 45,
-    "native_ready": 10,
+    "primitives_done": 15,
+    "logic_extraction_done": 48,
+    "native_ready": 13,
     "by_category": {
       "shared": 43,
       "platform_specific": 21,
@@ -902,10 +902,10 @@
       "unknown": 1
     },
     "by_logic_needs": {
-      "extract": 38,
+      "extract": 35,
       "keep": 31
     },
-    "last_updated": "2025-07-29"
+    "last_updated": "2025-07-30"
   },
   "metadata": {
     "audit_version": "1.0",

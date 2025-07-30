@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Input, Button, Modal } from '../primitives';
+import { Input, Button, Modal, Container, FlexCenter, Text } from '../primitives';
 import SpaceIcon from '../navbar/SpaceIcon';
 import './JoinSpaceModal.scss';
 import { useLocation } from 'react-router';
@@ -58,8 +58,8 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
       onClose={props.onClose}
       size="medium"
     >
-      <div className="modal-join-space modal-width-medium">
-        <div className="w-full flex justify-center">
+      <Container className="modal-join-space modal-width-medium">
+        <FlexCenter width="full">
           <Input
             className="w-full max-w-[500px] mx-auto !text-sm"
             value={lookup}
@@ -68,8 +68,8 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
             error={!!error}
             errorMessage={error}
           />
-        </div>
-        <div className="modal-join-space-icon">
+        </FlexCenter>
+        <Container className="modal-join-space-icon">
           {!validatedSpace ? (
             <SpaceIcon
               noTooltip={true}
@@ -92,13 +92,18 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
                 iconUrl={validatedSpace.iconUrl}
                 spaceId={validatedSpace.spaceId}
               />
-              <div className="mt-4 text-lg sm:text-xl text-strong">
+              <Text
+                variant="strong"
+                size="lg"
+                align="center"
+                className="mt-4 sm:text-xl"
+              >
                 {validatedSpace.spaceName}
-              </div>
+              </Text>
             </>
           )}
-        </div>
-        <div className="modal-join-space-actions">
+        </Container>
+        <Container className="modal-join-space-actions">
           <Button
             className="w-full sm:max-w-32 sm:inline-block"
             type="primary"
@@ -107,8 +112,8 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
           >
             {t`Join Space`}
           </Button>
-        </div>
-      </div>
+        </Container>
+      </Container>
     </Modal>
   );
 };
