@@ -1,17 +1,10 @@
 import * as React from 'react';
-import {
-  channel_raw as ch,
-  usePasskeysContext,
-} from '@quilibrium/quilibrium-js-sdk-channels';
 import { Input, Button, Modal } from '../primitives';
 import SpaceIcon from '../navbar/SpaceIcon';
 import './JoinSpaceModal.scss';
-import { useLocation, useNavigate } from 'react-router';
-import { getConfig } from '../../config/config';
-import { useQuorumApiClient } from '../context/QuorumApiContext';
-import { Space } from '../../api/quorumApi';
-import { useMessageDB } from '../context/MessageDB';
+import { useLocation } from 'react-router';
 import { t } from '@lingui/core/macro';
+import { useSpaceJoining, useInviteValidation } from '../../hooks';
 
 type JoinSpaceModalProps = {
   visible: boolean;
@@ -21,25 +14,19 @@ type JoinSpaceModalProps = {
 const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
   props
 ) => {
-  let [space, setSpace] = React.useState<
-    { iconUrl: string; spaceName: string; spaceId: string } | undefined
-  >(undefined);
-  let { hash, pathname } = useLocation();
-  let [init, setInit] = React.useState<boolean>(false);
-  let [lookup, setLookup] = React.useState<string>();
+  const { hash } = useLocation();
+  const [init, setInit] = React.useState<boolean>(false);
+  const [lookup, setLookup] = React.useState<string>();
 
-  // let connection = props.connection as WebSocket;
-  let navigate = useNavigate();
-  let [info, setInfo] = React.useState<{
-    spaceId: string;
-    configKey: string;
-  }>();
-  let [error, setError] = React.useState<string>();
-  const { joinInviteLink, keyset } = useMessageDB();
-  const [joining, setJoining] = React.useState<boolean>(false);
-  const { currentPasskeyInfo } = usePasskeysContext();
-  const { apiClient } = useQuorumApiClient();
+  // Extract business logic hooks
+  const { joinSpace, joining, joinError } = useSpaceJoining();
+  const { 
+    validatedSpace, 
+    validationError, 
+    validateInvite,
+  } = useInviteValidation();
 
+  // Initialize with hash from URL if present
   React.useEffect(() => {
     if (!init) {
       setInit(true);
@@ -49,90 +36,20 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
     }
   }, [init, hash]);
 
+  // Validate invite link when lookup changes
   React.useEffect(() => {
-    setError(undefined);
-    setSpace(undefined);
-    (async () => {
-      if (
-        lookup?.startsWith('https://app.quorummessenger.com/invite/#') ||
-        lookup?.startsWith('https://qm.one/#') ||
-        lookup?.startsWith('https://qm.one/invite/#') ||
-        lookup?.startsWith('app.quorummessenger.com/invite/#') ||
-        lookup?.startsWith('qm.one/#')
-      ) {
-        const output = lookup
-          .split('#')[1]
-          .split('&')
-          .map((l) => {
-            const [key, value] = l.split('=');
-            if (!key || !value) {
-              return undefined;
-            }
-
-            if (key != 'spaceId' && key != 'configKey') {
-              return undefined;
-            }
-
-            return { [key]: value };
-          })
-          .filter((l) => !!l)
-          .reduce((prev, curr) => Object.assign(prev, curr), {});
-
-        if (output) {
-          const info = output as { spaceId: string; configKey: string };
-
-          try {
-            const manifest = await apiClient.getSpaceManifest(info.spaceId);
-            if (!manifest) {
-              throw new Error(t`invalid response`);
-            }
-
-            const ciphertext = JSON.parse(manifest.data.space_manifest) as {
-              ciphertext: string;
-              initialization_vector: string;
-              associated_data: string;
-            };
-            const space = JSON.parse(
-              Buffer.from(
-                JSON.parse(
-                  ch.js_decrypt_inbox_message(
-                    JSON.stringify({
-                      inbox_private_key: [
-                        ...new Uint8Array(Buffer.from(info.configKey, 'hex')),
-                      ],
-                      ephemeral_public_key: [
-                        ...new Uint8Array(
-                          Buffer.from(manifest.data.ephemeral_public_key, 'hex')
-                        ),
-                      ],
-                      ciphertext: ciphertext,
-                    })
-                  )
-                )
-              ).toString('utf-8')
-            ) as Space;
-            setSpace(space);
-          } catch (e) {
-            setError(t`Could not verify invite`);
-          }
-        }
-      }
-    })();
-  }, [lookup]);
-
-  const join = React.useCallback(async () => {
-    setJoining(true);
-    try {
-      const result = await joinInviteLink(lookup!, keyset, currentPasskeyInfo!);
-      if (result) {
-        navigate('/spaces/' + result.spaceId + '/' + result.channelId);
-      }
-    } catch (e: any) {
-      console.error(e);
-      setError(e);
+    if (lookup) {
+      validateInvite(lookup);
     }
-    setJoining(false);
-  }, [joinInviteLink, keyset, currentPasskeyInfo, lookup]);
+  }, [lookup, validateInvite]);
+
+  const handleJoin = React.useCallback(async () => {
+    if (validatedSpace && lookup) {
+      await joinSpace(lookup);
+    }
+  }, [validatedSpace, lookup, joinSpace]);
+
+  const error = validationError || joinError;
 
   return (
     <Modal
@@ -146,13 +63,14 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
           <Input
             className="w-full max-w-[500px] mx-auto !text-sm"
             value={lookup}
-            onChange={(value) => setLookup(value)}
+            onChange={(value: string) => setLookup(value)}
             placeholder={t`Join Space`}
-            error={error}
+            error={!!error}
+            errorMessage={error}
           />
         </div>
         <div className="modal-join-space-icon">
-          {!space ? (
+          {!validatedSpace ? (
             <SpaceIcon
               noTooltip={true}
               notifs={false}
@@ -168,14 +86,14 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
                 noToggle={true}
                 noTooltip={true}
                 notifs={false}
-                spaceName={space.spaceName}
+                spaceName={validatedSpace.spaceName}
                 size="large"
                 selected={true}
-                iconUrl={space.iconUrl}
-                spaceId={space.spaceId}
+                iconUrl={validatedSpace.iconUrl}
+                spaceId={validatedSpace.spaceId}
               />
               <div className="mt-4 text-lg sm:text-xl text-strong">
-                {space.spaceName}
+                {validatedSpace.spaceName}
               </div>
             </>
           )}
@@ -184,12 +102,8 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
           <Button
             className="w-full sm:max-w-32 sm:inline-block"
             type="primary"
-            disabled={!space || joining}
-            onClick={() => {
-              if (!!space) {
-                join();
-              }
-            }}
+            disabled={!validatedSpace || joining}
+            onClick={handleJoin}
           >
             {t`Join Space`}
           </Button>
