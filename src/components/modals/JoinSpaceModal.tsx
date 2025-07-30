@@ -96,7 +96,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
                 variant="strong"
                 size="lg"
                 align="center"
-                className="mt-4 sm:text-xl"
+                className="sm:text-xl"
               >
                 {validatedSpace.spaceName}
               </Text>
@@ -105,7 +105,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
         </Container>
         <Container className="modal-join-space-actions">
           <Button
-            className="w-full sm:max-w-32 sm:inline-block"
+            className="w-full sm:w-auto sm:inline-block sm:px-8"
             type="primary"
             disabled={!validatedSpace || joining}
             onClick={handleJoin}

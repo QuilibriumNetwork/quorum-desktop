@@ -14,6 +14,20 @@
   @media (max-width: 640px) {
     padding: 16px 8px;
   }
+
+  // Override the background size for app logo placeholder ONLY (not the real space logo)
+  .space-icon-large[style*="quorumicon.png"] {
+    background-size: 60px 60px !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+  }
+  
+  // Center all space icons in the modal and add bottom margin when followed by text
+  .space-icon-large {
+    margin: 0 auto 1.5rem auto !important;
+    display: block !important;
+  }
+  
 }
 
 .modal-join-space-actions {
