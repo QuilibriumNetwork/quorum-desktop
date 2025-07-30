@@ -1,5 +1,7 @@
 # CSS Refactor Plan - Claude Code Execution Strategy
 
+[← Back to INDEX](../../../INDEX.md)
+
 ## 📋 Document Information
 
 **Last Updated:** January 19, 2025  

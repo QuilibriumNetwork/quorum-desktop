@@ -1,5 +1,7 @@
 # Modal Animation Consistency Implementation
 
+[← Back to INDEX](../../INDEX.md)
+
 ## Project Overview
 
 ### Background

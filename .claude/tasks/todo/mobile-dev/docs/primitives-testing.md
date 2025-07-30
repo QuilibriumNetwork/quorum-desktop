@@ -1,5 +1,7 @@
 # Primitives Testing Guide
 
+[← Back to INDEX](../../../../INDEX.md)
+
 ## Accessing the Primitives Playground
 
 During development, you can test all primitives by navigating to:

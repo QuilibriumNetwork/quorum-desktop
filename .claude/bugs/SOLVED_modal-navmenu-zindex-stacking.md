@@ -1,5 +1,7 @@
 # SOLVED: Modal NavMenu Z-Index Stacking Issue
 
+[← Back to INDEX](../INDEX.md)
+
 **Date**: Previously solved  
 **Issue**: NavMenu elements appearing above modal overlays  
 **Root Cause**: CSS stacking contexts created by responsive layout transforms  

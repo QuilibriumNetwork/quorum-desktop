@@ -1,5 +1,7 @@
 # NewDirectMessage Modal: URL-to-State Conversion
 
+[← Back to INDEX](../INDEX.md)
+
 **Date**: 2025-01-19  
 **Issue**: Modal reopening/flickering when closing from existing conversations  
 **Solution**: Converted from URL-based to state-based modal management  

@@ -1,5 +1,7 @@
 # Search Focus Management Comprehensive Bug Report
 
+[← Back to INDEX](../INDEX.md)
+
 **Status**: REVERTED - All attempts failed  
 **Priority**: High  
 **Platform**: All devices (Mobile, Desktop, Touch, Mouse)  

@@ -1,5 +1,7 @@
 # Cross-Platform Development : Revised Plan
 
+[← Back to INDEX](../../../INDEX.md)
+
 ## Phase 1: Complete Web Migration
 - [x]**Primitives completed** - All core UI primitives built for both web and mobile (Button, Input, Modal, Select, etc.)
 - [x] **Mobile testing validated** - Primitives tested and working on mobile via dedicated playground

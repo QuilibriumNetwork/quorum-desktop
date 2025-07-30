@@ -1,5 +1,7 @@
 # Third-Party Component Migration Report
 
+[← Back to INDEX](../../../../INDEX.md)
+
 ## Executive Summary
 
 This report analyzes all third-party UI components in the Quorum Desktop app that are web-browser specific and will not work in React Native. For each component, we provide alternative solutions and recommend implementation paths that fit our cross-platform primitive architecture.

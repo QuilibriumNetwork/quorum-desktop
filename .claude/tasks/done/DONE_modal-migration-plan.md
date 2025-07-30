@@ -1,5 +1,7 @@
 # Modal Migration Analysis & Progress Report
 
+[← Back to INDEX](../../INDEX.md)
+
 ## Overview
 
 This document provides a comprehensive analysis of the modal migration strategy for Step 4 of the mobile development plan. It captures findings, progress, and next steps for converting existing modals to use the Modal primitive.

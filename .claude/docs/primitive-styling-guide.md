@@ -1,5 +1,7 @@
 # Primitive Styling Guidelines
 
+[← Back to INDEX](../INDEX.md)
+
 _Last updated: July 26, 2025_
 
 ## Overview

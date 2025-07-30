@@ -1,5 +1,7 @@
 # Mobile Message Actions Implementation
 
+[← Back to INDEX](../../INDEX.md)
+
 ## Summary
 
 This feature transforms the desktop hover-based message actions into a comprehensive responsive system that provides optimal user experience across all device types. The implementation includes a Discord-inspired mobile drawer for touch devices, enhanced tablet interactions, and preserved desktop functionality.

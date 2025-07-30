@@ -1,5 +1,7 @@
 # Quorum Data Management Architecture
 
+[← Back to INDEX](../INDEX.md)
+
 A comprehensive guide to data storage, management, and flow patterns in the Quorum desktop application.
 
 **Created**: 2025-01-20  

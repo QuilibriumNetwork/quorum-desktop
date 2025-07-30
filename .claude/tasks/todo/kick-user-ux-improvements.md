@@ -1,5 +1,7 @@
 # Kick User UX Improvements
 
+[← Back to INDEX](../../INDEX.md)
+
 ## Status: Attempted - Reverted
 
 ## Problem Statement

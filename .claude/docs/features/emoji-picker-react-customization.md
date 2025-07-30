@@ -1,5 +1,7 @@
 # Emoji Picker React - Styling & Customization
 
+[← Back to INDEX](../../INDEX.md)
+
 ## Basic Information
 
 - **Package**: emoji-picker-react

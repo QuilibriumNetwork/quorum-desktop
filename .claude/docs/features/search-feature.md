@@ -1,5 +1,7 @@
 # 🔍 Global Message Search - Implementation Guide & Documentation
 
+[← Back to INDEX](../../INDEX.md)
+
 _The search feature has been built completely by Claude Code with human supervision_
 
 ## 📋 Overview

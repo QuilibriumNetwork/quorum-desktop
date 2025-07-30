@@ -1,5 +1,7 @@
 # Business Logic Extraction & Native Preparation Plan
 
+[← Back to INDEX](../../../INDEX.md)
+
 ## Overview
 
 **Main Objective**: Extract business logic into shared hooks, prepare for native components while keeping web app fully working and tested.
@@ -24,9 +26,8 @@
 - [ ] ChannelEditor.tsx
 - [ ] GroupEditor.tsx
 
-IMPORTANT: do also all other modals (list .claude/docs/features/modals.md)
 
-### 🚀 **Week 3-4: Core UI & Search Logic**
+### Search Business Logic
 
 #### SearchBar.tsx
 - [ ] Extract `useSearchSuggestions` hook
@@ -39,21 +40,8 @@ IMPORTANT: do also all other modals (list .claude/docs/features/modals.md)
   - Focus management
 - [ ] Test search functionality unchanged
 
-#### ChannelEditor.tsx
-- [ ] Extract `useChannelManagement` hook
-  - Channel create/edit logic
-  - Name validation
-  - Topic handling
-- [ ] Test channel operations unchanged
 
-#### GroupEditor.tsx
-- [ ] Extract `useGroupManagement` hook
-  - Group create/edit/delete logic
-  - Confirmation flows
-  - State management
-- [ ] Test group operations unchanged
-
-### 📊 **Week 5-6: Data Management Logic**
+### Data Management Logic**
 
 #### ChannelList.tsx
 - [ ] Extract `useChannelManagement` hook

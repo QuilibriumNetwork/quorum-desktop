@@ -1,5 +1,7 @@
 # Complete Guide: Cross-Platform React Components for Web + Native
 
+[← Back to INDEX](../INDEX.md)
+
 IMPORTANT: this guide is generic and may not fully adapt to the current repo. Don't just follow it blindly but always check the current situation and ask for clarification if needed.
 
 ## Table of Contents

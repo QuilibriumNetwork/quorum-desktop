@@ -1,5 +1,7 @@
 # ReactTooltip Mobile Support Documentation
 
+[← Back to INDEX](../../INDEX.md)
+
 ## Overview
 
 The `ReactTooltip` component has been enhanced with mobile touch support to provide a better user experience on touch devices. By default, tooltips are hidden on mobile devices, but can be enabled with touch interactions for specific use cases.

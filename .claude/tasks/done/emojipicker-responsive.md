@@ -1,5 +1,7 @@
 # Emoji Picker Responsive Design Improvement
 
+[← Back to INDEX](../../INDEX.md)
+
 ## Overview
 
 Improve the mobile UX of the emoji picker by replacing CSS scaling with proper responsive implementation using emoji-picker-react's built-in features.

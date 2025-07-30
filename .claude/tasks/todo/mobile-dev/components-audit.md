@@ -1,5 +1,7 @@
 # Cross-Platform Component Audit
 
+[← Back to INDEX](../../../INDEX.md)
+
 ## Current Status
 
 **✅ Phase 1 Complete**: Infrastructure built and 25 components analyzed

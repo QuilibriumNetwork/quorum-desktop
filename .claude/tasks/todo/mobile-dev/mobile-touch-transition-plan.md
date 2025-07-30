@@ -1,5 +1,7 @@
 # Mobile/Touch Implementation Transition Plan
 
+[← Back to INDEX](../../../INDEX.md)
+
 ## Executive Summary
 
 The codebase currently has extensive mobile/touch implementations to provide a good user experience for desktop browser users on phones and tablets. When the native mobile app is ready, we need to carefully decide what to keep, remove, or adapt to ensure:

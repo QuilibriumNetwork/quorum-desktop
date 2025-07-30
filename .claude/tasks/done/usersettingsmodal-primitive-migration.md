@@ -1,5 +1,7 @@
 # Complex Modal Primitive Migration Template
 
+[← Back to INDEX](../../INDEX.md)
+
 **Based on:** UserSettingsModal migration (2025-07-28)  
 **Purpose:** Template for migrating complex modals to primitive architecture  
 **Result:** 95% primitive architecture achieved

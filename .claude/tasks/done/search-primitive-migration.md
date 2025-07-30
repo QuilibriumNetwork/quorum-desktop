@@ -1,5 +1,7 @@
 # Search Components Primitive Migration
 
+[← Back to INDEX](../../INDEX.md)
+
 ## Overview
 Complete migration of search feature components to use primitive architecture for consistency and mobile compatibility.
 
