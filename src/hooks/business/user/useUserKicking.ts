@@ -4,12 +4,14 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/MessageDB';
 import { useRegistrationContext } from '../../../components/context/RegistrationPersister';
 import { useRegistration } from '../../../hooks';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const useUserKicking = () => {
   const [kicking, setKicking] = useState(false);
   const [confirmationStep, setConfirmationStep] = useState(0); // 0: initial, 1: awaiting confirmation
   const [confirmationTimeout, setConfirmationTimeout] = useState<NodeJS.Timeout | null>(null);
   
+  const queryClient = useQueryClient();
   const { kickUser } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const { keyset } = useRegistrationContext();
@@ -39,6 +41,17 @@ export const useUserKicking = () => {
         keyset.deviceKeyset,
         registration.registration
       );
+      
+      // The kickUser function doesn't remove the user from local IndexedDB
+      // So we invalidate the cache to trigger a re-render, but the kicked user
+      // will still appear until the server sync removes them from local DB
+      console.log('Kick operation completed for user:', userAddress);
+      
+      // Invalidate space members cache to refresh the user list
+      await queryClient.invalidateQueries({
+        queryKey: ['SpaceMembers', spaceId]
+      });
+      
       if (onSuccess) {
         onSuccess();
       }
@@ -47,7 +60,7 @@ export const useUserKicking = () => {
     } finally {
       setKicking(false);
     }
-  }, [kickUser, spaceId, keyset, registration]);
+  }, [kickUser, spaceId, keyset, registration, queryClient]);
 
   const handleKickClick = useCallback((userAddress: string, onSuccess?: () => void) => {
     if (confirmationStep === 0) {
