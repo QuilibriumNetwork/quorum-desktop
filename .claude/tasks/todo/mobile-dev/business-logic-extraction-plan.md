@@ -59,15 +59,15 @@
 - [x] Test global search functionality unchanged
 
 #### SearchResults.tsx
-- [ ] Extract `useResultsVirtualization` hook
+- [x] Extract `useResultsVirtualization` hook
   - Virtuoso integration
   - Scroll management
   - Performance optimization
-- [ ] Extract `useSearchNavigation` hook
+- [x] Extract `useSearchNavigation` hook
   - Navigation to messages
   - Highlight management
   - Result interaction
-- [ ] Test search results functionality unchanged
+- [x] Test search results functionality unchanged
 
 #### SearchResultItem.tsx
 - [ ] Extract `useSearchResultDisplay` hook

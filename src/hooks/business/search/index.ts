@@ -4,3 +4,8 @@ export * from './useKeyboardNavigation';
 export * from './useGlobalSearchState';
 export * from './useGlobalSearchNavigation';
 export * from './useSearchService';
+export * from './useSearchResultsState';
+export * from './useSearchResultsVirtualization';
+export * from './useSearchResultsKeyboard';
+export * from './useSearchResultsResponsive';
+export * from './useSearchResultsOutsideClick';

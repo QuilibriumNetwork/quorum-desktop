@@ -686,17 +686,18 @@
       "description": "Virtualized search results list with navigation",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "partial",
+      "primitives": "done",
       "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
-        "useResultsVirtualization",
-        "useSearchNavigation"
+        "useSearchResultsState",
+        "useSearchResultsResponsive",
+        "useSearchResultsOutsideClick"
       ],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Uses SearchResults.scss, react-virtuoso (web-specific). Needs FlatList for native. Different virtualization implementations required.",
-      "updated": "2025-07-30"
+      "notes": "Business logic extracted to 3 hooks. Uses only primitives (Container, Text, Icon, FlexCenter) but still has complex SCSS file and uses react-virtuoso for web-specific virtualization.",
+      "updated": "2025-07-31"
     },
     "Message.tsx": {
       "name": "Message",
@@ -1011,7 +1012,7 @@
   },
   "stats": {
     "total": 59,
-    "primitives_done": 17,
+    "primitives_done": 18,
     "logic_extraction_done": 43,
     "native_ready": 10,
     "by_category": {
