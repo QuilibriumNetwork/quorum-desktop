@@ -2,7 +2,7 @@
   "components": {
     "CloseButton.tsx": {
       "name": "CloseButton",
-      "path": "src/components/CloseButton.tsx", 
+      "path": "src/components/CloseButton.tsx",
       "description": "Simple close button with X icon for modals and dialogs",
       "category": "platform_specific",
       "used": "yes",
@@ -40,7 +40,10 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useShowHomeScreen", "useConversationsData"],
+      "hooks": [
+        "useShowHomeScreen",
+        "useConversationsData"
+      ],
       "native": "todo",
       "notes": "Has localStorage logic and responsive behavior. LocalStorage + toggle states are >10 lines and reusable. Extract: useShowHomeScreen, useConversationsData.",
       "updated": "2025-07-29"
@@ -55,7 +58,10 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useModalManagement", "useLayoutState"],
+      "hooks": [
+        "useModalManagement",
+        "useLayoutState"
+      ],
       "native": "todo",
       "notes": "Complex modal management logic (>10 lines, multiple useState/useEffect). Extract: useModalManagement, useLayoutState for reuse across app.",
       "updated": "2025-07-29"
@@ -64,13 +70,18 @@
       "name": "Channel",
       "path": "src/components/channel/Channel.tsx",
       "description": "Main channel view with messages, input, and interactions",
-      "category": "complex_refactor", 
+      "category": "complex_refactor",
       "used": "yes",
       "primitives": "todo",
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useMessages", "useChannelData", "useFileUpload", "useMessageComposer"],
+      "hooks": [
+        "useMessages",
+        "useChannelData",
+        "useFileUpload",
+        "useMessageComposer"
+      ],
       "native": "todo",
       "notes": "800+ lines with multiple useState/useEffect, API calls, complex business rules. Massive extraction needed: useMessages, useChannelData, useFileUpload, useMessageComposer.",
       "updated": "2025-07-29"
@@ -85,7 +96,10 @@
       "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useSearchSuggestions", "useKeyboardNavigation"],
+      "hooks": [
+        "useSearchSuggestions",
+        "useKeyboardNavigation"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Heavy SCSS dependencies (SearchBar.scss) with complex CSS classes (.search-bar, .search-suggestions, .search-input-container). Complex keyboard/focus behavior. Easier to build native version.",
       "updated": "2025-07-30"
@@ -100,7 +114,11 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useSearchState", "useModalContext", "useGlobalSearch"],
+      "hooks": [
+        "useSearchState",
+        "useModalContext",
+        "useGlobalSearch"
+      ],
       "native": "todo",
       "notes": "Complex wrapper with global search state, modal context (>10 lines, multiple useState/useEffect). Extract: useSearchState, useModalContext, useGlobalSearch.",
       "updated": "2025-07-29"
@@ -130,7 +148,9 @@
       "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "done",
-      "hooks": ["useUserKicking"],
+      "hooks": [
+        "useUserKicking"
+      ],
       "native": "ready",
       "notes": "COMPLETED: Business logic extracted into useUserKicking hook with confirmation flow, timeout management, and kick user API calls. All raw HTML replaced with Container, Text, FlexRow primitives. Fully cross-platform compatible with responsive text alignment.",
       "updated": "2025-07-30"
@@ -145,7 +165,12 @@
       "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useUserSettings", "useProfileImage", "useThemeSettings", "useLocaleSettings"],
+      "hooks": [
+        "useUserSettings",
+        "useProfileImage",
+        "useThemeSettings",
+        "useLocaleSettings"
+      ],
       "native": "todo",
       "notes": "Complex settings with API calls, file upload, validation (>10 lines each). Extract: useUserSettings, useProfileImage, useThemeSettings, useLocaleSettings.",
       "updated": "2025-07-29"
@@ -160,7 +185,10 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useDragAndDrop", "useSpaceNavigation"],
+      "hooks": [
+        "useDragAndDrop",
+        "useSpaceNavigation"
+      ],
       "native": "todo",
       "notes": "Drag/drop logic and space navigation (>10 lines, reusable). Extract: useDragAndDrop (web only), useSpaceNavigation (shared).",
       "updated": "2025-07-29"
@@ -190,7 +218,11 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useUserProfile", "useRoleManagement", "useProfileImage"],
+      "hooks": [
+        "useUserProfile",
+        "useRoleManagement",
+        "useProfileImage"
+      ],
       "native": "todo",
       "notes": "Profile data fetching + role management logic (>10 lines, API calls, reusable). Extract: useUserProfile, useRoleManagement, useProfileImage.",
       "updated": "2025-07-29"
@@ -205,7 +237,9 @@
       "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
-      "hooks": ["useContactSelection"],
+      "hooks": [
+        "useContactSelection"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses DirectMessageContact.scss with custom styling for contact list items, unread indicators. Easier to build native version.",
       "updated": "2025-07-30"
@@ -220,7 +254,11 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useSpaceOrdering", "useDragAndDrop", "useSpaceNavigation"],
+      "hooks": [
+        "useSpaceOrdering",
+        "useDragAndDrop",
+        "useSpaceNavigation"
+      ],
       "native": "todo",
       "notes": "Complex drag/drop + space ordering logic (>10 lines, multiple useEffect, reusable). Extract: useSpaceOrdering, useDragAndDrop, useSpaceNavigation.",
       "updated": "2025-07-29"
@@ -230,19 +268,23 @@
       "path": "src/components/modals/CreateSpaceModal.tsx",
       "description": "Modal for creating new spaces with advanced settings and file upload",
       "category": "platform_specific",
-      "used": "yes", 
+      "used": "yes",
       "primitives": "partial",
       "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useSpaceCreation", "useFileUpload", "useSpaceSettings"],
+      "hooks": [
+        "useSpaceCreation",
+        "useFileUpload",
+        "useSpaceSettings"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Heavy Tailwind dependencies, raw divs, complex file upload UI, SCSS classes. Complex modal with many custom CSS behaviors. Easier to build native version.",
       "updated": "2025-07-30"
     },
     "MessageList.tsx": {
       "name": "MessageList",
-      "path": "src/components/message/MessageList.tsx", 
+      "path": "src/components/message/MessageList.tsx",
       "description": "Virtualized message list with infinite scrolling and window management",
       "category": "platform_specific",
       "used": "yes",
@@ -250,7 +292,11 @@
       "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useVirtualization", "useMessagePagination", "useWindowSize"],
+      "hooks": [
+        "useVirtualization",
+        "useMessagePagination",
+        "useWindowSize"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses react-virtuoso (web-specific virtualization). React Native needs FlatList. Different scrolling/virtualization implementations required per platform.",
       "updated": "2025-07-30"
@@ -265,14 +311,16 @@
       "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useAccentColor"],
+      "hooks": [
+        "useAccentColor"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses Tailwind classes (flex gap-3), raw divs. ColorSwatch primitive exists but overall component has CSS dependencies. Easier to build native version.",
       "updated": "2025-07-30"
     },
     "Connecting.tsx": {
       "name": "Connecting",
-      "path": "src/components/Connecting.tsx", 
+      "path": "src/components/Connecting.tsx",
       "description": "Loading splash screen with animated icon and connecting message",
       "category": "platform_specific",
       "used": "yes",
@@ -289,7 +337,7 @@
       "name": "Maintenance",
       "path": "src/components/Maintenance.tsx",
       "description": "Maintenance mode display with icon and message",
-      "category": "platform_specific", 
+      "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
       "web_native": "platform_specific",
@@ -307,10 +355,13 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific", 
+      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useCopyToClipboard", "useTooltipInteraction"],
+      "hooks": [
+        "useCopyToClipboard",
+        "useTooltipInteraction"
+      ],
       "native": "todo",
       "notes": "Copy logic + touch detection (>10 lines, reusable across app). Extract: useCopyToClipboard, useTooltipInteraction.",
       "updated": "2025-07-29"
@@ -325,7 +376,9 @@
       "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useThemeSelection"],
+      "hooks": [
+        "useThemeSelection"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses Tailwind className. Theme selection logic with localStorage integration (>10 lines, reusable). Already extracted: useThemeSelection.",
       "updated": "2025-07-30"
@@ -340,7 +393,9 @@
       "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
-      "hooks": ["useTooltipBehavior"],
+      "hooks": [
+        "useTooltipBehavior"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses ReactTooltip.scss, web-specific tooltip library. Native needs different tooltip implementation. Should migrate to Tooltip primitive.",
       "updated": "2025-07-30"
@@ -385,7 +440,11 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useDirectMessageLogic", "useFileUpload", "useMessageActions"],
+      "hooks": [
+        "useDirectMessageLogic",
+        "useFileUpload",
+        "useMessageActions"
+      ],
       "native": "todo",
       "notes": "Large component with file upload, dropzone, message actions. Complex state management with multiple useEffect/useState. Similar to Channel.tsx - needs breakdown.",
       "updated": "2025-07-29"
@@ -490,7 +549,9 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useImageLoading"],
+      "hooks": [
+        "useImageLoading"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Imports './SpaceIcon.scss' and uses custom CSS classes (space-icon-selected). Image loading logic with ArrayBuffer handling (>10 lines, reusable). Uses ReactTooltip.",
       "updated": "2025-07-30"
@@ -520,7 +581,10 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useChannelManagement", "useSpacePermissions"],
+      "hooks": [
+        "useChannelManagement",
+        "useSpacePermissions"
+      ],
       "native": "todo",
       "notes": "Complex channel management logic with permissions, group editing (>10 lines, multiple useState). Desktop: sidebar. Mobile: drawer/stack.",
       "updated": "2025-07-29"
@@ -535,7 +599,10 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useInviteProcessing", "useSpaceJoining"],
+      "hooks": [
+        "useInviteProcessing",
+        "useSpaceJoining"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Complex invite preview UI with custom styling, link handling differs between web/native. Easier to build native version.",
       "updated": "2025-07-30"
@@ -550,7 +617,10 @@
       "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "done",
-      "hooks": ["useDirectMessageCreation", "useAddressValidation"],
+      "hooks": [
+        "useDirectMessageCreation",
+        "useAddressValidation"
+      ],
       "native": "ready",
       "notes": "COMPLETED: Business logic extracted into useDirectMessageCreation and useAddressValidation hooks. All raw HTML replaced with Container and Text primitives. Fully cross-platform compatible.",
       "updated": "2025-07-30"
@@ -565,7 +635,10 @@
       "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "done",
-      "hooks": ["useSpaceJoining", "useInviteValidation"],
+      "hooks": [
+        "useSpaceJoining",
+        "useInviteValidation"
+      ],
       "native": "ready",
       "notes": "COMPLETED: Business logic extracted into useSpaceJoining and useInviteValidation hooks. All raw HTML replaced with Container, FlexCenter, and Text primitives. Fully cross-platform compatible.",
       "updated": "2025-07-30"
@@ -580,7 +653,9 @@
       "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "done",
-      "hooks": ["useSpaceLeaving"],
+      "hooks": [
+        "useSpaceLeaving"
+      ],
       "native": "ready",
       "notes": "COMPLETED: Business logic extracted into useSpaceLeaving hook with confirmation flow and timeout management. All raw HTML replaced with Container, Text, FlexRow, and other primitives. Fully cross-platform compatible with responsive text alignment.",
       "updated": "2025-07-30"
@@ -595,7 +670,11 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useGlobalSearchLogic", "useSearchContext", "useSearchState"],
+      "hooks": [
+        "useGlobalSearchLogic",
+        "useSearchContext",
+        "useSearchState"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses GlobalSearch.scss, depends on SearchBar component (also platform-specific). Search UI patterns differ for web/native.",
       "updated": "2025-07-30"
@@ -610,7 +689,10 @@
       "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useResultsVirtualization", "useSearchNavigation"],
+      "hooks": [
+        "useResultsVirtualization",
+        "useSearchNavigation"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses SearchResults.scss, react-virtuoso (web-specific). Needs FlatList for native. Different virtualization implementations required.",
       "updated": "2025-07-30"
@@ -625,7 +707,12 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useMessageActions", "useEmojiPicker", "useMessageRendering", "useReactions"],
+      "hooks": [
+        "useMessageActions",
+        "useEmojiPicker",
+        "useMessageRendering",
+        "useReactions"
+      ],
       "native": "todo",
       "notes": "Large component (likely 500+ lines) with emoji picker, reactions, replies, user profiles. Desktop: hover actions. Mobile: touch/drawer actions. Massive extraction needed.",
       "updated": "2025-07-29"
@@ -640,7 +727,11 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useRegistrationFlow", "useProfileSetup", "useImageUpload"],
+      "hooks": [
+        "useRegistrationFlow",
+        "useProfileSetup",
+        "useImageUpload"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '_passkey-modal.scss' and 'react-dropzone', heavy Tailwind usage throughout. Complex registration logic with file upload, passkey integration (>10 lines, reusable).",
       "updated": "2025-07-30"
@@ -655,7 +746,10 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useAuthentication", "usePasskeyFlow"],
+      "hooks": [
+        "useAuthentication",
+        "usePasskeyFlow"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '_passkey-modal.scss', heavy Tailwind usage throughout. Authentication logic with passkey integration (>10 lines, reusable). Uses Button primitive.",
       "updated": "2025-07-30"
@@ -685,7 +779,10 @@
       "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useThemeDetection", "useSystemTheme"],
+      "hooks": [
+        "useThemeDetection",
+        "useSystemTheme"
+      ],
       "native": "ready",
       "notes": "Theme detection logic with localStorage + system theme detection (>10 lines, reusable). Context provider pattern works identically cross-platform.",
       "updated": "2025-07-29"
@@ -715,7 +812,12 @@
       "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useSpaceManagement", "usePermissions", "useRoleManagement", "useFileUpload"],
+      "hooks": [
+        "useSpaceManagement",
+        "usePermissions",
+        "useRoleManagement",
+        "useFileUpload"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '../../styles/_modal_common.scss'. Uses many primitives but has SCSS dependencies. Business logic extraction already done.",
       "updated": "2025-07-30"
@@ -728,12 +830,15 @@
       "used": "yes",
       "primitives": "done",
       "web_native": "platform_specific",
-      "logic_extraction": "todo",
+      "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useChannelManagement"],
+      "hooks": [
+        "useChannelManagement",
+        "useChannelPermissions"
+      ],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '../../styles/_modal_common.scss'. Uses primitives but has SCSS dependencies. Channel create/edit logic (>10 lines, reusable).",
-      "updated": "2025-07-30"
+      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports ../../styles/_modal_common.scss. Business logic extracted to useChannelManagement (channel CRUD, delete confirmation) and useChannelPermissions hooks. Now uses primitives (Modal, Container, FlexRow, Input, Button, Text, Icon) but retains SCSS dependency.",
+      "updated": "2025-07-31"
     },
     "GroupEditor.tsx": {
       "name": "GroupEditor",
@@ -745,7 +850,9 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useGroupManagement"],
+      "hooks": [
+        "useGroupManagement"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '../../styles/_modal_common.scss'. Uses primitives but has SCSS dependencies. Group create/edit logic with deletion flow (>10 lines, reusable).",
       "updated": "2025-07-30"
@@ -790,7 +897,9 @@
       "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
-      "hooks": ["useConversationPolling"],
+      "hooks": [
+        "useConversationPolling"
+      ],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses DirectMessageContactsList.scss, FontAwesome icons. List rendering and interaction patterns differ for web/native.",
       "updated": "2025-07-30"
@@ -820,7 +929,10 @@
       "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useWebSocketConnection", "useMessageQueue"],
+      "hooks": [
+        "useWebSocketConnection",
+        "useMessageQueue"
+      ],
       "native": "ready",
       "notes": "Complex WebSocket logic with connection management, message queuing (>10 lines, reusable). Context pattern works cross-platform.",
       "updated": "2025-07-29"
@@ -835,7 +947,10 @@
       "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useApiClientSetup", "useErrorHandling"],
+      "hooks": [
+        "useApiClientSetup",
+        "useErrorHandling"
+      ],
       "native": "ready",
       "notes": "Complex API client configuration with error handling (>10 lines, reusable). Context pattern works cross-platform.",
       "updated": "2025-07-29"
@@ -850,7 +965,11 @@
       "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useMessageDatabase", "useEncryption", "useCaching"],
+      "hooks": [
+        "useMessageDatabase",
+        "useEncryption",
+        "useCaching"
+      ],
       "native": "ready",
       "notes": "Complex database logic with encryption, caching, key management (>10 lines, reusable). Context pattern works cross-platform.",
       "updated": "2025-07-29"
@@ -865,7 +984,10 @@
       "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": ["useRegistrationPersistence", "usePasskeyIntegration"],
+      "hooks": [
+        "useRegistrationPersistence",
+        "usePasskeyIntegration"
+      ],
       "native": "todo",
       "notes": "Registration persistence logic with passkey integration (>10 lines, reusable). Uses Button primitive. Context pattern works cross-platform.",
       "updated": "2025-07-29"
@@ -889,7 +1011,7 @@
   "stats": {
     "total": 69,
     "primitives_done": 16,
-    "logic_extraction_done": 49,
+    "logic_extraction_done": 50,
     "native_ready": 14,
     "by_category": {
       "shared": 15,
@@ -902,11 +1024,11 @@
       "unknown": 1
     },
     "by_logic_needs": {
-      "extract": 34,
-      "keep": 31
+      "extract": 33,
+      "keep": 32
     },
-    "analysis_notes": "MAJOR UPDATE: Moved 28 total components from 'shared' to 'platform_specific' after analyzing CSS/SCSS dependencies. Latest batches: SpaceEditor, ChannelEditor, GroupEditor, UserStatus (SCSS imports), Maintenance/ThemeRadioGroup (Tailwind), ActionMenuItem (FontAwesome), SpaceIcon (SCSS), Onboarding/Login (SCSS + react-dropzone). Components with custom styling, web-specific libraries, or complex UI patterns are easier to build separately for web/native than to make truly cross-platform.",
-    "last_updated": "2025-07-30"
+    "analysis_notes": "MAJOR UPDATE: Moved 28 total components from shared to platform_specific after analyzing CSS/SCSS dependencies. Latest: ChannelEditor business logic extracted to useChannelManagement and useChannelPermissions hooks, now uses all primitives but retains SCSS dependency. Components with custom styling, web-specific libraries, or complex UI patterns are easier to build separately for web/native than to make truly cross-platform.",
+    "last_updated": "2025-07-31"
   },
   "metadata": {
     "audit_version": "1.0",

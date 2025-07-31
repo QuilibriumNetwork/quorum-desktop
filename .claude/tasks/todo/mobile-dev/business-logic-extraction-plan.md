@@ -23,7 +23,7 @@
 - [x] NewDirectMessageModal.tsx
 - [x] LeaveSpaceModal.tsx
 - [x] KickUserModal.tsx
-- [ ] ChannelEditor.tsx
+- [x] ChannelEditor.tsx
 - [ ] GroupEditor.tsx
 
 
