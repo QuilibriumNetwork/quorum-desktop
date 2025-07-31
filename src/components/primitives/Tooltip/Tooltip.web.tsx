@@ -13,6 +13,9 @@ export function Tooltip({
   showCloseButton = false, // Not used on web, for API consistency
   maxWidth = 400,
   disabled = false,
+  touchTrigger = 'click',
+  longPressDuration = 700,
+  showOnTouch = true,
 }: TooltipWebProps) {
   const tooltipId = `${id}-tooltip`;
   const anchorId = `${id}-anchor`;
@@ -44,8 +47,9 @@ export function Tooltip({
         className={tooltipClassName}
         anchorSelect={`#${anchorId}`}
         highlighted={highlighted}
-        showOnTouch
-        touchTrigger="click"
+        showOnTouch={showOnTouch}
+        touchTrigger={touchTrigger}
+        longPressDuration={longPressDuration}
       />
     </>
   );

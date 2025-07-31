@@ -23,6 +23,10 @@ export interface TooltipProps {
   showCloseButton?: boolean;
   maxWidth?: number;
   disabled?: boolean;
+  // Touch-specific props for mobile web UX
+  touchTrigger?: 'click' | 'long-press';
+  longPressDuration?: number;
+  showOnTouch?: boolean;
 }
 
 export interface TooltipWebProps extends TooltipProps {

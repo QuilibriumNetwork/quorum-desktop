@@ -1,15 +1,7 @@
 import * as React from 'react';
 import { t } from '@lingui/core/macro';
-import ReactTooltip from './ReactTooltip';
-import { faClipboard } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useTheme } from './context/ThemeProvider';
-
-const isTouchDevice = () =>
-  typeof window !== 'undefined' &&
-  ('ontouchstart' in window ||
-    navigator.maxTouchPoints > 0 ||
-    (navigator as any).msMaxTouchPoints > 0);
+import { Container, Icon, Text, Tooltip } from './primitives';
+import { useCopyToClipboard, isTouchDevice } from '../hooks';
 
 type ClickToCopyContentProps = {
   text: string;
@@ -32,7 +24,6 @@ type ClickToCopyContentProps = {
     | 'left'
     | 'left-start'
     | 'left-end';
-  theme?: 'dark' | 'light' | 'system';
   copyOnContentClick?: boolean;
   iconPosition?: 'left' | 'right';
   touchTrigger?: 'click' | 'long-press';
@@ -48,44 +39,32 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   onCopy,
   noArrow = false,
   tooltipLocation,
-  theme,
   copyOnContentClick = false,
   iconPosition = 'left',
   touchTrigger = 'click',
   longPressDuration = 700,
 }) => {
-  const [copied, setCopied] = React.useState(false);
-  const [hideTooltip, setHideTooltip] = React.useState(false);
-  const { theme: contextTheme } = useTheme();
-  const resolvedTheme = theme ?? contextTheme;
+  // Use extracted hooks
+  const { copied, copyToClipboard } = useCopyToClipboard({ 
+    onCopy,
+    timeout: 2000,
+    touchTimeout: 3000 
+  });
 
-  const uid = React.useMemo(() => Math.random().toString(36).slice(2, 10), []);
-  const tooltipId = `click-to-copy-tooltip-${uid}`;
-  const anchorId = `click-to-copy-anchor-${uid}`;
+  const [hideTooltip, setHideTooltip] = React.useState(false);
+
+  const tooltipId = React.useMemo(() => `click-to-copy-${Math.random().toString(36).slice(2, 10)}`, []);
 
   const handleCopy = async (e?: React.MouseEvent | Event) => {
     e?.stopPropagation();
-    try {
-      if (window.electron !== undefined) {
-        window.electron.clipboard.writeText(text);
-      } else {
-        navigator.clipboard.writeText(text);
-      }
-
-      setCopied(true);
-      setHideTooltip(false);
-      if (onCopy) onCopy();
-
-      if (isTouchDevice()) {
-        setTimeout(() => {
-          setHideTooltip(true);
-          setCopied(false);
-        }, 3000);
-      } else {
-        setTimeout(() => setCopied(false), 2000);
-      }
-    } catch (err) {
-      console.error('Failed to copy text: ', err);
+    await copyToClipboard(text);
+    setHideTooltip(false); // Show tooltip after copy
+    
+    // On touch devices, auto-hide tooltip after 3 seconds
+    if (isTouchDevice()) {
+      setTimeout(() => {
+        setHideTooltip(true);
+      }, 3000);
     }
   };
 
@@ -93,7 +72,9 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   React.useEffect(() => {
     if (!isTouchDevice()) return;
 
-    const anchorElement = document.getElementById(anchorId);
+    // Our Tooltip primitive uses ${id}-anchor format for anchor IDs
+    const actualAnchorId = `${tooltipId}-anchor`;
+    const anchorElement = document.getElementById(actualAnchorId);
     if (!anchorElement) return;
 
     let pressTimer: NodeJS.Timeout | null = null;
@@ -131,54 +112,74 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
         anchorElement.removeEventListener('touchcancel', handleTouchEnd);
       };
     }
-  }, [anchorId, touchTrigger, longPressDuration, text, onCopy]);
+  }, [tooltipId, touchTrigger, longPressDuration, text, onCopy]);
 
-  const wrapperClass = `flex items-center rounded-md ${
-    copyOnContentClick ? 'cursor-pointer hover:text-subtle' : ''
-  } ${className}`;
-
-  const icon = (
-    <FontAwesomeIcon
-      icon={faClipboard}
-      id={!copyOnContentClick ? anchorId : undefined}
-      className={`${
-        iconClassName || 'text-main'
-      } ${iconPosition === 'left' ? 'mr-1' : 'ml-1'} ${
-        !copyOnContentClick
-          ? 'cursor-pointer hover:text-subtle focus:outline-none focus:ring-0 active:bg-transparent'
-          : ''
-      }`}
+  const iconElement = (
+    <Icon
+      name="clipboard"
+      className={iconClassName || undefined}
       onClick={!copyOnContentClick ? handleCopy : undefined}
+      style={{
+        marginLeft: iconPosition === 'right' ? '4px' : undefined,
+        marginRight: iconPosition === 'left' ? '4px' : undefined,
+        cursor: !copyOnContentClick ? 'pointer' : undefined
+      }}
     />
   );
 
-  return (
-    <div
-      className={wrapperClass}
+  // Wrap icon with tooltip if not copyOnContentClick
+  const icon = !copyOnContentClick ? (
+    <Tooltip
+      id={tooltipId}
+      content={copied ? t`Copied!` : tooltipText}
+      place={tooltipLocation}
+      noArrow={noArrow}
+      showOnTouch={!(isTouchDevice() && hideTooltip)}
+      touchTrigger={touchTrigger}
+      longPressDuration={longPressDuration}
+    >
+      {iconElement}
+    </Tooltip>
+  ) : iconElement;
+
+  const containerContent = (
+    <Container
+      className={className}
       onClick={copyOnContentClick ? handleCopy : undefined}
-      id={copyOnContentClick ? anchorId : undefined}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        borderRadius: '6px',
+        cursor: copyOnContentClick ? 'pointer' : undefined
+      }}
     >
       {iconPosition === 'left' && icon}
-      <span className={!copyOnContentClick ? 'select-text' : 'flex-1'}>
+      <Text
+        style={{
+          userSelect: !copyOnContentClick ? 'text' : 'none',
+          flex: copyOnContentClick ? 1 : undefined
+        }}
+      >
         {children}
-      </span>
+      </Text>
       {iconPosition === 'right' && icon}
-
-      {!(isTouchDevice() && hideTooltip) && (
-        <ReactTooltip
-          id={tooltipId}
-          content={copied ? t`Copied!` : tooltipText}
-          place={tooltipLocation}
-          noArrow={noArrow}
-          theme={resolvedTheme}
-          anchorSelect={`#${anchorId}`}
-          showOnTouch
-          touchTrigger={touchTrigger}
-          longPressDuration={longPressDuration}
-        />
-      )}
-    </div>
+    </Container>
   );
+
+  // Wrap entire container with tooltip if copyOnContentClick
+  return copyOnContentClick ? (
+    <Tooltip
+      id={tooltipId}
+      content={copied ? t`Copied!` : tooltipText}
+      place={tooltipLocation}
+      noArrow={noArrow}
+      showOnTouch={!(isTouchDevice() && hideTooltip)}
+      touchTrigger={touchTrigger}
+      longPressDuration={longPressDuration}
+    >
+      {containerContent}
+    </Tooltip>
+  ) : containerContent;
 };
 
 export default ClickToCopyContent;
