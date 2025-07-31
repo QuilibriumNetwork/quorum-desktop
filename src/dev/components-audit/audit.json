@@ -880,14 +880,19 @@
       "description": "Individual search result item with message preview and navigation",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "partial",
+      "primitives": "done",
       "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
-      "hooks": [],
+      "hooks": [
+        "useSearchResultDisplayDM",
+        "useSearchResultDisplaySpace",
+        "useSearchResultHighlight",
+        "useSearchResultFormatting"
+      ],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Uses SearchResultItem.scss with custom styling. Part of search system with different interaction patterns for web/native.",
-      "updated": "2025-07-30"
+      "notes": "Business logic extracted to 4 hooks. Separated DM/Space logic to avoid hook rule violations. Uses only primitives (Container, Text, Icon, FlexBetween, FlexRow) but still has custom SCSS file with hover states and responsive styles.",
+      "updated": "2025-07-31"
     },
     "DirectMessageContactsList.tsx": {
       "name": "DirectMessageContactsList",
@@ -1012,7 +1017,7 @@
   },
   "stats": {
     "total": 59,
-    "primitives_done": 18,
+    "primitives_done": 19,
     "logic_extraction_done": 43,
     "native_ready": 10,
     "by_category": {

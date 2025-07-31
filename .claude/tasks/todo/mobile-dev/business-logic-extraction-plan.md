@@ -29,56 +29,10 @@
 
 ### Search Business Logic
 
-#### SearchBar.tsx
-- [x] Extract `useSearchSuggestions` hook
-  - Suggestion display logic
-  - Keyboard navigation state
-  - Selection handling
-- [x] Extract `useKeyboardShortcuts` hook
-  - Ctrl/Cmd+K global search shortcut
-  - Escape key handling
-  - Focus management
-- [x] Extract `useKeyboardNavigation` hook
-  - Arrow key navigation through suggestions
-  - Enter/Tab selection handling
-  - Selected index management
-- [x] Test search bar functionality unchanged
-
-#### GlobalSearch.tsx
-- [x] Extract `useGlobalSearchLogic` hook
-  - Search service integration
-  - Query debouncing
-  - Result management
-- [x] Extract `useSearchState` hook
-  - Show/hide results state
-  - Loading states
-  - Error handling
-- [x] Extract `useSearchContext` hook (if not already extracted)
-  - Current route context
-  - Context display logic
-- [x] Test global search functionality unchanged
-
-#### SearchResults.tsx
-- [x] Extract `useResultsVirtualization` hook
-  - Virtuoso integration
-  - Scroll management
-  - Performance optimization
-- [x] Extract `useSearchNavigation` hook
-  - Navigation to messages
-  - Highlight management
-  - Result interaction
-- [x] Test search results functionality unchanged
-
-#### SearchResultItem.tsx
-- [ ] Extract `useSearchResultDisplay` hook
-  - User info fetching
-  - Space/channel data
-  - Message formatting
-- [ ] Extract `useHighlighting` hook
-  - Search term highlighting
-  - Text processing
-  - DOM manipulation
-- [ ] Test search result item functionality unchanged
+- [x] SearchBar.tsx
+- [x] GlobalSearch.tsx
+- [x] SearchResults.tsx
+- [x] SearchResultItem.tsx
 
 
 ### Data Management Logic**

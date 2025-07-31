@@ -1,14 +1,13 @@
 import React from 'react';
-import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../db/messages';
-import { Message } from '../../api/quorumApi';
-import { useUserInfo } from '../../hooks/queries/userInfo/useUserInfo';
-import { useSpace } from '../../hooks/queries/space/useSpace';
-import { Icon, FlexBetween, FlexRow } from '../primitives';
+import { Icon, FlexBetween, FlexRow, Container, Text } from '../primitives';
+import {
+  useSearchResultDisplayDM,
+  useSearchResultDisplaySpace,
+  useSearchResultHighlight,
+  useSearchResultFormatting,
+} from '../../hooks';
 import './SearchResultItem.scss';
-import { useMessageDB } from '../context/MessageDB';
-import { DefaultImages } from '../../utils';
-import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 
 interface SearchResultItemProps {
   result: SearchResult;
@@ -18,7 +17,7 @@ interface SearchResultItemProps {
   searchTerms: string[];
 }
 
-// Component for DM search results
+// DM Search Result Component
 const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   result,
   onNavigate,
@@ -27,56 +26,59 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   searchTerms,
 }) => {
   const { message } = result;
-  const { messageDB } = useMessageDB();
-  const [icon, setIcon] = React.useState<string>(DefaultImages.UNKNOWN_USER);
-  const [displayName, setDisplayName] = React.useState<string>(t`Unknown User`);
-  const { currentPasskeyInfo } = usePasskeysContext();
 
-  React.useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        // For DMs, conversationId format is spaceId/channelId
-        const conversationId = `${message.content.senderId}/${message.content.senderId}`;
-        const { conversation } = await messageDB.getConversation({
-          conversationId,
-        });
-        if (conversation) {
-          setIcon(conversation.icon);
-          setDisplayName(conversation.displayName);
-        }
-      } catch (error) {
-        console.error('Failed to fetch conversation:', error);
-      }
-    };
-    if (message.content.senderId !== currentPasskeyInfo!.address) {
-      fetchUserInfo();
-    } else if (
-      currentPasskeyInfo &&
-      currentPasskeyInfo.pfpUrl &&
-      currentPasskeyInfo.displayName
-    ) {
-      setIcon(currentPasskeyInfo.pfpUrl);
-      setDisplayName(currentPasskeyInfo.displayName);
-    }
-  }, [messageDB, message.spaceId, message.channelId]);
+  // DM-specific display logic
+  const { displayName, spaceName, channelName, icon } = useSearchResultDisplayDM({
+    result,
+  });
+
+  const { contextualSnippet } = useSearchResultHighlight({
+    message,
+    searchTerms,
+  });
+
+  const { formattedDate, messageTypeIcon, handleClick, handleKeyDown } = useSearchResultFormatting({
+    message,
+    onNavigate,
+  });
 
   return (
-    <SearchResultItemContent
-      {...result}
-      onNavigate={onNavigate}
-      highlightTerms={highlightTerms}
-      className={className}
-      displayName={displayName}
-      icon={icon}
-      spaceName={t`Direct Message`}
-      channelName={displayName} // Use sender name for both
-      isDM={true}
-      searchTerms={searchTerms}
-    />
+    <Container
+      className={`search-result-item ${className || ''}`}
+      onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+    >
+      <FlexBetween className="result-header">
+        <FlexRow className="result-meta">
+          {icon && (
+            <Container
+              className="result-user-profile-image"
+              style={{ backgroundImage: `url(${icon})` }}
+            />
+          )}
+          <Text className="result-channel mr-2">{channelName}</Text>
+        </FlexRow>
+      </FlexBetween>
+
+      <Container className="result-content">
+        <Container
+          className="result-text"
+          dangerouslySetInnerHTML={{
+            __html: highlightTerms(contextualSnippet),
+          }}
+        />
+      </Container>
+
+      <FlexBetween className="result-footer">
+        <Text className="result-date">{formattedDate}</Text>
+      </FlexBetween>
+    </Container>
   );
 };
 
-// Component for Space search results
+// Space Search Result Component  
 const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   result,
   onNavigate,
@@ -86,37 +88,54 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
 }) => {
   const { message } = result;
 
-  // Fetch user info for the sender
-  const { data: userInfo } = useUserInfo({
-    address: message.content.senderId,
+  // Space-specific display logic
+  const { displayName, spaceName, channelName } = useSearchResultDisplaySpace({
+    result,
   });
 
-  // Fetch space info
-  const { data: spaceInfo } = useSpace({
-    spaceId: message.spaceId,
+  const { contextualSnippet } = useSearchResultHighlight({
+    message,
+    searchTerms,
   });
 
-  // Get channel name from space data
-  const channel = spaceInfo?.groups
-    .find((g) => g.channels.find((c) => c.channelId === message.channelId))
-    ?.channels.find((c) => c.channelId === message.channelId);
-
-  const displayName = userInfo.display_name || t`Unknown User`;
-  const spaceName = spaceInfo?.spaceName || t`Unknown Space`;
-  const channelName = channel?.channelName || message.channelId;
+  const { formattedDate, messageTypeIcon, handleClick, handleKeyDown } = useSearchResultFormatting({
+    message,
+    onNavigate,
+  });
 
   return (
-    <SearchResultItemContent
-      {...result}
-      onNavigate={onNavigate}
-      highlightTerms={highlightTerms}
-      className={className}
-      displayName={displayName}
-      spaceName={spaceName}
-      channelName={channelName}
-      isDM={false}
-      searchTerms={searchTerms}
-    />
+    <Container
+      className={`search-result-item ${className || ''}`}
+      onClick={handleClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+    >
+      <FlexBetween className="result-header">
+        <FlexRow className="result-meta">
+          <Icon
+            name={messageTypeIcon}
+            className="result-type-icon"
+          />
+          <Text className="result-channel mr-2">{channelName}</Text>
+          <Icon name="user" className="result-user-icon" />
+          <Text className="result-sender">{displayName}</Text>
+        </FlexRow>
+      </FlexBetween>
+
+      <Container className="result-content">
+        <Container
+          className="result-text"
+          dangerouslySetInnerHTML={{
+            __html: highlightTerms(contextualSnippet),
+          }}
+        />
+      </Container>
+
+      <FlexBetween className="result-footer">
+        <Text className="result-date">{formattedDate}</Text>
+      </FlexBetween>
+    </Container>
   );
 };
 
@@ -133,185 +152,4 @@ export const SearchResultItem: React.FC<SearchResultItemProps> = (props) => {
   } else {
     return <SpaceSearchResultItem {...props} />;
   }
-};
-
-// Shared content component
-interface SearchResultItemContentProps extends SearchResult {
-  onNavigate: (spaceId: string, channelId: string, messageId: string) => void;
-  highlightTerms: (text: string) => string;
-  className?: string;
-  displayName: string;
-  spaceName: string;
-  channelName: string;
-  isDM: boolean;
-  icon?: string;
-  searchTerms: string[];
-}
-
-const SearchResultItemContent: React.FC<SearchResultItemContentProps> = ({
-  message,
-  score,
-  highlights,
-  onNavigate,
-  highlightTerms,
-  className,
-  displayName,
-  icon,
-  spaceName,
-  channelName,
-  isDM,
-  searchTerms,
-}) => {
-  const formatDate = (timestamp: number): string => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-    if (diffDays === 0) {
-      return date.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    } else if (diffDays === 1) {
-      return t`Yesterday`;
-    } else if (diffDays < 7) {
-      return date.toLocaleDateString([], { weekday: 'long' });
-    } else {
-      return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
-    }
-  };
-
-  const getMessageText = (message: Message): string => {
-    // Only 'post' messages are searchable and appear in search results
-    if (message.content.type === 'post') {
-      const content = message.content.text;
-      return Array.isArray(content) ? content.join(' ') : content;
-    }
-    return '';
-  };
-
-  const generateContextualSnippet = (
-    text: string,
-    searchTerms: string[],
-    contextWords: number = 12,
-    maxLength: number = 200
-  ): string => {
-    if (!searchTerms.length || !text.trim()) {
-      return text.length > maxLength
-        ? text.substring(0, maxLength) + '...'
-        : text;
-    }
-
-    // Split text into words
-    const words = text.split(/\s+/);
-
-    // Find the first occurrence of any search term
-    let foundIndex = -1;
-
-    for (const term of searchTerms) {
-      const termLower = term.toLowerCase();
-      for (let i = 0; i < words.length; i++) {
-        if (words[i].toLowerCase().includes(termLower)) {
-          foundIndex = i;
-          break;
-        }
-      }
-      if (foundIndex !== -1) break;
-    }
-
-    // If no terms found, return truncated text from beginning
-    if (foundIndex === -1) {
-      return text.length > maxLength
-        ? text.substring(0, maxLength) + '...'
-        : text;
-    }
-
-    // Calculate snippet boundaries
-    const startIndex = Math.max(0, foundIndex - contextWords);
-    const endIndex = Math.min(words.length, foundIndex + contextWords + 1);
-
-    // Extract snippet
-    let snippet = words.slice(startIndex, endIndex).join(' ');
-
-    // Add ellipsis if we're not at the start/end
-    if (startIndex > 0) {
-      snippet = '...' + snippet;
-    }
-    if (endIndex < words.length) {
-      snippet = snippet + '...';
-    }
-
-    // If snippet is still too long, truncate it
-    if (snippet.length > maxLength) {
-      snippet = snippet.substring(0, maxLength - 3) + '...';
-    }
-
-    return snippet;
-  };
-
-  const getMessageTypeIconName = (message: Message): string => {
-    // Only 'post' messages are searchable and appear in search results
-    return 'hashtag';
-  };
-
-  const handleClick = () => {
-    onNavigate(message.spaceId, message.channelId, message.messageId);
-  };
-
-  const messageText = getMessageText(message);
-  const contextualSnippet = generateContextualSnippet(messageText, searchTerms);
-
-  return (
-    <div
-      className={`search-result-item ${className || ''}`}
-      onClick={handleClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          handleClick();
-        }
-      }}
-    >
-      <FlexBetween className="result-header">
-        <FlexRow className="result-meta">
-          {isDM && icon && (
-            <div
-              className="result-user-profile-image"
-              style={{ backgroundImage: `url(${icon})` }}
-            />
-          )}
-          {!isDM && (
-            <Icon
-              name={getMessageTypeIconName(message)}
-              className="result-type-icon"
-            />
-          )}
-          <span className="result-channel mr-2">{channelName}</span>
-
-          {!isDM && (
-            <>
-              <Icon name="user" className="result-user-icon" />
-              <span className=" result-sender">{displayName}</span>
-            </>
-          )}
-        </FlexRow>
-      </FlexBetween>
-
-      <div className="result-content">
-        <div
-          className="result-text"
-          dangerouslySetInnerHTML={{
-            __html: highlightTerms(contextualSnippet),
-          }}
-        />
-      </div>
-
-      <FlexBetween className="result-footer">
-        <span className="result-date">{formatDate(message.createdDate)}</span>
-      </FlexBetween>
-    </div>
-  );
 };
