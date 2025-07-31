@@ -30,19 +30,19 @@
 ### Search Business Logic
 
 #### SearchBar.tsx
-- [ ] Extract `useSearchSuggestions` hook
+- [x] Extract `useSearchSuggestions` hook
   - Suggestion display logic
   - Keyboard navigation state
   - Selection handling
-- [ ] Extract `useKeyboardShortcuts` hook
+- [x] Extract `useKeyboardShortcuts` hook
   - Ctrl/Cmd+K global search shortcut
   - Escape key handling
   - Focus management
-- [ ] Extract `useKeyboardNavigation` hook
+- [x] Extract `useKeyboardNavigation` hook
   - Arrow key navigation through suggestions
   - Enter/Tab selection handling
   - Selected index management
-- [ ] Test search bar functionality unchanged
+- [x] Test search bar functionality unchanged
 
 #### GlobalSearch.tsx
 - [ ] Extract `useGlobalSearchLogic` hook

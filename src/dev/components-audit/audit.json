@@ -92,17 +92,18 @@
       "description": "Search input with suggestions and keyboard navigation",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "partial",
+      "primitives": "done",
       "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
         "useSearchSuggestions",
+        "useKeyboardShortcuts",
         "useKeyboardNavigation"
       ],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Heavy SCSS dependencies (SearchBar.scss) with complex CSS classes (.search-bar, .search-suggestions, .search-input-container). Complex keyboard/focus behavior. Easier to build native version.",
-      "updated": "2025-07-30"
+      "notes": "Business logic extracted to 3 hooks. Uses only primitives but still has custom SCSS file with styling classes.",
+      "updated": "2025-07-31"
     },
     "AppWithSearch.tsx": {
       "name": "AppWithSearch",
@@ -1010,7 +1011,7 @@
   },
   "stats": {
     "total": 59,
-    "primitives_done": 15,
+    "primitives_done": 16,
     "logic_extraction_done": 42,
     "native_ready": 10,
     "by_category": {
