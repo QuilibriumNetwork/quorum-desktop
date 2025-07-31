@@ -786,7 +786,7 @@ const SpaceEditor: React.FunctionComponent<{
                           <Trans>Enter Address Manually</Trans>
                         </div>
                         <Input
-                          className="w-full placeholder:text-subtle"
+                          className="w-full"
                           value={manualAddress}
                           placeholder="Type the address of the user you want to send to"
                           onChange={setManualAddress}
@@ -854,12 +854,12 @@ const SpaceEditor: React.FunctionComponent<{
                                   <ClickToCopyContent
                                     text={space.inviteUrl}
                                     tooltipText={t`Copy invite link to clipboard`}
-                                    className="bg-input border border-strong rounded-md px-3 py-1.5 text-sm w-full max-w-full overflow-hidden whitespace-nowrap cursor-pointer transition hover:border-stronger"
+                                    className="bg-input border-0 rounded-md px-3 py-1.5 text-sm w-full max-w-full overflow-hidden whitespace-nowrap cursor-pointer"
                                     iconClassName="text-muted hover:text-main"
                                     copyOnContentClick
                                   >
                                     <div className="flex items-center gap-2 w-full">
-                                      <div className="truncate flex-1">
+                                      <div className="truncate flex-1 text-subtle">
                                         {space.inviteUrl}
                                       </div>
                                     </div>
