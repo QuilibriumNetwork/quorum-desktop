@@ -1,229 +1,83 @@
-# .claude Directory Index
+# Claude Context Index
 
-This index provides quick access to all documentation, bug reports, and task tracking files in the .claude directory. Use Ctrl+F to search for specific topics or keywords.
+This index provides an overview of all documentation, tasks, bugs, and commands available in the Claude context.
 
-**Last Updated**: 2025-07-30
+## Documentation
 
-## 📚 Documentation (.claude/docs/)
+- **[Component Management & Development Guide](docs/component-management-guide.md)**
+- **[Complete Guide: Cross-Platform React Components for Web + Native](docs/cross-platform-components-guide.md)**
+- **[Quorum Data Management Architecture](docs/data-management-architecture-guide.md)**
+- **[Desktop Notifications Feature](docs/features/desktop-notifications.md)**
+- **[Emoji Picker React - Styling & Customization](docs/features/emoji-picker-react-customization.md)**
+- **[Invite System Analysis - Comprehensive Report](docs/features/invite-system-analysis.md)**
+- **[Kick User System Documentation](docs/features/kick-user-system.md)**
+- **[Mobile Message Actions Implementation](docs/features/message-actions-mobile.md)**
+- **[Modal System Documentation](docs/features/modals.md)**
+- **[ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)**
+- **[Responsive Layout System Documentation](docs/features/responsive-layout.md)**
+- **[🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)**
+- **[Primitive Styling Guidelines](docs/primitive-styling-guide.md)**
+- **[When to Use Primitives vs Raw HTML](docs/when-to-use-primitives.md)**
 
-Comprehensive guides and documentation for various features and components.
+## Bug Reports
 
-### Component Development
+### Active Issues
+- **[Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors-ONGOING.md)**
+- **[Search Focus Management Comprehensive Bug Report](bugs/search-focus-management.md)**
 
-- **[component-development-guide.md](docs/component-development-guide.md)**  
-  _Guidelines for developing components with mobile-first approach_
+### Solved Issues
+- **[SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/SOLVED_modal-navmenu-zindex-stacking.md)**
+- **[NewDirectMessage Modal: URL-to-State Conversion](bugs/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)**
+- **[React Hooks Violation: Conditional Return Before Hooks](bugs/SOLVED_react-hooks-violation-conditional-return.md)**
+- **[SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/SOLVED_right-sidebar-overlay.md)**
 
-- **[cross-platform-components-guide.md](docs/cross-platform-components-guide.md)**  
-  _Cross-platform component architecture and implementation guide_
+## Commands
 
-- **[primitive-styling-guide.md](docs/primitive-styling-guide.md)**  
-  _🚨 CRITICAL: Form field consistency rules and semantic color usage for all primitives_
+- **[Audit Update](commands/audit-update.md)**
+- **[Index Update](commands/index-update.md)**
 
-### Feature Documentation
+## Tasks
 
-- **[desktop-notifications.md](docs/features/desktop-notifications.md)**  
-  _Desktop notification system implementation and configuration_
+### Completed Tasks
+- **[Modal Migration Analysis & Progress Report](tasks/done/DONE_modal-migration-plan.md)**
+- **[Color Switcher Implementation](tasks/done/color-switcher.md)**
+- **[Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/done/components-audit-dashboard.md)**
+- **[Emoji Picker Responsive Design Improvement](tasks/done/emojipicker-responsive.md)**
+- **[🎯 Objective: Implement Global Message Search](tasks/done/global-search-plan.md)**
+- **[🔍 Global Message Search Implementation Plan](tasks/done/global-search.md)**
+- **[Mobile Message Options UX Enhancement](tasks/done/message-options-mobile/message-options-mobile.md)**
+- **[Message Handling Report](tasks/done/messages-report.md)**
+- **[Modal Animation Consistency Implementation](tasks/done/new-modals-effect.md)**
+- **[ReactTooltip Mobile Optimization](tasks/done/reacttoolltip-mobile.md)**
+- **[Responsive Layout Implementation Plan](tasks/done/responsive-layout.md)**
+- **[Responsive Layout Requirements](tasks/done/responsive-layout_requirements.md)**
+- **[Search Components Primitive Migration](tasks/done/search-primitive-migration.md)**
+- **[Complex Modal Primitive Migration Template](tasks/done/usersettingsmodal-primitive-migration.md)**
 
-- **[emoji-picker-react-customization.md](docs/features/emoji-picker-react-customization.md)**  
-  _Custom emoji picker implementation with responsive design_
+### Ongoing Tasks
 
-- **[invite-system-analysis.md](docs/features/invite-system-analysis.md)**  
-  _🔍 COMPREHENSIVE: Complete analysis of invite system architecture, dual key systems, and security implications_
-
-- **[kick-user-system.md](docs/features/kick-user-system.md)**  
-  _User kick/ban system implementation and limitations_
-
-- **[message-actions-mobile.md](docs/features/message-actions-mobile.md)**  
-  _Mobile-friendly message action menus and drawers_
-
-- **[modals.md](docs/features/modals.md)**  
-  _Complete modal system architecture and patterns_
-
-- **[reacttooltip-mobile.md](docs/features/reacttooltip-mobile.md)**  
-  _React Tooltip implementation for mobile devices_
-
-- **[responsive-layout.md](docs/features/responsive-layout.md)**  
-  _Responsive layout system with mobile sidebar navigation_
-
-- **[search-feature.md](docs/features/search-feature.md)**  
-  _Global search implementation with keyboard shortcuts_
-
-### System Architecture
-
-- **[data-management-architecture-guide.md](docs/data-management-architecture-guide.md)**  
-  _Comprehensive guide to data storage, management, and flow patterns in Quorum_
-
-## 🐛 Bug Reports (.claude/bugs/)
-
-Tracking of bugs, both solved and active.
-
-### ✅ Solved Bugs
-
-- **[SOLVED_modal-navmenu-zindex-stacking.md](bugs/SOLVED_modal-navmenu-zindex-stacking.md)**  
-  _NavMenu elements appearing above modal overlays_  
-  Solution: New modal component with direct rendering and z-[9999]
-
-- **[SOLVED_newdirectmessage-modal-url-to-state-conversion.md](bugs/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)**  
-  _Modal reopening/flickering when closing from existing conversations_  
-  Solution: Converted from URL-based to state-based modal management
-
-- **[SOLVED_react-hooks-violation-conditional-return.md](bugs/SOLVED_react-hooks-violation-conditional-return.md)**  
-  _React hooks called conditionally due to early return statement_  
-  Solution: Moved all hooks before conditional returns
-
-- **[SOLVED_right-sidebar-overlay.md](bugs/SOLVED_right-sidebar-overlay.md)**  
-  _Right sidebar overlay positioning issues_  
-  Solution: Fixed overlay implementation
-
-### 🚧 Active/Ongoing Bugs
-
-- **[brave-browser-react-hook-errors-ONGOING.md](bugs/brave-browser-react-hook-errors-ONGOING.md)**  
-  _React hook errors specific to Brave browser_  
-  Status: Ongoing investigation with factory function workaround
-
-- **[search-focus-management.md](bugs/search-focus-management.md)**  
-  _Search input focus management issues_  
-  Status: Under investigation
-
-## 🛠️ Commands (.claude/commands/)
-
-Custom commands and automation scripts.
-
-- **[audit-update.md](commands/audit-update.md)**  
-  _Audit and update commands for codebase maintenance_
-
-## 📋 Tasks (.claude/tasks/)
-
-Task tracking for completed, ongoing, and planned work.
-
-### ✅ Completed Tasks (.claude/tasks/done/)
-
-- **[DONE_modal-migration-plan.md](tasks/done/DONE_modal-migration-plan.md)** - Modal system migration planning
-- **[color-switcher.md](tasks/done/color-switcher.md)** - Accent color switcher implementation
-- **[components-audit-dashboard.md](tasks/done/components-audit-dashboard.md)** - Components audit dashboard
-- **[emojipicker-responsive.md](tasks/done/emojipicker-responsive.md)** - Responsive emoji picker
-- **[global-search-plan.md](tasks/done/global-search-plan.md)** - Global search planning
-- **[global-search.md](tasks/done/global-search.md)** - Global search implementation
-- **[message-options-mobile/](tasks/done/message-options-mobile/)** - Mobile message actions
-- **[messages-report.md](tasks/done/messages-report.md)** - Messages feature report
-- **[new-modals-effect.md](tasks/done/new-modals-effect.md)** - Modal effects implementation
-- **[reacttoolltip-mobile.md](tasks/done/reacttoolltip-mobile.md)** - Mobile tooltip support
-- **[responsive-layout.md](tasks/done/responsive-layout.md)** - Responsive layout implementation
-- **[responsive-layout_requirements.md](tasks/done/responsive-layout_requirements.md)** - Layout requirements
-- **[search-primitive-migration.md](tasks/done/search-primitive-migration.md)** - Search primitive migration
-- **[usersettingsmodal-primitive-migration.md](tasks/done/usersettingsmodal-primitive-migration.md)** - User settings modal migration
-
-### 🚧 Ongoing Tasks (.claude/tasks/ongoing/)
-
-_(Currently empty)_
-
-### 📝 TODO Tasks (.claude/tasks/todo/)
-
-#### CSS Refactoring
-
-- **[css-refactor/analysis.md](tasks/todo/css-refactor/analysis.md)** - CSS codebase analysis
-- **[css-refactor/css-inventory.md](tasks/todo/css-refactor/css-inventory.md)** - Complete CSS inventory
-- **[css-refactor/css-refactor-plan.md](tasks/todo/css-refactor/css-refactor-plan.md)** - Refactoring plan
-
-#### Mobile Development
-
-- **[mobile-dev/business-logic-extraction-plan.md](tasks/todo/mobile-dev/business-logic-extraction-plan.md)** - Business logic extraction planning
-- **[mobile-dev/components-audit.md](tasks/todo/mobile-dev/components-audit.md)** - Components audit for mobile
-- **[mobile-dev/components-shared-arch-masterplan.md](tasks/todo/mobile-dev/components-shared-arch-masterplan.md)** - Shared component architecture
-- **[mobile-dev/css-to-mobile-colors-sync.md](tasks/todo/mobile-dev/css-to-mobile-colors-sync.md)** - CSS to mobile color synchronization
-- **[mobile-dev/mobile-dev-plan.md](tasks/todo/mobile-dev/mobile-dev-plan.md)** - Mobile development plan
-- **[mobile-dev/mobile-touch-transition-plan.md](tasks/todo/mobile-dev/mobile-touch-transition-plan.md)** - Touch transition plan
-- **[mobile-dev/plan-quick-recap.md](tasks/todo/mobile-dev/plan-quick-recap.md)** - Quick plan recap
-- **[mobile-dev/primitive-migration-audit.md](tasks/todo/mobile-dev/primitive-migration-audit.md)** - Primitive component migration audit
-
-##### Mobile Dev Documentation
-
-- **[mobile-dev/docs/component-architecture-workflow-explained.md](tasks/todo/mobile-dev/docs/component-architecture-workflow-explained.md)** - Component architecture workflow
-- **[mobile-dev/docs/mobile-desktop-audit.md](tasks/todo/mobile-dev/docs/mobile-desktop-audit.md)** - Mobile/desktop feature audit
-- **[mobile-dev/docs/primitives-testing.md](tasks/todo/mobile-dev/docs/primitives-testing.md)** - Primitives testing guide
-- **[mobile-dev/docs/third-party-component-migration-report.md](tasks/todo/mobile-dev/docs/third-party-component-migration-report.md)** - Third-party component migration
-- **[mobile-dev/docs/web-and-native-repo-structure.md](tasks/todo/mobile-dev/docs/web-and-native-repo-structure.md)** - Repository structure guide
-
-#### Other TODOs
-
-- **[kick-user-ux-improvements.md](tasks/todo/kick-user-ux-improvements.md)** - Kick user UX improvements planning
-- **[search-performance-optimization.md](tasks/todo/search-performance-optimization.md)** - Search performance improvements
-- **[test-suite-plan.md](tasks/todo/test-suite-plan.md)** - Test suite planning
-- **[user-status.md](tasks/todo/user-status.md)** - User status feature planning
-
-## 📁 Directory Structure
-
-```
-.claude/
-├── INDEX.md (this file)
-├── settings.local.json
-├── commands/
-│   └── audit-update.md
-├── docs/
-│   ├── component-development-guide.md
-│   ├── cross-platform-components-guide.md
-│   ├── data-management-architecture-guide.md
-│   ├── primitive-styling-guide.md
-│   └── features/
-│       ├── desktop-notifications.md
-│       ├── emoji-picker-react-customization.md
-│       ├── invite-system-analysis.md
-│       ├── kick-user-system.md
-│       ├── message-actions-mobile.md
-│       ├── modals.md
-│       ├── reacttooltip-mobile.md
-│       ├── responsive-layout.md
-│       └── search-feature.md
-├── bugs/
-│   ├── SOLVED_modal-navmenu-zindex-stacking.md
-│   ├── SOLVED_newdirectmessage-modal-url-to-state-conversion.md
-│   ├── SOLVED_react-hooks-violation-conditional-return.md
-│   ├── SOLVED_right-sidebar-overlay.md
-│   ├── brave-browser-react-hook-errors-ONGOING.md
-│   └── search-focus-management.md
-└── tasks/
-    ├── done/
-    │   ├── DONE_modal-migration-plan.md
-    │   ├── color-switcher.md
-    │   ├── components-audit-dashboard.md
-    │   ├── emojipicker-responsive.md
-    │   ├── global-search-plan.md
-    │   ├── global-search.md
-    │   ├── message-options-mobile/
-    │   ├── messages-report.md
-    │   ├── new-modals-effect.md
-    │   ├── reacttoolltip-mobile.md
-    │   ├── responsive-layout.md
-    │   ├── responsive-layout_requirements.md
-    │   ├── search-primitive-migration.md
-    │   └── usersettingsmodal-primitive-migration.md
-    ├── ongoing/
-    └── todo/
-        ├── css-refactor/
-        │   ├── analysis.md
-        │   ├── css-inventory.md
-        │   └── css-refactor-plan.md
-        ├── mobile-dev/
-        │   ├── business-logic-extraction-plan.md
-        │   ├── components-audit.md
-        │   ├── components-shared-arch-masterplan.md
-        │   ├── css-to-mobile-colors-sync.md
-        │   ├── mobile-dev-plan.md
-        │   ├── mobile-touch-transition-plan.md
-        │   ├── plan-quick-recap.md
-        │   ├── primitive-migration-audit.md
-        │   └── docs/
-        │       ├── component-architecture-workflow-explained.md
-        │       ├── mobile-desktop-audit.md
-        │       ├── primitives-testing.md
-        │       ├── third-party-component-migration-report.md
-        │       └── web-and-native-repo-structure.md
-        ├── kick-user-ux-improvements.md
-        ├── search-performance-optimization.md
-        ├── test-suite-plan.md
-        └── user-status.md
-```
+### Todo Tasks
+- **[CSS Refactor Analysis Report](tasks/todo/css-refactor/analysis.md)**
+- **[CSS Inventory - Complete Codebase Analysis](tasks/todo/css-refactor/css-inventory.md)**
+- **[CSS Refactor Plan - Claude Code Execution Strategy](tasks/todo/css-refactor/css-refactor-plan.md)**
+- **[Kick User UX Improvements](tasks/todo/kick-user-ux-improvements.md)**
+- **[Business Logic Extraction & Native Preparation Plan](tasks/todo/mobile-dev/business-logic-extraction-plan.md)**
+- **[Cross-Platform Component Audit](tasks/todo/mobile-dev/components-audit.md)**
+- **[Component Architecture Masterplan - Desktop/Mobile Unification](tasks/todo/mobile-dev/components-shared-arch-masterplan.md)**
+- **[CSS to Mobile Colors Sync Script](tasks/todo/mobile-dev/css-to-mobile-colors-sync.md)**
+- **[Component Architecture Workflow - Detailed Explanation](tasks/todo/mobile-dev/docs/component-architecture-workflow-explained.md)**
+- **[Mobile/Desktop Behavioral Differences Audit Plan](tasks/todo/mobile-dev/docs/mobile-desktop-audit.md)**
+- **[Primitives Testing Guide](tasks/todo/mobile-dev/docs/primitives-testing.md)**
+- **[Third-Party Component Migration Report](tasks/todo/mobile-dev/docs/third-party-component-migration-report.md)**
+- **[Web/Native Repository Structure](tasks/todo/mobile-dev/docs/web-and-native-repo-structure.md)**
+- **[Mobile Development Plan - Improved Version](tasks/todo/mobile-dev/mobile-dev-plan.md)**
+- **[Mobile/Touch Implementation Transition Plan](tasks/todo/mobile-dev/mobile-touch-transition-plan.md)**
+- **[Cross-Platform Development : Revised Plan](tasks/todo/mobile-dev/plan-quick-recap.md)**
+- **[Primitive Migration Audit Report](tasks/todo/mobile-dev/primitive-migration-audit.md)**
+- **[🚀 Search Performance Optimization - Master Plan](tasks/todo/search-performance-optimization.md)**
+- **[Test Suite Implementation Plan for Quorum Desktop](tasks/todo/test-suite-plan.md)**
+- **[User Status Feature Implementation Plan](tasks/todo/user-status.md)**
 
 ---
 
-_Last updated: 2025-07-30_
+*Last Updated: 2025-07-31 17:40 UTC*
