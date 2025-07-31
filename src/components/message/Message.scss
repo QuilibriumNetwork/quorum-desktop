@@ -1,9 +1,9 @@
 @keyframes flash-highlight {
   0% {
-    background-color: rgba(var(--warning), 0.2);
+    background-color: rgb(var(--warning) / 0.2);
   }
   30% {
-    background-color: rgba(var(--warning), 0.2); /* stay solid */
+    background-color: rgb(var(--warning) / 0.2); /* stay solid */
   }
   100% {
     background-color: transparent;
