@@ -5,7 +5,6 @@
 This guide provides step-by-step instructions for creating new components and converting existing components to work seamlessly across desktop and mobile platforms using our primitive-based architecture.
 
 **For architectural concepts and reasoning**, see [`components-shared-arch-masterplan.md`](../tasks/todo/mobile-dev/components-shared-arch-masterplan.md).  
-**For implementation timeline and phases**, see [`mobile-dev-plan.md`](../tasks/todo/mobile-dev/mobile-dev-plan.md).
 
 ## Development Workflow Overview
 

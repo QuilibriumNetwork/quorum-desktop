@@ -9,6 +9,8 @@ RULES to categorize a component:
   - Complex UI patterns (drag/drop, virtualization, tooltips)
 - **complex_refactor**: 500+ lines with multiple concerns needing major refactoring
 
+- **Native** categories: is "Ready" only if there is a native components ready or the component is **shared** AND it's been tested succesfully on mobile - in most cases it will be **todo**
+
 **EVALUATE CASE BY CASE**: Simple CSS fixes vs separate components
 - If 1-2 simple CSS classes can be replaced with primitives → make **shared**
 - If complex SCSS, multiple classes, or web-specific behavior → keep **platform_specific**

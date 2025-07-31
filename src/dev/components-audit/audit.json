@@ -152,9 +152,9 @@
       "hooks": [
         "useUserKicking"
       ],
-      "native": "ready",
-      "notes": "COMPLETED: Business logic extracted into useUserKicking hook with confirmation flow, timeout management, and kick user API calls. All raw HTML replaced with Container, Text, FlexRow primitives. Fully cross-platform compatible with responsive text alignment.",
-      "updated": "2025-07-30"
+      "native": "done",
+      "notes": "COMPLETED: Business logic extracted into useUserKicking hook with confirmation flow, timeout management, and kick user API calls. All raw HTML replaced with Container, Text, FlexRow primitives. Fully cross-platform compatible with responsive text alignment. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
+      "updated": "2025-07-31"
     },
     "UserSettingsModal.tsx": {
       "name": "UserSettingsModal",
@@ -315,7 +315,7 @@
       "hooks": [
         "useAccentColor"
       ],
-      "native": "ready",
+      "native": "done",
       "notes": "COMPLETED: Business logic extracted into useAccentColor hook with platform-aware storage (localStorage for web, AsyncStorage ready for native). Now uses FlexRow primitive instead of raw div. Component uses only primitives (FlexRow, ColorSwatch) with platform-aware sizing logic. Fully cross-platform compatible.",
       "updated": "2025-07-31"
     },
@@ -622,9 +622,9 @@
         "useDirectMessageCreation",
         "useAddressValidation"
       ],
-      "native": "ready",
-      "notes": "COMPLETED: Business logic extracted into useDirectMessageCreation and useAddressValidation hooks. All raw HTML replaced with Container and Text primitives. Fully cross-platform compatible.",
-      "updated": "2025-07-30"
+      "native": "done",
+      "notes": "COMPLETED: Business logic extracted into useDirectMessageCreation and useAddressValidation hooks. All raw HTML replaced with Container and Text primitives. Fully cross-platform compatible. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
+      "updated": "2025-07-31"
     },
     "JoinSpaceModal.tsx": {
       "name": "JoinSpaceModal",
@@ -640,9 +640,9 @@
         "useSpaceJoining",
         "useInviteValidation"
       ],
-      "native": "ready",
-      "notes": "COMPLETED: Business logic extracted into useSpaceJoining and useInviteValidation hooks. All raw HTML replaced with Container, FlexCenter, and Text primitives. Fully cross-platform compatible.",
-      "updated": "2025-07-30"
+      "native": "done",
+      "notes": "COMPLETED: Business logic extracted into useSpaceJoining and useInviteValidation hooks. All raw HTML replaced with Container, FlexCenter, and Text primitives. Fully cross-platform compatible. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
+      "updated": "2025-07-31"
     },
     "LeaveSpaceModal.tsx": {
       "name": "LeaveSpaceModal",
@@ -657,9 +657,9 @@
       "hooks": [
         "useSpaceLeaving"
       ],
-      "native": "ready",
-      "notes": "COMPLETED: Business logic extracted into useSpaceLeaving hook with confirmation flow and timeout management. All raw HTML replaced with Container, Text, FlexRow, and other primitives. Fully cross-platform compatible with responsive text alignment.",
-      "updated": "2025-07-30"
+      "native": "done",
+      "notes": "COMPLETED: Business logic extracted into useSpaceLeaving hook with confirmation flow and timeout management. All raw HTML replaced with Container, Text, FlexRow, and other primitives. Fully cross-platform compatible with responsive text alignment. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
+      "updated": "2025-07-31"
     },
     "GlobalSearch.tsx": {
       "name": "GlobalSearch",
@@ -785,9 +785,9 @@
         "useThemeDetection",
         "useSystemTheme"
       ],
-      "native": "ready",
+      "native": "done",
       "notes": "Theme detection logic with localStorage + system theme detection (>10 lines, reusable). Context provider pattern works identically cross-platform.",
-      "updated": "2025-07-29"
+      "updated": "2025-07-31"
     },
     "ResponsiveLayoutProvider.tsx": {
       "name": "ResponsiveLayoutProvider",
@@ -800,9 +800,9 @@
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
-      "native": "ready",
+      "native": "done",
       "notes": "Simple context wrapper around useResponsiveLayout hook. Context pattern works identically cross-platform. Logic already in hook.",
-      "updated": "2025-07-29"
+      "updated": "2025-07-31"
     },
     "SpaceEditor.tsx": {
       "name": "SpaceEditor",
@@ -940,9 +940,9 @@
         "useWebSocketConnection",
         "useMessageQueue"
       ],
-      "native": "ready",
+      "native": "done",
       "notes": "Complex WebSocket logic with connection management, message queuing (>10 lines, reusable). Context pattern works cross-platform.",
-      "updated": "2025-07-29"
+      "updated": "2025-07-31"
     },
     "QuorumApiContext.tsx": {
       "name": "QuorumApiContext",
@@ -958,9 +958,9 @@
         "useApiClientSetup",
         "useErrorHandling"
       ],
-      "native": "ready",
+      "native": "done",
       "notes": "Complex API client configuration with error handling (>10 lines, reusable). Context pattern works cross-platform.",
-      "updated": "2025-07-29"
+      "updated": "2025-07-31"
     },
     "MessageDB.tsx": {
       "name": "MessageDB",
@@ -977,9 +977,9 @@
         "useEncryption",
         "useCaching"
       ],
-      "native": "ready",
+      "native": "done",
       "notes": "Complex database logic with encryption, caching, key management (>10 lines, reusable). Context pattern works cross-platform.",
-      "updated": "2025-07-29"
+      "updated": "2025-07-31"
     },
     "RegistrationPersister.tsx": {
       "name": "RegistrationPersister",
@@ -1010,16 +1010,17 @@
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
-      "native": "ready",
+      "native": "done",
       "notes": "Entire component is commented out. Would use React Router Navigate - works cross-platform. Dead code candidate for removal.",
-      "updated": "2025-07-29"
+      "updated": "2025-07-31"
     }
   },
   "stats": {
     "total": 59,
     "primitives_done": 23,
     "logic_extraction_done": 46,
-    "native_ready": 11,
+    "native_ready": 0,
+    "native_done": 11,
     "by_category": {
       "platform_specific": 41,
       "complex_refactor": 5,

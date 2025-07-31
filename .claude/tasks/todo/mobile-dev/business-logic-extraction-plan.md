@@ -34,37 +34,13 @@
 - [x] SearchResults.tsx
 - [x] SearchResultItem.tsx
 
+### Simple Logic, Quick Testing
 
-### Remaining Components - Prioritized by Simplicity & Testability
+- [x] AccentColorSwitcher.tsx
+- [x] ClickToCopyContent.tsx
+- [x] SpaceIcon.tsx
 
-#### High Priority - Simple Logic, Quick Testing (Start Here)
-
-#### AccentColorSwitcher.tsx ⭐ EASIEST TEST
-- [ ] Extract `useAccentColor` hook
-  - Color selection logic
-  - Theme integration
-  - Local storage persistence
-- [ ] Replace primitives: `<div className="flex gap-3">` → `<FlexRow>`
-- [ ] Test: Click colors, verify theme changes, check persistence
-
-#### ClickToCopyContent.tsx ⭐ EASY TEST
-- [ ] Extract `useCopyToClipboard` hook
-  - Copy functionality
-  - Success feedback
-  - Error handling
-- [ ] Extract `useTooltipInteraction` hook
-  - Touch/hover detection
-  - Tooltip show/hide
-- [ ] Test: Click to copy, verify clipboard, check tooltip
-
-#### SpaceIcon.tsx ⭐ VISUAL TEST
-- [ ] Extract `useImageLoading` hook
-  - ArrayBuffer image handling
-  - Loading states
-  - Error fallbacks
-- [ ] Test: Upload space icon, verify display, check loading states
-
-#### Medium Priority - More Complex Logic
+### More Complex Logic
 
 #### DirectMessageContactsList.tsx
 - [ ] Extract `useConversationPolling` hook
@@ -131,7 +107,7 @@
 - [ ] Extract `useSpaceNavigation` hook (shared)
 - [ ] Test: Reorder spaces, verify persistence, check navigation
 
-#### High Complexity - Extract Last (Require Careful Testing)
+### High Complexity - Extract Last (Require Careful Testing)
 
 #### Layout.tsx ⚠️ COMPLEX REFACTOR
 - [ ] Extract `useModalManagement` hook
@@ -150,7 +126,7 @@
   - Search integration
 - [ ] Test: Search functionality, modal interactions, global state
 
-#### MASSIVE REFACTORS - Phase 2 Only ⚠️
+### MASSIVE REFACTORS - Phase 2 Only ⚠️
 
 **These should be done last as they require extensive testing:**
 

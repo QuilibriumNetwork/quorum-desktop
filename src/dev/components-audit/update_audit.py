@@ -35,6 +35,7 @@ def update_statistics(data):
     primitives_done = sum(1 for c in components.values() if c.get('primitives') == 'done')
     logic_extraction_done = sum(1 for c in components.values() if c.get('logic_extraction') == 'done')
     native_ready = sum(1 for c in components.values() if c.get('native') == 'ready')
+    native_done = sum(1 for c in components.values() if c.get('native') == 'done')
     
     # Count by category
     categories = {}
@@ -60,6 +61,7 @@ def update_statistics(data):
         'primitives_done': primitives_done,
         'logic_extraction_done': logic_extraction_done,
         'native_ready': native_ready,
+        'native_done': native_done,
         'by_category': categories,
         'by_usage': usage,
         'by_logic_needs': logic_needs,
@@ -88,6 +90,27 @@ def update_component(data, component_name, updates):
     # Always update the timestamp
     comp['updated'] = datetime.now().strftime('%Y-%m-%d')
 
+def move_ready_components(data):
+    """Move components from 'Native > Ready' to appropriate categories based on their main category"""
+    moved_components = []
+    
+    for comp_name, comp_data in data['components'].items():
+        if comp_data.get('native') == 'ready':
+            category = comp_data.get('category')
+            
+            if category == 'shared':
+                # Move to "Native > Done"
+                comp_data['native'] = 'done'
+                comp_data['updated'] = datetime.now().strftime('%Y-%m-%d')
+                moved_components.append(f"{comp_name}: shared -> done")
+            elif category == 'platform_specific':
+                # Move to "Native > Todo"
+                comp_data['native'] = 'todo'
+                comp_data['updated'] = datetime.now().strftime('%Y-%m-%d')
+                moved_components.append(f"{comp_name}: platform_specific -> todo")
+    
+    return moved_components
+
 def main():
     parser = argparse.ArgumentParser(description='Update components audit.json file')
     parser.add_argument('--component', help='Component name to update (e.g., "GroupEditor.tsx")')
@@ -95,11 +118,12 @@ def main():
     parser.add_argument('--logic_extraction', choices=['todo', 'done'], help='Logic extraction status')
     parser.add_argument('--logic_needs', choices=['extract', 'keep', 'done'], help='Logic needs status')
     parser.add_argument('--hooks', help='Comma-separated list of hooks (e.g., "useHook1,useHook2")')
-    parser.add_argument('--native', choices=['todo', 'ready'], help='Native readiness status')
+    parser.add_argument('--native', choices=['todo', 'ready', 'done'], help='Native readiness status')
     parser.add_argument('--category', choices=['shared', 'platform_specific', 'complex_refactor'], help='Component category')
     parser.add_argument('--notes', help='Updated notes for the component')
     parser.add_argument('--analysis_notes', help='Update the global analysis notes')
     parser.add_argument('--stats-only', action='store_true', help='Only recalculate statistics')
+    parser.add_argument('--move-ready', action='store_true', help='Move components from Native>Ready to appropriate categories')
     
     args = parser.parse_args()
     
@@ -110,6 +134,15 @@ def main():
         # Just update statistics
         update_statistics(data)
         print("Updated statistics only")
+    elif args.move_ready:
+        # Move components from Native>Ready to appropriate categories
+        moved_components = move_ready_components(data)
+        if moved_components:
+            print("Moved the following components:")
+            for move in moved_components:
+                print(f"  - {move}")
+        else:
+            print("No components found with 'ready' status to move")
     elif args.component:
         # Update specific component
         updates = {}
@@ -136,7 +169,7 @@ def main():
             print("No updates specified for component")
             return
     else:
-        print("Must specify either --component or --stats-only")
+        print("Must specify either --component, --stats-only, or --move-ready")
         return
     
     # Update global analysis notes if provided
