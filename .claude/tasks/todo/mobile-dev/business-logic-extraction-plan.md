@@ -45,18 +45,18 @@
 - [x] Test search bar functionality unchanged
 
 #### GlobalSearch.tsx
-- [ ] Extract `useGlobalSearchLogic` hook
+- [x] Extract `useGlobalSearchLogic` hook
   - Search service integration
   - Query debouncing
   - Result management
-- [ ] Extract `useSearchState` hook
+- [x] Extract `useSearchState` hook
   - Show/hide results state
   - Loading states
   - Error handling
-- [ ] Extract `useSearchContext` hook (if not already extracted)
+- [x] Extract `useSearchContext` hook (if not already extracted)
   - Current route context
   - Context display logic
-- [ ] Test global search functionality unchanged
+- [x] Test global search functionality unchanged
 
 #### SearchResults.tsx
 - [ ] Extract `useResultsVirtualization` hook

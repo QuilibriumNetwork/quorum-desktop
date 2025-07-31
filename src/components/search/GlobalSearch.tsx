@@ -1,14 +1,16 @@
-import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
 import { SearchBar } from './SearchBar';
 import { SearchResults } from './SearchResults';
-import { useGlobalSearch } from '../../hooks/queries/search/useGlobalSearch';
-import { SearchService } from '../../services/searchService';
 import { useMessageDB } from '../context/MessageDB';
+import { Container } from '../primitives';
 import {
+  useGlobalSearch,
+  useGlobalSearchState,
+  useGlobalSearchNavigation,
+  useSearchService,
   useSearchContext,
   getContextDisplayName,
-} from '../../hooks/useSearchContext';
+} from '../../hooks';
 import './GlobalSearch.scss';
 
 interface GlobalSearchProps {
@@ -16,23 +18,23 @@ interface GlobalSearchProps {
 }
 
 export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
-  const navigate = useNavigate();
   const { messageDB } = useMessageDB();
-  const [showResults, setShowResults] = useState(false);
-
+  
   // Get search context from current route
   const searchContext = useSearchContext();
 
-  // Create search service instance (in a real app, this should be a singleton)
-  const searchService = useMemo(() => {
-    if (!messageDB) return null;
-    const service = new SearchService(messageDB);
-    // Initialize search indices
-    service.initialize().catch(() => {
-      // Search initialization failed - service will handle gracefully
-    });
-    return service;
-  }, [messageDB]);
+  // Business logic hooks
+  const { searchService } = useSearchService({ messageDB });
+  
+  const {
+    showResults,
+    handleQueryChange,
+    handleSuggestionSelect,
+    handleClear,
+    handleCloseResults,
+  } = useGlobalSearchState({ minQueryLength: 3 });
+
+  const { handleNavigate } = useGlobalSearchNavigation();
 
   // Search hook
   const {
@@ -52,47 +54,6 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
     debounceMs: 800, // Increased delay to prevent focus stealing during typing
   });
 
-  // Handle navigation to message
-  const handleNavigate = (
-    spaceId: string,
-    channelId: string,
-    messageId: string
-  ) => {
-    // Check if this is a DM message (spaceId === channelId indicates DM)
-    const isDM = spaceId === channelId;
-
-    if (isDM) {
-      // For DMs, navigate to /messages/:address route
-      navigate(`/messages/${spaceId}#msg-${messageId}`);
-    } else {
-      // For spaces, use normal space route
-      navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
-    }
-  };
-
-  // Handle query changes
-  const handleQueryChange = (newQuery: string) => {
-    setQuery(newQuery);
-    setShowResults(newQuery.trim().length >= 3);
-  };
-
-  // Handle suggestion selection
-  const handleSuggestionSelect = (suggestion: string) => {
-    setQuery(suggestion);
-    setShowResults(true);
-  };
-
-  // Handle clear
-  const handleClear = () => {
-    clearSearch();
-    setShowResults(false);
-  };
-
-  // Handle close results
-  const handleCloseResults = () => {
-    setShowResults(false);
-  };
-
   // Get contextual placeholder
   const placeholder = getContextDisplayName(searchContext);
 
@@ -101,14 +62,14 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
   }
 
   return (
-    <div className={`global-search ${className || ''}`}>
+    <Container className={`global-search ${className || ''}`}>
       <SearchBar
         query={query}
-        onQueryChange={handleQueryChange}
-        onClear={handleClear}
+        onQueryChange={(newQuery) => handleQueryChange(newQuery, setQuery)}
+        onClear={() => handleClear(clearSearch)}
         placeholder={placeholder}
         suggestions={suggestions}
-        onSuggestionSelect={handleSuggestionSelect}
+        onSuggestionSelect={(suggestion) => handleSuggestionSelect(suggestion, setQuery)}
         className="global-search-bar"
       />
 
@@ -125,6 +86,6 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
           className="global-search-results"
         />
       )}
-    </div>
+    </Container>
   );
 };

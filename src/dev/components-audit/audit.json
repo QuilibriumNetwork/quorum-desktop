@@ -667,18 +667,18 @@
       "description": "Global search component with context-aware search functionality",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "partial",
+      "primitives": "done",
       "web_native": "platform_specific",
-      "logic_extraction": "todo",
+      "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
-        "useGlobalSearchLogic",
-        "useSearchContext",
-        "useSearchState"
+        "useGlobalSearchState",
+        "useGlobalSearchNavigation",
+        "useSearchService"
       ],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Uses GlobalSearch.scss, depends on SearchBar component (also platform-specific). Search UI patterns differ for web/native.",
-      "updated": "2025-07-30"
+      "notes": "Business logic extracted to 3 hooks. Uses Container primitive but still has minimal SCSS file with z-index positioning for web-specific layering.",
+      "updated": "2025-07-31"
     },
     "SearchResults.tsx": {
       "name": "SearchResults",
@@ -1011,8 +1011,8 @@
   },
   "stats": {
     "total": 59,
-    "primitives_done": 16,
-    "logic_extraction_done": 42,
+    "primitives_done": 17,
+    "logic_extraction_done": 43,
     "native_ready": 10,
     "by_category": {
       "platform_specific": 42,

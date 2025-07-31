@@ -10,3 +10,4 @@ export * from './inbox';
 export * from './channels';
 export * from './messages';
 export * from './global';
+export * from './search';
