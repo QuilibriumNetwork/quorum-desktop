@@ -1,6 +1,8 @@
 import * as React from 'react';
 import './SpaceIcon.scss';
-import ReactTooltip from '../ReactTooltip';
+import { Tooltip } from '../primitives';
+import { useImageLoading } from '../../hooks';
+import { useDragStateContext } from '../../context/DragStateContext';
 
 type SpaceIconProps = {
   selected: boolean;
@@ -15,15 +17,20 @@ type SpaceIconProps = {
   highlightedTooltip?: boolean;
 };
 const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
-  const [data, setData] = React.useState<ArrayBuffer>();
+  const { backgroundImage } = useImageLoading({
+    iconData: props.iconData,
+    iconUrl: props.iconUrl,
+  });
 
-  React.useEffect(() => {
-    if (!data && props.iconData) {
-      props.iconData.then((data) => {
-        setData(data);
-      });
-    }
-  }, [data]);
+  // Check if we're in a drag context (will be undefined if not in DragStateProvider)
+  let isDragging = false;
+  try {
+    const dragContext = useDragStateContext();
+    isDragging = dragContext.isDragging;
+  } catch {
+    // Not in drag context, tooltips should work normally
+    isDragging = false;
+  }
 
   // Generate a unique ID for this space icon
   // Use spaceId if available, otherwise sanitize the space name
@@ -39,36 +46,34 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
   const iconId = React.useMemo(() => {
     return `space-icon-${uniqueId}-${Math.random().toString(36).substr(2, 9)}`;
   }, [uniqueId]);
-  return (
-    <>
-      <div className="relative z-[999]">
-        {!props.noToggle && (
-          <div
-            className={`${props.selected ? 'space-icon-selected' : props.notifs ? 'space-icon-has-notifs' : 'space-icon'}-toggle`}
-          />
-        )}
+  const iconElement = (
+    <div className="relative z-[999]">
+      {!props.noToggle && (
         <div
-          id={iconId}
-          className={`${props.selected ? 'space-icon-selected' : 'space-icon'} space-icon-${props.size}`}
-          style={{
-            backgroundImage: props.iconUrl
-              ? `url(${props.iconUrl})`
-              : data
-                ? `url(data:image/png;base64,${Buffer.from(data).toString('base64')})`
-                : '',
-          }}
-        ></div>
-      </div>
-      {!props.noTooltip && (
-        <ReactTooltip
-          id={`${iconId}-tooltip`}
-          content={props.spaceName}
-          place="right"
-          anchorSelect={`#${iconId}`}
-          highlighted={props.highlightedTooltip}
+          className={`${props.selected ? 'space-icon-selected' : props.notifs ? 'space-icon-has-notifs' : 'space-icon'}-toggle`}
         />
       )}
-    </>
+      <div
+        className={`${props.selected ? 'space-icon-selected' : 'space-icon'} space-icon-${props.size}`}
+        style={{
+          backgroundImage,
+        }}
+        {...(props.noTooltip ? {} : { id: `${iconId}-anchor` })}
+      />
+    </div>
+  );
+
+  return props.noTooltip || isDragging ? (
+    iconElement
+  ) : (
+    <Tooltip
+      id={iconId}
+      content={props.spaceName}
+      place="right"
+      highlighted={props.highlightedTooltip}
+    >
+      {iconElement}
+    </Tooltip>
   );
 };
 

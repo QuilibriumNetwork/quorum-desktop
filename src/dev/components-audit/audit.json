@@ -542,19 +542,20 @@
     "SpaceIcon.tsx": {
       "name": "SpaceIcon",
       "path": "src/components/navbar/SpaceIcon.tsx",
-      "description": "Space icon display with image loading and tooltip",
+      "description": "Space icon display with image loading, tooltip, and drag-aware behavior",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "partial",
+      "primitives": "done",
       "web_native": "platform_specific",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
+      "logic_extraction": "done",
+      "logic_needs": "done",
       "hooks": [
-        "useImageLoading"
+        "useImageLoading",
+        "useDragStateContext"
       ],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports './SpaceIcon.scss' and uses custom CSS classes (space-icon-selected). Image loading logic with ArrayBuffer handling (>10 lines, reusable). Uses ReactTooltip.",
-      "updated": "2025-07-30"
+      "notes": "COMPLETED: Business logic extracted into useImageLoading hook with ArrayBuffer/URL image loading, loading states, and error handling. Now uses Tooltip primitive instead of direct ReactTooltip. Added drag-aware tooltip management - disables tooltips during space icon dragging for better UX. Remains platform_specific due to SpaceIcon.scss dependency with custom CSS classes (space-icon-selected, space-icon-has-notifs) and responsive breakpoints. Web version cannot use Container primitive - must use raw div elements to maintain CSS class compatibility with existing SCSS. Component demonstrates excellent pattern: shared business logic with platform-specific styling coordination.",
+      "updated": "2025-07-31"
     },
     "ChannelGroup.tsx": {
       "name": "ChannelGroup",
@@ -1016,8 +1017,8 @@
   },
   "stats": {
     "total": 59,
-    "primitives_done": 21,
-    "logic_extraction_done": 43,
+    "primitives_done": 22,
+    "logic_extraction_done": 44,
     "native_ready": 11,
     "by_category": {
       "platform_specific": 41,
@@ -1031,10 +1032,10 @@
     },
     "by_logic_needs": {
       "keep": 23,
-      "extract": 30,
-      "done": 6
+      "extract": 29,
+      "done": 7
     },
-    "analysis_notes": "MAJOR UPDATE: ClickToCopyContent business logic extracted to useCopyToClipboard hook and converted to use only primitives (Container, Icon, Text, Tooltip). Remains platform_specific due to complex web-specific touch event handling for mobile web UX. Latest: Component demonstrates perfect pattern - shared business logic with platform-specific UI coordination.",
+    "analysis_notes": "MAJOR UPDATE: SpaceIcon business logic extracted to useImageLoading hook with drag-aware tooltip management. Added DragStateContext system to disable tooltips during space icon dragging for better UX. Now uses Tooltip primitive instead of direct ReactTooltip. Component demonstrates excellent pattern - shared business logic with platform-specific styling coordination and enhanced drag/drop interaction.",
     "last_updated": "2025-07-31"
   },
   "metadata": {

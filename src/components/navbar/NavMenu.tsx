@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   DndContext,
   DragEndEvent,
+  DragStartEvent,
   PointerSensor,
   closestCenter,
   useSensor,
@@ -20,13 +21,14 @@ import './NavMenu.scss';
 import { useMessageDB } from '../context/MessageDB';
 import { useConfig } from '../../hooks/queries/config/useConfig';
 import { t } from '@lingui/core/macro';
+import { DragStateProvider, useDragStateContext } from '../../context/DragStateContext';
 
 type NavMenuProps = {
   showCreateSpaceModal: () => void;
   showJoinSpaceModal: () => void;
 };
 
-const NavMenu: React.FC<NavMenuProps> = (props) => {
+const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   const location = useLocation();
   const user = usePasskeysContext();
   const { data: spaces } = useSpaces({});
@@ -34,10 +36,18 @@ const NavMenu: React.FC<NavMenuProps> = (props) => {
   const { data: config } = useConfig({
     userAddress: user.currentPasskeyInfo!.address,
   });
+  const { setIsDragging } = useDragStateContext();
   const [mappedSpaces, setMappedSpaces] = React.useState<
     (Space & { id: string })[]
   >([]);
+
+  const handleDragStart = (e: DragStartEvent) => {
+    setIsDragging(true);
+  };
+
   const handleDragEnd = (e: DragEndEvent) => {
+    setIsDragging(false);
+    
     if (!e.over) return;
 
     const sortedItems = arrayMove(
@@ -108,6 +118,7 @@ const NavMenu: React.FC<NavMenuProps> = (props) => {
           sensors={sensors}
           modifiers={[restrictToVerticalAxis]}
           collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
           <SortableContext items={mappedSpaces}>
@@ -119,6 +130,14 @@ const NavMenu: React.FC<NavMenuProps> = (props) => {
       </div>
       <ExpandableNavMenu {...props} />
     </header>
+  );
+};
+
+const NavMenu: React.FC<NavMenuProps> = (props) => {
+  return (
+    <DragStateProvider>
+      <NavMenuContent {...props} />
+    </DragStateProvider>
   );
 };
 
