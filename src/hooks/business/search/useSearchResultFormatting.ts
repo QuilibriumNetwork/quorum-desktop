@@ -1,6 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import { t } from '@lingui/core/macro';
 import { Message } from '../../../api/quorumApi';
+import { IconName } from '../../../components/primitives/Icon/types';
 
 export interface UseSearchResultFormattingProps {
   message: Message;
@@ -9,7 +10,7 @@ export interface UseSearchResultFormattingProps {
 
 export interface UseSearchResultFormattingReturn {
   formattedDate: string;
-  messageTypeIcon: string;
+  messageTypeIcon: IconName;
   handleClick: () => void;
   handleKeyDown: (e: React.KeyboardEvent) => void;
 }
@@ -45,7 +46,7 @@ export const useSearchResultFormatting = ({
   }, [message.createdDate]);
 
   // Get message type icon
-  const messageTypeIcon = useMemo(() => {
+  const messageTypeIcon = useMemo((): IconName => {
     // Only 'post' messages are searchable and appear in search results
     return 'hashtag';
   }, []);

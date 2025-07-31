@@ -28,7 +28,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   const { message } = result;
 
   // DM-specific display logic
-  const { displayName, spaceName, channelName, icon } = useSearchResultDisplayDM({
+  const { channelName, icon } = useSearchResultDisplayDM({
     result,
   });
 
@@ -37,7 +37,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
     searchTerms,
   });
 
-  const { formattedDate, messageTypeIcon, handleClick, handleKeyDown } = useSearchResultFormatting({
+  const { formattedDate, handleClick, handleKeyDown } = useSearchResultFormatting({
     message,
     onNavigate,
   });
@@ -89,7 +89,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   const { message } = result;
 
   // Space-specific display logic
-  const { displayName, spaceName, channelName } = useSearchResultDisplaySpace({
+  const { displayName, channelName } = useSearchResultDisplaySpace({
     result,
   });
 
