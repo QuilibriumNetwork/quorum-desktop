@@ -31,14 +31,54 @@
 
 #### SearchBar.tsx
 - [ ] Extract `useSearchSuggestions` hook
-  - Search API integration
-  - Suggestion filtering
-  - Debouncing logic
-- [ ] Extract `useKeyboardNavigation` hook
-  - Arrow key navigation
-  - Enter/escape handling
+  - Suggestion display logic
+  - Keyboard navigation state
+  - Selection handling
+- [ ] Extract `useKeyboardShortcuts` hook
+  - Ctrl/Cmd+K global search shortcut
+  - Escape key handling
   - Focus management
-- [ ] Test search functionality unchanged
+- [ ] Extract `useKeyboardNavigation` hook
+  - Arrow key navigation through suggestions
+  - Enter/Tab selection handling
+  - Selected index management
+- [ ] Test search bar functionality unchanged
+
+#### GlobalSearch.tsx
+- [ ] Extract `useGlobalSearchLogic` hook
+  - Search service integration
+  - Query debouncing
+  - Result management
+- [ ] Extract `useSearchState` hook
+  - Show/hide results state
+  - Loading states
+  - Error handling
+- [ ] Extract `useSearchContext` hook (if not already extracted)
+  - Current route context
+  - Context display logic
+- [ ] Test global search functionality unchanged
+
+#### SearchResults.tsx
+- [ ] Extract `useResultsVirtualization` hook
+  - Virtuoso integration
+  - Scroll management
+  - Performance optimization
+- [ ] Extract `useSearchNavigation` hook
+  - Navigation to messages
+  - Highlight management
+  - Result interaction
+- [ ] Test search results functionality unchanged
+
+#### SearchResultItem.tsx
+- [ ] Extract `useSearchResultDisplay` hook
+  - User info fetching
+  - Space/channel data
+  - Message formatting
+- [ ] Extract `useHighlighting` hook
+  - Search term highlighting
+  - Text processing
+  - DOM manipulation
+- [ ] Test search result item functionality unchanged
 
 
 ### Data Management Logic**
