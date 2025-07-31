@@ -28,6 +28,9 @@ type ClickToCopyContentProps = {
   iconPosition?: 'left' | 'right';
   touchTrigger?: 'click' | 'long-press';
   longPressDuration?: number;
+  textVariant?: 'default' | 'strong' | 'subtle' | 'muted' | 'error' | 'success' | 'warning';
+  textSize?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl';
+  iconSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
 };
 
 const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
@@ -43,6 +46,9 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   iconPosition = 'left',
   touchTrigger = 'click',
   longPressDuration = 700,
+  textVariant,
+  textSize,
+  iconSize = 'sm',
 }) => {
   // Use extracted hooks
   const { copied, copyToClipboard } = useCopyToClipboard({ 
@@ -117,6 +123,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   const iconElement = (
     <Icon
       name="clipboard"
+      size={iconSize}
       className={iconClassName || undefined}
       onClick={!copyOnContentClick ? handleCopy : undefined}
       style={{
@@ -155,6 +162,9 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
     >
       {iconPosition === 'left' && icon}
       <Text
+        variant={textVariant}
+        size={textSize}
+        className={className}
         style={{
           userSelect: !copyOnContentClick ? 'text' : 'none',
           flex: copyOnContentClick ? 1 : undefined

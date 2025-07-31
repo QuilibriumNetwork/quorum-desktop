@@ -50,6 +50,7 @@ export function Icon({
     ...sizeStyle,
     ...(color && { color }),
     ...(disabled && { opacity: 0.5 }),
+    ...(onClick && { outline: 'none' }),
     ...style,
   };
 

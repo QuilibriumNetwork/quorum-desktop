@@ -177,12 +177,15 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   <span className="text-xs text-subtle">({t`You`})</span>
                 )}
               </span>
-              <span className="text-xs truncate w-[190px] text-surface-9 dark:text-surface-8">
+              <span className="truncate w-[190px]">
                 <ClickToCopyContent
                   text={members[s].address}
                   tooltipText={t`Copy address`}
                   tooltipLocation="left-start"
                   iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
+                  textVariant="subtle"
+                  textSize="xs"
+                  iconSize="xs"
                 >
                   {truncateAddress(members[s].address)}
                 </ClickToCopyContent>
@@ -555,12 +558,15 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                     <span className="text-xs text-subtle">({t`You`})</span>
                   )}
                 </span>
-                <span className="text-xs truncate w-[190px] text-surface-9 dark:text-surface-8">
+                <span className="truncate w-[190px]">
                   <ClickToCopyContent
                     text={members[s].address}
                     tooltipText={t`Copy address`}
                     tooltipLocation="left-start"
                     iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
+                    textVariant="subtle"
+                    textSize="xs"
+                    iconSize="xs"
                   >
                     {truncateAddress(members[s].address)}
                   </ClickToCopyContent>

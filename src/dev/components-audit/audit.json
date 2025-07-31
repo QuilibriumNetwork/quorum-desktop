@@ -355,17 +355,16 @@
       "description": "Utility component for copy-to-clipboard functionality with tooltip",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "todo",
+      "primitives": "done",
       "web_native": "platform_specific",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
+      "logic_extraction": "done",
+      "logic_needs": "done",
       "hooks": [
-        "useCopyToClipboard",
-        "useTooltipInteraction"
+        "useCopyToClipboard"
       ],
       "native": "todo",
-      "notes": "Copy logic + touch detection (>10 lines, reusable across app). Extract: useCopyToClipboard, useTooltipInteraction.",
-      "updated": "2025-07-29"
+      "notes": "COMPLETED: Business logic extracted into useCopyToClipboard hook with platform-aware clipboard handling. Now uses only primitives (Container, Icon, Text, Tooltip) but remains platform_specific due to complex web-specific touch event handling with manual DOM event listeners for mobile web UX. Native version would use different touch patterns and native clipboard APIs.",
+      "updated": "2025-07-31"
     },
     "ThemeRadioGroup.tsx": {
       "name": "ThemeRadioGroup",
@@ -1017,7 +1016,7 @@
   },
   "stats": {
     "total": 59,
-    "primitives_done": 20,
+    "primitives_done": 21,
     "logic_extraction_done": 43,
     "native_ready": 11,
     "by_category": {
@@ -1032,10 +1031,10 @@
     },
     "by_logic_needs": {
       "keep": 23,
-      "extract": 31,
-      "done": 5
+      "extract": 30,
+      "done": 6
     },
-    "analysis_notes": "MAJOR UPDATE: AccentColorSwitcher moved from platform_specific to shared after completing business logic extraction and primitive conversion. Component now uses only FlexRow and ColorSwatch primitives with platform-aware sizing logic. Latest: AccentColorSwitcher fully cross-platform compatible with useAccentColor hook supporting both web (localStorage) and future native (AsyncStorage ready) platforms.",
+    "analysis_notes": "MAJOR UPDATE: ClickToCopyContent business logic extracted to useCopyToClipboard hook and converted to use only primitives (Container, Icon, Text, Tooltip). Remains platform_specific due to complex web-specific touch event handling for mobile web UX. Latest: Component demonstrates perfect pattern - shared business logic with platform-specific UI coordination.",
     "last_updated": "2025-07-31"
   },
   "metadata": {

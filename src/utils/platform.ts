@@ -26,7 +26,7 @@ export function platformSelect<T>(options: {
 // Mock Platform object for compatibility
 export const Platform = {
   OS: 'web' as const,
-  select: <T>(specifics: { [platform: string]: T; default?: T }): T => {
-    return specifics.web ?? specifics.default ?? Object.values(specifics)[0];
+  select: <T>(specifics: { web?: T; ios?: T; android?: T; default?: T }): T => {
+    return specifics.web ?? specifics.default ?? (Object.values(specifics)[0] as T);
   }
 };
