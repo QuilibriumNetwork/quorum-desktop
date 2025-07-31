@@ -1,0 +1,100 @@
+#!/bin/bash
+
+# AWS Configuration Import Script for Quorum Staging
+set -e
+export AWS_CLI_FILE_ENCODING='utf-8'
+
+PROFILE="quorum-staging"
+ENDPOINT_URL="https://qstorage.quilibrium.com"
+REGION="q-world-1"
+
+# Function to import AWS credentials from CSV file
+import_aws_config() {
+    # Determine the script's directory and config file location
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    CONFIG_FILE="$SCRIPT_DIR/qstorage-config"
+
+    PREFIX="IMPORTING_AWS_CONFIG"
+    echo "$PREFIX: Importing AWS config from $CONFIG_FILE..."
+
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo "$PREFIX: Error: $CONFIG_FILE file not found!"
+        exit 1
+    fi
+
+    config_line=$(tail -n +2 "$CONFIG_FILE")
+
+    expected_key=$(echo "$config_line" | cut -d',' -f1)
+    expected_secret=$(echo "$config_line" | cut -d',' -f2)
+    expected_account_id=$(echo "$config_line" | cut -d',' -f3)
+
+    # Import the CSV credentials with the quorum-staging profile
+    aws configure set aws_access_key_id $expected_key --profile $PROFILE
+    aws configure set aws_secret_access_key $expected_secret --profile $PROFILE
+    aws configure set aws_account_id $expected_account_id --profile $PROFILE
+
+    # Set additional configuration for the profile
+    aws configure set region $REGION --profile $PROFILE
+    aws configure set s3.endpoint_url $ENDPOINT_URL --profile $PROFILE
+
+    echo "$PREFIX: AWS config imported successfully with profile '$PROFILE'"
+}
+
+detect_aws_profile() {
+    PREFIX="DETECTING_AWS_PROFILE"
+    echo "$PREFIX: Detecting AWS profile..."
+
+    # Check if profile exists by trying to get access key
+    if aws configure get aws_access_key_id --profile $PROFILE >/dev/null 2>&1; then
+        echo "$PREFIX: AWS profile detected"
+        verify_aws_profile
+    else
+        echo "$PREFIX: AWS profile not detected"
+        import_aws_config
+    fi
+}
+
+verify_aws_profile() {
+    PREFIX="VERIFYING_AWS_PROFILE"
+    echo "$PREFIX: Verifying AWS profile..."
+
+    # Read credentials from config file
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    CONFIG_FILE="$SCRIPT_DIR/qstorage-config"
+
+    if [ ! -f "$CONFIG_FILE" ]; then
+        echo "$PREFIX: Error: $CONFIG_FILE not found!"
+        exit 1
+    fi
+
+    # Extract expected credentials from config (skip header row)
+    # Format: User Name,Access key ID,Secret access key
+    config_line=$(tail -n +2 "$CONFIG_FILE")
+
+    expected_key=$(echo "$config_line" | cut -d',' -f1)
+    expected_secret=$(echo "$config_line" | cut -d',' -f2)
+    expected_account_id=$(echo "$config_line" | cut -d',' -f3)
+
+    # Get current profile credentials
+    current_key=$(aws configure get aws_access_key_id --profile $PROFILE 2>/dev/null)
+    current_secret=$(aws configure get aws_secret_access_key --profile $PROFILE 2>/dev/null)
+    current_account_id=$(aws configure get aws_account_id --profile $PROFILE 2>/dev/null)
+
+    # Verify credentials match
+    if [ "$current_key" = "$expected_key" ] && [ "$current_secret" = "$expected_secret" ] && [ "$current_account_id" = "$expected_account_id" ]; then
+        echo "$PREFIX: AWS profile verified with matching credentials"
+    else
+        echo "$PREFIX: AWS profile missing or credentials mismatch"
+        import_aws_config
+    fi
+}
+
+# Main function - can be called directly or sourced
+main() {
+    detect_aws_profile
+}
+
+# If script is executed directly (not sourced), run main
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main "$@"
+fi

@@ -1,0 +1,109 @@
+#!/bin/bash
+
+# Deploy script for Quorum staging environment
+set -e
+
+PROFILE="quorum-staging"
+BUCKET_NAME="quorum-staging"
+BUCKET_URL="https://qstorage.quilibrium.com/quorum-staging"
+ENDPOINT_URL="https://qstorage.quilibrium.com"
+REGION="q-world-1"
+
+# Source the AWS import script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/import-aws-config"
+
+# Function to build the application
+build_app() {
+    PREFIX="BUILDING_APP"
+    echo "$PREFIX: Building application for staging..."
+
+    rm -rf staging/dist
+    yarn build:staging
+    echo "$PREFIX: Build completed. Files are in staging/dist"
+}
+
+verify_bucket_exists() {
+    PREFIX="VERIFYING_BUCKET_EXISTS"
+    echo "$PREFIX: Verifying bucket exists..."
+    output=$(aws s3 ls s3://$BUCKET_NAME --profile $PROFILE --endpoint-url $ENDPOINT_URL 2>&1)
+    if [ $? -eq 0 ]; then
+        echo "$PREFIX: Bucket $BUCKET_NAME exists"
+    else
+        echo "$PREFIX: Bucket $BUCKET_NAME does not exist"
+    fi
+}
+
+verify_empty_bucket() {
+    PREFIX="VERIFYING_BUCKET_STATUS"
+    echo "$PREFIX: Verifying bucket status..."
+    output=$(aws s3 ls s3://$BUCKET_NAME --profile $PROFILE --endpoint-url $ENDPOINT_URL 2>&1)
+    if [ $? -eq 0 ]; then
+        if [ -n "$output" ]; then
+            echo "$PREFIX: Bucket is not empty"
+        else
+            echo "$PREFIX: Bucket is empty"
+        fi
+    else
+        echo "$PREFIX: Bucket verified (empty or does not exist)"
+    fi
+}
+
+# Function to clean existing files from bucket
+clean_bucket() {
+    PREFIX="CLEANING_BUCKET"
+    echo "$PREFIX: Removing existing files from bucket..."
+    aws s3 rm s3://quorum-staging --recursive --profile $PROFILE --endpoint-url $ENDPOINT_URL
+
+    echo "$PREFIX: Verifying bucket is empty..."
+    if ! verify_empty_bucket; then
+        exit 1
+    fi
+    echo "$PREFIX: Bucket cleaned"
+}
+
+# Function to upload build files
+upload_files() {
+    PREFIX="UPLOADING_FILES"
+    echo "$PREFIX: Uploading build files to bucket..."
+    aws s3 cp staging/dist s3://quorum-staging --recursive --profile $PROFILE --endpoint-url $ENDPOINT_URL
+    echo "$PREFIX: Files uploaded successfully"
+}
+
+verify_upload() {
+    PREFIX="VERIFYING_UPLOAD"
+    echo "$PREFIX: Verifying upload..."
+    aws s3 ls s3://$BUCKET_NAME --profile $PROFILE --endpoint-url $ENDPOINT_URL
+    echo "$PREFIX: Upload verified"
+}
+
+# Main deployment process
+main() {
+    echo "Starting deployment to staging..."
+
+    # Verify bucket exists
+    VERIFY_BUCKET_EXISTS=$(verify_bucket_exists)
+    if [ "$VERIFY_BUCKET_EXISTS" == "Bucket does not exist" ]; then
+        echo "Bucket does not exist"
+        echo "Creating bucket..."
+        aws s3 mb s3://$BUCKET_NAME --profile $PROFILE --endpoint-url $ENDPOINT_URL
+        echo "Bucket $BUCKET_NAME created"
+    else
+        echo "Bucket $BUCKET_NAME exists"
+    fi
+
+    # Build the application
+    build_app
+
+    # Clean existing files
+    clean_bucket
+
+    # Upload new files
+    upload_files
+
+    echo "Deployment completed successfully!"
+    echo "Site available at: $BUCKET_URL"
+}
+
+# Run main function
+main "$@"

@@ -14,6 +14,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:staging": "yarn build --outDir staging/dist",
     "build:preview": "yarn build && yarn preview",
     "electron:dev": "NODE_ENV=development electron electron/main.cjs",
     "electron:build": "vite build && electron-builder",
@@ -22,7 +23,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lingui:extract": "lingui extract",
-    "lingui:compile": "lingui compile"
+    "lingui:compile": "lingui compile",
+    "deploy:staging": "bash staging/deploy"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
