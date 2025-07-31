@@ -35,18 +35,43 @@
 - [x] SearchResultItem.tsx
 
 
-### Data Management Logic**
+### Remaining Components - Prioritized by Simplicity & Testability
 
-#### ChannelList.tsx
-- [ ] Extract `useChannelManagement` hook
-  - Channel organization
-  - Group management
-  - Permission checking
-- [ ] Extract `useSpacePermissions` hook
-  - Role-based permissions
-  - Admin controls
-  - Visibility logic
-- [ ] Test channel list functionality unchanged
+#### High Priority - Simple Logic, Quick Testing (Start Here)
+
+#### AccentColorSwitcher.tsx ⭐ EASIEST TEST
+- [ ] Extract `useAccentColor` hook
+  - Color selection logic
+  - Theme integration
+  - Local storage persistence
+- [ ] Replace primitives: `<div className="flex gap-3">` → `<FlexRow>`
+- [ ] Test: Click colors, verify theme changes, check persistence
+
+#### ClickToCopyContent.tsx ⭐ EASY TEST
+- [ ] Extract `useCopyToClipboard` hook
+  - Copy functionality
+  - Success feedback
+  - Error handling
+- [ ] Extract `useTooltipInteraction` hook
+  - Touch/hover detection
+  - Tooltip show/hide
+- [ ] Test: Click to copy, verify clipboard, check tooltip
+
+#### SpaceIcon.tsx ⭐ VISUAL TEST
+- [ ] Extract `useImageLoading` hook
+  - ArrayBuffer image handling
+  - Loading states
+  - Error fallbacks
+- [ ] Test: Upload space icon, verify display, check loading states
+
+#### Medium Priority - More Complex Logic
+
+#### DirectMessageContactsList.tsx
+- [ ] Extract `useConversationPolling` hook
+  - Polling logic with setInterval
+  - Conversation refresh
+  - Optimization patterns
+- [ ] Test: Check conversation updates, verify polling intervals
 
 #### UserProfile.tsx
 - [ ] Extract `useUserProfile` hook
@@ -58,82 +83,100 @@
   - Permission changes
   - Admin controls
 - [ ] Extract `useProfileImage` hook (if different from UserSettingsModal)
-- [ ] Test user profile functionality unchanged
+- [ ] Test: View profile, change roles, update image
 
-#### DirectMessageContactsList.tsx
-- [ ] Extract `useConversationPolling` hook
-  - Polling logic with setInterval
-  - Conversation refresh
-  - Optimization patterns
-- [ ] Test conversation list functionality unchanged
+#### ChannelList.tsx
+- [ ] Extract `useChannelManagement` hook
+  - Channel organization
+  - Group management
+  - Permission checking
+- [ ] Extract `useSpacePermissions` hook
+  - Role-based permissions
+  - Admin controls
+  - Visibility logic
+- [ ] Test: Create/edit channels, verify permissions, check groups
 
-#### Additional Components (Lower Priority)
-- [ ] InviteLink.tsx → `useInviteProcessing`, `useSpaceJoining`
-- [ ] SpaceIcon.tsx → `useImageLoading`
-- [ ] ClickToCopyContent.tsx → `useCopyToClipboard`, `useTooltipInteraction`
-- [ ] GlobalSearch.tsx → `useGlobalSearchLogic`, `useSearchContext`, `useSearchState`
-- [ ] SearchResults.tsx → `useResultsVirtualization`, `useSearchNavigation`
+#### EmptyDirectMessage.tsx
+- [ ] Extract `useShowHomeScreen` hook
+  - LocalStorage logic
+  - Toggle states
+- [ ] Extract `useConversationsData` hook
+  - Data fetching
+  - Display logic
+- [ ] Test: Toggle show/hide, verify localStorage persistence
+
+#### InviteLink.tsx
+- [ ] Extract `useInviteProcessing` hook
+  - Link parsing
+  - Validation logic
+- [ ] Extract `useSpaceJoining` hook
+  - Join workflow
+  - Error handling
+- [ ] Test: Process invite links, attempt to join spaces
+
+#### SpaceButton.tsx
+- [ ] Extract `useDragAndDrop` hook (web-specific)
+  - Drag/drop logic
+  - Visual feedback
+- [ ] Extract `useSpaceNavigation` hook
+  - Selection state
+  - Navigation logic
+- [ ] Test: Drag spaces, verify reordering, check navigation
+
+#### NavMenu.tsx
+- [ ] Extract `useSpaceOrdering` hook
+  - Order persistence
+  - State management
+- [ ] Extract `useDragAndDrop` hook (shared with SpaceButton)
+- [ ] Extract `useSpaceNavigation` hook (shared)
+- [ ] Test: Reorder spaces, verify persistence, check navigation
+
+#### High Complexity - Extract Last (Require Careful Testing)
+
+#### Layout.tsx ⚠️ COMPLEX REFACTOR
+- [ ] Extract `useModalManagement` hook
+  - Complex modal state management
+  - Multiple useEffect/useState
+- [ ] Extract `useLayoutState` hook
+  - Global layout coordination
+- [ ] Test: Open/close modals, verify no modal conflicts, check layout
+
+#### AppWithSearch.tsx ⚠️ COMPLEX REFACTOR  
+- [ ] Extract `useSearchState` hook
+  - Global search coordination
+- [ ] Extract `useModalContext` hook
+  - Modal context management
+- [ ] Extract `useGlobalSearch` hook
+  - Search integration
+- [ ] Test: Search functionality, modal interactions, global state
+
+#### MASSIVE REFACTORS - Phase 2 Only ⚠️
+
+**These should be done last as they require extensive testing:**
+
+#### Channel.tsx ⚠️ MASSIVE (800+ lines)
+- [ ] Extract `useMessages` hook
+- [ ] Extract `useChannelData` hook  
+- [ ] Extract `useFileUpload` hook
+- [ ] Extract `useMessageComposer` hook
+- [ ] Test: Send messages, upload files, verify all channel functionality
+
+#### DirectMessage.tsx ⚠️ COMPLEX
+- [ ] Extract `useDirectMessageLogic` hook
+- [ ] Extract `useFileUpload` hook (shared)
+- [ ] Extract `useMessageActions` hook
+- [ ] Test: DM conversations, file uploads, message actions
+
+#### Message.tsx ⚠️ MASSIVE (500+ lines)
+- [ ] Extract `useMessageActions` hook
+- [ ] Extract `useEmojiPicker` hook
+- [ ] Extract `useMessageRendering` hook
+- [ ] Extract `useReactions` hook
+- [ ] Test: Message interactions, emoji reactions, reply functionality
 
 ---
 
-## Phase 2: Clean HTML → Primitives (Native Preparation)
-
-### Target: 13 components using SOME primitives - replace remaining raw HTML
-
-**⚠️ Only start after Phase 1 business logic is extracted and tested**
-
-### 🎯 **Simple Wrapper Fixes (Low Risk)**
-
-#### SearchBar.tsx (After logic extraction)
-- [ ] Replace `<div className="search-bar">` → `<Container>`
-- [ ] Test visual rendering identical
-- [ ] Test all functionality preserved
-
-#### AccentColorSwitcher.tsx (After logic extraction)
-- [ ] Replace `<div className="flex gap-3">` → `<FlexRow>`
-- [ ] Test color switching functionality
-- [ ] Test visual layout unchanged
-
-### 🏗️ **Modal Layout Fixes**
-
-#### CreateSpaceModal.tsx (After logic extraction)
-- [ ] Replace `<div className="modal-width-large">` → `<Container maxWidth="large">`
-- [ ] Replace `<div className="flex flex-row justify-around pb-4">` → `<FlexRow justifyContent="around" paddingBottom={4}>`
-- [ ] Replace `<div className="flex flex-col justify-around pb-4">` → `<FlexColumn paddingBottom={4}>`
-- [ ] Replace `<span className="attachment-drop-icon...">` → `<Container className="attachment-drop-icon">`
-- [ ] Test modal functionality unchanged
-- [ ] Test file upload still works
-
-#### NewDirectMessageModal.tsx (After logic extraction)
-- [ ] Replace `<div className="modal-new-direct-message w-full max-w-[500px] mx-auto">` → `<Container maxWidth="500px">`
-- [ ] Replace `<div className="mb-4 text-sm text-subtle">` → `<Container marginBottom={4}><Text variant="subtle" size="sm">`
-- [ ] Replace action div containers with FlexRow/FlexColumn
-- [ ] Test DM creation functionality unchanged
-
-#### JoinSpaceModal.tsx (After logic extraction)
-- [ ] Replace `<div className="modal-join-space modal-width-medium">` → `<Container maxWidth="medium">`
-- [ ] Replace `<div className="w-full flex justify-center">` → `<FlexCenter width="full">`
-- [ ] Replace `<div className="modal-join-space-icon">` → `<Container className="space-icon-container">`
-- [ ] Test space joining functionality unchanged
-
-#### KickUserModal.tsx (After logic extraction)
-- [ ] Replace `<div className="w-full max-w-[400px] mx-auto">` → `<Container maxWidth="400px">`
-- [ ] Replace `<div className="mb-4 text-sm text-subtle text-left max-sm:text-center">` → `<Container marginBottom={4}><Text variant="subtle" size="sm">`
-- [ ] Replace `<div className="flex justify-start max-sm:justify-center">` → `<FlexRow justifyContent="start">`
-- [ ] Test kick user functionality unchanged
-
-#### LeaveSpaceModal.tsx (After logic extraction)
-- [ ] Review and replace raw div elements (needs verification)
-- [ ] Test leave space functionality unchanged
-
-#### Additional Modal/Editor Components
-- [ ] SpaceEditor.tsx → Replace layout divs with primitives (after logic extraction)
-- [ ] ChannelEditor.tsx → Replace layout divs with primitives (after logic extraction)  
-- [ ] GroupEditor.tsx → Replace layout divs with primitives (after logic extraction)
-
----
-
-## Phase 3: Test Native Readiness (Validation)
+## Phase 2: Test Native Readiness (Validation)
 
 ### 🧪 **Build and Test React Native Compatibility**
 
@@ -586,6 +629,6 @@ const useSpaceManagement = (options) => {
 ---
 
 _Created: 2025-07-29_
-_Updated: 2025-01-29_
+_Updated: 2025-07-31_
 _Priority: Business Logic First → Native Preparation Second_
 _Objective: Fully working web app ready for native components_
