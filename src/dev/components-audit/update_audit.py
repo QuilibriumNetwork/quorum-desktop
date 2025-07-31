@@ -1,0 +1,154 @@
+#!/usr/bin/env python3
+"""
+Reusable script to update the components audit.json file.
+
+Usage:
+  python3 update_audit.py --component "ComponentName.tsx" --logic_extraction "done" --hooks "useHook1,useHook2" --notes "Updated notes"
+  python3 update_audit.py --component "ComponentName.tsx" --primitives "done" --native "ready"
+  python3 update_audit.py --stats-only  # Just update statistics
+"""
+
+import json
+import argparse
+from datetime import datetime
+import os
+
+def load_audit():
+    """Load the audit.json file"""
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    audit_path = os.path.join(script_dir, 'audit.json')
+    
+    with open(audit_path, 'r') as f:
+        return json.load(f), audit_path
+
+def save_audit(data, audit_path):
+    """Save the audit.json file"""
+    with open(audit_path, 'w') as f:
+        json.dump(data, f, indent=2)
+
+def update_statistics(data):
+    """Recalculate all statistics from the components data"""
+    components = data['components']
+    
+    # Count totals
+    total = len(components)
+    primitives_done = sum(1 for c in components.values() if c.get('primitives') == 'done')
+    logic_extraction_done = sum(1 for c in components.values() if c.get('logic_extraction') == 'done')
+    native_ready = sum(1 for c in components.values() if c.get('native') == 'ready')
+    
+    # Count by category
+    categories = {}
+    for comp in components.values():
+        cat = comp.get('category', 'unknown')
+        categories[cat] = categories.get(cat, 0) + 1
+    
+    # Count by usage
+    usage = {}
+    for comp in components.values():
+        use = comp.get('used', 'unknown')
+        usage[use] = usage.get(use, 0) + 1
+    
+    # Count by logic needs
+    logic_needs = {}
+    for comp in components.values():
+        need = comp.get('logic_needs', 'unknown')
+        logic_needs[need] = logic_needs.get(need, 0) + 1
+    
+    # Update stats
+    data['stats'] = {
+        'total': total,
+        'primitives_done': primitives_done,
+        'logic_extraction_done': logic_extraction_done,
+        'native_ready': native_ready,
+        'by_category': categories,
+        'by_usage': usage,
+        'by_logic_needs': logic_needs,
+        'analysis_notes': data['stats'].get('analysis_notes', ''),
+        'last_updated': datetime.now().strftime('%Y-%m-%d')
+    }
+
+def update_component(data, component_name, updates):
+    """Update a specific component with the given updates"""
+    if component_name not in data['components']:
+        print(f"Warning: Component {component_name} not found in audit.json")
+        return
+    
+    comp = data['components'][component_name]
+    
+    # Apply updates
+    for key, value in updates.items():
+        if key == 'hooks' and isinstance(value, str):
+            # Convert comma-separated string to list
+            comp[key] = [h.strip() for h in value.split(',') if h.strip()]
+        elif key == 'updated':
+            comp[key] = datetime.now().strftime('%Y-%m-%d')
+        else:
+            comp[key] = value
+    
+    # Always update the timestamp
+    comp['updated'] = datetime.now().strftime('%Y-%m-%d')
+
+def main():
+    parser = argparse.ArgumentParser(description='Update components audit.json file')
+    parser.add_argument('--component', help='Component name to update (e.g., "GroupEditor.tsx")')
+    parser.add_argument('--primitives', choices=['todo', 'partial', 'done'], help='Primitives status')
+    parser.add_argument('--logic_extraction', choices=['todo', 'done'], help='Logic extraction status')
+    parser.add_argument('--logic_needs', choices=['extract', 'keep', 'done'], help='Logic needs status')
+    parser.add_argument('--hooks', help='Comma-separated list of hooks (e.g., "useHook1,useHook2")')
+    parser.add_argument('--native', choices=['todo', 'ready'], help='Native readiness status')
+    parser.add_argument('--category', choices=['shared', 'platform_specific', 'complex_refactor'], help='Component category')
+    parser.add_argument('--notes', help='Updated notes for the component')
+    parser.add_argument('--analysis_notes', help='Update the global analysis notes')
+    parser.add_argument('--stats-only', action='store_true', help='Only recalculate statistics')
+    
+    args = parser.parse_args()
+    
+    # Load audit data
+    data, audit_path = load_audit()
+    
+    if args.stats_only:
+        # Just update statistics
+        update_statistics(data)
+        print("Updated statistics only")
+    elif args.component:
+        # Update specific component
+        updates = {}
+        
+        if args.primitives:
+            updates['primitives'] = args.primitives
+        if args.logic_extraction:
+            updates['logic_extraction'] = args.logic_extraction
+        if args.logic_needs:
+            updates['logic_needs'] = args.logic_needs
+        if args.hooks:
+            updates['hooks'] = args.hooks
+        if args.native:
+            updates['native'] = args.native
+        if args.category:
+            updates['category'] = args.category
+        if args.notes:
+            updates['notes'] = args.notes
+        
+        if updates:
+            update_component(data, args.component, updates)
+            print(f"Updated component {args.component} with: {updates}")
+        else:
+            print("No updates specified for component")
+            return
+    else:
+        print("Must specify either --component or --stats-only")
+        return
+    
+    # Update global analysis notes if provided
+    if args.analysis_notes:
+        data['stats']['analysis_notes'] = args.analysis_notes
+    
+    # Always recalculate statistics after any update
+    update_statistics(data)
+    
+    # Save the file
+    save_audit(data, audit_path)
+    print(f"Successfully updated {audit_path}")
+
+if __name__ == '__main__':
+    main()

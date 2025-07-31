@@ -24,7 +24,7 @@
 - [x] LeaveSpaceModal.tsx
 - [x] KickUserModal.tsx
 - [x] ChannelEditor.tsx
-- [ ] GroupEditor.tsx
+- [x] GroupEditor.tsx
 
 
 ### Search Business Logic

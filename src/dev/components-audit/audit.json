@@ -848,14 +848,14 @@
       "used": "yes",
       "primitives": "done",
       "web_native": "platform_specific",
-      "logic_extraction": "todo",
+      "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
         "useGroupManagement"
       ],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '../../styles/_modal_common.scss'. Uses primitives but has SCSS dependencies. Group create/edit logic with deletion flow (>10 lines, reusable).",
-      "updated": "2025-07-30"
+      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports ../../styles/_modal_common.scss. Business logic extracted to useGroupManagement hook (group CRUD, delete confirmation, message checking). Now uses primitives (Modal, Container, FlexRow, Input, Button, Text, Icon) but retains SCSS dependency.",
+      "updated": "2025-07-31"
     },
     "EmojiPickerDrawer.tsx": {
       "name": "EmojiPickerDrawer",
@@ -1009,23 +1009,24 @@
     }
   },
   "stats": {
-    "total": 69,
-    "primitives_done": 16,
-    "logic_extraction_done": 50,
-    "native_ready": 14,
+    "total": 59,
+    "primitives_done": 15,
+    "logic_extraction_done": 42,
+    "native_ready": 10,
     "by_category": {
-      "shared": 15,
-      "platform_specific": 49,
-      "complex_refactor": 5
+      "platform_specific": 42,
+      "complex_refactor": 5,
+      "shared": 12
     },
     "by_usage": {
-      "used": 66,
-      "unused": 2,
-      "unknown": 1
+      "yes": 56,
+      "unknown": 1,
+      "no": 2
     },
     "by_logic_needs": {
-      "extract": 33,
-      "keep": 32
+      "keep": 23,
+      "extract": 32,
+      "done": 4
     },
     "analysis_notes": "MAJOR UPDATE: Moved 28 total components from shared to platform_specific after analyzing CSS/SCSS dependencies. Latest: ChannelEditor business logic extracted to useChannelManagement and useChannelPermissions hooks, now uses all primitives but retains SCSS dependency. Components with custom styling, web-specific libraries, or complex UI patterns are easier to build separately for web/native than to make truly cross-platform.",
     "last_updated": "2025-07-31"

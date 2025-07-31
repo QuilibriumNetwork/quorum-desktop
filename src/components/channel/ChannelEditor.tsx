@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Modal, Input, Icon, Container, FlexRow, Text } from '../primitives';
 import '../../styles/_modal_common.scss';
-import { useChannelManagement } from '../../hooks/business';
+import { useChannelManagement } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 

@@ -1,4 +1,4 @@
-Update src/dev/components-audit/audit.json - update the detailes for the component we have just worked on and then update the general stats at the end of the json.
+Update src/dev/components-audit/audit.json using this script: src/dev/components-audit/update_audit.py - update the detailes for the component we have just worked on and then update the general stats at the end of the json.
 
 RULES to categorize a component:
 - **shared**: Only if component uses ONLY primitives + business logic hooks (no custom CSS/SCSS)

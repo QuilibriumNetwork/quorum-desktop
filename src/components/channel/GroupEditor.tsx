@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { Button, Modal, Input, Icon } from '../primitives';
+import { Button, Modal, Input, Icon, Container, FlexRow, Text } from '../primitives';
 import '../../styles/_modal_common.scss';
-import { useSpace } from '../../hooks';
-import { useMessageDB } from '../context/MessageDB';
-import { useNavigate, useParams } from 'react-router';
+import { useGroupManagement } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 
@@ -13,117 +11,42 @@ const GroupEditor: React.FunctionComponent<{
   dismiss: () => void;
   onEditModeClick?: () => void;
 }> = ({ spaceId, groupName, dismiss }) => {
-  let { data: space } = useSpace({ spaceId });
-  let [group, setGroup] = React.useState<string>(groupName || '');
-  let { channelId } = useParams();
-  let [deleteStatus, setDeleteStatus] = React.useState<boolean>(false);
-  let [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
-  let [hasMessages, setHasMessages] = React.useState<boolean>(false);
-  let [showWarning, setShowWarning] = React.useState<boolean>(false);
-  let [closing, setClosing] = React.useState<boolean>(false);
-  let navigate = useNavigate();
-  const { updateSpace, messageDB } = useMessageDB();
+  const {
+    group,
+    hasMessages,
+    showWarning,
+    deleteConfirmationStep,
+    isEditMode,
+    canSave,
+    handleGroupNameChange,
+    saveChanges,
+    handleDeleteClick,
+    setShowWarning,
+  } = useGroupManagement({ spaceId, groupName, onDeleteComplete: dismiss });
 
-  // Check if any channel in the group has messages
-  React.useEffect(() => {
-    const checkGroupMessages = async () => {
-      if (groupName && space && messageDB) {
-        try {
-          const group = space.groups.find((g) => g.groupName === groupName);
-          if (group) {
-            for (const channel of group.channels) {
-              const messages = await messageDB.getMessages({
-                spaceId,
-                channelId: channel.channelId,
-                limit: 1,
-              });
-              if (messages.messages.length > 0) {
-                setHasMessages(true);
-                break;
-              }
-            }
-          }
-        } catch (error) {
-          console.error('Error checking group messages:', error);
-        }
-      }
-    };
-    checkGroupMessages();
-  }, [groupName, space, spaceId, messageDB]);
-
-  const saveChanges = React.useCallback(async () => {
-    if (
-      !space!.groups.find((g) => g.groupName === group) &&
-      groupName !== group &&
-      group !== ''
-    ) {
-      if (groupName) {
-        updateSpace({
-          ...space!,
-          groups: space!.groups.map((g) => {
-            return {
-              ...g,
-              groupName: groupName === g.groupName ? group : g.groupName,
-            };
-          }),
-        });
-      } else {
-        updateSpace({
-          ...space!,
-          groups: [...space!.groups, { groupName: group, channels: [] }],
-        });
-      }
-    }
+  const handleSave = React.useCallback(async () => {
+    await saveChanges();
     dismiss();
-  }, [space, group]);
-
-  const deleteGroup = React.useCallback(async () => {
-    if (groupName) {
-      const withoutGroup = space!.groups.filter(
-        (g) => g.groupName !== groupName
-      );
-      const updatedChannelId = withoutGroup.find((g) =>
-        g.channels.find((c) => c.channelId == space?.defaultChannelId)
-      )
-        ? space!.defaultChannelId
-        : withoutGroup.length > 0 && withoutGroup[0].channels.length > 0
-          ? withoutGroup[0].channels[0].channelId
-          : space!.defaultChannelId;
-      if (
-        !withoutGroup.find((g) =>
-          g.channels.find((c) => c.channelId == channelId)
-        )
-      ) {
-        navigate('/spaces/' + space?.spaceId + '/' + updatedChannelId);
-      }
-      updateSpace({
-        ...space!,
-        defaultChannelId: updatedChannelId,
-        groups: space!.groups.filter((g) => g.groupName !== groupName),
-      });
-    }
-    dismiss();
-  }, [space, group]);
+  }, [saveChanges, dismiss]);
 
   return (
     <Modal
-      title={groupName ? t`Edit Group` : t`Add Group`}
+      title={isEditMode ? t`Edit Group` : t`Add Group`}
       visible={true}
       onClose={dismiss}
     >
-      <div className="modal-body modal-width-medium" style={{ textAlign: 'left' }} data-small-modal>
-        <div className="modal-content-info max-sm:mb-1">
-          <div className="small-caps">
+      <Container className="modal-body modal-width-medium" style={{ textAlign: 'left' }} data-small-modal>
+        <Container className="modal-content-info max-sm:mb-1">
+          <Text className="small-caps">
             <Trans>Group Name</Trans>
-          </div>
+          </Text>
           <Input
-            fullWidth
             value={group}
-            onChange={(value) => setGroup(value)}
+            onChange={handleGroupNameChange}
           />
-        </div>
+        </Container>
         {hasMessages && showWarning && (
-          <div className="error-label mb-3 relative pr-8">
+          <Container className="error-label mb-3 relative pr-8">
             <Trans>
               Are you sure? This group contains channels with messages.
               Deleting it will cause all content to be lost forever!
@@ -133,25 +56,14 @@ const GroupEditor: React.FunctionComponent<{
               className="absolute top-2 right-2 cursor-pointer hover:opacity-70"
               onClick={() => setShowWarning(false)}
             />
-          </div>
+          </Container>
         )}
-        <div className="flex justify-end gap-2 mt-4 max-sm:flex-col max-sm:gap-4">
-          {groupName && (
+        <FlexRow className="justify-end gap-2 mt-4 max-sm:flex-col max-sm:gap-4">
+          {isEditMode && (
             <Button
               type="danger"
               className="max-sm:w-full max-sm:order-2"
-              onClick={() => {
-                if (deleteConfirmationStep === 0) {
-                  setDeleteConfirmationStep(1);
-                  if (hasMessages) {
-                    setShowWarning(true);
-                  }
-                  // Reset confirmation after 5 seconds
-                  setTimeout(() => setDeleteConfirmationStep(0), 5000);
-                } else {
-                  deleteGroup();
-                }
-              }}
+              onClick={handleDeleteClick}
             >
               {deleteConfirmationStep === 0
                 ? t`Delete Group`
@@ -161,12 +73,13 @@ const GroupEditor: React.FunctionComponent<{
           <Button 
             type="primary" 
             className="max-sm:w-full max-sm:order-1"
-            onClick={() => saveChanges()}
+            onClick={handleSave}
+            disabled={!canSave}
           >
             {t`Save Changes`}
           </Button>
-        </div>
-      </div>
+        </FlexRow>
+      </Container>
     </Modal>
   );
 };
