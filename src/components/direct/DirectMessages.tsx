@@ -8,7 +8,7 @@ import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider'
 
 import './DirectMessages.scss';
 import { useRegistrationContext } from '../context/RegistrationPersister';
-import { useModalContext } from '../AppWithSearch';
+import { useModalContext } from '../context/ModalProvider';
 import ReactTooltip from '../ReactTooltip';
 import { t } from '@lingui/core/macro';
 

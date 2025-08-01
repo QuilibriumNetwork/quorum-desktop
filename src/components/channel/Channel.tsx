@@ -34,7 +34,8 @@ import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
-import { useModalContext } from '../AppWithSearch';
+import { useModalContext } from '../context/ModalProvider';
+import { useSidebar } from '../context/SidebarProvider';
 
 type ChannelProps = {
   spaceId: string;
@@ -69,7 +70,7 @@ const Channel: React.FC<ChannelProps> = ({
     showRightSidebar: showUsers,
     setShowRightSidebar: setShowUsers,
     setRightSidebarContent,
-  } = useModalContext();
+  } = useSidebar();
   const [init, setInit] = useState(false);
 
   // Clean up sidebar content when component unmounts

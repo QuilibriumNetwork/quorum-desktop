@@ -98,23 +98,57 @@
       "notes": "Business logic extracted to 3 hooks. Uses only primitives but still has custom SCSS file with styling classes.",
       "updated": "2025-07-31"
     },
-    "AppWithSearch.tsx": {
-      "name": "AppWithSearch",
-      "path": "src/components/AppWithSearch.tsx",
-      "description": "Main app wrapper with search functionality and modal context",
-      "category": "complex_refactor",
+    "ModalProvider.tsx": {
+      "name": "ModalProvider",
+      "path": "src/components/context/ModalProvider.tsx",
+      "description": "Context provider for managing all modal state using useReducer pattern",
+      "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
-        "useSearchState",
-        "useModalContext",
-        "useGlobalSearch"
+        "useModalState",
+        "useModals",
+        "useModalContext"
       ],
       "native": "todo",
-      "notes": "Complex wrapper with global search state, modal context (>10 lines, multiple useState/useEffect). Extract: useSearchState, useModalContext, useGlobalSearch.",
-      "updated": "2025-07-29"
+      "notes": "Contains modal state management logic (reducer, actions, initial state) that should be extracted to useModalState hook. Renders modal components directly with web-specific CSS classes (z-[9999], fixed positioning). Business logic: modal opening/closing coordination, state management (>10 lines, reusable). Replaces AppWithSearch modal functionality.",
+      "updated": "2025-08-01"
+    },
+    "MobileProvider.tsx": {
+      "name": "MobileProvider",
+      "path": "src/components/context/MobileProvider.tsx",
+      "description": "Context provider for managing mobile-specific drawer components with animations",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "todo",
+      "logic_needs": "extract",
+      "hooks": [
+        "useMobileDrawerState",
+        "useMobile"
+      ],
+      "native": "todo",
+      "notes": "Contains mobile drawer state management logic (reducer, animation timing with 300ms setTimeout delays, closing state sequences) that should be extracted to useMobileDrawerState hook. Renders drawers with web-specific CSS. Business logic: drawer animations, timing management (>10 lines, reusable).",
+      "updated": "2025-08-01"
+    },
+    "SidebarProvider.tsx": {
+      "name": "SidebarProvider",
+      "path": "src/components/context/SidebarProvider.tsx",
+      "description": "Context provider for managing right sidebar visibility and content",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "todo",
+      "logic_needs": "extract",
+      "hooks": [
+        "useSidebarState",
+        "useSidebar"
+      ],
+      "native": "todo",
+      "notes": "Contains sidebar state management logic that should be extracted to useSidebarState hook. Renders sidebar with web-specific CSS classes (fixed positioning, transitions, lg:hidden responsive). Business logic: sidebar visibility management (reusable).",
+      "updated": "2025-08-01"
     },
     "Elements.tsx": {
       "name": "Elements",
@@ -975,27 +1009,27 @@
     }
   },
   "stats": {
-    "total": 60,
+    "total": 62,
     "primitives_done": 25,
     "logic_extraction_done": 48,
     "native_ready": 0,
     "native_done": 11,
     "by_category": {
-      "platform_specific": 42,
-      "complex_refactor": 5,
+      "platform_specific": 45,
+      "complex_refactor": 4,
       "shared": 13
     },
     "by_usage": {
-      "yes": 56,
+      "yes": 59,
       "no": 3,
-      "unknown": 1
+      "unknown": 0
     },
     "by_logic_needs": {
       "keep": 25,
-      "extract": 27,
+      "extract": 29,
       "done": 8
     },
-    "analysis_notes": "MAJOR UPDATE: SpaceIcon business logic extracted to useImageLoading hook with drag-aware tooltip management. Added DragStateContext system to disable tooltips during space icon dragging for better UX. Now uses Tooltip primitive instead of direct ReactTooltip. Component demonstrates excellent pattern - shared business logic with platform-specific styling coordination and enhanced drag/drop interaction.",
+    "analysis_notes": "MAJOR REFACTOR: AppWithSearch.tsx successfully split into 3 focused providers (ModalProvider, MobileProvider, SidebarProvider) with single responsibilities. Eliminated monolithic component mixing modal, mobile, and sidebar concerns. New providers maintain z-[9999] stacking solutions but still need business logic extraction to hooks. Architecture now follows separation of concerns principle.",
     "last_updated": "2025-08-01"
   },
   "metadata": {

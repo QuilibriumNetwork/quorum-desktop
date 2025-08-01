@@ -10,7 +10,10 @@
 }
 
 .global-search-bar {
-  // No specific styling needed - inherits from SearchBar
+  // Responsive positioning for search bar
+  @media (max-width: 480px) {
+    min-width: 200px;
+  }
 }
 
 .global-search-results {

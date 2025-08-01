@@ -34,7 +34,8 @@ import { DefaultImages } from '../../utils';
 import ReactTooltip from '../../components/ReactTooltip';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { useLongPress } from '../../hooks/useLongPress';
-import { useModalContext } from '../AppWithSearch';
+import { useModalContext } from '../context/ModalProvider';
+import { useMobile } from '../context/MobileProvider';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -97,7 +98,7 @@ export const Message = ({
   const user = usePasskeysContext();
   const { spaceId } = useParams();
   const location = useLocation();
-  const { openMobileActionsDrawer, openMobileEmojiDrawer } = useModalContext();
+  const { openMobileActionsDrawer, openMobileEmojiDrawer } = useMobile();
 
   // Responsive layout and device detection
   const { isMobile } = useResponsiveLayout();

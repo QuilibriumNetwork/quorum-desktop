@@ -171,10 +171,11 @@ export const ComponentAuditViewer: React.FC = () => {
   const [logicFilter, setLogicFilter] = useState<AuditStatus | 'all'>('all');
   const [nativeFilter, setNativeFilter] = useState<AuditStatus | 'all'>('all');
   const [usageFilter, setUsageFilter] = useState<'yes' | 'no' | 'unknown' | 'all'>('all');
+  const [sortOrder, setSortOrder] = useState<'alphabetical' | 'reverse'>('alphabetical');
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
   const filteredComponents = useMemo(() => {
-    return Object.entries(data.components).filter(([key, component]) => {
+    const filtered = Object.entries(data.components).filter(([key, component]) => {
       const matchesSearch = 
         component.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         component.path.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -190,7 +191,14 @@ export const ComponentAuditViewer: React.FC = () => {
       
       return matchesSearch && matchesCategory && matchesPrimitives && matchesLogic && matchesNative && matchesUsage;
     });
-  }, [data.components, searchTerm, categoryFilter, primitivesFilter, logicFilter, nativeFilter, usageFilter]);
+
+    // Apply sorting
+    if (sortOrder === 'alphabetical') {
+      return filtered.sort(([, a], [, b]) => a.name.localeCompare(b.name));
+    } else {
+      return filtered.sort(([, a], [, b]) => b.name.localeCompare(a.name));
+    }
+  }, [data.components, searchTerm, categoryFilter, primitivesFilter, logicFilter, nativeFilter, usageFilter, sortOrder]);
 
   const toggleRowExpansion = (componentKey: string) => {
     const newExpanded = new Set(expandedRows);
@@ -394,6 +402,19 @@ export const ComponentAuditViewer: React.FC = () => {
               { value: 'yes', label: 'Used' },
               { value: 'no', label: 'Unused' },
               { value: 'unknown', label: 'Unknown' }
+            ]}
+          />
+        </FlexColumn>
+        
+        <FlexColumn className="min-w-[140px]">
+          <Text variant="subtle" size="xs" className="mb-1">Sort Order</Text>
+          <Select
+            variant="bordered"
+            value={sortOrder}
+            onChange={(value: string) => setSortOrder(value as 'alphabetical' | 'reverse')}
+            options={[
+              { value: 'alphabetical', label: 'A → Z' },
+              { value: 'reverse', label: 'Z → A' }
             ]}
           />
         </FlexColumn>

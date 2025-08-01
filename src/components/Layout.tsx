@@ -6,7 +6,7 @@ import CreateSpaceModal from './modals/CreateSpaceModal';
 import NewDirectMessageModal from './modals/NewDirectMessageModal';
 import Connecting from './Connecting';
 import KickUserModal from './modals/KickUserModal';
-import { useModalContext } from './AppWithSearch';
+import { useModalContext } from './context/ModalProvider';
 
 const Layout: React.FunctionComponent<{
   children: React.ReactNode;

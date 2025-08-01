@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useSpaceOwner } from '../../queries/spaceOwner';
-import { useModalContext } from '../../../components/AppWithSearch';
+import { useModalContext } from '../../../components/context/ModalProvider';
 
 /**
  * Custom hook for space permission checking and permission-based actions

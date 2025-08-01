@@ -8,7 +8,9 @@ import {
 } from '@quilibrium/quilibrium-js-sdk-channels';
 
 import Layout from './components/Layout';
-import { AppWithSearch } from './components/AppWithSearch';
+import { ModalProvider } from './components/context/ModalProvider';
+import { MobileProvider } from './components/context/MobileProvider';
+import { SidebarProvider } from './components/context/SidebarProvider';
 import Space from './components/space/Space';
 import Connecting from './components/Connecting';
 import CustomTitlebar from './components/Titlebar';
@@ -46,7 +48,7 @@ class ErrorBoundary extends React.Component<
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error: any) {
+  static getDerivedStateFromError(_error: any) {
     return { hasError: true };
   }
 
@@ -145,60 +147,72 @@ const App = () => {
                         <Route
                           path="/messages"
                           element={
-                            <AppWithSearch
-                              kickUserAddress={kickUserAddress}
-                              setKickUserAddress={setKickUserAddress}
-                              user={user}
-                              setUser={setUser}
-                            >
-                              <DirectMessages
-                                setUser={setUser}
-                                setAuthState={() => {
-                                  setUser(undefined);
-                                }}
-                                user={user}
-                              />
-                            </AppWithSearch>
+                            <ModalProvider user={user} setUser={setUser}>
+                              <MobileProvider>
+                                <SidebarProvider>
+                                  <Layout
+                                    kickUserAddress={kickUserAddress}
+                                    setKickUserAddress={setKickUserAddress}
+                                  >
+                                    <DirectMessages
+                                      setUser={setUser}
+                                      setAuthState={() => {
+                                        setUser(undefined);
+                                      }}
+                                      user={user}
+                                    />
+                                  </Layout>
+                                </SidebarProvider>
+                              </MobileProvider>
+                            </ModalProvider>
                           }
                         />
                         <Route
                           path="/messages/:address"
                           element={
-                            <AppWithSearch
-                              kickUserAddress={kickUserAddress}
-                              setKickUserAddress={setKickUserAddress}
-                              user={user}
-                              setUser={setUser}
-                            >
-                              <DirectMessages
-                                setUser={setUser}
-                                setAuthState={() => {
-                                  setUser(undefined);
-                                }}
-                                user={user}
-                              />
-                            </AppWithSearch>
+                            <ModalProvider user={user} setUser={setUser}>
+                              <MobileProvider>
+                                <SidebarProvider>
+                                  <Layout
+                                    kickUserAddress={kickUserAddress}
+                                    setKickUserAddress={setKickUserAddress}
+                                  >
+                                    <DirectMessages
+                                      setUser={setUser}
+                                      setAuthState={() => {
+                                        setUser(undefined);
+                                      }}
+                                      user={user}
+                                    />
+                                  </Layout>
+                                </SidebarProvider>
+                              </MobileProvider>
+                            </ModalProvider>
                           }
                         />
                         <Route
                           path="/spaces/:spaceId/:channelId"
                           element={
-                            <AppWithSearch
-                              kickUserAddress={kickUserAddress}
-                              setKickUserAddress={setKickUserAddress}
-                              user={user}
-                              setUser={setUser}
-                            >
-                              <Space
-                                setUser={setUser}
-                                setAuthState={() => {
-                                  setUser(undefined);
-                                }}
-                                kickUserAddress={kickUserAddress}
-                                setKickUserAddress={setKickUserAddress}
-                                user={user}
-                              />
-                            </AppWithSearch>
+                            <ModalProvider user={user} setUser={setUser}>
+                              <MobileProvider>
+                                <SidebarProvider>
+                                  <Layout
+                                    kickUserAddress={kickUserAddress}
+                                    setKickUserAddress={setKickUserAddress}
+                                  >
+                                    <Space
+                                      setUser={setUser}
+                                      setAuthState={() => {
+                                        setUser(undefined);
+                                      }}
+                                      kickUserAddress={kickUserAddress}
+                                      setKickUserAddress={setKickUserAddress}
+                                      user={user}
+                                    />
+                                  </Layout>
+                                </SidebarProvider>
+                              </MobileProvider>
+                            </ModalProvider>
                           }
                         />
                         <Route
@@ -214,16 +228,20 @@ const App = () => {
                           <Route
                             path="/playground"
                             element={
-                              <AppWithSearch
-                                kickUserAddress={kickUserAddress}
-                                setKickUserAddress={setKickUserAddress}
-                                user={user}
-                                setUser={setUser}
-                              >
-                                <Suspense fallback={<div>Loading playground...</div>}>
-                                  <PrimitivesPlayground />
-                                </Suspense>
-                              </AppWithSearch>
+                              <ModalProvider user={user} setUser={setUser}>
+                              <MobileProvider>
+                                <SidebarProvider>
+                                  <Layout
+                                    kickUserAddress={kickUserAddress}
+                                    setKickUserAddress={setKickUserAddress}
+                                  >
+                                    <Suspense fallback={<div>Loading playground...</div>}>
+                                      <PrimitivesPlayground />
+                                    </Suspense>
+                                  </Layout>
+                                </SidebarProvider>
+                              </MobileProvider>
+                            </ModalProvider>
                             }
                           />
                         )}
@@ -287,8 +305,8 @@ const App = () => {
 };
 
 const InviteRoute: React.FC<{
-  kickUserAddress: string;
-  setKickUserAddress: (addr: string) => void;
+  kickUserAddress: string | undefined;
+  setKickUserAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
 }> = ({ kickUserAddress, setKickUserAddress }) => {
   const navigate = useNavigate();
 
@@ -304,14 +322,20 @@ const InviteRoute: React.FC<{
   };
 
   return (
-    <div className="app-with-search">
+    <div className="min-h-screen w-full">
       <JoinSpaceModal visible={true} onClose={handleClose} />
-      <AppWithSearch
-        kickUserAddress={kickUserAddress}
-        setKickUserAddress={setKickUserAddress}
-      >
-        <div />
-      </AppWithSearch>
+      <ModalProvider>
+        <MobileProvider>
+          <SidebarProvider>
+            <Layout
+              kickUserAddress={kickUserAddress}
+              setKickUserAddress={setKickUserAddress}
+            >
+              <div />
+            </Layout>
+          </SidebarProvider>
+        </MobileProvider>
+      </ModalProvider>
     </div>
   );
 };

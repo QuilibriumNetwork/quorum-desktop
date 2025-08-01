@@ -4,7 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
-import { useModalContext } from '../AppWithSearch';
+import { useModalContext } from '../context/ModalProvider';
 
 const ChannelGroup: React.FunctionComponent<{
   group: {

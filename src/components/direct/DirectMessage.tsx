@@ -15,7 +15,8 @@ import { useMessageDB } from '../context/MessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
 import { useInvalidateConversation } from '../../hooks/queries/conversation/useInvalidateConversation';
-import { useModalContext } from '../AppWithSearch';
+import { useModalContext } from '../context/ModalProvider';
+import { useSidebar } from '../context/SidebarProvider';
 import { MessageList } from '../message/MessageList';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
@@ -153,7 +154,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     showRightSidebar: showUsers,
     setShowRightSidebar: setShowUsers,
     setRightSidebarContent,
-  } = useModalContext();
+  } = useSidebar();
   const [acceptChat, setAcceptChat] = React.useState(false);
 
   // Set sidebar content in context

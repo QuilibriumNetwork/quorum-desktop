@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useModalContext } from '../../../components/AppWithSearch';
+import { useModalContext } from '../../../components/context/ModalProvider';
 
 /**
  * Custom hook for managing group editor modal using global modal system

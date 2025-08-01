@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useConversations } from '../../../hooks';
-import { useModalContext } from '../../../components/AppWithSearch';
+import { useModalContext } from '../../../components/context/ModalProvider';
 import { useAddressValidation } from '../validation';
 import { t } from '@lingui/core/macro';
 

@@ -7,7 +7,7 @@ import { useSpace } from '../../hooks';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 import './Space.scss';
-import { useModalContext } from '../AppWithSearch';
+import { useModalContext } from '../context/ModalProvider';
 
 type SpaceProps = {
   user: any;

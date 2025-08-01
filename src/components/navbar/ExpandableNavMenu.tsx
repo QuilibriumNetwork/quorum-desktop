@@ -9,7 +9,7 @@ import { Button } from '../primitives';
 import './ExpandableNavMenu.scss';
 import { getConfig } from '../../config/config';
 import { t } from '@lingui/core/macro';
-import { useModalContext } from '../AppWithSearch';
+import { useModalContext } from '../context/ModalProvider';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { DefaultImages } from '../../utils';
 import ReactTooltip from '../ReactTooltip';
