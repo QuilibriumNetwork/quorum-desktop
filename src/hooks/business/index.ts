@@ -5,3 +5,4 @@ export * from './validation';
 export * from './conversations';
 export * from './channels';
 export * from './search';
+export * from './invites';

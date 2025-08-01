@@ -613,16 +613,17 @@
       "description": "Invite link preview and join functionality component",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "partial",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
+      "primitives": "done",
+      "logic_extraction": "done",
+      "logic_needs": "done",
       "hooks": [
         "useInviteProcessing",
-        "useSpaceJoining"
+        "useInviteJoining",
+        "useInviteUI"
       ],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Complex invite preview UI with custom styling, link handling differs between web/native. Easier to build native version.",
-      "updated": "2025-07-30"
+      "notes": "COMPLETED: Business logic extracted into 3 focused hooks - useInviteProcessing (invite validation), useInviteJoining (space joining with passkey validation), useInviteUI (button states, membership checking). All HTML elements replaced with primitives (Container, Text, FlexRow, Button). Simplified error display using Text with variant='error'. Improved error handling with separate validation and join errors. Hook designed specifically for fixed invite link use case (vs general useSpaceJoining for dynamic links).",
+      "updated": "2025-08-01"
     },
     "NewDirectMessageModal.tsx": {
       "name": "NewDirectMessageModal",

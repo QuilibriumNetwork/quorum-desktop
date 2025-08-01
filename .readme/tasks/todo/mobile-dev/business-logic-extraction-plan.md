@@ -49,16 +49,11 @@
 ### More Complex Logic
 
 - [x] ChannelList.tsx
+- [x] InviteLink.tsx
 
 
-#### InviteLink.tsx
-- [ ] Extract `useInviteProcessing` hook
-  - Link parsing
-  - Validation logic
-- [ ] Extract `useSpaceJoining` hook
-  - Join workflow
-  - Error handling
-- [ ] Test: Process invite links, attempt to join spaces
+
+
 
 #### SpaceButton.tsx
 - [ ] Extract `useDragAndDrop` hook (web-specific)
