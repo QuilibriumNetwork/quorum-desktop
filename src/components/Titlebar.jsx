@@ -84,8 +84,20 @@ const CustomTitlebar = () => {
 
         <button
           onClick={handleClose}
-          className="flex items-center justify-center w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full transition-colors cursor-pointer text-white focus:outline-none focus:ring-0 border-0 focus:border-0 hover:border-0"
-          style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
+          className="flex items-center justify-center w-6 h-6 rounded-full transition-colors cursor-pointer text-white focus:outline-none focus:ring-0 border-0 focus:border-0 hover:border-0"
+          style={{ 
+            border: 'none', 
+            outline: 'none', 
+            boxShadow: 'none',
+            backgroundColor: '#ef4444',
+            color: 'white'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#dc2626';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#ef4444';
+          }}
         >
           <Icon name="times" size="xs" color="white" />
         </button>
