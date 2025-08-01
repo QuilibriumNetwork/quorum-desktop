@@ -46,6 +46,8 @@
 - [x] DirectMessageContactsList.tsx
 - [x] EmptyDirectMessage.tsx
 
+- [x] Layout.tsx 
+
 ### More Complex Logic
 
 - [x] ChannelList.tsx
@@ -56,41 +58,20 @@
 
 ### High Complexity - Extract Last (Require Careful Testing)
 
-#### Layout.tsx ⚠️ COMPLEX REFACTOR
-- [ ] Extract `useModalManagement` hook
-  - Complex modal state management
-  - Multiple useEffect/useState
-- [ ] Extract `useLayoutState` hook
-  - Global layout coordination
-- [ ] Test: Open/close modals, verify no modal conflicts, check layout
-
-#### AppWithSearch.tsx ⚠️ COMPLEX REFACTOR  
-- [ ] Extract `useSearchState` hook
-  - Global search coordination
-- [ ] Extract `useModalContext` hook
-  - Modal context management
-- [ ] Extract `useGlobalSearch` hook
-  - Search integration
-- [ ] Test: Search functionality, modal interactions, global state
-
-### MASSIVE REFACTORS - Phase 2 Only ⚠️
-
-**These should be done last as they require extensive testing:**
-
-#### Channel.tsx ⚠️ MASSIVE (800+ lines)
+#### Channel.tsx 
 - [ ] Extract `useMessages` hook
 - [ ] Extract `useChannelData` hook  
 - [ ] Extract `useFileUpload` hook
 - [ ] Extract `useMessageComposer` hook
 - [ ] Test: Send messages, upload files, verify all channel functionality
 
-#### DirectMessage.tsx ⚠️ COMPLEX
+#### DirectMessage.tsx 
 - [ ] Extract `useDirectMessageLogic` hook
 - [ ] Extract `useFileUpload` hook (shared)
 - [ ] Extract `useMessageActions` hook
 - [ ] Test: DM conversations, file uploads, message actions
 
-#### Message.tsx ⚠️ MASSIVE (500+ lines)
+#### Message.tsx 
 - [ ] Extract `useMessageActions` hook
 - [ ] Extract `useEmojiPicker` hook
 - [ ] Extract `useMessageRendering` hook

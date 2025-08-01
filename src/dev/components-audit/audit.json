@@ -48,18 +48,18 @@
       "name": "Layout",
       "path": "src/components/Layout.tsx",
       "description": "Main app layout container with modals and navigation",
-      "category": "complex_refactor",
+      "category": "shared",
       "used": "yes",
-      "primitives": "todo",
-      "logic_extraction": "todo",
+      "primitives": "done",
+      "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
         "useModalManagement",
-        "useLayoutState"
+        "useElectronDetection"
       ],
       "native": "todo",
-      "notes": "Complex modal management logic (>10 lines, multiple useState/useEffect). Extract: useModalManagement, useLayoutState for reuse across app.",
-      "updated": "2025-07-29"
+      "notes": "Business logic extracted to useModalManagement (createSpace modal state) and useElectronDetection (platform detection for CloseButton). Added Container primitive for conditional rendering. Component simplified from 60+ lines to ~40 lines with clean hook composition. Much simpler than originally estimated - no complex useEffect or state interactions found.",
+      "updated": "2025-08-01"
     },
     "Channel.tsx": {
       "name": "Channel",

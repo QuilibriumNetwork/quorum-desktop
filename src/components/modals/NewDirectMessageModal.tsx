@@ -26,6 +26,7 @@ const NewDirectMessageModal: React.FunctionComponent<
       visible={props.visible}
       onClose={props.onClose}
       title={t`New Direct Message`}
+      size="small"
     >
       <Container className="modal-new-direct-message" width="full" maxWidth="500px" margin="auto">
         <Container margin="none" className="mb-4">
