@@ -38,20 +38,15 @@
 
 - [x] AccentColorSwitcher.tsx
 - [x] ClickToCopyContent.tsx
+
 - [x] SpaceIcon.tsx
+
 - [x] UserProfile.tsx
+
 - [x] DirectMessageContactsList.tsx
+- [x] EmptyDirectMessage.tsx
 
 ### More Complex Logic
-
-#### EmptyDirectMessage.tsx
-- [ ] Extract `useShowHomeScreen` hook
-  - LocalStorage logic
-  - Toggle states
-- [ ] Extract `useConversationsData` hook
-  - Data fetching
-  - Display logic
-- [ ] Test: Toggle show/hide, verify localStorage persistence
 
 #### ChannelList.tsx
 - [ ] Extract `useChannelManagement` hook

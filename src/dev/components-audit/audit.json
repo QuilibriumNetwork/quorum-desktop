@@ -34,16 +34,15 @@
       "description": "Empty state screen for direct messages with welcome content",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "todo",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
+      "primitives": "done",
+      "logic_extraction": "done",
+      "logic_needs": "keep",
       "hooks": [
-        "useShowHomeScreen",
-        "useConversationsData"
+        "useShowHomeScreen"
       ],
       "native": "todo",
-      "notes": "Has localStorage logic and responsive behavior. LocalStorage + toggle states are >10 lines and reusable. Extract: useShowHomeScreen, useConversationsData.",
-      "updated": "2025-07-29"
+      "notes": "Business logic extracted to useShowHomeScreen hook for localStorage toggle states. All HTML elements replaced with primitives (Container, FlexRow, FlexColumn, Text, Icon). Removed unused imports and commented code. useConversationsData was determined unnecessary and removed. Still uses DirectMessage.scss so remains platform_specific.",
+      "updated": "2025-08-01"
     },
     "Layout.tsx": {
       "name": "Layout",
@@ -975,8 +974,8 @@
   },
   "stats": {
     "total": 60,
-    "primitives_done": 24,
-    "logic_extraction_done": 47,
+    "primitives_done": 25,
+    "logic_extraction_done": 48,
     "native_ready": 0,
     "native_done": 11,
     "by_category": {
@@ -990,8 +989,8 @@
       "unknown": 1
     },
     "by_logic_needs": {
-      "keep": 24,
-      "extract": 28,
+      "keep": 25,
+      "extract": 27,
       "done": 8
     },
     "analysis_notes": "MAJOR UPDATE: SpaceIcon business logic extracted to useImageLoading hook with drag-aware tooltip management. Added DragStateContext system to disable tooltips during space icon dragging for better UX. Now uses Tooltip primitive instead of direct ReactTooltip. Component demonstrates excellent pattern - shared business logic with platform-specific styling coordination and enhanced drag/drop interaction.",
