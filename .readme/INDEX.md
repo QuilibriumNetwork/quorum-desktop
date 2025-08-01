@@ -1,6 +1,6 @@
 # Claude Context Index
 
-This index provides an overview of all documentation, tasks, bugs, and commands available in the Claude context.
+This index provides an overview of all documentation, tasks and bugs, available.
 
 ## Documentation
 
@@ -30,11 +30,6 @@ This index provides an overview of all documentation, tasks, bugs, and commands 
 - **[NewDirectMessage Modal: URL-to-State Conversion](bugs/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)**
 - **[React Hooks Violation: Conditional Return Before Hooks](bugs/SOLVED_react-hooks-violation-conditional-return.md)**
 - **[SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/SOLVED_right-sidebar-overlay.md)**
-
-## Commands
-
-- **[Audit Update](commands/audit-update.md)**
-- **[Index Update](commands/index-update.md)**
 
 ## Tasks
 

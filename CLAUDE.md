@@ -9,7 +9,7 @@ This is a React project using Vite and Electron with a **cross-platform web + mo
 - **Shared Code Architecture**: Components are built using custom primitives that abstract platform differences
 - **Mobile-First Approach**: Every UI change must work on both desktop and mobile
 - **Primitive Components**: Use components from `src/components/primitives/` (Input, Button, Modal, FlexRow, etc.) instead of raw HTML elements
-- **Reference Documentation**: See `.claude/tasks/todo/mobile-dev/docs/component-architecture-workflow-explained.md` for detailed architecture explanation
+- **Reference Documentation**: See `.readme/tasks/todo/mobile-dev/docs/component-architecture-workflow-explained.md` for detailed architecture explanation
 
 **When making any changes, always ask**: "Will this work on mobile?" If uncertain, use primitives and follow mobile-first design principles.
 
@@ -77,10 +77,10 @@ The `.claude/` folder tracks tasks, bugs, features, and development context.
 ### Important Claude Locations
 
 - `.claude/` — Main Claude context
-- `.claude/INDEX.md` - Index of all the docs available in `.claude/`
-- `.claude/docs/` — Documentation on custom features (Look here when you work on specific things (e.g. Modals, Search, etc.))
-- `.claude/bugs/` — Bug reports and solutions
-- `.claude/tasks/` — Task management folders:
+- `.readme/INDEX.md` - Index of all the docs available in `.claude/`
+- `.readme/docs/` — Documentation on custom features (Look here when you work on specific things (e.g. Modals, Search, etc.))
+- `.readme/bugs/` — Bug reports and solutions
+- `.readme/tasks/` — Task management folders:
   - `todo/`: Future tasks
   - `ongoing/`: Tasks in progress
   - `done/`: Completed tasks

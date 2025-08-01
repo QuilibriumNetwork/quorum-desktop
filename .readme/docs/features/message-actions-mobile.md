@@ -310,10 +310,10 @@ src/index.scss - Added new stylesheet imports
 
 ## Related Documentation
 
-- [Modal System Documentation](.claude/docs/new-modal-component.md)
-- [Responsive Layout Documentation](.claude/docs/responsive-layout.md)
-- [Emoji System Documentation](.claude/docs/emojipicker-responsive.md)
-- [Touch Interface Guidelines](.claude/docs/reacttooltip-mobile.md)
+- [Modal System Documentation](.readme/docs/new-modal-component.md)
+- [Responsive Layout Documentation](.readme/docs/responsive-layout.md)
+- [Emoji System Documentation](.readme/docs/emojipicker-responsive.md)
+- [Touch Interface Guidelines](.readme/docs/reacttooltip-mobile.md)
 
 ---
 

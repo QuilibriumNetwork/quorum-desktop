@@ -8,14 +8,14 @@
 - Interactive dashboard available at `/dev/audit`
 - Categorization system validated with real data
 - Template patterns identified for migration
-- **See**: `.claude/tasks/done/mobile-dev-audit-phase1-complete.md` for full Phase 1 results
+- **See**: `.readme/tasks/done/mobile-dev-audit-phase1-complete.md` for full Phase 1 results
 
 **🔄 Phase 2 In Progress**: Full component discovery and analysis
 
 ## Quick Reference
 
 **Dashboard**: Visit `/dev/audit` for live component status  
-**Architecture Guide**: `.claude/tasks/todo/mobile-dev/components-shared-arch-masterplan.md`  
+**Architecture Guide**: `.readme/tasks/todo/mobile-dev/components-shared-arch-masterplan.md`  
 **Categorization Rules**: See section below for detailed criteria
 
 ## Component Categorization Rules

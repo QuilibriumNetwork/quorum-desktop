@@ -16,7 +16,7 @@ This document provides a comprehensive analysis of the modal migration strategy 
 
 ## Modal Architecture Analysis
 
-Based on comprehensive code review and the modal inventory (`.claude/docs/modals.md` lines 156-239), we've identified **3 distinct modal patterns**:
+Based on comprehensive code review and the modal inventory (`.readme/docs/modals.md` lines 156-239), we've identified **3 distinct modal patterns**:
 
 ### 🟢 Category 1: Simple Modals (Direct Modal Primitive Candidates)
 
@@ -393,8 +393,8 @@ When converting modals to Modal primitive:
 
 ## References
 
-- **Modal Inventory**: `.claude/docs/modals.md` (lines 156-239)
-- **Mobile Dev Plan**: `.claude/tasks/todo/mobile-dev/mobile-dev-plan.md` (Step 4)
+- **Modal Inventory**: `.readme/docs/modals.md` (lines 156-239)
+- **Mobile Dev Plan**: `.readme/tasks/todo/mobile-dev/mobile-dev-plan.md` (Step 4)
 - **Modal Primitive**: `src/components/primitives/Modal/`
 - **Test Cases**: 
   - `src/components/modals/KickUserModal.tsx` (simple conversion)

@@ -9,14 +9,24 @@ Powered by Quilibrium and the libp2p stack, Quorum can be used over TCP, QUIC, W
 
 ## Documentation
 
-For detailed documentation on specific features and components, please refer to the `.claude/docs` directory. You can find the complete index of available documentation in `.claude/INDEX.md`.
+For detailed documentation on specific features and components, please refer to the `.readme/docs` directory. You can find the complete index of available documentation in `.readme/INDEX.md`.
 A complete documentation website will be created at a later time.
+
+## Development Resources
+
+The `.readme/` folder contains development resources including:
+- Architecture documentation and component guides
+- Bug reports and solutions
+- Task management (todo, ongoing, done)
+- Mobile development guidelines and cross-platform considerations
+
+See `.readme/INDEX.md` for a complete overview of available resources.
 
 ## Set up and local testing
 
 Requires Node.js, and quilibrium-js-sdk-channels cloned alongside it. Running locally in a browser against prod Quorum API requires CORS to be disabled, consult your extensions or settings to perform this.
 
-```
+```bash
 cd ../quilibrium-js-sdk-channels/
 yarn build
 yarn link
@@ -27,20 +37,23 @@ yarn install
 
 To run:
 
-```
+```bash
 yarn dev
 ```
 
 To run in Electron, run:
 
-```
+```bash
 yarn dev
-```
 
-and in another terminal:
-
-```
+# and in another terminal
 yarn electron:dev
+```
+
+To build for production and preview:
+
+```bash
+yarn build:preview
 ```
 
 _If you are on Windows, we suggest testing on WSL for better performance_.

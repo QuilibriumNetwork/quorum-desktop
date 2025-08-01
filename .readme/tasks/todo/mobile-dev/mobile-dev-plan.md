@@ -708,10 +708,10 @@ See `third-party-component-migration-report.md` for detailed implementation stra
 - [x] **Fixed styling issues**: Tighter spacing between icons and text, proper left alignment
 
 
-IMPORTANT: there are still many elements that need to be switched to using our primitives (button,select,textarea,input): see .claude/tasks/todo/mobile-dev/primitive-migration-audit.md
+IMPORTANT: there are still many elements that need to be switched to using our primitives (button,select,textarea,input): see .readme/tasks/todo/mobile-dev/primitive-migration-audit.md
 
 #### Step 4: Modal Component Replacement
-Detailed plan: .claude/tasks/todo/mobile-dev/modal-migration-plan.md
+Detailed plan: .readme/tasks/todo/mobile-dev/modal-migration-plan.md
 - [x] **Rename old component**: `Modal.tsx` → `Modal-OLD.tsx`
 - [x] **Update imports**: Change imports to use `import { Modal } from '@/components/primitives'`
 - [x] **Test thoroughly**:

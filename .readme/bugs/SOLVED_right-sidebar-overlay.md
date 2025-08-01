@@ -280,9 +280,9 @@ Consider implementing a z-index scale/system to prevent future conflicts:
 
 ## Related Documentation
 
-- `.claude/docs/new-modal-component.md` - Original modal z-index fix
-- `.claude/docs/responsive-layout.md` - Responsive design patterns
-- `.claude/docs/modals.md` - Modal system guidelines
+- `.readme/docs/new-modal-component.md` - Original modal z-index fix
+- `.readme/docs/responsive-layout.md` - Responsive design patterns
+- `.readme/docs/modals.md` - Modal system guidelines
 
 ---
 

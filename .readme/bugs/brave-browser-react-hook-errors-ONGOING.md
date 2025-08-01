@@ -193,7 +193,7 @@ module.exports = {
 - Mobile components working with direct theme imports
 
 ### Investigation Documentation
-- `.claude/bugs/brave-browser-react-hook-errors-ONGOING.md` - This file
+- `.readme/bugs/brave-browser-react-hook-errors-ONGOING.md` - This file
 
 ## Long-Term Recommendations
 

@@ -31,9 +31,9 @@ Migrate the existing SCSS-based styling system (using semantic class names and r
 
 **Reference Documents:**
 
-- Full analysis of the current situation: `.claude/tasks/todo/css-refactor/analysis.md`
-- **Updated inventory** of current CSS styles: `.claude/tasks/todo/css-refactor/css-inventory.md` (January 19, 2025)
-- Mobile development plan context: `.claude/tasks/todo/mobile-dev/mobile-dev-plan.md`
+- Full analysis of the current situation: `.readme/tasks/todo/css-refactor/analysis.md`
+- **Updated inventory** of current CSS styles: `.readme/tasks/todo/css-refactor/css-inventory.md` (January 19, 2025)
+- Mobile development plan context: `.readme/tasks/todo/mobile-dev/mobile-dev-plan.md`
 
 ---
 
