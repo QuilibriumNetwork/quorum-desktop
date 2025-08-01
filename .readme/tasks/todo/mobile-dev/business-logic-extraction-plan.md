@@ -50,19 +50,8 @@
 
 - [x] ChannelList.tsx
 - [x] InviteLink.tsx
+- [x] SpaceButton.tsx ✓ (Reverted - see lessons learned)
 
-
-
-
-
-#### SpaceButton.tsx
-- [ ] Extract `useDragAndDrop` hook (web-specific)
-  - Drag/drop logic
-  - Visual feedback
-- [ ] Extract `useSpaceNavigation` hook
-  - Selection state
-  - Navigation logic
-- [ ] Test: Drag spaces, verify reordering, check navigation
 
 #### NavMenu.tsx
 - [ ] Extract `useSpaceOrdering` hook
@@ -567,9 +556,278 @@ const useSpaceManagement = (options) => {
 
 **Timeline**: Evaluate for shared hooks after extracting JoinSpaceModal and NewDirectMessageModal to confirm patterns.
 
+### When NOT to Extract: Lessons from SpaceButton
+
+**Date**: 2025-08-01
+
+**Learning**: Not every component needs business logic extraction, even in a cross-platform architecture.
+
+#### The SpaceButton Over-Engineering Case
+
+**What we did**:
+1. Created `useDragAndDrop` hook for sortable functionality
+2. Created `useSpaceNavigation` hook for URL generation and selection state
+3. Used spread operators to hide prop details
+
+**Why it was wrong**:
+1. **Too simple to abstract** - The component had minimal logic (just prop transformations)
+2. **Hidden intent** - `{...spaceIconProps}` made it harder to understand what props were passed
+3. **Platform concerns mixed** - Drag/drop is inherently web-specific, not "business logic"
+4. **Added complexity without benefit** - More files, more indirection, same functionality
+
+#### When to Extract vs When to Keep Simple
+
+**✅ EXTRACT when you have**:
+- Complex state management (multiple useState/useEffect)
+- Async operations with error handling
+- Business rules and validation
+- Multi-step workflows
+- Logic that could be reused across components
+- 10+ lines of interconnected logic
+
+**Examples of good extraction**:
+- `InviteLink` - Complex async flow, error states, join process
+- `ChannelList` - Permission logic, modal coordination, data processing
+- `SpaceEditor` - Multiple feature domains, complex state sync
+
+**❌ DON'T EXTRACT when you have**:
+- Simple prop transformations
+- Platform-specific behavior (drag/drop, native gestures)
+- UI-only calculations
+- Single-purpose, single-use logic
+- Components under 50 lines with clear intent
+
+**Examples to keep simple**:
+- `SpaceButton` - Just a draggable link with an icon
+- `AccentColorSwitcher` - Simple color picker
+- `ClickToCopyContent` - Single focused action
+
+#### Best Practices for Cross-Platform Architecture
+
+1. **Clarity over cleverness** - Explicit props are better than spread operators
+2. **Extract by complexity, not by principle** - Don't force extraction on simple components
+3. **Platform-specific is OK** - Not everything needs to be "cross-platform ready"
+4. **Simple components should stay simple** - Maintainability > Architectural purity
+
+#### The Revised SpaceButton Approach
+
+```tsx
+// ✅ Good - Clear, simple, maintainable
+const SpaceButton = ({ space }) => {
+  const { spaceId: currentSpaceId } = useParams();
+  
+  // Platform-specific drag logic - clearly visible
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useSortable({
+    id: space.spaceId,
+    data: { targetId: space.spaceId },
+  });
+
+  // Simple, explicit logic
+  const isSelected = currentSpaceId === space.spaceId;
+  const navigationUrl = `/spaces/${space.spaceId}/${space.defaultChannelId || '...'}`;
+
+  return (
+    <Link ref={setNodeRef} style={dragStyle} {...listeners} {...attributes} to={navigationUrl}>
+      <SpaceIcon
+        notifs={Boolean(space.notifs && space.notifs > 0)}
+        selected={isSelected}
+        size="regular"
+        iconUrl={space.iconUrl}
+        spaceName={space.spaceName}
+        spaceId={space.spaceId}
+        highlightedTooltip={true}
+      />
+    </Link>
+  );
+};
+```
+
+**Key Takeaway**: In cross-platform development, knowing when NOT to abstract is as important as knowing when to abstract. Keep simple things simple.
+
+### Platform-Specific Components Pattern
+
+**Date**: 2025-08-01
+
+**Pattern**: How to handle components with platform-specific behavior like drag/drop, gestures, or navigation.
+
+#### The SpaceButton Platform Split
+
+SpaceButton requires different implementations because:
+- **Web**: Uses `@dnd-kit/sortable` for drag-and-drop reordering
+- **Native**: Might use long-press menus or different gesture system
+- **Core logic**: Only 2-3 lines (selection state, URL generation)
+
+#### Best Practice: Platform-Specific Files
+
+```
+src/components/navbar/
+├── SpaceButton.tsx          # Web version with drag/drop
+├── SpaceButton.native.tsx   # Native version with gestures
+└── SpaceButton.shared.ts    # Shared logic (only if complex)
+```
+
+#### Implementation Pattern
+
+**Web Version (SpaceButton.tsx)**:
+```tsx
+const SpaceButton = ({ space }) => {
+  const { spaceId: currentSpaceId } = useParams();
+  const isSelected = currentSpaceId === space.spaceId;
+  
+  // Web-specific: Drag and drop
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useSortable({
+    id: space.spaceId,
+    data: { targetId: space.spaceId },
+  });
+  
+  const { setIsDragging } = useDragStateContext();
+  React.useEffect(() => {
+    setIsDragging(isDragging);
+  }, [isDragging, setIsDragging]);
+
+  const dragStyle = { /* transform, opacity, etc */ };
+  const navigationUrl = `/spaces/${space.spaceId}/${space.defaultChannelId || '...'}`;
+
+  return (
+    <Link ref={setNodeRef} style={dragStyle} {...listeners} {...attributes} to={navigationUrl}>
+      <SpaceIcon
+        notifs={Boolean(space.notifs && space.notifs > 0)}
+        selected={isSelected}
+        size="regular"
+        iconUrl={space.iconUrl}
+        spaceName={space.spaceName}
+        spaceId={space.spaceId}
+        highlightedTooltip={true}
+      />
+    </Link>
+  );
+};
+```
+
+**Native Version (SpaceButton.native.tsx)**:
+```tsx
+import { TouchableOpacity, Pressable } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+
+const SpaceButton = ({ space }) => {
+  const navigation = useNavigation();
+  const { spaceId: currentSpaceId } = useParams();
+  const isSelected = currentSpaceId === space.spaceId;
+  
+  // Native-specific: Navigation and gestures
+  const handlePress = () => {
+    navigation.navigate('Space', {
+      spaceId: space.spaceId,
+      channelId: space.defaultChannelId || '00000000-0000-0000-0000-000000000000'
+    });
+  };
+
+  const handleLongPress = () => {
+    // Native might show action menu instead of drag
+    showSpaceActions(space);
+  };
+
+  return (
+    <Pressable 
+      onPress={handlePress}
+      onLongPress={handleLongPress}
+      style={({ pressed }) => ({
+        opacity: pressed ? 0.7 : 1
+      })}
+    >
+      <SpaceIcon
+        notifs={Boolean(space.notifs && space.notifs > 0)}
+        selected={isSelected}
+        size="regular"
+        iconUrl={space.iconUrl}
+        spaceName={space.spaceName}
+        spaceId={space.spaceId}
+        highlightedTooltip={false} // Tooltips work differently on native
+      />
+    </Pressable>
+  );
+};
+```
+
+#### When to Use This Pattern
+
+**Use platform-specific files when**:
+- Platform behaviors are fundamentally different (drag vs gestures)
+- Each platform has unique optimization opportunities
+- Shared logic is minimal (< 10 lines)
+- Platform-specific APIs are heavily used
+
+**Examples of platform-specific components**:
+- `SpaceButton` - Drag/drop vs long-press
+- `FileUpload` - File input vs camera/gallery
+- `Tooltip` - Hover vs press-and-hold
+- `ContextMenu` - Right-click vs long-press
+
+#### When to Share Logic
+
+**Extract shared logic only when**:
+- Business rules must stay synchronized
+- Complex calculations (> 10 lines)
+- Data transformations
+- State management logic
+
+**Example of worth extracting**:
+```tsx
+// useMessagePermissions.shared.ts
+export const useMessagePermissions = (message, user, space) => {
+  const isAuthor = user.id === message.authorId;
+  const isAdmin = space.roles.find(r => r.userId === user.id)?.permissions.includes('admin');
+  const editTimeout = Date.now() - message.timestamp < 15 * 60 * 1000;
+  
+  const canEdit = isAuthor && editTimeout && !message.deleted;
+  const canDelete = isAuthor || isAdmin;
+  const canReact = !message.deleted && space.permissions.reactions;
+  const canReply = !message.deleted && space.permissions.replies;
+  
+  return { canEdit, canDelete, canReact, canReply };
+};
+```
+
+#### Metro Bundler Configuration
+
+React Native's Metro bundler automatically picks the right file:
+- `SpaceButton.tsx` → Used on web
+- `SpaceButton.native.tsx` → Used on iOS/Android
+- `SpaceButton.ios.tsx` → iOS specific (if needed)
+- `SpaceButton.android.tsx` → Android specific (if needed)
+
+#### Key Principles
+
+1. **"Share business logic, not UI logic"**
+   - ✅ Share: Calculations, validations, data processing
+   - ❌ Don't share: Gestures, animations, platform APIs
+
+2. **Duplication is OK for simple logic**
+   - 2-3 lines of duplication > complex abstraction
+   - Each platform can optimize independently
+
+3. **Optimize for platform strengths**
+   - Web: Hover states, drag/drop, keyboard shortcuts
+   - Native: Gestures, haptics, native navigation
+
+4. **Keep platform code obvious**
+   - Anyone should immediately see what's platform-specific
+   - No hidden platform checks in shared components
+
+#### Migration Strategy
+
+When splitting existing components:
+1. Identify platform-specific code (drag, hover, file inputs)
+2. Create `.native.tsx` version
+3. Move platform code to respective files
+4. Keep truly shared logic inline (if < 10 lines)
+5. Extract to `.shared.ts` only if complex
+
+This pattern ensures clean, maintainable code that leverages each platform's strengths without unnecessary abstraction.
+
 ---
 
 _Created: 2025-07-29_
-_Updated: 2025-07-31_
+_Updated: 2025-08-01_
 _Priority: Business Logic First → Native Preparation Second_
 _Objective: Fully working web app ready for native components_

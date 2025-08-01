@@ -205,16 +205,13 @@
       "description": "Draggable space navigation button with selection state",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "todo",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
-      "hooks": [
-        "useDragAndDrop",
-        "useSpaceNavigation"
-      ],
+      "primitives": "done",
+      "logic_extraction": "keep",
+      "logic_needs": "keep",
+      "hooks": [],
       "native": "todo",
-      "notes": "Drag/drop logic and space navigation (>10 lines, reusable). Extract: useDragAndDrop (web only), useSpaceNavigation (shared).",
-      "updated": "2025-07-29"
+      "notes": "COMPLETED: Analyzed for business logic extraction but intentionally kept simple and explicit. Logic too minimal to extract (2-3 lines: selection state, URL generation). Uses @dnd-kit/sortable for web drag/drop. Will need .native.tsx version with different gesture system (long-press vs drag). Removed SCSS dependency, using Tailwind 'block' class. Best practice: Don't over-engineer simple components - clarity over abstraction. Platform-specific behavior (drag/drop) belongs in platform files, not shared hooks.",
+      "updated": "2025-08-01"
     },
     "QuickReactionButton.tsx": {
       "name": "QuickReactionButton",
