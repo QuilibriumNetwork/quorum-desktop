@@ -71,6 +71,7 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
       content={props.spaceName}
       place="right"
       highlighted={props.highlightedTooltip}
+      showOnTouch={false}
     >
       {iconElement}
     </Tooltip>

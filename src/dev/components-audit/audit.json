@@ -560,16 +560,18 @@
       "description": "Full channel list with groups, admin controls, and actions",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "partial",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
+      "primitives": "done",
+      "logic_extraction": "done",
+      "logic_needs": "done",
       "hooks": [
-        "useChannelManagement",
-        "useSpacePermissions"
+        "useGroupEditor",
+        "useSpacePermissions",
+        "useSpaceHeader",
+        "useSpaceGroups"
       ],
       "native": "todo",
-      "notes": "Complex channel management logic with permissions, group editing (>10 lines, multiple useState). Desktop: sidebar. Mobile: drawer/stack.",
-      "updated": "2025-07-29"
+      "notes": "COMPLETED: Business logic extracted into 4 focused hooks - useGroupEditor (modal state), useSpacePermissions (owner/member logic), useSpaceHeader (banner/styling), useSpaceGroups (data processing). All HTML elements replaced with primitives (Container, Button, Icon, Text). Removed unused useSpaceMembers import and cleaned up TypeScript warnings. Modal system updated to use primitives with proper Container wrapper instead of raw divs. Still uses ChannelList.scss so remains platform_specific.",
+      "updated": "2025-08-01"
     },
     "InviteLink.tsx": {
       "name": "InviteLink",

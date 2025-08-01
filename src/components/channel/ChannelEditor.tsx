@@ -36,9 +36,10 @@ const ChannelEditor: React.FunctionComponent<{
       title={isEditMode ? t`Edit Channel` : t`Add Channel`}
       visible={true}
       onClose={dismiss}
+      size="small"
     >
-      <Container className="modal-body modal-width-medium" style={{ textAlign: 'left' }} data-small-modal>
-        <Container className="modal-content-info max-sm:mb-1">
+      <Container style={{ textAlign: 'left' }}>
+        <Container className="mb-4 max-sm:mb-1">
           <Text className="small-caps">
             <Trans>Channel Name</Trans>
           </Text>
@@ -47,7 +48,7 @@ const ChannelEditor: React.FunctionComponent<{
             onChange={handleChannelNameChange}
           />
         </Container>
-        <Container className="modal-content-info max-sm:mb-1">
+        <Container className="mb-4 max-sm:mb-1">
           <Text className="small-caps">
             <Trans>Channel Topic</Trans>
           </Text>
@@ -69,7 +70,7 @@ const ChannelEditor: React.FunctionComponent<{
             />
           </Container>
         )}
-        <FlexRow className="justify-end gap-2 mt-4 max-sm:flex-col max-sm:gap-4">
+        <FlexRow className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
           {isEditMode && (
             <Button
               type="danger"

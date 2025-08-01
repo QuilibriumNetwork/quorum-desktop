@@ -48,16 +48,8 @@
 
 ### More Complex Logic
 
-#### ChannelList.tsx
-- [ ] Extract `useChannelManagement` hook
-  - Channel organization
-  - Group management
-  - Permission checking
-- [ ] Extract `useSpacePermissions` hook
-  - Role-based permissions
-  - Admin controls
-  - Visibility logic
-- [ ] Test: Create/edit channels, verify permissions, check groups
+- [x] ChannelList.tsx
+
 
 #### InviteLink.tsx
 - [ ] Extract `useInviteProcessing` hook

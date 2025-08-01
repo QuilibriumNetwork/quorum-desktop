@@ -1,107 +1,88 @@
 import * as React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faDoorOpen,
-  faPlus,
-  faSliders,
-} from '@fortawesome/free-solid-svg-icons';
 import ChannelGroup from './ChannelGroup';
 import './ChannelList.scss';
-import { useSpace, useSpaceMembers } from '../../hooks';
-import { useModalContext } from '../AppWithSearch';
-import GroupEditor from './GroupEditor';
-import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
+import { useSpace } from '../../hooks';
+import {
+  useGroupEditor,
+  useSpacePermissions,
+  useSpaceHeader,
+  useSpaceGroups,
+} from '../../hooks';
 import { t } from '@lingui/core/macro';
-import { Button } from '../primitives';
+import { Button, Container, Icon, Text } from '../primitives';
 
 type ChannelListProps = { spaceId: string };
 
 const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   const { data: space } = useSpace({ spaceId });
-  const { openSpaceEditor, openChannelEditor, openLeaveSpace } =
-    useModalContext();
-  let [isGroupEditorOpen, setIsGroupEditorOpen] = React.useState<
-    { groupName?: string } | undefined
-  >();
-  let { data: isSpaceOwner } = useSpaceOwner({ spaceId });
-  let { data: members } = useSpaceMembers({ spaceId });
+  
+  // Extract business logic into hooks
+  const {
+    openNewGroupEditor,
+    openEditGroupEditor,
+  } = useGroupEditor(spaceId);
+  
+  const {
+    canAddGroups,
+    handleSpaceContextAction,
+    getContextIcon,
+  } = useSpacePermissions(spaceId);
+  
+  const {
+    headerClassName,
+    headerStyle,
+    hasBanner,
+    gradientOverlayStyle,
+    spaceName,
+  } = useSpaceHeader(space);
+  
+  const { groups } = useSpaceGroups(space);
 
   return (
     <>
-      {isGroupEditorOpen ? (
-        <>
-          <div className="invisible-dismissal invisible-dark">
-            <GroupEditor
-              spaceId={spaceId}
-              groupName={isGroupEditorOpen.groupName}
-              dismiss={() => setIsGroupEditorOpen(undefined)}
-            />
-            <div
-              className="invisible-dismissal"
-              onClick={() => setIsGroupEditorOpen(undefined)}
-            />
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
-      <div className="channels-list">
-        <div
-          className={
-            'space-header relative flex flex-row justify-between ' +
-            (space?.bannerUrl
-              ? ''
-              : ' !h-[41px] border-b border-b-1 border-b-surface-6')
-          }
-          style={{ backgroundImage: `url('${space?.bannerUrl}')` }}
+      <Container className="channels-list">
+        <Container
+          className={headerClassName}
+          style={headerStyle}
         >
-          {space?.bannerUrl && (
-            <div
+          {hasBanner && (
+            <Container
               className="absolute inset-0 pointer-events-none z-0"
-              style={{
-                background:
-                  'linear-gradient(to bottom, rgba(var(--surface-00-rgb), 0.8), rgba(var(--surface-00-rgb), 0))',
-              }}
-            ></div>
+              style={gradientOverlayStyle}
+            />
           )}
 
-          <div className="space-header-name truncate relative z-10">
-            {space?.spaceName}
-          </div>
-          <div
+          <Container className="space-header-name truncate relative z-10">
+            <Text>{spaceName}</Text>
+          </Container>
+          <Container
             className="space-context-menu-toggle-button relative z-10"
-            onClick={() => {
-              if (isSpaceOwner) {
-                openSpaceEditor(spaceId);
-              } else {
-                openLeaveSpace(spaceId);
-              }
-            }}
+            onClick={handleSpaceContextAction}
           >
-            <FontAwesomeIcon icon={isSpaceOwner ? faSliders : faDoorOpen} />
-          </div>
-        </div>
-        {space?.groups.map((group) => (
+            <Icon name={getContextIcon()} />
+          </Container>
+        </Container>
+        {groups.map((group: any) => (
           <ChannelGroup
-            setIsGroupEditorOpen={setIsGroupEditorOpen}
+            onEditGroup={openEditGroupEditor}
             key={group.groupName}
             group={group}
           />
         ))}
-        {isSpaceOwner && (
-          <div className="px-4 py-2">
+        {canAddGroups && (
+          <Container className="px-4 py-2">
             <Button
               type="subtle-outline"
               size="small"
-              onClick={() => setIsGroupEditorOpen({})}
-              className="w-full justify-start"
+              onClick={openNewGroupEditor}
+              className="w-full justify-center items-center"
             >
-              <FontAwesomeIcon icon={faPlus} className="mr-2" />
+              <Icon name="plus" className="mr-2" />
               {t`Add Group`}
             </Button>
-          </div>
+          </Container>
         )}
-      </div>
+      </Container>
     </>
   );
 };

@@ -30,7 +30,7 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
       visible={visible} 
       onClose={onClose} 
       title={t`Leave ${space?.spaceName || 'Space'}`} 
-      size="medium"
+      size="small"
     >
       <Container width="full" maxWidth="400px" margin="auto">
         <Container margin="none" className="mb-6 text-left max-sm:text-center">

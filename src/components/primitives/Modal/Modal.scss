@@ -41,26 +41,21 @@
 .quorum-modal.quorum-modal-small {
   width: 90vw;
   max-width: 400px;
+  min-width: 390px;
   height: auto;
   max-height: 70vh;
-  padding: 0; // Remove default padding for small modals
+  // Keep default padding for proper title positioning
   
-  .quorum-modal-title {
-    display: none; // Hide title for small modals (they have their own content structure)
-  }
   
   .quorum-modal-container {
     height: 100%;
-    padding: 20px; // Standard padding for small modals
-    
-    @media (max-width: 768px) {
-      padding: 16px;
-    }
+    // Let Modal primitive handle padding consistently
   }
 
   @media (max-width: 768px) {
     width: 95vw;
     max-width: 400px; // Keep 400px limit on mobile too
+    min-width: 200px;
     max-height: 60vh;
     border-radius: 0.5rem;
   }
@@ -68,7 +63,12 @@
 
 .quorum-modal.quorum-modal-medium {
   max-width: 600px;
+  min-width: 590px;
   max-height: 70vh;
+
+  @media (max-width: 640px) {
+    min-width: 200px;
+  }
 }
 
 .quorum-modal.quorum-modal-large {

@@ -17,14 +17,7 @@ const ChannelGroup: React.FunctionComponent<{
       mentions?: string;
     }[];
   };
-  setIsGroupEditorOpen: React.Dispatch<
-    React.SetStateAction<
-      | {
-          groupName?: string;
-        }
-      | undefined
-    >
-  >;
+  onEditGroup: (groupName: string) => void;
 }> = (props) => {
   const { openChannelEditor } = useModalContext();
   let { spaceId, channelId } = useParams<{
@@ -42,7 +35,7 @@ const ChannelGroup: React.FunctionComponent<{
           }
           onClick={() => {
             if (isSpaceOwner) {
-              props.setIsGroupEditorOpen({ groupName: props.group.groupName });
+              props.onEditGroup(props.group.groupName);
             }
           }}
         >

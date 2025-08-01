@@ -3,6 +3,7 @@ import Layout from './Layout';
 import UserSettingsModal from './modals/UserSettingsModal';
 import SpaceEditor from './channel/SpaceEditor';
 import ChannelEditor from './channel/ChannelEditor';
+import GroupEditor from './channel/GroupEditor';
 import LeaveSpaceModal from './modals/LeaveSpaceModal';
 import MessageActionsDrawer from './message/MessageActionsDrawer';
 import EmojiPickerDrawer from './message/EmojiPickerDrawer';
@@ -25,6 +26,7 @@ interface ModalContextType {
     groupName: string,
     channelId: string
   ) => void;
+  openGroupEditor: (spaceId: string, groupName?: string) => void;
   openLeaveSpace: (spaceId: string) => void;
   showRightSidebar: boolean;
   setShowRightSidebar: (show: boolean) => void;
@@ -65,6 +67,10 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
     groupName: string;
     channelId: string;
   } | null>(null);
+  const [groupEditorData, setGroupEditorData] = useState<{
+    spaceId: string;
+    groupName?: string;
+  } | null>(null);
   const [leaveSpaceData, setLeaveSpaceData] = useState<{
     spaceId: string;
   } | null>(null);
@@ -86,6 +92,8 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
       groupName: string,
       channelId: string
     ) => setChannelEditorData({ spaceId, groupName, channelId }),
+    openGroupEditor: (spaceId: string, groupName?: string) => 
+      setGroupEditorData({ spaceId, groupName }),
     openLeaveSpace: (spaceId: string) => setLeaveSpaceData({ spaceId }),
     showRightSidebar,
     setShowRightSidebar,
@@ -131,18 +139,20 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
       )}
 
       {channelEditorData && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
-          <ChannelEditor
-            spaceId={channelEditorData.spaceId}
-            groupName={channelEditorData.groupName}
-            channelId={channelEditorData.channelId}
-            dismiss={() => setChannelEditorData(null)}
-          />
-          <div
-            className="fixed inset-0 -z-10"
-            onClick={() => setChannelEditorData(null)}
-          />
-        </div>
+        <ChannelEditor
+          spaceId={channelEditorData.spaceId}
+          groupName={channelEditorData.groupName}
+          channelId={channelEditorData.channelId}
+          dismiss={() => setChannelEditorData(null)}
+        />
+      )}
+
+      {groupEditorData && (
+        <GroupEditor
+          spaceId={groupEditorData.spaceId}
+          groupName={groupEditorData.groupName}
+          dismiss={() => setGroupEditorData(null)}
+        />
       )}
 
       {leaveSpaceData && (
