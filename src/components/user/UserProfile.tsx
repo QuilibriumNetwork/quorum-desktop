@@ -1,17 +1,15 @@
-import {
-  faTimes,
-} from '@fortawesome/free-solid-svg-icons';
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Button } from '../primitives';
+import { Button, Container, FlexRow, Text, Icon } from '../primitives';
 import UserOnlineStateIndicator from './UserOnlineStateIndicator';
 import ClickToCopyContent from '../ClickToCopyContent';
 import './UserProfile.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Role } from '../../api/quorumApi';
-import { useMessageDB } from '../context/MessageDB';
-import { useNavigate } from 'react-router';
-import { useRegistration } from '../../hooks';
+import { 
+  useUserRoleManagement,
+  useUserProfileActions,
+  useUserRoleDisplay
+} from '../../hooks';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../utils';
 
@@ -25,63 +23,30 @@ const UserProfile: React.FunctionComponent<{
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }> = (props) => {
   const { currentPasskeyInfo } = usePasskeysContext();
-  const { updateSpace, messageDB } = useMessageDB();
-  const { data: selfRegistration } = useRegistration({
-    address: currentPasskeyInfo!.address,
+
+  // Extract business logic into hooks
+  const { addRole, removeRole } = useUserRoleManagement(props.spaceId);
+  const { sendMessage, kickUser } = useUserProfileActions({
+    dismiss: props.dismiss,
+    setKickUserAddress: props.setKickUserAddress,
   });
-  const navigate = useNavigate();
-
-  const addRole = React.useCallback(
-    async (roleId: string) => {
-      const space = await messageDB.getSpace(props.spaceId!);
-      updateSpace({
-        ...space!,
-        roles: space!.roles.map((r) => {
-          return r.roleId == roleId
-            ? {
-                ...r,
-                members: [
-                  ...r.members.filter((m) => m !== props.user.address),
-                  props.user.address,
-                ],
-              }
-            : r;
-        }),
-      });
-    },
-    [messageDB, updateSpace]
-  );
-
-  const removeRole = React.useCallback(
-    async (roleId: string) => {
-      const space = await messageDB.getSpace(props.spaceId!);
-      updateSpace({
-        ...space!,
-        roles: space!.roles.map((r) => {
-          return r.roleId == roleId
-            ? {
-                ...r,
-                members: [...r.members.filter((m) => m !== props.user.address)],
-              }
-            : r;
-        }),
-      });
-    },
-    [messageDB, updateSpace]
+  const { userRoles, availableRoles } = useUserRoleDisplay(
+    props.user.address,
+    props.roles
   );
 
   return (
-    <div className="user-profile" onClick={(e) => e.stopPropagation()}>
+    <Container className="user-profile" onClick={(e: React.MouseEvent) => e.stopPropagation()}>
       {props.dismiss && (
-        <div
+        <Container
           className="absolute right-3 top-3 cursor-pointer text-subtle hover:text-main z-10"
           onClick={props.dismiss}
         >
-          <FontAwesomeIcon icon={faTimes} />
-        </div>
+          <Icon name="times" />
+        </Container>
       )}
-      <div className="user-profile-header">
-        <div
+      <Container className="user-profile-header">
+        <Container
           className="user-profile-icon"
           style={{
             backgroundImage:
@@ -91,14 +56,14 @@ const UserProfile: React.FunctionComponent<{
                 : 'var(--unknown-icon)',
           }}
         />
-        <div className="user-profile-text">
-          <div className="user-profile-username break-words">
-            {props.user.displayName}
-          </div>
-          <div className="flex flex-row py-1 text-subtle">
-            <div className="text-xs w-[140px] truncate">
+        <Container className="user-profile-text">
+          <Container className="user-profile-username break-words">
+            <Text>{props.user.displayName}</Text>
+          </Container>
+          <FlexRow className="py-1 text-subtle">
+            <Text className="text-xs w-[140px] truncate text-subtle">
               {props.user.address}
-            </div>
+            </Text>
             <ClickToCopyContent
               className="ml-2"
               tooltipText={t`Copy address`}
@@ -108,15 +73,15 @@ const UserProfile: React.FunctionComponent<{
             >
               <></>
             </ClickToCopyContent>
-          </div>
-          <div className="user-profile-state">
+          </FlexRow>
+          <Container className="user-profile-state">
             <UserOnlineStateIndicator user={props.user} />
-          </div>
-        </div>
-      </div>
+          </Container>
+        </Container>
+      </Container>
 
-      <div>
-          <div
+      <Container>
+          <Container
             className={
               'p-2 pb-4 ' +
               (currentPasskeyInfo!.address !== props.user.address
@@ -124,67 +89,60 @@ const UserProfile: React.FunctionComponent<{
                 : 'rounded-b-xl')
             }
           >
-            <div className="user-profile-content-section-header">Roles</div>
-            <div className="user-profile-roles">
+            <Container className="user-profile-content-section-header">
+              <Text className="text-sm">Roles</Text>
+            </Container>
+            <Container className="user-profile-roles">
               {!props.canEditRoles &&
-                props.roles
-                  ?.filter((r) => r.members.includes(props.user.address))
-                  .map((r) => (
-                    <span
-                      key={'user-profile-role-' + r.roleId}
-                      className={'message-name-mentions-role'}
-                    >
-                      {r.displayName}
-                    </span>
-                  ))}
+                userRoles.map((r) => (
+                  <Text
+                    key={'user-profile-role-' + r.roleId}
+                    className={'message-name-mentions-role inline-block mr-2'}
+                  >
+                    {r.displayName}
+                  </Text>
+                ))}
               {props.canEditRoles &&
-                props.roles
-                  ?.filter((r) => r.members.includes(props.user.address))
-                  .map((r) => (
-                    <span
-                      key={'user-profile-role-' + r.roleId}
-                      className={'message-name-mentions-role'}
-                    >
-                      <FontAwesomeIcon
-                        icon={faTimes}
-                        className="hover:bg-black hover:bg-opacity-30 rounded-full p-1 cursor-pointer mr-1 text-sm align-middle"
-                        onClick={() => removeRole(r.roleId)}
-                      />
-                      <span className="text-xs">{r.displayName}</span>
-                    </span>
-                  ))}
+                userRoles.map((r) => (
+                  <Text
+                    key={'user-profile-role-' + r.roleId}
+                    className={'message-name-mentions-role inline-block mr-2'}
+                  >
+                    <Icon
+                      name="times"
+                      className="hover:bg-black hover:bg-opacity-30 rounded-full p-1 cursor-pointer mr-1 text-sm align-middle"
+                      onClick={() => removeRole(props.user.address, r.roleId)}
+                    />
+                    <Text className="text-xs inline">{r.displayName}</Text>
+                  </Text>
+                ))}
               {props.canEditRoles &&
-                props.roles
-                  ?.filter((r) => !r.members.includes(props.user.address))
-                  .map((r) => (
-                    <div
-                      key={'user-profile-add-role-' + r.roleId}
-                      className="w-full sm:w-auto sm:inline-block mb-2"
+                availableRoles.map((r) => (
+                  <Container
+                    key={'user-profile-add-role-' + r.roleId}
+                    className="w-full sm:w-auto sm:inline-block mb-2"
+                  >
+                    <Button
+                      className="w-full sm:w-auto"
+                      onClick={() => {
+                        addRole(props.user.address, r.roleId);
+                      }}
+                      type="secondary"
+                      size="small"
                     >
-                      <Button
-                        className="w-full sm:w-auto"
-                        onClick={() => {
-                          addRole(r.roleId);
-                        }}
-                        type="secondary"
-                        size="small"
-                      >
-                        + {r.roleTag}
-                      </Button>
-                    </div>
-                  ))}
-            </div>
-          </div>
+                      + {r.roleTag}
+                    </Button>
+                  </Container>
+                ))}
+            </Container>
+          </Container>
           {currentPasskeyInfo!.address !== props.user.address && (
-            <div className="bg-surface-0 rounded-b-xl p-3">
-              <div className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2">
+            <Container className="bg-surface-3 rounded-b-xl p-3">
+              <Container className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2">
                 <Button
                   size="small"
-                  className="justify-center text-center hover:bg-surface-1 rounded text-main"
-                  onClick={() => {
-                    navigate('/messages/' + props.user.address);
-                    props.dismiss && props.dismiss();
-                  }}
+                  className="justify-center text-center rounded text-main"
+                  onClick={() => sendMessage(props.user.address)}
                 >
                   {t`Send Message`}
                 </Button>
@@ -192,20 +150,17 @@ const UserProfile: React.FunctionComponent<{
                   <Button
                     type="danger"
                     size="small"
-                    className="justify-center text-center hover:bg-surface-1 rounded text-main"
-                    onClick={() => {
-                      props.setKickUserAddress!(props.user.address);
-                      props.dismiss && props.dismiss();
-                    }}
+                    className="justify-center text-center rounded text-main"
+                    onClick={() => kickUser(props.user.address)}
                   >
                     {t`Kick User`}
                   </Button>
                 )}
-              </div>
-            </div>
+              </Container>
+            </Container>
           )}
-        </div>
-    </div>
+        </Container>
+    </Container>
   );
 };
 

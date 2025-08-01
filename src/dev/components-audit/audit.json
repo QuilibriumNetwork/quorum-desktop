@@ -203,17 +203,17 @@
       "description": "User profile display with role management and actions",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "todo",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
+      "primitives": "done",
+      "logic_extraction": "done",
+      "logic_needs": "keep",
       "hooks": [
-        "useUserProfile",
-        "useRoleManagement",
-        "useProfileImage"
+        "useUserRoleManagement",
+        "useUserProfileActions",
+        "useUserRoleDisplay"
       ],
       "native": "todo",
-      "notes": "Profile data fetching + role management logic (>10 lines, API calls, reusable). Extract: useUserProfile, useRoleManagement, useProfileImage.",
-      "updated": "2025-07-29"
+      "notes": "Business logic extracted into 3 focused hooks. Uses primitives (Container, FlexRow, Text, Icon, Button) but still has UserProfile.scss with custom CSS classes. Platform-specific due to SCSS dependency.",
+      "updated": "2025-08-01"
     },
     "UserProfileEdit.tsx": {
       "name": "UserProfileEdit",
@@ -975,8 +975,8 @@
   },
   "stats": {
     "total": 60,
-    "primitives_done": 23,
-    "logic_extraction_done": 46,
+    "primitives_done": 24,
+    "logic_extraction_done": 47,
     "native_ready": 0,
     "native_done": 11,
     "by_category": {
@@ -990,8 +990,8 @@
       "unknown": 1
     },
     "by_logic_needs": {
-      "keep": 23,
-      "extract": 29,
+      "keep": 24,
+      "extract": 28,
       "done": 8
     },
     "analysis_notes": "MAJOR UPDATE: SpaceIcon business logic extracted to useImageLoading hook with drag-aware tooltip management. Added DragStateContext system to disable tooltips during space icon dragging for better UX. Now uses Tooltip primitive instead of direct ReactTooltip. Component demonstrates excellent pattern - shared business logic with platform-specific styling coordination and enhanced drag/drop interaction.",

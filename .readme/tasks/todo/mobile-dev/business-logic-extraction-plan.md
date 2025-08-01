@@ -39,6 +39,7 @@
 - [x] AccentColorSwitcher.tsx
 - [x] ClickToCopyContent.tsx
 - [x] SpaceIcon.tsx
+- [x] UserProfile.tsx
 
 ### More Complex Logic
 
@@ -49,17 +50,6 @@
   - Optimization patterns
 - [ ] Test: Check conversation updates, verify polling intervals
 
-#### UserProfile.tsx
-- [ ] Extract `useUserProfile` hook
-  - Profile data fetching
-  - Display logic
-  - Status management
-- [ ] Extract `useRoleManagement` hook
-  - Role assignment
-  - Permission changes
-  - Admin controls
-- [ ] Extract `useProfileImage` hook (if different from UserSettingsModal)
-- [ ] Test: View profile, change roles, update image
 
 #### ChannelList.tsx
 - [ ] Extract `useChannelManagement` hook

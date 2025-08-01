@@ -3,7 +3,7 @@
   z-index: 3000;
   width: 330px;
   background: var(--surface-3);
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   color: var(--color-text-main);
   user-select: none;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
@@ -11,11 +11,13 @@
 
 .user-profile-header {
   background: var(--surface-5);
-  min-height: 120px;
+  min-height: 80px;
   border-top-left-radius: 0.75rem;
   border-top-right-radius: 10px;
   display: flex;
   flex-direction: row;
+  align-items: center;
+  padding: 12px 0;
 }
 
 .user-profile-text {
@@ -23,6 +25,7 @@
   flex-direction: column;
   justify-content: center;
   width: 212px;
+  flex: 1;
 }
 
 .user-profile-username {
@@ -53,14 +56,13 @@
 
 .user-profile-icon,
 .user-profile-icon-editable {
-  width: 82px;
-  height: 82px;
-  margin-top: 20px;
+  width: 49px;
+  height: 49px;
   margin-left: 18px;
   margin-right: 18px;
   background-position: center;
   background-size: cover;
-  border-radius: 41px;
+  border-radius: 25px;
   display: inline-block;
   flex-shrink: 0;
 }
