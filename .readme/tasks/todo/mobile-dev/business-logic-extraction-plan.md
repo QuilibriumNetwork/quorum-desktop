@@ -217,187 +217,39 @@
 
 ---
 
-## Hooks Structure Organization (Reference)
+## Hooks Structure Organization
 
-### Current Structure Analysis
-
+### Current Structure
 Your hooks are well-organized with:
 - **`queries/`** - Data fetching hooks (by domain: spaces, messages, etc.)
 - **`mutations/`** - Data mutation hooks  
 - **`utils/`** - Utility hooks
 - **Root level** - General-purpose hooks (responsive, longpress, search)
 
-### Recommended Organization for Business Logic Extraction
+### Business Logic Organization Strategy
+Add a new **`business/`** folder organized by domain, similar to queries:
 
 ```
 src/hooks/
-├── index.ts                    # Main exports
-├── queries/                    # Data fetching (existing nested structure)
-│   ├── channels/
-│   ├── conversations/ 
-│   ├── spaces/
-│   ├── etc...
+├── queries/                    # Data fetching (existing)
 ├── mutations/                  # Data mutations (existing)
-├── business/                   # 🆕 Business logic hooks (nested like queries)
-│   ├── index.ts
-│   ├── spaces/
-│   │   ├── index.ts
-│   │   ├── useSpaceCreation.ts
-│   │   ├── useSpaceSettings.ts
-│   │   ├── useSpaceJoining.ts
-│   │   ├── useSpaceLeaving.ts
-│   │   ├── useSpaceNavigation.ts
-│   │   ├── useSpacePermissions.ts
-│   │   └── useInviteValidation.ts
-│   ├── messages/
-│   │   ├── index.ts
-│   │   ├── useMessageActions.ts
-│   │   ├── useMessageComposer.ts
-│   │   ├── useMessageRendering.ts
-│   │   ├── useReactions.ts
-│   │   └── useEmojiPicker.ts
-│   ├── channels/
-│   │   ├── index.ts
-│   │   ├── useChannelManagement.ts
-│   │   ├── useChannelData.ts
-│   │   └── useGroupManagement.ts
-│   ├── search/
-│   │   ├── index.ts
-│   │   ├── useSearchSuggestions.ts
-│   │   ├── useKeyboardNavigation.ts
-│   │   ├── useGlobalSearchLogic.ts
-│   │   ├── useSearchState.ts
-│   │   ├── useSearchNavigation.ts
-│   │   └── useResultsVirtualization.ts
-│   ├── user/
-│   │   ├── index.ts
-│   │   ├── useUserSettings.ts
-│   │   ├── useUserProfile.ts
-│   │   ├── useProfileImage.ts
-│   │   ├── useRoleManagement.ts
-│   │   └── useThemeSettings.ts
-│   ├── conversations/
-│   │   ├── index.ts
-│   │   ├── useDirectMessageCreation.ts
-│   │   ├── useConversationPolling.ts
-│   │   ├── useConversationsData.ts
-│   │   └── useShowHomeScreen.ts
-│   ├── auth/
-│   │   ├── index.ts
-│   │   ├── useAuthentication.ts
-│   │   ├── useRegistrationFlow.ts
-│   │   ├── useProfileSetup.ts
-│   │   └── usePasskeyFlow.ts
-│   ├── modals/
-│   │   ├── index.ts
-│   │   ├── useModalManagement.ts
-│   │   ├── useModalContext.ts
-│   │   ├── useKickUser.ts
-│   │   └── useConfirmationFlow.ts
-│   ├── ui/
-│   │   ├── index.ts
-│   │   ├── useFileUpload.ts
-│   │   ├── useImageLoading.ts
-│   │   ├── useCopyToClipboard.ts
-│   │   ├── useTooltipInteraction.ts
-│   │   ├── useAccentColor.ts
-│   │   ├── useDragAndDrop.ts
-│   │   └── useLayoutState.ts
-│   └── validation/
-│       ├── index.ts
-│       ├── useAddressValidation.ts
-│       └── useInviteProcessing.ts
+├── business/                   # 🆕 Business logic hooks (by domain)
+│   ├── spaces/                 # Space-related business logic
+│   ├── messages/              # Message-related business logic
+│   ├── user/                  # User-related business logic
+│   ├── conversations/         # Direct message logic
+│   ├── search/               # Search logic
+│   ├── ui/                   # UI interaction logic
+│   └── validation/           # Validation logic
 ├── useResponsiveLayout.ts      # Keep existing
 ├── useLongPress.ts            # Keep existing  
-├── useSearchContext.ts        # Keep existing
 └── utils/                     # Keep existing
 ```
 
-### Domain Mapping from Components
-
-Based on the actual components that need extraction (from audit.json):
-
-**Spaces Domain (`business/spaces/`):**
-- CreateSpaceModal → `useSpaceCreation`, `useSpaceSettings`
-- JoinSpaceModal → `useSpaceJoining`, `useInviteValidation`
-- LeaveSpaceModal → `useSpaceLeaving`, `useConfirmationFlow`
-- SpaceButton/NavMenu → `useSpaceNavigation`, `useDragAndDrop`
-- ChannelList → `useSpacePermissions`
-
-**Messages Domain (`business/messages/`):**
-- Channel.tsx → `useMessageComposer`, `useMessageActions`
-- Message.tsx → `useMessageRendering`, `useReactions`, `useEmojiPicker`
-- MessageList.tsx → Already has hooks extracted
-
-**User Domain (`business/user/`):**
-- UserSettingsModal → `useUserSettings`, `useProfileImage`, `useThemeSettings`
-- UserProfile → `useUserProfile`, `useRoleManagement`
-
-**Search Domain (`business/search/`):**
-- SearchBar → `useSearchSuggestions`, `useKeyboardNavigation`
-- GlobalSearch → `useGlobalSearchLogic`, `useSearchState`
-- SearchResults → `useResultsVirtualization`, `useSearchNavigation`
-
-**Conversations Domain (`business/conversations/`):**
-- NewDirectMessageModal → `useDirectMessageCreation`
-- DirectMessageContactsList → `useConversationPolling`
-- EmptyDirectMessage → `useShowHomeScreen`, `useConversationsData`
-
-**Auth Domain (`business/auth/`):**
-- Onboarding → `useRegistrationFlow`, `useProfileSetup`
-- Login → `useAuthentication`, `usePasskeyFlow`
-
-**UI Domain (`business/ui/`):**
-- File upload components → `useFileUpload`
-- ClickToCopyContent → `useCopyToClipboard`, `useTooltipInteraction`
-- SpaceIcon → `useImageLoading`
-- AccentColorSwitcher → `useAccentColor`
-- Drag/drop components → `useDragAndDrop`
-
-### Guidelines for Business Logic Extraction
-
-#### 1. **Domain-Based Organization**
-Group hooks by business domain (spaces, messages, auth) to match existing queries structure.
-
-#### 2. **Naming Conventions**
-- `useXxxLogic.ts` - Main business logic for a domain
-- `useXxxFlow.ts` - Multi-step processes  
-- `useXxxState.ts` - Complex state management
-- `useXxxUI.ts` - UI-specific business logic
-
-#### 3. **Hook Categories**
-
-**Business Logic (`business/`)**:
-- Complex component state management
-- Business rules and validation
-- Multi-step workflows
-- Cross-component logic coordination
-
-**UI Logic (`ui/`)**:
-- Drawer/modal open/close logic
-- Theme and styling logic  
-- Notification display logic
-- Search UI state
-
-**Forms (`forms/`)**:
-- Form state management
-- Validation logic
-- Form submission flows
-
-#### 4. **Keep Existing Structure**
-- `queries/` - Continue using for data fetching
-- `mutations/` - Continue using for data mutations
-- Root level - Keep general-purpose hooks (responsive, longpress)
-
-### Implementation Strategy
-
-This organization separates concerns cleanly while building on your existing well-structured foundation. The new structure allows for:
-
-1. **Clean separation** between data access (queries/mutations) and business logic
-2. **Domain-focused** organization that matches your app's architecture
-3. **Easy testing** of isolated business logic
-4. **Better reusability** across web and mobile platforms
-5. **Gradual migration** without disrupting existing code
+### Guidelines
+- **Domain-based organization** - Group by feature area, not component
+- **Analyze as we go** - Determine specific hooks during component analysis
+- **Keep existing structure** - Build on current queries/mutations pattern
 
 ---
 
@@ -599,8 +451,6 @@ const useSpaceManagement = (options) => {
 
 **Examples to keep simple**:
 - `SpaceButton` - Just a draggable link with an icon
-- `AccentColorSwitcher` - Simple color picker
-- `ClickToCopyContent` - Single focused action
 
 #### Best Practices for Cross-Platform Architecture
 
