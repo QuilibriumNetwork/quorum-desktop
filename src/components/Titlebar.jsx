@@ -1,4 +1,17 @@
+import { Icon } from './primitives';
+import { useTheme } from './context/ThemeProvider';
+import { useEffect } from 'react';
+
 const CustomTitlebar = () => {
+  const { resolvedTheme } = useTheme();
+  
+  // Add electron class to body for CSS targeting
+  useEffect(() => {
+    document.body.classList.add('electron');
+    return () => {
+      document.body.classList.remove('electron');
+    };
+  }, []);
   const handleMinimize = () => {
     window.electron.windowControls.minimize();
   };
@@ -41,34 +54,47 @@ const CustomTitlebar = () => {
     );
   };
   const controls = () => {
+    const isDark = resolvedTheme === 'dark';
+    
     return (
-      <div className="flex-row">
+      <div className="flex flex-row items-center gap-1 pr-2">
         <button
           onClick={handleMinimize}
-          className="flex-col items-center justify-center w-12 h-full hover:bg-gray-700"
+          className={`flex items-center justify-center w-6 h-6 rounded-full transition-colors cursor-pointer focus:outline-none focus:ring-0 border-0 focus:border-0 hover:border-0 text-main ${
+            isDark 
+              ? 'bg-gray-700 hover:bg-gray-600' 
+              : 'bg-gray-200 hover:bg-gray-300'
+          }`}
+          style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
         >
-          <div className="w-4 h-4 text-gray-300">-</div>
+          <Icon name="minus" size="xs" color="currentColor" />
         </button>
 
         <button
           onClick={handleMaximize}
-          className="flex-col items-center justify-center w-12 h-full hover:bg-gray-700"
+          className={`flex items-center justify-center w-6 h-6 rounded-full transition-colors cursor-pointer focus:outline-none focus:ring-0 border-0 focus:border-0 hover:border-0 text-main ${
+            isDark 
+              ? 'bg-gray-700 hover:bg-gray-600' 
+              : 'bg-gray-200 hover:bg-gray-300'
+          }`}
+          style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
         >
-          <div className="w-4 h-4 text-gray-300">[]</div>
+          <Icon name="compress-alt" size="xs" color="currentColor" />
         </button>
 
         <button
           onClick={handleClose}
-          className="flex-col items-center justify-center w-12 h-full hover:bg-red-600"
+          className="flex items-center justify-center w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full transition-colors cursor-pointer text-white focus:outline-none focus:ring-0 border-0 focus:border-0 hover:border-0"
+          style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
         >
-          <div className="w-4 h-4 text-gray-300">x</div>
+          <Icon name="times" size="xs" color="white" />
         </button>
       </div>
     );
   };
 
   return (
-    <div className="flex flex-row items-center justify-between h-8 select-none z-[3000]">
+    <div className="flex flex-row items-center justify-between h-9 select-none z-[3000] bg-surface-00 flex-shrink-0 pt-0.5">
       {window.electron.platform === 'darwin' ? macControls() : <></>}
       {/* App title/icon area */}
       <div
@@ -77,7 +103,7 @@ const CustomTitlebar = () => {
           (window.electron.platform === 'darwin' ? 'pr-24' : 'pl-24')
         }
       >
-        <span className="text-sm font-bold">Quorum</span>
+        <span className="text-sm font-bold text-main">Quorum</span>
       </div>
       {window.electron.platform !== 'darwin' ? controls() : <></>}
     </div>

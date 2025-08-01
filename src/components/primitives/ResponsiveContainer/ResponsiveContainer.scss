@@ -17,6 +17,12 @@
   border-top-left-radius: 0.75rem;
   background-color: var(--color-bg-sidebar);
 
+  /* Electron-specific adjustment for titlebar */
+  .electron & {
+    top: 38px; /* 14px + 24px (reduced gap to titlebar) */
+    height: calc(100vh - 38px); /* Adjust height accordingly */
+  }
+
   /* Phone-specific optimization for smaller NavMenu */
   @media (max-width: 480px) {
     width: calc(100vw - 50px);

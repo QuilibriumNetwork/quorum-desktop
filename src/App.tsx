@@ -111,19 +111,23 @@ const App = () => {
   return (
     <>
       <I18nProvider i18n={i18n}>
-        {
-          // @ts-ignore
-          window.electron && <CustomTitlebar />
-        }
         <ErrorBoundary
           fallback={
             <div className="bg-radial--accent-noise flex flex-col min-h-screen text-main">
+              {
+                // @ts-ignore
+                window.electron && <CustomTitlebar />
+              }
               <Maintenance />
             </div>
           }
         >
           {user && currentPasskeyInfo ? (
             <div className="bg-app flex flex-col min-h-screen text-main">
+              {
+                // @ts-ignore
+                window.electron && <CustomTitlebar />
+              }
               <Suspense fallback={<Connecting />}>
                 <RegistrationProvider>
                   <ResponsiveLayoutProvider>
@@ -283,6 +287,10 @@ const App = () => {
             </div>
           ) : landing && !currentPasskeyInfo ? (
             <div className="bg-radial--accent-noise flex flex-col min-h-screen text-main">
+              {
+                // @ts-ignore
+                window.electron && <CustomTitlebar />
+              }
               <Routes>
                 <Route path="/" element={<Login setUser={setUser} />} />
                 <Route path="/*" element={<Navigate to="/" replace />} />
@@ -290,6 +298,10 @@ const App = () => {
             </div>
           ) : landing ? (
             <div className="bg-radial--accent-noise flex flex-col min-h-screen text-main">
+              {
+                // @ts-ignore
+                window.electron && <CustomTitlebar />
+              }
               <Routes>
                 <Route path="/" element={<Onboarding setUser={setUser} />} />
                 <Route path="/*" element={<Navigate to="/" replace />} />

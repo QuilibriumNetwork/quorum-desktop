@@ -34,7 +34,10 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
 
 
   return (
-    <header>
+    <header className={
+      //@ts-ignore
+      window.electron ? "electron" : ""
+    }>
       {
         //@ts-ignore
         window.electron ? <div className="p-3"></div> : <></>

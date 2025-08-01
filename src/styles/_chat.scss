@@ -7,6 +7,11 @@
   height: calc(100vh - 14px);
   flex-direction: row;
 
+  // Electron-specific height adjustment for titlebar
+  .electron & {
+    height: calc(100vh - 38px); /* Account for titlebar */
+  }
+
   // Mobile layout - ensure full width usage
   @media (max-width: 1023px) {
     width: 100%;

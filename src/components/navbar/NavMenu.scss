@@ -27,6 +27,11 @@ header {
   flex-direction: column;
   user-select: none;
 
+  // Electron-specific padding adjustments to prevent overflow
+  .electron & {
+    padding-bottom: 20px;
+  }
+
   // Mobile phone optimization - smaller width and icons
   @media (max-width: 480px) {
     width: 50px;
