@@ -872,8 +872,8 @@
         "useConversationPolling"
       ],
       "native": "todo",
-      "notes": "Business logic extracted to useConversationPolling hook. All HTML elements replaced with primitives (Container, FlexColumn, FlexBetween, Icon). Still uses DirectMessageContactsList.scss so remains platform_specific. Native implementation still needed.",
-      "updated": "2025-07-31"
+      "notes": "Business logic extracted to useConversationPolling hook. All HTML elements replaced with primitives (Container, FlexColumn, FlexBetween, Icon). CSS optimized with Tailwind utilities. Still uses minimal SCSS for scrollbar styling so remains platform_specific. Native implementation still needed.",
+      "updated": "2025-08-01"
     },
     "ExpandableNavMenu.tsx": {
       "name": "ExpandableNavMenu",

@@ -1,9 +1,5 @@
 .direct-messages-list {
-  overflow-y: auto;
-  overflow-x: hidden;
-  z-index: 0;
   scrollbar-width: none;
-  flex-grow: 1;
 
   a {
     color: var(--color-text-main);
@@ -12,7 +8,6 @@
   a:hover {
     text-decoration: none;
   }
-  user-select: none;
 }
 
 .channels-list::-webkit-scrollbar {

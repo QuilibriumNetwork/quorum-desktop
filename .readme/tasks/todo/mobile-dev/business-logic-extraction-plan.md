@@ -40,16 +40,18 @@
 - [x] ClickToCopyContent.tsx
 - [x] SpaceIcon.tsx
 - [x] UserProfile.tsx
+- [x] DirectMessageContactsList.tsx
 
 ### More Complex Logic
 
-#### DirectMessageContactsList.tsx
-- [ ] Extract `useConversationPolling` hook
-  - Polling logic with setInterval
-  - Conversation refresh
-  - Optimization patterns
-- [ ] Test: Check conversation updates, verify polling intervals
-
+#### EmptyDirectMessage.tsx
+- [ ] Extract `useShowHomeScreen` hook
+  - LocalStorage logic
+  - Toggle states
+- [ ] Extract `useConversationsData` hook
+  - Data fetching
+  - Display logic
+- [ ] Test: Toggle show/hide, verify localStorage persistence
 
 #### ChannelList.tsx
 - [ ] Extract `useChannelManagement` hook
@@ -61,15 +63,6 @@
   - Admin controls
   - Visibility logic
 - [ ] Test: Create/edit channels, verify permissions, check groups
-
-#### EmptyDirectMessage.tsx
-- [ ] Extract `useShowHomeScreen` hook
-  - LocalStorage logic
-  - Toggle states
-- [ ] Extract `useConversationsData` hook
-  - Data fetching
-  - Display logic
-- [ ] Test: Toggle show/hide, verify localStorage persistence
 
 #### InviteLink.tsx
 - [ ] Extract `useInviteProcessing` hook
