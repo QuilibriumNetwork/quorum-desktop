@@ -9,7 +9,6 @@ import {
   Container,
   Text
 } from '../../components/primitives';
-import type { SelectOption } from '../../components/primitives';
 
 type AuditStatus = 'todo' | 'in_progress' | 'done' | 'ready' | 'partial' | 'unknown';
 type ComponentCategory = 'shared' | 'platform_specific' | 'complex_refactor' | 'unknown';
@@ -49,18 +48,32 @@ interface AuditData {
   };
 }
 
-const StatusBadge: React.FC<{ status: AuditStatus }> = ({ status }) => {
+const StatusBadge: React.FC<{ status: AuditStatus; context?: 'native' | 'default' }> = ({ status, context = 'default' }) => {
   const getStatusClass = () => {
+    // Special colors for native category
+    if (context === 'native') {
+      switch (status) {
+        case 'done':
+          return 'bg-blue-500/70 text-white';
+        case 'ready':
+          return 'bg-green-500/70 text-white';
+        case 'todo':
+          return 'bg-red-500/70 text-white';
+        default:
+          return 'bg-surface-2 text-muted';
+      }
+    }
+    
+    // Default colors for primitives and logic
     switch (status) {
       case 'done':
-      case 'ready':
         return 'bg-green-500/70 text-white';
       case 'in_progress':
         return 'bg-yellow-500/70 text-black';
       case 'todo':
-        return 'bg-blue-500/70 text-white';
+        return 'bg-red-500/70 text-white';
       case 'partial':
-        return 'bg-orange-500/70 text-white';
+        return 'bg-green-500/70 text-white';
       case 'unknown':
         return 'bg-gray-500/70 text-white';
       default:
@@ -68,9 +81,16 @@ const StatusBadge: React.FC<{ status: AuditStatus }> = ({ status }) => {
     }
   };
 
+  const getStatusLabel = () => {
+    if (status === 'partial' && context === 'default') {
+      return 'done (partial)';
+    }
+    return status;
+  };
+
   return (
     <Text className={`px-2 py-1 rounded text-xs font-medium ${getStatusClass()}`}>
-      {status}
+      {getStatusLabel()}
     </Text>
   );
 };
@@ -199,7 +219,7 @@ export const ComponentAuditViewer: React.FC = () => {
         <Text as="h1" variant="strong" size="3xl" weight="bold" className="my-6">Component Audit Dashboard</Text>
       
       {/* Stats Dashboard */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
         <div className="bg-surface-1 rounded-lg p-4 border border-default">
           <Text as="h3" variant="subtle" size="sm" weight="medium" className="mb-2">Total Components</Text>
           <Text variant="strong" size="2xl" weight="bold">{data.stats.total}</Text>
@@ -232,7 +252,20 @@ export const ComponentAuditViewer: React.FC = () => {
         </div>
         
         <div className="bg-surface-1 rounded-lg p-4 border border-default">
-          <Text as="h3" variant="subtle" size="sm" weight="medium" className="mb-2">Native Ready</Text>
+          <Text as="h3" variant="subtle" size="sm" weight="medium" className="mb-2">Native Done</Text>
+          <Text variant="strong" size="2xl" weight="bold">
+            {data.stats.native_done}/{data.stats.total}
+          </Text>
+          <div className="mt-2 bg-surface-3 rounded-full h-2 overflow-hidden">
+            <div 
+              className="bg-success h-full transition-all duration-300"
+              style={{ width: `${(data.stats.native_done / data.stats.total) * 100}%` }}
+            />
+          </div>
+        </div>
+        
+        <div className="bg-surface-1 rounded-lg p-4 border border-default">
+          <Text as="h3" variant="subtle" size="sm" weight="medium" className="mb-2">Native Ready (Tested)</Text>
           <Text variant="strong" size="2xl" weight="bold">
             {data.stats.native_ready}/{data.stats.total}
           </Text>
@@ -261,12 +294,12 @@ export const ComponentAuditViewer: React.FC = () => {
         </div>
         <div className="bg-surface-1 rounded-lg p-4 border border-default">
           <h3 className="text-sm font-medium text-subtle mb-2">Used Components</h3>
-          <p className="text-xl font-bold text-success">{data.stats.by_usage?.used || 0}</p>
+          <p className="text-xl font-bold text-success">{data.stats.by_usage?.yes || 0}</p>
           <p className="text-xs text-subtle">Active in codebase</p>
         </div>
         <div className="bg-surface-1 rounded-lg p-4 border border-default">
           <h3 className="text-sm font-medium text-subtle mb-2">Unused Components</h3>
-          <p className="text-xl font-bold text-danger">{data.stats.by_usage?.unused || 0}</p>
+          <p className="text-xl font-bold text-danger">{data.stats.by_usage?.no || 0}</p>
           <p className="text-xs text-subtle">Can be deleted</p>
         </div>
         <div className="bg-surface-1 rounded-lg p-4 border border-default">
@@ -313,9 +346,8 @@ export const ComponentAuditViewer: React.FC = () => {
             options={[
               { value: 'all', label: 'All' },
               { value: 'todo', label: 'Todo' },
-              { value: 'in_progress', label: 'In Progress' },
-              { value: 'done', label: 'Done' },
-              { value: 'ready', label: 'Ready' }
+              { value: 'partial', label: 'Done (partial)' },
+              { value: 'done', label: 'Done' }
             ]}
           />
         </FlexColumn>
@@ -330,8 +362,7 @@ export const ComponentAuditViewer: React.FC = () => {
               { value: 'all', label: 'All' },
               { value: 'todo', label: 'Todo' },
               { value: 'in_progress', label: 'In Progress' },
-              { value: 'done', label: 'Done' },
-              { value: 'ready', label: 'Ready' }
+              { value: 'done', label: 'Done' }
             ]}
           />
         </FlexColumn>
@@ -408,7 +439,7 @@ export const ComponentAuditViewer: React.FC = () => {
                     <StatusBadge status={component.logic_extraction} />
                   </td>
                   <td className="px-4 py-3">
-                    <StatusBadge status={component.native} />
+                    <StatusBadge status={component.native} context="native" />
                   </td>
                   <td className="px-4 py-3">
                     <div className="w-24">

@@ -7,7 +7,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -22,7 +21,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -37,7 +35,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
@@ -55,7 +52,6 @@
       "category": "complex_refactor",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
@@ -73,7 +69,6 @@
       "category": "complex_refactor",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
@@ -93,7 +88,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -112,7 +106,6 @@
       "category": "complex_refactor",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
@@ -131,7 +124,6 @@
       "category": "shared",
       "used": "yes",
       "primitives": "unknown",
-      "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -146,7 +138,6 @@
       "category": "shared",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "done",
       "hooks": [
@@ -163,7 +154,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -183,7 +173,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
@@ -201,7 +190,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -216,7 +204,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
@@ -228,6 +215,23 @@
       "notes": "Profile data fetching + role management logic (>10 lines, API calls, reusable). Extract: useUserProfile, useRoleManagement, useProfileImage.",
       "updated": "2025-07-29"
     },
+    "UserProfileEdit.tsx": {
+      "name": "UserProfileEdit",
+      "path": "src/components/user/UserProfileEdit.tsx",
+      "description": "User profile edit mode with image upload and profile updates",
+      "category": "platform_specific",
+      "used": "no",
+      "primitives": "todo",
+      "logic_extraction": "todo",
+      "logic_needs": "extract",
+      "hooks": [
+        "useProfileEdit",
+        "useImageUpload"
+      ],
+      "native": "todo",
+      "notes": "Edit mode functionality extracted from UserProfile. Currently unused but kept for potential future use.",
+      "updated": "2025-08-01"
+    },
     "DirectMessageContact.tsx": {
       "name": "DirectMessageContact",
       "path": "src/components/direct/DirectMessageContact.tsx",
@@ -235,7 +239,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [
@@ -252,7 +255,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
@@ -271,7 +273,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -290,7 +291,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -309,7 +309,6 @@
       "category": "shared",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "done",
       "hooks": [
@@ -326,7 +325,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -341,7 +339,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -356,7 +353,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "done",
       "hooks": [
@@ -373,7 +369,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -390,7 +385,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [
@@ -407,7 +401,6 @@
       "category": "platform_specific",
       "used": "unknown",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -422,7 +415,6 @@
       "category": "platform_specific",
       "used": "no",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -437,7 +429,6 @@
       "category": "complex_refactor",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
@@ -456,7 +447,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -471,7 +461,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -486,7 +475,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -501,7 +489,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -516,7 +503,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -531,7 +517,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -546,7 +531,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "done",
       "hooks": [
@@ -564,7 +548,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -579,7 +562,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
@@ -597,7 +579,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
@@ -615,7 +596,6 @@
       "category": "shared",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "done",
       "hooks": [
@@ -633,7 +613,6 @@
       "category": "shared",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "done",
       "hooks": [
@@ -651,7 +630,6 @@
       "category": "shared",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "done",
       "hooks": [
@@ -668,7 +646,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -687,7 +664,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -706,7 +682,6 @@
       "category": "complex_refactor",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
@@ -726,7 +701,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
@@ -745,7 +719,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "platform_specific",
       "logic_extraction": "todo",
       "logic_needs": "extract",
       "hooks": [
@@ -763,7 +736,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -778,7 +750,6 @@
       "category": "shared",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -796,7 +767,6 @@
       "category": "shared",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -811,7 +781,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -831,7 +800,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -849,7 +817,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -866,7 +833,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -881,7 +847,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [
@@ -901,7 +866,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "done",
       "hooks": [
@@ -918,7 +882,6 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "platform_specific",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -933,7 +896,6 @@
       "category": "shared",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -951,7 +913,6 @@
       "category": "shared",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -969,7 +930,6 @@
       "category": "shared",
       "used": "yes",
       "primitives": "done",
-      "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -988,7 +948,6 @@
       "category": "shared",
       "used": "yes",
       "primitives": "partial",
-      "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -1006,7 +965,6 @@
       "category": "shared",
       "used": "no",
       "primitives": "done",
-      "web_native": "shared",
       "logic_extraction": "done",
       "logic_needs": "keep",
       "hooks": [],
@@ -1016,28 +974,28 @@
     }
   },
   "stats": {
-    "total": 59,
+    "total": 60,
     "primitives_done": 23,
     "logic_extraction_done": 46,
     "native_ready": 0,
     "native_done": 11,
     "by_category": {
-      "platform_specific": 41,
+      "platform_specific": 42,
       "complex_refactor": 5,
       "shared": 13
     },
     "by_usage": {
       "yes": 56,
-      "unknown": 1,
-      "no": 2
+      "no": 3,
+      "unknown": 1
     },
     "by_logic_needs": {
       "keep": 23,
-      "extract": 28,
+      "extract": 29,
       "done": 8
     },
     "analysis_notes": "MAJOR UPDATE: SpaceIcon business logic extracted to useImageLoading hook with drag-aware tooltip management. Added DragStateContext system to disable tooltips during space icon dragging for better UX. Now uses Tooltip primitive instead of direct ReactTooltip. Component demonstrates excellent pattern - shared business logic with platform-specific styling coordination and enhanced drag/drop interaction.",
-    "last_updated": "2025-07-31"
+    "last_updated": "2025-08-01"
   },
   "metadata": {
     "audit_version": "1.0",

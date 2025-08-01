@@ -439,7 +439,6 @@ export const Message = ({
                   setKickUserAddress={setKickUserAddress}
                   roles={senderRoles}
                   user={sender}
-                  editMode={false}
                   dismiss={() => {
                     setShowUserProfile(false);
                   }}

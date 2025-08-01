@@ -1,13 +1,9 @@
 import {
-  faClipboard,
-  faReply,
-  faShieldAlt,
   faTimes,
 } from '@fortawesome/free-solid-svg-icons';
-import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Button, Input } from '../primitives';
+import { Button } from '../primitives';
 import UserOnlineStateIndicator from './UserOnlineStateIndicator';
 import ClickToCopyContent from '../ClickToCopyContent';
 import './UserProfile.scss';
@@ -24,34 +20,12 @@ const UserProfile: React.FunctionComponent<{
   roles?: Role[];
   canEditRoles?: boolean;
   user: any;
-  editMode?: boolean;
   dismiss?: () => void;
-  onEditModeClick?: () => void;
-  setUser?:
-    | React.Dispatch<
-        React.SetStateAction<
-          | {
-              displayName: string;
-              state: string;
-              status: string;
-              userIcon: string;
-              address: string;
-            }
-          | undefined
-        >
-      >
-    | undefined;
   kickUserAddress?: string;
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }> = (props) => {
-  let [status, setStatus] = React.useState<string>(props.user.status);
-  let [displayName, setDisplayName] = React.useState<string>(
-    props.user.displayName
-  );
-  const { currentPasskeyInfo, updateStoredPasskey } = usePasskeysContext();
-  const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
-  const { updateSpace, messageDB, kickUser, keyset, updateUserProfile } =
-    useMessageDB();
+  const { currentPasskeyInfo } = usePasskeysContext();
+  const { updateSpace, messageDB } = useMessageDB();
   const { data: selfRegistration } = useRegistration({
     address: currentPasskeyInfo!.address,
   });
@@ -96,24 +70,6 @@ const UserProfile: React.FunctionComponent<{
     [messageDB, updateSpace]
   );
 
-  const { getRootProps, getInputProps, acceptedFiles, isDragActive } =
-    useDropzone({
-      accept: {
-        'image/png': ['.png'],
-        'image/jpeg': ['.jpg', '.jpeg'],
-      },
-      minSize: 0,
-      maxSize: 1 * 1024 * 1024,
-    });
-
-  React.useEffect(() => {
-    if (acceptedFiles.length > 0) {
-      (async () => {
-        setFileData(await acceptedFiles[0].arrayBuffer());
-      })();
-    }
-  }, [acceptedFiles]);
-
   return (
     <div className="user-profile" onClick={(e) => e.stopPropagation()}>
       {props.dismiss && (
@@ -125,46 +81,20 @@ const UserProfile: React.FunctionComponent<{
         </div>
       )}
       <div className="user-profile-header">
-        {props.editMode ? (
-          <div
-            className="user-profile-icon-editable"
-            style={{
-              backgroundImage:
-                fileData !== undefined
-                  ? `url(data:${acceptedFiles[0].type};base64,${Buffer.from(fileData).toString('base64')})`
-                  : props.user.userIcon &&
-                      !props.user.userIcon.includes(DefaultImages.UNKNOWN_USER)
-                    ? `url(${props.user.userIcon})`
-                    : 'var(--unknown-icon)',
-            }}
-            {...getRootProps()}
-          >
-            <input {...getInputProps()} />
-          </div>
-        ) : (
-          <div
-            className="user-profile-icon"
-            style={{
-              backgroundImage:
-                props.user.userIcon &&
-                !props.user.userIcon.includes(DefaultImages.UNKNOWN_USER)
-                  ? `url(${props.user.userIcon})`
-                  : 'var(--unknown-icon)',
-            }}
-          />
-        )}
+        <div
+          className="user-profile-icon"
+          style={{
+            backgroundImage:
+              props.user.userIcon &&
+              !props.user.userIcon.includes(DefaultImages.UNKNOWN_USER)
+                ? `url(${props.user.userIcon})`
+                : 'var(--unknown-icon)',
+          }}
+        />
         <div className="user-profile-text">
-          {props.editMode ? (
-            <Input
-              className="w-[190px]"
-              value={displayName}
-              onChange={setDisplayName}
-            />
-          ) : (
-            <div className="user-profile-username break-words">
-              {props.user.displayName}
-            </div>
-          )}
+          <div className="user-profile-username break-words">
+            {props.user.displayName}
+          </div>
           <div className="flex flex-row py-1 text-subtle">
             <div className="text-xs w-[140px] truncate">
               {props.user.address}
@@ -185,76 +115,7 @@ const UserProfile: React.FunctionComponent<{
         </div>
       </div>
 
-      {props.editMode ? (
-        <div className="user-profile-content">
-          <div className="user-profile-content-section-header small-caps">
-            Status
-          </div>
-          <div className="user-profile-info">
-            <Input
-              placeholder={t`Status goes here`}
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            />
-          </div>
-          <div className="user-profile-editor-actions">
-            <Button
-              type="primary"
-              disabled={
-                status == props.user.status &&
-                displayName == props.user.display_name
-              }
-              onClick={() => {
-                updateStoredPasskey(currentPasskeyInfo!.credentialId, {
-                  credentialId: currentPasskeyInfo!.credentialId,
-                  address: currentPasskeyInfo!.address,
-                  publicKey: currentPasskeyInfo!.publicKey,
-                  displayName: displayName,
-                  pfpUrl:
-                    acceptedFiles.length > 0 && fileData
-                      ? 'data:' +
-                        acceptedFiles[0].type +
-                        ';base64,' +
-                        Buffer.from(fileData).toString('base64')
-                      : currentPasskeyInfo!.pfpUrl,
-                  completedOnboarding: true,
-                });
-                props.setUser!({
-                  displayName: displayName,
-                  state: 'online',
-                  status: '',
-                  userIcon:
-                    acceptedFiles.length > 0 && fileData
-                      ? 'data:' +
-                        acceptedFiles[0].type +
-                        ';base64,' +
-                        Buffer.from(fileData).toString('base64')
-                      : (currentPasskeyInfo!.pfpUrl ??
-                        DefaultImages.UNKNOWN_USER),
-                  address: currentPasskeyInfo!.address,
-                });
-                updateUserProfile(
-                  displayName,
-                  acceptedFiles.length > 0 && fileData
-                    ? 'data:' +
-                        acceptedFiles[0].type +
-                        ';base64,' +
-                        Buffer.from(fileData).toString('base64')
-                    : (currentPasskeyInfo!.pfpUrl ??
-                        DefaultImages.UNKNOWN_USER),
-                  currentPasskeyInfo!
-                );
-                if (props.dismiss !== undefined) {
-                  props.dismiss();
-                }
-              }}
-            >
-              {t`Save Changes`}
-            </Button>
-          </div>
-        </div>
-      ) : (
-        <div>
+      <div>
           <div
             className={
               'p-2 pb-4 ' +
@@ -344,7 +205,6 @@ const UserProfile: React.FunctionComponent<{
             </div>
           )}
         </div>
-      )}
     </div>
   );
 };
