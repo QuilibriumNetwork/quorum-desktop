@@ -50,16 +50,9 @@
 
 - [x] ChannelList.tsx
 - [x] InviteLink.tsx
-- [x] SpaceButton.tsx ✓ (Reverted - see lessons learned)
+- [x] SpaceButton.tsx (Keep logic - see lessons learned)
+- [x] NavMenu.tsx (Keep raw html/css or layout breaks)
 
-
-#### NavMenu.tsx
-- [ ] Extract `useSpaceOrdering` hook
-  - Order persistence
-  - State management
-- [ ] Extract `useDragAndDrop` hook (shared with SpaceButton)
-- [ ] Extract `useSpaceNavigation` hook (shared)
-- [ ] Test: Reorder spaces, verify persistence, check navigation
 
 ### High Complexity - Extract Last (Require Careful Testing)
 

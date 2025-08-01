@@ -6,3 +6,5 @@ export * from './useInviteManagement';
 export * from './useSpaceJoining';
 export * from './useInviteValidation';
 export * from './useSpaceLeaving';
+export * from './useSpaceOrdering';
+export * from './useSpaceDragAndDrop';

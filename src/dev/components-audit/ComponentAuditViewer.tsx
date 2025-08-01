@@ -366,7 +366,8 @@ export const ComponentAuditViewer: React.FC = () => {
               { value: 'all', label: 'All' },
               { value: 'todo', label: 'Todo' },
               { value: 'partial', label: 'Done (partial)' },
-              { value: 'done', label: 'Done' }
+              { value: 'done', label: 'Done' },
+              { value: 'keep', label: 'Keep' }
             ]}
           />
         </FlexColumn>

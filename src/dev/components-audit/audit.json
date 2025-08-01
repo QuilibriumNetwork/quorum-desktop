@@ -284,17 +284,16 @@
       "description": "Main navigation menu with drag-and-drop space reordering",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "todo",
-      "logic_extraction": "todo",
+      "primitives": "keep",
+      "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
         "useSpaceOrdering",
-        "useDragAndDrop",
-        "useSpaceNavigation"
+        "useSpaceDragAndDrop"
       ],
       "native": "todo",
-      "notes": "Complex drag/drop + space ordering logic (>10 lines, multiple useEffect, reusable). Extract: useSpaceOrdering, useDragAndDrop, useSpaceNavigation.",
-      "updated": "2025-07-29"
+      "notes": "Business logic extracted to useSpaceOrdering (space deduplication, mapping, persistence) and useSpaceDragAndDrop (drag state, reordering, config saving). Primitives NOT used - complex CSS layout with glow effects, selection indicators, and precise spacing breaks when converted to primitives. Original HTML + SCSS preserved for visual integrity. Hooks are cross-platform ready for future native implementation.",
+      "updated": "2025-08-01"
     },
     "CreateSpaceModal.tsx": {
       "name": "CreateSpaceModal",
