@@ -16,7 +16,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
 ) => {
   const { hash } = useLocation();
   const [init, setInit] = React.useState<boolean>(false);
-  const [lookup, setLookup] = React.useState<string>();
+  const [lookup, setLookup] = React.useState<string>('');
 
   // Extract business logic hooks
   const { joinSpace, joining, joinError } = useSpaceJoining();
