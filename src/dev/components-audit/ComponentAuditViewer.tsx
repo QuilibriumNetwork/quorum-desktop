@@ -10,7 +10,7 @@ import {
   Text
 } from '../../components/primitives';
 
-type AuditStatus = 'todo' | 'in_progress' | 'done' | 'keep' | 'ready' | 'partial' | 'unknown';
+type AuditStatus = 'todo' | 'in_progress' | 'done' | 'ready' | 'partial' | 'unknown';
 type ComponentCategory = 'shared' | 'platform_specific' | 'complex_refactor' | 'unknown';
 
 interface ComponentAudit {
@@ -80,7 +80,6 @@ const StatusBadge: React.FC<{ status: AuditStatus; context?: 'native' | 'default
     // Default colors for primitives and logic
     switch (status) {
       case 'done':
-      case 'keep':
         return 'bg-green-500/70 text-white';
       case 'in_progress':
         return 'bg-yellow-500/70 text-black';
@@ -238,8 +237,8 @@ export const ComponentAuditViewer: React.FC = () => {
     let progress = 0;
     const total = 3;
     
-    if (component.primitives === 'done' || component.primitives === 'keep') progress++;
-    if (component.logic_extraction === 'done' || component.logic_extraction === 'keep') progress++;
+    if (component.primitives === 'done' || component.primitives === 'partial') progress++;
+    if (component.logic_extraction === 'done') progress++;
     if (component.native === 'ready') progress++;
     
     return (progress / total) * 100;
@@ -379,8 +378,7 @@ export const ComponentAuditViewer: React.FC = () => {
               { value: 'all', label: 'All' },
               { value: 'todo', label: 'Todo' },
               { value: 'partial', label: 'Done (partial)' },
-              { value: 'done', label: 'Done' },
-              { value: 'keep', label: 'Keep' }
+              { value: 'done', label: 'Done' }
             ]}
           />
         </FlexColumn>
@@ -395,8 +393,7 @@ export const ComponentAuditViewer: React.FC = () => {
               { value: 'all', label: 'All' },
               { value: 'todo', label: 'Todo' },
               { value: 'in_progress', label: 'In Progress' },
-              { value: 'done', label: 'Done' },
-              { value: 'keep', label: 'Keep' }
+              { value: 'done', label: 'Done' }
             ]}
           />
         </FlexColumn>

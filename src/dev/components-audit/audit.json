@@ -67,7 +67,7 @@
       "description": "Main channel view with messages, input, and interactions",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "keep",
+      "primitives": "partial",
       "logic_extraction": "done",
       "logic_needs": "done",
       "hooks": [
@@ -283,7 +283,7 @@
       "description": "Main navigation menu with drag-and-drop space reordering",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "keep",
+      "primitives": "partial",
       "logic_extraction": "done",
       "logic_needs": "extract",
       "hooks": [
@@ -454,19 +454,19 @@
       "name": "DirectMessage",
       "path": "src/components/direct/DirectMessage.tsx",
       "description": "Full direct message conversation view with file upload and interactions",
-      "category": "complex_refactor",
+      "category": "platform_specific",
       "used": "yes",
-      "primitives": "todo",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
+      "primitives": "done",
+      "logic_extraction": "done",
+      "logic_needs": "keep",
       "hooks": [
-        "useDirectMessageLogic",
-        "useFileUpload",
-        "useMessageActions"
+        "useDirectMessageData",
+        "useDirectMessagesList",
+        "useMessageComposer"
       ],
       "native": "todo",
-      "notes": "Large component with file upload, dropzone, message actions. Complex state management with multiple useEffect/useState. Similar to Channel.tsx - needs breakdown.",
-      "updated": "2025-07-29"
+      "notes": "Major refactor completed: Business logic extracted to useDirectMessageData and useDirectMessagesList hooks. MessageComposer component now shared with Channel.tsx (moved to src/components/message/). Raw HTML elements replaced with primitives (Container, FlexRow, FlexColumn, Button, Text, Icon, TextArea). Component reduced from ~590 to ~350 lines. Auto-scroll and auto-focus functionality added. Still uses DirectMessage.scss and some Tailwind classes, so remains platform_specific.",
+      "updated": "2025-08-02"
     },
     "DirectMessages.tsx": {
       "name": "DirectMessages",
@@ -1005,7 +1005,7 @@
     },
     "MessageComposer.tsx": {
       "name": "MessageComposer",
-      "path": "src/components/channel/MessageComposer.tsx",
+      "path": "src/components/message/MessageComposer.tsx",
       "description": "Complete message composition UI with textarea, file upload, sticker button, and send functionality",
       "category": "platform_specific",
       "used": "yes",
@@ -1016,19 +1016,19 @@
         "useMessageComposer"
       ],
       "native": "todo",
-      "notes": "NEW COMPONENT: Extracted from Channel.tsx to consolidate all message input UI. Uses TextArea primitive with forwardRef for auto-focus. Includes upload button, sticker button, send button, file preview with clear option. Integrates with useMessageComposer hook for all business logic. Uses primitives (TextArea, Button, Icon, Container, FlexRow) but remains platform_specific due to complex responsive layout requirements and file preview styling. Component demonstrates clean separation: UI in component, logic in hook.",
+      "notes": "SHARED COMPONENT: Moved from channel/ to message/ folder. Now shared between Channel.tsx and DirectMessage.tsx to eliminate code duplication. Enhanced with reply-to display, hasStickers prop, and error handling. Uses primitives (TextArea, Button, Icon, FlexRow, Tooltip) with forwardRef for auto-focus. Integrates with useMessageComposer hook for all business logic. Remains platform_specific due to complex file preview styling and responsive layout requirements. Component demonstrates clean separation: UI in component, logic in hook.",
       "updated": "2025-08-02"
     }
   },
   "stats": {
     "total": 63,
-    "primitives_done": 26,
-    "logic_extraction_done": 50,
+    "primitives_done": 27,
+    "logic_extraction_done": 51,
     "native_ready": 0,
     "native_done": 11,
     "by_category": {
-      "platform_specific": 46,
-      "complex_refactor": 3,
+      "platform_specific": 47,
+      "complex_refactor": 2,
       "shared": 13
     },
     "by_usage": {
@@ -1037,8 +1037,8 @@
       "unknown": 0
     },
     "by_logic_needs": {
-      "keep": 25,
-      "extract": 29,
+      "keep": 26,
+      "extract": 28,
       "done": 10
     },
     "analysis_notes": "MAJOR REFACTOR: AppWithSearch.tsx successfully split into 3 focused providers (ModalProvider, MobileProvider, SidebarProvider) with single responsibilities. Eliminated monolithic component mixing modal, mobile, and sidebar concerns. New providers maintain z-[9999] stacking solutions but still need business logic extraction to hooks. Architecture now follows separation of concerns principle.",

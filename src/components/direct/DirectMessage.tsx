@@ -1,23 +1,18 @@
 import React, { useEffect, useRef, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faUsers,
-  faBars,
-} from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { EmbedMessage, Message as MessageType } from '../../api/quorumApi';
 import './DirectMessage.scss';
 import { 
   useRegistration, 
-  useMessageComposer, 
+  useMessageComposer,
   useDirectMessagesList 
 } from '../../hooks';
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
 import { useMessageDB } from '../context/MessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSidebar } from '../context/SidebarProvider';
-import { MessageList } from '../message/MessageList';
+import { MessageList, MessageListRef } from '../message/MessageList';
 import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
 
 import { t } from '@lingui/core/macro';
@@ -26,10 +21,10 @@ import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages, truncateAddress } from '../../utils';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
-import { Button, Container, FlexRow, FlexColumn, FlexBetween, Text } from '../primitives';
+import { Button, Container, FlexRow, FlexColumn,Text } from '../primitives';
 
 const DirectMessage: React.FC<{}> = (p: {}) => {
-  const { isDesktop, isMobile, isTablet, toggleLeftSidebar } =
+  const { isMobile, isTablet, toggleLeftSidebar } =
     useResponsiveLayoutContext();
   
   const user = usePasskeysContext();
@@ -99,9 +94,12 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
 
   // Message composition - using shared MessageComposer hook
   const messageComposerRef = useRef<MessageComposerRef>(null);
+  const messageListRef = useRef<MessageListRef>(null);
   
   // Submit message function for MessageComposer
   const handleSubmitMessage = useCallback(async (message: string | object, inReplyTo?: string) => {
+    if (!address) return; // Guard against undefined address
+    
     if (typeof message === 'string') {
       // Text message
       await submitMessage(
@@ -127,6 +125,17 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         inReplyTo
       );
     }
+    
+    // Auto-scroll to bottom after sending message (same logic as Channel.tsx)
+    const isReaction = typeof message === 'object' && 
+      'type' in message && 
+      (message.type === 'reaction' || message.type === 'remove-reaction');
+    
+    if (!isReaction) {
+      setTimeout(() => {
+        messageListRef.current?.scrollToBottom();
+      }, 100);
+    }
   }, [address, self, registration, queryClient, user, keyset, submitMessage]);
 
   // Use MessageComposer hook
@@ -138,8 +147,6 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
 
   // Set sidebar content in context (exactly as original)
   React.useEffect(() => {
-    console.log('DirectMessage members:', members); // Debug log
-    console.log('Setting sidebar content, members count:', Object.keys(members).length);
     
     const sidebarContent = (
       <div className="flex flex-col">
@@ -179,9 +186,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       </div>
     );
     
-    console.log('About to call setRightSidebarContent with:', sidebarContent);
     setRightSidebarContent(sidebarContent);
-    console.log('setRightSidebarContent called');
   }, [members, user.currentPasskeyInfo, setRightSidebarContent]);
 
   // Clean up sidebar content when component unmounts
@@ -190,6 +195,13 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       setRightSidebarContent(null);
     };
   }, [setRightSidebarContent]);
+
+  // Auto-focus textarea when replying (same logic as Channel.tsx)
+  useEffect(() => {
+    if (composer.inReplyTo) {
+      messageComposerRef.current?.focus();
+    }
+  }, [composer.inReplyTo]);
 
   // Helper function to map sender to user (used by MessageList)
   const mapSenderToUser = useCallback((senderId: string) => {
@@ -212,10 +224,10 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     : 'url(' + userIcon + ')';
   return (
     <div className="chat-container">
-      <div className="flex flex-col">
-        <div className="direct-message-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
-          <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2 lg:mb-0">
-            <div className="flex flex-row items-center gap-2">
+      <FlexColumn>
+        <Container className="direct-message-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
+          <FlexRow className="items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2 lg:mb-0">
+            <FlexRow className="items-center gap-2">
               {(isMobile || isTablet) && (
                 <Button
                   type="unstyled"
@@ -226,35 +238,33 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                 />
               )}
               <GlobalSearch className="dm-search flex-1 lg:flex-none max-w-xs lg:max-w-none" />
-            </div>
+            </FlexRow>
             <Button
               type="unstyled"
               onClick={() => {
-                console.log('Users button clicked, showUsers was:', showUsers);
                 setShowUsers(!showUsers);
-                console.log('Users button clicked, showUsers now:', !showUsers);
               }}
               className="w-6 h-6 p-2 !rounded-md cursor-pointer hover:bg-surface-6 flex items-center justify-center [&_.quorum-button-icon-element]:text-sm"
               iconName="users"
               iconOnly
             />
-          </div>
-          <div className="flex-1 min-w-0 lg:order-1">
-            <div className="flex flex-row items-center">
-              <div className="flex flex-col justify-around">
-                <div
+          </FlexRow>
+          <Container className="flex-1 min-w-0 lg:order-1">
+            <FlexRow className="items-center">
+              <FlexColumn className="justify-around">
+                <Container
                   className="w-[28px] h-[28px] bg-cover bg-center rounded-full"
                   style={{
                     backgroundImage: `${icon}`,
                   }}
                 />
-              </div>
-              <div className="flex flex-row pl-2">
-                <div className="flex flex-col justify-around font-semibold">
-                  <span>{otherUser.displayName} |</span>
-                </div>
-                <div className="flex flex-col justify-around pl-1">
-                  <div className="flex flex-row items-center">
+              </FlexColumn>
+              <FlexRow className="pl-2">
+                <FlexColumn className="justify-around font-semibold">
+                  <Text>{otherUser.displayName} |</Text>
+                </FlexColumn>
+                <FlexColumn className="justify-around pl-1">
+                  <FlexRow className="items-center">
                     <ClickToCopyContent
                       text={address ?? ''}
                       tooltipText={t`Copy address`}
@@ -265,18 +275,19 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                     >
                       {truncateAddress(address ?? '')}
                     </ClickToCopyContent>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
+                  </FlexRow>
+                </FlexColumn>
+              </FlexRow>
+            </FlexRow>
+          </Container>
+        </Container>
+        <Container
           className={
             'message-list' + (!showUsers ? ' message-list-expanded' : '')
           }
         >
           <MessageList
+            ref={messageListRef}
             isRepudiable={true}
             roles={[]}
             canDeleteMessages={() => false}
@@ -289,42 +300,11 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               fetchPreviousPage();
             }}
           />
-        </div>
-        {/* Error and reply-to display */}
-        {(composer.fileError || composer.inReplyTo) && (
-          <Container className="flex flex-col w-full px-[11px]">
-            {composer.fileError && (
-              <Text className="text-sm text-danger ml-1 mt-3 mb-1">
-                {composer.fileError}
-              </Text>
-            )}
-            {composer.inReplyTo && (
-              <FlexBetween
-                onClick={() => composer.setInReplyTo(undefined)}
-                className="rounded-t-lg px-4 cursor-pointer py-1 text-sm bg-surface-4"
-              >
-                <Text>
-                  {i18n._('Replying to {user}', {
-                    user: mapSenderToUser(composer.inReplyTo.content.senderId).displayName,
-                  })}
-                </Text>
-                <Button
-                  type="subtle"
-                  size="small"
-                  onClick={() => composer.setInReplyTo(undefined)}
-                  iconName="x"
-                  iconOnly
-                  className="message-in-reply-dismiss"
-                />
-              </FlexBetween>
-            )}
-          </Container>
-        )}
-
+        </Container>
         {/* Accept chat warning */}
         {!acceptChat && (
           <FlexRow className="justify-center">
-            <Container className="w-full px-3 py-2 mb-2 text-sm text-center rounded-lg bg-surface-4 text-subtle">
+            <Container className="w-auto px-3 py-2 mb-2 text-sm text-center rounded-lg bg-surface-4 text-subtle">
               {t`Until you reply, this sender will not see your display name or profile picture`}
             </Container>
           </FlexRow>
@@ -346,13 +326,17 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           fileType={composer.fileType}
           clearFile={composer.clearFile}
           onSubmitMessage={composer.submitMessage}
-          onShowStickers={() => {}} // DirectMessage doesn't support stickers
+          onShowStickers={() => {}}
+          hasStickers={false}
           inReplyTo={composer.inReplyTo}
+          fileError={composer.fileError}
+          mapSenderToUser={mapSenderToUser}
+          setInReplyTo={composer.setInReplyTo}
         />
-      </div>
+      </FlexColumn>
 
       {/* Desktop sidebar - content is managed by SidebarProvider */}
-      <div
+      <Container
         className={
           'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-y-auto ' +
           'transition-transform duration-300 ease-in-out ' +
@@ -362,7 +346,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         }
       >
         {rightSidebarContent}
-      </div>
+      </Container>
     </div>
   );
 };

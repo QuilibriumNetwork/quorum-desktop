@@ -236,35 +236,6 @@ const Channel: React.FC<ChannelProps> = ({
             }}
           />
         </div>
-        {(composer.fileError || composer.inReplyTo) && (
-          <div className="flex flex-col w-full pl-[11px] pr-[11px]  sm:pr-[13px] lg:pr-[22px]">
-            {composer.fileError && (
-              <div className="text-sm ml-1 mt-3 mb-1" style={{ color: 'var(--color-text-danger)' }}>
-                {composer.fileError}
-              </div>
-            )}
-            {composer.inReplyTo && (
-              <div
-                onClick={() => composer.setInReplyTo(undefined)}
-                className="rounded-t-lg px-4 cursor-pointer py-1 text-xs flex flex-row justify-between items-center bg-surface-4"
-              >
-                <span className="text-subtle">
-                  {i18n._('Replying to {user}', {
-                    user: mapSenderToUser(composer.inReplyTo.content.senderId).displayName,
-                  })}
-                </span>
-                <Icon 
-                  name="times" 
-                  size="sm"
-                  className="cursor-pointer hover:opacity-70"
-                  onClick={() => {
-                    composer.setInReplyTo(undefined);
-                  }}
-                />
-              </div>
-            )}
-          </div>
-        )}
 
         <MessageComposer
           ref={messageComposerRef}
@@ -283,6 +254,9 @@ const Channel: React.FC<ChannelProps> = ({
           onSubmitMessage={composer.submitMessage}
           onShowStickers={() => composer.setShowStickers(true)}
           inReplyTo={composer.inReplyTo}
+          fileError={composer.fileError}
+          mapSenderToUser={mapSenderToUser}
+          setInReplyTo={composer.setInReplyTo}
         />
       </div>
 

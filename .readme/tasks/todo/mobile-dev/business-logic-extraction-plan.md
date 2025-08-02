@@ -61,23 +61,11 @@
 - [x] Channel.tsx 
 - [x] MessageComposer.tsx 
 
-- [ ] DirectMessage.tsx 
+- [x] DirectMessage.tsx 
 Analyze the component carefully. we have already done a big refractor on Channel.tsx , which has similarities with DirectMessage.tsx (some lessons learned you can find here .readme/tasks/done/channel-business-logic-extraction-lessons.md).
 For Channel.tsc we have also extracted the textarea ina  dedicated component MessageComposer.tsx > one interesting thing to look into is if we can make this componend shareable between Channel.tsx and DirectMessage.tsx 
 Before starting any logic extraction, report your analysius results on all of the above.
 
-
-- [ ] Extract `useMessages` hook
-- [ ] Extract `useChannelData` hook  
-- [ ] Extract `useFileUpload` hook
-- [ ] Extract `useMessageComposer` hook
-- [ ] Test: Send messages, upload files, verify all channel functionality
-
-#### DirectMessage.tsx 
-- [ ] Extract `useDirectMessageLogic` hook
-- [ ] Extract `useFileUpload` hook (shared)
-- [ ] Extract `useMessageActions` hook
-- [ ] Test: DM conversations, file uploads, message actions
 
 #### Message.tsx 
 - [ ] Extract `useMessageActions` hook
