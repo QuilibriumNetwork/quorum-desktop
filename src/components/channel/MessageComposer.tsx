@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
-import { Button, FlexRow, Tooltip, Icon } from '../primitives';
+import { Button, FlexRow, Tooltip, Icon, TextArea } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { Buffer } from 'buffer';
 
@@ -53,18 +53,15 @@ export const MessageComposer = forwardRef<MessageComposerRef, MessageComposerPro
     },
   }));
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onChange(e.target.value);
-  };
-
   return (
     <div className="message-editor-container pr-6 lg:pr-8">
+
       {/* File preview */}
       {fileData && (
         <div className="mx-3 mt-2">
-          <div className="p-2 relative rounded-lg bg-[rgba(0,0,0,0.2)] inline-block">
+          <div className="p-2 relative rounded-lg bg-surface-3 inline-block">
             <Button
-              className="absolute p-1 px-2 m-1 bg-[rgba(0,0,0,0.6)] rounded-full"
+              className="absolute p-1 px-2 m-1 bg-surface-7 rounded-full"
               type="subtle"
               size="small"
               onClick={clearFile}
@@ -79,6 +76,7 @@ export const MessageComposer = forwardRef<MessageComposerRef, MessageComposerPro
                 ';base64,' +
                 Buffer.from(fileData).toString('base64')
               }
+              alt="File preview"
             />
           </div>
         </div>
@@ -104,23 +102,27 @@ export const MessageComposer = forwardRef<MessageComposerRef, MessageComposerPro
           </div>
         </Tooltip>
         
-        <textarea
+        <TextArea
           ref={textareaRef}
-          className="flex-1 bg-transparent border-0 outline-0 py-1 resize-none placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap text-main"
+          value={value}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+          placeholder={placeholder}
+          autoResize={false}
+          rows={value ? calculateRows() : 1}
+          variant="filled"
+          noFocusStyle={true}
+          resize={false}
+          className="flex-1 bg-transparent border-0 outline-0 py-1 text-main"
           style={{
-            // Override any default styling
+            // Override any default styling  
             border: 'none',
             boxShadow: 'none',
             backgroundColor: 'transparent',
-            minHeight: '28px', // Single line height
-            maxHeight: '112px', // 4 lines max
-            height: value ? undefined : '28px', // Force single line when empty
+            minHeight: '28px',
+            maxHeight: '112px',
+            height: value ? 'auto' : '28px',
           }}
-          placeholder={placeholder}
-          rows={value ? calculateRows() : 1}
-          value={value}
-          onChange={handleChange}
-          onKeyDown={onKeyDown}
         />
         
         <Tooltip id="add-sticker" content={t`add sticker`} place="top">
@@ -142,6 +144,5 @@ export const MessageComposer = forwardRef<MessageComposerRef, MessageComposerPro
   );
 });
 
-// Keep the old name for backward compatibility
-export const MessageTextArea = MessageComposer;
-export type MessageTextAreaRef = MessageComposerRef;
+
+export { MessageComposer as default };

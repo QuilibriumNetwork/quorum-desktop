@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import './Channel.scss';
 import { StickerMessage } from '../../api/quorumApi';
 import { useChannelData, useChannelMessages, useMessageComposer } from '../../hooks';
@@ -6,13 +6,12 @@ import { useMessageDB } from '../context/MessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { MessageList, MessageListRef } from '../message/MessageList';
-import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
-import { Button, Icon, FlexRow } from '../primitives';
-import { MessageTextArea, MessageTextAreaRef } from './MessageTextArea';
+import { Button, Icon } from '../primitives';
+import MessageComposer, { MessageComposerRef } from './MessageComposer';
 
 type ChannelProps = {
   spaceId: string;
@@ -40,7 +39,7 @@ const Channel: React.FC<ChannelProps> = ({
   
   // Create refs for textarea (MessageList needs this for scrolling and we need it for focus)
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const messageTextAreaRef = useRef<MessageTextAreaRef>(null);
+  const messageComposerRef = useRef<MessageComposerRef>(null);
   const messageListRef = useRef<MessageListRef>(null);
 
   // Get channel data
@@ -48,9 +47,7 @@ const Channel: React.FC<ChannelProps> = ({
     space,
     channel,
     members,
-    activeMembers,
     roles,
-    noRoleMembers,
     stickers,
     generateSidebarContent,
   } = useChannelData({ spaceId, channelId });
@@ -74,10 +71,17 @@ const Channel: React.FC<ChannelProps> = ({
       user.currentPasskeyInfo!,
       inReplyTo
     );
-    // Auto-scroll to bottom after sending message
-    setTimeout(() => {
-      messageListRef.current?.scrollToBottom();
-    }, 100);
+    
+    // Only auto-scroll for actual messages (text/embed), not reactions
+    const isReaction = typeof message === 'object' && 
+      'type' in message && 
+      (message.type === 'reaction' || message.type === 'remove-reaction');
+    
+    if (!isReaction) {
+      setTimeout(() => {
+        messageListRef.current?.scrollToBottom();
+      }, 100);
+    }
   }, [spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo]);
 
   // Handle sticker submission
@@ -164,7 +168,7 @@ const Channel: React.FC<ChannelProps> = ({
   // Auto-focus textarea when replying
   useEffect(() => {
     if (composer.inReplyTo) {
-      messageTextAreaRef.current?.focus();
+      messageComposerRef.current?.focus();
     }
   }, [composer.inReplyTo]);
 
@@ -233,33 +237,37 @@ const Channel: React.FC<ChannelProps> = ({
           />
         </div>
         {(composer.fileError || composer.inReplyTo) && (
-          <div className="flex flex-col w-full px-[11px]">
+          <div className="flex flex-col w-full pl-[11px] pr-[11px]  sm:pr-[13px] lg:pr-[22px]">
             {composer.fileError && (
-              <div className="text-sm text-danger ml-1 mt-3 mb-1">
+              <div className="text-sm ml-1 mt-3 mb-1" style={{ color: 'var(--color-text-danger)' }}>
                 {composer.fileError}
               </div>
             )}
             {composer.inReplyTo && (
               <div
                 onClick={() => composer.setInReplyTo(undefined)}
-                className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-[var(--surface-4)]"
+                className="rounded-t-lg px-4 cursor-pointer py-1 text-xs flex flex-row justify-between items-center bg-surface-4"
               >
-                {i18n._('Replying to {user}', {
-                  user: mapSenderToUser(composer.inReplyTo.content.senderId).displayName,
-                })}
-                <span
-                  className="message-in-reply-dismiss"
-                  onClick={() => composer.setInReplyTo(undefined)}
-                >
-                  ×
+                <span className="text-subtle">
+                  {i18n._('Replying to {user}', {
+                    user: mapSenderToUser(composer.inReplyTo.content.senderId).displayName,
+                  })}
                 </span>
+                <Icon 
+                  name="times" 
+                  size="sm"
+                  className="cursor-pointer hover:opacity-70"
+                  onClick={() => {
+                    composer.setInReplyTo(undefined);
+                  }}
+                />
               </div>
             )}
           </div>
         )}
 
-        <MessageTextArea
-          ref={messageTextAreaRef}
+        <MessageComposer
+          ref={messageComposerRef}
           value={composer.pendingMessage}
           onChange={composer.setPendingMessage}
           onKeyDown={composer.handleKeyDown}
@@ -330,8 +338,8 @@ const Channel: React.FC<ChannelProps> = ({
           <div
             className={`fixed bottom-20 z-[9999] pointer-events-none ${showUsers ? 'right-[300px]' : 'right-6'} transition-all duration-300`}
           >
-            <div className="flex flex-col border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4 pointer-events-auto">
-              <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">
+            <div className="flex flex-col border border-surface-5 shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4 pointer-events-auto">
+              <div className="font-bold p-2 h-[40px] border-b border-surface-5">
                 Stickers
               </div>
               <div className="grid grid-cols-3 auto-rows-min gap-1 w-[300px] p-4 overflow-y-auto max-h-[359px]">

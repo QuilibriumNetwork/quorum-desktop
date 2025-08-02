@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import { TextAreaNativeProps } from './types';
 import { useTheme } from '../theme';
 import { getColors } from '../theme/colors';
 
-export const TextArea: React.FC<TextAreaNativeProps> = ({
+export const TextArea = forwardRef<TextInput, TextAreaNativeProps>(({
   value,
   placeholder,
   onChange,
@@ -27,7 +27,7 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
   style,
   testID,
   accessibilityLabel,
-}) => {
+}, ref) => {
   const theme = useTheme();
   const colors = getColors(theme.mode, theme.accentColor);
   const [isFocused, setIsFocused] = useState(false);
@@ -35,6 +35,9 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
     undefined
   );
   const textInputRef = useRef<TextInput>(null);
+
+  // Forward the ref
+  useImperativeHandle(ref, () => textInputRef.current!);
 
   const getBorderColor = () => {
     if (error) return colors.utilities.danger;
@@ -153,7 +156,7 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
       )}
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

@@ -80,7 +80,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
   useEffect(() => {
     if (acceptedFiles.length > 0) {
       (async () => {
-        const file = await compressImage(acceptedFiles[0], acceptedFiles);
+        const file = await compressImage(acceptedFiles[0], [...acceptedFiles]);
         setFileData(await file.arrayBuffer());
         setFileType(file.type);
       })();

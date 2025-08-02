@@ -65,20 +65,19 @@
       "name": "Channel",
       "path": "src/components/channel/Channel.tsx",
       "description": "Main channel view with messages, input, and interactions",
-      "category": "complex_refactor",
+      "category": "platform_specific",
       "used": "yes",
-      "primitives": "todo",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
+      "primitives": "keep",
+      "logic_extraction": "done",
+      "logic_needs": "done",
       "hooks": [
-        "useMessages",
         "useChannelData",
-        "useFileUpload",
+        "useChannelMessages",
         "useMessageComposer"
       ],
       "native": "todo",
-      "notes": "800+ lines with multiple useState/useEffect, API calls, complex business rules. Massive extraction needed: useMessages, useChannelData, useFileUpload, useMessageComposer.",
-      "updated": "2025-07-29"
+      "notes": "COMPLETED: Business logic extracted to useChannelData (space/channel/members/stickers data), useChannelMessages (message list, pagination, user mapping), and useMessageComposer (message input, file upload, sticker handling). Component reduced from 730+ lines to ~370 lines. Message composition UI extracted to MessageComposer component. Uses primitives (Button, Icon) but keeps Channel.scss for complex chat layout - responsive sidebar positioning, message list styling, sticker panel positioning with z-index layering. Auto-focus on reply and auto-scroll on message/sticker send implemented. Emoji reaction scroll bug fixed. TypeScript errors resolved.",
+      "updated": "2025-08-02"
     },
     "SearchBar.tsx": {
       "name": "SearchBar",
@@ -1005,15 +1004,32 @@
       "updated": "2025-07-31"
     }
   },
+    "MessageComposer.tsx": {
+      "name": "MessageComposer",
+      "path": "src/components/channel/MessageComposer.tsx",
+      "description": "Complete message composition UI with textarea, file upload, sticker button, and send functionality",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "done",
+      "logic_extraction": "done",
+      "logic_needs": "done",
+      "hooks": [
+        "useMessageComposer"
+      ],
+      "native": "todo",
+      "notes": "NEW COMPONENT: Extracted from Channel.tsx to consolidate all message input UI. Uses TextArea primitive with forwardRef for auto-focus. Includes upload button, sticker button, send button, file preview with clear option. Integrates with useMessageComposer hook for all business logic. Uses primitives (TextArea, Button, Icon, Container, FlexRow) but remains platform_specific due to complex responsive layout requirements and file preview styling. Component demonstrates clean separation: UI in component, logic in hook.",
+      "updated": "2025-08-02"
+    }
+  },
   "stats": {
-    "total": 62,
-    "primitives_done": 25,
-    "logic_extraction_done": 48,
+    "total": 63,
+    "primitives_done": 26,
+    "logic_extraction_done": 50,
     "native_ready": 0,
     "native_done": 11,
     "by_category": {
-      "platform_specific": 45,
-      "complex_refactor": 4,
+      "platform_specific": 46,
+      "complex_refactor": 3,
       "shared": 13
     },
     "by_usage": {
@@ -1024,10 +1040,10 @@
     "by_logic_needs": {
       "keep": 25,
       "extract": 29,
-      "done": 8
+      "done": 10
     },
     "analysis_notes": "MAJOR REFACTOR: AppWithSearch.tsx successfully split into 3 focused providers (ModalProvider, MobileProvider, SidebarProvider) with single responsibilities. Eliminated monolithic component mixing modal, mobile, and sidebar concerns. New providers maintain z-[9999] stacking solutions but still need business logic extraction to hooks. Architecture now follows separation of concerns principle.",
-    "last_updated": "2025-08-01"
+    "last_updated": "2025-08-02"
   },
   "metadata": {
     "audit_version": "1.0",

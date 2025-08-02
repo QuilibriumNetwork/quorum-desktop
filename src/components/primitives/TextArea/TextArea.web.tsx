@@ -1,8 +1,8 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import clsx from 'clsx';
 import { TextAreaProps } from './types';
 
-export const TextArea: React.FC<TextAreaProps> = ({
+export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(({
   value,
   placeholder,
   onChange,
@@ -24,8 +24,11 @@ export const TextArea: React.FC<TextAreaProps> = ({
   style,
   testID,
   accessibilityLabel,
-}) => {
+}, ref) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Forward the ref
+  useImperativeHandle(ref, () => textAreaRef.current!);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     // Support both onChange signatures for backward compatibility
@@ -103,4 +106,4 @@ export const TextArea: React.FC<TextAreaProps> = ({
       )}
     </div>
   );
-};
+});
