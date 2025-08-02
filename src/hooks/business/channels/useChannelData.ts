@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { useSpace } from '../../queries/space/useSpace';
 import { useSpaceMembers } from '../../queries/spaceMembers/useSpaceMembers';
 import { i18n } from '@lingui/core';
@@ -78,7 +78,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
     );
   }, [space]);
 
-  const generateSidebarContent = () => {
+  const generateSidebarContent = useCallback(() => {
     const roleSections = roles
       .filter((r) => r.members.length !== 0)
       .map((role) => {
@@ -108,7 +108,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
     };
 
     return [...roleSections, noRoleSection];
-  };
+  }, [roles, activeMembers, members, noRoleMembers]);
 
   return {
     space,

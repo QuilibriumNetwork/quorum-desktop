@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as moment from 'moment-timezone';
 import { Message } from './Message';
@@ -13,35 +13,11 @@ import type { VirtuosoHandle } from 'react-virtuoso';
 import React from 'react';
 import { DefaultImages } from '../../utils';
 
-function useWindowSize() {
-  const [size, setSize] = React.useState([0, 0]);
-  useLayoutEffect(() => {
-    function updateSize() {
-      setSize([window.innerWidth, window.innerHeight]);
-    }
-    window.addEventListener('resize', updateSize);
-    updateSize();
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
-  return size;
+export interface MessageListRef {
+  scrollToBottom: () => void;
 }
 
-export const MessageList = ({
-  messageList,
-  stickers,
-  members,
-  setInReplyTo,
-  editor,
-  submitMessage,
-  fetchPreviousPage,
-  isSpaceOwner,
-  canDeleteMessages,
-  customEmoji,
-  isRepudiable,
-  roles,
-  kickUserAddress,
-  setKickUserAddress,
-}: {
+interface MessageListProps {
   messageList: MessageType[];
   stickers?: { [stickerId: string]: Sticker };
   members: any;
@@ -56,7 +32,39 @@ export const MessageList = ({
   roles: Role[];
   kickUserAddress?: string;
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
-}) => {
+}
+
+function useWindowSize() {
+  const [size, setSize] = React.useState([0, 0]);
+  useLayoutEffect(() => {
+    function updateSize() {
+      setSize([window.innerWidth, window.innerHeight]);
+    }
+    window.addEventListener('resize', updateSize);
+    updateSize();
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
+  return size;
+}
+
+export const MessageList = forwardRef<MessageListRef, MessageListProps>((props, ref) => {
+  const {
+    messageList,
+    stickers,
+    members,
+    setInReplyTo,
+    editor,
+    submitMessage,
+    fetchPreviousPage,
+    isSpaceOwner,
+    canDeleteMessages,
+    customEmoji,
+    isRepudiable,
+    roles,
+    kickUserAddress,
+    setKickUserAddress
+  } = props;
+  
   const [width, height] = useWindowSize();
   const [hoverTarget, setHoverTarget] = useState<string>();
   const [emojiPickerOpen, setEmojiPickerOpen] = useState<string>();
@@ -65,6 +73,18 @@ export const MessageList = ({
   const virtuoso = useRef<VirtuosoHandle>(null);
   const [init, setInit] = useState(false);
   const location = useLocation();
+
+  useImperativeHandle(ref, () => ({
+    scrollToBottom: () => {
+      if (virtuoso.current && messageList.length > 0) {
+        virtuoso.current.scrollToIndex({
+          index: messageList.length - 1,
+          align: 'end',
+          behavior: 'auto',
+        });
+      }
+    },
+  }));
 
   const mapSenderToUser = (senderId: string) => {
     return (
@@ -173,4 +193,4 @@ export const MessageList = ({
       itemContent={rowRenderer}
     />
   );
-};
+});

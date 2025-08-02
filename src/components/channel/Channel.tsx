@@ -5,16 +5,14 @@ import { useChannelData, useChannelMessages, useMessageComposer } from '../../ho
 import { useMessageDB } from '../context/MessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { MessageList } from '../message/MessageList';
+import { MessageList, MessageListRef } from '../message/MessageList';
 import { t } from '@lingui/core/macro';
-import ReactTooltip from '../ReactTooltip';
 import { i18n } from '@lingui/core';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
-import { Button, Icon, Container, FlexRow } from '../primitives';
-import { MessageTextArea } from './MessageTextArea';
-import { Buffer } from 'buffer';
+import { Button, Icon, FlexRow } from '../primitives';
+import { MessageTextArea, MessageTextAreaRef } from './MessageTextArea';
 
 type ChannelProps = {
   spaceId: string;
@@ -40,8 +38,10 @@ const Channel: React.FC<ChannelProps> = ({
   const [init, setInit] = useState(false);
   const { submitChannelMessage } = useMessageDB();
   
-  // Create a manual ref for the textarea (MessageList needs this for scrolling)
+  // Create refs for textarea (MessageList needs this for scrolling and we need it for focus)
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const messageTextAreaRef = useRef<MessageTextAreaRef>(null);
+  const messageListRef = useRef<MessageListRef>(null);
 
   // Get channel data
   const {
@@ -74,6 +74,10 @@ const Channel: React.FC<ChannelProps> = ({
       user.currentPasskeyInfo!,
       inReplyTo
     );
+    // Auto-scroll to bottom after sending message
+    setTimeout(() => {
+      messageListRef.current?.scrollToBottom();
+    }, 100);
   }, [spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo]);
 
   // Handle sticker submission
@@ -91,6 +95,10 @@ const Channel: React.FC<ChannelProps> = ({
       user.currentPasskeyInfo!,
       inReplyTo
     );
+    // Auto-scroll to bottom after sending sticker
+    setTimeout(() => {
+      messageListRef.current?.scrollToBottom();
+    }, 100);
   }, [spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo]);
 
   // Message composer hook
@@ -153,6 +161,13 @@ const Channel: React.FC<ChannelProps> = ({
     }
   }, []);
 
+  // Auto-focus textarea when replying
+  useEffect(() => {
+    if (composer.inReplyTo) {
+      messageTextAreaRef.current?.focus();
+    }
+  }, [composer.inReplyTo]);
+
   return (
     <div className="chat-container">
       <div className="flex flex-col">
@@ -198,6 +213,7 @@ const Channel: React.FC<ChannelProps> = ({
           }
         >
           <MessageList
+            ref={messageListRef}
             isRepudiable={space?.isRepudiable}
             stickers={stickers}
             roles={roles}
@@ -242,77 +258,28 @@ const Channel: React.FC<ChannelProps> = ({
           </div>
         )}
 
-        {composer.fileData && (
-          <div className="mx-3 mt-2">
-            <div className="p-2 relative rounded-lg bg-[rgba(0,0,0,0.2)] inline-block">
-              <Button
-                className="absolute p-1 px-2 m-1 bg-[rgba(0,0,0,0.6)] rounded-full"
-                type="subtle"
-                size="small"
-                onClick={composer.clearFile}
-              >
-                <Icon name="x" size="xs" />
-              </Button>
-              <img
-                style={{ maxWidth: 140, maxHeight: 140 }}
-                src={
-                  'data:' +
-                  composer.fileType +
-                  ';base64,' +
-                  Buffer.from(composer.fileData).toString('base64')
-                }
-              />
-            </div>
-          </div>
-        )}
-        <div className="message-editor-container pr-6 lg:pr-8">
-          <FlexRow
-            className={
-              'message-editor w-full items-center gap-2 ' +
-              (composer.inReplyTo ? 'message-editor-reply' : '')
-            }
-          >
-            <div {...composer.getRootProps()} data-tooltip-id="attach-image-tooltip">
-              <input {...composer.getInputProps()} />
-              <Button
-                type="unstyled"
-                onClick={() => {}} // onClick handled by dropzone
-                className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
-                iconName="plus"
-                iconOnly
-              />
-            </div>
-            <MessageTextArea
-              value={composer.pendingMessage}
-              onChange={composer.setPendingMessage}
-              onKeyDown={composer.handleKeyDown}
-              placeholder={i18n._('Send a message to #{channel_name}', {
-                channel_name: channel?.channelName ?? '',
-              })}
-              calculateRows={composer.calculateRows}
-            />
-            <Button
-              type="unstyled"
-              className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
-              onClick={() => {
-                composer.setShowStickers(true);
-              }}
-              data-tooltip-id="add-sticker-tooltip"
-              iconName="smile"
-              iconOnly
-            />
-            <div
-              className="hover:bg-accent-400 cursor-pointer w-8 h-8 rounded-full bg-accent bg-center bg-no-repeat bg-[url('/send.png')] bg-[length:60%] flex-shrink-0"
-              onClick={() => {
-                composer.submitMessage();
-              }}
-            />
-          </FlexRow>
-        </div>
+        <MessageTextArea
+          ref={messageTextAreaRef}
+          value={composer.pendingMessage}
+          onChange={composer.setPendingMessage}
+          onKeyDown={composer.handleKeyDown}
+          placeholder={i18n._('Send a message to #{channel_name}', {
+            channel_name: channel?.channelName ?? '',
+          })}
+          calculateRows={composer.calculateRows}
+          getRootProps={composer.getRootProps}
+          getInputProps={composer.getInputProps}
+          fileData={composer.fileData}
+          fileType={composer.fileType}
+          clearFile={composer.clearFile}
+          onSubmitMessage={composer.submitMessage}
+          onShowStickers={() => composer.setShowStickers(true)}
+          inReplyTo={composer.inReplyTo}
+        />
       </div>
 
       {/* Desktop sidebar - only visible on lg+ screens */}
-      <Container
+      <div
         className={
           'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-y-auto ' +
           'transition-transform duration-300 ease-in-out ' +
@@ -350,18 +317,8 @@ const Channel: React.FC<ChannelProps> = ({
             ))}
           </div>
         ))}
-      </Container>
+      </div>
 
-      <ReactTooltip
-        id="attach-image-tooltip"
-        content={t`attach image`}
-        place="top"
-      />
-      <ReactTooltip
-        id="add-sticker-tooltip"
-        content={t`add sticker`}
-        place="top"
-      />
 
       {/* Stickers panel - positioned at top level to avoid stacking context issues */}
       {composer.showStickers && (
@@ -373,7 +330,7 @@ const Channel: React.FC<ChannelProps> = ({
           <div
             className={`fixed bottom-20 z-[9999] pointer-events-none ${showUsers ? 'right-[300px]' : 'right-6'} transition-all duration-300`}
           >
-            <Container className="flex flex-col border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4 pointer-events-auto">
+            <div className="flex flex-col border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4 pointer-events-auto">
               <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">
                 Stickers
               </div>
@@ -397,7 +354,7 @@ const Channel: React.FC<ChannelProps> = ({
                   );
                 })}
               </div>
-            </Container>
+            </div>
           </div>
         </>
       )}
