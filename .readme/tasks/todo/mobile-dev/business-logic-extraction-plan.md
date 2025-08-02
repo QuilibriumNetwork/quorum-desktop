@@ -58,11 +58,14 @@
 
 ### High Complexity - Extract Last (Require Careful Testing)
 
-#### Channel.tsx 
-Analyze the component carefully (there could bemor hooks to create than the ones listed below).
-Decide if it's worth refactoring it in smaller components.
-One particular part you must pay attention to is th etextarea used to send messages. This will have different features/behavior in the web app vs the native app (e.g, in the native app it shoudl grow in size horizontally wghne the user type intp it, hiding the add emoji and add sticker buttons). We need to undertand if it's worth creating  a separate component for thsi textarea. thsi etaxtarea is used in both Channel.tsx and DirectMessage.tsx, but he logic betwen the 2 is likely slightly different (e.g. DirectMessage don't have the add stickers button and maybe some otther things are different).
+- [x] Channel.tsx 
+- [x] MessageComposer.tsx 
+
+- [ ] DirectMessage.tsx 
+Analyze the component carefully. we have already done a big refractor on Channel.tsx , which has similarities with DirectMessage.tsx (some lessons learned you can find here .readme/tasks/done/channel-business-logic-extraction-lessons.md).
+For Channel.tsc we have also extracted the textarea ina  dedicated component MessageComposer.tsx > one interesting thing to look into is if we can make this componend shareable between Channel.tsx and DirectMessage.tsx 
 Before starting any logic extraction, report your analysius results on all of the above.
+
 
 - [ ] Extract `useMessages` hook
 - [ ] Extract `useChannelData` hook  

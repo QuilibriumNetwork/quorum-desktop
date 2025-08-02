@@ -11,7 +11,7 @@ import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
 import { Button, Icon } from '../primitives';
-import MessageComposer, { MessageComposerRef } from './MessageComposer';
+import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
 
 type ChannelProps = {
   spaceId: string;
