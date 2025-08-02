@@ -18,9 +18,10 @@ interface ComponentAudit {
   path: string;
   description: string;
   category: ComponentCategory;
+  used: string;
   primitives: AuditStatus;
-  web_native: string;
   logic_extraction: AuditStatus;
+  logic_needs: AuditStatus;
   hooks: string[];
   native: AuditStatus;
   notes: string;
@@ -34,11 +35,23 @@ interface AuditData {
     primitives_done: number;
     logic_extraction_done: number;
     native_ready: number;
+    native_done: number;
     by_category: {
       shared: number;
       platform_specific: number;
       complex_refactor: number;
     };
+    by_usage: {
+      yes: number;
+      no: number;
+      unknown: number;
+    };
+    by_logic_needs: {
+      keep: number;
+      extract: number;
+      done: number;
+    };
+    analysis_notes: string;
     last_updated: string;
   };
   metadata: {
@@ -198,7 +211,7 @@ export const ComponentAuditViewer: React.FC = () => {
       const matchesLogic = logicFilter === 'all' || component.logic_extraction === logicFilter;
       const matchesNative = nativeFilter === 'all' || component.native === nativeFilter;
       
-      const matchesUsage = usageFilter === 'all' || (component as any).used === usageFilter;
+      const matchesUsage = usageFilter === 'all' || component.used === usageFilter;
       
       return matchesSearch && matchesCategory && matchesPrimitives && matchesLogic && matchesNative && matchesUsage;
     });
@@ -475,7 +488,7 @@ export const ComponentAuditViewer: React.FC = () => {
                     <CategoryBadge category={component.category} />
                   </td>
                   <td className="px-4 py-3">
-                    <UsageBadge used={(component as any).used || 'unknown'} />
+                    <UsageBadge used={component.used || 'unknown'} />
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={component.primitives} />
