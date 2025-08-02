@@ -131,8 +131,11 @@ const App = () => {
               <Suspense fallback={<Connecting />}>
                 <RegistrationProvider>
                   <ResponsiveLayoutProvider>
-                    <Suspense>
-                      <Routes>
+                    <ModalProvider user={user} setUser={setUser}>
+                      <MobileProvider>
+                        <SidebarProvider>
+                          <Suspense>
+                            <Routes>
                         <Route
                           path="/"
                           element={
@@ -151,72 +154,54 @@ const App = () => {
                         <Route
                           path="/messages"
                           element={
-                            <ModalProvider user={user} setUser={setUser}>
-                              <MobileProvider>
-                                <SidebarProvider>
-                                  <Layout
-                                    kickUserAddress={kickUserAddress}
-                                    setKickUserAddress={setKickUserAddress}
-                                  >
-                                    <DirectMessages
-                                      setUser={setUser}
-                                      setAuthState={() => {
-                                        setUser(undefined);
-                                      }}
-                                      user={user}
-                                    />
-                                  </Layout>
-                                </SidebarProvider>
-                              </MobileProvider>
-                            </ModalProvider>
+                            <Layout
+                              kickUserAddress={kickUserAddress}
+                              setKickUserAddress={setKickUserAddress}
+                            >
+                              <DirectMessages
+                                setUser={setUser}
+                                setAuthState={() => {
+                                  setUser(undefined);
+                                }}
+                                user={user}
+                              />
+                            </Layout>
                           }
                         />
                         <Route
                           path="/messages/:address"
                           element={
-                            <ModalProvider user={user} setUser={setUser}>
-                              <MobileProvider>
-                                <SidebarProvider>
-                                  <Layout
-                                    kickUserAddress={kickUserAddress}
-                                    setKickUserAddress={setKickUserAddress}
-                                  >
-                                    <DirectMessages
-                                      setUser={setUser}
-                                      setAuthState={() => {
-                                        setUser(undefined);
-                                      }}
-                                      user={user}
-                                    />
-                                  </Layout>
-                                </SidebarProvider>
-                              </MobileProvider>
-                            </ModalProvider>
+                            <Layout
+                              kickUserAddress={kickUserAddress}
+                              setKickUserAddress={setKickUserAddress}
+                            >
+                              <DirectMessages
+                                setUser={setUser}
+                                setAuthState={() => {
+                                  setUser(undefined);
+                                }}
+                                user={user}
+                              />
+                            </Layout>
                           }
                         />
                         <Route
                           path="/spaces/:spaceId/:channelId"
                           element={
-                            <ModalProvider user={user} setUser={setUser}>
-                              <MobileProvider>
-                                <SidebarProvider>
-                                  <Layout
-                                    kickUserAddress={kickUserAddress}
-                                    setKickUserAddress={setKickUserAddress}
-                                  >
-                                    <Space
-                                      setUser={setUser}
-                                      setAuthState={() => {
-                                        setUser(undefined);
-                                      }}
-                                      kickUserAddress={kickUserAddress}
-                                      setKickUserAddress={setKickUserAddress}
-                                      user={user}
-                                    />
-                                  </Layout>
-                                </SidebarProvider>
-                              </MobileProvider>
-                            </ModalProvider>
+                            <Layout
+                              kickUserAddress={kickUserAddress}
+                              setKickUserAddress={setKickUserAddress}
+                            >
+                              <Space
+                                setUser={setUser}
+                                setAuthState={() => {
+                                  setUser(undefined);
+                                }}
+                                kickUserAddress={kickUserAddress}
+                                setKickUserAddress={setKickUserAddress}
+                                user={user}
+                              />
+                            </Layout>
                           }
                         />
                         <Route
@@ -279,8 +264,11 @@ const App = () => {
                             />
                           }
                         />
-                      </Routes>
-                    </Suspense>
+                            </Routes>
+                          </Suspense>
+                        </SidebarProvider>
+                      </MobileProvider>
+                    </ModalProvider>
                   </ResponsiveLayoutProvider>
                 </RegistrationProvider>
               </Suspense>

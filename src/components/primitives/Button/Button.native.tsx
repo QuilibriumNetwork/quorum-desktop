@@ -94,6 +94,16 @@ const Button: React.FC<NativeButtonProps> = (props) => {
           elevation: 0,
         });
         break;
+      case 'unstyled':
+        style.push({
+          backgroundColor: 'transparent',
+          borderColor: 'transparent',
+          shadowOpacity: 0,
+          elevation: 0,
+          paddingVertical: 0,
+          paddingHorizontal: 0,
+        });
+        break;
       default:
         style.push({
           backgroundColor: colors.accent.DEFAULT,
@@ -124,7 +134,8 @@ const Button: React.FC<NativeButtonProps> = (props) => {
       type === 'light-outline' ||
       type === 'subtle-outline' ||
       type === 'secondary-white' ||
-      type === 'light-outline-white'
+      type === 'light-outline-white' ||
+      type === 'unstyled'
     ) {
       style.push({
         shadowOpacity: 0,
@@ -170,6 +181,8 @@ const Button: React.FC<NativeButtonProps> = (props) => {
       case 'secondary-white':
       case 'light-outline-white':
         return colors.white;
+      case 'unstyled':
+        return 'inherit'; // Let the parent control text color
       default:
         return colors.white;
     }

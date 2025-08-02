@@ -14,7 +14,8 @@ export interface BaseButtonProps {
     | 'secondary-white'
     | 'light-white'
     | 'light-outline-white'
-    | 'disabled-onboarding';
+    | 'disabled-onboarding'
+    | 'unstyled';
   size?: 'small' | 'normal' | 'large';
   disabled?: boolean;
   icon?: boolean; // Legacy prop for existing compatibility

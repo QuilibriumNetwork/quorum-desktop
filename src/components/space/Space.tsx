@@ -62,6 +62,7 @@ const Space: React.FunctionComponent<SpaceProps> = (props) => {
         />
       </div>
       <Channel
+        key={`${params.spaceId}-${params.channelId}`}
         kickUserAddress={props.kickUserAddress}
         setKickUserAddress={props.setKickUserAddress}
         spaceId={params.spaceId}

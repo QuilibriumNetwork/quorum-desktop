@@ -1,41 +1,20 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faPlus,
-  faSmile,
-  faUsers,
-  faX,
-  faBars,
-} from '@fortawesome/free-solid-svg-icons';
-import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import './Channel.scss';
-import {
-  EmbedMessage,
-  Message as MessageType,
-  StickerMessage,
-} from '../../api/quorumApi';
-import { useMessages, useSpace } from '../../hooks';
+import { StickerMessage } from '../../api/quorumApi';
+import { useChannelData, useChannelMessages, useMessageComposer } from '../../hooks';
 import { useMessageDB } from '../context/MessageDB';
 import { useQueryClient } from '@tanstack/react-query';
-import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
-import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { MessageList } from '../message/MessageList';
-import { FileWithPath, useDropzone } from 'react-dropzone';
-import Compressor from 'compressorjs';
 import { t } from '@lingui/core/macro';
 import ReactTooltip from '../ReactTooltip';
 import { i18n } from '@lingui/core';
-import { DefaultImages } from '../../utils';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
-import { useModalContext } from '../context/ModalProvider';
 import { useSidebar } from '../context/SidebarProvider';
+import { Button, Icon, Container, FlexRow } from '../primitives';
+import { MessageTextArea } from './MessageTextArea';
+import { Buffer } from 'buffer';
 
 type ChannelProps = {
   spaceId: string;
@@ -51,27 +30,76 @@ const Channel: React.FC<ChannelProps> = ({
   setKickUserAddress,
 }) => {
   const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
-  const [state, setState] = React.useState<{
-    pendingMessage: string;
-    messages: MessageType[];
-  }>({
-    pendingMessage: '',
-    messages: [],
-  });
-  const { data: space } = useSpace({ spaceId });
-  const { data: messages, fetchPreviousPage } = useMessages({
-    spaceId: spaceId,
-    channelId: channelId,
-  });
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
-  const [pendingMessage, setPendingMessage] = useState('');
   const {
     showRightSidebar: showUsers,
     setShowRightSidebar: setShowUsers,
     setRightSidebarContent,
   } = useSidebar();
   const [init, setInit] = useState(false);
+  const { submitChannelMessage } = useMessageDB();
+  
+  // Create a manual ref for the textarea (MessageList needs this for scrolling)
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Get channel data
+  const {
+    space,
+    channel,
+    members,
+    activeMembers,
+    roles,
+    noRoleMembers,
+    stickers,
+    generateSidebarContent,
+  } = useChannelData({ spaceId, channelId });
+
+  // Get message handling
+  const {
+    messageList,
+    fetchPreviousPage,
+    canDeleteMessages,
+    mapSenderToUser,
+    isSpaceOwner,
+  } = useChannelMessages({ spaceId, channelId, roles, members });
+
+  // Handle message submission
+  const handleSubmitMessage = useCallback(async (message: string | object, inReplyTo?: string) => {
+    await submitChannelMessage(
+      spaceId,
+      channelId,
+      message,
+      queryClient,
+      user.currentPasskeyInfo!,
+      inReplyTo
+    );
+  }, [spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo]);
+
+  // Handle sticker submission
+  const handleSubmitSticker = useCallback(async (stickerId: string, inReplyTo?: string) => {
+    const stickerMessage: StickerMessage = {
+      senderId: user.currentPasskeyInfo?.address,
+      type: 'sticker',
+      stickerId: stickerId,
+    } as StickerMessage;
+    await submitChannelMessage(
+      spaceId,
+      channelId,
+      stickerMessage,
+      queryClient,
+      user.currentPasskeyInfo!,
+      inReplyTo
+    );
+  }, [spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo]);
+
+  // Message composer hook
+  const composer = useMessageComposer({
+    type: 'channel',
+    onSubmitMessage: handleSubmitMessage,
+    onSubmitSticker: handleSubmitSticker,
+    hasStickers: true,
+  });
 
   // Clean up sidebar content when component unmounts
   React.useEffect(() => {
@@ -79,273 +107,51 @@ const Channel: React.FC<ChannelProps> = ({
       setRightSidebarContent(null);
     };
   }, [setRightSidebarContent]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showStickers, setShowStickers] = useState(false);
-  const [inReplyTo, setInReplyTo] = useState<MessageType>();
-  const editor = useRef<HTMLTextAreaElement>(null);
-  const { submitChannelMessage } = useMessageDB();
-  const { data: spaceMembers } = useSpaceMembers({ spaceId });
-  const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
-  const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
-  const [fileType, setFileType] = React.useState<string>();
-  const [fileError, setFileError] = useState<string | null>(null);
-  const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
-    accept: {
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg', '.jpeg'],
-      'image/gif': ['.gif'],
-    },
-    minSize: 0,
-    maxSize: 2 * 1024 * 1024,
-    onDropRejected: (fileRejections) => {
-      for (const rejection of fileRejections) {
-        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          setFileError(t`File cannot be larger than 2MB`);
-        } else {
-          setFileError(t`File rejected`);
-        }
-      }
-    },
-    onDropAccepted: () => {
-      setFileError(null);
-    },
-  });
-
-  const compressImage = async function (file: FileWithPath) {
-    return new Promise<File>((resolve, reject) => {
-      if (acceptedFiles[0].type == 'image/gif') {
-        resolve(acceptedFiles[0] as File);
-      } else {
-        new Compressor(file, {
-          quality: 0.8,
-          convertSize: Infinity,
-          retainExif: false,
-          mimeType: file.type,
-          success(result: Blob) {
-            let newFile = new File([result], acceptedFiles[0].name, {
-              type: result.type,
-            });
-
-            resolve(newFile);
-          },
-          error(err) {
-            reject(err);
-          },
-        });
-      }
-    });
-  };
-
-  React.useEffect(() => {
-    if (acceptedFiles.length > 0) {
-      (async () => {
-        const file = await compressImage(acceptedFiles[0]);
-        setFileData(await file.arrayBuffer());
-        setFileType(file.type);
-      })();
-    }
-  }, [acceptedFiles]);
-
-  const members = useMemo(() => {
-    return spaceMembers.reduce(
-      (prev, curr) =>
-        Object.assign(prev, {
-          [curr.user_address]: {
-            address: curr.user_address,
-            userIcon: curr.user_icon,
-            displayName: curr.display_name,
-          },
-        }),
-      {} as {
-        [address: string]: {
-          address: string;
-          userIcon?: string;
-          displayName?: string;
-        };
-      }
-    );
-  }, [spaceMembers]);
-
-  const activeMembers = useMemo(() => {
-    return spaceMembers.reduce(
-      (prev, curr) =>
-        Object.assign(prev, {
-          [curr.user_address]: {
-            address: curr.user_address,
-            userIcon: curr.user_icon,
-            displayName: curr.display_name,
-            left: curr.inbox_address === '',
-          },
-        }),
-      {} as {
-        [address: string]: {
-          address: string;
-          userIcon?: string;
-          displayName?: string;
-          left: boolean;
-        };
-      }
-    );
-  }, [spaceMembers]);
-
-  const roles = useMemo(() => {
-    return space?.roles ?? [];
-  }, [space]);
-
-  const noRoleMembers = useMemo(() => {
-    return Object.keys(activeMembers)
-      .filter((s) => !roles.flatMap((r) => r.members).includes(s))
-      .filter((r) => !activeMembers[r].left);
-  }, [roles, activeMembers]);
 
   // Set sidebar content in context
   React.useEffect(() => {
+    const sections = generateSidebarContent();
     const sidebarContent = (
       <>
-        {roles
-          .filter((r) => r.members.length != 0)
-          .map((r) => {
-            const role = r;
-            const roleMembers = Object.keys(activeMembers).filter((s) =>
-              role.members.includes(s)
-            );
-            return (
-              <div className="flex flex-col mb-2" key={'role-' + r}>
-                <div className="font-semibold ml-[1pt] mb-1 text-xs">
-                  {i18n._('{role} - {count}', {
-                    role: role.displayName.toUpperCase(),
-                    count: roleMembers.length,
-                  })}
-                </div>
-                {roleMembers.map((s) => (
-                  <div
-                    key={s}
-                    className="w-full flex flex-row items-center mb-2"
-                  >
-                    <div
-                      className="rounded-full w-[40px] h-[40px]"
-                      style={{
-                        backgroundPosition: 'center',
-                        backgroundSize: 'cover',
-                        backgroundImage: members[s]?.userIcon?.includes(
-                          DefaultImages.UNKNOWN_USER
-                        )
-                          ? 'var(--unknown-icon)'
-                          : `url(${members[s]?.userIcon})`,
-                      }}
-                    />
-                    <div className="flex flex-col ml-2 text-main">
-                      <span className="text-md font-bold">
-                        {members[s]?.displayName}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            );
-          })}
-        <div className="flex flex-col">
-          <div className="font-semibold ml-[1pt] mb-1 text-xs">
-            {i18n._('No Role - {count}', { count: noRoleMembers.length })}
-          </div>
-          {noRoleMembers.map((s) => (
-            <div key={s} className="w-full flex flex-row items-center mb-2">
-              <div
-                className="rounded-full w-[40px] h-[40px]"
-                style={{
-                  backgroundPosition: 'center',
-                  backgroundSize: 'cover',
-                  backgroundImage: `url(${members[s].userIcon})`,
-                }}
-              />
-              <div className="flex flex-col ml-2 text-main">
-                <span className="text-md font-bold">
-                  {members[s].displayName}
-                </span>
-              </div>
+        {sections.map((section) => (
+          <div className="flex flex-col mb-2" key={section.title}>
+            <div className="font-semibold ml-[1pt] mb-1 text-xs">
+              {section.title}
             </div>
-          ))}
-        </div>
+            {section.members.map((member) => (
+              <div
+                key={member.address}
+                className="w-full flex flex-row items-center mb-2"
+              >
+                <div
+                  className="rounded-full w-[40px] h-[40px]"
+                  style={{
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                    backgroundImage: member.userIcon?.includes('var(--unknown-icon)')
+                      ? member.userIcon
+                      : `url(${member.userIcon})`,
+                  }}
+                />
+                <div className="flex flex-col ml-2 text-main">
+                  <span className="text-md font-bold">
+                    {member.displayName}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
       </>
     );
     setRightSidebarContent(sidebarContent);
-  }, [roles, activeMembers, members, noRoleMembers, setRightSidebarContent]);
-
-  const channel = useMemo(() => {
-    return space?.groups
-      .find((g) => g.channels.find((c) => c.channelId == channelId))
-      ?.channels.find((c) => c.channelId == channelId);
-  }, [space, channelId]);
-
-  const mapSenderToUser = (senderId: string) => {
-    return (
-      members[senderId] || {
-        displayName: t`Unknown User`,
-        userIcon: DefaultImages.UNKNOWN_USER,
-      }
-    );
-  };
-
-  const messageList = React.useMemo(() => {
-    return messages.pages.flatMap(
-      (p) => (p as { messages: MessageType[] }).messages as MessageType[]
-    );
-  }, [messages, fetchPreviousPage]);
+  }, [generateSidebarContent, setRightSidebarContent]);
 
   useEffect(() => {
     if (!init) {
       setTimeout(() => setInit(true), 200);
     }
   }, []);
-
-  const submit = async (message: string | object) => {
-    await submitChannelMessage(
-      spaceId,
-      channelId,
-      message,
-      queryClient,
-      user.currentPasskeyInfo!
-    );
-  };
-
-  const canDeleteMessages = (message: MessageType) => {
-    return !!roles.find(
-      (r) =>
-        r.permissions.includes('message:delete') &&
-        r.members.includes(user.currentPasskeyInfo!.address)
-    );
-  };
-
-  const stickers = useMemo(() => {
-    return (space?.stickers ?? []).reduce(
-      (prev, curr) => Object.assign(prev, { [curr.id]: curr }),
-      {}
-    );
-  }, [space]);
-
-  const sendSticker = async (stickerId: string) => {
-    console.log('Sending sticker:', stickerId);
-    setIsSubmitting(true);
-    submitChannelMessage(
-      spaceId,
-      channelId,
-      {
-        senderId: user.currentPasskeyInfo?.address,
-        type: 'sticker',
-        stickerId: stickerId,
-      } as StickerMessage,
-      queryClient,
-      user.currentPasskeyInfo!,
-      inReplyTo?.messageId
-    ).finally(() => {
-      setIsSubmitting(false);
-    });
-    setInReplyTo(undefined);
-    setShowStickers(false);
-  };
-
-  const rowCount =
-    state.pendingMessage.split('').filter((c) => c == '\n').length + 1;
 
   return (
     <div className="chat-container">
@@ -354,20 +160,24 @@ const Channel: React.FC<ChannelProps> = ({
           <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2 lg:mb-0">
             <div className="flex flex-row items-center gap-2">
               {!isDesktop && (
-                <FontAwesomeIcon
+                <Button
+                  type="unstyled"
                   onClick={toggleLeftSidebar}
-                  className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"
-                  icon={faBars}
+                  className="w-6 h-6 p-2 !rounded-md cursor-pointer hover:bg-surface-6 flex items-center justify-center"
+                  iconName="bars"
+                  iconOnly
                 />
               )}
               <GlobalSearch className="channel-search flex-1 lg:flex-none max-w-xs lg:max-w-none" />
             </div>
-            <FontAwesomeIcon
+            <Button
+              type="unstyled"
               onClick={() => {
-                setShowUsers((prev) => !prev);
+                setShowUsers(!showUsers);
               }}
-              className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"
-              icon={faUsers}
+              className="w-6 h-6 p-2 !rounded-md cursor-pointer hover:bg-surface-6 flex items-center justify-center [&_.quorum-button-icon-element]:text-sm"
+              iconName="users"
+              iconOnly
             />
           </div>
           <div className="flex-1 min-w-0 lg:order-1">
@@ -393,12 +203,12 @@ const Channel: React.FC<ChannelProps> = ({
             roles={roles}
             canDeleteMessages={canDeleteMessages}
             isSpaceOwner={isSpaceOwner}
-            editor={editor}
+            editor={textareaRef}
             messageList={messageList}
-            setInReplyTo={setInReplyTo}
+            setInReplyTo={composer.setInReplyTo}
             customEmoji={space?.emojis}
             members={members}
-            submitMessage={submit}
+            submitMessage={handleSubmitMessage}
             kickUserAddress={kickUserAddress}
             setKickUserAddress={setKickUserAddress}
             fetchPreviousPage={() => {
@@ -406,24 +216,24 @@ const Channel: React.FC<ChannelProps> = ({
             }}
           />
         </div>
-        {(fileError || inReplyTo) && (
+        {(composer.fileError || composer.inReplyTo) && (
           <div className="flex flex-col w-full px-[11px]">
-            {fileError && (
+            {composer.fileError && (
               <div className="text-sm text-danger ml-1 mt-3 mb-1">
-                {fileError}
+                {composer.fileError}
               </div>
             )}
-            {inReplyTo && (
+            {composer.inReplyTo && (
               <div
-                onClick={() => setInReplyTo(undefined)}
+                onClick={() => composer.setInReplyTo(undefined)}
                 className="rounded-t-lg px-4 cursor-pointer py-1 text-sm flex flex-row justify-between bg-[var(--surface-4)]"
               >
                 {i18n._('Replying to {user}', {
-                  user: mapSenderToUser(inReplyTo.content.senderId).displayName,
+                  user: mapSenderToUser(composer.inReplyTo.content.senderId).displayName,
                 })}
                 <span
                   className="message-in-reply-dismiss"
-                  onClick={() => setInReplyTo(undefined)}
+                  onClick={() => composer.setInReplyTo(undefined)}
                 >
                   ×
                 </span>
@@ -432,175 +242,77 @@ const Channel: React.FC<ChannelProps> = ({
           </div>
         )}
 
-        {fileData && (
+        {composer.fileData && (
           <div className="mx-3 mt-2">
             <div className="p-2 relative rounded-lg bg-[rgba(0,0,0,0.2)] inline-block">
-              <FontAwesomeIcon
-                className="absolute p-1 px-2 m-1 bg-[rgba(0,0,0,0.6)] cursor-pointer rounded-full"
-                size={'xs'}
-                icon={faX}
-                onClick={() => {
-                  setFileData(undefined);
-                  setFileType(undefined);
-                }}
-              />
+              <Button
+                className="absolute p-1 px-2 m-1 bg-[rgba(0,0,0,0.6)] rounded-full"
+                type="subtle"
+                size="small"
+                onClick={composer.clearFile}
+              >
+                <Icon name="x" size="xs" />
+              </Button>
               <img
                 style={{ maxWidth: 140, maxHeight: 140 }}
                 src={
                   'data:' +
-                  fileType +
+                  composer.fileType +
                   ';base64,' +
-                  Buffer.from(fileData).toString('base64')
+                  Buffer.from(composer.fileData).toString('base64')
                 }
               />
             </div>
           </div>
         )}
-        <div
-          {...getRootProps()}
-          className="message-editor-container pr-6 lg:pr-8"
-        >
-          <div
+        <div className="message-editor-container pr-6 lg:pr-8">
+          <FlexRow
             className={
-              'message-editor w-full flex items-center gap-2 ' +
-              (inReplyTo ? 'message-editor-reply' : '')
+              'message-editor w-full items-center gap-2 ' +
+              (composer.inReplyTo ? 'message-editor-reply' : '')
             }
           >
-            <div
-              className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
-              data-tooltip-id="attach-image-tooltip"
-            >
-              <input {...getInputProps()} />
-              <FontAwesomeIcon className="text-subtle" icon={faPlus} />
+            <div {...composer.getRootProps()} data-tooltip-id="attach-image-tooltip">
+              <input {...composer.getInputProps()} />
+              <Button
+                type="unstyled"
+                onClick={() => {}} // onClick handled by dropzone
+                className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
+                iconName="plus"
+                iconOnly
+              />
             </div>
-            <textarea
-              ref={editor}
-              className="flex-1 bg-transparent border-0 outline-0 resize-none py-1 placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap"
+            <MessageTextArea
+              value={composer.pendingMessage}
+              onChange={composer.setPendingMessage}
+              onKeyDown={composer.handleKeyDown}
               placeholder={i18n._('Send a message to #{channel_name}', {
                 channel_name: channel?.channelName ?? '',
               })}
-              rows={
-                rowCount > 4
-                  ? 4
-                  : pendingMessage == ''
-                    ? 1
-                    : Math.min(
-                        4,
-                        Math.max(
-                          rowCount,
-                          Math.round(editor.current!.scrollHeight / 28)
-                        )
-                      )
-              }
-              value={pendingMessage}
-              onChange={(e) => setPendingMessage(e.target.value)}
-              onClick={(e) => e.stopPropagation()}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  if ((pendingMessage || fileData) && !isSubmitting) {
-                    setIsSubmitting(true);
-                    setInReplyTo(undefined);
-                    if (pendingMessage) {
-                      submitChannelMessage(
-                        spaceId,
-                        channelId,
-                        pendingMessage,
-                        queryClient,
-                        user.currentPasskeyInfo!,
-                        inReplyTo?.messageId
-                      ).finally(() => {
-                        setIsSubmitting(false);
-                      });
-                    }
-                    if (fileData) {
-                      submitChannelMessage(
-                        spaceId,
-                        channelId,
-                        {
-                          senderId: user.currentPasskeyInfo!.address,
-                          type: 'embed',
-                          imageUrl:
-                            'data:' +
-                            fileType +
-                            ';base64,' +
-                            Buffer.from(fileData).toString('base64'),
-                        } as EmbedMessage,
-                        queryClient,
-                        user.currentPasskeyInfo!,
-                        inReplyTo?.messageId
-                      ).finally(() => {
-                        setIsSubmitting(false);
-                      });
-                    }
-                    setPendingMessage('');
-                    setFileData(undefined);
-                    setFileType(undefined);
-                  }
-                  e.preventDefault();
-                }
-              }}
+              calculateRows={composer.calculateRows}
             />
-            <div
+            <Button
+              type="unstyled"
               className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowStickers(true);
+              onClick={() => {
+                composer.setShowStickers(true);
               }}
               data-tooltip-id="add-sticker-tooltip"
-            >
-              <FontAwesomeIcon className="text-subtle" icon={faSmile} />
-            </div>
+              iconName="smile"
+              iconOnly
+            />
             <div
               className="hover:bg-accent-400 cursor-pointer w-8 h-8 rounded-full bg-accent bg-center bg-no-repeat bg-[url('/send.png')] bg-[length:60%] flex-shrink-0"
-              onClick={(e) => {
-                e.stopPropagation();
-                if ((pendingMessage || fileData) && !isSubmitting) {
-                  setIsSubmitting(true);
-                  setInReplyTo(undefined);
-                  if (pendingMessage) {
-                    submitChannelMessage(
-                      spaceId,
-                      channelId,
-                      pendingMessage,
-                      queryClient,
-                      user.currentPasskeyInfo!,
-                      inReplyTo?.messageId
-                    ).finally(() => {
-                      setIsSubmitting(false);
-                    });
-                  }
-                  if (fileData) {
-                    submitChannelMessage(
-                      spaceId,
-                      channelId,
-                      {
-                        senderId: user.currentPasskeyInfo!.address,
-                        type: 'embed',
-                        imageUrl:
-                          'data:' +
-                          fileType +
-                          ';base64,' +
-                          Buffer.from(fileData).toString('base64'),
-                      } as EmbedMessage,
-                      queryClient,
-                      user.currentPasskeyInfo!,
-                      inReplyTo?.messageId
-                    ).finally(() => {
-                      setIsSubmitting(false);
-                    });
-                  }
-                  setPendingMessage('');
-                  setFileData(undefined);
-                  setFileType(undefined);
-                }
+              onClick={() => {
+                composer.submitMessage();
               }}
-            ></div>
-          </div>
+            />
+          </FlexRow>
         </div>
       </div>
 
       {/* Desktop sidebar - only visible on lg+ screens */}
-      <div
+      <Container
         className={
           'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-y-auto ' +
           'transition-transform duration-300 ease-in-out ' +
@@ -609,71 +321,36 @@ const Channel: React.FC<ChannelProps> = ({
             : 'hidden')
         }
       >
-        {roles
-          .filter((r) => r.members.length != 0)
-          .map((r) => {
-            const role = r;
-            const roleMembers = Object.keys(activeMembers).filter((s) =>
-              role.members.includes(s)
-            );
-            return (
-              <div className="flex flex-col mb-2" key={'role-' + r}>
-                <div className="font-semibold ml-[1pt] mb-1 text-xs">
-                  {i18n._('{role} - {count}', {
-                    role: role.displayName.toUpperCase(),
-                    count: roleMembers.length,
-                  })}
-                </div>
-                {roleMembers.map((s) => (
-                  <div
-                    key={s}
-                    className="w-full flex flex-row items-center mb-2"
-                  >
-                    <div
-                      className="rounded-full w-[40px] h-[40px]"
-                      style={{
-                        backgroundPosition: 'center',
-                        backgroundSize: 'cover',
-                        backgroundImage: members[s]?.userIcon?.includes(
-                          DefaultImages.UNKNOWN_USER
-                        )
-                          ? 'var(--unknown-icon)'
-                          : `url(${members[s]?.userIcon})`,
-                      }}
-                    />
-                    <div className="flex flex-col ml-2 text-main">
-                      <span className="text-md font-bold">
-                        {members[s]?.displayName}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            );
-          })}
-        <div className="flex flex-col">
-          <div className="font-semibold ml-[1pt] mb-1 text-xs">
-            {i18n._('No Role - {count}', { count: noRoleMembers.length })}
-          </div>
-          {noRoleMembers.map((s) => (
-            <div key={s} className="w-full flex flex-row items-center mb-2">
-              <div
-                className="rounded-full w-[40px] h-[40px]"
-                style={{
-                  backgroundPosition: 'center',
-                  backgroundSize: 'cover',
-                  backgroundImage: `url(${members[s].userIcon})`,
-                }}
-              />
-              <div className="flex flex-col ml-2 text-main">
-                <span className="text-md font-bold">
-                  {members[s].displayName}
-                </span>
-              </div>
+        {generateSidebarContent().map((section) => (
+          <div className="flex flex-col mb-2" key={section.title}>
+            <div className="font-semibold ml-[1pt] mb-1 text-xs">
+              {section.title}
             </div>
-          ))}
-        </div>
-      </div>
+            {section.members.map((member) => (
+              <div
+                key={member.address}
+                className="w-full flex flex-row items-center mb-2"
+              >
+                <div
+                  className="rounded-full w-[40px] h-[40px]"
+                  style={{
+                    backgroundPosition: 'center',
+                    backgroundSize: 'cover',
+                    backgroundImage: member.userIcon?.includes('var(--unknown-icon)')
+                      ? member.userIcon
+                      : `url(${member.userIcon})`,
+                  }}
+                />
+                <div className="flex flex-col ml-2 text-main">
+                  <span className="text-md font-bold">
+                    {member.displayName}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </Container>
 
       <ReactTooltip
         id="attach-image-tooltip"
@@ -687,40 +364,40 @@ const Channel: React.FC<ChannelProps> = ({
       />
 
       {/* Stickers panel - positioned at top level to avoid stacking context issues */}
-      {showStickers && (
+      {composer.showStickers && (
         <>
           <div
             className="fixed inset-0 top-16 z-[9990]"
-            onClick={() => setShowStickers(false)}
+            onClick={() => composer.setShowStickers(false)}
           />
           <div
             className={`fixed bottom-20 z-[9999] pointer-events-none ${showUsers ? 'right-[300px]' : 'right-6'} transition-all duration-300`}
           >
-            <div className="flex flex-col border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4 pointer-events-auto">
+            <Container className="flex flex-col border border-[var(--surface-5)] shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4 pointer-events-auto">
               <div className="font-bold p-2 h-[40px] border-b border-b-[#272026]">
                 Stickers
               </div>
               <div className="grid grid-cols-3 auto-rows-min gap-1 w-[300px] p-4 overflow-y-auto max-h-[359px]">
                 {space?.stickers.map((s) => {
                   return (
-                    <div
+                    <Button
                       key={'sticker-' + s.id}
-                      className="flex justify-center items-center w-[80px] h-[80px] cursor-pointer hover:bg-surface-6 hover:scale-105 transition-all duration-200 rounded-lg p-1 bg-surface-3"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        sendSticker(s.id);
+                      className="flex justify-center items-center w-[80px] h-[80px] hover:bg-surface-6 hover:scale-105 transition-all duration-200 rounded-lg p-1 bg-surface-3"
+                      onClick={() => {
+                        composer.submitSticker(s.id);
                       }}
+                      type="subtle"
                     >
                       <img
                         src={s.imgUrl}
                         className="max-w-full max-h-full object-contain rounded-md"
                         alt="sticker"
                       />
-                    </div>
+                    </Button>
                   );
                 })}
               </div>
-            </div>
+            </Container>
           </div>
         </>
       )}

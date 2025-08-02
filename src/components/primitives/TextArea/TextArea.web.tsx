@@ -9,6 +9,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
   variant = 'filled',
   onBlur,
   onFocus,
+  onKeyDown,
   rows = 3,
   minRows = 1,
   maxRows = 10,
@@ -87,6 +88,7 @@ export const TextArea: React.FC<TextAreaProps> = ({
         onChange={handleChange}
         onBlur={onBlur}
         onFocus={onFocus}
+        onKeyDown={onKeyDown}
         rows={autoResize ? undefined : rows}
         disabled={disabled}
         autoFocus={autoFocus}

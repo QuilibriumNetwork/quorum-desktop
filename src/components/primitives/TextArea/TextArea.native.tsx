@@ -11,6 +11,7 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
   variant = 'filled',
   onBlur,
   onFocus,
+  onKeyPress,
   rows = 3,
   minRows = 1,
   maxRows = 10,
@@ -132,6 +133,7 @@ export const TextArea: React.FC<TextAreaNativeProps> = ({
           onFocus?.();
         }}
         onContentSizeChange={handleContentSizeChange}
+        onKeyPress={onKeyPress}
         returnKeyType={returnKeyType}
         autoComplete={autoComplete}
         multiline={multiline}
