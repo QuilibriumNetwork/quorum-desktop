@@ -30,7 +30,7 @@ import { DefaultImages } from '../../utils';
 import { useLongPress } from '../../hooks/useLongPress';
 import { useModalContext } from '../context/ModalProvider';
 import { useMobile } from '../context/MobileProvider';
-import { useMessageActions, useEmojiPicker, useMessageInteractions } from '../../hooks';
+import { useMessageActions, useEmojiPicker, useMessageInteractions, useMessageFormatting } from '../../hooks';
 import MessageActions from './MessageActions';
 
 type MessageProps = {
@@ -60,12 +60,6 @@ type MessageProps = {
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
-const YTRegex = new RegExp(
-  /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu\.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]{11})((?:\?|\&)\S+)?$/
-);
-const InviteRegex = new RegExp(
-  /^((?:https?:)?\/\/?)?((?:www\.)?(?:qm\.one|app\.quorummessenger\.com))(\/(invite\/)?#(.*))$/
-);
 
 export const Message = ({
   customEmoji,
@@ -144,6 +138,14 @@ export const Message = ({
     onEmojiPickerUserProfileClick: emojiPicker.handleUserProfileClick,
   });
 
+  // Message formatting logic
+  const formatting = useMessageFormatting({
+    message,
+    stickers,
+    mapSenderToUser,
+    onImageClick: setOpenImage,
+  });
+
 
   let sender = mapSenderToUser(message.content?.senderId);
   const isHashTarget = useMemo(() => {
@@ -197,7 +199,7 @@ export const Message = ({
       id={`msg-${message.messageId}`}
       className={
         'text-base relative hover:bg-chat-hover flex flex-col ' +
-        (message.mentions?.memberIds.includes(user.currentPasskeyInfo!.address)
+        (formatting.isMentioned(user.currentPasskeyInfo!.address)
           ? ' message-mentions-you'
           : '') +
         (isHashTarget ? ' message-highlighted' : '')
@@ -393,104 +395,94 @@ export const Message = ({
             </span>
             <span className="message-timestamp">{displayedTimestmap}</span>
             {(() => {
-              if (message.content.type == 'post') {
-                let content = Array.isArray(message.content.text)
-                  ? message.content.text
-                  : message.content.text.split('\n');
-                return content.map((c, i) => {
-                  return (
-                    <div
-                      key={message.messageId + '-' + i}
-                      className="message-post-content break-words"
-                    >
-                      {c.split(' ').map((t, j) => {
-                        if (t.match(new RegExp(`^@<Qm[a-zA-Z0-9]+>$`))) {
-                          const mention = mapSenderToUser(
-                            t.substring(2, t.length - 1)
-                          );
-                          return (
-                            <React.Fragment
-                              key={message.messageId + '-' + i + '-' + j}
-                            >
-                              <span className={'message-name-mentions-you'}>
-                                {mention.displayName}
-                              </span>{' '}
-                            </React.Fragment>
-                          );
-                        }
+              const contentData = formatting.getContentData();
+              if (!contentData) return null;
 
-                        if (t.match(YTRegex)) {
-                          const group = t.match(YTRegex)![6];
-                          return (
-                            <div
-                              key={message.messageId + '-' + i + '-' + j}
-                              className="message-post-content"
-                            >
-                              <iframe
-                                width={'560'}
-                                height={'400'}
-                                src={'https://www.youtube.com/embed/' + group}
-                                allow="autoplay; encrypted-media"
-                                className="rounded-lg"
-                              ></iframe>
-                            </div>
-                          );
-                        }
-
-                        if (t.match(InviteRegex)) {
-                          return (
-                            <InviteLink
-                              key={message.messageId + '-' + j}
-                              inviteLink={t}
-                            />
-                          );
-                        }
-
+              if (contentData.type === 'post') {
+                return contentData.content.map((c, i) => (
+                  <div
+                    key={contentData.messageId + '-' + i}
+                    className="message-post-content break-words"
+                  >
+                    {c.split(' ').map((t, j) => {
+                      const tokenData = formatting.processTextToken(t, contentData.messageId, i, j);
+                      
+                      if (tokenData.type === 'mention') {
                         return (
-                          <React.Fragment
-                            key={message.messageId + '-' + i + '-' + j}
-                          >
-                            {linkify.test(t) ? (
-                              <a
-                                href={linkify.find(t)[0].href}
-                                className="text-accent-300 hover:text-accent-400 hover:underline"
-                                target="_blank"
-                                referrerPolicy="no-referrer"
-                              >
-                                {t}
-                              </a>
-                            ) : (
-                              <>{t}</>
-                            )}{' '}
+                          <React.Fragment key={tokenData.key}>
+                            <span className={'message-name-mentions-you'}>
+                              {tokenData.displayName}
+                            </span>{' '}
                           </React.Fragment>
                         );
-                      })}
-                    </div>
-                  );
-                });
-              } else if (message.content.type == 'embed') {
-                let content = message.content as {
-                  imageUrl?: string;
-                  videoUrl?: string;
-                  width?: string;
-                  height?: string;
-                };
+                      }
+
+                      if (tokenData.type === 'youtube') {
+                        return (
+                          <div
+                            key={tokenData.key}
+                            className="message-post-content"
+                          >
+                            <iframe
+                              width={'560'}
+                              height={'400'}
+                              src={'https://www.youtube.com/embed/' + tokenData.videoId}
+                              allow="autoplay; encrypted-media"
+                              className="rounded-lg"
+                            ></iframe>
+                          </div>
+                        );
+                      }
+
+                      if (tokenData.type === 'invite') {
+                        return (
+                          <InviteLink
+                            key={tokenData.key}
+                            inviteLink={tokenData.inviteLink}
+                          />
+                        );
+                      }
+
+                      if (tokenData.type === 'link') {
+                        return (
+                          <React.Fragment key={tokenData.key}>
+                            <a
+                              href={tokenData.url}
+                              className="text-accent-300 hover:text-accent-400 hover:underline"
+                              target="_blank"
+                              referrerPolicy="no-referrer"
+                            >
+                              {tokenData.text}
+                            </a>{' '}
+                          </React.Fragment>
+                        );
+                      }
+
+                      return (
+                        <React.Fragment key={tokenData.key}>
+                          {tokenData.text}{' '}
+                        </React.Fragment>
+                      );
+                    })}
+                  </div>
+                ));
+              } else if (contentData.type === 'embed') {
                 return (
-                  <div key={message.messageId} className="message-post-content">
-                    {content.videoUrl?.startsWith(
+                  <div key={contentData.messageId} className="message-post-content">
+                    {contentData.content.videoUrl?.startsWith(
                       'https://www.youtube.com/embed'
                     ) && (
                       <iframe
-                        width={content.width || '560'}
-                        height={content.height || '400'}
-                        src={content.videoUrl}
+                        width={contentData.content.width || '560'}
+                        height={contentData.content.height || '400'}
+                        src={contentData.content.videoUrl}
                         allow="autoplay; encrypted-media"
                         className="rounded-lg"
                       ></iframe>
                     )}
-                    {content.imageUrl && (
+                    {contentData.content.imageUrl && (
                       <img
-                        src={content.imageUrl}
+                        src={contentData.content.imageUrl}
                         style={{
                           maxWidth: 300,
                           maxHeight: 300,
@@ -498,25 +490,15 @@ export const Message = ({
                           cursor: 'pointer',
                         }}
                         className="rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer"
-                        onClick={(e) => {
-                          const img = e.currentTarget;
-                          if (
-                            (img.naturalWidth > 300 ||
-                              img.naturalHeight > 300) &&
-                            content.imageUrl
-                          ) {
-                            setOpenImage(content.imageUrl);
-                          }
-                        }}
+                        onClick={(e) => formatting.handleImageClick(e, contentData.content.imageUrl!)}
                       />
                     )}
                   </div>
                 );
-              } else if (message.content.type == 'sticker') {
-                const sticker = (stickers ?? {})[message.content.stickerId];
+              } else if (contentData.type === 'sticker') {
                 return (
                   <img
-                    src={sticker?.imgUrl}
+                    src={contentData.sticker?.imgUrl}
                     style={{ maxWidth: 300, maxHeight: 300 }}
                     className="rounded-lg"
                   />
