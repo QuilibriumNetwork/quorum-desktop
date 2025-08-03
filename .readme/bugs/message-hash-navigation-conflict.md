@@ -85,6 +85,7 @@ Added `hasProcessedHash` flag to prevent re-navigation, but issue persists. The 
 ### Git Bisect Investigation
 - Used git bisect to identify commit `210d4f6` as the first bad commit that introduced the bug
 - Multiple fix attempts created regressions (infinite scrolling, continuous flashing)
+- **Problematic fix attempt**: Commit `3cbc08b` ("Improve message hash navigation with state-based highlighting") introduced worse regressions including infinite scrolling loops
 - Reverted to stable baseline commit `46b28e3` before applying final fix
 
 ### Applied Fix
