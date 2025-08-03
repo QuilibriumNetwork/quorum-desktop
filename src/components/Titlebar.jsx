@@ -25,6 +25,8 @@ const CustomTitlebar = () => {
   };
 
   const macControls = () => {
+    const isDark = resolvedTheme === 'dark';
+    
     return (
       <div className="flex items-center gap-2 px-3 h-8">
         {/* Close button */}
@@ -32,23 +34,35 @@ const CustomTitlebar = () => {
           onClick={handleClose}
           className="w-3 h-3 flex items-center justify-center group"
         >
-          <div className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600"></div>
+          <div className={`w-3 h-3 rounded-full ${
+            isDark 
+              ? 'bg-red-700 hover:bg-red-600' 
+              : 'bg-red-500 hover:bg-red-600'
+          }`}></div>
         </div>
 
         {/* Minimize button */}
         <div
           onClick={handleMinimize}
-          className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 flex items-center justify-center group"
+          className="w-3 h-3 flex items-center justify-center group"
         >
-          <div className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600"></div>
+          <div className={`w-3 h-3 rounded-full ${
+            isDark 
+              ? 'bg-yellow-700 hover:bg-yellow-600' 
+              : 'bg-yellow-500 hover:bg-yellow-600'
+          }`}></div>
         </div>
 
         {/* Maximize button */}
         <div
           onClick={handleMaximize}
-          className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center group"
+          className="w-3 h-3 flex items-center justify-center group"
         >
-          <div className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600"></div>
+          <div className={`w-3 h-3 rounded-full ${
+            isDark 
+              ? 'bg-green-700 hover:bg-green-600' 
+              : 'bg-green-500 hover:bg-green-600'
+          }`}></div>
         </div>
       </div>
     );
