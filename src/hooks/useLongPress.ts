@@ -41,7 +41,7 @@ export const useLongPress = (
 
   const start = useCallback(
     (event: React.TouchEvent | React.MouseEvent) => {
-      if (shouldPreventDefault && event.target) {
+      if (shouldPreventDefault && event.target && event.cancelable) {
         event.preventDefault();
       }
 

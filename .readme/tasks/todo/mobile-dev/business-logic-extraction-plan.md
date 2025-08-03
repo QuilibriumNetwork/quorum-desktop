@@ -62,12 +62,12 @@
 - [x] MessageComposer.tsx 
 
 - [x] DirectMessage.tsx 
-Analyze the component carefully. we have already done a big refractor on Channel.tsx , which has similarities with DirectMessage.tsx (some lessons learned you can find here .readme/tasks/done/channel-business-logic-extraction-lessons.md).
-For Channel.tsc we have also extracted the textarea ina  dedicated component MessageComposer.tsx > one interesting thing to look into is if we can make this componend shareable between Channel.tsx and DirectMessage.tsx 
-Before starting any logic extraction, report your analysius results on all of the above.
 
 
 #### Message.tsx 
+This  avery big and complex component. I "think" it si shared between DirectMessage and Channel. Analyze the component carefully. If you think it coudl benefit fomr eing scomosed in smaller components, please advice. After you finish your detailed analysis of whatcan be done to extract all logic and add our primitves, report back.
+
+There could me more logic to extract compared to what is listed below:
 - [ ] Extract `useMessageActions` hook
 - [ ] Extract `useEmojiPicker` hook
 - [ ] Extract `useMessageRendering` hook

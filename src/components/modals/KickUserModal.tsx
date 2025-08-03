@@ -20,7 +20,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
   }, [props.visible, resetConfirmation]);
 
   return (
-    <Modal visible={props.visible} onClose={props.onClose} title={t`Kick User`}>
+    <Modal visible={props.visible} onClose={props.onClose} title={t`Kick User`} size='small'>
       <Container width="full" maxWidth="400px" margin="auto">
         <Container margin="none" className="mb-4 text-left max-sm:text-center">
           <Text 
