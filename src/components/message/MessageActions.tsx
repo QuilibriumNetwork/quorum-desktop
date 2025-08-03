@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faFaceSmileBeam,
-  faReply,
-  faTrash,
-  faLink,
-} from '@fortawesome/free-solid-svg-icons';
 import { Message as MessageType } from '../../api/quorumApi';
-import { Tooltip } from '../primitives';
+import { Tooltip, Icon } from '../primitives';
 import { useQuickReactions } from '../../hooks/business/messages';
 import { t } from '@lingui/core/macro';
 
@@ -28,7 +21,6 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   message,
   userAddress,
   canUserDelete,
-  height,
   onReaction,
   onReply,
   onCopyLink,
@@ -81,7 +73,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
         disabled={!hoveredAction}
       >
         <div
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
             return false;
           }}
@@ -113,13 +105,13 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
 
           {/* More reactions */}
           <div
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               onMoreReactions(e.clientY);
             }}
             onMouseEnter={() => setHoveredAction('emoji')}
             className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
           >
-            <FontAwesomeIcon icon={faFaceSmileBeam} />
+            <Icon name="face-smile-beam" size="sm" />
           </div>
 
           {/* Reply */}
@@ -128,7 +120,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             onMouseEnter={() => setHoveredAction('reply')}
             className="w-5 mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
           >
-            <FontAwesomeIcon icon={faReply} />
+            <Icon name="reply" size="sm" />
           </div>
 
           {/* Copy link */}
@@ -137,7 +129,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             onMouseEnter={() => setHoveredAction('copy')}
             className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
           >
-            <FontAwesomeIcon icon={faLink} />
+            <Icon name="link" size="sm" />
           </div>
 
           {/* Delete (if user can delete) */}
@@ -149,8 +141,9 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
                 onMouseEnter={() => setHoveredAction('delete')}
                 className="w-5 text-center transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
-                <FontAwesomeIcon
-                  icon={faTrash}
+                <Icon
+                  name="trash"
+                  size="sm"
                   className="text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125"
                 />
               </div>
