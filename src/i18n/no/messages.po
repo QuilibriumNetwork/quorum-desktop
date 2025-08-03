@@ -15,77 +15,74 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:88
-msgid "File cannot be larger than {maxFileSize}"
-msgstr "Filen kan ikke være større enn {maxFileSize}"
-
-#. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:313
-msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "Profilbildet ditt må være {maxFileSize} eller mindre og må ha filtypen PNG, JPG eller JPEG."
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:185
-msgid "{user} has joined"
-msgstr "{user} har blitt med"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:187
-msgid "{user} has left"
-msgstr "{user} har forlatt"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:189
-msgid "{user} has been kicked"
-msgstr "{user} har blitt sparket"
-
-#. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:340
-#: src/components/channel/Channel.tsx:420
-msgid "Replying to {user}"
-msgstr "Svaret til {user}"
-
-#. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:409
-msgid "Send a message to {user}"
-msgstr "Send en melding til {user}"
-
-#. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:214
-#: src/components/channel/Channel.tsx:621
+#: src/hooks/business/channels/useChannelData.ts:89
 msgid "{role} - {count}"
 msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:248
-#: src/components/channel/Channel.tsx:655
+#: src/hooks/business/channels/useChannelData.ts:103
 msgid "No Role - {count}"
 msgstr "Ingen rolle - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:478
+#: src/components/onboarding/Onboarding.tsx:87
+msgid "File cannot be larger than {maxFileSize}"
+msgstr "Filen kan ikke være større enn {maxFileSize}"
+
+#. js-lingui-explicit-id
+#: src/components/onboarding/Onboarding.tsx:323
+msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+msgstr "Profilbildet ditt må være {maxFileSize} eller mindre og må ha filtypen PNG, JPG eller JPEG."
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:82
+msgid "Replying to {user}"
+msgstr "Svaret til {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:167
+msgid "{user} has joined"
+msgstr "{user} har blitt med"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:169
+msgid "{user} has left"
+msgstr "{user} har forlatt"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:171
+msgid "{user} has been kicked"
+msgstr "{user} har blitt sparket"
+
+#. js-lingui-explicit-id
+#: src/components/direct/DirectMessage.tsx:319
+msgid "Send a message to {user}"
+msgstr "Send en melding til {user}"
+
+#. js-lingui-explicit-id
+#: src/components/channel/Channel.tsx:245
 msgid "Send a message to #{channel_name}"
 msgstr "Send en melding til #{channel_name}"
 
 #. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:225
+#: src/components/search/SearchResults.tsx:121
 msgid "{0} result"
 msgstr "{0} resultat"
 
 #. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:226
+#: src/components/search/SearchResults.tsx:122
 msgid "{0} results"
 msgstr "{0} resultater"
 
-#: src/components/direct/DirectMessageContactsList.tsx:63
+#: src/components/direct/DirectMessageContactsList.tsx:45
 msgid "+ Add a friend"
 msgstr "Legg til en venn"
 
-#: src/components/modals/UserSettingsModal.tsx:419
+#: src/components/modals/UserSettingsModal.tsx:231
 msgid "Account Address"
 msgstr "Kontoadresse"
 
-#: src/components/channel/ChannelEditor.tsx:136
+#: src/components/channel/ChannelEditor.tsx:36
 msgid "Add Channel"
 msgstr ""
 
@@ -93,55 +90,55 @@ msgstr ""
 msgid "Add friend"
 msgstr "Legg til venn"
 
-#: src/components/channel/GroupEditor.tsx:110
-#: src/components/channel/ChannelList.tsx:100
+#: src/components/channel/GroupEditor.tsx:34
+#: src/components/channel/ChannelList.tsx:81
 msgid "Add Group"
 msgstr "Legg til gruppe"
 
-#: src/components/channel/SpaceEditor.tsx:769
+#: src/components/channel/SpaceEditor.tsx:498
 msgid "Add Role"
 msgstr "Legg til rolle"
 
 #~ msgid "Add Space"
 #~ msgstr "Legg til rom"
 
-#: src/components/channel/Channel.tsx:684
+#: src/components/message/MessageComposer.tsx:166
 msgid "add sticker"
 msgstr "legg til klistremerke"
 
 #~ msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
 #~ msgstr "Legg til opptil 50 tilpassede emoji. Tilpassede emoji kan kun brukes innenfor et rom."
 
-#: src/components/channel/SpaceEditor.tsx:892
+#: src/components/channel/SpaceEditor.tsx:579
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 256kB."
 msgstr "Legg til opptil 50 tilpassede emoji. Tilpassede emoji kan kun brukes innenfor en Space. Du kan laste opp PNG, JPG eller GIF, maks 256kB."
 
 #~ msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space."
 #~ msgstr "Legg til opptil 50 tilpassede klistremerker. Tilpassede klistremerker kan kun brukes innenfor et rom."
 
-#: src/components/channel/SpaceEditor.tsx:990
+#: src/components/channel/SpaceEditor.tsx:665
 msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 256kB."
 msgstr "Legg til opptil 50 tilpassede klistremerker. Tilpassede klistremerker kan kun brukes innenfor en Space. Du kan laste opp PNG, JPG eller GIF, maks 256kB."
 
-#: src/components/modals/NewDirectMessageModal.tsx:66
+#: src/hooks/business/validation/useAddressValidation.ts:68
 msgid "Addresses must be exactly 46 characters long."
 msgstr "Adresser må være nøyaktig 46 tegn lange."
 
-#: src/components/modals/NewDirectMessageModal.tsx:72
+#: src/hooks/business/validation/useAddressValidation.ts:80
 msgid "Addresses start with \"Qm\"."
 msgstr "Adresser starter med \"Qm\"."
 
-#: src/components/modals/UserSettingsModal.tsx:550
+#: src/components/modals/UserSettingsModal.tsx:362
 msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
 msgstr "Juster sikkerhetsrelaterte innstillinger, som kan påvirke brukeropplevelsen, men øke sikkerheten til Quorum-kontoen din."
 
-#: src/components/modals/CreateSpaceModal.tsx:264
+#: src/components/modals/CreateSpaceModal.tsx:190
 msgid "Advanced Settings"
 msgstr "Avanserte innstillinger"
 
-#: src/components/modals/UserSettingsModal.tsx:327
-#: src/components/modals/UserSettingsModal.tsx:359
-#: src/components/modals/UserSettingsModal.tsx:666
+#: src/components/modals/UserSettingsModal.tsx:147
+#: src/components/modals/UserSettingsModal.tsx:179
+#: src/components/modals/UserSettingsModal.tsx:483
 msgid "Appearance"
 msgstr "Utseende"
 
@@ -149,20 +146,19 @@ msgstr "Utseende"
 #~ msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
 #~ msgstr "Er du sikker på at du vil forlate {0}? Du vil ikke kunne bli med igjen med mindre du blir invitert på nytt."
 
-#: src/components/modals/LeaveSpaceModal.tsx:35
+#: src/components/modals/LeaveSpaceModal.tsx:41
 msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited."
 msgstr ""
 
-#: src/components/channel/ChannelEditor.tsx:167
+#: src/components/channel/ChannelEditor.tsx:62
 msgid "Are you sure? This channel contains messages. Deleting it will cause all content to be lost forever!"
 msgstr "Er du sikker? Denne kanalen inneholder meldinger. Å slette den vil føre til at alt innhold går tapt for alltid!"
 
-#: src/components/channel/GroupEditor.tsx:127
+#: src/components/channel/GroupEditor.tsx:51
 msgid "Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!"
 msgstr "Er du sikker? Denne gruppen inneholder kanaler med meldinger. Å slette den vil føre til at alt innhold går tapt for alltid!"
 
-#: src/components/direct/DirectMessage.tsx:576
-#: src/components/channel/Channel.tsx:679
+#: src/components/message/MessageComposer.tsx:130
 msgid "attach image"
 msgstr "vedlegg bilde"
 
@@ -170,7 +166,7 @@ msgstr "vedlegg bilde"
 msgid "Away"
 msgstr "Borte"
 
-#: src/components/channel/SpaceEditor.tsx:1189
+#: src/components/channel/SpaceEditor.tsx:851
 msgid "Be patient, this can take a few seconds..."
 msgstr "Vær tålmodig, dette kan ta noen sekunder..."
 
@@ -178,7 +174,7 @@ msgstr "Vær tålmodig, dette kan ta noen sekunder..."
 msgid "Busy"
 msgstr "Opptatt"
 
-#: src/components/channel/SpaceEditor.tsx:840
+#: src/components/channel/SpaceEditor.tsx:548
 msgid "Can delete messages?"
 msgstr "Kan slette meldinger?"
 
@@ -186,28 +182,28 @@ msgstr "Kan slette meldinger?"
 #~ msgstr "Avbryt"
 
 #. placeholder {0}: Math.min(10, remaining)
-#: src/components/channel/SpaceEditor.tsx:241
-#: src/components/channel/SpaceEditor.tsx:276
+#: src/hooks/business/ui/useCustomAssets.ts:92
+#: src/hooks/business/ui/useCustomAssets.ts:134
 msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:695
+#: src/components/modals/UserSettingsModal.tsx:508
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 msgstr "Endringer gjøres automatisk, men den aktive siden kan hende ikke er oppdatert. Oppdater siden for å bruke det nye språket."
 
-#: src/components/channel/ChannelEditor.tsx:143
+#: src/components/channel/ChannelEditor.tsx:44
 msgid "Channel Name"
 msgstr "Kanalnavn"
 
-#: src/components/channel/ChannelEditor.tsx:157
+#: src/components/channel/ChannelEditor.tsx:53
 msgid "Channel Topic"
 msgstr "Kanaltema"
 
-#: src/components/modals/UserSettingsModal.tsx:668
+#: src/components/modals/UserSettingsModal.tsx:485
 msgid "Choose your preferred theme for Quorum."
 msgstr "Velg ditt foretrukne tema for Quorum."
 
-#: src/components/search/SearchBar.tsx:186
+#: src/components/search/SearchBar.tsx:121
 msgid "Clear search"
 msgstr "Fjern søk"
 
@@ -215,28 +211,28 @@ msgstr "Fjern søk"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "Fjerner varsler med tag: {tag}"
 
-#: src/components/onboarding/Onboarding.tsx:242
-#: src/components/modals/LeaveSpaceModal.tsx:56
-#: src/components/modals/KickUserModal.tsx:57
-#: src/components/channel/SpaceEditor.tsx:1297
-#: src/components/channel/GroupEditor.tsx:158
-#: src/components/channel/ChannelEditor.tsx:198
+#: src/components/onboarding/Onboarding.tsx:250
+#: src/components/modals/LeaveSpaceModal.tsx:55
+#: src/components/modals/KickUserModal.tsx:39
+#: src/components/channel/SpaceEditor.tsx:942
+#: src/components/channel/GroupEditor.tsx:71
+#: src/components/channel/ChannelEditor.tsx:82
 msgid "Click again to confirm"
 msgstr "Klikk igjen for å bekrefte"
 
-#: src/components/channel/SpaceEditor.tsx:744
+#: src/components/channel/SpaceEditor.tsx:485
 msgid "Click on the role name and tag to edit them."
 msgstr "Klikk på rollenavnet og taggen for å redigere dem."
 
-#: src/components/onboarding/Onboarding.tsx:207
+#: src/components/onboarding/Onboarding.tsx:215
 msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
 msgstr "Klikk på knappen nedenfor for å lage en sikkerhetskopi av nøkkelinfoen din, for når den er borte, er den borte for alltid. Du kan bli bedt om å autentisere igjen."
 
-#: src/components/ClickToCopyContent.tsx:46
+#: src/components/ClickToCopyContent.tsx:40
 msgid "Click to copy"
 msgstr "Klikk for å kopiere"
 
-#: src/components/MobileDrawer.tsx:148
+#: src/components/MobileDrawer.tsx:150
 msgid "Close"
 msgstr "Lukk"
 
@@ -247,29 +243,29 @@ msgstr "Lukk"
 msgid "Connecting"
 msgstr "Tilkobler"
 
-#: src/components/ClickToCopyContent.tsx:170
-#: src/components/message/Message.tsx:282
+#: src/components/ClickToCopyContent.tsx:141
+#: src/components/ClickToCopyContent.tsx:183
+#: src/components/message/MessageActions.tsx:56
 msgid "Copied!"
 msgstr "Kopiert!"
 
 #: src/components/user/UserStatus.tsx:48
-#: src/components/user/UserProfile.tsx:175
-#: src/components/modals/UserSettingsModal.tsx:429
-#: src/components/direct/DirectMessage.tsx:183
-#: src/components/direct/DirectMessage.tsx:296
-#: src/components/direct/DirectMessage.tsx:561
+#: src/components/user/UserProfile.tsx:69
+#: src/components/modals/UserSettingsModal.tsx:241
+#: src/components/direct/DirectMessage.tsx:173
+#: src/components/direct/DirectMessage.tsx:270
 msgid "Copy address"
 msgstr "Kopier adresse"
 
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Kopier adresse til utklippstavle"
 
-#: src/components/channel/SpaceEditor.tsx:1194
+#: src/components/channel/SpaceEditor.tsx:856
 msgid "Copy invite link to clipboard"
 msgstr "Kopier invitasjonslenke til utklippstavle"
 
 #: src/components/message/MessageActionsDrawer.tsx:113
-#: src/components/message/Message.tsx:283
+#: src/components/message/MessageActions.tsx:56
 msgid "Copy message link"
 msgstr "Kopier meldingslenke"
 
@@ -284,8 +280,8 @@ msgstr "Kunne ikke legge til Space"
 msgid "Could not obtain manifest for Space"
 msgstr "Kunne ikke hente manifest for Space"
 
-#: src/components/modals/JoinSpaceModal.tsx:116
-#: src/components/message/InviteLink.tsx:26
+#: src/hooks/business/spaces/useInviteValidation.ts:109
+#: src/hooks/business/invites/useInviteProcessing.ts:22
 msgid "Could not verify invite"
 msgstr "Kunne ikke verifisere invitasjon"
 
@@ -293,7 +289,7 @@ msgstr "Kunne ikke verifisere invitasjon"
 msgid "Create a new Space"
 msgstr "Opprett en ny Space"
 
-#: src/components/modals/CreateSpaceModal.tsx:101
+#: src/components/modals/CreateSpaceModal.tsx:47
 msgid "Create a Space"
 msgstr "Opprett en Space"
 
@@ -301,15 +297,15 @@ msgstr "Opprett en Space"
 msgid "Create New Account"
 msgstr "Opprett ny konto"
 
-#: src/components/modals/CreateSpaceModal.tsx:255
+#: src/components/modals/CreateSpaceModal.tsx:181
 msgid "Create Space"
 msgstr "Opprett Space"
 
-#: src/components/modals/CreateSpaceModal.tsx:255
+#: src/components/modals/CreateSpaceModal.tsx:181
 msgid "Creating Space..."
 msgstr "Oppretter Space..."
 
-#: src/components/channel/SpaceEditor.tsx:1169
+#: src/components/channel/SpaceEditor.tsx:831
 msgid "Current Invite Link"
 msgstr "Nåværende invitasjonslenke"
 
@@ -329,74 +325,75 @@ msgstr "dekryptert space med ingen kjent konfigurasjonsnøkkel"
 msgid "Decrypted Space with no known hub key"
 msgstr "Dekryptert Space med ingen kjent hub-nøkkel"
 
-#: src/components/channel/SpaceEditor.tsx:678
+#: src/components/channel/SpaceEditor.tsx:419
 msgid "Default Channel"
 msgstr "Standardkanal"
 
-#: src/components/modals/CreateSpaceModal.tsx:168
+#: src/components/modals/CreateSpaceModal.tsx:114
 msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
 msgstr "Standard Space-innstillinger gir den mest typiske chatteopplevelsen, men for høyere personverngarantier, se gjennom avanserte innstillinger."
 
-#: src/components/channel/ChannelEditor.tsx:197
+#: src/components/channel/ChannelEditor.tsx:81
 msgid "Delete Channel"
 msgstr "Slett kanal"
 
-#: src/components/channel/GroupEditor.tsx:157
+#: src/components/channel/GroupEditor.tsx:70
 msgid "Delete Group"
 msgstr "Slett gruppe"
 
 #: src/components/message/MessageActionsDrawer.tsx:120
-#: src/components/message/Message.tsx:285
+#: src/components/message/MessageActions.tsx:58
 msgid "Delete message"
 msgstr "Slett melding"
 
-#: src/components/channel/SpaceEditor.tsx:514
-#: src/components/channel/SpaceEditor.tsx:565
-#: src/components/channel/SpaceEditor.tsx:1295
+#: src/components/channel/SpaceEditor.tsx:255
+#: src/components/channel/SpaceEditor.tsx:306
+#: src/components/channel/SpaceEditor.tsx:940
 msgid "Delete Space"
 msgstr "Slett Space"
 
-#: src/components/channel/SpaceEditor.tsx:1267
+#: src/components/channel/SpaceEditor.tsx:914
 msgid "Delete this space"
 msgstr "Slett denne plassen"
 
-#: src/components/modals/UserSettingsModal.tsx:627
+#: src/components/modals/UserSettingsModal.tsx:439
 msgid "Desktop Notifications"
 msgstr "Skrivebordsvarsler"
 
-#: src/components/modals/UserSettingsModal.tsx:649
+#: src/components/modals/UserSettingsModal.tsx:461
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Skrivebordsvarsler støttes ikke i denne nettleseren."
 
-#: src/components/search/SearchResultItem.tsx:77
+#: src/hooks/business/search/useSearchResultDisplayDM.ts:74
+#: src/hooks/business/search/useSearchResultDisplay.ts:104
 msgid "Direct Message"
 msgstr "Direkte melding"
 
-#: src/components/navbar/NavMenu.tsx:99
-#: src/components/direct/DirectMessageContactsList.tsx:35
+#: src/components/navbar/NavMenu.tsx:51
+#: src/components/direct/DirectMessageContactsList.tsx:17
 msgid "Direct Messages"
 msgstr "Direkte meldinger"
 
-#: src/components/modals/UserSettingsModal.tsx:397
+#: src/components/modals/UserSettingsModal.tsx:209
 msgid "Display Name"
 msgstr "Visningsnavn"
 
 #~ msgid "Do it!"
 #~ msgstr "Gjør det!"
 
-#: src/components/MobileDrawer.tsx:130
+#: src/components/MobileDrawer.tsx:132
 msgid "Drawer"
 msgstr "Skuff"
 
-#: src/components/onboarding/Onboarding.tsx:167
+#: src/components/onboarding/Onboarding.tsx:175
 msgid "Drop your profile photo here"
 msgstr "Slipp profilbildet ditt her"
 
-#: src/components/channel/ChannelEditor.tsx:136
+#: src/components/channel/ChannelEditor.tsx:36
 msgid "Edit Channel"
 msgstr ""
 
-#: src/components/channel/GroupEditor.tsx:110
+#: src/components/channel/GroupEditor.tsx:34
 msgid "Edit Group"
 msgstr ""
 
@@ -406,29 +403,29 @@ msgstr ""
 #~ msgid "Edit Space"
 #~ msgstr "Rediger Space"
 
-#: src/components/message/EmojiPickerDrawer.tsx:38
+#: src/components/message/EmojiPickerDrawer.tsx:40
 msgid "Emoji picker"
 msgstr "Emoji-velger"
 
-#: src/components/channel/SpaceEditor.tsx:489
-#: src/components/channel/SpaceEditor.tsx:554
-#: src/components/channel/SpaceEditor.tsx:889
+#: src/components/channel/SpaceEditor.tsx:230
+#: src/components/channel/SpaceEditor.tsx:295
+#: src/components/channel/SpaceEditor.tsx:576
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal.tsx:556
+#: src/components/modals/UserSettingsModal.tsx:368
 msgid "Enable sync"
 msgstr "Aktiver synkronisering"
 
-#: src/components/modals/CreateSpaceModal.tsx:164
+#: src/components/modals/CreateSpaceModal.tsx:110
 msgid "Enter a name for your new Space"
 msgstr "Angi et navn for ditt nye Space"
 
-#: src/components/modals/NewDirectMessageModal.tsx:104
+#: src/components/modals/NewDirectMessageModal.tsx:39
 msgid "Enter a user's address to start messaging them."
 msgstr "Angi en brukers adresse for å begynne å sende meldinger til dem."
 
-#: src/components/channel/SpaceEditor.tsx:1121
+#: src/components/channel/SpaceEditor.tsx:786
 msgid "Enter Address Manually"
 msgstr "Angi adresse manuelt"
 
@@ -444,10 +441,11 @@ msgstr "Feil ved behandling av utgående:"
 msgid "Error processing queue:"
 msgstr "Feil ved behandling av kø:"
 
-#: src/components/modals/UserSettingsModal.tsx:215
-#: src/components/modals/CreateSpaceModal.tsx:90
-#: src/components/channel/SpaceEditor.tsx:299
-#: src/components/channel/SpaceEditor.tsx:315
+#: src/hooks/business/user/useProfileImage.ts:83
+#: src/hooks/business/ui/useSpaceFileUploads.ts:153
+#: src/hooks/business/ui/useSpaceFileUploads.ts:172
+#: src/hooks/business/ui/useFileUpload.ts:92
+#: src/components/onboarding/Onboarding.tsx:140
 msgid "Error reading file"
 msgstr ""
 
@@ -460,15 +458,15 @@ msgstr "Feil ved forespørsel om varselstillatelse:"
 msgid "Error showing notification:"
 msgstr "Feil ved visning av varsel:"
 
-#: src/components/channel/SpaceEditor.tsx:1101
+#: src/components/channel/SpaceEditor.tsx:764
 msgid "Existing Conversations"
 msgstr "Eksisterende samtaler"
 
-#: src/components/modals/UserSettingsModal.tsx:542
+#: src/components/modals/UserSettingsModal.tsx:354
 msgid "Export"
 msgstr "Eksporter"
 
-#: src/components/modals/UserSettingsModal.tsx:533
+#: src/components/modals/UserSettingsModal.tsx:345
 msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 msgstr "Eksporter nøkkelen din til en fil ved å klikke på denne knappen. Ikke del denne filen med noen andre, ellers kan de utgi seg for deg eller stjele inntektene fra Space ditt."
 
@@ -480,32 +478,30 @@ msgstr "Mislyktes med å dekryptere melding med kjent tilstand"
 msgid "Failed to parse WebSocket message:"
 msgstr "Mislyktes med å analysere WebSocket-melding:"
 
-#: src/components/modals/UserSettingsModal.tsx:179
-#: src/components/modals/CreateSpaceModal.tsx:54
-#: src/components/channel/SpaceEditor.tsx:150
-#: src/components/channel/SpaceEditor.tsx:193
+#: src/hooks/business/user/useProfileImage.ts:45
+#: src/hooks/business/ui/useSpaceFileUploads.ts:65
+#: src/hooks/business/ui/useSpaceFileUploads.ts:112
+#: src/hooks/business/ui/useFileUpload.ts:53
 msgid "File cannot be larger than 1MB"
 msgstr "Fil kan ikke være større enn 1MB"
 
-#: src/components/channel/SpaceEditor.tsx:238
-#: src/components/channel/SpaceEditor.tsx:273
+#: src/hooks/business/ui/useCustomAssets.ts:87
+#: src/hooks/business/ui/useCustomAssets.ts:129
 msgid "File cannot be larger than 256KB"
 msgstr "Fil kan ikke være større enn 256KB"
 
-#: src/components/direct/DirectMessage.tsx:71
-#: src/components/channel/Channel.tsx:102
+#: src/hooks/business/messages/useMessageComposer.ts:68
 msgid "File cannot be larger than 2MB"
 msgstr "Fil kan ikke være større enn 2MB"
 
-#: src/components/onboarding/Onboarding.tsx:93
-#: src/components/modals/UserSettingsModal.tsx:181
-#: src/components/modals/CreateSpaceModal.tsx:56
-#: src/components/direct/DirectMessage.tsx:73
-#: src/components/channel/SpaceEditor.tsx:152
-#: src/components/channel/SpaceEditor.tsx:195
-#: src/components/channel/SpaceEditor.tsx:243
-#: src/components/channel/SpaceEditor.tsx:278
-#: src/components/channel/Channel.tsx:104
+#: src/hooks/business/user/useProfileImage.ts:47
+#: src/hooks/business/ui/useSpaceFileUploads.ts:69
+#: src/hooks/business/ui/useSpaceFileUploads.ts:116
+#: src/hooks/business/ui/useFileUpload.ts:55
+#: src/hooks/business/ui/useCustomAssets.ts:96
+#: src/hooks/business/ui/useCustomAssets.ts:138
+#: src/hooks/business/messages/useMessageComposer.ts:70
+#: src/components/onboarding/Onboarding.tsx:92
 msgid "File rejected"
 msgstr "Fil avvist"
 
@@ -513,10 +509,10 @@ msgstr "Fil avvist"
 msgid "general"
 msgstr "generell"
 
-#: src/components/modals/UserSettingsModal.tsx:306
-#: src/components/modals/UserSettingsModal.tsx:338
-#: src/components/channel/SpaceEditor.tsx:475
-#: src/components/channel/SpaceEditor.tsx:526
+#: src/components/modals/UserSettingsModal.tsx:126
+#: src/components/modals/UserSettingsModal.tsx:158
+#: src/components/channel/SpaceEditor.tsx:216
+#: src/components/channel/SpaceEditor.tsx:267
 msgid "General"
 msgstr "Generell"
 
@@ -524,40 +520,40 @@ msgstr "Generell"
 msgid "General Chat"
 msgstr "Generell chat"
 
-#: src/components/channel/SpaceEditor.tsx:1233
+#: src/components/channel/SpaceEditor.tsx:880
 msgid "Generate New Invite Link"
 msgstr "Generer ny invitasjonslenke"
 
-#: src/components/channel/SpaceEditor.tsx:1231
+#: src/components/channel/SpaceEditor.tsx:878
 msgid "Generating link..."
 msgstr "Genererer lenke..."
 
-#: src/components/modals/NewDirectMessageModal.tsx:78
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:34
 msgid "Go to conversation"
 msgstr "Gå til samtale"
 
-#: src/components/channel/GroupEditor.tsx:117
+#: src/components/channel/GroupEditor.tsx:42
 msgid "Group Name"
 msgstr "Gruppenavn"
 
-#: src/components/direct/EmptyDirectMessage.tsx:70
+#: src/components/direct/EmptyDirectMessage.tsx:52
 msgid "hide home screen"
 msgstr "skjul startskjerm"
 
-#: src/components/onboarding/Onboarding.tsx:241
+#: src/components/onboarding/Onboarding.tsx:249
 msgid "I already saved mine"
 msgstr "Jeg har allerede lagret min"
 
-#: src/components/onboarding/Onboarding.tsx:378
-#: src/components/onboarding/Onboarding.tsx:385
+#: src/components/onboarding/Onboarding.tsx:384
+#: src/components/onboarding/Onboarding.tsx:391
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr "Hvis du hopper over dette, får du det standard profilbildet og kan sette det senere"
 
-#: src/components/onboarding/Onboarding.tsx:193
+#: src/components/onboarding/Onboarding.tsx:201
 msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
 msgstr "Hvis du tømmer nettleserens lagring eller bytter nettlesere, kan gamle meldinger og nøkler forsvinne."
 
-#: src/components/onboarding/Onboarding.tsx:200
+#: src/components/onboarding/Onboarding.tsx:208
 msgid "If you uninstall the app from your device, you will lose your old messages and keys."
 msgstr "Hvis du avinstallerer appen fra enheten din, vil du miste gamle meldinger og nøkler."
 
@@ -565,7 +561,7 @@ msgstr "Hvis du avinstallerer appen fra enheten din, vil du miste gamle meldinge
 msgid "Import Existing Key"
 msgstr "Importer eksisterende nøkkel"
 
-#: src/components/onboarding/Onboarding.tsx:178
+#: src/components/onboarding/Onboarding.tsx:186
 msgid "Important first-time user information:"
 msgstr "Viktig informasjon for førstegangsbrukere:"
 
@@ -573,7 +569,7 @@ msgstr "Viktig informasjon for førstegangsbrukere:"
 msgid "invalid address for signature"
 msgstr "ugyldig adresse for signatur"
 
-#: src/components/modals/NewDirectMessageModal.tsx:90
+#: src/hooks/business/validation/useAddressValidation.ts:94
 msgid "Invalid address format. Addresses must use valid alphanumeric characters."
 msgstr "Ugyldig adresseformat. Adresser må bruke gyldige alfanumeriske tegn."
 
@@ -588,46 +584,50 @@ msgstr "ugyldig lenke"
 msgid "invalid message type"
 msgstr "ugyldig meldingstype"
 
-#: src/components/modals/JoinSpaceModal.tsx:87
+#: src/hooks/business/spaces/useInviteValidation.ts:76
 #: src/components/context/MessageDB.tsx:4249
 #: src/components/context/MessageDB.tsx:4348
 msgid "invalid response"
 msgstr "ugyldig svar"
 
-#: src/components/channel/SpaceEditor.tsx:503
-#: src/components/channel/SpaceEditor.tsx:547
-#: src/components/channel/SpaceEditor.tsx:1085
+#: src/components/channel/SpaceEditor.tsx:244
+#: src/components/channel/SpaceEditor.tsx:288
+#: src/components/channel/SpaceEditor.tsx:748
 msgid "Invites"
 msgstr "Invitasjoner"
 
-#: src/components/message/InviteLink.tsx:91
+#: src/hooks/business/invites/useInviteUI.ts:21
 msgid "Join"
 msgstr "Bli med"
 
-#: src/components/modals/JoinSpaceModal.tsx:139
-#: src/components/modals/JoinSpaceModal.tsx:150
-#: src/components/modals/JoinSpaceModal.tsx:194
+#: src/components/modals/JoinSpaceModal.tsx:56
+#: src/components/modals/JoinSpaceModal.tsx:67
+#: src/components/modals/JoinSpaceModal.tsx:113
 msgid "Join Space"
 msgstr "Bli med i Space"
 
-#: src/components/message/InviteLink.tsx:90
+#: src/hooks/business/invites/useInviteUI.ts:20
 msgid "Joined"
 msgstr "Ble med"
 
-#: src/components/modals/UserSettingsModal.tsx:530
+#: src/hooks/business/invites/useInviteUI.ts:19
+msgid "Joining..."
+msgstr ""
+
+#: src/components/modals/UserSettingsModal.tsx:342
 msgid "Key Export"
 msgstr "Nøkkel Eksport"
 
-#: src/components/user/UserProfile.tsx:341
-#: src/components/modals/KickUserModal.tsx:29
+#: src/components/user/UserProfile.tsx:156
+#: src/components/modals/KickUserModal.tsx:23
 msgid "Kick User"
 msgstr "Spark Bruker"
 
-#: src/components/modals/KickUserModal.tsx:57
+#: src/components/modals/KickUserModal.tsx:39
 msgid "Kick!"
 msgstr "Spark!"
 
-#: src/components/modals/UserSettingsModal.tsx:678
+#: src/components/modals/UserSettingsModal.tsx:495
 msgid "Language"
 msgstr "Språk"
 
@@ -636,18 +636,18 @@ msgstr "Språk"
 msgid "Leave {0}"
 msgstr ""
 
-#: src/components/modals/LeaveSpaceModal.tsx:54
+#: src/components/modals/LeaveSpaceModal.tsx:53
 msgid "Leave Space"
 msgstr "Forlat Space"
 
 #~ msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
 #~ msgstr "La vennene dine vite hvem du er! Velg et vennlig navn å vise i samtalene dine, noe som er lettere å lese enn {0}"
 
-#: src/components/onboarding/Onboarding.tsx:256
+#: src/components/onboarding/Onboarding.tsx:264
 msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
 msgstr "La vennene dine vite hvem du er! Velg et vennlig navn å vise i samtalene dine, noe som er lettere å lese enn:"
 
-#: src/components/onboarding/Onboarding.tsx:433
+#: src/components/onboarding/Onboarding.tsx:439
 msgid "Let's gooooooooo"
 msgstr "La oss gååååå"
 
@@ -659,23 +659,23 @@ msgstr "La oss gååååå"
 msgid "Light"
 msgstr ""
 
-#: src/components/modals/NewDirectMessageModal.tsx:36
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:31
 msgid "Looking up user..."
 msgstr "Ser opp bruker..."
 
-#: src/components/Maintenance.tsx:16
+#: src/components/Maintenance.tsx:14
 msgid "Maintenance in Progress"
 msgstr "Vedlikehold pågår"
 
-#: src/components/onboarding/Onboarding.tsx:304
+#: src/components/onboarding/Onboarding.tsx:314
 msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
 msgstr "Gjør kontoen din unik – sett et kontaktbilde. Denne informasjonen gis kun til Spaces du blir med i."
 
-#: src/components/modals/UserSettingsModal.tsx:618
+#: src/components/modals/UserSettingsModal.tsx:430
 msgid "Manage desktop notification preferences for new messages."
 msgstr "Administrer innstillinger for skrivebordsvarsler for nye meldinger."
 
-#: src/components/modals/UserSettingsModal.tsx:475
+#: src/components/modals/UserSettingsModal.tsx:287
 msgid "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr "Administrer enheter og personvernvilkår for meldinger og synkronisering."
 
@@ -686,24 +686,24 @@ msgstr "Administrer enheter og personvernvilkår for meldinger og synkronisering
 msgid "Message actions"
 msgstr "Meldingshandlinger"
 
-#: src/components/message/Message.tsx:693
+#: src/components/message/Message.tsx:383
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Meldingen har ikke en gyldig signatur, dette kan hende ikke er fra avsenderen"
 
 #: src/components/message/MessageActionsDrawer.tsx:97
-#: src/components/message/Message.tsx:277
+#: src/components/message/MessageActions.tsx:52
 msgid "More reactions"
 msgstr "Flere reaksjoner"
 
-#: src/components/modals/NewDirectMessageModal.tsx:100
+#: src/components/modals/NewDirectMessageModal.tsx:28
 msgid "New Direct Message"
 msgstr "Ny Direkte Meldinger"
 
-#: src/components/search/SearchResults.tsx:193
+#: src/components/search/SearchResults.tsx:91
 msgid "No messages found"
 msgstr "Ingen meldinger funnet"
 
-#: src/components/modals/UserSettingsModal.tsx:578
+#: src/components/modals/UserSettingsModal.tsx:390
 msgid "Non-repudiability"
 msgstr "Ikke-avviselighet"
 
@@ -711,9 +711,9 @@ msgstr "Ikke-avviselighet"
 msgid "Notification permission not granted"
 msgstr "Varselstillatelse ikke gitt"
 
-#: src/components/modals/UserSettingsModal.tsx:320
-#: src/components/modals/UserSettingsModal.tsx:352
-#: src/components/modals/UserSettingsModal.tsx:616
+#: src/components/modals/UserSettingsModal.tsx:140
+#: src/components/modals/UserSettingsModal.tsx:172
+#: src/components/modals/UserSettingsModal.tsx:428
 msgid "Notifications"
 msgstr "Varsler"
 
@@ -721,7 +721,7 @@ msgstr "Varsler"
 #~ msgid "Notifications are blocked. Please enable them in your browser settings for this site."
 #~ msgstr "Varsler er blokkert. Vennligst aktiver dem i nettleserinnstillingene dine for dette nettstedet."
 
-#: src/components/modals/UserSettingsModal.tsx:656
+#: src/components/modals/UserSettingsModal.tsx:467
 msgid "Notifications are blocked. Please enable them in your browser settings."
 msgstr "Varsler er blokkert. Vennligst aktiver dem i nettleserinnstillingene dine."
 
@@ -734,7 +734,7 @@ msgstr "Varsler støttes ikke i denne nettleseren"
 msgid "Offline"
 msgstr "Frakoblet"
 
-#: src/components/onboarding/Onboarding.tsx:155
+#: src/components/onboarding/Onboarding.tsx:163
 msgid "One of us, one of us!"
 msgstr "En av oss, en av oss!"
 
@@ -742,33 +742,33 @@ msgstr "En av oss, en av oss!"
 msgid "Online"
 msgstr "På nett"
 
-#: src/components/onboarding/Onboarding.tsx:156
+#: src/components/onboarding/Onboarding.tsx:164
 msgid "Personalize your account"
 msgstr "Personliggjør kontoen din"
 
-#: src/components/channel/SpaceEditor.tsx:698
+#: src/components/channel/SpaceEditor.tsx:439
 msgid "Privacy Settings"
 msgstr "Personverninnstillinger"
 
-#: src/components/modals/UserSettingsModal.tsx:313
-#: src/components/modals/UserSettingsModal.tsx:345
-#: src/components/modals/UserSettingsModal.tsx:473
+#: src/components/modals/UserSettingsModal.tsx:133
+#: src/components/modals/UserSettingsModal.tsx:165
+#: src/components/modals/UserSettingsModal.tsx:285
 msgid "Privacy/Security"
 msgstr "Personvern/Sikkerhet"
 
-#: src/components/channel/SpaceEditor.tsx:1144
+#: src/components/channel/SpaceEditor.tsx:806
 msgid "Public Invite Link"
 msgstr "Offentlig Invitasjonslenke"
 
-#: src/components/channel/SpaceEditor.tsx:1146
+#: src/components/channel/SpaceEditor.tsx:808
 msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
 msgstr "Offentlige invitasjonslenker lar hvem som helst med tilgang til lenken bli med i Space. Forstå risikoene ved å aktivere dette, og til hvem og hvor du deler lenken."
 
-#: src/components/Maintenance.tsx:30
+#: src/components/Maintenance.tsx:28
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
 msgstr "Quorum-infrastruktur blir implementert nå. Vennligst prøv å oppdatere, og sjekk <0>https://status.quilibrium.com/</0> for oppdateringer."
 
-#: src/components/onboarding/Onboarding.tsx:181
+#: src/components/onboarding/Onboarding.tsx:189
 msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
 msgstr "Quorum er peer-to-peer og ende-til-ende kryptert. Dette betyr at meldingene dine forblir private, men like viktig, de lever bare på nettverket så lenge det er nødvendig for å nå deg og mottakerne dine."
 
@@ -776,7 +776,7 @@ msgstr "Quorum er peer-to-peer og ende-til-ende kryptert. Dette betyr at melding
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
 msgstr "Quorum ble lastet inn mens nettleseren ikke var i fokus eller en passordforespørsel ble avvist. Vennligst reautorisere for å få tilgang til meldingene dine."
 
-#: src/components/direct/DirectMessageContactsList.tsx:56
+#: src/components/direct/DirectMessageContactsList.tsx:38
 msgid "Ready to start a truly private conversation?"
 msgstr "Klar til å starte en virkelig privat samtale?"
 
@@ -788,56 +788,56 @@ msgstr "Reautorisere"
 msgid "received config with invalid signature!"
 msgstr "mottatt konfigurasjon med ugyldig signatur!"
 
-#: src/components/Maintenance.tsx:54
-#: src/components/modals/UserSettingsModal.tsx:703
+#: src/components/Maintenance.tsx:52
+#: src/components/modals/UserSettingsModal.tsx:516
 msgid "Refresh"
 msgstr "Oppdater"
 
-#: src/components/modals/UserSettingsModal.tsx:509
+#: src/components/modals/UserSettingsModal.tsx:321
 msgid "Remove"
 msgstr "Fjern"
 
 #: src/components/message/MessageActionsDrawer.tsx:109
-#: src/components/message/Message.tsx:279
+#: src/components/message/MessageActions.tsx:54
 msgid "Reply"
 msgstr "Svar"
 
-#: src/components/modals/CreateSpaceModal.tsx:179
-#: src/components/channel/SpaceEditor.tsx:704
+#: src/components/modals/CreateSpaceModal.tsx:125
+#: src/components/channel/SpaceEditor.tsx:445
 msgid "Repudiability"
 msgstr "Repudiabilitet"
 
-#: src/components/modals/CreateSpaceModal.tsx:184
-#: src/components/channel/SpaceEditor.tsx:709
+#: src/components/modals/CreateSpaceModal.tsx:130
+#: src/components/channel/SpaceEditor.tsx:450
 msgid "Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
 msgstr "Repudiabilitet er en innstilling som gjør samtaler i dette Rommet uverifiserbare som opprinnelig fra den navngitte avsenderen. Dette kan være nyttig i sensitive situasjoner, men det betyr også at andre kan forfalske meldinger som ser ut til å komme fra deg."
 
 #~ msgid "Requirements:"
 #~ msgstr "Krav:"
 
+#: src/components/channel/SpaceEditor.tsx:223
+#: src/components/channel/SpaceEditor.tsx:281
 #: src/components/channel/SpaceEditor.tsx:482
-#: src/components/channel/SpaceEditor.tsx:540
-#: src/components/channel/SpaceEditor.tsx:741
 msgid "Roles"
 msgstr "Roller"
 
-#: src/components/user/UserProfile.tsx:253
-#: src/components/modals/UserSettingsModal.tsx:462
-#: src/components/modals/UserSettingsModal.tsx:605
-#: src/components/channel/SpaceEditor.tsx:729
-#: src/components/channel/SpaceEditor.tsx:877
-#: src/components/channel/SpaceEditor.tsx:975
-#: src/components/channel/SpaceEditor.tsx:1073
-#: src/components/channel/GroupEditor.tsx:166
-#: src/components/channel/ChannelEditor.tsx:206
+#: src/components/user/UserProfileEdit.tsx:161
+#: src/components/modals/UserSettingsModal.tsx:274
+#: src/components/modals/UserSettingsModal.tsx:417
+#: src/components/channel/SpaceEditor.tsx:470
+#: src/components/channel/SpaceEditor.tsx:564
+#: src/components/channel/SpaceEditor.tsx:650
+#: src/components/channel/SpaceEditor.tsx:736
+#: src/components/channel/GroupEditor.tsx:80
+#: src/components/channel/ChannelEditor.tsx:90
 msgid "Save Changes"
 msgstr "Lagre endringer"
 
-#: src/components/onboarding/Onboarding.tsx:396
+#: src/components/onboarding/Onboarding.tsx:402
 msgid "Save Contact Photo"
 msgstr "Lagre kontaktbilde"
 
-#: src/components/onboarding/Onboarding.tsx:221
+#: src/components/onboarding/Onboarding.tsx:229
 msgid "Save User Key"
 msgstr "Lagre bruker-nøkkel"
 
@@ -846,7 +846,7 @@ msgid "saved config is out of date"
 msgstr "lagret konfigurasjon er utdatert"
 
 #. placeholder {0}: error?.message || 'Unknown error'
-#: src/components/search/SearchResults.tsx:184
+#: src/components/search/SearchResults.tsx:82
 msgid "Search failed: {0}"
 msgstr "Søket mislyktes: {0}"
 
@@ -868,42 +868,40 @@ msgstr "Søk i denne Space"
 msgid "Search messages..."
 msgstr "Søk meldinger..."
 
-#: src/components/search/SearchResults.tsx:171
+#: src/components/search/SearchResults.tsx:69
 msgid "Searching..."
 msgstr "Søker..."
 
-#: src/components/modals/UserSettingsModal.tsx:547
+#: src/components/modals/UserSettingsModal.tsx:359
 msgid "Security"
 msgstr "Sikkerhet"
 
-#: src/components/primitives/Select/Select.web.tsx:14
+#: src/components/primitives/Select/Select.web.tsx:13
 #: src/components/primitives/Select/Select.native.tsx:25
 msgid "Select an option"
 msgstr ""
 
-#: src/components/channel/SpaceEditor.tsx:1118
+#: src/components/channel/SpaceEditor.tsx:783
 msgid "Select conversation"
 msgstr "Velg samtale"
 
-#: src/components/channel/SpaceEditor.tsx:693
+#: src/components/channel/SpaceEditor.tsx:434
 msgid "Select default channel"
 msgstr ""
 
-#: src/components/modals/NewDirectMessageModal.tsx:22
-#: src/components/modals/NewDirectMessageModal.tsx:44
-#: src/components/modals/NewDirectMessageModal.tsx:50
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:36
 msgid "Send"
 msgstr "Send"
 
-#: src/components/channel/SpaceEditor.tsx:1255
+#: src/components/channel/SpaceEditor.tsx:902
 msgid "Send Invite"
 msgstr "Send invitasjon"
 
-#: src/components/channel/SpaceEditor.tsx:1088
+#: src/components/channel/SpaceEditor.tsx:751
 msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 msgstr "Send invitasjoner til personer du tidligere har hatt samtaler med. En invitasjonsknapp vil vises i innboksen deres."
 
-#: src/components/user/UserProfile.tsx:329
+#: src/components/user/UserProfile.tsx:147
 msgid "Send Message"
 msgstr "Send melding"
 
@@ -911,61 +909,61 @@ msgstr "Send melding"
 msgid "Session Encrypted"
 msgstr "Økt kryptert"
 
-#: src/components/onboarding/Onboarding.tsx:288
+#: src/components/onboarding/Onboarding.tsx:298
 msgid "Set Display Name"
 msgstr "Sett visningsnavn"
 
-#: src/components/modals/UserSettingsModal.tsx:300
+#: src/components/modals/UserSettingsModal.tsx:120
 msgid "Settings"
 msgstr "Innstillinger"
 
-#: src/components/modals/UserSettingsModal.tsx:631
+#: src/components/modals/UserSettingsModal.tsx:443
 msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
 msgstr "Vis skrivebordsvarsler når du mottar nye meldinger mens Quorum er i bakgrunnen. Nettleseren din vil be om tillatelse når du aktiverer denne funksjonen."
 
-#: src/components/direct/EmptyDirectMessage.tsx:90
+#: src/components/direct/EmptyDirectMessage.tsx:73
 msgid "show home screen"
 msgstr "vis startskjerm"
 
-#: src/components/onboarding/Onboarding.tsx:370
+#: src/components/onboarding/Onboarding.tsx:377
 msgid "Skip Adding Photo"
 msgstr "Hopp over å legge til bilde"
 
-#: src/components/channel/SpaceEditor.tsx:616
+#: src/components/channel/SpaceEditor.tsx:357
 msgid "Space Banner"
 msgstr "Rombanner"
 
-#: src/components/modals/CreateSpaceModal.tsx:147
+#: src/components/modals/CreateSpaceModal.tsx:93
 msgid "Space Icon Attachment"
 msgstr "Romikonvedlegg"
 
-#: src/components/channel/SpaceEditor.tsx:605
+#: src/components/channel/SpaceEditor.tsx:346
 msgid "Space Name"
 msgstr "Romnavn"
 
-#: src/components/search/SearchResults.tsx:162
+#: src/components/search/SearchResults.tsx:60
 msgid "Start typing to search messages..."
 msgstr "Begynn å skrive for å søke meldinger..."
 
 #~ msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
 #~ msgstr "Start med en melding til en venn. Klikk på legg til-knappen ved siden av listen over direkte meldinger."
 
-#: src/components/user/UserProfile.tsx:196
+#: src/components/user/UserProfileEdit.tsx:104
 msgid "Status goes here"
 msgstr "Status går her"
 
-#: src/components/direct/EmptyDirectMessage.tsx:61
+#: src/components/direct/EmptyDirectMessage.tsx:43
 msgid "Stay Connected, Stay Invisible"
 msgstr "Hold deg tilkoblet, hold deg usynlig"
 
-#: src/components/channel/SpaceEditor.tsx:496
-#: src/components/channel/SpaceEditor.tsx:533
-#: src/components/channel/SpaceEditor.tsx:987
+#: src/components/channel/SpaceEditor.tsx:237
+#: src/components/channel/SpaceEditor.tsx:274
+#: src/components/channel/SpaceEditor.tsx:662
 msgid "Stickers"
 msgstr "Klistremerker"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:1134
+#: src/components/channel/SpaceEditor.tsx:796
 msgid "Successfully sent invite to {0}"
 msgstr "Invitasjon sendt til {0} med suksess"
 
@@ -980,23 +978,23 @@ msgstr "Invitasjon sendt til {0} med suksess"
 msgid "System"
 msgstr ""
 
-#: src/components/message/InviteLink.tsx:53
+#: src/components/message/InviteLink.tsx:20
 msgid "The invite link has expired or is invalid."
 msgstr "Invitasjonslenken har utløpt eller er ugyldig."
 
-#: src/components/modals/UserSettingsModal.tsx:520
+#: src/components/modals/UserSettingsModal.tsx:332
 msgid "This device"
 msgstr "Denne enheten"
 
-#: src/components/onboarding/Onboarding.tsx:265
+#: src/components/onboarding/Onboarding.tsx:273
 msgid "This information is only provided to the Spaces you join."
 msgstr "Dette informasjonen gis kun til Rommene du blir med i."
 
-#: src/components/modals/UserSettingsModal.tsx:421
+#: src/components/modals/UserSettingsModal.tsx:233
 msgid "This is your public address and is safe to share with anyone you want to interact with."
 msgstr "Dette er din offentlige adresse og er trygg å dele med hvem som helst du ønsker å samhandle med."
 
-#: src/components/channel/SpaceEditor.tsx:1174
+#: src/components/channel/SpaceEditor.tsx:836
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
 msgstr "Dette lenken vil ikke utløpe, men du kan generere en ny når som helst, som vil gjøre den gamle lenken ugyldig. Nåværende Rommedlemmer vil ikke bli fjernet fra Rommet."
 
@@ -1004,61 +1002,70 @@ msgstr "Dette lenken vil ikke utløpe, men du kan generere en ny når som helst,
 #~ msgid "To disable notifications, please change the notification settings in your browser for this site."
 #~ msgstr "For å deaktivere varsler, vennligst endre varselinnstillingene i nettleseren din for dette nettstedet."
 
-#: src/components/message/Message.tsx:173
+#: src/components/modals/UserSettingsModal.tsx:473
+msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
+msgstr ""
+
+#: src/components/message/Message.tsx:155
 msgid "Today at {timeFormatted}"
 msgstr "I dag kl {timeFormatted}"
 
-#: src/components/search/SearchResults.tsx:195
+#: src/components/search/SearchResults.tsx:93
 msgid "Try different keywords or check your spelling"
 msgstr "Prøv forskjellige søkeord eller sjekk stavemåten din"
 
-#: src/components/modals/JoinSpaceModal.tsx:159
+#: src/components/modals/JoinSpaceModal.tsx:77
 msgid "Unknown"
 msgstr "Ukjent"
 
-#: src/components/search/SearchResultItem.tsx:111
+#: src/hooks/business/search/useSearchResultDisplaySpace.ts:46
+#: src/hooks/business/search/useSearchResultDisplay.ts:118
 msgid "Unknown Space"
 msgstr "Ukjent Space"
 
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/components/search/SearchResultItem.tsx:37
-#: src/components/search/SearchResultItem.tsx:110
-#: src/components/direct/DirectMessage.tsx:140
-#: src/components/direct/DirectMessage.tsx:208
+#: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
+#: src/hooks/business/search/useSearchResultDisplayDM.ts:33
+#: src/hooks/business/search/useSearchResultDisplay.ts:40
+#: src/hooks/business/search/useSearchResultDisplay.ts:117
+#: src/hooks/business/conversations/useDirectMessageData.ts:57
+#: src/hooks/business/conversations/useDirectMessageData.ts:75
+#: src/hooks/business/channels/useChannelMessages.ts:47
+#: src/components/direct/DirectMessage.tsx:67
+#: src/components/direct/DirectMessage.tsx:82
+#: src/components/direct/DirectMessage.tsx:210
 #: src/components/context/MessageDB.tsx:817
 #: src/components/context/MessageDB.tsx:836
 #: src/components/context/MessageDB.tsx:2618
 #: src/components/context/MessageDB.tsx:3638
 #: src/components/context/MessageDB.tsx:4860
-#: src/components/channel/Channel.tsx:282
 msgid "Unknown User"
 msgstr "Ukjent bruker"
 
-#: src/components/direct/DirectMessage.tsx:383
+#: src/components/direct/DirectMessage.tsx:308
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Inntil du svarer, vil denne avsenderen ikke se ditt visningsnavn eller profilbilde"
 
-#: src/components/channel/SpaceEditor.tsx:907
+#: src/components/channel/SpaceEditor.tsx:594
 msgid "Upload Emoji"
 msgstr "Last opp Emoji"
 
-#: src/components/channel/SpaceEditor.tsx:1005
+#: src/components/channel/SpaceEditor.tsx:680
 msgid "Upload Sticker"
 msgstr "Last opp klistremerke"
 
-#: src/components/modals/KickUserModal.tsx:32
+#: src/components/modals/KickUserModal.tsx:30
 msgid "Use the below button to kick this user out of the Space"
 msgstr "Bruk knappen nedenfor for å kaste denne brukeren ut av Space"
 
-#: src/components/modals/NewDirectMessageModal.tsx:110
+#: src/components/modals/NewDirectMessageModal.tsx:46
 msgid "User address here"
 msgstr "Brukeradresse her"
 
 #~ msgid "User does not exist"
 #~ msgstr "Bruker eksisterer ikke"
 
-#: src/components/modals/NewDirectMessageModal.tsx:41
-#: src/components/modals/NewDirectMessageModal.tsx:83
+#: src/hooks/business/validation/useAddressValidation.ts:106
 msgid "User does not exist."
 msgstr "Bruker eksisterer ikke."
 
@@ -1066,47 +1073,46 @@ msgstr "Bruker eksisterer ikke."
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr "useWebSocket må brukes innenfor en WebSocketProvider"
 
-#: src/components/onboarding/Onboarding.tsx:153
+#: src/components/onboarding/Onboarding.tsx:161
 msgid "Welcome to Quorum!"
 msgstr "Velkommen til Quorum!"
 
-#: src/components/direct/EmptyDirectMessage.tsx:83
+#: src/components/direct/EmptyDirectMessage.tsx:65
 msgid "What's on your mind today?"
 msgstr "Hva tenker du på i dag?"
 
-#: src/components/modals/UserSettingsModal.tsx:582
+#: src/components/modals/UserSettingsModal.tsx:394
 msgid "When enabled, direct messages are not signed by your user key..."
 msgstr "Når aktivert, er direkte meldinger ikke signert med din brukernøkkel..."
 
-#: src/components/modals/UserSettingsModal.tsx:560
+#: src/components/modals/UserSettingsModal.tsx:372
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
 msgstr "Når aktivert, synkroniserer din brukerdata, Spaces og Space-nøkler mellom enheter. Aktivering av dette øker metadata synligheten av kontoen din, noe som kan avsløre når du har blitt med i nye Spaces, selv om ikke de Spaces du har blitt med i."
 
-#: src/components/modals/CreateSpaceModal.tsx:209
+#: src/components/modals/CreateSpaceModal.tsx:155
 msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
 msgstr "Når denne innstillingen er aktivert, vil invitasjonslenker automatisk tillate en bruker å bli med i din Space. Når den ikke er aktivert, vil brukere som følger en invitasjonslenke sende deg en forespørsel om å bli med i din Space som du må godkjenne manuelt. Offentlige lenker krever at noe nøkkelmateriale er til stede i lenken – vær oppmerksom på at besittelse av en offentlig Space-lenke kan tillate hvem som helst med lenken å lese meldinger på Space så lenge lenken er gyldig."
 
-#: src/components/onboarding/Onboarding.tsx:189
+#: src/components/onboarding/Onboarding.tsx:197
 msgid "When using Quorum on a browser, your messages are saved locally to your browser."
 msgstr "Når du bruker Quorum i en nettleser, lagres meldingene dine lokalt i nettleseren."
 
-#: src/components/search/SearchResultItem.tsx:183
+#: src/hooks/business/search/useSearchResultFormatting.ts:40
 msgid "Yesterday"
 msgstr "I går"
 
-#: src/components/message/Message.tsx:176
+#: src/components/message/Message.tsx:158
 msgid "Yesterday at {timeFormatted}"
 msgstr "I går kl {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:177
-#: src/components/direct/DirectMessage.tsx:555
+#: src/components/direct/DirectMessage.tsx:167
 msgid "You"
 msgstr "Du"
 
 #~ msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
 #~ msgstr "Du kan klikke på standardbildet nedenfor for å velge det med systemets fildialog eller dra og slippe et nytt."
 
-#: src/components/modals/NewDirectMessageModal.tsx:60
+#: src/hooks/business/validation/useAddressValidation.ts:56
 msgid "You cannot send a direct message to yourself."
 msgstr "Du kan ikke sende en direkte melding til deg selv."
 
@@ -1121,10 +1127,10 @@ msgstr "Du har nye uleste meldinger"
 #~ msgid "You will be able to change this later in your settings."
 #~ msgstr "Du vil kunne endre dette senere i innstillingene dine."
 
-#: src/components/onboarding/Onboarding.tsx:410
+#: src/components/onboarding/Onboarding.tsx:416
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Du er klar. Velkommen til Quorum!"
 
-#: src/components/message/InviteLink.tsx:59
+#: src/components/message/InviteLink.tsx:27
 msgid "You've been invited to join a Space"
 msgstr "Du har blitt invitert til å bli med i en Space"

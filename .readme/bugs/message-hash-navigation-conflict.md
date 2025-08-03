@@ -10,6 +10,7 @@
 
 When navigating to a message via hash link (e.g., pasted message link), any subsequent message operations (delete, react, etc.) cause the page to scroll back to the originally visited message and re-trigger the yellow highlight flash.
 
+
 ## Steps to Reproduce
 
 1. Copy a message link and paste it in browser (or click shared link)
@@ -24,6 +25,30 @@ When navigating to a message via hash link (e.g., pasted message link), any subs
 - Hash navigation should work once and not interfere with subsequent interactions
 - After navigating via hash link, normal message operations should not cause re-navigation
 - User should be able to scroll freely after initial hash navigation
+
+
+## Tests: (incomplete)
+
+### Notes: 
+After a few tests the issue seems to be non deterministic. We noticed the issue stops happening after a few seconds, but in previous tests it was happening for a long time. It's also happening intermittently right now, while before it was happening more consistently.
+
+We also noticed another issue, maybe not related, ONLY on the dev buld: Emoji reactions take a long time to appear (4 to 8 seconds). Thsi happen both for new recations , or when clicking on an existing "sent" recation, whcih shoudl delete it (it does, but it takes  a long time)
+
+- "Reply" action:
+ - Scroll to previous message? NO (it correctly scrolls to last message sent)
+ - Flashing effect: YES
+
+- Emoji reaction:
+ - Scroll to previous message? YES
+ - Flashing effect: NO
+
+- Delete action:
+ - Scroll to previous message? YES
+ - Flashing effect: YES
+
+
+
+
 
 ## Technical Analysis
 
