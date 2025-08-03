@@ -8,6 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Message as MessageType } from '../../api/quorumApi';
 import { Tooltip } from '../primitives';
+import { useQuickReactions } from '../../hooks/business/messages';
 import { t } from '@lingui/core/macro';
 
 interface MessageActionsProps {
@@ -38,16 +39,11 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   // State for tracking which action is currently hovered
   const [hoveredAction, setHoveredAction] = useState<string | null>(null);
 
-  // Quick reaction handler
-  const handleQuickReaction = (emoji: string) => {
-    if (
-      !message.reactions
-        ?.find((r) => r.emojiId === emoji)
-        ?.memberIds.includes(userAddress)
-    ) {
-      onReaction(emoji);
-    }
-  };
+  // Quick reactions hook
+  const { handleQuickReaction } = useQuickReactions({
+    userAddress,
+    onReaction,
+  });
 
   // Get tooltip content based on current hovered action
   const getTooltipContent = () => {
@@ -94,19 +90,19 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
         >
           {/* Quick reactions */}
           <div
-            onClick={() => handleQuickReaction('❤️')}
+            onClick={() => handleQuickReaction(message, '❤️')}
             className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 transition duration-200"
           >
             ❤️
           </div>
           <div
-            onClick={() => handleQuickReaction('👍')}
+            onClick={() => handleQuickReaction(message, '👍')}
             className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 transition duration-200"
           >
             👍
           </div>
           <div
-            onClick={() => handleQuickReaction('🔥')}
+            onClick={() => handleQuickReaction(message, '🔥')}
             className="w-5 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 transition duration-200"
           >
             🔥

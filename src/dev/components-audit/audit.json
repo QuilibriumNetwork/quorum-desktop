@@ -1026,18 +1026,20 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "todo",
-      "logic_extraction": "todo",
+      "logic_extraction": "done",
       "logic_needs": "extract",
-      "hooks": [],
+      "hooks": [
+        "useQuickReactions"
+      ],
       "native": "todo",
-      "notes": "NEW COMPONENT: Extracted from Message.tsx during refactoring. Floating action toolbar for message interactions (reply, reactions, copy link, delete). Uses FontAwesome icons and raw HTML div elements with Tailwind classes throughout. Complex web-specific hover interactions and CSS transitions. LOGIC EXTRACTION NEEDED: Quick reaction validation logic should be extracted to hook for cross-platform reuse - mobile version will need same business logic but different UI (drawer vs hover toolbar). Current EmojiPicker library is web-only, mobile will use React Native emoji picker requiring shared validation logic. Extract: reaction validation, emoji checking. Keep: hover state, tooltip positioning (platform-specific UI). TODO: Replace raw divs with primitives and FontAwesome with Icon primitive.",
+      "notes": "LOGIC EXTRACTION COMPLETED: Quick reaction validation logic extracted to useQuickReactions hook for cross-platform reuse. Mobile version will need same business logic but different UI (drawer vs hover toolbar). Component still needs primitives replacement for FontAwesome icons and HTML divs.",
       "updated": "2025-08-03"
     }
   },
   "stats": {
     "total": 64,
     "primitives_done": 32,
-    "logic_extraction_done": 57,
+    "logic_extraction_done": 58,
     "native_ready": 0,
     "native_done": 11,
     "by_category": {
