@@ -131,15 +131,21 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>((props, 
     }
   }, []);
 
+  // Track if we've already processed a hash navigation to prevent re-navigation on messageList changes
+  const [hasProcessedHash, setHasProcessedHash] = useState(false);
+
   useEffect(() => {
     if (!init || messageList.length === 0) return;
 
     // Capture hash but delay removal to allow Message components to detect it
     const hash = location.hash;
-    if (hash.startsWith('#msg-')) {
+    if (hash.startsWith('#msg-') && !hasProcessedHash) {
       const msgId = hash.replace('#msg-', '');
       const index = messageList.findIndex((m) => m.messageId === msgId);
       if (index !== -1 && virtuoso.current) {
+        // Mark that we've processed this hash navigation
+        setHasProcessedHash(true);
+        
         // Scroll to the message - use instant scroll for search navigation to prevent focus stealing
         setTimeout(() => {
           virtuoso.current?.scrollToIndex({
@@ -159,7 +165,14 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>((props, 
         }, 1000);
       }
     }
-  }, [init, messageList, location.hash]);
+  }, [init, messageList, location.hash, hasProcessedHash]);
+
+  // Reset hash processing flag when location.hash changes to a new value
+  useEffect(() => {
+    if (location.hash.startsWith('#msg-')) {
+      setHasProcessedHash(false);
+    }
+  }, [location.hash]);
 
   return (
     <Virtuoso

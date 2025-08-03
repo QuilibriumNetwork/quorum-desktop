@@ -27,10 +27,10 @@ import './Message.scss';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
-import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { useLongPress } from '../../hooks/useLongPress';
 import { useModalContext } from '../context/ModalProvider';
 import { useMobile } from '../context/MobileProvider';
+import { useMessageActions, useEmojiPicker, useMessageInteractions } from '../../hooks';
 import MessageActions from './MessageActions';
 
 type MessageProps = {
@@ -96,53 +96,55 @@ export const Message = ({
   const location = useLocation();
   const { openMobileActionsDrawer, openMobileEmojiDrawer } = useMobile();
 
-  // Responsive layout and device detection
-  const { isMobile } = useResponsiveLayout();
-  const isTouchDevice = 'ontouchstart' in window;
-  const useMobileDrawer = isMobile;
-  const useDesktopTap = !isMobile && isTouchDevice;
-  const useDesktopHover = !isMobile && !isTouchDevice;
+  // Component state that needs to be available to hooks
+  const [showUserProfile, setShowUserProfile] = useState<boolean>(false);
+  const [openImage, setOpenImage] = useState<string | null>(null);
 
-  // State for mobile emoji drawer (kept separate from actions drawer)
-  const [showEmojiDrawer, setShowEmojiDrawer] = useState(false);
+  // Message actions business logic
+  const messageActions = useMessageActions({
+    message,
+    userAddress: user.currentPasskeyInfo!.address,
+    canDeleteMessages,
+    height,
+    onSubmitMessage: submitMessage,
+    onSetInReplyTo: setInReplyTo,
+    onSetEmojiPickerOpen: setEmojiPickerOpen,
+    onSetEmojiPickerDirection: setEmojiPickerOpenDirection,
+    editorRef,
+  });
 
-  // State for desktop tap interaction
-  const [actionsVisibleOnTap, setActionsVisibleOnTap] = useState(false);
+  // Emoji picker business logic
+  const emojiPicker = useEmojiPicker({
+    customEmoji,
+    height,
+    onEmojiClick: messageActions.handleReaction,
+    onSetEmojiPickerOpen: setEmojiPickerOpen,
+    onSetEmojiPickerDirection: setEmojiPickerOpenDirection,
+  });
 
-  // State for copied link feedback
-  const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null);
+  // Message interactions logic
+  const interactions = useMessageInteractions({
+    message,
+    hoverTarget,
+    setHoverTarget,
+    setShowUserProfile,
+    onCloseEmojiPickers: emojiPicker.closeEmojiPickers,
+    onMobileActionsDrawer: (config) => {
+      openMobileActionsDrawer({
+        ...config,
+        onReply: messageActions.handleReply,
+        onCopyLink: messageActions.handleCopyLink,
+        onDelete: messageActions.canUserDelete ? messageActions.handleDelete : undefined,
+        onReaction: messageActions.handleReaction,
+        onMoreReactions: handleMoreReactions,
+        canDelete: messageActions.canUserDelete,
+        userAddress: user.currentPasskeyInfo!.address,
+      });
+    },
+    onEmojiPickerUserProfileClick: emojiPicker.handleUserProfileClick,
+  });
 
-  // Effect to handle hiding tablet actions when clicking elsewhere
-  React.useEffect(() => {
-    if (
-      useDesktopTap &&
-      actionsVisibleOnTap &&
-      hoverTarget === message.messageId
-    ) {
-      const handleClickOutside = (event: MouseEvent) => {
-        const target = event.target as Element;
-        if (!target.closest(`#msg-${message.messageId}`)) {
-          setHoverTarget(undefined);
-          setActionsVisibleOnTap(false);
-        }
-      };
 
-      document.addEventListener('click', handleClickOutside);
-      return () => document.removeEventListener('click', handleClickOutside);
-    }
-  }, [useDesktopTap, actionsVisibleOnTap, hoverTarget, message.messageId]);
-
-  const customEmojis = useMemo(() => {
-    if (!customEmoji) return [];
-
-    return customEmoji.map((c) => {
-      return {
-        names: [c.name],
-        id: c.id,
-        imgUrl: c.imgUrl,
-      } as CustomEmoji;
-    });
-  }, [customEmoji]);
   let sender = mapSenderToUser(message.content?.senderId);
   const isHashTarget = useMemo(() => {
     return location.hash === `#msg-${message.messageId}`;
@@ -153,14 +155,6 @@ export const Message = ({
   );
   const fromNow = time.fromNow();
   const timeFormatted = time.format('h:mm a');
-  const [showUserProfile, setShowUserProfile] = useState<boolean>(false);
-  const [openImage, setOpenImage] = useState<string | null>(null);
-  const canUserDelete = useMemo(() => {
-    return (
-      message.content.senderId == user.currentPasskeyInfo!.address ||
-      canDeleteMessages
-    );
-  }, []);
 
   const displayedTimestmap = time.calendar(null, {
     sameDay: function () {
@@ -184,87 +178,16 @@ export const Message = ({
     }
   };
 
-  // Long-press handler for mobile and tablets
-  const longPressHandlers = useLongPress({
-    onLongPress: () => {
-      if (useMobileDrawer) {
-        // Mobile: Open drawer
-        openMobileActionsDrawer({
-          message,
-          onReply: handleReply,
-          onCopyLink: handleCopyLink,
-          onDelete: canUserDelete ? handleDelete : undefined,
-          onReaction: handleReaction,
-          onMoreReactions: handleMoreReactions,
-          canDelete: canUserDelete,
-          userAddress: user.currentPasskeyInfo!.address,
-        });
-        if ('vibrate' in navigator) {
-          try {
-            navigator.vibrate(50);
-          } catch (e) {
-            // Silently ignore vibration blocked by browser
-          }
-        }
-      } else if (useDesktopTap) {
-        // Tablet: Show inline actions and hide others
-        setHoverTarget(message.messageId);
-        setActionsVisibleOnTap(true);
-      }
-    },
-    delay: 500,
-  });
 
-  // Action handlers
-  const handleReaction = (emoji: string) => {
-    if (
-      !message.reactions
-        ?.find((r) => r.emojiId === emoji)
-        ?.memberIds.includes(user.currentPasskeyInfo!.address)
-    ) {
-      submitMessage({
-        type: 'reaction',
-        messageId: message.messageId,
-        reaction: emoji,
-      });
-    } else {
-      submitMessage({
-        type: 'remove-reaction',
-        messageId: message.messageId,
-        reaction: emoji,
-      });
-    }
-  };
-
-  const handleReply = () => {
-    setInReplyTo(message);
-    editorRef?.focus();
-  };
-
-  const handleCopyLink = () => {
-    const url = `${window.location.origin}${window.location.pathname}#msg-${message.messageId}`;
-    navigator.clipboard.writeText(url);
-    setCopiedLinkId(message.messageId);
-    setTimeout(() => {
-      setCopiedLinkId((prev) => (prev === message.messageId ? null : prev));
-    }, 1500);
-  };
-
-  const handleDelete = () => {
-    submitMessage({
-      type: 'remove-message',
-      removeMessageId: message.messageId,
-    });
-  };
-
+  // Handle more reactions with mobile/desktop logic
   const handleMoreReactions = () => {
-    if (useMobileDrawer) {
+    if (interactions.useMobileDrawer) {
       openMobileEmojiDrawer({
-        onEmojiClick: handleReaction,
-        customEmojis: customEmojis,
+        onEmojiClick: messageActions.handleReaction,
+        customEmojis: emojiPicker.customEmojis,
       });
     } else {
-      setShowEmojiDrawer(true);
+      emojiPicker.openMobileEmojiDrawer();
     }
   };
 
@@ -280,29 +203,11 @@ export const Message = ({
         (isHashTarget ? ' message-highlighted' : '')
       }
       // Desktop mouse interaction
-      onMouseOver={() => useDesktopHover && setHoverTarget(message.messageId)}
-      onMouseOut={() => useDesktopHover && setHoverTarget(undefined)}
-      onClick={(e) => {
-        // Prevent default click behavior for mobile drawer
-        if (useMobileDrawer) {
-          e.preventDefault();
-        }
-
-        // For tablets, regular click should hide actions (not show them)
-        if (useDesktopTap) {
-          // Hide actions if clicking on a different message or same message
-          if (hoverTarget !== message.messageId) {
-            setHoverTarget(undefined);
-            setActionsVisibleOnTap(false);
-          }
-        }
-
-        // Common click behaviors
-        setShowUserProfile(false);
-        setEmojiPickerOpen(undefined);
-      }}
+      onMouseOver={interactions.handleMouseOver}
+      onMouseOut={interactions.handleMouseOut}
+      onClick={interactions.handleMessageClick}
       // Mobile and tablet touch interaction
-      {...(useMobileDrawer || useDesktopTap ? longPressHandlers : {})}
+      {...interactions.touchHandlers}
     >
       {(() => {
         if (message.content.type == 'post') {
@@ -375,7 +280,7 @@ export const Message = ({
         >
           {showUserProfile && spaceId && (
             <div
-              onClick={(e) => setShowUserProfile(false)}
+              onClick={interactions.handleUserProfileBackgroundClick}
               className={
                 'absolute left-0 top-0 w-full mt-[-1000px] pb-[200px] pt-[1000px] z-[1000] flex flex-row'
               }
@@ -402,13 +307,7 @@ export const Message = ({
             </div>
           )}
           <div
-            onClick={(e) => {
-              setShowUserProfile(true);
-              setEmojiPickerOpenDirection(
-                e.clientY / height > 0.5 ? 'upwards' : 'downwards'
-              );
-              e.stopPropagation();
-            }}
+            onClick={interactions.handleUserProfileClick}
             className="message-sender-icon"
             style={{
               backgroundImage: sender.userIcon?.includes(
@@ -419,26 +318,18 @@ export const Message = ({
             }}
           />
           <div className="message-content">
-            {((hoverTarget === message.messageId && useDesktopHover) ||
-              (hoverTarget === message.messageId &&
-                actionsVisibleOnTap &&
-                useDesktopTap)) && (
+            {interactions.shouldShowActions && (
               <MessageActions
                 message={message}
                 userAddress={user.currentPasskeyInfo!.address}
-                canUserDelete={canUserDelete}
+                canUserDelete={messageActions.canUserDelete}
                 height={height}
-                onReaction={handleReaction}
-                onReply={handleReply}
-                onCopyLink={handleCopyLink}
-                onDelete={handleDelete}
-                onMoreReactions={(clientY) => {
-                  setEmojiPickerOpen(message.messageId);
-                  setEmojiPickerOpenDirection(
-                    clientY / height > 0.5 ? 'upwards' : 'downwards'
-                  );
-                }}
-                copiedLinkId={copiedLinkId}
+                onReaction={messageActions.handleReaction}
+                onReply={messageActions.handleReply}
+                onCopyLink={messageActions.handleCopyLink}
+                onDelete={messageActions.handleDelete}
+                onMoreReactions={messageActions.handleMoreReactions}
+                copiedLinkId={messageActions.copiedLinkId}
               />
             )}
 
@@ -452,57 +343,39 @@ export const Message = ({
               >
                 <EmojiPicker
                   suggestedEmojisMode={SuggestionMode.FREQUENT}
-                  customEmojis={customEmojis}
+                  customEmojis={emojiPicker.customEmojis}
                   getEmojiUrl={(unified, style) => {
                     return '/apple/64/' + unified + '.png';
                   }}
                   skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
                   theme={Theme.DARK}
                   onEmojiClick={(e) => {
-                    if (
-                      !message.reactions
-                        ?.find((r) => r.emojiId == e.emoji)
-                        ?.memberIds.includes(user.currentPasskeyInfo!.address)
-                    ) {
-                      submitMessage({
-                        type: 'reaction',
-                        messageId: message.messageId,
-                        reaction: e.emoji,
-                      });
-                    } else {
-                      submitMessage({
-                        type: 'remove-reaction',
-                        messageId: message.messageId,
-                        reaction: e.emoji,
-                      });
-                    }
-                    setEmojiPickerOpen(undefined);
+                    emojiPicker.handleDesktopEmojiClick(e.emoji);
                   }}
                 />
               </div>
             )}
 
             {/* Mobile Emoji Picker */}
-            {useMobileDrawer && showEmojiDrawer && (
+            {interactions.useMobileDrawer && emojiPicker.showMobileEmojiDrawer && (
               <Modal
                 title=""
-                visible={showEmojiDrawer}
-                onClose={() => setShowEmojiDrawer(false)}
+                visible={emojiPicker.showMobileEmojiDrawer}
+                onClose={emojiPicker.closeMobileEmojiDrawer}
                 hideClose={false}
               >
                 <EmojiPicker
                   width="100%"
                   height={300}
                   suggestedEmojisMode={SuggestionMode.FREQUENT}
-                  customEmojis={customEmojis}
+                  customEmojis={emojiPicker.customEmojis}
                   getEmojiUrl={(unified, style) => {
                     return '/apple/64/' + unified + '.png';
                   }}
                   skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
                   theme={Theme.DARK}
                   onEmojiClick={(e) => {
-                    handleReaction(e.emoji);
-                    setShowEmojiDrawer(false);
+                    emojiPicker.handleMobileEmojiClick(e.emoji);
                   }}
                 />
               </Modal>
@@ -661,22 +534,15 @@ export const Message = ({
                       : 'bg-tooltip hover:bg-surface-5')
                   }
                   onClick={() => {
-                    const hasReacted = r.memberIds.includes(
-                      user.currentPasskeyInfo!.address
-                    );
-                    submitMessage({
-                      type: hasReacted ? 'remove-reaction' : 'reaction',
-                      messageId: message.messageId,
-                      reaction: r.emojiId,
-                    });
+                    messageActions.handleReaction(r.emojiId);
                   }}
                 >
-                  {customEmojis.find((e) => e.id === r.emojiName) ? (
+                  {emojiPicker.customEmojis.find((e) => e.id === r.emojiName) ? (
                     <img
                       width="24"
                       className="mr-1"
                       src={
-                        customEmojis.find((e) => e.id === r.emojiName)?.imgUrl
+                        emojiPicker.customEmojis.find((e) => e.id === r.emojiName)?.imgUrl
                       }
                     />
                   ) : (
