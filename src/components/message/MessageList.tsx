@@ -165,7 +165,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>((props, 
         }, 1000);
       }
     }
-  }, [init, messageList, location.hash, hasProcessedHash]);
+  }, [init, location.hash]); // Removed messageList and hasProcessedHash to prevent re-navigation on message changes
 
   // Reset hash processing flag when location.hash changes to a new value
   useEffect(() => {
