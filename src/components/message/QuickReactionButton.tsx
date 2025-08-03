@@ -9,7 +9,7 @@ export interface QuickReactionButtonProps {
 }
 
 /**
- * Component for quick reaction buttons in the mobile drawer.
+ * Component for quick reaction buttons in the mobile drawer. Used for the web app when visited via touch devices.
  * Provides touch-friendly emoji buttons with visual feedback for existing reactions.
  */
 const QuickReactionButton: React.FC<QuickReactionButtonProps> = ({

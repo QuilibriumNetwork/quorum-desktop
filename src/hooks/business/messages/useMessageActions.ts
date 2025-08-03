@@ -30,7 +30,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null);
 
   // Calculate if user can delete this message
-  const canUserDelete = message.content.senderId === userAddress || canDeleteMessages;
+  const canUserDelete = message.content.senderId === userAddress || Boolean(canDeleteMessages);
 
   // Handle reaction submission
   const handleReaction = useCallback((emoji: string) => {

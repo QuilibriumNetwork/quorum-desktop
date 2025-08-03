@@ -13,3 +13,43 @@
 .message-highlighted {
   animation: flash-highlight 6s ease-out;
 }
+
+/* === RESPONSIVE YOUTUBE EMBEDS === */
+.youtube-embed {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  
+  /* Below 1024px: enforce max-width to prevent full-width videos */
+  @media (max-width: 1023px) {
+    max-width: min(560px, calc(100vw - 120px)) !important; /* Account for sidebar + padding */
+  }
+  
+  /* Below 640px: smaller constraint */
+  @media (max-width: 640px) {
+    max-width: min(400px, calc(100vw - 80px)) !important; /* Account for padding */
+  }
+  
+  /* Below 480px: mobile constraint */
+  @media (max-width: 480px) {
+    max-width: min(300px, calc(100vw - 60px)) !important; /* Account for padding */
+  }
+  
+  /* Fallback for browsers that don't support aspect-ratio */
+  @supports not (aspect-ratio: 16 / 9) {
+    height: 400px;
+    
+    @media (max-width: 1023px) {
+      height: calc(min(560px, 100vw - 120px) * 9 / 16);
+    }
+    
+    @media (max-width: 640px) {
+      height: calc(min(400px, 100vw - 80px) * 9 / 16);
+    }
+    
+    @media (max-width: 480px) {
+      height: calc(min(300px, 100vw - 60px) * 9 / 16);
+    }
+  }
+}

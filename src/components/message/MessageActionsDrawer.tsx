@@ -28,7 +28,7 @@ export interface MessageActionsDrawerProps {
 
 /**
  * Mobile drawer component for message actions.
- * Provides touch-friendly interface for message interactions on mobile devices.
+ * Provides touch-friendly interface for message interactions on mobile devices.  Used for the web app when visited via touch devices.
  */
 const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
   isOpen,

@@ -33,7 +33,12 @@ def update_statistics(data):
     # Count totals
     total = len(components)
     primitives_done = sum(1 for c in components.values() if c.get('primitives') == 'done')
-    logic_extraction_done = sum(1 for c in components.values() if c.get('logic_extraction') == 'done')
+    # Count logic work as complete if:
+    # 1. logic_extraction == 'done' (extraction work completed)
+    # 2. logic_needs == 'keep' (decision made to keep logic in component)
+    logic_extraction_done = sum(1 for c in components.values() 
+                              if c.get('logic_extraction') == 'done' or 
+                                 c.get('logic_needs') == 'keep')
     native_ready = sum(1 for c in components.values() if c.get('native') == 'ready')
     native_done = sum(1 for c in components.values() if c.get('native') == 'done')
     
@@ -73,7 +78,22 @@ def update_component(data, component_name, updates):
     """Update a specific component with the given updates"""
     if component_name not in data['components']:
         print(f"Warning: Component {component_name} not found in audit.json")
-        return
+        # Create new component with default values
+        data['components'][component_name] = {
+            "name": component_name.replace('.tsx', ''),
+            "path": f"src/components/message/{component_name}",  # Default path, can be updated
+            "description": "Component description pending",
+            "category": "platform_specific",
+            "used": "yes",
+            "primitives": "todo",
+            "logic_extraction": "todo", 
+            "logic_needs": "extract",
+            "hooks": [],
+            "native": "todo",
+            "notes": "New component added to audit",
+            "updated": datetime.now().strftime('%Y-%m-%d')
+        }
+        print(f"Created new component entry for {component_name}")
     
     comp = data['components'][component_name]
     

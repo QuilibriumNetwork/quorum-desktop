@@ -29,13 +29,7 @@
 
 .message-name-mentions-you,
 .message-name-mentions-role {
-  padding: 2px 8px 4px 4px;
-  border-radius: 9px;
-  line-height: 20px;
-  margin-top: 4px;
   font-weight: 700;
-  min-width: 29px;
-  color: var(--color-text-main);
 }
 
 .message-mentions-you {
@@ -49,11 +43,11 @@
 }
 
 .message-name-mentions-role {
-  background: var(--success-hex);
+  color: var(--success-hex);
 }
 
 .message-name-mentions-you {
-  background: var(--accent);
+  color: var(--accent);
 }
 
 .message-list {
@@ -94,7 +88,8 @@
   background-position: center;
   background-size: cover;
   border-radius: 29px;
-  display: inline-block;
+  display: block;
+  align-self: flex-start;
 
   // Smaller on mobile phones
   @media (max-width: 480px) {

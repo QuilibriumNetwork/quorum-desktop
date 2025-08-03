@@ -9,4 +9,8 @@ export interface FlexColumnProps {
   className?: string;
   style?: React.CSSProperties;
   testId?: string;
+  /**
+   * HTML attributes
+   */
+  [key: string]: any;
 }

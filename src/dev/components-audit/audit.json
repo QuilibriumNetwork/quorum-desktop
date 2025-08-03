@@ -710,20 +710,20 @@
       "name": "Message",
       "path": "src/components/message/Message.tsx",
       "description": "Individual message component with reactions, replies, and interactions",
-      "category": "complex_refactor",
+      "category": "platform_specific",
       "used": "yes",
-      "primitives": "partial",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
+      "primitives": "done",
+      "logic_extraction": "done",
+      "logic_needs": "done",
       "hooks": [
         "useMessageActions",
         "useEmojiPicker",
-        "useMessageRendering",
-        "useReactions"
+        "useMessageInteractions",
+        "useMessageFormatting"
       ],
       "native": "todo",
-      "notes": "Large component (likely 500+ lines) with emoji picker, reactions, replies, user profiles. Desktop: hover actions. Mobile: touch/drawer actions. Massive extraction needed.",
-      "updated": "2025-07-29"
+      "notes": "MAJOR REFACTORING COMPLETED: Extracted all business logic into 4 hooks (useMessageActions, useEmojiPicker, useMessageInteractions, useMessageFormatting). Replaced HTML elements with primitives (FlexColumn, FlexRow, Container, Text, Icon, Tooltip). Enhanced Text primitive to support links with proper styling. Fixed avatar alignment, YouTube responsive embeds, TypeScript errors. Removed unused imports. Component now has clean separation between UI and business logic but remains platform_specific due to Message.scss and complex responsive features.",
+      "updated": "2025-08-03"
     },
     "Onboarding.tsx": {
       "name": "Onboarding",
@@ -1018,31 +1018,44 @@
       "native": "todo",
       "notes": "SHARED COMPONENT: Moved from channel/ to message/ folder. Now shared between Channel.tsx and DirectMessage.tsx to eliminate code duplication. Enhanced with reply-to display, hasStickers prop, and error handling. Uses primitives (TextArea, Button, Icon, FlexRow, Tooltip) with forwardRef for auto-focus. Integrates with useMessageComposer hook for all business logic. Remains platform_specific due to complex file preview styling and responsive layout requirements. Component demonstrates clean separation: UI in component, logic in hook.",
       "updated": "2025-08-02"
+    },
+    "MessageActions.tsx": {
+      "name": "MessageActions",
+      "path": "src/components/message/MessageActions.tsx",
+      "description": "Floating action toolbar with quick reactions and message actions (reply, copy link, delete)",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "todo",
+      "logic_needs": "extract",
+      "hooks": [],
+      "native": "todo",
+      "notes": "NEW COMPONENT: Extracted from Message.tsx during refactoring. Floating action toolbar for message interactions (reply, reactions, copy link, delete). Uses FontAwesome icons and raw HTML div elements with Tailwind classes throughout. Complex web-specific hover interactions and CSS transitions. LOGIC EXTRACTION NEEDED: Quick reaction validation logic should be extracted to hook for cross-platform reuse - mobile version will need same business logic but different UI (drawer vs hover toolbar). Current EmojiPicker library is web-only, mobile will use React Native emoji picker requiring shared validation logic. Extract: reaction validation, emoji checking. Keep: hover state, tooltip positioning (platform-specific UI). TODO: Replace raw divs with primitives and FontAwesome with Icon primitive.",
+      "updated": "2025-08-03"
     }
   },
   "stats": {
-    "total": 63,
-    "primitives_done": 27,
-    "logic_extraction_done": 51,
+    "total": 64,
+    "primitives_done": 32,
+    "logic_extraction_done": 57,
     "native_ready": 0,
     "native_done": 11,
     "by_category": {
-      "platform_specific": 47,
-      "complex_refactor": 2,
-      "shared": 13
+      "platform_specific": 50,
+      "shared": 14
     },
     "by_usage": {
-      "yes": 59,
+      "yes": 60,
       "no": 3,
-      "unknown": 0
+      "unknown": 1
     },
     "by_logic_needs": {
-      "keep": 26,
-      "extract": 28,
-      "done": 10
+      "keep": 27,
+      "extract": 24,
+      "done": 13
     },
     "analysis_notes": "MAJOR REFACTOR: AppWithSearch.tsx successfully split into 3 focused providers (ModalProvider, MobileProvider, SidebarProvider) with single responsibilities. Eliminated monolithic component mixing modal, mobile, and sidebar concerns. New providers maintain z-[9999] stacking solutions but still need business logic extraction to hooks. Architecture now follows separation of concerns principle.",
-    "last_updated": "2025-08-02"
+    "last_updated": "2025-08-03"
   },
   "metadata": {
     "audit_version": "1.0",

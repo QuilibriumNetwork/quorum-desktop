@@ -10,7 +10,7 @@ import {
   Text
 } from '../../components/primitives';
 
-type AuditStatus = 'todo' | 'in_progress' | 'done' | 'ready' | 'partial' | 'unknown';
+type AuditStatus = 'todo' | 'in_progress' | 'done' | 'ready' | 'partial' | 'unknown' | 'keep' | 'extract';
 type ComponentCategory = 'shared' | 'platform_specific' | 'complex_refactor' | 'unknown';
 
 interface ComponentAudit {
@@ -81,12 +81,16 @@ const StatusBadge: React.FC<{ status: AuditStatus; context?: 'native' | 'default
     switch (status) {
       case 'done':
         return 'bg-green-500/70 text-white';
+      case 'keep':
+        return 'bg-green-500/70 text-white';
       case 'in_progress':
         return 'bg-yellow-500/70 text-black';
       case 'todo':
         return 'bg-red-500/70 text-white';
       case 'partial':
         return 'bg-green-500/70 text-white';
+      case 'extract':
+        return 'bg-red-500/70 text-white';
       case 'unknown':
         return 'bg-gray-500/70 text-white';
       default:
@@ -238,7 +242,8 @@ export const ComponentAuditViewer: React.FC = () => {
     const total = 3;
     
     if (component.primitives === 'done' || component.primitives === 'partial') progress++;
-    if (component.logic_extraction === 'done') progress++;
+    // Count logic extraction as complete if 'done' OR if logic_needs is 'keep'
+    if (component.logic_extraction === 'done' || component.logic_needs === 'keep') progress++;
     if (component.native === 'ready') progress++;
     
     return (progress / total) * 100;
@@ -393,7 +398,8 @@ export const ComponentAuditViewer: React.FC = () => {
               { value: 'all', label: 'All' },
               { value: 'todo', label: 'Todo' },
               { value: 'in_progress', label: 'In Progress' },
-              { value: 'done', label: 'Done' }
+              { value: 'done', label: 'Done' },
+              { value: 'keep', label: 'Keep' }
             ]}
           />
         </FlexColumn>

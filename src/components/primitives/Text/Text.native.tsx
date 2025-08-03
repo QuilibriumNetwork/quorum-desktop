@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text as RNText, TextStyle, TouchableOpacity } from 'react-native';
+import { Text as RNText, TextStyle, TouchableOpacity, Linking } from 'react-native';
 import { NativeTextProps } from './types';
 import { useCrossPlatformTheme } from '../theme/ThemeProvider';
 
@@ -40,6 +40,7 @@ export const Text: React.FC<NativeTextProps> = ({
   accessible,
   accessibilityLabel,
   testId,
+  href,
 }) => {
   const theme = useCrossPlatformTheme();
   const colors = theme.colors;
@@ -59,6 +60,8 @@ export const Text: React.FC<NativeTextProps> = ({
         return colors.utilities.success;
       case 'warning':
         return colors.utilities.warning;
+      case 'link':
+        return colors.accent[300]; // Use accent color for links
       default:
         return colors.text.main;
     }
@@ -84,9 +87,18 @@ export const Text: React.FC<NativeTextProps> = ({
     </RNText>
   );
 
-  if (onPress) {
+  // Handle link functionality in React Native
+  const handlePress = () => {
+    if (href) {
+      Linking.openURL(href).catch(err => console.error('Failed to open URL:', err));
+    } else if (onPress) {
+      onPress();
+    }
+  };
+
+  if (onPress || href) {
     return (
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={handlePress}>
         {textContent}
       </TouchableOpacity>
     );

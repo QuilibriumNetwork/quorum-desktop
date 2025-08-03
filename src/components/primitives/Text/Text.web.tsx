@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { WebTextProps } from './types';
+import './Text.scss';
 
 const variantMap = {
   default: 'text-main',
@@ -10,6 +11,7 @@ const variantMap = {
   error: 'text-red-600 dark:text-red-400',
   success: 'text-green-600',
   warning: 'text-yellow-600',
+  link: 'text-link-primitive',
 };
 
 const sizeMap = {
@@ -47,10 +49,17 @@ export const Text: React.FC<WebTextProps> = ({
   style,
   testId,
   onClick,
+  href,
+  target,
+  rel,
+  referrerPolicy,
   ...rest
 }) => {
+  // Auto-detect link variant when as="a" and no variant is specified
+  const finalVariant = Component === 'a' && variant === 'default' ? 'link' : variant;
+  
   const classes = clsx(
-    variantMap[variant],
+    variantMap[finalVariant],
     sizeMap[size],
     weightMap[weight],
     alignMap[align],
@@ -68,6 +77,10 @@ export const Text: React.FC<WebTextProps> = ({
       style={textStyle}
       data-testid={testId}
       onClick={onClick}
+      href={href}
+      target={target}
+      rel={rel}
+      referrerPolicy={referrerPolicy}
       {...rest}
     >
       {children}

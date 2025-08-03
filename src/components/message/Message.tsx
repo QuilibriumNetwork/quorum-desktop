@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as moment from 'moment-timezone';
-import * as linkify from 'linkifyjs';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import {
   Emoji,
@@ -14,21 +13,14 @@ import EmojiPicker, {
   SuggestionMode,
   Theme,
 } from 'emoji-picker-react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faUnlock,
-} from '@fortawesome/free-solid-svg-icons';
-import { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
 import UserProfile from '../user/UserProfile';
 import { useParams } from 'react-router';
 import { InviteLink } from './InviteLink';
-import { Modal } from '../primitives';
+import { Modal, Text, Container, FlexRow, FlexColumn, FlexCenter, Icon, Tooltip } from '../primitives';
 import './Message.scss';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
-import { useLongPress } from '../../hooks/useLongPress';
-import { useModalContext } from '../context/ModalProvider';
 import { useMobile } from '../context/MobileProvider';
 import { useMessageActions, useEmojiPicker, useMessageInteractions, useMessageFormatting } from '../../hooks';
 import MessageActions from './MessageActions';
@@ -195,10 +187,10 @@ export const Message = ({
 
 
   return (
-    <div
+    <FlexColumn
       id={`msg-${message.messageId}`}
       className={
-        'text-base relative hover:bg-chat-hover flex flex-col ' +
+        'text-base relative hover:bg-chat-hover ' +
         (formatting.isMentioned(user.currentPasskeyInfo!.address)
           ? ' message-mentions-you'
           : '') +
@@ -223,7 +215,7 @@ export const Message = ({
             replyIndex !== undefined ? messageList[replyIndex] : undefined;
           if (reply) {
             return (
-              <div
+              <Container
                 key={reply.messageId + 'rplyhd'}
                 className="message-reply-heading"
                 onClick={() =>
@@ -234,8 +226,8 @@ export const Message = ({
                   })
                 }
               >
-                <div className="message-reply-curve" />
-                <div
+                <Container className="message-reply-curve" />
+                <Container
                   className="message-reply-sender-icon"
                   style={{
                     backgroundImage: `url(${
@@ -247,13 +239,13 @@ export const Message = ({
                     })`,
                   }}
                 />
-                <div className="message-reply-sender-name">
+                <Text className="message-reply-sender-name">
                   {mapSenderToUser(reply.content.senderId).displayName}
-                </div>
-                <div className="message-reply-text">
+                </Text>
+                <Text className="message-reply-text">
                   {reply.content.type == 'post' && reply.content.text}
-                </div>
-              </div>
+                </Text>
+              </Container>
             );
           } else {
             return <></>;
@@ -261,14 +253,14 @@ export const Message = ({
         }
       })()}
       {['join', 'leave', 'kick'].includes(message.content.type) && (
-        <div className="flex flex-row font-[11px] px-[11px] py-[8px] italic">
-          {formatEventMessage(sender.displayName, message.content.type)}
-        </div>
+        <FlexRow className="font-[11px] px-[11px] py-[8px] italic">
+          <Text>{formatEventMessage(sender.displayName, message.content.type)}</Text>
+        </FlexRow>
       )}
       {!['join', 'leave', 'kick'].includes(message.content.type) && (
-        <div
+        <FlexRow
           className={
-            'flex flex-row w-full font-[11pt] px-[11px] pb-[8px] ' +
+            'w-full font-[11pt] px-[11px] pb-[8px] items-start ' +
             ((
               !(message.content as any).repliesToMessageId
                 ? undefined
@@ -281,13 +273,13 @@ export const Message = ({
           }
         >
           {showUserProfile && spaceId && (
-            <div
+            <FlexRow
               onClick={interactions.handleUserProfileBackgroundClick}
               className={
-                'absolute left-0 top-0 w-full mt-[-1000px] pb-[200px] pt-[1000px] z-[1000] flex flex-row'
+                'absolute left-0 top-0 w-full mt-[-1000px] pb-[200px] pt-[1000px] z-[1000]'
               }
             >
-              <div
+              <Container
                 className={
                   emojiPickerOpenDirection == 'upwards'
                     ? 'ml-[10px] mt-[-220px]'
@@ -305,10 +297,10 @@ export const Message = ({
                     setShowUserProfile(false);
                   }}
                 />
-              </div>
-            </div>
+              </Container>
+            </FlexRow>
           )}
-          <div
+          <Container
             onClick={interactions.handleUserProfileClick}
             className="message-sender-icon"
             style={{
@@ -319,7 +311,7 @@ export const Message = ({
                 : `url(${sender.userIcon})`,
             }}
           />
-          <div className="message-content">
+          <Container className="message-content">
             {interactions.shouldShowActions && (
               <MessageActions
                 message={message}
@@ -336,8 +328,8 @@ export const Message = ({
             )}
 
             {emojiPickerOpen === message.messageId && (
-              <div
-                onClick={(e) => e.stopPropagation()}
+              <Container
+                onClick={(e: React.MouseEvent) => e.stopPropagation()}
                 className={
                   'absolute right-4 z-[9999] ' +
                   (emojiPickerOpenDirection == 'upwards' ? 'bottom-6' : 'top-0')
@@ -346,7 +338,7 @@ export const Message = ({
                 <EmojiPicker
                   suggestedEmojisMode={SuggestionMode.FREQUENT}
                   customEmojis={emojiPicker.customEmojis}
-                  getEmojiUrl={(unified, style) => {
+                  getEmojiUrl={(unified) => {
                     return '/apple/64/' + unified + '.png';
                   }}
                   skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
@@ -355,7 +347,7 @@ export const Message = ({
                     emojiPicker.handleDesktopEmojiClick(e.emoji);
                   }}
                 />
-              </div>
+              </Container>
             )}
 
             {/* Mobile Emoji Picker */}
@@ -371,7 +363,7 @@ export const Message = ({
                   height={300}
                   suggestedEmojisMode={SuggestionMode.FREQUENT}
                   customEmojis={emojiPicker.customEmojis}
-                  getEmojiUrl={(unified, style) => {
+                  getEmojiUrl={(unified) => {
                     return '/apple/64/' + unified + '.png';
                   }}
                   skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
@@ -383,24 +375,28 @@ export const Message = ({
               </Modal>
             )}
 
-            <span className="message-sender-name">{sender.displayName}</span>
-            <span className="pl-2">
+            <Text className="message-sender-name">{sender.displayName}</Text>
+            <Text className="pl-2">
               {!repudiability && !message.signature && (
-                <FontAwesomeIcon
-                  title={t`Message does not have a valid signature, this may not be from the sender`}
-                  size={'2xs'}
-                  icon={faUnlock}
-                />
+                <Tooltip 
+                  id={`signature-warning-${message.messageId}`}
+                  content={t`Message does not have a valid signature, this may not be from the sender`}
+                >
+                  <Icon
+                    name="unlock"
+                    size="xs"
+                  />
+                </Tooltip>
               )}
-            </span>
-            <span className="message-timestamp">{displayedTimestmap}</span>
+            </Text>
+            <Text className="message-timestamp">{displayedTimestmap}</Text>
             {(() => {
               const contentData = formatting.getContentData();
               if (!contentData) return null;
 
               if (contentData.type === 'post') {
                 return contentData.content.map((c, i) => (
-                  <div
+                  <Container
                     key={contentData.messageId + '-' + i}
                     className="message-post-content break-words"
                   >
@@ -410,27 +406,25 @@ export const Message = ({
                       if (tokenData.type === 'mention') {
                         return (
                           <React.Fragment key={tokenData.key}>
-                            <span className={'message-name-mentions-you'}>
+                            <Text className={'message-name-mentions-you'}>
                               {tokenData.displayName}
-                            </span>{' '}
+                            </Text>{' '}
                           </React.Fragment>
                         );
                       }
 
                       if (tokenData.type === 'youtube') {
                         return (
-                          <div
+                          <Container
                             key={tokenData.key}
                             className="message-post-content"
                           >
                             <iframe
-                              width={'560'}
-                              height={'400'}
                               src={'https://www.youtube.com/embed/' + tokenData.videoId}
                               allow="autoplay; encrypted-media"
-                              className="rounded-lg"
+                              className="rounded-lg youtube-embed"
                             ></iframe>
-                          </div>
+                          </Container>
                         );
                       }
 
@@ -446,14 +440,14 @@ export const Message = ({
                       if (tokenData.type === 'link') {
                         return (
                           <React.Fragment key={tokenData.key}>
-                            <a
+                            <Text
+                              as="a"
                               href={tokenData.url}
-                              className="text-accent-300 hover:text-accent-400 hover:underline"
                               target="_blank"
                               referrerPolicy="no-referrer"
                             >
                               {tokenData.text}
-                            </a>{' '}
+                            </Text>{' '}
                           </React.Fragment>
                         );
                       }
@@ -464,20 +458,18 @@ export const Message = ({
                         </React.Fragment>
                       );
                     })}
-                  </div>
+                  </Container>
                 ));
               } else if (contentData.type === 'embed') {
                 return (
-                  <div key={contentData.messageId} className="message-post-content">
+                  <Container key={contentData.messageId} className="message-post-content">
                     {contentData.content.videoUrl?.startsWith(
                       'https://www.youtube.com/embed'
                     ) && (
                       <iframe
-                        width={contentData.content.width || '560'}
-                        height={contentData.content.height || '400'}
                         src={contentData.content.videoUrl}
                         allow="autoplay; encrypted-media"
-                        className="rounded-lg"
+                        className="rounded-lg youtube-embed"
                       ></iframe>
                     )}
                     {contentData.content.imageUrl && (
@@ -493,7 +485,7 @@ export const Message = ({
                         onClick={(e) => formatting.handleImageClick(e, contentData.content.imageUrl!)}
                       />
                     )}
-                  </div>
+                  </Container>
                 );
               } else if (contentData.type === 'sticker') {
                 return (
@@ -505,12 +497,12 @@ export const Message = ({
                 );
               }
             })()}
-            <div className="flex flex-wrap pt-1 -mr-1">
+            <FlexRow className="flex-wrap pt-1 -mr-1">
               {message.reactions?.map((r) => (
-                <div
+                <FlexRow
                   key={message.messageId + '-reactions-' + r.emojiId}
                   className={
-                    'cursor-pointer flex flex-row items-center mr-1 mb-1 rounded-lg py-[1pt] px-2 border border-transparent whitespace-nowrap ' +
+                    'cursor-pointer items-center mr-1 mb-1 rounded-lg py-[1pt] px-2 border border-transparent whitespace-nowrap ' +
                     (r.memberIds.includes(user.currentPasskeyInfo!.address)
                       ? 'bg-accent-150 hover:bg-accent-200 dark:bg-accent-700 dark:hover:bg-accent-600'
                       : 'bg-tooltip hover:bg-surface-5')
@@ -528,14 +520,14 @@ export const Message = ({
                       }
                     />
                   ) : (
-                    <span className="mr-1">{r.emojiName}</span>
+                    <Text className="mr-1">{r.emojiName}</Text>
                   )}
-                  <span className="text-sm">{r.count}</span>
-                </div>
+                  <Text className="text-sm">{r.count}</Text>
+                </FlexRow>
               ))}
-            </div>
-          </div>
-        </div>
+            </FlexRow>
+          </Container>
+        </FlexRow>
       )}
       {openImage && (
         <Modal
@@ -544,7 +536,7 @@ export const Message = ({
           onClose={() => setOpenImage(null)}
           hideClose={false}
         >
-          <div className="flex justify-center items-center">
+          <FlexCenter>
             <img
               src={openImage}
               style={{
@@ -555,9 +547,9 @@ export const Message = ({
               }}
               className="rounded-lg"
             />
-          </div>
+          </FlexCenter>
         </Modal>
       )}
-    </div>
+    </FlexColumn>
   );
 };
