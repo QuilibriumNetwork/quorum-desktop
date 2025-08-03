@@ -439,7 +439,6 @@ export const Message = ({
                   );
                 }}
                 copiedLinkId={copiedLinkId}
-                isVisible={true} // Actions are visible when this component renders
               />
             )}
 
