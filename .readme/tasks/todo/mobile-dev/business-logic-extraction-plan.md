@@ -71,7 +71,7 @@
 
 ### Onboarding & Login Components
 
-- [ ] Onboarding.tsx - Extract `useRegistrationFlow`, `useProfileSetup`, `useImageUpload` hooks
+- [x] Onboarding.tsx
 - [ ] Login.tsx - Extract `useAuthentication`, `usePasskeyFlow` hooks
 
 ### Unused Components 

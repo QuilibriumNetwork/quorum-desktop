@@ -679,15 +679,15 @@
       "category": "platform_specific",
       "used": "yes",
       "primitives": "partial",
-      "logic_extraction": "todo",
+      "logic_extraction": "done",
       "hooks": [
-        "useRegistrationFlow",
-        "useProfileSetup",
-        "useImageUpload"
+        "useOnboardingFlow",
+        "useWebKeyBackup",
+        "useWebFileUpload"
       ],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '_passkey-modal.scss' and 'react-dropzone', heavy Tailwind usage throughout. Complex registration logic with file upload, passkey integration (>10 lines, reusable).",
-      "updated": "2025-07-30"
+      "notes": "BUSINESS LOGIC EXTRACTED: Successfully extracted cross-platform hooks (useOnboardingFlow state machine, useWebKeyBackup file download, useWebFileUpload drag/drop). PRIMITIVES PARTIAL: Uses Input, Icon, Button, Tooltip primitives but has custom CSS classes (onboarding-input, attachment-drop, btn-disabled-onboarding) and imports _passkey-modal.scss. Web-specific: PasskeyModal, react-dropzone, DOM file downloads. Native version would reuse business logic hooks but need completely different UI (camera, native storage, platform navigation).",
+      "updated": "2025-08-04"
     },
     "Login.tsx": {
       "name": "Login",
@@ -967,7 +967,7 @@
   "stats": {
     "total": 64,
     "primitives_done": 35,
-    "logic_extraction_done": 61,
+    "logic_extraction_done": 62,
     "native_ready": 0,
     "native_done": 11,
     "by_category": {

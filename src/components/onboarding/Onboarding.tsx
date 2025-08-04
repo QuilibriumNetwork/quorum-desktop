@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   PasskeyModal,
-  usePasskeysContext,
-  passkey,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import '../../styles/_passkey-modal.scss';
-import { Input, Icon, Button } from '../primitives';
-import { useDropzone } from 'react-dropzone';
+import { Input, Icon, Button, Tooltip } from '../primitives';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
-import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
+import { 
+  useUploadRegistration,
+  useOnboardingFlow,
+  useWebKeyBackup,
+  useWebFileUpload
+} from '../../hooks';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { Trans } from '@lingui/react/macro';
 import { DefaultImages } from '../../utils';
-import ReactTooltip from '../ReactTooltip';
-
-const maxImageSize = 2 * 1024 * 1024;
 
 export const Onboarding = ({
   setUser,
@@ -33,115 +32,38 @@ export const Onboarding = ({
     >
   >;
 }) => {
-  const { currentPasskeyInfo, exportKey, updateStoredPasskey } =
-    usePasskeysContext();
-  const [exported, setExported] = useState(false);
-  const [displayName, setDisplayName] = useState(
-    currentPasskeyInfo?.displayName ?? ''
-  );
-  const [fileData, setFileData] = useState<ArrayBuffer | undefined>();
-  const [currentFile, setCurrentFile] = useState<File | undefined>();
-  const [fileError, setFileError] = useState<string | null>(null);
+  // Business logic hooks
+  const onboardingFlow = useOnboardingFlow();
+  const keyBackup = useWebKeyBackup();
+  const fileUpload = useWebFileUpload();
 
+  // API context
   const { apiClient } = useQuorumApiClient();
-
   const uploadRegistration = useUploadRegistration();
 
-  const downloadKey = async () => {
-    let content = await exportKey(currentPasskeyInfo!.address);
-    let fileName = currentPasskeyInfo!.address + '.key';
-    const blob = new Blob([content], { type: 'text/plain' });
-
-    const url = window.URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName;
-
-    document.body.appendChild(link);
-    link.click();
-
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-    setExported(true);
-  };
-
-  const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [alreadySavedConfirmationStep, setAlreadySavedConfirmationStep] =
-    useState(0);
-
-  const { getRootProps, getInputProps, acceptedFiles, isDragActive } =
-    useDropzone({
-      accept: {
-        'image/png': ['.png'],
-        'image/jpeg': ['.jpg', '.jpeg'],
-      },
-      minSize: 0,
-      maxSize: maxImageSize,
-      maxFiles: 1,
-      multiple: false,
-      onDropRejected: (fileRejections) => {
-        for (const rejection of fileRejections) {
-          if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-            setFileError(
-              i18n._(`File cannot be larger than {maxFileSize}`, {
-                maxFileSize: `${maxImageSize / 1024 / 1024}MB`,
-              })
-            );
-          } else {
-            setFileError(t`File rejected`);
-          }
-        }
-      },
-      onDropAccepted: (files) => {
-        setFileError(null);
-        // Clear previous file data immediately when new file is accepted
-        setFileData(undefined);
-        setCurrentFile(files[0]);
-      },
-    });
-
-  const setPfpImage = async () => {
-    let pfpUrl: string = String(DefaultImages.UNKNOWN_USER);
-
-    if (currentFile && fileData) {
-      pfpUrl =
-        'data:' +
-        currentFile.type +
-        ';base64,' +
-        Buffer.from(fileData).toString('base64');
+  // Handle key download and mark as exported
+  const handleDownloadKey = async () => {
+    try {
+      await keyBackup.downloadKey();
+      onboardingFlow.markKeyAsExported();
+    } catch (error) {
+      console.error('Error downloading key:', error);
     }
-
-    updateUserStoredInfo({ pfpUrl });
   };
 
-  const updateUserStoredInfo = (
-    updates: Partial<passkey.StoredPasskey> = {}
-  ) => {
-    updateStoredPasskey(currentPasskeyInfo!.credentialId, {
-      credentialId: currentPasskeyInfo!.credentialId,
-      address: currentPasskeyInfo!.address,
-      publicKey: currentPasskeyInfo!.publicKey,
-      displayName: displayName,
-      completedOnboarding: false,
-      pfpUrl: currentPasskeyInfo?.pfpUrl ?? DefaultImages.UNKNOWN_USER,
-      ...updates,
-    });
-  };
-
-  useEffect(() => {
-    if (currentFile) {
-      (async () => {
-        try {
-          const arrayBuffer = await currentFile.arrayBuffer();
-          setFileData(arrayBuffer);
-        } catch (error) {
-          console.error('Error reading file:', error);
-          setFileError(t`Error reading file`);
-        }
-      })();
+  // Handle "I already saved mine" with confirmation
+  const handleAlreadySaved = () => {
+    const canProceed = keyBackup.handleAlreadySaved();
+    if (canProceed) {
+      onboardingFlow.markKeyAsExported();
     }
-  }, [currentFile]);
+  };
+
+  // Handle profile photo save
+  const handleSavePhoto = () => {
+    const dataUrl = fileUpload.getImageDataUrl();
+    onboardingFlow.saveProfilePhoto(dataUrl || undefined);
+  };
 
   return (
     <>
@@ -157,14 +79,14 @@ export const Onboarding = ({
         <div className="flex flex-row grow"></div>
         <div className="flex flex-row grow font-semibold text-2xl justify-center px-4">
           <div className="flex flex-col text-white text-center">
-            {!exported
+            {onboardingFlow.currentStep === 'key-backup'
               ? t`Welcome to Quorum!`
-              : currentPasskeyInfo?.pfpUrl && currentPasskeyInfo.displayName
+              : onboardingFlow.currentPasskeyInfo?.pfpUrl && onboardingFlow.currentPasskeyInfo.displayName
                 ? t`One of us, one of us!`
                 : t`Personalize your account`}
           </div>
         </div>
-        {isDragActive && (
+        {fileUpload.isDragActive && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay pointer-events-none">
             <div className="flex flex-col p-8 border-2 border-dashed border-white rounded-lg bg-white bg-opacity-50 items-center">
               <Icon name="file-image" className="text-4xl text-gray-700 mb-4" />
@@ -174,7 +96,7 @@ export const Onboarding = ({
             </div>
           </div>
         )}
-        {!exported && (
+        {onboardingFlow.currentStep === 'key-backup' && (
           <>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
@@ -221,7 +143,7 @@ export const Onboarding = ({
                 <Button
                   type="primary-white"
                   className="px-8 mb-4 w-full sm:w-auto"
-                  onClick={downloadKey}
+                  onClick={handleDownloadKey}
                 >
                   {t`Save User Key`}
                 </Button>
@@ -229,22 +151,9 @@ export const Onboarding = ({
                   <Button
                     type="light-outline-white"
                     className="px-8 w-full sm:!w-auto sm:!inline-flex"
-                    onClick={() => {
-                      if (alreadySavedConfirmationStep === 0) {
-                        setAlreadySavedConfirmationStep(1);
-                        // Reset confirmation after 5 seconds
-                        setTimeout(
-                          () => setAlreadySavedConfirmationStep(0),
-                          5000
-                        );
-                      } else {
-                        setExported(true);
-                      }
-                    }}
+                    onClick={handleAlreadySaved}
                   >
-                    {alreadySavedConfirmationStep === 0
-                      ? t`I already saved mine`
-                      : t`Click again to confirm`}
+                    {keyBackup.getConfirmationButtonText()}
                   </Button>
                 </div>
               </div>
@@ -252,7 +161,7 @@ export const Onboarding = ({
             </div>
           </>
         )}
-        {exported && !currentPasskeyInfo?.displayName && (
+        {onboardingFlow.currentStep === 'display-name' && (
           <>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
@@ -265,7 +174,7 @@ export const Onboarding = ({
                   </Trans>
                 </p>
                 <pre className="text-sm font-mono bg-black bg-opacity-20 p-2 rounded mb-4 break-all whitespace-pre-wrap word-break overflow-wrap-anywhere">
-                  {currentPasskeyInfo?.address}
+                  {onboardingFlow.currentPasskeyInfo?.address}
                 </pre>
                 <p className="text-sm">{t`This information is only provided to the Spaces you join.`}</p>
               </div>
@@ -278,19 +187,17 @@ export const Onboarding = ({
                 <div className="flex-1 min-w-0">
                   <Input
                     className="onboarding-input !bg-white w-full"
-                    value={displayName}
-                    onChange={setDisplayName}
+                    value={onboardingFlow.displayName}
+                    onChange={onboardingFlow.setDisplayName}
                     placeholder="Bongocat"
                   />
                 </div>
                 <div className="flex flex-col justify-center sm:min-w-[180px] sm:pl-2">
                   <Button
                     type="primary-white"
-                    disabled={displayName.length === 0}
-                    className={`px-8 w-full ${displayName.length === 0 ? 'btn-disabled-onboarding ' : ''}`}
-                    onClick={() =>
-                      updateUserStoredInfo({ displayName, pfpUrl: undefined })
-                    }
+                    disabled={!onboardingFlow.canProceedWithName}
+                    className={`px-8 w-full ${!onboardingFlow.canProceedWithName ? 'btn-disabled-onboarding ' : ''}`}
+                    onClick={onboardingFlow.saveDisplayName}
                   >
                     {t`Set Display Name`}
                   </Button>
@@ -300,9 +207,7 @@ export const Onboarding = ({
             </div>
           </>
         )}
-        {exported &&
-          currentPasskeyInfo?.displayName &&
-          !currentPasskeyInfo?.pfpUrl && (
+        {onboardingFlow.currentStep === 'profile-photo' && (
             <>
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
@@ -319,11 +224,11 @@ export const Onboarding = ({
                   <div className="mb-2 text-sm text-center">
                     {i18n._(
                       `Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension.`,
-                      { maxFileSize: `${maxImageSize / 1024 / 1024}MB` }
+                      { maxFileSize: `${fileUpload.maxImageSize / 1024 / 1024}MB` }
                     )}
                   </div>
-                  {fileError && (
-                    <div className="error-label mt-2">{fileError}</div>
+                  {fileUpload.fileError && (
+                    <div className="error-label mt-2">{fileUpload.fileError}</div>
                   )}
                 </div>
 
@@ -332,25 +237,21 @@ export const Onboarding = ({
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
                 <div className="w-full max-w-[460px] px-4 py-4 text-center flex flex-row justify-around">
-                  {currentFile && fileData ? (
-                    <div {...getRootProps()}>
-                      <input {...getInputProps()} />
+                  {fileUpload.hasValidFile ? (
+                    <div {...fileUpload.getRootProps()}>
+                      <input {...fileUpload.getInputProps()} />
                       <img
                         className="max-w-[200px] max-h-[200px] object-cover rounded-full mx-auto"
-                        src={
-                          fileData !== undefined && currentFile
-                            ? `data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')}`
-                            : DefaultImages.UNKNOWN_USER
-                        }
+                        src={fileUpload.getImageDataUrl() || DefaultImages.UNKNOWN_USER}
                       />
                     </div>
                   ) : (
                     <div
                       className="attachment-drop cursor-pointer"
-                      {...getRootProps()}
+                      {...fileUpload.getRootProps()}
                     >
-                      <span className="attachment-drop-icon inline-block justify-around w-20 h-20 flex flex-col">
-                        <input {...getInputProps()} />
+                      <span className="attachment-drop-icon justify-around w-20 h-20 flex flex-col">
+                        <input {...fileUpload.getInputProps()} />
                         <img
                           src={DefaultImages.UNKNOWN_USER}
                           className="w-20 h-20 object-cover rounded-full mx-auto"
@@ -369,32 +270,28 @@ export const Onboarding = ({
                     <Button
                       type="light-outline-white"
                       className="px-8"
-                      onClick={setPfpImage}
+                      onClick={handleSavePhoto}
                     >
                       {t`Skip Adding Photo`}
                     </Button>
-                    <div className="flex flex-row justify-between">
+                    <Tooltip
+                      id="profile-image-info"
+                      content={t`If skipped, you'll get the default profile image and can set it later`}
+                      place="right"
+                      maxWidth={300}
+                    >
                       <Icon
                         name="circle-info"
-                        id="profile-image-info-tooltip-anchor"
                         className="text-white/80 hover:text-white/60 cursor-pointer ml-2 my-auto"
                         aria-label={t`If skipped, you'll get the default profile image and can set it later`}
                       />
-                    </div>
-
-                    <ReactTooltip
-                      id="profile-image-info-tooltip"
-                      anchorSelect="#profile-image-info-tooltip-anchor"
-                      content={t`If skipped, you'll get the default profile image and can set it later`}
-                      place="right"
-                      className="!w-[300px]"
-                    />
+                    </Tooltip>
                   </div>
                   <Button
                     type="primary-white"
-                    disabled={!fileData || !!fileError}
-                    className={`px-8 mt-4 w-full sm:w-auto ${!fileData || !!fileError ? 'btn-disabled-onboarding' : ''}`}
-                    onClick={setPfpImage}
+                    disabled={!fileUpload.canSaveFile}
+                    className={`px-8 mt-4 w-full sm:w-auto ${!fileUpload.canSaveFile ? 'btn-disabled-onboarding' : ''}`}
+                    onClick={handleSavePhoto}
                   >
                     {t`Save Contact Photo`}
                   </Button>
@@ -403,9 +300,7 @@ export const Onboarding = ({
               </div>
             </>
           )}
-        {exported &&
-          currentPasskeyInfo?.pfpUrl &&
-          currentPasskeyInfo.displayName && (
+        {onboardingFlow.currentStep === 'complete' && (
             <>
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
@@ -420,18 +315,7 @@ export const Onboarding = ({
                   <Button
                     type="primary-white"
                     className="px-8 w-full sm:w-auto"
-                    onClick={() => {
-                      updateUserStoredInfo({ completedOnboarding: true });
-                      setUser({
-                        displayName: displayName,
-                        state: 'online',
-                        status: '',
-                        userIcon:
-                          currentPasskeyInfo.pfpUrl ??
-                          DefaultImages.UNKNOWN_USER,
-                        address: currentPasskeyInfo!.address,
-                      });
-                    }}
+                    onClick={() => onboardingFlow.completeOnboarding(setUser)}
                   >
                     {t`Let's gooooooooo`}
                   </Button>
