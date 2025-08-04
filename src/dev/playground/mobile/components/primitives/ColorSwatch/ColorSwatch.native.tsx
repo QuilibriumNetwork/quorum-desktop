@@ -55,6 +55,7 @@ export const ColorSwatch: React.FC<ColorSwatchNativeProps> = ({
         {
           backgroundColor: getColorHex(color),
           borderColor: isActive ? getColorHex(color) : 'transparent',
+          borderWidth: isActive ? 2 : 0, // No border when unchecked for perfect circle
           opacity: disabled ? 0.5 : 1,
           borderRadius: sizeStyle.width / 2, // Ensure perfect circle by using half the width
         },
@@ -81,7 +82,6 @@ export const ColorSwatch: React.FC<ColorSwatchNativeProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderWidth: 2,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden', // Ensure content doesn't break the circle
