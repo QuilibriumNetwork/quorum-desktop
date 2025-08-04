@@ -93,7 +93,18 @@ export type IconName =
   | 'sort'
   | 'print'
   | 'download-alt'
-  | 'upload-alt';
+  | 'upload-alt'
+  // Test screen icons for emoji replacements
+  | 'mobile'
+  | 'device'
+  | 'tablet'
+  | 'dot-circle'
+  | 'circle'
+  | 'radio'
+  | 'target'
+  | 'bullseye'
+  | 'pencil'
+  | 'memo';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
 

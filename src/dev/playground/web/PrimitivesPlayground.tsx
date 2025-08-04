@@ -432,7 +432,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-                📱 Mobile Testing Notes
+              Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>Web: Uses div with CSS classes for styling</li>
@@ -1447,7 +1447,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-                📱 Mobile Testing Notes
+              Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>
@@ -1694,7 +1694,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-                📱 Mobile Testing Notes
+              Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>Auto-resize functionality works on both web and mobile</li>
@@ -1803,7 +1803,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-                📱 Mobile Testing Notes
+              Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>
@@ -2230,7 +2230,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-                📱 Mobile Testing Notes
+              Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>Web: Uses FontAwesome check icon in selected state</li>
@@ -2339,7 +2339,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-                📱 Mobile Testing Notes
+              Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>Web: Native HTML radio inputs with custom styling</li>
@@ -2476,7 +2476,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-                📱 Mobile Testing Notes
+              Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>Web: Uses existing ReactTooltip with touch support</li>

@@ -48,7 +48,7 @@ import {
   faShieldAlt,
   faLock,
   faUnlock,
-  faPalette,
+  faPaintBrush,
   faBell,
   faInfo,
   faExclamationTriangle,
@@ -69,6 +69,11 @@ import {
   faSort,
   faPrint,
   faSave,
+  faMobile,
+  faTablet,
+  faCircle,
+  faBullseye,
+  faPencil,
 } from '@fortawesome/free-solid-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { IconName } from './types';
@@ -136,7 +141,7 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   'shield-alt': faShieldAlt,
   lock: faLock,
   unlock: faUnlock,
-  palette: faPalette,
+  palette: faPaintBrush,
   bell: faBell,
 
   // Status & Alerts
@@ -168,6 +173,18 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   print: faPrint,
   'download-alt': faDownload, // alias for download
   'upload-alt': faUpload, // alias for upload
+  
+  // Test screen icons for emoji replacements
+  mobile: faMobile,
+  device: faMobile, // alias for mobile
+  tablet: faTablet,
+  'dot-circle': faCircle,
+  circle: faCircle, // alias for dot-circle
+  radio: faCircle, // alias for dot-circle (radio button)
+  target: faBullseye,
+  bullseye: faBullseye,
+  pencil: faPencil,
+  memo: faPencil, // alias for pencil (memo/note)
 };
 
 // React Native vector icon names (using FontAwesome family from react-native-vector-icons)
@@ -233,7 +250,7 @@ export const reactNativeIconMap: Record<IconName, string> = {
   'shield-alt': 'shield',
   lock: 'lock',
   unlock: 'unlock',
-  palette: 'palette',
+  palette: 'paint-brush',
   bell: 'bell',
 
   // Status & Alerts
@@ -265,6 +282,18 @@ export const reactNativeIconMap: Record<IconName, string> = {
   print: 'print',
   'download-alt': 'download',
   'upload-alt': 'upload',
+  
+  // Test screen icons for emoji replacements
+  mobile: 'mobile',
+  device: 'mobile',
+  tablet: 'tablet',
+  'dot-circle': 'circle',
+  circle: 'circle',
+  radio: 'circle',
+  target: 'bullseye',
+  bullseye: 'bullseye',
+  pencil: 'pencil',
+  memo: 'pencil',
 };
 
 // Helper function to check if a string is a valid icon name

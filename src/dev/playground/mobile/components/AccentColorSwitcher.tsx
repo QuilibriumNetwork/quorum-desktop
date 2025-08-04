@@ -14,9 +14,13 @@ const AccentColorSwitcher: React.FC = () => {
   // Native apps always use medium size for better touch targets
   // Web apps use responsive sizing based on viewport
   const swatchSize = isNative ? 'medium' : isMobile ? 'medium' : 'large';
+  
+  // Native/mobile apps need larger gaps for better touch targets
+  // Web apps use smaller gaps for compact layout
+  const swatchGap = isNative ? 12 : isMobile ? 12 : 3;
 
   return (
-    <FlexRow gap={3}>
+    <FlexRow gap={swatchGap}>
       {ACCENT_COLORS.map((color) => (
         <ColorSwatch
           key={color}

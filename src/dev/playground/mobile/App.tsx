@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
-  Text,
   View,
-  ScrollView,
-  TouchableOpacity,
 } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider, useTheme } from './components/primitives/theme';
+import Button from './components/primitives/Button';
 import { PrimitiveListScreen } from './screens/PrimitiveListScreen';
 import { PrimitivesTestScreen } from './screens/PrimitivesTestScreen';
 import { TextTestScreen } from './screens/TextTestScreen';
@@ -48,20 +46,27 @@ function ThemedAppContent() {
 
     return (
       <View style={[styles.backBar, { backgroundColor: theme.colors.bg.app }]}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => setCurrentScreen('list')}
-        >
-          <Text style={styles.backButtonText}>← Back to Primitives</Text>
-        </TouchableOpacity>
+        <View style={styles.buttonContainer}>
+          <Button
+            type="secondary"
+            iconName="arrow-left"
+            onClick={() => setCurrentScreen('list')}
+          >
+            Back to Primitives
+          </Button>
+        </View>
       </View>
     );
+  };
+
+  const handleSelectPrimitive = (screen: string) => {
+    setCurrentScreen(screen as Screen);
   };
 
   const renderScreen = () => {
     switch (currentScreen) {
       case 'list':
-        return <PrimitiveListScreen onSelectPrimitive={setCurrentScreen} />;
+        return <PrimitiveListScreen onSelectPrimitive={handleSelectPrimitive} />;
       case 'basic':
         return <PrimitivesTestScreen />;
       case 'text':
@@ -87,7 +92,7 @@ function ThemedAppContent() {
       case 'icon':
         return <IconTestScreen />;
       default:
-        return <PrimitiveListScreen onSelectPrimitive={setCurrentScreen} />;
+        return <PrimitiveListScreen onSelectPrimitive={handleSelectPrimitive} />;
     }
   };
 
@@ -124,16 +129,7 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     paddingHorizontal: 20,
   },
-  backButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
+  buttonContainer: {
     alignSelf: 'flex-start',
-  },
-  backButtonText: {
-    fontSize: 16,
-    color: '#1976d2',
-    fontWeight: '500',
   },
 });
