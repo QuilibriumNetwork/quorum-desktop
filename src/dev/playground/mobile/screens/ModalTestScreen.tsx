@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import Modal from '../components/primitives/Modal';
 import { useTheme } from '../components/primitives/theme';
-import { getColors } from '../components/primitives/theme/colors';
 
 export const ModalTestScreen: React.FC = () => {
   const theme = useTheme();
-  const colors = getColors(theme.resolvedTheme, theme.accent);
+  const colors = theme.colors;
 
   const [basicModal, setBasicModal] = useState(false);
   const [smallModal, setSmallModal] = useState(false);

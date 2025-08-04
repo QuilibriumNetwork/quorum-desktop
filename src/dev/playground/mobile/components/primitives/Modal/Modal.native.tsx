@@ -16,7 +16,6 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeModalProps } from './types';
 import { useTheme } from '../theme';
-import { getColors } from '../theme/colors';
 import { Icon } from '../Icon';
 
 const Modal: React.FC<NativeModalProps> = ({
@@ -32,7 +31,7 @@ const Modal: React.FC<NativeModalProps> = ({
   keyboardAvoidingView = true,
 }) => {
   const theme = useTheme();
-  const colors = getColors(theme.resolvedTheme, theme.accent);
+  const colors = theme.colors;
   const insets = useSafeAreaInsets();
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width;

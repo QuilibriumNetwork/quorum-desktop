@@ -8,7 +8,6 @@ import React, {
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import { TextAreaNativeProps } from './types';
 import { useTheme } from '../theme';
-import { getColors } from '../theme/colors';
 
 export const TextArea = forwardRef<TextInput, TextAreaNativeProps>(
   (
@@ -39,7 +38,7 @@ export const TextArea = forwardRef<TextInput, TextAreaNativeProps>(
     ref
   ) => {
     const theme = useTheme();
-    const colors = getColors(theme.mode, theme.accentColor);
+    const colors = theme.colors;
     const [isFocused, setIsFocused] = useState(false);
     const [textAreaHeight, setTextAreaHeight] = useState<number | undefined>(
       undefined

@@ -2,7 +2,6 @@ import React from 'react';
 import { TextInput, View, Text, StyleSheet } from 'react-native';
 import { InputNativeProps } from './types';
 import { useTheme } from '../theme';
-import { getColors } from '../theme/colors';
 
 export const Input: React.FC<InputNativeProps> = ({
   value,
@@ -26,7 +25,7 @@ export const Input: React.FC<InputNativeProps> = ({
   accessibilityLabel,
 }) => {
   const theme = useTheme();
-  const colors = getColors(theme.resolvedTheme, theme.accent);
+  const colors = theme.colors;
   const [isFocused, setIsFocused] = React.useState(false);
 
   // Map type to keyboardType if not explicitly provided

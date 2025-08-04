@@ -25,7 +25,6 @@ export function RadioGroup<T extends string = string>({
   
   // Use the colors directly from the theme provider (already resolved)
   const colors = theme.colors;
-  
 
   const handlePress = (optionValue: T) => {
     if (!disabled) {
@@ -44,7 +43,6 @@ export function RadioGroup<T extends string = string>({
       {options.map((option) => {
         const isSelected = value === option.value;
         const isDisabled = disabled || option.disabled;
-        
 
         return (
           <TouchableOpacity

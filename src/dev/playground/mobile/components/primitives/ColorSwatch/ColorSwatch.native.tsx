@@ -2,7 +2,6 @@ import React from 'react';
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { ColorSwatchNativeProps } from './types';
 import { useTheme } from '../theme';
-import { getColors } from '../theme/colors';
 import { Icon } from '../Icon';
 
 // Helper function to get hex color for accent colors
@@ -29,8 +28,7 @@ export const ColorSwatch: React.FC<ColorSwatchNativeProps> = ({
   testID,
 }) => {
   const theme = useTheme();
-  const colors = getColors(theme.resolvedTheme, color as any);
-  const themeColors = getColors(theme.resolvedTheme, theme.accent);
+  const themeColors = theme.colors;
 
   const getSizeStyle = () => {
     switch (size) {

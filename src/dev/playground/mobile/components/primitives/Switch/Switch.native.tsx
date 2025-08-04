@@ -2,7 +2,6 @@ import React from 'react';
 import { Pressable, View, Animated, Platform } from 'react-native';
 import { NativeSwitchProps } from './types';
 import { useTheme } from '../theme';
-import { getColors } from '../theme/colors';
 
 export const Switch: React.FC<NativeSwitchProps> = ({
   value,
@@ -14,7 +13,7 @@ export const Switch: React.FC<NativeSwitchProps> = ({
   testID,
 }) => {
   const theme = useTheme();
-  const colors = getColors(theme.resolvedTheme, theme.accent);
+  const colors = theme.colors;
 
   // Animation value for thumb position
   const animatedValue = React.useRef(new Animated.Value(value ? 1 : 0)).current;

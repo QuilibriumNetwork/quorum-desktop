@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import { RadioGroupNativeProps } from './types';
 import { useTheme } from '../theme';
-import { getColors } from '../theme/colors';
 import { Icon } from '../Icon';
 import { isValidIconName } from '../Icon/iconMapping';
 
