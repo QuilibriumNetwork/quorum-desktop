@@ -6,7 +6,7 @@ import {
   Linking,
 } from 'react-native';
 import { NativeTextProps } from './types';
-import { useCrossPlatformTheme } from '../theme/ThemeProvider';
+import { useTheme } from '../theme';
 
 const sizeMap = {
   xs: 12,
@@ -46,7 +46,7 @@ export const Text: React.FC<NativeTextProps> = ({
   testId,
   href,
 }) => {
-  const theme = useCrossPlatformTheme();
+  const theme = useTheme();
   const colors = theme.colors;
 
   // Map variants to theme colors

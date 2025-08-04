@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Icon, useCrossPlatformTheme } from '../components/primitives';
+import { Icon, useTheme } from '../components/primitives';
 
 export const IconTestScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
-  const theme = useCrossPlatformTheme();
+  const theme = useTheme();
   const { colors } = theme;
 
   return (

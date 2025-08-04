@@ -24,11 +24,8 @@ export function RadioGroup<T extends string = string>({
 }: RadioGroupNativeProps<T>) {
   const theme = useTheme();
   
-  // Extract theme values from the primitive theme provider structure
-  const themeMode = theme.theme || theme.resolvedTheme || 'light';
-  const accentColor = theme.accent || 'blue';
-  
-  const colors = getColors(themeMode, accentColor);
+  // Use the colors directly from the theme provider (already resolved)
+  const colors = theme.colors;
   
 
   const handlePress = (optionValue: T) => {

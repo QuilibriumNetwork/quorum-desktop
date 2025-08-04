@@ -96,25 +96,25 @@ export const RadioGroupTestScreen: React.FC = () => {
         <View style={[styles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
           <Text style={[styles.infoTitle, { color: theme.colors.text.strong }]}>📱 Mobile Testing Notes</Text>
           <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            • Web: Native HTML radio inputs with custom styling
+            - Web: Native HTML radio inputs with custom styling
           </Text>
           <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            • Mobile: Custom radio implementation with TouchableOpacity
+            - Mobile: Custom radio implementation with TouchableOpacity
           </Text>
           <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            • Icons now use FontAwesome icon system
+            - Icons now use FontAwesome icon system
           </Text>
           <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            • Both horizontal and vertical layouts supported
+            - Both horizontal and vertical layouts supported
           </Text>
           <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            • Touch targets optimized for mobile (min 44x44)
+            - Touch targets optimized for mobile (min 44x44)
           </Text>
           <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            • Active state has accent color border and background
+            - Active state has accent color border and background
           </Text>
           <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            • Ready for ThemeRadioGroup integration
+            - Ready for ThemeRadioGroup integration
           </Text>
         </View>
       </ScrollView>

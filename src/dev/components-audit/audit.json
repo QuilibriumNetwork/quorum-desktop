@@ -361,17 +361,15 @@
     "ThemeRadioGroup.tsx": {
       "name": "ThemeRadioGroup",
       "path": "src/components/ThemeRadioGroup.tsx",
-      "description": "Radio button group for selecting light/dark theme modes",
-      "category": "platform_specific",
+      "description": "Radio button group for selecting light/dark/system theme modes with cross-platform system theme detection",
+      "category": "shared",
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useThemeSelection"
-      ],
-      "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Uses Tailwind className. Theme selection logic with localStorage integration (>10 lines, reusable). Already extracted: useThemeSelection.",
-      "updated": "2025-07-30"
+      "hooks": [],
+      "native": "done",
+      "notes": "FULLY SHARED COMPONENT: Implemented cross-platform theming system with platform-specific providers (ThemeProvider.web.tsx + ThemeProvider.native.tsx). Both platforms support system theme detection (web: matchMedia, mobile: useColorScheme). Component uses only primitives (RadioGroup) with unified theme API. Web-only props (className, name) are ignored on native. Tested and working on both web and mobile playground. No custom hooks needed - uses provider directly.",
+      "updated": "2025-08-04"
     },
     "ReactTooltip.tsx": {
       "name": "ReactTooltip",
@@ -968,10 +966,10 @@
     "primitives_done": 35,
     "logic_extraction_done": 63,
     "native_ready": 0,
-    "native_done": 11,
+    "native_done": 12,
     "by_category": {
-      "platform_specific": 50,
-      "shared": 14
+      "platform_specific": 49,
+      "shared": 15
     },
     "by_usage": {
       "yes": 60,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme, Theme } from './context/ThemeProvider';
+import { useTheme, type Theme } from './primitives/theme';
 import { RadioGroup } from './primitives';
 import { t } from '@lingui/core/macro';
 import { RadioOption } from './primitives/RadioGroup/types';

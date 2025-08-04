@@ -1,27 +1,7 @@
-import { lazy } from 'react';
-
-// Static color exports (safe - no hooks)
+// Re-export shared types and colors
 export { getColors, getColor, themeColors, accentColors } from './colors';
 export type { Theme, AccentColor } from './colors';
+export type { ThemeContextType, PrimitivesThemeContextType } from './ThemeProvider';
 
-// Environment-aware theme providers
-// For web: lazy-loaded to prevent hook loading during module init
-// For React Native: direct exports work fine
-export const CrossPlatformThemeProvider =
-  typeof window !== 'undefined'
-    ? lazy(() =>
-        import('./ThemeProvider').then((m) => ({
-          default: m.CrossPlatformThemeProvider,
-        }))
-      )
-    : require('./ThemeProvider').CrossPlatformThemeProvider;
-
-export const ThemeProvider =
-  typeof window !== 'undefined'
-    ? lazy(() =>
-        import('./ThemeProvider').then((m) => ({ default: m.ThemeProvider }))
-      )
-    : require('./ThemeProvider').ThemeProvider;
-
-// Hooks are always direct exports (used inside components, not during module init)
-export { useCrossPlatformTheme, useTheme } from './ThemeProvider';
+// Mobile playground uses React Native theme provider directly
+export { useTheme, ThemeProvider } from './ThemeProvider.native';

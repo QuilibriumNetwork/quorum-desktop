@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { ModalContainerProps } from './types';
-import { useCrossPlatformTheme } from '../theme/ThemeProvider';
+import { useTheme } from '../theme';
 
 const { height: screenHeight } = Dimensions.get('window');
 
@@ -22,7 +22,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   animationDuration = 300,
   closeOnEscape = true, // On mobile, this translates to back button
 }) => {
-  const { colors } = useCrossPlatformTheme();
+  const { colors } = useTheme();
   const translateY = useRef(new Animated.Value(screenHeight)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 

@@ -21,8 +21,8 @@ export { Tooltip } from './Tooltip';
 export { Icon } from './Icon';
 export { Text } from './Text';
 
-// Theme System - Environment-aware exports
-export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
+// Theme System - Platform-specific exports
+export { ThemeProvider, useTheme } from './theme';
 
 // Types
 export type { ModalContainerProps } from './ModalContainer';

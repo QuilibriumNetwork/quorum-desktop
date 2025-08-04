@@ -3,7 +3,7 @@ import { Tooltip } from 'react-tooltip';
 import './ReactTooltip.scss';
 import 'react-tooltip/dist/react-tooltip.css';
 
-import { useTheme } from './context/ThemeProvider';
+import { useTheme } from './primitives/theme';
 
 type ReactTooltipProps = {
   id: string;

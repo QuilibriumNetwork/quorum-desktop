@@ -2,7 +2,7 @@
 // These values EXACTLY match the CSS variables in _colors.scss
 // DO NOT modify without updating CSS variables accordingly
 
-export type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark' | 'system';
 export type AccentColor =
   | 'blue'
   | 'purple'

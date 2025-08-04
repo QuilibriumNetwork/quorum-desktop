@@ -7,7 +7,7 @@ import { MessageDBProvider } from './components/context/MessageDB.tsx';
 import './index.scss';
 import App from './App.tsx';
 import { WebSocketProvider } from './components/context/WebsocketProvider.tsx';
-import { ThemeProvider } from './components/context/ThemeProvider.tsx';
+import { ThemeProvider } from './components/primitives/theme';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { dynamicActivate, getUserLocale } from './i18n/i18n.ts';

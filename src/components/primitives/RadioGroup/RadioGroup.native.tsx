@@ -23,7 +23,9 @@ export function RadioGroup<T extends string = string>({
   testID,
 }: RadioGroupNativeProps<T>) {
   const theme = useTheme();
-  const colors = getColors(theme.mode, theme.accentColor);
+  
+  // Use the colors directly from the theme provider (already resolved)
+  const colors = theme.colors;
 
   const handlePress = (optionValue: T) => {
     if (!disabled) {
