@@ -81,7 +81,6 @@ const App = () => {
   >(undefined);
   const [init, setInit] = useState(false);
   const [landing, setLanding] = useState(false);
-  const [kickUserAddress, setKickUserAddress] = useState<string>();
 
   // All hooks must be called before any conditional returns
   useEffect(() => {
@@ -154,10 +153,7 @@ const App = () => {
                             <ModalProvider user={user} setUser={setUser}>
                               <MobileProvider>
                                 <SidebarProvider>
-                                  <Layout
-                                    kickUserAddress={kickUserAddress}
-                                    setKickUserAddress={setKickUserAddress}
-                                  >
+                                  <Layout>
                                     <DirectMessages
                                       setUser={setUser}
                                       setAuthState={() => {
@@ -177,10 +173,7 @@ const App = () => {
                             <ModalProvider user={user} setUser={setUser}>
                               <MobileProvider>
                                 <SidebarProvider>
-                                  <Layout
-                                    kickUserAddress={kickUserAddress}
-                                    setKickUserAddress={setKickUserAddress}
-                                  >
+                                  <Layout>
                                     <DirectMessages
                                       setUser={setUser}
                                       setAuthState={() => {
@@ -200,17 +193,12 @@ const App = () => {
                             <ModalProvider user={user} setUser={setUser}>
                               <MobileProvider>
                                 <SidebarProvider>
-                                  <Layout
-                                    kickUserAddress={kickUserAddress}
-                                    setKickUserAddress={setKickUserAddress}
-                                  >
+                                  <Layout>
                                     <Space
                                       setUser={setUser}
                                       setAuthState={() => {
                                         setUser(undefined);
                                       }}
-                                      kickUserAddress={kickUserAddress}
-                                      setKickUserAddress={setKickUserAddress}
                                       user={user}
                                     />
                                   </Layout>
@@ -222,10 +210,7 @@ const App = () => {
                         <Route
                           path="/invite/"
                           element={
-                            <InviteRoute
-                              kickUserAddress={kickUserAddress}
-                              setKickUserAddress={setKickUserAddress}
-                            />
+                            <InviteRoute />
                           }
                         />
                         {process.env.NODE_ENV === 'development' && PrimitivesPlayground && (
@@ -235,10 +220,7 @@ const App = () => {
                               <ModalProvider user={user} setUser={setUser}>
                               <MobileProvider>
                                 <SidebarProvider>
-                                  <Layout
-                                    kickUserAddress={kickUserAddress}
-                                    setKickUserAddress={setKickUserAddress}
-                                  >
+                                  <Layout>
                                     <Suspense fallback={<div>Loading playground...</div>}>
                                       <PrimitivesPlayground />
                                     </Suspense>
@@ -316,10 +298,7 @@ const App = () => {
   );
 };
 
-const InviteRoute: React.FC<{
-  kickUserAddress: string | undefined;
-  setKickUserAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
-}> = ({ kickUserAddress, setKickUserAddress }) => {
+const InviteRoute: React.FC = () => {
   const navigate = useNavigate();
 
   const handleClose = () => {
@@ -339,10 +318,7 @@ const InviteRoute: React.FC<{
       <ModalProvider>
         <MobileProvider>
           <SidebarProvider>
-            <Layout
-              kickUserAddress={kickUserAddress}
-              setKickUserAddress={setKickUserAddress}
-            >
+            <Layout>
               <div />
             </Layout>
           </SidebarProvider>

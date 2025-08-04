@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router';
 import ChannelList from '../channel/ChannelList';
 import Channel from '../channel/Channel';
@@ -24,11 +25,10 @@ type SpaceProps = {
       | undefined
     >
   >;
-  kickUserAddress?: string;
-  setKickUserAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 const Space: React.FunctionComponent<SpaceProps> = (props) => {
+  const [kickUserAddress, setKickUserAddress] = useState<string>();
   let params = useParams<{ spaceId: string; channelId: string }>();
   let { data: space } = useSpace({ spaceId: params.spaceId! });
   const { isMobile, isTablet, leftSidebarOpen, closeLeftSidebar } =
@@ -63,8 +63,8 @@ const Space: React.FunctionComponent<SpaceProps> = (props) => {
       </div>
       <Channel
         key={`${params.spaceId}-${params.channelId}`}
-        kickUserAddress={props.kickUserAddress}
-        setKickUserAddress={props.setKickUserAddress}
+        kickUserAddress={kickUserAddress}
+        setKickUserAddress={setKickUserAddress}
         spaceId={params.spaceId}
         channelId={params.channelId}
       />

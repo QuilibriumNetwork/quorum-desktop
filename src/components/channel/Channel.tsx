@@ -12,6 +12,7 @@ import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider'
 import { useSidebar } from '../context/SidebarProvider';
 import { Button, Icon } from '../primitives';
 import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
+import KickUserModal from '../modals/KickUserModal';
 
 type ChannelProps = {
   spaceId: string;
@@ -174,6 +175,15 @@ const Channel: React.FC<ChannelProps> = ({
 
   return (
     <div className="chat-container">
+      {kickUserAddress && (
+        <KickUserModal
+          visible={!!kickUserAddress}
+          kickUserAddress={kickUserAddress}
+          onClose={() => {
+            setKickUserAddress(undefined);
+          }}
+        />
+      )}
       <div className="flex flex-col">
         <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
           <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2 lg:mb-0">

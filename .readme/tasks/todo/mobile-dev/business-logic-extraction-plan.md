@@ -63,16 +63,17 @@
 
 - [x] DirectMessage.tsx 
 
+- [x] Message.tsx 
+- [x] MessageActions.tsx (primitves kept or layout issues)
 
-#### Message.tsx 
-This  avery big and complex component. I "think" it si shared between DirectMessage and Channel. Analyze the component carefully. After you finish your detailed analysis of whatcan be done to extract all logic and add our primitves, report back.
+### NEXT PHASE
 
-There could me more logic to extract compared to what is listed below:
-- [ ] Extract `useMessageActions` hook
-- [ ] Extract `useEmojiPicker` hook
-- [ ] Extract `useMessageRendering` hook
-- [ ] Extract `useReactions` hook
-- [ ] Test: Message interactions, emoji reactions, reply functionality
+Carefully check on audit.json which components still need logic extraction and/or import of our new primitves. Then reposrt below here with a list:
+
+**Reminders:**
+- Scope of logic extraction is to be able to build native components later that use the same logic.
+- Scope of primtives import is to: be ablee to build shared components web/native , even if components are platform specific, stay consistent by still using our primitves on web components, avoid over-engineering (If some components like Flex or Container cause layout issues, just use raw html for the web components).
+
 
 ---
 
