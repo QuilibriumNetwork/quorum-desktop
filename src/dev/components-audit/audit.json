@@ -336,12 +336,12 @@
       "description": "Maintenance mode display with icon and message",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "todo",
+      "primitives": "partial",
       "logic_extraction": "done",
       "hooks": [],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Heavy Tailwind usage with raw divs throughout (flex flex-col grow, etc.). Simple maintenance display (<5 lines of logic).",
-      "updated": "2025-07-30"
+      "notes": "Uses Button and Icon primitives but has extensive Tailwind layout classes and raw HTML elements (div, a). Simple error page with minimal business logic - good candidate for shared component but would require Link primitive creation and layout conversion effort. NOT WORTH MAKING SHARED: Low ROI due to rare usage (only shown on app errors), would need new Link primitive, and complex flex layout conversion for minimal user benefit. Keep as platform_specific.",
+      "updated": "2025-08-04"
     },
     "ClickToCopyContent.tsx": {
       "name": "ClickToCopyContent",

@@ -74,7 +74,7 @@
 - [x] Onboarding.tsx
 - [x] Login.tsx 
 
-### Unused Components 
+### Unused Components (SKIP FOR NOW)
 
 - [ ] UserProfileEdit.tsx - Extract `useProfileEdit`, `useImageUpload` hooks (unused component)
 
