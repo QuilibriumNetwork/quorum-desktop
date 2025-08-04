@@ -40,7 +40,7 @@ export const PrimitivesTestScreen: React.FC = () => {
         </View>
 
         {/* Button Primitive Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Button Primitive</Text>
 
           <View style={styles.testGroup}>
@@ -90,7 +90,7 @@ export const PrimitivesTestScreen: React.FC = () => {
         </View>
 
         {/* Container Primitive Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Container Primitive</Text>
 
           <View style={styles.testGroup}>
@@ -133,7 +133,7 @@ export const PrimitivesTestScreen: React.FC = () => {
         </View>
 
         {/* Flex Primitives Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Flex Primitives</Text>
 
           <View style={styles.testGroup}>
@@ -200,7 +200,7 @@ export const PrimitivesTestScreen: React.FC = () => {
         </View>
 
         {/* Modal Primitives Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Modal Primitives</Text>
 
           <View style={styles.testGroup}>
@@ -228,7 +228,7 @@ export const PrimitivesTestScreen: React.FC = () => {
         </View>
 
         {/* ResponsiveContainer Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>ResponsiveContainer</Text>
           <View style={styles.infoBox}>
             <Text style={styles.infoText}>

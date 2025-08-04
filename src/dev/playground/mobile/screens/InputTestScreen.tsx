@@ -21,7 +21,7 @@ export const InputTestScreen: React.FC = () => {
         </Text>
 
         {/* Basic Input Types */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Input Types</Text>
 
           <View style={styles.inputGroup}>
@@ -70,7 +70,7 @@ export const InputTestScreen: React.FC = () => {
         </View>
 
         {/* Error States */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={styles.sectionTitle}>Error States</Text>
 
           <View style={styles.inputGroup}>
@@ -105,7 +105,7 @@ export const InputTestScreen: React.FC = () => {
         </View>
 
         {/* Input Variants */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={styles.sectionTitle}>Input Variants</Text>
 
           <View style={styles.inputGroup}>
@@ -134,7 +134,7 @@ export const InputTestScreen: React.FC = () => {
         </View>
 
         {/* Focus and Styling */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={styles.sectionTitle}>Focus Features</Text>
 
           <View style={styles.inputGroup}>

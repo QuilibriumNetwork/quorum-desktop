@@ -55,7 +55,7 @@ export const themeColors = {
       tooltip: '#ffffff', // var(--surface-00)
       icon: '#ffffff', // var(--surface-00)
       input: '#e6e6eb', // var(--surface-3)
-      card: '#eeeef3', // var(--surface-2)
+      card: '#fefeff', // var(--surface-0) - much better contrast with surface-3 fields
     },
 
     // Border colors (matches CSS --color-border-* variables)
@@ -83,13 +83,12 @@ export const themeColors = {
       info: 'rgb(48, 149, 189)',
     },
 
-    // === MOBILE-SPECIFIC FIELD COLORS (DO NOT SYNC WITH WEB APP COLORS) ===
-    // Optimized for mobile modal backgrounds (surface-1: #f6f6f9)
+    // Field colors that match web app theming system exactly
     field: {
-      // Background colors - need good contrast on surface-1
-      bg: '#eeeef3', // surface-2 - provides visible contrast on surface-1
-      bgFocus: '#f6f6f9', // surface-1 - lighter focus state
-      bgError: '#eeeef3', // surface-2 - same as default
+      // Background colors - using same as web app
+      bg: '#e6e6eb', // surface-3 - matches web app bg.input
+      bgFocus: '#e6e6eb', // surface-3 - same as default (web pattern)
+      bgError: '#e6e6eb', // surface-3 - same as default
 
       // Border colors - lighter borders for surface-1 background
       border: '#cdccd3', // surface-6 - visible but not too strong
@@ -156,7 +155,7 @@ export const themeColors = {
       tooltip: '#100f11', // var(--surface-00)
       icon: '#100f11', // var(--surface-00)
       input: '#312935', // var(--surface-3)
-      card: '#2c252e', // var(--surface-2)
+      card: '#1d1a21', // var(--surface-0) - much better contrast with surface-3 fields
     },
 
     // Dark theme border colors
@@ -184,13 +183,12 @@ export const themeColors = {
       info: 'rgb(38, 123, 158)',
     },
 
-    // === MOBILE-SPECIFIC FIELD COLORS (DO NOT SYNC) ===
-    // Optimized for mobile modal backgrounds (surface-1: #241f27)
+    // Field colors that match web app theming system exactly
     field: {
-      // Background colors - need good contrast on dark surface-1
-      bg: '#2c252e', // surface-2 - provides visible contrast on dark surface-1
-      bgFocus: '#241f27', // surface-1 - lighter focus state
-      bgError: '#2c252e', // surface-2 - same as default
+      // Background colors - using same as web app
+      bg: '#312935', // surface-3 - matches web app bg.input
+      bgFocus: '#312935', // surface-3 - same as default (web pattern)
+      bgError: '#312935', // surface-3 - same as default
 
       // Border colors - need visibility on dark surface-1 background
       border: '#584d5e', // surface-6 - visible on dark background

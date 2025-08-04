@@ -29,8 +29,8 @@ export const ColorSwatch: React.FC<ColorSwatchNativeProps> = ({
   testID,
 }) => {
   const theme = useTheme();
-  const colors = getColors(theme.mode, color as any);
-  const themeColors = getColors(theme.mode, theme.accentColor);
+  const colors = getColors(theme.resolvedTheme, color as any);
+  const themeColors = getColors(theme.resolvedTheme, theme.accent);
 
   const getSizeStyle = () => {
     switch (size) {

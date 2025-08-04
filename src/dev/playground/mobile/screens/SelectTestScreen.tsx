@@ -131,7 +131,7 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Basic Select */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Basic Select</Text>
           <Text style={[styles.label, { color: theme.colors.text.main }]}>Simple Select</Text>
           <Select
@@ -143,7 +143,7 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Select with Icons */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>With Icons</Text>
           <Text style={[styles.label, { color: theme.colors.text.main }]}>Action Picker</Text>
           <Select
@@ -155,7 +155,7 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Select Sizes */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Size Variants</Text>
 
           <View style={styles.subSection}>
@@ -193,7 +193,7 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Select Variants */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Select Variants</Text>
 
           <View style={styles.subSection}>
@@ -219,7 +219,7 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Error States */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Error States</Text>
 
           <View style={styles.subSection}>
@@ -271,7 +271,7 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Advanced Features */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Advanced Features</Text>
 
           <View style={styles.subSection}>
@@ -310,7 +310,7 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Custom Width */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Custom Width</Text>
 
           <View style={styles.subSection}>
@@ -339,7 +339,7 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Grouped Options */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>
             Grouped Options (SpaceEditor Style)
           </Text>
@@ -357,7 +357,7 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* User Selection with Avatars */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>User Selection with Avatars</Text>
           <Text style={[styles.label, { color: theme.colors.text.main }]}>Select Conversation</Text>
           <Select
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   section: {
-    backgroundColor: 'white',
+    // backgroundColor removed - now uses theme.colors.bg.card dynamically
     borderRadius: 12,
     padding: 20,
     marginBottom: 16,

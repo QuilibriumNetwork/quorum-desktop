@@ -14,7 +14,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
           Testing Button primitive without flex layouts
         </Text>
 
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Primary Variants</Text>
 
           <View style={styles.buttonContainer}>
@@ -51,7 +51,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
           </View>
         </View>
 
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Subtle & Utility Variants</Text>
 
           <View style={styles.buttonContainer}>
@@ -109,7 +109,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
           </View>
         </View>
 
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Button Sizes</Text>
 
           <View style={styles.buttonContainer}>
@@ -143,7 +143,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
           </View>
         </View>
 
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Buttons with Icons</Text>
 
           <View style={styles.buttonContainer}>
@@ -187,7 +187,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
           </View>
         </View>
 
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Disabled State</Text>
 
           <View style={styles.buttonContainer}>
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   section: {
-    backgroundColor: 'white',
+    // backgroundColor removed - now uses theme.colors.bg.card dynamically
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,

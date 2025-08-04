@@ -33,7 +33,7 @@ export const ColorSwatchTestScreen: React.FC = () => {
         </View>
 
         {/* Basic Usage */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Basic Usage</Text>
 
           <View style={styles.subSection}>
@@ -52,7 +52,7 @@ export const ColorSwatchTestScreen: React.FC = () => {
         </View>
 
         {/* Size Variants */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Size Variants</Text>
 
           <View style={styles.subSection}>
@@ -102,7 +102,7 @@ export const ColorSwatchTestScreen: React.FC = () => {
         </View>
 
         {/* States */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>States</Text>
 
           <View style={styles.subSection}>
@@ -136,7 +136,7 @@ export const ColorSwatchTestScreen: React.FC = () => {
         </View>
 
         {/* All Colors Grid */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>All Theme Colors</Text>
           <Text style={[styles.label, { color: theme.colors.text.main }]}>Complete color palette</Text>
 

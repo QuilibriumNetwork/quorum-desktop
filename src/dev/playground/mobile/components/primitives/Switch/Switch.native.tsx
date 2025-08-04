@@ -14,7 +14,7 @@ export const Switch: React.FC<NativeSwitchProps> = ({
   testID,
 }) => {
   const theme = useTheme();
-  const colors = getColors(theme.mode, theme.accentColor);
+  const colors = getColors(theme.resolvedTheme, theme.accent);
 
   // Animation value for thumb position
   const animatedValue = React.useRef(new Animated.Value(value ? 1 : 0)).current;

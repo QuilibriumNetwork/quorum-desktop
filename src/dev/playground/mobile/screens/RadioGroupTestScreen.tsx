@@ -27,7 +27,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Theme Selection */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Theme Selection</Text>
           <Text style={styles.sectionSubtitle}>Using FontAwesome icons:</Text>
           <RadioGroup
@@ -43,7 +43,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Horizontal Layout */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Horizontal Layout</Text>
           <Text style={styles.sectionSubtitle}>Horizontal layout example:</Text>
           <RadioGroup
@@ -59,7 +59,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Disabled Options */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Disabled Options</Text>
           <Text style={styles.sectionSubtitle}>
             Some options can be disabled:
@@ -76,7 +76,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Without Icons */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Without Icons</Text>
           <Text style={styles.sectionSubtitle}>
             Simple text-only radio group:
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   section: {
-    backgroundColor: 'white',
+    // backgroundColor removed - now uses theme.colors.bg.card dynamically
     borderRadius: 12,
     padding: 20,
     marginBottom: 16,

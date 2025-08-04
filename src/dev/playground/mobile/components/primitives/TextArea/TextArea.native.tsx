@@ -39,7 +39,7 @@ export const TextArea = forwardRef<TextInput, TextAreaNativeProps>(
     ref
   ) => {
     const theme = useTheme();
-    const colors = getColors(theme.mode, theme.accentColor);
+    const colors = getColors(theme.resolvedTheme, theme.accent);
     const [isFocused, setIsFocused] = useState(false);
     const [textAreaHeight, setTextAreaHeight] = useState<number | undefined>(
       undefined

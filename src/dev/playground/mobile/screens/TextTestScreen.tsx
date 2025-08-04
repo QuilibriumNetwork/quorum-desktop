@@ -25,50 +25,50 @@ export const TextTestScreen: React.FC = () => {
         </View>
 
         {/* Variants Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text size="lg" weight="semibold" style={styles.sectionTitle}>
             Text Variants
           </Text>
 
           <FlexColumn gap="md">
-            <View style={styles.testGroup}>
+            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="default">
                 Default variant - Regular text for content
               </Text>
             </View>
 
-            <View style={styles.testGroup}>
+            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="strong">Strong variant - Important emphasis</Text>
             </View>
 
-            <View style={styles.testGroup}>
+            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="subtle">
                 Subtle variant - Secondary information
               </Text>
             </View>
 
-            <View style={styles.testGroup}>
+            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="muted">
                 Muted variant - Less important details
               </Text>
             </View>
 
-            <View style={styles.testGroup}>
+            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="error">Error variant - Error messages</Text>
             </View>
 
-            <View style={styles.testGroup}>
+            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="success">Success variant - Success messages</Text>
             </View>
 
-            <View style={styles.testGroup}>
+            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="warning">Warning variant - Warning messages</Text>
             </View>
           </FlexColumn>
         </View>
 
         {/* Sizes Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text size="lg" weight="semibold" style={styles.sectionTitle}>
             Text Sizes
           </Text>
@@ -85,7 +85,7 @@ export const TextTestScreen: React.FC = () => {
         </View>
 
         {/* Weights Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text size="lg" weight="semibold" style={styles.sectionTitle}>
             Text Weights
           </Text>
@@ -101,28 +101,28 @@ export const TextTestScreen: React.FC = () => {
         </View>
 
         {/* Alignment Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text size="lg" weight="semibold" style={styles.sectionTitle}>
             Text Alignment
           </Text>
 
           <FlexColumn gap="md">
-            <View style={styles.alignmentBox}>
+            <View style={[styles.alignmentBox, { backgroundColor: theme.colors.surface[3], borderColor: theme.colors.border.default }]}>
               <Text align="left">Left aligned text (default)</Text>
             </View>
 
-            <View style={styles.alignmentBox}>
+            <View style={[styles.alignmentBox, { backgroundColor: theme.colors.surface[3], borderColor: theme.colors.border.default }]}>
               <Text align="center">Center aligned text</Text>
             </View>
 
-            <View style={styles.alignmentBox}>
+            <View style={[styles.alignmentBox, { backgroundColor: theme.colors.surface[3], borderColor: theme.colors.border.default }]}>
               <Text align="right">Right aligned text</Text>
             </View>
           </FlexColumn>
         </View>
 
         {/* Interactive Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text size="lg" weight="semibold" style={styles.sectionTitle}>
             Interactive Text
           </Text>
@@ -131,16 +131,16 @@ export const TextTestScreen: React.FC = () => {
             <Text
               variant="default"
               onPress={() => console.log('Text tapped!')}
-              style={styles.tappableText}
+              style={[styles.tappableText, { backgroundColor: theme.colors.accent[100] }]}
             >
               Tap this text to trigger an action
             </Text>
 
             <Text
               variant="strong"
-              color="#1976d2"
+              color={theme.colors.accent[600]}
               onPress={() => console.log('Link tapped!')}
-              style={styles.tappableText}
+              style={[styles.tappableText, { backgroundColor: theme.colors.accent[100] }]}
             >
               Custom blue link-style text
             </Text>
@@ -148,7 +148,7 @@ export const TextTestScreen: React.FC = () => {
         </View>
 
         {/* Multiline Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text size="lg" weight="semibold" style={styles.sectionTitle}>
             Multiline & Truncation
           </Text>
@@ -173,8 +173,8 @@ export const TextTestScreen: React.FC = () => {
         </View>
 
         {/* React Native Requirements */}
-        <View style={styles.infoSection}>
-          <Text size="lg" weight="semibold" style={styles.infoTitle}>
+        <View style={[styles.infoSection, { backgroundColor: theme.colors.utilities.success + '20' }]}>
+          <Text size="lg" weight="semibold" style={[styles.infoTitle, { color: theme.colors.utilities.success }]}>
             📱 Why Text Primitive is Critical
           </Text>
 
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   section: {
-    backgroundColor: 'white',
+    // backgroundColor removed - now uses theme.colors.bg.card dynamically
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -247,29 +247,28 @@ const styles = StyleSheet.create({
   },
   testGroup: {
     padding: 12,
-    backgroundColor: '#f8f9fa',
+    // backgroundColor removed - now uses theme colors dynamically
     borderRadius: 8,
   },
   alignmentBox: {
     padding: 12,
-    backgroundColor: '#f8f9fa',
+    // backgroundColor and borderColor removed - now uses theme colors dynamically
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e9ecef',
   },
   tappableText: {
     padding: 12,
-    backgroundColor: '#e3f2fd',
+    // backgroundColor removed - now uses theme colors dynamically
     borderRadius: 8,
     textDecorationLine: 'underline',
   },
   infoSection: {
-    backgroundColor: '#e8f5e9',
+    // backgroundColor removed - now uses theme colors dynamically
     borderRadius: 12,
     padding: 16,
     marginTop: 8,
   },
   infoTitle: {
-    color: '#2e7d32',
+    // color removed - now uses theme colors dynamically
   },
 });

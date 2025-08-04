@@ -152,7 +152,7 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
           </View>
         </View>
 
-        <View style={styles.section}>
+        <View>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Available Tests</Text>
           <Text style={[styles.sectionSubtitle, { color: theme.colors.text.subtle }]}>
             Tap any card to test that primitive on React Native

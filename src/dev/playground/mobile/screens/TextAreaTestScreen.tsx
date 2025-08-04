@@ -20,7 +20,7 @@ export const TextAreaTestScreen: React.FC = () => {
         </Text>
 
         {/* Basic TextArea Types */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Basic TextArea</Text>
 
           <View style={styles.inputGroup}>
@@ -70,7 +70,7 @@ export const TextAreaTestScreen: React.FC = () => {
         </View>
 
         {/* Error States */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Error States</Text>
 
           <View style={styles.inputGroup}>
@@ -107,7 +107,7 @@ export const TextAreaTestScreen: React.FC = () => {
         </View>
 
         {/* TextArea Variants */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>TextArea Variants</Text>
 
           <View style={styles.inputGroup}>
@@ -160,7 +160,7 @@ export const TextAreaTestScreen: React.FC = () => {
         </View>
 
         {/* Focus Features */}
-        <View style={styles.section}>
+        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Focus Features</Text>
 
           <View style={styles.inputGroup}>
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   section: {
-    backgroundColor: 'white',
+    // backgroundColor removed - now uses theme.colors.bg.card dynamically
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,

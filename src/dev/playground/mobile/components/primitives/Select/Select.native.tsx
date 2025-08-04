@@ -34,7 +34,7 @@ const Select: React.FC<NativeSelectProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || '');
   const theme = useTheme();
-  const colors = getColors(theme.mode, theme.accentColor);
+  const colors = getColors(theme.resolvedTheme, theme.accent);
 
   useEffect(() => {
     if (value !== undefined) {

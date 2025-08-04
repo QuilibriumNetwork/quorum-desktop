@@ -6,7 +6,7 @@ import { getColors } from '../components/primitives/theme/colors';
 
 export const ModalTestScreen: React.FC = () => {
   const theme = useTheme();
-  const colors = getColors(theme.mode, theme.accentColor);
+  const colors = getColors(theme.resolvedTheme, theme.accent);
 
   const [basicModal, setBasicModal] = useState(false);
   const [smallModal, setSmallModal] = useState(false);
