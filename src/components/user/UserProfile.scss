@@ -100,3 +100,19 @@
   right: 10px;
   top: 10px;
 }
+
+.user-profile-role-tag {
+  background: rgb(var(--success));
+  color: white;
+  padding: 0px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+
+.dark .user-profile-role-tag {
+  background: rgb(var(--success) / 0.7);
+}

@@ -139,6 +139,9 @@ const SpaceEditor: React.FunctionComponent<{
 
   // Delete confirmation state - kept local as it's UI-specific
   const [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
+  
+  // Role validation error state
+  const [roleValidationError, setRoleValidationError] = React.useState<string>('');
 
   // Helper functions for Select primitive
   const getChannelGroups = React.useMemo(() => {
@@ -156,6 +159,19 @@ const SpaceEditor: React.FunctionComponent<{
   // Custom save function that integrates all hooks
   const saveChanges = React.useCallback(() => {
     if (!space) return;
+
+    // Clear previous validation errors
+    setRoleValidationError('');
+
+    // Validate roles before saving
+    const emptyRoles = roles.filter(role => 
+      !role.roleTag.trim() || !role.displayName.trim()
+    );
+    
+    if (emptyRoles.length > 0) {
+      setRoleValidationError(t`All roles must have both a tag name and display name.`);
+      return;
+    }
 
     // Prepare all the data from our hooks
     const iconUrl =
@@ -540,12 +556,10 @@ const SpaceEditor: React.FunctionComponent<{
                                 <input
                                   className="border-0 bg-[rgba(0,0,0,0)] "
                                   style={{
-                                    width:
-                                      (roles.find((_, pi) => i == pi)
-                                        ?.displayName.length ?? 0) *
-                                        10 +
-                                      10 +
-                                      'px',
+                                    width: Math.max(
+                                      (r.displayName.length || 3) * 8,
+                                      60
+                                    ) + 'px',
                                   }}
                                   onChange={(e) =>
                                     updateRoleDisplayName(i, e.target.value)
@@ -577,6 +591,14 @@ const SpaceEditor: React.FunctionComponent<{
                             </div>
                           );
                         })}
+                        {roleValidationError && (
+                          <div 
+                            className="mt-4 text-sm"
+                            style={{ color: 'var(--color-text-danger)' }}
+                          >
+                            {roleValidationError}
+                          </div>
+                        )}
                         <div className="modal-content-info"></div>
                         <div className="modal-content-actions">
                           <Button type="primary" onClick={() => saveChanges()}>

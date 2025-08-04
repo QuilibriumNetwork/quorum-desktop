@@ -48,7 +48,16 @@ const UserProfile: React.FunctionComponent<{
           <Icon name="times" />
         </Container>
       )}
-      <Container className="user-profile-header">
+      <Container 
+        className={
+          'user-profile-header ' +
+          (currentPasskeyInfo!.address === props.user.address && 
+           userRoles.length === 0 && 
+           !props.canEditRoles 
+            ? 'rounded-b-xl' 
+            : '')
+        }
+      >
         <Container
           className="user-profile-icon"
           style={{
@@ -84,61 +93,63 @@ const UserProfile: React.FunctionComponent<{
       </Container>
 
       <Container>
-        <Container
-          className={
-            'p-2 pb-4 ' +
-            (currentPasskeyInfo!.address !== props.user.address
-              ? ''
-              : 'rounded-b-xl')
-          }
-        >
-          <Container className="user-profile-content-section-header">
-            <Text className="text-sm">Roles</Text>
-          </Container>
-          <Container className="user-profile-roles">
-            {!props.canEditRoles &&
-              userRoles.map((r) => (
-                <Text
-                  key={'user-profile-role-' + r.roleId}
-                  className={'message-name-mentions-role inline-block mr-2'}
-                >
-                  {r.displayName}
-                </Text>
-              ))}
-            {props.canEditRoles &&
-              userRoles.map((r) => (
-                <Text
-                  key={'user-profile-role-' + r.roleId}
-                  className={'message-name-mentions-role inline-block mr-2'}
-                >
-                  <Icon
-                    name="times"
-                    className="hover:bg-black hover:bg-opacity-30 rounded-full p-1 cursor-pointer mr-1 text-sm align-middle"
-                    onClick={() => removeRole(props.user.address, r.roleId)}
-                  />
-                  <Text className="text-xs inline">{r.displayName}</Text>
-                </Text>
-              ))}
-            {props.canEditRoles &&
-              availableRoles.map((r) => (
-                <Container
-                  key={'user-profile-add-role-' + r.roleId}
-                  className="w-full sm:w-auto sm:inline-block mb-2"
-                >
-                  <Button
-                    className="w-full sm:w-auto"
-                    onClick={() => {
-                      addRole(props.user.address, r.roleId);
-                    }}
-                    type="secondary"
-                    size="small"
+        {(userRoles.length > 0 || props.canEditRoles) && (
+          <Container
+            className={
+              'p-2 pb-4 ' +
+              (currentPasskeyInfo!.address !== props.user.address
+                ? ''
+                : 'rounded-b-xl')
+            }
+          >
+            <Container className="user-profile-content-section-header">
+              <Text className="text-sm">Roles</Text>
+            </Container>
+            <Container className="user-profile-roles">
+              {!props.canEditRoles &&
+                userRoles.map((r) => (
+                  <Text
+                    key={'user-profile-role-' + r.roleId}
+                    className={'user-profile-role-tag'}
                   >
-                    + {r.roleTag}
-                  </Button>
-                </Container>
-              ))}
+                    {r.displayName}
+                  </Text>
+                ))}
+              {props.canEditRoles &&
+                userRoles.map((r) => (
+                  <Text
+                    key={'user-profile-role-' + r.roleId}
+                    className={'user-profile-role-tag'}
+                  >
+                    <Icon
+                      name="times"
+                      className="hover:bg-black hover:bg-opacity-30 rounded-full p-1 cursor-pointer mr-1 text-sm align-middle"
+                      onClick={() => removeRole(props.user.address, r.roleId)}
+                    />
+                    <Text className="text-xs inline">{r.displayName}</Text>
+                  </Text>
+                ))}
+              {props.canEditRoles &&
+                availableRoles.map((r) => (
+                  <Container
+                    key={'user-profile-add-role-' + r.roleId}
+                    className="w-full sm:w-auto sm:inline-block mb-2"
+                  >
+                    <Button
+                      className="w-full sm:w-auto"
+                      onClick={() => {
+                        addRole(props.user.address, r.roleId);
+                      }}
+                      type="secondary"
+                      size="small"
+                    >
+                      + {r.roleTag}
+                    </Button>
+                  </Container>
+                ))}
+            </Container>
           </Container>
-        </Container>
+        )}
         {currentPasskeyInfo!.address !== props.user.address && (
           <Container className="bg-surface-3 rounded-b-xl p-3">
             <Container className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2">
