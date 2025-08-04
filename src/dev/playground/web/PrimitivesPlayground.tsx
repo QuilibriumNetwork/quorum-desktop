@@ -7,7 +7,6 @@ import {
   FlexColumn,
   FlexBetween,
   FlexCenter,
-  ResponsiveContainer,
   Input,
   TextArea,
   Switch,
@@ -64,11 +63,7 @@ export const PrimitivesPlayground: React.FC = () => {
   const [disabledSwitch, setDisabledSwitch] = useState(true);
   const [activeSection, setActiveSection] = useState('modalcontainer');
 
-  // Select testing state
-  const [selectValue, setSelectValue] = useState('');
-  const [iconSelectValue, setIconSelectValue] = useState('edit');
-  const [errorSelectValue, setErrorSelectValue] = useState('');
-  const [showSelectError, setShowSelectError] = useState(false);
+
 
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -369,11 +364,11 @@ export const PrimitivesPlayground: React.FC = () => {
                     <Container
                       padding="lg"
                       backgroundColor="var(--surface-4)"
-                      onMouseEnter={(e) =>
+                      onMouseEnter={(e: React.MouseEvent<HTMLDivElement>) =>
                         (e.currentTarget.style.backgroundColor =
                           'var(--accent-700)')
                       }
-                      onMouseLeave={(e) =>
+                      onMouseLeave={(e: React.MouseEvent<HTMLDivElement>) =>
                         (e.currentTarget.style.backgroundColor =
                           'var(--accent-900)')
                       }
@@ -1327,7 +1322,7 @@ export const PrimitivesPlayground: React.FC = () => {
                   </label>
                   <Input
                     value={errorInput}
-                    onChange={(value) => {
+                    onChange={(value: string) => {
                       setErrorInput(value);
                       setShowInputError(value.length > 0 && value.length < 3);
                     }}
@@ -1436,7 +1431,7 @@ export const PrimitivesPlayground: React.FC = () => {
                   <Input
                     variant="onboarding"
                     placeholder="Test legacy onChange"
-                    onChange={(e) =>
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       console.log('Legacy onChange:', e.target.value)
                     }
                     className="!bg-white"
@@ -1556,7 +1551,7 @@ export const PrimitivesPlayground: React.FC = () => {
                   </label>
                   <TextArea
                     value={errorTextArea}
-                    onChange={(value) => {
+                    onChange={(value: string) => {
                       setErrorTextArea(value);
                       setShowTextAreaError(
                         value.length > 0 && value.length < 10
@@ -2434,7 +2429,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
               <div className="space-y-3">
                 <h3 className="text-lg font-medium text-strong">Positioning</h3>
-                <div className="flex flex-wrap gap-4 justify-left py-8">
+                <div className="flex flex-wrap gap-4 justify-center py-8">
                   <Tooltip
                     id="tooltip-top"
                     content="Tooltip positioned at the top"
@@ -2727,6 +2722,7 @@ export const PrimitivesPlayground: React.FC = () => {
           </div>
         </div>
       </div>
+
     </div>
   );
 };

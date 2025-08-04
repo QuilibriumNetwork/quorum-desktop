@@ -20,29 +20,29 @@ import DirectMessages from './components/direct/DirectMessages';
 import { Maintenance } from './components/Maintenance';
 import { RegistrationProvider } from './components/context/RegistrationPersister';
 import { ResponsiveLayoutProvider } from './components/context/ResponsiveLayoutProvider';
-// Conditionally import playground in development mode
-const PrimitivesPlayground =
+// Helper function for conditional dev imports
+const lazyDevImport = (
+  importFn: () => Promise<any>,
+  exportName?: string
+) =>
   process.env.NODE_ENV === 'development'
     ? React.lazy(() =>
-        import('./dev/playground/web/PrimitivesPlayground').then((m) => ({
-          default: m.PrimitivesPlayground,
-        }))
+        exportName
+          ? importFn().then((m) => ({ default: m[exportName] }))
+          : importFn()
       )
     : null;
 
-// Conditionally import dev tools in development mode
-const ComponentAuditViewer =
-  process.env.NODE_ENV === 'development'
-    ? React.lazy(() =>
-        import('./dev/components-audit').then((m) => ({
-          default: m.ComponentAuditViewer,
-        }))
-      )
-    : null;
-const Elements =
-  process.env.NODE_ENV === 'development'
-    ? React.lazy(() => import('./dev/Elements'))
-    : null;
+// Conditionally import dev components
+const PrimitivesPlayground = lazyDevImport(
+  () => import('./dev/playground/web/PrimitivesPlayground'),
+  'PrimitivesPlayground'
+);
+const ComponentAuditViewer = lazyDevImport(
+  () => import('./dev/components-audit'),
+  'ComponentAuditViewer'
+);
+const Elements = lazyDevImport(() => import('./dev/Elements'));
 import JoinSpaceModal from './components/modals/JoinSpaceModal';
 import { DefaultImages } from './utils';
 import { i18n } from './i18n';
@@ -225,17 +225,11 @@ const App = () => {
                               element={
                                 <ModalProvider user={user} setUser={setUser}>
                                   <MobileProvider>
-                                    <SidebarProvider>
-                                      <Layout>
-                                        <Suspense
-                                          fallback={
-                                            <div>Loading playground...</div>
-                                          }
-                                        >
-                                          <PrimitivesPlayground />
-                                        </Suspense>
-                                      </Layout>
-                                    </SidebarProvider>
+                                    <Suspense
+                                      fallback={<div>Loading playground...</div>}
+                                    >
+                                      <PrimitivesPlayground />
+                                    </Suspense>
                                   </MobileProvider>
                                 </ModalProvider>
                               }
