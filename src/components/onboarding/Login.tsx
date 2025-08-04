@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   PasskeyModal,
   usePasskeysContext,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import '../../styles/_passkey-modal.scss';
 import { Button } from '../primitives';
-import { useQuorumApiClient } from '../context/QuorumApiContext';
-import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
+import { useAuthenticationFlow } from '../../hooks';
 import { t } from '@lingui/core/macro';
 
 export const Login = ({
@@ -25,18 +24,18 @@ export const Login = ({
     >
   >;
 }) => {
+  // Business logic hook
+  const authFlow = useAuthenticationFlow();
+  
+  // Web-specific passkey integration
   const { setShowPasskeyPrompt } = usePasskeysContext();
-  const { apiClient } = useQuorumApiClient();
-  const uploadRegistration = useUploadRegistration();
 
   return (
     <>
       <PasskeyModal
         fqAppPrefix="Quorum"
-        getUserRegistration={async (address: string) => {
-          return (await apiClient.getUser(address)).data;
-        }}
-        uploadRegistration={uploadRegistration}
+        getUserRegistration={authFlow.getUserRegistration}
+        uploadRegistration={authFlow.uploadRegistration}
       />
       <div className="flex flex-col grow"></div>
       <div className="flex flex-col select-none">
@@ -54,6 +53,7 @@ export const Login = ({
               type="primary-white"
               className="w-full sm:w-80 mt-2"
               onClick={() => {
+                authFlow.startNewAccount();
                 setShowPasskeyPrompt({
                   value: true,
                 });
@@ -65,6 +65,7 @@ export const Login = ({
               type="light-outline-white"
               className="w-full sm:w-80 mt-4"
               onClick={() => {
+                authFlow.startImportAccount();
                 //@ts-ignore
                 setShowPasskeyPrompt({
                   value: true,

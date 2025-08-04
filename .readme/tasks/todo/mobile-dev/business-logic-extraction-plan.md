@@ -72,7 +72,7 @@
 ### Onboarding & Login Components
 
 - [x] Onboarding.tsx
-- [ ] Login.tsx - Extract `useAuthentication`, `usePasskeyFlow` hooks
+- [x] Login.tsx 
 
 ### Unused Components 
 

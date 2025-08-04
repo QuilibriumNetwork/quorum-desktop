@@ -9,3 +9,4 @@ export * from './useUserRoleDisplay';
 export * from './useOnboardingFlow';
 export * from './useWebKeyBackup';
 export * from './useWebFileUpload';
+export * from './useAuthenticationFlow';
