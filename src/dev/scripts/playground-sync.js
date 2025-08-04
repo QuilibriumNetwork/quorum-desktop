@@ -200,12 +200,110 @@ function adjustImportPaths(content, fromPlayground) {
       "from 'react-tooltip"
     );
   } else {
-    // From main to playground: might need to adjust absolute imports
+    // From main to playground: adjust absolute imports AND strip Lingui syntax
     content = content.replace(
       /from ['"]react-tooltip/g,
       "from '../../ReactTooltip"
     );
+    
+    // Strip Lingui syntax when syncing to playground
+    content = stripLinguiSyntax(content);
   }
+
+  return content;
+}
+
+function stripLinguiSyntax(content) {
+  // Remove Lingui import lines (handle both single and multiple imports)
+  content = content.replace(
+    /import\s+\{\s*t\s*\}\s+from\s+['"]@lingui\/core\/macro['"];\s*\n?/g,
+    ''
+  );
+  content = content.replace(
+    /import\s+\{\s*Trans\s*\}\s+from\s+['"]@lingui\/react\/macro['"];\s*\n?/g,
+    ''
+  );
+  content = content.replace(
+    /import\s+\{\s*t,\s*Trans\s*\}\s+from\s+['"]@lingui\/(?:core|react)\/macro['"];\s*\n?/g,
+    ''
+  );
+  content = content.replace(
+    /import\s+\{\s*Trans,\s*t\s*\}\s+from\s+['"]@lingui\/(?:core|react)\/macro['"];\s*\n?/g,
+    ''
+  );
+
+  // Handle Trans components - convert to simple text/fragments
+  // Multi-line Trans tags
+  content = content.replace(
+    /<Trans>\s*([\s\S]*?)\s*<\/Trans>/g,
+    (match, innerContent) => {
+      // Clean up the inner content and convert to string literal
+      const cleaned = innerContent.trim().replace(/\s+/g, ' ');
+      return `'${cleaned}'`;
+    }
+  );
+
+  // Handle t`` template literals with complex interpolation
+  // Match t`...${...}...${...}...` patterns
+  content = content.replace(
+    /t`([^`]*(?:\$\{[^}]+\}[^`]*)*)`/g,
+    (match, templateContent) => {
+      // Split by ${...} patterns
+      const parts = templateContent.split(/(\$\{[^}]+\})/);
+      
+      let result = '';
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        if (part.startsWith('${') && part.endsWith('}')) {
+          // Variable interpolation - extract variable name
+          const variable = part.slice(2, -1);
+          result += (i > 0 ? ' + ' : '') + variable;
+        } else if (part.length > 0) {
+          // String literal part
+          result += (i > 0 ? ' + ' : '') + `'${part}'`;
+        }
+      }
+      
+      return result || "''";
+    }
+  );
+
+  // Handle remaining simple t`text` patterns (no interpolation)
+  content = content.replace(/t`([^`$]*)`/g, "'$1'");
+
+  // Add playground-specific comments if any Lingui constructs were found
+  const originalContent = content;
+  if ((originalContent.includes('t`') || originalContent.includes('<Trans')) && 
+      !content.includes('// Playground-specific:')) {
+    const lines = content.split('\n');
+    
+    // Find the end of imports
+    let importEndIndex = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].trim().startsWith('import')) {
+        importEndIndex = i;
+      } else if (lines[i].trim() === '' && importEndIndex >= 0) {
+        // Found empty line after imports
+        break;
+      } else if (importEndIndex >= 0 && lines[i].trim() !== '') {
+        // Found non-import, non-empty line
+        break;
+      }
+    }
+    
+    if (importEndIndex >= 0) {
+      lines.splice(importEndIndex + 1, 0, 
+        '',
+        '// Playground-specific: Lingui syntax has been converted to hardcoded strings',
+        '// Real mobile app will use full Lingui integration'
+      );
+      content = lines.join('\n');
+    }
+  }
+
+  // Clean up extra empty lines
+  content = content.replace(/\n\s*\n\s*\n/g, '\n\n');
+  content = content.replace(/^\n+/, ''); // Remove leading newlines
 
   return content;
 }

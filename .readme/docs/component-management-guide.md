@@ -278,7 +278,7 @@ From [component-development-guide.md](./component-development-guide.md#web-styli
 1. Navigate to `src/dev/playground/mobile`
 2. Run `yarn start --tunnel`
 3. Use Expo Go app to test on real device
-4. Sync components: `yarn playground:sync --to-playground ComponentName`
+4. Sync components: `yarn playground:sync --to-playground ComponentName` (see [src/dev/scripts/README.md](README.md))
 
 ### Testing Checklist
 
