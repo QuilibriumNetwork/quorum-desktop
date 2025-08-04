@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   ScrollView,
-  Text,
   View,
   StyleSheet,
   TouchableOpacity,
@@ -9,6 +8,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
 import { RadioGroup } from '../components/primitives';
+import { Icon } from '../components/primitives/Icon';
+import { Text } from '../components/primitives/Text';
 
 export const RadioGroupTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -20,16 +21,25 @@ export const RadioGroupTestScreen: React.FC = () => {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
-          <Text style={[styles.headerTitle, { color: theme.colors.text.strong }]}>🔘 RadioGroup</Text>
-          <Text style={[styles.headerSubtitle, { color: theme.colors.text.main }]}>
-            Accessible radio button group with icon support and flexible layouts
-          </Text>
+          <View style={styles.titleContainer}>
+            <Icon name="radio" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
+            <Text size="2xl" weight="bold" variant="strong">RadioGroup</Text>
+          </View>
+          <View style={{ marginBottom: 24 }}>
+            <Text size="base" variant="default" align="center">
+              Accessible radio button group with icon support and flexible layouts
+            </Text>
+          </View>
         </View>
 
         {/* Theme Selection */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Theme Selection</Text>
-          <Text style={[styles.sectionSubtitle, { color: theme.colors.text.main }]}>Using FontAwesome icons:</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Theme Selection</Text>
+          </View>
+          <View style={{ marginBottom: 8 }}>
+            <Text size="sm" variant="strong">Using FontAwesome icons:</Text>
+          </View>
           <RadioGroup
             options={[
               { value: 'light', label: 'Light', icon: 'sun' },
@@ -44,8 +54,12 @@ export const RadioGroupTestScreen: React.FC = () => {
 
         {/* Horizontal Layout */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Horizontal Layout</Text>
-          <Text style={[styles.sectionSubtitle, { color: theme.colors.text.main }]}>Horizontal layout example:</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Horizontal Layout</Text>
+          </View>
+          <View style={{ marginBottom: 8 }}>
+            <Text size="sm" variant="strong">Horizontal layout example:</Text>
+          </View>
           <RadioGroup
             options={[
               { value: 'option1', label: 'Option 1' },
@@ -60,10 +74,14 @@ export const RadioGroupTestScreen: React.FC = () => {
 
         {/* Disabled Options */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Disabled Options</Text>
-          <Text style={[styles.sectionSubtitle, { color: theme.colors.text.main }]}>
-            Some options can be disabled:
-          </Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Disabled Options</Text>
+          </View>
+          <View style={{ marginBottom: 8 }}>
+            <Text size="sm" variant="strong">
+              Some options can be disabled:
+            </Text>
+          </View>
           <RadioGroup
             options={[
               { value: 'basic', label: 'Basic Plan' },
@@ -77,10 +95,14 @@ export const RadioGroupTestScreen: React.FC = () => {
 
         {/* Without Icons */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Without Icons</Text>
-          <Text style={[styles.sectionSubtitle, { color: theme.colors.text.main }]}>
-            Simple text-only radio group:
-          </Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Without Icons</Text>
+          </View>
+          <View style={{ marginBottom: 8 }}>
+            <Text size="sm" variant="strong">
+              Simple text-only radio group:
+            </Text>
+          </View>
           <RadioGroup
             options={[
               { value: 'option1', label: 'Option 1' },
@@ -94,27 +116,29 @@ export const RadioGroupTestScreen: React.FC = () => {
 
         {/* Testing Notes */}
         <View style={[styles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <Text style={[styles.infoTitle, { color: theme.colors.text.strong }]}>📱 Mobile Testing Notes</Text>
-          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            - Web: Native HTML radio inputs with custom styling
+          <View style={styles.titleContainer}>
+            <Text size="base" weight="semibold" variant="strong">Mobile Notes</Text>
+          </View>
+          <Text size="sm" variant="default">
+            • Web: Native HTML radio inputs with custom styling
           </Text>
-          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            - Mobile: Custom radio implementation with TouchableOpacity
+          <Text size="sm" variant="default">
+            • Mobile: Custom radio implementation with TouchableOpacity
           </Text>
-          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            - Icons now use FontAwesome icon system
+          <Text size="sm" variant="default">
+            • Icons now use FontAwesome icon system
           </Text>
-          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            - Both horizontal and vertical layouts supported
+          <Text size="sm" variant="default">
+            • Both horizontal and vertical layouts supported
           </Text>
-          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            - Touch targets optimized for mobile (min 44x44)
+          <Text size="sm" variant="default">
+            • Touch targets optimized for mobile (min 44x44)
           </Text>
-          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            - Active state has accent color border and background
+          <Text size="sm" variant="default">
+            • Active state has accent color border and background
           </Text>
-          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
-            - Ready for ThemeRadioGroup integration
+          <Text size="sm" variant="default">
+            • Ready for ThemeRadioGroup integration
           </Text>
         </View>
       </ScrollView>
@@ -135,11 +159,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
     // color removed - now uses theme colors dynamically
-    marginBottom: 8,
     textAlign: 'center',
   },
   headerSubtitle: {

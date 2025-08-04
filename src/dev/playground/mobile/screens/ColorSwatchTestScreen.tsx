@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   ScrollView,
-  Text,
   View,
   StyleSheet,
   SafeAreaView,
@@ -9,6 +8,8 @@ import {
 } from 'react-native';
 import { useTheme } from '../components/primitives/theme';
 import { ColorSwatch } from '../components/primitives/ColorSwatch';
+import { Icon } from '../components/primitives/Icon';
+import { Text } from '../components/primitives/Text';
 
 export const ColorSwatchTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -26,18 +27,27 @@ export const ColorSwatchTestScreen: React.FC = () => {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.title, { color: theme.colors.text.strong }]}>🎨 ColorSwatch</Text>
-          <Text style={[styles.subtitle, { color: theme.colors.text.main }]}>
-            Touch-optimized color picker for accent selection
-          </Text>
+          <View style={styles.titleContainer}>
+            <Icon name="palette" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
+            <Text size="2xl" weight="bold" variant="strong">ColorSwatch</Text>
+          </View>
+          <View style={{ marginBottom: 24 }}>
+            <Text size="base" variant="default" align="center">
+              Touch-optimized color picker for accent selection
+            </Text>
+          </View>
         </View>
 
         {/* Basic Usage */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Basic Usage</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Basic Usage</Text>
+          </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Click to select colors:</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Click to select colors:</Text>
+            </View>
             <View style={styles.colorRow}>
               {colors.map((color) => (
                 <ColorSwatch
@@ -53,10 +63,14 @@ export const ColorSwatchTestScreen: React.FC = () => {
 
         {/* Size Variants */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Size Variants</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Size Variants</Text>
+          </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Small Size</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Small Size:</Text>
+            </View>
             <View style={styles.colorRow}>
               {colors.slice(0, 3).map((color) => (
                 <ColorSwatch
@@ -71,7 +85,9 @@ export const ColorSwatchTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Medium Size (Default)</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Medium Size (Default):</Text>
+            </View>
             <View style={styles.colorRow}>
               {colors.slice(0, 3).map((color) => (
                 <ColorSwatch
@@ -86,7 +102,9 @@ export const ColorSwatchTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Large Size</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Large Size:</Text>
+            </View>
             <View style={styles.colorRow}>
               {colors.slice(0, 3).map((color) => (
                 <ColorSwatch
@@ -103,26 +121,34 @@ export const ColorSwatchTestScreen: React.FC = () => {
 
         {/* States */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>States</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">States</Text>
+          </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Active State</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Active State:</Text>
+            </View>
             <View style={styles.stateRow}>
               <ColorSwatch color="blue" isActive={true} onPress={() => {}} />
-              <Text style={styles.stateText}>Shows ✓ checkmark</Text>
+              <Text size="sm" variant="subtle">Shows ✓ checkmark</Text>
             </View>
           </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Disabled State</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Disabled State:</Text>
+            </View>
             <View style={styles.stateRow}>
               <ColorSwatch color="purple" disabled={true} onPress={() => {}} />
-              <Text style={styles.stateText}>50% opacity, no interaction</Text>
+              <Text size="sm" variant="subtle">50% opacity, no interaction</Text>
             </View>
           </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Active without checkmark</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Active without checkmark:</Text>
+            </View>
             <View style={styles.stateRow}>
               <ColorSwatch
                 color="orange"
@@ -130,15 +156,19 @@ export const ColorSwatchTestScreen: React.FC = () => {
                 showCheckmark={false}
                 onPress={() => {}}
               />
-              <Text style={styles.stateText}>Border/shadow only</Text>
+              <Text size="sm" variant="subtle">Border/shadow only</Text>
             </View>
           </View>
         </View>
 
         {/* All Colors Grid */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>All Theme Colors</Text>
-          <Text style={[styles.label, { color: theme.colors.text.main }]}>Complete color palette</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">All Theme Colors</Text>
+          </View>
+          <View style={{ marginBottom: 8 }}>
+            <Text size="sm" variant="strong">Complete color palette:</Text>
+          </View>
 
           <View style={styles.colorGrid}>
             {colors.map((color) => (
@@ -148,7 +178,7 @@ export const ColorSwatchTestScreen: React.FC = () => {
                   isActive={false}
                   onPress={() => {}}
                 />
-                <Text style={styles.colorName}>{color}</Text>
+                <Text size="sm" variant="subtle">{color}</Text>
               </View>
             ))}
           </View>
@@ -156,23 +186,25 @@ export const ColorSwatchTestScreen: React.FC = () => {
 
         {/* Implementation Notes */}
         <View style={[styles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <Text style={[styles.notesTitle, { color: theme.colors.text.strong }]}>📱 Mobile Implementation</Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <View style={styles.titleContainer}>
+            <Text size="base" weight="semibold" variant="strong">Mobile Notes</Text>
+          </View>
+          <Text size="sm" variant="default">
             • Uses TouchableOpacity for native press feedback
           </Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • ✓ character used temporarily (FontAwesome pending)
           </Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Dynamic colors from theme system
           </Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Shadow effects for active state visibility
           </Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Touch targets optimized for mobile (min 24x24)
           </Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Will integrate with AccentColorSwitcher component
           </Text>
         </View>
@@ -194,11 +226,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     // color removed - now uses theme colors dynamically
-    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,

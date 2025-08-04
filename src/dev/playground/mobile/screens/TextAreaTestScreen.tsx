@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { ScrollView, Text, View, StyleSheet } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
 import { TextArea } from '../components/primitives/TextArea';
+import { Icon } from '../components/primitives/Icon';
+import { Text } from '../components/primitives/Text';
 
 export const TextAreaTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -12,33 +14,64 @@ export const TextAreaTestScreen: React.FC = () => {
   const [showTextAreaError, setShowTextAreaError] = useState(false);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.bg.app }]}
+    >
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={[styles.title, { color: theme.colors.text.strong }]}>📝 TextArea</Text>
-        <Text style={[styles.subtitle, { color: theme.colors.text.main }]}>
-          Testing TextArea primitive on React Native
-        </Text>
+        <View style={styles.titleContainer}>
+          <Icon
+            name="memo"
+            size="xl"
+            color={theme.colors.text.strong}
+            style={{ marginRight: 12 }}
+          />
+          <Text size="2xl" weight="bold" variant="strong">
+            Textarea
+          </Text>
+        </View>
+
+        <View style={{ marginBottom: 24 }}>
+          <Text size="base" variant="default" align="center">
+            Testing TextArea primitive on React Native
+          </Text>
+        </View>
 
         {/* Basic TextArea Types */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Basic TextArea</Text>
+        <View
+          style={[styles.section, { backgroundColor: theme.colors.bg.card }]}
+        >
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">
+              Basic TextArea
+            </Text>
+          </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Standard TextArea (3 rows):</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">
+                Standard TextArea (3 rows):
+              </Text>
+            </View>
             <TextArea
               value={textAreaValue}
               onChange={setTextAreaValue}
               placeholder="Enter your message here..."
               rows={3}
             />
-            <Text style={styles.valueText}>
-              Lines: {textAreaValue.split('\n').length} | Chars:{' '}
-              {textAreaValue.length}
-            </Text>
+            <View style={{ marginTop: 8 }}>
+              <Text size="sm" variant="subtle">
+                Lines: {textAreaValue.split('\n').length} | Chars:{' '}
+                {textAreaValue.length}
+              </Text>
+            </View>
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Auto-Resize TextArea (2-6 rows):</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">
+                Auto-Resize TextArea (2-6 rows):
+              </Text>
+            </View>
             <TextArea
               value={autoResizeValue}
               onChange={setAutoResizeValue}
@@ -47,11 +80,19 @@ export const TextAreaTestScreen: React.FC = () => {
               minRows={2}
               maxRows={6}
             />
-            <Text style={[styles.infoText, { color: theme.colors.text.muted }]}>Auto-resizes between 2-6 rows</Text>
+            <View style={{ marginTop: 8 }}>
+              <Text size="sm" variant="subtle">
+                Auto-resizes between 2-6 rows
+              </Text>
+            </View>
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Large TextArea (5 rows):</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">
+                Large TextArea (5 rows):
+              </Text>
+            </View>
             <TextArea
               placeholder="Large text area for longer content..."
               rows={5}
@@ -59,7 +100,11 @@ export const TextAreaTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Disabled TextArea:</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">
+                Disabled TextArea:
+              </Text>
+            </View>
             <TextArea
               value="This content cannot be edited on mobile"
               placeholder="Disabled text area..."
@@ -70,13 +115,21 @@ export const TextAreaTestScreen: React.FC = () => {
         </View>
 
         {/* Error States */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Error States</Text>
+        <View
+          style={[styles.section, { backgroundColor: theme.colors.bg.card }]}
+        >
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">
+              Error States
+            </Text>
+          </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>
-              TextArea with Error (type less than 10 chars):
-            </Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">
+                TextArea with Error (type less than 10 chars):
+              </Text>
+            </View>
             <TextArea
               value={errorTextArea}
               onChange={(value) => {
@@ -95,7 +148,11 @@ export const TextAreaTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Always Error:</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">
+                Always Error:
+              </Text>
+            </View>
             <TextArea
               value=""
               placeholder="This textarea is always in error state"
@@ -107,45 +164,71 @@ export const TextAreaTestScreen: React.FC = () => {
         </View>
 
         {/* TextArea Variants */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>TextArea Variants</Text>
-
-          <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Filled (Default):</Text>
-            <TextArea placeholder="Default filled style..." rows={4} />
-            <Text style={[styles.infoText, { color: theme.colors.text.muted }]}>
-              Filled background, accent border on focus
+        <View
+          style={[styles.section, { backgroundColor: theme.colors.bg.card }]}
+        >
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">
+              TextArea Variants
             </Text>
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Bordered Variant:</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">
+                Filled (Default):
+              </Text>
+            </View>
+            <TextArea placeholder="Default filled style..." rows={4} />
+            <View style={{ marginTop: 8 }}>
+              <Text size="sm" variant="subtle">
+                Filled background, accent border on focus
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">
+                Bordered Variant:
+              </Text>
+            </View>
             <TextArea
               variant="bordered"
               placeholder="Bordered textarea style..."
               rows={4}
             />
-            <Text style={[styles.infoText, { color: theme.colors.text.muted }]}>
-              Traditional bordered style (explicit variant)
-            </Text>
+            <View style={{ marginTop: 8 }}>
+              <Text size="sm" variant="subtle">
+                Traditional bordered style (explicit variant)
+              </Text>
+            </View>
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>
-              Onboarding Style (rounded corners):
-            </Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">
+                Onboarding Style (rounded corners):
+              </Text>
+            </View>
             <TextArea
               variant="onboarding"
               placeholder="Tell us about yourself..."
               rows={4}
             />
-            <Text style={[styles.infoText, { color: theme.colors.text.muted }]}>
-              Rounded corners with brand blue colors
-            </Text>
+            <View style={{ marginTop: 8 }}>
+              <Text size="sm" variant="subtle">
+                Rounded corners with brand blue colors
+              </Text>
+            </View>
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Onboarding Auto-Resize:</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">
+                Onboarding Auto-Resize:
+              </Text>
+            </View>
             <TextArea
               variant="onboarding"
               placeholder="Type multiple lines..."
@@ -153,18 +236,30 @@ export const TextAreaTestScreen: React.FC = () => {
               minRows={3}
               maxRows={7}
             />
-            <Text style={[styles.infoText, { color: theme.colors.text.muted }]}>
-              Onboarding style with auto-resize
-            </Text>
+            <View style={{ marginTop: 8 }}>
+              <Text size="sm" variant="subtle">
+                Onboarding style with auto-resize
+              </Text>
+            </View>
           </View>
         </View>
 
         {/* Focus Features */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Focus Features</Text>
+        <View
+          style={[styles.section, { backgroundColor: theme.colors.bg.card }]}
+        >
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">
+              Focus Features
+            </Text>
+          </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Auto Focus TextArea:</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">
+                Auto Focus TextArea:
+              </Text>
+            </View>
             <TextArea
               placeholder="This textarea auto-focuses"
               autoFocus
@@ -173,7 +268,11 @@ export const TextAreaTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>No Focus Style:</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">
+                No Focus Style:
+              </Text>
+            </View>
             <TextArea
               placeholder="This textarea has no focus styling"
               noFocusStyle
@@ -182,29 +281,38 @@ export const TextAreaTestScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* Mobile Testing Notes */}
-        <View style={[styles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <Text style={[styles.notesTitle, { color: theme.colors.text.strong }]}>📋 Mobile Testing Checklist</Text>
-          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
-            ✅ Auto-resize functionality works on mobile
+        {/* Mobile Notes */}
+        <View
+          style={[
+            styles.notesSection,
+            { backgroundColor: theme.colors.surface[3] },
+          ]}
+        >
+          <View style={styles.titleContainer}>
+            <Text size="base" weight="semibold" variant="strong">
+              Mobile Notes
+            </Text>
+          </View>
+          <Text size="sm" variant="default">
+            • Auto-resize functionality works on mobile
           </Text>
-          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
-            ✅ Touch targets optimized for mobile
+          <Text size="sm" variant="default">
+            • Touch targets optimized for mobile
           </Text>
-          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
-            ✅ Focus states work without web-style borders
+          <Text size="sm" variant="default">
+            • Focus states work without web-style borders
           </Text>
-          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
-            ✅ Error messages display below textarea
+          <Text size="sm" variant="default">
+            • Error messages display below textarea
           </Text>
-          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
-            ✅ Onboarding variant matches desktop style
+          <Text size="sm" variant="default">
+            • Onboarding variant matches desktop style
           </Text>
-          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
-            ✅ Multiline text input with mobile keyboard
+          <Text size="sm" variant="default">
+            • Multiline text input with mobile keyboard
           </Text>
-          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
-            ✅ Text alignment starts at top for multiline
+          <Text size="sm" variant="default">
+            • Text alignment starts at top for multiline
           </Text>
         </View>
       </ScrollView>
@@ -290,5 +398,11 @@ const styles = StyleSheet.create({
     // color removed - now uses theme colors dynamically
     marginBottom: 4,
     lineHeight: 20,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
   },
 });

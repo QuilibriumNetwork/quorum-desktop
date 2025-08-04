@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
 
@@ -14,6 +14,7 @@ import { FlexCenter } from '../components/primitives/FlexCenter';
 import { ResponsiveContainer } from '../components/primitives/ResponsiveContainer';
 import Button from '../components/primitives/Button';
 import Modal from '../components/primitives/Modal';
+import { Text } from '../components/primitives/Text';
 
 /**
  * Mobile test screen for all primitives
@@ -33,15 +34,15 @@ export const PrimitivesTestScreen: React.FC = () => {
         contentContainerStyle={styles.content}
       >
         <View style={styles.header}>
-          <Text style={[styles.title, { color: theme.colors.text.strong }]}>Layout Primitives Test</Text>
-          <Text style={[styles.subtitle, { color: theme.colors.text.main }]}>
+          <Text size="2xl" weight="bold" variant="strong">Layout Primitives Test</Text>
+          <Text size="base" variant="default" align="center">
             Testing Container, Flex components, and ResponsiveContainer
           </Text>
         </View>
 
         {/* Button Primitive Section */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Button Primitive</Text>
+          <Text size="lg" weight="semibold" variant="strong">Button Primitive</Text>
 
           <View style={styles.testGroup}>
             <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>Button Types:</Text>
@@ -91,7 +92,7 @@ export const PrimitivesTestScreen: React.FC = () => {
 
         {/* Container Primitive Section */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Container Primitive</Text>
+          <Text size="lg" weight="semibold" variant="strong">Container Primitive</Text>
 
           <View style={styles.testGroup}>
             <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>Container with padding:</Text>
@@ -134,7 +135,7 @@ export const PrimitivesTestScreen: React.FC = () => {
 
         {/* Flex Primitives Section */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Flex Primitives</Text>
+          <Text size="lg" weight="semibold" variant="strong">Flex Primitives</Text>
 
           <View style={styles.testGroup}>
             <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>FlexRow with gap:</Text>
@@ -201,7 +202,7 @@ export const PrimitivesTestScreen: React.FC = () => {
 
         {/* Modal Primitives Section */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Modal Primitives</Text>
+          <Text size="lg" weight="semibold" variant="strong">Modal Primitives</Text>
 
           <View style={styles.testGroup}>
             <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>Modal Tests:</Text>
@@ -229,7 +230,7 @@ export const PrimitivesTestScreen: React.FC = () => {
 
         {/* ResponsiveContainer Section */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>ResponsiveContainer</Text>
+          <Text size="lg" weight="semibold" variant="strong">ResponsiveContainer</Text>
           <View style={[styles.infoBox, { backgroundColor: theme.colors.utilities.warning + '20', borderColor: theme.colors.utilities.warning }]}>
             <Text style={[styles.infoText, { color: theme.colors.utilities.warning }]}>
               ResponsiveContainer is a layout primitive that works behind the

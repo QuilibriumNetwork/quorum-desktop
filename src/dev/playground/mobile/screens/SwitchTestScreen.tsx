@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { ScrollView, Text, View, StyleSheet } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
 import { Switch } from '../components/primitives/Switch';
+import { Text } from '../components/primitives/Text';
+import { Icon } from '../components/primitives/Icon';
+import { commonTestStyles } from '../styles/commonTestStyles';
 
 export const SwitchTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -13,87 +16,115 @@ export const SwitchTestScreen: React.FC = () => {
   const [mobileSwitch, setMobileSwitch] = useState(true);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: theme.colors.text.strong }]}>
-            Switch
-          </Text>
-          <Text style={[styles.subtitle, { color: theme.colors.text.main }]}>
-            Cross-platform toggle switch with multiple sizes and variants
-          </Text>
+    <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
+      <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
+        <View style={commonTestStyles.header}>
+          <View style={commonTestStyles.titleContainer}>
+            <Icon name="sliders" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
+            <Text size="2xl" weight="bold" variant="strong">
+              Switch
+            </Text>
+          </View>
+          <View style={{ marginBottom: 24 }}>
+            <Text size="base" variant="default" align="center">
+              Cross-platform toggle switch with multiple sizes and variants
+            </Text>
+          </View>
         </View>
 
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>
-            Basic Switch
-          </Text>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">
+              Basic Switch
+            </Text>
+          </View>
 
-          <View style={styles.switchRow}>
+          <View style={commonTestStyles.switchRow}>
             <Switch
               value={basicSwitch}
               onChange={setBasicSwitch}
               accessibilityLabel="Basic Switch (OFF)"
             />
-            <Text style={[styles.switchLabel, { color: theme.colors.text.main }]}>
-              Basic Switch ({basicSwitch ? 'ON' : 'OFF'})
-            </Text>
+            <View style={{ marginLeft: 12 }}>
+              <Text size="sm" variant="default">
+                Basic Switch ({basicSwitch ? 'ON' : 'OFF'})
+              </Text>
+            </View>
           </View>
 
-          <View style={styles.switchRow}>
+          <View style={commonTestStyles.switchRow}>
             <Switch
               value={disabledSwitchOff}
               onChange={setDisabledSwitchOff}
               disabled={true}
               accessibilityLabel="Disabled Switch (OFF)"
             />
-            <Text style={[styles.switchLabel, { color: theme.colors.text.subtle }]}>
-              Disabled Switch (OFF) - Cannot be toggled
-            </Text>
+            <View style={{ marginLeft: 12 }}>
+              <Text size="sm" variant="subtle">
+                Disabled Switch (OFF) - Cannot be toggled
+              </Text>
+            </View>
           </View>
 
-          <View style={styles.switchRow}>
+          <View style={commonTestStyles.switchRow}>
             <Switch
               value={disabledSwitchOn}
               onChange={setDisabledSwitchOn}
               disabled={true}
               accessibilityLabel="Disabled Switch (ON)"
             />
-            <Text style={[styles.switchLabel, { color: theme.colors.text.subtle }]}>
-              Disabled Switch (ON) - Cannot be toggled
-            </Text>
+            <View style={{ marginLeft: 12 }}>
+              <Text size="sm" variant="subtle">
+                Disabled Switch (ON) - Cannot be toggled
+              </Text>
+            </View>
           </View>
         </View>
 
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>
-            Mobile Switch Size
-          </Text>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">
+              Mobile Switch Size
+            </Text>
+          </View>
 
-          <View style={styles.switchRow}>
+          <View style={commonTestStyles.switchRow}>
             <Switch
               value={mobileSwitch}
               onChange={setMobileSwitch}
               accessibilityLabel="Mobile Switch"
             />
-            <Text style={[styles.switchLabel, { color: theme.colors.text.main }]}>
-              Standard Mobile Size (52×28px - matches platform guidelines)
-            </Text>
+            <View style={{ marginLeft: 12 }}>
+              <Text size="sm" variant="default">
+                Standard Mobile Size (52×28px - matches platform guidelines)
+              </Text>
+            </View>
           </View>
         </View>
 
-        <View style={[styles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <Text style={[styles.notesTitle, { color: theme.colors.text.strong }]}>
-            📱 Mobile Testing Notes
-          </Text>
-          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
+        <View style={[commonTestStyles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
+          <View style={commonTestStyles.titleContainer}>
+            <Text size="base" weight="semibold" variant="strong">
+              Mobile Notes
+            </Text>
+          </View>
+          <Text size="sm" variant="default">
             • Web: Custom styled switch with smooth animations and accent color
-            {'\n'}• Mobile: Custom switch component (no Android ripple effects)
-            {'\n'}• Single size optimized for mobile (52×28px matches platform
-            standards){'\n'}• Uses theme-aware surface colors (adapts to
-            light/dark themes){'\n'}• Touch targets are optimized for mobile
-            accessibility{'\n'}• Smooth animated transitions with proper spacing
-            consistency
+          </Text>
+          <Text size="sm" variant="default">
+            • Mobile: Custom switch component (no Android ripple effects)
+          </Text>
+          <Text size="sm" variant="default">
+            • Single size optimized for mobile (52×28px matches platform standards)
+          </Text>
+          <Text size="sm" variant="default">
+            • Uses theme-aware surface colors (adapts to light/dark themes)
+          </Text>
+          <Text size="sm" variant="default">
+            • Touch targets are optimized for mobile accessibility
+          </Text>
+          <Text size="sm" variant="default">
+            • Smooth animated transitions with proper spacing consistency
           </Text>
         </View>
       </ScrollView>
@@ -101,71 +132,11 @@ export const SwitchTestScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    padding: 20,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  section: {
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 16,
-  },
-  switchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
+// Most styles now centralized in commonTestStyles
+// Only screen-specific styles remain here if needed
+const styles = {
   switchLabel: {
     marginLeft: 15,
-    fontSize: 16,
     flex: 1,
   },
-  notesSection: {
-    // backgroundColor removed - now uses theme colors dynamically
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 8,
-  },
-  notesTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    // color removed - now uses theme colors dynamically
-    marginBottom: 12,
-  },
-  notesText: {
-    fontSize: 14,
-    // color removed - now uses theme colors dynamically
-    lineHeight: 20,
-  },
-});
+};

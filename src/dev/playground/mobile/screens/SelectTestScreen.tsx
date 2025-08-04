@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   ScrollView,
-  Text,
   View,
   StyleSheet,
   SafeAreaView,
@@ -10,6 +9,8 @@ import {
 import { useTheme } from '../components/primitives/theme';
 import Select from '../components/primitives/Select/Select.native';
 import Button from '../components/primitives/Button';
+import { Icon } from '../components/primitives/Icon';
+import { Text } from '../components/primitives/Text';
 
 export const SelectTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -74,15 +75,15 @@ export const SelectTestScreen: React.FC = () => {
     {
       groupLabel: 'Voice Channels',
       options: [
-        { value: 'voice-general', label: 'General Voice', icon: '🔊' },
-        { value: 'voice-meeting', label: 'Meeting Room', icon: '🔊' },
+        { value: 'voice-general', label: 'General Voice', icon: 'volume-up' },
+        { value: 'voice-meeting', label: 'Meeting Room', icon: 'volume-up' },
       ],
     },
     {
       groupLabel: 'Private Channels',
       options: [
-        { value: 'team-leads', label: '#team-leads', icon: '🔒' },
-        { value: 'admins', label: '#admins', icon: '🔒' },
+        { value: 'team-leads', label: '#team-leads', icon: 'lock' },
+        { value: 'admins', label: '#admins', icon: 'lock' },
       ],
     },
   ];
@@ -124,16 +125,25 @@ export const SelectTestScreen: React.FC = () => {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={[styles.title, { color: theme.colors.text.strong }]}>📋 Select</Text>
-          <Text style={[styles.subtitle, { color: theme.colors.text.main }]}>
-            Mobile dropdown/picker component with modal overlay
-          </Text>
+          <View style={styles.titleContainer}>
+            <Icon name="clipboard" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
+            <Text size="2xl" weight="bold" variant="strong">Select</Text>
+          </View>
+          <View style={{ marginBottom: 24 }}>
+            <Text size="base" variant="default" align="center">
+              Mobile dropdown/picker component with modal overlay
+            </Text>
+          </View>
         </View>
 
         {/* Basic Select */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Basic Select</Text>
-          <Text style={[styles.label, { color: theme.colors.text.main }]}>Simple Select</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Basic Select</Text>
+          </View>
+          <View style={{ marginBottom: 8 }}>
+            <Text size="sm" variant="strong">Simple Select:</Text>
+          </View>
           <Select
             value={basicValue}
             onChange={setBasicValue}
@@ -144,8 +154,12 @@ export const SelectTestScreen: React.FC = () => {
 
         {/* Select with Icons */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>With Icons</Text>
-          <Text style={[styles.label, { color: theme.colors.text.main }]}>Action Picker</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">With Icons</Text>
+          </View>
+          <View style={{ marginBottom: 8 }}>
+            <Text size="sm" variant="strong">Action Picker:</Text>
+          </View>
           <Select
             value={iconValue}
             onChange={setIconValue}
@@ -156,10 +170,14 @@ export const SelectTestScreen: React.FC = () => {
 
         {/* Select Sizes */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Size Variants</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Size Variants</Text>
+          </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Small Size</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Small Size:</Text>
+            </View>
             <Select
               size="small"
               value={sizeTestValue}
@@ -170,7 +188,9 @@ export const SelectTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Medium Size (Default)</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Medium Size (Default):</Text>
+            </View>
             <Select
               size="medium"
               value={sizeTestValue}
@@ -181,7 +201,9 @@ export const SelectTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Large Size</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Large Size:</Text>
+            </View>
             <Select
               size="large"
               value={sizeTestValue}
@@ -194,10 +216,14 @@ export const SelectTestScreen: React.FC = () => {
 
         {/* Select Variants */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Select Variants</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Select Variants</Text>
+          </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Bordered</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Bordered:</Text>
+            </View>
             <Select
               variant="bordered"
               value={variantTestValue}
@@ -208,7 +234,9 @@ export const SelectTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Filled (Default)</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Filled (Default):</Text>
+            </View>
             <Select
               value={variantTestValue}
               onChange={setVariantTestValue}
@@ -220,10 +248,14 @@ export const SelectTestScreen: React.FC = () => {
 
         {/* Error States */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Error States</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Error States</Text>
+          </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>With Error</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">With Error:</Text>
+            </View>
             <Select
               value={errorValue}
               onChange={(value) => {
@@ -257,7 +289,9 @@ export const SelectTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Disabled Select</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Disabled Select:</Text>
+            </View>
             <Select
               value="disabled"
               onChange={() => {}}
@@ -272,10 +306,14 @@ export const SelectTestScreen: React.FC = () => {
 
         {/* Advanced Features */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Advanced Features</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Advanced Features</Text>
+          </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Full Width</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Full Width:</Text>
+            </View>
             <Select
               fullWidth
               value=""
@@ -286,7 +324,9 @@ export const SelectTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>With Disabled Options</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">With Disabled Options:</Text>
+            </View>
             <Select
               value=""
               onChange={() => {}}
@@ -311,10 +351,14 @@ export const SelectTestScreen: React.FC = () => {
 
         {/* Custom Width */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Custom Width</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Custom Width</Text>
+          </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Custom 200px Width</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Custom 200px Width:</Text>
+            </View>
             <Select
               width={200}
               value={customWidthValue}
@@ -322,11 +366,15 @@ export const SelectTestScreen: React.FC = () => {
               placeholder="200px wide"
               options={longTextOptions}
             />
-            <Text style={styles.helpText}>Uses width=200 prop</Text>
+            <View style={{ marginTop: 8 }}>
+              <Text size="sm" variant="subtle">Uses width=200 prop</Text>
+            </View>
           </View>
 
           <View style={styles.subSection}>
-            <Text style={[styles.label, { color: theme.colors.text.main }]}>Custom 120px Width (Narrow)</Text>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Custom 120px Width (Narrow):</Text>
+            </View>
             <Select
               width={120}
               value=""
@@ -334,16 +382,22 @@ export const SelectTestScreen: React.FC = () => {
               placeholder="Narrow"
               options={longTextOptions}
             />
-            <Text style={styles.helpText}>Demonstrates text ellipsis</Text>
+            <View style={{ marginTop: 8 }}>
+              <Text size="sm" variant="subtle">Demonstrates text ellipsis</Text>
+            </View>
           </View>
         </View>
 
         {/* Grouped Options */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>
-            Grouped Options (SpaceEditor Style)
-          </Text>
-          <Text style={[styles.label, { color: theme.colors.text.main }]}>Select Channel</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">
+              Grouped Options (SpaceEditor Style)
+            </Text>
+          </View>
+          <View style={{ marginBottom: 8 }}>
+            <Text size="sm" variant="strong">Select Channel:</Text>
+          </View>
           <Select
             value={groupedValue}
             onChange={setGroupedValue}
@@ -351,15 +405,21 @@ export const SelectTestScreen: React.FC = () => {
             groups={channelGroups}
             fullWidth
           />
-          <Text style={styles.helpText}>
-            Options organized by category with group headers
-          </Text>
+          <View style={{ marginTop: 8 }}>
+            <Text size="sm" variant="subtle">
+              Options organized by category with group headers
+            </Text>
+          </View>
         </View>
 
         {/* User Selection with Avatars */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>User Selection with Avatars</Text>
-          <Text style={[styles.label, { color: theme.colors.text.main }]}>Select Conversation</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">User Selection with Avatars</Text>
+          </View>
+          <View style={{ marginBottom: 8 }}>
+            <Text size="sm" variant="strong">Select Conversation:</Text>
+          </View>
           <Select
             value={userValue}
             onChange={setUserValue}
@@ -367,39 +427,43 @@ export const SelectTestScreen: React.FC = () => {
             options={userOptions}
             fullWidth
           />
-          <Text style={styles.helpText}>
-            Shows user avatars and addresses (subtitle)
-          </Text>
+          <View style={{ marginTop: 8 }}>
+            <Text size="sm" variant="subtle">
+              Shows user avatars and addresses (subtitle)
+            </Text>
+          </View>
         </View>
 
         {/* Implementation Notes */}
         <View style={[styles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <Text style={[styles.notesTitle, { color: theme.colors.text.strong }]}>📱 Mobile Implementation</Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <View style={styles.titleContainer}>
+            <Text size="base" weight="semibold" variant="strong">Mobile Notes</Text>
+          </View>
+          <Text size="sm" variant="default">
             • Uses React Native Modal for dropdown overlay
           </Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Touch-optimized for mobile interaction
           </Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Consistent width management (min 150px, max 280px)
           </Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Text truncation with ellipsis for long options
           </Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Custom width support via numeric prop
           </Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Grouped options with sticky headers
           </Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Avatar support with 32px circular images
           </Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Subtitle text for secondary information
           </Text>
-          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Icons are temporary emoji (FontAwesome pending)
           </Text>
         </View>
@@ -421,11 +485,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     // color removed - now uses theme colors dynamically
-    marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {

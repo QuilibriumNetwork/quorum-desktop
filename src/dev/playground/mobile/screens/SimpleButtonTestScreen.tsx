@@ -1,21 +1,30 @@
 import React from 'react';
-import { ScrollView, Text, View, StyleSheet } from 'react-native';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
 import Button from '../components/primitives/Button';
+import { Icon } from '../components/primitives/Icon';
+import { Text } from '../components/primitives/Text';
 
 export const SimpleButtonTestScreen: React.FC = () => {
   const theme = useTheme();
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={[styles.title, { color: theme.colors.text.strong }]}>🔘 Simple Button Test</Text>
-        <Text style={[styles.subtitle, { color: theme.colors.text.main }]}>
-          Testing Button primitive without flex layouts
-        </Text>
+        <View style={styles.titleContainer}>
+          <Icon name="radio" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
+          <Text size="2xl" weight="bold" variant="strong">Simple Button Test</Text>
+        </View>
+        <View style={{ marginBottom: 24 }}>
+          <Text size="base" variant="default" align="center">
+            Testing Button primitive without flex layouts
+          </Text>
+        </View>
 
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Primary Variants</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Primary Variants</Text>
+          </View>
 
           <View style={styles.buttonContainer}>
             <Button
@@ -52,7 +61,9 @@ export const SimpleButtonTestScreen: React.FC = () => {
         </View>
 
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Subtle & Utility Variants</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Subtle & Utility Variants</Text>
+          </View>
 
           <View style={styles.buttonContainer}>
             <Button type="subtle" onClick={() => {}}>
@@ -77,9 +88,11 @@ export const SimpleButtonTestScreen: React.FC = () => {
         </View>
 
         <View style={[styles.section, { backgroundColor: theme.colors.accent[500] }]}>
-          <Text style={[styles.sectionTitle, { color: 'white' }]}>
-            White Variants (on colored bg)
-          </Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" color="white">
+              White Variants (on colored bg)
+            </Text>
+          </View>
 
           <View style={styles.buttonContainer}>
             <Button
@@ -110,7 +123,9 @@ export const SimpleButtonTestScreen: React.FC = () => {
         </View>
 
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Button Sizes</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Button Sizes</Text>
+          </View>
 
           <View style={styles.buttonContainer}>
             <Button
@@ -144,7 +159,9 @@ export const SimpleButtonTestScreen: React.FC = () => {
         </View>
 
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Buttons with Icons</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Buttons with Icons</Text>
+          </View>
 
           <View style={styles.buttonContainer}>
             <Button
@@ -188,7 +205,9 @@ export const SimpleButtonTestScreen: React.FC = () => {
         </View>
 
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Disabled State</Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Disabled State</Text>
+          </View>
 
           <View style={styles.buttonContainer}>
             <Button
@@ -213,12 +232,16 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     // color removed - now uses theme colors dynamically
-    marginBottom: 8,
-    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,

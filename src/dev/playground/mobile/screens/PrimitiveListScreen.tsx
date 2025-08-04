@@ -1,21 +1,18 @@
 import React from 'react';
-import {
-  ScrollView,
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import { ScrollView, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
 import ThemeRadioGroup from '../components/ThemeRadioGroup';
 import AccentColorSwitcher from '../components/AccentColorSwitcher';
+import { Icon } from '../components/primitives/Icon';
+import { IconName } from '../components/primitives/Icon/types';
+import { Text } from '../components/primitives/Text';
 
 interface PrimitiveItem {
   id: string;
   title: string;
   description: string;
-  emoji: string;
+  icon: IconName;
   onPress: () => void;
 }
 
@@ -33,14 +30,14 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
       title: 'Layout',
       description:
         'Container, FlexRow, FlexColumn, FlexBetween, FlexCenter, and ResponsiveContainer',
-      emoji: '📐',
+      icon: 'sliders',
       onPress: () => onSelectPrimitive('basic'),
     },
     {
       id: 'input',
       title: 'Input',
       description: 'Cross-platform text input with error states and variants',
-      emoji: '📝',
+      icon: 'memo',
       onPress: () => onSelectPrimitive('input'),
     },
     {
@@ -48,14 +45,14 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
       title: 'TextArea',
       description:
         'Multiline text input with auto-resize and onboarding variant',
-      emoji: '📄',
+      icon: 'memo',
       onPress: () => onSelectPrimitive('textarea'),
     },
     {
       id: 'button',
       title: 'Button',
       description: 'Complete button system with 11 variants and all sizes',
-      emoji: '🔘',
+      icon: 'radio',
       onPress: () => onSelectPrimitive('button'),
     },
     {
@@ -63,56 +60,56 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
       title: 'Switch',
       description:
         'Toggle switches with proper spacing and consistent behavior',
-      emoji: '🔛',
+      icon: 'sliders',
       onPress: () => onSelectPrimitive('switch'),
     },
     {
       id: 'modal',
       title: 'Modal',
       description: 'Cross-platform modal that transforms to drawer on mobile',
-      emoji: '📋',
+      icon: 'clipboard',
       onPress: () => onSelectPrimitive('modal'),
     },
     {
       id: 'select',
       title: 'Select',
       description: 'Dropdown/picker component with modal overlay for mobile',
-      emoji: '📋',
+      icon: 'clipboard',
       onPress: () => onSelectPrimitive('select'),
     },
     {
       id: 'colorswatch',
       title: 'ColorSwatch',
       description: 'Touch-optimized color picker for accent selection',
-      emoji: '🎨',
+      icon: 'palette',
       onPress: () => onSelectPrimitive('colorswatch'),
     },
     {
       id: 'radiogroup',
       title: 'RadioGroup',
       description: 'Accessible radio button group with icon support',
-      emoji: '🔘',
+      icon: 'radio',
       onPress: () => onSelectPrimitive('radiogroup'),
     },
     {
       id: 'tooltip',
       title: 'Tooltip',
       description: 'Cross-platform tooltip for info icons in modals',
-      emoji: '💬',
+      icon: 'comment-dots',
       onPress: () => onSelectPrimitive('tooltip'),
     },
     {
       id: 'icon',
       title: 'Icon',
       description: 'Cross-platform icon system using FontAwesome',
-      emoji: '🎯',
+      icon: 'target',
       onPress: () => onSelectPrimitive('icon'),
     },
     {
       id: 'text',
       title: 'Text',
       description: 'Essential text component with variants, sizes, and weights',
-      emoji: '✏️',
+      icon: 'pencil',
       onPress: () => onSelectPrimitive('text'),
     },
   ];
@@ -120,59 +117,103 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
   const renderPrimitiveCard = (primitive: PrimitiveItem) => (
     <TouchableOpacity
       key={primitive.id}
-      style={[styles.card, { backgroundColor: theme.colors.bg.card, borderColor: theme.colors.border.default }]}
+      style={[
+        styles.card,
+        {
+          backgroundColor: theme.colors.bg.card,
+          borderColor: theme.colors.border.default,
+        },
+      ]}
       onPress={primitive.onPress}
       activeOpacity={0.7}
     >
       <View style={styles.cardHeader}>
-        <Text style={styles.emoji}>{primitive.emoji}</Text>
-        <Text style={[styles.title, { color: theme.colors.text.strong }]}>{primitive.title}</Text>
+        <Icon
+          name={primitive.icon}
+          size="lg"
+          color={theme.colors.accent[500]}
+          style={{ marginRight: 12 }}
+        />
+        <Text size="xl" variant="strong">
+          {primitive.title}
+        </Text>
       </View>
-      <Text style={[styles.description, { color: theme.colors.text.main }]}>{primitive.description}</Text>
-      <View style={styles.arrow}>
-        <Text style={[styles.arrowText, { color: theme.colors.text.subtle }]}>→</Text>
-      </View>
+      <Text size="sm" variant="default">
+        {primitive.description}
+      </Text>
     </TouchableOpacity>
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.bg.app }]}
+    >
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
-          <Text style={[styles.headerTitle, { color: theme.colors.text.strong }]}>🧱 Primitives Playground</Text>
-          <Text style={[styles.headerSubtitle, { color: theme.colors.text.main }]}>
+          <View style={styles.titleContainer}>
+            <Icon
+              name="tools"
+              size="xl"
+              color={theme.colors.text.strong}
+              style={{ marginRight: 12 }}
+            />
+            <Text size="3xl" variant="strong">
+              Primitives Playground
+            </Text>
+          </View>
+          <Text>
             Cross-platform primitive components for mobile architecture
           </Text>
-          
-          <View style={[styles.themeSection, { backgroundColor: theme.colors.surface[2] }]}>
-            <Text style={[styles.themeSectionTitle, { color: theme.colors.text.strong }]}>Theme</Text>
+
+          <View
+            style={[
+              styles.themeSection,
+              { backgroundColor: theme.colors.surface[2] },
+            ]}
+          >
+            <Text size="sm" variant="default">
+              Theme
+            </Text>
             <ThemeRadioGroup horizontal />
             <AccentColorSwitcher />
           </View>
         </View>
 
         <View>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Available Tests</Text>
-          <Text style={[styles.sectionSubtitle, { color: theme.colors.text.subtle }]}>
-            Tap any card to test that primitive on React Native
-          </Text>
+          <View style={{ marginBottom: 12 }}>
+            <Text size="2xl" variant="strong">
+              Available Tests
+            </Text>
+            <Text variant="subtle">
+              Tap any card to test that primitive on React Native
+            </Text>
+          </View>
 
           {primitives.map(renderPrimitiveCard)}
         </View>
 
-        <View style={[styles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <Text style={[styles.infoTitle, { color: theme.colors.text.strong }]}>📱 Testing Notes</Text>
-          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
+        <View
+          style={[
+            styles.infoSection,
+            { backgroundColor: theme.colors.surface[3] },
+          ]}
+        >
+          <View style={styles.titleContainer}>
+            <Text size="sm" variant="strong">
+              Testing Notes
+            </Text>
+          </View>
+          <Text size="sm" variant="default">
             • Each primitive has both web (.web.tsx) and mobile (.native.tsx)
             implementations
           </Text>
-          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • All primitives maintain identical APIs across platforms
           </Text>
-          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Focus on Android testing - Expo web can be unreliable
           </Text>
-          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
+          <Text size="sm" variant="default">
             • Use shake gesture to open developer menu if needed
           </Text>
         </View>
@@ -193,11 +234,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
   headerTitle: {
     fontSize: 32,
     fontWeight: 'bold',
     // color removed - now uses theme.colors.text.strong dynamically
-    marginBottom: 8,
     textAlign: 'center',
   },
   headerSubtitle: {

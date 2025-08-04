@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
-import { Tooltip } from '../components/primitives';
+import { Tooltip, Text, Icon } from '../components/primitives';
 
 export const TooltipTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -18,14 +18,21 @@ export const TooltipTestScreen: React.FC = () => {
         paddingHorizontal: 20,
       }}
     >
-      <Text style={[styles.title, { color: colors.text.strong }]}>Tooltip</Text>
-      <Text style={[styles.subtitle, { color: colors.text.subtle }]}>
-        Cross-platform tooltip for info icons in modals
-      </Text>
+      <View style={{ alignItems: 'center', marginBottom: 32 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+          <Icon name="comment-dots" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
+          <Text size="2xl" weight="bold" variant="strong">Tooltip</Text>
+        </View>
+        <View style={{ marginBottom: 24 }}>
+          <Text size="base" variant="default" align="center">
+            Cross-platform tooltip for info icons in modals
+          </Text>
+        </View>
+      </View>
 
       {/* Basic Tooltips */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text.main }]}>
+        <Text size="lg" weight="semibold" variant="strong">
           Basic Tooltips
         </Text>
 
@@ -41,7 +48,7 @@ export const TooltipTestScreen: React.FC = () => {
                 { backgroundColor: colors.accent.DEFAULT },
               ]}
             >
-              <Text style={[styles.buttonText, { color: 'white' }]}>
+              <Text size="base" weight="medium" style={{ color: 'white' }}>
                 Tap for Info
               </Text>
             </View>
@@ -67,17 +74,21 @@ export const TooltipTestScreen: React.FC = () => {
 
       {/* Positioning Examples */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text.main }]}>
-          Positioning Options
-        </Text>
-        <Text style={[styles.description, { color: colors.text.subtle }]}>
-          Each button is tested individually with proper spacing:
-        </Text>
+        <View style={{ marginBottom: 16 }}>
+          <Text size="lg" weight="semibold" variant="strong">
+            Positioning Options
+          </Text>
+        </View>
+        <View style={{ marginBottom: 16 }}>
+          <Text size="sm" variant="subtle">
+            Each button is tested individually with proper spacing:
+          </Text>
+        </View>
 
         <View style={styles.positioningTestContainer}>
           {/* Top positioning test */}
           <View style={styles.individualTest}>
-            <Text style={[styles.testLabel, { color: colors.text.subtle }]}>
+            <Text size="sm" variant="subtle">
               Top:
             </Text>
             <Tooltip
@@ -91,12 +102,7 @@ export const TooltipTestScreen: React.FC = () => {
                   { backgroundColor: colors.surface[3] },
                 ]}
               >
-                <Text
-                  style={[
-                    styles.positionButtonText,
-                    { color: colors.text.main },
-                  ]}
-                >
+                <Text size="xs" variant="default">
                   Top Test
                 </Text>
               </View>
@@ -105,7 +111,7 @@ export const TooltipTestScreen: React.FC = () => {
 
           {/* Right positioning test */}
           <View style={styles.individualTest}>
-            <Text style={[styles.testLabel, { color: colors.text.subtle }]}>
+            <Text size="sm" variant="subtle">
               Right:
             </Text>
             <Tooltip id="tooltip-right" content="Right" place="right">
@@ -115,12 +121,7 @@ export const TooltipTestScreen: React.FC = () => {
                   { backgroundColor: colors.surface[3] },
                 ]}
               >
-                <Text
-                  style={[
-                    styles.positionButtonText,
-                    { color: colors.text.main },
-                  ]}
-                >
+                <Text size="xs" variant="default">
                   Right Test
                 </Text>
               </View>
@@ -129,7 +130,7 @@ export const TooltipTestScreen: React.FC = () => {
 
           {/* Bottom positioning test */}
           <View style={styles.individualTest}>
-            <Text style={[styles.testLabel, { color: colors.text.subtle }]}>
+            <Text size="sm" variant="subtle">
               Bottom:
             </Text>
             <Tooltip
@@ -143,12 +144,7 @@ export const TooltipTestScreen: React.FC = () => {
                   { backgroundColor: colors.surface[3] },
                 ]}
               >
-                <Text
-                  style={[
-                    styles.positionButtonText,
-                    { color: colors.text.main },
-                  ]}
-                >
+                <Text size="xs" variant="default">
                   Bottom Test
                 </Text>
               </View>
@@ -157,7 +153,7 @@ export const TooltipTestScreen: React.FC = () => {
 
           {/* Left positioning test */}
           <View style={styles.individualTest}>
-            <Text style={[styles.testLabel, { color: colors.text.subtle }]}>
+            <Text size="sm" variant="subtle">
               Left:
             </Text>
             <Tooltip id="tooltip-left" content="Left" place="left">
@@ -167,12 +163,7 @@ export const TooltipTestScreen: React.FC = () => {
                   { backgroundColor: colors.surface[3] },
                 ]}
               >
-                <Text
-                  style={[
-                    styles.positionButtonText,
-                    { color: colors.text.main },
-                  ]}
-                >
+                <Text size="xs" variant="default">
                   Left Test
                 </Text>
               </View>
@@ -183,10 +174,12 @@ export const TooltipTestScreen: React.FC = () => {
 
       {/* Testing Notes */}
       <View style={[styles.notes, { backgroundColor: colors.surface[3] }]}>
-        <Text style={[styles.notesTitle, { color: colors.text.strong }]}>
-          📱 Mobile Testing Notes
-        </Text>
-        <Text style={[styles.notesText, { color: colors.text.main }]}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+          <Text size="base" weight="semibold" variant="strong">
+            Mobile Notes
+          </Text>
+        </View>
+        <Text size="sm" variant="default">
           • Custom modal-based tooltip with positioning{'\n'}• Short tap opens
           tooltip, tap outside or X button closes{'\n'}• Automatically positions
           to stay within screen bounds{'\n'}• Default close button on mobile for

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Import primitives for theme testing
@@ -11,6 +11,8 @@ import Modal from '../components/primitives/Modal';
 
 // Import theme system
 import { useTheme } from '../components/primitives/theme';
+import { Text } from '../components/primitives/Text';
+import { Icon } from '../components/primitives/Icon';
 
 /**
  * Mobile theme testing screen

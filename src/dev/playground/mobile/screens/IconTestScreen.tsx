@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Icon, useTheme } from '../components/primitives';
+import { Icon, useTheme, Text } from '../components/primitives';
 
 export const IconTestScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
@@ -17,33 +17,42 @@ export const IconTestScreen: React.FC = () => {
         paddingHorizontal: 20,
       }}
     >
-      <Text style={[styles.title, { color: colors.text.strong }]}>Icon</Text>
-      <Text style={[styles.subtitle, { color: colors.text.subtle }]}>
-        Cross-platform icon system using FontAwesome with unified API
-      </Text>
+      <View style={{ alignItems: 'center', marginBottom: 32 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+          <Icon name="target" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
+          <Text size="2xl" weight="bold" variant="strong">Icon</Text>
+        </View>
+        <View style={{ marginBottom: 24 }}>
+          <Text size="base" variant="default" align="center">
+            Cross-platform icon system using FontAwesome with unified API
+          </Text>
+        </View>
+      </View>
 
       {/* Basic Icons */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text.main }]}>
-          Basic Icons
-        </Text>
+        <View style={{ marginBottom: 16 }}>
+          <Text size="lg" weight="semibold" variant="strong">
+            Basic Icons
+          </Text>
+        </View>
 
         <View style={styles.iconGrid}>
           <View style={styles.iconItem}>
             <Icon name="check" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="sm" variant="subtle">
               check
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="times" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="sm" variant="subtle">
               times
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="user" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="sm" variant="subtle">
               user
             </Text>
           </View>
@@ -52,26 +61,28 @@ export const IconTestScreen: React.FC = () => {
 
       {/* Theme Icons */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text.main }]}>
-          Theme Icons
-        </Text>
+        <View style={{ marginBottom: 16 }}>
+          <Text size="lg" weight="semibold" variant="strong">
+            Theme Icons
+          </Text>
+        </View>
 
         <View style={styles.iconGrid}>
           <View style={styles.iconItem}>
             <Icon name="sun" color={theme.colors.utilities.warning} />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               sun
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="moon" color={theme.colors.accent[600]} />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               moon
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="desktop" color={theme.colors.text.subtle} />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               desktop
             </Text>
           </View>
@@ -80,44 +91,46 @@ export const IconTestScreen: React.FC = () => {
 
       {/* Sizes */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text.main }]}>
-          Icon Sizes
-        </Text>
+        <View style={{ marginBottom: 16 }}>
+          <Text size="lg" weight="semibold" variant="strong">
+            Icon Sizes
+          </Text>
+        </View>
 
         <View style={styles.sizeRow}>
           <View style={styles.sizeItem}>
             <Icon name="heart" size="xs" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               xs (12px)
             </Text>
           </View>
           <View style={styles.sizeItem}>
             <Icon name="heart" size="sm" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               sm (14px)
             </Text>
           </View>
           <View style={styles.sizeItem}>
             <Icon name="heart" size="md" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               md (16px)
             </Text>
           </View>
           <View style={styles.sizeItem}>
             <Icon name="heart" size="lg" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               lg (20px)
             </Text>
           </View>
           <View style={styles.sizeItem}>
             <Icon name="heart" size="xl" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               xl (24px)
             </Text>
           </View>
           <View style={styles.sizeItem}>
             <Icon name="heart" size={32} />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               32px
             </Text>
           </View>
@@ -126,44 +139,46 @@ export const IconTestScreen: React.FC = () => {
 
       {/* Actions & Communication */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text.main }]}>
-          Actions & Communication
-        </Text>
+        <View style={{ marginBottom: 16 }}>
+          <Text size="lg" weight="semibold" variant="strong">
+            Actions & Communication
+          </Text>
+        </View>
 
         <View style={styles.iconGrid}>
           <View style={styles.iconItem}>
             <Icon name="reply" color={theme.colors.utilities.success} />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               reply
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="trash" color={theme.colors.utilities.danger} />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               trash
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="link" color={theme.colors.accent[500]} />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               link
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="bell" disabled />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               bell (disabled)
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="envelope" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               envelope
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="clipboard" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               clipboard
             </Text>
           </View>
@@ -172,44 +187,46 @@ export const IconTestScreen: React.FC = () => {
 
       {/* Navigation */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text.main }]}>
-          Navigation Icons
-        </Text>
+        <View style={{ marginBottom: 16 }}>
+          <Text size="lg" weight="semibold" variant="strong">
+            Navigation Icons
+          </Text>
+        </View>
 
         <View style={styles.iconGrid}>
           <View style={styles.iconItem}>
             <Icon name="chevron-left" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               chevron-left
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="chevron-right" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               chevron-right
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="arrow-up" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               arrow-up
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="arrow-down" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               arrow-down
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="home" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               home
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="menu" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               menu
             </Text>
           </View>
@@ -218,44 +235,46 @@ export const IconTestScreen: React.FC = () => {
 
       {/* User & Social */}
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: colors.text.main }]}>
-          User & Social Icons
-        </Text>
+        <View style={{ marginBottom: 16 }}>
+          <Text size="lg" weight="semibold" variant="strong">
+            User & Social Icons
+          </Text>
+        </View>
 
         <View style={styles.iconGrid}>
           <View style={styles.iconItem}>
             <Icon name="users" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               users
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="user-plus" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               user-plus
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="smile" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               smile
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="face-smile-beam" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               face-smile-beam
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="eye" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               eye
             </Text>
           </View>
           <View style={styles.iconItem}>
             <Icon name="eye-slash" />
-            <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
+            <Text size="xs" variant="subtle">
               eye-slash
             </Text>
           </View>
@@ -264,10 +283,12 @@ export const IconTestScreen: React.FC = () => {
 
       {/* Testing Notes */}
       <View style={[styles.notes, { backgroundColor: colors.surface[3] }]}>
-        <Text style={[styles.notesTitle, { color: colors.text.strong }]}>
-          📱 Mobile Icon Testing
-        </Text>
-        <Text style={[styles.notesText, { color: colors.text.main }]}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+          <Text size="base" weight="semibold" variant="strong">
+            Mobile Icon Testing
+          </Text>
+        </View>
+        <Text size="sm" variant="default">
           • Native: Uses react-native-vector-icons with FontAwesome font{'\n'}•
           Unified API: Same props work across web and mobile{'\n'}• Automatic
           theme integration with color system{'\n'}• 60+ icons mapped from

@@ -5,6 +5,7 @@ import { useTheme } from '../components/primitives/theme';
 import { Text } from '../components/primitives/Text';
 import { FlexRow } from '../components/primitives/FlexRow';
 import { FlexColumn } from '../components/primitives/FlexColumn';
+import { Icon } from '../components/primitives/Icon';
 
 export const TextTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -16,17 +17,22 @@ export const TextTestScreen: React.FC = () => {
         contentContainerStyle={styles.content}
       >
         <View style={styles.header}>
-          <Text size="2xl" weight="bold">
-            Text Primitive Test
-          </Text>
-          <Text variant="subtle" style={{ marginTop: 8 }}>
-            Essential text component for React Native compatibility
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+            <Icon name="pencil" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
+            <Text size="2xl" weight="bold" variant="strong">
+              Text
+            </Text>
+          </View>
+          <View style={{ marginBottom: 24 }}>
+            <Text size="base" variant="default" align="center">
+              Essential text component for React Native compatibility
+            </Text>
+          </View>
         </View>
 
         {/* Variants Section */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text size="lg" weight="semibold" style={styles.sectionTitle}>
+          <Text size="lg" weight="semibold" variant="strong">
             Text Variants
           </Text>
 
@@ -48,7 +54,7 @@ export const TextTestScreen: React.FC = () => {
             </View>
 
             <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
-              <Text variant="muted">
+              <Text variant="subtle">
                 Muted variant - Less important details
               </Text>
             </View>
@@ -174,35 +180,37 @@ export const TextTestScreen: React.FC = () => {
 
         {/* React Native Requirements */}
         <View style={[styles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <Text size="lg" weight="semibold" style={[styles.infoTitle, { color: theme.colors.text.strong }]}>
-            📱 Why Text Primitive is Critical
+          <Text size="lg" weight="semibold" variant="strong">
+            <View style={styles.titleContainer}>
+              <Text weight="semibold">Mobile Notes</Text>
+            </View>
           </Text>
 
           <FlexColumn gap="sm" style={{ marginTop: 12 }}>
             <FlexRow gap="sm">
-              <Text style={{ color: theme.colors.text.main }}>•</Text>
-              <Text style={{ flex: 1, color: theme.colors.text.main }}>
+              <Text variant="default">•</Text>
+              <Text variant="default">
                 React Native requires ALL text to be wrapped in Text components
               </Text>
             </FlexRow>
 
             <FlexRow gap="sm">
-              <Text style={{ color: theme.colors.text.main }}>•</Text>
-              <Text style={{ flex: 1, color: theme.colors.text.main }}>
+              <Text variant="default">•</Text>
+              <Text variant="default">
                 Raw text in View components will crash the app on mobile
               </Text>
             </FlexRow>
 
             <FlexRow gap="sm">
-              <Text style={{ color: theme.colors.text.main }}>•</Text>
-              <Text style={{ flex: 1, color: theme.colors.text.main }}>
+              <Text variant="default">•</Text>
+              <Text variant="default">
                 Provides consistent typography across web and mobile
               </Text>
             </FlexRow>
 
             <FlexRow gap="sm">
-              <Text style={{ color: theme.colors.text.main }}>•</Text>
-              <Text style={{ flex: 1, color: theme.colors.text.main }}>
+              <Text variant="default">•</Text>
+              <Text variant="default">
                 Enables proper text selection and accessibility
               </Text>
             </FlexRow>

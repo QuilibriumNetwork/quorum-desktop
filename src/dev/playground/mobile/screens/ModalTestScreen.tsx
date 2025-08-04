@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { ScrollView, Text, View, TouchableOpacity } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import Modal from '../components/primitives/Modal';
+import Button from '../components/primitives/Button';
+import { Icon } from '../components/primitives/Icon';
 import { useTheme } from '../components/primitives/theme';
+import { Text } from '../components/primitives/Text';
 
 export const ModalTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -16,129 +19,113 @@ export const ModalTestScreen: React.FC = () => {
   const [navigationModal, setNavigationModal] = useState(false);
   const [currentPage, setCurrentPage] = useState('menu');
 
-  const buttonStyle = {
-    backgroundColor: colors.accent[500],
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 16,
-    alignItems: 'center' as const,
-  };
-
-  const buttonText = {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '600' as const,
-  };
 
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: colors.surface[0], padding: 20 }}
     >
-      <Text
-        style={{
-          color: colors.text.strong,
-          fontSize: 24,
-          fontWeight: 'bold',
-          marginBottom: 10,
-        }}
-      >
-        Modal
-      </Text>
-      <Text
-        style={{ color: colors.text.subtle, fontSize: 16, marginBottom: 30 }}
-      >
-        Cross-platform modal that transforms to drawer on mobile
-      </Text>
-
-      <View style={{ marginBottom: 30 }}>
-        <Text
-          style={{
-            color: colors.text.strong,
-            fontSize: 18,
-            fontWeight: 'bold',
-            marginBottom: 15,
-          }}
-        >
-          Basic Modal
-        </Text>
-
-        <TouchableOpacity
-          style={buttonStyle}
-          onPress={() => setBasicModal(true)}
-        >
-          <Text style={buttonText}>Open Basic Modal</Text>
-        </TouchableOpacity>
+      <View style={{ alignItems: 'center', marginBottom: 32 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+          <Icon name="clipboard" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
+          <Text size="2xl" weight="bold" variant="strong">
+            Modal
+          </Text>
+        </View>
+        <View style={{ marginBottom: 24 }}>
+          <Text size="base" variant="default" align="center">
+            Cross-platform modal that transforms to drawer on mobile
+          </Text>
+        </View>
       </View>
 
       <View style={{ marginBottom: 30 }}>
-        <Text
-          style={{
-            color: colors.text.strong,
-            fontSize: 18,
-            fontWeight: 'bold',
-            marginBottom: 15,
-          }}
-        >
-          Modal Sizes
-        </Text>
+        <View style={{ marginBottom: 16 }}>
+          <Text size="lg" weight="semibold" variant="strong">
+            Basic Modal
+          </Text>
+        </View>
 
-        <TouchableOpacity
-          style={buttonStyle}
-          onPress={() => setSmallModal(true)}
-        >
-          <Text style={buttonText}>Small Modal (40% height)</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={buttonStyle}
-          onPress={() => setMediumModal(true)}
-        >
-          <Text style={buttonText}>Medium Modal (70% height)</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={buttonStyle}
-          onPress={() => setLargeModal(true)}
-        >
-          <Text style={buttonText}>Large Modal (90% height)</Text>
-        </TouchableOpacity>
+        <View style={{ marginBottom: 16 }}>
+          <Button
+            type="primary"
+            onClick={() => setBasicModal(true)}
+          >
+            Open Basic Modal
+          </Button>
+        </View>
       </View>
 
       <View style={{ marginBottom: 30 }}>
-        <Text
-          style={{
-            color: colors.text.strong,
-            fontSize: 18,
-            fontWeight: 'bold',
-            marginBottom: 15,
-          }}
-        >
-          Modal Options
-        </Text>
+        <View style={{ marginBottom: 16 }}>
+          <Text size="lg" weight="semibold" variant="strong">
+            Modal Sizes
+          </Text>
+        </View>
 
-        <TouchableOpacity
-          style={buttonStyle}
-          onPress={() => setNoCloseModal(true)}
-        >
-          <Text style={buttonText}>No Close Button</Text>
-        </TouchableOpacity>
+        <View style={{ marginBottom: 16 }}>
+          <Button
+            type="primary"
+            onClick={() => setSmallModal(true)}
+          >
+            Small Modal (40% height)
+          </Button>
+        </View>
 
-        <TouchableOpacity
-          style={buttonStyle}
-          onPress={() => setNoSwipeModal(true)}
-        >
-          <Text style={buttonText}>No Swipe to Close</Text>
-        </TouchableOpacity>
+        <View style={{ marginBottom: 16 }}>
+          <Button
+            type="primary"
+            onClick={() => setMediumModal(true)}
+          >
+            Medium Modal (70% height)
+          </Button>
+        </View>
 
-        <TouchableOpacity
-          style={buttonStyle}
-          onPress={() => {
-            setNavigationModal(true);
-            setCurrentPage('menu');
-          }}
-        >
-          <Text style={buttonText}>Navigation Example</Text>
-        </TouchableOpacity>
+        <View style={{ marginBottom: 16 }}>
+          <Button
+            type="primary"
+            onClick={() => setLargeModal(true)}
+          >
+            Large Modal (90% height)
+          </Button>
+        </View>
+      </View>
+
+      <View style={{ marginBottom: 30 }}>
+        <View style={{ marginBottom: 16 }}>
+          <Text size="lg" weight="semibold" variant="strong">
+            Modal Options
+          </Text>
+        </View>
+
+        <View style={{ marginBottom: 16 }}>
+          <Button
+            type="primary"
+            onClick={() => setNoCloseModal(true)}
+          >
+            No Close Button
+          </Button>
+        </View>
+
+        <View style={{ marginBottom: 16 }}>
+          <Button
+            type="primary"
+            onClick={() => setNoSwipeModal(true)}
+          >
+            No Swipe to Close
+          </Button>
+        </View>
+
+        <View style={{ marginBottom: 16 }}>
+          <Button
+            type="primary"
+            onClick={() => {
+              setNavigationModal(true);
+              setCurrentPage('menu');
+            }}
+          >
+            Navigation Example
+          </Button>
+        </View>
       </View>
 
       {/* Basic Modal */}
@@ -149,37 +136,26 @@ export const ModalTestScreen: React.FC = () => {
         size="medium"
       >
         <View style={{ padding: 20 }}>
-          <Text
-            style={{
-              color: colors.text.main,
-              fontSize: 16,
-              marginBottom: 16,
-              lineHeight: 24,
-            }}
-          >
-            This is a basic modal that transforms into a drawer on mobile. You
-            can close it by:
-          </Text>
-          <Text
-            style={{ color: colors.text.subtle, fontSize: 14, marginBottom: 8 }}
-          >
+          <View style={{ marginBottom: 16 }}>
+            <Text size="sm" variant="default">
+              This is a basic modal that transforms into a drawer on mobile. You
+              can close it by:
+            </Text>
+          </View>
+          <Text size="sm" variant="subtle">
             • Tapping outside the modal
           </Text>
-          <Text
-            style={{
-              color: colors.text.subtle,
-              fontSize: 14,
-              marginBottom: 16,
-            }}
+          <View style={{ marginBottom: 16 }}>
+            <Text size="sm" variant="subtle">
+              • Swiping down from the handle area
+            </Text>
+          </View>
+          <Button
+            type="primary"
+            onClick={() => setBasicModal(false)}
           >
-            • Swiping down from the handle area
-          </Text>
-          <TouchableOpacity
-            style={[buttonStyle, { backgroundColor: colors.utilities.success }]}
-            onPress={() => setBasicModal(false)}
-          >
-            <Text style={buttonText}>Close Modal</Text>
-          </TouchableOpacity>
+            Close Modal
+          </Button>
         </View>
       </Modal>
 
@@ -191,17 +167,17 @@ export const ModalTestScreen: React.FC = () => {
         size="small"
       >
         <View style={{ padding: 20 }}>
-          <Text
-            style={{ color: colors.text.main, fontSize: 16, marginBottom: 16 }}
+          <View style={{ marginBottom: 16 }}>
+            <Text size="sm" variant="default">
+              This is a small modal that takes up 40% of the screen height.
+            </Text>
+          </View>
+          <Button
+            type="danger"
+            onClick={() => setSmallModal(false)}
           >
-            This is a small modal that takes up 40% of the screen height.
-          </Text>
-          <TouchableOpacity
-            style={[buttonStyle, { backgroundColor: colors.utilities.danger }]}
-            onPress={() => setSmallModal(false)}
-          >
-            <Text style={buttonText}>Close</Text>
-          </TouchableOpacity>
+            Close
+          </Button>
         </View>
       </Modal>
 
@@ -213,12 +189,12 @@ export const ModalTestScreen: React.FC = () => {
         size="medium"
       >
         <View style={{ padding: 20 }}>
-          <Text
-            style={{ color: colors.text.main, fontSize: 16, marginBottom: 16 }}
-          >
-            This is a medium modal that takes up 70% of the screen height. This
-            is the default size.
-          </Text>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="sm" variant="default">
+              This is a medium modal that takes up 70% of the screen height. This
+              is the default size.
+            </Text>
+          </View>
           <View
             style={{
               backgroundColor: colors.surface[3],
@@ -227,32 +203,23 @@ export const ModalTestScreen: React.FC = () => {
               marginBottom: 16,
             }}
           >
-            <Text
-              style={{
-                color: colors.utilities.warning,
-                fontSize: 14,
-                marginBottom: 8,
-              }}
-            >
-              📱 Swipe Gesture Test
-            </Text>
-            <Text
-              style={{
-                color: colors.text.subtle,
-                fontSize: 12,
-                lineHeight: 18,
-              }}
-            >
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+              <Icon name="mobile" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
+              <Text size="sm" variant="strong">
+                Swipe Gesture Test
+              </Text>
+            </View>
+            <Text size="sm" variant="subtle">
               Try swiping down from the top handle area to close this modal. The
               gesture only works from the handle and header area.
             </Text>
           </View>
-          <TouchableOpacity
-            style={[buttonStyle, { backgroundColor: colors.utilities.warning }]}
-            onPress={() => setMediumModal(false)}
+          <Button
+            type="primary"
+            onClick={() => setMediumModal(false)}
           >
-            <Text style={buttonText}>Close</Text>
-          </TouchableOpacity>
+            Close
+          </Button>
         </View>
       </Modal>
 
@@ -264,19 +231,10 @@ export const ModalTestScreen: React.FC = () => {
         size="large"
       >
         <ScrollView style={{ padding: 20 }}>
-          <Text
-            style={{ color: colors.text.main, fontSize: 16, marginBottom: 16 }}
-          >
+          <Text size="sm" variant="default">
             This is a large modal that takes up 90% of the screen height.
           </Text>
-          <Text
-            style={{
-              color: colors.text.subtle,
-              fontSize: 14,
-              marginBottom: 16,
-              lineHeight: 20,
-            }}
-          >
+          <Text size="sm" variant="subtle">
             Large modals are perfect for complex forms or detailed content that
             needs more space. Notice how the content area is scrollable if it
             exceeds the available height.
@@ -293,36 +251,20 @@ export const ModalTestScreen: React.FC = () => {
                 marginBottom: 16,
               }}
             >
-              <Text
-                style={{
-                  color: colors.text.strong,
-                  fontSize: 16,
-                  fontWeight: 'bold',
-                  marginBottom: 8,
-                }}
-              >
-                Scrollable Section {index + 1}
-              </Text>
-              <Text
-                style={{
-                  color: colors.text.main,
-                  fontSize: 14,
-                  lineHeight: 20,
-                  marginBottom: 12,
-                }}
-              >
-                This is section {index + 1} of the scrollable content. Each
-                section contains enough text and content to demonstrate the
-                scrolling functionality properly. The modal should maintain
-                smooth scrolling while keeping the header fixed.
-              </Text>
-              <Text
-                style={{
-                  color: colors.text.subtle,
-                  fontSize: 13,
-                  lineHeight: 18,
-                }}
-              >
+              <View style={{ marginBottom: 8 }}>
+                <Text size="base" weight="bold" variant="strong">
+                  Scrollable Section {index + 1}
+                </Text>
+              </View>
+              <View style={{ marginBottom: 12 }}>
+                <Text size="sm" variant="default">
+                  This is section {index + 1} of the scrollable content. Each
+                  section contains enough text and content to demonstrate the
+                  scrolling functionality properly. The modal should maintain
+                  smooth scrolling while keeping the header fixed.
+                </Text>
+              </View>
+              <Text size="xs" variant="subtle">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
                 enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -341,31 +283,24 @@ export const ModalTestScreen: React.FC = () => {
               marginBottom: 16,
             }}
           >
-            <Text
-              style={{
-                color: colors.text.strong,
-                fontSize: 16,
-                fontWeight: 'bold',
-                marginBottom: 8,
-              }}
-            >
-              Final Scrollable Section
-            </Text>
-            <Text
-              style={{ color: colors.text.main, fontSize: 14, lineHeight: 20 }}
-            >
+            <View style={{ marginBottom: 8 }}>
+              <Text size="base" weight="bold" variant="strong">
+                Final Scrollable Section
+              </Text>
+            </View>
+            <Text size="sm" variant="default">
               This is the final section that demonstrates the modal content area
               is fully scrollable when it exceeds the available height. You can
               scroll through all this content while maintaining the header and
               swipe-to-close functionality at the top.
             </Text>
           </View>
-          <TouchableOpacity
-            style={[buttonStyle, { backgroundColor: colors.accent[600] }]}
-            onPress={() => setLargeModal(false)}
+          <Button
+            type="primary"
+            onClick={() => setLargeModal(false)}
           >
-            <Text style={buttonText}>Close Large Modal</Text>
-          </TouchableOpacity>
+            Close Large Modal
+          </Button>
         </ScrollView>
       </Modal>
 
@@ -378,32 +313,22 @@ export const ModalTestScreen: React.FC = () => {
         size="medium"
       >
         <View style={{ padding: 20 }}>
-          <Text
-            style={{ color: colors.text.main, fontSize: 16, marginBottom: 16 }}
-          >
+          <Text size="sm" variant="default">
             This modal has no close button in the header. You can still close it
             by:
           </Text>
-          <Text
-            style={{ color: colors.text.subtle, fontSize: 14, marginBottom: 8 }}
-          >
+          <Text size="sm" variant="subtle">
             • Tapping outside the modal
           </Text>
-          <Text
-            style={{
-              color: colors.text.subtle,
-              fontSize: 14,
-              marginBottom: 16,
-            }}
-          >
+          <Text size="sm" variant="subtle">
             • Swiping down from the handle area
           </Text>
-          <TouchableOpacity
-            style={[buttonStyle, { backgroundColor: colors.accent[500] }]}
-            onPress={() => setNoCloseModal(false)}
+          <Button
+            type="primary"
+            onClick={() => setNoCloseModal(false)}
           >
-            <Text style={buttonText}>Manual Close</Text>
-          </TouchableOpacity>
+            Manual Close
+          </Button>
         </View>
       </Modal>
 
@@ -416,32 +341,22 @@ export const ModalTestScreen: React.FC = () => {
         size="medium"
       >
         <View style={{ padding: 20 }}>
-          <Text
-            style={{ color: colors.text.main, fontSize: 16, marginBottom: 16 }}
-          >
+          <Text size="sm" variant="default">
             This modal has swipe-to-close disabled. Notice there's no handle at
             the top. You can only close it by:
           </Text>
-          <Text
-            style={{ color: colors.text.subtle, fontSize: 14, marginBottom: 8 }}
-          >
+          <Text size="sm" variant="subtle">
             • Tapping the ✕ button
           </Text>
-          <Text
-            style={{
-              color: colors.text.subtle,
-              fontSize: 14,
-              marginBottom: 16,
-            }}
-          >
+          <Text size="sm" variant="subtle">
             • Tapping outside the modal
           </Text>
-          <TouchableOpacity
-            style={[buttonStyle, { backgroundColor: colors.utilities.warning }]}
-            onPress={() => setNoSwipeModal(false)}
+          <Button
+            type="primary"
+            onClick={() => setNoSwipeModal(false)}
           >
-            <Text style={buttonText}>Close Modal</Text>
-          </TouchableOpacity>
+            Close Modal
+          </Button>
         </View>
       </Modal>
 
@@ -461,108 +376,80 @@ export const ModalTestScreen: React.FC = () => {
         <View style={{ flex: 1 }}>
           {currentPage === 'menu' ? (
             <View style={{ padding: 20 }}>
-              <Text
-                style={{
-                  color: colors.text.main,
-                  fontSize: 16,
-                  marginBottom: 20,
-                }}
-              >
-                This demonstrates navigation within a modal, similar to
-                UserSettingsModal on desktop.
-              </Text>
+              <View style={{ marginBottom: 20 }}>
+                <Text size="base" variant="default">
+                  This demonstrates navigation within a modal, similar to
+                  UserSettingsModal on desktop.
+                </Text>
+              </View>
 
-              <TouchableOpacity
-                style={[
-                  buttonStyle,
-                  { backgroundColor: colors.surface[3], marginBottom: 12 },
-                ]}
-                onPress={() => setCurrentPage('profile')}
-              >
-                <Text style={[buttonText, { color: colors.text.main }]}>
+              <View style={{ marginBottom: 12 }}>
+                <Button
+                  type="subtle"
+                  onClick={() => setCurrentPage('profile')}
+                >
                   Profile Settings →
-                </Text>
-              </TouchableOpacity>
+                </Button>
+              </View>
 
-              <TouchableOpacity
-                style={[
-                  buttonStyle,
-                  { backgroundColor: colors.surface[3], marginBottom: 12 },
-                ]}
-                onPress={() => setCurrentPage('appearance')}
-              >
-                <Text style={[buttonText, { color: colors.text.main }]}>
+              <View style={{ marginBottom: 12 }}>
+                <Button
+                  type="subtle"
+                  onClick={() => setCurrentPage('appearance')}
+                >
                   Appearance →
-                </Text>
-              </TouchableOpacity>
+                </Button>
+              </View>
 
-              <TouchableOpacity
-                style={[buttonStyle, { backgroundColor: colors.surface[3] }]}
-                onPress={() => setNavigationModal(false)}
+              <Button
+                type="subtle"
+                onClick={() => setNavigationModal(false)}
               >
-                <Text style={[buttonText, { color: colors.text.main }]}>
-                  Close Settings
-                </Text>
-              </TouchableOpacity>
+                Close Settings
+              </Button>
             </View>
           ) : currentPage === 'profile' ? (
             <View style={{ padding: 20 }}>
-              <TouchableOpacity
-                style={{ marginBottom: 20 }}
-                onPress={() => setCurrentPage('menu')}
-              >
-                <Text style={{ color: colors.accent[500], fontSize: 16 }}>
-                  ← Back to Settings
-                </Text>
-              </TouchableOpacity>
+              <View style={{ marginBottom: 20 }}>
+                <Button
+                  type="unstyled"
+                  onClick={() => setCurrentPage('menu')}
+                >
+                  <Text size="base" color={colors.accent[500]}>
+                    ← Back to Settings
+                  </Text>
+                </Button>
+              </View>
 
-              <Text
-                style={{
-                  color: colors.text.strong,
-                  fontSize: 18,
-                  marginBottom: 16,
-                }}
-              >
-                Profile Settings
-              </Text>
-              <Text
-                style={{
-                  color: colors.text.main,
-                  fontSize: 14,
-                  lineHeight: 20,
-                }}
-              >
+              <View style={{ marginBottom: 16 }}>
+                <Text size="lg" weight="semibold" variant="strong">
+                  Profile Settings
+                </Text>
+              </View>
+              <Text size="sm" variant="default">
                 Configure your profile, username, avatar, and other personal
                 settings here.
               </Text>
             </View>
           ) : (
             <View style={{ padding: 20 }}>
-              <TouchableOpacity
-                style={{ marginBottom: 20 }}
-                onPress={() => setCurrentPage('menu')}
-              >
-                <Text style={{ color: colors.accent[500], fontSize: 16 }}>
-                  ← Back to Settings
-                </Text>
-              </TouchableOpacity>
+              <View style={{ marginBottom: 20 }}>
+                <Button
+                  type="unstyled"
+                  onClick={() => setCurrentPage('menu')}
+                >
+                  <Text size="base" color={colors.accent[500]}>
+                    ← Back to Settings
+                  </Text>
+                </Button>
+              </View>
 
-              <Text
-                style={{
-                  color: colors.text.strong,
-                  fontSize: 18,
-                  marginBottom: 16,
-                }}
-              >
-                Appearance Settings
-              </Text>
-              <Text
-                style={{
-                  color: colors.text.main,
-                  fontSize: 14,
-                  lineHeight: 20,
-                }}
-              >
+              <View style={{ marginBottom: 16 }}>
+                <Text size="lg" weight="semibold" variant="strong">
+                  Appearance Settings
+                </Text>
+              </View>
+              <Text size="sm" variant="default">
                 Choose your theme, accent color, and other visual preferences.
               </Text>
             </View>
@@ -578,25 +465,28 @@ export const ModalTestScreen: React.FC = () => {
           marginBottom: 20,
         }}
       >
-        <Text
-          style={{
-            color: colors.text.strong,
-            fontSize: 14,
-            fontWeight: 'bold',
-            marginBottom: 8,
-          }}
-        >
-          📱 Mobile Testing Notes
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+          <Text size="base" weight="semibold" variant="strong">
+            Mobile Notes
+          </Text>
+        </View>
+        <Text size="sm" variant="default">
+          • Web: Centered modal with backdrop and ESC key support
         </Text>
-        <Text
-          style={{ color: colors.text.main, fontSize: 12, lineHeight: 18 }}
-        >
-          • Web: Centered modal with backdrop and ESC key support{'\n'}• Mobile:
-          Bottom drawer with slide-up animation and swipe gestures{'\n'}• All
-          sizes adapt to mobile screen dimensions (40%, 70%, 90%){'\n'}• Swipe
-          gestures work from handle and header area only{'\n'}• Theme-aware
-          colors adapt to light/dark mode automatically{'\n'}• Uses FontAwesome
-          icons for consistent cross-platform design
+        <Text size="sm" variant="default">
+          • Mobile: Bottom drawer with slide-up animation and swipe gestures
+        </Text>
+        <Text size="sm" variant="default">
+          • All sizes adapt to mobile screen dimensions (40%, 70%, 90%)
+        </Text>
+        <Text size="sm" variant="default">
+          • Swipe gestures work from handle and header area only
+        </Text>
+        <Text size="sm" variant="default">
+          • Theme-aware colors adapt to light/dark mode automatically
+        </Text>
+        <Text size="sm" variant="default">
+          • Uses FontAwesome icons for consistent cross-platform design
         </Text>
       </View>
     </ScrollView>
