@@ -19,11 +19,12 @@
 .direct-messages-container-channels {
   display: flex;
   flex-direction: column;
-  justify-content: stretch;
   height: 100%;
   width: var(--sidebar-left-width);
   min-width: var(--sidebar-left-width);
   max-width: var(--sidebar-left-width);
+  overflow: hidden; // Ensure the container itself doesn't scroll
+  position: relative;
 
   // Mobile responsive behavior - smooth slide animation with proper hiding
   @media (max-width: 1023px) {

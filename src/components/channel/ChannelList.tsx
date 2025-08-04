@@ -39,29 +39,29 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   const { groups } = useSpaceGroups(space);
 
   return (
-    <>
-      <Container className="channels-list">
-        <Container
-          className={headerClassName}
-          style={headerStyle}
-        >
-          {hasBanner && (
-            <Container
-              className="absolute inset-0 pointer-events-none z-0"
-              style={gradientOverlayStyle}
-            />
-          )}
-
-          <Container className="space-header-name truncate relative z-10">
-            <Text>{spaceName}</Text>
-          </Container>
+    <Container className="channels-list-wrapper">
+      <Container
+        className={headerClassName}
+        style={headerStyle}
+      >
+        {hasBanner && (
           <Container
-            className="space-context-menu-toggle-button relative z-10"
-            onClick={handleSpaceContextAction}
-          >
-            <Icon name={getContextIcon()} />
-          </Container>
+            className="absolute inset-0 pointer-events-none z-0"
+            style={gradientOverlayStyle}
+          />
+        )}
+
+        <Container className="space-header-name truncate relative z-10">
+          <Text>{spaceName}</Text>
         </Container>
+        <Container
+          className="space-context-menu-toggle-button relative z-10"
+          onClick={handleSpaceContextAction}
+        >
+          <Icon name={getContextIcon()} />
+        </Container>
+      </Container>
+      <Container className="channels-list">
         {groups.map((group: any) => (
           <ChannelGroup
             onEditGroup={openEditGroupEditor}
@@ -83,7 +83,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
           </Container>
         )}
       </Container>
-    </>
+    </Container>
   );
 };
 

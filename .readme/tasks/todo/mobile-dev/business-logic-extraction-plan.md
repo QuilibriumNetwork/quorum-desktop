@@ -68,7 +68,7 @@
 
 ### NEXT PHASE
 
-Carefully check on audit.json which components still need logic extraction and/or import of our new primitves. Then reposrt below here with a list:
+Carefully check on src/dev/components-audit/audit.json which components still need logic extraction and/or import of our new primitves. Then reposrt below here with a list:
 
 **Reminders:**
 - Scope of logic extraction is to be able to build native components later that use the same logic.

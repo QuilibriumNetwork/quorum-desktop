@@ -19,8 +19,9 @@
 .space-container-channels {
   display: flex;
   flex-direction: column;
-  justify-content: stretch;
   height: 100%;
+  overflow: hidden; // Ensure the container itself doesn't scroll
+  position: relative;
 
   // Mobile responsive behavior - smooth slide animation with proper hiding
   @media (max-width: 1023px) {

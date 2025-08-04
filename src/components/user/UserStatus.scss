@@ -6,6 +6,10 @@
   flex-shrink: 0;
   width: var(--sidebar-left-width);
   user-select: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
 }
 
 @media (max-width: 1023px) {
