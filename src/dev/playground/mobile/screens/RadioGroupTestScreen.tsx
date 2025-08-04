@@ -20,8 +20,8 @@ export const RadioGroupTestScreen: React.FC = () => {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>🔘 RadioGroup</Text>
-          <Text style={styles.headerSubtitle}>
+          <Text style={[styles.headerTitle, { color: theme.colors.text.strong }]}>🔘 RadioGroup</Text>
+          <Text style={[styles.headerSubtitle, { color: theme.colors.text.main }]}>
             Accessible radio button group with icon support and flexible layouts
           </Text>
         </View>
@@ -29,7 +29,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         {/* Theme Selection */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Theme Selection</Text>
-          <Text style={styles.sectionSubtitle}>Using FontAwesome icons:</Text>
+          <Text style={[styles.sectionSubtitle, { color: theme.colors.text.main }]}>Using FontAwesome icons:</Text>
           <RadioGroup
             options={[
               { value: 'light', label: 'Light', icon: 'sun' },
@@ -45,7 +45,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         {/* Horizontal Layout */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Horizontal Layout</Text>
-          <Text style={styles.sectionSubtitle}>Horizontal layout example:</Text>
+          <Text style={[styles.sectionSubtitle, { color: theme.colors.text.main }]}>Horizontal layout example:</Text>
           <RadioGroup
             options={[
               { value: 'option1', label: 'Option 1' },
@@ -61,7 +61,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         {/* Disabled Options */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Disabled Options</Text>
-          <Text style={styles.sectionSubtitle}>
+          <Text style={[styles.sectionSubtitle, { color: theme.colors.text.main }]}>
             Some options can be disabled:
           </Text>
           <RadioGroup
@@ -78,7 +78,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         {/* Without Icons */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Without Icons</Text>
-          <Text style={styles.sectionSubtitle}>
+          <Text style={[styles.sectionSubtitle, { color: theme.colors.text.main }]}>
             Simple text-only radio group:
           </Text>
           <RadioGroup

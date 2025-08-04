@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import { RadioGroupNativeProps } from './types';
 import { useTheme } from '../theme';
-import { getColors } from '../theme/colors';
 import { Icon } from '../Icon';
 import { isValidIconName } from '../Icon/iconMapping';
 
@@ -63,7 +62,7 @@ export function RadioGroup<T extends string = string>({
                   : colors.field.border,
                 backgroundColor: isSelected
                   ? colors.field.bgFocus
-                  : colors.field.bg, // Use theme background instead of hardcoded white
+                  : colors.field.bg,
                 ...(iconOnly ? {} : { minHeight: 50 }), // Only apply minHeight when not iconOnly
               },
               isDisabled && styles.itemDisabled,
@@ -76,10 +75,10 @@ export function RadioGroup<T extends string = string>({
                     <Icon
                       name={option.icon}
                       size="sm"
-                      color={colors.field.text} // Use theme text color
+                      color={colors.text.main}
                     />
                   ) : (
-                    <Text style={[styles.icon, { color: colors.field.text }]}>
+                    <Text style={[styles.icon, { color: colors.text.main }]}>
                       {option.icon}
                     </Text>
                   )}
@@ -89,15 +88,11 @@ export function RadioGroup<T extends string = string>({
                 <Text
                   style={[
                     styles.label,
-                    { 
-                      color: colors.field.text, // Use theme text color
-                      fontSize: 16, // Force font size
-                      fontWeight: '500', // Force font weight
-                    },
+                    { color: colors.text.main },
                     isDisabled && styles.labelDisabled,
                   ]}
                 >
-                  {option.label || 'No Label'}
+                  {option.label}
                 </Text>
               )}
             </View>
@@ -108,10 +103,7 @@ export function RadioGroup<T extends string = string>({
                 style={[
                   styles.radio,
                   {
-                    borderColor: isSelected 
-                      ? colors.field.borderFocus 
-                      : colors.field.border, // Use theme border colors
-                    backgroundColor: colors.field.bg, // Use theme background
+                    borderColor: colors.field.border,
                   },
                 ]}
               >
@@ -119,7 +111,7 @@ export function RadioGroup<T extends string = string>({
                   <View
                     style={[
                       styles.radioInner,
-                      { backgroundColor: colors.field.borderFocus }, // Use theme focus color
+                      { backgroundColor: colors.accent.DEFAULT },
                     ]}
                   />
                 )}
