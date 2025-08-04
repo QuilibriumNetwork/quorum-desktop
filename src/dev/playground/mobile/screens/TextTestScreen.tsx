@@ -130,8 +130,8 @@ export const TextTestScreen: React.FC = () => {
           <FlexColumn gap="md">
             <Text
               variant="default"
-              onPress={() => console.log('Text tapped!')}
-              style={[styles.tappableText, { backgroundColor: theme.colors.accent[100] }]}
+              onPress={() => {}}
+              style={[styles.tappableText, { backgroundColor: theme.colors.surface[3] }]}
             >
               Tap this text to trigger an action
             </Text>
@@ -139,8 +139,8 @@ export const TextTestScreen: React.FC = () => {
             <Text
               variant="strong"
               color={theme.colors.accent[600]}
-              onPress={() => console.log('Link tapped!')}
-              style={[styles.tappableText, { backgroundColor: theme.colors.accent[100] }]}
+              onPress={() => {}}
+              style={[styles.tappableText, { backgroundColor: theme.colors.surface[3] }]}
             >
               Custom blue link-style text
             </Text>
@@ -173,36 +173,36 @@ export const TextTestScreen: React.FC = () => {
         </View>
 
         {/* React Native Requirements */}
-        <View style={[styles.infoSection, { backgroundColor: theme.colors.utilities.success + '20' }]}>
-          <Text size="lg" weight="semibold" style={[styles.infoTitle, { color: theme.colors.utilities.success }]}>
+        <View style={[styles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
+          <Text size="lg" weight="semibold" style={[styles.infoTitle, { color: theme.colors.text.strong }]}>
             📱 Why Text Primitive is Critical
           </Text>
 
           <FlexColumn gap="sm" style={{ marginTop: 12 }}>
             <FlexRow gap="sm">
-              <Text>•</Text>
-              <Text style={{ flex: 1 }}>
+              <Text style={{ color: theme.colors.text.main }}>•</Text>
+              <Text style={{ flex: 1, color: theme.colors.text.main }}>
                 React Native requires ALL text to be wrapped in Text components
               </Text>
             </FlexRow>
 
             <FlexRow gap="sm">
-              <Text>•</Text>
-              <Text style={{ flex: 1 }}>
+              <Text style={{ color: theme.colors.text.main }}>•</Text>
+              <Text style={{ flex: 1, color: theme.colors.text.main }}>
                 Raw text in View components will crash the app on mobile
               </Text>
             </FlexRow>
 
             <FlexRow gap="sm">
-              <Text>•</Text>
-              <Text style={{ flex: 1 }}>
+              <Text style={{ color: theme.colors.text.main }}>•</Text>
+              <Text style={{ flex: 1, color: theme.colors.text.main }}>
                 Provides consistent typography across web and mobile
               </Text>
             </FlexRow>
 
             <FlexRow gap="sm">
-              <Text>•</Text>
-              <Text style={{ flex: 1 }}>
+              <Text style={{ color: theme.colors.text.main }}>•</Text>
+              <Text style={{ flex: 1, color: theme.colors.text.main }}>
                 Enables proper text selection and accessibility
               </Text>
             </FlexRow>

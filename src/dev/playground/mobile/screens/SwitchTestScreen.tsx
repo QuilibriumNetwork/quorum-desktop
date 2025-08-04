@@ -82,11 +82,11 @@ export const SwitchTestScreen: React.FC = () => {
           </View>
         </View>
 
-        <View style={styles.notesSection}>
-          <Text style={styles.notesTitle}>
+        <View style={[styles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
+          <Text style={[styles.notesTitle, { color: theme.colors.text.strong }]}>
             📱 Mobile Testing Notes
           </Text>
-          <Text style={styles.notesText}>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             • Web: Custom styled switch with smooth animations and accent color
             {'\n'}• Mobile: Custom switch component (no Android ripple effects)
             {'\n'}• Single size optimized for mobile (52×28px matches platform
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   notesSection: {
-    backgroundColor: '#e3f2fd',
+    // backgroundColor removed - now uses theme colors dynamically
     borderRadius: 12,
     padding: 16,
     marginTop: 8,
@@ -160,12 +160,12 @@ const styles = StyleSheet.create({
   notesTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1976d2',
+    // color removed - now uses theme colors dynamically
     marginBottom: 12,
   },
   notesText: {
     fontSize: 14,
-    color: '#1976d2',
+    // color removed - now uses theme colors dynamically
     lineHeight: 20,
   },
 });

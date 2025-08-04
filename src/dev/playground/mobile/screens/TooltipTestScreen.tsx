@@ -182,11 +182,11 @@ export const TooltipTestScreen: React.FC = () => {
       </View>
 
       {/* Testing Notes */}
-      <View style={[styles.notes, { backgroundColor: colors.surface[1] }]}>
+      <View style={[styles.notes, { backgroundColor: colors.surface[3] }]}>
         <Text style={[styles.notesTitle, { color: colors.text.strong }]}>
           📱 Mobile Testing Notes
         </Text>
-        <Text style={[styles.notesText, { color: colors.text.subtle }]}>
+        <Text style={[styles.notesText, { color: colors.text.main }]}>
           • Custom modal-based tooltip with positioning{'\n'}• Short tap opens
           tooltip, tap outside or X button closes{'\n'}• Automatically positions
           to stay within screen bounds{'\n'}• Default close button on mobile for

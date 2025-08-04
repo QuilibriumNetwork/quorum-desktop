@@ -18,32 +18,22 @@ export function RadioGroup<T extends string = string>({
   onChange,
   direction = 'vertical',
   disabled = false,
+  iconOnly = false,
   style,
   testID,
 }: RadioGroupNativeProps<T>) {
   const theme = useTheme();
-  console.log('RadioGroup - Raw theme object:', theme);
   
   // Extract theme values from the primitive theme provider structure
   const themeMode = theme.theme || theme.resolvedTheme || 'light';
   const accentColor = theme.accent || 'blue';
   
-  console.log('RadioGroup - Using theme mode:', themeMode, 'accent:', accentColor);
-  
   const colors = getColors(themeMode, accentColor);
   
-  // Debug logging
-  console.log('RadioGroup - Options received:', options);
-  console.log('RadioGroup - Current value:', value);
-  console.log('RadioGroup - Value type:', typeof value);
 
   const handlePress = (optionValue: T) => {
-    console.log(`handlePress called with: "${optionValue}", disabled: ${disabled}`);
     if (!disabled) {
-      console.log('Calling onChange with:', optionValue);
       onChange(optionValue);
-    } else {
-      console.log('onChange not called - disabled is true');
     }
   };
 
@@ -59,21 +49,6 @@ export function RadioGroup<T extends string = string>({
         const isSelected = value === option.value;
         const isDisabled = disabled || option.disabled;
         
-        // Debug each option
-        console.log(`Option ${option.value}: isSelected=${isSelected}, value="${value}", option.value="${option.value}"`);
-
-        console.log(`Rendering option ${option.value}:`, {
-          hasIcon: !!option.icon,
-          icon: option.icon,
-          label: option.label,
-          isValidIcon: option.icon ? isValidIconName(option.icon) : false,
-          colors: {
-            borderColor: isSelected ? colors.field.borderFocus : colors.field.border,
-            backgroundColor: isSelected ? colors.field.bgFocus : colors.field.bg,
-            textColor: colors.field.text,
-            iconColor: colors.field.text
-          }
-        });
 
         return (
           <TouchableOpacity
@@ -83,6 +58,8 @@ export function RadioGroup<T extends string = string>({
             activeOpacity={0.7}
             style={[
               styles.item,
+              direction === 'horizontal' && styles.itemHorizontal,
+              iconOnly && styles.itemIconOnly,
               {
                 borderColor: isSelected
                   ? colors.field.borderFocus
@@ -90,12 +67,12 @@ export function RadioGroup<T extends string = string>({
                 backgroundColor: isSelected
                   ? colors.field.bgFocus
                   : colors.field.bg, // Use theme background instead of hardcoded white
-                minHeight: 50, // Ensure minimum height
+                ...(iconOnly ? {} : { minHeight: 50 }), // Only apply minHeight when not iconOnly
               },
               isDisabled && styles.itemDisabled,
             ]}
           >
-            <View style={styles.content}>
+            <View style={[styles.content, iconOnly && styles.contentIconOnly]}>
               {option.icon && (
                 <View style={styles.iconContainer}>
                   {isValidIconName(option.icon) ? (
@@ -111,42 +88,46 @@ export function RadioGroup<T extends string = string>({
                   )}
                 </View>
               )}
-              <Text
-                style={[
-                  styles.label,
-                  { 
-                    color: colors.field.text, // Use theme text color
-                    fontSize: 16, // Force font size
-                    fontWeight: '500', // Force font weight
-                  },
-                  isDisabled && styles.labelDisabled,
-                ]}
-              >
-                {option.label || 'No Label'}
-              </Text>
-            </View>
-
-            {/* Custom radio button */}
-            <View
-              style={[
-                styles.radio,
-                {
-                  borderColor: isSelected 
-                    ? colors.field.borderFocus 
-                    : colors.field.border, // Use theme border colors
-                  backgroundColor: colors.field.bg, // Use theme background
-                },
-              ]}
-            >
-              {isSelected && (
-                <View
+              {!iconOnly && (
+                <Text
                   style={[
-                    styles.radioInner,
-                    { backgroundColor: colors.field.borderFocus }, // Use theme focus color
+                    styles.label,
+                    { 
+                      color: colors.field.text, // Use theme text color
+                      fontSize: 16, // Force font size
+                      fontWeight: '500', // Force font weight
+                    },
+                    isDisabled && styles.labelDisabled,
                   ]}
-                />
+                >
+                  {option.label || 'No Label'}
+                </Text>
               )}
             </View>
+
+            {/* Custom radio button - hidden in iconOnly mode */}
+            {!iconOnly && (
+              <View
+                style={[
+                  styles.radio,
+                  {
+                    borderColor: isSelected 
+                      ? colors.field.borderFocus 
+                      : colors.field.border, // Use theme border colors
+                    backgroundColor: colors.field.bg, // Use theme background
+                  },
+                ]}
+              >
+                {isSelected && (
+                  <View
+                    style={[
+                      styles.radioInner,
+                      { backgroundColor: colors.field.borderFocus }, // Use theme focus color
+                    ]}
+                  />
+                )}
+              </View>
+            )}
           </TouchableOpacity>
         );
       })}
@@ -160,7 +141,9 @@ const styles = StyleSheet.create({
   },
   horizontal: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   vertical: {
     flexDirection: 'column',
@@ -176,6 +159,25 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
   },
+  itemHorizontal: {
+    flex: 0,
+    minWidth: 80,
+  },
+  itemIconOnly: {
+    width: 50,
+    height: 50,
+    minWidth: 50, // Force exact width
+    maxWidth: 50, // Force exact width
+    minHeight: 50, // Force exact height
+    maxHeight: 50, // Force exact height
+    paddingHorizontal: 0, // Override base padding
+    paddingVertical: 0, // Override base padding
+    justifyContent: 'center', // Center the icon
+    alignItems: 'center', // Center the icon
+    borderRadius: 25, // Perfect circle (exactly half of width/height)
+    borderWidth: 2, // Ensure border is visible
+    overflow: 'hidden', // Ensure circular clipping
+  },
   itemDisabled: {
     opacity: 0.6,
   },
@@ -184,6 +186,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     flex: 1,
+  },
+  contentIconOnly: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
   iconContainer: {
     // Container for icon alignment

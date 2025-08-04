@@ -143,11 +143,8 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
             Cross-platform primitive components for mobile architecture
           </Text>
           
-          <View style={styles.themeSection}>
-            <Text style={[styles.themeSectionTitle, { color: theme.colors.text.strong }]}>🎨 Theme</Text>
-            <Text style={[styles.themeSectionSubtitle, { color: theme.colors.text.subtle }]}>
-              Change the theme for the entire playground
-            </Text>
+          <View style={[styles.themeSection, { backgroundColor: theme.colors.surface[2] }]}>
+            <Text style={[styles.themeSectionTitle, { color: theme.colors.text.strong }]}>Theme</Text>
             <ThemeRadioGroup horizontal />
           </View>
         </View>
@@ -161,7 +158,7 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
           {primitives.map(renderPrimitiveCard)}
         </View>
 
-        <View style={styles.infoSection}>
+        <View style={[styles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
           <Text style={[styles.infoTitle, { color: theme.colors.text.strong }]}>📱 Testing Notes</Text>
           <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
             • Each primitive has both web (.web.tsx) and mobile (.native.tsx)
@@ -210,24 +207,16 @@ const styles = StyleSheet.create({
   themeSection: {
     marginTop: 24,
     alignItems: 'center',
-    backgroundColor: 'white', // Keep white for theme section container
-    borderRadius: 16,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    borderRadius: 12,
+    padding: 16,
     width: '100%',
+    gap: 12,
   },
   themeSectionTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
     // color removed - now uses theme.colors.text.strong dynamically
-    marginBottom: 4,
+    textAlign: 'center',
   },
   themeSectionSubtitle: {
     fontSize: 14,
@@ -256,14 +245,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 20,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
     position: 'relative',
   },
   cardHeader: {
@@ -299,7 +280,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   infoSection: {
-    backgroundColor: '#e3f2fd', // Keep info section blue background
+    // backgroundColor removed - now uses theme colors dynamically
     borderRadius: 12,
     padding: 16,
     marginTop: 8,

@@ -38,6 +38,7 @@ const ThemeRadioGroup: React.FC<ThemeRadioGroupProps> = ({
       value={theme}
       onChange={setTheme}
       direction={horizontal ? 'horizontal' : 'vertical'}
+      iconOnly={horizontal} // Show only icons in horizontal mode
       className="mt-2" // Web-only, ignored on native
       name="theme"
     />

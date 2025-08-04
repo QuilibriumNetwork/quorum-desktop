@@ -14,6 +14,7 @@ export interface RadioGroupProps<T = string> {
   onChange: (value: T) => void;
   direction?: 'horizontal' | 'vertical';
   disabled?: boolean;
+  iconOnly?: boolean; // Show only icons, hide text labels
   testID?: string;
 }
 

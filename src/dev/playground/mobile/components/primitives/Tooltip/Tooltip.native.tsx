@@ -53,9 +53,6 @@ export function Tooltip({
           px: number,
           py: number
         ) => {
-          console.log(
-            `[Tooltip ${place}] Element: x=${px}, y=${py}, w=${width}, h=${height}`
-          );
           setChildLayout({ x: px, y: py, width, height });
           setVisible(true);
         }
@@ -69,7 +66,6 @@ export function Tooltip({
 
   const handleTooltipLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
-    console.log(`[Tooltip ${place}] Tooltip size: w=${width}, h=${height}`);
     setTooltipLayout({ width, height });
   };
 
@@ -148,9 +144,6 @@ export function Tooltip({
       Math.min(left, screenWidth - tooltipWidth - minPadding)
     );
 
-    console.log(
-      `[Tooltip ${place}] Calculated position: top=${finalTop}, left=${finalLeft}`
-    );
 
     return { top: finalTop, left: finalLeft };
   };

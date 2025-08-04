@@ -56,26 +56,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const setTheme = (value: Theme) => {
-    console.log('🔥 ThemeProvider - setTheme ENTRY with:', value);
-    console.log('🔥 ThemeProvider - Current theme state before update:', theme);
-    
     try {
-      console.log('🔥 ThemeProvider - Calling setThemeState...');
       setThemeState(value);
-      console.log('🔥 ThemeProvider - setThemeState called successfully');
       
       // Save to storage (cross-platform)
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem('theme', value);
-        console.log('🔥 ThemeProvider - Saved to localStorage');
       }
       // In React Native, you'd use AsyncStorage here
       
-      console.log('🔥 ThemeProvider - Calling applyTheme...');
       applyTheme(value);
-      console.log('🔥 ThemeProvider - applyTheme completed');
-      
-      console.log('🔥 ThemeProvider - setTheme function EXIT');
     } catch (error) {
       console.error('🚨 ThemeProvider - setTheme ERROR:', error);
     }

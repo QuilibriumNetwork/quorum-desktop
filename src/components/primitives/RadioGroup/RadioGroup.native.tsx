@@ -18,6 +18,7 @@ export function RadioGroup<T extends string = string>({
   onChange,
   direction = 'vertical',
   disabled = false,
+  iconOnly = false,
   style,
   testID,
 }: RadioGroupNativeProps<T>) {
@@ -50,6 +51,8 @@ export function RadioGroup<T extends string = string>({
             activeOpacity={0.7}
             style={[
               styles.item,
+              direction === 'horizontal' && styles.itemHorizontal,
+              iconOnly && styles.itemIconOnly,
               {
                 borderColor: isSelected
                   ? colors.field.borderFocus
@@ -57,11 +60,12 @@ export function RadioGroup<T extends string = string>({
                 backgroundColor: isSelected
                   ? colors.field.bgFocus
                   : colors.field.bg,
+                ...(iconOnly ? {} : { minHeight: 50 }), // Only apply minHeight when not iconOnly
               },
               isDisabled && styles.itemDisabled,
             ]}
           >
-            <View style={styles.content}>
+            <View style={[styles.content, iconOnly && styles.contentIconOnly]}>
               {option.icon && (
                 <View style={styles.iconContainer}>
                   {isValidIconName(option.icon) ? (
@@ -77,35 +81,39 @@ export function RadioGroup<T extends string = string>({
                   )}
                 </View>
               )}
-              <Text
-                style={[
-                  styles.label,
-                  { color: colors.text.main },
-                  isDisabled && styles.labelDisabled,
-                ]}
-              >
-                {option.label}
-              </Text>
-            </View>
-
-            {/* Custom radio button */}
-            <View
-              style={[
-                styles.radio,
-                {
-                  borderColor: colors.field.border,
-                },
-              ]}
-            >
-              {isSelected && (
-                <View
+              {!iconOnly && (
+                <Text
                   style={[
-                    styles.radioInner,
-                    { backgroundColor: colors.accent.DEFAULT },
+                    styles.label,
+                    { color: colors.text.main },
+                    isDisabled && styles.labelDisabled,
                   ]}
-                />
+                >
+                  {option.label}
+                </Text>
               )}
             </View>
+
+            {/* Custom radio button - hidden in iconOnly mode */}
+            {!iconOnly && (
+              <View
+                style={[
+                  styles.radio,
+                  {
+                    borderColor: colors.field.border,
+                  },
+                ]}
+              >
+                {isSelected && (
+                  <View
+                    style={[
+                      styles.radioInner,
+                      { backgroundColor: colors.accent.DEFAULT },
+                    ]}
+                  />
+                )}
+              </View>
+            )}
           </TouchableOpacity>
         );
       })}
@@ -119,7 +127,9 @@ const styles = StyleSheet.create({
   },
   horizontal: {
     flexDirection: 'row',
-    gap: 12,
+    gap: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   vertical: {
     flexDirection: 'column',
@@ -135,6 +145,25 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
   },
+  itemHorizontal: {
+    flex: 0,
+    minWidth: 80,
+  },
+  itemIconOnly: {
+    width: 50,
+    height: 50,
+    minWidth: 50, // Force exact width
+    maxWidth: 50, // Force exact width
+    minHeight: 50, // Force exact height
+    maxHeight: 50, // Force exact height
+    paddingHorizontal: 0, // Override base padding
+    paddingVertical: 0, // Override base padding
+    justifyContent: 'center', // Center the icon
+    alignItems: 'center', // Center the icon
+    borderRadius: 25, // Perfect circle (exactly half of width/height)
+    borderWidth: 2, // Ensure border is visible
+    overflow: 'hidden', // Ensure circular clipping
+  },
   itemDisabled: {
     opacity: 0.6,
   },
@@ -143,6 +172,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     flex: 1,
+  },
+  contentIconOnly: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    width: '100%',
+    height: '100%',
   },
   iconContainer: {
     // Container for icon alignment

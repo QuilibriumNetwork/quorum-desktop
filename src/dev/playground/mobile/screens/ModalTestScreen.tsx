@@ -18,7 +18,7 @@ export const ModalTestScreen: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('menu');
 
   const buttonStyle = {
-    backgroundColor: '#007AFF',
+    backgroundColor: colors.accent[500],
     padding: 16,
     borderRadius: 8,
     marginBottom: 16,
@@ -176,7 +176,7 @@ export const ModalTestScreen: React.FC = () => {
             • Swiping down from the handle area
           </Text>
           <TouchableOpacity
-            style={[buttonStyle, { backgroundColor: '#34C759' }]}
+            style={[buttonStyle, { backgroundColor: colors.utilities.success }]}
             onPress={() => setBasicModal(false)}
           >
             <Text style={buttonText}>Close Modal</Text>
@@ -198,7 +198,7 @@ export const ModalTestScreen: React.FC = () => {
             This is a small modal that takes up 40% of the screen height.
           </Text>
           <TouchableOpacity
-            style={[buttonStyle, { backgroundColor: '#FF3B30' }]}
+            style={[buttonStyle, { backgroundColor: colors.utilities.danger }]}
             onPress={() => setSmallModal(false)}
           >
             <Text style={buttonText}>Close</Text>
@@ -249,7 +249,7 @@ export const ModalTestScreen: React.FC = () => {
             </Text>
           </View>
           <TouchableOpacity
-            style={[buttonStyle, { backgroundColor: '#FF9500' }]}
+            style={[buttonStyle, { backgroundColor: colors.utilities.warning }]}
             onPress={() => setMediumModal(false)}
           >
             <Text style={buttonText}>Close</Text>
@@ -362,7 +362,7 @@ export const ModalTestScreen: React.FC = () => {
             </Text>
           </View>
           <TouchableOpacity
-            style={[buttonStyle, { backgroundColor: '#8B5CF6' }]}
+            style={[buttonStyle, { backgroundColor: colors.accent[600] }]}
             onPress={() => setLargeModal(false)}
           >
             <Text style={buttonText}>Close Large Modal</Text>
@@ -400,7 +400,7 @@ export const ModalTestScreen: React.FC = () => {
             • Swiping down from the handle area
           </Text>
           <TouchableOpacity
-            style={[buttonStyle, { backgroundColor: '#007AFF' }]}
+            style={[buttonStyle, { backgroundColor: colors.accent[500] }]}
             onPress={() => setNoCloseModal(false)}
           >
             <Text style={buttonText}>Manual Close</Text>
@@ -438,7 +438,7 @@ export const ModalTestScreen: React.FC = () => {
             • Tapping outside the modal
           </Text>
           <TouchableOpacity
-            style={[buttonStyle, { backgroundColor: '#FF9500' }]}
+            style={[buttonStyle, { backgroundColor: colors.utilities.warning }]}
             onPress={() => setNoSwipeModal(false)}
           >
             <Text style={buttonText}>Close Modal</Text>
@@ -573,7 +573,7 @@ export const ModalTestScreen: React.FC = () => {
 
       <View
         style={{
-          backgroundColor: colors.surface[2],
+          backgroundColor: colors.surface[3],
           padding: 15,
           borderRadius: 8,
           marginBottom: 20,
@@ -581,7 +581,7 @@ export const ModalTestScreen: React.FC = () => {
       >
         <Text
           style={{
-            color: colors.utilities.success,
+            color: colors.text.strong,
             fontSize: 14,
             fontWeight: 'bold',
             marginBottom: 8,
@@ -590,7 +590,7 @@ export const ModalTestScreen: React.FC = () => {
           📱 Mobile Testing Notes
         </Text>
         <Text
-          style={{ color: colors.text.subtle, fontSize: 12, lineHeight: 18 }}
+          style={{ color: colors.text.main, fontSize: 12, lineHeight: 18 }}
         >
           • Web: Centered modal with backdrop and ESC key support{'\n'}• Mobile:
           Bottom drawer with slide-up animation and swipe gestures{'\n'}• All

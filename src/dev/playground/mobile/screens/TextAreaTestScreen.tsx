@@ -47,7 +47,7 @@ export const TextAreaTestScreen: React.FC = () => {
               minRows={2}
               maxRows={6}
             />
-            <Text style={styles.infoText}>Auto-resizes between 2-6 rows</Text>
+            <Text style={[styles.infoText, { color: theme.colors.text.muted }]}>Auto-resizes between 2-6 rows</Text>
           </View>
 
           <View style={styles.inputGroup}>
@@ -113,7 +113,7 @@ export const TextAreaTestScreen: React.FC = () => {
           <View style={styles.inputGroup}>
             <Text style={[styles.label, { color: theme.colors.text.main }]}>Filled (Default):</Text>
             <TextArea placeholder="Default filled style..." rows={4} />
-            <Text style={styles.infoText}>
+            <Text style={[styles.infoText, { color: theme.colors.text.muted }]}>
               Filled background, accent border on focus
             </Text>
           </View>
@@ -125,7 +125,7 @@ export const TextAreaTestScreen: React.FC = () => {
               placeholder="Bordered textarea style..."
               rows={4}
             />
-            <Text style={styles.infoText}>
+            <Text style={[styles.infoText, { color: theme.colors.text.muted }]}>
               Traditional bordered style (explicit variant)
             </Text>
           </View>
@@ -139,7 +139,7 @@ export const TextAreaTestScreen: React.FC = () => {
               placeholder="Tell us about yourself..."
               rows={4}
             />
-            <Text style={styles.infoText}>
+            <Text style={[styles.infoText, { color: theme.colors.text.muted }]}>
               Rounded corners with brand blue colors
             </Text>
           </View>
@@ -153,7 +153,7 @@ export const TextAreaTestScreen: React.FC = () => {
               minRows={3}
               maxRows={7}
             />
-            <Text style={styles.infoText}>
+            <Text style={[styles.infoText, { color: theme.colors.text.muted }]}>
               Onboarding style with auto-resize
             </Text>
           </View>
@@ -183,27 +183,27 @@ export const TextAreaTestScreen: React.FC = () => {
         </View>
 
         {/* Mobile Testing Notes */}
-        <View style={styles.notesSection}>
-          <Text style={styles.notesTitle}>📋 Mobile Testing Checklist</Text>
-          <Text style={styles.notesText}>
+        <View style={[styles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
+          <Text style={[styles.notesTitle, { color: theme.colors.text.strong }]}>📋 Mobile Testing Checklist</Text>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             ✅ Auto-resize functionality works on mobile
           </Text>
-          <Text style={styles.notesText}>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             ✅ Touch targets optimized for mobile
           </Text>
-          <Text style={styles.notesText}>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             ✅ Focus states work without web-style borders
           </Text>
-          <Text style={styles.notesText}>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             ✅ Error messages display below textarea
           </Text>
-          <Text style={styles.notesText}>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             ✅ Onboarding variant matches desktop style
           </Text>
-          <Text style={styles.notesText}>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             ✅ Multiline text input with mobile keyboard
           </Text>
-          <Text style={styles.notesText}>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             ✅ Text alignment starts at top for multiline
           </Text>
         </View>
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   notesSection: {
-    backgroundColor: '#e3f2fd',
+    // backgroundColor removed - now uses theme colors dynamically
     borderRadius: 12,
     padding: 16,
     marginTop: 8,
@@ -282,12 +282,12 @@ const styles = StyleSheet.create({
   notesTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1976d2',
+    // color removed - now uses theme colors dynamically
     marginBottom: 12,
   },
   notesText: {
     fontSize: 14,
-    color: '#1976d2',
+    // color removed - now uses theme colors dynamically
     marginBottom: 4,
     lineHeight: 20,
   },

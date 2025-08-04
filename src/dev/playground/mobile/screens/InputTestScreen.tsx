@@ -25,42 +25,42 @@ export const InputTestScreen: React.FC = () => {
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Input Types</Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Text Input:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.strong }]}>Text Input:</Text>
             <Input
               value={textValue}
               onChange={setTextValue}
               placeholder="Enter some text..."
               type="text"
             />
-            <Text style={styles.valueText}>Value: "{textValue}"</Text>
+            <Text style={[styles.valueText, { color: theme.colors.text.subtle }]}>Value: "{textValue}"</Text>
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Email Input:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.strong }]}>Email Input:</Text>
             <Input
               value={emailValue}
               onChange={setEmailValue}
               placeholder="Enter your email..."
               type="email"
             />
-            <Text style={styles.valueText}>Value: "{emailValue}"</Text>
+            <Text style={[styles.valueText, { color: theme.colors.text.subtle }]}>Value: "{emailValue}"</Text>
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Password Input:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.strong }]}>Password Input:</Text>
             <Input
               value={passwordValue}
               onChange={setPasswordValue}
               placeholder="Enter password..."
               type="password"
             />
-            <Text style={styles.valueText}>
+            <Text style={[styles.valueText, { color: theme.colors.text.subtle }]}>
               Value: "{passwordValue ? '•'.repeat(passwordValue.length) : ''}"
             </Text>
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Disabled Input:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.strong }]}>Disabled Input:</Text>
             <Input
               value="Cannot edit this"
               placeholder="Disabled input..."
@@ -71,10 +71,10 @@ export const InputTestScreen: React.FC = () => {
 
         {/* Error States */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={styles.sectionTitle}>Error States</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Error States</Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>
+            <Text style={[styles.label, { color: theme.colors.text.strong }]}>
               Input with Error (type less than 3 chars):
             </Text>
             <Input
@@ -94,7 +94,7 @@ export const InputTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Always Error:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.strong }]}>Always Error:</Text>
             <Input
               value=""
               placeholder="This input is always in error state"
@@ -106,28 +106,28 @@ export const InputTestScreen: React.FC = () => {
 
         {/* Input Variants */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={styles.sectionTitle}>Input Variants</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Input Variants</Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Filled (Default):</Text>
+            <Text style={[styles.label, { color: theme.colors.text.strong }]}>Filled (Default):</Text>
             <Input placeholder="Default filled style" />
-            <Text style={styles.infoText}>
+            <Text style={[styles.infoText, { color: theme.colors.text.subtle }]}>
               Filled background, accent border on focus
             </Text>
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Bordered Variant:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.strong }]}>Bordered Variant:</Text>
             <Input variant="bordered" placeholder="Bordered input style" />
-            <Text style={styles.infoText}>
+            <Text style={[styles.infoText, { color: theme.colors.text.subtle }]}>
               Traditional bordered style (explicit variant)
             </Text>
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Onboarding Style (pill shape):</Text>
+            <Text style={[styles.label, { color: theme.colors.text.strong }]}>Onboarding Style (pill shape):</Text>
             <Input variant="onboarding" placeholder="Bongocat" />
-            <Text style={styles.infoText}>
+            <Text style={[styles.infoText, { color: theme.colors.text.subtle }]}>
               Full pill shape with brand blue colors
             </Text>
           </View>
@@ -135,38 +135,38 @@ export const InputTestScreen: React.FC = () => {
 
         {/* Focus and Styling */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={styles.sectionTitle}>Focus Features</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Focus Features</Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Auto Focus Input:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.strong }]}>Auto Focus Input:</Text>
             <Input placeholder="This input auto-focuses" autoFocus />
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>No Focus Style:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.strong }]}>No Focus Style:</Text>
             <Input placeholder="This input has no focus styling" noFocusStyle />
           </View>
         </View>
 
         {/* Mobile Testing Notes */}
-        <View style={styles.notesSection}>
-          <Text style={styles.notesTitle}>📋 Mobile Testing Checklist</Text>
-          <Text style={styles.notesText}>
+        <View style={[styles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
+          <Text style={[styles.notesTitle, { color: theme.colors.text.strong }]}>📋 Mobile Testing Checklist</Text>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             ✅ Input types trigger correct mobile keyboards
           </Text>
-          <Text style={styles.notesText}>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             ✅ Touch targets are 42px high for accessibility
           </Text>
-          <Text style={styles.notesText}>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             ✅ Focus states work without web-style borders
           </Text>
-          <Text style={styles.notesText}>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             ✅ Error messages display below inputs
           </Text>
-          <Text style={styles.notesText}>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             ✅ Onboarding variant matches desktop pill shape
           </Text>
-          <Text style={styles.notesText}>
+          <Text style={[styles.notesText, { color: theme.colors.text.main }]}>
             ✅ Platform-specific keyboard types work
           </Text>
         </View>
@@ -186,18 +186,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
     marginBottom: 24,
     textAlign: 'center',
   },
   section: {
-    backgroundColor: 'white',
+    // backgroundColor removed - now uses theme colors dynamically
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     marginBottom: 16,
   },
   inputGroup: {
@@ -222,22 +222,22 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     marginBottom: 8,
   },
   valueText: {
     fontSize: 12,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
     marginTop: 4,
     fontStyle: 'italic',
   },
   infoText: {
     fontSize: 12,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
     marginTop: 4,
   },
   notesSection: {
-    backgroundColor: '#e3f2fd',
+    // backgroundColor removed - now uses theme colors dynamically
     borderRadius: 12,
     padding: 16,
     marginTop: 8,
@@ -245,12 +245,12 @@ const styles = StyleSheet.create({
   notesTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1976d2',
+    // color removed - now uses theme colors dynamically
     marginBottom: 12,
   },
   notesText: {
     fontSize: 14,
-    color: '#1976d2',
+    // color removed - now uses theme colors dynamically
     marginBottom: 4,
     lineHeight: 20,
   },

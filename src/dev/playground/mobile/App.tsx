@@ -42,11 +42,6 @@ type Screen =
 function ThemedAppContent() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('list');
   const theme = useTheme();
-  
-  console.log('App - Current theme colors:', {
-    appBg: theme.colors.bg.app,
-    resolvedTheme: theme.resolvedTheme
-  });
 
   const renderBackButton = () => {
     if (currentScreen === 'list') return null;

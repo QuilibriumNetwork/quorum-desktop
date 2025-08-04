@@ -93,27 +93,27 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Testing Notes */}
-        <View style={styles.infoSection}>
-          <Text style={styles.infoTitle}>📱 Mobile Testing Notes</Text>
-          <Text style={styles.infoText}>
+        <View style={[styles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
+          <Text style={[styles.infoTitle, { color: theme.colors.text.strong }]}>📱 Mobile Testing Notes</Text>
+          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
             • Web: Native HTML radio inputs with custom styling
           </Text>
-          <Text style={styles.infoText}>
+          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
             • Mobile: Custom radio implementation with TouchableOpacity
           </Text>
-          <Text style={styles.infoText}>
+          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
             • Icons now use FontAwesome icon system
           </Text>
-          <Text style={styles.infoText}>
+          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
             • Both horizontal and vertical layouts supported
           </Text>
-          <Text style={styles.infoText}>
+          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
             • Touch targets optimized for mobile (min 44x44)
           </Text>
-          <Text style={styles.infoText}>
+          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
             • Active state has accent color border and background
           </Text>
-          <Text style={styles.infoText}>
+          <Text style={[styles.infoText, { color: theme.colors.text.main }]}>
             • Ready for ThemeRadioGroup integration
           </Text>
         </View>
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   infoSection: {
-    backgroundColor: '#e3f2fd',
+    // backgroundColor removed - now uses theme colors dynamically
     borderRadius: 12,
     padding: 16,
     marginTop: 8,
@@ -183,12 +183,12 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1976d2',
+    // color removed - now uses theme colors dynamically
     marginBottom: 12,
   },
   infoText: {
     fontSize: 14,
-    color: '#1976d2',
+    // color removed - now uses theme colors dynamically
     marginBottom: 6,
     lineHeight: 20,
   },

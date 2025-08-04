@@ -58,19 +58,19 @@ export const IconTestScreen: React.FC = () => {
 
         <View style={styles.iconGrid}>
           <View style={styles.iconItem}>
-            <Icon name="sun" color="#f59e0b" />
+            <Icon name="sun" color={theme.colors.utilities.warning} />
             <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
               sun
             </Text>
           </View>
           <View style={styles.iconItem}>
-            <Icon name="moon" color="#6366f1" />
+            <Icon name="moon" color={theme.colors.accent[600]} />
             <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
               moon
             </Text>
           </View>
           <View style={styles.iconItem}>
-            <Icon name="desktop" color="#6b7280" />
+            <Icon name="desktop" color={theme.colors.text.subtle} />
             <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
               desktop
             </Text>
@@ -132,19 +132,19 @@ export const IconTestScreen: React.FC = () => {
 
         <View style={styles.iconGrid}>
           <View style={styles.iconItem}>
-            <Icon name="reply" color="#10b981" />
+            <Icon name="reply" color={theme.colors.utilities.success} />
             <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
               reply
             </Text>
           </View>
           <View style={styles.iconItem}>
-            <Icon name="trash" color="#ef4444" />
+            <Icon name="trash" color={theme.colors.utilities.danger} />
             <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
               trash
             </Text>
           </View>
           <View style={styles.iconItem}>
-            <Icon name="link" color="#3b82f6" />
+            <Icon name="link" color={theme.colors.accent[500]} />
             <Text style={[styles.iconLabel, { color: colors.text.subtle }]}>
               link
             </Text>
@@ -263,11 +263,11 @@ export const IconTestScreen: React.FC = () => {
       </View>
 
       {/* Testing Notes */}
-      <View style={[styles.notes, { backgroundColor: colors.surface[1] }]}>
+      <View style={[styles.notes, { backgroundColor: colors.surface[3] }]}>
         <Text style={[styles.notesTitle, { color: colors.text.strong }]}>
           📱 Mobile Icon Testing
         </Text>
-        <Text style={[styles.notesText, { color: colors.text.subtle }]}>
+        <Text style={[styles.notesText, { color: colors.text.main }]}>
           • Native: Uses react-native-vector-icons with FontAwesome font{'\n'}•
           Unified API: Same props work across web and mobile{'\n'}• Automatic
           theme integration with color system{'\n'}• 60+ icons mapped from

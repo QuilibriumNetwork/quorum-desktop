@@ -48,17 +48,17 @@ export const PrimitivesTestScreen: React.FC = () => {
             <FlexRow gap="md" wrap style={styles.buttonRow}>
               <Button
                 type="primary"
-                onClick={() => console.log('Primary pressed')}
+                onClick={() => {}}
               >
                 Primary
               </Button>
               <Button
                 type="secondary"
-                onClick={() => console.log('Secondary pressed')}
+                onClick={() => {}}
               >
                 Secondary
               </Button>
-              <Button type="light" onClick={() => console.log('Light pressed')}>
+              <Button type="light" onClick={() => {}}>
                 Light
               </Button>
             </FlexRow>
@@ -97,7 +97,7 @@ export const PrimitivesTestScreen: React.FC = () => {
             <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>Container with padding:</Text>
             <Container
               padding="md"
-              backgroundColor="#e3f2fd"
+              backgroundColor={theme.colors.accent[100]}
               style={styles.containerDemo}
             >
               <Text>Container with medium padding</Text>
@@ -112,7 +112,7 @@ export const PrimitivesTestScreen: React.FC = () => {
               width="full"
               margin="sm"
               padding="lg"
-              backgroundColor="#f3e5f5"
+              backgroundColor={theme.colors.accent[200]}
               style={styles.containerDemo}
             >
               <Text>Full width container with margin</Text>
@@ -123,8 +123,8 @@ export const PrimitivesTestScreen: React.FC = () => {
             <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>Touchable Container:</Text>
             <Container
               padding="md"
-              backgroundColor="#e8f5e9"
-              onPress={() => console.log('Container pressed!')}
+              backgroundColor={theme.colors.utilities.success + '20'}
+              onPress={() => {}}
               style={styles.containerDemo}
             >
               <Text>Tap this container!</Text>
@@ -138,14 +138,14 @@ export const PrimitivesTestScreen: React.FC = () => {
 
           <View style={styles.testGroup}>
             <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>FlexRow with gap:</Text>
-            <FlexRow gap="md" style={styles.flexDemo}>
-              <View style={styles.flexItem}>
+            <FlexRow gap="md" style={[styles.flexDemo, { backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default }]}>
+              <View style={[styles.flexItem, { backgroundColor: theme.colors.accent[100] }]}>
                 <Text>Item 1</Text>
               </View>
-              <View style={styles.flexItem}>
+              <View style={[styles.flexItem, { backgroundColor: theme.colors.accent[100] }]}>
                 <Text>Item 2</Text>
               </View>
-              <View style={styles.flexItem}>
+              <View style={[styles.flexItem, { backgroundColor: theme.colors.accent[100] }]}>
                 <Text>Item 3</Text>
               </View>
             </FlexRow>
@@ -153,8 +153,8 @@ export const PrimitivesTestScreen: React.FC = () => {
 
           <View style={styles.testGroup}>
             <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>FlexBetween:</Text>
-            <FlexBetween style={styles.flexDemo}>
-              <Text style={styles.flexText}>Left Content</Text>
+            <FlexBetween style={[styles.flexDemo, { backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default }]}>
+              <Text style={[styles.flexText, { color: theme.colors.text.main }]}>Left Content</Text>
               <Button type="secondary" size="small" onClick={() => {}}>
                 Right Action
               </Button>
@@ -163,21 +163,21 @@ export const PrimitivesTestScreen: React.FC = () => {
 
           <View style={styles.testGroup}>
             <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>FlexCenter:</Text>
-            <FlexCenter style={[styles.flexDemo, styles.centerDemo]}>
-              <Text style={styles.flexText}>Centered Content</Text>
+            <FlexCenter style={[styles.flexDemo, styles.centerDemo, { backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default }]}>
+              <Text style={[styles.flexText, { color: theme.colors.text.main }]}>Centered Content</Text>
             </FlexCenter>
           </View>
 
           <View style={styles.testGroup}>
             <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>FlexColumn with gap:</Text>
-            <FlexColumn gap="md" style={styles.flexDemo}>
-              <View style={styles.flexItem}>
+            <FlexColumn gap="md" style={[styles.flexDemo, { backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default }]}>
+              <View style={[styles.flexItem, { backgroundColor: theme.colors.accent[100] }]}>
                 <Text>Item 1</Text>
               </View>
-              <View style={styles.flexItem}>
+              <View style={[styles.flexItem, { backgroundColor: theme.colors.accent[100] }]}>
                 <Text>Item 2</Text>
               </View>
-              <View style={styles.flexItem}>
+              <View style={[styles.flexItem, { backgroundColor: theme.colors.accent[100] }]}>
                 <Text>Item 3</Text>
               </View>
             </FlexColumn>
@@ -188,13 +188,13 @@ export const PrimitivesTestScreen: React.FC = () => {
             <FlexColumn
               gap="sm"
               align="center"
-              style={[styles.flexDemo, { minHeight: 120 }]}
+              style={[styles.flexDemo, { minHeight: 120, backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default }]}
             >
-              <Text style={styles.flexText}>Centered items</Text>
+              <Text style={[styles.flexText, { color: theme.colors.text.main }]}>Centered items</Text>
               <Button type="primary" size="small" onClick={() => {}}>
                 Button
               </Button>
-              <Text style={styles.flexText}>In column</Text>
+              <Text style={[styles.flexText, { color: theme.colors.text.main }]}>In column</Text>
             </FlexColumn>
           </View>
         </View>
@@ -230,8 +230,8 @@ export const PrimitivesTestScreen: React.FC = () => {
         {/* ResponsiveContainer Section */}
         <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>ResponsiveContainer</Text>
-          <View style={styles.infoBox}>
-            <Text style={styles.infoText}>
+          <View style={[styles.infoBox, { backgroundColor: theme.colors.utilities.warning + '20', borderColor: theme.colors.utilities.warning }]}>
+            <Text style={[styles.infoText, { color: theme.colors.utilities.warning }]}>
               ResponsiveContainer is a layout primitive that works behind the
               scenes. On mobile, it provides SafeAreaView integration and proper
               content positioning.
@@ -247,9 +247,9 @@ export const PrimitivesTestScreen: React.FC = () => {
         closeOnBackdropClick={true}
         closeOnEscape={true}
       >
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Modal with Backdrop</Text>
-          <Text style={styles.modalText}>
+        <View style={[styles.modalContent, { backgroundColor: theme.colors.bg.card }]}>
+          <Text style={[styles.modalTitle, { color: theme.colors.text.strong }]}>Modal with Backdrop</Text>
+          <Text style={[styles.modalText, { color: theme.colors.text.main }]}>
             This modal uses the ModalContainer primitive with backdrop. Tap
             outside or press the close button to close.
           </Text>
@@ -263,9 +263,9 @@ export const PrimitivesTestScreen: React.FC = () => {
         onBackdropClick={() => setShowBackdrop(false)}
         blur={true}
       >
-        <View style={styles.backdropContent}>
-          <Text style={styles.modalTitle}>Content on Backdrop</Text>
-          <Text style={styles.modalText}>
+        <View style={[styles.backdropContent, { backgroundColor: theme.colors.bg.card }]}>
+          <Text style={[styles.modalTitle, { color: theme.colors.text.strong }]}>Content on Backdrop</Text>
+          <Text style={[styles.modalText, { color: theme.colors.text.main }]}>
             This demonstrates the OverlayBackdrop primitive. Tap the dark area
             to close.
           </Text>
@@ -280,26 +280,26 @@ export const PrimitivesTestScreen: React.FC = () => {
         size="medium"
       >
         <View style={styles.modalPrimitiveContent}>
-          <Text style={styles.modalText}>
+          <Text style={[styles.modalText, { color: theme.colors.text.main }]}>
             This modal is built using the Modal primitive, which internally uses
             the ModalContainer primitive for backdrop and animations.
           </Text>
 
           <View style={styles.modalFeatures}>
-            <Text style={styles.featuresTitle}>Key Features:</Text>
-            <Text style={styles.featureItem}>
+            <Text style={[styles.featuresTitle, { color: theme.colors.text.strong }]}>Key Features:</Text>
+            <Text style={[styles.featureItem, { color: theme.colors.text.main }]}>
               • Uses ModalContainer for consistent backdrop behavior
             </Text>
-            <Text style={styles.featureItem}>
+            <Text style={[styles.featureItem, { color: theme.colors.text.main }]}>
               • Smooth open/close animations
             </Text>
-            <Text style={styles.featureItem}>
+            <Text style={[styles.featureItem, { color: theme.colors.text.main }]}>
               • Cross-platform React Native implementation
             </Text>
-            <Text style={styles.featureItem}>
+            <Text style={[styles.featureItem, { color: theme.colors.text.main }]}>
               • Size variants (small, medium, large, full)
             </Text>
-            <Text style={styles.featureItem}>
+            <Text style={[styles.featureItem, { color: theme.colors.text.main }]}>
               • Desktop modal → Mobile drawer transformation
             </Text>
           </View>
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
     // color removed - now uses theme.colors.text.main dynamically
   },
   section: {
-    backgroundColor: 'white',
+    // backgroundColor removed - now uses theme colors dynamically
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -378,42 +378,41 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   flexDemo: {
-    backgroundColor: '#f8f9fa',
+    // backgroundColor removed - now uses theme colors dynamically
     padding: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e9ecef',
+    // borderColor removed - now uses theme colors dynamically
   },
   centerDemo: {
     height: 60,
   },
   flexItem: {
-    backgroundColor: '#e3f2fd',
+    // backgroundColor removed - now uses theme colors dynamically
     padding: 8,
     borderRadius: 4,
     minWidth: 60,
     alignItems: 'center',
   },
   flexText: {
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     fontSize: 14,
   },
   containerDemo: {
     borderRadius: 8,
   },
   infoBox: {
-    backgroundColor: '#fff3cd',
-    borderColor: '#ffeaa7',
+    // backgroundColor and borderColor removed - now uses theme colors dynamically
     borderWidth: 1,
     borderRadius: 8,
     padding: 12,
   },
   infoText: {
-    color: '#856404',
+    // color removed - now uses theme colors dynamically
     fontSize: 14,
   },
   modalContent: {
-    backgroundColor: 'white',
+    // backgroundColor removed - now uses theme colors dynamically
     borderRadius: 12,
     padding: 24,
     margin: 20,
@@ -428,7 +427,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   backdropContent: {
-    backgroundColor: 'white',
+    // backgroundColor removed - now uses theme colors dynamically
     borderRadius: 12,
     padding: 24,
     margin: 20,
@@ -444,13 +443,13 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     marginBottom: 12,
     textAlign: 'center',
   },
   modalText: {
     fontSize: 14,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
     textAlign: 'center',
     marginBottom: 16,
     lineHeight: 20,
@@ -464,12 +463,12 @@ const styles = StyleSheet.create({
   featuresTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     marginBottom: 8,
   },
   featureItem: {
     fontSize: 14,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
     marginBottom: 4,
     lineHeight: 18,
   },

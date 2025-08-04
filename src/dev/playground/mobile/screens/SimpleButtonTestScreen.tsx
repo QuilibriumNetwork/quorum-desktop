@@ -20,7 +20,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
           <View style={styles.buttonContainer}>
             <Button
               type="primary"
-              onClick={() => console.log('Primary clicked')}
+              onClick={() => {}}
             >
               Primary
             </Button>
@@ -29,14 +29,14 @@ export const SimpleButtonTestScreen: React.FC = () => {
           <View style={styles.buttonContainer}>
             <Button
               type="secondary"
-              onClick={() => console.log('Secondary clicked')}
+              onClick={() => {}}
             >
               Secondary
             </Button>
           </View>
 
           <View style={styles.buttonContainer}>
-            <Button type="light" onClick={() => console.log('Light clicked')}>
+            <Button type="light" onClick={() => {}}>
               Light
             </Button>
           </View>
@@ -44,7 +44,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
           <View style={styles.buttonContainer}>
             <Button
               type="light-outline"
-              onClick={() => console.log('Light Outline clicked')}
+              onClick={() => {}}
             >
               Light Outline
             </Button>
@@ -55,7 +55,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Subtle & Utility Variants</Text>
 
           <View style={styles.buttonContainer}>
-            <Button type="subtle" onClick={() => console.log('Subtle clicked')}>
+            <Button type="subtle" onClick={() => {}}>
               Subtle
             </Button>
           </View>
@@ -63,20 +63,20 @@ export const SimpleButtonTestScreen: React.FC = () => {
           <View style={styles.buttonContainer}>
             <Button
               type="subtle-outline"
-              onClick={() => console.log('Subtle Outline clicked')}
+              onClick={() => {}}
             >
               Subtle Outline
             </Button>
           </View>
 
           <View style={styles.buttonContainer}>
-            <Button type="danger" onClick={() => console.log('Danger clicked')}>
+            <Button type="danger" onClick={() => {}}>
               Danger
             </Button>
           </View>
         </View>
 
-        <View style={[styles.section, { backgroundColor: '#4A90E2' }]}>
+        <View style={[styles.section, { backgroundColor: theme.colors.accent[500] }]}>
           <Text style={[styles.sectionTitle, { color: 'white' }]}>
             White Variants (on colored bg)
           </Text>
@@ -84,7 +84,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
           <View style={styles.buttonContainer}>
             <Button
               type="primary-white"
-              onClick={() => console.log('Primary White clicked')}
+              onClick={() => {}}
             >
               Primary White
             </Button>
@@ -93,7 +93,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
           <View style={styles.buttonContainer}>
             <Button
               type="secondary-white"
-              onClick={() => console.log('Secondary White clicked')}
+              onClick={() => {}}
             >
               Secondary White
             </Button>
@@ -102,7 +102,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
           <View style={styles.buttonContainer}>
             <Button
               type="light-outline-white"
-              onClick={() => console.log('Light Outline White clicked')}
+              onClick={() => {}}
             >
               Light Outline White
             </Button>
@@ -116,7 +116,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
             <Button
               type="primary"
               size="large"
-              onClick={() => console.log('Large size')}
+              onClick={() => {}}
             >
               Large Size
             </Button>
@@ -126,7 +126,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
             <Button
               type="primary"
               size="normal"
-              onClick={() => console.log('Normal size')}
+              onClick={() => {}}
             >
               Normal Size
             </Button>
@@ -136,7 +136,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
             <Button
               type="primary"
               size="small"
-              onClick={() => console.log('Small size')}
+              onClick={() => {}}
             >
               Small Size
             </Button>
@@ -150,7 +150,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
             <Button
               type="primary"
               iconName="plus"
-              onClick={() => console.log('Add item')}
+              onClick={() => {}}
             >
               Add Item
             </Button>
@@ -161,7 +161,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
               type="primary"
               iconName="edit"
               iconOnly
-              onClick={() => console.log('Edit')}
+              onClick={() => {}}
             />
           </View>
 
@@ -170,7 +170,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
               type="secondary"
               iconName="save"
               size="large"
-              onClick={() => console.log('Save large')}
+              onClick={() => {}}
             >
               Save Document
             </Button>
@@ -182,7 +182,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
               iconName="download"
               iconOnly
               size="large"
-              onClick={() => console.log('Download large')}
+              onClick={() => {}}
             />
           </View>
         </View>
@@ -194,7 +194,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
             <Button
               type="primary"
               disabled
-              onClick={() => console.log('Should not fire')}
+              onClick={() => {}}
             >
               Disabled Button
             </Button>

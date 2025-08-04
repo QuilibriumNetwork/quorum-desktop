@@ -19,7 +19,7 @@ export const ColorSwatchTestScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
+      <StatusBar barStyle={theme.resolvedTheme === "dark" ? "light-content" : "dark-content"} backgroundColor={theme.colors.bg.app} />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -155,24 +155,24 @@ export const ColorSwatchTestScreen: React.FC = () => {
         </View>
 
         {/* Implementation Notes */}
-        <View style={styles.notesSection}>
-          <Text style={styles.notesTitle}>📱 Mobile Implementation</Text>
-          <Text style={styles.noteText}>
+        <View style={[styles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
+          <Text style={[styles.notesTitle, { color: theme.colors.text.strong }]}>📱 Mobile Implementation</Text>
+          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
             • Uses TouchableOpacity for native press feedback
           </Text>
-          <Text style={styles.noteText}>
+          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
             • ✓ character used temporarily (FontAwesome pending)
           </Text>
-          <Text style={styles.noteText}>
+          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
             • Dynamic colors from theme system
           </Text>
-          <Text style={styles.noteText}>
+          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
             • Shadow effects for active state visibility
           </Text>
-          <Text style={styles.noteText}>
+          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
             • Touch targets optimized for mobile (min 24x24)
           </Text>
-          <Text style={styles.noteText}>
+          <Text style={[styles.noteText, { color: theme.colors.text.main }]}>
             • Will integrate with AccentColorSwitcher component
           </Text>
         </View>
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     // color removed - now uses theme colors dynamically
   },
   notesSection: {
-    backgroundColor: '#e3f2fd',
+    // backgroundColor removed - now uses theme colors dynamically
     borderRadius: 12,
     padding: 16,
     marginTop: 8,
@@ -277,12 +277,12 @@ const styles = StyleSheet.create({
   notesTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1976d2',
+    // color removed - now uses theme colors dynamically
     marginBottom: 12,
   },
   noteText: {
     fontSize: 14,
-    color: '#1976d2',
+    // color removed - now uses theme colors dynamically
     marginBottom: 6,
     lineHeight: 20,
   },
