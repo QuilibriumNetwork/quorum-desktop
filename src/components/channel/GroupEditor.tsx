@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { Button, Modal, Input, Icon, Container, FlexRow, Text } from '../primitives';
+import {
+  Button,
+  Modal,
+  Input,
+  Icon,
+  Container,
+  FlexRow,
+  Text,
+} from '../primitives';
 import '../../styles/_modal_common.scss';
 import { useGroupManagement } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
@@ -41,16 +49,13 @@ const GroupEditor: React.FunctionComponent<{
           <Text className="small-caps">
             <Trans>Group Name</Trans>
           </Text>
-          <Input
-            value={group}
-            onChange={handleGroupNameChange}
-          />
+          <Input value={group} onChange={handleGroupNameChange} />
         </Container>
         {hasMessages && showWarning && (
           <Container className="error-label mb-3 relative pr-8">
             <Trans>
-              Are you sure? This group contains channels with messages.
-              Deleting it will cause all content to be lost forever!
+              Are you sure? This group contains channels with messages. Deleting
+              it will cause all content to be lost forever!
             </Trans>
             <Icon
               name="times"
@@ -71,8 +76,8 @@ const GroupEditor: React.FunctionComponent<{
                 : t`Click again to confirm`}
             </Button>
           )}
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             className="max-sm:w-full max-sm:order-1"
             onClick={handleSave}
             disabled={!canSave}

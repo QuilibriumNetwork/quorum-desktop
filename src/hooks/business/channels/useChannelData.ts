@@ -92,7 +92,9 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
           }),
           members: roleMembers.map((address) => ({
             ...members[address],
-            userIcon: members[address]?.userIcon?.includes(DefaultImages.UNKNOWN_USER)
+            userIcon: members[address]?.userIcon?.includes(
+              DefaultImages.UNKNOWN_USER
+            )
               ? 'var(--unknown-icon)'
               : members[address]?.userIcon,
           })),

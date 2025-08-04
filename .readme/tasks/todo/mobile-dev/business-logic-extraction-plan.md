@@ -26,7 +26,6 @@
 - [x] ChannelEditor.tsx
 - [x] GroupEditor.tsx
 
-
 ### Search Business Logic
 
 - [x] SearchBar.tsx
@@ -46,7 +45,7 @@
 - [x] DirectMessageContactsList.tsx
 - [x] EmptyDirectMessage.tsx
 
-- [x] Layout.tsx 
+- [x] Layout.tsx
 
 ### More Complex Logic
 
@@ -55,25 +54,64 @@
 - [x] SpaceButton.tsx (Keep logic - see lessons learned)
 - [x] NavMenu.tsx (Keep raw html/css or layout breaks)
 
+### High Complexity - (Require Careful Testing)
 
-### High Complexity - Extract Last (Require Careful Testing)
+- [x] Channel.tsx
+- [x] MessageComposer.tsx
 
-- [x] Channel.tsx 
-- [x] MessageComposer.tsx 
+- [x] DirectMessage.tsx
 
-- [x] DirectMessage.tsx 
-
-- [x] Message.tsx 
+- [x] Message.tsx
 - [x] MessageActions.tsx (primitves kept or layout issues)
 
-### NEXT PHASE
+### Context Providers 
 
-Carefully check on src/dev/components-audit/audit.json which components still need logic extraction and/or import of our new primitves. Then reposrt below here with a list:
+- [x] ModalProvider.tsx - Extract `useModalState` hook (COMPLETED 2025-08-04)
+
+
+### Onboarding & Login Components
+
+- [ ] Onboarding.tsx - Extract `useRegistrationFlow`, `useProfileSetup`, `useImageUpload` hooks
+- [ ] Login.tsx - Extract `useAuthentication`, `usePasskeyFlow` hooks
+
+### Unused Components 
+
+- [ ] UserProfileEdit.tsx - Extract `useProfileEdit`, `useImageUpload` hooks (unused component)
+
+### Components That DON'T Need Logic Extraction
+
+- MobileProvider.tsx - Native apps don't need this: React Native has native drawer/sheet components
+- SidebarProvider.tsx - Desktop sidebar vs mobile navigation are fundamentally
+  different UX patterns
+- Elements.tsx - Development showcase, no complex logic
+- Loading.tsx - Simple animation, no business logic
+- Connecting.tsx - Simple splash screen, no business logic
+- Maintenance.tsx - Simple display, no business logic
+- CloseButton.tsx - Simple button, no business logic
+- QuickReactionButton.tsx - Simple button, no business logic
+- UnknownAvatar.tsx - Simple SVG, no business logic
+- ActionMenuItem.tsx - Simple menu item, no business logic
+- UserOnlineStateIndicator.tsx - Simple indicator, no business logic
+- ReactTooltip.tsx - Legacy wrapper, no business logic
+- Container.tsx - Legacy component, no business logic
+- MobileDrawer.tsx - Simple drawer, no business logic
+- EmojiPickerDrawer.tsx - Simple drawer wrapper, no business logic
+
+**Platform-Specific Components (Different UX per platform):**
+
+- DirectMessages.tsx - Layout component, different per platform
+- Space.tsx - Layout component, different per platform
+- DirectMessageContact.tsx - Uses SCSS, different styling per platform
+- UserStatus.tsx - Uses SCSS, different styling per platform
+- ChannelGroup.tsx - Uses SCSS, different styling per platform
+- MessageList.tsx - Different virtualization per platform
+- MessageActionsDrawer.tsx - Mobile-first UX component
+- ExpandableNavMenu.tsx - Different expansion per platform
 
 **Reminders:**
-- Scope of logic extraction is to be able to build native components later that use the same logic.
-- Scope of primtives import is to: be ablee to build shared components web/native , even if components are platform specific, stay consistent by still using our primitves on web components, avoid over-engineering (If some components like Flex or Container cause layout issues, just use raw html for the web components).
 
+- Scope of logic extraction is to be able to build native components later that use the same logic.
+- Scope of primitives import is to: be able to build shared components web/native, even if components are platform specific, stay consistent by still using our primitives on web components, avoid over-engineering (If some components like Flex or Container cause layout issues, just use raw html for the web components).
 
 ---
 
@@ -82,6 +120,7 @@ Carefully check on src/dev/components-audit/audit.json which components still ne
 ### 🧪 **Build and Test React Native Compatibility**
 
 #### Test Environment Setup
+
 - [ ] Ensure React Native build pipeline works
 - [ ] Configure mobile simulator/emulator
 - [ ] Set up component testing framework
@@ -89,6 +128,7 @@ Carefully check on src/dev/components-audit/audit.json which components still ne
 #### Test Order (Safest to Most Complex)
 
 **Context Providers (Already Ready)**
+
 - [ ] Test ThemeProvider on React Native
 - [ ] Test ResponsiveLayoutProvider on React Native
 - [ ] Test WebsocketProvider on React Native
@@ -97,15 +137,18 @@ Carefully check on src/dev/components-audit/audit.json which components still ne
 - [ ] Test RegistrationPersister on React Native
 
 **Simple Components**
+
 - [ ] Test ThemeRadioGroup on React Native (already 100% primitives)
 - [ ] Test AccentColorSwitcher on React Native (after Phase 2 cleanup)
 
 **Extracted + Cleaned Components**
+
 - [ ] Test SearchBar on React Native (after Phases 1 & 2)
 - [ ] Test CreateSpaceModal on React Native (after Phases 1 & 2)
 - [ ] Test other cleaned modals
 
 #### Success Criteria
+
 - [ ] React Native build compiles without errors
 - [ ] Components render correctly on mobile simulator
 - [ ] Business logic hooks work identically on both platforms
@@ -121,12 +164,14 @@ Carefully check on src/dev/components-audit/audit.json which components still ne
 ### Target: 21 components that need different UX per platform
 
 #### Navigation Components
+
 - [ ] NavMenu.tsx → Desktop sidebar vs mobile tabs
 - [ ] ExpandableNavMenu.tsx → Different expansion patterns
 - [ ] MessageActionsDrawer.tsx → Desktop hover vs mobile drawer
 - [ ] EmojiPickerDrawer.tsx → Desktop popup vs mobile fullscreen
 
-#### Layout Components  
+#### Layout Components
+
 - [ ] Layout.tsx → Desktop multi-pane vs mobile stack
 - [ ] Space.tsx → Desktop sidebar + main vs mobile navigation
 - [ ] DirectMessages.tsx → Desktop split vs mobile stack
@@ -136,18 +181,21 @@ Carefully check on src/dev/components-audit/audit.json which components still ne
 ## Success Metrics
 
 ### Phase 1 Success
+
 - [ ] All targeted hooks extracted successfully
 - [ ] Web app functionality 100% preserved
 - [ ] Code is more testable and maintainable
 - [ ] Business logic is platform-agnostic
 
 ### Phase 2 Success
+
 - [ ] All raw HTML replaced with primitives
 - [ ] Web app visual rendering unchanged
 - [ ] No functionality regressions
 - [ ] Components are theoretically React Native compatible
 
 ### Phase 3 Success
+
 - [ ] React Native build successful
 - [ ] Components render correctly on mobile
 - [ ] All business logic works cross-platform
@@ -158,12 +206,14 @@ Carefully check on src/dev/components-audit/audit.json which components still ne
 ## Risk Mitigation
 
 ### Low-Risk Approach
+
 - **Extract logic first** - no UI changes, easy to test and rollback
 - **One component at a time** - isolate issues quickly
 - **Thorough testing** - each change verified before next step
 - **Preserve web functionality** - never break existing features
 
 ### Testing Strategy
+
 - **Unit tests** for extracted hooks
 - **Component tests** for UI changes
 - **Integration tests** for full workflows
@@ -174,6 +224,7 @@ Carefully check on src/dev/components-audit/audit.json which components still ne
 ## Getting Started
 
 ### Immediate Next Steps
+
 1. **Start with CreateSpaceModal business logic extraction**
 2. **Set up hook testing framework**
 3. **Extract useSpaceCreation hook first**
@@ -181,6 +232,7 @@ Carefully check on src/dev/components-audit/audit.json which components still ne
 5. **Move to next hook in same component**
 
 ### Team Coordination
+
 - **Web app must stay fully functional** throughout process
 - **Each phase should be tested before proceeding**
 - **Regular cross-platform compatibility checks**
@@ -191,13 +243,16 @@ Carefully check on src/dev/components-audit/audit.json which components still ne
 ## Hooks Structure Organization
 
 ### Current Structure
+
 Your hooks are well-organized with:
+
 - **`queries/`** - Data fetching hooks (by domain: spaces, messages, etc.)
-- **`mutations/`** - Data mutation hooks  
+- **`mutations/`** - Data mutation hooks
 - **`utils/`** - Utility hooks
 - **Root level** - General-purpose hooks (responsive, longpress, search)
 
 ### Business Logic Organization Strategy
+
 Add a new **`business/`** folder organized by domain, similar to queries:
 
 ```
@@ -213,11 +268,12 @@ src/hooks/
 │   ├── ui/                   # UI interaction logic
 │   └── validation/           # Validation logic
 ├── useResponsiveLayout.ts      # Keep existing
-├── useLongPress.ts            # Keep existing  
+├── useLongPress.ts            # Keep existing
 └── utils/                     # Keep existing
 ```
 
 ### Guidelines
+
 - **Domain-based organization** - Group by feature area, not component
 - **Analyze as we go** - Determine specific hooks during component analysis
 - **Keep existing structure** - Build on current queries/mutations pattern
@@ -229,8 +285,10 @@ src/hooks/
 ### Key Patterns & Best Practices
 
 #### 1. State Synchronization with Async Data
+
 **Problem**: States initialized with default values don't sync with loaded data.
 **Solution**: Use `useEffect` with careful dependency management:
+
 ```tsx
 // ✅ Good - Only runs when data loads/changes
 useEffect(() => {
@@ -247,7 +305,9 @@ useEffect(() => {
 ```
 
 #### 2. React Hooks Rules Compliance
+
 **Critical**: Always call hooks at the top level, never after conditional returns.
+
 ```tsx
 // ❌ Bad - Violates Rules of Hooks
 if (someCondition) return <SomeComponent />;
@@ -259,14 +319,18 @@ if (someCondition) return <SomeComponent />;
 ```
 
 #### 3. Cross-Platform Primitive Components
+
 **Issue**: Primitive components must support all required props across platforms.
 **Learning**: When extracting business logic, check that primitives handle all interactions:
+
 - Web: Pass `onClick` directly to underlying component
 - Native: Wrap with `TouchableOpacity` when `onClick` provided
 
 #### 4. Database Operation Validation
+
 **Problem**: Empty arrays/undefined values cause IndexedDB key errors.
 **Solution**: Always validate data before database operations:
+
 ```tsx
 // ✅ Add guards for empty data
 if (!space || !space.groups || space.groups.length === 0) {
@@ -274,7 +338,9 @@ if (!space || !space.groups || space.groups.length === 0) {
   return;
 }
 
-const channelIds = space.groups.flatMap(g => g.channels.map(c => c.channelId));
+const channelIds = space.groups.flatMap((g) =>
+  g.channels.map((c) => c.channelId)
+);
 if (channelIds.length === 0) {
   resolve([]);
   return;
@@ -282,15 +348,19 @@ if (channelIds.length === 0) {
 ```
 
 #### 5. Hook Extraction Strategy
+
 **Approach**: Extract by feature domain, not by UI section:
+
 - `useSpaceManagement` - Core space operations
-- `useRoleManagement` - Role CRUD operations  
+- `useRoleManagement` - Role CRUD operations
 - `useCustomAssets` - Emoji/sticker management
 - `useFileUploads` - File handling logic
 - `useInviteManagement` - Invitation workflows
 
 #### 6. Context Integration Patterns
+
 **Pattern**: Extract context functions at hook level, not in callbacks:
+
 ```tsx
 // ✅ Good - Extract at hook level
 const { updateSpace, deleteSpace } = useMessageDB();
@@ -307,7 +377,9 @@ const handleDelete = useCallback(async () => {
 ```
 
 #### 7. State Management for Complex Modals
+
 **Learning**: Keep UI-specific state in components, extract business logic to hooks:
+
 - ✅ Component: `deleteConfirmationStep`, modal visibility
 - ✅ Hook: Data operations, validation, API calls
 
@@ -336,25 +408,30 @@ const handleDelete = useCallback(async () => {
 #### High Potential for Shared Hooks
 
 **1. File Upload Patterns**
+
 - `useSpaceFileUploads` vs `useProfileImage` both handle image uploads with validation
 - **Future shared hook**: `useImageUpload({ type: 'avatar' | 'banner' | 'profile', maxSize, dimensions })`
 
 **2. Settings Management Pattern**
+
 - Both modals follow: Load → Edit → Save → Close pattern
 - State sync with async data, form validation, error handling
 - **Future shared hook**: `useSettingsForm({ loadFn, saveFn, validator })`
 
 **3. Asset Collection Management**
+
 - `useCustomAssets` (emojis/stickers) could generalize to badges, reactions, themes
 - **Future shared hook**: `useAssetCollection({ type, maxCount, validations })`
 
 #### Implementation Strategy
 
 **Phase 1: Pattern Recognition (Current)**
+
 - Continue extracting 2-3 more modals (JoinSpaceModal, NewDirectMessageModal)
 - Document recurring patterns as they emerge
 
 **Phase 2: Base Hook Creation (After 4-5 extractions)**
+
 ```tsx
 // Create configurable base hooks
 const useFormWithAsyncData = ({ loadFn, saveFn, validator }) => { ... };
@@ -363,13 +440,14 @@ const useCollectionManager = ({ maxItems, validator, itemType }) => { ... };
 ```
 
 **Phase 3: Refactor to Shared Hooks**
+
 ```tsx
 // Build specialized hooks on shared foundations
 const useSpaceManagement = (options) => {
   const form = useFormWithAsyncData({
     loadFn: () => useSpace(options.spaceId).data,
     saveFn: updateSpace,
-    validator: spaceValidator
+    validator: spaceValidator,
   });
   return { ...form, handleDeleteSpace, isOwner };
 };
@@ -388,11 +466,13 @@ const useSpaceManagement = (options) => {
 #### The SpaceButton Over-Engineering Case
 
 **What we did**:
+
 1. Created `useDragAndDrop` hook for sortable functionality
 2. Created `useSpaceNavigation` hook for URL generation and selection state
 3. Used spread operators to hide prop details
 
 **Why it was wrong**:
+
 1. **Too simple to abstract** - The component had minimal logic (just prop transformations)
 2. **Hidden intent** - `{...spaceIconProps}` made it harder to understand what props were passed
 3. **Platform concerns mixed** - Drag/drop is inherently web-specific, not "business logic"
@@ -401,6 +481,7 @@ const useSpaceManagement = (options) => {
 #### When to Extract vs When to Keep Simple
 
 **✅ EXTRACT when you have**:
+
 - Complex state management (multiple useState/useEffect)
 - Async operations with error handling
 - Business rules and validation
@@ -409,11 +490,13 @@ const useSpaceManagement = (options) => {
 - 10+ lines of interconnected logic
 
 **Examples of good extraction**:
+
 - `InviteLink` - Complex async flow, error states, join process
 - `ChannelList` - Permission logic, modal coordination, data processing
 - `SpaceEditor` - Multiple feature domains, complex state sync
 
 **❌ DON'T EXTRACT when you have**:
+
 - Simple prop transformations
 - Platform-specific behavior (drag/drop, native gestures)
 - UI-only calculations
@@ -421,6 +504,7 @@ const useSpaceManagement = (options) => {
 - Components under 50 lines with clear intent
 
 **Examples to keep simple**:
+
 - `SpaceButton` - Just a draggable link with an icon
 
 #### Best Practices for Cross-Platform Architecture
@@ -436,19 +520,26 @@ const useSpaceManagement = (options) => {
 // ✅ Good - Clear, simple, maintainable
 const SpaceButton = ({ space }) => {
   const { spaceId: currentSpaceId } = useParams();
-  
+
   // Platform-specific drag logic - clearly visible
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useSortable({
-    id: space.spaceId,
-    data: { targetId: space.spaceId },
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useSortable({
+      id: space.spaceId,
+      data: { targetId: space.spaceId },
+    });
 
   // Simple, explicit logic
   const isSelected = currentSpaceId === space.spaceId;
   const navigationUrl = `/spaces/${space.spaceId}/${space.defaultChannelId || '...'}`;
 
   return (
-    <Link ref={setNodeRef} style={dragStyle} {...listeners} {...attributes} to={navigationUrl}>
+    <Link
+      ref={setNodeRef}
+      style={dragStyle}
+      {...listeners}
+      {...attributes}
+      to={navigationUrl}
+    >
       <SpaceIcon
         notifs={Boolean(space.notifs && space.notifs > 0)}
         selected={isSelected}
@@ -474,6 +565,7 @@ const SpaceButton = ({ space }) => {
 #### The SpaceButton Platform Split
 
 SpaceButton requires different implementations because:
+
 - **Web**: Uses `@dnd-kit/sortable` for drag-and-drop reordering
 - **Native**: Might use long-press menus or different gesture system
 - **Core logic**: Only 2-3 lines (selection state, URL generation)
@@ -490,27 +582,37 @@ src/components/navbar/
 #### Implementation Pattern
 
 **Web Version (SpaceButton.tsx)**:
+
 ```tsx
 const SpaceButton = ({ space }) => {
   const { spaceId: currentSpaceId } = useParams();
   const isSelected = currentSpaceId === space.spaceId;
-  
+
   // Web-specific: Drag and drop
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useSortable({
-    id: space.spaceId,
-    data: { targetId: space.spaceId },
-  });
-  
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useSortable({
+      id: space.spaceId,
+      data: { targetId: space.spaceId },
+    });
+
   const { setIsDragging } = useDragStateContext();
   React.useEffect(() => {
     setIsDragging(isDragging);
   }, [isDragging, setIsDragging]);
 
-  const dragStyle = { /* transform, opacity, etc */ };
+  const dragStyle = {
+    /* transform, opacity, etc */
+  };
   const navigationUrl = `/spaces/${space.spaceId}/${space.defaultChannelId || '...'}`;
 
   return (
-    <Link ref={setNodeRef} style={dragStyle} {...listeners} {...attributes} to={navigationUrl}>
+    <Link
+      ref={setNodeRef}
+      style={dragStyle}
+      {...listeners}
+      {...attributes}
+      to={navigationUrl}
+    >
       <SpaceIcon
         notifs={Boolean(space.notifs && space.notifs > 0)}
         selected={isSelected}
@@ -526,6 +628,7 @@ const SpaceButton = ({ space }) => {
 ```
 
 **Native Version (SpaceButton.native.tsx)**:
+
 ```tsx
 import { TouchableOpacity, Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -534,12 +637,13 @@ const SpaceButton = ({ space }) => {
   const navigation = useNavigation();
   const { spaceId: currentSpaceId } = useParams();
   const isSelected = currentSpaceId === space.spaceId;
-  
+
   // Native-specific: Navigation and gestures
   const handlePress = () => {
     navigation.navigate('Space', {
       spaceId: space.spaceId,
-      channelId: space.defaultChannelId || '00000000-0000-0000-0000-000000000000'
+      channelId:
+        space.defaultChannelId || '00000000-0000-0000-0000-000000000000',
     });
   };
 
@@ -549,11 +653,11 @@ const SpaceButton = ({ space }) => {
   };
 
   return (
-    <Pressable 
+    <Pressable
       onPress={handlePress}
       onLongPress={handleLongPress}
       style={({ pressed }) => ({
-        opacity: pressed ? 0.7 : 1
+        opacity: pressed ? 0.7 : 1,
       })}
     >
       <SpaceIcon
@@ -573,12 +677,14 @@ const SpaceButton = ({ space }) => {
 #### When to Use This Pattern
 
 **Use platform-specific files when**:
+
 - Platform behaviors are fundamentally different (drag vs gestures)
 - Each platform has unique optimization opportunities
 - Shared logic is minimal (< 10 lines)
 - Platform-specific APIs are heavily used
 
 **Examples of platform-specific components**:
+
 - `SpaceButton` - Drag/drop vs long-press
 - `FileUpload` - File input vs camera/gallery
 - `Tooltip` - Hover vs press-and-hold
@@ -587,24 +693,28 @@ const SpaceButton = ({ space }) => {
 #### When to Share Logic
 
 **Extract shared logic only when**:
+
 - Business rules must stay synchronized
 - Complex calculations (> 10 lines)
 - Data transformations
 - State management logic
 
 **Example of worth extracting**:
+
 ```tsx
 // useMessagePermissions.shared.ts
 export const useMessagePermissions = (message, user, space) => {
   const isAuthor = user.id === message.authorId;
-  const isAdmin = space.roles.find(r => r.userId === user.id)?.permissions.includes('admin');
+  const isAdmin = space.roles
+    .find((r) => r.userId === user.id)
+    ?.permissions.includes('admin');
   const editTimeout = Date.now() - message.timestamp < 15 * 60 * 1000;
-  
+
   const canEdit = isAuthor && editTimeout && !message.deleted;
   const canDelete = isAuthor || isAdmin;
   const canReact = !message.deleted && space.permissions.reactions;
   const canReply = !message.deleted && space.permissions.replies;
-  
+
   return { canEdit, canDelete, canReact, canReply };
 };
 ```
@@ -612,6 +722,7 @@ export const useMessagePermissions = (message, user, space) => {
 #### Metro Bundler Configuration
 
 React Native's Metro bundler automatically picks the right file:
+
 - `SpaceButton.tsx` → Used on web
 - `SpaceButton.native.tsx` → Used on iOS/Android
 - `SpaceButton.ios.tsx` → iOS specific (if needed)
@@ -638,6 +749,7 @@ React Native's Metro bundler automatically picks the right file:
 #### Migration Strategy
 
 When splitting existing components:
+
 1. Identify platform-specific code (drag, hover, file inputs)
 2. Create `.native.tsx` version
 3. Move platform code to respective files

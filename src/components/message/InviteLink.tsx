@@ -1,5 +1,9 @@
 import { Button, Container, Text, FlexRow } from '../primitives';
-import { useInviteProcessing, useInviteJoining, useInviteUI } from '../../hooks';
+import {
+  useInviteProcessing,
+  useInviteJoining,
+  useInviteUI,
+} from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 
 export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
@@ -12,9 +16,7 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
   const displayError = error || joinError;
 
   return (
-    <Container
-      className="w-full !max-w-[250px] sm:!max-w-[400px] lg:!max-w-[500px] lg:min-w-[500px] rounded-md p-2 sm:p-3 bg-surface-5 border border-surface-6"
-    >
+    <Container className="w-full !max-w-[250px] sm:!max-w-[400px] lg:!max-w-[500px] lg:min-w-[500px] rounded-md p-2 sm:p-3 bg-surface-5 border border-surface-6">
       {displayError && (
         <Text variant="error" className="mb-2 text-center sm:text-left">
           <Trans>The invite link has expired or is invalid.</Trans>

@@ -37,10 +37,11 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
     searchTerms,
   });
 
-  const { formattedDate, handleClick, handleKeyDown } = useSearchResultFormatting({
-    message,
-    onNavigate,
-  });
+  const { formattedDate, handleClick, handleKeyDown } =
+    useSearchResultFormatting({
+      message,
+      onNavigate,
+    });
 
   return (
     <Container
@@ -78,7 +79,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   );
 };
 
-// Space Search Result Component  
+// Space Search Result Component
 const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   result,
   onNavigate,
@@ -98,10 +99,11 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
     searchTerms,
   });
 
-  const { formattedDate, messageTypeIcon, handleClick, handleKeyDown } = useSearchResultFormatting({
-    message,
-    onNavigate,
-  });
+  const { formattedDate, messageTypeIcon, handleClick, handleKeyDown } =
+    useSearchResultFormatting({
+      message,
+      onNavigate,
+    });
 
   return (
     <Container
@@ -113,10 +115,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
     >
       <FlexBetween className="result-header">
         <FlexRow className="result-meta">
-          <Icon
-            name={messageTypeIcon}
-            className="result-type-icon"
-          />
+          <Icon name={messageTypeIcon} className="result-type-icon" />
           <Text className="result-channel mr-2">{channelName}</Text>
           <Icon name="user" className="result-user-icon" />
           <Text className="result-sender">{displayName}</Text>

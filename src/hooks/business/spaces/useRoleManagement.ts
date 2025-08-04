@@ -35,38 +35,46 @@ export const useRoleManagement = (
       members: [],
       permissions: [],
     };
-    
-    setRoles(prev => [...prev, newRole]);
+
+    setRoles((prev) => [...prev, newRole]);
   }, [roles.length]);
 
   const deleteRole = useCallback((index: number) => {
-    setRoles(prev => prev.filter((_, i) => i !== index));
+    setRoles((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
   const updateRoleTag = useCallback((index: number, roleTag: string) => {
-    setRoles(prev => prev.map((role, i) => 
-      i === index ? { ...role, roleTag } : role
-    ));
+    setRoles((prev) =>
+      prev.map((role, i) => (i === index ? { ...role, roleTag } : role))
+    );
   }, []);
 
-  const updateRoleDisplayName = useCallback((index: number, displayName: string) => {
-    setRoles(prev => prev.map((role, i) => 
-      i === index ? { ...role, displayName } : role
-    ));
-  }, []);
+  const updateRoleDisplayName = useCallback(
+    (index: number, displayName: string) => {
+      setRoles((prev) =>
+        prev.map((role, i) => (i === index ? { ...role, displayName } : role))
+      );
+    },
+    []
+  );
 
-  const toggleRolePermission = useCallback((index: number, permission: Permission) => {
-    setRoles(prev => prev.map((role, i) => {
-      if (i !== index) return role;
-      
-      const hasPermission = role.permissions.includes(permission);
-      const newPermissions = hasPermission
-        ? role.permissions.filter(p => p !== permission)
-        : [...role.permissions, permission];
-        
-      return { ...role, permissions: newPermissions };
-    }));
-  }, []);
+  const toggleRolePermission = useCallback(
+    (index: number, permission: Permission) => {
+      setRoles((prev) =>
+        prev.map((role, i) => {
+          if (i !== index) return role;
+
+          const hasPermission = role.permissions.includes(permission);
+          const newPermissions = hasPermission
+            ? role.permissions.filter((p) => p !== permission)
+            : [...role.permissions, permission];
+
+          return { ...role, permissions: newPermissions };
+        })
+      );
+    },
+    []
+  );
 
   return {
     roles,

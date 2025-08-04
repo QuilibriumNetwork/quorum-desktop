@@ -338,7 +338,9 @@ export const SelectTestScreen: React.FC = () => {
 
         {/* Grouped Options */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Grouped Options (SpaceEditor Style)</Text>
+          <Text style={styles.sectionTitle}>
+            Grouped Options (SpaceEditor Style)
+          </Text>
           <Text style={styles.label}>Select Channel</Text>
           <Select
             value={groupedValue}

@@ -15,19 +15,13 @@ type ChannelListProps = { spaceId: string };
 
 const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   const { data: space } = useSpace({ spaceId });
-  
+
   // Extract business logic into hooks
-  const {
-    openNewGroupEditor,
-    openEditGroupEditor,
-  } = useGroupEditor(spaceId);
-  
-  const {
-    canAddGroups,
-    handleSpaceContextAction,
-    getContextIcon,
-  } = useSpacePermissions(spaceId);
-  
+  const { openNewGroupEditor, openEditGroupEditor } = useGroupEditor(spaceId);
+
+  const { canAddGroups, handleSpaceContextAction, getContextIcon } =
+    useSpacePermissions(spaceId);
+
   const {
     headerClassName,
     headerStyle,
@@ -35,15 +29,12 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
     gradientOverlayStyle,
     spaceName,
   } = useSpaceHeader(space);
-  
+
   const { groups } = useSpaceGroups(space);
 
   return (
     <Container className="channels-list-wrapper">
-      <Container
-        className={headerClassName}
-        style={headerStyle}
-      >
+      <Container className={headerClassName} style={headerStyle}>
         {hasBanner && (
           <Container
             className="absolute inset-0 pointer-events-none z-0"

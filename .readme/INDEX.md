@@ -22,10 +22,12 @@ This index provides an overview of all documentation, tasks and bugs, available.
 ## Bug Reports
 
 ### Active Issues
+
 - **[Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors-ONGOING.md)**
 - **[Search Focus Management Comprehensive Bug Report](bugs/search-focus-management.md)**
 
 ### Solved Issues
+
 - **[SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/SOLVED_modal-navmenu-zindex-stacking.md)**
 - **[NewDirectMessage Modal: URL-to-State Conversion](bugs/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)**
 - **[React Hooks Violation: Conditional Return Before Hooks](bugs/SOLVED_react-hooks-violation-conditional-return.md)**
@@ -34,6 +36,7 @@ This index provides an overview of all documentation, tasks and bugs, available.
 ## Tasks
 
 ### Completed Tasks
+
 - **[Modal Migration Analysis & Progress Report](tasks/done/DONE_modal-migration-plan.md)**
 - **[Color Switcher Implementation](tasks/done/color-switcher.md)**
 - **[Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/done/components-audit-dashboard.md)**
@@ -52,6 +55,7 @@ This index provides an overview of all documentation, tasks and bugs, available.
 ### Ongoing Tasks
 
 ### Todo Tasks
+
 - **[CSS Refactor Analysis Report](tasks/todo/css-refactor/analysis.md)**
 - **[CSS Inventory - Complete Codebase Analysis](tasks/todo/css-refactor/css-inventory.md)**
 - **[CSS Refactor Plan - Claude Code Execution Strategy](tasks/todo/css-refactor/css-refactor-plan.md)**
@@ -75,4 +79,4 @@ This index provides an overview of all documentation, tasks and bugs, available.
 
 ---
 
-*Last Updated: 2025-07-31 17:40 UTC*
+_Last Updated: 2025-07-31 17:40 UTC_

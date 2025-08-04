@@ -9,7 +9,12 @@ import SpaceButton from './SpaceButton';
 import SpaceIcon from './SpaceIcon';
 import { t } from '@lingui/core/macro';
 import { DragStateProvider } from '../../context/DragStateContext';
-import { useSpaces, useConfig, useSpaceOrdering, useSpaceDragAndDrop } from '../../hooks';
+import {
+  useSpaces,
+  useConfig,
+  useSpaceOrdering,
+  useSpaceDragAndDrop,
+} from '../../hooks';
 import './NavMenu.scss';
 
 type NavMenuProps = {
@@ -24,7 +29,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   const { data: config } = useConfig({
     userAddress: user.currentPasskeyInfo!.address,
   });
-  
+
   const { mappedSpaces, setMappedSpaces } = useSpaceOrdering(spaces, config);
   const { handleDragStart, handleDragEnd, sensors } = useSpaceDragAndDrop({
     mappedSpaces,
@@ -32,12 +37,13 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
     config,
   });
 
-
   return (
-    <header className={
-      //@ts-ignore
-      window.electron ? "electron" : ""
-    }>
+    <header
+      className={
+        //@ts-ignore
+        window.electron ? 'electron' : ''
+      }
+    >
       {
         //@ts-ignore
         window.electron ? <div className="p-3"></div> : <></>

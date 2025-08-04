@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useReducer, ReactNode, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  ReactNode,
+  useState,
+} from 'react';
 import MessageActionsDrawer from '../message/MessageActionsDrawer';
 import EmojiPickerDrawer from '../message/EmojiPickerDrawer';
 
@@ -59,7 +65,7 @@ function mobileReducer(state: MobileState, action: MobileAction): MobileState {
           isClosing: action.isClosing,
         },
       };
-    
+
     case 'OPEN_EMOJI_PICKER':
       return {
         ...state,
@@ -85,7 +91,7 @@ function mobileReducer(state: MobileState, action: MobileAction): MobileState {
           isClosing: action.isClosing,
         },
       };
-    
+
     default:
       return state;
   }

@@ -28,11 +28,16 @@ const NewDirectMessageModal: React.FunctionComponent<
       title={t`New Direct Message`}
       size="small"
     >
-      <Container className="modal-new-direct-message" width="full" maxWidth="500px" margin="auto">
+      <Container
+        className="modal-new-direct-message"
+        width="full"
+        maxWidth="500px"
+        margin="auto"
+      >
         <Container margin="none" className="mb-4">
-          <Text 
-            size="sm" 
-            variant="subtle" 
+          <Text
+            size="sm"
+            variant="subtle"
             align="left"
             className="text-left max-sm:text-center"
           >

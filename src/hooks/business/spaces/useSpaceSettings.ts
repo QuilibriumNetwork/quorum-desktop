@@ -30,7 +30,7 @@ export const useSpaceSettings = (
   const [repudiable, setRepudiable] = useState(defaultRepudiable);
   const [pub, setPublic] = useState(defaultPublic);
 
-  const toggleAdvancedMode = () => setAdvancedMode(prev => !prev);
+  const toggleAdvancedMode = () => setAdvancedMode((prev) => !prev);
 
   const resetSettings = () => {
     setAdvancedMode(defaultAdvancedMode);

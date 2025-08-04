@@ -93,17 +93,23 @@ export const PrimitivesTestScreen: React.FC = () => {
 
           <View style={styles.testGroup}>
             <Text style={styles.testLabel}>Container with padding:</Text>
-            <Container padding="md" backgroundColor="#e3f2fd" style={styles.containerDemo}>
+            <Container
+              padding="md"
+              backgroundColor="#e3f2fd"
+              style={styles.containerDemo}
+            >
               <Text>Container with medium padding</Text>
             </Container>
           </View>
 
           <View style={styles.testGroup}>
-            <Text style={styles.testLabel}>Container with margin and width:</Text>
-            <Container 
-              width="full" 
-              margin="sm" 
-              padding="lg" 
+            <Text style={styles.testLabel}>
+              Container with margin and width:
+            </Text>
+            <Container
+              width="full"
+              margin="sm"
+              padding="lg"
               backgroundColor="#f3e5f5"
               style={styles.containerDemo}
             >
@@ -113,8 +119,8 @@ export const PrimitivesTestScreen: React.FC = () => {
 
           <View style={styles.testGroup}>
             <Text style={styles.testLabel}>Touchable Container:</Text>
-            <Container 
-              padding="md" 
+            <Container
+              padding="md"
               backgroundColor="#e8f5e9"
               onPress={() => console.log('Container pressed!')}
               style={styles.containerDemo}
@@ -177,7 +183,11 @@ export const PrimitivesTestScreen: React.FC = () => {
 
           <View style={styles.testGroup}>
             <Text style={styles.testLabel}>FlexColumn with alignment:</Text>
-            <FlexColumn gap="sm" align="center" style={[styles.flexDemo, { minHeight: 120 }]}>
+            <FlexColumn
+              gap="sm"
+              align="center"
+              style={[styles.flexDemo, { minHeight: 120 }]}
+            >
               <Text style={styles.flexText}>Centered items</Text>
               <Button type="primary" size="small" onClick={() => {}}>
                 Button

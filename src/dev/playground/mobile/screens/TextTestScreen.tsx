@@ -13,7 +13,9 @@ export const TextTestScreen: React.FC = () => {
         contentContainerStyle={styles.content}
       >
         <View style={styles.header}>
-          <Text size="2xl" weight="bold">Text Primitive Test</Text>
+          <Text size="2xl" weight="bold">
+            Text Primitive Test
+          </Text>
           <Text variant="subtle" style={{ marginTop: 8 }}>
             Essential text component for React Native compatibility
           </Text>
@@ -27,7 +29,9 @@ export const TextTestScreen: React.FC = () => {
 
           <FlexColumn gap="md">
             <View style={styles.testGroup}>
-              <Text variant="default">Default variant - Regular text for content</Text>
+              <Text variant="default">
+                Default variant - Regular text for content
+              </Text>
             </View>
 
             <View style={styles.testGroup}>
@@ -35,11 +39,15 @@ export const TextTestScreen: React.FC = () => {
             </View>
 
             <View style={styles.testGroup}>
-              <Text variant="subtle">Subtle variant - Secondary information</Text>
+              <Text variant="subtle">
+                Subtle variant - Secondary information
+              </Text>
             </View>
 
             <View style={styles.testGroup}>
-              <Text variant="muted">Muted variant - Less important details</Text>
+              <Text variant="muted">
+                Muted variant - Less important details
+              </Text>
             </View>
 
             <View style={styles.testGroup}>
@@ -81,7 +89,9 @@ export const TextTestScreen: React.FC = () => {
 
           <FlexColumn gap="md">
             <Text weight="normal">Normal weight (400) - Default body text</Text>
-            <Text weight="medium">Medium weight (500) - Slightly emphasized</Text>
+            <Text weight="medium">
+              Medium weight (500) - Slightly emphasized
+            </Text>
             <Text weight="semibold">Semibold weight (600) - Headings</Text>
             <Text weight="bold">Bold weight (700) - Strong emphasis</Text>
           </FlexColumn>
@@ -115,16 +125,16 @@ export const TextTestScreen: React.FC = () => {
           </Text>
 
           <FlexColumn gap="md">
-            <Text 
-              variant="default" 
+            <Text
+              variant="default"
               onPress={() => console.log('Text tapped!')}
               style={styles.tappableText}
             >
               Tap this text to trigger an action
             </Text>
 
-            <Text 
-              variant="strong" 
+            <Text
+              variant="strong"
               color="#1976d2"
               onPress={() => console.log('Link tapped!')}
               style={styles.tappableText}
@@ -143,13 +153,17 @@ export const TextTestScreen: React.FC = () => {
           <FlexColumn gap="md">
             <View style={styles.testGroup}>
               <Text numberOfLines={2}>
-                This is a long text that will be truncated after two lines. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. This text should be cut off with ellipsis.
+                This is a long text that will be truncated after two lines.
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua. This
+                text should be cut off with ellipsis.
               </Text>
             </View>
 
             <View style={styles.testGroup}>
               <Text numberOfLines={1} variant="subtle">
-                Single line truncation: This very long text will be truncated to a single line with ellipsis at the end no matter how long it is.
+                Single line truncation: This very long text will be truncated to
+                a single line with ellipsis at the end no matter how long it is.
               </Text>
             </View>
           </FlexColumn>
@@ -160,7 +174,7 @@ export const TextTestScreen: React.FC = () => {
           <Text size="lg" weight="semibold" style={styles.infoTitle}>
             📱 Why Text Primitive is Critical
           </Text>
-          
+
           <FlexColumn gap="sm" style={{ marginTop: 12 }}>
             <FlexRow gap="sm">
               <Text>•</Text>

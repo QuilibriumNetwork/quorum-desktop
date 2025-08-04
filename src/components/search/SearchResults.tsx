@@ -48,7 +48,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   });
 
   const { containerRef } = useSearchResultsResponsive({ results, query });
-  
+
   useSearchResultsOutsideClick({ containerRef, onClose });
 
   // Render empty state
@@ -74,10 +74,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     if (isError) {
       return (
         <FlexCenter className="search-error-state">
-          <Icon
-            name="exclamation-triangle"
-            className="error-icon"
-          />
+          <Icon name="exclamation-triangle" className="error-icon" />
           <Text className="error-message">
             {t`Search failed: ${error?.message || 'Unknown error'}`}
           </Text>

@@ -167,10 +167,7 @@ export const Onboarding = ({
         {isDragActive && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay pointer-events-none">
             <div className="flex flex-col p-8 border-2 border-dashed border-white rounded-lg bg-white bg-opacity-50 items-center">
-              <Icon
-                name="file-image"
-                className="text-4xl text-gray-700 mb-4"
-              />
+              <Icon name="file-image" className="text-4xl text-gray-700 mb-4" />
               <p className="text-xl font-semibold text-gray-800">
                 {t`Drop your profile photo here`}
               </p>

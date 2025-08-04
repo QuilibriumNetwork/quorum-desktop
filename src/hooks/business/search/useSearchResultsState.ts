@@ -14,7 +14,11 @@ export interface UseSearchResultsStateProps {
 
 export interface UseSearchResultsStateReturn {
   searchTerms: string[];
-  handleNavigate: (spaceId: string, channelId: string, messageId: string) => void;
+  handleNavigate: (
+    spaceId: string,
+    channelId: string,
+    messageId: string
+  ) => void;
 }
 
 /**
@@ -30,7 +34,6 @@ export const useSearchResultsState = ({
   onNavigate,
   onClose,
 }: UseSearchResultsStateProps): UseSearchResultsStateReturn => {
-  
   // Extract search terms from query
   const searchTerms = useMemo(() => {
     return query

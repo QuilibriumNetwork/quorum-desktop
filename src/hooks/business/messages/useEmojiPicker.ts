@@ -26,32 +26,44 @@ export function useEmojiPicker(options: UseEmojiPickerOptions) {
   const customEmojis = useMemo(() => {
     if (!customEmoji) return [];
 
-    return customEmoji.map((c) => ({
-      names: [c.name],
-      id: c.id,
-      imgUrl: c.imgUrl,
-    } as CustomEmoji));
+    return customEmoji.map(
+      (c) =>
+        ({
+          names: [c.name],
+          id: c.id,
+          imgUrl: c.imgUrl,
+        }) as CustomEmoji
+    );
   }, [customEmoji]);
 
   // Handle emoji selection for desktop picker
-  const handleDesktopEmojiClick = useCallback((emoji: string) => {
-    onEmojiClick(emoji);
-    onSetEmojiPickerOpen(undefined);
-  }, [onEmojiClick, onSetEmojiPickerOpen]);
+  const handleDesktopEmojiClick = useCallback(
+    (emoji: string) => {
+      onEmojiClick(emoji);
+      onSetEmojiPickerOpen(undefined);
+    },
+    [onEmojiClick, onSetEmojiPickerOpen]
+  );
 
   // Handle emoji selection for mobile drawer
-  const handleMobileEmojiClick = useCallback((emoji: string) => {
-    onEmojiClick(emoji);
-    setShowMobileEmojiDrawer(false);
-  }, [onEmojiClick]);
+  const handleMobileEmojiClick = useCallback(
+    (emoji: string) => {
+      onEmojiClick(emoji);
+      setShowMobileEmojiDrawer(false);
+    },
+    [onEmojiClick]
+  );
 
   // Open desktop emoji picker with direction calculation
-  const openDesktopEmojiPicker = useCallback((messageId: string, clientY: number) => {
-    onSetEmojiPickerOpen(messageId);
-    onSetEmojiPickerDirection(
-      clientY / height > 0.5 ? 'upwards' : 'downwards'
-    );
-  }, [height, onSetEmojiPickerOpen, onSetEmojiPickerDirection]);
+  const openDesktopEmojiPicker = useCallback(
+    (messageId: string, clientY: number) => {
+      onSetEmojiPickerOpen(messageId);
+      onSetEmojiPickerDirection(
+        clientY / height > 0.5 ? 'upwards' : 'downwards'
+      );
+    },
+    [height, onSetEmojiPickerOpen, onSetEmojiPickerDirection]
+  );
 
   // Open mobile emoji drawer
   const openMobileEmojiDrawer = useCallback(() => {
@@ -70,18 +82,21 @@ export function useEmojiPicker(options: UseEmojiPickerOptions) {
   }, []);
 
   // Handle user profile click that also sets emoji picker direction
-  const handleUserProfileClick = useCallback((clientY: number, onProfileClick: () => void) => {
-    onProfileClick();
-    onSetEmojiPickerDirection(
-      clientY / height > 0.5 ? 'upwards' : 'downwards'
-    );
-  }, [height, onSetEmojiPickerDirection]);
+  const handleUserProfileClick = useCallback(
+    (clientY: number, onProfileClick: () => void) => {
+      onProfileClick();
+      onSetEmojiPickerDirection(
+        clientY / height > 0.5 ? 'upwards' : 'downwards'
+      );
+    },
+    [height, onSetEmojiPickerDirection]
+  );
 
   return {
     // State
     showMobileEmojiDrawer,
     customEmojis,
-    
+
     // Actions
     handleDesktopEmojiClick,
     handleMobileEmojiClick,

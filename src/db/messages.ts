@@ -173,21 +173,21 @@ export class MessageDB {
     await this.init();
     return new Promise(async (resolve, reject) => {
       const space = await this.getSpace(spaceId);
-      
+
       if (!space || !space.groups || space.groups.length === 0) {
         resolve([]);
         return;
       }
-      
+
       const channelIds = space.groups
         .flatMap((g) => g.channels.map((c) => c.channelId))
         .sort();
-        
+
       if (channelIds.length === 0) {
         resolve([]);
         return;
       }
-      
+
       const transaction = this.db!.transaction('messages', 'readonly');
       const store = transaction.objectStore('messages');
       const index = store.index('by_conversation_time');

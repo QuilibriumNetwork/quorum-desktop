@@ -2,7 +2,14 @@ import React from 'react';
 
 export interface BaseTextProps {
   children: React.ReactNode;
-  variant?: 'default' | 'strong' | 'subtle' | 'muted' | 'error' | 'success' | 'warning';
+  variant?:
+    | 'default'
+    | 'strong'
+    | 'subtle'
+    | 'muted'
+    | 'error'
+    | 'success'
+    | 'warning';
   size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl';
   weight?: 'normal' | 'medium' | 'semibold' | 'bold';
   align?: 'left' | 'center' | 'right';

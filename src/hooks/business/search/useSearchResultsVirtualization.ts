@@ -15,7 +15,13 @@ export interface UseSearchResultsVirtualizationReturn {
   MAX_HEIGHT: number;
   VISIBLE_ITEMS: number;
   LIST_HEIGHT: number;
-  renderItem: ({ index, style }: { index: number; style: React.CSSProperties }) => React.ReactNode;
+  renderItem: ({
+    index,
+    style,
+  }: {
+    index: number;
+    style: React.CSSProperties;
+  }) => React.ReactNode;
 }
 
 /**
@@ -31,7 +37,6 @@ export const useSearchResultsVirtualization = ({
   itemHeight = 120,
   maxHeight = 400,
 }: UseSearchResultsVirtualizationProps): UseSearchResultsVirtualizationReturn => {
-  
   // Constants for virtualization
   const ITEM_HEIGHT = itemHeight;
   const MAX_HEIGHT = maxHeight;
@@ -42,17 +47,20 @@ export const useSearchResultsVirtualization = ({
   const renderItem = useCallback(
     ({ index, style }: { index: number; style: React.CSSProperties }) => {
       const result = results[index];
-      
+
       // Dynamic import to avoid circular dependencies
       // In a real app, you might want to pass this as a prop
-      const SearchResultItem = require('../../../components/search/SearchResultItem').SearchResultItem;
-      
-      return createElement('div', { style }, 
+      const SearchResultItem =
+        require('../../../components/search/SearchResultItem').SearchResultItem;
+
+      return createElement(
+        'div',
+        { style },
         createElement(SearchResultItem, {
           result,
           query,
           highlightTerms,
-          onClick: () => handleItemClick(result)
+          onClick: () => handleItemClick(result),
         })
       );
     },
@@ -85,7 +93,7 @@ export const useSearchResultsVirtualization = ({
 //       onClick={() => handleItemClick(item)}
 //     />
 //   ), [query, highlightTerms, handleItemClick]);
-//   
+//
 //   return {
 //     data: results,
 //     renderItem,

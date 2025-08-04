@@ -286,4 +286,3 @@ We identified two types of modals that needed different approaches:
 The modal system is now fully modernized with consistent animations, professional close buttons, and enhanced responsive behavior while maintaining complete backward compatibility.
 
 For guidelines on the new modal system see .claude\docs\modals.md
-

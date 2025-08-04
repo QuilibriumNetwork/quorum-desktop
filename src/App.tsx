@@ -21,17 +21,28 @@ import { Maintenance } from './components/Maintenance';
 import { RegistrationProvider } from './components/context/RegistrationPersister';
 import { ResponsiveLayoutProvider } from './components/context/ResponsiveLayoutProvider';
 // Conditionally import playground in development mode
-const PrimitivesPlayground = process.env.NODE_ENV === 'development'
-  ? React.lazy(() => import('./dev/playground/web/PrimitivesPlayground').then(m => ({ default: m.PrimitivesPlayground })))
-  : null;
+const PrimitivesPlayground =
+  process.env.NODE_ENV === 'development'
+    ? React.lazy(() =>
+        import('./dev/playground/web/PrimitivesPlayground').then((m) => ({
+          default: m.PrimitivesPlayground,
+        }))
+      )
+    : null;
 
 // Conditionally import dev tools in development mode
-const ComponentAuditViewer = process.env.NODE_ENV === 'development'
-  ? React.lazy(() => import('./dev/components-audit').then(m => ({ default: m.ComponentAuditViewer })))
-  : null;
-const Elements = process.env.NODE_ENV === 'development'
-  ? React.lazy(() => import('./dev/Elements'))
-  : null;
+const ComponentAuditViewer =
+  process.env.NODE_ENV === 'development'
+    ? React.lazy(() =>
+        import('./dev/components-audit').then((m) => ({
+          default: m.ComponentAuditViewer,
+        }))
+      )
+    : null;
+const Elements =
+  process.env.NODE_ENV === 'development'
+    ? React.lazy(() => import('./dev/Elements'))
+    : null;
 import JoinSpaceModal from './components/modals/JoinSpaceModal';
 import { DefaultImages } from './utils';
 import { i18n } from './i18n';
@@ -105,7 +116,6 @@ const App = () => {
       });
     }
   }, [currentPasskeyInfo, passkeyRegistrationComplete, setUser, user]);
-
 
   return (
     <>
@@ -207,45 +217,50 @@ const App = () => {
                             </ModalProvider>
                           }
                         />
-                        <Route
-                          path="/invite/"
-                          element={
-                            <InviteRoute />
-                          }
-                        />
-                        {process.env.NODE_ENV === 'development' && PrimitivesPlayground && (
-                          <Route
-                            path="/playground"
-                            element={
-                              <ModalProvider user={user} setUser={setUser}>
-                              <MobileProvider>
-                                <SidebarProvider>
-                                  <Layout>
-                                    <Suspense fallback={<div>Loading playground...</div>}>
-                                      <PrimitivesPlayground />
-                                    </Suspense>
-                                  </Layout>
-                                </SidebarProvider>
-                              </MobileProvider>
-                            </ModalProvider>
-                            }
-                          />
-                        )}
-                        {process.env.NODE_ENV === 'development' && ComponentAuditViewer && (
-                          <Route
-                            path="/dev/audit"
-                            element={
-                              <Suspense fallback={<div>Loading audit viewer...</div>}>
-                                <ComponentAuditViewer />
-                              </Suspense>
-                            }
-                          />
-                        )}
+                        <Route path="/invite/" element={<InviteRoute />} />
+                        {process.env.NODE_ENV === 'development' &&
+                          PrimitivesPlayground && (
+                            <Route
+                              path="/playground"
+                              element={
+                                <ModalProvider user={user} setUser={setUser}>
+                                  <MobileProvider>
+                                    <SidebarProvider>
+                                      <Layout>
+                                        <Suspense
+                                          fallback={
+                                            <div>Loading playground...</div>
+                                          }
+                                        >
+                                          <PrimitivesPlayground />
+                                        </Suspense>
+                                      </Layout>
+                                    </SidebarProvider>
+                                  </MobileProvider>
+                                </ModalProvider>
+                              }
+                            />
+                          )}
+                        {process.env.NODE_ENV === 'development' &&
+                          ComponentAuditViewer && (
+                            <Route
+                              path="/dev/audit"
+                              element={
+                                <Suspense
+                                  fallback={<div>Loading audit viewer...</div>}
+                                >
+                                  <ComponentAuditViewer />
+                                </Suspense>
+                              }
+                            />
+                          )}
                         {process.env.NODE_ENV === 'development' && Elements && (
                           <Route
                             path="/elements"
                             element={
-                              <Suspense fallback={<div>Loading Elements...</div>}>
+                              <Suspense
+                                fallback={<div>Loading Elements...</div>}
+                              >
                                 <Elements />
                               </Suspense>
                             }

@@ -11,20 +11,20 @@ const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({
 
   // Define theme options with Icon primitive names
   const options: RadioOption<Theme>[] = [
-    { 
-      value: 'light', 
-      label: t`Light`, 
-      icon: 'sun' // Maps to Icon primitive
+    {
+      value: 'light',
+      label: t`Light`,
+      icon: 'sun', // Maps to Icon primitive
     },
-    { 
-      value: 'dark', 
-      label: t`Dark`, 
-      icon: 'moon' // Maps to Icon primitive
+    {
+      value: 'dark',
+      label: t`Dark`,
+      icon: 'moon', // Maps to Icon primitive
     },
-    { 
-      value: 'system', 
-      label: t`System`, 
-      icon: 'desktop' // Maps to Icon primitive
+    {
+      value: 'system',
+      label: t`System`,
+      icon: 'desktop', // Maps to Icon primitive
     },
   ];
 

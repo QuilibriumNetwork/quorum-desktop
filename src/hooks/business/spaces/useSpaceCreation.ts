@@ -29,7 +29,7 @@ export const useSpaceCreation = (
 ): UseSpaceCreationReturn => {
   const [spaceName, setSpaceName] = useState('');
   const [creating, setCreating] = useState(false);
-  
+
   const navigate = useNavigate();
   const { createSpace: createSpaceAPI } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
@@ -50,12 +50,13 @@ export const useSpaceCreation = (
     setCreating(true);
 
     try {
-      const iconData = fileData && currentFile
-        ? 'data:' +
-          currentFile.type +
-          ';base64,' +
-          Buffer.from(fileData).toString('base64')
-        : DefaultImages.UNKNOWN_USER;
+      const iconData =
+        fileData && currentFile
+          ? 'data:' +
+            currentFile.type +
+            ';base64,' +
+            Buffer.from(fileData).toString('base64')
+          : DefaultImages.UNKNOWN_USER;
 
       const { spaceId, channelId } = await createSpaceAPI(
         name,

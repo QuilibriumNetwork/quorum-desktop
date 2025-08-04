@@ -8,7 +8,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses CloseButton.scss with absolute positioning. FontAwesome dependency. Easier to build native version with Icon primitive.",
@@ -22,7 +21,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "Simple animation component. Logic is just props passing - no extraction needed. Platform difference in animation implementation (CSS vs React Native Animated).",
@@ -36,7 +34,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [
         "useShowHomeScreen"
       ],
@@ -52,7 +49,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useModalManagement",
         "useElectronDetection"
@@ -69,7 +65,6 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "logic_needs": "done",
       "hooks": [
         "useChannelData",
         "useChannelMessages",
@@ -87,7 +82,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useSearchSuggestions",
         "useKeyboardShortcuts",
@@ -103,17 +97,14 @@
       "description": "Context provider for managing all modal state using useReducer pattern",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "todo",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
+      "primitives": "done",
+      "logic_extraction": "done",
       "hooks": [
-        "useModalState",
-        "useModals",
-        "useModalContext"
+        "useModalState"
       ],
       "native": "todo",
-      "notes": "Contains modal state management logic (reducer, actions, initial state) that should be extracted to useModalState hook. Renders modal components directly with web-specific CSS classes (z-[9999], fixed positioning). Business logic: modal opening/closing coordination, state management (>10 lines, reusable). Replaces AppWithSearch modal functionality.",
-      "updated": "2025-08-01"
+      "notes": "COMPLETED: Business logic extracted into useModalState hook with reducer pattern, modal state management, and all open/close actions. Component now focuses purely on rendering modals with web-specific CSS classes (z-[9999], fixed positioning). Hook is cross-platform ready with complete modal coordination logic. Legacy hooks useModals and useModalContext maintained for backward compatibility. MANUAL TESTING VERIFIED: All modal functionality (UserSettings, SpaceEditor, ChannelEditor, GroupEditor, LeaveSpace, NewDirectMessage) works correctly after extraction.",
+      "updated": "2025-08-04"
     },
     "MobileProvider.tsx": {
       "name": "MobileProvider",
@@ -121,16 +112,12 @@
       "description": "Context provider for managing mobile-specific drawer components with animations",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "todo",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
-      "hooks": [
-        "useMobileDrawerState",
-        "useMobile"
-      ],
+      "primitives": "done",
+      "logic_extraction": "keep",
+      "hooks": [],
       "native": "todo",
-      "notes": "Contains mobile drawer state management logic (reducer, animation timing with 300ms setTimeout delays, closing state sequences) that should be extracted to useMobileDrawerState hook. Renders drawers with web-specific CSS. Business logic: drawer animations, timing management (>10 lines, reusable).",
-      "updated": "2025-08-01"
+      "notes": "LOGIC EXTRACTION NOT NEEDED: This component is web-specific for responsive mobile breakpoints. Native apps use completely different navigation patterns (React Native navigation, native drawers). The animation timing and CSS transitions are inherently web-specific. Cross-platform architecture will use platform-specific navigation providers instead of extracting this logic.",
+      "updated": "2025-08-04"
     },
     "SidebarProvider.tsx": {
       "name": "SidebarProvider",
@@ -138,16 +125,12 @@
       "description": "Context provider for managing right sidebar visibility and content",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "todo",
-      "logic_extraction": "todo",
-      "logic_needs": "extract",
-      "hooks": [
-        "useSidebarState",
-        "useSidebar"
-      ],
+      "primitives": "done",
+      "logic_extraction": "keep",
+      "hooks": [],
       "native": "todo",
-      "notes": "Contains sidebar state management logic that should be extracted to useSidebarState hook. Renders sidebar with web-specific CSS classes (fixed positioning, transitions, lg:hidden responsive). Business logic: sidebar visibility management (reusable).",
-      "updated": "2025-08-01"
+      "notes": "LOGIC EXTRACTION NOT NEEDED: This component manages desktop sidebar vs mobile navigation which are fundamentally different UX patterns. Native apps use different navigation paradigms (tabs, stack navigation) rather than sidebars. The responsive breakpoints (lg:hidden) and CSS transitions are web-specific. Cross-platform architecture will use platform-specific navigation state management.",
+      "updated": "2025-08-04"
     },
     "Elements.tsx": {
       "name": "Elements",
@@ -157,7 +140,6 @@
       "used": "yes",
       "primitives": "unknown",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "Development showcase component. Likely just renders UI elements - no complex logic to extract. Keep simple display logic in component.",
@@ -171,7 +153,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "done",
       "hooks": [
         "useUserKicking"
       ],
@@ -187,7 +168,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useUserSettings",
         "useProfileImage",
@@ -206,7 +186,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "keep",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "COMPLETED: Analyzed for business logic extraction but intentionally kept simple and explicit. Logic too minimal to extract (2-3 lines: selection state, URL generation). Uses @dnd-kit/sortable for web drag/drop. Will need .native.tsx version with different gesture system (long-press vs drag). Removed SCSS dependency, using Tailwind 'block' class. Best practice: Don't over-engineer simple components - clarity over abstraction. Platform-specific behavior (drag/drop) belongs in platform files, not shared hooks.",
@@ -220,7 +199,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses custom CSS classes for hover/touch feedback. Touch/hover behavior differs between web/native. Easier to build native version.",
@@ -234,7 +212,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [
         "useUserRoleManagement",
         "useUserProfileActions",
@@ -252,7 +229,6 @@
       "used": "no",
       "primitives": "todo",
       "logic_extraction": "todo",
-      "logic_needs": "extract",
       "hooks": [
         "useProfileEdit",
         "useImageUpload"
@@ -269,7 +245,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [
         "useContactSelection"
       ],
@@ -285,7 +260,6 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useSpaceOrdering",
         "useSpaceDragAndDrop"
@@ -302,7 +276,6 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useSpaceCreation",
         "useFileUpload",
@@ -320,7 +293,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useVirtualization",
         "useMessagePagination",
@@ -338,7 +310,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "done",
       "hooks": [
         "useAccentColor"
       ],
@@ -354,7 +325,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "Simple splash screen with no business logic (<5 lines). Animation differs per platform but no logic extraction needed.",
@@ -368,7 +338,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Heavy Tailwind usage with raw divs throughout (flex flex-col grow, etc.). Simple maintenance display (<5 lines of logic).",
@@ -382,7 +351,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "done",
       "hooks": [
         "useCopyToClipboard"
       ],
@@ -398,7 +366,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useThemeSelection"
       ],
@@ -414,7 +381,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [
         "useTooltipBehavior"
       ],
@@ -430,7 +396,6 @@
       "used": "unknown",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Legacy class component with Container.scss dependencies. Should migrate to Container primitive instead of porting.",
@@ -444,7 +409,6 @@
       "used": "no",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses Tailwind classes, raw divs. Unused component. SVG handling differs between web/native. Easier to build native version when needed.",
@@ -458,7 +422,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [
         "useDirectMessageData",
         "useDirectMessagesList",
@@ -476,7 +439,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "Layout component managing DM contacts and conversation view. Uses responsive context. Desktop: sidebar + main. Mobile: stack navigation.",
@@ -490,7 +452,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses FontAwesome (@fortawesome/react-fontawesome) and custom CSS classes (action-menu-item). Simple menu item with icon, label, onClick.",
@@ -504,7 +465,6 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "Uses MobileDrawer component. Designed for mobile-first UX. Desktop equivalent likely uses hover/context menu. Simple action handlers.",
@@ -518,7 +478,6 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Imports './UserStatus.scss'. Uses ClickToCopyContent component and partially uses primitives. Has SCSS dependencies.",
@@ -532,7 +491,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses UserOnlineStateIndicator.scss with custom styling. Simple component but has CSS dependencies. Easier to build native version.",
@@ -546,7 +504,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "Layout component managing space view. Uses responsive context. Desktop: sidebar + main. Mobile: stack/tab navigation. Simple layout logic.",
@@ -560,7 +517,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "done",
       "hooks": [
         "useImageLoading",
         "useDragStateContext"
@@ -577,7 +533,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses ChannelGroup.scss, FontAwesome icons, raw Link elements. Different navigation patterns for web/native. Easier to build native version.",
@@ -591,7 +546,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "done",
       "hooks": [
         "useGroupEditor",
         "useSpacePermissions",
@@ -610,7 +564,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "done",
       "hooks": [
         "useInviteProcessing",
         "useInviteJoining",
@@ -628,7 +581,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "done",
       "hooks": [
         "useDirectMessageCreation",
         "useAddressValidation"
@@ -645,7 +597,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "done",
       "hooks": [
         "useSpaceJoining",
         "useInviteValidation"
@@ -662,7 +613,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "done",
       "hooks": [
         "useSpaceLeaving"
       ],
@@ -678,7 +628,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useGlobalSearchState",
         "useGlobalSearchNavigation",
@@ -696,7 +645,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useSearchResultsState",
         "useSearchResultsResponsive",
@@ -714,7 +662,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "done",
       "hooks": [
         "useMessageActions",
         "useEmojiPicker",
@@ -733,7 +680,6 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "todo",
-      "logic_needs": "extract",
       "hooks": [
         "useRegistrationFlow",
         "useProfileSetup",
@@ -751,7 +697,6 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "todo",
-      "logic_needs": "extract",
       "hooks": [
         "useAuthentication",
         "usePasskeyFlow"
@@ -768,7 +713,6 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "Comment clarifies: 'for mobile users using web app, native app uses primitives/Modal/Modal.native.tsx'. Uses FontAwesome + SCSS. Simple drawer logic.",
@@ -782,7 +726,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useThemeDetection",
         "useSystemTheme"
@@ -799,7 +742,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "done",
       "notes": "Simple context wrapper around useResponsiveLayout hook. Context pattern works identically cross-platform. Logic already in hook.",
@@ -813,7 +755,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useSpaceManagement",
         "usePermissions",
@@ -832,7 +773,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useChannelManagement",
         "useChannelPermissions"
@@ -849,7 +789,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useGroupManagement"
       ],
@@ -865,7 +804,6 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "Comment: 'for mobile users using web app, native app needs different emoji picker (React Native compatible)'. Uses MobileDrawer + EmojiPicker lib.",
@@ -879,7 +817,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [
         "useSearchResultDisplayDM",
         "useSearchResultDisplaySpace",
@@ -898,7 +835,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "done",
       "hooks": [
         "useConversationPolling"
       ],
@@ -914,7 +850,6 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "todo",
       "notes": "Uses Button primitive + FontAwesome + ReactTooltip. Desktop: expandable sidebar. Mobile: different navigation pattern. Simple toggle logic.",
@@ -928,7 +863,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useWebSocketConnection",
         "useMessageQueue"
@@ -945,7 +879,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useApiClientSetup",
         "useErrorHandling"
@@ -962,7 +895,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useMessageDatabase",
         "useEncryption",
@@ -980,7 +912,6 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useRegistrationPersistence",
         "usePasskeyIntegration"
@@ -997,7 +928,6 @@
       "used": "no",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "keep",
       "hooks": [],
       "native": "done",
       "notes": "Entire component is commented out. Would use React Router Navigate - works cross-platform. Dead code candidate for removal.",
@@ -1011,7 +941,6 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "logic_needs": "done",
       "hooks": [
         "useMessageComposer"
       ],
@@ -1027,7 +956,6 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "logic_needs": "extract",
       "hooks": [
         "useQuickReactions"
       ],
@@ -1038,8 +966,8 @@
   },
   "stats": {
     "total": 64,
-    "primitives_done": 32,
-    "logic_extraction_done": 58,
+    "primitives_done": 35,
+    "logic_extraction_done": 61,
     "native_ready": 0,
     "native_done": 11,
     "by_category": {
@@ -1051,13 +979,8 @@
       "no": 3,
       "unknown": 1
     },
-    "by_logic_needs": {
-      "keep": 27,
-      "extract": 24,
-      "done": 13
-    },
-    "analysis_notes": "MAJOR REFACTOR: AppWithSearch.tsx successfully split into 3 focused providers (ModalProvider, MobileProvider, SidebarProvider) with single responsibilities. Eliminated monolithic component mixing modal, mobile, and sidebar concerns. New providers maintain z-[9999] stacking solutions but still need business logic extraction to hooks. Architecture now follows separation of concerns principle.",
-    "last_updated": "2025-08-03"
+    "analysis_notes": "PROVIDER COMPONENT ANALYSIS COMPLETE: ModalProvider business logic successfully extracted (useModalState hook) and manually tested. MobileProvider and SidebarProvider determined NOT to need logic extraction - they are inherently web-specific for responsive breakpoints and CSS transitions. Native apps will use platform-specific navigation patterns instead. Focus shifted to authentication components (Onboarding, Login) which have genuine cross-platform business logic.",
+    "last_updated": "2025-08-04"
   },
   "metadata": {
     "audit_version": "1.0",

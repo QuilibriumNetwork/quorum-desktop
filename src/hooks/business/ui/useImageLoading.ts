@@ -11,7 +11,10 @@ interface UseImageLoadingReturn {
   hasError: boolean;
 }
 
-export const useImageLoading = ({ iconData, iconUrl }: UseImageLoadingProps): UseImageLoadingReturn => {
+export const useImageLoading = ({
+  iconData,
+  iconUrl,
+}: UseImageLoadingProps): UseImageLoadingReturn => {
   const [data, setData] = useState<ArrayBuffer>();
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);

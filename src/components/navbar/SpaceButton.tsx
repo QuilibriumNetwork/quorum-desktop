@@ -13,18 +13,19 @@ interface Space {
   notifs?: number;
 }
 
-type SpaceButtonProps = { 
+type SpaceButtonProps = {
   space: Space;
 };
 
 const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space }) => {
   const { spaceId: currentSpaceId } = useParams<{ spaceId: string }>();
-  
+
   // Drag and drop functionality - platform-specific
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useSortable({
-    id: space.spaceId,
-    data: { targetId: space.spaceId },
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useSortable({
+      id: space.spaceId,
+      data: { targetId: space.spaceId },
+    });
 
   // Update global drag state for tooltip coordination
   const { setIsDragging } = useDragStateContext();

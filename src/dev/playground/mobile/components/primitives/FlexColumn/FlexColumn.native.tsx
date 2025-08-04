@@ -4,7 +4,7 @@ import { FlexColumnProps } from './types';
 
 const justifyMap = {
   start: 'flex-start',
-  end: 'flex-end', 
+  end: 'flex-end',
   center: 'center',
   between: 'space-between',
   around: 'space-around',
@@ -14,7 +14,7 @@ const justifyMap = {
 const alignMap = {
   start: 'flex-start',
   end: 'flex-end',
-  center: 'center', 
+  center: 'center',
   stretch: 'stretch',
   baseline: 'baseline',
 };

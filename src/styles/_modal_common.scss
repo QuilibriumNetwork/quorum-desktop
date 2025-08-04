@@ -161,22 +161,22 @@
     width: 800px !important;
     max-width: 90vw !important;
     max-height: 90vh !important;
-    
+
     // Desktop: consistent 800px height, max 90vh for very short screens
     @media (min-width: 768px) {
       height: min(800px, 90vh) !important;
     }
-    
+
     // Mobile/Tablet: fixed 90vh height
     @media (max-width: 767px) {
       height: 90vh !important;
     }
   }
-  
+
   .quorum-modal-title {
     display: none; // Hide Modal primitive title
   }
-  
+
   .quorum-modal-container {
     height: 100%;
     display: flex;

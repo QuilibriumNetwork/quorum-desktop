@@ -31,7 +31,7 @@ export const useSearchResultDisplay = ({
   const { message } = result;
   const { messageDB } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
-  
+
   // Detect if this is a DM message (spaceId === channelId indicates DM)
   const isDM = useMemo(() => message.spaceId === message.channelId, [message]);
 
@@ -42,7 +42,7 @@ export const useSearchResultDisplay = ({
   // Space-specific data fetching (conditionally called based on isDM)
   // For DM messages, we'll skip these hooks entirely
   let userInfo, userLoading, spaceInfo, spaceLoading;
-  
+
   if (isDM) {
     // For DMs, don't call the hooks that cause issues
     userInfo = null;

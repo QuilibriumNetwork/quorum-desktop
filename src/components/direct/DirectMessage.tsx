@@ -3,17 +3,19 @@ import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { EmbedMessage, Message as MessageType } from '../../api/quorumApi';
 import './DirectMessage.scss';
-import { 
-  useRegistration, 
+import {
+  useRegistration,
   useMessageComposer,
-  useDirectMessagesList 
+  useDirectMessagesList,
 } from '../../hooks';
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
 import { useMessageDB } from '../context/MessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSidebar } from '../context/SidebarProvider';
 import { MessageList, MessageListRef } from '../message/MessageList';
-import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
+import MessageComposer, {
+  MessageComposerRef,
+} from '../message/MessageComposer';
 
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
@@ -21,20 +23,20 @@ import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages, truncateAddress } from '../../utils';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
-import { Button, Container, FlexRow, FlexColumn,Text } from '../primitives';
+import { Button, Container, FlexRow, FlexColumn, Text } from '../primitives';
 
 const DirectMessage: React.FC<{}> = (p: {}) => {
   const { isMobile, isTablet, toggleLeftSidebar } =
     useResponsiveLayoutContext();
-  
+
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
   const { messageDB, submitMessage, keyset } = useMessageDB();
-  
+
   // Extract business logic hooks but also get the original data for compatibility
   let { address } = useParams<{ address: string }>();
   const conversationId = address! + '/' + address!;
-  
+
   // Get all the data we need (same as original)
   const { data: registration } = useRegistration({ address: address! });
   const { data: self } = useRegistration({
@@ -43,10 +45,11 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   const { data: conversation } = useConversation({
     conversationId: conversationId,
   });
-  
+
   // Use business logic hooks for message handling
-  const { messageList, acceptChat, fetchNextPage, fetchPreviousPage } = useDirectMessagesList();
-  
+  const { messageList, acceptChat, fetchNextPage, fetchPreviousPage } =
+    useDirectMessagesList();
+
   // Recreate members logic exactly as original (temporary fix)
   const members = useMemo(() => {
     let m = {} as {
@@ -76,7 +79,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     };
     return m;
   }, [registration, conversation, address, user.currentPasskeyInfo]);
-  
+
   // Helper for compatibility
   const otherUser = members[address!] || {
     displayName: t`Unknown User`,
@@ -95,48 +98,52 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   // Message composition - using shared MessageComposer hook
   const messageComposerRef = useRef<MessageComposerRef>(null);
   const messageListRef = useRef<MessageListRef>(null);
-  
+
   // Submit message function for MessageComposer
-  const handleSubmitMessage = useCallback(async (message: string | object, inReplyTo?: string) => {
-    if (!address) return; // Guard against undefined address
-    
-    if (typeof message === 'string') {
-      // Text message
-      await submitMessage(
-        address,
-        message,
-        self.registration!,
-        registration.registration!,
-        queryClient,
-        user.currentPasskeyInfo!,
-        keyset,
-        inReplyTo
-      );
-    } else {
-      // Embed message (image)
-      await submitMessage(
-        address,
-        message as EmbedMessage,
-        self.registration!,
-        registration.registration!,
-        queryClient,
-        user.currentPasskeyInfo!,
-        keyset,
-        inReplyTo
-      );
-    }
-    
-    // Auto-scroll to bottom after sending message (same logic as Channel.tsx)
-    const isReaction = typeof message === 'object' && 
-      'type' in message && 
-      (message.type === 'reaction' || message.type === 'remove-reaction');
-    
-    if (!isReaction) {
-      setTimeout(() => {
-        messageListRef.current?.scrollToBottom();
-      }, 100);
-    }
-  }, [address, self, registration, queryClient, user, keyset, submitMessage]);
+  const handleSubmitMessage = useCallback(
+    async (message: string | object, inReplyTo?: string) => {
+      if (!address) return; // Guard against undefined address
+
+      if (typeof message === 'string') {
+        // Text message
+        await submitMessage(
+          address,
+          message,
+          self.registration!,
+          registration.registration!,
+          queryClient,
+          user.currentPasskeyInfo!,
+          keyset,
+          inReplyTo
+        );
+      } else {
+        // Embed message (image)
+        await submitMessage(
+          address,
+          message as EmbedMessage,
+          self.registration!,
+          registration.registration!,
+          queryClient,
+          user.currentPasskeyInfo!,
+          keyset,
+          inReplyTo
+        );
+      }
+
+      // Auto-scroll to bottom after sending message (same logic as Channel.tsx)
+      const isReaction =
+        typeof message === 'object' &&
+        'type' in message &&
+        (message.type === 'reaction' || message.type === 'remove-reaction');
+
+      if (!isReaction) {
+        setTimeout(() => {
+          messageListRef.current?.scrollToBottom();
+        }, 100);
+      }
+    },
+    [address, self, registration, queryClient, user, keyset, submitMessage]
+  );
 
   // Use MessageComposer hook
   const composer = useMessageComposer({
@@ -147,7 +154,6 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
 
   // Set sidebar content in context (exactly as original)
   React.useEffect(() => {
-    
     const sidebarContent = (
       <div className="flex flex-col">
         {Object.keys(members).map((s) => (
@@ -185,7 +191,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         ))}
       </div>
     );
-    
+
     setRightSidebarContent(sidebarContent);
   }, [members, user.currentPasskeyInfo, setRightSidebarContent]);
 
@@ -204,19 +210,25 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   }, [composer.inReplyTo]);
 
   // Helper function to map sender to user (used by MessageList)
-  const mapSenderToUser = useCallback((senderId: string) => {
-    return (
-      members[senderId] || {
-        displayName: t`Unknown User`,
-        userIcon: DefaultImages.UNKNOWN_USER,
-      }
-    );
-  }, [members]);
+  const mapSenderToUser = useCallback(
+    (senderId: string) => {
+      return (
+        members[senderId] || {
+          displayName: t`Unknown User`,
+          userIcon: DefaultImages.UNKNOWN_USER,
+        }
+      );
+    },
+    [members]
+  );
 
   // Legacy submit function for MessageList compatibility
-  const submit = useCallback(async (message: any) => {
-    await handleSubmitMessage(message);
-  }, [handleSubmitMessage]);
+  const submit = useCallback(
+    async (message: any) => {
+      await handleSubmitMessage(message);
+    },
+    [handleSubmitMessage]
+  );
 
   const userIcon = otherUser.userIcon;
   const icon = userIcon?.includes(DefaultImages.UNKNOWN_USER)

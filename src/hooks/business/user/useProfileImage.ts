@@ -26,9 +26,12 @@ export const useProfileImage = (
 ): UseProfileImageReturn => {
   const [fileData, setFileData] = useState<ArrayBuffer | undefined>();
   const [currentFile, setCurrentFile] = useState<File | undefined>();
-  const [userIconFileError, setUserIconFileError] = useState<string | null>(null);
-  const [isUserIconUploading, setIsUserIconUploading] = useState<boolean>(false);
-  
+  const [userIconFileError, setUserIconFileError] = useState<string | null>(
+    null
+  );
+  const [isUserIconUploading, setIsUserIconUploading] =
+    useState<boolean>(false);
+
   const { currentPasskeyInfo } = usePasskeysContext();
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -88,7 +91,7 @@ export const useProfileImage = (
   }, [currentFile, options]);
 
   const clearFileError = () => setUserIconFileError(null);
-  
+
   const clearFile = () => {
     setFileData(undefined);
     setCurrentFile(undefined);
@@ -100,11 +103,14 @@ export const useProfileImage = (
     if (fileData && currentFile) {
       return `data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')}`;
     }
-    
-    if (currentPasskeyInfo?.pfpUrl && !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) {
+
+    if (
+      currentPasskeyInfo?.pfpUrl &&
+      !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)
+    ) {
       return currentPasskeyInfo.pfpUrl;
     }
-    
+
     return 'var(--unknown-icon)';
   };
 

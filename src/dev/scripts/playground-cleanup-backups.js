@@ -10,8 +10,14 @@ const projectRoot = path.resolve(__dirname, '../../..');
 
 // Define paths
 // Note: Only mobile playground needs sync - web playground imports directly from main app
-const MAIN_PRIMITIVES_PATH = path.join(projectRoot, 'src/components/primitives');
-const MOBILE_PLAYGROUND_PATH = path.join(projectRoot, 'src/dev/playground/mobile/components/primitives');
+const MAIN_PRIMITIVES_PATH = path.join(
+  projectRoot,
+  'src/components/primitives'
+);
+const MOBILE_PLAYGROUND_PATH = path.join(
+  projectRoot,
+  'src/dev/playground/mobile/components/primitives'
+);
 
 // Colors for console output
 const colors = {
@@ -40,14 +46,14 @@ if (olderIndex !== -1 && args[olderIndex + 1]) {
 
 function findBackupFiles(basePath) {
   const backupFiles = [];
-  
+
   function scanDirectory(dirPath) {
     try {
       const items = fs.readdirSync(dirPath, { withFileTypes: true });
-      
-      items.forEach(item => {
+
+      items.forEach((item) => {
         const fullPath = path.join(dirPath, item.name);
-        
+
         if (item.isDirectory()) {
           scanDirectory(fullPath);
         } else if (item.name.includes('.backup-')) {
@@ -57,7 +63,8 @@ function findBackupFiles(basePath) {
             name: item.name,
             size: stats.size,
             mtime: stats.mtime,
-            ageInDays: (Date.now() - stats.mtime.getTime()) / (1000 * 60 * 60 * 24)
+            ageInDays:
+              (Date.now() - stats.mtime.getTime()) / (1000 * 60 * 60 * 24),
           });
         }
       });
@@ -65,7 +72,7 @@ function findBackupFiles(basePath) {
       // Ignore errors for directories that don't exist
     }
   }
-  
+
   scanDirectory(basePath);
   return backupFiles;
 }
@@ -84,28 +91,34 @@ function formatAge(days) {
 }
 
 function main() {
-  console.log(`\n${colors.blue}🧹 Mobile Playground Backup Cleanup${colors.reset}`);
-  console.log(`${colors.dim}Note: Web playground imports directly from main app (no backups created)${colors.reset}\n`);
-  
+  console.log(
+    `\n${colors.blue}🧹 Mobile Playground Backup Cleanup${colors.reset}`
+  );
+  console.log(
+    `${colors.dim}Note: Web playground imports directly from main app (no backups created)${colors.reset}\n`
+  );
+
   if (dryRun) {
-    console.log(`${colors.yellow}🔍 DRY RUN MODE - No files will be deleted${colors.reset}\n`);
+    console.log(
+      `${colors.yellow}🔍 DRY RUN MODE - No files will be deleted${colors.reset}\n`
+    );
   }
-  
+
   // Find all backup files
   const mainBackups = findBackupFiles(MAIN_PRIMITIVES_PATH);
   const playgroundBackups = findBackupFiles(MOBILE_PLAYGROUND_PATH);
   const allBackups = [...mainBackups, ...playgroundBackups];
-  
+
   if (allBackups.length === 0) {
     console.log(`${colors.green}✓ No backup files found${colors.reset}`);
     return;
   }
-  
+
   console.log(`Found ${allBackups.length} backup files:\n`);
-  
+
   // Group by component for better display
   const backupsByComponent = {};
-  allBackups.forEach(backup => {
+  allBackups.forEach((backup) => {
     const componentPath = path.dirname(backup.path);
     const componentName = path.basename(componentPath);
     if (!backupsByComponent[componentName]) {
@@ -113,62 +126,86 @@ function main() {
     }
     backupsByComponent[componentName].push(backup);
   });
-  
+
   let totalSize = 0;
   let toDelete = [];
-  
-  Object.keys(backupsByComponent).sort().forEach(componentName => {
-    const backups = backupsByComponent[componentName];
-    console.log(`${colors.blue}${componentName}:${colors.reset}`);
-    
-    backups.forEach(backup => {
-      totalSize += backup.size;
-      const shouldDelete = all || (older && backup.ageInDays > daysOld);
-      
-      if (shouldDelete) {
-        toDelete.push(backup);
-        console.log(`  ${colors.red}✗${colors.reset} ${backup.name} ${colors.dim}(${formatSize(backup.size)}, ${formatAge(backup.ageInDays)} old)${colors.reset}`);
-      } else {
-        console.log(`  ${colors.green}✓${colors.reset} ${backup.name} ${colors.dim}(${formatSize(backup.size)}, ${formatAge(backup.ageInDays)} old)${colors.reset}`);
-      }
+
+  Object.keys(backupsByComponent)
+    .sort()
+    .forEach((componentName) => {
+      const backups = backupsByComponent[componentName];
+      console.log(`${colors.blue}${componentName}:${colors.reset}`);
+
+      backups.forEach((backup) => {
+        totalSize += backup.size;
+        const shouldDelete = all || (older && backup.ageInDays > daysOld);
+
+        if (shouldDelete) {
+          toDelete.push(backup);
+          console.log(
+            `  ${colors.red}✗${colors.reset} ${backup.name} ${colors.dim}(${formatSize(backup.size)}, ${formatAge(backup.ageInDays)} old)${colors.reset}`
+          );
+        } else {
+          console.log(
+            `  ${colors.green}✓${colors.reset} ${backup.name} ${colors.dim}(${formatSize(backup.size)}, ${formatAge(backup.ageInDays)} old)${colors.reset}`
+          );
+        }
+      });
     });
-  });
-  
+
   console.log(`\n${colors.blue}📊 Summary${colors.reset}`);
   console.log(`Total backup files: ${allBackups.length}`);
   console.log(`Total size: ${formatSize(totalSize)}`);
-  console.log(`${colors.red}Files to delete: ${toDelete.length}${colors.reset}`);
-  console.log(`${colors.green}Files to keep: ${allBackups.length - toDelete.length}${colors.reset}`);
-  
+  console.log(
+    `${colors.red}Files to delete: ${toDelete.length}${colors.reset}`
+  );
+  console.log(
+    `${colors.green}Files to keep: ${allBackups.length - toDelete.length}${colors.reset}`
+  );
+
   if (toDelete.length > 0) {
     const sizeToDelete = toDelete.reduce((sum, backup) => sum + backup.size, 0);
     console.log(`Space to recover: ${formatSize(sizeToDelete)}`);
-    
+
     if (!dryRun) {
       let deletedCount = 0;
-      toDelete.forEach(backup => {
+      toDelete.forEach((backup) => {
         try {
           fs.unlinkSync(backup.path);
           deletedCount++;
         } catch (error) {
-          console.log(`${colors.red}Failed to delete: ${backup.name}${colors.reset}`);
+          console.log(
+            `${colors.red}Failed to delete: ${backup.name}${colors.reset}`
+          );
         }
       });
-      
-      console.log(`\n${colors.green}✓ Deleted ${deletedCount} backup files${colors.reset}`);
+
+      console.log(
+        `\n${colors.green}✓ Deleted ${deletedCount} backup files${colors.reset}`
+      );
     } else {
-      console.log(`\n${colors.yellow}💡 To actually delete these files, run without --dry-run${colors.reset}`);
+      console.log(
+        `\n${colors.yellow}💡 To actually delete these files, run without --dry-run${colors.reset}`
+      );
     }
   } else {
     console.log(`\n${colors.green}✓ No files to delete${colors.reset}`);
   }
-  
+
   if (!all && !older) {
     console.log(`\n${colors.yellow}💡 Cleanup options:${colors.reset}`);
-    console.log(`  yarn playground:cleanup --all          ${colors.dim}# Delete all backup files${colors.reset}`);
-    console.log(`  yarn playground:cleanup --older 7      ${colors.dim}# Delete backups older than 7 days${colors.reset}`);
-    console.log(`  yarn playground:cleanup --older 1      ${colors.dim}# Delete backups older than 1 day${colors.reset}`);
-    console.log(`  yarn playground:cleanup --dry-run --all ${colors.dim}# See what would be deleted${colors.reset}`);
+    console.log(
+      `  yarn playground:cleanup --all          ${colors.dim}# Delete all backup files${colors.reset}`
+    );
+    console.log(
+      `  yarn playground:cleanup --older 7      ${colors.dim}# Delete backups older than 7 days${colors.reset}`
+    );
+    console.log(
+      `  yarn playground:cleanup --older 1      ${colors.dim}# Delete backups older than 1 day${colors.reset}`
+    );
+    console.log(
+      `  yarn playground:cleanup --dry-run --all ${colors.dim}# See what would be deleted${colors.reset}`
+    );
   }
 }
 
@@ -176,9 +213,15 @@ function main() {
 if (!all && !older && args.length > 0 && !dryRun) {
   console.log(`${colors.red}Error: Invalid options${colors.reset}`);
   console.log(`\nUsage:`);
-  console.log(`  yarn playground:cleanup --all              # Delete all backup files`);
-  console.log(`  yarn playground:cleanup --older [days]     # Delete backups older than N days`);
-  console.log(`  yarn playground:cleanup --dry-run --all    # Preview what would be deleted`);
+  console.log(
+    `  yarn playground:cleanup --all              # Delete all backup files`
+  );
+  console.log(
+    `  yarn playground:cleanup --older [days]     # Delete backups older than N days`
+  );
+  console.log(
+    `  yarn playground:cleanup --dry-run --all    # Preview what would be deleted`
+  );
   process.exit(1);
 }
 

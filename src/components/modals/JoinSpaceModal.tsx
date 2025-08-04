@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Input, Button, Modal, Container, FlexCenter, Text } from '../primitives';
+import {
+  Input,
+  Button,
+  Modal,
+  Container,
+  FlexCenter,
+  Text,
+} from '../primitives';
 import SpaceIcon from '../navbar/SpaceIcon';
 import './JoinSpaceModal.scss';
 import { useLocation } from 'react-router';
@@ -20,11 +27,8 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
 
   // Extract business logic hooks
   const { joinSpace, joining, joinError } = useSpaceJoining();
-  const { 
-    validatedSpace, 
-    validationError, 
-    validateInvite,
-  } = useInviteValidation();
+  const { validatedSpace, validationError, validateInvite } =
+    useInviteValidation();
 
   // Initialize with hash from URL if present
   React.useEffect(() => {

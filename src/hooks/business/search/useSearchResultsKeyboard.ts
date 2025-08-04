@@ -15,7 +15,6 @@ export interface UseSearchResultsKeyboardReturn {
 export const useSearchResultsKeyboard = ({
   onClose,
 }: UseSearchResultsKeyboardProps): UseSearchResultsKeyboardReturn => {
-  
   // Handle keyboard navigation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {

@@ -6,10 +6,8 @@ import { useConversations } from '../../queries/conversations/useConversations';
  * Handles periodic conversation updates and data transformation
  */
 export function useConversationPolling() {
-  const { 
-    data: conversations, 
-    refetch: refetchConversations 
-  } = useConversations({ type: 'direct' });
+  const { data: conversations, refetch: refetchConversations } =
+    useConversations({ type: 'direct' });
 
   // Set up periodic polling for conversation updates
   useEffect(() => {

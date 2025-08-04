@@ -22,7 +22,7 @@ export interface UseCustomAssetsReturn {
   removeEmoji: (index: number) => void;
   updateEmoji: (index: number, updates: Partial<Emoji>) => void;
   canAddMoreEmojis: boolean;
-  
+
   // Sticker management
   stickers: Sticker[];
   setStickers: (stickers: Sticker[]) => void;
@@ -39,11 +39,11 @@ export interface UseCustomAssetsReturn {
 export const useCustomAssets = (
   options: UseCustomAssetsOptions = {}
 ): UseCustomAssetsReturn => {
-  const { 
-    initialEmojis = [], 
-    initialStickers = [], 
-    onEmojiFileError, 
-    onStickerFileError 
+  const {
+    initialEmojis = [],
+    initialStickers = [],
+    onEmojiFileError,
+    onStickerFileError,
   } = options;
 
   // State
@@ -58,8 +58,12 @@ export const useCustomAssets = (
   useEffect(() => {
     setStickers(initialStickers);
   }, [initialStickers]);
-  const [currentEmojiFiles, setCurrentEmojiFiles] = useState<File[] | undefined>();
-  const [currentStickerFiles, setCurrentStickerFiles] = useState<File[] | undefined>();
+  const [currentEmojiFiles, setCurrentEmojiFiles] = useState<
+    File[] | undefined
+  >();
+  const [currentStickerFiles, setCurrentStickerFiles] = useState<
+    File[] | undefined
+  >();
   const [emojiFileError, setEmojiFileError] = useState<string | null>(null);
   const [stickerFileError, setStickerFileError] = useState<string | null>(null);
 
@@ -67,46 +71,46 @@ export const useCustomAssets = (
   const canAddMoreStickers = stickers.length < 50;
 
   // Emoji dropzone
-  const {
-    getRootProps: getEmojiRootProps,
-    getInputProps: getEmojiInputProps,
-  } = useDropzone({
-    accept: {
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg', '.jpeg'],
-      'image/gif': ['.gif'],
-    },
-    multiple: true,
-    maxFiles: Math.min(10, 50 - emojis.length),
-    minSize: 0,
-    maxSize: 256 * 1024,
-    disabled: emojis.length >= 50,
-    onDropRejected: (fileRejections) => {
-      for (const rejection of fileRejections) {
-        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          const error = t`File cannot be larger than 256KB`;
-          setEmojiFileError(error);
-          onEmojiFileError?.(error);
-        } else if (rejection.errors.some((err) => err.code === 'too-many-files')) {
-          const remaining = 50 - emojis.length;
-          const error = t`Cannot upload more than ${Math.min(10, remaining)} files at once (${remaining} slots remaining)`;
-          setEmojiFileError(error);
-          onEmojiFileError?.(error);
-        } else {
-          const error = t`File rejected`;
-          setEmojiFileError(error);
-          onEmojiFileError?.(error);
+  const { getRootProps: getEmojiRootProps, getInputProps: getEmojiInputProps } =
+    useDropzone({
+      accept: {
+        'image/png': ['.png'],
+        'image/jpeg': ['.jpg', '.jpeg'],
+        'image/gif': ['.gif'],
+      },
+      multiple: true,
+      maxFiles: Math.min(10, 50 - emojis.length),
+      minSize: 0,
+      maxSize: 256 * 1024,
+      disabled: emojis.length >= 50,
+      onDropRejected: (fileRejections) => {
+        for (const rejection of fileRejections) {
+          if (rejection.errors.some((err) => err.code === 'file-too-large')) {
+            const error = t`File cannot be larger than 256KB`;
+            setEmojiFileError(error);
+            onEmojiFileError?.(error);
+          } else if (
+            rejection.errors.some((err) => err.code === 'too-many-files')
+          ) {
+            const remaining = 50 - emojis.length;
+            const error = t`Cannot upload more than ${Math.min(10, remaining)} files at once (${remaining} slots remaining)`;
+            setEmojiFileError(error);
+            onEmojiFileError?.(error);
+          } else {
+            const error = t`File rejected`;
+            setEmojiFileError(error);
+            onEmojiFileError?.(error);
+          }
         }
-      }
-    },
-    onDropAccepted: (files) => {
-      setEmojiFileError(null);
-      onEmojiFileError?.(null);
-      // Double-check we don't exceed the limit
-      const allowedFiles = files.slice(0, 50 - emojis.length);
-      setCurrentEmojiFiles(allowedFiles);
-    },
-  });
+      },
+      onDropAccepted: (files) => {
+        setEmojiFileError(null);
+        onEmojiFileError?.(null);
+        // Double-check we don't exceed the limit
+        const allowedFiles = files.slice(0, 50 - emojis.length);
+        setCurrentEmojiFiles(allowedFiles);
+      },
+    });
 
   // Sticker dropzone
   const {
@@ -129,7 +133,9 @@ export const useCustomAssets = (
           const error = t`File cannot be larger than 256KB`;
           setStickerFileError(error);
           onStickerFileError?.(error);
-        } else if (rejection.errors.some((err) => err.code === 'too-many-files')) {
+        } else if (
+          rejection.errors.some((err) => err.code === 'too-many-files')
+        ) {
           const remaining = 50 - stickers.length;
           const error = t`Cannot upload more than ${Math.min(10, remaining)} files at once (${remaining} slots remaining)`;
           setStickerFileError(error);
@@ -206,23 +212,25 @@ export const useCustomAssets = (
 
   // Helper functions
   const removeEmoji = (index: number) => {
-    setEmojis(prev => prev.filter((_, i) => i !== index));
+    setEmojis((prev) => prev.filter((_, i) => i !== index));
   };
 
   const removeSticker = (index: number) => {
-    setStickers(prev => prev.filter((_, i) => i !== index));
+    setStickers((prev) => prev.filter((_, i) => i !== index));
   };
 
   const updateEmoji = (index: number, updates: Partial<Emoji>) => {
-    setEmojis(prev => prev.map((emoji, i) => 
-      i === index ? { ...emoji, ...updates } : emoji
-    ));
+    setEmojis((prev) =>
+      prev.map((emoji, i) => (i === index ? { ...emoji, ...updates } : emoji))
+    );
   };
 
   const updateSticker = (index: number, updates: Partial<Sticker>) => {
-    setStickers(prev => prev.map((sticker, i) => 
-      i === index ? { ...sticker, ...updates } : sticker
-    ));
+    setStickers((prev) =>
+      prev.map((sticker, i) =>
+        i === index ? { ...sticker, ...updates } : sticker
+      )
+    );
   };
 
   const clearEmojiFileError = () => {
@@ -246,7 +254,7 @@ export const useCustomAssets = (
     removeEmoji,
     updateEmoji,
     canAddMoreEmojis,
-    
+
     stickers,
     setStickers,
     currentStickerFiles,

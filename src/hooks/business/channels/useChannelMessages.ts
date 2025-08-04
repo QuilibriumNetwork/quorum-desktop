@@ -19,7 +19,12 @@ interface UseChannelMessagesProps {
   };
 }
 
-export function useChannelMessages({ spaceId, channelId, roles, members }: UseChannelMessagesProps) {
+export function useChannelMessages({
+  spaceId,
+  channelId,
+  roles,
+  members,
+}: UseChannelMessagesProps) {
   const user = usePasskeysContext();
   const { data: messages, fetchPreviousPage } = useMessages({
     spaceId,
@@ -33,22 +38,28 @@ export function useChannelMessages({ spaceId, channelId, roles, members }: UseCh
     );
   }, [messages]);
 
-  const canDeleteMessages = useCallback((message: MessageType) => {
-    return !!roles.find(
-      (r) =>
-        r.permissions.includes('message:delete') &&
-        r.members.includes(user.currentPasskeyInfo!.address)
-    );
-  }, [roles, user.currentPasskeyInfo]);
+  const canDeleteMessages = useCallback(
+    (message: MessageType) => {
+      return !!roles.find(
+        (r) =>
+          r.permissions.includes('message:delete') &&
+          r.members.includes(user.currentPasskeyInfo!.address)
+      );
+    },
+    [roles, user.currentPasskeyInfo]
+  );
 
-  const mapSenderToUser = useCallback((senderId: string) => {
-    return (
-      members[senderId] || {
-        displayName: t`Unknown User`,
-        userIcon: DefaultImages.UNKNOWN_USER,
-      }
-    );
-  }, [members]);
+  const mapSenderToUser = useCallback(
+    (senderId: string) => {
+      return (
+        members[senderId] || {
+          displayName: t`Unknown User`,
+          userIcon: DefaultImages.UNKNOWN_USER,
+        }
+      );
+    },
+    [members]
+  );
 
   return {
     messageList,

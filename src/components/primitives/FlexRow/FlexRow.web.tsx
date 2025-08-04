@@ -28,37 +28,42 @@ const gapMap = {
   xl: 'gap-8',
 };
 
-export const FlexRow = React.forwardRef<HTMLDivElement, FlexRowProps>(({
-  children,
-  justify = 'start',
-  align = 'center',
-  gap = 'none',
-  wrap = false,
-  className,
-  style,
-  ...rest
-}, ref) => {
-  const gapClass =
-    typeof gap === 'string' && gap in gapMap
-      ? gapMap[gap as keyof typeof gapMap]
-      : typeof gap === 'number'
-        ? `gap-${gap}`
-        : typeof gap === 'string'
-          ? gap
-          : 'gap-0';
+export const FlexRow = React.forwardRef<HTMLDivElement, FlexRowProps>(
+  (
+    {
+      children,
+      justify = 'start',
+      align = 'center',
+      gap = 'none',
+      wrap = false,
+      className,
+      style,
+      ...rest
+    },
+    ref
+  ) => {
+    const gapClass =
+      typeof gap === 'string' && gap in gapMap
+        ? gapMap[gap as keyof typeof gapMap]
+        : typeof gap === 'number'
+          ? `gap-${gap}`
+          : typeof gap === 'string'
+            ? gap
+            : 'gap-0';
 
-  const classes = clsx(
-    'flex flex-row',
-    justifyMap[justify],
-    alignMap[align],
-    gapClass,
-    wrap && 'flex-wrap',
-    className
-  );
+    const classes = clsx(
+      'flex flex-row',
+      justifyMap[justify],
+      alignMap[align],
+      gapClass,
+      wrap && 'flex-wrap',
+      className
+    );
 
-  return (
-    <div ref={ref} className={classes} style={style} {...rest}>
-      {children}
-    </div>
-  );
-});
+    return (
+      <div ref={ref} className={classes} style={style} {...rest}>
+        {children}
+      </div>
+    );
+  }
+);

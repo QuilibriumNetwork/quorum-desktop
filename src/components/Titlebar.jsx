@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 const CustomTitlebar = () => {
   const { resolvedTheme } = useTheme();
-  
+
   // Add electron class to body for CSS targeting
   useEffect(() => {
     document.body.classList.add('electron');
@@ -26,7 +26,7 @@ const CustomTitlebar = () => {
 
   const macControls = () => {
     const isDark = resolvedTheme === 'dark';
-    
+
     return (
       <div className="flex items-center gap-2 px-3 h-8">
         {/* Close button */}
@@ -34,11 +34,13 @@ const CustomTitlebar = () => {
           onClick={handleClose}
           className="w-3 h-3 flex items-center justify-center group"
         >
-          <div className={`w-3 h-3 rounded-full ${
-            isDark 
-              ? 'bg-red-700 hover:bg-red-600' 
-              : 'bg-red-500 hover:bg-red-600'
-          }`}></div>
+          <div
+            className={`w-3 h-3 rounded-full ${
+              isDark
+                ? 'bg-red-700 hover:bg-red-600'
+                : 'bg-red-500 hover:bg-red-600'
+            }`}
+          ></div>
         </div>
 
         {/* Minimize button */}
@@ -46,11 +48,13 @@ const CustomTitlebar = () => {
           onClick={handleMinimize}
           className="w-3 h-3 flex items-center justify-center group"
         >
-          <div className={`w-3 h-3 rounded-full ${
-            isDark 
-              ? 'bg-yellow-700 hover:bg-yellow-600' 
-              : 'bg-yellow-500 hover:bg-yellow-600'
-          }`}></div>
+          <div
+            className={`w-3 h-3 rounded-full ${
+              isDark
+                ? 'bg-yellow-700 hover:bg-yellow-600'
+                : 'bg-yellow-500 hover:bg-yellow-600'
+            }`}
+          ></div>
         </div>
 
         {/* Maximize button */}
@@ -58,25 +62,27 @@ const CustomTitlebar = () => {
           onClick={handleMaximize}
           className="w-3 h-3 flex items-center justify-center group"
         >
-          <div className={`w-3 h-3 rounded-full ${
-            isDark 
-              ? 'bg-green-700 hover:bg-green-600' 
-              : 'bg-green-500 hover:bg-green-600'
-          }`}></div>
+          <div
+            className={`w-3 h-3 rounded-full ${
+              isDark
+                ? 'bg-green-700 hover:bg-green-600'
+                : 'bg-green-500 hover:bg-green-600'
+            }`}
+          ></div>
         </div>
       </div>
     );
   };
   const controls = () => {
     const isDark = resolvedTheme === 'dark';
-    
+
     return (
       <div className="flex flex-row items-center gap-1 pr-2">
         <button
           onClick={handleMinimize}
           className={`flex items-center justify-center w-6 h-6 rounded-full transition-colors cursor-pointer focus:outline-none focus:ring-0 border-0 focus:border-0 hover:border-0 text-main ${
-            isDark 
-              ? 'bg-gray-700 hover:bg-gray-600' 
+            isDark
+              ? 'bg-gray-700 hover:bg-gray-600'
               : 'bg-gray-200 hover:bg-gray-300'
           }`}
           style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
@@ -87,8 +93,8 @@ const CustomTitlebar = () => {
         <button
           onClick={handleMaximize}
           className={`flex items-center justify-center w-6 h-6 rounded-full transition-colors cursor-pointer focus:outline-none focus:ring-0 border-0 focus:border-0 hover:border-0 text-main ${
-            isDark 
-              ? 'bg-gray-700 hover:bg-gray-600' 
+            isDark
+              ? 'bg-gray-700 hover:bg-gray-600'
               : 'bg-gray-200 hover:bg-gray-300'
           }`}
           style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
@@ -99,12 +105,12 @@ const CustomTitlebar = () => {
         <button
           onClick={handleClose}
           className="flex items-center justify-center w-6 h-6 rounded-full transition-colors cursor-pointer text-white focus:outline-none focus:ring-0 border-0 focus:border-0 hover:border-0"
-          style={{ 
-            border: 'none', 
-            outline: 'none', 
+          style={{
+            border: 'none',
+            outline: 'none',
             boxShadow: 'none',
             backgroundColor: '#ef4444',
-            color: 'white'
+            color: 'white',
           }}
           onMouseEnter={(e) => {
             e.target.style.backgroundColor = '#dc2626';

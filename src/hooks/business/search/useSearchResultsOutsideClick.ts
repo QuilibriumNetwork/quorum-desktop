@@ -14,7 +14,6 @@ export const useSearchResultsOutsideClick = ({
   containerRef,
   onClose,
 }: UseSearchResultsOutsideClickProps): void => {
-  
   // Close on click outside (but not on search bar)
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

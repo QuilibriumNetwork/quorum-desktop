@@ -30,7 +30,7 @@ export function useDirectMessageData(): UseDirectMessageDataReturn {
 
   // Get registration data for the other user
   const { data: registration } = useRegistration({ address: address! });
-  
+
   // Get registration data for current user
   const { data: self } = useRegistration({
     address: user.currentPasskeyInfo!.address,
@@ -44,7 +44,7 @@ export function useDirectMessageData(): UseDirectMessageDataReturn {
   // Build members map
   const members = useMemo(() => {
     const m: { [address: string]: DirectMessageMember } = {};
-    
+
     // Other user
     if (conversation?.conversation) {
       m[address!] = {
@@ -59,14 +59,14 @@ export function useDirectMessageData(): UseDirectMessageDataReturn {
         address: registration.registration.user_address,
       };
     }
-    
+
     // Current user
     m[user.currentPasskeyInfo!.address] = {
       address: user.currentPasskeyInfo!.address,
       userIcon: user.currentPasskeyInfo!.pfpUrl,
       displayName: user.currentPasskeyInfo!.displayName,
     };
-    
+
     return m;
   }, [registration, conversation, address, user.currentPasskeyInfo]);
 

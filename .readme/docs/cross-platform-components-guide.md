@@ -5,6 +5,7 @@
 IMPORTANT: this guide is generic and may not fully adapt to the current repo. Don't just follow it blindly but always check the current situation and ask for clarification if needed.
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Architectural Foundations](#architectural-foundations)
 3. [Decision Framework: One vs Two Components](#decision-framework-one-vs-two-components)
@@ -35,26 +36,29 @@ Building cross-platform React applications for both web and React Native require
 ## Architectural Foundations
 
 ### Layer 1: Primitive Components (Platform-Specific)
+
 ```tsx
 // Platform-specific rendering with identical APIs
-Button.web.tsx    // Uses HTML <button>
-Button.native.tsx // Uses React Native <Pressable>
+Button.web.tsx; // Uses HTML <button>
+Button.native.tsx; // Uses React Native <Pressable>
 ```
 
 ### Layer 2: Business Logic (Shared)
+
 ```tsx
 // Shared hooks and business functions
-useChannelData()    // 100% shared across platforms
-usePermissions()    // 100% shared across platforms
-validateMessage()   // Pure functions, no React dependencies  
+useChannelData(); // 100% shared across platforms
+usePermissions(); // 100% shared across platforms
+validateMessage(); // Pure functions, no React dependencies
 ```
 
 ### Layer 3: Layout Components (Platform-Aware)
+
 ```tsx
 // Either shared with responsive design OR platform-specific
-Component.tsx           // Single component with conditional rendering
-Component.web.tsx       // Desktop-specific layout
-Component.native.tsx    // Mobile-specific layout
+Component.tsx; // Single component with conditional rendering
+Component.web.tsx; // Desktop-specific layout
+Component.native.tsx; // Mobile-specific layout
 ```
 
 ---
@@ -64,31 +68,33 @@ Component.native.tsx    // Mobile-specific layout
 ### Use Single Shared Component When:
 
 **✅ Criteria:**
+
 - Similar data requirements and interactions
 - Layout differences can be handled with conditional rendering
 - Complexity manageable within one component file
 - <cite index="34-1">The Container and presentation pattern can separate presentation logic from business logic</cite>
 
 **📝 Example Structure:**
+
 ```tsx
 // UserProfile.tsx - Single component for both platforms
 export function UserProfile({ userId }) {
   const { isMobile } = useResponsiveLayout();
-  
+
   // ✅ Logic can stay - single component
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  
+
   // Business logic
   useEffect(() => {
     fetchUser(userId).then(setUser);
   }, [userId]);
-  
+
   // UI logic with platform detection
   return (
     <FlexColumn className={isMobile ? 'profile-mobile' : 'profile-desktop'}>
       <Avatar src={user?.avatar} size={isMobile ? 'lg' : 'xl'} />
-      
+
       {isMobile ? (
         <MobileLayout user={user} isEditing={isEditing} />
       ) : (
@@ -102,6 +108,7 @@ export function UserProfile({ userId }) {
 ### Use Separate Platform Components When:
 
 **✅ Criteria:**
+
 - Fundamentally different layouts or navigation patterns
 - Platform-specific features (swipe gestures, hover actions)
 - Different interaction paradigms (sidebar vs tabs)
@@ -109,27 +116,28 @@ export function UserProfile({ userId }) {
 - <cite index="23-1">When your platform-specific code is more complex, you should consider splitting the code out into separate files</cite>
 
 **📝 Example Structure:**
+
 ```tsx
 // hooks/useServerHeader.ts - Shared business logic
 export function useServerHeader(serverId) {
   const [server, setServer] = useState(null);
   const [members, setMembers] = useState([]);
-  
+
   // All business logic here - 100% shared
   useEffect(() => {
     fetchServerData(serverId).then(/* ... */);
   }, [serverId]);
-  
+
   return { server, members, updateServer, addMember };
 }
 
 // ServerHeader.web.tsx - Desktop layout
 export function ServerHeader({ serverId }) {
   const { server, updateServer } = useServerHeader(serverId);
-  
+
   // ✅ Only UI logic specific to desktop
   const [showDropdown, setShowDropdown] = useState(false);
-  
+
   return (
     <div className="desktop-header">
       <ServerBanner server={server}>
@@ -143,15 +151,15 @@ export function ServerHeader({ serverId }) {
 // ServerHeader.native.tsx - Mobile layout
 export function ServerHeader({ serverId }) {
   const { server, updateServer } = useServerHeader(serverId); // Same hook!
-  
+
   // ✅ Only UI logic specific to mobile
   const [activeTab, setActiveTab] = useState(0);
-  
+
   return (
     <View style={styles.mobileHeader}>
-      <ServerBanner server={server} />      {/* Separate from title */}
+      <ServerBanner server={server} /> {/* Separate from title */}
       <Text style={styles.title}>{server.name}</Text>
-      <MobileActions server={server} />     {/* Mobile-only features */}
+      <MobileActions server={server} /> {/* Mobile-only features */}
     </View>
   );
 }
@@ -166,29 +174,34 @@ export function ServerHeader({ serverId }) {
 <cite index="29-1">Business logic can bloat React components and make them difficult to test. Extracting them to hooks in combination with dependency injection can improve maintainability and testability.</cite>
 
 **🔄 Must Extract:**
+
 - **Data fetching**: API calls, WebSocket connections, caching
-- **Business rules**: Permissions, validation, calculations  
+- **Business rules**: Permissions, validation, calculations
 - **State management**: Data that represents business entities
 - **Side effects**: Analytics, notifications, external integrations
 
 **📝 Example:**
+
 ```tsx
 // ❌ Business logic mixed in component
 export function Channel({ channelId }) {
   const [messages, setMessages] = useState([]);
   const [permissions, setPermissions] = useState({});
-  
+
   // ❌ Extract this to hooks
   useEffect(() => {
     fetchMessages(channelId).then(setMessages);
     fetchPermissions(channelId).then(setPermissions);
   }, [channelId]);
-  
+
   const canDelete = (messageId) => {
     // ❌ Extract this business rule
-    return permissions.admin || messages.find(m => m.id === messageId)?.authorId === currentUser.id;
+    return (
+      permissions.admin ||
+      messages.find((m) => m.id === messageId)?.authorId === currentUser.id
+    );
   };
-  
+
   return <div>...</div>;
 }
 
@@ -196,27 +209,32 @@ export function Channel({ channelId }) {
 export function useChannelData(channelId) {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     fetchMessages(channelId)
       .then(setMessages)
       .finally(() => setIsLoading(false));
   }, [channelId]);
-  
+
   return { messages, isLoading };
 }
 
 export function useChannelPermissions(channelId, userId) {
   const [permissions, setPermissions] = useState({});
-  
+
   useEffect(() => {
     fetchPermissions(channelId, userId).then(setPermissions);
   }, [channelId, userId]);
-  
-  const canDelete = useCallback((messageId, authorId) => {
-    return permissions.admin || (authorId === userId && permissions.canDeleteOwn);
-  }, [permissions, userId]);
-  
+
+  const canDelete = useCallback(
+    (messageId, authorId) => {
+      return (
+        permissions.admin || (authorId === userId && permissions.canDeleteOwn)
+      );
+    },
+    [permissions, userId]
+  );
+
   return { permissions, canDelete };
 }
 
@@ -224,12 +242,12 @@ export function useChannelPermissions(channelId, userId) {
 export function Channel({ channelId }) {
   const { messages, isLoading } = useChannelData(channelId);
   const { canDelete } = useChannelPermissions(channelId, currentUser.id);
-  
+
   // Only UI logic remains
   if (isLoading) return <LoadingSpinner />;
-  
+
   return (
-    <MessageList 
+    <MessageList
       messages={messages}
       onDelete={(messageId, authorId) => canDelete(messageId, authorId)}
     />
@@ -240,40 +258,42 @@ export function Channel({ channelId }) {
 ### UI Logic: Keep in Components
 
 **✅ Keep in Components:**
+
 - **UI state**: Modal visibility, input values, scroll position, hover states
 - **Event handling**: Click handlers, form submissions, keyboard events
 - **UI calculations**: Show/hide logic, CSS classes, formatting for display
 - **Render logic**: Conditional rendering, data presentation
 
 **📝 Example:**
+
 ```tsx
 export function MessageInput({ onSend }) {
   // ✅ UI state - stays in component
   const [message, setMessage] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
-  
+
   // ✅ UI event handlers - stays in component
   const handleSubmit = () => {
     if (message.trim()) {
-      onSend(message);        // Business logic handled by parent
-      setMessage('');         // UI logic - clear input
+      onSend(message); // Business logic handled by parent
+      setMessage(''); // UI logic - clear input
       setShowEmojiPicker(false); // UI logic - hide picker
     }
   };
-  
+
   const handleEmojiSelect = (emoji) => {
-    setMessage(prev => prev + emoji);  // UI logic - update input
-    setShowEmojiPicker(false);         // UI logic - hide picker
+    setMessage((prev) => prev + emoji); // UI logic - update input
+    setShowEmojiPicker(false); // UI logic - hide picker
   };
-  
+
   // ✅ UI calculations - stays in component
   const showSendButton = message.trim().length > 0;
   const inputPlaceholder = isFocused ? '' : 'Type a message...';
-  
+
   return (
     <FlexRow gap="sm">
-      <Input 
+      <Input
         value={message}
         onChange={setMessage}
         placeholder={inputPlaceholder}
@@ -281,19 +301,17 @@ export function MessageInput({ onSend }) {
         onBlur={() => setIsFocused(false)}
         onEnter={handleSubmit}
       />
-      
-      <IconButton 
-        name="smile" 
+
+      <IconButton
+        name="smile"
         active={showEmojiPicker}
-        onClick={() => setShowEmojiPicker(!showEmojiPicker)} 
+        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
       />
-      
-      {showSendButton && (
-        <Button onClick={handleSubmit}>Send</Button>
-      )}
-      
+
+      {showSendButton && <Button onClick={handleSubmit}>Send</Button>}
+
       {showEmojiPicker && (
-        <EmojiPicker 
+        <EmojiPicker
           onEmojiSelect={handleEmojiSelect}
           onclose={() => setShowEmojiPicker(false)}
         />
@@ -308,44 +326,51 @@ export function MessageInput({ onSend }) {
 <cite index="29-1">Extract all the business logic into a new function in a new file that contains no code related to the UI or React (except for maybe the error messages that could be replaced by some kind of error codes).</cite>
 
 **📝 Example:**
+
 ```tsx
 // business/messageLogic.ts - Pure functions (no React dependencies)
 export function validateMessage(content: string, rules: ChannelRules) {
   if (!content.trim()) {
     return { valid: false, error: 'Message cannot be empty' };
   }
-  
+
   if (content.length > rules.maxLength) {
     return { valid: false, error: `Message too long (max ${rules.maxLength})` };
   }
-  
+
   if (containsProfanity(content)) {
     return { valid: false, error: 'Message contains inappropriate content' };
   }
-  
+
   return { valid: true };
 }
 
-export function calculatePermissions(user: User, channel: Channel): Permissions {
+export function calculatePermissions(
+  user: User,
+  channel: Channel
+): Permissions {
   if (user.globalRole === 'admin') return ALL_PERMISSIONS;
-  
-  const channelRole = channel.members.find(m => m.userId === user.id)?.role;
+
+  const channelRole = channel.members.find((m) => m.userId === user.id)?.role;
   return getRolePermissions(channelRole || 'member');
 }
 
 // hooks/useMessageValidation.ts - Hook uses pure functions
 export function useMessageValidation(channelId: string) {
   const [rules, setRules] = useState(null);
-  
+
   useEffect(() => {
     fetchChannelRules(channelId).then(setRules);
   }, [channelId]);
-  
-  const validate = useCallback((content: string) => {
-    if (!rules) return { valid: true };
-    return validateMessage(content, rules); // Uses pure function
-  }, [rules]);
-  
+
+  const validate = useCallback(
+    (content: string) => {
+      if (!rules) return { valid: true };
+      return validateMessage(content, rules); // Uses pure function
+    },
+    [rules]
+  );
+
   return { validate };
 }
 ```
@@ -364,34 +389,31 @@ import { useResponsiveLayout } from '../hooks/useResponsiveLayout';
 
 export function UserCard({ userId }) {
   const { isMobile, isTablet } = useResponsiveLayout();
-  
+
   // Shared business logic
   const { user, updateUser, isLoading } = useUser(userId);
-  
+
   // UI state specific to this component
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
-  
+
   if (isLoading) return <LoadingSpinner />;
-  
+
   return (
     <Card className={isMobile ? 'user-card-mobile' : 'user-card-desktop'}>
       <FlexRow gap={isMobile ? 'sm' : 'md'}>
-        <Avatar 
-          src={user.avatar} 
-          size={isMobile ? 'md' : 'lg'} 
-        />
-        
+        <Avatar src={user.avatar} size={isMobile ? 'md' : 'lg'} />
+
         <FlexColumn flex={1}>
           <Text size={isMobile ? 'lg' : 'xl'} weight="bold">
             {user.name}
           </Text>
-          
+
           {isMobile ? (
             // Mobile: Collapsible details
             <>
-              <Button 
-                variant="subtle" 
+              <Button
+                variant="subtle"
                 onClick={() => setIsExpanded(!isExpanded)}
               >
                 {isExpanded ? 'Show Less' : 'Show More'}
@@ -419,50 +441,50 @@ export function useChannelChat(channelId: string) {
   const [messages, setMessages] = useState([]);
   const [members, setMembers] = useState([]);
   const [typing, setTyping] = useState([]);
-  
+
   // All business logic: data fetching, WebSocket, etc.
   useEffect(() => {
     const ws = new WebSocket(`ws://api.com/channels/${channelId}`);
     ws.onmessage = handleMessage;
     return () => ws.close();
   }, [channelId]);
-  
-  const sendMessage = useCallback(async (content: string) => {
-    const message = await api.sendMessage(channelId, content);
-    setMessages(prev => [...prev, message]);
-  }, [channelId]);
-  
+
+  const sendMessage = useCallback(
+    async (content: string) => {
+      const message = await api.sendMessage(channelId, content);
+      setMessages((prev) => [...prev, message]);
+    },
+    [channelId]
+  );
+
   return { messages, members, typing, sendMessage };
 }
 
 // ChannelChat.web.tsx - Desktop: Sidebar layout
 export function ChannelChat({ channelId }) {
   const chat = useChannelChat(channelId); // Shared logic
-  
+
   // Desktop-specific UI state
   const [showMembersList, setShowMembersList] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState(null);
-  
+
   return (
     <FlexRow height="100vh">
       {/* Desktop: Always visible sidebar */}
-      <ChannelSidebar 
+      <ChannelSidebar
         members={chat.members}
         visible={showMembersList}
         onToggle={setShowMembersList}
       />
-      
+
       <FlexColumn flex={1}>
-        <MessageList 
+        <MessageList
           messages={chat.messages}
           onMessageSelect={setSelectedMessage}
           selectedMessage={selectedMessage}
         />
-        
-        <MessageInput 
-          onSend={chat.sendMessage}
-          typingUsers={chat.typing}
-        />
+
+        <MessageInput onSend={chat.sendMessage} typingUsers={chat.typing} />
       </FlexColumn>
     </FlexRow>
   );
@@ -471,36 +493,35 @@ export function ChannelChat({ channelId }) {
 // ChannelChat.native.tsx - Mobile: Stack navigation
 export function ChannelChat({ channelId, navigation }) {
   const chat = useChannelChat(channelId); // Same shared logic
-  
+
   // Mobile-specific UI state
   const [showActionSheet, setShowActionSheet] = useState(false);
-  
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: `# ${chat.channelName}`,
       headerRight: () => (
-        <IconButton 
+        <IconButton
           name="users"
-          onPress={() => navigation.navigate('ChannelMembers', { 
-            members: chat.members 
-          })}
+          onPress={() =>
+            navigation.navigate('ChannelMembers', {
+              members: chat.members,
+            })
+          }
         />
-      )
+      ),
     });
   }, [navigation, chat.channelName, chat.members]);
-  
+
   return (
     <View style={styles.container}>
-      <MessageList 
+      <MessageList
         messages={chat.messages}
         onLongPress={(message) => setShowActionSheet(message)}
       />
-      
-      <MessageInput 
-        onSend={chat.sendMessage}
-        typingUsers={chat.typing}
-      />
-      
+
+      <MessageInput onSend={chat.sendMessage} typingUsers={chat.typing} />
+
       {showActionSheet && (
         <ActionSheet
           message={showActionSheet}
@@ -523,7 +544,7 @@ export function useChannelData(channelId: string) {
 }
 
 export function useChannelPermissions(channelId: string, userId: string) {
-  // Permission checking logic  
+  // Permission checking logic
 }
 
 export function useChannelMessaging(channelId: string) {
@@ -540,12 +561,12 @@ export function useChannel(channelId: string) {
   const permissions = useChannelPermissions(channelId, currentUser.id);
   const messaging = useChannelMessaging(channelId);
   const presence = useChannelPresence(channelId);
-  
+
   return {
     ...data,
     ...permissions,
     ...messaging,
-    ...presence
+    ...presence,
   };
 }
 
@@ -553,7 +574,7 @@ export function useChannel(channelId: string) {
 export function SimpleComponent({ channelId }) {
   // Option A: Composed hook (simpler)
   const channel = useChannel(channelId);
-  
+
   return <ChannelView {...channel} />;
 }
 
@@ -561,7 +582,7 @@ export function AdvancedComponent({ channelId }) {
   // Option B: Individual hooks (more control)
   const { messages } = useChannelData(channelId);
   const { canDelete } = useChannelPermissions(channelId, currentUser.id);
-  
+
   return <AdvancedChannelView messages={messages} canDelete={canDelete} />;
 }
 ```
@@ -581,9 +602,9 @@ export function useResponsiveLayout() {
     isMobile: false,
     isTablet: false,
     isDesktop: true,
-    screenWidth: 0
+    screenWidth: 0,
   });
-  
+
   useEffect(() => {
     // React Native: Platform detection
     if (Platform.OS === 'ios' || Platform.OS === 'android') {
@@ -592,11 +613,11 @@ export function useResponsiveLayout() {
         isMobile: width < 768,
         isTablet: width >= 768 && width < 1024,
         isDesktop: width >= 1024,
-        screenWidth: width
+        screenWidth: width,
       });
       return;
     }
-    
+
     // Web: Window size detection
     const updateLayout = () => {
       const width = window.innerWidth;
@@ -604,15 +625,15 @@ export function useResponsiveLayout() {
         isMobile: width < 768,
         isTablet: width >= 768 && width < 1024,
         isDesktop: width >= 1024,
-        screenWidth: width
+        screenWidth: width,
       });
     };
-    
+
     updateLayout();
     window.addEventListener('resize', updateLayout);
     return () => window.removeEventListener('resize', updateLayout);
   }, []);
-  
+
   return layout;
 }
 ```
@@ -623,17 +644,31 @@ export function useResponsiveLayout() {
 
 ```tsx
 // ✅ Good: Focused, single-responsibility hooks
-export function useUserProfile(userId: string) { /* ... */ }
-export function useUserPermissions(userId: string) { /* ... */ }
-export function useUserPreferences(userId: string) { /* ... */ }
+export function useUserProfile(userId: string) {
+  /* ... */
+}
+export function useUserPermissions(userId: string) {
+  /* ... */
+}
+export function useUserPreferences(userId: string) {
+  /* ... */
+}
 
 // ❌ Bad: Kitchen sink hook
-export function useUserEverything(userId: string) { /* ... */ }
+export function useUserEverything(userId: string) {
+  /* ... */
+}
 
 // ✅ Good: Clear naming convention
-export function useChannelData(channelId: string) { /* ... */ }
-export function useChannelActions(channelId: string) { /* ... */ }
-export function useChannelRealtime(channelId: string) { /* ... */ }
+export function useChannelData(channelId: string) {
+  /* ... */
+}
+export function useChannelActions(channelId: string) {
+  /* ... */
+}
+export function useChannelRealtime(channelId: string) {
+  /* ... */
+}
 ```
 
 ### 3. Dependency Injection for Testing
@@ -643,7 +678,7 @@ export function useChannelRealtime(channelId: string) { /* ... */ }
 ```tsx
 // Pure business function with dependency injection
 export async function sendMessage(
-  channelId: string, 
+  channelId: string,
   content: string,
   dependencies: {
     api: ApiService;
@@ -652,10 +687,13 @@ export async function sendMessage(
   }
 ) {
   const { api, analytics, notifications } = dependencies;
-  
+
   try {
     const message = await api.sendMessage(channelId, content);
-    analytics.track('message_sent', { channelId, messageLength: content.length });
+    analytics.track('message_sent', {
+      channelId,
+      messageLength: content.length,
+    });
     return message;
   } catch (error) {
     notifications.showError('Failed to send message');
@@ -665,14 +703,17 @@ export async function sendMessage(
 
 // Hook provides dependencies
 export function useChannelMessaging(channelId: string) {
-  const sendMessageWithDeps = useCallback(async (content: string) => {
-    return sendMessage(channelId, content, {
-      api: apiService,
-      analytics: analyticsService,
-      notifications: notificationService
-    });
-  }, [channelId]);
-  
+  const sendMessageWithDeps = useCallback(
+    async (content: string) => {
+      return sendMessage(channelId, content, {
+        api: apiService,
+        analytics: analyticsService,
+        notifications: notificationService,
+      });
+    },
+    [channelId]
+  );
+
   return { sendMessage: sendMessageWithDeps };
 }
 
@@ -682,17 +723,17 @@ describe('sendMessage', () => {
     const mockApi = { sendMessage: jest.fn().mockResolvedValue({ id: '123' }) };
     const mockAnalytics = { track: jest.fn() };
     const mockNotifications = { showError: jest.fn() };
-    
+
     await sendMessage('channel-1', 'Hello', {
       api: mockApi,
       analytics: mockAnalytics,
-      notifications: mockNotifications
+      notifications: mockNotifications,
     });
-    
+
     expect(mockApi.sendMessage).toHaveBeenCalledWith('channel-1', 'Hello');
     expect(mockAnalytics.track).toHaveBeenCalledWith('message_sent', {
       channelId: 'channel-1',
-      messageLength: 5
+      messageLength: 5,
     });
   });
 });
@@ -706,34 +747,39 @@ describe('sendMessage', () => {
 export function useChannelData(channelId: string) {
   const [messages, setMessages] = useState([]);
   const [members, setMembers] = useState([]);
-  
+
   // Memoize expensive calculations
   const messagesByDate = useMemo(() => {
     return groupMessagesByDate(messages); // Expensive operation
   }, [messages]);
-  
+
   const onlineMembers = useMemo(() => {
-    return members.filter(member => member.isOnline);
+    return members.filter((member) => member.isOnline);
   }, [members]);
-  
+
   // Memoize callback functions
   const addMessage = useCallback((message: Message) => {
-    setMessages(prev => [...prev, message]);
+    setMessages((prev) => [...prev, message]);
   }, []);
-  
-  const updateMemberStatus = useCallback((userId: string, isOnline: boolean) => {
-    setMembers(prev => prev.map(member => 
-      member.id === userId ? { ...member, isOnline } : member
-    ));
-  }, []);
-  
+
+  const updateMemberStatus = useCallback(
+    (userId: string, isOnline: boolean) => {
+      setMembers((prev) =>
+        prev.map((member) =>
+          member.id === userId ? { ...member, isOnline } : member
+        )
+      );
+    },
+    []
+  );
+
   return {
     messages,
     messagesByDate,
     members,
     onlineMembers,
     addMessage,
-    updateMemberStatus
+    updateMemberStatus,
   };
 }
 ```
@@ -746,17 +792,17 @@ export function useChannelData(channelId: string) {
   const [messages, setMessages] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     let cancelled = false;
-    
+
     const fetchData = async () => {
       try {
         setError(null);
         setIsLoading(true);
-        
+
         const data = await api.fetchChannelMessages(channelId);
-        
+
         if (!cancelled) {
           setMessages(data.messages);
         }
@@ -770,14 +816,14 @@ export function useChannelData(channelId: string) {
         }
       }
     };
-    
+
     fetchData();
-    
+
     return () => {
       cancelled = true;
     };
   }, [channelId]);
-  
+
   return { messages, error, isLoading };
 }
 
@@ -787,21 +833,21 @@ export class ChannelErrorBoundary extends React.Component {
     super(props);
     this.state = { hasError: false, error: null };
   }
-  
+
   static getDerivedStateFromError(error) {
     return { hasError: true, error };
   }
-  
+
   render() {
     if (this.state.hasError) {
       return (
-        <ErrorFallback 
+        <ErrorFallback
           error={this.state.error}
           onRetry={() => this.setState({ hasError: false, error: null })}
         />
       );
     }
-    
+
     return this.props.children;
   }
 }
@@ -819,18 +865,18 @@ import { validateMessage, calculatePermissions } from './messageLogic';
 
 describe('validateMessage', () => {
   const rules = { maxLength: 100, allowProfanity: false };
-  
+
   it('should validate normal messages', () => {
     const result = validateMessage('Hello world', rules);
     expect(result.valid).toBe(true);
   });
-  
+
   it('should reject empty messages', () => {
     const result = validateMessage('   ', rules);
     expect(result.valid).toBe(false);
     expect(result.error).toBe('Message cannot be empty');
   });
-  
+
   it('should reject messages that are too long', () => {
     const longMessage = 'a'.repeat(101);
     const result = validateMessage(longMessage, rules);
@@ -849,40 +895,40 @@ import { useChannelData } from './useChannelData';
 
 // Mock API
 jest.mock('../services/api', () => ({
-  fetchChannelMessages: jest.fn()
+  fetchChannelMessages: jest.fn(),
 }));
 
 describe('useChannelData', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  
+
   it('should fetch channel data on mount', async () => {
     const mockMessages = [{ id: '1', content: 'Hello' }];
     api.fetchChannelMessages.mockResolvedValue({ messages: mockMessages });
-    
+
     const { result } = renderHook(() => useChannelData('channel-123'));
-    
+
     expect(result.current.isLoading).toBe(true);
-    
+
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
-    
+
     expect(result.current.messages).toEqual(mockMessages);
     expect(result.current.error).toBeNull();
   });
-  
+
   it('should handle errors gracefully', async () => {
     const error = new Error('Network error');
     api.fetchChannelMessages.mockRejectedValue(error);
-    
+
     const { result } = renderHook(() => useChannelData('channel-123'));
-    
+
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
-    
+
     expect(result.current.error).toBe('Network error');
     expect(result.current.messages).toEqual([]);
   });
@@ -899,33 +945,31 @@ import { ChannelChat } from './ChannelChat';
 // Mock hooks
 jest.mock('./hooks/useChannelChat', () => ({
   useChannelChat: () => ({
-    messages: [
-      { id: '1', content: 'Hello', author: { name: 'John' } }
-    ],
+    messages: [{ id: '1', content: 'Hello', author: { name: 'John' } }],
     sendMessage: jest.fn(),
-    members: [{ id: 'user1', name: 'John' }]
-  })
+    members: [{ id: 'user1', name: 'John' }],
+  }),
 }));
 
 describe('ChannelChat', () => {
   it('should render messages', () => {
     render(<ChannelChat channelId="channel-123" />);
-    
+
     expect(screen.getByText('Hello')).toBeInTheDocument();
     expect(screen.getByText('John')).toBeInTheDocument();
   });
-  
+
   it('should handle message sending', () => {
     const mockSendMessage = jest.fn();
-    
+
     render(<ChannelChat channelId="channel-123" />);
-    
+
     const input = screen.getByPlaceholderText('Type a message...');
     const sendButton = screen.getByRole('button', { name: /send/i });
-    
+
     fireEvent.change(input, { target: { value: 'New message' } });
     fireEvent.click(sendButton);
-    
+
     expect(mockSendMessage).toHaveBeenCalledWith('New message');
   });
 });
@@ -943,31 +987,31 @@ export function useServerHeader(serverId: string) {
   const [server, setServer] = useState(null);
   const [memberCount, setMemberCount] = useState(0);
   const [userRole, setUserRole] = useState('member');
-  
+
   useEffect(() => {
     Promise.all([
       fetchServer(serverId),
       fetchMemberCount(serverId),
-      fetchUserRole(serverId, currentUser.id)
+      fetchUserRole(serverId, currentUser.id),
     ]).then(([serverData, count, role]) => {
       setServer(serverData);
       setMemberCount(count);
       setUserRole(role);
     });
   }, [serverId]);
-  
+
   const canManageServer = userRole === 'admin' || userRole === 'moderator';
-  
+
   return { server, memberCount, userRole, canManageServer };
 }
 
 // ServerHeader.web.tsx - Desktop: Banner with embedded title
 export function ServerHeader({ serverId }) {
   const { server, memberCount, canManageServer } = useServerHeader(serverId);
-  
+
   return (
     <div className="relative">
-      <ServerBanner 
+      <ServerBanner
         imageUrl={server?.bannerUrl}
         className="h-32 bg-gradient-to-r from-purple-500 to-blue-500"
       >
@@ -976,15 +1020,13 @@ export function ServerHeader({ serverId }) {
           <Text className="text-white text-2xl font-bold drop-shadow-lg">
             {server?.name}
           </Text>
-          <Text className="text-white/80 text-sm">
-            {memberCount} members
-          </Text>
+          <Text className="text-white/80 text-sm">{memberCount} members</Text>
         </div>
-        
+
         {canManageServer && (
           <div className="absolute top-4 right-4">
-            <IconButton 
-              name="cog" 
+            <IconButton
+              name="cog"
               variant="ghost"
               className="text-white hover:bg-white/20"
               onClick={() => openServerSettings(serverId)}
@@ -999,28 +1041,28 @@ export function ServerHeader({ serverId }) {
 // ServerHeader.native.tsx - Mobile: Stacked layout with fixed header
 export function ServerHeader({ serverId }) {
   const { server, memberCount, canManageServer } = useServerHeader(serverId);
-  
+
   return (
     <View style={styles.container}>
       {/* Mobile: Banner separate from title */}
-      <ServerBanner 
-        imageUrl={server?.bannerUrl}
-        style={styles.banner}
-      />
-      
+      <ServerBanner imageUrl={server?.bannerUrl} style={styles.banner} />
+
       {/* Mobile: Title below banner with actions */}
       <View style={styles.titleSection}>
         <View style={styles.titleContainer}>
           <Text style={styles.serverName}>{server?.name}</Text>
           <Text style={styles.memberCount}>{memberCount} members</Text>
         </View>
-        
+
         {/* Mobile-specific action buttons */}
         <FlexRow gap="sm">
           <IconButton name="search" onPress={() => openSearch(serverId)} />
           <IconButton name="users" onPress={() => openMembersList(serverId)} />
           {canManageServer && (
-            <IconButton name="cog" onPress={() => openServerSettings(serverId)} />
+            <IconButton
+              name="cog"
+              onPress={() => openServerSettings(serverId)}
+            />
           )}
         </FlexRow>
       </View>
@@ -1068,50 +1110,62 @@ const styles = StyleSheet.create({
 export function useMessage(messageId: string) {
   const [message, setMessage] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   useEffect(() => {
     fetchMessage(messageId)
       .then(setMessage)
       .finally(() => setIsLoading(false));
   }, [messageId]);
-  
-  const updateMessage = useCallback(async (newContent: string) => {
-    const updated = await api.updateMessage(messageId, newContent);
-    setMessage(updated);
-    return updated;
-  }, [messageId]);
-  
+
+  const updateMessage = useCallback(
+    async (newContent: string) => {
+      const updated = await api.updateMessage(messageId, newContent);
+      setMessage(updated);
+      return updated;
+    },
+    [messageId]
+  );
+
   const deleteMessage = useCallback(async () => {
     await api.deleteMessage(messageId);
     setMessage(null);
   }, [messageId]);
-  
+
   return { message, isLoading, updateMessage, deleteMessage };
 }
 
 // hooks/useMessageActions.ts - Message actions logic
 export function useMessageActions(messageId: string) {
   const { canEdit, canDelete } = useMessagePermissions(messageId);
-  
+
   const actions = useMemo(() => {
     const availableActions = [];
-    
+
     availableActions.push({ id: 'reply', label: 'Reply', icon: 'reply' });
-    availableActions.push({ id: 'react', label: 'Add Reaction', icon: 'smile' });
-    
+    availableActions.push({
+      id: 'react',
+      label: 'Add Reaction',
+      icon: 'smile',
+    });
+
     if (canEdit) {
       availableActions.push({ id: 'edit', label: 'Edit', icon: 'edit' });
     }
-    
+
     if (canDelete) {
-      availableActions.push({ id: 'delete', label: 'Delete', icon: 'trash', danger: true });
+      availableActions.push({
+        id: 'delete',
+        label: 'Delete',
+        icon: 'trash',
+        danger: true,
+      });
     }
-    
+
     availableActions.push({ id: 'copy', label: 'Copy Link', icon: 'link' });
-    
+
     return availableActions;
   }, [canEdit, canDelete]);
-  
+
   return { actions };
 }
 
@@ -1120,26 +1174,26 @@ export function Message({ messageId }) {
   const { isMobile } = useResponsiveLayout();
   const { message, isLoading } = useMessage(messageId);
   const { actions } = useMessageActions(messageId);
-  
+
   // UI state
   const [showActions, setShowActions] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  
+
   if (isLoading) return <MessageSkeleton />;
   if (!message) return null;
-  
+
   const shouldShowActions = isMobile ? showActions : isHovered;
-  
+
   return (
-    <FlexRow 
-      gap="md" 
+    <FlexRow
+      gap="md"
       className="message group"
       onMouseEnter={() => !isMobile && setIsHovered(true)}
       onMouseLeave={() => !isMobile && setIsHovered(false)}
       onLongPress={() => isMobile && setShowActions(true)}
     >
       <Avatar src={message.author.avatar} size="md" />
-      
+
       <FlexColumn flex={1} gap="xs">
         <FlexRow gap="sm" align="center">
           <Text weight="semibold" size="sm">
@@ -1149,17 +1203,17 @@ export function Message({ messageId }) {
             {formatTimestamp(message.createdAt)}
           </Text>
         </FlexRow>
-        
+
         <Text>{message.content}</Text>
-        
+
         {message.reactions?.length > 0 && (
           <MessageReactions reactions={message.reactions} />
         )}
       </FlexColumn>
-      
+
       {/* Actions appear on hover (desktop) or long press (mobile) */}
       {shouldShowActions && (
-        <MessageActionsMenu 
+        <MessageActionsMenu
           actions={actions}
           onAction={(actionId) => {
             handleAction(actionId, message);
@@ -1186,69 +1240,78 @@ export interface ValidationRule {
   custom?: (value: any) => boolean;
 }
 
-export function validateField(value: any, rules: ValidationRule): ValidationResult {
+export function validateField(
+  value: any,
+  rules: ValidationRule
+): ValidationResult {
   if (rules.required && (!value || value.toString().trim() === '')) {
     return { valid: false, error: 'This field is required' };
   }
-  
+
   if (rules.minLength && value.length < rules.minLength) {
     return { valid: false, error: `Minimum length is ${rules.minLength}` };
   }
-  
+
   if (rules.maxLength && value.length > rules.maxLength) {
     return { valid: false, error: `Maximum length is ${rules.maxLength}` };
   }
-  
+
   if (rules.pattern && !rules.pattern.test(value)) {
     return { valid: false, error: 'Invalid format' };
   }
-  
+
   if (rules.custom && !rules.custom(value)) {
     return { valid: false, error: 'Invalid value' };
   }
-  
+
   return { valid: true };
 }
 
 // hooks/useForm.ts - Form state management
-export function useForm<T>(initialValues: T, validationRules: Record<keyof T, ValidationRule>) {
+export function useForm<T>(
+  initialValues: T,
+  validationRules: Record<keyof T, ValidationRule>
+) {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState<Record<keyof T, string>>({});
   const [touched, setTouched] = useState<Record<keyof T, boolean>>({});
-  
+
   const validateForm = useCallback(() => {
     const newErrors = {} as Record<keyof T, string>;
     let isValid = true;
-    
-    Object.keys(validationRules).forEach(field => {
+
+    Object.keys(validationRules).forEach((field) => {
       const fieldKey = field as keyof T;
       const result = validateField(values[fieldKey], validationRules[fieldKey]);
-      
+
       if (!result.valid) {
         newErrors[fieldKey] = result.error;
         isValid = false;
       }
     });
-    
+
     setErrors(newErrors);
     return isValid;
   }, [values, validationRules]);
-  
+
   const setValue = useCallback((field: keyof T, value: any) => {
-    setValues(prev => ({ ...prev, [field]: value }));
-    setTouched(prev => ({ ...prev, [field]: true }));
+    setValues((prev) => ({ ...prev, [field]: value }));
+    setTouched((prev) => ({ ...prev, [field]: true }));
   }, []);
-  
-  const handleSubmit = useCallback((onSubmit: (values: T) => void) => {
-    return (e?: React.FormEvent) => {
-      e?.preventDefault();
-      
-      if (validateForm()) {
-        onSubmit(values);
-      }
-    };
-  }, [values, validateForm]);
-  
+
+  const handleSubmit = useCallback(
+    (onSubmit: (values: T) => void) => {
+      return (e?: React.FormEvent) => {
+        e?.preventDefault();
+
+        if (validateForm()) {
+          onSubmit(values);
+        }
+      };
+    },
+    [values, validateForm]
+  );
+
   return {
     values,
     errors,
@@ -1256,7 +1319,7 @@ export function useForm<T>(initialValues: T, validationRules: Record<keyof T, Va
     setValue,
     validateForm,
     handleSubmit,
-    isValid: Object.keys(errors).length === 0
+    isValid: Object.keys(errors).length === 0,
   };
 }
 
@@ -1266,10 +1329,10 @@ export function CreateChannelForm({ onSubmit, onCancel }) {
     { name: '', description: '', isPrivate: false },
     {
       name: { required: true, minLength: 1, maxLength: 50 },
-      description: { maxLength: 500 }
+      description: { maxLength: 500 },
     }
   );
-  
+
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       <FlexColumn gap="md">
@@ -1281,7 +1344,7 @@ export function CreateChannelForm({ onSubmit, onCancel }) {
           placeholder="Enter channel name"
           required
         />
-        
+
         <TextAreaField
           label="Description"
           value={form.values.description}
@@ -1290,20 +1353,20 @@ export function CreateChannelForm({ onSubmit, onCancel }) {
           placeholder="Optional description"
           rows={3}
         />
-        
+
         <SwitchField
           label="Private Channel"
           description="Only invited members can see this channel"
           checked={form.values.isPrivate}
           onChange={(checked) => form.setValue('isPrivate', checked)}
         />
-        
+
         <FlexRow gap="sm" justify="end">
           <Button variant="subtle" onClick={onCancel}>
             Cancel
           </Button>
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={!form.isValid}
             loading={form.isSubmitting}
           >
@@ -1326,32 +1389,35 @@ export function CreateChannelForm({ onSubmit, onCancel }) {
 // Heavy computation memoization
 export function useChannelAnalytics(channelId: string) {
   const { messages } = useChannelData(channelId);
-  
+
   // Expensive calculations - memoize them
   const analytics = useMemo(() => {
     const messageCount = messages.length;
     const userActivity = calculateUserActivity(messages); // Expensive
     const timeDistribution = calculateTimeDistribution(messages); // Expensive
     const popularEmojis = extractPopularEmojis(messages); // Expensive
-    
+
     return {
       messageCount,
       userActivity,
       timeDistribution,
-      popularEmojis
+      popularEmojis,
     };
   }, [messages]);
-  
+
   return analytics;
 }
 
 // Callback memoization to prevent child re-renders
 export function MessageList({ messages, onMessageAction }) {
   // Memoize the callback to prevent MessageItem re-renders
-  const handleMessageAction = useCallback((messageId: string, action: string) => {
-    onMessageAction(messageId, action);
-  }, [onMessageAction]);
-  
+  const handleMessageAction = useCallback(
+    (messageId: string, action: string) => {
+      onMessageAction(messageId, action);
+    },
+    [onMessageAction]
+  );
+
   return (
     <VirtualList
       data={messages}
@@ -1375,36 +1441,37 @@ export function useVirtualizedMessages(channelId: string) {
   const [messages, setMessages] = useState([]);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const loadMoreMessages = useCallback(async () => {
     if (isLoading || !hasMore) return;
-    
+
     setIsLoading(true);
     try {
       const response = await api.fetchMessages(channelId, {
         before: messages[0]?.id,
-        limit: 50
+        limit: 50,
       });
-      
-      setMessages(prev => [...response.messages, ...prev]);
+
+      setMessages((prev) => [...response.messages, ...prev]);
       setHasMore(response.hasMore);
     } finally {
       setIsLoading(false);
     }
   }, [channelId, messages, isLoading, hasMore]);
-  
+
   return { messages, hasMore, isLoading, loadMoreMessages };
 }
 
 // MessageList with virtualization
 export function MessageList({ channelId }) {
-  const { messages, hasMore, loadMoreMessages } = useVirtualizedMessages(channelId);
-  
+  const { messages, hasMore, loadMoreMessages } =
+    useVirtualizedMessages(channelId);
+
   return (
     <VirtualList
       data={messages}
       renderItem={({ item, index }) => (
-        <MessageItem 
+        <MessageItem
           message={item}
           isFirstMessage={index === 0}
           isLastMessage={index === messages.length - 1}
@@ -1416,7 +1483,7 @@ export function MessageList({ channelId }) {
       getItemLayout={(data, index) => ({
         length: 60, // Estimated message height
         offset: 60 * index,
-        index
+        index,
       })}
     />
   );
@@ -1434,21 +1501,21 @@ const FileUploadDialog = lazy(() => import('./FileUploadDialog'));
 export function ChatInterface() {
   const [showSettings, setShowSettings] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  
+
   return (
     <div>
       <ChatMessages />
       <MessageInput onEmojiClick={() => setShowEmojiPicker(true)} />
-      
+
       {/* Lazy load modals only when needed */}
       <Suspense fallback={<ModalSkeleton />}>
         {showSettings && (
-          <UserSettingsModal 
+          <UserSettingsModal
             visible={showSettings}
             onClose={() => setShowSettings(false)}
           />
         )}
-        
+
         {showEmojiPicker && (
           <EmojiPicker
             visible={showEmojiPicker}
@@ -1473,20 +1540,16 @@ export function ChatInterface() {
 export function Channel({ channelId }) {
   const [messages, setMessages] = useState([]);
   const [members, setMembers] = useState([]);
-  
+
   useEffect(() => {
     // 100+ lines of business logic
   }, [channelId]);
-  
+
   const handleSendMessage = async (content) => {
     // 50+ lines of business logic
   };
-  
-  return (
-    <div>
-      {/* 200+ lines of JSX */}
-    </div>
-  );
+
+  return <div>{/* 200+ lines of JSX */}</div>;
 }
 
 // After Phase 1: Logic extracted to hooks
@@ -1494,26 +1557,22 @@ export function Channel({ channelId }) {
   // ✅ Business logic extracted
   const { messages, members } = useChannelData(channelId);
   const { sendMessage } = useChannelMessaging(channelId);
-  
-  return (
-    <div>
-      {/* Same JSX, but now using shared logic */}
-    </div>
-  );
+
+  return <div>{/* Same JSX, but now using shared logic */}</div>;
 }
 
 // Phase 2: Create platform-specific versions if needed
 // Channel.web.tsx
 export function Channel({ channelId }) {
   const channelLogic = useChannel(channelId);
-  
+
   return <DesktopChannelLayout {...channelLogic} />;
 }
 
 // Channel.native.tsx
 export function Channel({ channelId }) {
   const channelLogic = useChannel(channelId); // Same logic!
-  
+
   return <MobileChannelLayout {...channelLogic} />;
 }
 ```
@@ -1524,12 +1583,12 @@ export function Channel({ channelId }) {
 // Gradual rollout using feature flags
 export function UserProfile({ userId }) {
   const { useNewArchitecture } = useFeatureFlags();
-  
+
   if (useNewArchitecture) {
     // New: Uses extracted hooks and shared logic
     return <UserProfileV2 userId={userId} />;
   }
-  
+
   // Old: Legacy implementation
   return <UserProfileV1 userId={userId} />;
 }
@@ -1538,9 +1597,9 @@ export function UserProfile({ userId }) {
 export function UserProfileV2({ userId }) {
   const { user, updateUser } = useUser(userId);
   const { permissions } = useUserPermissions(userId);
-  
+
   return (
-    <UserProfileLayout 
+    <UserProfileLayout
       user={user}
       permissions={permissions}
       onUpdate={updateUser}
@@ -1556,10 +1615,10 @@ export function UserProfileV2({ userId }) {
 export function LegacyChannelWrapper({ channelId }) {
   // Extract logic gradually
   const { messages } = useChannelData(channelId);
-  
+
   // Keep using legacy component with new data
   return (
-    <LegacyChannel 
+    <LegacyChannel
       channelId={channelId}
       messages={messages} // New: From hook
       // Other props passed through from legacy usage
@@ -1570,7 +1629,7 @@ export function LegacyChannelWrapper({ channelId }) {
 // Eventually replace entirely
 export function Channel({ channelId }) {
   const channelLogic = useChannel(channelId);
-  
+
   return <NewChannelLayout {...channelLogic} />;
 }
 ```
@@ -1594,4 +1653,4 @@ The investment in proper architecture pays dividends in **maintainability**, **t
 
 ---
 
-*This guide synthesizes best practices from React, React Native, and cross-platform development communities. Continue refining these patterns based on your specific application needs and user feedback.*
+_This guide synthesizes best practices from React, React Native, and cross-platform development communities. Continue refining these patterns based on your specific application needs and user feedback._

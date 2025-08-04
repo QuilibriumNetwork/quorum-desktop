@@ -12,9 +12,12 @@ export const useGroupEditor = (spaceId: string) => {
     openGroupEditor(spaceId);
   }, [openGroupEditor, spaceId]);
 
-  const openEditGroupEditor = useCallback((groupName: string) => {
-    openGroupEditor(spaceId, groupName);
-  }, [openGroupEditor, spaceId]);
+  const openEditGroupEditor = useCallback(
+    (groupName: string) => {
+      openGroupEditor(spaceId, groupName);
+    },
+    [openGroupEditor, spaceId]
+  );
 
   return {
     openNewGroupEditor,

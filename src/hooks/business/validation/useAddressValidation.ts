@@ -13,29 +13,33 @@ interface AddressValidationResult {
 }
 
 export const useAddressValidation = (address: string) => {
-  const [validationResult, setValidationResult] = useState<AddressValidationResult>({
-    isValid: false,
-    error: null,
-    isRegistered: false,
-    isOwnAddress: false,
-    isValidating: false,
-  });
+  const [validationResult, setValidationResult] =
+    useState<AddressValidationResult>({
+      isValid: false,
+      error: null,
+      isRegistered: false,
+      isOwnAddress: false,
+      isValidating: false,
+    });
 
   const { apiClient } = useQuorumApiClient();
   const { currentPasskeyInfo } = usePasskeysContext();
   const ownAddress = currentPasskeyInfo?.address;
 
-  const lookupUser = useCallback(async (addressToLookup: string): Promise<boolean> => {
-    setValidationResult(prev => ({ ...prev, isValidating: true }));
-    try {
-      await apiClient.getUser(addressToLookup);
-      return true;
-    } catch (e) {
-      return false;
-    } finally {
-      setValidationResult(prev => ({ ...prev, isValidating: false }));
-    }
-  }, [apiClient]);
+  const lookupUser = useCallback(
+    async (addressToLookup: string): Promise<boolean> => {
+      setValidationResult((prev) => ({ ...prev, isValidating: true }));
+      try {
+        await apiClient.getUser(addressToLookup);
+        return true;
+      } catch (e) {
+        return false;
+      } finally {
+        setValidationResult((prev) => ({ ...prev, isValidating: false }));
+      }
+    },
+    [apiClient]
+  );
 
   useEffect(() => {
     // Reset validation state

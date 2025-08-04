@@ -32,7 +32,9 @@
 
   &:focus {
     outline: none;
-    border-color: var(--color-field-border-focus) !important; // Show accent border on focus, override hover
+    border-color: var(
+      --color-field-border-focus
+    ) !important; // Show accent border on focus, override hover
     background-color: var(--color-field-bg-focus);
     box-shadow: 0 0 0 3px var(--color-field-focus-shadow); // Keep focus glow
   }
@@ -42,12 +44,12 @@
     cursor: not-allowed;
     background-color: var(--color-field-bg) !important;
     border-color: transparent !important;
-    
+
     &:hover {
       background-color: var(--color-field-bg) !important;
       border-color: transparent !important;
     }
-    
+
     &:focus {
       border-color: transparent !important;
       box-shadow: none !important;
@@ -65,7 +67,9 @@
     }
 
     &:focus {
-      border-color: var(--color-field-border-focus) !important; // Override hover state
+      border-color: var(
+        --color-field-border-focus
+      ) !important; // Override hover state
       background-color: var(--color-field-bg-focus); // Same bg as default
       box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
     }
@@ -73,12 +77,14 @@
     &:disabled {
       border-color: var(--color-field-border) !important;
       background-color: var(--color-field-bg) !important; // Same bg as default
-      
+
       &:hover {
         border-color: var(--color-field-border) !important;
-        background-color: var(--color-field-bg) !important; // Same bg as default
+        background-color: var(
+          --color-field-bg
+        ) !important; // Same bg as default
       }
-      
+
       &:focus {
         border-color: var(--color-field-border) !important;
         box-shadow: none !important;
@@ -153,12 +159,12 @@
     cursor: not-allowed;
     background-color: #ffffff !important;
     border-color: transparent !important;
-    
+
     &:hover {
       background-color: #ffffff !important;
       border-color: transparent !important;
     }
-    
+
     &:focus {
       border-color: transparent !important;
       box-shadow: none !important;

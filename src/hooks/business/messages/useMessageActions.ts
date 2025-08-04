@@ -30,28 +30,32 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null);
 
   // Calculate if user can delete this message
-  const canUserDelete = message.content.senderId === userAddress || Boolean(canDeleteMessages);
+  const canUserDelete =
+    message.content.senderId === userAddress || Boolean(canDeleteMessages);
 
   // Handle reaction submission
-  const handleReaction = useCallback((emoji: string) => {
-    const hasReacted = message.reactions
-      ?.find((r) => r.emojiId === emoji)
-      ?.memberIds.includes(userAddress);
+  const handleReaction = useCallback(
+    (emoji: string) => {
+      const hasReacted = message.reactions
+        ?.find((r) => r.emojiId === emoji)
+        ?.memberIds.includes(userAddress);
 
-    if (!hasReacted) {
-      onSubmitMessage({
-        type: 'reaction',
-        messageId: message.messageId,
-        reaction: emoji,
-      });
-    } else {
-      onSubmitMessage({
-        type: 'remove-reaction',
-        messageId: message.messageId,
-        reaction: emoji,
-      });
-    }
-  }, [message, userAddress, onSubmitMessage]);
+      if (!hasReacted) {
+        onSubmitMessage({
+          type: 'reaction',
+          messageId: message.messageId,
+          reaction: emoji,
+        });
+      } else {
+        onSubmitMessage({
+          type: 'remove-reaction',
+          messageId: message.messageId,
+          reaction: emoji,
+        });
+      }
+    },
+    [message, userAddress, onSubmitMessage]
+  );
 
   // Handle reply action
   const handleReply = useCallback(() => {
@@ -78,18 +82,21 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   }, [message.messageId, onSubmitMessage]);
 
   // Handle more reactions (emoji picker)
-  const handleMoreReactions = useCallback((clientY: number) => {
-    onSetEmojiPickerOpen(message.messageId);
-    onSetEmojiPickerDirection(
-      clientY / height > 0.5 ? 'upwards' : 'downwards'
-    );
-  }, [message.messageId, height, onSetEmojiPickerOpen, onSetEmojiPickerDirection]);
+  const handleMoreReactions = useCallback(
+    (clientY: number) => {
+      onSetEmojiPickerOpen(message.messageId);
+      onSetEmojiPickerDirection(
+        clientY / height > 0.5 ? 'upwards' : 'downwards'
+      );
+    },
+    [message.messageId, height, onSetEmojiPickerOpen, onSetEmojiPickerDirection]
+  );
 
   return {
     // State
     copiedLinkId,
     canUserDelete,
-    
+
     // Actions
     handleReaction,
     handleReply,

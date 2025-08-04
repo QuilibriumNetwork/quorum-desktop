@@ -16,7 +16,8 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
   onClose,
 }) => {
   const { data: space } = useSpace({ spaceId });
-  const { confirmationStep, handleLeaveClick, resetConfirmation } = useSpaceLeaving();
+  const { confirmationStep, handleLeaveClick, resetConfirmation } =
+    useSpaceLeaving();
 
   // Reset confirmation when modal closes
   React.useEffect(() => {
@@ -26,21 +27,18 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
   }, [visible, resetConfirmation]);
 
   return (
-    <Modal 
-      visible={visible} 
-      onClose={onClose} 
-      title={t`Leave ${space?.spaceName || 'Space'}`} 
+    <Modal
+      visible={visible}
+      onClose={onClose}
+      title={t`Leave ${space?.spaceName || 'Space'}`}
       size="small"
     >
       <Container width="full" maxWidth="400px" margin="auto">
         <Container margin="none" className="mb-6 text-left max-sm:text-center">
-          <Text 
-            size="sm" 
-            variant="subtle"
-          >
+          <Text size="sm" variant="subtle">
             <Trans>
-              Are you sure you want to leave this Space? You won't be able
-              to rejoin unless you are re-invited.
+              Are you sure you want to leave this Space? You won't be able to
+              rejoin unless you are re-invited.
             </Trans>
           </Text>
         </Container>

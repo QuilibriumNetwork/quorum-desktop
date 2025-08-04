@@ -1,6 +1,6 @@
 /**
  * Platform detection utilities for future React Native compatibility
- * 
+ *
  * Since we're currently a web-only app, these return web values.
  * When we add React Native, we'll update this to use Platform from react-native.
  */
@@ -27,6 +27,8 @@ export function platformSelect<T>(options: {
 export const Platform = {
   OS: 'web' as const,
   select: <T>(specifics: { web?: T; ios?: T; android?: T; default?: T }): T => {
-    return specifics.web ?? specifics.default ?? (Object.values(specifics)[0] as T);
-  }
+    return (
+      specifics.web ?? specifics.default ?? (Object.values(specifics)[0] as T)
+    );
+  },
 };

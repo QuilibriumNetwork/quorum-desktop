@@ -2,7 +2,14 @@ import * as React from 'react';
 import DirectMessageContact from './DirectMessageContact';
 import './DirectMessageContactsList.scss';
 import { Trans } from '@lingui/react/macro';
-import { Button, Container, FlexRow, FlexColumn, FlexBetween, Icon } from '../primitives';
+import {
+  Button,
+  Container,
+  FlexRow,
+  FlexColumn,
+  FlexBetween,
+  Icon,
+} from '../primitives';
 import { useModalContext } from '../context/ModalProvider';
 import { useConversationPolling } from '../../hooks';
 

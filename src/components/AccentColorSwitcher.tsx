@@ -6,10 +6,10 @@ import { isNative } from '../utils/platform';
 const AccentColorSwitcher: React.FC = () => {
   const { activeAccent, setAccent, availableColors } = useAccentColor();
   const { isMobile } = useResponsiveLayout();
-  
+
   // Native apps always use medium size for better touch targets
   // Web apps use responsive sizing based on viewport
-  const swatchSize = isNative ? 'medium' : (isMobile ? 'medium' : 'large');
+  const swatchSize = isNative ? 'medium' : isMobile ? 'medium' : 'large';
 
   return (
     <FlexRow gap={3}>

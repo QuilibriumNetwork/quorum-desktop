@@ -16,7 +16,7 @@ Brave browser exhibits intermittent "Invalid hook call" errors that prevent the 
 ```
 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
 1. You might have mismatching versions of React and the renderer (such as React DOM)
-2. You might be breaking the Rules of Hooks  
+2. You might be breaking the Rules of Hooks
 3. You might have more than one copy of React in the same app
 
 chunk-YMK7XHJB.js?v=0d8c5ba4:1347 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
@@ -44,6 +44,7 @@ chunk-YMK7XHJB.js?v=0d8c5ba4:1347 Uncaught TypeError: Cannot read properties of 
 **Approach**: Replace direct exports with factory functions to lazy-load hooks.
 
 **Implementation**:
+
 ```typescript
 // Before (Direct Exports)
 export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
@@ -62,11 +63,15 @@ export const createCrossPlatformThemeProvider = () => {
 **Approach**: Provide both direct exports (for mobile) and factory functions (for web).
 
 **Implementation**:
+
 ```typescript
 // Direct exports for mobile development (React Native compatible)
-export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme/ThemeProvider';
+export {
+  CrossPlatformThemeProvider,
+  useCrossPlatformTheme,
+} from './theme/ThemeProvider';
 
-// Factory functions for web development (fixes Brave browser hook errors) 
+// Factory functions for web development (fixes Brave browser hook errors)
 export const createCrossPlatformThemeProvider = () => {
   const { CrossPlatformThemeProvider } = require('./theme/ThemeProvider');
   return CrossPlatformThemeProvider;
@@ -80,10 +85,16 @@ export const createCrossPlatformThemeProvider = () => {
 **Approach**: Use environment detection with React.lazy() for web, direct exports for React Native.
 
 **Implementation**:
+
 ```typescript
-export const CrossPlatformThemeProvider = typeof window !== 'undefined' 
-  ? lazy(() => import('./ThemeProvider').then(m => ({ default: m.CrossPlatformThemeProvider })))
-  : require('./ThemeProvider').CrossPlatformThemeProvider;
+export const CrossPlatformThemeProvider =
+  typeof window !== 'undefined'
+    ? lazy(() =>
+        import('./ThemeProvider').then((m) => ({
+          default: m.CrossPlatformThemeProvider,
+        }))
+      )
+    : require('./ThemeProvider').CrossPlatformThemeProvider;
 ```
 
 **Result**: **Still experiencing hook errors** in Brave. Lazy loading doesn't solve the core module loading issue.
@@ -95,7 +106,7 @@ export const CrossPlatformThemeProvider = typeof window !== 'undefined'
 Based on web search research:
 
 1. **Context API + Custom Hooks** - Most recommended pattern for React Native Web theming
-2. **CSS-in-JS libraries** (Styled Components, Emotion) for theme implementation  
+2. **CSS-in-JS libraries** (Styled Components, Emotion) for theme implementation
 3. **Component libraries with built-in theming** (React Native Paper, UI Kitten)
 4. **Factory functions NOT commonly mentioned** for theming solutions
 
@@ -110,11 +121,13 @@ Research confirms the "Invalid hook call" error is typically caused by:
 ## Current Status
 
 ### Browser Compatibility
+
 - ❌ **Brave**: Intermittent hook errors, **non-deterministic behavior**
 - ✅ **Chrome**: Consistently works
 - ✅ **Production**: No issues reported
 
 ### Development Impact
+
 - **Low-Medium Impact**: Brave users may need to refresh or clear cache occasionally
 - **Workaround Available**: Use Chrome for development or clear Vite cache
 - **Non-blocking**: Does not affect production or core functionality
@@ -122,6 +135,7 @@ Research confirms the "Invalid hook call" error is typically caused by:
 ## Current Architecture
 
 ### Theme System Structure
+
 ```
 src/components/primitives/
 ├── index.ts                    # Environment-aware exports
@@ -133,6 +147,7 @@ src/components/primitives/
 ```
 
 ### Mobile Playground
+
 - ✅ **Working**: All mobile playground functionality preserved
 - ✅ **Mirrors Main App**: Uses same export structure as main app
 - ✅ **React Native Compatible**: Direct exports work without issues
@@ -140,19 +155,21 @@ src/components/primitives/
 ## Potential Solutions (Not Yet Attempted)
 
 ### 1. Vite Configuration Approach
+
 ```javascript
 // vite.config.js
 export default {
   resolve: {
     alias: {
-      'react': path.resolve('./node_modules/react'),
-      'react-dom': path.resolve('./node_modules/react-dom')
-    }
-  }
-}
+      react: path.resolve('./node_modules/react'),
+      'react-dom': path.resolve('./node_modules/react-dom'),
+    },
+  },
+};
 ```
 
 ### 2. React Instance Deduplication
+
 ```javascript
 // webpack.config.js or vite equivalent
 module.exports = {
@@ -165,6 +182,7 @@ module.exports = {
 ```
 
 ### 3. SDK Architecture Changes
+
 - Move React to peer dependencies in SDK
 - Eliminate duplicate React instances entirely
 - Implement proper module federation configuration
@@ -172,6 +190,7 @@ module.exports = {
 ## Decision: Leave As-Is
 
 **Rationale**:
+
 1. **Non-deterministic issue** suggests deeper browser/bundler compatibility problem
 2. **Multiple solutions attempted** without complete resolution
 3. **Low priority** - affects only Brave development experience
@@ -183,26 +202,31 @@ module.exports = {
 ## Files Modified During Investigation
 
 ### Core Architecture Files
+
 - `src/components/primitives/index.ts` - Multiple export pattern attempts
-- `src/components/primitives/theme/index.ts` - Conditional exports implementation  
+- `src/components/primitives/theme/index.ts` - Conditional exports implementation
 - `src/components/primitives/Select/Select.web.tsx` - Removed unused imports
 
 ### Mobile Playground (Working)
+
 - `src/dev/playground/mobile/components/primitives/index.ts` - Mirrors main app
 - `src/dev/playground/mobile/components/primitives/theme/index.ts` - Environment-aware exports
 - Mobile components working with direct theme imports
 
 ### Investigation Documentation
+
 - `.readme/bugs/brave-browser-react-hook-errors-ONGOING.md` - This file
 
 ## Long-Term Recommendations
 
 ### High Priority (If Issue Becomes Blocking)
+
 1. **Deep-dive Vite configuration** for React instance management
 2. **SDK refactoring** to eliminate duplicate React dependencies
 3. **Module federation configuration** review
 
 ### Low Priority (Nice to Have)
+
 1. **Browser compatibility testing** across all major browsers
 2. **Performance analysis** of lazy loading vs direct exports
 3. **Alternative theming libraries** evaluation (React Native Paper, etc.)
@@ -229,9 +253,10 @@ Given the **non-blocking nature** and **available workarounds**, the decision is
 **Status**: 🔄 **ONGOING INVESTIGATION PAUSED**
 
 ---
-*Investigation period: July 30, 2025*  
-*Solutions attempted: Factory functions, dual exports, conditional lazy loading*  
-*Result: Partial improvement, issue remains non-deterministic*  
-*Decision: Accept current state due to low priority and available workarounds*
+
+_Investigation period: July 30, 2025_  
+_Solutions attempted: Factory functions, dual exports, conditional lazy loading_  
+_Result: Partial improvement, issue remains non-deterministic_  
+_Decision: Accept current state due to low priority and available workarounds_
 
 Updated: July 30, 2025 14:30 UTC

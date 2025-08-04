@@ -44,7 +44,8 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
   } = useResponsiveLayoutContext();
 
   // Removed automatic sidebar opening behavior - sidebar now opens only when user clicks burger menu
-  const { openUserSettings, isNewDirectMessageOpen, closeNewDirectMessage } = useModalContext();
+  const { openUserSettings, isNewDirectMessageOpen, closeNewDirectMessage } =
+    useModalContext();
 
   return (
     <div className="direct-messages-container">

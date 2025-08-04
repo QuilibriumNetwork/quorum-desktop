@@ -84,11 +84,7 @@ export const Text: React.FC<NativeTextProps> = ({
   );
 
   if (onPress) {
-    return (
-      <TouchableOpacity onPress={onPress}>
-        {textContent}
-      </TouchableOpacity>
-    );
+    return <TouchableOpacity onPress={onPress}>{textContent}</TouchableOpacity>;
   }
 
   return textContent;

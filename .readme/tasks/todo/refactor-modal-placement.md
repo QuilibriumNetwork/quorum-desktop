@@ -3,8 +3,9 @@
 ## Problem
 
 Currently, Layout.tsx contains 3 modals at the root level:
+
 - CreateSpaceModal
-- NewDirectMessageModal  
+- NewDirectMessageModal
 - KickUserModal
 
 Initial analysis suggests that NewDirectMessageModal and KickUserModal don't need to be at the global Layout level since they have specific trigger locations.
@@ -39,9 +40,10 @@ Initial analysis suggests that NewDirectMessageModal and KickUserModal don't nee
 
 - `src/components/Layout.tsx` (lines 23-44)
 - `src/components/direct/DirectMessageContactsList.tsx`
-- `src/components/channel/Channel.tsx` 
+- `src/components/channel/Channel.tsx`
 - `src/App.tsx` (kickUserAddress state management)
 - `src/components/context/ModalProvider.tsx`
 
 ---
-*Created: 2025-08-03*
+
+_Created: 2025-08-03_

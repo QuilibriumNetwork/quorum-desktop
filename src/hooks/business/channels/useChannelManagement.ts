@@ -47,7 +47,7 @@ export function useChannelManagement({
       const channel = space.groups
         .find((g) => g.groupName === groupName)
         ?.channels.find((c) => c.channelId === channelId);
-      
+
       if (channel) {
         setChannelData({
           channelName: channel.channelName || '',
@@ -79,12 +79,12 @@ export function useChannelManagement({
   // Handle channel name change
   const handleChannelNameChange = useCallback((value: string) => {
     const sanitized = value.toLowerCase().replace(/[^a-z0-9\-]/gi, '');
-    setChannelData(prev => ({ ...prev, channelName: sanitized }));
+    setChannelData((prev) => ({ ...prev, channelName: sanitized }));
   }, []);
 
   // Handle channel topic change
   const handleChannelTopicChange = useCallback((value: string) => {
-    setChannelData(prev => ({ ...prev, channelTopic: value }));
+    setChannelData((prev) => ({ ...prev, channelTopic: value }));
   }, []);
 
   // Save channel changes
@@ -140,7 +140,15 @@ export function useChannelManagement({
         }),
       });
     }
-  }, [space, channelData, channelId, groupName, spaceId, updateSpace, createChannel]);
+  }, [
+    space,
+    channelData,
+    channelId,
+    groupName,
+    spaceId,
+    updateSpace,
+    createChannel,
+  ]);
 
   // Handle delete confirmation
   const handleDeleteClick = useCallback(() => {
@@ -190,7 +198,15 @@ export function useChannelManagement({
     if (onDeleteComplete) {
       onDeleteComplete();
     }
-  }, [channelId, space, routeChannelId, spaceId, navigate, updateSpace, onDeleteComplete]);
+  }, [
+    channelId,
+    space,
+    routeChannelId,
+    spaceId,
+    navigate,
+    updateSpace,
+    onDeleteComplete,
+  ]);
 
   // Reset delete confirmation state
   const resetDeleteConfirmation = useCallback(() => {

@@ -29,6 +29,7 @@ IndexedDB + Server API
 **Purpose**: Cross-platform modal UI for kicking users with confirmation flow.
 
 **Key Features**:
+
 - ✅ **Cross-platform compatible** - Uses only primitives (Container, Text, FlexRow, Button, Modal)
 - ✅ **Responsive design** - Text centers on mobile (<640px), left-aligned on desktop
 - ✅ **Confirmation flow** - Requires two clicks to prevent accidental kicks
@@ -36,15 +37,17 @@ IndexedDB + Server API
 - ✅ **Auto-reset** - Confirmation resets when modal closes
 
 **Props**:
+
 ```tsx
 interface KickUserModalProps {
-  visible: boolean;           // Modal visibility
-  kickUserAddress?: string;   // Address of user to kick
-  onClose: () => void;       // Close handler
+  visible: boolean; // Modal visibility
+  kickUserAddress?: string; // Address of user to kick
+  onClose: () => void; // Close handler
 }
 ```
 
 **Primitives Used**:
+
 - `Modal` - Base modal container
 - `Container` - Layout containers with responsive props
 - `Text` - Typography with variant styling
@@ -58,13 +61,16 @@ interface KickUserModalProps {
 **Purpose**: Encapsulates all kick user business logic, state management, and API interactions.
 
 **State Management**:
+
 ```tsx
-const [kicking, setKicking] = useState(false);           // Loading state
+const [kicking, setKicking] = useState(false); // Loading state
 const [confirmationStep, setConfirmationStep] = useState(0); // 0: initial, 1: confirm
-const [confirmationTimeout, setConfirmationTimeout] = useState<NodeJS.Timeout | null>(null);
+const [confirmationTimeout, setConfirmationTimeout] =
+  useState<NodeJS.Timeout | null>(null);
 ```
 
 **Dependencies**:
+
 - `useParams()` - Gets spaceId from URL
 - `usePasskeysContext()` - Current user's passkey info
 - `useRegistrationContext()` - User's keyset for cryptographic operations
@@ -75,6 +81,7 @@ const [confirmationTimeout, setConfirmationTimeout] = useState<NodeJS.Timeout | 
 **Key Functions**:
 
 #### `kickUserFromSpace(userAddress, onSuccess?)`
+
 - Validates required parameters (spaceId, registration, userAddress)
 - Sets loading state
 - Calls `MessageDB.kickUser()` with cryptographic parameters
@@ -83,17 +90,20 @@ const [confirmationTimeout, setConfirmationTimeout] = useState<NodeJS.Timeout | 
 - Handles errors and cleanup
 
 #### `handleKickClick(userAddress, onSuccess?)`
+
 - Implements two-click confirmation flow
 - First click: Sets confirmationStep to 1, starts 5-second timeout
 - Second click: Clears timeout, executes kick operation
 - Auto-resets confirmation after 5 seconds
 
 #### `resetConfirmation()`
+
 - Resets confirmation state to 0
 - Clears any active timeout
 - Called when modal closes
 
 **Return Values**:
+
 ```tsx
 {
   kicking: boolean;                    // Current loading state
@@ -148,6 +158,7 @@ onClose() - Modal closes
 **Core Operations**:
 
 #### Server-Side Operations:
+
 1. **Key Generation**: Creates new cryptographic keys (config, space, owner)
 2. **Space Registration**: Posts updated space data to server via `apiClient.postSpace()`
 3. **Member Notification**: Sends encrypted rekey notifications to remaining members
@@ -155,11 +166,13 @@ onClose() - Modal closes
 5. **Manifest Update**: Updates space manifest excluding kicked user
 
 #### Local Database Operations:
+
 1. **Kick Message**: Saves kick confirmation message to local chat history
 2. **Encryption State**: Updates encryption state excluding kicked user from peer mappings
 3. **Member Filtering**: Creates `filteredMembers` list for future encryption sessions
 
-#### **Important**: 
+#### **Important**:
+
 The `kickUser` function does **NOT** remove the kicked user from the local IndexedDB space members table. The user remains visible in the UI until server synchronization updates the local database.
 
 ## Data Flow and Caching
@@ -179,14 +192,16 @@ Right Sidebar Content (setRightSidebarContent)
 ### 2. Cache Invalidation Strategy
 
 After kick operation completes:
+
 ```tsx
 // Invalidate space members cache
 await queryClient.invalidateQueries({
-  queryKey: ['SpaceMembers', spaceId]
+  queryKey: ['SpaceMembers', spaceId],
 });
 ```
 
-**Result**: 
+**Result**:
+
 - ✅ React Query refetches data from IndexedDB
 - ⚠️ **Kicked user still visible** because IndexedDB still contains their record
 - ✅ User eventually disappears when server sync updates local database
@@ -196,8 +211,9 @@ await queryClient.invalidateQueries({
 **By Design**: The kicked user remains in the local UI until server synchronization removes them from IndexedDB. This ensures UI consistency with actual server state and prevents optimistic updates that might not match reality.
 
 **Timeline**:
+
 1. **Immediate**: Kick operation completes, success message shows
-2. **Cache refresh**: React Query refetches same data from IndexedDB  
+2. **Cache refresh**: React Query refetches same data from IndexedDB
 3. **Eventually**: Server sync removes user from local database
 4. **Final**: User disappears from sidebar on next data refresh
 
@@ -210,7 +226,7 @@ kickUser(
   spaceId: string,                           // Target space ID
   userAddress: string,                       // User to kick
   userKeyset: secureChannel.UserKeyset,     // Admin's user keyset
-  deviceKeyset: secureChannel.DeviceKeyset, // Admin's device keyset  
+  deviceKeyset: secureChannel.DeviceKeyset, // Admin's device keyset
   registration: secureChannel.UserRegistration // Admin's registration
 )
 ```
@@ -225,18 +241,21 @@ kickUser(
 ## Error Handling
 
 ### Validation Checks
+
 - ✅ spaceId must be present (from URL params)
 - ✅ userAddress must be provided
 - ✅ registration data must be loaded
 - ✅ User must have admin privileges (implicit in registration check)
 
 ### Error States
+
 - **Network failures**: Displayed in console, operation retried
 - **Cryptographic errors**: Operation fails, error logged
 - **Permission errors**: Operation rejected by server
 - **Invalid parameters**: Early return, no operation attempted
 
 ### UI Error Handling
+
 - **Loading state**: Button disabled during operation
 - **Error recovery**: User can retry operation
 - **Graceful degradation**: Modal can be closed even if operation fails
@@ -244,16 +263,19 @@ kickUser(
 ## Performance Considerations
 
 ### UI Responsiveness
+
 - **5-second operation**: Kick operation typically takes ~5 seconds
 - **Non-blocking**: UI remains responsive (loading state shown)
 - **Background operation**: Cryptographic work happens in background thread
 
 ### Cache Management
+
 - **Selective invalidation**: Only space members cache invalidated
 - **Efficient queries**: React Query manages background refetching
 - **Minimal re-renders**: Only affected components re-render
 
 ### Memory Management
+
 - **Timeout cleanup**: Confirmation timeouts properly cleared
 - **Effect cleanup**: useEffect cleanup prevents memory leaks
 - **Cache cleanup**: Old query data garbage collected
@@ -261,6 +283,7 @@ kickUser(
 ## Testing Considerations
 
 ### Test Scenarios
+
 1. **Happy path**: Normal kick operation with confirmation
 2. **Timeout test**: Confirmation resets after 5 seconds
 3. **Modal close**: Confirmation resets when modal closes
@@ -269,6 +292,7 @@ kickUser(
 6. **Permission error**: Handles insufficient privileges
 
 ### Mock Requirements
+
 - Mock `useMessageDB()` for kick operations
 - Mock `useQueryClient()` for cache invalidation
 - Mock `useParams()` for spaceId
@@ -277,13 +301,15 @@ kickUser(
 ## Integration Points
 
 ### Dependencies
+
 - **Authentication**: Requires valid passkey and registration
-- **Routing**: Needs spaceId from URL parameters  
+- **Routing**: Needs spaceId from URL parameters
 - **Database**: Integrates with MessageDB for operations
 - **Caching**: Uses React Query for data management
 - **UI**: Uses primitive components for cross-platform compatibility
 
 ### External Systems
+
 - **Server API**: Posts space updates and notifications
 - **WebSocket**: Receives real-time updates and sync messages
 - **IndexedDB**: Stores local space member data
@@ -292,6 +318,7 @@ kickUser(
 ## Future Improvements
 
 ### Potential Enhancements
+
 1. **Optimistic UI**: Immediately hide kicked user with rollback on failure
 2. **Progress indication**: Show detailed progress during 5-second operation
 3. **Batch operations**: Allow kicking multiple users simultaneously
@@ -299,6 +326,7 @@ kickUser(
 5. **Permission levels**: Different kick permissions for different admin roles
 
 ### Mobile Considerations
+
 - ✅ **Touch-friendly**: Button sizes appropriate for mobile
 - ✅ **Responsive text**: Centers on mobile, left-aligned on desktop
 - ✅ **Cross-platform**: Uses primitives compatible with React Native

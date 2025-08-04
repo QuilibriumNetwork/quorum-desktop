@@ -15,19 +15,25 @@ export const useQuickReactions = ({
   userAddress,
   onReaction,
 }: UseQuickReactionsProps): UseQuickReactionsReturn => {
-  const isUserReacted = useCallback((message: MessageType, emoji: string): boolean => {
-    return Boolean(
-      message.reactions
-        ?.find((r) => r.emojiId === emoji)
-        ?.memberIds.includes(userAddress)
-    );
-  }, [userAddress]);
+  const isUserReacted = useCallback(
+    (message: MessageType, emoji: string): boolean => {
+      return Boolean(
+        message.reactions
+          ?.find((r) => r.emojiId === emoji)
+          ?.memberIds.includes(userAddress)
+      );
+    },
+    [userAddress]
+  );
 
-  const handleQuickReaction = useCallback((message: MessageType, emoji: string) => {
-    if (!isUserReacted(message, emoji)) {
-      onReaction(emoji);
-    }
-  }, [isUserReacted, onReaction]);
+  const handleQuickReaction = useCallback(
+    (message: MessageType, emoji: string) => {
+      if (!isUserReacted(message, emoji)) {
+        onReaction(emoji);
+      }
+    },
+    [isUserReacted, onReaction]
+  );
 
   return {
     handleQuickReaction,

@@ -1,5 +1,10 @@
 import React from 'react';
-import { Text as RNText, TextStyle, TouchableOpacity, Linking } from 'react-native';
+import {
+  Text as RNText,
+  TextStyle,
+  TouchableOpacity,
+  Linking,
+} from 'react-native';
 import { NativeTextProps } from './types';
 import { useCrossPlatformTheme } from '../theme/ThemeProvider';
 
@@ -25,7 +30,6 @@ const alignMap = {
   center: 'center',
   right: 'right',
 };
-
 
 export const Text: React.FC<NativeTextProps> = ({
   children,
@@ -90,7 +94,9 @@ export const Text: React.FC<NativeTextProps> = ({
   // Handle link functionality in React Native
   const handlePress = () => {
     if (href) {
-      Linking.openURL(href).catch(err => console.error('Failed to open URL:', err));
+      Linking.openURL(href).catch((err) =>
+        console.error('Failed to open URL:', err)
+      );
     } else if (onPress) {
       onPress();
     }
@@ -98,9 +104,7 @@ export const Text: React.FC<NativeTextProps> = ({
 
   if (onPress || href) {
     return (
-      <TouchableOpacity onPress={handlePress}>
-        {textContent}
-      </TouchableOpacity>
+      <TouchableOpacity onPress={handlePress}>{textContent}</TouchableOpacity>
     );
   }
 

@@ -1,7 +1,11 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import './Channel.scss';
 import { StickerMessage } from '../../api/quorumApi';
-import { useChannelData, useChannelMessages, useMessageComposer } from '../../hooks';
+import {
+  useChannelData,
+  useChannelMessages,
+  useMessageComposer,
+} from '../../hooks';
 import { useMessageDB } from '../context/MessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -11,7 +15,9 @@ import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
 import { Button, Icon } from '../primitives';
-import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
+import MessageComposer, {
+  MessageComposerRef,
+} from '../message/MessageComposer';
 import KickUserModal from '../modals/KickUserModal';
 
 type ChannelProps = {
@@ -37,21 +43,15 @@ const Channel: React.FC<ChannelProps> = ({
   } = useSidebar();
   const [init, setInit] = useState(false);
   const { submitChannelMessage } = useMessageDB();
-  
+
   // Create refs for textarea (MessageList needs this for scrolling and we need it for focus)
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messageComposerRef = useRef<MessageComposerRef>(null);
   const messageListRef = useRef<MessageListRef>(null);
 
   // Get channel data
-  const {
-    space,
-    channel,
-    members,
-    roles,
-    stickers,
-    generateSidebarContent,
-  } = useChannelData({ spaceId, channelId });
+  const { space, channel, members, roles, stickers, generateSidebarContent } =
+    useChannelData({ spaceId, channelId });
 
   // Get message handling
   const {
@@ -63,48 +63,67 @@ const Channel: React.FC<ChannelProps> = ({
   } = useChannelMessages({ spaceId, channelId, roles, members });
 
   // Handle message submission
-  const handleSubmitMessage = useCallback(async (message: string | object, inReplyTo?: string) => {
-    await submitChannelMessage(
+  const handleSubmitMessage = useCallback(
+    async (message: string | object, inReplyTo?: string) => {
+      await submitChannelMessage(
+        spaceId,
+        channelId,
+        message,
+        queryClient,
+        user.currentPasskeyInfo!,
+        inReplyTo
+      );
+
+      // Only auto-scroll for actual messages (text/embed), not reactions
+      const isReaction =
+        typeof message === 'object' &&
+        'type' in message &&
+        (message.type === 'reaction' || message.type === 'remove-reaction');
+
+      if (!isReaction) {
+        setTimeout(() => {
+          messageListRef.current?.scrollToBottom();
+        }, 100);
+      }
+    },
+    [
       spaceId,
       channelId,
-      message,
+      submitChannelMessage,
       queryClient,
-      user.currentPasskeyInfo!,
-      inReplyTo
-    );
-    
-    // Only auto-scroll for actual messages (text/embed), not reactions
-    const isReaction = typeof message === 'object' && 
-      'type' in message && 
-      (message.type === 'reaction' || message.type === 'remove-reaction');
-    
-    if (!isReaction) {
+      user.currentPasskeyInfo,
+    ]
+  );
+
+  // Handle sticker submission
+  const handleSubmitSticker = useCallback(
+    async (stickerId: string, inReplyTo?: string) => {
+      const stickerMessage: StickerMessage = {
+        senderId: user.currentPasskeyInfo?.address,
+        type: 'sticker',
+        stickerId: stickerId,
+      } as StickerMessage;
+      await submitChannelMessage(
+        spaceId,
+        channelId,
+        stickerMessage,
+        queryClient,
+        user.currentPasskeyInfo!,
+        inReplyTo
+      );
+      // Auto-scroll to bottom after sending sticker
       setTimeout(() => {
         messageListRef.current?.scrollToBottom();
       }, 100);
-    }
-  }, [spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo]);
-
-  // Handle sticker submission
-  const handleSubmitSticker = useCallback(async (stickerId: string, inReplyTo?: string) => {
-    const stickerMessage: StickerMessage = {
-      senderId: user.currentPasskeyInfo?.address,
-      type: 'sticker',
-      stickerId: stickerId,
-    } as StickerMessage;
-    await submitChannelMessage(
+    },
+    [
       spaceId,
       channelId,
-      stickerMessage,
+      submitChannelMessage,
       queryClient,
-      user.currentPasskeyInfo!,
-      inReplyTo
-    );
-    // Auto-scroll to bottom after sending sticker
-    setTimeout(() => {
-      messageListRef.current?.scrollToBottom();
-    }, 100);
-  }, [spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo]);
+      user.currentPasskeyInfo,
+    ]
+  );
 
   // Message composer hook
   const composer = useMessageComposer({
@@ -141,7 +160,9 @@ const Channel: React.FC<ChannelProps> = ({
                   style={{
                     backgroundPosition: 'center',
                     backgroundSize: 'cover',
-                    backgroundImage: member.userIcon?.includes('var(--unknown-icon)')
+                    backgroundImage: member.userIcon?.includes(
+                      'var(--unknown-icon)'
+                    )
                       ? member.userIcon
                       : `url(${member.userIcon})`,
                   }}
@@ -295,7 +316,9 @@ const Channel: React.FC<ChannelProps> = ({
                   style={{
                     backgroundPosition: 'center',
                     backgroundSize: 'cover',
-                    backgroundImage: member.userIcon?.includes('var(--unknown-icon)')
+                    backgroundImage: member.userIcon?.includes(
+                      'var(--unknown-icon)'
+                    )
                       ? member.userIcon
                       : `url(${member.userIcon})`,
                   }}
@@ -310,7 +333,6 @@ const Channel: React.FC<ChannelProps> = ({
           </div>
         ))}
       </div>
-
 
       {/* Stickers panel - positioned at top level to avoid stacking context issues */}
       {composer.showStickers && (

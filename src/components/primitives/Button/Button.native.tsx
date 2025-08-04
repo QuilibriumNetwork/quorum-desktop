@@ -220,9 +220,15 @@ const Button: React.FC<NativeButtonProps> = (props) => {
       <View style={styles.content}>
         {props.iconName && (
           <View style={!props.iconOnly ? styles.iconWithText : undefined}>
-            <Icon 
-              name={props.iconName} 
-              size={props.size === 'small' ? 'sm' : props.size === 'large' ? 'lg' : 'md'} 
+            <Icon
+              name={props.iconName}
+              size={
+                props.size === 'small'
+                  ? 'sm'
+                  : props.size === 'large'
+                    ? 'lg'
+                    : 'md'
+              }
               color={getTextColor()}
             />
           </View>

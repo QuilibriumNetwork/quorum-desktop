@@ -9,12 +9,13 @@ export const useDirectMessageCreation = () => {
   const [address, setAddress] = useState<string>('');
   const navigate = useNavigate();
   const { closeNewDirectMessage } = useModalContext();
-  
+
   // Get existing conversations
   const { data: conversations } = useConversations({ type: 'direct' });
-  const conversationsList = useMemo(() => [
-    ...conversations.pages.flatMap((c: any) => c.conversations),
-  ], [conversations]);
+  const conversationsList = useMemo(
+    () => [...conversations.pages.flatMap((c: any) => c.conversations)],
+    [conversations]
+  );
 
   // Validate the address
   const validationResult = useAddressValidation(address);
@@ -44,13 +45,14 @@ export const useDirectMessageCreation = () => {
   // Handle form submission
   const handleSubmit = useCallback(() => {
     if (!address || validationResult.error) return;
-    
+
     closeNewDirectMessage();
     navigate('/messages/' + address);
   }, [address, validationResult.error, closeNewDirectMessage, navigate]);
 
   // Determine if button should be disabled
-  const isButtonDisabled = !address || !!validationResult.error || validationResult.isValidating;
+  const isButtonDisabled =
+    !address || !!validationResult.error || validationResult.isValidating;
 
   return {
     address,

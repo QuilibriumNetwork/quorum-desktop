@@ -12,7 +12,7 @@ export const useInviteUI = (space: Space | undefined, joining: boolean) => {
 
   const isAlreadyMember = useMemo(() => {
     if (!space) return false;
-    return spaces.some(s => s.spaceId === space.spaceId);
+    return spaces.some((s) => s.spaceId === space.spaceId);
   }, [spaces, space]);
 
   const buttonText = useMemo(() => {

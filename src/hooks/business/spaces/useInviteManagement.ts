@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import { usePasskeysContext, channel } from '@quilibrium/quilibrium-js-sdk-channels';
+import {
+  usePasskeysContext,
+  channel,
+} from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/MessageDB';
 import { useRegistrationContext } from '../../../components/context/RegistrationPersister';
 import { useQuorumApiClient } from '../../../components/context/QuorumApiContext';
@@ -21,12 +24,12 @@ export interface UseInviteManagementReturn {
   setManualAddress: (address: string) => void;
   resolvedUser: channel.UserRegistration | undefined;
   getUserOptions: () => any[];
-  
+
   // Invite management
   sendingInvite: boolean;
   success: boolean;
   invite: (address: string) => Promise<void>;
-  
+
   // Public invite link
   publicInvite: boolean;
   setPublicInvite: (isPublic: boolean) => void;
@@ -38,19 +41,27 @@ export const useInviteManagement = (
   options: UseInviteManagementOptions
 ): UseInviteManagementReturn => {
   const { spaceId, space, defaultChannel } = options;
-  
+
   // State
   const [selectedUser, setSelectedUser] = useState<Conversation | undefined>();
   const [manualAddress, setManualAddress] = useState<string>('');
-  const [resolvedUser, setResolvedUser] = useState<channel.UserRegistration | undefined>();
+  const [resolvedUser, setResolvedUser] = useState<
+    channel.UserRegistration | undefined
+  >();
   const [sendingInvite, setSendingInvite] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
   const [generating, setGenerating] = useState<boolean>(false);
-  const [publicInvite, setPublicInvite] = useState<boolean>(space?.isPublic || false);
+  const [publicInvite, setPublicInvite] = useState<boolean>(
+    space?.isPublic || false
+  );
 
   // Hooks
   const { currentPasskeyInfo } = usePasskeysContext();
-  const { ensureKeyForSpace, sendInviteToUser, generateNewInviteLink: generateInviteLink } = useMessageDB();
+  const {
+    ensureKeyForSpace,
+    sendInviteToUser,
+    generateNewInviteLink: generateInviteLink,
+  } = useMessageDB();
   const { keyset } = useRegistrationContext();
   const { data: registration } = useRegistration({
     address: currentPasskeyInfo!.address,
@@ -65,11 +76,11 @@ export const useInviteManagement = (
     return conversations.pages
       .flatMap((c: any) => c.conversations as Conversation[])
       .toReversed()
-      .map(conversation => ({
+      .map((conversation) => ({
         value: conversation.address,
         label: conversation.displayName,
         avatar: conversation.icon,
-        subtitle: conversation.address
+        subtitle: conversation.address,
       }));
   }, [conversations]);
 
@@ -111,25 +122,23 @@ export const useInviteManagement = (
       }
     },
     [
-      ensureKeyForSpace, 
-      currentPasskeyInfo, 
-      space, 
-      spaceId, 
-      defaultChannel, 
-      navigate, 
-      sendInviteToUser
+      ensureKeyForSpace,
+      currentPasskeyInfo,
+      space,
+      spaceId,
+      defaultChannel,
+      navigate,
+      sendInviteToUser,
     ]
   );
 
   // Generate new invite link
   const generateNewInviteLink = useCallback(async () => {
     if (!space || !registration?.registration) return;
-    
+
     setGenerating(true);
     try {
-      await new Promise<void>((resolve) =>
-        setTimeout(() => resolve(), 200)
-      );
+      await new Promise<void>((resolve) => setTimeout(() => resolve(), 200));
       await generateInviteLink(
         space.spaceId,
         keyset.userKeyset,
@@ -148,11 +157,11 @@ export const useInviteManagement = (
     setManualAddress,
     resolvedUser,
     getUserOptions,
-    
+
     sendingInvite,
     success,
     invite,
-    
+
     publicInvite,
     setPublicInvite,
     generating,

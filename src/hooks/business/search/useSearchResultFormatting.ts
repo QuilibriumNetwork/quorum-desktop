@@ -23,7 +23,6 @@ export const useSearchResultFormatting = ({
   message,
   onNavigate,
 }: UseSearchResultFormattingProps): UseSearchResultFormattingReturn => {
-  
   // Format date relative to current time
   const formattedDate = useMemo(() => {
     const date = new Date(message.createdDate);

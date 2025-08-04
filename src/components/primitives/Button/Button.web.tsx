@@ -24,7 +24,9 @@ const Button: React.FC<WebButtonProps> = (props) => {
           (props.size === 'large' ? ' btn-large' : '') +
           (props.icon ? ' quorum-button-icon' : '') +
           (props.iconName && props.iconOnly ? ' quorum-button-icon-only' : '') +
-          (props.iconName && !props.iconOnly ? ' quorum-button-with-icon' : '') +
+          (props.iconName && !props.iconOnly
+            ? ' quorum-button-with-icon'
+            : '') +
           (props.className ? ' ' + props.className : '')
         }
         onClick={() => {
@@ -32,9 +34,15 @@ const Button: React.FC<WebButtonProps> = (props) => {
         }}
       >
         {props.iconName && (
-          <Icon 
-            name={props.iconName} 
-            size={props.size === 'small' ? 'sm' : props.size === 'large' ? 'lg' : 'md'} 
+          <Icon
+            name={props.iconName}
+            size={
+              props.size === 'small'
+                ? 'sm'
+                : props.size === 'large'
+                  ? 'lg'
+                  : 'md'
+            }
             className="quorum-button-icon-element"
             style={{ color: 'inherit' }}
           />

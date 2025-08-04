@@ -19,13 +19,13 @@ interface GlobalSearchProps {
 
 export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
   const { messageDB } = useMessageDB();
-  
+
   // Get search context from current route
   const searchContext = useSearchContext();
 
   // Business logic hooks
   const { searchService } = useSearchService({ messageDB });
-  
+
   const {
     showResults,
     handleQueryChange,
@@ -69,7 +69,9 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
         onClear={() => handleClear(clearSearch)}
         placeholder={placeholder}
         suggestions={suggestions}
-        onSuggestionSelect={(suggestion) => handleSuggestionSelect(suggestion, setQuery)}
+        onSuggestionSelect={(suggestion) =>
+          handleSuggestionSelect(suggestion, setQuery)
+        }
         className="global-search-bar"
       />
 

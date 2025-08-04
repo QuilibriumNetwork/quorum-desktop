@@ -46,7 +46,9 @@ declare module 'react-native' {
   export const TouchableWithoutFeedback: ComponentType<TouchableWithoutFeedbackProps>;
 
   export namespace StyleSheet {
-    export function create<T extends { [key: string]: ViewStyle }>(styles: T): T;
+    export function create<T extends { [key: string]: ViewStyle }>(
+      styles: T
+    ): T;
     export const absoluteFillObject: {
       position: 'absolute';
       left: 0;
@@ -61,18 +63,29 @@ declare module 'react-native' {
     export class Value {
       constructor(value: number);
     }
-    export function timing(value: any, config: any): {
+    export function timing(
+      value: any,
+      config: any
+    ): {
       start: (callback?: () => void) => void;
     };
-    export function parallel(animations: any[]): { start: (callback?: () => void) => void };
+    export function parallel(animations: any[]): {
+      start: (callback?: () => void) => void;
+    };
   }
 
   export namespace Dimensions {
-    export function get(dim: 'window' | 'screen'): { width: number; height: number };
+    export function get(dim: 'window' | 'screen'): {
+      width: number;
+      height: number;
+    };
   }
 
   export namespace BackHandler {
-    export function addEventListener(event: string, handler: () => boolean): {
+    export function addEventListener(
+      event: string,
+      handler: () => boolean
+    ): {
       remove: () => void;
     };
   }

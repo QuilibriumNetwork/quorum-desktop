@@ -45,7 +45,9 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
       case 'reply':
         return t`Reply`;
       case 'copy':
-        return copiedLinkId === message.messageId ? t`Copied!` : t`Copy message link`;
+        return copiedLinkId === message.messageId
+          ? t`Copied!`
+          : t`Copy message link`;
       case 'delete':
         return t`Delete message`;
       default:

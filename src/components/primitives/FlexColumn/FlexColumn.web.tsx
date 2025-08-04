@@ -28,44 +28,49 @@ const gapMap = {
   xl: 'gap-8',
 };
 
-export const FlexColumn = React.forwardRef<HTMLDivElement, FlexColumnProps>(({
-  children,
-  justify = 'start',
-  align = 'stretch',
-  gap = 'none',
-  wrap = false,
-  className,
-  style,
-  testId,
-  ...rest
-}, ref) => {
-  const gapClass =
-    typeof gap === 'string' && gap in gapMap
-      ? gapMap[gap as keyof typeof gapMap]
-      : typeof gap === 'number'
-        ? `gap-${gap}`
-        : typeof gap === 'string'
-          ? gap
-          : 'gap-0';
+export const FlexColumn = React.forwardRef<HTMLDivElement, FlexColumnProps>(
+  (
+    {
+      children,
+      justify = 'start',
+      align = 'stretch',
+      gap = 'none',
+      wrap = false,
+      className,
+      style,
+      testId,
+      ...rest
+    },
+    ref
+  ) => {
+    const gapClass =
+      typeof gap === 'string' && gap in gapMap
+        ? gapMap[gap as keyof typeof gapMap]
+        : typeof gap === 'number'
+          ? `gap-${gap}`
+          : typeof gap === 'string'
+            ? gap
+            : 'gap-0';
 
-  const classes = clsx(
-    'flex flex-col',
-    justifyMap[justify],
-    alignMap[align],
-    gapClass,
-    wrap && 'flex-wrap',
-    className
-  );
+    const classes = clsx(
+      'flex flex-col',
+      justifyMap[justify],
+      alignMap[align],
+      gapClass,
+      wrap && 'flex-wrap',
+      className
+    );
 
-  return (
-    <div 
-      ref={ref} 
-      className={classes} 
-      style={style} 
-      data-testid={testId}
-      {...rest}
-    >
-      {children}
-    </div>
-  );
-});
+    return (
+      <div
+        ref={ref}
+        className={classes}
+        style={style}
+        data-testid={testId}
+        {...rest}
+      >
+        {children}
+      </div>
+    );
+  }
+);

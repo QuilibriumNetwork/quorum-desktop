@@ -10,26 +10,34 @@ export const useSpaceJoining = () => {
   const { joinInviteLink, keyset } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
 
-  const joinSpace = useCallback(async (inviteLink: string) => {
-    setJoining(true);
-    setJoinError(undefined);
-    
-    try {
-      const result = await joinInviteLink(inviteLink, keyset, currentPasskeyInfo!);
-      if (result) {
-        navigate('/spaces/' + result.spaceId + '/' + result.channelId);
-        return true;
+  const joinSpace = useCallback(
+    async (inviteLink: string) => {
+      setJoining(true);
+      setJoinError(undefined);
+
+      try {
+        const result = await joinInviteLink(
+          inviteLink,
+          keyset,
+          currentPasskeyInfo!
+        );
+        if (result) {
+          navigate('/spaces/' + result.spaceId + '/' + result.channelId);
+          return true;
+        }
+        return false;
+      } catch (e: any) {
+        console.error(e);
+        const errorMessage =
+          e.message || e.toString() || 'Failed to join space';
+        setJoinError(errorMessage);
+        return false;
+      } finally {
+        setJoining(false);
       }
-      return false;
-    } catch (e: any) {
-      console.error(e);
-      const errorMessage = e.message || e.toString() || 'Failed to join space';
-      setJoinError(errorMessage);
-      return false;
-    } finally {
-      setJoining(false);
-    }
-  }, [joinInviteLink, keyset, currentPasskeyInfo, navigate]);
+    },
+    [joinInviteLink, keyset, currentPasskeyInfo, navigate]
+  );
 
   return {
     joinSpace,

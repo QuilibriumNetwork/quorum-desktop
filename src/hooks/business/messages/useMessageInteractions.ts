@@ -10,7 +10,10 @@ interface UseMessageInteractionsOptions {
   setShowUserProfile: React.Dispatch<React.SetStateAction<boolean>>;
   onCloseEmojiPickers: () => void;
   onMobileActionsDrawer: (config: any) => void;
-  onEmojiPickerUserProfileClick: (clientY: number, onProfileClick: () => void) => void;
+  onEmojiPickerUserProfileClick: (
+    clientY: number,
+    onProfileClick: () => void
+  ) => void;
 }
 
 export function useMessageInteractions(options: UseMessageInteractionsOptions) {
@@ -52,7 +55,13 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
       document.addEventListener('click', handleClickOutside);
       return () => document.removeEventListener('click', handleClickOutside);
     }
-  }, [useDesktopTap, actionsVisibleOnTap, hoverTarget, message.messageId, setHoverTarget]);
+  }, [
+    useDesktopTap,
+    actionsVisibleOnTap,
+    hoverTarget,
+    message.messageId,
+    setHoverTarget,
+  ]);
 
   // Long-press handler for mobile and tablets
   const longPressHandlers = useLongPress({
@@ -93,65 +102,75 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
   }, [useDesktopHover, setHoverTarget]);
 
   // Handle main message click
-  const handleMessageClick = useCallback((e: React.MouseEvent) => {
-    // Prevent default click behavior for mobile drawer
-    if (useMobileDrawer) {
-      e.preventDefault();
-    }
-
-    // For tablets, regular click should hide actions (not show them)
-    if (useDesktopTap) {
-      // Hide actions if clicking on a different message or same message
-      if (hoverTarget !== message.messageId) {
-        setHoverTarget(undefined);
-        setActionsVisibleOnTap(false);
+  const handleMessageClick = useCallback(
+    (e: React.MouseEvent) => {
+      // Prevent default click behavior for mobile drawer
+      if (useMobileDrawer) {
+        e.preventDefault();
       }
-    }
 
-    // Common click behaviors
-    setShowUserProfile(false);
-    onCloseEmojiPickers();
-  }, [
-    useMobileDrawer,
-    useDesktopTap,
-    hoverTarget,
-    message.messageId,
-    setHoverTarget,
-    setActionsVisibleOnTap,
-    setShowUserProfile,
-    onCloseEmojiPickers,
-  ]);
+      // For tablets, regular click should hide actions (not show them)
+      if (useDesktopTap) {
+        // Hide actions if clicking on a different message or same message
+        if (hoverTarget !== message.messageId) {
+          setHoverTarget(undefined);
+          setActionsVisibleOnTap(false);
+        }
+      }
+
+      // Common click behaviors
+      setShowUserProfile(false);
+      onCloseEmojiPickers();
+    },
+    [
+      useMobileDrawer,
+      useDesktopTap,
+      hoverTarget,
+      message.messageId,
+      setHoverTarget,
+      setActionsVisibleOnTap,
+      setShowUserProfile,
+      onCloseEmojiPickers,
+    ]
+  );
 
   // Handle user profile icon click
-  const handleUserProfileClick = useCallback((e: React.MouseEvent) => {
-    onEmojiPickerUserProfileClick(e.clientY, () => setShowUserProfile(true));
-    e.stopPropagation();
-  }, [onEmojiPickerUserProfileClick, setShowUserProfile]);
+  const handleUserProfileClick = useCallback(
+    (e: React.MouseEvent) => {
+      onEmojiPickerUserProfileClick(e.clientY, () => setShowUserProfile(true));
+      e.stopPropagation();
+    },
+    [onEmojiPickerUserProfileClick, setShowUserProfile]
+  );
 
   // Handle background click to close user profile
-  const handleUserProfileBackgroundClick = useCallback((e: React.MouseEvent) => {
-    setShowUserProfile(false);
-  }, [setShowUserProfile]);
+  const handleUserProfileBackgroundClick = useCallback(
+    (e: React.MouseEvent) => {
+      setShowUserProfile(false);
+    },
+    [setShowUserProfile]
+  );
 
   // Check if actions should be visible
-  const shouldShowActions = 
+  const shouldShowActions =
     (hoverTarget === message.messageId && useDesktopHover) ||
     (hoverTarget === message.messageId && actionsVisibleOnTap && useDesktopTap);
 
   // Get touch handlers for mobile/tablet
-  const touchHandlers = useMobileDrawer || useDesktopTap ? longPressHandlers : {};
+  const touchHandlers =
+    useMobileDrawer || useDesktopTap ? longPressHandlers : {};
 
   return {
     // State
     actionsVisibleOnTap,
     shouldShowActions,
-    
+
     // Device detection
     isTouchDevice,
     useMobileDrawer,
     useDesktopTap,
     useDesktopHover,
-    
+
     // Event handlers
     handleMouseOver,
     handleMouseOut,

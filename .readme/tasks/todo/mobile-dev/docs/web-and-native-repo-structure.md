@@ -1,4 +1,3 @@
-
 # Web/Native Repository Structure
 
 [← Back to INDEX](../../../../INDEX.md)
@@ -42,6 +41,7 @@ quorum/
 ## How the Entry Points Work
 
 ### Web Entry Point (`web/main.tsx`)
+
 ```tsx
 // web/main.tsx - Same as your current main.tsx
 import React from 'react';
@@ -57,17 +57,18 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 ```
 
 ### Mobile Entry Point (`mobile/App.tsx`)
+
 ```tsx
 // mobile/App.tsx - React Native entry point
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import App from '../src/App';  // SAME App component!
+import App from '../src/App'; // SAME App component!
 
 export default function AppEntry() {
   return (
     <>
       <StatusBar style="auto" />
-      <App />  {/* Your existing App.tsx works here too! */}
+      <App /> {/* Your existing App.tsx works here too! */}
     </>
   );
 }
@@ -81,13 +82,13 @@ Your existing `src/App.tsx` will work on both platforms:
 // src/App.tsx - SHARED between web and mobile
 import { ThemeProvider } from './contexts/ThemeProvider';
 import { MessageProvider } from './contexts/MessageProvider';
-import { Router } from './components/Router';  // Will differ per platform
+import { Router } from './components/Router'; // Will differ per platform
 
 export default function App() {
   return (
     <ThemeProvider>
       <MessageProvider>
-        <Router />  {/* Web: react-router, Mobile: react-navigation */}
+        <Router /> {/* Web: react-router, Mobile: react-navigation */}
       </MessageProvider>
     </ThemeProvider>
   );
@@ -101,7 +102,7 @@ export default function App() {
   "scripts": {
     "dev": "vite --config web/vite.config.ts",
     "build:web": "vite build --config web/vite.config.ts",
-    
+
     "mobile:start": "cd mobile && expo start",
     "mobile:android": "cd mobile && expo start --android",
     "mobile:ios": "cd mobile && expo start --ios",
@@ -114,6 +115,7 @@ export default function App() {
 ## Platform-Specific Configs
 
 ### Web Config (`web/vite.config.ts`)
+
 ```ts
 // web/vite.config.ts
 import { defineConfig } from 'vite';
@@ -121,7 +123,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  root: '../',  // Root is main directory
+  root: '../', // Root is main directory
   build: {
     outDir: 'dist',
   },
@@ -134,6 +136,7 @@ export default defineConfig({
 ```
 
 ### Mobile Config (`mobile/metro.config.js`)
+
 ```js
 // mobile/metro.config.js
 const { getDefaultConfig } = require('expo/metro-config');
@@ -161,12 +164,14 @@ import { api } from '../src/services/api';
 ```
 
 The bundlers automatically resolve:
+
 - **Web (Vite)**: Picks `.web.tsx` files
 - **Mobile (Metro)**: Picks `.native.tsx` files
 
 ## Assets and Resources
 
 ### Web Assets (`web/public/`)
+
 ```
 web/public/
 ├── favicon.ico
@@ -175,6 +180,7 @@ web/public/
 ```
 
 ### Mobile Assets (`mobile/assets/`)
+
 ```
 mobile/assets/
 ├── icon.png          # App icon
@@ -185,6 +191,7 @@ mobile/assets/
 ## Development Experience
 
 ### Starting Development
+
 ```bash
 # Terminal 1: Web development (your current workflow)
 yarn dev
@@ -196,7 +203,9 @@ yarn mobile:start
 ```
 
 ### File Changes
+
 When you edit a file in `src/`:
+
 - **Web**: Vite hot-reloads in browser
 - **Mobile**: Metro hot-reloads on phone
 - **Both platforms update simultaneously!**
@@ -209,7 +218,7 @@ When you edit a file in `src/`:
 4. **Familiar Structure**: Web folder looks like current setup
 5. **Easy Migration**: Just move current files to `web/`, add `mobile/`
 
-----
+---
 
 ## Dependencies structure
 
@@ -235,6 +244,7 @@ quorum/
 ## How Dependencies Work
 
 ### Single Package.json Strategy
+
 ```json
 {
   "dependencies": {
@@ -243,12 +253,12 @@ quorum/
     "@lingui/react": "^4.5.0",
     "@tanstack/react-query": "^4.29.0",
     "minisearch": "^6.1.0",
-    
+
     // WEB-ONLY: Bundler ignores on mobile
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    
+
     // MOBILE-ONLY: Bundler ignores on web
     "react-native": "0.72.6",
     "@react-navigation/native": "^6.1.0",
@@ -258,13 +268,16 @@ quorum/
 ```
 
 ### Bundler Intelligence
+
 The bundlers are smart about what they include:
 
 **Web (Vite):**
+
 - ✅ Includes: `@lingui/react`, `@tanstack/react-query`, `react-dom`
 - ❌ Ignores: `react-native`, `expo`, `@react-navigation`
 
 **Mobile (Metro):**
+
 - ✅ Includes: `@lingui/react`, `@tanstack/react-query`, `react-native`
 - ❌ Ignores: `react-dom`, `react-router-dom`
 
@@ -284,7 +297,7 @@ import MiniSearch from 'minisearch';
 export function MyComponent() {
   const { data } = useQuery(['messages'], fetchMessages);
   const searchEngine = new MiniSearch({ fields: ['content'] });
-  
+
   return <div>{t`Hello World`}</div>;  // Same on both platforms
 }
 ```
@@ -293,33 +306,36 @@ export function MyComponent() {
 
 ```typescript
 // Web-only import
-import { BrowserRouter } from 'react-router-dom';  // Only bundled on web
+import { BrowserRouter } from 'react-router-dom'; // Only bundled on web
 
-// Mobile-only import  
-import { NavigationContainer } from '@react-navigation/native';  // Only bundled on mobile
+// Mobile-only import
+import { NavigationContainer } from '@react-navigation/native'; // Only bundled on mobile
 ```
 
 ## Installation Process
 
 ### Current (Web Only)
+
 ```bash
 yarn add @lingui/react
 # Installs to single node_modules, used by web
 ```
 
 ### Future (Web + Mobile)
+
 ```bash
 yarn add @lingui/react
 # Same command! Single node_modules, used by both platforms
 ```
 
 ### Adding Platform-Specific Dependencies
+
 ```bash
 # Add mobile-only dependency
 yarn add react-native-vector-icons
 # Still goes to shared node_modules, but only mobile bundles it
 
-# Add web-only dependency  
+# Add web-only dependency
 yarn add @fortawesome/react-fontawesome
 # Still goes to shared node_modules, but only web bundles it
 ```
@@ -329,6 +345,7 @@ yarn add @fortawesome/react-fontawesome
 Each platform only includes what it uses:
 
 ### Web Bundle
+
 - ✅ `@lingui/react` (6KB)
 - ✅ `@tanstack/react-query` (24KB)
 - ✅ `react-dom` (42KB)
@@ -336,6 +353,7 @@ Each platform only includes what it uses:
 - ❌ `expo` (0KB - not included)
 
 ### Mobile Bundle
+
 - ✅ `@lingui/react` (6KB)
 - ✅ `@tanstack/react-query` (24KB)
 - ✅ `react-native` (core platform)
@@ -345,6 +363,7 @@ Each platform only includes what it uses:
 ## Development Workflow
 
 ### Installing New Dependencies
+
 ```bash
 # From root directory (always)
 yarn add some-new-library
@@ -355,6 +374,7 @@ yarn add some-new-library
 ```
 
 ### Checking What's Installed
+
 ```bash
 # Single source of truth
 cat package.json
@@ -377,7 +397,7 @@ import { useLingui } from '@lingui/react';
 
 export function SomeComponent() {
   const { i18n } = useLingui();
-  
+
   return (
     <div>
       {t`Welcome to Quorum`}
@@ -390,6 +410,7 @@ export function SomeComponent() {
 ```
 
 **Result:**
+
 - ✅ Web: Renders as HTML with translations
 - ✅ Mobile: Renders as React Native with same translations
 - ✅ Same translation files work for both
@@ -404,4 +425,3 @@ export function SomeComponent() {
 4. **Faster CI/CD**: Single `yarn install` for both platforms
 5. **Smaller Repository**: No duplicate node_modules folders
 6. **Easier Updates**: `yarn upgrade` updates both platforms
-

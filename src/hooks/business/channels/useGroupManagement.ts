@@ -114,9 +114,7 @@ export function useGroupManagement({
     if (!groupName || !space) return;
 
     // Find remaining groups after deletion
-    const withoutGroup = space.groups.filter(
-      (g) => g.groupName !== groupName
-    );
+    const withoutGroup = space.groups.filter((g) => g.groupName !== groupName);
 
     // Find a new default channel if current channel is in the deleted group
     const updatedChannelId = withoutGroup.find((g) =>
@@ -158,13 +156,13 @@ export function useGroupManagement({
   // Check if group name is valid for saving
   const isValidGroupName = useCallback(() => {
     if (!space || group === '') return false;
-    
+
     // Can't save if name hasn't changed
     if (groupName === group) return false;
-    
+
     // Can't save if name already exists
     if (space.groups.find((g) => g.groupName === group)) return false;
-    
+
     return true;
   }, [space, group, groupName]);
 

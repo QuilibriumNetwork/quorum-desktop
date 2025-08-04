@@ -6,7 +6,9 @@ export interface UserProfileActionsOptions {
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-export const useUserProfileActions = (options: UserProfileActionsOptions = {}) => {
+export const useUserProfileActions = (
+  options: UserProfileActionsOptions = {}
+) => {
   const navigate = useNavigate();
   const { dismiss, setKickUserAddress } = options;
 

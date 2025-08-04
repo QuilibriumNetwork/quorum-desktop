@@ -10,19 +10,28 @@ export const useSpaceHeader = (space: any) => {
     const bannerClasses = space?.bannerUrl
       ? ''
       : ' !h-[41px] border-b border-b-1 border-b-surface-6';
-    
+
     return baseClasses + bannerClasses;
   }, [space?.bannerUrl]);
 
-  const headerStyle = useMemo(() => ({
-    backgroundImage: space?.bannerUrl ? `url('${space.bannerUrl}')` : undefined,
-  }), [space?.bannerUrl]);
+  const headerStyle = useMemo(
+    () => ({
+      backgroundImage: space?.bannerUrl
+        ? `url('${space.bannerUrl}')`
+        : undefined,
+    }),
+    [space?.bannerUrl]
+  );
 
   const hasBanner = Boolean(space?.bannerUrl);
 
-  const gradientOverlayStyle = useMemo(() => ({
-    background: 'linear-gradient(to bottom, rgba(var(--surface-00-rgb), 0.8), rgba(var(--surface-00-rgb), 0))',
-  }), []);
+  const gradientOverlayStyle = useMemo(
+    () => ({
+      background:
+        'linear-gradient(to bottom, rgba(var(--surface-00-rgb), 0.8), rgba(var(--surface-00-rgb), 0))',
+    }),
+    []
+  );
 
   return {
     headerClassName,

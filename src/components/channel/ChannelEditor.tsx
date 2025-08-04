@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { Button, Modal, Input, Icon, Container, FlexRow, Text } from '../primitives';
+import {
+  Button,
+  Modal,
+  Input,
+  Icon,
+  Container,
+  FlexRow,
+  Text,
+} from '../primitives';
 import '../../styles/_modal_common.scss';
 import { useChannelManagement } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
@@ -24,7 +32,12 @@ const ChannelEditor: React.FunctionComponent<{
     saveChanges,
     handleDeleteClick,
     setShowWarning,
-  } = useChannelManagement({ spaceId, groupName, channelId, onDeleteComplete: dismiss });
+  } = useChannelManagement({
+    spaceId,
+    groupName,
+    channelId,
+    onDeleteComplete: dismiss,
+  });
 
   const handleSave = React.useCallback(async () => {
     await saveChanges();
@@ -43,19 +56,13 @@ const ChannelEditor: React.FunctionComponent<{
           <Text className="small-caps">
             <Trans>Channel Name</Trans>
           </Text>
-          <Input
-            value={channelName}
-            onChange={handleChannelNameChange}
-          />
+          <Input value={channelName} onChange={handleChannelNameChange} />
         </Container>
         <Container className="mb-4 max-sm:mb-1">
           <Text className="small-caps">
             <Trans>Channel Topic</Trans>
           </Text>
-          <Input
-            value={channelTopic}
-            onChange={handleChannelTopicChange}
-          />
+          <Input value={channelTopic} onChange={handleChannelTopicChange} />
         </Container>
         {hasMessages && showWarning && (
           <Container className="error-label mb-3 relative pr-8">
@@ -82,8 +89,8 @@ const ChannelEditor: React.FunctionComponent<{
                 : t`Click again to confirm`}
             </Button>
           )}
-          <Button 
-            type="primary" 
+          <Button
+            type="primary"
             className="max-sm:w-full max-sm:order-1"
             onClick={handleSave}
           >

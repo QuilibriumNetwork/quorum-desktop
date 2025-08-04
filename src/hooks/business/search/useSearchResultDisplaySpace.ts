@@ -47,13 +47,7 @@ export const useSearchResultDisplaySpace = ({
       channelName: channel?.channelName || message.channelId,
       isLoading: userLoading || spaceLoading,
     };
-  }, [
-    userInfo,
-    spaceInfo,
-    message.channelId,
-    userLoading,
-    spaceLoading,
-  ]);
+  }, [userInfo, spaceInfo, message.channelId, userLoading, spaceLoading]);
 
   return displayValues;
 };

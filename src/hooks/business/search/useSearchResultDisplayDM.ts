@@ -27,7 +27,7 @@ export const useSearchResultDisplayDM = ({
   const { message } = result;
   const { messageDB } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
-  
+
   // DM-specific state
   const [icon, setIcon] = useState<string>(DefaultImages.UNKNOWN_USER);
   const [displayName, setDisplayName] = useState<string>(t`Unknown User`);

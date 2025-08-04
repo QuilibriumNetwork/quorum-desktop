@@ -23,7 +23,6 @@ export const useSearchResultHighlight = ({
   contextWords = 12,
   maxLength = 200,
 }: UseSearchResultHighlightProps): UseSearchResultHighlightReturn => {
-  
   // Extract message text
   const messageText = useMemo(() => {
     // Only 'post' messages are searchable and appear in search results
@@ -37,7 +36,7 @@ export const useSearchResultHighlight = ({
   // Generate contextual snippet around search terms
   const contextualSnippet = useMemo(() => {
     const text = messageText;
-    
+
     if (!searchTerms.length || !text.trim()) {
       return text.length > maxLength
         ? text.substring(0, maxLength) + '...'

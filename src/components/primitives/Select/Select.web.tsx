@@ -27,7 +27,9 @@ const Select: React.FC<WebSelectProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState(value || '');
-  const [actualPlacement, setActualPlacement] = useState<'top' | 'bottom'>('bottom');
+  const [actualPlacement, setActualPlacement] = useState<'top' | 'bottom'>(
+    'bottom'
+  );
   const selectRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -86,7 +88,7 @@ const Select: React.FC<WebSelectProps> = ({
   // Helper function to get all options (flattened from groups or direct options)
   const getAllOptions = () => {
     if (groups) {
-      return groups.flatMap(group => group.options);
+      return groups.flatMap((group) => group.options);
     }
     return options || [];
   };
@@ -139,125 +141,164 @@ const Select: React.FC<WebSelectProps> = ({
           aria-expanded={isOpen}
         >
           <span className="quorum-select__value">
-            {selectedOption?.icon && (
-              isValidIconName(selectedOption.icon) ? (
-                <Icon name={selectedOption.icon} size="sm" className="text-subtle quorum-select__icon" />
+            {selectedOption?.icon &&
+              (isValidIconName(selectedOption.icon) ? (
+                <Icon
+                  name={selectedOption.icon}
+                  size="sm"
+                  className="text-subtle quorum-select__icon"
+                />
               ) : (
-                <span className="quorum-select__icon">{selectedOption.icon}</span>
-              )
-            )}
+                <span className="quorum-select__icon">
+                  {selectedOption.icon}
+                </span>
+              ))}
             <span
               className={!selectedOption ? 'quorum-select__placeholder' : ''}
             >
               {displayText}
             </span>
           </span>
-          <Icon name="chevron-down" size="xs" className="quorum-select__arrow" />
+          <Icon
+            name="chevron-down"
+            size="xs"
+            className="quorum-select__arrow"
+          />
         </button>
 
         {isOpen && (
-          <div ref={dropdownRef} className="quorum-select__dropdown" role="listbox">
-            {groups ? (
-              // Render grouped options
-              groups.map((group, groupIndex) => (
-                <div key={groupIndex} className="quorum-select__group">
-                  <div className="quorum-select__group-label">{group.groupLabel}</div>
-                  {group.options.map((option) => (
-                    <div
-                      key={option.value}
-                      className={[
-                        'quorum-select__option',
-                        'quorum-select__option--grouped',
-                        option.value === selectedValue &&
-                          'quorum-select__option--selected',
-                        option.disabled && 'quorum-select__option--disabled',
-                      ]
-                        .filter(Boolean)
-                        .join(' ')}
-                      onClick={() => !option.disabled && handleSelect(option.value)}
-                      role="option"
-                      aria-selected={option.value === selectedValue}
-                    >
-                      <div className="quorum-select__option-content">
-                        {option.avatar && (
-                          <div
-                            className="quorum-select__option-avatar"
-                            style={{ backgroundImage: `url(${option.avatar})` }}
+          <div
+            ref={dropdownRef}
+            className="quorum-select__dropdown"
+            role="listbox"
+          >
+            {groups
+              ? // Render grouped options
+                groups.map((group, groupIndex) => (
+                  <div key={groupIndex} className="quorum-select__group">
+                    <div className="quorum-select__group-label">
+                      {group.groupLabel}
+                    </div>
+                    {group.options.map((option) => (
+                      <div
+                        key={option.value}
+                        className={[
+                          'quorum-select__option',
+                          'quorum-select__option--grouped',
+                          option.value === selectedValue &&
+                            'quorum-select__option--selected',
+                          option.disabled && 'quorum-select__option--disabled',
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
+                        onClick={() =>
+                          !option.disabled && handleSelect(option.value)
+                        }
+                        role="option"
+                        aria-selected={option.value === selectedValue}
+                      >
+                        <div className="quorum-select__option-content">
+                          {option.avatar && (
+                            <div
+                              className="quorum-select__option-avatar"
+                              style={{
+                                backgroundImage: `url(${option.avatar})`,
+                              }}
+                            />
+                          )}
+                          {option.icon &&
+                            !option.avatar &&
+                            (isValidIconName(option.icon) ? (
+                              <Icon
+                                name={option.icon}
+                                size="sm"
+                                className="text-subtle quorum-select__option-icon"
+                              />
+                            ) : (
+                              <span className="quorum-select__option-icon">
+                                {option.icon}
+                              </span>
+                            ))}
+                          <div className="quorum-select__option-text">
+                            <span className="quorum-select__option-label">
+                              {option.label}
+                            </span>
+                            {option.subtitle && (
+                              <span className="quorum-select__option-subtitle">
+                                {option.subtitle}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        {option.value === selectedValue && (
+                          <Icon
+                            name="check"
+                            size="sm"
+                            className="quorum-select__checkmark"
                           />
                         )}
-                        {option.icon && !option.avatar && (
-                          isValidIconName(option.icon) ? (
-                            <Icon name={option.icon} size="sm" className="text-subtle quorum-select__option-icon" />
-                          ) : (
-                            <span className="quorum-select__option-icon">{option.icon}</span>
-                          )
-                        )}
-                        <div className="quorum-select__option-text">
-                          <span className="quorum-select__option-label">{option.label}</span>
-                          {option.subtitle && (
-                            <span className="quorum-select__option-subtitle">{option.subtitle}</span>
-                          )}
-                        </div>
                       </div>
-                      {option.value === selectedValue && (
-                        <Icon
-                          name="check"
-                          size="sm"
-                          className="quorum-select__checkmark"
+                    ))}
+                  </div>
+                ))
+              : // Render simple options
+                allOptions.map((option) => (
+                  <div
+                    key={option.value}
+                    className={[
+                      'quorum-select__option',
+                      option.value === selectedValue &&
+                        'quorum-select__option--selected',
+                      option.disabled && 'quorum-select__option--disabled',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                    onClick={() =>
+                      !option.disabled && handleSelect(option.value)
+                    }
+                    role="option"
+                    aria-selected={option.value === selectedValue}
+                  >
+                    <div className="quorum-select__option-content">
+                      {option.avatar && (
+                        <div
+                          className="quorum-select__option-avatar"
+                          style={{ backgroundImage: `url(${option.avatar})` }}
                         />
                       )}
+                      {option.icon &&
+                        !option.avatar &&
+                        (isValidIconName(option.icon) ? (
+                          <Icon
+                            name={option.icon}
+                            size="sm"
+                            className="text-subtle quorum-select__option-icon"
+                          />
+                        ) : (
+                          <span className="quorum-select__option-icon">
+                            {option.icon}
+                          </span>
+                        ))}
+                      <div className="quorum-select__option-text">
+                        <span className="quorum-select__option-label">
+                          {option.label}
+                        </span>
+                        {option.subtitle && (
+                          <span className="quorum-select__option-subtitle">
+                            {option.subtitle}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  ))}
-                </div>
-              ))
-            ) : (
-              // Render simple options
-              allOptions.map((option) => (
-                <div
-                  key={option.value}
-                  className={[
-                    'quorum-select__option',
-                    option.value === selectedValue &&
-                      'quorum-select__option--selected',
-                    option.disabled && 'quorum-select__option--disabled',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                  onClick={() => !option.disabled && handleSelect(option.value)}
-                  role="option"
-                  aria-selected={option.value === selectedValue}
-                >
-                  <div className="quorum-select__option-content">
-                    {option.avatar && (
-                      <div
-                        className="quorum-select__option-avatar"
-                        style={{ backgroundImage: `url(${option.avatar})` }}
+                    {option.value === selectedValue && (
+                      <Icon
+                        name="check"
+                        size="sm"
+                        className="quorum-select__checkmark"
                       />
                     )}
-                    {option.icon && !option.avatar && (
-                      isValidIconName(option.icon) ? (
-                        <Icon name={option.icon} size="sm" className="text-subtle quorum-select__option-icon" />
-                      ) : (
-                        <span className="quorum-select__option-icon">{option.icon}</span>
-                      )
-                    )}
-                    <div className="quorum-select__option-text">
-                      <span className="quorum-select__option-label">{option.label}</span>
-                      {option.subtitle && (
-                        <span className="quorum-select__option-subtitle">{option.subtitle}</span>
-                      )}
-                    </div>
                   </div>
-                  {option.value === selectedValue && (
-                    <Icon
-                      name="check"
-                      size="sm"
-                      className="quorum-select__checkmark"
-                    />
-                  )}
-                </div>
-              ))
-            )}
+                ))}
           </div>
         )}
       </div>

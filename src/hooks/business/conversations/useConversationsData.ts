@@ -8,7 +8,8 @@ export const useConversationsData = () => {
   const { data: conversations, ...rest } = useConversations({ type: 'direct' });
 
   // Process conversations for display logic
-  const conversationsList = conversations?.pages?.flatMap((p: any) => p.conversations) || [];
+  const conversationsList =
+    conversations?.pages?.flatMap((p: any) => p.conversations) || [];
   const hasConversations = conversationsList.length > 0;
 
   return {

@@ -31,21 +31,26 @@ export interface UseUserSettingsReturn {
 export const useUserSettings = (
   options: UseUserSettingsOptions = {}
 ): UseUserSettingsReturn => {
-  const { currentPasskeyInfo, updateStoredPasskey, exportKey } = usePasskeysContext();
-  const [displayName, setDisplayName] = useState(currentPasskeyInfo?.displayName || '');
+  const { currentPasskeyInfo, updateStoredPasskey, exportKey } =
+    usePasskeysContext();
+  const [displayName, setDisplayName] = useState(
+    currentPasskeyInfo?.displayName || ''
+  );
   const [selectedCategory, setSelectedCategory] = useState('general');
   const [allowSync, setAllowSync] = useState(false);
   const [nonRepudiable, setNonRepudiable] = useState(true);
   const [init, setInit] = useState(false);
-  
+
   const { data: registration } = useRegistration({
     address: currentPasskeyInfo?.address!,
   });
   const { keyset } = useRegistrationContext();
   const { saveConfig, getConfig, updateUserProfile } = useMessageDB();
   const existingConfig = useRef<UserConfig | null>(null);
-  
-  const [stagedRegistration, setStagedRegistration] = useState(registration?.registration);
+
+  const [stagedRegistration, setStagedRegistration] = useState(
+    registration?.registration
+  );
 
   // Update staged registration when registration data becomes available
   useEffect(() => {
@@ -83,7 +88,7 @@ export const useUserSettings = (
 
   const downloadKey = async () => {
     if (!currentPasskeyInfo) return;
-    
+
     const content = await exportKey(currentPasskeyInfo.address);
     const fileName = currentPasskeyInfo.address + '.key';
     const blob = new Blob([content], { type: 'text/plain' });
@@ -103,12 +108,13 @@ export const useUserSettings = (
   const saveChanges = async (fileData?: ArrayBuffer, currentFile?: File) => {
     if (!currentPasskeyInfo) return;
 
-    const profileImageUrl = currentFile && fileData
-      ? 'data:' +
-        currentFile.type +
-        ';base64,' +
-        Buffer.from(fileData).toString('base64')
-      : currentPasskeyInfo.pfpUrl;
+    const profileImageUrl =
+      currentFile && fileData
+        ? 'data:' +
+          currentFile.type +
+          ';base64,' +
+          Buffer.from(fileData).toString('base64')
+        : currentPasskeyInfo.pfpUrl;
 
     // Update stored passkey
     updateStoredPasskey(currentPasskeyInfo.credentialId, {

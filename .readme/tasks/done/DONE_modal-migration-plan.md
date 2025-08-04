@@ -23,6 +23,7 @@ Based on comprehensive code review and the modal inventory (`.readme/docs/modals
 These modals use the standard `<Modal>` wrapper and have straightforward content structures:
 
 #### **✅ KickUserModal** - `src/components/modals/KickUserModal.tsx`
+
 - **Status**: CONVERTED & TESTED ✅
 - **Complexity**: Simple (single action confirmation)
 - **Original Import**: `import Modal from '../Modal'`
@@ -30,12 +31,14 @@ These modals use the standard `<Modal>` wrapper and have straightforward content
 - **Result**: Works perfectly, no issues found
 
 #### **📝 NewDirectMessageModal** - `src/components/modals/NewDirectMessageModal.tsx`
+
 - **Status**: CONVERTED & TESTED ✅
 - **Complexity**: Simple (single input with validation)
 - **Features**: Address validation, user lookup with Suspense
 - **Risk Level**: Low (similar pattern to KickUserModal)
 
 #### **✅ CreateSpaceModal** - `src/components/modals/CreateSpaceModal.tsx`
+
 - **Status**: CONVERTED & TESTED ✅
 - **Complexity**: Complex but uses standard Modal wrapper
 - **Features**: Icon upload with drag-and-drop, privacy settings, validation
@@ -43,6 +46,7 @@ These modals use the standard `<Modal>` wrapper and have straightforward content
 - **Issue Fixed**: Input onChange handler updated to accept string value directly
 
 #### **✅ Image Viewer Modal** - `src/components/message/Message.tsx`
+
 - **Status**: CONVERTED & TESTED ✅
 - **Complexity**: Simple (just image display)
 - **Features**: Full-size image display with close functionality
@@ -54,18 +58,21 @@ These modals use the standard `<Modal>` wrapper and have straightforward content
 These modals use custom layout containers and may require enhanced Modal primitive or specialized approach:
 
 #### **🔍 UserSettingsModal** - `src/components/modals/UserSettingsModal.tsx`
+
 - **Layout**: Uses `modal-complex-container` with sidebar navigation
 - **Complexity**: Complex (multi-category tabbed interface)
 - **Features**: Profile editing, device management, theme/language settings
 - **Challenge**: Custom responsive sidebar layout
 
 #### **🔍 SpaceEditor** - `src/components/channel/SpaceEditor.tsx`
+
 - **Layout**: Uses `modal-complex-container` with 5-section interface
 - **Complexity**: Most complex modal in the codebase
 - **Features**: Multi-category tabs, file uploads, role management, invite system
 - **Challenge**: Extensive state management and section switching
 
 #### **🔍 JoinSpaceModal** - `src/components/modals/JoinSpaceModal.tsx`
+
 - **Layout**: Custom `quorum-modal` styling without Modal wrapper
 - **Complexity**: Complex (link parsing, space manifest decryption)
 - **Features**: Link validation, space preview, error handling
@@ -76,11 +83,13 @@ These modals use custom layout containers and may require enhanced Modal primiti
 These modals use specialized layouts that may not fit the standard Modal primitive:
 
 #### **🔍 ChannelEditor** - `src/components/channel/ChannelEditor.tsx`
+
 - **Layout**: Uses `modal-small-container` custom layout
 - **Complexity**: Simple form with delete confirmation
 - **Challenge**: Specialized small modal styling
 
 #### **🔍 GroupEditor** - `src/components/channel/GroupEditor.tsx`
+
 - **Layout**: Completely custom `group-editor` styling
 - **Complexity**: Single input field with delete confirmation
 - **Challenge**: Fully custom modal styling approach
@@ -108,6 +117,7 @@ interface BaseModalProps {
 ```
 
 **Strengths**:
+
 - ✅ Standard modal functionality (backdrop, ESC handling, animations)
 - ✅ Multiple size variants
 - ✅ Customizable close behavior
@@ -115,6 +125,7 @@ interface BaseModalProps {
 - ✅ Custom className support for styling extensions
 
 **Limitations for Complex Modals**:
+
 - ❌ No built-in sidebar/tab navigation support
 - ❌ No section-based layout management
 - ❌ Limited responsive layout options for complex UIs
@@ -128,12 +139,14 @@ interface BaseModalProps {
 **Approach**: Direct replacement using existing Modal primitive
 
 **Target Modals**:
+
 1. ✅ KickUserModal (completed)
 2. NewDirectMessageModal
 3. Image Viewer Modal
 4. CreateSpaceModal (test carefully due to complexity)
 
 **Steps**:
+
 1. Change import: `import Modal from '../Modal'` → `import { Modal } from '../primitives'`
 2. Test functionality thoroughly
 3. Verify styling and responsive behavior
@@ -144,36 +157,40 @@ interface BaseModalProps {
 **Approach**: Evaluate if current Modal primitive can handle complex layouts
 
 **Target Modals**:
+
 - UserSettingsModal
-- SpaceEditor  
+- SpaceEditor
 - JoinSpaceModal
 
 **Assessment Criteria**:
+
 1. Can existing Modal primitive accommodate custom layouts via `className`?
 2. Do we need enhanced Modal primitive with sidebar/tab support?
 3. Should complex modals remain as custom implementations?
 
 **Possible Solutions**:
+
 - **Option A**: Enhance Modal primitive with `layout` prop (sidebar, tabs, etc.)
 - **Option B**: Create specialized `ComplexModal` primitive
 - **Option C**: Keep complex modals as custom implementations with shared styling
 
 **Note by LaMat:**
-These complex modals in mobile will be bottom sheets with navigation (the current modal categories will becomee  the  navigation items, in the mobile playground you already cerated a very basic example of bopttom shett with navigation). We have 2 of these complex modals with categories: UserSettingsModal.tsx, SpaceEditor.tsx - We will probably never have more than these 2 - 
+These complex modals in mobile will be bottom sheets with navigation (the current modal categories will becomee the navigation items, in the mobile playground you already cerated a very basic example of bopttom shett with navigation). We have 2 of these complex modals with categories: UserSettingsModal.tsx, SpaceEditor.tsx - We will probably never have more than these 2 -
 On the web app, tehse 2 modals have a different layout depending on screen size (we want to maintain that so they are fully responsive).
 Q: Can't we simply use the modal primitive as a container which contains custom code to create all the complexity of these modals?
 Please asses the situation carefully and come up with a plan that is simple and elegant to solve all of our requests.
-
 
 ### 🎯 Phase 3: Custom Small Modal Migration (Future)
 
 **Approach**: Case-by-case evaluation
 
 **Target Modals**:
+
 - ChannelEditor
 - GroupEditor
 
 **Options**:
+
 1. Create `size="small"` variant for Modal primitive
 2. Add specialized small modal layout support
 3. Maintain as custom implementations if too specialized
@@ -185,23 +202,27 @@ Please asses the situation carefully and come up with a plan that is simple and 
 ### 🔧 Modal Import Patterns Found
 
 **Current Pattern**:
+
 ```typescript
-import Modal from '../Modal';  // Old component
+import Modal from '../Modal'; // Old component
 ```
 
 **Target Pattern**:
+
 ```typescript
-import { Modal } from '../primitives';  // New primitive
+import { Modal } from '../primitives'; // New primitive
 ```
 
 ### 🎨 Styling Considerations
 
 **Complex Modal Containers**:
+
 - `modal-complex-container`: Used by UserSettingsModal, SpaceEditor
 - `modal-small-container`: Used by ChannelEditor
 - `group-editor`: Custom styling for GroupEditor
 
 **Integration Strategy**:
+
 - Simple modals: Use Modal primitive's built-in styling
 - Complex modals: May need `className` prop for custom layouts
 - Custom small modals: Evaluate if `size` variants suffice
@@ -221,6 +242,7 @@ import { Modal } from '../primitives';  // New primitive
 ### 📊 Current Progress
 
 **Simple Modals**:
+
 - ✅ KickUserModal: Converted & tested
 - ⏳ NewDirectMessageModal: Ready for conversion
 - ⏳ CreateSpaceModal: Ready for testing
@@ -234,16 +256,19 @@ import { Modal } from '../primitives';  // New primitive
 ## Risk Assessment
 
 ### 🟢 Low Risk (Simple Modals)
+
 - KickUserModal ✅
 - NewDirectMessageModal
 - Image Viewer Modal
 
 ### 🟡 Medium Risk
+
 - CreateSpaceModal (complex form handling)
 - ChannelEditor (custom small layout)
 - GroupEditor (fully custom styling)
 
 ### 🔴 High Risk (Complex Modals)
+
 - UserSettingsModal (complex sidebar layout)
 - SpaceEditor (most complex modal, 5 sections)
 - JoinSpaceModal (custom navigation behavior)
@@ -279,27 +304,32 @@ import { Modal } from '../primitives';  // New primitive
 ### 🔧 Input Primitive Integration Issues
 
 **Problem**: Input primitive uses different onChange signature than standard HTML inputs
+
 - **Standard HTML**: `onChange={(e) => setValue(e.target.value)}`
 - **Input Primitive**: `onChange={(value) => setValue(value)}`
 
 **Solution**: Update all modal forms to use string value directly instead of event objects
+
 - ✅ Fixed in NewDirectMessageModal and CreateSpaceModal
 - ⚠️ **Note for future**: Always check onChange handlers when converting modals with forms
 
 ### 🖼️ File Upload Component Compatibility
 
 **Problem**: SpaceIcon expected `Promise<ArrayBuffer>` but CreateSpaceModal was passing inconsistent data types
+
 - **Root cause**: `acceptedFiles[0].arrayBuffer()` called in render creates new Promise each time
 - **Side effect**: Non-deterministic file display behavior, wrong images showing
 
 **⚠️ Widespread Issue**: Found same pattern in multiple components that will need similar fixes:
+
 - ✅ `src/components/modals/CreateSpaceModal.tsx` (FIXED)
 - ❌ `src/components/channel/SpaceEditor.tsx` (needs fix)
-- ❌ `src/components/modals/UserSettingsModal.tsx` (needs fix)  
+- ❌ `src/components/modals/UserSettingsModal.tsx` (needs fix)
 - ❌ `src/components/onboarding/Onboarding.tsx` (needs fix)
 - ❌ `src/components/user/UserProfile.tsx` (needs fix)
 
 **Solution**: Proper state management pattern for file uploads:
+
 ```typescript
 const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
 const [currentFile, setCurrentFile] = React.useState<File | undefined>();
@@ -320,6 +350,7 @@ key={currentFile?.name + currentFile?.lastModified} // Force re-render
 ```
 
 **⚠️ Key Lessons**:
+
 1. Never call async functions (like `arrayBuffer()`) directly in render
 2. Always clear previous state when accepting new files
 3. Use `key` prop to force re-render of components with cached internal state
@@ -328,12 +359,14 @@ key={currentFile?.name + currentFile?.lastModified} // Force re-render
 ### 🎨 Styling Consistency Patterns
 
 **Error Message Alignment**: Input primitives had centered error text by default
+
 - **Fix**: Add `text-align: left` to both web (.scss) and native (StyleSheet) versions
 - **Pattern**: Always check cross-platform styling when updating primitives
 
 ### 📝 Import Consolidation Strategy
 
 **Before**:
+
 ```typescript
 import Modal from '../Modal';
 import { Input } from '../primitives';
@@ -341,6 +374,7 @@ import { Button } from '../primitives';
 ```
 
 **After**:
+
 ```typescript
 import { Input, Button, Modal } from '../primitives';
 ```
@@ -350,11 +384,13 @@ import { Input, Button, Modal } from '../primitives';
 ### 🔄 State Management Anti-Patterns Found
 
 **Dropzone State Issues**:
+
 - `acceptedFiles` array doesn't automatically clear when new files are selected
 - Multiple state sources (acceptedFiles, fileData, isUploading) can get out of sync
 - File dialog events vs drag-drop events have different timing
 
 **Best Practice**: Single source of truth with explicit state clearing:
+
 - Use controlled state (`currentFile`) instead of relying on `acceptedFiles` array
 - Clear all related state together when new file is accepted
 - Handle async operations in useEffect, not in event handlers
@@ -369,6 +405,7 @@ All components with file uploads should be reviewed and potentially fixed with t
 When converting modals to Modal primitive:
 
 ### ✅ Pre-Conversion Checks
+
 - [ ] Identify all form inputs and their onChange patterns
 - [ ] Check for file upload components and their data flow (look for useDropzone, acceptedFiles, arrayBuffer patterns)
 - [ ] Review any third-party component integrations
@@ -376,6 +413,7 @@ When converting modals to Modal primitive:
 - [ ] **Special attention**: Search for `acceptedFiles[0].arrayBuffer()` calls in render or SpaceIcon usage
 
 ### ✅ During Conversion
+
 - [ ] Update import statements to use primitives
 - [ ] Convert onChange handlers from event-based to value-based
 - [ ] Update error handling to use Input primitive's built-in error display
@@ -383,6 +421,7 @@ When converting modals to Modal primitive:
 - [ ] Verify cross-platform styling consistency
 
 ### ✅ Post-Conversion Testing
+
 - [ ] Test all form submissions and validations
 - [ ] Verify file uploads work reliably (multiple attempts)
 - [ ] Check error message styling and alignment
@@ -396,13 +435,13 @@ When converting modals to Modal primitive:
 - **Modal Inventory**: `.readme/docs/modals.md` (lines 156-239)
 - **Mobile Dev Plan**: `.readme/tasks/todo/mobile-dev/mobile-dev-plan.md` (Step 4)
 - **Modal Primitive**: `src/components/primitives/Modal/`
-- **Test Cases**: 
+- **Test Cases**:
   - `src/components/modals/KickUserModal.tsx` (simple conversion)
   - `src/components/modals/NewDirectMessageModal.tsx` (form with validation)
   - `src/components/modals/CreateSpaceModal.tsx` (complex form with file upload)
 
 ---
 
-*Document created: 2025-01-27*
-*Last updated: 2025-01-27*
-*Status: Phase 1 completed - 3 simple modals successfully converted*
+_Document created: 2025-01-27_
+_Last updated: 2025-01-27_
+_Status: Phase 1 completed - 3 simple modals successfully converted_

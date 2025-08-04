@@ -8,12 +8,12 @@ import { Icon } from '../Icon';
 // Helper function to get hex color for accent colors
 const getColorHex = (color: string): string => {
   const colorMap: { [key: string]: string } = {
-    blue: '#3b82f6',     // blue-500
-    purple: '#8b5cf6',   // purple-500  
-    fuchsia: '#d946ef',  // fuchsia-500
-    orange: '#f97316',   // orange-500
-    green: '#22c55e',    // green-500
-    yellow: '#eab308',   // yellow-500
+    blue: '#3b82f6', // blue-500
+    purple: '#8b5cf6', // purple-500
+    fuchsia: '#d946ef', // fuchsia-500
+    orange: '#f97316', // orange-500
+    green: '#22c55e', // green-500
+    yellow: '#eab308', // yellow-500
   };
   return colorMap[color] || '#3b82f6';
 };
@@ -71,10 +71,10 @@ export const ColorSwatch: React.FC<ColorSwatchNativeProps> = ({
       ]}
     >
       {isActive && showCheckmark && (
-        <Icon 
-          name="check" 
-          size={size === 'small' ? 'xs' : size === 'large' ? 'lg' : 'sm'} 
-          color="#ffffff" 
+        <Icon
+          name="check"
+          size={size === 'small' ? 'xs' : size === 'large' ? 'lg' : 'sm'}
+          color="#ffffff"
         />
       )}
     </TouchableOpacity>

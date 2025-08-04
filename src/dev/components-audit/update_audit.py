@@ -33,12 +33,9 @@ def update_statistics(data):
     # Count totals
     total = len(components)
     primitives_done = sum(1 for c in components.values() if c.get('primitives') == 'done')
-    # Count logic work as complete if:
-    # 1. logic_extraction == 'done' (extraction work completed)
-    # 2. logic_needs == 'keep' (decision made to keep logic in component)
+    # Count logic work as complete if 'done' or 'keep'
     logic_extraction_done = sum(1 for c in components.values() 
-                              if c.get('logic_extraction') == 'done' or 
-                                 c.get('logic_needs') == 'keep')
+                              if c.get('logic_extraction') in ['done', 'keep'])
     native_ready = sum(1 for c in components.values() if c.get('native') == 'ready')
     native_done = sum(1 for c in components.values() if c.get('native') == 'done')
     
@@ -54,11 +51,6 @@ def update_statistics(data):
         use = comp.get('used', 'unknown')
         usage[use] = usage.get(use, 0) + 1
     
-    # Count by logic needs
-    logic_needs = {}
-    for comp in components.values():
-        need = comp.get('logic_needs', 'unknown')
-        logic_needs[need] = logic_needs.get(need, 0) + 1
     
     # Update stats
     data['stats'] = {
@@ -69,7 +61,6 @@ def update_statistics(data):
         'native_done': native_done,
         'by_category': categories,
         'by_usage': usage,
-        'by_logic_needs': logic_needs,
         'analysis_notes': data['stats'].get('analysis_notes', ''),
         'last_updated': datetime.now().strftime('%Y-%m-%d')
     }
@@ -87,7 +78,6 @@ def update_component(data, component_name, updates):
             "used": "yes",
             "primitives": "todo",
             "logic_extraction": "todo", 
-            "logic_needs": "extract",
             "hooks": [],
             "native": "todo",
             "notes": "New component added to audit",
@@ -136,7 +126,6 @@ def main():
     parser.add_argument('--component', help='Component name to update (e.g., "GroupEditor.tsx")')
     parser.add_argument('--primitives', choices=['todo', 'partial', 'done'], help='Primitives status')
     parser.add_argument('--logic_extraction', choices=['todo', 'in_progress', 'done'], help='Logic extraction status')
-    parser.add_argument('--logic_needs', choices=['extract', 'keep', 'done'], help='Logic needs status')
     parser.add_argument('--hooks', help='Comma-separated list of hooks (e.g., "useHook1,useHook2")')
     parser.add_argument('--native', choices=['todo', 'in_progress', 'ready', 'done'], help='Native readiness status')
     parser.add_argument('--category', choices=['shared', 'platform_specific', 'complex_refactor'], help='Component category')
@@ -171,8 +160,6 @@ def main():
             updates['primitives'] = args.primitives
         if args.logic_extraction:
             updates['logic_extraction'] = args.logic_extraction
-        if args.logic_needs:
-            updates['logic_needs'] = args.logic_needs
         if args.hooks:
             updates['hooks'] = args.hooks
         if args.native:

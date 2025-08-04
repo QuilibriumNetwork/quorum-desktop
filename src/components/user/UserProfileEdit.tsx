@@ -1,6 +1,4 @@
-import {
-  faTimes,
-} from '@fortawesome/free-solid-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -149,8 +147,7 @@ const UserProfileEdit: React.FunctionComponent<{
                       acceptedFiles[0].type +
                       ';base64,' +
                       Buffer.from(fileData).toString('base64')
-                  : (currentPasskeyInfo!.pfpUrl ??
-                      DefaultImages.UNKNOWN_USER),
+                  : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
                 currentPasskeyInfo!
               );
               if (props.dismiss !== undefined) {

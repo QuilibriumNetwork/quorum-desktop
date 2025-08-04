@@ -7,7 +7,7 @@ export const useUserRoleManagement = (spaceId?: string) => {
   const addRole = useCallback(
     async (userAddress: string, roleId: string) => {
       if (!spaceId) return;
-      
+
       const space = await messageDB.getSpace(spaceId);
       if (!space) return;
 
@@ -32,7 +32,7 @@ export const useUserRoleManagement = (spaceId?: string) => {
   const removeRole = useCallback(
     async (userAddress: string, roleId: string) => {
       if (!spaceId) return;
-      
+
       const space = await messageDB.getSpace(spaceId);
       if (!space) return;
 

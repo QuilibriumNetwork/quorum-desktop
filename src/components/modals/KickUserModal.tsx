@@ -10,7 +10,8 @@ type KickUserModalProps = {
 };
 
 const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
-  const { kicking, confirmationStep, handleKickClick, resetConfirmation } = useUserKicking();
+  const { kicking, confirmationStep, handleKickClick, resetConfirmation } =
+    useUserKicking();
 
   // Reset confirmation when modal closes
   React.useEffect(() => {
@@ -20,13 +21,15 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
   }, [props.visible, resetConfirmation]);
 
   return (
-    <Modal visible={props.visible} onClose={props.onClose} title={t`Kick User`} size='small'>
+    <Modal
+      visible={props.visible}
+      onClose={props.onClose}
+      title={t`Kick User`}
+      size="small"
+    >
       <Container width="full" maxWidth="400px" margin="auto">
         <Container margin="none" className="mb-4 text-left max-sm:text-center">
-          <Text 
-            size="sm" 
-            variant="subtle"
-          >
+          <Text size="sm" variant="subtle">
             {t`Use the below button to kick this user out of the Space`}
           </Text>
         </Container>
@@ -34,7 +37,9 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
           <Button
             type="danger"
             disabled={kicking}
-            onClick={() => handleKickClick(props.kickUserAddress!, props.onClose)}
+            onClick={() =>
+              handleKickClick(props.kickUserAddress!, props.onClose)
+            }
           >
             {confirmationStep === 0 ? t`Kick!` : t`Click again to confirm`}
           </Button>

@@ -11,6 +11,7 @@ Update the .readme/INDEX.md file by:
 6. Updating the "Last Updated" date
 
 Use Python to:
+
 - Walk through the .claude directory
 - Read each markdown file to extract its title
 - Calculate relative paths for back links

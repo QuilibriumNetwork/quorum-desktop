@@ -20,7 +20,12 @@ export interface UseSpaceManagementReturn {
   saving: boolean;
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
-  saveChanges: (iconData?: ArrayBuffer, currentIconFile?: File, bannerData?: ArrayBuffer, currentBannerFile?: File) => Promise<void>;
+  saveChanges: (
+    iconData?: ArrayBuffer,
+    currentIconFile?: File,
+    bannerData?: ArrayBuffer,
+    currentBannerFile?: File
+  ) => Promise<void>;
   handleDeleteSpace: () => Promise<void>;
   isOwner: boolean;
   currentPasskeyInfo: any;
@@ -30,13 +35,13 @@ export const useSpaceManagement = (
   options: UseSpaceManagementOptions
 ): UseSpaceManagementReturn => {
   const { spaceId, onClose } = options;
-  
+
   const [spaceName, setSpaceName] = useState('');
   const [isPublic, setIsPublic] = useState(true);
   const [isRepudiable, setIsRepudiable] = useState(false);
   const [saving, setSaving] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('general');
-  
+
   const { updateSpace, deleteSpace } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const { keyset } = useRegistrationContext();
@@ -51,48 +56,66 @@ export const useSpaceManagement = (
     }
   }, [space?.spaceId]); // Only run when space ID changes, not when state changes
 
-  const saveChanges = useCallback(async (
-    iconData?: ArrayBuffer, 
-    currentIconFile?: File, 
-    bannerData?: ArrayBuffer, 
-    currentBannerFile?: File
-  ) => {
-    if (!spaceName.trim() || !space) return;
-    
-    setSaving(true);
-    try {
-      const iconUrl = iconData && currentIconFile
-        ? 'data:' + currentIconFile.type + ';base64,' + Buffer.from(iconData).toString('base64')
-        : space.iconUrl;
+  const saveChanges = useCallback(
+    async (
+      iconData?: ArrayBuffer,
+      currentIconFile?: File,
+      bannerData?: ArrayBuffer,
+      currentBannerFile?: File
+    ) => {
+      if (!spaceName.trim() || !space) return;
 
-      const bannerUrl = bannerData && currentBannerFile
-        ? 'data:' + currentBannerFile.type + ';base64,' + Buffer.from(bannerData).toString('base64')
-        : space.bannerUrl;
+      setSaving(true);
+      try {
+        const iconUrl =
+          iconData && currentIconFile
+            ? 'data:' +
+              currentIconFile.type +
+              ';base64,' +
+              Buffer.from(iconData).toString('base64')
+            : space.iconUrl;
 
-      await updateSpace({
-        ...space,
-        spaceName,
-        iconUrl,
-        bannerUrl,
-        isRepudiable,
-      });
-      
-      onClose?.();
-    } catch (error) {
-      console.error('Failed to update space:', error);
-    } finally {
-      setSaving(false);
-    }
-  }, [spaceName, space, isRepudiable, updateSpace, onClose]);
+        const bannerUrl =
+          bannerData && currentBannerFile
+            ? 'data:' +
+              currentBannerFile.type +
+              ';base64,' +
+              Buffer.from(bannerData).toString('base64')
+            : space.bannerUrl;
+
+        await updateSpace({
+          ...space,
+          spaceName,
+          iconUrl,
+          bannerUrl,
+          isRepudiable,
+        });
+
+        onClose?.();
+      } catch (error) {
+        console.error('Failed to update space:', error);
+      } finally {
+        setSaving(false);
+      }
+    },
+    [spaceName, space, isRepudiable, updateSpace, onClose]
+  );
 
   const handleDeleteSpace = useCallback(async () => {
     try {
-      console.log('Attempting to delete space with ID:', spaceId, 'Type:', typeof spaceId);
-      
+      console.log(
+        'Attempting to delete space with ID:',
+        spaceId,
+        'Type:',
+        typeof spaceId
+      );
+
       if (!spaceId || typeof spaceId !== 'string') {
-        throw new Error(`Invalid spaceId: ${spaceId} (type: ${typeof spaceId})`);
+        throw new Error(
+          `Invalid spaceId: ${spaceId} (type: ${typeof spaceId})`
+        );
       }
-      
+
       await deleteSpace(spaceId);
       navigate('/');
       onClose?.();

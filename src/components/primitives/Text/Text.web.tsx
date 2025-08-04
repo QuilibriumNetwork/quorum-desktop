@@ -5,7 +5,7 @@ import './Text.scss';
 
 const variantMap = {
   default: 'text-main',
-  strong: 'text-strong', 
+  strong: 'text-strong',
   subtle: 'text-subtle',
   muted: 'text-muted',
   error: 'text-red-600 dark:text-red-400',
@@ -27,7 +27,7 @@ const sizeMap = {
 const weightMap = {
   normal: 'font-normal',
   medium: 'font-medium',
-  semibold: 'font-semibold', 
+  semibold: 'font-semibold',
   bold: 'font-bold',
 };
 
@@ -56,8 +56,9 @@ export const Text: React.FC<WebTextProps> = ({
   ...rest
 }) => {
   // Auto-detect link variant when as="a" and no variant is specified
-  const finalVariant = Component === 'a' && variant === 'default' ? 'link' : variant;
-  
+  const finalVariant =
+    Component === 'a' && variant === 'default' ? 'link' : variant;
+
   const classes = clsx(
     variantMap[finalVariant],
     sizeMap[size],

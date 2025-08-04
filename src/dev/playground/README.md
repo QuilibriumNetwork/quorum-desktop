@@ -15,18 +15,20 @@ src/dev/playground/
 ## Build Configuration
 
 ### Development Mode
+
 ```bash
 yarn dev
 ```
+
 - Web Playground is **always included** and available at `/playground` route
 - Mobile playground is **always excluded** from all builds
-
 
 ## Web Playground
 
 ### Accessing the Web Playground
 
 During development, navigate to:
+
 - **URL**: `/playground`
 - **Example**: `http://localhost:5173/playground`
 
@@ -35,11 +37,13 @@ During development, navigate to:
 The web playground includes:
 
 #### 1. Theme Testing
+
 - Dark/Light mode switching
 - Accent color selection
 - Visual validation of theme changes
 
 #### 2. Primitive Components
+
 - **Layout**: FlexRow, FlexBetween, FlexCenter
 - **Containers**: ModalContainer, OverlayBackdrop, ResponsiveContainer
 - **Controls**: Button, Switch, RadioGroup, Select
@@ -48,6 +52,7 @@ The web playground includes:
 - More primitives added as they're developed
 
 #### 3. Interactive Testing
+
 - Test different prop combinations
 - Verify animations and transitions
 - Check responsive behavior
@@ -56,6 +61,7 @@ The web playground includes:
 ### Testing Checklist
 
 When testing primitives:
+
 - [ ] Visual appearance matches design
 - [ ] Animations are smooth
 - [ ] Click interactions work correctly
@@ -82,11 +88,13 @@ When testing primitives:
 ### Starting Mobile Testing
 
 1. **Navigate to mobile test directory**:
+
    ```bash
    cd src/dev/playground/mobile
    ```
 
 2. **Start with tunnel mode** (required for WSL2):
+
    ```bash
    yarn start --tunnel
    ```
@@ -98,16 +106,19 @@ When testing primitives:
 ### Testing on Different Platforms
 
 #### Web Browser (Quick Development)
+
 - Access `http://localhost:8081` in your browser
 - Shows React Native components via react-native-web
 - Good for rapid iteration and layout checks (not recommended for definitive testing)
 
 #### Android Testing (Primary Mobile Platform)
+
 - Use Expo Go app with tunnel URL
 - Tests actual React Native implementations (`.native.tsx` files)
 - Validates touch interactions, performance, and native behaviors
 
 #### iPhone Testing (Secondary Platform)
+
 - Same process as Android - use Expo Go app
 - Important for iOS-specific behaviors and gestures
 - Essential before production releases
@@ -173,16 +184,19 @@ When testing primitives:
 ## Platform Testing Strategy
 
 ### During Development (Phases 1-2)
+
 - Focus on web playground for rapid iteration
 - Android testing for mobile validation
 - iPhone testing optional
 
 ### Before Major Milestones (Phases 3-4)
+
 - Test all primitives on web
 - Validate on Android device
 - Include iPhone testing for platform-specific issues
 
 ### Production Ready (Phases 5-6)
+
 - Full testing on all platforms
 - Performance profiling
 - Accessibility validation
@@ -194,7 +208,7 @@ When testing primitives:
 
 ### What Gets Synced
 
-- **Main App**: `src/components/primitives/` 
+- **Main App**: `src/components/primitives/`
 - **Mobile Playground**: `src/dev/playground/mobile/components/primitives/`
 - **Web Playground**: No sync needed - imports directly from main app
 
@@ -208,6 +222,7 @@ yarn playground:check
 ```
 
 This will show you:
+
 - Which components are in sync vs out of sync
 - Which version is newer (main app or playground)
 - File sizes and modification dates
@@ -276,16 +291,19 @@ In the mobile playground we have disabled Lingui becaused itcaused conflcits wit
 The sync system intelligently handles differences between Lingui localization (main app) and hardcoded strings (playground):
 
 **File Comparison Types:**
+
 - `✓ Component (in sync)` - Files are identical
 - `≈ Component (Lingui-equivalent)` - Files differ only in Lingui vs hardcoded strings
 - `✗ Component (out of sync)` - Files have meaningful differences
 
 **Default Behavior:**
+
 - Lingui-equivalent files are **skipped** by default (considered in-sync)
 - Only truly different files are synced
 - Use `--force-lingui` to sync even Lingui-equivalent files
 
 **Examples:**
+
 ```bash
 # Default: Skip Lingui-equivalent files (recommended)
 yarn playground:sync --sync-newer --all
@@ -297,11 +315,13 @@ yarn playground:sync --sync-newer --all --force-lingui
 ### When to Sync
 
 **To Playground** (main app → playground):
+
 - After updating components in main app
 - Before testing new component features
 - When playground components are outdated
 
 **From Mobile Playground** (mobile playground → main app):
+
 - After testing and perfecting components in mobile playground
 - When mobile playground has newer/better implementations
 - After mobile-specific optimizations
@@ -345,6 +365,7 @@ A: Share the tunnel URL from Expo. They need Expo Go app installed.
 The main app and mobile playground use **different component resolution strategies** by design:
 
 #### Main App (Production Cross-Platform)
+
 ```typescript
 // Button.tsx - Metro bundler resolution
 export { default } from './Button.web';
@@ -355,6 +376,7 @@ export { default } from './Button.web';
 ```
 
 #### Mobile Playground (React Native Testing Environment)
+
 ```typescript
 // Button.tsx - Always native
 export { default } from './Button.native';
@@ -367,12 +389,14 @@ export { default } from './Button.native';
 ### Why This Architecture Was Chosen
 
 **Main App Requirements:**
+
 - Must build for web (Electron) in production
 - Must support future mobile builds via Metro bundler
 - Uses Vite + Tailwind + SCSS for web builds
 - Needs optimal bundle splitting between platforms
 
 **Mobile Playground Requirements:**
+
 - Pure React Native testing environment
 - Consistent behavior between Android and Expo web preview
 - No CSS conflicts or web-specific dependencies
@@ -383,21 +407,25 @@ export { default } from './Button.native';
 The sync script **automatically skips routing files** that have architectural differences:
 
 #### Files Automatically Skipped
+
 - `index.ts` - Different export patterns
 - `Button.tsx`, `Modal.tsx`, etc. - Different platform routing
 - `ThemeProvider.tsx` - Environment-specific setup
 
 #### Files Always Synced
+
 - `Button.native.tsx` - Mobile implementation (only version used in playground)
 - `types.ts` - Shared TypeScript interfaces
 
 #### Files Never Synced (Not Needed in Mobile Playground)
+
 - `Button.web.tsx` - Web implementation (not used in React Native environment)
 - `Button.scss` - CSS styling (React Native uses StyleSheet instead)
 
 ### Override Behavior
 
 Use `--force` flag to sync routing files if needed:
+
 ```bash
 # Force sync routing files (rarely needed)
 yarn playground:sync --to-playground Button --force

@@ -62,11 +62,13 @@ function createWindow() {
 
   if (isDev) {
     mainWindow.webContents.openDevTools();
-    
+
     // Bypass CORS in development
     mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
       (details, callback) => {
-        callback({ requestHeaders: { ...details.requestHeaders, Origin: '*' } });
+        callback({
+          requestHeaders: { ...details.requestHeaders, Origin: '*' },
+        });
       }
     );
 

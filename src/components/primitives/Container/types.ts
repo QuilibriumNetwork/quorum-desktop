@@ -29,7 +29,7 @@ export interface WebContainerProps extends BaseContainerProps {
   [key: string]: any;
 }
 
-// Native-specific props  
+// Native-specific props
 export interface NativeContainerProps extends BaseContainerProps {
   onPress?: () => void;
   accessible?: boolean;

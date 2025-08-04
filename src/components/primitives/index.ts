@@ -27,7 +27,11 @@ export { CrossPlatformThemeProvider, useCrossPlatformTheme } from './theme';
 // Types
 export type { ModalContainerProps } from './ModalContainer';
 export type { OverlayBackdropProps } from './OverlayBackdrop';
-export type { ContainerProps, WebContainerProps, NativeContainerProps } from './Container';
+export type {
+  ContainerProps,
+  WebContainerProps,
+  NativeContainerProps,
+} from './Container';
 export type { FlexRowProps } from './FlexRow';
 export type { FlexColumnProps } from './FlexColumn';
 export type { FlexBetweenProps } from './FlexBetween';
@@ -37,7 +41,11 @@ export type { ButtonProps } from './Button';
 export type { ModalProps } from './Modal';
 export type { InputProps, InputNativeProps } from './Input';
 export type { TextAreaProps, TextAreaNativeProps } from './TextArea';
-export type { BaseSelectProps as SelectProps, WebSelectProps, NativeSelectProps } from './Select';
+export type {
+  BaseSelectProps as SelectProps,
+  WebSelectProps,
+  NativeSelectProps,
+} from './Select';
 export type { SwitchProps, BaseSwitchProps } from './Switch';
 export type {
   ColorSwatchProps,
@@ -62,8 +70,4 @@ export type {
   IconName,
   IconSize,
 } from './Icon';
-export type {
-  TextProps,
-  WebTextProps,
-  NativeTextProps,
-} from './Text';
+export type { TextProps, WebTextProps, NativeTextProps } from './Text';

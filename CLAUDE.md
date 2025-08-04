@@ -48,7 +48,6 @@ The main dependencies are:
 - When editign anything, you must be very careful to not cause destructive changes or conflicts with other functionalities, as the app is pretty complex with many shared styles and features
 - Think always mobile first, and when making layout/css edits, always think at the final result for both desktop and mobile users for an optimal UX/UI
 
-
 ## React Hooks Rules - IMPORTANT
 
 **NEVER violate React's Rules of Hooks:**

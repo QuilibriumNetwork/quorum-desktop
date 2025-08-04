@@ -287,40 +287,51 @@ export const PrimitivesPlayground: React.FC = () => {
           >
             <h2 className="text-xl font-semibold text-strong">Container</h2>
             <p className="text-subtle">
-              Flexible container primitive with width, padding, margin, and background options
+              Flexible container primitive with width, padding, margin, and
+              background options
             </p>
 
             <div className="space-y-6">
               {/* Basic Container Examples */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Basic Containers</h3>
-                
+                <h3 className="text-lg font-medium text-strong">
+                  Basic Containers
+                </h3>
+
                 <div className="space-y-4">
                   <div>
-                    <p className="text-sm text-subtle mb-2">Container with padding:</p>
+                    <p className="text-sm text-subtle mb-2">
+                      Container with padding:
+                    </p>
                     <Container padding="md" backgroundColor="var(--surface-4)">
                       <Text>Container with medium padding</Text>
                     </Container>
                   </div>
 
                   <div>
-                    <p className="text-sm text-subtle mb-2">Container with margin and full width:</p>
-                    <Container 
-                      width="full" 
-                      margin="sm" 
-                      padding="lg" 
+                    <p className="text-sm text-subtle mb-2">
+                      Container with margin and full width:
+                    </p>
+                    <Container
+                      width="full"
+                      margin="sm"
+                      padding="lg"
                       backgroundColor="var(--surface-4)"
                     >
-                      <Text>Full width container with margin and large padding</Text>
+                      <Text>
+                        Full width container with margin and large padding
+                      </Text>
                     </Container>
                   </div>
 
                   <div>
-                    <p className="text-sm text-subtle mb-2">Container with max width:</p>
-                    <Container 
+                    <p className="text-sm text-subtle mb-2">
+                      Container with max width:
+                    </p>
+                    <Container
                       width="full"
-                      maxWidth="md" 
-                      padding="md" 
+                      maxWidth="md"
+                      padding="md"
                       backgroundColor="var(--surface-4)"
                       className="mx-auto"
                     >
@@ -332,13 +343,17 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Interactive Containers */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Interactive Containers</h3>
-                
+                <h3 className="text-lg font-medium text-strong">
+                  Interactive Containers
+                </h3>
+
                 <div className="space-y-4">
                   <div>
-                    <p className="text-sm text-subtle mb-2">Clickable Container:</p>
-                    <Container 
-                      padding="md" 
+                    <p className="text-sm text-subtle mb-2">
+                      Clickable Container:
+                    </p>
+                    <Container
+                      padding="md"
                       backgroundColor="var(--surface-4)"
                       onClick={() => alert('Container clicked!')}
                       className="cursor-pointer hover:bg-surface-4 transition-colors"
@@ -348,12 +363,20 @@ export const PrimitivesPlayground: React.FC = () => {
                   </div>
 
                   <div>
-                    <p className="text-sm text-subtle mb-2">Container with hover effects:</p>
-                    <Container 
-                      padding="lg" 
+                    <p className="text-sm text-subtle mb-2">
+                      Container with hover effects:
+                    </p>
+                    <Container
+                      padding="lg"
                       backgroundColor="var(--surface-4)"
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-700)'}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--accent-900)'}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          'var(--accent-700)')
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          'var(--accent-900)')
+                      }
                       className="transition-all duration-200"
                     >
                       <Text>Hover over this container to see color change</Text>
@@ -364,25 +387,27 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Nested Containers */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Nested Containers</h3>
-                
-                <Container 
-                  padding="xl" 
+                <h3 className="text-lg font-medium text-strong">
+                  Nested Containers
+                </h3>
+
+                <Container
+                  padding="xl"
                   backgroundColor="var(--surface-4)"
                   className="space-y-4"
                 >
                   <Text weight="semibold">Parent Container (XL padding)</Text>
-                  
-                  <Container 
-                    padding="md" 
+
+                  <Container
+                    padding="md"
                     margin="sm"
                     backgroundColor="var(--surface-5)"
                   >
                     <Text>Child Container 1 (MD padding, SM margin)</Text>
                   </Container>
 
-                  <Container 
-                    padding="sm" 
+                  <Container
+                    padding="sm"
                     margin="md"
                     backgroundColor="var(--surface-6)"
                   >
@@ -390,15 +415,15 @@ export const PrimitivesPlayground: React.FC = () => {
                   </Container>
 
                   <FlexRow gap="md">
-                    <Container 
-                      padding="sm" 
+                    <Container
+                      padding="sm"
                       backgroundColor="var(--surface-7)"
                       className="flex-1"
                     >
                       <Text size="sm">Flex item 1</Text>
                     </Container>
-                    <Container 
-                      padding="sm" 
+                    <Container
+                      padding="sm"
                       backgroundColor="var(--surface-7)"
                       className="flex-1"
                     >
@@ -602,12 +627,16 @@ export const PrimitivesPlayground: React.FC = () => {
                   <Button className="w-auto" onClick={() => {}}>
                     Centered Button
                   </Button>
-                  <Text size="sm" variant="subtle">All items centered</Text>
+                  <Text size="sm" variant="subtle">
+                    All items centered
+                  </Text>
                 </FlexColumn>
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm text-subtle">Column with justify-between:</p>
+                <p className="text-sm text-subtle">
+                  Column with justify-between:
+                </p>
                 <FlexColumn
                   justify="between"
                   className="p-4 bg-surface-3 rounded-xl h-48"
@@ -621,7 +650,9 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm text-subtle">Wrapping column (rare use case):</p>
+                <p className="text-sm text-subtle">
+                  Wrapping column (rare use case):
+                </p>
                 <FlexColumn
                   gap="sm"
                   wrap
@@ -745,33 +776,46 @@ export const PrimitivesPlayground: React.FC = () => {
           >
             <h2 className="text-xl font-semibold text-strong">Text</h2>
             <p className="text-subtle">
-              Essential text component for React Native compatibility with variants, sizes, and weights
+              Essential text component for React Native compatibility with
+              variants, sizes, and weights
             </p>
 
             <div className="space-y-6">
               {/* Text Variants */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Text Variants</h3>
-                
+                <h3 className="text-lg font-medium text-strong">
+                  Text Variants
+                </h3>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 bg-surface-3 rounded-xl">
-                    <Text variant="default">Default variant - Regular text for content</Text>
+                    <Text variant="default">
+                      Default variant - Regular text for content
+                    </Text>
                   </div>
-                  
+
                   <div className="p-4 bg-surface-3 rounded-xl">
-                    <Text variant="strong">Strong variant - Important emphasis</Text>
+                    <Text variant="strong">
+                      Strong variant - Important emphasis
+                    </Text>
                   </div>
-                  
+
                   <div className="p-4 bg-surface-3 rounded-xl">
-                    <Text variant="subtle">Subtle variant - Secondary information</Text>
+                    <Text variant="subtle">
+                      Subtle variant - Secondary information
+                    </Text>
                   </div>
-                  
+
                   <div className="p-4 bg-surface-3 rounded-xl">
-                    <Text variant="muted">Muted variant - Less important details</Text>
+                    <Text variant="muted">
+                      Muted variant - Less important details
+                    </Text>
                   </div>
-                  
+
                   <div className="p-4 bg-surface-3 rounded-xl">
-                    <Text variant="warning">Warning variant - Warning messages</Text>
+                    <Text variant="warning">
+                      Warning variant - Warning messages
+                    </Text>
                   </div>
                 </div>
               </div>
@@ -779,27 +823,61 @@ export const PrimitivesPlayground: React.FC = () => {
               {/* Text Sizes and Weights */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <h3 className="text-lg font-medium text-strong">Text Sizes</h3>
-                  
+                  <h3 className="text-lg font-medium text-strong">
+                    Text Sizes
+                  </h3>
+
                   <div className="p-4 bg-surface-3 rounded-xl space-y-2">
-                    <div><Text size="xs">Extra small text (xs) - 12px</Text></div>
-                    <div><Text size="sm">Small text (sm) - 14px</Text></div>
-                    <div><Text size="base">Base text (base) - 16px default</Text></div>
-                    <div><Text size="lg">Large text (lg) - 18px</Text></div>
-                    <div><Text size="xl">Extra large text (xl) - 20px</Text></div>
-                    <div><Text size="2xl">2X large text (2xl) - 24px</Text></div>
-                    <div><Text size="3xl">3X large text (3xl) - 30px</Text></div>
+                    <div>
+                      <Text size="xs">Extra small text (xs) - 12px</Text>
+                    </div>
+                    <div>
+                      <Text size="sm">Small text (sm) - 14px</Text>
+                    </div>
+                    <div>
+                      <Text size="base">Base text (base) - 16px default</Text>
+                    </div>
+                    <div>
+                      <Text size="lg">Large text (lg) - 18px</Text>
+                    </div>
+                    <div>
+                      <Text size="xl">Extra large text (xl) - 20px</Text>
+                    </div>
+                    <div>
+                      <Text size="2xl">2X large text (2xl) - 24px</Text>
+                    </div>
+                    <div>
+                      <Text size="3xl">3X large text (3xl) - 30px</Text>
+                    </div>
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <h3 className="text-lg font-medium text-strong">Text Weights</h3>
-                  
+                  <h3 className="text-lg font-medium text-strong">
+                    Text Weights
+                  </h3>
+
                   <div className="p-4 bg-surface-3 rounded-xl space-y-2">
-                    <div><Text weight="normal">Normal weight (400) - Default body text</Text></div>
-                    <div><Text weight="medium">Medium weight (500) - Slightly emphasized</Text></div>
-                    <div><Text weight="semibold">Semibold weight (600) - Headings</Text></div>
-                    <div><Text weight="bold">Bold weight (700) - Strong emphasis</Text></div>
+                    <div>
+                      <Text weight="normal">
+                        Normal weight (400) - Default body text
+                      </Text>
+                    </div>
+                    <div>
+                      <Text weight="medium">
+                        Medium weight (500) - Slightly emphasized
+                      </Text>
+                    </div>
+                    <div>
+                      <Text weight="semibold">
+                        Semibold weight (600) - Headings
+                      </Text>
+                    </div>
+                    <div>
+                      <Text weight="bold">
+                        Bold weight (700) - Strong emphasis
+                      </Text>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -807,21 +885,23 @@ export const PrimitivesPlayground: React.FC = () => {
               {/* Text Alignment & Interaction */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <h4 className="text-md font-medium text-strong">Text Alignment</h4>
-                  
+                  <h4 className="text-md font-medium text-strong">
+                    Text Alignment
+                  </h4>
+
                   <div className="space-y-2">
                     <div className="p-4 bg-surface-3 rounded-xl">
                       <div style={{ textAlign: 'left' }}>
                         <Text align="left">Left aligned text (default)</Text>
                       </div>
                     </div>
-                    
+
                     <div className="p-4 bg-surface-3 rounded-xl">
                       <div style={{ textAlign: 'center' }}>
                         <Text align="center">Center aligned text</Text>
                       </div>
                     </div>
-                    
+
                     <div className="p-4 bg-surface-3 rounded-xl">
                       <div style={{ textAlign: 'right' }}>
                         <Text align="right">Right aligned text</Text>
@@ -831,20 +911,22 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <h4 className="text-md font-medium text-strong">Interactive Text</h4>
-                  
+                  <h4 className="text-md font-medium text-strong">
+                    Interactive Text
+                  </h4>
+
                   <div className="space-y-2">
                     <div className="p-4 bg-surface-3 rounded-xl">
-                      <Text 
+                      <Text
                         onClick={() => alert('Text clicked!')}
                         className="cursor-pointer hover:underline"
                       >
                         Click this text to trigger an action
                       </Text>
                     </div>
-                    
+
                     <div className="p-4 bg-surface-3 rounded-xl">
-                      <Text 
+                      <Text
                         color="var(--accent)"
                         weight="medium"
                         onClick={() => alert('Link clicked!')}
@@ -859,8 +941,10 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Combined Examples */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Combined Properties</h3>
-                
+                <h3 className="text-lg font-medium text-strong">
+                  Combined Properties
+                </h3>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 bg-surface-3 rounded-xl">
                     <div>
@@ -874,7 +958,7 @@ export const PrimitivesPlayground: React.FC = () => {
                       </Text>
                     </div>
                   </div>
-                  
+
                   <div className="p-4 bg-surface-3 rounded-xl">
                     <div style={{ textAlign: 'center' }}>
                       <Text size="lg" weight="semibold" align="center">
@@ -890,7 +974,6 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
               </div>
             </div>
-
           </section>
 
           {/* Section: Button Primitive */}
@@ -1905,7 +1988,7 @@ export const PrimitivesPlayground: React.FC = () => {
                   ]}
                 />
               </div>
-              
+
               {/* Empty cells for row 2 */}
               <div></div>
               <div></div>
@@ -1968,11 +2051,10 @@ export const PrimitivesPlayground: React.FC = () => {
                 />
                 <p className="text-xs text-subtle">Always opens above</p>
               </div>
-              
+
               {/* Empty cell for row 3 */}
               <div></div>
             </div>
-           
 
             {/* Implementation Notes */}
             <div className="space-y-3">

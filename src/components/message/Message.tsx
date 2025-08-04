@@ -16,13 +16,27 @@ import EmojiPicker, {
 import UserProfile from '../user/UserProfile';
 import { useParams } from 'react-router';
 import { InviteLink } from './InviteLink';
-import { Modal, Text, Container, FlexRow, FlexColumn, FlexCenter, Icon, Tooltip } from '../primitives';
+import {
+  Modal,
+  Text,
+  Container,
+  FlexRow,
+  FlexColumn,
+  FlexCenter,
+  Icon,
+  Tooltip,
+} from '../primitives';
 import './Message.scss';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
 import { useMobile } from '../context/MobileProvider';
-import { useMessageActions, useEmojiPicker, useMessageInteractions, useMessageFormatting } from '../../hooks';
+import {
+  useMessageActions,
+  useEmojiPicker,
+  useMessageInteractions,
+  useMessageFormatting,
+} from '../../hooks';
 import MessageActions from './MessageActions';
 
 type MessageProps = {
@@ -51,7 +65,6 @@ type MessageProps = {
   kickUserAddress?: string;
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
-
 
 export const Message = ({
   customEmoji,
@@ -120,7 +133,9 @@ export const Message = ({
         ...config,
         onReply: messageActions.handleReply,
         onCopyLink: messageActions.handleCopyLink,
-        onDelete: messageActions.canUserDelete ? messageActions.handleDelete : undefined,
+        onDelete: messageActions.canUserDelete
+          ? messageActions.handleDelete
+          : undefined,
         onReaction: messageActions.handleReaction,
         onMoreReactions: handleMoreReactions,
         canDelete: messageActions.canUserDelete,
@@ -137,7 +152,6 @@ export const Message = ({
     mapSenderToUser,
     onImageClick: setOpenImage,
   });
-
 
   let sender = mapSenderToUser(message.content?.senderId);
   const isHashTarget = useMemo(() => {
@@ -172,7 +186,6 @@ export const Message = ({
     }
   };
 
-
   // Handle more reactions with mobile/desktop logic
   const handleMoreReactions = () => {
     if (interactions.useMobileDrawer) {
@@ -184,7 +197,6 @@ export const Message = ({
       emojiPicker.openMobileEmojiDrawer();
     }
   };
-
 
   return (
     <FlexColumn
@@ -254,7 +266,9 @@ export const Message = ({
       })()}
       {['join', 'leave', 'kick'].includes(message.content.type) && (
         <FlexRow className="font-[11px] px-[11px] py-[8px] italic">
-          <Text>{formatEventMessage(sender.displayName, message.content.type)}</Text>
+          <Text>
+            {formatEventMessage(sender.displayName, message.content.type)}
+          </Text>
         </FlexRow>
       )}
       {!['join', 'leave', 'kick'].includes(message.content.type) && (
@@ -351,41 +365,39 @@ export const Message = ({
             )}
 
             {/* Mobile Emoji Picker */}
-            {interactions.useMobileDrawer && emojiPicker.showMobileEmojiDrawer && (
-              <Modal
-                title=""
-                visible={emojiPicker.showMobileEmojiDrawer}
-                onClose={emojiPicker.closeMobileEmojiDrawer}
-                hideClose={false}
-              >
-                <EmojiPicker
-                  width="100%"
-                  height={300}
-                  suggestedEmojisMode={SuggestionMode.FREQUENT}
-                  customEmojis={emojiPicker.customEmojis}
-                  getEmojiUrl={(unified) => {
-                    return '/apple/64/' + unified + '.png';
-                  }}
-                  skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                  theme={Theme.DARK}
-                  onEmojiClick={(e) => {
-                    emojiPicker.handleMobileEmojiClick(e.emoji);
-                  }}
-                />
-              </Modal>
-            )}
+            {interactions.useMobileDrawer &&
+              emojiPicker.showMobileEmojiDrawer && (
+                <Modal
+                  title=""
+                  visible={emojiPicker.showMobileEmojiDrawer}
+                  onClose={emojiPicker.closeMobileEmojiDrawer}
+                  hideClose={false}
+                >
+                  <EmojiPicker
+                    width="100%"
+                    height={300}
+                    suggestedEmojisMode={SuggestionMode.FREQUENT}
+                    customEmojis={emojiPicker.customEmojis}
+                    getEmojiUrl={(unified) => {
+                      return '/apple/64/' + unified + '.png';
+                    }}
+                    skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
+                    theme={Theme.DARK}
+                    onEmojiClick={(e) => {
+                      emojiPicker.handleMobileEmojiClick(e.emoji);
+                    }}
+                  />
+                </Modal>
+              )}
 
             <Text className="message-sender-name">{sender.displayName}</Text>
             <Text className="pl-2">
               {!repudiability && !message.signature && (
-                <Tooltip 
+                <Tooltip
                   id={`signature-warning-${message.messageId}`}
                   content={t`Message does not have a valid signature, this may not be from the sender`}
                 >
-                  <Icon
-                    name="unlock"
-                    size="xs"
-                  />
+                  <Icon name="unlock" size="xs" />
                 </Tooltip>
               )}
             </Text>
@@ -401,8 +413,13 @@ export const Message = ({
                     className="message-post-content break-words"
                   >
                     {c.split(' ').map((t, j) => {
-                      const tokenData = formatting.processTextToken(t, contentData.messageId, i, j);
-                      
+                      const tokenData = formatting.processTextToken(
+                        t,
+                        contentData.messageId,
+                        i,
+                        j
+                      );
+
                       if (tokenData.type === 'mention') {
                         return (
                           <React.Fragment key={tokenData.key}>
@@ -420,7 +437,10 @@ export const Message = ({
                             className="message-post-content"
                           >
                             <iframe
-                              src={'https://www.youtube.com/embed/' + tokenData.videoId}
+                              src={
+                                'https://www.youtube.com/embed/' +
+                                tokenData.videoId
+                              }
                               allow="autoplay; encrypted-media"
                               className="rounded-lg youtube-embed"
                             ></iframe>
@@ -462,7 +482,10 @@ export const Message = ({
                 ));
               } else if (contentData.type === 'embed') {
                 return (
-                  <Container key={contentData.messageId} className="message-post-content">
+                  <Container
+                    key={contentData.messageId}
+                    className="message-post-content"
+                  >
                     {contentData.content.videoUrl?.startsWith(
                       'https://www.youtube.com/embed'
                     ) && (
@@ -482,7 +505,12 @@ export const Message = ({
                           cursor: 'pointer',
                         }}
                         className="rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer"
-                        onClick={(e) => formatting.handleImageClick(e, contentData.content.imageUrl!)}
+                        onClick={(e) =>
+                          formatting.handleImageClick(
+                            e,
+                            contentData.content.imageUrl!
+                          )
+                        }
                       />
                     )}
                   </Container>
@@ -511,12 +539,16 @@ export const Message = ({
                     messageActions.handleReaction(r.emojiId);
                   }}
                 >
-                  {emojiPicker.customEmojis.find((e) => e.id === r.emojiName) ? (
+                  {emojiPicker.customEmojis.find(
+                    (e) => e.id === r.emojiName
+                  ) ? (
                     <img
                       width="24"
                       className="mr-1"
                       src={
-                        emojiPicker.customEmojis.find((e) => e.id === r.emojiName)?.imgUrl
+                        emojiPicker.customEmojis.find(
+                          (e) => e.id === r.emojiName
+                        )?.imgUrl
                       }
                     />
                   ) : (

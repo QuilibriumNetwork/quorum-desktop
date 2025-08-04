@@ -11,6 +11,7 @@ After conducting a detailed analysis of the invite system in the Quorum desktop 
 The invite system operates through several key components:
 
 ### Core Components
+
 1. **SpaceEditor.tsx** - Main UI for managing invites (lines 742-907)
 2. **useInviteManagement.ts** - Hook managing invite state and logic
 3. **useInviteValidation.ts** - Hook for validating invite links
@@ -19,6 +20,7 @@ The invite system operates through several key components:
 6. **InviteLink.tsx** - Component for displaying and processing invite links
 
 ### Data Flow
+
 1. **Invite Creation**: Generated through `generateNewInviteLink()` in MessageDB.tsx (lines 3829-3869)
 2. **Invite Sending**: Sent via `sendInviteToUser()` to direct message conversations (lines 3800-3827)
 3. **Invite Processing**: Links parsed and validated through `useInviteValidation` hook
@@ -31,6 +33,7 @@ The invite system operates through several key components:
 **Answer: NO explicit blocks are implemented for kicked users receiving invites.**
 
 **Analysis:**
+
 - The SpaceEditor.tsx invite section (lines 763-784) allows selecting any existing conversation from the dropdown
 - The `getUserOptions()` function in useInviteManagement.ts (lines 63-74) returns ALL past conversations without filtering
 - There is **no check** to prevent sending invites to previously kicked users
@@ -39,6 +42,7 @@ The invite system operates through several key components:
   - The target user address is valid (46 characters, starts with "Qm")
 
 **Code Evidence:**
+
 ```typescript
 // In useInviteManagement.ts lines 63-74
 const getUserOptions = useCallback(() => {
@@ -46,11 +50,11 @@ const getUserOptions = useCallback(() => {
   return conversations.pages
     .flatMap((c: any) => c.conversations as Conversation[])
     .toReversed()
-    .map(conversation => ({
+    .map((conversation) => ({
       value: conversation.address,
       label: conversation.displayName,
       avatar: conversation.icon,
-      subtitle: conversation.address
+      subtitle: conversation.address,
     }));
 }, [conversations]);
 ```
@@ -62,12 +66,14 @@ const getUserOptions = useCallback(() => {
 **Answer: This error occurs due to cryptographic validation failures, not time-based expiration.**
 
 **Root Causes:**
+
 1. **Invalid Cryptographic Keys**: The invite link contains encrypted space data that requires specific keys for decryption
 2. **Key System Conflict**: There are TWO separate key systems - original space keys vs. public link keys
 3. **Key Switching**: When public links are generated, the system switches from original keys to new public keys
 4. **Missing Configuration**: Space manifest or configuration keys may be missing or corrupted
 
 **Error Flow Analysis:**
+
 - InviteLink.tsx line 26: `setError(t\`Could not verify invite\`)`
 - useInviteValidation.ts line 109: `setValidationError(t\`Could not verify invite\`)`
 - The error message "The invite link has expired or is invalid" (line 53) is misleading - links don't actually expire by time
@@ -84,10 +90,11 @@ The system actually uses **two different key sources** for invites:
    - Replace the original key system once created
 
 **Code Evidence:**
+
 ```typescript
 // constructInviteLink() - MessageDB.tsx lines 3770-3772
 if (space?.inviteUrl) {
-  return space.inviteUrl;  // Uses PUBLIC link if it exists
+  return space.inviteUrl; // Uses PUBLIC link if it exists
 }
 // OTHERWISE: Uses original space creation keys
 const config_key = await messageDB.getSpaceKey(spaceId, 'config');
@@ -98,25 +105,28 @@ const config_key = await messageDB.getSpaceKey(spaceId, 'config');
 **Answer: YES, but ONLY if public links have been enabled first.**
 
 **Corrected Understanding:**
+
 1. **Without Public Links**: Private invites use original space keys and remain valid indefinitely
 2. **With Public Links**: Once `generateNewInviteLink()` is called, `constructInviteLink()` switches to using public link keys
 3. **Key System Switch**: This switch invalidates ALL previous private invites that were using original keys
 
 **How it Actually Works:**
+
 1. **Initial State**: Private invites sent via `sendInviteToUser()` use original space keys through `constructInviteLink()`
 2. **Public Link Generation**: When "Generate New Invite Link" is clicked, new X448 keys are created
 3. **System Switch**: The `space.inviteUrl` property is set, causing `constructInviteLink()` to use public link keys instead
 4. **Invalidation**: Old private invites become invalid because they use the original keys, but the system now expects public keys
 
 **Critical Code Evidence:**
+
 ```typescript
 // constructInviteLink() decision logic - MessageDB.tsx lines 3768-3796
 const constructInviteLink = React.useCallback(async (spaceId: string) => {
   const space = await messageDB.getSpace(spaceId);
   if (space?.inviteUrl) {
-    return space.inviteUrl;  // USES PUBLIC KEYS
+    return space.inviteUrl; // USES PUBLIC KEYS
   }
-  
+
   // ONLY REACHED IF NO PUBLIC LINK EXISTS - USES ORIGINAL KEYS
   const config_key = await messageDB.getSpaceKey(spaceId, 'config');
   const hub_key = await messageDB.getSpaceKey(spaceId, 'hub');
@@ -125,6 +135,7 @@ const constructInviteLink = React.useCallback(async (spaceId: string) => {
 ```
 
 **User Experience Impact:**
+
 - **Private-Only Spaces**: Private invites never expire - they use stable original keys
 - **Mixed Spaces**: Once public linking is enabled, old private invites become invalid
 - **Regeneration**: Each regeneration invalidates previous public-era invites
@@ -135,6 +146,7 @@ const constructInviteLink = React.useCallback(async (spaceId: string) => {
 **Answer: YES, kicked users can immediately rejoin via public invite links.**
 
 **Analysis:**
+
 - No persistent "ban list" or "kicked user" database exists
 - The `kickUser()` function (MessageDB.tsx lines 3141-3495) only:
   - Removes user from current space member list
@@ -143,6 +155,7 @@ const constructInviteLink = React.useCallback(async (spaceId: string) => {
 - Public invite links bypass membership checks entirely
 
 **Security Implications:**
+
 - Kicked users retain the ability to rejoin if they have access to public invite links
 - The only permanent prevention would be:
   - Regenerating invite links after kicking
@@ -150,6 +163,7 @@ const constructInviteLink = React.useCallback(async (spaceId: string) => {
   - Manually managing invite distribution
 
 **Code Evidence:**
+
 ```typescript
 // No persistent ban list or kicked user tracking found in the codebase
 // kickUser() function only handles immediate removal, not future prevention
@@ -162,6 +176,7 @@ const constructInviteLink = React.useCallback(async (spaceId: string) => {
 **Two Separate Invite Systems:**
 
 1. **Original Space Keys** (Space Creation):
+
    ```
    Created: When space is first created
    Keys: config_key, hub_key (from space creation)
@@ -180,11 +195,13 @@ const constructInviteLink = React.useCallback(async (spaceId: string) => {
 ### Invite Link Structures
 
 **Private Invites (Original Keys):**
+
 ```
 https://qm.one/#spaceId={SPACE_ID}&configKey={ORIGINAL_CONFIG_PRIVATE_KEY}&template={TEMPLATE}&secret={SECRET}&hubKey={HUB_PRIVATE_KEY}
 ```
 
 **Public Links (Generated Keys):**
+
 ```
 https://qm.one/invite/#spaceId={SPACE_ID}&configKey={NEW_CONFIG_PRIVATE_KEY}
 ```
@@ -192,6 +209,7 @@ https://qm.one/invite/#spaceId={SPACE_ID}&configKey={NEW_CONFIG_PRIVATE_KEY}
 ### Cryptographic Flow
 
 **Private Invites (constructInviteLink):**
+
 1. **Check**: Does `space.inviteUrl` exist?
 2. **If NO**: Use original space creation keys
 3. **Template Construction**: Uses existing encryption states and ratchets
@@ -199,6 +217,7 @@ https://qm.one/invite/#spaceId={SPACE_ID}&configKey={NEW_CONFIG_PRIVATE_KEY}
 5. **Validation**: Uses original config keys for decryption
 
 **Public Links (generateNewInviteLink):**
+
 1. **Key Generation**: Create new X448 key pair
 2. **Key Storage**: Save new config keys to database
 3. **Space Update**: Set `space.inviteUrl` with new link
@@ -206,10 +225,11 @@ https://qm.one/invite/#spaceId={SPACE_ID}&configKey={NEW_CONFIG_PRIVATE_KEY}
 5. **Validation**: Uses new config keys for decryption
 
 ### Key Decision Logic
+
 ```typescript
 // The critical decision point in constructInviteLink()
 if (space?.inviteUrl) {
-  return space.inviteUrl;  // PUBLIC SYSTEM
+  return space.inviteUrl; // PUBLIC SYSTEM
 } else {
   // PRIVATE SYSTEM - use original keys
   const config_key = await messageDB.getSpaceKey(spaceId, 'config');
@@ -218,6 +238,7 @@ if (space?.inviteUrl) {
 ```
 
 ### Database Operations
+
 - **Space Keys**: Multiple types stored ('hub', 'owner', 'config', 'space')
 - **Key Evolution**: Original keys preserved, new keys added when public links enabled
 - **Space State**: `inviteUrl` property determines which key system is active
@@ -227,12 +248,14 @@ if (space?.inviteUrl) {
 ## Recommendations
 
 ### Security Improvements
+
 1. **Implement Kicked User Tracking**: Create persistent ban list to prevent re-joining
 2. **Enhanced Validation**: Add kicked user checks in invite processing
 3. **Key System Warning**: Alert users that enabling public links invalidates private invites
 4. **Separate Key Systems**: Consider maintaining both key systems simultaneously
 
 ### UX Improvements
+
 1. **Better Error Messages**: Distinguish between expired, invalid, and access-denied scenarios
 2. **Kicked User Notifications**: Clear indication when users are blocked from spaces
 3. **Invite History**: Track sent invites and their status
@@ -240,12 +263,14 @@ if (space?.inviteUrl) {
 5. **Migration Warning**: Warn users before switching from private-only to public linking
 
 ### Code Quality
+
 1. **Centralized Validation**: Move invite validation logic to single location
 2. **Type Safety**: Improve TypeScript definitions for invite-related types
 3. **Error Handling**: More granular error categorization and handling
 4. **Documentation**: Better code comments explaining the dual key system
 
 ### Critical UX Issues to Address
+
 1. **Hidden Key Switch**: Users don't understand that enabling public links breaks private invites
 2. **Misleading Tooltips**: Current tooltip doesn't explain the dual system impact
 3. **No Rollback**: Once public links are enabled, there's no way to go back to private-only mode
@@ -263,5 +288,5 @@ The system is cryptographically sound but the UX around key system transitions n
 
 ---
 
-*Document created: July 30, 2025*
-*Analysis covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, MessageDB.tsx, InviteLink.tsx*
+_Document created: July 30, 2025_
+_Analysis covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, MessageDB.tsx, InviteLink.tsx_

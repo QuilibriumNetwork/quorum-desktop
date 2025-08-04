@@ -15,7 +15,7 @@ This audit identifies components that still use div-based form elements or raw H
 **Total Items Found:** 8 components/patterns  
 **High Priority:** 3 items  
 **Medium Priority:** 3 items  
-**Low Priority:** 2 items  
+**Low Priority:** 2 items
 
 ---
 
@@ -26,6 +26,7 @@ This audit identifies components that still use div-based form elements or raw H
 **Impact:** Core messaging functionality, high usage frequency
 
 #### Channel Message Input
+
 - **File:** `src/components/channel/Channel.tsx`
 - **Pattern:** Raw `<textarea>` element for message composition
 - **Location:** Approximately line 475
@@ -33,7 +34,8 @@ This audit identifies components that still use div-based form elements or raw H
 - **Complexity:** Medium (needs to maintain existing functionality like auto-resize, emoji handling)
 
 #### Direct Message Input
-- **File:** `src/components/direct/DirectMessage.tsx`  
+
+- **File:** `src/components/direct/DirectMessage.tsx`
 - **Pattern:** Raw `<textarea>` element for direct message composition
 - **Location:** Approximately line 406
 - **Migration:** Replace with `TextArea` primitive component
@@ -44,6 +46,7 @@ This audit identifies components that still use div-based form elements or raw H
 **Impact:** Core search functionality
 
 #### SearchBar Component
+
 - **File:** `src/components/search/SearchBar.tsx`
 - **Pattern:** Raw HTML `<input>` element
 - **Location:** Lines 167-180
@@ -59,6 +62,7 @@ This audit identifies components that still use div-based form elements or raw H
 **Impact:** Accessibility and consistency
 
 #### SpaceEditor File Upload Buttons
+
 - **File:** `src/components/channel/SpaceEditor.tsx`
 - **Pattern:** `<div className="btn-secondary">` with onClick handlers
 - **Usage:** Emoji and sticker upload triggers
@@ -70,9 +74,10 @@ This audit identifies components that still use div-based form elements or raw H
 **Impact:** Consistency with primitive architecture
 
 #### Custom ToggleSwitch
+
 - **File:** `src/components/ToggleSwitch.tsx`
 - **Pattern:** Custom div-based toggle implementation
-- **Location:** Lines 11-22 
+- **Location:** Lines 11-22
 - **Migration:** Replace with existing `Switch` primitive component
 - **Complexity:** Low (Switch primitive already exists)
 - **Note:** Verify all usage sites support Switch primitive API
@@ -82,6 +87,7 @@ This audit identifies components that still use div-based form elements or raw H
 **Impact:** Accessibility improvement
 
 #### Modal File Upload Patterns
+
 - **Files:** Multiple modals (CreateSpaceModal, UserSettingsModal, etc.)
 - **Pattern:** Dropzone areas using divs as click targets
 - **Migration:** Ensure proper Button primitive usage for upload triggers
@@ -96,6 +102,7 @@ This audit identifies components that still use div-based form elements or raw H
 **Impact:** Accessibility and consistency
 
 #### Color Picker Divs
+
 - **File:** `src/components/AccentColorSwitcher.tsx`
 - **Pattern:** Color picker divs with onClick handlers
 - **Location:** Lines 34-42
@@ -107,6 +114,7 @@ This audit identifies components that still use div-based form elements or raw H
 **Impact:** Consistency (already using Button primitive)
 
 #### Onboarding Disabled State
+
 - **File:** `src/components/onboarding/Onboarding.tsx`
 - **Pattern:** Uses `btn-disabled-onboarding` className with Button primitive
 - **Status:** Already using primitive, just needs class cleanup
@@ -118,16 +126,19 @@ This audit identifies components that still use div-based form elements or raw H
 ## Migration Strategy
 
 ### Phase 1: Critical Path (Week 1)
+
 1. **Message inputs** - Channel.tsx and DirectMessage.tsx textarea migrations
 2. **Search input** - SearchBar.tsx input migration
 3. **Testing** - Verify core functionality works
 
-### Phase 2: Consistency (Week 2) 
+### Phase 2: Consistency (Week 2)
+
 1. **ToggleSwitch** - Replace with Switch primitive
 2. **File upload triggers** - Convert div buttons to Button primitives
 3. **Testing** - Verify upload and toggle functionality
 
 ### Phase 3: Polish (Week 3)
+
 1. **AccentColorSwitcher** - Convert to Button primitives
 2. **Class cleanup** - Remove legacy button classes
 3. **Final testing** - Complete cross-browser/device testing
@@ -137,17 +148,20 @@ This audit identifies components that still use div-based form elements or raw H
 ## Implementation Notes
 
 ### TextArea Migration Considerations
+
 - Preserve auto-resize functionality
 - Maintain emoji picker integration
 - Keep message sending on Enter behavior
 - Ensure mobile keyboard handling works
 
-### Input Migration Considerations  
+### Input Migration Considerations
+
 - Preserve search debouncing behavior
 - Maintain focus/blur event handling
 - Keep keyboard shortcut support
 
 ### Button Migration Considerations
+
 - Ensure proper ARIA labels for accessibility
 - Maintain existing click behaviors
 - Preserve styling and hover states
@@ -170,14 +184,17 @@ For each migrated component:
 ## Risk Assessment
 
 **Low Risk:**
+
 - Button primitive migrations (well-tested primitive)
 - Switch primitive migration (primitive exists)
 
 **Medium Risk:**
+
 - TextArea migrations (complex existing functionality)
 - Search input migration (critical user flow)
 
 **Mitigation:**
+
 - Implement behind feature flags initially
 - Thorough testing in development environment
 - Staged rollout with quick rollback capability
@@ -187,7 +204,7 @@ For each migrated component:
 ## Status Tracking
 
 - [ ] Phase 1: Critical Path
-- [ ] Phase 2: Consistency  
+- [ ] Phase 2: Consistency
 - [ ] Phase 3: Polish
 - [ ] Final validation and cleanup
 

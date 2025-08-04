@@ -47,7 +47,7 @@ const Select: React.FC<NativeSelectProps> = ({
   // Helper function to get all options (flattened from groups or direct options)
   const getAllOptions = () => {
     if (groups) {
-      return groups.flatMap(group => group.options);
+      return groups.flatMap((group) => group.options);
     }
     return options || [];
   };
@@ -145,10 +145,17 @@ const Select: React.FC<NativeSelectProps> = ({
           {selectedOption?.icon && !selectedOption?.avatar && (
             <View style={styles.icon}>
               {isValidIconName(selectedOption.icon) ? (
-                <Icon name={selectedOption.icon} size="sm" color={colors.text.subtle} />
+                <Icon
+                  name={selectedOption.icon}
+                  size="sm"
+                  color={colors.text.subtle}
+                />
               ) : (
                 <Text
-                  style={{ fontSize: sizeStyles.fontSize * 1.25, color: colors.text.subtle }}
+                  style={{
+                    fontSize: sizeStyles.fontSize * 1.25,
+                    color: colors.text.subtle,
+                  }}
                 >
                   {selectedOption.icon}
                 </Text>
@@ -190,9 +197,7 @@ const Select: React.FC<NativeSelectProps> = ({
       </TouchableOpacity>
 
       {error && errorMessage && (
-        <Text
-          style={[styles.errorMessage, { color: colors.text.danger }]}
-        >
+        <Text style={[styles.errorMessage, { color: colors.text.danger }]}>
           {errorMessage}
         </Text>
       )}
@@ -217,163 +222,197 @@ const Select: React.FC<NativeSelectProps> = ({
                   bounces={false}
                   style={styles.scrollView}
                 >
-                  {groups && groups.length > 0 ? (
-                    // Render grouped options
-                    groups.map((group, groupIndex) => (
-                      <View key={groupIndex} style={styles.group}>
-                        <View style={[styles.groupLabel, { backgroundColor: colors.field.bg }]}>
-                          <Text style={[styles.groupLabelText, { color: colors.text.subtle }]}>
-                            {group.groupLabel}
-                          </Text>
-                        </View>
-                        {group.options.map((option) => (
-                          <TouchableOpacity
-                            key={option.value}
-                            onPress={() =>
-                              !option.disabled && handleSelect(option.value)
-                            }
-                            disabled={option.disabled}
+                  {groups && groups.length > 0
+                    ? // Render grouped options
+                      groups.map((group, groupIndex) => (
+                        <View key={groupIndex} style={styles.group}>
+                          <View
                             style={[
-                              styles.option,
-                              styles.groupedOption,
-                              option.value === selectedValue && {
-                                backgroundColor: colors.field.optionSelected,
-                              },
-                              option.disabled && styles.disabledOption,
+                              styles.groupLabel,
+                              { backgroundColor: colors.field.bg },
                             ]}
                           >
-                            <View style={styles.optionContent}>
-                              {option.avatar && (
-                                <Image
-                                  source={{ uri: option.avatar }}
-                                  style={styles.optionAvatar}
-                                />
-                              )}
-                              {option.icon && !option.avatar && (
-                                <View style={styles.optionIcon}>
-                                  {isValidIconName(option.icon) ? (
-                                    <Icon name={option.icon} size="sm" color={colors.text.subtle} />
-                                  ) : (
-                                    <Text style={{ color: colors.text.subtle, fontSize: 18 }}>{option.icon}</Text>
-                                  )}
-                                </View>
-                              )}
-                              <View style={styles.optionTextContainer}>
-                                <Text
-                                  style={[
-                                    styles.optionText,
-                                    {
-                                      color:
-                                        option.value === selectedValue
-                                          ? colors.field.optionTextSelected
-                                          : colors.field.optionText,
-                                      fontWeight:
-                                        option.value === selectedValue ? '500' : '400',
-                                    },
-                                    option.disabled && { opacity: 0.5 },
-                                  ]}
-                                >
-                                  {option.label}
-                                </Text>
-                                {option.subtitle && (
+                            <Text
+                              style={[
+                                styles.groupLabelText,
+                                { color: colors.text.subtle },
+                              ]}
+                            >
+                              {group.groupLabel}
+                            </Text>
+                          </View>
+                          {group.options.map((option) => (
+                            <TouchableOpacity
+                              key={option.value}
+                              onPress={() =>
+                                !option.disabled && handleSelect(option.value)
+                              }
+                              disabled={option.disabled}
+                              style={[
+                                styles.option,
+                                styles.groupedOption,
+                                option.value === selectedValue && {
+                                  backgroundColor: colors.field.optionSelected,
+                                },
+                                option.disabled && styles.disabledOption,
+                              ]}
+                            >
+                              <View style={styles.optionContent}>
+                                {option.avatar && (
+                                  <Image
+                                    source={{ uri: option.avatar }}
+                                    style={styles.optionAvatar}
+                                  />
+                                )}
+                                {option.icon && !option.avatar && (
+                                  <View style={styles.optionIcon}>
+                                    {isValidIconName(option.icon) ? (
+                                      <Icon
+                                        name={option.icon}
+                                        size="sm"
+                                        color={colors.text.subtle}
+                                      />
+                                    ) : (
+                                      <Text
+                                        style={{
+                                          color: colors.text.subtle,
+                                          fontSize: 18,
+                                        }}
+                                      >
+                                        {option.icon}
+                                      </Text>
+                                    )}
+                                  </View>
+                                )}
+                                <View style={styles.optionTextContainer}>
                                   <Text
                                     style={[
-                                      styles.optionSubtitle,
-                                      { color: colors.text.subtle },
+                                      styles.optionText,
+                                      {
+                                        color:
+                                          option.value === selectedValue
+                                            ? colors.field.optionTextSelected
+                                            : colors.field.optionText,
+                                        fontWeight:
+                                          option.value === selectedValue
+                                            ? '500'
+                                            : '400',
+                                      },
                                       option.disabled && { opacity: 0.5 },
                                     ]}
                                   >
-                                    {option.subtitle}
+                                    {option.label}
+                                  </Text>
+                                  {option.subtitle && (
+                                    <Text
+                                      style={[
+                                        styles.optionSubtitle,
+                                        { color: colors.text.subtle },
+                                        option.disabled && { opacity: 0.5 },
+                                      ]}
+                                    >
+                                      {option.subtitle}
+                                    </Text>
+                                  )}
+                                </View>
+                              </View>
+                              {option.value === selectedValue && (
+                                <Icon
+                                  name="check"
+                                  size="sm"
+                                  color={colors.field.optionTextSelected}
+                                  style={styles.checkmark}
+                                />
+                              )}
+                            </TouchableOpacity>
+                          ))}
+                        </View>
+                      ))
+                    : // Render simple options
+                      allOptions.map((option) => (
+                        <TouchableOpacity
+                          key={option.value}
+                          onPress={() =>
+                            !option.disabled && handleSelect(option.value)
+                          }
+                          disabled={option.disabled}
+                          style={[
+                            styles.option,
+                            option.value === selectedValue && {
+                              backgroundColor: colors.field.optionSelected,
+                            },
+                            option.disabled && styles.disabledOption,
+                          ]}
+                        >
+                          <View style={styles.optionContent}>
+                            {option.avatar && (
+                              <Image
+                                source={{ uri: option.avatar }}
+                                style={styles.optionAvatar}
+                              />
+                            )}
+                            {option.icon && !option.avatar && (
+                              <View style={styles.optionIcon}>
+                                {isValidIconName(option.icon) ? (
+                                  <Icon
+                                    name={option.icon}
+                                    size="sm"
+                                    color={colors.text.subtle}
+                                  />
+                                ) : (
+                                  <Text
+                                    style={{
+                                      color: colors.text.subtle,
+                                      fontSize: 18,
+                                    }}
+                                  >
+                                    {option.icon}
                                   </Text>
                                 )}
                               </View>
-                            </View>
-                            {option.value === selectedValue && (
-                              <Icon 
-                                name="check" 
-                                size="sm" 
-                                color={colors.field.optionTextSelected} 
-                                style={styles.checkmark}
-                              />
                             )}
-                          </TouchableOpacity>
-                        ))}
-                      </View>
-                    ))
-                  ) : (
-                    // Render simple options
-                    allOptions.map((option) => (
-                      <TouchableOpacity
-                        key={option.value}
-                        onPress={() =>
-                          !option.disabled && handleSelect(option.value)
-                        }
-                        disabled={option.disabled}
-                        style={[
-                          styles.option,
-                          option.value === selectedValue && {
-                            backgroundColor: colors.field.optionSelected,
-                          },
-                          option.disabled && styles.disabledOption,
-                        ]}
-                      >
-                        <View style={styles.optionContent}>
-                          {option.avatar && (
-                            <Image
-                              source={{ uri: option.avatar }}
-                              style={styles.optionAvatar}
-                            />
-                          )}
-                          {option.icon && !option.avatar && (
-                            <View style={styles.optionIcon}>
-                              {isValidIconName(option.icon) ? (
-                                <Icon name={option.icon} size="sm" color={colors.text.subtle} />
-                              ) : (
-                                <Text style={{ color: colors.text.subtle, fontSize: 18 }}>{option.icon}</Text>
-                              )}
-                            </View>
-                          )}
-                          <View style={styles.optionTextContainer}>
-                            <Text
-                              style={[
-                                styles.optionText,
-                                {
-                                  color:
-                                    option.value === selectedValue
-                                      ? colors.field.optionTextSelected
-                                      : colors.field.optionText,
-                                  fontWeight:
-                                    option.value === selectedValue ? '500' : '400',
-                                },
-                                option.disabled && { opacity: 0.5 },
-                              ]}
-                            >
-                              {option.label}
-                            </Text>
-                            {option.subtitle && (
+                            <View style={styles.optionTextContainer}>
                               <Text
                                 style={[
-                                  styles.optionSubtitle,
-                                  { color: colors.text.subtle },
+                                  styles.optionText,
+                                  {
+                                    color:
+                                      option.value === selectedValue
+                                        ? colors.field.optionTextSelected
+                                        : colors.field.optionText,
+                                    fontWeight:
+                                      option.value === selectedValue
+                                        ? '500'
+                                        : '400',
+                                  },
                                   option.disabled && { opacity: 0.5 },
                                 ]}
                               >
-                                {option.subtitle}
+                                {option.label}
                               </Text>
-                            )}
+                              {option.subtitle && (
+                                <Text
+                                  style={[
+                                    styles.optionSubtitle,
+                                    { color: colors.text.subtle },
+                                    option.disabled && { opacity: 0.5 },
+                                  ]}
+                                >
+                                  {option.subtitle}
+                                </Text>
+                              )}
+                            </View>
                           </View>
-                        </View>
-                        {option.value === selectedValue && (
-                          <Icon 
-                            name="check" 
-                            size="sm" 
-                            color={colors.field.optionTextSelected} 
-                            style={styles.checkmark}
-                          />
-                        )}
-                      </TouchableOpacity>
-                    ))
-                  )}
+                          {option.value === selectedValue && (
+                            <Icon
+                              name="check"
+                              size="sm"
+                              color={colors.field.optionTextSelected}
+                              style={styles.checkmark}
+                            />
+                          )}
+                        </TouchableOpacity>
+                      ))}
                 </ScrollView>
               </View>
             </TouchableWithoutFeedback>

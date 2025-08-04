@@ -16,10 +16,11 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
   props
 ) => {
   // Use our extracted hooks
-  const { spaceName, setSpaceName, creating, createSpace, canCreate } = useSpaceCreation({
-    onSuccess: props.onClose,
-  });
-  
+  const { spaceName, setSpaceName, creating, createSpace, canCreate } =
+    useSpaceCreation({
+      onSuccess: props.onClose,
+    });
+
   const {
     fileData,
     currentFile,
@@ -139,10 +140,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                   </Tooltip>
                 </div>
               </div>
-              <Switch
-                onChange={setRepudiable}
-                value={repudiable}
-              />
+              <Switch onChange={setRepudiable} value={repudiable} />
             </div>
             <div className="flex flex-row justify-between pb-2">
               <div className="text-sm flex flex-row">
@@ -164,10 +162,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                   </Tooltip>
                 </div>
               </div>
-              <Switch
-                onChange={setPublic}
-                value={pub}
-              />
+              <Switch onChange={setPublic} value={pub} />
             </div>
           </div>
         )}
@@ -176,7 +171,9 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           <Button
             type="primary"
             disabled={!canCreate || !fileData}
-            onClick={() => createSpace(spaceName, fileData, currentFile, repudiable, pub)}
+            onClick={() =>
+              createSpace(spaceName, fileData, currentFile, repudiable, pub)
+            }
           >
             {creating ? t`Creating Space...` : t`Create Space`}
           </Button>

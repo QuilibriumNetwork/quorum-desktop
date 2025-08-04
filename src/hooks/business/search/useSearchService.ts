@@ -13,20 +13,20 @@ export interface UseSearchServiceReturn {
  * Creates and initializes a SearchService instance
  * This hook is platform-agnostic and manages the search service lifecycle
  */
-export const useSearchService = ({ 
-  messageDB 
+export const useSearchService = ({
+  messageDB,
 }: UseSearchServiceProps): UseSearchServiceReturn => {
   const searchService = useMemo(() => {
     if (!messageDB) return null;
-    
+
     const service = new SearchService(messageDB);
-    
+
     // Initialize search indices asynchronously
     service.initialize().catch(() => {
       // Search initialization failed - service will handle gracefully
       // This is intentionally silent as the service should degrade gracefully
     });
-    
+
     return service;
   }, [messageDB]);
 

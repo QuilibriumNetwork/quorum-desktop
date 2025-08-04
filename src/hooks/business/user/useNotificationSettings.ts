@@ -36,7 +36,7 @@ export const useNotificationSettings = (): UseNotificationSettingsReturn => {
     // Some browsers allow re-requesting even after denial
     const permission = await notificationService.requestPermission();
     setNotificationsEnabled(permission === 'granted');
-    
+
     // The error messages will be shown by the conditional rendering below
     // No need for alerts that interrupt the UX
   };

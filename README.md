@@ -15,6 +15,7 @@ A complete documentation website will be created at a later time.
 ## Development Resources
 
 The `.readme/` folder contains development resources including:
+
 - Architecture documentation and component guides
 - Bug reports and solutions
 - Task management (todo, ongoing, done)

@@ -28,7 +28,14 @@ type ClickToCopyContentProps = {
   iconPosition?: 'left' | 'right';
   touchTrigger?: 'click' | 'long-press';
   longPressDuration?: number;
-  textVariant?: 'default' | 'strong' | 'subtle' | 'muted' | 'error' | 'success' | 'warning';
+  textVariant?:
+    | 'default'
+    | 'strong'
+    | 'subtle'
+    | 'muted'
+    | 'error'
+    | 'success'
+    | 'warning';
   textSize?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl';
   iconSize?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
 };
@@ -51,21 +58,24 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   iconSize = 'sm',
 }) => {
   // Use extracted hooks
-  const { copied, copyToClipboard } = useCopyToClipboard({ 
+  const { copied, copyToClipboard } = useCopyToClipboard({
     onCopy,
     timeout: 2000,
-    touchTimeout: 3000 
+    touchTimeout: 3000,
   });
 
   const [hideTooltip, setHideTooltip] = React.useState(false);
 
-  const tooltipId = React.useMemo(() => `click-to-copy-${Math.random().toString(36).slice(2, 10)}`, []);
+  const tooltipId = React.useMemo(
+    () => `click-to-copy-${Math.random().toString(36).slice(2, 10)}`,
+    []
+  );
 
   const handleCopy = async (e?: React.MouseEvent | Event) => {
     e?.stopPropagation();
     await copyToClipboard(text);
     setHideTooltip(false); // Show tooltip after copy
-    
+
     // On touch devices, auto-hide tooltip after 3 seconds
     if (isTouchDevice()) {
       setTimeout(() => {
@@ -129,7 +139,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
       style={{
         marginLeft: iconPosition === 'right' ? '4px' : undefined,
         marginRight: iconPosition === 'left' ? '4px' : undefined,
-        cursor: !copyOnContentClick ? 'pointer' : undefined
+        cursor: !copyOnContentClick ? 'pointer' : undefined,
       }}
     />
   );
@@ -147,7 +157,9 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
     >
       {iconElement}
     </Tooltip>
-  ) : iconElement;
+  ) : (
+    iconElement
+  );
 
   const containerContent = (
     <Container
@@ -157,7 +169,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
         display: 'flex',
         alignItems: 'center',
         borderRadius: '6px',
-        cursor: copyOnContentClick ? 'pointer' : undefined
+        cursor: copyOnContentClick ? 'pointer' : undefined,
       }}
     >
       {iconPosition === 'left' && icon}
@@ -167,7 +179,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
         className={className}
         style={{
           userSelect: !copyOnContentClick ? 'text' : 'none',
-          flex: copyOnContentClick ? 1 : undefined
+          flex: copyOnContentClick ? 1 : undefined,
         }}
       >
         {children}
@@ -189,7 +201,9 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
     >
       {containerContent}
     </Tooltip>
-  ) : containerContent;
+  ) : (
+    containerContent
+  );
 };
 
 export default ClickToCopyContent;

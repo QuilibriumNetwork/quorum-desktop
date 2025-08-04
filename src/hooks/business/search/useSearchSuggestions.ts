@@ -12,25 +12,34 @@ export function useSearchSuggestions({
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
   // Show/hide suggestions based on query and available suggestions
-  const updateSuggestionsVisibility = useCallback((query: string, hasSuggestions: boolean) => {
-    setShowSuggestions(query.length > 0 && hasSuggestions);
-    if (query.length === 0) {
-      setSelectedSuggestionIndex(-1);
-    }
-  }, []);
+  const updateSuggestionsVisibility = useCallback(
+    (query: string, hasSuggestions: boolean) => {
+      setShowSuggestions(query.length > 0 && hasSuggestions);
+      if (query.length === 0) {
+        setSelectedSuggestionIndex(-1);
+      }
+    },
+    []
+  );
 
   // Handle suggestion selection
-  const selectSuggestion = useCallback((suggestion: string) => {
-    onSuggestionSelect?.(suggestion);
-    setShowSuggestions(false);
-    setSelectedSuggestionIndex(-1);
-  }, [onSuggestionSelect]);
+  const selectSuggestion = useCallback(
+    (suggestion: string) => {
+      onSuggestionSelect?.(suggestion);
+      setShowSuggestions(false);
+      setSelectedSuggestionIndex(-1);
+    },
+    [onSuggestionSelect]
+  );
 
   // Handle suggestion click
-  const handleSuggestionClick = useCallback((suggestion: string, focusInput?: () => void) => {
-    selectSuggestion(suggestion);
-    focusInput?.();
-  }, [selectSuggestion]);
+  const handleSuggestionClick = useCallback(
+    (suggestion: string, focusInput?: () => void) => {
+      selectSuggestion(suggestion);
+      focusInput?.();
+    },
+    [selectSuggestion]
+  );
 
   // Clear suggestions
   const clearSuggestions = useCallback(() => {
@@ -39,9 +48,12 @@ export function useSearchSuggestions({
   }, []);
 
   // Handle focus changes
-  const handleFocus = useCallback((query: string) => {
-    setShowSuggestions(query.length > 0 && suggestions.length > 0);
-  }, [suggestions.length]);
+  const handleFocus = useCallback(
+    (query: string) => {
+      setShowSuggestions(query.length > 0 && suggestions.length > 0);
+    },
+    [suggestions.length]
+  );
 
   const handleBlur = useCallback(() => {
     // Delay to allow suggestion clicks

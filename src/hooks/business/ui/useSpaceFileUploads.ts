@@ -17,7 +17,7 @@ export interface UseSpaceFileUploadsReturn {
   getIconRootProps: () => any;
   getIconInputProps: () => any;
   clearIconFileError: () => void;
-  
+
   // Banner upload
   bannerData: ArrayBuffer | undefined;
   currentBannerFile: File | undefined;
@@ -42,7 +42,9 @@ export const useSpaceFileUploads = (
 
   // Banner upload state
   const [bannerData, setBannerData] = useState<ArrayBuffer | undefined>();
-  const [currentBannerFile, setCurrentBannerFile] = useState<File | undefined>();
+  const [currentBannerFile, setCurrentBannerFile] = useState<
+    File | undefined
+  >();
   const [bannerFileError, setBannerFileError] = useState<string | null>(null);
   const [isBannerUploading, setIsBannerUploading] = useState<boolean>(false);
 
@@ -197,7 +199,7 @@ export const useSpaceFileUploads = (
     getIconRootProps,
     getIconInputProps,
     clearIconFileError,
-    
+
     bannerData,
     currentBannerFile,
     bannerFileError,

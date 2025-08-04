@@ -43,7 +43,9 @@
 
     &:focus {
       outline: none;
-      border-color: var(--color-field-border-focus); // Show accent border on focus
+      border-color: var(
+        --color-field-border-focus
+      ); // Show accent border on focus
       box-shadow: 0 0 0 3px var(--color-field-focus-shadow); // Keep focus glow
     }
 
@@ -51,13 +53,17 @@
       opacity: 0.5;
       cursor: not-allowed;
       border-color: transparent !important; // Keep transparent border for filled default
-      background-color: var(--color-field-bg-filled) !important; // Keep filled background
-      
+      background-color: var(
+        --color-field-bg-filled
+      ) !important; // Keep filled background
+
       &:hover {
         border-color: transparent !important; // No hover border change
-        background-color: var(--color-field-bg-filled) !important; // No hover background change
+        background-color: var(
+          --color-field-bg-filled
+        ) !important; // No hover background change
       }
-      
+
       &:focus {
         border-color: transparent !important; // No focus accent border
         box-shadow: none !important; // No focus glow
@@ -107,12 +113,14 @@
     &:disabled {
       border-color: var(--color-field-border) !important;
       background-color: var(--color-field-bg) !important; // Same bg as default
-      
+
       &:hover {
         border-color: var(--color-field-border) !important;
-        background-color: var(--color-field-bg) !important; // Same bg as default
+        background-color: var(
+          --color-field-bg
+        ) !important; // Same bg as default
       }
-      
+
       &:focus {
         border-color: var(--color-field-border) !important;
         box-shadow: none !important;
@@ -282,7 +290,7 @@
     gap: 0;
     flex: 1;
     overflow: hidden;
-    
+
     span {
       overflow: hidden;
       text-overflow: ellipsis;

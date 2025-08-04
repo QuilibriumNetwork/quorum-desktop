@@ -9,7 +9,8 @@ import { useModalManagement, useElectronDetection } from '../hooks';
 const Layout: React.FunctionComponent<{
   children: React.ReactNode;
 }> = (props) => {
-  const { createSpaceVisible, showCreateSpaceModal, hideCreateSpaceModal } = useModalManagement();
+  const { createSpaceVisible, showCreateSpaceModal, hideCreateSpaceModal } =
+    useModalManagement();
   const { isElectron } = useElectronDetection();
 
   return (
@@ -27,9 +28,7 @@ const Layout: React.FunctionComponent<{
           /*setJoinSpaceVisible(true)*/
         }}
       />
-      <Container>
-        {isElectron && <CloseButton />}
-      </Container>
+      <Container>{isElectron && <CloseButton />}</Container>
       <ResponsiveContainer>{props.children}</ResponsiveContainer>
     </React.Suspense>
   );

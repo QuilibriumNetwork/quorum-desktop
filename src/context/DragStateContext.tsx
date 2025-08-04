@@ -6,13 +6,17 @@ interface DragStateContextType {
   setIsDragging: (dragging: boolean) => void;
 }
 
-const DragStateContext = createContext<DragStateContextType | undefined>(undefined);
+const DragStateContext = createContext<DragStateContextType | undefined>(
+  undefined
+);
 
 interface DragStateProviderProps {
   children: ReactNode;
 }
 
-export const DragStateProvider: React.FC<DragStateProviderProps> = ({ children }) => {
+export const DragStateProvider: React.FC<DragStateProviderProps> = ({
+  children,
+}) => {
   const dragState = useDragState();
 
   return (
@@ -25,7 +29,9 @@ export const DragStateProvider: React.FC<DragStateProviderProps> = ({ children }
 export const useDragStateContext = (): DragStateContextType => {
   const context = useContext(DragStateContext);
   if (context === undefined) {
-    throw new Error('useDragStateContext must be used within a DragStateProvider');
+    throw new Error(
+      'useDragStateContext must be used within a DragStateProvider'
+    );
   }
   return context;
 };

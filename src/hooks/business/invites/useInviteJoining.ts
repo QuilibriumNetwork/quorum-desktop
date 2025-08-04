@@ -29,7 +29,7 @@ export const useInviteJoining = (inviteLink: string) => {
         keyset,
         currentPasskeyInfo
       );
-      
+
       if (result) {
         // Navigate to the newly joined space and channel
         navigate(`/spaces/${result.spaceId}/${result.channelId}`);
@@ -38,7 +38,8 @@ export const useInviteJoining = (inviteLink: string) => {
       return false;
     } catch (e: any) {
       console.error('Failed to join space:', e);
-      const errorMessage = e?.message || e?.toString() || 'Failed to join space';
+      const errorMessage =
+        e?.message || e?.toString() || 'Failed to join space';
       setJoinError(errorMessage);
       return false;
     } finally {

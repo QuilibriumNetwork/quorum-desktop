@@ -1,14 +1,13 @@
 import './DirectMessage.scss';
-import { 
-  useShowHomeScreen
-} from '../../hooks';
+import { useShowHomeScreen } from '../../hooks';
 import { t } from '@lingui/core/macro';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { Container, FlexRow, FlexColumn, Text, Icon } from '../primitives';
 
 export const EmptyDirectMessage = () => {
   const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
-  const { showHomeScreen, hideHomeScreen, showHomeScreenView } = useShowHomeScreen();
+  const { showHomeScreen, hideHomeScreen, showHomeScreenView } =
+    useShowHomeScreen();
 
   return (
     <Container className="chat-container">
@@ -48,7 +47,10 @@ export const EmptyDirectMessage = () => {
                     onClick={hideHomeScreen}
                     className="items-center gap-2 cursor-pointer"
                   >
-                    <Icon name="eye-slash" className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm" />
+                    <Icon
+                      name="eye-slash"
+                      className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm"
+                    />
                     <Text className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm">{t`hide home screen`}</Text>
                   </FlexRow>
                 </FlexRow>
@@ -69,7 +71,10 @@ export const EmptyDirectMessage = () => {
                       onClick={showHomeScreenView}
                       className="items-center gap-2 cursor-pointer"
                     >
-                      <Icon name="eye" className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm" />
+                      <Icon
+                        name="eye"
+                        className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm"
+                      />
                       <Text className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm">{t`show home screen`}</Text>
                     </FlexRow>
                   </FlexRow>

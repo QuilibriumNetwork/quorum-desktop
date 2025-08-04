@@ -97,7 +97,7 @@ export const useFileUpload = (
   }, [currentFile]);
 
   const clearFileError = () => setFileError(null);
-  
+
   const clearFile = () => {
     setFileData(undefined);
     setCurrentFile(undefined);

@@ -21,7 +21,7 @@ export function useKeyboardShortcuts({
       const mobileOverlay = document.querySelector('.bg-mobile-overlay');
       if (mobileOverlay) return; // Don't focus
     }
-    
+
     // Find the actual input element within the Input primitive
     const inputElement = inputContainerRef.current?.querySelector('input');
     inputElement?.focus();
@@ -68,7 +68,8 @@ export function useKeyboardShortcuts({
       // Try to restore focus
       setTimeout(() => {
         if (isUserTyping.current) {
-          const inputElement = inputContainerRef.current?.querySelector('input');
+          const inputElement =
+            inputContainerRef.current?.querySelector('input');
           inputElement?.focus();
         }
       }, 10);

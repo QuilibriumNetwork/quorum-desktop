@@ -1,7 +1,19 @@
 import React, { useState, useRef } from 'react';
 import { t } from '@lingui/core/macro';
-import { Input, Button, Icon, FlexRow, FlexCenter, Container, Text } from '../primitives';
-import { useSearchSuggestions, useKeyboardShortcuts, useKeyboardNavigation } from '../../hooks';
+import {
+  Input,
+  Button,
+  Icon,
+  FlexRow,
+  FlexCenter,
+  Container,
+  Text,
+} from '../primitives';
+import {
+  useSearchSuggestions,
+  useKeyboardShortcuts,
+  useKeyboardNavigation,
+} from '../../hooks';
 import './SearchBar.scss';
 
 interface SearchBarProps {
@@ -39,15 +51,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     setSelectedSuggestionIndex,
   } = useSearchSuggestions({ suggestions, onSuggestionSelect });
 
-  const {
-    focusInputSafely,
-    markUserTyping,
-    handleFocusRestoration,
-  } = useKeyboardShortcuts({
-    inputContainerRef,
-    isFocused,
-    onEscape: clearSuggestions,
-  });
+  const { focusInputSafely, markUserTyping, handleFocusRestoration } =
+    useKeyboardShortcuts({
+      inputContainerRef,
+      isFocused,
+      onEscape: clearSuggestions,
+    });
 
   const { handleKeyDown } = useKeyboardNavigation({
     showSuggestions,
@@ -130,9 +139,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       </FlexRow>
 
       {showSuggestions && suggestions.length > 0 && (
-        <Container 
-          ref={suggestionsRef} 
-          className="search-suggestions" 
+        <Container
+          ref={suggestionsRef}
+          className="search-suggestions"
           role="listbox"
         >
           {suggestions.map((suggestion, index) => (
@@ -141,7 +150,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               className={`search-suggestion ${
                 index === selectedSuggestionIndex ? 'selected' : ''
               }`}
-              onClick={() => handleSuggestionClick(suggestion, focusInputSafely)}
+              onClick={() =>
+                handleSuggestionClick(suggestion, focusInputSafely)
+              }
               role="option"
               aria-selected={index === selectedSuggestionIndex}
             >
