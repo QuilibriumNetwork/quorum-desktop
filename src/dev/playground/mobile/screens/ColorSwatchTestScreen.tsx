@@ -7,16 +7,18 @@ import {
   SafeAreaView,
   StatusBar,
 } from 'react-native';
+import { useTheme } from '../components/primitives/theme';
 import { ColorSwatch } from '../components/primitives/ColorSwatch';
 
 export const ColorSwatchTestScreen: React.FC = () => {
+  const theme = useTheme();
   const [activeColor, setActiveColor] = useState('blue');
   const [sizeDemo, setSizeDemo] = useState('');
 
   const colors = ['blue', 'purple', 'fuchsia', 'orange', 'green', 'yellow'];
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
       <StatusBar barStyle="dark-content" backgroundColor="#f5f5f5" />
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -24,18 +26,18 @@ export const ColorSwatchTestScreen: React.FC = () => {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.title}>🎨 ColorSwatch</Text>
-          <Text style={styles.subtitle}>
+          <Text style={[styles.title, { color: theme.colors.text.strong }]}>🎨 ColorSwatch</Text>
+          <Text style={[styles.subtitle, { color: theme.colors.text.main }]}>
             Touch-optimized color picker for accent selection
           </Text>
         </View>
 
         {/* Basic Usage */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Basic Usage</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Basic Usage</Text>
 
           <View style={styles.subSection}>
-            <Text style={styles.label}>Click to select colors:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Click to select colors:</Text>
             <View style={styles.colorRow}>
               {colors.map((color) => (
                 <ColorSwatch
@@ -51,10 +53,10 @@ export const ColorSwatchTestScreen: React.FC = () => {
 
         {/* Size Variants */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Size Variants</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Size Variants</Text>
 
           <View style={styles.subSection}>
-            <Text style={styles.label}>Small Size</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Small Size</Text>
             <View style={styles.colorRow}>
               {colors.slice(0, 3).map((color) => (
                 <ColorSwatch
@@ -69,7 +71,7 @@ export const ColorSwatchTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.subSection}>
-            <Text style={styles.label}>Medium Size (Default)</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Medium Size (Default)</Text>
             <View style={styles.colorRow}>
               {colors.slice(0, 3).map((color) => (
                 <ColorSwatch
@@ -84,7 +86,7 @@ export const ColorSwatchTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.subSection}>
-            <Text style={styles.label}>Large Size</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Large Size</Text>
             <View style={styles.colorRow}>
               {colors.slice(0, 3).map((color) => (
                 <ColorSwatch
@@ -101,10 +103,10 @@ export const ColorSwatchTestScreen: React.FC = () => {
 
         {/* States */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>States</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>States</Text>
 
           <View style={styles.subSection}>
-            <Text style={styles.label}>Active State</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Active State</Text>
             <View style={styles.stateRow}>
               <ColorSwatch color="blue" isActive={true} onPress={() => {}} />
               <Text style={styles.stateText}>Shows ✓ checkmark</Text>
@@ -112,7 +114,7 @@ export const ColorSwatchTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.subSection}>
-            <Text style={styles.label}>Disabled State</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Disabled State</Text>
             <View style={styles.stateRow}>
               <ColorSwatch color="purple" disabled={true} onPress={() => {}} />
               <Text style={styles.stateText}>50% opacity, no interaction</Text>
@@ -120,7 +122,7 @@ export const ColorSwatchTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.subSection}>
-            <Text style={styles.label}>Active without checkmark</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Active without checkmark</Text>
             <View style={styles.stateRow}>
               <ColorSwatch
                 color="orange"
@@ -135,8 +137,8 @@ export const ColorSwatchTestScreen: React.FC = () => {
 
         {/* All Colors Grid */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>All Theme Colors</Text>
-          <Text style={styles.label}>Complete color palette</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>All Theme Colors</Text>
+          <Text style={[styles.label, { color: theme.colors.text.main }]}>Complete color palette</Text>
 
           <View style={styles.colorGrid}>
             {colors.map((color) => (
@@ -182,7 +184,7 @@ export const ColorSwatchTestScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    // backgroundColor removed - now uses theme.colors.bg.app dynamically
   },
   scrollContent: {
     padding: 20,
@@ -195,12 +197,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
     textAlign: 'center',
   },
   section: {
@@ -220,7 +222,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     marginBottom: 16,
   },
   subSection: {
@@ -229,7 +231,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     marginBottom: 12,
   },
   colorRow: {
@@ -239,7 +241,7 @@ const styles = StyleSheet.create({
   },
   selectedText: {
     fontSize: 12,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
     marginTop: 8,
     fontStyle: 'italic',
   },
@@ -250,7 +252,7 @@ const styles = StyleSheet.create({
   },
   stateText: {
     fontSize: 14,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
   },
   colorGrid: {
     flexDirection: 'row',
@@ -264,7 +266,7 @@ const styles = StyleSheet.create({
   },
   colorName: {
     fontSize: 12,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
   },
   notesSection: {
     backgroundColor: '#e3f2fd',

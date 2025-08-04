@@ -1,16 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Tooltip, useCrossPlatformTheme } from '../components/primitives';
+import { useTheme } from '../components/primitives/theme';
+import { Tooltip } from '../components/primitives';
 
 export const TooltipTestScreen: React.FC = () => {
+  const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const theme = useCrossPlatformTheme();
   const { colors } = theme;
 
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: colors.surface[0] }]}
+      style={[styles.container, { backgroundColor: theme.colors.bg.app }]}
       contentContainerStyle={{
         paddingTop: insets.top + 20,
         paddingBottom: insets.bottom + 20,

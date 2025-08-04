@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { ScrollView, Text, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../components/primitives/theme';
 import { Input } from '../components/primitives/Input';
 
 export const InputTestScreen: React.FC = () => {
+  const theme = useTheme();
   const [textValue, setTextValue] = useState('');
   const [emailValue, setEmailValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
@@ -11,16 +13,16 @@ export const InputTestScreen: React.FC = () => {
   const [showInputError, setShowInputError] = useState(false);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>📱 Input</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: theme.colors.text.strong }]}>📱 Input</Text>
+        <Text style={[styles.subtitle, { color: theme.colors.text.main }]}>
           Testing Input primitive on React Native
         </Text>
 
         {/* Basic Input Types */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Input Types</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Input Types</Text>
 
           <View style={styles.inputGroup}>
             <Text style={styles.label}>Text Input:</Text>
@@ -176,7 +178,7 @@ export const InputTestScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    // backgroundColor removed - now uses theme.colors.bg.app dynamically
   },
   content: {
     padding: 20,

@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { CrossPlatformThemeProvider } from './components/primitives/theme';
+import { CrossPlatformThemeProvider, useTheme } from './components/primitives/theme';
 import { PrimitiveListScreen } from './screens/PrimitiveListScreen';
 import { PrimitivesTestScreen } from './screens/PrimitivesTestScreen';
 import { TextTestScreen } from './screens/TextTestScreen';
@@ -38,14 +38,21 @@ type Screen =
   | 'tooltip'
   | 'icon';
 
-export default function App() {
+// Themed App Content (must be inside ThemeProvider)
+function ThemedAppContent() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('list');
+  const theme = useTheme();
+  
+  console.log('App - Current theme colors:', {
+    appBg: theme.colors.bg.app,
+    resolvedTheme: theme.resolvedTheme
+  });
 
   const renderBackButton = () => {
     if (currentScreen === 'list') return null;
 
     return (
-      <View style={styles.backBar}>
+      <View style={[styles.backBar, { backgroundColor: theme.colors.bg.app }]}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => setCurrentScreen('list')}
@@ -90,13 +97,20 @@ export default function App() {
   };
 
   return (
+    <View style={[styles.appContainer, { backgroundColor: theme.colors.bg.app }]}>
+      {renderBackButton()}
+      {renderScreen()}
+      <StatusBar style="auto" />
+    </View>
+  );
+}
+
+// Main App component
+export default function App() {
+  return (
     <SafeAreaProvider>
       <CrossPlatformThemeProvider disableWebFeatures={true}>
-        <View style={styles.appContainer}>
-          {renderBackButton()}
-          {renderScreen()}
-          <StatusBar style="auto" />
-        </View>
+        <ThemedAppContent />
       </CrossPlatformThemeProvider>
     </SafeAreaProvider>
   );
@@ -105,7 +119,7 @@ export default function App() {
 const styles = StyleSheet.create({
   appContainer: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    // backgroundColor removed - now uses theme.colors.bg.app dynamically
   },
   backBar: {
     backgroundColor: '#ffffff',

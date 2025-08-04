@@ -1,28 +1,30 @@
 import React, { useState } from 'react';
 import { ScrollView, Text, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../components/primitives/theme';
 import { TextArea } from '../components/primitives/TextArea';
 
 export const TextAreaTestScreen: React.FC = () => {
+  const theme = useTheme();
   const [textAreaValue, setTextAreaValue] = useState('');
   const [autoResizeValue, setAutoResizeValue] = useState('');
   const [errorTextArea, setErrorTextArea] = useState('');
   const [showTextAreaError, setShowTextAreaError] = useState(false);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>📝 TextArea</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: theme.colors.text.strong }]}>📝 TextArea</Text>
+        <Text style={[styles.subtitle, { color: theme.colors.text.main }]}>
           Testing TextArea primitive on React Native
         </Text>
 
         {/* Basic TextArea Types */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Basic TextArea</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Basic TextArea</Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Standard TextArea (3 rows):</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Standard TextArea (3 rows):</Text>
             <TextArea
               value={textAreaValue}
               onChange={setTextAreaValue}
@@ -36,7 +38,7 @@ export const TextAreaTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Auto-Resize TextArea (2-6 rows):</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Auto-Resize TextArea (2-6 rows):</Text>
             <TextArea
               value={autoResizeValue}
               onChange={setAutoResizeValue}
@@ -49,7 +51,7 @@ export const TextAreaTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Large TextArea (5 rows):</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Large TextArea (5 rows):</Text>
             <TextArea
               placeholder="Large text area for longer content..."
               rows={5}
@@ -57,7 +59,7 @@ export const TextAreaTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Disabled TextArea:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Disabled TextArea:</Text>
             <TextArea
               value="This content cannot be edited on mobile"
               placeholder="Disabled text area..."
@@ -69,10 +71,10 @@ export const TextAreaTestScreen: React.FC = () => {
 
         {/* Error States */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Error States</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Error States</Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>
               TextArea with Error (type less than 10 chars):
             </Text>
             <TextArea
@@ -93,7 +95,7 @@ export const TextAreaTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Always Error:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Always Error:</Text>
             <TextArea
               value=""
               placeholder="This textarea is always in error state"
@@ -106,10 +108,10 @@ export const TextAreaTestScreen: React.FC = () => {
 
         {/* TextArea Variants */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>TextArea Variants</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>TextArea Variants</Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Filled (Default):</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Filled (Default):</Text>
             <TextArea placeholder="Default filled style..." rows={4} />
             <Text style={styles.infoText}>
               Filled background, accent border on focus
@@ -117,7 +119,7 @@ export const TextAreaTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Bordered Variant:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Bordered Variant:</Text>
             <TextArea
               variant="bordered"
               placeholder="Bordered textarea style..."
@@ -129,7 +131,7 @@ export const TextAreaTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>
               Onboarding Style (rounded corners):
             </Text>
             <TextArea
@@ -143,7 +145,7 @@ export const TextAreaTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Onboarding Auto-Resize:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Onboarding Auto-Resize:</Text>
             <TextArea
               variant="onboarding"
               placeholder="Type multiple lines..."
@@ -159,10 +161,10 @@ export const TextAreaTestScreen: React.FC = () => {
 
         {/* Focus Features */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Focus Features</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Focus Features</Text>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Auto Focus TextArea:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>Auto Focus TextArea:</Text>
             <TextArea
               placeholder="This textarea auto-focuses"
               autoFocus
@@ -171,7 +173,7 @@ export const TextAreaTestScreen: React.FC = () => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>No Focus Style:</Text>
+            <Text style={[styles.label, { color: theme.colors.text.main }]}>No Focus Style:</Text>
             <TextArea
               placeholder="This textarea has no focus styling"
               noFocusStyle
@@ -213,7 +215,7 @@ export const TextAreaTestScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    // backgroundColor removed - now uses theme.colors.bg.app dynamically
   },
   content: {
     padding: 20,
@@ -221,13 +223,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
     marginBottom: 24,
     textAlign: 'center',
   },
@@ -248,7 +250,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     marginBottom: 16,
   },
   inputGroup: {
@@ -257,18 +259,18 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     marginBottom: 8,
   },
   valueText: {
     fontSize: 12,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
     marginTop: 4,
     fontStyle: 'italic',
   },
   infoText: {
     fontSize: 12,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
     marginTop: 4,
   },
   notesSection: {

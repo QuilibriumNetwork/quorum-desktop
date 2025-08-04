@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
+import { useTheme } from '../components/primitives/theme';
 import { Switch } from '../components/primitives/Switch';
 
 export const SwitchTestScreen: React.FC = () => {
+  const theme = useTheme();
   const [basicSwitch, setBasicSwitch] = useState(false);
   const [disabledSwitchOff, setDisabledSwitchOff] = useState(false);
   const [disabledSwitchOn, setDisabledSwitchOn] = useState(true);

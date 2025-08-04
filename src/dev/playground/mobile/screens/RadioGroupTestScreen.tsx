@@ -7,15 +7,17 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../components/primitives/theme';
 import { RadioGroup } from '../components/primitives';
 
 export const RadioGroupTestScreen: React.FC = () => {
+  const theme = useTheme();
   const [selectedTheme, setSelectedTheme] = useState('light');
   const [selectedSize, setSelectedSize] = useState('medium');
   const [selectedOption, setSelectedOption] = useState('option1');
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>🔘 RadioGroup</Text>
@@ -26,7 +28,7 @@ export const RadioGroupTestScreen: React.FC = () => {
 
         {/* Theme Selection */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Theme Selection</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Theme Selection</Text>
           <Text style={styles.sectionSubtitle}>Using FontAwesome icons:</Text>
           <RadioGroup
             options={[
@@ -42,7 +44,7 @@ export const RadioGroupTestScreen: React.FC = () => {
 
         {/* Horizontal Layout */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Horizontal Layout</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Horizontal Layout</Text>
           <Text style={styles.sectionSubtitle}>Horizontal layout example:</Text>
           <RadioGroup
             options={[
@@ -58,7 +60,7 @@ export const RadioGroupTestScreen: React.FC = () => {
 
         {/* Disabled Options */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Disabled Options</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Disabled Options</Text>
           <Text style={styles.sectionSubtitle}>
             Some options can be disabled:
           </Text>
@@ -75,7 +77,7 @@ export const RadioGroupTestScreen: React.FC = () => {
 
         {/* Without Icons */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Without Icons</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Without Icons</Text>
           <Text style={styles.sectionSubtitle}>
             Simple text-only radio group:
           </Text>
@@ -123,7 +125,7 @@ export const RadioGroupTestScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    // backgroundColor removed - now uses theme.colors.bg.app dynamically
   },
   content: {
     padding: 20,
@@ -136,13 +138,13 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     marginBottom: 8,
     textAlign: 'center',
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -163,12 +165,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
+    // color removed - now uses theme colors dynamically
     marginBottom: 8,
   },
   sectionSubtitle: {
     fontSize: 14,
-    color: '#666',
+    // color removed - now uses theme colors dynamically
     marginBottom: 16,
     lineHeight: 20,
   },

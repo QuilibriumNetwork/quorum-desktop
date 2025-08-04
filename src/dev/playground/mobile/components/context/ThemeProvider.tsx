@@ -27,42 +27,82 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   const [resolvedTheme, setResolvedTheme] = useState<Theme>('system');
 
   const applyTheme = (value: Theme) => {
-    const html = document.documentElement;
-    html.classList.remove('light', 'dark');
+    // Check if we're in a web environment
+    if (typeof document !== 'undefined') {
+      // Web implementation
+      const html = document.documentElement;
+      html.classList.remove('light', 'dark');
 
-    if (value === 'system') {
-      const prefersDark = window.matchMedia(
-        '(prefers-color-scheme: dark)'
-      ).matches;
-      html.classList.add(prefersDark ? 'dark' : 'light');
-      setResolvedTheme(prefersDark ? 'dark' : 'light');
+      if (value === 'system') {
+        const prefersDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches;
+        html.classList.add(prefersDark ? 'dark' : 'light');
+        setResolvedTheme(prefersDark ? 'dark' : 'light');
+      } else {
+        html.classList.add(value);
+        setResolvedTheme(value);
+      }
     } else {
-      html.classList.add(value);
-      setResolvedTheme(value);
+      // React Native implementation
+      if (value === 'system') {
+        // For now, default to light for system theme in React Native
+        // In a real app, you'd use Appearance.getColorScheme() from react-native
+        setResolvedTheme('light');
+      } else {
+        setResolvedTheme(value);
+      }
     }
   };
 
   const setTheme = (value: Theme) => {
-    setThemeState(value);
-    localStorage.setItem('theme', value);
-    applyTheme(value);
+    console.log('🔥 ThemeProvider - setTheme ENTRY with:', value);
+    console.log('🔥 ThemeProvider - Current theme state before update:', theme);
+    
+    try {
+      console.log('🔥 ThemeProvider - Calling setThemeState...');
+      setThemeState(value);
+      console.log('🔥 ThemeProvider - setThemeState called successfully');
+      
+      // Save to storage (cross-platform)
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('theme', value);
+        console.log('🔥 ThemeProvider - Saved to localStorage');
+      }
+      // In React Native, you'd use AsyncStorage here
+      
+      console.log('🔥 ThemeProvider - Calling applyTheme...');
+      applyTheme(value);
+      console.log('🔥 ThemeProvider - applyTheme completed');
+      
+      console.log('🔥 ThemeProvider - setTheme function EXIT');
+    } catch (error) {
+      console.error('🚨 ThemeProvider - setTheme ERROR:', error);
+    }
   };
 
   useEffect(() => {
-    const saved = (localStorage.getItem('theme') as Theme) || 'system';
+    // Load saved theme (cross-platform)
+    let saved: Theme = 'system';
+    if (typeof localStorage !== 'undefined') {
+      saved = (localStorage.getItem('theme') as Theme) || 'system';
+    }
     setTheme(saved); // this will call applyTheme internally
 
-    // Initialize accent color
-    const savedAccent = localStorage.getItem('accent-color') || 'blue';
-    document.documentElement.classList.add(`accent-${savedAccent}`);
+    // Web-only initialization
+    if (typeof document !== 'undefined' && typeof window !== 'undefined') {
+      // Initialize accent color
+      const savedAccent = localStorage.getItem('accent-color') || 'blue';
+      document.documentElement.classList.add(`accent-${savedAccent}`);
 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const onSystemChange = () => {
-      if (saved === 'system') applyTheme('system');
-    };
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const onSystemChange = () => {
+        if (saved === 'system') applyTheme('system');
+      };
 
-    mediaQuery.addEventListener('change', onSystemChange);
-    return () => mediaQuery.removeEventListener('change', onSystemChange);
+      mediaQuery.addEventListener('change', onSystemChange);
+      return () => mediaQuery.removeEventListener('change', onSystemChange);
+    }
   }, []);
 
   return (

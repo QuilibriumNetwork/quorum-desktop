@@ -1,55 +1,95 @@
-import React, { useEffect } from 'react';
-import { useTheme, Theme } from './context/ThemeProvider';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSun, faMoon, faDesktop } from '@fortawesome/free-solid-svg-icons';
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import React from 'react';
+import { View, TouchableOpacity, Text } from 'react-native';
+import { useTheme } from './primitives/theme';
+import { RadioGroup } from './primitives';
+import { RadioOption } from './primitives/RadioGroup/types';
 
-type ThemeOption = { text: string; icon: IconDefinition };
+// Use the primitive's theme type, but extend it for our UI
+type ExtendedTheme = 'light' | 'dark' | 'system';
 
-const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({
+// Playground-specific: Lingui syntax has been converted to hardcoded strings
+// Real mobile app will use full Lingui integration
+
+export interface ThemeRadioGroupProps {
+  horizontal?: boolean;
+}
+
+const ThemeRadioGroup: React.FC<ThemeRadioGroupProps> = ({
   horizontal,
 }) => {
-  const { theme, setTheme } = useTheme();
+  // Use React state for extended theme management since primitives only support light/dark
+  const [extendedTheme, setExtendedTheme] = React.useState<ExtendedTheme>('system');
+  const primitiveTheme = useTheme();
+  
+  console.log('🔥 ThemeRadioGroup - Primitive theme context:', primitiveTheme);
+  console.log('🔥 ThemeRadioGroup - Extended theme state:', extendedTheme);
 
-  // Playground-specific: Skip Lingui for demo purposes
-  const options: { [key: string]: ThemeOption } = {
-    light: { text: 'light', icon: faSun },
-    dark: { text: 'dark', icon: faMoon },
-    system: { text: 'system', icon: faDesktop },
+  // Convert extended theme to primitive theme
+  const resolvedTheme = extendedTheme === 'system' ? 'light' : extendedTheme;
+
+  // Test if setTheme is actually a function
+  const testSetTheme = () => {
+    console.log('Testing primitive setTheme directly...');
+    try {
+      primitiveTheme.setTheme('dark');
+      console.log('primitive setTheme call completed');
+    } catch (error) {
+      console.error('primitive setTheme failed:', error);
+    }
+  };
+
+  // Define theme options with Icon primitive names
+  const options: RadioOption<ExtendedTheme>[] = [
+    {
+      value: 'light',
+      label: 'Light',
+      icon: 'sun', // Maps to Icon primitive
+    },
+    {
+      value: 'dark',
+      label: 'Dark',
+      icon: 'moon', // Maps to Icon primitive
+    },
+    {
+      value: 'system',
+      label: 'System',
+      icon: 'desktop', // Maps to Icon primitive
+    },
+  ];
+
+  // Debug logging
+  console.log('🔥 ThemeRadioGroup - Current extended theme:', extendedTheme);
+  console.log('🔥 ThemeRadioGroup - Resolved theme for primitives:', resolvedTheme);
+  console.log('🔥 ThemeRadioGroup - Primitive theme object:', primitiveTheme);
+
+  // Temporary debugging - add a simple test view
+  if (extendedTheme === undefined) {
+    console.log('WARNING: extendedTheme is undefined!');
+  }
+
+  // Handle theme changes - update both local state and primitive theme
+  const handleThemeChange = (newTheme: ExtendedTheme) => {
+    console.log('🔥 ThemeRadioGroup - handleThemeChange called with:', newTheme);
+    
+    // Update local extended theme state
+    setExtendedTheme(newTheme);
+    
+    // Update primitive theme (convert system to light for now)
+    const primitiveThemeValue = newTheme === 'system' ? 'light' : newTheme;
+    console.log('🔥 ThemeRadioGroup - Setting primitive theme to:', primitiveThemeValue);
+    primitiveTheme.setTheme(primitiveThemeValue);
   };
 
   return (
-    <div
-      className={`mt-2 ${
-        horizontal ? 'flex flex-row gap-4' : 'flex flex-col gap-3 max-w-[300px]'
-      }`}
-    >
-      {Object.entries(options).map(([key, opt]) => (
-        <label
-          key={key}
-          className={
-            'flex items-center justify-between px-4 py-2 rounded-md border cursor-pointer ' +
-            (theme === key
-              ? 'border-accent bg-[var(--surface-3)]'
-              : 'border-[var(--surface-3)] hover:bg-[var(--surface-3)]')
-          }
-        >
-          <div className="flex items-center gap-2">
-            <FontAwesomeIcon icon={opt.icon} className="text-surface-9" />
-            <span className="capitalize mr-3">{opt.text}</span>
-          </div>
-
-          <input
-            type="radio"
-            name="theme"
-            value={key}
-            checked={theme === key}
-            onChange={() => setTheme(key as Theme)}
-            className="accent-[var(--accent)] w-4 h-4"
-          />
-        </label>
-      ))}
-    </div>
+    <View>
+      <RadioGroup
+        options={options}
+        value={extendedTheme}
+        onChange={handleThemeChange}
+        direction={horizontal ? 'horizontal' : 'vertical'}
+        name="theme"
+      />
+    </View>
   );
 };
 

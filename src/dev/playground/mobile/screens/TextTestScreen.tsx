@@ -1,13 +1,16 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '../components/primitives/theme';
 import { Text } from '../components/primitives/Text';
 import { FlexRow } from '../components/primitives/FlexRow';
 import { FlexColumn } from '../components/primitives/FlexColumn';
 
 export const TextTestScreen: React.FC = () => {
+  const theme = useTheme();
+  
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}
@@ -213,7 +216,7 @@ export const TextTestScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    // backgroundColor removed - now uses theme.colors.bg.app dynamically
   },
   scrollView: {
     flex: 1,

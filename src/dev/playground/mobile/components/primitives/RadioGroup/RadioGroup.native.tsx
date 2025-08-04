@@ -22,11 +22,28 @@ export function RadioGroup<T extends string = string>({
   testID,
 }: RadioGroupNativeProps<T>) {
   const theme = useTheme();
-  const colors = getColors(theme.mode, theme.accentColor);
+  console.log('RadioGroup - Raw theme object:', theme);
+  
+  // Extract theme values from the primitive theme provider structure
+  const themeMode = theme.theme || theme.resolvedTheme || 'light';
+  const accentColor = theme.accent || 'blue';
+  
+  console.log('RadioGroup - Using theme mode:', themeMode, 'accent:', accentColor);
+  
+  const colors = getColors(themeMode, accentColor);
+  
+  // Debug logging
+  console.log('RadioGroup - Options received:', options);
+  console.log('RadioGroup - Current value:', value);
+  console.log('RadioGroup - Value type:', typeof value);
 
   const handlePress = (optionValue: T) => {
+    console.log(`handlePress called with: "${optionValue}", disabled: ${disabled}`);
     if (!disabled) {
+      console.log('Calling onChange with:', optionValue);
       onChange(optionValue);
+    } else {
+      console.log('onChange not called - disabled is true');
     }
   };
 
@@ -41,6 +58,22 @@ export function RadioGroup<T extends string = string>({
       {options.map((option) => {
         const isSelected = value === option.value;
         const isDisabled = disabled || option.disabled;
+        
+        // Debug each option
+        console.log(`Option ${option.value}: isSelected=${isSelected}, value="${value}", option.value="${option.value}"`);
+
+        console.log(`Rendering option ${option.value}:`, {
+          hasIcon: !!option.icon,
+          icon: option.icon,
+          label: option.label,
+          isValidIcon: option.icon ? isValidIconName(option.icon) : false,
+          colors: {
+            borderColor: isSelected ? colors.field.borderFocus : colors.field.border,
+            backgroundColor: isSelected ? colors.field.bgFocus : colors.field.bg,
+            textColor: colors.field.text,
+            iconColor: colors.field.text
+          }
+        });
 
         return (
           <TouchableOpacity
@@ -56,7 +89,8 @@ export function RadioGroup<T extends string = string>({
                   : colors.field.border,
                 backgroundColor: isSelected
                   ? colors.field.bgFocus
-                  : colors.field.bg,
+                  : colors.field.bg, // Use theme background instead of hardcoded white
+                minHeight: 50, // Ensure minimum height
               },
               isDisabled && styles.itemDisabled,
             ]}
@@ -68,10 +102,10 @@ export function RadioGroup<T extends string = string>({
                     <Icon
                       name={option.icon}
                       size="sm"
-                      color={colors.text.main}
+                      color={colors.field.text} // Use theme text color
                     />
                   ) : (
-                    <Text style={[styles.icon, { color: colors.text.main }]}>
+                    <Text style={[styles.icon, { color: colors.field.text }]}>
                       {option.icon}
                     </Text>
                   )}
@@ -80,11 +114,15 @@ export function RadioGroup<T extends string = string>({
               <Text
                 style={[
                   styles.label,
-                  { color: colors.text.main },
+                  { 
+                    color: colors.field.text, // Use theme text color
+                    fontSize: 16, // Force font size
+                    fontWeight: '500', // Force font weight
+                  },
                   isDisabled && styles.labelDisabled,
                 ]}
               >
-                {option.label}
+                {option.label || 'No Label'}
               </Text>
             </View>
 
@@ -93,7 +131,10 @@ export function RadioGroup<T extends string = string>({
               style={[
                 styles.radio,
                 {
-                  borderColor: colors.field.border,
+                  borderColor: isSelected 
+                    ? colors.field.borderFocus 
+                    : colors.field.border, // Use theme border colors
+                  backgroundColor: colors.field.bg, // Use theme background
                 },
               ]}
             >
@@ -101,7 +142,7 @@ export function RadioGroup<T extends string = string>({
                 <View
                   style={[
                     styles.radioInner,
-                    { backgroundColor: colors.accent.DEFAULT },
+                    { backgroundColor: colors.field.borderFocus }, // Use theme focus color
                   ]}
                 />
               )}
