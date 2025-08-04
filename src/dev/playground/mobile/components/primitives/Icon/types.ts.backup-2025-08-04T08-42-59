@@ -105,8 +105,6 @@ export interface IconProps {
   style?: any;
   disabled?: boolean;
   children?: ReactNode;
-  id?: string;
-  onClick?: () => void;
 }
 
 export interface IconWebProps extends IconProps {

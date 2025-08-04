@@ -4,7 +4,11 @@ import { RadioGroup } from './primitives';
 import { t } from '@lingui/core/macro';
 import { RadioOption } from './primitives/RadioGroup/types';
 
-const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({
+export interface ThemeRadioGroupProps {
+  horizontal?: boolean;
+}
+
+const ThemeRadioGroup: React.FC<ThemeRadioGroupProps> = ({
   horizontal,
 }) => {
   const { theme, setTheme } = useTheme();
@@ -34,7 +38,7 @@ const ThemeRadioGroup: React.FC<{ horizontal?: boolean }> = ({
       value={theme}
       onChange={setTheme}
       direction={horizontal ? 'horizontal' : 'vertical'}
-      className="mt-2"
+      className="mt-2" // Web-only, ignored on native
       name="theme"
     />
   );

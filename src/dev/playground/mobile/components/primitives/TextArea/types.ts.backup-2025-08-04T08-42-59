@@ -15,8 +15,6 @@ export interface TextAreaProps {
   onBlur?: () => void;
   /** Focus handler */
   onFocus?: () => void;
-  /** Key down handler */
-  onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   /** Number of visible text lines */
   rows?: number;
   /** Minimum number of rows */
@@ -49,13 +47,11 @@ export interface TextAreaProps {
 
 // React Native specific props
 export interface TextAreaNativeProps
-  extends Omit<TextAreaProps, 'className' | 'resize' | 'onKeyDown'> {
+  extends Omit<TextAreaProps, 'className' | 'resize'> {
   /** Return key type */
   returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send' | 'default';
   /** Auto complete type */
   autoComplete?: 'off' | 'name' | 'username';
   /** Multiline (always true for TextArea) */
   multiline?: boolean;
-  /** Key press handler (React Native equivalent of onKeyDown) */
-  onKeyPress?: (e: { nativeEvent: { key: string } }) => void;
 }
