@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
 import ThemeRadioGroup from '../components/ThemeRadioGroup';
+import AccentColorSwitcher from '../components/AccentColorSwitcher';
 
 interface PrimitiveItem {
   id: string;
@@ -146,6 +147,7 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
           <View style={[styles.themeSection, { backgroundColor: theme.colors.surface[2] }]}>
             <Text style={[styles.themeSectionTitle, { color: theme.colors.text.strong }]}>Theme</Text>
             <ThemeRadioGroup horizontal />
+            <AccentColorSwitcher />
           </View>
         </View>
 

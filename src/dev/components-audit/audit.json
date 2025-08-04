@@ -156,9 +156,9 @@
       "hooks": [
         "useUserKicking"
       ],
-      "native": "done",
+      "native": "todo",
       "notes": "COMPLETED: Business logic extracted into useUserKicking hook with confirmation flow, timeout management, and kick user API calls. All raw HTML replaced with Container, Text, FlexRow primitives. Fully cross-platform compatible with responsive text alignment. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
-      "updated": "2025-07-31"
+      "updated": "2025-08-04"
     },
     "UserSettingsModal.tsx": {
       "name": "UserSettingsModal",
@@ -314,8 +314,8 @@
         "useAccentColor"
       ],
       "native": "done",
-      "notes": "COMPLETED: Business logic extracted into useAccentColor hook with platform-aware storage (localStorage for web, AsyncStorage ready for native). Now uses FlexRow primitive instead of raw div. Component uses only primitives (FlexRow, ColorSwatch) with platform-aware sizing logic. Fully cross-platform compatible.",
-      "updated": "2025-07-31"
+      "notes": "UPDATED: Now integrated with unified theme system using useTheme() hook instead of separate useAccentColor. Full cross-platform compatibility with AsyncStorage persistence on native and localStorage on web. Uses only primitives (FlexRow, ColorSwatch) with dynamic accent color propagation to all form fields (Input, TextArea, Select focus borders). Tested successfully in mobile playground. Main app testing pending.",
+      "updated": "2025-08-04"
     },
     "Connecting.tsx": {
       "name": "Connecting",
@@ -583,9 +583,9 @@
         "useDirectMessageCreation",
         "useAddressValidation"
       ],
-      "native": "done",
+      "native": "todo",
       "notes": "COMPLETED: Business logic extracted into useDirectMessageCreation and useAddressValidation hooks. All raw HTML replaced with Container and Text primitives. Fully cross-platform compatible. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
-      "updated": "2025-07-31"
+      "updated": "2025-08-04"
     },
     "JoinSpaceModal.tsx": {
       "name": "JoinSpaceModal",
@@ -599,9 +599,9 @@
         "useSpaceJoining",
         "useInviteValidation"
       ],
-      "native": "done",
+      "native": "todo",
       "notes": "COMPLETED: Business logic extracted into useSpaceJoining and useInviteValidation hooks. All raw HTML replaced with Container, FlexCenter, and Text primitives. Fully cross-platform compatible. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
-      "updated": "2025-07-31"
+      "updated": "2025-08-04"
     },
     "LeaveSpaceModal.tsx": {
       "name": "LeaveSpaceModal",
@@ -614,9 +614,9 @@
       "hooks": [
         "useSpaceLeaving"
       ],
-      "native": "done",
+      "native": "todo",
       "notes": "COMPLETED: Business logic extracted into useSpaceLeaving hook with confirmation flow and timeout management. All raw HTML replaced with Container, Text, FlexRow, and other primitives. Fully cross-platform compatible with responsive text alignment. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
-      "updated": "2025-07-31"
+      "updated": "2025-08-04"
     },
     "GlobalSearch.tsx": {
       "name": "GlobalSearch",
@@ -966,7 +966,7 @@
     "primitives_done": 35,
     "logic_extraction_done": 63,
     "native_ready": 0,
-    "native_done": 12,
+    "native_done": 8,
     "by_category": {
       "platform_specific": 49,
       "shared": 15

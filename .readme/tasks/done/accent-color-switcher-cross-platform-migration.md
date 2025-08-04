@@ -2,7 +2,7 @@
 
 ## Task Overview
 
-Migrate the AccentColorSwitcher component to be fully cross-platform compatible with our unified theme system, ensuring complete persistence of both theme and accent color choices across sessions on both web and native platforms.
+Make the existing AccentColorSwitcher component work on both web and native by fixing its web-only dependencies and integrating it with our unified theme system. Ensure complete persistence of both theme and accent color choices across sessions on both platforms.
 
 ## Current State Analysis
 
@@ -17,10 +17,13 @@ Migrate the AccentColorSwitcher component to be fully cross-platform compatible 
 - **CRITICAL GAP**: All settings reset on app restart
 
 ### AccentColorSwitcher Current State
-- **Web**: Uses `useAccentColor` hook with localStorage + CSS classes
-- **Native**: TODO comments indicate not implemented
-- **Dependencies**: `ColorSwatch` and `FlexRow` are already cross-platform ready
-- **Platform Detection**: Uses `isNative` and `useResponsiveLayout` for sizing
+- **Component**: Already designed to be cross-platform (uses primitives, has platform detection)
+- **Dependencies**: `ColorSwatch` and `FlexRow` are cross-platform ready
+- **Platform Logic**: Uses `isNative` and `useResponsiveLayout` for responsive sizing
+- **ISSUE**: Not working on native because its dependencies are web-only:
+  - `useAccentColor` hook only works on web (localStorage + CSS classes)
+  - `useResponsiveLayout` hook is web-only (window.innerWidth)
+  - No integration with our new cross-platform theme system
 
 ### Theme System Integration
 - **Web Provider**: Has theme persistence but accent is handled separately
@@ -150,20 +153,20 @@ export const useResponsiveLayout = (): ResponsiveLayoutState => {
 
 2. Update platform resolution in hook exports
 
-### Phase 4: Cross-Platform AccentColorSwitcher Component
+### Phase 4: Update AccentColorSwitcher Component
 
-**Goal**: Make AccentColorSwitcher fully shared between platforms
+**Goal**: Update the existing AccentColorSwitcher to use cross-platform dependencies
 
 **Tasks**:
 1. **Update component dependencies**:
    - Remove `useAccentColor` import
-   - Use `useTheme` from primitives/theme
+   - Use `useTheme` from primitives/theme instead
    - Extract accent and setAccent from theme context
 
-2. **Simplify platform logic**:
-   - Remove `isNative` detection
-   - Let `useResponsiveLayout` handle platform differences
-   - Simplify sizing logic
+2. **Keep platform detection logic** (it's already cross-platform):
+   - Continue using `isNative` for platform-appropriate sizing
+   - Continue using `useResponsiveLayout` (now cross-platform)
+   - Component design is already good
 
 3. **Update component implementation**:
 ```typescript

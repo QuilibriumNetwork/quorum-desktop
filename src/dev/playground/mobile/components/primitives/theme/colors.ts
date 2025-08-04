@@ -55,7 +55,7 @@ export const themeColors = {
       tooltip: '#ffffff', // var(--surface-00)
       icon: '#ffffff', // var(--surface-00)
       input: '#e6e6eb', // var(--surface-3)
-      card: '#eeeef3', // var(--surface-2)
+      card: '#fefeff', // var(--surface-0) - changed for better field contrast
     },
 
     // Border colors (matches CSS --color-border-* variables)
@@ -110,7 +110,7 @@ export const themeColors = {
       optionHover: '#e6e6eb', // surface-3 - hover state
       optionSelected: '#eeeef3', // surface-2 - selected state
       optionText: '#363636', // text.main
-      optionTextSelected: '#0287f2', // accent blue
+      optionTextSelected: '#0287f2', // will be overridden by getColors() with dynamic accent
     },
   },
 
@@ -156,7 +156,7 @@ export const themeColors = {
       tooltip: '#100f11', // var(--surface-00)
       icon: '#100f11', // var(--surface-00)
       input: '#312935', // var(--surface-3)
-      card: '#2c252e', // var(--surface-2)
+      card: '#1d1a21', // var(--surface-0) - changed for better field contrast
     },
 
     // Dark theme border colors
@@ -211,7 +211,7 @@ export const themeColors = {
       optionHover: '#312935', // surface-3 - hover state
       optionSelected: '#2c252e', // surface-2 - selected state
       optionText: '#f4f1f6', // text.main
-      optionTextSelected: '#0287f2', // accent blue
+      optionTextSelected: '#0287f2', // will be overridden by getColors() with dynamic accent
     },
   },
 };
@@ -322,10 +322,23 @@ export const getColors = (
   theme: 'light' | 'dark' = 'light',
   accent: AccentColor = 'blue'
 ) => {
-  return {
+  const baseColors = {
     ...themeColors[theme],
     accent: accentColors[accent],
     ...commonColors,
+  };
+
+  // Override field focus colors to use the current accent
+  const accentDefault = accentColors[accent].DEFAULT;
+  
+  return {
+    ...baseColors,
+    field: {
+      ...baseColors.field,
+      borderFocus: accentDefault,
+      bgFocus: baseColors.field.bgFocus, // Keep existing bgFocus
+      optionTextSelected: accentDefault, // Dynamic accent for selected options
+    },
   };
 };
 

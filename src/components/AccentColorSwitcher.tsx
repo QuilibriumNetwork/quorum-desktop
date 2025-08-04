@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { ColorSwatch, FlexRow } from './primitives';
-import { useAccentColor, useResponsiveLayout } from '../hooks';
+import { useTheme } from './primitives/theme';
+import { useResponsiveLayout } from '../hooks';
 import { isNative } from '../utils/platform';
+import type { AccentColor } from './primitives/theme/colors';
+
+const ACCENT_COLORS: AccentColor[] = ['blue', 'purple', 'fuchsia', 'orange', 'green', 'yellow'];
 
 const AccentColorSwitcher: React.FC = () => {
-  const { activeAccent, setAccent, availableColors } = useAccentColor();
+  const { accent, setAccent } = useTheme();
   const { isMobile } = useResponsiveLayout();
 
   // Native apps always use medium size for better touch targets
@@ -13,11 +17,11 @@ const AccentColorSwitcher: React.FC = () => {
 
   return (
     <FlexRow gap={3}>
-      {availableColors.map((color) => (
+      {ACCENT_COLORS.map((color) => (
         <ColorSwatch
           key={color}
           color={color}
-          isActive={activeAccent === color}
+          isActive={accent === color}
           onPress={() => setAccent(color)}
           size={swatchSize}
         />

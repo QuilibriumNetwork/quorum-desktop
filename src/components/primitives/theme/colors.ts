@@ -110,7 +110,7 @@ export const themeColors = {
       optionHover: '#e6e6eb', // surface-3 - hover state
       optionSelected: '#eeeef3', // surface-2 - selected state
       optionText: '#363636', // text.main
-      optionTextSelected: '#0287f2', // accent blue
+      optionTextSelected: '#0287f2', // will be overridden by getColors() with dynamic accent
     },
   },
 
@@ -211,7 +211,7 @@ export const themeColors = {
       optionHover: '#312935', // surface-3 - hover state
       optionSelected: '#2c252e', // surface-2 - selected state
       optionText: '#f4f1f6', // text.main
-      optionTextSelected: '#0287f2', // accent blue
+      optionTextSelected: '#0287f2', // will be overridden by getColors() with dynamic accent
     },
   },
 };
@@ -319,13 +319,26 @@ export const commonColors = {
  * This is the main function React Native components should use
  */
 export const getColors = (
-  theme: Theme = 'light',
+  theme: 'light' | 'dark' = 'light',
   accent: AccentColor = 'blue'
 ) => {
-  return {
+  const baseColors = {
     ...themeColors[theme],
     accent: accentColors[accent],
     ...commonColors,
+  };
+
+  // Override field focus colors to use the current accent
+  const accentDefault = accentColors[accent].DEFAULT;
+  
+  return {
+    ...baseColors,
+    field: {
+      ...baseColors.field,
+      borderFocus: accentDefault,
+      bgFocus: baseColors.field.bgFocus, // Keep existing bgFocus
+      optionTextSelected: accentDefault, // Dynamic accent for selected options
+    },
   };
 };
 

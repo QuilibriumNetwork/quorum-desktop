@@ -9,6 +9,7 @@ This document describes our comprehensive cross-platform theming architecture th
 Our theming system is built with a shared-first approach, providing:
 - **Unified Theme API**: Same interface for web and mobile
 - **System Theme Detection**: Automatic light/dark detection on both platforms
+- **Dynamic Accent Colors**: Full accent color switching with persistence
 - **Shared Component Support**: Single ThemeRadioGroup works everywhere
 - **Color Consistency**: Mobile colors mirror web CSS variables exactly
 
@@ -37,6 +38,7 @@ Both platforms export the same API through `src/components/primitives/theme/inde
 
 ```typescript
 export type Theme = 'light' | 'dark' | 'system';
+export type AccentColor = 'blue' | 'purple' | 'fuchsia' | 'orange' | 'green' | 'yellow';
 ```
 
 ### Theme Resolution
@@ -49,21 +51,21 @@ export type Theme = 'light' | 'dark' | 'system';
 
 ## Theme Provider Interfaces
 
-### Web Interface
+### Unified Interface
 ```typescript
 interface ThemeContextType {
-  theme: Theme;                    // Current setting ('light'|'dark'|'system')
-  setTheme: (value: Theme) => void;
-  resolvedTheme: 'light' | 'dark'; // Actual applied theme
+  theme: Theme;                      // Current setting ('light'|'dark'|'system')
+  setTheme: (value: Theme) => void | Promise<void>;
+  resolvedTheme: 'light' | 'dark';   // Actual applied theme
+  accent: AccentColor;               // Current accent color
+  setAccent: (value: AccentColor) => void | Promise<void>;
 }
 ```
 
-### Mobile Interface
+### Extended Mobile Interface
 ```typescript
 interface PrimitivesThemeContextType extends ThemeContextType {
-  accent: AccentColor;             // Additional mobile properties
-  setAccent: (value: AccentColor) => void;
-  colors: ColorPalette;            // Pre-calculated colors
+  colors: ColorPalette;              // Pre-calculated colors with dynamic accent
   getColor: (path: string) => string;
 }
 ```
@@ -98,12 +100,33 @@ Mobile has additional field-specific colors optimized for React Native:
 
 ```typescript
 field: {
-  bg: '#e6e6eb',           // Input background (surface-3)
+  bg: '#eeeef3',           // Input background (surface-2) 
   border: '#cdccd3',       // Input border (surface-6)
-  borderFocus: '#0287f2',  // Focus state (accent)
+  borderFocus: '#0287f2',  // Focus state (dynamic accent)
   text: '#363636',         // Input text
   placeholder: '#818181',  // Placeholder text
+  optionTextSelected: '#0287f2', // Select dropdown selected text (dynamic accent)
 }
+```
+
+### Dynamic Accent Color System
+
+The `getColors()` function dynamically applies accent colors to form fields:
+
+```typescript
+export const getColors = (theme: 'light' | 'dark' = 'light', accent: AccentColor = 'blue') => {
+  const baseColors = { ...themeColors[theme], accent: accentColors[accent], ...commonColors };
+  const accentDefault = accentColors[accent].DEFAULT;
+  
+  return {
+    ...baseColors,
+    field: {
+      ...baseColors.field,
+      borderFocus: accentDefault,        // Input/TextArea focus borders
+      optionTextSelected: accentDefault, // Select dropdown selected items
+    },
+  };
+};
 ```
 
 ## Usage Patterns
@@ -133,6 +156,23 @@ const ThemeRadioGroup = () => {
 };
 ```
 
+```typescript
+// AccentColorSwitcher.tsx - Also works on both platforms
+import { useTheme, type AccentColor } from './primitives/theme';
+
+const AccentColorSwitcher = () => {
+  const { accent, setAccent } = useTheme();
+  
+  return (
+    <ColorSwitcher
+      colors={['blue', 'purple', 'fuchsia', 'orange', 'green', 'yellow']}
+      value={accent}
+      onChange={setAccent}
+    />
+  );
+};
+```
+
 ### Platform-Specific Usage
 
 **Web:**
@@ -143,9 +183,11 @@ const ThemeRadioGroup = () => {
 
 **React Native:**
 ```typescript
-// Pre-calculated colors available
+// Pre-calculated colors with dynamic accent available
 const theme = useTheme();
 const backgroundColor = theme.colors.bg.app;
+const focusBorderColor = theme.colors.field.borderFocus; // Uses current accent
+const selectedTextColor = theme.colors.field.optionTextSelected; // Uses current accent
 ```
 
 ## System Theme Detection
@@ -161,8 +203,20 @@ mediaQuery.addEventListener('change', onSystemChange);
 
 ### Mobile Implementation
 ```typescript
-// Uses React Native hook
+// Uses React Native hook + AsyncStorage persistence
 const systemColorScheme = useColorScheme(); // 'light' | 'dark' | null
+
+// Load persisted values on mount
+useEffect(() => {
+  const loadPersistedValues = async () => {
+    const savedTheme = await AsyncStorage.getItem('theme') as Theme | null;
+    const savedAccent = await AsyncStorage.getItem('accent-color') as AccentColor | null;
+    
+    if (savedTheme) setThemeState(savedTheme);
+    if (savedAccent) setAccentState(savedAccent);
+  };
+  loadPersistedValues();
+}, []);
 
 // Automatic re-render on system changes
 useEffect(() => {
@@ -180,7 +234,15 @@ useEffect(() => {
 1. **Add to web CSS first** (`_colors.scss`)
 2. **Mirror exactly in mobile** (`colors.ts`)
 3. **Update both light and dark themes**
-4. **Test on both platforms**
+4. **Consider dynamic accent support** in `getColors()`
+5. **Test on both platforms**
+
+### Adding New Accent Colors
+
+1. **Define in `accentColors` object** with full shade palette
+2. **Update `AccentColor` type** to include new option
+3. **Add to AccentColorSwitcher** component options
+4. **Test field focus states** with new accent
 
 ### Theme Provider Updates
 
@@ -196,11 +258,12 @@ When updating theme providers:
 ```typescript
 // Use pre-resolved colors from provider
 const theme = useTheme();
-const colors = theme.colors; // Already resolved
+const colors = theme.colors; // Already resolved with dynamic accent
 
 // Use semantic color names
 backgroundColor: colors.bg.app
 color: colors.text.main
+borderColor: colors.field.borderFocus // Uses current accent automatically
 ```
 
 **❌ Don't:**
@@ -209,7 +272,10 @@ color: colors.text.main
 const actualTheme = theme.theme === 'system' ? 'light' : theme.theme;
 const colors = getColors(actualTheme); // Provider already did this
 
-// Don't use hardcoded values
+// Don't use hardcoded accent colors
+borderColor: '#0287f2' // Use colors.field.borderFocus instead
+
+// Don't use hardcoded surface values
 backgroundColor: '#ffffff' // Use colors.bg.app instead
 ```
 
@@ -231,15 +297,20 @@ backgroundColor: '#ffffff' // Use colors.bg.app instead
 - [ ] System theme matches OS preference
 - [ ] Theme switching is immediate
 - [ ] System changes are detected automatically
+- [ ] Accent color switching works (blue, purple, fuchsia, orange, green, yellow)
+- [ ] Accent colors persist between sessions
+- [ ] Field focus borders use current accent color
+- [ ] Select dropdown selected items use current accent color
 
 **Mobile Specific:**
-- [ ] Field colors have proper contrast
+- [ ] Field colors have proper contrast against card backgrounds
 - [ ] Touch targets work in all themes
 - [ ] StatusBar adapts to theme
+- [ ] AsyncStorage persistence works for theme and accent
 
 **Web Specific:**
 - [ ] CSS classes applied correctly
-- [ ] LocalStorage persistence works
+- [ ] LocalStorage persistence works for theme and accent
 - [ ] Media query changes detected
 
 ## Troubleshooting
@@ -262,6 +333,14 @@ backgroundColor: '#ffffff' // Use colors.bg.app instead
 **Theme switching not working**
 - Components using different ThemeProvider contexts
 - Solution: Ensure all imports use `./primitives/theme`
+
+**Accent colors not updating form fields**
+- Field colors using hardcoded values instead of dynamic accent
+- Solution: Ensure `getColors()` overrides `borderFocus` and `optionTextSelected`
+
+**Field backgrounds not visible**
+- Card backgrounds same color as field backgrounds
+- Solution: Use different surface levels (e.g., card=surface-0, field=surface-2)
 
 ---
 

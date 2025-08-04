@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Theme, AccentColor } from './colors';
 import type { PrimitivesThemeContextType } from './ThemeProvider';
 import { getColors } from './colors';
@@ -21,8 +22,9 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [theme, setThemeState] = useState<Theme>('light');
+  const [theme, setThemeState] = useState<Theme>('system');
   const [accent, setAccentState] = useState<AccentColor>('blue');
+  const [isLoading, setIsLoading] = useState(true);
   
   // React Native system theme detection
   const systemColorScheme = useColorScheme();
@@ -39,6 +41,29 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() => 
     resolveTheme(theme)
   );
+
+  // Load persisted values on mount
+  useEffect(() => {
+    const loadPersistedValues = async () => {
+      try {
+        const savedTheme = await AsyncStorage.getItem('theme') as Theme | null;
+        const savedAccent = await AsyncStorage.getItem('accent-color') as AccentColor | null;
+        
+        if (savedTheme) {
+          setThemeState(savedTheme);
+        }
+        if (savedAccent) {
+          setAccentState(savedAccent);
+        }
+      } catch (error) {
+        console.warn('Failed to load theme settings:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadPersistedValues();
+  }, []);
 
   // Update resolved theme when theme or system preference changes
   useEffect(() => {
@@ -65,16 +90,24 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     return current;
   };
 
-  // Theme setter for React Native
-  const setTheme = (value: Theme) => {
+  // Theme setter for React Native with persistence
+  const setTheme = async (value: Theme) => {
     setThemeState(value);
-    // No localStorage in React Native - state management only
+    try {
+      await AsyncStorage.setItem('theme', value);
+    } catch (error) {
+      console.warn('Failed to persist theme:', error);
+    }
   };
 
-  // Accent setter for React Native
-  const setAccent = (value: AccentColor) => {
+  // Accent setter for React Native with persistence
+  const setAccent = async (value: AccentColor) => {
     setAccentState(value);
-    // No localStorage in React Native - state management only
+    try {
+      await AsyncStorage.setItem('accent-color', value);
+    } catch (error) {
+      console.warn('Failed to persist accent color:', error);
+    }
   };
 
   const value: PrimitivesThemeContextType = {
@@ -86,6 +119,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     colors,
     getColor,
   };
+
+  // Don't render until persisted values are loaded
+  if (isLoading) {
+    return null; // You could return a loading screen here
+  }
 
   return (
     <ThemeContext.Provider value={value}>
