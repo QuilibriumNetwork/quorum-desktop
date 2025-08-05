@@ -1,6 +1,6 @@
 # Mobile Message Actions Implementation
 
-[← Back to INDEX](../../INDEX.md)
+[← Back to INDEX](/.readme/INDEX.md)
 
 ## Summary
 

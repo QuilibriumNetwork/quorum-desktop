@@ -1,6 +1,6 @@
 # Modal Animation Consistency Implementation
 
-[← Back to INDEX](../../INDEX.md)
+[← Back to INDEX](/.readme/INDEX.md)
 
 ## Project Overview
 

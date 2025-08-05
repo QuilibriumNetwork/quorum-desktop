@@ -10,17 +10,13 @@ This index provides an overview of all documentation, tasks and bugs, available.
 - **[Desktop Notifications Feature](docs/features/desktop-notifications.md)**
 - **[Emoji Picker React - Styling & Customization](docs/features/emoji-picker-react-customization.md)**
 - **[Invite System Analysis - Comprehensive Report](docs/features/invite-system-analysis.md)**
-- **[Cross-Platform Primitive Components - Complete Documentation](docs/features/primitive-components.md)**
-- **[Primitives Quick Reference Guide](docs/features/primitives-quick-reference.md)**
-- **[Web-to-Native Migration Guide](docs/features/web-to-native-migration-guide.md)**
+- **[📚 Primitives Documentation Hub](docs/features/primitives/INDEX.md)** - Complete cross-platform primitives guide
 - **[Kick User System Documentation](docs/features/kick-user-system.md)**
 - **[Mobile Message Actions Implementation](docs/features/message-actions-mobile.md)**
 - **[Modal System Documentation](docs/features/modals.md)**
 - **[ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)**
 - **[Responsive Layout System Documentation](docs/features/responsive-layout.md)**
 - **[🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)**
-- **[Primitive Styling Guidelines](docs/primitive-styling-guide.md)**
-- **[When to Use Primitives vs Raw HTML](docs/when-to-use-primitives.md)**
 
 ## Bug Reports
 
@@ -82,4 +78,4 @@ This index provides an overview of all documentation, tasks and bugs, available.
 
 ---
 
-_Last Updated: 2025-08-05 09:09:11 UTC_
+_Last Updated: 2025-08-05_

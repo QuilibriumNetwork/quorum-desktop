@@ -1,6 +1,6 @@
 # Search Focus Management Comprehensive Bug Report
 
-[← Back to INDEX](../INDEX.md)
+[← Back to INDEX](/.readme/INDEX.md)
 
 **Status**: REVERTED - All attempts failed  
 **Priority**: High  

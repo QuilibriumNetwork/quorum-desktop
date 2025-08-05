@@ -1,6 +1,6 @@
 # Quorum Data Management Architecture
 
-[← Back to INDEX](../INDEX.md)
+[← Back to INDEX](/.readme/INDEX.md)
 
 A comprehensive guide to data storage, management, and flow patterns in the Quorum desktop application.
 

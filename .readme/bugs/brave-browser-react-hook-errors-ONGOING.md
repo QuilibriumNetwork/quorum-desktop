@@ -1,6 +1,6 @@
 # Brave Browser React Hook Errors - ONGOING INVESTIGATION
 
-[← Back to INDEX](../INDEX.md)
+[← Back to INDEX](/.readme/INDEX.md)
 
 **Date:** July 30, 2025  
 **Status:** 🔄 **ONGOING** - Multiple Solutions Attempted, Still Experiencing Hook Errors  

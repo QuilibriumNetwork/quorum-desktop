@@ -1,6 +1,6 @@
 # SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible
 
-[← Back to INDEX](../INDEX.md)
+[← Back to INDEX](/.readme/INDEX.md)
 
 ## Problem Summary
 

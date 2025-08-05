@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '../components/primitives/theme';
-import { Switch } from '../components/primitives/Switch';
-import { Text } from '../components/primitives/Text';
-import { Icon } from '../components/primitives/Icon';
+import {
+  useTheme,
+  Switch,
+  Text,
+  SectionHeading,
+  Paragraph,
+  Label,
+  Icon,
+  FlexRow,
+  FlexColumn,
+} from '../components/primitives';
 import { commonTestStyles } from '../styles/commonTestStyles';
 
 export const SwitchTestScreen: React.FC = () => {
@@ -18,125 +25,89 @@ export const SwitchTestScreen: React.FC = () => {
   return (
     <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
-        <View style={commonTestStyles.header}>
-          <View style={commonTestStyles.titleContainer}>
+        <FlexColumn style={commonTestStyles.header}>
+          <FlexRow style={commonTestStyles.titleContainer}>
             <Icon name="sliders" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
-            <Text size="2xl" weight="bold" variant="strong">
-              Switch
-            </Text>
-          </View>
-          <View style={{ marginBottom: 24 }}>
-            <Text size="base" variant="default" align="center">
-              Cross-platform toggle switch with multiple sizes and variants
-            </Text>
-          </View>
-        </View>
+            <SectionHeading>Switch</SectionHeading>
+          </FlexRow>
+          <Paragraph align="center">
+            Cross-platform toggle switch with multiple sizes and variants
+          </Paragraph>
+        </FlexColumn>
 
         <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">
-              Basic Switch
-            </Text>
-          </View>
+          <Label>
+            Basic Switch
+          </Label>
 
-          <View style={commonTestStyles.switchRow}>
-            <Switch
-              value={basicSwitch}
-              onChange={setBasicSwitch}
-              accessibilityLabel="Basic Switch (OFF)"
-            />
-            <View style={{ marginLeft: 12 }}>
+          <FlexColumn gap="lg">
+            <FlexRow gap="sm" align="center">
+              <Switch
+                value={basicSwitch}
+                onChange={setBasicSwitch}
+                accessibilityLabel="Basic Switch (OFF)"
+              />
               <Text size="sm" variant="default">
                 Basic Switch ({basicSwitch ? 'ON' : 'OFF'})
               </Text>
-            </View>
-          </View>
+            </FlexRow>
 
-          <View style={commonTestStyles.switchRow}>
-            <Switch
-              value={disabledSwitchOff}
-              onChange={setDisabledSwitchOff}
-              disabled={true}
-              accessibilityLabel="Disabled Switch (OFF)"
-            />
-            <View style={{ marginLeft: 12 }}>
+            <FlexRow gap="sm" align="center">
+              <Switch
+                value={disabledSwitchOff}
+                onChange={setDisabledSwitchOff}
+                disabled={true}
+                accessibilityLabel="Disabled Switch (OFF)"
+              />
               <Text size="sm" variant="subtle">
                 Disabled Switch (OFF) - Cannot be toggled
               </Text>
-            </View>
-          </View>
+            </FlexRow>
 
-          <View style={commonTestStyles.switchRow}>
-            <Switch
-              value={disabledSwitchOn}
-              onChange={setDisabledSwitchOn}
-              disabled={true}
-              accessibilityLabel="Disabled Switch (ON)"
-            />
-            <View style={{ marginLeft: 12 }}>
+            <FlexRow gap="sm" align="center">
+              <Switch
+                value={disabledSwitchOn}
+                onChange={setDisabledSwitchOn}
+                disabled={true}
+                accessibilityLabel="Disabled Switch (ON)"
+              />
               <Text size="sm" variant="subtle">
                 Disabled Switch (ON) - Cannot be toggled
               </Text>
-            </View>
-          </View>
+            </FlexRow>
+          </FlexColumn>
         </View>
 
         <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">
-              Mobile Switch Size
-            </Text>
-          </View>
+          <Label>
+            Mobile Switch Size
+          </Label>
 
-          <View style={commonTestStyles.switchRow}>
+          <FlexRow gap="sm" align="center">
             <Switch
               value={mobileSwitch}
               onChange={setMobileSwitch}
               accessibilityLabel="Mobile Switch"
             />
-            <View style={{ marginLeft: 12 }}>
-              <Text size="sm" variant="default">
-                Standard Mobile Size (52×28px - matches platform guidelines)
-              </Text>
-            </View>
-          </View>
+            <Text size="sm" variant="default">
+              Standard Mobile Size (52×28px - matches platform guidelines)
+            </Text>
+          </FlexRow>
         </View>
 
         <View style={[commonTestStyles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <View style={commonTestStyles.titleContainer}>
-            <Text size="base" weight="semibold" variant="strong">
-              Mobile Notes
-            </Text>
-          </View>
-          <Text size="sm" variant="default">
-            • Web: Custom styled switch with smooth animations and accent color
-          </Text>
-          <Text size="sm" variant="default">
-            • Mobile: Custom switch component (no Android ripple effects)
-          </Text>
-          <Text size="sm" variant="default">
-            • Single size optimized for mobile (52×28px matches platform standards)
-          </Text>
-          <Text size="sm" variant="default">
-            • Uses theme-aware surface colors (adapts to light/dark themes)
-          </Text>
-          <Text size="sm" variant="default">
-            • Touch targets are optimized for mobile accessibility
-          </Text>
-          <Text size="sm" variant="default">
-            • Smooth animated transitions with proper spacing consistency
-          </Text>
+          <FlexColumn gap="md">
+            <Label>Mobile Notes</Label>
+            <Text size="sm" variant="default">• Web: Custom styled switch with smooth animations and accent color</Text>
+            <Text size="sm" variant="default">• Mobile: Custom switch component (no Android ripple effects)</Text>
+            <Text size="sm" variant="default">• Single size optimized for mobile (52×28px matches platform standards)</Text>
+            <Text size="sm" variant="default">• Uses theme-aware surface colors (adapts to light/dark themes)</Text>
+            <Text size="sm" variant="default">• Touch targets are optimized for mobile accessibility</Text>
+            <Text size="sm" variant="default">• Smooth animated transitions with proper spacing consistency</Text>
+          </FlexColumn>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-// Most styles now centralized in commonTestStyles
-// Only screen-specific styles remain here if needed
-const styles = {
-  switchLabel: {
-    marginLeft: 15,
-    flex: 1,
-  },
-};

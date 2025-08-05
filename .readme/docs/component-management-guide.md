@@ -1,6 +1,6 @@
 # Component Management & Development Guide
 
-[← Back to INDEX](../INDEX.md)
+[← Back to INDEX](/.readme/INDEX.md)
 
 This guide helps developers manage existing components and create new ones in our cross-platform architecture.
 

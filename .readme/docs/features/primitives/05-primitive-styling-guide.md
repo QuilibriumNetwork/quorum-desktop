@@ -1,8 +1,8 @@
 # Primitive Styling Guidelines
 
-[← Back to INDEX](../INDEX.md)
+**[← Back to Primitives INDEX](./INDEX.md)**
 
-_Last updated: July 26, 2025_
+[← Back to Docs INDEX](/.readme/INDEX.md)
 
 ## Overview
 
@@ -172,3 +172,6 @@ When creating or updating primitives:
 ---
 
 **⚠️ Remember:** Visual consistency is crucial for user experience. When in doubt, use existing semantic classes rather than creating one-off styles.
+
+
+*Last updated: 2025-08-05*

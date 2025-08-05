@@ -1,6 +1,6 @@
 # Kick User UX Improvements
 
-[← Back to INDEX](../../INDEX.md)
+[← Back to INDEX](/.readme/INDEX.md)
 
 ## Status: Attempted - Reverted
 

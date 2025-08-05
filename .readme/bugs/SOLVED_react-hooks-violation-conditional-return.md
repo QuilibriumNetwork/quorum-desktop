@@ -1,6 +1,6 @@
 # React Hooks Violation: Conditional Return Before Hooks
 
-[← Back to INDEX](../INDEX.md)
+[← Back to INDEX](/.readme/INDEX.md)
 
 **Date**: 2025-01-20  
 **Issue**: React hooks called conditionally due to early return statement  

@@ -1,7 +1,7 @@
 Update the .readme/INDEX.md file by:
 
 1. Scanning the entire .readme directory for any changes (new files, deleted files, moved files)
-2. Adding any missing `[← Back to INDEX](../INDEX.md)` links below the title of markdown files AND at the end of the file
+2. Adding any missing `[← Back to INDEX](/.readme/INDEX.md)` links below the title of markdown files AND at the end of the file.
 3. Organizing files into proper categories:
    - Documentation (docs/)
    - Bug Reports (bugs/) - separate SOLVED and Active

@@ -1,11 +1,15 @@
 # Primitives Quick Reference
 
+**[← Back to Primitives INDEX](./INDEX.md)**
+
+[← Back to Docs INDEX](/.readme/INDEX.md)
+
 Fast lookup guide for all primitive components with essential props and examples.
 
 ## 📝 Text & Typography
 
 ### Text
-\`\`\`tsx
+```tsx
 <Text 
   variant="default|strong|subtle|muted|error|success|warning|link"
   size="xs|sm|base|lg|xl|2xl|3xl"
@@ -17,24 +21,24 @@ Fast lookup guide for all primitive components with essential props and examples
 >
   Content
 </Text>
-\`\`\`
+```
 
 ### Semantic Typography
-\`\`\`tsx
+```tsx
 <Title>Page Title</Title>                    // size="2xl", weight="bold", marginBottom={8}
 <SectionHeading>Section</SectionHeading>     // size="lg", weight="semibold", marginBottom={12}
 <Paragraph>Content paragraph</Paragraph>     // marginBottom={16}, lineHeight="1.4x"
 <Label>Form label</Label>                    // size="sm", weight="strong", marginBottom={8}
 <Caption>Helper text</Caption>               // size="sm", variant="subtle", marginTop={8}
 <InlineText>No spacing</InlineText>          // No automatic margins
-\`\`\`
+```
 
 ---
 
 ## 🎨 Buttons
 
 ### Button
-\`\`\`tsx
+```tsx
 <Button 
   type="primary|secondary|light|light-outline|subtle|subtle-outline|danger|unstyled"
   size="small|normal|large"
@@ -48,21 +52,21 @@ Fast lookup guide for all primitive components with essential props and examples
 >
   Button Text
 </Button>
-\`\`\`
+```
 
 **Quick Examples:**
-\`\`\`tsx
+```tsx
 <Button type="primary" onClick={save}>Save</Button>
 <Button type="secondary" iconName="plus" onClick={add}>Add</Button>
 <Button type="light" iconName="settings" iconOnly onClick={settings} />
-\`\`\`
+```
 
 ---
 
 ## 📝 Form Elements
 
 ### Input
-\`\`\`tsx
+```tsx
 <Input 
   value={string}
   onChange={(value) => {}}
@@ -77,10 +81,10 @@ Fast lookup guide for all primitive components with essential props and examples
   autoComplete="off|email|name|tel|username|password"
   secureTextEntry={boolean}
 />
-\`\`\`
+```
 
 ### TextArea
-\`\`\`tsx
+```tsx
 <TextArea 
   value={string}
   onChange={(value) => {}}
@@ -90,10 +94,10 @@ Fast lookup guide for all primitive components with essential props and examples
   error={boolean}
   errorMessage="error text"
 />
-\`\`\`
+```
 
 ### Select
-\`\`\`tsx
+```tsx
 <Select 
   value={string}
   onChange={(value) => {}}
@@ -105,14 +109,14 @@ Fast lookup guide for all primitive components with essential props and examples
   error={boolean}
   errorMessage="error text"
 />
-\`\`\`
+```
 
 ---
 
 ## 🔄 Layout Components
 
 ### FlexRow
-\`\`\`tsx
+```tsx
 <FlexRow 
   gap="none|xs|sm|md|lg|xl"
   justify="start|end|center|between|around|evenly"
@@ -122,10 +126,10 @@ Fast lookup guide for all primitive components with essential props and examples
   <Text>Item 1</Text>
   <Text>Item 2</Text>
 </FlexRow>
-\`\`\`
+```
 
 ### FlexColumn
-\`\`\`tsx
+```tsx
 <FlexColumn 
   gap="none|xs|sm|md|lg|xl"
   justify="start|end|center|between|around|evenly"
@@ -134,10 +138,10 @@ Fast lookup guide for all primitive components with essential props and examples
   <Text>Item 1</Text>
   <Text>Item 2</Text>
 </FlexColumn>
-\`\`\`
+```
 
 ### FlexCenter & FlexBetween
-\`\`\`tsx
+```tsx
 <FlexCenter>                    // justify="center", align="center"
   <Text>Centered content</Text>
 </FlexCenter>
@@ -146,14 +150,14 @@ Fast lookup guide for all primitive components with essential props and examples
   <Text>Left</Text>
   <Text>Right</Text>
 </FlexBetween>
-\`\`\`
+```
 
 ---
 
 ## 🎛️ Interactive Components
 
 ### Switch
-\`\`\`tsx
+```tsx
 <Switch 
   value={boolean}
   onChange={(value) => {}}
@@ -161,10 +165,10 @@ Fast lookup guide for all primitive components with essential props and examples
   size="small|normal|large"
   label="Switch label"
 />
-\`\`\`
+```
 
 ### RadioGroup
-\`\`\`tsx
+```tsx
 <RadioGroup 
   value={string}
   onChange={(value) => {}}
@@ -175,10 +179,10 @@ Fast lookup guide for all primitive components with essential props and examples
   direction="vertical|horizontal"
   disabled={boolean}
 />
-\`\`\`
+```
 
 ### Modal
-\`\`\`tsx
+```tsx
 <Modal 
   isOpen={boolean}
   onClose={() => {}}
@@ -188,10 +192,10 @@ Fast lookup guide for all primitive components with essential props and examples
 >
   <Text>Modal content</Text>
 </Modal>
-\`\`\`
+```
 
 ### Tooltip
-\`\`\`tsx
+```tsx
 <Tooltip 
   content="Tooltip text"
   position="top|bottom|left|right"
@@ -199,24 +203,24 @@ Fast lookup guide for all primitive components with essential props and examples
 >
   <Button>Hover me</Button>
 </Tooltip>
-\`\`\`
+```
 
 ---
 
 ## 🎨 Visual Components
 
 ### Icon
-\`\`\`tsx
+```tsx
 <Icon 
   name="icon-name"
   size="xs|sm|md|lg|xl|2xl"
   color="hex-color"
   style={StyleObject}
 />
-\`\`\`
+```
 
 ### ColorSwatch
-\`\`\`tsx
+```tsx
 <ColorSwatch 
   color="hex-color"
   size="small|medium|large"
@@ -224,14 +228,14 @@ Fast lookup guide for all primitive components with essential props and examples
   showBorder={boolean}
   onClick={() => {}}
 />
-\`\`\`
+```
 
 ---
 
 ## 📱 Native-Specific Props
 
 ### Common React Native Props
-\`\`\`tsx
+```tsx
 // Accessibility
 accessibilityLabel="Screen reader description"
 testID="automation-test-id"
@@ -248,14 +252,14 @@ autoComplete="email"                // Autofill suggestion
 numberOfLines={2}                   // Text truncation
 selectable={true}                   // Text selection
 secureTextEntry={true}              // Password masking
-\`\`\`
+```
 
 ---
 
 ## 🎨 Theme Integration
 
 ### Using Theme Colors
-\`\`\`tsx
+```tsx
 import { useTheme } from '../components/primitives/theme';
 
 const theme = useTheme();
@@ -274,10 +278,10 @@ theme.colors.utilities.danger    // Error/danger
 theme.colors.utilities.success   // Success
 theme.colors.utilities.warning   // Warning
 theme.colors.utilities.info      // Info
-\`\`\`
+```
 
 ### Applying Theme Colors
-\`\`\`tsx
+```tsx
 // In component styles
 <View style={{ backgroundColor: theme.colors.bg.card }}>
   <Text color={theme.colors.text.strong}>Themed text</Text>
@@ -286,14 +290,14 @@ theme.colors.utilities.info      // Info
 // Using variants (preferred)
 <Text variant="strong">Uses theme.colors.text.strong automatically</Text>
 <Text variant="error">Uses theme.colors.utilities.danger automatically</Text>
-\`\`\`
+```
 
 ---
 
 ## ⚡ Common Patterns
 
 ### Form Field Group
-\`\`\`tsx
+```tsx
 <FlexColumn gap="xs">
   <Label>Email Address</Label>
   <Input 
@@ -304,10 +308,10 @@ theme.colors.utilities.info      // Info
     errorMessage={emailError}
   />
 </FlexColumn>
-\`\`\`
+```
 
 ### Header with Icon and Action
-\`\`\`tsx
+```tsx
 <FlexRow justify="between" align="center">
   <FlexRow gap="sm" align="center">
     <Icon name="settings" />
@@ -315,10 +319,10 @@ theme.colors.utilities.info      // Info
   </FlexRow>
   <Button type="subtle" iconName="close" iconOnly onClick={onClose} />
 </FlexRow>
-\`\`\`
+```
 
 ### Card Layout
-\`\`\`tsx
+```tsx
 <FlexColumn 
   gap="md" 
   style={{ 
@@ -332,10 +336,10 @@ theme.colors.utilities.info      // Info
   <Paragraph>Card content goes here</Paragraph>
   <Button type="primary">Action</Button>
 </FlexColumn>
-\`\`\`
+```
 
 ### Loading State
-\`\`\`tsx
+```tsx
 {loading ? (
   <FlexCenter style={{ padding: 20 }}>
     <Text variant="subtle">Loading...</Text>
@@ -345,7 +349,7 @@ theme.colors.utilities.info      // Info
     {data.map(item => <ItemComponent key={item.id} item={item} />)}
   </FlexColumn>
 )}
-\`\`\`
+```
 
 ---
 
@@ -353,23 +357,56 @@ theme.colors.utilities.info      // Info
 
 | ❌ Don't Do | ✅ Do Instead |
 |-------------|---------------|
-| `<div className="flex">` | `<FlexRow>` |
+| `<div className="flex">` | `<FlexRow>` or `<FlexColumn>` |
+| `<View style={{ flexDirection: 'row' }}>` | `<FlexRow>` |
 | `<p>Text content</p>` | `<Text>Text content</Text>` |
 | `<button onClick={}>` | `<Button onClick={}>` |
 | `style={{ color: '#000' }}` on Text | `variant="strong"` or `color={theme.colors.text.strong}` |
-| Manual margin/padding for text spacing | Use semantic components or spacing props |
+| Manual margin/padding for spacing | Use Flex gap props or semantic components |
 | CSS classes in React Native | Use component props |
 | Raw text outside Text components | Always wrap text in Text components |
+
+## 🏗️ **View vs Flex Usage Pattern**
+
+**Recommended Architecture**: Container + Layout separation
+
+```tsx
+// ✅ BEST PRACTICE: View for styling, Flex for layout
+<View style={{ backgroundColor: theme.colors.bg.card, padding: 16, borderRadius: 8 }}>
+  <FlexColumn gap="md">
+    <FlexRow gap="sm" align="center">
+      <Icon name="user" />
+      <Text>Content</Text>
+    </FlexRow>
+  </FlexColumn>
+</View>
+
+// ❌ AVOID: Manual flexbox in View
+<View style={{ flexDirection: 'column', gap: 16, backgroundColor: '...' }}>
+  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+    <Icon name="user" />
+    <Text>Content</Text>
+  </View>
+</View>
+```
+
+**When to use:**
+- **View**: Styling containers (colors, borders, shadows, platform props)
+- **FlexRow/FlexColumn**: Layout, spacing, alignment, content organization
 
 ---
 
 ## 📖 Related Documentation
 
-- [Complete Primitives Guide](./primitive-components.md) - Detailed documentation with examples
-- [Web-to-Native Migration Guide](./web-to-native-migration-guide.md) - Step-by-step conversion patterns
+- [Complete Primitives Guide](./04-complete-component-guide.md) - Detailed documentation with examples
+- [Web-to-Native Migration Guide](./02-web-to-native-migration.md) - Step-by-step conversion patterns
 - [Theme System](../theme/README.md) - Color system and theming
 - [Component Architecture](../component-architecture-workflow-explained.md) - Overall architecture explanation
 
 ---
 
-*Last updated: 2025-08-05 09:09:11*
+*Last updated: 2025-08-05*
+
+---
+
+[← Back to Primitives INDEX](./INDEX.md)

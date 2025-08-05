@@ -19,7 +19,7 @@ export { ColorSwatch } from './ColorSwatch';
 export { RadioGroup } from './RadioGroup';
 export { Tooltip } from './Tooltip';
 export { Icon } from './Icon';
-export { Text } from './Text';
+export { Text, SectionHeading, Paragraph, Label, Caption, Title, InlineText } from './Text';
 
 // Theme System - Platform-specific exports
 export { ThemeProvider, useTheme } from './theme';

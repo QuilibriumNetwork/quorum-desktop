@@ -1,5 +1,9 @@
 # Web-to-Native Migration Guide
 
+**[← Back to Primitives INDEX](./INDEX.md)**
+
+[← Back to Docs INDEX](/.readme/INDEX.md)
+
 Complete guide for converting web components to React Native using our cross-platform primitives.
 
 ## Table of Contents
@@ -45,7 +49,7 @@ Complete guide for converting web components to React Native using our cross-pla
 ### Pattern 1: Card Component
 
 #### ❌ Web Version
-\`\`\`tsx
+```tsx
 const UserCard = ({ user }) => (
   <div className="bg-white rounded-lg shadow-md p-6 mb-4">
     <div className="flex items-center mb-4">
@@ -64,10 +68,10 @@ const UserCard = ({ user }) => (
     </button>
   </div>
 );
-\`\`\`
+```
 
 #### ✅ Native Version
-\`\`\`tsx
+```tsx
 import { FlexRow, FlexColumn, Text, Paragraph, Button } from '../components/primitives';
 
 const UserCard = ({ user }) => (
@@ -101,12 +105,12 @@ const UserCard = ({ user }) => (
     </Button>
   </FlexColumn>
 );
-\`\`\`
+```
 
 ### Pattern 2: Form Layout
 
 #### ❌ Web Version
-\`\`\`tsx
+```tsx
 const ContactForm = () => (
   <form className="space-y-6">
     <div className="grid grid-cols-2 gap-4">
@@ -149,10 +153,10 @@ const ContactForm = () => (
     </button>
   </form>
 );
-\`\`\`
+```
 
 #### ✅ Native Version
-\`\`\`tsx
+```tsx
 import { FlexColumn, FlexRow, Label, Input, TextArea, Button } from '../components/primitives';
 
 const ContactForm = () => {
@@ -200,7 +204,7 @@ const ContactForm = () => {
     </FlexColumn>
   );
 };
-\`\`\`
+```
 
 ---
 
@@ -209,7 +213,7 @@ const ContactForm = () => {
 ### Basic Text Conversion
 
 #### ❌ Web Patterns
-\`\`\`tsx
+```tsx
 // Multiple text elements with margins
 <div>
   <h2 className="text-2xl font-bold mb-4">Section Title</h2>
@@ -218,10 +222,10 @@ const ContactForm = () => {
   </p>
   <span className="text-sm text-gray-500">Helper text</span>
 </div>
-\`\`\`
+```
 
 #### ✅ Native Conversion
-\`\`\`tsx
+```tsx
 import { Title, Paragraph, Text } from '../components/primitives/Text';
 
 // Using semantic typography components
@@ -232,7 +236,7 @@ import { Title, Paragraph, Text } from '../components/primitives/Text';
   </Paragraph>
   <Text size="sm" variant="subtle">Helper text</Text>
 </>
-\`\`\`
+```
 
 ### Typography Hierarchy
 
@@ -251,7 +255,7 @@ import { Title, Paragraph, Text } from '../components/primitives/Text';
 ### Flexbox Layouts
 
 #### ❌ Web CSS
-\`\`\`tsx
+```tsx
 <div className="flex items-center justify-between p-4 bg-gray-100">
   <div className="flex items-center space-x-3">
     <img src="icon.png" className="w-6 h-6" />
@@ -261,10 +265,10 @@ import { Title, Paragraph, Text } from '../components/primitives/Text';
     Action
   </button>
 </div>
-\`\`\`
+```
 
 #### ✅ Native Primitive
-\`\`\`tsx
+```tsx
 <FlexRow 
   justify="between" 
   align="center" 
@@ -281,21 +285,21 @@ import { Title, Paragraph, Text } from '../components/primitives/Text';
     Action
   </Button>
 </FlexRow>
-\`\`\`
+```
 
 ### Grid to Flex Conversion
 
 #### ❌ Web Grid
-\`\`\`tsx
+```tsx
 <div className="grid grid-cols-3 gap-4">
   <div className="bg-white p-4 rounded">Item 1</div>
   <div className="bg-white p-4 rounded">Item 2</div>
   <div className="bg-white p-4 rounded">Item 3</div>
 </div>
-\`\`\`
+```
 
 #### ✅ Native Flex
-\`\`\`tsx
+```tsx
 <FlexRow gap="md" wrap>
   {items.map(item => (
     <FlexColumn 
@@ -312,7 +316,7 @@ import { Title, Paragraph, Text } from '../components/primitives/Text';
     </FlexColumn>
   ))}
 </FlexRow>
-\`\`\`
+```
 
 ---
 
@@ -321,7 +325,7 @@ import { Title, Paragraph, Text } from '../components/primitives/Text';
 ### Input Field Conversion
 
 #### ❌ Web Input
-\`\`\`tsx
+```tsx
 <div className="mb-4">
   <label className="block text-sm font-medium text-gray-700 mb-2">
     Email Address
@@ -335,10 +339,10 @@ import { Title, Paragraph, Text } from '../components/primitives/Text';
   />
   {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
 </div>
-\`\`\`
+```
 
 #### ✅ Native Input
-\`\`\`tsx
+```tsx
 import { Label, Input } from '../components/primitives';
 
 <>
@@ -354,12 +358,12 @@ import { Label, Input } from '../components/primitives';
     autoComplete="email"
   />
 </>
-\`\`\`
+```
 
 ### Select/Dropdown Conversion
 
 #### ❌ Web Select
-\`\`\`tsx
+```tsx
 <select 
   value={country} 
   onChange={(e) => setCountry(e.target.value)}
@@ -369,10 +373,10 @@ import { Label, Input } from '../components/primitives';
   <option value="us">United States</option>
   <option value="ca">Canada</option>
 </select>
-\`\`\`
+```
 
 #### ✅ Native Select
-\`\`\`tsx
+```tsx
 import { Select } from '../components/primitives';
 
 <Select 
@@ -384,7 +388,7 @@ import { Select } from '../components/primitives';
     { label: 'Canada', value: 'ca' }
   ]}
 />
-\`\`\`
+```
 
 ---
 
@@ -393,7 +397,7 @@ import { Select } from '../components/primitives';
 ### Button Conversion
 
 #### ❌ Web Buttons
-\`\`\`tsx
+```tsx
 // Primary button
 <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
   Primary Action
@@ -408,10 +412,10 @@ import { Select } from '../components/primitives';
 <button className="p-2 text-gray-400 hover:text-gray-600">
   <svg>...</svg>
 </button>
-\`\`\`
+```
 
 #### ✅ Native Buttons
-\`\`\`tsx
+```tsx
 import { Button } from '../components/primitives';
 
 // Primary button
@@ -432,7 +436,7 @@ import { Button } from '../components/primitives';
   onClick={handleSettings}
   accessibilityLabel="Settings"
 />
-\`\`\`
+```
 
 ---
 
@@ -441,15 +445,15 @@ import { Button } from '../components/primitives';
 ### Color System Migration
 
 #### ❌ Web Tailwind Classes
-\`\`\`tsx
+```tsx
 <div className="bg-gray-100 text-gray-900 border-gray-300">
   <p className="text-blue-600">Link text</p>
   <p className="text-red-500">Error text</p>
 </div>
-\`\`\`
+```
 
 #### ✅ Native Theme Colors
-\`\`\`tsx
+```tsx
 import { useTheme } from '../components/primitives/theme';
 
 const theme = useTheme();
@@ -461,19 +465,19 @@ const theme = useTheme();
   <Text variant="link">Link text</Text>
   <Text variant="error">Error text</Text>
 </View>
-\`\`\`
+```
 
 ### Spacing System
 
 #### ❌ Web Tailwind Spacing
-\`\`\`tsx
+```tsx
 <div className="p-4 m-2 space-y-3">
   <p className="mb-4">Content</p>
 </div>
-\`\`\`
+```
 
 #### ✅ Native Spacing
-\`\`\`tsx
+```tsx
 // Using FlexColumn gap
 <FlexColumn gap="sm" style={{ padding: 16, margin: 8 }}>
   <Paragraph>Content</Paragraph>
@@ -481,57 +485,57 @@ const theme = useTheme();
 
 // Or using Text spacing props
 <Text marginBottom={16}>Content</Text>
-\`\`\`
+```
 
 ---
 
 ## Common Pitfalls
 
 ### ❌ Pitfall 1: Using HTML Elements
-\`\`\`tsx
+```tsx
 // DON'T: HTML elements won't work in React Native
 <div>
   <p>This will crash on mobile</p>
   <button onClick={handleClick}>Won't work</button>
 </div>
-\`\`\`
+```
 
 ### ✅ Solution: Use Primitives
-\`\`\`tsx
+```tsx
 // DO: Use primitive components
 <FlexColumn>
   <Text>This works on mobile</Text>
   <Button onClick={handleClick}>Works everywhere</Button>
 </FlexColumn>
-\`\`\`
+```
 
 ### ❌ Pitfall 2: CSS Classes on Native
-\`\`\`tsx
+```tsx
 // DON'T: CSS classes don't work in React Native
 <Text className="text-blue-600 font-bold">Styled text</Text>
-\`\`\`
+```
 
 ### ✅ Solution: Use Props
-\`\`\`tsx
+```tsx
 // DO: Use component props
 <Text variant="link" weight="bold">Styled text</Text>
-\`\`\`
+```
 
 ### ❌ Pitfall 3: Missing Text Wrappers
-\`\`\`tsx
+```tsx
 // DON'T: Naked text will crash React Native
 <View>
   Raw text content
 </View>
-\`\`\`
+```
 
 ### ✅ Solution: Wrap All Text
-\`\`\`tsx
+```tsx
 // DO: All text must be in Text components
 <View>
   <Text>Raw text content</Text>
 </View>
-\`\`\`
+```
 
 ---
 
@@ -576,7 +580,7 @@ const theme = useTheme();
 
 Common find/replace patterns for VS Code:
 
-\`\`\`regex
+```regex
 // Replace div with flexbox classes
 Find: <div className="flex ([^"]*)"[^>]*>
 Replace: <FlexRow $1>
@@ -588,7 +592,7 @@ Replace: <Text variant="default">$2</Text>
 // Replace button elements
 Find: <button ([^>]*) onClick=\{([^}]*)\}[^>]*>([^<]*)</button>
 Replace: <Button onClick={$2}>$3</Button>
-\`\`\`
+```
 
 ---
 
@@ -608,4 +612,8 @@ Following these patterns will ensure your components work seamlessly across web 
 
 ---
 
-*Last updated: 2025-08-05 09:09:11*
+*Last updated: 2025-08-05*
+
+---
+
+[← Back to Primitives INDEX](./INDEX.md)

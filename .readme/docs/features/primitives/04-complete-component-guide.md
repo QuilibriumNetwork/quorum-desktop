@@ -1,4 +1,8 @@
-# Cross-Platform Primitive Components Documentation
+# Complete Primitive Components Guide
+
+**[← Back to Primitives INDEX](./INDEX.md)**
+
+[← Back to Docs INDEX](/.readme/INDEX.md)
 
 This comprehensive guide covers all primitive components in the Quorum Desktop application, with detailed examples and best practices for React Native development.
 
@@ -48,7 +52,7 @@ The Text primitive is the foundation of all text rendering in the app, with enha
 
 ### Basic Usage
 
-\`\`\`tsx
+```tsx
 import { Text } from '../components/primitives/Text';
 
 // Basic text
@@ -59,11 +63,11 @@ import { Text } from '../components/primitives/Text';
 
 // With custom spacing
 <Text marginBottom={16} lineHeight={24}>Custom spaced text</Text>
-\`\`\`
+```
 
 ### All Props
 
-\`\`\`tsx
+```tsx
 interface NativeTextProps {
   children: React.ReactNode;
   
@@ -88,13 +92,13 @@ interface NativeTextProps {
   href?: string; // For links
   testId?: string;
 }
-\`\`\`
+```
 
 ### Semantic Typography Components
 
 Use these pre-configured components for common patterns:
 
-\`\`\`tsx
+```tsx
 import { 
   Paragraph, 
   SectionHeading, 
@@ -123,12 +127,12 @@ import {
 
 // Inline text (no automatic spacing)
 <InlineText>Text within containers</InlineText>
-\`\`\`
+```
 
 ### Web-to-Native Migration Examples
 
 #### ❌ Web Version (Don't do this in native)
-\`\`\`tsx
+```tsx
 // Web approach with CSS classes
 <div className="mb-4">
   <p className="text-lg font-semibold text-gray-900">Section Title</p>
@@ -136,19 +140,19 @@ import {
 <p className="text-base text-gray-700 leading-relaxed">
   Content paragraph with CSS styling.
 </p>
-\`\`\`
+```
 
 #### ✅ Native Version (Recommended)
-\`\`\`tsx
+```tsx
 // Native approach with semantic components
 <SectionHeading>Section Title</SectionHeading>
 <Paragraph>
   Content paragraph with automatic spacing and line height.
 </Paragraph>
-\`\`\`
+```
 
 #### ⚠️ Native Version (Avoid - too verbose)
-\`\`\`tsx
+```tsx
 // Avoid: Manual View wrappers
 <View style={{ marginBottom: 16 }}>
   <Text size="lg" weight="semibold" variant="strong">Section Title</Text>
@@ -156,7 +160,7 @@ import {
 <View style={{ marginBottom: 16 }}>
   <Text size="base" variant="default">Content paragraph</Text>
 </View>
-\`\`\`
+```
 
 ---
 
@@ -166,17 +170,17 @@ Interactive button component with multiple variants and states.
 
 ### Basic Usage
 
-\`\`\`tsx
+```tsx
 import { Button } from '../components/primitives/Button';
 
 <Button onPress={() => console.log('Pressed!')}>
   Click Me
 </Button>
-\`\`\`
+```
 
 ### All Props
 
-\`\`\`tsx
+```tsx
 interface NativeButtonProps {
   children?: React.ReactNode;
   onClick: () => void;
@@ -204,11 +208,11 @@ interface NativeButtonProps {
   id?: string;
   className?: string;
 }
-\`\`\`
+```
 
 ### Examples
 
-\`\`\`tsx
+```tsx
 // Primary button
 <Button type="primary" onClick={handleSubmit}>
   Submit
@@ -241,26 +245,26 @@ interface NativeButtonProps {
 <Button type="primary" size="small" onClick={handleClick}>Small</Button>
 <Button type="primary" size="normal" onClick={handleClick}>Normal</Button>
 <Button type="primary" size="large" onClick={handleClick}>Large</Button>
-\`\`\`
+```
 
 ### Web-to-Native Migration
 
 #### ❌ Web Version
-\`\`\`tsx
+```tsx
 <button 
   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
   onClick={handleClick}
 >
   Click Me
 </button>
-\`\`\`
+```
 
 #### ✅ Native Version
-\`\`\`tsx
+```tsx
 <Button type="primary" onClick={handleClick}>
   Click Me
 </Button>
-\`\`\`
+```
 
 ---
 
@@ -270,7 +274,7 @@ Text input component with validation and multiple variants.
 
 ### Basic Usage
 
-\`\`\`tsx
+```tsx
 import { Input } from '../components/primitives/Input';
 
 const [value, setValue] = useState('');
@@ -280,11 +284,11 @@ const [value, setValue] = useState('');
   onChange={setValue}
   placeholder="Enter text..."
 />
-\`\`\`
+```
 
 ### All Props
 
-\`\`\`tsx
+```tsx
 interface InputNativeProps {
   // Basic props
   value?: string;
@@ -320,11 +324,11 @@ interface InputNativeProps {
   // Styling
   style?: React.CSSProperties;
 }
-\`\`\`
+```
 
 ### Examples
 
-\`\`\`tsx
+```tsx
 // Basic input
 <Input 
   value={email}
@@ -347,12 +351,12 @@ interface InputNativeProps {
   variant="bordered"
   placeholder="Bordered input style"
 />
-\`\`\`
+```
 
 ### Web-to-Native Migration
 
 #### ❌ Web Version
-\`\`\`tsx
+```tsx
 <input 
   type="email"
   value={email}
@@ -360,17 +364,17 @@ interface InputNativeProps {
   className="border rounded px-3 py-2"
   placeholder="Email"
 />
-\`\`\`
+```
 
 #### ✅ Native Version
-\`\`\`tsx
+```tsx
 <Input 
   type="email"
   value={email}
   onChange={setEmail}
   placeholder="Email"
 />
-\`\`\`
+```
 
 ---
 
@@ -380,7 +384,7 @@ Flexbox-based layout primitives for consistent cross-platform layouts.
 
 ### FlexRow & FlexColumn
 
-\`\`\`tsx
+```tsx
 import { FlexRow, FlexColumn } from '../components/primitives';
 
 // Horizontal layout
@@ -396,11 +400,11 @@ import { FlexRow, FlexColumn } from '../components/primitives';
   <Input placeholder="Email" />
   <Button>Submit</Button>
 </FlexColumn>
-\`\`\`
+```
 
 ### Props
 
-\`\`\`tsx
+```tsx
 interface FlexRowProps {
   children: ReactNode;
   
@@ -424,25 +428,25 @@ interface FlexRowProps {
 
 // FlexColumn has the same props but different default flex direction
 interface FlexColumnProps extends FlexRowProps {}
-\`\`\`
+```
 
 ### Web-to-Native Migration
 
 #### ❌ Web Version
-\`\`\`tsx
+```tsx
 <div className="flex items-center space-x-4">
   <img src="icon.png" />
   <span>Text content</span>
 </div>
-\`\`\`
+```
 
 #### ✅ Native Version
-\`\`\`tsx
+```tsx
 <FlexRow gap="md" align="center">
   <Icon name="user" />
   <Text>Text content</Text>
 </FlexRow>
-\`\`\`
+```
 
 ---
 
@@ -452,17 +456,52 @@ interface FlexColumnProps extends FlexRowProps {}
 
 1. **Use semantic typography components** (Paragraph, Label, etc.) instead of manual View wrappers
 2. **Leverage built-in spacing props** (marginTop, marginBottom) for Text components
-3. **Use primitive layout components** (FlexRow, FlexColumn) instead of raw View with flexbox
-4. **Prefer variant props** over custom styling
-5. **Use testId props** for testing accessibility
+3. **Use Flex primitives for layout** (FlexRow, FlexColumn) - they handle gaps, alignment, and spacing
+4. **Use View for styling containers** - backgroundColor, borders, shadows, platform-specific props
+5. **Prefer variant props** over custom styling
+6. **Use testId props** for testing accessibility
 
 ### ❌ Don'ts
 
 1. **Don't apply style props to Text components** - use container Views instead
 2. **Don't use raw HTML elements** in native components
 3. **Don't hardcode colors** - use theme variants
-4. **Don't create manual flexbox layouts** - use Flex primitives
+4. **Don't use View with manual flexbox** - use FlexRow/FlexColumn for layout instead
 5. **Don't ignore accessibility props**
+
+### 🏗️ **Architecture Pattern: Container + Layout**
+
+**Best Practice**: Use View for styling containers, Flex primitives for content layout
+
+```tsx
+// ✅ RECOMMENDED: Separation of styling vs layout concerns
+<View style={[styles.card, { backgroundColor: theme.colors.bg.card }]}>
+  <FlexColumn gap="md">
+    <FlexRow gap="sm" align="center">
+      <Icon name="user" />
+      <Text>User Profile</Text>
+    </FlexRow>
+    <FlexColumn gap="xs">
+      <Label>Email:</Label>
+      <Input value={email} onChange={setEmail} />
+    </FlexColumn>
+  </FlexColumn>
+</View>
+
+// ❌ AVOID: Manual flexbox in View
+<View style={{ flexDirection: 'column', gap: 16 }}>
+  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+    <Icon name="user" />
+    <Text>User Profile</Text>
+  </View>
+</View>
+```
+
+**Why this pattern:**
+- **View**: Handles visual styling (colors, borders, shadows)  
+- **Flex primitives**: Handle layout, spacing, and alignment consistently
+- **Better maintainability**: Consistent gap system vs manual margins
+- **Cross-platform**: Flex primitives abstract platform differences
 
 ### Migration Strategy
 
@@ -474,4 +513,8 @@ interface FlexColumnProps extends FlexRowProps {}
 
 ---
 
-*Last updated: 2025-08-05 09:09:11*
+*Last updated: 2025-08-05*
+
+---
+
+[← Back to Primitives INDEX](./INDEX.md)

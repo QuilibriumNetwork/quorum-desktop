@@ -1,6 +1,8 @@
 # When to Use Primitives vs Raw HTML
 
-[← Back to INDEX](../INDEX.md)
+**[← Back to Primitives INDEX](./INDEX.md)**
+
+[← Back to Docs INDEX](/.readme/INDEX.md)
 
 ## Overview
 
@@ -127,5 +129,8 @@ The goal is shared business logic with appropriate UI abstractions, not primitiv
 
 ---
 
-_Created: 2025-07-31_  
-_Context: Cross-platform architecture planning_
+*Last updated: 2025-08-05*
+
+---
+
+[← Back to Primitives INDEX](./INDEX.md)

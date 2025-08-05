@@ -1,6 +1,6 @@
 # Cross-Platform Theming System
 
-[← Back to INDEX](../../INDEX.md)
+[← Back to INDEX](/.readme/INDEX.md)
 
 This document describes our comprehensive cross-platform theming architecture that provides consistent theme switching and color management across web and React Native platforms.
 
@@ -346,4 +346,4 @@ backgroundColor: '#ffffff' // Use colors.bg.app instead
 
 *Updated: 2025-08-04*
 
-[← Back to INDEX](../../INDEX.md)
+[← Back to INDEX](/.readme/INDEX.md)

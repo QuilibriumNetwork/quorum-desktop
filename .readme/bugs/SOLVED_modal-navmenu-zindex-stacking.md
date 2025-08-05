@@ -1,6 +1,6 @@
 # SOLVED: Modal NavMenu Z-Index Stacking Issue
 
-[← Back to INDEX](../INDEX.md)
+[← Back to INDEX](/.readme/INDEX.md)
 
 **Date**: Previously solved  
 **Issue**: NavMenu elements appearing above modal overlays  

@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
 import Button from '../components/primitives/Button';
 import { Icon } from '../components/primitives/Icon';
-import { Text } from '../components/primitives/Text';
+import { Text, SectionHeading, Paragraph, FlexColumn, FlexRow } from '../components/primitives';
 import { commonTestStyles } from '../styles/commonTestStyles';
 
 export const SimpleButtonTestScreen: React.FC = () => {
@@ -12,123 +12,99 @@ export const SimpleButtonTestScreen: React.FC = () => {
   return (
     <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
-        <View style={commonTestStyles.titleContainer}>
-          <Icon name="radio" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
-          <Text size="2xl" weight="bold" variant="strong">Simple Button Test</Text>
-        </View>
-        <View style={{ marginBottom: 24 }}>
-          <Text size="base" variant="default" align="center">
+        <FlexColumn style={commonTestStyles.header}>
+          <FlexRow align="center">
+            <Icon name="radio" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
+            <Text size="2xl" weight="bold" variant="strong">Simple Button Test</Text>
+          </FlexRow>
+          <Paragraph align="center">
             Testing Button primitive without flex layouts
-          </Text>
-        </View>
+          </Paragraph>
+        </FlexColumn>
 
         <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">Primary Variants</Text>
-          </View>
+          <SectionHeading>Primary Variants</SectionHeading>
 
-          <View style={commonTestStyles.buttonContainer}>
+          <FlexColumn gap={12}>
             <Button
               type="primary"
               onClick={() => {}}
             >
               Primary
             </Button>
-          </View>
 
-          <View style={commonTestStyles.buttonContainer}>
             <Button
               type="secondary"
               onClick={() => {}}
             >
               Secondary
             </Button>
-          </View>
 
-          <View style={commonTestStyles.buttonContainer}>
             <Button type="light" onClick={() => {}}>
               Light
             </Button>
-          </View>
 
-          <View style={commonTestStyles.buttonContainer}>
             <Button
               type="light-outline"
               onClick={() => {}}
             >
               Light Outline
             </Button>
-          </View>
+          </FlexColumn>
         </View>
 
         <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">Subtle & Utility Variants</Text>
-          </View>
+          <SectionHeading>Subtle & Utility Variants</SectionHeading>
 
-          <View style={commonTestStyles.buttonContainer}>
+          <FlexColumn gap={12}>
             <Button type="subtle" onClick={() => {}}>
               Subtle
             </Button>
-          </View>
 
-          <View style={commonTestStyles.buttonContainer}>
             <Button
               type="subtle-outline"
               onClick={() => {}}
             >
               Subtle Outline
             </Button>
-          </View>
 
-          <View style={commonTestStyles.buttonContainer}>
             <Button type="danger" onClick={() => {}}>
               Danger
             </Button>
-          </View>
+          </FlexColumn>
         </View>
 
         <View style={[commonTestStyles.section, { backgroundColor: theme.colors.accent[500] }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" color="white">
-              White Variants (on colored bg)
-            </Text>
-          </View>
+          <SectionHeading color="white">White Variants (on colored bg)</SectionHeading>
 
-          <View style={commonTestStyles.buttonContainer}>
+          <FlexColumn gap={12}>
             <Button
               type="primary-white"
               onClick={() => {}}
             >
               Primary White
             </Button>
-          </View>
 
-          <View style={commonTestStyles.buttonContainer}>
             <Button
               type="secondary-white"
               onClick={() => {}}
             >
               Secondary White
             </Button>
-          </View>
 
-          <View style={commonTestStyles.buttonContainer}>
             <Button
               type="light-outline-white"
               onClick={() => {}}
             >
               Light Outline White
             </Button>
-          </View>
+          </FlexColumn>
         </View>
 
         <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">Button Sizes</Text>
-          </View>
+          <SectionHeading>Button Sizes</SectionHeading>
 
-          <View style={commonTestStyles.buttonContainer}>
+          <FlexColumn gap={12}>
             <Button
               type="primary"
               size="large"
@@ -136,9 +112,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
             >
               Large Size
             </Button>
-          </View>
 
-          <View style={commonTestStyles.buttonContainer}>
             <Button
               type="primary"
               size="normal"
@@ -146,9 +120,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
             >
               Normal Size
             </Button>
-          </View>
 
-          <View style={commonTestStyles.buttonContainer}>
             <Button
               type="primary"
               size="small"
@@ -156,15 +128,13 @@ export const SimpleButtonTestScreen: React.FC = () => {
             >
               Small Size
             </Button>
-          </View>
+          </FlexColumn>
         </View>
 
         <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">Buttons with Icons</Text>
-          </View>
+          <SectionHeading>Buttons with Icons</SectionHeading>
 
-          <View style={commonTestStyles.buttonContainer}>
+          <FlexColumn gap={12}>
             <Button
               type="primary"
               iconName="plus"
@@ -172,18 +142,14 @@ export const SimpleButtonTestScreen: React.FC = () => {
             >
               Add Item
             </Button>
-          </View>
 
-          <View style={commonTestStyles.buttonContainer}>
             <Button
               type="primary"
               iconName="edit"
               iconOnly
               onClick={() => {}}
             />
-          </View>
 
-          <View style={commonTestStyles.buttonContainer}>
             <Button
               type="secondary"
               iconName="save"
@@ -192,9 +158,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
             >
               Save Document
             </Button>
-          </View>
 
-          <View style={commonTestStyles.buttonContainer}>
             <Button
               type="primary"
               iconName="download"
@@ -202,15 +166,13 @@ export const SimpleButtonTestScreen: React.FC = () => {
               size="large"
               onClick={() => {}}
             />
-          </View>
+          </FlexColumn>
         </View>
 
         <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">Disabled State</Text>
-          </View>
+          <SectionHeading>Disabled State</SectionHeading>
 
-          <View style={commonTestStyles.buttonContainer}>
+          <FlexColumn gap={12}>
             <Button
               type="primary"
               disabled
@@ -218,7 +180,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
             >
               Disabled Button
             </Button>
-          </View>
+          </FlexColumn>
         </View>
       </ScrollView>
     </SafeAreaView>
