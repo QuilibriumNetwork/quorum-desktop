@@ -1,83 +1,149 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
-import { Text } from '../components/primitives/Text';
-import { FlexRow } from '../components/primitives/FlexRow';
+import { 
+  Text, 
+  Paragraph, 
+  SectionHeading, 
+  Label, 
+  Caption, 
+  Title, 
+  InlineText 
+} from '../components/primitives/Text';
 import { FlexColumn } from '../components/primitives/FlexColumn';
 import { Icon } from '../components/primitives/Icon';
+import { commonTestStyles } from '../styles/commonTestStyles';
 
 export const TextTestScreen: React.FC = () => {
   const theme = useTheme();
   
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
+    <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
+        style={commonTestStyles.container}
+        contentContainerStyle={commonTestStyles.contentPaddingCompact}
       >
-        <View style={styles.header}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+        <View style={commonTestStyles.header}>
+          <View style={commonTestStyles.titleContainer}>
             <Icon name="pencil" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
-            <Text size="2xl" weight="bold" variant="strong">
-              Text
-            </Text>
+            <Title>Text and Typography</Title>
           </View>
-          <View style={{ marginBottom: 24 }}>
-            <Text size="base" variant="default" align="center">
-              Essential text component for React Native compatibility
-            </Text>
+          <Paragraph align="center">
+            Improved text primitives with automatic line height, spacing, and semantic components
+          </Paragraph>
+        </View>
+
+        {/* Typography Components Demo */}
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+          <SectionHeading>✨ Typography Components</SectionHeading>
+          
+          <Label>Title Component:</Label>
+          <Title>This is a title with automatic spacing</Title>
+          
+          <Label>Section Heading:</Label>
+          <SectionHeading>This is a section heading</SectionHeading>
+          
+          <Label>Paragraph Component:</Label>
+          <Paragraph>
+            This is a paragraph with automatic bottom margin. No more wrapping in View containers! 
+            The text has proper line height for readability and consistent spacing.
+          </Paragraph>
+          
+          <Label>Caption Component:</Label>
+          <Caption>This is a caption with top margin automatically applied</Caption>
+        </View>
+
+        {/* Before/After Comparison */}
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+          <SectionHeading>Before vs After Comparison</SectionHeading>
+          
+          <Label>❌ Old Way (verbose View wrappers):</Label>
+          <View style={{ backgroundColor: theme.colors.surface[3], padding: 12, borderRadius: 8, marginBottom: 16 }}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" variant="strong">Label:</Text>
+            </View>
+            <Text size="base" variant="default">Content text</Text>
+            <View style={{ marginTop: 8 }}>
+              <Text size="sm" variant="subtle">Helper text</Text>
+            </View>
+          </View>
+          
+          <Label>✅ New Way (semantic components):</Label>
+          <View style={{ backgroundColor: theme.colors.surface[3], padding: 12, borderRadius: 8 }}>
+            <Label>Label:</Label>
+            <InlineText size="base" variant="default">Content text</InlineText>
+            <Caption>Helper text</Caption>
           </View>
         </View>
 
-        {/* Variants Section */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text size="lg" weight="semibold" variant="strong">
-            Text Variants
+        {/* Line Height & Spacing Demo */}
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+          <SectionHeading>Automatic Line Height & Spacing</SectionHeading>
+          
+          <Label>Multi-line text with default line height (1.4x):</Label>
+          <Paragraph>
+            This is a longer paragraph that demonstrates how the automatic line height works. 
+            The text should be readable with proper spacing between lines, making it easier 
+            to follow when reading multiple lines of content.
+          </Paragraph>
+          
+          <Label>Custom line height example:</Label>
+          <Text marginBottom={16} lineHeight={32}>
+            This text has a custom line height of 32 pixels, showing how you can override 
+            the default when needed for specific design requirements.
           </Text>
+          
+          <Label>Manual Spacing Control:</Label>
+          <Text marginBottom={24}>Text with 24px bottom margin</Text>
+          <Text marginTop={16} marginBottom={16}>Text with 16px top and bottom margins</Text>
+          <Text>Regular text with no manual spacing</Text>
+        </View>
+
+        {/* Variants Section */}
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+          <SectionHeading>Text Variants</SectionHeading>
 
           <FlexColumn gap="md">
-            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
+            <View style={[commonTestStyles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="default">
                 Default variant - Regular text for content
               </Text>
             </View>
 
-            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
+            <View style={[commonTestStyles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="strong">Strong variant - Important emphasis</Text>
             </View>
 
-            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
+            <View style={[commonTestStyles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="subtle">
                 Subtle variant - Secondary information
               </Text>
             </View>
 
-            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
+            <View style={[commonTestStyles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="subtle">
                 Muted variant - Less important details
               </Text>
             </View>
 
-            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
+            <View style={[commonTestStyles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="error">Error variant - Error messages</Text>
             </View>
 
-            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
+            <View style={[commonTestStyles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="success">Success variant - Success messages</Text>
             </View>
 
-            <View style={[styles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
+            <View style={[commonTestStyles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
               <Text variant="warning">Warning variant - Warning messages</Text>
             </View>
           </FlexColumn>
         </View>
 
         {/* Sizes Section */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text size="lg" weight="semibold" style={styles.sectionTitle}>
-            Text Sizes
-          </Text>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+          <SectionHeading>Text Sizes</SectionHeading>
 
           <FlexColumn gap="sm">
             <Text size="xs">Extra small text (xs) - 12px</Text>
@@ -91,10 +157,8 @@ export const TextTestScreen: React.FC = () => {
         </View>
 
         {/* Weights Section */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text size="lg" weight="semibold" style={styles.sectionTitle}>
-            Text Weights
-          </Text>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+          <SectionHeading>Text Weights</SectionHeading>
 
           <FlexColumn gap="md">
             <Text weight="normal">Normal weight (400) - Default body text</Text>
@@ -107,60 +171,56 @@ export const TextTestScreen: React.FC = () => {
         </View>
 
         {/* Alignment Section */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text size="lg" weight="semibold" style={styles.sectionTitle}>
-            Text Alignment
-          </Text>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+          <SectionHeading>Text Alignment</SectionHeading>
 
           <FlexColumn gap="md">
-            <View style={[styles.alignmentBox, { backgroundColor: theme.colors.surface[3], borderColor: theme.colors.border.default }]}>
+            <View style={[commonTestStyles.alignmentBox, { backgroundColor: theme.colors.surface[3], borderColor: theme.colors.border.default }]}>
               <Text align="left">Left aligned text (default)</Text>
             </View>
 
-            <View style={[styles.alignmentBox, { backgroundColor: theme.colors.surface[3], borderColor: theme.colors.border.default }]}>
+            <View style={[commonTestStyles.alignmentBox, { backgroundColor: theme.colors.surface[3], borderColor: theme.colors.border.default }]}>
               <Text align="center">Center aligned text</Text>
             </View>
 
-            <View style={[styles.alignmentBox, { backgroundColor: theme.colors.surface[3], borderColor: theme.colors.border.default }]}>
+            <View style={[commonTestStyles.alignmentBox, { backgroundColor: theme.colors.surface[3], borderColor: theme.colors.border.default }]}>
               <Text align="right">Right aligned text</Text>
             </View>
           </FlexColumn>
         </View>
 
         {/* Interactive Section */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text size="lg" weight="semibold" style={styles.sectionTitle}>
-            Interactive Text
-          </Text>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+          <SectionHeading>Interactive Text</SectionHeading>
 
           <FlexColumn gap="md">
-            <Text
-              variant="default"
-              onPress={() => {}}
-              style={[styles.tappableText, { backgroundColor: theme.colors.surface[3] }]}
-            >
-              Tap this text to trigger an action
-            </Text>
+            <View style={{ padding: 12, borderRadius: 8, backgroundColor: theme.colors.surface[3] }}>
+              <Text
+                variant="default"
+                onPress={() => {}}
+              >
+                Tap this text to trigger an action
+              </Text>
+            </View>
 
-            <Text
-              variant="strong"
-              color={theme.colors.accent[600]}
-              onPress={() => {}}
-              style={[styles.tappableText, { backgroundColor: theme.colors.surface[3] }]}
-            >
-              Custom blue link-style text
-            </Text>
+            <View style={{ padding: 12, borderRadius: 8, backgroundColor: theme.colors.surface[3] }}>
+              <Text
+                variant="strong"
+                color={theme.colors.accent[600]}
+                onPress={() => {}}
+              >
+                Custom blue link-style text
+              </Text>
+            </View>
           </FlexColumn>
         </View>
 
         {/* Multiline Section */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text size="lg" weight="semibold" style={styles.sectionTitle}>
-            Multiline & Truncation
-          </Text>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+          <SectionHeading>Multiline & Truncation</SectionHeading>
 
           <FlexColumn gap="md">
-            <View style={styles.testGroup}>
+            <View style={commonTestStyles.testGroup}>
               <Text numberOfLines={2}>
                 This is a long text that will be truncated after two lines.
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
@@ -169,7 +229,7 @@ export const TextTestScreen: React.FC = () => {
               </Text>
             </View>
 
-            <View style={styles.testGroup}>
+            <View style={commonTestStyles.testGroup}>
               <Text numberOfLines={1} variant="subtle">
                 Single line truncation: This very long text will be truncated to
                 a single line with ellipsis at the end no matter how long it is.
@@ -179,104 +239,49 @@ export const TextTestScreen: React.FC = () => {
         </View>
 
         {/* React Native Requirements */}
-        <View style={[styles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <Text size="lg" weight="semibold" variant="strong">
-            <View style={styles.titleContainer}>
-              <Text weight="semibold">Mobile Notes</Text>
-            </View>
+        <View style={[commonTestStyles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
+          <SectionHeading>Mobile Notes & Improvements</SectionHeading>
+
+          <Text variant="default" marginBottom={12}>
+            ✅ Enhanced Text primitive now includes:
           </Text>
-
-          <FlexColumn gap="sm" style={{ marginTop: 12 }}>
-            <FlexRow gap="sm">
-              <Text variant="default">•</Text>
-              <Text variant="default">
-                React Native requires ALL text to be wrapped in Text components
-              </Text>
-            </FlexRow>
-
-            <FlexRow gap="sm">
-              <Text variant="default">•</Text>
-              <Text variant="default">
-                Raw text in View components will crash the app on mobile
-              </Text>
-            </FlexRow>
-
-            <FlexRow gap="sm">
-              <Text variant="default">•</Text>
-              <Text variant="default">
-                Provides consistent typography across web and mobile
-              </Text>
-            </FlexRow>
-
-            <FlexRow gap="sm">
-              <Text variant="default">•</Text>
-              <Text variant="default">
-                Enables proper text selection and accessibility
-              </Text>
-            </FlexRow>
-          </FlexColumn>
+          
+          <Text variant="default" marginBottom={8}>
+            • Automatic line height (1.4x font size) for better readability
+          </Text>
+          <Text variant="default" marginBottom={8}>
+            • Built-in spacing props (marginTop, marginBottom) to reduce View wrappers
+          </Text>
+          <Text variant="default" marginBottom={8}>
+            • Semantic components: Paragraph, SectionHeading, Label, Caption, Title
+          </Text>
+          <Text variant="default" marginBottom={8}>
+            • Custom lineHeight support for specific design needs
+          </Text>
+          <Text variant="default" marginBottom={8}>
+            • Better Android alignment with includeFontPadding: false
+          </Text>
+          <Text variant="default" marginBottom={8}>
+            • Maintains React Native compatibility and cross-platform consistency
+          </Text>
+          
+          <Text variant="default" marginBottom={12} marginTop={16}>
+            💡 Usage Guidelines:
+          </Text>
+          <Text variant="default" marginBottom={8}>
+            • Use semantic components (Paragraph, Label, etc.) for common patterns
+          </Text>
+          <Text variant="default" marginBottom={8}>
+            • Use marginTop/marginBottom props for custom spacing when needed
+          </Text>
+          <Text variant="default" marginBottom={8}>
+            • InlineText has no automatic spacing for use within containers
+          </Text>
+          <Text variant="default">
+            • This reduces View wrapper verbosity while maintaining proper spacing
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // backgroundColor removed - now uses theme.colors.bg.app dynamically
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: 16,
-  },
-  header: {
-    marginBottom: 24,
-    alignItems: 'center',
-  },
-  section: {
-    // backgroundColor removed - now uses theme.colors.bg.card dynamically
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  sectionTitle: {
-    marginBottom: 16,
-  },
-  testGroup: {
-    padding: 12,
-    // backgroundColor removed - now uses theme colors dynamically
-    borderRadius: 8,
-  },
-  alignmentBox: {
-    padding: 12,
-    // backgroundColor and borderColor removed - now uses theme colors dynamically
-    borderRadius: 8,
-    borderWidth: 1,
-  },
-  tappableText: {
-    padding: 12,
-    // backgroundColor removed - now uses theme colors dynamically
-    borderRadius: 8,
-    textDecorationLine: 'underline',
-  },
-  infoSection: {
-    // backgroundColor removed - now uses theme colors dynamically
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 8,
-  },
-  infoTitle: {
-    // color removed - now uses theme colors dynamically
-  },
-});

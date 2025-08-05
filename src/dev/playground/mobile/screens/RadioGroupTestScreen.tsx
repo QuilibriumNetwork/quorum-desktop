@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   ScrollView,
   View,
-  StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,6 +9,7 @@ import { useTheme } from '../components/primitives/theme';
 import { RadioGroup } from '../components/primitives';
 import { Icon } from '../components/primitives/Icon';
 import { Text } from '../components/primitives/Text';
+import { commonTestStyles } from '../styles/commonTestStyles';
 
 export const RadioGroupTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -18,10 +18,10 @@ export const RadioGroupTestScreen: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState('option1');
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <View style={styles.titleContainer}>
+    <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
+      <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
+        <View style={commonTestStyles.header}>
+          <View style={commonTestStyles.titleContainer}>
             <Icon name="radio" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
             <Text size="2xl" weight="bold" variant="strong">RadioGroup</Text>
           </View>
@@ -33,7 +33,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Theme Selection */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">Theme Selection</Text>
           </View>
@@ -53,7 +53,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Horizontal Layout */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">Horizontal Layout</Text>
           </View>
@@ -73,7 +73,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Disabled Options */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">Disabled Options</Text>
           </View>
@@ -94,7 +94,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Without Icons */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">Without Icons</Text>
           </View>
@@ -115,8 +115,8 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Testing Notes */}
-        <View style={[styles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <View style={styles.titleContainer}>
+        <View style={[commonTestStyles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
+          <View style={commonTestStyles.titleContainer}>
             <Text size="base" weight="semibold" variant="strong">Mobile Notes</Text>
           </View>
           <Text size="sm" variant="default">
@@ -146,78 +146,4 @@ export const RadioGroupTestScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // backgroundColor removed - now uses theme.colors.bg.app dynamically
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    // color removed - now uses theme colors dynamically
-    textAlign: 'center',
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    // color removed - now uses theme colors dynamically
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  section: {
-    // backgroundColor removed - now uses theme.colors.bg.card dynamically
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    // color removed - now uses theme colors dynamically
-    marginBottom: 8,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    // color removed - now uses theme colors dynamically
-    marginBottom: 16,
-    lineHeight: 20,
-  },
-  infoSection: {
-    // backgroundColor removed - now uses theme colors dynamically
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 8,
-  },
-  infoTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    // color removed - now uses theme colors dynamically
-    marginBottom: 12,
-  },
-  infoText: {
-    fontSize: 14,
-    // color removed - now uses theme colors dynamically
-    marginBottom: 6,
-    lineHeight: 20,
-  },
-});
+// All styles now centralized in commonTestStyles

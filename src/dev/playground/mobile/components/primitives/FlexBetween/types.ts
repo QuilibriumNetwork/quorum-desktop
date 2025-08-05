@@ -1,5 +1,13 @@
 import { ReactNode, CSSProperties } from 'react';
 
+// Try to import ViewStyle, fallback to any if not available (web environment)
+let ViewStyle: any;
+try {
+  ViewStyle = require('react-native').ViewStyle;
+} catch {
+  ViewStyle = any;
+}
+
 export interface FlexBetweenProps {
   /**
    * Child elements
@@ -18,9 +26,9 @@ export interface FlexBetweenProps {
    */
   className?: string;
   /**
-   * Inline styles
+   * Inline styles - supports both web CSSProperties and React Native ViewStyle
    */
-  style?: CSSProperties;
+  style?: CSSProperties | ViewStyle | any;
   /**
    * HTML attributes
    */

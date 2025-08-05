@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
 
@@ -15,6 +15,8 @@ import { ResponsiveContainer } from '../components/primitives/ResponsiveContaine
 import Button from '../components/primitives/Button';
 import Modal from '../components/primitives/Modal';
 import { Text } from '../components/primitives/Text';
+import { Icon } from '../components/primitives/Icon';
+import { commonTestStyles } from '../styles/commonTestStyles';
 
 /**
  * Mobile test screen for all primitives
@@ -28,25 +30,29 @@ export const PrimitivesTestScreen: React.FC = () => {
   const [showModalPrimitive, setShowModalPrimitive] = useState(false);
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.content}
-      >
-        <View style={styles.header}>
+    <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
+      <ScrollView contentContainerStyle={commonTestStyles.contentPaddingCompact}>
+        <View style={commonTestStyles.titleContainer}>
+          <Icon name="tools" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
           <Text size="2xl" weight="bold" variant="strong">Layout Primitives Test</Text>
+        </View>
+        <View style={{ marginBottom: 24 }}>
           <Text size="base" variant="default" align="center">
             Testing Container, Flex components, and ResponsiveContainer
           </Text>
         </View>
 
         {/* Button Primitive Section */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text size="lg" weight="semibold" variant="strong">Button Primitive</Text>
+        <View style={[commonTestStyles.sectionCompact, { backgroundColor: theme.colors.bg.card }]}>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Button Primitive</Text>
+          </View>
 
-          <View style={styles.testGroup}>
-            <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>Button Types:</Text>
-            <FlexRow gap="md" wrap style={styles.buttonRow}>
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">Button Types:</Text>
+            </View>
+            <FlexRow gap="md" wrap style={{ paddingVertical: 8 }}>
               <Button
                 type="primary"
                 onClick={() => {}}
@@ -65,9 +71,11 @@ export const PrimitivesTestScreen: React.FC = () => {
             </FlexRow>
           </View>
 
-          <View style={styles.testGroup}>
-            <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>Button Sizes:</Text>
-            <FlexRow gap="md" align="center" style={styles.buttonRow}>
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">Button Sizes:</Text>
+            </View>
+            <FlexRow gap="md" align="center" style={{ paddingVertical: 8 }}>
               <Button type="primary" size="normal" onClick={() => {}}>
                 Normal Size
               </Button>
@@ -77,9 +85,11 @@ export const PrimitivesTestScreen: React.FC = () => {
             </FlexRow>
           </View>
 
-          <View style={styles.testGroup}>
-            <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>Disabled State:</Text>
-            <FlexRow gap="md" style={styles.buttonRow}>
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">Disabled State:</Text>
+            </View>
+            <FlexRow gap="md" style={{ paddingVertical: 8 }}>
               <Button type="primary" disabled onClick={() => {}}>
                 Disabled Primary
               </Button>
@@ -91,122 +101,146 @@ export const PrimitivesTestScreen: React.FC = () => {
         </View>
 
         {/* Container Primitive Section */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text size="lg" weight="semibold" variant="strong">Container Primitive</Text>
+        <View style={[commonTestStyles.sectionCompact, { backgroundColor: theme.colors.bg.card }]}>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Container Primitive</Text>
+          </View>
 
-          <View style={styles.testGroup}>
-            <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>Container with padding:</Text>
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">Container with padding:</Text>
+            </View>
             <Container
               padding="md"
               backgroundColor={theme.colors.accent[100]}
-              style={styles.containerDemo}
+              style={{ borderRadius: 8 }}
             >
-              <Text>Container with medium padding</Text>
+              <Text size="sm" variant="default">Container with medium padding</Text>
             </Container>
           </View>
 
-          <View style={styles.testGroup}>
-            <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>
-              Container with margin and width:
-            </Text>
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">
+                Container with margin and width:
+              </Text>
+            </View>
             <Container
               width="full"
               margin="sm"
               padding="lg"
               backgroundColor={theme.colors.accent[200]}
-              style={styles.containerDemo}
+              style={{ borderRadius: 8 }}
             >
-              <Text>Full width container with margin</Text>
+              <Text size="sm" variant="default">Full width container with margin</Text>
             </Container>
           </View>
 
-          <View style={styles.testGroup}>
-            <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>Touchable Container:</Text>
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">Touchable Container:</Text>
+            </View>
             <Container
               padding="md"
               backgroundColor={theme.colors.utilities.success + '20'}
               onPress={() => {}}
-              style={styles.containerDemo}
+              style={{ borderRadius: 8 }}
             >
-              <Text>Tap this container!</Text>
+              <Text size="sm" variant="default">Tap this container!</Text>
             </Container>
           </View>
         </View>
 
         {/* Flex Primitives Section */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text size="lg" weight="semibold" variant="strong">Flex Primitives</Text>
+        <View style={[commonTestStyles.sectionCompact, { backgroundColor: theme.colors.bg.card }]}>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Flex Primitives</Text>
+          </View>
 
-          <View style={styles.testGroup}>
-            <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>FlexRow with gap:</Text>
-            <FlexRow gap="md" style={[styles.flexDemo, { backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default }]}>
-              <View style={[styles.flexItem, { backgroundColor: theme.colors.accent[100] }]}>
-                <Text>Item 1</Text>
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">FlexRow with gap:</Text>
+            </View>
+            <FlexRow gap="md" style={[commonTestStyles.testGroup, { backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default, borderWidth: 1, borderRadius: 8 }]}>
+              <View style={{ backgroundColor: theme.colors.accent[100], padding: 8, borderRadius: 4, minWidth: 60, alignItems: 'center' }}>
+                <Text size="sm" variant="default">Item 1</Text>
               </View>
-              <View style={[styles.flexItem, { backgroundColor: theme.colors.accent[100] }]}>
-                <Text>Item 2</Text>
+              <View style={{ backgroundColor: theme.colors.accent[100], padding: 8, borderRadius: 4, minWidth: 60, alignItems: 'center' }}>
+                <Text size="sm" variant="default">Item 2</Text>
               </View>
-              <View style={[styles.flexItem, { backgroundColor: theme.colors.accent[100] }]}>
-                <Text>Item 3</Text>
+              <View style={{ backgroundColor: theme.colors.accent[100], padding: 8, borderRadius: 4, minWidth: 60, alignItems: 'center' }}>
+                <Text size="sm" variant="default">Item 3</Text>
               </View>
             </FlexRow>
           </View>
 
-          <View style={styles.testGroup}>
-            <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>FlexBetween:</Text>
-            <FlexBetween style={[styles.flexDemo, { backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default }]}>
-              <Text style={[styles.flexText, { color: theme.colors.text.main }]}>Left Content</Text>
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">FlexBetween:</Text>
+            </View>
+            <FlexBetween style={[commonTestStyles.testGroup, { backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default, borderWidth: 1, borderRadius: 8 }]}>
+              <Text size="sm" variant="default">Left Content</Text>
               <Button type="secondary" size="small" onClick={() => {}}>
                 Right Action
               </Button>
             </FlexBetween>
           </View>
 
-          <View style={styles.testGroup}>
-            <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>FlexCenter:</Text>
-            <FlexCenter style={[styles.flexDemo, styles.centerDemo, { backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default }]}>
-              <Text style={[styles.flexText, { color: theme.colors.text.main }]}>Centered Content</Text>
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">FlexCenter:</Text>
+            </View>
+            <FlexCenter style={[commonTestStyles.testGroup, { height: 60, backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default, borderWidth: 1, borderRadius: 8 }]}>
+              <Text size="sm" variant="default">Centered Content</Text>
             </FlexCenter>
           </View>
 
-          <View style={styles.testGroup}>
-            <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>FlexColumn with gap:</Text>
-            <FlexColumn gap="md" style={[styles.flexDemo, { backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default }]}>
-              <View style={[styles.flexItem, { backgroundColor: theme.colors.accent[100] }]}>
-                <Text>Item 1</Text>
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">FlexColumn with gap:</Text>
+            </View>
+            <FlexColumn gap="md" style={[commonTestStyles.testGroup, { backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default, borderWidth: 1, borderRadius: 8 }]}>
+              <View style={{ backgroundColor: theme.colors.accent[100], padding: 8, borderRadius: 4, minWidth: 60, alignItems: 'center' }}>
+                <Text size="sm" variant="default">Item 1</Text>
               </View>
-              <View style={[styles.flexItem, { backgroundColor: theme.colors.accent[100] }]}>
-                <Text>Item 2</Text>
+              <View style={{ backgroundColor: theme.colors.accent[100], padding: 8, borderRadius: 4, minWidth: 60, alignItems: 'center' }}>
+                <Text size="sm" variant="default">Item 2</Text>
               </View>
-              <View style={[styles.flexItem, { backgroundColor: theme.colors.accent[100] }]}>
-                <Text>Item 3</Text>
+              <View style={{ backgroundColor: theme.colors.accent[100], padding: 8, borderRadius: 4, minWidth: 60, alignItems: 'center' }}>
+                <Text size="sm" variant="default">Item 3</Text>
               </View>
             </FlexColumn>
           </View>
 
-          <View style={styles.testGroup}>
-            <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>FlexColumn with alignment:</Text>
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">FlexColumn with alignment:</Text>
+            </View>
             <FlexColumn
               gap="sm"
               align="center"
-              style={[styles.flexDemo, { minHeight: 120, backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default }]}
+              style={[commonTestStyles.testGroup, { minHeight: 120, backgroundColor: theme.colors.surface[2], borderColor: theme.colors.border.default, borderWidth: 1, borderRadius: 8 }]}
             >
-              <Text style={[styles.flexText, { color: theme.colors.text.main }]}>Centered items</Text>
+              <Text size="sm" variant="default">Centered items</Text>
               <Button type="primary" size="small" onClick={() => {}}>
                 Button
               </Button>
-              <Text style={[styles.flexText, { color: theme.colors.text.main }]}>In column</Text>
+              <Text size="sm" variant="default">In column</Text>
             </FlexColumn>
           </View>
         </View>
 
         {/* Modal Primitives Section */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text size="lg" weight="semibold" variant="strong">Modal Primitives</Text>
+        <View style={[commonTestStyles.sectionCompact, { backgroundColor: theme.colors.bg.card }]}>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">Modal Primitives</Text>
+          </View>
 
-          <View style={styles.testGroup}>
-            <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>Modal Tests:</Text>
-            <FlexRow gap="md" wrap style={styles.buttonRow}>
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">Modal Tests:</Text>
+            </View>
+            <FlexRow gap="md" wrap style={{ paddingVertical: 8 }}>
               <Button type="primary" onClick={() => setShowModal(true)}>
                 Show Modal with Backdrop
               </Button>
@@ -220,8 +254,10 @@ export const PrimitivesTestScreen: React.FC = () => {
             </FlexRow>
           </View>
 
-          <View style={styles.testGroup}>
-            <Text style={[styles.testLabel, { color: theme.colors.text.main }]}>Backdrop Test:</Text>
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">Backdrop Test:</Text>
+            </View>
             <Button type="light" onClick={() => setShowBackdrop(true)}>
               Show Backdrop Only
             </Button>
@@ -229,10 +265,12 @@ export const PrimitivesTestScreen: React.FC = () => {
         </View>
 
         {/* ResponsiveContainer Section */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <Text size="lg" weight="semibold" variant="strong">ResponsiveContainer</Text>
-          <View style={[styles.infoBox, { backgroundColor: theme.colors.utilities.warning + '20', borderColor: theme.colors.utilities.warning }]}>
-            <Text style={[styles.infoText, { color: theme.colors.utilities.warning }]}>
+        <View style={[commonTestStyles.sectionCompact, { backgroundColor: theme.colors.bg.card }]}>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">ResponsiveContainer</Text>
+          </View>
+          <View style={{ backgroundColor: theme.colors.utilities.warning + '20', borderColor: theme.colors.utilities.warning, borderWidth: 1, borderRadius: 8, padding: 12 }}>
+            <Text size="sm" color={theme.colors.utilities.warning}>
               ResponsiveContainer is a layout primitive that works behind the
               scenes. On mobile, it provides SafeAreaView integration and proper
               content positioning.
@@ -248,9 +286,9 @@ export const PrimitivesTestScreen: React.FC = () => {
         closeOnBackdropClick={true}
         closeOnEscape={true}
       >
-        <View style={[styles.modalContent, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.modalTitle, { color: theme.colors.text.strong }]}>Modal with Backdrop</Text>
-          <Text style={[styles.modalText, { color: theme.colors.text.main }]}>
+        <View style={{ backgroundColor: theme.colors.bg.card, borderRadius: 12, padding: 24, margin: 20, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 6, elevation: 5 }}>
+          <Text size="lg" weight="semibold" variant="strong" align="center" marginBottom={12}>Modal with Backdrop</Text>
+          <Text size="sm" variant="default" align="center" marginBottom={16} lineHeight={20}>
             This modal uses the ModalContainer primitive with backdrop. Tap
             outside or press the close button to close.
           </Text>
@@ -264,9 +302,9 @@ export const PrimitivesTestScreen: React.FC = () => {
         onBackdropClick={() => setShowBackdrop(false)}
         blur={true}
       >
-        <View style={[styles.backdropContent, { backgroundColor: theme.colors.bg.card }]}>
-          <Text style={[styles.modalTitle, { color: theme.colors.text.strong }]}>Content on Backdrop</Text>
-          <Text style={[styles.modalText, { color: theme.colors.text.main }]}>
+        <View style={{ backgroundColor: theme.colors.bg.card, borderRadius: 12, padding: 24, margin: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 6, elevation: 5 }}>
+          <Text size="lg" weight="semibold" variant="strong" align="center" marginBottom={12}>Content on Backdrop</Text>
+          <Text size="sm" variant="default" align="center" marginBottom={16} lineHeight={20}>
             This demonstrates the OverlayBackdrop primitive. Tap the dark area
             to close.
           </Text>
@@ -280,32 +318,32 @@ export const PrimitivesTestScreen: React.FC = () => {
         onClose={() => setShowModalPrimitive(false)}
         size="medium"
       >
-        <View style={styles.modalPrimitiveContent}>
-          <Text style={[styles.modalText, { color: theme.colors.text.main }]}>
+        <View style={{ padding: 16 }}>
+          <Text size="sm" variant="default" align="center" marginBottom={16} lineHeight={20}>
             This modal is built using the Modal primitive, which internally uses
             the ModalContainer primitive for backdrop and animations.
           </Text>
 
-          <View style={styles.modalFeatures}>
-            <Text style={[styles.featuresTitle, { color: theme.colors.text.strong }]}>Key Features:</Text>
-            <Text style={[styles.featureItem, { color: theme.colors.text.main }]}>
+          <View style={{ marginVertical: 16 }}>
+            <Text size="base" weight="semibold" variant="strong" marginBottom={8}>Key Features:</Text>
+            <Text size="sm" variant="default" marginBottom={4} lineHeight={18}>
               • Uses ModalContainer for consistent backdrop behavior
             </Text>
-            <Text style={[styles.featureItem, { color: theme.colors.text.main }]}>
+            <Text size="sm" variant="default" marginBottom={4} lineHeight={18}>
               • Smooth open/close animations
             </Text>
-            <Text style={[styles.featureItem, { color: theme.colors.text.main }]}>
+            <Text size="sm" variant="default" marginBottom={4} lineHeight={18}>
               • Cross-platform React Native implementation
             </Text>
-            <Text style={[styles.featureItem, { color: theme.colors.text.main }]}>
+            <Text size="sm" variant="default" marginBottom={4} lineHeight={18}>
               • Size variants (small, medium, large, full)
             </Text>
-            <Text style={[styles.featureItem, { color: theme.colors.text.main }]}>
+            <Text size="sm" variant="default" marginBottom={4} lineHeight={18}>
               • Desktop modal → Mobile drawer transformation
             </Text>
           </View>
 
-          <FlexRow gap="md" justify="end" style={styles.modalActions}>
+          <FlexRow gap="md" justify="end" style={{ marginTop: 16 }}>
             <Button
               type="secondary"
               onClick={() => setShowModalPrimitive(false)}
@@ -322,158 +360,4 @@ export const PrimitivesTestScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // backgroundColor removed - now uses theme.colors.bg.app dynamically
-  },
-  scrollView: {
-    flex: 1,
-  },
-  content: {
-    padding: 16,
-  },
-  header: {
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    // color removed - now uses theme.colors.text.strong dynamically
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    // color removed - now uses theme.colors.text.main dynamically
-  },
-  section: {
-    // backgroundColor removed - now uses theme colors dynamically
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    // color removed - now uses theme.colors.text.strong dynamically
-    marginBottom: 12,
-  },
-  testGroup: {
-    marginBottom: 16,
-  },
-  testLabel: {
-    fontSize: 14,
-    fontWeight: '500',
-    // color removed - now uses theme.colors.text.main dynamically
-    marginBottom: 8,
-  },
-  buttonRow: {
-    paddingVertical: 8,
-  },
-  flexDemo: {
-    // backgroundColor removed - now uses theme colors dynamically
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    // borderColor removed - now uses theme colors dynamically
-  },
-  centerDemo: {
-    height: 60,
-  },
-  flexItem: {
-    // backgroundColor removed - now uses theme colors dynamically
-    padding: 8,
-    borderRadius: 4,
-    minWidth: 60,
-    alignItems: 'center',
-  },
-  flexText: {
-    // color removed - now uses theme colors dynamically
-    fontSize: 14,
-  },
-  containerDemo: {
-    borderRadius: 8,
-  },
-  infoBox: {
-    // backgroundColor and borderColor removed - now uses theme colors dynamically
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 12,
-  },
-  infoText: {
-    // color removed - now uses theme colors dynamically
-    fontSize: 14,
-  },
-  modalContent: {
-    // backgroundColor removed - now uses theme colors dynamically
-    borderRadius: 12,
-    padding: 24,
-    margin: 20,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  backdropContent: {
-    // backgroundColor removed - now uses theme colors dynamically
-    borderRadius: 12,
-    padding: 24,
-    margin: 20,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    // color removed - now uses theme colors dynamically
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  modalText: {
-    fontSize: 14,
-    // color removed - now uses theme colors dynamically
-    textAlign: 'center',
-    marginBottom: 16,
-    lineHeight: 20,
-  },
-  modalPrimitiveContent: {
-    padding: 16,
-  },
-  modalFeatures: {
-    marginVertical: 16,
-  },
-  featuresTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    // color removed - now uses theme colors dynamically
-    marginBottom: 8,
-  },
-  featureItem: {
-    fontSize: 14,
-    // color removed - now uses theme colors dynamically
-    marginBottom: 4,
-    lineHeight: 18,
-  },
-  modalActions: {
-    marginTop: 16,
-  },
-});
+// All styles now centralized in commonTestStyles

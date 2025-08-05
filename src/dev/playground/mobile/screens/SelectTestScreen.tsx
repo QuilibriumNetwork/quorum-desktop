@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   ScrollView,
   View,
-  StyleSheet,
   SafeAreaView,
   StatusBar,
 } from 'react-native';
@@ -11,6 +10,7 @@ import Select from '../components/primitives/Select/Select.native';
 import Button from '../components/primitives/Button';
 import { Icon } from '../components/primitives/Icon';
 import { Text } from '../components/primitives/Text';
+import { commonTestStyles } from '../styles/commonTestStyles';
 
 export const SelectTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -117,15 +117,15 @@ export const SelectTestScreen: React.FC = () => {
   ];
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.bg.app }]}>
+    <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
       <StatusBar barStyle={theme.resolvedTheme === "dark" ? "light-content" : "dark-content"} backgroundColor={theme.colors.bg.app} />
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={commonTestStyles.contentPadding}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View style={styles.header}>
-          <View style={styles.titleContainer}>
+        <View style={commonTestStyles.header}>
+          <View style={commonTestStyles.titleContainer}>
             <Icon name="clipboard" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
             <Text size="2xl" weight="bold" variant="strong">Select</Text>
           </View>
@@ -137,7 +137,7 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Basic Select */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">Basic Select</Text>
           </View>
@@ -153,7 +153,7 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Select with Icons */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">With Icons</Text>
           </View>
@@ -169,12 +169,12 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Select Sizes */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">Size Variants</Text>
           </View>
 
-          <View style={styles.subSection}>
+          <View style={commonTestStyles.subSection}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">Small Size:</Text>
             </View>
@@ -187,7 +187,7 @@ export const SelectTestScreen: React.FC = () => {
             />
           </View>
 
-          <View style={styles.subSection}>
+          <View style={commonTestStyles.subSection}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">Medium Size (Default):</Text>
             </View>
@@ -200,7 +200,7 @@ export const SelectTestScreen: React.FC = () => {
             />
           </View>
 
-          <View style={styles.subSection}>
+          <View style={commonTestStyles.subSection}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">Large Size:</Text>
             </View>
@@ -215,12 +215,12 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Select Variants */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">Select Variants</Text>
           </View>
 
-          <View style={styles.subSection}>
+          <View style={commonTestStyles.subSection}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">Bordered:</Text>
             </View>
@@ -233,7 +233,7 @@ export const SelectTestScreen: React.FC = () => {
             />
           </View>
 
-          <View style={styles.subSection}>
+          <View style={commonTestStyles.subSection}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">Filled (Default):</Text>
             </View>
@@ -247,12 +247,12 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Error States */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">Error States</Text>
           </View>
 
-          <View style={styles.subSection}>
+          <View style={commonTestStyles.subSection}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">With Error:</Text>
             </View>
@@ -282,13 +282,13 @@ export const SelectTestScreen: React.FC = () => {
                 setErrorValue('');
                 setShowError(false);
               }}
-              style={styles.toggleButton}
+              style={commonTestStyles.toggleButton}
             >
               Clear Selection
             </Button>
           </View>
 
-          <View style={styles.subSection}>
+          <View style={commonTestStyles.subSection}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">Disabled Select:</Text>
             </View>
@@ -305,12 +305,12 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Advanced Features */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">Advanced Features</Text>
           </View>
 
-          <View style={styles.subSection}>
+          <View style={commonTestStyles.subSection}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">Full Width:</Text>
             </View>
@@ -323,7 +323,7 @@ export const SelectTestScreen: React.FC = () => {
             />
           </View>
 
-          <View style={styles.subSection}>
+          <View style={commonTestStyles.subSection}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">With Disabled Options:</Text>
             </View>
@@ -350,12 +350,12 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Custom Width */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">Custom Width</Text>
           </View>
 
-          <View style={styles.subSection}>
+          <View style={commonTestStyles.subSection}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">Custom 200px Width:</Text>
             </View>
@@ -371,7 +371,7 @@ export const SelectTestScreen: React.FC = () => {
             </View>
           </View>
 
-          <View style={styles.subSection}>
+          <View style={commonTestStyles.subSection}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">Custom 120px Width (Narrow):</Text>
             </View>
@@ -389,7 +389,7 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Grouped Options */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">
               Grouped Options (SpaceEditor Style)
@@ -413,7 +413,7 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* User Selection with Avatars */}
-        <View style={[styles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">User Selection with Avatars</Text>
           </View>
@@ -435,8 +435,8 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Implementation Notes */}
-        <View style={[styles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <View style={styles.titleContainer}>
+        <View style={[commonTestStyles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
+          <View style={commonTestStyles.titleContainer}>
             <Text size="base" weight="semibold" variant="strong">Mobile Notes</Text>
           </View>
           <Text size="sm" variant="default">
@@ -472,98 +472,4 @@ export const SelectTestScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // backgroundColor removed - now uses theme.colors.bg.app dynamically
-  },
-  scrollContent: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    // color removed - now uses theme colors dynamically
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 16,
-    // color removed - now uses theme colors dynamically
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  section: {
-    // backgroundColor removed - now uses theme.colors.bg.card dynamically
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    // color removed - now uses theme colors dynamically
-    marginBottom: 16,
-  },
-  subSection: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    // color removed - now uses theme colors dynamically
-    marginBottom: 8,
-  },
-  selectedText: {
-    fontSize: 12,
-    // color removed - now uses theme colors dynamically
-    marginTop: 8,
-    fontStyle: 'italic',
-  },
-  helpText: {
-    fontSize: 12,
-    // color removed - now uses theme colors dynamically
-    marginTop: 4,
-    fontStyle: 'italic',
-  },
-  toggleButton: {
-    marginTop: 24,
-    alignSelf: 'flex-start',
-  },
-  notesSection: {
-    // backgroundColor removed - now uses theme colors dynamically
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 8,
-  },
-  notesTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    // color removed - now uses theme colors dynamically
-    marginBottom: 12,
-  },
-  noteText: {
-    fontSize: 14,
-    // color removed - now uses theme colors dynamically
-    marginBottom: 6,
-    lineHeight: 20,
-  },
-});
+// All styles now centralized in commonTestStyles

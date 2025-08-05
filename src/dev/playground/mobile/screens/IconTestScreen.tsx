@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon, useTheme, Text } from '../components/primitives';
+import { commonTestStyles } from '../styles/commonTestStyles';
 
 export const IconTestScreen: React.FC = () => {
   const insets = useSafeAreaInsets();
@@ -10,7 +11,7 @@ export const IconTestScreen: React.FC = () => {
 
   return (
     <ScrollView
-      style={[styles.container, { backgroundColor: colors.surface[0] }]}
+      style={[commonTestStyles.container, { backgroundColor: colors.surface[0] }]}
       contentContainerStyle={{
         paddingTop: insets.top + 20,
         paddingBottom: insets.bottom + 20,
@@ -30,27 +31,27 @@ export const IconTestScreen: React.FC = () => {
       </View>
 
       {/* Basic Icons */}
-      <View style={styles.section}>
+      <View style={commonTestStyles.sectionSimple}>
         <View style={{ marginBottom: 16 }}>
           <Text size="lg" weight="semibold" variant="strong">
             Basic Icons
           </Text>
         </View>
 
-        <View style={styles.iconGrid}>
-          <View style={styles.iconItem}>
+        <View style={commonTestStyles.iconGrid}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="check" />
             <Text size="sm" variant="subtle">
               check
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="times" />
             <Text size="sm" variant="subtle">
               times
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="user" />
             <Text size="sm" variant="subtle">
               user
@@ -60,27 +61,27 @@ export const IconTestScreen: React.FC = () => {
       </View>
 
       {/* Theme Icons */}
-      <View style={styles.section}>
+      <View style={commonTestStyles.sectionSimple}>
         <View style={{ marginBottom: 16 }}>
           <Text size="lg" weight="semibold" variant="strong">
             Theme Icons
           </Text>
         </View>
 
-        <View style={styles.iconGrid}>
-          <View style={styles.iconItem}>
+        <View style={commonTestStyles.iconGrid}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="sun" color={theme.colors.utilities.warning} />
             <Text size="xs" variant="subtle">
               sun
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="moon" color={theme.colors.accent[600]} />
             <Text size="xs" variant="subtle">
               moon
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="desktop" color={theme.colors.text.subtle} />
             <Text size="xs" variant="subtle">
               desktop
@@ -90,45 +91,45 @@ export const IconTestScreen: React.FC = () => {
       </View>
 
       {/* Sizes */}
-      <View style={styles.section}>
+      <View style={commonTestStyles.sectionSimple}>
         <View style={{ marginBottom: 16 }}>
           <Text size="lg" weight="semibold" variant="strong">
             Icon Sizes
           </Text>
         </View>
 
-        <View style={styles.sizeRow}>
-          <View style={styles.sizeItem}>
+        <View style={commonTestStyles.sizeRow}>
+          <View style={commonTestStyles.sizeItem}>
             <Icon name="heart" size="xs" />
             <Text size="xs" variant="subtle">
               xs (12px)
             </Text>
           </View>
-          <View style={styles.sizeItem}>
+          <View style={commonTestStyles.sizeItem}>
             <Icon name="heart" size="sm" />
             <Text size="xs" variant="subtle">
               sm (14px)
             </Text>
           </View>
-          <View style={styles.sizeItem}>
+          <View style={commonTestStyles.sizeItem}>
             <Icon name="heart" size="md" />
             <Text size="xs" variant="subtle">
               md (16px)
             </Text>
           </View>
-          <View style={styles.sizeItem}>
+          <View style={commonTestStyles.sizeItem}>
             <Icon name="heart" size="lg" />
             <Text size="xs" variant="subtle">
               lg (20px)
             </Text>
           </View>
-          <View style={styles.sizeItem}>
+          <View style={commonTestStyles.sizeItem}>
             <Icon name="heart" size="xl" />
             <Text size="xs" variant="subtle">
               xl (24px)
             </Text>
           </View>
-          <View style={styles.sizeItem}>
+          <View style={commonTestStyles.sizeItem}>
             <Icon name="heart" size={32} />
             <Text size="xs" variant="subtle">
               32px
@@ -138,45 +139,45 @@ export const IconTestScreen: React.FC = () => {
       </View>
 
       {/* Actions & Communication */}
-      <View style={styles.section}>
+      <View style={commonTestStyles.sectionSimple}>
         <View style={{ marginBottom: 16 }}>
           <Text size="lg" weight="semibold" variant="strong">
             Actions & Communication
           </Text>
         </View>
 
-        <View style={styles.iconGrid}>
-          <View style={styles.iconItem}>
+        <View style={commonTestStyles.iconGrid}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="reply" color={theme.colors.utilities.success} />
             <Text size="xs" variant="subtle">
               reply
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="trash" color={theme.colors.utilities.danger} />
             <Text size="xs" variant="subtle">
               trash
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="link" color={theme.colors.accent[500]} />
             <Text size="xs" variant="subtle">
               link
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="bell" disabled />
             <Text size="xs" variant="subtle">
               bell (disabled)
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="envelope" />
             <Text size="xs" variant="subtle">
               envelope
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="clipboard" />
             <Text size="xs" variant="subtle">
               clipboard
@@ -186,45 +187,45 @@ export const IconTestScreen: React.FC = () => {
       </View>
 
       {/* Navigation */}
-      <View style={styles.section}>
+      <View style={commonTestStyles.sectionSimple}>
         <View style={{ marginBottom: 16 }}>
           <Text size="lg" weight="semibold" variant="strong">
             Navigation Icons
           </Text>
         </View>
 
-        <View style={styles.iconGrid}>
-          <View style={styles.iconItem}>
+        <View style={commonTestStyles.iconGrid}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="chevron-left" />
             <Text size="xs" variant="subtle">
               chevron-left
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="chevron-right" />
             <Text size="xs" variant="subtle">
               chevron-right
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="arrow-up" />
             <Text size="xs" variant="subtle">
               arrow-up
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="arrow-down" />
             <Text size="xs" variant="subtle">
               arrow-down
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="home" />
             <Text size="xs" variant="subtle">
               home
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="menu" />
             <Text size="xs" variant="subtle">
               menu
@@ -234,45 +235,45 @@ export const IconTestScreen: React.FC = () => {
       </View>
 
       {/* User & Social */}
-      <View style={styles.section}>
+      <View style={commonTestStyles.sectionSimple}>
         <View style={{ marginBottom: 16 }}>
           <Text size="lg" weight="semibold" variant="strong">
             User & Social Icons
           </Text>
         </View>
 
-        <View style={styles.iconGrid}>
-          <View style={styles.iconItem}>
+        <View style={commonTestStyles.iconGrid}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="users" />
             <Text size="xs" variant="subtle">
               users
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="user-plus" />
             <Text size="xs" variant="subtle">
               user-plus
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="smile" />
             <Text size="xs" variant="subtle">
               smile
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="face-smile-beam" />
             <Text size="xs" variant="subtle">
               face-smile-beam
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="eye" />
             <Text size="xs" variant="subtle">
               eye
             </Text>
           </View>
-          <View style={styles.iconItem}>
+          <View style={commonTestStyles.iconItem}>
             <Icon name="eye-slash" />
             <Text size="xs" variant="subtle">
               eye-slash
@@ -282,7 +283,7 @@ export const IconTestScreen: React.FC = () => {
       </View>
 
       {/* Testing Notes */}
-      <View style={[styles.notes, { backgroundColor: colors.surface[3] }]}>
+      <View style={[commonTestStyles.notesSection, { backgroundColor: colors.surface[3] }]}>
         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
           <Text size="base" weight="semibold" variant="strong">
             Mobile Icon Testing
@@ -302,65 +303,4 @@ export const IconTestScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    marginBottom: 32,
-  },
-  section: {
-    marginBottom: 32,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 16,
-  },
-  iconGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 16,
-  },
-  iconItem: {
-    alignItems: 'center',
-    width: 80,
-    marginBottom: 16,
-  },
-  iconLabel: {
-    fontSize: 12,
-    marginTop: 4,
-    textAlign: 'center',
-  },
-  sizeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  sizeItem: {
-    alignItems: 'center',
-    minWidth: 50,
-  },
-  notes: {
-    padding: 16,
-    borderRadius: 8,
-    marginTop: 16,
-  },
-  notesTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  notesText: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
-});
+// All styles now centralized in commonTestStyles

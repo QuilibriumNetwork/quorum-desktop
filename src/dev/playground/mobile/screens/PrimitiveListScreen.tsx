@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
 import ThemeRadioGroup from '../components/ThemeRadioGroup';
@@ -7,6 +7,7 @@ import AccentColorSwitcher from '../components/AccentColorSwitcher';
 import { Icon } from '../components/primitives/Icon';
 import { IconName } from '../components/primitives/Icon/types';
 import { Text } from '../components/primitives/Text';
+import { commonTestStyles } from '../styles/commonTestStyles';
 
 interface PrimitiveItem {
   id: string;
@@ -118,16 +119,12 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
     <TouchableOpacity
       key={primitive.id}
       style={[
-        styles.card,
-        {
-          backgroundColor: theme.colors.bg.card,
-          borderColor: theme.colors.border.default,
-        },
+        { backgroundColor: theme.colors.bg.card, borderColor: theme.colors.border.default, borderWidth: 1, borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
       ]}
       onPress={primitive.onPress}
       activeOpacity={0.7}
     >
-      <View style={styles.cardHeader}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
         <Icon
           name={primitive.icon}
           size="lg"
@@ -146,11 +143,11 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.bg.app }]}
+      style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}
     >
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.header}>
-          <View style={styles.titleContainer}>
+      <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
+        <View style={commonTestStyles.header}>
+          <View style={commonTestStyles.titleContainer}>
             <Icon
               name="tools"
               size="xl"
@@ -167,8 +164,7 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
 
           <View
             style={[
-              styles.themeSection,
-              { backgroundColor: theme.colors.surface[2] },
+              { backgroundColor: theme.colors.surface[2], borderRadius: 12, padding: 16, marginTop: 24, alignItems: 'center' },
             ]}
           >
             <Text size="sm" variant="default">
@@ -194,11 +190,11 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
 
         <View
           style={[
-            styles.infoSection,
+            commonTestStyles.infoSection,
             { backgroundColor: theme.colors.surface[3] },
           ]}
         >
-          <View style={styles.titleContainer}>
+          <View style={commonTestStyles.titleContainer}>
             <Text size="sm" variant="strong">
               Testing Notes
             </Text>
@@ -222,127 +218,4 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // backgroundColor removed - now uses theme.colors.bg.app dynamically
-  },
-  content: {
-    padding: 20,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-  headerTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    // color removed - now uses theme.colors.text.strong dynamically
-    textAlign: 'center',
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    // color removed - now uses theme.colors.text.main dynamically
-    textAlign: 'center',
-    lineHeight: 22,
-  },
-  themeSection: {
-    marginTop: 24,
-    alignItems: 'center',
-    borderRadius: 12,
-    padding: 16,
-    width: '100%',
-    gap: 12,
-  },
-  themeSectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    // color removed - now uses theme.colors.text.strong dynamically
-    textAlign: 'center',
-  },
-  themeSectionSubtitle: {
-    fontSize: 14,
-    // color removed - now uses theme.colors.text.subtle dynamically
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  section: {
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    // color removed - now uses theme.colors.text.strong dynamically
-    marginBottom: 8,
-  },
-  sectionSubtitle: {
-    fontSize: 14,
-    // color removed - now uses theme.colors.text.subtle dynamically
-    marginBottom: 16,
-  },
-  card: {
-    // backgroundColor removed - now uses theme.colors.bg.card dynamically
-    // borderColor added dynamically in component
-    borderWidth: 1,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 12,
-    position: 'relative',
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  emoji: {
-    fontSize: 24,
-    marginRight: 12,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    // color removed - now uses theme.colors.text.strong dynamically
-    flex: 1,
-  },
-  description: {
-    fontSize: 14,
-    // color removed - now uses theme.colors.text.main dynamically
-    lineHeight: 20,
-    marginBottom: 4,
-  },
-  arrow: {
-    position: 'absolute',
-    right: 20,
-    top: '50%',
-    transform: [{ translateY: -10 }],
-  },
-  arrowText: {
-    fontSize: 20,
-    // color removed - now uses theme.colors.text.subtle dynamically
-    fontWeight: 'bold',
-  },
-  infoSection: {
-    // backgroundColor removed - now uses theme colors dynamically
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 8,
-  },
-  infoTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    // color removed - now uses theme.colors.text.strong dynamically
-    marginBottom: 12,
-  },
-  infoText: {
-    fontSize: 14,
-    // color removed - now uses theme.colors.text.main dynamically
-    marginBottom: 6,
-    lineHeight: 20,
-  },
-});
+// All styles now centralized in commonTestStyles

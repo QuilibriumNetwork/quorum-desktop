@@ -17,6 +17,10 @@ export interface BaseTextProps {
   color?: string;
   className?: string;
   testId?: string;
+  // Spacing props for better mobile experience
+  marginBottom?: number;
+  marginTop?: number;
+  lineHeight?: number;
 }
 
 // Web-specific props

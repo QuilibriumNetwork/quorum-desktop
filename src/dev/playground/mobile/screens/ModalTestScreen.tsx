@@ -5,6 +5,7 @@ import Button from '../components/primitives/Button';
 import { Icon } from '../components/primitives/Icon';
 import { useTheme } from '../components/primitives/theme';
 import { Text } from '../components/primitives/Text';
+import { commonTestStyles } from '../styles/commonTestStyles';
 
 export const ModalTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -22,10 +23,11 @@ export const ModalTestScreen: React.FC = () => {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: colors.surface[0], padding: 20 }}
+      style={[commonTestStyles.container, { backgroundColor: colors.surface[0] }]}
+      contentContainerStyle={commonTestStyles.contentPadding}
     >
-      <View style={{ alignItems: 'center', marginBottom: 32 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+      <View style={commonTestStyles.header}>
+        <View style={commonTestStyles.titleContainer}>
           <Icon name="clipboard" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
           <Text size="2xl" weight="bold" variant="strong">
             Modal
@@ -38,14 +40,14 @@ export const ModalTestScreen: React.FC = () => {
         </View>
       </View>
 
-      <View style={{ marginBottom: 30 }}>
+      <View style={commonTestStyles.subSection}>
         <View style={{ marginBottom: 16 }}>
           <Text size="lg" weight="semibold" variant="strong">
             Basic Modal
           </Text>
         </View>
 
-        <View style={{ marginBottom: 16 }}>
+        <View style={commonTestStyles.buttonContainer}>
           <Button
             type="primary"
             onClick={() => setBasicModal(true)}
@@ -55,14 +57,14 @@ export const ModalTestScreen: React.FC = () => {
         </View>
       </View>
 
-      <View style={{ marginBottom: 30 }}>
+      <View style={commonTestStyles.subSection}>
         <View style={{ marginBottom: 16 }}>
           <Text size="lg" weight="semibold" variant="strong">
             Modal Sizes
           </Text>
         </View>
 
-        <View style={{ marginBottom: 16 }}>
+        <View style={commonTestStyles.buttonContainer}>
           <Button
             type="primary"
             onClick={() => setSmallModal(true)}
@@ -71,7 +73,7 @@ export const ModalTestScreen: React.FC = () => {
           </Button>
         </View>
 
-        <View style={{ marginBottom: 16 }}>
+        <View style={commonTestStyles.buttonContainer}>
           <Button
             type="primary"
             onClick={() => setMediumModal(true)}
@@ -80,7 +82,7 @@ export const ModalTestScreen: React.FC = () => {
           </Button>
         </View>
 
-        <View style={{ marginBottom: 16 }}>
+        <View style={commonTestStyles.buttonContainer}>
           <Button
             type="primary"
             onClick={() => setLargeModal(true)}
@@ -90,14 +92,14 @@ export const ModalTestScreen: React.FC = () => {
         </View>
       </View>
 
-      <View style={{ marginBottom: 30 }}>
+      <View style={commonTestStyles.subSection}>
         <View style={{ marginBottom: 16 }}>
           <Text size="lg" weight="semibold" variant="strong">
             Modal Options
           </Text>
         </View>
 
-        <View style={{ marginBottom: 16 }}>
+        <View style={commonTestStyles.buttonContainer}>
           <Button
             type="primary"
             onClick={() => setNoCloseModal(true)}
@@ -106,7 +108,7 @@ export const ModalTestScreen: React.FC = () => {
           </Button>
         </View>
 
-        <View style={{ marginBottom: 16 }}>
+        <View style={commonTestStyles.buttonContainer}>
           <Button
             type="primary"
             onClick={() => setNoSwipeModal(true)}
@@ -115,7 +117,7 @@ export const ModalTestScreen: React.FC = () => {
           </Button>
         </View>
 
-        <View style={{ marginBottom: 16 }}>
+        <View style={commonTestStyles.buttonContainer}>
           <Button
             type="primary"
             onClick={() => {
@@ -458,14 +460,12 @@ export const ModalTestScreen: React.FC = () => {
       </Modal>
 
       <View
-        style={{
-          backgroundColor: colors.surface[3],
-          padding: 15,
-          borderRadius: 8,
-          marginBottom: 20,
-        }}
+        style={[
+          commonTestStyles.notesSection,
+          { backgroundColor: colors.surface[3] }
+        ]}
       >
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+        <View style={commonTestStyles.titleContainer}>
           <Text size="base" weight="semibold" variant="strong">
             Mobile Notes
           </Text>
@@ -492,3 +492,5 @@ export const ModalTestScreen: React.FC = () => {
     </ScrollView>
   );
 };
+
+// All styles now centralized in commonTestStyles

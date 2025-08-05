@@ -45,6 +45,9 @@ export const Text: React.FC<NativeTextProps> = ({
   accessibilityLabel,
   testId,
   href,
+  marginBottom,
+  marginTop,
+  lineHeight,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -71,11 +74,21 @@ export const Text: React.FC<NativeTextProps> = ({
     }
   };
 
+  // Default line height based on size for better readability
+  const getDefaultLineHeight = () => {
+    const fontSize = sizeMap[size];
+    return fontSize * 1.4; // 1.4 ratio for good readability
+  };
+
   const textStyle: TextStyle = {
     fontSize: sizeMap[size],
     fontWeight: weightMap[weight] as any,
     textAlign: alignMap[align] as any,
     color: color || getVariantColor(),
+    lineHeight: lineHeight || getDefaultLineHeight(),
+    marginBottom: marginBottom,
+    marginTop: marginTop,
+    includeFontPadding: false, // Better alignment on Android
   };
 
   const textContent = (
@@ -94,7 +107,7 @@ export const Text: React.FC<NativeTextProps> = ({
   // Handle link functionality in React Native
   const handlePress = () => {
     if (href) {
-      Linking.openURL(href).catch((err) =>
+      Linking.openURL(href).catch((err: any) =>
         console.error('Failed to open URL:', err)
       );
     } else if (onPress) {

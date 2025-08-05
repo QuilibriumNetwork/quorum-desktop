@@ -10,6 +10,9 @@ This index provides an overview of all documentation, tasks and bugs, available.
 - **[Desktop Notifications Feature](docs/features/desktop-notifications.md)**
 - **[Emoji Picker React - Styling & Customization](docs/features/emoji-picker-react-customization.md)**
 - **[Invite System Analysis - Comprehensive Report](docs/features/invite-system-analysis.md)**
+- **[Cross-Platform Primitive Components - Complete Documentation](docs/features/primitive-components.md)**
+- **[Primitives Quick Reference Guide](docs/features/primitives-quick-reference.md)**
+- **[Web-to-Native Migration Guide](docs/features/web-to-native-migration-guide.md)**
 - **[Kick User System Documentation](docs/features/kick-user-system.md)**
 - **[Mobile Message Actions Implementation](docs/features/message-actions-mobile.md)**
 - **[Modal System Documentation](docs/features/modals.md)**
@@ -79,4 +82,4 @@ This index provides an overview of all documentation, tasks and bugs, available.
 
 ---
 
-_Last Updated: 2025-07-31 17:40 UTC_
+_Last Updated: 2025-08-05 09:09:11 UTC_

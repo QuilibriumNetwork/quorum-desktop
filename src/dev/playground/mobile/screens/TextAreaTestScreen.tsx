@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { ScrollView, View, StyleSheet } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
 import { TextArea } from '../components/primitives/TextArea';
 import { Icon } from '../components/primitives/Icon';
 import { Text } from '../components/primitives/Text';
+import { commonTestStyles } from '../styles/commonTestStyles';
 
 export const TextAreaTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -15,10 +16,10 @@ export const TextAreaTestScreen: React.FC = () => {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: theme.colors.bg.app }]}
+      style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}
     >
-      <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.titleContainer}>
+      <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
+        <View style={commonTestStyles.titleContainer}>
           <Icon
             name="memo"
             size="xl"
@@ -38,7 +39,7 @@ export const TextAreaTestScreen: React.FC = () => {
 
         {/* Basic TextArea Types */}
         <View
-          style={[styles.section, { backgroundColor: theme.colors.bg.card }]}
+          style={[commonTestStyles.sectionCompact, { backgroundColor: theme.colors.bg.card }]}
         >
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">
@@ -46,7 +47,7 @@ export const TextAreaTestScreen: React.FC = () => {
             </Text>
           </View>
 
-          <View style={styles.inputGroup}>
+          <View style={commonTestStyles.inputGroup}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">
                 Standard TextArea (3 rows):
@@ -66,7 +67,7 @@ export const TextAreaTestScreen: React.FC = () => {
             </View>
           </View>
 
-          <View style={styles.inputGroup}>
+          <View style={commonTestStyles.inputGroup}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">
                 Auto-Resize TextArea (2-6 rows):
@@ -87,7 +88,7 @@ export const TextAreaTestScreen: React.FC = () => {
             </View>
           </View>
 
-          <View style={styles.inputGroup}>
+          <View style={commonTestStyles.inputGroup}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">
                 Large TextArea (5 rows):
@@ -99,7 +100,7 @@ export const TextAreaTestScreen: React.FC = () => {
             />
           </View>
 
-          <View style={styles.inputGroup}>
+          <View style={commonTestStyles.inputGroup}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">
                 Disabled TextArea:
@@ -116,7 +117,7 @@ export const TextAreaTestScreen: React.FC = () => {
 
         {/* Error States */}
         <View
-          style={[styles.section, { backgroundColor: theme.colors.bg.card }]}
+          style={[commonTestStyles.sectionCompact, { backgroundColor: theme.colors.bg.card }]}
         >
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">
@@ -124,7 +125,7 @@ export const TextAreaTestScreen: React.FC = () => {
             </Text>
           </View>
 
-          <View style={styles.inputGroup}>
+          <View style={commonTestStyles.inputGroup}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">
                 TextArea with Error (type less than 10 chars):
@@ -132,7 +133,7 @@ export const TextAreaTestScreen: React.FC = () => {
             </View>
             <TextArea
               value={errorTextArea}
-              onChange={(value) => {
+              onChange={(value: string) => {
                 setErrorTextArea(value);
                 setShowTextAreaError(value.length > 0 && value.length < 10);
               }}
@@ -147,7 +148,7 @@ export const TextAreaTestScreen: React.FC = () => {
             />
           </View>
 
-          <View style={styles.inputGroup}>
+          <View style={commonTestStyles.inputGroup}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">
                 Always Error:
@@ -165,7 +166,7 @@ export const TextAreaTestScreen: React.FC = () => {
 
         {/* TextArea Variants */}
         <View
-          style={[styles.section, { backgroundColor: theme.colors.bg.card }]}
+          style={[commonTestStyles.sectionCompact, { backgroundColor: theme.colors.bg.card }]}
         >
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">
@@ -173,7 +174,7 @@ export const TextAreaTestScreen: React.FC = () => {
             </Text>
           </View>
 
-          <View style={styles.inputGroup}>
+          <View style={commonTestStyles.inputGroup}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">
                 Filled (Default):
@@ -187,7 +188,7 @@ export const TextAreaTestScreen: React.FC = () => {
             </View>
           </View>
 
-          <View style={styles.inputGroup}>
+          <View style={commonTestStyles.inputGroup}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">
                 Bordered Variant:
@@ -205,7 +206,7 @@ export const TextAreaTestScreen: React.FC = () => {
             </View>
           </View>
 
-          <View style={styles.inputGroup}>
+          <View style={commonTestStyles.inputGroup}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">
                 Onboarding Style (rounded corners):
@@ -223,7 +224,7 @@ export const TextAreaTestScreen: React.FC = () => {
             </View>
           </View>
 
-          <View style={styles.inputGroup}>
+          <View style={commonTestStyles.inputGroup}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">
                 Onboarding Auto-Resize:
@@ -246,7 +247,7 @@ export const TextAreaTestScreen: React.FC = () => {
 
         {/* Focus Features */}
         <View
-          style={[styles.section, { backgroundColor: theme.colors.bg.card }]}
+          style={[commonTestStyles.sectionCompact, { backgroundColor: theme.colors.bg.card }]}
         >
           <View style={{ marginBottom: 16 }}>
             <Text size="lg" weight="semibold" variant="strong">
@@ -254,7 +255,7 @@ export const TextAreaTestScreen: React.FC = () => {
             </Text>
           </View>
 
-          <View style={styles.inputGroup}>
+          <View style={commonTestStyles.inputGroup}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">
                 Auto Focus TextArea:
@@ -267,7 +268,7 @@ export const TextAreaTestScreen: React.FC = () => {
             />
           </View>
 
-          <View style={styles.inputGroup}>
+          <View style={commonTestStyles.inputGroup}>
             <View style={{ marginBottom: 8 }}>
               <Text size="sm" variant="strong">
                 No Focus Style:
@@ -284,11 +285,11 @@ export const TextAreaTestScreen: React.FC = () => {
         {/* Mobile Notes */}
         <View
           style={[
-            styles.notesSection,
+            commonTestStyles.notesSection,
             { backgroundColor: theme.colors.surface[3] },
           ]}
         >
-          <View style={styles.titleContainer}>
+          <View style={commonTestStyles.titleContainer}>
             <Text size="base" weight="semibold" variant="strong">
               Mobile Notes
             </Text>
@@ -320,89 +321,4 @@ export const TextAreaTestScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // backgroundColor removed - now uses theme.colors.bg.app dynamically
-  },
-  content: {
-    padding: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    // color removed - now uses theme colors dynamically
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 16,
-    // color removed - now uses theme colors dynamically
-    marginBottom: 24,
-    textAlign: 'center',
-  },
-  section: {
-    // backgroundColor removed - now uses theme.colors.bg.card dynamically
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    // color removed - now uses theme colors dynamically
-    marginBottom: 16,
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '500',
-    // color removed - now uses theme colors dynamically
-    marginBottom: 8,
-  },
-  valueText: {
-    fontSize: 12,
-    // color removed - now uses theme colors dynamically
-    marginTop: 4,
-    fontStyle: 'italic',
-  },
-  infoText: {
-    fontSize: 12,
-    // color removed - now uses theme colors dynamically
-    marginTop: 4,
-  },
-  notesSection: {
-    // backgroundColor removed - now uses theme colors dynamically
-    borderRadius: 12,
-    padding: 16,
-    marginTop: 8,
-  },
-  notesTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    // color removed - now uses theme colors dynamically
-    marginBottom: 12,
-  },
-  notesText: {
-    fontSize: 14,
-    // color removed - now uses theme colors dynamically
-    marginBottom: 4,
-    lineHeight: 20,
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
-  },
-});
+// All styles now centralized in commonTestStyles

@@ -58,6 +58,11 @@ export const commonTestStyles = StyleSheet.create({
     // backgroundColor applied dynamically via theme.colors.bg.card
   },
 
+  // Simple section without card styling (used by IconTestScreen)
+  sectionSimple: {
+    marginBottom: 32,
+  },
+
   sectionCompact: {
     borderRadius: 12,
     padding: 16,
@@ -133,6 +138,24 @@ export const commonTestStyles = StyleSheet.create({
     marginBottom: 8,
   },
 
+  colorGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+    marginTop: 12,
+  },
+
+  colorItem: {
+    alignItems: 'center',
+    gap: 8,
+  },
+
+  stateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+
   // === TEST/DEMO CONTAINERS ===
   testGroup: {
     padding: 12,
@@ -182,9 +205,40 @@ export const commonTestStyles = StyleSheet.create({
     // backgroundColor applied dynamically via theme.colors.surface[3]
   },
 
+  // === TOOLTIP-SPECIFIC PATTERNS ===
+  tooltipButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+    // backgroundColor applied dynamically
+  },
+
+  infoIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    // backgroundColor applied dynamically
+  },
+
+  positioningTestContainer: {
+    paddingVertical: 16,
+  },
+
   // === TEXT POSITIONING ===
   centerText: {
     textAlign: 'center',
+  },
+
+  // === SURFACE SAMPLE (ThemeTestScreen) ===
+  surfaceSample: {
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+    // backgroundColor applied dynamically
   },
 
   // === SPACING HELPERS ===
