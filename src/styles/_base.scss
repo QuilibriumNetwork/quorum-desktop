@@ -22,6 +22,15 @@
 
   /* layout dimensions */
   --sidebar-left-width: 260px;
+  
+  /* Responsive sidebar width for very small screens */
+  @media (max-width: 360px) {
+    --sidebar-left-width: calc(100vw - 100px); /* Leave 100px for tap area */
+  }
+  
+  @media (max-width: 320px) {
+    --sidebar-left-width: calc(100vw - 80px); /* Leave 80px for tap area */
+  }
 }
 
 /* === LINKS === */
