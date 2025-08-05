@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import {
   ScrollView,
-  View,
   SafeAreaView,
   StatusBar,
+  View,
 } from 'react-native';
-import { useTheme } from '../components/primitives/theme';
-import Select from '../components/primitives/Select/Select.native';
-import Button from '../components/primitives/Button';
-import { Icon } from '../components/primitives/Icon';
-import { Text } from '../components/primitives/Text';
-import { commonTestStyles } from '../styles/commonTestStyles';
+import { 
+  Text, 
+ 
+  Title, 
+  Label, 
+  FlexColumn, 
+  FlexRow, 
+  Select, 
+  Button, 
+  Icon, 
+  useTheme 
+} from '../components/primitives';
+import { commonTestStyles, createThemedStyles } from '../styles/commonTestStyles';
 
 export const SelectTestScreen: React.FC = () => {
   const theme = useTheme();
+  const themedStyles = createThemedStyles(theme);
   // Select testing state
   const [basicValue, setBasicValue] = useState('');
   const [iconValue, setIconValue] = useState('edit');
@@ -125,11 +133,11 @@ export const SelectTestScreen: React.FC = () => {
       >
         {/* Header */}
         <View style={commonTestStyles.header}>
-          <View style={commonTestStyles.titleContainer}>
-            <Icon name="clipboard" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
-            <Text size="2xl" weight="bold" variant="strong">Select</Text>
-          </View>
-          <View style={{ marginBottom: 24 }}>
+          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+            <Icon name="clipboard" size="xl" style={{ marginTop: 2 }}/>
+            <Title>Select</Title>
+          </FlexRow>
+          <View style={{ marginTop: 8 }}>
             <Text size="base" variant="default" align="center">
               Mobile dropdown/picker component with modal overlay
             </Text>
@@ -137,339 +145,343 @@ export const SelectTestScreen: React.FC = () => {
         </View>
 
         {/* Basic Select */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">Basic Select</Text>
-          </View>
-          <View style={{ marginBottom: 8 }}>
-            <Text size="sm" variant="strong">Simple Select:</Text>
-          </View>
-          <Select
-            value={basicValue}
-            onChange={setBasicValue}
-            placeholder="Choose an option"
-            options={basicOptions}
-          />
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Basic Select</Title>
+            <FlexColumn gap="xs">
+              <Label>Simple Select:</Label>
+              <Select
+                value={basicValue}
+                onChange={setBasicValue}
+                placeholder="Choose an option"
+                options={basicOptions}
+              />
+            </FlexColumn>
+          </FlexColumn>
         </View>
 
         {/* Select with Icons */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">With Icons</Text>
-          </View>
-          <View style={{ marginBottom: 8 }}>
-            <Text size="sm" variant="strong">Action Picker:</Text>
-          </View>
-          <Select
-            value={iconValue}
-            onChange={setIconValue}
-            placeholder="Choose an action"
-            options={iconOptions}
-          />
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">With Icons</Title>
+            <FlexColumn gap="xs">
+              <Label>Action Picker:</Label>
+              <Select
+                value={iconValue}
+                onChange={setIconValue}
+                placeholder="Choose an action"
+                options={iconOptions}
+              />
+            </FlexColumn>
+          </FlexColumn>
         </View>
 
         {/* Select Sizes */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">Size Variants</Text>
-          </View>
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Size Variants</Title>
 
-          <View style={commonTestStyles.subSection}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" variant="strong">Small Size:</Text>
-            </View>
-            <Select
-              size="small"
-              value={sizeTestValue}
-              onChange={setSizeTestValue}
-              placeholder="Small select"
-              options={sizeOptions}
-            />
-          </View>
+            <FlexColumn gap="xs">
+              <Label>Small Size:</Label>
+              <Select
+                size="small"
+                value={sizeTestValue}
+                onChange={setSizeTestValue}
+                placeholder="Small select"
+                options={sizeOptions}
+              />
+            </FlexColumn>
 
-          <View style={commonTestStyles.subSection}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" variant="strong">Medium Size (Default):</Text>
-            </View>
-            <Select
-              size="medium"
-              value={sizeTestValue}
-              onChange={setSizeTestValue}
-              placeholder="Medium select"
-              options={sizeOptions}
-            />
-          </View>
+            <FlexColumn gap="xs">
+              <Label>Medium Size (Default):</Label>
+              <Select
+                size="medium"
+                value={sizeTestValue}
+                onChange={setSizeTestValue}
+                placeholder="Medium select"
+                options={sizeOptions}
+              />
+            </FlexColumn>
 
-          <View style={commonTestStyles.subSection}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" variant="strong">Large Size:</Text>
-            </View>
-            <Select
-              size="large"
-              value={sizeTestValue}
-              onChange={setSizeTestValue}
-              placeholder="Large select"
-              options={sizeOptions}
-            />
-          </View>
+            <FlexColumn gap="xs">
+              <Label>Large Size:</Label>
+              <Select
+                size="large"
+                value={sizeTestValue}
+                onChange={setSizeTestValue}
+                placeholder="Large select"
+                options={sizeOptions}
+              />
+            </FlexColumn>
+          </FlexColumn>
         </View>
 
         {/* Select Variants */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">Select Variants</Text>
-          </View>
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Select Variants</Title>
 
-          <View style={commonTestStyles.subSection}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" variant="strong">Bordered:</Text>
-            </View>
-            <Select
-              variant="bordered"
-              value={variantTestValue}
-              onChange={setVariantTestValue}
-              placeholder="Bordered style"
-              options={basicOptions}
-            />
-          </View>
+            <FlexColumn gap="xs">
+              <Label>Bordered:</Label>
+              <Select
+                variant="bordered"
+                value={variantTestValue}
+                onChange={setVariantTestValue}
+                placeholder="Bordered style"
+                options={basicOptions}
+              />
+            </FlexColumn>
 
-          <View style={commonTestStyles.subSection}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" variant="strong">Filled (Default):</Text>
-            </View>
-            <Select
-              value={variantTestValue}
-              onChange={setVariantTestValue}
-              placeholder="Filled style"
-              options={basicOptions}
-            />
-          </View>
+            <FlexColumn gap="xs">
+              <Label>Filled (Default):</Label>
+              <Select
+                value={variantTestValue}
+                onChange={setVariantTestValue}
+                placeholder="Filled style"
+                options={basicOptions}
+              />
+            </FlexColumn>
+          </FlexColumn>
         </View>
 
         {/* Error States */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">Error States</Text>
-          </View>
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Error States</Title>
 
-          <View style={commonTestStyles.subSection}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" variant="strong">With Error:</Text>
-            </View>
-            <Select
-              value={errorValue}
-              onChange={(value) => {
-                setErrorValue(value);
-                // Show error when "Invalid Option" is selected
-                setShowError(value === 'invalid');
-              }}
-              placeholder="Select with error"
-              error={showError}
-              errorMessage={
-                showError
-                  ? 'Invalid selection - please choose a valid option'
-                  : 'This field is required'
-              }
-              options={[
-                { value: 'valid', label: 'Valid Option' },
-                { value: 'invalid', label: 'Invalid Option' },
-              ]}
-            />
-            <Button
-              size="small"
-              type="secondary"
-              onClick={() => {
-                setErrorValue('');
-                setShowError(false);
-              }}
-              style={commonTestStyles.toggleButton}
-            >
-              Clear Selection
-            </Button>
-          </View>
+            <FlexColumn gap="xs">
+              <Label>With Error:</Label>
+              <Select
+                value={errorValue}
+                onChange={(value) => {
+                  setErrorValue(value);
+                  // Show error when "Invalid Option" is selected
+                  setShowError(value === 'invalid');
+                }}
+                placeholder="Select with error"
+                error={showError}
+                errorMessage={
+                  showError
+                    ? 'Invalid selection - please choose a valid option'
+                    : 'This field is required'
+                }
+                options={[
+                  { value: 'valid', label: 'Valid Option' },
+                  { value: 'invalid', label: 'Invalid Option' },
+                ]}
+              />
+              <Button
+                size="small"
+                type="secondary"
+                onClick={() => {
+                  setErrorValue('');
+                  setShowError(false);
+                }}
+                style={commonTestStyles.toggleButton}
+              >
+                Clear Selection
+              </Button>
+            </FlexColumn>
 
-          <View style={commonTestStyles.subSection}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" variant="strong">Disabled Select:</Text>
-            </View>
-            <Select
-              value="disabled"
-              onChange={() => {}}
-              disabled
-              options={[
-                { value: 'disabled', label: 'Cannot change this' },
-                { value: 'other', label: 'Other option' },
-              ]}
-            />
-          </View>
+            <FlexColumn gap="xs">
+              <Label>Disabled Select:</Label>
+              <Select
+                value="disabled"
+                onChange={() => {}}
+                disabled
+                options={[
+                  { value: 'disabled', label: 'Cannot change this' },
+                  { value: 'other', label: 'Other option' },
+                ]}
+              />
+            </FlexColumn>
+          </FlexColumn>
         </View>
 
         {/* Advanced Features */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">Advanced Features</Text>
-          </View>
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Advanced Features</Title>
 
-          <View style={commonTestStyles.subSection}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" variant="strong">Full Width:</Text>
-            </View>
-            <Select
-              fullWidth
-              value=""
-              onChange={() => {}}
-              placeholder="Full width select"
-              options={basicOptions}
-            />
-          </View>
+            <FlexColumn gap="xs">
+              <Label>Full Width:</Label>
+              <Select
+                fullWidth
+                value=""
+                onChange={() => {}}
+                placeholder="Full width select"
+                options={basicOptions}
+              />
+            </FlexColumn>
 
-          <View style={commonTestStyles.subSection}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" variant="strong">With Disabled Options:</Text>
-            </View>
-            <Select
-              value=""
-              onChange={() => {}}
-              placeholder="Some options disabled"
-              options={[
-                { value: 'available', label: 'Available Option' },
-                {
-                  value: 'disabled1',
-                  label: 'Disabled Option 1',
-                  disabled: true,
-                },
-                { value: 'available2', label: 'Available Option 2' },
-                {
-                  value: 'disabled2',
-                  label: 'Disabled Option 2',
-                  disabled: true,
-                },
-              ]}
-            />
-          </View>
+            <FlexColumn gap="xs">
+              <Label>With Disabled Options:</Label>
+              <Select
+                value=""
+                onChange={() => {}}
+                placeholder="Some options disabled"
+                options={[
+                  { value: 'available', label: 'Available Option' },
+                  {
+                    value: 'disabled1',
+                    label: 'Disabled Option 1',
+                    disabled: true,
+                  },
+                  { value: 'available2', label: 'Available Option 2' },
+                  {
+                    value: 'disabled2',
+                    label: 'Disabled Option 2',
+                    disabled: true,
+                  },
+                ]}
+              />
+            </FlexColumn>
+          </FlexColumn>
         </View>
 
         {/* Custom Width */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">Custom Width</Text>
-          </View>
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Custom Width</Title>
 
-          <View style={commonTestStyles.subSection}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" variant="strong">Custom 200px Width:</Text>
-            </View>
-            <Select
-              width={200}
-              value={customWidthValue}
-              onChange={setCustomWidthValue}
-              placeholder="200px wide"
-              options={longTextOptions}
-            />
-            <View style={{ marginTop: 8 }}>
+            <FlexColumn gap="xs">
+              <Label>Custom 200px Width:</Label>
+              <Select
+                width={200}
+                value={customWidthValue}
+                onChange={setCustomWidthValue}
+                placeholder="200px wide"
+                options={longTextOptions}
+              />
               <Text size="sm" variant="subtle">Uses width=200 prop</Text>
-            </View>
-          </View>
+            </FlexColumn>
 
-          <View style={commonTestStyles.subSection}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" variant="strong">Custom 120px Width (Narrow):</Text>
-            </View>
-            <Select
-              width={120}
-              value=""
-              onChange={() => {}}
-              placeholder="Narrow"
-              options={longTextOptions}
-            />
-            <View style={{ marginTop: 8 }}>
+            <FlexColumn gap="xs">
+              <Label>Custom 120px Width (Narrow):</Label>
+              <Select
+                width={120}
+                value=""
+                onChange={() => {}}
+                placeholder="Narrow"
+                options={longTextOptions}
+              />
               <Text size="sm" variant="subtle">Demonstrates text ellipsis</Text>
-            </View>
-          </View>
+            </FlexColumn>
+          </FlexColumn>
         </View>
 
         {/* Grouped Options */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">
-              Grouped Options (SpaceEditor Style)
-            </Text>
-          </View>
-          <View style={{ marginBottom: 8 }}>
-            <Text size="sm" variant="strong">Select Channel:</Text>
-          </View>
-          <Select
-            value={groupedValue}
-            onChange={setGroupedValue}
-            placeholder="Choose a channel"
-            groups={channelGroups}
-            fullWidth
-          />
-          <View style={{ marginTop: 8 }}>
-            <Text size="sm" variant="subtle">
-              Options organized by category with group headers
-            </Text>
-          </View>
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Grouped Options (SpaceEditor Style)</Title>
+            <FlexColumn gap="xs">
+              <Label>Select Channel:</Label>
+              <Select
+                value={groupedValue}
+                onChange={setGroupedValue}
+                placeholder="Choose a channel"
+                groups={channelGroups}
+                fullWidth
+              />
+              <Text size="sm" variant="subtle">
+                Options organized by category with group headers
+              </Text>
+            </FlexColumn>
+          </FlexColumn>
         </View>
 
         {/* User Selection with Avatars */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">User Selection with Avatars</Text>
-          </View>
-          <View style={{ marginBottom: 8 }}>
-            <Text size="sm" variant="strong">Select Conversation:</Text>
-          </View>
-          <Select
-            value={userValue}
-            onChange={setUserValue}
-            placeholder="Select conversation"
-            options={userOptions}
-            fullWidth
-          />
-          <View style={{ marginTop: 8 }}>
-            <Text size="sm" variant="subtle">
-              Shows user avatars and addresses (subtitle)
-            </Text>
-          </View>
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">User Selection with Avatars</Title>
+            <FlexColumn gap="xs">
+              <Label>Select Conversation:</Label>
+              <Select
+                value={userValue}
+                onChange={setUserValue}
+                placeholder="Select conversation"
+                options={userOptions}
+                fullWidth
+              />
+              <Text size="sm" variant="subtle">
+                Shows user avatars and addresses (subtitle)
+              </Text>
+            </FlexColumn>
+          </FlexColumn>
         </View>
 
         {/* Implementation Notes */}
-        <View style={[commonTestStyles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <View style={commonTestStyles.titleContainer}>
-            <Text size="base" weight="semibold" variant="strong">Mobile Notes</Text>
-          </View>
-          <Text size="sm" variant="default">
-            • Uses React Native Modal for dropdown overlay
-          </Text>
-          <Text size="sm" variant="default">
-            • Touch-optimized for mobile interaction
-          </Text>
-          <Text size="sm" variant="default">
-            • Consistent width management (min 150px, max 280px)
-          </Text>
-          <Text size="sm" variant="default">
-            • Text truncation with ellipsis for long options
-          </Text>
-          <Text size="sm" variant="default">
-            • Custom width support via numeric prop
-          </Text>
-          <Text size="sm" variant="default">
-            • Grouped options with sticky headers
-          </Text>
-          <Text size="sm" variant="default">
-            • Avatar support with 32px circular images
-          </Text>
-          <Text size="sm" variant="default">
-            • Subtitle text for secondary information
-          </Text>
-          <Text size="sm" variant="default">
-            • Icons are temporary emoji (FontAwesome pending)
-          </Text>
+        <View style={themedStyles.notesSection}>
+          <FlexColumn gap="sm">
+            <Title size="sm">Mobile Notes</Title>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Uses React Native Modal for dropdown overlay</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Touch-optimized for mobile interaction</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Consistent width management (min 150px, max 280px)</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Text truncation with ellipsis for long options</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Custom width support via numeric prop</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Grouped options with sticky headers</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Avatar support with 32px circular images</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Subtitle text for secondary information</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Icons are temporary emoji (FontAwesome pending)</Text>
+              </View>
+            </FlexRow>
+          </FlexColumn>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-// All styles now centralized in commonTestStyles
+

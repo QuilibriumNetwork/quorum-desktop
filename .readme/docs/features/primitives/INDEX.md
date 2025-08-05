@@ -102,7 +102,7 @@ Refer to [06-when-to-use-primitives.md](./06-when-to-use-primitives.md) for guid
 ## 🎯 **Component Categories**
 
 ### **Text & Typography**
-- Text, Paragraph, Title, SectionHeading, Label, Caption, InlineText
+- Text, Paragraph, Title (with size & weight props), Label, Caption, InlineText
 
 ### **Interactive Elements**
 - Button, Input, TextArea, Select, Switch, RadioGroup

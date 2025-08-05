@@ -8,12 +8,13 @@ import {
 import { useTheme } from '../components/primitives/theme';
 import { ColorSwatch } from '../components/primitives/ColorSwatch';
 import { Icon } from '../components/primitives/Icon';
-import { Text, SectionHeading, Paragraph, Label, Caption } from '../components/primitives';
+import { Text, Paragraph, Label, Caption, Title } from '../components/primitives';
 import { FlexRow, FlexColumn, FlexCenter } from '../components/primitives';
-import { commonTestStyles } from '../styles/commonTestStyles';
+import { commonTestStyles, createThemedStyles } from '../styles/commonTestStyles';
 
 export const ColorSwatchTestScreen: React.FC = () => {
   const theme = useTheme();
+  const themedStyles = createThemedStyles(theme);
   const [activeColor, setActiveColor] = useState('blue');
   const [sizeDemo, setSizeDemo] = useState('');
 
@@ -28,9 +29,9 @@ export const ColorSwatchTestScreen: React.FC = () => {
       >
         {/* Header */}
         <FlexColumn style={commonTestStyles.header}>
-          <FlexRow gap="sm" align="center" style={commonTestStyles.titleContainer}>
-            <Icon name="palette" size="xl" color={theme.colors.text.strong} />
-            <Text size="2xl" weight="bold" variant="strong">ColorSwatch</Text>
+          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+            <Icon name="palette" size="xl" style={{ marginTop: 2 }}/>
+            <Title>ColorSwatch</Title>
           </FlexRow>
           <Paragraph align="center">
             Touch-optimized color picker for accent selection
@@ -38,8 +39,8 @@ export const ColorSwatchTestScreen: React.FC = () => {
         </FlexColumn>
 
         {/* Basic Usage */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <SectionHeading>Basic Usage</SectionHeading>
+        <View style={themedStyles.section}>
+          <Title size="sm">Basic Usage</Title>
 
           <FlexColumn style={commonTestStyles.subSection}>
             <Label>Click to select colors:</Label>
@@ -57,8 +58,8 @@ export const ColorSwatchTestScreen: React.FC = () => {
         </View>
 
         {/* Size Variants */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <SectionHeading>Size Variants</SectionHeading>
+        <View style={themedStyles.section}>
+          <Title size="sm">Size Variants</Title>
 
           <FlexColumn style={commonTestStyles.subSection}>
             <Label>Small Size:</Label>
@@ -107,8 +108,8 @@ export const ColorSwatchTestScreen: React.FC = () => {
         </View>
 
         {/* States */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <SectionHeading>States</SectionHeading>
+        <View style={themedStyles.section}>
+          <Title size="sm">States</Title>
 
           <FlexColumn style={commonTestStyles.subSection}>
             <Label>Active State:</Label>
@@ -141,8 +142,8 @@ export const ColorSwatchTestScreen: React.FC = () => {
         </View>
 
         {/* All Colors Grid */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <SectionHeading>All Theme Colors</SectionHeading>
+        <View style={themedStyles.section}>
+          <Title size="sm">All Theme Colors</Title>
           <Label>Complete color palette:</Label>
 
           <FlexRow wrap style={commonTestStyles.colorGrid}>
@@ -160,27 +161,49 @@ export const ColorSwatchTestScreen: React.FC = () => {
         </View>
 
         {/* Implementation Notes */}
-        <View style={[commonTestStyles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <Text size="base" weight="semibold" variant="strong">Mobile Notes</Text>
-          <Text size="sm" variant="default">
-            • Uses TouchableOpacity for native press feedback
-          </Text>
-          <Text size="sm" variant="default">
-            • Dynamic colors from theme system
-          </Text>
-          <Text size="sm" variant="default">
-            • Shadow effects for active state visibility
-          </Text>
-          <Text size="sm" variant="default">
-            • Touch targets optimized for mobile (min 24x24)
-          </Text>
-          <Text size="sm" variant="default">
-            • Will integrate with AccentColorSwitcher component
-          </Text>
+        <View style={themedStyles.notesSection}>
+          <FlexColumn gap="sm">
+            <Title size="sm">Mobile Notes</Title>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Uses TouchableOpacity for native press feedback</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Dynamic colors from theme system</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Shadow effects for active state visibility</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Touch targets optimized for mobile (min 24x24)</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Will integrate with AccentColorSwitcher component</Text>
+              </View>
+            </FlexRow>
+          </FlexColumn>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-// All styles now centralized in commonTestStyles
+

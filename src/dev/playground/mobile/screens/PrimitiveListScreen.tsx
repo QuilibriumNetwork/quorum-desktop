@@ -6,7 +6,7 @@ import ThemeRadioGroup from '../components/ThemeRadioGroup';
 import AccentColorSwitcher from '../components/AccentColorSwitcher';
 import { Icon } from '../components/primitives/Icon';
 import { IconName } from '../components/primitives/Icon/types';
-import { FlexColumn, SectionHeading, Text } from '../components/primitives';
+import { FlexColumn, FlexRow, Text, Title } from '../components/primitives';
 import { commonTestStyles } from '../styles/commonTestStyles';
 
 interface PrimitiveItem {
@@ -126,11 +126,6 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
           borderRadius: 12,
           padding: 16,
           marginBottom: 12,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-          elevation: 3,
         },
       ]}
       onPress={primitive.onPress}
@@ -145,11 +140,11 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
           color={theme.colors.accent[500]}
           style={{ marginRight: 12 }}
         />
-        <Text size="xl" variant="strong">
+        <Text size="xl">
           {primitive.title}
         </Text>
       </View>
-      <Text size="sm" variant="default">
+      <Text size="sm" variant="subtle">
         {primitive.description}
       </Text>
     </TouchableOpacity>
@@ -164,20 +159,16 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <View style={commonTestStyles.header}>
-          <View style={commonTestStyles.titleContainer}>
-            <Icon
-              name="tools"
-              size="xl"
-              color={theme.colors.text.strong}
-              style={{ marginRight: 12 }}
-            />
-            <Text size="3xl" variant="strong">
-              Primitives Playground
-            </Text>
+          <View style={[commonTestStyles.titleContainer, { alignItems: 'center' }]}>
+            <FlexColumn align="center">
+              <Text size="3xl" weight="bold" color={theme.colors.accent[500]}>
+                Quorum
+              </Text>
+              <Text size="3xl" weight="normal">
+                Primitives Playground
+              </Text>
+            </FlexColumn>
           </View>
-          <Text>
-            Cross-platform primitive components for mobile architecture
-          </Text>
 
           <View
             style={[
@@ -191,7 +182,6 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
             ]}
           >
             <FlexColumn gap="md" align="center">
-              {' '}
               <ThemeRadioGroup horizontal />
               <AccentColorSwitcher />
             </FlexColumn>
@@ -203,7 +193,7 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
             <Text size="2xl" variant="strong">
               Available Tests
             </Text>
-            <Text variant="subtle">
+            <Text size="sm">
               Tap any card to test that primitive on React Native
             </Text>
           </View>
@@ -218,27 +208,32 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
           ]}
         >
           <View style={commonTestStyles.titleContainer}>
-            <Text size="sm" variant="strong">
+            <Title size='sm'>
               Testing Notes
-            </Text>
+            </Title>
           </View>
-          <Text size="sm" variant="default">
-            • Each primitive has both web (.web.tsx) and mobile (.native.tsx)
-            implementations
-          </Text>
-          <Text size="sm" variant="default">
-            • All primitives maintain identical APIs across platforms
-          </Text>
-          <Text size="sm" variant="default">
-            • Focus on Android testing - Expo web can be unreliable
-          </Text>
-          <Text size="sm" variant="default">
-            • Use shake gesture to open developer menu if needed
-          </Text>
+          <FlexRow gap="xs" align="start">
+            <Text size="sm" variant="default">•</Text>
+            <View style={{flex: 1}}>
+              <Text size="sm" variant="default">Each primitive has both web (.web.tsx) and mobile (.native.tsx) implementations</Text>
+            </View>
+          </FlexRow>
+          <FlexRow gap="xs" align="start">
+            <Text size="sm" variant="default">•</Text>
+            <View style={{flex: 1}}>
+              <Text size="sm" variant="default">Focus on Android testing - Expo web can be unreliable</Text>
+            </View>
+          </FlexRow>
+          <FlexRow gap="xs" align="start">
+            <Text size="sm" variant="default">•</Text>
+            <View style={{flex: 1}}>
+              <Text size="sm" variant="default">Use shake gesture to open developer menu if needed</Text>
+            </View>
+          </FlexRow>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-// All styles now centralized in commonTestStyles
+

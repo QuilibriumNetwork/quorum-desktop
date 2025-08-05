@@ -4,20 +4,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { 
   Text, 
   Paragraph, 
-  SectionHeading, 
   Label, 
   Caption, 
   Title, 
-  InlineText,
   FlexColumn,
   FlexRow,
   Icon,
   useTheme
 } from '../components/primitives';
-import { commonTestStyles } from '../styles/commonTestStyles';
+import { commonTestStyles, createThemedStyles } from '../styles/commonTestStyles';
 
 export const TextTestScreen: React.FC = () => {
   const theme = useTheme();
+  const themedStyles = createThemedStyles(theme);
   
   return (
     <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
@@ -27,7 +26,7 @@ export const TextTestScreen: React.FC = () => {
       >
         <FlexColumn style={commonTestStyles.header}>
           <FlexRow style={commonTestStyles.titleContainer}>
-            <Icon name="pencil" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
+            <Icon name="pencil" size="xl" style={{ marginRight: 12 }} />
             <Title>Text and Typography</Title>
           </FlexRow>
           <Paragraph align="center">
@@ -36,19 +35,16 @@ export const TextTestScreen: React.FC = () => {
         </FlexColumn>
 
         {/* Typography Components Demo */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.section}>
           <FlexColumn gap="md">
-            <SectionHeading>✨ Typography Components</SectionHeading>
+            <Title size="sm">✨ Typography Components</Title>
             
             <FlexColumn gap="sm">
               <Label>Title Component:</Label>
               <Title>This is a title with automatic spacing</Title>
+              <Title size="sm">This is a small title</Title>
             </FlexColumn>
             
-            <FlexColumn gap="sm">
-              <Label>Section Heading:</Label>
-              <SectionHeading>This is a section heading</SectionHeading>
-            </FlexColumn>
             
             <FlexColumn gap="sm">
               <Label>Paragraph Component:</Label>
@@ -65,39 +61,10 @@ export const TextTestScreen: React.FC = () => {
           </FlexColumn>
         </View>
 
-        {/* Before/After Comparison */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <FlexColumn gap="md">
-            <SectionHeading>Before vs After Comparison</SectionHeading>
-            
-            <FlexColumn gap="sm">
-              <Label>❌ Old Way (verbose View wrappers):</Label>
-              <View style={{ backgroundColor: theme.colors.surface[3], padding: 12, borderRadius: 8 }}>
-                <FlexColumn gap="sm">
-                  <Text size="sm" variant="strong">Label:</Text>
-                  <Text size="base" variant="default">Content text</Text>
-                  <Text size="sm" variant="subtle">Helper text</Text>
-                </FlexColumn>
-              </View>
-            </FlexColumn>
-            
-            <FlexColumn gap="sm">
-              <Label>✅ New Way (semantic components):</Label>
-              <View style={{ backgroundColor: theme.colors.surface[3], padding: 12, borderRadius: 8 }}>
-                <FlexColumn gap="sm">
-                  <Label>Label:</Label>
-                  <InlineText size="base" variant="default">Content text</InlineText>
-                  <Caption>Helper text</Caption>
-                </FlexColumn>
-              </View>
-            </FlexColumn>
-          </FlexColumn>
-        </View>
-
         {/* Line Height & Spacing Demo */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.section}>
           <FlexColumn gap="md">
-            <SectionHeading>Automatic Line Height & Spacing</SectionHeading>
+            <Title size="sm">Automatic Line Height & Spacing</Title>
             
             <FlexColumn gap="sm">
               <Label>Multi-line text with default line height (1.4x):</Label>
@@ -128,9 +95,9 @@ export const TextTestScreen: React.FC = () => {
         </View>
 
         {/* Variants Section */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.section}>
           <FlexColumn gap="md">
-            <SectionHeading>Text Variants</SectionHeading>
+            <Title size="sm">Text Variants</Title>
 
             <FlexColumn gap="sm">
               <View style={[commonTestStyles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
@@ -171,9 +138,9 @@ export const TextTestScreen: React.FC = () => {
         </View>
 
         {/* Sizes Section */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.section}>
           <FlexColumn gap="md">
-            <SectionHeading>Text Sizes</SectionHeading>
+            <Title size="sm">Text Sizes</Title>
 
             <FlexColumn gap="sm">
               <Text size="xs">Extra small text (xs) - 12px</Text>
@@ -187,10 +154,11 @@ export const TextTestScreen: React.FC = () => {
           </FlexColumn>
         </View>
 
-        {/* Weights Section */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        
+        {/* Text Weights Section */}
+        <View style={themedStyles.section}>
           <FlexColumn gap="md">
-            <SectionHeading>Text Weights</SectionHeading>
+            <Title size="sm">Text Weights</Title>
 
             <FlexColumn gap="sm">
               <Text weight="normal">Normal weight (400) - Default body text</Text>
@@ -203,10 +171,39 @@ export const TextTestScreen: React.FC = () => {
           </FlexColumn>
         </View>
 
-        {/* Alignment Section */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        {/* Title Sizes & Weights Section */}
+        <View style={themedStyles.section}>
           <FlexColumn gap="md">
-            <SectionHeading>Text Alignment</SectionHeading>
+            <Title size="sm">Title Component</Title>
+
+            <FlexColumn gap="sm">
+              <Label>Title with different sizes:</Label>
+              <Title size="sm">Small title (sm)</Title>
+              <Title size="lg">Large title (lg)</Title>
+              <Title size="xl">Extra large title (xl)</Title>
+            </FlexColumn>
+
+            <FlexColumn gap="sm">  
+              <Label>Title with different weights:</Label>
+              <Title weight="normal">Normal weight title</Title>
+              <Title weight="medium">Medium weight title</Title>
+              <Title weight="semibold">Semibold weight title</Title>
+              <Title weight="bold">Bold weight title</Title>
+            </FlexColumn>
+
+            <FlexColumn gap="sm">
+              <Label>Combined size and weight:</Label>
+              <Title size="sm" weight="semibold">Small semibold (typical section heading)</Title>
+              <Title size="lg" weight="bold">Large bold title</Title>
+            </FlexColumn>
+          </FlexColumn>
+        </View>
+
+
+        {/* Alignment Section */}
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Text Alignment</Title>
 
             <FlexColumn gap="sm">
               <View style={[commonTestStyles.alignmentBox, { backgroundColor: theme.colors.surface[3], borderColor: theme.colors.border.default }]}>
@@ -225,9 +222,9 @@ export const TextTestScreen: React.FC = () => {
         </View>
 
         {/* Interactive Section */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.section}>
           <FlexColumn gap="md">
-            <SectionHeading>Interactive Text</SectionHeading>
+            <Title size="sm">Interactive Text</Title>
 
             <FlexColumn gap="sm">
               <View style={{ padding: 12, borderRadius: 8, backgroundColor: theme.colors.surface[3] }}>
@@ -245,7 +242,7 @@ export const TextTestScreen: React.FC = () => {
                   color={theme.colors.accent[600]}
                   onPress={() => {}}
                 >
-                  Custom blue link-style text
+                  Custom accent color link-style text
                 </Text>
               </View>
             </FlexColumn>
@@ -253,9 +250,9 @@ export const TextTestScreen: React.FC = () => {
         </View>
 
         {/* Multiline Section */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.section}>
           <FlexColumn gap="md">
-            <SectionHeading>Multiline & Truncation</SectionHeading>
+            <Title size="sm">Multiline Text</Title>
 
             <FlexColumn gap="sm">
               <View style={commonTestStyles.testGroup}>
@@ -266,13 +263,6 @@ export const TextTestScreen: React.FC = () => {
                   text should be cut off with ellipsis.
                 </Text>
               </View>
-
-              <View style={commonTestStyles.testGroup}>
-                <Text numberOfLines={1} variant="subtle">
-                  Single line truncation: This very long text will be truncated to
-                  a single line with ellipsis at the end no matter how long it is.
-                </Text>
-              </View>
             </FlexColumn>
           </FlexColumn>
         </View>
@@ -280,54 +270,80 @@ export const TextTestScreen: React.FC = () => {
         {/* React Native Requirements */}
         <View style={[commonTestStyles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
           <FlexColumn gap="md">
-            <SectionHeading>Mobile Notes & Improvements</SectionHeading>
+            <Title size="sm">Mobile Notes</Title>
 
-            <FlexColumn gap="xs">
-              <Text variant="default">
-                ✅ Enhanced Text primitive now includes:
-              </Text>
-              
-              <FlexColumn gap="xs">
-                <Text variant="default">
-                  • Automatic line height (1.4x font size) for better readability
-                </Text>
-                <Text variant="default">
-                  • Built-in spacing props (marginTop, marginBottom) to reduce View wrappers
-                </Text>
-                <Text variant="default">
-                  • Semantic components: Paragraph, SectionHeading, Label, Caption, Title
-                </Text>
-                <Text variant="default">
-                  • Custom lineHeight support for specific design needs
-                </Text>
-                <Text variant="default">
-                  • Better Android alignment with includeFontPadding: false
-                </Text>
-                <Text variant="default">
-                  • Maintains React Native compatibility and cross-platform consistency
-                </Text>
-              </FlexColumn>
-            </FlexColumn>
+            <FlexRow gap="xs" align="start">
+              <Text variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text variant="default">Automatic line height (1.4x font size) for better readability</Text>
+              </View>
+            </FlexRow>
             
-            <FlexColumn gap="xs">
-              <Text variant="default">
-                💡 Usage Guidelines:
-              </Text>
-              <FlexColumn gap="xs">
-                <Text variant="default">
-                  • Use semantic components (Paragraph, Label, etc.) for common patterns
-                </Text>
-                <Text variant="default">
-                  • Use marginTop/marginBottom props for custom spacing when needed
-                </Text>
-                <Text variant="default">
-                  • InlineText has no automatic spacing for use within containers
-                </Text>
-                <Text variant="default">
-                  • This reduces View wrapper verbosity while maintaining proper spacing
-                </Text>
-              </FlexColumn>
-            </FlexColumn>
+            <FlexRow gap="xs" align="start">
+              <Text variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text variant="default">Built-in spacing props (marginTop, marginBottom) to reduce View wrappers</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text variant="default">Semantic components: Paragraph, Title (with size/weight props), Label, Caption</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text variant="default">Custom lineHeight support for specific design needs</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text variant="default">Better Android alignment with includeFontPadding: false</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start" marginBottom="18">
+              <Text variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text variant="default">Maintains React Native compatibility and cross-platform consistency</Text>
+              </View>
+            </FlexRow>
+
+            <Title size="sm">Usage Guidelines</Title>
+            
+            <FlexRow gap="xs" align="start">
+              <Text variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text variant="default">Use semantic components (Paragraph, Label, etc.) for common patterns</Text>
+              </View>
+            </FlexRow>
+          
+            
+            <FlexRow gap="xs" align="start">
+              <Text variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text variant="default">Use marginTop/marginBottom props for custom spacing when needed</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text variant="default">InlineText has no automatic spacing for use within containers</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text variant="default">This reduces View wrapper verbosity while maintaining proper spacing</Text>
+              </View>
+            </FlexRow>
           </FlexColumn>
         </View>
       </ScrollView>

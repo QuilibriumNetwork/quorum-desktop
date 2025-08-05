@@ -1,28 +1,23 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Icon, useTheme, Text, SectionHeading, Paragraph } from '../components/primitives';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Icon, useTheme, Text, Paragraph, Title } from '../components/primitives';
 import { FlexRow, FlexColumn } from '../components/primitives';
 import { commonTestStyles } from '../styles/commonTestStyles';
 
 export const IconTestScreen: React.FC = () => {
-  const insets = useSafeAreaInsets();
   const theme = useTheme();
   const { colors } = theme;
 
   return (
-    <ScrollView
-      style={[commonTestStyles.container, { backgroundColor: colors.surface[0] }]}
-      contentContainerStyle={{
-        paddingTop: insets.top + 20,
-        paddingBottom: insets.bottom + 20,
-        paddingHorizontal: 20,
-      }}
+    <SafeAreaView
+      style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}
     >
+      <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
       <FlexColumn style={commonTestStyles.header}>
-        <FlexRow gap="sm" align="center" style={commonTestStyles.titleContainer}>
-          <Icon name="target" size="xl" color={theme.colors.text.strong} />
-          <Text size="2xl" weight="bold" variant="strong">Icon</Text>
+        <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+          <Icon name="target" size="xl" style={{ marginTop: 2 }}/>
+          <Title>Icon</Title>
         </FlexRow>
         <Paragraph align="center">
           Cross-platform icon system using FontAwesome with unified API
@@ -31,7 +26,7 @@ export const IconTestScreen: React.FC = () => {
 
       {/* Basic Icons */}
       <FlexColumn style={commonTestStyles.sectionSimple}>
-        <SectionHeading>Basic Icons</SectionHeading>
+        <Title size="sm">Basic Icons</Title>
 
         <FlexRow wrap gap="md" style={commonTestStyles.iconGrid}>
           <FlexColumn align="center" style={commonTestStyles.iconItem}>
@@ -51,7 +46,7 @@ export const IconTestScreen: React.FC = () => {
 
       {/* Theme Icons */}
       <FlexColumn style={commonTestStyles.sectionSimple}>
-        <SectionHeading>Theme Icons</SectionHeading>
+        <Title size="sm">Theme Icons</Title>
 
         <FlexRow wrap gap="md" style={commonTestStyles.iconGrid}>
           <FlexColumn align="center" style={commonTestStyles.iconItem}>
@@ -71,7 +66,7 @@ export const IconTestScreen: React.FC = () => {
 
       {/* Sizes */}
       <FlexColumn style={commonTestStyles.sectionSimple}>
-        <SectionHeading>Icon Sizes</SectionHeading>
+        <Title size="sm">Icon Sizes</Title>
 
         <FlexRow wrap justify="between" align="center" style={commonTestStyles.sizeRow}>
           <FlexColumn align="center" style={commonTestStyles.sizeItem}>
@@ -91,7 +86,7 @@ export const IconTestScreen: React.FC = () => {
             <Text size="xs" variant="subtle">lg (20px)</Text>
           </FlexColumn>
           <FlexColumn align="center" style={commonTestStyles.sizeItem}>
-            <Icon name="heart" size="xl" />
+            <Icon name="heart" size="xl"/>
             <Text size="xs" variant="subtle">xl (24px)</Text>
           </FlexColumn>
           <FlexColumn align="center" style={commonTestStyles.sizeItem}>
@@ -103,7 +98,7 @@ export const IconTestScreen: React.FC = () => {
 
       {/* Actions & Communication */}
       <FlexColumn style={commonTestStyles.sectionSimple}>
-        <SectionHeading>Actions & Communication</SectionHeading>
+        <Title size="sm">Actions & Communication</Title>
 
         <FlexRow wrap gap="md" style={commonTestStyles.iconGrid}>
           <FlexColumn align="center" style={commonTestStyles.iconItem}>
@@ -135,7 +130,7 @@ export const IconTestScreen: React.FC = () => {
 
       {/* Navigation */}
       <FlexColumn style={commonTestStyles.sectionSimple}>
-        <SectionHeading>Navigation Icons</SectionHeading>
+        <Title size="sm">Navigation Icons</Title>
 
         <FlexRow wrap gap="md" style={commonTestStyles.iconGrid}>
           <FlexColumn align="center" style={commonTestStyles.iconItem}>
@@ -167,7 +162,7 @@ export const IconTestScreen: React.FC = () => {
 
       {/* User & Social */}
       <FlexColumn style={commonTestStyles.sectionSimple}>
-        <SectionHeading>User & Social Icons</SectionHeading>
+        <Title size="sm">User & Social Icons</Title>
 
         <FlexRow wrap gap="md" style={commonTestStyles.iconGrid}>
           <FlexColumn align="center" style={commonTestStyles.iconItem}>
@@ -268,8 +263,9 @@ export const IconTestScreen: React.FC = () => {
           </FlexRow>
         </FlexColumn>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
-// All styles now centralized in commonTestStyles
+

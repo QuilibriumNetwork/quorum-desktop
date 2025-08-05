@@ -12,16 +12,6 @@ export const Paragraph: React.FC<Omit<NativeTextProps, 'marginBottom'>> = (props
   <Text {...props} marginBottom={16} />
 );
 
-// Section heading with spacing
-export const SectionHeading: React.FC<Omit<NativeTextProps, 'size' | 'weight' | 'variant' | 'marginBottom'>> = (props) => (
-  <Text 
-    {...props} 
-    size="lg" 
-    weight="semibold" 
-    variant="strong" 
-    marginBottom={12}
-  />
-);
 
 // Label with minimal spacing
 export const Label: React.FC<Omit<NativeTextProps, 'size' | 'variant' | 'marginBottom'>> = (props) => (
@@ -43,14 +33,19 @@ export const Caption: React.FC<Omit<NativeTextProps, 'size' | 'variant' | 'margi
   />
 );
 
-// Title with proper spacing
-export const Title: React.FC<Omit<NativeTextProps, 'size' | 'weight' | 'variant' | 'marginBottom'>> = (props) => (
+// Title with size and weight options
+export const Title: React.FC<Omit<NativeTextProps, 'size' | 'weight' | 'variant' | 'marginBottom'> & { size?: 'sm' | 'md' | 'lg' | 'xl'; weight?: 'normal' | 'medium' | 'semibold' | 'bold' }> = ({ size = 'lg', weight = 'bold', ...props }) => (
   <Text 
     {...props} 
-    size="2xl" 
-    weight="bold" 
+    size={size === 'sm' ? 'lg' : size === 'md' ? 'xl' : size === 'lg' ? '2xl' : '3xl'}
+    weight={weight} 
     variant="strong" 
-    marginBottom={8}
+    marginBottom={
+      size === 'sm' ? 8 : 
+      size === 'md' ? 12 : 
+      size === 'lg' ? 16 : 
+      20
+    }
   />
 );
 

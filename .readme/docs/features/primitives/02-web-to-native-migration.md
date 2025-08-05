@@ -90,7 +90,7 @@ const UserCard = ({ user }) => (
     }}
   >
     <FlexRow gap="md" align="center">
-      <Icon name="user" size="lg" color={theme.colors.text.strong} />
+      <Icon name="user" size="lg" />
       <FlexColumn gap="xs">
         <Text size="lg" weight="semibold" variant="strong">{user.name}</Text>
         <Text size="sm" variant="subtle">{user.email}</Text>
@@ -243,7 +243,7 @@ import { Title, Paragraph, Text } from '../components/primitives/Text';
 | Web CSS Class | Native Component | Props |
 |---------------|------------------|-------|
 | `.text-3xl.font-bold` | `<Title>` | `size="3xl" weight="bold"` |
-| `.text-xl.font-semibold` | `<SectionHeading>` | `size="xl" weight="semibold"` |
+| `.text-xl.font-semibold` | `<Title size="sm">` | `size="sm" weight="bold"` |
 | `.text-base` | `<Paragraph>` | Default paragraph styling |
 | `.text-sm.font-medium` | `<Label>` | Form labels with spacing |
 | `.text-sm.text-gray-500` | `<Caption>` | Helper/secondary text |

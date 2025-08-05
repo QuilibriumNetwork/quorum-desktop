@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import {
-  StyleSheet,
-  View,
-} from 'react-native';
+import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider, useTheme } from './components/primitives/theme';
 import Button from './components/primitives/Button';
+import { commonTestStyles, createThemedStyles } from './styles/commonTestStyles';
 import { PrimitiveListScreen } from './screens/PrimitiveListScreen';
 import { PrimitivesTestScreen } from './screens/PrimitivesTestScreen';
 import { TextTestScreen } from './screens/TextTestScreen';
@@ -40,13 +38,14 @@ type Screen =
 function ThemedAppContent() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('list');
   const theme = useTheme();
+  const themedStyles = createThemedStyles(theme);
 
   const renderBackButton = () => {
     if (currentScreen === 'list') return null;
 
     return (
-      <View style={[styles.backBar, { backgroundColor: theme.colors.bg.app }]}>
-        <View style={styles.buttonContainer}>
+      <View style={themedStyles.backBar}>
+        <View style={commonTestStyles.backButtonContainer}>
           <Button
             type="secondary"
             iconName="arrow-left"
@@ -97,7 +96,7 @@ function ThemedAppContent() {
   };
 
   return (
-    <View style={[styles.appContainer, { backgroundColor: theme.colors.bg.app }]}>
+    <View style={[commonTestStyles.appContainer, { backgroundColor: theme.colors.bg.app }]}>
       {renderBackButton()}
       {renderScreen()}
       <StatusBar style="auto" />
@@ -116,20 +115,3 @@ export default function App() {
   );
 }
 
-const styles = StyleSheet.create({
-  appContainer: {
-    flex: 1,
-    // backgroundColor removed - now uses theme.colors.bg.app dynamically
-  },
-  backBar: {
-    backgroundColor: '#ffffff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-    paddingTop: 50,
-    paddingBottom: 15,
-    paddingHorizontal: 20,
-  },
-  buttonContainer: {
-    alignSelf: 'flex-start',
-  },
-});

@@ -5,17 +5,18 @@ import {
   useTheme,
   Switch,
   Text,
-  SectionHeading,
   Paragraph,
   Label,
+  Title,
   Icon,
   FlexRow,
   FlexColumn,
 } from '../components/primitives';
-import { commonTestStyles } from '../styles/commonTestStyles';
+import { commonTestStyles, createThemedStyles } from '../styles/commonTestStyles';
 
 export const SwitchTestScreen: React.FC = () => {
   const theme = useTheme();
+  const themedStyles = createThemedStyles(theme);
   const [basicSwitch, setBasicSwitch] = useState(false);
   const [disabledSwitchOff, setDisabledSwitchOff] = useState(false);
   const [disabledSwitchOn, setDisabledSwitchOn] = useState(true);
@@ -26,16 +27,16 @@ export const SwitchTestScreen: React.FC = () => {
     <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <FlexColumn style={commonTestStyles.header}>
-          <FlexRow style={commonTestStyles.titleContainer}>
-            <Icon name="sliders" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
-            <SectionHeading>Switch</SectionHeading>
+          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+            <Icon name="sliders" size="xl" style={{ marginTop: 2 }} />
+            <Title>Switch</Title>
           </FlexRow>
           <Paragraph align="center">
             Cross-platform toggle switch with multiple sizes and variants
           </Paragraph>
         </FlexColumn>
 
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.section}>
           <Label>
             Basic Switch
           </Label>
@@ -78,7 +79,7 @@ export const SwitchTestScreen: React.FC = () => {
           </FlexColumn>
         </View>
 
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.section}>
           <Label>
             Mobile Switch Size
           </Label>
@@ -95,15 +96,51 @@ export const SwitchTestScreen: React.FC = () => {
           </FlexRow>
         </View>
 
-        <View style={[commonTestStyles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
-          <FlexColumn gap="md">
-            <Label>Mobile Notes</Label>
-            <Text size="sm" variant="default">• Web: Custom styled switch with smooth animations and accent color</Text>
-            <Text size="sm" variant="default">• Mobile: Custom switch component (no Android ripple effects)</Text>
-            <Text size="sm" variant="default">• Single size optimized for mobile (52×28px matches platform standards)</Text>
-            <Text size="sm" variant="default">• Uses theme-aware surface colors (adapts to light/dark themes)</Text>
-            <Text size="sm" variant="default">• Touch targets are optimized for mobile accessibility</Text>
-            <Text size="sm" variant="default">• Smooth animated transitions with proper spacing consistency</Text>
+        <View style={themedStyles.notesSection}>
+          <FlexColumn gap="sm">
+            <Title size="sm">Mobile Notes</Title>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Web: Custom styled switch with smooth animations and accent color</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Mobile: Custom switch component (no Android ripple effects)</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Single size optimized for mobile (52×28px matches platform standards)</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Uses theme-aware surface colors (adapts to light/dark themes)</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Touch targets are optimized for mobile accessibility</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm" variant="default">Smooth animated transitions with proper spacing consistency</Text>
+              </View>
+            </FlexRow>
           </FlexColumn>
         </View>
       </ScrollView>

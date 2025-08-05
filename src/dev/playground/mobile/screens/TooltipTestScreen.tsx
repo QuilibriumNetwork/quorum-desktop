@@ -1,214 +1,200 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
-import { Tooltip, Text, Icon } from '../components/primitives';
-import { commonTestStyles } from '../styles/commonTestStyles';
+import { Tooltip, Text, Icon, Title, FlexColumn, FlexRow, Button } from '../components/primitives';
+import { commonTestStyles, createThemedStyles } from '../styles/commonTestStyles';
 
 export const TooltipTestScreen: React.FC = () => {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
   const { colors } = theme;
+  const themedStyles = createThemedStyles(theme);
 
   return (
-    <ScrollView
+    <SafeAreaView
       style={[
         commonTestStyles.container,
         { backgroundColor: theme.colors.bg.app },
       ]}
-      contentContainerStyle={{
-        paddingTop: insets.top + 20,
-        paddingBottom: insets.bottom + 20,
-        paddingHorizontal: 20,
-      }}
     >
+      <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
       <View style={{ alignItems: 'center', marginBottom: 32 }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 8,
-          }}
-        >
+        <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start', marginBottom: 8 }}>
           <Icon
             name="comment-dots"
             size="xl"
-            color={theme.colors.text.strong}
-            style={{ marginRight: 12 }}
+            style={{ marginTop: 2 }}
           />
-          <Text size="2xl" weight="bold" variant="strong">
-            Tooltip
-          </Text>
-        </View>
-        <View style={{ marginBottom: 24 }}>
-          <Text size="base" variant="default" align="center">
-            Cross-platform tooltip for info icons in modals
-          </Text>
-        </View>
+          <Title>Tooltip</Title>
+        </FlexRow>
+        <Text size="base" variant="default" align="center">
+          Cross-platform tooltip for info icons in modals
+        </Text>
       </View>
 
       {/* Basic Tooltips */}
-      <View style={commonTestStyles.sectionSimple}>
-        <View style={{ marginBottom: 16 }}>
-          <Text size="lg" weight="semibold" variant="strong">
-            Basic Tooltips
-          </Text>
-        </View>
+      <View style={themedStyles.section}>
+        <FlexColumn gap="md">
+          <Title size="sm">Basic Tooltips</Title>
 
-        <View style={[commonTestStyles.componentRow, { gap: 16 }]}>
-          <Tooltip
-            id="basic-tooltip"
-            content="This is a basic tooltip that appears when you tap this button. Tap outside or the X button to close."
-            place="top"
-          >
-            <View
-              style={[
-                commonTestStyles.tooltipButton,
-                { backgroundColor: colors.accent.DEFAULT },
-              ]}
+          <FlexRow gap="md" style={{ justifyContent: 'center' }}>
+            <Tooltip
+              id="basic-tooltip"
+              content="This is a basic tooltip that appears when you tap this button. Tap outside or the X button to close."
+              place="top"
             >
-              <Text size="base" weight="medium" color="white">
+              <Button
+                onClick={() => {}}
+                type="primary"
+                size="normal"
+              >
                 Tap for Info
-              </Text>
-            </View>
-          </Tooltip>
+              </Button>
+            </Tooltip>
 
-          <Tooltip
-            id="info-icon-tooltip"
-            content="This tooltip simulates the info icons used in UserSettingsModal and SpaceEditor. The tooltip opens with a short tap."
-            place="bottom"
-            maxWidth={280}
-          >
-            <View
-              style={[
-                commonTestStyles.infoIcon,
-                { backgroundColor: colors.accent.DEFAULT },
-              ]}
+            <Tooltip
+              id="info-icon-tooltip"
+              content="This tooltip simulates the info icons used in UserSettingsModal and SpaceEditor. The tooltip opens with a short tap."
+              place="bottom"
+              maxWidth={280}
             >
-              <Text size="sm" weight="bold" color="white">
-                i
-              </Text>
-            </View>
-          </Tooltip>
-        </View>
+              <View
+                style={[
+                  commonTestStyles.infoIcon,
+                  { backgroundColor: colors.accent.DEFAULT },
+                ]}
+              >
+                <Text size="sm" weight="bold" color="white">
+                  i
+                </Text>
+              </View>
+            </Tooltip>
+          </FlexRow>
+        </FlexColumn>
       </View>
 
       {/* Positioning Examples */}
-      <View style={commonTestStyles.sectionSimple}>
-        <View style={{ marginBottom: 16 }}>
-          <Text size="lg" weight="semibold" variant="strong">
-            Positioning Options
-          </Text>
-        </View>
-        <View style={{ marginBottom: 16 }}>
+      <View style={themedStyles.section}>
+        <FlexColumn gap="md">
+          <Title size="sm">Positioning Options</Title>
           <Text size="sm" variant="subtle">
             Each button is tested individually with proper spacing:
           </Text>
-        </View>
 
-        <View
-          style={[
-            commonTestStyles.positioningTestContainer,
-            { alignItems: 'center', gap: 20 },
-          ]}
-        >
-          {/* Top positioning test */}
-          <Tooltip
-            id="tooltip-top"
-            content="This tooltip should appear above the button without covering it"
-            place="top"
-          >
-            <View
-              style={[
-                commonTestStyles.positionButton,
-                { backgroundColor: colors.surface[3] },
-              ]}
+          <FlexColumn gap="lg" align="center">
+            {/* Top positioning test */}
+            <Tooltip
+              id="tooltip-top"
+              content="This tooltip should appear above the button without covering it"
+              place="top"
             >
-              <Text size="xs" variant="default">
+              <Button
+                onClick={() => {}}
+                type="secondary"
+                size="small"
+              >
                 Top Test
-              </Text>
-            </View>
-          </Tooltip>
+              </Button>
+            </Tooltip>
 
-          {/* Right positioning test */}
-          <Tooltip id="tooltip-right" content="Right" place="right">
-            <View
-              style={[
-                commonTestStyles.positionButton,
-                { backgroundColor: colors.surface[3] },
-              ]}
-            >
-              <Text size="xs" variant="default">
+            {/* Right positioning test */}
+            <Tooltip id="tooltip-right" content="Right" place="right">
+              <Button
+                onClick={() => {}}
+                type="secondary"
+                size="small"
+              >
                 Right Test
-              </Text>
-            </View>
-          </Tooltip>
+              </Button>
+            </Tooltip>
 
-          {/* Bottom positioning test */}
-          <Tooltip
-            id="tooltip-bottom"
-            content="This tooltip should appear below the button, close but not too far"
-            place="bottom"
-          >
-            <View
-              style={[
-                commonTestStyles.positionButton,
-                { backgroundColor: colors.surface[3] },
-              ]}
+            {/* Bottom positioning test */}
+            <Tooltip
+              id="tooltip-bottom"
+              content="This tooltip should appear below the button, close but not too far"
+              place="bottom"
             >
-              <Text size="xs" variant="default">
+              <Button
+                onClick={() => {}}
+                type="secondary"
+                size="small"
+              >
                 Bottom Test
-              </Text>
-            </View>
-          </Tooltip>
+              </Button>
+            </Tooltip>
 
-          {/* Left positioning test */}
-          <Tooltip id="tooltip-left" content="Left" place="left">
-            <View
-              style={[
-                commonTestStyles.positionButton,
-                { backgroundColor: colors.surface[3] },
-              ]}
-            >
-              <Text size="xs" variant="default">
+            {/* Left positioning test */}
+            <Tooltip id="tooltip-left" content="Left" place="left">
+              <Button
+                onClick={() => {}}
+                type="secondary"
+                size="small"
+              >
                 Left Test
-              </Text>
-            </View>
-          </Tooltip>
-        </View>
+              </Button>
+            </Tooltip>
+          </FlexColumn>
+        </FlexColumn>
       </View>
 
       {/* Testing Notes */}
-      <View
-        style={[
-          commonTestStyles.notesSection,
-          { backgroundColor: colors.surface[3] },
-        ]}
-      >
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 8,
-          }}
-        >
-          <Text size="base" weight="semibold" variant="strong">
-            Mobile Notes
-          </Text>
-        </View>
-        <Text size="sm" variant="default">
-          • Custom modal-based tooltip with positioning{'\n'}• Short tap opens
-          tooltip, tap outside or X button closes{'\n'}• Automatically positions
-          to stay within screen bounds{'\n'}• Default close button on mobile for
-          better UX{'\n'}• Ideal for info icons in UserSettingsModal and
-          SpaceEditor{'\n'}• Supports all 12 positioning options{'\n'}•
-          Configurable max width for content wrapping
-        </Text>
+      <View style={themedStyles.notesSection}>
+        <FlexColumn gap="sm">
+          <Title size="sm">Mobile Notes</Title>
+          
+          <FlexRow gap="xs" align="start">
+            <Text size="sm" variant="default">•</Text>
+            <View style={{flex: 1}}>
+              <Text size="sm" variant="default">Custom modal-based tooltip with positioning</Text>
+            </View>
+          </FlexRow>
+          
+          <FlexRow gap="xs" align="start">
+            <Text size="sm" variant="default">•</Text>
+            <View style={{flex: 1}}>
+              <Text size="sm" variant="default">Short tap opens tooltip, tap outside or X button closes</Text>
+            </View>
+          </FlexRow>
+          
+          <FlexRow gap="xs" align="start">
+            <Text size="sm" variant="default">•</Text>
+            <View style={{flex: 1}}>
+              <Text size="sm" variant="default">Automatically positions to stay within screen bounds</Text>
+            </View>
+          </FlexRow>
+          
+          <FlexRow gap="xs" align="start">
+            <Text size="sm" variant="default">•</Text>
+            <View style={{flex: 1}}>
+              <Text size="sm" variant="default">Default close button on mobile for better UX</Text>
+            </View>
+          </FlexRow>
+          
+          <FlexRow gap="xs" align="start">
+            <Text size="sm" variant="default">•</Text>
+            <View style={{flex: 1}}>
+              <Text size="sm" variant="default">Ideal for info icons in UserSettingsModal and SpaceEditor</Text>
+            </View>
+          </FlexRow>
+          
+          <FlexRow gap="xs" align="start">
+            <Text size="sm" variant="default">•</Text>
+            <View style={{flex: 1}}>
+              <Text size="sm" variant="default">Supports all 12 positioning options</Text>
+            </View>
+          </FlexRow>
+          
+          <FlexRow gap="xs" align="start">
+            <Text size="sm" variant="default">•</Text>
+            <View style={{flex: 1}}>
+              <Text size="sm" variant="default">Configurable max width for content wrapping</Text>
+            </View>
+          </FlexRow>
+        </FlexColumn>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
-// All styles now centralized in commonTestStyles
+

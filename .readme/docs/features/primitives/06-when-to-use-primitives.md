@@ -47,6 +47,52 @@ Not every component needs to use primitives. This guide helps decide when primit
 - **Text elements**: Use Text if you need semantic colors (`text-strong`, `text-subtle`)
 - **Form elements**: Use primitives for consistent validation/error states
 
+## Container vs div Decision Framework
+
+### **Use Container when:**
+
+- **Interactive containers**: Need `onClick` (web) / `onPress` (native) support
+- **Semantic spacing**: Using `padding="md"` instead of hardcoded `p-4`
+- **Cross-platform components**: Component will be used on mobile
+- **Theme integration**: Need theme background colors or consistent styling
+
+### **Use div when:**
+
+- **Simple static wrappers**: Pure layout containers with no interaction
+- **Complex SCSS patterns**: Heavy animations or specialized styling
+- **Performance-critical sections**: Where extra component abstraction matters
+- **One-off layouts**: Unique styling that won't be reused
+
+### **Examples:**
+
+```tsx
+// ✅ Good Container usage
+<Container 
+  padding="md" 
+  onClick={handleClick}
+  backgroundColor="var(--surface-1)"
+>
+  Interactive themed container
+</Container>
+
+// ✅ Good div usage  
+<div className="complex-animation-wrapper scroll-container">
+  <div className="fade-in-effect">Static content</div>
+</div>
+
+// ❌ Over-engineering with Container
+<Container>
+  <Container className="simple-wrapper">
+    <Container>Static text</Container>
+  </Container>
+</Container>
+
+// ✅ Better approach
+<div className="simple-wrapper">
+  <span>Static text</span>
+</div>
+```
+
 ### ❌ **Don't Force Primitives For:**
 
 - **Highly specialized components**: Complex animations, charts, code editors

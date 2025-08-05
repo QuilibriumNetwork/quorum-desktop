@@ -8,6 +8,22 @@
 
 Primitive components are the foundation of our cross-platform UI system. They provide a unified API that works seamlessly across web and React Native, abstracting platform differences while enabling platform-specific optimizations.
 
+## ⚠️ **Platform Requirements - IMPORTANT**
+
+### **Mobile (React Native)**
+- ✅ **Primitives are MANDATORY** - React Native requires specific components
+- ❌ **Cannot use HTML elements** (`<div>`, `<span>`, `<p>`, etc.)
+- ❌ **Cannot use CSS classes** - Must use style objects
+
+### **Web**
+- 🤔 **Primitives are RECOMMENDED** but not required
+- ✅ **Can still use raw HTML** when it makes sense
+- ✅ **Mix primitives with existing HTML/CSS** during migration
+
+### **Shared Components**
+- ✅ **Use primitives ONLY** if component must work on both web AND mobile
+- 🎯 **Otherwise, choose based on practicality** (see [When to Use Primitives](./06-when-to-use-primitives.md))
+
 ## 🎯 **Core Philosophy**
 
 ### **Mobile-First Cross-Platform Development**
@@ -86,8 +102,8 @@ xs: 4px,  sm: 8px,  md: 16px,  lg: 24px,  xl: 32px
 ### **Typography Hierarchy**
 ```tsx
 // Semantic typography components
-<Title>Main page title</Title>           // 2xl, bold, auto-spacing
-<SectionHeading>Section title</SectionHeading>  // lg, semibold, auto-spacing  
+<Title>Main page title</Title>           // lg (24px), bold, auto-spacing
+<Title size="sm">Section title</Title>   // sm (18px), bold, auto-spacing  
 <Paragraph>Body content</Paragraph>      // base, normal, auto-spacing
 <Label>Form field label</Label>          // sm, medium, auto-spacing
 <Caption>Helper text</Caption>           // sm, subtle, auto-spacing
@@ -237,8 +253,8 @@ React Native text handling is different from web. Our Text primitive solves comm
    - CSS classes → component props
 
 3. **Use Semantic Components**
-   - `<p>` → `<Paragraph>`
-   - `<h2>` → `<SectionHeading>`
+   - `<p>` → `<Paragraph>` or `<Text>`
+   - `<h2>` → `<Title size="sm">`
    - `<label>` → `<Label>`
 
 4. **Test on Mobile**

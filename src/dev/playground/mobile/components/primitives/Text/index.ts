@@ -1,7 +1,6 @@
 export { Text } from './Text.native';
 export { 
   Paragraph, 
-  SectionHeading, 
   Label, 
   Caption, 
   Title, 

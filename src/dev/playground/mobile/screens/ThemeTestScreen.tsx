@@ -3,45 +3,28 @@ import { View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Import primitives for theme testing
-import { FlexRow } from '../components/primitives/FlexRow';
-import { FlexBetween } from '../components/primitives/FlexBetween';
-import { FlexCenter } from '../components/primitives/FlexCenter';
-import Button from '../components/primitives/Button';
-import Modal from '../components/primitives/Modal';
-
-// Import theme system
-import { useTheme } from '../components/primitives/theme';
-import { Text } from '../components/primitives/Text';
-import { Icon } from '../components/primitives/Icon';
-import { commonTestStyles } from '../styles/commonTestStyles';
+import { FlexRow, FlexColumn, FlexBetween, Button, Modal, Text, Paragraph, Label, Title, Icon, useTheme } from '../components/primitives';
+import ThemeRadioGroup from '../components/ThemeRadioGroup';
+import AccentColorSwitcher from '../components/AccentColorSwitcher';
+import { commonTestStyles, createThemedStyles } from '../styles/commonTestStyles';
 
 /**
  * Mobile theme testing screen
  * Tests cross-platform theme system on React Native
  */
 export const ThemeTestScreen: React.FC = () => {
-  const theme = useTheme();
-  const { currentTheme, accentColor, toggleTheme, setAccentColor } = theme;
+  const themeContext = useTheme();
+  const { resolvedTheme, accent, colors } = themeContext;
+  const themedStyles = createThemedStyles(themeContext);
   const [showThemeModal, setShowThemeModal] = useState(false);
 
-  const accentColors = [
-    { name: 'Blue', value: 'blue' },
-    { name: 'Purple', value: 'purple' },
-    { name: 'Fuchsia', value: 'fuchsia' },
-    { name: 'Orange', value: 'orange' },
-    { name: 'Green', value: 'green' },
-    { name: 'Yellow', value: 'yellow' },
-  ];
-
   return (
-    <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
+    <SafeAreaView style={[commonTestStyles.container, { backgroundColor: colors.bg.app }]}>
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
-        <View style={commonTestStyles.titleContainer}>
-          <Icon name="palette" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
-          <Text size="2xl" weight="bold" variant="strong">
-            Theme System Test
-          </Text>
-        </View>
+        <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+          <Icon name="palette" size="xl" style={{ marginTop: 2 }} />
+          <Title>Theme System Test</Title>
+        </FlexRow>
         <View style={{ marginBottom: 24 }}>
           <Text size="base" variant="default" align="center">
             Testing cross-platform theme system on React Native
@@ -49,19 +32,16 @@ export const ThemeTestScreen: React.FC = () => {
         </View>
 
         {/* Current Theme Info */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">
-              Current Theme
-            </Text>
-          </View>
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Current Theme</Title>
 
           <FlexBetween style={{ paddingVertical: 8, marginBottom: 8 }}>
             <Text size="sm" weight="medium" variant="default">
               Mode:
             </Text>
-            <Text size="sm" weight="semibold" variant="strong" style={{ textTransform: 'capitalize' }}>
-              {currentTheme.mode}
+            <Text size="sm" weight="semibold" variant="strong">
+              {resolvedTheme}
             </Text>
           </FlexBetween>
 
@@ -69,136 +49,105 @@ export const ThemeTestScreen: React.FC = () => {
             <Text size="sm" weight="medium" variant="default">
               Accent Color:
             </Text>
-            <Text size="sm" weight="semibold" color={theme.colors.accent[500]} style={{ textTransform: 'capitalize' }}>
-              {accentColor}
+            <Text size="sm" weight="semibold" color={colors.accent[500]}>
+              {accent}
             </Text>
           </FlexBetween>
 
-          <View style={{ marginTop: 12 }}>
-            <Button
-              type="primary"
-              onClick={toggleTheme}
-            >
-              Toggle {currentTheme.mode === 'light' ? 'Dark' : 'Light'} Mode
-            </Button>
-          </View>
+            <ThemeRadioGroup horizontal />
+          </FlexColumn>
         </View>
 
         {/* Accent Colors */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">
-              Accent Colors
-            </Text>
-          </View>
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Accent Colors</Title>
 
-          <FlexRow gap="sm" wrap style={{ marginTop: 8 }}>
-            {accentColors.map((color) => (
-              <Button
-                key={color.value}
-                type={accentColor === color.value ? 'primary' : 'secondary'}
-                onClick={() => setAccentColor(color.value as any)}
-                style={{ minWidth: 80 }}
-              >
-                {color.name}
-              </Button>
-            ))}
-          </FlexRow>
+            <AccentColorSwitcher />
+          </FlexColumn>
         </View>
 
         {/* Color Samples */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">
-              Color Samples
-            </Text>
-          </View>
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Color Samples</Title>
 
-          <View style={{ gap: 16 }}>
-            {/* Text Colors */}
-            <View style={{ marginBottom: 16 }}>
-              <Text size="base" weight="semibold" variant="strong">
-                Text Colors
-              </Text>
-              <Text size="sm" weight="medium" color={theme.colors.text.strong} style={{ marginBottom: 4 }}>
-                text-strong
-              </Text>
-              <Text size="sm" weight="medium" color={theme.colors.text.main} style={{ marginBottom: 4 }}>
-                text-main
-              </Text>
-              <Text size="sm" weight="medium" color={theme.colors.text.subtle} style={{ marginBottom: 4 }}>
-                text-subtle
-              </Text>
-              <Text size="sm" weight="medium" color={theme.colors.text.muted} style={{ marginBottom: 4 }}>
-                text-muted
-              </Text>
-            </View>
+            <FlexColumn gap="lg">
+              {/* Text Colors */}
+              <FlexColumn gap="sm">
+                <Label weight="semibold">Text Colors</Label>
+                <Text size="sm" weight="medium" color={colors.text.strong}>
+                  text-strong
+                </Text>
+                <Text size="sm" weight="medium" color={colors.text.main}>
+                  text-main
+                </Text>
+                <Text size="sm" weight="medium" color={colors.text.subtle}>
+                  text-subtle
+                </Text>
+                <Text size="sm" weight="medium" color={colors.text.muted}>
+                  text-muted
+                </Text>
+              </FlexColumn>
 
-            {/* Surface Colors */}
-            <View style={{ marginBottom: 16 }}>
-              <Text size="base" weight="semibold" variant="strong">
-                Surface Colors
-              </Text>
-              <View style={[commonTestStyles.surfaceSample, { backgroundColor: theme.colors.surface[0] }]}>
-                <Text size="xs" weight="medium" color={theme.colors.text.main}>
-                  surface-0
-                </Text>
-              </View>
-              <View style={[commonTestStyles.surfaceSample, { backgroundColor: theme.colors.surface[1] }]}>
-                <Text size="xs" weight="medium" color={theme.colors.text.main}>
-                  surface-1
-                </Text>
-              </View>
-              <View style={[commonTestStyles.surfaceSample, { backgroundColor: theme.colors.surface[3] }]}>
-                <Text size="xs" weight="medium" color={theme.colors.text.main}>
-                  surface-3
-                </Text>
-              </View>
-            </View>
+              {/* Surface Colors */}
+              <FlexColumn gap="sm">
+                <Label weight="semibold">Surface Colors</Label>
+                <View style={[commonTestStyles.surfaceSample, { backgroundColor: colors.surface[0] }]}>
+                  <Text size="xs" weight="medium" color={colors.text.main}>
+                    surface-0
+                  </Text>
+                </View>
+                <View style={[commonTestStyles.surfaceSample, { backgroundColor: colors.surface[1] }]}>
+                  <Text size="xs" weight="medium" color={colors.text.main}>
+                    surface-1
+                  </Text>
+                </View>
+                <View style={[commonTestStyles.surfaceSample, { backgroundColor: colors.surface[3] }]}>
+                  <Text size="xs" weight="medium" color={colors.text.main}>
+                    surface-3
+                  </Text>
+                </View>
+              </FlexColumn>
 
-            {/* Accent Colors */}
-            <View style={{ marginBottom: 16 }}>
-              <Text size="base" weight="semibold" variant="strong">
-                Accent Variants
-              </Text>
-              <View style={[commonTestStyles.surfaceSample, { backgroundColor: theme.colors.accent[50] }]}>
-                <Text size="xs" weight="medium" color={theme.colors.text.main}>
-                  accent-50
-                </Text>
-              </View>
-              <View style={[commonTestStyles.surfaceSample, { backgroundColor: theme.colors.accent[500] }]}>
-                <Text size="xs" variant="default" color="white">
-                  accent (500)
-                </Text>
-              </View>
-              <View style={[commonTestStyles.surfaceSample, { backgroundColor: theme.colors.accent[900] }]}>
-                <Text size="xs" variant="default" color="white">
-                  accent-900
-                </Text>
-              </View>
-            </View>
-          </View>
+              {/* Accent Colors */}
+              <FlexColumn gap="sm">
+                <Label weight="semibold">Accent Variants</Label>
+                <View style={[commonTestStyles.surfaceSample, { backgroundColor: colors.accent[50] }]}>
+                  <Text size="xs" weight="medium" color={colors.text.main}>
+                    accent-50
+                  </Text>
+                </View>
+                <View style={[commonTestStyles.surfaceSample, { backgroundColor: colors.accent[500] }]}>
+                  <Text size="xs" variant="default" color="white">
+                    accent (500)
+                  </Text>
+                </View>
+                <View style={[commonTestStyles.surfaceSample, { backgroundColor: colors.accent[900] }]}>
+                  <Text size="xs" variant="default" color="white">
+                    accent-900
+                  </Text>
+                </View>
+              </FlexColumn>
+            </FlexColumn>
+          </FlexColumn>
         </View>
 
         {/* Theme Modal Test */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">
-              Theme in Modal
-            </Text>
-          </View>
-          <View style={{ marginBottom: 12 }}>
-            <Text size="sm" variant="subtle">
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Theme in Modal</Title>
+            <Paragraph size="sm" variant="subtle">
               Test theme consistency within modal components
-            </Text>
-          </View>
+            </Paragraph>
 
-          <Button
-            type="primary"
-            onClick={() => setShowThemeModal(true)}
-          >
-            Open Themed Modal
-          </Button>
+            <Button
+              type="primary"
+              onClick={() => setShowThemeModal(true)}
+            >
+              Open Themed Modal
+            </Button>
+          </FlexColumn>
         </View>
       </ScrollView>
 
@@ -209,36 +158,36 @@ export const ThemeTestScreen: React.FC = () => {
         onClose={() => setShowThemeModal(false)}
         size="medium"
       >
-        <View style={{ padding: 16 }}>
-          <Text size="sm" variant="default" style={{ lineHeight: 20, marginBottom: 16 }}>
+        <FlexColumn gap="md" style={{ padding: 16 }}>
+          <Paragraph size="sm" variant="default">
             This modal demonstrates theme consistency across components. The
             theme system ensures all colors and styles remain consistent.
-          </Text>
+          </Paragraph>
 
-          <View style={{ padding: 16, borderRadius: 8, marginBottom: 16, backgroundColor: theme.colors.surface[1] }}>
-            <Text size="base" weight="semibold" variant="strong" style={{ marginBottom: 8 }}>
-              Theme Demo
-            </Text>
-            <Text size="sm" variant="subtle" style={{ marginBottom: 4 }}>
-              Current mode: {currentTheme.mode}
-            </Text>
-            <Text size="sm" color={theme.colors.accent[500]} style={{ marginBottom: 4 }}>
-              Accent: {accentColor}
-            </Text>
+          <View style={{ padding: 16, borderRadius: 8, backgroundColor: colors.surface[1] }}>
+            <FlexColumn gap="xs">
+              <Label weight="semibold">Theme Demo</Label>
+              <Text size="sm" variant="subtle">
+                Current mode: {resolvedTheme}
+              </Text>
+              <Text size="sm" color={colors.accent[500]}>
+                Accent: {accent}
+              </Text>
+            </FlexColumn>
           </View>
 
-          <FlexRow gap="md" justify="end" style={{ marginTop: 16 }}>
+          <FlexRow gap="md" justify="end">
             <Button type="secondary" onClick={() => setShowThemeModal(false)}>
               Close
             </Button>
-            <Button type="primary" onClick={toggleTheme}>
-              Toggle Theme
-            </Button>
+            <View style={{ width: 200 }}>
+              <ThemeRadioGroup horizontal />
+            </View>
           </FlexRow>
-        </View>
+        </FlexColumn>
       </Modal>
     </SafeAreaView>
   );
 };
 
-// All styles now centralized in commonTestStyles
+

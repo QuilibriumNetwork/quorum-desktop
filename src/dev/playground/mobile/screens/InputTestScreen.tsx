@@ -6,16 +6,17 @@ import {
   Input,
   Icon,
   Text,
-  SectionHeading,
   Paragraph,
   Label,
+  Title,
   FlexColumn,
   FlexRow,
 } from '../components/primitives';
-import { commonTestStyles } from '../styles/commonTestStyles';
+import { commonTestStyles, createThemedStyles } from '../styles/commonTestStyles';
 
 export const InputTestScreen: React.FC = () => {
   const theme = useTheme();
+  const themedStyles = createThemedStyles(theme);
   const [textValue, setTextValue] = useState('');
   const [emailValue, setEmailValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
@@ -26,9 +27,9 @@ export const InputTestScreen: React.FC = () => {
     <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <FlexColumn style={commonTestStyles.header}>
-          <FlexRow gap="sm" align="center">
-            <Icon name="memo" size="xl" color={theme.colors.text.strong} />
-            <Text size="2xl" weight="bold" variant="strong">Input</Text>
+          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+            <Icon name="memo" size="xl" style={{ marginTop: 2 }}/>
+            <Title>Input</Title>
           </FlexRow>
           <Paragraph align="center">
             Testing Input primitive on React Native
@@ -36,9 +37,9 @@ export const InputTestScreen: React.FC = () => {
         </FlexColumn>
 
         {/* Basic Input Types */}
-        <View style={[commonTestStyles.sectionCompact, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.sectionCompact}>
           <FlexColumn gap="md">
-            <SectionHeading>Input Types</SectionHeading>
+            <Title size="sm">Input Types</Title>
 
             <FlexColumn gap="xs">
               <Label>Text Input:</Label>
@@ -87,9 +88,9 @@ export const InputTestScreen: React.FC = () => {
         </View>
 
         {/* Error States */}
-        <View style={[commonTestStyles.sectionCompact, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.sectionCompact}>
           <FlexColumn gap="md">
-            <SectionHeading>Error States</SectionHeading>
+            <Title size="sm">Error States</Title>
 
             <FlexColumn gap="xs">
               <Label>Input with Error (type less than 3 chars):</Label>
@@ -122,9 +123,9 @@ export const InputTestScreen: React.FC = () => {
         </View>
 
         {/* Input Variants */}
-        <View style={[commonTestStyles.sectionCompact, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.sectionCompact}>
           <FlexColumn gap="md">
-            <SectionHeading>Input Variants</SectionHeading>
+            <Title size="sm">Input Variants</Title>
 
             <FlexColumn gap="xs">
               <Label>Filled (Default):</Label>
@@ -153,9 +154,9 @@ export const InputTestScreen: React.FC = () => {
         </View>
 
         {/* Focus and Styling */}
-        <View style={[commonTestStyles.sectionCompact, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.sectionCompact}>
           <FlexColumn gap="md">
-            <SectionHeading>Focus Features</SectionHeading>
+            <Title size="sm">Focus Features</Title>
 
             <FlexColumn gap="xs">
               <Label>Auto Focus Input:</Label>
@@ -172,7 +173,7 @@ export const InputTestScreen: React.FC = () => {
         {/* Mobile Notes */}
         <View style={[commonTestStyles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
           <FlexColumn gap="sm">
-            <SectionHeading>Mobile Notes</SectionHeading>
+            <Title size="sm">Mobile Notes</Title>
             
             <FlexRow gap="xs" align="start">
               <Text size="sm" variant="default">•</Text>

@@ -927,7 +927,7 @@ export const PrimitivesPlayground: React.FC = () => {
                         onClick={() => alert('Link clicked!')}
                         className="cursor-pointer hover:underline"
                       >
-                        Custom blue link-style text
+                        Custom accent color link-style text
                       </Text>
                     </div>
                   </div>
@@ -2586,7 +2586,7 @@ export const PrimitivesPlayground: React.FC = () => {
                     <span className="text-sm text-subtle">lg</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Icon name="heart" size="xl" />
+                    <Icon name="heart" size="xl"/>
                     <span className="text-sm text-subtle">xl</span>
                   </div>
                   <div className="flex items-center gap-2">

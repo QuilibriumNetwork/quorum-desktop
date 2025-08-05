@@ -1,7 +1,6 @@
 export { Text } from './Text.web';
 export { 
   Paragraph, 
-  SectionHeading, 
   Label, 
   Caption, 
   Title, 

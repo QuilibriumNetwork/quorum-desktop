@@ -4,26 +4,27 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '../components/primitives/theme';
 import Button from '../components/primitives/Button';
 import { Icon } from '../components/primitives/Icon';
-import { Text, SectionHeading, Paragraph, FlexColumn, FlexRow } from '../components/primitives';
-import { commonTestStyles } from '../styles/commonTestStyles';
+import { Text, Paragraph, Title, FlexColumn, FlexRow } from '../components/primitives';
+import { commonTestStyles, createThemedStyles } from '../styles/commonTestStyles';
 
 export const SimpleButtonTestScreen: React.FC = () => {
   const theme = useTheme();
+  const themedStyles = createThemedStyles(theme);
   return (
     <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <FlexColumn style={commonTestStyles.header}>
-          <FlexRow align="center">
-            <Icon name="radio" size="xl" color={theme.colors.text.strong} style={{ marginRight: 12 }} />
-            <Text size="2xl" weight="bold" variant="strong">Simple Button Test</Text>
+          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+            <Icon name="radio" size="xl" style={{ marginTop: 2 }} />
+            <Title>Simple Button Test</Title>
           </FlexRow>
           <Paragraph align="center">
             Testing Button primitive without flex layouts
           </Paragraph>
         </FlexColumn>
 
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <SectionHeading>Primary Variants</SectionHeading>
+        <View style={themedStyles.section}>
+          <Title size="sm">Primary Variants</Title>
 
           <FlexColumn gap={12}>
             <Button
@@ -53,8 +54,8 @@ export const SimpleButtonTestScreen: React.FC = () => {
           </FlexColumn>
         </View>
 
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <SectionHeading>Subtle & Utility Variants</SectionHeading>
+        <View style={themedStyles.section}>
+          <Title size="sm">Subtle & Utility Variants</Title>
 
           <FlexColumn gap={12}>
             <Button type="subtle" onClick={() => {}}>
@@ -75,7 +76,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
         </View>
 
         <View style={[commonTestStyles.section, { backgroundColor: theme.colors.accent[500] }]}>
-          <SectionHeading color="white">White Variants (on colored bg)</SectionHeading>
+          <Title size="sm" color="white">White Variants (on colored bg)</Title>
 
           <FlexColumn gap={12}>
             <Button
@@ -101,8 +102,8 @@ export const SimpleButtonTestScreen: React.FC = () => {
           </FlexColumn>
         </View>
 
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <SectionHeading>Button Sizes</SectionHeading>
+        <View style={themedStyles.section}>
+          <Title size="sm">Button Sizes</Title>
 
           <FlexColumn gap={12}>
             <Button
@@ -131,8 +132,8 @@ export const SimpleButtonTestScreen: React.FC = () => {
           </FlexColumn>
         </View>
 
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <SectionHeading>Buttons with Icons</SectionHeading>
+        <View style={themedStyles.section}>
+          <Title size="sm">Buttons with Icons</Title>
 
           <FlexColumn gap={12}>
             <Button
@@ -169,8 +170,8 @@ export const SimpleButtonTestScreen: React.FC = () => {
           </FlexColumn>
         </View>
 
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
-          <SectionHeading>Disabled State</SectionHeading>
+        <View style={themedStyles.section}>
+          <Title size="sm">Disabled State</Title>
 
           <FlexColumn gap={12}>
             <Button
@@ -187,4 +188,4 @@ export const SimpleButtonTestScreen: React.FC = () => {
   );
 };
 
-// All styles now centralized in commonTestStyles
+

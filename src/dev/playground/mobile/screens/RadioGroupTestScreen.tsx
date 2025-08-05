@@ -8,17 +8,18 @@ import {
   useTheme,
   RadioGroup,
   Icon,
-  SectionHeading,
+  Title,
   Label,
   Paragraph,
   FlexColumn,
   FlexRow,
   Text
 } from '../components/primitives';
-import { commonTestStyles } from '../styles/commonTestStyles';
+import { commonTestStyles, createThemedStyles } from '../styles/commonTestStyles';
 
 export const RadioGroupTestScreen: React.FC = () => {
   const theme = useTheme();
+  const themedStyles = createThemedStyles(theme);
   const [selectedTheme, setSelectedTheme] = useState('light');
   const [selectedSize, setSelectedSize] = useState('medium');
   const [selectedOption, setSelectedOption] = useState('option1');
@@ -27,10 +28,10 @@ export const RadioGroupTestScreen: React.FC = () => {
     <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <View style={commonTestStyles.header}>
-          <FlexColumn gap="lg" align="center">
-            <FlexRow gap="md" align="center">
-              <Icon name="radio" size="xl" color={theme.colors.text.strong} />
-              <SectionHeading color="strong">RadioGroup</SectionHeading>
+          <FlexColumn gap="sm" align="center">
+            <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+              <Icon name="radio" size="xl" style={{ marginTop: 2 }}/>
+              <Title>RadioGroup</Title>
             </FlexRow>
             <Paragraph align="center">
               Accessible radio button group with icon support and flexible layouts
@@ -39,9 +40,9 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Theme Selection */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.section}>
           <FlexColumn gap="md">
-            <SectionHeading color="strong">Theme Selection</SectionHeading>
+            <Title size="sm">Theme Selection</Title>
             <Label color="strong">Using FontAwesome icons:</Label>
             <RadioGroup
               options={[
@@ -57,15 +58,15 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Horizontal Layout */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.section}>
           <FlexColumn gap="md">
-            <SectionHeading color="strong">Horizontal Layout</SectionHeading>
+            <Title size="sm">Horizontal Layout</Title>
             <Label color="strong">Horizontal layout example:</Label>
             <RadioGroup
               options={[
-                { value: 'option1', label: 'Option 1' },
-                { value: 'option2', label: 'Option 2' },
-                { value: 'option3', label: 'Option 3' },
+                { value: 'option1', label: '1' },
+                { value: 'option2', label: '2' },
+                { value: 'option3', label: '3' },
               ]}
               value={selectedSize}
               onChange={setSelectedSize}
@@ -75,9 +76,9 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Disabled Options */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.section}>
           <FlexColumn gap="md">
-            <SectionHeading color="strong">Disabled Options</SectionHeading>
+            <Title size="sm">Disabled Options</Title>
             <Label color="strong">
               Some options can be disabled:
             </Label>
@@ -94,10 +95,10 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Without Icons */}
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+        <View style={themedStyles.section}>
           <FlexColumn gap="md">
-            <SectionHeading color="strong">Without Icons</SectionHeading>
-            <Label color="strong">
+            <Title size="sm">Without Icons</Title>
+            <Label>
               Simple text-only radio group:
             </Label>
             <RadioGroup
@@ -113,9 +114,9 @@ export const RadioGroupTestScreen: React.FC = () => {
         </View>
 
         {/* Testing Notes */}
-        <View style={[commonTestStyles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
+        <View style={themedStyles.infoSection}>
           <FlexColumn gap="sm">
-            <SectionHeading color="strong">Mobile Notes</SectionHeading>
+            <Title size="sm">Mobile Notes</Title>
             <Text size="sm" variant="default">
               • Web: Native HTML radio inputs with custom styling
             </Text>
@@ -144,4 +145,4 @@ export const RadioGroupTestScreen: React.FC = () => {
   );
 };
 
-// All styles now centralized in commonTestStyles
+

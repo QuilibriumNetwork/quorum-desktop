@@ -101,7 +101,6 @@ Use these pre-configured components for common patterns:
 ```tsx
 import { 
   Paragraph, 
-  SectionHeading, 
   Label, 
   Caption, 
   Title, 
@@ -111,8 +110,8 @@ import {
 // Title with automatic spacing
 <Title>Page Title</Title>
 
-// Section heading
-<SectionHeading>Section Title</SectionHeading>
+// Section heading (using Title with sm size)
+<Title size="sm">Section Title</Title>
 
 // Paragraph with bottom margin
 <Paragraph>
@@ -145,7 +144,7 @@ import {
 #### ✅ Native Version (Recommended)
 ```tsx
 // Native approach with semantic components
-<SectionHeading>Section Title</SectionHeading>
+<Title size="sm">Section Title</Title>
 <Paragraph>
   Content paragraph with automatic spacing and line height.
 </Paragraph>

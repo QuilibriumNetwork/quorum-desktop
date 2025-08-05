@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { 
   Modal, 
   Button, 
   Icon, 
   useTheme, 
   Text, 
-  SectionHeading, 
   Paragraph, 
-  Label,
+  Title,
   FlexColumn,
   FlexRow
 } from '../components/primitives';
-import { commonTestStyles } from '../styles/commonTestStyles';
+import { commonTestStyles, createThemedStyles } from '../styles/commonTestStyles';
 
 export const ModalTestScreen: React.FC = () => {
   const theme = useTheme();
   const colors = theme.colors;
+  const themedStyles = createThemedStyles(theme);
 
   const [basicModal, setBasicModal] = useState(false);
   const [smallModal, setSmallModal] = useState(false);
@@ -29,15 +30,15 @@ export const ModalTestScreen: React.FC = () => {
 
 
   return (
-    <ScrollView
-      style={[commonTestStyles.container, { backgroundColor: colors.surface[0] }]}
-      contentContainerStyle={commonTestStyles.contentPadding}
+    <SafeAreaView
+      style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}
     >
+      <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
       <View style={commonTestStyles.header}>
-        <FlexColumn gap="md">
-          <FlexRow gap="sm" style={commonTestStyles.titleContainer}>
-            <Icon name="clipboard" size="xl" color={theme.colors.text.strong} />
-            <SectionHeading>Modal</SectionHeading>
+        <FlexColumn gap="sm" align="center">
+          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+            <Icon name="clipboard" size="xl" style={{ marginTop: 2 }}/>
+            <Title>Modal</Title>
           </FlexRow>
           <Paragraph align="center">
             Cross-platform modal that transforms to drawer on mobile
@@ -45,9 +46,9 @@ export const ModalTestScreen: React.FC = () => {
         </FlexColumn>
       </View>
 
-      <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+      <View style={themedStyles.section}>
         <FlexColumn gap="md">
-          <Label weight="semibold">Basic Modal</Label>
+          <Title size="sm">Basic Modal</Title>
           <FlexRow gap="sm">
             <Button
               type="primary"
@@ -59,9 +60,9 @@ export const ModalTestScreen: React.FC = () => {
         </FlexColumn>
       </View>
 
-      <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+      <View style={themedStyles.section}>
         <FlexColumn gap="md">
-          <Label weight="semibold">Modal Sizes</Label>
+          <Title size="sm">Modal Sizes</Title>
           <FlexColumn gap="sm">
             <Button
               type="primary"
@@ -85,9 +86,9 @@ export const ModalTestScreen: React.FC = () => {
         </FlexColumn>
       </View>
 
-      <View style={[commonTestStyles.section, { backgroundColor: theme.colors.bg.card }]}>
+      <View style={themedStyles.section}>
         <FlexColumn gap="md">
-          <Label weight="semibold">Modal Options</Label>
+          <Title size="sm">Modal Options</Title>
           <FlexColumn gap="sm">
             <Button
               type="primary"
@@ -189,8 +190,8 @@ export const ModalTestScreen: React.FC = () => {
             >
               <FlexColumn gap="sm">
                 <FlexRow gap="sm" style={{ alignItems: 'center' }}>
-                  <Icon name="mobile" size="xl" color={theme.colors.text.strong} />
-                  <Label weight="semibold">Swipe Gesture Test</Label>
+                  <Icon name="mobile" size="xl"/>
+                  <Title size="sm">Swipe Gesture Test</Title>
                 </FlexRow>
                 <Text size="sm" color={colors.text.subtle}>
                   Try swiping down from the top handle area to close this modal. The
@@ -237,9 +238,9 @@ export const ModalTestScreen: React.FC = () => {
                 }}
               >
                 <FlexColumn gap="sm">
-                  <Label weight="semibold">
+                  <Title size="sm">
                     Scrollable Section {index + 1}
-                  </Label>
+                  </Title>
                   <Paragraph>
                     This is section {index + 1} of the scrollable content. Each
                     section contains enough text and content to demonstrate the
@@ -266,7 +267,7 @@ export const ModalTestScreen: React.FC = () => {
               }}
             >
               <FlexColumn gap="sm">
-                <Label weight="semibold">Final Scrollable Section</Label>
+                <Title size="sm">Final Scrollable Section</Title>
                 <Paragraph>
                   This is the final section that demonstrates the modal content area
                   is fully scrollable when it exceeds the available height. You can
@@ -409,7 +410,7 @@ export const ModalTestScreen: React.FC = () => {
                 </Button>
 
                 <FlexColumn gap="md">
-                  <Label weight="semibold">Profile Settings</Label>
+                  <Title size="sm">Profile Settings</Title>
                   <Paragraph>
                     Configure your profile, username, avatar, and other personal
                     settings here.
@@ -430,7 +431,7 @@ export const ModalTestScreen: React.FC = () => {
                 </Button>
 
                 <FlexColumn gap="md">
-                  <Label weight="semibold">Appearance Settings</Label>
+                  <Title size="sm">Appearance Settings</Title>
                   <Paragraph>
                     Choose your theme, accent color, and other visual preferences.
                   </Paragraph>
@@ -441,38 +442,57 @@ export const ModalTestScreen: React.FC = () => {
         </View>
       </Modal>
 
-      <View
-        style={[
-          commonTestStyles.notesSection,
-          { backgroundColor: colors.surface[3] }
-        ]}
-      >
+      <View style={themedStyles.notesSection}>
         <FlexColumn gap="md">
-          <Label weight="semibold">Mobile Notes</Label>
-          <FlexColumn gap="xs">
-            <Text size="sm">
-              • Web: Centered modal with backdrop and ESC key support
-            </Text>
-            <Text size="sm">
-              • Mobile: Bottom drawer with slide-up animation and swipe gestures
-            </Text>
-            <Text size="sm">
-              • All sizes adapt to mobile screen dimensions (40%, 70%, 90%)
-            </Text>
-            <Text size="sm">
-              • Swipe gestures work from handle and header area only
-            </Text>
-            <Text size="sm">
-              • Theme-aware colors adapt to light/dark mode automatically
-            </Text>
-            <Text size="sm">
-              • Uses FontAwesome icons for consistent cross-platform design
-            </Text>
+          <Title size="sm">Mobile Notes</Title>
+          <FlexColumn gap="sm">
+            <FlexRow gap="xs" align="start">
+              <Text size="sm">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm">Web: Centered modal with backdrop and ESC key support</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm">Mobile: Bottom drawer with slide-up animation and swipe gestures</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm">All sizes adapt to mobile screen dimensions (40%, 70%, 90%)</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm">Swipe gestures work from handle and header area only</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm">Theme-aware colors adapt to light/dark mode automatically</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm">Uses FontAwesome icons for consistent cross-platform design</Text>
+              </View>
+            </FlexRow>
           </FlexColumn>
         </FlexColumn>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
-// All styles now centralized in commonTestStyles
+

@@ -25,12 +25,23 @@ Fast lookup guide for all primitive components with essential props and examples
 
 ### Semantic Typography
 ```tsx
-<Title>Page Title</Title>                    // size="2xl", weight="bold", marginBottom={8}
-<SectionHeading>Section</SectionHeading>     // size="lg", weight="semibold", marginBottom={12}
+<Title>Page Title</Title>                    // size="lg" (24px), weight="bold" (default)
+<Title size="sm">Section Title</Title>       // size="sm" (18px), weight="bold"
+<Title size="xl" weight="normal">Hero</Title> // size="xl" (30px), normal weight
 <Paragraph>Content paragraph</Paragraph>     // marginBottom={16}, lineHeight="1.4x"
 <Label>Form label</Label>                    // size="sm", weight="strong", marginBottom={8}
 <Caption>Helper text</Caption>               // size="sm", variant="subtle", marginTop={8}
 <InlineText>No spacing</InlineText>          // No automatic margins
+```
+
+### Title Props
+```tsx
+<Title 
+  size="sm|md|lg|xl"           // sm=18px, md=20px, lg=24px, xl=30px
+  weight="normal|medium|semibold|bold"  // Default: bold
+>
+  Title Text
+</Title>
 ```
 
 ---
@@ -332,7 +343,7 @@ theme.colors.utilities.info      // Info
     marginBottom: 16
   }}
 >
-  <SectionHeading>Card Title</SectionHeading>
+  <Title size="sm">Card Title</Title>
   <Paragraph>Card content goes here</Paragraph>
   <Button type="primary">Action</Button>
 </FlexColumn>
