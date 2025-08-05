@@ -55,24 +55,21 @@
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
-  width: calc(100vw - 584px);
-  transition: width 200ms;
+  min-width: 0; // Allow shrinking
 
   // Mobile override - use full available width
   @media (max-width: 1023px) {
-    width: 100% !important;
-    flex: 1;
+    flex: 1 !important;
   }
 }
 
 .message-list-expanded {
-  flex-grow: 1;
-  width: calc(100vw - 324px);
+  flex: 1 0;
+  min-width: 0; // Allow shrinking
 
   // Mobile override - use full available width
   @media (max-width: 1023px) {
-    width: 100% !important;
-    flex: 1;
+    flex: 1 !important;
   }
 }
 

@@ -205,7 +205,7 @@ const Channel: React.FC<ChannelProps> = ({
           }}
         />
       )}
-      <div className="flex flex-col">
+      <div className="flex flex-col flex-1 min-w-0">
         <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
           <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2 lg:mb-0">
             <div className="flex flex-row items-center gap-2">
@@ -294,10 +294,10 @@ const Channel: React.FC<ChannelProps> = ({
       {/* Desktop sidebar - only visible on lg+ screens */}
       <div
         className={
-          'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-y-auto ' +
-          'transition-transform duration-300 ease-in-out ' +
+          'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-y-auto flex-shrink-0 ' +
+          'transition-all duration-300 ease-in-out ' +
           (showUsers
-            ? 'hidden lg:block translate-x-0 fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
+            ? 'hidden lg:block fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
             : 'hidden')
         }
       >

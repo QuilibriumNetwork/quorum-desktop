@@ -3,6 +3,11 @@
   flex-direction: column;
   height: calc(100% - 52px); // Account for UserStatus height
   width: var(--sidebar-left-width);
+
+  // On mobile, UserStatus is hidden so expand to full height
+  @media (max-width: 1023px) {
+    height: 100%;
+  }
 }
 
 .channels-list {
