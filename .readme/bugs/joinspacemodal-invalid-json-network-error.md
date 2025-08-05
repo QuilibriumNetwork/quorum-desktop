@@ -1,5 +1,7 @@
 # JoinSpaceModal "Invalid JSON" Error Due to Network Issues
 
+[← Back to INDEX](../INDEX.md)
+
 **Status**: Open (Low Priority)  
 **Priority**: Low  
 **Component**: Various

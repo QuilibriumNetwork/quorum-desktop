@@ -1,13 +1,10 @@
 Update the .readme/INDEX.md file by:
 
 1. Scanning the entire .readme directory for any changes (new files, deleted files, moved files)
-2. Adding any missing `[← Back to INDEX](/.readme/INDEX.md)` links below the title of markdown files AND at the end of the file.
-3. Organizing files into proper categories:
-   - Documentation (docs/)
-   - Bug Reports (bugs/) - separate SOLVED and Active
-   - Tasks (tasks/) - separate done/, ongoing/, and todo/
-4. Extracting titles from files for descriptions
-5. Maintaining the same structure and format as the current INDEX.md
+2. Adding any missing `[← Back to INDEX](/.readme/INDEX.md)` links below the title of markdown files AND at the end of the file. Keep existing "Back to index" if they are pointing to other indexes. 
+3. Extracting titles from files for descriptions
+4. Maintaining the same structure and format as the current INDEX.md
+5. If files are in subfolders, e.g., docs/features, always group them according to tjhe subfolder they are in
 6. Updating the "Last Updated" date
 
 Use Python to:

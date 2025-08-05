@@ -7,3 +7,7 @@ the public invite link UI functionality needs some work
 
 
 Ref: https://quilibrium.slack.com/archives/C08SP1TUJHJ/p1754368782373349
+
+---
+
+[← Back to INDEX](../../INDEX.md)

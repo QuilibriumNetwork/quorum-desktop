@@ -1,5 +1,7 @@
 # AccentColorSwitcher Cross-Platform Migration + Persistence
 
+[← Back to INDEX](../../INDEX.md)
+
 ## Task Overview
 
 Make the existing AccentColorSwitcher component work on both web and native by fixing its web-only dependencies and integrating it with our unified theme system. Ensure complete persistence of both theme and accent color choices across sessions on both platforms.

@@ -1,5 +1,7 @@
 # Combined Text + Image Messages
 
+[← Back to INDEX](../../INDEX.md)
+
 ## Overview
 
 Currently, when a user uploads an image and types text, the message composer sends two separate messages:

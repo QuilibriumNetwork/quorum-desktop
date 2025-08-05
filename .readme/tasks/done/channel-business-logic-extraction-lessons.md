@@ -1,5 +1,7 @@
 # Channel Business Logic Extraction - Lessons Learned
 
+[← Back to INDEX](../../INDEX.md)
+
 ## Overview
 
 Successfully extracted business logic from Channel.tsx (730+ lines → ~400 lines) while refactoring to use primitives. Key lessons for future component refactoring.
