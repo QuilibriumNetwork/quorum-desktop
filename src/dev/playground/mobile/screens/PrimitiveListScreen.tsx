@@ -6,7 +6,7 @@ import ThemeRadioGroup from '../components/ThemeRadioGroup';
 import AccentColorSwitcher from '../components/AccentColorSwitcher';
 import { Icon } from '../components/primitives/Icon';
 import { IconName } from '../components/primitives/Icon/types';
-import { Text } from '../components/primitives/Text';
+import { FlexColumn, SectionHeading, Text } from '../components/primitives';
 import { commonTestStyles } from '../styles/commonTestStyles';
 
 interface PrimitiveItem {
@@ -119,12 +119,26 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
     <TouchableOpacity
       key={primitive.id}
       style={[
-        { backgroundColor: theme.colors.bg.card, borderColor: theme.colors.border.default, borderWidth: 1, borderRadius: 12, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
+        {
+          backgroundColor: theme.colors.bg.card,
+          borderColor: theme.colors.border.default,
+          borderWidth: 1,
+          borderRadius: 12,
+          padding: 16,
+          marginBottom: 12,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          elevation: 3,
+        },
       ]}
       onPress={primitive.onPress}
       activeOpacity={0.7}
     >
-      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+      <View
+        style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}
+      >
         <Icon
           name={primitive.icon}
           size="lg"
@@ -143,7 +157,10 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
 
   return (
     <SafeAreaView
-      style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}
+      style={[
+        commonTestStyles.container,
+        { backgroundColor: theme.colors.bg.app },
+      ]}
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <View style={commonTestStyles.header}>
@@ -164,14 +181,20 @@ export const PrimitiveListScreen: React.FC<PrimitiveListScreenProps> = ({
 
           <View
             style={[
-              { backgroundColor: theme.colors.surface[2], borderRadius: 12, padding: 16, marginTop: 24, alignItems: 'center' },
+              {
+                backgroundColor: theme.colors.surface[2],
+                borderRadius: 12,
+                padding: 16,
+                marginTop: 24,
+                width: '100%', // Full width
+              },
             ]}
           >
-            <Text size="sm" variant="default">
-              Theme
-            </Text>
-            <ThemeRadioGroup horizontal />
-            <AccentColorSwitcher />
+            <FlexColumn gap="md" align="center">
+              {' '}
+              <ThemeRadioGroup horizontal />
+              <AccentColorSwitcher />
+            </FlexColumn>
           </View>
         </View>
 
