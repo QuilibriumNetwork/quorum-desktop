@@ -1,34 +1,84 @@
 /**
- * Platform detection utilities for future React Native compatibility
- *
- * Since we're currently a web-only app, these return web values.
- * When we add React Native, we'll update this to use Platform from react-native.
+ * Platform detection utilities for cross-platform development
  */
 
-// For now, we're always on web
-export const isWeb = true;
-export const isNative = false;
-export const isIOS = false;
-export const isAndroid = false;
-
-// Platform-specific selection helper
-export function platformSelect<T>(options: {
-  web?: T;
-  native?: T;
-  ios?: T;
-  android?: T;
-  default: T;
-}): T {
-  // Currently always returns web option or default
-  return options.web ?? options.default;
+/**
+ * Check if running in a web browser environment
+ */
+export function isWeb(): boolean {
+  return typeof window !== 'undefined' && typeof window.document !== 'undefined';
 }
 
-// Mock Platform object for compatibility
-export const Platform = {
-  OS: 'web' as const,
-  select: <T>(specifics: { web?: T; ios?: T; android?: T; default?: T }): T => {
-    return (
-      specifics.web ?? specifics.default ?? (Object.values(specifics)[0] as T)
-    );
-  },
+/**
+ * Check if running in React Native/mobile environment
+ */
+export function isMobile(): boolean {
+  // Will be true when running in React Native
+  // @ts-ignore - React Native global
+  return typeof navigator !== 'undefined' && navigator.product === 'ReactNative';
+}
+
+/**
+ * Alias for isMobile() for backward compatibility
+ */
+export function isNative(): boolean {
+  return isMobile();
+}
+
+/**
+ * Check if running in Electron desktop environment
+ */
+export function isElectron(): boolean {
+  // Check for Electron user agent
+  if (typeof navigator !== 'undefined' && navigator.userAgent.includes('Electron')) {
+    return true;
+  }
+  
+  // Check for Electron process
+  // @ts-ignore - Electron global
+  if (typeof process !== 'undefined' && process.versions && process.versions.electron) {
+    return true;
+  }
+  
+  // Check for Electron window object
+  // @ts-ignore - Electron global
+  if (typeof window !== 'undefined' && window.electron) {
+    return true;
+  }
+  
+  return false;
+}
+
+/**
+ * Check if running in development mode
+ */
+export function isDevelopment(): boolean {
+  return process.env.NODE_ENV === 'development';
+}
+
+/**
+ * Check if running in production mode
+ */
+export function isProduction(): boolean {
+  return process.env.NODE_ENV === 'production';
+}
+
+/**
+ * Get the current platform as a string
+ */
+export function getPlatform(): 'web' | 'mobile' | 'electron' {
+  if (isMobile()) return 'mobile';
+  if (isElectron()) return 'electron';
+  return 'web';
+}
+
+/**
+ * Platform-specific feature flags
+ */
+export const platformFeatures = {
+  hasFileSystem: isElectron(),
+  hasNativeNotifications: isElectron() || isMobile(),
+  hasCamera: isMobile(),
+  hasDeepLinking: isMobile() || isElectron(),
+  hasPushNotifications: isMobile(),
 };

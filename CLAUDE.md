@@ -13,6 +13,46 @@ This is a React project using Vite and Electron with a **cross-platform web + mo
 
 **When making any changes, always ask**: "Will this work on mobile?" If uncertain, use primitives and follow mobile-first design principles.
 
+## Repository Structure
+
+The repository has been restructured for cross-platform development:
+
+```
+quorum/
+├── src/                          # SHARED CODE (90% of app)
+│   ├── components/              # Business logic components
+│   │   ├── primitives/         # Cross-platform UI components
+│   │   ├── Router/             # Platform-aware routing
+│   │   └── ...
+│   ├── hooks/                  # 100% shared business logic
+│   ├── api/                    # 100% shared API layer
+│   ├── services/               # 100% shared services
+│   ├── types/                  # 100% shared TypeScript types
+│   └── utils/                  # 100% shared utilities (including platform detection)
+│
+├── web/                        # WEB-SPECIFIC FILES
+│   ├── index.html             # Web HTML entry
+│   ├── main.tsx               # Web React entry point
+│   ├── vite.config.ts         # Vite bundler config
+│   ├── public/                # Web-specific assets
+│   └── electron/              # Electron desktop wrapper
+│
+├── mobile/                     # MOBILE-SPECIFIC FILES (placeholder)
+│   ├── App.tsx                # React Native entry point (placeholder)
+│   ├── app.json               # Expo configuration
+│   └── assets/                # Mobile app assets
+```
+
+## Platform Detection
+
+Use the platform utilities in `src/utils/platform.ts`:
+
+- `isWeb()` - Check if running in web browser
+- `isMobile()` / `isNative()` - Check if running in React Native
+- `isElectron()` - Check if running in Electron desktop app
+- `getPlatform()` - Get current platform as string
+- `platformFeatures` - Object with platform-specific feature flags
+
 ## Dependencies
 
 The main dependencies are:

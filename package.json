@@ -2,30 +2,33 @@
   "name": "quorum-desktop",
   "private": true,
   "version": "0.0.0",
-  "main": "electron/main.cjs",
+  "main": "web/electron/main.cjs",
   "type": "module",
   "build": {
     "extends": null,
     "files": [
       "dist/**/*",
-      "electron/**/*"
+      "web/electron/**/*"
     ]
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:preview": "yarn build && yarn preview --port 3000",
-    "electron:dev": "NODE_ENV=development electron electron/main.cjs",
-    "electron:build": "vite build && electron-builder",
+    "dev": "vite --config web/vite.config.ts",
+    "build": "vite build --config web/vite.config.ts",
+    "build:preview": "yarn build && yarn preview --port 3000 --config web/vite.config.ts",
+    "electron:dev": "NODE_ENV=development electron web/electron/main.cjs",
+    "electron:build": "yarn build && electron-builder",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "vite preview --config web/vite.config.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lingui:extract": "lingui extract",
     "lingui:compile": "lingui compile",
     "playground:check": "node src/dev/scripts/playground-check-sync.js",
     "playground:sync": "node src/dev/scripts/playground-sync.js",
-    "playground:cleanup": "node src/dev/scripts/playground-cleanup-backups.js"
+    "playground:cleanup": "node src/dev/scripts/playground-cleanup-backups.js",
+    "mobile:dev": "echo 'Mobile development not yet active. Run: cd mobile && expo start'",
+    "mobile:android": "echo 'Mobile development not yet active. Run: cd mobile && expo start --android'",
+    "mobile:ios": "echo 'Mobile development not yet active. Run: cd mobile && expo start --ios'"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

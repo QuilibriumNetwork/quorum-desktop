@@ -1,49 +1,21 @@
 import React, { Suspense } from 'react';
 import { Buffer } from 'buffer';
 import { useState, useEffect } from 'react';
-import { Navigate, Route, Routes, useNavigate } from 'react-router';
+import { Routes, Route, Navigate } from 'react-router';
 import {
   channel_raw,
   usePasskeysContext,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 
-import Layout from './components/Layout';
-import { ModalProvider } from './components/context/ModalProvider';
-import { MobileProvider } from './components/context/MobileProvider';
-import { SidebarProvider } from './components/context/SidebarProvider';
-import Space from './components/space/Space';
 import Connecting from './components/Connecting';
 import CustomTitlebar from './components/Titlebar';
 import { Login } from './components/onboarding/Login';
 import { Onboarding } from './components/onboarding/Onboarding';
-import DirectMessages from './components/direct/DirectMessages';
 import { Maintenance } from './components/Maintenance';
 import { RegistrationProvider } from './components/context/RegistrationPersister';
 import { ResponsiveLayoutProvider } from './components/context/ResponsiveLayoutProvider';
-// Helper function for conditional dev imports
-const lazyDevImport = (
-  importFn: () => Promise<any>,
-  exportName?: string
-) =>
-  process.env.NODE_ENV === 'development'
-    ? React.lazy(() =>
-        exportName
-          ? importFn().then((m) => ({ default: m[exportName] }))
-          : importFn()
-      )
-    : null;
-
-// Conditionally import dev components
-const PrimitivesPlayground = lazyDevImport(
-  () => import('./dev/playground/web/PrimitivesPlayground'),
-  'PrimitivesPlayground'
-);
-const ComponentAuditViewer = lazyDevImport(
-  () => import('./dev/components-audit'),
-  'ComponentAuditViewer'
-);
-const Elements = lazyDevImport(() => import('./dev/Elements'));
-import JoinSpaceModal from './components/modals/JoinSpaceModal';
+import { Router } from './components/Router';
+import { isElectron, isWeb } from './utils/platform';
 import { DefaultImages } from './utils';
 import { i18n } from './i18n';
 import { I18nProvider } from '@lingui/react';
@@ -123,154 +95,19 @@ const App = () => {
         <ErrorBoundary
           fallback={
             <div className="bg-radial--accent-noise flex flex-col min-h-screen text-main">
-              {
-                // @ts-ignore
-                window.electron && <CustomTitlebar />
-              }
+              {isWeb() && isElectron() && <CustomTitlebar />}
               <Maintenance />
             </div>
           }
         >
           {user && currentPasskeyInfo ? (
             <div className="bg-app flex flex-col min-h-screen text-main">
-              {
-                // @ts-ignore
-                window.electron && <CustomTitlebar />
-              }
+              {isWeb() && isElectron() && <CustomTitlebar />}
               <Suspense fallback={<Connecting />}>
                 <RegistrationProvider>
                   <ResponsiveLayoutProvider>
                     <Suspense>
-                      <Routes>
-                        <Route
-                          path="/"
-                          element={
-                            <>
-                              <Connecting />
-                              {user && (
-                                <Navigate
-                                  to="/messages"
-                                  state={{ from: '/' }}
-                                  replace
-                                />
-                              )}
-                            </>
-                          }
-                        />
-                        <Route
-                          path="/messages"
-                          element={
-                            <ModalProvider user={user} setUser={setUser}>
-                              <MobileProvider>
-                                <SidebarProvider>
-                                  <Layout>
-                                    <DirectMessages
-                                      setUser={setUser}
-                                      setAuthState={() => {
-                                        setUser(undefined);
-                                      }}
-                                      user={user}
-                                    />
-                                  </Layout>
-                                </SidebarProvider>
-                              </MobileProvider>
-                            </ModalProvider>
-                          }
-                        />
-                        <Route
-                          path="/messages/:address"
-                          element={
-                            <ModalProvider user={user} setUser={setUser}>
-                              <MobileProvider>
-                                <SidebarProvider>
-                                  <Layout>
-                                    <DirectMessages
-                                      setUser={setUser}
-                                      setAuthState={() => {
-                                        setUser(undefined);
-                                      }}
-                                      user={user}
-                                    />
-                                  </Layout>
-                                </SidebarProvider>
-                              </MobileProvider>
-                            </ModalProvider>
-                          }
-                        />
-                        <Route
-                          path="/spaces/:spaceId/:channelId"
-                          element={
-                            <ModalProvider user={user} setUser={setUser}>
-                              <MobileProvider>
-                                <SidebarProvider>
-                                  <Layout>
-                                    <Space
-                                      setUser={setUser}
-                                      setAuthState={() => {
-                                        setUser(undefined);
-                                      }}
-                                      user={user}
-                                    />
-                                  </Layout>
-                                </SidebarProvider>
-                              </MobileProvider>
-                            </ModalProvider>
-                          }
-                        />
-                        <Route path="/invite/" element={<InviteRoute />} />
-                        {process.env.NODE_ENV === 'development' &&
-                          PrimitivesPlayground && (
-                            <Route
-                              path="/playground"
-                              element={
-                                <ModalProvider user={user} setUser={setUser}>
-                                  <MobileProvider>
-                                    <Suspense
-                                      fallback={<div>Loading playground...</div>}
-                                    >
-                                      <PrimitivesPlayground />
-                                    </Suspense>
-                                  </MobileProvider>
-                                </ModalProvider>
-                              }
-                            />
-                          )}
-                        {process.env.NODE_ENV === 'development' &&
-                          ComponentAuditViewer && (
-                            <Route
-                              path="/dev/audit"
-                              element={
-                                <Suspense
-                                  fallback={<div>Loading audit viewer...</div>}
-                                >
-                                  <ComponentAuditViewer />
-                                </Suspense>
-                              }
-                            />
-                          )}
-                        {process.env.NODE_ENV === 'development' && Elements && (
-                          <Route
-                            path="/elements"
-                            element={
-                              <Suspense
-                                fallback={<div>Loading Elements...</div>}
-                              >
-                                <Elements />
-                              </Suspense>
-                            }
-                          />
-                        )}
-                        <Route
-                          path="/*"
-                          element={
-                            <Navigate
-                              to="/messages"
-                              state={{ from: '/' }}
-                              replace
-                            />
-                          }
-                        />
-                      </Routes>
+                      <Router user={user} setUser={setUser} />
                     </Suspense>
                   </ResponsiveLayoutProvider>
                 </RegistrationProvider>
@@ -278,10 +115,7 @@ const App = () => {
             </div>
           ) : landing && !currentPasskeyInfo ? (
             <div className="bg-radial--accent-noise flex flex-col min-h-screen text-main">
-              {
-                // @ts-ignore
-                window.electron && <CustomTitlebar />
-              }
+              {isWeb() && isElectron() && <CustomTitlebar />}
               <Routes>
                 <Route path="/" element={<Login setUser={setUser} />} />
                 <Route path="/*" element={<Navigate to="/" replace />} />
@@ -289,10 +123,7 @@ const App = () => {
             </div>
           ) : landing ? (
             <div className="bg-radial--accent-noise flex flex-col min-h-screen text-main">
-              {
-                // @ts-ignore
-                window.electron && <CustomTitlebar />
-              }
+              {isWeb() && isElectron() && <CustomTitlebar />}
               <Routes>
                 <Route path="/" element={<Onboarding setUser={setUser} />} />
                 <Route path="/*" element={<Navigate to="/" replace />} />
@@ -304,36 +135,6 @@ const App = () => {
         </ErrorBoundary>
       </I18nProvider>
     </>
-  );
-};
-
-const InviteRoute: React.FC = () => {
-  const navigate = useNavigate();
-
-  const handleClose = () => {
-    // Check if there's meaningful browser history to go back to
-    if (window.history.length > 1 && document.referrer) {
-      // There's previous history and a referrer, safe to go back
-      window.history.back();
-    } else {
-      // No meaningful history or came directly to this page, go to messages
-      navigate('/messages');
-    }
-  };
-
-  return (
-    <div className="min-h-screen w-full">
-      <JoinSpaceModal visible={true} onClose={handleClose} />
-      <ModalProvider>
-        <MobileProvider>
-          <SidebarProvider>
-            <Layout>
-              <div />
-            </Layout>
-          </SidebarProvider>
-        </MobileProvider>
-      </ModalProvider>
-    </div>
   );
 };
 
