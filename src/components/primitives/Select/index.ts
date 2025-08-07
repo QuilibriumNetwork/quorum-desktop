@@ -1,4 +1,4 @@
-export { default } from './Select.web';
+export { default } from './Select';
 export type {
   SelectOption,
   BaseSelectProps,

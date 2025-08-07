@@ -1,4 +1,4 @@
-export { Tooltip } from './Tooltip.web';
+export { Tooltip } from './Tooltip';
 export type {
   TooltipProps,
   TooltipWebProps,

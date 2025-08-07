@@ -1,4 +1,6 @@
-export { Text } from './Text.web';
+// Platform-specific exports - bundler will resolve automatically
+// Web: Text.web.tsx, Native: Text.native.tsx
+export { Text } from './Text';
 export { 
   Paragraph, 
   Label, 

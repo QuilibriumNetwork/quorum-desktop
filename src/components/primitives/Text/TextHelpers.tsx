@@ -1,5 +1,7 @@
 import React from 'react';
-import { Text } from './Text.web';
+// Import Text directly from platform-specific file
+// Bundler will resolve to .web or .native automatically
+import { Text } from './Text';
 import { NativeTextProps } from './types';
 
 /**

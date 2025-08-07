@@ -2,24 +2,24 @@ import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { ThemeProvider, useTheme } from '@/primitives/theme';
-import Button from '@/primitives/Button';
-// Import Tailwind styles for web
-import './styles/tailwind.css';
+import { ThemeProvider, useTheme } from '../src/components/primitives/theme';
+import { default as Button } from '../src/components/primitives/Button';
 import { commonTestStyles, createThemedStyles } from './styles/commonTestStyles';
-import { PrimitiveListScreen } from './screens/PrimitiveListScreen';
-import { PrimitivesTestScreen } from './screens/PrimitivesTestScreen';
-import { TextTestScreen } from './screens/TextTestScreen';
-import { InputTestScreen } from './screens/InputTestScreen';
-import { TextAreaTestScreen } from './screens/TextAreaTestScreen';
-import { SimpleButtonTestScreen } from './screens/SimpleButtonTestScreen';
-import { SwitchTestScreen } from './screens/SwitchTestScreen';
-import { ModalTestScreen } from './screens/ModalTestScreen';
-import { SelectTestScreen } from './screens/SelectTestScreen';
-import { ColorSwatchTestScreen } from './screens/ColorSwatchTestScreen';
-import { RadioGroupTestScreen } from './screens/RadioGroupTestScreen';
-import { TooltipTestScreen } from './screens/TooltipTestScreen';
-import { IconTestScreen } from './screens/IconTestScreen';
+import {
+  PrimitiveListScreen,
+  PrimitivesTestScreen,
+  TextTestScreen,
+  InputTestScreen,
+  TextAreaTestScreen,
+  SimpleButtonTestScreen,
+  SwitchTestScreen,
+  ModalTestScreen,
+  SelectTestScreen,
+  ColorSwatchTestScreen,
+  RadioGroupTestScreen,
+  TooltipTestScreen,
+  IconTestScreen,
+} from './screens';
 
 type Screen =
   | 'list'

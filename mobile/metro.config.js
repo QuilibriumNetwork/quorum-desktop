@@ -3,41 +3,42 @@ const path = require('path');
 
 const config = getDefaultConfig(__dirname);
 
-// Enable shared src/ folder usage
+// Set project root to the mobile folder (not monorepo root)
 const projectRoot = __dirname;
 const monorepoRoot = path.resolve(projectRoot, '..');
 
-config.watchFolders = [monorepoRoot];
-
-// Add path alias support for shared src and local mobile files
-config.resolver.alias = {
-  // Local mobile paths
-  '@': path.resolve(__dirname, './'),
-  '@/screens': path.resolve(__dirname, './screens'),
-  '@/components': path.resolve(__dirname, './components'),
-  
-  // Shared src folder - this is the key alias
-  'src': path.resolve(monorepoRoot, 'src'),
-  '@/src': path.resolve(monorepoRoot, 'src'),
-  
-  // Specific shortcuts for commonly used shared paths
-  '@/primitives': path.resolve(monorepoRoot, 'src/components/primitives'),
-  '@/shared': path.resolve(monorepoRoot, 'src'),
-};
-
-// Enable node_modules resolution from project root
-config.resolver.nodeModulesPaths = [
-  path.resolve(projectRoot, 'node_modules'),
-  path.resolve(monorepoRoot, 'node_modules'),
+// Configure watch folders to include the shared src
+config.watchFolders = [
+  path.resolve(monorepoRoot, 'src'),
 ];
 
-// Add support for platform-specific extensions and scss files
-config.resolver.sourceExts = [...config.resolver.sourceExts, 'scss', 'sass'];
-config.resolver.platforms = ['native', 'ios', 'android', 'web'];
+// Configure resolver for ES module compatibility
+config.resolver = {
+  ...config.resolver,
+  nodeModulesPaths: [
+    // Prioritize mobile node_modules to avoid React version conflicts
+    path.resolve(projectRoot, 'node_modules'),
+    path.resolve(monorepoRoot, 'node_modules'),
+  ],
+  platforms: ['native', 'android', 'ios'],
+  // Handle ES modules from parent package.json
+  sourceExts: [...config.resolver.sourceExts, 'mjs', 'cjs'],
+  // Disable experimental features that cause issues with ES modules
+  unstable_enablePackageExports: false,
+  unstable_conditionNames: ['react-native', 'browser', 'require'],
+  
+  // Force single React instance resolution
+  alias: {
+    'react': path.resolve(projectRoot, 'node_modules', 'react'),
+    'react-native': path.resolve(projectRoot, 'node_modules', 'react-native'),
+  },
+};
 
-// Ensure proper platform resolution order for React Native
-// Metro will look for .native.tsx first, then .tsx
-config.resolver.resolverMainFields = ['react-native', 'browser', 'main'];
-config.resolver.platforms = ['native', 'ios', 'android', 'web'];
+// Configure transformer for better ES module support
+config.transformer = {
+  ...config.transformer,
+  // Ensure proper handling of CommonJS/ES module interop
+  unstable_allowRequireContext: false,
+};
 
 module.exports = config;

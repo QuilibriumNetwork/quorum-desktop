@@ -1,2 +1,2 @@
-export { OverlayBackdrop } from './OverlayBackdrop.web';
+export { OverlayBackdrop } from './OverlayBackdrop';
 export type { OverlayBackdropProps } from './types';

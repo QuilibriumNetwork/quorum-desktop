@@ -1,4 +1,4 @@
-export { Icon } from './Icon.web';
+export { Icon } from './Icon';
 export type {
   IconProps,
   IconWebProps,

@@ -1,2 +1,2 @@
-export { FlexColumn } from './FlexColumn.web';
+export { FlexColumn } from './FlexColumn';
 export type { FlexColumnProps } from './types';

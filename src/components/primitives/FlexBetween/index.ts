@@ -1,2 +1,2 @@
-export { FlexBetween } from './FlexBetween.web';
+export { FlexBetween } from './FlexBetween';
 export type { FlexBetweenProps } from './types';

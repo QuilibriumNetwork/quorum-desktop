@@ -1,11 +1,11 @@
 import React from 'react';
 import { Pressable, Text, StyleSheet, View } from 'react-native';
 import { NativeButtonProps } from './types';
-import { useCrossPlatformTheme } from '../theme/ThemeProvider';
+import { useTheme } from '../theme';
 import { Icon } from '../Icon';
 
 const Button: React.FC<NativeButtonProps> = (props) => {
-  const { colors } = useCrossPlatformTheme();
+  const { colors } = useTheme();
 
   const handlePress = () => {
     if (!props.disabled && props.onClick) {

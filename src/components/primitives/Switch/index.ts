@@ -1,2 +1,2 @@
-export { Switch } from './Switch.web';
+export { Switch } from './Switch';
 export type { WebSwitchProps as SwitchProps, BaseSwitchProps } from './types';

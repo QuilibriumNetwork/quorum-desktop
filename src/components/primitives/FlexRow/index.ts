@@ -1,2 +1,2 @@
-export { FlexRow } from './FlexRow.web';
+export { FlexRow } from './FlexRow';
 export type { FlexRowProps } from './types';

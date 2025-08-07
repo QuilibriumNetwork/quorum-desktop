@@ -2,6 +2,9 @@
   "name": "quorum-desktop",
   "private": true,
   "version": "0.0.0",
+  "workspaces": [
+    "mobile"
+  ],
   "main": "web/electron/main.cjs",
   "type": "module",
   "build": {
@@ -26,7 +29,9 @@
     "playground:check": "node src/dev/scripts/playground-check-sync.js",
     "playground:sync": "node src/dev/scripts/playground-sync.js",
     "playground:cleanup": "node src/dev/scripts/playground-cleanup-backups.js",
-    "mobile:dev": "cd mobile && expo start --tunnel",
+    "mobile": "cd mobile && expo start --tunnel",
+    "mobile:tunnel": "cd mobile && expo start --tunnel",
+    "mobile:clear": "cd mobile && expo start --clear --tunnel",
     "mobile:android": "cd mobile && expo start --android",
     "mobile:ios": "cd mobile && expo start --ios",
     "mobile:web": "cd mobile && expo start --web"
@@ -66,8 +71,8 @@
     "moment-timezone": "^0.5.46",
     "multiformats": "^13.3.1",
     "qs": "^6.13.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
     "react-dropzone": "^14.3.5",
     "react-native": "0.79.5",
     "react-native-gesture-handler": "~2.24.0",
@@ -90,6 +95,7 @@
     "@vitejs/plugin-basic-ssl": "^1.2.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "babel-plugin-macros": "^3.1.0",
     "electron": "^33.2.1",
     "electron-builder": "^25.1.8",
     "eslint": "^9.15.0",

@@ -1,2 +1,2 @@
-export { ModalContainer } from './ModalContainer.web';
+export { ModalContainer } from './ModalContainer';
 export type { ModalContainerProps } from './types';

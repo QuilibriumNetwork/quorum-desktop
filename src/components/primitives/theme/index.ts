@@ -4,6 +4,5 @@ export type { Theme, AccentColor } from './colors';
 export type { ThemeContextType, PrimitivesThemeContextType } from './ThemeProvider';
 
 // Platform-specific theme provider resolution
-// Metro/React Native will resolve to ThemeProvider.native.tsx automatically
-// Vite/Web will resolve to ThemeProvider.web.tsx automatically
-export { useTheme, ThemeProvider } from './ThemeProvider';
+// For React Native, explicitly import from .native file since Metro resolution isn't working
+export { useTheme, ThemeProvider } from './ThemeProvider.native';

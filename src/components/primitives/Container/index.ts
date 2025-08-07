@@ -1,4 +1,4 @@
-export { Container } from './Container.web';
+export { Container } from './Container';
 export type {
   ContainerProps,
   WebContainerProps,

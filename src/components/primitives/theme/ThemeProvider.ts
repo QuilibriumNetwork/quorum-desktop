@@ -16,3 +16,7 @@ export interface PrimitivesThemeContextType extends ThemeContextType {
   colors: any; // From getColors function
   getColor: (path: string) => string;
 }
+
+// Platform-specific exports will be resolved by bundler based on file extensions
+// Web bundlers will look for ThemeProvider.web.tsx
+// React Native bundlers will look for ThemeProvider.native.tsx

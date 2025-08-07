@@ -45,7 +45,7 @@ src/components/primitives/Button/
 ├── index.ts              # Exports the appropriate version
 ├── Button.web.tsx        # Web-specific implementation  
 ├── Button.native.tsx     # React Native implementation
-├── Button.module.scss    # Web styles
+├── Button.scss    # Web styles
 └── types.ts             # Shared type definitions
 ```
 
