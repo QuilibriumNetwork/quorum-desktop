@@ -4,8 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Import primitives for theme testing
 import { FlexRow, FlexColumn, FlexBetween, Button, Modal, Text, Paragraph, Label, Title, Icon, useTheme } from '@/primitives';
-import ThemeRadioGroup from '../components/ThemeRadioGroup';
-import AccentColorSwitcher from '../components/AccentColorSwitcher';
+import ThemeRadioGroup from '../../src/components/ThemeRadioGroup';
+import AccentColorSwitcher from '../../src/components/AccentColorSwitcher';
 import { commonTestStyles, createThemedStyles } from '../styles/commonTestStyles';
 
 /**

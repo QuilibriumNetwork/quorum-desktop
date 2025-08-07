@@ -30,7 +30,7 @@ export function isNative(): boolean {
  */
 export function isElectron(): boolean {
   // Check for Electron user agent
-  if (typeof navigator !== 'undefined' && navigator.userAgent.includes('Electron')) {
+  if (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.includes('Electron')) {
     return true;
   }
   

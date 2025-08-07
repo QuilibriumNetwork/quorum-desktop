@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider, useTheme } from '../src/components/primitives/theme';
+import { I18nProvider } from '@lingui/react';
+import { i18n, initializeMobileI18n } from './i18n';
 import { default as Button } from '../src/components/primitives/Button';
 import { commonTestStyles, createThemedStyles } from './styles/commonTestStyles';
 import {
@@ -108,11 +110,18 @@ function ThemedAppContent() {
 
 // Main App component
 export default function App() {
+  useEffect(() => {
+    // Initialize Lingui for mobile app (English only)
+    initializeMobileI18n();
+  }, []);
+
   return (
     <SafeAreaProvider>
-      <ThemeProvider>
-        <ThemedAppContent />
-      </ThemeProvider>
+      <I18nProvider i18n={i18n}>
+        <ThemeProvider>
+          <ThemedAppContent />
+        </ThemeProvider>
+      </I18nProvider>
     </SafeAreaProvider>
   );
 }
