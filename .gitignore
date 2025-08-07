@@ -15,7 +15,6 @@
 /build
 /dist
 
-
 # misc
 .DS_Store
 .env.local
@@ -27,12 +26,30 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Local Claude instructions (contains local environment constraints)
-CLAUDE.local.md
-.claude/settings.local.json
-
 # VS Code workspace settings
 .vscode/settings.json
 
+# React Native / Expo
+mobile/.expo/
+mobile/node_modules/
+mobile/.expo-shared/
+mobile/expo-env.d.ts
+
+# Platform-specific builds
+*.apk
+*.aab
+*.ipa
+android/
+ios/
+
+# Metro bundler cache
+.metro-cache/
+
+# React Native debugger
+.flipper/
+
 # custom
+CLAUDE.local.md
+.claude/settings.local.json
+
 

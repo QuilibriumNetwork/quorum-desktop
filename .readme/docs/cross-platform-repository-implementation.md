@@ -273,16 +273,108 @@ dist/
 
 ## Dependency Management
 
+### Yarn Workspaces Implementation
+The project uses **Yarn Workspaces** for proper monorepo dependency management, which was essential to resolve React version conflicts and ensure both platforms work correctly.
+
+**Root package.json configuration**:
+```json
+{
+  "workspaces": [
+    "mobile"
+  ],
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
+```
+
+**Key benefits of Yarn Workspaces**:
+- ✅ Eliminates multiple React instances that caused Metro bundler errors
+- ✅ Hoists shared dependencies to root `node_modules/`
+- ✅ Allows mobile-specific dependencies in `mobile/package.json`
+- ✅ Resolves version conflicts between web and mobile platforms
+
+### Metro Configuration for Workspaces
+**mobile/metro.config.js**:
+```javascript
+const config = getDefaultConfig(__dirname);
+const projectRoot = __dirname;
+const monorepoRoot = path.resolve(projectRoot, '..');
+
+// Watch shared source folders
+config.watchFolders = [
+  path.resolve(monorepoRoot, 'src'),
+];
+
+// Configure resolver for workspace
+config.resolver = {
+  ...config.resolver,
+  // Use hoisted dependencies from workspace root
+  nodeModulesPaths: [
+    path.resolve(monorepoRoot, 'node_modules'),
+  ],
+  platforms: ['native', 'android', 'ios'],
+  sourceExts: [...config.resolver.sourceExts, 'mjs', 'cjs'],
+  // Prioritize platform-specific files for React Native
+  resolverMainFields: ['react-native', 'main'],
+};
+
+// Support symlinks (used by Yarn workspaces)
+config.resolver.symlinks = true;
+```
+
+### Vite Configuration for Cross-Platform
+**web/vite.config.ts** enhancements for React Native exclusion:
+```typescript
+export default defineConfig({
+  resolve: {
+    // Deduplicate React instances
+    dedupe: ['react', 'react-dom'],
+  },
+  optimizeDeps: {
+    // Exclude React Native from web builds
+    exclude: ['react-native', '@react-native-async-storage/async-storage'],
+    entries: [
+      'web/index.html',
+      'src/**/*.web.{ts,tsx,js,jsx}',
+      '!src/dev/playground/mobile/**',
+      '!src/**/*.native.{ts,tsx,js,jsx}',
+      '!mobile/**'
+    ],
+  }
+});
+```
+
+### Platform-Specific File Resolution Strategy
+Critical fix for theme provider imports that caused build failures:
+
+**Theme Provider Hybrid Resolution**:
+```typescript
+// src/components/primitives/theme/index.ts
+// Vite will resolve ThemeProvider.web.tsx for web, Metro will resolve ThemeProvider.native.tsx for mobile
+export { useTheme, ThemeProvider } from './ThemeProvider';
+
+// src/components/primitives/theme/ThemeProvider.ts
+// For React Native, export from .native file explicitly since Metro resolution isn't always reliable
+export { useTheme, ThemeProvider } from './ThemeProvider.native';
+```
+
+This hybrid approach ensures:
+- **Vite (Web)**: Uses platform resolution to find `.web.tsx` files
+- **Metro (Mobile)**: Uses explicit `.native` exports for reliable resolution
+
 ### Single Shared Dependencies
-- ✅ One `node_modules/` folder at root
-- ✅ One `package.json` for all platforms  
+- ✅ One `node_modules/` folder at root (via Yarn Workspaces)
+- ✅ One `package.json` for shared dependencies  
 - ✅ One `yarn.lock` file
 - ✅ Web and mobile share 90%+ of dependencies
+- ✅ Mobile can have additional dependencies in `mobile/package.json`
 
 ### Bundler Intelligence
-- **Vite (Web)**: Only bundles web-compatible dependencies
-- **Metro (Mobile)**: Only bundles mobile-compatible dependencies
-- Platform-specific dependencies are ignored by other platforms
+- **Vite (Web)**: Only bundles web-compatible dependencies, excludes React Native
+- **Metro (Mobile)**: Only bundles mobile-compatible dependencies from workspace
+- Platform-specific dependencies are automatically filtered by each bundler
 
 ## Development Workflow
 
@@ -332,9 +424,52 @@ Assets in `public/` are accessible to both platforms:
 ### Environment-Specific Builds
 The Vite configuration intelligently handles different build contexts without requiring separate config files or build hacks.
 
+## Critical Fixes and Troubleshooting
+
+### Issues Resolved During Implementation
+
+**1. Metro Bundler "Cannot read property 'S' of undefined" Error**
+- **Root Cause**: Multiple React instances and version conflicts
+- **Solution**: Implemented Yarn Workspaces to deduplicate dependencies
+- **Fix**: Hoisted React to workspace root, configured Metro to use workspace node_modules
+
+**2. "useCrossPlatformTheme is not a function" Mobile Runtime Error**
+- **Root Cause**: Inconsistent theme hook naming across primitives
+- **Solution**: Updated all primitive components to use unified `useTheme` import
+- **Files Fixed**: Button, Text, Icon, Tooltip, ModalContainer, OverlayBackdrop, ResponsiveContainer
+
+**3. Vite Parsing React Native Flow Syntax Errors**
+- **Root Cause**: Vite attempting to parse React Native files for web builds
+- **Solution**: Added comprehensive React Native exclusion patterns in Vite config
+- **Avoided**: Using react-native-web dependency (per lead developer preference)
+
+**4. "Element type is invalid" Mobile Error After Theme Fixes**
+- **Root Cause**: Metro bundler not reliably resolving platform-specific files
+- **Solution**: Implemented hybrid resolution strategy with explicit .native exports
+- **Implementation**: ThemeProvider.ts for Metro, index.ts for Vite platform resolution
+
+### Commands for Testing Cross-Platform Setup
+```bash
+# Test web build
+yarn dev
+# → Should load without React Native errors
+
+# Test web production build  
+yarn build
+# → Should exclude all React Native dependencies
+
+# Test mobile build (in mobile/ directory)
+cd mobile && yarn expo start
+# → Should resolve shared dependencies from workspace root
+
+# Verify workspace setup
+yarn workspaces info
+# → Should show mobile workspace properly configured
+```
+
 ---
 
 **Implementation Status**: ✅ Complete and Production Ready  
 **Next Phase**: Mobile platform development can begin using this structure
 
-*Updated: 2025-08-07 11:00:00*
+*Updated: 2025-08-07 17:30:00*
