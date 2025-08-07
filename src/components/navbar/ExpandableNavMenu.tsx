@@ -1,18 +1,11 @@
 import * as React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCompressAlt,
-  faPlus,
-  faSearch,
-} from '@fortawesome/free-solid-svg-icons';
-import { Button } from '../primitives';
+import { Icon, Tooltip, FlexColumn, Container } from '../primitives';
 import './ExpandableNavMenu.scss';
 import { getConfig } from '../../config/config';
 import { t } from '@lingui/core/macro';
 import { useModalContext } from '../context/ModalProvider';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { DefaultImages } from '../../utils';
-import ReactTooltip from '../ReactTooltip';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 
 type ExpandableNavMenuProps = {
@@ -30,37 +23,35 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
   // Desktop: Show only + button for creating spaces
   if (isDesktop) {
     return (
-      <>
-        <div className="nav-buttons-centered-container">
-          <div
-            className="expanded-nav-button-primary"
-            onClick={() => props.showCreateSpaceModal()}
-            data-tooltip-id="create-space-tooltip-desktop"
-          >
-            <FontAwesomeIcon icon={faPlus} />
-          </div>
-        </div>
-        <ReactTooltip
-          id="create-space-tooltip-desktop"
+      <FlexColumn className="nav-buttons-centered-container">
+        <Tooltip
+          id="create-space-desktop"
           content={t`Create a new Space`}
           place="right"
-          anchorSelect="[data-tooltip-id='create-space-tooltip-desktop']"
           highlighted={true}
-        />
-      </>
+        >
+          <Container
+            className="expanded-nav-button-primary"
+            onClick={() => props.showCreateSpaceModal()}
+          >
+            <Icon name="plus" />
+          </Container>
+        </Tooltip>
+      </FlexColumn>
     );
   }
 
   // Mobile/Tablet: Show both buttons directly (no tooltips to avoid tap conflicts)
+  // Inverted order: Plus button at top, Avatar at bottom
   return (
-    <div className="nav-buttons-centered-container">
-      <div
+    <FlexColumn className="nav-buttons-centered-container">
+      <Container
         className="expanded-nav-button-primary"
         onClick={() => props.showCreateSpaceModal()}
       >
-        <FontAwesomeIcon icon={faPlus} />
-      </div>
-      <div
+        <Icon name="plus" />
+      </Container>
+      <Container
         className="expanded-nav-button-avatar"
         onClick={() => openUserSettings()}
         style={{
@@ -71,7 +62,7 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
               : 'var(--unknown-icon)',
         }}
       />
-    </div>
+    </FlexColumn>
   );
 };
 
