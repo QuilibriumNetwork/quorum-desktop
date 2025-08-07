@@ -41,7 +41,9 @@ const Root = () => {
             <WebSocketProvider>
               <MessageDBProvider>
                 <ThemeProvider>
-                  <App />
+                  <I18nProvider i18n={i18n}>
+                    <App />
+                  </I18nProvider>
                 </ThemeProvider>
               </MessageDBProvider>
             </WebSocketProvider>
