@@ -14,9 +14,9 @@ This guide helps developers manage existing components and create new ones in ou
 
 - **Primitives Collection**: `src/components/primitives/` - Cross-platform UI building blocks
 - **Theming System**: `src/components/primitives/theme/colors.ts` - Mirrors web CSS variables as hex colors for native app
-- **Dev Playground**: Test primitives on both web (`/playground`) and mobile (Expo Go)
+- **Dev Playground**: Test primitives on both web (`/playground`) and mobile (React Native via Expo)
 - **Platform Files**: `.web.tsx` for browser, `.native.tsx` for React Native
-- **Auto-sync Script** _(planned)_: Will automatically sync CSS color changes to native theme
+- **Mobile Testing**: `/mobile` workspace with test screens for real device testing
 
 ## Quick Decision Framework
 
@@ -269,16 +269,15 @@ From [component-development-guide.md](./component-development-guide.md#web-styli
 ### Web Testing (Primary)
 
 1. Run `yarn dev`
-2. Navigate to `/playground`
+2. Navigate to `/playground` (web playground for primitives)
 3. Test your component with different props/states
 4. Verify responsive behavior and theme switching
 
 ### Mobile Testing (When Needed)
 
-1. Navigate to `src/dev/playground/mobile`
-2. Run `yarn start --tunnel`
-3. Use Expo Go app to test on real device
-4. Sync components: `yarn playground:sync --to-playground ComponentName` (see [src/dev/scripts/README.md](README.md))
+1. Run `yarn mobile` to start the mobile test playground
+2. Use Expo Go app to test on real device
+3. Navigate through test screens in the mobile app to test your primitive
 
 ### Testing Checklist
 
@@ -390,7 +389,7 @@ import { Button } from '../primitives/Button';
 **Mobile testing issues**
 
 - Use `--tunnel` flag for Expo from WSL2
-- Check component sync status: `yarn playground:check`
+- Test primitives on mobile: `yarn mobile`
 - Ensure touch targets are minimum 44dp
 
 **Performance problems**
@@ -403,7 +402,7 @@ import { Button } from '../primitives/Button';
 
 1. Check existing primitives first - don't reinvent
 2. Review [when-to-use-primitives.md](./when-to-use-primitives.md) for guidance
-3. Test in playground before implementing in main app
+3. Test with web playground (`/playground`) and mobile testing (`yarn mobile`) before implementing in main app
 4. Follow existing patterns from similar components
 
 ## Best Practices Summary
@@ -413,7 +412,7 @@ import { Button } from '../primitives/Button';
 - Think mobile-first for every component
 - Use existing primitives for UI consistency
 - Follow the styling hierarchy (Tailwind → @apply → raw CSS)
-- Test in playground before shipping
+- Test with both web playground and mobile testing before shipping
 - Use semantic color variables for consistency
 - Keep business logic separate from UI primitives
 
