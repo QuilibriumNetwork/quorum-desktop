@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Variables for theme colors */
+:root {
+  --color-text-main: #1f2937;
+  --color-text-subtle: #6b7280;
+  --color-text-strong: #111827;
+  --color-text-muted: #9ca3af;
+}
+
+[data-theme="dark"] {
+  --color-text-main: #f9fafb;
+  --color-text-subtle: #d1d5db;
+  --color-text-strong: #ffffff;
+  --color-text-muted: #9ca3af;
+}

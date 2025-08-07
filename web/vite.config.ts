@@ -66,6 +66,10 @@ export default defineConfig(({ command }) => ({
         '../node_modules/@quilibrium/quilibrium-js-sdk-channels/dist/index.js'
       ),
     },
+    // Platform-specific resolution for cross-platform components
+    // Vite will resolve .web.tsx before .tsx, then .ts
+    extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.tsx', '.ts', '.jsx', '.js'],
+    conditions: ['web', 'import', 'module', 'browser', 'default'],
   },
   optimizeDeps: {
     include: ['@quilibrium/quilibrium-js-sdk-channels'], // Force Vite to pre-bundle or app doesn't load (WSL)
