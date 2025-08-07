@@ -15,8 +15,9 @@ Powered by Quilibrium and the libp2p stack, Quorum can be used over TCP, QUIC, W
 For detailed documentation on specific features and components, please refer to the [`.readme/docs`](.readme/docs) directory. You can find the complete index of available documentation in [`.readme/INDEX.md`](.readme/INDEX.md).
 
 **Key Documentation:**
-- [Cross-Platform Architecture](.readme/docs/cross-platform-repository-implementation.md) - How the shared codebase works
 - [Component Management Guide](.readme/docs/component-management-guide.md) - Creating cross-platform components
+- [Cross-Platform Architecture](.readme/docs/cross-platform-repository-implementation.md) - How the shared codebase works
+
 
 A complete documentation website will be created at a later time.
 

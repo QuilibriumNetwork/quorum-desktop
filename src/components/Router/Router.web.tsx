@@ -24,7 +24,7 @@ const lazyDevImport = (
 
 // Conditionally import dev components
 const PrimitivesPlayground = lazyDevImport(
-  () => import('../../dev/playground/web/PrimitivesPlayground'),
+  () => import('../../dev/PrimitivesPlayground'),
   'PrimitivesPlayground'
 );
 const ComponentAuditViewer = lazyDevImport(
