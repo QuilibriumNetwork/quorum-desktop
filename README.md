@@ -1,31 +1,41 @@
-# Quorum Desktop (and Web)
+# Quorum Cross-Platform
 
 The world's first fully private and decentralized group messenger.
 Powered by Quilibrium and the libp2p stack, Quorum can be used over TCP, QUIC, Websockets, or even LoRa — so it can run across the traditional internet, local networks, or off-grid setups.
 
+**Available Platforms:**
+- **Web Browser** - [Live app (beta)](https://app.quorummessenger.com/)
+- **Desktop** - Electron wrapper for native desktop experience
+- **Mobile** - React Native app (in development)
+
 - [Official website](https://www.quorummessenger.com/) - [FAQ](https://www.quorummessenger.com/faq)
-- [Web app (beta)](https://app.quorummessenger.com/)
-- Mobile App: coming soon...
 
 ## Documentation
 
-For detailed documentation on specific features and components, please refer to the `.readme/docs` directory. You can find the complete index of available documentation in `.readme/INDEX.md`.
+For detailed documentation on specific features and components, please refer to the [`.readme/docs`](.readme/docs) directory. You can find the complete index of available documentation in [`.readme/INDEX.md`](.readme/INDEX.md).
+
+**Key Documentation:**
+- [Cross-Platform Architecture](.readme/docs/cross-platform-repository-implementation.md) - How the shared codebase works
+- [Component Management Guide](.readme/docs/component-management-guide.md) - Creating cross-platform components
+
 A complete documentation website will be created at a later time.
 
 ## Development Resources
 
-The `.readme/` folder contains development resources including:
+The [`.readme/`](.readme) folder contains development resources including:
 
 - Architecture documentation and component guides
-- Bug reports and solutions
-- Task management (todo, ongoing, done)
+- Bug reports and solutions  
+- Task management ([todo](.readme/tasks/todo), [ongoing](.readme/tasks/ongoing), [done](.readme/tasks/done))
 - Mobile development guidelines and cross-platform considerations
 
-See `.readme/INDEX.md` for a complete overview of available resources.
+## Setup and Development
 
-## Set up and local testing
+### Prerequisites
 
-Requires Node.js, and quilibrium-js-sdk-channels cloned alongside it. Running locally in a browser against prod Quorum API requires CORS to be disabled, consult your extensions or settings to perform this.
+Requires Node.js and `quilibrium-js-sdk-channels` cloned alongside this repository. Running locally in a browser against prod Quorum API requires CORS to be disabled, consult your extensions or settings to perform this.
+
+### Initial Setup
 
 ```bash
 cd ../quilibrium-js-sdk-channels/
@@ -36,18 +46,20 @@ yarn link @quilibrium/quilibrium-js-sdk-channels
 yarn install
 ```
 
-To run:
+### Web Development
+
+To run the web app in development:
 
 ```bash
 yarn dev
 ```
 
-To run in Electron, run:
+To run in Electron desktop app:
 
 ```bash
 yarn dev
 
-# and in another terminal
+# In another terminal
 yarn electron:dev
 ```
 
@@ -58,6 +70,34 @@ yarn build:preview
 ```
 
 _If you are on Windows, we suggest testing on WSL for better performance_.
+
+### Mobile Development
+
+The mobile app uses React Native with Expo and shares components with the web app through a cross-platform architecture.
+
+Currently the mobile environment is hosting a temporary playground to showcase the native primtives and test the mobile setup in general.
+
+**Start Mobile Development Server:**
+```bash
+yarn mobile
+# or
+yarn mobile:tunnel  # For WSL/remote development
+```
+
+**Test on Device:**
+1. Install [Expo Go](https://expo.dev/client) on your mobile device
+2. Scan the QR code shown in terminal or browser
+3. App will load with primitive component testing screens
+
+**Clear Metro Cache:**
+```bash
+yarn mobile:clear  # Clears Metro bundler cache and starts fresh
+```
+
+**Platform-Specific Commands:**
+```bash
+yarn mobile:android  # Target Android specifically
+```
 
 ## Translation Workflow
 
@@ -91,3 +131,7 @@ _If you are on Windows, we suggest testing on WSL for better performance_.
    ```
    This creates the `messages.js` file in `src/i18n/<new-locale>/messages.js`.
 5. Commit the changes and push to the remote repository.
+
+---
+
+*Updated: 2025-08-07*
