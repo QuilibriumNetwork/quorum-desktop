@@ -1,18 +1,12 @@
-Update the .readme/INDEX.md file by:
+Update the .readme/INDEX.md file by running `python3 .readme/update-index.py`
 
-1. Scanning the entire .readme directory for any changes (new files, deleted files, moved files)
-2. Adding any missing `[← Back to INDEX](/.readme/INDEX.md)` links below the title of markdown files AND at the end of the file. Keep existing "Back to index" if they are pointing to other indexes. 
-3. Extracting titles from files for descriptions
-4. Maintaining the same structure and format as the current INDEX.md
-5. If files are in subfolders, e.g., docs/features, always group them according to tjhe subfolder they are in
-6. Updating the "Last Updated" date
+The script automatically:
 
-Use Python to:
+1. **Scans** .readme directory for all markdown files
+2. **Adds back links** `[← Back to INDEX](/.readme/INDEX.md)` below titles and at file ends
+3. **Extracts titles** from `# headings` or formats filenames
+4. **Orders files** by number prefix (`01-file.md`, `02-guide.md`) then alphabetically
+5. **Groups by folder** structure (docs → bugs → tasks, with subfolders)
+6. **Updates timestamp** in INDEX.md footer
 
-- Walk through the .claude directory
-- Read each markdown file to extract its title
-- Calculate relative paths for back links
-- Generate the new INDEX.md content
-- Add missing back links to files
-
-Do not include Keywords or a Quick Search Guide section.
+Each folder handles numbering independently. Numbered files always come before non-numbered ones.
