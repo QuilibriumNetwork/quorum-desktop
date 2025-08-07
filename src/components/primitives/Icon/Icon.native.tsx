@@ -3,7 +3,7 @@ import { TouchableOpacity } from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import { IconNativeProps, IconSize } from './types';
 import { reactNativeIconMap } from './iconMapping';
-import { useCrossPlatformTheme } from '../theme/ThemeProvider';
+import { useTheme } from '../theme';
 
 // Convert semantic size to numeric size for React Native
 const getSizeValue = (size: IconSize): number => {
@@ -33,7 +33,7 @@ export function Icon({
   id, // Ignored on native - for API consistency
   onClick,
 }: IconNativeProps) {
-  const theme = useCrossPlatformTheme();
+  const theme = useTheme();
   const colors = theme.colors;
 
   const iconName = reactNativeIconMap[name];

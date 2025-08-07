@@ -3,42 +3,32 @@ const path = require('path');
 
 const config = getDefaultConfig(__dirname);
 
-// Set project root to the mobile folder (not monorepo root)
+// Monorepo setup with Yarn Workspaces
 const projectRoot = __dirname;
 const monorepoRoot = path.resolve(projectRoot, '..');
 
-// Configure watch folders to include the shared src
+// Watch shared source folders
 config.watchFolders = [
   path.resolve(monorepoRoot, 'src'),
 ];
 
-// Configure resolver for ES module compatibility
+// Configure resolver for workspace
 config.resolver = {
   ...config.resolver,
+  // Use hoisted dependencies from workspace root
   nodeModulesPaths: [
-    // Prioritize mobile node_modules to avoid React version conflicts
-    path.resolve(projectRoot, 'node_modules'),
     path.resolve(monorepoRoot, 'node_modules'),
   ],
   platforms: ['native', 'android', 'ios'],
-  // Handle ES modules from parent package.json
+  // Handle ES modules properly
   sourceExts: [...config.resolver.sourceExts, 'mjs', 'cjs'],
-  // Disable experimental features that cause issues with ES modules
   unstable_enablePackageExports: false,
   unstable_conditionNames: ['react-native', 'browser', 'require'],
-  
-  // Force single React instance resolution
-  alias: {
-    'react': path.resolve(projectRoot, 'node_modules', 'react'),
-    'react-native': path.resolve(projectRoot, 'node_modules', 'react-native'),
-  },
+  // Prioritize platform-specific files for React Native
+  resolverMainFields: ['react-native', 'main'],
 };
 
-// Configure transformer for better ES module support
-config.transformer = {
-  ...config.transformer,
-  // Ensure proper handling of CommonJS/ES module interop
-  unstable_allowRequireContext: false,
-};
+// Support symlinks (used by Yarn workspaces)
+config.resolver.symlinks = true;
 
 module.exports = config;

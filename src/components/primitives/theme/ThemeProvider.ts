@@ -20,3 +20,6 @@ export interface PrimitivesThemeContextType extends ThemeContextType {
 // Platform-specific exports will be resolved by bundler based on file extensions
 // Web bundlers will look for ThemeProvider.web.tsx
 // React Native bundlers will look for ThemeProvider.native.tsx
+
+// For React Native, export from .native file explicitly since Metro resolution isn't always reliable
+export { useTheme, ThemeProvider } from './ThemeProvider.native';

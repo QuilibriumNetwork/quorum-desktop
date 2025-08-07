@@ -12,7 +12,7 @@ import {
   TextStyle,
 } from 'react-native';
 import { TooltipNativeProps } from './types';
-import { useCrossPlatformTheme } from '../theme/ThemeProvider';
+import { useTheme } from '../theme';
 import { Icon } from '../Icon';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
@@ -25,7 +25,7 @@ export function Tooltip({
   maxWidth = 300,
   disabled = false,
 }: TooltipNativeProps) {
-  const theme = useCrossPlatformTheme();
+  const theme = useTheme();
   const colors = theme.colors;
 
   const [visible, setVisible] = useState(false);

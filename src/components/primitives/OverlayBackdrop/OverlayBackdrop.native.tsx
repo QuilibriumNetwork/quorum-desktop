@@ -6,7 +6,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { OverlayBackdropProps } from './types';
-import { useCrossPlatformTheme } from '../theme/ThemeProvider';
+import { useTheme } from '../theme';
 
 export const OverlayBackdrop: React.FC<OverlayBackdropProps> = ({
   visible = true,
@@ -16,7 +16,7 @@ export const OverlayBackdrop: React.FC<OverlayBackdropProps> = ({
   children,
   closeOnBackdropClick = true,
 }) => {
-  const { colors } = useCrossPlatformTheme();
+  const { colors } = useTheme();
   const handleBackdropPress = () => {
     if (closeOnBackdropClick && onBackdropClick) {
       onBackdropClick();

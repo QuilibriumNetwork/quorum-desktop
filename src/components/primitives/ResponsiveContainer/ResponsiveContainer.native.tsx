@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ResponsiveContainerProps } from './types';
-import { useCrossPlatformTheme } from '../theme';
+import { useTheme } from '../theme';
 
 /**
  * ResponsiveContainer React Native Implementation
@@ -12,7 +12,7 @@ import { useCrossPlatformTheme } from '../theme';
 export const ResponsiveContainer: React.FC<ResponsiveContainerProps> = ({
   children,
 }) => {
-  const { colors } = useCrossPlatformTheme();
+  const { colors } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.bg.sidebar }]}>
