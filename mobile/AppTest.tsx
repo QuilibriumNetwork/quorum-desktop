@@ -5,6 +5,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider, useTheme } from '@/primitives/theme';
 import { I18nProvider } from '@lingui/react';
 import { i18n, initializeMobileI18n } from './i18n';
+import { PasskeysProvider } from '@quilibrium/quilibrium-js-sdk-channels';
 import { default as Button } from '@/primitives/Button';
 import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
 // Import main menu
@@ -182,7 +183,9 @@ export default function App() {
     <SafeAreaProvider>
       <I18nProvider i18n={i18n}>
         <ThemeProvider>
-          <ThemedAppContent />
+          <PasskeysProvider>
+            <ThemedAppContent />
+          </PasskeysProvider>
         </ThemeProvider>
       </I18nProvider>
     </SafeAreaProvider>

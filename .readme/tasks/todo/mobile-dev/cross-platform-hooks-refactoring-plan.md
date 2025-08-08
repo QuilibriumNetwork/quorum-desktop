@@ -274,5 +274,52 @@ export const useFileUpload = () => {
 - [ ] **All mobile functionality** working without web API dependencies
 - [ ] **Performance improvements** on mobile (no polyfills)
 
+## Important Architecture Note: Barrel Exports vs Direct Imports
+
+### The Import Chain Problem
+
+During development, we discovered that barrel exports (`export * from './business'`) were causing unrelated hooks to be loaded, even when components didn't directly use them:
+
+```typescript
+// Onboarding.native.tsx imports:
+import { useOnboardingFlow } from '@/hooks';
+
+// This loads the entire chain:
+@/hooks/index.ts → ./business → ./search → useSearchResultsResponsive (has window.addEventListener!)
+```
+
+Even though Onboarding never uses search hooks, Metro processes all exports and evaluates files with web APIs, causing crashes.
+
+### Solution Strategy
+
+**Not**: Abandon barrel exports entirely  
+**But**: Structure them properly for cross-platform compatibility
+
+#### ✅ Good Barrel Exports (Keep Using)
+```typescript
+// All hooks work on both platforms
+export * from './useOnboardingFlow';     // Pure business logic
+export * from './useUserSettings';       // Pure business logic  
+export * from './useProfileImage';       // Pure business logic
+```
+
+#### ❌ Problematic Barrel Exports (Fix First)
+```typescript  
+// Mixed platform-specific code
+export * from './useSearchResultsResponsive';  // Has window.addEventListener
+export * from './useKeyboardShortcuts';        // Has document.querySelector
+```
+
+#### 🔄 Migration Path
+1. **During refactoring**: Use direct imports for non-adapted hooks
+2. **After adapter pattern**: Return to clean barrel exports
+3. **End goal**: All hooks work cross-platform, barrel exports are safe
+
+### Temporary Workarounds Applied
+
+- Commented out problematic exports in `/src/hooks/business/search/index.ts`
+- Used selective exports in `/src/hooks/index.ts` for mobile compatibility
+- These will be removed once adapter pattern refactoring is complete
+
 *Last updated: August 8, 2025*
 *Created by: Claude Code*

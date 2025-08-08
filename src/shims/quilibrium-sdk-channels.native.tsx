@@ -197,15 +197,22 @@ const PasskeysContext = createContext<PasskeysContextType | null>(null);
  */
 export const PasskeysProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // TODO: Replace with actual state management
+  // Mock passkey info for testing mobile onboarding
+  const mockPasskeyInfo: PasskeyInfo = {
+    credentialId: 'mock_credential_id_12345',
+    address: '0x1234567890abcdef1234567890abcdef12345678',
+    publicKey: 'mock_public_key_abcdef123456',
+  };
+
   const mockValue: PasskeysContextType = {
-    address: null,
-    username: null,
-    publicKey: null,
-    credentialId: null,
-    isAuthenticated: false,
+    address: mockPasskeyInfo.address,
+    username: 'MockUser',
+    publicKey: mockPasskeyInfo.publicKey,
+    credentialId: mockPasskeyInfo.credentialId,
+    isAuthenticated: true,
     isLoading: false,
     error: null,
-    currentPasskeyInfo: null,
+    currentPasskeyInfo: mockPasskeyInfo,
     
     login: async () => {
       console.warn('[SDK Mock] Passkey login not available on mobile');
@@ -228,6 +235,18 @@ export const PasskeysProvider: React.FC<{ children: ReactNode }> = ({ children }
     deleteAccount: async () => {
       console.warn('[SDK Mock] deleteAccount called - not available');
       throw new Error('Account deletion not available on mobile');
+    },
+
+    // Add exportKey method for key backup functionality
+    exportKey: async (address: string): Promise<string> => {
+      console.warn('[SDK Mock] exportKey called - returning mock key data');
+      return JSON.stringify({
+        address: address,
+        privateKey: 'mock_private_key_data_for_testing',
+        createdAt: new Date().toISOString(),
+        version: '1.0',
+        isMockData: true,
+      });
     },
   };
 

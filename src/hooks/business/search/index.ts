@@ -7,8 +7,10 @@ export * from './useGlobalSearchNavigation';
 export * from './useSearchResultsState';
 export * from './useSearchResultsVirtualization';
 export * from './useSearchResultsKeyboard';
-export * from './useSearchResultsResponsive';
-export * from './useSearchResultsOutsideClick';
+// TEMPORARY: Commented out to fix mobile window.addEventListener issues
+// TODO: Implement proper adapter pattern for these hooks
+// export * from './useSearchResultsResponsive';
+// export * from './useSearchResultsOutsideClick';
 export * from './useSearchResultDisplay';
 export * from './useSearchResultDisplayDM';
 export * from './useSearchResultDisplaySpace';

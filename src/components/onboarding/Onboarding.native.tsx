@@ -14,7 +14,7 @@ import {
 } from '@/components/primitives';
 import {
   useOnboardingFlow,
-  useWebKeyBackup,
+  useKeyBackup,
 } from '@/hooks';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
@@ -42,7 +42,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
 
   // Business logic hooks
   const onboardingFlow = useOnboardingFlow();
-  const keyBackup = useWebKeyBackup();
+  const keyBackup = useKeyBackup();
 
   // FileUpload state management
   const [profileImage, setProfileImage] = useState<string | null>(null);

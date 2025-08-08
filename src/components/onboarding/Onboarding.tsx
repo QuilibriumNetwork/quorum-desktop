@@ -8,7 +8,7 @@ import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { 
   useUploadRegistration,
   useOnboardingFlow,
-  useWebKeyBackup
+  useKeyBackup
 } from '../../hooks';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
@@ -33,7 +33,7 @@ export const Onboarding = ({
 }) => {
   // Business logic hooks
   const onboardingFlow = useOnboardingFlow();
-  const keyBackup = useWebKeyBackup();
+  const keyBackup = useKeyBackup();
 
   // API context
   const { apiClient } = useQuorumApiClient();
