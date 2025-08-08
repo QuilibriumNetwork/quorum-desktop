@@ -50,8 +50,10 @@ import { useQuorumApiClient } from './QuorumApiContext';
 import { QuorumApiClient } from '../../api/baseTypes';
 import { useWebSocket } from './WebsocketProvider';
 import { useInvalidateConversation } from '../../hooks/queries/conversation/useInvalidateConversation';
-import { sha256 } from 'multiformats/hashes/sha2';
-import { base58btc } from 'multiformats/bases/base58';
+// Use platform-specific crypto utilities
+// Web: uses multiformats directly
+// Native: uses React Native compatible implementations
+import { sha256, base58btc } from '../../utils/crypto';
 import { buildConfigKey } from '../../hooks/queries/config/buildConfigKey';
 import { t } from '@lingui/core/macro';
 import { DefaultImages, getDefaultUserConfig } from '../../utils';
