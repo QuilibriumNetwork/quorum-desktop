@@ -1,6 +1,26 @@
 # Cross-Platform Hooks Refactoring Plan
 **Priority: High | Type: Architecture | Estimated Effort: 3-4 weeks**
 
+## 🚨 URGENT: Mobile App Currently Broken (August 8, 2025)
+
+**Status**: Mobile app will crash due to `window.addEventListener` errors from re-enabled search hooks
+
+**What Happened**: 
+- Fixed web app build by re-enabling `useSearchResultsResponsive` and `useSearchResultsOutsideClick` exports
+- These hooks contain `window.addEventListener` which crashes React Native
+- Mobile app worked when these were commented out, but web app needed them for SearchResults.tsx
+
+**Immediate Solution Needed**:
+1. **Test mobile app** - confirm it crashes when loading search functionality
+2. **Priority refactoring**: Focus on `useSearchResultsResponsive` and `useSearchResultsOutsideClick` first
+3. **Implement adapter pattern** for these two hooks to unblock mobile development
+
+**Root Cause**: Barrel export problem - when any component imports search hooks, ALL search hooks get loaded, including problematic ones with `window` APIs.
+
+**Long-term Fix**: Complete adapter pattern refactoring as planned below.
+
+---
+
 ## Executive Summary
 
 Our cross-platform architecture goal of sharing 90% of business logic is being undermined by hooks that mix business logic with platform-specific APIs. We currently have **24 hooks** that require refactoring using the **adapter pattern** to maintain our shared codebase vision.
