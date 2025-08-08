@@ -5,10 +5,8 @@ export interface TextAreaProps {
   value?: string;
   /** Placeholder text */
   placeholder?: string;
-  /** Change handler - can be either string value or React event */
-  onChange?:
-    | ((value: string) => void)
-    | ((e: React.ChangeEvent<HTMLTextAreaElement>) => void);
+  /** Change handler - receives the string value */
+  onChange?: (value: string) => void;
   /** TextArea variant */
   variant?: 'filled' | 'bordered' | 'onboarding';
   /** Blur handler */
