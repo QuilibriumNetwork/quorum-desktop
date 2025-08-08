@@ -4,14 +4,15 @@
   "main": "index.ts",
   "private": true,
   "dependencies": {
+    "@react-native-async-storage/async-storage": "2.1.2",
     "expo": "~53.0.20",
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
     "react-native": "0.79.5",
-    "react-native-safe-area-context": "5.4.0",
-    "@react-native-async-storage/async-storage": "2.1.2"
+    "react-native-safe-area-context": "5.4.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "babel-plugin-module-resolver": "^5.0.2"
   }
 }
