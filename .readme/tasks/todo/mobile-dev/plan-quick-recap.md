@@ -10,13 +10,14 @@
 - [x] **Web migration in progress** - Converting existing web components to use new primitives
 - [x] Extract business logic from complex components into shared hooks
 - [x] Clean up components to focus only on UI rendering
-- [ ] Test web app new architecture
-- [ ] If successful, deploy on production and start using the repo as the main repo for building new features using the new architecture
+- [x] Test web app new architecture
+- [x] If successful, deploy on production and start using the repo as the main repo for building new features using the new architecture
 
 === This is where a more experienced coder could jump in to speed things up! ===
 
 ## Phase 2: Mobile Architecture Planning
 
+- [ ] Begin creating native components and test them in the playground
 - [ ] Find and test alternative solutions for third party plugins non supported on react native (react-virtuoso, emoji-picker-react, react-dropzone)
 - [ ] Design mobile UX/UI (Document mobile differences)
 - [ ] Set up React Native development environment
