@@ -106,7 +106,7 @@ export function Login({ onSuccess }: LoginProps) {
 - **Primitive usage**: Only use components from `src/components/primitives/`
 - **Platform detection**: Use `isNative()`, `isWeb()` utilities when needed
 - **Shared state**: Leverage existing context providers and hooks
-- **Styling**: Use Tailwind classes that work across platforms
+- **Styling**: Follow primitives-first styling approach (see Native Styling Guidelines below)
 
 ### Error Handling
 - **Network errors**: Handle API failures gracefully
@@ -120,6 +120,104 @@ export function Login({ onSuccess }: LoginProps) {
 3. **Document learnings** - Update this plan with discoveries and best practices
 4. **Cross-platform verification** - Ensure web app continues working during mobile development
 
+## Native Styling Guidelines
+
+### **Research-Based Best Practice: Primitives-First Approach**
+
+After researching React Native styling best practices for 2025, we determined that our existing primitive system already provides comprehensive design tokens, eliminating the need for additional shared style files.
+
+### **✅ What Our Primitives Already Provide**
+
+**Typography** (`Text.native.tsx`):
+```typescript
+// Font sizes: xs(12), sm(14), base(16), lg(18), xl(20), 2xl(24), 3xl(30)
+// Font weights: normal(400), medium(500), semibold(600), bold(700)
+<Text size="2xl" weight="semibold" variant="strong">Welcome!</Text>
+```
+
+**Spacing** (`Container.native.tsx`):
+```typescript  
+// Padding/margin: none(0), xs(4), sm(8), md(16), lg(24), xl(32)
+<Container padding="lg" margin="md">Content</Container>
+```
+
+**Colors** (Theme system):
+```typescript
+const { colors } = useTheme();
+// colors.text.strong/main/subtle/muted
+// colors.accent.DEFAULT/100/300/700  
+// colors.surface[0-10]
+// colors.utilities.danger/success/warning
+```
+
+**Component Variants**:
+- Button: 10+ variants with complete theming
+- Input/TextArea: Form styling with focus states
+- Modal: Layout and animation patterns
+- Layout: FlexRow, FlexColumn, FlexCenter, etc.
+
+### **✅ Recommended Implementation Pattern**
+
+**Use Primitives (90% of styling needs)**:
+```typescript
+export const Onboarding = () => {
+  const { colors } = useTheme();
+  
+  return (
+    <Container padding="lg" style={{ backgroundColor: colors.surface[0] }}>
+      <Text size="2xl" weight="semibold" variant="strong" align="center">
+        Welcome to Quorum!
+      </Text>
+      <Button type="primary-white" size="large">
+        Create New Account
+      </Button>
+    </Container>
+  );
+};
+```
+
+**Minimal Component-Specific Styles (10% of cases)**:
+```typescript
+// Only for unique layouts not covered by primitives
+const styles = StyleSheet.create({
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+  },
+  logo: {
+    width: 64,
+    height: 64,
+  },
+  // NO text, button, spacing styles - use primitives instead!
+});
+```
+
+### **✅ Key Benefits**
+
+- **Design Consistency**: Primitives ensure identical styling across platforms
+- **Performance**: StyleSheet.create optimization + no inline style recreation  
+- **Maintainability**: Changes to primitives propagate automatically
+- **Developer Experience**: No need to memorize spacing tokens or color values
+- **Theme Integration**: Automatic dark/light mode + accent color support
+
+### **❌ What NOT to Create**
+
+- ❌ Separate `.styles.native.ts` files
+- ❌ Shared style token files (spacing.ts, typography.ts)
+- ❌ Custom shadow helpers (primitives handle this)
+- ❌ Inline styles (performance impact)
+- ❌ Hardcoded colors/sizes (use theme + primitives)
+
+### **🎯 Implementation Workflow**
+
+1. **Start with primitives**: Use Container, Text, Button, Input, etc.
+2. **Add theme colors**: `const { colors } = useTheme()` for dynamic colors
+3. **Minimal custom styles**: Only for unique layouts via StyleSheet.create
+4. **Test consistency**: Compare with web version visually
+
+This approach leverages our existing investment in the primitive system and follows 2025 React Native best practices.
+
 ## Risk Mitigation
 
 - **Backup strategy**: All changes committed incrementally
@@ -129,4 +227,5 @@ export function Login({ onSuccess }: LoginProps) {
 
 ---
 
-*Created: 2025-08-08*
+*Created: 2025-08-08*  
+*Updated: 2025-08-08 - Added Native Styling Guidelines*

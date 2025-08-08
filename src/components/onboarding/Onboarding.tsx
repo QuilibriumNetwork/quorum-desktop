@@ -51,12 +51,9 @@ export const Onboarding = ({
     }
   };
 
-  // Handle "I already saved mine" with confirmation
+  // Handle "I already saved mine" without confirmation
   const handleAlreadySaved = () => {
-    const canProceed = keyBackup.handleAlreadySaved();
-    if (canProceed) {
-      onboardingFlow.markKeyAsExported();
-    }
+    onboardingFlow.markKeyAsExported();
   };
 
   // Handle profile photo save
@@ -148,13 +145,12 @@ export const Onboarding = ({
                   {t`Save User Key`}
                 </Button>
                 <div className="pt-4">
-                  <Button
-                    type="light-outline-white"
-                    className="px-8 w-full sm:!w-auto sm:!inline-flex"
+                  <span 
+                    className="text-white text-sm cursor-pointer underline hover:text-white/80 transition-colors"
                     onClick={handleAlreadySaved}
                   >
-                    {keyBackup.getConfirmationButtonText()}
-                  </Button>
+                    {t`I already saved mine`}
+                  </span>
                 </div>
               </div>
               <div className="grow"></div>
