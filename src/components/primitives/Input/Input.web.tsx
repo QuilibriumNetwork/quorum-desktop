@@ -21,15 +21,10 @@ export const Input: React.FC<InputProps> = ({
   accessibilityLabel,
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Support both onChange signatures for backward compatibility
+    // Always pass the string value (most common case)
+    // React 19 changed state setter function.length, making detection unreliable
     if (onChange) {
-      if (onChange.length === 1) {
-        // If function expects 1 parameter, assume it wants the string value
-        (onChange as (value: string) => void)(e.target.value);
-      } else {
-        // If function expects more parameters, assume it wants the full event
-        (onChange as (e: React.ChangeEvent<HTMLInputElement>) => void)(e);
-      }
+      (onChange as (value: string) => void)(e.target.value);
     }
   };
 

@@ -29,7 +29,7 @@ interface MessageListProps {
   stickers?: { [stickerId: string]: Sticker };
   members: any;
   setInReplyTo: React.Dispatch<React.SetStateAction<MessageType | undefined>>;
-  editor: React.RefObject<HTMLTextAreaElement>;
+  editor: React.RefObject<HTMLTextAreaElement | null>;
   submitMessage: (message: any) => Promise<void>;
   fetchPreviousPage: () => void;
   isSpaceOwner?: boolean;

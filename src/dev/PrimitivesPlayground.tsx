@@ -1426,18 +1426,18 @@ export const PrimitivesPlayground: React.FC = () => {
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-strong">
-                    Onboarding with Legacy onChange:
+                    Onboarding Input Test:
                   </label>
                   <Input
                     variant="onboarding"
                     placeholder="Test legacy onChange"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      console.log('Legacy onChange:', e.target.value)
+                    onChange={(value: string) =>
+                      console.log('Legacy onChange:', value)
                     }
                     className="!bg-white"
                   />
                   <p className="text-xs text-subtle">
-                    Tests backward compatibility with (e) =&gt; e.target.value
+                    Tests onboarding variant styling
                     pattern
                   </p>
                 </div>

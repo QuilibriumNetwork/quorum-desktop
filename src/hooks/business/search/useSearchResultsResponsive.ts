@@ -6,7 +6,7 @@ export interface UseSearchResultsResponsiveProps {
 }
 
 export interface UseSearchResultsResponsiveReturn {
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
 }
 
 /**
@@ -19,7 +19,7 @@ export const useSearchResultsResponsive = ({
   query,
 }: UseSearchResultsResponsiveProps): UseSearchResultsResponsiveReturn => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const updateTimeoutRef = useRef<NodeJS.Timeout>();
+  const updateTimeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   // Debounced dimension update function
   const updateDimensions = useCallback(() => {

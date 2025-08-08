@@ -101,7 +101,7 @@ const QuorumApiClientProvider = memo(
       checkOffline,
     ]);
 
-    const apiClient = useRef<QuorumApiClient>();
+    const apiClient = useRef<QuorumApiClient>(undefined);
 
     useEffect(() => {
       if (!apiClient.current) {

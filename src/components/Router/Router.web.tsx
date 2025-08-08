@@ -15,11 +15,25 @@ const lazyDevImport = (
   exportName?: string
 ) =>
   process.env.NODE_ENV === 'development'
-    ? React.lazy(() =>
-        exportName
-          ? importFn().then((m) => ({ default: m[exportName] }))
-          : importFn()
-      )
+    ? React.lazy(async () => {
+        try {
+          const module = await importFn();
+          if (exportName && module[exportName]) {
+            return { default: module[exportName] };
+          }
+          return module;
+        } catch (error) {
+          console.error(`Failed to import dev component:`, error);
+          // Return a fallback component instead of failing
+          return { 
+            default: () => (
+              <div style={{ padding: '20px', textAlign: 'center' }}>
+                Dev component failed to load: {String(error)}
+              </div>
+            )
+          };
+        }
+      })
     : null;
 
 // Dev components - web playground still available alongside mobile playground

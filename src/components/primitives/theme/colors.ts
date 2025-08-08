@@ -55,7 +55,7 @@ export const themeColors = {
       tooltip: '#ffffff', // var(--surface-00)
       icon: '#ffffff', // var(--surface-00)
       input: '#e6e6eb', // var(--surface-3)
-      card: '#eeeef3', // var(--surface-2)
+      card: '#fefeff', // var(--surface-0) - lighter background for better field contrast
     },
 
     // Border colors (matches CSS --color-border-* variables)
@@ -156,7 +156,7 @@ export const themeColors = {
       tooltip: '#100f11', // var(--surface-00)
       icon: '#100f11', // var(--surface-00)
       input: '#312935', // var(--surface-3)
-      card: '#2c252e', // var(--surface-2)
+      card: '#1d1a21', // var(--surface-0) - lighter background for better field contrast
     },
 
     // Dark theme border colors

@@ -22,9 +22,9 @@ export function Tooltip({
 
   // Clone the child element and add the anchor ID for tooltip targeting
   const childWithAnchor = isValidElement(children)
-    ? cloneElement(children as ReactElement, {
+    ? cloneElement(children as ReactElement<any>, {
         id: anchorId,
-        ...(children as ReactElement).props,
+        ...(children as ReactElement<any>).props,
       })
     : children;
 

@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 export const createAnimation = (
   loaderName: string,
   frames: string,

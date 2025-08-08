@@ -5,7 +5,7 @@ export function useKeyboardShortcuts({
   isFocused,
   onEscape,
 }: {
-  inputContainerRef: React.RefObject<HTMLDivElement>;
+  inputContainerRef: React.RefObject<HTMLDivElement | null>;
   isFocused: boolean;
   onEscape?: () => void;
 }) {

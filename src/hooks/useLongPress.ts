@@ -35,8 +35,8 @@ export const useLongPress = (
   } = options;
 
   const [longPressTriggered, setLongPressTriggered] = useState(false);
-  const timeout = useRef<NodeJS.Timeout>();
-  const target = useRef<EventTarget>();
+  const timeout = useRef<NodeJS.Timeout>(undefined);
+  const target = useRef<EventTarget>(undefined);
   const startPoint = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const start = useCallback(

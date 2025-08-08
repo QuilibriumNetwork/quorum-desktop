@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 export interface UseSearchResultsOutsideClickProps {
-  containerRef: React.RefObject<HTMLDivElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
   onClose?: () => void;
 }
 
