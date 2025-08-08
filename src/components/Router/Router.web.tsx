@@ -22,7 +22,7 @@ const lazyDevImport = (
       )
     : null;
 
-// Conditionally import dev components
+// Dev components - web playground still available alongside mobile playground
 const PrimitivesPlayground = lazyDevImport(
   () => import('../../dev/PrimitivesPlayground'),
   'PrimitivesPlayground'
