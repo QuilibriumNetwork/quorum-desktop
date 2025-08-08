@@ -82,6 +82,11 @@ export const FileUpload: React.FC<FileUploadWebProps> = ({
     maxSize,
     minSize,
     disabled,
+    noClick: false,
+    noKeyboard: false,
+    noDrag: false,
+    noDragEventsBubbling: false,
+    preventDropOnDocument: true,
     validator: validator ? (file: File) => {
       const result = validator(file);
       return result ? { code: 'custom-validation-error', message: result } : null;

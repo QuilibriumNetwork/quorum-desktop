@@ -2726,9 +2726,9 @@ export const PrimitivesPlayground: React.FC = () => {
                       testId="image-upload"
                     >
                       <div
-                        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
                           isDragActive
-                            ? 'border-accent-500 bg-accent-50'
+                            ? 'border-accent-500 bg-surface-2'
                             : 'border-surface-6 hover:border-accent-300'
                         }`}
                       >

@@ -295,13 +295,13 @@ export const FileUploadTestScreen: React.FC = () => {
               <FlexRow gap="xs" align="start">
                 <Text>•</Text>
                 <Text size="sm" style={{ flex: 1 }}>
-                  Uses react-native-image-picker for image selection
+                  Uses expo-image-picker for image selection
                 </Text>
               </FlexRow>
               <FlexRow gap="xs" align="start">
                 <Text>•</Text>
                 <Text size="sm" style={{ flex: 1 }}>
-                  Uses react-native-document-picker for document selection
+                  Uses expo-document-picker for document selection
                 </Text>
               </FlexRow>
               <FlexRow gap="xs" align="start">

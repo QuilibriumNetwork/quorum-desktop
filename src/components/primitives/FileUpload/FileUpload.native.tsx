@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, Alert } from 'react-native';
-import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
-import { launchImageLibrary, launchCamera, ImagePickerResponse, Asset, PhotoQuality } from 'react-native-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
+import * as ImagePicker from 'expo-image-picker';
 import { FileUploadNativeProps, FileUploadFile } from './types';
 import { t } from '@lingui/core/macro';
 
@@ -25,25 +25,44 @@ export const FileUpload: React.FC<FileUploadNativeProps> = ({
   const isImageUpload = accept && Object.keys(accept).some(key => key.includes('image'));
 
   const handleImageSelection = async (useCamera: boolean = false) => {
-    const options = {
-      mediaType: 'photo' as const,
-      quality: (imageQuality || 0.8) as PhotoQuality,
-      allowsEditing,
-      maxWidth: 2048,
-      maxHeight: 2048,
-    };
-
-    const callback = (response: ImagePickerResponse) => {
-      if (response.didCancel || response.errorMessage) {
-        if (response.errorMessage && onError) {
-          onError(new Error(response.errorMessage));
+    try {
+      // Request permissions first
+      if (useCamera) {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+          if (onError) {
+            onError(new Error(t`Camera permission is required to take photos`));
+          }
+          return;
         }
-        return;
+      } else {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          if (onError) {
+            onError(new Error(t`Photo library permission is required to select images`));
+          }
+          return;
+        }
       }
 
-      if (response.assets && response.assets.length > 0) {
-        const convertedFiles: FileUploadFile[] = response.assets.map((asset: Asset) => ({
-          uri: asset.uri || '',
+      const options: ImagePicker.ImagePickerOptions = {
+        mediaTypes: ['images'],
+        quality: imageQuality || 0.8,
+        allowsEditing,
+        base64: false,
+      };
+
+      const result = useCamera 
+        ? await ImagePicker.launchCameraAsync(options)
+        : await ImagePicker.launchImageLibraryAsync(options);
+
+      if (result.canceled) {
+        return; // User cancelled, no error
+      }
+
+      if (result.assets && result.assets.length > 0) {
+        const convertedFiles: FileUploadFile[] = result.assets.map((asset) => ({
+          uri: asset.uri,
           name: asset.fileName || `image_${Date.now()}.jpg`,
           size: asset.fileSize || 0,
           type: asset.type || 'image/jpeg',
@@ -61,14 +80,6 @@ export const FileUpload: React.FC<FileUploadNativeProps> = ({
 
         onFilesSelected(convertedFiles);
       }
-    };
-
-    try {
-      if (useCamera) {
-        launchCamera(options, callback);
-      } else {
-        launchImageLibrary(options, callback);
-      }
     } catch (error: any) {
       if (onError) {
         onError(new Error(error.message || t`Failed to open image picker`));
@@ -78,17 +89,22 @@ export const FileUpload: React.FC<FileUploadNativeProps> = ({
 
   const handleDocumentSelection = async () => {
     try {
-      const results = await DocumentPicker.pick({
-        type: DocumentPicker.types.allFiles,
-        allowMultiSelection: multiple,
-        presentationStyle: 'fullScreen',
+      const result = await DocumentPicker.getDocumentAsync({
+        type: '*/*',
+        multiple: multiple,
+        copyToCacheDirectory: true,
       });
 
-      const convertedFiles: FileUploadFile[] = results.map((result: DocumentPickerResponse) => ({
-        uri: result.uri,
-        name: result.name || 'document',
-        size: result.size || 0,
-        type: result.type || 'application/octet-stream',
+      if (result.canceled) {
+        return; // User cancelled, no error
+      }
+
+      const assets = result.assets || [];
+      const convertedFiles: FileUploadFile[] = assets.map((asset) => ({
+        uri: asset.uri,
+        name: asset.name || 'document',
+        size: asset.size || 0,
+        type: asset.mimeType || 'application/octet-stream',
       }));
 
       // Check file size if maxSize is specified
@@ -103,11 +119,6 @@ export const FileUpload: React.FC<FileUploadNativeProps> = ({
 
       onFilesSelected(convertedFiles);
     } catch (error: any) {
-      if (DocumentPicker.isCancel(error)) {
-        // User cancelled, this is normal
-        return;
-      }
-      
       if (onError) {
         onError(new Error(error.message || t`Failed to select document`));
       }

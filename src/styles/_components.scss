@@ -34,3 +34,11 @@
 .mobile-sidebar-right {
   padding: 15px;
 }
+
+/* === REACT-DROPZONE STYLING === */
+/* Add cursor pointer for file upload areas */
+[class*="dropzone"],
+div[role="presentation"] {
+  cursor: pointer !important;
+  transition: background-color 0.15s ease !important;
+}

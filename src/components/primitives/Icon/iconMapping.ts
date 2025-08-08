@@ -250,7 +250,7 @@ export const reactNativeIconMap: Record<IconName, string> = {
   'shield-alt': 'shield',
   lock: 'lock',
   unlock: 'unlock',
-  palette: 'palette',
+  palette: 'paint-brush',
   bell: 'bell',
 
   // Status & Alerts
