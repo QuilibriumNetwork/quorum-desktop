@@ -1,13 +1,13 @@
 import React, { Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
-import { ModalProvider } from '../context/ModalProvider';
-import { MobileProvider } from '../context/MobileProvider';
-import { SidebarProvider } from '../context/SidebarProvider';
-import Layout from '../Layout';
-import Space from '../space/Space';
-import DirectMessages from '../direct/DirectMessages';
-import Connecting from '../Connecting';
-import InviteRoute from '../InviteRoute';
+import { ModalProvider } from '@/components/context/ModalProvider';
+import { MobileProvider } from '@/components/context/MobileProvider';
+import { SidebarProvider } from '@/components/context/SidebarProvider';
+import Layout from '@/components/Layout';
+import Space from '@/components/space/Space';
+import DirectMessages from '@/components/direct/DirectMessages';
+import Connecting from '@/components/Connecting';
+import InviteRoute from '@/components/InviteRoute';
 
 // Helper function for conditional dev imports
 const lazyDevImport = (
@@ -38,14 +38,14 @@ const lazyDevImport = (
 
 // Dev components - web playground still available alongside mobile playground
 const PrimitivesPlayground = lazyDevImport(
-  () => import('../../dev/PrimitivesPlayground'),
+  () => import('@/dev/PrimitivesPlayground'),
   'PrimitivesPlayground'
 );
 const ComponentAuditViewer = lazyDevImport(
-  () => import('../../dev/components-audit'),
+  () => import('@/dev/components-audit'),
   'ComponentAuditViewer'
 );
-const Elements = lazyDevImport(() => import('../../dev/Elements'));
+const Elements = lazyDevImport(() => import('@/dev/Elements'));
 
 interface RouterProps {
   user: {

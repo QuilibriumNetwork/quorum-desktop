@@ -18,9 +18,9 @@ import {
   Tooltip,
   Icon,
   Text,
-} from '../components/primitives';
-import ThemeRadioGroup from '../components/ThemeRadioGroup';
-import AccentColorSwitcher from '../components/AccentColorSwitcher';
+} from '@/components/primitives';
+import ThemeRadioGroup from '@/components/ThemeRadioGroup';
+import AccentColorSwitcher from '@/components/AccentColorSwitcher';
 
 /**
  * Playground for testing primitives during development

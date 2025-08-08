@@ -60,6 +60,7 @@ export default defineConfig(({ command }) => ({
   },
   resolve: {
     alias: {
+      '@': resolve(__dirname, '../src'),
       crypto: 'crypto-browserify',
       '@quilibrium/quilibrium-js-sdk-channels': resolve(
         __dirname,
