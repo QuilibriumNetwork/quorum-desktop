@@ -1,10 +1,3 @@
-// Import polyfills FIRST, before anything else
-import 'react-native-get-random-values';
-import { Buffer } from 'buffer';
-
-// Make Buffer globally available
-global.Buffer = Buffer;
-
 import { registerRootComponent } from 'expo';
 
 // Test playground app (change to './App' for production app)

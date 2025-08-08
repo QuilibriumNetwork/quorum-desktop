@@ -22,27 +22,18 @@ config.resolver = {
   platforms: ['native', 'android', 'ios'],
   // Handle ES modules properly
   sourceExts: [...config.resolver.sourceExts, 'mjs', 'cjs'],
-  unstable_enablePackageExports: true,
+  unstable_enablePackageExports: false,
   unstable_conditionNames: ['react-native', 'browser', 'require'],
   // Prioritize platform-specific files for React Native
-  resolverMainFields: ['react-native', 'browser', 'main'],
-  // Add Node.js polyfills - use shim files for better compatibility  
-  alias: {
-    crypto: path.resolve(projectRoot, 'shims/crypto.js'),
-    stream: path.resolve(monorepoRoot, 'node_modules/readable-stream'),
-    buffer: path.resolve(monorepoRoot, 'node_modules/buffer'),
-  },
-  // Custom resolver function for crypto module
-  resolverMainFields: ['react-native', 'browser', 'main'],
-  resolveRequest: (context, moduleName, platform) => {
-    if (moduleName === 'crypto') {
-      return {
-        filePath: path.resolve(projectRoot, 'shims/crypto.js'),
-        type: 'sourceFile',
-      };
-    }
-    // Let Metro handle other modules
-    return context.resolveRequest(context, moduleName, platform);
+  resolverMainFields: ['react-native', 'main'],
+  // TEMPORARY: Redirect SDK to mock implementation for mobile
+  // TODO: Remove this when proper SDK integration is implemented
+  // See: .readme/tasks/todo/mobile-sdk-integration-issue.md
+  extraNodeModules: {
+    '@quilibrium/quilibrium-js-sdk-channels': path.resolve(
+      monorepoRoot,
+      'src/shims/quilibrium-sdk-channels.native.ts'
+    ),
   },
 };
 
