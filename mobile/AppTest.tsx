@@ -25,6 +25,7 @@ import {
   RadioGroupTestScreen,
   TooltipTestScreen,
   IconTestScreen,
+  FileUploadTestScreen,
 } from '@/test/primitives';
 
 // Import business component test screens
@@ -34,7 +35,7 @@ import {
 } from '@/test/business';
 
 type Section = 'main' | 'primitives' | 'business';
-type PrimitiveScreen = 'list' | 'basic' | 'text' | 'input' | 'textarea' | 'button' | 'switch' | 'modal' | 'select' | 'colorswatch' | 'radiogroup' | 'tooltip' | 'icon';
+type PrimitiveScreen = 'list' | 'basic' | 'text' | 'input' | 'textarea' | 'button' | 'switch' | 'modal' | 'select' | 'colorswatch' | 'radiogroup' | 'tooltip' | 'icon' | 'fileupload';
 type BusinessScreen = 'list' | 'auth' | 'spaces' | 'channel' | 'direct' | 'settings' | 'search';
 
 // Themed App Content (must be inside ThemeProvider)
@@ -135,6 +136,8 @@ function ThemedAppContent() {
           return <TooltipTestScreen />;
         case 'icon':
           return <IconTestScreen />;
+        case 'fileupload':
+          return <FileUploadTestScreen />;
         default:
           return <PrimitivesMenuScreen onSelectPrimitive={handleSelectPrimitive} />;
       }

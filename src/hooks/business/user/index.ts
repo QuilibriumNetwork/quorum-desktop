@@ -7,6 +7,6 @@ export * from './useUserRoleManagement';
 export * from './useUserProfileActions';
 export * from './useUserRoleDisplay';
 export * from './useOnboardingFlow';
-export * from './useWebKeyBackup';
-export * from './useWebFileUpload';
+export * from './useKeyBackup';
+export * from './useFileUpload';
 export * from './useAuthenticationFlow';

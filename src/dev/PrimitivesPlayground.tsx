@@ -18,6 +18,7 @@ import {
   Tooltip,
   Icon,
   Text,
+  FileUpload,
 } from '@/components/primitives';
 import ThemeRadioGroup from '@/components/ThemeRadioGroup';
 import AccentColorSwitcher from '@/components/AccentColorSwitcher';
@@ -52,6 +53,11 @@ export const PrimitivesPlayground: React.FC = () => {
   const [autoResizeValue, setAutoResizeValue] = useState('');
   const [errorTextArea, setErrorTextArea] = useState('');
   const [showTextAreaError, setShowTextAreaError] = useState(false);
+
+  // FileUpload testing state
+  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+  const [isDragActive, setIsDragActive] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   // Switch testing state
   const [basicSwitch, setBasicSwitch] = useState(false);
@@ -90,6 +96,7 @@ export const PrimitivesPlayground: React.FC = () => {
     { id: 'radiogroup-primitive', label: 'RadioGroup' },
     { id: 'tooltip-primitive', label: 'Tooltip' },
     { id: 'icon-primitive', label: 'Icon' },
+    { id: 'fileupload-primitive', label: 'FileUpload' },
   ];
 
   return (
@@ -2680,6 +2687,175 @@ export const PrimitivesPlayground: React.FC = () => {
                 <li>Automatic theme color integration on mobile</li>
                 <li>Ready to replace all current FontAwesome usage</li>
               </ul>
+            </div>
+          </section>
+
+          {/* FileUpload Primitive */}
+          <section
+            id="fileupload-primitive"
+            className="w-full max-w-6xl mx-auto p-8 bg-app border border-default rounded-lg"
+          >
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-strong mb-3">
+                  FileUpload Primitive
+                </h2>
+                <p className="text-base text-main">
+                  Cross-platform file upload component with drag-and-drop for web
+                  and native picker integration for mobile.
+                </p>
+              </div>
+
+              {/* Image Upload */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">Image Upload</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-3">
+                    <p className="text-sm text-subtle">
+                      Image upload with drag and drop (web) / image picker (mobile):
+                    </p>
+                    <FileUpload
+                      accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.gif'] }}
+                      onFilesSelected={(files) => {
+                        setUploadedFiles(files);
+                        setUploadError(null);
+                      }}
+                      onError={(error) => setUploadError(error.message)}
+                      onDragActiveChange={setIsDragActive}
+                      maxSize={2 * 1024 * 1024} // 2MB
+                      testId="image-upload"
+                    >
+                      <div
+                        className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                          isDragActive
+                            ? 'border-accent-500 bg-accent-50'
+                            : 'border-surface-6 hover:border-accent-300'
+                        }`}
+                      >
+                        <Icon
+                          name="file-image"
+                          size="xl"
+                          className="mx-auto mb-3 text-subtle"
+                        />
+                        <Text weight="medium" className="mb-3 text-center block">
+                          {isDragActive
+                            ? 'Drop your image here'
+                            : 'Click or drag to upload image'}
+                        </Text>
+                        <Text size="sm" variant="subtle" className="text-center block">
+                          PNG, JPG, GIF up to 2MB
+                        </Text>
+                      </div>
+                    </FileUpload>
+                  </div>
+
+                  {/* Upload Results */}
+                  <div className="space-y-3">
+                    <p className="text-sm text-subtle">Upload Results:</p>
+                    <div className="bg-surface-3 rounded-lg p-4 space-y-3">
+                      {uploadError && (
+                        <div className="text-sm" style={{ color: 'var(--color-text-danger)' }}>
+                          Error: {uploadError}
+                        </div>
+                      )}
+                      {uploadedFiles.length > 0 ? (
+                        <div className="space-y-2">
+                          <Text weight="medium">Uploaded Files:</Text>
+                          {uploadedFiles.map((file, index) => (
+                            <div
+                              key={index}
+                              className="bg-surface-4 p-3 rounded text-sm space-y-1"
+                            >
+                              <div>
+                                <Text weight="medium">Name:</Text> {file.name}
+                              </div>
+                              <div>
+                                <Text weight="medium">Size:</Text>{' '}
+                                {Math.round(file.size / 1024)}KB
+                              </div>
+                              <div>
+                                <Text weight="medium">Type:</Text> {file.type}
+                              </div>
+                            </div>
+                          ))}
+                          <Button
+                            type="subtle"
+                            size="small"
+                            onClick={() => {
+                              setUploadedFiles([]);
+                              setUploadError(null);
+                            }}
+                          >
+                            Clear
+                          </Button>
+                        </div>
+                      ) : (
+                        <Text variant="subtle" size="sm">
+                          No files uploaded yet
+                        </Text>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Document Upload */}
+              <div className="space-y-3">
+                <h3 className="text-lg font-medium text-strong">
+                  Document Upload
+                </h3>
+                <div className="space-y-3">
+                  <p className="text-sm text-subtle">
+                    All file types accepted:
+                  </p>
+                  <FileUpload
+                    accept={{ '*/*': [] }}
+                    multiple={true}
+                    onFilesSelected={(files) => {
+                      setUploadedFiles(files);
+                      setUploadError(null);
+                    }}
+                    onError={(error) => setUploadError(error.message)}
+                    maxSize={10 * 1024 * 1024} // 10MB
+                    testId="document-upload"
+                  >
+                    <div className="border-2 border-dashed border-surface-6 rounded-lg p-6 text-center hover:border-accent-300 transition-colors">
+                      <Icon
+                        name="file-image"
+                        size="lg"
+                        className="mx-auto mb-2 text-subtle"
+                      />
+                      <Text weight="medium" className="mb-2 text-center block">
+                        Upload any files
+                      </Text>
+                      <Text size="sm" variant="subtle" className="text-center block">
+                        Multiple files, up to 10MB each
+                      </Text>
+                    </div>
+                  </FileUpload>
+                </div>
+              </div>
+
+              {/* Implementation Details */}
+              <div className="bg-surface-2 p-4 rounded-lg">
+                <h3 className="text-lg font-medium text-strong mb-3">
+                  Implementation Details
+                </h3>
+                <ul className="text-sm text-main space-y-1 list-disc list-inside">
+                  <li>
+                    Web: Uses react-dropzone with full drag-and-drop support
+                  </li>
+                  <li>
+                    Native: Uses react-native-document-picker and
+                    react-native-image-picker
+                  </li>
+                  <li>Unified API: Same props work across both platforms</li>
+                  <li>File validation: Size limits, MIME type filtering</li>
+                  <li>Error handling: Platform-appropriate error messages</li>
+                  <li>Accessibility: Full keyboard and screen reader support</li>
+                  <li>Performance: No memory leaks, proper cleanup</li>
+                </ul>
+              </div>
             </div>
           </section>
         </div>

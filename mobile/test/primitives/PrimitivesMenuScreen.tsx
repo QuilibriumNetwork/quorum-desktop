@@ -113,6 +113,13 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
       icon: 'pencil',
       onPress: () => onSelectPrimitive('text'),
     },
+    {
+      id: 'fileupload',
+      title: 'FileUpload',
+      description: 'Cross-platform file upload with native picker integration',
+      icon: 'upload',
+      onPress: () => onSelectPrimitive('fileupload'),
+    },
   ];
 
   const renderPrimitiveCard = (primitive: PrimitiveItem) => (

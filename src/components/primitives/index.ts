@@ -20,6 +20,7 @@ export { RadioGroup } from './RadioGroup';
 export { Tooltip } from './Tooltip';
 export { Icon } from './Icon';
 export { Text, Paragraph, Label, Caption, Title, InlineText } from './Text';
+export { FileUpload } from './FileUpload';
 
 // Theme System - Platform-specific exports
 export { ThemeProvider, useTheme } from './theme';
@@ -71,3 +72,4 @@ export type {
   IconSize,
 } from './Icon';
 export type { TextProps, WebTextProps, NativeTextProps } from './Text';
+export type { FileUploadProps, FileUploadFile } from './FileUpload';
