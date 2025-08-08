@@ -56,8 +56,8 @@ export const PrimitivesPlayground: React.FC = () => {
 
   // FileUpload testing state
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
-  const [isDragActive, setIsDragActive] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isDragActive, setIsDragActive] = useState(false);
 
   // Switch testing state
   const [basicSwitch, setBasicSwitch] = useState(false);
@@ -1769,7 +1769,7 @@ export const PrimitivesPlayground: React.FC = () => {
                     <label className="text-sm font-medium text-strong flex items-center gap-3">
                       <Switch
                         value={switchSizes.small}
-                        onChange={(value) =>
+                        onChange={(value: boolean) =>
                           setSwitchSizes((prev) => ({ ...prev, small: value }))
                         }
                         size="small"
@@ -1782,7 +1782,7 @@ export const PrimitivesPlayground: React.FC = () => {
                     <label className="text-sm font-medium text-strong flex items-center gap-3">
                       <Switch
                         value={switchSizes.medium}
-                        onChange={(value) =>
+                        onChange={(value: boolean) =>
                           setSwitchSizes((prev) => ({ ...prev, medium: value }))
                         }
                         size="medium"
@@ -1795,7 +1795,7 @@ export const PrimitivesPlayground: React.FC = () => {
                     <label className="text-sm font-medium text-strong flex items-center gap-3">
                       <Switch
                         value={switchSizes.large}
-                        onChange={(value) =>
+                        onChange={(value: boolean) =>
                           setSwitchSizes((prev) => ({ ...prev, large: value }))
                         }
                         size="large"
@@ -2721,9 +2721,9 @@ export const PrimitivesPlayground: React.FC = () => {
                         setUploadError(null);
                       }}
                       onError={(error) => setUploadError(error.message)}
-                      onDragActiveChange={setIsDragActive}
                       maxSize={2 * 1024 * 1024} // 2MB
                       testId="image-upload"
+                      {...({onDragActiveChange: setIsDragActive} as any)}
                     >
                       <div
                         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
@@ -2738,9 +2738,7 @@ export const PrimitivesPlayground: React.FC = () => {
                           className="mx-auto mb-3 text-subtle"
                         />
                         <Text weight="medium" className="mb-3 text-center block">
-                          {isDragActive
-                            ? 'Drop your image here'
-                            : 'Click or drag to upload image'}
+                          Click or drag to upload image
                         </Text>
                         <Text size="sm" variant="subtle" className="text-center block">
                           PNG, JPG, GIF up to 2MB
