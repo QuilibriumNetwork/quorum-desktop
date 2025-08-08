@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   PasskeyModal,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import '../../styles/_passkey-modal.scss';
-import { Input, Icon, Button, Tooltip } from '../primitives';
+import { Input, Icon, Button, Tooltip, FileUpload } from '../primitives';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
 import { 
   useUploadRegistration,
   useOnboardingFlow,
-  useWebKeyBackup,
-  useWebFileUpload
+  useWebKeyBackup
 } from '../../hooks';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
@@ -35,11 +34,40 @@ export const Onboarding = ({
   // Business logic hooks
   const onboardingFlow = useOnboardingFlow();
   const keyBackup = useWebKeyBackup();
-  const fileUpload = useWebFileUpload();
 
   // API context
   const { apiClient } = useQuorumApiClient();
   const uploadRegistration = useUploadRegistration();
+
+  // FileUpload state management
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [isDragActive, setIsDragActive] = useState(false);
+  
+  const maxImageSize = 2 * 1024 * 1024; // 2MB
+
+  // Handle file upload
+  const handleFilesSelected = useCallback((files: any[]) => {
+    if (files.length > 0) {
+      const file = files[0];
+      setProfileImage(file.uri);
+      setFileError(null);
+    }
+  }, []);
+
+  const handleFileError = useCallback((error: Error) => {
+    setFileError(error.message);
+    setProfileImage(null);
+  }, []);
+
+  // Get image data URL for saving
+  const getImageDataUrl = useCallback((): string | null => {
+    return profileImage;
+  }, [profileImage]);
+
+  // Validation helpers
+  const hasValidFile = !!profileImage;
+  const canSaveFile = hasValidFile && !fileError;
 
   // Handle key download and mark as exported
   const handleDownloadKey = async () => {
@@ -58,7 +86,7 @@ export const Onboarding = ({
 
   // Handle profile photo save
   const handleSavePhoto = () => {
-    const dataUrl = fileUpload.getImageDataUrl();
+    const dataUrl = getImageDataUrl();
     onboardingFlow.saveProfilePhoto(dataUrl || undefined);
   };
 
@@ -83,12 +111,15 @@ export const Onboarding = ({
                 : t`Personalize your account`}
           </div>
         </div>
-        {fileUpload.isDragActive && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-overlay pointer-events-none">
-            <div className="flex flex-col p-8 border-2 border-dashed border-white rounded-lg bg-white bg-opacity-50 items-center">
-              <Icon name="file-image" className="text-4xl text-gray-700 mb-4" />
-              <p className="text-xl font-semibold text-gray-800">
+        {isDragActive && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 pointer-events-none backdrop-blur-sm">
+            <div className="flex flex-col p-12 border-2 border-dashed border-accent-500 rounded-2xl bg-white/90 shadow-2xl items-center transform scale-110 transition-all duration-200">
+              <Icon name="file-image" className="text-5xl text-accent-500 mb-6" />
+              <p className="text-xl">
                 {t`Drop your profile photo here`}
+              </p>
+              <p className="text-sm text-subtle mt-2">
+                {t`PNG, JPG or JPEG • Max 2MB`}
               </p>
             </div>
           </div>
@@ -220,11 +251,11 @@ export const Onboarding = ({
                   <div className="mb-2 text-sm text-center">
                     {i18n._(
                       `Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension.`,
-                      { maxFileSize: `${fileUpload.maxImageSize / 1024 / 1024}MB` }
+                      { maxFileSize: `${maxImageSize / 1024 / 1024}MB` }
                     )}
                   </div>
-                  {fileUpload.fileError && (
-                    <div className="error-label mt-2">{fileUpload.fileError}</div>
+                  {fileError && (
+                    <div className="error-label mt-2">{fileError}</div>
                   )}
                 </div>
 
@@ -233,28 +264,33 @@ export const Onboarding = ({
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
                 <div className="w-full max-w-[460px] px-4 py-4 text-center flex flex-row justify-around">
-                  {fileUpload.hasValidFile ? (
-                    <div {...fileUpload.getRootProps()}>
-                      <input {...fileUpload.getInputProps()} />
+                  <FileUpload
+                    onFilesSelected={handleFilesSelected}
+                    onError={handleFileError}
+                    accept={{
+                      'image/png': ['.png'],
+                      'image/jpeg': ['.jpg', '.jpeg'],
+                    }}
+                    maxSize={maxImageSize}
+                    multiple={false}
+                    {...({ onDragActiveChange: setIsDragActive } as any)}
+                  >
+                    {hasValidFile ? (
                       <img
-                        className="max-w-[200px] max-h-[200px] object-cover rounded-full mx-auto"
-                        src={fileUpload.getImageDataUrl() || DefaultImages.UNKNOWN_USER}
+                        className="max-w-[200px] max-h-[200px] object-cover rounded-full mx-auto cursor-pointer"
+                        src={getImageDataUrl() || DefaultImages.UNKNOWN_USER}
                       />
-                    </div>
-                  ) : (
-                    <div
-                      className="attachment-drop cursor-pointer"
-                      {...fileUpload.getRootProps()}
-                    >
-                      <span className="attachment-drop-icon justify-around w-20 h-20 flex flex-col">
-                        <input {...fileUpload.getInputProps()} />
-                        <img
-                          src={DefaultImages.UNKNOWN_USER}
-                          className="w-20 h-20 object-cover rounded-full mx-auto"
-                        />
-                      </span>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="attachment-drop cursor-pointer">
+                        <span className="attachment-drop-icon justify-around w-20 h-20 flex flex-col">
+                          <img
+                            src={DefaultImages.UNKNOWN_USER}
+                            className="w-20 h-20 object-cover rounded-full mx-auto"
+                          />
+                        </span>
+                      </div>
+                    )}
+                  </FileUpload>
                 </div>
 
                 <div className="grow"></div>
@@ -285,8 +321,8 @@ export const Onboarding = ({
                   </div>
                   <Button
                     type="primary-white"
-                    disabled={!fileUpload.canSaveFile}
-                    className={`px-8 mt-4 w-full sm:w-auto ${!fileUpload.canSaveFile ? 'btn-disabled-onboarding' : ''}`}
+                    disabled={!canSaveFile}
+                    className={`px-8 mt-4 w-full sm:w-auto ${!canSaveFile ? 'btn-disabled-onboarding' : ''}`}
                     onClick={handleSavePhoto}
                   >
                     {t`Save Contact Photo`}
