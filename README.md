@@ -30,6 +30,14 @@ The [`.readme/`](.readme) folder contains development resources including:
 - Task management ([todo](.readme/tasks/todo), [ongoing](.readme/tasks/ongoing), [done](.readme/tasks/done))
 - Mobile development guidelines and cross-platform considerations
 
+### Development Tools
+
+The [`src/dev/`](src/dev) folder contains development utilities:
+
+- **Components Audit** (`/dev/audit`) - Visual audit of all components showing extraction status and cross-platform readiness
+- **Primitives Playground** (`/playground`) - Web-based testing environment for UI primitives and components
+- **Mobile Playground** - Comprehensive testing environment accessible by running the mobile app (see Mobile Development section)
+
 ## Setup and Development
 
 ### Prerequisites
@@ -88,7 +96,7 @@ yarn mobile:tunnel  # For WSL/remote development
 **Test on Device:**
 1. Install [Expo Go](https://expo.dev/client) on your mobile device
 2. Scan the QR code shown in terminal or browser
-3. App will load with primitive component testing screens
+3. App will load with primitive/business components testing screens
 
 **Clear Metro Cache:**
 ```bash
