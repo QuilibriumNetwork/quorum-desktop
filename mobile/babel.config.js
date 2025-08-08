@@ -1,7 +1,14 @@
 module.exports = function (api) {
   api.cache(true);
   return {
-    presets: ['babel-preset-expo'],
+    presets: [
+      [
+        'babel-preset-expo',
+        {
+          unstable_transformImportMeta: true,
+        },
+      ],
+    ],
     plugins: [
       '@lingui/babel-plugin-lingui-macro',
       [
@@ -16,6 +23,7 @@ module.exports = function (api) {
             '@/primitives': '../src/components/primitives',
             '@/components': '../src/components',
             '@/hooks': '../src/hooks',
+            '@/utils': '../src/utils',
             '@/src': '../src',
           },
         },

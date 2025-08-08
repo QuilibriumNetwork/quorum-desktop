@@ -1,21 +1,20 @@
-import React from 'react';
-import { ScrollView, Image, Pressable } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { ScrollView, Pressable } from 'react-native';
+import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Container,
   FlexColumn,
-  FlexRow,
-  FlexBetween,
   Text,
   Input,
   Button,
   Icon,
-} from '@/primitives';
-import { useTheme } from '@/primitives/theme';
+  FileUpload,
+  useTheme,
+} from '@/components/primitives';
 import {
   useOnboardingFlow,
   useWebKeyBackup,
-  useWebFileUpload,
 } from '@/hooks';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
@@ -44,7 +43,35 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
   // Business logic hooks
   const onboardingFlow = useOnboardingFlow();
   const keyBackup = useWebKeyBackup();
-  const fileUpload = useWebFileUpload();
+
+  // FileUpload state management
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  
+  const maxImageSize = 2 * 1024 * 1024; // 2MB
+
+  // Handle file upload
+  const handleFilesSelected = useCallback((files: any[]) => {
+    if (files.length > 0) {
+      const file = files[0];
+      setProfileImage(file.uri);
+      setFileError(null);
+    }
+  }, []);
+
+  const handleFileError = useCallback((error: Error) => {
+    setFileError(error.message);
+    setProfileImage(null);
+  }, []);
+
+  // Get image data URL for saving
+  const getImageDataUrl = useCallback((): string | null => {
+    return profileImage;
+  }, [profileImage]);
+
+  // Validation helpers
+  const hasValidFile = !!profileImage;
+  const canSaveFile = hasValidFile && !fileError;
 
   // Handle key download and mark as exported
   const handleDownloadKey = async () => {
@@ -63,7 +90,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
 
   // Handle profile photo save
   const handleSavePhoto = () => {
-    const dataUrl = fileUpload.getImageDataUrl();
+    const dataUrl = getImageDataUrl();
     onboardingFlow.saveProfilePhoto(dataUrl || undefined);
   };
 
@@ -137,9 +164,8 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                 <Button
                   type="primary"
                   onClick={handleDownloadKey}
-                  disabled={keyBackup.isDownloading}
                 >
-                  {keyBackup.isDownloading ? t`Saving...` : t`Save User Key`}
+                  {t`Save User Key`}
                 </Button>
                 
                 <Pressable onPress={handleAlreadySaved} style={styles.linkButton}>
@@ -224,65 +250,76 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                 
                 <Text size="sm" variant="subtle" align="center">
                   <Trans>
-                    Your profile image size must be {fileUpload.maxImageSize / 1024 / 1024}MB or less and must be a PNG, JPG, or JPEG file extension.
+                    Your profile image size must be {maxImageSize / 1024 / 1024}MB or less and must be a PNG, JPG, or JPEG file extension.
                   </Trans>
                 </Text>
                 
-                {fileUpload.fileError && (
+                {fileError && (
                   <Container 
                     padding="sm" 
                     style={styles.errorContainer}
                   >
                     <Text variant="error" size="sm" align="center">
-                      {fileUpload.fileError}
+                      {fileError}
                     </Text>
                   </Container>
                 )}
               </FlexColumn>
 
               {/* Profile Image Display/Selector */}
-              <Pressable 
-                onPress={fileUpload.showImagePicker}
-                style={styles.imageSelector}
-                disabled={fileUpload.isSelecting}
+              <FileUpload
+                onFilesSelected={handleFilesSelected}
+                onError={handleFileError}
+                accept={{
+                  'image/png': ['.png'],
+                  'image/jpeg': ['.jpg', '.jpeg'],
+                }}
+                maxSize={maxImageSize}
+                multiple={false}
+                showCameraOption={true}
+                allowsEditing={true}
               >
-                <Image
-                  source={{ 
-                    uri: fileUpload.getImageDataUrl() || DefaultImages.UNKNOWN_USER 
-                  }}
-                  style={styles.profileImage}
-                />
-                
-                {!fileUpload.hasValidFile && (
-                  <Container style={styles.imageOverlay}>
-                    <Icon 
-                      name="file-image" 
-                      size="lg" 
-                      color={theme.colors.text.onAccent}
-                    />
-                    <Text 
-                      size="sm" 
-                      variant="strong" 
-                      align="center"
-                      color={theme.colors.text.onAccent}
-                    >
-                      <Trans>Tap to select</Trans>
-                    </Text>
-                  </Container>
-                )}
-              </Pressable>
+                <Container style={styles.imageSelector}>
+                  <Image
+                    source={{ 
+                      uri: getImageDataUrl() || DefaultImages.UNKNOWN_USER 
+                    }}
+                    style={styles.profileImage}
+                    contentFit="cover"
+                    placeholder={DefaultImages.UNKNOWN_USER}
+                  />
+                  
+                  {!hasValidFile && (
+                    <Container style={styles.imageOverlay}>
+                      <Icon 
+                        name="file-image" 
+                        size="lg" 
+                        color={theme.colors.text.onAccent}
+                      />
+                      <Text 
+                        size="sm" 
+                        variant="strong" 
+                        align="center"
+                        color={theme.colors.text.onAccent}
+                      >
+                        <Trans>Tap to select</Trans>
+                      </Text>
+                    </Container>
+                  )}
+                </Container>
+              </FileUpload>
 
               {/* Action Buttons */}
               <FlexColumn gap="md" align="stretch" style={styles.photoButtons}>
                 <Button
                   type="primary"
-                  disabled={fileUpload.fileError !== null}
+                  disabled={fileError !== null}
                   onClick={handleSavePhoto}
                 >
-                  {fileUpload.hasValidFile ? t`Save Contact Photo` : t`Use Default Photo`}
+                  {hasValidFile ? t`Save Contact Photo` : t`Use Default Photo`}
                 </Button>
                 
-                {fileUpload.hasValidFile && (
+                {hasValidFile && (
                   <Button
                     type="secondary"
                     onClick={handleSavePhoto}
@@ -321,68 +358,64 @@ const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.bg.app,
-  },
+  } as any,
   scrollContent: {
     flexGrow: 1,
-    justifyContent: 'center',
-    paddingVertical: theme.spacing.xl,
-  },
+    justifyContent: 'center' as const,
+    paddingVertical: theme.spacing?.xl || 24,
+  } as any,
   titleSection: {
-    marginBottom: theme.spacing.lg,
-  },
+    marginBottom: theme.spacing?.lg || 16,
+  } as any,
   stepContainer: {
-    backgroundColor: theme.colors.surface[2],
-    marginHorizontal: theme.spacing.md,
-    borderRadius: theme.borderRadius.lg,
-  },
+    backgroundColor: theme.colors.surface?.[2] || '#f5f5f5',
+    marginHorizontal: theme.spacing?.md || 12,
+    borderRadius: theme.borderRadius?.lg || 12,
+  } as any,
   addressDisplay: {
-    backgroundColor: theme.colors.surface[4],
-    borderRadius: theme.borderRadius.md,
-  },
+    backgroundColor: theme.colors.surface?.[4] || '#e0e0e0',
+    borderRadius: theme.borderRadius?.md || 8,
+  } as any,
   addressText: {
-    fontFamily: 'monospace',
-    textAlign: 'center',
-  },
+    textAlign: 'center' as const,
+  } as any,
   nameInput: {
-    backgroundColor: theme.colors.surface[0],
-  },
+    backgroundColor: theme.colors.surface?.[0] || '#ffffff',
+  } as any,
   linkButton: {
-    paddingVertical: theme.spacing.sm,
-  },
+    paddingVertical: theme.spacing?.sm || 8,
+  } as any,
   linkText: {
-    textDecorationLine: 'underline',
-  },
+    textDecorationLine: 'underline' as const,
+  } as any,
   errorContainer: {
-    backgroundColor: theme.colors.utilities.danger + '20',
-    borderColor: theme.colors.utilities.danger,
+    backgroundColor: (theme.colors.utilities?.danger || '#ef4444') + '20',
+    borderColor: theme.colors.utilities?.danger || '#ef4444',
     borderWidth: 1,
-    borderRadius: theme.borderRadius.sm,
-  },
+    borderRadius: theme.borderRadius?.sm || 4,
+  } as any,
   imageSelector: {
-    position: 'relative',
     width: 200,
     height: 200,
     borderRadius: 100,
-    overflow: 'hidden',
-    backgroundColor: theme.colors.surface[3],
-  },
+    overflow: 'hidden' as const,
+    backgroundColor: theme.colors.surface?.[3] || '#d0d0d0',
+  } as any,
   profileImage: {
-    width: '100%',
-    height: '100%',
-  },
+    width: 200,
+    height: 200,
+  } as any,
   imageOverlay: {
-    position: 'absolute',
+    position: 'absolute' as const,
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: theme.colors.accent.DEFAULT + '80',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: theme.spacing.xs,
-  },
+    backgroundColor: (theme.colors.accent?.DEFAULT || '#3b82f6') + '80',
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+  } as any,
   photoButtons: {
-    width: '100%',
-    maxWidth: 300,
-  },
+    width: 300,
+  } as any,
 });

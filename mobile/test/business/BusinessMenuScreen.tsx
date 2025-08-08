@@ -35,6 +35,14 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
 
   const features: BusinessFeature[] = [
     {
+      id: 'onboarding',
+      title: 'User Onboarding',
+      description: 'Complete user onboarding flow with FileUpload primitive',
+      icon: 'user-plus',
+      status: 'ready',
+      onPress: () => onSelectFeature('onboarding'),
+    },
+    {
       id: 'auth',
       title: 'Authentication',
       description: 'Login & Onboarding flows with useAuthenticationFlow hook',

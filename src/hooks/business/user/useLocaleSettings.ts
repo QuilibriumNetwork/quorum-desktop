@@ -3,7 +3,7 @@ import {
   dynamicActivate,
   getUserLocale,
   saveUserLocale,
-} from '../../../i18n/i18n.ts';
+} from '../../../i18n/i18n';
 import locales from '../../../i18n/locales';
 import useForceUpdate from '../../utils/forceUpdate';
 

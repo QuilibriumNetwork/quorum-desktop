@@ -1,6 +1,7 @@
 // Business component test screens
 export { BusinessMenuScreen } from './BusinessMenuScreen';
 export { AuthenticationTestScreen } from './AuthenticationTestScreen';
+export { OnboardingTestScreen } from './OnboardingTestScreen';
 
 // Future exports will be added here as we create components:
 // export { SpaceNavigationTestScreen } from './SpaceNavigationTestScreen';
