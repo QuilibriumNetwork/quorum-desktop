@@ -43,7 +43,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
         )}
 
         <Container className="space-header-name truncate relative z-10">
-          <Text>{spaceName}</Text>
+          <Text weight="bold" color="strong">{spaceName}</Text>
         </Container>
         <Container
           className="space-context-menu-toggle-button relative z-10"

@@ -28,7 +28,7 @@ export const useSpaceHeader = (space: any) => {
   const gradientOverlayStyle = useMemo(
     () => ({
       background:
-        'linear-gradient(to bottom, rgba(var(--surface-00-rgb), 0.8), rgba(var(--surface-00-rgb), 0))',
+        'linear-gradient(to bottom, rgba(var(--surface-00-rgb), 0.85), rgba(var(--surface-00-rgb), 0))',
     }),
     []
   );
