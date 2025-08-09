@@ -62,6 +62,7 @@ export type IconName =
   | 'shield-alt'
   | 'lock'
   | 'unlock'
+  | 'sign-in'
   | 'palette'
   | 'bell'
 

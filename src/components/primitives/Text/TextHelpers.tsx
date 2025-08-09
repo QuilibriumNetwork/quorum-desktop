@@ -1,6 +1,6 @@
 import React from 'react';
-// Import Text from index which properly exports the platform-specific version
-import { Text } from './index';
+// Import Text directly to avoid circular dependency
+import { Text } from './Text';
 import { NativeTextProps } from './types';
 
 /**

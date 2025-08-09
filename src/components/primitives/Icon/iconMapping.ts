@@ -48,6 +48,7 @@ import {
   faShieldAlt,
   faLock,
   faUnlock,
+  faSignInAlt,
   faPalette,
   faBell,
   faInfo,
@@ -141,6 +142,7 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   'shield-alt': faShieldAlt,
   lock: faLock,
   unlock: faUnlock,
+  'sign-in': faSignInAlt,
   palette: faPalette,
   bell: faBell,
 
@@ -250,6 +252,7 @@ export const reactNativeIconMap: Record<IconName, string> = {
   'shield-alt': 'shield',
   lock: 'lock',
   unlock: 'unlock',
+  'sign-in': 'sign-in',
   palette: 'paint-brush',
   bell: 'bell',
 
