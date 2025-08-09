@@ -19,7 +19,7 @@
  * See: .readme/tasks/todo/mobile-sdk-integration-issue.md for full details
  */
 
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useState } from 'react';
 
 // ============================================================================
 // TYPE DEFINITIONS - Must match the real SDK interface
@@ -50,6 +50,15 @@ export interface PasskeyInfo {
   publicKey?: string;
 }
 
+export interface StoredPasskey {
+  credentialId: string;
+  address: string;
+  publicKey: string;
+  displayName?: string;
+  pfpUrl?: string;
+  completedOnboarding?: boolean;
+}
+
 export interface PasskeysContextType {
   address: string | null;
   username: string | null;
@@ -66,6 +75,8 @@ export interface PasskeysContextType {
   register: (username: string) => Promise<void>;
   updateProfile: (data: any) => Promise<void>;
   deleteAccount: () => Promise<void>;
+  updateStoredPasskey: (credentialId: string, updates: Partial<StoredPasskey>) => void;
+  exportKey?: (address: string) => Promise<string>;
 }
 
 // ============================================================================
@@ -197,16 +208,19 @@ const PasskeysContext = createContext<PasskeysContextType | null>(null);
  */
 export const PasskeysProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // TODO: Replace with actual state management
-  // Mock passkey info for testing mobile onboarding
-  const mockPasskeyInfo: PasskeyInfo = {
+  // Mock passkey info for testing mobile onboarding - using state for updates
+  const [mockPasskeyInfo, setMockPasskeyInfo] = useState<PasskeyInfo & Partial<StoredPasskey>>({
     credentialId: 'mock_credential_id_12345',
     address: '0x1234567890abcdef1234567890abcdef12345678',
     publicKey: 'mock_public_key_abcdef123456',
-  };
+    displayName: undefined,
+    pfpUrl: undefined,
+    completedOnboarding: false,
+  });
 
   const mockValue: PasskeysContextType = {
     address: mockPasskeyInfo.address,
-    username: 'MockUser',
+    username: mockPasskeyInfo.displayName || 'MockUser',
     publicKey: mockPasskeyInfo.publicKey,
     credentialId: mockPasskeyInfo.credentialId,
     isAuthenticated: true,
@@ -235,6 +249,15 @@ export const PasskeysProvider: React.FC<{ children: ReactNode }> = ({ children }
     deleteAccount: async () => {
       console.warn('[SDK Mock] deleteAccount called - not available');
       throw new Error('Account deletion not available on mobile');
+    },
+
+    // Add updateStoredPasskey method for onboarding flow
+    updateStoredPasskey: (credentialId: string, updates: Partial<StoredPasskey>) => {
+      console.warn('[SDK Mock] updateStoredPasskey called with:', updates);
+      setMockPasskeyInfo(prev => ({
+        ...prev,
+        ...updates,
+      }));
     },
 
     // Add exportKey method for key backup functionality
@@ -281,9 +304,18 @@ export const usePasskeysContext = (): PasskeysContextType => {
       register: async () => { throw new Error('Not available'); },
       updateProfile: async () => {},
       deleteAccount: async () => { throw new Error('Not available'); },
+      updateStoredPasskey: () => { console.warn('[SDK Mock] updateStoredPasskey - no provider'); },
     };
   }
   return context;
+};
+
+// ============================================================================
+// PASSKEY NAMESPACE EXPORT
+// ============================================================================
+
+export const passkey = {
+  StoredPasskey: {} as StoredPasskey, // Type export for compatibility
 };
 
 // ============================================================================
@@ -293,6 +325,7 @@ export const usePasskeysContext = (): PasskeysContextType => {
 export default {
   channel,
   channel_raw,
+  passkey,
   PasskeysProvider,
   usePasskeysContext,
 };

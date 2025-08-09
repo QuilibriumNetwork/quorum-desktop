@@ -12,10 +12,11 @@ import {
   FileUpload,
   useTheme,
 } from '@/components/primitives';
-import {
-  useOnboardingFlow,
-  useKeyBackup,
-} from '@/hooks';
+// Use direct imports to avoid barrel export chain loading problematic hooks
+import { useOnboardingFlow } from '@/hooks/business/user/useOnboardingFlow';
+import { useKeyBackup } from '@/hooks/useKeyBackup';
+import { useUploadRegistration } from '@/hooks/mutations/useUploadRegistration';
+import { useQuorumApiClient } from '@/components/context/QuorumApiContext';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { DefaultImages } from '@/utils';
@@ -40,9 +41,22 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
   const theme = useTheme();
   const styles = createStyles(theme);
 
+  // API context
+  const { apiClient } = useQuorumApiClient();
+  const uploadRegistration = useUploadRegistration();
+
   // Business logic hooks
   const onboardingFlow = useOnboardingFlow();
   const keyBackup = useKeyBackup();
+
+  // TODO: When real SDK is integrated for React Native:
+  // 1. Import PasskeyModal from the SDK (once it's compatible with React Native)
+  // 2. Add PasskeyModal component at the top of the render tree (like web version)
+  // 3. Remove manual uploadRegistration call from handleSaveDisplayName
+  // 4. Let PasskeyModal handle getUserRegistration and uploadRegistration automatically
+  // 
+  // Current implementation uses SDK shim and manual registration as a temporary solution
+  // See: .readme/tasks/todo/mobile-sdk-integration-issue.md for full SDK integration plan
 
   // FileUpload state management
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -71,7 +85,6 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
 
   // Validation helpers
   const hasValidFile = !!profileImage;
-  const canSaveFile = hasValidFile && !fileError;
 
   // Handle key download and mark as exported
   const handleDownloadKey = async () => {
@@ -86,6 +99,31 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
   // Handle "I already saved mine" without confirmation
   const handleAlreadySaved = () => {
     onboardingFlow.markKeyAsExported();
+  };
+
+  // Handle display name save with user registration
+  // NOTE: This manual registration is a temporary solution while using SDK shim
+  // The web version handles this automatically through PasskeyModal
+  // TODO: Remove this manual registration once PasskeyModal is available for React Native
+  const handleSaveDisplayName = async () => {
+    try {
+      // Manually register user with the API (normally handled by PasskeyModal)
+      if (onboardingFlow.currentPasskeyInfo) {
+        await uploadRegistration({
+          address: onboardingFlow.currentPasskeyInfo.address,
+          registration: {
+            username: onboardingFlow.displayName,
+            address: onboardingFlow.currentPasskeyInfo.address,
+            publicKey: onboardingFlow.currentPasskeyInfo.publicKey,
+          },
+        });
+      }
+      // Save to local state
+      onboardingFlow.saveDisplayName();
+    } catch (error) {
+      console.error('Error saving display name:', error);
+      // TODO: Add proper error handling UI when SDK is integrated
+    }
   };
 
   // Handle profile photo save
@@ -114,6 +152,13 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* TODO: Add PasskeyModal here once SDK is React Native compatible
+          <PasskeyModal
+            fqAppPrefix="Quorum"
+            getUserRegistration={async (address) => (await apiClient.getUser(address)).data}
+            uploadRegistration={uploadRegistration}
+          />
+      */}
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
@@ -227,7 +272,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                 <Button
                   type="primary"
                   disabled={!onboardingFlow.canProceedWithName}
-                  onClick={onboardingFlow.saveDisplayName}
+                  onClick={handleSaveDisplayName}
                 >
                   <Trans>Set Display Name</Trans>
                 </Button>

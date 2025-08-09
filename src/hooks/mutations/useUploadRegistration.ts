@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useQuorumApiClient } from '../../components/context/QuorumApiContext';
-import { useInvalidateRegistration } from '../queries';
+import { useInvalidateRegistration } from '../queries/registration/useInvalidateRegistration';
 
 export const useUploadRegistration = () => {
   const { apiClient } = useQuorumApiClient();

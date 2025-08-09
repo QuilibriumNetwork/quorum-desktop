@@ -5,11 +5,10 @@ import {
 import '../../styles/_passkey-modal.scss';
 import { Input, Icon, Button, Tooltip, FileUpload } from '../primitives';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
-import { 
-  useUploadRegistration,
-  useOnboardingFlow,
-  useKeyBackup
-} from '../../hooks';
+// Use direct imports for better tree-shaking and to avoid import chain issues
+import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
+import { useOnboardingFlow } from '../../hooks/business/user/useOnboardingFlow';
+import { useKeyBackup } from '../../hooks/useKeyBackup';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { Trans } from '@lingui/react/macro';
