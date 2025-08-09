@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Container, FlexColumn, Text, Button } from '@/primitives';
-import { useTheme } from '@/primitives/theme';
-import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
 import { Onboarding } from '@/components/onboarding/Onboarding.native';
+import {
+  AuthScreenWrapper,
+  AuthTitle,
+  AuthContent,
+  AuthSpacer,
+} from '@/components/OnboardingStyles.native';
 
 // Mock user type for testing
 type User = {
@@ -16,8 +18,6 @@ type User = {
 };
 
 export const OnboardingTestScreen: React.FC = () => {
-  const theme = useTheme();
-  const themedStyles = createThemedStyles(theme);
   const [user, setUser] = useState<User | undefined>();
   const [showOnboarding, setShowOnboarding] = useState(true);
 
@@ -26,52 +26,57 @@ export const OnboardingTestScreen: React.FC = () => {
     setShowOnboarding(true);
   };
 
+  // Show onboarding in full-screen mode for accurate testing
   if (showOnboarding && !user) {
-    return (
-      <Onboarding setUser={setUser} />
-    );
+    return <Onboarding setUser={setUser} />;
   }
 
+  // Success screen using the same styling as auth components
   return (
-    <SafeAreaView
-      style={[
-        commonTestStyles.container,
-        { backgroundColor: theme.colors.bg.app },
-      ]}
-    >
-      <ScrollView 
-        contentContainerStyle={commonTestStyles.contentPadding}
-        showsVerticalScrollIndicator={false}
-      >
-        <Container padding="lg" style={themedStyles.card}>
-          <FlexColumn gap="lg" align="center">
-            <Text size="2xl" weight="bold">
-              Onboarding Complete! 🎉
-            </Text>
-            
-            {user && (
-              <FlexColumn gap="md" align="center">
-                <Text size="lg" weight="medium">
-                  Welcome, {user.displayName}!
-                </Text>
-                <Text size="sm" variant="subtle">
-                  Address: {user.address}
-                </Text>
-                <Text size="sm" variant="subtle">
-                  Status: {user.status}
-                </Text>
-              </FlexColumn>
-            )}
-            
-            <Button
-              type="secondary"
-              onClick={resetOnboarding}
+    <AuthScreenWrapper>
+      <AuthSpacer />
+      
+      <AuthTitle>
+        Onboarding Complete! 🎉
+      </AuthTitle>
+      
+      {user && (
+        <AuthContent centerContent>
+          <FlexColumn gap="md" align="center">
+            <Text 
+              size="lg" 
+              weight="medium"
+              style={{ color: 'white', textAlign: 'center' }}
             >
-              Test Onboarding Again
-            </Button>
+              Welcome, {user.displayName}!
+            </Text>
+            <Text 
+              size="sm" 
+              style={{ color: 'rgba(255, 255, 255, 0.8)', textAlign: 'center' }}
+            >
+              Address: {user.address}
+            </Text>
+            <Text 
+              size="sm" 
+              style={{ color: 'rgba(255, 255, 255, 0.8)', textAlign: 'center' }}
+            >
+              Status: {user.status}
+            </Text>
           </FlexColumn>
-        </Container>
-      </ScrollView>
-    </SafeAreaView>
+        </AuthContent>
+      )}
+      
+      <AuthContent centerContent>
+        <Button
+          type="primary-white"
+          style={{ paddingHorizontal: 32, width: '100%', maxWidth: 320 }}
+          onClick={resetOnboarding}
+        >
+          Test Onboarding Again
+        </Button>
+      </AuthContent>
+      
+      <AuthSpacer />
+    </AuthScreenWrapper>
   );
 };

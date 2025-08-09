@@ -21,8 +21,12 @@ const Button: React.FC<NativeButtonProps> = (props) => {
   const getButtonStyle = () => {
     const type = props.type || 'primary';
     const size = props.size || 'normal';
+    
+    // Calculate pill shape based on button height
+    const baseHeight = 8 * 2 + 16 + 4; // paddingVertical * 2 + fontSize + extra
+    const pillRadius = size === 'large' ? 30 : size === 'small' ? 20 : 25;
 
-    let style = [styles.base];
+    let style = [styles.base, { borderRadius: pillRadius }];
 
     // Add type-specific styles using dynamic colors
     switch (type) {
@@ -146,12 +150,23 @@ const Button: React.FC<NativeButtonProps> = (props) => {
 
     // Add disabled styles
     if (props.disabled) {
-      style.push({
-        backgroundColor: colors.surface[3],
-        borderColor: colors.transparent,
-        shadowOpacity: 0,
-        elevation: 0,
-      });
+      if (type === 'disabled-onboarding') {
+        // Special onboarding disabled style: semi-transparent white
+        style.push({
+          backgroundColor: 'rgba(255, 255, 255, 0.3)', // bg-white/30
+          borderColor: 'transparent',
+          shadowOpacity: 0,
+          elevation: 0,
+        });
+      } else {
+        // Regular disabled style
+        style.push({
+          backgroundColor: colors.surface[3],
+          borderColor: colors.transparent,
+          shadowOpacity: 0,
+          elevation: 0,
+        });
+      }
     }
 
     return style;
@@ -161,6 +176,9 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     const type = props.type || 'primary';
 
     if (props.disabled) {
+      if (type === 'disabled-onboarding') {
+        return '#ffffff'; // White text for onboarding disabled state
+      }
       return colors.surface[8]; // Darker grey for disabled text
     }
 
@@ -248,12 +266,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 8,
     paddingHorizontal: 16,
-    borderRadius: 20,
     borderWidth: 2,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    // borderRadius is set dynamically in getButtonStyle
   },
   small: {
     paddingVertical: 4,
@@ -279,7 +297,7 @@ const styles = StyleSheet.create({
   large: {
     paddingVertical: 12,
     paddingHorizontal: 24,
-    borderRadius: 26,
+    // borderRadius is set dynamically in getButtonStyle
   },
   content: {
     flexDirection: 'row',

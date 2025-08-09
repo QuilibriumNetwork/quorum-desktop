@@ -1,17 +1,24 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { ScrollView, Pressable, KeyboardAvoidingView, Platform, Keyboard, KeyboardEvent } from 'react-native';
+import { Pressable, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import { Image } from 'expo-image';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Container,
-  FlexColumn,
   Text,
+  Title,
+  Paragraph,
   Input,
   Button,
   Icon,
   FileUpload,
-  useTheme,
 } from '@/components/primitives';
+import {
+  AuthScreenWrapper,
+  AuthTitle,
+  AuthContent,
+  AuthSpacer,
+  AUTH_TEXT_STYLES,
+  AUTH_CONTAINER_STYLES,
+} from '../OnboardingStyles.native';
 // Use direct imports to avoid barrel export chain loading problematic hooks
 import { useOnboardingFlow } from '@/hooks/business/user/useOnboardingFlow';
 import { useKeyBackup } from '@/hooks/useKeyBackup';
@@ -21,7 +28,6 @@ import { useKeyBackup } from '@/hooks/useKeyBackup';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { DefaultImages } from '@/utils';
-import { StyleSheet } from 'react-native';
 
 interface OnboardingProps {
   setUser: React.Dispatch<
@@ -39,8 +45,6 @@ interface OnboardingProps {
 }
 
 export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
-  const theme = useTheme();
-  const styles = createStyles(theme);
 
   // TODO: Re-enable API context when PasskeyModal is available for React Native
   // const { apiClient } = useQuorumApiClient();
@@ -62,24 +66,26 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
   // FileUpload state management
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
-  
-  // Keyboard state for better UX
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  const [isDragActive, setIsDragActive] = useState(false);
   
   const maxImageSize = 2 * 1024 * 1024; // 2MB
+  
+  // Keyboard handling
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
-  // Listen to keyboard events
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e: KeyboardEvent) => {
-      setKeyboardHeight(e.endCoordinates.height);
-    });
-    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardHeight(0);
-    });
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      (e) => setKeyboardHeight(e.endCoordinates.height)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => setKeyboardHeight(0)
+    );
 
     return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
+      keyboardDidShowListener?.remove();
+      keyboardDidHideListener?.remove();
     };
   }, []);
 
@@ -104,6 +110,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
 
   // Validation helpers
   const hasValidFile = !!profileImage;
+  const canSaveFile = hasValidFile && !fileError;
 
   // Handle key download and mark as exported
   const handleDownloadKey = async () => {
@@ -146,353 +153,309 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
     onboardingFlow.saveProfilePhoto(dataUrl || undefined);
   };
 
-  // Get current step title
-  const getStepTitle = () => {
-    switch (onboardingFlow.currentStep) {
-      case 'key-backup':
-        return t`Welcome to Quorum!`;
-      case 'display-name':
-        return t`Personalize your account`;
-      case 'profile-photo':
-        return onboardingFlow.currentPasskeyInfo?.pfpUrl && onboardingFlow.currentPasskeyInfo.displayName
-          ? t`One of us, one of us!`
-          : t`Personalize your account`;
-      case 'complete':
-        return t`You're all set!`;
-      default:
-        return t`Welcome to Quorum!`;
-    }
-  };
+
+  // Drag overlay component
+  const dragOverlay = isDragActive ? (
+    <Container style={AUTH_CONTAINER_STYLES.dragOverlay}>
+      <Container style={AUTH_CONTAINER_STYLES.dragContent}>
+        <Icon name="file-image" size="5xl" style={{ color: '#3b82f6', marginBottom: 24 }} />
+        <Text size="xl" weight="semibold" style={{ color: '#111827' }}>
+          {t`Drop your profile photo here`}
+        </Text>
+        <Text size="sm" style={{ color: '#6b7280', marginTop: 8 }}>
+          {t`PNG, JPG or JPEG • Max 2MB`}
+        </Text>
+      </Container>
+    </Container>
+  ) : null;
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* TODO: Add PasskeyModal here once SDK is React Native compatible
-          <PasskeyModal
-            fqAppPrefix="Quorum"
-            getUserRegistration={async (address) => (await apiClient.getUser(address)).data}
-            uploadRegistration={uploadRegistration}
-          />
-      */}
-      <KeyboardAvoidingView 
-        style={styles.keyboardAvoidingView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 20}
-      >
-        <ScrollView
-          contentContainerStyle={[
-            styles.scrollContent,
-            keyboardHeight > 0 && { paddingBottom: Math.max(120, keyboardHeight + 20) }
-          ]}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          enableOnAndroid={true}
-        >
-        {/* Title */}
-        <Container padding="lg" style={styles.titleSection}>
-          <Text 
-            size="2xl" 
-            weight="semibold" 
-            variant="strong" 
-            align="center"
-          >
-            {getStepTitle()}
-          </Text>
-        </Container>
-
-        {/* Key Backup Step */}
-        {onboardingFlow.currentStep === 'key-backup' && (
-          <Container padding="lg" style={styles.stepContainer}>
-            <FlexColumn gap="lg">
-              {/* Information Text */}
-              <FlexColumn gap="md">
-                <Text weight="semibold" variant="strong">
-                  <Trans>Important first-time user information:</Trans>
+    <KeyboardAvoidingView 
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+    >
+      <AuthScreenWrapper dragOverlay={dragOverlay}>
+        {/* TODO: Add PasskeyModal here once SDK is React Native compatible
+            <PasskeyModal
+              fqAppPrefix="Quorum"
+              getUserRegistration={async (address) => (await apiClient.getUser(address)).data}
+              uploadRegistration={uploadRegistration}
+            />
+        */}
+        
+        <AuthSpacer />
+      
+      {/* Title Section - Only show for non-key-backup steps since key-backup has its own title */}
+      {onboardingFlow.currentStep !== 'key-backup' && (
+        <AuthTitle>
+          {onboardingFlow.currentPasskeyInfo?.pfpUrl && onboardingFlow.currentPasskeyInfo.displayName
+            ? t`One of us, one of us!`
+            : t`Personalize your account`}
+        </AuthTitle>
+      )}
+              
+      {/* Key Backup Step */}
+      {onboardingFlow.currentStep === 'key-backup' && (
+        <>
+          <AuthContent>
+            {/* Title using Title helper */}
+            <Title size="xl" align="center" color="white">
+              {t`Welcome to Quorum!`}
+            </Title>
+            
+            {/* Paragraph 1: Important information header */}
+            <Paragraph weight="semibold" color="white" align="center">
+              {t`Important first-time user information:`}
+            </Paragraph>
+            
+            {/* Paragraph 2: P2P encryption explanation */}
+            <Paragraph color="white" align="center">
+              {t`Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients.`}
+            </Paragraph>
+            
+            {/* Paragraph 3: Device-specific warning */}
+            <Paragraph weight="semibold" color="white" align="center">
+              {t`If you uninstall the app from your device, you will lose your old messages and keys.`}
+            </Paragraph>
+            
+            {/* Paragraph 4: Action instruction */}
+            <Paragraph color="white" align="center">
+              {t`Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again.`}
+            </Paragraph>
+          </AuthContent>
+          
+          <AuthContent>
+            {/* Full width Save User Key button */}
+            <Button
+              type="primary-white"
+              style={{ width: '100%', marginBottom: 16 }}
+              onClick={handleDownloadKey}
+            >
+              {t`Save User Key`}
+            </Button>
+            
+            {/* More space above the link - centered */}
+            <Container style={{ paddingTop: 48, alignItems: 'center' }}>
+              <Pressable onPress={handleAlreadySaved}>
+                <Text size="sm" style={AUTH_TEXT_STYLES.link}>
+                  {t`I already saved mine`}
                 </Text>
-                
-                <Text variant="default">
-                  <Trans>
-                    Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients.
-                  </Trans>
-                </Text>
-                
-                <Text variant="default">
-                  <Trans>
-                    If you uninstall the app from your device, you will lose your old messages and keys.
-                  </Trans>
-                </Text>
-                
-                <Text variant="default">
-                  <Trans>
-                    Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again.
-                  </Trans>
-                </Text>
-              </FlexColumn>
-
-              {/* Action Buttons */}
-              <FlexColumn gap="md" align="stretch">
-                <Button
-                  type="primary"
-                  onClick={handleDownloadKey}
-                >
-                  {t`Save User Key`}
-                </Button>
-                
-                <Pressable onPress={handleAlreadySaved} style={styles.linkButton}>
-                  <Text 
-                    size="sm" 
-                    variant="subtle" 
-                    align="center"
-                    style={styles.linkText}
-                  >
-                    <Trans>I already saved mine</Trans>
-                  </Text>
-                </Pressable>
-              </FlexColumn>
-            </FlexColumn>
-          </Container>
-        )}
-
-        {/* Display Name Step */}
-        {onboardingFlow.currentStep === 'display-name' && (
-          <Container padding="lg" style={styles.stepContainer}>
-            <FlexColumn gap="lg">
-              {/* Information Text */}
-              <FlexColumn gap="md">
-                <Text variant="default" align="center">
-                  <Trans>
-                    Let your friends know who you are! Pick a friendly name to
-                    display in your conversations, something easier to read than:
-                  </Trans>
-                </Text>
-                
-                <Container 
-                  padding="md" 
-                  style={styles.addressDisplay}
-                >
-                  <Text 
-                    size="sm" 
-                    variant="muted" 
-                    style={styles.addressText}
-                    numberOfLines={3}
-                  >
-                    {onboardingFlow.currentPasskeyInfo?.address}
-                  </Text>
-                </Container>
-                
-                <Text size="sm" variant="subtle" align="center">
-                  <Trans>This information is only provided to the Spaces you join.</Trans>
-                </Text>
-              </FlexColumn>
-
-              {/* Input and Button */}
-              <FlexColumn gap="md" align="stretch">
-                <Input
-                  value={onboardingFlow.displayName}
-                  onChange={onboardingFlow.setDisplayName}
-                  placeholder="Bongocat"
-                  autoFocus={false}
-                  returnKeyType="done"
-                  onSubmitEditing={() => {
-                    // Handle return key press to save display name
-                    if (onboardingFlow.canProceedWithName) {
-                      handleSaveDisplayName();
-                    }
-                  }}
+              </Pressable>
+            </Container>
+          </AuthContent>
+        </>
+      )}
+              
+      {/* Display Name Step */}
+      {onboardingFlow.currentStep === 'display-name' && (
+        <>
+          <AuthContent>
+            {/* Title - matching web version */}
+            <Title size="lg" align="center" color="white">
+              {t`Personalize your account`}
+            </Title>
+            
+            {/* Instruction paragraph */}
+            <Paragraph color="white" align="center">
+              <Trans>
+                Let your friends know who you are! Pick a friendly name to
+                display in your conversations, something easier to read
+                than:
+              </Trans>
+            </Paragraph>
+            
+            {/* Address display */}
+            <Container style={AUTH_CONTAINER_STYLES.addressDisplay}>
+              <Text size="sm" style={{ ...AUTH_TEXT_STYLES.address, flexWrap: 'wrap' }}>
+                {onboardingFlow.currentPasskeyInfo?.address}
+              </Text>
+            </Container>
+            
+            {/* Disclaimer paragraph */}
+            <Paragraph color="white" align="center">
+              {t`This information is only provided to the Spaces you join.`}
+            </Paragraph>
+          </AuthContent>
+          
+          <AuthContent>
+            {/* Input field with onboarding variant - pill shape, white bg */}
+            <Input
+              variant="onboarding"
+              style={{ width: '100%', marginBottom: 16 }}
+              value={onboardingFlow.displayName}
+              onChange={onboardingFlow.setDisplayName}
+              placeholder="Bongocat"
+            />
+            
+            {/* Button with proper disabled state for onboarding */}
+            <Button
+              type={!onboardingFlow.canProceedWithName ? "disabled-onboarding" : "primary-white"}
+              disabled={!onboardingFlow.canProceedWithName}
+              style={{ width: '100%' }}
+              onClick={handleSaveDisplayName}
+            >
+              {t`Set Display Name`}
+            </Button>
+          </AuthContent>
+        </>
+      )}
+              
+      {/* Profile Photo Step */}
+      {onboardingFlow.currentStep === 'profile-photo' && (
+        <>
+          <AuthContent>
+            {/* Title - matching web version */}
+            <Title size="lg" align="center" color="white">
+              {t`Personalize your account`}
+            </Title>
+            
+            {/* Instruction paragraph */}
+            <Paragraph color="white" align="center">
+              <Trans>
+                Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join.
+              </Trans>
+            </Paragraph>
+            
+            {/* Size requirement paragraph */}
+            <Paragraph size="sm" color="white" align="center">
+              <Trans>
+                Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension.
+              </Trans>
+            </Paragraph>
+            
+            {/* Error display */}
+            {fileError && (
+              <Container style={AUTH_CONTAINER_STYLES.errorContainer}>
+                <Paragraph size="sm" color="#ef4444" align="center">
+                  {fileError}
+                </Paragraph>
+              </Container>
+            )}
+          </AuthContent>
+          
+          <AuthContent centerContent>
+            <FileUpload
+              onFilesSelected={handleFilesSelected}
+              onError={handleFileError}
+              accept={{
+                'image/png': ['.png'],
+                'image/jpeg': ['.jpg', '.jpeg'],
+              }}
+              maxSize={maxImageSize}
+              multiple={false}
+              {...({ onDragActiveChange: setIsDragActive } as any)}
+            >
+              <Container style={{ 
+                width: 200, 
+                height: 200, 
+                borderRadius: 100, 
+                overflow: 'hidden',
+                position: 'relative',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                borderWidth: 2,
+                borderStyle: 'dashed',
+                borderColor: 'rgba(255, 255, 255, 0.5)',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+                <Image
+                  style={{ width: 200, height: 200 }}
+                  source={{ uri: getImageDataUrl() || DefaultImages.UNKNOWN_USER }}
+                  contentFit="cover"
                 />
                 
-                <Button
-                  type="primary"
-                  disabled={!onboardingFlow.canProceedWithName}
-                  onClick={handleSaveDisplayName}
-                >
-                  <Trans>Set Display Name</Trans>
-                </Button>
-              </FlexColumn>
-            </FlexColumn>
-          </Container>
-        )}
-
-        {/* Profile Photo Step */}
-        {onboardingFlow.currentStep === 'profile-photo' && (
-          <Container padding="lg" style={styles.stepContainer}>
-            <FlexColumn gap="lg" align="center">
-              {/* Information Text */}
-              <FlexColumn gap="md">
-                <Text variant="default" align="center">
-                  <Trans>
-                    Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join.
-                  </Trans>
-                </Text>
-                
-                <Text size="sm" variant="subtle" align="center">
-                  <Trans>
-                    Your profile image size must be {maxImageSize / 1024 / 1024}MB or less and must be a PNG, JPG, or JPEG file extension.
-                  </Trans>
-                </Text>
-                
-                {fileError && (
-                  <Container 
-                    padding="sm" 
-                    style={styles.errorContainer}
-                  >
-                    <Text variant="error" size="sm" align="center">
-                      {fileError}
-                    </Text>
+                {/* Tap overlay when no image selected */}
+                {!hasValidFile && (
+                  <Container style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}>
+                    <Icon 
+                      name="file-image" 
+                      size="xl" 
+                      style={{ color: 'white', marginBottom: 8 }}
+                    />
+                    <Paragraph size="sm" weight="semibold" color="white" align="center">
+                      {t`Tap to select`}
+                    </Paragraph>
                   </Container>
                 )}
-              </FlexColumn>
-
-              {/* Profile Image Display/Selector */}
-              <FileUpload
-                onFilesSelected={handleFilesSelected}
-                onError={handleFileError}
-                accept={{
-                  'image/png': ['.png'],
-                  'image/jpeg': ['.jpg', '.jpeg'],
-                }}
-                maxSize={maxImageSize}
-                multiple={false}
-                showCameraOption={true}
-                allowsEditing={true}
-              >
-                <Container style={styles.imageSelector}>
-                  <Image
-                    source={{ 
-                      uri: getImageDataUrl() || DefaultImages.UNKNOWN_USER 
-                    }}
-                    style={styles.profileImage}
-                    contentFit="cover"
-                    placeholder={DefaultImages.UNKNOWN_USER}
-                  />
-                  
-                  {!hasValidFile && (
-                    <Container style={styles.imageOverlay}>
-                      <Icon 
-                        name="file-image" 
-                        size="lg" 
-                        color={theme.colors.text.onAccent}
-                      />
-                      <Text 
-                        size="sm" 
-                        variant="strong" 
-                        align="center"
-                        color={theme.colors.text.onAccent}
-                      >
-                        <Trans>Tap to select</Trans>
-                      </Text>
-                    </Container>
-                  )}
-                </Container>
-              </FileUpload>
-
-              {/* Action Buttons */}
-              <FlexColumn gap="md" align="stretch" style={styles.photoButtons}>
-                {hasValidFile ? (
-                  <Button
-                    type="primary"
-                    disabled={fileError !== null}
-                    onClick={handleSavePhoto}
-                  >
-                    <Trans>Save Contact Photo</Trans>
-                  </Button>
-                ) : (
-                  <Button
-                    type="secondary"
-                    onClick={handleSavePhoto}
-                  >
-                    <Trans>Skip Adding Photo</Trans>
-                  </Button>
-                )}
-              </FlexColumn>
-            </FlexColumn>
-          </Container>
-        )}
-
-        {/* Complete Step */}
-        {onboardingFlow.currentStep === 'complete' && (
-          <Container padding="lg" style={styles.stepContainer}>
-            <FlexColumn gap="lg" align="center">
-              <Text variant="default" align="center">
-                <Trans>You're all set. Welcome to Quorum!</Trans>
-              </Text>
+              </Container>
+            </FileUpload>
+          </AuthContent>
+          
+          <AuthContent centerContent>
+            <Container style={{ alignItems: 'center', width: '100%' }}>
+              {/* Skip button - only show when no file selected */}
+              {!hasValidFile && (
+                <Button
+                  type="light-outline-white"
+                  style={{ paddingHorizontal: 32 }}
+                  onClick={handleSavePhoto}
+                >
+                  {t`Skip Adding Photo`}
+                </Button>
+              )}
               
-              <Button
-                type="primary"
-                onClick={() => onboardingFlow.completeOnboarding(setUser)}
-              >
-                <Trans>Let's gooooooooo</Trans>
-              </Button>
-            </FlexColumn>
-          </Container>
-        )}
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+              {/* Save button - only show when file is selected */}
+              {hasValidFile && (
+                <Button
+                  type="primary-white"
+                  disabled={!canSaveFile}
+                  style={{
+                    paddingHorizontal: 32,
+                    width: '100%',
+                    opacity: !canSaveFile ? 0.5 : 1
+                  }}
+                  onClick={handleSavePhoto}
+                >
+                  {t`Save Contact Photo`}
+                </Button>
+              )}
+            </Container>
+          </AuthContent>
+        </>
+      )}
+              
+      {/* Complete Step */}
+      {onboardingFlow.currentStep === 'complete' && (
+        <>
+          <AuthContent>
+            {/* Title - conditional based on user data like web version */}
+            <Title size="lg" align="center" color="white">
+              {onboardingFlow.currentPasskeyInfo?.pfpUrl && onboardingFlow.currentPasskeyInfo.displayName
+                ? t`One of us, one of us!`
+                : t`Personalize your account`}
+            </Title>
+            
+            {/* Welcome message */}
+            <Paragraph color="white" align="center">
+              {t`You're all set. Welcome to Quorum!`}
+            </Paragraph>
+          </AuthContent>
+          
+          <AuthContent centerContent>
+            <Button
+              type="primary-white"
+              style={{ width: '100%' }}
+              onClick={() => onboardingFlow.completeOnboarding(setUser)}
+            >
+              {t`Let's gooooooooo`}
+            </Button>
+          </AuthContent>
+        </>
+      )}
+      
+        <AuthSpacer />
+      </AuthScreenWrapper>
+    </KeyboardAvoidingView>
   );
 };
 
-const createStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.bg.app,
-  } as any,
-  keyboardAvoidingView: {
-    flex: 1,
-  } as any,
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center' as const,
-    paddingVertical: theme.spacing?.xl || 24,
-  } as any,
-  titleSection: {
-    marginBottom: theme.spacing?.lg || 16,
-  } as any,
-  stepContainer: {
-    backgroundColor: theme.colors.surface?.[2] || '#f5f5f5',
-    marginHorizontal: theme.spacing?.md || 12,
-    borderRadius: theme.borderRadius?.lg || 12,
-  } as any,
-  addressDisplay: {
-    backgroundColor: theme.colors.surface?.[4] || '#e0e0e0',
-    borderRadius: theme.borderRadius?.md || 8,
-  } as any,
-  addressText: {
-    textAlign: 'center' as const,
-  } as any,
-  linkButton: {
-    paddingVertical: theme.spacing?.sm || 8,
-  } as any,
-  linkText: {
-    textDecorationLine: 'underline' as const,
-  } as any,
-  errorContainer: {
-    backgroundColor: (theme.colors.utilities?.danger || '#ef4444') + '20',
-    borderColor: theme.colors.utilities?.danger || '#ef4444',
-    borderWidth: 1,
-    borderRadius: theme.borderRadius?.sm || 4,
-  } as any,
-  imageSelector: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    overflow: 'hidden' as const,
-    backgroundColor: theme.colors.surface?.[3] || '#d0d0d0',
-  } as any,
-  profileImage: {
-    width: 200,
-    height: 200,
-  } as any,
-  imageOverlay: {
-    position: 'absolute' as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: (theme.colors.accent?.DEFAULT || '#3b82f6') + '80',
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
-  } as any,
-  photoButtons: {
-    width: 300,
-  } as any,
-});

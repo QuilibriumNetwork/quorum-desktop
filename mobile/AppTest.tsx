@@ -35,11 +35,13 @@ import {
   BusinessMenuScreen,
   AuthenticationTestScreen,
   OnboardingTestScreen,
+  LoginTestScreen,
+  MaintenanceTestScreen,
 } from '@/test/business';
 
 type Section = 'main' | 'primitives' | 'business';
 type PrimitiveScreen = 'list' | 'basic' | 'text' | 'input' | 'textarea' | 'button' | 'switch' | 'modal' | 'select' | 'colorswatch' | 'radiogroup' | 'tooltip' | 'icon' | 'fileupload';
-type BusinessScreen = 'list' | 'onboarding' | 'auth' | 'spaces' | 'channel' | 'direct' | 'settings' | 'search';
+type BusinessScreen = 'list' | 'onboarding' | 'auth' | 'login' | 'maintenance' | 'spaces' | 'channel' | 'direct' | 'settings' | 'search';
 
 // Themed App Content (must be inside ThemeProvider)
 function ThemedAppContent() {
@@ -155,6 +157,10 @@ function ThemedAppContent() {
           return <OnboardingTestScreen />;
         case 'auth':
           return <AuthenticationTestScreen />;
+        case 'login':
+          return <LoginTestScreen />;
+        case 'maintenance':
+          return <MaintenanceTestScreen />;
         // Future screens will be added here
         default:
           return <BusinessMenuScreen onSelectFeature={handleSelectBusiness} />;
