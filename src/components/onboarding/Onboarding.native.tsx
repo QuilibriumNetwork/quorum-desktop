@@ -23,6 +23,7 @@ import {
   AuthTitle,
   AuthContent,
   AuthSpacer,
+  StepIndicator,
   AUTH_CONTAINER_STYLES,
   AUTH_LAYOUT,
 } from './OnboardingStyles.native';
@@ -59,6 +60,20 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
   // Business logic hooks
   const onboardingFlow = useOnboardingFlow();
   const keyBackup = useKeyBackup();
+
+  // Step indicator logic
+  const getStepNumber = (step: string) => {
+    switch (step) {
+      case 'key-backup': return 1;
+      case 'display-name': return 2;
+      case 'profile-photo': return 3;
+      case 'complete': return 3; // Complete step shows step 3 as done
+      default: return 1;
+    }
+  };
+
+  const currentStepNumber = getStepNumber(onboardingFlow.currentStep);
+  const totalSteps = 3;
 
   // TODO: When real SDK is integrated for React Native:
   // 1. Import PasskeyModal from the SDK (once it's compatible with React Native)
@@ -172,6 +187,11 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
         */}
         
         <AuthSpacer />
+
+        {/* Step Indicator - Show for all steps except complete */}
+        {onboardingFlow.currentStep !== 'complete' && (
+          <StepIndicator currentStep={currentStepNumber} totalSteps={totalSteps} />
+        )}
       
       {/* Title Section - Only show for non-key-backup steps since key-backup has its own title */}
       {onboardingFlow.currentStep !== 'key-backup' && (

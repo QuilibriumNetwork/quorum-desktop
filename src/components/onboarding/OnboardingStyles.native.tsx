@@ -153,4 +153,28 @@ export const AuthSpacer: React.FC = () => (
   <FlexRow style={{ flex: 1 }} />
 );
 
+// Step Indicator component for onboarding progress
+interface StepIndicatorProps {
+  currentStep: number;
+  totalSteps: number;
+}
+
+export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, totalSteps }) => (
+  <FlexRow justify="center" style={{ marginBottom: 24, marginTop: 16 }}>
+    <FlexRow gap="sm">
+      {Array.from({ length: totalSteps }, (_, index) => (
+        <Container
+          key={index}
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: 4,
+            backgroundColor: index < currentStep ? 'white' : 'rgba(255, 255, 255, 0.3)',
+          }}
+        />
+      ))}
+    </FlexRow>
+  </FlexRow>
+);
+
 // Updated: August 9, 2025 at 4:50 PM
