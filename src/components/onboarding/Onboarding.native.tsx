@@ -1,5 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { Pressable, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { 
+  Pressable, 
+  // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
+  KeyboardAvoidingView, 
+  // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
+  Platform
+} from 'react-native';
 import { Image } from 'expo-image';
 import {
   Container,
@@ -16,7 +22,6 @@ import {
   AuthTitle,
   AuthContent,
   AuthSpacer,
-  AUTH_TEXT_STYLES,
   AUTH_CONTAINER_STYLES,
 } from '../OnboardingStyles.native';
 // Use direct imports to avoid barrel export chain loading problematic hooks
@@ -26,7 +31,6 @@ import { useKeyBackup } from '@/hooks/useKeyBackup';
 // import { useUploadRegistration } from '@/hooks/mutations/useUploadRegistration';
 // import { useQuorumApiClient } from '@/components/context/QuorumApiContext';
 import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { DefaultImages } from '@/utils';
 
 interface OnboardingProps {
@@ -69,25 +73,6 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
   const [isDragActive, setIsDragActive] = useState(false);
   
   const maxImageSize = 2 * 1024 * 1024; // 2MB
-  
-  // Keyboard handling
-  const [keyboardHeight, setKeyboardHeight] = useState(0);
-
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      (e) => setKeyboardHeight(e.endCoordinates.height)
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => setKeyboardHeight(0)
-    );
-
-    return () => {
-      keyboardDidShowListener?.remove();
-      keyboardDidHideListener?.remove();
-    };
-  }, []);
 
   // Handle file upload
   const handleFilesSelected = useCallback((files: any[]) => {
@@ -237,8 +222,19 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
             
             {/* More space above the link - centered */}
             <Container style={{ paddingTop: 48, alignItems: 'center' }}>
-              <Pressable onPress={handleAlreadySaved}>
-                <Text size="sm" style={AUTH_TEXT_STYLES.link}>
+              <Pressable 
+                onPress={handleAlreadySaved}
+                style={({ pressed }: { pressed: boolean }) => ({
+                  opacity: pressed ? 0.6 : 1,
+                  transform: pressed ? [{ scale: 0.98 }] : [{ scale: 1 }],
+                })}
+              >
+                <Text 
+                  size="sm" 
+                  color="white" 
+                  align="center"
+                  style={{ textDecorationLine: 'underline' }}
+                >
                   {t`I already saved mine`}
                 </Text>
               </Pressable>
@@ -258,16 +254,17 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
             
             {/* Instruction paragraph */}
             <Paragraph color="white" align="center">
-              <Trans>
-                Let your friends know who you are! Pick a friendly name to
-                display in your conversations, something easier to read
-                than:
-              </Trans>
+              {t`Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:`}
             </Paragraph>
             
             {/* Address display */}
             <Container style={AUTH_CONTAINER_STYLES.addressDisplay}>
-              <Text size="sm" style={{ ...AUTH_TEXT_STYLES.address, flexWrap: 'wrap' }}>
+              <Text 
+                size="sm" 
+                color="white" 
+                align="center"
+                style={{ fontFamily: 'monospace', flexWrap: 'wrap' }}
+              >
                 {onboardingFlow.currentPasskeyInfo?.address}
               </Text>
             </Container>
@@ -312,16 +309,12 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
             
             {/* Instruction paragraph */}
             <Paragraph color="white" align="center">
-              <Trans>
-                Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join.
-              </Trans>
+              {t`Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join.`}
             </Paragraph>
             
             {/* Size requirement paragraph */}
             <Paragraph size="sm" color="white" align="center">
-              <Trans>
-                Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension.
-              </Trans>
+              {t`Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension.`}
             </Paragraph>
             
             {/* Error display */}
