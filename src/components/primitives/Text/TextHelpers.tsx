@@ -11,7 +11,7 @@ import { NativeTextProps } from './types';
 
 // Paragraph with proper spacing
 export const Paragraph: React.FC<Omit<NativeTextProps, 'marginBottom'>> = (props) => (
-  <Text {...props} marginBottom={16} />
+  <Text {...props} marginBottom={8} />
 );
 
 

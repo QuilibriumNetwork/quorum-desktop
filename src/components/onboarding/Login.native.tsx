@@ -78,7 +78,7 @@ export const Login: React.FC<LoginProps> = ({ setUser, onNavigateToOnboarding })
         */}
         
         <AuthSpacer />
-      
+        
         {/* Logo Section - using FlexRow with justify prop */}
         <FlexRow justify="center">
           <Image
@@ -87,6 +87,9 @@ export const Login: React.FC<LoginProps> = ({ setUser, onNavigateToOnboarding })
             contentFit="contain"
           />
         </FlexRow>
+
+        {/* Spacer between logo and buttons */}
+        <Container style={{ height: 32 }} />
 
         {/* Buttons Section - using FlexRow and Container with props */}
         <FlexRow justify="center">

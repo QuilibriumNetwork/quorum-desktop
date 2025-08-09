@@ -29,7 +29,7 @@ export const AuthenticationTestScreen: React.FC<AuthenticationTestScreenProps> =
   };
 
   const renderMenu = () => (
-    <Container padding={20}>
+    <Container>
       <FlexColumn gap="lg">
       <Text size="xl" weight="bold" align="center">
         Authentication Flow Test

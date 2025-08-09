@@ -11,6 +11,7 @@ export const AUTH_GRADIENT_COLORS = ['#034081', '#0287f2', '#b4e235'] as const; 
 export const AUTH_LAYOUT = {
   MAX_CONTENT_WIDTH: 460,
   PADDING: 16,
+  BUTTON_HORIZONTAL_MARGIN: 32, // Responsive margin for buttons/inputs
 } as const;
 
 // Common styles for auth screens (text colors, spacing, etc.)
@@ -152,4 +153,4 @@ export const AuthSpacer: React.FC = () => (
   <FlexRow style={{ flex: 1 }} />
 );
 
-// Updated: December 9, 2024 at 11:28 AM
+// Updated: August 9, 2025 at 4:50 PM

@@ -16,6 +16,7 @@ import {
   Button,
   Icon,
   FileUpload,
+  FlexColumn
 } from '@/components/primitives';
 import {
   AuthScreenWrapper,
@@ -23,6 +24,7 @@ import {
   AuthContent,
   AuthSpacer,
   AUTH_CONTAINER_STYLES,
+  AUTH_LAYOUT,
 } from './OnboardingStyles.native';
 // Use direct imports to avoid barrel export chain loading problematic hooks
 import { useOnboardingFlow } from '@/hooks/business/user/useOnboardingFlow';
@@ -211,15 +213,16 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
           </AuthContent>
           
           <AuthContent>
-            {/* Full width Save User Key button */}
-            <Button
-              type="primary-white"
-              fullWidth
-              style={{ marginBottom: 16 }}
-              onClick={handleDownloadKey}
-            >
-              {t`Save User Key`}
-            </Button>
+            {/* Save User Key button with horizontal padding */}
+            <Container style={{ paddingHorizontal: AUTH_LAYOUT.BUTTON_HORIZONTAL_MARGIN, marginBottom: 16 }}>
+              <Button
+                type="primary-white"
+                style={{ width: '100%' }}
+                onClick={handleDownloadKey}
+              >
+                {t`Save User Key`}
+              </Button>
+            </Container>
             
             {/* More space above the link - centered */}
             <Container style={{ paddingTop: 48, alignItems: 'center' }}>
@@ -247,7 +250,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
       {/* Display Name Step */}
       {onboardingFlow.currentStep === 'display-name' && (
         <>
-          <AuthContent>
+          <AuthContent variant="text">
             {/* Title - matching web version */}
             <Title size="lg" align="center" color="white">
               {t`Personalize your account`}
@@ -277,24 +280,29 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
           </AuthContent>
           
           <AuthContent>
-            {/* Input field with onboarding variant - pill shape, white bg */}
-            <Input
-              variant="onboarding"
-              style={{ width: '100%', marginBottom: 16 }}
-              value={onboardingFlow.displayName}
-              onChange={onboardingFlow.setDisplayName}
-              placeholder="Bongocat"
-            />
-            
-            {/* Button with proper disabled state for onboarding */}
-            <Button
-              type={!onboardingFlow.canProceedWithName ? "disabled-onboarding" : "primary-white"}
-              disabled={!onboardingFlow.canProceedWithName}
-              fullWidth
-              onClick={handleSaveDisplayName}
-            >
-              {t`Set Display Name`}
-            </Button>
+            <FlexColumn gap="md">
+              {/* Input field with onboarding variant - pill shape, white bg */}
+              <Container style={{ paddingHorizontal: AUTH_LAYOUT.BUTTON_HORIZONTAL_MARGIN }}>
+                <Input
+                  variant="onboarding"
+                  value={onboardingFlow.displayName}
+                  onChange={onboardingFlow.setDisplayName}
+                  placeholder="Bongocat"
+                />
+              </Container>
+              
+              {/* Button with proper disabled state for onboarding */}
+              <Container style={{ paddingHorizontal: AUTH_LAYOUT.BUTTON_HORIZONTAL_MARGIN }}>
+                <Button
+                  type={!onboardingFlow.canProceedWithName ? "disabled-onboarding" : "primary-white"}
+                  disabled={!onboardingFlow.canProceedWithName}
+                  fullWidth
+                  onClick={handleSaveDisplayName}
+                >
+                  {t`Set Display Name`}
+                </Button>
+              </Container>
+            </FlexColumn>
           </AuthContent>
         </>
       )}
@@ -302,7 +310,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
       {/* Profile Photo Step */}
       {onboardingFlow.currentStep === 'profile-photo' && (
         <>
-          <AuthContent>
+          <AuthContent variant="text">
             {/* Title - matching web version */}
             <Title size="lg" align="center" color="white">
               {t`Personalize your account`}
@@ -371,14 +379,16 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                     justifyContent: 'center',
                     alignItems: 'center'
                   }}>
-                    <Icon 
-                      name="file-image" 
-                      size="xl" 
-                      style={{ color: 'white', marginBottom: 8 }}
-                    />
-                    <Paragraph size="sm" weight="semibold" color="white" align="center">
-                      {t`Tap to select`}
-                    </Paragraph>
+                    <FlexColumn gap="sm" align="center">
+                      <Icon 
+                        name="file-image" 
+                        size="xl" 
+                        color="white"
+                      />
+                      <Paragraph size="sm" weight="semibold" color="white" align="center">
+                        {t`Tap to select`}
+                      </Paragraph>
+                    </FlexColumn>
                   </Container>
                 )}
               </Container>
@@ -386,12 +396,11 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
           </AuthContent>
           
           <AuthContent centerContent>
-            <Container style={{ alignItems: 'center', width: '100%' }}>
+            <FlexColumn gap="sm" align="center">
               {/* Skip button - only show when no file selected */}
               {!hasValidFile && (
                 <Button
                   type="light-outline-white"
-                  style={{ paddingHorizontal: 32 }}
                   onClick={handleSavePhoto}
                 >
                   {t`Skip Adding Photo`}
@@ -403,17 +412,12 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                 <Button
                   type="primary-white"
                   disabled={!canSaveFile}
-                  fullWidth
-                  style={{
-                    paddingHorizontal: 32,
-                    opacity: !canSaveFile ? 0.5 : 1
-                  }}
                   onClick={handleSavePhoto}
                 >
                   {t`Save Contact Photo`}
                 </Button>
               )}
-            </Container>
+            </FlexColumn>
           </AuthContent>
         </>
       )}
@@ -421,7 +425,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
       {/* Complete Step */}
       {onboardingFlow.currentStep === 'complete' && (
         <>
-          <AuthContent>
+          <AuthContent variant="text">
             {/* Title - conditional based on user data like web version */}
             <Title size="lg" align="center" color="white">
               {onboardingFlow.currentPasskeyInfo?.pfpUrl && onboardingFlow.currentPasskeyInfo.displayName
@@ -438,7 +442,6 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
           <AuthContent centerContent>
             <Button
               type="primary-white"
-              fullWidth
               onClick={() => onboardingFlow.completeOnboarding(setUser)}
             >
               {t`Let's gooooooooo`}
@@ -446,7 +449,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
           </AuthContent>
         </>
       )}
-      
+        
         <AuthSpacer />
       </AuthScreenWrapper>
     </KeyboardAvoidingView>
