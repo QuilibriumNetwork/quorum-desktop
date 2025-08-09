@@ -9,6 +9,9 @@ Complete guide for converting web components to React Native using our cross-pla
 ## Table of Contents
 
 1. [Migration Strategy Overview](#migration-strategy-overview)
+   - [Component Logic Extraction](#️-important-component-logic-extraction)
+   - [Step-by-Step Process](#step-by-step-process)
+   - [Native Component Styling Guidelines](#-native-component-styling-guidelines)
 2. [Common Patterns](#common-patterns)
 3. [Text & Typography](#text--typography)
 4. [Layout Conversion](#layout-conversion)
@@ -22,14 +25,51 @@ Complete guide for converting web components to React Native using our cross-pla
 
 ## Migration Strategy Overview
 
+### ⚠️ **IMPORTANT: Component Logic Extraction**
+
+Before migrating any component, the component logic **MUST** be extracted in a surgical way following these guidelines:
+
+📋 **Read**: [Cross-Platform Hooks Refactoring Plan](/.readme/tasks/todo/mobile-dev/cross-platform-hooks-refactoring-plan.md)
+
+**Key Requirements:**
+- **Business logic** must be separated from platform-specific APIs
+- Use **adapter pattern** for hooks that mix business logic with platform APIs
+- Use **direct imports** instead of barrel exports to avoid Import Chain Problem
+- Ensure **90% code sharing** between web and native versions
+
 ### Step-by-Step Process
 
 1. **🔍 Analyze Web Component** - Identify HTML elements, CSS classes, and interactions
-2. **📋 Map to Primitives** - Find equivalent primitive components
-3. **🔄 Convert Structure** - Replace HTML with primitive components
-4. **🎨 Apply Styling** - Use props instead of CSS classes
-5. **📱 Test Mobile** - Verify behavior on mobile simulator
-6. **♿ Validate Accessibility** - Ensure screen reader compatibility
+2. **⚡ Extract Logic First** - Refactor hooks using adapter pattern (see refactoring plan)
+3. **📋 Map to Primitives** - Find equivalent primitive components
+4. **🔄 Convert Structure** - Replace HTML with primitive components
+5. **🎨 Apply Styling** - Use props instead of CSS classes (see styling guidelines below)
+6. **📱 Test Mobile** - Verify behavior on mobile simulator
+7. **♿ Validate Accessibility** - Ensure screen reader compatibility
+
+### ✨ **Native Component Styling Guidelines**
+
+**Critical Rules for Native Components:**
+
+1. **Mirror Web Component Style** - Native styling must visually match the web version exactly
+2. **Use Text Primitive Helpers** - Always use the correct helper components:
+   - `<Title>` for headings (h1, h2, h3, etc.)
+   - `<Paragraph>` for body text and descriptions
+   - `<Text>` for inline text and labels
+   - `<Label>` for form field labels
+3. **Use Style Props Over Hardcoded Styles** - Prefer primitive props over inline `style` objects:
+   ```tsx
+   // ✅ Good - Use props
+   <Title size="lg" weight="bold" color="white" align="center">
+   <Paragraph size="sm" color="subtle" align="center">
+   <Button type="primary-white" size="large">
+   
+   // ❌ Bad - Hardcoded styles
+   <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#ffffff' }}>
+   <Text style={{ fontSize: 14, color: '#666666', textAlign: 'center' }}>
+   ```
+4. **Maintain Visual Consistency** - Colors, spacing, typography, and layout must match web version
+5. **Use Semantic Components** - Choose components that reflect the content's meaning, not just appearance
 
 ### Quick Reference Table
 
@@ -226,15 +266,15 @@ const ContactForm = () => {
 
 #### ✅ Native Conversion
 ```tsx
-import { Title, Paragraph, Text } from '../components/primitives/Text';
+import { Title, Paragraph, Text } from '../components/primitives';
 
-// Using semantic typography components
+// Using semantic typography components with proper props
 <>
-  <Title>Section Title</Title>
-  <Paragraph>
+  <Title size="lg" weight="bold">Section Title</Title>
+  <Paragraph color="default">
     This is a paragraph with some content that needs proper spacing.
   </Paragraph>
-  <Text size="sm" variant="subtle">Helper text</Text>
+  <Text size="sm" color="subtle">Helper text</Text>
 </>
 ```
 
@@ -242,11 +282,52 @@ import { Title, Paragraph, Text } from '../components/primitives/Text';
 
 | Web CSS Class | Native Component | Props |
 |---------------|------------------|-------|
-| `.text-3xl.font-bold` | `<Title>` | `size="3xl" weight="bold"` |
-| `.text-xl.font-semibold` | `<Title size="sm">` | `size="sm" weight="bold"` |
+| `.text-3xl.font-bold` | `<Title>` | `size="xl" weight="bold"` |
+| `.text-xl.font-semibold` | `<Title>` | `size="lg" weight="semibold"` |
 | `.text-base` | `<Paragraph>` | Default paragraph styling |
-| `.text-sm.font-medium` | `<Label>` | Form labels with spacing |
-| `.text-sm.text-gray-500` | `<Caption>` | Helper/secondary text |
+| `.text-sm.font-medium` | `<Text>` | `size="sm" weight="medium"` |
+| `.text-sm.text-gray-500` | `<Text>` | `size="sm" color="subtle"` |
+
+### Real-World Example: Onboarding Step
+
+Based on actual mobile onboarding implementation:
+
+#### ❌ Web Version
+```tsx
+<div className="w-full max-w-[460px] px-4 py-4 text-center text-white">
+  <h2 className="text-2xl font-semibold mb-4">Welcome to Quorum!</h2>
+  <p className="font-semibold mb-4">Important first-time user information:</p>
+  <p className="mb-4">Quorum is peer-to-peer and end-to-end encrypted...</p>
+  <button className="bg-white text-blue-600 py-2 px-4 rounded-full w-full">
+    Save User Key
+  </button>
+</div>
+```
+
+#### ✅ Native Version
+```tsx
+<AuthContent>
+  <Title size="xl" align="center" color="white">
+    {t`Welcome to Quorum!`}
+  </Title>
+  
+  <Paragraph weight="semibold" color="white" align="center">
+    {t`Important first-time user information:`}
+  </Paragraph>
+  
+  <Paragraph color="white" align="center">
+    {t`Quorum is peer-to-peer and end-to-end encrypted...`}
+  </Paragraph>
+  
+  <Button
+    type="primary-white"
+    style={{ width: '100%', marginBottom: 16 }}
+    onClick={handleDownloadKey}
+  >
+    {t`Save User Key`}
+  </Button>
+</AuthContent>
+```
 
 ---
 
@@ -517,8 +598,8 @@ const theme = useTheme();
 
 ### ✅ Solution: Use Props
 ```tsx
-// DO: Use component props
-<Text variant="link" weight="bold">Styled text</Text>
+// DO: Use component props (learned from mobile onboarding)
+<Text color="accent" weight="bold">Styled text</Text>
 ```
 
 ### ❌ Pitfall 3: Missing Text Wrappers
@@ -567,10 +648,31 @@ const theme = useTheme();
 - [ ] Test on iOS simulator
 - [ ] Test on Android simulator
 - [ ] Verify keyboard types (email, numeric, etc.)
+- [ ] **Test keyboard covering inputs** - Ensure KeyboardAvoidingView works properly
 - [ ] Test with larger accessibility font sizes
 - [ ] Verify haptic feedback (if implemented)
 - [ ] Test scroll behavior and content overflow
 - [ ] Verify safe area handling
+
+### ✅ Keyboard Handling (Critical for Mobile)
+
+From mobile onboarding implementation, we learned:
+
+```tsx
+// ✅ Always wrap components with form inputs in KeyboardAvoidingView
+<KeyboardAvoidingView 
+  style={{ flex: 1 }}
+  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+>
+  <YourFormComponent />
+</KeyboardAvoidingView>
+```
+
+**Key lessons:**
+- KeyboardAvoidingView must wrap the entire screen layout
+- Different behavior needed for iOS vs Android
+- Test thoroughly to ensure keyboard doesn't cover inputs
 
 ---
 
@@ -587,7 +689,7 @@ Replace: <FlexRow $1>
 
 // Replace paragraph tags
 Find: <p className="([^"]*)"[^>]*>([^<]*)</p>
-Replace: <Text variant="default">$2</Text>
+Replace: <Paragraph>$2</Paragraph>
 
 // Replace button elements
 Find: <button ([^>]*) onClick=\{([^}]*)\}[^>]*>([^<]*)</button>
@@ -612,7 +714,7 @@ Following these patterns will ensure your components work seamlessly across web 
 
 ---
 
-*Last updated: 2025-08-05*
+*Last updated: December 9, 2024 at 11:45 AM*
 
 ---
 

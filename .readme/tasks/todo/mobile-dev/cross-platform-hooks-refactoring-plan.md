@@ -1,61 +1,35 @@
 # Cross-Platform Hooks Refactoring Plan
-**Priority: High | Type: Architecture | Estimated Effort: 3-4 weeks**
-
-## ✅ RESOLVED: Mobile Onboarding Fixed (August 9, 2025)
-
-**Status**: Mobile Onboarding component now working with adapter pattern and direct imports
-
-**Solution Implemented**:
-1. **Adapter Pattern** - Implemented for `useOnboardingFlow` hook with platform-specific adapters
-2. **Direct Imports** - Fixed Import Chain Problem by using direct imports instead of barrel exports
-3. **SDK Shim Updates** - Added `updateStoredPasskey` method to support onboarding flow
-
-**What Was Fixed**:
-- Changed from `import { useOnboardingFlow } from '@/hooks'` (barrel export)
-- To `import { useOnboardingFlow } from '@/hooks/business/user/useOnboardingFlow'` (direct import)
-- This prevents loading ALL hooks including problematic search hooks with `window.addEventListener`
-
-**Remaining Work**:
-- Test Onboarding component in mobile playground to confirm it works
-- Continue adapter pattern refactoring for other components that use barrel exports
-- Fix `useSearchResultsResponsive` and `useSearchResultsOutsideClick` with adapter pattern
-
-**Key Learning**: Always use direct imports for cross-platform components to avoid Import Chain Problem
-
-### Update: Platform Resolution vs Adapter Pattern (August 9, 2025)
-
-**Important Discovery**: Not all hooks need full adapter pattern refactoring. Some hooks already work correctly with Metro's platform-specific file resolution (`.ts` vs `.native.ts`), but get contaminated through import chains.
-
-**Example - Search Hooks Solution**:
-- ❌ **Wrong Approach**: Implement full adapter pattern for `useSearchResultsResponsive`  
-- ✅ **Right Approach**: Fix import chains so Metro can properly resolve to `.native.ts` versions
-
-**Decision Matrix for Hook Refactoring**:
-
-1. **Use Platform Resolution** when:
-   - Hook already has `.native.ts` version
-   - Business logic is minimal or platform-specific
-   - Issue is import chain contamination, not architecture
-
-2. **Use Adapter Pattern** when:
-   - Hooks have significant shared business logic
-   - Need to eliminate code duplication between platforms
-   - Want to ensure 90% code sharing goal
-
-**Hooks That Use Platform Resolution**:
-- `useSearchResultsResponsive` - Web (DOM) vs Native (flexbox) approaches
-- `useSearchResultsOutsideClick` - Web (click events) vs Native (gesture handling)
-- `useKeyboardShortcuts` - Web (keyboard) vs Native (hardware buttons)
-
-**Hooks That Use Adapter Pattern**:  
-- `useOnboardingFlow` - Shared business logic with platform-specific SDK adapters ✅ **COMPLETED**
-- `useKeyBackup` - Shared validation with platform-specific file handling
-
----
+**Priority: High | Type: Architecture**
 
 ## Executive Summary
 
 Our cross-platform architecture goal of sharing 90% of business logic is being undermined by hooks that mix business logic with platform-specific APIs. We currently have **24 hooks** that require refactoring using the **adapter pattern** to maintain our shared codebase vision.
+
+## ⚠️ **IMPORTANT: Native Component Implementation Rules**
+
+When implementing native components during hook refactoring, **MUST** follow the styling and primitive usage guidelines:
+
+📋 **Read**: [Web-to-Native Migration Guide](/.readme/docs/features/primitives/02-web-to-native-migration.md)
+
+**Critical Requirements for Native Components:**
+- **Mirror Web Styling** - Native components must visually match web versions exactly
+- **Use Text Primitive Helpers** - Always use `<Title>`, `<Paragraph>`, `<Text>` helpers appropriately
+- **Prefer Style Props** - Use component props (`color="white"`, `size="lg"`) over hardcoded `style` objects  
+- **Maintain Semantic Structure** - Choose components based on content meaning, not just appearance
+- **Follow KeyboardAvoidingView Patterns** - Wrap form components properly for mobile UX
+
+**Example from Mobile Onboarding:**
+```tsx
+// ✅ Correct primitive usage with proper props
+<Title size="xl" align="center" color="white">
+  {t`Welcome to Quorum!`}
+</Title>
+<Paragraph weight="semibold" color="white" align="center">
+  {t`Important first-time user information:`}
+</Paragraph>
+```
+
+This ensures consistent UX/UI across platforms while maintaining our shared codebase architecture.
 
 ## Problem Statement
 
@@ -269,6 +243,35 @@ export * from './useKeyboardShortcuts';        // Has document.querySelector
 2. **After adapter pattern**: Return to clean barrel exports
 3. **End goal**: All hooks work cross-platform, barrel exports are safe
 
+### Update: Platform Resolution vs Adapter Pattern (August 9, 2025)
+
+**Important Discovery**: Not all hooks need full adapter pattern refactoring. Some hooks already work correctly with Metro's platform-specific file resolution (`.ts` vs `.native.ts`), but get contaminated through import chains.
+
+**Example - Search Hooks Solution**:
+- ❌ **Wrong Approach**: Implement full adapter pattern for `useSearchResultsResponsive`  
+- ✅ **Right Approach**: Fix import chains so Metro can properly resolve to `.native.ts` versions
+
+**Decision Matrix for Hook Refactoring**:
+
+1. **Use Platform Resolution** when:
+   - Hook already has `.native.ts` version
+   - Business logic is minimal or platform-specific
+   - Issue is import chain contamination, not architecture
+
+2. **Use Adapter Pattern** when:
+   - Hooks have significant shared business logic
+   - Need to eliminate code duplication between platforms
+   - Want to ensure 90% code sharing goal
+
+**Hooks That Use Platform Resolution**:
+- `useSearchResultsResponsive` - Web (DOM) vs Native (flexbox) approaches
+- `useSearchResultsOutsideClick` - Web (click events) vs Native (gesture handling)
+- `useKeyboardShortcuts` - Web (keyboard) vs Native (hardware buttons)
+
+**Hooks That Use Adapter Pattern**:  
+- `useOnboardingFlow` - Shared business logic with platform-specific SDK adapters ✅ **COMPLETED**
+- `useKeyBackup` - Shared validation with platform-specific file handling
+
 
 ## SDK Integration Strategy & Feature Parity Principle
 
@@ -352,6 +355,7 @@ See: `.readme/tasks/todo/mobile-dev/sdk-shim-temporary-solutions.md` for detaile
    - File system access (`useFileSystem.web.ts`, `useFileSystem.native.ts`)
    - Download functionality (`useDownload.web.ts`, `useDownload.native.ts`)
 4. Update imports in components using these hooks
+5. **Follow native component styling rules** - Apply migration guide principles when updating components
 
 ### Phase 2: UI Interactions (Week 2)  
 **Goal**: Fix mobile UX issues caused by web-specific event handling
@@ -366,6 +370,7 @@ See: `.readme/tasks/todo/mobile-dev/sdk-shim-temporary-solutions.md` for detaile
    - `useClickOutside.web.ts` / `useClickOutside.native.ts`
    - `useKeyboardEvents.web.ts` / `useKeyboardEvents.native.ts`
    - `useGestures.web.ts` / `useGestures.native.ts`
+3. **Apply KeyboardAvoidingView patterns** - Use migration guide examples for form interactions
 
 ### Phase 3: Layout & Navigation (Week 3)
 **Goal**: Ensure consistent responsive behavior and navigation
