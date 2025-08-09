@@ -23,7 +23,7 @@ import {
   AuthContent,
   AuthSpacer,
   AUTH_CONTAINER_STYLES,
-} from '../OnboardingStyles.native';
+} from './OnboardingStyles.native';
 // Use direct imports to avoid barrel export chain loading problematic hooks
 import { useOnboardingFlow } from '@/hooks/business/user/useOnboardingFlow';
 import { useKeyBackup } from '@/hooks/useKeyBackup';
