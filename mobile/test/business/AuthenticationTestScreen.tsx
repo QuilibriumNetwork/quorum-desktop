@@ -56,15 +56,6 @@ export const AuthenticationTestScreen: React.FC<AuthenticationTestScreenProps> =
         >
           Start Authentication Flow
         </Button>
-        
-        <Button
-          type="secondary"
-          size="large"
-          iconName="user-plus"
-          onClick={() => setCurrentView('onboarding')}
-        >
-          Test Onboarding Only
-        </Button>
       </FlexColumn>
 
       {user && (
@@ -117,13 +108,13 @@ export const AuthenticationTestScreen: React.FC<AuthenticationTestScreenProps> =
               Implementation Status
             </Text>
             <Text size="sm" style={{ marginTop: 4 }}>
-              ✅ Login.native.tsx - Complete with proper styling
+              ✅ Complete Login → Onboarding flow
             </Text>
             <Text size="sm">
-              ✅ Onboarding.native.tsx - Complete with full flow
+              ✅ Step indicator and progress tracking
             </Text>
             <Text size="sm">
-              ✅ Shared OnboardingStyles.native.tsx
+              ✅ Responsive layout with proper centering
             </Text>
             <Text size="sm" style={{ marginTop: 4 }}>
               🚧 SDK integration pending for full functionality
@@ -199,6 +190,7 @@ export const AuthenticationTestScreen: React.FC<AuthenticationTestScreenProps> =
     // Show Onboarding component
     return <Onboarding setUser={setUser} />;
   };
+
 
   return (
     <>

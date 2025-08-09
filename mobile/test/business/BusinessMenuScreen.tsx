@@ -35,20 +35,12 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
 
   const features: BusinessFeature[] = [
     {
-      id: 'onboarding',
-      title: 'User Onboarding',
-      description: 'Complete user onboarding flow with beautiful gradient styling',
-      icon: 'user-plus',
+      id: 'auth',
+      title: 'Authentication Flow',
+      description: 'Complete Login → Onboarding flow with step indicator and responsive design',
+      icon: 'shield',
       status: 'ready',
-      onPress: () => onSelectFeature('onboarding'),
-    },
-    {
-      id: 'login',
-      title: 'Login Screen',
-      description: 'Login screen - temporarily disabled due to logic conflicts',
-      icon: 'sign-in-alt',
-      status: 'planned',
-      onPress: () => handlePlannedFeature('Login Screen (disabled)'),
+      onPress: () => onSelectFeature('auth'),
     },
     {
       id: 'maintenance',
@@ -57,14 +49,6 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
       icon: 'tools',
       status: 'planned',
       onPress: () => handlePlannedFeature('Maintenance Screen (disabled)'),
-    },
-    {
-      id: 'auth',
-      title: 'Authentication Flow',
-      description: 'Complete authentication flow with useAuthenticationFlow hook',
-      icon: 'shield',
-      status: 'ready',
-      onPress: () => onSelectFeature('auth'),
     },
     {
       id: 'spaces',
