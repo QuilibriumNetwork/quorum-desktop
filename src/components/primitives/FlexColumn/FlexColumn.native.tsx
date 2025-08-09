@@ -41,7 +41,7 @@ export const FlexColumn: React.FC<FlexColumnProps> = ({
     typeof gap === 'string' && gap in gapMap
       ? gapMap[gap as keyof typeof gapMap]
       : typeof gap === 'number'
-        ? gap * 4 // Convert to px equivalent
+        ? gap // Use number values directly (they're already in pixels)
         : 0;
 
   const containerStyle: ViewStyle = {

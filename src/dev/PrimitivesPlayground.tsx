@@ -939,6 +939,102 @@ export const PrimitivesPlayground: React.FC = () => {
                     </div>
                   </div>
                 </div>
+                
+                <div className="space-y-3">
+                  <h4 className="text-md font-medium text-strong">
+                    Link Styles (Web)
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="p-4 bg-surface-3 rounded-xl">
+                      <Text>
+                        This is a paragraph with a{' '}
+                        <Text
+                          as="a"
+                          href="https://example.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:opacity-80"
+                        >
+                          default link
+                        </Text>
+                        {' '}that follows our base CSS styling (accent color, medium weight).
+                      </Text>
+                    </div>
+                    
+                    <div className="p-4 bg-surface-3 rounded-xl">
+                      <Text>
+                        This paragraph contains a{' '}
+                        <Text
+                          as="a"
+                          href="https://example.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline hover:no-underline"
+                          style={{ color: 'inherit', fontWeight: 'inherit' }}
+                        >
+                          simple underlined link
+                        </Text>
+                        {' '}that inherits the surrounding text color and style.
+                      </Text>
+                    </div>
+                    
+                    <div className="p-4 bg-surface-3 rounded-xl">
+                      <Text variant="subtle">
+                        Links work in different variants too:{' '}
+                        <Text
+                          as="a"
+                          href="https://example.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:opacity-80"
+                        >
+                          accent color link
+                        </Text>
+                        {' '}and{' '}
+                        <Text
+                          as="a"
+                          href="https://example.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline hover:no-underline"
+                          style={{ color: 'inherit', fontWeight: 'inherit' }}
+                        >
+                          simple underlined
+                        </Text>
+                        .
+                      </Text>
+                    </div>
+                    
+                    <div className="p-4 bg-surface-3 rounded-xl">
+                      <Text size="lg" weight="semibold">
+                        Links in larger text with{' '}
+                        <Text
+                          as="a"
+                          href="https://example.com" 
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          size="lg"
+                          className="hover:opacity-80"
+                        >
+                          accent styling
+                        </Text>
+                        {' '}and{' '}
+                        <Text
+                          as="a"
+                          href="https://example.com"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          size="lg"
+                          className="underline hover:no-underline"
+                          style={{ color: 'inherit', fontWeight: 'inherit' }}
+                        >
+                          simple underlined
+                        </Text>
+                        .
+                      </Text>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Combined Examples */}

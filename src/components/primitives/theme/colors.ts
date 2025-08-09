@@ -39,6 +39,12 @@ export const themeColors = {
       danger: '#e74a4a', // matches --color-text-danger in light theme
     },
 
+    // Link colors (matches CSS link styles)
+    link: {
+      default: '#0287f2', // var(--accent) - will be overridden by getColors()
+      hover: '#3aa9f8', // var(--accent-400) for light theme
+    },
+
     // Semantic background colors (matches CSS --color-bg-* variables)
     bg: {
       app: '#ffffff', // var(--surface-00)
@@ -138,6 +144,12 @@ export const themeColors = {
       subtle: '#bfb5c8',
       muted: '#84788b',
       danger: '#d46767', // matches --color-text-danger in dark theme
+    },
+
+    // Dark theme link colors (matches CSS html.dark link styles)
+    link: {
+      default: '#0287f2', // var(--accent) - will be overridden by getColors()
+      hover: '#6fc3ff', // var(--accent-200) for dark theme
     },
 
     // Dark theme semantic backgrounds
@@ -328,8 +340,9 @@ export const getColors = (
     ...commonColors,
   };
 
-  // Override field focus colors to use the current accent
+  // Override dynamic colors to use the current accent
   const accentDefault = accentColors[accent].DEFAULT;
+  const accentHover = theme === 'light' ? accentColors[accent][400] : accentColors[accent][200];
   
   return {
     ...baseColors,
@@ -338,6 +351,10 @@ export const getColors = (
       borderFocus: accentDefault,
       bgFocus: baseColors.field.bgFocus, // Keep existing bgFocus
       optionTextSelected: accentDefault, // Dynamic accent for selected options
+    },
+    link: {
+      default: accentDefault, // Use current accent color
+      hover: accentHover, // Use appropriate hover color for theme
     },
   };
 };

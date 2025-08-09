@@ -270,7 +270,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
       {/* Display Name Step */}
       {onboardingFlow.currentStep === 'display-name' && (
         <>
-          <AuthContent variant="text">
+          <AuthContent>
             {/* Title - matching web version */}
             <Title size="lg" align="center" color="white">
               {t`Personalize your account`}
@@ -330,7 +330,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
       {/* Profile Photo Step */}
       {onboardingFlow.currentStep === 'profile-photo' && (
         <>
-          <AuthContent variant="text">
+          <AuthContent>
             {/* Title - matching web version */}
             <Title size="lg" align="center" color="white">
               {t`Personalize your account`}
@@ -445,7 +445,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
       {/* Complete Step */}
       {onboardingFlow.currentStep === 'complete' && (
         <>
-          <AuthContent variant="text">
+          <AuthContent>
             {/* Title - conditional based on user data like web version */}
             <Title size="lg" align="center" color="white">
               {onboardingFlow.currentPasskeyInfo?.pfpUrl && onboardingFlow.currentPasskeyInfo.displayName

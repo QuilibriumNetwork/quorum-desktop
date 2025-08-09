@@ -43,8 +43,12 @@ export const Text: React.FC<NativeTextProps> = ({
   selectable = true,
   accessible,
   accessibilityLabel,
+  accessibilityRole,
   testId,
   href,
+  linkStyle = 'default',
+  underline,
+  style,
   marginBottom,
   marginTop,
   lineHeight,
@@ -68,10 +72,33 @@ export const Text: React.FC<NativeTextProps> = ({
       case 'warning':
         return colors.utilities.warning;
       case 'link':
-        return colors.accent[300]; // Use accent color for links
+        return colors.link.default; // Use link color from theme
       default:
         return colors.text.main;
     }
+  };
+
+  // Determine if this is a link and what style to use
+  const isLink = !!(href || onPress);
+  const isDefaultLinkStyle = linkStyle === 'default' || variant === 'link';
+  const isSimpleLinkStyle = linkStyle === 'simple';
+  
+  // Get link color and weight
+  const getLinkColor = () => {
+    if (isDefaultLinkStyle) {
+      return color || colors.link.default;
+    }
+    if (isSimpleLinkStyle) {
+      return color || getVariantColor(); // Inherit surrounding color
+    }
+    return color || getVariantColor();
+  };
+  
+  const getLinkWeight = () => {
+    if (isDefaultLinkStyle) {
+      return weight || 'medium'; // Default link weight is medium (500)
+    }
+    return weight; // For simple links, inherit weight
   };
 
   // Default line height based on size for better readability
@@ -80,15 +107,27 @@ export const Text: React.FC<NativeTextProps> = ({
     return fontSize * 1.4; // 1.4 ratio for good readability
   };
 
+  // Use link-aware color and weight if this is a link
+  const finalColor = isLink ? getLinkColor() : (color || getVariantColor());
+  const finalWeight = isLink ? getLinkWeight() : weight;
+
   const textStyle: TextStyle = {
     fontSize: sizeMap[size],
-    fontWeight: weightMap[weight] as any,
+    fontWeight: weightMap[finalWeight] as any,
     textAlign: alignMap[align] as any,
-    color: color || getVariantColor(),
+    color: finalColor,
     lineHeight: lineHeight || getDefaultLineHeight(),
     marginBottom: marginBottom,
     marginTop: marginTop,
     includeFontPadding: false, // Better alignment on Android
+    // Add underline for simple link style or explicit underline prop
+    ...((isSimpleLinkStyle || underline) && {
+      textDecorationLine: 'underline',
+      textDecorationColor: finalColor,
+      textDecorationStyle: 'solid',
+    }),
+    // Merge additional styles
+    ...style,
   };
 
   const textContent = (
@@ -98,7 +137,9 @@ export const Text: React.FC<NativeTextProps> = ({
       selectable={selectable}
       accessible={accessible}
       accessibilityLabel={accessibilityLabel}
+      accessibilityRole={isLink ? 'link' : accessibilityRole}
       testID={testId}
+      onPress={isLink ? handlePress : undefined}
     >
       {children}
     </RNText>
@@ -115,11 +156,7 @@ export const Text: React.FC<NativeTextProps> = ({
     }
   };
 
-  if (onPress || href) {
-    return (
-      <TouchableOpacity onPress={handlePress}>{textContent}</TouchableOpacity>
-    );
-  }
-
+  // For inline links, we don't want TouchableOpacity wrapper as it can cause layout issues
+  // Instead, use onPress directly on the Text component for better inline behavior
   return textContent;
 };

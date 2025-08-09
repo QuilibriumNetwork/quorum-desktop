@@ -106,7 +106,7 @@ export type IconName =
   | 'pencil'
   | 'memo';
 
-export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
+export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | number;
 
 export interface IconProps {
   name: IconName;

@@ -1,38 +1,87 @@
-// TEMPORARILY DISABLED - Logic conflicts need to be resolved
-// Re-enable after Onboarding styling is finalized
-
 import React from 'react';
-// import { Button, Icon, Text } from '@/components/primitives';
-// import { Trans } from '@lingui/react/macro';
-// import { Linking } from 'react-native';
-// import {
-//   AuthScreenWrapper,
-//   AuthTitle,
-//   AuthContent,
-//   AuthSpacer,
-//   AUTH_TEXT_STYLES,
-// } from './OnboardingStyles.native';
+import { 
+  // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
+  KeyboardAvoidingView, 
+  // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
+  Platform
+} from 'react-native';
+import { Container, Text, Button, Icon, Title, Paragraph, FlexRow, FlexColumn } from './primitives';
+import {
+  AuthScreenWrapper,
+  AuthSpacer,
+  AUTH_LAYOUT,
+} from './onboarding/OnboardingStyles.native';
+import { t } from '@lingui/core/macro';
 
-export const Maintenance: React.FC = () => {
-  // TEMPORARILY DISABLED - Return placeholder component
+export const Maintenance = () => {
+  const handleRefresh = () => {
+    // TODO: Add proper refresh logic for React Native
+    console.log('Refresh requested');
+  };
+
   return (
-    <div style={{ 
-      padding: '20px', 
-      textAlign: 'center',
-      backgroundColor: '#1e40af',
-      color: 'white',
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
-      <div>
-        <h2>Maintenance Component</h2>
-        <p>Temporarily disabled due to logic conflicts</p>
-        <p>Will be re-enabled after Onboarding styling is finalized</p>
-      </div>
-    </div>
+    <KeyboardAvoidingView 
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+    >
+      <AuthScreenWrapper>
+        <AuthSpacer />
+        
+        {/* Content Container with reduced gaps */}
+        <FlexRow justify="center">
+          <Container 
+            width="full"
+            maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
+            padding={AUTH_LAYOUT.PADDING}
+          >
+            <FlexColumn gap="sm" align="center">
+              {/* Icon Section - large and above title */}
+              <Icon name="tools" size="2xl" color="white" />
+              
+              {/* Title Section */}
+              <Title size="xl" align="center" color="white">
+                {t`Maintenance in Progress`}
+              </Title>
+
+              {/* Message Section - First Paragraph */}
+              <Paragraph color="white" align="center">
+                {t`Quorum infrastructure is being deployed at this time. Please try refreshing.`}
+              </Paragraph>
+
+              {/* Message Section - Second Paragraph with link */}
+              <Paragraph color="white" align="center">
+                {t`Check `}
+                <Text 
+                  href="https://status.quilibrium.com/"
+                  linkStyle="simple"
+                  color="white"
+                  size="base"
+                >
+                  https://status.quilibrium.com/
+                </Text>
+                {t` for updates.`}
+              </Paragraph>
+
+              {/* Space before button */}
+              <Container style={{ height: 16 }} />
+
+              {/* Refresh Button Section */}
+              <Button
+                type="secondary-white"
+                fullWidthWithMargin
+                onClick={handleRefresh}
+              >
+                {t`Refresh`}
+              </Button>
+            </FlexColumn>
+          </Container>
+        </FlexRow>
+
+        <AuthSpacer />
+      </AuthScreenWrapper>
+    </KeyboardAvoidingView>
   );
 };
 
-// Updated: December 9, 2024 at 11:28 AM
+// Updated: August 9, 2025 at 6:10 PM

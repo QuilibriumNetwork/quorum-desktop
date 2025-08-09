@@ -42,8 +42,13 @@ export interface NativeTextProps extends BaseTextProps {
   selectable?: boolean;
   accessible?: boolean;
   accessibilityLabel?: string;
+  accessibilityRole?: string;
   // Link-specific props (for React Native)
   href?: string;
+  // Link styling options
+  linkStyle?: 'default' | 'simple'; // 'default' = accent color + medium weight, 'simple' = inherit color + underline
+  underline?: boolean;
+  style?: any;
 }
 
 export type TextProps = WebTextProps | NativeTextProps;

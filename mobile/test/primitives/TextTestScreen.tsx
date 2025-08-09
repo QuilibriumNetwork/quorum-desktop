@@ -249,6 +249,103 @@ export const TextTestScreen: React.FC = () => {
           </FlexColumn>
         </View>
 
+        {/* Link Styles Section */}
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Link Styles (Mobile)</Title>
+
+            <FlexColumn gap="sm">
+              <View style={{ padding: 12, borderRadius: 8, backgroundColor: theme.colors.surface[3] }}>
+                <Text>
+                  This paragraph contains a{' '}
+                  <Text
+                    href="https://example.com"
+                    linkStyle="default"
+                    size="base"
+                  >
+                    default link
+                  </Text>
+                  {' '}with accent color and medium weight.
+                </Text>
+              </View>
+
+              <View style={{ padding: 12, borderRadius: 8, backgroundColor: theme.colors.surface[3] }}>
+                <Text>
+                  This paragraph has a{' '}
+                  <Text
+                    href="https://example.com"
+                    linkStyle="simple"
+                    size="base"
+                  >
+                    simple underlined link
+                  </Text>
+                  {' '}that inherits surrounding text color.
+                </Text>
+              </View>
+
+              <View style={{ padding: 12, borderRadius: 8, backgroundColor: theme.colors.surface[3] }}>
+                <Text variant="subtle">
+                  Links work in different variants:{' '}
+                  <Text
+                    href="https://example.com"
+                    linkStyle="default"
+                    size="base"
+                  >
+                    accent color
+                  </Text>
+                  {' '}and{' '}
+                  <Text
+                    href="https://example.com"
+                    linkStyle="simple"
+                    size="base"
+                  >
+                    simple underlined
+                  </Text>
+                  .
+                </Text>
+              </View>
+
+              <View style={{ padding: 12, borderRadius: 8, backgroundColor: theme.colors.surface[3] }}>
+                <Text size="lg" weight="semibold">
+                  Links in larger text:{' '}
+                  <Text
+                    href="https://example.com"
+                    linkStyle="default"
+                    size="lg"
+                  >
+                    accent styling
+                  </Text>
+                  {' '}and{' '}
+                  <Text
+                    href="https://example.com" 
+                    linkStyle="simple"
+                    size="lg"
+                  >
+                    simple underlined
+                  </Text>
+                  .
+                </Text>
+              </View>
+            </FlexColumn>
+
+            <FlexColumn gap="sm">
+              <Label>Link Style Properties:</Label>
+              <Text size="sm" variant="subtle">
+                • linkStyle="default": Accent color + medium weight (500)
+              </Text>
+              <Text size="sm" variant="subtle">
+                • linkStyle="simple": Inherit color + underline decoration
+              </Text>
+              <Text size="sm" variant="subtle">
+                • Both support href and onPress for navigation
+              </Text>
+              <Text size="sm" variant="subtle">
+                • Proper accessibility with role="link"
+              </Text>
+            </FlexColumn>
+          </FlexColumn>
+        </View>
+
         {/* Multiline Section */}
         <View style={themedStyles.section}>
           <FlexColumn gap="md">

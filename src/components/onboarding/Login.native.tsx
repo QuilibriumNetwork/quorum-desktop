@@ -102,7 +102,7 @@ export const Login: React.FC<LoginProps> = ({ setUser, onNavigateToOnboarding })
               {/* Create New Account Button */}
               <Button
                 type="primary-white"
-                fullWidth
+                fullWidthWithMargin
                 onClick={handleCreateNewAccount}
               >
                 {t`Create New Account`}
@@ -111,7 +111,7 @@ export const Login: React.FC<LoginProps> = ({ setUser, onNavigateToOnboarding })
               {/* Import Existing Key Button */}
               <Button
                 type="light-outline-white"
-                fullWidth
+                fullWidthWithMargin
                 onClick={handleImportExistingKey}
               >
                 {t`Import Existing Key`}

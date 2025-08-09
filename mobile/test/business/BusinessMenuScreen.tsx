@@ -45,10 +45,10 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
     {
       id: 'maintenance',
       title: 'Maintenance Screen',
-      description: 'Maintenance screen - temporarily disabled due to logic conflicts',
+      description: 'Maintenance screen with consistent auth layout and styling',
       icon: 'tools',
-      status: 'planned',
-      onPress: () => handlePlannedFeature('Maintenance Screen (disabled)'),
+      status: 'ready',
+      onPress: () => onSelectFeature('maintenance'),
     },
     {
       id: 'spaces',

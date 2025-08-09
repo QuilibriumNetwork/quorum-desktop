@@ -53,16 +53,12 @@ export const Container: React.FC<NativeContainerProps> = ({
   const containerPadding =
     typeof padding === 'string' && padding in paddingMap
       ? paddingMap[padding as keyof typeof paddingMap]
-      : typeof padding === 'number'
-        ? padding * 4 // Convert to px equivalent
-        : padding;
+      : padding; // Use number values directly (they're already in pixels)
 
   const containerMargin =
     typeof margin === 'string' && margin in marginMap
       ? marginMap[margin as keyof typeof marginMap]
-      : typeof margin === 'number'
-        ? margin * 4 // Convert to px equivalent
-        : margin;
+      : margin; // Use number values directly (they're already in pixels)
 
   const containerStyle: ViewStyle = {
     width: containerWidth,

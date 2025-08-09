@@ -17,6 +17,10 @@ const getSizeValue = (size: IconSize): number => {
     md: 16,
     lg: 20,
     xl: 24,
+    '2xl': 32,
+    '3xl': 48,
+    '4xl': 64,
+    '5xl': 96,
   };
 
   return sizeMap[size] || 16;

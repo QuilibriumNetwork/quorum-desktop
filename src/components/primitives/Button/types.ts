@@ -37,4 +37,5 @@ export interface NativeButtonProps extends BaseButtonProps {
   // Native-specific props
   hapticFeedback?: boolean;
   accessibilityLabel?: string;
+  fullWidthWithMargin?: boolean; // If true, button takes full width but with 40px left/right margins
 }

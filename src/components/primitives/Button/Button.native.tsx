@@ -32,6 +32,14 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     if (props.fullWidth) {
       style.push({ width: '100%' });
     }
+    
+    // Add full width with margin styling if needed
+    if (props.fullWidthWithMargin) {
+      style.push({ 
+        alignSelf: 'stretch',
+        marginHorizontal: 40
+      });
+    }
 
     // Add type-specific styles using dynamic colors
     switch (type) {
