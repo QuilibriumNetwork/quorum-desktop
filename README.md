@@ -34,7 +34,7 @@ The [`.readme/`](.readme) folder contains development resources including:
 
 The [`src/dev/`](src/dev) folder contains development utilities:
 
-- **Components Audit** (`/dev/audit`) - Visual audit of all components showing extraction status and cross-platform readiness
+- **Dev tools** (`/dev`) - Hub for the current available development tools
 - **Primitives Playground** (`/playground`) - Web-based testing environment for UI primitives and components
 - **Mobile Playground** - Comprehensive testing environment accessible by running the mobile app (see Mobile Development section)
 

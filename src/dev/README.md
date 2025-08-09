@@ -1,31 +1,56 @@
 # Development Tools
 
-Development utilities and testing environments for the Quorum cross-platform application.
+Comprehensive development suite for building and managing cross-platform components in the Quorum desktop application.
 
 ## Contents
 
-### 🎮 Playground
+### 🏠 Development Hub
+**Path**: `DevMainPage.tsx`  
+**Access**: `/dev` route during development  
+**Purpose**: Central hub providing access to all development tools
+
+- Navigation to all development interfaces
+- Overview of available tools and their purposes
+- Quick access to playground, audit, and dependency analysis
+
+### 🎮 Primitives Playground
 **Path**: `PrimitivesPlayground.tsx`  
 **Access**: `/playground` route during development  
 **Purpose**: Interactive testing environment for cross-platform UI primitives
 
-- Test all primitive components (Button, Input, Modal, etc.)
+- Test all primitive components (Button, Input, Modal, Container, Flex, etc.)
+- Complete color system showcase with CSS variables
 - Theme switching (light/dark) and accent color testing
 - Real-time prop testing and visual validation
+- Mobile-responsive component testing
 
 ### 🔍 Component Audit
-**Path**: `components-audit/`  
+**Path**: `components-audit/ComponentAuditViewer.tsx`  
 **Access**: `/dev/audit` route during development  
-**Purpose**: Automated component analysis and documentation
+**Purpose**: Comprehensive component analysis and mobile readiness tracking
 
-- `ComponentAuditViewer.tsx` - Web interface for viewing component audit
-- `audit.json` - Generated component metadata
-- `update_audit.py` - Script to regenerate audit data
+- `ComponentAuditViewer.tsx` - Interactive web interface for component status
+- `audit.json` - Complete metadata for all 64 components
+- `update_audit.py` - Python script to regenerate audit data
+- Mobile readiness tracking and progress statistics
 
-### 🧩 Elements
-**Path**: `Elements.tsx`  
-**Access**: `/elements` route during development  
-**Purpose**: Design system showcase and component gallery
+### 🗺️ Dependency Map
+**Path**: `components-audit/DependencyMapViewer.tsx`  
+**Access**: `/dev/dependencies` route during development  
+**Purpose**: Visual roadmap for mobile component development strategy
+
+- `DependencyMapViewer.tsx` - Interactive dependency visualization
+- `dependency-map.json` - 6-level component hierarchy analysis
+- `mobile-roadmap.md` - Phase-by-phase mobile development plan
+- Build order recommendations (Level 0 primitives → Level 5 complex components)
+
+### 🧭 Navigation System
+**Path**: `DevNavMenu.tsx`  
+**Purpose**: Consistent navigation across all development tools
+
+- Unified navigation bar for all dev interfaces
+- Active page highlighting and smooth transitions
+- Sticky positioning for easy tool switching
 
 ## Usage
 
@@ -35,17 +60,18 @@ All development tools are automatically available during development:
 yarn dev
 ```
 
-Then navigate to:
-- `/playground` - Test primitives interactively
-- `/dev/audit` - View component documentation 
-- `/elements` - Browse design system
+### Development Routes
+- **`/dev`** - Main development hub with tool overview
+- **`/playground`** - Interactive primitives testing environment  
+- **`/dev/audit`** - Component audit and mobile readiness tracker
+- **`/dev/dependencies`** - Visual dependency map and mobile roadmap
 
 ## Notes
 
-- Mobile playground was removed - use `/mobile` workspace for mobile testing
-- All dev tools are excluded from production builds automatically
-- Web playground uses shared components directly (always in sync)
+- **Cross-Platform Ready**: All tools support the mobile/web shared architecture
+- **Production Excluded**: Dev tools are automatically excluded from production builds
+- **Live Sync**: Web playground uses shared components directly (always current)
 
 ---
 
-*Updated: 2025-08-07*
+*Updated: August 9, 2025 at 8:28 PM*
