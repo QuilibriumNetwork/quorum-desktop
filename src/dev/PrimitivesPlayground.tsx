@@ -2917,7 +2917,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
               <div className="space-y-3">
                 <h3 className="text-lg font-medium text-strong">Sizes</h3>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 flex-wrap">
                   <div className="flex items-center gap-2">
                     <Icon name="heart" size="xs" />
                     <span className="text-sm text-subtle">xs</span>
@@ -2937,6 +2937,22 @@ export const PrimitivesPlayground: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <Icon name="heart" size="xl"/>
                     <span className="text-sm text-subtle">xl</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="heart" size="2xl"/>
+                    <span className="text-sm text-subtle">2xl</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="heart" size="3xl"/>
+                    <span className="text-sm text-subtle">3xl</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="heart" size="4xl"/>
+                    <span className="text-sm text-subtle">4xl</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Icon name="heart" size="5xl"/>
+                    <span className="text-sm text-subtle">5xl</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Icon name="heart" size={32} />
@@ -3035,7 +3051,7 @@ export const PrimitivesPlayground: React.FC = () => {
           {/* FileUpload Primitive */}
           <section
             id="fileupload-primitive"
-            className="w-full max-w-6xl mx-auto p-8 bg-app border border-default rounded-lg"
+            className="border border-default rounded-lg p-6 space-y-4"
           >
             <div className="space-y-6">
               <div>
