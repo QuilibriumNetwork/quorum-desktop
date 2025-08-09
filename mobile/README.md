@@ -48,18 +48,21 @@ The mobile app uses:
 - Native styling (no SCSS)
 - Cross-platform primitives
 
+### Dependency Management
+
+This mobile workspace follows **Yarn workspaces best practices**:
+
+- **Shared dependencies** (React, Expo, React Native, business logic libraries) are installed in the **root package.json** and automatically hoisted
+- **Mobile package.json** contains only:
+  - Mobile-specific build tools (like Babel configs)  
+  - Dependencies requiring different versions than web
+  - True mobile-only packages not used elsewhere
+
+This approach ensures faster installs, prevents version conflicts, and follows 2024 monorepo standards.
+
 ## Testing Components
 
-The playground includes test screens for:
-- Button
-- Text & Typography
-- Input & TextArea
-- Modal
-- Switch
-- Select
-- Radio Group
-- Icons
-- Theme switching
-- And more...
+The playground includes test screens for Primtives and Business Components.
 
-Navigate between screens using the menu.
+---
+*Updated: 2025-08-09*
