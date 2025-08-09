@@ -61,10 +61,15 @@ export const useKeyBackupLogic = (adapter: KeyBackupAdapter) => {
       // Use platform adapter for file operations
       await adapter.downloadKeyFile(content, filename);
       
-      // Success - show platform-specific success message if available
-      adapter.showSuccess?.('Key backup created successfully');
+      // Success - adapter handles its own success message
       
     } catch (error: any) {
+      // Handle user cancellation gracefully - don't show as error
+      if (error.message === 'canceled') {
+        // User canceled the save dialog - this is not an error
+        return;
+      }
+      
       const errorMessage = error.message || 'Failed to backup key';
       setExportError(errorMessage);
       
