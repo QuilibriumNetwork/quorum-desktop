@@ -23,6 +23,7 @@ import {
 } from '@/components/primitives';
 import ThemeRadioGroup from '@/components/ThemeRadioGroup';
 import AccentColorSwitcher from '@/components/AccentColorSwitcher';
+import { DevNavMenu } from './DevNavMenu';
 
 /**
  * Playground for testing primitives during development
@@ -81,6 +82,7 @@ export const PrimitivesPlayground: React.FC = () => {
   };
 
   const navigationItems = [
+    { id: 'colors-section', label: 'Colors' },
     { id: 'modalcontainer', label: 'ModalContainer' },
     { id: 'overlaybackdrop', label: 'OverlayBackdrop' },
     { id: 'container-primitive', label: 'Container' },
@@ -103,8 +105,9 @@ export const PrimitivesPlayground: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col">
+      <DevNavMenu currentPath="/playground" sticky />
       {/* Sticky Header */}
-      <div className="sticky top-0 z-20 bg-surface-2 p-6 pr-8 rounded-tl-lg">
+      <div className="sticky top-[41px] z-10 bg-surface-2 p-6 pr-8 -mt-px">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-strong mb-2">
@@ -128,6 +131,116 @@ export const PrimitivesPlayground: React.FC = () => {
       <div className="flex flex-1 overflow-hidden bg-surface-1">
         {/* Components Content */}
         <div className="flex-1 p-8 space-y-8 overflow-y-auto pr-80">
+          {/* Colors Section */}
+          <section
+            id="colors-section"
+            className="border border-default rounded-lg p-6 space-y-4"
+          >
+            <h2 className="text-2xl font-bold text-strong mb-6">Colors</h2>
+            {[
+              {
+                title: 'Primary',
+                vars: [
+                  '--accent-100',
+                  '--accent-200',
+                  '--accent-300',
+                  '--accent-400',
+                  '--accent-500',
+                  '--accent-600',
+                  '--accent-700',
+                  '--accent-800',
+                  '--accent-900',
+                  '--accent',
+                ],
+              },
+              {
+                title: 'Surface',
+                vars: [
+                  '--surface-00',
+                  '--surface-0',
+                  '--surface-1',
+                  '--surface-2',
+                  '--surface-3',
+                  '--surface-4',
+                  '--surface-5',
+                  '--surface-6',
+                  '--surface-7',
+                  '--surface-8',
+                  '--surface-9',
+                  '--surface-10',
+                ],
+              },
+              {
+                title: 'Text',
+                vars: ['--color-text-strong', '--color-text-main', '--color-text-subtle', '--color-text-muted'],
+              },
+              {
+                title: 'Utility (HEX)',
+                vars: [
+                  '--danger-hex',
+                  '--danger-hover-hex',
+                  '--warning-hex',
+                  '--success-hex',
+                  '--info-hex',
+                ],
+              },
+              {
+                title: 'Utility (RGB w/ opacity)',
+                vars: ['--danger', '--warning', '--success', '--info'].flatMap(
+                  (name) =>
+                    [1, 0.75, 0.5, 0.25].map((opacity) => ({
+                      label: `${name} / ${opacity}`,
+                      bg: `rgb(var(${name}) / ${opacity})`,
+                    }))
+                ),
+              },
+            ].map(({ title, vars }) => (
+              <div key={title} className="mb-8">
+                <h3 className="text-xl font-semibold text-strong mb-2">{title}</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10 gap-4">
+                  {(typeof vars[0] === 'string'
+                    ? (vars as string[]).map((v) => ({
+                        label: v,
+                        bg: `var(${v})`,
+                      }))
+                    : (vars as { label: string; bg: string }[])
+                  ).map(({ label, bg }) => (
+                    <div
+                      key={label}
+                      className={`p-2 rounded flex items-center justify-center text-center text-xs font-mono ${
+                        title === 'Text' 
+                          ? 'border border-default bg-transparent' 
+                          : 'shadow'
+                      }`}
+                      style={{
+                        backgroundColor: title === 'Text' ? 'transparent' : bg,
+                        color: title === 'Text' ? bg : 'var(--color-text-main)',
+                        minHeight: '3rem',
+                      }}
+                    >
+                      {label}
+                    </div>
+                  ))}
+                </div>
+                {title === 'Utility (RGB w/ opacity)' && (
+                  <p className="mt-2 text-sm text-subtle">
+                    <span className="italic">
+                      Use{' '}
+                      <code className="font-mono not-italic text-[rgba(var(--warning),0.8)]">
+                        rgba(var(--color), 0.5)
+                      </code>{' '}
+                      in CSS/JSX, or{' '}
+                      <code className="font-mono not-italic text-[rgba(var(--warning),0.8)]">
+                        bg-[rgba(var(--color),0.5)]
+                      </code>{' '}
+                      in Tailwind className.
+                    </span>
+                  </p>
+                )}
+              </div>
+            ))}
+          </section>
+
           {/* Section: ModalContainer */}
           <section
             id="modalcontainer"

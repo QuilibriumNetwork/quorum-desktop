@@ -45,7 +45,14 @@ const ComponentAuditViewer = lazyDevImport(
   () => import('@/dev/components-audit'),
   'ComponentAuditViewer'
 );
-const Elements = lazyDevImport(() => import('@/dev/Elements'));
+const DependencyMapViewer = lazyDevImport(
+  () => import('@/dev/components-audit'),
+  'DependencyMapViewer'
+);
+const DevMainPage = lazyDevImport(
+  () => import('@/dev/DevMainPage'),
+  'DevMainPage'
+);
 
 interface RouterProps {
   user: {
@@ -168,12 +175,27 @@ export function Router({ user, setUser }: RouterProps) {
           />
         )}
       {process.env.NODE_ENV === 'development' &&
-        Elements && (
+        DependencyMapViewer && (
           <Route
-            path="/dev/elements"
+            path="/dev/dependencies"
             element={
-              <Suspense fallback={<div>Loading elements...</div>}>
-                <Elements />
+              <Suspense
+                fallback={<div>Loading dependency map...</div>}
+              >
+                <DependencyMapViewer />
+              </Suspense>
+            }
+          />
+        )}
+      {process.env.NODE_ENV === 'development' &&
+        DevMainPage && (
+          <Route
+            path="/dev"
+            element={
+              <Suspense
+                fallback={<div>Loading dev tools...</div>}
+              >
+                <DevMainPage />
               </Suspense>
             }
           />

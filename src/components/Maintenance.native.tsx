@@ -71,5 +71,3 @@ export const Maintenance = () => {
       </AuthScreenWrapper>
   );
 };
-
-// Updated: August 9, 2025 at 6:10 PM

@@ -9,6 +9,7 @@ import {
   Container,
   Text,
 } from '../../components/primitives';
+import { DevNavMenu } from '../DevNavMenu';
 
 type AuditStatus =
   | 'todo'
@@ -307,6 +308,7 @@ export const ComponentAuditViewer: React.FC = () => {
 
   return (
     <Container className="min-h-screen bg-app overflow-y-auto">
+      <DevNavMenu currentPath="/dev/audit" />
       <Container padding="lg" className="mx-auto max-w-screen-2xl">
         <Text
           as="h1"
