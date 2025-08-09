@@ -19,6 +19,7 @@ import {
   Icon,
   Text,
   FileUpload,
+  Spacer,
 } from '@/components/primitives';
 import ThemeRadioGroup from '@/components/ThemeRadioGroup';
 import AccentColorSwitcher from '@/components/AccentColorSwitcher';
@@ -84,6 +85,7 @@ export const PrimitivesPlayground: React.FC = () => {
     { id: 'overlaybackdrop', label: 'OverlayBackdrop' },
     { id: 'container-primitive', label: 'Container' },
     { id: 'flex-primitives', label: 'Flex Primitives' },
+    { id: 'spacer', label: 'Spacer' },
     { id: 'responsivecontainer', label: 'ResponsiveContainer' },
     { id: 'text-primitive', label: 'Text' },
     { id: 'button-primitive', label: 'Button' },
@@ -667,6 +669,137 @@ export const PrimitivesPlayground: React.FC = () => {
                   <span className="px-3 py-1 bg-accent-100 rounded">Tag 5</span>
                   <span className="px-3 py-1 bg-accent-100 rounded">Tag 6</span>
                 </FlexColumn>
+              </div>
+            </div>
+          </section>
+
+          {/* Section: Spacer */}
+          <section
+            id="spacer"
+            className="border border-default rounded-lg p-6 space-y-4"
+          >
+            <h2 className="text-xl font-semibold text-strong">Spacer</h2>
+            <p className="text-subtle">
+              Semantic spacing component for adding consistent vertical or horizontal space between elements.
+            </p>
+
+            {/* Spacer Examples in 3x1 Grid */}
+            <div className="grid grid-cols-3 gap-6">
+              {/* Column 1: Vertical Spacers */}
+              <div className="space-y-2">
+                <h3 className="text-lg font-medium text-strong">Vertical Spacers</h3>
+                <p className="text-sm text-subtle">All spacer sizes with visual indicators:</p>
+                <div className="p-4 bg-surface-3 rounded-xl">
+                  <Text>Text before xs spacer</Text>
+                  <Spacer size="xs" />
+                  <div className="h-px bg-accent opacity-30"></div>
+                  <Text size="sm" variant="subtle">↑ xs (4px)</Text>
+                  
+                  <Spacer size="md" />
+                  
+                  <Text>Text before sm spacer</Text>
+                  <Spacer size="sm" />
+                  <div className="h-px bg-accent opacity-30"></div>
+                  <Text size="sm" variant="subtle">↑ sm (8px)</Text>
+                  
+                  <Spacer size="md" />
+                  
+                  <Text>Text before md spacer</Text>
+                  <Spacer size="md" />
+                  <div className="h-px bg-accent opacity-30"></div>
+                  <Text size="sm" variant="subtle">↑ md (16px)</Text>
+                  
+                  <Spacer size="md" />
+                  
+                  <Text>Text before lg spacer</Text>
+                  <Spacer size="lg" />
+                  <div className="h-px bg-accent opacity-30"></div>
+                  <Text size="sm" variant="subtle">↑ lg (24px)</Text>
+                  
+                  <Spacer size="md" />
+                  
+                  <Text>Text before xl spacer</Text>
+                  <Spacer size="xl" />
+                  <div className="h-px bg-accent opacity-30"></div>
+                  <Text size="sm" variant="subtle">↑ xl (32px)</Text>
+                </div>
+              </div>
+
+              {/* Column 2: Horizontal Spacers */}
+              <div className="space-y-2">
+                <h3 className="text-lg font-medium text-strong">Horizontal Spacers</h3>
+                <p className="text-sm text-subtle">Spacing between inline elements:</p>
+                <div className="p-4 bg-surface-3 rounded-xl">
+                  <div className="space-y-4">
+                    <FlexRow align="center">
+                      <Text>Left</Text>
+                      <Spacer size="xs" direction="horizontal" />
+                      <div className="w-px h-4 bg-accent opacity-30"></div>
+                      <Text size="sm" variant="subtle">xs</Text>
+                    </FlexRow>
+                    
+                    <FlexRow align="center">
+                      <Text>Left</Text>
+                      <Spacer size="sm" direction="horizontal" />
+                      <div className="w-px h-4 bg-accent opacity-30"></div>
+                      <Text size="sm" variant="subtle">sm</Text>
+                    </FlexRow>
+                    
+                    <FlexRow align="center">
+                      <Text>Left</Text>
+                      <Spacer size="md" direction="horizontal" />
+                      <div className="w-px h-4 bg-accent opacity-30"></div>
+                      <Text size="sm" variant="subtle">md</Text>
+                    </FlexRow>
+                    
+                    <FlexRow align="center">
+                      <Text>Left</Text>
+                      <Spacer size="lg" direction="horizontal" />
+                      <div className="w-px h-4 bg-accent opacity-30"></div>
+                      <Text size="sm" variant="subtle">lg</Text>
+                    </FlexRow>
+                    
+                    <FlexRow align="center">
+                      <Text>Left</Text>
+                      <Spacer size="xl" direction="horizontal" />
+                      <div className="w-px h-4 bg-accent opacity-30"></div>
+                      <Text size="sm" variant="subtle">xl</Text>
+                    </FlexRow>
+                  </div>
+                </div>
+              </div>
+
+              {/* Column 3: Custom Spacing */}
+              <div className="space-y-2">
+                <h3 className="text-lg font-medium text-strong">Custom Spacing</h3>
+                <p className="text-sm text-subtle">Numeric pixel values:</p>
+                <div className="p-4 bg-surface-3 rounded-xl">
+                  <Text>Custom 20px spacer:</Text>
+                  <Spacer size={20} />
+                  <div className="h-px bg-accent opacity-30"></div>
+                  <Text size="sm" variant="subtle">↑ 20px (custom)</Text>
+                  
+                  <Spacer size="lg" />
+                  
+                  <Text>Custom 50px spacer:</Text>
+                  <Spacer size={50} />
+                  <div className="h-px bg-accent opacity-30"></div>
+                  <Text size="sm" variant="subtle">↑ 50px (custom)</Text>
+                  
+                  <Spacer size="lg" />
+                  
+                  <Text>Custom 10px spacer:</Text>
+                  <Spacer size={10} />
+                  <div className="h-px bg-accent opacity-30"></div>
+                  <Text size="sm" variant="subtle">↑ 10px (custom)</Text>
+                  
+                  <Spacer size="lg" />
+                  
+                  <Text>Custom 100px spacer:</Text>
+                  <Spacer size={100} />
+                  <div className="h-px bg-accent opacity-30"></div>
+                  <Text size="sm" variant="subtle">↑ 100px (custom)</Text>
+                </div>
               </div>
             </div>
           </section>

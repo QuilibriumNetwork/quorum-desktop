@@ -7,6 +7,7 @@ export { FlexColumn } from './FlexColumn';
 export { FlexBetween } from './FlexBetween';
 export { FlexCenter } from './FlexCenter';
 export { ResponsiveContainer } from './ResponsiveContainer';
+export { Spacer } from './Spacer';
 
 // UI Primitives
 export { default as Button } from './Button';
@@ -38,6 +39,7 @@ export type { FlexColumnProps } from './FlexColumn';
 export type { FlexBetweenProps } from './FlexBetween';
 export type { FlexCenterProps } from './FlexCenter';
 export type { ResponsiveContainerProps } from './ResponsiveContainer';
+export type { SpacerProps, SpacerSize, SpacerDirection } from './Spacer';
 export type { ButtonProps } from './Button';
 export type { ModalProps } from './Modal';
 export type { InputProps, InputNativeProps } from './Input';

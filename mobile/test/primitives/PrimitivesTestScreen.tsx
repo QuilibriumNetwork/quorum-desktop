@@ -9,6 +9,7 @@ import { FlexColumn } from '@/primitives/FlexColumn';
 import { FlexBetween } from '@/primitives/FlexBetween';
 import { FlexCenter } from '@/primitives/FlexCenter';
 import { ResponsiveContainer } from '@/primitives/ResponsiveContainer';
+import { Spacer } from '@/primitives/Spacer';
 import Button from '@/primitives/Button';
 import { Text, Title } from '@/primitives/Text';
 import { Icon } from '@/primitives/Icon';
@@ -375,6 +376,125 @@ export const PrimitivesTestScreen: React.FC = () => {
           </View>
         </View>
 
+        {/* Spacer Section */}
+        <View style={themedStyles.sectionCompact}>
+          <View style={{ marginBottom: 16 }}>
+            <Text size="lg" weight="semibold" variant="strong">
+              Spacer Primitive
+            </Text>
+          </View>
+
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">
+                Vertical spacers (all sizes):
+              </Text>
+            </View>
+            <View
+              style={[
+                {
+                  backgroundColor: theme.colors.surface[2],
+                  borderColor: theme.colors.border.default,
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  padding: 16,
+                },
+              ]}
+            >
+              <Text size="sm" variant="default">Text before xs spacer</Text>
+              <Spacer size="xs" />
+              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
+              <Text size="xs" variant="subtle">↑ xs (4px)</Text>
+              
+              <Text size="sm" variant="default">Text before sm spacer</Text>
+              <Spacer size="sm" />
+              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
+              <Text size="xs" variant="subtle">↑ sm (8px)</Text>
+              
+              <Text size="sm" variant="default">Text before md spacer</Text>
+              <Spacer size="md" />
+              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
+              <Text size="xs" variant="subtle">↑ md (16px)</Text>
+              
+              <Text size="sm" variant="default">Text before lg spacer</Text>
+              <Spacer size="lg" />
+              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
+              <Text size="xs" variant="subtle">↑ lg (24px)</Text>
+              
+              <Text size="sm" variant="default">Text before xl spacer</Text>
+              <Spacer size="xl" />
+              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
+              <Text size="xs" variant="subtle">↑ xl (32px)</Text>
+            </View>
+          </View>
+
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">
+                Horizontal spacers:
+              </Text>
+            </View>
+            <View
+              style={[
+                {
+                  backgroundColor: theme.colors.surface[2],
+                  borderColor: theme.colors.border.default,
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  padding: 16,
+                },
+              ]}
+            >
+              <FlexRow align="center">
+                <Text size="sm" variant="default">Left</Text>
+                <Spacer size="xs" direction="horizontal" />
+                <View style={{ width: 1, height: 16, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
+                <Text size="xs" variant="subtle">xs</Text>
+                <Spacer size="sm" direction="horizontal" />
+                <View style={{ width: 1, height: 16, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
+                <Text size="xs" variant="subtle">sm</Text>
+                <Spacer size="md" direction="horizontal" />
+                <View style={{ width: 1, height: 16, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
+                <Text size="xs" variant="subtle">md</Text>
+                <Spacer size="lg" direction="horizontal" />
+                <View style={{ width: 1, height: 16, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
+                <Text size="xs" variant="subtle">lg</Text>
+                <Spacer size="xl" direction="horizontal" />
+                <View style={{ width: 1, height: 16, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
+                <Text size="sm" variant="default">Right</Text>
+              </FlexRow>
+            </View>
+          </View>
+
+          <View style={commonTestStyles.inputGroup}>
+            <View style={{ marginBottom: 8 }}>
+              <Text size="sm" weight="medium" variant="default">
+                Custom numeric spacing:
+              </Text>
+            </View>
+            <View
+              style={[
+                {
+                  backgroundColor: theme.colors.surface[2],
+                  borderColor: theme.colors.border.default,
+                  borderWidth: 1,
+                  borderRadius: 8,
+                  padding: 16,
+                },
+              ]}
+            >
+              <Text size="sm" variant="default">Custom 20px spacer:</Text>
+              <Spacer size={20} />
+              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
+              <Text size="xs" variant="subtle">↑ 20px (custom)</Text>
+              
+              <Text size="sm" variant="default">Custom 50px spacer:</Text>
+              <Spacer size={50} />
+              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
+              <Text size="xs" variant="subtle">↑ 50px (custom)</Text>
+            </View>
+          </View>
+        </View>
 
         {/* ResponsiveContainer Section */}
         <View style={themedStyles.sectionCompact}>

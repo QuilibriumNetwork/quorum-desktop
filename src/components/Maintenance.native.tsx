@@ -1,10 +1,4 @@
 import React from 'react';
-import { 
-  // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
-  KeyboardAvoidingView, 
-  // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
-  Platform
-} from 'react-native';
 import { Container, Text, Button, Icon, Title, Paragraph, FlexRow, FlexColumn } from './primitives';
 import {
   AuthScreenWrapper,
@@ -20,12 +14,7 @@ export const Maintenance = () => {
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-    >
-      <AuthScreenWrapper>
+    <AuthScreenWrapper>
         <AuthSpacer />
         
         {/* Content Container with reduced gaps */}
@@ -80,7 +69,6 @@ export const Maintenance = () => {
 
         <AuthSpacer />
       </AuthScreenWrapper>
-    </KeyboardAvoidingView>
   );
 };
 

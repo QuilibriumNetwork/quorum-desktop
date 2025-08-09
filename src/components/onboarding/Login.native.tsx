@@ -1,13 +1,9 @@
 import React from 'react';
 import { 
-  Pressable, 
-  // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
-  KeyboardAvoidingView, 
-  // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
-  Platform
+  Pressable
 } from 'react-native';
 import { Image } from 'expo-image';
-import { Button, Container, FlexRow, FlexColumn } from '@/components/primitives';
+import { Button, Container, FlexRow, FlexColumn, Spacer } from '@/components/primitives';
 import {
   AuthScreenWrapper,
   AuthSpacer,
@@ -63,12 +59,7 @@ export const Login: React.FC<LoginProps> = ({ setUser, onNavigateToOnboarding })
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-    >
-      <AuthScreenWrapper>
+    <AuthScreenWrapper>
         {/* TODO: Add PasskeyModal here once SDK is React Native compatible
             <PasskeyModal
               fqAppPrefix="Quorum"
@@ -89,7 +80,7 @@ export const Login: React.FC<LoginProps> = ({ setUser, onNavigateToOnboarding })
         </FlexRow>
 
         {/* Spacer between logo and buttons */}
-        <Container style={{ height: 32 }} />
+        <Spacer size="xl" />
 
         {/* Buttons Section - using FlexRow and Container with props */}
         <FlexRow justify="center">
@@ -122,7 +113,6 @@ export const Login: React.FC<LoginProps> = ({ setUser, onNavigateToOnboarding })
 
         <AuthSpacer />
       </AuthScreenWrapper>
-    </KeyboardAvoidingView>
   );
 };
 
