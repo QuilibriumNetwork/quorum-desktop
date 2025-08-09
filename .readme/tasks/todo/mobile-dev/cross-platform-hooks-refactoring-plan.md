@@ -29,6 +29,48 @@ When implementing native components during hook refactoring, **MUST** follow the
 </Paragraph>
 ```
 
+### 🏗️ **Architecture Pattern: Container + Layout**
+
+**Best Practice**: Use View for styling containers, Flex primitives for content layout
+
+```tsx
+// ✅ RECOMMENDED: Separation of styling vs layout concerns
+<View style={[styles.card, { backgroundColor: theme.colors.bg.card }]}>
+  <FlexColumn gap="md">
+    <FlexRow gap="sm" align="center">
+      <Icon name="user" />
+      <Text>User Profile</Text>
+    </FlexRow>
+    <FlexColumn gap="xs">
+      <Label>Email:</Label>
+      <Input value={email} onChange={setEmail} />
+    </FlexColumn>
+  </FlexColumn>
+</View>
+
+// ❌ AVOID: Manual flexbox in View
+<View style={{ flexDirection: 'column', gap: 16 }}>
+  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+    <Icon name="user" />
+    <Text>User Profile</Text>
+  </View>
+</View>
+```
+
+**Why this pattern:**
+- **View**: Handles visual styling (colors, borders, shadows)  
+- **Flex primitives**: Handle layout, spacing, and alignment consistently
+- **Better maintainability**: Consistent gap system vs manual margins
+- **Cross-platform**: Flex primitives abstract platform differences
+
+### Migration Strategy
+
+1. **Identify web-specific patterns** (CSS classes, HTML elements)
+2. **Map to primitive equivalents** (Button, Input, FlexRow, etc.)
+3. **Use semantic components** where available
+4. **Test on mobile simulator** to ensure proper behavior
+5. **Validate accessibility** with screen readers
+
 This ensures consistent UX/UI across platforms while maintaining our shared codebase architecture.
 
 ## Problem Statement

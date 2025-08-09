@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Container, FlexColumn, FlexRow, Text, Button, Icon } from '@/primitives';
 import { useTheme } from '@/primitives/theme';
 import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
+import { Login } from '@/components/onboarding/Login.native';
+import { Onboarding } from '@/components/onboarding/Onboarding.native';
 
 interface AuthenticationTestScreenProps {
   // Will add props as we develop the actual components
@@ -13,11 +15,24 @@ export const AuthenticationTestScreen: React.FC<AuthenticationTestScreenProps> =
   const theme = useTheme();
   const themedStyles = createThemedStyles(theme);
   const [currentView, setCurrentView] = useState<'menu' | 'login' | 'onboarding'>('menu');
+  const [user, setUser] = useState<{
+    displayName: string;
+    state: string;
+    status: string;
+    userIcon: string;
+    address: string;
+  } | undefined>(undefined);
+
+  const handleResetFlow = () => {
+    setUser(undefined);
+    setCurrentView('menu');
+  };
 
   const renderMenu = () => (
-    <FlexColumn gap="lg" style={{ padding: 20 }}>
-      <Text size="xl" weight="bold" style={{ textAlign: 'center' }}>
-        Authentication Components
+    <Container padding={20}>
+      <FlexColumn gap="lg">
+      <Text size="xl" weight="bold" align="center">
+        Authentication Flow Test
       </Text>
       
       <View
@@ -28,7 +43,7 @@ export const AuthenticationTestScreen: React.FC<AuthenticationTestScreenProps> =
         }}
       >
         <Text size="sm" variant="subtle">
-          Test the authentication flow components here. Once Login.native.tsx and Onboarding.native.tsx are created, they will be integrated here for testing.
+          Test the complete authentication flow: Login → Onboarding → Welcome. This mimics the actual app flow where users first see the Login screen, then proceed through the Onboarding process.
         </Text>
       </View>
 
@@ -39,7 +54,7 @@ export const AuthenticationTestScreen: React.FC<AuthenticationTestScreenProps> =
           iconName="sign-in"
           onClick={() => setCurrentView('login')}
         >
-          Test Login Component
+          Start Authentication Flow
         </Button>
         
         <Button
@@ -48,14 +63,47 @@ export const AuthenticationTestScreen: React.FC<AuthenticationTestScreenProps> =
           iconName="user-plus"
           onClick={() => setCurrentView('onboarding')}
         >
-          Test Onboarding Component
+          Test Onboarding Only
         </Button>
       </FlexColumn>
 
+      {user && (
+        <View
+          style={{
+            backgroundColor: theme.colors.success + '20',
+            borderColor: theme.colors.success,
+            borderWidth: 1,
+            borderRadius: 8,
+            padding: 12,
+            marginTop: 20,
+          }}
+        >
+          <FlexRow gap="sm" align="start">
+            <Icon name="check-circle" size="md" color={theme.colors.success} />
+            <View style={{ flex: 1 }}>
+              <Text size="sm" weight="semibold" color={theme.colors.success}>
+                Authentication Complete!
+              </Text>
+              <Text size="sm" style={{ marginTop: 4 }}>
+                User: {user.displayName} ({user.address?.substring(0, 8)}...)
+              </Text>
+              <Button
+                type="secondary"
+                size="small"
+                onClick={handleResetFlow}
+                style={{ marginTop: 8, alignSelf: 'flex-start' }}
+              >
+                Reset Flow
+              </Button>
+            </View>
+          </FlexRow>
+        </View>
+      )}
+
       <View
         style={{
-          backgroundColor: theme.colors.warning + '20',
-          borderColor: theme.colors.warning,
+          backgroundColor: theme.colors.info + '20',
+          borderColor: theme.colors.info,
           borderWidth: 1,
           borderRadius: 8,
           padding: 12,
@@ -63,68 +111,116 @@ export const AuthenticationTestScreen: React.FC<AuthenticationTestScreenProps> =
         }}
       >
         <FlexRow gap="sm" align="start">
-          <Icon name="exclamation-triangle" size="md" color={theme.colors.warning} />
+          <Icon name="info-circle" size="md" color={theme.colors.info} />
           <View style={{ flex: 1 }}>
-            <Text size="sm" weight="semibold" color={theme.colors.warning}>
-              Development Status
+            <Text size="sm" weight="semibold" color={theme.colors.info}>
+              Implementation Status
             </Text>
             <Text size="sm" style={{ marginTop: 4 }}>
-              Login.native.tsx and Onboarding.native.tsx need to be created first. They will reuse:
+              ✅ Login.native.tsx - Complete with proper styling
+            </Text>
+            <Text size="sm">
+              ✅ Onboarding.native.tsx - Complete with full flow
+            </Text>
+            <Text size="sm">
+              ✅ Shared OnboardingStyles.native.tsx
             </Text>
             <Text size="sm" style={{ marginTop: 4 }}>
-              • useAuthenticationFlow hook
-            </Text>
-            <Text size="sm">
-              • useOnboardingFlow hook
-            </Text>
-            <Text size="sm">
-              • useWebKeyBackup hook (adapted for mobile)
+              🚧 SDK integration pending for full functionality
             </Text>
           </View>
         </FlexRow>
       </View>
-    </FlexColumn>
+      </FlexColumn>
+    </Container>
   );
 
-  const renderLogin = () => (
-    <FlexColumn gap="md" style={{ padding: 20 }}>
-      <Text size="lg" weight="bold">Login Component</Text>
-      <Text size="sm" variant="subtle">
-        Login.native.tsx will be displayed here once created
-      </Text>
-      <Button type="secondary" onClick={() => setCurrentView('menu')}>
-        Back to Menu
-      </Button>
-    </FlexColumn>
-  );
+  const renderLogin = () => {
+    // If user is already set (completed onboarding), show success
+    if (user) {
+      return (
+        <Container padding={20}>
+          <FlexColumn gap="md">
+            <Text size="lg" weight="bold" align="center">
+              Welcome to Quorum! 🎉
+            </Text>
+            <Text size="md" align="center">
+              Authentication flow completed successfully
+            </Text>
+            <Text size="sm" variant="subtle" align="center">
+              User: {user.displayName}
+            </Text>
+            <Button type="primary" onClick={handleResetFlow}>
+              Start Over
+            </Button>
+            <Button type="secondary" onClick={() => setCurrentView('menu')}>
+              Back to Menu
+            </Button>
+          </FlexColumn>
+        </Container>
+      );
+    }
 
-  const renderOnboarding = () => (
-    <FlexColumn gap="md" style={{ padding: 20 }}>
-      <Text size="lg" weight="bold">Onboarding Component</Text>
-      <Text size="sm" variant="subtle">
-        Onboarding.native.tsx will be displayed here once created
-      </Text>
-      <Button type="secondary" onClick={() => setCurrentView('menu')}>
-        Back to Menu
-      </Button>
-    </FlexColumn>
-  );
+    // Show Login component
+    return (
+      <Login 
+        setUser={setUser}
+        onNavigateToOnboarding={() => setCurrentView('onboarding')}
+      />
+    );
+  };
+
+  const renderOnboarding = () => {
+    // If user is already set (completed onboarding), show success  
+    if (user) {
+      return (
+        <Container padding={20}>
+          <FlexColumn gap="md">
+            <Text size="lg" weight="bold" align="center">
+              Welcome to Quorum! 🎉
+            </Text>
+            <Text size="md" align="center">
+              Onboarding completed successfully
+            </Text>
+            <Text size="sm" variant="subtle" align="center">
+              User: {user.displayName}
+            </Text>
+            <Button type="primary" onClick={handleResetFlow}>
+              Start Over
+            </Button>
+            <Button type="secondary" onClick={() => setCurrentView('menu')}>
+              Back to Menu
+            </Button>
+          </FlexColumn>
+        </Container>
+      );
+    }
+
+    // Show Onboarding component
+    return <Onboarding setUser={setUser} />;
+  };
 
   return (
-    <SafeAreaView
-      style={[
-        commonTestStyles.container,
-        { backgroundColor: theme.colors.bg.app },
-      ]}
-    >
-      <ScrollView
-        contentContainerStyle={commonTestStyles.contentPadding}
-        showsVerticalScrollIndicator={false}
-      >
-        {currentView === 'menu' && renderMenu()}
-        {currentView === 'login' && renderLogin()}
-        {currentView === 'onboarding' && renderOnboarding()}
-      </ScrollView>
-    </SafeAreaView>
+    <>
+      {currentView === 'menu' && (
+        <SafeAreaView
+          style={[
+            commonTestStyles.container,
+            { backgroundColor: theme.colors.bg.app },
+          ]}
+        >
+          <ScrollView
+            contentContainerStyle={commonTestStyles.contentPadding}
+            showsVerticalScrollIndicator={false}
+          >
+            {renderMenu()}
+          </ScrollView>
+        </SafeAreaView>
+      )}
+      {currentView === 'login' && renderLogin()}
+      {currentView === 'onboarding' && renderOnboarding()}
+    </>
   );
 };
+
+// Updated: August 9, 2025 at 3:45 PM

@@ -27,6 +27,7 @@ const Button: React.FC<WebButtonProps> = (props) => {
           (props.iconName && !props.iconOnly
             ? ' quorum-button-with-icon'
             : '') +
+          (props.fullWidth ? ' btn-full-width' : '') +
           (props.className ? ' ' + props.className : '')
         }
         onClick={() => {

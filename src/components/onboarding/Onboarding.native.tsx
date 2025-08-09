@@ -214,7 +214,8 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
             {/* Full width Save User Key button */}
             <Button
               type="primary-white"
-              style={{ width: '100%', marginBottom: 16 }}
+              fullWidth
+              style={{ marginBottom: 16 }}
               onClick={handleDownloadKey}
             >
               {t`Save User Key`}
@@ -289,7 +290,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
             <Button
               type={!onboardingFlow.canProceedWithName ? "disabled-onboarding" : "primary-white"}
               disabled={!onboardingFlow.canProceedWithName}
-              style={{ width: '100%' }}
+              fullWidth
               onClick={handleSaveDisplayName}
             >
               {t`Set Display Name`}
@@ -402,9 +403,9 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                 <Button
                   type="primary-white"
                   disabled={!canSaveFile}
+                  fullWidth
                   style={{
                     paddingHorizontal: 32,
-                    width: '100%',
                     opacity: !canSaveFile ? 0.5 : 1
                   }}
                   onClick={handleSavePhoto}
@@ -437,7 +438,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
           <AuthContent centerContent>
             <Button
               type="primary-white"
-              style={{ width: '100%' }}
+              fullWidth
               onClick={() => onboardingFlow.completeOnboarding(setUser)}
             >
               {t`Let's gooooooooo`}

@@ -18,6 +18,7 @@ export interface BaseButtonProps {
     | 'unstyled';
   size?: 'small' | 'normal' | 'large';
   disabled?: boolean;
+  fullWidth?: boolean; // If true, button takes full width of container
   icon?: boolean; // Legacy prop for existing compatibility
   iconName?: IconName; // FontAwesome icon to display (left of text or icon-only)
   iconOnly?: boolean; // If true, only show icon without text

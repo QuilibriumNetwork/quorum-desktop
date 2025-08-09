@@ -27,6 +27,11 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     const pillRadius = size === 'large' ? 30 : size === 'small' ? 20 : 25;
 
     let style = [styles.base, { borderRadius: pillRadius }];
+    
+    // Add full width styling if needed
+    if (props.fullWidth) {
+      style.push({ width: '100%' });
+    }
 
     // Add type-specific styles using dynamic colors
     switch (type) {

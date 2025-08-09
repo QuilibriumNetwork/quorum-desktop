@@ -1,17 +1,21 @@
-// TEMPORARILY DISABLED - Logic conflicts need to be resolved
-// Re-enable after Onboarding styling is finalized
-
 import React from 'react';
-// import { Image } from 'expo-image';
-// import { Button } from '@/components/primitives';
-// import { useAuthenticationFlow } from '@/hooks';
-// import { t } from '@lingui/core/macro';
-// import {
-//   AuthScreenWrapper,
-//   AuthTitle,
-//   AuthContent,
-//   AuthSpacer,
-// } from '../OnboardingStyles.native';
+import { 
+  Pressable, 
+  // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
+  KeyboardAvoidingView, 
+  // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
+  Platform
+} from 'react-native';
+import { Image } from 'expo-image';
+import { Button, Container, FlexRow, FlexColumn } from '@/components/primitives';
+import {
+  AuthScreenWrapper,
+  AuthSpacer,
+  AUTH_LAYOUT,
+} from './OnboardingStyles.native';
+// Use direct imports to avoid barrel export chain loading problematic hooks
+import { useAuthenticationFlow } from '@/hooks/business/user/useAuthenticationFlow';
+import { t } from '@lingui/core/macro';
 
 interface LoginProps {
   setUser: React.Dispatch<
@@ -26,28 +30,96 @@ interface LoginProps {
       | undefined
     >
   >;
+  onNavigateToOnboarding?: () => void;
 }
 
-export const Login: React.FC<LoginProps> = ({ setUser }) => {
-  // TEMPORARILY DISABLED - Return placeholder component
+export const Login: React.FC<LoginProps> = ({ setUser, onNavigateToOnboarding }) => {
+  // Business logic hook - shared with web version
+  const authFlow = useAuthenticationFlow();
+
+  // TODO: When real SDK is integrated for React Native:
+  // 1. Import PasskeyModal from the SDK (once it's compatible with React Native)
+  // 2. Add PasskeyModal component at the top of the render tree (like web version)
+  // 3. Remove manual navigation and let PasskeyModal handle authentication automatically
+  // 4. Connect setShowPasskeyPrompt to trigger the modal
+  // 
+  // Current implementation uses manual navigation to onboarding as temporary solution
+  // See: .readme/tasks/todo/mobile-dev/sdk-shim-temporary-solutions.md for full SDK integration plan
+
+  const handleCreateNewAccount = () => {
+    authFlow.startNewAccount();
+    // TODO: When SDK is integrated, trigger PasskeyModal like web version:
+    // setShowPasskeyPrompt({ value: true });
+    // For now, navigate to onboarding manually
+    onNavigateToOnboarding?.();
+  };
+
+  const handleImportExistingKey = () => {
+    authFlow.startImportAccount();
+    // TODO: When SDK is integrated, trigger PasskeyModal like web version:
+    // setShowPasskeyPrompt({ value: true, importMode: true });
+    // For now, navigate to onboarding manually
+    onNavigateToOnboarding?.();
+  };
+
   return (
-    <div style={{ 
-      padding: '20px', 
-      textAlign: 'center',
-      backgroundColor: '#1e40af',
-      color: 'white',
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
-      <div>
-        <h2>Login Component</h2>
-        <p>Temporarily disabled due to logic conflicts</p>
-        <p>Will be re-enabled after Onboarding styling is finalized</p>
-      </div>
-    </div>
+    <KeyboardAvoidingView 
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+    >
+      <AuthScreenWrapper>
+        {/* TODO: Add PasskeyModal here once SDK is React Native compatible
+            <PasskeyModal
+              fqAppPrefix="Quorum"
+              getUserRegistration={authFlow.getUserRegistration}
+              uploadRegistration={authFlow.uploadRegistration}
+            />
+        */}
+        
+        <AuthSpacer />
+      
+        {/* Logo Section - using FlexRow with justify prop */}
+        <FlexRow justify="center">
+          <Image
+            style={{ height: 64, width: 280 }}
+            source={require('../../../mobile/assets/quorum.png')}
+            contentFit="contain"
+          />
+        </FlexRow>
+
+        {/* Buttons Section - using FlexRow and Container with props */}
+        <FlexRow justify="center">
+          <Container 
+            width="full"
+            maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
+            padding={AUTH_LAYOUT.PADDING}
+          >
+            <FlexColumn gap="lg">
+              {/* Create New Account Button */}
+              <Button
+                type="primary-white"
+                fullWidth
+                onClick={handleCreateNewAccount}
+              >
+                {t`Create New Account`}
+              </Button>
+              
+              {/* Import Existing Key Button */}
+              <Button
+                type="light-outline-white"
+                fullWidth
+                onClick={handleImportExistingKey}
+              >
+                {t`Import Existing Key`}
+              </Button>
+            </FlexColumn>
+          </Container>
+        </FlexRow>
+
+        <AuthSpacer />
+      </AuthScreenWrapper>
+    </KeyboardAvoidingView>
   );
 };
 
-// Updated: December 9, 2024 at 11:28 AM

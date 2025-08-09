@@ -6,7 +6,7 @@ import {
   AuthTitle,
   AuthContent,
   AuthSpacer,
-} from '@/components/OnboardingStyles.native';
+} from '@/components/onboarding/OnboardingStyles.native';
 
 // Mock user type for testing
 type User = {
