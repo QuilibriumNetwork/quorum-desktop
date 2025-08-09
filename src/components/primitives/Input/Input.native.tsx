@@ -20,6 +20,7 @@ export const Input: React.FC<InputNativeProps> = ({
   disabled = false,
   noFocusStyle = false,
   autoFocus = false,
+  onSubmitEditing,
   style,
   testID,
   accessibilityLabel,
@@ -116,6 +117,7 @@ export const Input: React.FC<InputNativeProps> = ({
           setIsFocused(true);
           onFocus?.();
         }}
+        onSubmitEditing={onSubmitEditing}
         keyboardType={getKeyboardType()}
         returnKeyType={returnKeyType}
         autoComplete={autoComplete}

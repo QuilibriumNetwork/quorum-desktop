@@ -52,4 +52,6 @@ export interface InputNativeProps extends Omit<InputProps, 'className'> {
   autoComplete?: 'off' | 'email' | 'name' | 'tel' | 'username' | 'password';
   /** Secure text entry for passwords */
   secureTextEntry?: boolean;
+  /** Submit handler for return key */
+  onSubmitEditing?: () => void;
 }

@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { ScrollView, Pressable } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { ScrollView, Pressable, KeyboardAvoidingView, Platform, Keyboard, KeyboardEvent } from 'react-native';
 import { Image } from 'expo-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -63,7 +63,25 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   
+  // Keyboard state for better UX
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  
   const maxImageSize = 2 * 1024 * 1024; // 2MB
+
+  // Listen to keyboard events
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (e: KeyboardEvent) => {
+      setKeyboardHeight(e.endCoordinates.height);
+    });
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardHeight(0);
+    });
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
 
   // Handle file upload
   const handleFilesSelected = useCallback((files: any[]) => {
@@ -155,10 +173,20 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
             uploadRegistration={uploadRegistration}
           />
       */}
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView 
+        style={styles.keyboardAvoidingView}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 20}
       >
+        <ScrollView
+          contentContainerStyle={[
+            styles.scrollContent,
+            keyboardHeight > 0 && { paddingBottom: Math.max(120, keyboardHeight + 20) }
+          ]}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          enableOnAndroid={true}
+        >
         {/* Title */}
         <Container padding="lg" style={styles.titleSection}>
           <Text 
@@ -260,9 +288,16 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
               <FlexColumn gap="md" align="stretch">
                 <Input
                   value={onboardingFlow.displayName}
-                  onChangeText={onboardingFlow.setDisplayName}
+                  onChange={onboardingFlow.setDisplayName}
                   placeholder="Bongocat"
-                  style={styles.nameInput}
+                  autoFocus={false}
+                  returnKeyType="done"
+                  onSubmitEditing={() => {
+                    // Handle return key press to save display name
+                    if (onboardingFlow.canProceedWithName) {
+                      handleSaveDisplayName();
+                    }
+                  }}
                 />
                 
                 <Button
@@ -352,15 +387,15 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
 
               {/* Action Buttons */}
               <FlexColumn gap="md" align="stretch" style={styles.photoButtons}>
-                <Button
-                  type="primary"
-                  disabled={fileError !== null}
-                  onClick={handleSavePhoto}
-                >
-                  {hasValidFile ? t`Save Contact Photo` : t`Use Default Photo`}
-                </Button>
-                
-                {hasValidFile && (
+                {hasValidFile ? (
+                  <Button
+                    type="primary"
+                    disabled={fileError !== null}
+                    onClick={handleSavePhoto}
+                  >
+                    <Trans>Save Contact Photo</Trans>
+                  </Button>
+                ) : (
                   <Button
                     type="secondary"
                     onClick={handleSavePhoto}
@@ -390,7 +425,8 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
             </FlexColumn>
           </Container>
         )}
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -399,6 +435,9 @@ const createStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors.bg.app,
+  } as any,
+  keyboardAvoidingView: {
+    flex: 1,
   } as any,
   scrollContent: {
     flexGrow: 1,
@@ -419,9 +458,6 @@ const createStyles = (theme: any) => StyleSheet.create({
   } as any,
   addressText: {
     textAlign: 'center' as const,
-  } as any,
-  nameInput: {
-    backgroundColor: theme.colors.surface?.[0] || '#ffffff',
   } as any,
   linkButton: {
     paddingVertical: theme.spacing?.sm || 8,
