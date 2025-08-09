@@ -15,8 +15,9 @@ import {
 // Use direct imports to avoid barrel export chain loading problematic hooks
 import { useOnboardingFlow } from '@/hooks/business/user/useOnboardingFlow';
 import { useKeyBackup } from '@/hooks/useKeyBackup';
-import { useUploadRegistration } from '@/hooks/mutations/useUploadRegistration';
-import { useQuorumApiClient } from '@/components/context/QuorumApiContext';
+// TODO: Re-enable when PasskeyModal is available for React Native
+// import { useUploadRegistration } from '@/hooks/mutations/useUploadRegistration';
+// import { useQuorumApiClient } from '@/components/context/QuorumApiContext';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { DefaultImages } from '@/utils';
@@ -41,9 +42,9 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
   const theme = useTheme();
   const styles = createStyles(theme);
 
-  // API context
-  const { apiClient } = useQuorumApiClient();
-  const uploadRegistration = useUploadRegistration();
+  // TODO: Re-enable API context when PasskeyModal is available for React Native
+  // const { apiClient } = useQuorumApiClient();
+  // const uploadRegistration = useUploadRegistration();
 
   // Business logic hooks
   const onboardingFlow = useOnboardingFlow();
@@ -102,22 +103,17 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
   };
 
   // Handle display name save with user registration
-  // NOTE: This manual registration is a temporary solution while using SDK shim
-  // The web version handles this automatically through PasskeyModal
-  // TODO: Remove this manual registration once PasskeyModal is available for React Native
+  // NOTE: This is a temporary solution while using SDK shim
+  // The web version handles this automatically through PasskeyModal which also handles uploadRegistration
+  // TODO: When PasskeyModal is available for React Native, remove this simplified version
+  // and let PasskeyModal handle the registration automatically like the web version does
   const handleSaveDisplayName = async () => {
     try {
-      // Manually register user with the API (normally handled by PasskeyModal)
-      if (onboardingFlow.currentPasskeyInfo) {
-        await uploadRegistration({
-          address: onboardingFlow.currentPasskeyInfo.address,
-          registration: {
-            username: onboardingFlow.displayName,
-            address: onboardingFlow.currentPasskeyInfo.address,
-            publicKey: onboardingFlow.currentPasskeyInfo.publicKey,
-          },
-        });
-      }
+      // TODO: Manual API registration will be added once we determine the correct
+      // UserRegistration interface structure from the real SDK
+      // For now, just save to local state - registration will happen when full SDK is integrated
+      console.warn('[Mobile] Skipping API user registration - will be handled by PasskeyModal when SDK is integrated');
+      
       // Save to local state
       onboardingFlow.saveDisplayName();
     } catch (error) {

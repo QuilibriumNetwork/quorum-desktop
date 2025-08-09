@@ -38,10 +38,10 @@ export interface DeviceKeyset {
 }
 
 export interface UserRegistration {
-  username: string;
+  displayName: string;
   address: string;
   publicKey?: string;
-  // Add other fields as needed
+  // Add other fields as needed to match real SDK
 }
 
 export interface PasskeyInfo {
