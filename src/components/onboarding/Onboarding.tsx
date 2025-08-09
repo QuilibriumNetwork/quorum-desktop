@@ -127,7 +127,7 @@ export const Onboarding = ({
           <>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
-              <div className="w-full max-w-[460px] px-4 py-4 text-justify text-white">
+              <div className="w-full max-w-[460px] px-4 py-4 text-left text-white">
                 <p className="py-4">
                   <b>{t`Important first-time user information:`}</b>
                 </p>
