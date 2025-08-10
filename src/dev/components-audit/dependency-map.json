@@ -141,9 +141,9 @@
         },
         {
           "name": "LeaveSpaceModal",
-          "dependencies": ["Button", "Modal", "Container", "Text", "FlexRow"],
-          "status": "shared", 
-          "notes": "Only primitive dependencies, mobile ready"
+          "dependencies": ["Button", "Modal", "Container", "Text", "FlexRow", "Spacer"],
+          "status": "mobile_test", 
+          "notes": "Test version available in mobile playground. Uses primitives, cross-platform modal, haptic feedback. Still needs mobile implementation of hooks (useSpace, useSpaceLeaving) with proper navigation and database logic."
         },
         {
           "name": "EmptyDirectMessage",

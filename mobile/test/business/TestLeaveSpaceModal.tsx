@@ -112,6 +112,7 @@ const TestLeaveSpaceModal: React.FunctionComponent<TestLeaveSpaceModalProps> = (
           <Button
             type="danger"
             onClick={() => handleLeaveClick(spaceId, onClose)}
+            hapticFeedback={true}
           >
             {confirmationStep === 0 ? (
               <Trans>Leave Space</Trans>

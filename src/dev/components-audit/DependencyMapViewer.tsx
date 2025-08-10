@@ -155,6 +155,7 @@ const ComponentCard: React.FC<{
               comp.status === 'web_only' ? 'bg-blue-500/70 text-white' :
               comp.status === 'electron_only' ? 'bg-gray-500/70 text-white' :
               comp.status === 'disabled' ? 'bg-yellow-500/70 text-black' :
+              comp.status === 'mobile_test' ? 'bg-purple-500/70 text-white' :
               comp.status === 'deleted' ? 'bg-red-500/70 text-white' :
               'bg-yellow-600/70 text-white'
             }`}
@@ -164,6 +165,7 @@ const ComponentCard: React.FC<{
              comp.status === 'web_only' ? 'Web Only' :
              comp.status === 'electron_only' ? 'Electron Only' :
              comp.status === 'disabled' ? 'Disabled' :
+             comp.status === 'mobile_test' ? 'Mobile Test' :
              comp.status === 'deleted' ? 'Deleted' : 'Unknown'}
           </Text>
         </div>
@@ -192,7 +194,7 @@ const ComponentCard: React.FC<{
         </div>
       )}
       
-      <Text variant="subtle" size="xs" className="line-clamp-2">
+      <Text variant="subtle" size="xs">
         {comp.notes}
       </Text>
     </div>
