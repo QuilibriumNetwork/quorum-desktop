@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -27,6 +27,7 @@ const Modal: React.FC<NativeModalProps> = ({
   size = 'medium',
   closeOnBackdropClick = true,
   swipeToClose = true,
+  swipeUpToOpen = false,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -36,9 +37,10 @@ const Modal: React.FC<NativeModalProps> = ({
 
   const translateY = useRef(new Animated.Value(screenHeight)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
+  const [isEnlarged, setIsEnlarged] = useState(false);
 
-  // Calculate height based on size
-  const getModalHeight = () => {
+  // Calculate initial height based on size
+  const getInitialHeight = () => {
     switch (size) {
       case 'small':
         return screenHeight * 0.4;
@@ -51,7 +53,11 @@ const Modal: React.FC<NativeModalProps> = ({
     }
   };
 
-  const modalHeight = getModalHeight();
+  const initialHeight = getInitialHeight();
+  const enlargedHeight = screenHeight * 0.9;
+  
+  // Current height for rendering
+  const currentHeight = swipeUpToOpen && isEnlarged ? enlargedHeight : initialHeight;
 
   // Determine if we're on a tablet based on screen width
   const isTablet = screenWidth >= 768;
@@ -73,6 +79,9 @@ const Modal: React.FC<NativeModalProps> = ({
         }),
       ]).start();
     } else {
+      // Reset enlarged state when modal closes
+      setIsEnlarged(false);
+      
       // Animate out
       Animated.parallel([
         Animated.timing(translateY, {
@@ -94,34 +103,42 @@ const Modal: React.FC<NativeModalProps> = ({
     onClose();
   };
 
-  // Debug: Log when modal renders
-  console.log('Modal rendering - swipeToClose:', swipeToClose, 'visible:', visible);
 
-  // Pan responder for swipe to close
+  // Pan responder for swipe gestures
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => {
-        console.log('🎯 Should start pan responder:', swipeToClose);
-        return swipeToClose;
+        return swipeToClose || swipeUpToOpen;
       },
       onMoveShouldSetPanResponder: (_evt: any, gestureState: any) => {
-        const shouldMove = swipeToClose && gestureState.dy > 5;
-        console.log('📱 Should move pan responder:', shouldMove, 'dy:', gestureState.dy);
-        return shouldMove;
+        const swipeDown = swipeToClose && gestureState.dy > 5;
+        const swipeUp = swipeUpToOpen && gestureState.dy < -5;
+        return swipeDown || swipeUp;
       },
       onPanResponderMove: (_evt: any, gestureState: any) => {
-        console.log('🔄 Pan responder move:', gestureState.dy);
-        if (gestureState.dy > 0) {
+        // Only allow swipe down movement for closing
+        if (swipeToClose && gestureState.dy > 0) {
           (translateY as any).setValue(gestureState.dy);
         }
+        // No visual feedback during swipe up to avoid stretching
       },
       onPanResponderRelease: (_evt: any, gestureState: any) => {
-        console.log('✋ Pan responder release:', gestureState.dy, gestureState.vy);
-        if (gestureState.dy > 100 || gestureState.vy > 0.5) {
-          console.log('❌ Closing modal via swipe');
+        // Handle swipe down to close
+        if (swipeToClose && (gestureState.dy > 100 || gestureState.vy > 0.5)) {
           handleClose();
-        } else {
-          console.log('↩️ Resetting modal position');
+        }
+        // Handle swipe up to enlarge (only if swipeUpToOpen is enabled and not already enlarged)
+        else if (swipeUpToOpen && !isEnlarged && (gestureState.dy < -100 || gestureState.vy < -0.5)) {
+          setIsEnlarged(true);
+          // Return to normal position
+          Animated.timing(translateY, {
+            toValue: 0,
+            duration: 200,
+            useNativeDriver: true,
+          }).start();
+        }
+        // Return to normal position if gesture wasn't strong enough
+        else {
           Animated.timing(translateY, {
             toValue: 0,
             duration: 200,
@@ -161,7 +178,7 @@ const Modal: React.FC<NativeModalProps> = ({
           style={[
             styles.modalContent,
             {
-              height: modalHeight, // Use calculated height only
+              height: currentHeight,
               backgroundColor: colors.surface[1],
               transform: [{ translateY }],
               maxWidth: isTablet ? 600 : '100%',
@@ -169,15 +186,13 @@ const Modal: React.FC<NativeModalProps> = ({
             },
           ]}
         >
-          {/* Handle indicator and header with gesture for swipe to close */}
+          {/* Handle indicator and header with gesture for swipe actions */}
           <View
-            {...(swipeToClose ? panResponder.panHandlers : {})}
-            onTouchStart={() => console.log('👆 Touch detected on handle/header area')}
-            onTouchEnd={() => console.log('🖐️ Touch ended on handle/header area')}
+            {...((swipeToClose || swipeUpToOpen) ? panResponder.panHandlers : {})}
             style={{ minHeight: 50 }} // Ensure gesture area has minimum height
           >
             {/* Handle indicator */}
-            {swipeToClose && (
+            {(swipeToClose || swipeUpToOpen) && (
               <View
                 style={[styles.handle, { backgroundColor: colors.surface[5] }]}
               />

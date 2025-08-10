@@ -25,6 +25,7 @@ export const ModalTestScreen: React.FC = () => {
   const [largeModal, setLargeModal] = useState(false);
   const [noCloseModal, setNoCloseModal] = useState(false);
   const [noSwipeModal, setNoSwipeModal] = useState(false);
+  const [swipeUpModal, setSwipeUpModal] = useState(false);
   const [navigationModal, setNavigationModal] = useState(false);
   const [currentPage, setCurrentPage] = useState('menu');
 
@@ -101,6 +102,12 @@ export const ModalTestScreen: React.FC = () => {
               onClick={() => setNoSwipeModal(true)}
             >
               No Swipe to Close
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => setSwipeUpModal(true)}
+            >
+              Swipe Up to Enlarge
             </Button>
             <Button
               type="primary"
@@ -351,6 +358,72 @@ export const ModalTestScreen: React.FC = () => {
         </View>
       </Modal>
 
+      {/* Swipe Up Modal */}
+      <Modal
+        title="Swipe Up Modal"
+        visible={swipeUpModal}
+        onClose={() => setSwipeUpModal(false)}
+        swipeUpToOpen={true}
+        size="small"
+      >
+        <View style={{ padding: 20 }}>
+          <FlexColumn gap="md">
+            <Paragraph>
+              This modal supports swipe-up to enlarge functionality. It opens at small size (40% height),
+              but you can swipe up from the handle area to enlarge it to 90% height.
+            </Paragraph>
+            
+            <View
+              style={{
+                backgroundColor: colors.surface[3],
+                padding: 16,
+                borderRadius: 8,
+              }}
+            >
+              <FlexColumn gap="sm">
+                <FlexRow gap="sm" style={{ alignItems: 'center' }}>
+                  <Icon name="arrows-alt-v" size="xl"/>
+                  <Title size="sm">Gesture Instructions</Title>
+                </FlexRow>
+                <Text size="sm" color={colors.text.subtle}>
+                  • Swipe UP from the handle/header area to enlarge to 90% height
+                </Text>
+                <Text size="sm" color={colors.text.subtle}>
+                  • Swipe DOWN from the handle/header area to close the modal
+                </Text>
+                <Text size="sm" color={colors.text.subtle}>
+                  • Once enlarged, you can still swipe down to close normally
+                </Text>
+              </FlexColumn>
+            </View>
+
+            <View
+              style={{
+                backgroundColor: colors.surface[4],
+                padding: 16,
+                borderRadius: 8,
+              }}
+            >
+              <FlexColumn gap="sm">
+                <Title size="sm">Try It Out!</Title>
+                <Paragraph>
+                  Try swiping up from the top handle area right now to see the modal 
+                  enlarge to 90% screen height. The gesture only works from the handle 
+                  and header area, not from this content area.
+                </Paragraph>
+              </FlexColumn>
+            </View>
+
+            <Button
+              type="primary"
+              onClick={() => setSwipeUpModal(false)}
+            >
+              Close Modal
+            </Button>
+          </FlexColumn>
+        </View>
+      </Modal>
+
       {/* Navigation Example Modal */}
       <Modal
         title={
@@ -471,6 +544,13 @@ export const ModalTestScreen: React.FC = () => {
               <Text size="sm">•</Text>
               <View style={{flex: 1}}>
                 <Text size="sm">Swipe gestures work from handle and header area only</Text>
+              </View>
+            </FlexRow>
+            
+            <FlexRow gap="xs" align="start">
+              <Text size="sm">•</Text>
+              <View style={{flex: 1}}>
+                <Text size="sm">Optional swipe-up to enlarge: opens normally, then swipe up to 90% height</Text>
               </View>
             </FlexRow>
             

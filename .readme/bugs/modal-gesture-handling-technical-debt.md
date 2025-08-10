@@ -120,9 +120,39 @@ This affects other components that may need gesture handling:
 - Card components with drag gestures  
 - Navigation components with pan gestures
 
+## Migration Attempts & Findings
+
+### Failed Modern Approach (August 2025)
+**Attempted Solution:**
+- Implemented modern Gesture.Pan() + GestureDetector approach
+- Added 'react-native-reanimated/plugin' to babel.config.js
+- Wrapped app with GestureHandlerRootView
+- Used proper useSharedValue and useAnimatedStyle patterns
+
+**Results:**
+- ❌ GestureDetector completely non-functional (no events fired)
+- ❌ No gesture logs despite proper setup and debugging
+- ❌ Babel plugin caused build issues and conflicts
+- ❌ Modern approach incompatible with current React Native 0.79.5 + Expo SDK 53 setup
+
+**Key Discovery:**
+The modern gesture handling approach (Gesture Handler 2.x + Reanimated 3.x) appears to have compatibility issues with the current stack configuration that cannot be resolved through configuration alone.
+
+### Root Cause Investigation
+1. **New Architecture Requirement**: Modern gesture handling may require React Native's New Architecture to be fully enabled
+2. **Expo Compatibility**: Expo SDK 53 may have limitations with latest gesture handler features
+3. **Version Conflicts**: React Native 0.79.5 may be too old for modern gesture patterns despite having the required packages
+
+### Verified Working Solution
+- **Cherry-picked from commit b455d33**: PanResponder implementation with `@ts-ignore` workaround
+- **Status**: Functional but uses deprecated patterns
+- **Performance**: Adequate for current needs despite JavaScript thread limitations
+
 ## Notes
 
 The project should establish consistent gesture handling patterns before adding more gesture-based components to prevent this technical debt from spreading.
+
+**Important:** Do not attempt to migrate to modern gesture handling without first upgrading the entire React Native + Expo stack, as the modern approach is confirmed non-functional with the current setup.
 
 ---
 
