@@ -14,11 +14,11 @@ import { i18n } from '@lingui/core';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
+import { useModals } from '../context/ModalProvider';
 import { Button, Icon } from '../primitives';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
-import KickUserModal from '../modals/KickUserModal';
 
 type ChannelProps = {
   spaceId: string;
@@ -34,6 +34,7 @@ const Channel: React.FC<ChannelProps> = ({
   setKickUserAddress,
 }) => {
   const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
+  const { openKickUser } = useModals();
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
   const {
@@ -194,17 +195,16 @@ const Channel: React.FC<ChannelProps> = ({
     }
   }, [composer.inReplyTo]);
 
+  // Handle kick user modal opening
+  React.useEffect(() => {
+    if (kickUserAddress) {
+      openKickUser(kickUserAddress);
+      setKickUserAddress(undefined); // Clear local state immediately
+    }
+  }, [kickUserAddress, openKickUser, setKickUserAddress]);
+
   return (
     <div className="chat-container">
-      {kickUserAddress && (
-        <KickUserModal
-          visible={!!kickUserAddress}
-          kickUserAddress={kickUserAddress}
-          onClose={() => {
-            setKickUserAddress(undefined);
-          }}
-        />
-      )}
       <div className="flex flex-col flex-1 min-w-0">
         <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
           <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2 lg:mb-0">

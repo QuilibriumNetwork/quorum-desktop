@@ -4,6 +4,8 @@ import SpaceEditor from '../channel/SpaceEditor';
 import ChannelEditor from '../channel/ChannelEditor';
 import GroupEditor from '../channel/GroupEditor';
 import LeaveSpaceModal from '../modals/LeaveSpaceModal';
+import KickUserModal from '../modals/KickUserModal';
+import NewDirectMessageModal from '../modals/NewDirectMessageModal';
 import {
   useModalState,
   type ModalState,
@@ -28,6 +30,8 @@ interface ModalContextType {
   closeLeaveSpace: () => void;
   openNewDirectMessage: () => void;
   closeNewDirectMessage: () => void;
+  openKickUser: (kickUserAddress: string) => void;
+  closeKickUser: () => void;
   // Legacy compatibility with existing useModalContext
   isNewDirectMessageOpen: boolean;
 }
@@ -82,6 +86,8 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
     closeLeaveSpace: modalState.closeLeaveSpace,
     openNewDirectMessage: modalState.openNewDirectMessage,
     closeNewDirectMessage: modalState.closeNewDirectMessage,
+    openKickUser: modalState.openKickUser,
+    closeKickUser: modalState.closeKickUser,
     // Legacy compatibility
     isNewDirectMessageOpen: modalState.isNewDirectMessageOpen,
   };
@@ -132,6 +138,22 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
             onClose={modalState.closeLeaveSpace}
           />
         )}
+
+      {modalState.state.kickUser.isOpen &&
+        modalState.state.kickUser.kickUserAddress && (
+          <KickUserModal
+            kickUserAddress={modalState.state.kickUser.kickUserAddress}
+            visible={true}
+            onClose={modalState.closeKickUser}
+          />
+        )}
+
+      {modalState.state.newDirectMessage.isOpen && (
+        <NewDirectMessageModal
+          visible={true}
+          onClose={modalState.closeNewDirectMessage}
+        />
+      )}
 
       {children}
     </ModalContext.Provider>

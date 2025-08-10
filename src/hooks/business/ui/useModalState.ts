@@ -27,6 +27,10 @@ export interface ModalState {
   newDirectMessage: {
     isOpen: boolean;
   };
+  kickUser: {
+    isOpen: boolean;
+    kickUserAddress?: string;
+  };
 }
 
 // Modal actions
@@ -47,7 +51,9 @@ type ModalAction =
   | { type: 'OPEN_LEAVE_SPACE'; spaceId: string }
   | { type: 'CLOSE_LEAVE_SPACE' }
   | { type: 'OPEN_NEW_DIRECT_MESSAGE' }
-  | { type: 'CLOSE_NEW_DIRECT_MESSAGE' };
+  | { type: 'CLOSE_NEW_DIRECT_MESSAGE' }
+  | { type: 'OPEN_KICK_USER'; kickUserAddress: string }
+  | { type: 'CLOSE_KICK_USER' };
 
 // Initial state
 const initialModalState: ModalState = {
@@ -57,6 +63,7 @@ const initialModalState: ModalState = {
   groupEditor: { isOpen: false },
   leaveSpace: { isOpen: false },
   newDirectMessage: { isOpen: false },
+  kickUser: { isOpen: false },
 };
 
 // Modal reducer
@@ -112,6 +119,14 @@ function modalReducer(state: ModalState, action: ModalAction): ModalState {
       return { ...state, newDirectMessage: { isOpen: true } };
     case 'CLOSE_NEW_DIRECT_MESSAGE':
       return { ...state, newDirectMessage: { isOpen: false } };
+
+    case 'OPEN_KICK_USER':
+      return {
+        ...state,
+        kickUser: { isOpen: true, kickUserAddress: action.kickUserAddress },
+      };
+    case 'CLOSE_KICK_USER':
+      return { ...state, kickUser: { isOpen: false } };
 
     default:
       return state;
@@ -183,6 +198,15 @@ export const useModalState = () => {
     dispatch({ type: 'CLOSE_NEW_DIRECT_MESSAGE' });
   }, []);
 
+  // Kick User Modal
+  const openKickUser = useCallback((kickUserAddress: string) => {
+    dispatch({ type: 'OPEN_KICK_USER', kickUserAddress });
+  }, []);
+
+  const closeKickUser = useCallback(() => {
+    dispatch({ type: 'CLOSE_KICK_USER' });
+  }, []);
+
   return {
     // State
     state,
@@ -210,6 +234,10 @@ export const useModalState = () => {
     // New Direct Message
     openNewDirectMessage,
     closeNewDirectMessage,
+
+    // Kick User
+    openKickUser,
+    closeKickUser,
 
     // Legacy compatibility
     isNewDirectMessageOpen: state.newDirectMessage.isOpen,

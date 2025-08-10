@@ -5,7 +5,6 @@ import DirectMessage from './DirectMessage';
 import UserStatus from '../user/UserStatus';
 import { EmptyDirectMessage } from './EmptyDirectMessage';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
-import NewDirectMessageModal from '../modals/NewDirectMessageModal';
 
 import './DirectMessages.scss';
 import { useRegistrationContext } from '../context/RegistrationPersister';
@@ -49,12 +48,6 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
 
   return (
     <div className="direct-messages-container">
-      {isNewDirectMessageOpen && (
-        <NewDirectMessageModal
-          visible={isNewDirectMessageOpen}
-          onClose={closeNewDirectMessage}
-        />
-      )}
       {/* Mobile backdrop overlay - show when sidebar is visible */}
       {(isMobile || isTablet) && leftSidebarOpen && (
         <div
