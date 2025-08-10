@@ -16,12 +16,6 @@ export const DevMainPage: React.FC = () => {
       description: 'Detailed status of all components migration',
       path: '/dev/audit',
     },
-    {
-      name: 'Dependency Map',
-      icon: 'map',
-      description: 'Visual roadmap for mobile component development',
-      path: '/dev/dependencies',
-    }
   ];
 
   const handleNavigate = (path: string) => {

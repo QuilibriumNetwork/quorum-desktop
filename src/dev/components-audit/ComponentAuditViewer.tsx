@@ -19,12 +19,20 @@ type AuditStatus =
   | 'partial'
   | 'unknown'
   | 'keep'
-  | 'extract';
+  | 'extract'
+  | 'not_needed';
+  
 type ComponentCategory =
   | 'shared'
   | 'platform_specific'
   | 'complex_refactor'
   | 'unknown';
+
+type ComplexityCategory =
+  | 'basic'
+  | 'simple'
+  | 'medium'
+  | 'complex';
 
 interface ComponentAudit {
   name: string;
@@ -38,6 +46,10 @@ interface ComponentAudit {
   native: AuditStatus;
   notes: string;
   updated: string;
+  // New dependency fields
+  dependencies?: string[];
+  dependency_level?: number;
+  complexity_category?: ComplexityCategory;
 }
 
 interface AuditData {
@@ -57,6 +69,7 @@ interface AuditData {
       yes: number;
       no: number;
       unknown: number;
+      suspended?: number;
     };
     analysis_notes: string;
     last_updated: string;
@@ -65,6 +78,30 @@ interface AuditData {
     audit_version: string;
     last_full_scan: string | null;
     scan_scope: string[];
+    unified_version?: string;
+    migration_date?: string;
+    includes_dependencies?: boolean;
+  };
+  dependency_hierarchy?: {
+    basic: { count: number; components: string[] };
+    simple: { count: number; components: string[] };
+    medium: { count: number; components: string[] };
+    complex: { count: number; components: string[] };
+  };
+  mobile_strategy?: {
+    current_phase: string;
+    ready_to_build: Array<{
+      name: string;
+      reason: string;
+      effort: string;
+      notes: string;
+    }>;
+    phases_summary: {
+      primitives_complete: string;
+      simple_components_complete: string;
+      moderate_components_current: string;
+      next_priority: string;
+    };
   };
 }
 
@@ -82,6 +119,8 @@ const StatusBadge: React.FC<{
           return 'bg-green-500/70 text-white';
         case 'todo':
           return 'bg-red-500/70 text-white';
+        case 'not_needed':
+          return 'bg-gray-500/70 text-white';
         default:
           return 'bg-surface-2 text-muted';
       }
@@ -171,6 +210,8 @@ const UsageBadge: React.FC<{ used: string }> = ({ used }) => {
         return 'bg-red-500/70 text-white';
       case 'unknown':
         return 'bg-amber-500/70 text-white';
+      case 'suspended':
+        return 'bg-purple-500/70 text-white';
       default:
         return 'bg-gray-400/70 text-white';
     }
@@ -184,6 +225,8 @@ const UsageBadge: React.FC<{ used: string }> = ({ used }) => {
         return 'Unused';
       case 'unknown':
         return 'Unknown';
+      case 'suspended':
+        return 'Suspended';
       default:
         return 'Unknown';
     }
@@ -194,6 +237,50 @@ const UsageBadge: React.FC<{ used: string }> = ({ used }) => {
       className={`px-2 py-1 rounded text-xs font-medium ${getUsageClass()}`}
     >
       {getUsageLabel()}
+    </Text>
+  );
+};
+
+const ComplexityBadge: React.FC<{ complexity: ComplexityCategory | undefined }> = ({
+  complexity,
+}) => {
+  if (!complexity) return null;
+
+  const getComplexityClass = () => {
+    switch (complexity) {
+      case 'basic':
+        return 'bg-green-600/70 text-white';
+      case 'simple':
+        return 'bg-blue-500/70 text-white';
+      case 'medium':
+        return 'bg-yellow-500/70 text-black';
+      case 'complex':
+        return 'bg-red-500/70 text-white';
+      default:
+        return 'bg-gray-400/70 text-white';
+    }
+  };
+
+  const getComplexityLabel = () => {
+    switch (complexity) {
+      case 'basic':
+        return 'Basic';
+      case 'simple':
+        return 'Simple';
+      case 'medium':
+        return 'Medium';
+      case 'complex':
+        return 'Complex';
+      default:
+        return 'Unknown';
+    }
+  };
+
+  return (
+    <Text
+      className={`px-2 py-1 rounded text-xs font-medium ${getComplexityClass()}`}
+    >
+      {getComplexityLabel()}
     </Text>
   );
 };
@@ -210,9 +297,13 @@ export const ComponentAuditViewer: React.FC = () => {
   const [logicFilter, setLogicFilter] = useState<AuditStatus | 'all'>('all');
   const [nativeFilter, setNativeFilter] = useState<AuditStatus | 'all'>('all');
   const [usageFilter, setUsageFilter] = useState<
-    'yes' | 'no' | 'unknown' | 'all'
+    'yes' | 'no' | 'unknown' | 'suspended' | 'all'
   >('all');
-  const [sortOrder, setSortOrder] = useState<'alphabetical' | 'reverse'>(
+  const [complexityFilter, setComplexityFilter] = useState<
+    ComplexityCategory | 'all'
+  >('all');
+  const [viewMode, setViewMode] = useState<'table' | 'hierarchy'>('table');
+  const [sortOrder, setSortOrder] = useState<'alphabetical' | 'reverse' | 'dependency'>(
     'alphabetical'
   );
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
@@ -224,6 +315,7 @@ export const ComponentAuditViewer: React.FC = () => {
     setLogicFilter('all');
     setNativeFilter('all');
     setUsageFilter('all');
+    setComplexityFilter('all');
     setSortOrder('alphabetical');
   };
 
@@ -251,13 +343,17 @@ export const ComponentAuditViewer: React.FC = () => {
         const matchesUsage =
           usageFilter === 'all' || component.used === usageFilter;
 
+        const matchesComplexity =
+          complexityFilter === 'all' || component.complexity_category === complexityFilter;
+
         return (
           matchesSearch &&
           matchesCategory &&
           matchesPrimitives &&
           matchesLogic &&
           matchesNative &&
-          matchesUsage
+          matchesUsage &&
+          matchesComplexity
         );
       }
     );
@@ -265,9 +361,19 @@ export const ComponentAuditViewer: React.FC = () => {
     // Apply sorting
     if (sortOrder === 'alphabetical') {
       return filtered.sort(([, a], [, b]) => a.name.localeCompare(b.name));
-    } else {
+    } else if (sortOrder === 'reverse') {
       return filtered.sort(([, a], [, b]) => b.name.localeCompare(a.name));
+    } else if (sortOrder === 'dependency') {
+      return filtered.sort(([, a], [, b]) => {
+        const aLevel = a.dependency_level ?? 0;
+        const bLevel = b.dependency_level ?? 0;
+        if (aLevel === bLevel) {
+          return a.name.localeCompare(b.name);
+        }
+        return aLevel - bLevel;
+      });
     }
+    return filtered;
   }, [
     data.components,
     searchTerm,
@@ -276,6 +382,7 @@ export const ComponentAuditViewer: React.FC = () => {
     logicFilter,
     nativeFilter,
     usageFilter,
+    complexityFilter,
     sortOrder,
   ]);
 
@@ -308,8 +415,8 @@ export const ComponentAuditViewer: React.FC = () => {
 
   return (
     <Container className="min-h-screen bg-app overflow-y-auto">
-      <DevNavMenu currentPath="/dev/audit" />
-      <Container padding="lg" className="mx-auto max-w-screen-2xl">
+      <DevNavMenu currentPath={window.location.pathname} />
+      <Container padding="lg" className="w-full">
         <Text
           as="h1"
           variant="strong"
@@ -485,6 +592,86 @@ export const ComponentAuditViewer: React.FC = () => {
           </div>
         </div>
 
+        {/* Complexity Breakdown */}
+        {data.dependency_hierarchy && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="bg-surface-1 rounded-lg p-4 border border-default">
+              <h3 className="text-sm font-medium text-subtle mb-2">
+                Basic Components
+              </h3>
+              <p className="text-xl font-bold text-success">
+                {data.dependency_hierarchy.basic.count}
+              </p>
+              <p className="text-xs text-subtle">Base components</p>
+            </div>
+            <div className="bg-surface-1 rounded-lg p-4 border border-default">
+              <h3 className="text-sm font-medium text-subtle mb-2">
+                Simple Components
+              </h3>
+              <p className="text-xl font-bold text-info">
+                {data.dependency_hierarchy.simple.count}
+              </p>
+              <p className="text-xs text-subtle">1-3 dependencies</p>
+            </div>
+            <div className="bg-surface-1 rounded-lg p-4 border border-default">
+              <h3 className="text-sm font-medium text-subtle mb-2">
+                Medium Components
+              </h3>
+              <p className="text-xl font-bold text-warning">
+                {data.dependency_hierarchy.medium.count}
+              </p>
+              <p className="text-xs text-subtle">4-6 dependencies</p>
+            </div>
+            <div className="bg-surface-1 rounded-lg p-4 border border-default">
+              <h3 className="text-sm font-medium text-subtle mb-2">
+                Complex Components
+              </h3>
+              <p className="text-xl font-bold text-danger">
+                {data.dependency_hierarchy.complex.count}
+              </p>
+              <p className="text-xs text-subtle">7+ dependencies</p>
+            </div>
+          </div>
+        )}
+
+        {/* Ready to Build Panel */}
+        {data.mobile_strategy && (
+          <div className="bg-accent/10 rounded-lg p-4 border border-accent/30 mb-6">
+            <FlexRow gap="sm" className="mb-3 items-center">
+              <Text variant="strong" size="md" className="text-accent-700 dark:text-accent-300">
+                🚀 Ready to Build Now - {data.mobile_strategy.current_phase}
+              </Text>
+            </FlexRow>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              {data.mobile_strategy.ready_to_build.map((item, idx) => (
+                <div key={idx} className="bg-white/50 dark:bg-black/20 rounded p-3">
+                  <Text variant="strong" size="sm" className="mb-1">{item.name}</Text>
+                  <FlexRow gap="xs" className="mb-1 items-center">
+                    <Text variant="subtle" size="xs">{item.effort}</Text>
+                  </FlexRow>
+                  <Text variant="main" size="xs">{item.reason}</Text>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* View Mode Toggle */}
+        <FlexRow gap="md" wrap className="mb-6">
+          <FlexColumn className="min-w-[200px]">
+            <Text variant="subtle" size="xs" className="mb-1">View Mode</Text>
+            <Select
+              variant="bordered"
+              value={viewMode}
+              onChange={(value: string) => setViewMode(value as 'table' | 'hierarchy')}
+              options={[
+                { value: 'table', label: 'Table View' },
+                { value: 'hierarchy', label: 'Native Roadmap' },
+              ]}
+            />
+          </FlexColumn>
+        </FlexRow>
+
         {/* Filters */}
         <FlexRow gap="md" wrap className="mb-6">
           <FlexColumn className="w-[250px] flex-shrink-0">
@@ -574,6 +761,7 @@ export const ComponentAuditViewer: React.FC = () => {
                 { value: 'in_progress', label: 'In Progress' },
                 { value: 'done', label: 'Done' },
                 { value: 'ready', label: 'Ready' },
+                { value: 'not_needed', label: 'Not Needed' },
               ]}
             />
           </FlexColumn>
@@ -586,13 +774,14 @@ export const ComponentAuditViewer: React.FC = () => {
               variant="bordered"
               value={usageFilter}
               onChange={(value: string) =>
-                setUsageFilter(value as 'yes' | 'no' | 'unknown' | 'all')
+                setUsageFilter(value as 'yes' | 'no' | 'unknown' | 'suspended' | 'all')
               }
               options={[
                 { value: 'all', label: 'All' },
                 { value: 'yes', label: 'Used' },
                 { value: 'no', label: 'Unused' },
                 { value: 'unknown', label: 'Unknown' },
+                { value: 'suspended', label: 'Suspended' },
               ]}
             />
           </FlexColumn>
@@ -605,11 +794,32 @@ export const ComponentAuditViewer: React.FC = () => {
               variant="bordered"
               value={sortOrder}
               onChange={(value: string) =>
-                setSortOrder(value as 'alphabetical' | 'reverse')
+                setSortOrder(value as 'alphabetical' | 'reverse' | 'dependency')
               }
               options={[
                 { value: 'alphabetical', label: 'A → Z' },
                 { value: 'reverse', label: 'Z → A' },
+                { value: 'dependency', label: 'Dependency Level' },
+              ]}
+            />
+          </FlexColumn>
+
+          <FlexColumn className="min-w-[140px]">
+            <Text variant="subtle" size="xs" className="mb-1">
+              Complexity
+            </Text>
+            <Select
+              variant="bordered"
+              value={complexityFilter}
+              onChange={(value: string) =>
+                setComplexityFilter(value as ComplexityCategory | 'all')
+              }
+              options={[
+                { value: 'all', label: 'All' },
+                { value: 'basic', label: 'Basic' },
+                { value: 'simple', label: 'Simple' },
+                { value: 'medium', label: 'Medium' },
+                { value: 'complex', label: 'Complex' },
               ]}
             />
           </FlexColumn>
@@ -628,8 +838,10 @@ export const ComponentAuditViewer: React.FC = () => {
           </FlexColumn>
         </FlexRow>
 
-        {/* Component Table */}
-        <div className="bg-surface-1 rounded-lg border border-default overflow-hidden">
+        {/* Component Views */}
+        {viewMode === 'table' ? (
+          /* Component Table */
+          <div className="bg-surface-1 rounded-lg border border-default overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[800px]">
               <thead>
@@ -651,6 +863,12 @@ export const ComponentAuditViewer: React.FC = () => {
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-subtle">
                     Native
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-subtle">
+                    Complexity
+                  </th>
+                  <th className="px-4 py-3 text-left text-sm font-medium text-subtle">
+                    Dependencies
                   </th>
                   <th className="px-4 py-3 text-left text-sm font-medium text-subtle">
                     Progress
@@ -694,6 +912,33 @@ export const ComponentAuditViewer: React.FC = () => {
                         />
                       </td>
                       <td className="px-4 py-3">
+                        <ComplexityBadge complexity={component.complexity_category} />
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="max-w-[120px]">
+                          {component.dependencies && component.dependencies.length > 0 ? (
+                            <div className="flex flex-wrap gap-1">
+                              {component.dependencies.slice(0, 3).map((dep, idx) => (
+                                <Text
+                                  key={idx}
+                                  className="px-1.5 py-0.5 bg-accent/10 text-accent-600 dark:text-accent-400 rounded text-xs"
+                                  title={dep}
+                                >
+                                  {dep.length > 10 ? dep.substring(0, 10) + '...' : dep}
+                                </Text>
+                              ))}
+                              {component.dependencies.length > 3 && (
+                                <Text className="px-1.5 py-0.5 bg-surface-2 text-subtle rounded text-xs">
+                                  +{component.dependencies.length - 3}
+                                </Text>
+                              )}
+                            </div>
+                          ) : (
+                            <Text className="text-xs text-muted">None</Text>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
                         <div className="w-24">
                           <div className="bg-surface-3 rounded-full h-2 overflow-hidden">
                             <div
@@ -722,7 +967,7 @@ export const ComponentAuditViewer: React.FC = () => {
 
                     {expandedRows.has(key) && (
                       <tr className="bg-surface-2/30 border-b border-default">
-                        <td colSpan={8} className="px-4 py-4">
+                        <td colSpan={10} className="px-4 py-4">
                           <div className="space-y-3">
                             <div>
                               <h4 className="text-sm font-medium text-strong mb-1">
@@ -751,6 +996,46 @@ export const ComponentAuditViewer: React.FC = () => {
                               </div>
                             )}
 
+                            {component.dependencies && component.dependencies.length > 0 && (
+                              <div>
+                                <h4 className="text-sm font-medium text-strong mb-1">
+                                  Dependencies ({component.dependencies.length})
+                                </h4>
+                                <div className="flex flex-wrap gap-2">
+                                  {component.dependencies.map((dep, index) => (
+                                    <span
+                                      key={index}
+                                      className="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded text-xs border border-blue-200 dark:border-blue-800"
+                                    >
+                                      {dep}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {component.dependency_level !== undefined && (
+                              <div>
+                                <h4 className="text-sm font-medium text-strong mb-1">
+                                  Build Information
+                                </h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs">
+                                  <div>
+                                    <span className="text-subtle">Dependency Level:</span>{' '}
+                                    <span className="font-medium">{component.dependency_level}</span>
+                                  </div>
+                                  <div>
+                                    <span className="text-subtle">Complexity:</span>{' '}
+                                    <span className="font-medium capitalize">{component.complexity_category}</span>
+                                  </div>
+                                  <div>
+                                    <span className="text-subtle">Dependencies:</span>{' '}
+                                    <span className="font-medium">{component.dependencies?.length || 0}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
                             <div className="text-xs text-subtle">
                               Last updated: {component.updated}
                             </div>
@@ -762,7 +1047,7 @@ export const ComponentAuditViewer: React.FC = () => {
                 ))}
                 {filteredComponents.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="text-center py-8 text-subtle">
+                    <td colSpan={10} className="text-center py-8 text-subtle">
                       No components match your filters
                     </td>
                   </tr>
@@ -771,6 +1056,238 @@ export const ComponentAuditViewer: React.FC = () => {
             </table>
           </div>
         </div>
+        ) : (
+          /* Native Development Roadmap */
+          <div className="space-y-8">
+            {/* Development Phase Overview */}
+            <div className="bg-surface-1 rounded-lg p-6 border border-default">
+              <Text size="lg" weight="semibold" className="mb-4">🎯 Native Development Roadmap</Text>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-500">
+                    {filteredComponents.filter(([, c]) => c.complexity_category === 'basic' && c.primitives === 'done' && c.native === 'todo').length}
+                  </div>
+                  <div className="text-xs text-subtle">Ready Now</div>
+                  <div className="text-xs text-green-600">Start Here</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-500">
+                    {filteredComponents.filter(([, c]) => c.complexity_category === 'simple' && c.primitives === 'done' && ['todo', 'in_progress'].includes(c.native)).length}
+                  </div>
+                  <div className="text-xs text-subtle">Next Phase</div>
+                  <div className="text-xs text-blue-600">1-3 deps</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-orange-500">
+                    {filteredComponents.filter(([, c]) => c.complexity_category === 'medium' && ['todo', 'in_progress'].includes(c.native)).length}
+                  </div>
+                  <div className="text-xs text-subtle">Medium Term</div>
+                  <div className="text-xs text-orange-600">4-6 deps</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-red-500">
+                    {filteredComponents.filter(([, c]) => c.complexity_category === 'complex' && ['todo', 'in_progress'].includes(c.native)).length}
+                  </div>
+                  <div className="text-xs text-subtle">Complex</div>
+                  <div className="text-xs text-red-600">7+ deps</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-accent">
+                    {filteredComponents.filter(([, c]) => ['done', 'ready'].includes(c.native)).length}
+                  </div>
+                  <div className="text-xs text-subtle">Done</div>
+                  <div className="text-xs text-accent">Complete</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Priority Phases */}
+            {(() => {
+              const roadmapPhases = [
+                {
+                  id: 'ready_now',
+                  title: '🚀 Ready to Build Now',
+                  subtitle: 'Basic components with no dependencies - Start here!',
+                  filter: (comp: ComponentAudit) => 
+                    comp.complexity_category === 'basic' && 
+                    comp.primitives === 'done' && 
+                    comp.native === 'todo',
+                  color: 'bg-green-500/10 border-green-500/30',
+                  urgency: 'high'
+                },
+                {
+                  id: 'next_phase',
+                  title: '⚡ Next Phase - Simple Components',
+                  subtitle: 'Components with 1-3 dependencies - Build after basics',
+                  filter: (comp: ComponentAudit) => 
+                    comp.complexity_category === 'simple' &&
+                    comp.primitives === 'done' &&
+                    ['todo', 'in_progress'].includes(comp.native),
+                  color: 'bg-blue-500/10 border-blue-500/30',
+                  urgency: 'medium'
+                },
+                {
+                  id: 'medium_complexity',
+                  title: '🔧 Medium Complexity',
+                  subtitle: 'Components with 4-6 dependencies - Plan carefully',
+                  filter: (comp: ComponentAudit) => 
+                    comp.complexity_category === 'medium' &&
+                    ['todo', 'in_progress'].includes(comp.native),
+                  color: 'bg-orange-500/10 border-orange-500/30',
+                  urgency: 'low'
+                },
+                {
+                  id: 'complex_components',
+                  title: '🎯 Complex Components',
+                  subtitle: 'Components with 7+ dependencies - Tackle last',
+                  filter: (comp: ComponentAudit) => 
+                    comp.complexity_category === 'complex' &&
+                    ['todo', 'in_progress'].includes(comp.native),
+                  color: 'bg-red-500/10 border-red-500/30',
+                  urgency: 'low'
+                },
+                {
+                  id: 'completed',
+                  title: '✅ Completed & Ready',
+                  subtitle: 'Native implementation complete',
+                  filter: (comp: ComponentAudit) => 
+                    ['done', 'ready'].includes(comp.native),
+                  color: 'bg-accent/10 border-accent/30',
+                  urgency: 'done'
+                }
+              ];
+
+              return roadmapPhases.map(phase => {
+                const components = filteredComponents.filter(([, comp]) => phase.filter(comp));
+                
+                if (components.length === 0) return null;
+
+                return (
+                  <div key={phase.id} className={`rounded-lg border-2 ${phase.color} overflow-hidden`}>
+                    <div className="p-6">
+                      <div className="flex justify-between items-start mb-6">
+                        <div className="flex-1 pr-4">
+                          <Text size="xl" weight="semibold" className="block mb-2">{phase.title}</Text>
+                          <Text size="sm" className="text-subtle block">{phase.subtitle}</Text>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-accent">{components.length}</div>
+                          <div className="text-xs text-subtle">components</div>
+                        </div>
+                      </div>
+
+                      {/* Action Items List */}
+                      <div className="space-y-3">
+                        {components.slice(0, 8).map(([key, component]) => (
+                          <div key={key} className="flex items-center justify-between p-4 bg-surface-0 rounded-lg border border-default hover:bg-surface-1/50 transition-colors">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-4 mb-2">
+                                <Text size="sm" weight="medium">{component.name}</Text>
+                                
+                                {/* Status indicators */}
+                                <div className="flex gap-2">
+                                  <StatusBadge status={component.native} context="native" />
+                                  {component.dependencies && component.dependencies.length > 0 && (
+                                    <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded">
+                                      {component.dependencies.length} deps
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                              
+                              <Text size="xs" className="text-subtle line-clamp-1 mb-2">
+                                {component.description}
+                              </Text>
+
+                              {/* Dependencies preview */}
+                              {component.dependencies && component.dependencies.length > 0 && (
+                                <div className="flex gap-1 flex-wrap">
+                                  <span className="text-xs text-subtle">Needs:</span>
+                                  {component.dependencies.slice(0, 3).map(dep => (
+                                    <span key={dep} className="text-xs bg-surface-2 px-1.5 py-0.5 rounded">
+                                      {dep}
+                                    </span>
+                                  ))}
+                                  {component.dependencies.length > 3 && (
+                                    <span className="text-xs text-subtle">+{component.dependencies.length - 3}</span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-3 ml-4">
+                              {/* Progress dots */}
+                              <div className="flex gap-1" title="Primitives • Logic • Native">
+                                <div className={`w-2 h-2 rounded-full ${
+                                  component.primitives === 'done' ? 'bg-green-500' : 'bg-gray-300'
+                                }`} />
+                                <div className={`w-2 h-2 rounded-full ${
+                                  component.logic_extraction === 'done' ? 'bg-green-500' : 'bg-gray-300'
+                                }`} />
+                                <div className={`w-2 h-2 rounded-full ${
+                                  ['done', 'ready'].includes(component.native) ? 'bg-green-500' : 'bg-gray-300'
+                                }`} />
+                              </div>
+                              
+                              <Text size="xs" className="text-subtle w-8 text-right">
+                                L{component.dependency_level || 0}
+                              </Text>
+
+                              {phase.urgency === 'high' && (
+                                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-medium">
+                                  BUILD
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                        
+                        {components.length > 8 && (
+                          <div className="text-center py-3">
+                            <Text size="sm" className="text-subtle">
+                              +{components.length - 8} more components in this phase
+                            </Text>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              });
+            })()}
+
+            {/* Build Strategy Summary */}
+            <div className="bg-surface-1 rounded-lg p-6 border border-default">
+              <Text size="lg" weight="semibold" className="mb-4">💡 Build Strategy</Text>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Text size="sm" weight="medium" className="mb-2 text-green-600 block">Phase 1: Foundations</Text>
+                  <Text size="xs" className="text-subtle block">
+                    Start with basic components (no dependencies). These are building blocks for everything else.
+                  </Text>
+                </div>
+                <div>
+                  <Text size="sm" weight="medium" className="mb-2 text-blue-600 block">Phase 2: Simple Components</Text>
+                  <Text size="xs" className="text-subtle block">
+                    Build components with 1-3 dependencies once their prerequisites are complete.
+                  </Text>
+                </div>
+                <div>
+                  <Text size="sm" weight="medium" className="mb-2 text-orange-600 block">Phase 3: Medium Complexity</Text>
+                  <Text size="xs" className="text-subtle block">
+                    Tackle components with 4-6 dependencies. Plan refactoring and testing carefully.
+                  </Text>
+                </div>
+                <div>
+                  <Text size="sm" weight="medium" className="mb-2 text-red-600 block">Phase 4: Complex Systems</Text>
+                  <Text size="xs" className="text-subtle block">
+                    Handle complex components (7+ deps) last. Consider breaking them down further.
+                  </Text>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Metadata Footer */}
         <Container className="mt-6 text-xs text-subtle">

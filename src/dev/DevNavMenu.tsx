@@ -22,11 +22,6 @@ const devNavItems: DevNavItem[] = [
     name: 'Audit',
     icon: 'chart-line',
     path: '/dev/audit'
-  },
-  {
-    name: 'Dependencies',
-    icon: 'map',
-    path: '/dev/dependencies'
   }
 ];
 
