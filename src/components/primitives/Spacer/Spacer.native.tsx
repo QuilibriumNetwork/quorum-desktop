@@ -18,14 +18,14 @@ export const Spacer: React.FC<NativeSpacerProps> = ({
 }) => {
   const spacingValue = typeof size === 'number' ? size : SPACING_MAP[size];
   
-  const style = direction === 'vertical' 
+  const style: any = direction === 'vertical' 
     ? { height: spacingValue, width: 0 }
     : { width: spacingValue, height: 0 };
 
   return (
     <View 
       style={style}
-      testID={testId}
+      {...(testId ? { testID: testId } : {})}
     />
   );
 };

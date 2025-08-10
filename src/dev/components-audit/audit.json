@@ -9,22 +9,9 @@
       "primitives": "todo",
       "logic_extraction": "done",
       "hooks": [],
-      "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Uses CloseButton.scss with absolute positioning. FontAwesome dependency. Easier to build native version with Icon primitive.",
-      "updated": "2025-07-30"
-    },
-    "Loading.tsx": {
-      "name": "Loading",
-      "path": "src/components/Loading.tsx",
-      "description": "Animated loading spinner with customizable appearance",
-      "category": "platform_specific",
-      "used": "yes",
-      "primitives": "todo",
-      "logic_extraction": "done",
-      "hooks": [],
-      "native": "todo",
-      "notes": "Simple animation component. Logic is just props passing - no extraction needed. Platform difference in animation implementation (CSS vs React Native Animated).",
-      "updated": "2025-07-29"
+      "native": "electron_only",
+      "notes": "ELECTRON ONLY: This component is only used for Electron (desktop) app and no need for native mobile implementation. MOVED TO PLATFORM_SPECIFIC: Uses CloseButton.scss with absolute positioning. FontAwesome dependency. Easier to build native version with Icon primitive.",
+      "updated": "2025-08-10"
     },
     "EmptyDirectMessage.tsx": {
       "name": "EmptyDirectMessage",
@@ -156,7 +143,7 @@
       "hooks": [
         "useUserKicking"
       ],
-      "native": "todo",
+      "native": "done",
       "notes": "COMPLETED: Business logic extracted into useUserKicking hook with confirmation flow, timeout management, and kick user API calls. All raw HTML replaced with Container, Text, FlexRow primitives. Fully cross-platform compatible with responsive text alignment. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
       "updated": "2025-08-04"
     },
@@ -473,13 +460,13 @@
       "path": "src/components/user/UserStatus.tsx",
       "description": "User status display with avatar, name, and online indicator",
       "category": "platform_specific",
-      "used": "yes",
+      "used": "suspended",
       "primitives": "partial",
       "logic_extraction": "done",
       "hooks": [],
-      "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports './UserStatus.scss'. Uses ClickToCopyContent component and partially uses primitives. Has SCSS dependencies.",
-      "updated": "2025-07-30"
+      "native": "suspended",
+      "notes": "SUSPENDED: Component is currently unused/suspended and no need for native implementation at this time. MOVED TO PLATFORM_SPECIFIC: Imports './UserStatus.scss'. Uses ClickToCopyContent component and partially uses primitives. Has SCSS dependencies.",
+      "updated": "2025-08-10"
     },
     "UserOnlineStateIndicator.tsx": {
       "name": "UserOnlineStateIndicator",
@@ -583,7 +570,7 @@
         "useDirectMessageCreation",
         "useAddressValidation"
       ],
-      "native": "todo",
+      "native": "done",
       "notes": "COMPLETED: Business logic extracted into useDirectMessageCreation and useAddressValidation hooks. All raw HTML replaced with Container and Text primitives. Fully cross-platform compatible. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
       "updated": "2025-08-04"
     },
@@ -962,7 +949,7 @@
     }
   },
   "stats": {
-    "total": 64,
+    "total": 63,
     "primitives_done": 36,
     "logic_extraction_done": 63,
     "native_ready": 3,
@@ -972,12 +959,13 @@
       "shared": 15
     },
     "by_usage": {
-      "yes": 60,
+      "yes": 59,
       "no": 3,
+      "suspended": 1,
       "unknown": 1
     },
     "analysis_notes": "AUTHENTICATION FLOW NATIVE IMPLEMENTATION COMPLETE: Both Login.native.tsx and Onboarding.native.tsx successfully implemented with full cross-platform architecture. Complete authentication flow (Login → Onboarding) working with step indicator, responsive design, and proper mobile UX. Shared business logic hooks (useAuthenticationFlow, useOnboardingFlow, useKeyBackup) work across platforms. Components demonstrate successful cross-platform pattern: shared logic, platform-specific UI. Ready for mobile deployment testing.",
-    "last_updated": "2025-08-09"
+    "last_updated": "2025-08-10"
   },
   "metadata": {
     "audit_version": "1.0",

@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Animated,
@@ -11,7 +10,7 @@ import {
   ScrollView,
 } from 'react-native';
 
-// @ts-ignore - PanResponder exists at runtime but not in types
+// @ts-ignore - PanResponder exists at runtime but not in named exports
 const { PanResponder } = require('react-native');
 // import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeModalProps } from './types';
@@ -217,7 +216,7 @@ const Modal: React.FC<NativeModalProps> = ({
 
             {/* Title (when present) */}
             {title && (
-              <View style={[styles.header, titleAlign === 'center' && styles.headerCenter]}>
+              <View style={[styles.header, ...(titleAlign === 'center' ? [styles.headerCenter] : [])]}>
                 <Title size="md" weight="semibold" color={colors.text.strong}>
                   {title}
                 </Title>
@@ -242,7 +241,7 @@ const Modal: React.FC<NativeModalProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<any>({
   container: {
     flex: 1,
     justifyContent: 'flex-end',
