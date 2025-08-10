@@ -6,6 +6,7 @@ import { useTheme } from '@/primitives/theme';
 import { IconName } from '@/primitives/Icon/types';
 import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
 import TestLeaveSpaceModal from './TestLeaveSpaceModal';
+import TestKickUserModal from './TestKickUserModal';
 
 interface ModalTest {
   id: string;
@@ -28,9 +29,11 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
 
   // Modal visibility states
   const [leaveSpaceModalVisible, setLeaveSpaceModalVisible] = useState(false);
+  const [kickUserModalVisible, setKickUserModalVisible] = useState(false);
   
   // Mock data for testing
   const mockSpaceId = 'test-space-123';
+  const mockUserAddress = 'test-user-address-456';
 
   const handlePlannedModal = (title: string) => {
     Alert.alert(
@@ -48,6 +51,14 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
       icon: 'times',
       status: 'cross-platform',
       testAction: () => setLeaveSpaceModalVisible(true),
+    },
+    {
+      id: 'kick-user',
+      title: 'KickUserModal',
+      description: 'Confirmation modal for kicking a user from space with haptic feedback',
+      icon: 'ban',
+      status: 'cross-platform',
+      testAction: () => setKickUserModalVisible(true),
     },
     {
       id: 'confirm',
@@ -236,6 +247,11 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
         spaceId={mockSpaceId}
         visible={leaveSpaceModalVisible}
         onClose={() => setLeaveSpaceModalVisible(false)}
+      />
+      <TestKickUserModal
+        kickUserAddress={mockUserAddress}
+        visible={kickUserModalVisible}
+        onClose={() => setKickUserModalVisible(false)}
       />
     </SafeAreaView>
   );

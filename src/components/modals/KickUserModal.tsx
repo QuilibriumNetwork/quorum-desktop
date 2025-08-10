@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, FlexRow } from '../primitives';
+import { Button, Modal, Container, Text, FlexRow, Spacer } from '../primitives';
 import { useUserKicking } from '../../hooks';
 import { t } from '@lingui/core/macro';
 
@@ -26,20 +26,23 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
       onClose={props.onClose}
       title={t`Kick User`}
       size="small"
+      swipeToClose={true}
     >
-      <Container width="full" maxWidth="400px" margin="auto">
-        <Container margin="none" className="mb-4 text-left max-sm:text-center">
-          <Text size="sm" variant="subtle">
+      <Container>
+        <Container>
+          <Text variant="subtle">
             {t`Use the below button to kick this user out of the Space`}
           </Text>
         </Container>
-        <FlexRow className="justify-start max-sm:justify-center">
+        <Spacer size="lg"></Spacer>
+        <FlexRow>
           <Button
             type="danger"
             disabled={kicking}
             onClick={() =>
               handleKickClick(props.kickUserAddress!, props.onClose)
             }
+            hapticFeedback={true}
           >
             {confirmationStep === 0 ? t`Kick!` : t`Click again to confirm`}
           </Button>
