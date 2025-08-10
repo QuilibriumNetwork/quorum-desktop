@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,12 +8,12 @@ import {
   Dimensions,
   Modal as RNModal,
   TouchableWithoutFeedback,
-  PanResponder,
   ScrollView,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+// @ts-ignore - PanResponder exists at runtime but not in types
+const { PanResponder } = require('react-native');
+// import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeModalProps } from './types';
 import { useTheme } from '../theme';
 import { Icon } from '../Icon';
@@ -26,13 +26,11 @@ const Modal: React.FC<NativeModalProps> = ({
   children,
   size = 'medium',
   closeOnBackdropClick = true,
-  closeOnEscape = true,
   swipeToClose = true,
-  keyboardAvoidingView = true,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
-  const insets = useSafeAreaInsets();
+  // const insets = useSafeAreaInsets(); // Not currently used but may be needed for safe areas
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width;
 
@@ -96,30 +94,46 @@ const Modal: React.FC<NativeModalProps> = ({
     onClose();
   };
 
+  // Debug: Log when modal renders
+  console.log('Modal rendering - swipeToClose:', swipeToClose, 'visible:', visible);
+
   // Pan responder for swipe to close
   const panResponder = useRef(
     PanResponder.create({
-      onStartShouldSetPanResponder: () => swipeToClose,
-      onMoveShouldSetPanResponder: (evt, gestureState) => {
-        return swipeToClose && gestureState.dy > 5;
+      onStartShouldSetPanResponder: () => {
+        console.log('🎯 Should start pan responder:', swipeToClose);
+        return swipeToClose;
       },
-      onPanResponderMove: (evt, gestureState) => {
+      onMoveShouldSetPanResponder: (_evt: any, gestureState: any) => {
+        const shouldMove = swipeToClose && gestureState.dy > 5;
+        console.log('📱 Should move pan responder:', shouldMove, 'dy:', gestureState.dy);
+        return shouldMove;
+      },
+      onPanResponderMove: (_evt: any, gestureState: any) => {
+        console.log('🔄 Pan responder move:', gestureState.dy);
         if (gestureState.dy > 0) {
-          translateY.setValue(gestureState.dy);
+          (translateY as any).setValue(gestureState.dy);
         }
       },
-      onPanResponderRelease: (evt, gestureState) => {
+      onPanResponderRelease: (_evt: any, gestureState: any) => {
+        console.log('✋ Pan responder release:', gestureState.dy, gestureState.vy);
         if (gestureState.dy > 100 || gestureState.vy > 0.5) {
+          console.log('❌ Closing modal via swipe');
           handleClose();
         } else {
-          Animated.spring(translateY, {
+          console.log('↩️ Resetting modal position');
+          Animated.timing(translateY, {
             toValue: 0,
+            duration: 200,
             useNativeDriver: true,
           }).start();
         }
       },
     })
   ).current;
+
+
+
 
   if (!visible) {
     return null;
@@ -131,7 +145,6 @@ const Modal: React.FC<NativeModalProps> = ({
       transparent={true}
       animationType="none"
       onRequestClose={handleClose}
-      statusBarTranslucent={true}
     >
       <View style={styles.container}>
         {/* Backdrop */}
@@ -148,7 +161,7 @@ const Modal: React.FC<NativeModalProps> = ({
           style={[
             styles.modalContent,
             {
-              height: modalHeight + insets.bottom, // Extend height to cover bottom area
+              height: modalHeight, // Use calculated height only
               backgroundColor: colors.surface[1],
               transform: [{ translateY }],
               maxWidth: isTablet ? 600 : '100%',
@@ -156,8 +169,13 @@ const Modal: React.FC<NativeModalProps> = ({
             },
           ]}
         >
-          {/* Handle indicator and header with pan responder for swipe to close */}
-          <View {...(swipeToClose ? panResponder.panHandlers : {})}>
+          {/* Handle indicator and header with gesture for swipe to close */}
+          <View
+            {...(swipeToClose ? panResponder.panHandlers : {})}
+            onTouchStart={() => console.log('👆 Touch detected on handle/header area')}
+            onTouchEnd={() => console.log('🖐️ Touch ended on handle/header area')}
+            style={{ minHeight: 50 }} // Ensure gesture area has minimum height
+          >
             {/* Handle indicator */}
             {swipeToClose && (
               <View
@@ -174,7 +192,7 @@ const Modal: React.FC<NativeModalProps> = ({
                   </Text>
                 )}
 
-                {!hideClose && !swipeToClose && (
+                {!hideClose && (
                   <TouchableOpacity
                     style={styles.closeButton}
                     onPress={handleClose}
@@ -188,22 +206,13 @@ const Modal: React.FC<NativeModalProps> = ({
           </View>
 
           {/* Content */}
-          <KeyboardAvoidingView
-            style={styles.content}
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            enabled={keyboardAvoidingView}
-          >
+          <View style={styles.content}>
             <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
-              <View
-                style={[
-                  styles.contentContainer,
-                  { paddingBottom: insets.bottom + 16 },
-                ]}
-              >
+              <View style={styles.contentContainer}>
                 {children}
               </View>
             </ScrollView>
-          </KeyboardAvoidingView>
+          </View>
         </Animated.View>
       </View>
     </RNModal>

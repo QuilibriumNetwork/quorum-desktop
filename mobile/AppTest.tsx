@@ -3,6 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemeProvider, useTheme } from '@/primitives/theme';
 import { I18nProvider } from '@lingui/react';
 import { i18n, initializeMobileI18n } from './i18n';
@@ -198,17 +199,19 @@ export default function App() {
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <QueryClientProvider client={queryClient}>
-        <I18nProvider i18n={i18n}>
-          <ThemeProvider>
-            <PasskeysProvider>
-              <ThemedAppContent />
-            </PasskeysProvider>
-          </ThemeProvider>
-        </I18nProvider>
-      </QueryClientProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <I18nProvider i18n={i18n}>
+            <ThemeProvider>
+              <PasskeysProvider>
+                <ThemedAppContent />
+              </PasskeysProvider>
+            </ThemeProvider>
+          </I18nProvider>
+        </QueryClientProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 
