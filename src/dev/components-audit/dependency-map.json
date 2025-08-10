@@ -36,19 +36,13 @@
     },
     "level_1_simple": {
       "description": "Simple components that only depend on primitives - BUILD THESE SECOND",
-      "count": 8,
+      "count": 7,
       "components": [
         {
           "name": "CloseButton",
           "dependencies": ["Icon"],
-          "status": "platform_specific",
-          "notes": "Simple component, just needs Icon primitive"
-        },
-        {
-          "name": "Loading",
-          "dependencies": [],
-          "status": "platform_specific", 
-          "notes": "Animation only, no component dependencies"
+          "status": "electron_only",
+          "notes": "Electron-only component - not needed for mobile"
         },
         {
           "name": "ThemeRadioGroup",
@@ -67,27 +61,28 @@
         {
           "name": "Maintenance",
           "dependencies": ["Button", "Icon"],
-          "status": "platform_specific",
+          "status": "shared",
           "mobile_ready": true,
           "notes": "Already has native implementation"
         },
         {
           "name": "ClickToCopyContent",
           "dependencies": ["Container", "Icon", "Text", "Tooltip"],
-          "status": "platform_specific",
-          "notes": "Uses only primitives, touch handling differs"
+          "status": "shared",
+          "mobile_ready": true,
+          "notes": "Native implementation complete"
         },
         {
           "name": "UserOnlineStateIndicator",
           "dependencies": [],
-          "status": "platform_specific",
-          "notes": "No component dependencies, just styling"
+          "status": "disabled",
+          "notes": "Component disabled - awaiting online/offline status implementation"
         },
         {
           "name": "QuickReactionButton",
           "dependencies": [],
-          "status": "platform_specific", 
-          "notes": "No component dependencies, touch/hover behavior differs"
+          "status": "web_mobile_only", 
+          "notes": "Used in web app's MobileDrawer for mobile browsers - not needed for React Native app"
         }
       ],
       "priority": "HIGH - Foundation for mid-level components"
@@ -99,37 +94,37 @@
         {
           "name": "SpaceIcon",
           "dependencies": ["Tooltip"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Depends on Tooltip primitive, image loading logic extracted"
         },
         {
           "name": "UserStatus", 
           "dependencies": ["UserOnlineStateIndicator", "ClickToCopyContent"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Depends on 2 level-1 components"
         },
         {
           "name": "InviteLink",
           "dependencies": ["Button", "Container", "Text", "FlexRow"],
-          "status": "platform_specific", 
+          "status": "needs_native", 
           "notes": "Only primitive dependencies"
         },
         {
           "name": "MessageActions",
           "dependencies": ["Tooltip", "Icon"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Floating toolbar, mobile needs drawer approach"
         },
         {
           "name": "MessageComposer",
           "dependencies": ["TextArea", "Button", "Icon", "FlexRow", "Tooltip"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Only primitive dependencies but complex layout"
         },
         {
           "name": "SearchResultItem", 
           "dependencies": ["Container", "Text", "Icon", "FlexBetween", "FlexRow"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Only primitive dependencies"
         },
         {
@@ -153,19 +148,19 @@
         {
           "name": "EmptyDirectMessage",
           "dependencies": ["Container", "FlexRow", "FlexColumn", "Text", "Icon"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Only primitive dependencies"
         },
         {
           "name": "SearchBar",
           "dependencies": ["primitives"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Uses primitives but has SCSS dependencies"
         },
         {
           "name": "ActionMenuItem",
           "dependencies": [],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Simple menu item, FontAwesome dependency"
         }
       ],
@@ -178,19 +173,19 @@
         {
           "name": "UserProfile",
           "dependencies": ["Button", "Container", "FlexRow", "Text", "Icon", "UserOnlineStateIndicator", "ClickToCopyContent"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Depends on multiple level-1 and level-2 components"
         },
         {
           "name": "SpaceButton",
           "dependencies": ["SpaceIcon"],
-          "status": "platform_specific", 
+          "status": "needs_native", 
           "notes": "Depends on level-2 SpaceIcon"
         },
         {
           "name": "DirectMessageContact",
           "dependencies": [],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "No direct component deps but uses SCSS"
         },
         {
@@ -202,32 +197,32 @@
         {
           "name": "ExpandableNavMenu",
           "dependencies": ["Icon", "Tooltip", "FlexColumn", "Container"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Only primitive dependencies but complex behavior"
         },
         {
           "name": "GlobalSearch",
           "dependencies": ["SearchBar", "SearchResults", "Container"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Depends on other search components"
         },
         {
           "name": "SearchResults",
           "dependencies": ["SearchResultItem", "Container", "Text", "Icon", "FlexCenter"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Depends on level-2 SearchResultItem"
         },
         {
           "name": "MessageActionsDrawer",
           "dependencies": ["QuickReactionButton", "ActionMenuItem", "MobileDrawer"],
-          "status": "platform_specific",
-          "notes": "Depends on level-1 components and MobileDrawer"
+          "status": "web_only",
+          "notes": "Web-only mobile drawer, React Native will use native bottom sheet"
         },
         {
           "name": "EmojiPickerDrawer",
           "dependencies": ["MobileDrawer"],
-          "status": "platform_specific",
-          "notes": "Depends on MobileDrawer"
+          "status": "web_only",
+          "notes": "Web-only mobile drawer, React Native will use native emoji picker"
         },
         {
           "name": "ChannelGroup",
@@ -262,7 +257,7 @@
         {
           "name": "Login",
           "dependencies": ["Button"],
-          "status": "platform_specific",
+          "status": "shared",
           "mobile_ready": true,
           "notes": "Already has native implementation"
         }
@@ -276,19 +271,19 @@
         {
           "name": "Message", 
           "dependencies": ["UserProfile", "InviteLink", "MessageActions", "FlexColumn", "FlexRow", "Container", "Text", "Icon", "Tooltip"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Depends on multiple level-2 and level-3 components"
         },
         {
           "name": "MessageList",
           "dependencies": ["Message"],
-          "status": "platform_specific", 
+          "status": "needs_native", 
           "notes": "Depends on level-4 Message, virtualization differs per platform"
         },
         {
           "name": "NavMenu",
           "dependencies": ["ExpandableNavMenu", "SpaceButton", "SpaceIcon"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Depends on multiple level-2 and level-3 components"
         },
         {
@@ -312,7 +307,7 @@
         {
           "name": "Onboarding",
           "dependencies": ["Input", "Icon", "Button", "Tooltip", "FileUpload"],
-          "status": "platform_specific",
+          "status": "shared",
           "mobile_ready": true,
           "notes": "Already has native implementation"
         },
@@ -338,7 +333,7 @@
         {
           "name": "Channel",
           "dependencies": ["MessageList", "GlobalSearch", "Button", "Icon", "KickUserModal"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Main chat view, depends on level-4 MessageList and complex search"
         },
         {
@@ -412,17 +407,22 @@
     },
     "phase_2_simple_components": {
       "description": "Build simple components that only use primitives",
-      "components_count": 8,
-      "estimated_effort": "1 week",
-      "status": "IN PROGRESS - Some complete (ThemeRadioGroup, AccentColorSwitcher, Maintenance)", 
-      "priority_order": [
-        "CloseButton",
-        "Loading", 
-        "ClickToCopyContent",
-        "UserOnlineStateIndicator",
-        "QuickReactionButton"
+      "components_count": 0,
+      "estimated_effort": "Complete",
+      "status": "COMPLETE - All level-1 components are either complete or not needed for React Native", 
+      "priority_order": [],
+      "completed": [
+        "ThemeRadioGroup",
+        "AccentColorSwitcher", 
+        "Maintenance",
+        "ClickToCopyContent"
       ],
-      "next_action": "Create .native.tsx versions of remaining level-1 components"
+      "not_needed": [
+        "CloseButton (Electron-only)",
+        "UserOnlineStateIndicator (disabled pending status implementation)",
+        "QuickReactionButton (web mobile browsers only, not React Native)"
+      ],
+      "next_action": "Move to Phase 3 - Moderate components"
     },
     "phase_3_moderate_components": {
       "description": "Build components with moderate dependencies",
@@ -467,39 +467,40 @@
     }
   },
   "immediate_next_steps": {
-    "current_phase": "Phase 2 - Simple Components",
+    "current_phase": "Phase 3 - Moderate Components",
     "ready_to_build": [
       {
-        "name": "CloseButton",
-        "reason": "Only depends on Icon primitive (available)",
-        "effort": "1-2 hours",
-        "notes": "Simple component, just needs native button with X icon"
-      },
-      {
-        "name": "Loading", 
-        "reason": "No component dependencies, just animation",
-        "effort": "2-3 hours", 
-        "notes": "Different animation approach needed for React Native"
-      },
-      {
-        "name": "UserOnlineStateIndicator",
-        "reason": "No component dependencies",
-        "effort": "1 hour",
-        "notes": "Simple colored dot indicator"
-      },
-      {
-        "name": "QuickReactionButton",
-        "reason": "No component dependencies", 
-        "effort": "2-3 hours",
-        "notes": "Touch-friendly emoji reaction button"
-      },
-      {
-        "name": "ClickToCopyContent",
-        "reason": "Depends only on primitives (Container, Icon, Text, Tooltip)",
+        "name": "SpaceIcon",
+        "reason": "Only depends on Tooltip primitive (available)",
         "effort": "3-4 hours",
-        "notes": "Native clipboard API different from web"
+        "notes": "Image loading component with fallback handling"
+      },
+      {
+        "name": "InviteLink",
+        "reason": "Only primitive dependencies",
+        "effort": "2-3 hours",
+        "notes": "Simple link display component"
+      },
+      {
+        "name": "KickUserModal",
+        "reason": "Only primitive dependencies, cross-platform ready",
+        "effort": "2-3 hours",
+        "notes": "Simple confirmation modal"
       }
-    ]
+    ],
+    "phase_2_complete": {
+      "completed": [
+        "ThemeRadioGroup", 
+        "AccentColorSwitcher",
+        "Maintenance",
+        "ClickToCopyContent"
+      ],
+      "not_needed_for_native": [
+        "CloseButton (Electron-only)",
+        "UserOnlineStateIndicator (disabled pending status implementation)",
+        "QuickReactionButton (web mobile browsers only)"
+      ]
+    }
   },
   "dependencies_analysis": {
     "most_imported_components": [

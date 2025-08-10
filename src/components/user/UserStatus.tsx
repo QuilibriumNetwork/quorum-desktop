@@ -2,7 +2,7 @@ import * as React from 'react';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
 
 import './UserStatus.scss';
-import UserOnlineStateIndicator from './UserOnlineStateIndicator';
+// import UserOnlineStateIndicator from './UserOnlineStateIndicator'; // TODO: Re-enable when online/offline status is implemented
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { t } from '@lingui/core/macro';
 import ClickToCopyContent from '../ClickToCopyContent';
@@ -54,7 +54,10 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
             </ClickToCopyContent>
           </div>
           <div className="user-status-info">
+            {/* TODO: Re-enable when online/offline status is implemented
+                See .readme/tasks/todo/user-status.md for implementation plan
             <UserOnlineStateIndicator user={props.user} />
+            */}
           </div>
         </div>
         <div className="flex flex-col justify-around pr-2">

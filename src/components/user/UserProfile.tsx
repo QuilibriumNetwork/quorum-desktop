@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Button, Container, FlexRow, Text, Icon } from '../primitives';
-import UserOnlineStateIndicator from './UserOnlineStateIndicator';
+// import UserOnlineStateIndicator from './UserOnlineStateIndicator'; // TODO: Re-enable when online/offline status is implemented
 import ClickToCopyContent from '../ClickToCopyContent';
 import './UserProfile.scss';
 import { Role } from '../../api/quorumApi';
@@ -87,7 +87,12 @@ const UserProfile: React.FunctionComponent<{
             </ClickToCopyContent>
           </FlexRow>
           <Container className="user-profile-state">
+            {/* TODO: Re-enable when online/offline status is implemented
+                See .readme/tasks/todo/user-status.md for implementation plan
+                Phase 1: Show current user's connection state
+                Phase 2: Show all users' online/offline status via presence system
             <UserOnlineStateIndicator user={props.user} />
+            */}
           </Container>
         </Container>
       </Container>

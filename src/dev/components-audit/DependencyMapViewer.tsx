@@ -15,7 +15,7 @@ import { DevNavMenu } from '../DevNavMenu';
 interface ComponentDependency {
   name: string;
   dependencies?: string[];
-  status: 'shared' | 'platform_specific';
+  status: 'shared' | 'needs_native' | 'web_only' | 'electron_only' | 'disabled' | 'deleted';
   mobile_ready?: boolean;
   notes: string;
 }
@@ -150,12 +150,21 @@ const ComponentCard: React.FC<{
           {!isString && <MobileReadyBadge ready={comp.mobile_ready} />}
           <Text
             className={`px-2 py-1 rounded text-xs font-medium ${
-              comp.status === 'shared'
-                ? 'bg-purple-500/70 text-white'
-                : 'bg-yellow-600/70 text-white'
+              comp.status === 'shared' ? 'bg-purple-500/70 text-white' :
+              comp.status === 'needs_native' ? 'bg-orange-500/70 text-white' :
+              comp.status === 'web_only' ? 'bg-blue-500/70 text-white' :
+              comp.status === 'electron_only' ? 'bg-gray-500/70 text-white' :
+              comp.status === 'disabled' ? 'bg-yellow-500/70 text-black' :
+              comp.status === 'deleted' ? 'bg-red-500/70 text-white' :
+              'bg-yellow-600/70 text-white'
             }`}
           >
-            {comp.status === 'shared' ? 'Shared' : 'Platform'}
+            {comp.status === 'shared' ? 'Shared' : 
+             comp.status === 'needs_native' ? 'Needs Native' :
+             comp.status === 'web_only' ? 'Web Only' :
+             comp.status === 'electron_only' ? 'Electron Only' :
+             comp.status === 'disabled' ? 'Disabled' :
+             comp.status === 'deleted' ? 'Deleted' : 'Platform'}
           </Text>
         </div>
       </div>
