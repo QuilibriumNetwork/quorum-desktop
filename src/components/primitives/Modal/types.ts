@@ -11,6 +11,7 @@ export interface BaseModalProps {
   closeOnEscape?: boolean;
   className?: string;
   noPadding?: boolean;
+  titleAlign?: 'left' | 'center';
 }
 
 export interface WebModalProps extends BaseModalProps {

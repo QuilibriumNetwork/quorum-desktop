@@ -30,6 +30,7 @@ const Modal: React.FC<NativeModalProps> = ({
   closeOnBackdropClick = true,
   swipeToClose = true,
   swipeUpToOpen = false,
+  titleAlign = 'left',
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
@@ -216,7 +217,7 @@ const Modal: React.FC<NativeModalProps> = ({
 
             {/* Title (when present) */}
             {title && (
-              <View style={styles.header}>
+              <View style={[styles.header, titleAlign === 'center' && styles.headerCenter]}>
                 <Title size="md" weight="semibold" color={colors.text.strong}>
                   {title}
                 </Title>
@@ -224,7 +225,7 @@ const Modal: React.FC<NativeModalProps> = ({
             )}
 
             {/* Spacer between title and content (or top spacer when no title) */}
-            <Spacer size="md" />
+            <Spacer size="xl" />
           </View>
 
           {/* Content */}
@@ -275,6 +276,9 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 28,
+  },
+  headerCenter: {
+    alignItems: 'center',
   },
   closeButton: {
     position: 'absolute',

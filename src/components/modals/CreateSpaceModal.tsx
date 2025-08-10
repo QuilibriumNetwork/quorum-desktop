@@ -46,6 +46,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
       visible={props.visible}
       onClose={props.onClose}
       title={t`Create a Space`}
+      titleAlign="center"
     >
       <div className="modal-width-large">
         <div className="flex flex-row justify-around pb-4">

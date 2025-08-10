@@ -15,6 +15,7 @@ const Modal: React.FC<WebModalProps> = ({
   closeOnEscape = true,
   className = '',
   noPadding = false,
+  titleAlign = 'left',
 }) => {
   return (
     <ModalContainer
@@ -41,7 +42,7 @@ const Modal: React.FC<WebModalProps> = ({
           </div>
         )}
 
-        <div className="quorum-modal-title select-none cursor-default">
+        <div className={`quorum-modal-title select-none cursor-default ${titleAlign === 'center' ? 'quorum-modal-title-center' : ''}`}>
           {title}
         </div>
 

@@ -162,10 +162,20 @@
   font-size: 24px;
   text-align: left;
   color: var(--color-text-strong);
+  margin-bottom: 24px;
 
   @media (max-width: 640px) {
     font-size: 20px;
     text-align: left;
+    margin-bottom: 20px;
+  }
+}
+
+.quorum-modal-title-center {
+  text-align: center;
+
+  @media (max-width: 640px) {
+    text-align: center;
   }
 }
 
