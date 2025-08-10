@@ -5,6 +5,7 @@ export { OnboardingTestScreen } from './OnboardingTestScreen';
 export { LoginTestScreen } from './LoginTestScreen';
 export { MaintenanceTestScreen } from './MaintenanceTestScreen';
 export { ClickToCopyTestScreen } from './ClickToCopyTestScreen';
+export { ModalsTestScreen } from './ModalsTestScreen';
 
 // Future exports will be added here as we create components:
 // export { SpaceNavigationTestScreen } from './SpaceNavigationTestScreen';

@@ -83,6 +83,14 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
       onPress: () => onSelectFeature('copy'),
     },
     {
+      id: 'modals',
+      title: 'Modal Components',
+      description: 'Cross-platform modal testing with bottom sheet and swipe gestures',
+      icon: 'square',
+      status: 'ready',
+      onPress: () => onSelectFeature('modals'),
+    },
+    {
       id: 'settings',
       title: 'User Settings',
       description: 'Profile and app settings using useUserSettings hook',

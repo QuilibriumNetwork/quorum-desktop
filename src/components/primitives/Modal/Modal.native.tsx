@@ -17,6 +17,8 @@ const { PanResponder } = require('react-native');
 import { NativeModalProps } from './types';
 import { useTheme } from '../theme';
 import { Icon } from '../Icon';
+import { Title } from '../Text';
+import { Spacer } from '../Spacer';
 
 const Modal: React.FC<NativeModalProps> = ({
   title,
@@ -198,26 +200,31 @@ const Modal: React.FC<NativeModalProps> = ({
               />
             )}
 
-            {/* Header */}
-            {(title || !hideClose) && (
-              <View style={styles.header}>
-                {title && (
-                  <Text style={[styles.title, { color: colors.text.strong }]}>
-                    {title}
-                  </Text>
-                )}
+            {/* Close button - positioned absolutely at top right */}
+            {!hideClose && (
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={handleClose}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Icon name="times" size="sm" color={colors.text.subtle} />
+              </TouchableOpacity>
+            )}
 
-                {!hideClose && (
-                  <TouchableOpacity
-                    style={styles.closeButton}
-                    onPress={handleClose}
-                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                  >
-                    <Icon name="times" size="sm" color={colors.text.subtle} />
-                  </TouchableOpacity>
-                )}
+            {/* Top Spacer - consistent spacing from handle/top */}
+            <Spacer size="xl" />
+
+            {/* Title (when present) */}
+            {title && (
+              <View style={styles.header}>
+                <Title size="md" weight="semibold" color={colors.text.strong}>
+                  {title}
+                </Title>
               </View>
             )}
+
+            {/* Spacer between title and content (or top spacer when no title) */}
+            <Spacer size="md" />
           </View>
 
           {/* Content */}
@@ -267,29 +274,21 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    paddingTop: 8,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-    flex: 1,
-    margin: 0,
+    paddingHorizontal: 28,
   },
   closeButton: {
+    position: 'absolute',
+    top: 12,
+    right: 28,
     backgroundColor: 'transparent',
     borderWidth: 0,
     padding: 4,
-    marginLeft: 16,
     width: 32,
     height: 32,
     borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 10,
   },
   closeText: {
     fontSize: 18,
@@ -299,8 +298,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingHorizontal: 28,
   },
 });
 

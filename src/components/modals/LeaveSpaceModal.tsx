@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, FlexRow } from '../primitives';
+import { Button, Modal, Container, Text, FlexRow, Spacer } from '../primitives';
 import { useSpace, useSpaceLeaving } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
@@ -32,17 +32,19 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
       onClose={onClose}
       title={t`Leave ${space?.spaceName || 'Space'}`}
       size="small"
+      swipeToClose={true}
     >
-      <Container width="full" maxWidth="400px" margin="auto">
-        <Container margin="none" className="mb-6 text-left max-sm:text-center">
-          <Text size="sm" variant="subtle">
+      <Container>
+        <Container>
+          <Text variant="subtle">
             <Trans>
               Are you sure you want to leave this Space? You won't be able to
               rejoin unless you are re-invited.
             </Trans>
           </Text>
         </Container>
-        <FlexRow className="gap-3 justify-start max-sm:justify-center">
+        <Spacer size='lg'></Spacer>
+        <FlexRow>
           <Button
             type="danger"
             onClick={() => handleLeaveClick(spaceId, onClose)}
