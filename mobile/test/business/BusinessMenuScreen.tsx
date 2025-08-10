@@ -75,6 +75,14 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
       onPress: () => handlePlannedFeature('Direct Messages'),
     },
     {
+      id: 'copy',
+      title: 'Click To Copy',
+      description: 'Cross-platform copy component with gesture support and adapter pattern',
+      icon: 'clipboard',
+      status: 'ready',
+      onPress: () => onSelectFeature('copy'),
+    },
+    {
       id: 'settings',
       title: 'User Settings',
       description: 'Profile and app settings using useUserSettings hook',

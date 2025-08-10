@@ -20,7 +20,7 @@ When implementing native components during hook refactoring, **MUST** follow the
 
 **Example from Mobile Onboarding:**
 ```tsx
-// ✅ Correct primitive usage with proper props
+// ✅ Correct primitive usage with proper propsth
 <Title size="xl" align="center" color="white">
   {t`Welcome to Quorum!`}
 </Title>

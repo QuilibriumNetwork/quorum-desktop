@@ -1,5 +1,6 @@
 import React from 'react';
 import { Pressable, Text, StyleSheet, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { NativeButtonProps } from './types';
 import { useTheme } from '../theme';
 import { Icon } from '../Icon';
@@ -11,8 +12,7 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     if (!props.disabled && props.onClick) {
       // Add haptic feedback if enabled
       if (props.hapticFeedback) {
-        // Note: Would require expo-haptics or similar
-        // HapticFeedback.impactAsync(HapticFeedback.ImpactFeedbackStyle.Light);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       }
       props.onClick();
     }

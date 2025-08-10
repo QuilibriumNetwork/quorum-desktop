@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { isWeb } from '../../../utils/platform';
+import { useCopyToClipboardLogic } from './useCopyToClipboardLogic';
+import { useClipboardAdapter } from '../../platform/clipboard/useClipboard';
 
 interface UseCopyToClipboardOptions {
   onCopy?: () => void;
@@ -16,75 +16,9 @@ interface UseCopyToClipboardReturn {
 export const useCopyToClipboard = (
   options: UseCopyToClipboardOptions = {}
 ): UseCopyToClipboardReturn => {
-  const { onCopy, timeout = 2000, touchTimeout = 3000 } = options;
-
-  const [copied, setCopied] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  const copyToClipboard = useCallback(
-    async (text: string) => {
-      try {
-        if (isWeb && typeof window !== 'undefined') {
-          // Check for Electron clipboard API first
-          if ((window as any).electron?.clipboard?.writeText) {
-            (window as any).electron.clipboard.writeText(text);
-          } else if (navigator.clipboard) {
-            await navigator.clipboard.writeText(text);
-          } else {
-            // Fallback for older browsers
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            textArea.style.position = 'fixed';
-            textArea.style.opacity = '0';
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-          }
-        } else {
-          // For native, we'll use Clipboard from react-native
-          // import { Clipboard } from '@react-native-clipboard/clipboard';
-          // await Clipboard.setString(text);
-          console.log('Native clipboard not implemented yet');
-        }
-
-        setCopied(true);
-        setError(null);
-
-        if (onCopy) {
-          onCopy();
-        }
-
-        // Auto-reset copied state after timeout
-        const timeoutDuration = isTouchDevice() ? touchTimeout : timeout;
-        setTimeout(() => {
-          setCopied(false);
-        }, timeoutDuration);
-      } catch (err) {
-        const error =
-          err instanceof Error ? err : new Error('Failed to copy text');
-        setError(error);
-        setCopied(false);
-        console.error('Failed to copy text:', err);
-      }
-    },
-    [onCopy, timeout, touchTimeout]
-  );
-
-  return {
-    copied,
-    copyToClipboard,
-    error,
-  };
+  const adapter = useClipboardAdapter();
+  return useCopyToClipboardLogic(adapter, options);
 };
 
-// Helper function to detect touch devices
-export const isTouchDevice = (): boolean => {
-  if (typeof window === 'undefined') return false;
-
-  return (
-    'ontouchstart' in window ||
-    navigator.maxTouchPoints > 0 ||
-    (navigator as any).msMaxTouchPoints > 0
-  );
-};
+// Note: isTouchDevice function moved to web-specific files only.
+// Platform detection is now handled by the clipboard adapters.
