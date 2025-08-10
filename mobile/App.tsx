@@ -10,7 +10,7 @@
  * 
  * The production app will use:
  * - React Navigation for routing
- * - Business components from src/components/*/[component].native.tsx
+ * - Business components from src/components/.../component.native.tsx/*
  * - Shared business logic hooks from src/hooks/*
  * - Cross-platform primitives from src/components/primitives/*
  */
