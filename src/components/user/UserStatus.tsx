@@ -6,7 +6,7 @@ import './UserStatus.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { t } from '@lingui/core/macro';
 import ClickToCopyContent from '../ClickToCopyContent';
-import { DefaultImages } from '../../utils';
+import { DefaultImages, truncateAddress } from '../../utils';
 
 type UserStatusProps = {
   user: any;
@@ -41,26 +41,27 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
           }}
         />
         <div className="user-status-text">
-          <div className="flex flex-row user-status-username w-[164px] text-ellipsis overflow-hidden">
+          <div className="user-status-username w-[164px] text-ellipsis overflow-hidden">
             <span>{props.user.displayName}</span>
+          </div>
+          <div className="user-status-info w-fit">
             <ClickToCopyContent
-              className="ml-4"
-              tooltipText={t`Copy address`}
               text={props.user.address}
+              tooltipText={t`Copy address`}
               tooltipLocation="top"
-              iconClassName="text-surface-10"
+              iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
+              textVariant="subtle"
+              textSize="xs"
+              iconSize="md"
+              iconPosition="right"
+              copyOnContentClick={true}
+              className="flex items-center w-fit"
             >
-              <></>
+              {truncateAddress(props.user.address)}
             </ClickToCopyContent>
           </div>
-          <div className="user-status-info">
-            {/* TODO: Re-enable when online/offline status is implemented
-                See .readme/tasks/todo/user-status.md for implementation plan
-            <UserOnlineStateIndicator user={props.user} />
-            */}
-          </div>
         </div>
-        <div className="flex flex-col justify-around pr-2">
+        <div className="flex flex-col justify-center pr-2">
           <FontAwesomeIcon
             onClick={(e) => {
               props.setIsUserSettingsOpen(true);

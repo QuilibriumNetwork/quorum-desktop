@@ -31,7 +31,7 @@
         "ResponsiveContainer",
         "Spacer"
       ],
-      "mobile_status": "All have both .web.tsx and .native.tsx implementations",
+      "mobile_status": "All primitives are mobile ready - have both .web.tsx and .native.tsx implementations",
       "priority": "HIGHEST - Required for all other components"
     },
     "level_1_simple": {
@@ -81,7 +81,7 @@
         {
           "name": "QuickReactionButton",
           "dependencies": [],
-          "status": "web_mobile_only", 
+          "status": "web_only", 
           "notes": "Used in web app's MobileDrawer for mobile browsers - not needed for React Native app"
         }
       ],
@@ -131,19 +131,19 @@
           "name": "KickUserModal",
           "dependencies": ["Button", "Modal", "Container", "Text", "FlexRow"],
           "status": "shared",
-          "notes": "Only primitive dependencies, cross-platform ready"
+          "notes": "Only primitive dependencies, mobile ready"
         },
         {
           "name": "NewDirectMessageModal",
           "dependencies": ["Input", "Button", "Modal", "Container", "Text"], 
           "status": "shared",
-          "notes": "Only primitive dependencies, cross-platform ready"
+          "notes": "Only primitive dependencies, mobile ready"
         },
         {
           "name": "LeaveSpaceModal",
           "dependencies": ["Button", "Modal", "Container", "Text", "FlexRow"],
           "status": "shared", 
-          "notes": "Only primitive dependencies, cross-platform ready"
+          "notes": "Only primitive dependencies, mobile ready"
         },
         {
           "name": "EmptyDirectMessage",
@@ -227,31 +227,31 @@
         {
           "name": "ChannelGroup",
           "dependencies": [],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "SCSS dependencies, FontAwesome"
         },
         {
           "name": "CreateSpaceModal",
           "dependencies": ["Input", "Button", "Modal", "Switch", "Icon", "Tooltip", "SpaceIcon", "ReactTooltip"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Many primitive deps plus level-2 SpaceIcon"
         },
         {
           "name": "UserSettingsModal",
           "dependencies": ["ThemeRadioGroup", "AccentColorSwitcher", "ClickToCopyContent", "ReactTooltip", "primitives"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Depends on multiple level-1 components"
         },
         {
           "name": "GroupEditor",
           "dependencies": ["Modal", "Container", "FlexRow", "Input", "Button", "Text", "Icon"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Only primitive dependencies but SCSS"
         },
         {
           "name": "ChannelEditor", 
           "dependencies": ["Modal", "Container", "FlexRow", "Input", "Button", "Text", "Icon"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Only primitive dependencies but SCSS"
         },
         {
@@ -289,19 +289,19 @@
         {
           "name": "DirectMessageContactsList",
           "dependencies": ["DirectMessageContact", "Container", "FlexColumn", "FlexBetween", "Icon"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Depends on level-3 DirectMessageContact"
         },
         {
           "name": "ChannelList",
           "dependencies": ["ChannelGroup", "Button", "Container", "Icon", "Text"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Depends on level-3 ChannelGroup"
         },
         {
           "name": "SpaceEditor",
           "dependencies": ["ClickToCopyContent", "ReactTooltip", "primitives"],
-          "status": "platform_specific", 
+          "status": "needs_native", 
           "notes": "Complex modal with many features"
         },
         {
@@ -314,13 +314,13 @@
         {
           "name": "DirectMessages", 
           "dependencies": ["DirectMessageContactsList", "DirectMessage", "UserStatus", "EmptyDirectMessage", "NewDirectMessageModal", "ReactTooltip"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Layout component with many dependencies"
         },
         {
           "name": "Space",
           "dependencies": ["ChannelList", "Channel", "UserStatus"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Layout component depending on very complex children"
         }
       ],
@@ -339,7 +339,7 @@
         {
           "name": "DirectMessage", 
           "dependencies": ["MessageList", "ClickToCopyContent", "GlobalSearch", "Button", "Container", "FlexRow", "FlexColumn", "Text"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "DM view, depends on level-4 MessageList"
         },
         {
@@ -351,19 +351,19 @@
         {
           "name": "ModalProvider",
           "dependencies": ["UserSettingsModal", "SpaceEditor", "ChannelEditor", "GroupEditor", "LeaveSpaceModal"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Coordinates all modals, depends on multiple level-3 components"
         },
         {
           "name": "MobileProvider", 
           "dependencies": ["MessageActionsDrawer", "EmojiPickerDrawer"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Mobile-specific coordination"
         },
         {
           "name": "InviteRoute",
           "dependencies": ["JoinSpaceModal", "ModalProvider", "MobileProvider", "SidebarProvider", "Layout"],
-          "status": "platform_specific",
+          "status": "needs_native",
           "notes": "Route component with many provider dependencies"
         },
         {
@@ -402,14 +402,14 @@
       "description": "Build primitive components foundation",
       "components_count": 20,
       "estimated_effort": "1-2 weeks", 
-      "status": "COMPLETE - All primitives have .native.tsx implementations",
+      "status": "COMPLETE - All primitives are mobile ready with .native.tsx implementations",
       "next_action": "Verify all primitives work correctly in mobile playground"
     },
     "phase_2_simple_components": {
       "description": "Build simple components that only use primitives",
       "components_count": 0,
       "estimated_effort": "Complete",
-      "status": "COMPLETE - All level-1 components are either complete or not needed for React Native", 
+      "status": "COMPLETE - All level-1 components are either mobile ready or not needed for React Native", 
       "priority_order": [],
       "completed": [
         "ThemeRadioGroup",
@@ -483,7 +483,7 @@
       },
       {
         "name": "KickUserModal",
-        "reason": "Only primitive dependencies, cross-platform ready",
+        "reason": "Only primitive dependencies, mobile ready",
         "effort": "2-3 hours",
         "notes": "Simple confirmation modal"
       }

@@ -138,7 +138,7 @@ const ComponentCard: React.FC<{
   level: number;
 }> = ({ component, level }) => {
   const isString = typeof component === 'string';
-  const comp = isString ? { name: component, notes: '', status: 'platform_specific' as const } : component;
+  const comp = isString ? { name: component, notes: '', status: 'shared' as const, mobile_ready: true } : component;
 
   return (
     <div className="bg-surface-1 rounded-lg p-3 border border-default hover:border-accent/50 transition-colors">
@@ -147,10 +147,10 @@ const ComponentCard: React.FC<{
           {comp.name}
         </Text>
         <div className="flex gap-1">
-          {!isString && <MobileReadyBadge ready={comp.mobile_ready} />}
+          {!isString && comp.status !== 'shared' && <MobileReadyBadge ready={comp.mobile_ready} />}
           <Text
             className={`px-2 py-1 rounded text-xs font-medium ${
-              comp.status === 'shared' ? 'bg-purple-500/70 text-white' :
+              comp.status === 'shared' ? 'bg-green-500/70 text-white' :
               comp.status === 'needs_native' ? 'bg-orange-500/70 text-white' :
               comp.status === 'web_only' ? 'bg-blue-500/70 text-white' :
               comp.status === 'electron_only' ? 'bg-gray-500/70 text-white' :
@@ -159,12 +159,12 @@ const ComponentCard: React.FC<{
               'bg-yellow-600/70 text-white'
             }`}
           >
-            {comp.status === 'shared' ? 'Shared' : 
+            {comp.status === 'shared' ? 'Mobile Ready' : 
              comp.status === 'needs_native' ? 'Needs Native' :
              comp.status === 'web_only' ? 'Web Only' :
              comp.status === 'electron_only' ? 'Electron Only' :
              comp.status === 'disabled' ? 'Disabled' :
-             comp.status === 'deleted' ? 'Deleted' : 'Platform'}
+             comp.status === 'deleted' ? 'Deleted' : 'Unknown'}
           </Text>
         </div>
       </div>
