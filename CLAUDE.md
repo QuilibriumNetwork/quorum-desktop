@@ -65,6 +65,13 @@ The main dependencies are:
 - Prettier
 - Lingui for i18n
 
+## CRITICAL: Package Management
+
+- **NEVER use npm commands** - this project uses Yarn exclusively
+- **Always use `yarn` commands** - npm creates package-lock.json which conflicts with yarn.lock
+- **If package-lock.json appears, DELETE it immediately**
+- Running `npm install` instead of `yarn install` will break both web and mobile builds
+
 ## Scripts
 
 - `dev`: Starts the Vite development server
