@@ -1,7 +1,8 @@
-import { useCallback } from 'react';
+import { useCallback, useState, useRef } from 'react';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import { Alert, Platform } from 'react-native';
+import { Alert, Clipboard, Platform } from 'react-native';
+import * as Device from 'expo-device';
 import { t } from '@lingui/core/macro';
 import type { KeyBackupAdapter } from '../../business/files/useKeyBackupLogic';
 
@@ -19,9 +20,101 @@ import type { KeyBackupAdapter } from '../../business/files/useKeyBackupLogic';
  */
 export const useFileDownloadAdapter = (): KeyBackupAdapter => {
   
+  // Check if device should use clipboard fallback (Android < 8.0)
+  const shouldUseClipboardFallback = useCallback((): boolean => {
+    try {
+      // Only Android devices need clipboard fallback
+      // Use React Native Platform API as primary detection
+      if (Platform.OS !== 'android') {
+        return false;
+      }
+      
+      // For Android, check system version
+      const systemVersion = Device.osVersion;
+      if (systemVersion) {
+        // Parse major version (e.g., "7.1.2" -> 7, "8.0.0" -> 8)
+        const majorVersion = parseInt(systemVersion.split('.')[0], 10);
+        
+        // Use clipboard fallback for Android < 8.0
+        return majorVersion < 8;
+      }
+      
+      // Fallback: try platformApiLevel if osVersion is not available
+      if (Device.platformApiLevel) {
+        return Device.platformApiLevel < 26; // API 26 = Android 8.0
+      }
+      
+      // If we can't determine the version, assume clipboard fallback is needed for safety
+      return true;
+    } catch (error) {
+      return true;
+    }
+  }, []);
+
   // React Native-specific: Platform-aware file save (2024 best practice)
   const downloadKeyFile = useCallback(async (keyData: string, filename: string): Promise<void> => {
     try {
+      // Check if we should use clipboard fallback (Android < 8.0 only)
+      if (shouldUseClipboardFallback()) {
+        
+        // Extract the actual private key from JSON if needed
+        let privateKeyToShow = keyData;
+        try {
+          const parsed = JSON.parse(keyData);
+          if (parsed.privateKey) {
+            privateKeyToShow = parsed.privateKey;
+          }
+        } catch (e) {
+          // If it's not JSON, use as-is
+        }
+        
+        // Show native Alert with copy functionality
+        Alert.alert(
+          t`Manual Backup Required`,
+          t`Your device doesn't support automatic file downloads. Your private key will be copied to clipboard so you can save it manually as ${filename}.`,
+          [
+            {
+              text: t`Cancel`,
+              style: 'cancel',
+              onPress: () => {
+                // Don't resolve - this will keep the user on the current step
+              }
+            },
+            {
+              text: t`Copy Key & Continue`,
+              onPress: async () => {
+                try {
+                  await Clipboard.setString(privateKeyToShow);
+                  
+                  // Show success message
+                  Alert.alert(
+                    t`Key Copied!`,
+                    t`Your private key has been copied to clipboard. Save it as "AccountID.key" (you can find your Account ID in Settings later). NEVER share this key!`,
+                    [
+                      { 
+                        text: t`I've Saved It`, 
+                        onPress: () => {
+                          // Continue with onboarding - this will be handled by the business logic
+                        }
+                      }
+                    ]
+                  );
+                } catch (error) {
+                  Alert.alert(
+                    t`Copy Failed`,
+                    t`Failed to copy to clipboard. Please try again.`,
+                    [{ text: t`OK` }]
+                  );
+                }
+              }
+            }
+          ]
+        );
+        
+        // Return immediately - the Alert handles the user interaction
+        return;
+      }
+      
       // Create temporary file first with raw key data (not JSON wrapped)
       const tempFileUri = FileSystem.cacheDirectory + filename;
       await FileSystem.writeAsStringAsync(tempFileUri, keyData);
@@ -31,7 +124,8 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
         const { StorageAccessFramework } = FileSystem;
         
         if (!StorageAccessFramework) {
-          throw new Error('File saving not supported on this device');
+          await FileSystem.deleteAsync(tempFileUri, { idempotent: true });
+          throw new Error('Storage Access Framework not available on this Android device');
         }
 
         // Request directory permissions - opens folder picker (user can choose Downloads)
@@ -68,7 +162,9 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
           [{ text: t`OK` }]
         );
         
-      } else {
+        return; // Important: exit here to prevent falling through to iOS code
+        
+      } else if (Platform.OS === 'ios') {
         // iOS: Use expo-sharing (best practice 2024)
         // User can choose "Save to Files" from the share sheet
         await Sharing.shareAsync(tempFileUri, {
@@ -85,6 +181,13 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
           t`Use "Save to Files" to save your private key`,
           [{ text: t`OK` }]
         );
+        
+      } else {
+        // Unknown platform - fallback to sharing
+        await Sharing.shareAsync(tempFileUri, {
+          mimeType: 'application/octet-stream',
+          dialogTitle: t`Save Private Key`,
+        });
       }
       
     } catch (error: any) {
@@ -94,7 +197,7 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
       }
       throw new Error(`Failed to save key file: ${error.message}`);
     }
-  }, []);
+  }, [shouldUseClipboardFallback]);
 
   // React Native-specific: Show error using native Alert
   const showError = useCallback((message: string) => {

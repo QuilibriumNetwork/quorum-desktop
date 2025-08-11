@@ -22,5 +22,8 @@ export const useKeyBackup = () => {
   const adapter = useFileDownloadAdapter();
   
   // Combine with shared business logic
-  return useKeyBackupLogic(adapter);
+  const businessLogic = useKeyBackupLogic(adapter);
+  
+  // Return combined functionality
+  return businessLogic;
 };

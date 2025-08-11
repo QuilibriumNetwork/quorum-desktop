@@ -175,17 +175,18 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
   ) : null;
 
   return (
-    <KeyboardAvoidingView 
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 20}
-    >
-      <ScrollView 
+    <>
+      <KeyboardAvoidingView 
         style={{ flex: 1 }}
-        contentContainerStyle={{ flexGrow: 1 }}
-        keyboardShouldPersistTaps="handled"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 20}
       >
-        <AuthScreenWrapper dragOverlay={dragOverlay}>
+        <ScrollView 
+          style={{ flex: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <AuthScreenWrapper dragOverlay={dragOverlay}>
         {/* TODO: Add PasskeyModal here once SDK is React Native compatible
             <PasskeyModal
               fqAppPrefix="Quorum"
@@ -292,20 +293,8 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
               <FlexColumn gap="md" align="center">
                 {/* Instruction paragraph */}
                 <Paragraph color="white" align="center">
-                  {t`Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:`}
+                  {t`Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:`}  {onboardingFlow.currentPasskeyInfo?.address}
                 </Paragraph>
-                
-                {/* Address display */}
-                <Container style={AUTH_CONTAINER_STYLES.addressDisplay}>
-                  <Text 
-                    size="sm" 
-                    color="white" 
-                    align="center"
-                    style={{ fontFamily: 'monospace', flexWrap: 'wrap' }}
-                  >
-                    {onboardingFlow.currentPasskeyInfo?.address}
-                  </Text>
-                </Container>
                 
                 {/* Disclaimer paragraph */}
                 <Paragraph color="white" align="center">
@@ -484,10 +473,12 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
         </>
       )}
         
-        <AuthSpacer />
-      </AuthScreenWrapper>
-      </ScrollView>
-    </KeyboardAvoidingView>
+            <AuthSpacer />
+          </AuthScreenWrapper>
+        </ScrollView>
+      </KeyboardAvoidingView>
+
+    </>
   );
 };
 

@@ -1,5 +1,7 @@
 # Android 7.0 File Download Fix - Implementation Plan
 
+Tried and failed (see: .readme/bugs/CRITICAL_android-file-download-huawei-p9-lite.md)
+
 ## Problem Analysis
 
 ### Issue Description
