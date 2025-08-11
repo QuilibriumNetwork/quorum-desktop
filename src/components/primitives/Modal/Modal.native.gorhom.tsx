@@ -1,3 +1,5 @@
+// Not used, fallback if we have issues with our custom implementation fo bottom sheets
+
 import React, { useRef, useEffect, useMemo, useCallback } from 'react';
 import {
   View,
