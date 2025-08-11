@@ -46,7 +46,6 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
       visible={props.visible}
       onClose={props.onClose}
       title={t`Create a Space`}
-      titleAlign="center"
     >
       <div className="modal-width-large">
         <div className="flex flex-row justify-around pb-4">
@@ -74,7 +73,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               className="attachment-drop cursor-pointer"
               {...getRootProps()}
             >
-              <span className="attachment-drop-icon inline-block justify-around w-20 h-20 flex flex-col">
+              <span className="attachment-drop-icon justify-around w-20 h-20 flex flex-col">
                 <input {...getInputProps()} />
                 <Icon name="image" />
               </span>
@@ -168,9 +167,19 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           </div>
         )}
         {/* <div className="mt-4 py-5 mx-[-26px] px-4 rounded-b-xl bg-surface-4 mb-[-26px] h-16 flex flex-row-reverse justify-between"> Issues with bottom space*/}
-        <div className="mt-6 pt-6 rounded-b-xl border-t border-t-surface-1 modal-buttons-responsive">
+        <div className="mt-6 pt-6 rounded-b-xl border-t border-strong flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
+          {!advancedMode && (
+            <Button
+              type="secondary"
+              className="w-full sm:w-auto"
+              onClick={() => setAdvancedMode(true)}
+            >
+              {t`Advanced Settings`}
+            </Button>
+          )}
           <Button
             type="primary"
+            className="w-full sm:w-auto"
             disabled={!canCreate || !fileData}
             onClick={() =>
               createSpace(spaceName, fileData, currentFile, repudiable, pub)
@@ -178,16 +187,6 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           >
             {creating ? t`Creating Space...` : t`Create Space`}
           </Button>
-          {!advancedMode && (
-            <Button
-              type="secondary"
-              onClick={() => {
-                setAdvancedMode(true);
-              }}
-            >
-              {t`Advanced Settings`}
-            </Button>
-          )}
         </div>
       </div>
     </Modal>

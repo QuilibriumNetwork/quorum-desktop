@@ -22,19 +22,9 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
   // React Native-specific: Platform-aware file save (2024 best practice)
   const downloadKeyFile = useCallback(async (keyData: string, filename: string): Promise<void> => {
     try {
-      // Create enhanced key data object with metadata
-      const enhancedKeyData = {
-        keyData,
-        filename,
-        createdAt: new Date().toISOString(),
-        platform: 'mobile',
-        version: '1.0',
-        warning: 'PRIVATE KEY - Never share this file with anyone',
-      };
-      
-      // Create temporary file first
+      // Create temporary file first with raw key data (not JSON wrapped)
       const tempFileUri = FileSystem.cacheDirectory + filename;
-      await FileSystem.writeAsStringAsync(tempFileUri, JSON.stringify(enhancedKeyData, null, 2));
+      await FileSystem.writeAsStringAsync(tempFileUri, keyData);
       
       if (Platform.OS === 'android') {
         // Android: Use Storage Access Framework (best practice 2024)
@@ -62,7 +52,7 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
         const fileUri = await StorageAccessFramework.createFileAsync(
           permissions.directoryUri,
           filename,
-          'application/json'
+          'application/octet-stream'
         );
         
         if (!fileUri) {
@@ -89,9 +79,8 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
         // iOS: Use expo-sharing (best practice 2024)
         // User can choose "Save to Files" from the share sheet
         await Sharing.shareAsync(tempFileUri, {
-          mimeType: 'application/json',
+          mimeType: 'application/octet-stream',
           dialogTitle: t`Save Private Key`,
-          UTI: 'public.json',
         });
         
         // Note: On iOS, we don't clean up temp file immediately as sharing is async
