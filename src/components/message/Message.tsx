@@ -501,7 +501,7 @@ export const Message = ({
                         style={{
                           maxWidth: 300,
                           maxHeight: 300,
-                          width: '100%',
+                          width: 'auto',
                           cursor: 'pointer',
                         }}
                         className="rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer"
