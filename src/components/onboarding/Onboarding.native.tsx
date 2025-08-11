@@ -274,6 +274,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                   >
                     {t`I already saved mine`}
                   </Text>
+                  <Spacer size="lg" />
                 </Pressable>
               </FlexColumn>
             </Container>

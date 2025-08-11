@@ -1,7 +1,8 @@
-import { useCallback, useState, useRef } from 'react';
+import { useCallback } from 'react';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import { Alert, Clipboard, Platform } from 'react-native';
+import { Alert } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import * as Device from 'expo-device';
 import { t } from '@lingui/core/macro';
 import type { KeyBackupAdapter } from '../../business/files/useKeyBackupLogic';
@@ -23,9 +24,13 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
   // Check if device should use clipboard fallback (Android < 8.0)
   const shouldUseClipboardFallback = useCallback((): boolean => {
     try {
-      // Only Android devices need clipboard fallback
-      // Use React Native Platform API as primary detection
-      if (Platform.OS !== 'android') {
+      // Only Android devices need clipboard fallback  
+      // Device.osName can be "Android" or full build string on some devices
+      const isAndroid = Device.osName?.toLowerCase().includes('android') || 
+                       Device.osName?.includes('/') || // Build string format 
+                       (Device.platformApiLevel && Device.platformApiLevel > 0); // Android has API level
+                       
+      if (!isAndroid) {
         return false;
       }
       
@@ -71,7 +76,7 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
         // Show native Alert with copy functionality
         Alert.alert(
           t`Manual Backup Required`,
-          t`Your device doesn't support automatic file downloads. Your private key will be copied to clipboard so you can save it manually as ${filename}.`,
+          t`Your device doesn't support automatic file downloads. Your private key will be copied to clipboard so you can save it manually.`,
           [
             {
               text: t`Cancel`,
@@ -84,7 +89,7 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
               text: t`Copy Key & Continue`,
               onPress: async () => {
                 try {
-                  await Clipboard.setString(privateKeyToShow);
+                  await Clipboard.setStringAsync(privateKeyToShow);
                   
                   // Show success message
                   Alert.alert(
@@ -130,7 +135,12 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
       const tempFileUri = FileSystem.cacheDirectory + filename;
       await FileSystem.writeAsStringAsync(tempFileUri, privateKeyToSave);
       
-      if (Platform.OS === 'android') {
+      // Check if Android device (handles both "Android" and build strings)
+      const isAndroid = Device.osName?.toLowerCase().includes('android') || 
+                       Device.osName?.includes('/') || // Build string format
+                       (Device.platformApiLevel && Device.platformApiLevel > 0); // Android has API level
+                       
+      if (isAndroid) {
         // Android: Use Storage Access Framework (best practice 2024)
         const { StorageAccessFramework } = FileSystem;
         
@@ -175,7 +185,8 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
         
         return; // Important: exit here to prevent falling through to iOS code
         
-      } else if (Platform.OS === 'ios') {
+      } else {
+        // iOS or other platforms - use sharing
         // iOS: Use expo-sharing (best practice 2024)
         // User can choose "Save to Files" from the share sheet
         await Sharing.shareAsync(tempFileUri, {
@@ -192,13 +203,6 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
           t`Use "Save to Files" to save your private key`,
           [{ text: t`OK` }]
         );
-        
-      } else {
-        // Unknown platform - fallback to sharing
-        await Sharing.shareAsync(tempFileUri, {
-          mimeType: 'application/octet-stream',
-          dialogTitle: t`Save Private Key`,
-        });
       }
       
     } catch (error: any) {
