@@ -340,10 +340,10 @@ Given the number of failed attempts, I think the most realistic path forward is 
 - Copy-to-clipboard fallback for Android < 26 (broken SAF).
 - iOS version detection to decide between UIDocumentPicker (iOS 11+) and fallback for older iOS.
 
-The below code may ned to be reworked according to our specifci situation, it's untested.
+The below code may need to be reworked according to our specific situation, it's untested.
 
 IMPORTANT:
-We dont' want to show a QR code to users, but simply their key to copy to the clipboard manually. We can use the ClickToCopyContent.native.tsx components for this.
+We dont' want to show a QR code to users, but simply their key to copy to the clipboard manually. We could use the ClickToCopyContent.native.tsx component for this.
 
 ```typescript
 

@@ -43,11 +43,6 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
           throw new Error('canceled');
         }
         
-        // Read temp file as base64 (required for SAF)
-        const base64Content = await FileSystem.readAsStringAsync(tempFileUri, {
-          encoding: FileSystem.EncodingType.Base64
-        });
-        
         // Create file in selected directory
         const fileUri = await StorageAccessFramework.createFileAsync(
           permissions.directoryUri,
@@ -60,10 +55,8 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
           throw new Error('Failed to create file');
         }
         
-        // Write content to the created file
-        await FileSystem.writeAsStringAsync(fileUri, base64Content, {
-          encoding: FileSystem.EncodingType.Base64
-        });
+        // Write raw key data directly to the created file
+        await FileSystem.writeAsStringAsync(fileUri, keyData);
         
         // Clean up temp file
         await FileSystem.deleteAsync(tempFileUri, { idempotent: true });
