@@ -330,6 +330,147 @@ const getOptimalDownloadStrategy = () => {
 - Avoid blocking UI during file operations
 - Implement proper loading states
 
+
+## Solution to test
+
+Given the number of failed attempts, I think the most realistic path forward is to stop fighting SAF on Android 7 entirely and instead create a non-SAF backup flow specifically for old devices — but not using cache or sharing, since both had UX or security pitfalls.
+
+**We can make this hook robust and future-proof by adding:** 
+- Android API detection to decide whether to use SAF or fallback.
+- Copy-to-clipboard fallback for Android < 26 (broken SAF).
+- iOS version detection to decide between UIDocumentPicker (iOS 11+) and fallback for older iOS.
+
+The below code may ned to be reworked according to our specifci situation, it's untested.
+
+IMPORTANT:
+We dont' want to show a QR code to users, but simply their key to copy to the clipboard manually. We can use the ClickToCopyContent.native.tsx components for this.
+
+```typescript
+
+import { useCallback } from 'react';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import { Alert, Platform, Clipboard } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
+import { t } from '@lingui/core/macro';
+import QRCode from 'react-native-qrcode-svg';
+import React from 'react';
+
+// Helper component for fallback display
+const KeyBackupFallback = ({ keyData }: { keyData: string }) => {
+  return (
+    <>
+      <Alert
+        title={t`Manual Backup Required`}
+        message={t`Your device cannot save this file directly. Please scan the QR code or copy the text below.`}
+      />
+      <QRCode value={keyData} size={250} />
+      <Text selectable>{keyData}</Text>
+      <Button title={t`Copy to Clipboard`} onPress={() => Clipboard.setString(keyData)} />
+    </>
+  );
+};
+
+export const useFileDownloadAdapter = () => {
+  const androidVersion = Platform.OS === 'android'
+    ? parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10)
+    : null;
+
+  const iosVersion = Platform.OS === 'ios'
+    ? parseInt(DeviceInfo.getSystemVersion().split('.')[0], 10)
+    : null;
+
+  const downloadKeyFile = useCallback(async (keyData: string, filename: string): Promise<void> => {
+    try {
+      const tempFileUri = FileSystem.cacheDirectory + filename;
+      await FileSystem.writeAsStringAsync(tempFileUri, keyData);
+
+      if (Platform.OS === 'android') {
+        if (androidVersion && androidVersion < 8) {
+          // Fallback for Android < API 26
+          Alert.alert(
+            t`Manual Backup Required`,
+            t`Saving files is not supported on this Android version. We’ll show you a QR code and direct copy option.`
+          );
+          // Render fallback UI (QR + Copy)
+          // This can be a modal/screen you navigate to
+          return;
+        }
+
+        const { StorageAccessFramework } = FileSystem;
+        if (!StorageAccessFramework) {
+          throw new Error('File saving not supported on this device');
+        }
+
+        const permissions = await StorageAccessFramework.requestDirectoryPermissionsAsync();
+        if (!permissions.granted) {
+          await FileSystem.deleteAsync(tempFileUri, { idempotent: true });
+          throw new Error('canceled');
+        }
+
+        const base64Content = await FileSystem.readAsStringAsync(tempFileUri, {
+          encoding: FileSystem.EncodingType.Base64
+        });
+
+        const fileUri = await StorageAccessFramework.createFileAsync(
+          permissions.directoryUri,
+          filename,
+          'application/octet-stream'
+        );
+
+        if (!fileUri) {
+          await FileSystem.deleteAsync(tempFileUri, { idempotent: true });
+          throw new Error('Failed to create file');
+        }
+
+        await FileSystem.writeAsStringAsync(fileUri, base64Content, {
+          encoding: FileSystem.EncodingType.Base64
+        });
+
+        await FileSystem.deleteAsync(tempFileUri, { idempotent: true });
+
+        Alert.alert(t`Key Saved`, t`Private key saved to selected folder`, [{ text: t`OK` }]);
+
+      } else if (Platform.OS === 'ios') {
+        if (iosVersion && iosVersion < 11) {
+          // Fallback for iOS < 11
+          Alert.alert(
+            t`Manual Backup Required`,
+            t`Your iOS version does not support saving to Files. We’ll show you a QR code and direct copy option.`
+          );
+          // Render fallback UI
+          return;
+        }
+
+        await Sharing.shareAsync(tempFileUri, {
+          mimeType: 'application/octet-stream',
+          dialogTitle: t`Save Private Key`,
+        });
+
+        Alert.alert(
+          t`Key Ready`,
+          t`Use "Save to Files" to store your private key`,
+          [{ text: t`OK` }]
+        );
+      }
+
+    } catch (error: any) {
+      if (error.message?.includes('canceled') || error.message?.includes('cancelled')) {
+        throw new Error('canceled');
+      }
+      throw new Error(`Failed to save key file: ${error.message}`);
+    }
+  }, [androidVersion, iosVersion]);
+
+  const showError = useCallback((message: string) => {
+    Alert.alert(t`Backup Failed`, message, [{ text: t`OK` }]);
+  }, []);
+
+  return { downloadKeyFile, showError };
+};
+
+```
+
 ---
 
 *Last Updated: 2025-08-11*
