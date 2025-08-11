@@ -115,9 +115,20 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
         return;
       }
       
+      // Extract raw private key from JSON if needed
+      let privateKeyToSave = keyData;
+      try {
+        const parsed = JSON.parse(keyData);
+        if (parsed.privateKey) {
+          privateKeyToSave = parsed.privateKey;
+        }
+      } catch (e) {
+        // If it's not JSON, use as-is
+      }
+      
       // Create temporary file first with raw key data (not JSON wrapped)
       const tempFileUri = FileSystem.cacheDirectory + filename;
-      await FileSystem.writeAsStringAsync(tempFileUri, keyData);
+      await FileSystem.writeAsStringAsync(tempFileUri, privateKeyToSave);
       
       if (Platform.OS === 'android') {
         // Android: Use Storage Access Framework (best practice 2024)
@@ -150,7 +161,7 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
         }
         
         // Write raw key data directly to the created file
-        await FileSystem.writeAsStringAsync(fileUri, keyData);
+        await FileSystem.writeAsStringAsync(fileUri, privateKeyToSave);
         
         // Clean up temp file
         await FileSystem.deleteAsync(tempFileUri, { idempotent: true });
