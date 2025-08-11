@@ -25,9 +25,10 @@ export const ModalTestScreen: React.FC = () => {
   const [largeModal, setLargeModal] = useState(false);
   const [noCloseModal, setNoCloseModal] = useState(false);
   const [noSwipeModal, setNoSwipeModal] = useState(false);
-  const [swipeUpModal, setSwipeUpModal] = useState(false);
+  // Removed swipeUpModal - @gorhom/bottom-sheet has built-in expand gesture
   const [navigationModal, setNavigationModal] = useState(false);
   const [currentPage, setCurrentPage] = useState('menu');
+  const [deviceTestModal, setDeviceTestModal] = useState(false);
 
 
   return (
@@ -105,12 +106,6 @@ export const ModalTestScreen: React.FC = () => {
             </Button>
             <Button
               type="primary"
-              onClick={() => setSwipeUpModal(true)}
-            >
-              Swipe Up to Enlarge
-            </Button>
-            <Button
-              type="primary"
               onClick={() => {
                 setNavigationModal(true);
                 setCurrentPage('menu');
@@ -129,7 +124,7 @@ export const ModalTestScreen: React.FC = () => {
         onClose={() => setBasicModal(false)}
         size="medium"
       >
-        <View style={{ padding: 20 }}>
+        <View>
           <FlexColumn gap="md">
             <Paragraph>
               This is a basic modal that transforms into a drawer on mobile. You
@@ -160,7 +155,7 @@ export const ModalTestScreen: React.FC = () => {
         onClose={() => setSmallModal(false)}
         size="small"
       >
-        <View style={{ padding: 20 }}>
+        <View>
           <FlexColumn gap="md">
             <Paragraph>
               This is a small modal that takes up 40% of the screen height.
@@ -182,7 +177,7 @@ export const ModalTestScreen: React.FC = () => {
         onClose={() => setMediumModal(false)}
         size="medium"
       >
-        <View style={{ padding: 20 }}>
+        <View>
           <FlexColumn gap="md">
             <Paragraph>
               This is a medium modal that takes up 70% of the screen height. This
@@ -223,8 +218,7 @@ export const ModalTestScreen: React.FC = () => {
         onClose={() => setLargeModal(false)}
         size="large"
       >
-        <ScrollView style={{ padding: 20 }}>
-          <FlexColumn gap="md">
+        <FlexColumn gap="md">
             <Paragraph>
               This is a large modal that takes up 90% of the screen height.
             </Paragraph>
@@ -234,19 +228,20 @@ export const ModalTestScreen: React.FC = () => {
               exceeds the available height.
             </Text>
 
-            {/* Extended scrollable content to test scrolling */}
-            {Array.from({ length: 5 }, (_, index) => (
+            {/* Extended scrollable content to test scrolling - INCREASED FOR BETTER TESTING */}
+            {Array.from({ length: 12 }, (_, index) => (
               <View
                 key={index}
                 style={{
                   backgroundColor: colors.surface[3],
                   padding: 16,
                   borderRadius: 8,
+                  marginBottom: 12,
                 }}
               >
                 <FlexColumn gap="sm">
                   <Title size="sm">
-                    Scrollable Section {index + 1}
+                    🔄 Scrollable Test Section {index + 1}
                   </Title>
                   <Paragraph>
                     This is section {index + 1} of the scrollable content. Each
@@ -260,8 +255,18 @@ export const ModalTestScreen: React.FC = () => {
                     enim ad minim veniam, quis nostrud exercitation ullamco laboris
                     nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
                     in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                    nulla pariatur.
+                    nulla pariatur. Excepteur sint occaecat cupidatat non proident.
                   </Text>
+                  <View style={{
+                    backgroundColor: colors.surface[5],
+                    padding: 8,
+                    borderRadius: 4,
+                    marginTop: 8,
+                  }}>
+                    <Text size="xs" color={colors.text.muted}>
+                      Section {index + 1} - If you can read this, scrolling is working! 🎉
+                    </Text>
+                  </View>
                 </FlexColumn>
               </View>
             ))}
@@ -284,14 +289,28 @@ export const ModalTestScreen: React.FC = () => {
               </FlexColumn>
             </View>
             
+            <View style={{
+              backgroundColor: colors.success + '20',
+              padding: 16,
+              borderRadius: 8,
+              borderWidth: 1,
+              borderColor: colors.success,
+              marginTop: 16,
+            }}>
+              <Text size="sm" color={colors.success}>
+                ✅ SUCCESS! If you can see this message, scrolling is working perfectly! 
+                This should be at the bottom of all the scrollable content.
+              </Text>
+            </View>
+
             <Button
               type="primary"
               onClick={() => setLargeModal(false)}
+              style={{ marginTop: 20 }}
             >
-              Close Large Modal
+              🎯 Close Large Modal (Bottom Button)
             </Button>
-          </FlexColumn>
-        </ScrollView>
+        </FlexColumn>
       </Modal>
 
       {/* No Close Button Modal */}
@@ -302,7 +321,7 @@ export const ModalTestScreen: React.FC = () => {
         hideClose={true}
         size="medium"
       >
-        <View style={{ padding: 20 }}>
+        <View>
           <FlexColumn gap="md">
             <Paragraph>
               This modal has no close button in the header. You can still close it
@@ -334,7 +353,7 @@ export const ModalTestScreen: React.FC = () => {
         swipeToClose={false}
         size="medium"
       >
-        <View style={{ padding: 20 }}>
+        <View>
           <FlexColumn gap="md">
             <Paragraph>
               This modal has swipe-to-close disabled. Notice there's no handle at
@@ -358,72 +377,6 @@ export const ModalTestScreen: React.FC = () => {
         </View>
       </Modal>
 
-      {/* Swipe Up Modal */}
-      <Modal
-        title="Swipe Up Modal"
-        visible={swipeUpModal}
-        onClose={() => setSwipeUpModal(false)}
-        swipeUpToOpen={true}
-        size="small"
-      >
-        <View style={{ padding: 20 }}>
-          <FlexColumn gap="md">
-            <Paragraph>
-              This modal supports swipe-up to enlarge functionality. It opens at small size (40% height),
-              but you can swipe up from the handle area to enlarge it to 90% height.
-            </Paragraph>
-            
-            <View
-              style={{
-                backgroundColor: colors.surface[3],
-                padding: 16,
-                borderRadius: 8,
-              }}
-            >
-              <FlexColumn gap="sm">
-                <FlexRow gap="sm" style={{ alignItems: 'center' }}>
-                  <Icon name="arrows-alt-v" size="xl"/>
-                  <Title size="sm">Gesture Instructions</Title>
-                </FlexRow>
-                <Text size="sm" color={colors.text.subtle}>
-                  • Swipe UP from the handle/header area to enlarge to 90% height
-                </Text>
-                <Text size="sm" color={colors.text.subtle}>
-                  • Swipe DOWN from the handle/header area to close the modal
-                </Text>
-                <Text size="sm" color={colors.text.subtle}>
-                  • Once enlarged, you can still swipe down to close normally
-                </Text>
-              </FlexColumn>
-            </View>
-
-            <View
-              style={{
-                backgroundColor: colors.surface[4],
-                padding: 16,
-                borderRadius: 8,
-              }}
-            >
-              <FlexColumn gap="sm">
-                <Title size="sm">Try It Out!</Title>
-                <Paragraph>
-                  Try swiping up from the top handle area right now to see the modal 
-                  enlarge to 90% screen height. The gesture only works from the handle 
-                  and header area, not from this content area.
-                </Paragraph>
-              </FlexColumn>
-            </View>
-
-            <Button
-              type="primary"
-              onClick={() => setSwipeUpModal(false)}
-            >
-              Close Modal
-            </Button>
-          </FlexColumn>
-        </View>
-      </Modal>
-
       {/* Navigation Example Modal */}
       <Modal
         title={
@@ -439,7 +392,7 @@ export const ModalTestScreen: React.FC = () => {
       >
         <View style={{ flex: 1 }}>
           {currentPage === 'menu' ? (
-            <View style={{ padding: 20 }}>
+            <View>
               <FlexColumn gap="lg">
                 <Paragraph>
                   This demonstrates navigation within a modal, similar to
@@ -471,7 +424,7 @@ export const ModalTestScreen: React.FC = () => {
               </FlexColumn>
             </View>
           ) : currentPage === 'profile' ? (
-            <View style={{ padding: 20 }}>
+            <View>
               <FlexColumn gap="lg">
                 <Button
                   type="unstyled"
@@ -492,7 +445,7 @@ export const ModalTestScreen: React.FC = () => {
               </FlexColumn>
             </View>
           ) : (
-            <View style={{ padding: 20 }}>
+            <View>
               <FlexColumn gap="lg">
                 <Button
                   type="unstyled"
@@ -550,7 +503,7 @@ export const ModalTestScreen: React.FC = () => {
             <FlexRow gap="xs" align="start">
               <Text size="sm">•</Text>
               <View style={{flex: 1}}>
-                <Text size="sm">Optional swipe-up to enlarge: opens normally, then swipe up to 90% height</Text>
+                <Text size="sm">Built-in expand gesture: all modals can be expanded by swiping up on the handle</Text>
               </View>
             </FlexRow>
             

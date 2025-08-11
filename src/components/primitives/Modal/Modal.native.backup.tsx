@@ -12,7 +12,7 @@ import {
 
 // @ts-ignore - PanResponder exists at runtime but not in named exports
 const { PanResponder } = require('react-native');
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+// import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NativeModalProps } from './types';
 import { useTheme } from '../theme';
 import { Icon } from '../Icon';
@@ -33,12 +33,11 @@ const Modal: React.FC<NativeModalProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
-  const insets = useSafeAreaInsets(); // Used for proper positioning including system navigation
+  // const insets = useSafeAreaInsets(); // Not currently used but may be needed for safe areas
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width;
 
-  // Start animation from below the screen including navigation area
-  const translateY = useRef(new Animated.Value(screenHeight + insets.bottom + 50)).current;
+  const translateY = useRef(new Animated.Value(screenHeight)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
   const [isEnlarged, setIsEnlarged] = useState(false);
 
@@ -85,10 +84,10 @@ const Modal: React.FC<NativeModalProps> = ({
       // Reset enlarged state when modal closes
       setIsEnlarged(false);
       
-      // Animate out - go below the screen including navigation area
+      // Animate out
       Animated.parallel([
         Animated.timing(translateY, {
-          toValue: screenHeight + insets.bottom + 50,
+          toValue: screenHeight,
           duration: 300,
           useNativeDriver: true,
         }),
@@ -99,7 +98,7 @@ const Modal: React.FC<NativeModalProps> = ({
         }),
       ]).start();
     }
-  }, [visible, translateY, backdropOpacity, screenHeight, insets.bottom]);
+  }, [visible, translateY, backdropOpacity, screenHeight]);
 
   // Handle close
   const handleClose = () => {
@@ -165,10 +164,6 @@ const Modal: React.FC<NativeModalProps> = ({
       transparent={true}
       animationType="none"
       onRequestClose={handleClose}
-      // @ts-ignore - Both properties needed for Android 7.0 gap fix
-      statusBarTranslucent={true}
-      // @ts-ignore - presentationStyle needed for Android 7.0 gap fix
-      presentationStyle="overFullScreen"
     >
       <View style={styles.container}>
         {/* Backdrop */}
@@ -221,7 +216,7 @@ const Modal: React.FC<NativeModalProps> = ({
 
             {/* Title (when present) */}
             {title && (
-              <View style={titleAlign === 'center' ? [styles.header, styles.headerCenter] : styles.header}>
+              <View style={[styles.header, ...(titleAlign === 'center' ? [styles.headerCenter] : [])]}>
                 <Title size="md" weight="semibold" color={colors.text.strong}>
                   {title}
                 </Title>
@@ -229,18 +224,12 @@ const Modal: React.FC<NativeModalProps> = ({
             )}
 
             {/* Spacer between title and content (or top spacer when no title) */}
-            <Spacer size="md" />
+            <Spacer size="xl" />
           </View>
 
           {/* Content */}
           <View style={styles.content}>
-            <ScrollView 
-              showsVerticalScrollIndicator={false} 
-              bounces={false}
-              contentContainerStyle={{
-                paddingBottom: Math.max(insets.bottom, 20) // Ensure content is above navigation
-              }}
-            >
+            <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
               <View style={styles.contentContainer}>
                 {children}
               </View>
@@ -256,15 +245,10 @@ const styles = StyleSheet.create<any>({
   container: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'transparent',
-    zIndex: 999999, // Extremely high z-index to appear above everything
-    elevation: 999999, // Android elevation
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    zIndex: 999998, // Just below container
-    elevation: 999998,
   },
   modalContent: {
     borderTopLeftRadius: 16,
@@ -277,8 +261,7 @@ const styles = StyleSheet.create<any>({
     },
     shadowOpacity: 0.3,
     shadowRadius: 12,
-    elevation: 999999, // Maximum elevation for Android
-    zIndex: 999999, // Maximum z-index
+    elevation: 8,
     overflow: 'hidden', // Ensure content doesn't bleed outside rounded corners
   },
   handle: {
@@ -298,8 +281,8 @@ const styles = StyleSheet.create<any>({
   },
   closeButton: {
     position: 'absolute',
-    top: 16,
-    right: 16,
+    top: 12,
+    right: 28,
     backgroundColor: 'transparent',
     borderWidth: 0,
     padding: 4,
