@@ -33,7 +33,7 @@ export const FileUpload: React.FC<FileUploadWebProps> = ({
   children,
   testId,
 }) => {
-  const handleDrop = (acceptedFiles: File[], rejectedFiles: any[]) => {
+  const handleDrop = async (acceptedFiles: File[], rejectedFiles: any[]) => {
     // Handle validation errors
     if (rejectedFiles.length > 0 && onError) {
       const firstRejection = rejectedFiles[0];
@@ -62,13 +62,25 @@ export const FileUpload: React.FC<FileUploadWebProps> = ({
       onError(new Error(errorMessage));
     }
 
-    // Convert File objects to FileUploadFile interface
-    const convertedFiles: FileUploadFile[] = acceptedFiles.map((file) => ({
-      uri: URL.createObjectURL(file),
-      name: file.name,
-      size: file.size,
-      type: file.type,
-    }));
+    // Convert File objects to FileUploadFile interface with proper data handling
+    const convertedFiles: FileUploadFile[] = await Promise.all(
+      acceptedFiles.map(async (file) => {
+        // Read file as ArrayBuffer for permanent storage
+        const arrayBuffer = await file.arrayBuffer();
+        
+        // Create data URL for preview (permanent, not a blob URL)
+        const dataUrl = `data:${file.type};base64,${Buffer.from(arrayBuffer).toString('base64')}`;
+        
+        return {
+          uri: dataUrl,  // Use data URL instead of blob URL
+          name: file.name,
+          size: file.size,
+          type: file.type,
+          file: file,  // Include original File object
+          data: arrayBuffer,  // Include ArrayBuffer for easy processing
+        };
+      })
+    );
 
     if (convertedFiles.length > 0) {
       onFilesSelected(convertedFiles);

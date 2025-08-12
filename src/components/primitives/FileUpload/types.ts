@@ -2,10 +2,12 @@ import { ReactNode } from 'react';
 
 // File object interface compatible between platforms
 export interface FileUploadFile {
-  uri: string;
+  uri: string;  // For display/preview only - should be data URL or temporary URL
   name: string;
   size: number;
   type: string;
+  file?: File;  // Original File object (web only)
+  data?: ArrayBuffer;  // File data as ArrayBuffer
 }
 
 // Accept object for file type filtering
