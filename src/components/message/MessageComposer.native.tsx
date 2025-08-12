@@ -8,6 +8,7 @@ import {
   Platform 
 } from 'react-native';
 import { Button, Icon, Text } from '../primitives';
+import { useTheme } from '../primitives/theme';
 import { MessageTextInput } from './MessageTextInput.native';
 import { i18n } from '@lingui/core';
 
@@ -60,6 +61,7 @@ export const MessageComposer = forwardRef<
     },
     ref
   ) => {
+    const theme = useTheme();
     const textareaRef = useRef<any>(null);
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -87,7 +89,7 @@ export const MessageComposer = forwardRef<
           <View style={{
             padding: 8,
             borderRadius: 8,
-            backgroundColor: 'var(--color-bg-surface-3)',
+            backgroundColor: theme.colors.surface[3],
             alignSelf: 'flex-start',
             position: 'relative'
           }}>
@@ -98,7 +100,7 @@ export const MessageComposer = forwardRef<
                 right: 4,
                 padding: 4,
                 paddingHorizontal: 8,
-                backgroundColor: 'var(--color-bg-surface-7)',
+                backgroundColor: theme.colors.surface[7],
                 borderRadius: 20,
                 zIndex: 1
               }}
@@ -112,12 +114,12 @@ export const MessageComposer = forwardRef<
             <View style={{
               width: 140,
               height: 140,
-              backgroundColor: 'var(--color-bg-surface-5)',
+              backgroundColor: theme.colors.surface[5],
               borderRadius: 4,
               justifyContent: 'center',
               alignItems: 'center'
             }}>
-              <Icon name="image" size="lg" color="var(--color-text-subtle)" />
+              <Icon name="image" size="lg" color={theme.colors.text.subtle} />
             </View>
           </View>
         </View>
@@ -128,11 +130,11 @@ export const MessageComposer = forwardRef<
       if (!fileError && !inReplyTo) return null;
 
       return (
-        <View style={{ width: '100%', marginLeft: 11, marginTop: 8, marginBottom: 0 }}>
+        <View style={{ width: '100%', marginTop: 8, marginBottom: -8 }}>
           {fileError && (
             <Text 
               size="sm" 
-              color="var(--color-text-danger)"
+              color={theme.colors.text.danger}
               style={{ marginLeft: 4, marginTop: 12, marginBottom: 4 }}
             >
               {fileError}
@@ -145,27 +147,31 @@ export const MessageComposer = forwardRef<
                 borderTopRightRadius: 8,
                 paddingHorizontal: 16,
                 paddingVertical: 4,
-                backgroundColor: 'var(--color-bg-surface-4)',
+                backgroundColor: theme.colors.surface[4],
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center'
               }}
             >
-              <Text size="xs" color="var(--color-text-subtle)">
+              <Text size="xs" color={theme.colors.text.subtle}>
                 {i18n._('Replying to {user}', {
                   user: mapSenderToUser(inReplyTo.content.senderId).displayName,
                 })}
               </Text>
-              <Button
-                type="unstyled"
+              <TouchableOpacity
                 onPress={() => setInReplyTo?.(undefined)}
+                style={{
+                  padding: 4,
+                  borderRadius: 4
+                }}
+                activeOpacity={0.7}
               >
                 <Icon
                   name="times"
                   size="sm"
-                  color="var(--color-text-subtle)"
+                  color={theme.colors.text.subtle}
                 />
-              </Button>
+              </TouchableOpacity>
             </View>
           )}
         </View>
@@ -178,49 +184,50 @@ export const MessageComposer = forwardRef<
           style={{
             width: '100%',
             flexDirection: 'row',
-            alignItems: 'flex-start',
-            marginLeft: 11,
+            alignItems: 'center',
             marginVertical: 8,
             padding: 8,
-            borderRadius: 8,
-            borderTopLeftRadius: inReplyTo ? 0 : 8,
-            borderTopRightRadius: inReplyTo ? 0 : 8,
-            backgroundColor: 'var(--color-bg-chat-input)',
+            borderRadius: 12,
+            borderTopLeftRadius: inReplyTo ? 0 : 12,
+            borderTopRightRadius: inReplyTo ? 0 : 12,
+            backgroundColor: theme.colors.bg['chat-input'],
           }}
         >
           {/* Left side - emoji/sticker picker buttons (hidden when expanded) */}
           {!isExpanded && (
             <>
-              <View style={{ marginRight: 8 }}>
-                <Button
-                  type="subtle"
-                  onPress={onFileSelect}
-                  size="small"
-                  iconName="plus"
-                  iconOnly
+              <TouchableOpacity
+                onPress={onFileSelect}
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 16,
+                  backgroundColor: theme.colors.surface[5],
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginRight: 8
+                }}
+                activeOpacity={0.7}
+              >
+                <Icon name="plus" size="sm" color={theme.colors.text.main} />
+              </TouchableOpacity>
+
+              {hasStickers && (
+                <TouchableOpacity
+                  onPress={onShowStickers}
                   style={{
                     width: 32,
                     height: 32,
-                    borderRadius: 16
+                    borderRadius: 16,
+                    backgroundColor: theme.colors.surface[5],
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: 8
                   }}
-                />
-              </View>
-
-              {hasStickers && (
-                <View style={{ marginRight: 8 }}>
-                  <Button
-                    type="subtle"
-                    onPress={onShowStickers}
-                    size="small"
-                    iconName="smile"
-                    iconOnly
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 16
-                    }}
-                  />
-                </View>
+                  activeOpacity={0.7}
+                >
+                  <Icon name="smile" size="sm" color={theme.colors.text.main} />
+                </TouchableOpacity>
               )}
             </>
           )}
@@ -230,15 +237,14 @@ export const MessageComposer = forwardRef<
             <TouchableOpacity
               onPress={handleCollapse}
               style={{
-                width: 32,
+                width: 24,
                 height: 32,
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginRight: 8
               }}
               activeOpacity={0.7}
             >
-              <Icon name="chevron-right" size="sm" color="var(--color-text-subtle)" />
+              <Icon name="chevron-right" size="sm" color={theme.colors.text.muted} />
             </TouchableOpacity>
           )}
 
@@ -250,48 +256,35 @@ export const MessageComposer = forwardRef<
             onFocus={handleFocus}
             placeholder={placeholder}
             minRows={1}
-            maxRows={5}
+            maxRows={8}
             style={{
               flex: 1,
               marginRight: 8
             }}
           />
 
-          {/* Send button (always on the right) - Matches web version styling */}
+          {/* Send button (always on the right) - Uses Icon primitive with accent background */}
           <TouchableOpacity
             onPress={onSubmitMessage}
             style={{
               width: 32,
               height: 32,
               borderRadius: 16,
-              backgroundColor: 'var(--color-bg-accent)',
+              backgroundColor: theme.colors.accent.DEFAULT,
               justifyContent: 'center',
               alignItems: 'center',
               flexShrink: 0
             }}
             activeOpacity={0.6}
           >
-            {/* Custom send arrow - triangular shape like the SVG */}
-            <View style={{
-              width: 0,
-              height: 0,
-              borderLeftWidth: 8,
-              borderRightWidth: 0,
-              borderTopWidth: 5,
-              borderBottomWidth: 5,
-              borderLeftColor: 'white',
-              borderRightColor: 'transparent',
-              borderTopColor: 'transparent',
-              borderBottomColor: 'transparent',
-              marginLeft: 2 // Slight offset to center visually
-            }} />
+            <Icon name="arrow-right" size="sm" color="white" />
           </TouchableOpacity>
         </View>
       );
     };
 
     return (
-      <View style={{ width: '100%', paddingRight: 24 }}>
+      <View style={{ width: '100%' }}>
         {renderErrorAndReply()}
         {renderFilePreview()}
         {renderInputRow()}

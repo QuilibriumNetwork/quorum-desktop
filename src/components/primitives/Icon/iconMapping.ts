@@ -33,6 +33,7 @@ import {
   faClipboard,
   faEnvelope,
   faCommentDots,
+  faPaperPlane,
   faUser,
   faUsers,
   faUserPlus,
@@ -122,7 +123,7 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   clipboard: faClipboard,
   envelope: faEnvelope,
   'comment-dots': faCommentDots,
-  send: faShare, // Temporary fallback - will be custom component
+  send: faPaperPlane,
 
   // User & Social
   user: faUser,
@@ -233,7 +234,7 @@ export const reactNativeIconMap: Record<IconName, string> = {
   clipboard: 'clipboard',
   envelope: 'envelope',
   'comment-dots': 'comment',
-  send: 'send', // Will use custom implementation
+  send: 'paper-plane',
 
   // User & Social
   user: 'user',

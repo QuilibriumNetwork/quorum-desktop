@@ -3,13 +3,14 @@ import {
   ScrollView, 
   View, 
   Alert,
+  TouchableOpacity,
   // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
   KeyboardAvoidingView,
   // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
   Platform 
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text, Title, Button } from '@/primitives';
+import { Paragraph, Text, Title } from '@/primitives';
 import { useTheme } from '@/primitives/theme';
 import { commonTestStyles } from '@/styles/commonTestStyles';
 import { MessageComposer, MessageComposerRef } from '@/components/message/MessageComposer.native';
@@ -40,21 +41,42 @@ export const MessageComposerTestScreen: React.FC = () => {
   };
 
   const handleShowStickers = () => {
-    Alert.alert('Stickers', 'Sticker picker would open here');
+    console.log('Sticker button clicked in MessageComposer!');
+    const stickers = ['🌟', '🎭', '🎨', '🎪', '🎯', '🎲'];
+    const stickerNames = ['Star', 'Theater', 'Art', 'Circus', 'Target', 'Dice'];
+    
+    Alert.alert(
+      'Sticker Picker',
+      'Choose a sticker to add to your message:',
+      [
+        { text: 'Cancel' },
+        ...stickers.map((sticker, index) => ({
+          text: `${sticker} ${stickerNames[index]}`,
+          onPress: () => setMessage(prev => prev + sticker)
+        }))
+      ]
+    );
   };
 
   const handleFileSelect = () => {
+    console.log('Image upload button clicked in MessageComposer!');
     Alert.alert(
-      'File Picker',
-      'File picker would open here. Simulate adding a file?',
+      'Image Upload',
+      'Select an image to upload:',
       [
         { text: 'Cancel' },
-        { 
-          text: 'Add Demo File', 
-          onPress: () => {
-            // Simulate file data
-            const demoData = new ArrayBuffer(8);
+        { text: 'Camera', onPress: () => {
+            const demoData = new ArrayBuffer(1024);
             setFileData(demoData);
+            console.log('Demo camera image added');
+          }
+        },
+        { 
+          text: 'Gallery', 
+          onPress: () => {
+            const demoData = new ArrayBuffer(2048);
+            setFileData(demoData);
+            console.log('Demo gallery image added');
           }
         }
       ]
@@ -71,29 +93,30 @@ export const MessageComposerTestScreen: React.FC = () => {
     return { displayName: 'Test User' };
   };
 
-  // Test scenarios
+  // Test scenarios for MessageComposer features that are handled internally
   const testScenarios = [
     {
-      title: 'Add Reply',
-      action: () => setInReplyTo({ 
-        content: { senderId: 'user123' }
-      })
+      title: 'Reply',
+      action: () => {
+        console.log('Reply clicked');
+        setInReplyTo({ 
+          content: { 
+            senderId: 'alice_crypto'
+          }
+        });
+      }
     },
     {
-      title: 'Add File Error',
-      action: () => setFileError('File too large (max 10MB)')
-    },
-    {
-      title: 'Add Long Text',
-      action: () => setMessage('This is a very long message that should demonstrate the auto-resize functionality of the textarea component when typing multiple lines of text.')
-    },
-    {
-      title: 'Focus Composer',
-      action: () => composerRef.current?.focus()
+      title: 'File Error',
+      action: () => {
+        console.log('File Error clicked');
+        setFileError('File too large (max 10MB)');
+      }
     },
     {
       title: 'Clear All',
       action: () => {
+        console.log('Clear All clicked');
         setMessage('');
         setFileData(undefined);
         setFileError(null);
@@ -112,80 +135,82 @@ export const MessageComposerTestScreen: React.FC = () => {
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 120 : 80}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 80}
       >
         <ScrollView 
-          contentContainerStyle={commonTestStyles.contentPadding}
+          contentContainerStyle={[commonTestStyles.contentPadding, { flexGrow: 1 }]}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="always"
+          nestedScrollEnabled={true}
         >
-        <View style={commonTestStyles.header}>
-          <View style={{ alignItems: 'center' }}>
-            <Title size="xl" weight="bold" style={{ marginBottom: 4 }}>
-              MessageComposer Test
-            </Title>
-            <Text size="sm" variant="subtle">
-              Test the native message composer with mobile-specific features
+          <View style={commonTestStyles.header}>
+            <View style={{ alignItems: 'center' }}>
+              <Title size="lg" weight="bold">
+                MessageComposer Test
+              </Title>
+              <Paragraph align='center'>
+                Test the native message composer with mobile-specific features
+              </Paragraph>
+            </View>
+          </View>
+
+          {/* Test Controls */}
+          <View style={{ marginBottom: 24 }}>
+            <Text size="lg" weight="semibold" style={{ marginBottom: 12 }}>
+              Test Scenarios:
             </Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {testScenarios.map((scenario, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={scenario.action}
+                  style={{ 
+                    backgroundColor: theme.colors.surface[2],
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    borderRadius: 8,
+                    flex: index < 2 ? 1 : 0,
+                    minWidth: index === 2 ? 100 : undefined
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <Text size="sm" weight="medium" style={{ textAlign: 'center' }}>
+                    {scenario.title}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
 
-        {/* Test Controls */}
-        <View style={{ marginBottom: 24 }}>
-          <Text size="lg" weight="semibold" style={{ marginBottom: 12 }}>
-            Test Scenarios:
-          </Text>
-          <View>
-            {testScenarios.map((scenario, index) => (
-              <Button
-                key={index}
-                type="secondary"
-                onPress={scenario.action}
-                style={{ alignSelf: 'flex-start', marginBottom: 8 }}
-              >
-                {scenario.title}
-              </Button>
-            ))}
+
+          {/* Feature Highlights */}
+          <View style={{ marginBottom: 24 }}>
+            <Text size="lg" weight="semibold" style={{ marginBottom: 12 }}>
+              Mobile Features to Test:
+            </Text>
+            <View>
+              <Text size="sm" style={{ marginBottom: 4 }}>• Emoji/sticker buttons hide when textarea expands</Text>
+              <Text size="sm" style={{ marginBottom: 4 }}>• Right arrow appears to collapse expanded textarea</Text>
+              <Text size="sm" style={{ marginBottom: 4 }}>• KeyboardAvoidingView for mobile typing</Text>
+              <Text size="sm" style={{ marginBottom: 4 }}>• Touch-optimized button sizes (32px)</Text>
+              <Text size="sm">• Auto-resize textarea for multiline messages</Text>
+            </View>
           </View>
-        </View>
 
-        {/* Current State Display */}
-        <View style={{ 
-          backgroundColor: theme.colors.bg.card,
-          padding: 16,
-          borderRadius: 8,
-          marginBottom: 24
-        }}>
-          <Text size="md" weight="semibold" style={{ marginBottom: 8 }}>
-            Current State:
-          </Text>
-          <Text size="sm">Message length: {message.length}</Text>
-          <Text size="sm">Has file: {fileData ? 'Yes' : 'No'}</Text>
-          <Text size="sm">Has reply: {inReplyTo ? 'Yes' : 'No'}</Text>
-          <Text size="sm">Has error: {fileError ? 'Yes' : 'No'}</Text>
-        </View>
-
-        {/* Feature Highlights */}
-        <View style={{ marginBottom: 24 }}>
-          <Text size="lg" weight="semibold" style={{ marginBottom: 12 }}>
-            Mobile Features to Test:
-          </Text>
-          <View>
-            <Text size="sm" style={{ marginBottom: 4 }}>• Emoji/sticker buttons hide when textarea expands</Text>
-            <Text size="sm" style={{ marginBottom: 4 }}>• Right arrow appears to collapse expanded textarea</Text>
-            <Text size="sm" style={{ marginBottom: 4 }}>• KeyboardAvoidingView for mobile typing</Text>
-            <Text size="sm" style={{ marginBottom: 4 }}>• Touch-optimized button sizes (32px)</Text>
-            <Text size="sm">• Auto-resize textarea for multiline messages</Text>
-          </View>
-        </View>
-
-        {/* MessageComposer Component */}
+          {/* Spacer to push MessageComposer to bottom */}
+          <View style={{ flex: 1 }} />
+        </ScrollView>
+        
+        {/* MessageComposer Component - Fixed at bottom */}
         <View style={{
           backgroundColor: theme.colors.bg.chat,
           borderRadius: 12,
-          padding: 16,
-          minHeight: 120
+          paddingVertical: 16,
+          paddingHorizontal: 8,
+          marginHorizontal: 16,
+          marginBottom: 16
         }}>
-          <Text size="md" weight="semibold" style={{ marginBottom: 12 }}>
+          <Text size="md" weight="semibold" style={{ marginBottom: 12, marginHorizontal: 8 }}>
             MessageComposer:
           </Text>
           
@@ -193,7 +218,7 @@ export const MessageComposerTestScreen: React.FC = () => {
             ref={composerRef}
             value={message}
             onChange={setMessage}
-            placeholder="Type your message..."
+            placeholder="Message..."
             onFileSelect={handleFileSelect}
             fileData={fileData}
             clearFile={clearFile}
@@ -206,7 +231,6 @@ export const MessageComposerTestScreen: React.FC = () => {
             setInReplyTo={setInReplyTo}
           />
         </View>
-        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

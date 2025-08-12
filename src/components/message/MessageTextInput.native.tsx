@@ -18,7 +18,6 @@ export const MessageTextInput = forwardRef<TextInput, MessageTextInputProps>(
   ({ value, onChange, onFocus, onBlur, placeholder, minRows = 1, maxRows = 5, style }, ref) => {
     const theme = useTheme();
     const [height, setHeight] = useState(32); // Start with compact single-line height
-    const [isFocused, setIsFocused] = useState(false);
     const textInputRef = useRef<TextInput>(null);
 
     useImperativeHandle(ref, () => textInputRef.current!);
@@ -26,7 +25,7 @@ export const MessageTextInput = forwardRef<TextInput, MessageTextInputProps>(
     const handleContentSizeChange = (event: any) => {
       const { height: contentHeight } = event.nativeEvent.contentSize;
       const lineHeight = 18;
-      const basePadding = 12; // 6px top + 6px bottom - compact
+      const basePadding = 4; // 2px top + 2px bottom - minimal padding
       
       // Calculate number of lines
       const lines = Math.max(minRows, Math.ceil((contentHeight) / lineHeight));
@@ -42,14 +41,8 @@ export const MessageTextInput = forwardRef<TextInput, MessageTextInputProps>(
         ref={textInputRef}
         value={value}
         onChangeText={onChange}
-        onFocus={() => {
-          setIsFocused(true);
-          onFocus?.();
-        }}
-        onBlur={() => {
-          setIsFocused(false);
-          onBlur?.();
-        }}
+        onFocus={onFocus}
+        onBlur={onBlur}
         placeholder={placeholder}
         placeholderTextColor={theme.colors.field.placeholder}
         onContentSizeChange={handleContentSizeChange}
@@ -60,13 +53,12 @@ export const MessageTextInput = forwardRef<TextInput, MessageTextInputProps>(
         style={[
           {
             height,
-            paddingVertical: 6,
+            paddingVertical: 2,
             paddingHorizontal: 8,
             fontSize: 15,
             color: theme.colors.field.text,
             backgroundColor: theme.colors.surface[0],
-            borderWidth: 1,
-            borderColor: isFocused ? theme.colors.field.borderFocus : 'transparent',
+            borderWidth: 0,
             borderRadius: 8,
             textAlignVertical: (value && value.includes('\n')) ? 'top' : 'center', // Center for single line, top for multiline
             includeFontPadding: false, // Remove extra font padding on Android
