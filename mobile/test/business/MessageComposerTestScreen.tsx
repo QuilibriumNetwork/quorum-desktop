@@ -58,32 +58,22 @@ export const MessageComposerTestScreen: React.FC = () => {
     );
   };
 
-  const handleFileSelect = () => {
-    console.log('Image upload button clicked in MessageComposer!');
-    Alert.alert(
-      'Image Upload',
-      'Select an image to upload:',
-      [
-        { text: 'Cancel' },
-        { text: 'Camera', onPress: () => {
-            const demoData = new ArrayBuffer(1024);
-            setFileData(demoData);
-            console.log('Demo camera image added');
-          }
-        },
-        { 
-          text: 'Gallery', 
-          onPress: () => {
-            const demoData = new ArrayBuffer(2048);
-            setFileData(demoData);
-            console.log('Demo gallery image added');
-          }
-        }
-      ]
-    );
+  // Handle real file selection from MessageComposer
+  const handleFileSelect = (fileData: ArrayBuffer, fileType: string) => {
+    console.log('Real file selected:', { size: fileData.byteLength, type: fileType });
+    setFileData(fileData);
+    setFileError(null);
+  };
+
+  // Handle file upload errors
+  const handleFileError = (error: string) => {
+    console.log('File upload error:', error);
+    setFileError(error);
+    setFileData(undefined);
   };
 
   const clearFile = () => {
+    console.log('clearFile called - clearing file data');
     setFileData(undefined);
     setFileError(null);
   };
@@ -222,6 +212,7 @@ export const MessageComposerTestScreen: React.FC = () => {
             onFileSelect={handleFileSelect}
             fileData={fileData}
             clearFile={clearFile}
+            onFileError={handleFileError}
             onSubmitMessage={handleSubmitMessage}
             onShowStickers={handleShowStickers}
             hasStickers={true}

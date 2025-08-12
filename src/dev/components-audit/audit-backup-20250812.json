@@ -1375,36 +1375,20 @@
       "dependency_level": 0,
       "complexity_category": "basic",
       "updated": "2025-08-12"
-    },
-    "MessageTextInput": {
-      "name": "MessageTextInput",
-      "path": "src/components/message/MessageTextInput.native.tsx",
-      "description": "Native text input component optimized for messaging with auto-resizing and chat-specific UX",
-      "category": "platform_specific",
-      "used": "yes",
-      "primitives": "todo",
-      "logic_extraction": "todo",
-      "hooks": [],
-      "native": "ready",
-      "notes": "Added via script",
-      "dependencies": [],
-      "dependency_level": 0,
-      "complexity_category": "basic",
-      "updated": "2025-08-12"
     }
   },
   "stats": {
-    "total": 65,
+    "total": 64,
     "primitives_done": 36,
     "logic_extraction_done": 62,
-    "native_ready": 5,
+    "native_ready": 4,
     "native_done": 10,
     "by_category": {
-      "platform_specific": 50,
+      "platform_specific": 49,
       "shared": 15
     },
     "by_usage": {
-      "yes": 60,
+      "yes": 59,
       "no": 3,
       "unknown": 1,
       "suspended": 1
@@ -1425,7 +1409,7 @@
   },
   "dependency_hierarchy": {
     "basic": {
-      "count": 13,
+      "count": 12,
       "components": [
         "SidebarProvider.tsx",
         "Elements.tsx",
@@ -1438,8 +1422,7 @@
         "ThemeProvider.tsx",
         "ResponsiveLayoutProvider.tsx",
         "RedirectToDefaultSpace.tsx",
-        "MessageComposer",
-        "MessageTextInput"
+        "MessageComposer"
       ]
     },
     "simple": {

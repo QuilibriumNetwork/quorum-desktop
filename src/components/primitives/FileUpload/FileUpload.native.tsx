@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, Alert } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as ImagePicker from 'expo-image-picker';
+import * as Haptics from 'expo-haptics';
 import { FileUploadNativeProps, FileUploadFile } from './types';
 import { t } from '@lingui/core/macro';
 
@@ -136,6 +137,9 @@ export const FileUpload: React.FC<FileUploadNativeProps> = ({
 
   const handlePress = () => {
     if (disabled) return;
+
+    // Haptic feedback when upload button is tapped
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     if (isImageUpload && showCameraOption) {
       // Show options for images: Camera, Library, Cancel

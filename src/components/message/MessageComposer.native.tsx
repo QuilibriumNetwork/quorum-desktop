@@ -7,10 +7,12 @@ import {
   // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
   Platform 
 } from 'react-native';
-import { Button, Icon, Text } from '../primitives';
+import { Icon, Text, FileUpload } from '../primitives';
 import { useTheme } from '../primitives/theme';
 import { MessageTextInput } from './MessageTextInput.native';
 import { i18n } from '@lingui/core';
+import { Image } from 'expo-image';
+import * as Haptics from 'expo-haptics';
 
 interface MessageComposerProps {
   // Textarea props
@@ -19,9 +21,10 @@ interface MessageComposerProps {
   placeholder: string;
 
   // File upload props - adapted for mobile
-  onFileSelect?: () => void; // Native file picker instead of dropzone
   fileData?: ArrayBuffer;
   clearFile: () => void;
+  onFileError?: (error: string) => void;
+  onFileSelect?: (fileData: ArrayBuffer, fileType: string) => void;
 
   // Actions
   onSubmitMessage: () => void;
@@ -48,7 +51,6 @@ export const MessageComposer = forwardRef<
       value,
       onChange,
       placeholder,
-      onFileSelect,
       fileData,
       clearFile,
       onSubmitMessage,
@@ -58,12 +60,61 @@ export const MessageComposer = forwardRef<
       fileError,
       mapSenderToUser,
       setInReplyTo,
+      onFileError,
+      onFileSelect,
     },
     ref
   ) => {
     const theme = useTheme();
     const textareaRef = useRef<any>(null);
     const [isExpanded, setIsExpanded] = useState(false);
+
+    // File upload configuration
+    const maxImageSize = 2 * 1024 * 1024; // 2MB
+    const acceptedFileTypes = {
+      'image/png': ['.png'],
+      'image/jpeg': ['.jpg', '.jpeg'],
+      'image/gif': ['.gif']
+    };
+
+    // Convert data URL to ArrayBuffer (for compatibility with existing interface)
+    const dataUrlToArrayBuffer = (dataUrl: string): ArrayBuffer => {
+      const base64 = dataUrl.split(',')[1];
+      const binaryString = atob(base64);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      return bytes.buffer;
+    };
+
+    // Get data URL from ArrayBuffer (for image preview)
+    const arrayBufferToDataUrl = (buffer: ArrayBuffer, mimeType: string = 'image/jpeg'): string => {
+      const bytes = new Uint8Array(buffer);
+      const binary = bytes.reduce((acc, byte) => acc + String.fromCharCode(byte), '');
+      const base64 = btoa(binary);
+      return `data:${mimeType};base64,${base64}`;
+    };
+
+    // Handle file selection from FileUpload
+    const handleFilesSelected = (files: any[]) => {
+      if (files.length > 0) {
+        const file = files[0];
+        try {
+          // Convert data URL to ArrayBuffer for compatibility
+          const arrayBuffer = dataUrlToArrayBuffer(file.uri);
+          // Pass to parent component
+          onFileSelect?.(arrayBuffer, file.type);
+        } catch (error) {
+          onFileError?.(i18n._('Failed to process image'));
+        }
+      }
+    };
+
+    // Handle file upload errors
+    const handleFileError = (error: Error) => {
+      onFileError?.(error.message);
+    };
 
     useImperativeHandle(ref, () => ({
       focus: () => {
@@ -87,40 +138,42 @@ export const MessageComposer = forwardRef<
       return (
         <View style={{ marginHorizontal: 12, marginTop: 8 }}>
           <View style={{
-            padding: 8,
-            borderRadius: 8,
-            backgroundColor: theme.colors.surface[3],
             alignSelf: 'flex-start',
             position: 'relative'
           }}>
-            <Button
+            {/* Image preview with proper ArrayBuffer to data URL conversion */}
+            <Image
+              style={{
+                width: 140,
+                height: 140,
+                borderRadius: 8,
+              }}
+              source={{ uri: arrayBufferToDataUrl(fileData) }}
+              contentFit="cover"
+            />
+            {/* Close button positioned inside the top-right corner of the image */}
+            <TouchableOpacity
+              onPress={() => {
+                // Haptic feedback for delete action
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                clearFile();
+              }}
               style={{
                 position: 'absolute',
-                top: 4,
-                right: 4,
-                padding: 4,
-                paddingHorizontal: 8,
-                backgroundColor: theme.colors.surface[7],
-                borderRadius: 20,
+                top: 8,
+                right: 8,
+                width: 24,
+                height: 24,
+                borderRadius: 12,
+                backgroundColor: theme.colors.surface[6],
+                justifyContent: 'center',
+                alignItems: 'center',
                 zIndex: 1
               }}
-              type="subtle"
-              size="small"
-              onPress={clearFile}
+              activeOpacity={0.7}
             >
-              <Icon name="x" size="xs" />
-            </Button>
-            {/* TODO: Implement proper image preview for React Native when real SDK is available */}
-            <View style={{
-              width: 140,
-              height: 140,
-              backgroundColor: theme.colors.surface[5],
-              borderRadius: 4,
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}>
-              <Icon name="image" size="lg" color={theme.colors.text.subtle} />
-            </View>
+              <Icon name="x" size="xs" color={theme.colors.text.main} />
+            </TouchableOpacity>
           </View>
         </View>
       );
@@ -196,25 +249,38 @@ export const MessageComposer = forwardRef<
           {/* Left side - emoji/sticker picker buttons (hidden when expanded) */}
           {!isExpanded && (
             <>
-              <TouchableOpacity
-                onPress={onFileSelect}
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 16,
-                  backgroundColor: theme.colors.surface[5],
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginRight: 8
-                }}
-                activeOpacity={0.7}
+              <FileUpload
+                onFilesSelected={handleFilesSelected}
+                onError={handleFileError}
+                accept={acceptedFileTypes}
+                maxSize={maxImageSize}
+                multiple={false}
+                showCameraOption={true}
+                imageQuality={0.8}
+                allowsEditing={true}
               >
-                <Icon name="plus" size="sm" color={theme.colors.text.main} />
-              </TouchableOpacity>
+                <View
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 16,
+                    backgroundColor: theme.colors.surface[5],
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: 8
+                  }}
+                >
+                  <Icon name="plus" size="sm" color={theme.colors.text.main} />
+                </View>
+              </FileUpload>
 
               {hasStickers && (
                 <TouchableOpacity
-                  onPress={onShowStickers}
+                  onPress={() => {
+                    // Haptic feedback for sticker button
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                    onShowStickers();
+                  }}
                   style={{
                     width: 32,
                     height: 32,
