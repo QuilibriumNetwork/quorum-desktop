@@ -1,11 +1,11 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
-import { 
-  View, 
+import {
+  View,
   TouchableOpacity,
   // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
   KeyboardAvoidingView,
   // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
-  Platform 
+  Platform,
 } from 'react-native';
 import { Icon, Text, FileUpload } from '../primitives';
 import { useTheme } from '../primitives/theme';
@@ -13,6 +13,7 @@ import { MessageTextInput } from './MessageTextInput.native';
 import { i18n } from '@lingui/core';
 import { Image } from 'expo-image';
 import * as Haptics from 'expo-haptics';
+import Svg, { Path } from 'react-native-svg';
 
 interface MessageComposerProps {
   // Textarea props
@@ -41,6 +42,24 @@ interface MessageComposerProps {
 export interface MessageComposerRef {
   focus: () => void;
 }
+
+// Custom SendIcon component using the provided SVG
+const SendIcon = ({
+  size = 20,
+  color = 'white',
+}: {
+  size?: number;
+  color?: string;
+}) => {
+  // Calculate proportional height based on the 5:4 aspect ratio (100:80)
+  const height = (size * 80) / 100;
+
+  return (
+    <Svg width={size} height={height} viewBox="0 0 100 80">
+      <Path d="M0 80L25 40.4181L0 0L100 40.4181L0 80Z" fill={color} />
+    </Svg>
+  );
+};
 
 export const MessageComposer = forwardRef<
   MessageComposerRef,
@@ -74,7 +93,7 @@ export const MessageComposer = forwardRef<
     const acceptedFileTypes = {
       'image/png': ['.png'],
       'image/jpeg': ['.jpg', '.jpeg'],
-      'image/gif': ['.gif']
+      'image/gif': ['.gif'],
     };
 
     // Convert data URL to ArrayBuffer (for compatibility with existing interface)
@@ -89,9 +108,15 @@ export const MessageComposer = forwardRef<
     };
 
     // Get data URL from ArrayBuffer (for image preview)
-    const arrayBufferToDataUrl = (buffer: ArrayBuffer, mimeType: string = 'image/jpeg'): string => {
+    const arrayBufferToDataUrl = (
+      buffer: ArrayBuffer,
+      mimeType: string = 'image/jpeg'
+    ): string => {
       const bytes = new Uint8Array(buffer);
-      const binary = bytes.reduce((acc, byte) => acc + String.fromCharCode(byte), '');
+      const binary = bytes.reduce(
+        (acc, byte) => acc + String.fromCharCode(byte),
+        ''
+      );
       const base64 = btoa(binary);
       return `data:${mimeType};base64,${base64}`;
     };
@@ -129,7 +154,8 @@ export const MessageComposer = forwardRef<
     const handleCollapse = () => {
       console.log('Collapse button clicked');
       setIsExpanded(false);
-      textareaRef.current?.blur();
+      // Keep keyboard open - don't blur the input
+      // textareaRef.current?.blur();
     };
 
     const renderFilePreview = () => {
@@ -137,10 +163,12 @@ export const MessageComposer = forwardRef<
 
       return (
         <View style={{ marginHorizontal: 12, marginTop: 8 }}>
-          <View style={{
-            alignSelf: 'flex-start',
-            position: 'relative'
-          }}>
+          <View
+            style={{
+              alignSelf: 'flex-start',
+              position: 'relative',
+            }}
+          >
             {/* Image preview with proper ArrayBuffer to data URL conversion */}
             <Image
               style={{
@@ -168,7 +196,7 @@ export const MessageComposer = forwardRef<
                 backgroundColor: theme.colors.surface[6],
                 justifyContent: 'center',
                 alignItems: 'center',
-                zIndex: 1
+                zIndex: 1,
               }}
               activeOpacity={0.7}
             >
@@ -185,8 +213,8 @@ export const MessageComposer = forwardRef<
       return (
         <View style={{ width: '100%', marginTop: 8, marginBottom: -8 }}>
           {fileError && (
-            <Text 
-              size="sm" 
+            <Text
+              size="sm"
               color={theme.colors.text.danger}
               style={{ marginLeft: 4, marginTop: 12, marginBottom: 4 }}
             >
@@ -203,7 +231,7 @@ export const MessageComposer = forwardRef<
                 backgroundColor: theme.colors.surface[4],
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
               }}
             >
               <Text size="xs" color={theme.colors.text.subtle}>
@@ -215,15 +243,11 @@ export const MessageComposer = forwardRef<
                 onPress={() => setInReplyTo?.(undefined)}
                 style={{
                   padding: 4,
-                  borderRadius: 4
+                  borderRadius: 4,
                 }}
                 activeOpacity={0.7}
               >
-                <Icon
-                  name="times"
-                  size="sm"
-                  color={theme.colors.text.subtle}
-                />
+                <Icon name="times" size="sm" color={theme.colors.text.subtle} />
               </TouchableOpacity>
             </View>
           )}
@@ -239,7 +263,8 @@ export const MessageComposer = forwardRef<
             flexDirection: 'row',
             alignItems: 'center',
             marginVertical: 8,
-            padding: 8,
+            paddingVertical: 4,
+            paddingHorizontal: 8, 
             borderRadius: 12,
             borderTopLeftRadius: inReplyTo ? 0 : 12,
             borderTopRightRadius: inReplyTo ? 0 : 12,
@@ -267,7 +292,7 @@ export const MessageComposer = forwardRef<
                     backgroundColor: theme.colors.surface[5],
                     justifyContent: 'center',
                     alignItems: 'center',
-                    marginRight: 8
+                    marginRight: 8,
                   }}
                 >
                   <Icon name="plus" size="sm" color={theme.colors.text.main} />
@@ -288,7 +313,7 @@ export const MessageComposer = forwardRef<
                     backgroundColor: theme.colors.surface[5],
                     justifyContent: 'center',
                     alignItems: 'center',
-                    marginRight: 8
+                    marginRight: 8,
                   }}
                   activeOpacity={0.7}
                 >
@@ -310,7 +335,11 @@ export const MessageComposer = forwardRef<
               }}
               activeOpacity={0.7}
             >
-              <Icon name="chevron-right" size="sm" color={theme.colors.text.muted} />
+              <Icon
+                name="chevron-right"
+                size="sm"
+                color={theme.colors.text.muted}
+              />
             </TouchableOpacity>
           )}
 
@@ -325,11 +354,11 @@ export const MessageComposer = forwardRef<
             maxRows={8}
             style={{
               flex: 1,
-              marginRight: 8
+              marginRight: 8,
             }}
           />
 
-          {/* Send button (always on the right) - Uses Icon primitive with accent background */}
+          {/* Send button (always on the right) - Uses custom SendIcon */}
           <TouchableOpacity
             onPress={onSubmitMessage}
             style={{
@@ -339,11 +368,11 @@ export const MessageComposer = forwardRef<
               backgroundColor: theme.colors.accent.DEFAULT,
               justifyContent: 'center',
               alignItems: 'center',
-              flexShrink: 0
+              flexShrink: 0,
             }}
             activeOpacity={0.6}
           >
-            <Icon name="arrow-right" size="sm" color="white" />
+            <SendIcon size={18} color="white" />
           </TouchableOpacity>
         </View>
       );
