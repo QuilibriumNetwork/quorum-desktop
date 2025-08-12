@@ -86,7 +86,7 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
       id: 'modals',
       title: 'Modal Components',
       description: 'Cross-platform modal testing with bottom sheet and swipe gestures',
-      icon: 'square',
+      icon: 'compress-alt',
       status: 'ready',
       onPress: () => onSelectFeature('modals'),
     },
@@ -105,6 +105,14 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
       icon: 'search',
       status: 'planned',
       onPress: () => handlePlannedFeature('Global Search'),
+    },
+    {
+      id: 'messagecomposer',
+      title: 'Message Composer',
+      description: 'Native message composer with mobile-specific features and layout',
+      icon: 'edit',
+      status: 'ready',
+      onPress: () => onSelectFeature('messagecomposer'),
     },
   ];
 

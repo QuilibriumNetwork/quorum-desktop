@@ -42,6 +42,7 @@ export type IconName =
   | 'clipboard'
   | 'envelope'
   | 'comment-dots'
+  | 'send'
 
   // User & Social
   | 'user'

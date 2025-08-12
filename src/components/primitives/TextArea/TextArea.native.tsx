@@ -65,7 +65,7 @@ export const TextArea = forwardRef<TextInput, TextAreaNativeProps>(
       return colors.field.bg;
     };
 
-    // Auto-resize functionality for React Native
+    // Auto-resize functionality for React Native - improved for messaging apps
     const handleContentSizeChange = (event: any) => {
       if (autoResize) {
         const { height } = event.nativeEvent.contentSize;
@@ -87,9 +87,14 @@ export const TextArea = forwardRef<TextInput, TextAreaNativeProps>(
       const baseStyles = [styles.textArea];
 
       // Calculate height based on rows if not auto-resizing
-      const calculatedHeight = autoResize
-        ? textAreaHeight
-        : Math.max(rows || 3, 1) * 20 + 20; // 20px line height + padding
+      let calculatedHeight;
+      if (autoResize) {
+        calculatedHeight = textAreaHeight;
+      } else {
+        const rowCount = Math.max(rows || 3, 1);
+        // For single row, use input field height
+        calculatedHeight = rowCount === 1 ? 32 : rowCount * 20 + 20;
+      }
 
       if (variant === 'onboarding') {
         return [
@@ -113,6 +118,8 @@ export const TextArea = forwardRef<TextInput, TextAreaNativeProps>(
           color: colors.field.text,
           borderColor: getBorderColor(),
           height: calculatedHeight,
+          // Make single rows look like input fields
+          ...(rows === 1 && { paddingVertical: 6 })
         },
         error && styles.textAreaError,
         disabled && styles.textAreaDisabled,
@@ -153,7 +160,9 @@ export const TextArea = forwardRef<TextInput, TextAreaNativeProps>(
           autoFocus={autoFocus}
           testID={testID}
           accessibilityLabel={accessibilityLabel}
-          textAlignVertical="top" // Start text at top for multiline
+          textAlignVertical={rows === 1 && !value ? "center" : "top"} // Center for single empty row, top for multiline
+          numberOfLines={rows === 1 ? 1 : undefined} // Force single line for single-row textareas
+          ellipsizeMode={rows === 1 ? "tail" : undefined} // Truncate placeholder if too long for single row
         />
         {error && errorMessage && (
           <Text

@@ -40,11 +40,12 @@ import {
   MaintenanceTestScreen,
   ClickToCopyTestScreen,
   ModalsTestScreen,
+  MessageComposerTestScreen,
 } from '@/test/business';
 
 type Section = 'main' | 'primitives' | 'business';
 type PrimitiveScreen = 'list' | 'basic' | 'text' | 'input' | 'textarea' | 'button' | 'switch' | 'modal' | 'select' | 'colorswatch' | 'radiogroup' | 'tooltip' | 'icon' | 'fileupload';
-type BusinessScreen = 'list' | 'onboarding' | 'auth' | 'login' | 'maintenance' | 'copy' | 'modals' | 'spaces' | 'channel' | 'direct' | 'settings' | 'search';
+type BusinessScreen = 'list' | 'onboarding' | 'auth' | 'login' | 'maintenance' | 'copy' | 'modals' | 'spaces' | 'channel' | 'direct' | 'settings' | 'search' | 'messagecomposer';
 
 // Themed App Content (must be inside ThemeProvider)
 function ThemedAppContent() {
@@ -168,6 +169,8 @@ function ThemedAppContent() {
           return <ClickToCopyTestScreen />;
         case 'modals':
           return <ModalsTestScreen onGoBack={() => setCurrentBusinessScreen('list')} />;
+        case 'messagecomposer':
+          return <MessageComposerTestScreen />;
         // Future screens will be added here
         default:
           return <BusinessMenuScreen onSelectFeature={handleSelectBusiness} />;

@@ -204,6 +204,34 @@ export const TextAreaTestScreen: React.FC = () => {
           </FlexColumn>
         </View>
 
+        {/* Message Input Style */}
+        <View style={themedStyles.sectionCompact}>
+          <FlexColumn gap="md">
+            <Title size="sm">Message Input Style (Single Row + Auto-Grow)</Title>
+
+            <FlexColumn gap="xs">
+              <Label>Message Composer Style:</Label>
+              <TextArea
+                placeholder="Type your message..."
+                autoResize={true}
+                rows={1}
+                minRows={1}
+                maxRows={5}
+                variant="filled"
+                noFocusStyle={true}
+                multiline={true}
+                style={{
+                  backgroundColor: 'transparent',
+                  borderWidth: 0
+                }}
+              />
+              <Text size="sm" variant="subtle">
+                Starts as single row, expands when typing multiple lines
+              </Text>
+            </FlexColumn>
+          </FlexColumn>
+        </View>
+
         {/* Mobile Notes */}
         <View style={[commonTestStyles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
           <FlexColumn gap="sm">
