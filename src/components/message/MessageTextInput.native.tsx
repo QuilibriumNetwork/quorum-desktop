@@ -1,4 +1,5 @@
 import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react';
+// @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
 import { TextInput } from 'react-native';
 import { useTheme } from '../primitives/theme';
 

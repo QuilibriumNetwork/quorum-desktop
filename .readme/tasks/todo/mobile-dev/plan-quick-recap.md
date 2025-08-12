@@ -26,6 +26,9 @@
 
 ## Phase 3: Mobile App Finalization
 
-- [ ] Mobile-specific features (push notifications, etc.)
-- [ ] Performance optimization and testing
+- [ ] Move from Expo Go to Expo Dev
+- [ ] Integrate Passkey SDK and special/complex features ((push notifications, etc.))
+- [ ] Performance optimization and extensive testing of all components ((android/ios))
+- [ ] Fix all issues
+- [ ] Final test rounds on production builds (android/ios)
 - [ ] App store preparation and deployment
