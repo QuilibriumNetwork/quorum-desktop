@@ -108,7 +108,6 @@ const UserSettingsModal: React.FunctionComponent<{
   };
 
   React.useEffect(() => {
-    console.log('Language changed to:', language);
     dynamicActivate(language);
     setLanguageChanged(true);
     saveUserLocale(language);

@@ -321,7 +321,6 @@ const Channel: React.FC<ChannelProps> = ({
   }, [space]);
 
   const sendSticker = async (stickerId: string) => {
-    console.log('Sending sticker:', stickerId);
     setIsSubmitting(true);
     submitChannelMessage(
       spaceId,
@@ -701,9 +700,9 @@ const Channel: React.FC<ChannelProps> = ({
                         sendSticker(s.id);
                       }}
                     >
-                      <img 
-                        src={s.imgUrl} 
-                        className="max-w-full max-h-full object-contain rounded-md" 
+                      <img
+                        src={s.imgUrl}
+                        className="max-w-full max-h-full object-contain rounded-md"
                         alt="sticker"
                       />
                     </div>

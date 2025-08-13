@@ -855,20 +855,11 @@ export class MessageDB {
   async initializeSearchIndices(): Promise<void> {
     if (this.indexInitialized) return;
 
-    console.log('MessageDB: Initializing search indices...');
     await this.init();
 
     // Get all spaces and conversations to build indices
     const spaces = await this.getSpaces();
     const dmConversations = await this.getConversations({ type: 'direct' });
-
-    console.log(
-      'MessageDB: Found',
-      spaces.length,
-      'spaces and',
-      dmConversations.conversations.length,
-      'DM conversations'
-    );
 
     // Initialize space indices
     for (const space of spaces) {
@@ -877,10 +868,6 @@ export class MessageDB {
         spaceId: space.spaceId,
       });
 
-      console.log(
-        `MessageDB: Building index for space ${space.spaceId} with ${messages.length} messages`
-      );
-
       const searchIndex = this.createSearchIndex();
       const searchableMessages = messages.map((msg) =>
         this.messageToSearchable(msg)
@@ -888,9 +875,6 @@ export class MessageDB {
       searchIndex.addAll(searchableMessages);
 
       this.searchIndices.set(indexKey, searchIndex);
-      console.log(
-        `MessageDB: Created index ${indexKey} with ${searchableMessages.length} searchable messages`
-      );
     }
 
     // Initialize DM indices
@@ -901,10 +885,6 @@ export class MessageDB {
         conversation.conversationId
       );
 
-      console.log(
-        `MessageDB: Building index for DM ${conversation.conversationId} with ${messages.length} messages`
-      );
-
       const searchIndex = this.createSearchIndex();
       const searchableMessages = messages.map((msg) =>
         this.messageToSearchable(msg)
@@ -912,15 +892,8 @@ export class MessageDB {
       searchIndex.addAll(searchableMessages);
 
       this.searchIndices.set(indexKey, searchIndex);
-      console.log(
-        `MessageDB: Created index ${indexKey} with ${searchableMessages.length} searchable messages`
-      );
     }
 
-    console.log(
-      'MessageDB: Search indices initialized. Total indices:',
-      this.searchIndices.size
-    );
     this.indexInitialized = true;
   }
 

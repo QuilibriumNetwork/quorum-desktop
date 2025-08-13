@@ -5163,7 +5163,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       config.timestamp = ts;
 
       if (config.allowSync) {
-        console.log('syncing config', config);
         const userKey = keyset.userKeyset;
         const derived = await crypto.subtle.digest(
           'SHA-512',

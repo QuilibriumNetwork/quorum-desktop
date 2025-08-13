@@ -42,7 +42,6 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> =({
       try {
         // For DMs, conversationId format is spaceId/channelId
         const conversationId = `${message.content.senderId}/${message.content.senderId}`;
-        console.log('conversationId', conversationId);
         const { conversation } = await messageDB.getConversation({
           conversationId
         });
