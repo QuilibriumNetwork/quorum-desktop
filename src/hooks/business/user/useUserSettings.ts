@@ -126,7 +126,7 @@ export const useUserSettings = (
       completedOnboarding: true,
     });
 
-    // Update user profile in message DB
+    // Update user profile in message DB and persist to UserConfig
     updateUserProfile(
       displayName,
       profileImageUrl ?? DefaultImages.UNKNOWN_USER,
@@ -137,6 +137,9 @@ export const useUserSettings = (
     await saveConfig({
       config: {
         ...existingConfig.current!,
+        address: currentPasskeyInfo.address,
+        name: displayName,
+        profile_image: profileImageUrl ?? DefaultImages.UNKNOWN_USER,
         allowSync,
         nonRepudiable: nonRepudiable,
       },

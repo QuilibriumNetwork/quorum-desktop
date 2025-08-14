@@ -1,7 +1,10 @@
 import { useState, useCallback } from 'react';
-import { DefaultImages } from '../../../utils';
+import { DefaultImages } from '../../../utils'
+import { passkey } from '@quilibrium/quilibrium-js-sdk-channels';
+import { useMessageDB } from '../../../components/context/MessageDB';
+import { useQuorumApiClient } from '../../../components/context/QuorumApiContext'
 
-export type OnboardingStep = 'key-backup' | 'display-name' | 'profile-photo' | 'complete';
+export type OnboardingStep = 'loading' | 'key-backup' | 'display-name' | 'profile-photo' | 'complete';
 
 export interface PasskeyInfo {
   credentialId: string;
@@ -15,6 +18,7 @@ export interface PasskeyInfo {
 export interface OnboardingAdapter {
   currentPasskeyInfo: PasskeyInfo | null;
   updateStoredPasskey: (credentialId: string, updates: Partial<PasskeyInfo>) => void;
+  exportKey: (address: string) => Promise<string>;
 }
 
 /**
@@ -22,14 +26,18 @@ export interface OnboardingAdapter {
  * Platform-agnostic implementation that works with adapters
  */
 export const useOnboardingFlowLogic = (adapter: OnboardingAdapter) => {
-  const { currentPasskeyInfo, updateStoredPasskey } = adapter;
+  const { currentPasskeyInfo, updateStoredPasskey, exportKey } = adapter;
   const [exported, setExported] = useState(false);
   const [displayName, setDisplayName] = useState(
     currentPasskeyInfo?.displayName ?? ''
   );
+  const [isFetchingUser, setIsFetchingUser] = useState(false);
+  const { getConfig } = useMessageDB();
+  const { apiClient } = useQuorumApiClient();
 
   // State machine - determine current step based on completion state
   const getCurrentStep = useCallback((): OnboardingStep => {
+    if (isFetchingUser) return 'loading';
     if (!exported) return 'key-backup';
     if (exported && !currentPasskeyInfo?.displayName) return 'display-name';
     if (exported && currentPasskeyInfo?.displayName && !currentPasskeyInfo?.pfpUrl) {
@@ -88,10 +96,87 @@ export const useOnboardingFlowLogic = (adapter: OnboardingAdapter) => {
     updateUserProfile({ pfpUrl: finalPfpUrl });
   }, [updateUserProfile]);
 
+  const fetchUser = useCallback(async (
+    address: string,
+    setUser?: (user: {
+      displayName: string;
+      state: string;
+      status: string;
+      userIcon: string;
+      address: string;
+    }) => void
+  ) => {
+
+    if (!address) return;
+
+    setIsFetchingUser(true);
+    try {
+
+      await apiClient.getUser(address);
+      // user is already registered
+      const user_key = new Uint8Array(
+        Buffer.from(
+          await exportKey(address),
+          'hex'
+        )
+      );
+
+      const passkeyData = await passkey.loadKeyDecryptData(2);
+      const envelope = JSON.parse(
+        Buffer.from(passkeyData).toString('utf-8')
+      );
+      const key = await passkey.createKeyFromBuffer(
+        user_key as unknown as ArrayBuffer
+      );
+      const inner = JSON.parse(
+        Buffer.from(
+          await passkey.decrypt(
+            new Uint8Array(envelope.ciphertext),
+            new Uint8Array(envelope.iv),
+            key
+          )
+        ).toString('utf-8')
+      );
+
+      const config = await getConfig({
+        address: address,
+        userKey: inner.identity,
+      });
+
+      setIsFetchingUser(false);
+      // If the remote config contains saved user info, update local
+      const hasSavedProfile = Boolean(config && config.name && config.name.trim().length > 0);
+      if (hasSavedProfile) {
+        setDisplayName(config!.name!);
+        updateUserProfile({
+          displayName: config!.name!,
+          pfpUrl: config!.profile_image ?? DefaultImages.UNKNOWN_USER,
+        });
+        if (setUser) {
+          setUser({
+            displayName: config!.name!,
+            state: 'online',
+            status: '',
+            userIcon: config!.profile_image ?? DefaultImages.UNKNOWN_USER,
+            address: address,
+          });
+        }
+      } else {
+        // Do not set user when config fetch fails or returns no profile
+      }
+      return config;
+    } catch (error) {
+
+    } finally {
+      setIsFetchingUser(false);
+    }
+    return null;
+  }, [currentPasskeyInfo?.address]);
+
   // Validation helpers
   const canProceedWithName = displayName.length > 0;
-  const isOnboardingComplete = exported && 
-    currentPasskeyInfo?.displayName && 
+  const isOnboardingComplete = exported &&
+    currentPasskeyInfo?.displayName &&
     currentPasskeyInfo?.pfpUrl;
 
   return {
@@ -100,12 +185,14 @@ export const useOnboardingFlowLogic = (adapter: OnboardingAdapter) => {
     exported,
     displayName,
     currentPasskeyInfo,
-    
+    isFetchingUser,
+
     // Validation
     canProceedWithName,
     isOnboardingComplete,
-    
+
     // Actions
+    fetchUser,
     setDisplayName,
     markKeyAsExported,
     saveDisplayName,

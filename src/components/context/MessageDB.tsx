@@ -123,9 +123,11 @@ type MessageDBContextValue = {
   getConfig: ({
     address,
     userKey,
+    preferSaved,
   }: {
     address: string;
     userKey: secureChannel.UserKeyset;
+    preferSaved?: boolean;
   }) => Promise<UserConfig>;
   saveConfig: ({
     config,
@@ -4892,9 +4894,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     async ({
       address,
       userKey,
+      preferSaved,
     }: {
       address: string;
       userKey: secureChannel.UserKeyset;
+      preferSaved?: boolean;
     }) => {
       let savedConfig: secureChannel.UserConfig | undefined;
       try {
@@ -4909,13 +4913,14 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         return storedConfig;
       }
 
+      if (!preferSaved) {
       if (savedConfig.timestamp < (storedConfig?.timestamp ?? 0)) {
         console.warn(t`saved config is out of date`);
         return storedConfig;
       }
-
       if (savedConfig.timestamp == storedConfig?.timestamp) {
         return storedConfig;
+        }
       }
 
       const derived = await crypto.subtle.digest(
