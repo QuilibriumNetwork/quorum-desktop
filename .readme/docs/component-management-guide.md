@@ -17,6 +17,7 @@ This guide helps developers manage existing components and create new ones in ou
 - **Dev Playground**: Test primitives on both web (`/playground`) and mobile (React Native via Expo)
 - **Platform Files**: `.web.tsx` for browser, `.native.tsx` for React Native
 - **Mobile Testing**: `/mobile` workspace with test screens for real device testing
+- **Components Audit**: `/src/dev` audit of all components (WIP) accessible via `/dev/audit` in forntend
 
 ## Quick Decision Framework
 
@@ -31,7 +32,12 @@ Ask yourself:
 
 ### 2. Platform-Specific vs Shared?
 
-**Most components are shared** (use primitives internally). Only create platform-specific components for:
+**Most components are platform-specific** (only very simple components can be truly shared). Components can be shared when:
+- They only use primitives
+- The logic flow is identical between web and native
+- They have minimal complexity (e.g., AccentColorSwitcher, KickUserModal, LeaveSpaceModal)
+
+Create platform-specific components for:
 
 - Deep OS integration needs
 - Platform-specific gestures/interactions
@@ -172,7 +178,7 @@ Follow the guidelines in [when-to-use-primitives.md](./when-to-use-primitives.md
 - **Always**: Interactive elements (Button, Input, Modal)
 - **Usually**: Layout containers with theme colors
 - **Sometimes**: Text elements needing semantic colors
-- **Never**: Complex animations, third-party wrappers, performance-critical sections
+- **Almost Never**: Complex animations, third-party wrappers, performance-critical sections
 
 ## Creating New Primitives
 
@@ -313,6 +319,25 @@ import { Button } from '../primitives/Button';
 
 ## Responsive & Platform Utilities
 
+### Touch Device Detection
+
+We have **multiple overlapping touch detection implementations** that should be consolidated:
+
+1. **`isTouchDevice()` function** (duplicated in 4 locations):
+   - `src/hooks/platform/clipboard/useClipboard.web.ts`
+   - `src/hooks/platform/interactions/useInteraction.web.ts`
+   - `src/components/ReactTooltip.tsx`
+   - `src/hooks/business/messages/useMessageInteractions.ts` (inline check)
+
+All use the same detection logic:
+```typescript
+'ontouchstart' in window ||
+navigator.maxTouchPoints > 0 ||
+(navigator as any).msMaxTouchPoints > 0
+```
+
+**Recommendation:** Create a centralized utility in `src/utils/platform.ts` to avoid duplication.
+
 ### ResponsiveLayout Hook
 
 For web breakpoint management and sidebar state:
@@ -334,37 +359,64 @@ function MyComponent() {
 
 **Breakpoints:**
 
-- `isMobile`: < 768px
+- `isMobile`: < 768px (viewport-based, NOT touch detection)
 - `isTablet`: 768px - 1024px
 - `isDesktop`: ≥ 1024px
+
+**Important:** `isMobile` from ResponsiveLayout is viewport-based, not touch-based. A desktop with touch screen at 1920px will be `isDesktop: true` but still be a touch device.
 
 ### Platform Detection Utility
 
 For platform-specific logic:
 
 ```typescript
-import { isWeb, isNative, platformSelect, Platform } from '../utils/platform';
+import { isWeb, isNative, isElectron, getPlatform } from '../utils/platform';
 
-// Simple checks
-if (isWeb) {
-  // Web-specific code
+// Platform checks
+if (isWeb()) {
+  // Web browser code
+}
+if (isNative() || isMobile()) {  // Both are aliases
+  // React Native code
+}
+if (isElectron()) {
+  // Electron desktop app code
 }
 
-// Platform-specific values
-const config = platformSelect({
-  web: { theme: 'light', animation: 'smooth' },
-  native: { theme: 'dark', animation: 'fast' },
-  default: { theme: 'auto', animation: 'normal' },
-});
+// Get platform string
+const platform = getPlatform(); // Returns: 'web' | 'mobile' | 'electron'
 
-// React Native style selection (future compatibility)
-const styles = Platform.select({
-  web: webStyles,
-  ios: iosStyles,
-  android: androidStyles,
-  default: defaultStyles,
-});
+// Platform features (from platformFeatures object)
+- hasFileSystem: isElectron()
+- hasNativeNotifications: isElectron() || isMobile()
+- hasCamera: isMobile()
+- hasDeepLinking: isMobile() || isElectron()
+- hasPushNotifications: isMobile()
 ```
+
+**Note:** These utilities detect the runtime environment (web/native/electron), NOT device capabilities like touch support.
+
+### Clarifying the Different "Mobile" Concepts
+
+This codebase has three distinct concepts that use similar terminology:
+
+1. **Viewport-based Mobile** (`useResponsiveLayout`'s `isMobile`)
+   - Detects screen width < 768px
+   - Used for responsive layout decisions
+   - A desktop browser resized to 600px width is "mobile" by this definition
+
+2. **Platform Mobile** (`utils/platform`'s `isMobile()`)
+   - Detects React Native runtime environment
+   - Returns true only when running as a native mobile app
+   - A mobile browser still returns false (it's "web" platform)
+
+3. **Touch Device** (`isTouchDevice()` functions)
+   - Detects touch capability regardless of viewport or platform
+   - Desktop with touchscreen returns true
+   - Tablet in landscape at 1200px width returns true
+   - Used for interaction patterns (tap vs hover)
+
+**Best Practice:** Be explicit about which "mobile" you mean in code comments and variable names.
 
 ## Troubleshooting
 
@@ -428,4 +480,5 @@ import { Button } from '../primitives/Button';
 ---
 
 _Created: 2025-07-31_  
+_Updated: 2025-08-14 09:05 UTC_  
 _This guide focuses on practical decision-making for component development in our cross-platform architecture._
