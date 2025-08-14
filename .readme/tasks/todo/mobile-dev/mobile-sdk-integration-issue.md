@@ -4,6 +4,10 @@
 **Priority**: High  
 **Date**: 2025-08-08  
 
+**Issue posted**
+
+> ⚠️ **CRITICAL NOTE**: This analysis was conducted while testing with **Expo GO**. Many of the compatibility issues described below (especially crypto polyfills, Metro configuration, and WebAssembly support) may be resolved by switching to **Expo Dev Build**, which supports custom native dependencies and Metro configurations. Testing with Expo Dev Build should be the first step before pursuing more complex solutions.
+
 ## Executive Summary
 
 The `@quilibrium/quilibrium-js-sdk-channels` SDK, used for Passkey Authentication, has fundamental incompatibilities with React Native that prevent the mobile app from bundling. The SDK requires Node.js-specific modules and WebAssembly, neither of which are available in React Native environments.
@@ -59,7 +63,25 @@ The SDK directly imports Node.js built-in modules:
 
 ## Viable Solutions
 
-### Option A: SDK Modification (Recommended)
+### Option A: Switch to Expo Dev Build (RECOMMENDED FIRST STEP)
+
+Test with Expo Dev Build instead of Expo GO:
+- Build custom development client with native dependencies
+- Enable Metro configuration and crypto polyfills
+- Test WebAssembly support in custom runtime
+
+**Pros**: 
+- May solve all issues with minimal changes
+- Keeps existing polyfill approach
+- No SDK modifications needed
+- Simple to test
+
+**Cons**: 
+- Requires creating development build
+- Slightly slower development iteration
+- WebAssembly support still uncertain
+
+### Option B: SDK Modification
 
 Modify the SDK to support React Native:
 - Create separate build targets for web and React Native
@@ -77,7 +99,7 @@ Modify the SDK to support React Native:
 - Testing across platforms needed
 - Maintenance overhead for dual builds
 
-### Option B: Server-Side Proxy
+### Option C: Server-Side Proxy
 
 Move SDK operations to backend:
 - Keep SDK on server only
@@ -94,24 +116,7 @@ Move SDK operations to backend:
 - Additional network latency
 - Offline functionality lost
 
-### Option C: Native Modules (I don't think so)
-
-Implement passkey functionality natively:
-- Create iOS module using Apple's passkey APIs
-- Create Android module using Google's passkey APIs
-- Bridge to React Native
-
-**Pros**: 
-- Best performance
-- Platform-native UX
-- Full feature parity
-
-**Cons**: 
-- Requires native iOS/Android expertise
-- Significant development effort
-- Separate maintenance for each platform
-
-### Option D: Conditional/Mock Implementation
+### Option D: Conditional/Mock Implementation (already done)
 
 Create shim for mobile:
 - Mock SDK interface for React Native
@@ -130,14 +135,20 @@ Create shim for mobile:
 
 ## Recommended Approach
 
-### Phase 1: Immediate 
-- Implement Option D (Mock/Shim)
+### Phase 0: Test with Expo Dev Build (NEXT STEP)
+- Create Expo Dev Build with custom native dependencies
+- Test existing polyfills (`react-native-crypto`, etc.)
+- Verify Metro configuration works properly
+- Test WebAssembly loading in custom runtime
+
+### Phase 1: Immediate (DONE)
+- Implement Option E (Mock/Shim)
 - Create `@quilibrium/quilibrium-js-sdk-channels.native.ts` shim
 - Allow mobile app to run without passkey features
 - Document feature limitations
 
 ### Phase 2: Short-term 
-- Work with SDK team on Option A
+- If Dev Build doesn't work: Work with SDK team on Option B
 - Create React Native compatible build
 - Replace crypto and WASM dependencies
 - Test across platforms
@@ -172,11 +183,12 @@ export const channel_raw = channel;
 
 ## Next Steps
 
-1. **Immediate**: Implement mobile shim to unblock development
-2. **Communicate**: Share this analysis with SDK team
-3. **Decide**: Choose long-term solution based on priorities
-4. **Plan**: Create detailed implementation plan for chosen solution
-5. **Execute**: Implement solution with proper testing
+1. **Test Expo Dev Build**: Create development build and test existing polyfills
+2. **Evaluate Results**: If Dev Build works, problem solved; if not, proceed with SDK modifications
+3. **Communicate**: Share this analysis with SDK team
+4. **Decide**: Choose long-term solution based on priorities
+5. **Plan**: Create detailed implementation plan for chosen solution
+6. **Execute**: Implement solution with proper testing
 
 ## Related Files
 - `/src/components/context/MessageDB.tsx`
@@ -190,4 +202,4 @@ export const channel_raw = channel;
 - [WebAssembly in React Native Discussion](https://github.com/react-native-community/discussions-and-proposals/issues/564)
 
 ---
-*Last updated: 2025-08-08*
+*Last updated: 2025-08-14*
