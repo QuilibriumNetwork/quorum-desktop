@@ -8,6 +8,8 @@
 **Discovered**: 2025-08-03  
 **Reporter**: During Message.tsx business logic extraction
 
+**Issue Opened**
+
 ## Summary
 
 When navigating to a message via hash link (e.g., pasted message link), subsequent message deletion operations cause the page to scroll back to the originally visited message and re-trigger the yellow highlight flash.

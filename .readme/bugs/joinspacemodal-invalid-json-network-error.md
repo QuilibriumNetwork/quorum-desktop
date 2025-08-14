@@ -7,6 +7,8 @@
 **Component**: Various
 **Discovered**: 2025-08-03
 
+**Issue Opened**
+
 ## Bug Description
 
 Users encountering "invalid json" error messages in the JoinSpaceModal when trying to join spaces via invite links. The error appears to be related to network/connection issues rather than actual invalid invite links.

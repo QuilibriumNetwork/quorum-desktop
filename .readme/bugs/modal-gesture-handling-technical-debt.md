@@ -5,6 +5,8 @@
 **Component:** `src/components/primitives/Modal/Modal.native.tsx`  
 **Date Reported:** 2025-08-10
 
+**Issue Opened**
+
 ## Problem Description
 
 The Modal component's swipe-to-close gesture implementation uses outdated, non-standard approaches that violate modern React Native best practices for 2024/2025.
