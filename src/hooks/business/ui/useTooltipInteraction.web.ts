@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { isTouchDevice } from '../../platform/clipboard/useClipboard.web';
+import { isTouchDevice } from '../../../utils/platform';
 
 interface UseTooltipInteractionOptions {
   touchTrigger?: 'click' | 'long-press';

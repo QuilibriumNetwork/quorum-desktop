@@ -1,5 +1,8 @@
 # Android 7.0 File Download Fix - Implementation Plan
 
+
+This is only partially solved (giveAndoird 7 users the possibility to manually save the key in a txt file), but it's also a minor issue as those users are an extrenely low minority (well below 1%).
+
 ## Problem Analysis
 
 ### Issue Description

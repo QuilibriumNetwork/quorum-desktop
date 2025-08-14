@@ -3,7 +3,7 @@ import { Button, FlexRow, Tooltip, Icon, TextArea } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { Buffer } from 'buffer';
-import { isTouchDevice } from '../../hooks/platform/clipboard/useClipboard.web';
+import { isTouchDevice } from '../../utils/platform';
 
 interface MessageComposerProps {
   // Textarea props

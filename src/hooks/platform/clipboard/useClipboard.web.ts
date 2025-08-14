@@ -1,18 +1,9 @@
+import { isTouchDevice } from '../../../utils/platform';
+
 interface ClipboardAdapter {
   copy: (text: string) => Promise<void>;
   isTouch: boolean;
 }
-
-// Helper function to detect touch devices (for web touch support)
-export const isTouchDevice = (): boolean => {
-  if (typeof window === 'undefined') return false;
-
-  return (
-    'ontouchstart' in window ||
-    navigator.maxTouchPoints > 0 ||
-    (navigator as any).msMaxTouchPoints > 0
-  );
-};
 
 export const useClipboardAdapter = (): ClipboardAdapter => {
   const copy = async (text: string): Promise<void> => {

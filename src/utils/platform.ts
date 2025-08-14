@@ -64,6 +64,21 @@ export function isProduction(): boolean {
 }
 
 /**
+ * Detect if the current device supports touch input
+ * Uses multiple detection methods for maximum compatibility
+ * @returns true if device supports touch, false otherwise
+ */
+export function isTouchDevice(): boolean {
+  if (typeof window === 'undefined') return false;
+
+  return (
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+    (navigator as any).msMaxTouchPoints > 0
+  );
+}
+
+/**
  * Get the current platform as a string
  */
 export function getPlatform(): 'web' | 'mobile' | 'electron' {
@@ -81,4 +96,5 @@ export const platformFeatures = {
   hasCamera: isMobile(),
   hasDeepLinking: isMobile() || isElectron(),
   hasPushNotifications: isMobile(),
+  hasTouch: typeof window !== 'undefined' ? isTouchDevice() : false,
 };

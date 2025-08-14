@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { Message as MessageType } from '../../../api/quorumApi';
 import { useResponsiveLayout } from '../../useResponsiveLayout';
 import { useLongPress } from '../../useLongPress';
+import { isTouchDevice as detectTouchDevice } from '../../../utils/platform';
 
 interface UseMessageInteractionsOptions {
   message: MessageType;
@@ -29,7 +30,7 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
 
   // Responsive layout and device detection
   const { isMobile } = useResponsiveLayout();
-  const isTouchDevice = 'ontouchstart' in window;
+  const isTouchDevice = detectTouchDevice();
   const useMobileDrawer = isMobile;
   const useDesktopTap = !isMobile && isTouchDevice;
   const useDesktopHover = !isMobile && !isTouchDevice;
