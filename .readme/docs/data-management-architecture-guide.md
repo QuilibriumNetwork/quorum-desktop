@@ -2,6 +2,9 @@
 
 [← Back to INDEX](/.readme/INDEX.md)
 
+
+**NEEDS HUMAN REVIEW: _Last review: 2025-08-14 10:45 UTC_**
+
 A comprehensive guide to data storage, management, and flow patterns in the Quorum desktop application.
 
 **Created**: 2025-01-20  

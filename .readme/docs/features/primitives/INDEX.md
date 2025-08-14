@@ -6,15 +6,12 @@ Complete guide to the cross-platform primitive component system for React Native
 
 ### 🚀 **Getting Started**
 1. [**01-introduction-and-concepts.md**](./01-introduction-and-concepts.md) - Architecture overview, concepts, and philosophy
-2. [**02-web-to-native-migration.md**](./02-web-to-native-migration.md) - Step-by-step migration guide with patterns and examples
+2. [**02-primitives-quick-reference.md**](./02-primitives-quick-reference.md) - Comprehensive component reference with all props and examples
+3. [**03-when-to-use-primitives.md**](./03-when-to-use-primitives.md) - Decision framework for when to use vs avoid primitives
 
-### 📖 **Reference Guides**
-3. [**03-primitives-quick-reference.md**](./03-primitives-quick-reference.md) - Fast lookup for all components and props
-4. [**04-complete-component-guide.md**](./04-complete-component-guide.md) - Detailed documentation with examples and best practices
-
-### 🎨 **Styling & Standards**
+### 🔄 **Migration & Advanced**
+4. [**04-web-to-native-migration.md**](./04-web-to-native-migration.md) - Step-by-step migration guide with patterns and examples
 5. [**05-primitive-styling-guide.md**](./05-primitive-styling-guide.md) - Color system, semantic classes, and consistency rules
-6. [**06-when-to-use-primitives.md**](./06-when-to-use-primitives.md) - Decision framework for when to use vs avoid primitives
 
 ---
 
@@ -23,20 +20,17 @@ Complete guide to the cross-platform primitive component system for React Native
 ### **New to Primitives?**
 Start with [01-introduction-and-concepts.md](./01-introduction-and-concepts.md) to understand the architecture and philosophy.
 
+### **Need Component Reference?**
+Use [02-primitives-quick-reference.md](./02-primitives-quick-reference.md) for comprehensive component documentation with all props and examples.
+
+### **Architecture Decisions?**
+Refer to [03-when-to-use-primitives.md](./03-when-to-use-primitives.md) for guidance on when to use primitives.
+
 ### **Converting Web Components?**
-Jump to [02-web-to-native-migration.md](./02-web-to-native-migration.md) for step-by-step conversion patterns.
-
-### **Need Quick Reference?**
-Use [03-primitives-quick-reference.md](./03-primitives-quick-reference.md) for fast prop lookups and examples.
-
-### **Building Complex Components?**
-See [04-complete-component-guide.md](./04-complete-component-guide.md) for detailed implementation guides.
+Jump to [04-web-to-native-migration.md](./04-web-to-native-migration.md) for step-by-step conversion patterns.
 
 ### **Styling Questions?**
 Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color system and consistency rules.
-
-### **Architecture Decisions?**
-Refer to [06-when-to-use-primitives.md](./06-when-to-use-primitives.md) for guidance on when to use primitives.
 
 ---
 
@@ -138,7 +132,7 @@ Refer to [06-when-to-use-primitives.md](./06-when-to-use-primitives.md) for guid
 
 ---
 
-*Last updated: 2025-08-05*
+*Last updated: 2025-08-14*
 
 ---
 

@@ -4,6 +4,8 @@
 
 [← Back to Docs INDEX](/.readme/INDEX.md)
 
+**READY FOR OFFICIAL DOCS: _Last review: 2025-08-14 10:45 UTC_**
+
 ## What Are Primitive Components?
 
 Primitive components are the foundation of our cross-platform UI system. They provide a unified API that works seamlessly across web and React Native, abstracting platform differences while enabling platform-specific optimizations.
@@ -22,7 +24,7 @@ Primitive components are the foundation of our cross-platform UI system. They pr
 
 ### **Shared Components**
 - ✅ **Use primitives ONLY** if component must work on both web AND mobile
-- 🎯 **Otherwise, choose based on practicality** (see [When to Use Primitives](./06-when-to-use-primitives.md))
+- 🎯 **Otherwise, choose based on practicality** (see [When to Use Primitives](./03-when-to-use-primitives.md))
 
 ## 🎯 **Core Philosophy**
 
@@ -61,17 +63,29 @@ import { Button } from '../components/primitives/Button';
 ### **Shared Type System**
 ```tsx
 // types.ts - shared across platforms
-interface ButtonProps {
-  children: ReactNode;
-  onClick: () => void;
-  type?: 'primary' | 'secondary' | 'light';
+export interface BaseButtonProps {
+  type?:
+    | 'primary'
+    | 'secondary' 
+    | 'light'
+    | 'light-outline'
+    | 'subtle'
+    | 'danger'
+    | 'unstyled';
+  size?: 'small' | 'normal' | 'large';
   disabled?: boolean;
+  fullWidth?: boolean;
+  iconName?: IconName;
+  iconOnly?: boolean;
+  onClick: () => void;
+  children?: React.ReactNode;
 }
 
 // Platform-specific props are conditionally added
-interface NativeButtonProps extends ButtonProps {
+export interface NativeButtonProps extends BaseButtonProps {
   hapticFeedback?: boolean;  // Only on native
   accessibilityLabel?: string;
+  fullWidthWithMargin?: boolean;
 }
 ```
 
@@ -84,29 +98,43 @@ Instead of hardcoded colors, use semantic variables that automatically adapt to 
 
 ```tsx
 // ❌ Hardcoded colors
-<View style={{ backgroundColor: '#ffffff', borderColor: '#e5e7eb' }}>
+<Container style={{ backgroundColor: '#ffffff', borderColor: '#e5e7eb' }}>
 
-// ✅ Semantic colors
-<View style={{ backgroundColor: theme.colors.bg.card, borderColor: theme.colors.border.default }}>
+// ✅ Semantic colors (Quilibrium system)
+<Container className="bg-surface-1 border-default">
+
+// ✅ Or with theme variables
+<Container style={{ backgroundColor: theme.colors.bg.surface1 }}>
 ```
 
 ### **Consistent Spacing System**
 ```tsx
-// Standardized gap values
+// Standardized gap values used across Quilibrium
 gap: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 
 // Maps to consistent pixel values
-xs: 4px,  sm: 8px,  md: 16px,  lg: 24px,  xl: 32px
+// xs: 4px,  sm: 8px,  md: 16px,  lg: 24px,  xl: 32px
+
+// Real usage in UserProfile component:
+<FlexRow gap="sm" align="center">
+  <Icon name="user" />
+  <Text variant="strong">User Profile</Text>
+</FlexRow>
 ```
 
 ### **Typography Hierarchy**
 ```tsx
-// Semantic typography components
-<Title>Main page title</Title>           // lg (24px), bold, auto-spacing
-<Title size="sm">Section title</Title>   // sm (18px), bold, auto-spacing  
-<Paragraph>Body content</Paragraph>      // base, normal, auto-spacing
-<Label>Form field label</Label>          // sm, medium, auto-spacing
-<Caption>Helper text</Caption>           // sm, subtle, auto-spacing
+// Semantic typography components in Quilibrium
+<Text variant="strong" size="xl">Main page title</Text>
+<Text variant="strong" size="lg">Section title</Text>
+<Text variant="default">Body content</Text>
+<Text variant="subtle" size="sm">Helper text</Text>
+<Text variant="error">Error message</Text>
+
+// Real usage from SwitchTestScreen:
+<Text size="sm" variant="default">
+  Basic Switch ({basicSwitch ? 'ON' : 'OFF'})
+</Text>
 ```
 
 ---
@@ -147,34 +175,45 @@ xs: 4px,  sm: 8px,  md: 16px,  lg: 24px,  xl: 32px
 Our architecture separates **styling** from **layout** for maximum flexibility and consistency:
 
 ```tsx
-// ✅ RECOMMENDED: Container + Layout pattern
-<View style={{ backgroundColor: colors.bg.card, padding: 16, borderRadius: 8 }}>
-  <FlexColumn gap="md">
-    <FlexRow gap="sm" align="center">
-      <Icon name="user" />
-      <Text>User Profile</Text>
-    </FlexRow>
-    <FlexColumn gap="xs">
-      <Label>Email:</Label>
-      <Input value={email} onChange={setEmail} />
-    </FlexColumn>
-  </FlexColumn>
-</View>
+// ✅ REAL EXAMPLE: From UserProfile component
+<Container 
+  className="user-profile"
+  onClick={(e: React.MouseEvent) => e.stopPropagation()}
+>
+  <FlexRow gap="sm" align="center">
+    <Icon name="user" />
+    <Text variant="strong">{user.name}</Text>
+  </FlexRow>
+  
+  <FlexRow gap="xs" align="center">
+    <Text variant="subtle" size="sm">
+      Address:
+    </Text>
+    <ClickToCopyContent
+      text={user.address}
+      tooltipText="Copy address"
+    >
+      <Text variant="subtle" className="font-mono">
+        {user.address.slice(0, 8)}...
+      </Text>
+    </ClickToCopyContent>
+  </FlexRow>
+</Container>
 ```
 
 ### **Component Responsibilities**
 
-#### **View (Styling Container)**
+#### **Container (Styling Container)**
 - Visual styling: colors, borders, shadows, border radius
-- Platform-specific props (e.g., elevation on Android)
-- Background colors and images
-- Padding and margins for the container itself
+- Click/press handlers that work cross-platform
+- Background colors and themed styling
+- CSS classes and inline styles
 
-#### **Flex Primitives (Layout)**
-- Content organization and spacing
-- Gap between child elements
-- Alignment and justification
-- Responsive behavior
+#### **FlexRow/FlexColumn Primitives (Layout)**
+- Content organization and spacing (gap: 'xs' | 'sm' | 'md' | 'lg' | 'xl')
+- Alignment: align="center" | "start" | "end" | "stretch"
+- Justification: justify="start" | "center" | "between" | "around"
+- Responsive behavior and wrapping
 
 #### **Text Components (Content)**
 - Typography and text rendering
@@ -196,9 +235,12 @@ Our architecture separates **styling** from **layout** for maximum flexibility a
 React Native text handling is different from web. Our Text primitive solves common issues:
 
 ```tsx
-// ✅ Enhanced Text with automatic improvements
-<Text marginBottom={16} lineHeight={24}>
-  This text has proper line height and spacing for mobile
+// ✅ Real example: Enhanced Text from Quilibrium codebase
+<Text variant="strong" size="lg" marginBottom={8}>
+  Switch Component Demo
+</Text>
+<Text variant="subtle" align="center">
+  Cross-platform toggle switch with multiple sizes and variants
 </Text>
 
 // ❌ Web approach (doesn't work well on mobile)
@@ -215,23 +257,46 @@ React Native text handling is different from web. Our Text primitive solves comm
 
 ### **Touch-Optimized Interactions**
 ```tsx
+// Real example from UserProfile component
 <Button 
   type="primary"
-  onClick={handlePress}
-  hapticFeedback={true}           // Tactile feedback on mobile
-  accessibilityLabel="Save document"  // Screen reader support
+  size="small"
+  onClick={() => sendMessage(user)}
+  iconName="paper-plane"
+  tooltip="Send direct message"
 >
-  Save
+  Message
+</Button>
+
+// With mobile-specific props
+<Button 
+  type="primary"
+  onClick={handleSave}
+  hapticFeedback={true}                    // Tactile feedback on mobile
+  accessibilityLabel="Save user profile"  // Screen reader support
+>
+  Save Profile
 </Button>
 ```
 
 ### **Platform-Specific Input Types**
 ```tsx
+// Real examples from Quilibrium forms
 <Input 
   type="email"
+  placeholder="Enter email address"
   keyboardType="email-address"    // Shows @ key on mobile keyboards
   autoComplete="email"            // Enables autofill
   returnKeyType="done"            // Custom return key label
+  error={emailError}
+/>
+
+<Input 
+  type="password"
+  placeholder="Enter passphrase"
+  secureTextEntry={true}          // Hide password on mobile
+  autoComplete="current-password"
+  error={passwordError}
 />
 ```
 
@@ -247,15 +312,16 @@ React Native text handling is different from web. Our Text primitive solves comm
    - Web-only event handlers
 
 2. **Map to Primitive Equivalents**
-   - `<div>` → `<View>` (styling) + `<FlexRow>`/`<FlexColumn>` (layout)
-   - `<button>` → `<Button>`
-   - `<input>` → `<Input>`
-   - CSS classes → component props
+   - `<div>` → `<Container>` (styling) + `<FlexRow>`/`<FlexColumn>` (layout)
+   - `<button>` → `<Button>` with type, size, and icon props
+   - `<input>` → `<Input>` with error handling and mobile keyboard types
+   - CSS classes → component props and semantic variants
 
 3. **Use Semantic Components**
-   - `<p>` → `<Paragraph>` or `<Text>`
-   - `<h2>` → `<Title size="sm">`
-   - `<label>` → `<Label>`
+   - `<p>` → `<Text variant="default">`
+   - `<h2>` → `<Text variant="strong" size="lg">`
+   - `<strong>` → `<Text variant="strong">`
+   - `<small>` → `<Text variant="subtle" size="sm">`
 
 4. **Test on Mobile**
    - Run in React Native simulator
@@ -266,15 +332,22 @@ React Native text handling is different from web. Our Text primitive solves comm
 You don't need to convert everything at once:
 
 ```tsx
-// ✅ Mix primitives with existing code during migration
-<div className="existing-complex-layout">
+// ✅ Real example: Mix primitives with existing SCSS during migration
+<div className="user-profile-complex-layout"> {/* Keep existing SCSS */}
   <FlexRow gap="sm" align="center">
     <Icon name="user" />
-    <Text variant="strong">User Profile</Text>
+    <Text variant="strong">{user.name}</Text>
   </FlexRow>
-  <Button type="primary" onClick={handleSave}>
-    Save Changes
-  </Button>
+  
+  {/* Use primitive buttons for consistency */}
+  <FlexRow gap="xs">
+    <Button type="secondary" size="small" onClick={() => kickUser(user)}>
+      Remove User
+    </Button>
+    <Button type="primary" size="small" onClick={() => sendMessage(user)}>
+      Send Message
+    </Button>
+  </FlexRow>
 </div>
 ```
 
@@ -301,9 +374,9 @@ You don't need to convert everything at once:
 ## 🚀 **Getting Started**
 
 ### **Next Steps**
-1. **New to converting web components?** → [02-web-to-native-migration.md](./02-web-to-native-migration.md)
-2. **Need quick component reference?** → [03-primitives-quick-reference.md](./03-primitives-quick-reference.md)
-3. **Building complex components?** → [04-complete-component-guide.md](./04-complete-component-guide.md)
+1. **Need quick component reference?** → [02-primitives-quick-reference.md](./02-primitives-quick-reference.md)
+2. **Understanding when to use primitives?** → [03-when-to-use-primitives.md](./03-when-to-use-primitives.md)
+3. **Converting web components?** → [04-web-to-native-migration.md](./04-web-to-native-migration.md)
 
 ### **Development Workflow**
 1. Design your component using primitives
@@ -314,7 +387,7 @@ You don't need to convert everything at once:
 
 ---
 
-*Last updated: 2025-08-05*
+*Last updated: 2025-08-14*
 
 ---
 

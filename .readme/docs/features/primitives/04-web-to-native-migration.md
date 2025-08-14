@@ -4,6 +4,8 @@
 
 [← Back to Docs INDEX](/.readme/INDEX.md)
 
+**READY FOR OFFICIAL DOCS: _Last review: 2025-08-14 10:45 UTC_**
+
 Complete guide for converting web components to React Native using our cross-platform primitives.
 
 ## Table of Contents
@@ -84,167 +86,38 @@ Before migrating any component, the component logic **MUST** be extracted in a s
 
 ---
 
-## Common Patterns
 
-### Pattern 1: Card Component
+## Real Migration Examples
 
-#### ❌ Web Version
-```tsx
-const UserCard = ({ user }) => (
-  <div className="bg-white rounded-lg shadow-md p-6 mb-4">
-    <div className="flex items-center mb-4">
-      <img src={user.avatar} alt="Avatar" className="w-12 h-12 rounded-full mr-4" />
-      <div>
-        <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
-        <p className="text-sm text-gray-600">{user.email}</p>
-      </div>
-    </div>
-    <p className="text-gray-700 leading-relaxed">{user.bio}</p>
-    <button 
-      className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      onClick={() => handleContact(user.id)}
-    >
-      Contact
-    </button>
-  </div>
-);
-```
+### Example: Maintenance Component
 
-#### ✅ Native Version
-```tsx
-import { FlexRow, FlexColumn, Text, Paragraph, Button } from '../components/primitives';
-
-const UserCard = ({ user }) => (
-  <FlexColumn 
-    gap="md" 
-    style={{ 
-      backgroundColor: theme.colors.bg.card,
-      borderRadius: 12,
-      padding: 20,
-      marginBottom: 16,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3
-    }}
-  >
-    <FlexRow gap="md" align="center">
-      <Icon name="user" size="lg" />
-      <FlexColumn gap="xs">
-        <Text size="lg" weight="semibold" variant="strong">{user.name}</Text>
-        <Text size="sm" variant="subtle">{user.email}</Text>
-      </FlexColumn>
-    </FlexRow>
-    <Paragraph>{user.bio}</Paragraph>
-    <Button 
-      type="primary" 
-      onClick={() => handleContact(user.id)}
-    >
-      Contact
-    </Button>
-  </FlexColumn>
-);
-```
-
-### Pattern 2: Form Layout
+Shows actual web → native migration from existing codebase:
 
 #### ❌ Web Version
 ```tsx
-const ContactForm = () => (
-  <form className="space-y-6">
-    <div className="grid grid-cols-2 gap-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          First Name
-        </label>
-        <input 
-          type="text" 
-          className="w-full border border-gray-300 rounded-md px-3 py-2"
-          placeholder="Enter first name"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Last Name
-        </label>
-        <input 
-          type="text" 
-          className="w-full border border-gray-300 rounded-md px-3 py-2"
-          placeholder="Enter last name"
-        />
-      </div>
-    </div>
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        Message
-      </label>
-      <textarea 
-        rows="4" 
-        className="w-full border border-gray-300 rounded-md px-3 py-2"
-        placeholder="Your message..."
-      />
-    </div>
-    <button 
-      type="submit" 
-      className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-    >
-      Send Message
-    </button>
-  </form>
-);
+<div className="flex flex-col text-white">
+  <Icon name="tools" className="text-4xl" />
+  <Trans>Maintenance in Progress</Trans>
+</div>
 ```
 
-#### ✅ Native Version
+#### ✅ Native Version  
 ```tsx
-import { FlexColumn, FlexRow, Label, Input, TextArea, Button } from '../components/primitives';
-
-const ContactForm = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [message, setMessage] = useState('');
-
-  return (
-    <FlexColumn gap="lg">
-      <FlexRow gap="md">
-        <FlexColumn gap="xs" style={{ flex: 1 }}>
-          <Label>First Name</Label>
-          <Input 
-            value={firstName}
-            onChange={setFirstName}
-            placeholder="Enter first name"
-          />
-        </FlexColumn>
-        <FlexColumn gap="xs" style={{ flex: 1 }}>
-          <Label>Last Name</Label>
-          <Input 
-            value={lastName}
-            onChange={setLastName}
-            placeholder="Enter last name"
-          />
-        </FlexColumn>
-      </FlexRow>
-      
-      <FlexColumn gap="xs">
-        <Label>Message</Label>
-        <TextArea 
-          value={message}
-          onChange={setMessage}
-          placeholder="Your message..."
-          numberOfLines={4}
-        />
-      </FlexColumn>
-      
-      <Button 
-        type="primary" 
-        onClick={handleSubmit}
-      >
-        Send Message
-      </Button>
-    </FlexColumn>
-  );
-};
+<FlexColumn gap="sm" align="center">
+  <Icon name="tools" size="2xl" color="white" />
+  <Title size="xl" align="center" color="white">
+    {t`Maintenance in Progress`}
+  </Title>
+</FlexColumn>
 ```
+
+### Key Migration Patterns
+
+- Replace `<div>` with `<Container>` or `<FlexRow>`/`<FlexColumn>`
+- Replace `<button>` with `<Button type="primary">`
+- Replace `<input>` with `<Input>` 
+- Use component props instead of CSS classes
+- Wrap all text in `<Text>` components
 
 ---
 
@@ -288,157 +161,46 @@ import { Title, Paragraph, Text } from '../components/primitives';
 | `.text-sm.font-medium` | `<Text>` | `size="sm" weight="medium"` |
 | `.text-sm.text-gray-500` | `<Text>` | `size="sm" color="subtle"` |
 
-### Real-World Example: Onboarding Step
-
-Based on actual mobile onboarding implementation:
-
-#### ❌ Web Version
-```tsx
-<div className="w-full max-w-[460px] px-4 py-4 text-center text-white">
-  <h2 className="text-2xl font-semibold mb-4">Welcome to Quorum!</h2>
-  <p className="font-semibold mb-4">Important first-time user information:</p>
-  <p className="mb-4">Quorum is peer-to-peer and end-to-end encrypted...</p>
-  <button className="bg-white text-blue-600 py-2 px-4 rounded-full w-full">
-    Save User Key
-  </button>
-</div>
-```
-
-#### ✅ Native Version
-```tsx
-<AuthContent>
-  <Title size="xl" align="center" color="white">
-    {t`Welcome to Quorum!`}
-  </Title>
-  
-  <Paragraph weight="semibold" color="white" align="center">
-    {t`Important first-time user information:`}
-  </Paragraph>
-  
-  <Paragraph color="white" align="center">
-    {t`Quorum is peer-to-peer and end-to-end encrypted...`}
-  </Paragraph>
-  
-  <Button
-    type="primary-white"
-    style={{ width: '100%', marginBottom: 16 }}
-    onClick={handleDownloadKey}
-  >
-    {t`Save User Key`}
-  </Button>
-</AuthContent>
-```
 
 ---
 
-## Layout Conversion
-
-### Flexbox Layouts
-
-#### ❌ Web CSS
-```tsx
-<div className="flex items-center justify-between p-4 bg-gray-100">
-  <div className="flex items-center space-x-3">
-    <img src="icon.png" className="w-6 h-6" />
-    <span className="font-medium">Title</span>
-  </div>
-  <button className="text-blue-600 hover:text-blue-700">
-    Action
-  </button>
-</div>
-```
-
-#### ✅ Native Primitive
-```tsx
-<FlexRow 
-  justify="between" 
-  align="center" 
-  style={{ 
-    padding: 16, 
-    backgroundColor: theme.colors.surface[1] 
-  }}
->
-  <FlexRow gap="sm" align="center">
-    <Icon name="settings" size="md" />
-    <Text weight="medium">Title</Text>
-  </FlexRow>
-  <Button type="subtle" onClick={handleAction}>
-    Action
-  </Button>
-</FlexRow>
-```
-
-### Grid to Flex Conversion
-
-#### ❌ Web Grid
-```tsx
-<div className="grid grid-cols-3 gap-4">
-  <div className="bg-white p-4 rounded">Item 1</div>
-  <div className="bg-white p-4 rounded">Item 2</div>
-  <div className="bg-white p-4 rounded">Item 3</div>
-</div>
-```
-
-#### ✅ Native Flex
-```tsx
-<FlexRow gap="md" wrap>
-  {items.map(item => (
-    <FlexColumn 
-      key={item.id}
-      style={{ 
-        flex: 1, 
-        minWidth: 120,
-        backgroundColor: theme.colors.bg.card,
-        padding: 16,
-        borderRadius: 8 
-      }}
-    >
-      <Text>{item.title}</Text>
-    </FlexColumn>
-  ))}
-</FlexRow>
-```
-
----
-
-## Form Elements
+## Common Pitfalls
 
 ### Input Field Conversion
 
-#### ❌ Web Input
+#### ❌ Web Input (Similar to UserProfileEdit pattern)
 ```tsx
-<div className="mb-4">
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    Email Address
-  </label>
+<div className="user-profile-content">
+  <div className="user-profile-content-section-header small-caps">
+    Display Name
+  </div>
   <input 
-    type="email"
-    value={email}
-    onChange={(e) => setEmail(e.target.value)}
-    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-    placeholder="Enter your email"
+    className="w-[190px] border border-gray-300 rounded px-3 py-2"
+    value={displayName}
+    onChange={(e) => setDisplayName(e.target.value)}
+    placeholder="Enter display name"
   />
   {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
 </div>
 ```
 
-#### ✅ Native Input
+#### ✅ How This Would Look With Primitives
 ```tsx
-import { Label, Input } from '../components/primitives';
+// This shows how the web input could be converted using primitives
+// (UserProfileEdit doesn't have a native version yet)
+import { Input, Text, FlexColumn } from '../primitives';
 
-<>
-  <Label>Email Address</Label>
-  <Input 
-    type="email"
-    value={email}
-    onChange={setEmail}
-    placeholder="Enter your email"
-    error={!!error}
-    errorMessage={error}
-    keyboardType="email-address"
-    autoComplete="email"
+<FlexColumn gap="xs">
+  <Text size="sm" variant="subtle">
+    Display Name
+  </Text>
+  <Input
+    value={displayName}
+    onChange={setDisplayName}
+    placeholder="Enter display name"
+    error={displayNameError}
   />
-</>
+</FlexColumn>
 ```
 
 ### Select/Dropdown Conversion
@@ -479,44 +241,50 @@ import { Select } from '../components/primitives';
 
 #### ❌ Web Buttons
 ```tsx
-// Primary button
-<button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-  Primary Action
+// Save button
+<button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+  Save Profile
 </button>
 
-// Secondary button
+// Secondary action button
 <button className="border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-50">
-  Secondary Action
+  Send Message
 </button>
 
-// Icon button
+// Icon-only button
 <button className="p-2 text-gray-400 hover:text-gray-600">
-  <svg>...</svg>
+  <i className="fas fa-ellipsis-vertical"></i>
 </button>
 ```
 
 #### ✅ Native Buttons
 ```tsx
-import { Button } from '../components/primitives';
+// Using primitives for button patterns
+import { Button, Icon, Container } from '../primitives';
 
-// Primary button
-<Button type="primary" onClick={handlePrimary}>
-  Primary Action
-</Button>
-
-// Secondary button
-<Button type="secondary" onClick={handleSecondary}>
-  Secondary Action
-</Button>
-
-// Icon button
+// Primary action button
 <Button 
-  type="light"
-  iconName="settings"
-  iconOnly
-  onClick={handleSettings}
-  accessibilityLabel="Settings"
-/>
+  type="primary"
+  disabled={isDisabled}
+  onClick={handleSave}
+>
+  Save Profile
+</Button>
+
+// Secondary action button with icon
+<Button 
+  type="secondary" 
+  size="small"
+  iconName="paper-plane"
+  onClick={handleAction}
+>
+  Send Message
+</Button>
+
+// Icon-only button pattern
+<Container onClick={handleMenuAction}>
+  <Icon name="ellipsis-vertical" />
+</Container>
 ```
 
 ---
@@ -527,25 +295,28 @@ import { Button } from '../components/primitives';
 
 #### ❌ Web Tailwind Classes
 ```tsx
-<div className="bg-gray-100 text-gray-900 border-gray-300">
-  <p className="text-blue-600">Link text</p>
-  <p className="text-red-500">Error text</p>
+// From ChannelList component header styling
+<div className="space-header bg-surface-1 border-default rounded">
+  <div className="space-header-name truncate">
+    <span className="font-bold text-strong">Space Name</span>
+  </div>
+  <p className="text-subtle">Space description</p>
+  <span className="text-accent">Online users: 5</span>
 </div>
 ```
 
 #### ✅ Native Theme Colors
 ```tsx
-import { useTheme } from '../components/primitives/theme';
+// Real examples using Quilibrium's theme system
+import { Container, Text } from '../primitives';
 
-const theme = useTheme();
-
-<View style={{ 
-  backgroundColor: theme.colors.surface[1], 
-  borderColor: theme.colors.border.default 
-}}>
-  <Text variant="link">Link text</Text>
-  <Text variant="error">Error text</Text>
-</View>
+<Container className="space-header" style={headerStyle}>
+  <Container className="space-header-name truncate relative z-10">
+    <Text weight="bold" variant="strong">Space Name</Text>
+  </Container>
+  <Text variant="subtle">Space description</Text>
+  <Text variant="link">Online users: 5</Text>
+</Container>
 ```
 
 ### Spacing System
@@ -592,30 +363,43 @@ const theme = useTheme();
 
 ### ❌ Pitfall 2: CSS Classes on Native
 ```tsx
-// DON'T: CSS classes don't work in React Native
-<Text className="text-blue-600 font-bold">Styled text</Text>
+// DON'T: CSS classes don't work in React Native (from UserProfile example)
+<Text className="text-strong font-bold">User Name</Text>
+<Text className="text-subtle text-xs">User address</Text>
 ```
 
 ### ✅ Solution: Use Props
 ```tsx
-// DO: Use component props (learned from mobile onboarding)
-<Text color="accent" weight="bold">Styled text</Text>
+// DO: Use component props (real examples from OnboardingTestScreen)
+<Text variant="strong" weight="bold">User Name</Text>
+<Text variant="subtle" size="xs">User address</Text>
+<Text 
+  size="lg" 
+  weight="medium"
+  style={{ color: 'white', textAlign: 'center' }}
+>
+  Welcome, {user.displayName}!
+</Text>
 ```
 
 ### ❌ Pitfall 3: Missing Text Wrappers
 ```tsx
-// DON'T: Naked text will crash React Native
-<View>
-  Raw text content
-</View>
+// DON'T: Naked text will crash React Native (common in ChannelList)
+<Container>
+  Space Name
+  <Icon name="users" />
+  5 members
+</Container>
 ```
 
-### ✅ Solution: Wrap All Text
+### ✅ Solution: Wrap All Text (ChannelList)
 ```tsx
-// DO: All text must be in Text components
-<View>
-  <Text>Raw text content</Text>
-</View>
+// DO: All text must be in Text components (real pattern from Quilibrium)
+<Container className="space-header-name truncate relative z-10">
+  <Text weight="bold" variant="strong">{spaceName}</Text>
+  <Icon name="users" />
+  <Text variant="subtle" size="sm">5 members</Text>
+</Container>
 ```
 
 ---
@@ -676,28 +460,6 @@ From mobile onboarding implementation, we learned:
 
 ---
 
-## Quick Migration Commands
-
-### Search and Replace Patterns
-
-Common find/replace patterns for VS Code:
-
-```regex
-// Replace div with flexbox classes
-Find: <div className="flex ([^"]*)"[^>]*>
-Replace: <FlexRow $1>
-
-// Replace paragraph tags
-Find: <p className="([^"]*)"[^>]*>([^<]*)</p>
-Replace: <Paragraph>$2</Paragraph>
-
-// Replace button elements
-Find: <button ([^>]*) onClick=\{([^}]*)\}[^>]*>([^<]*)</button>
-Replace: <Button onClick={$2}>$3</Button>
-```
-
----
-
 ## Summary
 
 Key principles for successful web-to-native migration:
@@ -714,7 +476,7 @@ Following these patterns will ensure your components work seamlessly across web 
 
 ---
 
-*Last updated: December 9, 2024 at 11:45 AM*
+*Last updated: 2025-08-14*
 
 ---
 

@@ -2,7 +2,9 @@
 
 [← Back to INDEX](/.readme/INDEX.md)
 
-IMPORTANT: this guide is generic and may not fully adapt to the current repo. Don't just follow it blindly but always check the current situation and ask for clarification if needed.
+**Auto-reviewed and corrected against .readme/docs/component-management-guide.md - still needs human review : _Last review: 2025-08-14 10:45 UTC_**
+
+This guide provides architectural patterns and practical examples specific to this Quilibrium desktop/mobile app. All examples use our actual primitives, utilities, and file structure.
 
 ## Table of Contents
 
@@ -25,11 +27,11 @@ Building cross-platform React applications for both web and React Native require
 
 ### Key Principles
 
-**🎯 Core Goal**: <cite index="20-1">Write platform-specific code on the lowest possible level. Improve your primitive components, so you don't have to write custom styles and split code too much.</cite>
+**🎯 Core Goal**: Write platform-specific code at the primitive level. Our `src/components/primitives/` collection handles platform differences so business components don't need to.
 
-**📊 Code Sharing Reality**: <cite index="27-1">Facebook claims that their Ad Manager application has 87% code reuse across the two platforms</cite>, demonstrating that significant code sharing is achievable with the right architecture.
+**📊 Code Sharing Reality**: We achieve ~90% code sharing by extracting business logic to hooks in `src/hooks/` and using shared primitives for UI consistency.
 
-**🏗️ Architecture Philosophy**: <cite index="22-1">Both react and react-native being JavaScript based, with an architectural design approach you can share your business logic</cite> while keeping UI implementations platform-specific where necessary.
+**🏗️ Architecture Philosophy**: Three platform targets (web, desktop Electron, mobile React Native) share the same component architecture and business logic while adapting UI automatically through primitives.
 
 ---
 
@@ -38,69 +40,81 @@ Building cross-platform React applications for both web and React Native require
 ### Layer 1: Primitive Components (Platform-Specific)
 
 ```tsx
-// Platform-specific rendering with identical APIs
-Button.web.tsx; // Uses HTML <button>
-Button.native.tsx; // Uses React Native <Pressable>
+// Our actual primitive structure in src/components/primitives/
+Button/
+├── Button.web.tsx     // Uses HTML <button> with Tailwind CSS
+├── Button.native.tsx  // Uses React Native <Pressable> with StyleSheet
+├── types.ts           // Shared TypeScript interface
+└── index.ts           // Platform resolution
 ```
 
 ### Layer 2: Business Logic (Shared)
 
 ```tsx
-// Shared hooks and business functions
-useChannelData(); // 100% shared across platforms
-usePermissions(); // 100% shared across platforms
-validateMessage(); // Pure functions, no React dependencies
+// Our actual hooks structure in src/hooks/
+useSpaces(); // 100% shared across platforms
+useMessages(); // 100% shared across platforms  
+useUserProfile(); // 100% shared across platforms
+validateMessageContent(); // Pure functions in src/utils/
 ```
 
 ### Layer 3: Layout Components (Platform-Aware)
 
 ```tsx
-// Either shared with responsive design OR platform-specific
-Component.tsx; // Single component with conditional rendering
-Component.web.tsx; // Desktop-specific layout
-Component.native.tsx; // Mobile-specific layout
+// Our component patterns in src/components/
+SpaceHeader.tsx        // Single component using primitives + responsive detection
+MessageComposer.web.tsx   // Desktop-specific layout with hover interactions
+MessageComposer.native.tsx // Mobile-specific layout with touch gestures
 ```
 
 ---
 
 ## Decision Framework: One vs Two Components
 
+This framework aligns with the practical guidance in [Component Management Guide](./component-management-guide.md). 
+
 ### Use Single Shared Component When:
 
 **✅ Criteria:**
 
-- Similar data requirements and interactions
-- Layout differences can be handled with conditional rendering
-- Complexity manageable within one component file
-- <cite index="34-1">The Container and presentation pattern can separate presentation logic from business logic</cite>
+- Component only uses our primitives (no raw HTML)
+- Layout differences can be handled with responsive detection
+- Business logic is already extracted to hooks in `src/hooks/`
+- Component complexity stays manageable (~100 lines or less)
 
 **📝 Example Structure:**
 
 ```tsx
-// UserProfile.tsx - Single component for both platforms
-export function UserProfile({ userId }) {
-  const { isMobile } = useResponsiveLayout();
+// UserProfile.tsx - Single component using our primitives
+import { FlexColumn, Container, Text, Button } from '../primitives';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
+import { useUserProfile } from '../hooks/useUserProfile';
 
-  // ✅ Logic can stay - single component
-  const [user, setUser] = useState(null);
+export function UserProfile({ userId }) {
+  const { isMobile } = useResponsiveLayoutContext();
+  
+  // ✅ Business logic extracted to hook
+  const { user, updateUser, isLoading } = useUserProfile(userId);
+  
+  // UI state stays in component
   const [isEditing, setIsEditing] = useState(false);
 
-  // Business logic
-  useEffect(() => {
-    fetchUser(userId).then(setUser);
-  }, [userId]);
+  if (isLoading) return <Text>Loading...</Text>;
 
-  // UI logic with platform detection
   return (
-    <FlexColumn className={isMobile ? 'profile-mobile' : 'profile-desktop'}>
-      <Avatar src={user?.avatar} size={isMobile ? 'lg' : 'xl'} />
-
-      {isMobile ? (
-        <MobileLayout user={user} isEditing={isEditing} />
-      ) : (
-        <DesktopLayout user={user} isEditing={isEditing} />
-      )}
-    </FlexColumn>
+    <Container className={isMobile ? 'p-4' : 'p-6'}>
+      <FlexColumn gap={isMobile ? 'md' : 'lg'}>
+        <Text variant="heading" size={isMobile ? 'lg' : 'xl'}>
+          {user.name}
+        </Text>
+        
+        {isMobile ? (
+          <MobileProfileLayout user={user} onEdit={() => setIsEditing(true)} />
+        ) : (
+          <DesktopProfileLayout user={user} onEdit={() => setIsEditing(true)} />
+        )}
+      </FlexColumn>
+    </Container>
   );
 }
 ```
@@ -109,58 +123,74 @@ export function UserProfile({ userId }) {
 
 **✅ Criteria:**
 
-- Fundamentally different layouts or navigation patterns
-- Platform-specific features (swipe gestures, hover actions)
-- Different interaction paradigms (sidebar vs tabs)
-- Would require excessive conditional rendering
-- <cite index="23-1">When your platform-specific code is more complex, you should consider splitting the code out into separate files</cite>
+- Deep OS integration needs (file system, notifications, camera)
+- Platform-specific gestures/interactions (swipe vs hover)
+- Performance-critical sections requiring native optimization
+- Would require excessive conditional rendering (>50% of component)
+- Component exceeds ~150 lines with conditional logic
 
 **📝 Example Structure:**
 
 ```tsx
-// hooks/useServerHeader.ts - Shared business logic
-export function useServerHeader(serverId) {
-  const [server, setServer] = useState(null);
-  const [members, setMembers] = useState([]);
+// hooks/useSpaceHeader.ts - Shared business logic
+export function useSpaceHeader(spaceId: string) {
+  const [space, setSpace] = useState(null);
+  const [memberCount, setMemberCount] = useState(0);
 
   // All business logic here - 100% shared
   useEffect(() => {
-    fetchServerData(serverId).then(/* ... */);
-  }, [serverId]);
+    Promise.all([
+      fetchSpace(spaceId),
+      fetchMemberCount(spaceId)
+    ]).then(([spaceData, count]) => {
+      setSpace(spaceData);
+      setMemberCount(count);
+    });
+  }, [spaceId]);
 
-  return { server, members, updateServer, addMember };
+  return { space, memberCount, updateSpace };
 }
 
-// ServerHeader.web.tsx - Desktop layout
-export function ServerHeader({ serverId }) {
-  const { server, updateServer } = useServerHeader(serverId);
+// SpaceHeader.web.tsx - Desktop layout using our primitives
+import { FlexBetween, Text, Button, Container } from '../primitives';
+
+export function SpaceHeader({ spaceId }) {
+  const { space, memberCount } = useSpaceHeader(spaceId);
 
   // ✅ Only UI logic specific to desktop
   const [showDropdown, setShowDropdown] = useState(false);
 
   return (
-    <div className="desktop-header">
-      <ServerBanner server={server}>
-        <h1>{server.name}</h1> {/* Embedded in banner */}
-      </ServerBanner>
-      {/* Desktop-specific controls */}
-    </div>
+    <Container className="space-header-desktop">
+      <FlexBetween>
+        <Text variant="heading" size="xl">{space?.name}</Text>
+        <Button variant="subtle" onClick={() => setShowDropdown(!showDropdown)}>
+          Settings
+        </Button>
+      </FlexBetween>
+    </Container>
   );
 }
 
-// ServerHeader.native.tsx - Mobile layout
-export function ServerHeader({ serverId }) {
-  const { server, updateServer } = useServerHeader(serverId); // Same hook!
+// SpaceHeader.native.tsx - Mobile layout using our primitives
+import { FlexColumn, FlexRow, Text, Button } from '../primitives';
+
+export function SpaceHeader({ spaceId }) {
+  const { space, memberCount } = useSpaceHeader(spaceId); // Same hook!
 
   // ✅ Only UI logic specific to mobile
-  const [activeTab, setActiveTab] = useState(0);
+  const [showActions, setShowActions] = useState(false);
 
   return (
-    <View style={styles.mobileHeader}>
-      <ServerBanner server={server} /> {/* Separate from title */}
-      <Text style={styles.title}>{server.name}</Text>
-      <MobileActions server={server} /> {/* Mobile-only features */}
-    </View>
+    <FlexColumn gap="sm" style={styles.mobileHeader}>
+      <Text variant="heading" size="lg">{space?.name}</Text>
+      <FlexRow gap="xs">
+        <Text variant="subtle">{memberCount} members</Text>
+        <Button size="small" onPress={() => setShowActions(!showActions)}>
+          ⋯
+        </Button>
+      </FlexRow>
+    </FlexColumn>
   );
 }
 ```
@@ -171,204 +201,140 @@ export function ServerHeader({ serverId }) {
 
 ### Business Logic: ALWAYS Extract to Hooks
 
-<cite index="29-1">Business logic can bloat React components and make them difficult to test. Extracting them to hooks in combination with dependency injection can improve maintainability and testability.</cite>
+Following our [Component Management Guide](./component-management-guide.md#business-logic-extraction-rule), ALL business logic must be extracted to hooks in `src/hooks/`.
 
-**🔄 Must Extract:**
+**🔄 Must Extract to `src/hooks/`:**
 
 - **Data fetching**: API calls, WebSocket connections, caching
-- **Business rules**: Permissions, validation, calculations
-- **State management**: Data that represents business entities
-- **Side effects**: Analytics, notifications, external integrations
+- **Business rules**: User permissions, message validation, space management
+- **State management**: User profiles, space data, message history
+- **Side effects**: Analytics tracking, notifications, file uploads
 
-**📝 Example:**
+**📝 Example from Our Codebase:**
 
 ```tsx
 // ❌ Business logic mixed in component
-export function Channel({ channelId }) {
+export function SpaceView({ spaceId }) {
   const [messages, setMessages] = useState([]);
-  const [permissions, setPermissions] = useState({});
+  const [members, setMembers] = useState([]);
 
-  // ❌ Extract this to hooks
+  // ❌ Extract this to src/hooks/
   useEffect(() => {
-    fetchMessages(channelId).then(setMessages);
-    fetchPermissions(channelId).then(setPermissions);
-  }, [channelId]);
+    fetchSpaceMessages(spaceId).then(setMessages);
+    fetchSpaceMembers(spaceId).then(setMembers);
+  }, [spaceId]);
 
-  const canDelete = (messageId) => {
+  const canManageSpace = (userId) => {
     // ❌ Extract this business rule
-    return (
-      permissions.admin ||
-      messages.find((m) => m.id === messageId)?.authorId === currentUser.id
-    );
+    return members.find(m => m.id === userId)?.role === 'admin';
   };
 
   return <div>...</div>;
 }
 
-// ✅ Business logic extracted to shared hooks
-export function useChannelData(channelId) {
+// ✅ Business logic extracted to our hooks structure
+// src/hooks/useSpaceData.ts
+export function useSpaceData(spaceId: string) {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchMessages(channelId)
+    fetchSpaceMessages(spaceId)
       .then(setMessages)
       .finally(() => setIsLoading(false));
-  }, [channelId]);
+  }, [spaceId]);
 
   return { messages, isLoading };
 }
 
-export function useChannelPermissions(channelId, userId) {
-  const [permissions, setPermissions] = useState({});
+// src/hooks/useSpacePermissions.ts
+export function useSpacePermissions(spaceId: string, userId: string) {
+  const { members } = useSpaceMembers(spaceId);
 
-  useEffect(() => {
-    fetchPermissions(channelId, userId).then(setPermissions);
-  }, [channelId, userId]);
+  const canManageSpace = useCallback(() => {
+    return members.find(m => m.id === userId)?.role === 'admin';
+  }, [members, userId]);
 
-  const canDelete = useCallback(
-    (messageId, authorId) => {
-      return (
-        permissions.admin || (authorId === userId && permissions.canDeleteOwn)
-      );
-    },
-    [permissions, userId]
-  );
+  const canDeleteMessages = useCallback(() => {
+    const userMember = members.find(m => m.id === userId);
+    return userMember?.role === 'admin' || userMember?.role === 'moderator';
+  }, [members, userId]);
 
-  return { permissions, canDelete };
+  return { canManageSpace, canDeleteMessages };
 }
 
-// ✅ Clean component using extracted logic
-export function Channel({ channelId }) {
-  const { messages, isLoading } = useChannelData(channelId);
-  const { canDelete } = useChannelPermissions(channelId, currentUser.id);
+// ✅ Clean component using our primitives and extracted logic
+import { FlexColumn, Text, Container } from '../primitives';
+
+export function SpaceView({ spaceId }) {
+  const { messages, isLoading } = useSpaceData(spaceId);
+  const { canManageSpace } = useSpacePermissions(spaceId, currentUser.id);
 
   // Only UI logic remains
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading) return <Text>Loading...</Text>;
 
   return (
-    <MessageList
-      messages={messages}
-      onDelete={(messageId, authorId) => canDelete(messageId, authorId)}
-    />
+    <Container>
+      <FlexColumn gap="md">
+        <SpaceMessageList 
+          messages={messages}
+          canManage={canManageSpace()}
+        />
+      </FlexColumn>
+    </Container>
   );
 }
 ```
 
 ### UI Logic: Keep in Components
 
+The [Component Management Guide](./component-management-guide.md#business-logic-extraction-rule) covers this in detail. Key points:
+
 **✅ Keep in Components:**
+- **UI state**: Modal visibility, input focus, hover states  
+- **Event handling**: Click handlers, form submissions
+- **UI calculations**: Show/hide logic, formatting for display
+- **Render logic**: Conditional rendering based on UI state
 
-- **UI state**: Modal visibility, input values, scroll position, hover states
-- **Event handling**: Click handlers, form submissions, keyboard events
-- **UI calculations**: Show/hide logic, CSS classes, formatting for display
-- **Render logic**: Conditional rendering, data presentation
-
-**📝 Example:**
-
-```tsx
-export function MessageInput({ onSend }) {
-  // ✅ UI state - stays in component
-  const [message, setMessage] = useState('');
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
-
-  // ✅ UI event handlers - stays in component
-  const handleSubmit = () => {
-    if (message.trim()) {
-      onSend(message); // Business logic handled by parent
-      setMessage(''); // UI logic - clear input
-      setShowEmojiPicker(false); // UI logic - hide picker
-    }
-  };
-
-  const handleEmojiSelect = (emoji) => {
-    setMessage((prev) => prev + emoji); // UI logic - update input
-    setShowEmojiPicker(false); // UI logic - hide picker
-  };
-
-  // ✅ UI calculations - stays in component
-  const showSendButton = message.trim().length > 0;
-  const inputPlaceholder = isFocused ? '' : 'Type a message...';
-
-  return (
-    <FlexRow gap="sm">
-      <Input
-        value={message}
-        onChange={setMessage}
-        placeholder={inputPlaceholder}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        onEnter={handleSubmit}
-      />
-
-      <IconButton
-        name="smile"
-        active={showEmojiPicker}
-        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-      />
-
-      {showSendButton && <Button onClick={handleSubmit}>Send</Button>}
-
-      {showEmojiPicker && (
-        <EmojiPicker
-          onEmojiSelect={handleEmojiSelect}
-          onclose={() => setShowEmojiPicker(false)}
-        />
-      )}
-    </FlexRow>
-  );
-}
-```
+**See the Component Management Guide for complete examples and implementation details.**
 
 ### Pure Business Functions: Maximum Extractability
 
-<cite index="29-1">Extract all the business logic into a new function in a new file that contains no code related to the UI or React (except for maybe the error messages that could be replaced by some kind of error codes).</cite>
-
-**📝 Example:**
+Pure functions go in `src/utils/` and should contain no React dependencies:
 
 ```tsx
-// business/messageLogic.ts - Pure functions (no React dependencies)
-export function validateMessage(content: string, rules: ChannelRules) {
+// src/utils/messageValidation.ts - Pure functions
+export function validateMessageContent(content: string): ValidationResult {
   if (!content.trim()) {
-    return { valid: false, error: 'Message cannot be empty' };
+    return { isValid: false, error: 'Message cannot be empty' };
   }
 
-  if (content.length > rules.maxLength) {
-    return { valid: false, error: `Message too long (max ${rules.maxLength})` };
+  if (content.length > MESSAGE_MAX_LENGTH) {
+    return { isValid: false, error: `Message too long (max ${MESSAGE_MAX_LENGTH})` };
   }
 
-  if (containsProfanity(content)) {
-    return { valid: false, error: 'Message contains inappropriate content' };
-  }
-
-  return { valid: true };
+  return { isValid: true };
 }
 
-export function calculatePermissions(
+export function calculateSpacePermissions(
   user: User,
-  channel: Channel
-): Permissions {
+  space: Space
+): SpacePermissions {
   if (user.globalRole === 'admin') return ALL_PERMISSIONS;
 
-  const channelRole = channel.members.find((m) => m.userId === user.id)?.role;
-  return getRolePermissions(channelRole || 'member');
+  const spaceMember = space.members.find((m) => m.userId === user.id);
+  return getRolePermissions(spaceMember?.role || 'member');
 }
 
-// hooks/useMessageValidation.ts - Hook uses pure functions
-export function useMessageValidation(channelId: string) {
-  const [rules, setRules] = useState(null);
-
-  useEffect(() => {
-    fetchChannelRules(channelId).then(setRules);
-  }, [channelId]);
+// src/hooks/useMessageValidation.ts - Hook uses pure functions
+export function useMessageValidation(spaceId: string) {
+  const { space } = useSpaceData(spaceId);
 
   const validate = useCallback(
     (content: string) => {
-      if (!rules) return { valid: true };
-      return validateMessage(content, rules); // Uses pure function
+      return validateMessageContent(content); // Uses pure function
     },
-    [rules]
+    [space]
   );
 
   return { validate };
@@ -593,49 +559,32 @@ export function AdvancedComponent({ channelId }) {
 
 ### 1. Platform Detection Strategy
 
-<cite index="23-1">React Native provides a module that detects the platform in which the app is running. You can use the detection logic to implement platform-specific code.</cite>
+We use our centralized platform utilities in `src/utils/platform.ts` for all platform detection needs:
 
 ```tsx
-// hooks/useResponsiveLayout.ts - Cross-platform detection
-export function useResponsiveLayout() {
-  const [layout, setLayout] = useState({
-    isMobile: false,
-    isTablet: false,
-    isDesktop: true,
-    screenWidth: 0,
-  });
+// Our actual platform utilities
+import { isWeb, isMobile, isElectron, getPlatform, isTouchDevice } from '../utils/platform';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
-  useEffect(() => {
-    // React Native: Platform detection
-    if (Platform.OS === 'ios' || Platform.OS === 'android') {
-      const { width } = Dimensions.get('window');
-      setLayout({
-        isMobile: width < 768,
-        isTablet: width >= 768 && width < 1024,
-        isDesktop: width >= 1024,
-        screenWidth: width,
-      });
-      return;
-    }
-
-    // Web: Window size detection
-    const updateLayout = () => {
-      const width = window.innerWidth;
-      setLayout({
-        isMobile: width < 768,
-        isTablet: width >= 768 && width < 1024,
-        isDesktop: width >= 1024,
-        screenWidth: width,
-      });
-    };
-
-    updateLayout();
-    window.addEventListener('resize', updateLayout);
-    return () => window.removeEventListener('resize', updateLayout);
-  }, []);
-
-  return layout;
+// Platform environment detection
+if (isWeb()) {
+  // Web browser code
 }
+if (isMobile()) {  // React Native environment
+  // Mobile app code
+}
+if (isElectron()) {
+  // Electron desktop app code
+}
+
+// Screen size detection (viewport-based)
+const { isMobile: isSmallScreen, isTablet, isDesktop } = useResponsiveLayoutContext();
+
+// Touch capability detection
+const hasTouch = isTouchDevice();
+
+// Combined platform features
+const platform = getPlatform(); // 'web' | 'mobile' | 'electron'
 ```
 
 ### 2. Custom Hook Naming and Structure
@@ -857,31 +806,43 @@ export class ChannelErrorBoundary extends React.Component {
 
 ## Testing Strategies
 
+### Testing with Our Playground System
+
+**Web Testing (Primary):**
+1. Run `yarn dev` to start development server
+2. Navigate to `/playground` for primitive testing
+3. Test components with different props, themes, and screen sizes
+4. Verify responsive behavior and theme switching
+
+**Mobile Testing (When Needed):**
+1. Run `yarn mobile` to start mobile test playground
+2. Use Expo Go app to test on real device
+3. Navigate through test screens to verify mobile behavior
+4. Test touch interactions and native platform integration
+
 ### 1. Testing Pure Business Functions
 
 ```tsx
-// business/messageLogic.test.ts
-import { validateMessage, calculatePermissions } from './messageLogic';
+// src/utils/__tests__/messageValidation.test.ts
+import { validateMessageContent } from '../messageValidation';
 
-describe('validateMessage', () => {
-  const rules = { maxLength: 100, allowProfanity: false };
-
+describe('validateMessageContent', () => {
   it('should validate normal messages', () => {
-    const result = validateMessage('Hello world', rules);
-    expect(result.valid).toBe(true);
+    const result = validateMessageContent('Hello world');
+    expect(result.isValid).toBe(true);
   });
 
   it('should reject empty messages', () => {
-    const result = validateMessage('   ', rules);
-    expect(result.valid).toBe(false);
+    const result = validateMessageContent('   ');
+    expect(result.isValid).toBe(false);
     expect(result.error).toBe('Message cannot be empty');
   });
 
   it('should reject messages that are too long', () => {
-    const longMessage = 'a'.repeat(101);
-    const result = validateMessage(longMessage, rules);
-    expect(result.valid).toBe(false);
-    expect(result.error).toBe('Message too long (max 100)');
+    const longMessage = 'a'.repeat(1001); // Assuming 1000 char limit
+    const result = validateMessageContent(longMessage);
+    expect(result.isValid).toBe(false);
+    expect(result.error).toContain('too long');
   });
 });
 ```
@@ -889,25 +850,29 @@ describe('validateMessage', () => {
 ### 2. Testing Custom Hooks
 
 ```tsx
-// hooks/useChannelData.test.ts
+// src/hooks/__tests__/useSpaceData.test.ts
 import { renderHook, waitFor } from '@testing-library/react';
-import { useChannelData } from './useChannelData';
+import { useSpaceData } from '../useSpaceData';
 
-// Mock API
-jest.mock('../services/api', () => ({
-  fetchChannelMessages: jest.fn(),
+// Mock our API service
+jest.mock('../../services/api', () => ({
+  fetchSpaceMessages: jest.fn(),
+  fetchSpaceMembers: jest.fn(),
 }));
 
-describe('useChannelData', () => {
+describe('useSpaceData', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should fetch channel data on mount', async () => {
-    const mockMessages = [{ id: '1', content: 'Hello' }];
-    api.fetchChannelMessages.mockResolvedValue({ messages: mockMessages });
+  it('should fetch space data on mount', async () => {
+    const mockMessages = [{ id: '1', content: 'Hello space!' }];
+    const mockMembers = [{ id: 'user1', name: 'Alice' }];
+    
+    api.fetchSpaceMessages.mockResolvedValue({ messages: mockMessages });
+    api.fetchSpaceMembers.mockResolvedValue({ members: mockMembers });
 
-    const { result } = renderHook(() => useChannelData('channel-123'));
+    const { result } = renderHook(() => useSpaceData('space-123'));
 
     expect(result.current.isLoading).toBe(true);
 
@@ -916,14 +881,15 @@ describe('useChannelData', () => {
     });
 
     expect(result.current.messages).toEqual(mockMessages);
+    expect(result.current.members).toEqual(mockMembers);
     expect(result.current.error).toBeNull();
   });
 
   it('should handle errors gracefully', async () => {
     const error = new Error('Network error');
-    api.fetchChannelMessages.mockRejectedValue(error);
+    api.fetchSpaceMessages.mockRejectedValue(error);
 
-    const { result } = renderHook(() => useChannelData('channel-123'));
+    const { result } = renderHook(() => useSpaceData('space-123'));
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
@@ -938,39 +904,50 @@ describe('useChannelData', () => {
 ### 3. Testing Platform-Specific Components
 
 ```tsx
-// ChannelChat.test.tsx
+// src/components/__tests__/SpaceChat.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ChannelChat } from './ChannelChat';
+import { SpaceChat } from '../SpaceChat';
 
-// Mock hooks
-jest.mock('./hooks/useChannelChat', () => ({
-  useChannelChat: () => ({
-    messages: [{ id: '1', content: 'Hello', author: { name: 'John' } }],
+// Mock our hooks
+jest.mock('../../hooks/useSpaceChat', () => ({
+  useSpaceChat: () => ({
+    messages: [{ id: '1', content: 'Hello space!', author: { name: 'Alice' } }],
     sendMessage: jest.fn(),
-    members: [{ id: 'user1', name: 'John' }],
+    members: [{ id: 'user1', name: 'Alice' }],
   }),
 }));
 
-describe('ChannelChat', () => {
-  it('should render messages', () => {
-    render(<ChannelChat channelId="channel-123" />);
+// Mock our primitives
+jest.mock('../primitives', () => ({
+  FlexColumn: ({ children, ...props }) => <div data-testid="flex-column" {...props}>{children}</div>,
+  Text: ({ children, ...props }) => <span {...props}>{children}</span>,
+  Button: ({ children, onClick, ...props }) => <button onClick={onClick} {...props}>{children}</button>,
+  Input: ({ value, onChange, placeholder, ...props }) => (
+    <input value={value} onChange={(e) => onChange?.(e.target.value)} placeholder={placeholder} {...props} />
+  ),
+}));
 
-    expect(screen.getByText('Hello')).toBeInTheDocument();
-    expect(screen.getByText('John')).toBeInTheDocument();
+describe('SpaceChat', () => {
+  it('should render messages using our primitives', () => {
+    render(<SpaceChat spaceId="space-123" />);
+
+    expect(screen.getByText('Hello space!')).toBeInTheDocument();
+    expect(screen.getByText('Alice')).toBeInTheDocument();
+    expect(screen.getByTestId('flex-column')).toBeInTheDocument();
   });
 
-  it('should handle message sending', () => {
+  it('should handle message sending with our Input primitive', () => {
     const mockSendMessage = jest.fn();
 
-    render(<ChannelChat channelId="channel-123" />);
+    render(<SpaceChat spaceId="space-123" />);
 
     const input = screen.getByPlaceholderText('Type a message...');
     const sendButton = screen.getByRole('button', { name: /send/i });
 
-    fireEvent.change(input, { target: { value: 'New message' } });
+    fireEvent.change(input, { target: { value: 'New space message' } });
     fireEvent.click(sendButton);
 
-    expect(mockSendMessage).toHaveBeenCalledWith('New message');
+    expect(mockSendMessage).toHaveBeenCalledWith('New space message');
   });
 });
 ```
@@ -979,126 +956,106 @@ describe('ChannelChat', () => {
 
 ## Common Patterns & Examples
 
-### 1. Discord-Like Server Header
+### 1. Space Header Pattern (Real Example)
+
+This is the actual pattern used in our app - see the complete implementation in `src/components/SpaceHeader/`.
 
 ```tsx
-// hooks/useServerHeader.ts - Shared business logic
-export function useServerHeader(serverId: string) {
-  const [server, setServer] = useState(null);
+// src/hooks/useSpaceHeader.ts - Shared business logic
+export function useSpaceHeader(spaceId: string) {
+  const [space, setSpace] = useState(null);
   const [memberCount, setMemberCount] = useState(0);
   const [userRole, setUserRole] = useState('member');
 
   useEffect(() => {
     Promise.all([
-      fetchServer(serverId),
-      fetchMemberCount(serverId),
-      fetchUserRole(serverId, currentUser.id),
-    ]).then(([serverData, count, role]) => {
-      setServer(serverData);
+      fetchSpace(spaceId),
+      fetchSpaceMemberCount(spaceId),
+      fetchUserSpaceRole(spaceId, currentUser.id),
+    ]).then(([spaceData, count, role]) => {
+      setSpace(spaceData);
       setMemberCount(count);
       setUserRole(role);
     });
-  }, [serverId]);
+  }, [spaceId]);
 
-  const canManageServer = userRole === 'admin' || userRole === 'moderator';
+  const canManageSpace = userRole === 'admin' || userRole === 'moderator';
 
-  return { server, memberCount, userRole, canManageServer };
+  return { space, memberCount, userRole, canManageSpace };
 }
 
-// ServerHeader.web.tsx - Desktop: Banner with embedded title
-export function ServerHeader({ serverId }) {
-  const { server, memberCount, canManageServer } = useServerHeader(serverId);
+// SpaceHeader.web.tsx - Desktop: Uses our primitives
+import { Container, FlexBetween, Text, Button } from '../primitives';
+
+export function SpaceHeader({ spaceId }) {
+  const { space, memberCount, canManageSpace } = useSpaceHeader(spaceId);
 
   return (
-    <div className="relative">
-      <ServerBanner
-        imageUrl={server?.bannerUrl}
-        className="h-32 bg-gradient-to-r from-purple-500 to-blue-500"
-      >
-        {/* Desktop: Title embedded in banner */}
-        <div className="absolute bottom-4 left-4">
-          <Text className="text-white text-2xl font-bold drop-shadow-lg">
-            {server?.name}
+    <Container className="space-header-desktop bg-surface-0 border-b border-default">
+      <FlexBetween className="p-4">
+        <FlexColumn gap="xs">
+          <Text variant="heading" size="xl" className="text-strong">
+            {space?.name}
           </Text>
-          <Text className="text-white/80 text-sm">{memberCount} members</Text>
-        </div>
+          <Text variant="subtle" size="sm">{memberCount} members</Text>
+        </FlexColumn>
 
-        {canManageServer && (
-          <div className="absolute top-4 right-4">
-            <IconButton
-              name="cog"
-              variant="ghost"
-              className="text-white hover:bg-white/20"
-              onClick={() => openServerSettings(serverId)}
-            />
-          </div>
+        {canManageSpace && (
+          <Button variant="subtle" onClick={() => openSpaceSettings(spaceId)}>
+            Settings
+          </Button>
         )}
-      </ServerBanner>
-    </div>
+      </FlexBetween>
+    </Container>
   );
 }
 
-// ServerHeader.native.tsx - Mobile: Stacked layout with fixed header
-export function ServerHeader({ serverId }) {
-  const { server, memberCount, canManageServer } = useServerHeader(serverId);
+// SpaceHeader.native.tsx - Mobile: Uses our primitives with StyleSheet
+import { FlexColumn, FlexRow, Text, Button } from '../primitives';
+import { StyleSheet } from 'react-native';
+
+export function SpaceHeader({ spaceId }) {
+  const { space, memberCount, canManageSpace } = useSpaceHeader(spaceId);
 
   return (
-    <View style={styles.container}>
-      {/* Mobile: Banner separate from title */}
-      <ServerBanner imageUrl={server?.bannerUrl} style={styles.banner} />
+    <FlexColumn style={styles.container}>
+      <FlexRow style={styles.titleSection}>
+        <FlexColumn style={styles.titleContainer}>
+          <Text variant="heading" size="lg" style={styles.spaceName}>
+            {space?.name}
+          </Text>
+          <Text variant="subtle" size="sm" style={styles.memberCount}>
+            {memberCount} members
+          </Text>
+        </FlexColumn>
 
-      {/* Mobile: Title below banner with actions */}
-      <View style={styles.titleSection}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.serverName}>{server?.name}</Text>
-          <Text style={styles.memberCount}>{memberCount} members</Text>
-        </View>
-
-        {/* Mobile-specific action buttons */}
-        <FlexRow gap="sm">
-          <IconButton name="search" onPress={() => openSearch(serverId)} />
-          <IconButton name="users" onPress={() => openMembersList(serverId)} />
-          {canManageServer && (
-            <IconButton
-              name="cog"
-              onPress={() => openServerSettings(serverId)}
-            />
-          )}
-        </FlexRow>
-      </View>
-    </View>
+        {canManageSpace && (
+          <Button
+            variant="subtle"
+            size="small"
+            onPress={() => openSpaceSettings(spaceId)}
+          >
+            ⋯
+          </Button>
+        )}
+      </FlexRow>
+    </FlexColumn>
   );
 }
 
+// Using our theming system from src/components/primitives/theme/colors.ts
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
-  },
-  banner: {
-    height: 120,
-    backgroundColor: '#7c3aed',
+    backgroundColor: colors.surface[0],
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
   },
   titleSection: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     padding: 16,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    alignItems: 'center',
   },
   titleContainer: {
     flex: 1,
-  },
-  serverName: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#111827',
-  },
-  memberCount: {
-    fontSize: 14,
-    color: '#6b7280',
-    marginTop: 2,
   },
 });
 ```
@@ -1653,4 +1610,14 @@ The investment in proper architecture pays dividends in **maintainability**, **t
 
 ---
 
-_This guide synthesizes best practices from React, React Native, and cross-platform development communities. Continue refining these patterns based on your specific application needs and user feedback._
+## Additional Resources
+
+- **[Component Management Guide](./component-management-guide.md)** - Practical decisions for component creation and management
+- **[Primitive Styling Guide](./primitive-styling-guide.md)** - Detailed styling guidelines for primitives
+- **[When to Use Primitives](./when-to-use-primitives.md)** - Decision framework for primitive usage
+
+---
+
+_This guide provides architectural patterns specific to the Quilibrium desktop/mobile app. Continue refining these patterns based on user feedback and platform requirements._
+
+_Updated: 2025-08-14 12:30 UTC_

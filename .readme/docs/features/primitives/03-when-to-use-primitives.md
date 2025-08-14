@@ -4,6 +4,8 @@
 
 [← Back to Docs INDEX](/.readme/INDEX.md)
 
+**READY FOR OFFICIAL DOCS: _Last review: 2025-08-14 10:45 UTC_**
+
 ## Overview
 
 Not every component needs to use primitives. This guide helps decide when primitives add value vs when they're over-engineering.
@@ -131,18 +133,53 @@ Not every component needs to use primitives. This guide helps decide when primit
 ### ❌ Over-Engineering
 
 ```tsx
-// Too much abstraction for simple static content
-<Container>
-  <Container className="wrapper">
-    <Text>Simple static text</Text>
-  </Container>
+// Complex table layout forced into primitives creates unnecessary complexity
+<Container className="table-container">
+  <FlexRow className="table-header">
+    <Container className="col-name"><Text>Name</Text></Container>
+    <Container className="col-status"><Text>Status</Text></Container>
+    <Container className="col-actions"><Text>Actions</Text></Container>
+  </FlexRow>
+  {data.map(item => (
+    <FlexRow key={item.id} className="table-row">
+      <Container className="col-name"><Text>{item.name}</Text></Container>
+      <Container className="col-status"><Text>{item.status}</Text></Container>
+      <Container className="col-actions">
+        <Button size="small" onClick={() => edit(item)}>Edit</Button>
+      </Container>
+    </FlexRow>
+  ))}
 </Container>
 
-// vs simpler:
-<div className="wrapper">
-  <span>Simple static text</span>
-</div>
+// vs proper HTML table with primitive buttons:
+<table className="data-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {data.map(item => (
+      <tr key={item.id}>
+        <td>{item.name}</td>
+        <td>{item.status}</td>
+        <td>
+          <Button size="small" onClick={() => edit(item)}>Edit</Button>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
 ```
+
+**Problems with the primitive version:**
+- Loses semantic HTML table structure (accessibility issues)
+- CSS grid/flexbox hacks needed for proper column alignment
+- Screen readers can't navigate properly
+- Complex responsive behavior needs manual implementation
+- Browser table features (sorting, selection) are lost
 
 ## Migration Strategy
 
@@ -175,7 +212,7 @@ The goal is shared business logic with appropriate UI abstractions, not primitiv
 
 ---
 
-*Last updated: 2025-08-05*
+*Last updated: 2025-08-14*
 
 ---
 

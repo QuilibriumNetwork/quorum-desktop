@@ -4,6 +4,8 @@
 
 [← Back to Docs INDEX](/.readme/INDEX.md)
 
+**READY FOR OFFICIAL DOCS: _Last review: 2025-08-14 10:45 UTC_**
+
 Fast lookup guide for all primitive components with essential props and examples.
 
 ## 📝 Text & Typography
@@ -51,15 +53,19 @@ Fast lookup guide for all primitive components with essential props and examples
 ### Button
 ```tsx
 <Button 
-  type="primary|secondary|light|light-outline|subtle|subtle-outline|danger|unstyled"
+  type="primary|secondary|light|light-outline|subtle|subtle-outline|danger|primary-white|secondary-white|light-white|light-outline-white|disabled-onboarding|unstyled"
   size="small|normal|large"
   onClick={() => {}}
   disabled={boolean}
+  fullWidth={boolean}
+  fullWidthWithMargin={boolean}    // Native only
   iconName="icon-name"
   iconOnly={boolean}
-  hapticFeedback={boolean}
-  accessibilityLabel="description"
+  hapticFeedback={boolean}         // Native only
+  accessibilityLabel="description" // Native only
   tooltip="tooltip text"
+  highlightedTooltip={boolean}
+  className="css-classes"          // Web only
 >
   Button Text
 </Button>
@@ -70,6 +76,8 @@ Fast lookup guide for all primitive components with essential props and examples
 <Button type="primary" onClick={save}>Save</Button>
 <Button type="secondary" iconName="plus" onClick={add}>Add</Button>
 <Button type="light" iconName="settings" iconOnly onClick={settings} />
+<Button type="primary" fullWidth onClick={submit}>Full Width Button</Button>
+<Button type="light-white" onClick={onWhiteBackground}>White Variant</Button>
 ```
 
 ---
@@ -87,10 +95,20 @@ Fast lookup guide for all primitive components with essential props and examples
   error={boolean}
   errorMessage="error text"
   disabled={boolean}
-  keyboardType="default|email-address|numeric|phone-pad|number-pad"
-  returnKeyType="done|go|next|search|send"
-  autoComplete="off|email|name|tel|username|password"
-  secureTextEntry={boolean}
+  noFocusStyle={boolean}
+  autoFocus={boolean}
+  className="css-classes"          // Web only
+  style={CSSProperties}
+  testID="test-id"
+  accessibilityLabel="description"
+  // Native-specific props:
+  keyboardType="default|email-address|numeric|phone-pad|number-pad|decimal-pad|url"  // Native only
+  returnKeyType="done|go|next|search|send"  // Native only
+  autoComplete="off|email|name|tel|username|password"  // Native only
+  secureTextEntry={boolean}        // Native only
+  onSubmitEditing={() => {}}       // Native only
+  onBlur={() => {}}
+  onFocus={() => {}}
 />
 ```
 
@@ -120,6 +138,29 @@ Fast lookup guide for all primitive components with essential props and examples
   error={boolean}
   errorMessage="error text"
 />
+```
+
+### FileUpload
+```tsx
+<FileUpload 
+  onFilesSelected={(files) => {}}
+  accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
+  multiple={boolean}
+  maxSize={number}                 // bytes
+  minSize={number}                 // bytes
+  disabled={boolean}
+  onError={(error) => {}}
+  testId="file-upload"
+  // Web-specific props:
+  onDragActiveChange={(active) => {}}  // Web only
+  validator={(file) => string|null}    // Web only
+  // Native-specific props:
+  showCameraOption={boolean}       // Native only
+  imageQuality={number}            // Native only (0-1)
+  allowsEditing={boolean}          // Native only
+>
+  <Text>Drop files here or click to upload</Text>
+</FileUpload>
 ```
 
 ---
@@ -163,6 +204,53 @@ Fast lookup guide for all primitive components with essential props and examples
 </FlexBetween>
 ```
 
+### Container
+```tsx
+<Container 
+  width="auto|full|fit|custom-value"
+  maxWidth="xs|sm|md|lg|xl|2xl|full|custom-value"
+  padding="none|xs|sm|md|lg|xl|custom-value"
+  margin="none|xs|sm|md|lg|xl|auto|custom-value"
+  backgroundColor="hex-color"
+  className="css-classes"        // Web only
+  style={CSSProperties}
+  testId="container"
+  // Web-specific props:
+  onClick={(event) => {}}        // Web only
+  onMouseEnter={(event) => {}}   // Web only
+  onMouseLeave={(event) => {}}   // Web only
+  role="button"                  // Web only
+  aria-label="description"       // Web only
+  // Native-specific props:
+  onPress={() => {}}             // Native only
+  accessible={boolean}           // Native only
+  accessibilityLabel="description"  // Native only
+  accessibilityRole="button"     // Native only
+  accessibilityHint="hint"       // Native only
+>
+  <Text>Container content</Text>
+</Container>
+```
+
+### Spacer
+```tsx
+<Spacer 
+  size="xs|sm|md|lg|xl|number"
+  direction="vertical|horizontal"  // Default: vertical
+  testId="spacer"
+  className="css-classes"        // Web only
+/>
+```
+
+### ResponsiveContainer
+```tsx
+<ResponsiveContainer 
+  className="css-classes"
+>
+  <Text>Responsive content that adapts to screen size</Text>
+</ResponsiveContainer>
+```
+
 ---
 
 ## 🎛️ Interactive Components
@@ -203,6 +291,38 @@ Fast lookup guide for all primitive components with essential props and examples
 >
   <Text>Modal content</Text>
 </Modal>
+```
+
+### ModalContainer
+```tsx
+<ModalContainer 
+  visible={boolean}
+  onClose={() => {}}
+  closeOnBackdropClick={boolean}
+  showBackdrop={boolean}
+  backdropBlur={boolean}
+  zIndex="9999"
+  className="css-classes"
+  animationDuration={300}        // ms
+  closeOnEscape={boolean}
+>
+  <Text>Modal content</Text>
+</ModalContainer>
+```
+
+### OverlayBackdrop
+```tsx
+<OverlayBackdrop 
+  visible={boolean}
+  onBackdropClick={() => {}}
+  zIndex="9999"
+  blur={boolean}
+  opacity={0.5}
+  className="css-classes"
+  closeOnBackdropClick={boolean}  // Default: true
+>
+  <Text>Content rendered on top of backdrop</Text>
+</OverlayBackdrop>
 ```
 
 ### Tooltip
@@ -334,19 +454,17 @@ theme.colors.utilities.info      // Info
 
 ### Card Layout
 ```tsx
-<FlexColumn 
-  gap="md" 
-  style={{ 
-    backgroundColor: theme.colors.bg.card,
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 16
-  }}
+<Container 
+  padding="md"
+  backgroundColor={theme.colors.bg.card}
+  style={{ borderRadius: 12, marginBottom: 16 }}
 >
-  <Title size="sm">Card Title</Title>
-  <Paragraph>Card content goes here</Paragraph>
-  <Button type="primary">Action</Button>
-</FlexColumn>
+  <FlexColumn gap="md">
+    <Title size="sm">Card Title</Title>
+    <Paragraph>Card content goes here</Paragraph>
+    <Button type="primary">Action</Button>
+  </FlexColumn>
+</Container>
 ```
 
 ### Loading State
@@ -362,6 +480,60 @@ theme.colors.utilities.info      // Info
 )}
 ```
 
+### File Upload Area
+```tsx
+<FileUpload 
+  onFilesSelected={handleFiles}
+  accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.gif'] }}
+  multiple
+  maxSize={5 * 1024 * 1024} // 5MB
+>
+  <Container 
+    padding="xl"
+    style={{ 
+      border: '2px dashed #ccc', 
+      borderRadius: 8,
+      textAlign: 'center' 
+    }}
+  >
+    <FlexColumn gap="sm" align="center">
+      <Icon name="upload" size="lg" />
+      <Text>Drop files here or click to upload</Text>
+      <Text variant="subtle" size="sm">Max 5MB per file</Text>
+    </FlexColumn>
+  </Container>
+</FileUpload>
+```
+
+### Modal with Backdrop
+```tsx
+<ModalContainer 
+  visible={showModal}
+  onClose={closeModal}
+  closeOnBackdropClick
+  backdropBlur
+>
+  <Container 
+    backgroundColor={theme.colors.bg.card}
+    padding="lg"
+    style={{ borderRadius: 12, maxWidth: 400, width: '90vw' }}
+  >
+    <FlexColumn gap="md">
+      <FlexBetween>
+        <Title size="sm">Confirmation</Title>
+        <Button type="subtle" iconName="close" iconOnly onClick={closeModal} />
+      </FlexBetween>
+      <Spacer size="sm" />
+      <Text>Are you sure you want to continue?</Text>
+      <FlexRow gap="sm" justify="end">
+        <Button type="secondary" onClick={closeModal}>Cancel</Button>
+        <Button type="danger" onClick={confirmAction}>Confirm</Button>
+      </FlexRow>
+    </FlexColumn>
+  </Container>
+</ModalContainer>
+```
+
 ---
 
 ## 🚫 Common Mistakes
@@ -372,6 +544,10 @@ theme.colors.utilities.info      // Info
 | `<View style={{ flexDirection: 'row' }}>` | `<FlexRow>` |
 | `<p>Text content</p>` | `<Text>Text content</Text>` |
 | `<button onClick={}>` | `<Button onClick={}>` |
+| `<input type="file" />` | `<FileUpload onFilesSelected={}>` |
+| `<div style={{ padding: 16 }}>` | `<Container padding="md">` |
+| Manual margin spacing between elements | `<Spacer size="md" />` |
+| Custom modal backdrop implementation | `<ModalContainer>` or `<OverlayBackdrop>` |
 | `style={{ color: '#000' }}` on Text | `variant="strong"` or `color={theme.colors.text.strong}` |
 | Manual margin/padding for spacing | Use Flex gap props or semantic components |
 | CSS classes in React Native | Use component props |
@@ -382,17 +558,21 @@ theme.colors.utilities.info      // Info
 **Recommended Architecture**: Container + Layout separation
 
 ```tsx
-// ✅ BEST PRACTICE: View for styling, Flex for layout
-<View style={{ backgroundColor: theme.colors.bg.card, padding: 16, borderRadius: 8 }}>
+// ✅ BEST PRACTICE: Container for styling, Flex for layout
+<Container 
+  backgroundColor={theme.colors.bg.card} 
+  padding="md" 
+  style={{ borderRadius: 8 }}
+>
   <FlexColumn gap="md">
     <FlexRow gap="sm" align="center">
       <Icon name="user" />
       <Text>Content</Text>
     </FlexRow>
   </FlexColumn>
-</View>
+</Container>
 
-// ❌ AVOID: Manual flexbox in View
+// ❌ AVOID: Manual flexbox in View/Container
 <View style={{ flexDirection: 'column', gap: 16, backgroundColor: '...' }}>
   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
     <Icon name="user" />
@@ -402,21 +582,23 @@ theme.colors.utilities.info      // Info
 ```
 
 **When to use:**
-- **View**: Styling containers (colors, borders, shadows, platform props)
+- **Container**: Styling containers (colors, borders, shadows, padding, accessibility)
 - **FlexRow/FlexColumn**: Layout, spacing, alignment, content organization
+- **Spacer**: Fixed spacing between non-flex elements
 
 ---
 
 ## 📖 Related Documentation
 
-- [Complete Primitives Guide](./04-complete-component-guide.md) - Detailed documentation with examples
-- [Web-to-Native Migration Guide](./02-web-to-native-migration.md) - Step-by-step conversion patterns
+- [When to Use Primitives](./03-when-to-use-primitives.md) - Decision framework
+- [Web-to-Native Migration Guide](./04-web-to-native-migration.md) - Step-by-step conversion patterns
+- [Primitive Styling Guide](./05-primitive-styling-guide.md) - Color system and consistency rules
 - [Theme System](../theme/README.md) - Color system and theming
 - [Component Architecture](../component-architecture-workflow-explained.md) - Overall architecture explanation
 
 ---
 
-*Last updated: 2025-08-05*
+*Last updated: 2025-08-14*
 
 ---
 
