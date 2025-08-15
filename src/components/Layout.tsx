@@ -5,6 +5,7 @@ import { ResponsiveContainer, Container } from './primitives';
 import CreateSpaceModal from './modals/CreateSpaceModal';
 import Connecting from './Connecting';
 import { useModalManagement, useElectronDetection } from '../hooks';
+import { useNavigationHotkeys } from '@/hooks/platform/interactions/useNavigationHotkeys';
 
 const Layout: React.FunctionComponent<{
   children: React.ReactNode;
@@ -12,6 +13,7 @@ const Layout: React.FunctionComponent<{
   const { createSpaceVisible, showCreateSpaceModal, hideCreateSpaceModal } =
     useModalManagement();
   const { isElectron } = useElectronDetection();
+  useNavigationHotkeys();
 
   return (
     <React.Suspense fallback={<Connecting />}>

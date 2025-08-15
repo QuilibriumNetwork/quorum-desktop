@@ -4914,12 +4914,12 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       }
 
       if (!preferSaved) {
-      if (savedConfig.timestamp < (storedConfig?.timestamp ?? 0)) {
-        console.warn(t`saved config is out of date`);
-        return storedConfig;
-      }
-      if (savedConfig.timestamp == storedConfig?.timestamp) {
-        return storedConfig;
+        if (savedConfig.timestamp < (storedConfig?.timestamp ?? 0)) {
+          console.warn(t`saved config is out of date`);
+          return storedConfig;
+        }
+        if (savedConfig.timestamp == storedConfig?.timestamp) {
+          return storedConfig;
         }
       }
 
