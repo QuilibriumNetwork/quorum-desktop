@@ -83,7 +83,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [fileType, setFileType] = React.useState<string>();
   const [fileError, setFileError] = useState<string | null>(null);
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
-  const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
+  const { getRootProps, getInputProps, acceptedFiles, open } = useDropzone({
     accept: {
       'image/png': ['.png'],
       'image/jpeg': ['.jpg', '.jpeg'],
@@ -91,6 +91,8 @@ const Channel: React.FC<ChannelProps> = ({
     },
     minSize: 0,
     maxSize: 2 * 1024 * 1024,
+    noClick: true,
+    noKeyboard: true,
     onDropRejected: (fileRejections) => {
       for (const rejection of fileRejections) {
         if (rejection.errors.some((err) => err.code === 'file-too-large')) {
@@ -459,6 +461,10 @@ const Channel: React.FC<ChannelProps> = ({
           >
             <div
               className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
+              onClick={(e) => {
+                e.stopPropagation();
+                open();
+              }}
               data-tooltip-id="attach-image-tooltip"
             >
               <input {...getInputProps()} />
