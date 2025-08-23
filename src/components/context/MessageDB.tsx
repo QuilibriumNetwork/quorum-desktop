@@ -116,7 +116,8 @@ type MessageDBContextValue = {
       pfpUrl?: string;
       completedOnboarding: boolean;
     },
-    inReplyTo?: string
+    inReplyTo?: string,
+    skipSigning?: boolean
   ) => Promise<void>;
   getConfig: ({
     address,
@@ -4766,7 +4767,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         pfpUrl?: string;
         completedOnboarding: boolean;
       },
-      inReplyTo?: string
+      inReplyTo?: string,
+      skipSigning?: boolean
     ) => {
       enqueueOutbound(async () => {
         let outbounds: string[] = [];
@@ -4814,12 +4816,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         });
         const sets = response.map((e) => JSON.parse(e.state));
 
-        // enforce non-repudiability
-        if (
-          !space?.isRepudiable ||
-          (typeof pendingMessage !== 'string' &&
-            (pendingMessage as any).type === 'update-profile')
-        ) {
+        // Decide signing behavior: sign if not explicitly skipped, or if space is non-repudiable, or for profile updates
+        const isProfileUpdate =
+          typeof pendingMessage !== 'string' &&
+          (pendingMessage as any).type === 'update-profile';
+        const shouldSign = isProfileUpdate || !space?.isRepudiable || !skipSigning;
+
+        if (shouldSign) {
           const inboxKey = await messageDB.getSpaceKey(spaceId, 'inbox');
           message.publicKey = inboxKey.publicKey;
           message.signature = Buffer.from(

@@ -592,7 +592,7 @@ export const Message = ({
                 )}
               </div>
             )}
-            
+
             {/* Shared tooltip for all action icons to avoid flashing issues */}
             {((hoverTarget === message.messageId && useDesktopHover) || (hoverTarget === message.messageId && actionsVisibleOnTap && useDesktopTap)) && hoveredAction && (
               <ReactTooltip
@@ -602,7 +602,7 @@ export const Message = ({
                 anchorSelect={getTooltipAnchorId(hoveredAction)}
               />
             )}
-            
+
             {emojiPickerOpen === message.messageId && (
               <div
                 onClick={(e) => e.stopPropagation()}
@@ -671,7 +671,7 @@ export const Message = ({
 
             <span className="message-sender-name">{sender.displayName}</span>
             <span className="pl-2">
-              {!repudiability && !message.signature && (
+              {!message.signature && (
                 <FontAwesomeIcon
                   title={t`Message does not have a valid signature, this may not be from the sender`}
                   size={'2xs'}

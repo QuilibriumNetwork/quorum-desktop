@@ -1,6 +1,5 @@
 import React, {
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -12,6 +11,8 @@ import {
   faUsers,
   faX,
   faBars,
+  faLock,
+  faUnlock,
 } from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import './Channel.scss';
@@ -50,13 +51,6 @@ const Channel: React.FC<ChannelProps> = ({
   setKickUserAddress,
 }) => {
   const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
-  const [state, setState] = React.useState<{
-    pendingMessage: string;
-    messages: MessageType[];
-  }>({
-    pendingMessage: '',
-    messages: [],
-  });
   const { data: space } = useSpace({ spaceId });
   const { data: messages, fetchPreviousPage } = useMessages({
     spaceId: spaceId,
@@ -88,6 +82,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
   const [fileType, setFileType] = React.useState<string>();
   const [fileError, setFileError] = useState<string | null>(null);
+  const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
     accept: {
       'image/png': ['.png'],
@@ -301,7 +296,9 @@ const Channel: React.FC<ChannelProps> = ({
       channelId,
       message,
       queryClient,
-      user.currentPasskeyInfo!
+      user.currentPasskeyInfo!,
+      undefined,
+      space?.isRepudiable ? skipSigning : undefined
     );
   };
 
@@ -332,7 +329,8 @@ const Channel: React.FC<ChannelProps> = ({
       } as StickerMessage,
       queryClient,
       user.currentPasskeyInfo!,
-      inReplyTo?.messageId
+      inReplyTo?.messageId,
+      space?.isRepudiable ? skipSigning : undefined
     ).finally(() => {
       setIsSubmitting(false);
     });
@@ -341,7 +339,7 @@ const Channel: React.FC<ChannelProps> = ({
   };
 
   const rowCount =
-    state.pendingMessage.split('').filter((c) => c == '\n').length + 1;
+    pendingMessage.split('').filter((c) => c == '\n').length + 1;
 
   return (
     <div className="chat-container">
@@ -360,7 +358,7 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
             <FontAwesomeIcon
               onClick={() => {
-                setShowUsers((prev) => !prev);
+                setShowUsers(!showUsers);
               }}
               className="w-4 p-1 rounded-md cursor-pointer hover:bg-[rgba(255,255,255,0.2)]"
               icon={faUsers}
@@ -500,7 +498,8 @@ const Channel: React.FC<ChannelProps> = ({
                         pendingMessage,
                         queryClient,
                         user.currentPasskeyInfo!,
-                        inReplyTo?.messageId
+                        inReplyTo?.messageId,
+                        space?.isRepudiable ? skipSigning : undefined
                       ).finally(() => {
                         setIsSubmitting(false);
                       });
@@ -520,7 +519,8 @@ const Channel: React.FC<ChannelProps> = ({
                         } as EmbedMessage,
                         queryClient,
                         user.currentPasskeyInfo!,
-                        inReplyTo?.messageId
+                        inReplyTo?.messageId,
+                        space?.isRepudiable ? skipSigning : undefined
                       ).finally(() => {
                         setIsSubmitting(false);
                       });
@@ -543,6 +543,21 @@ const Channel: React.FC<ChannelProps> = ({
             >
               <FontAwesomeIcon className="text-subtle" icon={faSmile} />
             </div>
+            {space?.isRepudiable && (
+              <div
+                className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSkipSigning((s) => !s);
+                }}
+                data-tooltip-id="toggle-signing-tooltip"
+              >
+                <FontAwesomeIcon
+                  className="text-subtle"
+                  icon={skipSigning ? faUnlock : faLock}
+                />
+              </div>
+            )}
             <div
               className="hover:bg-accent-400 cursor-pointer w-8 h-8 rounded-full bg-accent bg-center bg-no-repeat bg-[url('/send.png')] bg-[length:60%] flex-shrink-0"
               onClick={(e) => {
@@ -557,7 +572,8 @@ const Channel: React.FC<ChannelProps> = ({
                       pendingMessage,
                       queryClient,
                       user.currentPasskeyInfo!,
-                      inReplyTo?.messageId
+                      inReplyTo?.messageId,
+                      space?.isRepudiable ? skipSigning : undefined
                     ).finally(() => {
                       setIsSubmitting(false);
                     });
@@ -577,7 +593,8 @@ const Channel: React.FC<ChannelProps> = ({
                       } as EmbedMessage,
                       queryClient,
                       user.currentPasskeyInfo!,
-                      inReplyTo?.messageId
+                      inReplyTo?.messageId,
+                      space?.isRepudiable ? skipSigning : undefined
                     ).finally(() => {
                       setIsSubmitting(false);
                     });
@@ -674,6 +691,11 @@ const Channel: React.FC<ChannelProps> = ({
       <ReactTooltip
         id="add-sticker-tooltip"
         content={t`add sticker`}
+        place="top"
+      />
+      <ReactTooltip
+        id="toggle-signing-tooltip"
+        content={skipSigning ? t`Skips signing` : t`Sign message`}
         place="top"
       />
 
