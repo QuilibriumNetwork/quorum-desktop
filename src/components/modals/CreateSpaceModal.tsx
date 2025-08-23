@@ -128,7 +128,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                 <div className="text-sm flex flex-col justify-around ml-2">
                   <Tooltip
                     id="repudiability-tooltip"
-                    content={t`Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.`}
+                    content={t`Repudiability controls whether messages are verifiable as coming from the named sender. When enabled, users may choose per message to send it unsigned (via the lock icon) so it cannot be cryptographically tied to a sender; when left off, all messages are signed and verifiable. Unsigned messages display an open padlock icon; these will still be visible after you disable Repudiability, but future messages should be signed by default.`}
                     place="top"
                     className="!w-[400px]"
                     maxWidth={400}

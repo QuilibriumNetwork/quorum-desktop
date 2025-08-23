@@ -15,7 +15,7 @@ import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
 import { useModals } from '../context/ModalProvider';
-import { Button, Icon } from '../primitives';
+import { Button } from '../primitives';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
@@ -44,6 +44,8 @@ const Channel: React.FC<ChannelProps> = ({
   } = useSidebar();
   const [init, setInit] = useState(false);
   const { submitChannelMessage } = useMessageDB();
+  // Skip signing only when user explicitly chooses so in repudiable spaces
+  const [skipSigning, setSkipSigning] = useState<boolean>(false);
 
   // Create refs for textarea (MessageList needs this for scrolling and we need it for focus)
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -72,7 +74,8 @@ const Channel: React.FC<ChannelProps> = ({
         message,
         queryClient,
         user.currentPasskeyInfo!,
-        inReplyTo
+        inReplyTo,
+        skipSigning
       );
 
       // Only auto-scroll for actual messages (text/embed), not reactions
@@ -93,6 +96,7 @@ const Channel: React.FC<ChannelProps> = ({
       submitChannelMessage,
       queryClient,
       user.currentPasskeyInfo,
+      skipSigning,
     ]
   );
 
@@ -110,7 +114,8 @@ const Channel: React.FC<ChannelProps> = ({
         stickerMessage,
         queryClient,
         user.currentPasskeyInfo!,
-        inReplyTo
+        inReplyTo,
+        skipSigning
       );
       // Auto-scroll to bottom after sending sticker
       setTimeout(() => {
@@ -123,6 +128,7 @@ const Channel: React.FC<ChannelProps> = ({
       submitChannelMessage,
       queryClient,
       user.currentPasskeyInfo,
+      skipSigning,
     ]
   );
 
@@ -288,6 +294,9 @@ const Channel: React.FC<ChannelProps> = ({
           fileError={composer.fileError}
           mapSenderToUser={mapSenderToUser}
           setInReplyTo={composer.setInReplyTo}
+          showSigningToggle={!!space?.isRepudiable}
+          signMessage={!skipSigning}
+          onToggleSign={() => setSkipSigning((s) => !s)}
         />
       </div>
 

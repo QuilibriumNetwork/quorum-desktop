@@ -30,6 +30,11 @@ interface MessageComposerProps {
   fileError?: string | null;
   mapSenderToUser?: (senderId: string) => { displayName?: string };
   setInReplyTo?: (inReplyTo: any) => void;
+
+  // Signing control (spaces with repudiability enabled)
+  showSigningToggle?: boolean;
+  signMessage?: boolean;
+  onToggleSign?: () => void;
 }
 
 export interface MessageComposerRef {
@@ -59,6 +64,9 @@ export const MessageComposer = forwardRef<
       fileError,
       mapSenderToUser,
       setInReplyTo,
+      showSigningToggle = false,
+      signMessage = true,
+      onToggleSign,
     },
     ref
   ) => {
@@ -76,13 +84,13 @@ export const MessageComposer = forwardRef<
       if (!isTouchDevice()) return;
 
       const handleFocus = () => {
-        // When the textarea gains focus on touch devices, 
+        // When the textarea gains focus on touch devices,
         // scroll the composer into view after a short delay
         // to account for virtual keyboard animation
         setTimeout(() => {
           if (composerRef.current) {
-            composerRef.current.scrollIntoView({ 
-              behavior: 'smooth', 
+            composerRef.current.scrollIntoView({
+              behavior: 'smooth',
               block: 'end',
               inline: 'nearest'
             });
@@ -93,8 +101,8 @@ export const MessageComposer = forwardRef<
       const handleResize = () => {
         // Handle viewport resize (keyboard appearing/disappearing)
         if (document.activeElement === textareaRef.current && composerRef.current) {
-          composerRef.current.scrollIntoView({ 
-            behavior: 'smooth', 
+          composerRef.current.scrollIntoView({
+            behavior: 'smooth',
             block: 'end',
             inline: 'nearest'
           });
@@ -229,6 +237,22 @@ export const MessageComposer = forwardRef<
                 className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
                 onClick={onShowStickers}
                 iconName="smile"
+                iconOnly
+              />
+            </Tooltip>
+          )}
+
+          {showSigningToggle && (
+            <Tooltip
+              id="toggle-signing"
+              content={signMessage ? t`Sign this message` : t`Skip signing`}
+              place="top"
+            >
+              <Button
+                type="unstyled"
+                className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
+                onClick={() => onToggleSign && onToggleSign()}
+                iconName={signMessage ? 'lock' : 'unlock'}
                 iconOnly
               />
             </Tooltip>

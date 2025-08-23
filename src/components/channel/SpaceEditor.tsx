@@ -139,7 +139,7 @@ const SpaceEditor: React.FunctionComponent<{
 
   // Delete confirmation state - kept local as it's UI-specific
   const [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
-  
+
   // Role validation error state
   const [roleValidationError, setRoleValidationError] = React.useState<string>('');
 
@@ -164,10 +164,10 @@ const SpaceEditor: React.FunctionComponent<{
     setRoleValidationError('');
 
     // Validate roles before saving
-    const emptyRoles = roles.filter(role => 
+    const emptyRoles = roles.filter(role =>
       !role.roleTag.trim() || !role.displayName.trim()
     );
-    
+
     if (emptyRoles.length > 0) {
       setRoleValidationError(t`All roles must have both a tag name and display name.`);
       return;
@@ -476,7 +476,7 @@ const SpaceEditor: React.FunctionComponent<{
                               <div className="text-sm flex flex-col justify-around ml-2">
                                 <Tooltip
                                   id="repudiability-tooltip"
-                                  content={t`Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.`}
+                                  content={t`Repudiability controls whether messages are verifiable as coming from the named sender. When enabled, users may choose per message to send it unsigned (via the lock icon) so it cannot be cryptographically tied to a sender; when left off, all messages are signed and verifiable. Unsigned messages display an open padlock icon; these will still be visible after you disable Repudiability, but future messages should be signed by default.`}
                                   place="bottom"
                                   className="!w-[400px]"
                                   maxWidth={400}
@@ -592,7 +592,7 @@ const SpaceEditor: React.FunctionComponent<{
                           );
                         })}
                         {roleValidationError && (
-                          <div 
+                          <div
                             className="mt-4 text-sm"
                             style={{ color: 'var(--color-text-danger)' }}
                           >
