@@ -6,6 +6,8 @@ import {
   faUsers,
   faX,
   faBars,
+  faLock,
+  faUnlock,
 } from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { EmbedMessage, Message as MessageType } from '../../api/quorumApi';
@@ -46,7 +48,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   const { data: self } = useRegistration({
     address: user.currentPasskeyInfo!.address,
   });
-  const { messageDB, submitMessage, keyset } = useMessageDB();
+  const { messageDB, submitMessage, keyset, getConfig } = useMessageDB();
   const { data: conversation } = useConversation({
     conversationId: conversationId,
   });
@@ -55,6 +57,8 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   const [inReplyTo, setInReplyTo] = useState<MessageType>();
   const [fileData, setFileData] = React.useState<ArrayBuffer | undefined>();
   const [fileType, setFileType] = React.useState<string>();
+  const [skipSigning, setSkipSigning] = React.useState<boolean>(false);
+  const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
   const { getRootProps, getInputProps, acceptedFiles, isDragActive, open } =
     useDropzone({
       accept: {
@@ -114,6 +118,20 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       })();
     }
   }, [acceptedFiles]);
+
+  // Load user preference for DM signing (non-repudiability)
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const config = await getConfig({
+          address: user.currentPasskeyInfo!.address,
+          userKey: keyset.userKeyset,
+        });
+        setNonRepudiable(config?.nonRepudiable ?? true);
+        setSkipSigning(false); // default to signing; user can opt-out only if nonRepudiable is false
+      } catch {}
+    })();
+  }, [user.currentPasskeyInfo, keyset.userKeyset, getConfig]);
 
   useEffect(() => {
     if ((messages.pages[0] as any)?.messages?.length === 0) {
@@ -237,6 +255,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   }, [messageList]);
 
   const submit = async (message: any) => {
+    const effectiveSkip = nonRepudiable ? false : skipSigning;
     await submitMessage(
       address!,
       message,
@@ -244,7 +263,9 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       registration.registration!,
       queryClient,
       user.currentPasskeyInfo!,
-      keyset
+      keyset,
+      undefined,
+      effectiveSkip
     );
   };
 
@@ -271,7 +292,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
             </div>
             <FontAwesomeIcon
               onClick={() => {
-                setShowUsers((prev) => !prev);
+                setShowUsers(!showUsers);
               }}
               className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"
               icon={faUsers}
@@ -441,7 +462,8 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                         queryClient,
                         user.currentPasskeyInfo!,
                         keyset,
-                        inReplyTo?.messageId
+                        inReplyTo?.messageId,
+                        skipSigning
                       ).finally(() => {
                         setIsSubmitting(false);
                       });
@@ -463,7 +485,8 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                         queryClient,
                         user.currentPasskeyInfo!,
                         keyset,
-                        inReplyTo?.messageId
+                        inReplyTo?.messageId,
+                        skipSigning
                       ).finally(() => {
                         setIsSubmitting(false);
                       });
@@ -477,12 +500,29 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               }}
             />
             <div
+              className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
+              onClick={async (e) => {
+                e.stopPropagation();
+                if (nonRepudiable) {
+                  return; // signing enforced; do not toggle
+                }
+                setSkipSigning(!skipSigning);
+              }}
+              data-tooltip-id="toggle-signing-tooltip-dm"
+            >
+              <FontAwesomeIcon
+                className="text-subtle"
+                icon={nonRepudiable ? faLock : (skipSigning ? faUnlock : faLock)}
+              />
+            </div>
+            <div
               className="hover:bg-accent-400 cursor-pointer w-8 h-8 rounded-full bg-accent bg-center bg-no-repeat bg-[url('/send.png')] bg-[length:60%] flex-shrink-0"
               onClick={(e) => {
                 e.stopPropagation();
                 if ((pendingMessage || fileData) && !isSubmitting) {
                   setIsSubmitting(true);
                   setInReplyTo(undefined);
+                  const effectiveSkip = nonRepudiable ? false : skipSigning;
                   if (pendingMessage) {
                     submitMessage(
                       address!,
@@ -492,7 +532,8 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                       queryClient,
                       user.currentPasskeyInfo!,
                       keyset,
-                      inReplyTo?.messageId
+                      inReplyTo?.messageId,
+                      effectiveSkip
                     ).finally(() => {
                       setIsSubmitting(false);
                     });
@@ -514,7 +555,8 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                       queryClient,
                       user.currentPasskeyInfo!,
                       keyset,
-                      inReplyTo?.messageId
+                      inReplyTo?.messageId,
+                      effectiveSkip
                     ).finally(() => {
                       setIsSubmitting(false);
                     });
@@ -576,6 +618,11 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
       <ReactTooltip
         id="attach-image-tooltip-dm"
         content={t`attach image`}
+        place="top"
+      />
+      <ReactTooltip
+        id="toggle-signing-tooltip-dm"
+        content={skipSigning ? t`Skips signing` : t`Sign message`}
         place="top"
       />
     </div>

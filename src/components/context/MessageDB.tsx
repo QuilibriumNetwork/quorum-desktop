@@ -86,7 +86,8 @@ type MessageDBContextValue = {
       userKeyset: secureChannel.UserKeyset;
       deviceKeyset: secureChannel.DeviceKeyset;
     },
-    inReplyTo?: string
+    inReplyTo?: string,
+    skipSigning?: boolean
   ) => Promise<void>;
   createSpace: (
     spaceName: string,
@@ -2478,7 +2479,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         deviceKeyset: secureChannel.DeviceKeyset;
         userKeyset: secureChannel.UserKeyset;
       },
-      inReplyTo?: string
+      inReplyTo?: string,
+      skipSigning?: boolean
     ) => {
       enqueueOutbound(async () => {
         let outbounds: string[] = [];
@@ -2585,6 +2587,23 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               )),
             ];
           }
+        }
+
+        // For DMs, sign with the USER key if the user has non-repudiability enabled (skipSigning === false)
+        // Use userKeyset for signatures; recipient verification will be based on user settings, not space keys
+        if (!skipSigning) {
+          const sig = ch.js_sign_ed448(
+            Buffer.from(
+              new Uint8Array(keyset.userKeyset.user_key.private_key)
+            ).toString('base64'),
+            Buffer.from(messageId).toString('base64')
+          );
+          message.publicKey = Buffer.from(
+            new Uint8Array(keyset.userKeyset.user_key.public_key)
+          ).toString('hex');
+          message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
+            'hex'
+          );
         }
 
         for (const session of sessions) {

@@ -142,6 +142,11 @@ const Channel: React.FC<ChannelProps> = ({
     }
   }, [acceptedFiles]);
 
+  // Ensure signing is enabled by default when navigating between spaces/channels
+  React.useEffect(() => {
+    setSkipSigning(false);
+  }, [spaceId, channelId]);
+
   const members = useMemo(() => {
     return spaceMembers.reduce(
       (prev, curr) =>
@@ -304,7 +309,7 @@ const Channel: React.FC<ChannelProps> = ({
     );
   };
 
-  const canDeleteMessages = (message: MessageType) => {
+  const canDeleteMessages = (_message: MessageType) => {
     return !!roles.find(
       (r) =>
         r.permissions.includes('message:delete') &&
