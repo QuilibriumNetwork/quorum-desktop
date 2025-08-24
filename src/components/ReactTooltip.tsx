@@ -4,6 +4,7 @@ import './ReactTooltip.scss';
 import 'react-tooltip/dist/react-tooltip.css';
 
 import { useTheme } from './context/ThemeProvider';
+import { isTouchDevice } from '../utils';
 
 type ReactTooltipProps = {
   id: string;
@@ -31,12 +32,6 @@ type ReactTooltipProps = {
   longPressDuration?: number;
   alwaysVisible?: boolean;
 };
-
-const isTouchDevice = () =>
-  typeof window !== 'undefined' &&
-  ('ontouchstart' in window ||
-    navigator.maxTouchPoints > 0 ||
-    (navigator as any).msMaxTouchPoints > 0);
 
 const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
   id,

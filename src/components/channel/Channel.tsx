@@ -32,7 +32,7 @@ import Compressor from 'compressorjs';
 import { t } from '@lingui/core/macro';
 import ReactTooltip from '../ReactTooltip';
 import { i18n } from '@lingui/core';
-import { DefaultImages } from '../../utils';
+import { DefaultImages, isTouchDevice } from '../../utils';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useModalContext } from '../AppWithSearch';
@@ -76,6 +76,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [showStickers, setShowStickers] = useState(false);
   const [inReplyTo, setInReplyTo] = useState<MessageType>();
   const editor = useRef<HTMLTextAreaElement>(null);
+  const composerRef = useRef<HTMLDivElement>(null);
   const { submitChannelMessage } = useMessageDB();
   const { data: spaceMembers } = useSpaceMembers({ spaceId });
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
@@ -292,6 +293,54 @@ const Channel: React.FC<ChannelProps> = ({
     }
   }, []);
 
+  // Keyboard avoidance for touch devices
+  useEffect(() => {
+    if (!isTouchDevice()) return;
+
+    const handleFocus = () => {
+      // When the textarea gains focus on touch devices, 
+      // scroll the composer into view after a short delay
+      // to account for virtual keyboard animation
+      setTimeout(() => {
+        if (composerRef.current) {
+          composerRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'end',
+            inline: 'nearest'
+          });
+        }
+      }, 300);
+    };
+
+    const handleResize = () => {
+      // Handle viewport resize (keyboard appearing/disappearing)
+      if (document.activeElement === editor.current && composerRef.current) {
+        composerRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    };
+
+    const textarea = editor.current;
+    if (textarea) {
+      textarea.addEventListener('focus', handleFocus);
+    }
+
+    // Listen for viewport changes which indicate keyboard appearance
+    window.visualViewport?.addEventListener('resize', handleResize);
+    window.visualViewport?.addEventListener('scroll', handleResize);
+
+    return () => {
+      if (textarea) {
+        textarea.removeEventListener('focus', handleFocus);
+      }
+      window.visualViewport?.removeEventListener('resize', handleResize);
+      window.visualViewport?.removeEventListener('scroll', handleResize);
+    };
+  }, []);
+
   const submit = async (message: string | object) => {
     await submitChannelMessage(
       spaceId,
@@ -452,7 +501,7 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
           </div>
         )}
-        <div {...getRootProps()} className="message-editor-container pr-6 lg:pr-8">
+        <div ref={composerRef} {...getRootProps()} className="message-editor-container pr-6 lg:pr-8">
           <div
             className={
               'message-editor w-full flex items-center gap-2 ' +

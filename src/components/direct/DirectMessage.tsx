@@ -24,7 +24,7 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import ReactTooltip from '../ReactTooltip';
 import ClickToCopyContent from '../ClickToCopyContent';
-import { DefaultImages, truncateAddress } from '../../utils';
+import { DefaultImages, truncateAddress, isTouchDevice } from '../../utils';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
@@ -36,6 +36,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   const [pendingMessage, setPendingMessage] = useState('');
   const user = usePasskeysContext();
   const editor = useRef<HTMLTextAreaElement>(null);
+  const composerRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
   const {
     data: messages,
@@ -236,6 +237,54 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     }
   }, [messageList]);
 
+  // Keyboard avoidance for touch devices
+  useEffect(() => {
+    if (!isTouchDevice()) return;
+
+    const handleFocus = () => {
+      // When the textarea gains focus on touch devices, 
+      // scroll the composer into view after a short delay
+      // to account for virtual keyboard animation
+      setTimeout(() => {
+        if (composerRef.current) {
+          composerRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'end',
+            inline: 'nearest'
+          });
+        }
+      }, 300);
+    };
+
+    const handleResize = () => {
+      // Handle viewport resize (keyboard appearing/disappearing)
+      if (document.activeElement === editor.current && composerRef.current) {
+        composerRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    };
+
+    const textarea = editor.current;
+    if (textarea) {
+      textarea.addEventListener('focus', handleFocus);
+    }
+
+    // Listen for viewport changes which indicate keyboard appearance
+    window.visualViewport?.addEventListener('resize', handleResize);
+    window.visualViewport?.addEventListener('scroll', handleResize);
+
+    return () => {
+      if (textarea) {
+        textarea.removeEventListener('focus', handleFocus);
+      }
+      window.visualViewport?.removeEventListener('resize', handleResize);
+      window.visualViewport?.removeEventListener('scroll', handleResize);
+    };
+  }, []);
+
   const submit = async (message: any) => {
     await submitMessage(
       address!,
@@ -387,7 +436,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           </div>
         )}
 
-        <div {...getRootProps()} className="message-editor-container pr-6 lg:pr-8">
+        <div ref={composerRef} {...getRootProps()} className="message-editor-container pr-6 lg:pr-8">
           <div
             className={
               'message-editor w-full flex items-center gap-2 ' +
