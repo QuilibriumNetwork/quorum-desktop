@@ -148,7 +148,7 @@ const Channel: React.FC<ChannelProps> = ({
       <>
         {sections.map((section) => (
           <div className="flex flex-col mb-2" key={section.title}>
-            <div className="font-semibold ml-[1pt] mb-1 text-xs">
+            <div className="font-semibold ml-[1pt] mb-3 text-xs pb-1 border-b border-default">
               {section.title}
             </div>
             {section.members.map((member) => (
@@ -157,7 +157,7 @@ const Channel: React.FC<ChannelProps> = ({
                 className="w-full flex flex-row items-center mb-2"
               >
                 <div
-                  className="rounded-full w-[40px] h-[40px]"
+                  className="rounded-full w-[30px] h-[30px]"
                   style={{
                     backgroundPosition: 'center',
                     backgroundSize: 'cover',
@@ -303,7 +303,7 @@ const Channel: React.FC<ChannelProps> = ({
       >
         {generateSidebarContent().map((section) => (
           <div className="flex flex-col mb-2" key={section.title}>
-            <div className="font-semibold ml-[1pt] mb-1 text-xs">
+            <div className="font-semibold ml-[1pt] mb-3 text-xs pb-1 border-b border-default">
               {section.title}
             </div>
             {section.members.map((member) => (
@@ -312,7 +312,7 @@ const Channel: React.FC<ChannelProps> = ({
                 className="w-full flex flex-row items-center mb-2"
               >
                 <div
-                  className="rounded-full w-[40px] h-[40px]"
+                  className="rounded-full w-[30px] h-[30px]"
                   style={{
                     backgroundPosition: 'center',
                     backgroundSize: 'cover',
