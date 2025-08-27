@@ -511,7 +511,7 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
             <textarea
               ref={editor}
-              className="flex-1 bg-transparent border-0 outline-0 resize-none py-1 placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap"
+              className="flex-1 bg-transparent border-0 outline-0 resize-none py-1 placeholder:text-ellipsis placeholder:overflow-hidden placeholder:whitespace-nowrap message-composer-textarea"
               placeholder={i18n._('Send a message to #{channel_name}', {
                 channel_name: channel?.channelName ?? '',
               })}

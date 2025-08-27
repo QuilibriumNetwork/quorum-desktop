@@ -140,3 +140,34 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+
+/* === MESSAGE COMPOSER TEXTAREA === */
+/* Remove Firefox focus outline from message composer textareas only */
+.message-composer-textarea {
+  -moz-appearance: none !important;
+  outline: none !important;
+  border: none !important;
+}
+
+.message-composer-textarea:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  -moz-outline: none !important;
+}
+
+@-moz-document url-prefix() {
+  textarea.message-composer-textarea {
+    outline: none !important;
+    border: none !important;
+    -moz-appearance: none !important;
+  }
+  
+  textarea.message-composer-textarea:focus {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    -moz-outline: none !important;
+    -moz-user-focus: ignore !important;
+  }
+}
