@@ -2,7 +2,7 @@
 
 This index provides quick access to all documentation, bug reports, and task tracking files in the .claude directory. Use Ctrl+F to search for specific topics or keywords.
 
-**Last Updated**: 2025-01-20
+**Last Updated**: 2025-08-27
 
 ## 📚 Documentation (.claude/docs/)
 
@@ -41,6 +41,10 @@ Comprehensive guides and documentation for various features and components.
 - **[search-feature.md](docs/search-feature.md)**  
   *Global search implementation with keyboard shortcuts*  
   Keywords: `search`, `global-search`, `cmd+k`, `ctrl+k`, `minisearch`
+
+- **[keyboard-avoidance-mobile.md](docs/keyboard-avoidance-mobile.md)**  
+  *Enhanced mobile keyboard avoidance system with 2025 web standards*  
+  Keywords: `keyboard`, `mobile`, `virtual-keyboard`, `visual-viewport`, `dvh`, `samsung`
 
 ### System Architecture
 - **[data-management-architecture.md](docs/data-management-architecture.md)**  
@@ -112,13 +116,14 @@ Task tracking for completed, ongoing, and planned work.
 ## 🔍 Quick Search Guide
 
 Use these keywords to find related content:
-- **Mobile**: `mobile`, `responsive`, `touch`, `drawer`, `sidebar`
+- **Mobile**: `mobile`, `responsive`, `touch`, `drawer`, `sidebar`, `keyboard`, `virtual-keyboard`
 - **Modals**: `modal`, `dialog`, `overlay`, `z-index`, `stacking`
 - **Search**: `search`, `global-search`, `cmd+k`, `minisearch`
 - **Components**: `component`, `emoji`, `tooltip`, `message`
 - **Bugs**: `SOLVED`, `hooks`, `z-index`, `focus`
 - **Architecture**: `architecture`, `data`, `storage`, `flow`, `indexeddb`, `websocket`, `encryption`
-- **CSS**: `css`, `refactor`, `styles`, `tailwind`
+- **CSS**: `css`, `refactor`, `styles`, `tailwind`, `dvh`, `visual-viewport`
+- **Browser APIs**: `visual-viewport`, `virtual-keyboard`, `samsung`, `device-detection`
 
 ## 📁 Directory Structure
 
@@ -134,6 +139,7 @@ Use these keywords to find related content:
 │   ├── reacttooltip-mobile.md
 │   ├── responsive-layout.md
 │   ├── search-feature.md
+│   ├── keyboard-avoidance-mobile.md
 │   └── data-management-architecture.md
 ├── bugs/
 │   ├── SOLVED_modal-navmenu-zindex-stacking.md
@@ -148,4 +154,4 @@ Use these keywords to find related content:
 ```
 
 ---
-*Last updated: 2025-01-20*
+*Last updated: 2025-08-27*

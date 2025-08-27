@@ -24,7 +24,7 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import ReactTooltip from '../ReactTooltip';
 import ClickToCopyContent from '../ClickToCopyContent';
-import { DefaultImages, truncateAddress, isTouchDevice } from '../../utils';
+import { DefaultImages, truncateAddress, createKeyboardAvoidanceHandler } from '../../utils';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
@@ -237,53 +237,43 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     }
   }, [messageList]);
 
-  // Keyboard avoidance for touch devices
+  // Enhanced keyboard avoidance for mobile devices
   useEffect(() => {
-    if (!isTouchDevice()) return;
-
-    const handleFocus = () => {
-      // When the textarea gains focus on touch devices, 
-      // scroll the composer into view after a short delay
-      // to account for virtual keyboard animation
-      setTimeout(() => {
-        if (composerRef.current) {
-          composerRef.current.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'end',
-            inline: 'nearest'
-          });
-        }
-      }, 300);
-    };
-
-    const handleResize = () => {
-      // Handle viewport resize (keyboard appearing/disappearing)
-      if (document.activeElement === editor.current && composerRef.current) {
-        composerRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end',
-          inline: 'nearest'
-        });
-      }
-    };
+    const keyboardHandler = createKeyboardAvoidanceHandler();
+    if (!keyboardHandler) return; // Not a mobile device
 
     const textarea = editor.current;
-    if (textarea) {
-      textarea.addEventListener('focus', handleFocus);
-    }
+    const composer = composerRef.current;
+    
+    if (!textarea || !composer) return;
 
-    // Listen for viewport changes which indicate keyboard appearance
-    window.visualViewport?.addEventListener('resize', handleResize);
-    window.visualViewport?.addEventListener('scroll', handleResize);
+    const handlers = keyboardHandler.createDetectionHandlers(textarea, composer);
+
+    // Set up event listeners
+    textarea.addEventListener('focus', handlers.handleFocus);
+    
+    // Visual Viewport API (primary detection)
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handlers.handleVisualViewportChange);
+      window.visualViewport.addEventListener('scroll', handlers.handleVisualViewportChange);
+    }
+    
+    // Window resize fallback (secondary detection)
+    window.addEventListener('resize', handlers.handleWindowResize);
 
     return () => {
-      if (textarea) {
-        textarea.removeEventListener('focus', handleFocus);
+      // Cleanup all event listeners and timeouts
+      textarea.removeEventListener('focus', handlers.handleFocus);
+      
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handlers.handleVisualViewportChange);
+        window.visualViewport.removeEventListener('scroll', handlers.handleVisualViewportChange);
       }
-      window.visualViewport?.removeEventListener('resize', handleResize);
-      window.visualViewport?.removeEventListener('scroll', handleResize);
+      
+      window.removeEventListener('resize', handlers.handleWindowResize);
+      keyboardHandler.cleanup();
     };
-  }, []);
+  }, []); // Empty dependency array is correct - we only want this to run once on mount
 
   const submit = async (message: any) => {
     await submitMessage(
