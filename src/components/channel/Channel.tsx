@@ -300,32 +300,32 @@ const Channel: React.FC<ChannelProps> = ({
 
     const textarea = editor.current;
     const composer = composerRef.current;
-    
+
     if (!textarea || !composer) return;
 
     const handlers = keyboardHandler.createDetectionHandlers(textarea, composer);
 
     // Set up event listeners
     textarea.addEventListener('focus', handlers.handleFocus);
-    
+
     // Visual Viewport API (primary detection)
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', handlers.handleVisualViewportChange);
       window.visualViewport.addEventListener('scroll', handlers.handleVisualViewportChange);
     }
-    
+
     // Window resize fallback (secondary detection)
     window.addEventListener('resize', handlers.handleWindowResize);
 
     return () => {
       // Cleanup all event listeners and timeouts
       textarea.removeEventListener('focus', handlers.handleFocus);
-      
+
       if (window.visualViewport) {
         window.visualViewport.removeEventListener('resize', handlers.handleVisualViewportChange);
         window.visualViewport.removeEventListener('scroll', handlers.handleVisualViewportChange);
       }
-      
+
       window.removeEventListener('resize', handlers.handleWindowResize);
       keyboardHandler.cleanup();
     };
@@ -590,7 +590,12 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
             {space?.isRepudiable && (
               <div
-                className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
+                className={
+                  (skipSigning
+                    ? 'cursor-pointer bg-red-600 hover:bg-red-500'
+                    : 'cursor-pointer bg-blue-600 hover:bg-blue-500') +
+                  ' flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0'
+                }
                 onClick={(e) => {
                   e.stopPropagation();
                   setSkipSigning((s) => !s);
@@ -740,7 +745,7 @@ const Channel: React.FC<ChannelProps> = ({
       />
       <ReactTooltip
         id="toggle-signing-tooltip"
-        content={skipSigning ? t`Skips signing` : t`Sign message`}
+        content={skipSigning ? t`This message will NOT be signed` : t`This message will be signed`}
         place="top"
       />
 

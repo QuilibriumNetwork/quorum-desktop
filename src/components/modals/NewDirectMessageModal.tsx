@@ -10,6 +10,12 @@ import { useConversations, useRegistration } from '../../hooks';
 import { useNavigate } from 'react-router';
 import { useModalContext } from '../AppWithSearch';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
+import ToggleSwitch from '../ToggleSwitch';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import ReactTooltip from '../ReactTooltip';
+import { useMessageDB } from '../context/MessageDB';
+import { DefaultImages } from '../../utils';
 
 type NewDirectMessageModalProps = {
   visible: boolean;
@@ -24,6 +30,8 @@ const NewDirectMessageModal: React.FunctionComponent<
   let [buttonText, setButtonText] = React.useState<string>(t`Send`);
   let navigate = useNavigate();
   const { closeNewDirectMessage } = useModalContext();
+  const { getConfig, keyset, messageDB } = useMessageDB();
+  const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
 
   const { data: conversations } =
     useConversations({ type: 'direct' });
@@ -94,6 +102,20 @@ const NewDirectMessageModal: React.FunctionComponent<
     }
   }, [address, ownAddress]);
 
+  // Load user default non-repudiable setting to initialize the switch
+  React.useEffect(() => {
+    (async () => {
+      if (!currentPasskeyInfo?.address || !keyset?.userKeyset) return;
+      try {
+        const cfg = await getConfig({
+          address: currentPasskeyInfo.address,
+          userKey: keyset.userKeyset,
+        });
+        setNonRepudiable(cfg?.nonRepudiable ?? true);
+      } catch {}
+    })();
+  }, [currentPasskeyInfo, keyset, getConfig]);
+
   return (
     <Modal
       visible={props.visible}
@@ -110,7 +132,20 @@ const NewDirectMessageModal: React.FunctionComponent<
             onChange={(e) => setAddress(e.target.value.trim())}
             placeholder={t`User address here`}
           />
-
+          <div className="mt-4 flex items-center justify-between">
+            <div className="flex items-center text-sm text-subtle">
+              <span className="mr-1">{t`Always sign messages`}</span>
+              <FontAwesomeIcon
+                className="text-subtle"
+                icon={faCircleInfo}
+                data-tooltip-id="dm-nonrepudiable-tip"
+              />
+            </div>
+            <ToggleSwitch
+              active={nonRepudiable}
+              onClick={() => setNonRepudiable((s) => !s)}
+            />
+          </div>
         </div>
         {error && <div className="modal-new-direct-message-error">{error}</div>}
         <React.Suspense
@@ -134,6 +169,19 @@ const NewDirectMessageModal: React.FunctionComponent<
               disabled={!address || !!error}
               onClick={() => {
                 if (!!address) {
+                  // Persist the conversation record with the selected non-repudiability
+                  const now = Date.now();
+                  messageDB
+                    .saveConversation({
+                      conversationId: address + '/' + address,
+                      address: address,
+                      icon: DefaultImages.UNKNOWN_USER,
+                      displayName: t`Unknown User`,
+                      type: 'direct',
+                      timestamp: now,
+                      isRepudiable: !nonRepudiable ? true : false,
+                    })
+                    .catch(() => {});
                   closeNewDirectMessage();
                   navigate('/messages/' + address);
                 }
@@ -144,6 +192,12 @@ const NewDirectMessageModal: React.FunctionComponent<
           </div>
         </React.Suspense>
       </div>
+      <ReactTooltip
+        id="dm-nonrepudiable-tip"
+        content={t`You can change this later per conversation from the header lock toggle.`}
+        className="max-w-[260px]"
+        place="top"
+      />
     </Modal>
   );
 };
