@@ -10,6 +10,8 @@ import { useConversations, useRegistration } from '../../hooks';
 import { useNavigate } from 'react-router';
 import { useModalContext } from '../AppWithSearch';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
+import { useMessageDB } from '../context/MessageDB';
+import { DefaultImages } from '../../utils';
 
 type NewDirectMessageModalProps = {
   visible: boolean;
@@ -34,6 +36,8 @@ const NewDirectMessageModal: React.FunctionComponent<
   const ownAddress = currentPasskeyInfo?.address;
 
   const { apiClient } = useQuorumApiClient();
+  const { getConfig, keyset, messageDB } = useMessageDB();
+  const [isRepudiable, setIsRepudiable] = React.useState<boolean>(true);
 
   const lookupUser = async (): Promise<boolean> => {
       setButtonText(t`Looking up user...`);
@@ -94,6 +98,20 @@ const NewDirectMessageModal: React.FunctionComponent<
     }
   }, [address, ownAddress]);
 
+  // Load default non-repudiability from user config
+  React.useEffect(() => {
+    (async () => {
+      if (!currentPasskeyInfo?.address || !keyset?.userKeyset) return;
+      try {
+        const cfg = await getConfig({
+          address: currentPasskeyInfo.address,
+          userKey: keyset.userKeyset,
+        });
+        setIsRepudiable(cfg?.nonRepudiable ?? true);
+      } catch {}
+    })();
+  }, [currentPasskeyInfo, keyset, getConfig]);
+
   return (
     <Modal
       visible={props.visible}
@@ -110,7 +128,17 @@ const NewDirectMessageModal: React.FunctionComponent<
             onChange={(e) => setAddress(e.target.value.trim())}
             placeholder={t`User address here`}
           />
-
+          <div className="mt-3 flex items-center gap-2">
+            <input
+              id="dm-isrepudiable"
+              type="checkbox"
+              checked={isRepudiable}
+              onChange={(e) => setIsRepudiable(e.target.checked)}
+            />
+            <label htmlFor="dm-isrepudiable" className="text-sm select-none cursor-pointer">
+              {t`Require signatures (non-repudiable)`}
+            </label>
+          </div>
         </div>
         {error && <div className="modal-new-direct-message-error">{error}</div>}
         <React.Suspense
@@ -134,6 +162,19 @@ const NewDirectMessageModal: React.FunctionComponent<
               disabled={!address || !!error}
               onClick={() => {
                 if (!!address) {
+                  // Pre-create/update conversation record with isRepudiable selection
+                  const now = Date.now();
+                  messageDB
+                    .saveConversation({
+                      conversationId: address + '/' + address,
+                      address: address,
+                      icon: DefaultImages.UNKNOWN_USER,
+                      displayName: t`Unknown User`,
+                      type: 'direct',
+                      timestamp: now,
+                      isRepudiable: isRepudiable,
+                    })
+                    .catch(() => {});
                   closeNewDirectMessage();
                   navigate('/messages/' + address);
                 }

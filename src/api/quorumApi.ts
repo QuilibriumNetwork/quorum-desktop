@@ -68,6 +68,7 @@ export type Conversation = {
   icon: string;
   displayName: string;
   lastReadTimestamp?: number;
+  isRepudiable?: boolean;
 };
 
 export type Message = {

@@ -556,7 +556,12 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
             {space?.isRepudiable && (
               <div
-                className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
+                className={
+                  (skipSigning
+                    ? 'cursor-pointer bg-red-600 hover:bg-red-500'
+                    : 'cursor-pointer bg-blue-600 hover:bg-blue-500') +
+                  ' flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0'
+                }
                 onClick={(e) => {
                   e.stopPropagation();
                   setSkipSigning((s) => !s);
@@ -706,7 +711,7 @@ const Channel: React.FC<ChannelProps> = ({
       />
       <ReactTooltip
         id="toggle-signing-tooltip"
-        content={skipSigning ? t`Skips signing` : t`Sign message`}
+        content={skipSigning ? t`This message will NOT be signed` : t`This message will be signed`}
         place="top"
       />
 

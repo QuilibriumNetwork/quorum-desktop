@@ -72,6 +72,7 @@ const UserSettingsModal: React.FunctionComponent<{
   const [notificationsEnabled, setNotificationsEnabled] = React.useState<boolean>(
     notificationService.getPermissionStatus() === 'granted'
   );
+  const [saving, setSaving] = React.useState<boolean>(false);
 
   const forceUpdate = useForceUpdate();
 
@@ -115,6 +116,7 @@ const UserSettingsModal: React.FunctionComponent<{
   }, [language]);
 
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
+  const [includeSpaceKeys, setIncludeSpaceKeys] = React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (!init) {
@@ -127,6 +129,7 @@ const UserSettingsModal: React.FunctionComponent<{
         existingConfig.current = config;
         setAllowSync(config?.allowSync ?? allowSync);
         setNonRepudiable(config?.nonRepudiable ?? nonRepudiable);
+        setIncludeSpaceKeys(config?.includeSpaceKeys ?? false);
       })();
     }
   }, [init]);
@@ -210,51 +213,43 @@ const UserSettingsModal: React.FunctionComponent<{
   };
 
   const saveChanges = async () => {
+    setSaving(true);
+
+    const computedUserIcon =
+      acceptedFiles.length > 0 && fileData
+        ?
+            'data:' +
+            acceptedFiles[0].type +
+            ';base64,' +
+            Buffer.from(fileData).toString('base64')
+        : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER);
     updateStoredPasskey(currentPasskeyInfo!.credentialId, {
       credentialId: currentPasskeyInfo!.credentialId,
       address: currentPasskeyInfo!.address,
       publicKey: currentPasskeyInfo!.publicKey,
       displayName: displayName,
-      pfpUrl:
-        acceptedFiles.length > 0 && fileData
-          ? 'data:' +
-            acceptedFiles[0].type +
-            ';base64,' +
-            Buffer.from(fileData).toString('base64')
-          : currentPasskeyInfo!.pfpUrl,
+      pfpUrl: computedUserIcon,
       completedOnboarding: true,
     });
     setUser!({
       displayName: displayName,
       state: 'online',
       status: '',
-      userIcon:
-        acceptedFiles.length > 0 && fileData
-          ? 'data:' +
-            acceptedFiles[0].type +
-            ';base64,' +
-            Buffer.from(fileData).toString('base64')
-          : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
+      userIcon: computedUserIcon,
       address: currentPasskeyInfo!.address,
     });
-    updateUserProfile(
-      displayName,
-      acceptedFiles.length > 0 && fileData
-        ? 'data:' +
-            acceptedFiles[0].type +
-            ';base64,' +
-            Buffer.from(fileData).toString('base64')
-        : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
-      currentPasskeyInfo!
-    );
+    updateUserProfile(displayName, computedUserIcon, currentPasskeyInfo!);
+
     await saveConfig({
       config: {
         ...existingConfig.current!,
         allowSync,
         nonRepudiable: nonRepudiable,
+        includeSpaceKeys,
       },
       keyset: keyset,
     });
+    setSaving(false);
     handleDismiss();
   };
 
@@ -426,11 +421,12 @@ const UserSettingsModal: React.FunctionComponent<{
                       <div className="modal-content-actions">
                         <Button
                           type="primary"
+                          disabled={saving}
                           onClick={() => {
-                            saveChanges();
+                            if (!saving) saveChanges();
                           }}
                         >
-                          {t`Save Changes`}
+                          {saving ? t`Saving...` : t`Save Changes`}
                         </Button>
                       </div>
                     </div>
@@ -577,15 +573,44 @@ const UserSettingsModal: React.FunctionComponent<{
                             active={nonRepudiable}
                           />
                         </div>
+                        <div className="flex flex-row justify-between mt-3">
+                          <div className="text-sm flex flex-row">
+                            <div className="text-sm flex flex-col justify-around">
+                              {t`Strip space keys from remote config (10MB limit workaround)`}
+                            </div>
+                            <>
+                              <FontAwesomeIcon
+                                id="include-spacekeys-tooltip-anchor"
+                                icon={faInfoCircle}
+                                className="info-icon-tooltip mt-2 ml-2"
+                              />
+                              <ReactTooltip
+                                id="include-spacekeys-tooltip"
+                                anchorSelect="#include-spacekeys-tooltip-anchor"
+                                content={t`Enable to exclude large encrypted space data from remote uploads, useful until server limit is raised. Your spaces remain local and unaffected.`}
+                                place="right"
+                                className="!w-[400px]"
+                                showOnTouch
+                                touchTrigger="click"
+                              />
+                            </>
+                          </div>
+
+                          <ToggleSwitch
+                            onClick={() => setIncludeSpaceKeys((prev) => !prev)}
+                            active={includeSpaceKeys}
+                          />
+                        </div>
                       </div>
                       <div className="modal-content-actions">
                         <Button
                           type="primary"
+                          disabled={saving}
                           onClick={() => {
-                            saveChanges();
+                            if (!saving) saveChanges();
                           }}
                         >
-                          {t`Save Changes`}
+                          {saving ? t`Saving...` : t`Save Changes`}
                         </Button>
                       </div>
                     </div>

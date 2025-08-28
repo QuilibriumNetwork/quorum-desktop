@@ -119,19 +119,25 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
     }
   }, [acceptedFiles]);
 
-  // Load user preference for DM signing (non-repudiability)
+  // Load effective DM non-repudiability (conversation-level or user default)
   React.useEffect(() => {
     (async () => {
       try {
+        const { conversation: conv } = await messageDB.getConversation({ conversationId });
+        if (conv && typeof conv.isRepudiable !== 'undefined') {
+          setNonRepudiable(!!conv.isRepudiable);
+          setSkipSigning(false);
+          return;
+        }
         const config = await getConfig({
           address: user.currentPasskeyInfo!.address,
           userKey: keyset.userKeyset,
         });
         setNonRepudiable(config?.nonRepudiable ?? true);
-        setSkipSigning(false); // default to signing; user can opt-out only if nonRepudiable is false
+        setSkipSigning(false);
       } catch {}
     })();
-  }, [user.currentPasskeyInfo, keyset.userKeyset, getConfig]);
+  }, [user.currentPasskeyInfo, keyset.userKeyset, getConfig, conversationId, messageDB]);
 
   useEffect(() => {
     if ((messages.pages[0] as any)?.messages?.length === 0) {
@@ -325,6 +331,21 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   </ClickToCopyContent>
                 </div>
               </div>
+              <div className="flex flex-col justify-center pl-3">
+                <div
+                  className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-6 cursor-pointer"
+                  onClick={async () => {
+                    const next = !nonRepudiable;
+                    setNonRepudiable(next);
+                    try {
+                      await messageDB.updateConversation(conversationId, { isRepudiable: next });
+                    } catch {}
+                  }}
+                  data-tooltip-id="dm-repudiability-toggle"
+                >
+                  <FontAwesomeIcon className="text-subtle" icon={nonRepudiable ? faLock : faUnlock} />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -334,7 +355,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
           }
         >
           <MessageList
-            isRepudiable={true}
+            isRepudiable={nonRepudiable}
             roles={[]}
             canDeleteMessages={() => false}
             editor={editor}
@@ -453,6 +474,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   if ((pendingMessage || fileData) && !isSubmitting) {
                     setIsSubmitting(true);
                     setInReplyTo(undefined);
+                    const effectiveSkip = nonRepudiable ? false : skipSigning;
                     if (pendingMessage) {
                       submitMessage(
                         address!,
@@ -463,7 +485,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                         user.currentPasskeyInfo!,
                         keyset,
                         inReplyTo?.messageId,
-                        skipSigning
+                        effectiveSkip
                       ).finally(() => {
                         setIsSubmitting(false);
                       });
@@ -486,7 +508,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                         user.currentPasskeyInfo!,
                         keyset,
                         inReplyTo?.messageId,
-                        skipSigning
+                        effectiveSkip
                       ).finally(() => {
                         setIsSubmitting(false);
                       });
@@ -500,7 +522,15 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
               }}
             />
             <div
-              className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
+              className={
+                (
+                  nonRepudiable
+                    ? 'cursor-not-allowed opacity-50 bg-surface-5'
+                    : (skipSigning
+                        ? 'cursor-pointer bg-red-600 hover:bg-red-500'
+                        : 'cursor-pointer bg-blue-600 hover:bg-blue-500')
+                ) + ' flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0'
+              }
               onClick={async (e) => {
                 e.stopPropagation();
                 if (nonRepudiable) {
@@ -621,8 +651,17 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         place="top"
       />
       <ReactTooltip
+        id="dm-repudiability-toggle"
+        content={nonRepudiable ? t`Always sign this conversation's messages` : t`Do not sign this conversation's messages`}
+        place="top"
+      />
+      <ReactTooltip
         id="toggle-signing-tooltip-dm"
-        content={skipSigning ? t`Skips signing` : t`Sign message`}
+        content={
+          nonRepudiable
+            ? t`This conversation requires signatures. Toggle it off in the header to allow unsigned messages.`
+            : (skipSigning ? t`This message will NOT be signed` : t`This message will be signed`)
+        }
         place="top"
       />
     </div>

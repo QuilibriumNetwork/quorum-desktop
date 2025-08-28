@@ -226,10 +226,14 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   const syncInfo = useRef<{
     [spaceId: string]: {
       expiry: number;
-      candidates: any[];
+      candidates: {
+        inboxAddress: string;
+        timestamp: number;
+      }[];
       invokable: NodeJS.Timeout | undefined;
     };
   }>({});
+  const recentLocalSaveAt = useRef<number | null>(null);
 
   const saveMessage = async (
     decryptedContent: Message,
@@ -1842,8 +1846,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             message.timestamp,
             conversation.conversation?.lastReadTimestamp ?? 0,
             updatedUserProfile ?? {
-              user_icon: conversation.conversation?.icon,
-              display_name: conversation.conversation?.displayName,
+              user_icon:
+                conversation?.conversation?.icon ??
+                DefaultImages.UNKNOWN_USER,
+              display_name:
+                conversation?.conversation?.displayName ?? t`Unknown User`,
             }
           );
         } else {
@@ -2070,8 +2077,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     let candidates = syncInfo.current[spaceId].candidates;
 
     candidates = candidates
-      .filter((c) => c.messageCount > messageSet.length)
-      .sort((a, b) => b.messageCount - a.messageCount);
+      .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
     if (candidates.length == 0) {
       return;
@@ -3797,6 +3803,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       conversationId: spaceId + '/' + spaceId,
     });
     const sets = response.map((e) => JSON.parse(e.state));
+    if (!sets || sets.length === 0 || !sets[0]) {
+      throw new Error(t`Missing space encryption state`);
+    }
     const state = sets[0].template;
     const ratchet = JSON.parse(state.dkg_ratchet);
     ratchet.id = 10001 - sets[0].evals.length;
@@ -4787,7 +4796,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         completedOnboarding: boolean;
       },
       inReplyTo?: string,
-      skipSigning?: boolean
+      skipSigning?: boolean,
+      retryCount?: number
     ) => {
       enqueueOutbound(async () => {
         let outbounds: string[] = [];
@@ -4833,7 +4843,48 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         let response = await messageDB.getEncryptionStates({
           conversationId: spaceId + '/' + spaceId,
         });
-        const sets = response.map((e) => JSON.parse(e.state));
+        let sets = response.map((e) => JSON.parse(e.state));
+        // Ensure space triple-ratchet state exists; if missing, request sync and wait briefly
+        if (!sets || sets.length === 0 || !sets[0] || !sets[0].state) {
+          try {
+            await requestSync(spaceId);
+          } catch {}
+          for (let i = 0; i < 10; i++) {
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            response = await messageDB.getEncryptionStates({
+              conversationId: spaceId + '/' + spaceId,
+            });
+            const retrySets = response.map((e) => JSON.parse(e.state));
+            if (
+              retrySets &&
+              retrySets.length > 0 &&
+              retrySets[0] &&
+              retrySets[0].state
+            ) {
+              sets = retrySets;
+              break;
+            }
+          }
+          if (!sets || sets.length === 0 || !sets[0] || !sets[0].state) {
+            const nextRetry = (retryCount || 0) + 1;
+            if (nextRetry <= 5) {
+              // Re-enqueue the same outbound after a short delay so profile updates are not lost
+              setTimeout(() => {
+                submitChannelMessage(
+                  spaceId,
+                  channelId,
+                  pendingMessage,
+                  queryClient,
+                  currentPasskeyInfo,
+                  inReplyTo,
+                  skipSigning,
+                  nextRetry
+                );
+              }, 2000);
+            }
+            return outbounds;
+          }
+        }
 
         // Decide signing behavior: sign if not explicitly skipped, or if space is non-repudiable, or for profile updates
         const isProfileUpdate =
@@ -4916,26 +4967,23 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       address: string;
       userKey: secureChannel.UserKeyset;
     }) => {
+      const storedConfig = await messageDB.getUserConfig({ address });
+      if (storedConfig) {
+        // Return immediately with local; reconcile remote in background
+        setTimeout(() => {
+          reconcileRemoteConfig({ address, userKey, storedConfig }).catch(() => {});
+        }, 0);
+        return storedConfig;
+      }
+
       let savedConfig: secureChannel.UserConfig | undefined;
       try {
         savedConfig = (await apiClient.getUserSettings(address)).data;
       } catch {}
 
-      const storedConfig = await messageDB.getUserConfig({ address });
       if (!savedConfig) {
-        if (!storedConfig) {
-          return getDefaultUserConfig(address);
-        }
-        return storedConfig;
-      }
-
-      if (savedConfig.timestamp < (storedConfig?.timestamp ?? 0)) {
-        console.warn(t`saved config is out of date`);
-        return storedConfig;
-      }
-
-      if (savedConfig.timestamp == storedConfig?.timestamp) {
-        return storedConfig;
+        const def = getDefaultUserConfig(address);
+        return def;
       }
 
       const derived = await crypto.subtle.digest(
@@ -4973,7 +5021,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         )
       ) {
         console.warn(t`received config with invalid signature!`);
-        return storedConfig;
+        const def = getDefaultUserConfig(address);
+        return def;
       }
 
       const iv = savedConfig.user_config.substring(
@@ -4993,15 +5042,17 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         ).toString('utf-8')
       ) as UserConfig;
       if (!config) {
-        return storedConfig;
+        const def = getDefaultUserConfig(address);
+        return def;
       }
 
+      // Merge any new Spaces referenced remotely
       for (const space of config.spaceKeys ?? []) {
         const existingSpace = await messageDB.getSpace(space.spaceId);
         if (!existingSpace) {
           try {
-            const config = space.keys.find((k) => k.keyId == 'config');
-            if (!config) {
+            const cfgKey = space.keys.find((k) => k.keyId == 'config');
+            if (!cfgKey) {
               console.warn(t`decrypted space with no known config key`);
               continue;
             }
@@ -5027,7 +5078,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               continue;
             }
 
-            const ciphertext = JSON.parse(
+            const mCiphertext = JSON.parse(
               manifestPayload.data.space_manifest
             ) as {
               ciphertext: string;
@@ -5041,7 +5092,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                     JSON.stringify({
                       inbox_private_key: [
                         ...new Uint8Array(
-                          Buffer.from(config.privateKey, 'hex')
+                          Buffer.from(cfgKey.privateKey, 'hex')
                         ),
                       ],
                       ephemeral_public_key: [
@@ -5052,7 +5103,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                           )
                         ),
                       ],
-                      ciphertext: ciphertext,
+                      ciphertext: mCiphertext,
                     })
                   )
                 )
@@ -5165,7 +5216,271 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         buildConfigKey({ userAddress: config.address! }),
         () => config
       );
+
       return config;
+    },
+    []
+  );
+
+  const reconcileRemoteConfig = React.useCallback(
+    async ({
+      address,
+      userKey,
+      storedConfig,
+    }: {
+      address: string;
+      userKey: secureChannel.UserKeyset;
+      storedConfig: UserConfig;
+    }) => {
+      let savedConfig: secureChannel.UserConfig | undefined;
+      try {
+        savedConfig = (await apiClient.getUserSettings(address)).data;
+      } catch {}
+
+      if (!savedConfig) {
+        return;
+      }
+
+      if (recentLocalSaveAt.current && storedConfig.timestamp && storedConfig.timestamp >= savedConfig.timestamp) {
+        // Local was just saved and is newer or equal; do not overwrite
+        return;
+      }
+
+      if (savedConfig.timestamp <= (storedConfig?.timestamp ?? 0)) {
+        // Remote is not newer; nothing to do
+        return;
+      }
+
+      const derived = await crypto.subtle.digest(
+        'SHA-512',
+        Buffer.from(new Uint8Array(userKey.user_key.private_key))
+      );
+
+      const subtleKey = await window.crypto.subtle.importKey(
+        'raw',
+        derived.slice(0, 32),
+        {
+          name: 'AES-GCM',
+          length: 256,
+        },
+        false,
+        ['decrypt']
+      );
+
+      if (
+        !JSON.parse(
+          ch.js_verify_ed448(
+            Buffer.from(new Uint8Array(userKey.user_key.public_key)).toString(
+              'base64'
+            ),
+            Buffer.from(
+              new Uint8Array([
+                ...new Uint8Array(
+                  Buffer.from(savedConfig.user_config, 'utf-8')
+                ),
+                ...int64ToBytes(savedConfig.timestamp),
+              ])
+            ).toString('base64'),
+            Buffer.from(savedConfig.signature, 'hex').toString('base64')
+          )
+        )
+      ) {
+        console.warn(t`received config with invalid signature!`);
+        return;
+      }
+
+      const iv = savedConfig.user_config.substring(
+        savedConfig.user_config.length - 24
+      );
+      const ciphertext = savedConfig.user_config.substring(
+        0,
+        savedConfig.user_config.length - 24
+      );
+
+      const config = JSON.parse(
+        Buffer.from(
+          await window.crypto.subtle.decrypt(
+            { name: 'AES-GCM', iv: Buffer.from(iv, 'hex') },
+            subtleKey,
+            Buffer.from(ciphertext, 'hex')
+          )
+        ).toString('utf-8')
+      ) as UserConfig;
+      if (!config) {
+        return;
+      }
+
+      // Merge any new Spaces referenced remotely
+      for (const space of config.spaceKeys ?? []) {
+        const existingSpace = await messageDB.getSpace(space.spaceId);
+        if (!existingSpace) {
+          try {
+            const cfgKey = space.keys.find((k) => k.keyId == 'config');
+            if (!cfgKey) {
+              console.warn(t`decrypted space with no known config key`);
+              continue;
+            }
+
+            const hub = space.keys.find((k) => k.keyId == 'hub');
+            if (!hub) {
+              console.warn(t`Decrypted Space with no known hub key`);
+              continue;
+            }
+
+            for (const key of space.keys) {
+              await messageDB.saveSpaceKey(key);
+            }
+
+            let reg = (await apiClient.getSpace(space.spaceId)).data;
+            spaceInfo.current[space.spaceId] = reg;
+
+            const manifestPayload = await apiClient.getSpaceManifest(
+              space.spaceId
+            );
+            if (!manifestPayload) {
+              console.warn(t`Could not obtain manifest for Space`);
+              continue;
+            }
+
+            const mCiphertext = JSON.parse(
+              manifestPayload.data.space_manifest
+            ) as {
+              ciphertext: string;
+              initialization_vector: string;
+              associated_data: string;
+            };
+            const manifest = JSON.parse(
+              Buffer.from(
+                JSON.parse(
+                  ch.js_decrypt_inbox_message(
+                    JSON.stringify({
+                      inbox_private_key: [
+                        ...new Uint8Array(
+                          Buffer.from(cfgKey.privateKey, 'hex')
+                        ),
+                      ],
+                      ephemeral_public_key: [
+                        ...new Uint8Array(
+                          Buffer.from(
+                            manifestPayload.data.ephemeral_public_key,
+                            'hex'
+                          )
+                        ),
+                      ],
+                      ciphertext: mCiphertext,
+                    })
+                  )
+                )
+              ).toString('utf-8')
+            ) as Space;
+
+            const ip = ch.js_generate_ed448();
+            const inboxPair = JSON.parse(ip);
+            const ih = await sha256.digest(
+              Buffer.from(new Uint8Array(inboxPair.public_key))
+            );
+            const inboxAddress = base58btc.baseEncode(ih.bytes);
+
+            await messageDB.saveSpace(manifest);
+            await messageDB.saveEncryptionState(
+              { ...space.encryptionState, inboxId: inboxAddress },
+              true
+            );
+
+            await apiClient.postHubAdd({
+              hub_address: hub.address!,
+              hub_public_key: hub.publicKey,
+              hub_signature: Buffer.from(
+                JSON.parse(
+                  ch.js_sign_ed448(
+                    Buffer.from(hub.privateKey, 'hex').toString('base64'),
+                    Buffer.from(
+                      new Uint8Array([
+                        ...new Uint8Array(
+                          Buffer.from(
+                            'add' +
+                              Buffer.from(
+                                new Uint8Array(inboxPair.public_key)
+                              ).toString('hex'),
+                            'utf-8'
+                          )
+                        ),
+                      ])
+                    ).toString('base64')
+                  )
+                ),
+                'base64'
+              ).toString('hex'),
+              inbox_public_key: Buffer.from(
+                new Uint8Array(inboxPair.public_key)
+              ).toString('hex'),
+              inbox_signature: Buffer.from(
+                JSON.parse(
+                  ch.js_sign_ed448(
+                    Buffer.from(new Uint8Array(inboxPair.private_key)).toString(
+                      'base64'
+                    ),
+                    Buffer.from(
+                      new Uint8Array([
+                        ...new Uint8Array(
+                          Buffer.from('add' + hub.publicKey, 'utf-8')
+                        ),
+                      ])
+                    ).toString('base64')
+                  )
+                ),
+                'base64'
+              ).toString('hex'),
+            });
+
+            enqueueOutbound(async () => [
+              JSON.stringify({
+                type: 'listen',
+                inbox_addresses: [inboxAddress],
+              }),
+            ]);
+
+            await messageDB.saveSpaceKey({
+              spaceId: space.spaceId,
+              keyId: 'inbox',
+              address: inboxAddress,
+              publicKey: Buffer.from(
+                new Uint8Array(inboxPair.public_key)
+              ).toString('hex'),
+              privateKey: Buffer.from(
+                new Uint8Array(inboxPair.private_key)
+              ).toString('hex'),
+            });
+
+            enqueueOutbound(async () => [
+              await sendHubMessage(
+                space.spaceId,
+                JSON.stringify({
+                  type: 'control',
+                  message: {
+                    type: 'sync',
+                    inboxAddress: inboxAddress,
+                  },
+                })
+              ),
+            ]);
+          } catch (e) {
+            console.error(t`Could not add Space`, e);
+          }
+        }
+      }
+
+      await messageDB.saveUserConfig({
+        ...config,
+        timestamp: savedConfig.timestamp,
+      });
+
+      const updatedSpaces = await messageDB.getSpaces();
+      await queryClient.setQueryData(buildSpacesKey({}), () => updatedSpaces);
+      await queryClient.setQueryData(
+        buildConfigKey({ userAddress: config.address! }),
+        () => config
+      );
     },
     []
   );
@@ -5184,13 +5499,17 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       const ts = Date.now();
       config.timestamp = ts;
 
+      await messageDB.saveUserConfig(config);
+      recentLocalSaveAt.current = ts;
+
       if (config.allowSync) {
+        // Background remote sync to avoid blocking UI
+        (async () => {
         const userKey = keyset.userKeyset;
         const derived = await crypto.subtle.digest(
           'SHA-512',
           Buffer.from(new Uint8Array(userKey.user_key.private_key))
         );
-
         const subtleKey = await window.crypto.subtle.importKey(
           'raw',
           derived.slice(0, 32),
@@ -5202,20 +5521,50 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           ['encrypt']
         );
 
-        config.spaceKeys = [];
+          let configForUpload: any = { ...config };
+
+          if (config.includeSpaceKeys) {
+            // When enabled, send compact config by stripping spaceKeys
+            configForUpload = { ...configForUpload, spaceKeys: [] };
+          } else {
+            // Default behavior: include full space keys and encryption state for each space
         const spaces = await messageDB.getSpaces();
 
-        for (const space of spaces) {
-          const keys = await messageDB.getSpaceKeys(space.spaceId);
-          const encryptionState = await messageDB.getEncryptionStates({
+            const filteredSpaceKeys: NonNullable<typeof config.spaceKeys> = [];
+            const filteredSpaceIds: string[] = [];
+
+            await Promise.all(
+              spaces.map(async (space) => {
+                const [keys, encryptionStates] = await Promise.all([
+                  messageDB.getSpaceKeys(space.spaceId),
+                  messageDB.getEncryptionStates({
             conversationId: space.spaceId + '/' + space.spaceId,
-          });
-          config.spaceKeys.push({
+                  }),
+                ]);
+                const first = encryptionStates && encryptionStates[0];
+                if (
+                  first &&
+                  first.conversationId &&
+                  first.inboxId &&
+                  first.state &&
+                  typeof first.timestamp === 'number'
+                ) {
+                  filteredSpaceKeys.push({
             spaceId: space.spaceId,
-            encryptionState: encryptionState[0],
+                    encryptionState: first,
             keys: keys,
           });
-        }
+                  filteredSpaceIds.push(space.spaceId);
+                }
+              })
+            );
+
+            configForUpload = {
+              ...configForUpload,
+              spaceIds: filteredSpaceIds,
+              spaceKeys: filteredSpaceKeys,
+            };
+          }
 
         let iv = crypto.getRandomValues(new Uint8Array(12));
         const ciphertext =
@@ -5223,18 +5572,12 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             await window.crypto.subtle.encrypt(
               { name: 'AES-GCM', iv: iv },
               subtleKey,
-              Buffer.from(JSON.stringify(config), 'utf-8')
+                Buffer.from(JSON.stringify(configForUpload), 'utf-8')
             )
           ).toString('hex') + Buffer.from(iv).toString('hex');
 
-        await apiClient.postUserSettings(config.address, {
-          user_address: config.address,
-          user_public_key: Buffer.from(
-            new Uint8Array(userKey.user_key.public_key)
-          ).toString('hex'),
-          user_config: ciphertext,
-          timestamp: ts,
-          signature: Buffer.from(
+          try {
+            const signature = Buffer.from(
             JSON.parse(
               ch.js_sign_ed448(
                 Buffer.from(
@@ -5249,11 +5592,23 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               )
             ),
             'base64'
+            ).toString('hex');
+
+            const payload = {
+              user_address: configForUpload.address,
+              user_public_key: Buffer.from(
+                new Uint8Array(userKey.user_key.public_key)
           ).toString('hex'),
-        });
+              user_config: ciphertext,
+              timestamp: ts,
+              signature,
+            };
+
+            await apiClient.postUserSettings(configForUpload.address, payload);
+          } catch {}
+        })();
       }
 
-      await messageDB.saveUserConfig(config);
     },
     []
   );

@@ -27,6 +27,7 @@ export type UserConfig = {
   timestamp?: number;
   nonRepudiable?: boolean;
   allowSync?: boolean;
+  includeSpaceKeys?: boolean;
   spaceKeys?: {
     spaceId: string;
     encryptionState: {
@@ -435,6 +436,36 @@ export class MessageDB {
     });
   }
 
+  async updateConversation(
+    conversationId: string,
+    update: Partial<Conversation>
+  ): Promise<void> {
+    await this.init();
+    const existing = await this.getConversation({ conversationId });
+    const next: Conversation = {
+      conversationId,
+      type: existing.conversation?.type ?? 'direct',
+      timestamp: existing.conversation?.timestamp ?? Date.now(),
+      address: existing.conversation?.address ?? conversationId.split('/')[0],
+      icon: existing.conversation?.icon ?? '',
+      displayName: existing.conversation?.displayName ?? '',
+      lastReadTimestamp: existing.conversation?.lastReadTimestamp,
+      isRepudiable: existing.conversation?.isRepudiable,
+      ...update,
+    } as Conversation;
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('conversations', 'readwrite');
+      const store = transaction.objectStore('conversations');
+      const request = store.put(next);
+
+      request.onsuccess = () => {
+        resolve();
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   async getConversations({
     type,
     cursor,
@@ -592,6 +623,9 @@ export class MessageDB {
     displayName: string
   ): Promise<void> {
     await this.init();
+    const conversationId = message.spaceId + '/' + message.channelId;
+    // Fetch existing conversation to preserve fields like lastReadTimestamp and isRepudiable
+    const existing = await this.getConversation({ conversationId });
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(
         ['messages', 'conversations'],
@@ -603,12 +637,14 @@ export class MessageDB {
 
       const conversationStore = transaction.objectStore('conversations');
       const request = conversationStore.put({
-        conversationId: message.spaceId + '/' + message.channelId,
+        conversationId,
         address: address,
         icon: icon,
         displayName: displayName,
         type: conversationType,
         timestamp: message.createdDate,
+        lastReadTimestamp: existing.conversation?.lastReadTimestamp,
+        isRepudiable: existing.conversation?.isRepudiable,
       });
       request.onerror = () => reject(request.error);
 

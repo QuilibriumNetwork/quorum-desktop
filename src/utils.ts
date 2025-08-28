@@ -8,6 +8,7 @@ export const getDefaultUserConfig = (address: string): UserConfig => {
   return {
     address: address,
     allowSync: false,
+    includeSpaceKeys: false,
     nonRepudiable: true,
     spaceKeys: [],
     spaceIds: [],
