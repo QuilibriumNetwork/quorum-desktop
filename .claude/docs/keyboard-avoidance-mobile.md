@@ -1,190 +1,103 @@
 # Mobile Keyboard Avoidance System
 
-## Overview
+Simple CSS-based keyboard avoidance solution using modern web standards that ensures message input areas remain visible when virtual keyboards appear on mobile devices.
 
-Enhanced keyboard avoidance system for mobile web browsers that ensures message input areas remain visible when virtual keyboards appear. Implements 2025 best practices with multi-layered detection, device-specific optimizations, and graceful fallbacks.
+## Current Solution: CSS-Only Approach
 
-## Problem Solved
+The working solution uses **native web standards** instead of JavaScript workarounds:
 
-The original keyboard avoidance implementation worked in browser simulators but failed on real devices (e.g., Samsung Fold 6 with Chrome) because:
+### Implementation
 
-- Single 300ms delay insufficient for modern device animations
-- Only relied on Visual Viewport API (limited browser support)  
-- No fallback mechanisms when Visual Viewport API failed
-- Missing detection for actual keyboard appearance vs disappearance
+#### 1. Viewport Meta Tag Enhancement
+```html
+<!-- Before -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-## Implementation Details
-
-### Architecture
-
-The system uses a **multi-layered detection approach**:
-
-1. **Visual Viewport API** (primary) - Modern browsers
-2. **Window resize events** (secondary) - Fallback for older browsers
-3. **Multiple scroll methods** (tertiary) - Ensures scroll actually works
-
-### Key Features
-
-#### 1. Device-Specific Timing Optimization
-```javascript
-// Samsung devices: 400ms, 600ms, 800ms delays
-// iOS Safari: 200ms, 400ms, 600ms delays  
-// Other devices: 300ms, 500ms, 700ms delays
+<!-- After -->  
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content" />
 ```
 
-#### 2. Enhanced Touch Device Detection
-- Only activates on `isTouchDevice() && viewport width < 768px`
-- Prevents interference with desktop devices that have touch screens
-- Maintains existing `isTouchDevice()` functionality for other components
+**Key addition**: `interactive-widget=resizes-content`
+- Tells the browser to resize the content area when virtual keyboards appear
+- Works natively without JavaScript intervention
 
-#### 3. Visual Viewport API Integration (2025 Standard)
-- Uses `window.visualViewport?.height` for accurate viewport calculations
-- Properly handles viewport changes when keyboard appears/disappears
-- Fallback to `window.innerHeight` for older browsers
-
-#### 4. CSS Viewport Units Support
-- Added `applyKeyboardAwareCss()` utility for dvh/svh units
-- Provides CSS classes with fallbacks: `100vh` → `100dvh`
-- Uses dynamic viewport height calculations in scroll logic
-
-#### 5. Robust Scroll Implementation
-```javascript
-// Method 1: Visual viewport aware calculation
-const viewportHeight = window.visualViewport?.height || window.innerHeight;
-// Method 2: Standard scrollIntoView as fallback
-element.scrollIntoView({ behavior: 'smooth', block: 'end' });
+#### 2. Dynamic Viewport Height Support
+```scss
+// Container.scss & _chat.scss
+.container {
+  height: calc(100vh - 14px);
+  @supports (height: 100dvh) {
+    height: calc(100dvh - 14px); // Dynamic viewport height
+  }
+}
 ```
 
-#### 6. Performance Optimizations
-- Caches device detection result to avoid repeated calculations
-- Proper event listener cleanup to prevent memory leaks  
-- Clears timeouts on component unmount
+**Benefits of `100dvh`**:
+- Automatically adjusts for virtual keyboards
+- Modern CSS unit specifically designed for this problem
+- No JavaScript calculation needed
+
+#### 3. Improved Flexbox Layout
+```scss
+// Channel.scss & DirectMessage.scss
+.chat-container {
+  flex: 1 1 auto; // Changed from flex: 1
+}
+
+.message-list {
+  flex: 1 1 auto; // Allows proper shrinking
+  min-height: 0; // Critical for vertical shrinking
+}
+```
+
+#### 4. Sticky Message Composer
+```scss
+// Channel.scss & DirectMessage.scss  
+.message-editor-container {
+  position: sticky;
+  bottom: 0;
+  background: transparent;
+  z-index: 5;
+}
+```
+
+**Effect**: Input stays visible at bottom when keyboard appears
 
 ## Files Modified
 
-### 1. `src/utils.ts`
-**Added new utilities:**
-- `hasVirtualKeyboardSupport()` - Detects Visual Viewport API support
-- `getKeyboardAvoidanceTimings()` - Device-specific timing arrays
-- `applyKeyboardAwareCss()` - Applies 2025 CSS viewport units
-- `createKeyboardAvoidanceHandler()` - Main keyboard avoidance system
+### 1. `index.html`
+- Added `interactive-widget=resizes-content` to viewport meta tag
 
-**Enhanced existing:**
-- Kept `isTouchDevice()` for backward compatibility
-- Removed temporary `isMobileDevice()` function
+### 2. `src/components/Container.scss`
+- Added `100dvh` support with fallback to `100vh`
 
-### 2. `src/components/channel/Channel.tsx`
-**Changes:**
-- Updated import: `createKeyboardAvoidanceHandler` from utils
-- Replaced simple keyboard avoidance with enhanced multi-layered system
-- Added proper useEffect cleanup and dependencies
-- Maintained composerRef and editor ref usage
+### 3. `src/styles/_chat.scss`
+- Added `100dvh` support for main chat container
+- Changed flex properties for better responsiveness
+- Added `min-height: 0` for vertical shrinking
 
-### 3. `src/components/direct/DirectMessage.tsx`  
-**Changes:**
-- Updated import: `createKeyboardAvoidanceHandler` from utils
-- Applied same enhanced keyboard avoidance system as Channel
-- Added proper useEffect cleanup and dependencies
-- Maintained composerRef and editor ref usage
+### 4. `src/components/channel/Channel.scss`
+- Updated flexbox properties to `flex: 1 1 auto`
+- Added sticky positioning for message editor container
+
+### 5. `src/components/direct/DirectMessage.scss`
+- Same flexbox and sticky positioning improvements as Channel
+
+### 6. Removed Files/Code
+- **All JavaScript keyboard avoidance utilities** from `src/utils.ts`
+- **useEffect hooks** for keyboard handling in both components
+- **Complex import statements** referencing JavaScript handlers
 
 ## Browser Compatibility
 
-| Browser | Visual Viewport API | Keyboard Avoidance | Notes |
-|---------|-------------------|-------------------|-------|
-| Chrome Mobile | ✅ Full Support | ✅ Primary method | Includes VirtualKeyboard API |
-| Safari iOS | ✅ Full Support | ✅ Primary method | No VirtualKeyboard API |
-| Firefox Mobile | ✅ Supported | ✅ Primary method | Limited documentation |
-| Older Browsers | ❌ No Support | ✅ Window resize fallback | Graceful degradation |
+| Browser | Support | Notes |
+|---------|---------|-------|
+| Chrome Mobile | ✅ Full | Native `interactive-widget` support |
+| Safari iOS | ✅ Full | Excellent `100dvh` support |
+| Firefox Mobile | ✅ Full | Good standards compliance |
+| Older Browsers | ✅ Fallback | Falls back to `100vh` gracefully |
 
-## Best Practices Implemented
-
-### 1. **2025 Web Standards**
-- Visual Viewport API as primary detection method
-- CSS viewport units (dvh, svh) support with fallbacks
-- Progressive enhancement approach
-
-### 2. **Performance**  
-- Event listener cleanup prevents memory leaks
-- Cached device detection avoids repeated calculations
-- Timeout management with proper cleanup
-
-### 3. **React Best Practices**
-- Proper useEffect dependencies (empty array for mount-only)
-- Complete cleanup in useEffect return function
-- No side effects during render
-
-### 4. **Mobile-First Design**
-- Only activates on actual mobile devices
-- Respects desktop behavior - zero interference
-- Device-specific optimizations
-
-### 5. **Error Handling**
-- Try-catch blocks around scroll operations  
-- Console warnings for debugging
-- Graceful fallbacks when operations fail
-
-## Usage Example
-
-```javascript
-// Automatic activation in Channel and DirectMessage components
-useEffect(() => {
-  const keyboardHandler = createKeyboardAvoidanceHandler();
-  if (!keyboardHandler) return; // Not a mobile device
-
-  const textarea = editor.current;
-  const composer = composerRef.current;
-  
-  if (!textarea || !composer) return;
-
-  const handlers = keyboardHandler.createDetectionHandlers(textarea, composer);
-
-  // Set up multi-layered detection
-  textarea.addEventListener('focus', handlers.handleFocus);
-  
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', handlers.handleVisualViewportChange);
-  }
-  
-  window.addEventListener('resize', handlers.handleWindowResize);
-
-  return () => {
-    // Complete cleanup
-    textarea.removeEventListener('focus', handlers.handleFocus);
-    if (window.visualViewport) {
-      window.visualViewport.removeEventListener('resize', handlers.handleVisualViewportChange);
-    }
-    window.removeEventListener('resize', handlers.handleWindowResize);
-    keyboardHandler.cleanup();
-  };
-}, []);
-```
-
-## Testing Recommendations
-
-### Desktop Testing
-- ✅ Verify no keyboard avoidance activation on desktop browsers
-- ✅ Test touch-enabled desktops/laptops don't trigger mobile behavior  
-- ✅ Confirm existing functionality unchanged
-
-### Mobile Testing
-- ✅ Test on Samsung devices (Fold, Galaxy series)
-- ✅ Test on various iOS devices and Safari versions
-- ✅ Test keyboard appearance/disappearance in different orientations
-- ✅ Verify message input remains visible during typing
-
-### Edge Cases
-- ✅ Test on tablets (should activate based on viewport width)
-- ✅ Test with browser zoom levels
-- ✅ Test rapid keyboard open/close cycles
-
-## Future Enhancements
-
-1. **CSS Integration**: Consider adding utility classes to existing Tailwind setup
-2. **Performance Monitoring**: Add optional telemetry for keyboard avoidance effectiveness  
-3. **A11y Improvements**: Enhanced screen reader support during keyboard transitions
-4. **PWA Support**: Integration with PWA manifest for better mobile app behavior
 
 ---
 
-*Last updated: August 27, 2025*
-*Implementation: Enhanced mobile keyboard avoidance with 2025 web standards*
+*Last updated: August 30, 2025*  
