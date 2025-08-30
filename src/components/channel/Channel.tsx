@@ -268,27 +268,29 @@ const Channel: React.FC<ChannelProps> = ({
           />
         </div>
 
-        <MessageComposer
-          ref={messageComposerRef}
-          value={composer.pendingMessage}
-          onChange={composer.setPendingMessage}
-          onKeyDown={composer.handleKeyDown}
-          placeholder={i18n._('Send a message to #{channel_name}', {
-            channel_name: channel?.channelName ?? '',
-          })}
-          calculateRows={composer.calculateRows}
-          getRootProps={composer.getRootProps}
-          getInputProps={composer.getInputProps}
-          fileData={composer.fileData}
-          fileType={composer.fileType}
-          clearFile={composer.clearFile}
-          onSubmitMessage={composer.submitMessage}
-          onShowStickers={() => composer.setShowStickers(true)}
-          inReplyTo={composer.inReplyTo}
-          fileError={composer.fileError}
-          mapSenderToUser={mapSenderToUser}
-          setInReplyTo={composer.setInReplyTo}
-        />
+        <div className="message-editor-container">
+          <MessageComposer
+            ref={messageComposerRef}
+            value={composer.pendingMessage}
+            onChange={composer.setPendingMessage}
+            onKeyDown={composer.handleKeyDown}
+            placeholder={i18n._('Send a message to #{channel_name}', {
+              channel_name: channel?.channelName ?? '',
+            })}
+            calculateRows={composer.calculateRows}
+            getRootProps={composer.getRootProps}
+            getInputProps={composer.getInputProps}
+            fileData={composer.fileData}
+            fileType={composer.fileType}
+            clearFile={composer.clearFile}
+            onSubmitMessage={composer.submitMessage}
+            onShowStickers={() => composer.setShowStickers(true)}
+            inReplyTo={composer.inReplyTo}
+            fileError={composer.fileError}
+            mapSenderToUser={mapSenderToUser}
+            setInReplyTo={composer.setInReplyTo}
+          />
+        </div>
       </div>
 
       {/* Desktop sidebar - only visible on lg+ screens */}

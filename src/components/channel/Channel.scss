@@ -28,7 +28,7 @@
     border-top-left-radius: 0.75rem;
     position: relative;
     overflow: hidden;
-    flex: 1; // Expand to fill available space when sidebar is hidden
+    flex: 1 1 auto; // Expand to fill available space when sidebar is hidden
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0; // Allow shrinking
@@ -48,4 +48,12 @@
 
 .message-editor {
   background: var(--surface-5);
+}
+
+// Ensure the composer stays visible at bottom and doesn't get pushed off-screen
+.message-editor-container {
+  position: sticky;
+  bottom: 0;
+  background: transparent;
+  z-index: 5;
 }

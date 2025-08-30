@@ -1,9 +1,8 @@
-import React, { forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { Button, FlexRow, Tooltip, Icon, TextArea } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { Buffer } from 'buffer';
-import { isTouchDevice } from '../../utils/platform';
 
 interface MessageComposerProps {
   // Textarea props
@@ -63,7 +62,6 @@ export const MessageComposer = forwardRef<
     ref
   ) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const composerRef = useRef<HTMLDivElement>(null);
 
     useImperativeHandle(ref, () => ({
       focus: () => {
@@ -71,56 +69,9 @@ export const MessageComposer = forwardRef<
       },
     }));
 
-    // Keyboard avoidance for touch devices
-    useEffect(() => {
-      if (!isTouchDevice()) return;
-
-      const handleFocus = () => {
-        // When the textarea gains focus on touch devices, 
-        // scroll the composer into view after a short delay
-        // to account for virtual keyboard animation
-        setTimeout(() => {
-          if (composerRef.current) {
-            composerRef.current.scrollIntoView({ 
-              behavior: 'smooth', 
-              block: 'end',
-              inline: 'nearest'
-            });
-          }
-        }, 300);
-      };
-
-      const handleResize = () => {
-        // Handle viewport resize (keyboard appearing/disappearing)
-        if (document.activeElement === textareaRef.current && composerRef.current) {
-          composerRef.current.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'end',
-            inline: 'nearest'
-          });
-        }
-      };
-
-      const textarea = textareaRef.current;
-      if (textarea) {
-        textarea.addEventListener('focus', handleFocus);
-      }
-
-      // Listen for viewport changes which indicate keyboard appearance
-      window.visualViewport?.addEventListener('resize', handleResize);
-      window.visualViewport?.addEventListener('scroll', handleResize);
-
-      return () => {
-        if (textarea) {
-          textarea.removeEventListener('focus', handleFocus);
-        }
-        window.visualViewport?.removeEventListener('resize', handleResize);
-        window.visualViewport?.removeEventListener('scroll', handleResize);
-      };
-    }, []);
 
     return (
-      <div ref={composerRef} className="w-full pr-6 lg:pr-8">
+      <div className="w-full pr-6 lg:pr-8">
         {/* Error and reply-to display */}
         {(fileError || inReplyTo) && (
           <div className="flex flex-col w-full ml-[11px] mt-2 mb-0">

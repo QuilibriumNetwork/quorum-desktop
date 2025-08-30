@@ -323,28 +323,30 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
         )}
 
         {/* Message Composer */}
-        <MessageComposer
-          ref={messageComposerRef}
-          value={composer.pendingMessage}
-          onChange={composer.setPendingMessage}
-          onKeyDown={composer.handleKeyDown}
-          placeholder={i18n._('Send a message to {user}', {
-            user: otherUser.displayName,
-          })}
-          calculateRows={composer.calculateRows}
-          getRootProps={composer.getRootProps}
-          getInputProps={composer.getInputProps}
-          fileData={composer.fileData}
-          fileType={composer.fileType}
-          clearFile={composer.clearFile}
-          onSubmitMessage={composer.submitMessage}
-          onShowStickers={() => {}}
-          hasStickers={false}
-          inReplyTo={composer.inReplyTo}
-          fileError={composer.fileError}
-          mapSenderToUser={mapSenderToUser}
-          setInReplyTo={composer.setInReplyTo}
-        />
+        <div className="message-editor-container">
+          <MessageComposer
+            ref={messageComposerRef}
+            value={composer.pendingMessage}
+            onChange={composer.setPendingMessage}
+            onKeyDown={composer.handleKeyDown}
+            placeholder={i18n._('Send a message to {user}', {
+              user: otherUser.displayName,
+            })}
+            calculateRows={composer.calculateRows}
+            getRootProps={composer.getRootProps}
+            getInputProps={composer.getInputProps}
+            fileData={composer.fileData}
+            fileType={composer.fileType}
+            clearFile={composer.clearFile}
+            onSubmitMessage={composer.submitMessage}
+            onShowStickers={() => {}}
+            hasStickers={false}
+            inReplyTo={composer.inReplyTo}
+            fileError={composer.fileError}
+            mapSenderToUser={mapSenderToUser}
+            setInReplyTo={composer.setInReplyTo}
+          />
+        </div>
       </FlexColumn>
 
       {/* Desktop sidebar - content is managed by SidebarProvider */}
