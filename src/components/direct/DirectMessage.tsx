@@ -26,7 +26,7 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import ReactTooltip from '../ReactTooltip';
 import ClickToCopyContent from '../ClickToCopyContent';
-import { DefaultImages, truncateAddress, createKeyboardAvoidanceHandler } from '../../utils';
+import { DefaultImages, truncateAddress } from '../../utils';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
@@ -266,43 +266,6 @@ const DirectMessage: React.FC = () => {
     }
   }, [messageList]);
 
-  // Enhanced keyboard avoidance for mobile devices
-  useEffect(() => {
-    const keyboardHandler = createKeyboardAvoidanceHandler();
-    if (!keyboardHandler) return; // Not a mobile device
-
-    const textarea = editor.current;
-    const composer = composerRef.current;
-
-    if (!textarea || !composer) return;
-
-    const handlers = keyboardHandler.createDetectionHandlers(textarea, composer);
-
-    // Set up event listeners
-    textarea.addEventListener('focus', handlers.handleFocus);
-
-    // Visual Viewport API (primary detection)
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', handlers.handleVisualViewportChange);
-      window.visualViewport.addEventListener('scroll', handlers.handleVisualViewportChange);
-    }
-
-    // Window resize fallback (secondary detection)
-    window.addEventListener('resize', handlers.handleWindowResize);
-
-    return () => {
-      // Cleanup all event listeners and timeouts
-      textarea.removeEventListener('focus', handlers.handleFocus);
-
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', handlers.handleVisualViewportChange);
-        window.visualViewport.removeEventListener('scroll', handlers.handleVisualViewportChange);
-      }
-
-      window.removeEventListener('resize', handlers.handleWindowResize);
-      keyboardHandler.cleanup();
-    };
-  }, []); // Empty dependency array is correct - we only want this to run once on mount
 
   const submit = async (message: any) => {
     await submitMessage(
