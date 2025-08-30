@@ -197,9 +197,9 @@ export const Onboarding = ({
                 >
                   {t`Save User Key`}
                 </Button>
-                <div className="pt-4">
+                <div className="pt-6">
                   <span
-                    className="text-white text-sm cursor-pointer underline hover:text-white/80 transition-colors"
+                    className="text-white text-sm cursor-pointer hover:text-white/80 transition-colors"
                     onClick={handleAlreadySaved}
                   >
                     {t`I already saved mine`}
@@ -305,10 +305,7 @@ export const Onboarding = ({
                     ) : (
                       <div className="attachment-drop cursor-pointer">
                         <span className="attachment-drop-icon justify-around w-20 h-20 flex flex-col">
-                          <img
-                            src={DefaultImages.UNKNOWN_USER}
-                            className="w-20 h-20 object-cover rounded-full mx-auto"
-                          />
+                          <Icon name="image" />
                         </span>
                       </div>
                     )}
@@ -320,35 +317,34 @@ export const Onboarding = ({
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
                 <div className="flex flex-col justify-around pl-2 pt-4">
-                  <div className="flex flex-row justify-between ml-4">
-                    <Button
-                      type="light-outline-white"
-                      className="px-8"
-                      onClick={handleSavePhoto}
-                    >
-                      {t`Skip Adding Photo`}
-                    </Button>
-                    <Tooltip
-                      id="profile-image-info"
-                      content={t`If skipped, you'll get the default profile image and can set it later`}
-                      place="right"
-                      maxWidth={300}
-                    >
-                      <Icon
-                        name="circle-info"
-                        className="text-white/80 hover:text-white/60 cursor-pointer ml-2 my-auto"
-                        aria-label={t`If skipped, you'll get the default profile image and can set it later`}
-                      />
-                    </Tooltip>
-                  </div>
                   <Button
                     type="primary-white"
                     disabled={!canSaveFile}
-                    className={`px-8 mt-4 w-full sm:w-auto ${!canSaveFile ? 'btn-disabled-onboarding' : ''}`}
+                    className={`px-8 w-full sm:w-auto ${!canSaveFile ? 'btn-disabled-onboarding' : ''}`}
                     onClick={handleSavePhoto}
                   >
                     {t`Save Contact Photo`}
                   </Button>
+                  <div className="pt-8 text-center">
+                    <span
+                      className="text-white text-sm cursor-pointer hover:text-white/80 transition-colors"
+                      onClick={handleSavePhoto}
+                    >
+                      {t`Skip Adding Photo`}
+                    </span>
+                    <Tooltip
+                      id="profile-image-info"
+                      content={t`If skipped, you'll get the default profile image and can set it later`}
+                      place="bottom"
+                      maxWidth={300}
+                    >
+                      <Icon
+                        name="circle-info"
+                        className="text-white/80 hover:text-white/60 cursor-pointer ml-2"
+                        aria-label={t`If skipped, you'll get the default profile image and can set it later`}
+                      />
+                    </Tooltip>
+                  </div>
                 </div>
                 <div className="grow"></div>
               </div>

@@ -203,16 +203,31 @@ const UserSettingsModal: React.FunctionComponent<{
                 case 'general':
                   return (
                     <>
-                      <div className="modal-content-header">
-                        <div
-                          id="user-icon-tooltip-target"
-                          className="modal-icon-editable"
-                          style={{
-                            backgroundImage: `url(${getProfileImageUrl()})`,
-                          }}
-                          {...getRootProps()}
-                        >
-                          <input {...getInputProps()} />
+                      <div className="modal-content-header flex flex-col md:flex-row md:items-center md:justify-center md:gap-6">
+                        <div className="flex justify-start md:mt-4">
+                          {fileData ? (
+                            <div
+                              id="user-icon-tooltip-target"
+                              className="modal-icon-editable cursor-pointer"
+                              style={{
+                                backgroundImage: `url(${getProfileImageUrl()})`,
+                              }}
+                              {...getRootProps()}
+                            >
+                              <input {...getInputProps()} />
+                            </div>
+                          ) : (
+                            <div
+                              id="user-icon-tooltip-target"
+                              className="attachment-drop cursor-pointer"
+                              {...getRootProps()}
+                            >
+                              <span className="attachment-drop-icon justify-around w-20 h-20 flex flex-col">
+                                <input {...getInputProps()} />
+                                <Icon name="image" />
+                              </span>
+                            </div>
+                          )}
                         </div>
                         {!isUserIconUploading && !isUserIconDragActive && (
                           <ReactTooltip
@@ -223,10 +238,10 @@ const UserSettingsModal: React.FunctionComponent<{
                             anchorSelect="#user-icon-tooltip-target"
                           />
                         )}
-                        <div className="modal-text-section sm:mt-6">
-                          <div className="modal-text-label">{t`Display Name`}</div>
+                        <div className="modal-text-section md:mt-0 md:ml-0 flex flex-col items-start">
+                          <div className="modal-text-label md:mt-4 mb-2">{t`Display Name`}</div>
                           <Input
-                            className="w-full modal-input-text"
+                            className="w-full md:w-80 modal-input-text"
                             value={displayName}
                             onChange={setDisplayName}
                           />

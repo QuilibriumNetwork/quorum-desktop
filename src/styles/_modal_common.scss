@@ -604,6 +604,49 @@
   }
 }
 
+// Shared attachment/file upload drop area styles
+// Used by: CreateSpaceModal, UserSettingsModal, Onboarding
+.attachment-drop {
+  border: 3px dashed var(--accent-100);
+  font-size: 18px;
+  text-align: center;
+  border-radius: 1000px;
+  color: rgba(255, 255, 255, 0.6);
+  background-color: var(--accent);
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  .attachment-drop-icon {
+    font-size: 32px;
+  }
+}
+
+.attachment-drop:hover {
+  background-color: var(--accent-400);
+  color: white;
+}
+
+.attachment-drop::after {
+  width: 24px;
+  height: 24px;
+  background: var(--color-bg-icon);
+  color: var(--accent);
+  content: '+';
+  display: block;
+  text-align: center;
+  border-radius: 50%;
+  position: absolute;
+  font-weight: 100;
+  font-size: 12pt;
+  margin-top: -75px;
+  margin-left: 40px;
+  line-height: 24px;
+}
+
 .modal-icon-editable {
   cursor: pointer;
 
