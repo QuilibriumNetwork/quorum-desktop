@@ -22,7 +22,7 @@
   .chat-container {
     position: relative;
     overflow: hidden;
-    flex: 1; // Expand to fill available space when sidebar is hidden
+    flex: 1 1 auto; // Expand to fill available space when sidebar is hidden
     width: 100% !important;
     max-width: 100% !important;
     min-width: 0; // Allow shrinking
@@ -42,6 +42,14 @@
   border-top-left-radius: 0px;
   border-top-right-radius: 0px;
   margin-top: 0px;
+}
+
+// Ensure the composer stays visible at bottom and doesn't get pushed off-screen
+.message-editor-container {
+  position: sticky;
+  bottom: 0;
+  background: transparent;
+  z-index: 5;
 }
 
 .message-reply-curve {
