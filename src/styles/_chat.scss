@@ -5,6 +5,9 @@
   z-index: 1;
   display: flex;
   height: calc(100vh - 14px);
+  @supports (height: 100dvh) {
+    height: calc(100dvh - 14px);
+  }
   flex-direction: row;
 
   // Mobile layout - ensure full width usage
@@ -18,6 +21,7 @@
   > .flex.flex-col {
     flex: 1;
     min-width: 0; // Allow shrinking
+    min-height: 0; // Allow vertical shrinking so footer doesn't get pushed out
     width: 100%;
   }
 }
@@ -52,7 +56,7 @@
 }
 
 .message-list {
-  flex: 1 0;
+  flex: 1 1 auto;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
