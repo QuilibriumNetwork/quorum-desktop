@@ -30,8 +30,8 @@ import { DefaultImages, truncateAddress, createKeyboardAvoidanceHandler } from '
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
-const DirectMessage: React.FC<{}> = (p: {}) => {
-  const { isDesktop, isMobile, isTablet, toggleLeftSidebar } = useResponsiveLayoutContext();
+const DirectMessage: React.FC = () => {
+  const { isMobile, isTablet, toggleLeftSidebar } = useResponsiveLayoutContext();
   const [fileError, setFileError] = useState<string | null>(null);
   let { address } = useParams<{ address: string }>();
   const conversationId = address! + '/' + address!;
@@ -60,7 +60,7 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
   const [fileType, setFileType] = React.useState<string>();
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [nonRepudiable, setNonRepudiable] = useState<boolean>(true);
-  const { getRootProps, getInputProps, acceptedFiles, isDragActive, open } =
+  const { getRootProps, getInputProps, acceptedFiles, open } =
     useDropzone({
       accept: {
         'image/png': ['.png'],
@@ -335,15 +335,83 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   icon={faBars}
                 />
               )}
+              {/* Desktop: non-repudiability toggle to the left of search */}
+              <div
+                className="hidden lg:flex w-8 h-8 items-center justify-center rounded-md bg-surface-5 hover:bg-surface-6 cursor-pointer"
+                onClick={async () => {
+                  const next = !nonRepudiable;
+                  setNonRepudiable(next);
+                  try {
+                    const existing = await messageDB.getConversation({ conversationId });
+                    const baseConv = existing.conversation ?? {
+                      conversationId,
+                      address: address!,
+                      icon: mapSenderToUser(address ?? '').userIcon || DefaultImages.UNKNOWN_USER,
+                      displayName: mapSenderToUser(address ?? '').displayName || t`Unknown User`,
+                      type: 'direct' as const,
+                      timestamp: Date.now(),
+                    };
+                    await messageDB.saveConversation({ ...baseConv, isRepudiable: !next });
+                    if (!next) {
+                      const cfg = await getConfig({
+                        address: user.currentPasskeyInfo!.address,
+                        userKey: keyset.userKeyset,
+                      });
+                      const userNonRepudiable = cfg?.nonRepudiable ?? true;
+                      setSkipSigning(!userNonRepudiable);
+                    } else {
+                      setSkipSigning(false);
+                    }
+                  } catch {}
+                }}
+                data-tooltip-id="dm-repudiability-toggle"
+              >
+                <FontAwesomeIcon className="text-subtle" icon={nonRepudiable ? faLock : faUnlock} />
+              </div>
               <GlobalSearch className="dm-search flex-1 lg:flex-none max-w-xs lg:max-w-none" />
             </div>
-            <FontAwesomeIcon
-              onClick={() => {
-                setShowUsers((prev) => !prev);
-              }}
-              className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"
-              icon={faUsers}
-            />
+            {/* Right actions: users toggle and mobile non-repudiability at far right */}
+            <div className="flex flex-row items-center gap-2">
+              <FontAwesomeIcon
+                onClick={() => {
+                  setShowUsers(!showUsers);
+                }}
+                className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"
+                icon={faUsers}
+              />
+              <div
+                className="flex lg:hidden w-8 h-8 items-center justify-center rounded-md bg-surface-5 hover:bg-surface-6 cursor-pointer"
+                onClick={async () => {
+                  const next = !nonRepudiable;
+                  setNonRepudiable(next);
+                  try {
+                    const existing = await messageDB.getConversation({ conversationId });
+                    const baseConv = existing.conversation ?? {
+                      conversationId,
+                      address: address!,
+                      icon: mapSenderToUser(address ?? '').userIcon || DefaultImages.UNKNOWN_USER,
+                      displayName: mapSenderToUser(address ?? '').displayName || t`Unknown User`,
+                      type: 'direct' as const,
+                      timestamp: Date.now(),
+                    };
+                    await messageDB.saveConversation({ ...baseConv, isRepudiable: !next });
+                    if (!next) {
+                      const cfg = await getConfig({
+                        address: user.currentPasskeyInfo!.address,
+                        userKey: keyset.userKeyset,
+                      });
+                      const userNonRepudiable = cfg?.nonRepudiable ?? true;
+                      setSkipSigning(!userNonRepudiable);
+                    } else {
+                      setSkipSigning(false);
+                    }
+                  } catch {}
+                }}
+                data-tooltip-id="dm-repudiability-toggle"
+              >
+                <FontAwesomeIcon className="text-subtle" icon={nonRepudiable ? faLock : faUnlock} />
+              </div>
+            </div>
           </div>
           <div className="flex flex-row items-center lg:order-1">
             <div className="flex flex-col justify-around">
@@ -370,32 +438,6 @@ const DirectMessage: React.FC<{}> = (p: {}) => {
                   >
                     {truncateAddress(address ?? '')}
                   </ClickToCopyContent>
-                </div>
-              </div>
-              <div className="flex flex-col justify-center pl-3">
-                <div
-                  className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-surface-6 cursor-pointer"
-                  onClick={async () => {
-                    const next = !nonRepudiable;
-                    setNonRepudiable(next);
-                    try {
-                      await messageDB.updateConversation(conversationId, { isRepudiable: !next });
-                      // align per-message default with user setting when allowing unsigned
-                      if (!next) {
-                        const cfg = await getConfig({
-                          address: user.currentPasskeyInfo!.address,
-                          userKey: keyset.userKeyset,
-                        });
-                        const userNonRepudiable = cfg?.nonRepudiable ?? true;
-                        setSkipSigning(!userNonRepudiable);
-                      } else {
-                        setSkipSigning(false);
-                      }
-                    } catch {}
-                  }}
-                  data-tooltip-id="dm-repudiability-toggle"
-                >
-                  <FontAwesomeIcon className="text-subtle" icon={nonRepudiable ? faLock : faUnlock} />
                 </div>
               </div>
             </div>
