@@ -54,7 +54,7 @@ export default defineConfig(({ command }) => ({
     }),
   ],
   server: {
-    allowedHosts: ['.serveo.net', '.loca.lt', '.localhost.run', '.pinggy.io', '.ngrok-free.app'],
+    allowedHosts: ['.serveo.net', '.loca.lt', '.localhost.run', '.pinggy.io', '.ngrok-free.app', '.quilibrium.one'],
     headers: {
       'Permissions-Policy': 'publickey-credentials-get=*',
     },
