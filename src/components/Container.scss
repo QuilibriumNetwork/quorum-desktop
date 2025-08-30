@@ -2,13 +2,13 @@
   position: fixed;
   width: calc(100vw - 72px);
   height: calc(100vh - 14px);
-  @supports (height: 100dvh) {
-    height: calc(100dvh - 14px);
-  }
   left: 72px;
   top: 14px;
   border-top-left-radius: 0.75rem;
   background-color: var(--color-bg-sidebar);
+  @supports (height: 100dvh) {
+    height: calc(100dvh - 14px);
+  }
 
   // Mobile optimization - full width for chat content
   @media (max-width: 1023px) {

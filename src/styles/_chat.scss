@@ -5,10 +5,10 @@
   z-index: 1;
   display: flex;
   height: calc(100vh - 14px);
+  flex-direction: row;
   @supports (height: 100dvh) {
     height: calc(100dvh - 14px);
   }
-  flex-direction: row;
 
   // Mobile layout - ensure full width usage
   @media (max-width: 1023px) {
