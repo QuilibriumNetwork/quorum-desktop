@@ -68,6 +68,8 @@ export type Conversation = {
   icon: string;
   displayName: string;
   lastReadTimestamp?: number;
+  // Not persisted by server, but may be stored client-side for DMs
+  isRepudiable?: boolean;
 };
 
 export type Message = {
