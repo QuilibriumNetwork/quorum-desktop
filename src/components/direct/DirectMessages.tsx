@@ -42,7 +42,20 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
     openLeftSidebar,
   } = useResponsiveLayoutContext();
 
-  // Removed automatic sidebar opening behavior - sidebar now opens only when user clicks burger menu
+  // Simple context-aware sidebar: set initial state based on route, only on route changes
+  React.useEffect(() => {
+    // Only manage sidebar state for mobile/tablet - desktop shows sidebar always
+    if (isMobile || isTablet) {
+      if (!address) {
+        // On /messages (no specific conversation) - show sidebar
+        openLeftSidebar();
+      } else {
+        // On /messages/:address (specific conversation) - hide sidebar  
+        closeLeftSidebar();
+      }
+    }
+  }, [address, isMobile, isTablet]); // Removed leftSidebarOpen from deps to avoid fighting manual toggles
+
   const { openUserSettings, isNewDirectMessageOpen, closeNewDirectMessage } =
     useModalContext();
 
