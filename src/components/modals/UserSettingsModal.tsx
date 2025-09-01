@@ -22,7 +22,6 @@ import {
   useNotificationSettings,
 } from '../../hooks';
 import ReactTooltip from '../ReactTooltip';
-import { useMessageDB } from '../context/MessageDB';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -53,6 +52,7 @@ const UserSettingsModal: React.FunctionComponent<{
     saveChanges: saveUserChanges,
     currentPasskeyInfo,
     stagedRegistration,
+    setStagedRegistration,
     removeDevice,
     downloadKey,
     keyset,
@@ -82,22 +82,6 @@ const UserSettingsModal: React.FunctionComponent<{
     permissionStatus,
     showRevokeMessage,
   } = useNotificationSettings();
-
-  const { getConfig } = useMessageDB();
-
-  const resyncConfig = async () => {
-    if (!currentPasskeyInfo) return;
-    const cfg = await getConfig({
-      address: currentPasskeyInfo.address,
-      userKey: keyset.userKeyset,
-      preferSaved: true,
-    });
-    if (cfg) {
-      setAllowSync(cfg.allowSync ?? false);
-      setNonRepudiable(cfg.nonRepudiable ?? true);
-      if (typeof cfg.name === 'string') setDisplayName(cfg.name);
-    }
-  };
 
   // Custom save handler that updates setUser callback
   const saveChanges = async () => {
@@ -306,21 +290,6 @@ const UserSettingsModal: React.FunctionComponent<{
                           >
                             {t`Save Changes`}
                           </Button>
-                          {allowSync && (
-                            <Tooltip
-                              id="resync-settings-tooltip"
-                              content={t`This will override your locally stored settings with the saved settings for this account.`}
-                              place="top"
-                            >
-                              <Button
-                                type="secondary"
-                                onClick={resyncConfig}
-                                className="ml-2"
-                              >
-                                {t`Resync Settings`}
-                              </Button>
-                            </Tooltip>
-                          )}
                         </div>
                       </div>
                     </>
@@ -545,7 +514,7 @@ const UserSettingsModal: React.FunctionComponent<{
                           <Select
                             value={language}
                             options={localeOptions}
-                            onChange={(value: string) => {
+                            onChange={(value) => {
                               setLanguage(value);
                             }}
                             width="300px"

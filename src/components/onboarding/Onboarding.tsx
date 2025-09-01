@@ -1,5 +1,7 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { PasskeyModal } from '@quilibrium/quilibrium-js-sdk-channels';
+import React, { useState, useCallback } from 'react';
+import {
+  PasskeyModal,
+} from '@quilibrium/quilibrium-js-sdk-channels';
 import '../../styles/_passkey-modal.scss';
 import { Input, Icon, Button, Tooltip, FileUpload } from '../primitives';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
@@ -40,8 +42,7 @@ export const Onboarding = ({
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [isDragActive, setIsDragActive] = useState(false);
-  const [isConfigLoading, setIsConfigLoading] = useState<boolean>(false);
-
+  
   const maxImageSize = 2 * 1024 * 1024; // 2MB
 
   // Handle file upload
@@ -88,33 +89,12 @@ export const Onboarding = ({
     onboardingFlow.saveProfilePhoto(dataUrl || undefined);
   };
 
-  useEffect(() => {
-    if (
-      onboardingFlow.currentPasskeyInfo !== null &&
-      onboardingFlow.currentPasskeyInfo.address
-    ) {
-      const { address } = onboardingFlow.currentPasskeyInfo;
-      setIsConfigLoading(true);
-      (async () => {
-        try {
-          await onboardingFlow.fetchUser(address, setUser);
-        } finally {
-          setIsConfigLoading(false);
-        }
-      })();
-    }
-  }, [onboardingFlow.currentPasskeyInfo?.address]);
-
   return (
     <>
       <PasskeyModal
         fqAppPrefix="Quorum"
         getUserRegistration={async (address: string) => {
-          try {
-            return (await apiClient.getUser(address)).data;
-          } catch (e) {
-            return undefined as any;
-          }
+          return (await apiClient.getUser(address)).data;
         }}
         uploadRegistration={uploadRegistration}
       />
@@ -123,14 +103,11 @@ export const Onboarding = ({
         <div className="flex flex-row grow"></div>
         <div className="flex flex-row grow font-semibold text-2xl justify-center px-4">
           <div className="flex flex-col text-white text-center">
-            {isConfigLoading
-              ? t`Initializing your profile...`
-              : onboardingFlow.currentStep === 'key-backup'
+            {onboardingFlow.currentStep === 'key-backup'
               ? t`Welcome to Quorum!`
-              : onboardingFlow.currentPasskeyInfo?.pfpUrl &&
-                onboardingFlow.currentPasskeyInfo.displayName
-              ? t`One of us, one of us!`
-              : t`Personalize your account`}
+              : onboardingFlow.currentPasskeyInfo?.pfpUrl && onboardingFlow.currentPasskeyInfo.displayName
+                ? t`One of us, one of us!`
+                : t`Personalize your account`}
           </div>
         </div>
         {isDragActive && (
@@ -146,7 +123,7 @@ export const Onboarding = ({
             </div>
           </div>
         )}
-        {!isConfigLoading && onboardingFlow.currentStep === 'key-backup' && (
+        {onboardingFlow.currentStep === 'key-backup' && (
           <>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
@@ -197,9 +174,9 @@ export const Onboarding = ({
                 >
                   {t`Save User Key`}
                 </Button>
-                <div className="pt-6">
-                  <span
-                    className="text-white text-sm cursor-pointer hover:text-white/80 transition-colors"
+                <div className="pt-4">
+                  <span 
+                    className="text-white text-sm cursor-pointer underline hover:text-white/80 transition-colors"
                     onClick={handleAlreadySaved}
                   >
                     {t`I already saved mine`}
@@ -210,7 +187,7 @@ export const Onboarding = ({
             </div>
           </>
         )}
-        {!isConfigLoading && onboardingFlow.currentStep === 'display-name' && (
+        {onboardingFlow.currentStep === 'display-name' && (
           <>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
@@ -256,7 +233,7 @@ export const Onboarding = ({
             </div>
           </>
         )}
-        {!isConfigLoading && onboardingFlow.currentStep === 'profile-photo' && (
+        {onboardingFlow.currentStep === 'profile-photo' && (
             <>
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
@@ -350,7 +327,7 @@ export const Onboarding = ({
               </div>
             </>
           )}
-        {!isConfigLoading && onboardingFlow.currentStep === 'complete' && (
+        {onboardingFlow.currentStep === 'complete' && (
             <>
               <div className="flex flex-row justify-center">
                 <div className="grow"></div>
