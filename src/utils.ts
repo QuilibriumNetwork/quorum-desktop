@@ -9,8 +9,6 @@ export const getDefaultUserConfig = (address: string): UserConfig => {
     address: address,
     allowSync: false,
     nonRepudiable: true,
-    name: '',
-    profile_image: DefaultImages.UNKNOWN_USER,
     spaceKeys: [],
     spaceIds: [],
     timestamp: Date.now(),
