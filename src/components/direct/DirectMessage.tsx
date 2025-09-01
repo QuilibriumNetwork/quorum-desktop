@@ -25,7 +25,7 @@ import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { Button, Container, FlexRow, FlexColumn, Text } from '../primitives';
 
-const DirectMessage: React.FC<{}> = (p: {}) => {
+const DirectMessage: React.FC<{}> = () => {
   const { isMobile, isTablet, toggleLeftSidebar } =
     useResponsiveLayoutContext();
 
