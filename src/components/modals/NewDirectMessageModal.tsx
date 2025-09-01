@@ -194,7 +194,7 @@ const NewDirectMessageModal: React.FunctionComponent<
       </div>
       <ReactTooltip
         id="dm-nonrepudiable-tip"
-        content={t`You can change this later per conversation from the header lock toggle.`}
+        content={t`You can change this later for this conversation by clicking the lock icon in the Conversation view.`}
         className="max-w-[260px]"
         place="top"
       />
