@@ -180,4 +180,169 @@ Remove `"plugins": ["expo-dev-client"]` from app.json and use Expo Go app until 
 
 ---
 
+## Detailed Rollback Steps (Expo Dev Client → Expo Go)
+
+### Current State Analysis
+The project is currently configured with:
+- ✅ Expo Dev Client plugin in `mobile/app.json`
+- ✅ Dev Client scripts in root `package.json`
+- ✅ Native Android build in `mobile/android/` directory
+- ✅ Native dependencies that won't work in Expo Go
+
+### Step 1: Update Package Scripts
+
+**File: `package.json`** - Revert scripts to Expo Go:
+
+```json
+"mobile": "cd mobile && expo start --tunnel",
+"mobile:tunnel": "cd mobile && expo start --tunnel",
+"mobile:clear": "cd mobile && expo start --clear --tunnel",
+"mobile:android": "cd mobile && expo start --android --tunnel",
+```
+
+Remove dev client specific scripts:
+```json
+// Remove these:
+"mobile:build": "cd mobile && expo run:android"
+```
+
+### Step 2: Update App Configuration
+
+**File: `mobile/app.json`** - Remove dev client plugin:
+
+```json
+{
+  "expo": {
+    "name": "quorum-mobile-playground",
+    "slug": "quorum-mobile-playground",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.quilibrium.quorum",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+    // Remove: "plugins": ["expo-dev-client"]
+  }
+}
+```
+
+### Step 3: Remove Development Dependencies
+
+**File: `mobile/package.json`** - Remove expo-dev-client:
+
+```bash
+cd mobile
+yarn remove expo-dev-client
+```
+
+### Step 4: Clean Build Artifacts (Optional)
+
+Remove native build directory to save space:
+```bash
+# WARNING: This will require rebuilding if you want to go back to dev client
+rm -rf mobile/android/
+rm -rf mobile/ios/ # if exists
+```
+
+Or keep it for later:
+```bash
+# Rename to preserve for future use
+mv mobile/android mobile/android_backup
+```
+
+### Step 5: Install Expo Go App
+
+1. Download **Expo Go** app from Play Store/App Store (not your custom dev client)
+2. Uninstall any existing "Expo Dev Client" custom apps
+3. Use the standard Expo Go app for development
+
+### Step 6: Start Development
+
+```bash
+# From project root
+yarn mobile
+
+# OR with explicit tunnel (recommended for network issues)
+yarn mobile:tunnel
+```
+
+### Step 7: Verify Rollback
+
+**Expected behavior:**
+- ✅ `expo start` opens Expo Go QR code
+- ✅ Scan QR with Expo Go app (not custom dev client)
+- ❌ Native crypto functions will be disabled/broken
+- ❌ File uploads may not work correctly
+- ❌ Some native dependencies will be unavailable
+
+### Feature Limitations After Rollback
+
+**Will Work:**
+- ✅ Basic React Native components and navigation
+- ✅ UI primitives and cross-platform components
+- ✅ Most business logic and state management
+- ✅ Networking and API calls
+- ✅ Internationalization (Lingui)
+
+**Will NOT Work (Expo Go Limitations):**
+- ❌ `@quilibrium/quilibrium-js-sdk-channels` (native crypto)
+- ❌ Advanced file system operations
+- ❌ Native crypto libraries
+- ❌ Custom native modules
+- ❌ Platform-specific features requiring native code
+
+### Rollback Validation Checklist
+
+- [ ] Removed `"plugins": ["expo-dev-client"]` from `mobile/app.json`
+- [ ] Updated package.json scripts to use standard `expo start`
+- [ ] Removed expo-dev-client dependency
+- [ ] Uninstalled custom dev client app from device
+- [ ] Installed standard Expo Go app
+- [ ] `yarn mobile` opens standard Expo QR code
+- [ ] App loads in Expo Go (with native features disabled)
+- [ ] UI components and navigation work correctly
+- [ ] Known native features show appropriate fallbacks/errors
+
+### Re-enabling Dev Client Later
+
+If you need native features again, reverse these steps:
+
+1. Add back `"plugins": ["expo-dev-client"]` to `mobile/app.json`
+2. Restore dev client scripts in `package.json`
+3. Run `yarn mobile:build` to rebuild custom dev client
+4. Install custom dev client app on device
+
+### Why Rollback Might Be Needed
+
+**Common Scenarios:**
+- Build issues on new machine/environment
+- Android Studio setup problems
+- Device/emulator connection issues
+- Need quick UI testing without native features
+- Sharing with team members without dev client setup
+- Testing cross-platform primitive components
+
+**Note:** This rollback sacrifices native functionality for easier setup and broader compatibility.
+
+---
+
 *Document created: 2025-01-09*
+*Rollback section added: 2025-01-09*
