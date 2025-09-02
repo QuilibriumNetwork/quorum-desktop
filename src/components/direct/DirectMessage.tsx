@@ -1,14 +1,7 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faPlus,
-  faUsers,
-  faX,
-  faBars,
-  faLock,
-  faUnlock,
-} from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faUsers, faX, faBars, faGear, faLock, faUnlock } from '@fortawesome/free-solid-svg-icons';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { EmbedMessage, Message as MessageType } from '../../api/quorumApi';
 import './DirectMessage.scss';
@@ -184,6 +177,7 @@ const DirectMessage: React.FC = () => {
     showRightSidebar: showUsers,
     setShowRightSidebar: setShowUsers,
     setRightSidebarContent,
+    openConversationSettings,
   } = useModalContext();
   const [acceptChat, setAcceptChat] = React.useState(false);
 
@@ -298,38 +292,13 @@ const DirectMessage: React.FC = () => {
                   icon={faBars}
                 />
               )}
-              {/* Desktop: non-repudiability toggle to the left of search */}
+              {/* Desktop: open Conversation Settings */}
               <div
-                className="hidden lg:flex w-8 h-8 items-center justify-center rounded-md bg-surface-5 hover:bg-surface-6 cursor-pointer"
-                onClick={async () => {
-                  const next = !nonRepudiable;
-                  setNonRepudiable(next);
-                  try {
-                    const existing = await messageDB.getConversation({ conversationId });
-                    const baseConv = existing.conversation ?? {
-                      conversationId,
-                      address: address!,
-                      icon: mapSenderToUser(address ?? '').userIcon || DefaultImages.UNKNOWN_USER,
-                      displayName: mapSenderToUser(address ?? '').displayName || t`Unknown User`,
-                      type: 'direct' as const,
-                      timestamp: Date.now(),
-                    };
-                    await messageDB.saveConversation({ ...baseConv, isRepudiable: !next });
-                    if (!next) {
-                      const cfg = await getConfig({
-                        address: user.currentPasskeyInfo!.address,
-                        userKey: keyset.userKeyset,
-                      });
-                      const userNonRepudiable = cfg?.nonRepudiable ?? true;
-                      setSkipSigning(!userNonRepudiable);
-                    } else {
-                      setSkipSigning(false);
-                    }
-                  } catch {}
-                }}
+                className="hidden lg:flex w-8 h-8 items-center justify-center rounded-md hover:bg-[rgba(255,255,255,0.1)] hover:text-main cursor-pointer"
+                onClick={() => openConversationSettings(conversationId)}
                 data-tooltip-id="dm-repudiability-toggle"
               >
-                <FontAwesomeIcon className="text-subtle" icon={nonRepudiable ? faLock : faUnlock} />
+                <FontAwesomeIcon className="text-subtle" icon={faGear} />
               </div>
               <GlobalSearch className="dm-search flex-1 lg:flex-none max-w-xs lg:max-w-none" />
             </div>
@@ -343,36 +312,11 @@ const DirectMessage: React.FC = () => {
                 icon={faUsers}
               />
               <div
-                className="flex lg:hidden w-8 h-8 items-center justify-center rounded-md bg-surface-5 hover:bg-surface-6 cursor-pointer"
-                onClick={async () => {
-                  const next = !nonRepudiable;
-                  setNonRepudiable(next);
-                  try {
-                    const existing = await messageDB.getConversation({ conversationId });
-                    const baseConv = existing.conversation ?? {
-                      conversationId,
-                      address: address!,
-                      icon: mapSenderToUser(address ?? '').userIcon || DefaultImages.UNKNOWN_USER,
-                      displayName: mapSenderToUser(address ?? '').displayName || t`Unknown User`,
-                      type: 'direct' as const,
-                      timestamp: Date.now(),
-                    };
-                    await messageDB.saveConversation({ ...baseConv, isRepudiable: !next });
-                    if (!next) {
-                      const cfg = await getConfig({
-                        address: user.currentPasskeyInfo!.address,
-                        userKey: keyset.userKeyset,
-                      });
-                      const userNonRepudiable = cfg?.nonRepudiable ?? true;
-                      setSkipSigning(!userNonRepudiable);
-                    } else {
-                      setSkipSigning(false);
-                    }
-                  } catch {}
-                }}
+                className="flex lg:hidden w-8 h-8 items-center justify-center rounded-md hover:bg-[rgba(255,255,255,0.1)] hover:text-main cursor-pointer"
+                onClick={() => openConversationSettings(conversationId)}
                 data-tooltip-id="dm-repudiability-toggle"
               >
-                <FontAwesomeIcon className="text-subtle" icon={nonRepudiable ? faLock : faUnlock} />
+                <FontAwesomeIcon className="text-subtle" icon={faGear} />
               </div>
             </div>
           </div>
@@ -703,16 +647,9 @@ const DirectMessage: React.FC = () => {
         content={t`attach image`}
         place="top"
       />
-      {!nonRepudiable && (
-        <ReactTooltip
-          id="toggle-signing-tooltip-dm"
-          content={skipSigning ? t`This message will NOT be signed` : t`This message will be signed`}
-          place="top"
-        />
-      )}
       <ReactTooltip
         id="dm-repudiability-toggle"
-        content={nonRepudiable ? t`Always sign this conversation's messages` : t`You may choose not to sign this conversation's messages`}
+        content={t`Conversation settings`}
         place="top"
       />
     </div>

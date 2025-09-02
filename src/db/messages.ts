@@ -199,6 +199,76 @@ export class MessageDB {
     });
   }
 
+  async getAllConversationMessages({
+    spaceId,
+    channelId,
+  }: {
+    spaceId: string;
+    channelId: string;
+  }): Promise<Message[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+      const index = store.index('by_conversation_time');
+
+      const range = IDBKeyRange.bound(
+        [spaceId, channelId, 0],
+        [spaceId, channelId, Number.MAX_VALUE]
+      );
+
+      const request = index.getAll(range);
+
+      request.onsuccess = () => {
+        const messages = request.result;
+        resolve(messages);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async deleteMessagesForConversation(conversationId: string): Promise<void> {
+    await this.init();
+    const [spaceId, channelId] = conversationId.split('/');
+    if (!spaceId || !channelId) return;
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readwrite');
+      const store = transaction.objectStore('messages');
+      const index = store.index('by_conversation_time');
+
+      const range = IDBKeyRange.bound(
+        [spaceId, channelId, 0],
+        [spaceId, channelId, Number.MAX_VALUE]
+      );
+
+      const request = index.openCursor(range);
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest<IDBCursorWithValue | null>)
+          .result;
+        if (cursor) {
+          const msg = cursor.value as Message;
+          try {
+            // Remove from in-memory search indices if present
+            const spaceIndexKey = `space:${msg.spaceId}`;
+            const spaceIndex = this.searchIndices.get(spaceIndexKey);
+            if (spaceIndex) spaceIndex.removeById(msg.messageId);
+
+            const dmIndexKey = `dm:${msg.spaceId}/${msg.channelId}`;
+            const dmIndex = this.searchIndices.get(dmIndexKey);
+            if (dmIndex) dmIndex.removeById(msg.messageId);
+          } catch {}
+          store.delete(msg.messageId);
+          cursor.continue();
+        } else {
+          resolve();
+        }
+      };
+
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   async getMessages({
     spaceId,
     channelId,
@@ -435,6 +505,20 @@ export class MessageDB {
     });
   }
 
+  async deleteConversation(conversationId: string): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('conversations', 'readwrite');
+      const store = transaction.objectStore('conversations');
+      const request = store.delete([conversationId]);
+
+      request.onsuccess = () => {
+        resolve();
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   async getConversations({
     type,
     cursor,
@@ -480,6 +564,18 @@ export class MessageDB {
     });
   }
 
+  async deleteUser(address: string): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('user_info', 'readwrite');
+      const store = transaction.objectStore('user_info');
+      const request = store.delete(address);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   async saveUserConfig(userConfig: UserConfig): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -509,6 +605,40 @@ export class MessageDB {
 
       transaction.oncomplete = () => resolve();
       transaction.onerror = () => reject(transaction.error);
+    });
+  }
+
+  async deleteConversationUsers(conversationId: string): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('conversation_users', 'readwrite');
+      const store = transaction.objectStore('conversation_users');
+      const index = store.index('by_conversation');
+
+      const range = IDBKeyRange.only(conversationId);
+      const getAllReq = index.getAll(range);
+
+      getAllReq.onsuccess = () => {
+        const users = getAllReq.result as { address: string }[];
+        for (const u of users) {
+          store.delete(u.address);
+        }
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = () => reject(transaction.error);
+      };
+      getAllReq.onerror = () => reject(getAllReq.error);
+    });
+  }
+
+  async deleteInboxMapping(inboxId: string): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('inbox_mapping', 'readwrite');
+      const store = transaction.objectStore('inbox_mapping');
+      const request = store.delete(inboxId);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
     });
   }
 
@@ -653,6 +783,18 @@ export class MessageDB {
 
       transaction.oncomplete = () => resolve();
       transaction.onerror = () => reject(transaction.error);
+    });
+  }
+
+  async deleteLatestState(conversationId: string): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['latest_states'], 'readwrite');
+      const store = transaction.objectStore('latest_states');
+      const request = store.delete(conversationId);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
     });
   }
 

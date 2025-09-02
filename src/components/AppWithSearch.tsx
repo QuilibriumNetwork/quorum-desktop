@@ -4,6 +4,7 @@ import UserSettingsModal from './modals/UserSettingsModal';
 import SpaceEditor from './channel/SpaceEditor';
 import ChannelEditor from './channel/ChannelEditor';
 import LeaveSpaceModal from './modals/LeaveSpaceModal';
+import ConversationSettingsModal from './modals/ConversationSettingsModal';
 import MessageActionsDrawer from './message/MessageActionsDrawer';
 import EmojiPickerDrawer from './message/EmojiPickerDrawer';
 // Note: UserSettingsModal, SpaceEditor, ChannelEditor use custom simple modal pattern
@@ -26,6 +27,7 @@ interface ModalContextType {
     channelId: string
   ) => void;
   openLeaveSpace: (spaceId: string) => void;
+  openConversationSettings: (conversationId: string) => void;
   showRightSidebar: boolean;
   setShowRightSidebar: (show: boolean) => void;
   rightSidebarContent: React.ReactNode;
@@ -68,6 +70,9 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
   const [leaveSpaceData, setLeaveSpaceData] = useState<{
     spaceId: string;
   } | null>(null);
+  const [conversationSettingsData, setConversationSettingsData] = useState<{
+    conversationId: string;
+  } | null>(null);
   const [showRightSidebar, setShowRightSidebar] = useState(false);
   const [rightSidebarContent, setRightSidebarContent] =
     useState<React.ReactNode>(null);
@@ -86,6 +91,8 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
       channelId: string
     ) => setChannelEditorData({ spaceId, groupName, channelId }),
     openLeaveSpace: (spaceId: string) => setLeaveSpaceData({ spaceId }),
+    openConversationSettings: (conversationId: string) =>
+      setConversationSettingsData({ conversationId }),
     showRightSidebar,
     setShowRightSidebar,
     rightSidebarContent,
@@ -114,7 +121,7 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
   return (
     <div className="app-with-search">
       {isUserSettingsOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[rgba(0,0,0,0.5)] backdrop-blur">
           <UserSettingsModal
             setUser={setUser}
             dismiss={() => setIsUserSettingsOpen(false)}
@@ -127,7 +134,7 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
       )}
 
       {spaceEditorData && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[rgba(0,0,0,0.5)] backdrop-blur">
           <SpaceEditor
             spaceId={spaceEditorData.spaceId}
             dismiss={() => setSpaceEditorData(null)}
@@ -140,7 +147,7 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
       )}
 
       {channelEditorData && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[rgba(0,0,0,0.5)] backdrop-blur">
           <ChannelEditor
             spaceId={channelEditorData.spaceId}
             groupName={channelEditorData.groupName}
@@ -162,8 +169,21 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
         />
       )}
 
+      {conversationSettingsData && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur">
+          <ConversationSettingsModal
+            conversationId={conversationSettingsData.conversationId}
+            onClose={() => setConversationSettingsData(null)}
+          />
+          <div
+            className="fixed inset-0 -z-10"
+            onClick={() => setConversationSettingsData(null)}
+          />
+        </div>
+      )}
+
       {mobileActionsDrawerData && (
-        <div className="fixed inset-0 z-[9999] flex items-end justify-center bg-overlay backdrop-blur">
+        <div className="fixed inset-0 z-[9999] flex items-end justify-center bg-[rgba(0,0,0,0.5)] backdrop-blur">
           <MessageActionsDrawer
             isOpen={!drawerClosing}
             message={mobileActionsDrawerData.message}
@@ -196,7 +216,7 @@ export const AppWithSearch: React.FC<AppWithSearchProps> = ({
       )}
 
       {mobileEmojiDrawerData && (
-        <div className="fixed inset-0 z-[9999] flex items-end justify-center bg-overlay backdrop-blur">
+        <div className="fixed inset-0 z-[9999] flex items-end justify-center bg-[rgba(0,0,0,0.5)] backdrop-blur">
           <EmojiPickerDrawer
             isOpen={!emojiDrawerClosing}
             onClose={() => {

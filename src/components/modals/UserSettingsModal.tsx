@@ -563,7 +563,7 @@ const UserSettingsModal: React.FunctionComponent<{
                               <ReactTooltip
                                 id="non-repudiable-tooltip"
                                 anchorSelect="#non-repudiable-tooltip-anchor"
-                                content={t`Sets the default signing mode for Conversations (Direct Messages) to always sign when enabled.  This can be overridden for finer-grain control for each Conversation by clicking the lock icon found in each Conversation view.`}
+                                content={t`Sets the default signing mode for Conversations (Direct Messages) to always sign when enabled. For per-conversation control, open Conversation Settings from the conversation header.`}
                                 place="right"
                                 className="!w-[400px]"
                                 showOnTouch

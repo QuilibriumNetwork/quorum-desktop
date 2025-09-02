@@ -39,7 +39,7 @@ const Modal: React.FunctionComponent<ModalProps> = (props) => {
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-overlay backdrop-blur"
+      className="fixed inset-0 z-[9999] flex items-center justify-center"
       onClick={() => {
         if (!props.hideClose) close();
       }}
