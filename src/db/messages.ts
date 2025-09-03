@@ -27,6 +27,8 @@ export type UserConfig = {
   timestamp?: number;
   nonRepudiable?: boolean;
   allowSync?: boolean;
+  name?: string;
+  profile_image?: string;
   spaceKeys?: {
     spaceId: string;
     encryptionState: {
