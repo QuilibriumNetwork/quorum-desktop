@@ -73,22 +73,38 @@ yarn expo run:ios  # Builds and installs dev client (up to 30 min first time)
 
 ## Running the App
 
-From project root:
+**IMPORTANT**: The emulator must be started manually BEFORE running the dev server.
 
-```bash
-# Start dev server
-yarn mobile
+### Step-by-step Workflow
 
-# With tunnel (for remote devices)
-yarn mobile:tunnel
+1. **Start the emulator first** (choose one):
+   ```bash
+   # Android emulator
+   emulator @AVD_NAME
+   
+   # iOS simulator (macOS only)
+   open -a Simulator
+   ```
 
-# Clear cache if issues
-yarn mobile:clear
+2. **Start the dev server** (from project root):
+   ```bash
+   # Start dev server
+   yarn mobile
+   
+   # With tunnel (for remote devices)
+   yarn mobile:tunnel
+   
+   # Clear cache if issues
+   yarn mobile:clear
+   
+   # Platform-specific
+   yarn mobile:android
+   yarn mobile:ios
+   ```
 
-# Platform-specific
-yarn mobile:android
-yarn mobile:ios
-```
+3. **The app should open automatically** in the running emulator
+
+**Note**: If you run a full build (`yarn expo run:android` or `yarn expo run:ios`), the emulator will be started automatically during the build process.
 
 ## Device Requirements
 
@@ -97,9 +113,29 @@ yarn mobile:ios
 2. Connect via USB
 3. Trust computer when prompted
 
-### Emulators
-- **Android**: Use Android Studio AVD Manager
-- **iOS**: Use Xcode Simulator (macOS only)
+### Android Emulator
+```bash
+# List available emulators
+emulator -list-avds
+
+# Start specific emulator (replace AVD_NAME with your emulator name)
+emulator @AVD_NAME
+
+# Or start default emulator
+emulator @Pixel_3a_API_30_x86
+```
+
+### iOS Simulator (macOS only)
+```bash
+# List available simulators
+xcrun simctl list devices
+
+# Open simulator app
+open -a Simulator
+
+# Boot specific device (optional)
+xcrun simctl boot "iPhone 14"
+```
 
 ## Quick Troubleshooting
 
@@ -129,4 +165,4 @@ All from project root:
 
 ---
 
-*Last updated: 2025-01-03 10:52 UTC*
+*Last updated: 2025-09-03 15:45 UTC*

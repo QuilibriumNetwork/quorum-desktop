@@ -82,31 +82,16 @@ _If you are on Windows, we suggest testing on WSL for better performance_.
 
 ### Mobile Development
 
-The mobile app uses React Native with Expo and shares components with the web app through a cross-platform architecture.
+The mobile app uses React Native with Expo Dev Client and shares components with the web app through a cross-platform architecture.
 
-Currently the mobile environment is hosting a temporary playground to showcase the native primtives and test the mobile setup in general.
-
-**Start Mobile Development Server:**
+**Quick Start:**
 ```bash
-yarn mobile
-# or
-yarn mobile:tunnel  # For WSL/remote development
+yarn mobile  # Start development server
 ```
 
-**Test on Device:**
-1. Install [Expo Go](https://expo.dev/client) on your mobile device
-2. Scan the QR code shown in terminal or browser
-3. App will load with primitive/business components testing screens
-
-**Clear Metro Cache:**
-```bash
-yarn mobile:clear  # Clears Metro bundler cache and starts fresh
-```
-
-**Platform-Specific Commands:**
-```bash
-yarn mobile:android  # Target Android specifically
-```
+For detailed setup and testing instructions, see:
+- [Mobile README](mobile/README.md) - Complete mobile development guide
+- [Expo Dev Testing Guide](.readme/docs/expo-dev-testing-guide.md) - Environment setup and troubleshooting
 
 ## Translation Workflow
 
@@ -143,4 +128,4 @@ yarn mobile:android  # Target Android specifically
 
 ---
 
-*Updated: 2025-08-07*
+*Updated: 2025-09-03*
