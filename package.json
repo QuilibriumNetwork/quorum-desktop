@@ -26,12 +26,13 @@
     "format:check": "prettier --check .",
     "lingui:extract": "lingui extract",
     "lingui:compile": "lingui compile",
-    "mobile": "cd mobile && expo start --tunnel",
-    "mobile:tunnel": "cd mobile && expo start --tunnel",
-    "mobile:clear": "cd mobile && expo start --clear --tunnel",
-    "mobile:android": "cd mobile && expo start --android",
+    "mobile": "cd mobile && expo start --dev-client",
+    "mobile:tunnel": "cd mobile && expo start --dev-client --tunnel",
+    "mobile:clear": "cd mobile && expo start --dev-client --clear",
+    "mobile:android": "cd mobile && expo start --dev-client --android",
     "mobile:ios": "cd mobile && expo start --ios",
-    "mobile:web": "cd mobile && expo start --web"
+    "mobile:web": "cd mobile && expo start --web",
+    "mobile:build": "cd mobile && expo run:android"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
