@@ -15,195 +15,287 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:134
+msgid "Failed to process image"
+msgstr "画像の処理に失敗しました"
+
+#. js-lingui-explicit-id
+#: src/hooks/business/user/useFileUpload.native.ts:103
+#: src/hooks/business/user/useWebFileUpload.ts:32
+msgid "File cannot be larger than {maxFileSize}"
+msgstr "ファイルは {maxFileSize} より大きくすることはできません"
+
+#. js-lingui-explicit-id
 #: src/hooks/business/channels/useChannelData.ts:89
 msgid "{role} - {count}"
 msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:103
+#: src/hooks/business/channels/useChannelData.ts:105
 msgid "No Role - {count}"
 msgstr "役割なし - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:87
-msgid "File cannot be larger than {maxFileSize}"
-msgstr "ファイルは {maxFileSize} より大きくすることはできません"
-
-#. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:323
-msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+#: src/components/onboarding/Onboarding.tsx:251
+msgid ""
+"Your profile image size must be {maxFileSize} or less and must be a PNG, "
+"JPG, or JPEG file extension."
 msgstr "プロフィール画像のサイズは {maxFileSize} 以下で、PNG、JPG、またはJPEGファイル拡張子である必要があります。"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:82
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:100
 msgid "Replying to {user}"
 msgstr "{user} に返信中"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:167
+#: src/components/message/Message.tsx:181
 msgid "{user} has joined"
 msgstr "{user} が参加しました"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:169
+#: src/components/message/Message.tsx:183
 msgid "{user} has left"
 msgstr "{user} が退出しました"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:171
+#: src/components/message/Message.tsx:185
 msgid "{user} has been kicked"
 msgstr "{user} がキックされました"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:319
+#: src/components/direct/DirectMessage.tsx:435
 msgid "Send a message to {user}"
 msgstr "{user} にメッセージを送信"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:245
+#: src/components/channel/Channel.tsx:283
 msgid "Send a message to #{channel_name}"
 msgstr "#{channel_name} にメッセージを送信"
 
+#: src/components/Maintenance.native.tsx:52
+msgid " for updates."
+msgstr "更新のため。"
+
 #. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:121
+#: src/components/search/SearchResults.tsx:118
 msgid "{0} result"
 msgstr "{0} の結果"
 
 #. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:122
+#: src/components/search/SearchResults.tsx:119
 msgid "{0} results"
 msgstr "{0} の結果"
 
-#: src/components/direct/DirectMessageContactsList.tsx:45
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:12
+msgid "{size} Bytes"
+msgstr "{size} バイト"
+
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:15
+msgid "{size} GB"
+msgstr "{size} GB"
+
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:13
+msgid "{size} KB"
+msgstr "{size} KB"
+
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:14
+msgid "{size} MB"
+msgstr "{size} MB"
+
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:16
+msgid "{size} TB"
+msgstr "{size} TB"
+
+#: src/components/direct/DirectMessageContactsList.tsx:53
 msgid "+ Add a friend"
 msgstr "友達を追加"
 
-#: src/components/modals/UserSettingsModal.tsx:231
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:7
+msgid "0 Bytes"
+msgstr "0 バイト"
+
+#: src/components/modals/UserSettingsModal.tsx:248
 msgid "Account Address"
 msgstr "アカウントアドレス"
 
-#: src/components/channel/ChannelEditor.tsx:36
+#: src/components/channel/ChannelEditor.tsx:49
 msgid "Add Channel"
-msgstr ""
+msgstr "チャンネルを追加"
 
-#: src/components/direct/DirectMessages.tsx:81
+#: src/components/direct/DirectMessages.tsx:95
 msgid "Add friend"
 msgstr "友達を追加"
 
-#: src/components/channel/GroupEditor.tsx:34
-#: src/components/channel/ChannelList.tsx:81
+#: src/components/channel/ChannelList.tsx:72
+#: src/components/channel/GroupEditor.tsx:42
 msgid "Add Group"
 msgstr "グループを追加"
 
-#: src/components/channel/SpaceEditor.tsx:498
+#: src/components/channel/SpaceEditor.tsx:527
 msgid "Add Role"
 msgstr "役割を追加"
 
-#~ msgid "Add Space"
-#~ msgstr "スペースを追加"
-
-#: src/components/message/MessageComposer.tsx:166
+#: src/components/message/MessageComposer.tsx:163
 msgid "add sticker"
 msgstr "ステッカーを追加"
 
-#~ msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
-#~ msgstr "最大50個のカスタム絵文字を追加できます。カスタム絵文字はスペース内でのみ使用できます。"
+#: src/components/channel/SpaceEditor.tsx:620
+msgid ""
+"Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
+"You can upload PNG, JPG or GIF, max 256kB."
+msgstr ""
+"最大50個のカスタム絵文字を追加できます。カスタム絵文字はスペース内でのみ使用できます。PNG、JPG、またはGIFをアップロードできます。最大256kB。"
 
-#: src/components/channel/SpaceEditor.tsx:579
-msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 256kB."
-msgstr "最大50個のカスタム絵文字を追加できます。カスタム絵文字はスペース内でのみ使用できます。PNG、JPG、またはGIFをアップロードできます。最大256kB。"
+#: src/components/channel/SpaceEditor.tsx:706
+msgid ""
+"Add up to 50 custom stickers. Custom stickers can only be used within a "
+"Space. You can upload PNG, JPG or GIF, max 256kB."
+msgstr ""
+"最大50個のカスタムステッカーを追加できます。カスタムステッカーはスペース内でのみ使用できます。PNG、JPG、またはGIFをアップロードできます。最大256kB。"
 
-#~ msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space."
-#~ msgstr "最大50個のカスタムステッカーを追加できます。カスタムステッカーはスペース内でのみ使用できます。"
-
-#: src/components/channel/SpaceEditor.tsx:665
-msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 256kB."
-msgstr "最大50個のカスタムステッカーを追加できます。カスタムステッカーはスペース内でのみ使用できます。PNG、JPG、またはGIFをアップロードできます。最大256kB。"
-
-#: src/hooks/business/validation/useAddressValidation.ts:68
+#: src/hooks/business/validation/useAddressValidation.native.ts:71
+#: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
 msgstr "アドレスは正確に46文字でなければなりません。"
 
-#: src/hooks/business/validation/useAddressValidation.ts:80
+#: src/hooks/business/validation/useAddressValidation.native.ts:83
+#: src/hooks/business/validation/useAddressValidation.ts:84
 msgid "Addresses start with \"Qm\"."
 msgstr "アドレスは「Qm」で始まります。"
 
-#: src/components/modals/UserSettingsModal.tsx:362
-msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
-msgstr "セキュリティ関連の設定を調整します。これによりユーザー体験に影響を与える可能性がありますが、あなたのQuorumアカウントのセキュリティが向上します。"
+#: src/components/modals/UserSettingsModal.tsx:379
+msgid ""
+"Adjust security-related settings, which may impact user  experience but "
+"increase the security of your Quorum account."
+msgstr ""
+"セキュリティ関連の設定を調整します。これによりユーザー体験に影響を与える可能性がありますが、あなたのQuorumアカウントのセキュリティが向上します。"
 
-#: src/components/modals/CreateSpaceModal.tsx:190
+#: src/components/modals/CreateSpaceModal.tsx:177
 msgid "Advanced Settings"
 msgstr "詳細設定"
 
-#: src/components/modals/UserSettingsModal.tsx:147
-#: src/components/modals/UserSettingsModal.tsx:179
-#: src/components/modals/UserSettingsModal.tsx:483
+#: src/components/channel/SpaceEditor.tsx:172
+msgid "All roles must have both a tag name and display name."
+msgstr "すべてのロールにはタグ名と表示名の両方が必要です。"
+
+#: src/components/modals/UserSettingsModal.tsx:404
+msgid "Always sign Direct Messages"
+msgstr "ダイレクトメッセージに常に署名する"
+
+#: src/components/modals/UserSettingsModal.tsx:408
+msgid ""
+"Always sign Direct Messages in  Conversations. This can be overridden for "
+"finer-grain control by clicking the lock icon found in each Conversation "
+"view."
+msgstr ""
+"会話でダイレクトメッセージに常に署名します。これは、各会話ビューにあるロックアイコンをクリックすることで、より細かい制御のためにオーバーライドできます。"
+
+#: src/components/modals/NewDirectMessageModal.tsx:100
+msgid "Always sign messages"
+msgstr "メッセージに常に署名する"
+
+#: src/components/modals/UserSettingsModal.tsx:149
+#: src/components/modals/UserSettingsModal.tsx:181
+#: src/components/modals/UserSettingsModal.tsx:500
 msgid "Appearance"
 msgstr "外観"
 
-#: src/components/modals/LeaveSpaceModal.tsx:36
-#~ msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
-#~ msgstr "{0} を離れてもよろしいですか？再招待されない限り、再参加することはできません。"
+#: src/components/modals/LeaveSpaceModal.tsx:40
+msgid ""
+"Are you sure you want to leave this Space? You won't be able to rejoin "
+"unless you are re-invited."
+msgstr "このスペースを離れますか？再招待されない限り再参加できません。"
 
-#: src/components/modals/LeaveSpaceModal.tsx:41
-msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited."
-msgstr ""
-
-#: src/components/channel/ChannelEditor.tsx:62
-msgid "Are you sure? This channel contains messages. Deleting it will cause all content to be lost forever!"
+#: src/components/channel/ChannelEditor.tsx:69
+msgid ""
+"Are you sure? This channel contains messages. Deleting it will cause all "
+"content to be lost forever!"
 msgstr "本当にいいですか？このチャンネルにはメッセージが含まれています。削除するとすべてのコンテンツが永遠に失われます！"
 
-#: src/components/channel/GroupEditor.tsx:51
-msgid "Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!"
+#: src/components/channel/GroupEditor.tsx:56
+msgid ""
+"Are you sure? This group contains channels with messages. Deleting it will "
+"cause all content to be lost forever!"
 msgstr "本当にいいですか？このグループにはメッセージがあるチャンネルが含まれています。削除するとすべてのコンテンツが永遠に失われます！"
 
-#: src/components/message/MessageComposer.tsx:130
+#: src/components/message/MessageComposer.tsx:149
 msgid "attach image"
 msgstr "画像を添付"
 
-#: src/components/user/UserOnlineStateIndicator.tsx:14
+#: src/components/user/UserOnlineStateIndicator.tsx:28
 msgid "Away"
 msgstr "離席"
 
-#: src/components/channel/SpaceEditor.tsx:851
+#: src/hooks/platform/files/useFileDownload.native.ts:220
+msgid "Backup Failed"
+msgstr "バックアップに失敗しました"
+
+#: src/components/channel/SpaceEditor.tsx:896
 msgid "Be patient, this can take a few seconds..."
 msgstr "お待ちください、これには数秒かかる場合があります..."
 
-#: src/components/user/UserOnlineStateIndicator.tsx:16
+#: src/components/user/UserOnlineStateIndicator.tsx:30
 msgid "Busy"
 msgstr "忙しい"
 
-#: src/components/channel/SpaceEditor.tsx:548
+#: src/components/primitives/FileUpload/FileUpload.native.tsx:151
+#: src/hooks/business/user/useFileUpload.native.ts:36
+msgid "Camera"
+msgstr "カメラ"
+
+#: src/components/primitives/FileUpload/FileUpload.native.tsx:35
+msgid "Camera permission is required to take photos"
+msgstr "写真を撮るにはカメラの権限が必要です"
+
+#: src/components/channel/SpaceEditor.tsx:579
 msgid "Can delete messages?"
 msgstr "メッセージを削除できますか？"
 
-#~ msgid "Cancel"
-#~ msgstr "キャンセル"
+#: src/components/primitives/FileUpload/FileUpload.native.tsx:159
+#: src/hooks/business/user/useFileUpload.native.ts:44
+#: src/hooks/platform/files/useFileDownload.native.ts:82
+msgid "Cancel"
+msgstr "キャンセル"
 
 #. placeholder {0}: Math.min(10, remaining)
-#: src/hooks/business/ui/useCustomAssets.ts:92
-#: src/hooks/business/ui/useCustomAssets.ts:134
-msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
-msgstr ""
+#: src/hooks/business/ui/useCustomAssets.ts:96
+#: src/hooks/business/ui/useCustomAssets.ts:140
+msgid ""
+"Cannot upload more than {0} files at once ({remaining} slots remaining)"
+msgstr "一度に {0} ファイル以上をアップロードすることはできません（{remaining} スロットが残っています）"
 
-#: src/components/modals/UserSettingsModal.tsx:508
-msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
+#: src/components/modals/UserSettingsModal.tsx:525
+msgid ""
+"Changes are made automatically, but the active page may not be updated. "
+"Refresh the page to apply the new language."
 msgstr "変更は自動的に行われますが、アクティブなページが更新されない場合があります。新しい言語を適用するにはページを更新してください。"
 
-#: src/components/channel/ChannelEditor.tsx:44
+#: src/components/channel/ChannelEditor.tsx:57
 msgid "Channel Name"
 msgstr "チャンネル名"
 
-#: src/components/channel/ChannelEditor.tsx:53
+#: src/components/channel/ChannelEditor.tsx:63
 msgid "Channel Topic"
 msgstr "チャンネルトピック"
 
-#: src/components/modals/UserSettingsModal.tsx:485
+#: src/components/Maintenance.native.tsx:43
+msgid "Check "
+msgstr "チェック"
+
+#: src/components/primitives/FileUpload/FileUpload.native.tsx:148
+msgid "Choose how you'd like to add an image"
+msgstr "画像を追加する方法を選択してください"
+
+#: src/hooks/business/user/useFileUpload.native.ts:33
+msgid "Choose how you'd like to add your profile image"
+msgstr "プロフィール画像を追加する方法を選択してください"
+
+#: src/components/modals/UserSettingsModal.tsx:502
 msgid "Choose your preferred theme for Quorum."
 msgstr "Quorumの好みのテーマを選択してください。"
 
-#: src/components/search/SearchBar.tsx:121
+#: src/components/search/SearchBar.tsx:130
 msgid "Clear search"
 msgstr "検索をクリア"
 
@@ -211,24 +303,32 @@ msgstr "検索をクリア"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "タグ {tag} の通知をクリア中"
 
-#: src/components/onboarding/Onboarding.tsx:250
-#: src/components/modals/LeaveSpaceModal.tsx:55
-#: src/components/modals/KickUserModal.tsx:39
-#: src/components/channel/SpaceEditor.tsx:942
-#: src/components/channel/GroupEditor.tsx:71
-#: src/components/channel/ChannelEditor.tsx:82
+#: src/components/channel/ChannelEditor.tsx:89
+#: src/components/channel/GroupEditor.tsx:76
+#: src/components/channel/SpaceEditor.tsx:987
+#: src/components/modals/KickUserModal.tsx:47
+#: src/components/modals/LeaveSpaceModal.tsx:56
 msgid "Click again to confirm"
 msgstr "再度クリックして確認してください"
 
-#: src/components/channel/SpaceEditor.tsx:485
+#: src/components/channel/SpaceEditor.tsx:514
 msgid "Click on the role name and tag to edit them."
 msgstr "役割名とタグをクリックして編集します。"
 
-#: src/components/onboarding/Onboarding.tsx:215
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
+#: src/components/onboarding/Onboarding.tsx:161
+msgid ""
+"Click the button below to create a backup of your key info, because once "
+"it's gone, it's gone  forever. You may be prompted to authenticate again."
 msgstr "下のボタンをクリックして、重要な情報のバックアップを作成してください。一度失われると、永遠に失われます。再認証を求められる場合があります。"
 
-#: src/components/ClickToCopyContent.tsx:40
+#: src/components/onboarding/Onboarding.native.tsx:246
+msgid ""
+"Click the button below to create a backup of your key info, because once "
+"it's gone, it's gone forever. You may be prompted to authenticate again."
+msgstr ""
+"キー情報のバックアップを作成するには、下のボタンをクリックしてください。一度失われると、永遠に失われます。再度認証を求められる場合があります。"
+
+#: src/components/ClickToCopyContent.tsx:48
 msgid "Click to copy"
 msgstr "コピーするにはクリック"
 
@@ -236,196 +336,189 @@ msgstr "コピーするにはクリック"
 msgid "Close"
 msgstr "閉じる"
 
-#~ msgid "Confirm Deletion"
-#~ msgstr "削除を確認"
-
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
 msgstr "接続中"
 
-#: src/components/ClickToCopyContent.tsx:141
-#: src/components/ClickToCopyContent.tsx:183
-#: src/components/message/MessageActions.tsx:56
+#: src/components/ClickToCopyContent.native.tsx:192
+#: src/components/ClickToCopyContent.native.tsx:271
+#: src/components/ClickToCopyContent.tsx:152
+#: src/components/ClickToCopyContent.tsx:196
+#: src/components/message/MessageActions.tsx:49
 msgid "Copied!"
 msgstr "コピーしました！"
 
-#: src/components/user/UserStatus.tsx:48
-#: src/components/user/UserProfile.tsx:69
-#: src/components/modals/UserSettingsModal.tsx:241
-#: src/components/direct/DirectMessage.tsx:173
-#: src/components/direct/DirectMessage.tsx:270
+#: src/components/direct/DirectMessage.tsx:242
+#: src/components/direct/DirectMessage.tsx:385
+#: src/components/modals/UserSettingsModal.tsx:258
+#: src/components/user/UserProfile.tsx:81
+#: src/components/user/UserStatus.tsx:50
 msgid "Copy address"
 msgstr "アドレスをコピー"
 
-#~ msgid "Copy address to clipboard"
-#~ msgstr "アドレスをクリップボードにコピー"
+#: src/components/ClickToCopyContent.native.tsx:158
+#: src/hooks/platform/files/useFileDownload.native.ts:109
+msgid "Copy Failed"
+msgstr "コピーに失敗しました"
 
-#: src/components/channel/SpaceEditor.tsx:856
+#: src/components/channel/SpaceEditor.tsx:901
 msgid "Copy invite link to clipboard"
 msgstr "招待リンクをクリップボードにコピー"
 
+#: src/hooks/platform/files/useFileDownload.native.ts:89
+msgid "Copy Key & Continue"
+msgstr "キーをコピーして続行"
+
+#: src/components/message/MessageActions.tsx:50
 #: src/components/message/MessageActionsDrawer.tsx:113
-#: src/components/message/MessageActions.tsx:56
 msgid "Copy message link"
 msgstr "メッセージリンクをコピー"
 
-#~ msgid "Copy to clipboard"
-#~ msgstr "クリップボードにコピー"
-
-#: src/components/context/MessageDB.tsx:5131
+#: src/components/context/MessageDB.tsx:5153
 msgid "Could not add Space"
 msgstr "スペースを追加できませんでした"
 
-#: src/components/context/MessageDB.tsx:5004
+#: src/components/context/MessageDB.tsx:5026
 msgid "Could not obtain manifest for Space"
 msgstr "スペースのマニフェストを取得できませんでした"
 
-#: src/hooks/business/spaces/useInviteValidation.ts:109
 #: src/hooks/business/invites/useInviteProcessing.ts:22
+#: src/hooks/business/spaces/useInviteValidation.ts:117
 msgid "Could not verify invite"
 msgstr "招待を確認できませんでした"
 
-#: src/components/navbar/ExpandableNavMenu.tsx:45
+#: src/components/navbar/ExpandableNavMenu.tsx:29
 msgid "Create a new Space"
 msgstr "新しいスペースを作成"
 
-#: src/components/modals/CreateSpaceModal.tsx:47
+#: src/components/modals/CreateSpaceModal.tsx:48
 msgid "Create a Space"
 msgstr "スペースを作成"
 
+#: src/components/onboarding/Login.native.tsx:99
 #: src/components/onboarding/Login.tsx:62
 msgid "Create New Account"
 msgstr "新しいアカウントを作成"
 
-#: src/components/modals/CreateSpaceModal.tsx:181
+#: src/components/modals/CreateSpaceModal.tsx:188
 msgid "Create Space"
 msgstr "スペースを作成"
 
-#: src/components/modals/CreateSpaceModal.tsx:181
+#: src/components/modals/CreateSpaceModal.tsx:188
 msgid "Creating Space..."
 msgstr "スペースを作成中..."
 
-#: src/components/channel/SpaceEditor.tsx:831
+#: src/components/channel/SpaceEditor.tsx:876
 msgid "Current Invite Link"
 msgstr "現在の招待リンク"
 
-#: src/components/ThemeRadioGroup.tsx:17
-#~ msgid "dark"
-#~ msgstr "ダーク"
-
-#: src/components/ThemeRadioGroup.tsx:21
+#: src/components/ThemeRadioGroup.tsx:25
 msgid "Dark"
-msgstr ""
+msgstr "ダーク"
 
-#: src/components/context/MessageDB.tsx:4983
+#: src/components/context/MessageDB.tsx:5005
 msgid "decrypted space with no known config key"
 msgstr "既知の設定キーがない復号化されたスペース"
 
-#: src/components/context/MessageDB.tsx:4989
+#: src/components/context/MessageDB.tsx:5011
 msgid "Decrypted Space with no known hub key"
 msgstr "既知のハブキーがない復号化されたスペース"
 
-#: src/components/channel/SpaceEditor.tsx:419
+#: src/components/channel/SpaceEditor.tsx:448
 msgid "Default Channel"
 msgstr "デフォルトチャンネル"
 
-#: src/components/modals/CreateSpaceModal.tsx:114
-msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
+#: src/components/modals/CreateSpaceModal.tsx:115
+msgid ""
+"Default Space settings provide the most typical chat experience, but for "
+"higher privacy guarantees, review Advanced Settings."
 msgstr "デフォルトのスペース設定は最も一般的なチャット体験を提供しますが、より高いプライバシー保証のために、詳細設定を確認してください。"
 
-#: src/components/channel/ChannelEditor.tsx:81
+#: src/components/channel/ChannelEditor.tsx:88
 msgid "Delete Channel"
 msgstr "チャンネルを削除"
 
-#: src/components/channel/GroupEditor.tsx:70
+#: src/components/channel/GroupEditor.tsx:75
 msgid "Delete Group"
 msgstr "グループを削除"
 
+#: src/components/message/MessageActions.tsx:52
 #: src/components/message/MessageActionsDrawer.tsx:120
-#: src/components/message/MessageActions.tsx:58
 msgid "Delete message"
 msgstr "メッセージを削除"
 
-#: src/components/channel/SpaceEditor.tsx:255
-#: src/components/channel/SpaceEditor.tsx:306
-#: src/components/channel/SpaceEditor.tsx:940
+#: src/components/channel/SpaceEditor.tsx:284
+#: src/components/channel/SpaceEditor.tsx:336
+#: src/components/channel/SpaceEditor.tsx:985
 msgid "Delete Space"
 msgstr "スペースを削除"
 
-#: src/components/channel/SpaceEditor.tsx:914
+#: src/components/channel/SpaceEditor.tsx:959
 msgid "Delete this space"
 msgstr "このスペースを削除"
 
-#: src/components/modals/UserSettingsModal.tsx:439
+#: src/components/modals/UserSettingsModal.tsx:453
 msgid "Desktop Notifications"
 msgstr "デスクトップ通知"
 
-#: src/components/modals/UserSettingsModal.tsx:461
+#: src/components/modals/UserSettingsModal.tsx:475
 msgid "Desktop notifications are not supported in this browser."
 msgstr "このブラウザではデスクトップ通知はサポートされていません。"
 
-#: src/hooks/business/search/useSearchResultDisplayDM.ts:74
 #: src/hooks/business/search/useSearchResultDisplay.ts:104
+#: src/hooks/business/search/useSearchResultDisplayDM.ts:74
 msgid "Direct Message"
 msgstr "ダイレクトメッセージ"
 
-#: src/components/navbar/NavMenu.tsx:51
-#: src/components/direct/DirectMessageContactsList.tsx:17
+#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/navbar/NavMenu.tsx:57
 msgid "Direct Messages"
 msgstr "ダイレクトメッセージ"
 
-#: src/components/modals/UserSettingsModal.tsx:209
+#: src/components/modals/UserSettingsModal.tsx:226
 msgid "Display Name"
 msgstr "表示名"
-
-#~ msgid "Do it!"
-#~ msgstr "やってみて！"
 
 #: src/components/MobileDrawer.tsx:132
 msgid "Drawer"
 msgstr "ドロワー"
 
-#: src/components/onboarding/Onboarding.tsx:175
+#: src/components/onboarding/Onboarding.native.tsx:168
+#: src/components/onboarding/Onboarding.tsx:118
 msgid "Drop your profile photo here"
 msgstr "ここにプロフィール写真をドロップ"
 
-#: src/components/channel/ChannelEditor.tsx:36
+#: src/components/channel/ChannelEditor.tsx:49
 msgid "Edit Channel"
-msgstr ""
+msgstr "チャンネルを編集"
 
-#: src/components/channel/GroupEditor.tsx:34
+#: src/components/channel/GroupEditor.tsx:42
 msgid "Edit Group"
-msgstr ""
-
-#~ msgid "Edit Profile"
-#~ msgstr "プロフィールを編集"
-
-#~ msgid "Edit Space"
-#~ msgstr "スペースを編集"
+msgstr "グループを編集"
 
 #: src/components/message/EmojiPickerDrawer.tsx:40
 msgid "Emoji picker"
 msgstr "絵文字ピッカー"
 
-#: src/components/channel/SpaceEditor.tsx:230
-#: src/components/channel/SpaceEditor.tsx:295
-#: src/components/channel/SpaceEditor.tsx:576
+#: src/components/channel/SpaceEditor.tsx:258
+#: src/components/channel/SpaceEditor.tsx:324
+#: src/components/channel/SpaceEditor.tsx:617
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal.tsx:368
+#: src/components/modals/UserSettingsModal.tsx:385
 msgid "Enable sync"
 msgstr "同期を有効にする"
 
-#: src/components/modals/CreateSpaceModal.tsx:110
+#: src/components/modals/CreateSpaceModal.tsx:111
 msgid "Enter a name for your new Space"
 msgstr "新しいスペースの名前を入力してください"
 
-#: src/components/modals/NewDirectMessageModal.tsx:39
+#: src/components/modals/NewDirectMessageModal.tsx:85
 msgid "Enter a user's address to start messaging them."
 msgstr "ユーザーのアドレスを入力して、メッセージを送信します。"
 
-#: src/components/channel/SpaceEditor.tsx:786
+#: src/components/channel/SpaceEditor.tsx:831
 msgid "Enter Address Manually"
 msgstr "アドレスを手動で入力"
 
@@ -441,13 +534,13 @@ msgstr "送信処理中のエラー:"
 msgid "Error processing queue:"
 msgstr "キュー処理中のエラー:"
 
-#: src/hooks/business/user/useProfileImage.ts:83
-#: src/hooks/business/ui/useSpaceFileUploads.ts:153
-#: src/hooks/business/ui/useSpaceFileUploads.ts:172
 #: src/hooks/business/ui/useFileUpload.ts:92
-#: src/components/onboarding/Onboarding.tsx:140
+#: src/hooks/business/ui/useSpaceFileUploads.ts:155
+#: src/hooks/business/ui/useSpaceFileUploads.ts:174
+#: src/hooks/business/user/useProfileImage.ts:86
+#: src/hooks/business/user/useWebFileUpload.ts:58
 msgid "Error reading file"
-msgstr ""
+msgstr "ファイルの読み取り中にエラーが発生しました"
 
 #: src/services/notificationService.ts:77
 msgid "Error requesting notification permission:"
@@ -458,35 +551,51 @@ msgstr "通知の権限をリクエスト中にエラーが発生しました：
 msgid "Error showing notification:"
 msgstr "通知を表示中にエラーが発生しました："
 
-#: src/components/channel/SpaceEditor.tsx:764
+#: src/components/channel/SpaceEditor.tsx:807
 msgid "Existing Conversations"
 msgstr "既存の会話"
 
-#: src/components/modals/UserSettingsModal.tsx:354
+#: src/components/modals/UserSettingsModal.tsx:371
 msgid "Export"
 msgstr "エクスポート"
 
-#: src/components/modals/UserSettingsModal.tsx:345
-msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
-msgstr "このボタンをクリックして、キーをファイルにエクスポートします。このファイルを他の誰とも共有しないでください。そうしないと、彼らがあなたを偽装したり、あなたのスペースのApex収益を盗んだりする可能性があります。"
+#: src/components/modals/UserSettingsModal.tsx:362
+msgid ""
+"Export your key to a file by clicking this button. Do not share this file "
+"with anyone else or they can impersonate you or steal your Space's Apex "
+"earnings."
+msgstr ""
+"このボタンをクリックして、キーをファイルにエクスポートします。このファイルを他の誰とも共有しないでください。そうしないと、彼らがあなたを偽装したり、あなたのスペースのApex収益を盗んだりする可能性があります。"
 
-#: src/components/context/MessageDB.tsx:840
+#: src/hooks/platform/files/useFileDownload.native.ts:110
+msgid "Failed to copy to clipboard. Please try again."
+msgstr "クリップボードへのコピーに失敗しました。もう一度お試しください。"
+
+#: src/components/context/MessageDB.tsx:842
 msgid "Failed to decrypt message with any known state"
 msgstr "既知の状態でメッセージを復号化できませんでした"
+
+#: src/components/primitives/FileUpload/FileUpload.native.tsx:95
+msgid "Failed to open image picker"
+msgstr "画像ピッカーを開くのに失敗しました"
 
 #: src/components/context/WebsocketProvider.tsx:164
 msgid "Failed to parse WebSocket message:"
 msgstr "WebSocketメッセージの解析に失敗しました:"
 
-#: src/hooks/business/user/useProfileImage.ts:45
-#: src/hooks/business/ui/useSpaceFileUploads.ts:65
-#: src/hooks/business/ui/useSpaceFileUploads.ts:112
+#: src/components/primitives/FileUpload/FileUpload.native.tsx:133
+msgid "Failed to select document"
+msgstr "ドキュメントの選択に失敗しました"
+
 #: src/hooks/business/ui/useFileUpload.ts:53
+#: src/hooks/business/ui/useSpaceFileUploads.ts:67
+#: src/hooks/business/ui/useSpaceFileUploads.ts:114
+#: src/hooks/business/user/useProfileImage.ts:48
 msgid "File cannot be larger than 1MB"
 msgstr "ファイルは1MBを超えることはできません"
 
-#: src/hooks/business/ui/useCustomAssets.ts:87
-#: src/hooks/business/ui/useCustomAssets.ts:129
+#: src/hooks/business/ui/useCustomAssets.ts:89
+#: src/hooks/business/ui/useCustomAssets.ts:133
 msgid "File cannot be larger than 256KB"
 msgstr "ファイルは256KBを超えることはできません"
 
@@ -494,105 +603,140 @@ msgstr "ファイルは256KBを超えることはできません"
 msgid "File cannot be larger than 2MB"
 msgstr "ファイルは2MBを超えることはできません"
 
-#: src/hooks/business/user/useProfileImage.ts:47
-#: src/hooks/business/ui/useSpaceFileUploads.ts:69
-#: src/hooks/business/ui/useSpaceFileUploads.ts:116
-#: src/hooks/business/ui/useFileUpload.ts:55
-#: src/hooks/business/ui/useCustomAssets.ts:96
-#: src/hooks/business/ui/useCustomAssets.ts:138
 #: src/hooks/business/messages/useMessageComposer.ts:70
-#: src/components/onboarding/Onboarding.tsx:92
+#: src/hooks/business/ui/useCustomAssets.ts:100
+#: src/hooks/business/ui/useCustomAssets.ts:144
+#: src/hooks/business/ui/useFileUpload.ts:55
+#: src/hooks/business/ui/useSpaceFileUploads.ts:71
+#: src/hooks/business/ui/useSpaceFileUploads.ts:118
+#: src/hooks/business/user/useProfileImage.ts:50
+#: src/hooks/business/user/useWebFileUpload.ts:37
 msgid "File rejected"
 msgstr "ファイルが拒否されました"
 
-#: src/components/context/MessageDB.tsx:2761
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:48
+msgid "File size too large. Maximum size: {maxSizeMB}"
+msgstr "ファイルサイズが大きすぎます。最大サイズ: {maxSizeMB}"
+
+#: src/components/primitives/FileUpload/FileUpload.native.tsx:86
+#: src/components/primitives/FileUpload/FileUpload.native.tsx:125
+msgid "File size too large. Maximum size: {maxSizeMB}MB"
+msgstr "ファイルサイズが大きすぎます。最大サイズ: {maxSizeMB}MB"
+
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:51
+msgid "File size too small. Minimum size: {minSizeMB}"
+msgstr "ファイルサイズが小さすぎます。最小サイズ: {minSizeMB}"
+
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:59
+msgid "File validation failed. Please try again."
+msgstr "ファイルの検証に失敗しました。もう一度お試しください。"
+
+#: src/components/context/MessageDB.tsx:2782
 msgid "general"
 msgstr "一般"
 
-#: src/components/modals/UserSettingsModal.tsx:126
-#: src/components/modals/UserSettingsModal.tsx:158
-#: src/components/channel/SpaceEditor.tsx:216
-#: src/components/channel/SpaceEditor.tsx:267
+#: src/components/channel/SpaceEditor.tsx:244
+#: src/components/channel/SpaceEditor.tsx:296
+#: src/components/modals/UserSettingsModal.tsx:128
+#: src/components/modals/UserSettingsModal.tsx:160
 msgid "General"
 msgstr "一般"
 
-#: src/components/context/MessageDB.tsx:2762
+#: src/components/context/MessageDB.tsx:2783
 msgid "General Chat"
 msgstr "一般チャット"
 
-#: src/components/channel/SpaceEditor.tsx:880
+#: src/components/channel/SpaceEditor.tsx:925
 msgid "Generate New Invite Link"
 msgstr "新しい招待リンクを生成"
 
-#: src/components/channel/SpaceEditor.tsx:878
+#: src/components/channel/SpaceEditor.tsx:923
 msgid "Generating link..."
 msgstr "リンクを生成中..."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:34
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:35
 msgid "Go to conversation"
 msgstr "会話に移動"
 
-#: src/components/channel/GroupEditor.tsx:42
+#: src/components/channel/GroupEditor.tsx:50
 msgid "Group Name"
 msgstr "グループ名"
 
-#: src/components/direct/EmptyDirectMessage.tsx:52
+#: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
 msgstr "ホーム画面を隠す"
 
-#: src/components/onboarding/Onboarding.tsx:249
+#: src/components/onboarding/Onboarding.native.tsx:275
+#: src/components/onboarding/Onboarding.tsx:182
 msgid "I already saved mine"
 msgstr "私はすでに自分のを保存しました"
 
-#: src/components/onboarding/Onboarding.tsx:384
-#: src/components/onboarding/Onboarding.tsx:391
+#: src/hooks/platform/files/useFileDownload.native.ts:100
+msgid "I've Saved It"
+msgstr "保存しました"
+
+#: src/components/onboarding/Onboarding.tsx:314
+#: src/components/onboarding/Onboarding.tsx:321
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr "スキップした場合、デフォルトのプロフィール画像が表示され、後で設定できます"
 
-#: src/components/onboarding/Onboarding.tsx:201
-msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
+#: src/components/onboarding/Onboarding.tsx:147
+msgid ""
+"If you clear your browser storage or switch browsers, your old messages and "
+"keys may disappear."
 msgstr "ブラウザのストレージをクリアしたり、ブラウザを切り替えたりすると、古いメッセージやキーが消える可能性があります。"
 
-#: src/components/onboarding/Onboarding.tsx:208
-msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+#: src/components/onboarding/Onboarding.native.tsx:241
+#: src/components/onboarding/Onboarding.tsx:154
+msgid ""
+"If you uninstall the app from your device, you will lose your old messages "
+"and keys."
 msgstr "デバイスからアプリをアンインストールすると、古いメッセージやキーを失います。"
 
-#: src/components/onboarding/Login.tsx:75
+#: src/components/onboarding/Login.native.tsx:108
+#: src/components/onboarding/Login.tsx:76
 msgid "Import Existing Key"
 msgstr "既存のキーをインポート"
 
-#: src/components/onboarding/Onboarding.tsx:186
+#: src/components/onboarding/Onboarding.native.tsx:231
+#: src/components/onboarding/Onboarding.tsx:132
 msgid "Important first-time user information:"
 msgstr "初めてのユーザーに関する重要な情報:"
 
-#: src/components/context/MessageDB.tsx:1020
+#: src/components/context/MessageDB.tsx:1022
 msgid "invalid address for signature"
 msgstr "署名用の無効なアドレス"
 
-#: src/hooks/business/validation/useAddressValidation.ts:94
-msgid "Invalid address format. Addresses must use valid alphanumeric characters."
+#: src/hooks/business/validation/useAddressValidation.native.ts:97
+#: src/hooks/business/validation/useAddressValidation.ts:98
+msgid ""
+"Invalid address format. Addresses must use valid alphanumeric characters."
 msgstr "無効なアドレス形式です。アドレスは有効な英数字を使用する必要があります。"
 
-#: src/components/context/MessageDB.tsx:4244
-#: src/components/context/MessageDB.tsx:4281
-#: src/components/context/MessageDB.tsx:4287
-#: src/components/context/MessageDB.tsx:4385
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:53
+msgid "Invalid file type. Please check accepted file formats."
+msgstr "無効なファイルタイプです。受け入れられるファイル形式を確認してください。"
+
+#: src/components/context/MessageDB.tsx:4265
+#: src/components/context/MessageDB.tsx:4302
+#: src/components/context/MessageDB.tsx:4308
+#: src/components/context/MessageDB.tsx:4406
 msgid "invalid link"
 msgstr "無効なリンク"
 
-#: src/components/context/MessageDB.tsx:4750
+#: src/components/context/MessageDB.tsx:4771
 msgid "invalid message type"
 msgstr "無効なメッセージタイプ"
 
-#: src/hooks/business/spaces/useInviteValidation.ts:76
-#: src/components/context/MessageDB.tsx:4249
-#: src/components/context/MessageDB.tsx:4348
+#: src/components/context/MessageDB.tsx:4270
+#: src/components/context/MessageDB.tsx:4369
+#: src/hooks/business/spaces/useInviteValidation.ts:84
 msgid "invalid response"
 msgstr "無効な応答"
 
-#: src/components/channel/SpaceEditor.tsx:244
-#: src/components/channel/SpaceEditor.tsx:288
-#: src/components/channel/SpaceEditor.tsx:748
+#: src/components/channel/SpaceEditor.tsx:272
+#: src/components/channel/SpaceEditor.tsx:317
+#: src/components/channel/SpaceEditor.tsx:791
 msgid "Invites"
 msgstr "招待"
 
@@ -600,9 +744,9 @@ msgstr "招待"
 msgid "Join"
 msgstr "参加"
 
-#: src/components/modals/JoinSpaceModal.tsx:56
-#: src/components/modals/JoinSpaceModal.tsx:67
-#: src/components/modals/JoinSpaceModal.tsx:113
+#: src/components/modals/JoinSpaceModal.tsx:60
+#: src/components/modals/JoinSpaceModal.tsx:71
+#: src/components/modals/JoinSpaceModal.tsx:117
 msgid "Join Space"
 msgstr "スペースに参加"
 
@@ -612,117 +756,137 @@ msgstr "参加済み"
 
 #: src/hooks/business/invites/useInviteUI.ts:19
 msgid "Joining..."
-msgstr ""
+msgstr "参加中..."
 
-#: src/components/modals/UserSettingsModal.tsx:342
+#: src/hooks/platform/files/useFileDownload.native.ts:96
+msgid "Key Copied!"
+msgstr "キーがコピーされました！"
+
+#: src/components/modals/UserSettingsModal.tsx:359
 msgid "Key Export"
 msgstr "キーエクスポート"
 
-#: src/components/user/UserProfile.tsx:156
-#: src/components/modals/KickUserModal.tsx:23
+#: src/hooks/platform/files/useFileDownload.native.ts:202
+msgid "Key Ready"
+msgstr "キーは準備完了"
+
+#: src/hooks/platform/files/useFileDownload.native.ts:181
+msgid "Key Saved"
+msgstr "キーが保存されました"
+
+#: src/components/modals/KickUserModal.tsx:27
+#: src/components/user/UserProfile.tsx:175
 msgid "Kick User"
 msgstr "ユーザーをキック"
 
-#: src/components/modals/KickUserModal.tsx:39
+#: src/components/modals/KickUserModal.tsx:47
 msgid "Kick!"
 msgstr "キック！"
 
-#: src/components/modals/UserSettingsModal.tsx:495
+#: src/components/modals/UserSettingsModal.tsx:512
 msgid "Language"
 msgstr "言語"
 
 #. placeholder {0}: space?.spaceName || 'Space'
-#: src/components/modals/LeaveSpaceModal.tsx:32
+#: src/components/modals/LeaveSpaceModal.tsx:33
 msgid "Leave {0}"
-msgstr ""
+msgstr "{0}を離れる"
 
-#: src/components/modals/LeaveSpaceModal.tsx:53
+#: src/components/modals/LeaveSpaceModal.tsx:54
 msgid "Leave Space"
 msgstr "スペースを離れる"
 
-#~ msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
-#~ msgstr "友達に自分を知らせよう！会話で表示するフレンドリーな名前を選んで、{0}よりも読みやすいものにしよう"
-
-#: src/components/onboarding/Onboarding.tsx:264
-msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
+#: src/components/onboarding/Onboarding.native.tsx:297
+#: src/components/onboarding/Onboarding.tsx:196
+msgid ""
+"Let your friends know who you are! Pick a friendly name to display in your "
+"conversations, something easier to read than:"
 msgstr "友達に自分が誰か知らせましょう！会話で表示するためのフレンドリーな名前を選んでください。読みやすいものが良いです："
 
-#: src/components/onboarding/Onboarding.tsx:439
+#: src/components/onboarding/Onboarding.native.tsx:469
+#: src/components/onboarding/Onboarding.tsx:347
 msgid "Let's gooooooooo"
 msgstr "行くぞーーーーー"
 
-#: src/components/ThemeRadioGroup.tsx:16
-#~ msgid "light"
-#~ msgstr "ライト"
-
-#: src/components/ThemeRadioGroup.tsx:16
+#: src/components/ThemeRadioGroup.tsx:20
 msgid "Light"
-msgstr ""
+msgstr "ライト"
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:31
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
 msgstr "ユーザーを検索中..."
 
-#: src/components/Maintenance.tsx:14
+#: src/components/Maintenance.native.tsx:33 src/components/Maintenance.tsx:14
 msgid "Maintenance in Progress"
 msgstr "メンテナンス中"
 
-#: src/components/onboarding/Onboarding.tsx:314
-msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
+#: src/components/onboarding/Onboarding.native.tsx:342
+#: src/components/onboarding/Onboarding.tsx:242
+msgid ""
+"Make your account uniquely yours – set a contact photo. This information is "
+"only provided to the Spaces you join."
 msgstr "アカウントをユニークにしよう – 連絡先写真を設定してね。この情報は参加するスペースにのみ提供されます。"
 
-#: src/components/modals/UserSettingsModal.tsx:430
+#: src/components/modals/UserSettingsModal.tsx:444
 msgid "Manage desktop notification preferences for new messages."
 msgstr "新しいメッセージのためのデスクトップ通知の設定を管理します。"
 
-#: src/components/modals/UserSettingsModal.tsx:287
-msgid "Manage devices, and privacy conditions for messaging and synchronization."
+#: src/components/modals/UserSettingsModal.tsx:304
+msgid ""
+"Manage devices, and privacy conditions for messaging and synchronization."
 msgstr "デバイスとメッセージングおよび同期のプライバシー条件を管理します。"
 
-#~ msgid "Max file size: 256kB"
-#~ msgstr "最大ファイルサイズ：256kB"
+#: src/hooks/platform/files/useFileDownload.native.ts:78
+msgid "Manual Backup Required"
+msgstr "手動バックアップが必要です"
 
 #: src/components/message/MessageActionsDrawer.tsx:78
 msgid "Message actions"
 msgstr "メッセージアクション"
 
-#: src/components/message/Message.tsx:383
-msgid "Message does not have a valid signature, this may not be from the sender"
+#: src/components/message/Message.tsx:398
+msgid ""
+"Message does not have a valid signature, this may not be from the sender"
 msgstr "メッセージには有効な署名がありません。これは送信者からのものではない可能性があります"
 
+#: src/components/direct/DirectMessage.tsx:318
+#: src/components/direct/DirectMessage.tsx:349
+#: src/components/message/MessageComposer.tsx:201
+msgid "Messages are NOT signed!"
+msgstr "メッセージは署名されていません！"
+
+#: src/components/direct/DirectMessage.tsx:318
+#: src/components/direct/DirectMessage.tsx:349
+#: src/components/message/MessageComposer.tsx:202
+msgid "Messages are signed!"
+msgstr "メッセージは署名されています！"
+
+#: src/components/message/MessageActions.tsx:44
 #: src/components/message/MessageActionsDrawer.tsx:97
-#: src/components/message/MessageActions.tsx:52
 msgid "More reactions"
 msgstr "もっとリアクション"
 
-#: src/components/modals/NewDirectMessageModal.tsx:28
+#: src/components/modals/NewDirectMessageModal.tsx:69
 msgid "New Direct Message"
 msgstr "新しいダイレクトメッセージ"
 
-#: src/components/search/SearchResults.tsx:91
+#: src/components/search/SearchResults.tsx:88
 msgid "No messages found"
 msgstr "メッセージが見つかりませんでした"
-
-#: src/components/modals/UserSettingsModal.tsx:390
-msgid "Non-repudiability"
-msgstr "非否認性"
 
 #: src/services/notificationService.ts:185
 msgid "Notification permission not granted"
 msgstr "通知の権限が付与されていません"
 
-#: src/components/modals/UserSettingsModal.tsx:140
-#: src/components/modals/UserSettingsModal.tsx:172
-#: src/components/modals/UserSettingsModal.tsx:428
+#: src/components/modals/UserSettingsModal.tsx:142
+#: src/components/modals/UserSettingsModal.tsx:174
+#: src/components/modals/UserSettingsModal.tsx:442
 msgid "Notifications"
 msgstr "通知"
 
-#: src/components/modals/UserSettingsModal.tsx:101
-#~ msgid "Notifications are blocked. Please enable them in your browser settings for this site."
-#~ msgstr "通知がブロックされています。このサイトのブラウザ設定で有効にしてください。"
-
-#: src/components/modals/UserSettingsModal.tsx:467
-msgid "Notifications are blocked. Please enable them in your browser settings."
+#: src/components/modals/UserSettingsModal.tsx:484
+msgid ""
+"Notifications are blocked. Please enable them in your browser settings."
 msgstr "通知がブロックされています。このサイトのブラウザ設定で有効にしてください。"
 
 #: src/services/notificationService.ts:55
@@ -730,53 +894,100 @@ msgstr "通知がブロックされています。このサイトのブラウザ
 msgid "Notifications are not supported in this browser"
 msgstr "このブラウザでは通知はサポートされていません"
 
-#: src/components/user/UserOnlineStateIndicator.tsx:18
+#: src/components/user/UserOnlineStateIndicator.tsx:32
 msgid "Offline"
 msgstr "オフライン"
 
-#: src/components/onboarding/Onboarding.tsx:163
+#: src/hooks/platform/files/useFileDownload.native.ts:111
+#: src/hooks/platform/files/useFileDownload.native.ts:183
+#: src/hooks/platform/files/useFileDownload.native.ts:204
+#: src/hooks/platform/files/useFileDownload.native.ts:222
+msgid "OK"
+msgstr "OK"
+
+#: src/components/onboarding/Onboarding.native.tsx:209
+#: src/components/onboarding/Onboarding.tsx:109
 msgid "One of us, one of us!"
 msgstr "私たちの一員、私たちの一員！"
 
-#: src/components/user/UserOnlineStateIndicator.tsx:12
+#: src/components/user/UserOnlineStateIndicator.tsx:26
 msgid "Online"
 msgstr "オンライン"
 
-#: src/components/onboarding/Onboarding.tsx:164
+#: src/components/onboarding/Onboarding.native.tsx:210
+#: src/components/onboarding/Onboarding.tsx:110
 msgid "Personalize your account"
 msgstr "アカウントをパーソナライズ"
 
-#: src/components/channel/SpaceEditor.tsx:439
+#: src/components/primitives/FileUpload/FileUpload.native.tsx:155
+#: src/hooks/business/user/useFileUpload.native.ts:40
+msgid "Photo Library"
+msgstr "フォトライブラリ"
+
+#: src/components/primitives/FileUpload/FileUpload.native.tsx:43
+msgid "Photo library permission is required to select images"
+msgstr "画像を選択するにはフォトライブラリの権限が必要です"
+
+#: src/components/onboarding/Onboarding.native.tsx:171
+#: src/components/onboarding/Onboarding.tsx:121
+msgid "PNG, JPG or JPEG • Max 2MB"
+msgstr "PNG、JPGまたはJPEG • 最大2MB"
+
+#: src/components/channel/SpaceEditor.tsx:468
 msgid "Privacy Settings"
 msgstr "プライバシー設定"
 
-#: src/components/modals/UserSettingsModal.tsx:133
-#: src/components/modals/UserSettingsModal.tsx:165
-#: src/components/modals/UserSettingsModal.tsx:285
+#: src/components/modals/UserSettingsModal.tsx:135
+#: src/components/modals/UserSettingsModal.tsx:167
+#: src/components/modals/UserSettingsModal.tsx:302
 msgid "Privacy/Security"
 msgstr "プライバシー/セキュリティ"
 
-#: src/components/channel/SpaceEditor.tsx:806
+#: src/hooks/platform/files/useFileDownload.native.ts:182
+msgid "Private key saved to selected folder"
+msgstr "プライベートキーが選択したフォルダに保存されました"
+
+#: src/components/channel/SpaceEditor.tsx:851
 msgid "Public Invite Link"
 msgstr "公開招待リンク"
 
-#: src/components/channel/SpaceEditor.tsx:808
-msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
-msgstr "公開招待リンクは、リンクにアクセスできる誰でもあなたのスペースに参加できるようにします。これを有効にするリスクと、リンクを共有する相手や場所を理解してください。"
+#: src/components/channel/SpaceEditor.tsx:853
+msgid ""
+"Public invite links allow anyone with access to the link join your Space. "
+"Understand the risks of enabling this, and to whom and where you share the "
+"link."
+msgstr ""
+"公開招待リンクは、リンクにアクセスできる誰でもあなたのスペースに参加できるようにします。これを有効にするリスクと、リンクを共有する相手や場所を理解してください。"
 
 #: src/components/Maintenance.tsx:28
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
-msgstr "Quorumインフラストラクチャが現在展開中です。リフレッシュを試み、<0>https://status.quilibrium.com/</0>で更新情報を確認してください。"
+msgid ""
+"Quorum infrastructure is being deployed at this time. Please try refreshing,"
+" and check <0>https://status.quilibrium.com/</0> for updates."
+msgstr ""
+"Quorumインフラストラクチャが現在展開中です。リフレッシュを試み、<0>https://status.quilibrium.com/</0>で更新情報を確認してください。"
 
-#: src/components/onboarding/Onboarding.tsx:189
-msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
-msgstr "Quorumはピアツーピアでエンドツーエンド暗号化されています。これは、あなたのメッセージがプライベートであることを意味しますが、同様に重要なのは、あなたと受信者に届くために必要な時間だけネットワーク上に存在することです。"
+#: src/components/Maintenance.native.tsx:38
+msgid ""
+"Quorum infrastructure is being deployed at this time. Please try refreshing."
+msgstr "Quorumインフラストラクチャが現在展開中です。リフレッシュをお試しください。"
+
+#: src/components/onboarding/Onboarding.native.tsx:236
+#: src/components/onboarding/Onboarding.tsx:135
+msgid ""
+"Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
+"stay private, but equally important, they only live on the network for the "
+"time required to reach you and your recipients."
+msgstr ""
+"Quorumはピアツーピアでエンドツーエンド暗号化されています。これは、あなたのメッセージがプライベートであることを意味しますが、同様に重要なのは、あなたと受信者に届くために必要な時間だけネットワーク上に存在することです。"
 
 #: src/components/context/RegistrationPersister.tsx:272
-msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
-msgstr "ブラウザがフォーカスされていない間にQuorumが読み込まれたか、パスキーリクエストが拒否されました。メッセージにアクセスするには再認証してください。"
+msgid ""
+"Quorum was loaded while the browser was not in focus or a passkey request "
+"was rejected. Please reauthorize to access your messages."
+msgstr ""
+"ブラウザがフォーカスされていない間にQuorumが読み込まれたか、パスキーリクエストが拒否されました。メッセージにアクセスするには再認証してください。"
 
-#: src/components/direct/DirectMessageContactsList.tsx:38
+#: src/components/direct/DirectMessageContactsList.tsx:46
 msgid "Ready to start a truly private conversation?"
 msgstr "本当にプライベートな会話を始める準備はできていますか？"
 
@@ -784,87 +995,87 @@ msgstr "本当にプライベートな会話を始める準備はできていま
 msgid "Reauthorize"
 msgstr "再認証"
 
-#: src/components/context/MessageDB.tsx:4953
+#: src/components/context/MessageDB.tsx:4975
 msgid "received config with invalid signature!"
 msgstr "無効な署名の設定を受信しました！"
 
-#: src/components/Maintenance.tsx:52
-#: src/components/modals/UserSettingsModal.tsx:516
+#: src/components/Maintenance.native.tsx:64 src/components/Maintenance.tsx:52
+#: src/components/modals/UserSettingsModal.tsx:533
 msgid "Refresh"
 msgstr "リフレッシュ"
 
-#: src/components/modals/UserSettingsModal.tsx:321
+#: src/components/modals/UserSettingsModal.tsx:338
 msgid "Remove"
 msgstr "削除"
 
+#: src/components/message/MessageActions.tsx:46
 #: src/components/message/MessageActionsDrawer.tsx:109
-#: src/components/message/MessageActions.tsx:54
 msgid "Reply"
 msgstr "返信"
 
-#: src/components/modals/CreateSpaceModal.tsx:125
-#: src/components/channel/SpaceEditor.tsx:445
-msgid "Repudiability"
-msgstr "拒否可能性"
+#: src/components/channel/SpaceEditor.tsx:474
+#: src/components/modals/CreateSpaceModal.tsx:126
+msgid "Require Message Signing"
+msgstr "メッセージ署名を要求"
 
-#: src/components/modals/CreateSpaceModal.tsx:130
-#: src/components/channel/SpaceEditor.tsx:450
-msgid "Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
-msgstr "拒否可能性は、このスペース内の会話が指定された送信者から発信されたことを検証できなくする設定です。これは敏感な状況で役立つことがありますが、他の人があなたからのメッセージのように見えるメッセージを偽造する可能性があることも意味します。"
+#: src/components/channel/SpaceEditor.tsx:479
+#: src/components/modals/CreateSpaceModal.tsx:131
+msgid ""
+"Require messages sent in this Space to be signed by the sender. Technically "
+"speaking, this makes the messages in this Space non-repudiable."
+msgstr ""
+"このSpace内で送信されたメッセージが送信者によって署名されることを要求します。技術的には、これによりこのSpace内のメッセージは否認できなくなります。"
 
-#~ msgid "Requirements:"
-#~ msgstr "要件:"
-
-#: src/components/channel/SpaceEditor.tsx:223
-#: src/components/channel/SpaceEditor.tsx:281
-#: src/components/channel/SpaceEditor.tsx:482
+#: src/components/channel/SpaceEditor.tsx:251
+#: src/components/channel/SpaceEditor.tsx:310
+#: src/components/channel/SpaceEditor.tsx:511
 msgid "Roles"
 msgstr "役割"
 
-#: src/components/user/UserProfileEdit.tsx:161
-#: src/components/modals/UserSettingsModal.tsx:274
-#: src/components/modals/UserSettingsModal.tsx:417
-#: src/components/channel/SpaceEditor.tsx:470
-#: src/components/channel/SpaceEditor.tsx:564
-#: src/components/channel/SpaceEditor.tsx:650
-#: src/components/channel/SpaceEditor.tsx:736
-#: src/components/channel/GroupEditor.tsx:80
-#: src/components/channel/ChannelEditor.tsx:90
+#: src/components/channel/ChannelEditor.tsx:97
+#: src/components/channel/GroupEditor.tsx:85
+#: src/components/channel/SpaceEditor.tsx:499
+#: src/components/channel/SpaceEditor.tsx:605
+#: src/components/channel/SpaceEditor.tsx:691
+#: src/components/channel/SpaceEditor.tsx:779
+#: src/components/modals/UserSettingsModal.tsx:291
+#: src/components/modals/UserSettingsModal.tsx:431
+#: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "変更を保存"
 
-#: src/components/onboarding/Onboarding.tsx:402
+#: src/components/onboarding/Onboarding.native.tsx:439
+#: src/components/onboarding/Onboarding.tsx:303
 msgid "Save Contact Photo"
 msgstr "連絡先写真を保存"
 
-#: src/components/onboarding/Onboarding.tsx:229
+#: src/hooks/platform/files/useFileDownload.native.ts:194
+msgid "Save Private Key"
+msgstr "プライベートキーを保存"
+
+#: src/components/onboarding/Onboarding.native.tsx:256
+#: src/components/onboarding/Onboarding.tsx:175
 msgid "Save User Key"
 msgstr "ユーザーキーを保存"
 
-#: src/components/context/MessageDB.tsx:4911
+#: src/components/context/MessageDB.tsx:4933
 msgid "saved config is out of date"
 msgstr "保存された設定は古くなっています"
 
 #. placeholder {0}: error?.message || 'Unknown error'
-#: src/components/search/SearchResults.tsx:82
+#: src/components/search/SearchResults.tsx:79
 msgid "Search failed: {0}"
 msgstr "検索に失敗しました: {0}"
 
-#: src/hooks/useSearchContext.ts:94
+#: src/hooks/useSearchContext.native.ts:102 src/hooks/useSearchContext.ts:94
 msgid "Search here"
 msgstr "ここで検索"
 
-#~ msgid "Search in direct messages"
-#~ msgstr "ダイレクトメッセージを検索"
-
-#: src/hooks/useSearchContext.ts:92
+#: src/hooks/useSearchContext.native.ts:100 src/hooks/useSearchContext.ts:92
 msgid "Search in this Space"
 msgstr "この Space で検索"
 
-#~ msgid "Search messages"
-#~ msgstr "メッセージを検索"
-
-#: src/components/search/SearchBar.tsx:22
+#: src/components/search/SearchBar.tsx:34
 msgid "Search messages..."
 msgstr "メッセージを検索中..."
 
@@ -872,36 +1083,46 @@ msgstr "メッセージを検索中..."
 msgid "Searching..."
 msgstr "検索中..."
 
-#: src/components/modals/UserSettingsModal.tsx:359
+#: src/components/modals/UserSettingsModal.tsx:376
 msgid "Security"
 msgstr "セキュリティ"
 
+#: src/components/primitives/Select/Select.native.tsx:24
 #: src/components/primitives/Select/Select.web.tsx:13
-#: src/components/primitives/Select/Select.native.tsx:25
 msgid "Select an option"
-msgstr ""
+msgstr "オプションを選択"
 
-#: src/components/channel/SpaceEditor.tsx:783
+#: src/components/channel/SpaceEditor.tsx:828
 msgid "Select conversation"
 msgstr "会話を選択"
 
-#: src/components/channel/SpaceEditor.tsx:434
+#: src/components/channel/SpaceEditor.tsx:463
 msgid "Select default channel"
-msgstr ""
+msgstr "デフォルトチャンネルを選択"
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:36
+#: src/components/primitives/FileUpload/FileUpload.native.tsx:147
+msgid "Select Image"
+msgstr "画像を選択"
+
+#: src/hooks/business/user/useFileUpload.native.ts:32
+msgid "Select Profile Image"
+msgstr "プロフィール画像を選択"
+
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:37
 msgid "Send"
 msgstr "送信"
 
-#: src/components/channel/SpaceEditor.tsx:902
+#: src/components/channel/SpaceEditor.tsx:947
 msgid "Send Invite"
 msgstr "招待を送信"
 
-#: src/components/channel/SpaceEditor.tsx:751
-msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
+#: src/components/channel/SpaceEditor.tsx:794
+msgid ""
+"Send invites to people you've previously had conversations with. An invite "
+"button will appear in their inbox."
 msgstr "以前に会話をしたことのある人に招待を送信します。招待ボタンが彼らの受信箱に表示されます。"
 
-#: src/components/user/UserProfile.tsx:147
+#: src/components/user/UserProfile.tsx:166
 msgid "Send Message"
 msgstr "メッセージを送信"
 
@@ -909,35 +1130,42 @@ msgstr "メッセージを送信"
 msgid "Session Encrypted"
 msgstr "セッションは暗号化されています"
 
-#: src/components/onboarding/Onboarding.tsx:298
+#: src/components/onboarding/Onboarding.native.tsx:322
+#: src/components/onboarding/Onboarding.tsx:228
 msgid "Set Display Name"
 msgstr "表示名を設定"
 
-#: src/components/modals/UserSettingsModal.tsx:120
+#: src/components/modals/UserSettingsModal.tsx:122
 msgid "Settings"
 msgstr "設定"
 
-#: src/components/modals/UserSettingsModal.tsx:443
-msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
-msgstr "Quorum がバックグラウンドにあるときに新しいメッセージを受信したときにデスクトップ通知を表示します。この機能を有効にすると、ブラウザが権限を求めます。"
+#: src/components/modals/UserSettingsModal.tsx:457
+msgid ""
+"Show desktop notifications when you receive new messages while Quorum is in "
+"the background. Your browser will ask for permission when you enable this "
+"feature."
+msgstr ""
+"Quorum "
+"がバックグラウンドにあるときに新しいメッセージを受信したときにデスクトップ通知を表示します。この機能を有効にすると、ブラウザが権限を求めます。"
 
-#: src/components/direct/EmptyDirectMessage.tsx:73
+#: src/components/direct/EmptyDirectMessage.tsx:78
 msgid "show home screen"
 msgstr "ホーム画面を表示"
 
-#: src/components/onboarding/Onboarding.tsx:377
+#: src/components/onboarding/Onboarding.native.tsx:427
+#: src/components/onboarding/Onboarding.tsx:310
 msgid "Skip Adding Photo"
 msgstr "写真の追加をスキップ"
 
-#: src/components/channel/SpaceEditor.tsx:357
+#: src/components/channel/SpaceEditor.tsx:387
 msgid "Space Banner"
 msgstr "スペースバナー"
 
-#: src/components/modals/CreateSpaceModal.tsx:93
+#: src/components/modals/CreateSpaceModal.tsx:94
 msgid "Space Icon Attachment"
 msgstr "スペースアイコン添付"
 
-#: src/components/channel/SpaceEditor.tsx:346
+#: src/components/channel/SpaceEditor.tsx:376
 msgid "Space Name"
 msgstr "スペース名"
 
@@ -945,127 +1173,144 @@ msgstr "スペース名"
 msgid "Start typing to search messages..."
 msgstr "メッセージを検索するには入力を開始してください..."
 
-#~ msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
-#~ msgstr "友達へのメッセージから始めましょう。ダイレクトメッセージリストの隣にある追加ボタンをクリックしてください。"
-
-#: src/components/user/UserProfileEdit.tsx:104
+#: src/components/user/UserProfileEdit.tsx:102
 msgid "Status goes here"
 msgstr "ステータスはここに表示されます"
 
-#: src/components/direct/EmptyDirectMessage.tsx:43
+#: src/components/direct/EmptyDirectMessage.tsx:42
 msgid "Stay Connected, Stay Invisible"
 msgstr "接続を維持し、見えないままでいましょう"
 
-#: src/components/channel/SpaceEditor.tsx:237
-#: src/components/channel/SpaceEditor.tsx:274
-#: src/components/channel/SpaceEditor.tsx:662
+#: src/components/channel/SpaceEditor.tsx:265
+#: src/components/channel/SpaceEditor.tsx:303
+#: src/components/channel/SpaceEditor.tsx:703
 msgid "Stickers"
 msgstr "ステッカー"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:796
+#: src/components/channel/SpaceEditor.tsx:841
 msgid "Successfully sent invite to {0}"
 msgstr "{0}への招待を正常に送信しました"
 
-#~ msgid "Supported types: PNG, JPG, GIF"
-#~ msgstr "サポートされているタイプ: PNG, JPG, GIF"
-
-#: src/components/ThemeRadioGroup.tsx:18
-#~ msgid "system"
-#~ msgstr "システム"
-
-#: src/components/ThemeRadioGroup.tsx:26
+#: src/components/ThemeRadioGroup.tsx:30
 msgid "System"
-msgstr ""
+msgstr "システム"
 
-#: src/components/message/InviteLink.tsx:20
+#: src/components/ClickToCopyContent.native.tsx:56
+msgid "Tap to copy"
+msgstr "コピーするにはタップしてください"
+
+#: src/components/onboarding/Onboarding.native.tsx:409
+msgid "Tap to select"
+msgstr "選択するにはタップしてください"
+
+#: src/components/message/InviteLink.tsx:22
 msgid "The invite link has expired or is invalid."
 msgstr "招待リンクは期限切れまたは無効です。"
 
-#: src/components/modals/UserSettingsModal.tsx:332
+#: src/components/modals/UserSettingsModal.tsx:349
 msgid "This device"
 msgstr "このデバイス"
 
-#: src/components/onboarding/Onboarding.tsx:273
+#: src/components/onboarding/Onboarding.native.tsx:302
+#: src/components/onboarding/Onboarding.tsx:205
 msgid "This information is only provided to the Spaces you join."
 msgstr "この情報は、参加するスペースにのみ提供されます。"
 
-#: src/components/modals/UserSettingsModal.tsx:233
-msgid "This is your public address and is safe to share with anyone you want to interact with."
+#: src/components/modals/UserSettingsModal.tsx:250
+msgid ""
+"This is your public address and is safe to share with anyone you want to "
+"interact with."
 msgstr "これはあなたの公開アドレスであり、やり取りしたい相手と共有しても安全です。"
 
-#: src/components/channel/SpaceEditor.tsx:836
-msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
-msgstr "このリンクは期限切れになりませんが、いつでも新しいリンクを生成でき、古いリンクは無効になります。現在のスペースメンバーはスペースから削除されることはありません。"
-
-#: src/components/modals/UserSettingsModal.tsx:95
-#~ msgid "To disable notifications, please change the notification settings in your browser for this site."
-#~ msgstr "通知を無効にするには、このサイトのブラウザ設定で通知設定を変更してください。"
-
-#: src/components/modals/UserSettingsModal.tsx:473
-msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
+#: src/components/channel/SpaceEditor.tsx:881
+msgid ""
+"This link will not expire, but you can generate a new one at any time, which"
+" will invalidate the old link. Current Space members will not be removed "
+"from the Space."
 msgstr ""
+"このリンクは期限切れになりませんが、いつでも新しいリンクを生成でき、古いリンクは無効になります。現在のスペースメンバーはスペースから削除されることはありません。"
 
-#: src/components/message/Message.tsx:155
+#: src/components/modals/UserSettingsModal.tsx:490
+msgid ""
+"To disable notifications, please change the setting in your browser "
+"settings. Notifications cannot be disabled programmatically."
+msgstr "通知を無効にするには、ブラウザの設定で設定を変更してください。通知はプログラムで無効にすることはできません。"
+
+#: src/components/message/Message.tsx:169
 msgid "Today at {timeFormatted}"
 msgstr "今日は{timeFormatted}です"
 
-#: src/components/search/SearchResults.tsx:93
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:55
+msgid "Too many files selected. Please select fewer files."
+msgstr "選択されたファイルが多すぎます。より少ないファイルを選択してください。"
+
+#: src/components/search/SearchResults.tsx:90
 msgid "Try different keywords or check your spelling"
 msgstr "異なるキーワードを試すか、スペルを確認してください"
 
-#: src/components/modals/JoinSpaceModal.tsx:77
+#: src/components/ClickToCopyContent.native.tsx:158
+msgid "Unable to copy to clipboard"
+msgstr "クリップボードにコピーできません"
+
+#: src/components/modals/JoinSpaceModal.tsx:81
 msgid "Unknown"
 msgstr "不明"
 
-#: src/hooks/business/search/useSearchResultDisplaySpace.ts:46
 #: src/hooks/business/search/useSearchResultDisplay.ts:118
+#: src/hooks/business/search/useSearchResultDisplaySpace.ts:46
 msgid "Unknown Space"
 msgstr "不明な Space"
 
-#: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
-#: src/hooks/business/search/useSearchResultDisplayDM.ts:33
-#: src/hooks/business/search/useSearchResultDisplay.ts:40
-#: src/hooks/business/search/useSearchResultDisplay.ts:117
+#: src/components/context/MessageDB.tsx:819
+#: src/components/context/MessageDB.tsx:838
+#: src/components/context/MessageDB.tsx:2639
+#: src/components/context/MessageDB.tsx:3659
+#: src/components/context/MessageDB.tsx:4882
+#: src/components/direct/DirectMessage.tsx:100
+#: src/components/direct/DirectMessage.tsx:115
+#: src/components/direct/DirectMessage.tsx:193
+#: src/components/direct/DirectMessage.tsx:280
+#: src/components/modals/NewDirectMessageModal.tsx:55
+#: src/hooks/business/channels/useChannelMessages.ts:56
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
-#: src/hooks/business/channels/useChannelMessages.ts:47
-#: src/components/direct/DirectMessage.tsx:67
-#: src/components/direct/DirectMessage.tsx:82
-#: src/components/direct/DirectMessage.tsx:210
-#: src/components/context/MessageDB.tsx:817
-#: src/components/context/MessageDB.tsx:836
-#: src/components/context/MessageDB.tsx:2618
-#: src/components/context/MessageDB.tsx:3638
-#: src/components/context/MessageDB.tsx:4860
+#: src/hooks/business/search/useSearchResultDisplay.ts:40
+#: src/hooks/business/search/useSearchResultDisplay.ts:117
+#: src/hooks/business/search/useSearchResultDisplayDM.ts:33
+#: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
+#: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 msgid "Unknown User"
 msgstr "不明なユーザー"
 
-#: src/components/direct/DirectMessage.tsx:308
-msgid "Until you reply, this sender will not see your display name or profile picture"
+#: src/components/direct/DirectMessage.tsx:423
+msgid ""
+"Until you reply, this sender will not see your display name or profile "
+"picture"
 msgstr "あなたが返信するまで、この送信者はあなたの表示名やプロフィール写真を見ることができません"
 
-#: src/components/channel/SpaceEditor.tsx:594
+#: src/components/channel/SpaceEditor.tsx:635
 msgid "Upload Emoji"
 msgstr "絵文字をアップロード"
 
-#: src/components/channel/SpaceEditor.tsx:680
+#: src/components/channel/SpaceEditor.tsx:721
 msgid "Upload Sticker"
 msgstr "ステッカーをアップロード"
 
-#: src/components/modals/KickUserModal.tsx:30
+#: src/hooks/platform/files/useFileDownload.native.ts:203
+msgid "Use \"Save to Files\" to save your private key"
+msgstr "プライベートキーを保存するには「ファイルに保存」を使用してください"
+
+#: src/components/modals/KickUserModal.tsx:34
 msgid "Use the below button to kick this user out of the Space"
 msgstr "以下のボタンを使ってこのユーザーをスペースから追い出してください"
 
-#: src/components/modals/NewDirectMessageModal.tsx:46
+#: src/components/modals/NewDirectMessageModal.tsx:92
 msgid "User address here"
 msgstr "ユーザーアドレスはこちら"
 
-#~ msgid "User does not exist"
-#~ msgstr "ユーザーは存在しません"
-
-#: src/hooks/business/validation/useAddressValidation.ts:106
+#: src/hooks/business/validation/useAddressValidation.native.ts:109
+#: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "ユーザーは存在しません。"
 
@@ -1073,46 +1318,61 @@ msgstr "ユーザーは存在しません。"
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr "useWebSocketはWebSocketProvider内で使用する必要があります"
 
-#: src/components/onboarding/Onboarding.tsx:161
+#: src/components/onboarding/Onboarding.native.tsx:226
+#: src/components/onboarding/Onboarding.tsx:107
 msgid "Welcome to Quorum!"
 msgstr "Quorumへようこそ！"
 
-#: src/components/direct/EmptyDirectMessage.tsx:65
+#: src/components/direct/EmptyDirectMessage.tsx:67
 msgid "What's on your mind today?"
 msgstr "今日は何を考えていますか？"
 
-#: src/components/modals/UserSettingsModal.tsx:394
-msgid "When enabled, direct messages are not signed by your user key..."
-msgstr "有効にすると、ダイレクトメッセージはユーザーキーによって署名されません..."
+#: src/components/modals/UserSettingsModal.tsx:389
+msgid ""
+"When enabled, synchronizes your user data, Spaces, and Space keys between "
+"devices. Enabling this increases metadata visibility of your account, which "
+"can reveal when you have joined new Spaces, although not the Spaces you have"
+" joined."
+msgstr ""
+"有効にすると、あなたのユーザーデータ、スペース、およびスペースキーがデバイス間で同期されます。これを有効にすると、あなたのアカウントのメタデータの可視性が向上し、新しいスペースに参加したときが明らかになる可能性がありますが、参加したスペース自体は明らかになりません。"
 
-#: src/components/modals/UserSettingsModal.tsx:372
-msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
-msgstr "有効にすると、あなたのユーザーデータ、スペース、およびスペースキーがデバイス間で同期されます。これを有効にすると、あなたのアカウントのメタデータの可視性が向上し、新しいスペースに参加したときが明らかになる可能性がありますが、参加したスペース自体は明らかになりません。"
+#: src/components/modals/CreateSpaceModal.tsx:153
+msgid ""
+"When this setting is enabled, invite links will automatically allow a user "
+"to join your Space. When it is not enabled, users following an invite link "
+"will send you a request to join your Space that you must manually approve. "
+"Public links require some key material to be present in the link – be aware "
+"that possession of a public Space link can allow anyone with the link to "
+"read messages on the Space for the duration of the link being valid."
+msgstr ""
+"この設定が有効になっている場合、招待リンクは自動的にユーザーがあなたのスペースに参加することを許可します。有効でない場合、招待リンクをフォローしているユーザーは、あなたのスペースに参加するためのリクエストを送信し、手動で承認する必要があります。公開リンクには、リンクに存在する必要があるいくつかのキー素材が必要です。公開スペースリンクを所持していると、リンクが有効な間、誰でもそのリンクを使ってスペースのメッセージを読むことができることに注意してください。"
 
-#: src/components/modals/CreateSpaceModal.tsx:155
-msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
-msgstr "この設定が有効になっている場合、招待リンクは自動的にユーザーがあなたのスペースに参加することを許可します。有効でない場合、招待リンクをフォローしているユーザーは、あなたのスペースに参加するためのリクエストを送信し、手動で承認する必要があります。公開リンクには、リンクに存在する必要があるいくつかのキー素材が必要です。公開スペースリンクを所持していると、リンクが有効な間、誰でもそのリンクを使ってスペースのメッセージを読むことができることに注意してください。"
-
-#: src/components/onboarding/Onboarding.tsx:197
-msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+#: src/components/onboarding/Onboarding.tsx:143
+msgid ""
+"When using Quorum on a browser, your messages are saved locally to your "
+"browser."
 msgstr "ブラウザでQuorumを使用しているとき、あなたのメッセージはローカルにブラウザに保存されます"
 
-#: src/hooks/business/search/useSearchResultFormatting.ts:40
+#: src/hooks/business/search/useSearchResultFormatting.ts:39
 msgid "Yesterday"
 msgstr "昨日"
 
-#: src/components/message/Message.tsx:158
+#: src/components/message/Message.tsx:172
 msgid "Yesterday at {timeFormatted}"
 msgstr "昨日は{timeFormatted}です"
 
-#: src/components/direct/DirectMessage.tsx:167
+#: src/components/direct/DirectMessage.tsx:236
 msgid "You"
 msgstr "あなた"
 
-#~ msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
-#~ msgstr "下のデフォルト画像をクリックして、システムのファイルダイアログで選択するか、新しい画像をドラッグ＆ドロップできます。"
+#: src/components/modals/NewDirectMessageModal.tsx:142
+msgid ""
+"You can change this later for this conversation by clicking the lock icon in"
+" the Conversation view."
+msgstr "会話ビューでロックアイコンをクリックすることで、この会話のために後で変更できます。"
 
-#: src/hooks/business/validation/useAddressValidation.ts:56
+#: src/hooks/business/validation/useAddressValidation.native.ts:59
+#: src/hooks/business/validation/useAddressValidation.ts:60
 msgid "You cannot send a direct message to yourself."
 msgstr "自分自身にダイレクトメッセージを送信することはできません。"
 
@@ -1124,13 +1384,137 @@ msgstr "新しい未読メッセージがあります"
 msgid "You have new unread messages"
 msgstr "新しい未読メッセージがあります"
 
-#~ msgid "You will be able to change this later in your settings."
-#~ msgstr "後で設定でこれを変更できるようになります。"
-
-#: src/components/onboarding/Onboarding.tsx:416
+#: src/components/onboarding/Onboarding.native.tsx:460
+#: src/components/onboarding/Onboarding.tsx:335
 msgid "You're all set. Welcome to Quorum!"
 msgstr "すべて準備完了です。Quorumへようこそ！"
 
-#: src/components/message/InviteLink.tsx:27
+#: src/components/message/InviteLink.tsx:29
 msgid "You've been invited to join a Space"
 msgstr "スペースに参加するよう招待されました"
+
+#: src/hooks/platform/files/useFileDownload.native.ts:79
+msgid ""
+"Your device doesn't support automatic file downloads. Your private key will "
+"be copied to clipboard so you can save it manually."
+msgstr "お使いのデバイスは自動ファイルダウンロードをサポートしていません。プライベートキーはクリップボードにコピーされるので、手動で保存できます。"
+
+#: src/hooks/platform/files/useFileDownload.native.ts:97
+msgid ""
+"Your private key has been copied to clipboard. Save it as \"AccountID.key\" "
+"(you can find your Account ID in Settings later). NEVER share this key!"
+msgstr ""
+"プライベートキーがクリップボードにコピーされました。「AccountID.key」として保存してください（後で設定でアカウントIDを見つけることができます）。このキーを絶対に共有しないでください！"
+
+#: src/components/onboarding/Onboarding.native.tsx:347
+msgid ""
+"Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG "
+"file extension."
+msgstr "プロフィール画像のサイズは2MB以下でなければならず、PNG、JPG、またはJPEGファイル拡張子でなければなりません。"
+
+#~ msgid "Add Space"
+#~ msgstr "スペースを追加"
+
+#~ msgid ""
+#~ "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
+#~ msgstr "最大50個のカスタム絵文字を追加できます。カスタム絵文字はスペース内でのみ使用できます。"
+
+#~ msgid ""
+#~ "Add up to 50 custom stickers. Custom stickers can only be used within a "
+#~ "Space."
+#~ msgstr "最大50個のカスタムステッカーを追加できます。カスタムステッカーはスペース内でのみ使用できます。"
+
+#~ msgid ""
+#~ "Are you sure you want to leave {0}? You won't be able to rejoin unless you "
+#~ "are re-invited."
+#~ msgstr "{0} を離れてもよろしいですか？再招待されない限り、再参加することはできません。"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "削除を確認"
+
+#~ msgid "Copy address to clipboard"
+#~ msgstr "アドレスをクリップボードにコピー"
+
+#~ msgid "Copy to clipboard"
+#~ msgstr "クリップボードにコピー"
+
+#~ msgid "dark"
+#~ msgstr "ダーク"
+
+#~ msgid "Do it!"
+#~ msgstr "やってみて！"
+
+#~ msgid "Edit Profile"
+#~ msgstr "プロフィールを編集"
+
+#~ msgid "Edit Space"
+#~ msgstr "スペースを編集"
+
+#~ msgid ""
+#~ "Let your friends know who you are! Pick a friendly name to display in your "
+#~ "conversations, something easier to read than {0}"
+#~ msgstr "友達に自分を知らせよう！会話で表示するフレンドリーな名前を選んで、{0}よりも読みやすいものにしよう"
+
+#~ msgid "light"
+#~ msgstr "ライト"
+
+#~ msgid "Max file size: 256kB"
+#~ msgstr "最大ファイルサイズ：256kB"
+
+#~ msgid "Non-repudiability"
+#~ msgstr "非否認性"
+
+#~ msgid ""
+#~ "Notifications are blocked. Please enable them in your browser settings for "
+#~ "this site."
+#~ msgstr "通知がブロックされています。このサイトのブラウザ設定で有効にしてください。"
+
+#~ msgid "Repudiability"
+#~ msgstr "拒否可能性"
+
+#~ msgid ""
+#~ "Repudiability is a setting that makes conversations in this Space "
+#~ "unverifiable as originating from the named sender. This can be useful in "
+#~ "sensitive situations, but it also means others may forge messages that "
+#~ "appear to come from you."
+#~ msgstr ""
+#~ "拒否可能性は、このスペース内の会話が指定された送信者から発信されたことを検証できなくする設定です。これは敏感な状況で役立つことがありますが、他の人があなたからのメッセージのように見えるメッセージを偽造する可能性があることも意味します。"
+
+#~ msgid "Requirements:"
+#~ msgstr "要件:"
+
+#~ msgid "Search in direct messages"
+#~ msgstr "ダイレクトメッセージを検索"
+
+#~ msgid "Search messages"
+#~ msgstr "メッセージを検索"
+
+#~ msgid ""
+#~ "Start with a message to a friend. Click on the add button next to the direct"
+#~ " messages list."
+#~ msgstr "友達へのメッセージから始めましょう。ダイレクトメッセージリストの隣にある追加ボタンをクリックしてください。"
+
+#~ msgid "Supported types: PNG, JPG, GIF"
+#~ msgstr "サポートされているタイプ: PNG, JPG, GIF"
+
+#~ msgid "system"
+#~ msgstr "システム"
+
+#~ msgid ""
+#~ "To disable notifications, please change the notification settings in your "
+#~ "browser for this site."
+#~ msgstr "通知を無効にするには、このサイトのブラウザ設定で通知設定を変更してください。"
+
+#~ msgid "User does not exist"
+#~ msgstr "ユーザーは存在しません"
+
+#~ msgid "When enabled, direct messages are not signed by your user key..."
+#~ msgstr "有効にすると、ダイレクトメッセージはユーザーキーによって署名されません..."
+
+#~ msgid ""
+#~ "You can click the default image below to select it with your system's file "
+#~ "dialog or drag and drop a new one."
+#~ msgstr "下のデフォルト画像をクリックして、システムのファイルダイアログで選択するか、新しい画像をドラッグ＆ドロップできます。"
+
+#~ msgid "You will be able to change this later in your settings."
+#~ msgstr "後で設定でこれを変更できるようになります。"
