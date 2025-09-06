@@ -5,7 +5,7 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Button, Input } from '../primitives';
 import './UserProfile.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useMessageDB } from '../context/MessageDB';
+import { useMessageDB } from '../context/useMessageDB';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../utils';
 

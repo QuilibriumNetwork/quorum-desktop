@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { buildConfigFetcher } from './buildConfigFetcher';
 import { buildConfigKey } from './buildConfigKey';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 
 const useConfig = ({ userAddress }: { userAddress: string }) => {
   const { messageDB } = useMessageDB();

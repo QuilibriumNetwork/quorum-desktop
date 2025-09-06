@@ -10,7 +10,7 @@ import {
 } from '../primitives';
 import { useSpace } from '../../hooks';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
-import { useMessageDB } from '../context/MessageDB';
+import { useMessageDB } from '../context/useMessageDB';
 import { Channel } from '../../api/quorumApi';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';

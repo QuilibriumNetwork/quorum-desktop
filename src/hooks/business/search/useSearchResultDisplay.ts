@@ -3,7 +3,7 @@ import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../../db/messages';
 import { useUserInfo } from '../../queries/userInfo/useUserInfo';
 import { useSpace } from '../../queries/space/useSpace';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 import { DefaultImages } from '../../../utils';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 

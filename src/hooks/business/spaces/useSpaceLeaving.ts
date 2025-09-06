@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 
 export const useSpaceLeaving = () => {
   const [confirmationStep, setConfirmationStep] = useState(0); // 0: initial, 1: awaiting confirmation

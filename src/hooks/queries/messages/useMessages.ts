@@ -2,7 +2,7 @@ import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 
 import { buildMessagesFetcher } from './buildMessagesFetcher';
 import { buildMessagesKey } from './buildMessagesKey';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 
 const useMessages = ({
   spaceId,

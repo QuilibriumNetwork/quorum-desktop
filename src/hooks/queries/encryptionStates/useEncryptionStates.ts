@@ -2,7 +2,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { buildEncryptionStatesFetcher } from './buildEncryptionStatesFetcher';
 import { buildEncryptionStatesKey } from './buildEncryptionStatesKey';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 
 const useEncryptionStates = ({
   conversationId,

@@ -6,7 +6,7 @@ import {
   useChannelMessages,
   useMessageComposer,
 } from '../../hooks';
-import { useMessageDB } from '../context/MessageDB';
+import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { MessageList, MessageListRef } from '../message/MessageList';

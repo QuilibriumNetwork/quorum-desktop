@@ -5356,6 +5356,4 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   requestSync: () => undefined as never,
 });
 
-const useMessageDB = () => useContext(MessageDBContext);
-
-export { useMessageDB, MessageDBProvider };
+export { MessageDBProvider, MessageDBContext };

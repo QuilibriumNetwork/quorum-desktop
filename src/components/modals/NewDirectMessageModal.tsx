@@ -3,7 +3,7 @@ import { Input, Button, Modal, Container, Text, Switch, Icon, Tooltip, FlexRow }
 import './NewDirectMessageModal.scss';
 import { t } from '@lingui/core/macro';
 import { useDirectMessageCreation } from '../../hooks';
-import { useMessageDB } from '../context/MessageDB';
+import { useMessageDB } from '../context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { DefaultImages } from '../../utils';
 

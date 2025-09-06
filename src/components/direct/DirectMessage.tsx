@@ -9,7 +9,7 @@ import {
   useDirectMessagesList,
 } from '../../hooks';
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
-import { useMessageDB } from '../context/MessageDB';
+import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSidebar } from '../context/SidebarProvider';
 import { MessageList, MessageListRef } from '../message/MessageList';

@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useRegistration } from '../../queries';
-import { useRegistrationContext } from '../../../components/context/RegistrationPersister';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 import { UserConfig } from '../../../db/messages';
 import { DefaultImages } from '../../../utils';
 

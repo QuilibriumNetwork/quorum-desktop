@@ -2,7 +2,7 @@ import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
 
 import { buildConversationsFetcher } from './buildConversationsFetcher';
 import { buildConversationsKey } from './buildConversationsKey';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 
 const useConversations = ({ type }: { type: 'direct' | 'group' }) => {
   const { messageDB } = useMessageDB();

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { buildConversationFetcher } from './buildConversationFetcher';
 import { buildConversationKey } from './buildConversationKey';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 
 const useConversation = ({ conversationId }: { conversationId: string }) => {
   const { messageDB } = useMessageDB();

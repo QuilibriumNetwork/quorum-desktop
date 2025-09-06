@@ -2,7 +2,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 
 import { buildSpacesFetcher } from './buildSpacesFetcher';
 import { buildSpacesKey } from './buildSpacesKey';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 
 const useSpaces = ({}: {}) => {
   const { messageDB } = useMessageDB();
