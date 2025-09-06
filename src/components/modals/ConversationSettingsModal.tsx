@@ -6,6 +6,8 @@ import { useConversation } from '../../hooks/queries/conversation/useConversatio
 import { useConversations } from '../../hooks';
 import { DefaultImages } from '../../utils';
 import { Modal, Button, Switch, Icon, Tooltip } from '../primitives';
+import { useQueryClient } from '@tanstack/react-query';
+import { buildConversationKey } from '../../hooks/queries/conversation/buildConversationKey';
 
 type ConversationSettingsModalProps = {
   conversationId: string;
@@ -22,6 +24,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   const { messageDB, getConfig, keyset, deleteConversation } = useMessageDB();
   const navigate = useNavigate();
   const { data: convPages } = useConversations({ type: 'direct' });
+  const queryClient = useQueryClient();
 
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
   const [confirmingDelete, setConfirmingDelete] = React.useState(false);
@@ -66,11 +69,17 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
         ...baseConv,
         isRepudiable: !nonRepudiable,
       });
+      
+      // Invalidate conversation query to update DirectMessage component
+      await queryClient.invalidateQueries({
+        queryKey: buildConversationKey({ conversationId }),
+      });
+      
       onClose();
     } catch {
       onClose();
     }
-  }, [nonRepudiable, conversationId, messageDB, conversation, onClose]);
+  }, [nonRepudiable, conversationId, messageDB, conversation, onClose, queryClient]);
 
   const handleDeleteConversation = React.useCallback(async () => {
     await deleteConversation(conversationId);
@@ -106,12 +115,12 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
             <div className="flex flex-row justify-between">
               <div className="text-sm flex flex-row">
                 <div className="text-sm flex flex-col justify-around">
-                  {t`Require Message Signing`}
+                  {t`Always sign messages`}
                 </div>
                 <div className="text-sm flex flex-col justify-around ml-2">
                   <Tooltip
                     id="conv-repudiability-tooltip"
-                    content={t`Require messages sent in this Conversation to be signed by the sender. Technically speaking, this makes messages in this Conversation non-repudiable. The default for all Conversations can be changed in User Settings.`}
+                    content={t`Always sign messages sent in this conversation. Technically speaking, this makes your messages in non-repudiable. The default for all conversations can be changed in User Settings.`}
                     className="!w-[400px] !text-left"
                   >
                     <Icon name="info-circle" className="info-icon-tooltip" />
@@ -119,7 +128,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
                 </div>
               </div>
               <Switch
-                value={!nonRepudiable}
+                value={nonRepudiable}
                 onChange={() => setNonRepudiable((prev) => !prev)}
               />
             </div>

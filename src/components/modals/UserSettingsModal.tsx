@@ -395,7 +395,7 @@ const UserSettingsModal: React.FunctionComponent<{
                               </div>
                               <Tooltip
                                 id="settings-non-repudiable-tooltip"
-                                content={t`Always sign Direct Messages in  Conversations. This can be overridden for finer-grain control by clicking the lock icon found in each Conversation view.`}
+                                content={t`Always sign Direct Messages in conversations. This can be overridden for finer-grain control by clicking the lock icon found in each conversation view.`}
                                 place="right"
                               >
                                 <Icon
