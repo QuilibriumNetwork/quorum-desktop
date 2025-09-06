@@ -94,23 +94,6 @@ const NewDirectMessageModal: React.FunctionComponent<
             errorMessage={error || undefined}
           />
         </Container>
-        <Container margin="none" className="mt-4">
-          <FlexRow className="items-center justify-between">
-            <FlexRow className="items-center text-sm text-subtle gap-1">
-              <span>{t`Always sign messages`}</span>
-              <Icon
-                name="info-circle"
-                size="xs"
-                className="text-subtle"
-                data-tooltip-id="dm-nonrepudiable-tip"
-              />
-            </FlexRow>
-            <Switch
-              value={nonRepudiable}
-              onChange={() => setNonRepudiable(!nonRepudiable)}
-            />
-          </FlexRow>
-        </Container>
         <React.Suspense
           fallback={
             <Container className="modal-new-direct-message-actions">
@@ -136,13 +119,31 @@ const NewDirectMessageModal: React.FunctionComponent<
             </Button>
           </Container>
         </React.Suspense>
+        
+        <Container margin="none" className="mt-6 pt-4 border-t border-default">
+          <FlexRow className="items-center justify-between">
+            <FlexRow className="items-center text-sm text-subtle gap-1">
+              <span>{t`Always sign messages`}</span>
+              <Tooltip
+                id="dm-nonrepudiable-tip"
+                content={t`You can change this later for this conversation by clicking the lock icon in the Conversation view.`}
+                maxWidth={260}
+                className="!text-left"
+              >
+                <Icon
+                  name="info-circle"
+                  size="xs"
+                  className="text-subtle info-icon-tooltip"
+                />
+              </Tooltip>
+            </FlexRow>
+            <Switch
+              value={nonRepudiable}
+              onChange={() => setNonRepudiable(!nonRepudiable)}
+            />
+          </FlexRow>
+        </Container>
       </Container>
-      <Tooltip
-        id="dm-nonrepudiable-tip"
-        content={t`You can change this later for this conversation by clicking the lock icon in the Conversation view.`}
-        className="max-w-[260px]"
-        place="top"
-      />
     </Modal>
   );
 };
