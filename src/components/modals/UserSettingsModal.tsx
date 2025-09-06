@@ -189,7 +189,7 @@ const UserSettingsModal: React.FunctionComponent<{
                     <>
                       <div className="modal-content-header flex flex-col md:flex-row md:items-center md:justify-center md:gap-6">
                         <div className="flex justify-start md:mt-4">
-                          {fileData ? (
+                          {(fileData || (currentPasskeyInfo?.pfpUrl && !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER))) ? (
                             <div
                               id="user-icon-tooltip-target"
                               className="modal-icon-editable cursor-pointer"
