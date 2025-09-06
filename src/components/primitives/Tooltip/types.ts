@@ -27,6 +27,7 @@ export interface TooltipProps {
   touchTrigger?: 'click' | 'long-press';
   longPressDuration?: number;
   showOnTouch?: boolean;
+  autoHideAfter?: number; // Auto-hide timeout in milliseconds for touch devices
 }
 
 export interface TooltipWebProps extends TooltipProps {

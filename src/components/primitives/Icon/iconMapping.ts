@@ -77,6 +77,9 @@ import {
   faBullseye,
   faPencil,
 } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCircle as faCircleRegular,
+} from '@fortawesome/free-regular-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { IconName } from './types';
 
@@ -151,6 +154,7 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   // Status & Alerts
   info: faInfoCircle, // alias for info-circle
   warning: faExclamationTriangle,
+  'warning-outline': faExclamationTriangle, // solid triangle - will be styled as outlined via CSS
   error: faExclamationTriangle, // alias for warning
   success: faCheck, // alias for check
   'exclamation-triangle': faExclamationTriangle,
@@ -262,6 +266,7 @@ export const reactNativeIconMap: Record<IconName, string> = {
   // Status & Alerts
   info: 'info-circle',
   warning: 'exclamation-triangle',
+  'warning-outline': 'triangle-exclamation', // outlined warning triangle
   error: 'exclamation-triangle',
   success: 'check',
   'exclamation-triangle': 'exclamation-triangle',

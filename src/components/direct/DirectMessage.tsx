@@ -21,6 +21,7 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages, truncateAddress } from '../../utils';
+import { isTouchDevice } from '../../utils/platform';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { Button, Container, FlexRow, FlexColumn, Text, Icon, Tooltip } from '../primitives';
@@ -178,6 +179,35 @@ const DirectMessage: React.FC<{}> = () => {
     [address, self, registration, queryClient, user, keyset, submitMessage, nonRepudiable, skipSigning]
   );
 
+  // Handle signing toggle
+  const handleSigningToggle = React.useCallback(async () => {
+    const next = !nonRepudiable;
+    setNonRepudiable(next);
+    
+    try {
+      const existing = await messageDB.getConversation({ conversationId });
+      const baseConv = existing.conversation ?? {
+        conversationId,
+        address: address!,
+        icon: otherUser.userIcon || DefaultImages.UNKNOWN_USER,
+        displayName: otherUser.displayName || t`Unknown User`,
+        type: 'direct' as const,
+        timestamp: Date.now(),
+      };
+      await messageDB.saveConversation({ ...baseConv, isRepudiable: !next });
+      if (!next) {
+        const cfg = await getConfig({
+          address: user.currentPasskeyInfo!.address,
+          userKey: keyset.userKeyset,
+        });
+        const userNonRepudiable = cfg?.nonRepudiable ?? true;
+        setSkipSigning(!userNonRepudiable);
+      } else {
+        setSkipSigning(false);
+      }
+    } catch {}
+  }, [nonRepudiable, messageDB, conversationId, address, otherUser.userIcon, otherUser.displayName, getConfig, user.currentPasskeyInfo, keyset, setNonRepudiable, setSkipSigning]);
+
   // Use MessageComposer hook
   const composer = useMessageComposer({
     type: 'direct',
@@ -283,38 +313,24 @@ const DirectMessage: React.FC<{}> = () => {
                 />
               )}
               {/* Desktop: non-repudiability toggle to the left of search */}
-              <div
-                className="hidden lg:flex w-8 h-8 items-center justify-center rounded-md bg-surface-5 hover:bg-surface-6 cursor-pointer"
-                onClick={async () => {
-                  const next = !nonRepudiable;
-                  setNonRepudiable(next);
-                  try {
-                    const existing = await messageDB.getConversation({ conversationId });
-                    const baseConv = existing.conversation ?? {
-                      conversationId,
-                      address: address!,
-                      icon: otherUser.userIcon || DefaultImages.UNKNOWN_USER,
-                      displayName: otherUser.displayName || t`Unknown User`,
-                      type: 'direct' as const,
-                      timestamp: Date.now(),
-                    };
-                    await messageDB.saveConversation({ ...baseConv, isRepudiable: !next });
-                    if (!next) {
-                      const cfg = await getConfig({
-                        address: user.currentPasskeyInfo!.address,
-                        userKey: keyset.userKeyset,
-                      });
-                      const userNonRepudiable = cfg?.nonRepudiable ?? true;
-                      setSkipSigning(!userNonRepudiable);
-                    } else {
-                      setSkipSigning(false);
-                    }
-                  } catch {}
-                }}
-                data-tooltip-id="dm-repudiability-toggle"
+              <Tooltip
+                id="dm-signing-toggle-desktop"
+                content={nonRepudiable ? t`Messages are signed!` : t`Messages are NOT signed!`}
+                place="bottom"
+                showOnTouch={true}
+                autoHideAfter={1500}
               >
-                <Icon name={nonRepudiable ? 'lock' : 'unlock'} size="sm" className="text-subtle" />
-              </div>
+                <div
+                  className="hidden lg:flex w-8 h-8 items-center justify-center rounded-md hover:bg-surface-6 cursor-pointer"
+                  onClick={handleSigningToggle}
+                >
+                  <Icon 
+                    name={nonRepudiable ? 'lock' : 'unlock'} 
+                    size="sm" 
+                    className={nonRepudiable ? 'text-subtle' : 'text-warning-hex'} 
+                  />
+                </div>
+              </Tooltip>
               <GlobalSearch className="dm-search flex-1 lg:flex-none max-w-xs lg:max-w-none" />
             </FlexRow>
             <FlexRow className="items-center gap-2">
@@ -323,43 +339,29 @@ const DirectMessage: React.FC<{}> = () => {
               onClick={() => {
                 setShowUsers(!showUsers);
               }}
-              className="w-6 h-6 p-2 !rounded-md cursor-pointer hover:bg-surface-6 flex items-center justify-center [&_.quorum-button-icon-element]:text-sm"
+              className="w-8 h-8 !rounded-md cursor-pointer hover:bg-surface-6 flex items-center justify-center [&_.quorum-button-icon-element]:text-sm"
               iconName="users"
               iconOnly
             />
               {/* Mobile: non-repudiability toggle at far right */}
-              <div
-                className="flex lg:hidden w-8 h-8 items-center justify-center rounded-md bg-surface-5 hover:bg-surface-6 cursor-pointer"
-                onClick={async () => {
-                  const next = !nonRepudiable;
-                  setNonRepudiable(next);
-                  try {
-                    const existing = await messageDB.getConversation({ conversationId });
-                    const baseConv = existing.conversation ?? {
-                      conversationId,
-                      address: address!,
-                      icon: otherUser.userIcon || DefaultImages.UNKNOWN_USER,
-                      displayName: otherUser.displayName || t`Unknown User`,
-                      type: 'direct' as const,
-                      timestamp: Date.now(),
-                    };
-                    await messageDB.saveConversation({ ...baseConv, isRepudiable: !next });
-                    if (!next) {
-                      const cfg = await getConfig({
-                        address: user.currentPasskeyInfo!.address,
-                        userKey: keyset.userKeyset,
-                      });
-                      const userNonRepudiable = cfg?.nonRepudiable ?? true;
-                      setSkipSigning(!userNonRepudiable);
-                    } else {
-                      setSkipSigning(false);
-                    }
-                  } catch {}
-                }}
-                data-tooltip-id="dm-repudiability-toggle"
+              <Tooltip
+                id="dm-signing-toggle-mobile"
+                content={nonRepudiable ? t`Messages are signed!` : t`Messages are NOT signed!`}
+                place="bottom"
+                showOnTouch={true}
+                autoHideAfter={1500}
               >
-                <Icon name={nonRepudiable ? 'lock' : 'unlock'} size="sm" className="text-subtle" />
-              </div>
+                <div
+                  className="flex lg:hidden w-8 h-8 items-center justify-center rounded-md hover:bg-transparent cursor-pointer"
+                  onClick={handleSigningToggle}
+                >
+                  <Icon 
+                    name={nonRepudiable ? 'lock' : 'unlock'} 
+                    size="sm" 
+                    className={nonRepudiable ? 'text-subtle' : 'text-warning-hex'} 
+                  />
+                </div>
+              </Tooltip>
             </FlexRow>
           </FlexRow>
           <Container className="flex-1 min-w-0 lg:order-1">
@@ -465,11 +467,6 @@ const DirectMessage: React.FC<{}> = () => {
       >
         {rightSidebarContent}
       </Container>
-      <Tooltip
-        id="dm-repudiability-toggle"
-        content={nonRepudiable ? t`Always sign this conversation's messages` : t`You may choose not to sign this conversation's messages`}
-        place="top"
-      />
     </div>
   );
 };

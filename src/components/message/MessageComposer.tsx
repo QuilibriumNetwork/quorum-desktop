@@ -159,6 +159,18 @@ export const MessageComposer = forwardRef<
             </div>
           </Tooltip>
 
+          {hasStickers && (
+            <Tooltip id="add-sticker" content={t`add sticker`} place="top">
+              <Button
+                type="unstyled"
+                className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
+                onClick={onShowStickers}
+                iconName="smile"
+                iconOnly
+              />
+            </Tooltip>
+          )}
+
           <TextArea
             ref={textareaRef}
             value={value}
@@ -181,41 +193,26 @@ export const MessageComposer = forwardRef<
             }}
           />
 
-          {hasStickers && (
-            <Tooltip id="add-sticker" content={t`add sticker`} place="top">
-              <Button
-                type="unstyled"
-                className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
-                onClick={onShowStickers}
-                iconName="smile"
-                iconOnly
-              />
-            </Tooltip>
-          )}
-
           {showSigningToggle && (
             <Tooltip
-              id="toggle-signing-tooltip-dm"
+              id="composer-signing-toggle"
               content={
                 skipSigning
-                  ? t`This message will NOT be signed`
-                  : t`This message will be signed`
+                  ? t`Messages are NOT signed!`
+                  : t`Messages are signed!`
               }
               place="top"
+              showOnTouch={true}
+              autoHideAfter={1500}
             >
               <div
-                className={
-                  (skipSigning
-                    ? 'cursor-pointer bg-red-600 hover:bg-red-500'
-                    : 'cursor-pointer bg-blue-600 hover:bg-blue-500') +
-                  ' flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0'
-                }
+                className="cursor-pointer bg-transparent hover:bg-transparent lg:hover:bg-surface-6 flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0"
                 onClick={onSigningToggle}
               >
                 <Icon
                   name={skipSigning ? 'unlock' : 'lock'}
                   size="sm"
-                  className="text-white"
+                  className={skipSigning ? 'text-warning-hex' : 'text-subtle'}
                 />
               </div>
             </Tooltip>
