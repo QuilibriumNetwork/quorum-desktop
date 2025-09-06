@@ -376,17 +376,21 @@ const DirectMessage: React.FC<{}> = () => {
               </FlexColumn>
               <FlexRow className="pl-2">
                 <FlexColumn className="justify-around font-semibold">
-                  <Text>{otherUser.displayName} |</Text>
+                  <Text>{otherUser.displayName}</Text>
                 </FlexColumn>
-                <FlexColumn className="justify-around pl-1">
+                <FlexColumn className="justify-around px-1">
+                  <Text className="text-subtle">|</Text>
+                </FlexColumn>
+                <FlexColumn className="justify-around">
                   <FlexRow className="items-center">
                     <ClickToCopyContent
                       text={address ?? ''}
                       tooltipText={t`Copy address`}
                       tooltipLocation="right"
-                      className="font-light text-sm text-subtle"
+                      className="font-light text-xs text-subtle"
                       iconPosition="right"
                       iconClassName="text-subtle hover:text-surface-7"
+                      iconSize="xs"
                     >
                       {truncateAddress(address ?? '')}
                     </ClickToCopyContent>
