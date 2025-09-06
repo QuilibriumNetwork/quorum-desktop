@@ -27,7 +27,8 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   const queryClient = useQueryClient();
 
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
-  const [confirmingDelete, setConfirmingDelete] = React.useState(false);
+  const [confirmationStep, setConfirmationStep] = React.useState<number>(0);
+  const [confirmationTimeout, setConfirmationTimeout] = React.useState<NodeJS.Timeout | null>(null);
 
   React.useEffect(() => {
     (async () => {
@@ -81,26 +82,60 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
     }
   }, [nonRepudiable, conversationId, messageDB, conversation, onClose, queryClient]);
 
-  const handleDeleteConversation = React.useCallback(async () => {
-    await deleteConversation(conversationId);
-    // Redirect to first conversation (excluding the deleted one) if exists, else /messages
-    const list = (convPages?.pages || [])
-      .flatMap((p: any) => p.conversations)
-      .filter((c: any) => !!c)
-      .sort((a: any, b: any) => (b.timestamp || 0) - (a.timestamp || 0));
-    const currentAddr = conversationId.split('/')[0];
-    const next = list.find(
-      (c: any) => (c.address || c.conversationId.split('/')[0]) !== currentAddr
-    );
-    if (next) {
-      const addr = (next as any).address || next.conversationId.split('/')[0];
-      navigate(`/messages/${addr}`);
+  const handleDeleteClick = React.useCallback(async () => {
+    if (confirmationStep === 0) {
+      // First click - show confirmation
+      setConfirmationStep(1);
+      // Reset confirmation after 5 seconds
+      const timeout = setTimeout(() => setConfirmationStep(0), 5000);
+      setConfirmationTimeout(timeout);
     } else {
-      navigate('/messages');
+      // Second click - execute deletion
+      // Clear the timeout since we're confirming
+      if (confirmationTimeout) {
+        clearTimeout(confirmationTimeout);
+        setConfirmationTimeout(null);
+      }
+      await deleteConversation(conversationId);
+      // Redirect to first conversation (excluding the deleted one) if exists, else /messages
+      const list = (convPages?.pages || [])
+        .flatMap((p: any) => p.conversations)
+        .filter((c: any) => !!c)
+        .sort((a: any, b: any) => (b.timestamp || 0) - (a.timestamp || 0));
+      const currentAddr = conversationId.split('/')[0];
+      const next = list.find(
+        (c: any) => (c.address || c.conversationId.split('/')[0]) !== currentAddr
+      );
+      if (next) {
+        const addr = (next as any).address || next.conversationId.split('/')[0];
+        navigate(`/messages/${addr}`);
+      } else {
+        navigate('/messages');
+      }
+      setConfirmationStep(0);
+      onClose();
     }
-    setConfirmingDelete(false);
-    onClose();
-  }, [deleteConversation, conversationId, convPages, navigate, onClose]);
+  }, [confirmationStep, confirmationTimeout, deleteConversation, conversationId, convPages, navigate, onClose]);
+
+  // Reset confirmation when modal closes
+  React.useEffect(() => {
+    if (!visible) {
+      setConfirmationStep(0);
+      if (confirmationTimeout) {
+        clearTimeout(confirmationTimeout);
+        setConfirmationTimeout(null);
+      }
+    }
+  }, [visible, confirmationTimeout]);
+
+  // Clean up timeout on unmount
+  React.useEffect(() => {
+    return () => {
+      if (confirmationTimeout) {
+        clearTimeout(confirmationTimeout);
+      }
+    };
+  }, [confirmationTimeout]);
 
   return (
     <>
@@ -149,39 +184,13 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
               {t`Deletes conversation keys, user profile information, and messages on your computer only. These messages will still exist on the recipent's computer, so they must also delete on their end to complete a full deletion.`}
             </div>
             <div className="flex gap-3">
-              <Button type="danger" onClick={() => setConfirmingDelete(true)}>
-                {t`Delete`}
+              <Button type="danger" onClick={handleDeleteClick}>
+                {confirmationStep === 0 ? t`Delete` : t`Click again to confirm`}
               </Button>
             </div>
           </div>
         </div>
       </Modal>
-
-      {confirmingDelete && (
-        <Modal
-          title={t`Confirm Deletion`}
-          visible={true}
-          onClose={() => setConfirmingDelete(false)}
-          size="medium"
-        >
-          <div className="modal-body">
-            <div className="mb-6 text-sm text-subtle text-left max-sm:text-center">
-              {t`This will delete this conversation forever on this device. Do you wish to proceed?`}
-            </div>
-            <div className="modal-buttons-responsive">
-              <Button type="danger" onClick={handleDeleteConversation}>
-                {t`Delete Forever`}
-              </Button>
-              <Button
-                type="secondary"
-                onClick={() => setConfirmingDelete(false)}
-              >
-                {t`Cancel`}
-              </Button>
-            </div>
-          </div>
-        </Modal>
-      )}
     </>
   );
 };
