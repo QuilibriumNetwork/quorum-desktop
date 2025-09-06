@@ -22,6 +22,7 @@ import {
   buildSpaceMembersKey,
   buildSpacesKey,
 } from '../../hooks';
+import { buildConversationKey } from '../../hooks/queries/conversation/buildConversationKey';
 import {
   InfiniteData,
   QueryClient,
@@ -194,6 +195,7 @@ type MessageDBContextValue = {
     }
   ) => Promise<void>;
   requestSync: (spaceId: string) => Promise<void>;
+  deleteConversation: (conversationId: string) => Promise<void>;
 };
 
 type MessageDBContextProps = {
@@ -2392,6 +2394,50 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       } catch {}
     },
     []
+  );
+
+  const deleteConversation = React.useCallback(
+    async (conversationId: string) => {
+      try {
+        const [spaceId, channelId] = conversationId.split('/');
+        // Delete encryption states (keys) and latest state
+        const states = await messageDB.getEncryptionStates({ conversationId });
+        for (const state of states) {
+          await messageDB.deleteEncryptionState(state);
+          // Best-effort cleanup of inbox mapping for this inbox
+          if (state.inboxId) {
+            await messageDB.deleteInboxMapping(state.inboxId);
+          }
+        }
+        await messageDB.deleteLatestState(conversationId);
+
+        // Delete all messages for this conversation and remove from indices
+        await messageDB.deleteMessagesForConversation(conversationId);
+
+        // Delete conversation users mapping and metadata
+        await messageDB.deleteConversationUsers(conversationId);
+        await messageDB.deleteConversation(conversationId);
+
+        // Best-effort: remove cached user profile for counterparty
+        if (spaceId && spaceId === channelId) {
+          await messageDB.deleteUser(spaceId);
+        }
+
+        // Invalidate queries
+        await queryClient.invalidateQueries({
+          queryKey: buildMessagesKey({ spaceId, channelId }),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: buildConversationKey({ conversationId }),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: buildConversationsKey({ type: 'direct' }),
+        });
+      } catch (e) {
+        // no-op
+      }
+    },
+    [messageDB, queryClient]
   );
 
   const updateUserProfile = React.useCallback(
@@ -5326,6 +5372,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         kickUser,
         updateUserProfile,
         requestSync,
+        deleteConversation,
       }}
     >
       {children}
@@ -5354,6 +5401,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   kickUser: () => undefined as never,
   updateUserProfile: () => undefined as never,
   requestSync: () => undefined as never,
+  deleteConversation: () => undefined as never,
 });
 
 export { MessageDBProvider, MessageDBContext };

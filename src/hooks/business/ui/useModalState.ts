@@ -31,6 +31,10 @@ export interface ModalState {
     isOpen: boolean;
     kickUserAddress?: string;
   };
+  conversationSettings: {
+    isOpen: boolean;
+    conversationId?: string;
+  };
 }
 
 // Modal actions
@@ -53,7 +57,9 @@ type ModalAction =
   | { type: 'OPEN_NEW_DIRECT_MESSAGE' }
   | { type: 'CLOSE_NEW_DIRECT_MESSAGE' }
   | { type: 'OPEN_KICK_USER'; kickUserAddress: string }
-  | { type: 'CLOSE_KICK_USER' };
+  | { type: 'CLOSE_KICK_USER' }
+  | { type: 'OPEN_CONVERSATION_SETTINGS'; conversationId: string }
+  | { type: 'CLOSE_CONVERSATION_SETTINGS' };
 
 // Initial state
 const initialModalState: ModalState = {
@@ -64,6 +70,7 @@ const initialModalState: ModalState = {
   leaveSpace: { isOpen: false },
   newDirectMessage: { isOpen: false },
   kickUser: { isOpen: false },
+  conversationSettings: { isOpen: false },
 };
 
 // Modal reducer
@@ -127,6 +134,17 @@ function modalReducer(state: ModalState, action: ModalAction): ModalState {
       };
     case 'CLOSE_KICK_USER':
       return { ...state, kickUser: { isOpen: false } };
+
+    case 'OPEN_CONVERSATION_SETTINGS':
+      return {
+        ...state,
+        conversationSettings: { 
+          isOpen: true, 
+          conversationId: action.conversationId 
+        },
+      };
+    case 'CLOSE_CONVERSATION_SETTINGS':
+      return { ...state, conversationSettings: { isOpen: false } };
 
     default:
       return state;
@@ -207,6 +225,15 @@ export const useModalState = () => {
     dispatch({ type: 'CLOSE_KICK_USER' });
   }, []);
 
+  // Conversation Settings Modal
+  const openConversationSettings = useCallback((conversationId: string) => {
+    dispatch({ type: 'OPEN_CONVERSATION_SETTINGS', conversationId });
+  }, []);
+
+  const closeConversationSettings = useCallback(() => {
+    dispatch({ type: 'CLOSE_CONVERSATION_SETTINGS' });
+  }, []);
+
   return {
     // State
     state,
@@ -238,6 +265,10 @@ export const useModalState = () => {
     // Kick User
     openKickUser,
     closeKickUser,
+
+    // Conversation Settings
+    openConversationSettings,
+    closeConversationSettings,
 
     // Legacy compatibility
     isNewDirectMessageOpen: state.newDirectMessage.isOpen,

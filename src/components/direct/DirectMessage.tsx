@@ -24,12 +24,14 @@ import { DefaultImages, truncateAddress } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
+import { useModalContext } from '../context/ModalProvider';
 import { Button, Container, FlexRow, FlexColumn, Text, Icon, Tooltip } from '../primitives';
 
 const DirectMessage: React.FC<{}> = () => {
   const { isMobile, isTablet, toggleLeftSidebar } =
     useResponsiveLayoutContext();
 
+  const { openConversationSettings } = useModalContext();
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
   const { messageDB, submitMessage, keyset, getConfig } = useMessageDB();
@@ -179,34 +181,6 @@ const DirectMessage: React.FC<{}> = () => {
     [address, self, registration, queryClient, user, keyset, submitMessage, nonRepudiable, skipSigning]
   );
 
-  // Handle signing toggle
-  const handleSigningToggle = React.useCallback(async () => {
-    const next = !nonRepudiable;
-    setNonRepudiable(next);
-    
-    try {
-      const existing = await messageDB.getConversation({ conversationId });
-      const baseConv = existing.conversation ?? {
-        conversationId,
-        address: address!,
-        icon: otherUser.userIcon || DefaultImages.UNKNOWN_USER,
-        displayName: otherUser.displayName || t`Unknown User`,
-        type: 'direct' as const,
-        timestamp: Date.now(),
-      };
-      await messageDB.saveConversation({ ...baseConv, isRepudiable: !next });
-      if (!next) {
-        const cfg = await getConfig({
-          address: user.currentPasskeyInfo!.address,
-          userKey: keyset.userKeyset,
-        });
-        const userNonRepudiable = cfg?.nonRepudiable ?? true;
-        setSkipSigning(!userNonRepudiable);
-      } else {
-        setSkipSigning(false);
-      }
-    } catch {}
-  }, [nonRepudiable, messageDB, conversationId, address, otherUser.userIcon, otherUser.displayName, getConfig, user.currentPasskeyInfo, keyset, setNonRepudiable, setSkipSigning]);
 
   // Use MessageComposer hook
   const composer = useMessageComposer({
@@ -312,22 +286,21 @@ const DirectMessage: React.FC<{}> = () => {
                   iconOnly
                 />
               )}
-              {/* Desktop: non-repudiability toggle to the left of search */}
+              {/* Desktop: open Conversation Settings */}
               <Tooltip
-                id="dm-signing-toggle-desktop"
-                content={nonRepudiable ? t`Messages are signed!` : t`Messages are NOT signed!`}
+                id="dm-settings-toggle-desktop"
+                content={t`Conversation settings`}
                 place="bottom"
-                showOnTouch={true}
-                autoHideAfter={1500}
+                showOnTouch={false}
               >
                 <div
                   className="hidden lg:flex w-8 h-8 items-center justify-center rounded-md hover:bg-surface-6 cursor-pointer"
-                  onClick={handleSigningToggle}
+                  onClick={() => openConversationSettings(conversationId)}
                 >
                   <Icon 
-                    name={nonRepudiable ? 'lock' : 'unlock'} 
+                    name="cog" 
                     size="sm" 
-                    className={nonRepudiable ? 'text-subtle' : 'text-warning-hex'} 
+                    className="text-subtle" 
                   />
                 </div>
               </Tooltip>
@@ -343,22 +316,21 @@ const DirectMessage: React.FC<{}> = () => {
               iconName="users"
               iconOnly
             />
-              {/* Mobile: non-repudiability toggle at far right */}
+              {/* Mobile: open Conversation Settings */}
               <Tooltip
-                id="dm-signing-toggle-mobile"
-                content={nonRepudiable ? t`Messages are signed!` : t`Messages are NOT signed!`}
+                id="dm-settings-toggle-mobile"
+                content={t`Conversation settings`}
                 place="bottom"
-                showOnTouch={true}
-                autoHideAfter={1500}
+                showOnTouch={false}
               >
                 <div
                   className="flex lg:hidden w-8 h-8 items-center justify-center rounded-md hover:bg-transparent cursor-pointer"
-                  onClick={handleSigningToggle}
+                  onClick={() => openConversationSettings(conversationId)}
                 >
                   <Icon 
-                    name={nonRepudiable ? 'lock' : 'unlock'} 
+                    name="cog" 
                     size="sm" 
-                    className={nonRepudiable ? 'text-subtle' : 'text-warning-hex'} 
+                    className="text-subtle" 
                   />
                 </div>
               </Tooltip>
