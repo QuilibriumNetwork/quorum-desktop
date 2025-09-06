@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { EmbedMessage, Message as MessageType } from '../../api/quorumApi';
@@ -23,7 +23,7 @@ import ClickToCopyContent from '../ClickToCopyContent';
 import { DefaultImages, truncateAddress } from '../../utils';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
-import { Button, Container, FlexRow, FlexColumn, Text } from '../primitives';
+import { Button, Container, FlexRow, FlexColumn, Text, Icon, Tooltip } from '../primitives';
 
 const DirectMessage: React.FC<{}> = () => {
   const { isMobile, isTablet, toggleLeftSidebar } =
@@ -31,7 +31,11 @@ const DirectMessage: React.FC<{}> = () => {
 
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
-  const { messageDB, submitMessage, keyset } = useMessageDB();
+  const { messageDB, submitMessage, keyset, getConfig } = useMessageDB();
+  
+  // State for message signing
+  const [skipSigning, setSkipSigning] = useState<boolean>(false);
+  const [nonRepudiable, setNonRepudiable] = useState<boolean>(true);
 
   // Extract business logic hooks but also get the original data for compatibility
   let { address } = useParams<{ address: string }>();
@@ -45,6 +49,31 @@ const DirectMessage: React.FC<{}> = () => {
   const { data: conversation } = useConversation({
     conversationId: conversationId,
   });
+  
+  // Determine default signing behavior: conversation setting overrides user default.
+  React.useEffect(() => {
+    (async () => {
+      try {
+        const convIsRepudiable = conversation?.conversation?.isRepudiable;
+        const cfg = await getConfig({
+          address: user.currentPasskeyInfo!.address,
+          userKey: keyset.userKeyset,
+        });
+        const userNonRepudiable = cfg?.nonRepudiable ?? true;
+        if (typeof convIsRepudiable !== 'undefined') {
+          const convNonRepudiable = !convIsRepudiable;
+          setNonRepudiable(convNonRepudiable);
+          setSkipSigning(convNonRepudiable ? false : !userNonRepudiable);
+        } else {
+          setNonRepudiable(userNonRepudiable);
+          setSkipSigning(userNonRepudiable ? false : true);
+        }
+      } catch {
+        setNonRepudiable(true);
+        setSkipSigning(false);
+      }
+    })();
+  }, [conversation?.conversation?.isRepudiable, keyset.userKeyset, getConfig, user.currentPasskeyInfo]);
 
   // Use business logic hooks for message handling
   const { messageList, acceptChat, fetchNextPage, fetchPreviousPage } =
@@ -104,6 +133,8 @@ const DirectMessage: React.FC<{}> = () => {
     async (message: string | object, inReplyTo?: string) => {
       if (!address) return; // Guard against undefined address
 
+      const effectiveSkip = nonRepudiable ? false : skipSigning;
+      
       if (typeof message === 'string') {
         // Text message
         await submitMessage(
@@ -114,7 +145,8 @@ const DirectMessage: React.FC<{}> = () => {
           queryClient,
           user.currentPasskeyInfo!,
           keyset,
-          inReplyTo
+          inReplyTo,
+          effectiveSkip
         );
       } else {
         // Embed message (image)
@@ -126,7 +158,8 @@ const DirectMessage: React.FC<{}> = () => {
           queryClient,
           user.currentPasskeyInfo!,
           keyset,
-          inReplyTo
+          inReplyTo,
+          effectiveSkip
         );
       }
 
@@ -142,7 +175,7 @@ const DirectMessage: React.FC<{}> = () => {
         }, 100);
       }
     },
-    [address, self, registration, queryClient, user, keyset, submitMessage]
+    [address, self, registration, queryClient, user, keyset, submitMessage, nonRepudiable, skipSigning]
   );
 
   // Use MessageComposer hook
@@ -249,9 +282,43 @@ const DirectMessage: React.FC<{}> = () => {
                   iconOnly
                 />
               )}
+              {/* Desktop: non-repudiability toggle to the left of search */}
+              <div
+                className="hidden lg:flex w-8 h-8 items-center justify-center rounded-md bg-surface-5 hover:bg-surface-6 cursor-pointer"
+                onClick={async () => {
+                  const next = !nonRepudiable;
+                  setNonRepudiable(next);
+                  try {
+                    const existing = await messageDB.getConversation({ conversationId });
+                    const baseConv = existing.conversation ?? {
+                      conversationId,
+                      address: address!,
+                      icon: otherUser.userIcon || DefaultImages.UNKNOWN_USER,
+                      displayName: otherUser.displayName || t`Unknown User`,
+                      type: 'direct' as const,
+                      timestamp: Date.now(),
+                    };
+                    await messageDB.saveConversation({ ...baseConv, isRepudiable: !next });
+                    if (!next) {
+                      const cfg = await getConfig({
+                        address: user.currentPasskeyInfo!.address,
+                        userKey: keyset.userKeyset,
+                      });
+                      const userNonRepudiable = cfg?.nonRepudiable ?? true;
+                      setSkipSigning(!userNonRepudiable);
+                    } else {
+                      setSkipSigning(false);
+                    }
+                  } catch {}
+                }}
+                data-tooltip-id="dm-repudiability-toggle"
+              >
+                <Icon name={nonRepudiable ? 'lock' : 'unlock'} size="sm" className="text-subtle" />
+              </div>
               <GlobalSearch className="dm-search flex-1 lg:flex-none max-w-xs lg:max-w-none" />
             </FlexRow>
-            <Button
+            <FlexRow className="items-center gap-2">
+              <Button
               type="unstyled"
               onClick={() => {
                 setShowUsers(!showUsers);
@@ -260,6 +327,40 @@ const DirectMessage: React.FC<{}> = () => {
               iconName="users"
               iconOnly
             />
+              {/* Mobile: non-repudiability toggle at far right */}
+              <div
+                className="flex lg:hidden w-8 h-8 items-center justify-center rounded-md bg-surface-5 hover:bg-surface-6 cursor-pointer"
+                onClick={async () => {
+                  const next = !nonRepudiable;
+                  setNonRepudiable(next);
+                  try {
+                    const existing = await messageDB.getConversation({ conversationId });
+                    const baseConv = existing.conversation ?? {
+                      conversationId,
+                      address: address!,
+                      icon: otherUser.userIcon || DefaultImages.UNKNOWN_USER,
+                      displayName: otherUser.displayName || t`Unknown User`,
+                      type: 'direct' as const,
+                      timestamp: Date.now(),
+                    };
+                    await messageDB.saveConversation({ ...baseConv, isRepudiable: !next });
+                    if (!next) {
+                      const cfg = await getConfig({
+                        address: user.currentPasskeyInfo!.address,
+                        userKey: keyset.userKeyset,
+                      });
+                      const userNonRepudiable = cfg?.nonRepudiable ?? true;
+                      setSkipSigning(!userNonRepudiable);
+                    } else {
+                      setSkipSigning(false);
+                    }
+                  } catch {}
+                }}
+                data-tooltip-id="dm-repudiability-toggle"
+              >
+                <Icon name={nonRepudiable ? 'lock' : 'unlock'} size="sm" className="text-subtle" />
+              </div>
+            </FlexRow>
           </FlexRow>
           <Container className="flex-1 min-w-0 lg:order-1">
             <FlexRow className="items-center">
@@ -300,7 +401,7 @@ const DirectMessage: React.FC<{}> = () => {
         >
           <MessageList
             ref={messageListRef}
-            isRepudiable={true}
+            isRepudiable={!nonRepudiable}
             roles={[]}
             canDeleteMessages={() => false}
             editor={composer.editor}
@@ -345,6 +446,9 @@ const DirectMessage: React.FC<{}> = () => {
             fileError={composer.fileError}
             mapSenderToUser={mapSenderToUser}
             setInReplyTo={composer.setInReplyTo}
+            showSigningToggle={!nonRepudiable}
+            skipSigning={skipSigning}
+            onSigningToggle={() => setSkipSigning(!skipSigning)}
           />
         </div>
       </FlexColumn>
@@ -361,6 +465,11 @@ const DirectMessage: React.FC<{}> = () => {
       >
         {rightSidebarContent}
       </Container>
+      <Tooltip
+        id="dm-repudiability-toggle"
+        content={nonRepudiable ? t`Always sign this conversation's messages` : t`You may choose not to sign this conversation's messages`}
+        place="top"
+      />
     </div>
   );
 };

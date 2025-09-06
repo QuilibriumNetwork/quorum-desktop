@@ -29,6 +29,11 @@ interface MessageComposerProps {
   fileError?: string | null;
   mapSenderToUser?: (senderId: string) => { displayName?: string };
   setInReplyTo?: (inReplyTo: any) => void;
+
+  // Signing toggle props
+  showSigningToggle?: boolean;
+  skipSigning?: boolean;
+  onSigningToggle?: () => void;
 }
 
 export interface MessageComposerRef {
@@ -58,6 +63,9 @@ export const MessageComposer = forwardRef<
       fileError,
       mapSenderToUser,
       setInReplyTo,
+      showSigningToggle = false,
+      skipSigning = false,
+      onSigningToggle,
     },
     ref
   ) => {
@@ -182,6 +190,34 @@ export const MessageComposer = forwardRef<
                 iconName="smile"
                 iconOnly
               />
+            </Tooltip>
+          )}
+
+          {showSigningToggle && (
+            <Tooltip
+              id="toggle-signing-tooltip-dm"
+              content={
+                skipSigning
+                  ? t`This message will NOT be signed`
+                  : t`This message will be signed`
+              }
+              place="top"
+            >
+              <div
+                className={
+                  (skipSigning
+                    ? 'cursor-pointer bg-red-600 hover:bg-red-500'
+                    : 'cursor-pointer bg-blue-600 hover:bg-blue-500') +
+                  ' flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0'
+                }
+                onClick={onSigningToggle}
+              >
+                <Icon
+                  name={skipSigning ? 'unlock' : 'lock'}
+                  size="sm"
+                  className="text-white"
+                />
+              </div>
             </Tooltip>
           )}
 

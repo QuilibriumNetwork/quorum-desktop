@@ -2479,7 +2479,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         deviceKeyset: secureChannel.DeviceKeyset;
         userKeyset: secureChannel.UserKeyset;
       },
-      inReplyTo?: string
+      inReplyTo?: string,
+      skipSigning?: boolean
     ) => {
       enqueueOutbound(async () => {
         let outbounds: string[] = [];
@@ -2541,6 +2542,24 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         let sets = response.map((e) => JSON.parse(e.state));
 
         let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+        // Sign DM unless explicitly skipped
+        if (!skipSigning) {
+          try {
+            const sig = ch.js_sign_ed448(
+              Buffer.from(
+                new Uint8Array(keyset.userKeyset.user_key.private_key)
+              ).toString('base64'),
+              Buffer.from(messageId).toString('base64')
+            );
+            message.publicKey = Buffer.from(
+              new Uint8Array(keyset.userKeyset.user_key.public_key)
+            ).toString('hex');
+            message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
+              'hex'
+            );
+          } catch {}
+        }
+
         for (const inbox of inboxes.filter(
           (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
         )) {
@@ -4768,7 +4787,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         pfpUrl?: string;
         completedOnboarding: boolean;
       },
-      inReplyTo?: string
+      inReplyTo?: string,
+      skipSigning?: boolean
     ) => {
       enqueueOutbound(async () => {
         let outbounds: string[] = [];
@@ -4818,7 +4838,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
         // enforce non-repudiability
         if (
-          !space?.isRepudiable ||
+          (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) ||
           (typeof pendingMessage !== 'string' &&
             (pendingMessage as any).type === 'update-profile')
         ) {

@@ -392,7 +392,7 @@ export const Message = ({
 
             <Text className="message-sender-name">{sender.displayName}</Text>
             <Text className="pl-2">
-              {!repudiability && !message.signature && (
+              {!message.signature && (
                 <Tooltip
                   id={`signature-warning-${message.messageId}`}
                   content={t`Message does not have a valid signature, this may not be from the sender`}

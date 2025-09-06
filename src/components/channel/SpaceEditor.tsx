@@ -471,12 +471,12 @@ const SpaceEditor: React.FunctionComponent<{
                           <div className="flex flex-row justify-between">
                             <div className="text-sm flex flex-row">
                               <div className="text-sm flex flex-col justify-around">
-                                <Trans>Repudiability</Trans>
+                                <Trans>Require Message Signing</Trans>
                               </div>
                               <div className="text-sm flex flex-col justify-around ml-2">
                                 <Tooltip
                                   id="repudiability-tooltip"
-                                  content={t`Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.`}
+                                  content={t`Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable.`}
                                   place="bottom"
                                   className="!w-[400px]"
                                   maxWidth={400}
@@ -489,8 +489,8 @@ const SpaceEditor: React.FunctionComponent<{
                               </div>
                             </div>
                             <Switch
-                              onChange={setIsRepudiable}
-                              value={isRepudiable}
+                              onChange={() => setIsRepudiable(!isRepudiable)}
+                              value={!isRepudiable}
                             />
                           </div>
                         </div>

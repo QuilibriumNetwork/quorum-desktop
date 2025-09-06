@@ -15,7 +15,7 @@ import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
 import { useModals } from '../context/ModalProvider';
-import { Button, Icon } from '../primitives';
+import { Button, Icon, Tooltip } from '../primitives';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
@@ -43,6 +43,7 @@ const Channel: React.FC<ChannelProps> = ({
     setRightSidebarContent,
   } = useSidebar();
   const [init, setInit] = useState(false);
+  const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const { submitChannelMessage } = useMessageDB();
 
   // Create refs for textarea (MessageList needs this for scrolling and we need it for focus)
@@ -66,13 +67,15 @@ const Channel: React.FC<ChannelProps> = ({
   // Handle message submission
   const handleSubmitMessage = useCallback(
     async (message: string | object, inReplyTo?: string) => {
+      const effectiveSkip = space?.isRepudiable ? skipSigning : false;
       await submitChannelMessage(
         spaceId,
         channelId,
         message,
         queryClient,
         user.currentPasskeyInfo!,
-        inReplyTo
+        inReplyTo,
+        effectiveSkip
       );
 
       // Only auto-scroll for actual messages (text/embed), not reactions
@@ -93,6 +96,8 @@ const Channel: React.FC<ChannelProps> = ({
       submitChannelMessage,
       queryClient,
       user.currentPasskeyInfo,
+      space,
+      skipSigning,
     ]
   );
 
@@ -110,7 +115,8 @@ const Channel: React.FC<ChannelProps> = ({
         stickerMessage,
         queryClient,
         user.currentPasskeyInfo!,
-        inReplyTo
+        inReplyTo,
+        false // Stickers are always signed
       );
       // Auto-scroll to bottom after sending sticker
       setTimeout(() => {
@@ -289,9 +295,18 @@ const Channel: React.FC<ChannelProps> = ({
             fileError={composer.fileError}
             mapSenderToUser={mapSenderToUser}
             setInReplyTo={composer.setInReplyTo}
+            showSigningToggle={space?.isRepudiable}
+            skipSigning={skipSigning}
+            onSigningToggle={() => setSkipSigning(!skipSigning)}
           />
         </div>
       </div>
+      
+      <Tooltip
+        id="toggle-signing-tooltip"
+        content={skipSigning ? 'This message will NOT be signed' : 'This message will be signed'}
+        place="top"
+      />
 
       {/* Desktop sidebar - only visible on lg+ screens */}
       <div
