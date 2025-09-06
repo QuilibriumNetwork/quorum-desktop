@@ -401,11 +401,11 @@ const UserSettingsModal: React.FunctionComponent<{
                           <div className="flex flex-row justify-between">
                             <div className="text-sm flex flex-row">
                               <div className="text-sm flex flex-col justify-around">
-                                {t`Default Conversation Non-repudiability`}
+                                {t`Always sign Direct Messages`}
                               </div>
                               <Tooltip
                                 id="settings-non-repudiable-tooltip"
-                                content={t`Sets the default signing mode for Conversations (Direct Messages) to always sign when enabled. This can be overridden for finer-grain control for each Conversation by clicking the lock icon found in each Conversation view.`}
+                                content={t`Always sign Direct Messages in  Conversations. This can be overridden for finer-grain control by clicking the lock icon found in each Conversation view.`}
                                 place="right"
                               >
                                 <Icon
