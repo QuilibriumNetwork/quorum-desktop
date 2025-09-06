@@ -70,6 +70,7 @@ export type IconName =
   // Status & Alerts
   | 'info'
   | 'warning'
+  | 'warning-outline'
   | 'error'
   | 'success'
   | 'exclamation-triangle'

@@ -16,7 +16,7 @@ import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistrati
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '../primitives';
-import { useMessageDB } from './MessageDB';
+import { useMessageDB } from './useMessageDB';
 import { useQuorumApiClient } from './QuorumApiContext';
 import { t } from '@lingui/core/macro';
 import { getDefaultUserConfig } from '../../utils';
@@ -302,6 +302,4 @@ const RegistrationContext = createContext<RegistrationContextValue>({
   keyset: undefined as never,
 });
 
-const useRegistrationContext = () => useContext(RegistrationContext);
-
-export { RegistrationProvider, useRegistrationContext };
+export { RegistrationProvider, RegistrationContext };

@@ -189,29 +189,19 @@ const UserSettingsModal: React.FunctionComponent<{
                     <>
                       <div className="modal-content-header flex flex-col md:flex-row md:items-center md:justify-center md:gap-6">
                         <div className="flex justify-start md:mt-4">
-                          {fileData ? (
-                            <div
-                              id="user-icon-tooltip-target"
-                              className="modal-icon-editable cursor-pointer"
-                              style={{
-                                backgroundImage: `url(${getProfileImageUrl()})`,
-                              }}
-                              {...getRootProps()}
-                            >
-                              <input {...getInputProps()} />
-                            </div>
-                          ) : (
-                            <div
-                              id="user-icon-tooltip-target"
-                              className="attachment-drop cursor-pointer"
-                              {...getRootProps()}
-                            >
-                              <span className="attachment-drop-icon justify-around w-20 h-20 flex flex-col">
-                                <input {...getInputProps()} />
-                                <Icon name="image" />
-                              </span>
-                            </div>
-                          )}
+                          <div
+                            id="user-icon-tooltip-target"
+                            className={`avatar-upload ${!fileData && (!currentPasskeyInfo?.pfpUrl || currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) ? 'empty' : ''}`}
+                            style={(fileData || (currentPasskeyInfo?.pfpUrl && !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER))) ? {
+                              backgroundImage: `url(${getProfileImageUrl()})`
+                            } : {}}
+                            {...getRootProps()}
+                          >
+                            <input {...getInputProps()} />
+                            {!fileData && (!currentPasskeyInfo?.pfpUrl || currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) && (
+                              <Icon name="image" className="icon" />
+                            )}
+                          </div>
                         </div>
                         {!isUserIconUploading && !isUserIconDragActive && (
                           <ReactTooltip
@@ -401,11 +391,11 @@ const UserSettingsModal: React.FunctionComponent<{
                           <div className="flex flex-row justify-between">
                             <div className="text-sm flex flex-row">
                               <div className="text-sm flex flex-col justify-around">
-                                {t`Non-repudiability`}
+                                {t`Always sign Direct Messages`}
                               </div>
                               <Tooltip
                                 id="settings-non-repudiable-tooltip"
-                                content={t`When enabled, direct messages are not signed by your user key...`}
+                                content={t`Always sign Direct Messages in conversations. This can be overridden for finer-grain control by clicking the lock icon found in each conversation view.`}
                                 place="right"
                               >
                                 <Icon

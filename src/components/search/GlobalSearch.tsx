@@ -1,7 +1,7 @@
 import React from 'react';
 import { SearchBar } from './SearchBar';
 import { SearchResults } from './SearchResults';
-import { useMessageDB } from '../context/MessageDB';
+import { useMessageDB } from '../context/useMessageDB';
 import { Container } from '../primitives';
 import {
   useGlobalSearch,

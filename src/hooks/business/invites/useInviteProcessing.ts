@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Space } from '../../../api/quorumApi';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 import { t } from '@lingui/core/macro';
 
 /**

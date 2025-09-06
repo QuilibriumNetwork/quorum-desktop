@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../../db/messages';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 import { DefaultImages } from '../../../utils';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 

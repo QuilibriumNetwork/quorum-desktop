@@ -16,6 +16,7 @@ export function Tooltip({
   touchTrigger = 'click',
   longPressDuration = 700,
   showOnTouch = true,
+  autoHideAfter,
 }: TooltipWebProps) {
   const tooltipId = `${id}-tooltip`;
   const anchorId = `${id}-anchor`;
@@ -50,6 +51,7 @@ export function Tooltip({
         showOnTouch={showOnTouch}
         touchTrigger={touchTrigger}
         longPressDuration={longPressDuration}
+        autoHideAfter={autoHideAfter}
       />
     </>
   );

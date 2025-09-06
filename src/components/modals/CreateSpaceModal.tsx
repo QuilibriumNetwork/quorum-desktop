@@ -49,36 +49,17 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
     >
       <div className="modal-width-large">
         <div className="flex flex-row justify-around pb-4">
-          {fileData ? (
-            <div
-              id="space-icon-tooltip-target"
-              className="cursor-pointer"
-              {...getRootProps()}
-            >
-              <input {...getInputProps()} />
-              <SpaceIcon
-                noTooltip={true}
-                notifs={false}
-                spaceName={'Unknown'}
-                size="large"
-                selected={false}
-                iconData={Promise.resolve(fileData)}
-                spaceId="create-space-preview"
-                key={currentFile?.name + currentFile?.lastModified} // Force re-render when file changes
-              />
-            </div>
-          ) : (
-            <div
-              id="space-icon-tooltip-target"
-              className="attachment-drop cursor-pointer"
-              {...getRootProps()}
-            >
-              <span className="attachment-drop-icon justify-around w-20 h-20 flex flex-col">
-                <input {...getInputProps()} />
-                <Icon name="image" />
-              </span>
-            </div>
-          )}
+          <div
+            id="space-icon-tooltip-target"
+            className={`avatar-upload ${!fileData ? 'empty' : ''}`}
+            style={fileData && currentFile ? {
+              backgroundImage: `url(data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')})`
+            } : {}}
+            {...getRootProps()}
+          >
+            <input {...getInputProps()} />
+            {!fileData && <Icon name="image" className="icon" />}
+          </div>
           {!isUploading && !isDragActive && (
             /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */
             <ReactTooltip
@@ -123,12 +104,12 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
             <div className="flex flex-row justify-between pb-2">
               <div className="text-sm flex flex-row">
                 <div className="text-sm flex flex-col justify-around">
-                  <Trans>Repudiability</Trans>
+                  <Trans>Require Message Signing</Trans>
                 </div>
                 <div className="text-sm flex flex-col justify-around ml-2">
                   <Tooltip
                     id="repudiability-tooltip"
-                    content={t`Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you.`}
+                    content={t`Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable.`}
                     place="top"
                     className="!w-[400px]"
                     maxWidth={400}
@@ -140,7 +121,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                   </Tooltip>
                 </div>
               </div>
-              <Switch onChange={setRepudiable} value={repudiable} />
+              <Switch onChange={() => setRepudiable(!repudiable)} value={!repudiable} />
             </div>
             <div className="flex flex-row justify-between pb-2">
               <div className="text-sm flex flex-row">

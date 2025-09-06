@@ -31,6 +31,7 @@ type ReactTooltipProps = {
   touchTrigger?: 'click' | 'long-press';
   longPressDuration?: number;
   alwaysVisible?: boolean;
+  autoHideAfter?: number; // Optional auto-hide timeout in milliseconds
 };
 
 const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
@@ -46,11 +47,13 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
   touchTrigger = 'click',
   longPressDuration = 700,
   alwaysVisible = false,
+  autoHideAfter,
 }) => {
   const { resolvedTheme } = useTheme();
   const resolvedThemeInUse = theme || resolvedTheme;
   const [visible, setVisible] = React.useState(false);
   const tooltipRef = React.useRef<HTMLElement | null>(null);
+  
 
   // Auto-apply responsive width and text wrapping for showOnTouch tooltips
   const touchClass = showOnTouch ? 'quorum-react-tooltip-touch' : '';
@@ -68,13 +71,13 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
 
     // Open tooltip logic for click or long-press
     const openTooltip = (e: Event) => {
-      e.stopPropagation();
+      // Don't stop propagation - let the original click handler work too
       setVisible(true);
     };
 
     if (touchTrigger === 'click') {
       const handleTouch = (e: TouchEvent) => {
-        e.preventDefault();
+        // Don't prevent default - let the original click handler work
         openTooltip(e);
       };
       elem.addEventListener('touchend', handleTouch, { passive: false });
@@ -108,6 +111,19 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
       };
     }
   }, [showOnTouch, anchorSelect, touchTrigger, longPressDuration]);
+
+  // Auto-hide after specified time on touch devices (if autoHideAfter is provided)
+  React.useEffect(() => {
+    if (!showOnTouch || !isTouchDevice() || !visible || alwaysVisible || !autoHideAfter) return;
+
+    const autoHideTimer = setTimeout(() => {
+      setVisible(false);
+    }, autoHideAfter);
+
+    return () => {
+      clearTimeout(autoHideTimer);
+    };
+  }, [visible, showOnTouch, alwaysVisible, autoHideAfter]);
 
   // Dismiss on outside tap/click when tooltip is open and on a touch device
   React.useEffect(() => {

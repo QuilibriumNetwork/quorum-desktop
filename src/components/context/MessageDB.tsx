@@ -22,6 +22,7 @@ import {
   buildSpaceMembersKey,
   buildSpacesKey,
 } from '../../hooks';
+import { buildConversationKey } from '../../hooks/queries/conversation/buildConversationKey';
 import {
   InfiniteData,
   QueryClient,
@@ -194,6 +195,7 @@ type MessageDBContextValue = {
     }
   ) => Promise<void>;
   requestSync: (spaceId: string) => Promise<void>;
+  deleteConversation: (conversationId: string) => Promise<void>;
 };
 
 type MessageDBContextProps = {
@@ -2394,6 +2396,50 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     []
   );
 
+  const deleteConversation = React.useCallback(
+    async (conversationId: string) => {
+      try {
+        const [spaceId, channelId] = conversationId.split('/');
+        // Delete encryption states (keys) and latest state
+        const states = await messageDB.getEncryptionStates({ conversationId });
+        for (const state of states) {
+          await messageDB.deleteEncryptionState(state);
+          // Best-effort cleanup of inbox mapping for this inbox
+          if (state.inboxId) {
+            await messageDB.deleteInboxMapping(state.inboxId);
+          }
+        }
+        await messageDB.deleteLatestState(conversationId);
+
+        // Delete all messages for this conversation and remove from indices
+        await messageDB.deleteMessagesForConversation(conversationId);
+
+        // Delete conversation users mapping and metadata
+        await messageDB.deleteConversationUsers(conversationId);
+        await messageDB.deleteConversation(conversationId);
+
+        // Best-effort: remove cached user profile for counterparty
+        if (spaceId && spaceId === channelId) {
+          await messageDB.deleteUser(spaceId);
+        }
+
+        // Invalidate queries
+        await queryClient.invalidateQueries({
+          queryKey: buildMessagesKey({ spaceId, channelId }),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: buildConversationKey({ conversationId }),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: buildConversationsKey({ type: 'direct' }),
+        });
+      } catch (e) {
+        // no-op
+      }
+    },
+    [messageDB, queryClient]
+  );
+
   const updateUserProfile = React.useCallback(
     async (
       displayName: string,
@@ -2479,7 +2525,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         deviceKeyset: secureChannel.DeviceKeyset;
         userKeyset: secureChannel.UserKeyset;
       },
-      inReplyTo?: string
+      inReplyTo?: string,
+      skipSigning?: boolean
     ) => {
       enqueueOutbound(async () => {
         let outbounds: string[] = [];
@@ -2541,6 +2588,24 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         let sets = response.map((e) => JSON.parse(e.state));
 
         let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+        // Sign DM unless explicitly skipped
+        if (!skipSigning) {
+          try {
+            const sig = ch.js_sign_ed448(
+              Buffer.from(
+                new Uint8Array(keyset.userKeyset.user_key.private_key)
+              ).toString('base64'),
+              Buffer.from(messageId).toString('base64')
+            );
+            message.publicKey = Buffer.from(
+              new Uint8Array(keyset.userKeyset.user_key.public_key)
+            ).toString('hex');
+            message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
+              'hex'
+            );
+          } catch {}
+        }
+
         for (const inbox of inboxes.filter(
           (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
         )) {
@@ -4768,7 +4833,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         pfpUrl?: string;
         completedOnboarding: boolean;
       },
-      inReplyTo?: string
+      inReplyTo?: string,
+      skipSigning?: boolean
     ) => {
       enqueueOutbound(async () => {
         let outbounds: string[] = [];
@@ -4818,7 +4884,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
         // enforce non-repudiability
         if (
-          !space?.isRepudiable ||
+          (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) ||
           (typeof pendingMessage !== 'string' &&
             (pendingMessage as any).type === 'update-profile')
         ) {
@@ -5306,6 +5372,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         kickUser,
         updateUserProfile,
         requestSync,
+        deleteConversation,
       }}
     >
       {children}
@@ -5334,8 +5401,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   kickUser: () => undefined as never,
   updateUserProfile: () => undefined as never,
   requestSync: () => undefined as never,
+  deleteConversation: () => undefined as never,
 });
 
-const useMessageDB = () => useContext(MessageDBContext);
-
-export { useMessageDB, MessageDBProvider };
+export { MessageDBProvider, MessageDBContext };

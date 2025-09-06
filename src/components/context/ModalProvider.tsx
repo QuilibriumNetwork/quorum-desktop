@@ -6,6 +6,7 @@ import GroupEditor from '../channel/GroupEditor';
 import LeaveSpaceModal from '../modals/LeaveSpaceModal';
 import KickUserModal from '../modals/KickUserModal';
 import NewDirectMessageModal from '../modals/NewDirectMessageModal';
+import ConversationSettingsModal from '../modals/ConversationSettingsModal';
 import {
   useModalState,
   type ModalState,
@@ -32,6 +33,8 @@ interface ModalContextType {
   closeNewDirectMessage: () => void;
   openKickUser: (kickUserAddress: string) => void;
   closeKickUser: () => void;
+  openConversationSettings: (conversationId: string) => void;
+  closeConversationSettings: () => void;
   // Legacy compatibility with existing useModalContext
   isNewDirectMessageOpen: boolean;
 }
@@ -88,6 +91,8 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
     closeNewDirectMessage: modalState.closeNewDirectMessage,
     openKickUser: modalState.openKickUser,
     closeKickUser: modalState.closeKickUser,
+    openConversationSettings: modalState.openConversationSettings,
+    closeConversationSettings: modalState.closeConversationSettings,
     // Legacy compatibility
     isNewDirectMessageOpen: modalState.isNewDirectMessageOpen,
   };
@@ -154,6 +159,15 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
           onClose={modalState.closeNewDirectMessage}
         />
       )}
+
+      {modalState.state.conversationSettings.isOpen &&
+        modalState.state.conversationSettings.conversationId && (
+          <ConversationSettingsModal
+            conversationId={modalState.state.conversationSettings.conversationId}
+            visible={true}
+            onClose={modalState.closeConversationSettings}
+          />
+        )}
 
       {children}
     </ModalContext.Provider>

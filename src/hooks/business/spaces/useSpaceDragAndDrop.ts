@@ -9,7 +9,7 @@ import {
 import { arrayMove } from '@dnd-kit/sortable';
 import { Space } from '../../../api/quorumApi';
 import { useDragStateContext } from '../../../context/DragStateContext';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 
 interface UseSpaceDragAndDropProps {
   mappedSpaces: (Space & { id: string })[];

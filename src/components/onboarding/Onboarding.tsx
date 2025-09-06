@@ -274,18 +274,14 @@ export const Onboarding = ({
                     multiple={false}
                     {...({ onDragActiveChange: setIsDragActive } as any)}
                   >
-                    {hasValidFile ? (
-                      <img
-                        className="max-w-[200px] max-h-[200px] object-cover rounded-full mx-auto cursor-pointer"
-                        src={getImageDataUrl() || DefaultImages.UNKNOWN_USER}
-                      />
-                    ) : (
-                      <div className="attachment-drop cursor-pointer">
-                        <span className="attachment-drop-icon justify-around w-20 h-20 flex flex-col">
-                          <Icon name="image" />
-                        </span>
-                      </div>
-                    )}
+                    <div 
+                      className={`avatar-upload ${!hasValidFile ? 'empty' : ''}`}
+                      style={hasValidFile ? {
+                        backgroundImage: `url(${getImageDataUrl() || DefaultImages.UNKNOWN_USER})`
+                      } : {}}
+                    >
+                      {!hasValidFile && <Icon name="image" className="icon" />}
+                    </div>
                   </FileUpload>
                 </div>
 

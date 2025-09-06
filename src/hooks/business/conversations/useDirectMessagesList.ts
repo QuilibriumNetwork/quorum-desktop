@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessages } from '../../queries/messages/useMessages';
 import { useInvalidateConversation } from '../../queries/conversation/useInvalidateConversation';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 import { Message as MessageType } from '../../../api/quorumApi';
 
 export interface UseDirectMessagesListReturn {

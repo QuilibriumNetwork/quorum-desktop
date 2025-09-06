@@ -536,8 +536,7 @@
 }
 
 // Icon Classes
-.modal-icon,
-.modal-icon-editable {
+.modal-icon {
   width: 82px;
   height: 82px;
   margin-top: 20px;
@@ -548,6 +547,73 @@
   border-radius: 41px;
   display: inline-block;
   flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 70px;
+    height: 70px;
+    margin-top: 15px;
+    margin-left: 12px;
+    margin-right: 12px;
+    border-radius: 35px;
+  }
+}
+
+// Consolidated upload element for all modals
+.avatar-upload {
+  width: 82px;
+  height: 82px;
+  margin-top: 20px;
+  margin-left: 18px;
+  margin-right: 18px;
+  background-position: center;
+  background-size: cover;
+  border-radius: 41px;
+  display: inline-block;
+  flex-shrink: 0;
+  cursor: pointer;
+  position: relative;
+  
+  // Empty state styling
+  &.empty {
+    border: 3px dashed var(--accent-100);
+    background-color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.6);
+    
+    .icon {
+      font-size: 32px;
+    }
+    
+    &:hover {
+      background-color: var(--accent-400);
+      color: white;
+    }
+  }
+  
+  // Filled state hover
+  &:not(.empty):hover {
+    opacity: 0.8;
+  }
+  
+  // Upload "+" icon
+  &::after {
+    content: '+';
+    width: 24px;
+    height: 24px;
+    background: var(--color-bg-icon);
+    color: var(--accent);
+    display: block;
+    text-align: center;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    line-height: 24px;
+  }
 
   @media (max-width: 768px) {
     width: 70px;
@@ -604,75 +670,6 @@
   }
 }
 
-// Shared attachment/file upload drop area styles
-// Used by: CreateSpaceModal, UserSettingsModal, Onboarding
-.attachment-drop {
-  border: 3px dashed var(--accent-100);
-  font-size: 18px;
-  text-align: center;
-  border-radius: 1000px;
-  color: rgba(255, 255, 255, 0.6);
-  background-color: var(--accent);
-  width: 80px;
-  height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-
-  .attachment-drop-icon {
-    font-size: 32px;
-  }
-}
-
-.attachment-drop:hover {
-  background-color: var(--accent-400);
-  color: white;
-}
-
-.attachment-drop::after {
-  width: 24px;
-  height: 24px;
-  background: var(--color-bg-icon);
-  color: var(--accent);
-  content: '+';
-  display: block;
-  text-align: center;
-  border-radius: 50%;
-  position: absolute;
-  font-weight: 100;
-  font-size: 12pt;
-  margin-top: -75px;
-  margin-left: 40px;
-  line-height: 24px;
-}
-
-.modal-icon-editable {
-  cursor: pointer;
-
-  &:hover {
-    opacity: 0.8;
-  }
-
-  &::after {
-    width: 24px;
-    height: 24px;
-    background: var(--color-bg-icon);
-    color: var(--accent);
-    content: '+';
-    display: block;
-    text-align: center;
-    border-radius: 0.75rem;
-    font-weight: 700;
-    float: right;
-    margin-top: 58px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-
-    @media (max-width: 768px) {
-      margin-top: 46px;
-    }
-  }
-}
 
 .modal-text-section {
   display: flex;

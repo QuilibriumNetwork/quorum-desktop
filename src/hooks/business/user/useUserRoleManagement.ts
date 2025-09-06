@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useMessageDB } from '../../../components/context/MessageDB';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 
 export const useUserRoleManagement = (spaceId?: string) => {
   const { updateSpace, messageDB } = useMessageDB();

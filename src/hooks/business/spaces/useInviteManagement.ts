@@ -4,8 +4,8 @@ import {
   usePasskeysContext,
   channel,
 } from '@quilibrium/quilibrium-js-sdk-channels';
-import { useMessageDB } from '../../../components/context/MessageDB';
-import { useRegistrationContext } from '../../../components/context/RegistrationPersister';
+import { useMessageDB } from '../../../components/context/useMessageDB';
+import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useQuorumApiClient } from '../../../components/context/QuorumApiContext';
 import { useConversations, useRegistration } from '../../queries';
 import { Conversation, Channel } from '../../../api/quorumApi';
