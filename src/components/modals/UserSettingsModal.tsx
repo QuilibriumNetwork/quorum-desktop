@@ -189,29 +189,19 @@ const UserSettingsModal: React.FunctionComponent<{
                     <>
                       <div className="modal-content-header flex flex-col md:flex-row md:items-center md:justify-center md:gap-6">
                         <div className="flex justify-start md:mt-4">
-                          {(fileData || (currentPasskeyInfo?.pfpUrl && !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER))) ? (
-                            <div
-                              id="user-icon-tooltip-target"
-                              className="modal-icon-editable cursor-pointer"
-                              style={{
-                                backgroundImage: `url(${getProfileImageUrl()})`,
-                              }}
-                              {...getRootProps()}
-                            >
-                              <input {...getInputProps()} />
-                            </div>
-                          ) : (
-                            <div
-                              id="user-icon-tooltip-target"
-                              className="attachment-drop cursor-pointer"
-                              {...getRootProps()}
-                            >
-                              <span className="attachment-drop-icon justify-around w-20 h-20 flex flex-col">
-                                <input {...getInputProps()} />
-                                <Icon name="image" />
-                              </span>
-                            </div>
-                          )}
+                          <div
+                            id="user-icon-tooltip-target"
+                            className={`avatar-upload ${!fileData && (!currentPasskeyInfo?.pfpUrl || currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) ? 'empty' : ''}`}
+                            style={(fileData || (currentPasskeyInfo?.pfpUrl && !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER))) ? {
+                              backgroundImage: `url(${getProfileImageUrl()})`
+                            } : {}}
+                            {...getRootProps()}
+                          >
+                            <input {...getInputProps()} />
+                            {!fileData && (!currentPasskeyInfo?.pfpUrl || currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) && (
+                              <Icon name="image" className="icon" />
+                            )}
+                          </div>
                         </div>
                         {!isUserIconUploading && !isUserIconDragActive && (
                           <ReactTooltip

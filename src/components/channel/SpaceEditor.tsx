@@ -346,8 +346,8 @@ const SpaceEditor: React.FunctionComponent<{
                       <div className="modal-content-header">
                         <div
                           id="space-icon-tooltip-target"
-                          className="modal-icon-editable cursor-pointer"
-                          style={{
+                          className={`avatar-upload ${!iconData && !space?.iconUrl ? 'empty' : ''}`}
+                          style={(iconData && currentIconFile) || space?.iconUrl ? {
                             backgroundImage:
                               iconData != undefined && currentIconFile
                                 ? 'url(data:' +
@@ -355,11 +355,14 @@ const SpaceEditor: React.FunctionComponent<{
                                   ';base64,' +
                                   Buffer.from(iconData).toString('base64') +
                                   ')'
-                                : `url(${space?.iconUrl})`,
-                          }}
+                                : `url(${space?.iconUrl})`
+                          } : {}}
                           {...getIconRootProps()}
                         >
                           <input {...getIconInputProps()} />
+                          {!iconData && !space?.iconUrl && (
+                            <Icon name="image" className="icon" />
+                          )}
                         </div>
                         {!isIconUploading && !isIconDragActive && (
                           /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */

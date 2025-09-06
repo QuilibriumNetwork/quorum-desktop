@@ -49,36 +49,17 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
     >
       <div className="modal-width-large">
         <div className="flex flex-row justify-around pb-4">
-          {fileData ? (
-            <div
-              id="space-icon-tooltip-target"
-              className="cursor-pointer"
-              {...getRootProps()}
-            >
-              <input {...getInputProps()} />
-              <SpaceIcon
-                noTooltip={true}
-                notifs={false}
-                spaceName={'Unknown'}
-                size="large"
-                selected={false}
-                iconData={Promise.resolve(fileData)}
-                spaceId="create-space-preview"
-                key={currentFile?.name + currentFile?.lastModified} // Force re-render when file changes
-              />
-            </div>
-          ) : (
-            <div
-              id="space-icon-tooltip-target"
-              className="attachment-drop cursor-pointer"
-              {...getRootProps()}
-            >
-              <span className="attachment-drop-icon justify-around w-20 h-20 flex flex-col">
-                <input {...getInputProps()} />
-                <Icon name="image" />
-              </span>
-            </div>
-          )}
+          <div
+            id="space-icon-tooltip-target"
+            className={`avatar-upload ${!fileData ? 'empty' : ''}`}
+            style={fileData && currentFile ? {
+              backgroundImage: `url(data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')})`
+            } : {}}
+            {...getRootProps()}
+          >
+            <input {...getInputProps()} />
+            {!fileData && <Icon name="image" className="icon" />}
+          </div>
           {!isUploading && !isDragActive && (
             /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */
             <ReactTooltip
