@@ -1,5 +1,8 @@
 # Shared Git Hooks Setup
 
+[← Back to INDEX](/../../INDEX.md)
+
+
 ## Overview
 
 Set up shared git hooks directory so all developers get the same npm/yarn conflict protection, not just individual local environments.
@@ -51,3 +54,5 @@ The pre-commit hook prevents accidental npm usage by:
 ---
 
 *Created: 2025-08-10*
+
+[← Back to INDEX](/../../INDEX.md)

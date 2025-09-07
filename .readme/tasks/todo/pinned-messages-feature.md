@@ -1,5 +1,8 @@
 # Pinned Messages Feature - Implementation Plan
 
+[← Back to INDEX](/../../INDEX.md)
+
+
 ## Overview
 
 Implementation of a Discord-like pinned messages feature for Quorum spaces, initially restricted to space owners with future expansion to role-based permissions.
@@ -365,3 +368,5 @@ No new external dependencies required. Uses existing:
 *Document created: 2025-09-07*
 *Author: Claude*
 *Status: Planning*
+
+[← Back to INDEX](/../../INDEX.md)

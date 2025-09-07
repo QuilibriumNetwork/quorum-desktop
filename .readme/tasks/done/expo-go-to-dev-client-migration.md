@@ -1,5 +1,8 @@
 # Expo Go to Expo Dev Client Migration Plan - Simplified
 
+[← Back to INDEX](/../../INDEX.md)
+
+
 ## Why Migrate?
 
 Your project has native dependencies (`@quilibrium/quilibrium-js-sdk-channels`, crypto libraries, file system modules) that don't work in Expo Go's sandboxed environment. Dev Client creates a custom build with your dependencies included.
@@ -346,3 +349,5 @@ If you need native features again, reverse these steps:
 
 *Document created: 2025-01-09*
 *Rollback section added: 2025-01-09*
+
+[← Back to INDEX](/../../INDEX.md)

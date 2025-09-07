@@ -1,5 +1,8 @@
 # Quilibrium SDK Mobile Integration Issue
 
+[← Back to INDEX](/../../../INDEX.md)
+
+
 **Status**: 🔴 Blocked  
 **Priority**: High  
 **Date**: 2025-08-08  
@@ -227,3 +230,5 @@ A temporary shim implementation is currently in place that provides mock functio
 
 ---
 *Last updated: 2025-01-07*
+
+[← Back to INDEX](/../../../INDEX.md)

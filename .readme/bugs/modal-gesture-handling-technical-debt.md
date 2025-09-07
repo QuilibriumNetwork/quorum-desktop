@@ -1,5 +1,8 @@
 # Modal Gesture Handling Technical Debt
 
+[← Back to INDEX](/../INDEX.md)
+
+
 **Status:** TECHNICAL_DEBT  
 **Priority:** Medium  
 **Component:** `src/components/primitives/Modal/Modal.native.tsx`  
@@ -159,3 +162,5 @@ The project should establish consistent gesture handling patterns before adding 
 ---
 
 *Updated: 2025-08-10*
+
+[← Back to INDEX](/../INDEX.md)

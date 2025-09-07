@@ -1,5 +1,8 @@
 # Cross-Platform Key Backup Implementation
 
+[← Back to INDEX](/../../INDEX.md)
+
+
 ## Overview
 
 This document describes the implementation of the cross-platform private key backup feature for the Quorum onboarding flow. The feature handles device-specific limitations and provides fallback mechanisms to ensure all users can securely backup their private keys.
@@ -225,3 +228,5 @@ import QRCode from 'react-native-qrcode-svg';
 
 *Last Updated: 2025-01-11*  
 *Created by: Claude Code Assistant*
+
+[← Back to INDEX](/../../INDEX.md)
