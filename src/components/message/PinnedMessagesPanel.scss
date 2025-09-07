@@ -1,0 +1,144 @@
+// Pinned messages panel styling - matches search results
+.pinned-messages-list {
+  overflow-y: auto;
+  max-height: 350px;
+  background: var(--surface-0);
+  padding-bottom: 12px;
+}
+
+.pinned-message-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--surface-3);
+  background-color: transparent;
+  font-weight: normal;
+
+  &:hover {
+    background-color: var(--surface-2);
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.result-header {
+  margin-bottom: 8px;
+}
+
+.result-meta {
+  font-size: 12px;
+  color: var(--color-text-subtle);
+  gap: 6px;
+}
+
+.result-type-icon {
+  font-size: 10px;
+  color: var(--accent-500);
+}
+
+.result-sender {
+  color: var(--color-text-main);
+  font-weight: 500;
+  font-size: 12px;
+}
+
+.result-content {
+  margin-bottom: 8px;
+}
+
+.result-text {
+  color: var(--color-text-main);
+  font-size: 14px;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.result-date {
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.message-actions {
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+
+  .pinned-message-item:hover & {
+    opacity: 1;
+  }
+}
+
+.jump-button {
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
+  background: transparent;
+
+  &:hover {
+    background: transparent;
+    color: var(--accent-500);
+  }
+}
+
+.unpin-button {
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
+  background: transparent;
+
+  &:hover {
+    background: transparent;
+    color: rgb(var(--danger));
+  }
+}
+
+// Empty states
+.pinned-empty-state,
+.pinned-loading-state {
+  flex-direction: column;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-icon,
+.loading-icon {
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: var(--color-text-muted);
+}
+
+.loading-icon {
+  color: var(--accent-500);
+}
+
+.empty-message,
+.loading-message {
+  font-size: 14px;
+  color: var(--color-text-main);
+  margin: 0 0 4px 0;
+  font-weight: 500;
+}
+
+.empty-hint {
+  font-size: 12px;
+  color: var(--color-text-subtle);
+  margin: 0;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .pinned-message-item {
+    padding: 10px 12px;
+  }
+
+  .result-meta {
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .result-text {
+    font-size: 13px;
+  }
+}

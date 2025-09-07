@@ -5,6 +5,7 @@ import {
   useChannelData,
   useChannelMessages,
   useMessageComposer,
+  usePinnedMessages,
 } from '../../hooks';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
@@ -19,6 +20,7 @@ import { Button, Icon, Tooltip } from '../primitives';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
+import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
 
 type ChannelProps = {
   spaceId: string;
@@ -44,6 +46,7 @@ const Channel: React.FC<ChannelProps> = ({
   } = useSidebar();
   const [init, setInit] = useState(false);
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
+  const [showPinnedMessages, setShowPinnedMessages] = useState(false);
   const { submitChannelMessage } = useMessageDB();
 
   // Create refs for textarea (MessageList needs this for scrolling and we need it for focus)
@@ -63,6 +66,9 @@ const Channel: React.FC<ChannelProps> = ({
     mapSenderToUser,
     isSpaceOwner,
   } = useChannelMessages({ spaceId, channelId, roles, members });
+
+  // Get pinned messages
+  const { pinnedCount } = usePinnedMessages(spaceId, channelId);
 
   // Handle message submission
   const handleSubmitMessage = useCallback(
@@ -226,15 +232,50 @@ const Channel: React.FC<ChannelProps> = ({
               )}
               <GlobalSearch className="channel-search flex-1 lg:flex-none max-w-xs lg:max-w-none" />
             </div>
-            <Button
-              type="unstyled"
-              onClick={() => {
-                setShowUsers(!showUsers);
-              }}
-              className="w-6 h-6 p-2 !rounded-md cursor-pointer hover:bg-surface-6 flex items-center justify-center [&_.quorum-button-icon-element]:text-sm"
-              iconName="users"
-              iconOnly
-            />
+            <div className="flex flex-row items-center gap-2">
+              <div className="relative">
+                <Tooltip
+                  id={`pinned-messages-${channelId}`}
+                  content={pinnedCount > 0 ? `${pinnedCount} pinned message${pinnedCount > 1 ? 's' : ''}` : 'Pinned messages'}
+                >
+                  <Button
+                    type="unstyled"
+                    onClick={() => {
+                      setShowPinnedMessages(true);
+                    }}
+                    className={`relative w-6 h-6 p-2 !rounded-md cursor-pointer hover:bg-surface-6 flex items-center justify-center [&_.quorum-button-icon-element]:text-sm ${
+                      pinnedCount > 0 ? 'text-accent' : 'text-surface-9'
+                    }`}
+                    iconName="thumbtack"
+                    iconOnly
+                  >
+                    {pinnedCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-accent text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                        {pinnedCount > 9 ? '9+' : pinnedCount}
+                      </span>
+                    )}
+                  </Button>
+                </Tooltip>
+                
+                {/* Pinned Messages Panel */}
+                <PinnedMessagesPanel
+                  isOpen={showPinnedMessages}
+                  onClose={() => setShowPinnedMessages(false)}
+                  spaceId={spaceId}
+                  channelId={channelId}
+                  mapSenderToUser={mapSenderToUser}
+                />
+              </div>
+              <Button
+                type="unstyled"
+                onClick={() => {
+                  setShowUsers(!showUsers);
+                }}
+                className="w-6 h-6 p-2 !rounded-md cursor-pointer hover:bg-surface-6 flex items-center justify-center [&_.quorum-button-icon-element]:text-sm"
+                iconName="users"
+                iconOnly
+              />
+            </div>
           </div>
           <div className="flex-1 min-w-0 lg:order-1">
             <div className="truncate">
@@ -389,6 +430,7 @@ const Channel: React.FC<ChannelProps> = ({
           </div>
         </>
       )}
+
     </div>
   );
 };

@@ -36,6 +36,7 @@ import {
   useEmojiPicker,
   useMessageInteractions,
   useMessageFormatting,
+  usePinnedMessages,
 } from '../../hooks';
 import MessageActions from './MessageActions';
 
@@ -152,6 +153,13 @@ export const Message = ({
     mapSenderToUser,
     onImageClick: setOpenImage,
   });
+
+  // Pinned messages logic
+  const pinnedMessages = usePinnedMessages(
+    message.spaceId || spaceId || '',
+    message.channelId || ''
+  );
+
 
   let sender = mapSenderToUser(message.content?.senderId);
   const isHashTarget = useMemo(() => {
@@ -331,11 +339,13 @@ export const Message = ({
                 message={message}
                 userAddress={user.currentPasskeyInfo!.address}
                 canUserDelete={messageActions.canUserDelete}
+                canPinMessages={pinnedMessages.canPinMessages}
                 height={height}
                 onReaction={messageActions.handleReaction}
                 onReply={messageActions.handleReply}
                 onCopyLink={messageActions.handleCopyLink}
                 onDelete={messageActions.handleDelete}
+                onPin={() => pinnedMessages.togglePin(message)}
                 onMoreReactions={messageActions.handleMoreReactions}
                 copiedLinkId={messageActions.copiedLinkId}
               />
@@ -391,6 +401,20 @@ export const Message = ({
               )}
 
             <Text className="message-sender-name">{sender.displayName}</Text>
+            {message.isPinned && (
+              <Tooltip
+                id={`pin-indicator-${message.messageId}`}
+                content={message.pinnedBy ? t`Pinned by ${mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy}` : t`Pinned`}
+                showOnTouch={true}
+                autoHideAfter={3000}
+              >
+                <Icon 
+                  name="thumbtack" 
+                  size="xs" 
+                  className="ml-2 text-accent" 
+                />
+              </Tooltip>
+            )}
             <Text className="pl-2">
               {!message.signature && (
                 <Tooltip

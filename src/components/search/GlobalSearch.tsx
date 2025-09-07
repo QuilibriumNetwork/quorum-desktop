@@ -75,19 +75,18 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
         className="global-search-bar"
       />
 
-      {showResults && (
-        <SearchResults
-          results={results}
-          isLoading={isLoading}
-          isError={isError}
-          error={error}
-          query={query}
-          onNavigate={handleNavigate}
-          highlightTerms={highlightTerms}
-          onClose={handleCloseResults}
-          className="global-search-results"
-        />
-      )}
+      <SearchResults
+        results={results}
+        isLoading={isLoading}
+        isError={isError}
+        error={error}
+        query={query}
+        onNavigate={handleNavigate}
+        highlightTerms={highlightTerms}
+        onClose={handleCloseResults}
+        className="global-search-results"
+        isOpen={showResults}
+      />
     </Container>
   );
 };

@@ -4,10 +4,9 @@ import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../db/messages';
 import { SearchResultItem } from './SearchResultItem';
 import { Icon, FlexCenter, Container, Text } from '../primitives';
+import { DropdownPanel } from '../DropdownPanel';
 import {
   useSearchResultsState,
-  useSearchResultsResponsive,
-  useSearchResultsOutsideClick,
 } from '../../hooks';
 import './SearchResults.scss';
 
@@ -22,6 +21,7 @@ interface SearchResultsProps {
   onClose?: () => void;
   className?: string;
   maxHeight?: number;
+  isOpen?: boolean;
 }
 
 export const SearchResults: React.FC<SearchResultsProps> = ({
@@ -35,6 +35,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   onClose,
   className,
   maxHeight = 400,
+  isOpen = true,
 }) => {
   // Business logic hooks
   const { searchTerms, handleNavigate } = useSearchResultsState({
@@ -46,10 +47,6 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     onNavigate,
     onClose,
   });
-
-  const { containerRef } = useSearchResultsResponsive({ results, query });
-
-  useSearchResultsOutsideClick({ containerRef, onClose });
 
   // Render empty state
   const renderEmptyState = () => {
@@ -93,64 +90,53 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     );
   };
 
-  // If no query, loading, error, or no results, show appropriate state
-  if (!query.trim() || isLoading || isError || results.length === 0) {
-    return (
-      <Container
-        ref={containerRef}
-        className={`search-results ${className || ''}`}
-        style={{ maxHeight }}
-      >
-        {renderEmptyState()}
-      </Container>
-    );
-  }
-
   return (
-    <Container
-      ref={containerRef}
+    <DropdownPanel
+      isOpen={isOpen}
+      onClose={onClose || (() => {})}
+      position="absolute"
+      positionStyle="right-aligned"
+      maxWidth={400}
+      maxHeight={maxHeight}
+      resultsCount={results.length}
       className={`search-results ${className || ''}`}
-      style={{ maxHeight }}
+      showCloseButton={false}
     >
-      <Container className="search-results-header">
-        <Text className="results-count">
-          {results.length === 1
-            ? t`${results.length} result`
-            : t`${results.length} results`}
-        </Text>
-      </Container>
-
-      <Container className="search-results-list">
-        {results.length <= 20 ? (
-          // For small result sets, render directly without virtualization
-          results.map((result, index) => (
-            <SearchResultItem
-              key={`${result.message.messageId}-${index}`}
-              result={result}
-              onNavigate={handleNavigate}
-              highlightTerms={highlightTerms}
-              searchTerms={searchTerms}
-            />
-          ))
-        ) : (
-          // For large result sets, use virtualization
-          <Virtuoso
-            style={{ height: maxHeight - 60 }}
-            totalCount={results.length}
-            tabIndex={-1}
-            itemContent={(index) => (
+      {!query.trim() || isLoading || isError || results.length === 0 ? (
+        renderEmptyState()
+      ) : (
+        <Container className="search-results-list">
+          {results.length <= 20 ? (
+            // For small result sets, render directly without virtualization
+            results.map((result, index) => (
               <SearchResultItem
-                key={`${results[index].message.messageId}-${index}`}
-                result={results[index]}
+                key={`${result.message.messageId}-${index}`}
+                result={result}
                 onNavigate={handleNavigate}
                 highlightTerms={highlightTerms}
                 searchTerms={searchTerms}
               />
-            )}
-            overscan={5}
-          />
-        )}
-      </Container>
-    </Container>
+            ))
+          ) : (
+            // For large result sets, use virtualization
+            <Virtuoso
+              style={{ height: maxHeight - 60 }}
+              totalCount={results.length}
+              tabIndex={-1}
+              itemContent={(index) => (
+                <SearchResultItem
+                  key={`${results[index].message.messageId}-${index}`}
+                  result={results[index]}
+                  onNavigate={handleNavigate}
+                  highlightTerms={highlightTerms}
+                  searchTerms={searchTerms}
+                />
+              )}
+              overscan={5}
+            />
+          )}
+        </Container>
+      )}
+    </DropdownPanel>
   );
 };

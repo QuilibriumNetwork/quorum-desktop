@@ -1,38 +1,17 @@
-// Clean search results for inline search
+// Search results now use DropdownPanel - only keep specific overrides if needed
 .search-results {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: var(--surface-0);
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  margin-top: 8px;
-  z-index: 9999;
-  overflow: hidden;
-  width: min(400px, calc(100vw - 40px)) !important;
-  min-width: 200px;
-  max-width: min(400px, calc(100vw - 40px)) !important;
-  font-weight: normal;
+  // Any search-specific styling can go here
 }
 
-.search-results-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--surface-3);
-  background: var(--surface-00);
-}
+// Header styling now handled by DropdownPanel
 
-.results-count {
-  font-size: 12px;
-  color: var(--color-text-subtle);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
+// Results count styling now handled by DropdownPanel
 
 .search-results-list {
   overflow-y: auto;
   max-height: 340px;
   background: var(--surface-0);
+  padding-bottom: 8px;
 }
 
 // Empty states
