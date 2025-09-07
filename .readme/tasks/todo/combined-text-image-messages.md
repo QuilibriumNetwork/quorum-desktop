@@ -182,20 +182,6 @@ const submitMessage = useCallback(async () => {
    - Performance validation
    - Cross-platform compatibility check
 
-## Success Criteria
-
-- [ ] Single message sent for text + image input
-- [ ] All existing message types still work correctly
-- [ ] No performance regression
-- [ ] Search functionality includes text from combined messages
-- [ ] Mobile compatibility maintained (if applicable)
-- [ ] No styling/layout issues with combined messages
-
-## Estimated Effort
-
-**Time**: 2-3 days for experienced developer
-**Complexity**: Medium-High (due to cross-system impact)
-**Priority**: Low-Medium (UX improvement, not critical functionality)
 
 ## Notes
 

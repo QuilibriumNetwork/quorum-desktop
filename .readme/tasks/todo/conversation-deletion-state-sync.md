@@ -1,5 +1,9 @@
 # Conversation Deletion State Synchronization
 
+[← Back to INDEX](../../INDEX.md)
+
+Added to GitHub issues
+
 ## Issue
 When a user deletes a conversation, the other party has no indication that messages will no longer be received. This creates a broken communication loop where users send messages into the void without any feedback.
 

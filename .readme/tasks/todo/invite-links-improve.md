@@ -1,3 +1,5 @@
+Adde to Github Issues
+
 the public invite link UI functionality needs some work
 
 - when toggling it should either automatically generate the link, perhaps with a confirmation modal

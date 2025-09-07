@@ -1,4 +1,4 @@
-# SDK Shim Temporary Solutions Documentation
+the Onboarding flow# SDK Shim Temporary Solutions Documentation
 **Created: August 9, 2025**
 
 ## Overview
