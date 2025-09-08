@@ -484,9 +484,9 @@ const DirectMessage: React.FC<{}> = () => {
             </div>
           </div>
 
-          {/* Sidebar - same for all screen sizes */}
+          {/* Desktop sidebar only - mobile sidebar renders via SidebarProvider at Layout level */}
           {showUsers && (
-            <div className="w-[260px] bg-chat lg:bg-chat bg-mobile-sidebar border-l border-default overflow-y-auto flex-shrink-0 p-4">
+            <div className="hidden lg:block w-[260px] bg-chat border-l border-default overflow-y-auto flex-shrink-0 p-4">
               {rightSidebarContent}
             </div>
           )}
