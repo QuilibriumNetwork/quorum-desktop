@@ -15,6 +15,7 @@ import { DropdownPanel } from '../DropdownPanel';
 import { t } from '@lingui/core/macro';
 import { usePinnedMessages } from '../../hooks';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
+import { isTouchDevice } from '../../utils/platform';
 import * as moment from 'moment-timezone';
 import './PinnedMessagesPanel.scss';
 
@@ -229,7 +230,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                       {formatMessageDate(message.createdDate)}
                     </Text>
                   </FlexRow>
-                  <FlexRow className="message-actions items-center">
+                  <FlexRow className={`message-actions items-center${isTouchDevice() ? ' always-visible' : ''}`}>
                     <Tooltip
                       id={`jump-${message.messageId}`}
                       content={t`Jump to message`}

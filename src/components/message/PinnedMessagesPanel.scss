@@ -66,6 +66,11 @@
   .pinned-message-item:hover & {
     opacity: 1;
   }
+
+  // Always visible on touch devices
+  &.always-visible {
+    opacity: 1;
+  }
 }
 
 .jump-button {
