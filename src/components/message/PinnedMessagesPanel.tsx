@@ -176,9 +176,15 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                       >
                         <Button
                           type="unstyled"
-                          onClick={() => {
+                          onClick={async () => {
                             console.log('🔍 Unpinning message:', message.messageId);
-                            unpinMessage(message.messageId);
+                            console.log('🔍 Current pinned messages count:', pinnedMessages.length);
+                            try {
+                              await unpinMessage(message.messageId);
+                              console.log('🔍 Unpin completed successfully');
+                            } catch (error) {
+                              console.error('🔍 Unpin failed:', error);
+                            }
                           }}
                           iconName="times"
                           iconOnly={true}
