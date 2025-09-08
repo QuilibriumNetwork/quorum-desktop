@@ -56,24 +56,14 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
                             elementClassName.includes('jump-button') ||
                             elementClassName.includes('unpin-button') ||
                             elementClassName.includes('btn-unstyled') ||
-                            currentElement.tagName === 'BUTTON';
+                            currentElement.tagName === 'BUTTON' ||
+                            currentElement.tagName === 'A';
           
           currentElement = currentElement.parentElement;
         }
         
-        console.log('🔍 DropdownPanel click debug:', {
-          target: event.target,
-          targetTagName: (event.target as Element)?.tagName,
-          isInside,
-          isTooltipElement,
-          shouldClose: !isInside && !isTooltipElement
-        });
-        
         if (!isInside && !isTooltipElement) {
-          console.log('🔍 Closing panel');
           onClose();
-        } else {
-          console.log('🔍 Keeping panel open');
         }
       }
     };

@@ -14,6 +14,7 @@ import {
 import { DropdownPanel } from '../DropdownPanel';
 import { t } from '@lingui/core/macro';
 import { usePinnedMessages } from '../../hooks';
+import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import * as moment from 'moment-timezone';
 import './PinnedMessagesPanel.scss';
 
@@ -64,24 +65,101 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
     }, 100);
   }, [navigate, onClose]);
 
-  const formatMessageContent = (message: MessageType) => {
-    if (!message.content) return '';
-    
-    switch (message.content.type) {
-      case 'post':
-        const text = Array.isArray(message.content.text) 
-          ? message.content.text.join(' ')
-          : message.content.text;
-        return text.length > PINNED_PANEL_CONFIG.TEXT_PREVIEW_LENGTH 
-          ? text.substring(0, PINNED_PANEL_CONFIG.TEXT_PREVIEW_LENGTH) + '...' 
-          : text;
-      case 'sticker':
-        return t`[Sticker]`;
-      case 'embed':
-        return t`[Image]`;
-      default:
-        return t`[Message]`;
+  // Component to render formatted message content with links, mentions, etc.
+  const FormattedMessageContent: React.FC<{ message: MessageType }> = ({ message }) => {
+    const formatting = useMessageFormatting({
+      message,
+      stickers: {},
+      mapSenderToUser,
+      onImageClick: () => {}, // Not needed for preview panel
+    });
+
+    if (!message.content) return null;
+
+    const contentData = formatting.getContentData();
+    if (!contentData) return null;
+
+    if (contentData.type === 'post') {
+      let totalChars = 0;
+      const maxChars = PINNED_PANEL_CONFIG.TEXT_PREVIEW_LENGTH;
+      
+      return (
+        <>
+          {contentData.content.map((line, i) => {
+            const tokens = line.split(' ');
+            const renderedTokens: React.ReactNode[] = [];
+            
+            for (let j = 0; j < tokens.length; j++) {
+              const token = tokens[j];
+              const tokenLength = token.length + 1; // +1 for space
+              
+              // Check if adding this token would exceed the limit
+              if (totalChars + tokenLength > maxChars) {
+                renderedTokens.push(
+                  <React.Fragment key={`truncate-${i}-${j}`}>...</React.Fragment>
+                );
+                break;
+              }
+              
+              totalChars += tokenLength;
+              const tokenData = formatting.processTextToken(token, contentData.messageId, i, j);
+
+              if (tokenData.type === 'mention') {
+                renderedTokens.push(
+                  <React.Fragment key={tokenData.key}>
+                    <Text className="message-name-mentions-you">
+                      {tokenData.displayName}
+                    </Text>{' '}
+                  </React.Fragment>
+                );
+              } else if (tokenData.type === 'link') {
+                renderedTokens.push(
+                  <React.Fragment key={tokenData.key}>
+                    <a
+                      href={tokenData.url}
+                      target="_blank"
+                      referrerPolicy="no-referrer"
+                      className="text-accent hover:underline"
+                      style={{ fontSize: 'inherit' }}
+                    >
+                      {tokenData.text}
+                    </a>{' '}
+                  </React.Fragment>
+                );
+              } else if (tokenData.type === 'youtube') {
+                renderedTokens.push(
+                  <React.Fragment key={tokenData.key}>
+                    <Text className="text-accent">[YouTube Video]</Text>{' '}
+                  </React.Fragment>
+                );
+              } else if (tokenData.type === 'invite') {
+                renderedTokens.push(
+                  <React.Fragment key={tokenData.key}>
+                    <Text className="text-accent">[Invite Link]</Text>{' '}
+                  </React.Fragment>
+                );
+              } else {
+                renderedTokens.push(
+                  <React.Fragment key={tokenData.key}>
+                    {tokenData.text}{' '}
+                  </React.Fragment>
+                );
+              }
+            }
+            
+            return (
+              <React.Fragment key={`line-${i}`}>
+                {renderedTokens}
+                {i < contentData.content.length - 1 && <br />}
+              </React.Fragment>
+            );
+          })}
+        </>
+      );
     }
+
+    // Since only 'post' type messages are pinnable, no need to handle other types
+    return null;
   };
 
   const formatMessageDate = (timestamp: number) => {
@@ -176,16 +254,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                       >
                         <Button
                           type="unstyled"
-                          onClick={async () => {
-                            console.log('🔍 Unpinning message:', message.messageId);
-                            console.log('🔍 Current pinned messages count:', pinnedMessages.length);
-                            try {
-                              await unpinMessage(message.messageId);
-                              console.log('🔍 Unpin completed successfully');
-                            } catch (error) {
-                              console.error('🔍 Unpin failed:', error);
-                            }
-                          }}
+                          onClick={() => unpinMessage(message.messageId)}
                           iconName="times"
                           iconOnly={true}
                           size="normal"
@@ -198,7 +267,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                 
                 <Container className="result-content">
                   <Text className="result-text">
-                    {formatMessageContent(message)}
+                    <FormattedMessageContent message={message} />
                   </Text>
                 </Container>
               </Container>
