@@ -274,48 +274,32 @@ const DirectMessage: React.FC<{}> = () => {
   return (
     <div className="chat-container">
       <FlexColumn>
+        {/* Header - full width at top */}
         <Container className="direct-message-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
-          <FlexRow className="items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2 lg:mb-0">
+          {/* Mobile layout - keep original structure */}
+          <FlexRow className="items-center gap-2 justify-between mb-2 lg:hidden">
             <FlexRow className="items-center gap-2">
               {(isMobile || isTablet) && (
                 <Button
                   type="unstyled"
                   onClick={toggleLeftSidebar}
-                  className="w-6 h-6 p-2 !rounded-md cursor-pointer hover:bg-surface-6 flex items-center justify-center"
+                  className="header-icon-button"
                   iconName="bars"
                   iconOnly
                 />
               )}
-              {/* Desktop: open Conversation Settings */}
-              <Tooltip
-                id="dm-settings-toggle-desktop"
-                content={t`Conversation settings`}
-                place="bottom"
-                showOnTouch={false}
-              >
-                <div
-                  className="hidden lg:flex w-8 h-8 items-center justify-center rounded-md hover:bg-surface-6 cursor-pointer"
-                  onClick={() => openConversationSettings(conversationId)}
-                >
-                  <Icon 
-                    name="cog" 
-                    size="sm" 
-                    className="text-subtle" 
-                  />
-                </div>
-              </Tooltip>
-              <GlobalSearch className="dm-search flex-1 lg:flex-none max-w-xs lg:max-w-none" />
+              <GlobalSearch className="dm-search flex-1" />
             </FlexRow>
             <FlexRow className="items-center gap-2">
               <Button
-              type="unstyled"
-              onClick={() => {
-                setShowUsers(!showUsers);
-              }}
-              className="w-8 h-8 !rounded-md cursor-pointer hover:bg-surface-6 flex items-center justify-center [&_.quorum-button-icon-element]:text-sm"
-              iconName="users"
-              iconOnly
-            />
+                type="unstyled"
+                onClick={() => {
+                  setShowUsers(!showUsers);
+                }}
+                className="header-icon-button"
+                iconName="users"
+                iconOnly
+              />
               {/* Mobile: open Conversation Settings */}
               <Tooltip
                 id="dm-settings-toggle-mobile"
@@ -323,19 +307,18 @@ const DirectMessage: React.FC<{}> = () => {
                 place="bottom"
                 showOnTouch={false}
               >
-                <div
-                  className="flex lg:hidden w-8 h-8 items-center justify-center rounded-md hover:bg-transparent cursor-pointer"
+                <Button
+                  type="unstyled"
                   onClick={() => openConversationSettings(conversationId)}
-                >
-                  <Icon 
-                    name="cog" 
-                    size="sm" 
-                    className="text-subtle" 
-                  />
-                </div>
+                  className="header-icon-button"
+                  iconName="cog"
+                  iconOnly
+                />
               </Tooltip>
             </FlexRow>
           </FlexRow>
+
+          {/* User info - order-1 on desktop */}
           <Container className="flex-1 min-w-0 lg:order-1">
             <FlexRow className="items-center">
               <FlexColumn className="justify-around">
@@ -371,78 +354,116 @@ const DirectMessage: React.FC<{}> = () => {
               </FlexRow>
             </FlexRow>
           </Container>
-        </Container>
-        <Container
-          className={
-            'message-list' + (!showUsers ? ' message-list-expanded' : '')
-          }
-        >
-          <MessageList
-            ref={messageListRef}
-            isRepudiable={!nonRepudiable}
-            roles={[]}
-            canDeleteMessages={() => false}
-            editor={composer.editor}
-            messageList={messageList}
-            setInReplyTo={composer.setInReplyTo}
-            members={members}
-            submitMessage={submit}
-            fetchPreviousPage={() => {
-              fetchPreviousPage();
-            }}
-          />
-        </Container>
-        {/* Accept chat warning */}
-        {!acceptChat && (
-          <FlexRow className="justify-center">
-            <Container className="w-auto px-3 py-2 mb-2 text-sm text-center rounded-lg bg-surface-4 text-subtle">
-              {t`Until you reply, this sender will not see your display name or profile picture`}
-            </Container>
-          </FlexRow>
-        )}
 
-        {/* Message Composer */}
-        <div className="message-editor-container">
-          <MessageComposer
-            ref={messageComposerRef}
-            value={composer.pendingMessage}
-            onChange={composer.setPendingMessage}
-            onKeyDown={composer.handleKeyDown}
-            placeholder={i18n._('Send a message to {user}', {
-              user: otherUser.displayName,
-            })}
-            calculateRows={composer.calculateRows}
-            getRootProps={composer.getRootProps}
-            getInputProps={composer.getInputProps}
-            fileData={composer.fileData}
-            fileType={composer.fileType}
-            clearFile={composer.clearFile}
-            onSubmitMessage={composer.submitMessage}
-            onShowStickers={() => {}}
-            hasStickers={false}
-            inReplyTo={composer.inReplyTo}
-            fileError={composer.fileError}
-            mapSenderToUser={mapSenderToUser}
-            setInReplyTo={composer.setInReplyTo}
-            showSigningToggle={!nonRepudiable}
-            skipSigning={skipSigning}
-            onSigningToggle={() => setSkipSigning(!skipSigning)}
-          />
+          {/* Desktop controls - right aligned, order-2 */}
+          <FlexRow className="hidden lg:flex items-center gap-2 lg:order-2">
+            <Tooltip
+              id="dm-settings-toggle-desktop"
+              content={t`Conversation settings`}
+              place="bottom"
+              showOnTouch={false}
+            >
+              <Button
+                type="unstyled"
+                onClick={() => openConversationSettings(conversationId)}
+                className="header-icon-button"
+                iconName="cog"
+                iconOnly
+              />
+            </Tooltip>
+            <Button
+              type="unstyled"
+              onClick={() => {
+                setShowUsers(!showUsers);
+              }}
+              className="header-icon-button"
+              iconName="users"
+              iconOnly
+            />
+            <GlobalSearch className="dm-search ml-4" />
+          </FlexRow>
+        </Container>
+
+        {/* Content area - flex container for messages and sidebar */}
+        <div className="flex flex-1 min-w-0">
+          {/* Messages and composer area */}
+          <div className="flex flex-col flex-1 min-w-0">
+            <Container
+              className={
+                'message-list' + (!showUsers ? ' message-list-expanded' : '')
+              }
+            >
+              <MessageList
+                ref={messageListRef}
+                isRepudiable={!nonRepudiable}
+                roles={[]}
+                canDeleteMessages={() => false}
+                editor={composer.editor}
+                messageList={messageList}
+                setInReplyTo={composer.setInReplyTo}
+                members={members}
+                submitMessage={submit}
+                fetchPreviousPage={() => {
+                  fetchPreviousPage();
+                }}
+              />
+            </Container>
+            {/* Accept chat warning */}
+            {!acceptChat && (
+              <FlexRow className="justify-center">
+                <Container className="w-auto px-3 py-2 mb-2 text-sm text-center rounded-lg bg-surface-4 text-subtle">
+                  {t`Until you reply, this sender will not see your display name or profile picture`}
+                </Container>
+              </FlexRow>
+            )}
+
+            {/* Message Composer */}
+            <div className="message-editor-container">
+              <MessageComposer
+                ref={messageComposerRef}
+                value={composer.pendingMessage}
+                onChange={composer.setPendingMessage}
+                onKeyDown={composer.handleKeyDown}
+                placeholder={i18n._('Send a message to {user}', {
+                  user: otherUser.displayName,
+                })}
+                calculateRows={composer.calculateRows}
+                getRootProps={composer.getRootProps}
+                getInputProps={composer.getInputProps}
+                fileData={composer.fileData}
+                fileType={composer.fileType}
+                clearFile={composer.clearFile}
+                onSubmitMessage={composer.submitMessage}
+                onShowStickers={() => {}}
+                hasStickers={false}
+                inReplyTo={composer.inReplyTo}
+                fileError={composer.fileError}
+                mapSenderToUser={mapSenderToUser}
+                setInReplyTo={composer.setInReplyTo}
+                showSigningToggle={!nonRepudiable}
+                skipSigning={skipSigning}
+                onSigningToggle={() => setSkipSigning(!skipSigning)}
+              />
+            </div>
+          </div>
+
+          {/* Desktop sidebar - positioned in content area */}
+          {showUsers && (
+            <div className="hidden lg:block w-[260px] bg-chat border-l border-default overflow-y-auto flex-shrink-0 p-4">
+              {rightSidebarContent}
+            </div>
+          )}
         </div>
       </FlexColumn>
 
-      {/* Desktop sidebar - content is managed by SidebarProvider */}
-      <Container
-        className={
-          'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-y-auto ' +
-          'transition-transform duration-300 ease-in-out ' +
-          (showUsers
-            ? 'hidden lg:block translate-x-0 fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
-            : 'hidden')
-        }
-      >
-        {rightSidebarContent}
-      </Container>
+      {/* Mobile sidebar - overlay */}
+      {showUsers && (
+        <Container
+          className="lg:hidden fixed top-0 right-0 h-full w-[260px] bg-mobile-sidebar overflow-y-auto z-[10000] transition-all duration-300 ease-in-out p-4"
+        >
+          {rightSidebarContent}
+        </Container>
+      )}
     </div>
   );
 };

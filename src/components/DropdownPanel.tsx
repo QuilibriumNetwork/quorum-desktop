@@ -34,8 +34,47 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
   // Handle outside clicks and escape key
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
-        onClose();
+      if (panelRef.current && event.target) {
+        const isInside = panelRef.current.contains(event.target as Node);
+        
+        // Check if it's a tooltip-related element (they render outside the panel)
+        const targetElement = event.target as Element;
+        
+        // Check current element and parents for button-related classes/ids
+        let currentElement = targetElement;
+        let isTooltipElement = false;
+        
+        // Walk up the DOM tree to find button-related elements
+        for (let i = 0; i < 5 && currentElement && !isTooltipElement; i++) {
+          const elementId = currentElement.id || '';
+          const elementClassName = typeof currentElement.className === 'string' 
+            ? currentElement.className 
+            : currentElement.className?.baseVal || '';
+            
+          isTooltipElement = elementId.includes('jump-') || 
+                            elementId.includes('unpin-') ||
+                            elementClassName.includes('jump-button') ||
+                            elementClassName.includes('unpin-button') ||
+                            elementClassName.includes('btn-unstyled') ||
+                            currentElement.tagName === 'BUTTON';
+          
+          currentElement = currentElement.parentElement;
+        }
+        
+        console.log('🔍 DropdownPanel click debug:', {
+          target: event.target,
+          targetTagName: (event.target as Element)?.tagName,
+          isInside,
+          isTooltipElement,
+          shouldClose: !isInside && !isTooltipElement
+        });
+        
+        if (!isInside && !isTooltipElement) {
+          console.log('🔍 Closing panel');
+          onClose();
+        } else {
+          console.log('🔍 Keeping panel open');
+        }
       }
     };
 

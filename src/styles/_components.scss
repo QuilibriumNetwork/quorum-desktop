@@ -42,3 +42,21 @@ div[role="presentation"] {
   cursor: pointer !important;
   transition: background-color 0.15s ease !important;
 }
+
+/* === HEADER ICON BUTTONS === */
+/* Common style for header icon buttons in Channel and DirectMessage */
+.header-icon-button {
+  @apply w-6 h-6 p-2 rounded-md cursor-pointer flex items-center justify-center;
+  
+  /* Icon styling - increased specificity to override Button styles */
+  .quorum-button-icon-element {
+    @apply text-base text-subtle !important;
+    transition: color 0.15s ease !important;
+  }
+
+  /* Hover state - increased specificity */
+  &:hover .quorum-button-icon-element {
+    @apply text-main !important;
+  }
+}
+
