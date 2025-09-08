@@ -48,6 +48,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [init, setInit] = useState(false);
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [showPinnedMessages, setShowPinnedMessages] = useState(false);
+  const headerRef = React.useRef<HTMLDivElement>(null);
   const { submitChannelMessage } = useMessageDB();
 
   // Create refs for textarea (MessageList needs this for scrolling and we need it for focus)
@@ -208,6 +209,27 @@ const Channel: React.FC<ChannelProps> = ({
     }
   }, [composer.inReplyTo]);
 
+  // Calculate header height for mobile sidebar positioning
+  useEffect(() => {
+    if (headerRef.current) {
+      const updateHeaderHeight = () => {
+        const rect = headerRef.current?.getBoundingClientRect();
+        if (rect) {
+          // Get the total height including the header element and its top offset
+          const totalHeight = rect.bottom;
+          document.documentElement.style.setProperty('--header-height', `${totalHeight}px`);
+        }
+      };
+      
+      updateHeaderHeight();
+      window.addEventListener('resize', updateHeaderHeight);
+      
+      return () => {
+        window.removeEventListener('resize', updateHeaderHeight);
+      };
+    }
+  }, []);
+
   // Handle kick user modal opening
   React.useEffect(() => {
     if (kickUserAddress) {
@@ -220,27 +242,41 @@ const Channel: React.FC<ChannelProps> = ({
     <div className="chat-container">
       <div className="flex flex-col flex-1 min-w-0">
         {/* Header - full width at top */}
-        <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
-          {/* Mobile layout - keep original structure */}
-          <div className="flex flex-row items-center gap-2 justify-between mb-2 lg:hidden">
-            <div className="flex flex-row items-center gap-2">
-              {!isDesktop && (
-                <Button
-                  type="unstyled"
-                  onClick={toggleLeftSidebar}
-                  className="header-icon-button"
-                  iconName="bars"
-                  iconOnly
-                />
-              )}
-              <GlobalSearch className="channel-search flex-1" />
+        <div ref={headerRef} className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-wrap lg:flex-nowrap lg:justify-between lg:items-center">
+          {/* First row on mobile: burger + controls / Single row on desktop */}
+          <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
+            {/* Burger menu for mobile only */}
+            {!isDesktop && (
+              <Button
+                type="unstyled"
+                onClick={toggleLeftSidebar}
+                className="header-icon-button lg:hidden"
+                iconName="bars"
+                iconOnly
+              />
+            )}
+            
+            {/* Channel name - hidden on mobile first row, shown on desktop */}
+            <div className="hidden lg:flex flex-1 min-w-0">
+              <div className="truncate">
+                <span>
+                  #{channel?.channelName}
+                  {channel?.channelTopic && ' | '}
+                </span>
+                <span className="font-light text-sm">
+                  {channel?.channelTopic}
+                </span>
+              </div>
             </div>
+
+            {/* Controls - right side on both mobile and desktop */}
             <div className="flex flex-row items-center gap-2">
               {pinnedCount > 0 && (
                 <div className="relative">
                   <Tooltip
                     id={`pinned-messages-${channelId}`}
                     content={t`Pinned Messages`}
+                    showOnTouch={false}
                   >
                     <Button
                       type="unstyled"
@@ -267,20 +303,27 @@ const Channel: React.FC<ChannelProps> = ({
                   />
                 </div>
               )}
-              <Button
-                type="unstyled"
-                onClick={() => {
-                  setShowUsers(!showUsers);
-                }}
-                className="header-icon-button"
-                iconName="users"
-                iconOnly
-              />
+              <Tooltip
+                id={`members-list-${channelId}`}
+                content={t`Members List`}
+                showOnTouch={false}
+              >
+                <Button
+                  type="unstyled"
+                  onClick={() => {
+                    setShowUsers(!showUsers);
+                  }}
+                  className="header-icon-button"
+                  iconName="users"
+                  iconOnly
+                />
+              </Tooltip>
+              <GlobalSearch className="channel-search ml-2" />
             </div>
           </div>
 
-          {/* Channel name/topic - order-1 on desktop */}
-          <div className="flex-1 min-w-0 lg:order-1">
+          {/* Second row on mobile: channel name / Hidden on desktop (shown above) */}
+          <div className="w-full lg:hidden">
             <div className="truncate">
               <span>
                 #{channel?.channelName}
@@ -290,51 +333,6 @@ const Channel: React.FC<ChannelProps> = ({
                 {channel?.channelTopic}
               </span>
             </div>
-          </div>
-
-          {/* Desktop controls - right aligned, order-2 */}
-          <div className="hidden lg:flex flex-row items-center gap-2 lg:order-2">
-            {pinnedCount > 0 && (
-              <div className="relative">
-                <Tooltip
-                  id={`pinned-messages-${channelId}`}
-                  content={t`Pinned Messages`}
-                >
-                  <Button
-                    type="unstyled"
-                    onClick={() => {
-                      setShowPinnedMessages(true);
-                    }}
-                    className="relative header-icon-button"
-                    iconName="thumbtack"
-                    iconOnly
-                  >
-                    <span className="absolute -top-1 -right-1 bg-accent text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
-                      {pinnedCount > 9 ? '9+' : pinnedCount}
-                    </span>
-                  </Button>
-                </Tooltip>
-                
-                {/* Pinned Messages Panel */}
-                <PinnedMessagesPanel
-                  isOpen={showPinnedMessages}
-                  onClose={() => setShowPinnedMessages(false)}
-                  spaceId={spaceId}
-                  channelId={channelId}
-                  mapSenderToUser={mapSenderToUser}
-                />
-              </div>
-            )}
-            <Button
-              type="unstyled"
-              onClick={() => {
-                setShowUsers(!showUsers);
-              }}
-              className="header-icon-button"
-              iconName="users"
-              iconOnly
-            />
-            <GlobalSearch className="channel-search ml-4" />
           </div>
         </div>
 
@@ -396,9 +394,9 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
           </div>
 
-          {/* Desktop sidebar - positioned in content area */}
+          {/* Sidebar - same for all screen sizes */}
           {showUsers && (
-            <div className="hidden lg:block w-[260px] bg-chat border-l border-default overflow-y-auto flex-shrink-0">
+            <div className="w-[260px] bg-chat lg:bg-chat bg-mobile-sidebar border-l border-default overflow-y-auto flex-shrink-0">
               {generateSidebarContent().map((section) => (
                 <div className="flex flex-col mb-2 p-4" key={section.title}>
                   <div className="font-semibold ml-[1pt] mb-3 text-xs pb-1 border-b border-default">
@@ -435,42 +433,6 @@ const Channel: React.FC<ChannelProps> = ({
         </div>
       </div>
 
-      {/* Mobile sidebar - overlay */}
-      {showUsers && (
-        <div className="lg:hidden fixed top-0 right-0 h-full w-[260px] bg-mobile-sidebar overflow-y-auto z-[10000] transition-all duration-300 ease-in-out">
-          {generateSidebarContent().map((section) => (
-            <div className="flex flex-col mb-2 p-4" key={section.title}>
-              <div className="font-semibold ml-[1pt] mb-3 text-xs pb-1 border-b border-default">
-                {section.title}
-              </div>
-              {section.members.map((member) => (
-                <div
-                  key={member.address}
-                  className="w-full flex flex-row items-center mb-2"
-                >
-                  <div
-                    className="rounded-full w-[30px] h-[30px]"
-                    style={{
-                      backgroundPosition: 'center',
-                      backgroundSize: 'cover',
-                      backgroundImage: member.userIcon?.includes(
-                        'var(--unknown-icon)'
-                      )
-                        ? member.userIcon
-                        : `url(${member.userIcon})`,
-                    }}
-                  />
-                  <div className="flex flex-col ml-2 text-main">
-                    <span className="text-md font-bold">
-                      {member.displayName}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      )}
       
       <Tooltip
         id="toggle-signing-tooltip"

@@ -39,6 +39,7 @@ const DirectMessage: React.FC<{}> = () => {
   // State for message signing
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [nonRepudiable, setNonRepudiable] = useState<boolean>(true);
+  const headerRef = useRef<HTMLDivElement>(null);
 
   // Extract business logic hooks but also get the original data for compatibility
   let { address } = useParams<{ address: string }>();
@@ -246,6 +247,27 @@ const DirectMessage: React.FC<{}> = () => {
     }
   }, [composer.inReplyTo]);
 
+  // Calculate header height for mobile sidebar positioning
+  useEffect(() => {
+    if (headerRef.current) {
+      const updateHeaderHeight = () => {
+        const rect = headerRef.current?.getBoundingClientRect();
+        if (rect) {
+          // Get the total height including the header element and its top offset
+          const totalHeight = rect.bottom;
+          document.documentElement.style.setProperty('--header-height', `${totalHeight}px`);
+        }
+      };
+      
+      updateHeaderHeight();
+      window.addEventListener('resize', updateHeaderHeight);
+      
+      return () => {
+        window.removeEventListener('resize', updateHeaderHeight);
+      };
+    }
+  }, []);
+
   // Helper function to map sender to user (used by MessageList)
   const mapSenderToUser = useCallback(
     (senderId: string) => {
@@ -275,34 +297,61 @@ const DirectMessage: React.FC<{}> = () => {
     <div className="chat-container">
       <FlexColumn>
         {/* Header - full width at top */}
-        <Container className="direct-message-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
-          {/* Mobile layout - keep original structure */}
-          <FlexRow className="items-center gap-2 justify-between mb-2 lg:hidden">
-            <FlexRow className="items-center gap-2">
-              {(isMobile || isTablet) && (
-                <Button
-                  type="unstyled"
-                  onClick={toggleLeftSidebar}
-                  className="header-icon-button"
-                  iconName="bars"
-                  iconOnly
-                />
-              )}
-              <GlobalSearch className="dm-search flex-1" />
-            </FlexRow>
-            <FlexRow className="items-center gap-2">
+        <Container ref={headerRef} className="direct-message-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-wrap lg:flex-nowrap lg:justify-between lg:items-center">
+          {/* First row on mobile: burger + controls / Single row on desktop */}
+          <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
+            {/* Burger menu for mobile only */}
+            {(isMobile || isTablet) && (
               <Button
                 type="unstyled"
-                onClick={() => {
-                  setShowUsers(!showUsers);
-                }}
-                className="header-icon-button"
-                iconName="users"
+                onClick={toggleLeftSidebar}
+                className="header-icon-button lg:hidden"
+                iconName="bars"
                 iconOnly
               />
-              {/* Mobile: open Conversation Settings */}
+            )}
+            
+            {/* User info - hidden on mobile first row, shown on desktop */}
+            <Container className="hidden lg:flex flex-1 min-w-0">
+              <FlexRow className="items-center">
+                <FlexColumn className="justify-around">
+                  <Container
+                    className="w-[28px] h-[28px] bg-cover bg-center rounded-full"
+                    style={{
+                      backgroundImage: `${icon}`,
+                    }}
+                  />
+                </FlexColumn>
+                <FlexRow className="pl-2">
+                  <FlexColumn className="justify-around font-semibold">
+                    <Text>{otherUser.displayName}</Text>
+                  </FlexColumn>
+                  <FlexColumn className="justify-around px-1">
+                    <Text className="text-subtle">|</Text>
+                  </FlexColumn>
+                  <FlexColumn className="justify-around">
+                    <FlexRow className="items-center">
+                      <ClickToCopyContent
+                        text={address ?? ''}
+                        tooltipText={t`Copy address`}
+                        tooltipLocation="right"
+                        className="font-light text-xs text-subtle"
+                        iconPosition="right"
+                        iconClassName="text-subtle hover:text-surface-7"
+                        iconSize="xs"
+                      >
+                        {truncateAddress(address ?? '')}
+                      </ClickToCopyContent>
+                    </FlexRow>
+                  </FlexColumn>
+                </FlexRow>
+              </FlexRow>
+            </Container>
+
+            {/* Controls - right side on both mobile and desktop */}
+            <FlexRow className="items-center gap-2">
               <Tooltip
-                id="dm-settings-toggle-mobile"
+                id="dm-settings-toggle"
                 content={t`Conversation settings`}
                 place="bottom"
                 showOnTouch={false}
@@ -315,11 +364,27 @@ const DirectMessage: React.FC<{}> = () => {
                   iconOnly
                 />
               </Tooltip>
+              <Tooltip
+                id="dm-members-list"
+                content={t`Members List`}
+                showOnTouch={false}
+              >
+                <Button
+                  type="unstyled"
+                  onClick={() => {
+                    setShowUsers(!showUsers);
+                  }}
+                  className="header-icon-button"
+                  iconName="users"
+                  iconOnly
+                />
+              </Tooltip>
+              <GlobalSearch className="dm-search ml-2" />
             </FlexRow>
-          </FlexRow>
+          </div>
 
-          {/* User info - order-1 on desktop */}
-          <Container className="flex-1 min-w-0 lg:order-1">
+          {/* Second row on mobile: user info / Hidden on desktop (shown above) */}
+          <Container className="w-full lg:hidden">
             <FlexRow className="items-center">
               <FlexColumn className="justify-around">
                 <Container
@@ -354,34 +419,6 @@ const DirectMessage: React.FC<{}> = () => {
               </FlexRow>
             </FlexRow>
           </Container>
-
-          {/* Desktop controls - right aligned, order-2 */}
-          <FlexRow className="hidden lg:flex items-center gap-2 lg:order-2">
-            <Tooltip
-              id="dm-settings-toggle-desktop"
-              content={t`Conversation settings`}
-              place="bottom"
-              showOnTouch={false}
-            >
-              <Button
-                type="unstyled"
-                onClick={() => openConversationSettings(conversationId)}
-                className="header-icon-button"
-                iconName="cog"
-                iconOnly
-              />
-            </Tooltip>
-            <Button
-              type="unstyled"
-              onClick={() => {
-                setShowUsers(!showUsers);
-              }}
-              className="header-icon-button"
-              iconName="users"
-              iconOnly
-            />
-            <GlobalSearch className="dm-search ml-4" />
-          </FlexRow>
         </Container>
 
         {/* Content area - flex container for messages and sidebar */}
@@ -447,23 +484,15 @@ const DirectMessage: React.FC<{}> = () => {
             </div>
           </div>
 
-          {/* Desktop sidebar - positioned in content area */}
+          {/* Sidebar - same for all screen sizes */}
           {showUsers && (
-            <div className="hidden lg:block w-[260px] bg-chat border-l border-default overflow-y-auto flex-shrink-0 p-4">
+            <div className="w-[260px] bg-chat lg:bg-chat bg-mobile-sidebar border-l border-default overflow-y-auto flex-shrink-0 p-4">
               {rightSidebarContent}
             </div>
           )}
         </div>
       </FlexColumn>
 
-      {/* Mobile sidebar - overlay */}
-      {showUsers && (
-        <Container
-          className="lg:hidden fixed top-0 right-0 h-full w-[260px] bg-mobile-sidebar overflow-y-auto z-[10000] transition-all duration-300 ease-in-out p-4"
-        >
-          {rightSidebarContent}
-        </Container>
-      )}
     </div>
   );
 };

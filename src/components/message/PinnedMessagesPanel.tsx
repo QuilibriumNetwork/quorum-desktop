@@ -209,6 +209,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
         ? t`${pinnedMessages.length} pinned message`
         : t`${pinnedMessages.length} pinned messages`}
       className="pinned-messages-panel"
+      showCloseButton={false}
     >
       <Container className="pinned-messages-list">
         {isLoading || pinnedMessages.length === 0 ? (

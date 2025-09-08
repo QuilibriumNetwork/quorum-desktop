@@ -17,11 +17,12 @@
   min-width: 200px;
 }
 
-// Right-aligned positioning (opens to the left of the trigger)
+// Right-aligned positioning (opens to the right side of screen)
 .dropdown-panel--right-aligned {
-  top: 100%;
-  right: 0;
-  margin-top: 8px;
+  right: 20px;
+  left: auto;
+  top: calc(var(--header-height, 80px) + 10px); // Below header with small margin
+  margin-top: 0;
   min-width: 200px;
 }
 

@@ -96,7 +96,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       onClose={onClose || (() => {})}
       position="absolute"
       positionStyle="right-aligned"
-      maxWidth={400}
+      maxWidth={500}
       maxHeight={maxHeight}
       resultsCount={results.length}
       className={`search-results ${className || ''}`}

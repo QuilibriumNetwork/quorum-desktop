@@ -92,29 +92,37 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
     : positionStyle === 'right-aligned'
     ? 'dropdown-panel--right-aligned'
     : 'dropdown-panel--search-results';
+  
+  // Check if screen is below 640px (sm breakpoint) for responsive width
+  const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 640;
+  const responsiveMaxWidth = isSmallScreen ? 280 : maxWidth;
+  
   const positionStyleObject = positionStyle === 'search-results' 
     ? { 
-        width: `min(${maxWidth}px, calc(100vw - 40px))`,
-        maxWidth: `min(${maxWidth}px, calc(100vw - 40px))`,
+        width: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
+        maxWidth: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
         maxHeight: `${maxHeight}px`
       }
     : positionStyle === 'right-aligned'
     ? {
-        width: `min(${maxWidth}px, calc(100vw - 40px))`,
-        maxWidth: `min(${maxWidth}px, calc(100vw - 40px))`,
+        width: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
+        maxWidth: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
         maxHeight: `${maxHeight}px`
       }
     : {
-        maxWidth: `min(${maxWidth}px, calc(100vw - 40px))`,
+        maxWidth: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
         maxHeight: `${maxHeight}px`
       };
+
+  // Use fixed positioning for right-aligned panels to escape relative containers
+  const finalPosition = (positionStyle === 'right-aligned') ? 'fixed' : position;
 
   return (
     <Container
       ref={panelRef}
       className={`dropdown-panel ${positionClass} ${className}`}
       style={{ 
-        position,
+        position: finalPosition,
         ...positionStyleObject
       }}
     >
