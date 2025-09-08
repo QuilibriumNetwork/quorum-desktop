@@ -241,7 +241,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                         onClick={() => handleJumpToMessage(message.messageId)}
                         iconName="arrow-right"
                         iconOnly={true}
-                        size="normal"
+                        size="compact"
                         className="jump-button"
                       />
                     </Tooltip>
@@ -257,7 +257,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                           onClick={() => unpinMessage(message.messageId)}
                           iconName="times"
                           iconOnly={true}
-                          size="normal"
+                          size="compact"
                           className="unpin-button"
                         />
                       </Tooltip>

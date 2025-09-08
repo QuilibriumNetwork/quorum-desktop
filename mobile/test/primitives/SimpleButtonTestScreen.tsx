@@ -129,6 +129,14 @@ export const SimpleButtonTestScreen: React.FC = () => {
             >
               Small Size
             </Button>
+
+            <Button
+              type="primary"
+              size="compact"
+              onClick={() => {}}
+            >
+              Compact Size
+            </Button>
           </FlexColumn>
         </View>
 
@@ -167,6 +175,24 @@ export const SimpleButtonTestScreen: React.FC = () => {
               size="large"
               onClick={() => {}}
             />
+
+            <FlexRow gap={8} style={{ alignItems: 'center' }}>
+              <Button
+                type="unstyled"
+                iconName="arrow-right"
+                iconOnly
+                size="compact"
+                onClick={() => {}}
+              />
+              <Button
+                type="unstyled"
+                iconName="times"
+                iconOnly
+                size="compact"
+                onClick={() => {}}
+              />
+              <Paragraph>Compact icon-only buttons (like in pinned messages)</Paragraph>
+            </FlexRow>
           </FlexColumn>
         </View>
 

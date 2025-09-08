@@ -59,7 +59,7 @@
 }
 
 .message-actions {
-  gap: 8px;
+  gap: 2px;
   opacity: 0;
   transition: opacity 0.2s ease;
 
@@ -69,28 +69,28 @@
 }
 
 .jump-button {
-  padding: 4px;
-  border-radius: 4px;
   color: var(--accent-500);
   transition: all 0.2s ease;
-  background: transparent;
 
   &:hover {
-    background: transparent;
     color: var(--accent-300);
+  }
+
+  .quorum-button-icon-element {
+    font-size: 16px !important;
   }
 }
 
 .unpin-button {
-  padding: 4px;
-  border-radius: 4px;
   color: var(--color-text-muted);
   transition: all 0.2s ease;
-  background: transparent;
 
   &:hover {
-    background: transparent;
     color: rgb(var(--danger));
+  }
+
+  .quorum-button-icon-element {
+    font-size: 16px !important;
   }
 }
 
