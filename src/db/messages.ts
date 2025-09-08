@@ -1203,7 +1203,8 @@ export class MessageDB {
       const store = transaction.objectStore('messages');
       const index = store.index('by_conversation_time');
       
-      // Use the existing index to get all messages for this channel, then filter
+      // Get all messages for this channel, then filter for pinned ones
+      // This approach works reliably with the existing index structure
       const range = IDBKeyRange.bound(
         [spaceId, channelId, 0],
         [spaceId, channelId, Number.MAX_SAFE_INTEGER]
@@ -1215,8 +1216,12 @@ export class MessageDB {
         const allMessages = request.result || [];
         // Filter for pinned messages only
         const pinnedMessages = allMessages.filter(msg => msg.isPinned === true);
-        // Sort by message creation date (newest first)
-        pinnedMessages.sort((a, b) => b.createdDate - a.createdDate);
+        // Sort by pinned date (newest first), falling back to creation date
+        pinnedMessages.sort((a, b) => {
+          const aPinnedAt = a.pinnedAt || a.createdDate;
+          const bPinnedAt = b.pinnedAt || b.createdDate;
+          return bPinnedAt - aPinnedAt;
+        });
         resolve(pinnedMessages);
       };
       request.onerror = () => {
@@ -1282,7 +1287,8 @@ export class MessageDB {
       const store = transaction.objectStore('messages');
       const index = store.index('by_conversation_time');
       
-      // Use the existing index to get all messages for this channel, then count pinned ones
+      // Get all messages for this channel, then count pinned ones
+      // This approach works reliably with the existing index structure
       const range = IDBKeyRange.bound(
         [spaceId, channelId, 0],
         [spaceId, channelId, Number.MAX_SAFE_INTEGER]

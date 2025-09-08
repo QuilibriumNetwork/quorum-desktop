@@ -6,16 +6,22 @@ import {
   FlexRow, 
   FlexCenter,
   Text, 
-  Icon, 
   Button,
   Container,
-  Tooltip
+  Tooltip,
+  Icon
 } from '../primitives';
 import { DropdownPanel } from '../DropdownPanel';
 import { t } from '@lingui/core/macro';
 import { usePinnedMessages } from '../../hooks';
 import * as moment from 'moment-timezone';
 import './PinnedMessagesPanel.scss';
+
+// Configuration constants for pinned messages panel
+const PINNED_PANEL_CONFIG = {
+  TEXT_PREVIEW_LENGTH: 800,  // Maximum characters to show in message preview
+  TOOLTIP_DURATION_MOBILE: 3000,  // Tooltip auto-hide duration on mobile (ms)
+} as const;
 
 interface PinnedMessagesPanelProps {
   isOpen: boolean;
@@ -50,7 +56,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
     setTimeout(() => {
       const messageElement = document.getElementById(`msg-${messageId}`);
       if (messageElement) {
-        messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        messageElement.scrollIntoView({ behavior: 'auto', block: 'center' });
         messageElement.classList.add('highlight-message');
         setTimeout(() => {
           messageElement.classList.remove('highlight-message');
@@ -67,7 +73,9 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
         const text = Array.isArray(message.content.text) 
           ? message.content.text.join(' ')
           : message.content.text;
-        return text.length > 800 ? text.substring(0, 800) + '...' : text;
+        return text.length > PINNED_PANEL_CONFIG.TEXT_PREVIEW_LENGTH 
+          ? text.substring(0, PINNED_PANEL_CONFIG.TEXT_PREVIEW_LENGTH) + '...' 
+          : text;
       case 'sticker':
         return t`[Sticker]`;
       case 'embed':
@@ -105,7 +113,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
         <Text className="empty-hint">
           {canPinMessages 
             ? t`Pin important messages to keep them easily accessible`
-            : t`Space owners can pin important messages here`}
+            : t`Important messages will be pinned here`}
         </Text>
       </FlexCenter>
     );
@@ -148,31 +156,35 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                     <Tooltip
                       id={`jump-${message.messageId}`}
                       content={t`Jump to message`}
-                      showOnTouch={true}
-                      autoHideAfter={3000}
+                      place="top"
+                      showOnTouch={false}
+                      autoHideAfter={PINNED_PANEL_CONFIG.TOOLTIP_DURATION_MOBILE}
                     >
                       <Button
                         type="unstyled"
                         onClick={() => handleJumpToMessage(message.messageId)}
+                        iconName="arrow-right"
+                        iconOnly={true}
+                        size="normal"
                         className="jump-button"
-                      >
-                        <Icon name="arrow-right" size="sm" />
-                      </Button>
+                      />
                     </Tooltip>
                     {canPinMessages && (
                       <Tooltip
                         id={`unpin-${message.messageId}`}
                         content={t`Unpin this post`}
-                        showOnTouch={true}
-                        autoHideAfter={3000}
+                        place="top"
+                        showOnTouch={false}
+                        autoHideAfter={PINNED_PANEL_CONFIG.TOOLTIP_DURATION_MOBILE}
                       >
                         <Button
                           type="unstyled"
                           onClick={() => unpinMessage(message.messageId)}
+                          iconName="times"
+                          iconOnly={true}
+                          size="normal"
                           className="unpin-button"
-                        >
-                          <Icon name="times" size="sm" />
-                        </Button>
+                        />
                       </Tooltip>
                     )}
                   </FlexRow>

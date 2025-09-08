@@ -22,16 +22,18 @@ The pinned messages feature allows space owners to pin important messages within
 
 **File: `src/db/messages.ts`**
 - Database schema version bumped from 2 to 3
-- Added `by_channel_pinned` index for efficient pinned message queries
+- Added `by_channel_pinned` index (created but not actively used due to IndexedDB limitations)
 - Three new methods:
-  - `getPinnedMessages()`: Retrieves all pinned messages for a channel
+  - `getPinnedMessages()`: Retrieves all pinned messages for a channel (uses `by_conversation_time` index with filtering)
   - `updateMessagePinStatus()`: Updates pin status with metadata
-  - `getPinnedMessageCount()`: Returns count of pinned messages
+  - `getPinnedMessageCount()`: Returns count of pinned messages (uses `by_conversation_time` index with filtering)
 
 **Message fields added:**
 - `isPinned?: boolean` - Whether message is pinned
 - `pinnedAt?: number` - Timestamp when message was pinned
 - `pinnedBy?: string` - Address of user who pinned the message
+
+**Implementation Note:** While a dedicated `by_channel_pinned` index was created, the implementation uses the existing `by_conversation_time` index and filters results in memory. This approach was chosen for reliability as IndexedDB has limitations with boolean values in compound index keys.
 
 ### API Types
 
@@ -56,8 +58,10 @@ Main hook managing all pinned message functionality:
 **Key features:**
 - React Query integration with optimistic updates
 - Permission checking (space owner validation)
-- Pin limit enforcement (50 messages maximum)
+- Pin limit enforcement (50 messages maximum, configurable via `PINNED_MESSAGES_CONFIG.MAX_PINS`)
 - Automatic query invalidation for real-time updates
+- Comprehensive error handling with try-catch blocks and validation
+- Error state exposure via `pinError` and `unpinError` properties
 
 **Exported functions:**
 - `pinnedMessages`: Array of pinned messages (sorted by creation date, newest first)
@@ -89,6 +93,7 @@ queryClient.invalidateQueries({ queryKey: ['Messages', spaceId, channelId] }); /
 - Shows confirmation tooltips ("Pinned!" / "Unpinned!")
 - Icon changes based on pin state: `thumbtack` → `thumbtack-slash`
 - Color changes: muted → accent blue when pinned
+- Confirmation duration configurable via `MESSAGE_ACTIONS_CONFIG.PIN_CONFIRMATION_DURATION` (2000ms)
 
 #### Channel Header
 
@@ -110,6 +115,8 @@ Full-featured panel displaying all pinned messages:
 - Unpin functionality (only visible to space owners)
 - Empty states for loading and no pinned messages
 - Uses reusable DropdownPanel component
+- Text preview truncation at 800 characters (configurable via `PINNED_PANEL_CONFIG.TEXT_PREVIEW_LENGTH`)
+- Mobile tooltip auto-hide after 3000ms (configurable via `PINNED_PANEL_CONFIG.TOOLTIP_DURATION_MOBILE`)
 
 **Layout:**
 - Header: Count of pinned messages with close button
@@ -191,6 +198,13 @@ Added thumbtack-related icons:
 
 ## Key Technical Details
 
+### Configuration Constants
+All magic numbers have been extracted into configuration objects:
+- `PINNED_MESSAGES_CONFIG.MAX_PINS`: 50 (maximum pinned messages per channel)
+- `PINNED_PANEL_CONFIG.TEXT_PREVIEW_LENGTH`: 800 (characters shown in preview)
+- `PINNED_PANEL_CONFIG.TOOLTIP_DURATION_MOBILE`: 3000ms (mobile tooltip auto-hide)
+- `MESSAGE_ACTIONS_CONFIG.PIN_CONFIRMATION_DURATION`: 2000ms (confirmation tooltip duration)
+
 ### Query Key Management
 - **Critical bug fix**: Messages query uses capital 'M' (`['Messages', ...]`)
 - Pin mutations must invalidate with correct case-sensitive key
@@ -201,10 +215,17 @@ Added thumbtack-related icons:
 - Permission checked in hook: `canPinMessages: Boolean(isSpaceOwner)`
 - UI elements conditionally rendered based on permissions
 
+### Error Handling
+- Comprehensive try-catch blocks in mutation functions
+- Validation of messageId, spaceId, and channelId parameters
+- Error logging for debugging and monitoring
+- Error states exposed via `pinError` and `unpinError` properties
+
 ### Performance Optimization
 - React Query caching prevents unnecessary database calls
 - Optimistic updates provide immediate UI feedback
 - Query invalidation strategy updates only relevant caches
+- Database queries use existing `by_conversation_time` index with in-memory filtering for reliability
 
 ### Mobile Compatibility
 - Uses primitive components for cross-platform support
@@ -221,6 +242,6 @@ Added thumbtack-related icons:
 
 ---
 
-*Last updated: January 2025*
+*Last updated: January 2025 - Added configuration constants, improved error handling, and database query optimization notes*
 
 [← Back to INDEX](/../../INDEX.md)

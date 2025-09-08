@@ -4,6 +4,11 @@ import { Tooltip, Icon } from '../primitives';
 import { useQuickReactions } from '../../hooks/business/messages';
 import { t } from '@lingui/core/macro';
 
+// Configuration constants for message actions
+const MESSAGE_ACTIONS_CONFIG = {
+  PIN_CONFIRMATION_DURATION: 2000,  // Duration to show pin/unpin confirmation (ms)
+} as const;
+
 interface MessageActionsProps {
   message: MessageType;
   userAddress: string;
@@ -51,10 +56,10 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
       onPin();
       // Show confirmation tooltip
       setPinAction(wasPinned ? 'unpinned' : 'pinned');
-      // Hide confirmation tooltip after 2 seconds
+      // Hide confirmation tooltip after configured duration
       setTimeout(() => {
         setPinAction(null);
-      }, 2000);
+      }, MESSAGE_ACTIONS_CONFIG.PIN_CONFIRMATION_DURATION);
     }
   };
 

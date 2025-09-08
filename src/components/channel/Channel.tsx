@@ -12,6 +12,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { MessageList, MessageListRef } from '../message/MessageList';
 import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
@@ -236,7 +237,7 @@ const Channel: React.FC<ChannelProps> = ({
               <div className="relative">
                 <Tooltip
                   id={`pinned-messages-${channelId}`}
-                  content={pinnedCount > 0 ? `${pinnedCount} pinned message${pinnedCount > 1 ? 's' : ''}` : 'Pinned messages'}
+                  content={t`Pinned Messages`}
                 >
                   <Button
                     type="unstyled"
