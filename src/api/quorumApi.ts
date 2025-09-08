@@ -92,11 +92,15 @@ export type Message = {
     | LeaveMessage
     | KickMessage
     | UpdateProfileMessage
-    | StickerMessage;
+    | StickerMessage
+    | PinMessage;
   reactions: Reaction[];
   mentions: Mentions;
   publicKey?: string;
   signature?: string;
+  isPinned?: boolean;
+  pinnedAt?: number;
+  pinnedBy?: string;
 };
 
 export type PostMessage = {
@@ -170,6 +174,13 @@ export type StickerMessage = {
   type: 'sticker';
   stickerId: string;
   repliesToMessageId?: string;
+};
+
+export type PinMessage = {
+  senderId: string;
+  type: 'pin';
+  targetMessageId: string;
+  action: 'pin' | 'unpin';
 };
 
 export type Reaction = {

@@ -1,5 +1,8 @@
 # File Upload Hooks Consolidation Task
 
+[← Back to INDEX](/../../../INDEX.md)
+
+
 ## Overview
 
 Currently, we have multiple file upload implementations that could be consolidated for better maintainability and cross-platform consistency.
@@ -97,3 +100,5 @@ Currently, we have multiple file upload implementations that could be consolidat
 *Created: August 8, 2025*
 *Status: Planning*
 *Priority: Medium*
+
+[← Back to INDEX](/../../../INDEX.md)

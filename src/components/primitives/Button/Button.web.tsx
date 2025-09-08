@@ -20,6 +20,7 @@ const Button: React.FC<WebButtonProps> = (props) => {
         id={buttonId}
         className={
           baseClass +
+          (props.size === 'compact' ? ' btn-compact' : '') +
           (props.size === 'small' ? ' btn-small' : '') +
           (props.size === 'large' ? ' btn-large' : '') +
           (props.icon ? ' quorum-button-icon' : '') +

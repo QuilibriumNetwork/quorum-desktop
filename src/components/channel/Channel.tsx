@@ -5,12 +5,14 @@ import {
   useChannelData,
   useChannelMessages,
   useMessageComposer,
+  usePinnedMessages,
 } from '../../hooks';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { MessageList, MessageListRef } from '../message/MessageList';
 import { i18n } from '@lingui/core';
+import { t } from '@lingui/core/macro';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
@@ -19,6 +21,7 @@ import { Button, Icon, Tooltip } from '../primitives';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
+import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
 
 type ChannelProps = {
   spaceId: string;
@@ -44,6 +47,8 @@ const Channel: React.FC<ChannelProps> = ({
   } = useSidebar();
   const [init, setInit] = useState(false);
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
+  const [showPinnedMessages, setShowPinnedMessages] = useState(false);
+  const headerRef = React.useRef<HTMLDivElement>(null);
   const { submitChannelMessage } = useMessageDB();
 
   // Create refs for textarea (MessageList needs this for scrolling and we need it for focus)
@@ -63,6 +68,9 @@ const Channel: React.FC<ChannelProps> = ({
     mapSenderToUser,
     isSpaceOwner,
   } = useChannelMessages({ spaceId, channelId, roles, members });
+
+  // Get pinned messages
+  const { pinnedCount } = usePinnedMessages(spaceId, channelId);
 
   // Handle message submission
   const handleSubmitMessage = useCallback(
@@ -201,6 +209,27 @@ const Channel: React.FC<ChannelProps> = ({
     }
   }, [composer.inReplyTo]);
 
+  // Calculate header height for mobile sidebar positioning
+  useEffect(() => {
+    if (headerRef.current) {
+      const updateHeaderHeight = () => {
+        const rect = headerRef.current?.getBoundingClientRect();
+        if (rect) {
+          // Get the total height including the header element and its top offset
+          const totalHeight = rect.bottom;
+          document.documentElement.style.setProperty('--header-height', `${totalHeight}px`);
+        }
+      };
+      
+      updateHeaderHeight();
+      window.addEventListener('resize', updateHeaderHeight);
+      
+      return () => {
+        window.removeEventListener('resize', updateHeaderHeight);
+      };
+    }
+  }, []);
+
   // Handle kick user modal opening
   React.useEffect(() => {
     if (kickUserAddress) {
@@ -212,31 +241,89 @@ const Channel: React.FC<ChannelProps> = ({
   return (
     <div className="chat-container">
       <div className="flex flex-col flex-1 min-w-0">
-        <div className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
-          <div className="flex flex-row items-center gap-2 lg:order-2 justify-between lg:justify-start mb-2 lg:mb-0">
+        {/* Header - full width at top */}
+        <div ref={headerRef} className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-wrap lg:flex-nowrap lg:justify-between lg:items-center">
+          {/* First row on mobile: burger + controls / Single row on desktop */}
+          <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
+            {/* Burger menu for mobile only */}
+            {!isDesktop && (
+              <Button
+                type="unstyled"
+                onClick={toggleLeftSidebar}
+                className="header-icon-button lg:hidden"
+                iconName="bars"
+                iconOnly
+              />
+            )}
+            
+            {/* Channel name - hidden on mobile first row, shown on desktop */}
+            <div className="hidden lg:flex flex-1 min-w-0">
+              <div className="truncate">
+                <span>
+                  #{channel?.channelName}
+                  {channel?.channelTopic && ' | '}
+                </span>
+                <span className="font-light text-sm">
+                  {channel?.channelTopic}
+                </span>
+              </div>
+            </div>
+
+            {/* Controls - right side on both mobile and desktop */}
             <div className="flex flex-row items-center gap-2">
-              {!isDesktop && (
+              {pinnedCount > 0 && (
+                <div className="relative">
+                  <Tooltip
+                    id={`pinned-messages-${channelId}`}
+                    content={t`Pinned Messages`}
+                    showOnTouch={false}
+                  >
+                    <Button
+                      type="unstyled"
+                      onClick={() => {
+                        setShowPinnedMessages(true);
+                      }}
+                      className="relative header-icon-button"
+                      iconName="thumbtack"
+                      iconOnly
+                    >
+                      <span className="absolute -top-1 -right-1 bg-accent text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                        {pinnedCount > 9 ? '9+' : pinnedCount}
+                      </span>
+                    </Button>
+                  </Tooltip>
+                  
+                  {/* Pinned Messages Panel */}
+                  <PinnedMessagesPanel
+                    isOpen={showPinnedMessages}
+                    onClose={() => setShowPinnedMessages(false)}
+                    spaceId={spaceId}
+                    channelId={channelId}
+                    mapSenderToUser={mapSenderToUser}
+                  />
+                </div>
+              )}
+              <Tooltip
+                id={`members-list-${channelId}`}
+                content={t`Members List`}
+                showOnTouch={false}
+              >
                 <Button
                   type="unstyled"
-                  onClick={toggleLeftSidebar}
-                  className="w-6 h-6 p-2 !rounded-md cursor-pointer hover:bg-surface-6 flex items-center justify-center"
-                  iconName="bars"
+                  onClick={() => {
+                    setShowUsers(!showUsers);
+                  }}
+                  className="header-icon-button"
+                  iconName="users"
                   iconOnly
                 />
-              )}
-              <GlobalSearch className="channel-search flex-1 lg:flex-none max-w-xs lg:max-w-none" />
+              </Tooltip>
+              <GlobalSearch className="channel-search ml-2" />
             </div>
-            <Button
-              type="unstyled"
-              onClick={() => {
-                setShowUsers(!showUsers);
-              }}
-              className="w-6 h-6 p-2 !rounded-md cursor-pointer hover:bg-surface-6 flex items-center justify-center [&_.quorum-button-icon-element]:text-sm"
-              iconName="users"
-              iconOnly
-            />
           </div>
-          <div className="flex-1 min-w-0 lg:order-1">
+
+          {/* Second row on mobile: channel name / Hidden on desktop (shown above) */}
+          <div className="w-full lg:hidden">
             <div className="truncate">
               <span>
                 #{channel?.channelName}
@@ -248,59 +335,104 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
           </div>
         </div>
-        <div
-          className={
-            'message-list' + (!showUsers ? ' message-list-expanded' : '')
-          }
-        >
-          <MessageList
-            ref={messageListRef}
-            isRepudiable={space?.isRepudiable}
-            stickers={stickers}
-            roles={roles}
-            canDeleteMessages={canDeleteMessages}
-            isSpaceOwner={isSpaceOwner}
-            editor={textareaRef}
-            messageList={messageList}
-            setInReplyTo={composer.setInReplyTo}
-            customEmoji={space?.emojis}
-            members={members}
-            submitMessage={handleSubmitMessage}
-            kickUserAddress={kickUserAddress}
-            setKickUserAddress={setKickUserAddress}
-            fetchPreviousPage={() => {
-              fetchPreviousPage();
-            }}
-          />
-        </div>
 
-        <div className="message-editor-container">
-          <MessageComposer
-            ref={messageComposerRef}
-            value={composer.pendingMessage}
-            onChange={composer.setPendingMessage}
-            onKeyDown={composer.handleKeyDown}
-            placeholder={i18n._('Send a message to #{channel_name}', {
-              channel_name: channel?.channelName ?? '',
-            })}
-            calculateRows={composer.calculateRows}
-            getRootProps={composer.getRootProps}
-            getInputProps={composer.getInputProps}
-            fileData={composer.fileData}
-            fileType={composer.fileType}
-            clearFile={composer.clearFile}
-            onSubmitMessage={composer.submitMessage}
-            onShowStickers={() => composer.setShowStickers(true)}
-            inReplyTo={composer.inReplyTo}
-            fileError={composer.fileError}
-            mapSenderToUser={mapSenderToUser}
-            setInReplyTo={composer.setInReplyTo}
-            showSigningToggle={space?.isRepudiable}
-            skipSigning={skipSigning}
-            onSigningToggle={() => setSkipSigning(!skipSigning)}
-          />
+        {/* Content area - flex container for messages and sidebar */}
+        <div className="flex flex-1 relative">
+          {/* Messages and composer area */}
+          <div className="flex flex-col flex-1">
+            <div
+              className={
+                'message-list' + (!showUsers ? ' message-list-expanded' : '')
+              }
+            >
+              <MessageList
+                ref={messageListRef}
+                isRepudiable={space?.isRepudiable}
+                stickers={stickers}
+                roles={roles}
+                canDeleteMessages={canDeleteMessages}
+                isSpaceOwner={isSpaceOwner}
+                editor={textareaRef}
+                messageList={messageList}
+                setInReplyTo={composer.setInReplyTo}
+                customEmoji={space?.emojis}
+                members={members}
+                submitMessage={handleSubmitMessage}
+                kickUserAddress={kickUserAddress}
+                setKickUserAddress={setKickUserAddress}
+                fetchPreviousPage={() => {
+                  fetchPreviousPage();
+                }}
+              />
+            </div>
+
+            <div className="message-editor-container">
+              <MessageComposer
+                ref={messageComposerRef}
+                value={composer.pendingMessage}
+                onChange={composer.setPendingMessage}
+                onKeyDown={composer.handleKeyDown}
+                placeholder={i18n._('Send a message to #{channel_name}', {
+                  channel_name: channel?.channelName ?? '',
+                })}
+                calculateRows={composer.calculateRows}
+                getRootProps={composer.getRootProps}
+                getInputProps={composer.getInputProps}
+                fileData={composer.fileData}
+                fileType={composer.fileType}
+                clearFile={composer.clearFile}
+                onSubmitMessage={composer.submitMessage}
+                onShowStickers={() => composer.setShowStickers(true)}
+                inReplyTo={composer.inReplyTo}
+                fileError={composer.fileError}
+                mapSenderToUser={mapSenderToUser}
+                setInReplyTo={composer.setInReplyTo}
+                showSigningToggle={space?.isRepudiable}
+                skipSigning={skipSigning}
+                onSigningToggle={() => setSkipSigning(!skipSigning)}
+              />
+            </div>
+          </div>
+
+          {/* Desktop sidebar only - mobile sidebar renders via SidebarProvider at Layout level */}
+          {showUsers && (
+            <div className="hidden lg:block w-[260px] bg-chat border-l border-default overflow-y-auto flex-shrink-0">
+              {generateSidebarContent().map((section) => (
+                <div className="flex flex-col mb-2 p-4" key={section.title}>
+                  <div className="font-semibold ml-[1pt] mb-3 text-xs pb-1 border-b border-default">
+                    {section.title}
+                  </div>
+                  {section.members.map((member) => (
+                    <div
+                      key={member.address}
+                      className="w-full flex flex-row items-center mb-2"
+                    >
+                      <div
+                        className="rounded-full w-[30px] h-[30px]"
+                        style={{
+                          backgroundPosition: 'center',
+                          backgroundSize: 'cover',
+                          backgroundImage: member.userIcon?.includes(
+                            'var(--unknown-icon)'
+                          )
+                            ? member.userIcon
+                            : `url(${member.userIcon})`,
+                        }}
+                      />
+                      <div className="flex flex-col ml-2 text-main">
+                        <span className="text-md font-bold">
+                          {member.displayName}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
       
       <Tooltip
         id="toggle-signing-tooltip"
@@ -308,48 +440,6 @@ const Channel: React.FC<ChannelProps> = ({
         place="top"
       />
 
-      {/* Desktop sidebar - only visible on lg+ screens */}
-      <div
-        className={
-          'w-[260px] bg-mobile-sidebar mobile-sidebar-right overflow-y-auto flex-shrink-0 ' +
-          'transition-all duration-300 ease-in-out ' +
-          (showUsers
-            ? 'hidden lg:block fixed top-0 right-0 h-full z-[10000] lg:relative lg:top-auto lg:right-auto lg:h-auto lg:z-auto'
-            : 'hidden')
-        }
-      >
-        {generateSidebarContent().map((section) => (
-          <div className="flex flex-col mb-2" key={section.title}>
-            <div className="font-semibold ml-[1pt] mb-3 text-xs pb-1 border-b border-default">
-              {section.title}
-            </div>
-            {section.members.map((member) => (
-              <div
-                key={member.address}
-                className="w-full flex flex-row items-center mb-2"
-              >
-                <div
-                  className="rounded-full w-[30px] h-[30px]"
-                  style={{
-                    backgroundPosition: 'center',
-                    backgroundSize: 'cover',
-                    backgroundImage: member.userIcon?.includes(
-                      'var(--unknown-icon)'
-                    )
-                      ? member.userIcon
-                      : `url(${member.userIcon})`,
-                  }}
-                />
-                <div className="flex flex-col ml-2 text-main">
-                  <span className="text-md font-bold">
-                    {member.displayName}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
 
       {/* Stickers panel - positioned at top level to avoid stacking context issues */}
       {composer.showStickers && (
@@ -389,6 +479,7 @@ const Channel: React.FC<ChannelProps> = ({
           </div>
         </>
       )}
+
     </div>
   );
 };

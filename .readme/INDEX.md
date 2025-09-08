@@ -7,9 +7,15 @@ This is the main index for all documentation, bug reports, and task management.
 - [Complete Guide: Cross-Platform React Components for Web + Native](docs/cross-platform-components-guide.md)
 - [Component Management & Development Guide](docs/component-management-guide.md)
 - [Cross-Platform Repository Implementation](docs/cross-platform-repository-implementation.md)
+- [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
+- [Space Roles System Documentation](docs/space-roles.md)
+
+### Development
+- [Unused Dependencies Analysis](docs/development/unused-dependencies-analysis.md)
 
 ### Features
+- [Cross-Platform Key Backup Implementation](docs/features/cross-platform-key-backup.md)
 - [Cross-Platform Theming System](docs/features/cross-platform-theming.md)
 - [Desktop Notifications Feature](docs/features/desktop-notifications.md)
 - [Emoji Picker React - Styling & Customization](docs/features/emoji-picker-react-customization.md)
@@ -17,14 +23,15 @@ This is the main index for all documentation, bug reports, and task management.
 - [Kick User System Documentation](docs/features/kick-user-system.md)
 - [Mobile Message Actions Implementation](docs/features/message-actions-mobile.md)
 - [Modal System Documentation](docs/features/modals.md)
+- [Pinned Messages Feature](docs/features/pinned-messages.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
 
 ### Features / Primitives
 - [Introduction and Core Concepts](docs/features/primitives/01-introduction-and-concepts.md)
-- [Primitives Quick Reference](docs/features/primitives/02-primitives-quick-reference.md) - Comprehensive component reference
-- [When to Use Primitives](docs/features/primitives/03-when-to-use-primitives.md) - Decision framework
+- [Primitives Quick Reference](docs/features/primitives/02-primitives-quick-reference.md)
+- [When to Use Primitives vs Raw HTML](docs/features/primitives/03-when-to-use-primitives.md)
 - [Web-to-Native Migration Guide](docs/features/primitives/04-web-to-native-migration.md)
 - [Primitive Styling Guidelines](docs/features/primitives/05-primitive-styling-guide.md)
 
@@ -34,20 +41,27 @@ This is the main index for all documentation, bug reports, and task management.
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors-ONGOING.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
 - [Message Hash Navigation Conflict Bug](bugs/message-hash-navigation-conflict.md)
+- [MessageDB Context: IndexedDB Platform Compatibility Issue](bugs/messagedb-cross-platform-storage-issue.md)
+- [Modal Gesture Handling Technical Debt](bugs/modal-gesture-handling-technical-debt.md)
 - [Search Focus Management Comprehensive Bug Report](bugs/search-focus-management.md)
 
 ### Solved Issues
+- [Android 7.0 File Download Fix - Implementation Plan](bugs/SOLVED_android-file-download-huawei-p9-lite.md)
 - [NewDirectMessage Modal: URL-to-State Conversion](bugs/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)
 - [React Hooks Violation: Conditional Return Before Hooks](bugs/SOLVED_react-hooks-violation-conditional-return.md)
+- [SOLVED: Fast Refresh Export Incompatibility](bugs/SOLVED_fast-refresh-export-incompatibility.md)
 - [SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/SOLVED_modal-navmenu-zindex-stacking.md)
 - [SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/SOLVED_right-sidebar-overlay.md)
 
 ## 📋 Tasks - Todo
 
 - [Combined Text + Image Messages](tasks/todo/combined-text-image-messages.md)
+- [Conversation Deletion State Synchronization](tasks/todo/conversation-deletion-state-sync.md)
 - [Invite Links Improve](tasks/todo/invite-links-improve.md)
 - [Kick User UX Improvements](tasks/todo/kick-user-ux-improvements.md)
+- [Pinned Messages Feature - Implementation Plan](tasks/todo/pinned-messages-feature.md)
 - [Refactor Modal Placement in Layout.tsx](tasks/todo/refactor-modal-placement.md)
+- [Shared Git Hooks Setup](tasks/todo/shared-git-hooks-setup.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/todo/test-suite-plan.md)
 - [User Status Feature Implementation Plan](tasks/todo/user-status.md)
 - [🚀 Search Performance Optimization - Master Plan](tasks/todo/search-performance-optimization.md)
@@ -60,12 +74,18 @@ This is the main index for all documentation, bug reports, and task management.
 ### Mobile Dev
 - [Business Logic Extraction & Native Preparation Plan](tasks/todo/mobile-dev/business-logic-extraction-plan.md)
 - [Component Architecture Masterplan - Desktop/Mobile Unification](tasks/todo/mobile-dev/components-shared-arch-masterplan.md)
-- [Cross-Platform Component Audit](tasks/todo/mobile-dev/components-audit.md)
 - [Cross-Platform Development : Revised Plan](tasks/todo/mobile-dev/plan-quick-recap.md)
+- [Cross-Platform Hooks Refactoring Plan](tasks/todo/mobile-dev/cross-platform-hooks-refactoring-plan.md)
 - [CSS to Mobile Colors Sync Script](tasks/todo/mobile-dev/css-to-mobile-colors-sync.md)
+- [File Upload Hooks Consolidation Task](tasks/todo/mobile-dev/file-upload-hooks-consolidation.md)
 - [Mobile Development Plan - Improved Version](tasks/todo/mobile-dev/mobile-dev-plan.md)
+- [Mobile Internationalization (i18n) Implementation Plan](tasks/todo/mobile-dev/internationalization-i18n-implementation-plan.md)
 - [Mobile/Touch Implementation Transition Plan](tasks/todo/mobile-dev/mobile-touch-transition-plan.md)
+- [Native Business Components Implementation Plan](tasks/todo/mobile-dev/native-business-components-plan.md)
 - [Primitive Migration Audit Report](tasks/todo/mobile-dev/primitive-migration-audit.md)
+- [Quilibrium SDK Mobile Integration Issue](tasks/todo/mobile-dev/mobile-sdk-integration-issue.md)
+- [React Native Upgrade Risk Assessment](tasks/todo/mobile-dev/upgrade-to-react-80.md)
+- [Sdk Shim Temporary Solutions](tasks/todo/mobile-dev/sdk-shim-temporary-solutions.md)
 
 ### Mobile Dev/Docs
 - [Component Architecture Workflow - Detailed Explanation](tasks/todo/mobile-dev/docs/component-architecture-workflow-explained.md)
@@ -79,10 +99,14 @@ This is the main index for all documentation, bug reports, and task management.
 ## 📋 Tasks - Done
 
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/done/accent-color-switcher-cross-platform-migration.md)
+- [Android 7.0 File Download Fix - Implementation Plan](tasks/done/FAILED_android-file-download-fix.md)
 - [Channel Business Logic Extraction - Lessons Learned](tasks/done/channel-business-logic-extraction-lessons.md)
 - [Color Switcher Implementation](tasks/done/color-switcher.md)
 - [Complex Modal Primitive Migration Template](tasks/done/usersettingsmodal-primitive-migration.md)
+- [Cross-Platform Component Audit](tasks/done/components-audit.md)
+- [Cross-Platform Key Backup Implementation](tasks/done/cross-platform-key-backup.md)
 - [Emoji Picker Responsive Design Improvement](tasks/done/emojipicker-responsive.md)
+- [Expo Go to Expo Dev Client Migration Plan - Simplified](tasks/done/expo-go-to-dev-client-migration.md)
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/done/implementation-plan-repo-restructure.md)
 - [Message Handling Report](tasks/done/messages-report.md)
 - [Modal Animation Consistency Implementation](tasks/done/new-modals-effect.md)
@@ -100,4 +124,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-08-07 12:09:33
+**Last Updated**: 2025-09-07 19:59:14

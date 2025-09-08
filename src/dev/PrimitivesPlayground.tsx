@@ -1407,6 +1407,9 @@ export const PrimitivesPlayground: React.FC = () => {
                       <Button type="primary" size="small" onClick={() => {}}>
                         Small
                       </Button>
+                      <Button type="primary" size="compact" onClick={() => {}}>
+                        Compact
+                      </Button>
                     </FlexRow>
                   </div>
                 </div>
@@ -1499,6 +1502,30 @@ export const PrimitivesPlayground: React.FC = () => {
                         onClick={() => {}}
                       />
                     </FlexRow>
+                    
+                    <div className="mt-4 pt-4 border-t border-surface-5">
+                      <p className="text-xs text-subtle mb-3">Compact icon-only (like pinned messages):</p>
+                      <FlexRow gap="xs" align="center">
+                        <Button
+                          type="unstyled"
+                          iconName="arrow-right"
+                          iconOnly
+                          size="compact"
+                          className="jump-button"
+                          tooltip="Jump to message"
+                          onClick={() => {}}
+                        />
+                        <Button
+                          type="unstyled"
+                          iconName="times"
+                          iconOnly
+                          size="compact"
+                          className="unpin-button"
+                          tooltip="Unpin message"
+                          onClick={() => {}}
+                        />
+                      </FlexRow>
+                    </div>
                   </div>
                 </div>
 

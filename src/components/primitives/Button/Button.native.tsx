@@ -129,7 +129,9 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     }
 
     // Add size-specific styles
-    if (size === 'small') {
+    if (size === 'compact') {
+      style.push(styles.compact);
+    } else if (size === 'small') {
       style.push(styles.small);
     } else if (size === 'large') {
       style.push(styles.large);
@@ -138,7 +140,9 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     // Add icon-only specific styles
     if (props.iconOnly) {
       style.push(styles.iconOnly);
-      if (size === 'small') {
+      if (size === 'compact') {
+        style.push(styles.iconOnlyCompact);
+      } else if (size === 'small') {
         style.push(styles.iconOnlySmall);
       } else if (size === 'large') {
         style.push(styles.iconOnlyLarge);
@@ -224,7 +228,7 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     let style = [styles.text];
 
     // Add size-specific text styles
-    if (size === 'small') {
+    if (size === 'compact' || size === 'small') {
       style.push(styles.textSmall);
     } else if (size === 'large') {
       style.push(styles.textLarge);
@@ -258,7 +262,9 @@ const Button: React.FC<NativeButtonProps> = (props) => {
                   ? 'sm'
                   : props.size === 'large'
                     ? 'lg'
-                    : 'md'
+                    : props.size === 'compact' && props.iconOnly
+                      ? 'lg'
+                      : 'md'
               }
               color={getTextColor()}
             />
@@ -285,6 +291,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
     // borderRadius is set dynamically in getButtonStyle
+  },
+  compact: {
+    paddingVertical: 2,
+    paddingHorizontal: 4,
+    shadowOpacity: 0,
+    elevation: 0,
   },
   small: {
     paddingVertical: 4,
@@ -325,6 +337,11 @@ const styles = StyleSheet.create({
     height: 44,
     paddingHorizontal: 0,
     borderRadius: 22,
+  },
+  iconOnlyCompact: {
+    width: 28,
+    height: 28,
+    borderRadius: 6,
   },
   iconOnlySmall: {
     width: 36,

@@ -167,6 +167,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
         disableFocusListener
         disableHoverListener
         disableTouchListener
+        strategy="fixed"
       />
     );
   }
@@ -181,6 +182,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
       className={tooltipClassName}
       anchorSelect={anchorSelect}
       border={highlighted ? '1px solid var(--color-border-default)' : undefined}
+      strategy="fixed"
     />
   );
 };

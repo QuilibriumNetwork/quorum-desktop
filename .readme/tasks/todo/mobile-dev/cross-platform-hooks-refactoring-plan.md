@@ -1,4 +1,7 @@
 # Cross-Platform Hooks Refactoring Plan
+
+[← Back to INDEX](/../../../INDEX.md)
+
 **Priority: High | Type: Architecture**
 
 ## Executive Summary
@@ -483,3 +486,5 @@ See: `.readme/tasks/todo/mobile-dev/sdk-shim-temporary-solutions.md` for detaile
 - [ ] **Performance improvements** on mobile (no polyfills)
 
 *Last updated: August 9, 2025*
+
+[← Back to INDEX](/../../../INDEX.md)

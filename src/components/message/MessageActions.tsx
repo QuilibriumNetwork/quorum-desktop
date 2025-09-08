@@ -4,15 +4,22 @@ import { Tooltip, Icon } from '../primitives';
 import { useQuickReactions } from '../../hooks/business/messages';
 import { t } from '@lingui/core/macro';
 
+// Configuration constants for message actions
+const MESSAGE_ACTIONS_CONFIG = {
+  PIN_CONFIRMATION_DURATION: 2000,  // Duration to show pin/unpin confirmation (ms)
+} as const;
+
 interface MessageActionsProps {
   message: MessageType;
   userAddress: string;
   canUserDelete: boolean;
+  canPinMessages?: boolean;
   height: number;
   onReaction: (emoji: string) => void;
   onReply: () => void;
   onCopyLink: () => void;
   onDelete: () => void;
+  onPin?: () => void;
   onMoreReactions: (clientY: number) => void;
   copiedLinkId: string | null;
 }
@@ -21,15 +28,19 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   message,
   userAddress,
   canUserDelete,
+  canPinMessages,
   onReaction,
   onReply,
   onCopyLink,
   onDelete,
+  onPin,
   onMoreReactions,
   copiedLinkId,
 }) => {
   // State for tracking which action is currently hovered
   const [hoveredAction, setHoveredAction] = useState<string | null>(null);
+  // State for confirmation tooltips
+  const [pinAction, setPinAction] = useState<'pinned' | 'unpinned' | null>(null);
 
   // Quick reactions hook
   const { handleQuickReaction } = useQuickReactions({
@@ -37,8 +48,33 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
     onReaction,
   });
 
+  // Handle pin action with confirmation tooltip
+  const handlePinClick = () => {
+    const wasPinned = message.isPinned;
+    
+    if (onPin) {
+      onPin();
+      // Show confirmation tooltip
+      setPinAction(wasPinned ? 'unpinned' : 'pinned');
+      // Hide confirmation tooltip after configured duration
+      setTimeout(() => {
+        setPinAction(null);
+      }, MESSAGE_ACTIONS_CONFIG.PIN_CONFIRMATION_DURATION);
+    }
+  };
+
+  // Clear pin action tooltip when hovering over pin button
+  const handlePinHover = () => {
+    setHoveredAction('pin');
+    setPinAction(null);
+  };
+
   // Get tooltip content based on current hovered action
   const getTooltipContent = () => {
+    // Show confirmation tooltip for pin actions
+    if (pinAction === 'pinned') return t`Pinned!`;
+    if (pinAction === 'unpinned') return t`Unpinned!`;
+    
     switch (hoveredAction) {
       case 'emoji':
         return t`More reactions`;
@@ -48,6 +84,8 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
         return copiedLinkId === message.messageId
           ? t`Copied!`
           : t`Copy message link`;
+      case 'pin':
+        return message.isPinned ? t`Unpin message` : t`Pin message`;
       case 'delete':
         return t`Delete message`;
       default:
@@ -72,7 +110,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
         id={`actions-${message.messageId}`}
         content={getTooltipContent()}
         place={getTooltipPlace()}
-        disabled={!hoveredAction}
+        disabled={!hoveredAction && !pinAction}
       >
         <div
           onClick={(e: React.MouseEvent) => {
@@ -133,6 +171,27 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
           >
             <Icon name="link" size="sm" />
           </div>
+
+          {/* Pin (if user can pin) */}
+          {canPinMessages && onPin && (
+            <>
+              <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePinClick();
+                }}
+                onMouseEnter={handlePinHover}
+                className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+              >
+                <Icon 
+                  name={message.isPinned ? "thumbtack-slash" : "thumbtack"} 
+                  size="sm"
+                  className={message.isPinned ? "text-accent" : ""}
+                />
+              </div>
+            </>
+          )}
 
           {/* Delete (if user can delete) */}
           {canUserDelete && (

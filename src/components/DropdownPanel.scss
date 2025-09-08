@@ -1,0 +1,100 @@
+// Shared dropdown panel styles for search results, pinned messages, etc.
+.dropdown-panel {
+  background: var(--surface-0);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 10001; /* Higher than flex layout containers */
+  overflow: hidden;
+  font-weight: normal;
+  animation: dropdownPanelOpen 0.2s ease-out;
+}
+
+// Search results positioning (relative to parent)
+.dropdown-panel--search-results {
+  top: 100%;
+  left: 0;
+  margin-top: 8px;
+  min-width: 200px;
+}
+
+// Right-aligned positioning (opens to the right side of screen)
+.dropdown-panel--right-aligned {
+  right: 20px;
+  left: auto;
+  top: calc(var(--header-height, 80px) + 10px); // Below header with small margin
+  margin-top: 0;
+  min-width: 200px;
+}
+
+// Centered positioning (for modals/overlays)
+.dropdown-panel--centered {
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+.dropdown-panel__header {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--surface-3);
+  background: var(--surface-00);
+}
+
+.dropdown-panel__title {
+  font-size: 12px;
+  color: var(--color-text-subtle);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.dropdown-panel__close {
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
+  background: transparent;
+
+  &:hover {
+    background: transparent;
+    color: var(--color-text-main);
+  }
+}
+
+.dropdown-panel__content {
+  overflow-y: auto;
+  background: var(--surface-0);
+  max-height: calc(100% - 40px); /* Account for header */
+}
+
+// Dark theme adjustments
+.dark .dropdown-panel {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+// Animation for opening/closing
+@keyframes dropdownPanelOpen {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Centered panels need different animation
+.dropdown-panel--centered {
+  animation: dropdownPanelOpenCentered 0.2s ease-out;
+}
+
+@keyframes dropdownPanelOpenCentered {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}

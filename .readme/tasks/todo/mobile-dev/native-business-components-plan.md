@@ -1,5 +1,8 @@
 # Native Business Components Implementation Plan
 
+[← Back to INDEX](/../../../INDEX.md)
+
+
 ## Overview
 
 We have successfully restructured the mobile playground with a clear separation between UI primitives testing and business components testing. The next phase is to begin implementing native business components that leverage our extracted business logic hooks.
@@ -229,3 +232,5 @@ This approach leverages our existing investment in the primitive system and foll
 
 *Created: 2025-08-08*  
 *Updated: 2025-08-08 - Added Native Styling Guidelines*
+
+[← Back to INDEX](/../../../INDEX.md)

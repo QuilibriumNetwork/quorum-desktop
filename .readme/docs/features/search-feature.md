@@ -47,12 +47,14 @@ User Types → Search Service → MiniSearch Index → MessageDB → Search Resu
 
 ```
 src/
-├── components/search/
-│   ├── SearchBar.tsx + .scss          # Search input with focus management
-│   ├── SearchResults.tsx + .scss      # Results dropdown with virtualization
-│   ├── SearchResultItem.tsx + .scss   # Individual result with name resolution
-│   ├── GlobalSearch.tsx + .scss       # Main integration component
-│   └── index.ts                       # Exports
+├── components/
+│   ├── DropdownPanel.tsx + .scss      # Reusable panel component for search results
+│   └── search/
+│       ├── SearchBar.tsx + .scss          # Search input with focus management
+│       ├── SearchResults.tsx + .scss      # Results dropdown using DropdownPanel
+│       ├── SearchResultItem.tsx + .scss   # Individual result with name resolution
+│       ├── GlobalSearch.tsx + .scss       # Main integration component
+│       └── index.ts                       # Exports
 ├── hooks/
 │   ├── queries/search/
 │   │   ├── useGlobalSearch.ts          # Main search hook with React Query
@@ -217,10 +219,13 @@ setTimeout(() => {
 
 **Features**:
 
+- Uses reusable `DropdownPanel` component for consistent panel behavior
 - Virtualized results for large datasets
 - Click-outside to close (with search bar exclusion)
-- Position adjustment to prevent off-screen display
+- Position adjustment to prevent off-screen display (via `right-aligned` positioning)
 - Non-focusable elements (`tabIndex={-1}`)
+
+**Architecture**: Refactored to use `src/components/DropdownPanel.tsx` for consistent positioning, styling, and interaction patterns shared with other panel components like `PinnedMessagesPanel`.
 
 **Focus Preservation**:
 
@@ -510,3 +515,7 @@ expect(result.current).toEqual({
 - **Performance Issues**: Monitor with React DevTools and Performance tab
 
 This implementation provides a solid foundation for message search with room for future enhancements and optimizations.
+
+---
+
+*Last updated: September 7, 2025*

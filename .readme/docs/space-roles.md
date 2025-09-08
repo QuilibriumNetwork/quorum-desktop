@@ -1,5 +1,8 @@
 # Space Roles System Documentation
 
+[← Back to INDEX](/../INDEX.md)
+
+
 ## Overview
 
 The space roles system in Quorum provides a flexible, permission-based access control mechanism for space management. Roles allow space owners to delegate specific permissions to members while maintaining granular control over space functionality.
@@ -264,3 +267,5 @@ export function hasPermission(
 
 *Document created: September 7, 2025*
 *Based on codebase analysis as of commit 72520cf5*
+
+[← Back to INDEX](/../INDEX.md)

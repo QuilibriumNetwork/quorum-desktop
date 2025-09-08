@@ -16,7 +16,7 @@ export interface BaseButtonProps {
     | 'light-outline-white'
     | 'disabled-onboarding'
     | 'unstyled';
-  size?: 'small' | 'normal' | 'large';
+  size?: 'compact' | 'small' | 'normal' | 'large';
   disabled?: boolean;
   fullWidth?: boolean; // If true, button takes full width of container
   icon?: boolean; // Legacy prop for existing compatibility

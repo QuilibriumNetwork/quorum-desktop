@@ -1,5 +1,8 @@
 # SOLVED: Fast Refresh Export Incompatibility
 
+[← Back to INDEX](/../INDEX.md)
+
+
 ## Problem
 Vite dev server was showing Fast Refresh failures with errors like:
 ```
@@ -26,3 +29,5 @@ Fast Refresh now works correctly, preserving component state during hot module r
 
 ---
 *Fixed: 2025-09-06*
+
+[← Back to INDEX](/../INDEX.md)
