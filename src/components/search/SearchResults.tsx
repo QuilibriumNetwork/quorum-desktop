@@ -106,35 +106,17 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
         renderEmptyState()
       ) : (
         <Container className="search-results-list">
-          {results.length <= 20 ? (
-            // For small result sets, render directly without virtualization
-            results.map((result, index) => (
-              <SearchResultItem
-                key={`${result.message.messageId}-${index}`}
-                result={result}
-                onNavigate={handleNavigate}
-                highlightTerms={highlightTerms}
-                searchTerms={searchTerms}
-              />
-            ))
-          ) : (
-            // For large result sets, use virtualization
-            <Virtuoso
-              style={{ height: maxHeight - 60 }}
-              totalCount={results.length}
-              tabIndex={-1}
-              itemContent={(index) => (
-                <SearchResultItem
-                  key={`${results[index].message.messageId}-${index}`}
-                  result={results[index]}
-                  onNavigate={handleNavigate}
-                  highlightTerms={highlightTerms}
-                  searchTerms={searchTerms}
-                />
-              )}
-              overscan={5}
+          {/* Staggered loading SearchResultItem components */}
+          {results.map((result, index) => (
+            <SearchResultItem
+              key={`${result.message.messageId}-${index}`}
+              result={result}
+              onNavigate={handleNavigate}
+              highlightTerms={highlightTerms}
+              searchTerms={searchTerms}
+              index={index}
             />
-          )}
+          ))}
         </Container>
       )}
     </DropdownPanel>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { SearchResult } from '../../db/messages';
 import { Icon, FlexBetween, FlexRow, Container, Text } from '../primitives';
 import {
@@ -15,6 +15,7 @@ interface SearchResultItemProps {
   highlightTerms: (text: string) => string;
   className?: string;
   searchTerms: string[];
+  index: number; // Add index to enable staggered loading
 }
 
 // DM Search Result Component
@@ -24,10 +25,10 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   highlightTerms,
   className,
   searchTerms,
+  index,
 }) => {
   const { message } = result;
-
-  // DM-specific display logic
+  // DM-specific display logic (restored)
   const { channelName, icon } = useSearchResultDisplayDM({
     result,
   });
@@ -48,7 +49,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
       className={`search-result-item ${className || ''}`}
       onClick={handleClick}
       role="button"
-      tabIndex={0}
+      tabIndex={-1}
       onKeyDown={handleKeyDown}
     >
       <FlexBetween className="result-header">
@@ -86,10 +87,10 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   highlightTerms,
   className,
   searchTerms,
+  index,
 }) => {
   const { message } = result;
-
-  // Space-specific display logic
+  // Space-specific display logic (restored)
   const { displayName, channelName } = useSearchResultDisplaySpace({
     result,
   });
@@ -110,7 +111,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
       className={`search-result-item ${className || ''}`}
       onClick={handleClick}
       role="button"
-      tabIndex={0}
+      tabIndex={-1}
       onKeyDown={handleKeyDown}
     >
       <FlexBetween className="result-header">

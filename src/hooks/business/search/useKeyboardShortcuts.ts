@@ -65,7 +65,8 @@ export function useKeyboardShortcuts({
   // Handle focus restoration for typing users
   const handleFocusRestoration = useCallback(() => {
     if (isUserTyping.current) {
-      // Try to restore focus
+      // Only restore focus if user was actively typing
+      // This prevents search results from stealing focus during typing
       setTimeout(() => {
         if (isUserTyping.current) {
           const inputElement =

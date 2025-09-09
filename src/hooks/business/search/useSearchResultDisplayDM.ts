@@ -38,6 +38,7 @@ export const useSearchResultDisplayDM = ({
     const fetchDMUserInfo = async () => {
       try {
         setIsLoading(true);
+        
         // For DMs, conversationId format is spaceId/channelId
         const conversationId = `${message.content.senderId}/${message.content.senderId}`;
         const { conversation } = await messageDB.getConversation({
@@ -47,9 +48,9 @@ export const useSearchResultDisplayDM = ({
           setIcon(conversation.icon);
           setDisplayName(conversation.displayName);
         }
+        
       } catch (error) {
         console.error('Failed to fetch conversation:', error);
-      } finally {
         setIsLoading(false);
       }
     };
