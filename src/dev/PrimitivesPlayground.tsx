@@ -2290,8 +2290,159 @@ export const PrimitivesPlayground: React.FC = () => {
                   Demonstrates text ellipsis
                 </p>
               </div>
+            </div>
 
-              {/* Row 2: Grouped Options and User Selection (first 2 cells only) */}
+            {/* Multiselect Examples */}
+            <h3 className="text-lg font-medium text-strong mb-3 mt-6">
+              Multiselect Features
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-strong mb-2 block">
+                  Basic Multiselect
+                </label>
+                <Select
+                  multiple
+                  value={[]}
+                  onChange={(values) => console.log('Selected:', values)}
+                  placeholder="Select multiple options"
+                  options={[
+                    { value: 'option1', label: 'Option 1' },
+                    { value: 'option2', label: 'Option 2' },
+                    { value: 'option3', label: 'Option 3' },
+                    { value: 'option4', label: 'Option 4' },
+                    { value: 'option5', label: 'Option 5' },
+                  ]}
+                />
+                <p className="text-xs text-subtle">
+                  Click to select multiple items
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-strong mb-2 block">
+                  Multiselect with Groups
+                </label>
+                <Select
+                  multiple
+                  value={[]}
+                  onChange={(values) => console.log('Selected:', values)}
+                  placeholder="Select permissions"
+                  groups={[
+                    {
+                      groupLabel: 'Message Permissions',
+                      options: [
+                        { value: 'message:delete', label: 'Delete Messages' },
+                        { value: 'message:pin', label: 'Pin Messages' },
+                        { value: 'message:edit', label: 'Edit Messages' },
+                      ],
+                    },
+                    {
+                      groupLabel: 'User Permissions',
+                      options: [
+                        { value: 'user:kick', label: 'Kick Users' },
+                        { value: 'user:ban', label: 'Ban Users' },
+                        { value: 'user:invite', label: 'Invite Users' },
+                      ],
+                    },
+                  ]}
+                />
+                <p className="text-xs text-subtle">
+                  Organized by permission type
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-strong mb-2 block">
+                  Multiselect without Select All
+                </label>
+                <Select
+                  multiple
+                  showSelectAllOption={false}
+                  value={[]}
+                  onChange={(values) => console.log('Selected:', values)}
+                  placeholder="Choose tags"
+                  options={[
+                    { value: 'react', label: 'React' },
+                    { value: 'typescript', label: 'TypeScript' },
+                    { value: 'javascript', label: 'JavaScript' },
+                    { value: 'css', label: 'CSS' },
+                    { value: 'html', label: 'HTML' },
+                  ]}
+                />
+                <p className="text-xs text-subtle">
+                  No Select All/Clear All buttons
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-strong mb-2 block">
+                  Multiselect with Pre-selected
+                </label>
+                <Select
+                  multiple
+                  value={['option2', 'option4']}
+                  onChange={(values) => console.log('Selected:', values)}
+                  placeholder="Select options"
+                  options={[
+                    { value: 'option1', label: 'Option 1' },
+                    { value: 'option2', label: 'Option 2 (Pre-selected)' },
+                    { value: 'option3', label: 'Option 3' },
+                    { value: 'option4', label: 'Option 4 (Pre-selected)' },
+                    { value: 'option5', label: 'Option 5' },
+                  ]}
+                />
+                <p className="text-xs text-subtle">
+                  Starts with some items selected
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-strong mb-2 block">
+                  Multiselect Full Width
+                </label>
+                <Select
+                  multiple
+                  fullWidth
+                  value={[]}
+                  onChange={(values) => console.log('Selected:', values)}
+                  placeholder="Select team members"
+                  options={[
+                    { value: 'john', label: 'John Doe' },
+                    { value: 'jane', label: 'Jane Smith' },
+                    { value: 'bob', label: 'Bob Johnson' },
+                    { value: 'alice', label: 'Alice Williams' },
+                    { value: 'charlie', label: 'Charlie Brown' },
+                  ]}
+                />
+                <p className="text-xs text-subtle">
+                  Full width multiselect
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-strong mb-2 block">
+                  Multiselect with Many Options
+                </label>
+                <Select
+                  multiple
+                  maxDisplayedChips={2}
+                  value={[]}
+                  onChange={(values) => console.log('Selected:', values)}
+                  placeholder="Select countries"
+                  options={Array.from({ length: 20 }, (_, i) => ({
+                    value: `country${i}`,
+                    label: `Country ${i + 1}`,
+                  }))}
+                />
+                <p className="text-xs text-subtle">
+                  Shows "+N more" after 2 chips
+                </p>
+              </div>
+            </div>
+
+            {/* Row 2: Original grouped options continued */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
               <div className="space-y-2">
                 <label className="text-sm font-medium text-strong mb-2 block">
                   Grouped Options (SpaceEditor Style)

@@ -118,11 +118,11 @@ if (someCondition) return <SomeComponent />;
 
 ## Claude Code Development Resources
 
-The `.claude/` folder tracks tasks, bugs, features, and development context.
+The `.readme/` folder tracks tasks, bugs, features, and development context.
 
 ### Important Claude Locations
 
-- `.claude/` — Main Claude context
+- `.claude/` — Claude commands, agents, local settings
 - `.readme/INDEX.md` - Index of all the docs available in `.claude/`
 - `.readme/docs/` — Documentation on custom features (Look here when you work on specific things (e.g. Modals, Search, etc.))
 - `.readme/bugs/` — Bug reports and solutions

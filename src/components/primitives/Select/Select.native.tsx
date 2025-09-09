@@ -31,17 +31,30 @@ const Select: React.FC<NativeSelectProps> = ({
   fullWidth = false,
   width,
   testID,
+  multiple = false,
+  renderSelectedValue,
+  selectAllLabel = t`Select All`,
+  clearAllLabel = t`Clear All`,
+  maxHeight,
+  showSelectAllOption = true,
+  maxDisplayedChips = 3,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState(value || '');
+  const [selectedValue, setSelectedValue] = useState<string | string[]>(
+    multiple ? (Array.isArray(value) ? value : []) : (value || '')
+  );
   const theme = useTheme();
   const colors = theme.colors;
 
   useEffect(() => {
     if (value !== undefined) {
-      setSelectedValue(value);
+      if (multiple) {
+        setSelectedValue(Array.isArray(value) ? value : []);
+      } else {
+        setSelectedValue(value);
+      }
     }
-  }, [value]);
+  }, [value, multiple]);
 
   // Helper function to get all options (flattened from groups or direct options)
   const getAllOptions = () => {
@@ -53,15 +66,80 @@ const Select: React.FC<NativeSelectProps> = ({
 
   const handleSelect = (optionValue: string) => {
     if (!disabled) {
-      setSelectedValue(optionValue);
-      setIsOpen(false);
-      onChange?.(optionValue);
+      if (multiple) {
+        const currentValues = selectedValue as string[];
+        let newValues: string[];
+        
+        if (currentValues.includes(optionValue)) {
+          newValues = currentValues.filter(v => v !== optionValue);
+        } else {
+          newValues = [...currentValues, optionValue];
+        }
+        
+        setSelectedValue(newValues);
+        onChange?.(newValues);
+        // Keep modal open for multiselect
+      } else {
+        setSelectedValue(optionValue);
+        setIsOpen(false);
+        onChange?.(optionValue);
+      }
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (!disabled && multiple) {
+      const allValues = allOptions.filter(opt => !opt.disabled).map(opt => opt.value);
+      setSelectedValue(allValues);
+      onChange?.(allValues);
+    }
+  };
+
+  const handleClearAll = () => {
+    if (!disabled && multiple) {
+      setSelectedValue([]);
+      onChange?.([]);
     }
   };
 
   const allOptions = getAllOptions();
-  const selectedOption = allOptions.find((opt) => opt.value === selectedValue);
-  const displayText = selectedOption ? selectedOption.label : placeholder;
+  
+  // Helper to get display content
+  const getDisplayContent = () => {
+    if (multiple) {
+      const selectedValues = selectedValue as string[];
+      
+      if (selectedValues.length === 0) {
+        return { text: placeholder, isPlaceholder: true };
+      }
+      
+      if (renderSelectedValue) {
+        return { element: renderSelectedValue(selectedValues, allOptions) };
+      }
+      
+      const selectedOptions = allOptions.filter(opt => selectedValues.includes(opt.value));
+      const displayedOptions = selectedOptions.slice(0, maxDisplayedChips);
+      const remainingCount = selectedOptions.length - maxDisplayedChips;
+      
+      const chipText = displayedOptions.map(opt => opt.label).join(', ');
+      const displayText = remainingCount > 0 
+        ? `${chipText} +${remainingCount} more`
+        : chipText;
+      
+      return { text: displayText, isPlaceholder: false };
+    } else {
+      const selectedOption = allOptions.find((opt) => opt.value === selectedValue);
+      return {
+        text: selectedOption ? selectedOption.label : placeholder,
+        isPlaceholder: !selectedOption,
+        icon: selectedOption?.icon,
+        avatar: selectedOption?.avatar,
+        subtitle: selectedOption?.subtitle
+      };
+    }
+  };
+  
+  const displayData = getDisplayContent();
 
   const getSizeStyles = () => {
     switch (size) {
@@ -94,12 +172,14 @@ const Select: React.FC<NativeSelectProps> = ({
         return {
           backgroundColor: colors.field.bg,
           borderColor: colors.field.border,
+          borderWidth: 1,
         };
       case 'filled':
       default:
         return {
           backgroundColor: colors.field.bg,
           borderColor: 'transparent',
+          borderWidth: 1,
         };
     }
   };
@@ -135,62 +215,87 @@ const Select: React.FC<NativeSelectProps> = ({
         ]}
       >
         <View style={styles.valueContainer}>
-          {selectedOption?.avatar && (
-            <Image
-              source={{ uri: selectedOption.avatar }}
-              style={styles.selectedAvatar}
-            />
-          )}
-          {selectedOption?.icon && !selectedOption?.avatar && (
-            <View style={styles.icon}>
-              {isValidIconName(selectedOption.icon) ? (
-                <Icon
-                  name={selectedOption.icon}
-                  size="sm"
-                  color={colors.text.subtle}
+          {displayData.element ? (
+            displayData.element
+          ) : (
+            <>
+              {displayData.avatar && (
+                <Image
+                  source={{ uri: displayData.avatar }}
+                  style={styles.selectedAvatar}
                 />
-              ) : (
-                <Text
-                  style={{
-                    fontSize: sizeStyles.fontSize * 1.25,
-                    color: colors.text.subtle,
-                  }}
-                >
-                  {selectedOption.icon}
-                </Text>
               )}
-            </View>
+              {displayData.icon && !displayData.avatar && (
+                <View style={styles.icon}>
+                  {isValidIconName(displayData.icon) ? (
+                    <Icon
+                      name={displayData.icon}
+                      size="sm"
+                      color={colors.text.subtle}
+                    />
+                  ) : (
+                    <Text
+                      style={{
+                        fontSize: sizeStyles.fontSize * 1.25,
+                        color: colors.text.subtle,
+                      }}
+                    >
+                      {displayData.icon}
+                    </Text>
+                  )}
+                </View>
+              )}
+              <View style={multiple ? styles.chipsContainer : styles.textContainer}>
+                {multiple && !displayData.isPlaceholder ? (
+                  <View style={styles.chips}>
+                    <Text
+                      style={[
+                        styles.chipText,
+                        {
+                          fontSize: sizeStyles.fontSize,
+                          color: colors.field.text,
+                        },
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {displayData.text}
+                    </Text>
+                  </View>
+                ) : (
+                  <>
+                    <Text
+                      style={[
+                        styles.text,
+                        {
+                          fontSize: sizeStyles.fontSize,
+                          color: displayData.isPlaceholder
+                            ? colors.field.placeholder
+                            : colors.field.text,
+                        },
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {displayData.text}
+                    </Text>
+                    {displayData.subtitle && (
+                      <Text
+                        style={[
+                          styles.subtitleText,
+                          {
+                            fontSize: sizeStyles.fontSize * 0.85,
+                            color: colors.text.subtle,
+                          },
+                        ]}
+                        numberOfLines={1}
+                      >
+                        {displayData.subtitle}
+                      </Text>
+                    )}
+                  </>
+                )}
+              </View>
+            </>
           )}
-          <View style={styles.textContainer}>
-            <Text
-              style={[
-                styles.text,
-                {
-                  fontSize: sizeStyles.fontSize,
-                  color: selectedOption
-                    ? colors.field.text
-                    : colors.field.placeholder,
-                },
-              ]}
-              numberOfLines={1}
-            >
-              {displayText}
-            </Text>
-            {selectedOption?.subtitle && (
-              <Text
-                style={[
-                  styles.subtitleText,
-                  {
-                    fontSize: sizeStyles.fontSize * 0.85,
-                    color: colors.text.subtle,
-                  },
-                ]}
-                numberOfLines={1}
-              >
-                {selectedOption.subtitle}
-              </Text>
-            )}
-          </View>
         </View>
         <Icon name="chevron-down" size="xs" color={colors.field.placeholder} />
       </TouchableOpacity>
@@ -219,8 +324,31 @@ const Select: React.FC<NativeSelectProps> = ({
                 <ScrollView
                   showsVerticalScrollIndicator={true}
                   bounces={false}
-                  style={styles.scrollView}
+                  style={[styles.scrollView, maxHeight && { maxHeight }]}
                 >
+                  {/* Select All / Clear All for multiselect */}
+                  {multiple && showSelectAllOption && allOptions.length > 0 && (
+                    <View style={[styles.actions, { borderBottomColor: colors.border.default }]}>
+                      <TouchableOpacity
+                        onPress={handleSelectAll}
+                        style={styles.action}
+                      >
+                        <Icon name="check-square" size="sm" color={colors.text.subtle} />
+                        <Text style={[styles.actionText, { color: colors.text.main }]}>
+                          {selectAllLabel}
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={handleClearAll}
+                        style={styles.action}
+                      >
+                        <Icon name="square" size="sm" color={colors.text.subtle} />
+                        <Text style={[styles.actionText, { color: colors.text.main }]}>
+                          {clearAllLabel}
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
                   {groups && groups.length > 0
                     ? // Render grouped options
                       groups.map((group, groupIndex) => (
@@ -240,24 +368,38 @@ const Select: React.FC<NativeSelectProps> = ({
                               {group.groupLabel}
                             </Text>
                           </View>
-                          {group.options.map((option) => (
-                            <TouchableOpacity
-                              key={option.value}
-                              onPress={() =>
-                                !option.disabled && handleSelect(option.value)
-                              }
-                              disabled={option.disabled}
-                              style={[
-                                styles.option,
-                                styles.groupedOption,
-                                option.value === selectedValue && {
-                                  backgroundColor: colors.field.optionSelected,
-                                },
-                                option.disabled && styles.disabledOption,
-                              ]}
-                            >
-                              <View style={styles.optionContent}>
-                                {option.avatar && (
+                          {group.options.map((option) => {
+                            const isSelected = multiple
+                              ? (selectedValue as string[]).includes(option.value)
+                              : option.value === selectedValue;
+                            
+                            return (
+                              <TouchableOpacity
+                                key={option.value}
+                                onPress={() =>
+                                  !option.disabled && handleSelect(option.value)
+                                }
+                                disabled={option.disabled}
+                                style={[
+                                  styles.option,
+                                  styles.groupedOption,
+                                  isSelected && {
+                                    backgroundColor: colors.field.optionSelected,
+                                  },
+                                  option.disabled && styles.disabledOption,
+                                ]}
+                              >
+                                <View style={styles.optionContent}>
+                                  {/* Show checkbox for multiselect */}
+                                  {multiple && (
+                                    <Icon
+                                      name={isSelected ? 'check-square' : 'square'}
+                                      size="sm"
+                                      color={isSelected ? colors.field.optionTextSelected : colors.text.subtle}
+                                      style={styles.checkbox}
+                                    />
+                                  )}
+                                  {option.avatar && (
                                   <Image
                                     source={{ uri: option.avatar }}
                                     style={styles.optionAvatar}
@@ -313,38 +455,54 @@ const Select: React.FC<NativeSelectProps> = ({
                                       {option.subtitle}
                                     </Text>
                                   )}
+                                  </View>
                                 </View>
-                              </View>
-                              {option.value === selectedValue && (
-                                <Icon
-                                  name="check"
-                                  size="sm"
-                                  color={colors.field.optionTextSelected}
-                                  style={styles.checkmark}
-                                />
-                              )}
-                            </TouchableOpacity>
-                          ))}
+                                {/* Show checkmark for all selected items (consistent with single select) */}
+                                {isSelected && (
+                                  <Icon
+                                    name="check"
+                                    size="sm"
+                                    color={colors.field.optionTextSelected}
+                                    style={styles.checkmark}
+                                  />
+                                )}
+                              </TouchableOpacity>
+                            );
+                          })}
                         </View>
                       ))
                     : // Render simple options
-                      allOptions.map((option) => (
-                        <TouchableOpacity
-                          key={option.value}
-                          onPress={() =>
-                            !option.disabled && handleSelect(option.value)
-                          }
-                          disabled={option.disabled}
-                          style={[
-                            styles.option,
-                            option.value === selectedValue && {
-                              backgroundColor: colors.field.optionSelected,
-                            },
-                            option.disabled && styles.disabledOption,
-                          ]}
-                        >
-                          <View style={styles.optionContent}>
-                            {option.avatar && (
+                      allOptions.map((option) => {
+                        const isSelected = multiple
+                          ? (selectedValue as string[]).includes(option.value)
+                          : option.value === selectedValue;
+                        
+                        return (
+                          <TouchableOpacity
+                            key={option.value}
+                            onPress={() =>
+                              !option.disabled && handleSelect(option.value)
+                            }
+                            disabled={option.disabled}
+                            style={[
+                              styles.option,
+                              isSelected && {
+                                backgroundColor: colors.field.optionSelected,
+                              },
+                              option.disabled && styles.disabledOption,
+                            ]}
+                          >
+                            <View style={styles.optionContent}>
+                              {/* Show checkbox for multiselect */}
+                              {multiple && (
+                                <Icon
+                                  name={isSelected ? 'check-square' : 'square'}
+                                  size="sm"
+                                  color={isSelected ? colors.field.optionTextSelected : colors.text.subtle}
+                                  style={styles.checkbox}
+                                />
+                              )}
+                              {option.avatar && (
                               <Image
                                 source={{ uri: option.avatar }}
                                 style={styles.optionAvatar}
@@ -400,18 +558,20 @@ const Select: React.FC<NativeSelectProps> = ({
                                   {option.subtitle}
                                 </Text>
                               )}
+                              </View>
                             </View>
-                          </View>
-                          {option.value === selectedValue && (
-                            <Icon
-                              name="check"
-                              size="sm"
-                              color={colors.field.optionTextSelected}
-                              style={styles.checkmark}
-                            />
-                          )}
-                        </TouchableOpacity>
-                      ))}
+                            {/* Show checkmark for all selected items (consistent with single select) */}
+                            {isSelected && (
+                              <Icon
+                                name="check"
+                                size="sm"
+                                color={colors.field.optionTextSelected}
+                                style={styles.checkmark}
+                              />
+                            )}
+                          </TouchableOpacity>
+                        );
+                      })}
                 </ScrollView>
               </View>
             </TouchableWithoutFeedback>
@@ -552,6 +712,43 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginLeft: 8,
+  },
+  // Multiselect styles
+  checkbox: {
+    marginRight: 12,
+  },
+  chipsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  chips: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 4,
+  },
+  chipText: {
+    fontWeight: '500',
+  },
+  actions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+  },
+  action: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 4,
+  },
+  actionText: {
+    fontSize: 14,
+    fontWeight: '500',
   },
 });
 

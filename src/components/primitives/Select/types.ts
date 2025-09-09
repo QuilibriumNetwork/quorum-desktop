@@ -13,10 +13,10 @@ export interface SelectOptionGroup {
 }
 
 export interface BaseSelectProps {
-  value?: string;
+  value?: string | string[]; // Support both single and multiple values
   options?: SelectOption[]; // Simple options (alternative to groups)
   groups?: SelectOptionGroup[]; // Grouped options (alternative to options)
-  onChange?: (value: string) => void;
+  onChange?: (value: string | string[]) => void; // Handle both single and multiple values
   placeholder?: string;
   disabled?: boolean;
   error?: boolean;
@@ -28,6 +28,15 @@ export interface BaseSelectProps {
   fullWidth?: boolean;
   width?: string | number; // Custom width (CSS value for web, number for RN)
   dropdownPlacement?: 'top' | 'bottom' | 'auto'; // Dropdown positioning
+  
+  // Multiselect specific props
+  multiple?: boolean; // Enable multiselect mode
+  renderSelectedValue?: (selected: string[], options: SelectOption[]) => React.ReactNode; // Custom display for selected values
+  selectAllLabel?: string; // Label for "Select All" option (default: "Select All")
+  clearAllLabel?: string; // Label for "Clear All" option (default: "Clear All")
+  maxHeight?: string | number; // Maximum height for dropdown
+  showSelectAllOption?: boolean; // Show select all/clear all options (default: true when multiple)
+  maxDisplayedChips?: number; // Maximum number of chips to display before showing count (default: 3)
 }
 
 export interface WebSelectProps extends BaseSelectProps {

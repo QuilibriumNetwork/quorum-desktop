@@ -32,6 +32,12 @@ export const SelectTestScreen: React.FC = () => {
   const [customWidthValue, setCustomWidthValue] = useState('');
   const [groupedValue, setGroupedValue] = useState('');
   const [userValue, setUserValue] = useState('');
+  
+  // Multiselect state
+  const [multiselectBasic, setMultiselectBasic] = useState<string[]>([]);
+  const [multiselectPermissions, setMultiselectPermissions] = useState<string[]>([]);
+  const [multiselectTags, setMultiselectTags] = useState<string[]>([]);
+  const [multiselectPreselected, setMultiselectPreselected] = useState<string[]>(['option2', 'option4']);
 
   const basicOptions = [
     { value: 'apple', label: 'Apple' },
@@ -94,6 +100,36 @@ export const SelectTestScreen: React.FC = () => {
         { value: 'admins', label: '#admins', icon: 'lock' },
       ],
     },
+  ];
+
+  // Permission groups for multiselect
+  const permissionGroups = [
+    {
+      groupLabel: 'Message Permissions',
+      options: [
+        { value: 'message:delete', label: 'Delete Messages' },
+        { value: 'message:pin', label: 'Pin Messages' },
+        { value: 'message:edit', label: 'Edit Messages' },
+      ],
+    },
+    {
+      groupLabel: 'User Permissions',
+      options: [
+        { value: 'user:kick', label: 'Kick Users' },
+        { value: 'user:ban', label: 'Ban Users' },
+        { value: 'user:invite', label: 'Invite Users' },
+      ],
+    },
+  ];
+
+  // Tag options for multiselect
+  const tagOptions = [
+    { value: 'react', label: 'React' },
+    { value: 'typescript', label: 'TypeScript' },
+    { value: 'javascript', label: 'JavaScript' },
+    { value: 'css', label: 'CSS' },
+    { value: 'html', label: 'HTML' },
+    { value: 'nodejs', label: 'Node.js' },
   ];
 
   // User options with avatars
@@ -405,6 +441,99 @@ export const SelectTestScreen: React.FC = () => {
               />
               <Text size="sm" variant="subtle">
                 Shows user avatars and addresses (subtitle)
+              </Text>
+            </FlexColumn>
+          </FlexColumn>
+        </View>
+
+        {/* Multiselect Examples */}
+        <View style={themedStyles.section}>
+          <FlexColumn gap="md">
+            <Title size="sm">Multiselect Features</Title>
+
+            <FlexColumn gap="xs">
+              <Label>Basic Multiselect:</Label>
+              <Select
+                multiple
+                value={multiselectBasic}
+                onChange={setMultiselectBasic}
+                placeholder="Select multiple options"
+                options={basicOptions}
+                fullWidth
+              />
+              <Text size="sm" variant="subtle">
+                Touch items to select multiple
+              </Text>
+            </FlexColumn>
+
+            <FlexColumn gap="xs">
+              <Label>Permission Multiselect:</Label>
+              <Select
+                multiple
+                value={multiselectPermissions}
+                onChange={setMultiselectPermissions}
+                placeholder="Select permissions"
+                groups={permissionGroups}
+                fullWidth
+              />
+              <Text size="sm" variant="subtle">
+                Grouped permissions with Select All/Clear All
+              </Text>
+            </FlexColumn>
+
+            <FlexColumn gap="xs">
+              <Label>Tags (No Select All):</Label>
+              <Select
+                multiple
+                showSelectAllOption={false}
+                value={multiselectTags}
+                onChange={setMultiselectTags}
+                placeholder="Choose tags"
+                options={tagOptions}
+                fullWidth
+              />
+              <Text size="sm" variant="subtle">
+                Without Select All/Clear All options
+              </Text>
+            </FlexColumn>
+
+            <FlexColumn gap="xs">
+              <Label>Pre-selected Options:</Label>
+              <Select
+                multiple
+                value={multiselectPreselected}
+                onChange={setMultiselectPreselected}
+                placeholder="Select options"
+                options={[
+                  { value: 'option1', label: 'Option 1' },
+                  { value: 'option2', label: 'Option 2 (Pre-selected)' },
+                  { value: 'option3', label: 'Option 3' },
+                  { value: 'option4', label: 'Option 4 (Pre-selected)' },
+                  { value: 'option5', label: 'Option 5' },
+                ]}
+                fullWidth
+              />
+              <Text size="sm" variant="subtle">
+                Starts with pre-selected values
+              </Text>
+            </FlexColumn>
+
+            <FlexColumn gap="xs">
+              <Label>Many Options (Chip Limit):</Label>
+              <Select
+                multiple
+                maxDisplayedChips={2}
+                value={[]}
+                onChange={() => {}}
+                placeholder="Select countries"
+                options={Array.from({ length: 15 }, (_, i) => ({
+                  value: `country${i}`,
+                  label: `Country ${i + 1}`,
+                }))}
+                fullWidth
+              />
+              <Text size="sm" variant="subtle">
+                Shows "+N more" after 2 selections
               </Text>
             </FlexColumn>
           </FlexColumn>

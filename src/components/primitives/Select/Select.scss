@@ -382,4 +382,89 @@
       margin-left: 0; // Reset margin since icon/avatar has margin-right
     }
   }
+
+  // Multiselect specific styles
+  &__checkbox {
+    margin-right: 0.5rem;
+    color: var(--color-text-subtle);
+    font-size: 1rem;
+    flex-shrink: 0;
+
+    // Selected state
+    .quorum-select__option--selected & {
+      color: var(--accent);
+    }
+  }
+
+  // Chips container for selected values
+  &__chips {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.5rem;
+    background-color: var(--color-field-chip-bg, var(--surface-3));
+    color: var(--color-field-chip-text, var(--color-text-main));
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    white-space: nowrap;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &--count {
+      background-color: var(--color-field-chip-count-bg, var(--accent-100));
+      color: var(--color-field-chip-count-text, var(--accent-700));
+      font-weight: 600;
+    }
+  }
+
+  // Select All / Clear All actions
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--color-border-default);
+    background-color: var(--color-field-bg);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  &__action {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-main);
+
+    &:hover {
+      background-color: var(--color-field-option-hover);
+    }
+
+    &-icon {
+      color: var(--color-text-subtle);
+    }
+  }
+
+  // Adjust dropdown when multiselect actions are present
+  &__dropdown {
+    .quorum-select__actions + .quorum-select__group:first-of-type,
+    .quorum-select__actions + .quorum-select__option:first-of-type {
+      margin-top: 0;
+    }
+  }
 }
