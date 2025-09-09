@@ -41,7 +41,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
           }}
         />
         <div className="user-status-text">
-          <div className="user-status-username w-[164px] text-ellipsis overflow-hidden">
+          <div className="user-status-username w-[164px] text-ellipsis overflow-hidden whitespace-nowrap">
             <span>{props.user.displayName}</span>
           </div>
           <div className="user-status-info w-fit">
