@@ -5249,20 +5249,24 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           ['encrypt']
         );
 
-        config.spaceKeys = [];
         const spaces = await messageDB.getSpaces();
 
-        for (const space of spaces) {
-          const keys = await messageDB.getSpaceKeys(space.spaceId);
-          const encryptionState = await messageDB.getEncryptionStates({
-            conversationId: space.spaceId + '/' + space.spaceId,
-          });
-          config.spaceKeys.push({
+        // Fetch all space keys and encryption states in parallel
+        const spaceKeysPromises = spaces.map(async (space) => {
+          const [keys, encryptionState] = await Promise.all([
+            messageDB.getSpaceKeys(space.spaceId),
+            messageDB.getEncryptionStates({
+              conversationId: space.spaceId + '/' + space.spaceId,
+            })
+          ]);
+          return {
             spaceId: space.spaceId,
             encryptionState: encryptionState[0],
             keys: keys,
-          });
-        }
+          };
+        });
+        
+        config.spaceKeys = await Promise.all(spaceKeysPromises);
 
         let iv = crypto.getRandomValues(new Uint8Array(12));
         const ciphertext =
@@ -5274,6 +5278,23 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             )
           ).toString('hex') + Buffer.from(iv).toString('hex');
 
+        const signature = Buffer.from(
+          JSON.parse(
+            ch.js_sign_ed448(
+              Buffer.from(
+                new Uint8Array(userKey.user_key.private_key)
+              ).toString('base64'),
+              Buffer.from(
+                new Uint8Array([
+                  ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
+                  ...int64ToBytes(ts),
+                ])
+              ).toString('base64')
+            )
+          ),
+          'base64'
+        ).toString('hex');
+
         await apiClient.postUserSettings(config.address, {
           user_address: config.address,
           user_public_key: Buffer.from(
@@ -5281,22 +5302,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           ).toString('hex'),
           user_config: ciphertext,
           timestamp: ts,
-          signature: Buffer.from(
-            JSON.parse(
-              ch.js_sign_ed448(
-                Buffer.from(
-                  new Uint8Array(userKey.user_key.private_key)
-                ).toString('base64'),
-                Buffer.from(
-                  new Uint8Array([
-                    ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
-                    ...int64ToBytes(ts),
-                  ])
-                ).toString('base64')
-              )
-            ),
-            'base64'
-          ).toString('hex'),
+          signature: signature,
         });
       }
 

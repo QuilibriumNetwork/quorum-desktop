@@ -39,6 +39,10 @@ const UserSettingsModal: React.FunctionComponent<{
     >
   >;
 }> = ({ dismiss, setUser }) => {
+  // State for saving
+  const [isSaving, setIsSaving] = React.useState(false);
+  const [saveError, setSaveError] = React.useState<string>('');
+
   // Use our extracted hooks
   const {
     displayName,
@@ -56,9 +60,7 @@ const UserSettingsModal: React.FunctionComponent<{
     removeDevice,
     downloadKey,
     keyset,
-  } = useUserSettings({
-    onSave: dismiss,
-  });
+  } = useUserSettings();
 
   const {
     fileData,
@@ -85,22 +87,35 @@ const UserSettingsModal: React.FunctionComponent<{
 
   // Custom save handler that updates setUser callback
   const saveChanges = async () => {
-    await saveUserChanges(fileData, currentFile);
+    setSaveError('');
+    setIsSaving(true);
+    
+    try {
+      await saveUserChanges(fileData, currentFile);
 
-    // Update parent component's user state
-    setUser!({
-      displayName: displayName,
-      state: 'online',
-      status: '',
-      userIcon:
-        fileData && currentFile
-          ? 'data:' +
-            currentFile.type +
-            ';base64,' +
-            Buffer.from(fileData).toString('base64')
-          : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
-      address: currentPasskeyInfo!.address,
-    });
+      // Update parent component's user state
+      setUser!({
+        displayName: displayName,
+        state: 'online',
+        status: '',
+        userIcon:
+          fileData && currentFile
+            ? 'data:' +
+              currentFile.type +
+              ';base64,' +
+              Buffer.from(fileData).toString('base64')
+            : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
+        address: currentPasskeyInfo!.address,
+      });
+
+      // Only close the modal after successful save
+      dismiss();
+    } catch (error) {
+      // Show error to user and don't dismiss
+      setSaveError(t`Failed to save settings. Please try again.`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -115,7 +130,38 @@ const UserSettingsModal: React.FunctionComponent<{
       closeOnBackdropClick={true}
       closeOnEscape={true}
     >
-      <div className="modal-complex-container-inner">
+      <div className="modal-complex-container-inner relative">
+        {/* Saving/Error overlay */}
+        {(isSaving || saveError) && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center">
+            {/* Blur backdrop */}
+            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm rounded-lg" />
+            {/* Content - no background */}
+            <div className="relative flex items-center gap-3">
+              {isSaving ? (
+                <>
+                  <Icon name="spinner" size={24} spin className="text-accent" />
+                  <div className="text-lg font-medium text-white">{t`Saving...`}</div>
+                </>
+              ) : (
+                <div className="flex flex-col items-center gap-4">
+                  <div className="flex items-center gap-3">
+                    <Icon name="exclamation-circle" size={24} className="text-danger" />
+                    <div className="text-lg font-medium text-danger">{t`Save Failed`}</div>
+                  </div>
+                  <div className="text-sm text-white/80 text-center">{saveError}</div>
+                  <Button
+                    type="secondary"
+                    size="small"
+                    onClick={() => setSaveError('')}
+                  >
+                    {t`Try Again`}
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         <div className="modal-complex-layout">
           {/* Desktop/Tablet Sidebar */}
           <div className="modal-complex-sidebar">
@@ -277,6 +323,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             onClick={() => {
                               saveChanges();
                             }}
+                            disabled={isSaving}
                           >
                             {t`Save Changes`}
                           </Button>
@@ -417,6 +464,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             onClick={() => {
                               saveChanges();
                             }}
+                            disabled={isSaving}
                           >
                             {t`Save Changes`}
                           </Button>
