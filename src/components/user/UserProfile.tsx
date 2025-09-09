@@ -10,6 +10,10 @@ import {
   useUserProfileActions,
   useUserRoleDisplay,
 } from '../../hooks';
+import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
+import { useQuery } from '@tanstack/react-query';
+import { useMessageDB } from '../context/useMessageDB';
+import { hasPermission } from '../../utils/permissions';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../utils';
 
@@ -23,6 +27,7 @@ const UserProfile: React.FunctionComponent<{
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }> = (props) => {
   const { currentPasskeyInfo } = usePasskeysContext();
+  const { messageDB } = useMessageDB();
 
   // Extract business logic into hooks
   const { addRole, removeRole } = useUserRoleManagement(props.spaceId);
@@ -33,6 +38,24 @@ const UserProfile: React.FunctionComponent<{
   const { userRoles, availableRoles } = useUserRoleDisplay(
     props.user.address,
     props.roles
+  );
+
+  // Permission checking
+  const { data: isSpaceOwner } = useSpaceOwner({ spaceId: props.spaceId || '' });
+  const { data: space } = useQuery({
+    queryKey: ['space', props.spaceId],
+    queryFn: async () => {
+      if (!props.spaceId) return null;
+      return await messageDB.getSpace(props.spaceId);
+    },
+    enabled: !!props.spaceId,
+  });
+
+  const canKickUsers = hasPermission(
+    currentPasskeyInfo?.address || '',
+    'user:kick',
+    space,
+    isSpaceOwner
   );
 
   return (
@@ -165,7 +188,7 @@ const UserProfile: React.FunctionComponent<{
               >
                 {t`Send Message`}
               </Button>
-              {props.canEditRoles && (
+              {canKickUsers && (
                 <Button
                   type="danger"
                   size="small"

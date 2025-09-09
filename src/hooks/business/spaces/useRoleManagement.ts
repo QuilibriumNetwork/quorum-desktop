@@ -13,6 +13,7 @@ export interface UseRoleManagementReturn {
   updateRoleTag: (index: number, roleTag: string) => void;
   updateRoleDisplayName: (index: number, displayName: string) => void;
   toggleRolePermission: (index: number, permission: Permission) => void;
+  updateRolePermissions: (index: number, permissions: Permission[]) => void;
 }
 
 export const useRoleManagement = (
@@ -76,6 +77,18 @@ export const useRoleManagement = (
     []
   );
 
+  const updateRolePermissions = useCallback(
+    (index: number, permissions: Permission[]) => {
+      setRoles((prev) =>
+        prev.map((role, i) => {
+          if (i !== index) return role;
+          return { ...role, permissions };
+        })
+      );
+    },
+    []
+  );
+
   return {
     roles,
     setRoles,
@@ -84,5 +97,6 @@ export const useRoleManagement = (
     updateRoleTag,
     updateRoleDisplayName,
     toggleRolePermission,
+    updateRolePermissions,
   };
 };

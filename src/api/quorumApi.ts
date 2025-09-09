@@ -1,6 +1,6 @@
 import { getConfig } from '../config/config';
 
-export type Permission = 'message:delete';
+export type Permission = 'message:delete' | 'message:pin' | 'user:kick';
 
 export type Role = {
   roleId: string;

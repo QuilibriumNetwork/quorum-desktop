@@ -23,13 +23,15 @@ export type Role = {
   permissions: Permission[];  // Array of permissions granted to this role
 };
 
-export type Permission = 'message:delete';  // Currently only one permission
+export type Permission = 'message:delete' | 'message:pin' | 'user:kick';
 ```
 
 #### 2. Permission Types
 
 **Current Permissions:**
 - `'message:delete'` - Allows users with this role to delete messages in the space
+- `'message:pin'` - Allows users with this role to pin/unpin messages in the space
+- `'user:kick'` - Allows users with this role to kick other users from the space
 
 **Permission Structure:**
 - Permissions are defined as string literals
@@ -44,8 +46,9 @@ export type Permission = 'message:delete';  // Currently only one permission
 - `useUserRoleDisplay` (`src/hooks/business/user/useUserRoleDisplay.ts`) - Role display logic
 
 **UI Components:**
-- `SpaceEditor` (`src/components/channel/SpaceEditor.tsx`) - Role management interface
+- `SpaceEditor` (`src/components/channel/SpaceEditor.tsx`) - Role management interface with multiselect permissions
 - `UserProfile` (`src/components/user/UserProfile.tsx`) - User role assignment interface
+- `Select` primitive (`src/components/primitives/Select/`) - Multiselect dropdown for permission management
 
 ### Role Assignment Mechanisms
 
@@ -56,7 +59,10 @@ Roles are managed through the `SpaceEditor` component's "Roles" tab:
 - **Creation**: Space owners can add new roles with custom names, tags, and colors
 - **Editing**: Role names, tags, and permissions can be modified inline
 - **Deletion**: Roles can be removed, automatically removing all user assignments
-- **Permission Assignment**: Currently supports toggling the `message:delete` permission
+- **Permission Assignment**: Supports multiselect permission management with three available permissions:
+  - `message:delete` - Delete messages
+  - `message:pin` - Pin/unpin messages  
+  - `user:kick` - Kick users from space
 
 #### 2. User-Role Assignment
 
@@ -80,8 +86,8 @@ User role assignments happen through the `UserProfile` component:
 ## Current Limitations
 
 ### 1. Limited Permission Set
-- Only one permission type: `'message:delete'`
-- No permissions for channel management, user management, or space settings
+- Basic permission set: `'message:delete'`, `'message:pin'`, `'user:kick'`
+- No permissions for channel management or space settings
 
 ### 2. Permission Enforcement Gaps
 - Role permissions not consistently enforced across all features
@@ -102,10 +108,18 @@ User role assignments happen through the `UserProfile` component:
 
 ### 1. Expand Permission System
 
+**Message Management Permissions:**
+```typescript
+type Permission = 
+  | 'message:delete'    // ✅ IMPLEMENTED
+  | 'message:pin'       // ✅ IMPLEMENTED
+  | 'message:edit'      // Future enhancement
+  | 'message:react'     // Future enhancement
+```
+
 **Channel Management Permissions:**
 ```typescript
 type Permission = 
-  | 'message:delete'
   | 'channel:create'
   | 'channel:edit'
   | 'channel:delete'
@@ -115,10 +129,10 @@ type Permission =
 **User Management Permissions:**
 ```typescript
 type Permission = 
-  | 'user:kick'
-  | 'user:ban'
-  | 'user:invite'
-  | 'user:manage_roles'
+  | 'user:kick'         // ✅ IMPLEMENTED
+  | 'user:ban'          // Future enhancement
+  | 'user:invite'       // Future enhancement
+  | 'user:manage_roles' // Future enhancement
 ```
 
 **Space Management Permissions:**
@@ -266,6 +280,7 @@ export function hasPermission(
 ---
 
 *Document created: September 7, 2025*
+*Last updated: September 9, 2025 - Added multiselect permissions UI and new permission types*
 *Based on codebase analysis as of commit 72520cf5*
 
 [← Back to INDEX](/../INDEX.md)

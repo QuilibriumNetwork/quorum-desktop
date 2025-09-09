@@ -65,6 +65,7 @@ const SpaceEditor: React.FunctionComponent<{
     updateRoleTag,
     updateRoleDisplayName,
     toggleRolePermission,
+    updateRolePermissions,
   } = useRoleManagement({
     initialRoles: space?.roles || [],
   });
@@ -536,61 +537,95 @@ const SpaceEditor: React.FunctionComponent<{
                               key={'space-editor-role-' + i}
                               className="modal-content-section-header text-main"
                             >
-                              @
-                              <input
-                                className="font-mono border-0 bg-[rgba(0,0,0,0)] pr-2"
-                                style={{
-                                  width:
-                                    (roles.find((_, pi) => i == pi)?.roleTag
-                                      .length ?? 0) *
-                                      11 +
-                                    11 +
-                                    'px',
-                                }}
-                                onChange={(e) =>
-                                  updateRoleTag(i, e.target.value)
-                                }
-                                value={r.roleTag}
-                              />
-                              <span
-                                className="font-mono modal-role"
-                                style={{ backgroundColor: r.color }}
-                              >
-                                <input
-                                  className="border-0 bg-[rgba(0,0,0,0)] "
-                                  style={{
-                                    width: Math.max(
-                                      (r.displayName.length || 3) * 8,
-                                      60
-                                    ) + 'px',
-                                  }}
-                                  onChange={(e) =>
-                                    updateRoleDisplayName(i, e.target.value)
-                                  }
-                                  value={r.displayName}
-                                />
-                              </span>
-                              <span className="float-right">
-                                <Icon
-                                  name="trash"
-                                  className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
-                                  onClick={() => deleteRole(i)}
-                                />
-                              </span>
-                              <span className="float-right pr-10 flex items-center">
-                                <span className="text-sm font-normal pr-2">
-                                  <Trans>Can delete messages?</Trans>
-                                </span>{' '}
-                                <input
-                                  type="checkbox"
-                                  checked={roles
-                                    .find((_, pi) => i == pi)
-                                    ?.permissions.includes('message:delete')}
-                                  onChange={() =>
-                                    toggleRolePermission(i, 'message:delete')
-                                  }
-                                />
-                              </span>
+                              <div className="grid grid-cols-3 gap-4 py-4">
+                                {/* Cell 1: Role tag and name */}
+                                <div className="flex flex-col">
+                                  <div>
+                                    @
+                                    <input
+                                      className="border-0 bg-[rgba(0,0,0,0)] pr-2 outline-none focus:bg-surface-1 focus:px-2 focus:py-1 focus:rounded transition-all"
+                                      style={{
+                                        width:
+                                          (roles.find((_, pi) => i == pi)?.roleTag
+                                            .length ?? 0) *
+                                            11 +
+                                          11 +
+                                          'px',
+                                      }}
+                                      onChange={(e) =>
+                                        updateRoleTag(i, e.target.value)
+                                      }
+                                      value={r.roleTag}
+                                    />
+                                  </div>
+                                  <div className="mt-1">
+                                    <span
+                                      className="font-mono modal-role"
+                                      style={{ backgroundColor: r.color }}
+                                    >
+                                      <input
+                                        className="border-0 bg-[rgba(0,0,0,0)] outline-none focus:bg-[rgba(0,0,0,0.1)] focus:px-2 focus:py-1 focus:rounded transition-all"
+                                        style={{
+                                          width: Math.max(
+                                            (r.displayName.length || 3) * 8,
+                                            60
+                                          ) + 'px',
+                                        }}
+                                        onChange={(e) =>
+                                          updateRoleDisplayName(i, e.target.value)
+                                        }
+                                        value={r.displayName}
+                                      />
+                                    </span>
+                                  </div>
+                                </div>
+                                
+                                {/* Cell 2: Permissions */}
+                                <div className="flex flex-col">
+                                  <div className="text-sm font-normal">
+                                    <Trans>Permissions:</Trans>
+                                  </div>
+                                  <div className="mt-1">
+                                    <Select
+                                      multiple
+                                      value={roles.find((_, pi) => i == pi)?.permissions || []}
+                                      onChange={(selectedPermissions) => 
+                                        updateRolePermissions(i, selectedPermissions as string[])
+                                      }
+                                      placeholder={t`Select permissions`}
+                                      width="200px"
+                                      options={[
+                                        { 
+                                          value: 'message:delete', 
+                                          label: t`Delete Messages` 
+                                        },
+                                        { 
+                                          value: 'message:pin', 
+                                          label: t`Pin Messages` 
+                                        },
+                                        { 
+                                          value: 'user:kick', 
+                                          label: t`Kick Users` 
+                                        },
+                                      ]}
+                                    />
+                                  </div>
+                                </div>
+                                
+                                {/* Cell 3: Delete button */}
+                                <div className="flex flex-col">
+                                  <div className="flex justify-end">
+                                    <Icon
+                                      name="trash"
+                                      className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
+                                      onClick={() => deleteRole(i)}
+                                    />
+                                  </div>
+                                  <div className="mt-1">
+                                    {/* Empty space for alignment */}
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                           );
                         })}

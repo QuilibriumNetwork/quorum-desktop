@@ -4,6 +4,7 @@ import { Message } from '../../../api/quorumApi';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useSpaceOwner } from '../../queries/spaceOwner';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { hasPermission } from '../../../utils/permissions';
 import { t } from '@lingui/core/macro';
 
 // Configuration constants for pinned messages feature
@@ -16,6 +17,15 @@ export const usePinnedMessages = (spaceId: string, channelId: string) => {
   const user = usePasskeysContext();
   const { messageDB } = useMessageDB();
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
+  // Query for space data to check roles and permissions
+  const { data: space } = useQuery({
+    queryKey: ['space', spaceId],
+    queryFn: async () => {
+      if (!spaceId) return null;
+      return await messageDB.getSpace(spaceId);
+    },
+    enabled: !!spaceId,
+  });
   
   // Query for pinned messages
   const {
@@ -108,9 +118,17 @@ export const usePinnedMessages = (spaceId: string, channelId: string) => {
     },
   });
 
+  // Check if user can pin messages based on role permissions
+  const canUserPin = hasPermission(
+    user?.currentPasskeyInfo?.address || '',
+    'message:pin',
+    space,
+    isSpaceOwner
+  );
+
   const pinMessage = useCallback(
     (messageId: string) => {
-      if (!isSpaceOwner) {
+      if (!canUserPin) {
         console.warn('User does not have permission to pin messages');
         return;
       }
@@ -120,12 +138,12 @@ export const usePinnedMessages = (spaceId: string, channelId: string) => {
       }
       pinMutation.mutate(messageId);
     },
-    [isSpaceOwner, pinMutation, spaceId, channelId]
+    [canUserPin, pinMutation, spaceId, channelId]
   );
 
   const unpinMessage = useCallback(
     (messageId: string) => {
-      if (!isSpaceOwner) {
+      if (!canUserPin) {
         console.warn('User does not have permission to unpin messages');
         return;
       }
@@ -135,7 +153,7 @@ export const usePinnedMessages = (spaceId: string, channelId: string) => {
       }
       unpinMutation.mutate(messageId);
     },
-    [isSpaceOwner, unpinMutation, spaceId, channelId]
+    [canUserPin, unpinMutation, spaceId, channelId]
   );
 
   const togglePin = useCallback(
@@ -156,7 +174,7 @@ export const usePinnedMessages = (spaceId: string, channelId: string) => {
   return {
     pinnedMessages,
     pinnedCount,
-    canPinMessages: Boolean(isSpaceOwner),
+    canPinMessages: canUserPin,
     pinMessage,
     unpinMessage,
     togglePin,
