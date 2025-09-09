@@ -15,6 +15,7 @@ import { DropdownPanel } from '../DropdownPanel';
 import { t } from '@lingui/core/macro';
 import { usePinnedMessages } from '../../hooks';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
+import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import { isTouchDevice } from '../../utils/platform';
 import * as moment from 'moment-timezone';
 import './PinnedMessagesPanel.scss';
@@ -30,6 +31,8 @@ interface PinnedMessagesPanelProps {
   spaceId: string;
   channelId: string;
   mapSenderToUser: (senderId: string) => any;
+  virtuosoRef?: any;
+  messageList?: MessageType[];
 }
 
 export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
@@ -38,33 +41,35 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
   spaceId,
   channelId,
   mapSenderToUser,
+  virtuosoRef,
+  messageList,
 }) => {
   const navigate = useNavigate();
   const { pinnedMessages, unpinMessage, canPinMessages, isLoading } = usePinnedMessages(
     spaceId,
     channelId
   );
+  
+  // Use the new React state-based message highlighting
+  const { highlightMessage, scrollToMessage } = useMessageHighlight();
 
   const handleJumpToMessage = useCallback((messageId: string) => {
     // Close the panel
     onClose();
     
-    // Navigate to the message with hash
+    // Navigate to the message with hash (for URL state consistency)
     const currentPath = window.location.pathname;
     navigate(`${currentPath}#msg-${messageId}`);
     
-    // Trigger the yellow flash effect after navigation
+    // Use React state-based highlighting instead of DOM manipulation
     setTimeout(() => {
-      const messageElement = document.getElementById(`msg-${messageId}`);
-      if (messageElement) {
-        messageElement.scrollIntoView({ behavior: 'auto', block: 'center' });
-        messageElement.classList.add('message-highlighted');
-        setTimeout(() => {
-          messageElement.classList.remove('message-highlighted');
-        }, 2000);
-      }
+      // Scroll to the message using the appropriate method
+      scrollToMessage(messageId, virtuosoRef, messageList);
+      
+      // Highlight the message using React state (triggers re-render with highlight class)
+      highlightMessage(messageId, { duration: 2000 });
     }, 100);
-  }, [navigate, onClose]);
+  }, [navigate, onClose, scrollToMessage, highlightMessage, virtuosoRef, messageList]);
 
   // Component to render formatted message content with links, mentions, etc.
   const FormattedMessageContent: React.FC<{ message: MessageType }> = ({ message }) => {

@@ -300,6 +300,8 @@ const Channel: React.FC<ChannelProps> = ({
                     spaceId={spaceId}
                     channelId={channelId}
                     mapSenderToUser={mapSenderToUser}
+                    virtuosoRef={messageListRef.current?.getVirtuosoRef()}
+                    messageList={messageList}
                   />
                 </div>
               )}

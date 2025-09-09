@@ -19,9 +19,11 @@ import { Virtuoso } from 'react-virtuoso';
 import type { VirtuosoHandle } from 'react-virtuoso';
 import React from 'react';
 import { DefaultImages } from '../../utils';
+import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 
 export interface MessageListRef {
   scrollToBottom: () => void;
+  getVirtuosoRef: () => VirtuosoHandle | null;
 }
 
 interface MessageListProps {
@@ -81,6 +83,9 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     const virtuoso = useRef<VirtuosoHandle>(null);
     const [init, setInit] = useState(false);
     const location = useLocation();
+    
+    // Message highlighting context - replaces direct DOM manipulation
+    const { highlightMessage, scrollToMessage } = useMessageHighlight();
 
     useImperativeHandle(ref, () => ({
       scrollToBottom: () => {
@@ -92,6 +97,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           });
         }
       },
+      getVirtuosoRef: () => virtuoso.current,
     }));
 
     const mapSenderToUser = (senderId: string) => {
@@ -150,20 +156,20 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       if (hash.startsWith('#msg-') && !hasProcessedHash) {
         const msgId = hash.replace('#msg-', '');
         const index = messageList.findIndex((m) => m.messageId === msgId);
-        if (index !== -1 && virtuoso.current) {
+        if (index !== -1) {
           // Mark that we've processed this hash navigation
           setHasProcessedHash(true);
 
-          // Scroll to the message - use instant scroll for search navigation to prevent focus stealing
+          // Use the React state-based highlighting system instead of DOM manipulation
           setTimeout(() => {
-            virtuoso.current?.scrollToIndex({
-              index,
-              align: 'center',
-              behavior: 'auto',
-            });
+            // Scroll using the centralized scroll function
+            scrollToMessage(msgId, virtuoso.current, messageList);
+            
+            // Highlight using React state (this will trigger re-render with highlight class)
+            highlightMessage(msgId, { duration: 6000 }); // Match CSS animation duration
           }, 200);
 
-          // Remove hash after Message components have had time to detect it
+          // Remove hash after highlighting is established
           setTimeout(() => {
             history.replaceState(
               null,
@@ -173,7 +179,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           }, 1000);
         }
       }
-    }, [init, location.hash]); // Removed messageList and hasProcessedHash to prevent re-navigation on message changes
+    }, [init, location.hash, scrollToMessage, highlightMessage, messageList]); // Added new dependencies
 
     // Reset hash processing flag when location.hash changes to a new value
     useEffect(() => {

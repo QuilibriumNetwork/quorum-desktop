@@ -38,6 +38,7 @@ import {
   useMessageFormatting,
   usePinnedMessages,
 } from '../../hooks';
+import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import MessageActions from './MessageActions';
 
 type MessageProps = {
@@ -160,11 +161,16 @@ export const Message = ({
     message.channelId || ''
   );
 
+  // Message highlighting logic - replaces isHashTarget
+  const { isHighlighted } = useMessageHighlight();
+  const isMessageHighlighted = useMemo(() => {
+    // Check both URL hash (for backward compatibility) and React state highlighting
+    const isUrlTarget = location.hash === `#msg-${message.messageId}`;
+    const isStateHighlighted = isHighlighted(message.messageId);
+    return isUrlTarget || isStateHighlighted;
+  }, [message.messageId, location.hash, isHighlighted]);
 
   let sender = mapSenderToUser(message.content?.senderId);
-  const isHashTarget = useMemo(() => {
-    return location.hash === `#msg-${message.messageId}`;
-  }, [message.messageId, location.hash]);
   const time = moment.tz(
     message.createdDate,
     Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -214,7 +220,7 @@ export const Message = ({
         (formatting.isMentioned(user.currentPasskeyInfo!.address)
           ? ' message-mentions-you'
           : '') +
-        (isHashTarget ? ' message-highlighted' : '')
+        (isMessageHighlighted ? ' message-highlighted' : '')
       }
       // Desktop mouse interaction
       onMouseOver={interactions.handleMouseOver}
