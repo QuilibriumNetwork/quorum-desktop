@@ -537,7 +537,7 @@ const SpaceEditor: React.FunctionComponent<{
                               key={'space-editor-role-' + i}
                               className="modal-content-section-header text-main"
                             >
-                              <div className="grid grid-cols-3 gap-4 py-4">
+                              <div className="grid gap-4 py-4" style={{ gridTemplateColumns: '1fr 1fr auto' }}>
                                 {/* Cell 1: Role tag and name */}
                                 <div className="flex flex-col">
                                   <div>
@@ -615,11 +615,18 @@ const SpaceEditor: React.FunctionComponent<{
                                 {/* Cell 3: Delete button */}
                                 <div className="flex flex-col">
                                   <div className="flex justify-end">
-                                    <Icon
-                                      name="trash"
-                                      className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
-                                      onClick={() => deleteRole(i)}
-                                    />
+                                    <Tooltip 
+                                      id={`delete-role-${i}`}
+                                      content={t`Delete Role`}
+                                      place="left"
+                                      showOnTouch={false}
+                                    >
+                                      <Icon
+                                        name="trash"
+                                        className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
+                                        onClick={() => deleteRole(i)}
+                                      />
+                                    </Tooltip>
                                   </div>
                                   <div className="mt-1">
                                     {/* Empty space for alignment */}

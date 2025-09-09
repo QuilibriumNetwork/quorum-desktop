@@ -71,6 +71,29 @@ export function getUserPermissions(
 }
 
 /**
+ * Check if a user can be kicked from a space
+ * Space owners cannot be kicked, regardless of who has kick permissions
+ * @param targetUserAddress - The address of the user to be kicked
+ * @param space - The space object
+ * @returns boolean - true if user can be kicked
+ */
+export function canKickUser(
+  targetUserAddress: string,
+  space: Space | undefined
+): boolean {
+  if (!space) {
+    return false;
+  }
+
+  // Space owners cannot be kicked
+  if (space.ownerAddress === targetUserAddress) {
+    return false;
+  }
+
+  return true;
+}
+
+/**
  * Get all roles a user has in a space
  * @param userAddress - The address of the user
  * @param space - The space object containing roles

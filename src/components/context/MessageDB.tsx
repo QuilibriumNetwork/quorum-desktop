@@ -58,6 +58,7 @@ import { sha256, base58btc } from '../../utils/crypto';
 import { buildConfigKey } from '../../hooks/queries/config/buildConfigKey';
 import { t } from '@lingui/core/macro';
 import { DefaultImages, getDefaultUserConfig } from '../../utils';
+import { canKickUser } from '../../utils/permissions';
 
 type MessageDBContextValue = {
   messageDB: MessageDB;
@@ -3213,6 +3214,15 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       device_keyset: secureChannel.DeviceKeyset,
       registration: secureChannel.UserRegistration
     ) => {
+      // Get space information to validate kick operation
+      const space = await messageDB.getSpace(spaceId);
+      
+      // Prevent kicking the space owner
+      if (!canKickUser(userAddress, space)) {
+        console.error('Cannot kick space owner');
+        throw new Error('Cannot kick space owner from the space');
+      }
+
       enqueueOutbound(async () => {
         const spaceKey = await messageDB.getSpaceKey(spaceId, spaceId);
         const ownerKey = await messageDB.getSpaceKey(spaceId, 'owner');
