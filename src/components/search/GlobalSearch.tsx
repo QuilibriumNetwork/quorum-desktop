@@ -73,6 +73,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({ className }) => {
           handleSuggestionSelect(suggestion, setQuery)
         }
         className="global-search-bar"
+        isResultsVisible={showResults}
       />
 
       <SearchResults

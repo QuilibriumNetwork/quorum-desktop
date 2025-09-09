@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { SearchResult } from '../../db/messages';
 import { Icon, FlexBetween, FlexRow, Container, Text } from '../primitives';
 import {
-  useSearchResultDisplayDM,
-  useSearchResultDisplaySpace,
   useSearchResultHighlight,
   useSearchResultFormatting,
+  BatchSearchResultDisplayData,
 } from '../../hooks';
 import './SearchResultItem.scss';
 
@@ -15,7 +14,8 @@ interface SearchResultItemProps {
   highlightTerms: (text: string) => string;
   className?: string;
   searchTerms: string[];
-  index: number; // Add index to enable staggered loading
+  index: number;
+  displayData?: BatchSearchResultDisplayData;
 }
 
 // DM Search Result Component
@@ -26,12 +26,13 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   className,
   searchTerms,
   index,
+  displayData,
 }) => {
   const { message } = result;
-  // DM-specific display logic (restored)
-  const { channelName, icon } = useSearchResultDisplayDM({
-    result,
-  });
+  
+  // Use batch-loaded display data instead of individual hooks
+  const channelName = displayData?.channelName || (displayData?.isLoading ? 'Loading...' : 'Unknown');
+  const icon = displayData?.icon;
 
   const { contextualSnippet } = useSearchResultHighlight({
     message,
@@ -88,12 +89,13 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   className,
   searchTerms,
   index,
+  displayData,
 }) => {
   const { message } = result;
-  // Space-specific display logic (restored)
-  const { displayName, channelName } = useSearchResultDisplaySpace({
-    result,
-  });
+  
+  // Use batch-loaded display data instead of individual hooks
+  const displayName = displayData?.displayName || (displayData?.isLoading ? 'Loading...' : 'Unknown User');
+  const channelName = displayData?.channelName || (displayData?.isLoading ? 'Loading...' : 'Unknown Channel');
 
   const { contextualSnippet } = useSearchResultHighlight({
     message,

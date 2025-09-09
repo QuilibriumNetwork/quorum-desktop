@@ -7,6 +7,7 @@ import { Icon, FlexCenter, Container, Text } from '../primitives';
 import { DropdownPanel } from '../DropdownPanel';
 import {
   useSearchResultsState,
+  useBatchSearchResultsDisplay,
 } from '../../hooks';
 import './SearchResults.scss';
 
@@ -46,6 +47,11 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     query,
     onNavigate,
     onClose,
+  });
+
+  // Batch load display data for all search results
+  const { resultsData } = useBatchSearchResultsDisplay({
+    results,
   });
 
   // Render empty state
@@ -115,6 +121,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
               highlightTerms={highlightTerms}
               searchTerms={searchTerms}
               index={index}
+              displayData={resultsData.get(result.message.messageId)}
             />
           ))}
         </Container>

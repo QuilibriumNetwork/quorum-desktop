@@ -13,6 +13,7 @@ import {
   useSearchSuggestions,
   useKeyboardShortcuts,
   useKeyboardNavigation,
+  useSearchFocusManager,
 } from '../../hooks';
 import './SearchBar.scss';
 
@@ -25,6 +26,7 @@ interface SearchBarProps {
   onSuggestionSelect?: (suggestion: string) => void;
   className?: string;
   disabled?: boolean;
+  isResultsVisible?: boolean;
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
@@ -36,9 +38,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   onSuggestionSelect,
   className,
   disabled = false,
+  isResultsVisible = false,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const inputContainerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Business logic hooks
   const {
@@ -67,11 +71,18 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     onHideSuggestions: clearSuggestions,
   });
 
+  const { maintainFocus, preventFocusSteal } = useSearchFocusManager({
+    searchInputRef: inputRef,
+    isResultsVisible,
+  });
+
   const handleInputChange = (value: string) => {
     markUserTyping();
-    onQueryChange(value);
-    setSelectedSuggestionIndex(-1);
-    updateSuggestionsVisibility(value, suggestions.length > 0);
+    preventFocusSteal(() => {
+      onQueryChange(value);
+      setSelectedSuggestionIndex(-1);
+      updateSuggestionsVisibility(value, suggestions.length > 0);
+    });
   };
 
   const handleInputFocus = () => {
@@ -110,6 +121,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           className={`search-icon ${isFocused ? 'search-icon-focused' : ''}`}
         />
         <Input
+          ref={inputRef}
           className="search-input"
           placeholder={placeholder}
           value={query}
