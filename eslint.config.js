@@ -5,7 +5,21 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default [
-  { ignores: ['dist'] },
+  { 
+    ignores: [
+      'dist',
+      'mobile/android/**',
+      'mobile/ios/**',
+      'node_modules/**',
+      '**/*.config.js',
+      'public/wasm_exec.js',
+      'mobile/babel.config.js',
+      'mobile/metro.config.js',
+      'mobile/postcss.config.js',
+      'mobile/tailwind.config.js',
+      'mobile/update-theme.js'
+    ] 
+  },
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
