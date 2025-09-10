@@ -46,82 +46,84 @@ This is the main index for all documentation, bug reports, and task management.
 - [Search Focus Management Comprehensive Bug Report](bugs/search-focus-management.md)
 
 ### Solved Issues
-- [Android 7.0 File Download Fix - Implementation Plan](bugs/SOLVED_android-file-download-huawei-p9-lite.md)
-- [NewDirectMessage Modal: URL-to-State Conversion](bugs/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)
-- [React Hooks Violation: Conditional Return Before Hooks](bugs/SOLVED_react-hooks-violation-conditional-return.md)
-- [SOLVED: Fast Refresh Export Incompatibility](bugs/SOLVED_fast-refresh-export-incompatibility.md)
-- [SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/SOLVED_modal-navmenu-zindex-stacking.md)
-- [SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/SOLVED_right-sidebar-overlay.md)
+- [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
+- [NewDirectMessage Modal: URL-to-State Conversion](bugs/.solved/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)
+- [React Hooks Violation: Conditional Return Before Hooks](bugs/.solved/SOLVED_react-hooks-violation-conditional-return.md)
+- [SOLVED: Fast Refresh Export Incompatibility](bugs/.solved/SOLVED_fast-refresh-export-incompatibility.md)
+- [SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/.solved/SOLVED_modal-navmenu-zindex-stacking.md)
+- [SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/.solved/SOLVED_right-sidebar-overlay.md)
 
-## 📋 Tasks - Todo
+## 📋 Tasks
 
-- [Combined Text + Image Messages](tasks/todo/combined-text-image-messages.md)
-- [Conversation Deletion State Synchronization](tasks/todo/conversation-deletion-state-sync.md)
-- [Invite Links Improve](tasks/todo/invite-links-improve.md)
-- [Kick User UX Improvements](tasks/todo/kick-user-ux-improvements.md)
-- [Pinned Messages Feature - Implementation Plan](tasks/todo/pinned-messages-feature.md)
-- [Refactor Modal Placement in Layout.tsx](tasks/todo/refactor-modal-placement.md)
-- [Shared Git Hooks Setup](tasks/todo/shared-git-hooks-setup.md)
-- [Test Suite Implementation Plan for Quorum Desktop](tasks/todo/test-suite-plan.md)
-- [User Status Feature Implementation Plan](tasks/todo/user-status.md)
-- [🚀 Search Performance Optimization - Master Plan](tasks/todo/search-performance-optimization.md)
+### Pending Tasks
 
-### Css Refactor
-- [CSS Inventory - Complete Codebase Analysis](tasks/todo/css-refactor/css-inventory.md)
-- [CSS Refactor Analysis Report](tasks/todo/css-refactor/analysis.md)
-- [CSS Refactor Plan - Claude Code Execution Strategy](tasks/todo/css-refactor/css-refactor-plan.md)
+- [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
+- [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
+- [Implement Background Sync Queue](tasks/implement-background-sync-queue.md)
+- [Invite Links Improve](tasks/invite-links-improve.md)
+- [Kick User UX Improvements](tasks/kick-user-ux-improvements.md)
+- [Pinned Messages Feature - Implementation Plan](tasks/pinned-messages-feature.md)
+- [Read-Only Channels with Role Managers](tasks/read-only-channels-with-role-managers.md)
+- [Refactor Modal Placement in Layout.tsx](tasks/refactor-modal-placement.md)
+- [Shared Git Hooks Setup](tasks/shared-git-hooks-setup.md)
+- [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
+- [User Status Feature Implementation Plan](tasks/user-status.md)
+- [🚀 Search Performance Optimization - Master Plan](tasks/search-performance-optimization.md)
 
-### Mobile Dev
-- [Business Logic Extraction & Native Preparation Plan](tasks/todo/mobile-dev/business-logic-extraction-plan.md)
-- [Component Architecture Masterplan - Desktop/Mobile Unification](tasks/todo/mobile-dev/components-shared-arch-masterplan.md)
-- [Cross-Platform Development : Revised Plan](tasks/todo/mobile-dev/plan-quick-recap.md)
-- [Cross-Platform Hooks Refactoring Plan](tasks/todo/mobile-dev/cross-platform-hooks-refactoring-plan.md)
-- [CSS to Mobile Colors Sync Script](tasks/todo/mobile-dev/css-to-mobile-colors-sync.md)
-- [File Upload Hooks Consolidation Task](tasks/todo/mobile-dev/file-upload-hooks-consolidation.md)
-- [Mobile Development Plan - Improved Version](tasks/todo/mobile-dev/mobile-dev-plan.md)
-- [Mobile Internationalization (i18n) Implementation Plan](tasks/todo/mobile-dev/internationalization-i18n-implementation-plan.md)
-- [Mobile/Touch Implementation Transition Plan](tasks/todo/mobile-dev/mobile-touch-transition-plan.md)
-- [Native Business Components Implementation Plan](tasks/todo/mobile-dev/native-business-components-plan.md)
-- [Primitive Migration Audit Report](tasks/todo/mobile-dev/primitive-migration-audit.md)
-- [Quilibrium SDK Mobile Integration Issue](tasks/todo/mobile-dev/mobile-sdk-integration-issue.md)
-- [React Native Upgrade Risk Assessment](tasks/todo/mobile-dev/upgrade-to-react-80.md)
-- [Sdk Shim Temporary Solutions](tasks/todo/mobile-dev/sdk-shim-temporary-solutions.md)
+### CSS Refactor
+- [CSS Inventory - Complete Codebase Analysis](tasks/css-refactor/css-inventory.md)
+- [CSS Refactor Analysis Report](tasks/css-refactor/analysis.md)
+- [CSS Refactor Plan - Claude Code Execution Strategy](tasks/css-refactor/css-refactor-plan.md)
 
-### Mobile Dev/Docs
-- [Component Architecture Workflow - Detailed Explanation](tasks/todo/mobile-dev/docs/component-architecture-workflow-explained.md)
-- [Mobile/Desktop Behavioral Differences Audit Plan](tasks/todo/mobile-dev/docs/mobile-desktop-audit.md)
-- [Primitives Testing Guide](tasks/todo/mobile-dev/docs/primitives-testing.md)
-- [Third-Party Component Migration Report](tasks/todo/mobile-dev/docs/third-party-component-migration-report.md)
-- [Web/Native Repository Structure](tasks/todo/mobile-dev/docs/web-and-native-repo-structure.md)
+### Mobile Development
+- [Business Logic Extraction & Native Preparation Plan](tasks/mobile-dev/business-logic-extraction-plan.md)
+- [Component Architecture Masterplan - Desktop/Mobile Unification](tasks/mobile-dev/components-shared-arch-masterplan.md)
+- [Cross-Platform Development : Revised Plan](tasks/mobile-dev/plan-quick-recap.md)
+- [Cross-Platform Hooks Refactoring Plan](tasks/mobile-dev/cross-platform-hooks-refactoring-plan.md)
+- [CSS to Mobile Colors Sync Script](tasks/mobile-dev/css-to-mobile-colors-sync.md)
+- [File Upload Hooks Consolidation Task](tasks/mobile-dev/file-upload-hooks-consolidation.md)
+- [Mobile Development Plan - Improved Version](tasks/mobile-dev/mobile-dev-plan.md)
+- [Mobile Internationalization (i18n) Implementation Plan](tasks/mobile-dev/internationalization-i18n-implementation-plan.md)
+- [Mobile/Touch Implementation Transition Plan](tasks/mobile-dev/mobile-touch-transition-plan.md)
+- [Native Business Components Implementation Plan](tasks/mobile-dev/native-business-components-plan.md)
+- [Primitive Migration Audit Report](tasks/mobile-dev/primitive-migration-audit.md)
+- [Quilibrium SDK Mobile Integration Issue](tasks/mobile-dev/mobile-sdk-integration-issue.md)
+- [React Native Upgrade Risk Assessment](tasks/mobile-dev/upgrade-to-react-80.md)
+- [SDK Shim Temporary Solutions](tasks/mobile-dev/sdk-shim-temporary-solutions.md)
 
-## 📋 Tasks - Ongoing
+### Mobile Development Documentation
+- [Component Architecture Workflow - Detailed Explanation](tasks/mobile-dev/docs/component-architecture-workflow-explained.md)
+- [Mobile/Desktop Behavioral Differences Audit Plan](tasks/mobile-dev/docs/mobile-desktop-audit.md)
+- [Primitives Testing Guide](tasks/mobile-dev/docs/primitives-testing.md)
+- [Third-Party Component Migration Report](tasks/mobile-dev/docs/third-party-component-migration-report.md)
+- [Web/Native Repository Structure](tasks/mobile-dev/docs/web-and-native-repo-structure.md)
 
-## 📋 Tasks - Done
+## 📋 Completed Tasks
 
-- [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/done/accent-color-switcher-cross-platform-migration.md)
-- [Android 7.0 File Download Fix - Implementation Plan](tasks/done/FAILED_android-file-download-fix.md)
-- [Channel Business Logic Extraction - Lessons Learned](tasks/done/channel-business-logic-extraction-lessons.md)
-- [Color Switcher Implementation](tasks/done/color-switcher.md)
-- [Complex Modal Primitive Migration Template](tasks/done/usersettingsmodal-primitive-migration.md)
-- [Cross-Platform Component Audit](tasks/done/components-audit.md)
-- [Cross-Platform Key Backup Implementation](tasks/done/cross-platform-key-backup.md)
-- [Emoji Picker Responsive Design Improvement](tasks/done/emojipicker-responsive.md)
-- [Expo Go to Expo Dev Client Migration Plan - Simplified](tasks/done/expo-go-to-dev-client-migration.md)
-- [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/done/implementation-plan-repo-restructure.md)
-- [Message Handling Report](tasks/done/messages-report.md)
-- [Modal Animation Consistency Implementation](tasks/done/new-modals-effect.md)
-- [Modal Migration Analysis & Progress Report](tasks/done/DONE_modal-migration-plan.md)
-- [Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/done/components-audit-dashboard.md)
-- [ReactTooltip Mobile Optimization](tasks/done/reacttoolltip-mobile.md)
-- [Responsive Layout Implementation Plan](tasks/done/responsive-layout.md)
-- [Responsive Layout Requirements](tasks/done/responsive-layout_requirements.md)
-- [Search Components Primitive Migration](tasks/done/search-primitive-migration.md)
-- [🎯 Objective: Implement Global Message Search](tasks/done/global-search-plan.md)
-- [🔍 Global Message Search Implementation Plan](tasks/done/global-search.md)
+- [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
+- [Android 7.0 File Download Fix - Implementation Plan](tasks/.done/FAILED_android-file-download-fix.md)
+- [Channel Business Logic Extraction - Lessons Learned](tasks/.done/channel-business-logic-extraction-lessons.md)
+- [Color Switcher Implementation](tasks/.done/color-switcher.md)
+- [Complex Modal Primitive Migration Template](tasks/.done/usersettingsmodal-primitive-migration.md)
+- [Cross-Platform Component Audit](tasks/.done/components-audit.md)
+- [Cross-Platform Key Backup Implementation](tasks/.done/cross-platform-key-backup.md)
+- [Emoji Picker Responsive Design Improvement](tasks/.done/emojipicker-responsive.md)
+- [Expo Go to Expo Dev Client Migration Plan - Simplified](tasks/.done/expo-go-to-dev-client-migration.md)
+- [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
+- [Message Handling Report](tasks/.done/messages-report.md)
+- [Modal Animation Consistency Implementation](tasks/.done/new-modals-effect.md)
+- [Modal Migration Analysis & Progress Report](tasks/.done/DONE_modal-migration-plan.md)
+- [Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/.done/components-audit-dashboard.md)
+- [ReactTooltip Mobile Optimization](tasks/.done/reacttoolltip-mobile.md)
+- [Responsive Layout Implementation Plan](tasks/.done/responsive-layout.md)
+- [Responsive Layout Requirements](tasks/.done/responsive-layout_requirements.md)
+- [Search Components Primitive Migration](tasks/.done/search-primitive-migration.md)
+- [🎯 Objective: Implement Global Message Search](tasks/.done/global-search-plan.md)
+- [🔍 Global Message Search Implementation Plan](tasks/.done/global-search.md)
 
 ### Message Options Mobile
-- [Mobile Message Options UX Enhancement](tasks/done/message-options-mobile/message-options-mobile.md)
+- [Mobile Message Options UX Enhancement](tasks/.done/message-options-mobile/message-options-mobile.md)
 
 ---
 
-**Last Updated**: 2025-09-07 19:59:14
+**Last Updated**: 2025-09-10 14:35:00

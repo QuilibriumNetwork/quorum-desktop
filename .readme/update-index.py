@@ -128,15 +128,13 @@ def scan_readme_directory():
     docs_subfolders = {}  # e.g., 'features' -> [files], 'features/primitives' -> [files]
     
     bugs_active = []
-    bugs_solved = []
+    bugs_solved = []  # Will be populated from .solved folder
     bugs_subfolders = {}
     
-    tasks_todo = []
-    tasks_todo_subfolders = {}
-    tasks_ongoing = []
-    tasks_ongoing_subfolders = {}
-    tasks_done = []
-    tasks_done_subfolders = {}
+    tasks_pending = []  # Tasks directly in tasks/ folder
+    tasks_subfolders = {}  # Subfolders in tasks/ (except .done)
+    tasks_done = []  # Tasks in tasks/.done/
+    tasks_done_subfolders = {}  # Subfolders in tasks/.done/
     
     for root, _, files in os.walk(readme_root):
         for file in files:
@@ -168,12 +166,19 @@ def scan_readme_directory():
                 
                 elif relative_path.startswith('bugs/'):
                     path_parts = relative_path.split('/')
-                    if len(path_parts) == 2:  # bugs/file.md
-                        if 'SOLVED' in file or 'solved' in file.lower():
+                    
+                    # Check if file is in .solved folder
+                    if relative_path.startswith('bugs/.solved/'):
+                        if len(path_parts) == 3:  # bugs/.solved/file.md
                             bugs_solved.append(file_info)
-                        else:
-                            bugs_active.append(file_info)
-                    else:  # bugs/subfolder/... files
+                        else:  # bugs/.solved/subfolder/... files
+                            subfolder = '/'.join(path_parts[2:-1])
+                            if subfolder not in bugs_subfolders:
+                                bugs_subfolders[subfolder] = []
+                            bugs_subfolders[subfolder].append(file_info)
+                    elif len(path_parts) == 2:  # bugs/file.md (active bugs)
+                        bugs_active.append(file_info)
+                    else:  # bugs/subfolder/... files (not .solved)
                         subfolder = '/'.join(path_parts[1:-1])
                         if subfolder not in bugs_subfolders:
                             bugs_subfolders[subfolder] = []
@@ -182,39 +187,31 @@ def scan_readme_directory():
                 elif relative_path.startswith('tasks/'):
                     path_parts = relative_path.split('/')
                     
-                    if relative_path.startswith('tasks/todo/'):
-                        if len(path_parts) == 3:  # tasks/todo/file.md
-                            tasks_todo.append(file_info)
-                        else:  # tasks/todo/subfolder/... files
-                            subfolder = '/'.join(path_parts[2:-1])
-                            if subfolder not in tasks_todo_subfolders:
-                                tasks_todo_subfolders[subfolder] = []
-                            tasks_todo_subfolders[subfolder].append(file_info)
-                    
-                    elif relative_path.startswith('tasks/ongoing/'):
-                        if len(path_parts) == 3:  # tasks/ongoing/file.md
-                            tasks_ongoing.append(file_info)
-                        else:  # tasks/ongoing/subfolder/... files
-                            subfolder = '/'.join(path_parts[2:-1])
-                            if subfolder not in tasks_ongoing_subfolders:
-                                tasks_ongoing_subfolders[subfolder] = []
-                            tasks_ongoing_subfolders[subfolder].append(file_info)
-                    
-                    elif relative_path.startswith('tasks/done/'):
-                        if len(path_parts) == 3:  # tasks/done/file.md
+                    # Check if file is in .done folder
+                    if relative_path.startswith('tasks/.done/'):
+                        if len(path_parts) == 3:  # tasks/.done/file.md
                             tasks_done.append(file_info)
-                        else:  # tasks/done/subfolder/... files
+                        else:  # tasks/.done/subfolder/... files
                             subfolder = '/'.join(path_parts[2:-1])
                             if subfolder not in tasks_done_subfolders:
                                 tasks_done_subfolders[subfolder] = []
                             tasks_done_subfolders[subfolder].append(file_info)
+                    
+                    elif len(path_parts) == 2:  # tasks/file.md (pending tasks)
+                        tasks_pending.append(file_info)
+                    else:  # tasks/subfolder/... files (not .done)
+                        subfolder = '/'.join(path_parts[1:-1])
+                        # Skip .done folder itself
+                        if not subfolder.startswith('.done'):
+                            if subfolder not in tasks_subfolders:
+                                tasks_subfolders[subfolder] = []
+                            tasks_subfolders[subfolder].append(file_info)
     
     # Sort all sections using smart sorting (numbered files first, then alphabetical)
     docs_root = sort_files_smart(docs_root)
     bugs_active = sort_files_smart(bugs_active)
     bugs_solved = sort_files_smart(bugs_solved)
-    tasks_todo = sort_files_smart(tasks_todo)
-    tasks_ongoing = sort_files_smart(tasks_ongoing)
+    tasks_pending = sort_files_smart(tasks_pending)
     tasks_done = sort_files_smart(tasks_done)
     
     # Sort subfolders and their contents (each folder treated independently)
@@ -222,10 +219,8 @@ def scan_readme_directory():
         docs_subfolders[subfolder] = sort_files_smart(docs_subfolders[subfolder])
     for subfolder in bugs_subfolders:
         bugs_subfolders[subfolder] = sort_files_smart(bugs_subfolders[subfolder])
-    for subfolder in tasks_todo_subfolders:
-        tasks_todo_subfolders[subfolder] = sort_files_smart(tasks_todo_subfolders[subfolder])
-    for subfolder in tasks_ongoing_subfolders:
-        tasks_ongoing_subfolders[subfolder] = sort_files_smart(tasks_ongoing_subfolders[subfolder])
+    for subfolder in tasks_subfolders:
+        tasks_subfolders[subfolder] = sort_files_smart(tasks_subfolders[subfolder])
     for subfolder in tasks_done_subfolders:
         tasks_done_subfolders[subfolder] = sort_files_smart(tasks_done_subfolders[subfolder])
     
@@ -283,52 +278,32 @@ def scan_readme_directory():
             index_content.append('')
     
     # TASKS SECTION - THIRD
-    # Todo Tasks
-    if tasks_todo or tasks_todo_subfolders:
-        index_content.append('## 📋 Tasks - Todo')
+    # Pending/Active Tasks
+    if tasks_pending or tasks_subfolders:
+        index_content.append('## 📋 Tasks')
         index_content.append('')
         
-        # Root todo files first
-        for file_info in tasks_todo:
-            index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
-        if tasks_todo:
+        if tasks_pending:
+            index_content.append('### Pending Tasks')
+            index_content.append('')
+            # Root pending files
+            for file_info in tasks_pending:
+                index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
             index_content.append('')
         
-        # Todo subfolders
-        for subfolder in sorted(tasks_todo_subfolders.keys()):
+        # Task subfolders (excluding .done)
+        for subfolder in sorted(tasks_subfolders.keys()):
             subfolder_title = subfolder.replace('-', ' ').replace('_', ' ').title()
             if '/' in subfolder_title:
-                subfolder_title = subfolder_title.replace('/', '/')
+                subfolder_title = subfolder_title.replace('/', ' ')
             index_content.append(f'### {subfolder_title}')
-            for file_info in tasks_todo_subfolders[subfolder]:
+            for file_info in tasks_subfolders[subfolder]:
                 index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
             index_content.append('')
     
-    # Ongoing Tasks
-    if tasks_ongoing or tasks_ongoing_subfolders:
-        index_content.append('## 📋 Tasks - Ongoing')
-        index_content.append('')
-        
-        for file_info in tasks_ongoing:
-            index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
-        if tasks_ongoing:
-            index_content.append('')
-        
-        # Ongoing subfolders
-        for subfolder in sorted(tasks_ongoing_subfolders.keys()):
-            subfolder_title = subfolder.replace('-', ' ').replace('_', ' ').title()
-            index_content.append(f'### {subfolder_title}')
-            for file_info in tasks_ongoing_subfolders[subfolder]:
-                index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
-            index_content.append('')
-    elif not tasks_ongoing and not tasks_ongoing_subfolders:
-        # Show empty section for consistency
-        index_content.append('## 📋 Tasks - Ongoing')
-        index_content.append('')
-    
-    # Done Tasks
+    # Completed Tasks
     if tasks_done or tasks_done_subfolders:
-        index_content.append('## 📋 Tasks - Done')
+        index_content.append('## 📋 Completed Tasks')
         index_content.append('')
         
         # Root done files first
@@ -361,15 +336,14 @@ def scan_readme_directory():
     # Summary
     total_files = (len(docs_root) + sum(len(files) for files in docs_subfolders.values()) +
                    len(bugs_active) + len(bugs_solved) + sum(len(files) for files in bugs_subfolders.values()) +
-                   len(tasks_todo) + sum(len(files) for files in tasks_todo_subfolders.values()) +
-                   len(tasks_ongoing) + sum(len(files) for files in tasks_ongoing_subfolders.values()) +
+                   len(tasks_pending) + sum(len(files) for files in tasks_subfolders.values()) +
                    len(tasks_done) + sum(len(files) for files in tasks_done_subfolders.values()))
     
     print(f'✅ Updated {index_path}')
     print(f'📄 Processed {total_files} markdown files')
     print(f'📖 Docs: {len(docs_root) + sum(len(files) for files in docs_subfolders.values())} files')
     print(f'🐛 Bugs: {len(bugs_active) + len(bugs_solved) + sum(len(files) for files in bugs_subfolders.values())} files')
-    print(f'📋 Tasks: {len(tasks_todo) + len(tasks_ongoing) + len(tasks_done) + sum(len(files) for files in tasks_todo_subfolders.values()) + sum(len(files) for files in tasks_ongoing_subfolders.values()) + sum(len(files) for files in tasks_done_subfolders.values())} files')
+    print(f'📋 Tasks: {len(tasks_pending) + len(tasks_done) + sum(len(files) for files in tasks_subfolders.values()) + sum(len(files) for files in tasks_done_subfolders.values())} files')
     
     return True
 

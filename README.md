@@ -27,7 +27,7 @@ The [`.readme/`](.readme) folder contains development resources including:
 
 - Architecture documentation and component guides
 - Bug reports and solutions  
-- Task management ([todo](.readme/tasks/todo), [ongoing](.readme/tasks/ongoing), [done](.readme/tasks/done))
+- Task management ([pending & ongoing](.readme/tasks), [completed](.readme/tasks/.done))
 - Mobile development guidelines and cross-platform considerations
 
 ### Development Tools

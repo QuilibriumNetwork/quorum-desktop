@@ -157,6 +157,25 @@ Combine multiple strategies:
 - User settings architecture
 - API scalability concerns
 
+## Tyler's comment
+
+we need to make a background sync queue. This will be useful for all sorts of actions, including this one.
+
+The importance is to essentially capture the action (and any context) needing to be done and add it to an offline queue, then once it's there the user UI is freed back up for the user to go about as they wish while the activity they submitted happens in the background. There are things to consider, e.g. saving user profile should automatically update first in the local database and then submit (if they have sync enabled) to the remote sync API endpoint.
+
+This queue should be generic enough to be used for almost any actions.
+
+E.g. send a message, save profile, etc.
+
+How this would be done is you'd have a list of valid actions/task types, 'send-message'. You'd save a list of these activities in the DB with a data schema something like:
+
+ID, auto incremented
+task type; send-message/delete-message/update-profile/etc.
+context; data that goes with each task, message content, message ID, profile info
+And then the Queue works through each task in the order they are submitted (top down). It removes tasks after successful completion and sends a toast to the user. If it fails, it toasts the user with the error.
+
+There may be a library for this such that we don't have to re-invent the wheel on this.
+
 ---
 
 *Created: 2025-09-09*
