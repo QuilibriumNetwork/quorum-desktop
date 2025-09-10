@@ -1,6 +1,5 @@
 # Mobile Message Actions Implementation
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 ## Summary
 

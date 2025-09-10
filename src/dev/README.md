@@ -11,7 +11,19 @@ Comprehensive development suite for building and managing cross-platform compone
 
 - Navigation to all development interfaces
 - Overview of available tools and their purposes
-- Quick access to playground, audit, and dependency analysis
+- Quick access to playground, audit, dependency analysis, and documentation viewer
+
+### 📖 Documentation Viewer
+**Path**: `docs/` folder  
+**Access**: `/dev` route during development  
+**Purpose**: Interactive frontend for browsing project documentation, tasks, and bug reports
+
+- Browse all documentation files from `.readme/docs/`
+- View task management files from `.readme/tasks/` (pending, ongoing, completed)
+- Access bug reports from `.readme/bugs/` (active and solved)
+- Features search functionality and categorization
+- Full markdown rendering with syntax highlighting
+- Organized by folder structure (e.g., mobile-dev/docs, features/primitives)
 
 ### 🎮 Primitives Playground
 **Path**: `PrimitivesPlayground.tsx`  
@@ -61,7 +73,7 @@ yarn dev
 ```
 
 ### Development Routes
-- **`/dev`** - Main development hub with tool overview
+- **`/dev`** - Main development hub with tool overview and documentation viewer
 - **`/playground`** - Interactive primitives testing environment  
 - **`/dev/audit`** - Component audit and mobile readiness tracker
 - **`/dev/dependencies`** - Visual dependency map and mobile roadmap
@@ -74,4 +86,4 @@ yarn dev
 
 ---
 
-*Updated: August 9, 2025 at 8:28 PM*
+*Updated: 2025-09-10 16:15*

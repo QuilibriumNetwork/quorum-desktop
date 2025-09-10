@@ -1,6 +1,5 @@
 # 🎯 Objective: Implement Global Message Search
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 Your task is to design and implement a **global search feature** for messages inside our Quorum app.
 

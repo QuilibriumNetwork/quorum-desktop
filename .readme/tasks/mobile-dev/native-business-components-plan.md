@@ -1,6 +1,5 @@
 # Native Business Components Implementation Plan
 
-[← Back to INDEX](/../../../INDEX.md)
 
 
 ## Overview
@@ -232,5 +231,3 @@ This approach leverages our existing investment in the primitive system and foll
 
 *Created: 2025-08-08*  
 *Updated: 2025-08-08 - Added Native Styling Guidelines*
-
-[← Back to INDEX](/../../../INDEX.md)

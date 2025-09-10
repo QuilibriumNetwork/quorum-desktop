@@ -1,6 +1,5 @@
 # Test Suite Implementation Plan for Quorum Desktop
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 This document outlines the plan to create a comprehensive testing suite for the Quorum Desktop application. The goal is to improve code quality, reduce regressions, and enable safe refactoring, starting with fixing existing TypeScript errors.
 

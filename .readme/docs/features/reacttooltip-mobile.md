@@ -1,6 +1,5 @@
 # ReactTooltip Mobile Support Documentation
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 ## Overview
 

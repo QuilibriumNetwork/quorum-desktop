@@ -1,6 +1,6 @@
 # Implementation Plan: Repository Restructure for Cross-Platform Development
 
-[← Back to INDEX](../../../../INDEX.md) | [📖 Architecture Overview](./web-and-native-repo-structure.md)
+[📖 Architecture Overview](./web-and-native-repo-structure.md)
 
 This document provides a detailed step-by-step implementation plan to restructure the repository for cross-platform development while maintaining current developer workflows.
 

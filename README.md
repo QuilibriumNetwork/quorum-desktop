@@ -35,8 +35,13 @@ The [`.readme/`](.readme) folder contains development resources including:
 The [`src/dev/`](src/dev) folder contains development utilities:
 
 - **Dev tools** (`/dev`) - Hub for the current available development tools
+- **Documentation Viewer** (`/dev`) - Interactive frontend for browsing docs, tasks, and bug reports from the `.readme/` folder
 - **Primitives Playground** (`/playground`) - Web-based testing environment for UI primitives and components
 - **Mobile Playground** - Comprehensive testing environment accessible by running the mobile app (see Mobile Development section)
+
+#### Accessing Development Tools
+
+After running `yarn dev`, you can access the development tools at: `http://localhost:[port]/dev`
 
 ## Setup and Development
 
@@ -128,4 +133,4 @@ For detailed setup and testing instructions, see:
 
 ---
 
-*Updated: 2025-09-03*
+*Updated: 2025-09-10 16:10*

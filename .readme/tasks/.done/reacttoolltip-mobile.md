@@ -1,6 +1,5 @@
 # ReactTooltip Mobile Optimization
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 Dear Claude, read the text and code below and decide if it's a good idea to implement it, or if it could be improved upon.
 

@@ -1,6 +1,5 @@
 # Mobile Development Plan - Improved Version
 
-[← Back to INDEX](../../../INDEX.md)
 
 ## Overview
 

@@ -1,6 +1,5 @@
 # User Status Feature Implementation Plan
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 **Created**: 2025-01-20  
 **Updated**: 2025-08-10  

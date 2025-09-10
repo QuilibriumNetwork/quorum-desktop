@@ -1,6 +1,5 @@
 # Invite System Analysis - Comprehensive Report
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 ## Executive Summary
 

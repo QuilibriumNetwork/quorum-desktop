@@ -1,6 +1,5 @@
 # Third-Party Component Migration Report
 
-[← Back to INDEX](../../../../INDEX.md)
 
 ## Executive Summary
 

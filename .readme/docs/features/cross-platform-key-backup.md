@@ -1,6 +1,5 @@
 # Cross-Platform Key Backup Implementation
 
-[← Back to INDEX](/../../INDEX.md)
 
 
 ## Overview
@@ -228,5 +227,3 @@ import QRCode from 'react-native-qrcode-svg';
 
 *Last Updated: 2025-01-11*  
 *Created by: Claude Code Assistant*
-
-[← Back to INDEX](/../../INDEX.md)

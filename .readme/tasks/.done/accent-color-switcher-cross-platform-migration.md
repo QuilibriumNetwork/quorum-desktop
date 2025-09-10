@@ -1,6 +1,5 @@
 # AccentColorSwitcher Cross-Platform Migration + Persistence
 
-[← Back to INDEX](../../INDEX.md)
 
 ## Task Overview
 

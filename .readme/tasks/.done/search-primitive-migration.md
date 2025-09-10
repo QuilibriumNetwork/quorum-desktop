@@ -1,6 +1,5 @@
 # Search Components Primitive Migration
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 ## Overview
 

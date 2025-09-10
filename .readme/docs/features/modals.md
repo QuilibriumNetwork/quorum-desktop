@@ -1,6 +1,5 @@
 # Modal System Documentation
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 ## Overview
 

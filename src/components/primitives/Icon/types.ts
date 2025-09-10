@@ -112,7 +112,13 @@ export type IconName =
   | 'memo'
   | 'thumbtack'
   | 'thumbtack-slash'
-  | 'pin';
+  | 'pin'
+  // Dev navigation icons
+  | 'book'
+  | 'clipboard-list'
+  | 'bug'
+  | 'flask'
+  | 'chart-line';
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | number;
 

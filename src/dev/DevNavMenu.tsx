@@ -9,9 +9,24 @@ interface DevNavItem {
 
 const devNavItems: DevNavItem[] = [
   {
-    name: 'Dev Hub',
+    name: 'Home',
     icon: 'home',
     path: '/dev'
+  },
+  {
+    name: 'Docs',
+    icon: 'book',
+    path: '/dev/docs'
+  },
+  {
+    name: 'Tasks',
+    icon: 'clipboard-list',
+    path: '/dev/tasks'
+  },
+  {
+    name: 'Bugs',
+    icon: 'bug',
+    path: '/dev/bugs'
   },
   {
     name: 'Playground',

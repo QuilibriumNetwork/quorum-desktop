@@ -94,5 +94,3 @@ When replacing the SDK shim:
 ---
 
 *This document should be updated whenever new components use the SDK shim, and referenced when implementing the real SDK for React Native.*
-
-[← Back to INDEX](/../../../INDEX.md)

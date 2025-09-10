@@ -1,6 +1,5 @@
 # Message Hash Navigation Conflict Bug
 
-[← Back to INDEX](../INDEX.md)
 
 **Status**: Open (Low Priority)  
 **Priority**: Low  

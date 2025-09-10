@@ -1,6 +1,5 @@
 # Message Handling Report
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 This document outlines how messages are handled in the Quilibrium desktop application, and proposes a plan for implementing a search feature.
 

@@ -1,6 +1,5 @@
 # Quorum Data Management Architecture
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 
 **NEEDS HUMAN REVIEW: _Last review: 2025-08-14 10:45 UTC_**

@@ -1,6 +1,5 @@
 # Mobile/Touch Implementation Transition Plan
 
-[← Back to INDEX](../../../INDEX.md)
 
 ## Executive Summary
 

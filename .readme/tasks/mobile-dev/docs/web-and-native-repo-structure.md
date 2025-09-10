@@ -1,6 +1,5 @@
 # Web/Native Repository Structure
 
-[← Back to INDEX](../../../../INDEX.md)
 
 This document explains the optimal repository structure for the cross-platform Quorum app that enables parallel development of web and mobile applications while maximizing code sharing.
 

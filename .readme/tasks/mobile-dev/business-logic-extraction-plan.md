@@ -1,6 +1,5 @@
 # Business Logic Extraction & Native Preparation Plan
 
-[← Back to INDEX](../../../INDEX.md)
 
 ## Overview
 

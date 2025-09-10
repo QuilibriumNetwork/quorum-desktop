@@ -1,6 +1,5 @@
 # Kick User System Documentation
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 ## Overview
 

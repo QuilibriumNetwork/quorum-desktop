@@ -1,6 +1,5 @@
 # Desktop Notifications Feature
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 ## Overview
 

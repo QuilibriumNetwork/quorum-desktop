@@ -1,6 +1,5 @@
 # CSS Inventory - Complete Codebase Analysis
 
-[← Back to INDEX](../../../INDEX.md)
 
 ## 📋 Document Information
 

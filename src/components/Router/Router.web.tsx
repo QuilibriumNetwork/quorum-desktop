@@ -38,7 +38,7 @@ const lazyDevImport = (
 
 // Dev components - web playground still available alongside mobile playground
 const PrimitivesPlayground = lazyDevImport(
-  () => import('@/dev/PrimitivesPlayground'),
+  () => import('@/dev/primitives-playground/PrimitivesPlayground'),
   'PrimitivesPlayground'
 );
 const ComponentAuditViewer = lazyDevImport(
@@ -52,6 +52,18 @@ const DependencyAuditViewer = lazyDevImport(
 const DevMainPage = lazyDevImport(
   () => import('@/dev/DevMainPage'),
   'DevMainPage'
+);
+const Docs = lazyDevImport(
+  () => import('@/dev/docs/Docs'),
+  'Docs'
+);
+const Tasks = lazyDevImport(
+  () => import('@/dev/docs/Tasks'),
+  'Tasks'
+);
+const Bugs = lazyDevImport(
+  () => import('@/dev/docs/Bugs'),
+  'Bugs'
 );
 
 interface RouterProps {
@@ -196,6 +208,45 @@ export function Router({ user, setUser }: RouterProps) {
                 fallback={<div>Loading dev tools...</div>}
               >
                 <DevMainPage />
+              </Suspense>
+            }
+          />
+        )}
+      {process.env.NODE_ENV === 'development' &&
+        Docs && (
+          <Route
+            path="/dev/docs"
+            element={
+              <Suspense
+                fallback={<div>Loading documentation...</div>}
+              >
+                <Docs />
+              </Suspense>
+            }
+          />
+        )}
+      {process.env.NODE_ENV === 'development' &&
+        Tasks && (
+          <Route
+            path="/dev/tasks"
+            element={
+              <Suspense
+                fallback={<div>Loading tasks...</div>}
+              >
+                <Tasks />
+              </Suspense>
+            }
+          />
+        )}
+      {process.env.NODE_ENV === 'development' &&
+        Bugs && (
+          <Route
+            path="/dev/bugs"
+            element={
+              <Suspense
+                fallback={<div>Loading bug reports...</div>}
+              >
+                <Bugs />
               </Suspense>
             }
           />

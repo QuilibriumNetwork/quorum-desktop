@@ -4,11 +4,10 @@ Index Update Script for .readme directory
 
 This script automatically updates the INDEX.md file by:
 1. Scanning all markdown files in .readme directory
-2. Adding back links to INDEX.md in all files (after title and at end)
-3. Extracting titles from files
-4. Organizing files by folder structure (docs -> bugs -> tasks)
-5. Maintaining proper subfolder groupings
-6. Updating the "Last Updated" timestamp
+2. Extracting titles from files
+3. Organizing files by folder structure (docs -> bugs -> tasks)
+4. Maintaining proper subfolder groupings
+5. Updating the "Last Updated" timestamp
 
 Usage: python3 update-index.py
 """
@@ -56,68 +55,6 @@ def sort_files_smart(file_list):
     """Sort files with numeric prefixes first (by number), then alphabetically by title"""
     return sorted(file_list, key=get_file_sort_key)
 
-def get_relative_back_link(file_path, readme_root):
-    """Calculate relative path to INDEX.md from any file"""
-    file_dir = os.path.dirname(file_path)
-    rel_path = os.path.relpath(readme_root, file_dir)
-    
-    if rel_path == '.':
-        return '/.readme/INDEX.md'
-    else:
-        return f'/{rel_path}/INDEX.md'.replace('\\', '/')
-
-def add_back_links(file_path, readme_root):
-    """Add back links to markdown files if missing"""
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
-        back_link = f'[← Back to INDEX]({get_relative_back_link(file_path, readme_root)})'
-        
-        # Skip if it already has a back link (any variant)
-        if '← Back to' in content or '[Back to' in content:
-            return False
-        
-        lines = content.split('\n')
-        modified = False
-        
-        # Add after title if there's a title
-        title_idx = -1
-        for i, line in enumerate(lines):
-            if line.startswith('# '):
-                title_idx = i
-                break
-        
-        if title_idx >= 0:
-            # Insert after title
-            lines.insert(title_idx + 1, '')
-            lines.insert(title_idx + 2, back_link)
-            lines.insert(title_idx + 3, '')
-            modified = True
-        else:
-            # Insert at beginning
-            lines.insert(0, back_link)
-            lines.insert(1, '')
-            modified = True
-        
-        # Add at end if not already there
-        if not content.strip().endswith(back_link):
-            if not lines[-1].strip():
-                lines[-1] = back_link
-            else:
-                lines.append('')
-                lines.append(back_link)
-            modified = True
-        
-        if modified:
-            with open(file_path, 'w', encoding='utf-8') as f:
-                f.write('\n'.join(lines))
-            return True
-            
-    except Exception as e:
-        print(f'Error processing {file_path}: {e}')
-    
-    return False
 
 def scan_readme_directory():
     """Scan .readme directory and build file structure"""
@@ -141,9 +78,6 @@ def scan_readme_directory():
             if file.endswith('.md') and file != 'INDEX.md':
                 file_path = os.path.join(root, file)
                 relative_path = os.path.relpath(file_path, readme_root)
-                
-                # Add back links to the file
-                add_back_links(file_path, readme_root)
                 
                 # Extract title and create file info
                 title = extract_title(file_path)

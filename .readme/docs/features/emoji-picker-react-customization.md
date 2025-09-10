@@ -1,6 +1,5 @@
 # Emoji Picker React - Styling & Customization
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 ## Basic Information
 

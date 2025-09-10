@@ -1,6 +1,5 @@
 # Android 7.0 File Download Fix - Implementation Plan
 
-[← Back to INDEX](/../../INDEX.md)
 
 
 Tried and failed (see: .readme/bugs/CRITICAL_android-file-download-huawei-p9-lite.md)
@@ -480,5 +479,3 @@ export const useFileDownloadAdapter = () => {
 
 *Last Updated: 2025-08-11*
 *Created by: Claude Code Assistant*
-
-[← Back to INDEX](/../../INDEX.md)

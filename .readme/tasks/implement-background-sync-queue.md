@@ -1,6 +1,5 @@
 # Implement Background Sync Queue for User Settings and Async Operations
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 ## Problem Statement
 

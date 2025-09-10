@@ -79,6 +79,11 @@ import {
   faBullseye,
   faPencil,
   faThumbtack,
+  faBook,
+  faClipboardList,
+  faBug,
+  faFlask,
+  faChartLine,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faCircle as faCircleRegular,
@@ -203,6 +208,13 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   thumbtack: faThumbtack,
   pin: faThumbtack, // alias for thumbtack
   'thumbtack-slash': faThumbtack, // Will use same icon with different styling
+  
+  // Dev navigation icons
+  book: faBook,
+  'clipboard-list': faClipboardList,
+  bug: faBug,
+  flask: faFlask,
+  'chart-line': faChartLine,
 };
 
 // React Native vector icon names (using FontAwesome family from react-native-vector-icons)
@@ -322,6 +334,13 @@ export const reactNativeIconMap: Record<IconName, string> = {
   thumbtack: 'thumb-tack',
   'thumbtack-slash': 'thumb-tack',
   pin: 'thumb-tack',
+  
+  // Dev navigation icons
+  book: 'book',
+  'clipboard-list': 'clipboard',
+  bug: 'bug',
+  flask: 'flask',
+  'chart-line': 'line-chart',
 };
 
 // Helper function to check if a string is a valid icon name

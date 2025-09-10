@@ -1,6 +1,5 @@
 # Unused Dependencies Analysis
 
-[← Back to INDEX](/../../INDEX.md)
 
 
 ## Safe to Remove (Verified)
@@ -66,5 +65,3 @@ After removal, verify the app still works:
 
 *Analysis Date: 2025-01-11*
 *Tool Used: depcheck + manual verification*
-
-[← Back to INDEX](/../../INDEX.md)

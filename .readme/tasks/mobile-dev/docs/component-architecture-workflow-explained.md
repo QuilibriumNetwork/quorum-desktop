@@ -1,6 +1,5 @@
 # Component Architecture Workflow - Detailed Explanation
 
-[← Back to INDEX](../../../../INDEX.md)
 
 ## Overview
 

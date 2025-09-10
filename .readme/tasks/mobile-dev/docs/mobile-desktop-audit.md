@@ -1,6 +1,5 @@
 # Mobile/Desktop Behavioral Differences Audit Plan
 
-[← Back to INDEX](../../../../INDEX.md)
 
 ## Objective
 

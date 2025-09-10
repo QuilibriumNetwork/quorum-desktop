@@ -1,6 +1,5 @@
 # Primitives Testing Guide
 
-[← Back to INDEX](../../../../INDEX.md)
 
 ## Accessing the Primitives Playground
 

@@ -1,6 +1,5 @@
 # Channel Business Logic Extraction - Lessons Learned
 
-[← Back to INDEX](../../INDEX.md)
 
 ## Overview
 

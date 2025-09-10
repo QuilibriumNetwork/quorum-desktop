@@ -1,6 +1,5 @@
 # Combined Text + Image Messages
 
-[← Back to INDEX](../../INDEX.md)
 
 ## Overview
 

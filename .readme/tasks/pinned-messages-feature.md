@@ -1,6 +1,5 @@
 # Pinned Messages Feature - Implementation Plan
 
-[← Back to INDEX](/../../INDEX.md)
 
 
 ## Overview
@@ -368,5 +367,3 @@ No new external dependencies required. Uses existing:
 *Document created: 2025-09-07*
 *Author: Claude*
 *Status: Planning*
-
-[← Back to INDEX](/../../INDEX.md)

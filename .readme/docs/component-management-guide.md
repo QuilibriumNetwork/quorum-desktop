@@ -1,6 +1,5 @@
 # Component Management & Development Guide
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 **READY FOR OFFICIAL DOCS: _Last review: 2025-08-14 10:45 UTC_**
 

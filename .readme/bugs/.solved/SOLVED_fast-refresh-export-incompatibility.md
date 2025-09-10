@@ -1,6 +1,5 @@
 # SOLVED: Fast Refresh Export Incompatibility
 
-[← Back to INDEX](/../INDEX.md)
 
 
 ## Problem
@@ -29,5 +28,3 @@ Fast Refresh now works correctly, preserving component state during hot module r
 
 ---
 *Fixed: 2025-09-06*
-
-[← Back to INDEX](/../INDEX.md)

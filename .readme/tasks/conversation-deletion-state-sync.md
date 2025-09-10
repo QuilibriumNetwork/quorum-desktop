@@ -1,6 +1,5 @@
 # Conversation Deletion State Synchronization
 
-[← Back to INDEX](../../INDEX.md)
 
 Added to GitHub issues
 

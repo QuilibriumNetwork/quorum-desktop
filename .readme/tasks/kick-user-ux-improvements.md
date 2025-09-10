@@ -1,6 +1,5 @@
 # Kick User UX Improvements
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 
 Added to GitHub Issues

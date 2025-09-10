@@ -1,6 +1,5 @@
 # Shared Git Hooks Setup
 
-[← Back to INDEX](/../../INDEX.md)
 
 
 ## Overview
@@ -54,5 +53,3 @@ The pre-commit hook prevents accidental npm usage by:
 ---
 
 *Created: 2025-08-10*
-
-[← Back to INDEX](/../../INDEX.md)

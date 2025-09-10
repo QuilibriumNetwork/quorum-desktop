@@ -1,6 +1,5 @@
 # Modal Migration Analysis & Progress Report
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 ## Overview
 

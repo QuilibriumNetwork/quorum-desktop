@@ -1,6 +1,5 @@
 # CSS Refactor Analysis Report
 
-[← Back to INDEX](../../../INDEX.md)
 
 ## 🎯 Executive Summary
 

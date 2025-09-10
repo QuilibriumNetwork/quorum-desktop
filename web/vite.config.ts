@@ -58,6 +58,10 @@ export default defineConfig(({ command }) => ({
     headers: {
       'Permissions-Policy': 'publickey-credentials-get=*',
     },
+    fs: {
+      // Allow serving .readme folder in development (entire dev folder already excluded from prod)
+      allow: ['..', '.readme'],
+    },
   },
   resolve: {
     alias: {

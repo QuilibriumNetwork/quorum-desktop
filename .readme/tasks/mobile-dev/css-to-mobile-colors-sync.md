@@ -1,6 +1,5 @@
 # CSS to Mobile Colors Sync Script
 
-[← Back to INDEX](../../../INDEX.md)
 
 **Goal**: Auto-sync color changes from `src/styles/_colors.scss` to `src/components/primitives/theme/colors.ts` while preserving mobile-specific overrides.
 

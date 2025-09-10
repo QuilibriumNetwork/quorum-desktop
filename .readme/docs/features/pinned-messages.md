@@ -1,6 +1,5 @@
 # Pinned Messages Feature
 
-[← Back to INDEX](/../../INDEX.md)
 
 
 ## Overview
@@ -243,5 +242,3 @@ All magic numbers have been extracted into configuration objects:
 ---
 
 *Last updated: January 2025 - Added configuration constants, improved error handling, and database query optimization notes*
-
-[← Back to INDEX](/../../INDEX.md)

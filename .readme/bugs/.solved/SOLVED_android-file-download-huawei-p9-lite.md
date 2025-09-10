@@ -1,6 +1,5 @@
 # Android 7.0 File Download Fix - Implementation Plan
 
-[← Back to INDEX](/../INDEX.md)
 
 
 
@@ -481,5 +480,3 @@ export const useFileDownloadAdapter = () => {
 
 *Last Updated: 2025-08-11*
 *Created by: Claude Code Assistant*
-
-[← Back to INDEX](/../INDEX.md)

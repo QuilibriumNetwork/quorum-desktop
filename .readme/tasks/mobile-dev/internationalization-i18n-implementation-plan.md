@@ -1,6 +1,5 @@
 # Mobile Internationalization (i18n) Implementation Plan
 
-[← Back to INDEX](/../../../INDEX.md)
 
 
 **Status**: Planning  
@@ -244,5 +243,3 @@ mobile/
 **Next Steps**: Start with Phase 1 and Option B implementation for quickest path to full language support.
 
 *Created: 2024-08-07*
-
-[← Back to INDEX](/../../../INDEX.md)

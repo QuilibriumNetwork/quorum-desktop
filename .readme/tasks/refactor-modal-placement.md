@@ -1,6 +1,5 @@
 # Refactor Modal Placement in Layout.tsx
 
-[← Back to INDEX](../../INDEX.md)
 
 ## Problem
 

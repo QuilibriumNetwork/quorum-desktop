@@ -1,6 +1,5 @@
 # Cross-Platform Repository Implementation
 
-[← Back to INDEX](../INDEX.md)
 
 This document explains the implemented cross-platform repository structure for the Quorum desktop application, detailing what changed from the previous structure and how the build configurations were modified to support both development and production environments.
 

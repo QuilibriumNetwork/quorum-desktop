@@ -1,6 +1,5 @@
 # Complete Guide: Cross-Platform React Components for Web + Native
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 **Auto-reviewed and corrected against .readme/docs/component-management-guide.md - still needs human review : _Last review: 2025-08-14 10:45 UTC_**
 

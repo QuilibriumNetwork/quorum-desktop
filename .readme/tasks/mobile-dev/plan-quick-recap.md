@@ -1,6 +1,5 @@
 # Cross-Platform Development : Revised Plan
 
-[← Back to INDEX](../../../INDEX.md)
 
 ## Phase 1: Complete Web Migration
 

@@ -1,6 +1,5 @@
 # React Native Upgrade Risk Assessment
 
-[← Back to INDEX](/../../../INDEX.md)
 
 
 ## Overview
@@ -116,5 +115,3 @@ The combination of Expo SDK incompatibility, New Architecture conflicts, and Met
 2. Missing Babel configuration amplifies compatibility issues
 3. Metro bundler changes may break existing module resolution patterns
 4. Potential cascade failures across gesture handling and animation systems
-
-[← Back to INDEX](/../../../INDEX.md)

@@ -1,6 +1,5 @@
 # MessageDB Context: IndexedDB Platform Compatibility Issue  
 
-[← Back to INDEX](/../INDEX.md)
 
 
 **Status:** Medium Priority - Requires platform-specific implementation  
@@ -82,5 +81,3 @@ const { getConfig } = useMessageDB(); // This loads IndexedDB code
 
 *Created: 2025-08-16*  
 *Updated: 2025-08-21 - Corrected analysis after commit review*
-
-[← Back to INDEX](/../INDEX.md)

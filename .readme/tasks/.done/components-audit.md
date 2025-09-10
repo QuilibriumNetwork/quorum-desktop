@@ -1,6 +1,5 @@
 # Cross-Platform Component Audit
 
-[← Back to INDEX](../../../INDEX.md)
 
 ## Current Status
 

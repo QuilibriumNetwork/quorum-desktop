@@ -1,6 +1,5 @@
 # Space Roles System Documentation
 
-[← Back to INDEX](/../INDEX.md)
 
 
 ## Overview
@@ -343,5 +342,3 @@ export function canKickUser(targetUserAddress: string, space: Space): boolean {
 *Document created: September 7, 2025*  
 *Major update: January 9, 2025 - Comprehensive system review and space owner protection documentation*  
 *Based on codebase analysis including recent kick protection enhancements*
-
-[← Back to INDEX](/../INDEX.md)

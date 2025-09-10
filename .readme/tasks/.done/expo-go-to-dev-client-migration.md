@@ -1,6 +1,5 @@
 # Expo Go to Expo Dev Client Migration Plan - Simplified
 
-[← Back to INDEX](/../../INDEX.md)
 
 
 ## Why Migrate?
@@ -349,5 +348,3 @@ If you need native features again, reverse these steps:
 
 *Document created: 2025-01-09*
 *Rollback section added: 2025-01-09*
-
-[← Back to INDEX](/../../INDEX.md)

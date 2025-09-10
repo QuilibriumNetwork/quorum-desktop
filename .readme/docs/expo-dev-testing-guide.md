@@ -1,6 +1,5 @@
 # Expo Dev Testing Guide
 
-[← Back to INDEX](/../INDEX.md)
 
 
 Quick setup guide for testing Quorum mobile app with Expo Dev Client.
@@ -169,5 +168,3 @@ All from project root:
 ---
 
 *Last updated: 2025-09-03 15:45 UTC*
-
-[← Back to INDEX](/../INDEX.md)

@@ -1,6 +1,5 @@
 # 🔍 Global Message Search - Implementation Guide & Documentation
 
-[← Back to INDEX](/.readme/INDEX.md)
 
 _The search feature has been built completely by Claude Code with human supervision_
 

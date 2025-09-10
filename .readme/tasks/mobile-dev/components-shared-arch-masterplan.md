@@ -1,6 +1,5 @@
 # Component Architecture Masterplan - Desktop/Mobile Unification
 
-[← Back to INDEX](../../../INDEX.md)
 
 ## Executive Summary
 
