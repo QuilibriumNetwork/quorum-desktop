@@ -7,7 +7,7 @@ allowed-tools: Read, Edit, MultiEdit, Glob
 Translate untranslated entries in gettext .po files located in `src/i18n/`. 
 
 Arguments: $ARGUMENTS
-- If no arguments provided, translate ALL languages  
+- If no arguments provided, translate ALL languages (in this case use a specialized Task agent to process all files quicker)
 - If arguments provided, translate only those language codes (e.g., "es it fr")
 
 **CRITICAL TRANSLATION RULES:**

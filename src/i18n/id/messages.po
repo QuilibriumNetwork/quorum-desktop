@@ -46,32 +46,32 @@ msgid "Replying to {user}"
 msgstr "Menjawab {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:181
-msgid "{user} has joined"
-msgstr "{user} telah bergabung"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:183
-msgid "{user} has left"
-msgstr "{user} telah keluar"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:185
-msgid "{user} has been kicked"
-msgstr "{user} telah dikeluarkan"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:134
 msgid "Failed to process image"
 msgstr "Gagal memproses gambar"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:411
+#: src/components/message/Message.tsx:195
+msgid "{user} has joined"
+msgstr "{user} telah bergabung"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:197
+msgid "{user} has left"
+msgstr "{user} telah keluar"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:199
+msgid "{user} has been kicked"
+msgstr "{user} telah dikeluarkan"
+
+#. js-lingui-explicit-id
+#: src/components/direct/DirectMessage.tsx:464
 msgid "Send a message to {user}"
 msgstr "Kirim pesan ke {user}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:283
+#: src/components/channel/Channel.tsx:377
 msgid "Send a message to #{channel_name}"
 msgstr "Kirim pesan ke #{channel_name}"
 
@@ -79,15 +79,15 @@ msgstr "Kirim pesan ke #{channel_name}"
 msgid " for updates."
 msgstr "untuk pembaruan."
 
-#. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:118
-msgid "{0} result"
-msgstr "{0} hasil"
+#. placeholder {0}: pinnedMessages.length
+#: src/components/message/PinnedMessagesPanel.tsx:214
+msgid "{0} pinned message"
+msgstr "{0} pesan yang dipin"
 
-#. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:119
-msgid "{0} results"
-msgstr "{0} hasil"
+#. placeholder {0}: pinnedMessages.length
+#: src/components/message/PinnedMessagesPanel.tsx:215
+msgid "{0} pinned messages"
+msgstr "{0} pesan yang dipin"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:12
 msgid "{size} Bytes"
@@ -117,11 +117,11 @@ msgstr "Tambahkan teman"
 msgid "0 Bytes"
 msgstr "0 Byte"
 
-#: src/components/modals/UserSettingsModal.tsx:238
+#: src/components/modals/UserSettingsModal.tsx:284
 msgid "Account Address"
 msgstr "Alamat Akun"
 
-#: src/components/channel/ChannelEditor.tsx:49
+#: src/components/channel/ChannelEditor.tsx:51
 msgid "Add Channel"
 msgstr "Tambahkan Saluran"
 
@@ -130,19 +130,19 @@ msgid "Add friend"
 msgstr "Tambahkan teman"
 
 #: src/components/channel/ChannelList.tsx:72
-#: src/components/channel/GroupEditor.tsx:42
+#: src/components/channel/GroupEditor.tsx:44
 msgid "Add Group"
 msgstr "Tambahkan Grup"
 
-#: src/components/channel/SpaceEditor.tsx:530
+#: src/components/channel/SpaceEditor.tsx:531
 msgid "Add Role"
 msgstr "Tambahkan Peran"
 
-#: src/components/message/MessageComposer.tsx:163
+#: src/components/message/MessageComposer.tsx:190
 msgid "add sticker"
 msgstr "tambahkan stiker"
 
-#: src/components/channel/SpaceEditor.tsx:623
+#: src/components/channel/SpaceEditor.tsx:665
 msgid ""
 "Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
 "You can upload PNG, JPG or GIF, max 256kB."
@@ -151,7 +151,7 @@ msgstr ""
 "dalam sebuah Espacio. Anda dapat mengunggah PNG, JPG, atau GIF, maksimal "
 "256kB."
 
-#: src/components/channel/SpaceEditor.tsx:709
+#: src/components/channel/SpaceEditor.tsx:751
 msgid ""
 "Add up to 50 custom stickers. Custom stickers can only be used within a "
 "Space. You can upload PNG, JPG or GIF, max 256kB."
@@ -170,7 +170,7 @@ msgstr "Alamat harus tepat 46 karakter panjangnya."
 msgid "Addresses start with \"Qm\"."
 msgstr "Alamat dimulai dengan \"Qm\"."
 
-#: src/components/modals/UserSettingsModal.tsx:369
+#: src/components/modals/UserSettingsModal.tsx:416
 msgid ""
 "Adjust security-related settings, which may impact user  experience but "
 "increase the security of your Quorum account."
@@ -182,15 +182,20 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr "Pengaturan Lanjutan"
 
-#: src/components/channel/SpaceEditor.tsx:172
+#: src/components/primitives/Select/Select.native.tsx:36
+#: src/components/primitives/Select/Select.web.tsx:29
+msgid "All"
+msgstr "Semua"
+
+#: src/components/channel/SpaceEditor.tsx:173
 msgid "All roles must have both a tag name and display name."
 msgstr "Semua peran harus memiliki nama tag dan nama tampilan."
 
-#: src/components/modals/UserSettingsModal.tsx:394
+#: src/components/modals/UserSettingsModal.tsx:441
 msgid "Always sign Direct Messages"
 msgstr "Selalu tanda tangan Pesan Langsung"
 
-#: src/components/modals/UserSettingsModal.tsx:398
+#: src/components/modals/UserSettingsModal.tsx:445
 msgid ""
 "Always sign Direct Messages in conversations. This can be overridden for "
 "finer-grain control by clicking the lock icon found in each conversation "
@@ -215,9 +220,9 @@ msgstr ""
 "membuat pesan Anda tidak dapat disangkal. Default untuk semua percakapan "
 "dapat diubah di Pengaturan Pengguna."
 
-#: src/components/modals/UserSettingsModal.tsx:149
-#: src/components/modals/UserSettingsModal.tsx:181
-#: src/components/modals/UserSettingsModal.tsx:490
+#: src/components/modals/UserSettingsModal.tsx:195
+#: src/components/modals/UserSettingsModal.tsx:227
+#: src/components/modals/UserSettingsModal.tsx:538
 msgid "Appearance"
 msgstr "Tampilan"
 
@@ -229,7 +234,7 @@ msgstr ""
 "Apakah Anda yakin ingin meninggalkan Ruang ini? Anda tidak akan dapat "
 "bergabung kembali kecuali Anda diundang kembali."
 
-#: src/components/channel/ChannelEditor.tsx:69
+#: src/components/channel/ChannelEditor.tsx:88
 msgid ""
 "Are you sure? This channel contains messages. Deleting it will cause all "
 "content to be lost forever!"
@@ -237,7 +242,7 @@ msgstr ""
 "Apakah Anda yakin? Saluran ini berisi pesan. Menghapusnya akan menyebabkan "
 "semua konten hilang selamanya!"
 
-#: src/components/channel/GroupEditor.tsx:56
+#: src/components/channel/GroupEditor.tsx:76
 msgid ""
 "Are you sure? This group contains channels with messages. Deleting it will "
 "cause all content to be lost forever!"
@@ -257,7 +262,7 @@ msgstr "Jauh"
 msgid "Backup Failed"
 msgstr "Cadangan Gagal"
 
-#: src/components/channel/SpaceEditor.tsx:899
+#: src/components/channel/SpaceEditor.tsx:941
 msgid "Be patient, this can take a few seconds..."
 msgstr "Bersabarlah, ini bisa memakan beberapa detik..."
 
@@ -274,10 +279,6 @@ msgstr "Kamera"
 msgid "Camera permission is required to take photos"
 msgstr "Izin kamera diperlukan untuk mengambil foto"
 
-#: src/components/channel/SpaceEditor.tsx:582
-msgid "Can delete messages?"
-msgstr "Bisakah menghapus pesan?"
-
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:159
 #: src/hooks/business/user/useFileUpload.native.ts:44
 #: src/hooks/platform/files/useFileDownload.native.ts:82
@@ -293,7 +294,7 @@ msgstr ""
 "Tidak dapat mengunggah lebih dari {0} file sekaligus ({remaining} slot "
 "tersisa)"
 
-#: src/components/modals/UserSettingsModal.tsx:515
+#: src/components/modals/UserSettingsModal.tsx:563
 msgid ""
 "Changes are made automatically, but the active page may not be updated. "
 "Refresh the page to apply the new language."
@@ -301,11 +302,11 @@ msgstr ""
 "Perubahan dilakukan secara otomatis, tetapi halaman aktif mungkin tidak "
 "diperbarui. Segarkan halaman untuk menerapkan bahasa baru."
 
-#: src/components/channel/ChannelEditor.tsx:57
+#: src/components/channel/ChannelEditor.tsx:59
 msgid "Channel Name"
 msgstr "Nama Saluran"
 
-#: src/components/channel/ChannelEditor.tsx:63
+#: src/components/channel/ChannelEditor.tsx:65
 msgid "Channel Topic"
 msgstr "Topik Saluran"
 
@@ -321,11 +322,16 @@ msgstr "Pilih bagaimana Anda ingin menambahkan gambar"
 msgid "Choose how you'd like to add your profile image"
 msgstr "Pilih bagaimana Anda ingin menambahkan gambar profil Anda"
 
-#: src/components/modals/UserSettingsModal.tsx:492
+#: src/components/modals/UserSettingsModal.tsx:540
 msgid "Choose your preferred theme for Quorum."
 msgstr "Pilih tema yang Anda inginkan untuk Quorum."
 
-#: src/components/search/SearchBar.tsx:130
+#: src/components/primitives/Select/Select.native.tsx:37
+#: src/components/primitives/Select/Select.web.tsx:30
+msgid "Clear"
+msgstr "Bersihkan"
+
+#: src/components/search/SearchBar.tsx:142
 msgid "Clear search"
 msgstr "Kosongkan pencarian"
 
@@ -333,16 +339,16 @@ msgstr "Kosongkan pencarian"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "Menghapus notifikasi dengan tag: {tag}"
 
-#: src/components/channel/ChannelEditor.tsx:89
-#: src/components/channel/GroupEditor.tsx:76
-#: src/components/channel/SpaceEditor.tsx:990
+#: src/components/channel/ChannelEditor.tsx:107
+#: src/components/channel/GroupEditor.tsx:95
+#: src/components/channel/SpaceEditor.tsx:1032
 #: src/components/modals/ConversationSettingsModal.tsx:188
 #: src/components/modals/KickUserModal.tsx:47
 #: src/components/modals/LeaveSpaceModal.tsx:56
 msgid "Click again to confirm"
 msgstr "Klik lagi untuk mengonfirmasi"
 
-#: src/components/channel/SpaceEditor.tsx:517
+#: src/components/channel/SpaceEditor.tsx:518
 msgid "Click on the role name and tag to edit them."
 msgstr "Klik pada nama peran dan tag untuk mengeditnya."
 
@@ -376,8 +382,7 @@ msgstr "Tutup"
 msgid "Connecting"
 msgstr "Sedang Menghubungkan"
 
-#: src/components/direct/DirectMessage.tsx:292
-#: src/components/direct/DirectMessage.tsx:322
+#: src/components/direct/DirectMessage.tsx:355
 msgid "Conversation settings"
 msgstr "Pengaturan percakapan"
 
@@ -389,14 +394,15 @@ msgstr "Pengaturan Percakapan"
 #: src/components/ClickToCopyContent.native.tsx:271
 #: src/components/ClickToCopyContent.tsx:152
 #: src/components/ClickToCopyContent.tsx:196
-#: src/components/message/MessageActions.tsx:49
+#: src/components/message/MessageActions.tsx:85
 msgid "Copied!"
 msgstr "Disalin!"
 
-#: src/components/direct/DirectMessage.tsx:216
-#: src/components/direct/DirectMessage.tsx:360
-#: src/components/modals/UserSettingsModal.tsx:248
-#: src/components/user/UserProfile.tsx:81
+#: src/components/direct/DirectMessage.tsx:217
+#: src/components/direct/DirectMessage.tsx:336
+#: src/components/direct/DirectMessage.tsx:408
+#: src/components/modals/UserSettingsModal.tsx:294
+#: src/components/user/UserProfile.tsx:108
 #: src/components/user/UserStatus.tsx:50
 msgid "Copy address"
 msgstr "Salin alamat"
@@ -406,7 +412,7 @@ msgstr "Salin alamat"
 msgid "Copy Failed"
 msgstr "Salin Gagal"
 
-#: src/components/channel/SpaceEditor.tsx:904
+#: src/components/channel/SpaceEditor.tsx:946
 msgid "Copy invite link to clipboard"
 msgstr "Salin tautan undangan ke papan klip"
 
@@ -414,16 +420,16 @@ msgstr "Salin tautan undangan ke papan klip"
 msgid "Copy Key & Continue"
 msgstr "Salin Kunci & Lanjutkan"
 
-#: src/components/message/MessageActions.tsx:50
+#: src/components/message/MessageActions.tsx:86
 #: src/components/message/MessageActionsDrawer.tsx:113
 msgid "Copy message link"
 msgstr "Salin tautan pesan"
 
-#: src/components/context/MessageDB.tsx:5199
+#: src/components/context/MessageDB.tsx:5209
 msgid "Could not add Space"
 msgstr "Tidak dapat menambahkan Space"
 
-#: src/components/context/MessageDB.tsx:5072
+#: src/components/context/MessageDB.tsx:5082
 msgid "Could not obtain manifest for Space"
 msgstr "Tidak dapat memperoleh manifest untuk Space"
 
@@ -453,7 +459,7 @@ msgstr "Buat Space"
 msgid "Creating Space..."
 msgstr "Membuat Space..."
 
-#: src/components/channel/SpaceEditor.tsx:879
+#: src/components/channel/SpaceEditor.tsx:921
 msgid "Current Invite Link"
 msgstr "Tautan Undangan Saat Ini"
 
@@ -461,15 +467,15 @@ msgstr "Tautan Undangan Saat Ini"
 msgid "Dark"
 msgstr "Gelap"
 
-#: src/components/context/MessageDB.tsx:5051
+#: src/components/context/MessageDB.tsx:5061
 msgid "decrypted space with no known config key"
 msgstr "ruang yang didekripsi tanpa kunci konfigurasi yang diketahui"
 
-#: src/components/context/MessageDB.tsx:5057
+#: src/components/context/MessageDB.tsx:5067
 msgid "Decrypted Space with no known hub key"
 msgstr "Ruang yang Didekripsi tanpa kunci hub yang diketahui"
 
-#: src/components/channel/SpaceEditor.tsx:451
+#: src/components/channel/SpaceEditor.tsx:452
 msgid "Default Channel"
 msgstr "Kanal Default"
 
@@ -485,7 +491,7 @@ msgstr ""
 msgid "Delete"
 msgstr "Hapus"
 
-#: src/components/channel/ChannelEditor.tsx:88
+#: src/components/channel/ChannelEditor.tsx:106
 msgid "Delete Channel"
 msgstr "Hapus Kanal"
 
@@ -493,22 +499,30 @@ msgstr "Hapus Kanal"
 msgid "Delete Conversation"
 msgstr "Hapus Percakapan"
 
-#: src/components/channel/GroupEditor.tsx:75
+#: src/components/channel/GroupEditor.tsx:94
 msgid "Delete Group"
 msgstr "Hapus Grup"
 
-#: src/components/message/MessageActions.tsx:52
+#: src/components/message/MessageActions.tsx:90
 #: src/components/message/MessageActionsDrawer.tsx:120
 msgid "Delete message"
 msgstr "Hapus pesan"
 
-#: src/components/channel/SpaceEditor.tsx:284
-#: src/components/channel/SpaceEditor.tsx:336
-#: src/components/channel/SpaceEditor.tsx:988
+#: src/components/channel/SpaceEditor.tsx:600
+msgid "Delete Messages"
+msgstr "Hapus Pesan"
+
+#: src/components/channel/SpaceEditor.tsx:620
+msgid "Delete Role"
+msgstr "Hapus Peran"
+
+#: src/components/channel/SpaceEditor.tsx:285
+#: src/components/channel/SpaceEditor.tsx:337
+#: src/components/channel/SpaceEditor.tsx:1030
 msgid "Delete Space"
 msgstr "Hapus Espacio"
 
-#: src/components/channel/SpaceEditor.tsx:962
+#: src/components/channel/SpaceEditor.tsx:1004
 msgid "Delete this space"
 msgstr "Hapus ruang ini"
 
@@ -522,16 +536,17 @@ msgstr ""
 " Anda saja. Pesan ini akan tetap ada di komputer penerima, jadi mereka juga "
 "harus menghapus di pihak mereka untuk menyelesaikan penghapusan penuh."
 
-#: src/components/modals/UserSettingsModal.tsx:443
+#: src/components/modals/UserSettingsModal.tsx:491
 msgid "Desktop Notifications"
 msgstr "Notifikasi Desktop"
 
-#: src/components/modals/UserSettingsModal.tsx:465
+#: src/components/modals/UserSettingsModal.tsx:513
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Notifikasi desktop tidak didukung di browser ini."
 
+#: src/hooks/business/search/useBatchSearchResultsDisplay.ts:157
 #: src/hooks/business/search/useSearchResultDisplay.ts:104
-#: src/hooks/business/search/useSearchResultDisplayDM.ts:74
+#: src/hooks/business/search/useSearchResultDisplayDM.ts:75
 msgid "Direct Message"
 msgstr "Pesan Langsung"
 
@@ -540,7 +555,7 @@ msgstr "Pesan Langsung"
 msgid "Direct Messages"
 msgstr "Pesan Langsung"
 
-#: src/components/modals/UserSettingsModal.tsx:216
+#: src/components/modals/UserSettingsModal.tsx:262
 msgid "Display Name"
 msgstr "Nama Tampilan"
 
@@ -553,11 +568,11 @@ msgstr "Laci"
 msgid "Drop your profile photo here"
 msgstr "Jatuhkan foto profil Anda di sini"
 
-#: src/components/channel/ChannelEditor.tsx:49
+#: src/components/channel/ChannelEditor.tsx:51
 msgid "Edit Channel"
 msgstr "Edit Saluran"
 
-#: src/components/channel/GroupEditor.tsx:42
+#: src/components/channel/GroupEditor.tsx:44
 msgid "Edit Group"
 msgstr "Edit Grup"
 
@@ -565,13 +580,13 @@ msgstr "Edit Grup"
 msgid "Emoji picker"
 msgstr "Pemilih emoji"
 
-#: src/components/channel/SpaceEditor.tsx:258
-#: src/components/channel/SpaceEditor.tsx:324
-#: src/components/channel/SpaceEditor.tsx:620
+#: src/components/channel/SpaceEditor.tsx:259
+#: src/components/channel/SpaceEditor.tsx:325
+#: src/components/channel/SpaceEditor.tsx:662
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal.tsx:375
+#: src/components/modals/UserSettingsModal.tsx:422
 msgid "Enable sync"
 msgstr "Aktifkan sinkronisasi"
 
@@ -583,7 +598,7 @@ msgstr "Masukkan nama untuk Ruang baru Anda"
 msgid "Enter a user's address to start messaging them."
 msgstr "Masukkan alamat pengguna untuk mulai mengirim pesan kepada mereka."
 
-#: src/components/channel/SpaceEditor.tsx:834
+#: src/components/channel/SpaceEditor.tsx:876
 msgid "Enter Address Manually"
 msgstr "Masukkan Alamat Secara Manual"
 
@@ -616,15 +631,15 @@ msgstr "Kesalahan saat meminta izin notifikasi:"
 msgid "Error showing notification:"
 msgstr "Kesalahan saat menampilkan notifikasi:"
 
-#: src/components/channel/SpaceEditor.tsx:810
+#: src/components/channel/SpaceEditor.tsx:852
 msgid "Existing Conversations"
 msgstr "Percakapan yang Ada"
 
-#: src/components/modals/UserSettingsModal.tsx:361
+#: src/components/modals/UserSettingsModal.tsx:408
 msgid "Export"
 msgstr "Ekspor"
 
-#: src/components/modals/UserSettingsModal.tsx:352
+#: src/components/modals/UserSettingsModal.tsx:399
 msgid ""
 "Export your key to a file by clicking this button. Do not share this file "
 "with anyone else or they can impersonate you or steal your Space's Apex "
@@ -638,7 +653,7 @@ msgstr ""
 msgid "Failed to copy to clipboard. Please try again."
 msgstr "Gagal menyalin ke papan klip. Silakan coba lagi."
 
-#: src/components/context/MessageDB.tsx:844
+#: src/components/context/MessageDB.tsx:845
 msgid "Failed to decrypt message with any known state"
 msgstr "Gagal mendekripsi pesan dengan status yang dikenal"
 
@@ -649,6 +664,10 @@ msgstr "Gagal membuka pemilih gambar"
 #: src/components/context/WebsocketProvider.tsx:164
 msgid "Failed to parse WebSocket message:"
 msgstr "Gagal mengurai pesan WebSocket:"
+
+#: src/components/modals/UserSettingsModal.tsx:115
+msgid "Failed to save settings. Please try again."
+msgstr "Gagal menyimpan pengaturan. Silakan coba lagi."
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:133
 msgid "Failed to select document"
@@ -698,26 +717,26 @@ msgstr "Ukuran file terlalu kecil. Ukuran minimum: {minSizeMB}"
 msgid "File validation failed. Please try again."
 msgstr "Validasi file gagal. Silakan coba lagi."
 
-#: src/components/context/MessageDB.tsx:2828
+#: src/components/context/MessageDB.tsx:2829
 msgid "general"
 msgstr "umum"
 
-#: src/components/channel/SpaceEditor.tsx:244
-#: src/components/channel/SpaceEditor.tsx:296
-#: src/components/modals/UserSettingsModal.tsx:128
-#: src/components/modals/UserSettingsModal.tsx:160
+#: src/components/channel/SpaceEditor.tsx:245
+#: src/components/channel/SpaceEditor.tsx:297
+#: src/components/modals/UserSettingsModal.tsx:174
+#: src/components/modals/UserSettingsModal.tsx:206
 msgid "General"
 msgstr "Umum"
 
-#: src/components/context/MessageDB.tsx:2829
+#: src/components/context/MessageDB.tsx:2830
 msgid "General Chat"
 msgstr "Obrolan Umum"
 
-#: src/components/channel/SpaceEditor.tsx:928
+#: src/components/channel/SpaceEditor.tsx:970
 msgid "Generate New Invite Link"
 msgstr "Generate Tautan Undangan Baru"
 
-#: src/components/channel/SpaceEditor.tsx:926
+#: src/components/channel/SpaceEditor.tsx:968
 msgid "Generating link..."
 msgstr "Menghasilkan tautan..."
 
@@ -725,7 +744,7 @@ msgstr "Menghasilkan tautan..."
 msgid "Go to conversation"
 msgstr "Pergi ke percakapan"
 
-#: src/components/channel/GroupEditor.tsx:50
+#: src/components/channel/GroupEditor.tsx:52
 msgid "Group Name"
 msgstr "Nama Grup"
 
@@ -776,7 +795,11 @@ msgstr "Impor Kunci yang Ada"
 msgid "Important first-time user information:"
 msgstr "Informasi penting untuk pengguna baru:"
 
-#: src/components/context/MessageDB.tsx:1024
+#: src/components/message/PinnedMessagesPanel.tsx:199
+msgid "Important messages will be pinned here"
+msgstr "Pesan penting akan dipin di sini"
+
+#: src/components/context/MessageDB.tsx:1025
 msgid "invalid address for signature"
 msgstr "alamat tidak valid untuk tanda tangan"
 
@@ -792,26 +815,31 @@ msgstr ""
 msgid "Invalid file type. Please check accepted file formats."
 msgstr "Jenis file tidak valid. Silakan periksa format file yang diterima."
 
-#: src/components/context/MessageDB.tsx:4311
-#: src/components/context/MessageDB.tsx:4348
-#: src/components/context/MessageDB.tsx:4354
-#: src/components/context/MessageDB.tsx:4452
+#: src/components/context/MessageDB.tsx:4321
+#: src/components/context/MessageDB.tsx:4358
+#: src/components/context/MessageDB.tsx:4364
+#: src/components/context/MessageDB.tsx:4462
 msgid "invalid link"
 msgstr "tautan tidak valid"
 
-#: src/components/context/MessageDB.tsx:4817
+#: src/hooks/business/messages/usePinnedMessages.ts:59
+#: src/hooks/business/messages/usePinnedMessages.ts:97
+msgid "Invalid message ID"
+msgstr "ID pesan tidak valid"
+
+#: src/components/context/MessageDB.tsx:4827
 msgid "invalid message type"
 msgstr "tipe pesan tidak valid"
 
-#: src/components/context/MessageDB.tsx:4316
-#: src/components/context/MessageDB.tsx:4415
+#: src/components/context/MessageDB.tsx:4326
+#: src/components/context/MessageDB.tsx:4425
 #: src/hooks/business/spaces/useInviteValidation.ts:84
 msgid "invalid response"
 msgstr "respon tidak valid"
 
-#: src/components/channel/SpaceEditor.tsx:272
-#: src/components/channel/SpaceEditor.tsx:317
-#: src/components/channel/SpaceEditor.tsx:794
+#: src/components/channel/SpaceEditor.tsx:273
+#: src/components/channel/SpaceEditor.tsx:318
+#: src/components/channel/SpaceEditor.tsx:836
 msgid "Invites"
 msgstr "Undangan"
 
@@ -833,11 +861,15 @@ msgstr "Telah Bergabung"
 msgid "Joining..."
 msgstr "Bergabung..."
 
+#: src/components/message/PinnedMessagesPanel.tsx:242
+msgid "Jump to message"
+msgstr "Lompat ke pesan"
+
 #: src/hooks/platform/files/useFileDownload.native.ts:96
 msgid "Key Copied!"
 msgstr "Kunci Disalin!"
 
-#: src/components/modals/UserSettingsModal.tsx:349
+#: src/components/modals/UserSettingsModal.tsx:396
 msgid "Key Export"
 msgstr "Ekspor Kunci"
 
@@ -850,15 +882,19 @@ msgid "Key Saved"
 msgstr "Kunci Disimpan"
 
 #: src/components/modals/KickUserModal.tsx:27
-#: src/components/user/UserProfile.tsx:175
+#: src/components/user/UserProfile.tsx:202
 msgid "Kick User"
 msgstr "Usir Pengguna"
+
+#: src/components/channel/SpaceEditor.tsx:608
+msgid "Kick Users"
+msgstr "Tendang Pengguna"
 
 #: src/components/modals/KickUserModal.tsx:47
 msgid "Kick!"
 msgstr "Tendang!"
 
-#: src/components/modals/UserSettingsModal.tsx:502
+#: src/components/modals/UserSettingsModal.tsx:550
 msgid "Language"
 msgstr "Bahasa"
 
@@ -889,6 +925,10 @@ msgstr "Ayo berangkat!"
 msgid "Light"
 msgstr "Cahaya"
 
+#: src/components/message/PinnedMessagesPanel.tsx:187
+msgid "Loading pinned messages..."
+msgstr "Memuat pesan yang dipin..."
+
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
 msgstr "Mencari pengguna..."
@@ -906,11 +946,11 @@ msgstr ""
 "Buat akunmu menjadi unik – atur foto kontak. Informasi ini hanya diberikan "
 "kepada Spaces yang kamu ikuti."
 
-#: src/components/modals/UserSettingsModal.tsx:434
+#: src/components/modals/UserSettingsModal.tsx:482
 msgid "Manage desktop notification preferences for new messages."
 msgstr "Kelola preferensi notifikasi desktop untuk pesan baru."
 
-#: src/components/modals/UserSettingsModal.tsx:294
+#: src/components/modals/UserSettingsModal.tsx:341
 msgid ""
 "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr "Kelola perangkat, dan kondisi privasi untuk pesan dan sinkronisasi."
@@ -919,26 +959,31 @@ msgstr "Kelola perangkat, dan kondisi privasi untuk pesan dan sinkronisasi."
 msgid "Manual Backup Required"
 msgstr "Cadangan Manual Diperlukan"
 
+#: src/components/channel/Channel.tsx:310
+#: src/components/direct/DirectMessage.tsx:369
+msgid "Members List"
+msgstr "Daftar Anggota"
+
 #: src/components/message/MessageActionsDrawer.tsx:78
 msgid "Message actions"
 msgstr "Tindakan pesan"
 
-#: src/components/message/Message.tsx:398
+#: src/components/message/Message.tsx:428
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
 "Pesan tidak memiliki tanda tangan yang valid, ini mungkin bukan dari "
 "pengirim"
 
-#: src/components/message/MessageComposer.tsx:201
+#: src/components/message/MessageComposer.tsx:206
 msgid "Messages are NOT signed!"
 msgstr "Pesan TIDAK ditandatangani!"
 
-#: src/components/message/MessageComposer.tsx:202
+#: src/components/message/MessageComposer.tsx:207
 msgid "Messages are signed!"
 msgstr "Pesan ditandatangani!"
 
-#: src/components/message/MessageActions.tsx:44
+#: src/components/message/MessageActions.tsx:80
 #: src/components/message/MessageActionsDrawer.tsx:97
 msgid "More reactions"
 msgstr "Lebih banyak reaksi"
@@ -947,21 +992,25 @@ msgstr "Lebih banyak reaksi"
 msgid "New Direct Message"
 msgstr "Pesan Langsung Baru"
 
-#: src/components/search/SearchResults.tsx:88
+#: src/components/search/SearchResults.tsx:91
 msgid "No messages found"
 msgstr "Tidak ada pesan yang ditemukan"
+
+#: src/components/message/PinnedMessagesPanel.tsx:195
+msgid "No pinned messages yet"
+msgstr "Belum ada pesan yang dipin"
 
 #: src/services/notificationService.ts:185
 msgid "Notification permission not granted"
 msgstr "Izin notifikasi tidak diberikan"
 
-#: src/components/modals/UserSettingsModal.tsx:142
-#: src/components/modals/UserSettingsModal.tsx:174
-#: src/components/modals/UserSettingsModal.tsx:432
+#: src/components/modals/UserSettingsModal.tsx:188
+#: src/components/modals/UserSettingsModal.tsx:220
+#: src/components/modals/UserSettingsModal.tsx:480
 msgid "Notifications"
 msgstr "Notifikasi"
 
-#: src/components/modals/UserSettingsModal.tsx:474
+#: src/components/modals/UserSettingsModal.tsx:522
 msgid ""
 "Notifications are blocked. Please enable them in your browser settings."
 msgstr "Notifikasi diblokir. Silakan aktifkan di pengaturan browsermu."
@@ -991,6 +1040,10 @@ msgstr "Salah satu dari kita, salah satu dari kita!"
 msgid "Online"
 msgstr "Online"
 
+#: src/components/channel/SpaceEditor.tsx:586
+msgid "Permissions:"
+msgstr "Izin:"
+
 #: src/components/onboarding/Onboarding.native.tsx:210
 #: src/components/onboarding/Onboarding.tsx:110
 msgid "Personalize your account"
@@ -1005,18 +1058,53 @@ msgstr "Perpustakaan Foto"
 msgid "Photo library permission is required to select images"
 msgstr "Izin perpustakaan foto diperlukan untuk memilih gambar"
 
+#: src/components/message/PinnedMessagesPanel.tsx:198
+msgid "Pin important messages to keep them easily accessible"
+msgstr "Pin pesan penting untuk menjaga agar mudah diakses"
+
+#. placeholder {0}: PINNED_MESSAGES_CONFIG.MAX_PINS
+#: src/hooks/business/messages/usePinnedMessages.ts:66
+msgid "Pin limit reached ({0})"
+msgstr "Batas pin tercapai ({0})"
+
+#: src/components/message/MessageActions.tsx:88
+msgid "Pin message"
+msgstr "Pin pesan"
+
+#: src/components/channel/SpaceEditor.tsx:604
+msgid "Pin Messages"
+msgstr "Pin Pesan"
+
+#: src/components/message/Message.tsx:413
+msgid "Pinned"
+msgstr "Dipin"
+
+#. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
+#. message.pinnedBy
+#: src/components/message/Message.tsx:413
+msgid "Pinned by {0}"
+msgstr "Dipin oleh {0}"
+
+#: src/components/channel/Channel.tsx:278
+msgid "Pinned Messages"
+msgstr "Pesan yang Dipin"
+
+#: src/components/message/MessageActions.tsx:75
+msgid "Pinned!"
+msgstr "Dipin!"
+
 #: src/components/onboarding/Onboarding.native.tsx:171
 #: src/components/onboarding/Onboarding.tsx:121
 msgid "PNG, JPG or JPEG • Max 2MB"
 msgstr "PNG, JPG atau JPEG • Maks 2MB"
 
-#: src/components/channel/SpaceEditor.tsx:471
+#: src/components/channel/SpaceEditor.tsx:472
 msgid "Privacy Settings"
 msgstr "Pengaturan Privasi"
 
-#: src/components/modals/UserSettingsModal.tsx:135
-#: src/components/modals/UserSettingsModal.tsx:167
-#: src/components/modals/UserSettingsModal.tsx:292
+#: src/components/modals/UserSettingsModal.tsx:181
+#: src/components/modals/UserSettingsModal.tsx:213
+#: src/components/modals/UserSettingsModal.tsx:339
 msgid "Privacy/Security"
 msgstr "Privasi/Keamanan"
 
@@ -1024,11 +1112,11 @@ msgstr "Privasi/Keamanan"
 msgid "Private key saved to selected folder"
 msgstr "Kunci pribadi disimpan di folder yang dipilih"
 
-#: src/components/channel/SpaceEditor.tsx:854
+#: src/components/channel/SpaceEditor.tsx:896
 msgid "Public Invite Link"
 msgstr "Tautan Undangan Publik"
 
-#: src/components/channel/SpaceEditor.tsx:856
+#: src/components/channel/SpaceEditor.tsx:898
 msgid ""
 "Public invite links allow anyone with access to the link join your Space. "
 "Understand the risks of enabling this, and to whom and where you share the "
@@ -1079,30 +1167,30 @@ msgstr "Siap untuk memulai percakapan yang benar-benar pribadi?"
 msgid "Reauthorize"
 msgstr "Otorisasi Ulang"
 
-#: src/components/context/MessageDB.tsx:5021
+#: src/components/context/MessageDB.tsx:5031
 msgid "received config with invalid signature!"
 msgstr "menerima konfigurasi dengan tanda tangan tidak valid!"
 
 #: src/components/Maintenance.native.tsx:64 src/components/Maintenance.tsx:52
-#: src/components/modals/UserSettingsModal.tsx:523
+#: src/components/modals/UserSettingsModal.tsx:571
 msgid "Refresh"
 msgstr "Segarkan"
 
-#: src/components/modals/UserSettingsModal.tsx:328
+#: src/components/modals/UserSettingsModal.tsx:375
 msgid "Remove"
 msgstr "Hapus"
 
-#: src/components/message/MessageActions.tsx:46
+#: src/components/message/MessageActions.tsx:82
 #: src/components/message/MessageActionsDrawer.tsx:109
 msgid "Reply"
 msgstr "Balas"
 
-#: src/components/channel/SpaceEditor.tsx:477
+#: src/components/channel/SpaceEditor.tsx:478
 #: src/components/modals/CreateSpaceModal.tsx:107
 msgid "Require Message Signing"
 msgstr "Memerlukan Penandatanganan Pesan"
 
-#: src/components/channel/SpaceEditor.tsx:482
+#: src/components/channel/SpaceEditor.tsx:483
 #: src/components/modals/CreateSpaceModal.tsx:112
 msgid ""
 "Require messages sent in this Space to be signed by the sender. Technically "
@@ -1112,9 +1200,9 @@ msgstr ""
 "pengirim. Secara teknis, ini membuat pesan di Espasi ini tidak dapat "
 "disangkal."
 
-#: src/components/channel/SpaceEditor.tsx:251
-#: src/components/channel/SpaceEditor.tsx:310
-#: src/components/channel/SpaceEditor.tsx:514
+#: src/components/channel/SpaceEditor.tsx:252
+#: src/components/channel/SpaceEditor.tsx:311
+#: src/components/channel/SpaceEditor.tsx:515
 msgid "Roles"
 msgstr "Peran"
 
@@ -1122,14 +1210,14 @@ msgstr "Peran"
 msgid "Save"
 msgstr "Simpan"
 
-#: src/components/channel/ChannelEditor.tsx:97
-#: src/components/channel/GroupEditor.tsx:85
-#: src/components/channel/SpaceEditor.tsx:502
-#: src/components/channel/SpaceEditor.tsx:608
-#: src/components/channel/SpaceEditor.tsx:694
-#: src/components/channel/SpaceEditor.tsx:782
-#: src/components/modals/UserSettingsModal.tsx:281
-#: src/components/modals/UserSettingsModal.tsx:421
+#: src/components/channel/ChannelEditor.tsx:75
+#: src/components/channel/GroupEditor.tsx:63
+#: src/components/channel/SpaceEditor.tsx:503
+#: src/components/channel/SpaceEditor.tsx:650
+#: src/components/channel/SpaceEditor.tsx:736
+#: src/components/channel/SpaceEditor.tsx:824
+#: src/components/modals/UserSettingsModal.tsx:328
+#: src/components/modals/UserSettingsModal.tsx:469
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Simpan Perubahan"
@@ -1138,6 +1226,10 @@ msgstr "Simpan Perubahan"
 #: src/components/onboarding/Onboarding.tsx:299
 msgid "Save Contact Photo"
 msgstr "Simpan Foto Kontak"
+
+#: src/components/modals/UserSettingsModal.tsx:150
+msgid "Save Failed"
+msgstr "Gagal Menyimpan"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:194
 msgid "Save Private Key"
@@ -1148,12 +1240,16 @@ msgstr "Simpan Kunci Pribadi"
 msgid "Save User Key"
 msgstr "Simpan Kunci Pengguna"
 
-#: src/components/context/MessageDB.tsx:4979
+#: src/components/context/MessageDB.tsx:4989
 msgid "saved config is out of date"
 msgstr "konfigurasi yang disimpan sudah kadaluarsa"
 
+#: src/components/modals/UserSettingsModal.tsx:144
+msgid "Saving..."
+msgstr "Menyimpan..."
+
 #. placeholder {0}: error?.message || 'Unknown error'
-#: src/components/search/SearchResults.tsx:79
+#: src/components/search/SearchResults.tsx:82
 msgid "Search failed: {0}"
 msgstr "Pencarian gagal: {0}"
 
@@ -1165,15 +1261,15 @@ msgstr "Cari di sini"
 msgid "Search in this Space"
 msgstr "Cari di Space ini"
 
-#: src/components/search/SearchBar.tsx:34
+#: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
 msgstr "Cari pesan..."
 
-#: src/components/search/SearchResults.tsx:69
+#: src/components/search/SearchResults.tsx:72
 msgid "Searching..."
 msgstr "Mencari..."
 
-#: src/components/modals/UserSettingsModal.tsx:366
+#: src/components/modals/UserSettingsModal.tsx:413
 msgid "Security"
 msgstr "Keamanan"
 
@@ -1182,17 +1278,21 @@ msgstr "Keamanan"
 msgid "Select an option"
 msgstr "Pilih opsi"
 
-#: src/components/channel/SpaceEditor.tsx:831
+#: src/components/channel/SpaceEditor.tsx:873
 msgid "Select conversation"
 msgstr "Pilih percakapan"
 
-#: src/components/channel/SpaceEditor.tsx:466
+#: src/components/channel/SpaceEditor.tsx:467
 msgid "Select default channel"
 msgstr "Pilih saluran default"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:147
 msgid "Select Image"
 msgstr "Pilih Gambar"
+
+#: src/components/channel/SpaceEditor.tsx:595
+msgid "Select permissions"
+msgstr "Pilih izin"
 
 #: src/hooks/business/user/useFileUpload.native.ts:32
 msgid "Select Profile Image"
@@ -1202,11 +1302,11 @@ msgstr "Pilih Gambar Profil"
 msgid "Send"
 msgstr "Kirim"
 
-#: src/components/channel/SpaceEditor.tsx:950
+#: src/components/channel/SpaceEditor.tsx:992
 msgid "Send Invite"
 msgstr "Kirim Undangan"
 
-#: src/components/channel/SpaceEditor.tsx:797
+#: src/components/channel/SpaceEditor.tsx:839
 msgid ""
 "Send invites to people you've previously had conversations with. An invite "
 "button will appear in their inbox."
@@ -1214,7 +1314,7 @@ msgstr ""
 "Kirim undangan kepada orang-orang yang sebelumnya telah Anda ajak bicara. "
 "Tombol undangan akan muncul di kotak masuk mereka."
 
-#: src/components/user/UserProfile.tsx:166
+#: src/components/user/UserProfile.tsx:193
 msgid "Send Message"
 msgstr "Kirim Pesan"
 
@@ -1227,11 +1327,11 @@ msgstr "Sesi Terenkripsi"
 msgid "Set Display Name"
 msgstr "Tetapkan Nama Tampilan"
 
-#: src/components/modals/UserSettingsModal.tsx:122
+#: src/components/modals/UserSettingsModal.tsx:168
 msgid "Settings"
 msgstr "Pengaturan"
 
-#: src/components/modals/UserSettingsModal.tsx:447
+#: src/components/modals/UserSettingsModal.tsx:495
 msgid ""
 "Show desktop notifications when you receive new messages while Quorum is in "
 "the background. Your browser will ask for permission when you enable this "
@@ -1250,7 +1350,7 @@ msgstr "tampilkan layar beranda"
 msgid "Skip Adding Photo"
 msgstr "Lewati Menambahkan Foto"
 
-#: src/components/channel/SpaceEditor.tsx:390
+#: src/components/channel/SpaceEditor.tsx:391
 msgid "Space Banner"
 msgstr "Spanduk Ruang"
 
@@ -1258,11 +1358,11 @@ msgstr "Spanduk Ruang"
 msgid "Space Icon Attachment"
 msgstr "Lampiran Ikon Ruang"
 
-#: src/components/channel/SpaceEditor.tsx:379
+#: src/components/channel/SpaceEditor.tsx:380
 msgid "Space Name"
 msgstr "Nama Ruang"
 
-#: src/components/search/SearchResults.tsx:60
+#: src/components/search/SearchResults.tsx:63
 msgid "Start typing to search messages..."
 msgstr "Mulai mengetik untuk mencari pesan..."
 
@@ -1274,14 +1374,14 @@ msgstr "Status pergi di sini"
 msgid "Stay Connected, Stay Invisible"
 msgstr "Tetap Terhubung, Tetap Tak Terlihat"
 
-#: src/components/channel/SpaceEditor.tsx:265
-#: src/components/channel/SpaceEditor.tsx:303
-#: src/components/channel/SpaceEditor.tsx:706
+#: src/components/channel/SpaceEditor.tsx:266
+#: src/components/channel/SpaceEditor.tsx:304
+#: src/components/channel/SpaceEditor.tsx:748
 msgid "Stickers"
 msgstr "Stiker"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:844
+#: src/components/channel/SpaceEditor.tsx:886
 msgid "Successfully sent invite to {0}"
 msgstr "Berhasil mengirim undangan kepada {0}"
 
@@ -1301,7 +1401,7 @@ msgstr "Ketuk untuk memilih"
 msgid "The invite link has expired or is invalid."
 msgstr "Tautan undangan telah kedaluwarsa atau tidak valid."
 
-#: src/components/modals/UserSettingsModal.tsx:339
+#: src/components/modals/UserSettingsModal.tsx:386
 msgid "This device"
 msgstr "Perangkat ini"
 
@@ -1310,7 +1410,7 @@ msgstr "Perangkat ini"
 msgid "This information is only provided to the Spaces you join."
 msgstr "Informasi ini hanya diberikan kepada Ruang yang Anda ikuti."
 
-#: src/components/modals/UserSettingsModal.tsx:240
+#: src/components/modals/UserSettingsModal.tsx:286
 msgid ""
 "This is your public address and is safe to share with anyone you want to "
 "interact with."
@@ -1318,7 +1418,7 @@ msgstr ""
 "Ini adalah alamat publik Anda dan aman untuk dibagikan kepada siapa saja "
 "yang ingin Anda ajak berinteraksi."
 
-#: src/components/channel/SpaceEditor.tsx:884
+#: src/components/channel/SpaceEditor.tsx:926
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link. Current Space members will not be removed "
@@ -1328,7 +1428,7 @@ msgstr ""
 "kapan saja, yang akan membatalkan tautan lama. Anggota Ruang saat ini tidak "
 "akan dihapus dari Ruang."
 
-#: src/components/modals/UserSettingsModal.tsx:480
+#: src/components/modals/UserSettingsModal.tsx:528
 msgid ""
 "To disable notifications, please change the setting in your browser "
 "settings. Notifications cannot be disabled programmatically."
@@ -1336,7 +1436,7 @@ msgstr ""
 "Untuk menonaktifkan notifikasi, silakan ubah pengaturan di pengaturan "
 "browser Anda. Notifikasi tidak dapat dinonaktifkan secara programatis."
 
-#: src/components/message/Message.tsx:169
+#: src/components/message/Message.tsx:183
 msgid "Today at {timeFormatted}"
 msgstr "Hari ini pada {timeFormatted}"
 
@@ -1345,7 +1445,11 @@ msgid "Too many files selected. Please select fewer files."
 msgstr ""
 "Terlalu banyak file yang dipilih. Silakan pilih file yang lebih sedikit."
 
-#: src/components/search/SearchResults.tsx:90
+#: src/components/modals/UserSettingsModal.tsx:158
+msgid "Try Again"
+msgstr "Coba Lagi"
+
+#: src/components/search/SearchResults.tsx:93
 msgid "Try different keywords or check your spelling"
 msgstr "Coba kata kunci yang berbeda atau periksa ejaan Anda"
 
@@ -1357,24 +1461,29 @@ msgstr "Tidak dapat menyalin ke clipboard"
 msgid "Unknown"
 msgstr "Tidak Dikenal"
 
+#: src/hooks/business/search/useBatchSearchResultsDisplay.ts:168
 #: src/hooks/business/search/useSearchResultDisplay.ts:118
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:46
 msgid "Unknown Space"
 msgstr "Space Tidak Dikenal"
 
-#: src/components/context/MessageDB.tsx:821
-#: src/components/context/MessageDB.tsx:840
-#: src/components/context/MessageDB.tsx:2685
-#: src/components/context/MessageDB.tsx:3705
-#: src/components/context/MessageDB.tsx:4928
-#: src/components/direct/DirectMessage.tsx:102
-#: src/components/direct/DirectMessage.tsx:117
-#: src/components/direct/DirectMessage.tsx:254
+#: src/components/context/MessageDB.tsx:822
+#: src/components/context/MessageDB.tsx:841
+#: src/components/context/MessageDB.tsx:2686
+#: src/components/context/MessageDB.tsx:3715
+#: src/components/context/MessageDB.tsx:4938
+#: src/components/direct/DirectMessage.tsx:103
+#: src/components/direct/DirectMessage.tsx:118
+#: src/components/direct/DirectMessage.tsx:276
+#: src/components/message/PinnedMessagesPanel.tsx:233
 #: src/components/modals/ConversationSettingsModal.tsx:65
 #: src/components/modals/NewDirectMessageModal.tsx:55
 #: src/hooks/business/channels/useChannelMessages.ts:56
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
+#: src/hooks/business/search/useBatchSearchResultsDisplay.ts:132
+#: src/hooks/business/search/useBatchSearchResultsDisplay.ts:144
+#: src/hooks/business/search/useBatchSearchResultsDisplay.ts:167
 #: src/hooks/business/search/useSearchResultDisplay.ts:40
 #: src/hooks/business/search/useSearchResultDisplay.ts:117
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
@@ -1383,7 +1492,19 @@ msgstr "Space Tidak Dikenal"
 msgid "Unknown User"
 msgstr "Pengguna Tidak Dikenal"
 
-#: src/components/direct/DirectMessage.tsx:399
+#: src/components/message/MessageActions.tsx:88
+msgid "Unpin message"
+msgstr "Lepaskan pesan"
+
+#: src/components/message/PinnedMessagesPanel.tsx:258
+msgid "Unpin this post"
+msgstr "Lepaskan pos ini"
+
+#: src/components/message/MessageActions.tsx:76
+msgid "Unpinned!"
+msgstr "Tidak dipin!"
+
+#: src/components/direct/DirectMessage.tsx:452
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -1391,11 +1512,11 @@ msgstr ""
 "Sampai kamu membalas, pengirim ini tidak akan melihat nama tampilan atau "
 "foto profilmu"
 
-#: src/components/channel/SpaceEditor.tsx:638
+#: src/components/channel/SpaceEditor.tsx:680
 msgid "Upload Emoji"
 msgstr "Unggah Emoji"
 
-#: src/components/channel/SpaceEditor.tsx:724
+#: src/components/channel/SpaceEditor.tsx:766
 msgid "Upload Sticker"
 msgstr "Unggah Stiker"
 
@@ -1430,7 +1551,7 @@ msgstr "Selamat datang di Quorum!"
 msgid "What's on your mind today?"
 msgstr "Apa yang ada di pikiranmu hari ini?"
 
-#: src/components/modals/UserSettingsModal.tsx:379
+#: src/components/modals/UserSettingsModal.tsx:426
 msgid ""
 "When enabled, synchronizes your user data, Spaces, and Space keys between "
 "devices. Enabling this increases metadata visibility of your account, which "
@@ -1472,11 +1593,12 @@ msgstr ""
 msgid "Yesterday"
 msgstr "kemarin"
 
-#: src/components/message/Message.tsx:172
+#: src/components/message/Message.tsx:186
 msgid "Yesterday at {timeFormatted}"
 msgstr "kemarin pada {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:210
+#: src/components/direct/DirectMessage.tsx:211
+#: src/hooks/business/search/useBatchSearchResultsDisplay.ts:138
 msgid "You"
 msgstr "Kamu"
 
@@ -1535,6 +1657,12 @@ msgstr ""
 "Ukuran gambar profil Anda harus 2MB atau kurang dan harus memiliki ekstensi "
 "file PNG, JPG, atau JPEG."
 
+#~ msgid "{0} result"
+#~ msgstr "{0} hasil"
+
+#~ msgid "{0} results"
+#~ msgstr "{0} hasil"
+
 #~ msgid "Add Space"
 #~ msgstr "Tambahkan Ruang"
 
@@ -1566,6 +1694,9 @@ msgstr ""
 #~ msgstr ""
 #~ "Apakah Anda yakin ingin meninggalkan {0}? Anda tidak akan dapat bergabung "
 #~ "kembali kecuali Anda diundang lagi."
+
+#~ msgid "Can delete messages?"
+#~ msgstr "Bisakah menghapus pesan?"
 
 #~ msgid "Confirm Deletion"
 #~ msgstr "Konfirmasi Penghapusan"
