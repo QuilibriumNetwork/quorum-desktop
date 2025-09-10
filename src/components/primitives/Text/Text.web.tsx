@@ -9,6 +9,7 @@ const variantMap = {
   subtle: 'text-subtle',
   muted: 'text-muted',
   error: 'text-red-600 dark:text-red-400',
+  danger: 'text-danger',
   success: 'text-green-600',
   warning: 'text-yellow-600',
   link: 'text-link-primitive',

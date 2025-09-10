@@ -1103,6 +1103,11 @@ export const PrimitivesPlayground: React.FC = () => {
                       Warning variant - Warning messages
                     </Text>
                   </div>
+                  <div className="p-4 bg-surface-3 rounded-xl">
+                    <Text variant="danger">
+                      Danger variant - Critical alerts and errors
+                    </Text>
+                  </div>
                 </div>
               </div>
 

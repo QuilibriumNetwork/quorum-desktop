@@ -101,6 +101,7 @@ export default {
         main: withOpacityValue('--color-text-main'),
         subtle: 'var(--color-text-subtle)',
         muted: 'var(--color-text-muted)',
+        danger: 'var(--color-text-danger)',
       },
 
       animation: {

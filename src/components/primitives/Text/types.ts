@@ -8,6 +8,7 @@ export interface BaseTextProps {
     | 'subtle'
     | 'muted'
     | 'error'
+    | 'danger'
     | 'success'
     | 'warning'
     | 'link';

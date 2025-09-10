@@ -133,6 +133,10 @@ export const TextTestScreen: React.FC = () => {
               <View style={[commonTestStyles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
                 <Text variant="warning">Warning variant - Warning messages</Text>
               </View>
+
+              <View style={[commonTestStyles.testGroup, { backgroundColor: theme.colors.surface[3] }]}>
+                <Text variant="danger">Danger variant - Critical alerts and errors</Text>
+              </View>
             </FlexColumn>
           </FlexColumn>
         </View>

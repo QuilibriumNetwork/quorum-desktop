@@ -67,6 +67,8 @@ export const Text: React.FC<NativeTextProps> = ({
         return colors.text.muted;
       case 'error':
         return colors.utilities.danger;
+      case 'danger':
+        return colors.text.danger;
       case 'success':
         return colors.utilities.success;
       case 'warning':
