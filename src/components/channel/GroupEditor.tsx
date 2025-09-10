@@ -6,7 +6,9 @@ import {
   Icon,
   Container,
   FlexRow,
+  FlexCenter,
   Text,
+  Spacer,
 } from '../primitives';
 import '../../styles/_modal_common.scss';
 import { useGroupManagement } from '../../hooks';
@@ -51,40 +53,50 @@ const GroupEditor: React.FunctionComponent<{
           </Text>
           <Input value={group} onChange={handleGroupNameChange} />
         </Container>
-        {hasMessages && showWarning && (
-          <Container className="error-label mb-3 relative pr-8">
-            <Trans>
-              Are you sure? This group contains channels with messages. Deleting
-              it will cause all content to be lost forever!
-            </Trans>
-            <Icon
-              name="times"
-              className="absolute top-2 right-2 cursor-pointer hover:opacity-70"
-              onClick={() => setShowWarning(false)}
-            />
-          </Container>
-        )}
         <FlexRow className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
-          {isEditMode && (
-            <Button
-              type="danger"
-              className="max-sm:w-full max-sm:order-2"
-              onClick={handleDeleteClick}
-            >
-              {deleteConfirmationStep === 0
-                ? t`Delete Group`
-                : t`Click again to confirm`}
-            </Button>
-          )}
           <Button
             type="primary"
-            className="max-sm:w-full max-sm:order-1"
+            className="max-sm:w-full"
             onClick={handleSave}
             disabled={!canSave}
           >
             {t`Save Changes`}
           </Button>
         </FlexRow>
+        {isEditMode && (
+          <>
+            <Spacer 
+              spaceBefore="lg" 
+              spaceAfter="md"
+              border 
+              direction="vertical"
+            />
+            {hasMessages && showWarning && (
+              <Container className="error-label mb-3 relative pr-8">
+                <Trans>
+                  Are you sure? This group contains channels with messages. Deleting
+                  it will cause all content to be lost forever!
+                </Trans>
+                <Icon
+                  name="times"
+                  className="absolute top-2 right-2 cursor-pointer hover:opacity-70"
+                  onClick={() => setShowWarning(false)}
+                />
+              </Container>
+            )}
+            <FlexCenter>
+              <Text 
+                variant="danger"
+                className="cursor-pointer hover:text-danger-hover" 
+                onClick={handleDeleteClick}
+              >
+                {deleteConfirmationStep === 0
+                  ? t`Delete Group`
+                  : t`Click again to confirm`}
+              </Text>
+            </FlexCenter>
+          </>
+        )}
       </Container>
     </Modal>
   );
