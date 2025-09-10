@@ -152,24 +152,13 @@ export const MessageComposer = forwardRef<
               <Button
                 type="unstyled"
                 onClick={() => {}} // onClick handled by dropzone
-                className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
+                className="w-7 h-7 rounded-full bg-surface-5 hover:bg-surface-6 cursor-pointer flex items-center justify-center flex-shrink-0"
                 iconName="plus"
                 iconOnly
               />
             </div>
           </Tooltip>
 
-          {hasStickers && (
-            <Tooltip id="add-sticker" content={t`add sticker`} place="top">
-              <Button
-                type="unstyled"
-                className="hover:bg-surface-6 cursor-pointer flex items-center justify-center w-8 h-8 rounded-full bg-surface-5 flex-shrink-0"
-                onClick={onShowStickers}
-                iconName="smile"
-                iconOnly
-              />
-            </Tooltip>
-          )}
 
           <TextArea
             ref={textareaRef}
@@ -190,8 +179,24 @@ export const MessageComposer = forwardRef<
               minHeight: '28px',
               maxHeight: '112px',
               height: value ? 'auto' : '28px',
+              paddingLeft: '4px',
+              paddingRight: '4px',
+              whiteSpace: value ? 'pre-wrap' : 'nowrap',
+              overflow: 'hidden',
             }}
           />
+
+          {hasStickers && (
+            <Tooltip id="add-sticker" content={t`add sticker`} place="top">
+              <Button
+                type="unstyled"
+                className="w-8 h-8 p-0 rounded-md cursor-pointer flex items-center justify-center flex-shrink-0 text-surface-9 hover:text-main"
+                onClick={onShowStickers}
+                iconName="smile"
+                iconOnly
+              />
+            </Tooltip>
+          )}
 
           {showSigningToggle && (
             <Tooltip
@@ -205,22 +210,22 @@ export const MessageComposer = forwardRef<
               showOnTouch={true}
               autoHideAfter={1500}
             >
-              <div
-                className="cursor-pointer bg-transparent hover:bg-transparent lg:hover:bg-surface-6 flex items-center justify-center w-8 h-8 rounded-full flex-shrink-0"
+              <Button
+                type="unstyled"
                 onClick={onSigningToggle}
-              >
-                <Icon
-                  name={skipSigning ? 'unlock' : 'lock'}
-                  size="sm"
-                  className={skipSigning ? 'text-warning-hex' : 'text-subtle'}
-                />
-              </div>
+                className={`w-8 h-8 p-0 rounded-md cursor-pointer flex items-center justify-center flex-shrink-0 -ml-2 ${
+                  skipSigning ? 'text-warning-hex' : 'text-surface-9 hover:text-main'
+                }`}
+                iconName={skipSigning ? 'unlock' : 'lock'}
+                iconOnly
+              />
             </Tooltip>
           )}
 
-          <div
-            className="hover:bg-accent-400 cursor-pointer w-8 h-8 rounded-full bg-accent bg-center bg-no-repeat bg-[url('/send.png')] bg-[length:60%] flex-shrink-0"
+          <Button
+            type="unstyled"
             onClick={onSubmitMessage}
+            className="hover:bg-accent-400 cursor-pointer w-8 h-8 rounded-full bg-accent bg-center bg-no-repeat bg-[url('/send.png')] bg-[length:60%] flex-shrink-0"
           />
         </FlexRow>
       </div>
