@@ -4,6 +4,12 @@ export type SpacerDirection = 'vertical' | 'horizontal';
 export interface BaseSpacerProps {
   size: SpacerSize;
   direction?: SpacerDirection;
+  borderTop?: boolean;
+  borderBottom?: boolean;
+  // Compound spacer: SPACE-BORDER-SPACE pattern
+  spaceBefore?: SpacerSize;
+  spaceAfter?: SpacerSize;
+  border?: boolean; // Creates middle border with spaceBefore/spaceAfter
   testId?: string;
 }
 

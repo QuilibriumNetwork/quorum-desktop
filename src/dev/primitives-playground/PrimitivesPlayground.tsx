@@ -23,7 +23,7 @@ import {
 } from '@/components/primitives';
 import ThemeRadioGroup from '@/components/ThemeRadioGroup';
 import AccentColorSwitcher from '@/components/AccentColorSwitcher';
-import { DevNavMenu } from './DevNavMenu';
+import { DevNavMenu } from '../DevNavMenu';
 
 /**
  * Playground for testing primitives during development
@@ -912,6 +912,44 @@ export const PrimitivesPlayground: React.FC = () => {
                   <Spacer size={100} />
                   <div className="h-px bg-accent opacity-30"></div>
                   <Text size="sm" variant="subtle">↑ 100px (custom)</Text>
+                </div>
+              </div>
+
+              {/* Column 4: Border Examples */}
+              <div className="space-y-2">
+                <h3 className="text-lg font-medium text-strong">Spacer Borders</h3>
+                <p className="text-sm text-subtle">Spacers with visual separation borders:</p>
+                <div className="p-4 bg-surface-3 rounded-xl space-y-4">
+                  <div>
+                    <Text variant="subtle" size="sm">Top border only</Text>
+                    <Spacer size="md" borderTop />
+                    <Text size="sm">Content after spacer</Text>
+                  </div>
+                  
+                  <div>
+                    <Text variant="subtle" size="sm">Bottom border only</Text>
+                    <Spacer size="md" borderBottom />
+                    <Text size="sm">Content after spacer</Text>
+                  </div>
+                  
+                  <div>
+                    <Text variant="subtle" size="sm">Both borders</Text>
+                    <Spacer size="lg" borderTop borderBottom />
+                    <Text size="sm">Content after spacer</Text>
+                  </div>
+                  
+                  <div className="border-t border-default pt-4 mt-4">
+                    <Text variant="subtle" size="sm" className="mb-2">Compound Spacers (SPACE-BORDER-SPACE):</Text>
+                    
+                    <div>
+                      <Text variant="subtle" size="xs" className="block mb-2">Compound spacer (md-border-lg)</Text>
+                      <div className="bg-surface-2 p-2 rounded">
+                        <Text size="sm">Content before</Text>
+                        <Spacer spaceBefore="md" spaceAfter="lg" border />
+                        <Text size="sm">Content after</Text>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
