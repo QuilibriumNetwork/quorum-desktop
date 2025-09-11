@@ -357,38 +357,25 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       if (spaceId != channelId) {
         const space = await messageDB.getSpace(spaceId);
         
-        // Space owners can always delete messages (inherent privilege)
-        // Check if the requesting user has owner privileges by checking for owner key
-        let isSpaceOwner = false;
-        try {
-          const ownerKey = await messageDB.getSpaceKey(spaceId, 'owner');
-          isSpaceOwner = !!ownerKey;
-        } catch (error) {
-          // Ignore error - user is not space owner
-        }
-        
-        if (isSpaceOwner) {
-          await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
-          return;
-        }
-        
-        // For read-only channels: check if user is a manager
+        // For read-only channels: ISOLATED permission system - only managers can delete
         const channel = space?.groups
           ?.find(g => g.channels.find(c => c.channelId === channelId))
           ?.channels.find(c => c.channelId === channelId);
           
-        if (channel?.isReadOnly && channel.managerRoleIds) {
-          const isManager = space?.roles?.some(role => 
+        if (channel?.isReadOnly) {
+          const isManager = !!(channel.managerRoleIds && space?.roles?.some(role => 
             channel.managerRoleIds?.includes(role.roleId) && 
             role.members.includes(decryptedContent.content.senderId)
-          );
+          ));
           if (isManager) {
             await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
             return;
           }
+          // For read-only channels, if not a manager, deny delete (even if user has traditional roles)
+          return;
         }
         
-        // Check for role-based delete permissions
+        // For regular channels: Traditional role-based permissions
         if (
           !space?.roles.find(
             (r) =>
