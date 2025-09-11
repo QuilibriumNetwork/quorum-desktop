@@ -2,11 +2,12 @@ import React, { useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as moment from 'moment-timezone';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import {
+import type {
   Emoji,
   Message as MessageType,
   Role,
   Sticker,
+  Channel,
 } from '../../api/quorumApi';
 import EmojiPicker, {
   SkinTonePickerLocation,
@@ -49,6 +50,8 @@ type MessageProps = {
   senderRoles: Role[];
   canEditRoles?: boolean;
   canDeleteMessages?: boolean;
+  canPinMessages?: boolean;
+  channel?: Channel;
   mapSenderToUser: (senderId: string) => any;
   virtuosoRef?: any;
   emojiPickerOpen: string | undefined;
@@ -76,6 +79,8 @@ export const Message = ({
   senderRoles,
   canEditRoles,
   canDeleteMessages,
+  canPinMessages,
+  channel,
   mapSenderToUser,
   virtuosoRef,
   emojiPickerOpen,
@@ -158,7 +163,8 @@ export const Message = ({
   // Pinned messages logic
   const pinnedMessages = usePinnedMessages(
     message.spaceId || spaceId || '',
-    message.channelId || ''
+    message.channelId || '',
+    channel
   );
 
   // Message highlighting logic - replaces isHashTarget
@@ -345,7 +351,7 @@ export const Message = ({
                 message={message}
                 userAddress={user.currentPasskeyInfo!.address}
                 canUserDelete={messageActions.canUserDelete}
-                canPinMessages={pinnedMessages.canPinMessages}
+                canPinMessages={canPinMessages !== undefined ? canPinMessages : pinnedMessages.canPinMessages}
                 height={height}
                 onReaction={messageActions.handleReaction}
                 onReply={messageActions.handleReply}

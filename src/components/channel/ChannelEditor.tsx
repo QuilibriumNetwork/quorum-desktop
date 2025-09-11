@@ -9,6 +9,8 @@ import {
   FlexCenter,
   Text,
   Spacer,
+  Switch,
+  Select,
 } from '../primitives';
 import '../../styles/_modal_common.scss';
 import { useChannelManagement } from '../../hooks';
@@ -25,12 +27,17 @@ const ChannelEditor: React.FunctionComponent<{
   const {
     channelName,
     channelTopic,
+    isReadOnly,
+    managerRoleIds,
     hasMessages,
     showWarning,
     deleteConfirmationStep,
     isEditMode,
+    availableRoles,
     handleChannelNameChange,
     handleChannelTopicChange,
+    handleReadOnlyChange,
+    handleManagerRolesChange,
     saveChanges,
     handleDeleteClick,
     setShowWarning,
@@ -66,6 +73,39 @@ const ChannelEditor: React.FunctionComponent<{
           </Text>
           <Input value={channelTopic} onChange={handleChannelTopicChange} />
         </Container>
+        
+        <Container className="mb-4 max-sm:mb-1">
+          <FlexRow className="items-center gap-3">
+            <Switch 
+              value={isReadOnly} 
+              onChange={handleReadOnlyChange}
+              accessibilityLabel={t`Read only channel`}
+            />
+            <Text className="text-sm">
+              <Trans>Read only?</Trans>
+            </Text>
+          </FlexRow>
+        </Container>
+        
+        {isReadOnly && (
+          <Container className="mb-4 max-sm:mb-1">
+            <p className="text-xs text-subtle mb-4 leading-tight">
+              <Trans>Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel.</Trans>
+            </p>
+            <Select
+              value={managerRoleIds}
+              options={availableRoles.map(role => ({
+                value: role.roleId,
+                label: role.displayName,
+              }))}
+              onChange={handleManagerRolesChange}
+              placeholder={t`Select Roles`}
+              multiple={true}
+              className="w-full"
+            />
+          </Container>
+        )}
+        
         <FlexRow className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
           <Button
             type="primary"

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
-import { Message } from '../../../api/quorumApi';
+import type { Message, Channel } from '../../../api/quorumApi';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useSpaceOwner } from '../../queries/spaceOwner';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -12,7 +12,7 @@ const PINNED_MESSAGES_CONFIG = {
   MAX_PINS: 50,  // Maximum number of messages that can be pinned per channel
 } as const;
 
-export const usePinnedMessages = (spaceId: string, channelId: string) => {
+export const usePinnedMessages = (spaceId: string, channelId: string, channel?: Channel) => {
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
   const { messageDB } = useMessageDB();
@@ -26,6 +26,8 @@ export const usePinnedMessages = (spaceId: string, channelId: string) => {
     },
     enabled: !!spaceId,
   });
+
+  // Use channel from props instead of querying (to ensure consistency with useChannelMessages)
   
   // Query for pinned messages
   const {
@@ -118,17 +120,46 @@ export const usePinnedMessages = (spaceId: string, channelId: string) => {
     },
   });
 
-  // Check if user can pin messages based on role permissions
-  const canUserPin = hasPermission(
-    user?.currentPasskeyInfo?.address || '',
-    'message:pin',
-    space,
-    isSpaceOwner
-  );
+  // Check if user can pin messages - includes read-only manager logic
+  const canUserPin = useCallback(() => {
+    const userAddress = user?.currentPasskeyInfo?.address;
+    console.log('🔥 PINNED MESSAGES HOOK - canUserPin check:', {
+      userAddress,
+      isSpaceOwner,
+      channelIsReadOnly: channel?.isReadOnly,
+      managerRoleIds: channel?.managerRoleIds,
+      spaceRoles: space?.roles?.map(r => ({ roleId: r.roleId, members: r.members, permissions: r.permissions }))
+    });
+    
+    if (!userAddress) return false;
+    
+    // Space owners can always pin messages
+    if (isSpaceOwner) {
+      console.log('🔥 PINNED MESSAGES: Space owner -> TRUE');
+      return true;
+    }
+    
+    // For read-only channels: check if user is a manager
+    if (channel?.isReadOnly) {
+      const isManager = !!(channel.managerRoleIds && space?.roles &&
+        space.roles.some(role => 
+          channel.managerRoleIds?.includes(role.roleId) && 
+          role.members.includes(userAddress)
+        )
+      );
+      console.log('🔥 PINNED MESSAGES: Read-only channel, is manager?', isManager);
+      return isManager;
+    }
+    
+    // For regular channels: check traditional permissions
+    const hasTraditionalPermission = hasPermission(userAddress, 'message:pin', space, isSpaceOwner);
+    console.log('🔥 PINNED MESSAGES: Regular channel, has traditional permission?', hasTraditionalPermission);
+    return hasTraditionalPermission;
+  }, [user?.currentPasskeyInfo?.address, isSpaceOwner, channel, space]);
 
   const pinMessage = useCallback(
     (messageId: string) => {
-      if (!canUserPin) {
+      if (!canUserPin()) {
         console.warn('User does not have permission to pin messages');
         return;
       }
@@ -143,7 +174,7 @@ export const usePinnedMessages = (spaceId: string, channelId: string) => {
 
   const unpinMessage = useCallback(
     (messageId: string) => {
-      if (!canUserPin) {
+      if (!canUserPin()) {
         console.warn('User does not have permission to unpin messages');
         return;
       }
@@ -174,7 +205,7 @@ export const usePinnedMessages = (spaceId: string, channelId: string) => {
   return {
     pinnedMessages,
     pinnedCount,
-    canPinMessages: canUserPin,
+    canPinMessages: canUserPin(),
     pinMessage,
     unpinMessage,
     togglePin,

@@ -120,7 +120,8 @@ type MessageDBContextValue = {
       pfpUrl?: string;
       completedOnboarding: boolean;
     },
-    inReplyTo?: string
+    inReplyTo?: string,
+    skipSigning?: boolean
   ) => Promise<void>;
   getConfig: ({
     address,
@@ -4846,7 +4847,17 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       inReplyTo?: string,
       skipSigning?: boolean
     ) => {
+      console.log('💥 SUBMIT CHANNEL MESSAGE:', {
+        spaceId,
+        channelId,
+        pendingMessage,
+        userAddress: currentPasskeyInfo.address,
+        inReplyTo,
+        skipSigning
+      });
+      
       enqueueOutbound(async () => {
+        console.log('💥 STARTING MESSAGE PROCESSING...');
         let outbounds: string[] = [];
         const nonce = crypto.randomUUID();
         const space = await messageDB.getSpace(spaceId);

@@ -7,6 +7,8 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 export interface ChannelData {
   channelName: string;
   channelTopic: string;
+  isReadOnly: boolean;
+  managerRoleIds: string[];
 }
 
 export function useChannelManagement({
@@ -34,6 +36,8 @@ export function useChannelManagement({
   const [channelData, setChannelData] = useState<ChannelData>({
     channelName: currentChannel?.channelName || '',
     channelTopic: currentChannel?.channelTopic || '',
+    isReadOnly: currentChannel?.isReadOnly || false,
+    managerRoleIds: currentChannel?.managerRoleIds || [],
   });
 
   // State for deletion flow
@@ -52,6 +56,8 @@ export function useChannelManagement({
         setChannelData({
           channelName: channel.channelName || '',
           channelTopic: channel.channelTopic || '',
+          isReadOnly: channel.isReadOnly || false,
+          managerRoleIds: channel.managerRoleIds || [],
         });
       }
     }
@@ -87,6 +93,17 @@ export function useChannelManagement({
     setChannelData((prev) => ({ ...prev, channelTopic: value }));
   }, []);
 
+  // Handle read-only toggle
+  const handleReadOnlyChange = useCallback((value: boolean) => {
+    setChannelData((prev) => ({ ...prev, isReadOnly: value }));
+  }, []);
+
+  // Handle manager roles change
+  const handleManagerRolesChange = useCallback((value: string | string[]) => {
+    const roleIds = Array.isArray(value) ? value : [value];
+    setChannelData((prev) => ({ ...prev, managerRoleIds: roleIds }));
+  }, []);
+
   // Save channel changes
   const saveChanges = useCallback(async () => {
     if (!space) return;
@@ -106,6 +123,8 @@ export function useChannelManagement({
                           ...c,
                           channelName: channelData.channelName,
                           channelTopic: channelData.channelTopic,
+                          isReadOnly: channelData.isReadOnly,
+                          managerRoleIds: channelData.managerRoleIds,
                           modifiedDate: Date.now(),
                         }
                       : c
@@ -131,6 +150,8 @@ export function useChannelManagement({
                       spaceId: spaceId,
                       channelName: channelData.channelName,
                       channelTopic: channelData.channelTopic,
+                      isReadOnly: channelData.isReadOnly,
+                      managerRoleIds: channelData.managerRoleIds,
                       createdDate: Date.now(),
                       modifiedDate: Date.now(),
                     } as Channel,
@@ -218,14 +239,19 @@ export function useChannelManagement({
     // State
     channelName: channelData.channelName,
     channelTopic: channelData.channelTopic,
+    isReadOnly: channelData.isReadOnly,
+    managerRoleIds: channelData.managerRoleIds,
     hasMessages,
     showWarning,
     deleteConfirmationStep,
     isEditMode: !!channelId,
+    availableRoles: space?.roles || [],
 
     // Actions
     handleChannelNameChange,
     handleChannelTopicChange,
+    handleReadOnlyChange,
+    handleManagerRolesChange,
     saveChanges,
     handleDeleteClick,
     setShowWarning,

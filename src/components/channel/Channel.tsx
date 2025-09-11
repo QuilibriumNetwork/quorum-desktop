@@ -17,11 +17,45 @@ import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
 import { useModals } from '../context/ModalProvider';
-import { Button, Icon, Tooltip } from '../primitives';
+import { Button, Tooltip, Icon } from '../primitives';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
+import type { Channel, Role } from '../../api/quorumApi';
+
+// Helper function to check if user can post in read-only channel
+function canPostInReadOnlyChannel(
+  channel: Channel | undefined,
+  userAddress: string | undefined,
+  roles: Role[],
+  isSpaceOwner: boolean
+): boolean {
+  // If not a read-only channel, allow posting
+  if (!channel?.isReadOnly) {
+    return true;
+  }
+  
+  // Space owners can always post
+  if (isSpaceOwner) {
+    return true;
+  }
+  
+  // If no manager roles defined, only space owner can post
+  if (!channel.managerRoleIds || channel.managerRoleIds.length === 0) {
+    return false;
+  }
+  
+  // Check if user has any of the manager roles
+  if (!userAddress) {
+    return false;
+  }
+  
+  return roles.some(role => 
+    channel.managerRoleIds?.includes(role.roleId) && 
+    role.members.includes(userAddress)
+  );
+}
 
 type ChannelProps = {
   spaceId: string;
@@ -65,16 +99,25 @@ const Channel: React.FC<ChannelProps> = ({
     messageList,
     fetchPreviousPage,
     canDeleteMessages,
+    canPinMessages,
     mapSenderToUser,
     isSpaceOwner,
-  } = useChannelMessages({ spaceId, channelId, roles, members });
+  } = useChannelMessages({ spaceId, channelId, roles, members, channel });
 
   // Get pinned messages
-  const { pinnedCount } = usePinnedMessages(spaceId, channelId);
+  const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
 
   // Handle message submission
   const handleSubmitMessage = useCallback(
     async (message: string | object, inReplyTo?: string) => {
+      console.log('🔥 HANDLE SUBMIT MESSAGE:', {
+        message,
+        inReplyTo,
+        spaceId,
+        channelId,
+        userAddress: user.currentPasskeyInfo?.address
+      });
+      
       const effectiveSkip = space?.isRepudiable ? skipSigning : false;
       await submitChannelMessage(
         spaceId,
@@ -138,6 +181,14 @@ const Channel: React.FC<ChannelProps> = ({
       queryClient,
       user.currentPasskeyInfo,
     ]
+  );
+
+  // Check if user can post in this channel
+  const canPost = canPostInReadOnlyChannel(
+    channel,
+    user.currentPasskeyInfo?.address,
+    roles,
+    isSpaceOwner || false
   );
 
   // Message composer hook
@@ -258,14 +309,23 @@ const Channel: React.FC<ChannelProps> = ({
             
             {/* Channel name - hidden on mobile first row, shown on desktop */}
             <div className="hidden lg:flex flex-1 min-w-0">
-              <div className="truncate">
-                <span>
-                  #{channel?.channelName}
-                  {channel?.channelTopic && ' | '}
+              <div className="flex items-center gap-2 truncate whitespace-nowrap overflow-hidden">
+                {channel?.isReadOnly ? (
+                  <Icon name="lock" size="sm" className="text-subtle flex-shrink-0" />
+                ) : (
+                  <Icon name="hashtag" size="sm" className="text-subtle flex-shrink-0" />
+                )}
+                <span className="text-main font-medium flex-shrink truncate">
+                  {channel?.channelName}
                 </span>
-                <span className="font-light text-sm">
-                  {channel?.channelTopic}
-                </span>
+                {channel?.channelTopic && (
+                  <>
+                    <span className="text-subtle flex-shrink-0">|</span>
+                    <span className="text-subtle font-light text-sm flex-shrink truncate">
+                      {channel.channelTopic}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
 
@@ -299,6 +359,7 @@ const Channel: React.FC<ChannelProps> = ({
                     onClose={() => setShowPinnedMessages(false)}
                     spaceId={spaceId}
                     channelId={channelId}
+                    channel={channel}
                     mapSenderToUser={mapSenderToUser}
                     virtuosoRef={messageListRef.current?.getVirtuosoRef()}
                     messageList={messageList}
@@ -326,14 +387,23 @@ const Channel: React.FC<ChannelProps> = ({
 
           {/* Second row on mobile: channel name / Hidden on desktop (shown above) */}
           <div className="w-full lg:hidden">
-            <div className="truncate">
-              <span>
-                #{channel?.channelName}
-                {channel?.channelTopic && ' | '}
+            <div className="flex items-center gap-2 truncate whitespace-nowrap overflow-hidden">
+              {channel?.isReadOnly ? (
+                <Icon name="lock" size="sm" className="text-subtle flex-shrink-0" />
+              ) : (
+                <Icon name="hashtag" size="sm" className="text-subtle flex-shrink-0" />
+              )}
+              <span className="text-main font-medium flex-shrink truncate">
+                {channel?.channelName}
               </span>
-              <span className="font-light text-sm">
-                {channel?.channelTopic}
-              </span>
+              {channel?.channelTopic && (
+                <>
+                  <span className="text-subtle flex-shrink-0">|</span>
+                  <span className="text-subtle font-light text-sm flex-shrink truncate">
+                    {channel.channelTopic}
+                  </span>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -353,6 +423,8 @@ const Channel: React.FC<ChannelProps> = ({
                 stickers={stickers}
                 roles={roles}
                 canDeleteMessages={canDeleteMessages}
+                canPinMessages={canPinMessages}
+                channel={channel}
                 isSpaceOwner={isSpaceOwner}
                 editor={textareaRef}
                 messageList={messageList}
@@ -392,6 +464,12 @@ const Channel: React.FC<ChannelProps> = ({
                 showSigningToggle={space?.isRepudiable}
                 skipSigning={skipSigning}
                 onSigningToggle={() => setSkipSigning(!skipSigning)}
+                disabled={!canPost}
+                disabledMessage={
+                  channel?.isReadOnly 
+                    ? t`You cannot post in this channel`
+                    : undefined
+                }
               />
             </div>
           </div>

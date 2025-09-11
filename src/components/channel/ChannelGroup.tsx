@@ -1,10 +1,9 @@
 import * as React from 'react';
 import './ChannelGroup.scss';
 import { Link, useParams } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import { useModalContext } from '../context/ModalProvider';
+import { Icon } from '../primitives';
 
 const ChannelGroup: React.FunctionComponent<{
   group: {
@@ -15,6 +14,7 @@ const ChannelGroup: React.FunctionComponent<{
       unreads?: number;
       mentionCount?: number;
       mentions?: string;
+      isReadOnly?: boolean;
     }[];
   };
   onEditGroup: (groupName: string) => void;
@@ -43,13 +43,13 @@ const ChannelGroup: React.FunctionComponent<{
         </div>
         {isSpaceOwner && (
           <div className="pt-[.15rem]">
-            <FontAwesomeIcon
+            <Icon
+              name="plus"
               className="hover:text-main cursor-pointer"
               onClick={() =>
                 openChannelEditor(spaceId!, props.group.groupName, '')
               }
-              size={'2xs'}
-              icon={faPlus}
+              size="xs"
             />
           </div>
         )}
@@ -69,8 +69,27 @@ const ChannelGroup: React.FunctionComponent<{
                   : '')
               }
             >
-              <div className="flex-1 min-w-0">
-                #{channel.channelName}
+              <div className="flex-1 min-w-0 flex items-center gap-1">
+                {channel.isReadOnly ? (
+                  <>
+                    <Icon 
+                      name="lock" 
+                      size="xs" 
+                      className="text-subtle" 
+                      title="Read-only channel"
+                    />
+                    <span>{channel.channelName}</span>
+                  </>
+                ) : (
+                  <>
+                    <Icon 
+                      name="hashtag" 
+                      size="xs" 
+                      className="text-subtle" 
+                    />
+                    <span>{channel.channelName}</span>
+                  </>
+                )}
                 {!!channel.mentionCount ? (
                   <span
                     className={
@@ -85,7 +104,7 @@ const ChannelGroup: React.FunctionComponent<{
               </div>
               {isSpaceOwner && (
                 <div
-                  onClick={(e) => {
+                  onClick={() => {
                     openChannelEditor(
                       spaceId!,
                       props.group.groupName,
@@ -94,7 +113,7 @@ const ChannelGroup: React.FunctionComponent<{
                   }}
                   className={'channel-configure flex-shrink-0 ml-2'}
                 >
-                  <FontAwesomeIcon size={'2xs'} icon={faGear} />
+                  <Icon name="cog" size="xs" />
                 </div>
               )}
             </div>

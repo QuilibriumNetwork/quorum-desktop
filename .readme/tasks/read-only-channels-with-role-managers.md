@@ -16,10 +16,16 @@ Implement read-only channels where only space owners or users with designated "m
 Channel name: [input field]
 Channel topic: [input field]
 
-☐ Read only?
-  └── Managers (select roles): [Multi-select dropdown of existing roles]
-      (If no roles selected, only space owner can post)
+☐ Read only? [Select]
+
+if selected it will show the below message in "text-xs" and the multiselect for managers:
+
+"Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
+
+Managers: [Multiselect with placeholder "Select Roles"]
 ```
+
+- Use primitives: Icon, Tooltip, Select..
 
 ## Technical Implementation
 

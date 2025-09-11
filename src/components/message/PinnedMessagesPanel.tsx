@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Message as MessageType } from '../../api/quorumApi';
+import type { Message as MessageType, Channel } from '../../api/quorumApi';
 import { 
   FlexColumn, 
   FlexRow, 
@@ -30,6 +30,7 @@ interface PinnedMessagesPanelProps {
   onClose: () => void;
   spaceId: string;
   channelId: string;
+  channel?: Channel;
   mapSenderToUser: (senderId: string) => any;
   virtuosoRef?: any;
   messageList?: MessageType[];
@@ -40,6 +41,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
   onClose,
   spaceId,
   channelId,
+  channel,
   mapSenderToUser,
   virtuosoRef,
   messageList,
@@ -47,7 +49,8 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
   const navigate = useNavigate();
   const { pinnedMessages, unpinMessage, canPinMessages, isLoading } = usePinnedMessages(
     spaceId,
-    channelId
+    channelId,
+    channel
   );
   
   // Use the new React state-based message highlighting

@@ -34,6 +34,10 @@ interface MessageComposerProps {
   showSigningToggle?: boolean;
   skipSigning?: boolean;
   onSigningToggle?: () => void;
+  
+  // Read-only channel support
+  disabled?: boolean;
+  disabledMessage?: string;
 }
 
 export interface MessageComposerRef {
@@ -66,6 +70,8 @@ export const MessageComposer = forwardRef<
       showSigningToggle = false,
       skipSigning = false,
       onSigningToggle,
+      disabled = false,
+      disabledMessage,
     },
     ref
   ) => {
@@ -77,6 +83,23 @@ export const MessageComposer = forwardRef<
       },
     }));
 
+
+    // If disabled, show a message instead of the composer
+    if (disabled) {
+      return (
+        <div className="w-full pr-6 lg:pr-8">
+          <div className="w-full items-center gap-2 ml-[11px] my-2 py-2 pl-4 pr-[6px] rounded-lg flex justify-start bg-chat-input">
+            <Icon name="lock" size="xs" className="text-muted flex-shrink-0" />
+            <span 
+              className="text-base font-normal" 
+              style={{ color: 'var(--color-field-placeholder)' }}
+            >
+              {disabledMessage || t`You cannot post in this channel`}
+            </span>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className="w-full pr-6 lg:pr-8">
@@ -143,8 +166,7 @@ export const MessageComposer = forwardRef<
 
         {/* Message input row */}
         <FlexRow
-          className={`w-full items-center gap-2 ml-[11px] my-2 p-[6px] rounded-lg ${inReplyTo ? 'rounded-t-none mt-0' : ''}`}
-          style={{ background: 'var(--color-bg-chat-input)' }}
+          className={`w-full items-center gap-2 ml-[11px] my-2 p-[6px] rounded-lg bg-chat-input ${inReplyTo ? 'rounded-t-none mt-0' : ''}`}
         >
           <Tooltip id="attach-image" content={t`attach image`} place="top">
             <div {...getRootProps()}>

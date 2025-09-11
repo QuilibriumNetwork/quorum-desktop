@@ -32,6 +32,15 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   // Calculate if user can delete this message
   const canUserDelete =
     message.content.senderId === userAddress || Boolean(canDeleteMessages);
+  
+  console.log('⚡ MESSAGE ACTIONS - canUserDelete:', {
+    messageId: message.messageId,
+    senderId: message.content.senderId,
+    userAddress,
+    canDeleteMessages,
+    isOwnMessage: message.content.senderId === userAddress,
+    finalCanDelete: canUserDelete
+  });
 
   // Handle reaction submission
   const handleReaction = useCallback(
@@ -75,11 +84,17 @@ export function useMessageActions(options: UseMessageActionsOptions) {
 
   // Handle delete action
   const handleDelete = useCallback(() => {
+    console.log('🚨 DELETE BUTTON CLICKED!', {
+      messageId: message.messageId,
+      canUserDelete,
+      onSubmitMessage: !!onSubmitMessage
+    });
+    
     onSubmitMessage({
       type: 'remove-message',
       removeMessageId: message.messageId,
     });
-  }, [message.messageId, onSubmitMessage]);
+  }, [message.messageId, onSubmitMessage, canUserDelete]);
 
   // Handle more reactions (emoji picker)
   const handleMoreReactions = useCallback(

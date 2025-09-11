@@ -14,6 +14,7 @@ import {
   Message as MessageType,
   Role,
   Sticker,
+  Channel,
 } from '../../api/quorumApi';
 import { Virtuoso } from 'react-virtuoso';
 import type { VirtuosoHandle } from 'react-virtuoso';
@@ -36,6 +37,8 @@ interface MessageListProps {
   fetchPreviousPage: () => void;
   isSpaceOwner?: boolean;
   canDeleteMessages: (message: MessageType) => boolean;
+  canPinMessages?: (message: MessageType) => boolean;
+  channel?: Channel;
   customEmoji?: Emoji[];
   isRepudiable?: boolean;
   roles: Role[];
@@ -68,6 +71,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       fetchPreviousPage,
       isSpaceOwner,
       canDeleteMessages,
+      canPinMessages,
+      channel,
       customEmoji,
       isRepudiable,
       roles,
@@ -132,6 +137,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           height={height}
           canEditRoles={isSpaceOwner}
           canDeleteMessages={canDeleteMessages(message)}
+          canPinMessages={canPinMessages ? canPinMessages(message) : undefined}
+          channel={channel}
           submitMessage={submitMessage}
           kickUserAddress={kickUserAddress}
           setKickUserAddress={setKickUserAddress}

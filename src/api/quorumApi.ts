@@ -58,6 +58,8 @@ export type Channel = {
   modifiedDate: number;
   mentionCount?: number;
   mentions?: string;
+  isReadOnly?: boolean;
+  managerRoleIds?: string[];  // Roles that can manage this read-only channel
 };
 
 export type Conversation = {
