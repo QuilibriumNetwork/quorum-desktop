@@ -1,8 +1,10 @@
 import { useMemo, useCallback } from 'react';
 import { useMessages } from '../../queries/messages/useMessages';
 import { useSpaceOwner } from '../../queries/spaceOwner/useSpaceOwner';
+import { useSpace } from '../../queries/space/useSpace';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Message as MessageType, Channel, Role } from '../../../api/quorumApi';
+import { hasPermission } from '../../../utils/permissions';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../../utils';
 
@@ -33,6 +35,7 @@ export function useChannelMessages({
     channelId,
   });
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
+  const { data: space } = useSpace({ spaceId });
 
   // Helper function to check if user can manage read-only channel
   const canManageReadOnlyChannel = useCallback(
@@ -71,19 +74,12 @@ export function useChannelMessages({
       const userAddress = user.currentPasskeyInfo?.address;
       if (!userAddress) return false;
       
-      console.log('🗑️ FIXED DELETE CHECK:', {
-        messageId: message.messageId,
-        userAddress,
-        isSpaceOwner
-      });
-      
-      // Space owners can always delete messages (inherent privilege)
-      if (isSpaceOwner) {
-        console.log('🗑️ FIXED: Space owner -> TRUE');
+      // Users can always delete their own messages
+      if (message.content.senderId === userAddress) {
         return true;
       }
       
-      // For read-only channels: check if user is a manager
+      // For read-only channels: check if user is a manager (before checking regular permissions)
       if (channel?.isReadOnly) {
         const isManager = !!(channel.managerRoleIds && 
           roles.some(role => 
@@ -91,43 +87,35 @@ export function useChannelMessages({
             role.members.includes(userAddress)
           )
         );
-        console.log('🗑️ FIXED: Read-only channel, is manager?', isManager);
-        return isManager;
+        if (isManager) {
+          return true;
+        }
       }
       
-      // For regular channels: check traditional permissions
-      const hasDeletePermission = !!roles.find(
-        (r) =>
-          r.permissions.includes('message:delete') &&
-          r.members.includes(userAddress)
-      );
-      console.log('🗑️ FIXED: Regular channel, has delete permission?', hasDeletePermission);
+      // Use centralized permission utility (handles space owners + role permissions)
+      const hasDeletePermission = hasPermission(userAddress, 'message:delete', space, isSpaceOwner);
+      
+      // Only log for debugging when it should work but doesn't
+      if (isSpaceOwner && !hasDeletePermission) {
+        console.log('🚨 SPACE OWNER DELETE FAILING:', {
+          userAddress,
+          isSpaceOwner,
+          hasDeletePermission,
+          space: !!space
+        });
+      }
+      
       return hasDeletePermission;
     },
-    [roles, user.currentPasskeyInfo, isSpaceOwner, channel]
+    [roles, user.currentPasskeyInfo, isSpaceOwner, channel, space]
   );
 
   const canPinMessages = useCallback(
     (message: MessageType) => {
       const userAddress = user.currentPasskeyInfo?.address;
-      console.log('📌 PIN CHECK:', {
-        messageId: message.messageId,
-        userAddress,
-        isSpaceOwner,
-        channelIsReadOnly: channel?.isReadOnly,
-        managerRoleIds: channel?.managerRoleIds,
-        userRoles: roles.filter(r => r.members.includes(userAddress || '')).map(r => ({ roleId: r.roleId, permissions: r.permissions }))
-      });
-      
       if (!userAddress) return false;
       
-      // Space owners can always pin messages
-      if (isSpaceOwner) {
-        console.log('📌 PIN: Space owner -> TRUE');
-        return true;
-      }
-      
-      // For read-only channels: check if user is a manager
+      // For read-only channels: check if user is a manager (before checking regular permissions)
       if (channel?.isReadOnly) {
         const isManager = !!(channel.managerRoleIds && 
           roles.some(role => 
@@ -135,20 +123,15 @@ export function useChannelMessages({
             role.members.includes(userAddress)
           )
         );
-        console.log('📌 PIN: Read-only channel, is manager?', isManager);
-        return isManager;
+        if (isManager) {
+          return true;
+        }
       }
       
-      // For regular channels: check traditional permissions
-      const hasPinPermission = !!roles.find(
-        (r) =>
-          r.permissions.includes('message:pin') &&
-          r.members.includes(userAddress)
-      );
-      console.log('📌 PIN: Regular channel, has pin permission?', hasPinPermission);
-      return hasPinPermission;
+      // Use centralized permission utility (handles space owners + role permissions)
+      return hasPermission(userAddress, 'message:pin', space, isSpaceOwner);
     },
-    [roles, user.currentPasskeyInfo, isSpaceOwner, channel]
+    [roles, user.currentPasskeyInfo, isSpaceOwner, channel, space]
   );
 
   const mapSenderToUser = useCallback(

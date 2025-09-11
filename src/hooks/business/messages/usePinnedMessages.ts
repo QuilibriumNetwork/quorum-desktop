@@ -123,23 +123,9 @@ export const usePinnedMessages = (spaceId: string, channelId: string, channel?: 
   // Check if user can pin messages - includes read-only manager logic
   const canUserPin = useCallback(() => {
     const userAddress = user?.currentPasskeyInfo?.address;
-    console.log('🔥 PINNED MESSAGES HOOK - canUserPin check:', {
-      userAddress,
-      isSpaceOwner,
-      channelIsReadOnly: channel?.isReadOnly,
-      managerRoleIds: channel?.managerRoleIds,
-      spaceRoles: space?.roles?.map(r => ({ roleId: r.roleId, members: r.members, permissions: r.permissions }))
-    });
-    
     if (!userAddress) return false;
     
-    // Space owners can always pin messages
-    if (isSpaceOwner) {
-      console.log('🔥 PINNED MESSAGES: Space owner -> TRUE');
-      return true;
-    }
-    
-    // For read-only channels: check if user is a manager
+    // For read-only channels: check if user is a manager (before checking regular permissions)
     if (channel?.isReadOnly) {
       const isManager = !!(channel.managerRoleIds && space?.roles &&
         space.roles.some(role => 
@@ -147,14 +133,13 @@ export const usePinnedMessages = (spaceId: string, channelId: string, channel?: 
           role.members.includes(userAddress)
         )
       );
-      console.log('🔥 PINNED MESSAGES: Read-only channel, is manager?', isManager);
-      return isManager;
+      if (isManager) {
+        return true;
+      }
     }
     
-    // For regular channels: check traditional permissions
-    const hasTraditionalPermission = hasPermission(userAddress, 'message:pin', space, isSpaceOwner);
-    console.log('🔥 PINNED MESSAGES: Regular channel, has traditional permission?', hasTraditionalPermission);
-    return hasTraditionalPermission;
+    // Use centralized permission utility (handles space owners + role permissions)
+    return hasPermission(userAddress, 'message:pin', space, isSpaceOwner);
   }, [user?.currentPasskeyInfo?.address, isSpaceOwner, channel, space]);
 
   const pinMessage = useCallback(

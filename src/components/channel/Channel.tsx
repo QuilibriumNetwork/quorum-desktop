@@ -110,14 +110,6 @@ const Channel: React.FC<ChannelProps> = ({
   // Handle message submission
   const handleSubmitMessage = useCallback(
     async (message: string | object, inReplyTo?: string) => {
-      console.log('🔥 HANDLE SUBMIT MESSAGE:', {
-        message,
-        inReplyTo,
-        spaceId,
-        channelId,
-        userAddress: user.currentPasskeyInfo?.address
-      });
-      
       const effectiveSkip = space?.isRepudiable ? skipSigning : false;
       await submitChannelMessage(
         spaceId,

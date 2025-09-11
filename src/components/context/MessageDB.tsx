@@ -356,6 +356,39 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
       if (spaceId != channelId) {
         const space = await messageDB.getSpace(spaceId);
+        
+        // Space owners can always delete messages (inherent privilege)
+        // Check if the requesting user has owner privileges by checking for owner key
+        let isSpaceOwner = false;
+        try {
+          const ownerKey = await messageDB.getSpaceKey(spaceId, 'owner');
+          isSpaceOwner = !!ownerKey;
+        } catch (error) {
+          // Ignore error - user is not space owner
+        }
+        
+        if (isSpaceOwner) {
+          await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
+          return;
+        }
+        
+        // For read-only channels: check if user is a manager
+        const channel = space?.groups
+          ?.find(g => g.channels.find(c => c.channelId === channelId))
+          ?.channels.find(c => c.channelId === channelId);
+          
+        if (channel?.isReadOnly && channel.managerRoleIds) {
+          const isManager = space?.roles?.some(role => 
+            channel.managerRoleIds?.includes(role.roleId) && 
+            role.members.includes(decryptedContent.content.senderId)
+          );
+          if (isManager) {
+            await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
+            return;
+          }
+        }
+        
+        // Check for role-based delete permissions
         if (
           !space?.roles.find(
             (r) =>
@@ -4847,17 +4880,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       inReplyTo?: string,
       skipSigning?: boolean
     ) => {
-      console.log('💥 SUBMIT CHANNEL MESSAGE:', {
-        spaceId,
-        channelId,
-        pendingMessage,
-        userAddress: currentPasskeyInfo.address,
-        inReplyTo,
-        skipSigning
-      });
-      
       enqueueOutbound(async () => {
-        console.log('💥 STARTING MESSAGE PROCESSING...');
         let outbounds: string[] = [];
         const nonce = crypto.randomUUID();
         const space = await messageDB.getSpace(spaceId);
