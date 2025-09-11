@@ -357,6 +357,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       if (spaceId != channelId) {
         const space = await messageDB.getSpace(spaceId);
         
+        
         // For read-only channels: ISOLATED permission system - only managers can delete
         const channel = space?.groups
           ?.find(g => g.channels.find(c => c.channelId === channelId))
@@ -550,7 +551,56 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         messageId: decryptedContent.content.removeMessageId,
       });
 
+      // Check if this delete request should be honored
+      let shouldHonorDelete = false;
+      
       if (!targetMessage) {
+        // If target message doesn't exist, always remove from UI
+        shouldHonorDelete = true;
+      } else {
+        // If target message exists, check permissions
+        
+        // 1. Users can always delete their own messages
+        if (targetMessage.content.senderId === decryptedContent.content.senderId) {
+          shouldHonorDelete = true;
+        } else {
+          
+          if (!shouldHonorDelete && spaceId != channelId) {
+            const space = await messageDB.getSpace(spaceId);
+            
+            // 3. Check read-only channel manager privileges
+            const channel = space?.groups
+              ?.find(g => g.channels.find(c => c.channelId === channelId))
+              ?.channels.find(c => c.channelId === channelId);
+              
+            if (channel?.isReadOnly && channel.managerRoleIds) {
+              const isManager = space?.roles?.some(role => 
+                channel.managerRoleIds?.includes(role.roleId) && 
+                role.members.includes(decryptedContent.content.senderId)
+              );
+              if (isManager) {
+                shouldHonorDelete = true;
+                console.log('🔹 ADDMESSAGE: Honoring read-only manager delete in UI cache');
+              }
+            }
+            
+            // 4. Check traditional role permissions
+            if (!shouldHonorDelete && !channel?.isReadOnly) {
+              const hasDeleteRole = space?.roles?.find(
+                (r) =>
+                  r.members.includes(decryptedContent.content.senderId) &&
+                  r.permissions.includes('message:delete')
+              );
+              if (hasDeleteRole) {
+                shouldHonorDelete = true;
+                console.log('🔹 ADDMESSAGE: Honoring role-based delete in UI cache');
+              }
+            }
+          }
+        }
+      }
+
+      if (shouldHonorDelete) {
         const targetId = decryptedContent.content.removeMessageId;
         queryClient.setQueryData(
           buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
@@ -575,6 +625,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             };
           }
         );
+      } else {
+        console.log('🔹 ADDMESSAGE: Ignoring unauthorized delete request');
       }
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await messageDB.getSpaceMember(
@@ -1037,12 +1089,10 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                     'utf-8'
                   )
                 );
-                if (
-                  (participant.inbox_address !== inboxAddress &&
-                    participant.inbox_address) ||
-                  decryptedContent.messageId !==
-                    Buffer.from(messageId).toString('hex')
-                ) {
+                const inboxMismatch = (participant.inbox_address !== inboxAddress && participant.inbox_address);
+                const messageIdMismatch = decryptedContent.messageId !== Buffer.from(messageId).toString('hex');
+                
+                if (inboxMismatch || messageIdMismatch) {
                   console.warn(t`invalid address for signature`);
                   decryptedContent.publicKey = undefined;
                   decryptedContent.signature = undefined;
