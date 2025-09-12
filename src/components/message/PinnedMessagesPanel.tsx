@@ -259,21 +259,15 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                     <FlexRow
                       className={`message-actions items-center${isTouchDevice() ? ' always-visible' : ''}`}
                     >
-                      <Tooltip
-                        id={`jump-${message.messageId}`}
-                        content={t`Jump to message`}
-                        place="top"
-                        showOnTouch={false}
+                      <Button
+                        type="subtle-outline"
+                        onClick={() => handleJumpToMessage(message.messageId)}
+                        iconName="arrow-right"
+                        size="small"
+                        className="gap-1 mr-6"
                       >
-                        <Button
-                          type="unstyled"
-                          onClick={() => handleJumpToMessage(message.messageId)}
-                          iconName="arrow-right"
-                          iconOnly={true}
-                          size="compact"
-                          className="jump-button"
-                        />
-                      </Tooltip>
+                        {t`Jump`}
+                      </Button>
                       {canPinMessages && (
                         <Tooltip
                           id={`unpin-${message.messageId}`}
