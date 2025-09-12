@@ -119,9 +119,9 @@ const Channel: React.FC<ChannelProps> = ({
 
   // Handle message submission
   const handleSubmitMessage = useCallback(
-    async (message: string | object, inReplyTo?: string) => {
+    (message: string | object, inReplyTo?: string) => {
       const effectiveSkip = space?.isRepudiable ? skipSigning : false;
-      await submitChannelMessage(
+      void submitChannelMessage(
         spaceId,
         channelId,
         message,
@@ -192,7 +192,7 @@ const Channel: React.FC<ChannelProps> = ({
     userIcon?: string;
   }, event: React.MouseEvent) => {
     event.stopPropagation(); // Prevent background click from closing modal
-    
+
     const rect = event.currentTarget.getBoundingClientRect();
     setModalPosition({ top: rect.top });
     setSelectedUser(user);
@@ -537,7 +537,7 @@ const Channel: React.FC<ChannelProps> = ({
                   } else {
                     return (
                       <div className="px-4 pb-2">
-                        <div 
+                        <div
                           className="w-full flex flex-row items-center cursor-pointer hover:bg-surface-2 rounded-md p-1 -m-1 transition-colors duration-150"
                           onClick={(event) => handleUserProfileClick({
                             address: item.address,
@@ -634,7 +634,7 @@ const Channel: React.FC<ChannelProps> = ({
             }}
             onClick={handleUserProfileClose}
           />
-          <div 
+          <div
             className="fixed z-[9999] pointer-events-none"
             style={{
               top: `${modalPosition.top}px`,

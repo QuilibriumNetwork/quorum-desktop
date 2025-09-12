@@ -14,6 +14,21 @@
   animation: flash-highlight 6s ease-out;
 }
 
+.message-pending {
+  opacity: 0.6;
+}
+
+.message-sending {
+  margin-left: 6px;
+  color: var(--subtle);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* === RESPONSIVE YOUTUBE EMBEDS === */
 .youtube-embed {
   width: 100%;

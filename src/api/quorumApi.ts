@@ -85,6 +85,10 @@ export type Message = {
   createdDate: number;
   modifiedDate: number;
   lastModifiedHash: string;
+  // Client-side delivery state: pending until actually sent
+  isSent?: boolean;
+  // Client-generated unique id to support deduplication across retries
+  clientMessageId?: string;
   content:
     | PostMessage
     | EventMessage

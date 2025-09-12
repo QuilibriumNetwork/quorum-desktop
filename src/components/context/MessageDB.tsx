@@ -90,7 +90,8 @@ type MessageDBContextValue = {
       userKeyset: secureChannel.UserKeyset;
       deviceKeyset: secureChannel.DeviceKeyset;
     },
-    inReplyTo?: string
+    inReplyTo?: string,
+    skipSigning?: boolean
   ) => Promise<void>;
   createSpace: (
     spaceName: string,
@@ -120,8 +121,7 @@ type MessageDBContextValue = {
       pfpUrl?: string;
       completedOnboarding: boolean;
     },
-    inReplyTo?: string,
-    skipSigning?: boolean
+    inReplyTo?: string
   ) => Promise<void>;
   getConfig: ({
     address,
@@ -881,6 +881,21 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           });
 
           if (decryptedContent && newState) {
+            // Receiver-side dedupe for DM init path
+            if (
+              decryptedContent.clientMessageId &&
+              (await messageDB.hasSeenClientMessage(
+                conversationId,
+                decryptedContent.clientMessageId
+              ))
+            ) {
+              await deleteInboxMessages(
+                keyset.deviceKeyset.inbox_keyset,
+                [envelope.timestamp],
+                apiClient
+              );
+              return;
+            }
             const newEncryptionState: EncryptionState = {
               state: newState,
               timestamp: message.timestamp,
@@ -905,6 +920,10 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 display_name:
                   conversation?.conversation?.displayName ?? t`Unknown User`,
               }
+            );
+            await messageDB.markClientMessageSeen(
+              conversationId,
+              decryptedContent.clientMessageId || decryptedContent.messageId
             );
             await addMessage(
               queryClient,
@@ -2505,6 +2524,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         await messageDB.deleteConversationUsers(conversationId);
         await messageDB.deleteConversation(conversationId);
 
+        // Clean dedup table for this conversation
+        await messageDB.deleteDedupForConversation(conversationId);
+
         // Best-effort: remove cached user profile for counterparty
         if (spaceId && spaceId === channelId) {
           await messageDB.deleteUser(spaceId);
@@ -2615,47 +2637,79 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       inReplyTo?: string,
       skipSigning?: boolean
     ) => {
+      // 1) Create and persist a provisional message immediately (optimistic UI)
+      const nonce = crypto.randomUUID();
+      const messageId = await crypto.subtle.digest(
+        'SHA-256',
+        Buffer.from(
+          nonce +
+            'post' +
+            currentPasskeyInfo.address +
+            (typeof pendingMessage === 'string'
+              ? pendingMessage
+              : JSON.stringify(pendingMessage)),
+          'utf-8'
+        )
+      );
+      const provisionalMessage = {
+        channelId: address!,
+        spaceId: address!,
+        messageId: Buffer.from(messageId).toString('hex'),
+        digestAlgorithm: 'SHA-256',
+        nonce: nonce,
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        lastModifiedHash: '',
+        clientMessageId: crypto.randomUUID(),
+        isSent: false,
+        content:
+          typeof pendingMessage === 'string'
+            ? ({
+                type: 'post',
+                senderId: currentPasskeyInfo.address,
+                text: pendingMessage,
+                repliesToMessageId: inReplyTo,
+              } as PostMessage)
+            : {
+                ...(pendingMessage as any),
+                senderId: currentPasskeyInfo.address,
+              },
+      } as Message;
+      const conversationId = address + '/' + address;
+      const conversation = await messageDB.getConversation({
+        conversationId,
+      });
+
+      await saveMessage(
+        provisionalMessage,
+        messageDB,
+        address!,
+        address!,
+        'direct',
+        {
+          user_icon:
+            conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+          display_name:
+            conversation?.conversation?.displayName ?? t`Unknown User`,
+        }
+      );
+      await addMessage(queryClient, address, address, provisionalMessage);
+      addOrUpdateConversation(
+        queryClient,
+        address,
+        provisionalMessage.createdDate,
+        provisionalMessage.createdDate,
+        {
+          user_icon:
+            conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+          display_name:
+            conversation?.conversation?.displayName ?? 'Unknown User',
+        }
+      );
+
+      // 2) Perform the actual send in the background, then flip isSent and update timestamp
       enqueueOutbound(async () => {
         let outbounds: string[] = [];
-        const nonce = crypto.randomUUID();
-        const messageId = await crypto.subtle.digest(
-          'SHA-256',
-          Buffer.from(
-            nonce +
-              'post' +
-              currentPasskeyInfo.address +
-              (typeof pendingMessage === 'string'
-                ? pendingMessage
-                : JSON.stringify(pendingMessage)),
-            'utf-8'
-          )
-        );
-        const message = {
-          channelId: address!,
-          spaceId: address!,
-          messageId: Buffer.from(messageId).toString('hex'),
-          digestAlgorithm: 'SHA-256',
-          nonce: nonce,
-          createdDate: Date.now(),
-          modifiedDate: Date.now(),
-          lastModifiedHash: '',
-          content:
-            typeof pendingMessage === 'string'
-              ? ({
-                  type: 'post',
-                  senderId: currentPasskeyInfo.address,
-                  text: pendingMessage,
-                  repliesToMessageId: inReplyTo,
-                } as PostMessage)
-              : {
-                  ...(pendingMessage as any),
-                  senderId: currentPasskeyInfo.address,
-                },
-        } as Message;
-        let conversationId = address + '/' + address;
-        const conversation = await messageDB.getConversation({
-          conversationId,
-        });
         let response = await messageDB.getEncryptionStates({ conversationId });
         const inboxes = self.device_registrations
           .map((d) => d.inbox_registration.inbox_address)
@@ -2684,14 +2738,23 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               ).toString('base64'),
               Buffer.from(messageId).toString('base64')
             );
-            message.publicKey = Buffer.from(
+            provisionalMessage.publicKey = Buffer.from(
               new Uint8Array(keyset.userKeyset.user_key.public_key)
             ).toString('hex');
-            message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
+            provisionalMessage.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
               'hex'
             );
           } catch {}
         }
+
+        // Build finalized message once; reuse for encryption and persistence
+        const finalTimestamp = Date.now();
+        const finalizedMessage: Message = {
+          ...provisionalMessage,
+          isSent: true,
+          createdDate: finalTimestamp,
+          modifiedDate: finalTimestamp,
+        };
 
         for (const inbox of inboxes.filter(
           (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
@@ -2704,7 +2767,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
                   keyset.deviceKeyset,
                   [set],
-                  JSON.stringify(message),
+                  JSON.stringify(finalizedMessage),
                   self,
                   currentPasskeyInfo!.displayName,
                   currentPasskeyInfo?.pfpUrl
@@ -2716,7 +2779,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 ...secureChannel.DoubleRatchetInboxEncrypt(
                   keyset.deviceKeyset,
                   [set],
-                  JSON.stringify(message),
+                  JSON.stringify(finalizedMessage),
                   self,
                   currentPasskeyInfo!.displayName,
                   currentPasskeyInfo?.pfpUrl
@@ -2732,7 +2795,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 self.device_registrations
                   .concat(counterparty.device_registrations)
                   .find((d) => d.inbox_registration.inbox_address === inbox)!,
-                JSON.stringify(message),
+                JSON.stringify(finalizedMessage),
                 currentPasskeyInfo!.displayName,
                 currentPasskeyInfo?.pfpUrl
               )),
@@ -2765,18 +2828,19 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           );
         }
 
-        await saveMessage(message, messageDB, address!, address!, 'direct', {
+        // Persist the same finalized message we sent
+        await saveMessage(finalizedMessage, messageDB, address!, address!, 'direct', {
           user_icon:
             conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
           display_name:
             conversation?.conversation?.displayName ?? t`Unknown User`,
         });
-        await addMessage(queryClient, address, address, message);
+        await addMessage(queryClient, address, address, finalizedMessage);
         addOrUpdateConversation(
           queryClient,
           address,
-          Date.now(),
-          message.createdDate,
+          finalTimestamp,
+          finalizedMessage.createdDate,
           {
             user_icon:
               conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
@@ -4932,47 +4996,59 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       inReplyTo?: string,
       skipSigning?: boolean
     ) => {
+      // 1) Optimistically insert a provisional message
+      const nonce = crypto.randomUUID();
+      const space = await messageDB.getSpace(spaceId);
+      const messageId = await crypto.subtle.digest(
+        'SHA-256',
+        Buffer.from(
+          nonce +
+            'post' +
+            currentPasskeyInfo.address +
+            canonicalize(pendingMessage as any),
+          'utf-8'
+        )
+      );
+      const provisionalMessage = {
+        spaceId: spaceId,
+        channelId: channelId,
+        messageId: Buffer.from(messageId).toString('hex'),
+        digestAlgorithm: 'SHA-256',
+        nonce: nonce,
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        lastModifiedHash: '',
+        clientMessageId: crypto.randomUUID(),
+        isSent: false,
+        content:
+          typeof pendingMessage === 'string'
+            ? ({
+                type: 'post',
+                senderId: currentPasskeyInfo.address,
+                text: pendingMessage,
+                repliesToMessageId: inReplyTo,
+              } as PostMessage)
+            : {
+                ...(pendingMessage as any),
+                senderId: currentPasskeyInfo.address,
+              },
+      } as Message;
+
+      const conversationId = spaceId + '/' + channelId;
+      const conversation = await messageDB.getConversation({
+        conversationId,
+      });
+      await saveMessage(provisionalMessage, messageDB, spaceId, channelId, 'group', {
+        user_icon:
+          conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+        display_name:
+          conversation.conversation?.displayName ?? t`Unknown User`,
+      });
+      await addMessage(queryClient, spaceId, channelId, provisionalMessage);
+
+      // 2) Send in background, then update to sent
       enqueueOutbound(async () => {
         let outbounds: string[] = [];
-        const nonce = crypto.randomUUID();
-        const space = await messageDB.getSpace(spaceId);
-        const messageId = await crypto.subtle.digest(
-          'SHA-256',
-          Buffer.from(
-            nonce +
-              'post' +
-              currentPasskeyInfo.address +
-              canonicalize(pendingMessage as any),
-            'utf-8'
-          )
-        );
-        const message = {
-          spaceId: spaceId,
-          channelId: channelId,
-          messageId: Buffer.from(messageId).toString('hex'),
-          digestAlgorithm: 'SHA-256',
-          nonce: nonce,
-          createdDate: Date.now(),
-          modifiedDate: Date.now(),
-          lastModifiedHash: '',
-          content:
-            typeof pendingMessage === 'string'
-              ? ({
-                  type: 'post',
-                  senderId: currentPasskeyInfo.address,
-                  text: pendingMessage,
-                  repliesToMessageId: inReplyTo,
-                } as PostMessage)
-              : {
-                  ...(pendingMessage as any),
-                  senderId: currentPasskeyInfo.address,
-                },
-        } as Message;
-
-        let conversationId = spaceId + '/' + channelId;
-        const conversation = await messageDB.getConversation({
-          conversationId,
-        });
         let response = await messageDB.getEncryptionStates({
           conversationId: spaceId + '/' + spaceId,
         });
@@ -4980,14 +5056,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
         // enforce non-repudiability
         if (
-          !space?.isRepudiable ||
-          (space?.isRepudiable && !skipSigning) ||
+          (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) ||
           (typeof pendingMessage !== 'string' &&
             (pendingMessage as any).type === 'update-profile')
         ) {
           const inboxKey = await messageDB.getSpaceKey(spaceId, 'inbox');
-          message.publicKey = inboxKey.publicKey;
-          message.signature = Buffer.from(
+          provisionalMessage.publicKey = inboxKey.publicKey;
+          provisionalMessage.signature = Buffer.from(
             JSON.parse(
               ch.js_sign_ed448(
                 Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
@@ -4998,11 +5073,20 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           ).toString('hex');
         }
 
+        // Build finalized message ONCE; reuse for encryption + persistence
+        const finalTimestamp = Date.now();
+        const finalizedMessage: Message = {
+          ...provisionalMessage,
+          isSent: true,
+          createdDate: finalTimestamp,
+          modifiedDate: finalTimestamp,
+        };
+
         const msg = secureChannel.TripleRatchetEncrypt(
           JSON.stringify({
             ratchet_state: sets[0].state,
             message: [
-              ...new Uint8Array(Buffer.from(JSON.stringify(message), 'utf-8')),
+              ...new Uint8Array(Buffer.from(JSON.stringify(finalizedMessage), 'utf-8')),
             ],
           } as secureChannel.TripleRatchetStateAndMessage)
         );
@@ -5018,13 +5102,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             })
           )
         );
-        await saveMessage(message, messageDB, spaceId, channelId, 'group', {
+        await saveMessage(finalizedMessage, messageDB, spaceId, channelId, 'group', {
           user_icon:
             conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
           display_name:
             conversation.conversation?.displayName ?? t`Unknown User`,
         });
-        await addMessage(queryClient, spaceId, channelId, message);
+        await addMessage(queryClient, spaceId, channelId, finalizedMessage);
 
         return outbounds;
       });
@@ -5346,24 +5430,20 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           ['encrypt']
         );
 
+        config.spaceKeys = [];
         const spaces = await messageDB.getSpaces();
 
-        // Fetch all space keys and encryption states in parallel
-        const spaceKeysPromises = spaces.map(async (space) => {
-          const [keys, encryptionState] = await Promise.all([
-            messageDB.getSpaceKeys(space.spaceId),
-            messageDB.getEncryptionStates({
-              conversationId: space.spaceId + '/' + space.spaceId,
-            }),
-          ]);
-          return {
+        for (const space of spaces) {
+          const keys = await messageDB.getSpaceKeys(space.spaceId);
+          const encryptionState = await messageDB.getEncryptionStates({
+            conversationId: space.spaceId + '/' + space.spaceId,
+          });
+          config.spaceKeys.push({
             spaceId: space.spaceId,
             encryptionState: encryptionState[0],
             keys: keys,
-          };
-        });
-
-        config.spaceKeys = await Promise.all(spaceKeysPromises);
+          });
+        }
 
         let iv = crypto.getRandomValues(new Uint8Array(12));
         const ciphertext =
@@ -5375,23 +5455,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             )
           ).toString('hex') + Buffer.from(iv).toString('hex');
 
-        const signature = Buffer.from(
-          JSON.parse(
-            ch.js_sign_ed448(
-              Buffer.from(
-                new Uint8Array(userKey.user_key.private_key)
-              ).toString('base64'),
-              Buffer.from(
-                new Uint8Array([
-                  ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
-                  ...int64ToBytes(ts),
-                ])
-              ).toString('base64')
-            )
-          ),
-          'base64'
-        ).toString('hex');
-
         await apiClient.postUserSettings(config.address, {
           user_address: config.address,
           user_public_key: Buffer.from(
@@ -5399,7 +5462,22 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           ).toString('hex'),
           user_config: ciphertext,
           timestamp: ts,
-          signature: signature,
+          signature: Buffer.from(
+            JSON.parse(
+              ch.js_sign_ed448(
+                Buffer.from(
+                  new Uint8Array(userKey.user_key.private_key)
+                ).toString('base64'),
+                Buffer.from(
+                  new Uint8Array([
+                    ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
+                    ...int64ToBytes(ts),
+                  ])
+                ).toString('base64')
+              )
+            ),
+            'base64'
+          ).toString('hex'),
         });
       }
 

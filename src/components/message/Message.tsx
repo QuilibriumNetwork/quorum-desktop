@@ -40,7 +40,7 @@ import {
   usePinnedMessages,
 } from '../../hooks';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
-import MessageActions from './MessageActions';
+import MessageActions, { MessageResendAction } from './MessageActions';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -218,6 +218,21 @@ export const Message = ({
     }
   };
 
+  const isPending = useMemo(() => {
+
+    const isOwnMessage = message.content?.senderId === user.currentPasskeyInfo!.address;
+    if (!isOwnMessage) {
+      return false;
+    }
+
+    if (Object.hasOwn(message, 'isSent')) {
+      console.log('isSent', message.isSent);
+      return message.isSent === false;
+    }
+
+    return false;
+  }, [message.isSent, message.content?.senderId, user.currentPasskeyInfo!.address]);
+
   return (
     <FlexColumn
       id={`msg-${message.messageId}`}
@@ -226,7 +241,8 @@ export const Message = ({
         (formatting.isMentioned(user.currentPasskeyInfo!.address)
           ? ' message-mentions-you'
           : '') +
-        (isMessageHighlighted ? ' message-highlighted' : '')
+        (isMessageHighlighted ? ' message-highlighted' : '') +
+        (isPending ? ' message-pending' : '')
       }
       // Desktop mouse interaction
       onMouseOver={interactions.handleMouseOver}
@@ -428,11 +444,15 @@ export const Message = ({
                 showOnTouch={true}
                 autoHideAfter={3000}
               >
-                <Icon name="thumbtack" size="xs" className="ml-2 text-accent" />
+                <Icon
+                  name="thumbtack"
+                  size="xs"
+                  className="ml-2 text-accent"
+                />
               </Tooltip>
             )}
             <Text className="pl-2">
-              {!message.signature && (
+              {!isPending && !message.signature && (
                 <Tooltip
                   id={`signature-warning-${message.messageId}`}
                   content={t`Message does not have a valid signature, this may not be from the sender`}
@@ -446,8 +466,20 @@ export const Message = ({
                   />
                 </Tooltip>
               )}
+              <MessageResendAction
+                isPending={isPending}
+                onResend={() => messageActions.handleResend()}
+              />
             </Text>
-            <Text className="message-timestamp">{displayedTimestmap}</Text>
+            <Text className="message-timestamp">
+              {displayedTimestmap}
+              {isPending && (
+                <>
+                  {' '}
+                  <Icon name="spinner" className="message-sending" size="xs" />
+                </>
+              )}
+            </Text>
             {(() => {
               const contentData = formatting.getContentData();
               if (!contentData) return null;

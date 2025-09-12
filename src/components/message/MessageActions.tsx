@@ -1,8 +1,24 @@
 import React, { useState } from 'react';
+import { Button, Icon, Tooltip } from '../primitives';
 import { Message as MessageType } from '../../api/quorumApi';
-import { Tooltip, Icon } from '../primitives';
 import { useQuickReactions } from '../../hooks/business/messages';
 import { t } from '@lingui/core/macro';
+
+type Props = {
+  onResend?: () => void;
+  isPending?: boolean;
+};
+
+export const MessageResendAction: React.FC<Props> = ({ onResend, isPending }) => {
+  if (!isPending || !onResend) return null;
+  return (
+    <Button type="unstyled" className="ml-2 inline-flex items-center" onClick={onResend}>
+      <Icon name="redo" size="xs" className="mr-1" /> Resend
+    </Button>
+  );
+};
+
+// Note: MessageResendAction is a named export; default export is MessageActions below
 
 // Configuration constants for message actions
 const MESSAGE_ACTIONS_CONFIG = {

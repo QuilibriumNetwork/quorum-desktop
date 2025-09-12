@@ -120,18 +120,25 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
         showNotificationForNewMessages(totalNewMessages);
       }
 
-      // Process outbound messages only if socket is open
+      // Process outbound messages only if socket is open, yielding between items
       if (wsRef.current?.readyState === WebSocket.OPEN) {
-        while ((outbound = dequeueOutbound())) {
+        const processNextOutbound = async () => {
+          const item = dequeueOutbound();
+          if (!item) return;
           try {
-            const messages = await outbound();
+            const messages = await item();
             for (const m of messages) {
-              wsRef.current.send(m);
+              wsRef.current!.send(m);
             }
           } catch (error) {
             console.error(t`Error processing outbound:`, error);
+          } finally {
+            // Yield back to the event loop to keep UI responsive
+            setTimeout(processNextOutbound, 0);
           }
-        }
+        };
+        // Kick off processing one at a time
+        setTimeout(processNextOutbound, 0);
       }
     } catch (error) {
       console.error(t`Error processing queue:`, error);
@@ -187,7 +194,8 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
 
   const enqueueOutbound = (message: OutboundMessage) => {
     outboundQueue.current = [...outboundQueue.current, message];
-    processQueue();
+    // Defer processing to next tick so user interactions (like navigation) aren't blocked
+    setTimeout(processQueue, 0);
   };
 
   const setMessageHandler = (handler: MessageHandler) => {

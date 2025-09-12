@@ -72,7 +72,7 @@ export interface SearchResult {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 3;
+  private readonly DB_VERSION = 4;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexInitialized = false;
 
@@ -146,6 +146,14 @@ export class MessageDB {
               'pinnedAt',
             ]);
           }
+        }
+
+        if (event.oldVersion < 4) {
+          // Dedup store: keys per conversationId + clientMessageId
+          const seen = db.createObjectStore('seen_client_messages', {
+            keyPath: ['conversationId', 'clientMessageId'],
+          });
+          seen.createIndex('by_conversation', ['conversationId']);
         }
       };
     });
@@ -1107,6 +1115,34 @@ export class MessageDB {
     });
   }
 
+  async hasSeenClientMessage(
+    conversationId: string,
+    clientMessageId: string
+  ): Promise<boolean> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('seen_client_messages', 'readonly');
+      const store = tx.objectStore('seen_client_messages');
+      const req = store.get([conversationId, clientMessageId]);
+      req.onsuccess = () => resolve(Boolean(req.result));
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async markClientMessageSeen(
+    conversationId: string,
+    clientMessageId: string
+  ): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('seen_client_messages', 'readwrite');
+      const store = tx.objectStore('seen_client_messages');
+      store.put({ conversationId, clientMessageId, seenAt: Date.now() });
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
   async deleteUser(address: string): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -1165,6 +1201,27 @@ export class MessageDB {
 
       request.onsuccess = () => resolve();
       request.onerror = () => reject(request.error);
+    });
+  }
+
+  async deleteDedupForConversation(conversationId: string): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('seen_client_messages', 'readwrite');
+      const store = tx.objectStore('seen_client_messages');
+      const index = store.index('by_conversation');
+      const range = IDBKeyRange.only(conversationId);
+      const req = index.openCursor(range);
+      req.onsuccess = (e) => {
+        const cursor = (e.target as IDBRequest<IDBCursorWithValue | null>).result;
+        if (cursor) {
+          store.delete(cursor.primaryKey as IDBValidKey);
+          cursor.continue();
+        } else {
+          resolve();
+        }
+      };
+      req.onerror = () => reject(req.error);
     });
   }
 

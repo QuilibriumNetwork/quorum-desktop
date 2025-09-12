@@ -81,6 +81,18 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     });
   }, [message.messageId, onSubmitMessage]);
 
+  // Resend pending message (only own message)
+  const handleResend = useCallback(() => {
+    if (message.content.senderId !== userAddress) return;
+    if (message.isSent === false) {
+      // Reconstruct a minimal payload from the original message
+      const payload = message.content.type === 'post'
+        ? { type: 'post', text: (message.content as any).text, repliesToMessageId: (message.content as any).repliesToMessageId }
+        : message.content;
+      onSubmitMessage(payload as any);
+    }
+  }, [message, userAddress, onSubmitMessage]);
+
   // Handle more reactions (emoji picker)
   const handleMoreReactions = useCallback(
     (clientY: number) => {
@@ -102,6 +114,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     handleReply,
     handleCopyLink,
     handleDelete,
+    handleResend,
     handleMoreReactions,
   };
 }

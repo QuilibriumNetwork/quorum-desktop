@@ -104,8 +104,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
 
   // Calculate textarea rows
   const calculateRows = useCallback(() => {
-    const rowCount =
-      pendingMessage.split('').filter((c) => c === '\n').length + 1;
+    const rowCount = pendingMessage.split('').filter((c) => c === '\n').length + 1;
 
     if (rowCount > 4) return 4;
     if (pendingMessage === '') return 1;
@@ -121,53 +120,40 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
 
   // Submit message
   const submitMessage = useCallback(async () => {
-    if ((pendingMessage || fileData) && !isSubmitting) {
-      setIsSubmitting(true);
-      try {
-        if (pendingMessage) {
-          await onSubmitMessage(pendingMessage, inReplyTo?.messageId);
-        }
-        if (fileData) {
-          const embedMessage: EmbedMessage = {
-            type: 'embed',
-            imageUrl: `data:${fileType};base64,${Buffer.from(fileData).toString('base64')}`,
-          } as EmbedMessage;
-          await onSubmitMessage(embedMessage, inReplyTo?.messageId);
-        }
-        // Clear state after successful submission
-        setPendingMessage('');
-        setFileData(undefined);
-        setFileType(undefined);
-        setInReplyTo(undefined);
-      } finally {
-        setIsSubmitting(false);
-      }
+    if (!(pendingMessage || fileData)) return;
+
+    // Snapshot current values and clear UI immediately to avoid any locking
+    const text = pendingMessage;
+    const buf = fileData;
+    const mime = fileType;
+    const replyId = inReplyTo?.messageId;
+
+    setPendingMessage('');
+    setFileData(undefined);
+    setFileType(undefined);
+    setInReplyTo(undefined);
+
+    // Fire-and-forget sends to keep the UI responsive
+    if (text) {
+      void onSubmitMessage(text, replyId);
     }
-  }, [
-    pendingMessage,
-    fileData,
-    fileType,
-    isSubmitting,
-    onSubmitMessage,
-    inReplyTo,
-  ]);
+    if (buf) {
+      const embedMessage: EmbedMessage = {
+        type: 'embed',
+        imageUrl: `data:${mime};base64,${Buffer.from(buf).toString('base64')}`,
+      } as EmbedMessage;
+      void onSubmitMessage(embedMessage, replyId);
+    }
+  }, [pendingMessage, fileData, fileType, onSubmitMessage, inReplyTo]);
 
   // Submit sticker
-  const submitSticker = useCallback(
-    async (stickerId: string) => {
-      if (onSubmitSticker && !isSubmitting) {
-        setIsSubmitting(true);
-        try {
-          await onSubmitSticker(stickerId, inReplyTo?.messageId);
-          setInReplyTo(undefined);
-          setShowStickers(false);
-        } finally {
-          setIsSubmitting(false);
-        }
-      }
-    },
-    [onSubmitSticker, isSubmitting, inReplyTo]
-  );
+  const submitSticker = useCallback(async (stickerId: string) => {
+    if (!onSubmitSticker) return;
+    const replyId = inReplyTo?.messageId;
+    setInReplyTo(undefined);
+    setShowStickers(false);
+    void onSubmitSticker(stickerId, replyId);
+  }, [onSubmitSticker, inReplyTo]);
 
   // Handle key press
   const handleKeyDown = useCallback(
