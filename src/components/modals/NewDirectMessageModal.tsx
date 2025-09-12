@@ -9,6 +9,7 @@ import {
   Icon,
   Tooltip,
   FlexRow,
+  Spacer,
 } from '../primitives';
 import './NewDirectMessageModal.scss';
 import { t } from '@lingui/core/macro';
@@ -87,10 +88,8 @@ const NewDirectMessageModal: React.FunctionComponent<
       >
         <Container margin="none" className="mb-4">
           <Text
-            size="sm"
-            variant="subtle"
-            align="left"
-            className="text-left max-sm:text-center"
+            className="text-sm text-subtle !text-left max-sm:!text-center !block"
+            style={{ textAlign: 'left' }}
           >
             {t`Enter a user's address to start messaging them.`}
           </Text>
@@ -130,20 +129,22 @@ const NewDirectMessageModal: React.FunctionComponent<
           </Container>
         </React.Suspense>
 
-        <Container margin="none" className="mt-6 pt-4 border-t border-default">
+        <Spacer spaceBefore="lg" spaceAfter="md" border={true} direction="vertical" />
+        <Container margin="none">
           <FlexRow className="items-center justify-between">
-            <FlexRow className="items-center text-sm text-subtle gap-1">
-              <span>{t`Always sign messages`}</span>
+            <FlexRow className="items-center">
+              <Text className="modal-text-small text-subtle">{t`Always sign messages`}</Text>
               <Tooltip
                 id="dm-nonrepudiable-tip"
                 content={t`You can change this later for this conversation by clicking the lock icon in the Conversation view.`}
                 maxWidth={260}
-                className="!text-left"
+                className="!text-left !max-w-[260px]"
+                place="top"
               >
                 <Icon
                   name="info-circle"
                   size="xs"
-                  className="text-subtle info-icon-tooltip"
+                  className="text-subtle hover:text-strong cursor-pointer ml-2"
                 />
               </Tooltip>
             </FlexRow>

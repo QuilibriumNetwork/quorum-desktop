@@ -1,4 +1,4 @@
-perfectimport * as React from 'react';
+import * as React from 'react';
 import { Input, Button, Modal, Switch, Icon, Tooltip, Spacer } from '../primitives';
 import './CreateSpaceModal.scss';
 import SpaceIcon from '../navbar/SpaceIcon';
@@ -48,60 +48,63 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
       title={t`Create a Space`}
     >
       <div>
-        <div className="flex flex-row justify-around pb-4">
-          <div
-            id="space-icon-tooltip-target"
-            className={`avatar-upload ${!fileData ? 'empty' : ''}`}
-            style={
-              fileData && currentFile
-                ? {
-                    backgroundImage: `url(data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')})`,
-                  }
-                : {}
-            }
-            {...getRootProps()}
-          >
-            <input {...getInputProps()} />
-            {!fileData && <Icon name="image" className="icon" />}
-          </div>
-          {!isUploading && !isDragActive && (
-            /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */
-            <ReactTooltip
-              id="space-icon-tooltip"
-              content="Upload an avatar for this Space - PNG or JPG, Max 1MB, Optimal size 123×123px"
-              place="bottom"
-              className="!w-[400px]"
-              anchorSelect="#space-icon-tooltip-target"
-            />
-          )}
-        </div>
-        <div className="flex flex-col justify-around pb-4 select-none cursor-default">
-          <div className="mb-1 text-center">{t`Space Icon Attachment`}</div>
-          {fileError && (
-            <div className="error-label flex items-center justify-between">
-              <span>{fileError}</span>
-              <Icon
-                name="times"
-                className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
-                onClick={clearFileError}
-              />
+        <div className="flex flex-col md:flex-row md:items-center md:justify-center md:gap-6">
+          <div className="flex justify-center">
+            <div
+              id="space-icon-tooltip-target"
+              className={`avatar-upload ${!fileData ? 'empty' : ''}`}
+              style={
+                fileData && currentFile
+                  ? {
+                      backgroundImage: `url(data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')})`,
+                    }
+                  : {}
+              }
+              {...getRootProps()}
+            >
+              <input {...getInputProps()} />
+              {!fileData && <Icon name="image" className="icon" />}
             </div>
-          )}
-        </div>
-
-        <div className="select-none cursor-default">
-          <Input
-            value={spaceName}
-            onChange={(value) => setSpaceName(value)}
-            placeholder={t`Enter a name for your new Space`}
-            className="w-full"
-          />
-          <div className="mt-4 text-xs text-subtle">
-            <Trans>
-              Default Space settings provide the most typical chat experience,
-              but for higher privacy guarantees, review Advanced Settings.
-            </Trans>
+            {!isUploading && !isDragActive && (
+              /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */
+              <ReactTooltip
+                id="space-icon-tooltip"
+                content="Upload an avatar for this Space - PNG or JPG, Max 1MB, Optimal size 128×128px"
+                place="bottom"
+                className="!w-[400px]"
+                anchorSelect="#space-icon-tooltip-target"
+              />
+            )}
           </div>
+          <div className="flex flex-col flex-1 mt-4 md:mt-0">
+            <Input
+              value={spaceName}
+              onChange={(value) => setSpaceName(value)}
+              placeholder={t`Enter a name for your new Space`}
+              className="w-full"
+              label={t`Space Name`}
+              labelType="static"
+            />
+            {fileError && (
+              <div className="error-label flex items-center justify-between mt-2">
+                <span>{fileError}</span>
+                <Icon
+                  name="times"
+                  className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
+                  onClick={clearFileError}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="mt-4 text-sm text-subtle">
+          <Trans>
+            Upload an image and choose a name for your Space.
+          </Trans>
+        </div>
+                <div className="mt-4 text-sm text-subtle">
+          <Trans> Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings.
+          </Trans>
         </div>
         {advancedMode && (
           <div className="mt-4 pt-5 select-none cursor-default">
