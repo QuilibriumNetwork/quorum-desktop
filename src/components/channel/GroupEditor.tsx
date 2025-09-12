@@ -48,10 +48,12 @@ const GroupEditor: React.FunctionComponent<{
     >
       <Container style={{ textAlign: 'left' }}>
         <Container className="mb-4 max-sm:mb-1">
-          <Text className="small-caps">
-            <Trans>Group Name</Trans>
-          </Text>
-          <Input value={group} onChange={handleGroupNameChange} />
+          <Input 
+            value={group} 
+            onChange={handleGroupNameChange}
+            label={t`Group Name`}
+            labelType="static"
+          />
         </Container>
         <FlexRow className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
           <Button

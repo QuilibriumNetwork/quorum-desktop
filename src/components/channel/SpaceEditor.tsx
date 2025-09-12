@@ -7,6 +7,7 @@ import {
   Input,
   Icon,
   Tooltip,
+  Spacer,
 } from '../primitives';
 import { useSpace } from '../../hooks';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
@@ -385,18 +386,18 @@ const SpaceEditor: React.FunctionComponent<{
                           />
                         )}
                         <div className="modal-text-section mt-4">
-                          <div className="small-caps">
-                            <Trans>Space Name</Trans>
-                          </div>
                           <Input
-                            className="w-full"
+                            className="w-full md:w-80 modal-input-text"
                             value={spaceName}
                             onChange={setSpaceName}
+                            label={t`Space Name`}
+                            labelType="static"
                           />
                         </div>
                       </div>
                       <div className="modal-content-section">
-                        <div className="modal-content-section-header small-caps">
+                        <Spacer size="md" direction="vertical" borderTop={true} />
+                        <div className="modal-text-label">
                           <Trans>Space Banner</Trans>
                         </div>
                         <div className="modal-content-info">
@@ -457,7 +458,8 @@ const SpaceEditor: React.FunctionComponent<{
                             </div>
                           )}
                         </div>
-                        <div className="modal-content-section-header small-caps">
+                        <Spacer size="md" direction="vertical" borderTop={true} />
+                        <div className="modal-text-label">
                           <Trans>Default Channel</Trans>
                         </div>
                         <div className="modal-content-info">
@@ -477,7 +479,8 @@ const SpaceEditor: React.FunctionComponent<{
                             style={{ textAlign: 'left' }}
                           />
                         </div>
-                        <div className="modal-content-section-header small-caps">
+                        <Spacer size="md" direction="vertical" borderTop={true} />
+                        <div className="modal-text-label">
                           <Trans>Privacy Settings</Trans>
                         </div>
                         <div className="modal-content-info">
@@ -538,124 +541,128 @@ const SpaceEditor: React.FunctionComponent<{
                             <Trans>Add Role</Trans>
                           </Button>
                         </div>
-                        {roles.map((r, i) => {
-                          return (
-                            <div
-                              key={'space-editor-role-' + i}
-                              className="modal-content-section-header text-main"
-                            >
+                        <div className="max-h-[400px] overflow-y-auto border border-surface-6 rounded-lg">
+                          {roles.map((r, i) => {
+                            return (
                               <div
-                                className="grid gap-4 py-4"
-                                style={{ gridTemplateColumns: '1fr 1fr auto' }}
+                                key={'space-editor-role-' + i}
+                                className="text-main px-3"
                               >
-                                {/* Cell 1: Role tag and name */}
-                                <div className="flex flex-col">
-                                  <div>
-                                    @
-                                    <input
-                                      className="border-0 bg-[rgba(0,0,0,0)] pr-2 outline-none focus:bg-surface-1 focus:px-2 focus:py-1 focus:rounded transition-all"
-                                      style={{
-                                        width:
-                                          (roles.find((_, pi) => i == pi)
-                                            ?.roleTag.length ?? 0) *
-                                            11 +
-                                          11 +
-                                          'px',
-                                      }}
-                                      onChange={(e) =>
-                                        updateRoleTag(i, e.target.value)
-                                      }
-                                      value={r.roleTag}
-                                    />
-                                  </div>
-                                  <div className="mt-1">
-                                    <span
-                                      className="font-mono modal-role"
-                                      style={{ backgroundColor: r.color }}
-                                    >
+                                <div
+                                  className="flex flex-col gap-4 py-4 sm:grid sm:grid-cols-[1fr_1fr_auto]"
+                                >
+                                  {/* Cell 1: Role tag and name */}
+                                  <div className="flex flex-col">
+                                    <div>
+                                      @
                                       <input
-                                        className="border-0 bg-[rgba(0,0,0,0)] outline-none focus:bg-[rgba(0,0,0,0.1)] focus:px-2 focus:py-1 focus:rounded transition-all"
+                                        className="border-0 bg-[rgba(0,0,0,0)] pr-2 outline-none focus:bg-surface-1 focus:px-2 focus:py-1 focus:rounded transition-all"
                                         style={{
                                           width:
-                                            Math.max(
-                                              (r.displayName.length || 3) * 8,
-                                              60
-                                            ) + 'px',
+                                            (roles.find((_, pi) => i == pi)
+                                              ?.roleTag.length ?? 0) *
+                                              11 +
+                                            11 +
+                                            'px',
                                         }}
                                         onChange={(e) =>
-                                          updateRoleDisplayName(
+                                          updateRoleTag(i, e.target.value)
+                                        }
+                                        value={r.roleTag}
+                                      />
+                                    </div>
+                                    <div className="mt-1">
+                                      <span
+                                        className="font-mono modal-role"
+                                        style={{ backgroundColor: r.color }}
+                                      >
+                                        <input
+                                          className="border-0 bg-[rgba(0,0,0,0)] outline-none focus:bg-[rgba(0,0,0,0.1)] focus:px-2 focus:py-1 focus:rounded transition-all"
+                                          style={{
+                                            width:
+                                              Math.max(
+                                                (r.displayName.length || 3) * 8,
+                                                60
+                                              ) + 'px',
+                                          }}
+                                          onChange={(e) =>
+                                            updateRoleDisplayName(
+                                              i,
+                                              e.target.value
+                                            )
+                                          }
+                                          value={r.displayName}
+                                        />
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  {/* Cell 2: Permissions */}
+                                  <div className="flex flex-col">
+                                    <div className="text-sm font-normal">
+                                      <Trans>Permissions:</Trans>
+                                    </div>
+                                    <div className="mt-1">
+                                      <Select
+                                        multiple
+                                        value={
+                                          roles.find((_, pi) => i == pi)
+                                            ?.permissions || []
+                                        }
+                                        onChange={(selectedPermissions) =>
+                                          updateRolePermissions(
                                             i,
-                                            e.target.value
+                                            selectedPermissions as string[]
                                           )
                                         }
-                                        value={r.displayName}
+                                        placeholder={t`Select permissions`}
+                                        width="200px"
+                                        options={[
+                                          {
+                                            value: 'message:delete',
+                                            label: t`Delete Messages`,
+                                          },
+                                          {
+                                            value: 'message:pin',
+                                            label: t`Pin Messages`,
+                                          },
+                                          {
+                                            value: 'user:kick',
+                                            label: t`Kick Users`,
+                                          },
+                                        ]}
                                       />
-                                    </span>
+                                    </div>
                                   </div>
-                                </div>
 
-                                {/* Cell 2: Permissions */}
-                                <div className="flex flex-col">
-                                  <div className="text-sm font-normal">
-                                    <Trans>Permissions:</Trans>
-                                  </div>
-                                  <div className="mt-1">
-                                    <Select
-                                      multiple
-                                      value={
-                                        roles.find((_, pi) => i == pi)
-                                          ?.permissions || []
-                                      }
-                                      onChange={(selectedPermissions) =>
-                                        updateRolePermissions(
-                                          i,
-                                          selectedPermissions as string[]
-                                        )
-                                      }
-                                      placeholder={t`Select permissions`}
-                                      width="200px"
-                                      options={[
-                                        {
-                                          value: 'message:delete',
-                                          label: t`Delete Messages`,
-                                        },
-                                        {
-                                          value: 'message:pin',
-                                          label: t`Pin Messages`,
-                                        },
-                                        {
-                                          value: 'user:kick',
-                                          label: t`Kick Users`,
-                                        },
-                                      ]}
-                                    />
+                                  {/* Cell 3: Delete button */}
+                                  <div className="flex flex-col">
+                                    <div className="flex justify-start sm:justify-end">
+                                      <Tooltip
+                                        id={`delete-role-${i}`}
+                                        content={t`Delete Role`}
+                                        place="left"
+                                        showOnTouch={false}
+                                      >
+                                        <Icon
+                                          name="trash"
+                                          className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
+                                          onClick={() => deleteRole(i)}
+                                        />
+                                      </Tooltip>
+                                    </div>
+                                    <div className="mt-1">
+                                      {/* Empty space for alignment */}
+                                    </div>
                                   </div>
                                 </div>
-
-                                {/* Cell 3: Delete button */}
-                                <div className="flex flex-col">
-                                  <div className="flex justify-end">
-                                    <Tooltip
-                                      id={`delete-role-${i}`}
-                                      content={t`Delete Role`}
-                                      place="left"
-                                      showOnTouch={false}
-                                    >
-                                      <Icon
-                                        name="trash"
-                                        className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
-                                        onClick={() => deleteRole(i)}
-                                      />
-                                    </Tooltip>
-                                  </div>
-                                  <div className="mt-1">
-                                    {/* Empty space for alignment */}
-                                  </div>
-                                </div>
+                                {i < roles.length - 1 && (
+                                  <div className="border-t border-dashed border-surface-7" />
+                                )}
                               </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
                         {roleValidationError && (
                           <div
                             className="mt-4 text-sm"
@@ -868,7 +875,7 @@ const SpaceEditor: React.FunctionComponent<{
                         <div className="flex"></div>
                         <div className=""></div>
                         <div className="modal-content-info">
-                          <div className="small-caps">
+                          <div className="input-style-label">
                             <Trans>Existing Conversations</Trans>
                           </div>
                           <Select
@@ -892,14 +899,14 @@ const SpaceEditor: React.FunctionComponent<{
                             }}
                             placeholder={t`Select conversation`}
                           />
-                          <div className="small-caps mt-2">
-                            <Trans>Enter Address Manually</Trans>
-                          </div>
+                          <Spacer size="md"></Spacer>
                           <Input
                             className="w-full"
                             value={manualAddress}
                             placeholder="Type the address of the user you want to send to"
                             onChange={setManualAddress}
+                            label={t`Enter Address Manually`}
+                            labelType="static"
                           />
                           {success && (
                             <div className="text-success-hex">
@@ -909,19 +916,24 @@ const SpaceEditor: React.FunctionComponent<{
                               </Trans>
                             </div>
                           )}
-                          <div className="border-t border-strong mt-4 pt-4"></div>
+                          <Spacer 
+                            spaceBefore="lg" 
+                            spaceAfter="md" 
+                            border={true} 
+                            direction="vertical" 
+                          />
                           <div className="flex flex-row justify-between">
-                            <div className="text-sm flex flex-row justify-center">
-                              <div className="text-lg flex flex-col justify-around">
+                            <div className="flex flex-col">
+                              <div className="modal-text-label">
                                 <Trans>Public Invite Link</Trans>
-                                <div className="text-sm flex flex-col justify-around pt-2 max-w-[500px]">
-                                  <Trans>
-                                    Public invite links allow anyone with access
-                                    to the link join your Space. Understand the
-                                    risks of enabling this, and to whom and
-                                    where you share the link.
-                                  </Trans>
-                                </div>
+                              </div>
+                              <div className="text-sm flex flex-col justify-around pt-2 max-w-[500px]">
+                                <Trans>
+                                  Public invite links allow anyone with access
+                                  to the link join your Space. Understand the
+                                  risks of enabling this, and to whom and
+                                  where you share the link.
+                                </Trans>
                               </div>
                             </div>
                             <div className="flex flex-col justify-center pt-2">

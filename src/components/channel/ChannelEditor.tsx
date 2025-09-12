@@ -63,21 +63,25 @@ const ChannelEditor: React.FunctionComponent<{
     >
       <Container style={{ textAlign: 'left' }}>
         <Container className="mb-4 max-sm:mb-1">
-          <Text className="small-caps">
-            <Trans>Channel Name</Trans>
-          </Text>
-          <Input value={channelName} onChange={handleChannelNameChange} />
+          <Input 
+            value={channelName} 
+            onChange={handleChannelNameChange}
+            label={t`Channel Name`}
+            labelType="static"
+          />
         </Container>
         <Container className="mb-4">
-          <Text className="small-caps">
-            <Trans>Channel Topic</Trans>
-          </Text>
-          <Input value={channelTopic} onChange={handleChannelTopicChange} />
+          <Input 
+            value={channelTopic} 
+            onChange={handleChannelTopicChange}
+            label={t`Channel Topic`}
+            labelType="static"
+          />
         </Container>
 
         <Container className="mb-2 max-sm:mb-1">
           <FlexRow className="items-center justify-between">
-            <div className="flex flex-row items-center">
+            <FlexRow className="items-center">
               <Text className="modal-text-small text-main">
                 <Trans>Read only</Trans>
               </Text>
@@ -94,7 +98,7 @@ const ChannelEditor: React.FunctionComponent<{
                   className="text-main hover:text-strong cursor-pointer ml-2"
                 />
               </Tooltip>
-            </div>
+            </FlexRow>
             <Switch
               value={isReadOnly}
               onChange={handleReadOnlyChange}

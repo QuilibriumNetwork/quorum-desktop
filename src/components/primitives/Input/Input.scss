@@ -30,7 +30,7 @@
   }
 
   &--static {
-    color: var(--color-text-main);
+    color: rgb(var(--color-text-main));
     margin-bottom: 0.25rem;
     display: block;
     font-size: 0.75rem;
@@ -54,7 +54,7 @@
       top: -24px; // Position above the input like static labels
       left: 0; // Align with left edge of input field
       transform: translateY(0);
-      color: var(--color-text-main);
+      color: rgb(var(--color-text-main));
       font-size: 0.75rem;
       font-weight: 600;
       text-transform: uppercase;

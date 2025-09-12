@@ -1,5 +1,5 @@
-import * as React from 'react';
-import { Input, Button, Modal, Switch, Icon, Tooltip } from '../primitives';
+perfectimport * as React from 'react';
+import { Input, Button, Modal, Switch, Icon, Tooltip, Spacer } from '../primitives';
 import './CreateSpaceModal.scss';
 import SpaceIcon from '../navbar/SpaceIcon';
 import { useSpaceCreation, useFileUpload, useSpaceSettings } from '../../hooks';
@@ -47,7 +47,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
       onClose={props.onClose}
       title={t`Create a Space`}
     >
-      <div className="modal-width-large">
+      <div>
         <div className="flex flex-row justify-around pb-4">
           <div
             id="space-icon-tooltip-target"
@@ -106,24 +106,22 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
         {advancedMode && (
           <div className="mt-4 pt-5 select-none cursor-default">
             <div className="flex flex-row justify-between pb-2">
-              <div className="text-sm flex flex-row">
-                <div className="text-sm flex flex-col justify-around">
+              <div className="flex flex-row items-center">
+                <div className="modal-text-small text-main">
                   <Trans>Require Message Signing</Trans>
                 </div>
-                <div className="text-sm flex flex-col justify-around ml-2">
-                  <Tooltip
-                    id="repudiability-tooltip"
-                    content={t`Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable.`}
-                    place="top"
-                    className="!w-[400px]"
-                    maxWidth={400}
-                  >
-                    <Icon
-                      name="info-circle"
-                      className="info-icon-tooltip hover:text-main cursor-pointer"
-                    />
-                  </Tooltip>
-                </div>
+                <Tooltip
+                  id="repudiability-tooltip"
+                  content={t`Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable.`}
+                  place="bottom"
+                  className="!w-[400px]"
+                  maxWidth={400}
+                >
+                  <Icon
+                    name="info-circle"
+                    className="text-main hover:text-strong cursor-pointer ml-2"
+                  />
+                </Tooltip>
               </div>
               <Switch
                 onChange={() => setRepudiable(!repudiable)}
@@ -131,31 +129,30 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               />
             </div>
             <div className="flex flex-row justify-between pb-2">
-              <div className="text-sm flex flex-row">
-                <div className="text-sm flex flex-col justify-around">
+              <div className="flex flex-row items-center">
+                <div className="modal-text-small text-main">
                   Directly joinable by link
                 </div>
-                <div className="text-sm flex flex-col justify-around ml-2">
-                  <Tooltip
-                    id="public-tooltip"
-                    content={t`When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid.`}
-                    place="bottom"
-                    className="!w-[400px]"
-                    maxWidth={400}
-                  >
-                    <Icon
-                      name="info-circle"
-                      className="info-icon-tooltip hover:text-main cursor-pointer"
-                    />
-                  </Tooltip>
-                </div>
+                <Tooltip
+                  id="public-tooltip"
+                  content={t`When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid.`}
+                  place="bottom"
+                  className="!w-[400px]"
+                  maxWidth={400}
+                >
+                  <Icon
+                    name="info-circle"
+                    className="text-main hover:text-strong cursor-pointer ml-2"
+                  />
+                </Tooltip>
               </div>
               <Switch onChange={setPublic} value={pub} />
             </div>
           </div>
         )}
         {/* <div className="mt-4 py-5 mx-[-26px] px-4 rounded-b-xl bg-surface-4 mb-[-26px] h-16 flex flex-row-reverse justify-between"> Issues with bottom space*/}
-        <div className="mt-6 pt-6 rounded-b-xl border-t border-strong flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
+        <Spacer spaceBefore="lg" spaceAfter="lg" border={true} direction="vertical" />
+        <div className="rounded-b-xl flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
           {!advancedMode && (
             <Button
               type="secondary"

@@ -7,6 +7,7 @@ import {
   Input,
   Icon,
   Tooltip,
+  Spacer,
 } from '../primitives';
 import '../../styles/_modal_common.scss';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -275,11 +276,13 @@ const UserSettingsModal: React.FunctionComponent<{
                           />
                         )}
                         <div className="modal-text-section md:mt-0 md:ml-0 flex flex-col items-start">
-                          <div className="modal-text-label md:mt-4 mb-2">{t`Display Name`}</div>
+                          <Spacer size="xl" direction="vertical" className="hidden md:block" />
                           <Input
                             className="w-full md:w-80 modal-input-text"
                             value={displayName}
                             onChange={setDisplayName}
+                            label={t`Display Name`}
+                            labelType="static"
                           />
                         </div>
                       </div>
@@ -297,7 +300,7 @@ const UserSettingsModal: React.FunctionComponent<{
                           </div>
                         )}
                         <div className="modal-content-info">
-                          <div className="modal-text-label">{t`Account Address`}</div>
+                          <div className="modal-text-label !text-xs !text-main">{t`Account Address`}</div>
                           <div className="pt-2 mb-4 modal-text-small text-main">
                             {t`This is your public address and is safe to share with anyone you want to interact with.`}
                           </div>
@@ -359,56 +362,68 @@ const UserSettingsModal: React.FunctionComponent<{
                         </div>
                       </div>
                       <div className="modal-content-section">
-                        <div className="modal-content-section-header" />
+                        <Spacer size="md" direction="vertical" borderTop={true} />
                         <div className="modal-text-label pb-2">Devices</div>
-                        {stagedRegistration?.device_registrations.map(
-                          (
-                            d: secureChannel.DeviceRegistration,
-                            index: number
-                          ) => (
-                            <div
-                              key={d.inbox_registration.inbox_address}
-                              className={`flex flex-row justify-between items-center py-3 ${
-                                index > 0
-                                  ? 'border-t border-dashed border-surface-7'
-                                  : ''
-                              }`}
-                            >
-                              <div className="flex flex-col justify-around font-light break-all flex-1 mr-2 text-sm">
-                                {d.inbox_registration.inbox_address}
+                        <div className="max-h-[280px] overflow-y-auto border border-surface-6 rounded-lg">
+                          {stagedRegistration?.device_registrations
+                            .sort((a, b) => {
+                              // Sort so "this device" appears first
+                              const aIsThisDevice = keyset.deviceKeyset.inbox_keyset.inbox_address === a.inbox_registration.inbox_address;
+                              const bIsThisDevice = keyset.deviceKeyset.inbox_keyset.inbox_address === b.inbox_registration.inbox_address;
+                              
+                              if (aIsThisDevice && !bIsThisDevice) return -1;
+                              if (!aIsThisDevice && bIsThisDevice) return 1;
+                              return 0; // Keep original order for other devices
+                            })
+                            .map(
+                            (
+                              d: secureChannel.DeviceRegistration,
+                              index: number
+                            ) => (
+                              <div
+                                key={d.inbox_registration.inbox_address}
+                                className={`flex flex-row justify-between items-center py-3 px-3 ${
+                                  index > 0
+                                    ? 'border-t border-dashed border-surface-7'
+                                    : ''
+                                }`}
+                              >
+                                <div className="flex flex-col justify-around font-light break-all flex-1 mr-2 text-sm">
+                                  {d.inbox_registration.inbox_address}
+                                </div>
+                                <div className="flex-shrink-0">
+                                  {keyset.deviceKeyset?.inbox_keyset
+                                    ?.inbox_address !==
+                                    d.inbox_registration.inbox_address && (
+                                    <Button
+                                      onClick={() => {
+                                        removeDevice(d.identity_public_key);
+                                      }}
+                                      type="danger"
+                                      size="small"
+                                    >
+                                      {t`Remove`}
+                                    </Button>
+                                  )}
+                                  {keyset.deviceKeyset.inbox_keyset
+                                    .inbox_address ===
+                                    d.inbox_registration.inbox_address && (
+                                    <Button
+                                      size="small"
+                                      disabled={true}
+                                      onClick={() => {}}
+                                    >
+                                      {t`This device`}
+                                    </Button>
+                                  )}
+                                </div>
                               </div>
-                              <div className="flex-shrink-0">
-                                {keyset.deviceKeyset?.inbox_keyset
-                                  ?.inbox_address !==
-                                  d.inbox_registration.inbox_address && (
-                                  <Button
-                                    onClick={() => {
-                                      removeDevice(d.identity_public_key);
-                                    }}
-                                    type="danger"
-                                    size="small"
-                                  >
-                                    {t`Remove`}
-                                  </Button>
-                                )}
-                                {keyset.deviceKeyset.inbox_keyset
-                                  .inbox_address ===
-                                  d.inbox_registration.inbox_address && (
-                                  <Button
-                                    size="small"
-                                    disabled={true}
-                                    onClick={() => {}}
-                                  >
-                                    {t`This device`}
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-                          )
-                        )}
+                            )
+                          )}
+                        </div>
 
                         <div className="modal-content-info !pt-4">
-                          <div className="modal-content-section-header" />
+                          <Spacer size="md" direction="vertical" borderTop={true} />
                           <div className="modal-text-label">{t`Key Export`}</div>
 
                           <div className="pt-2 modal-text-small text-main">
@@ -425,7 +440,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             </Button>
                           </div>
                         </div>
-                        <div className="modal-content-section-header" />
+                        <Spacer size="md" direction="vertical" borderTop={true} />
                         <div className="modal-text-label">{t`Security`}</div>
 
                         <div className="pt-2 modal-text-small text-main mb-4">
@@ -502,18 +517,18 @@ const UserSettingsModal: React.FunctionComponent<{
                       <div className="modal-content-section">
                         <div className="modal-content-info">
                           <div className="flex flex-row justify-between pb-2">
-                            <div className="text-sm flex flex-row">
-                              <div className="text-sm flex flex-col justify-around">
+                            <div className="flex flex-row items-center">
+                              <div className="modal-text-small text-main">
                                 {t`Desktop Notifications`}
                               </div>
                               <Tooltip
                                 id="settings-notifications-tooltip"
                                 content={t`Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature.`}
-                                place="right"
+                                place="bottom"
                               >
                                 <Icon
                                   name="info-circle"
-                                  className="info-icon-tooltip mt-2 ml-2"
+                                  className="text-main hover:text-strong cursor-pointer ml-2"
                                 />
                               </Tooltip>
                             </div>
@@ -525,7 +540,7 @@ const UserSettingsModal: React.FunctionComponent<{
                           </div>
 
                           {!isNotificationSupported && (
-                            <div className="pt-2 text-sm text-amber-600">
+                            <div className="pt-2 text-sm text-warning">
                               {t`Desktop notifications are not supported in this browser.`}
                             </div>
                           )}
@@ -540,7 +555,7 @@ const UserSettingsModal: React.FunctionComponent<{
                           )}
 
                           {showRevokeMessage && (
-                            <div className="pt-2 text-sm text-amber-600">
+                            <div className="pt-2 text-sm text-warning">
                               {t`To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically.`}
                             </div>
                           )}
@@ -550,46 +565,52 @@ const UserSettingsModal: React.FunctionComponent<{
                   );
                 case 'appearance':
                   return (
-                    <div className="modal-content-section">
-                      <div className="modal-text-section-header">{t`Appearance`}</div>
-                      <div className="modal-text-small text-main pt-2">
-                        {t`Choose your preferred theme for Quorum.`}
-                      </div>
-                      <ThemeRadioGroup />
-
-                      <div className="pt-4">
-                        <AccentColorSwitcher />
-                      </div>
-
-                      <div className="pt-6">
-                        <div className="modal-content-section-header" />
-                        <div className="modal-text-label pb-2">{t`Language`}</div>
-                        <div className="flex flex-row gap-2 items-center">
-                          <Select
-                            value={language}
-                            options={localeOptions}
-                            onChange={(value) => {
-                              setLanguage(value);
-                            }}
-                            width="300px"
-                            dropdownPlacement="bottom"
-                          />
-                          <Tooltip
-                            id="settings-language-refresh-tooltip"
-                            content={t`Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language.`}
-                            place="top"
-                          >
-                            <Button
-                              type="secondary"
-                              disabled={!languageChanged}
-                              onClick={forceUpdate}
-                            >
-                              {t`Refresh`}
-                            </Button>
-                          </Tooltip>
+                    <>
+                      <div className="modal-content-header">
+                        <div className="modal-text-section">
+                          <div className="modal-text-section-header">{t`Appearance`}</div>
+                          <div className="pt-2 modal-text-small text-main">
+                            {t`Choose your preferred theme for Quorum.`}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                      <div className="modal-content-section">
+                        <ThemeRadioGroup />
+
+                        <div className="pt-4">
+                          <AccentColorSwitcher />
+                        </div>
+
+                        <div className="pt-6">
+                          <Spacer size="md" direction="vertical" borderTop={true} />
+                          <div className="modal-text-label pb-2">{t`Language`}</div>
+                          <div className="flex flex-row gap-2 items-center">
+                            <Select
+                              value={language}
+                              options={localeOptions}
+                              onChange={(value) => {
+                                setLanguage(value);
+                              }}
+                              width="300px"
+                              dropdownPlacement="bottom"
+                            />
+                            <Tooltip
+                              id="settings-language-refresh-tooltip"
+                              content={t`Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language.`}
+                              place="top"
+                            >
+                              <Button
+                                type="secondary"
+                                disabled={!languageChanged}
+                                onClick={forceUpdate}
+                              >
+                                {t`Refresh`}
+                              </Button>
+                            </Tooltip>
+                          </div>
+                        </div>
+                      </div>
+                    </>
                   );
               }
             })()}

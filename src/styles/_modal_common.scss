@@ -48,9 +48,13 @@
 
 // Consistent Text Size Classes for Modals
 .modal-text-label {
-  font-variant-caps: all-small-caps;
-  font-weight: 700;
-  font-size: 1.2rem;
+  color: var(--color-text-subtle);
+  margin-bottom: 0.25rem;
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .modal-text-section-header {
@@ -155,6 +159,11 @@
 
 // Override Modal primitive styles for complex modals
 .modal-complex-wrapper {
+  // Move close button left to avoid scrollbar overlap
+  .quorum-modal-close {
+    right: 30px !important;
+  }
+
   &.quorum-modal-large {
     padding: 0 !important;
     overflow: hidden;
@@ -337,7 +346,6 @@
   display: flex;
   flex-direction: row;
   user-select: none;
-  min-height: 120px;
   padding: 20px 16px;
   align-items: flex-start;
   gap: 16px;
