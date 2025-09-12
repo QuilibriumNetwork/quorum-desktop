@@ -5,7 +5,19 @@ import { useMessageDB } from '../context/useMessageDB';
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
 import { useConversations } from '../../hooks';
 import { DefaultImages } from '../../utils';
-import { Modal, Button, Switch, Icon, Tooltip } from '../primitives';
+import { 
+  Modal, 
+  Container, 
+  FlexColumn, 
+  FlexRow, 
+  FlexBetween,
+  Button, 
+  Switch, 
+  Icon, 
+  Tooltip, 
+  Spacer,
+  Text
+} from '../primitives';
 import { useQueryClient } from '@tanstack/react-query';
 import { buildConversationKey } from '../../hooks/queries/conversation/buildConversationKey';
 
@@ -155,60 +167,78 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   }, [confirmationTimeout]);
 
   return (
-    <>
-      <Modal
-        title={t`Conversation Settings`}
-        visible={visible}
-        onClose={onClose}
-        size="medium"
-      >
-        <div className="modal-body">
-          <div className="modal-content-info select-none cursor-default">
-            <div className="flex flex-row justify-between">
-              <div className="text-sm flex flex-row">
-                <div className="text-sm flex flex-col justify-around">
-                  {t`Always sign messages`}
-                </div>
-                <div className="text-sm flex flex-col justify-around ml-2">
-                  <Tooltip
-                    id="conv-repudiability-tooltip"
-                    content={t`Always sign messages sent in this conversation. Technically speaking, this makes your messages in non-repudiable. The default for all conversations can be changed in User Settings.`}
-                    className="!w-[400px] !text-left"
-                  >
-                    <Icon name="info-circle" className="info-icon-tooltip" />
-                  </Tooltip>
-                </div>
-              </div>
-              <Switch
-                value={nonRepudiable}
-                onChange={() => setNonRepudiable((prev) => !prev)}
-              />
-            </div>
+    <Modal
+      visible={visible}
+      onClose={onClose}
+      title={t`Conversation Settings`}
+      size="small"
+    >
+      <Container>
+        <FlexColumn gap="md">
+          <FlexBetween align="center">
+            <FlexRow gap="sm" align="center">
+              <Text variant="default" size="sm">
+                {t`Always sign messages`}
+              </Text>
+              <Tooltip
+                id="conv-repudiability-tooltip"
+                content={t`Always sign messages sent in this conversation. Technically speaking, this makes your messages in non-repudiable. The default for all conversations can be changed in User Settings.`}
+                maxWidth={260}
+                className="!text-left !max-w-[260px]"
+                place="top"
+              >
+                <Icon
+                  name="info-circle"
+                  size="sm"
+                />
+              </Tooltip>
+            </FlexRow>
+            <Switch
+              value={nonRepudiable}
+              onChange={() => setNonRepudiable((prev) => !prev)}
+            />
+          </FlexBetween>
 
-            <div className="flex justify-end mt-4">
-              <Button type="primary" onClick={saveRepudiability}>
-                {t`Save`}
-              </Button>
-            </div>
-          </div>
+          <Spacer 
+            spaceBefore="sm" 
+            spaceAfter="sm" 
+            border={true} 
+            direction="vertical" 
+          />
+          
+          <FlexRow justify="end">
+            <Button type="primary" onClick={saveRepudiability}>
+              {t`Save`}
+            </Button>
+          </FlexRow>
+        </FlexColumn>
 
-          <div className="modal-content-info select-none cursor-default text-left mt-8 pt-2 pb-4 px-4 rounded-lg border-2 border-dashed border-danger-hex">
-            <div
-              className="modal-text-label"
-              style={{ color: 'var(--color-text-danger)' }}
-            >{t`Delete Conversation`}</div>
-            <div className="text-xs text-subtle mb-4">
+        <Spacer size="lg" />
+
+        {/* Delete Section */}
+        <Container
+          padding="md"
+          style={{ 
+            borderRadius: 8, 
+            border: '2px dashed var(--color-text-danger)'
+          }}
+        >
+          <FlexColumn gap="md">
+            <Text variant="error" weight="semibold">
+              {t`Delete Conversation`}
+            </Text>
+            <Text variant="subtle" size="xs">
               {t`Deletes conversation keys, user profile information, and messages on your computer only. These messages will still exist on the recipent's computer, so they must also delete on their end to complete a full deletion.`}
-            </div>
-            <div className="flex gap-3">
+            </Text>
+            <FlexRow>
               <Button type="danger" onClick={handleDeleteClick}>
                 {confirmationStep === 0 ? t`Delete` : t`Click again to confirm`}
               </Button>
-            </div>
-          </div>
-        </div>
-      </Modal>
-    </>
+            </FlexRow>
+          </FlexColumn>
+        </Container>
+      </Container>
+    </Modal>
   );
 };
 
