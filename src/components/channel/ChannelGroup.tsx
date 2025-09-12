@@ -15,6 +15,9 @@ const ChannelGroup: React.FunctionComponent<{
       mentionCount?: number;
       mentions?: string;
       isReadOnly?: boolean;
+      isPinned?: boolean;
+      pinnedAt?: number;
+      createdDate?: number;
     }[];
   };
   onEditGroup: (groupName: string) => void;
@@ -25,6 +28,23 @@ const ChannelGroup: React.FunctionComponent<{
     channelId: string;
   }>();
   let { data: isSpaceOwner } = useSpaceOwner({ spaceId: spaceId! });
+
+  // Sort channels: pinned first (newest pin on top), then unpinned (by creation date)
+  const sortedChannels = React.useMemo(() => {
+    return [...props.group.channels].sort((a, b) => {
+      // Pinned channels go first
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      
+      // Among pinned: newer pins first (DESC)
+      if (a.isPinned && b.isPinned) {
+        return (b.pinnedAt || 0) - (a.pinnedAt || 0);
+      }
+      
+      // Among unpinned: maintain original order (ASC by createdDate)
+      return (a.createdDate || 0) - (b.createdDate || 0);
+    });
+  }, [props.group.channels]);
 
   return (
     <div className="channel-group">
@@ -54,7 +74,7 @@ const ChannelGroup: React.FunctionComponent<{
           </div>
         )}
       </div>
-      {props.group.channels.map((channel) => (
+      {sortedChannels.map((channel) => (
         <Link
           key={channel.channelName}
           to={`/spaces/${spaceId}/${channel.channelId}`}
@@ -78,12 +98,16 @@ const ChannelGroup: React.FunctionComponent<{
                       className="text-subtle"
                       title="Read-only channel"
                     />
-                    <span>{channel.channelName}</span>
+                    <span title={channel.isPinned ? 'Pinned channel' : undefined}>
+                      {channel.channelName}
+                    </span>
                   </>
                 ) : (
                   <>
                     <Icon name="hashtag" size="xs" className="text-subtle" />
-                    <span>{channel.channelName}</span>
+                    <span title={channel.isPinned ? 'Pinned channel' : undefined}>
+                      {channel.channelName}
+                    </span>
                   </>
                 )}
                 {!!channel.mentionCount ? (

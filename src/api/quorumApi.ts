@@ -60,6 +60,8 @@ export type Channel = {
   mentions?: string;
   isReadOnly?: boolean;
   managerRoleIds?: string[]; // Roles that can manage this read-only channel
+  isPinned?: boolean; // Whether the channel is pinned to the top of its group
+  pinnedAt?: number; // Timestamp when the channel was pinned (for stack ordering)
 };
 
 export type Conversation = {

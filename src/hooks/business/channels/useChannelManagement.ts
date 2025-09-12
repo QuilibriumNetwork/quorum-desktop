@@ -9,6 +9,8 @@ export interface ChannelData {
   channelTopic: string;
   isReadOnly: boolean;
   managerRoleIds: string[];
+  isPinned: boolean;
+  pinnedAt?: number;
 }
 
 export function useChannelManagement({
@@ -38,6 +40,8 @@ export function useChannelManagement({
     channelTopic: currentChannel?.channelTopic || '',
     isReadOnly: currentChannel?.isReadOnly || false,
     managerRoleIds: currentChannel?.managerRoleIds || [],
+    isPinned: currentChannel?.isPinned || false,
+    pinnedAt: currentChannel?.pinnedAt,
   });
 
   // State for deletion flow
@@ -58,6 +62,8 @@ export function useChannelManagement({
           channelTopic: channel.channelTopic || '',
           isReadOnly: channel.isReadOnly || false,
           managerRoleIds: channel.managerRoleIds || [],
+          isPinned: channel.isPinned || false,
+          pinnedAt: channel.pinnedAt,
         });
       }
     }
@@ -104,6 +110,15 @@ export function useChannelManagement({
     setChannelData((prev) => ({ ...prev, managerRoleIds: roleIds }));
   }, []);
 
+  // Handle pin toggle
+  const handlePinChange = useCallback((value: boolean) => {
+    setChannelData((prev) => ({
+      ...prev,
+      isPinned: value,
+      pinnedAt: value ? Date.now() : undefined,
+    }));
+  }, []);
+
   // Save channel changes
   const saveChanges = useCallback(async () => {
     if (!space) return;
@@ -125,6 +140,8 @@ export function useChannelManagement({
                           channelTopic: channelData.channelTopic,
                           isReadOnly: channelData.isReadOnly,
                           managerRoleIds: channelData.managerRoleIds,
+                          isPinned: channelData.isPinned,
+                          pinnedAt: channelData.pinnedAt,
                           modifiedDate: Date.now(),
                         }
                       : c
@@ -152,6 +169,8 @@ export function useChannelManagement({
                       channelTopic: channelData.channelTopic,
                       isReadOnly: channelData.isReadOnly,
                       managerRoleIds: channelData.managerRoleIds,
+                      isPinned: channelData.isPinned,
+                      pinnedAt: channelData.pinnedAt,
                       createdDate: Date.now(),
                       modifiedDate: Date.now(),
                     } as Channel,
@@ -241,6 +260,8 @@ export function useChannelManagement({
     channelTopic: channelData.channelTopic,
     isReadOnly: channelData.isReadOnly,
     managerRoleIds: channelData.managerRoleIds,
+    isPinned: channelData.isPinned,
+    pinnedAt: channelData.pinnedAt,
     hasMessages,
     showWarning,
     deleteConfirmationStep,
@@ -252,6 +273,7 @@ export function useChannelManagement({
     handleChannelTopicChange,
     handleReadOnlyChange,
     handleManagerRolesChange,
+    handlePinChange,
     saveChanges,
     handleDeleteClick,
     setShowWarning,

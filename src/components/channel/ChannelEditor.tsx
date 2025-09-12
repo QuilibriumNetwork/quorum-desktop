@@ -30,6 +30,7 @@ const ChannelEditor: React.FunctionComponent<{
     channelTopic,
     isReadOnly,
     managerRoleIds,
+    isPinned,
     hasMessages,
     showWarning,
     deleteConfirmationStep,
@@ -39,6 +40,7 @@ const ChannelEditor: React.FunctionComponent<{
     handleChannelTopicChange,
     handleReadOnlyChange,
     handleManagerRolesChange,
+    handlePinChange,
     saveChanges,
     handleDeleteClick,
     setShowWarning,
@@ -78,6 +80,21 @@ const ChannelEditor: React.FunctionComponent<{
             labelType="static"
           />
         </Container>
+
+        {isEditMode && (
+          <Container className="mb-2 max-sm:mb-1">
+            <FlexRow className="items-center justify-between">
+              <Text className="modal-text-small text-main">
+                <Trans>Pin to top</Trans>
+              </Text>
+              <Switch
+                value={isPinned}
+                onChange={handlePinChange}
+                accessibilityLabel={t`Pin channel to top`}
+              />
+            </FlexRow>
+          </Container>
+        )}
 
         <Container className="mb-2 max-sm:mb-1">
           <FlexRow className="items-center justify-between">
