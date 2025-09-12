@@ -11,6 +11,7 @@ import {
   Spacer,
   Switch,
   Select,
+  Tooltip,
 } from '../primitives';
 import '../../styles/_modal_common.scss';
 import { useChannelManagement } from '../../hooks';
@@ -67,42 +68,59 @@ const ChannelEditor: React.FunctionComponent<{
           </Text>
           <Input value={channelName} onChange={handleChannelNameChange} />
         </Container>
-        <Container className="mb-4 max-sm:mb-1">
+        <Container className="mb-4">
           <Text className="small-caps">
             <Trans>Channel Topic</Trans>
           </Text>
           <Input value={channelTopic} onChange={handleChannelTopicChange} />
         </Container>
         
-        <Container className="mb-4 max-sm:mb-1">
-          <FlexRow className="items-center gap-3">
+        <Container className="mb-2 max-sm:mb-1">
+          <FlexRow className="items-center justify-between">
+            <div className="flex flex-row items-center">
+              <Text className="modal-text-small text-main">
+                <Trans>Read only</Trans>
+              </Text>
+              <Tooltip
+                id="read-only-tooltip"
+                content={t`Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel.`}
+                place="bottom"
+                className="!w-[350px]"
+                maxWidth={350}
+              >
+                <Icon
+                  name="info-circle"
+                  size="sm"
+                  className="text-main hover:text-strong cursor-pointer ml-2"
+                />
+              </Tooltip>
+            </div>
             <Switch 
               value={isReadOnly} 
               onChange={handleReadOnlyChange}
               accessibilityLabel={t`Read only channel`}
             />
-            <Text className="text-sm">
-              <Trans>Read only?</Trans>
-            </Text>
           </FlexRow>
         </Container>
         
         {isReadOnly && (
           <Container className="mb-4 max-sm:mb-1">
-            <p className="text-xs text-subtle mb-4 leading-tight">
-              <Trans>Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel.</Trans>
-            </p>
-            <Select
-              value={managerRoleIds}
-              options={availableRoles.map(role => ({
-                value: role.roleId,
-                label: role.displayName,
-              }))}
-              onChange={handleManagerRolesChange}
-              placeholder={t`Select Roles`}
-              multiple={true}
-              className="w-full"
-            />
+            <FlexRow className="items-center justify-between max-sm:flex-col max-sm:items-stretch">
+              <Text className="modal-text-small text-main whitespace-nowrap max-sm:mb-2">
+                <Trans>Channel Managers</Trans>
+              </Text>
+              <Select
+                value={managerRoleIds}
+                options={availableRoles.map(role => ({
+                  value: role.roleId,
+                  label: role.displayName,
+                }))}
+                onChange={handleManagerRolesChange}
+                placeholder={t`Select Roles`}
+                multiple={true}
+                className="flex-1 max-w-xs max-sm:max-w-full"
+              />
+            </FlexRow>
           </Container>
         )}
         

@@ -412,23 +412,23 @@ const UserSettingsModal: React.FunctionComponent<{
                         <div className="modal-content-section-header" />
                         <div className="modal-text-label">{t`Security`}</div>
 
-                        <div className="pt-2 modal-text-small text-main">
+                        <div className="pt-2 modal-text-small text-main mb-4">
                           {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
                         </div>
                         <div className="modal-content-info">
                           <div className="flex flex-row justify-between pb-2">
-                            <div className="text-sm flex flex-row">
-                              <div className="text-sm flex flex-col justify-around">
+                            <div className="flex flex-row items-center">
+                              <div className="modal-text-small text-main">
                                 {t`Enable sync`}
                               </div>
                               <Tooltip
                                 id="settings-allow-sync-tooltip"
                                 content={t`When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined.`}
-                                place="right"
+                                place="bottom"
                               >
                                 <Icon
                                   name="info-circle"
-                                  className="info-icon-tooltip mt-2 ml-2"
+                                  className="text-main hover:text-strong cursor-pointer ml-2"
                                 />
                               </Tooltip>
                             </div>
@@ -436,18 +436,18 @@ const UserSettingsModal: React.FunctionComponent<{
                             <Switch value={allowSync} onChange={setAllowSync} />
                           </div>
                           <div className="flex flex-row justify-between">
-                            <div className="text-sm flex flex-row">
-                              <div className="text-sm flex flex-col justify-around">
+                            <div className="flex flex-row items-center">
+                              <div className="modal-text-small text-main">
                                 {t`Always sign Direct Messages`}
                               </div>
                               <Tooltip
                                 id="settings-non-repudiable-tooltip"
                                 content={t`Always sign Direct Messages in conversations. This can be overridden for finer-grain control by clicking the lock icon found in each conversation view.`}
-                                place="right"
+                                place="bottom"
                               >
                                 <Icon
                                   name="info-circle"
-                                  className="info-icon-tooltip mt-2 ml-2"
+                                  className="text-main hover:text-strong cursor-pointer ml-2"
                                 />
                               </Tooltip>
                             </div>

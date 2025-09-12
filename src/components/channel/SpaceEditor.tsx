@@ -473,24 +473,22 @@ const SpaceEditor: React.FunctionComponent<{
                         </div>
                         <div className="modal-content-info">
                           <div className="flex flex-row justify-between">
-                            <div className="text-sm flex flex-row">
-                              <div className="text-sm flex flex-col justify-around">
+                            <div className="flex flex-row items-center">
+                              <div className="modal-text-small text-main">
                                 <Trans>Require Message Signing</Trans>
                               </div>
-                              <div className="text-sm flex flex-col justify-around ml-2">
-                                <Tooltip
-                                  id="repudiability-tooltip"
-                                  content={t`Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable.`}
-                                  place="bottom"
-                                  className="!w-[400px]"
-                                  maxWidth={400}
-                                >
-                                  <Icon
-                                    name="info-circle"
-                                    className="info-icon-tooltip"
-                                  />
-                                </Tooltip>
-                              </div>
+                              <Tooltip
+                                id="repudiability-tooltip"
+                                content={t`Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable.`}
+                                place="bottom"
+                                className="!w-[400px]"
+                                maxWidth={400}
+                              >
+                                <Icon
+                                  name="info-circle"
+                                  className="text-main hover:text-strong cursor-pointer ml-2"
+                                />
+                              </Tooltip>
                             </div>
                             <Switch
                               onChange={() => setIsRepudiable(!isRepudiable)}
@@ -916,24 +914,22 @@ const SpaceEditor: React.FunctionComponent<{
                               {space.inviteUrl && (
                                 <>
                                   <div className="flex pt-2 pb-1 items-center">
-                                    <div className="text-sm flex flex-row">
-                                      <div className="small-caps text-lg flex flex-col justify-around">
+                                    <div className="flex flex-row items-center">
+                                      <div className="small-caps text-lg text-main">
                                         <Trans>Current Invite Link</Trans>
                                       </div>
-                                      <div className="flex flex-col justify-around ml-2">
-                                        <Tooltip
-                                          id="current-invite-link-tooltip"
-                                          content={t`This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space.`}
-                                          place="bottom"
-                                          className="flex flex-col justify-around pt-3 pb-1 !w-[400px] cursor-pointer"
-                                          maxWidth={400}
-                                        >
-                                          <Icon
-                                            name="info-circle"
-                                            className="info-icon-tooltip"
-                                          />
-                                        </Tooltip>
-                                      </div>
+                                      <Tooltip
+                                        id="current-invite-link-tooltip"
+                                        content={t`This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space.`}
+                                        place="bottom"
+                                        className="!w-[400px]"
+                                        maxWidth={400}
+                                      >
+                                        <Icon
+                                          name="info-circle"
+                                          className="text-main hover:text-strong cursor-pointer ml-2"
+                                        />
+                                      </Tooltip>
                                     </div>
                                   </div>
                                   {generating ? (
