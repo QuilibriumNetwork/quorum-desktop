@@ -23,6 +23,7 @@ import MessageComposer, {
 } from '../message/MessageComposer';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
 import { Virtuoso } from 'react-virtuoso';
+import UserProfile from '../user/UserProfile';
 import type { Channel, Role } from '../../api/quorumApi';
 
 // Helper function to check if user can post in read-only channel
@@ -84,6 +85,13 @@ const Channel: React.FC<ChannelProps> = ({
   const [init, setInit] = useState(false);
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [showPinnedMessages, setShowPinnedMessages] = useState(false);
+  const [showUserProfile, setShowUserProfile] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<{
+    address: string;
+    displayName?: string;
+    userIcon?: string;
+  } | null>(null);
+  const [modalPosition, setModalPosition] = useState<{ top: number } | null>(null);
   const headerRef = React.useRef<HTMLDivElement>(null);
   const { submitChannelMessage } = useMessageDB();
 
@@ -176,6 +184,27 @@ const Channel: React.FC<ChannelProps> = ({
       user.currentPasskeyInfo,
     ]
   );
+
+  // Handle user profile click in sidebar
+  const handleUserProfileClick = useCallback((user: {
+    address: string;
+    displayName?: string;
+    userIcon?: string;
+  }, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent background click from closing modal
+    
+    const rect = event.currentTarget.getBoundingClientRect();
+    setModalPosition({ top: rect.top });
+    setSelectedUser(user);
+    setShowUserProfile(true);
+  }, []);
+
+  // Handle user profile modal close
+  const handleUserProfileClose = useCallback(() => {
+    setShowUserProfile(false);
+    setSelectedUser(null);
+    setModalPosition(null);
+  }, []);
 
   // Check if user can post in this channel
   const canPost = canPostInReadOnlyChannel(
@@ -508,7 +537,14 @@ const Channel: React.FC<ChannelProps> = ({
                   } else {
                     return (
                       <div className="px-4 pb-2">
-                        <div className="w-full flex flex-row items-center">
+                        <div 
+                          className="w-full flex flex-row items-center cursor-pointer hover:bg-surface-2 rounded-md p-1 -m-1 transition-colors duration-150"
+                          onClick={(event) => handleUserProfileClick({
+                            address: item.address,
+                            displayName: item.displayName,
+                            userIcon: item.userIcon,
+                          }, event)}
+                        >
                           <div
                             className="rounded-full w-[30px] h-[30px]"
                             style={{
@@ -582,6 +618,40 @@ const Channel: React.FC<ChannelProps> = ({
                   );
                 })}
               </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* User Profile Modal - desktop only (≥1024px) */}
+      {showUserProfile && selectedUser && modalPosition && window.innerWidth >= 1024 && (
+        <>
+          {/* Background click area - excludes sidebar to allow user switching */}
+          <div
+            className="fixed inset-0 z-[9990]"
+            style={{
+              right: showUsers ? '260px' : '0px',
+            }}
+            onClick={handleUserProfileClose}
+          />
+          <div 
+            className="fixed z-[9999] pointer-events-none"
+            style={{
+              top: `${modalPosition.top}px`,
+              left: showUsers ? `calc(100vw - 260px - 320px)` : `calc(100vw - 320px)`,
+            }}
+          >
+            <div className="pointer-events-auto">
+              <UserProfile
+                key={selectedUser.address}
+                spaceId={spaceId}
+                canEditRoles={isSpaceOwner}
+                kickUserAddress={kickUserAddress}
+                setKickUserAddress={setKickUserAddress}
+                roles={roles?.filter(role => role.members.includes(selectedUser.address)) || []}
+                user={selectedUser}
+                dismiss={handleUserProfileClose}
+              />
             </div>
           </div>
         </>
