@@ -22,6 +22,7 @@ import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
+import { Virtuoso } from 'react-virtuoso';
 import type { Channel, Role } from '../../api/quorumApi';
 
 // Helper function to check if user can post in read-only channel
@@ -92,7 +93,7 @@ const Channel: React.FC<ChannelProps> = ({
   const messageListRef = useRef<MessageListRef>(null);
 
   // Get channel data
-  const { space, channel, members, roles, stickers, generateSidebarContent } =
+  const { space, channel, members, roles, stickers, generateSidebarContent, generateVirtualizedUserList } =
     useChannelData({ spaceId, channelId });
 
   // Get message handling
@@ -491,38 +492,47 @@ const Channel: React.FC<ChannelProps> = ({
 
           {/* Desktop sidebar only - mobile sidebar renders via SidebarProvider at Layout level */}
           {showUsers && (
-            <div className="hidden lg:block w-[260px] bg-chat border-l border-default overflow-y-auto flex-shrink-0">
-              {generateSidebarContent().map((section) => (
-                <div className="flex flex-col mb-2 p-4" key={section.title}>
-                  <div className="font-semibold ml-[1pt] mb-3 text-xs pb-1 border-b border-default">
-                    {section.title}
-                  </div>
-                  {section.members.map((member) => (
-                    <div
-                      key={member.address}
-                      className="w-full flex flex-row items-center mb-2"
-                    >
-                      <div
-                        className="rounded-full w-[30px] h-[30px]"
-                        style={{
-                          backgroundPosition: 'center',
-                          backgroundSize: 'cover',
-                          backgroundImage: member.userIcon?.includes(
-                            'var(--unknown-icon)'
-                          )
-                            ? member.userIcon
-                            : `url(${member.userIcon})`,
-                        }}
-                      />
-                      <div className="flex flex-col ml-2 text-main">
-                        <span className="text-md font-bold">
-                          {member.displayName}
-                        </span>
+            <div className="hidden lg:block w-[260px] bg-chat border-l border-default flex-shrink-0">
+              <Virtuoso
+                data={generateVirtualizedUserList()}
+                overscan={10}
+                itemContent={(_index, item) => {
+                  if (item.type === 'header') {
+                    return (
+                      <div className="flex flex-col p-4 pb-0">
+                        <div className="font-semibold ml-[1pt] mb-3 text-xs pb-1 border-b border-default">
+                          {item.title}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
+                    );
+                  } else {
+                    return (
+                      <div className="px-4 pb-2">
+                        <div className="w-full flex flex-row items-center">
+                          <div
+                            className="rounded-full w-[30px] h-[30px]"
+                            style={{
+                              backgroundPosition: 'center',
+                              backgroundSize: 'cover',
+                              backgroundImage: item.userIcon?.includes(
+                                'var(--unknown-icon)'
+                              )
+                                ? item.userIcon
+                                : `url(${item.userIcon})`,
+                            }}
+                          />
+                          <div className="flex flex-col ml-2 text-main">
+                            <span className="text-md font-bold">
+                              {item.displayName}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                }}
+                style={{ height: '100%' }}
+              />
             </div>
           )}
         </div>

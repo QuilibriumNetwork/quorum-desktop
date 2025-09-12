@@ -44,6 +44,25 @@ The [`src/dev/`](src/dev) folder contains development utilities:
 
 After running `yarn dev`, you can access the development tools at: `http://localhost:[port]/dev`
 
+#### Testing with Mock Users
+
+To test channel performance with large user lists (useful for testing virtualization):
+
+**URL Parameter (temporary):**
+```
+http://localhost:port/space/your-space-id/channel/your-channel-id?mockUsers=1000
+```
+
+**localStorage (persistent across sessions):**
+```javascript
+// Enable mock users in browser console
+localStorage.setItem('debug_mock_users', 'true')
+localStorage.setItem('debug_mock_count', '1000')  // Any number
+
+// Disable
+localStorage.removeItem('debug_mock_users')
+```
+
 ## Setup and Development
 
 ### Prerequisites
