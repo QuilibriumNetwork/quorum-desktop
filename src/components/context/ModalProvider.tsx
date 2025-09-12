@@ -163,7 +163,9 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
       {modalState.state.conversationSettings.isOpen &&
         modalState.state.conversationSettings.conversationId && (
           <ConversationSettingsModal
-            conversationId={modalState.state.conversationSettings.conversationId}
+            conversationId={
+              modalState.state.conversationSettings.conversationId
+            }
             visible={true}
             onClose={modalState.closeConversationSettings}
           />

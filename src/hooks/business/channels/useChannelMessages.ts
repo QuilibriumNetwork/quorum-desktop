@@ -43,21 +43,22 @@ export function useChannelMessages({
       if (!channel?.isReadOnly) {
         return true;
       }
-      
+
       // Space owners can always manage
       if (isSpaceOwner) {
         return true;
       }
-      
+
       // If no manager roles defined, only space owner can manage
       if (!channel.managerRoleIds || channel.managerRoleIds.length === 0) {
         return false;
       }
-      
+
       // Check if user has any of the manager roles
-      return roles.some(role => 
-        channel.managerRoleIds?.includes(role.roleId) && 
-        role.members.includes(userAddress)
+      return roles.some(
+        (role) =>
+          channel.managerRoleIds?.includes(role.roleId) &&
+          role.members.includes(userAddress)
       );
     },
     [channel, isSpaceOwner, roles]
@@ -73,38 +74,45 @@ export function useChannelMessages({
     (message: MessageType) => {
       const userAddress = user.currentPasskeyInfo?.address;
       if (!userAddress) return false;
-      
+
       // Users can always delete their own messages
       if (message.content.senderId === userAddress) {
         return true;
       }
-      
+
       // For read-only channels: check if user is a manager (before checking regular permissions)
       if (channel?.isReadOnly) {
-        const isManager = !!(channel.managerRoleIds && 
-          roles.some(role => 
-            channel.managerRoleIds?.includes(role.roleId) && 
-            role.members.includes(userAddress)
+        const isManager = !!(
+          channel.managerRoleIds &&
+          roles.some(
+            (role) =>
+              channel.managerRoleIds?.includes(role.roleId) &&
+              role.members.includes(userAddress)
           )
         );
         if (isManager) {
           return true;
         }
       }
-      
+
       // Use centralized permission utility (handles space owners + role permissions)
-      const hasDeletePermission = hasPermission(userAddress, 'message:delete', space, isSpaceOwner);
-      
+      const hasDeletePermission = hasPermission(
+        userAddress,
+        'message:delete',
+        space,
+        isSpaceOwner
+      );
+
       // Only log for debugging when it should work but doesn't
       if (isSpaceOwner && !hasDeletePermission) {
         console.log('🚨 SPACE OWNER DELETE FAILING:', {
           userAddress,
           isSpaceOwner,
           hasDeletePermission,
-          space: !!space
+          space: !!space,
         });
       }
-      
+
       return hasDeletePermission;
     },
     [roles, user.currentPasskeyInfo, isSpaceOwner, channel, space]
@@ -114,20 +122,22 @@ export function useChannelMessages({
     (message: MessageType) => {
       const userAddress = user.currentPasskeyInfo?.address;
       if (!userAddress) return false;
-      
+
       // For read-only channels: check if user is a manager (before checking regular permissions)
       if (channel?.isReadOnly) {
-        const isManager = !!(channel.managerRoleIds && 
-          roles.some(role => 
-            channel.managerRoleIds?.includes(role.roleId) && 
-            role.members.includes(userAddress)
+        const isManager = !!(
+          channel.managerRoleIds &&
+          roles.some(
+            (role) =>
+              channel.managerRoleIds?.includes(role.roleId) &&
+              role.members.includes(userAddress)
           )
         );
         if (isManager) {
           return true;
         }
       }
-      
+
       // Use centralized permission utility (handles space owners + role permissions)
       return hasPermission(userAddress, 'message:pin', space, isSpaceOwner);
     },

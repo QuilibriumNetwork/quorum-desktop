@@ -34,7 +34,7 @@ interface MessageComposerProps {
   showSigningToggle?: boolean;
   skipSigning?: boolean;
   onSigningToggle?: () => void;
-  
+
   // Read-only channel support
   disabled?: boolean;
   disabledMessage?: string;
@@ -83,15 +83,14 @@ export const MessageComposer = forwardRef<
       },
     }));
 
-
     // If disabled, show a message instead of the composer
     if (disabled) {
       return (
         <div className="w-full pr-6 lg:pr-8">
           <div className="w-full items-center gap-2 ml-[11px] my-2 py-2 pl-4 pr-[6px] rounded-lg flex justify-start bg-chat-input">
             <Icon name="lock" size="xs" className="text-muted flex-shrink-0" />
-            <span 
-              className="text-base font-normal" 
+            <span
+              className="text-base font-normal"
               style={{ color: 'var(--color-field-placeholder)' }}
             >
               {disabledMessage || t`You cannot post in this channel`}
@@ -181,7 +180,6 @@ export const MessageComposer = forwardRef<
             </div>
           </Tooltip>
 
-
           <TextArea
             ref={textareaRef}
             value={value}
@@ -236,7 +234,9 @@ export const MessageComposer = forwardRef<
                 type="unstyled"
                 onClick={onSigningToggle}
                 className={`w-8 h-8 p-0 rounded-md cursor-pointer flex items-center justify-center flex-shrink-0 -ml-2 ${
-                  skipSigning ? 'text-warning-hex' : 'text-surface-9 hover:text-main'
+                  skipSigning
+                    ? 'text-warning-hex'
+                    : 'text-surface-9 hover:text-main'
                 }`}
                 iconName={skipSigning ? 'unlock' : 'lock'}
                 iconOnly

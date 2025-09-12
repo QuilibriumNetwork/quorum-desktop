@@ -33,7 +33,9 @@ export const useGlobalSearchNavigation =
           // });
         } else {
           // For spaces, would navigate to Space screen
-          console.log(`Navigate to Space: /spaces/${spaceId}/${channelId}#msg-${messageId}`);
+          console.log(
+            `Navigate to Space: /spaces/${spaceId}/${channelId}#msg-${messageId}`
+          );
           // navigation.navigate('Space', {
           //   spaceId,
           //   channelId,

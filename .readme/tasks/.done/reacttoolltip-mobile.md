@@ -1,6 +1,5 @@
 # ReactTooltip Mobile Optimization
 
-
 Dear Claude, read the text and code below and decide if it's a good idea to implement it, or if it could be improved upon.
 
 Objective is to made ReactTooltip.tsx optimized for mobile. This component could have mobile features that we are unaware of, so search online in their docs.

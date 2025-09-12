@@ -7,34 +7,39 @@
 ## Current Behavior vs Expected Behavior
 
 ### Current State
-- ✅ **Users with delete role permissions**: Can delete ANY message in regular channels 
+
+- ✅ **Users with delete role permissions**: Can delete ANY message in regular channels
 - ❌ **Space owners**: See delete buttons but cannot delete other users' messages
 - ✅ **Read-only channel managers**: Can delete ANY message in read-only channels
 - ✅ **Self-delete**: All users can delete their own messages
 
 ### Expected Behavior
+
 - Space owners should be able to delete any message in any channel within their space
 
 ## Technical Analysis
 
 ### Symptoms
+
 1. **UI Level**: Space owners correctly see delete buttons on other users' messages (permission checking works)
 2. **Processing Level**: Clicking delete does nothing - no local deletion, no network synchronization
 3. **User Experience**: Buttons appear but are non-functional, creating confusion
 
 ### Root Cause
+
 The issue is in the message processing architecture within `src/components/context/MessageDB.tsx`. The delete message processing logic has validation for:
 
 1. ✅ **Self-delete**: Users can delete their own messages
 2. ✅ **Role-based permissions**: Users with `message:delete` role permission
-3. ✅ **Read-only managers**: Channel-specific manager permissions  
+3. ✅ **Read-only managers**: Channel-specific manager permissions
 4. ❌ **Space owners**: No validation logic for space ownership
 
 ### Architecture Challenge
 
-**Key Technical Problem**: Space ownership is determined by cryptographic key possession (`messageDB.getSpaceKey(spaceId, 'owner')`), but this validation only works in the owner's local context. 
+**Key Technical Problem**: Space ownership is determined by cryptographic key possession (`messageDB.getSpaceKey(spaceId, 'owner')`), but this validation only works in the owner's local context.
 
 The system has dual processing paths:
+
 - **`saveMessage`**: Validates incoming messages (has access to sender's local keys)
 - **`addMessage`**: Applies messages to UI cache (cannot access sender's keys for validation)
 
@@ -43,6 +48,7 @@ Current working permissions (roles, self-delete, read-only managers) use differe
 ### Security Requirements
 
 Any solution must ensure:
+
 1. **Authentication**: Only actual space owners can delete messages (no privilege escalation)
 2. **Message Integrity**: Proper cryptographic validation of delete requests
 3. **Network Synchronization**: Delete messages must propagate correctly to all clients

@@ -15,20 +15,21 @@ import { useMarkdownFiles, type MarkdownFile } from './hooks/useMarkdownFiles';
 export const Docs: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFile, setSelectedFile] = useState<MarkdownFile | null>(null);
-  
+
   // Load markdown files dynamically
   const { files: docFiles, loading, error } = useMarkdownFiles('docs');
 
   const filteredFiles = useMemo(() => {
-    return docFiles.filter(file =>
-      file.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      file.folder.toLowerCase().includes(searchTerm.toLowerCase())
+    return docFiles.filter(
+      (file) =>
+        file.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        file.folder.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [docFiles, searchTerm]);
 
   const groupedFiles = useMemo(() => {
     const groups: Record<string, MarkdownFile[]> = {};
-    filteredFiles.forEach(file => {
+    filteredFiles.forEach((file) => {
       // Extract the full folder path from the file path for better grouping
       let folderName = 'root';
       if (file.path.includes('/')) {
@@ -39,7 +40,7 @@ export const Docs: React.FC = () => {
           folderName = relevantParts.join('/');
         }
       }
-      
+
       if (!groups[folderName]) {
         groups[folderName] = [];
       }
@@ -101,7 +102,13 @@ export const Docs: React.FC = () => {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="bg-surface-1 rounded-lg p-4 border border-default">
-            <Text as="h3" variant="subtle" size="sm" weight="medium" className="mb-2">
+            <Text
+              as="h3"
+              variant="subtle"
+              size="sm"
+              weight="medium"
+              className="mb-2"
+            >
               Total Documents
             </Text>
             <Text variant="strong" size="2xl" weight="bold">
@@ -109,7 +116,13 @@ export const Docs: React.FC = () => {
             </Text>
           </div>
           <div className="bg-surface-1 rounded-lg p-4 border border-default">
-            <Text as="h3" variant="subtle" size="sm" weight="medium" className="mb-2">
+            <Text
+              as="h3"
+              variant="subtle"
+              size="sm"
+              weight="medium"
+              className="mb-2"
+            >
               Categories
             </Text>
             <Text variant="strong" size="2xl" weight="bold">
@@ -117,7 +130,13 @@ export const Docs: React.FC = () => {
             </Text>
           </div>
           <div className="bg-surface-1 rounded-lg p-4 border border-default">
-            <Text as="h3" variant="subtle" size="sm" weight="medium" className="mb-2">
+            <Text
+              as="h3"
+              variant="subtle"
+              size="sm"
+              weight="medium"
+              className="mb-2"
+            >
               Matching Results
             </Text>
             <Text variant="strong" size="2xl" weight="bold">
@@ -129,7 +148,11 @@ export const Docs: React.FC = () => {
         {/* Loading State */}
         {loading && (
           <div className="text-center py-12">
-            <Icon name="loader" size="2xl" className="text-accent mx-auto mb-4" />
+            <Icon
+              name="loader"
+              size="2xl"
+              className="text-accent mx-auto mb-4"
+            />
             <Text variant="main" size="lg">
               Loading documentation files...
             </Text>
@@ -149,7 +172,8 @@ export const Docs: React.FC = () => {
               {error}
             </Text>
             <Text variant="subtle" size="sm">
-              The system is using a placeholder implementation. To see real files, implement the markdown loading API or build process.
+              The system is using a placeholder implementation. To see real
+              files, implement the markdown loading API or build process.
             </Text>
           </div>
         )}
@@ -160,48 +184,60 @@ export const Docs: React.FC = () => {
             {Object.entries(groupedFiles)
               .sort(([a], [b]) => a.localeCompare(b))
               .map(([folder, files]) => (
-            <div key={folder} className="bg-surface-1 rounded-lg border border-default overflow-hidden">
-              <div className="bg-surface-2 px-6 py-4 border-b border-default">
-                <FlexRow gap="sm" align="center">
-                  <Icon name="folder" size="md" className="text-accent" />
-                  <Text variant="strong" size="lg" weight="medium">
-                    {folder === 'root' 
-                      ? 'Documentation Root' 
-                      : folder.split('/').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' / ')
-                    }
-                  </Text>
-                  <Text variant="subtle" size="sm">
-                    ({files.length} files)
-                  </Text>
-                </FlexRow>
-              </div>
+                <div
+                  key={folder}
+                  className="bg-surface-1 rounded-lg border border-default overflow-hidden"
+                >
+                  <div className="bg-surface-2 px-6 py-4 border-b border-default">
+                    <FlexRow gap="sm" align="center">
+                      <Icon name="folder" size="md" className="text-accent" />
+                      <Text variant="strong" size="lg" weight="medium">
+                        {folder === 'root'
+                          ? 'Documentation Root'
+                          : folder
+                              .split('/')
+                              .map(
+                                (part) =>
+                                  part.charAt(0).toUpperCase() + part.slice(1)
+                              )
+                              .join(' / ')}
+                      </Text>
+                      <Text variant="subtle" size="sm">
+                        ({files.length} files)
+                      </Text>
+                    </FlexRow>
+                  </div>
 
-              <div className="p-6">
-                <ul className="space-y-2">
-                  {files
-                    .sort((a, b) => a.title.localeCompare(b.title))
-                    .map((file) => (
-                    <li key={file.path}>
-                      <div
-                        className="hover:text-accent transition-colors cursor-pointer"
-                        onClick={() => handleFileClick(file)}
-                      >
-                        <Text variant="main" size="md">
-                          • {file.title}
-                        </Text>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          ))}
-        </div>
+                  <div className="p-6">
+                    <ul className="space-y-2">
+                      {files
+                        .sort((a, b) => a.title.localeCompare(b.title))
+                        .map((file) => (
+                          <li key={file.path}>
+                            <div
+                              className="hover:text-accent transition-colors cursor-pointer"
+                              onClick={() => handleFileClick(file)}
+                            >
+                              <Text variant="main" size="md">
+                                • {file.title}
+                              </Text>
+                            </div>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+          </div>
         )}
 
         {!loading && filteredFiles.length === 0 && (
           <div className="text-center py-12">
-            <Icon name="search" size="2xl" className="text-muted mx-auto mb-4" />
+            <Icon
+              name="search"
+              size="2xl"
+              className="text-muted mx-auto mb-4"
+            />
             <Text variant="subtle" size="lg">
               No documentation files found
             </Text>

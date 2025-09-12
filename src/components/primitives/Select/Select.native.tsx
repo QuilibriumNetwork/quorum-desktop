@@ -41,7 +41,7 @@ const Select: React.FC<NativeSelectProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState<string | string[]>(
-    multiple ? (Array.isArray(value) ? value : []) : (value || '')
+    multiple ? (Array.isArray(value) ? value : []) : value || ''
   );
   const theme = useTheme();
   const colors = theme.colors;
@@ -69,13 +69,13 @@ const Select: React.FC<NativeSelectProps> = ({
       if (multiple) {
         const currentValues = selectedValue as string[];
         let newValues: string[];
-        
+
         if (currentValues.includes(optionValue)) {
-          newValues = currentValues.filter(v => v !== optionValue);
+          newValues = currentValues.filter((v) => v !== optionValue);
         } else {
           newValues = [...currentValues, optionValue];
         }
-        
+
         setSelectedValue(newValues);
         onChange?.(newValues);
         // Keep modal open for multiselect
@@ -89,7 +89,9 @@ const Select: React.FC<NativeSelectProps> = ({
 
   const handleSelectAll = () => {
     if (!disabled && multiple) {
-      const allValues = allOptions.filter(opt => !opt.disabled).map(opt => opt.value);
+      const allValues = allOptions
+        .filter((opt) => !opt.disabled)
+        .map((opt) => opt.value);
       setSelectedValue(allValues);
       onChange?.(allValues);
     }
@@ -103,42 +105,45 @@ const Select: React.FC<NativeSelectProps> = ({
   };
 
   const allOptions = getAllOptions();
-  
+
   // Helper to get display content
   const getDisplayContent = () => {
     if (multiple) {
       const selectedValues = selectedValue as string[];
-      
+
       if (selectedValues.length === 0) {
         return { text: placeholder, isPlaceholder: true };
       }
-      
+
       if (renderSelectedValue) {
         return { element: renderSelectedValue(selectedValues, allOptions) };
       }
-      
-      const selectedOptions = allOptions.filter(opt => selectedValues.includes(opt.value));
+
+      const selectedOptions = allOptions.filter((opt) =>
+        selectedValues.includes(opt.value)
+      );
       const displayedOptions = selectedOptions.slice(0, maxDisplayedChips);
       const remainingCount = selectedOptions.length - maxDisplayedChips;
-      
-      const chipText = displayedOptions.map(opt => opt.label).join(', ');
-      const displayText = remainingCount > 0 
-        ? `${chipText} +${remainingCount} more`
-        : chipText;
-      
+
+      const chipText = displayedOptions.map((opt) => opt.label).join(', ');
+      const displayText =
+        remainingCount > 0 ? `${chipText} +${remainingCount} more` : chipText;
+
       return { text: displayText, isPlaceholder: false };
     } else {
-      const selectedOption = allOptions.find((opt) => opt.value === selectedValue);
+      const selectedOption = allOptions.find(
+        (opt) => opt.value === selectedValue
+      );
       return {
         text: selectedOption ? selectedOption.label : placeholder,
         isPlaceholder: !selectedOption,
         icon: selectedOption?.icon,
         avatar: selectedOption?.avatar,
-        subtitle: selectedOption?.subtitle
+        subtitle: selectedOption?.subtitle,
       };
     }
   };
-  
+
   const displayData = getDisplayContent();
 
   const getSizeStyles = () => {
@@ -245,7 +250,9 @@ const Select: React.FC<NativeSelectProps> = ({
                   )}
                 </View>
               )}
-              <View style={multiple ? styles.chipsContainer : styles.textContainer}>
+              <View
+                style={multiple ? styles.chipsContainer : styles.textContainer}
+              >
                 {multiple && !displayData.isPlaceholder ? (
                   <View style={styles.chips}>
                     <Text
@@ -328,13 +335,27 @@ const Select: React.FC<NativeSelectProps> = ({
                 >
                   {/* Select All / Clear All for multiselect */}
                   {multiple && showSelectAllOption && allOptions.length > 0 && (
-                    <View style={[styles.actions, { borderBottomColor: colors.border.default }]}>
+                    <View
+                      style={[
+                        styles.actions,
+                        { borderBottomColor: colors.border.default },
+                      ]}
+                    >
                       <TouchableOpacity
                         onPress={handleSelectAll}
                         style={styles.action}
                       >
-                        <Icon name="check-square" size="sm" color={colors.text.subtle} />
-                        <Text style={[styles.actionText, { color: colors.text.main }]}>
+                        <Icon
+                          name="check-square"
+                          size="sm"
+                          color={colors.text.subtle}
+                        />
+                        <Text
+                          style={[
+                            styles.actionText,
+                            { color: colors.text.main },
+                          ]}
+                        >
                           {selectAllLabel}
                         </Text>
                       </TouchableOpacity>
@@ -342,8 +363,17 @@ const Select: React.FC<NativeSelectProps> = ({
                         onPress={handleClearAll}
                         style={styles.action}
                       >
-                        <Icon name="square" size="sm" color={colors.text.subtle} />
-                        <Text style={[styles.actionText, { color: colors.text.main }]}>
+                        <Icon
+                          name="square"
+                          size="sm"
+                          color={colors.text.subtle}
+                        />
+                        <Text
+                          style={[
+                            styles.actionText,
+                            { color: colors.text.main },
+                          ]}
+                        >
                           {clearAllLabel}
                         </Text>
                       </TouchableOpacity>
@@ -370,9 +400,11 @@ const Select: React.FC<NativeSelectProps> = ({
                           </View>
                           {group.options.map((option) => {
                             const isSelected = multiple
-                              ? (selectedValue as string[]).includes(option.value)
+                              ? (selectedValue as string[]).includes(
+                                  option.value
+                                )
                               : option.value === selectedValue;
-                            
+
                             return (
                               <TouchableOpacity
                                 key={option.value}
@@ -384,7 +416,8 @@ const Select: React.FC<NativeSelectProps> = ({
                                   styles.option,
                                   styles.groupedOption,
                                   isSelected && {
-                                    backgroundColor: colors.field.optionSelected,
+                                    backgroundColor:
+                                      colors.field.optionSelected,
                                   },
                                   option.disabled && styles.disabledOption,
                                 ]}
@@ -393,68 +426,74 @@ const Select: React.FC<NativeSelectProps> = ({
                                   {/* Show checkbox for multiselect */}
                                   {multiple && (
                                     <Icon
-                                      name={isSelected ? 'check-square' : 'square'}
+                                      name={
+                                        isSelected ? 'check-square' : 'square'
+                                      }
                                       size="sm"
-                                      color={isSelected ? colors.field.optionTextSelected : colors.text.subtle}
+                                      color={
+                                        isSelected
+                                          ? colors.field.optionTextSelected
+                                          : colors.text.subtle
+                                      }
                                       style={styles.checkbox}
                                     />
                                   )}
                                   {option.avatar && (
-                                  <Image
-                                    source={{ uri: option.avatar }}
-                                    style={styles.optionAvatar}
-                                  />
-                                )}
-                                {option.icon && !option.avatar && (
-                                  <View style={styles.optionIcon}>
-                                    {isValidIconName(option.icon) ? (
-                                      <Icon
-                                        name={option.icon}
-                                        size="sm"
-                                        color={colors.text.subtle}
-                                      />
-                                    ) : (
-                                      <Text
-                                        style={{
-                                          color: colors.text.subtle,
-                                          fontSize: 18,
-                                        }}
-                                      >
-                                        {option.icon}
-                                      </Text>
-                                    )}
-                                  </View>
-                                )}
-                                <View style={styles.optionTextContainer}>
-                                  <Text
-                                    style={[
-                                      styles.optionText,
-                                      {
-                                        color:
-                                          option.value === selectedValue
-                                            ? colors.field.optionTextSelected
-                                            : colors.field.optionText,
-                                        fontWeight:
-                                          option.value === selectedValue
-                                            ? '500'
-                                            : '400',
-                                      },
-                                      option.disabled && { opacity: 0.5 },
-                                    ]}
-                                  >
-                                    {option.label}
-                                  </Text>
-                                  {option.subtitle && (
+                                    <Image
+                                      source={{ uri: option.avatar }}
+                                      style={styles.optionAvatar}
+                                    />
+                                  )}
+                                  {option.icon && !option.avatar && (
+                                    <View style={styles.optionIcon}>
+                                      {isValidIconName(option.icon) ? (
+                                        <Icon
+                                          name={option.icon}
+                                          size="sm"
+                                          color={colors.text.subtle}
+                                        />
+                                      ) : (
+                                        <Text
+                                          style={{
+                                            color: colors.text.subtle,
+                                            fontSize: 18,
+                                          }}
+                                        >
+                                          {option.icon}
+                                        </Text>
+                                      )}
+                                    </View>
+                                  )}
+                                  <View style={styles.optionTextContainer}>
                                     <Text
                                       style={[
-                                        styles.optionSubtitle,
-                                        { color: colors.text.subtle },
+                                        styles.optionText,
+                                        {
+                                          color:
+                                            option.value === selectedValue
+                                              ? colors.field.optionTextSelected
+                                              : colors.field.optionText,
+                                          fontWeight:
+                                            option.value === selectedValue
+                                              ? '500'
+                                              : '400',
+                                        },
                                         option.disabled && { opacity: 0.5 },
                                       ]}
                                     >
-                                      {option.subtitle}
+                                      {option.label}
                                     </Text>
-                                  )}
+                                    {option.subtitle && (
+                                      <Text
+                                        style={[
+                                          styles.optionSubtitle,
+                                          { color: colors.text.subtle },
+                                          option.disabled && { opacity: 0.5 },
+                                        ]}
+                                      >
+                                        {option.subtitle}
+                                      </Text>
+                                    )}
                                   </View>
                                 </View>
                                 {/* Show checkmark for all selected items (consistent with single select) */}
@@ -476,7 +515,7 @@ const Select: React.FC<NativeSelectProps> = ({
                         const isSelected = multiple
                           ? (selectedValue as string[]).includes(option.value)
                           : option.value === selectedValue;
-                        
+
                         return (
                           <TouchableOpacity
                             key={option.value}
@@ -498,66 +537,70 @@ const Select: React.FC<NativeSelectProps> = ({
                                 <Icon
                                   name={isSelected ? 'check-square' : 'square'}
                                   size="sm"
-                                  color={isSelected ? colors.field.optionTextSelected : colors.text.subtle}
+                                  color={
+                                    isSelected
+                                      ? colors.field.optionTextSelected
+                                      : colors.text.subtle
+                                  }
                                   style={styles.checkbox}
                                 />
                               )}
                               {option.avatar && (
-                              <Image
-                                source={{ uri: option.avatar }}
-                                style={styles.optionAvatar}
-                              />
-                            )}
-                            {option.icon && !option.avatar && (
-                              <View style={styles.optionIcon}>
-                                {isValidIconName(option.icon) ? (
-                                  <Icon
-                                    name={option.icon}
-                                    size="sm"
-                                    color={colors.text.subtle}
-                                  />
-                                ) : (
-                                  <Text
-                                    style={{
-                                      color: colors.text.subtle,
-                                      fontSize: 18,
-                                    }}
-                                  >
-                                    {option.icon}
-                                  </Text>
-                                )}
-                              </View>
-                            )}
-                            <View style={styles.optionTextContainer}>
-                              <Text
-                                style={[
-                                  styles.optionText,
-                                  {
-                                    color:
-                                      option.value === selectedValue
-                                        ? colors.field.optionTextSelected
-                                        : colors.field.optionText,
-                                    fontWeight:
-                                      option.value === selectedValue
-                                        ? '500'
-                                        : '400',
-                                  },
-                                  option.disabled && { opacity: 0.5 },
-                                ]}
-                              >
-                                {option.label}
-                              </Text>
-                              {option.subtitle && (
+                                <Image
+                                  source={{ uri: option.avatar }}
+                                  style={styles.optionAvatar}
+                                />
+                              )}
+                              {option.icon && !option.avatar && (
+                                <View style={styles.optionIcon}>
+                                  {isValidIconName(option.icon) ? (
+                                    <Icon
+                                      name={option.icon}
+                                      size="sm"
+                                      color={colors.text.subtle}
+                                    />
+                                  ) : (
+                                    <Text
+                                      style={{
+                                        color: colors.text.subtle,
+                                        fontSize: 18,
+                                      }}
+                                    >
+                                      {option.icon}
+                                    </Text>
+                                  )}
+                                </View>
+                              )}
+                              <View style={styles.optionTextContainer}>
                                 <Text
                                   style={[
-                                    styles.optionSubtitle,
-                                    { color: colors.text.subtle },
+                                    styles.optionText,
+                                    {
+                                      color:
+                                        option.value === selectedValue
+                                          ? colors.field.optionTextSelected
+                                          : colors.field.optionText,
+                                      fontWeight:
+                                        option.value === selectedValue
+                                          ? '500'
+                                          : '400',
+                                    },
                                     option.disabled && { opacity: 0.5 },
                                   ]}
                                 >
-                                  {option.subtitle}
+                                  {option.label}
                                 </Text>
-                              )}
+                                {option.subtitle && (
+                                  <Text
+                                    style={[
+                                      styles.optionSubtitle,
+                                      { color: colors.text.subtle },
+                                      option.disabled && { opacity: 0.5 },
+                                    ]}
+                                  >
+                                    {option.subtitle}
+                                  </Text>
+                                )}
                               </View>
                             </View>
                             {/* Show checkmark for all selected items (consistent with single select) */}

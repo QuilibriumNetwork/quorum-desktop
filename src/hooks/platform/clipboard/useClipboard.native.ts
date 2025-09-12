@@ -9,7 +9,6 @@ export const useClipboardAdapter = (): ClipboardAdapter => {
   const copy = async (text: string): Promise<void> => {
     // TODO: Uncomment when @react-native-clipboard/clipboard is installed
     // await Clipboard.setString(text);
-    
     // TODO: Uncomment when @react-native-clipboard/clipboard is installed
     // Temporary no-op implementation for development
   };

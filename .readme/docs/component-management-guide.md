@@ -1,6 +1,5 @@
 # Component Management & Development Guide
 
-
 **READY FOR OFFICIAL DOCS: _Last review: 2025-08-14 10:45 UTC_**
 
 This guide helps developers manage existing components and create new ones in our cross-platform architecture.
@@ -34,6 +33,7 @@ Ask yourself:
 ### 2. Platform-Specific vs Shared?
 
 **Most components are platform-specific** (only very simple components can be truly shared). Components can be shared when:
+
 - They only use primitives
 - The logic flow is identical between web and native
 - They have minimal complexity (e.g., AccentColorSwitcher, KickUserModal, LeaveSpaceModal)
@@ -322,9 +322,10 @@ import { Button } from '../primitives/Button';
 
 We have two complementary systems for responsive behavior that work together to create sophisticated UX patterns.
 
-### Touch Device Detection 
+### Touch Device Detection
 
 **Centralized Detection** (now in `src/utils/platform.ts`):
+
 ```typescript
 import { isTouchDevice } from '../utils/platform';
 
@@ -333,10 +334,11 @@ const isTouch = isTouchDevice(); // Uses 3-layer detection for maximum compatibi
 ```
 
 **Detection Logic:**
+
 ```typescript
-'ontouchstart' in window ||           // DOM touch event support
-navigator.maxTouchPoints > 0 ||       // Modern touch points API  
-(navigator as any).msMaxTouchPoints > 0  // Legacy IE/Edge support
+'ontouchstart' in window || // DOM touch event support
+  navigator.maxTouchPoints > 0 || // Modern touch points API
+  (navigator as any).msMaxTouchPoints > 0; // Legacy IE/Edge support
 ```
 
 **Usage:** Input interaction patterns (hover vs tap), tooltip behavior, gesture handling
@@ -361,8 +363,9 @@ function MyComponent() {
 ```
 
 **Breakpoints:**
+
 - `isMobile`: < 768px (viewport width)
-- `isTablet`: 768px - 1024px (viewport width) 
+- `isTablet`: 768px - 1024px (viewport width)
 - `isDesktop`: ≥ 1024px (viewport width)
 
 **Usage:** Layout structure, component visibility, sidebar behavior
@@ -374,13 +377,20 @@ function MyComponent() {
 **Purpose:** Runtime environment detection (web/native/electron)
 
 ```typescript
-import { isWeb, isNative, isElectron, getPlatform, isTouchDevice } from '../utils/platform';
+import {
+  isWeb,
+  isNative,
+  isElectron,
+  getPlatform,
+  isTouchDevice,
+} from '../utils/platform';
 
 // Platform environment checks
 if (isWeb()) {
   // Web browser code
 }
-if (isNative() || isMobile()) {  // Both are aliases
+if (isNative() || isMobile()) {
+  // Both are aliases
   // React Native code
 }
 if (isElectron()) {
@@ -397,7 +407,7 @@ const features = {
   hasCamera: isMobile(),
   hasDeepLinking: isMobile() || isElectron(),
   hasPushNotifications: isMobile(),
-  hasTouch: isTouchDevice(), 
+  hasTouch: isTouchDevice(),
 };
 ```
 
@@ -412,25 +422,25 @@ import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider'
 import { isTouchDevice } from '../utils/platform';
 
 function useInteractionMode() {
-  const { isMobile } = useResponsiveLayoutContext();  // Screen size
-  const isTouch = isTouchDevice();                    // Touch capability
-  
-  const useMobileDrawer = isMobile;                   // Phone: Drawer UI
-  const useDesktopTap = !isMobile && isTouch;        // Tablet: Tap UI  
-  const useDesktopHover = !isMobile && !isTouch;     // Desktop: Hover UI
-  
+  const { isMobile } = useResponsiveLayoutContext(); // Screen size
+  const isTouch = isTouchDevice(); // Touch capability
+
+  const useMobileDrawer = isMobile; // Phone: Drawer UI
+  const useDesktopTap = !isMobile && isTouch; // Tablet: Tap UI
+  const useDesktopHover = !isMobile && !isTouch; // Desktop: Hover UI
+
   return { useMobileDrawer, useDesktopTap, useDesktopHover };
 }
 ```
 
 **Interaction Mode Matrix:**
 
-| Device Type | Screen Size | Touch | Result | UI Pattern |
-|-------------|-------------|-------|---------|------------|
-| Phone | < 768px | ✓ | `useMobileDrawer` | Long-press → drawer |
-| Tablet | ≥ 768px | ✓ | `useDesktopTap` | Tap → show/hide |
-| Desktop | ≥ 1024px | ✗ | `useDesktopHover` | Hover → show |
-| Touch Laptop | ≥ 1024px | ✓ | `useDesktopTap` | Tap → show/hide |
+| Device Type  | Screen Size | Touch | Result            | UI Pattern          |
+| ------------ | ----------- | ----- | ----------------- | ------------------- |
+| Phone        | < 768px     | ✓     | `useMobileDrawer` | Long-press → drawer |
+| Tablet       | ≥ 768px     | ✓     | `useDesktopTap`   | Tap → show/hide     |
+| Desktop      | ≥ 1024px    | ✗     | `useDesktopHover` | Hover → show        |
+| Touch Laptop | ≥ 1024px    | ✓     | `useDesktopTap`   | Tap → show/hide     |
 
 ### Understanding the Different "Mobile" Concepts
 
@@ -441,7 +451,7 @@ function useInteractionMode() {
    - **When:** Layout decisions, component sizing
    - **Example:** A desktop browser resized to 600px is "mobile"
 
-2. **Platform Mobile** (`utils/platform`'s `isMobile()`) 
+2. **Platform Mobile** (`utils/platform`'s `isMobile()`)
    - **What:** React Native runtime environment
    - **When:** Platform-specific code paths
    - **Example:** Mobile Safari returns `false` (it's "web" platform)

@@ -1,4 +1,9 @@
-import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react';
+import React, {
+  useState,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+} from 'react';
 // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
 import { TextInput } from 'react-native';
 import { useTheme } from '../primitives/theme';
@@ -15,7 +20,19 @@ interface MessageTextInputProps {
 }
 
 export const MessageTextInput = forwardRef<TextInput, MessageTextInputProps>(
-  ({ value, onChange, onFocus, onBlur, placeholder, minRows = 1, maxRows = 5, style }, ref) => {
+  (
+    {
+      value,
+      onChange,
+      onFocus,
+      onBlur,
+      placeholder,
+      minRows = 1,
+      maxRows = 5,
+      style,
+    },
+    ref
+  ) => {
     const theme = useTheme();
     const [height, setHeight] = useState(32); // Start with compact single-line height
     const textInputRef = useRef<TextInput>(null);
@@ -26,13 +43,13 @@ export const MessageTextInput = forwardRef<TextInput, MessageTextInputProps>(
       const { height: contentHeight } = event.nativeEvent.contentSize;
       const lineHeight = 18;
       const basePadding = 4; // 2px top + 2px bottom - minimal padding
-      
+
       // Calculate number of lines
-      const lines = Math.max(minRows, Math.ceil((contentHeight) / lineHeight));
+      const lines = Math.max(minRows, Math.ceil(contentHeight / lineHeight));
       const constrainedLines = Math.min(lines, maxRows);
-      
+
       // Calculate height: base padding + (lines * line height)
-      const newHeight = basePadding + (constrainedLines * lineHeight);
+      const newHeight = basePadding + constrainedLines * lineHeight;
       setHeight(Math.max(32, newHeight)); // Minimum 32px height
     };
 
@@ -60,7 +77,7 @@ export const MessageTextInput = forwardRef<TextInput, MessageTextInputProps>(
             backgroundColor: theme.colors.surface[0],
             borderWidth: 0,
             borderRadius: 8,
-            textAlignVertical: (value && value.includes('\n')) ? 'top' : 'center', // Center for single line, top for multiline
+            textAlignVertical: value && value.includes('\n') ? 'top' : 'center', // Center for single line, top for multiline
             includeFontPadding: false, // Remove extra font padding on Android
           },
           style,

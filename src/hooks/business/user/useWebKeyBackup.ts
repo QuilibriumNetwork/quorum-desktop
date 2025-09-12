@@ -8,7 +8,8 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
  */
 export const useWebKeyBackup = () => {
   const { currentPasskeyInfo, exportKey } = usePasskeysContext();
-  const [alreadySavedConfirmationStep, setAlreadySavedConfirmationStep] = useState(0);
+  const [alreadySavedConfirmationStep, setAlreadySavedConfirmationStep] =
+    useState(0);
 
   // Download key file using web APIs
   const downloadKey = useCallback(async (): Promise<void> => {
@@ -61,12 +62,12 @@ export const useWebKeyBackup = () => {
   return {
     // State
     alreadySavedConfirmationStep,
-    
+
     // Actions
     downloadKey,
     handleAlreadySaved,
-    
-    // UI helpers  
+
+    // UI helpers
     getConfirmationButtonText,
   };
 };

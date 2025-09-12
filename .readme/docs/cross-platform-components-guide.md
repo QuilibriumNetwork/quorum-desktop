@@ -1,6 +1,5 @@
 # Complete Guide: Cross-Platform React Components for Web + Native
 
-
 **Auto-reviewed and corrected against .readme/docs/component-management-guide.md - still needs human review : _Last review: 2025-08-14 10:45 UTC_**
 
 This guide provides architectural patterns and practical examples specific to this Quilibrium desktop/mobile app. All examples use our actual primitives, utilities, and file structure.
@@ -52,7 +51,7 @@ Button/
 ```tsx
 // Our actual hooks structure in src/hooks/
 useSpaces(); // 100% shared across platforms
-useMessages(); // 100% shared across platforms  
+useMessages(); // 100% shared across platforms
 useUserProfile(); // 100% shared across platforms
 validateMessageContent(); // Pure functions in src/utils/
 ```
@@ -61,16 +60,16 @@ validateMessageContent(); // Pure functions in src/utils/
 
 ```tsx
 // Our component patterns in src/components/
-SpaceHeader.tsx        // Single component using primitives + responsive detection
-MessageComposer.web.tsx   // Desktop-specific layout with hover interactions
-MessageComposer.native.tsx // Mobile-specific layout with touch gestures
+SpaceHeader.tsx; // Single component using primitives + responsive detection
+MessageComposer.web.tsx; // Desktop-specific layout with hover interactions
+MessageComposer.native.tsx; // Mobile-specific layout with touch gestures
 ```
 
 ---
 
 ## Decision Framework: One vs Two Components
 
-This framework aligns with the practical guidance in [Component Management Guide](./component-management-guide.md). 
+This framework aligns with the practical guidance in [Component Management Guide](./component-management-guide.md).
 
 ### Use Single Shared Component When:
 
@@ -91,10 +90,10 @@ import { useUserProfile } from '../hooks/useUserProfile';
 
 export function UserProfile({ userId }) {
   const { isMobile } = useResponsiveLayoutContext();
-  
+
   // ✅ Business logic extracted to hook
   const { user, updateUser, isLoading } = useUserProfile(userId);
-  
+
   // UI state stays in component
   const [isEditing, setIsEditing] = useState(false);
 
@@ -106,7 +105,7 @@ export function UserProfile({ userId }) {
         <Text variant="heading" size={isMobile ? 'lg' : 'xl'}>
           {user.name}
         </Text>
-        
+
         {isMobile ? (
           <MobileProfileLayout user={user} onEdit={() => setIsEditing(true)} />
         ) : (
@@ -138,13 +137,12 @@ export function useSpaceHeader(spaceId: string) {
 
   // All business logic here - 100% shared
   useEffect(() => {
-    Promise.all([
-      fetchSpace(spaceId),
-      fetchMemberCount(spaceId)
-    ]).then(([spaceData, count]) => {
-      setSpace(spaceData);
-      setMemberCount(count);
-    });
+    Promise.all([fetchSpace(spaceId), fetchMemberCount(spaceId)]).then(
+      ([spaceData, count]) => {
+        setSpace(spaceData);
+        setMemberCount(count);
+      }
+    );
   }, [spaceId]);
 
   return { space, memberCount, updateSpace };
@@ -162,7 +160,9 @@ export function SpaceHeader({ spaceId }) {
   return (
     <Container className="space-header-desktop">
       <FlexBetween>
-        <Text variant="heading" size="xl">{space?.name}</Text>
+        <Text variant="heading" size="xl">
+          {space?.name}
+        </Text>
         <Button variant="subtle" onClick={() => setShowDropdown(!showDropdown)}>
           Settings
         </Button>
@@ -182,7 +182,9 @@ export function SpaceHeader({ spaceId }) {
 
   return (
     <FlexColumn gap="sm" style={styles.mobileHeader}>
-      <Text variant="heading" size="lg">{space?.name}</Text>
+      <Text variant="heading" size="lg">
+        {space?.name}
+      </Text>
       <FlexRow gap="xs">
         <Text variant="subtle">{memberCount} members</Text>
         <Button size="small" onPress={() => setShowActions(!showActions)}>
@@ -225,7 +227,7 @@ export function SpaceView({ spaceId }) {
 
   const canManageSpace = (userId) => {
     // ❌ Extract this business rule
-    return members.find(m => m.id === userId)?.role === 'admin';
+    return members.find((m) => m.id === userId)?.role === 'admin';
   };
 
   return <div>...</div>;
@@ -251,11 +253,11 @@ export function useSpacePermissions(spaceId: string, userId: string) {
   const { members } = useSpaceMembers(spaceId);
 
   const canManageSpace = useCallback(() => {
-    return members.find(m => m.id === userId)?.role === 'admin';
+    return members.find((m) => m.id === userId)?.role === 'admin';
   }, [members, userId]);
 
   const canDeleteMessages = useCallback(() => {
-    const userMember = members.find(m => m.id === userId);
+    const userMember = members.find((m) => m.id === userId);
     return userMember?.role === 'admin' || userMember?.role === 'moderator';
   }, [members, userId]);
 
@@ -275,10 +277,7 @@ export function SpaceView({ spaceId }) {
   return (
     <Container>
       <FlexColumn gap="md">
-        <SpaceMessageList 
-          messages={messages}
-          canManage={canManageSpace()}
-        />
+        <SpaceMessageList messages={messages} canManage={canManageSpace()} />
       </FlexColumn>
     </Container>
   );
@@ -290,7 +289,8 @@ export function SpaceView({ spaceId }) {
 The [Component Management Guide](./component-management-guide.md#business-logic-extraction-rule) covers this in detail. Key points:
 
 **✅ Keep in Components:**
-- **UI state**: Modal visibility, input focus, hover states  
+
+- **UI state**: Modal visibility, input focus, hover states
 - **Event handling**: Click handlers, form submissions
 - **UI calculations**: Show/hide logic, formatting for display
 - **Render logic**: Conditional rendering based on UI state
@@ -309,7 +309,10 @@ export function validateMessageContent(content: string): ValidationResult {
   }
 
   if (content.length > MESSAGE_MAX_LENGTH) {
-    return { isValid: false, error: `Message too long (max ${MESSAGE_MAX_LENGTH})` };
+    return {
+      isValid: false,
+      error: `Message too long (max ${MESSAGE_MAX_LENGTH})`,
+    };
   }
 
   return { isValid: true };
@@ -562,14 +565,21 @@ We use our centralized platform utilities in `src/utils/platform.ts` for all pla
 
 ```tsx
 // Our actual platform utilities
-import { isWeb, isMobile, isElectron, getPlatform, isTouchDevice } from '../utils/platform';
+import {
+  isWeb,
+  isMobile,
+  isElectron,
+  getPlatform,
+  isTouchDevice,
+} from '../utils/platform';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 // Platform environment detection
 if (isWeb()) {
   // Web browser code
 }
-if (isMobile()) {  // React Native environment
+if (isMobile()) {
+  // React Native environment
   // Mobile app code
 }
 if (isElectron()) {
@@ -577,7 +587,11 @@ if (isElectron()) {
 }
 
 // Screen size detection (viewport-based)
-const { isMobile: isSmallScreen, isTablet, isDesktop } = useResponsiveLayoutContext();
+const {
+  isMobile: isSmallScreen,
+  isTablet,
+  isDesktop,
+} = useResponsiveLayoutContext();
 
 // Touch capability detection
 const hasTouch = isTouchDevice();
@@ -808,12 +822,14 @@ export class ChannelErrorBoundary extends React.Component {
 ### Testing with Our Playground System
 
 **Web Testing (Primary):**
+
 1. Run `yarn dev` to start development server
 2. Navigate to `/playground` for primitive testing
 3. Test components with different props, themes, and screen sizes
 4. Verify responsive behavior and theme switching
 
 **Mobile Testing (When Needed):**
+
 1. Run `yarn mobile` to start mobile test playground
 2. Use Expo Go app to test on real device
 3. Navigate through test screens to verify mobile behavior
@@ -867,7 +883,7 @@ describe('useSpaceData', () => {
   it('should fetch space data on mount', async () => {
     const mockMessages = [{ id: '1', content: 'Hello space!' }];
     const mockMembers = [{ id: 'user1', name: 'Alice' }];
-    
+
     api.fetchSpaceMessages.mockResolvedValue({ messages: mockMessages });
     api.fetchSpaceMembers.mockResolvedValue({ members: mockMembers });
 
@@ -918,11 +934,24 @@ jest.mock('../../hooks/useSpaceChat', () => ({
 
 // Mock our primitives
 jest.mock('../primitives', () => ({
-  FlexColumn: ({ children, ...props }) => <div data-testid="flex-column" {...props}>{children}</div>,
+  FlexColumn: ({ children, ...props }) => (
+    <div data-testid="flex-column" {...props}>
+      {children}
+    </div>
+  ),
   Text: ({ children, ...props }) => <span {...props}>{children}</span>,
-  Button: ({ children, onClick, ...props }) => <button onClick={onClick} {...props}>{children}</button>,
+  Button: ({ children, onClick, ...props }) => (
+    <button onClick={onClick} {...props}>
+      {children}
+    </button>
+  ),
   Input: ({ value, onChange, placeholder, ...props }) => (
-    <input value={value} onChange={(e) => onChange?.(e.target.value)} placeholder={placeholder} {...props} />
+    <input
+      value={value}
+      onChange={(e) => onChange?.(e.target.value)}
+      placeholder={placeholder}
+      {...props}
+    />
   ),
 }));
 
@@ -996,7 +1025,9 @@ export function SpaceHeader({ spaceId }) {
           <Text variant="heading" size="xl" className="text-strong">
             {space?.name}
           </Text>
-          <Text variant="subtle" size="sm">{memberCount} members</Text>
+          <Text variant="subtle" size="sm">
+            {memberCount} members
+          </Text>
         </FlexColumn>
 
         {canManageSpace && (

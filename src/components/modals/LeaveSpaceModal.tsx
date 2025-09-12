@@ -43,7 +43,7 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
             </Trans>
           </Text>
         </Container>
-        <Spacer size='lg'></Spacer>
+        <Spacer size="lg"></Spacer>
         <FlexRow>
           <Button
             type="danger"

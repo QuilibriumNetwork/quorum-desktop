@@ -67,7 +67,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
-  
+
   // Use extracted hooks
   const { copied, copyToClipboard } = useCopyToClipboard({
     onCopy,
@@ -86,41 +86,50 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
     try {
       // Provide haptic feedback for better UX (Expo Go compatible)
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      
+
       await copyToClipboard(text);
-      
+
       // Measure element position and show positioned tooltip
       const refToMeasure = buttonRef.current || contentRef.current;
       if (refToMeasure) {
-        refToMeasure.measure((_x: number, _y: number, width: number, _height: number, pageX: number, pageY: number) => {
-          setTooltipPosition({
-            x: pageX + width / 2, // Center above button
-            y: pageY - 10, // Above button with small offset
-          });
-          
-          setShowFeedback(true);
-          
-          // Animate in
-          Animated.parallel([
-            Animated.timing(fadeAnim, {
-              toValue: 1,
-              duration: 200,
-              useNativeDriver: true,
-            }),
-            Animated.timing(scaleAnim, {
-              toValue: 1,
-              duration: 200,
-              useNativeDriver: true,
-            }),
-          ]).start();
-        });
+        refToMeasure.measure(
+          (
+            _x: number,
+            _y: number,
+            width: number,
+            _height: number,
+            pageX: number,
+            pageY: number
+          ) => {
+            setTooltipPosition({
+              x: pageX + width / 2, // Center above button
+              y: pageY - 10, // Above button with small offset
+            });
+
+            setShowFeedback(true);
+
+            // Animate in
+            Animated.parallel([
+              Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: true,
+              }),
+              Animated.timing(scaleAnim, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: true,
+              }),
+            ]).start();
+          }
+        );
       } else {
         // Fallback if no button ref (copyOnContentClick case) - show centered tooltip
         setTooltipPosition({
           x: 200, // Center of screen approximately
           y: 300, // Middle of screen approximately
         });
-        
+
         setShowFeedback(true);
         Animated.parallel([
           Animated.timing(fadeAnim, {
@@ -135,7 +144,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
           }),
         ]).start();
       }
-      
+
       // Auto hide after delay
       setTimeout(() => {
         Animated.parallel([
@@ -160,10 +169,12 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   };
 
   const iconElement = (
-    <View style={[
-      styles.iconContainer,
-      iconPosition === 'right' ? styles.iconRight : styles.iconLeft,
-    ]}>
+    <View
+      style={[
+        styles.iconContainer,
+        iconPosition === 'right' ? styles.iconRight : styles.iconLeft,
+      ]}
+    >
       <Icon
         name="clipboard"
         size={iconSize}
@@ -218,10 +229,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
       <Text
         variant={textVariant}
         size={textSize}
-        style={[
-          styles.text,
-          copyOnContentClick && styles.clickableText,
-        ]}
+        style={[styles.text, copyOnContentClick && styles.clickableText]}
         selectable={!copyOnContentClick}
       >
         {children}
@@ -246,11 +254,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
 
   // Positioned feedback tooltip
   const feedbackTooltip = showFeedback ? (
-    <Modal
-      visible={showFeedback}
-      transparent
-      animationType="none"
-    >
+    <Modal visible={showFeedback} transparent animationType="none">
       <View style={styles.overlayContainer}>
         <Animated.View
           style={[
@@ -262,7 +266,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
               borderColor: colors.border.default,
               position: 'absolute',
               left: tooltipPosition.x - 40, // Center tooltip (assuming ~80px width)
-              top: tooltipPosition.y - 40,  // Position above button
+              top: tooltipPosition.y - 40, // Position above button
             },
           ]}
         >

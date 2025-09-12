@@ -12,9 +12,7 @@
       "native": "not_needed",
       "notes": "ELECTRON ONLY: This component is only used for Electron (desktop) app and no need for native mobile implementation. MOVED TO PLATFORM_SPECIFIC: Uses CloseButton.scss with absolute positioning. FontAwesome dependency. Easier to build native version with Icon primitive.",
       "updated": "2025-08-10",
-      "dependencies": [
-        "Icon"
-      ],
+      "dependencies": ["Icon"],
       "dependency_level": 1,
       "complexity_category": "simple"
     },
@@ -26,19 +24,11 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useShowHomeScreen"
-      ],
+      "hooks": ["useShowHomeScreen"],
       "native": "todo",
       "notes": "Business logic extracted to useShowHomeScreen hook for localStorage toggle states. All HTML elements replaced with primitives (Container, FlexRow, FlexColumn, Text, Icon). Removed unused imports and commented code. useConversationsData was determined unnecessary and removed. Still uses DirectMessage.scss so remains platform_specific.",
       "updated": "2025-08-01",
-      "dependencies": [
-        "Container",
-        "FlexRow",
-        "FlexColumn",
-        "Text",
-        "Icon"
-      ],
+      "dependencies": ["Container", "FlexRow", "FlexColumn", "Text", "Icon"],
       "dependency_level": 2,
       "complexity_category": "medium"
     },
@@ -50,10 +40,7 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useModalManagement",
-        "useElectronDetection"
-      ],
+      "hooks": ["useModalManagement", "useElectronDetection"],
       "native": "todo",
       "notes": "Business logic extracted to useModalManagement (createSpace modal state) and useElectronDetection (platform detection for CloseButton). Added Container primitive for conditional rendering. Component simplified from 60+ lines to ~40 lines with clean hook composition. Much simpler than originally estimated - no complex useEffect or state interactions found.",
       "updated": "2025-08-01",
@@ -76,11 +63,7 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "hooks": [
-        "useChannelData",
-        "useChannelMessages",
-        "useMessageComposer"
-      ],
+      "hooks": ["useChannelData", "useChannelMessages", "useMessageComposer"],
       "native": "todo",
       "notes": "COMPLETED: Business logic extracted to useChannelData (space/channel/members/stickers data), useChannelMessages (message list, pagination, user mapping), and useMessageComposer (message input, file upload, sticker handling). Component reduced from 730+ lines to ~370 lines. Message composition UI extracted to MessageComposer component. Uses primitives (Button, Icon) but keeps Channel.scss for complex chat layout - responsive sidebar positioning, message list styling, sticker panel positioning with z-index layering. Auto-focus on reply and auto-scroll on message/sticker send implemented. Emoji reaction scroll bug fixed. TypeScript errors resolved.",
       "updated": "2025-08-02",
@@ -110,9 +93,7 @@
       "native": "todo",
       "notes": "Business logic extracted to 3 hooks. Uses only primitives but still has custom SCSS file with styling classes.",
       "updated": "2025-07-31",
-      "dependencies": [
-        "primitives"
-      ],
+      "dependencies": ["primitives"],
       "dependency_level": 2,
       "complexity_category": "simple"
     },
@@ -124,9 +105,7 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useModalState"
-      ],
+      "hooks": ["useModalState"],
       "native": "todo",
       "notes": "COMPLETED: Business logic extracted into useModalState hook with reducer pattern, modal state management, and all open/close actions. Component now focuses purely on rendering modals with web-specific CSS classes (z-[9999], fixed positioning). Hook is cross-platform ready with complete modal coordination logic. Legacy hooks useModals and useModalContext maintained for backward compatibility. MANUAL TESTING VERIFIED: All modal functionality (UserSettings, SpaceEditor, ChannelEditor, GroupEditor, LeaveSpace, NewDirectMessage) works correctly after extraction.",
       "updated": "2025-08-04",
@@ -152,10 +131,7 @@
       "native": "todo",
       "notes": "LOGIC EXTRACTION NOT NEEDED: This component is web-specific for responsive mobile breakpoints. Native apps use completely different navigation patterns (React Native navigation, native drawers). The animation timing and CSS transitions are inherently web-specific. Cross-platform architecture will use platform-specific navigation providers instead of extracting this logic.",
       "updated": "2025-08-04",
-      "dependencies": [
-        "MessageActionsDrawer",
-        "EmojiPickerDrawer"
-      ],
+      "dependencies": ["MessageActionsDrawer", "EmojiPickerDrawer"],
       "dependency_level": 5,
       "complexity_category": "simple"
     },
@@ -199,9 +175,7 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useUserKicking"
-      ],
+      "hooks": ["useUserKicking"],
       "native": "done",
       "notes": "COMPLETED: Business logic extracted into useUserKicking hook with confirmation flow, timeout management, and kick user API calls. All raw HTML replaced with Container, Text, FlexRow primitives. Fully cross-platform compatible with responsive text alignment. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
       "updated": "2025-08-04",
@@ -255,9 +229,7 @@
       "native": "todo",
       "notes": "COMPLETED: Analyzed for business logic extraction but intentionally kept simple and explicit. Logic too minimal to extract (2-3 lines: selection state, URL generation). Uses @dnd-kit/sortable for web drag/drop. Will need .native.tsx version with different gesture system (long-press vs drag). Removed SCSS dependency, using Tailwind 'block' class. Best practice: Don't over-engineer simple components - clarity over abstraction. Platform-specific behavior (drag/drop) belongs in platform files, not shared hooks.",
       "updated": "2025-08-01",
-      "dependencies": [
-        "SpaceIcon"
-      ],
+      "dependencies": ["SpaceIcon"],
       "dependency_level": 3,
       "complexity_category": "simple"
     },
@@ -313,10 +285,7 @@
       "used": "no",
       "primitives": "todo",
       "logic_extraction": "todo",
-      "hooks": [
-        "useProfileEdit",
-        "useImageUpload"
-      ],
+      "hooks": ["useProfileEdit", "useImageUpload"],
       "native": "todo",
       "notes": "Edit mode functionality extracted from UserProfile. Currently unused but kept for potential future use.",
       "updated": "2025-08-01",
@@ -332,9 +301,7 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "hooks": [
-        "useContactSelection"
-      ],
+      "hooks": ["useContactSelection"],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses DirectMessageContact.scss with custom styling for contact list items, unread indicators. Easier to build native version.",
       "updated": "2025-07-30",
@@ -350,18 +317,11 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "hooks": [
-        "useSpaceOrdering",
-        "useSpaceDragAndDrop"
-      ],
+      "hooks": ["useSpaceOrdering", "useSpaceDragAndDrop"],
       "native": "todo",
       "notes": "Business logic extracted to useSpaceOrdering (space deduplication, mapping, persistence) and useSpaceDragAndDrop (drag state, reordering, config saving). Primitives NOT used - complex CSS layout with glow effects, selection indicators, and precise spacing breaks when converted to primitives. Original HTML + SCSS preserved for visual integrity. Hooks are cross-platform ready for future native implementation.",
       "updated": "2025-08-01",
-      "dependencies": [
-        "ExpandableNavMenu",
-        "SpaceButton",
-        "SpaceIcon"
-      ],
+      "dependencies": ["ExpandableNavMenu", "SpaceButton", "SpaceIcon"],
       "dependency_level": 4,
       "complexity_category": "simple"
     },
@@ -373,11 +333,7 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "hooks": [
-        "useSpaceCreation",
-        "useFileUpload",
-        "useSpaceSettings"
-      ],
+      "hooks": ["useSpaceCreation", "useFileUpload", "useSpaceSettings"],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Heavy Tailwind dependencies, raw divs, complex file upload UI, SCSS classes. Complex modal with many custom CSS behaviors. Easier to build native version.",
       "updated": "2025-07-30",
@@ -402,17 +358,11 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "hooks": [
-        "useVirtualization",
-        "useMessagePagination",
-        "useWindowSize"
-      ],
+      "hooks": ["useVirtualization", "useMessagePagination", "useWindowSize"],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses react-virtuoso (web-specific virtualization). React Native needs FlatList. Different scrolling/virtualization implementations required per platform.",
       "updated": "2025-07-30",
-      "dependencies": [
-        "Message"
-      ],
+      "dependencies": ["Message"],
       "dependency_level": 4,
       "complexity_category": "simple"
     },
@@ -424,16 +374,11 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useAccentColor"
-      ],
+      "hooks": ["useAccentColor"],
       "native": "done",
       "notes": "UPDATED: Now integrated with unified theme system using useTheme() hook instead of separate useAccentColor. Full cross-platform compatibility with AsyncStorage persistence on native and localStorage on web. Uses only primitives (FlexRow, ColorSwatch) with dynamic accent color propagation to all form fields (Input, TextArea, Select focus borders). Tested successfully in mobile playground. Main app testing pending.",
       "updated": "2025-08-04",
-      "dependencies": [
-        "ColorSwatch",
-        "FlexRow"
-      ],
+      "dependencies": ["ColorSwatch", "FlexRow"],
       "dependency_level": 1,
       "complexity_category": "simple"
     },
@@ -465,10 +410,7 @@
       "native": "ready",
       "notes": "NATIVE VERSION COMPLETE: Maintenance.native.tsx implemented with full cross-platform architecture. Uses consistent layout pattern (AuthScreenWrapper, FlexRow/Container/FlexColumn) like Login and Maintenance components. All primitives used: Container, Text, Button, Icon, Title, Paragraph, FlexRow, FlexColumn. Removed unnecessary KeyboardAvoidingView (no input fields). Replaced hardcoded Container spacers with Spacer primitive. Simplified layout using fullWidthWithMargin button prop. Clickable link implemented using Text primitive with linkStyle='simple' and proper Linking integration. Fully responsive with proper spacing and mobile-optimized UX.",
       "updated": "2025-08-09",
-      "dependencies": [
-        "Button",
-        "Icon"
-      ],
+      "dependencies": ["Button", "Icon"],
       "dependency_level": 1,
       "complexity_category": "simple"
     },
@@ -480,18 +422,11 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useCopyToClipboard"
-      ],
+      "hooks": ["useCopyToClipboard"],
       "native": "todo",
       "notes": "COMPLETED: Business logic extracted into useCopyToClipboard hook with platform-aware clipboard handling. Now uses only primitives (Container, Icon, Text, Tooltip) but remains platform_specific due to complex web-specific touch event handling with manual DOM event listeners for mobile web UX. Native version would use different touch patterns and native clipboard APIs.",
       "updated": "2025-07-31",
-      "dependencies": [
-        "Container",
-        "Icon",
-        "Text",
-        "Tooltip"
-      ],
+      "dependencies": ["Container", "Icon", "Text", "Tooltip"],
       "dependency_level": 1,
       "complexity_category": "medium"
     },
@@ -507,9 +442,7 @@
       "native": "done",
       "notes": "FULLY SHARED COMPONENT: Implemented cross-platform theming system with platform-specific providers (ThemeProvider.web.tsx + ThemeProvider.native.tsx). Both platforms support system theme detection (web: matchMedia, mobile: useColorScheme). Component uses only primitives (RadioGroup) with unified theme API. Web-only props (className, name) are ignored on native. Tested and working on both web and mobile playground. No custom hooks needed - uses provider directly.",
       "updated": "2025-08-04",
-      "dependencies": [
-        "RadioGroup"
-      ],
+      "dependencies": ["RadioGroup"],
       "dependency_level": 1,
       "complexity_category": "simple"
     },
@@ -521,9 +454,7 @@
       "used": "yes",
       "primitives": "todo",
       "logic_extraction": "done",
-      "hooks": [
-        "useTooltipBehavior"
-      ],
+      "hooks": ["useTooltipBehavior"],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Uses ReactTooltip.scss, web-specific tooltip library. Native needs different tooltip implementation. Should migrate to Tooltip primitive.",
       "updated": "2025-07-30",
@@ -643,11 +574,7 @@
       "native": "todo",
       "notes": "Uses MobileDrawer component. Designed for mobile-first UX. Desktop equivalent likely uses hover/context menu. Simple action handlers.",
       "updated": "2025-07-29",
-      "dependencies": [
-        "QuickReactionButton",
-        "ActionMenuItem",
-        "MobileDrawer"
-      ],
+      "dependencies": ["QuickReactionButton", "ActionMenuItem", "MobileDrawer"],
       "dependency_level": 3,
       "complexity_category": "simple"
     },
@@ -663,10 +590,7 @@
       "native": "not_needed",
       "notes": "SUSPENDED: Component is currently unused/suspended and no need for native implementation at this time. MOVED TO PLATFORM_SPECIFIC: Imports './UserStatus.scss'. Uses ClickToCopyContent component and partially uses primitives. Has SCSS dependencies.",
       "updated": "2025-08-10",
-      "dependencies": [
-        "UserOnlineStateIndicator",
-        "ClickToCopyContent"
-      ],
+      "dependencies": ["UserOnlineStateIndicator", "ClickToCopyContent"],
       "dependency_level": 2,
       "complexity_category": "simple"
     },
@@ -698,11 +622,7 @@
       "native": "todo",
       "notes": "Layout component managing space view. Uses responsive context. Desktop: sidebar + main. Mobile: stack/tab navigation. Simple layout logic.",
       "updated": "2025-07-29",
-      "dependencies": [
-        "ChannelList",
-        "Channel",
-        "UserStatus"
-      ],
+      "dependencies": ["ChannelList", "Channel", "UserStatus"],
       "dependency_level": 4,
       "complexity_category": "simple"
     },
@@ -714,16 +634,11 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useImageLoading",
-        "useDragStateContext"
-      ],
+      "hooks": ["useImageLoading", "useDragStateContext"],
       "native": "todo",
       "notes": "COMPLETED: Business logic extracted into useImageLoading hook with ArrayBuffer/URL image loading, loading states, and error handling. Now uses Tooltip primitive instead of direct ReactTooltip. Added drag-aware tooltip management - disables tooltips during space icon dragging for better UX. Remains platform_specific due to SpaceIcon.scss dependency with custom CSS classes (space-icon-selected, space-icon-has-notifs) and responsive breakpoints. Web version cannot use Container primitive - must use raw div elements to maintain CSS class compatibility with existing SCSS. Component demonstrates excellent pattern: shared business logic with platform-specific styling coordination.",
       "updated": "2025-07-31",
-      "dependencies": [
-        "Tooltip"
-      ],
+      "dependencies": ["Tooltip"],
       "dependency_level": 2,
       "complexity_category": "simple"
     },
@@ -760,13 +675,7 @@
       "native": "todo",
       "notes": "COMPLETED: Business logic extracted into 4 focused hooks - useGroupEditor (modal state), useSpacePermissions (owner/member logic), useSpaceHeader (banner/styling), useSpaceGroups (data processing). All HTML elements replaced with primitives (Container, Button, Icon, Text). Removed unused useSpaceMembers import and cleaned up TypeScript warnings. Modal system updated to use primitives with proper Container wrapper instead of raw divs. Still uses ChannelList.scss so remains platform_specific.",
       "updated": "2025-08-01",
-      "dependencies": [
-        "ChannelGroup",
-        "Button",
-        "Container",
-        "Icon",
-        "Text"
-      ],
+      "dependencies": ["ChannelGroup", "Button", "Container", "Icon", "Text"],
       "dependency_level": 4,
       "complexity_category": "medium"
     },
@@ -778,20 +687,11 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useInviteProcessing",
-        "useInviteJoining",
-        "useInviteUI"
-      ],
+      "hooks": ["useInviteProcessing", "useInviteJoining", "useInviteUI"],
       "native": "todo",
       "notes": "COMPLETED: Business logic extracted into 3 focused hooks - useInviteProcessing (invite validation), useInviteJoining (space joining with passkey validation), useInviteUI (button states, membership checking). All HTML elements replaced with primitives (Container, Text, FlexRow, Button). Simplified error display using Text with variant='error'. Improved error handling with separate validation and join errors. Hook designed specifically for fixed invite link use case (vs general useSpaceJoining for dynamic links).",
       "updated": "2025-08-01",
-      "dependencies": [
-        "Button",
-        "Container",
-        "Text",
-        "FlexRow"
-      ],
+      "dependencies": ["Button", "Container", "Text", "FlexRow"],
       "dependency_level": 2,
       "complexity_category": "medium"
     },
@@ -803,20 +703,11 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useDirectMessageCreation",
-        "useAddressValidation"
-      ],
+      "hooks": ["useDirectMessageCreation", "useAddressValidation"],
       "native": "done",
       "notes": "COMPLETED: Business logic extracted into useDirectMessageCreation and useAddressValidation hooks. All raw HTML replaced with Container and Text primitives. Fully cross-platform compatible. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
       "updated": "2025-08-04",
-      "dependencies": [
-        "Input",
-        "Button",
-        "Modal",
-        "Container",
-        "Text"
-      ],
+      "dependencies": ["Input", "Button", "Modal", "Container", "Text"],
       "dependency_level": 2,
       "complexity_category": "medium"
     },
@@ -828,17 +719,11 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useSpaceJoining",
-        "useInviteValidation"
-      ],
+      "hooks": ["useSpaceJoining", "useInviteValidation"],
       "native": "todo",
       "notes": "COMPLETED: Business logic extracted into useSpaceJoining and useInviteValidation hooks. All raw HTML replaced with Container, FlexCenter, and Text primitives. Fully cross-platform compatible. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
       "updated": "2025-08-04",
-      "dependencies": [
-        "SpaceIcon",
-        "primitives"
-      ],
+      "dependencies": ["SpaceIcon", "primitives"],
       "dependency_level": 3,
       "complexity_category": "simple"
     },
@@ -850,9 +735,7 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useSpaceLeaving"
-      ],
+      "hooks": ["useSpaceLeaving"],
       "native": "todo",
       "notes": "COMPLETED: Business logic extracted into useSpaceLeaving hook with confirmation flow and timeout management. All raw HTML replaced with Container, Text, FlexRow, and other primitives. Fully cross-platform compatible with responsive text alignment. TODO: Verify mobile UX in playground - confirm shared modal works well on mobile vs needing platform-specific native implementation.",
       "updated": "2025-08-04",
@@ -883,11 +766,7 @@
       "native": "todo",
       "notes": "Business logic extracted to 3 hooks. Uses Container primitive but still has minimal SCSS file with z-index positioning for web-specific layering.",
       "updated": "2025-07-31",
-      "dependencies": [
-        "SearchBar",
-        "SearchResults",
-        "Container"
-      ],
+      "dependencies": ["SearchBar", "SearchResults", "Container"],
       "dependency_level": 3,
       "complexity_category": "simple"
     },
@@ -956,21 +835,11 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "hooks": [
-        "useOnboardingFlow",
-        "useWebKeyBackup",
-        "useWebFileUpload"
-      ],
+      "hooks": ["useOnboardingFlow", "useWebKeyBackup", "useWebFileUpload"],
       "native": "ready",
       "notes": "NATIVE VERSION COMPLETE: Onboarding.native.tsx implemented with full cross-platform architecture. Uses shared business logic hooks (useOnboardingFlow, useKeyBackup) and platform-specific UI. Fixed keyboard handling with KeyboardAvoidingView wrapper. Implemented all onboarding steps: key-backup, display-name, profile-photo, complete. Text styling standardized using Text primitives instead of hardcoded styles. All steps match web functionality with mobile-optimized UX (transparent overlays, dashed borders, press effects, conditional buttons).",
       "updated": "2025-08-09",
-      "dependencies": [
-        "Input",
-        "Icon",
-        "Button",
-        "Tooltip",
-        "FileUpload"
-      ],
+      "dependencies": ["Input", "Icon", "Button", "Tooltip", "FileUpload"],
       "dependency_level": 4,
       "complexity_category": "medium"
     },
@@ -982,15 +851,11 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "hooks": [
-        "useAuthenticationFlow"
-      ],
+      "hooks": ["useAuthenticationFlow"],
       "native": "ready",
       "notes": "NATIVE VERSION COMPLETE: Login.native.tsx implemented with full cross-platform architecture. Uses shared useAuthenticationFlow business logic hook for auth state management, API integration, and user setup. Native UI built with AuthScreenWrapper, proper keyboard handling (KeyboardAvoidingView), and responsive button layout with horizontal margins. Integrated with step indicator system and smooth navigation flow to Onboarding. All mobile-optimized UX patterns implemented: proper spacing, fullWidth buttons, and touch-friendly interactions. Fully tested in authentication test flow.",
       "updated": "2025-08-09",
-      "dependencies": [
-        "Button"
-      ],
+      "dependencies": ["Button"],
       "dependency_level": 3,
       "complexity_category": "simple"
     },
@@ -1018,10 +883,7 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useThemeDetection",
-        "useSystemTheme"
-      ],
+      "hooks": ["useThemeDetection", "useSystemTheme"],
       "native": "done",
       "notes": "Theme detection logic with localStorage + system theme detection (>10 lines, reusable). Context provider pattern works identically cross-platform.",
       "updated": "2025-07-31",
@@ -1062,11 +924,7 @@
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '../../styles/_modal_common.scss'. Uses many primitives but has SCSS dependencies. Business logic extraction already done.",
       "updated": "2025-07-30",
-      "dependencies": [
-        "ClickToCopyContent",
-        "ReactTooltip",
-        "primitives"
-      ],
+      "dependencies": ["ClickToCopyContent", "ReactTooltip", "primitives"],
       "dependency_level": 4,
       "complexity_category": "simple"
     },
@@ -1078,10 +936,7 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useChannelManagement",
-        "useChannelPermissions"
-      ],
+      "hooks": ["useChannelManagement", "useChannelPermissions"],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Imports ../../styles/_modal_common.scss. Business logic extracted to useChannelManagement (channel CRUD, delete confirmation) and useChannelPermissions hooks. Now uses primitives (Modal, Container, FlexRow, Input, Button, Text, Icon) but retains SCSS dependency.",
       "updated": "2025-07-31",
@@ -1105,9 +960,7 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useGroupManagement"
-      ],
+      "hooks": ["useGroupManagement"],
       "native": "todo",
       "notes": "MOVED TO PLATFORM_SPECIFIC: Imports ../../styles/_modal_common.scss. Business logic extracted to useGroupManagement hook (group CRUD, delete confirmation, message checking). Now uses primitives (Modal, Container, FlexRow, Input, Button, Text, Icon) but retains SCSS dependency.",
       "updated": "2025-07-31",
@@ -1135,9 +988,7 @@
       "native": "todo",
       "notes": "Comment: 'for mobile users using web app, native app needs different emoji picker (React Native compatible)'. Uses MobileDrawer + EmojiPicker lib.",
       "updated": "2025-07-29",
-      "dependencies": [
-        "MobileDrawer"
-      ],
+      "dependencies": ["MobileDrawer"],
       "dependency_level": 3,
       "complexity_category": "simple"
     },
@@ -1158,13 +1009,7 @@
       "native": "todo",
       "notes": "Business logic extracted to 4 hooks. Separated DM/Space logic to avoid hook rule violations. Uses only primitives (Container, Text, Icon, FlexBetween, FlexRow) but still has custom SCSS file with hover states and responsive styles.",
       "updated": "2025-07-31",
-      "dependencies": [
-        "Container",
-        "Text",
-        "Icon",
-        "FlexBetween",
-        "FlexRow"
-      ],
+      "dependencies": ["Container", "Text", "Icon", "FlexBetween", "FlexRow"],
       "dependency_level": 2,
       "complexity_category": "medium"
     },
@@ -1176,9 +1021,7 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useConversationPolling"
-      ],
+      "hooks": ["useConversationPolling"],
       "native": "todo",
       "notes": "Business logic extracted to useConversationPolling hook. All HTML elements replaced with primitives (Container, FlexColumn, FlexBetween, Icon). CSS optimized with Tailwind utilities. Still uses minimal SCSS for scrollbar styling so remains platform_specific. Native implementation still needed.",
       "updated": "2025-08-01",
@@ -1204,12 +1047,7 @@
       "native": "todo",
       "notes": "Uses Button primitive + FontAwesome + ReactTooltip. Desktop: expandable sidebar. Mobile: different navigation pattern. Simple toggle logic.",
       "updated": "2025-07-29",
-      "dependencies": [
-        "Icon",
-        "Tooltip",
-        "FlexColumn",
-        "Container"
-      ],
+      "dependencies": ["Icon", "Tooltip", "FlexColumn", "Container"],
       "dependency_level": 3,
       "complexity_category": "medium"
     },
@@ -1221,16 +1059,11 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useWebSocketConnection",
-        "useMessageQueue"
-      ],
+      "hooks": ["useWebSocketConnection", "useMessageQueue"],
       "native": "done",
       "notes": "Complex WebSocket logic with connection management, message queuing (>10 lines, reusable). Context pattern works cross-platform.",
       "updated": "2025-07-31",
-      "dependencies": [
-        "QuorumApiContext"
-      ],
+      "dependencies": ["QuorumApiContext"],
       "dependency_level": 5,
       "complexity_category": "simple"
     },
@@ -1242,10 +1075,7 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useApiClientSetup",
-        "useErrorHandling"
-      ],
+      "hooks": ["useApiClientSetup", "useErrorHandling"],
       "native": "done",
       "notes": "Complex API client configuration with error handling (>10 lines, reusable). Context pattern works cross-platform.",
       "updated": "2025-07-31",
@@ -1261,18 +1091,11 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useMessageDatabase",
-        "useEncryption",
-        "useCaching"
-      ],
+      "hooks": ["useMessageDatabase", "useEncryption", "useCaching"],
       "native": "done",
       "notes": "Complex database logic with encryption, caching, key management (>10 lines, reusable). Context pattern works cross-platform.",
       "updated": "2025-07-31",
-      "dependencies": [
-        "QuorumApiContext",
-        "WebsocketProvider"
-      ],
+      "dependencies": ["QuorumApiContext", "WebsocketProvider"],
       "dependency_level": 5,
       "complexity_category": "simple"
     },
@@ -1284,18 +1107,11 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "hooks": [
-        "useRegistrationPersistence",
-        "usePasskeyIntegration"
-      ],
+      "hooks": ["useRegistrationPersistence", "usePasskeyIntegration"],
       "native": "todo",
       "notes": "Registration persistence logic with passkey integration (>10 lines, reusable). Uses Button primitive. Context pattern works cross-platform.",
       "updated": "2025-07-29",
-      "dependencies": [
-        "Button",
-        "MessageDB",
-        "QuorumApiContext"
-      ],
+      "dependencies": ["Button", "MessageDB", "QuorumApiContext"],
       "dependency_level": 5,
       "complexity_category": "simple"
     },
@@ -1323,19 +1139,11 @@
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
-      "hooks": [
-        "useMessageComposer"
-      ],
+      "hooks": ["useMessageComposer"],
       "native": "todo",
       "notes": "SHARED COMPONENT: Moved from channel/ to message/ folder. Now shared between Channel.tsx and DirectMessage.tsx to eliminate code duplication. Enhanced with reply-to display, hasStickers prop, and error handling. Uses primitives (TextArea, Button, Icon, FlexRow, Tooltip) with forwardRef for auto-focus. Integrates with useMessageComposer hook for all business logic. Remains platform_specific due to complex file preview styling and responsive layout requirements. Component demonstrates clean separation: UI in component, logic in hook.",
       "updated": "2025-08-02",
-      "dependencies": [
-        "TextArea",
-        "Button",
-        "Icon",
-        "FlexRow",
-        "Tooltip"
-      ],
+      "dependencies": ["TextArea", "Button", "Icon", "FlexRow", "Tooltip"],
       "dependency_level": 2,
       "complexity_category": "medium"
     },
@@ -1347,16 +1155,11 @@
       "used": "yes",
       "primitives": "partial",
       "logic_extraction": "done",
-      "hooks": [
-        "useQuickReactions"
-      ],
+      "hooks": ["useQuickReactions"],
       "native": "todo",
       "notes": "LOGIC EXTRACTION COMPLETED: Quick reaction validation logic extracted to useQuickReactions hook for cross-platform reuse. PRIMITIVES PARTIAL: Successfully replaced FontAwesome icons with Icon primitives, but Container and FlexRow primitives caused layout issues so reverted to raw HTML divs for layout structure. Mobile version will need same business logic but different UI (drawer vs hover toolbar).",
       "updated": "2025-08-03",
-      "dependencies": [
-        "Tooltip",
-        "Icon"
-      ],
+      "dependencies": ["Tooltip", "Icon"],
       "dependency_level": 2,
       "complexity_category": "simple"
     },
@@ -1399,10 +1202,7 @@
   "metadata": {
     "audit_version": "1.0",
     "last_full_scan": null,
-    "scan_scope": [
-      "src/components/**/*.tsx",
-      "src/components/**/*.jsx"
-    ],
+    "scan_scope": ["src/components/**/*.tsx", "src/components/**/*.jsx"],
     "unified_version": "2.0",
     "migration_date": "2025-08-10",
     "includes_dependencies": true

@@ -29,9 +29,10 @@ export function hasPermission(
   }
 
   // Check if user has any role with the required permission
-  return space.roles.some((role: Role) => 
-    role.members.includes(userAddress) && 
-    role.permissions.includes(permission)
+  return space.roles.some(
+    (role: Role) =>
+      role.members.includes(userAddress) &&
+      role.permissions.includes(permission)
   );
 }
 
@@ -58,7 +59,7 @@ export function getUserPermissions(
 
   // Collect all unique permissions from user's roles
   const permissions = new Set<Permission>();
-  
+
   space.roles.forEach((role: Role) => {
     if (role.members.includes(userAddress)) {
       role.permissions.forEach((permission: Permission) => {
@@ -107,7 +108,5 @@ export function getUserRoles(
     return [];
   }
 
-  return space.roles.filter((role: Role) => 
-    role.members.includes(userAddress)
-  );
+  return space.roles.filter((role: Role) => role.members.includes(userAddress));
 }

@@ -1,6 +1,5 @@
 # Modal Animation Consistency Implementation
 
-
 ## Project Overview
 
 ### Background

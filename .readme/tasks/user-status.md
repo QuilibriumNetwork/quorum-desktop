@@ -1,6 +1,5 @@
 # User Status Feature Implementation Plan
 
-
 **Created**: 2025-01-20  
 **Updated**: 2025-08-10  
 **Status**: Planning  
@@ -19,12 +18,14 @@ Implement a user online/offline status system with two phases:
 Based on investigation of the existing codebase:
 
 ### **Existing Infrastructure**:
+
 - **WebSocket connection state** tracked in WebSocketProvider (`connected: boolean`)
 - **UserOnlineStateIndicator component** exists but shows "undefined" for message users
 - **User objects from messages** lack `state`/`status` properties (from `mapSenderToUser`)
 - **CSS styling** only exists for online state (green dot), missing offline (red dot)
 
 ### **Key Limitations Discovered**:
+
 - **No presence system** - clients only know their own connection state
 - **Other users' status unknown** - no mechanism to track other users' online/offline state
 - **User object structure mismatch** - message users vs. profile users have different data structure
@@ -37,12 +38,14 @@ Based on investigation of the existing codebase:
 **Goal**: Show current user's own online/offline status based on WebSocket connection state.
 
 **Strategy**:
+
 - Leverage existing WebSocket connection tracking (`WebSocketProvider.connected`)
 - Update UserOnlineStateIndicator to detect current user vs. other users
 - Show green/red dot for current user's connection state
 - No status shown for other users (or neutral indicator)
 
 **Benefits**:
+
 - Immediate value for connection troubleshooting
 - Simple implementation using existing infrastructure
 - No server changes required
@@ -53,6 +56,7 @@ Based on investigation of the existing codebase:
 **Goal**: Show all users' online/offline status + optional custom status messages.
 
 **Requirements**:
+
 - **Server-side presence tracking** - track user connections/disconnections
 - **Presence broadcast system** - notify space members when users go online/offline
 - **Message protocol extension** - add presence-related message types
@@ -60,6 +64,7 @@ Based on investigation of the existing codebase:
 - **Heartbeat mechanism** - detect inactive/away users
 
 **Benefits**:
+
 - Full visibility into all users' online status
 - Enhanced collaboration awareness
 - Custom status messages for rich presence information
@@ -69,30 +74,34 @@ Based on investigation of the existing codebase:
 ### **Architecture Design**
 
 **Connection Status Hook** (`src/hooks/business/user/useUserConnectionStatus.ts`):
+
 ```typescript
 export const useUserConnectionStatus = () => {
   const { connected } = useWebSocket(); // From WebSocketProvider
   const { currentPasskeyInfo } = usePasskeysContext();
-  
+
   return {
     isCurrentUserOnline: connected,
-    getCurrentUserStatus: () => connected ? 'online' : 'offline'
+    getCurrentUserStatus: () => (connected ? 'online' : 'offline'),
   };
 };
 ```
 
 **UserOnlineStateIndicator Updates**:
+
 - Detect if displayed user is current user (compare addresses)
 - Use connection state for current user, existing logic for others
 - Add CSS styling for offline state (red dot)
 
 **Data Flow**:
+
 1. WebSocketProvider tracks connection state
 2. useUserConnectionStatus hook exposes connection status
 3. UserOnlineStateIndicator uses hook for current user detection
 4. Real-time updates when connection state changes
 
 ### **Files to Modify (Phase 1)**:
+
 - `src/hooks/business/user/useUserConnectionStatus.ts` (new)
 - `src/components/user/UserOnlineStateIndicator.tsx`
 - `src/components/user/UserOnlineStateIndicator.scss`
@@ -104,6 +113,7 @@ export const useUserConnectionStatus = () => {
 ### **Server-Side Presence System Requirements**
 
 **New Message Types**:
+
 ```typescript
 // User comes online
 type PresenceOnlineMessage = {
@@ -115,7 +125,7 @@ type PresenceOnlineMessage = {
 
 // User goes offline
 type PresenceOfflineMessage = {
-  type: 'presence_offline'; 
+  type: 'presence_offline';
   userId: string;
   timestamp: number;
   lastSeen: number;
@@ -131,6 +141,7 @@ type PresenceStatusMessage = {
 ```
 
 **Server Infrastructure Needs**:
+
 - **Connection tracking**: Map user sessions to spaces
 - **Presence broadcasting**: Send presence updates to space members
 - **Heartbeat system**: Detect inactive users (5min timeout)
@@ -138,6 +149,7 @@ type PresenceStatusMessage = {
 - **Multi-device support**: User online if any device connected
 
 **Database Schema Extensions**:
+
 ```typescript
 // Add to space_members store
 type SpaceMemberWithPresence = {
@@ -152,6 +164,7 @@ type SpaceMemberWithPresence = {
 ```
 
 **Client-Side Architecture**:
+
 - **Presence message handlers** in WebSocketProvider
 - **Presence cache** in IndexedDB for offline access
 - **Real-time UI updates** via React Query invalidation
@@ -160,22 +173,26 @@ type SpaceMemberWithPresence = {
 ### **Phase 2 Implementation Challenges**
 
 **Technical Complexity**:
+
 - Server infrastructure changes required
 - Message protocol extensions
 - Multi-device presence reconciliation
 - Network partition handling
 
 **Privacy Considerations**:
+
 - Users may not want presence tracking
 - Granular privacy controls needed
 - Status history retention policies
 
 **Performance Impact**:
+
 - Presence messages increase network traffic
 - Database storage requirements
 - Real-time update overhead
 
 **User Experience**:
+
 - Presence reliability expectations
 - Custom status input/validation
 - Mobile vs desktop presence differences
@@ -211,15 +228,18 @@ type SpaceMemberWithPresence = {
 ### Phase 1: Self-Status Implementation ✅ **Ready to Implement**
 
 **Core Implementation** (~2-3 hours):
+
 - [ ] Create `src/hooks/business/user/useUserConnectionStatus.ts` hook
 - [ ] Update `UserOnlineStateIndicator.tsx` with current user detection logic
 - [ ] Add offline state CSS (red dot) to `UserOnlineStateIndicator.scss`
 
 **Data Integration** (~1-2 hours):
+
 - [ ] Update `mapSenderToUser` in `MessageList.tsx` to include user address
 - [ ] Update `mapSenderToUser` in `DirectMessage.tsx` to include user address
 
 **Testing & Polish** (~1 hour):
+
 - [ ] Test online/offline status shows correctly for current user
 - [ ] Test real-time updates when connection state changes
 - [ ] Verify no status shows for other users (or neutral indicator)
@@ -228,6 +248,7 @@ type SpaceMemberWithPresence = {
 ### Phase 2: Full Presence System 🚧 **Future - Major Project**
 
 **Server Infrastructure** (~Several weeks):
+
 - [ ] Design presence tracking architecture
 - [ ] Implement connection/disconnection tracking
 - [ ] Add presence message types to protocol
@@ -236,18 +257,21 @@ type SpaceMemberWithPresence = {
 - [ ] Handle multi-device presence reconciliation
 
 **Client Infrastructure** (~1-2 weeks):
+
 - [ ] Add presence message handlers to WebSocketProvider
 - [ ] Extend IndexedDB schema for presence data
 - [ ] Build presence cache and query system
 - [ ] Implement real-time presence UI updates
 
 **Feature Implementation** (~1 week):
+
 - [ ] Add custom status input in user settings
 - [ ] Build comprehensive presence display system
 - [ ] Add privacy controls for presence visibility
 - [ ] Implement status history and persistence
 
 **Advanced Features** (~1-2 weeks):
+
 - [ ] Away/idle detection based on user activity
 - [ ] Status message formatting and emoji support
 - [ ] Presence analytics and insights
@@ -298,6 +322,7 @@ type SpaceMemberWithPresence = {
 ## Success Criteria
 
 ### **Phase 1 Success Criteria**:
+
 - [ ] Current user sees accurate online/offline status based on WebSocket connection
 - [ ] Green dot shows when user is connected, red dot when disconnected
 - [ ] Status updates in real-time when connection state changes
@@ -307,6 +332,7 @@ type SpaceMemberWithPresence = {
 - [ ] Mobile and web platforms work consistently
 
 ### **Phase 2 Success Criteria** (Future):
+
 - [ ] Users can see other users' online/offline status in real-time
 - [ ] Custom status messages up to 100 characters
 - [ ] Status messages visible to other users in same spaces
@@ -318,12 +344,14 @@ type SpaceMemberWithPresence = {
 ## Decision Rationale
 
 ### **Why Phase 1 First?**
+
 - **Immediate value**: Current user connection troubleshooting
 - **Low complexity**: Uses existing WebSocket infrastructure
 - **No server changes**: Can implement today with current architecture
 - **Foundation building**: Creates the UI/UX patterns for future presence system
 
 ### **Why Phase 2 is Separate?**
+
 - **Major infrastructure**: Requires server-side presence tracking
 - **Protocol changes**: New message types and handling
 - **Complexity**: Multi-device, heartbeat, privacy considerations

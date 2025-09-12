@@ -5,7 +5,7 @@ This directory contains mobile-specific assets for the Quorum mobile app.
 ## Required Assets (to be added when mobile development begins):
 
 - **icon.png** (1024x1024) - Main app icon
-- **splash-icon.png** (1024x1024) - Splash screen image  
+- **splash-icon.png** (1024x1024) - Splash screen image
 - **adaptive-icon.png** (1024x1024) - Android adaptive icon
 - **favicon.png** (32x32) - Web fallback icon
 

@@ -84,7 +84,7 @@ export const Text: React.FC<NativeTextProps> = ({
   const isLink = !!(href || onPress);
   const isDefaultLinkStyle = linkStyle === 'default' || variant === 'link';
   const isSimpleLinkStyle = linkStyle === 'simple';
-  
+
   // Get link color and weight
   const getLinkColor = () => {
     if (isDefaultLinkStyle) {
@@ -95,7 +95,7 @@ export const Text: React.FC<NativeTextProps> = ({
     }
     return color || getVariantColor();
   };
-  
+
   const getLinkWeight = () => {
     if (isDefaultLinkStyle) {
       return weight || 'medium'; // Default link weight is medium (500)
@@ -110,7 +110,7 @@ export const Text: React.FC<NativeTextProps> = ({
   };
 
   // Use link-aware color and weight if this is a link
-  const finalColor = isLink ? getLinkColor() : (color || getVariantColor());
+  const finalColor = isLink ? getLinkColor() : color || getVariantColor();
   const finalWeight = isLink ? getLinkWeight() : weight;
 
   const textStyle: TextStyle = {

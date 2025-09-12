@@ -50,7 +50,7 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
         // On /messages (no specific conversation) - show sidebar
         openLeftSidebar();
       } else {
-        // On /messages/:address (specific conversation) - hide sidebar  
+        // On /messages/:address (specific conversation) - hide sidebar
         closeLeftSidebar();
       }
     }

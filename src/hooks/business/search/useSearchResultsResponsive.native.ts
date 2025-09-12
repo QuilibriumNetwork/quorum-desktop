@@ -12,7 +12,7 @@ export interface UseSearchResultsResponsiveReturn {
 /**
  * REACT NATIVE VERSION: Search Results Responsive Hook
  * ====================================================
- * 
+ *
  * Simplified version for React Native - no window.addEventListener or DOM manipulation needed.
  * React Native handles responsive layout through different means (flexbox, dimensions, etc.)
  */
@@ -26,7 +26,7 @@ export const useSearchResultsResponsive = ({
   // 1. Flexbox layouts
   // 2. Platform-specific components
   // 3. Screen dimension detection (if needed)
-  // 
+  //
   // No need for resize listeners or DOM manipulation
 
   return {

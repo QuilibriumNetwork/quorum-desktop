@@ -13,16 +13,18 @@ import { useMarkdownFiles, type MarkdownFile } from './hooks/useMarkdownFiles';
 
 export const Bugs: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<MarkdownFile | null>(null);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['active'])); // Active section open by default
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(
+    new Set(['active'])
+  ); // Active section open by default
 
   // Load markdown files dynamically
   const { files: bugFiles, loading, error } = useMarkdownFiles('bugs');
 
   // Simple grouping: solved vs active
   const groupedFiles = useMemo(() => {
-    const solved = bugFiles.filter(file => file.status === 'solved');
-    const active = bugFiles.filter(file => file.status !== 'solved');
-    
+    const solved = bugFiles.filter((file) => file.status === 'solved');
+    const active = bugFiles.filter((file) => file.status !== 'solved');
+
     return {
       active,
       solved,
@@ -79,7 +81,11 @@ export const Bugs: React.FC = () => {
         {/* Loading State */}
         {loading && (
           <div className="text-center py-12">
-            <Icon name="loader" size="2xl" className="text-accent mx-auto mb-4" />
+            <Icon
+              name="loader"
+              size="2xl"
+              className="text-accent mx-auto mb-4"
+            />
             <Text variant="main" size="lg">
               Loading bug reports...
             </Text>
@@ -99,7 +105,8 @@ export const Bugs: React.FC = () => {
               {error}
             </Text>
             <Text variant="subtle" size="sm">
-              The system is using a placeholder implementation. To see real files, implement the markdown loading API or build process.
+              The system is using a placeholder implementation. To see real
+              files, implement the markdown loading API or build process.
             </Text>
           </div>
         )}
@@ -112,7 +119,11 @@ export const Bugs: React.FC = () => {
               <div className="bg-surface-2 px-6 py-4 border-b border-default">
                 <FlexRow gap="sm" align="center" justify="between">
                   <FlexRow gap="sm" align="center">
-                    <Icon name="alert-circle" size="md" className="text-danger" />
+                    <Icon
+                      name="alert-circle"
+                      size="md"
+                      className="text-danger"
+                    />
                     <Text variant="strong" size="lg" weight="medium">
                       Active
                     </Text>
@@ -128,17 +139,17 @@ export const Bugs: React.FC = () => {
                   {groupedFiles.active
                     .sort((a, b) => a.title.localeCompare(b.title))
                     .map((file) => (
-                    <li key={file.path}>
-                      <div
-                        className="hover:text-accent transition-colors cursor-pointer"
-                        onClick={() => handleFileClick(file)}
-                      >
-                        <Text variant="main" size="md">
-                          • {file.title}
-                        </Text>
-                      </div>
-                    </li>
-                  ))}
+                      <li key={file.path}>
+                        <div
+                          className="hover:text-accent transition-colors cursor-pointer"
+                          onClick={() => handleFileClick(file)}
+                        >
+                          <Text variant="main" size="md">
+                            • {file.title}
+                          </Text>
+                        </div>
+                      </li>
+                    ))}
                 </ul>
 
                 {groupedFiles.active.length === 0 && (
@@ -157,7 +168,11 @@ export const Bugs: React.FC = () => {
               >
                 <FlexRow gap="sm" align="center" justify="between">
                   <FlexRow gap="sm" align="center">
-                    <Icon name="check-circle" size="md" className="text-success" />
+                    <Icon
+                      name="check-circle"
+                      size="md"
+                      className="text-success"
+                    />
                     <Text variant="strong" size="lg" weight="medium">
                       Solved
                     </Text>
@@ -165,10 +180,14 @@ export const Bugs: React.FC = () => {
                       ({groupedFiles.solved.length} issues)
                     </Text>
                   </FlexRow>
-                  <Icon 
-                    name={expandedSections.has('solved') ? 'chevron-up' : 'chevron-down'} 
-                    size="sm" 
-                    className="text-subtle" 
+                  <Icon
+                    name={
+                      expandedSections.has('solved')
+                        ? 'chevron-up'
+                        : 'chevron-down'
+                    }
+                    size="sm"
+                    className="text-subtle"
                   />
                 </FlexRow>
               </div>
@@ -179,17 +198,17 @@ export const Bugs: React.FC = () => {
                     {groupedFiles.solved
                       .sort((a, b) => a.title.localeCompare(b.title))
                       .map((file) => (
-                      <li key={file.path}>
-                        <div
-                          className="hover:text-accent transition-colors cursor-pointer"
-                          onClick={() => handleFileClick(file)}
-                        >
-                          <Text variant="main" size="md">
-                            • {file.title}
-                          </Text>
-                        </div>
-                      </li>
-                    ))}
+                        <li key={file.path}>
+                          <div
+                            className="hover:text-accent transition-colors cursor-pointer"
+                            onClick={() => handleFileClick(file)}
+                          >
+                            <Text variant="main" size="md">
+                              • {file.title}
+                            </Text>
+                          </div>
+                        </li>
+                      ))}
                   </ul>
 
                   {groupedFiles.solved.length === 0 && (

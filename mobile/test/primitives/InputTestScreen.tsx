@@ -12,7 +12,10 @@ import {
   FlexColumn,
   FlexRow,
 } from '@/primitives';
-import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
+import {
+  commonTestStyles,
+  createThemedStyles,
+} from '@/styles/commonTestStyles';
 
 export const InputTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -24,11 +27,16 @@ export const InputTestScreen: React.FC = () => {
   const [showInputError, setShowInputError] = useState(false);
 
   return (
-    <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
+    <SafeAreaView
+      style={[
+        commonTestStyles.container,
+        { backgroundColor: theme.colors.bg.app },
+      ]}
+    >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <FlexColumn style={commonTestStyles.header}>
           <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
-            <Icon name="memo" size="xl" style={{ marginTop: 2 }}/>
+            <Icon name="memo" size="xl" style={{ marginTop: 2 }} />
             <Title>Input</Title>
           </FlexRow>
           <Paragraph align="center">
@@ -49,7 +57,9 @@ export const InputTestScreen: React.FC = () => {
                 placeholder="Enter some text..."
                 type="text"
               />
-              <Text size="sm" variant="subtle">Value: "{textValue}"</Text>
+              <Text size="sm" variant="subtle">
+                Value: "{textValue}"
+              </Text>
             </FlexColumn>
 
             <FlexColumn gap="xs">
@@ -60,7 +70,9 @@ export const InputTestScreen: React.FC = () => {
                 placeholder="Enter your email..."
                 type="email"
               />
-              <Text size="sm" variant="subtle">Value: "{emailValue}"</Text>
+              <Text size="sm" variant="subtle">
+                Value: "{emailValue}"
+              </Text>
             </FlexColumn>
 
             <FlexColumn gap="xs">
@@ -165,55 +177,199 @@ export const InputTestScreen: React.FC = () => {
 
             <FlexColumn gap="xs">
               <Label>No Focus Style:</Label>
-              <Input placeholder="This input has no focus styling" noFocusStyle />
+              <Input
+                placeholder="This input has no focus styling"
+                noFocusStyle
+              />
+            </FlexColumn>
+          </FlexColumn>
+        </View>
+
+        {/* Label Management */}
+        <View style={themedStyles.sectionCompact}>
+          <FlexColumn gap="md">
+            <Title size="sm">Label Management</Title>
+
+            <FlexColumn gap="xs">
+              <Input
+                label="Static Label"
+                labelType="static"
+                placeholder="Enter text with static label"
+                value={textValue}
+                onChange={setTextValue}
+              />
+              <Text size="sm" variant="subtle">
+                Traditional static label above the input
+              </Text>
+            </FlexColumn>
+
+            <FlexColumn gap="xs">
+              <Input
+                label="Floating Label"
+                labelType="floating"
+                placeholder="Additional helper text"
+                value={emailValue}
+                onChange={setEmailValue}
+                type="email"
+              />
+              <Text size="sm" variant="subtle">
+                Animated floating label (Material-UI style)
+              </Text>
+            </FlexColumn>
+
+            <FlexColumn gap="xs">
+              <Input
+                label="Required Field"
+                labelType="static"
+                placeholder="This field is required"
+                required
+                helperText="This field must be filled out"
+              />
+              <Text size="sm" variant="subtle">
+                Shows required asterisk and helper text
+              </Text>
+            </FlexColumn>
+
+            <FlexColumn gap="xs">
+              <Input
+                label="Floating Required"
+                labelType="floating"
+                placeholder="Helper text below"
+                required
+                helperText="Floating label with required indicator"
+                error={showInputError}
+                errorMessage={
+                  showInputError ? 'This field is required' : undefined
+                }
+              />
+              <Text size="sm" variant="subtle">
+                Floating label with required indicator and error state
+              </Text>
+            </FlexColumn>
+
+            <FlexColumn gap="xs">
+              <Input
+                label="Password with Label"
+                labelType="floating"
+                type="password"
+                placeholder="Enter your password"
+                helperText="Password must be at least 8 characters"
+              />
+              <Text size="sm" variant="subtle">
+                Floating label with password field and helper text
+              </Text>
+            </FlexColumn>
+
+            <FlexColumn gap="xs">
+              <Input
+                label="Disabled with Label"
+                labelType="static"
+                value="Disabled input with label"
+                disabled
+                helperText="This field cannot be edited"
+              />
+              <Text size="sm" variant="subtle">
+                Disabled input with static label and helper text
+              </Text>
             </FlexColumn>
           </FlexColumn>
         </View>
 
         {/* Mobile Notes */}
-        <View style={[commonTestStyles.notesSection, { backgroundColor: theme.colors.surface[3] }]}>
+        <View
+          style={[
+            commonTestStyles.notesSection,
+            { backgroundColor: theme.colors.surface[3] },
+          ]}
+        >
           <FlexColumn gap="sm">
             <Title size="sm">Mobile Notes</Title>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Input types trigger correct mobile keyboards</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Input types trigger correct mobile keyboards
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Touch targets are 42px high for accessibility</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Touch targets are 42px high for accessibility
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Focus states work without web-style borders</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Focus states work without web-style borders
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Error messages display below inputs</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Error messages display below inputs
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Onboarding variant matches desktop pill shape</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Onboarding variant matches desktop pill shape
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Platform-specific keyboard types work</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Platform-specific keyboard types work
+                </Text>
+              </View>
+            </FlexRow>
+
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Label management works with consistent styling
+                </Text>
+              </View>
+            </FlexRow>
+
+            <FlexRow gap="xs" align="start">
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Floating labels use smooth native animations
+                </Text>
               </View>
             </FlexRow>
           </FlexColumn>

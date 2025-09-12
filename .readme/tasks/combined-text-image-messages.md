@@ -1,6 +1,5 @@
 # Combined Text + Image Messages
 
-
 ## Overview
 
 Currently, when a user uploads an image and types text, the message composer sends two separate messages:
@@ -180,7 +179,6 @@ const submitMessage = useCallback(async () => {
    - Comprehensive testing across scenarios
    - Performance validation
    - Cross-platform compatibility check
-
 
 ## Notes
 

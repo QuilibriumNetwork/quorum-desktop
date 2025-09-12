@@ -41,37 +41,38 @@ export const useBatchSearchResultsDisplay = ({
   const { currentPasskeyInfo } = usePasskeysContext();
 
   // Extract unique identifiers for batch operations
-  const { uniqueUserIds, uniqueSpaceIds, dmResults, spaceResults } = useMemo(() => {
-    const userIds = new Set<string>();
-    const spaceIds = new Set<string>();
-    const dmResults: SearchResult[] = [];
-    const spaceResults: SearchResult[] = [];
+  const { uniqueUserIds, uniqueSpaceIds, dmResults, spaceResults } =
+    useMemo(() => {
+      const userIds = new Set<string>();
+      const spaceIds = new Set<string>();
+      const dmResults: SearchResult[] = [];
+      const spaceResults: SearchResult[] = [];
 
-    results.forEach((result) => {
-      const { message } = result;
-      const isDM = message.spaceId === message.channelId;
-      
-      if (isDM) {
-        dmResults.push(result);
-        // For DMs, we need user info for the sender (unless it's current user)
-        if (message.content.senderId !== currentPasskeyInfo?.address) {
+      results.forEach((result) => {
+        const { message } = result;
+        const isDM = message.spaceId === message.channelId;
+
+        if (isDM) {
+          dmResults.push(result);
+          // For DMs, we need user info for the sender (unless it's current user)
+          if (message.content.senderId !== currentPasskeyInfo?.address) {
+            userIds.add(message.content.senderId);
+          }
+        } else {
+          spaceResults.push(result);
+          // For space messages, we need both user and space info
           userIds.add(message.content.senderId);
+          spaceIds.add(message.spaceId);
         }
-      } else {
-        spaceResults.push(result);
-        // For space messages, we need both user and space info
-        userIds.add(message.content.senderId);
-        spaceIds.add(message.spaceId);
-      }
-    });
+      });
 
-    return {
-      uniqueUserIds: Array.from(userIds),
-      uniqueSpaceIds: Array.from(spaceIds),
-      dmResults,
-      spaceResults,
-    };
-  }, [results, currentPasskeyInfo]);
+      return {
+        uniqueUserIds: Array.from(userIds),
+        uniqueSpaceIds: Array.from(spaceIds),
+        dmResults,
+        spaceResults,
+      };
+    }, [results, currentPasskeyInfo]);
 
   // Batch fetch user info for all unique users
   const userInfoQueries = useQueries({
@@ -163,15 +164,17 @@ export const useBatchSearchResultsDisplay = ({
         // Handle Space display logic
         const userInfo = userInfoMap.get(message.content.senderId);
         const spaceInfo = spaceInfoMap.get(message.spaceId);
-        
+
         const displayName = userInfo?.display_name || t`Unknown User`;
         const spaceName = spaceInfo?.spaceName || t`Unknown Space`;
-        
+
         // Get channel name from space data
         let channelName = message.channelId;
         if (spaceInfo) {
           const channel = spaceInfo.groups
-            ?.find((g) => g.channels?.find((c) => c.channelId === message.channelId))
+            ?.find((g) =>
+              g.channels?.find((c) => c.channelId === message.channelId)
+            )
             ?.channels?.find((c) => c.channelId === message.channelId);
           if (channel) {
             channelName = channel.channelName;
@@ -197,7 +200,9 @@ export const useBatchSearchResultsDisplay = ({
 
   // Check if any queries are still loading
   const isAnyLoading = useMemo(() => {
-    return [...userInfoQueries, ...spaceInfoQueries].some((query) => query.isLoading);
+    return [...userInfoQueries, ...spaceInfoQueries].some(
+      (query) => query.isLoading
+    );
   }, [userInfoQueries, spaceInfoQueries]);
 
   // Trigger focus maintenance when results data updates

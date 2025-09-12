@@ -59,7 +59,7 @@ export type Channel = {
   mentionCount?: number;
   mentions?: string;
   isReadOnly?: boolean;
-  managerRoleIds?: string[];  // Roles that can manage this read-only channel
+  managerRoleIds?: string[]; // Roles that can manage this read-only channel
 };
 
 export type Conversation = {

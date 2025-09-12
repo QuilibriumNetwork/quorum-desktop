@@ -29,10 +29,15 @@ export function useNavigationHotkeys() {
   // Spaces ordering and navigation data
   const user = usePasskeysContext();
   const { data: spaces } = useSpaces({});
-  const { data: config } = useConfig({ userAddress: user.currentPasskeyInfo!.address });
+  const { data: config } = useConfig({
+    userAddress: user.currentPasskeyInfo!.address,
+  });
   const { mappedSpaces } = useSpaceOrdering(spaces, config);
 
-  const orderedSpaceIds = useMemo(() => mappedSpaces.map((s) => s.spaceId), [mappedSpaces]);
+  const orderedSpaceIds = useMemo(
+    () => mappedSpaces.map((s) => s.spaceId),
+    [mappedSpaces]
+  );
 
   // DM conversations ordered by recent activity (descending)
   const { conversations } = useConversationPolling();
@@ -74,10 +79,13 @@ export function useNavigationHotkeys() {
   const navigateToSpaceIndex = useCallback(
     (index: number) => {
       if (orderedSpaceIds.length === 0) return;
-      const safeIndex = ((index % orderedSpaceIds.length) + orderedSpaceIds.length) % orderedSpaceIds.length;
+      const safeIndex =
+        ((index % orderedSpaceIds.length) + orderedSpaceIds.length) %
+        orderedSpaceIds.length;
       const targetSpace = mappedSpaces[safeIndex];
       if (!targetSpace) return;
-      const defaultChannelId = targetSpace.defaultChannelId || '00000000-0000-0000-0000-000000000000';
+      const defaultChannelId =
+        targetSpace.defaultChannelId || '00000000-0000-0000-0000-000000000000';
       navigate(`/spaces/${targetSpace.spaceId}/${defaultChannelId}`);
     },
     [mappedSpaces, navigate, orderedSpaceIds.length]
@@ -86,7 +94,9 @@ export function useNavigationHotkeys() {
   const navigateToDmIndex = useCallback(
     (index: number) => {
       if (orderedDmAddresses.length === 0) return;
-      const safeIndex = ((index % orderedDmAddresses.length) + orderedDmAddresses.length) % orderedDmAddresses.length;
+      const safeIndex =
+        ((index % orderedDmAddresses.length) + orderedDmAddresses.length) %
+        orderedDmAddresses.length;
       const address = orderedDmAddresses[safeIndex];
       if (!address) return;
       navigate(`/messages/${address}`);
@@ -178,7 +188,12 @@ export function useNavigationHotkeys() {
 
     const handleKeyUp = (e: KeyboardEvent) => {
       // Clear chord on releasing S or D or modifier
-      if (e.key.toLowerCase() === 's' || e.key.toLowerCase() === 'd' || e.key === 'Meta' || e.key === 'Control') {
+      if (
+        e.key.toLowerCase() === 's' ||
+        e.key.toLowerCase() === 'd' ||
+        e.key === 'Meta' ||
+        e.key === 'Control'
+      ) {
         clearChord();
       }
     };
@@ -203,5 +218,3 @@ export function useNavigationHotkeys() {
     startChord,
   ]);
 }
-
-

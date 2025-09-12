@@ -5,13 +5,13 @@ import { t } from '@lingui/core/macro';
 
 /**
  * UserOnlineStateIndicator Component
- * 
+ *
  * TODO: Currently disabled - shows "undefined" for message-based users
- * 
+ *
  * ISSUE: User objects from messages (via mapSenderToUser) lack state/status properties
- * - UserProfile users: Have state/status from authentication flow 
+ * - UserProfile users: Have state/status from authentication flow
  * - Message users: Only have displayName/userIcon from space members
- * 
+ *
  * IMPLEMENTATION PLAN: See .readme/tasks/todo/user-status.md
  * - Phase 1: Show current user's WebSocket connection state (online/offline)
  * - Phase 2: Full presence system for all users (requires server changes)

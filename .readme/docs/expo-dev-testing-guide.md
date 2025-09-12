@@ -1,12 +1,11 @@
 # Expo Dev Testing Guide
 
-
-
 Quick setup guide for testing Quorum mobile app with Expo Dev Client.
 
 ## Prerequisites
 
 ### Required Tools
+
 - **Node.js** 18+
 - **Yarn** (NOT npm!)
 - **Git**
@@ -17,6 +16,7 @@ Quick setup guide for testing Quorum mobile app with Expo Dev Client.
 After installing Android Studio, verify your environment:
 
 #### 1. Check Environment Variables
+
 ```bash
 # Windows (PowerShell)
 echo $env:ANDROID_HOME
@@ -28,6 +28,7 @@ echo $PATH
 ```
 
 #### 2. Set Missing Variables (if needed)
+
 ```bash
 # Windows (run as Administrator)
 setx ANDROID_HOME "%LOCALAPPDATA%\Android\Sdk"
@@ -39,6 +40,7 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools
 ```
 
 #### 3. Verify Android Tools
+
 ```bash
 # These commands should work after setup
 adb --version
@@ -46,6 +48,7 @@ emulator -version
 ```
 
 ### Install Expo Tools
+
 ```bash
 yarn global add expo-cli eas-cli
 ```
@@ -53,6 +56,7 @@ yarn global add expo-cli eas-cli
 ## Setup Steps
 
 ### 1. Clone & Install
+
 ```bash
 git clone https://github.com/quilibrium/quorum-desktop.git
 cd quorum-desktop
@@ -62,12 +66,14 @@ yarn install  # MUST use yarn, not npm
 ### 2. First-Time Device Setup
 
 #### Android
+
 ```bash
 cd mobile
 yarn expo run:android  # Builds and installs dev client (up to 30 min first time)
 ```
 
 #### iOS (macOS only)
+
 ```bash
 cd mobile
 yarn expo run:ios  # Builds and installs dev client (up to 30 min first time)
@@ -80,25 +86,27 @@ yarn expo run:ios  # Builds and installs dev client (up to 30 min first time)
 ### Step-by-step Workflow
 
 1. **Start the emulator first** (choose one):
+
    ```bash
    # Android emulator
    emulator @AVD_NAME
-   
+
    # iOS simulator (macOS only)
    open -a Simulator
    ```
 
 2. **Start the dev server** (from project root):
+
    ```bash
    # Start dev server
    yarn mobile
-   
+
    # With tunnel (for remote devices)
    yarn mobile:tunnel
-   
+
    # Clear cache if issues
    yarn mobile:clear
-   
+
    # Platform-specific
    yarn mobile:android
    yarn mobile:ios
@@ -111,11 +119,13 @@ yarn expo run:ios  # Builds and installs dev client (up to 30 min first time)
 ## Device Requirements
 
 ### Physical Android Device
+
 1. Enable Developer Options & USB Debugging
 2. Connect via USB
 3. Trust computer when prompted
 
 ### Android Emulator
+
 ```bash
 # List available emulators
 emulator -list-avds
@@ -128,6 +138,7 @@ emulator @Pixel_3a_API_30_x86
 ```
 
 ### iOS Simulator (macOS only)
+
 ```bash
 # List available simulators
 xcrun simctl list devices
@@ -141,16 +152,17 @@ xcrun simctl boot "iPhone 14"
 
 ## Quick Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Metro bundler crash | `yarn mobile:clear` |
-| Build fails | Clean build: `cd mobile/android && ./gradlew clean` |
-| Network issues | Use tunnel: `yarn mobile:tunnel` |
-| Android SDK not found | Set `ANDROID_HOME` environment variable |
+| Issue                 | Solution                                            |
+| --------------------- | --------------------------------------------------- |
+| Metro bundler crash   | `yarn mobile:clear`                                 |
+| Build fails           | Clean build: `cd mobile/android && ./gradlew clean` |
+| Network issues        | Use tunnel: `yarn mobile:tunnel`                    |
+| Android SDK not found | Set `ANDROID_HOME` environment variable             |
 
 ## Testing Commands
 
 All from project root:
+
 - `yarn mobile` - Start standard dev server
 - `yarn mobile:tunnel` - Use tunnel for remote access
 - `yarn mobile:clear` - Clear cache and restart
@@ -167,4 +179,4 @@ All from project root:
 
 ---
 
-*Last updated: 2025-09-03 15:45 UTC*
+_Last updated: 2025-09-03 15:45 UTC_

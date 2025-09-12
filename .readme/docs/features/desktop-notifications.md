@@ -1,6 +1,5 @@
 # Desktop Notifications Feature
 
-
 ## Overview
 
 The desktop notifications feature allows Quorum to notify users about new messages when the application is running in the background. This feature enhances user engagement by ensuring they don't miss important messages even when the app isn't actively focused.

@@ -35,25 +35,26 @@ function canPostInReadOnlyChannel(
   if (!channel?.isReadOnly) {
     return true;
   }
-  
+
   // Space owners can always post
   if (isSpaceOwner) {
     return true;
   }
-  
+
   // If no manager roles defined, only space owner can post
   if (!channel.managerRoleIds || channel.managerRoleIds.length === 0) {
     return false;
   }
-  
+
   // Check if user has any of the manager roles
   if (!userAddress) {
     return false;
   }
-  
-  return roles.some(role => 
-    channel.managerRoleIds?.includes(role.roleId) && 
-    role.members.includes(userAddress)
+
+  return roles.some(
+    (role) =>
+      channel.managerRoleIds?.includes(role.roleId) &&
+      role.members.includes(userAddress)
   );
 }
 
@@ -260,13 +261,16 @@ const Channel: React.FC<ChannelProps> = ({
         if (rect) {
           // Get the total height including the header element and its top offset
           const totalHeight = rect.bottom;
-          document.documentElement.style.setProperty('--header-height', `${totalHeight}px`);
+          document.documentElement.style.setProperty(
+            '--header-height',
+            `${totalHeight}px`
+          );
         }
       };
-      
+
       updateHeaderHeight();
       window.addEventListener('resize', updateHeaderHeight);
-      
+
       return () => {
         window.removeEventListener('resize', updateHeaderHeight);
       };
@@ -285,7 +289,10 @@ const Channel: React.FC<ChannelProps> = ({
     <div className="chat-container">
       <div className="flex flex-col flex-1 min-w-0">
         {/* Header - full width at top */}
-        <div ref={headerRef} className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-wrap lg:flex-nowrap lg:justify-between lg:items-center">
+        <div
+          ref={headerRef}
+          className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-wrap lg:flex-nowrap lg:justify-between lg:items-center"
+        >
           {/* First row on mobile: burger + controls / Single row on desktop */}
           <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
             {/* Burger menu for mobile only */}
@@ -298,14 +305,22 @@ const Channel: React.FC<ChannelProps> = ({
                 iconOnly
               />
             )}
-            
+
             {/* Channel name - hidden on mobile first row, shown on desktop */}
             <div className="hidden lg:flex flex-1 min-w-0">
               <div className="flex items-center gap-2 truncate whitespace-nowrap overflow-hidden">
                 {channel?.isReadOnly ? (
-                  <Icon name="lock" size="sm" className="text-subtle flex-shrink-0" />
+                  <Icon
+                    name="lock"
+                    size="sm"
+                    className="text-subtle flex-shrink-0"
+                  />
                 ) : (
-                  <Icon name="hashtag" size="sm" className="text-subtle flex-shrink-0" />
+                  <Icon
+                    name="hashtag"
+                    size="sm"
+                    className="text-subtle flex-shrink-0"
+                  />
                 )}
                 <span className="text-main font-medium flex-shrink truncate">
                   {channel?.channelName}
@@ -344,7 +359,7 @@ const Channel: React.FC<ChannelProps> = ({
                       </span>
                     </Button>
                   </Tooltip>
-                  
+
                   {/* Pinned Messages Panel */}
                   <PinnedMessagesPanel
                     isOpen={showPinnedMessages}
@@ -381,9 +396,17 @@ const Channel: React.FC<ChannelProps> = ({
           <div className="w-full lg:hidden">
             <div className="flex items-center gap-2 truncate whitespace-nowrap overflow-hidden">
               {channel?.isReadOnly ? (
-                <Icon name="lock" size="sm" className="text-subtle flex-shrink-0" />
+                <Icon
+                  name="lock"
+                  size="sm"
+                  className="text-subtle flex-shrink-0"
+                />
               ) : (
-                <Icon name="hashtag" size="sm" className="text-subtle flex-shrink-0" />
+                <Icon
+                  name="hashtag"
+                  size="sm"
+                  className="text-subtle flex-shrink-0"
+                />
               )}
               <span className="text-main font-medium flex-shrink truncate">
                 {channel?.channelName}
@@ -458,7 +481,7 @@ const Channel: React.FC<ChannelProps> = ({
                 onSigningToggle={() => setSkipSigning(!skipSigning)}
                 disabled={!canPost}
                 disabledMessage={
-                  channel?.isReadOnly 
+                  channel?.isReadOnly
                     ? t`You cannot post in this channel`
                     : undefined
                 }
@@ -505,13 +528,15 @@ const Channel: React.FC<ChannelProps> = ({
         </div>
       </div>
 
-      
       <Tooltip
         id="toggle-signing-tooltip"
-        content={skipSigning ? 'This message will NOT be signed' : 'This message will be signed'}
+        content={
+          skipSigning
+            ? 'This message will NOT be signed'
+            : 'This message will be signed'
+        }
         place="top"
       />
-
 
       {/* Stickers panel - positioned at top level to avoid stacking context issues */}
       {composer.showStickers && (
@@ -551,7 +576,6 @@ const Channel: React.FC<ChannelProps> = ({
           </div>
         </>
       )}
-
     </div>
   );
 };

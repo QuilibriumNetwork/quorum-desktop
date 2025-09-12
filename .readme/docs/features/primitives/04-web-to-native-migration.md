@@ -34,6 +34,7 @@ Before migrating any component, the component logic **MUST** be extracted in a s
 📋 **Read**: [Cross-Platform Hooks Refactoring Plan](/.readme/tasks/todo/mobile-dev/cross-platform-hooks-refactoring-plan.md)
 
 **Key Requirements:**
+
 - **Business logic** must be separated from platform-specific APIs
 - Use **adapter pattern** for hooks that mix business logic with platform APIs
 - Use **direct imports** instead of barrel exports to avoid Import Chain Problem
@@ -60,32 +61,33 @@ Before migrating any component, the component logic **MUST** be extracted in a s
    - `<Text>` for inline text and labels
    - `<Label>` for form field labels
 3. **Use Style Props Over Hardcoded Styles** - Prefer primitive props over inline `style` objects:
+
    ```tsx
    // ✅ Good - Use props
    <Title size="lg" weight="bold" color="white" align="center">
    <Paragraph size="sm" color="subtle" align="center">
    <Button type="primary-white" size="large">
-   
+
    // ❌ Bad - Hardcoded styles
    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#ffffff' }}>
    <Text style={{ fontSize: 14, color: '#666666', textAlign: 'center' }}>
    ```
+
 4. **Maintain Visual Consistency** - Colors, spacing, typography, and layout must match web version
 5. **Use Semantic Components** - Choose components that reflect the content's meaning, not just appearance
 
 ### Quick Reference Table
 
-| Web Element | Native Primitive | Key Differences |
-|-------------|------------------|-----------------|
-| `<div>` with flexbox | `<FlexRow>`, `<FlexColumn>` | Use gap prop instead of margin |
-| `<p>`, `<span>` | `<Text>`, `<Paragraph>` | All text must be wrapped |
-| `<button>` | `<Button>` | Use onClick instead of click events |
-| `<input>` | `<Input>` | Different keyboard types available |
-| `<textarea>` | `<TextArea>` | Multiline handled differently |
-| `<select>` | `<Select>` | Custom dropdown implementation |
+| Web Element          | Native Primitive            | Key Differences                     |
+| -------------------- | --------------------------- | ----------------------------------- |
+| `<div>` with flexbox | `<FlexRow>`, `<FlexColumn>` | Use gap prop instead of margin      |
+| `<p>`, `<span>`      | `<Text>`, `<Paragraph>`     | All text must be wrapped            |
+| `<button>`           | `<Button>`                  | Use onClick instead of click events |
+| `<input>`            | `<Input>`                   | Different keyboard types available  |
+| `<textarea>`         | `<TextArea>`                | Multiline handled differently       |
+| `<select>`           | `<Select>`                  | Custom dropdown implementation      |
 
 ---
-
 
 ## Real Migration Examples
 
@@ -94,6 +96,7 @@ Before migrating any component, the component logic **MUST** be extracted in a s
 Shows actual web → native migration from existing codebase:
 
 #### ❌ Web Version
+
 ```tsx
 <div className="flex flex-col text-white">
   <Icon name="tools" className="text-4xl" />
@@ -101,7 +104,8 @@ Shows actual web → native migration from existing codebase:
 </div>
 ```
 
-#### ✅ Native Version  
+#### ✅ Native Version
+
 ```tsx
 <FlexColumn gap="sm" align="center">
   <Icon name="tools" size="2xl" color="white" />
@@ -115,7 +119,7 @@ Shows actual web → native migration from existing codebase:
 
 - Replace `<div>` with `<Container>` or `<FlexRow>`/`<FlexColumn>`
 - Replace `<button>` with `<Button type="primary">`
-- Replace `<input>` with `<Input>` 
+- Replace `<input>` with `<Input>`
 - Use component props instead of CSS classes
 - Wrap all text in `<Text>` components
 
@@ -126,6 +130,7 @@ Shows actual web → native migration from existing codebase:
 ### Basic Text Conversion
 
 #### ❌ Web Patterns
+
 ```tsx
 // Multiple text elements with margins
 <div>
@@ -138,29 +143,33 @@ Shows actual web → native migration from existing codebase:
 ```
 
 #### ✅ Native Conversion
+
 ```tsx
 import { Title, Paragraph, Text } from '../components/primitives';
 
 // Using semantic typography components with proper props
 <>
-  <Title size="lg" weight="bold">Section Title</Title>
+  <Title size="lg" weight="bold">
+    Section Title
+  </Title>
   <Paragraph color="default">
     This is a paragraph with some content that needs proper spacing.
   </Paragraph>
-  <Text size="sm" color="subtle">Helper text</Text>
-</>
+  <Text size="sm" color="subtle">
+    Helper text
+  </Text>
+</>;
 ```
 
 ### Typography Hierarchy
 
-| Web CSS Class | Native Component | Props |
-|---------------|------------------|-------|
-| `.text-3xl.font-bold` | `<Title>` | `size="xl" weight="bold"` |
-| `.text-xl.font-semibold` | `<Title>` | `size="lg" weight="semibold"` |
-| `.text-base` | `<Paragraph>` | Default paragraph styling |
-| `.text-sm.font-medium` | `<Text>` | `size="sm" weight="medium"` |
-| `.text-sm.text-gray-500` | `<Text>` | `size="sm" color="subtle"` |
-
+| Web CSS Class            | Native Component | Props                         |
+| ------------------------ | ---------------- | ----------------------------- |
+| `.text-3xl.font-bold`    | `<Title>`        | `size="xl" weight="bold"`     |
+| `.text-xl.font-semibold` | `<Title>`        | `size="lg" weight="semibold"` |
+| `.text-base`             | `<Paragraph>`    | Default paragraph styling     |
+| `.text-sm.font-medium`   | `<Text>`         | `size="sm" weight="medium"`   |
+| `.text-sm.text-gray-500` | `<Text>`         | `size="sm" color="subtle"`    |
 
 ---
 
@@ -169,12 +178,13 @@ import { Title, Paragraph, Text } from '../components/primitives';
 ### Input Field Conversion
 
 #### ❌ Web Input (Similar to UserProfileEdit pattern)
+
 ```tsx
 <div className="user-profile-content">
   <div className="user-profile-content-section-header small-caps">
     Display Name
   </div>
-  <input 
+  <input
     className="w-[190px] border border-gray-300 rounded px-3 py-2"
     value={displayName}
     onChange={(e) => setDisplayName(e.target.value)}
@@ -185,6 +195,7 @@ import { Title, Paragraph, Text } from '../components/primitives';
 ```
 
 #### ✅ How This Would Look With Primitives
+
 ```tsx
 // This shows how the web input could be converted using primitives
 // (UserProfileEdit doesn't have a native version yet)
@@ -200,15 +211,16 @@ import { Input, Text, FlexColumn } from '../primitives';
     placeholder="Enter display name"
     error={displayNameError}
   />
-</FlexColumn>
+</FlexColumn>;
 ```
 
 ### Select/Dropdown Conversion
 
 #### ❌ Web Select
+
 ```tsx
-<select 
-  value={country} 
+<select
+  value={country}
   onChange={(e) => setCountry(e.target.value)}
   className="w-full px-3 py-2 border border-gray-300 rounded-md"
 >
@@ -219,18 +231,19 @@ import { Input, Text, FlexColumn } from '../primitives';
 ```
 
 #### ✅ Native Select
+
 ```tsx
 import { Select } from '../components/primitives';
 
-<Select 
+<Select
   value={country}
   onChange={setCountry}
   placeholder="Select country"
   options={[
     { label: 'United States', value: 'us' },
-    { label: 'Canada', value: 'ca' }
+    { label: 'Canada', value: 'ca' },
   ]}
-/>
+/>;
 ```
 
 ---
@@ -240,6 +253,7 @@ import { Select } from '../components/primitives';
 ### Button Conversion
 
 #### ❌ Web Buttons
+
 ```tsx
 // Save button
 <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
@@ -258,12 +272,13 @@ import { Select } from '../components/primitives';
 ```
 
 #### ✅ Native Buttons
+
 ```tsx
 // Using primitives for button patterns
 import { Button, Icon, Container } from '../primitives';
 
 // Primary action button
-<Button 
+<Button
   type="primary"
   disabled={isDisabled}
   onClick={handleSave}
@@ -272,8 +287,8 @@ import { Button, Icon, Container } from '../primitives';
 </Button>
 
 // Secondary action button with icon
-<Button 
-  type="secondary" 
+<Button
+  type="secondary"
   size="small"
   iconName="paper-plane"
   onClick={handleAction}
@@ -294,6 +309,7 @@ import { Button, Icon, Container } from '../primitives';
 ### Color System Migration
 
 #### ❌ Web Tailwind Classes
+
 ```tsx
 // From ChannelList component header styling
 <div className="space-header bg-surface-1 border-default rounded">
@@ -306,22 +322,26 @@ import { Button, Icon, Container } from '../primitives';
 ```
 
 #### ✅ Native Theme Colors
+
 ```tsx
 // Real examples using Quilibrium's theme system
 import { Container, Text } from '../primitives';
 
 <Container className="space-header" style={headerStyle}>
   <Container className="space-header-name truncate relative z-10">
-    <Text weight="bold" variant="strong">Space Name</Text>
+    <Text weight="bold" variant="strong">
+      Space Name
+    </Text>
   </Container>
   <Text variant="subtle">Space description</Text>
   <Text variant="link">Online users: 5</Text>
-</Container>
+</Container>;
 ```
 
 ### Spacing System
 
 #### ❌ Web Tailwind Spacing
+
 ```tsx
 <div className="p-4 m-2 space-y-3">
   <p className="mb-4">Content</p>
@@ -329,6 +349,7 @@ import { Container, Text } from '../primitives';
 ```
 
 #### ✅ Native Spacing
+
 ```tsx
 // Using FlexColumn gap
 <FlexColumn gap="sm" style={{ padding: 16, margin: 8 }}>
@@ -344,6 +365,7 @@ import { Container, Text } from '../primitives';
 ## Common Pitfalls
 
 ### ❌ Pitfall 1: Using HTML Elements
+
 ```tsx
 // DON'T: HTML elements won't work in React Native
 <div>
@@ -353,6 +375,7 @@ import { Container, Text } from '../primitives';
 ```
 
 ### ✅ Solution: Use Primitives
+
 ```tsx
 // DO: Use primitive components
 <FlexColumn>
@@ -362,6 +385,7 @@ import { Container, Text } from '../primitives';
 ```
 
 ### ❌ Pitfall 2: CSS Classes on Native
+
 ```tsx
 // DON'T: CSS classes don't work in React Native (from UserProfile example)
 <Text className="text-strong font-bold">User Name</Text>
@@ -369,12 +393,13 @@ import { Container, Text } from '../primitives';
 ```
 
 ### ✅ Solution: Use Props
+
 ```tsx
 // DO: Use component props (real examples from OnboardingTestScreen)
 <Text variant="strong" weight="bold">User Name</Text>
 <Text variant="subtle" size="xs">User address</Text>
-<Text 
-  size="lg" 
+<Text
+  size="lg"
   weight="medium"
   style={{ color: 'white', textAlign: 'center' }}
 >
@@ -383,22 +408,27 @@ import { Container, Text } from '../primitives';
 ```
 
 ### ❌ Pitfall 3: Missing Text Wrappers
+
 ```tsx
 // DON'T: Naked text will crash React Native (common in ChannelList)
 <Container>
   Space Name
-  <Icon name="users" />
-  5 members
+  <Icon name="users" />5 members
 </Container>
 ```
 
 ### ✅ Solution: Wrap All Text (ChannelList)
+
 ```tsx
 // DO: All text must be in Text components (real pattern from Quilibrium)
 <Container className="space-header-name truncate relative z-10">
-  <Text weight="bold" variant="strong">{spaceName}</Text>
+  <Text weight="bold" variant="strong">
+    {spaceName}
+  </Text>
   <Icon name="users" />
-  <Text variant="subtle" size="sm">5 members</Text>
+  <Text variant="subtle" size="sm">
+    5 members
+  </Text>
 </Container>
 ```
 
@@ -444,7 +474,7 @@ From mobile onboarding implementation, we learned:
 
 ```tsx
 // ✅ Always wrap components with form inputs in KeyboardAvoidingView
-<KeyboardAvoidingView 
+<KeyboardAvoidingView
   style={{ flex: 1 }}
   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
   keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
@@ -454,6 +484,7 @@ From mobile onboarding implementation, we learned:
 ```
 
 **Key lessons:**
+
 - KeyboardAvoidingView must wrap the entire screen layout
 - Different behavior needed for iOS vs Android
 - Test thoroughly to ensure keyboard doesn't cover inputs
@@ -476,7 +507,7 @@ Following these patterns will ensure your components work seamlessly across web 
 
 ---
 
-*Last updated: 2025-08-14*
+_Last updated: 2025-08-14_
 
 ---
 

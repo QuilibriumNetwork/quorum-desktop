@@ -14,11 +14,8 @@ const Layout: React.FunctionComponent<{
   const { createSpaceVisible, showCreateSpaceModal, hideCreateSpaceModal } =
     useModalManagement();
   const { isElectron } = useElectronDetection();
-  const { 
-    showRightSidebar, 
-    setShowRightSidebar, 
-    rightSidebarContent 
-  } = useSidebar();
+  const { showRightSidebar, setShowRightSidebar, rightSidebarContent } =
+    useSidebar();
   useNavigationHotkeys();
 
   return (

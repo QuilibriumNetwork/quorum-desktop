@@ -342,8 +342,9 @@ export const getColors = (
 
   // Override dynamic colors to use the current accent
   const accentDefault = accentColors[accent].DEFAULT;
-  const accentHover = theme === 'light' ? accentColors[accent][400] : accentColors[accent][200];
-  
+  const accentHover =
+    theme === 'light' ? accentColors[accent][400] : accentColors[accent][200];
+
   return {
     ...baseColors,
     field: {

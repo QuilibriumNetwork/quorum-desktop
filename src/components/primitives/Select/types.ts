@@ -28,10 +28,13 @@ export interface BaseSelectProps {
   fullWidth?: boolean;
   width?: string | number; // Custom width (CSS value for web, number for RN)
   dropdownPlacement?: 'top' | 'bottom' | 'auto'; // Dropdown positioning
-  
+
   // Multiselect specific props
   multiple?: boolean; // Enable multiselect mode
-  renderSelectedValue?: (selected: string[], options: SelectOption[]) => React.ReactNode; // Custom display for selected values
+  renderSelectedValue?: (
+    selected: string[],
+    options: SelectOption[]
+  ) => React.ReactNode; // Custom display for selected values
   selectAllLabel?: string; // Label for "Select All" option (default: "Select All")
   clearAllLabel?: string; // Label for "Clear All" option (default: "Clear All")
   maxHeight?: string | number; // Maximum height for dropdown

@@ -21,7 +21,9 @@
 .dropdown-panel--right-aligned {
   right: 20px;
   left: auto;
-  top: calc(var(--header-height, 80px) + 10px); // Below header with small margin
+  top: calc(
+    var(--header-height, 80px) + 10px
+  ); // Below header with small margin
   margin-top: 0;
   min-width: 200px;
 }

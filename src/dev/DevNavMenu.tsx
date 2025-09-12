@@ -11,33 +11,33 @@ const devNavItems: DevNavItem[] = [
   {
     name: 'Home',
     icon: 'home',
-    path: '/dev'
+    path: '/dev',
   },
   {
     name: 'Docs',
     icon: 'book',
-    path: '/dev/docs'
+    path: '/dev/docs',
   },
   {
     name: 'Tasks',
     icon: 'clipboard-list',
-    path: '/dev/tasks'
+    path: '/dev/tasks',
   },
   {
     name: 'Bugs',
     icon: 'bug',
-    path: '/dev/bugs'
+    path: '/dev/bugs',
   },
   {
     name: 'Playground',
     icon: 'flask',
-    path: '/playground'
+    path: '/playground',
   },
   {
     name: 'Audit',
     icon: 'chart-line',
-    path: '/dev/audit'
-  }
+    path: '/dev/audit',
+  },
 ];
 
 interface DevNavMenuProps {
@@ -45,9 +45,14 @@ interface DevNavMenuProps {
   sticky?: boolean;
 }
 
-export const DevNavMenu: React.FC<DevNavMenuProps> = ({ currentPath, sticky = false }) => {
+export const DevNavMenu: React.FC<DevNavMenuProps> = ({
+  currentPath,
+  sticky = false,
+}) => {
   return (
-    <div className={`bg-surface-00 border-b border-default ${sticky ? 'sticky top-0 z-20' : ''}`}>
+    <div
+      className={`bg-surface-00 border-b border-default ${sticky ? 'sticky top-0 z-20' : ''}`}
+    >
       <Container padding="sm" className="mx-auto max-w-screen-2xl">
         <FlexRow gap="md" className="items-center justify-center">
           {devNavItems.map((item) => {

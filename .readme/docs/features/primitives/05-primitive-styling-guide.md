@@ -175,5 +175,4 @@ When creating or updating primitives:
 
 **⚠️ Remember:** Visual consistency is crucial for user experience. When in doubt, use existing semantic classes rather than creating one-off styles.
 
-
-*Last updated: 2025-08-05*
+_Last updated: 2025-08-05_

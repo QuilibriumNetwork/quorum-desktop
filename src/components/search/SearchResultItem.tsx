@@ -29,9 +29,11 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   displayData,
 }) => {
   const { message } = result;
-  
+
   // Use batch-loaded display data instead of individual hooks
-  const channelName = displayData?.channelName || (displayData?.isLoading ? 'Loading...' : 'Unknown');
+  const channelName =
+    displayData?.channelName ||
+    (displayData?.isLoading ? 'Loading...' : 'Unknown');
   const icon = displayData?.icon;
 
   const { contextualSnippet } = useSearchResultHighlight({
@@ -92,10 +94,14 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   displayData,
 }) => {
   const { message } = result;
-  
+
   // Use batch-loaded display data instead of individual hooks
-  const displayName = displayData?.displayName || (displayData?.isLoading ? 'Loading...' : 'Unknown User');
-  const channelName = displayData?.channelName || (displayData?.isLoading ? 'Loading...' : 'Unknown Channel');
+  const displayName =
+    displayData?.displayName ||
+    (displayData?.isLoading ? 'Loading...' : 'Unknown User');
+  const channelName =
+    displayData?.channelName ||
+    (displayData?.isLoading ? 'Loading...' : 'Unknown Channel');
 
   const { contextualSnippet } = useSearchResultHighlight({
     message,

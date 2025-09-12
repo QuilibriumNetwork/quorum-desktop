@@ -22,9 +22,10 @@ export default defineConfig(({ command }) => ({
         }
         return false;
       },
-      input: command === 'build' 
-        ? resolve(__dirname, '..', 'index.html') // Build: use root index.html to avoid nesting
-        : resolve(__dirname, 'index.html'), // Dev: use web/index.html
+      input:
+        command === 'build'
+          ? resolve(__dirname, '..', 'index.html') // Build: use root index.html to avoid nesting
+          : resolve(__dirname, 'index.html'), // Dev: use web/index.html
     },
   },
   define: {
@@ -54,7 +55,14 @@ export default defineConfig(({ command }) => ({
     }),
   ],
   server: {
-    allowedHosts: ['.serveo.net', '.loca.lt', '.localhost.run', '.pinggy.io', '.ngrok-free.app', '.quilibrium.one'],
+    allowedHosts: [
+      '.serveo.net',
+      '.loca.lt',
+      '.localhost.run',
+      '.pinggy.io',
+      '.ngrok-free.app',
+      '.quilibrium.one',
+    ],
     headers: {
       'Permissions-Policy': 'publickey-credentials-get=*',
     },
@@ -73,7 +81,16 @@ export default defineConfig(({ command }) => ({
       ),
     },
     // Platform-specific resolution - prioritize .web files over .native files
-    extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.tsx', '.ts', '.jsx', '.js'],
+    extensions: [
+      '.web.tsx',
+      '.web.ts',
+      '.web.jsx',
+      '.web.js',
+      '.tsx',
+      '.ts',
+      '.jsx',
+      '.js',
+    ],
     // Deduplicate React instances (critical for monorepo)
     dedupe: ['react', 'react-dom'],
   },

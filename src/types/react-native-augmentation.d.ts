@@ -14,7 +14,7 @@ declare module 'react-native' {
   export const ScrollView: any;
   export const SafeAreaView: any;
   export const StyleSheet: any;
-  
+
   // Note: At runtime, these will resolve to the actual React Native implementations
   // This is just for TypeScript IDE support in cross-platform development
 }

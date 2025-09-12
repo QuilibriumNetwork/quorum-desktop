@@ -1,6 +1,5 @@
 # Search Components Primitive Migration
 
-
 ## Overview
 
 Complete migration of search feature components to use primitive architecture for consistency and mobile compatibility.

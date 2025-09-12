@@ -38,14 +38,14 @@ const Modal: React.FC<NativeModalProps> = ({
   const insets = useSafeAreaInsets();
   const screenHeight = Dimensions.get('window').height;
   const screenWidth = Dimensions.get('window').width;
-  
+
   // Determine if we're on a tablet based on screen width
   const isTablet = screenWidth >= 768;
-  
+
   // Calculate snap points - use percentage strings for proper @gorhom/bottom-sheet behavior
   const snapPoints = useMemo(() => {
     const baseSnapPoints = [];
-    
+
     // Add the target size as first snap point
     switch (size) {
       case 'small':
@@ -60,18 +60,18 @@ const Modal: React.FC<NativeModalProps> = ({
       default:
         baseSnapPoints.push('70%');
     }
-    
+
     // Always add a larger snap point for expand gesture (unless already at max)
     if (size !== 'large') {
       baseSnapPoints.push('90%');
     }
-    
+
     return baseSnapPoints;
   }, [size]);
-  
+
   // Bottom sheet modal ref
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  
+
   // Handle visibility changes
   useEffect(() => {
     if (visible) {
@@ -80,11 +80,11 @@ const Modal: React.FC<NativeModalProps> = ({
       bottomSheetModalRef.current?.dismiss();
     }
   }, [visible]);
-  
+
   // Handle Android back button
   useEffect(() => {
     if (!visible) return;
-    
+
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
@@ -95,23 +95,26 @@ const Modal: React.FC<NativeModalProps> = ({
         return false;
       }
     );
-    
+
     return () => backHandler.remove();
   }, [visible, onClose]);
-  
+
   // Handle close
   const handleClose = useCallback(() => {
     onClose();
   }, [onClose]);
-  
+
   // Handle sheet changes
-  const handleSheetChanges = useCallback((index: number) => {
-    if (index === -1) {
-      // Sheet is closed
-      handleClose();
-    }
-  }, [handleClose]);
-  
+  const handleSheetChanges = useCallback(
+    (index: number) => {
+      if (index === -1) {
+        // Sheet is closed
+        handleClose();
+      }
+    },
+    [handleClose]
+  );
+
   // Render backdrop
   const renderBackdrop = useCallback(
     (props: React.ComponentProps<typeof BottomSheetBackdrop>) => (
@@ -125,17 +128,20 @@ const Modal: React.FC<NativeModalProps> = ({
     ),
     [closeOnBackdropClick]
   );
-  
+
   // Content container styles with safe area handling
-  const contentContainerStyle = useMemo(() => ({
-    flex: 1,
-    paddingBottom: Math.max(insets.bottom || 0, 20), // Ensure proper bottom padding for older devices
-  }), [insets.bottom]);
-  
+  const contentContainerStyle = useMemo(
+    () => ({
+      flex: 1,
+      paddingBottom: Math.max(insets.bottom || 0, 20), // Ensure proper bottom padding for older devices
+    }),
+    [insets.bottom]
+  );
+
   if (!visible) {
     return null;
   }
-  
+
   return (
     <BottomSheetModal
       ref={bottomSheetModalRef}
@@ -153,11 +159,11 @@ const Modal: React.FC<NativeModalProps> = ({
       }}
       style={[
         styles.bottomSheetStyle,
-        isTablet && { 
+        isTablet && {
           maxWidth: 600,
           alignSelf: 'center',
           width: '100%',
-        }
+        },
       ]}
     >
       <BottomSheetView style={contentContainerStyle}>
@@ -173,34 +179,38 @@ const Modal: React.FC<NativeModalProps> = ({
               <Icon name="times" size="sm" color={colors.text.subtle} />
             </TouchableOpacity>
           )}
-          
+
           {/* Top Spacer - consistent spacing from handle/top */}
           <Spacer size="xl" />
-          
+
           {/* Title (when present) */}
           {title && (
-            <View style={titleAlign === 'center' ? [styles.header, styles.headerCenter] : styles.header}>
+            <View
+              style={
+                titleAlign === 'center'
+                  ? [styles.header, styles.headerCenter]
+                  : styles.header
+              }
+            >
               <Title size="md" weight="semibold" color={colors.text.strong}>
                 {title}
               </Title>
             </View>
           )}
-          
+
           {/* Spacer between title and content */}
           <Spacer size="lg" />
         </View>
-        
+
         {/* Scrollable content area - using BottomSheetScrollView for proper gesture integration */}
-        <BottomSheetScrollView 
+        <BottomSheetScrollView
           showsVerticalScrollIndicator={true}
           bounces={true}
           style={{ flex: 1 }}
           contentContainerStyle={styles.scrollContentContainer}
           keyboardShouldPersistTaps="handled"
         >
-          <View style={styles.contentContainer}>
-            {children}
-          </View>
+          <View style={styles.contentContainer}>{children}</View>
         </BottomSheetScrollView>
       </BottomSheetView>
     </BottomSheetModal>

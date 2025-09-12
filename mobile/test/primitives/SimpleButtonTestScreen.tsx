@@ -5,13 +5,21 @@ import { useTheme } from '@/primitives/theme';
 import Button from '@/primitives/Button';
 import { Icon } from '@/primitives/Icon';
 import { Text, Paragraph, Title, FlexColumn, FlexRow } from '@/primitives';
-import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
+import {
+  commonTestStyles,
+  createThemedStyles,
+} from '@/styles/commonTestStyles';
 
 export const SimpleButtonTestScreen: React.FC = () => {
   const theme = useTheme();
   const themedStyles = createThemedStyles(theme);
   return (
-    <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
+    <SafeAreaView
+      style={[
+        commonTestStyles.container,
+        { backgroundColor: theme.colors.bg.app },
+      ]}
+    >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <FlexColumn style={commonTestStyles.header}>
           <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
@@ -27,17 +35,11 @@ export const SimpleButtonTestScreen: React.FC = () => {
           <Title size="sm">Primary Variants</Title>
 
           <FlexColumn gap={12}>
-            <Button
-              type="primary"
-              onClick={() => {}}
-            >
+            <Button type="primary" onClick={() => {}}>
               Primary
             </Button>
 
-            <Button
-              type="secondary"
-              onClick={() => {}}
-            >
+            <Button type="secondary" onClick={() => {}}>
               Secondary
             </Button>
 
@@ -45,10 +47,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
               Light
             </Button>
 
-            <Button
-              type="light-outline"
-              onClick={() => {}}
-            >
+            <Button type="light-outline" onClick={() => {}}>
               Light Outline
             </Button>
           </FlexColumn>
@@ -62,10 +61,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
               Subtle
             </Button>
 
-            <Button
-              type="subtle-outline"
-              onClick={() => {}}
-            >
+            <Button type="subtle-outline" onClick={() => {}}>
               Subtle Outline
             </Button>
 
@@ -75,28 +71,26 @@ export const SimpleButtonTestScreen: React.FC = () => {
           </FlexColumn>
         </View>
 
-        <View style={[commonTestStyles.section, { backgroundColor: theme.colors.accent[500] }]}>
-          <Title size="sm" color="white">White Variants (on colored bg)</Title>
+        <View
+          style={[
+            commonTestStyles.section,
+            { backgroundColor: theme.colors.accent[500] },
+          ]}
+        >
+          <Title size="sm" color="white">
+            White Variants (on colored bg)
+          </Title>
 
           <FlexColumn gap={12}>
-            <Button
-              type="primary-white"
-              onClick={() => {}}
-            >
+            <Button type="primary-white" onClick={() => {}}>
               Primary White
             </Button>
 
-            <Button
-              type="secondary-white"
-              onClick={() => {}}
-            >
+            <Button type="secondary-white" onClick={() => {}}>
               Secondary White
             </Button>
 
-            <Button
-              type="light-outline-white"
-              onClick={() => {}}
-            >
+            <Button type="light-outline-white" onClick={() => {}}>
               Light Outline White
             </Button>
           </FlexColumn>
@@ -106,35 +100,19 @@ export const SimpleButtonTestScreen: React.FC = () => {
           <Title size="sm">Button Sizes</Title>
 
           <FlexColumn gap={12}>
-            <Button
-              type="primary"
-              size="large"
-              onClick={() => {}}
-            >
+            <Button type="primary" size="large" onClick={() => {}}>
               Large Size
             </Button>
 
-            <Button
-              type="primary"
-              size="normal"
-              onClick={() => {}}
-            >
+            <Button type="primary" size="normal" onClick={() => {}}>
               Normal Size
             </Button>
 
-            <Button
-              type="primary"
-              size="small"
-              onClick={() => {}}
-            >
+            <Button type="primary" size="small" onClick={() => {}}>
               Small Size
             </Button>
 
-            <Button
-              type="primary"
-              size="compact"
-              onClick={() => {}}
-            >
+            <Button type="primary" size="compact" onClick={() => {}}>
               Compact Size
             </Button>
           </FlexColumn>
@@ -144,11 +122,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
           <Title size="sm">Buttons with Icons</Title>
 
           <FlexColumn gap={12}>
-            <Button
-              type="primary"
-              iconName="plus"
-              onClick={() => {}}
-            >
+            <Button type="primary" iconName="plus" onClick={() => {}}>
               Add Item
             </Button>
 
@@ -191,7 +165,9 @@ export const SimpleButtonTestScreen: React.FC = () => {
                 size="compact"
                 onClick={() => {}}
               />
-              <Paragraph>Compact icon-only buttons (like in pinned messages)</Paragraph>
+              <Paragraph>
+                Compact icon-only buttons (like in pinned messages)
+              </Paragraph>
             </FlexRow>
           </FlexColumn>
         </View>
@@ -200,11 +176,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
           <Title size="sm">Disabled State</Title>
 
           <FlexColumn gap={12}>
-            <Button
-              type="primary"
-              disabled
-              onClick={() => {}}
-            >
+            <Button type="primary" disabled onClick={() => {}}>
               Disabled Button
             </Button>
           </FlexColumn>
@@ -213,5 +185,3 @@ export const SimpleButtonTestScreen: React.FC = () => {
     </SafeAreaView>
   );
 };
-
-

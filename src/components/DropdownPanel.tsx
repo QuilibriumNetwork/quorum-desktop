@@ -36,32 +36,34 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
     const handleClickOutside = (event: MouseEvent) => {
       if (panelRef.current && event.target) {
         const isInside = panelRef.current.contains(event.target as Node);
-        
+
         // Check if it's a tooltip-related element (they render outside the panel)
         const targetElement = event.target as Element;
-        
+
         // Check current element and parents for button-related classes/ids
         let currentElement = targetElement;
         let isTooltipElement = false;
-        
+
         // Walk up the DOM tree to find button-related elements
         for (let i = 0; i < 5 && currentElement && !isTooltipElement; i++) {
           const elementId = currentElement.id || '';
-          const elementClassName = typeof currentElement.className === 'string' 
-            ? currentElement.className 
-            : currentElement.className?.baseVal || '';
-            
-          isTooltipElement = elementId.includes('jump-') || 
-                            elementId.includes('unpin-') ||
-                            elementClassName.includes('jump-button') ||
-                            elementClassName.includes('unpin-button') ||
-                            elementClassName.includes('btn-unstyled') ||
-                            currentElement.tagName === 'BUTTON' ||
-                            currentElement.tagName === 'A';
-          
+          const elementClassName =
+            typeof currentElement.className === 'string'
+              ? currentElement.className
+              : currentElement.className?.baseVal || '';
+
+          isTooltipElement =
+            elementId.includes('jump-') ||
+            elementId.includes('unpin-') ||
+            elementClassName.includes('jump-button') ||
+            elementClassName.includes('unpin-button') ||
+            elementClassName.includes('btn-unstyled') ||
+            currentElement.tagName === 'BUTTON' ||
+            currentElement.tagName === 'A';
+
           currentElement = currentElement.parentElement;
         }
-        
+
         if (!isInside && !isTooltipElement) {
           onClose();
         }
@@ -87,54 +89,56 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
 
   if (!isOpen) return null;
 
-  const positionClass = positionStyle === 'centered' 
-    ? 'dropdown-panel--centered' 
-    : positionStyle === 'right-aligned'
-    ? 'dropdown-panel--right-aligned'
-    : 'dropdown-panel--search-results';
-  
+  const positionClass =
+    positionStyle === 'centered'
+      ? 'dropdown-panel--centered'
+      : positionStyle === 'right-aligned'
+        ? 'dropdown-panel--right-aligned'
+        : 'dropdown-panel--search-results';
+
   // Check if screen is below 640px (sm breakpoint) for responsive width
-  const isSmallScreen = typeof window !== 'undefined' && window.innerWidth < 640;
+  const isSmallScreen =
+    typeof window !== 'undefined' && window.innerWidth < 640;
   const responsiveMaxWidth = isSmallScreen ? 280 : maxWidth;
-  
-  const positionStyleObject = positionStyle === 'search-results' 
-    ? { 
-        width: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
-        maxWidth: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
-        maxHeight: `${maxHeight}px`
-      }
-    : positionStyle === 'right-aligned'
-    ? {
-        width: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
-        maxWidth: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
-        maxHeight: `${maxHeight}px`
-      }
-    : {
-        maxWidth: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
-        maxHeight: `${maxHeight}px`
-      };
+
+  const positionStyleObject =
+    positionStyle === 'search-results'
+      ? {
+          width: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
+          maxWidth: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
+          maxHeight: `${maxHeight}px`,
+        }
+      : positionStyle === 'right-aligned'
+        ? {
+            width: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
+            maxWidth: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
+            maxHeight: `${maxHeight}px`,
+          }
+        : {
+            maxWidth: `min(${responsiveMaxWidth}px, calc(100vw - 40px))`,
+            maxHeight: `${maxHeight}px`,
+          };
 
   // Use fixed positioning for right-aligned panels to escape relative containers
-  const finalPosition = (positionStyle === 'right-aligned') ? 'fixed' : position;
+  const finalPosition = positionStyle === 'right-aligned' ? 'fixed' : position;
 
   return (
     <Container
       ref={panelRef}
       className={`dropdown-panel ${positionClass} ${className}`}
-      style={{ 
+      style={{
         position: finalPosition,
-        ...positionStyleObject
+        ...positionStyleObject,
       }}
     >
       {(title || resultsCount !== undefined) && (
         <Container className="dropdown-panel__header">
           <FlexRow className="items-center justify-between">
             <Text className="dropdown-panel__title">
-              {title || (
-                resultsCount === 1
+              {title ||
+                (resultsCount === 1
                   ? `${resultsCount} result`
-                  : `${resultsCount} results`
-              )}
+                  : `${resultsCount} results`)}
             </Text>
             {showCloseButton && (
               <Button
@@ -148,10 +152,8 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
           </FlexRow>
         </Container>
       )}
-      
-      <Container className="dropdown-panel__content">
-        {children}
-      </Container>
+
+      <Container className="dropdown-panel__content">{children}</Container>
     </Container>
   );
 };

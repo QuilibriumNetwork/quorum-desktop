@@ -21,23 +21,23 @@ const Button: React.FC<NativeButtonProps> = (props) => {
   const getButtonStyle = () => {
     const type = props.type || 'primary';
     const size = props.size || 'normal';
-    
+
     // Calculate pill shape based on button height
     const baseHeight = 8 * 2 + 16 + 4; // paddingVertical * 2 + fontSize + extra
     const pillRadius = size === 'large' ? 30 : size === 'small' ? 20 : 25;
 
     let style = [styles.base, { borderRadius: pillRadius }];
-    
+
     // Add full width styling if needed
     if (props.fullWidth) {
       style.push({ width: '100%' });
     }
-    
+
     // Add full width with margin styling if needed
     if (props.fullWidthWithMargin) {
-      style.push({ 
+      style.push({
         alignSelf: 'stretch',
-        marginHorizontal: 40
+        marginHorizontal: 40,
       });
     }
 

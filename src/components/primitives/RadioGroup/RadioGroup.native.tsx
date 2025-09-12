@@ -22,7 +22,7 @@ export function RadioGroup<T extends string = string>({
   testID,
 }: RadioGroupNativeProps<T>) {
   const theme = useTheme();
-  
+
   // Use the colors directly from the theme provider (already resolved)
   const colors = theme.colors;
 

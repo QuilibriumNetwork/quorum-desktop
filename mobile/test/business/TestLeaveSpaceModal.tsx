@@ -13,7 +13,8 @@ type TestLeaveSpaceModalProps = {
 // Mock the space leaving logic for testing (no real navigation or database calls)
 const useTestSpaceLeaving = () => {
   const [confirmationStep, setConfirmationStep] = useState(0);
-  const [confirmationTimeout, setConfirmationTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [confirmationTimeout, setConfirmationTimeout] =
+    useState<NodeJS.Timeout | null>(null);
 
   // Clean up timeout on unmount
   useEffect(() => {
@@ -69,18 +70,17 @@ const useTestSpaceLeaving = () => {
   };
 };
 
-const TestLeaveSpaceModal: React.FunctionComponent<TestLeaveSpaceModalProps> = ({
-  spaceId,
-  visible,
-  onClose,
-}) => {
+const TestLeaveSpaceModal: React.FunctionComponent<
+  TestLeaveSpaceModalProps
+> = ({ spaceId, visible, onClose }) => {
   // Mock space data for testing
   const mockSpace = {
     spaceName: 'Test Space',
     spaceId: spaceId,
   };
 
-  const { confirmationStep, handleLeaveClick, resetConfirmation } = useTestSpaceLeaving();
+  const { confirmationStep, handleLeaveClick, resetConfirmation } =
+    useTestSpaceLeaving();
 
   // Reset confirmation when modal closes
   React.useEffect(() => {
@@ -107,7 +107,7 @@ const TestLeaveSpaceModal: React.FunctionComponent<TestLeaveSpaceModalProps> = (
             </Trans>
           </Text>
         </Container>
-        <Spacer size='lg'></Spacer>
+        <Spacer size="lg"></Spacer>
         <FlexRow>
           <Button
             type="danger"

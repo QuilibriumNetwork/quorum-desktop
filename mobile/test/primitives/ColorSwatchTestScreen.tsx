@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import {
-  ScrollView,
-  View,
-  SafeAreaView,
-  StatusBar,
-} from 'react-native';
+import { ScrollView, View, SafeAreaView, StatusBar } from 'react-native';
 import { useTheme } from '@/primitives/theme';
 import { ColorSwatch } from '@/primitives/ColorSwatch';
 import { Icon } from '@/primitives/Icon';
 import { Text, Paragraph, Label, Caption, Title } from '@/primitives';
 import { FlexRow, FlexColumn, FlexCenter } from '@/primitives';
-import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
+import {
+  commonTestStyles,
+  createThemedStyles,
+} from '@/styles/commonTestStyles';
 
 export const ColorSwatchTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -21,8 +19,18 @@ export const ColorSwatchTestScreen: React.FC = () => {
   const colors = ['blue', 'purple', 'fuchsia', 'orange', 'green', 'yellow'];
 
   return (
-    <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
-      <StatusBar barStyle={theme.resolvedTheme === "dark" ? "light-content" : "dark-content"} backgroundColor={theme.colors.bg.app} />
+    <SafeAreaView
+      style={[
+        commonTestStyles.container,
+        { backgroundColor: theme.colors.bg.app },
+      ]}
+    >
+      <StatusBar
+        barStyle={
+          theme.resolvedTheme === 'dark' ? 'light-content' : 'dark-content'
+        }
+        backgroundColor={theme.colors.bg.app}
+      />
       <ScrollView
         contentContainerStyle={commonTestStyles.contentPadding}
         showsVerticalScrollIndicator={false}
@@ -30,7 +38,7 @@ export const ColorSwatchTestScreen: React.FC = () => {
         {/* Header */}
         <FlexColumn style={commonTestStyles.header}>
           <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
-            <Icon name="palette" size="xl" style={{ marginTop: 2 }}/>
+            <Icon name="palette" size="xl" style={{ marginTop: 2 }} />
             <Title>ColorSwatch</Title>
           </FlexRow>
           <Paragraph align="center">
@@ -115,7 +123,9 @@ export const ColorSwatchTestScreen: React.FC = () => {
             <Label>Active State:</Label>
             <FlexRow align="center" style={commonTestStyles.stateRow}>
               <ColorSwatch color="blue" isActive={true} onPress={() => {}} />
-              <Text size="sm" variant="subtle">Shows ✓ checkmark</Text>
+              <Text size="sm" variant="subtle">
+                Shows ✓ checkmark
+              </Text>
             </FlexRow>
           </FlexColumn>
 
@@ -123,7 +133,9 @@ export const ColorSwatchTestScreen: React.FC = () => {
             <Label>Disabled State:</Label>
             <FlexRow align="center" style={commonTestStyles.stateRow}>
               <ColorSwatch color="purple" disabled={true} onPress={() => {}} />
-              <Text size="sm" variant="subtle">50% opacity, no interaction</Text>
+              <Text size="sm" variant="subtle">
+                50% opacity, no interaction
+              </Text>
             </FlexRow>
           </FlexColumn>
 
@@ -136,7 +148,9 @@ export const ColorSwatchTestScreen: React.FC = () => {
                 showCheckmark={false}
                 onPress={() => {}}
               />
-              <Text size="sm" variant="subtle">Border/shadow only</Text>
+              <Text size="sm" variant="subtle">
+                Border/shadow only
+              </Text>
             </FlexRow>
           </FlexColumn>
         </View>
@@ -148,13 +162,19 @@ export const ColorSwatchTestScreen: React.FC = () => {
 
           <FlexRow wrap style={commonTestStyles.colorGrid}>
             {colors.map((color) => (
-              <FlexColumn key={color} align="center" style={commonTestStyles.colorItem}>
+              <FlexColumn
+                key={color}
+                align="center"
+                style={commonTestStyles.colorItem}
+              >
                 <ColorSwatch
                   color={color}
                   isActive={false}
                   onPress={() => {}}
                 />
-                <Text size="sm" variant="subtle">{color}</Text>
+                <Text size="sm" variant="subtle">
+                  {color}
+                </Text>
               </FlexColumn>
             ))}
           </FlexRow>
@@ -164,39 +184,59 @@ export const ColorSwatchTestScreen: React.FC = () => {
         <View style={themedStyles.notesSection}>
           <FlexColumn gap="sm">
             <Title size="sm">Mobile Notes</Title>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Uses TouchableOpacity for native press feedback</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Uses TouchableOpacity for native press feedback
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Dynamic colors from theme system</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Dynamic colors from theme system
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Shadow effects for active state visibility</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Shadow effects for active state visibility
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Touch targets optimized for mobile (min 24x24)</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Touch targets optimized for mobile (min 24x24)
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Will integrate with AccentColorSwitcher component</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Will integrate with AccentColorSwitcher component
+                </Text>
               </View>
             </FlexRow>
           </FlexColumn>
@@ -205,5 +245,3 @@ export const ColorSwatchTestScreen: React.FC = () => {
     </SafeAreaView>
   );
 };
-
-

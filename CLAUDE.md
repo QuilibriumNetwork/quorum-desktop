@@ -273,5 +273,6 @@ Stick to Tailwind's strengths, extract wisely, and keep your design system DRY, 
 ## Playgrounds and test screens
 
 When asked to "Add to web and/or mobile playground" you can find the playgrounds here:
+
 - Web: `src\dev\primitives-playground`
 - Mobile: `mobile\test\primitives\` for primitives tests creens and `mobile\test\business\` for business components test screens

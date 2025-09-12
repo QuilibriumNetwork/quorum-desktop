@@ -1,7 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import {
-  PasskeyModal,
-} from '@quilibrium/quilibrium-js-sdk-channels';
+import { PasskeyModal } from '@quilibrium/quilibrium-js-sdk-channels';
 import '../../styles/_passkey-modal.scss';
 import { Input, Icon, Button, Tooltip, FileUpload } from '../primitives';
 import { useQuorumApiClient } from '../context/QuorumApiContext';
@@ -42,7 +40,7 @@ export const Onboarding = ({
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
   const [isDragActive, setIsDragActive] = useState(false);
-  
+
   const maxImageSize = 2 * 1024 * 1024; // 2MB
 
   // Handle file upload
@@ -105,7 +103,8 @@ export const Onboarding = ({
           <div className="flex flex-col text-white text-center">
             {onboardingFlow.currentStep === 'key-backup'
               ? t`Welcome to Quorum!`
-              : onboardingFlow.currentPasskeyInfo?.pfpUrl && onboardingFlow.currentPasskeyInfo.displayName
+              : onboardingFlow.currentPasskeyInfo?.pfpUrl &&
+                  onboardingFlow.currentPasskeyInfo.displayName
                 ? t`One of us, one of us!`
                 : t`Personalize your account`}
           </div>
@@ -113,10 +112,11 @@ export const Onboarding = ({
         {isDragActive && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 pointer-events-none backdrop-blur-sm">
             <div className="flex flex-col p-12 border-2 border-dashed border-accent-500 rounded-2xl bg-white/90 shadow-2xl items-center transform scale-110 transition-all duration-200">
-              <Icon name="file-image" className="text-5xl text-accent-500 mb-6" />
-              <p className="text-xl">
-                {t`Drop your profile photo here`}
-              </p>
+              <Icon
+                name="file-image"
+                className="text-5xl text-accent-500 mb-6"
+              />
+              <p className="text-xl">{t`Drop your profile photo here`}</p>
               <p className="text-sm text-subtle mt-2">
                 {t`PNG, JPG or JPEG • Max 2MB`}
               </p>
@@ -175,7 +175,7 @@ export const Onboarding = ({
                   {t`Save User Key`}
                 </Button>
                 <div className="pt-4">
-                  <span 
+                  <span
                     className="text-white text-sm cursor-pointer underline hover:text-white/80 transition-colors"
                     onClick={handleAlreadySaved}
                   >
@@ -234,119 +234,123 @@ export const Onboarding = ({
           </>
         )}
         {onboardingFlow.currentStep === 'profile-photo' && (
-            <>
-              <div className="flex flex-row justify-center">
-                <div className="grow"></div>
-                <div className="w-full max-w-[460px] px-4 flex flex-col justify-center py-4 text-white">
-                  <div className="mb-2 text-center">
-                    {t`Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join.`}
-                  </div>
-                  {/* <div className="mb-2 text-center">
+          <>
+            <div className="flex flex-row justify-center">
+              <div className="grow"></div>
+              <div className="w-full max-w-[460px] px-4 flex flex-col justify-center py-4 text-white">
+                <div className="mb-2 text-center">
+                  {t`Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join.`}
+                </div>
+                {/* <div className="mb-2 text-center">
                     {t`You can click the default image below to select it with your system's file dialog or drag and drop a new one.`}
                   </div>
                   <div className="mb-2 text-center">
                     {t`You will be able to change this later in your settings.`}
                   </div> */}
-                  <div className="mb-2 text-sm text-center">
-                    {i18n._(
-                      `Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension.`,
-                      { maxFileSize: `${maxImageSize / 1024 / 1024}MB` }
-                    )}
-                  </div>
-                  {fileError && (
-                    <div className="error-label mt-2">{fileError}</div>
+                <div className="mb-2 text-sm text-center">
+                  {i18n._(
+                    `Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension.`,
+                    { maxFileSize: `${maxImageSize / 1024 / 1024}MB` }
                   )}
                 </div>
-
-                <div className="grow"></div>
+                {fileError && (
+                  <div className="error-label mt-2">{fileError}</div>
+                )}
               </div>
-              <div className="flex flex-row justify-center">
-                <div className="grow"></div>
-                <div className="w-full max-w-[460px] px-4 py-4 text-center flex flex-row justify-around">
-                  <FileUpload
-                    onFilesSelected={handleFilesSelected}
-                    onError={handleFileError}
-                    accept={{
-                      'image/png': ['.png'],
-                      'image/jpeg': ['.jpg', '.jpeg'],
-                    }}
-                    maxSize={maxImageSize}
-                    multiple={false}
-                    {...({ onDragActiveChange: setIsDragActive } as any)}
+
+              <div className="grow"></div>
+            </div>
+            <div className="flex flex-row justify-center">
+              <div className="grow"></div>
+              <div className="w-full max-w-[460px] px-4 py-4 text-center flex flex-row justify-around">
+                <FileUpload
+                  onFilesSelected={handleFilesSelected}
+                  onError={handleFileError}
+                  accept={{
+                    'image/png': ['.png'],
+                    'image/jpeg': ['.jpg', '.jpeg'],
+                  }}
+                  maxSize={maxImageSize}
+                  multiple={false}
+                  {...({ onDragActiveChange: setIsDragActive } as any)}
+                >
+                  <div
+                    className={`avatar-upload ${!hasValidFile ? 'empty' : ''}`}
+                    style={
+                      hasValidFile
+                        ? {
+                            backgroundImage: `url(${getImageDataUrl() || DefaultImages.UNKNOWN_USER})`,
+                          }
+                        : {}
+                    }
                   >
-                    <div 
-                      className={`avatar-upload ${!hasValidFile ? 'empty' : ''}`}
-                      style={hasValidFile ? {
-                        backgroundImage: `url(${getImageDataUrl() || DefaultImages.UNKNOWN_USER})`
-                      } : {}}
-                    >
-                      {!hasValidFile && <Icon name="image" className="icon" />}
-                    </div>
-                  </FileUpload>
-                </div>
-
-                <div className="grow"></div>
+                    {!hasValidFile && <Icon name="image" className="icon" />}
+                  </div>
+                </FileUpload>
               </div>
-              <div className="flex flex-row justify-center">
-                <div className="grow"></div>
-                <div className="flex flex-col justify-around pl-2 pt-4">
-                  <Button
-                    type="primary-white"
-                    disabled={!canSaveFile}
-                    className={`px-8 w-full sm:w-auto ${!canSaveFile ? 'btn-disabled-onboarding' : ''}`}
+
+              <div className="grow"></div>
+            </div>
+            <div className="flex flex-row justify-center">
+              <div className="grow"></div>
+              <div className="flex flex-col justify-around pl-2 pt-4">
+                <Button
+                  type="primary-white"
+                  disabled={!canSaveFile}
+                  className={`px-8 w-full sm:w-auto ${!canSaveFile ? 'btn-disabled-onboarding' : ''}`}
+                  onClick={handleSavePhoto}
+                >
+                  {t`Save Contact Photo`}
+                </Button>
+                <div className="pt-8 text-center">
+                  <span
+                    className="text-white text-sm cursor-pointer hover:text-white/80 transition-colors"
                     onClick={handleSavePhoto}
                   >
-                    {t`Save Contact Photo`}
-                  </Button>
-                  <div className="pt-8 text-center">
-                    <span
-                      className="text-white text-sm cursor-pointer hover:text-white/80 transition-colors"
-                      onClick={handleSavePhoto}
-                    >
-                      {t`Skip Adding Photo`}
-                    </span>
-                    <Tooltip
-                      id="profile-image-info"
-                      content={t`If skipped, you'll get the default profile image and can set it later`}
-                      place="bottom"
-                      maxWidth={300}
-                    >
-                      <Icon
-                        name="circle-info"
-                        className="text-white/80 hover:text-white/60 cursor-pointer ml-2"
-                        aria-label={t`If skipped, you'll get the default profile image and can set it later`}
-                      />
-                    </Tooltip>
-                  </div>
-                </div>
-                <div className="grow"></div>
-              </div>
-            </>
-          )}
-        {onboardingFlow.currentStep === 'complete' && (
-            <>
-              <div className="flex flex-row justify-center">
-                <div className="grow"></div>
-                <div className="w-full max-w-[460px] px-4 py-4 text-center text-white">
-                  {t`You're all set. Welcome to Quorum!`}
-                </div>
-                <div className="grow"></div>
-              </div>
-              <div className="flex flex-row justify-center">
-                <div className="grow"></div>
-                <div className="flex flex-col justify-around pl-2">
-                  <Button
-                    type="primary-white"
-                    className="px-8 w-full sm:w-auto"
-                    onClick={() => onboardingFlow.completeOnboarding(setUser)}
+                    {t`Skip Adding Photo`}
+                  </span>
+                  <Tooltip
+                    id="profile-image-info"
+                    content={t`If skipped, you'll get the default profile image and can set it later`}
+                    place="bottom"
+                    maxWidth={300}
                   >
-                    {t`Let's gooooooooo`}
-                  </Button>
+                    <Icon
+                      name="circle-info"
+                      className="text-white/80 hover:text-white/60 cursor-pointer ml-2"
+                      aria-label={t`If skipped, you'll get the default profile image and can set it later`}
+                    />
+                  </Tooltip>
                 </div>
-                <div className="grow"></div>
               </div>
-            </>
-          )}
+              <div className="grow"></div>
+            </div>
+          </>
+        )}
+        {onboardingFlow.currentStep === 'complete' && (
+          <>
+            <div className="flex flex-row justify-center">
+              <div className="grow"></div>
+              <div className="w-full max-w-[460px] px-4 py-4 text-center text-white">
+                {t`You're all set. Welcome to Quorum!`}
+              </div>
+              <div className="grow"></div>
+            </div>
+            <div className="flex flex-row justify-center">
+              <div className="grow"></div>
+              <div className="flex flex-col justify-around pl-2">
+                <Button
+                  type="primary-white"
+                  className="px-8 w-full sm:w-auto"
+                  onClick={() => onboardingFlow.completeOnboarding(setUser)}
+                >
+                  {t`Let's gooooooooo`}
+                </Button>
+              </div>
+              <div className="grow"></div>
+            </div>
+          </>
+        )}
         <div className="flex flex-row grow"></div>
       </div>
       <div className="flex flex-col grow"></div>

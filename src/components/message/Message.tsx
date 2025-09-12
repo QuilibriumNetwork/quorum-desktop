@@ -351,7 +351,11 @@ export const Message = ({
                 message={message}
                 userAddress={user.currentPasskeyInfo!.address}
                 canUserDelete={messageActions.canUserDelete}
-                canPinMessages={canPinMessages !== undefined ? canPinMessages : pinnedMessages.canPinMessages}
+                canPinMessages={
+                  canPinMessages !== undefined
+                    ? canPinMessages
+                    : pinnedMessages.canPinMessages
+                }
                 height={height}
                 onReaction={messageActions.handleReaction}
                 onReply={messageActions.handleReply}
@@ -416,15 +420,15 @@ export const Message = ({
             {message.isPinned && (
               <Tooltip
                 id={`pin-indicator-${message.messageId}`}
-                content={message.pinnedBy ? t`Pinned by ${mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy}` : t`Pinned`}
+                content={
+                  message.pinnedBy
+                    ? t`Pinned by ${mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy}`
+                    : t`Pinned`
+                }
                 showOnTouch={true}
                 autoHideAfter={3000}
               >
-                <Icon 
-                  name="thumbtack" 
-                  size="xs" 
-                  className="ml-2 text-accent" 
-                />
+                <Icon name="thumbtack" size="xs" className="ml-2 text-accent" />
               </Tooltip>
             )}
             <Text className="pl-2">
@@ -435,10 +439,10 @@ export const Message = ({
                   showOnTouch={true}
                   autoHideAfter={3000}
                 >
-                  <Icon 
-                    name="exclamation-triangle" 
-                    size="xs" 
-                    className="text-warning-hex" 
+                  <Icon
+                    name="exclamation-triangle"
+                    size="xs"
+                    className="text-warning-hex"
                   />
                 </Tooltip>
               )}

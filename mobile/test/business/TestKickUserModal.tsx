@@ -13,7 +13,8 @@ type TestKickUserModalProps = {
 const useTestUserKicking = () => {
   const [kicking, setKicking] = useState(false);
   const [confirmationStep, setConfirmationStep] = useState(0);
-  const [confirmationTimeout, setConfirmationTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [confirmationTimeout, setConfirmationTimeout] =
+    useState<NodeJS.Timeout | null>(null);
 
   // Clean up timeout on unmount
   useEffect(() => {
@@ -27,10 +28,10 @@ const useTestUserKicking = () => {
   const kickUserFromSpace = useCallback(
     async (userAddress: string, onSuccess?: () => void) => {
       setKicking(true);
-      
+
       // Mock the kick operation with a delay
       console.log(`[TEST] Would kick user: ${userAddress}`);
-      
+
       // Simulate async operation
       setTimeout(() => {
         setKicking(false);
@@ -77,7 +78,9 @@ const useTestUserKicking = () => {
   };
 };
 
-const TestKickUserModal: React.FunctionComponent<TestKickUserModalProps> = (props) => {
+const TestKickUserModal: React.FunctionComponent<TestKickUserModalProps> = (
+  props
+) => {
   const { kicking, confirmationStep, handleKickClick, resetConfirmation } =
     useTestUserKicking();
 
@@ -111,9 +114,7 @@ const TestKickUserModal: React.FunctionComponent<TestKickUserModalProps> = (prop
           <Button
             type="danger"
             disabled={kicking}
-            onClick={() =>
-              handleKickClick(mockUserAddress, props.onClose)
-            }
+            onClick={() => handleKickClick(mockUserAddress, props.onClose)}
             hapticFeedback={true}
           >
             {confirmationStep === 0 ? t`Kick!` : t`Click again to confirm`}

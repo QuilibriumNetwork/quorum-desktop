@@ -34,6 +34,7 @@ This document tracks all temporary solutions implemented while using the SDK shi
    - **TODO**: Implement real passkey authentication (biometrics/secure storage)
 
 **Integration Steps When SDK is Ready**:
+
 ```typescript
 // 1. Import PasskeyModal from real SDK
 import { PasskeyModal } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -54,12 +55,14 @@ import { PasskeyModal } from '@quilibrium/quilibrium-js-sdk-channels';
 **Location**: `/src/shims/quilibrium-sdk-channels.native.tsx`
 
 **Mock Implementations**:
+
 - `PasskeysProvider` - Provides mock passkey context
 - `usePasskeysContext` - Returns mock authentication state
 - `updateStoredPasskey` - Updates mock user profile data
 - `exportKey` - Returns mock key export data
 
 **Real SDK Requirements**:
+
 1. React Native compatible crypto operations
 2. Biometric authentication integration
 3. Secure key storage (iOS Keychain / Android Keystore)
@@ -79,6 +82,7 @@ import { PasskeyModal } from '@quilibrium/quilibrium-js-sdk-channels';
 ## Testing Considerations
 
 When replacing the SDK shim:
+
 1. Test all onboarding flows
 2. Verify user registration with backend
 3. Test key backup/export functionality
@@ -93,4 +97,4 @@ When replacing the SDK shim:
 
 ---
 
-*This document should be updated whenever new components use the SDK shim, and referenced when implementing the real SDK for React Native.*
+_This document should be updated whenever new components use the SDK shim, and referenced when implementing the real SDK for React Native._

@@ -33,6 +33,14 @@ export interface InputProps {
   testID?: string;
   /** Accessibility label */
   accessibilityLabel?: string;
+  /** Label text */
+  label?: string;
+  /** Label type - static shows above input, floating animates on focus/value */
+  labelType?: 'static' | 'floating';
+  /** Show required indicator */
+  required?: boolean;
+  /** Helper text shown below the input */
+  helperText?: string;
 }
 
 // React Native specific props

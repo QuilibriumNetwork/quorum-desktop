@@ -1,6 +1,5 @@
 # Emoji Picker React - Styling & Customization
 
-
 ## Basic Information
 
 - **Package**: emoji-picker-react

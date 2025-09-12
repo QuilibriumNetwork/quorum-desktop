@@ -47,14 +47,11 @@ export const useTooltipInteraction = (
     }, hideDelay);
   }, [hideDelay]);
 
-  const setupTouchHandlers = useCallback(
-    (element: any) => {
-      // Native doesn't need manual touch handler setup
-      // Touch handling is managed by TouchableOpacity/TouchableWithoutFeedback in components
-      return () => {}; // Return empty cleanup function
-    },
-    []
-  );
+  const setupTouchHandlers = useCallback((element: any) => {
+    // Native doesn't need manual touch handler setup
+    // Touch handling is managed by TouchableOpacity/TouchableWithoutFeedback in components
+    return () => {}; // Return empty cleanup function
+  }, []);
 
   return {
     showTooltip: !hideTooltip, // Native is always touch, so respect hideTooltip state

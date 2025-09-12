@@ -2,11 +2,10 @@ import { StyleSheet } from 'react-native';
 
 /**
  * Common styles shared across all mobile playground test screens
- * 
+ *
  * Dynamic theme colors are still applied per-component via theme props
  * to maintain theme-awareness.
  */
-
 
 export const commonTestStyles = StyleSheet.create({
   // === LAYOUT CONTAINERS ===
@@ -14,11 +13,11 @@ export const commonTestStyles = StyleSheet.create({
     flex: 1,
     // backgroundColor applied dynamically via theme.colors.bg.app
   },
-  
+
   contentPadding: {
     padding: 20,
   },
-  
+
   contentPaddingCompact: {
     padding: 16,
   },
@@ -271,42 +270,42 @@ export const commonTestStyles = StyleSheet.create({
 export const createThemedStyles = (theme: any) => {
   // Debug: uncomment to check theme values
   // console.log('Theme border colors:', theme.colors.border);
-  
+
   return {
-  section: {
-    ...commonTestStyles.section,
-    backgroundColor: theme.colors.bg.card,
-    borderColor: theme.colors.border.default,
-    borderWidth: 1,
-  },
-  sectionCompact: {
-    ...commonTestStyles.sectionCompact,
-    backgroundColor: theme.colors.bg.card,
-    borderColor: theme.colors.border.default,
-    borderWidth: 1,
-  },
-  infoSection: {
-    ...commonTestStyles.infoSection,
-    backgroundColor: theme.colors.surface[3],
-    borderColor: theme.colors.border.default,
-    borderWidth: 1,
-  },
-  notesSection: {
-    ...commonTestStyles.notesSection,
-    backgroundColor: theme.colors.surface[3],
-    borderColor: theme.colors.border.default,
-    borderWidth: 1,
-  },
-  backBar: {
-    ...commonTestStyles.backBar,
-    backgroundColor: theme.colors.bg.app,
-    borderBottomColor: theme.colors.border.default,
-  },
+    section: {
+      ...commonTestStyles.section,
+      backgroundColor: theme.colors.bg.card,
+      borderColor: theme.colors.border.default,
+      borderWidth: 1,
+    },
+    sectionCompact: {
+      ...commonTestStyles.sectionCompact,
+      backgroundColor: theme.colors.bg.card,
+      borderColor: theme.colors.border.default,
+      borderWidth: 1,
+    },
+    infoSection: {
+      ...commonTestStyles.infoSection,
+      backgroundColor: theme.colors.surface[3],
+      borderColor: theme.colors.border.default,
+      borderWidth: 1,
+    },
+    notesSection: {
+      ...commonTestStyles.notesSection,
+      backgroundColor: theme.colors.surface[3],
+      borderColor: theme.colors.border.default,
+      borderWidth: 1,
+    },
+    backBar: {
+      ...commonTestStyles.backBar,
+      backgroundColor: theme.colors.bg.app,
+      borderBottomColor: theme.colors.border.default,
+    },
   };
 };
 
-// Helper to combine common styles with dynamic theme colors  
-export const withThemeColors = (
-  baseStyle: any,
-  themeColorStyle: any
-) => [baseStyle, themeColorStyle];
+// Helper to combine common styles with dynamic theme colors
+export const withThemeColors = (baseStyle: any, themeColorStyle: any) => [
+  baseStyle,
+  themeColorStyle,
+];

@@ -69,15 +69,15 @@ Not every component needs to use primitives. This guide helps decide when primit
 
 ```tsx
 // ✅ Good Container usage
-<Container 
-  padding="md" 
+<Container
+  padding="md"
   onClick={handleClick}
   backgroundColor="var(--surface-1)"
 >
   Interactive themed container
 </Container>
 
-// ✅ Good div usage  
+// ✅ Good div usage
 <div className="complex-animation-wrapper scroll-container">
   <div className="fade-in-effect">Static content</div>
 </div>
@@ -175,6 +175,7 @@ Not every component needs to use primitives. This guide helps decide when primit
 ```
 
 **Problems with the primitive version:**
+
 - Loses semantic HTML table structure (accessibility issues)
 - CSS grid/flexbox hacks needed for proper column alignment
 - Screen readers can't navigate properly
@@ -212,7 +213,7 @@ The goal is shared business logic with appropriate UI abstractions, not primitiv
 
 ---
 
-*Last updated: 2025-08-14*
+_Last updated: 2025-08-14_
 
 ---
 

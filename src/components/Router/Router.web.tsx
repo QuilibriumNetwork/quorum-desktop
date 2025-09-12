@@ -10,10 +10,7 @@ import Connecting from '@/components/Connecting';
 import InviteRoute from '@/components/InviteRoute';
 
 // Helper function for conditional dev imports
-const lazyDevImport = (
-  importFn: () => Promise<any>,
-  exportName?: string
-) =>
+const lazyDevImport = (importFn: () => Promise<any>, exportName?: string) =>
   process.env.NODE_ENV === 'development'
     ? React.lazy(async () => {
         try {
@@ -25,12 +22,12 @@ const lazyDevImport = (
         } catch (error) {
           console.error(`Failed to import dev component:`, error);
           // Return a fallback component instead of failing
-          return { 
+          return {
             default: () => (
               <div style={{ padding: '20px', textAlign: 'center' }}>
                 Dev component failed to load: {String(error)}
               </div>
-            )
+            ),
           };
         }
       })
@@ -53,18 +50,9 @@ const DevMainPage = lazyDevImport(
   () => import('@/dev/DevMainPage'),
   'DevMainPage'
 );
-const Docs = lazyDevImport(
-  () => import('@/dev/docs/Docs'),
-  'Docs'
-);
-const Tasks = lazyDevImport(
-  () => import('@/dev/docs/Tasks'),
-  'Tasks'
-);
-const Bugs = lazyDevImport(
-  () => import('@/dev/docs/Bugs'),
-  'Bugs'
-);
+const Docs = lazyDevImport(() => import('@/dev/docs/Docs'), 'Docs');
+const Tasks = lazyDevImport(() => import('@/dev/docs/Tasks'), 'Tasks');
+const Bugs = lazyDevImport(() => import('@/dev/docs/Bugs'), 'Bugs');
 
 interface RouterProps {
   user: {
@@ -85,13 +73,7 @@ export function Router({ user, setUser }: RouterProps) {
         element={
           <>
             <Connecting />
-            {user && (
-              <Navigate
-                to="/messages"
-                state={{ from: '/' }}
-                replace
-              />
-            )}
+            {user && <Navigate to="/messages" state={{ from: '/' }} replace />}
           </>
         }
       />
@@ -156,101 +138,80 @@ export function Router({ user, setUser }: RouterProps) {
         }
       />
       <Route path="/invite/" element={<InviteRoute />} />
-      {process.env.NODE_ENV === 'development' &&
-        PrimitivesPlayground && (
-          <Route
-            path="/playground"
-            element={
-              <ModalProvider user={user} setUser={setUser}>
-                <MobileProvider>
-                  <Suspense
-                    fallback={<div>Loading playground...</div>}
-                  >
-                    <PrimitivesPlayground />
-                  </Suspense>
-                </MobileProvider>
-              </ModalProvider>
-            }
-          />
-        )}
-      {process.env.NODE_ENV === 'development' &&
-        ComponentAuditViewer && (
-          <Route
-            path="/dev/audit"
-            element={
-              <Suspense
-                fallback={<div>Loading audit viewer...</div>}
-              >
-                <ComponentAuditViewer />
-              </Suspense>
-            }
-          />
-        )}
-      {process.env.NODE_ENV === 'development' &&
-        DependencyAuditViewer && (
-          <Route
-            path="/dev/dependencies"
-            element={
-              <Suspense
-                fallback={<div>Loading dependency analysis...</div>}
-              >
-                <DependencyAuditViewer />
-              </Suspense>
-            }
-          />
-        )}
-      {process.env.NODE_ENV === 'development' &&
-        DevMainPage && (
-          <Route
-            path="/dev"
-            element={
-              <Suspense
-                fallback={<div>Loading dev tools...</div>}
-              >
-                <DevMainPage />
-              </Suspense>
-            }
-          />
-        )}
-      {process.env.NODE_ENV === 'development' &&
-        Docs && (
-          <Route
-            path="/dev/docs"
-            element={
-              <Suspense
-                fallback={<div>Loading documentation...</div>}
-              >
-                <Docs />
-              </Suspense>
-            }
-          />
-        )}
-      {process.env.NODE_ENV === 'development' &&
-        Tasks && (
-          <Route
-            path="/dev/tasks"
-            element={
-              <Suspense
-                fallback={<div>Loading tasks...</div>}
-              >
-                <Tasks />
-              </Suspense>
-            }
-          />
-        )}
-      {process.env.NODE_ENV === 'development' &&
-        Bugs && (
-          <Route
-            path="/dev/bugs"
-            element={
-              <Suspense
-                fallback={<div>Loading bug reports...</div>}
-              >
-                <Bugs />
-              </Suspense>
-            }
-          />
-        )}
+      {process.env.NODE_ENV === 'development' && PrimitivesPlayground && (
+        <Route
+          path="/playground"
+          element={
+            <ModalProvider user={user} setUser={setUser}>
+              <MobileProvider>
+                <Suspense fallback={<div>Loading playground...</div>}>
+                  <PrimitivesPlayground />
+                </Suspense>
+              </MobileProvider>
+            </ModalProvider>
+          }
+        />
+      )}
+      {process.env.NODE_ENV === 'development' && ComponentAuditViewer && (
+        <Route
+          path="/dev/audit"
+          element={
+            <Suspense fallback={<div>Loading audit viewer...</div>}>
+              <ComponentAuditViewer />
+            </Suspense>
+          }
+        />
+      )}
+      {process.env.NODE_ENV === 'development' && DependencyAuditViewer && (
+        <Route
+          path="/dev/dependencies"
+          element={
+            <Suspense fallback={<div>Loading dependency analysis...</div>}>
+              <DependencyAuditViewer />
+            </Suspense>
+          }
+        />
+      )}
+      {process.env.NODE_ENV === 'development' && DevMainPage && (
+        <Route
+          path="/dev"
+          element={
+            <Suspense fallback={<div>Loading dev tools...</div>}>
+              <DevMainPage />
+            </Suspense>
+          }
+        />
+      )}
+      {process.env.NODE_ENV === 'development' && Docs && (
+        <Route
+          path="/dev/docs"
+          element={
+            <Suspense fallback={<div>Loading documentation...</div>}>
+              <Docs />
+            </Suspense>
+          }
+        />
+      )}
+      {process.env.NODE_ENV === 'development' && Tasks && (
+        <Route
+          path="/dev/tasks"
+          element={
+            <Suspense fallback={<div>Loading tasks...</div>}>
+              <Tasks />
+            </Suspense>
+          }
+        />
+      )}
+      {process.env.NODE_ENV === 'development' && Bugs && (
+        <Route
+          path="/dev/bugs"
+          element={
+            <Suspense fallback={<div>Loading bug reports...</div>}>
+              <Bugs />
+            </Suspense>
+          }
+        />
+      )}
     </Routes>
   );
 }

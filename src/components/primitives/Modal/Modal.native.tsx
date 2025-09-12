@@ -38,7 +38,9 @@ const Modal: React.FC<NativeModalProps> = ({
   const screenWidth = Dimensions.get('window').width;
 
   // Start animation from below the screen including navigation area
-  const translateY = useRef(new Animated.Value(screenHeight + insets.bottom + 50)).current;
+  const translateY = useRef(
+    new Animated.Value(screenHeight + insets.bottom + 50)
+  ).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
   const [isEnlarged, setIsEnlarged] = useState(false);
 
@@ -58,9 +60,10 @@ const Modal: React.FC<NativeModalProps> = ({
 
   const initialHeight = getInitialHeight();
   const enlargedHeight = screenHeight * 0.9;
-  
+
   // Current height for rendering
-  const currentHeight = swipeUpToOpen && isEnlarged ? enlargedHeight : initialHeight;
+  const currentHeight =
+    swipeUpToOpen && isEnlarged ? enlargedHeight : initialHeight;
 
   // Determine if we're on a tablet based on screen width
   const isTablet = screenWidth >= 768;
@@ -84,7 +87,7 @@ const Modal: React.FC<NativeModalProps> = ({
     } else {
       // Reset enlarged state when modal closes
       setIsEnlarged(false);
-      
+
       // Animate out - go below the screen including navigation area
       Animated.parallel([
         Animated.timing(translateY, {
@@ -105,7 +108,6 @@ const Modal: React.FC<NativeModalProps> = ({
   const handleClose = () => {
     onClose();
   };
-
 
   // Pan responder for swipe gestures
   const panResponder = useRef(
@@ -131,7 +133,11 @@ const Modal: React.FC<NativeModalProps> = ({
           handleClose();
         }
         // Handle swipe up to enlarge (only if swipeUpToOpen is enabled and not already enlarged)
-        else if (swipeUpToOpen && !isEnlarged && (gestureState.dy < -100 || gestureState.vy < -0.5)) {
+        else if (
+          swipeUpToOpen &&
+          !isEnlarged &&
+          (gestureState.dy < -100 || gestureState.vy < -0.5)
+        ) {
           setIsEnlarged(true);
           // Return to normal position
           Animated.timing(translateY, {
@@ -151,9 +157,6 @@ const Modal: React.FC<NativeModalProps> = ({
       },
     })
   ).current;
-
-
-
 
   if (!visible) {
     return null;
@@ -195,7 +198,7 @@ const Modal: React.FC<NativeModalProps> = ({
         >
           {/* Handle indicator and header with gesture for swipe actions */}
           <View
-            {...((swipeToClose || swipeUpToOpen) ? panResponder.panHandlers : {})}
+            {...(swipeToClose || swipeUpToOpen ? panResponder.panHandlers : {})}
             style={{ minHeight: 50 }} // Ensure gesture area has minimum height
           >
             {/* Handle indicator */}
@@ -221,7 +224,13 @@ const Modal: React.FC<NativeModalProps> = ({
 
             {/* Title (when present) */}
             {title && (
-              <View style={titleAlign === 'center' ? [styles.header, styles.headerCenter] : styles.header}>
+              <View
+                style={
+                  titleAlign === 'center'
+                    ? [styles.header, styles.headerCenter]
+                    : styles.header
+                }
+              >
                 <Title size="md" weight="semibold" color={colors.text.strong}>
                   {title}
                 </Title>
@@ -234,16 +243,14 @@ const Modal: React.FC<NativeModalProps> = ({
 
           {/* Content */}
           <View style={styles.content}>
-            <ScrollView 
-              showsVerticalScrollIndicator={false} 
+            <ScrollView
+              showsVerticalScrollIndicator={false}
               bounces={false}
               contentContainerStyle={{
-                paddingBottom: Math.max(insets.bottom, 20) // Ensure content is above navigation
+                paddingBottom: Math.max(insets.bottom, 20), // Ensure content is above navigation
               }}
             >
-              <View style={styles.contentContainer}>
-                {children}
-              </View>
+              <View style={styles.contentContainer}>{children}</View>
             </ScrollView>
           </View>
         </Animated.View>

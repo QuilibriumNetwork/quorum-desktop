@@ -6,7 +6,7 @@ import { t } from '@lingui/core/macro';
 
 // Configuration constants for message actions
 const MESSAGE_ACTIONS_CONFIG = {
-  PIN_CONFIRMATION_DURATION: 2000,  // Duration to show pin/unpin confirmation (ms)
+  PIN_CONFIRMATION_DURATION: 2000, // Duration to show pin/unpin confirmation (ms)
 } as const;
 
 interface MessageActionsProps {
@@ -40,7 +40,9 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   // State for tracking which action is currently hovered
   const [hoveredAction, setHoveredAction] = useState<string | null>(null);
   // State for confirmation tooltips
-  const [pinAction, setPinAction] = useState<'pinned' | 'unpinned' | null>(null);
+  const [pinAction, setPinAction] = useState<'pinned' | 'unpinned' | null>(
+    null
+  );
 
   // Quick reactions hook
   const { handleQuickReaction } = useQuickReactions({
@@ -51,7 +53,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   // Handle pin action with confirmation tooltip
   const handlePinClick = () => {
     const wasPinned = message.isPinned;
-    
+
     if (onPin) {
       onPin();
       // Show confirmation tooltip
@@ -74,7 +76,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
     // Show confirmation tooltip for pin actions
     if (pinAction === 'pinned') return t`Pinned!`;
     if (pinAction === 'unpinned') return t`Unpinned!`;
-    
+
     switch (hoveredAction) {
       case 'emoji':
         return t`More reactions`;
@@ -184,10 +186,10 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
                 onMouseEnter={handlePinHover}
                 className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
-                <Icon 
-                  name={message.isPinned ? "thumbtack-slash" : "thumbtack"} 
+                <Icon
+                  name={message.isPinned ? 'thumbtack-slash' : 'thumbtack'}
                   size="sm"
-                  className={message.isPinned ? "text-accent" : ""}
+                  className={message.isPinned ? 'text-accent' : ''}
                 />
               </div>
             </>

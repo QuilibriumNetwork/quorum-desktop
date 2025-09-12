@@ -1,6 +1,5 @@
 # Modal System Documentation
 
-
 ## Overview
 
 The Quorum Desktop app uses a unified primitive-based modal system designed for cross-platform compatibility and consistent user experience. All modals use the Modal primitive from `src/components/primitives/Modal` and leverage other primitives for forms, buttons, and interactions.

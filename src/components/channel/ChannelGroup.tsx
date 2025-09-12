@@ -72,21 +72,17 @@ const ChannelGroup: React.FunctionComponent<{
               <div className="flex-1 min-w-0 flex items-center gap-1">
                 {channel.isReadOnly ? (
                   <>
-                    <Icon 
-                      name="lock" 
-                      size="xs" 
-                      className="text-subtle" 
+                    <Icon
+                      name="lock"
+                      size="xs"
+                      className="text-subtle"
                       title="Read-only channel"
                     />
                     <span>{channel.channelName}</span>
                   </>
                 ) : (
                   <>
-                    <Icon 
-                      name="hashtag" 
-                      size="xs" 
-                      className="text-subtle" 
-                    />
+                    <Icon name="hashtag" size="xs" className="text-subtle" />
                     <span>{channel.channelName}</span>
                   </>
                 )}

@@ -1,7 +1,5 @@
 # File Upload Hooks Consolidation Task
 
-
-
 ## Overview
 
 Currently, we have multiple file upload implementations that could be consolidated for better maintainability and cross-platform consistency.
@@ -28,10 +26,10 @@ Currently, we have multiple file upload implementations that could be consolidat
 
 - **Location**: `src/components/primitives/FileUpload/`
 - **Purpose**: Unified cross-platform file upload component
-- **Implementation**: 
+- **Implementation**:
   - Web: Uses react-dropzone (similar to existing hooks)
   - Native: Uses platform-specific pickers (react-native-image-picker, react-native-document-picker)
-- **Features**: 
+- **Features**:
   - Consistent API across platforms
   - Lingui internationalization
   - Human-readable error messages (MB instead of bytes)
@@ -40,6 +38,7 @@ Currently, we have multiple file upload implementations that could be consolidat
 ## Migration Strategy
 
 ### Phase 1: Keep Current System (CURRENT)
+
 - ✅ All existing hooks work fine
 - ✅ New FileUpload primitive is ready for new features
 - ✅ Both systems coexist without conflicts
@@ -47,11 +46,13 @@ Currently, we have multiple file upload implementations that could be consolidat
 ### Phase 2: Gradual Migration (TODO)
 
 #### High Priority
+
 1. **Migrate `useFileUpload` (ui) users** to FileUpload primitive:
    - `CreateSpaceModal.tsx` - Replace hook with component approach
    - Benefits: Cross-platform support for future mobile space creation
 
 #### Medium Priority
+
 2. **Keep `useWebFileUpload` for now**:
    - Specialized for onboarding image handling
    - Has complex image processing features (ArrayBuffer, data URLs)
@@ -59,6 +60,7 @@ Currently, we have multiple file upload implementations that could be consolidat
    - Consider migration only if onboarding gets full primitive treatment
 
 #### Low Priority
+
 3. **Future new features**:
    - Always use FileUpload primitive for new file upload needs
    - Avoid creating more file upload hooks
@@ -66,17 +68,20 @@ Currently, we have multiple file upload implementations that could be consolidat
 ## Technical Considerations
 
 ### Pros of Migration
+
 - **Unified API**: Same interface across web and mobile
 - **Better Mobile UX**: Native pickers instead of web dropzone
 - **Consistency**: All file uploads work the same way
 - **Maintenance**: Single codebase to maintain
 
 ### Cons of Migration
+
 - **Breaking Changes**: Need to refactor existing components
 - **Feature Parity**: Ensure primitive supports all existing hook features
 - **Testing**: Need to verify all existing functionality works
 
 ### Migration Complexity
+
 - `useFileUpload` (ui): **Low complexity** - straightforward dropzone replacement
 - `useWebFileUpload`: **Medium complexity** - has specialized image processing features
 
@@ -96,6 +101,6 @@ Currently, we have multiple file upload implementations that could be consolidat
 
 ---
 
-*Created: August 8, 2025*
-*Status: Planning*
-*Priority: Medium*
+_Created: August 8, 2025_
+_Status: Planning_
+_Priority: Medium_

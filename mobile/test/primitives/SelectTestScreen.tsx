@@ -1,23 +1,20 @@
 import React, { useState } from 'react';
+import { ScrollView, SafeAreaView, StatusBar, View } from 'react-native';
 import {
-  ScrollView,
-  SafeAreaView,
-  StatusBar,
-  View,
-} from 'react-native';
-import { 
-  Text, 
- 
-  Title, 
-  Label, 
-  FlexColumn, 
-  FlexRow, 
-  Select, 
-  Button, 
-  Icon, 
-  useTheme 
+  Text,
+  Title,
+  Label,
+  FlexColumn,
+  FlexRow,
+  Select,
+  Button,
+  Icon,
+  useTheme,
 } from '@/primitives';
-import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
+import {
+  commonTestStyles,
+  createThemedStyles,
+} from '@/styles/commonTestStyles';
 
 export const SelectTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -32,12 +29,16 @@ export const SelectTestScreen: React.FC = () => {
   const [customWidthValue, setCustomWidthValue] = useState('');
   const [groupedValue, setGroupedValue] = useState('');
   const [userValue, setUserValue] = useState('');
-  
+
   // Multiselect state
   const [multiselectBasic, setMultiselectBasic] = useState<string[]>([]);
-  const [multiselectPermissions, setMultiselectPermissions] = useState<string[]>([]);
+  const [multiselectPermissions, setMultiselectPermissions] = useState<
+    string[]
+  >([]);
   const [multiselectTags, setMultiselectTags] = useState<string[]>([]);
-  const [multiselectPreselected, setMultiselectPreselected] = useState<string[]>(['option2', 'option4']);
+  const [multiselectPreselected, setMultiselectPreselected] = useState<
+    string[]
+  >(['option2', 'option4']);
 
   const basicOptions = [
     { value: 'apple', label: 'Apple' },
@@ -161,8 +162,18 @@ export const SelectTestScreen: React.FC = () => {
   ];
 
   return (
-    <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
-      <StatusBar barStyle={theme.resolvedTheme === "dark" ? "light-content" : "dark-content"} backgroundColor={theme.colors.bg.app} />
+    <SafeAreaView
+      style={[
+        commonTestStyles.container,
+        { backgroundColor: theme.colors.bg.app },
+      ]}
+    >
+      <StatusBar
+        barStyle={
+          theme.resolvedTheme === 'dark' ? 'light-content' : 'dark-content'
+        }
+        backgroundColor={theme.colors.bg.app}
+      />
       <ScrollView
         contentContainerStyle={commonTestStyles.contentPadding}
         showsVerticalScrollIndicator={false}
@@ -170,7 +181,7 @@ export const SelectTestScreen: React.FC = () => {
         {/* Header */}
         <View style={commonTestStyles.header}>
           <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
-            <Icon name="clipboard" size="xl" style={{ marginTop: 2 }}/>
+            <Icon name="clipboard" size="xl" style={{ marginTop: 2 }} />
             <Title>Select</Title>
           </FlexRow>
           <View style={{ marginTop: 8 }}>
@@ -389,7 +400,9 @@ export const SelectTestScreen: React.FC = () => {
                 placeholder="200px wide"
                 options={longTextOptions}
               />
-              <Text size="sm" variant="subtle">Uses width=200 prop</Text>
+              <Text size="sm" variant="subtle">
+                Uses width=200 prop
+              </Text>
             </FlexColumn>
 
             <FlexColumn gap="xs">
@@ -401,7 +414,9 @@ export const SelectTestScreen: React.FC = () => {
                 placeholder="Narrow"
                 options={longTextOptions}
               />
-              <Text size="sm" variant="subtle">Demonstrates text ellipsis</Text>
+              <Text size="sm" variant="subtle">
+                Demonstrates text ellipsis
+              </Text>
             </FlexColumn>
           </FlexColumn>
         </View>
@@ -543,67 +558,103 @@ export const SelectTestScreen: React.FC = () => {
         <View style={themedStyles.notesSection}>
           <FlexColumn gap="sm">
             <Title size="sm">Mobile Notes</Title>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Uses React Native Modal for dropdown overlay</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Uses React Native Modal for dropdown overlay
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Touch-optimized for mobile interaction</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Touch-optimized for mobile interaction
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Consistent width management (min 150px, max 280px)</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Consistent width management (min 150px, max 280px)
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Text truncation with ellipsis for long options</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Text truncation with ellipsis for long options
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Custom width support via numeric prop</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Custom width support via numeric prop
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Grouped options with sticky headers</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Grouped options with sticky headers
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Avatar support with 32px circular images</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Avatar support with 32px circular images
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Subtitle text for secondary information</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Subtitle text for secondary information
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Icons are temporary emoji (FontAwesome pending)</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Icons are temporary emoji (FontAwesome pending)
+                </Text>
               </View>
             </FlexRow>
           </FlexColumn>
@@ -612,5 +663,3 @@ export const SelectTestScreen: React.FC = () => {
     </SafeAreaView>
   );
 };
-
-

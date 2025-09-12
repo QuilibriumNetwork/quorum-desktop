@@ -1,7 +1,5 @@
 # Expo Go to Expo Dev Client Migration Plan - Simplified
 
-
-
 ## Why Migrate?
 
 Your project has native dependencies (`@quilibrium/quilibrium-js-sdk-channels`, crypto libraries, file system modules) that don't work in Expo Go's sandboxed environment. Dev Client creates a custom build with your dependencies included.
@@ -11,12 +9,14 @@ Your project has native dependencies (`@quilibrium/quilibrium-js-sdk-channels`, 
 ### 0. Prerequisites (One-Time Setup) - DONE on LaMat Windows 01.09.2025
 
 **Install Android Studio:**
+
 1. Download from developer.android.com
 2. Install with default settings
 3. Open Android Studio → Tools → SDK Manager → Install latest SDK
 4. Create virtual device: Tools → AVD Manager → Create Virtual Device
 
 **Set Environment Variable:**
+
 ```bash
 # Windows: Add to system PATH
 setx ANDROID_HOME "C:\Users\%USERNAME%\AppData\Local\Android\Sdk"
@@ -24,6 +24,7 @@ setx ANDROID_HOME "C:\Users\%USERNAME%\AppData\Local\Android\Sdk"
 
 **Verify setup:**
 Restart terminal
+
 ```bash
 echo %ANDROID_HOME% #verify
 adb devices  # Should list emulator or connected device
@@ -85,6 +86,7 @@ expo install expo-dev-client
 ```
 
 Add new script:
+
 ```json
 "mobile:build": "cd mobile && expo run:android"
 ```
@@ -92,6 +94,7 @@ Add new script:
 ### 4. Build Development Client
 
 **For Physical Phone (One-Time Setup):**
+
 ```bash
 # Connect your Android phone via USB with USB debugging enabled
 # From project root
@@ -104,6 +107,7 @@ yarn mobile:build
 ```
 
 **For Emulator (Automatic):**
+
 ```bash
 # From project root
 yarn mobile:android
@@ -118,6 +122,7 @@ yarn mobile:android
 ### 5. Start Development
 
 **Physical Phone Workflow:**
+
 ```bash
 # Daily development (same as before, but with --dev-client flag)
 yarn mobile
@@ -127,6 +132,7 @@ yarn mobile
 ```
 
 **Emulator Workflow:**
+
 ```bash
 # Everything automatic
 yarn mobile:android
@@ -135,6 +141,7 @@ yarn mobile:android
 ```
 
 **Both Options:**
+
 ```bash
 # Quick testing: Emulator
 yarn mobile:android
@@ -151,21 +158,24 @@ yarn mobile  # After running yarn mobile:build once
 ## Troubleshooting
 
 **If build fails:**
+
 - Ensure Android Studio and ANDROID_HOME are set up
 - Try `yarn mobile:clear` to clear Metro cache
 
 **If app crashes:**
+
 - Check Metro bundler logs for native module errors
 - Some dependencies might need additional configuration
 
 **If connection fails:**
+
 - Use `--tunnel` flag for network issues
 - Ensure firewall allows Metro bundler port
 
 ## Validation Checklist
 
 - [ ] `expo run:android` builds successfully
-- [ ] Dev Client app installs on device/emulator  
+- [ ] Dev Client app installs on device/emulator
 - [ ] `yarn mobile` connects to custom app (not Expo Go)
 - [ ] Native crypto functions work
 - [ ] File upload/download works
@@ -174,6 +184,7 @@ yarn mobile  # After running yarn mobile:build once
 ## Rollback Plan
 
 If issues arise, temporarily revert scripts to use Expo Go:
+
 ```json
 "mobile": "cd mobile && expo start --tunnel"
 ```
@@ -185,7 +196,9 @@ Remove `"plugins": ["expo-dev-client"]` from app.json and use Expo Go app until 
 ## Detailed Rollback Steps (Expo Dev Client → Expo Go)
 
 ### Current State Analysis
+
 The project is currently configured with:
+
 - ✅ Expo Dev Client plugin in `mobile/app.json`
 - ✅ Dev Client scripts in root `package.json`
 - ✅ Native Android build in `mobile/android/` directory
@@ -203,6 +216,7 @@ The project is currently configured with:
 ```
 
 Remove dev client specific scripts:
+
 ```json
 // Remove these:
 "mobile:build": "cd mobile && expo run:android"
@@ -258,6 +272,7 @@ yarn remove expo-dev-client
 ### Step 4: Clean Build Artifacts (Optional)
 
 Remove native build directory to save space:
+
 ```bash
 # WARNING: This will require rebuilding if you want to go back to dev client
 rm -rf mobile/android/
@@ -265,6 +280,7 @@ rm -rf mobile/ios/ # if exists
 ```
 
 Or keep it for later:
+
 ```bash
 # Rename to preserve for future use
 mv mobile/android mobile/android_backup
@@ -289,6 +305,7 @@ yarn mobile:tunnel
 ### Step 7: Verify Rollback
 
 **Expected behavior:**
+
 - ✅ `expo start` opens Expo Go QR code
 - ✅ Scan QR with Expo Go app (not custom dev client)
 - ❌ Native crypto functions will be disabled/broken
@@ -298,6 +315,7 @@ yarn mobile:tunnel
 ### Feature Limitations After Rollback
 
 **Will Work:**
+
 - ✅ Basic React Native components and navigation
 - ✅ UI primitives and cross-platform components
 - ✅ Most business logic and state management
@@ -305,6 +323,7 @@ yarn mobile:tunnel
 - ✅ Internationalization (Lingui)
 
 **Will NOT Work (Expo Go Limitations):**
+
 - ❌ `@quilibrium/quilibrium-js-sdk-channels` (native crypto)
 - ❌ Advanced file system operations
 - ❌ Native crypto libraries
@@ -335,6 +354,7 @@ If you need native features again, reverse these steps:
 ### Why Rollback Might Be Needed
 
 **Common Scenarios:**
+
 - Build issues on new machine/environment
 - Android Studio setup problems
 - Device/emulator connection issues
@@ -346,5 +366,5 @@ If you need native features again, reverse these steps:
 
 ---
 
-*Document created: 2025-01-09*
-*Rollback section added: 2025-01-09*
+_Document created: 2025-01-09_
+_Rollback section added: 2025-01-09_

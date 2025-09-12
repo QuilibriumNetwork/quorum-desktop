@@ -88,7 +88,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     const virtuoso = useRef<VirtuosoHandle>(null);
     const [init, setInit] = useState(false);
     const location = useLocation();
-    
+
     // Message highlighting context - replaces direct DOM manipulation
     const { highlightMessage, scrollToMessage } = useMessageHighlight();
 
@@ -171,7 +171,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           setTimeout(() => {
             // Scroll using the centralized scroll function
             scrollToMessage(msgId, virtuoso.current, messageList);
-            
+
             // Highlight using React state (this will trigger re-render with highlight class)
             highlightMessage(msgId, { duration: 6000 }); // Match CSS animation duration
           }, 200);

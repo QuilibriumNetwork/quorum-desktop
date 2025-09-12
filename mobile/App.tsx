@@ -1,13 +1,13 @@
 /**
  * PRODUCTION APP ENTRY POINT
- * 
+ *
  * This will be the real Quorum mobile app.
  * Currently using AppTest.tsx for development playground.
- * 
+ *
  * To switch from test playground to production app:
  * 1. Implement the real app structure here
  * 2. Change index.ts to import from './App' instead of './AppTest'
- * 
+ *
  * The production app will use:
  * - React Navigation for routing
  * - Business components from src/components/.../component.native.tsx/*

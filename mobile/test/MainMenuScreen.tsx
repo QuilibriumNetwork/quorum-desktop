@@ -4,7 +4,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Container, FlexColumn, FlexRow, Text, Icon } from '@/primitives';
 import { useTheme } from '@/primitives/theme';
 import { IconName } from '@/primitives/Icon/types';
-import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
+import {
+  commonTestStyles,
+  createThemedStyles,
+} from '@/styles/commonTestStyles';
 import ThemeRadioGroup from '@/components/ThemeRadioGroup';
 import AccentColorSwitcher from '@/components/AccentColorSwitcher';
 
@@ -21,7 +24,9 @@ interface MainMenuScreenProps {
   onSelectSection: (section: 'primitives' | 'business') => void;
 }
 
-export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({ onSelectSection }) => {
+export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({
+  onSelectSection,
+}) => {
   const theme = useTheme();
   const themedStyles = createThemedStyles(theme);
 
@@ -29,7 +34,8 @@ export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({ onSelectSection 
     {
       id: 'primitives',
       title: 'UI Primitives',
-      description: 'Test individual primitive components like Button, Input, Modal, etc.',
+      description:
+        'Test individual primitive components like Button, Input, Modal, etc.',
       icon: 'sliders',
       color: theme.colors.accent[500],
       onPress: () => onSelectSection('primitives'),
@@ -37,7 +43,8 @@ export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({ onSelectSection 
     {
       id: 'business',
       title: 'Business Components',
-      description: 'Test app features like Authentication, Chat, Settings using real business logic',
+      description:
+        'Test app features like Authentication, Chat, Settings using real business logic',
       icon: 'home',
       color: theme.colors.info,
       onPress: () => onSelectSection('business'),
@@ -86,10 +93,10 @@ export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({ onSelectSection 
         { backgroundColor: theme.colors.bg.app },
       ]}
     >
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={[
           commonTestStyles.contentPadding,
-          { paddingTop: 40 }
+          { paddingTop: 40 },
         ]}
         showsVerticalScrollIndicator={false}
       >

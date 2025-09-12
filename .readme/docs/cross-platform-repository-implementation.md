@@ -1,11 +1,11 @@
 # Cross-Platform Repository Implementation
 
-
 This document explains the implemented cross-platform repository structure for the Quorum desktop application, detailing what changed from the previous structure and how the build configurations were modified to support both development and production environments.
 
 ## What Changed: Before vs After
 
 ### Previous Structure (Single Platform)
+
 ```
 quorum-desktop/
 ├── src/                    # Mixed web/shared code
@@ -19,6 +19,7 @@ quorum-desktop/
 ```
 
 ### New Structure (Cross-Platform Ready)
+
 ```
 quorum-desktop/
 ├── src/                          # SHARED CODE (90% of app)
@@ -69,18 +70,27 @@ quorum-desktop/
 ## Key Architectural Changes
 
 ### 1. Platform Detection System
+
 **New file**: `src/utils/platform.ts`
+
 ```typescript
 export function isWeb(): boolean {
-  return typeof window !== 'undefined' && typeof window.document !== 'undefined';
+  return (
+    typeof window !== 'undefined' && typeof window.document !== 'undefined'
+  );
 }
 
 export function isMobile(): boolean {
-  return typeof navigator !== 'undefined' && navigator.product === 'ReactNative';
+  return (
+    typeof navigator !== 'undefined' && navigator.product === 'ReactNative'
+  );
 }
 
 export function isElectron(): boolean {
-  if (typeof navigator !== 'undefined' && navigator.userAgent.includes('Electron')) {
+  if (
+    typeof navigator !== 'undefined' &&
+    navigator.userAgent.includes('Electron')
+  ) {
     return true;
   }
   return false;
@@ -92,6 +102,7 @@ export function isNative(): boolean {
 ```
 
 **Usage in App.tsx**:
+
 ```typescript
 // Before: Hardcoded electron detection
 const isElectron = navigator.userAgent.includes('Electron');
@@ -103,12 +114,15 @@ import { isWeb, isElectron } from './utils/platform';
 ```
 
 ### 2. Platform-Specific Router Abstraction
+
 **New structure**: `src/components/Router/`
+
 - `Router.web.tsx` - React Router implementation
 - `Router.native.tsx` - React Navigation placeholder
 - `index.ts` - Platform-aware exports
 
 **Web Router** (`Router.web.tsx`):
+
 ```typescript
 import { Routes, Route } from 'react-router';
 // Existing routing logic extracted from App.tsx
@@ -122,7 +136,9 @@ export function Router() {
 ```
 
 ### 3. Cross-Platform Primitive Components
+
 Enhanced primitive components with platform-specific implementations:
+
 - `Button.web.tsx` - Web implementation with CSS
 - `Button.native.tsx` - React Native implementation
 - Shared types and interfaces
@@ -132,13 +148,16 @@ Enhanced primitive components with platform-specific implementations:
 The most critical changes were made to support both development and production builds with the new structure.
 
 ### The Core Challenge
+
 **Problem**: Different requirements for dev vs build contexts:
+
 - **Dev server**: Needs to access `node_modules` from project root
 - **Build**: Needs to avoid nested `dist/web/web/index.html` structure
 
 ### ESolution: Environment-Specific Entry Points
 
 **New Vite Configuration** (`web/vite.config.ts`):
+
 ```typescript
 import { defineConfig } from 'vite';
 // ... other imports
@@ -159,9 +178,10 @@ export default defineConfig(({ command }) => ({
         return false;
       },
       // KEY SOLUTION: Environment-specific entry points
-      input: command === 'build' 
-        ? resolve(__dirname, '..', 'index.html')  // Build: use root HTML (flat output)
-        : resolve(__dirname, 'index.html'),       // Dev: use web/index.html
+      input:
+        command === 'build'
+          ? resolve(__dirname, '..', 'index.html') // Build: use root HTML (flat output)
+          : resolve(__dirname, 'index.html'), // Dev: use web/index.html
     },
   },
   // ... rest of config
@@ -183,6 +203,7 @@ export default defineConfig(({ command }) => ({
 ### Dual HTML Strategy
 
 **Development HTML** (`web/index.html`):
+
 ```html
 <!doctype html>
 <html lang="en">
@@ -194,12 +215,14 @@ export default defineConfig(({ command }) => ({
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="./main.tsx"></script>  <!-- Dev path -->
+    <script type="module" src="./main.tsx"></script>
+    <!-- Dev path -->
   </body>
 </html>
 ```
 
 **Build HTML** (`index.html` at root):
+
 ```html
 <!doctype html>
 <html lang="en">
@@ -211,7 +234,8 @@ export default defineConfig(({ command }) => ({
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="./web/main.tsx"></script>  <!-- Build path -->
+    <script type="module" src="./web/main.tsx"></script>
+    <!-- Build path -->
   </body>
 </html>
 ```
@@ -223,19 +247,19 @@ export default defineConfig(({ command }) => ({
   "scripts": {
     // Web Development (uses web/vite.config.ts)
     "dev": "vite --config web/vite.config.ts",
-    "build": "vite build --config web/vite.config.ts", 
+    "build": "vite build --config web/vite.config.ts",
     "build:preview": "yarn build && yarn preview --port 3000 --config web/vite.config.ts",
     "preview": "vite preview --config web/vite.config.ts",
-    
+
     // Electron (uses new paths)
     "electron:dev": "NODE_ENV=development electron web/electron/main.cjs",
     "electron:build": "yarn build && electron-builder",
-    
+
     // Mobile (placeholder - not active yet)
     "mobile:dev": "echo 'Mobile development not yet active. Run: cd mobile && expo start'",
     "mobile:android": "echo 'Mobile development not yet active. Run: cd mobile && expo start --android'",
     "mobile:ios": "echo 'Mobile development not yet active. Run: cd mobile && expo start --ios'",
-    
+
     // Existing scripts unchanged
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -248,6 +272,7 @@ export default defineConfig(({ command }) => ({
 ## Build Output Structure
 
 ### Correct Cross-Platform Build Structure
+
 ```
 dist/
 └── web/                    # Complete web distribution
@@ -263,6 +288,7 @@ dist/
 ```
 
 **Future mobile builds will create**:
+
 ```
 dist/
 ├── web/                   # Web distribution
@@ -274,14 +300,14 @@ dist/
 ## Dependency Management
 
 ### Yarn Workspaces Implementation
+
 The project uses **Yarn Workspaces** for proper monorepo dependency management, which was essential to resolve React version conflicts and ensure both platforms work correctly.
 
 **Root package.json configuration**:
+
 ```json
 {
-  "workspaces": [
-    "mobile"
-  ],
+  "workspaces": ["mobile"],
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -290,30 +316,29 @@ The project uses **Yarn Workspaces** for proper monorepo dependency management, 
 ```
 
 **Key benefits of Yarn Workspaces**:
+
 - ✅ Eliminates multiple React instances that caused Metro bundler errors
 - ✅ Hoists shared dependencies to root `node_modules/`
 - ✅ Allows mobile-specific dependencies in `mobile/package.json`
 - ✅ Resolves version conflicts between web and mobile platforms
 
 ### Metro Configuration for Workspaces
+
 **mobile/metro.config.js**:
+
 ```javascript
 const config = getDefaultConfig(__dirname);
 const projectRoot = __dirname;
 const monorepoRoot = path.resolve(projectRoot, '..');
 
 // Watch shared source folders
-config.watchFolders = [
-  path.resolve(monorepoRoot, 'src'),
-];
+config.watchFolders = [path.resolve(monorepoRoot, 'src')];
 
 // Configure resolver for workspace
 config.resolver = {
   ...config.resolver,
   // Use hoisted dependencies from workspace root
-  nodeModulesPaths: [
-    path.resolve(monorepoRoot, 'node_modules'),
-  ],
+  nodeModulesPaths: [path.resolve(monorepoRoot, 'node_modules')],
   platforms: ['native', 'android', 'ios'],
   sourceExts: [...config.resolver.sourceExts, 'mjs', 'cjs'],
   // Prioritize platform-specific files for React Native
@@ -325,27 +350,40 @@ config.resolver.symlinks = true;
 ```
 
 ### Vite Configuration for Cross-Platform
+
 **web/vite.config.ts** simplified configuration relies on platform file resolution:
+
 ```typescript
 export default defineConfig({
   resolve: {
     // Platform-specific resolution - prioritize .web files over .native files
-    extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.tsx', '.ts', '.jsx', '.js'],
+    extensions: [
+      '.web.tsx',
+      '.web.ts',
+      '.web.jsx',
+      '.web.js',
+      '.tsx',
+      '.ts',
+      '.jsx',
+      '.js',
+    ],
     // Deduplicate React instances (critical for monorepo)
     dedupe: ['react', 'react-dom'],
   },
   optimizeDeps: {
     include: ['@quilibrium/quilibrium-js-sdk-channels'], // Force pre-bundling for WSL compatibility
-  }
+  },
 });
 ```
 
 **Key Simplification**: The explicit React Native exclusions were removed because Vite's platform file resolution automatically selects `.web.tsx` files over `.native.tsx` files, preventing React Native from being included in web builds.
 
 ### Platform-Specific File Resolution Strategy
+
 Critical fix for theme provider imports that caused build failures:
 
 **Theme Provider Hybrid Resolution**:
+
 ```typescript
 // src/components/primitives/theme/index.ts
 // Vite will resolve ThemeProvider.web.tsx for web, Metro will resolve ThemeProvider.native.tsx for mobile
@@ -357,17 +395,20 @@ export { useTheme, ThemeProvider } from './ThemeProvider.native';
 ```
 
 This hybrid approach ensures:
+
 - **Vite (Web)**: Uses platform resolution to find `.web.tsx` files
 - **Metro (Mobile)**: Uses explicit `.native` exports for reliable resolution
 
 ### Single Shared Dependencies
+
 - ✅ One `node_modules/` folder at root (via Yarn Workspaces)
-- ✅ One `package.json` for shared dependencies  
+- ✅ One `package.json` for shared dependencies
 - ✅ One `yarn.lock` file
 - ✅ Web and mobile share 90%+ of dependencies
 - ✅ Mobile can have additional dependencies in `mobile/package.json`
 
 ### Bundler Intelligence
+
 - **Vite (Web)**: Only bundles web-compatible dependencies, excludes React Native
 - **Metro (Mobile)**: Only bundles mobile-compatible dependencies from workspace
 - Platform-specific dependencies are automatically filtered by each bundler
@@ -375,12 +416,13 @@ This hybrid approach ensures:
 ## Development Workflow
 
 ### Starting Development
+
 ```bash
 # Web development (unchanged experience)
 yarn dev
 # → Opens http://localhost:5173
 
-# Electron development  
+# Electron development
 yarn electron:dev
 # → Opens Electron window
 
@@ -405,19 +447,24 @@ yarn build:preview
 ## Technical Implementation Details
 
 ### Platform File Resolution
+
 The build system automatically resolves platform-specific files:
+
 - `Button.web.tsx` → Used in web builds
 - `Button.native.tsx` → Used in mobile builds (when implemented)
 - `Button.tsx` → Fallback for shared logic
 
 ### Shared Asset Access
+
 Assets in `public/` are accessible to both platforms:
+
 ```typescript
 // Works in both web and mobile
 <img src="/quorumicon-blue.png" alt="Quorum" />
 ```
 
 ### Environment-Specific Builds
+
 The Vite configuration intelligently handles different build contexts without requiring separate config files or build hacks.
 
 ## Critical Fixes and Troubleshooting
@@ -425,32 +472,37 @@ The Vite configuration intelligently handles different build contexts without re
 ### Issues Resolved During Implementation
 
 **1. Metro Bundler "Cannot read property 'S' of undefined" Error**
+
 - **Root Cause**: Multiple React instances and version conflicts
 - **Solution**: Implemented Yarn Workspaces to deduplicate dependencies
 - **Fix**: Hoisted React to workspace root, configured Metro to use workspace node_modules
 
 **2. "useCrossPlatformTheme is not a function" Mobile Runtime Error**
+
 - **Root Cause**: Inconsistent theme hook naming across primitives
 - **Solution**: Updated all primitive components to use unified `useTheme` import
 - **Files Fixed**: Button, Text, Icon, Tooltip, ModalContainer, OverlayBackdrop, ResponsiveContainer
 
 **3. Vite Parsing React Native Flow Syntax Errors**
+
 - **Root Cause**: Vite attempting to parse React Native files for web builds
 - **Solution**: Simplified to rely on platform file resolution (`.web.tsx` prioritized over `.native.tsx`)
 - **Avoided**: Using react-native-web dependency (per lead developer preference)
 
 **4. "Element type is invalid" Mobile Error After Theme Fixes**
+
 - **Root Cause**: Metro bundler not reliably resolving platform-specific files
 - **Solution**: Implemented hybrid resolution strategy with explicit .native exports
 - **Implementation**: ThemeProvider.ts for Metro, index.ts for Vite platform resolution
 
 ### Commands for Testing Cross-Platform Setup
+
 ```bash
 # Test web build
 yarn dev
 # → Should load without React Native errors
 
-# Test web production build  
+# Test web production build
 yarn build
 # → Should exclude all React Native dependencies
 
@@ -469,4 +521,4 @@ yarn workspaces info
 **Mobile Status**: 🚧 Test playground implemented, full mobile app development pending  
 **Next Phase**: Mobile application development using established cross-platform architecture
 
-*Updated: 2025-08-07 17:30:00*
+_Updated: 2025-08-07 17:30:00_

@@ -888,14 +888,12 @@ export class MessageDB {
     const spaces = await this.getSpaces();
     const dmConversations = await this.getConversations({ type: 'direct' });
 
-
     // Initialize space indices
     for (const space of spaces) {
       const indexKey = `space:${space.spaceId}`;
       const messages = await this.getAllSpaceMessages({
         spaceId: space.spaceId,
       });
-
 
       const searchIndex = this.createSearchIndex();
       const searchableMessages = messages.map((msg) =>
@@ -913,7 +911,6 @@ export class MessageDB {
       const messages = await this.getDirectMessages(
         conversation.conversationId
       );
-
 
       const searchIndex = this.createSearchIndex();
       const searchableMessages = messages.map((msg) =>
@@ -1125,7 +1122,10 @@ export class MessageDB {
   async deleteConversationUsers(conversationId: string): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction('conversation_users', 'readwrite');
+      const transaction = this.db!.transaction(
+        'conversation_users',
+        'readwrite'
+      );
       const store = transaction.objectStore('conversation_users');
       const index = store.index('by_conversation');
 
@@ -1178,20 +1178,22 @@ export class MessageDB {
       const transaction = this.db!.transaction('messages', 'readonly');
       const store = transaction.objectStore('messages');
       const index = store.index('by_conversation_time');
-      
+
       // Get all messages for this channel, then filter for pinned ones
       // This approach works reliably with the existing index structure
       const range = IDBKeyRange.bound(
         [spaceId, channelId, 0],
         [spaceId, channelId, Number.MAX_SAFE_INTEGER]
       );
-      
+
       const request = index.getAll(range);
-      
+
       request.onsuccess = () => {
         const allMessages = request.result || [];
         // Filter for pinned messages only
-        const pinnedMessages = allMessages.filter(msg => msg.isPinned === true);
+        const pinnedMessages = allMessages.filter(
+          (msg) => msg.isPinned === true
+        );
         // Sort by pinned date (newest first), falling back to creation date
         pinnedMessages.sort((a, b) => {
           const aPinnedAt = a.pinnedAt || a.createdDate;
@@ -1217,7 +1219,7 @@ export class MessageDB {
       const transaction = this.db!.transaction('messages', 'readwrite');
       const store = transaction.objectStore('messages');
       const getRequest = store.get(messageId);
-      
+
       getRequest.onsuccess = () => {
         const message = getRequest.result;
         if (!message) {
@@ -1225,7 +1227,7 @@ export class MessageDB {
           reject(new Error('Message not found'));
           return;
         }
-        
+
         // Update pin status
         message.isPinned = isPinned;
         if (isPinned) {
@@ -1235,7 +1237,7 @@ export class MessageDB {
           delete message.pinnedAt;
           delete message.pinnedBy;
         }
-        
+
         const putRequest = store.put(message);
         putRequest.onsuccess = () => {
           resolve();
@@ -1245,7 +1247,7 @@ export class MessageDB {
           reject(putRequest.error);
         };
       };
-      
+
       getRequest.onerror = () => {
         console.error('Error getting message:', getRequest.error);
         reject(getRequest.error);
@@ -1262,20 +1264,22 @@ export class MessageDB {
       const transaction = this.db!.transaction('messages', 'readonly');
       const store = transaction.objectStore('messages');
       const index = store.index('by_conversation_time');
-      
+
       // Get all messages for this channel, then count pinned ones
       // This approach works reliably with the existing index structure
       const range = IDBKeyRange.bound(
         [spaceId, channelId, 0],
         [spaceId, channelId, Number.MAX_SAFE_INTEGER]
       );
-      
+
       const request = index.getAll(range);
-      
+
       request.onsuccess = () => {
         const allMessages = request.result || [];
         // Count pinned messages only
-        const pinnedCount = allMessages.filter(msg => msg.isPinned === true).length;
+        const pinnedCount = allMessages.filter(
+          (msg) => msg.isPinned === true
+        ).length;
         resolve(pinnedCount);
       };
       request.onerror = () => {

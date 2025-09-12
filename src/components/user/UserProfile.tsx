@@ -41,7 +41,9 @@ const UserProfile: React.FunctionComponent<{
   );
 
   // Permission checking
-  const { data: isSpaceOwner } = useSpaceOwner({ spaceId: props.spaceId || '' });
+  const { data: isSpaceOwner } = useSpaceOwner({
+    spaceId: props.spaceId || '',
+  });
   const { data: space } = useQuery({
     queryKey: ['space', props.spaceId],
     queryFn: async () => {
@@ -59,7 +61,7 @@ const UserProfile: React.FunctionComponent<{
   );
 
   const canKickThisUser = canKickUser(props.user.address, space);
-  
+
   const canKickUsers = hasKickPermission && canKickThisUser;
 
   return (
@@ -75,13 +77,13 @@ const UserProfile: React.FunctionComponent<{
           <Icon name="times" />
         </Container>
       )}
-      <Container 
+      <Container
         className={
           'user-profile-header ' +
-          (currentPasskeyInfo!.address === props.user.address && 
-           userRoles.length === 0 && 
-           !props.canEditRoles 
-            ? 'rounded-b-xl' 
+          (currentPasskeyInfo!.address === props.user.address &&
+          userRoles.length === 0 &&
+          !props.canEditRoles
+            ? 'rounded-b-xl'
             : '')
         }
       >

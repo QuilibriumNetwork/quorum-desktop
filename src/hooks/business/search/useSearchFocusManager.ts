@@ -53,49 +53,56 @@ export const useSearchFocusManager = ({
   // Maintain focus on search input during async operations
   const maintainFocus = useCallback(() => {
     if (focusScheduled.current) return;
-    
+
     focusScheduled.current = true;
 
     // Use requestAnimationFrame to ensure DOM updates have completed
     requestAnimationFrame(() => {
       // Check if input should maintain focus
-      if (isResultsVisible && searchInputRef?.current && !isUserInteracting.current) {
+      if (
+        isResultsVisible &&
+        searchInputRef?.current &&
+        !isUserInteracting.current
+      ) {
         const activeElement = document.activeElement;
-        
+
         // Only restore focus if it was lost unexpectedly
         if (activeElement !== searchInputRef.current) {
           searchInputRef.current.focus();
         }
       }
-      
+
       focusScheduled.current = false;
     });
   }, [isResultsVisible, searchInputRef]);
 
   // Prevent focus stealing during async operations
-  const preventFocusSteal = useCallback((callback: () => void) => {
-    // Store current focus before async operation
-    const currentFocus = document.activeElement as HTMLElement;
-    const shouldRestoreFocus = currentFocus === searchInputRef?.current;
+  const preventFocusSteal = useCallback(
+    (callback: () => void) => {
+      // Store current focus before async operation
+      const currentFocus = document.activeElement as HTMLElement;
+      const shouldRestoreFocus = currentFocus === searchInputRef?.current;
 
-    // Execute the callback
-    callback();
+      // Execute the callback
+      callback();
 
-    // Schedule focus restoration if needed
-    if (shouldRestoreFocus && searchInputRef?.current) {
-      // Clear any existing timeout
-      if (focusTimeoutRef.current) {
-        clearTimeout(focusTimeoutRef.current);
-      }
-
-      // Schedule focus restoration after a short delay to allow for DOM updates
-      focusTimeoutRef.current = setTimeout(() => {
-        if (searchInputRef?.current && !isUserInteracting.current) {
-          searchInputRef.current.focus();
+      // Schedule focus restoration if needed
+      if (shouldRestoreFocus && searchInputRef?.current) {
+        // Clear any existing timeout
+        if (focusTimeoutRef.current) {
+          clearTimeout(focusTimeoutRef.current);
         }
-      }, 50);
-    }
-  }, [searchInputRef]);
+
+        // Schedule focus restoration after a short delay to allow for DOM updates
+        focusTimeoutRef.current = setTimeout(() => {
+          if (searchInputRef?.current && !isUserInteracting.current) {
+            searchInputRef.current.focus();
+          }
+        }, 50);
+      }
+    },
+    [searchInputRef]
+  );
 
   return {
     maintainFocus,

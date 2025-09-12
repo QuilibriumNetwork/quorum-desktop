@@ -65,17 +65,17 @@ const GroupEditor: React.FunctionComponent<{
         </FlexRow>
         {isEditMode && (
           <>
-            <Spacer 
-              spaceBefore="lg" 
+            <Spacer
+              spaceBefore="lg"
               spaceAfter="md"
-              border 
+              border
               direction="vertical"
             />
             {hasMessages && showWarning && (
               <Container className="error-label mb-3 relative pr-8">
                 <Trans>
-                  Are you sure? This group contains channels with messages. Deleting
-                  it will cause all content to be lost forever!
+                  Are you sure? This group contains channels with messages.
+                  Deleting it will cause all content to be lost forever!
                 </Trans>
                 <Icon
                   name="times"
@@ -85,9 +85,9 @@ const GroupEditor: React.FunctionComponent<{
               </Container>
             )}
             <FlexCenter>
-              <Text 
+              <Text
                 variant="danger"
-                className="cursor-pointer hover:text-danger-hover" 
+                className="cursor-pointer hover:text-danger-hover"
                 onClick={handleDeleteClick}
               >
                 {deleteConfirmationStep === 0

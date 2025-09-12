@@ -9,17 +9,13 @@ const projectRoot = __dirname;
 const monorepoRoot = path.resolve(projectRoot, '..');
 
 // Watch shared source folders
-config.watchFolders = [
-  path.resolve(monorepoRoot, 'src'),
-];
+config.watchFolders = [path.resolve(monorepoRoot, 'src')];
 
 // Configure resolver for workspace
 config.resolver = {
   ...config.resolver,
   // Use hoisted dependencies from workspace root
-  nodeModulesPaths: [
-    path.resolve(monorepoRoot, 'node_modules'),
-  ],
+  nodeModulesPaths: [path.resolve(monorepoRoot, 'node_modules')],
   platforms: ['native', 'android', 'ios'],
   // Handle ES modules properly
   sourceExts: [...config.resolver.sourceExts, 'mjs', 'cjs'],
@@ -45,12 +41,17 @@ config.resolver = {
   // Force Metro to resolve our shim instead of the actual SDK
   resolveRequest: (context, moduleName, platform) => {
     // Intercept ALL attempts to load the Quilibrium SDK
-    if (moduleName === '@quilibrium/quilibrium-js-sdk-channels' ||
-        moduleName.includes('@quilibrium/quilibrium-js-sdk-channels') ||
-        moduleName.includes('quilibrium-js-sdk-channels')) {
+    if (
+      moduleName === '@quilibrium/quilibrium-js-sdk-channels' ||
+      moduleName.includes('@quilibrium/quilibrium-js-sdk-channels') ||
+      moduleName.includes('quilibrium-js-sdk-channels')
+    ) {
       console.log('[Metro] Redirecting SDK import to shim:', moduleName);
       return {
-        filePath: path.resolve(monorepoRoot, 'src/shims/quilibrium-sdk-channels.native.tsx'),
+        filePath: path.resolve(
+          monorepoRoot,
+          'src/shims/quilibrium-sdk-channels.native.tsx'
+        ),
         type: 'sourceFile',
       };
     }

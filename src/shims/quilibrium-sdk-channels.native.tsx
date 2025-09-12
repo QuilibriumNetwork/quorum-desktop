@@ -1,21 +1,21 @@
 /**
  * MOBILE SDK SHIM - TEMPORARY IMPLEMENTATION
  * ==========================================
- * 
+ *
  * This is a mock implementation of the Quilibrium SDK for React Native.
  * The actual SDK has Node.js and WebAssembly dependencies that are incompatible
  * with React Native's runtime environment.
- * 
+ *
  * TODO: When implementing real SDK integration:
  * 1. Replace this entire file with actual React Native compatible SDK
  * 2. Consider using one of these approaches:
  *    - Server-side proxy for passkey operations
  *    - Native modules for iOS/Android passkey APIs
  *    - Modified SDK build without Node.js/WASM dependencies
- * 
+ *
  * IMPORTANT: All methods currently return mock data or no-ops.
  * Passkey functionality is NOT available on mobile until properly implemented.
- * 
+ *
  * See: .readme/tasks/todo/mobile-sdk-integration-issue.md for full details
  */
 
@@ -68,14 +68,17 @@ export interface PasskeysContextType {
   isLoading: boolean;
   error: string | null;
   currentPasskeyInfo: PasskeyInfo | null;
-  
+
   // Methods that need to be mocked
   login: () => Promise<void>;
   logout: () => void;
   register: (username: string) => Promise<void>;
   updateProfile: (data: any) => Promise<void>;
   deleteAccount: () => Promise<void>;
-  updateStoredPasskey: (credentialId: string, updates: Partial<StoredPasskey>) => void;
+  updateStoredPasskey: (
+    credentialId: string,
+    updates: Partial<StoredPasskey>
+  ) => void;
   exportKey?: (address: string) => Promise<string>;
 }
 
@@ -115,7 +118,11 @@ export const channel_raw = {
    * TODO: Implement actual key generation
    * Currently returns mock keys
    */
-  generateKeyset: (): { privateKey: string; publicKey: string; address: string } => {
+  generateKeyset: (): {
+    privateKey: string;
+    publicKey: string;
+    address: string;
+  } => {
     console.warn('[SDK Mock] generateKeyset called - returning mock keys');
     return {
       privateKey: 'mock_private_key',
@@ -148,7 +155,9 @@ export const channel = {
    * Should query the backend for user information
    */
   lookupUser: async (address: string): Promise<UserRegistration | null> => {
-    console.warn(`[SDK Mock] lookupUser called for ${address} - returning null`);
+    console.warn(
+      `[SDK Mock] lookupUser called for ${address} - returning null`
+    );
     // In real implementation, this would:
     // 1. Query the backend API for user with given address
     // 2. Verify the response signature
@@ -161,7 +170,9 @@ export const channel = {
    * Should use proper E2E encryption
    */
   encryptMessage: (message: any, recipientPublicKey: string): any => {
-    console.warn('[SDK Mock] encryptMessage called - returning mock encrypted data');
+    console.warn(
+      '[SDK Mock] encryptMessage called - returning mock encrypted data'
+    );
     return {
       encrypted: true,
       data: message,
@@ -174,7 +185,9 @@ export const channel = {
    * Should decrypt E2E encrypted messages
    */
   decryptMessage: (encryptedMessage: any, privateKey: string): any => {
-    console.warn('[SDK Mock] decryptMessage called - returning mock decrypted data');
+    console.warn(
+      '[SDK Mock] decryptMessage called - returning mock decrypted data'
+    );
     return encryptedMessage.data || encryptedMessage;
   },
 
@@ -206,10 +219,14 @@ const PasskeysContext = createContext<PasskeysContextType | null>(null);
  * - Biometric authentication
  * - Session management
  */
-export const PasskeysProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const PasskeysProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   // TODO: Replace with actual state management
   // Mock passkey info for testing mobile onboarding - using state for updates
-  const [mockPasskeyInfo, setMockPasskeyInfo] = useState<PasskeyInfo & Partial<StoredPasskey>>({
+  const [mockPasskeyInfo, setMockPasskeyInfo] = useState<
+    PasskeyInfo & Partial<StoredPasskey>
+  >({
     credentialId: 'mock_credential_id_12345',
     address: '0x1234567890abcdef1234567890abcdef12345678',
     publicKey: 'mock_public_key_abcdef123456',
@@ -227,34 +244,39 @@ export const PasskeysProvider: React.FC<{ children: ReactNode }> = ({ children }
     isLoading: false,
     error: null,
     currentPasskeyInfo: mockPasskeyInfo,
-    
+
     login: async () => {
       console.warn('[SDK Mock] Passkey login not available on mobile');
       throw new Error('Passkey authentication not available on mobile');
     },
-    
+
     logout: () => {
       console.warn('[SDK Mock] Logout called - no-op');
     },
-    
+
     register: async (username: string) => {
-      console.warn(`[SDK Mock] Register called for ${username} - not available`);
+      console.warn(
+        `[SDK Mock] Register called for ${username} - not available`
+      );
       throw new Error('Passkey registration not available on mobile');
     },
-    
+
     updateProfile: async (data: any) => {
       console.warn('[SDK Mock] updateProfile called - no-op');
     },
-    
+
     deleteAccount: async () => {
       console.warn('[SDK Mock] deleteAccount called - not available');
       throw new Error('Account deletion not available on mobile');
     },
 
     // Add updateStoredPasskey method for onboarding flow
-    updateStoredPasskey: (credentialId: string, updates: Partial<StoredPasskey>) => {
+    updateStoredPasskey: (
+      credentialId: string,
+      updates: Partial<StoredPasskey>
+    ) => {
       console.warn('[SDK Mock] updateStoredPasskey called with:', updates);
-      setMockPasskeyInfo(prev => ({
+      setMockPasskeyInfo((prev) => ({
         ...prev,
         ...updates,
       }));
@@ -289,7 +311,9 @@ export const usePasskeysContext = (): PasskeysContextType => {
   if (!context) {
     // Return a default mock context to prevent crashes
     // TODO: In production, this should properly handle missing provider
-    console.warn('[SDK Mock] usePasskeysContext called outside provider - returning mock');
+    console.warn(
+      '[SDK Mock] usePasskeysContext called outside provider - returning mock'
+    );
     return {
       address: null,
       username: null,
@@ -299,12 +323,20 @@ export const usePasskeysContext = (): PasskeysContextType => {
       isLoading: false,
       error: 'Passkeys not available on mobile',
       currentPasskeyInfo: null,
-      login: async () => { throw new Error('Not available'); },
+      login: async () => {
+        throw new Error('Not available');
+      },
       logout: () => {},
-      register: async () => { throw new Error('Not available'); },
+      register: async () => {
+        throw new Error('Not available');
+      },
       updateProfile: async () => {},
-      deleteAccount: async () => { throw new Error('Not available'); },
-      updateStoredPasskey: () => { console.warn('[SDK Mock] updateStoredPasskey - no provider'); },
+      deleteAccount: async () => {
+        throw new Error('Not available');
+      },
+      updateStoredPasskey: () => {
+        console.warn('[SDK Mock] updateStoredPasskey - no provider');
+      },
     };
   }
   return context;
@@ -333,28 +365,28 @@ export default {
 /**
  * IMPLEMENTATION NOTES FOR REAL SDK:
  * ===================================
- * 
+ *
  * 1. Crypto Operations:
  *    - Use react-native-crypto or expo-crypto for cryptographic operations
  *    - Consider using SubtleCrypto polyfill for React Native
- * 
+ *
  * 2. Key Storage:
  *    - iOS: Use Keychain Services
  *    - Android: Use Android Keystore
  *    - Consider expo-secure-store for simpler implementation
- * 
+ *
  * 3. WebAssembly Replacement:
  *    - Port WASM functionality to pure JavaScript
  *    - Or use native modules for performance-critical operations
- * 
+ *
  * 4. Biometric Authentication:
  *    - Use expo-local-authentication or react-native-biometrics
  *    - Tie passkey operations to biometric verification
- * 
+ *
  * 5. Network Communication:
  *    - Ensure all API calls work with React Native's fetch
  *    - Handle offline scenarios appropriately
- * 
+ *
  * 6. Testing:
  *    - Create comprehensive tests for all mocked methods
  *    - Ensure feature parity with web implementation

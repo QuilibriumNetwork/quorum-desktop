@@ -1,6 +1,5 @@
 # Mobile/Desktop Behavioral Differences Audit Plan
 
-
 ## Objective
 
 Systematically audit the codebase to identify elements that behave differently between desktop and mobile platforms, and categorize them for potential extraction into platform-specific primitive components.

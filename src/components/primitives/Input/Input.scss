@@ -2,6 +2,66 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+
+  &--floating {
+    position: relative;
+  }
+
+  &--active {
+    // When floating label is active (focused or has value)
+  }
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+
+  &__required {
+    color: var(--color-text-danger);
+    font-weight: bold;
+    margin-left: 2px;
+  }
+
+  &--static {
+    color: var(--color-text-main);
+    margin-bottom: 0.25rem;
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &--floating {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-subtle);
+    transition: all 0.2s ease-in-out;
+    pointer-events: none;
+    z-index: 1;
+
+    &-active {
+      // When active, look like a static label
+      top: -24px; // Position above the input like static labels
+      left: 0; // Align with left edge of input field
+      transform: translateY(0);
+      color: var(--color-text-main);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: transparent;
+    }
+  }
 }
 
 .quorum-input {
@@ -113,6 +173,11 @@
     border-color: var(--danger-hex);
     box-shadow: none;
   }
+
+  &--with-floating-label {
+    // Keep same padding and height as normal input
+    // The floating label will position itself over the border
+  }
 }
 
 .onboarding-input {
@@ -186,6 +251,13 @@
     border-color: var(--danger-hex);
     box-shadow: none;
   }
+}
+
+.input-helper-text {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-text-subtle);
+  text-align: left;
 }
 
 .input-error-message {

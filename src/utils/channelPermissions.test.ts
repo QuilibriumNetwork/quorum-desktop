@@ -1,11 +1,14 @@
 /**
  * Comprehensive test scenarios for the unified channel permission system
- * 
+ *
  * This file contains test scenarios to validate edge cases and ensure
  * the permission hierarchy works correctly in all situations.
  */
 
-import { UnifiedPermissionSystem, PermissionContext } from './channelPermissions';
+import {
+  UnifiedPermissionSystem,
+  PermissionContext,
+} from './channelPermissions';
 import { Space, Channel, Role, Message as MessageType } from '../api/quorumApi';
 
 // Test data setup
@@ -161,7 +164,7 @@ describe('Unified Permission System Edge Cases', () => {
             {
               roleId: 'manager-role-id',
               displayName: 'Manager Role',
-              roleTag: 'manager', 
+              roleTag: 'manager',
               color: '#0000ff',
               members: ['space-owner'], // Space owner is also a manager
               permissions: ['message:delete'],
@@ -309,8 +312,11 @@ describe('Unified Permission System Edge Cases', () => {
 
   describe('Own Message Permissions', () => {
     test('User can always delete their own message regardless of other permissions', () => {
-      const ownMessage = { ...testMessage, content: { ...testMessage.content, senderId: 'user-no-roles' }};
-      
+      const ownMessage = {
+        ...testMessage,
+        content: { ...testMessage.content, senderId: 'user-no-roles' },
+      };
+
       const context: PermissionContext = {
         userAddress: 'user-no-roles',
         isSpaceOwner: false,
@@ -324,8 +330,11 @@ describe('Unified Permission System Edge Cases', () => {
     });
 
     test('User can delete own message even in read-only channel without manager role', () => {
-      const ownMessage = { ...testMessage, content: { ...testMessage.content, senderId: 'user-no-roles' }};
-      
+      const ownMessage = {
+        ...testMessage,
+        content: { ...testMessage.content, senderId: 'user-no-roles' },
+      };
+
       const context: PermissionContext = {
         userAddress: 'user-no-roles',
         isSpaceOwner: false,
@@ -342,28 +351,34 @@ describe('Unified Permission System Edge Cases', () => {
   describe('Permission Hierarchy Validation', () => {
     test('Permission precedence: Space owner > Own message > Manager > Traditional roles', () => {
       // This test validates that the permission system respects the correct hierarchy
-      
+
       // Test 1: Space owner overrides everything
       let context: PermissionContext = {
         userAddress: 'space-owner-and-manager',
         isSpaceOwner: true,
         space: {
           ...mockSpace,
-          roles: mockSpace.roles.map(role => 
-            role.roleId === 'manager-role-id' 
-              ? { ...role, members: [...role.members, 'space-owner-and-manager'] }
+          roles: mockSpace.roles.map((role) =>
+            role.roleId === 'manager-role-id'
+              ? {
+                  ...role,
+                  members: [...role.members, 'space-owner-and-manager'],
+                }
               : role
           ),
         },
         channel: readOnlyChannel,
         message: testMessage,
       };
-      
+
       let system = new UnifiedPermissionSystem(context);
       expect(system.canDeleteMessage(testMessage)).toBe(true); // Space owner privilege
 
       // Test 2: Own message overrides manager status
-      const ownMessage = { ...testMessage, content: { ...testMessage.content, senderId: 'regular-user' }};
+      const ownMessage = {
+        ...testMessage,
+        content: { ...testMessage.content, senderId: 'regular-user' },
+      };
       context = {
         userAddress: 'regular-user',
         isSpaceOwner: false,
@@ -371,7 +386,7 @@ describe('Unified Permission System Edge Cases', () => {
         channel: readOnlyChannel,
         message: ownMessage,
       };
-      
+
       system = new UnifiedPermissionSystem(context);
       expect(system.canDeleteMessage(ownMessage)).toBe(true); // Own message privilege
 
@@ -383,11 +398,11 @@ describe('Unified Permission System Edge Cases', () => {
         channel: readOnlyChannel,
         message: testMessage,
       };
-      
+
       system = new UnifiedPermissionSystem(context);
       expect(system.canDeleteMessage(testMessage)).toBe(true); // Manager privilege
     });
   });
 });
 
-export { }; // Make this a module
+export {}; // Make this a module

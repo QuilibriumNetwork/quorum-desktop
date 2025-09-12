@@ -1,5 +1,13 @@
 import React from 'react';
-import { Container, Text, FlexRow, FlexColumn, Button, Spacer, Icon } from '../components/primitives';
+import {
+  Container,
+  Text,
+  FlexRow,
+  FlexColumn,
+  Button,
+  Spacer,
+  Icon,
+} from '../components/primitives';
 import { DevNavMenu } from './DevNavMenu';
 
 export const DevMainPage: React.FC = () => {
@@ -25,7 +33,8 @@ export const DevMainPage: React.FC = () => {
     {
       name: 'Primitives Playground',
       icon: 'flask',
-      description: 'Test and preview all primitive components with color palette',
+      description:
+        'Test and preview all primitive components with color palette',
       path: '/playground',
     },
     {
@@ -40,7 +49,6 @@ export const DevMainPage: React.FC = () => {
     window.location.href = path;
   };
 
-
   return (
     <Container className="min-h-screen bg-app">
       <DevNavMenu currentPath="/dev" />
@@ -48,12 +56,7 @@ export const DevMainPage: React.FC = () => {
         <div className="text-center my-12">
           <FlexRow justify="center" gap="sm" className="mb-4">
             <Icon name="tools" size="2xl" className="text-strong" />
-            <Text
-              as="h1"
-              variant="strong"
-              size="3xl"
-              weight="bold"
-            >
+            <Text as="h1" variant="strong" size="3xl" weight="bold">
               Development Tools
             </Text>
           </FlexRow>

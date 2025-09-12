@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { 
+import {
   useTheme,
   TextArea,
   Icon,
@@ -9,9 +9,12 @@ import {
   Title,
   Label,
   FlexColumn,
-  FlexRow
+  FlexRow,
 } from '@/primitives';
-import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
+import {
+  commonTestStyles,
+  createThemedStyles,
+} from '@/styles/commonTestStyles';
 
 export const TextAreaTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -22,12 +25,21 @@ export const TextAreaTestScreen: React.FC = () => {
   const [showTextAreaError, setShowTextAreaError] = useState(false);
 
   return (
-    <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
+    <SafeAreaView
+      style={[
+        commonTestStyles.container,
+        { backgroundColor: theme.colors.bg.app },
+      ]}
+    >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <View style={commonTestStyles.header}>
           <FlexColumn gap="sm" align="center">
-            <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
-              <Icon name="memo" size="xl" style={{ marginTop: 2 }}/>
+            <FlexRow
+              gap="md"
+              align="center"
+              style={{ alignItems: 'flex-start' }}
+            >
+              <Icon name="memo" size="xl" style={{ marginTop: 2 }} />
               <Title>TextArea</Title>
             </FlexRow>
             <Text size="base" variant="default" align="center">
@@ -40,7 +52,7 @@ export const TextAreaTestScreen: React.FC = () => {
         <View style={themedStyles.sectionCompact}>
           <FlexColumn gap="md">
             <Title size="sm">Basic TextArea</Title>
-            
+
             <FlexColumn gap="xs">
               <Label>Standard TextArea (3 rows):</Label>
               <TextArea
@@ -50,7 +62,8 @@ export const TextAreaTestScreen: React.FC = () => {
                 rows={3}
               />
               <Text size="sm" variant="subtle">
-                Lines: {textAreaValue.split('\n').length} | Chars: {textAreaValue.length}
+                Lines: {textAreaValue.split('\n').length} | Chars:{' '}
+                {textAreaValue.length}
               </Text>
             </FlexColumn>
 
@@ -205,56 +218,89 @@ export const TextAreaTestScreen: React.FC = () => {
         </View>
 
         {/* Mobile Notes */}
-        <View style={[commonTestStyles.infoSection, { backgroundColor: theme.colors.surface[3] }]}>
+        <View
+          style={[
+            commonTestStyles.infoSection,
+            { backgroundColor: theme.colors.surface[3] },
+          ]}
+        >
           <FlexColumn gap="sm">
             <Title size="sm">Mobile Notes</Title>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Auto-resize functionality works on mobile</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Auto-resize functionality works on mobile
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Touch targets optimized for mobile</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Touch targets optimized for mobile
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Focus states work without web-style borders</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Focus states work without web-style borders
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Error messages display below textarea</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Error messages display below textarea
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Onboarding variant matches desktop style</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Onboarding variant matches desktop style
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Multiline text input with mobile keyboard</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Multiline text input with mobile keyboard
+                </Text>
               </View>
             </FlexRow>
-            
+
             <FlexRow gap="xs" align="start">
-              <Text size="sm" variant="default">•</Text>
-              <View style={{flex: 1}}>
-                <Text size="sm" variant="default">Text alignment starts at top for multiline</Text>
+              <Text size="sm" variant="default">
+                •
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Text size="sm" variant="default">
+                  Text alignment starts at top for multiline
+                </Text>
               </View>
             </FlexRow>
           </FlexColumn>
@@ -263,5 +309,3 @@ export const TextAreaTestScreen: React.FC = () => {
     </SafeAreaView>
   );
 };
-
-

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextInput, View, Text, StyleSheet } from 'react-native';
+import { TextInput, View, Text, StyleSheet, Animated } from 'react-native';
 import { InputNativeProps } from './types';
 import { useTheme } from '../theme';
 
@@ -24,10 +24,20 @@ export const Input: React.FC<InputNativeProps> = ({
   style,
   testID,
   accessibilityLabel,
+  label,
+  labelType = 'static',
+  required = false,
+  helperText,
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
   const [isFocused, setIsFocused] = React.useState(false);
+  const animatedLabelPosition = React.useRef(
+    new Animated.Value(value ? 1 : 0)
+  ).current;
+
+  const hasValue = value && value.length > 0;
+  const showFloatingLabel = labelType === 'floating' && label;
 
   // Map type to keyboardType if not explicitly provided
   const getKeyboardType = () => {
@@ -47,7 +57,12 @@ export const Input: React.FC<InputNativeProps> = ({
     }
   };
 
-  const containerStyle = [styles.container, style];
+  const containerStyle = [
+    styles.container, 
+    // Add top margin when floating label is active to prevent overlapping
+    showFloatingLabel && (isFocused || hasValue) && { marginTop: 20 },
+    style
+  ];
 
   const getBorderColor = () => {
     if (error) return colors.utilities.danger;
@@ -66,8 +81,32 @@ export const Input: React.FC<InputNativeProps> = ({
     return colors.field.bg;
   };
 
+  // Animate label position for floating labels
+  React.useEffect(() => {
+    Animated.timing(animatedLabelPosition, {
+      toValue: isFocused || hasValue ? 1 : 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  }, [isFocused, hasValue]);
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    onFocus?.();
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    onBlur?.();
+  };
+
   const getInputStyles = () => {
     const baseStyles = [styles.input];
+
+    // Add padding for floating label
+    if (showFloatingLabel) {
+      baseStyles.push(styles.inputWithFloatingLabel);
+    }
 
     if (variant === 'onboarding') {
       return [
@@ -97,36 +136,92 @@ export const Input: React.FC<InputNativeProps> = ({
 
   const inputStyle = getInputStyles();
 
+  const getLabelColor = () => {
+    if (error) return colors.text.danger;
+    if (isFocused || hasValue) return colors.text.main; // When active, use main text color like static labels
+    return colors.text.subtle;
+  };
+
   return (
     <View style={containerStyle}>
-      <TextInput
-        style={inputStyle}
-        value={value}
-        placeholder={placeholder}
-        placeholderTextColor={
-          variant === 'onboarding'
-            ? '#6fc3ff' // Hardcoded brand blue-200
-            : colors.field.placeholder
-        }
-        onChangeText={onChange}
-        onBlur={() => {
-          setIsFocused(false);
-          onBlur?.();
-        }}
-        onFocus={() => {
-          setIsFocused(true);
-          onFocus?.();
-        }}
-        onSubmitEditing={onSubmitEditing}
-        keyboardType={getKeyboardType()}
-        returnKeyType={returnKeyType}
-        autoComplete={autoComplete}
-        secureTextEntry={secureTextEntry || type === 'password'}
-        editable={!disabled}
-        autoFocus={autoFocus}
-        testID={testID}
-        accessibilityLabel={accessibilityLabel}
-      />
+      {/* Static Label */}
+      {label && labelType === 'static' && (
+        <Text style={[styles.staticLabel, { color: colors.text.main }]}>
+          {label}
+          {required && (
+            <Text style={[styles.required, { color: colors.text.danger }]}>
+              {' '}
+              *
+            </Text>
+          )}
+        </Text>
+      )}
+
+      {/* Input container for floating label */}
+      <View style={showFloatingLabel ? styles.floatingContainer : undefined}>
+        <TextInput
+          style={inputStyle}
+          value={value}
+          placeholder={
+            showFloatingLabel
+              ? isFocused || hasValue
+                ? '' // No placeholder when floating label is active
+                : label // Use label as placeholder when inactive
+              : placeholder // Normal placeholder for non-floating inputs
+          }
+          placeholderTextColor={
+            variant === 'onboarding'
+              ? '#6fc3ff' // Hardcoded brand blue-200
+              : colors.field.placeholder
+          }
+          onChangeText={onChange}
+          onBlur={handleBlur}
+          onFocus={handleFocus}
+          onSubmitEditing={onSubmitEditing}
+          keyboardType={getKeyboardType()}
+          returnKeyType={returnKeyType}
+          autoComplete={autoComplete}
+          secureTextEntry={secureTextEntry || type === 'password'}
+          editable={!disabled}
+          autoFocus={autoFocus}
+          testID={testID}
+          accessibilityLabel={accessibilityLabel || label}
+        />
+
+        {/* Floating Label - only show when active (focused or has value) */}
+        {showFloatingLabel && (isFocused || hasValue) && (
+          <Text
+            style={[
+              styles.floatingLabel,
+              {
+                color: getLabelColor(),
+                fontSize: 12,
+                fontWeight: '600',
+                top: -20, // Closer to the input field
+                left: 0, // Align with left edge of input field
+              },
+            ]}
+            pointerEvents="none"
+          >
+            {label.toUpperCase()}
+            {required && (
+              <Text style={[styles.required, { color: colors.text.danger }]}>
+                {' '}
+                *
+              </Text>
+            )}
+          </Text>
+        )}
+      </View>
+
+      {/* Helper text */}
+      {helperText && !error && (
+        <Text style={[styles.helperText, { color: colors.text.subtle }]}>
+          {helperText}
+        </Text>
+      )}
+
+      {/* Error message */}
       {error && errorMessage && (
         <Text
           style={[styles.errorMessage, { color: colors.text.danger }]}
@@ -152,6 +247,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'transparent',
   },
+  inputWithFloatingLabel: {
+    // Keep same padding as normal input
+    // Floating label positions itself over the border
+  },
   inputOnboarding: {
     borderRadius: 9999, // full pill shape like CSS border-radius: 9999px
   },
@@ -161,6 +260,34 @@ const styles = StyleSheet.create({
   },
   inputDisabled: {
     opacity: 0.6,
+  },
+  staticLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  floatingContainer: {
+    position: 'relative',
+  },
+  floatingLabel: {
+    position: 'absolute',
+    left: 16,
+    fontSize: 16,
+    fontWeight: '400',
+    backgroundColor: 'transparent',
+    paddingHorizontal: 2,
+  },
+  required: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  helperText: {
+    fontSize: 12,
+    marginTop: 4,
+    paddingHorizontal: 4,
+    textAlign: 'left',
   },
   errorMessage: {
     fontSize: 12,

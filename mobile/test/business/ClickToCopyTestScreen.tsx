@@ -11,24 +11,28 @@ import {
   Button,
 } from '@/primitives';
 import { useTheme } from '@/primitives/theme';
-import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
+import {
+  commonTestStyles,
+  createThemedStyles,
+} from '@/styles/commonTestStyles';
 import ClickToCopyContent from '@/components/ClickToCopyContent';
 
 export const ClickToCopyTestScreen: React.FC = () => {
   const theme = useTheme();
   const themedStyles = createThemedStyles(theme);
-  
+
   const [copyCount, setCopyCount] = useState(0);
 
   const handleCopy = () => {
-    setCopyCount(prev => prev + 1);
+    setCopyCount((prev) => prev + 1);
     // Optional: Show feedback
     // Alert.alert('Copied!', 'Text has been copied to clipboard');
   };
 
   const sampleTexts = {
     short: 'Hello World!',
-    medium: 'This is a medium-length text that demonstrates copying functionality',
+    medium:
+      'This is a medium-length text that demonstrates copying functionality',
     long: 'This is a long text that demonstrates how the ClickToCopyContent component handles proper text wrapping and formatting while maintaining good usability',
     address: 'qubic1abc123def456ghi789jkl012mno345pqr678stu901vwx234yz567890',
     url: 'https://github.com/Quilibrium/quorum-desktop',
@@ -42,7 +46,7 @@ export const ClickToCopyTestScreen: React.FC = () => {
         { backgroundColor: theme.colors.bg.app },
       ]}
     >
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={commonTestStyles.contentPadding}
         showsVerticalScrollIndicator={false}
       >
@@ -66,7 +70,7 @@ export const ClickToCopyTestScreen: React.FC = () => {
             <Title size="md" style={{ marginBottom: 12 }}>
               Icon Click (Default)
             </Title>
-            
+
             <FlexColumn gap="md">
               <ClickToCopyContent
                 text={sampleTexts.short}
@@ -89,14 +93,12 @@ export const ClickToCopyTestScreen: React.FC = () => {
             </FlexColumn>
           </View>
 
-          
-
           {/* Copy On Content Click Tests */}
           <View style={themedStyles.section}>
             <Title size="md" style={{ marginBottom: 12 }}>
               Content Click Tests
             </Title>
-            
+
             <FlexColumn gap="md">
               <ClickToCopyContent
                 text="Tap anywhere on this text to copy it"
@@ -123,13 +125,12 @@ export const ClickToCopyTestScreen: React.FC = () => {
             </FlexColumn>
           </View>
 
-
           {/* Test Controls */}
           <View style={themedStyles.section}>
             <Title size="md" style={{ marginBottom: 12 }}>
               Test Controls
             </Title>
-            
+
             <FlexColumn gap="sm">
               <Button
                 variant="secondary"
@@ -139,11 +140,16 @@ export const ClickToCopyTestScreen: React.FC = () => {
               >
                 Reset Copy Counter
               </Button>
-              
+
               <Button
-                variant="secondary" 
+                variant="secondary"
                 size="sm"
-                onClick={() => Alert.alert('Info', 'This screen tests the ClickToCopyContent component with different configurations:\n\n• Icon click vs long press\n• Content click vs icon click\n• Different text variants\n• Various tooltip positions')}
+                onClick={() =>
+                  Alert.alert(
+                    'Info',
+                    'This screen tests the ClickToCopyContent component with different configurations:\n\n• Icon click vs long press\n• Content click vs icon click\n• Different text variants\n• Various tooltip positions'
+                  )
+                }
                 hapticFeedback={true}
               >
                 Show Info
@@ -156,7 +162,7 @@ export const ClickToCopyTestScreen: React.FC = () => {
             <Title size="md" style={{ marginBottom: 8 }}>
               Implementation Notes
             </Title>
-            
+
             <FlexColumn gap="xs">
               <Text size="sm" variant="subtle">
                 • Uses adapter pattern for cross-platform clipboard

@@ -4,5 +4,5 @@
 // For React Native (Metro bundler will resolve to .native.tsx)
 export { FileUpload } from './FileUpload.native';
 
-// For Web (Vite will resolve to .web.tsx) 
+// For Web (Vite will resolve to .web.tsx)
 // This is handled by the bundler's platform extensions configuration

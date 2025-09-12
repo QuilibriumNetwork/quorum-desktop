@@ -1,10 +1,20 @@
 import React, { useState } from 'react';
 import { ScrollView, View, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, FlexColumn, FlexRow, Text, Icon, Title } from '@/primitives';
+import {
+  Container,
+  FlexColumn,
+  FlexRow,
+  Text,
+  Icon,
+  Title,
+} from '@/primitives';
 import { useTheme } from '@/primitives/theme';
 import { IconName } from '@/primitives/Icon/types';
-import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
+import {
+  commonTestStyles,
+  createThemedStyles,
+} from '@/styles/commonTestStyles';
 import TestLeaveSpaceModal from './TestLeaveSpaceModal';
 import TestKickUserModal from './TestKickUserModal';
 
@@ -30,7 +40,7 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
   // Modal visibility states
   const [leaveSpaceModalVisible, setLeaveSpaceModalVisible] = useState(false);
   const [kickUserModalVisible, setKickUserModalVisible] = useState(false);
-  
+
   // Mock data for testing
   const mockSpaceId = 'test-space-123';
   const mockUserAddress = 'test-user-address-456';
@@ -47,7 +57,8 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
     {
       id: 'leave-space',
       title: 'LeaveSpaceModal',
-      description: 'Confirmation modal for leaving a space with double-click protection and swipe-to-close',
+      description:
+        'Confirmation modal for leaving a space with double-click protection and swipe-to-close',
       icon: 'times',
       status: 'cross-platform',
       testAction: () => setLeaveSpaceModalVisible(true),
@@ -55,7 +66,8 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
     {
       id: 'kick-user',
       title: 'KickUserModal',
-      description: 'Confirmation modal for kicking a user from space with haptic feedback',
+      description:
+        'Confirmation modal for kicking a user from space with haptic feedback',
       icon: 'ban',
       status: 'cross-platform',
       testAction: () => setKickUserModalVisible(true),
@@ -71,7 +83,8 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
     {
       id: 'settings',
       title: 'SettingsModal',
-      description: 'App settings modal with form validation and keyboard avoidance',
+      description:
+        'App settings modal with form validation and keyboard avoidance',
       icon: 'cog',
       status: 'pending',
       testAction: () => handlePlannedModal('SettingsModal'),
@@ -87,7 +100,8 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
     {
       id: 'image-preview',
       title: 'ImagePreviewModal',
-      description: 'Full-screen image preview with pinch-to-zoom and swipe gestures',
+      description:
+        'Full-screen image preview with pinch-to-zoom and swipe gestures',
       icon: 'image',
       status: 'pending',
       testAction: () => handlePlannedModal('ImagePreviewModal'),
@@ -122,9 +136,10 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
       style={[
         {
           backgroundColor: theme.colors.bg.card,
-          borderColor: modal.status === 'cross-platform' 
-            ? theme.colors.accent[500] 
-            : theme.colors.border.default,
+          borderColor:
+            modal.status === 'cross-platform'
+              ? theme.colors.accent[500]
+              : theme.colors.border.default,
           borderWidth: modal.status === 'cross-platform' ? 2 : 1,
           borderRadius: 12,
           padding: 16,
@@ -139,7 +154,11 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
         <Icon
           name={modal.icon}
           size="lg"
-          color={modal.status === 'cross-platform' ? theme.colors.accent[500] : theme.colors.text.subtle}
+          color={
+            modal.status === 'cross-platform'
+              ? theme.colors.accent[500]
+              : theme.colors.text.subtle
+          }
           style={{ marginTop: 2 }}
         />
         <View style={{ flex: 1 }}>
@@ -155,7 +174,11 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
                 borderRadius: 4,
               }}
             >
-              <Text size="xs" weight="semibold" color={getStatusColor(modal.status)}>
+              <Text
+                size="xs"
+                weight="semibold"
+                color={getStatusColor(modal.status)}
+              >
                 {getStatusText(modal.status)}
               </Text>
             </View>
@@ -175,7 +198,7 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
         { backgroundColor: theme.colors.bg.app },
       ]}
     >
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={commonTestStyles.contentPadding}
         showsVerticalScrollIndicator={false}
       >
@@ -190,7 +213,11 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
                 backgroundColor: theme.colors.bg.card,
               }}
             >
-              <Icon name="arrow-left" size="md" color={theme.colors.text.main} />
+              <Icon
+                name="arrow-left"
+                size="md"
+                color={theme.colors.text.main}
+              />
             </TouchableOpacity>
             <FlexColumn gap="xs" align="start" style={{ flex: 1 }}>
               <Text size="2xl" weight="bold">
@@ -237,9 +264,7 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
         </View>
 
         {/* Modal Tests */}
-        <View>
-          {modalTests.map(renderModalCard)}
-        </View>
+        <View>{modalTests.map(renderModalCard)}</View>
       </ScrollView>
 
       {/* Test Modals */}

@@ -26,7 +26,7 @@ export const Login = ({
 }) => {
   // Business logic hook
   const authFlow = useAuthenticationFlow();
-  
+
   // Web-specific passkey integration
   const { setShowPasskeyPrompt } = usePasskeysContext();
 

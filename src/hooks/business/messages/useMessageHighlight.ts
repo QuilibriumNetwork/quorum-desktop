@@ -6,7 +6,11 @@ export interface MessageHighlightState {
   isHighlighted: (messageId: string) => boolean;
   highlightMessage: (messageId: string, options?: HighlightOptions) => void;
   clearHighlight: () => void;
-  scrollToMessage: (messageId: string, virtuosoRef?: any, messageList?: any[]) => void;
+  scrollToMessage: (
+    messageId: string,
+    virtuosoRef?: any,
+    messageList?: any[]
+  ) => void;
 }
 
 export interface HighlightOptions {
@@ -24,7 +28,9 @@ const DEFAULT_SCROLL_BLOCK = 'center';
  * Provides mobile-safe scrolling and consistent highlight behavior across all components.
  */
 export const useMessageHighlight = (): MessageHighlightState => {
-  const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
+  const [highlightedMessageId, setHighlightedMessageId] = useState<
+    string | null
+  >(null);
   const highlightTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Clear any existing timeout when component unmounts
@@ -53,9 +59,7 @@ export const useMessageHighlight = (): MessageHighlightState => {
 
   const highlightMessage = useCallback(
     (messageId: string, options: HighlightOptions = {}) => {
-      const {
-        duration = DEFAULT_HIGHLIGHT_DURATION,
-      } = options;
+      const { duration = DEFAULT_HIGHLIGHT_DURATION } = options;
 
       // Clear any existing highlight first
       clearHighlight();
@@ -82,7 +86,9 @@ export const useMessageHighlight = (): MessageHighlightState => {
 
       // Method 1: Use Virtuoso if available (preferred for MessageList)
       if (virtuosoRef && messageList) {
-        const messageIndex = messageList.findIndex((m: any) => m.messageId === messageId);
+        const messageIndex = messageList.findIndex(
+          (m: any) => m.messageId === messageId
+        );
         if (messageIndex !== -1) {
           virtuosoRef.scrollToIndex({
             index: messageIndex,
@@ -102,7 +108,7 @@ export const useMessageHighlight = (): MessageHighlightState => {
           messageElement.scrollIntoView({
             behavior: DEFAULT_SCROLL_BEHAVIOR,
             block: DEFAULT_SCROLL_BLOCK,
-            inline: 'nearest'
+            inline: 'nearest',
           });
         }
       });

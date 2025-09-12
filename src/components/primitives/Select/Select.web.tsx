@@ -34,7 +34,7 @@ const Select: React.FC<WebSelectProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState<string | string[]>(
-    multiple ? (Array.isArray(value) ? value : []) : (value || '')
+    multiple ? (Array.isArray(value) ? value : []) : value || ''
   );
   const [actualPlacement, setActualPlacement] = useState<'top' | 'bottom'>(
     'bottom'
@@ -111,15 +111,15 @@ const Select: React.FC<WebSelectProps> = ({
       if (multiple) {
         const currentValues = selectedValue as string[];
         let newValues: string[];
-        
+
         if (currentValues.includes(optionValue)) {
           // Remove if already selected
-          newValues = currentValues.filter(v => v !== optionValue);
+          newValues = currentValues.filter((v) => v !== optionValue);
         } else {
           // Add if not selected
           newValues = [...currentValues, optionValue];
         }
-        
+
         setSelectedValue(newValues);
         onChange?.(newValues);
         // Keep dropdown open for multiselect
@@ -134,7 +134,9 @@ const Select: React.FC<WebSelectProps> = ({
   const handleSelectAll = () => {
     if (!disabled && multiple) {
       const allOptions = getAllOptions();
-      const allValues = allOptions.filter(opt => !opt.disabled).map(opt => opt.value);
+      const allValues = allOptions
+        .filter((opt) => !opt.disabled)
+        .map((opt) => opt.value);
       setSelectedValue(allValues);
       onChange?.(allValues);
     }
@@ -148,28 +150,32 @@ const Select: React.FC<WebSelectProps> = ({
   };
 
   const allOptions = getAllOptions();
-  
+
   // Helper to get display text/content
   const getDisplayContent = () => {
     if (multiple) {
       const selectedValues = selectedValue as string[];
-      
+
       if (selectedValues.length === 0) {
-        return <span className="quorum-select__placeholder">{placeholder}</span>;
+        return (
+          <span className="quorum-select__placeholder">{placeholder}</span>
+        );
       }
-      
+
       if (renderSelectedValue) {
         return renderSelectedValue(selectedValues, allOptions);
       }
-      
+
       // Default display: show chips for selected items
-      const selectedOptions = allOptions.filter(opt => selectedValues.includes(opt.value));
+      const selectedOptions = allOptions.filter((opt) =>
+        selectedValues.includes(opt.value)
+      );
       const displayedOptions = selectedOptions.slice(0, maxDisplayedChips);
       const remainingCount = selectedOptions.length - maxDisplayedChips;
-      
+
       return (
         <div className="quorum-select__chips">
-          {displayedOptions.map(opt => (
+          {displayedOptions.map((opt) => (
             <span key={opt.value} className="quorum-select__chip">
               {opt.label}
             </span>
@@ -182,7 +188,9 @@ const Select: React.FC<WebSelectProps> = ({
         </div>
       );
     } else {
-      const selectedOption = allOptions.find((opt) => opt.value === selectedValue);
+      const selectedOption = allOptions.find(
+        (opt) => opt.value === selectedValue
+      );
       return selectedOption ? (
         <>
           {selectedOption.icon &&
@@ -193,9 +201,7 @@ const Select: React.FC<WebSelectProps> = ({
                 className="text-subtle quorum-select__icon"
               />
             ) : (
-              <span className="quorum-select__icon">
-                {selectedOption.icon}
-              </span>
+              <span className="quorum-select__icon">{selectedOption.icon}</span>
             ))}
           <span>{selectedOption.label}</span>
         </>
@@ -241,9 +247,7 @@ const Select: React.FC<WebSelectProps> = ({
           aria-expanded={isOpen}
           aria-multiselectable={multiple}
         >
-          <span className="quorum-select__value">
-            {getDisplayContent()}
-          </span>
+          <span className="quorum-select__value">{getDisplayContent()}</span>
           <Icon
             name="chevron-down"
             size="xs"
@@ -266,7 +270,11 @@ const Select: React.FC<WebSelectProps> = ({
                   onClick={handleSelectAll}
                   role="option"
                 >
-                  <Icon name="check-square" size="sm" className="quorum-select__action-icon" />
+                  <Icon
+                    name="check-square"
+                    size="sm"
+                    className="quorum-select__action-icon"
+                  />
                   <span>{selectAllLabel}</span>
                 </div>
                 <div
@@ -274,7 +282,11 @@ const Select: React.FC<WebSelectProps> = ({
                   onClick={handleClearAll}
                   role="option"
                 >
-                  <Icon name="square" size="sm" className="quorum-select__action-icon" />
+                  <Icon
+                    name="square"
+                    size="sm"
+                    className="quorum-select__action-icon"
+                  />
                   <span>{clearAllLabel}</span>
                 </div>
               </div>
@@ -290,7 +302,7 @@ const Select: React.FC<WebSelectProps> = ({
                       const isSelected = multiple
                         ? (selectedValue as string[]).includes(option.value)
                         : option.value === selectedValue;
-                      
+
                       return (
                         <div
                           key={option.value}
@@ -298,7 +310,8 @@ const Select: React.FC<WebSelectProps> = ({
                             'quorum-select__option',
                             'quorum-select__option--grouped',
                             isSelected && 'quorum-select__option--selected',
-                            option.disabled && 'quorum-select__option--disabled',
+                            option.disabled &&
+                              'quorum-select__option--disabled',
                           ]
                             .filter(Boolean)
                             .join(' ')}
@@ -367,7 +380,7 @@ const Select: React.FC<WebSelectProps> = ({
                   const isSelected = multiple
                     ? (selectedValue as string[]).includes(option.value)
                     : option.value === selectedValue;
-                  
+
                   return (
                     <div
                       key={option.value}
@@ -466,7 +479,10 @@ const Select: React.FC<WebSelectProps> = ({
           id={id}
           value={selectedValue as string[]}
           onChange={(e) => {
-            const values = Array.from(e.target.selectedOptions, option => option.value);
+            const values = Array.from(
+              e.target.selectedOptions,
+              (option) => option.value
+            );
             setSelectedValue(values);
             onChange?.(values);
           }}

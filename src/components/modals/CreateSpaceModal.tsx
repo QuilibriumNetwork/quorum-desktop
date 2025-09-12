@@ -52,9 +52,13 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           <div
             id="space-icon-tooltip-target"
             className={`avatar-upload ${!fileData ? 'empty' : ''}`}
-            style={fileData && currentFile ? {
-              backgroundImage: `url(data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')})`
-            } : {}}
+            style={
+              fileData && currentFile
+                ? {
+                    backgroundImage: `url(data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')})`,
+                  }
+                : {}
+            }
             {...getRootProps()}
           >
             <input {...getInputProps()} />
@@ -121,7 +125,10 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                   </Tooltip>
                 </div>
               </div>
-              <Switch onChange={() => setRepudiable(!repudiable)} value={!repudiable} />
+              <Switch
+                onChange={() => setRepudiable(!repudiable)}
+                value={!repudiable}
+              />
             </div>
             <div className="flex flex-row justify-between pb-2">
               <div className="text-sm flex flex-row">

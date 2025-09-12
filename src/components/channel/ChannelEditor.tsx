@@ -74,7 +74,7 @@ const ChannelEditor: React.FunctionComponent<{
           </Text>
           <Input value={channelTopic} onChange={handleChannelTopicChange} />
         </Container>
-        
+
         <Container className="mb-2 max-sm:mb-1">
           <FlexRow className="items-center justify-between">
             <div className="flex flex-row items-center">
@@ -95,14 +95,14 @@ const ChannelEditor: React.FunctionComponent<{
                 />
               </Tooltip>
             </div>
-            <Switch 
-              value={isReadOnly} 
+            <Switch
+              value={isReadOnly}
               onChange={handleReadOnlyChange}
               accessibilityLabel={t`Read only channel`}
             />
           </FlexRow>
         </Container>
-        
+
         {isReadOnly && (
           <Container className="mb-4 max-sm:mb-1">
             <FlexRow className="items-center justify-between max-sm:flex-col max-sm:items-stretch">
@@ -111,7 +111,7 @@ const ChannelEditor: React.FunctionComponent<{
               </Text>
               <Select
                 value={managerRoleIds}
-                options={availableRoles.map(role => ({
+                options={availableRoles.map((role) => ({
                   value: role.roleId,
                   label: role.displayName,
                 }))}
@@ -123,22 +123,18 @@ const ChannelEditor: React.FunctionComponent<{
             </FlexRow>
           </Container>
         )}
-        
+
         <FlexRow className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
-          <Button
-            type="primary"
-            className="max-sm:w-full"
-            onClick={handleSave}
-          >
+          <Button type="primary" className="max-sm:w-full" onClick={handleSave}>
             <Trans>Save Changes</Trans>
           </Button>
         </FlexRow>
         {isEditMode && (
           <>
-            <Spacer 
-              spaceBefore="lg" 
+            <Spacer
+              spaceBefore="lg"
               spaceAfter="md"
-              border 
+              border
               direction="vertical"
             />
             {hasMessages && showWarning && (
@@ -155,9 +151,9 @@ const ChannelEditor: React.FunctionComponent<{
               </Container>
             )}
             <FlexCenter>
-              <Text 
+              <Text
                 variant="danger"
-                className="cursor-pointer hover:text-danger-hover" 
+                className="cursor-pointer hover:text-danger-hover"
                 onClick={handleDeleteClick}
               >
                 {deleteConfirmationStep === 0

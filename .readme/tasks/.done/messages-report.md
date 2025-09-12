@@ -1,6 +1,5 @@
 # Message Handling Report
 
-
 This document outlines how messages are handled in the Quilibrium desktop application, and proposes a plan for implementing a search feature.
 
 ## Message Flow

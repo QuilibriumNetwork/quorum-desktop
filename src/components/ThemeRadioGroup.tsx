@@ -8,9 +8,7 @@ export interface ThemeRadioGroupProps {
   horizontal?: boolean;
 }
 
-const ThemeRadioGroup: React.FC<ThemeRadioGroupProps> = ({
-  horizontal,
-}) => {
+const ThemeRadioGroup: React.FC<ThemeRadioGroupProps> = ({ horizontal }) => {
   const { theme, setTheme } = useTheme();
 
   // Define theme options with Icon primitive names

@@ -1,6 +1,5 @@
 # 🚀 Search Performance Optimization - Master Plan
 
-
 _Comprehensive optimization plan for scaling Quorum Desktop's search to handle many users with large message histories_
 
 ## 📊 Current State Analysis

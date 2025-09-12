@@ -1,7 +1,5 @@
 # Pinned Messages Feature
 
-
-
 ## Overview
 
 The pinned messages feature allows space owners to pin important messages within channels, making them easily accessible through a dedicated panel. This Discord-like functionality helps prioritize key information and announcements within conversations.
@@ -20,6 +18,7 @@ The pinned messages feature allows space owners to pin important messages within
 ### Database Layer
 
 **File: `src/db/messages.ts`**
+
 - Database schema version bumped from 2 to 3
 - Added `by_channel_pinned` index (created but not actively used due to IndexedDB limitations)
 - Three new methods:
@@ -28,6 +27,7 @@ The pinned messages feature allows space owners to pin important messages within
   - `getPinnedMessageCount()`: Returns count of pinned messages (uses `by_conversation_time` index with filtering)
 
 **Message fields added:**
+
 - `isPinned?: boolean` - Whether message is pinned
 - `pinnedAt?: number` - Timestamp when message was pinned
 - `pinnedBy?: string` - Address of user who pinned the message
@@ -37,6 +37,7 @@ The pinned messages feature allows space owners to pin important messages within
 ### API Types
 
 **File: `src/api/quorumApi.ts`**
+
 - Extended `Message` type with pin-related fields
 - Added `PinMessage` type for future system message implementation:
   ```typescript
@@ -55,6 +56,7 @@ The pinned messages feature allows space owners to pin important messages within
 Main hook managing all pinned message functionality:
 
 **Key features:**
+
 - React Query integration with optimistic updates
 - Permission checking (space owner validation)
 - Pin limit enforcement (50 messages maximum, configurable via `PINNED_MESSAGES_CONFIG.MAX_PINS`)
@@ -63,18 +65,24 @@ Main hook managing all pinned message functionality:
 - Error state exposure via `pinError` and `unpinError` properties
 
 **Exported functions:**
+
 - `pinnedMessages`: Array of pinned messages (sorted by creation date, newest first)
 - `pinnedCount`: Count of pinned messages
 - `canPinMessages`: Boolean indicating user permissions
 - `pinMessage(messageId)`: Pin a message
-- `unpinMessage(messageId)`: Unpin a message  
+- `unpinMessage(messageId)`: Unpin a message
 - `togglePin(message)`: Smart toggle based on current state
 
 **Query invalidation strategy:**
+
 ```typescript
 // Critical: Uses correct case-sensitive query keys
-queryClient.invalidateQueries({ queryKey: ['pinnedMessages', spaceId, channelId] });
-queryClient.invalidateQueries({ queryKey: ['pinnedMessageCount', spaceId, channelId] });
+queryClient.invalidateQueries({
+  queryKey: ['pinnedMessages', spaceId, channelId],
+});
+queryClient.invalidateQueries({
+  queryKey: ['pinnedMessageCount', spaceId, channelId],
+});
 queryClient.invalidateQueries({ queryKey: ['Messages', spaceId, channelId] }); // Capital 'M'
 ```
 
@@ -83,11 +91,13 @@ queryClient.invalidateQueries({ queryKey: ['Messages', spaceId, channelId] }); /
 #### Message Integration
 
 **File: `src/components/message/Message.tsx`**
+
 - Integrates `usePinnedMessages` hook
 - Displays thumbtack icon next to sender name for pinned messages
 - Passes pin functionality to MessageActions component
 
 **File: `src/components/message/MessageActions.tsx`**
+
 - Adds pin/unpin button to message hover actions
 - Shows confirmation tooltips ("Pinned!" / "Unpinned!")
 - Icon changes based on pin state: `thumbtack` → `thumbtack-slash`
@@ -97,6 +107,7 @@ queryClient.invalidateQueries({ queryKey: ['Messages', spaceId, channelId] }); /
 #### Channel Header
 
 **File: `src/components/channel/Channel.tsx`**
+
 - Thumbtack button in header shows pin count badge
 - Opens PinnedMessagesPanel when clicked
 - Button color changes based on pin count (accent when > 0)
@@ -109,6 +120,7 @@ queryClient.invalidateQueries({ queryKey: ['Messages', spaceId, channelId] }); /
 Full-featured panel displaying all pinned messages:
 
 **Features:**
+
 - Message preview with sender name and original post date
 - Jump-to-message functionality with smooth scrolling and highlight effect
 - Unpin functionality (only visible to space owners)
@@ -118,6 +130,7 @@ Full-featured panel displaying all pinned messages:
 - Mobile tooltip auto-hide after 3000ms (configurable via `PINNED_PANEL_CONFIG.TOOLTIP_DURATION_MOBILE`)
 
 **Layout:**
+
 - Header: Count of pinned messages with close button
 - List: Individual message items with actions
 - Actions: Jump (arrow-right) and Unpin (times icon) buttons
@@ -133,6 +146,7 @@ Full-featured panel displaying all pinned messages:
 Shared component used by both SearchResults and PinnedMessagesPanel:
 
 **Props:**
+
 - `isOpen`: Controls visibility
 - `position`: 'absolute' or 'fixed'
 - `positionStyle`: 'search-results', 'right-aligned', or 'centered'
@@ -141,6 +155,7 @@ Shared component used by both SearchResults and PinnedMessagesPanel:
 - `showCloseButton`: Optional close button
 
 **Benefits:**
+
 - Consistent positioning and animation across dropdowns
 - Unified keyboard (Escape) and outside-click handling
 - Standardized styling and responsive behavior
@@ -151,6 +166,7 @@ Shared component used by both SearchResults and PinnedMessagesPanel:
 **File: `src/components/search/SearchResults.scss`**
 
 Refactored to use DropdownPanel for consistency:
+
 - Removed duplicate positioning and styling code
 - Uses `right-aligned` positioning to prevent off-screen issues
 - Maintains all existing search functionality
@@ -160,6 +176,7 @@ Refactored to use DropdownPanel for consistency:
 **Files: `src/components/primitives/Icon/iconMapping.ts` & `types.ts`**
 
 Added thumbtack-related icons:
+
 - `thumbtack`: Main pin icon (FontAwesome `faThumbtack`)
 - `thumbtack-slash`: Unpin icon (reuses same icon with different styling)
 - `pin`: Alias for thumbtack
@@ -198,35 +215,42 @@ Added thumbtack-related icons:
 ## Key Technical Details
 
 ### Configuration Constants
+
 All magic numbers have been extracted into configuration objects:
+
 - `PINNED_MESSAGES_CONFIG.MAX_PINS`: 50 (maximum pinned messages per channel)
 - `PINNED_PANEL_CONFIG.TEXT_PREVIEW_LENGTH`: 800 (characters shown in preview)
 - `PINNED_PANEL_CONFIG.TOOLTIP_DURATION_MOBILE`: 3000ms (mobile tooltip auto-hide)
 - `MESSAGE_ACTIONS_CONFIG.PIN_CONFIRMATION_DURATION`: 2000ms (confirmation tooltip duration)
 
 ### Query Key Management
+
 - **Critical bug fix**: Messages query uses capital 'M' (`['Messages', ...]`)
 - Pin mutations must invalidate with correct case-sensitive key
 - Ensures real-time UI updates after pin operations
 
 ### Permission System
+
 - Only space owners can pin/unpin messages
 - Permission checked in hook: `canPinMessages: Boolean(isSpaceOwner)`
 - UI elements conditionally rendered based on permissions
 
 ### Error Handling
+
 - Comprehensive try-catch blocks in mutation functions
 - Validation of messageId, spaceId, and channelId parameters
 - Error logging for debugging and monitoring
 - Error states exposed via `pinError` and `unpinError` properties
 
 ### Performance Optimization
+
 - React Query caching prevents unnecessary database calls
 - Optimistic updates provide immediate UI feedback
 - Query invalidation strategy updates only relevant caches
 - Database queries use existing `by_conversation_time` index with in-memory filtering for reliability
 
 ### Mobile Compatibility
+
 - Uses primitive components for cross-platform support
 - Responsive design with mobile-first approach
 - Touch-friendly tooltips with auto-hide timers
@@ -241,4 +265,4 @@ All magic numbers have been extracted into configuration objects:
 
 ---
 
-*Last updated: January 2025 - Added configuration constants, improved error handling, and database query optimization notes*
+_Last updated: January 2025 - Added configuration constants, improved error handling, and database query optimization notes_

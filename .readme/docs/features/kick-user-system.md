@@ -1,6 +1,5 @@
 # Kick User System Documentation
 
-
 ## Overview
 
 The Kick User system allows space administrators to remove users from spaces through a secure, cryptographically-verified process. The system has been refactored to use cross-platform primitives and extracted business logic for maintainability and mobile compatibility.

@@ -12,9 +12,11 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Roles System Documentation](docs/space-roles.md)
 
 ### Development
+
 - [Unused Dependencies Analysis](docs/development/unused-dependencies-analysis.md)
 
 ### Features
+
 - [Cross-Platform Key Backup Implementation](docs/features/cross-platform-key-backup.md)
 - [Cross-Platform Theming System](docs/features/cross-platform-theming.md)
 - [Desktop Notifications Feature](docs/features/desktop-notifications.md)
@@ -29,6 +31,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
 
 ### Features / Primitives
+
 - [Introduction and Core Concepts](docs/features/primitives/01-introduction-and-concepts.md)
 - [Primitives Quick Reference](docs/features/primitives/02-primitives-quick-reference.md)
 - [When to Use Primitives vs Raw HTML](docs/features/primitives/03-when-to-use-primitives.md)
@@ -38,6 +41,7 @@ This is the main index for all documentation, bug reports, and task management.
 ## 🐛 Bug Reports
 
 ### Active Issues
+
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors-ONGOING.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
 - [Message Hash Navigation Conflict Bug](bugs/message-hash-navigation-conflict.md)
@@ -46,6 +50,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Search Focus Management Comprehensive Bug Report](bugs/search-focus-management.md)
 
 ### Solved Issues
+
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [NewDirectMessage Modal: URL-to-State Conversion](bugs/.solved/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)
 - [React Hooks Violation: Conditional Return Before Hooks](bugs/.solved/SOLVED_react-hooks-violation-conditional-return.md)
@@ -71,11 +76,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [🚀 Search Performance Optimization - Master Plan](tasks/search-performance-optimization.md)
 
 ### CSS Refactor
+
 - [CSS Inventory - Complete Codebase Analysis](tasks/css-refactor/css-inventory.md)
 - [CSS Refactor Analysis Report](tasks/css-refactor/analysis.md)
 - [CSS Refactor Plan - Claude Code Execution Strategy](tasks/css-refactor/css-refactor-plan.md)
 
 ### Mobile Development
+
 - [Business Logic Extraction & Native Preparation Plan](tasks/mobile-dev/business-logic-extraction-plan.md)
 - [Component Architecture Masterplan - Desktop/Mobile Unification](tasks/mobile-dev/components-shared-arch-masterplan.md)
 - [Cross-Platform Development : Revised Plan](tasks/mobile-dev/plan-quick-recap.md)
@@ -92,6 +99,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [SDK Shim Temporary Solutions](tasks/mobile-dev/sdk-shim-temporary-solutions.md)
 
 ### Mobile Development Documentation
+
 - [Component Architecture Workflow - Detailed Explanation](tasks/mobile-dev/docs/component-architecture-workflow-explained.md)
 - [Mobile/Desktop Behavioral Differences Audit Plan](tasks/mobile-dev/docs/mobile-desktop-audit.md)
 - [Primitives Testing Guide](tasks/mobile-dev/docs/primitives-testing.md)
@@ -122,6 +130,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [🔍 Global Message Search Implementation Plan](tasks/.done/global-search.md)
 
 ### Message Options Mobile
+
 - [Mobile Message Options UX Enhancement](tasks/.done/message-options-mobile/message-options-mobile.md)
 
 ---

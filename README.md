@@ -4,6 +4,7 @@ The world's first fully private and decentralized group messenger.
 Powered by Quilibrium and the libp2p stack, Quorum can be used over TCP, QUIC, Websockets, or even LoRa — so it can run across the traditional internet, local networks, or off-grid setups.
 
 **Available Platforms:**
+
 - **Web Browser** - [Live app (beta)](https://app.quorummessenger.com/)
 - **Desktop** - Electron wrapper for native desktop experience
 - **Mobile** - React Native app (in development)
@@ -15,9 +16,9 @@ Powered by Quilibrium and the libp2p stack, Quorum can be used over TCP, QUIC, W
 For detailed documentation on specific features and components, please refer to the [`.readme/docs`](.readme/docs) directory. You can find the complete index of available documentation in [`.readme/INDEX.md`](.readme/INDEX.md).
 
 **Key Documentation:**
+
 - [Component Management Guide](.readme/docs/component-management-guide.md) - Creating cross-platform components
 - [Cross-Platform Architecture](.readme/docs/cross-platform-repository-implementation.md) - How the shared codebase works
-
 
 A complete documentation website will be created at a later time.
 
@@ -26,7 +27,7 @@ A complete documentation website will be created at a later time.
 The [`.readme/`](.readme) folder contains development resources including:
 
 - Architecture documentation and component guides
-- Bug reports and solutions  
+- Bug reports and solutions
 - Task management ([pending & ongoing](.readme/tasks), [completed](.readme/tasks/.done))
 - Mobile development guidelines and cross-platform considerations
 
@@ -90,11 +91,13 @@ _If you are on Windows, we suggest testing on WSL for better performance_.
 The mobile app uses React Native with Expo Dev Client and shares components with the web app through a cross-platform architecture.
 
 **Quick Start:**
+
 ```bash
 yarn mobile  # Start development server
 ```
 
 For detailed setup and testing instructions, see:
+
 - [Mobile README](mobile/README.md) - Complete mobile development guide
 - [Expo Dev Testing Guide](.readme/docs/expo-dev-testing-guide.md) - Environment setup and troubleshooting
 
@@ -133,4 +136,4 @@ For detailed setup and testing instructions, see:
 
 ---
 
-*Updated: 2025-09-10 16:10*
+_Updated: 2025-09-10 16:10_

@@ -53,7 +53,6 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
   const resolvedThemeInUse = theme || resolvedTheme;
   const [visible, setVisible] = React.useState(false);
   const tooltipRef = React.useRef<HTMLElement | null>(null);
-  
 
   // Auto-apply responsive width and text wrapping for showOnTouch tooltips
   const touchClass = showOnTouch ? 'quorum-react-tooltip-touch' : '';
@@ -114,7 +113,14 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
 
   // Auto-hide after specified time on touch devices (if autoHideAfter is provided)
   React.useEffect(() => {
-    if (!showOnTouch || !isTouchDevice() || !visible || alwaysVisible || !autoHideAfter) return;
+    if (
+      !showOnTouch ||
+      !isTouchDevice() ||
+      !visible ||
+      alwaysVisible ||
+      !autoHideAfter
+    )
+      return;
 
     const autoHideTimer = setTimeout(() => {
       setVisible(false);

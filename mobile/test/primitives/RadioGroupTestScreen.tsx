@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import {
-  ScrollView,
-  View,
-} from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { 
+import {
   useTheme,
   RadioGroup,
   Icon,
@@ -13,9 +10,12 @@ import {
   Paragraph,
   FlexColumn,
   FlexRow,
-  Text
+  Text,
 } from '@/primitives';
-import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
+import {
+  commonTestStyles,
+  createThemedStyles,
+} from '@/styles/commonTestStyles';
 
 export const RadioGroupTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -25,16 +25,26 @@ export const RadioGroupTestScreen: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState('option1');
 
   return (
-    <SafeAreaView style={[commonTestStyles.container, { backgroundColor: theme.colors.bg.app }]}>
+    <SafeAreaView
+      style={[
+        commonTestStyles.container,
+        { backgroundColor: theme.colors.bg.app },
+      ]}
+    >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <View style={commonTestStyles.header}>
           <FlexColumn gap="sm" align="center">
-            <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
-              <Icon name="radio" size="xl" style={{ marginTop: 2 }}/>
+            <FlexRow
+              gap="md"
+              align="center"
+              style={{ alignItems: 'flex-start' }}
+            >
+              <Icon name="radio" size="xl" style={{ marginTop: 2 }} />
               <Title>RadioGroup</Title>
             </FlexRow>
             <Paragraph align="center">
-              Accessible radio button group with icon support and flexible layouts
+              Accessible radio button group with icon support and flexible
+              layouts
             </Paragraph>
           </FlexColumn>
         </View>
@@ -79,9 +89,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         <View style={themedStyles.section}>
           <FlexColumn gap="md">
             <Title size="sm">Disabled Options</Title>
-            <Label color="strong">
-              Some options can be disabled:
-            </Label>
+            <Label color="strong">Some options can be disabled:</Label>
             <RadioGroup
               options={[
                 { value: 'basic', label: 'Basic Plan' },
@@ -98,9 +106,7 @@ export const RadioGroupTestScreen: React.FC = () => {
         <View style={themedStyles.section}>
           <FlexColumn gap="md">
             <Title size="sm">Without Icons</Title>
-            <Label>
-              Simple text-only radio group:
-            </Label>
+            <Label>Simple text-only radio group:</Label>
             <RadioGroup
               options={[
                 { value: 'option1', label: 'Option 1' },
@@ -144,5 +150,3 @@ export const RadioGroupTestScreen: React.FC = () => {
     </SafeAreaView>
   );
 };
-
-

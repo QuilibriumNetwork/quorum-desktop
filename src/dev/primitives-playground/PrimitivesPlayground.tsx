@@ -71,8 +71,6 @@ export const PrimitivesPlayground: React.FC = () => {
   const [disabledSwitch, setDisabledSwitch] = useState(true);
   const [activeSection, setActiveSection] = useState('modalcontainer');
 
-
-
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
     const element = document.getElementById(sectionId);
@@ -172,7 +170,12 @@ export const PrimitivesPlayground: React.FC = () => {
               },
               {
                 title: 'Text',
-                vars: ['--color-text-strong', '--color-text-main', '--color-text-subtle', '--color-text-muted'],
+                vars: [
+                  '--color-text-strong',
+                  '--color-text-main',
+                  '--color-text-subtle',
+                  '--color-text-muted',
+                ],
               },
               {
                 title: 'Utility (HEX)',
@@ -196,7 +199,9 @@ export const PrimitivesPlayground: React.FC = () => {
               },
             ].map(({ title, vars }) => (
               <div key={title} className="mb-8">
-                <h3 className="text-xl font-semibold text-strong mb-2">{title}</h3>
+                <h3 className="text-xl font-semibold text-strong mb-2">
+                  {title}
+                </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10 gap-4">
                   {(typeof vars[0] === 'string'
                     ? (vars as string[]).map((v) => ({
@@ -208,8 +213,8 @@ export const PrimitivesPlayground: React.FC = () => {
                     <div
                       key={label}
                       className={`p-2 rounded flex items-center justify-center text-center text-xs font-mono ${
-                        title === 'Text' 
-                          ? 'border border-default bg-transparent' 
+                        title === 'Text'
+                          ? 'border border-default bg-transparent'
                           : 'shadow'
                       }`}
                       style={{
@@ -554,7 +559,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-              Mobile Testing Notes
+                Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>Web: Uses div with CSS classes for styling</li>
@@ -793,90 +798,119 @@ export const PrimitivesPlayground: React.FC = () => {
           >
             <h2 className="text-xl font-semibold text-strong">Spacer</h2>
             <p className="text-subtle">
-              Semantic spacing component for adding consistent vertical or horizontal space between elements.
+              Semantic spacing component for adding consistent vertical or
+              horizontal space between elements.
             </p>
 
             {/* Spacer Examples in 3x1 Grid */}
             <div className="grid grid-cols-3 gap-6">
               {/* Column 1: Vertical Spacers */}
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong">Vertical Spacers</h3>
-                <p className="text-sm text-subtle">All spacer sizes with visual indicators:</p>
+                <h3 className="text-lg font-medium text-strong">
+                  Vertical Spacers
+                </h3>
+                <p className="text-sm text-subtle">
+                  All spacer sizes with visual indicators:
+                </p>
                 <div className="p-4 bg-surface-3 rounded-xl">
                   <Text>Text before xs spacer</Text>
                   <Spacer size="xs" />
                   <div className="h-px bg-accent opacity-30"></div>
-                  <Text size="sm" variant="subtle">↑ xs (4px)</Text>
-                  
+                  <Text size="sm" variant="subtle">
+                    ↑ xs (4px)
+                  </Text>
+
                   <Spacer size="md" />
-                  
+
                   <Text>Text before sm spacer</Text>
                   <Spacer size="sm" />
                   <div className="h-px bg-accent opacity-30"></div>
-                  <Text size="sm" variant="subtle">↑ sm (8px)</Text>
-                  
+                  <Text size="sm" variant="subtle">
+                    ↑ sm (8px)
+                  </Text>
+
                   <Spacer size="md" />
-                  
+
                   <Text>Text before md spacer</Text>
                   <Spacer size="md" />
                   <div className="h-px bg-accent opacity-30"></div>
-                  <Text size="sm" variant="subtle">↑ md (16px)</Text>
-                  
+                  <Text size="sm" variant="subtle">
+                    ↑ md (16px)
+                  </Text>
+
                   <Spacer size="md" />
-                  
+
                   <Text>Text before lg spacer</Text>
                   <Spacer size="lg" />
                   <div className="h-px bg-accent opacity-30"></div>
-                  <Text size="sm" variant="subtle">↑ lg (24px)</Text>
-                  
+                  <Text size="sm" variant="subtle">
+                    ↑ lg (24px)
+                  </Text>
+
                   <Spacer size="md" />
-                  
+
                   <Text>Text before xl spacer</Text>
                   <Spacer size="xl" />
                   <div className="h-px bg-accent opacity-30"></div>
-                  <Text size="sm" variant="subtle">↑ xl (32px)</Text>
+                  <Text size="sm" variant="subtle">
+                    ↑ xl (32px)
+                  </Text>
                 </div>
               </div>
 
               {/* Column 2: Horizontal Spacers */}
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong">Horizontal Spacers</h3>
-                <p className="text-sm text-subtle">Spacing between inline elements:</p>
+                <h3 className="text-lg font-medium text-strong">
+                  Horizontal Spacers
+                </h3>
+                <p className="text-sm text-subtle">
+                  Spacing between inline elements:
+                </p>
                 <div className="p-4 bg-surface-3 rounded-xl">
                   <div className="space-y-4">
                     <FlexRow align="center">
                       <Text>Left</Text>
                       <Spacer size="xs" direction="horizontal" />
                       <div className="w-px h-4 bg-accent opacity-30"></div>
-                      <Text size="sm" variant="subtle">xs</Text>
+                      <Text size="sm" variant="subtle">
+                        xs
+                      </Text>
                     </FlexRow>
-                    
+
                     <FlexRow align="center">
                       <Text>Left</Text>
                       <Spacer size="sm" direction="horizontal" />
                       <div className="w-px h-4 bg-accent opacity-30"></div>
-                      <Text size="sm" variant="subtle">sm</Text>
+                      <Text size="sm" variant="subtle">
+                        sm
+                      </Text>
                     </FlexRow>
-                    
+
                     <FlexRow align="center">
                       <Text>Left</Text>
                       <Spacer size="md" direction="horizontal" />
                       <div className="w-px h-4 bg-accent opacity-30"></div>
-                      <Text size="sm" variant="subtle">md</Text>
+                      <Text size="sm" variant="subtle">
+                        md
+                      </Text>
                     </FlexRow>
-                    
+
                     <FlexRow align="center">
                       <Text>Left</Text>
                       <Spacer size="lg" direction="horizontal" />
                       <div className="w-px h-4 bg-accent opacity-30"></div>
-                      <Text size="sm" variant="subtle">lg</Text>
+                      <Text size="sm" variant="subtle">
+                        lg
+                      </Text>
                     </FlexRow>
-                    
+
                     <FlexRow align="center">
                       <Text>Left</Text>
                       <Spacer size="xl" direction="horizontal" />
                       <div className="w-px h-4 bg-accent opacity-30"></div>
-                      <Text size="sm" variant="subtle">xl</Text>
+                      <Text size="sm" variant="subtle">
+                        xl
+                      </Text>
                     </FlexRow>
                   </div>
                 </div>
@@ -884,65 +918,89 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Column 3: Custom Spacing */}
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong">Custom Spacing</h3>
+                <h3 className="text-lg font-medium text-strong">
+                  Custom Spacing
+                </h3>
                 <p className="text-sm text-subtle">Numeric pixel values:</p>
                 <div className="p-4 bg-surface-3 rounded-xl">
                   <Text>Custom 20px spacer:</Text>
                   <Spacer size={20} />
                   <div className="h-px bg-accent opacity-30"></div>
-                  <Text size="sm" variant="subtle">↑ 20px (custom)</Text>
-                  
+                  <Text size="sm" variant="subtle">
+                    ↑ 20px (custom)
+                  </Text>
+
                   <Spacer size="lg" />
-                  
+
                   <Text>Custom 50px spacer:</Text>
                   <Spacer size={50} />
                   <div className="h-px bg-accent opacity-30"></div>
-                  <Text size="sm" variant="subtle">↑ 50px (custom)</Text>
-                  
+                  <Text size="sm" variant="subtle">
+                    ↑ 50px (custom)
+                  </Text>
+
                   <Spacer size="lg" />
-                  
+
                   <Text>Custom 10px spacer:</Text>
                   <Spacer size={10} />
                   <div className="h-px bg-accent opacity-30"></div>
-                  <Text size="sm" variant="subtle">↑ 10px (custom)</Text>
-                  
+                  <Text size="sm" variant="subtle">
+                    ↑ 10px (custom)
+                  </Text>
+
                   <Spacer size="lg" />
-                  
+
                   <Text>Custom 100px spacer:</Text>
                   <Spacer size={100} />
                   <div className="h-px bg-accent opacity-30"></div>
-                  <Text size="sm" variant="subtle">↑ 100px (custom)</Text>
+                  <Text size="sm" variant="subtle">
+                    ↑ 100px (custom)
+                  </Text>
                 </div>
               </div>
 
               {/* Column 4: Border Examples */}
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong">Spacer Borders</h3>
-                <p className="text-sm text-subtle">Spacers with visual separation borders:</p>
+                <h3 className="text-lg font-medium text-strong">
+                  Spacer Borders
+                </h3>
+                <p className="text-sm text-subtle">
+                  Spacers with visual separation borders:
+                </p>
                 <div className="p-4 bg-surface-3 rounded-xl space-y-4">
                   <div>
-                    <Text variant="subtle" size="sm">Top border only</Text>
+                    <Text variant="subtle" size="sm">
+                      Top border only
+                    </Text>
                     <Spacer size="md" borderTop />
                     <Text size="sm">Content after spacer</Text>
                   </div>
-                  
+
                   <div>
-                    <Text variant="subtle" size="sm">Bottom border only</Text>
+                    <Text variant="subtle" size="sm">
+                      Bottom border only
+                    </Text>
                     <Spacer size="md" borderBottom />
                     <Text size="sm">Content after spacer</Text>
                   </div>
-                  
+
                   <div>
-                    <Text variant="subtle" size="sm">Both borders</Text>
+                    <Text variant="subtle" size="sm">
+                      Both borders
+                    </Text>
                     <Spacer size="lg" borderTop borderBottom />
                     <Text size="sm">Content after spacer</Text>
                   </div>
-                  
+
                   <div className="border-t border-default pt-4 mt-4">
-                    <Text variant="subtle" size="sm" className="mb-2">Compound Spacers (SPACE-BORDER-SPACE):</Text>
-                    
+                    <Text variant="subtle" size="sm" className="mb-2">
+                      Compound Spacers (SPACE-BORDER-SPACE):
+                    </Text>
+
                     <div>
-                      <Text variant="subtle" size="xs" className="block mb-2">Compound spacer (md-border-lg)</Text>
+                      <Text variant="subtle" size="xs" className="block mb-2">
+                        Compound spacer (md-border-lg)
+                      </Text>
                       <div className="bg-surface-2 p-2 rounded">
                         <Text size="sm">Content before</Text>
                         <Spacer spaceBefore="md" spaceAfter="lg" border />
@@ -1228,7 +1286,7 @@ export const PrimitivesPlayground: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="space-y-3">
                   <h4 className="text-md font-medium text-strong">
                     Link Styles (Web)
@@ -1245,11 +1303,12 @@ export const PrimitivesPlayground: React.FC = () => {
                           className="hover:opacity-80"
                         >
                           default link
-                        </Text>
-                        {' '}that follows our base CSS styling (accent color, medium weight).
+                        </Text>{' '}
+                        that follows our base CSS styling (accent color, medium
+                        weight).
                       </Text>
                     </div>
-                    
+
                     <div className="p-4 bg-surface-3 rounded-xl">
                       <Text>
                         This paragraph contains a{' '}
@@ -1262,11 +1321,11 @@ export const PrimitivesPlayground: React.FC = () => {
                           style={{ color: 'inherit', fontWeight: 'inherit' }}
                         >
                           simple underlined link
-                        </Text>
-                        {' '}that inherits the surrounding text color and style.
+                        </Text>{' '}
+                        that inherits the surrounding text color and style.
                       </Text>
                     </div>
-                    
+
                     <div className="p-4 bg-surface-3 rounded-xl">
                       <Text variant="subtle">
                         Links work in different variants too:{' '}
@@ -1278,8 +1337,8 @@ export const PrimitivesPlayground: React.FC = () => {
                           className="hover:opacity-80"
                         >
                           accent color link
-                        </Text>
-                        {' '}and{' '}
+                        </Text>{' '}
+                        and{' '}
                         <Text
                           as="a"
                           href="https://example.com"
@@ -1293,21 +1352,21 @@ export const PrimitivesPlayground: React.FC = () => {
                         .
                       </Text>
                     </div>
-                    
+
                     <div className="p-4 bg-surface-3 rounded-xl">
                       <Text size="lg" weight="semibold">
                         Links in larger text with{' '}
                         <Text
                           as="a"
-                          href="https://example.com" 
+                          href="https://example.com"
                           target="_blank"
                           rel="noopener noreferrer"
                           size="lg"
                           className="hover:opacity-80"
                         >
                           accent styling
-                        </Text>
-                        {' '}and{' '}
+                        </Text>{' '}
+                        and{' '}
                         <Text
                           as="a"
                           href="https://example.com"
@@ -1545,9 +1604,11 @@ export const PrimitivesPlayground: React.FC = () => {
                         onClick={() => {}}
                       />
                     </FlexRow>
-                    
+
                     <div className="mt-4 pt-4 border-t border-surface-5">
-                      <p className="text-xs text-subtle mb-3">Compact icon-only (like pinned messages):</p>
+                      <p className="text-xs text-subtle mb-3">
+                        Compact icon-only (like pinned messages):
+                      </p>
                       <FlexRow gap="xs" align="center">
                         <Button
                           type="unstyled"
@@ -1856,8 +1917,92 @@ export const PrimitivesPlayground: React.FC = () => {
                     className="!bg-white"
                   />
                   <p className="text-xs text-subtle">
-                    Tests onboarding variant styling
-                    pattern
+                    Tests onboarding variant styling pattern
+                  </p>
+                </div>
+              </div>
+            </div>
+            {/* Label Management */}
+            <div className="space-y-3">
+              <h3 className="text-lg font-medium text-strong">
+                Label Management
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Input
+                    label="Static Label"
+                    labelType="static"
+                    placeholder="Enter text with static label"
+                    value={textValue}
+                    onChange={setTextValue}
+                  />
+                  <p className="text-xs text-subtle">
+                    Traditional static label above the input
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Input
+                    label="Floating Label"
+                    labelType="floating"
+                    placeholder="Additional helper text"
+                    value={emailValue}
+                    onChange={setEmailValue}
+                    type="email"
+                  />
+                  <p className="text-xs text-subtle">
+                    Material-UI style floating label animation
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Input
+                    label="Required Field"
+                    labelType="static"
+                    placeholder="This field is required"
+                    required
+                    helperText="This field must be filled out"
+                  />
+                  <p className="text-xs text-subtle">
+                    Shows required asterisk and helper text
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Input
+                    label="Floating Required"
+                    labelType="floating"
+                    placeholder="Helper text below"
+                    required
+                    helperText="Floating label with required indicator"
+                    error={showInputError}
+                    errorMessage={
+                      showInputError ? 'This field is required' : undefined
+                    }
+                  />
+                  <p className="text-xs text-subtle">
+                    Floating label with required indicator and error state
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Input
+                    label="Password with Label"
+                    labelType="floating"
+                    type="password"
+                    placeholder="Enter your password"
+                    helperText="Password must be at least 8 characters"
+                  />
+                  <p className="text-xs text-subtle">
+                    Floating label with password field and helper text
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Input
+                    label="Disabled with Label"
+                    labelType="static"
+                    value="Disabled input with label"
+                    disabled
+                    helperText="This field cannot be edited"
+                  />
+                  <p className="text-xs text-subtle">
+                    Disabled input with static label and helper text
                   </p>
                 </div>
               </div>
@@ -1866,7 +2011,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-              Mobile Testing Notes
+                Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>
@@ -1879,6 +2024,14 @@ export const PrimitivesPlayground: React.FC = () => {
                 <li>
                   This Input primitive is NOT for chat/message inputs (see
                   MessageInput business component)
+                </li>
+                <li>
+                  Label management works on both platforms with consistent
+                  styling
+                </li>
+                <li>
+                  Floating labels use CSS animations on web, native animations
+                  on mobile
                 </li>
               </ul>
             </div>
@@ -2113,7 +2266,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-              Mobile Testing Notes
+                Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>Auto-resize functionality works on both web and mobile</li>
@@ -2222,7 +2375,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-              Mobile Testing Notes
+                Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>
@@ -2458,9 +2611,7 @@ export const PrimitivesPlayground: React.FC = () => {
                     { value: 'charlie', label: 'Charlie Brown' },
                   ]}
                 />
-                <p className="text-xs text-subtle">
-                  Full width multiselect
-                </p>
+                <p className="text-xs text-subtle">Full width multiselect</p>
               </div>
 
               <div className="space-y-2">
@@ -2800,7 +2951,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-              Mobile Testing Notes
+                Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>Web: Uses FontAwesome check icon in selected state</li>
@@ -2909,7 +3060,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-              Mobile Testing Notes
+                Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>Web: Native HTML radio inputs with custom styling</li>
@@ -3046,7 +3197,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
               <h4 className="font-semibold text-strong mb-2">
-              Mobile Testing Notes
+                Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                 <li>Web: Uses existing ReactTooltip with touch support</li>
@@ -3156,23 +3307,23 @@ export const PrimitivesPlayground: React.FC = () => {
                     <span className="text-sm text-subtle">lg</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Icon name="heart" size="xl"/>
+                    <Icon name="heart" size="xl" />
                     <span className="text-sm text-subtle">xl</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Icon name="heart" size="2xl"/>
+                    <Icon name="heart" size="2xl" />
                     <span className="text-sm text-subtle">2xl</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Icon name="heart" size="3xl"/>
+                    <Icon name="heart" size="3xl" />
                     <span className="text-sm text-subtle">3xl</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Icon name="heart" size="4xl"/>
+                    <Icon name="heart" size="4xl" />
                     <span className="text-sm text-subtle">4xl</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Icon name="heart" size="5xl"/>
+                    <Icon name="heart" size="5xl" />
                     <span className="text-sm text-subtle">5xl</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -3280,18 +3431,21 @@ export const PrimitivesPlayground: React.FC = () => {
                   FileUpload Primitive
                 </h2>
                 <p className="text-base text-main">
-                  Cross-platform file upload component with drag-and-drop for web
-                  and native picker integration for mobile.
+                  Cross-platform file upload component with drag-and-drop for
+                  web and native picker integration for mobile.
                 </p>
               </div>
 
               {/* Image Upload */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Image Upload</h3>
+                <h3 className="text-lg font-medium text-strong">
+                  Image Upload
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3">
                     <p className="text-sm text-subtle">
-                      Image upload with drag and drop (web) / image picker (mobile):
+                      Image upload with drag and drop (web) / image picker
+                      (mobile):
                     </p>
                     <FileUpload
                       accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.gif'] }}
@@ -3302,7 +3456,7 @@ export const PrimitivesPlayground: React.FC = () => {
                       onError={(error) => setUploadError(error.message)}
                       maxSize={2 * 1024 * 1024} // 2MB
                       testId="image-upload"
-                      {...({onDragActiveChange: setIsDragActive} as any)}
+                      {...({ onDragActiveChange: setIsDragActive } as any)}
                     >
                       <div
                         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
@@ -3316,10 +3470,17 @@ export const PrimitivesPlayground: React.FC = () => {
                           size="xl"
                           className="mx-auto mb-3 text-subtle"
                         />
-                        <Text weight="medium" className="mb-3 text-center block">
+                        <Text
+                          weight="medium"
+                          className="mb-3 text-center block"
+                        >
                           Click or drag to upload image
                         </Text>
-                        <Text size="sm" variant="subtle" className="text-center block">
+                        <Text
+                          size="sm"
+                          variant="subtle"
+                          className="text-center block"
+                        >
                           PNG, JPG, GIF up to 2MB
                         </Text>
                       </div>
@@ -3331,7 +3492,10 @@ export const PrimitivesPlayground: React.FC = () => {
                     <p className="text-sm text-subtle">Upload Results:</p>
                     <div className="bg-surface-3 rounded-lg p-4 space-y-3">
                       {uploadError && (
-                        <div className="text-sm" style={{ color: 'var(--color-text-danger)' }}>
+                        <div
+                          className="text-sm"
+                          style={{ color: 'var(--color-text-danger)' }}
+                        >
                           Error: {uploadError}
                         </div>
                       )}
@@ -3405,7 +3569,11 @@ export const PrimitivesPlayground: React.FC = () => {
                       <Text weight="medium" className="mb-2 text-center block">
                         Upload any files
                       </Text>
-                      <Text size="sm" variant="subtle" className="text-center block">
+                      <Text
+                        size="sm"
+                        variant="subtle"
+                        className="text-center block"
+                      >
                         Multiple files, up to 10MB each
                       </Text>
                     </div>
@@ -3429,7 +3597,9 @@ export const PrimitivesPlayground: React.FC = () => {
                   <li>Unified API: Same props work across both platforms</li>
                   <li>File validation: Size limits, MIME type filtering</li>
                   <li>Error handling: Platform-appropriate error messages</li>
-                  <li>Accessibility: Full keyboard and screen reader support</li>
+                  <li>
+                    Accessibility: Full keyboard and screen reader support
+                  </li>
                   <li>Performance: No memory leaks, proper cleanup</li>
                 </ul>
               </div>
@@ -3475,7 +3645,6 @@ export const PrimitivesPlayground: React.FC = () => {
           </div>
         </div>
       </div>
-
     </div>
   );
 };

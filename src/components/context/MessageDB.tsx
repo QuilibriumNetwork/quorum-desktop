@@ -356,26 +356,31 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
       if (spaceId != channelId) {
         const space = await messageDB.getSpace(spaceId);
-        
-        
+
         // For read-only channels: ISOLATED permission system - only managers can delete
         const channel = space?.groups
-          ?.find(g => g.channels.find(c => c.channelId === channelId))
-          ?.channels.find(c => c.channelId === channelId);
-          
+          ?.find((g) => g.channels.find((c) => c.channelId === channelId))
+          ?.channels.find((c) => c.channelId === channelId);
+
         if (channel?.isReadOnly) {
-          const isManager = !!(channel.managerRoleIds && space?.roles?.some(role => 
-            channel.managerRoleIds?.includes(role.roleId) && 
-            role.members.includes(decryptedContent.content.senderId)
-          ));
+          const isManager = !!(
+            channel.managerRoleIds &&
+            space?.roles?.some(
+              (role) =>
+                channel.managerRoleIds?.includes(role.roleId) &&
+                role.members.includes(decryptedContent.content.senderId)
+            )
+          );
           if (isManager) {
-            await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
+            await messageDB.deleteMessage(
+              decryptedContent.content.removeMessageId
+            );
             return;
           }
           // For read-only channels, if not a manager, deny delete (even if user has traditional roles)
           return;
         }
-        
+
         // For regular channels: Traditional role-based permissions
         if (
           !space?.roles.find(
@@ -553,37 +558,41 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
       // Check if this delete request should be honored
       let shouldHonorDelete = false;
-      
+
       if (!targetMessage) {
         // If target message doesn't exist, always remove from UI
         shouldHonorDelete = true;
       } else {
         // If target message exists, check permissions
-        
+
         // 1. Users can always delete their own messages
-        if (targetMessage.content.senderId === decryptedContent.content.senderId) {
+        if (
+          targetMessage.content.senderId === decryptedContent.content.senderId
+        ) {
           shouldHonorDelete = true;
         } else {
-          
           if (!shouldHonorDelete && spaceId != channelId) {
             const space = await messageDB.getSpace(spaceId);
-            
+
             // 3. Check read-only channel manager privileges
             const channel = space?.groups
-              ?.find(g => g.channels.find(c => c.channelId === channelId))
-              ?.channels.find(c => c.channelId === channelId);
-              
+              ?.find((g) => g.channels.find((c) => c.channelId === channelId))
+              ?.channels.find((c) => c.channelId === channelId);
+
             if (channel?.isReadOnly && channel.managerRoleIds) {
-              const isManager = space?.roles?.some(role => 
-                channel.managerRoleIds?.includes(role.roleId) && 
-                role.members.includes(decryptedContent.content.senderId)
+              const isManager = space?.roles?.some(
+                (role) =>
+                  channel.managerRoleIds?.includes(role.roleId) &&
+                  role.members.includes(decryptedContent.content.senderId)
               );
               if (isManager) {
                 shouldHonorDelete = true;
-                console.log('🔹 ADDMESSAGE: Honoring read-only manager delete in UI cache');
+                console.log(
+                  '🔹 ADDMESSAGE: Honoring read-only manager delete in UI cache'
+                );
               }
             }
-            
+
             // 4. Check traditional role permissions
             if (!shouldHonorDelete && !channel?.isReadOnly) {
               const hasDeleteRole = space?.roles?.find(
@@ -593,7 +602,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               );
               if (hasDeleteRole) {
                 shouldHonorDelete = true;
-                console.log('🔹 ADDMESSAGE: Honoring role-based delete in UI cache');
+                console.log(
+                  '🔹 ADDMESSAGE: Honoring role-based delete in UI cache'
+                );
               }
             }
           }
@@ -1089,9 +1100,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                     'utf-8'
                   )
                 );
-                const inboxMismatch = (participant.inbox_address !== inboxAddress && participant.inbox_address);
-                const messageIdMismatch = decryptedContent.messageId !== Buffer.from(messageId).toString('hex');
-                
+                const inboxMismatch =
+                  participant.inbox_address !== inboxAddress &&
+                  participant.inbox_address;
+                const messageIdMismatch =
+                  decryptedContent.messageId !==
+                  Buffer.from(messageId).toString('hex');
+
                 if (inboxMismatch || messageIdMismatch) {
                   console.warn(t`invalid address for signature`);
                   decryptedContent.publicKey = undefined;
@@ -3287,7 +3302,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     ) => {
       // Get space information to validate kick operation
       const space = await messageDB.getSpace(spaceId);
-      
+
       // Prevent kicking the space owner
       if (!canKickUser(userAddress, space)) {
         console.error('Cannot kick space owner');
@@ -4965,7 +4980,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
         // enforce non-repudiability
         if (
-          (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) ||
+          !space?.isRepudiable ||
+          (space?.isRepudiable && !skipSigning) ||
           (typeof pendingMessage !== 'string' &&
             (pendingMessage as any).type === 'update-profile')
         ) {
@@ -5338,7 +5354,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             messageDB.getSpaceKeys(space.spaceId),
             messageDB.getEncryptionStates({
               conversationId: space.spaceId + '/' + space.spaceId,
-            })
+            }),
           ]);
           return {
             spaceId: space.spaceId,
@@ -5346,7 +5362,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             keys: keys,
           };
         });
-        
+
         config.spaceKeys = await Promise.all(spaceKeysPromises);
 
         let iv = crypto.getRandomValues(new Uint8Array(12));

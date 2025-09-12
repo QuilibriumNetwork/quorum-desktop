@@ -1,6 +1,5 @@
 # React Hooks Violation: Conditional Return Before Hooks
 
-
 **Date**: 2025-01-20  
 **Issue**: React hooks called conditionally due to early return statement  
 **Files Affected**: src/App.tsx, src/App-prod-new.tsx  

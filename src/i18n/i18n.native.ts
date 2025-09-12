@@ -84,7 +84,7 @@ export function getUserLocale() {
 
 export function saveUserLocale(locale: string) {
   // Fire and forget for API compatibility
-  AsyncStorage.setItem('language', locale).catch(error => {
+  AsyncStorage.setItem('language', locale).catch((error) => {
     console.warn('Failed to save locale:', error);
   });
 }

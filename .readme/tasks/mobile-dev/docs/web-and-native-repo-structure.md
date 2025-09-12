@@ -1,11 +1,11 @@
 # Web/Native Repository Structure
 
-
 This document explains the optimal repository structure for the cross-platform Quorum app that enables parallel development of web and mobile applications while maximizing code sharing.
 
 ## **Current vs Target Structure**
 
 ### Current (Single Platform)
+
 ```
 quorum/
 ├── src/                    # Mixed web/shared code
@@ -16,6 +16,7 @@ quorum/
 ```
 
 ### Target (Cross-Platform)
+
 ```
 quorum/
 ├── src/                          # SHARED CODE (90% of app)
@@ -209,14 +210,14 @@ window.Buffer = Buffer;
 
 export default function App() {
   // ... existing state and effects (unchanged)
-  
+
   return (
     <ErrorBoundary fallback={<Maintenance />}>
       {user && currentPasskeyInfo ? (
         <div className="bg-app flex flex-col min-h-screen text-main">
           {/* Platform-specific titlebar */}
           {isWeb() && isElectron() && <CustomTitlebar />}
-          
+
           <Suspense fallback={<Connecting />}>
             <RegistrationProvider>
               <ResponsiveLayoutProvider>
@@ -285,24 +286,24 @@ export function Router() {
     "build": "vite build --config web/vite.config.ts",
     "build:preview": "yarn build && yarn preview --port 3000",
     "preview": "vite preview --config web/vite.config.ts",
-    
+
     // Web + Electron
     "electron:dev": "NODE_ENV=development electron web/electron/main.cjs",
     "electron:build": "yarn build && electron-builder",
-    
+
     // Mobile Development
     "mobile:dev": "cd mobile && expo start",
     "mobile:android": "cd mobile && expo start --android",
     "mobile:ios": "cd mobile && expo start --ios",
     "mobile:build:android": "cd mobile && expo build:android",
     "mobile:build:ios": "cd mobile && expo build:ios",
-    
+
     // Development Tools
     "playground:web": "vite --config src/dev/playground/web/vite.config.ts",
     "playground:mobile": "cd src/dev/playground/mobile && expo start",
     "playground:sync": "node src/dev/scripts/playground-sync.js",
     "playground:check": "node src/dev/scripts/playground-check-sync.js",
-    
+
     // Quality & Maintenance
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -429,9 +430,7 @@ module.exports = config;
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },

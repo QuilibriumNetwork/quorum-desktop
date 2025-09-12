@@ -1,10 +1,20 @@
 import React from 'react';
 import { ScrollView, View, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, FlexColumn, FlexRow, Text, Icon, Title } from '@/primitives';
+import {
+  Container,
+  FlexColumn,
+  FlexRow,
+  Text,
+  Icon,
+  Title,
+} from '@/primitives';
 import { useTheme } from '@/primitives/theme';
 import { IconName } from '@/primitives/Icon/types';
-import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
+import {
+  commonTestStyles,
+  createThemedStyles,
+} from '@/styles/commonTestStyles';
 
 interface BusinessFeature {
   id: string;
@@ -37,7 +47,8 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
     {
       id: 'auth',
       title: 'Authentication Flow',
-      description: 'Complete Login → Onboarding flow with step indicator and responsive design',
+      description:
+        'Complete Login → Onboarding flow with step indicator and responsive design',
       icon: 'shield',
       status: 'ready',
       onPress: () => onSelectFeature('auth'),
@@ -77,7 +88,8 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
     {
       id: 'copy',
       title: 'Click To Copy',
-      description: 'Cross-platform copy component with gesture support and adapter pattern',
+      description:
+        'Cross-platform copy component with gesture support and adapter pattern',
       icon: 'clipboard',
       status: 'ready',
       onPress: () => onSelectFeature('copy'),
@@ -85,7 +97,8 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
     {
       id: 'modals',
       title: 'Modal Components',
-      description: 'Cross-platform modal testing with bottom sheet and swipe gestures',
+      description:
+        'Cross-platform modal testing with bottom sheet and swipe gestures',
       icon: 'compress-alt',
       status: 'ready',
       onPress: () => onSelectFeature('modals'),
@@ -109,7 +122,8 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
     {
       id: 'messagecomposer',
       title: 'Message Composer',
-      description: 'Native message composer with mobile-specific features and layout',
+      description:
+        'Native message composer with mobile-specific features and layout',
       icon: 'edit',
       status: 'ready',
       onPress: () => onSelectFeature('messagecomposer'),
@@ -144,9 +158,10 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
       style={[
         {
           backgroundColor: theme.colors.bg.card,
-          borderColor: feature.status === 'ready' 
-            ? theme.colors.accent[500] 
-            : theme.colors.border.default,
+          borderColor:
+            feature.status === 'ready'
+              ? theme.colors.accent[500]
+              : theme.colors.border.default,
           borderWidth: feature.status === 'ready' ? 2 : 1,
           borderRadius: 12,
           padding: 16,
@@ -161,7 +176,11 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
         <Icon
           name={feature.icon}
           size="lg"
-          color={feature.status === 'ready' ? theme.colors.accent[500] : theme.colors.text.subtle}
+          color={
+            feature.status === 'ready'
+              ? theme.colors.accent[500]
+              : theme.colors.text.subtle
+          }
           style={{ marginTop: 2 }}
         />
         <View style={{ flex: 1 }}>
@@ -177,7 +196,11 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
                 borderRadius: 4,
               }}
             >
-              <Text size="xs" weight="semibold" color={getStatusColor(feature.status)}>
+              <Text
+                size="xs"
+                weight="semibold"
+                color={getStatusColor(feature.status)}
+              >
                 {getStatusText(feature.status)}
               </Text>
             </View>
@@ -197,7 +220,7 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
         { backgroundColor: theme.colors.bg.app },
       ]}
     >
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={commonTestStyles.contentPadding}
         showsVerticalScrollIndicator={false}
       >
@@ -212,9 +235,7 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
           </FlexColumn>
         </View>
 
-        <View>
-          {features.map(renderFeatureCard)}
-        </View>
+        <View>{features.map(renderFeatureCard)}</View>
       </ScrollView>
     </SafeAreaView>
   );

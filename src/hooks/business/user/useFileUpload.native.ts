@@ -1,6 +1,10 @@
 import { useState, useCallback } from 'react';
 import { Alert } from 'react-native';
-import { launchImageLibrary, launchCamera, ImagePickerResponse } from 'react-native-image-picker';
+import {
+  launchImageLibrary,
+  launchCamera,
+  ImagePickerResponse,
+} from 'react-native-image-picker';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 
@@ -14,7 +18,7 @@ export interface FileUploadFile {
 }
 
 /**
- * Hook for native file upload functionality  
+ * Hook for native file upload functionality
  * Handles image selection, validation, and processing
  * Native-only implementation using react-native-image-picker
  */
@@ -96,7 +100,7 @@ export const useWebFileUpload = () => {
 
     if (response.assets && response.assets.length > 0) {
       const asset = response.assets[0];
-      
+
       // Check file size
       if (asset.fileSize && asset.fileSize > maxImageSize) {
         setFileError(
@@ -124,7 +128,7 @@ export const useWebFileUpload = () => {
   // Generate data URL for image preview (compatible with web version)
   const getImageDataUrl = useCallback((): string | null => {
     if (!currentFile || !fileData) return null;
-    
+
     return `data:${currentFile.type};base64,${fileData}`;
   }, [currentFile, fileData]);
 
@@ -140,37 +144,40 @@ export const useWebFileUpload = () => {
   }, []);
 
   // Mock dropzone props for compatibility with web version
-  const getRootProps = useCallback(() => ({
-    onPress: showImagePicker,
-  }), [showImagePicker]);
+  const getRootProps = useCallback(
+    () => ({
+      onPress: showImagePicker,
+    }),
+    [showImagePicker]
+  );
 
   const getInputProps = useCallback(() => ({}), []);
 
   return {
     // File state (compatible with web version)
     currentFile,
-    fileData, 
+    fileData,
     fileError,
     isDragActive: false, // Always false on mobile
     isSelecting,
-    
+
     // Validation (compatible with web version)
     hasValidFile,
     canSaveFile,
-    
+
     // Actions
     showImagePicker,
     selectFromCamera,
     selectFromLibrary,
     clearFile,
-    
+
     // Dropzone compatibility props (for web compatibility)
     getRootProps,
     getInputProps,
-    
+
     // Helpers (compatible with web version)
     getImageDataUrl,
-    
+
     // Constants
     maxImageSize,
   };

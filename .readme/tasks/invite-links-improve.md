@@ -6,9 +6,6 @@ the public invite link UI functionality needs some work
 - when disabling it should warn with a confirmation modal
 - upon selecting, it should save/update the space config's inviteURL
 
-
-
 Ref: https://quilibrium.slack.com/archives/C08SP1TUJHJ/p1754368782373349
 
 ---
-

@@ -25,10 +25,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>('system');
   const [accent, setAccentState] = useState<AccentColor>('blue');
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // React Native system theme detection
   const systemColorScheme = useColorScheme();
-  
+
   // Helper function to resolve 'system' theme to actual theme
   const resolveTheme = (themeValue: Theme): 'light' | 'dark' => {
     if (themeValue === 'system') {
@@ -36,9 +36,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     }
     return themeValue;
   };
-  
+
   // Resolved theme state - always 'light' or 'dark', never 'system'
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() => 
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() =>
     resolveTheme(theme)
   );
 
@@ -46,9 +46,13 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   useEffect(() => {
     const loadPersistedValues = async () => {
       try {
-        const savedTheme = await AsyncStorage.getItem('theme') as Theme | null;
-        const savedAccent = await AsyncStorage.getItem('accent-color') as AccentColor | null;
-        
+        const savedTheme = (await AsyncStorage.getItem(
+          'theme'
+        )) as Theme | null;
+        const savedAccent = (await AsyncStorage.getItem(
+          'accent-color'
+        )) as AccentColor | null;
+
         if (savedTheme) {
           setThemeState(savedTheme);
         }
@@ -61,7 +65,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         setIsLoading(false);
       }
     };
-    
+
     loadPersistedValues();
   }, []);
 
@@ -126,8 +130,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   }
 
   return (
-    <ThemeContext.Provider value={value}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );
 };

@@ -264,7 +264,7 @@ export const MessageComposer = forwardRef<
             alignItems: 'center',
             marginVertical: 8,
             paddingVertical: 4,
-            paddingHorizontal: 8, 
+            paddingHorizontal: 8,
             borderRadius: 12,
             borderTopLeftRadius: inReplyTo ? 0 : 12,
             borderTopRightRadius: inReplyTo ? 0 : 12,

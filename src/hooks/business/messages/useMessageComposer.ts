@@ -1,35 +1,50 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import Compressor from 'compressorjs';
-import { Message as MessageType, EmbedMessage, StickerMessage } from '../../../api/quorumApi';
+import {
+  Message as MessageType,
+  EmbedMessage,
+  StickerMessage,
+} from '../../../api/quorumApi';
 import { t } from '@lingui/core/macro';
 
 interface UseMessageComposerOptions {
   type: 'channel' | 'direct';
-  onSubmitMessage: (message: string | object, inReplyTo?: string) => Promise<void>;
+  onSubmitMessage: (
+    message: string | object,
+    inReplyTo?: string
+  ) => Promise<void>;
   onSubmitSticker?: (stickerId: string, inReplyTo?: string) => Promise<void>;
   hasStickers?: boolean;
 }
 
 export function useMessageComposer(options: UseMessageComposerOptions) {
-  const { type, onSubmitMessage, onSubmitSticker, hasStickers = false } = options;
+  const {
+    type,
+    onSubmitMessage,
+    onSubmitSticker,
+    hasStickers = false,
+  } = options;
 
   // Message state
   const [pendingMessage, setPendingMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [inReplyTo, setInReplyTo] = useState<MessageType>();
   const [showStickers, setShowStickers] = useState(false);
-  
+
   // File upload state
   const [fileData, setFileData] = useState<ArrayBuffer | undefined>();
   const [fileType, setFileType] = useState<string>();
   const [fileError, setFileError] = useState<string | null>(null);
-  
+
   // Ref for textarea
   const editor = useRef<HTMLTextAreaElement>(null);
 
   // Image compression
-  const compressImage = async (file: FileWithPath, acceptedFiles: FileWithPath[]) => {
+  const compressImage = async (
+    file: FileWithPath,
+    acceptedFiles: FileWithPath[]
+  ) => {
     return new Promise<File>((resolve, reject) => {
       if (acceptedFiles[0].type === 'image/gif') {
         resolve(acceptedFiles[0] as File);
@@ -53,7 +68,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     });
   };
 
-  // File dropzone  
+  // File dropzone
   const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
     accept: {
       'image/png': ['.png'],
@@ -89,11 +104,12 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
 
   // Calculate textarea rows
   const calculateRows = useCallback(() => {
-    const rowCount = pendingMessage.split('').filter((c) => c === '\n').length + 1;
-    
+    const rowCount =
+      pendingMessage.split('').filter((c) => c === '\n').length + 1;
+
     if (rowCount > 4) return 4;
     if (pendingMessage === '') return 1;
-    
+
     return Math.min(
       4,
       Math.max(
@@ -127,29 +143,42 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
         setIsSubmitting(false);
       }
     }
-  }, [pendingMessage, fileData, fileType, isSubmitting, onSubmitMessage, inReplyTo]);
+  }, [
+    pendingMessage,
+    fileData,
+    fileType,
+    isSubmitting,
+    onSubmitMessage,
+    inReplyTo,
+  ]);
 
   // Submit sticker
-  const submitSticker = useCallback(async (stickerId: string) => {
-    if (onSubmitSticker && !isSubmitting) {
-      setIsSubmitting(true);
-      try {
-        await onSubmitSticker(stickerId, inReplyTo?.messageId);
-        setInReplyTo(undefined);
-        setShowStickers(false);
-      } finally {
-        setIsSubmitting(false);
+  const submitSticker = useCallback(
+    async (stickerId: string) => {
+      if (onSubmitSticker && !isSubmitting) {
+        setIsSubmitting(true);
+        try {
+          await onSubmitSticker(stickerId, inReplyTo?.messageId);
+          setInReplyTo(undefined);
+          setShowStickers(false);
+        } finally {
+          setIsSubmitting(false);
+        }
       }
-    }
-  }, [onSubmitSticker, isSubmitting, inReplyTo]);
+    },
+    [onSubmitSticker, isSubmitting, inReplyTo]
+  );
 
   // Handle key press
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      submitMessage();
-    }
-  }, [submitMessage]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        submitMessage();
+      }
+    },
+    [submitMessage]
+  );
 
   // Clear file
   const clearFile = useCallback(() => {
@@ -164,28 +193,28 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     isSubmitting,
     inReplyTo,
     setInReplyTo,
-    
+
     // File state
     fileData,
     fileType,
     fileError,
     clearFile,
-    
+
     // Sticker state
     showStickers,
     setShowStickers,
-    
+
     // Functions
     submitMessage,
     submitSticker,
     handleKeyDown,
     calculateRows,
-    
+
     // Refs and props
     editor,
     getRootProps,
     getInputProps,
-    
+
     // Config
     hasStickers,
   };

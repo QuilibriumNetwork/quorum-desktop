@@ -1,7 +1,5 @@
 # Kick User UX Improvements
 
-
-
 Added to GitHub Issues
 
 ## Status: Attempted - Reverted

@@ -1,6 +1,5 @@
 # Component Architecture Masterplan - Desktop/Mobile Unification
 
-
 ## Executive Summary
 
 This masterplan defines the **architectural philosophy and technical approach** for creating a unified codebase that supports both desktop and mobile platforms. The approach extracts only the "raw HTML portion" into platform-specific primitives while keeping 90%+ of the codebase shared.

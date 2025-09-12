@@ -1,6 +1,5 @@
 # Color Switcher Implementation
 
-
 Create a comprehensive implementation plan to add a "color switcher" to `UserSettingsModal.tsx`, allowing users to:
 
 1. Choose between **light and dark themes** (ALREADY DONE)

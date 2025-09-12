@@ -138,9 +138,9 @@ function modalReducer(state: ModalState, action: ModalAction): ModalState {
     case 'OPEN_CONVERSATION_SETTINGS':
       return {
         ...state,
-        conversationSettings: { 
-          isOpen: true, 
-          conversationId: action.conversationId 
+        conversationSettings: {
+          isOpen: true,
+          conversationId: action.conversationId,
         },
       };
     case 'CLOSE_CONVERSATION_SETTINGS':

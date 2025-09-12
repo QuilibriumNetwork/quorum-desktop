@@ -10,12 +10,12 @@ The space roles system provides **space-wide, role-based access control** for tr
 
 ```typescript
 export type Role = {
-  roleId: string;        // Unique identifier (crypto.randomUUID())
-  displayName: string;   // Human-readable name shown in UI
-  roleTag: string;       // Short identifier (e.g., @moderator)
-  color: string;         // Visual color for role display
-  members: string[];     // Array of user addresses with this role
-  permissions: Permission[];  // Array of permissions granted
+  roleId: string; // Unique identifier (crypto.randomUUID())
+  displayName: string; // Human-readable name shown in UI
+  roleTag: string; // Short identifier (e.g., @moderator)
+  color: string; // Visual color for role display
+  members: string[]; // Array of user addresses with this role
+  permissions: Permission[]; // Array of permissions granted
 };
 
 export type Permission = 'message:delete' | 'message:pin' | 'user:kick';
@@ -24,18 +24,21 @@ export type Permission = 'message:delete' | 'message:pin' | 'user:kick';
 ### Permission Types
 
 #### **`message:delete`**
+
 - **Scope**: Delete any message in regular channels
 - **UI Integration**: Controls delete button visibility in message actions
 - **Processing**: Validated in MessageDB for message removal operations
 - **Restrictions**: Does not work in read-only channels (isolation principle)
 
-#### **`message:pin`**  
+#### **`message:pin`**
+
 - **Scope**: Pin/unpin any message in regular channels
 - **UI Integration**: Controls pin button visibility and pin management panels
 - **Processing**: Validated through pinning mutation hooks
 - **Restrictions**: Does not work in read-only channels (isolation principle)
 
 #### **`user:kick`**
+
 - **Scope**: Remove users from the entire space
 - **UI Integration**: Controls kick button in user profiles
 - **Processing**: Multi-layer validation with space owner protection
@@ -59,12 +62,15 @@ export function hasPermission(
 ): boolean {
   // Space owners always have all permissions
   if (isSpaceOwner) return true;
-  
+
   // Check role-based permissions
-  return space?.roles?.some(role => 
-    role.members.includes(userAddress) && 
-    role.permissions.includes(permission)
-  ) || false;
+  return (
+    space?.roles?.some(
+      (role) =>
+        role.members.includes(userAddress) &&
+        role.permissions.includes(permission)
+    ) || false
+  );
 }
 ```
 
@@ -82,14 +88,14 @@ export function getUserPermissions(
   if (isSpaceOwner) {
     return ['message:delete', 'message:pin', 'user:kick'];
   }
-  
+
   const permissions = new Set<Permission>();
-  space?.roles?.forEach(role => {
+  space?.roles?.forEach((role) => {
     if (role.members.includes(userAddress)) {
-      role.permissions.forEach(p => permissions.add(p));
+      role.permissions.forEach((p) => permissions.add(p));
     }
   });
-  
+
   return Array.from(permissions);
 }
 ```
@@ -97,13 +103,15 @@ export function getUserPermissions(
 ### Enforcement Locations
 
 #### **UI Level Enforcement**
+
 - **Message Actions**: Delete/pin buttons shown based on `hasPermission()` checks
 - **User Profiles**: Kick buttons controlled by permission + space owner protection
 - **Role Management**: Role assignment UI restricted to space owners
 
 #### **Processing Level Enforcement**
+
 - **MessageDB Operations**: Server-side validation for delete operations (role-based only, space owners NOT implemented)
-- **Pinning System**: Permission checks in mutation hooks (role-based only, space owners NOT implemented)  
+- **Pinning System**: Permission checks in mutation hooks (role-based only, space owners NOT implemented)
 - **User Management**: Multi-layer kick protection system (including space owner protection)
 
 ## Role Management Components
@@ -111,6 +119,7 @@ export function getUserPermissions(
 ### Core Management Hooks
 
 #### **`useRoleManagement`** (`src/hooks/business/spaces/useRoleManagement.ts`)
+
 ```typescript
 export interface UseRoleManagementReturn {
   roles: Role[];
@@ -125,12 +134,14 @@ export interface UseRoleManagementReturn {
 ```
 
 **Features**:
+
 - Complete CRUD operations for role management
 - Real-time permission toggling with multiselect support
 - Automatic role ID generation using `crypto.randomUUID()`
 - Validation preventing empty role names/tags
 
 #### **`useUserRoleManagement`** (`src/hooks/business/user/useUserRoleManagement.ts`)
+
 - User-role assignment operations with immediate UI updates
 - Multi-role assignment support
 - Real-time role change reflection across the application
@@ -138,16 +149,19 @@ export interface UseRoleManagementReturn {
 ### UI Components
 
 #### **SpaceEditor Role Management**
+
 **Location**: `src/components/channel/SpaceEditor.tsx`
 
 **Features**:
+
 - **Role Creation**: Add new roles with custom names, tags, and colors
-- **Permission Assignment**: Multiselect dropdown for all available permissions  
+- **Permission Assignment**: Multiselect dropdown for all available permissions
 - **Role Editing**: Inline editing of role properties
 - **Role Deletion**: Remove roles with automatic user unassignment
 - **Validation**: Prevents saving roles with empty required fields
 
 **Permission UI**:
+
 ```typescript
 // Multiselect permission interface
 <Select
@@ -164,9 +178,11 @@ export interface UseRoleManagementReturn {
 ```
 
 #### **UserProfile Role Assignment**
+
 **Location**: `src/components/user/UserProfile.tsx`
 
 **Features**:
+
 - **Role Assignment**: Assign available space roles to users
 - **Role Removal**: Remove assigned roles from users
 - **Multi-Role Display**: Show all roles assigned to a user
@@ -179,7 +195,7 @@ export interface UseRoleManagementReturn {
 **Multi-Layer Kick Protection System**:
 
 1. **UI Layer**: Kick buttons hidden for space owners using `canKickUser()`
-2. **Permission Layer**: `hasPermission()` considers target user protection  
+2. **Permission Layer**: `hasPermission()` considers target user protection
 3. **Processing Layer**: MessageDB server-side validation prevents space owner kicks
 
 ```typescript
@@ -192,6 +208,7 @@ export function canKickUser(targetUserAddress: string, space: Space): boolean {
 ```
 
 **Protection Ensures**:
+
 - Space owners maintain permanent control over their spaces
 - Prevents privilege escalation attacks
 - Multiple validation layers for security depth
@@ -199,6 +216,7 @@ export function canKickUser(targetUserAddress: string, space: Space): boolean {
 ### Permission Validation Strategy
 
 **Defense in Depth Approach**:
+
 - **UI Controls**: Prevent unauthorized action attempts
 - **Business Logic**: Validate permissions in hooks and utilities
 - **Server Validation**: Final authorization in MessageDB processing
@@ -217,11 +235,12 @@ export function canKickUser(targetUserAddress: string, space: Space): boolean {
 ### Processing Integration
 
 **MessageDB Validation Pattern**:
+
 ```typescript
 // Example: Delete message processing
 if (spaceId != channelId) {
   const space = await messageDB.getSpace(spaceId);
-  
+
   // For read-only channels: isolated manager system
   if (channel?.isReadOnly) {
     const isManager = /* manager role check */;
@@ -231,10 +250,10 @@ if (spaceId != channelId) {
     }
     return; // Block traditional roles
   }
-  
-  // For regular channels: traditional role system  
-  if (!space?.roles.find(r => 
-    r.members.includes(senderId) && 
+
+  // For regular channels: traditional role system
+  if (!space?.roles.find(r =>
+    r.members.includes(senderId) &&
     r.permissions.includes('message:delete')
   )) {
     return;
@@ -246,6 +265,7 @@ if (spaceId != channelId) {
 ## Current Implementation Status
 
 ### ✅ Fully Implemented
+
 - **Message Deletion**: Role-based delete permissions working in regular channels
 - **Message Pinning**: Role-based pin permissions with proper UI integration
 - **User Kicking**: Complete kick system with space owner protection
@@ -253,6 +273,7 @@ if (spaceId != channelId) {
 - **Multi-Role Support**: Users can have multiple roles with accumulated permissions
 
 ### ⚠️ Known Limitations
+
 - **Mixed Enforcement Patterns**: Some areas use direct role checks instead of `hasPermission()`
 - **Incomplete Server Validation**: Not all permission checks have full server-side enforcement
 - **Limited Permission Scope**: Only covers basic moderation, not channel/space management
@@ -262,35 +283,39 @@ if (spaceId != channelId) {
 ### Permission System Expansion
 
 **Additional Message Permissions**:
+
 ```typescript
-type Permission = 
-  | 'message:delete'    // ✅ IMPLEMENTED
-  | 'message:pin'       // ✅ IMPLEMENTED  
-  | 'message:edit'      // Future: Allow editing others' messages
-  | 'message:react'     // Future: Control reaction permissions
+type Permission =
+  | 'message:delete' // ✅ IMPLEMENTED
+  | 'message:pin' // ✅ IMPLEMENTED
+  | 'message:edit' // Future: Allow editing others' messages
+  | 'message:react'; // Future: Control reaction permissions
 ```
 
 **Channel Management Permissions**:
+
 ```typescript
 type Permission =
-  | 'channel:create'    // Create new channels
-  | 'channel:edit'      // Modify channel settings  
-  | 'channel:delete'    // Remove channels
-  | 'channel:manage_permissions' // Set channel-specific permissions
+  | 'channel:create' // Create new channels
+  | 'channel:edit' // Modify channel settings
+  | 'channel:delete' // Remove channels
+  | 'channel:manage_permissions'; // Set channel-specific permissions
 ```
 
 **Space Management Permissions**:
+
 ```typescript
 type Permission =
-  | 'space:edit_settings'    // Modify space settings
-  | 'space:manage_emojis'    // Add/remove custom emojis
-  | 'space:manage_stickers'  // Add/remove custom stickers
-  | 'space:generate_invites' // Create invite links
+  | 'space:edit_settings' // Modify space settings
+  | 'space:manage_emojis' // Add/remove custom emojis
+  | 'space:manage_stickers' // Add/remove custom stickers
+  | 'space:generate_invites'; // Create invite links
 ```
 
 ### Role Hierarchy System
 
 **Proposed Enhancement**:
+
 ```typescript
 export type Role = {
   roleId: string;
@@ -299,24 +324,27 @@ export type Role = {
   color: string;
   members: string[];
   permissions: Permission[];
-  hierarchy: number;        // Priority level (higher = more authority)
-  inheritsFrom?: string[];  // Inherit permissions from other roles
+  hierarchy: number; // Priority level (higher = more authority)
+  inheritsFrom?: string[]; // Inherit permissions from other roles
 };
 ```
 
 **Benefits**:
+
 - **Role Inheritance**: Admin roles automatically include moderator permissions
-- **Conflict Resolution**: Clear priority system for role conflicts  
+- **Conflict Resolution**: Clear priority system for role conflicts
 - **Simplified Management**: Templates and inheritance reduce configuration complexity
 
 ### Advanced Features
 
 **Role Templates**:
+
 - Predefined role configurations (Admin, Moderator, Member)
 - Quick setup for common permission sets
 - Customizable per space
 
 **Audit and Logging**:
+
 - Track all permission-based actions
 - Role assignment/removal history
 - Compliance and security audit capabilities
@@ -352,5 +380,5 @@ export type Role = {
 
 ---
 
-*Last Updated: 2025-09-11*  
-*Implementation Status: Core features complete, expansion opportunities identified*
+_Last Updated: 2025-09-11_  
+_Implementation Status: Core features complete, expansion opportunities identified_

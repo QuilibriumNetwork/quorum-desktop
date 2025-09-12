@@ -21,7 +21,7 @@ export interface AuthUser {
 export const useAuthenticationFlow = () => {
   const { apiClient } = useQuorumApiClient();
   const uploadRegistration = useUploadRegistration();
-  
+
   const [authMode, setAuthMode] = useState<AuthMode>('login');
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +32,7 @@ export const useAuthenticationFlow = () => {
     setError(null);
   }, []);
 
-  // Start existing key import flow  
+  // Start existing key import flow
   const startImportAccount = useCallback(() => {
     setAuthMode('import');
     setError(null);
@@ -46,37 +46,43 @@ export const useAuthenticationFlow = () => {
   }, []);
 
   // Handle authentication completion and user setup
-  const completeAuthentication = useCallback((passkeyInfo: any, setUser: (user: AuthUser) => void) => {
-    try {
-      setUser({
-        displayName: passkeyInfo.displayName,
-        state: 'online',
-        status: '',
-        userIcon: passkeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER,
-        address: passkeyInfo.address,
-      });
-      setError(null);
-    } catch (error) {
-      console.error('Error completing authentication:', error);
-      setError('Failed to complete authentication');
-    }
-  }, []);
+  const completeAuthentication = useCallback(
+    (passkeyInfo: any, setUser: (user: AuthUser) => void) => {
+      try {
+        setUser({
+          displayName: passkeyInfo.displayName,
+          state: 'online',
+          status: '',
+          userIcon: passkeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER,
+          address: passkeyInfo.address,
+        });
+        setError(null);
+      } catch (error) {
+        console.error('Error completing authentication:', error);
+        setError('Failed to complete authentication');
+      }
+    },
+    []
+  );
 
   // Get user registration data from API
-  const getUserRegistration = useCallback(async (address: string) => {
-    try {
-      setIsAuthenticating(true);
-      setError(null);
-      const response = await apiClient.getUser(address);
-      return response.data;
-    } catch (error) {
-      console.error('Error getting user registration:', error);
-      setError('Failed to get user registration');
-      throw error;
-    } finally {
-      setIsAuthenticating(false);
-    }
-  }, [apiClient]);
+  const getUserRegistration = useCallback(
+    async (address: string) => {
+      try {
+        setIsAuthenticating(true);
+        setError(null);
+        const response = await apiClient.getUser(address);
+        return response.data;
+      } catch (error) {
+        console.error('Error getting user registration:', error);
+        setError('Failed to get user registration');
+        throw error;
+      } finally {
+        setIsAuthenticating(false);
+      }
+    },
+    [apiClient]
+  );
 
   // Set authentication error
   const setAuthError = useCallback((errorMessage: string) => {
@@ -94,7 +100,7 @@ export const useAuthenticationFlow = () => {
     authMode,
     isAuthenticating,
     error,
-    
+
     // Actions
     startNewAccount,
     startImportAccount,
@@ -102,7 +108,7 @@ export const useAuthenticationFlow = () => {
     completeAuthentication,
     setAuthError,
     clearAuthError,
-    
+
     // API integration
     getUserRegistration,
     uploadRegistration,

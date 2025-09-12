@@ -85,9 +85,7 @@ import {
   faFlask,
   faChartLine,
 } from '@fortawesome/free-solid-svg-icons';
-import {
-  faCircle as faCircleRegular,
-} from '@fortawesome/free-regular-svg-icons';
+import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { IconName } from './types';
 
@@ -191,7 +189,7 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   print: faPrint,
   'download-alt': faDownload, // alias for download
   'upload-alt': faUpload, // alias for upload
-  
+
   // Test screen icons for emoji replacements
   mobile: faMobile,
   device: faMobile, // alias for mobile
@@ -203,12 +201,12 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   bullseye: faBullseye,
   pencil: faPencil,
   memo: faPencil, // alias for pencil (memo/note)
-  
+
   // Pin-related icons
   thumbtack: faThumbtack,
   pin: faThumbtack, // alias for thumbtack
   'thumbtack-slash': faThumbtack, // Will use same icon with different styling
-  
+
   // Dev navigation icons
   book: faBook,
   'clipboard-list': faClipboardList,
@@ -317,7 +315,7 @@ export const reactNativeIconMap: Record<IconName, string> = {
   print: 'print',
   'download-alt': 'download',
   'upload-alt': 'upload',
-  
+
   // Test screen icons for emoji replacements
   mobile: 'mobile',
   device: 'mobile',
@@ -329,12 +327,12 @@ export const reactNativeIconMap: Record<IconName, string> = {
   bullseye: 'bullseye',
   pencil: 'pencil',
   memo: 'pencil',
-  
+
   // Pin-related icons
   thumbtack: 'thumb-tack',
   'thumbtack-slash': 'thumb-tack',
   pin: 'thumb-tack',
-  
+
   // Dev navigation icons
   book: 'book',
   'clipboard-list': 'clipboard',

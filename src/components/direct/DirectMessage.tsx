@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
 import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { EmbedMessage, Message as MessageType } from '../../api/quorumApi';
@@ -25,7 +31,15 @@ import { isTouchDevice } from '../../utils/platform';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useModalContext } from '../context/ModalProvider';
-import { Button, Container, FlexRow, FlexColumn, Text, Icon, Tooltip } from '../primitives';
+import {
+  Button,
+  Container,
+  FlexRow,
+  FlexColumn,
+  Text,
+  Icon,
+  Tooltip,
+} from '../primitives';
 
 const DirectMessage: React.FC<{}> = () => {
   const { isMobile, isTablet, toggleLeftSidebar } =
@@ -35,7 +49,7 @@ const DirectMessage: React.FC<{}> = () => {
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
   const { messageDB, submitMessage, keyset, getConfig } = useMessageDB();
-  
+
   // State for message signing
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [nonRepudiable, setNonRepudiable] = useState<boolean>(true);
@@ -53,7 +67,7 @@ const DirectMessage: React.FC<{}> = () => {
   const { data: conversation } = useConversation({
     conversationId: conversationId,
   });
-  
+
   // Determine default signing behavior: conversation setting overrides user default.
   React.useEffect(() => {
     (async () => {
@@ -77,7 +91,12 @@ const DirectMessage: React.FC<{}> = () => {
         setSkipSigning(false);
       }
     })();
-  }, [conversation?.conversation?.isRepudiable, keyset.userKeyset, getConfig, user.currentPasskeyInfo]);
+  }, [
+    conversation?.conversation?.isRepudiable,
+    keyset.userKeyset,
+    getConfig,
+    user.currentPasskeyInfo,
+  ]);
 
   // Use business logic hooks for message handling
   const { messageList, acceptChat, fetchNextPage, fetchPreviousPage } =
@@ -138,7 +157,7 @@ const DirectMessage: React.FC<{}> = () => {
       if (!address) return; // Guard against undefined address
 
       const effectiveSkip = nonRepudiable ? false : skipSigning;
-      
+
       if (typeof message === 'string') {
         // Text message
         await submitMessage(
@@ -179,9 +198,18 @@ const DirectMessage: React.FC<{}> = () => {
         }, 100);
       }
     },
-    [address, self, registration, queryClient, user, keyset, submitMessage, nonRepudiable, skipSigning]
+    [
+      address,
+      self,
+      registration,
+      queryClient,
+      user,
+      keyset,
+      submitMessage,
+      nonRepudiable,
+      skipSigning,
+    ]
   );
-
 
   // Use MessageComposer hook
   const composer = useMessageComposer({
@@ -255,13 +283,16 @@ const DirectMessage: React.FC<{}> = () => {
         if (rect) {
           // Get the total height including the header element and its top offset
           const totalHeight = rect.bottom;
-          document.documentElement.style.setProperty('--header-height', `${totalHeight}px`);
+          document.documentElement.style.setProperty(
+            '--header-height',
+            `${totalHeight}px`
+          );
         }
       };
-      
+
       updateHeaderHeight();
       window.addEventListener('resize', updateHeaderHeight);
-      
+
       return () => {
         window.removeEventListener('resize', updateHeaderHeight);
       };
@@ -297,7 +328,10 @@ const DirectMessage: React.FC<{}> = () => {
     <div className="chat-container">
       <FlexColumn>
         {/* Header - full width at top */}
-        <Container ref={headerRef} className="direct-message-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-wrap lg:flex-nowrap lg:justify-between lg:items-center">
+        <Container
+          ref={headerRef}
+          className="direct-message-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-wrap lg:flex-nowrap lg:justify-between lg:items-center"
+        >
           {/* First row on mobile: burger + controls / Single row on desktop */}
           <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
             {/* Burger menu for mobile only */}
@@ -310,7 +344,7 @@ const DirectMessage: React.FC<{}> = () => {
                 iconOnly
               />
             )}
-            
+
             {/* User info - hidden on mobile first row, shown on desktop */}
             <Container className="hidden lg:flex flex-1 min-w-0">
               <FlexRow className="items-center">
@@ -492,7 +526,6 @@ const DirectMessage: React.FC<{}> = () => {
           )}
         </div>
       </FlexColumn>
-
     </div>
   );
 };

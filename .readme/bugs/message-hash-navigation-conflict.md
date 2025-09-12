@@ -1,6 +1,5 @@
 # Message Hash Navigation Conflict Bug
 
-
 **Status**: Open (Low Priority)  
 **Priority**: Low  
 **Component**: MessageList.tsx  

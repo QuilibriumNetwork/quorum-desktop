@@ -1,15 +1,15 @@
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Message as MessageType, Channel } from '../../api/quorumApi';
-import { 
-  FlexColumn, 
-  FlexRow, 
+import {
+  FlexColumn,
+  FlexRow,
   FlexCenter,
-  Text, 
+  Text,
   Button,
   Container,
   Tooltip,
-  Icon
+  Icon,
 } from '../primitives';
 import { DropdownPanel } from '../DropdownPanel';
 import { t } from '@lingui/core/macro';
@@ -22,7 +22,7 @@ import './PinnedMessagesPanel.scss';
 
 // Configuration constants for pinned messages panel
 const PINNED_PANEL_CONFIG = {
-  TEXT_PREVIEW_LENGTH: 800,  // Maximum characters to show in message preview
+  TEXT_PREVIEW_LENGTH: 800, // Maximum characters to show in message preview
 } as const;
 
 interface PinnedMessagesPanelProps {
@@ -47,35 +47,44 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
   messageList,
 }) => {
   const navigate = useNavigate();
-  const { pinnedMessages, unpinMessage, canPinMessages, isLoading } = usePinnedMessages(
-    spaceId,
-    channelId,
-    channel
-  );
-  
+  const { pinnedMessages, unpinMessage, canPinMessages, isLoading } =
+    usePinnedMessages(spaceId, channelId, channel);
+
   // Use the new React state-based message highlighting
   const { highlightMessage, scrollToMessage } = useMessageHighlight();
 
-  const handleJumpToMessage = useCallback((messageId: string) => {
-    // Close the panel
-    onClose();
-    
-    // Navigate to the message with hash (for URL state consistency)
-    const currentPath = window.location.pathname;
-    navigate(`${currentPath}#msg-${messageId}`);
-    
-    // Use React state-based highlighting instead of DOM manipulation
-    setTimeout(() => {
-      // Scroll to the message using the appropriate method
-      scrollToMessage(messageId, virtuosoRef, messageList);
-      
-      // Highlight the message using React state (triggers re-render with highlight class)
-      highlightMessage(messageId, { duration: 2000 });
-    }, 100);
-  }, [navigate, onClose, scrollToMessage, highlightMessage, virtuosoRef, messageList]);
+  const handleJumpToMessage = useCallback(
+    (messageId: string) => {
+      // Close the panel
+      onClose();
+
+      // Navigate to the message with hash (for URL state consistency)
+      const currentPath = window.location.pathname;
+      navigate(`${currentPath}#msg-${messageId}`);
+
+      // Use React state-based highlighting instead of DOM manipulation
+      setTimeout(() => {
+        // Scroll to the message using the appropriate method
+        scrollToMessage(messageId, virtuosoRef, messageList);
+
+        // Highlight the message using React state (triggers re-render with highlight class)
+        highlightMessage(messageId, { duration: 2000 });
+      }, 100);
+    },
+    [
+      navigate,
+      onClose,
+      scrollToMessage,
+      highlightMessage,
+      virtuosoRef,
+      messageList,
+    ]
+  );
 
   // Component to render formatted message content with links, mentions, etc.
-  const FormattedMessageContent: React.FC<{ message: MessageType }> = ({ message }) => {
+  const FormattedMessageContent: React.FC<{ message: MessageType }> = ({
+    message,
+  }) => {
     const formatting = useMessageFormatting({
       message,
       stickers: {},
@@ -91,27 +100,34 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
     if (contentData.type === 'post') {
       let totalChars = 0;
       const maxChars = PINNED_PANEL_CONFIG.TEXT_PREVIEW_LENGTH;
-      
+
       return (
         <>
           {contentData.content.map((line, i) => {
             const tokens = line.split(' ');
             const renderedTokens: React.ReactNode[] = [];
-            
+
             for (let j = 0; j < tokens.length; j++) {
               const token = tokens[j];
               const tokenLength = token.length + 1; // +1 for space
-              
+
               // Check if adding this token would exceed the limit
               if (totalChars + tokenLength > maxChars) {
                 renderedTokens.push(
-                  <React.Fragment key={`truncate-${i}-${j}`}>...</React.Fragment>
+                  <React.Fragment key={`truncate-${i}-${j}`}>
+                    ...
+                  </React.Fragment>
                 );
                 break;
               }
-              
+
               totalChars += tokenLength;
-              const tokenData = formatting.processTextToken(token, contentData.messageId, i, j);
+              const tokenData = formatting.processTextToken(
+                token,
+                contentData.messageId,
+                i,
+                j
+              );
 
               if (tokenData.type === 'mention') {
                 renderedTokens.push(
@@ -155,7 +171,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                 );
               }
             }
-            
+
             return (
               <React.Fragment key={`line-${i}`}>
                 {renderedTokens}
@@ -197,7 +213,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
         <Icon name="thumbtack" className="empty-icon" />
         <Text className="empty-message">{t`No pinned messages yet`}</Text>
         <Text className="empty-hint">
-          {canPinMessages 
+          {canPinMessages
             ? t`Pin important messages to keep them easily accessible`
             : t`Important messages will be pinned here`}
         </Text>
@@ -213,77 +229,79 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
       positionStyle="right-aligned"
       maxWidth={500}
       maxHeight={420}
-      title={pinnedMessages.length === 1
-        ? t`${pinnedMessages.length} pinned message`
-        : t`${pinnedMessages.length} pinned messages`}
+      title={
+        pinnedMessages.length === 1
+          ? t`${pinnedMessages.length} pinned message`
+          : t`${pinnedMessages.length} pinned messages`
+      }
       className="pinned-messages-panel"
       showCloseButton={false}
     >
       <Container className="pinned-messages-list">
-        {isLoading || pinnedMessages.length === 0 ? (
-          renderEmptyState()
-        ) : (
-          pinnedMessages.map((message) => {
-            const sender = mapSenderToUser(message.content?.senderId);
-            return (
-              <Container
-                key={message.messageId}
-                className="pinned-message-item"
-              >
-                <FlexRow className="result-header items-center justify-between">
-                  <FlexRow className="result-meta items-center">
-                    <Text className="result-sender">
-                      {sender?.displayName || t`Unknown User`}
-                    </Text>
-                    <Text className="result-date">
-                      {formatMessageDate(message.createdDate)}
-                    </Text>
-                  </FlexRow>
-                  <FlexRow className={`message-actions items-center${isTouchDevice() ? ' always-visible' : ''}`}>
-                    <Tooltip
-                      id={`jump-${message.messageId}`}
-                      content={t`Jump to message`}
-                      place="top"
-                      showOnTouch={false}
+        {isLoading || pinnedMessages.length === 0
+          ? renderEmptyState()
+          : pinnedMessages.map((message) => {
+              const sender = mapSenderToUser(message.content?.senderId);
+              return (
+                <Container
+                  key={message.messageId}
+                  className="pinned-message-item"
+                >
+                  <FlexRow className="result-header items-center justify-between">
+                    <FlexRow className="result-meta items-center">
+                      <Text className="result-sender">
+                        {sender?.displayName || t`Unknown User`}
+                      </Text>
+                      <Text className="result-date">
+                        {formatMessageDate(message.createdDate)}
+                      </Text>
+                    </FlexRow>
+                    <FlexRow
+                      className={`message-actions items-center${isTouchDevice() ? ' always-visible' : ''}`}
                     >
-                      <Button
-                        type="unstyled"
-                        onClick={() => handleJumpToMessage(message.messageId)}
-                        iconName="arrow-right"
-                        iconOnly={true}
-                        size="compact"
-                        className="jump-button"
-                      />
-                    </Tooltip>
-                    {canPinMessages && (
                       <Tooltip
-                        id={`unpin-${message.messageId}`}
-                        content={t`Unpin this post`}
+                        id={`jump-${message.messageId}`}
+                        content={t`Jump to message`}
                         place="top"
                         showOnTouch={false}
                       >
                         <Button
                           type="unstyled"
-                          onClick={() => unpinMessage(message.messageId)}
-                          iconName="times"
+                          onClick={() => handleJumpToMessage(message.messageId)}
+                          iconName="arrow-right"
                           iconOnly={true}
                           size="compact"
-                          className="unpin-button"
+                          className="jump-button"
                         />
                       </Tooltip>
-                    )}
+                      {canPinMessages && (
+                        <Tooltip
+                          id={`unpin-${message.messageId}`}
+                          content={t`Unpin this post`}
+                          place="top"
+                          showOnTouch={false}
+                        >
+                          <Button
+                            type="unstyled"
+                            onClick={() => unpinMessage(message.messageId)}
+                            iconName="times"
+                            iconOnly={true}
+                            size="compact"
+                            className="unpin-button"
+                          />
+                        </Tooltip>
+                      )}
+                    </FlexRow>
                   </FlexRow>
-                </FlexRow>
-                
-                <Container className="result-content">
-                  <Text className="result-text">
-                    <FormattedMessageContent message={message} />
-                  </Text>
+
+                  <Container className="result-content">
+                    <Text className="result-text">
+                      <FormattedMessageContent message={message} />
+                    </Text>
+                  </Container>
                 </Container>
-              </Container>
-            );
-          })
-        )}
+              );
+            })}
       </Container>
     </DropdownPanel>
   );

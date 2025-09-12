@@ -162,7 +162,6 @@ export const PrimitivesTestScreen: React.FC = () => {
               </Text>
             </View>
           </View>
-
         </View>
 
         {/* Flex Primitives Section */}
@@ -401,30 +400,80 @@ export const PrimitivesTestScreen: React.FC = () => {
                 },
               ]}
             >
-              <Text size="sm" variant="default">Text before xs spacer</Text>
+              <Text size="sm" variant="default">
+                Text before xs spacer
+              </Text>
               <Spacer size="xs" />
-              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
-              <Text size="xs" variant="subtle">↑ xs (4px)</Text>
-              
-              <Text size="sm" variant="default">Text before sm spacer</Text>
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: theme.colors.border.default,
+                  opacity: 0.3,
+                }}
+              />
+              <Text size="xs" variant="subtle">
+                ↑ xs (4px)
+              </Text>
+
+              <Text size="sm" variant="default">
+                Text before sm spacer
+              </Text>
               <Spacer size="sm" />
-              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
-              <Text size="xs" variant="subtle">↑ sm (8px)</Text>
-              
-              <Text size="sm" variant="default">Text before md spacer</Text>
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: theme.colors.border.default,
+                  opacity: 0.3,
+                }}
+              />
+              <Text size="xs" variant="subtle">
+                ↑ sm (8px)
+              </Text>
+
+              <Text size="sm" variant="default">
+                Text before md spacer
+              </Text>
               <Spacer size="md" />
-              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
-              <Text size="xs" variant="subtle">↑ md (16px)</Text>
-              
-              <Text size="sm" variant="default">Text before lg spacer</Text>
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: theme.colors.border.default,
+                  opacity: 0.3,
+                }}
+              />
+              <Text size="xs" variant="subtle">
+                ↑ md (16px)
+              </Text>
+
+              <Text size="sm" variant="default">
+                Text before lg spacer
+              </Text>
               <Spacer size="lg" />
-              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
-              <Text size="xs" variant="subtle">↑ lg (24px)</Text>
-              
-              <Text size="sm" variant="default">Text before xl spacer</Text>
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: theme.colors.border.default,
+                  opacity: 0.3,
+                }}
+              />
+              <Text size="xs" variant="subtle">
+                ↑ lg (24px)
+              </Text>
+
+              <Text size="sm" variant="default">
+                Text before xl spacer
+              </Text>
               <Spacer size="xl" />
-              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
-              <Text size="xs" variant="subtle">↑ xl (32px)</Text>
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: theme.colors.border.default,
+                  opacity: 0.3,
+                }}
+              />
+              <Text size="xs" variant="subtle">
+                ↑ xl (32px)
+              </Text>
             </View>
           </View>
 
@@ -446,22 +495,69 @@ export const PrimitivesTestScreen: React.FC = () => {
               ]}
             >
               <FlexRow align="center">
-                <Text size="sm" variant="default">Left</Text>
+                <Text size="sm" variant="default">
+                  Left
+                </Text>
                 <Spacer size="xs" direction="horizontal" />
-                <View style={{ width: 1, height: 16, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
-                <Text size="xs" variant="subtle">xs</Text>
+                <View
+                  style={{
+                    width: 1,
+                    height: 16,
+                    backgroundColor: theme.colors.border.default,
+                    opacity: 0.3,
+                  }}
+                />
+                <Text size="xs" variant="subtle">
+                  xs
+                </Text>
                 <Spacer size="sm" direction="horizontal" />
-                <View style={{ width: 1, height: 16, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
-                <Text size="xs" variant="subtle">sm</Text>
+                <View
+                  style={{
+                    width: 1,
+                    height: 16,
+                    backgroundColor: theme.colors.border.default,
+                    opacity: 0.3,
+                  }}
+                />
+                <Text size="xs" variant="subtle">
+                  sm
+                </Text>
                 <Spacer size="md" direction="horizontal" />
-                <View style={{ width: 1, height: 16, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
-                <Text size="xs" variant="subtle">md</Text>
+                <View
+                  style={{
+                    width: 1,
+                    height: 16,
+                    backgroundColor: theme.colors.border.default,
+                    opacity: 0.3,
+                  }}
+                />
+                <Text size="xs" variant="subtle">
+                  md
+                </Text>
                 <Spacer size="lg" direction="horizontal" />
-                <View style={{ width: 1, height: 16, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
-                <Text size="xs" variant="subtle">lg</Text>
+                <View
+                  style={{
+                    width: 1,
+                    height: 16,
+                    backgroundColor: theme.colors.border.default,
+                    opacity: 0.3,
+                  }}
+                />
+                <Text size="xs" variant="subtle">
+                  lg
+                </Text>
                 <Spacer size="xl" direction="horizontal" />
-                <View style={{ width: 1, height: 16, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
-                <Text size="sm" variant="default">Right</Text>
+                <View
+                  style={{
+                    width: 1,
+                    height: 16,
+                    backgroundColor: theme.colors.border.default,
+                    opacity: 0.3,
+                  }}
+                />
+                <Text size="sm" variant="default">
+                  Right
+                </Text>
               </FlexRow>
             </View>
           </View>
@@ -483,15 +579,35 @@ export const PrimitivesTestScreen: React.FC = () => {
                 },
               ]}
             >
-              <Text size="sm" variant="default">Custom 20px spacer:</Text>
+              <Text size="sm" variant="default">
+                Custom 20px spacer:
+              </Text>
               <Spacer size={20} />
-              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
-              <Text size="xs" variant="subtle">↑ 20px (custom)</Text>
-              
-              <Text size="sm" variant="default">Custom 50px spacer:</Text>
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: theme.colors.border.default,
+                  opacity: 0.3,
+                }}
+              />
+              <Text size="xs" variant="subtle">
+                ↑ 20px (custom)
+              </Text>
+
+              <Text size="sm" variant="default">
+                Custom 50px spacer:
+              </Text>
               <Spacer size={50} />
-              <View style={{ height: 1, backgroundColor: theme.colors.border.default, opacity: 0.3 }} />
-              <Text size="xs" variant="subtle">↑ 50px (custom)</Text>
+              <View
+                style={{
+                  height: 1,
+                  backgroundColor: theme.colors.border.default,
+                  opacity: 0.3,
+                }}
+              />
+              <Text size="xs" variant="subtle">
+                ↑ 50px (custom)
+              </Text>
             </View>
           </View>
         </View>

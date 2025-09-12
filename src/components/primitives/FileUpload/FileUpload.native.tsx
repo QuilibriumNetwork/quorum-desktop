@@ -23,7 +23,8 @@ export const FileUpload: React.FC<FileUploadNativeProps> = ({
   children,
   testId,
 }) => {
-  const isImageUpload = accept && Object.keys(accept).some(key => key.includes('image'));
+  const isImageUpload =
+    accept && Object.keys(accept).some((key) => key.includes('image'));
 
   const handleImageSelection = async (useCamera: boolean = false) => {
     try {
@@ -37,10 +38,15 @@ export const FileUpload: React.FC<FileUploadNativeProps> = ({
           return;
         }
       } else {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
           if (onError) {
-            onError(new Error(t`Photo library permission is required to select images`));
+            onError(
+              new Error(
+                t`Photo library permission is required to select images`
+              )
+            );
           }
           return;
         }
@@ -50,10 +56,10 @@ export const FileUpload: React.FC<FileUploadNativeProps> = ({
         mediaTypes: ['images'],
         quality: imageQuality || 0.8,
         allowsEditing,
-        base64: true,  // Enable base64 to get data URL
+        base64: true, // Enable base64 to get data URL
       };
 
-      const result = useCamera 
+      const result = useCamera
         ? await ImagePicker.launchCameraAsync(options)
         : await ImagePicker.launchImageLibraryAsync(options);
 
@@ -64,26 +70,30 @@ export const FileUpload: React.FC<FileUploadNativeProps> = ({
       if (result.assets && result.assets.length > 0) {
         const convertedFiles: FileUploadFile[] = result.assets.map((asset) => {
           // Create data URL if base64 is available
-          const dataUrl = asset.base64 
+          const dataUrl = asset.base64
             ? `data:${asset.type || 'image/jpeg'};base64,${asset.base64}`
             : asset.uri;
-          
+
           return {
-            uri: dataUrl,  // Use data URL if available, otherwise use file URI
+            uri: dataUrl, // Use data URL if available, otherwise use file URI
             name: asset.fileName || `image_${Date.now()}.jpg`,
             size: asset.fileSize || 0,
             type: asset.type || 'image/jpeg',
-            // Note: ArrayBuffer not easily available in React Native, 
+            // Note: ArrayBuffer not easily available in React Native,
             // but base64 is included in uri as data URL
           };
         });
 
         // Check file size if maxSize is specified
         if (maxSize) {
-          const oversizedFiles = convertedFiles.filter(file => file.size > maxSize);
+          const oversizedFiles = convertedFiles.filter(
+            (file) => file.size > maxSize
+          );
           if (oversizedFiles.length > 0 && onError) {
             const maxSizeMB = Math.round(maxSize / (1024 * 1024));
-            onError(new Error(t`File size too large. Maximum size: ${maxSizeMB}MB`));
+            onError(
+              new Error(t`File size too large. Maximum size: ${maxSizeMB}MB`)
+            );
             return;
           }
         }
@@ -119,10 +129,14 @@ export const FileUpload: React.FC<FileUploadNativeProps> = ({
 
       // Check file size if maxSize is specified
       if (maxSize) {
-        const oversizedFiles = convertedFiles.filter(file => file.size > maxSize);
+        const oversizedFiles = convertedFiles.filter(
+          (file) => file.size > maxSize
+        );
         if (oversizedFiles.length > 0 && onError) {
           const maxSizeMB = Math.round(maxSize / (1024 * 1024));
-          onError(new Error(t`File size too large. Maximum size: ${maxSizeMB}MB`));
+          onError(
+            new Error(t`File size too large. Maximum size: ${maxSizeMB}MB`)
+          );
           return;
         }
       }
@@ -172,7 +186,7 @@ export const FileUpload: React.FC<FileUploadNativeProps> = ({
   };
 
   return (
-    <Pressable 
+    <Pressable
       onPress={handlePress}
       disabled={disabled}
       testID={testId}

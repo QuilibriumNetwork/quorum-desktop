@@ -4,10 +4,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Container, FlexColumn, FlexRow, Text } from '@/components/primitives';
 
 // Shared gradient colors matching web version (bg-radial--accent-noise) - EXACT WEB COLORS
-// Using the exact bright colors from the web: #034081, #0287f2, #b4e235  
+// Using the exact bright colors from the web: #034081, #0287f2, #b4e235
 export const AUTH_GRADIENT_COLORS = ['#034081', '#0287f2', '#b4e235'] as const; // Deep blue to bright blue to bright lime green
 
-// Shared layout constants matching web version  
+// Shared layout constants matching web version
 export const AUTH_LAYOUT = {
   MAX_CONTENT_WIDTH: 460,
   PADDING: 16,
@@ -84,26 +84,24 @@ interface AuthScreenWrapperProps {
   dragOverlay?: React.ReactNode;
 }
 
-export const AuthScreenWrapper: React.FC<AuthScreenWrapperProps> = ({ 
-  children, 
-  dragOverlay 
+export const AuthScreenWrapper: React.FC<AuthScreenWrapperProps> = ({
+  children,
+  dragOverlay,
 }) => (
   <>
     {/* Clean diagonal gradient from top-left to bottom-right, blue dominant */}
-    <LinearGradient 
-      colors={AUTH_GRADIENT_COLORS} 
+    <LinearGradient
+      colors={AUTH_GRADIENT_COLORS}
       style={{ flex: 1 }}
-      start={{ x: 0, y: 0 }}      // Top-left
-      end={{ x: 1, y: 1 }}        // Bottom-right  
-      locations={[0, 0.55, 1]}    // Blue dominant but green even more visible
+      start={{ x: 0, y: 0 }} // Top-left
+      end={{ x: 1, y: 1 }} // Bottom-right
+      locations={[0, 0.55, 1]} // Blue dominant but green even more visible
     >
       <SafeAreaView style={{ flex: 1 }}>
         {dragOverlay}
         <FlexColumn style={{ flex: 1 }}>
           <FlexColumn style={{ flex: 1 }} />
-          <FlexColumn style={{ userSelect: 'none' }}>
-            {children}
-          </FlexColumn>
+          <FlexColumn style={{ userSelect: 'none' }}>{children}</FlexColumn>
           <FlexColumn style={{ flex: 1 }} />
         </FlexColumn>
       </SafeAreaView>
@@ -117,7 +115,13 @@ interface AuthTitleProps {
 }
 
 export const AuthTitle: React.FC<AuthTitleProps> = ({ children }) => (
-  <FlexRow style={{ flex: 1, justifyContent: 'center', paddingHorizontal: AUTH_LAYOUT.PADDING }}>
+  <FlexRow
+    style={{
+      flex: 1,
+      justifyContent: 'center',
+      paddingHorizontal: AUTH_LAYOUT.PADDING,
+    }}
+  >
     <Text size="2xl" weight="semibold" style={AUTH_TEXT_STYLES.title}>
       {children}
     </Text>
@@ -130,16 +134,19 @@ interface AuthContentProps {
   centerContent?: boolean;
 }
 
-export const AuthContent: React.FC<AuthContentProps> = ({ children, centerContent = false }) => (
+export const AuthContent: React.FC<AuthContentProps> = ({
+  children,
+  centerContent = false,
+}) => (
   <FlexRow style={{ justifyContent: 'center' }}>
     <FlexColumn style={{ flex: 1 }} />
-    <Container 
-      style={{ 
-        width: '100%', 
-        maxWidth: AUTH_LAYOUT.MAX_CONTENT_WIDTH, 
+    <Container
+      style={{
+        width: '100%',
+        maxWidth: AUTH_LAYOUT.MAX_CONTENT_WIDTH,
         paddingHorizontal: AUTH_LAYOUT.PADDING,
         paddingVertical: AUTH_LAYOUT.PADDING,
-        ...(centerContent && { alignItems: 'center' })
+        ...(centerContent && { alignItems: 'center' }),
       }}
     >
       {children}
@@ -149,9 +156,7 @@ export const AuthContent: React.FC<AuthContentProps> = ({ children, centerConten
 );
 
 // Spacer component for consistent spacing
-export const AuthSpacer: React.FC = () => (
-  <FlexRow style={{ flex: 1 }} />
-);
+export const AuthSpacer: React.FC = () => <FlexRow style={{ flex: 1 }} />;
 
 // Step Indicator component for onboarding progress
 interface StepIndicatorProps {
@@ -159,7 +164,10 @@ interface StepIndicatorProps {
   totalSteps: number;
 }
 
-export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, totalSteps }) => (
+export const StepIndicator: React.FC<StepIndicatorProps> = ({
+  currentStep,
+  totalSteps,
+}) => (
   <FlexRow justify="center" style={{ marginBottom: 24, marginTop: 16 }}>
     <FlexRow gap="sm">
       {Array.from({ length: totalSteps }, (_, index) => (
@@ -169,7 +177,8 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({ currentStep, total
             width: 8,
             height: 8,
             borderRadius: 4,
-            backgroundColor: index < currentStep ? 'white' : 'rgba(255, 255, 255, 0.3)',
+            backgroundColor:
+              index < currentStep ? 'white' : 'rgba(255, 255, 255, 0.3)',
           }}
         />
       ))}

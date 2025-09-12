@@ -12,7 +12,7 @@ module.exports = {
       // Import shared color system (simplified version for mobile)
       colors: {
         // Basic accent colors
-        'accent': {
+        accent: {
           50: '#f0f9ff',
           100: '#e0f2fe',
           200: '#bae6fd',
@@ -25,9 +25,9 @@ module.exports = {
           900: '#0c4a6e',
         },
         // Surface colors
-        'surface': {
+        surface: {
           0: '#ffffff',
-          1: '#fafafa', 
+          1: '#fafafa',
           2: '#f5f5f5',
           3: '#f0f0f0',
           4: '#dedede',
@@ -40,16 +40,16 @@ module.exports = {
         },
         // Utility colors
         danger: '#ef4444',
-        warning: '#f59e0b', 
+        warning: '#f59e0b',
         success: '#10b981',
         info: '#3b82f6',
       },
       // Text color shortcuts
       textColor: {
-        'main': 'var(--color-text-main)',
-        'subtle': 'var(--color-text-subtle)',
-        'strong': 'var(--color-text-strong)',
-        'muted': 'var(--color-text-muted)',
+        main: 'var(--color-text-main)',
+        subtle: 'var(--color-text-subtle)',
+        strong: 'var(--color-text-strong)',
+        muted: 'var(--color-text-muted)',
       },
     },
   },

@@ -89,7 +89,7 @@ const UserSettingsModal: React.FunctionComponent<{
   const saveChanges = async () => {
     setSaveError('');
     setIsSaving(true);
-    
+
     try {
       await saveUserChanges(fileData, currentFile);
 
@@ -146,10 +146,16 @@ const UserSettingsModal: React.FunctionComponent<{
               ) : (
                 <div className="flex flex-col items-center gap-4">
                   <div className="flex items-center gap-3">
-                    <Icon name="exclamation-circle" size={24} className="text-danger" />
+                    <Icon
+                      name="exclamation-circle"
+                      size={24}
+                      className="text-danger"
+                    />
                     <div className="text-lg font-medium text-danger">{t`Save Failed`}</div>
                   </div>
-                  <div className="text-sm text-white/80 text-center">{saveError}</div>
+                  <div className="text-sm text-white/80 text-center">
+                    {saveError}
+                  </div>
                   <Button
                     type="secondary"
                     size="small"
@@ -238,15 +244,25 @@ const UserSettingsModal: React.FunctionComponent<{
                           <div
                             id="user-icon-tooltip-target"
                             className={`avatar-upload ${!fileData && (!currentPasskeyInfo?.pfpUrl || currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) ? 'empty' : ''}`}
-                            style={(fileData || (currentPasskeyInfo?.pfpUrl && !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER))) ? {
-                              backgroundImage: `url(${getProfileImageUrl()})`
-                            } : {}}
+                            style={
+                              fileData ||
+                              (currentPasskeyInfo?.pfpUrl &&
+                                !currentPasskeyInfo.pfpUrl.includes(
+                                  DefaultImages.UNKNOWN_USER
+                                ))
+                                ? {
+                                    backgroundImage: `url(${getProfileImageUrl()})`,
+                                  }
+                                : {}
+                            }
                             {...getRootProps()}
                           >
                             <input {...getInputProps()} />
-                            {!fileData && (!currentPasskeyInfo?.pfpUrl || currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) && (
-                              <Icon name="image" className="icon" />
-                            )}
+                            {!fileData &&
+                              (!currentPasskeyInfo?.pfpUrl ||
+                                currentPasskeyInfo.pfpUrl.includes(
+                                  DefaultImages.UNKNOWN_USER
+                                )) && <Icon name="image" className="icon" />}
                           </div>
                         </div>
                         {!isUserIconUploading && !isUserIconDragActive && (

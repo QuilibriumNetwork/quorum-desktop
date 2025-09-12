@@ -22,7 +22,7 @@ export const FileUploadTestScreen: React.FC = () => {
   const handleFilesSelected = (files: FileUploadFile[]) => {
     setUploadedFiles(files);
     setUploadError(null);
-    
+
     // Show success alert
     Alert.alert(
       'Files Selected',
@@ -113,7 +113,11 @@ export const FileUploadTestScreen: React.FC = () => {
                   color={theme.colors.text.subtle}
                   style={{ marginBottom: 12 }}
                 />
-                <Text weight="medium" align="center" style={{ marginBottom: 8 }}>
+                <Text
+                  weight="medium"
+                  align="center"
+                  style={{ marginBottom: 8 }}
+                >
                   Tap to select image
                 </Text>
                 <Text size="sm" variant="subtle" align="center">
@@ -169,7 +173,11 @@ export const FileUploadTestScreen: React.FC = () => {
                   color={theme.colors.text.subtle}
                   style={{ marginBottom: 8 }}
                 />
-                <Text weight="medium" align="center" style={{ marginBottom: 4 }}>
+                <Text
+                  weight="medium"
+                  align="center"
+                  style={{ marginBottom: 4 }}
+                >
                   Select any files
                 </Text>
                 <Text size="sm" variant="subtle" align="center">
@@ -239,7 +247,11 @@ export const FileUploadTestScreen: React.FC = () => {
                           color={theme.colors.accent.DEFAULT}
                           size="sm"
                         />
-                        <Text weight="medium" style={{ flex: 1 }} numberOfLines={1}>
+                        <Text
+                          weight="medium"
+                          style={{ flex: 1 }}
+                          numberOfLines={1}
+                        >
                           {file.name}
                         </Text>
                       </FlexRow>

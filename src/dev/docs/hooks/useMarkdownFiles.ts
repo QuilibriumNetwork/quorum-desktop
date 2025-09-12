@@ -18,12 +18,16 @@ const filenameToTitle = (filename: string): string => {
   return filename
     .replace('.md', '')
     .replace(/[-_]/g, ' ')
-    .replace(/\b\w/g, l => l.toUpperCase())
+    .replace(/\b\w/g, (l) => l.toUpperCase())
     .replace(/^(DONE|FAILED|SOLVED)_?/, ''); // Remove status prefixes
 };
 
 // Determine status from filename or folder structure
-const determineStatus = (path: string, filename: string, type: 'docs' | 'tasks' | 'bugs'): MarkdownFile['status'] => {
+const determineStatus = (
+  path: string,
+  filename: string,
+  type: 'docs' | 'tasks' | 'bugs'
+): MarkdownFile['status'] => {
   if (type === 'tasks') {
     // Check if it's in a .done folder or has status prefix
     if (path.includes('/.done/') || filename.startsWith('DONE_')) {
@@ -31,7 +35,7 @@ const determineStatus = (path: string, filename: string, type: 'docs' | 'tasks' 
     }
     return 'pending';
   }
-  
+
   if (type === 'bugs') {
     // Check if it's in .solved folder or has SOLVED prefix
     if (path.includes('/.solved/') || filename.startsWith('SOLVED_')) {
@@ -39,7 +43,7 @@ const determineStatus = (path: string, filename: string, type: 'docs' | 'tasks' 
     }
     return 'active';
   }
-  
+
   return undefined;
 };
 
@@ -49,7 +53,11 @@ const determinePriority = (filename: string): MarkdownFile['priority'] => {
   if (name.includes('critical') || name.includes('crash')) {
     return 'critical';
   }
-  if (name.includes('high') || name.includes('urgent') || name.includes('important')) {
+  if (
+    name.includes('high') ||
+    name.includes('urgent') ||
+    name.includes('important')
+  ) {
     return 'high';
   }
   if (name.includes('low') || name.includes('minor')) {
@@ -68,10 +76,10 @@ export const useMarkdownFiles = (type: 'docs' | 'tasks' | 'bugs') => {
       try {
         setLoading(true);
         setError('');
-        
+
         // Get the raw file data
         const rawFiles = (markdownFilesData as any)[type] || [];
-        
+
         // Process the files with titles and status
         const processedFiles: MarkdownFile[] = rawFiles.map((file: any) => ({
           name: file.name,
@@ -81,10 +89,12 @@ export const useMarkdownFiles = (type: 'docs' | 'tasks' | 'bugs') => {
           status: determineStatus(file.path, file.name, type),
           priority: type === 'bugs' ? determinePriority(file.name) : undefined,
         }));
-        
+
         setFiles(processedFiles);
       } catch (err) {
-        setError(`Error loading ${type} files: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        setError(
+          `Error loading ${type} files: ${err instanceof Error ? err.message : 'Unknown error'}`
+        );
       } finally {
         setLoading(false);
       }
@@ -104,25 +114,27 @@ export const useMarkdownContent = (filePath: string) => {
 
   const loadContent = async () => {
     if (!filePath) return;
-    
+
     try {
       setLoading(true);
       setError('');
-      
+
       // In development, fetch the actual markdown file
       // The Vite config allows serving .readme folder
       const response = await fetch(`/${filePath}`);
-      
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-      
+
       const markdownContent = await response.text();
       setContent(markdownContent);
     } catch (err) {
       console.error('Error loading markdown file:', err);
-      setError(`Error loading file: ${err instanceof Error ? err.message : 'Unknown error'}`);
-      
+      setError(
+        `Error loading file: ${err instanceof Error ? err.message : 'Unknown error'}`
+      );
+
       // Fallback content with error info
       const fallbackContent = `# Error Loading File
 

@@ -1,5 +1,15 @@
 import * as React from 'react';
-import { Input, Button, Modal, Container, Text, Switch, Icon, Tooltip, FlexRow } from '../primitives';
+import {
+  Input,
+  Button,
+  Modal,
+  Container,
+  Text,
+  Switch,
+  Icon,
+  Tooltip,
+  FlexRow,
+} from '../primitives';
 import './NewDirectMessageModal.scss';
 import { t } from '@lingui/core/macro';
 import { useDirectMessageCreation } from '../../hooks';
@@ -23,11 +33,11 @@ const NewDirectMessageModal: React.FunctionComponent<
     isButtonDisabled,
     error,
   } = useDirectMessageCreation();
-  
+
   const { getConfig, keyset, messageDB } = useMessageDB();
   const user = usePasskeysContext();
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
-  
+
   // Load user default non-repudiable setting to initialize the switch
   React.useEffect(() => {
     (async () => {
@@ -41,7 +51,7 @@ const NewDirectMessageModal: React.FunctionComponent<
       } catch {}
     })();
   }, [user.currentPasskeyInfo, keyset, getConfig]);
-  
+
   // Override handleSubmit to save conversation settings
   const handleSubmitWithSettings = React.useCallback(() => {
     if (!!address) {
@@ -119,7 +129,7 @@ const NewDirectMessageModal: React.FunctionComponent<
             </Button>
           </Container>
         </React.Suspense>
-        
+
         <Container margin="none" className="mt-6 pt-4 border-t border-default">
           <FlexRow className="items-center justify-between">
             <FlexRow className="items-center text-sm text-subtle gap-1">

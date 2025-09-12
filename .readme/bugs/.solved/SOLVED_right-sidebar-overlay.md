@@ -1,6 +1,5 @@
 # SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible
 
-
 ## Problem Summary
 
 **Primary Issue**: When the right sidebar (users panel) was opened on mobile/tablet screens (below 1024px), the navbar space icons remained visible on top of the overlay backdrop, creating a broken UX where the navbar appeared to "float" above the overlay.

@@ -6,7 +6,9 @@
  * Check if running in a web browser environment
  */
 export function isWeb(): boolean {
-  return typeof window !== 'undefined' && typeof window.document !== 'undefined';
+  return (
+    typeof window !== 'undefined' && typeof window.document !== 'undefined'
+  );
 }
 
 /**
@@ -15,7 +17,9 @@ export function isWeb(): boolean {
 export function isMobile(): boolean {
   // Will be true when running in React Native
   // @ts-ignore - React Native global
-  return typeof navigator !== 'undefined' && navigator.product === 'ReactNative';
+  return (
+    typeof navigator !== 'undefined' && navigator.product === 'ReactNative'
+  );
 }
 
 /**
@@ -30,22 +34,30 @@ export function isNative(): boolean {
  */
 export function isElectron(): boolean {
   // Check for Electron user agent
-  if (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.includes('Electron')) {
+  if (
+    typeof navigator !== 'undefined' &&
+    navigator.userAgent &&
+    navigator.userAgent.includes('Electron')
+  ) {
     return true;
   }
-  
+
   // Check for Electron process
   // @ts-ignore - Electron global
-  if (typeof process !== 'undefined' && process.versions && process.versions.electron) {
+  if (
+    typeof process !== 'undefined' &&
+    process.versions &&
+    process.versions.electron
+  ) {
     return true;
   }
-  
+
   // Check for Electron window object
   // @ts-ignore - Electron global
   if (typeof window !== 'undefined' && window.electron) {
     return true;
   }
-  
+
   return false;
 }
 
@@ -104,15 +116,11 @@ export function safeMobileScrollIntoView(
   element: Element,
   options: MobileSafeScrollOptions = {}
 ): void {
-  const {
-    behavior = 'auto',
-    block = 'center',
-    inline = 'nearest'
-  } = options;
+  const { behavior = 'auto', block = 'center', inline = 'nearest' } = options;
 
   // For mobile devices, use more conservative scrolling to avoid issues
   const isMobileDevice = isTouchDevice();
-  
+
   try {
     if (isMobileDevice) {
       // On mobile, use auto behavior to prevent jarring animations
@@ -120,14 +128,14 @@ export function safeMobileScrollIntoView(
       element.scrollIntoView({
         behavior: 'auto',
         block: block === 'center' ? 'nearest' : block,
-        inline
+        inline,
       });
     } else {
       // On desktop, we can use the requested behavior
       element.scrollIntoView({
         behavior,
         block,
-        inline
+        inline,
       });
     }
   } catch (error) {
@@ -141,17 +149,18 @@ export function safeMobileScrollIntoView(
  */
 export function supportsSmoothScrolling(): boolean {
   if (typeof window === 'undefined') return false;
-  
+
   // Smooth scrolling can be problematic on some mobile browsers
   // and lower-end devices, so be conservative
   const isMobileDevice = isTouchDevice();
-  
+
   if (isMobileDevice) {
     // Only enable smooth scrolling on modern mobile browsers
-    const supportsScrollBehavior = 'scrollBehavior' in document.documentElement.style;
+    const supportsScrollBehavior =
+      'scrollBehavior' in document.documentElement.style;
     return supportsScrollBehavior;
   }
-  
+
   // Desktop browsers generally handle smooth scrolling well
   return true;
 }
@@ -166,5 +175,6 @@ export const platformFeatures = {
   hasDeepLinking: isMobile() || isElectron(),
   hasPushNotifications: isMobile(),
   hasTouch: typeof window !== 'undefined' ? isTouchDevice() : false,
-  supportsSmoothScrolling: typeof window !== 'undefined' ? supportsSmoothScrolling() : false,
+  supportsSmoothScrolling:
+    typeof window !== 'undefined' ? supportsSmoothScrolling() : false,
 };

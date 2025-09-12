@@ -1,6 +1,5 @@
 # Refactor Modal Placement in Layout.tsx
 
-
 ## Problem
 
 Currently, Layout.tsx contains 3 modals at the root level:

@@ -1,6 +1,5 @@
 # Component Architecture Workflow - Detailed Explanation
 
-
 ## Overview
 
 This document explains the complete workflow from primitive creation to complex component implementation for developers new to cross-platform development. It covers what happens after we finish creating primitives and how existing complex components are handled.

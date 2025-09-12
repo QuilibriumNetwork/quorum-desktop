@@ -120,7 +120,17 @@ export type IconName =
   | 'flask'
   | 'chart-line';
 
-export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | number;
+export type IconSize =
+  | 'xs'
+  | 'sm'
+  | 'md'
+  | 'lg'
+  | 'xl'
+  | '2xl'
+  | '3xl'
+  | '4xl'
+  | '5xl'
+  | number;
 
 export interface IconProps {
   name: IconName;

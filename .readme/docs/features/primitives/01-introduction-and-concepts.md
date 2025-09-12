@@ -13,28 +13,34 @@ Primitive components are the foundation of our cross-platform UI system. They pr
 ## ⚠️ **Platform Requirements - IMPORTANT**
 
 ### **Mobile (React Native)**
+
 - ✅ **Primitives are MANDATORY** - React Native requires specific components
 - ❌ **Cannot use HTML elements** (`<div>`, `<span>`, `<p>`, etc.)
 - ❌ **Cannot use CSS classes** - Must use style objects
 
 ### **Web**
+
 - 🤔 **Primitives are RECOMMENDED** but not required
 - ✅ **Can still use raw HTML** when it makes sense
 - ✅ **Mix primitives with existing HTML/CSS** during migration
 
 ### **Shared Components**
+
 - ✅ **Use primitives ONLY** if component must work on both web AND mobile
 - 🎯 **Otherwise, choose based on practicality** (see [When to Use Primitives](./03-when-to-use-primitives.md))
 
 ## 🎯 **Core Philosophy**
 
 ### **Mobile-First Cross-Platform Development**
+
 Every component is designed to work on both desktop and mobile from day one. This isn't "responsive web design" – it's true cross-platform development with React Native.
 
 ### **Consistency Through Abstraction**
+
 Rather than learning different APIs for web vs mobile, you learn one API that works everywhere. Platform differences are handled internally.
 
 ### **Progressive Enhancement**
+
 Start with basic functionality that works everywhere, then add platform-specific features (haptic feedback, keyboard types, etc.) where beneficial.
 
 ---
@@ -42,16 +48,18 @@ Start with basic functionality that works everywhere, then add platform-specific
 ## 🏗️ **Architecture Overview**
 
 ### **File Structure Pattern**
+
 ```
 src/components/primitives/Button/
 ├── index.ts              # Exports the appropriate version
-├── Button.web.tsx        # Web-specific implementation  
+├── Button.web.tsx        # Web-specific implementation
 ├── Button.native.tsx     # React Native implementation
 ├── Button.scss    # Web styles
 └── types.ts             # Shared type definitions
 ```
 
 ### **Import Resolution**
+
 ```tsx
 // This automatically imports the right version
 import { Button } from '../components/primitives/Button';
@@ -61,12 +69,13 @@ import { Button } from '../components/primitives/Button';
 ```
 
 ### **Shared Type System**
+
 ```tsx
 // types.ts - shared across platforms
 export interface BaseButtonProps {
   type?:
     | 'primary'
-    | 'secondary' 
+    | 'secondary'
     | 'light'
     | 'light-outline'
     | 'subtle'
@@ -83,7 +92,7 @@ export interface BaseButtonProps {
 
 // Platform-specific props are conditionally added
 export interface NativeButtonProps extends BaseButtonProps {
-  hapticFeedback?: boolean;  // Only on native
+  hapticFeedback?: boolean; // Only on native
   accessibilityLabel?: string;
   fullWidthWithMargin?: boolean;
 }
@@ -94,6 +103,7 @@ export interface NativeButtonProps extends BaseButtonProps {
 ## 🎨 **Design System Integration**
 
 ### **Semantic Color Variables**
+
 Instead of hardcoded colors, use semantic variables that automatically adapt to light/dark themes:
 
 ```tsx
@@ -108,6 +118,7 @@ Instead of hardcoded colors, use semantic variables that automatically adapt to 
 ```
 
 ### **Consistent Spacing System**
+
 ```tsx
 // Standardized gap values used across Quilibrium
 gap: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
@@ -123,6 +134,7 @@ gap: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 ```
 
 ### **Typography Hierarchy**
+
 ```tsx
 // Semantic typography components in Quilibrium
 <Text variant="strong" size="xl">Main page title</Text>
@@ -142,26 +154,31 @@ gap: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 ## 🚀 **Key Benefits**
 
 ### **1. Development Speed**
+
 - Write once, works everywhere
 - No need to learn platform-specific APIs
 - Consistent behavior reduces debugging
 
 ### **2. Design Consistency**
+
 - Unified color system and spacing
 - Consistent interactive states (hover, focus, disabled)
 - Automatic theme switching (light/dark)
 
 ### **3. Maintainability**
+
 - Bug fixes apply to all platforms
 - API changes happen in one place
 - Predictable component behavior
 
 ### **4. Accessibility**
+
 - Built-in screen reader support
 - Proper touch targets on mobile
 - Keyboard navigation on web
 
 ### **5. Future-Proof**
+
 - Easy to add new platforms (e.g., desktop apps)
 - Component evolution without breaking changes
 - A/B testing and analytics integration points
@@ -176,7 +193,7 @@ Our architecture separates **styling** from **layout** for maximum flexibility a
 
 ```tsx
 // ✅ REAL EXAMPLE: From UserProfile component
-<Container 
+<Container
   className="user-profile"
   onClick={(e: React.MouseEvent) => e.stopPropagation()}
 >
@@ -184,15 +201,12 @@ Our architecture separates **styling** from **layout** for maximum flexibility a
     <Icon name="user" />
     <Text variant="strong">{user.name}</Text>
   </FlexRow>
-  
+
   <FlexRow gap="xs" align="center">
     <Text variant="subtle" size="sm">
       Address:
     </Text>
-    <ClickToCopyContent
-      text={user.address}
-      tooltipText="Copy address"
-    >
+    <ClickToCopyContent text={user.address} tooltipText="Copy address">
       <Text variant="subtle" className="font-mono">
         {user.address.slice(0, 8)}...
       </Text>
@@ -204,18 +218,21 @@ Our architecture separates **styling** from **layout** for maximum flexibility a
 ### **Component Responsibilities**
 
 #### **Container (Styling Container)**
+
 - Visual styling: colors, borders, shadows, border radius
 - Click/press handlers that work cross-platform
 - Background colors and themed styling
 - CSS classes and inline styles
 
 #### **FlexRow/FlexColumn Primitives (Layout)**
+
 - Content organization and spacing (gap: 'xs' | 'sm' | 'md' | 'lg' | 'xl')
 - Alignment: align="center" | "start" | "end" | "stretch"
 - Justification: justify="start" | "center" | "between" | "around"
 - Responsive behavior and wrapping
 
 #### **Text Components (Content)**
+
 - Typography and text rendering
 - Built-in spacing props for better mobile experience
 - Semantic variants (strong, subtle, error, etc.)
@@ -223,7 +240,7 @@ Our architecture separates **styling** from **layout** for maximum flexibility a
 ### **Why This Pattern Works**
 
 1. **Predictable Spacing**: Gap system eliminates margin calculation issues
-2. **Platform Consistency**: Flex primitives handle platform differences automatically  
+2. **Platform Consistency**: Flex primitives handle platform differences automatically
 3. **Maintainable**: Clear separation between styling and layout concerns
 4. **Flexible**: Mix and match containers with different layout patterns
 
@@ -232,6 +249,7 @@ Our architecture separates **styling** from **layout** for maximum flexibility a
 ## 📱 **Mobile-First Enhancements**
 
 ### **Enhanced Text Component**
+
 React Native text handling is different from web. Our Text primitive solves common issues:
 
 ```tsx
@@ -250,15 +268,17 @@ React Native text handling is different from web. Our Text primitive solves comm
 ```
 
 **Enhancements:**
+
 - **Automatic line height** (1.4x font size) for better readability
 - **Built-in spacing props** to reduce View wrapper verbosity
 - **Better Android alignment** with `includeFontPadding: false`
 - **Semantic components** (Paragraph, Label, etc.) for common patterns
 
 ### **Touch-Optimized Interactions**
+
 ```tsx
 // Real example from UserProfile component
-<Button 
+<Button
   type="primary"
   size="small"
   onClick={() => sendMessage(user)}
@@ -269,7 +289,7 @@ React Native text handling is different from web. Our Text primitive solves comm
 </Button>
 
 // With mobile-specific props
-<Button 
+<Button
   type="primary"
   onClick={handleSave}
   hapticFeedback={true}                    // Tactile feedback on mobile
@@ -280,9 +300,10 @@ React Native text handling is different from web. Our Text primitive solves comm
 ```
 
 ### **Platform-Specific Input Types**
+
 ```tsx
 // Real examples from Quilibrium forms
-<Input 
+<Input
   type="email"
   placeholder="Enter email address"
   keyboardType="email-address"    // Shows @ key on mobile keyboards
@@ -291,7 +312,7 @@ React Native text handling is different from web. Our Text primitive solves comm
   error={emailError}
 />
 
-<Input 
+<Input
   type="password"
   placeholder="Enter passphrase"
   secureTextEntry={true}          // Hide password on mobile
@@ -329,16 +350,18 @@ React Native text handling is different from web. Our Text primitive solves comm
    - Test keyboard behavior and accessibility
 
 ### **Gradual Adoption**
+
 You don't need to convert everything at once:
 
 ```tsx
 // ✅ Real example: Mix primitives with existing SCSS during migration
-<div className="user-profile-complex-layout"> {/* Keep existing SCSS */}
+<div className="user-profile-complex-layout">
+  {' '}
+  {/* Keep existing SCSS */}
   <FlexRow gap="sm" align="center">
     <Icon name="user" />
     <Text variant="strong">{user.name}</Text>
   </FlexRow>
-  
   {/* Use primitive buttons for consistency */}
   <FlexRow gap="xs">
     <Button type="secondary" size="small" onClick={() => kickUser(user)}>
@@ -356,15 +379,18 @@ You don't need to convert everything at once:
 ## 🎯 **When to Use Primitives**
 
 ### **Always Use For:**
+
 - **Interactive elements**: Button, Input, Select, Modal, Switch
 - **Layout containers**: FlexRow, FlexColumn for consistent spacing
 - **Design system elements**: Text with semantic colors, Icon
 
 ### **Consider For:**
+
 - **Simple containers**: Use View if you need theme consistency
 - **Form elements**: Primitives provide consistent validation/error states
 
 ### **Don't Force For:**
+
 - **Highly specialized components**: Complex animations, charts
 - **Third-party integrations**: When the library expects specific HTML structures
 - **Performance-critical sections**: Where extra abstraction layers could impact performance
@@ -374,11 +400,13 @@ You don't need to convert everything at once:
 ## 🚀 **Getting Started**
 
 ### **Next Steps**
+
 1. **Need quick component reference?** → [02-primitives-quick-reference.md](./02-primitives-quick-reference.md)
 2. **Understanding when to use primitives?** → [03-when-to-use-primitives.md](./03-when-to-use-primitives.md)
 3. **Converting web components?** → [04-web-to-native-migration.md](./04-web-to-native-migration.md)
 
 ### **Development Workflow**
+
 1. Design your component using primitives
 2. Test on web first (faster iteration)
 3. Test on mobile simulator to verify behavior
@@ -387,7 +415,7 @@ You don't need to convert everything at once:
 
 ---
 
-*Last updated: 2025-08-14*
+_Last updated: 2025-08-14_
 
 ---
 

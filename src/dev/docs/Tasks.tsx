@@ -13,7 +13,9 @@ import { useMarkdownFiles, type MarkdownFile } from './hooks/useMarkdownFiles';
 
 export const Tasks: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<MarkdownFile | null>(null);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['pending'])); // Keep all sections open except done
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(
+    new Set(['pending'])
+  ); // Keep all sections open except done
 
   // Load markdown files dynamically
   const { files: taskFiles, loading, error } = useMarkdownFiles('tasks');
@@ -22,8 +24,8 @@ export const Tasks: React.FC = () => {
   const groupedFiles = useMemo(() => {
     const groups: Record<string, MarkdownFile[]> = {};
     const done: MarkdownFile[] = [];
-    
-    taskFiles.forEach(file => {
+
+    taskFiles.forEach((file) => {
       if (file.status === 'done') {
         done.push(file);
       } else {
@@ -37,14 +39,14 @@ export const Tasks: React.FC = () => {
             folderName = relevantParts.join('/');
           }
         }
-        
+
         if (!groups[folderName]) {
           groups[folderName] = [];
         }
         groups[folderName].push(file);
       }
     });
-    
+
     return {
       regular: groups,
       done,
@@ -101,7 +103,11 @@ export const Tasks: React.FC = () => {
         {/* Loading State */}
         {loading && (
           <div className="text-center py-12">
-            <Icon name="loader" size="2xl" className="text-accent mx-auto mb-4" />
+            <Icon
+              name="loader"
+              size="2xl"
+              className="text-accent mx-auto mb-4"
+            />
             <Text variant="main" size="lg">
               Loading tasks...
             </Text>
@@ -121,7 +127,8 @@ export const Tasks: React.FC = () => {
               {error}
             </Text>
             <Text variant="subtle" size="sm">
-              The system is using a placeholder implementation. To see real files, implement the markdown loading API or build process.
+              The system is using a placeholder implementation. To see real
+              files, implement the markdown loading API or build process.
             </Text>
           </div>
         )}
@@ -133,48 +140,58 @@ export const Tasks: React.FC = () => {
             {Object.entries(groupedFiles.regular)
               .sort(([a], [b]) => a.localeCompare(b))
               .map(([folder, files]) => (
-              <div key={folder} className="bg-surface-1 rounded-lg border border-default overflow-hidden">
-                <div className="bg-surface-2 px-6 py-4 border-b border-default">
-                  <FlexRow gap="sm" align="center">
-                    <Icon name="folder" size="md" className="text-accent" />
-                    <Text variant="strong" size="lg" weight="medium">
-                      {folder === 'root' 
-                        ? 'Root Tasks' 
-                        : folder.split('/').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' / ')
-                      }
-                    </Text>
-                    <Text variant="subtle" size="sm">
-                      ({files.length} tasks)
-                    </Text>
-                  </FlexRow>
-                </div>
+                <div
+                  key={folder}
+                  className="bg-surface-1 rounded-lg border border-default overflow-hidden"
+                >
+                  <div className="bg-surface-2 px-6 py-4 border-b border-default">
+                    <FlexRow gap="sm" align="center">
+                      <Icon name="folder" size="md" className="text-accent" />
+                      <Text variant="strong" size="lg" weight="medium">
+                        {folder === 'root'
+                          ? 'Root Tasks'
+                          : folder
+                              .split('/')
+                              .map(
+                                (part) =>
+                                  part.charAt(0).toUpperCase() + part.slice(1)
+                              )
+                              .join(' / ')}
+                      </Text>
+                      <Text variant="subtle" size="sm">
+                        ({files.length} tasks)
+                      </Text>
+                    </FlexRow>
+                  </div>
 
-                <div className="p-6">
-                  <ul className="space-y-2">
-                    {files
-                      .sort((a, b) => a.title.localeCompare(b.title))
-                      .map((file) => (
-                      <li key={file.path}>
-                        <div
-                          className="hover:text-accent transition-colors cursor-pointer"
-                          onClick={() => handleFileClick(file)}
-                        >
-                          <Text variant="main" size="md">
-                            • {file.title}
-                          </Text>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="p-6">
+                    <ul className="space-y-2">
+                      {files
+                        .sort((a, b) => a.title.localeCompare(b.title))
+                        .map((file) => (
+                          <li key={file.path}>
+                            <div
+                              className="hover:text-accent transition-colors cursor-pointer"
+                              onClick={() => handleFileClick(file)}
+                            >
+                              <Text variant="main" size="md">
+                                • {file.title}
+                              </Text>
+                            </div>
+                          </li>
+                        ))}
+                    </ul>
 
-                  {files.length === 0 && (
-                    <div className="text-center py-8">
-                      <Text variant="subtle">No tasks found in this category</Text>
-                    </div>
-                  )}
+                    {files.length === 0 && (
+                      <div className="text-center py-8">
+                        <Text variant="subtle">
+                          No tasks found in this category
+                        </Text>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
 
             {/* Done Tasks Section - Collapsible */}
             {groupedFiles.done.length > 0 && (
@@ -185,7 +202,11 @@ export const Tasks: React.FC = () => {
                 >
                   <FlexRow gap="sm" align="center" justify="between">
                     <FlexRow gap="sm" align="center">
-                      <Icon name="check-circle" size="md" className="text-success" />
+                      <Icon
+                        name="check-circle"
+                        size="md"
+                        className="text-success"
+                      />
                       <Text variant="strong" size="lg" weight="medium">
                         Done
                       </Text>
@@ -193,10 +214,14 @@ export const Tasks: React.FC = () => {
                         ({groupedFiles.done.length} tasks)
                       </Text>
                     </FlexRow>
-                    <Icon 
-                      name={expandedSections.has('done') ? 'chevron-up' : 'chevron-down'} 
-                      size="sm" 
-                      className="text-subtle" 
+                    <Icon
+                      name={
+                        expandedSections.has('done')
+                          ? 'chevron-up'
+                          : 'chevron-down'
+                      }
+                      size="sm"
+                      className="text-subtle"
                     />
                   </FlexRow>
                 </div>
@@ -207,17 +232,17 @@ export const Tasks: React.FC = () => {
                       {groupedFiles.done
                         .sort((a, b) => a.title.localeCompare(b.title))
                         .map((file) => (
-                        <li key={file.path}>
-                          <div
-                            className="hover:text-accent transition-colors cursor-pointer"
-                            onClick={() => handleFileClick(file)}
-                          >
-                            <Text variant="main" size="md">
-                              • {file.title}
-                            </Text>
-                          </div>
-                        </li>
-                      ))}
+                          <li key={file.path}>
+                            <div
+                              className="hover:text-accent transition-colors cursor-pointer"
+                              onClick={() => handleFileClick(file)}
+                            >
+                              <Text variant="main" size="md">
+                                • {file.title}
+                              </Text>
+                            </div>
+                          </li>
+                        ))}
                     </ul>
                   </div>
                 )}

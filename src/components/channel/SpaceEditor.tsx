@@ -140,9 +140,10 @@ const SpaceEditor: React.FunctionComponent<{
 
   // Delete confirmation state - kept local as it's UI-specific
   const [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
-  
+
   // Role validation error state
-  const [roleValidationError, setRoleValidationError] = React.useState<string>('');
+  const [roleValidationError, setRoleValidationError] =
+    React.useState<string>('');
 
   // Helper functions for Select primitive
   const getChannelGroups = React.useMemo(() => {
@@ -165,12 +166,14 @@ const SpaceEditor: React.FunctionComponent<{
     setRoleValidationError('');
 
     // Validate roles before saving
-    const emptyRoles = roles.filter(role => 
-      !role.roleTag.trim() || !role.displayName.trim()
+    const emptyRoles = roles.filter(
+      (role) => !role.roleTag.trim() || !role.displayName.trim()
     );
-    
+
     if (emptyRoles.length > 0) {
-      setRoleValidationError(t`All roles must have both a tag name and display name.`);
+      setRoleValidationError(
+        t`All roles must have both a tag name and display name.`
+      );
       return;
     }
 
@@ -348,16 +351,22 @@ const SpaceEditor: React.FunctionComponent<{
                         <div
                           id="space-icon-tooltip-target"
                           className={`avatar-upload ${!iconData && !space?.iconUrl ? 'empty' : ''}`}
-                          style={(iconData && currentIconFile) || space?.iconUrl ? {
-                            backgroundImage:
-                              iconData != undefined && currentIconFile
-                                ? 'url(data:' +
-                                  currentIconFile.type +
-                                  ';base64,' +
-                                  Buffer.from(iconData).toString('base64') +
-                                  ')'
-                                : `url(${space?.iconUrl})`
-                          } : {}}
+                          style={
+                            (iconData && currentIconFile) || space?.iconUrl
+                              ? {
+                                  backgroundImage:
+                                    iconData != undefined && currentIconFile
+                                      ? 'url(data:' +
+                                        currentIconFile.type +
+                                        ';base64,' +
+                                        Buffer.from(iconData).toString(
+                                          'base64'
+                                        ) +
+                                        ')'
+                                      : `url(${space?.iconUrl})`,
+                                }
+                              : {}
+                          }
                           {...getIconRootProps()}
                         >
                           <input {...getIconInputProps()} />
@@ -535,7 +544,10 @@ const SpaceEditor: React.FunctionComponent<{
                               key={'space-editor-role-' + i}
                               className="modal-content-section-header text-main"
                             >
-                              <div className="grid gap-4 py-4" style={{ gridTemplateColumns: '1fr 1fr auto' }}>
+                              <div
+                                className="grid gap-4 py-4"
+                                style={{ gridTemplateColumns: '1fr 1fr auto' }}
+                              >
                                 {/* Cell 1: Role tag and name */}
                                 <div className="flex flex-col">
                                   <div>
@@ -544,8 +556,8 @@ const SpaceEditor: React.FunctionComponent<{
                                       className="border-0 bg-[rgba(0,0,0,0)] pr-2 outline-none focus:bg-surface-1 focus:px-2 focus:py-1 focus:rounded transition-all"
                                       style={{
                                         width:
-                                          (roles.find((_, pi) => i == pi)?.roleTag
-                                            .length ?? 0) *
+                                          (roles.find((_, pi) => i == pi)
+                                            ?.roleTag.length ?? 0) *
                                             11 +
                                           11 +
                                           'px',
@@ -564,20 +576,24 @@ const SpaceEditor: React.FunctionComponent<{
                                       <input
                                         className="border-0 bg-[rgba(0,0,0,0)] outline-none focus:bg-[rgba(0,0,0,0.1)] focus:px-2 focus:py-1 focus:rounded transition-all"
                                         style={{
-                                          width: Math.max(
-                                            (r.displayName.length || 3) * 8,
-                                            60
-                                          ) + 'px',
+                                          width:
+                                            Math.max(
+                                              (r.displayName.length || 3) * 8,
+                                              60
+                                            ) + 'px',
                                         }}
                                         onChange={(e) =>
-                                          updateRoleDisplayName(i, e.target.value)
+                                          updateRoleDisplayName(
+                                            i,
+                                            e.target.value
+                                          )
                                         }
                                         value={r.displayName}
                                       />
                                     </span>
                                   </div>
                                 </div>
-                                
+
                                 {/* Cell 2: Permissions */}
                                 <div className="flex flex-col">
                                   <div className="text-sm font-normal">
@@ -586,34 +602,40 @@ const SpaceEditor: React.FunctionComponent<{
                                   <div className="mt-1">
                                     <Select
                                       multiple
-                                      value={roles.find((_, pi) => i == pi)?.permissions || []}
-                                      onChange={(selectedPermissions) => 
-                                        updateRolePermissions(i, selectedPermissions as string[])
+                                      value={
+                                        roles.find((_, pi) => i == pi)
+                                          ?.permissions || []
+                                      }
+                                      onChange={(selectedPermissions) =>
+                                        updateRolePermissions(
+                                          i,
+                                          selectedPermissions as string[]
+                                        )
                                       }
                                       placeholder={t`Select permissions`}
                                       width="200px"
                                       options={[
-                                        { 
-                                          value: 'message:delete', 
-                                          label: t`Delete Messages` 
+                                        {
+                                          value: 'message:delete',
+                                          label: t`Delete Messages`,
                                         },
-                                        { 
-                                          value: 'message:pin', 
-                                          label: t`Pin Messages` 
+                                        {
+                                          value: 'message:pin',
+                                          label: t`Pin Messages`,
                                         },
-                                        { 
-                                          value: 'user:kick', 
-                                          label: t`Kick Users` 
+                                        {
+                                          value: 'user:kick',
+                                          label: t`Kick Users`,
                                         },
                                       ]}
                                     />
                                   </div>
                                 </div>
-                                
+
                                 {/* Cell 3: Delete button */}
                                 <div className="flex flex-col">
                                   <div className="flex justify-end">
-                                    <Tooltip 
+                                    <Tooltip
                                       id={`delete-role-${i}`}
                                       content={t`Delete Role`}
                                       place="left"
@@ -635,7 +657,7 @@ const SpaceEditor: React.FunctionComponent<{
                           );
                         })}
                         {roleValidationError && (
-                          <div 
+                          <div
                             className="mt-4 text-sm"
                             style={{ color: 'var(--color-text-danger)' }}
                           >

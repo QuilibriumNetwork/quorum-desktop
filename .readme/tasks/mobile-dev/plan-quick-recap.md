@@ -1,6 +1,5 @@
 # Cross-Platform Development : Revised Plan
 
-
 ## Phase 1: Complete Web Migration
 
 - [x] Build core UI primitives built for both web and mobile (Button, Input, Modal, Select, etc.)

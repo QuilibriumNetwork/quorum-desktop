@@ -3,12 +3,14 @@ import { useState, useCallback } from 'react';
 /**
  * REACT NATIVE VERSION: Notification Settings Hook
  * ===============================================
- * 
+ *
  * Simplified version for React Native - no window/document events needed.
  * React Native handles app lifecycle events differently through AppState.
  */
 export const useNotificationSettings = () => {
-  const [notificationPermission, setNotificationPermission] = useState<'granted' | 'denied' | 'default'>('default');
+  const [notificationPermission, setNotificationPermission] = useState<
+    'granted' | 'denied' | 'default'
+  >('default');
   const [isCheckingPermission, setIsCheckingPermission] = useState(false);
 
   // React Native: Notification permissions are handled differently
@@ -18,7 +20,7 @@ export const useNotificationSettings = () => {
     try {
       // TODO: Implement actual React Native notification permission checking
       // This would typically use Expo.Notifications.getPermissionsAsync()
-      
+
       // For now, return a default state
       setNotificationPermission('default');
     } catch (error) {
@@ -33,7 +35,7 @@ export const useNotificationSettings = () => {
     try {
       // TODO: Implement actual React Native notification permission request
       // This would typically use Expo.Notifications.requestPermissionsAsync()
-      
+
       // For now, simulate permission request
       setNotificationPermission('granted');
       return 'granted';

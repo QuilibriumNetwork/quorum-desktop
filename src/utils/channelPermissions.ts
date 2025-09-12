@@ -1,17 +1,23 @@
-import { Permission, Role, Space, Channel, Message as MessageType } from '../api/quorumApi';
+import {
+  Permission,
+  Role,
+  Space,
+  Channel,
+  Message as MessageType,
+} from '../api/quorumApi';
 
 /**
  * Consolidated Channel Permission System
- * 
+ *
  * This system handles all permission checks with a clear hierarchy and supports
  * isolated read-only channel permissions separate from regular role system.
- * 
+ *
  * PERMISSION HIERARCHY:
  * 1. Space Owner - Has ALL permissions everywhere (inherent privilege)
- * 2. Own Messages - Users can always manage their own messages  
+ * 2. Own Messages - Users can always manage their own messages
  * 3. Read-Only Channel Managers - Have ALL permissions in their managed channels ONLY
  * 4. Traditional Roles - Have permissions in regular channels based on role assignments
- * 
+ *
  * KEY PRINCIPLE: Read-only channels are completely isolated from traditional role system.
  * Users with traditional roles have NO permissions in read-only channels unless they are managers.
  */
@@ -112,7 +118,7 @@ export class UnifiedPermissionSystem {
   canKickUser(): boolean {
     const { isSpaceOwner } = this.context;
 
-    // 1. Space owners can kick anyone (inherent privilege)  
+    // 1. Space owners can kick anyone (inherent privilege)
     if (isSpaceOwner) {
       return true;
     }
@@ -133,9 +139,10 @@ export class UnifiedPermissionSystem {
       return false;
     }
 
-    return space.roles.some(role => 
-      channel.managerRoleIds?.includes(role.roleId) && 
-      role.members.includes(userAddress)
+    return space.roles.some(
+      (role) =>
+        channel.managerRoleIds?.includes(role.roleId) &&
+        role.members.includes(userAddress)
     );
   }
 
@@ -150,9 +157,10 @@ export class UnifiedPermissionSystem {
       return false;
     }
 
-    return space.roles.some(role => 
-      role.members.includes(userAddress) && 
-      role.permissions.includes(permission)
+    return space.roles.some(
+      (role) =>
+        role.members.includes(userAddress) &&
+        role.permissions.includes(permission)
     );
   }
 }
@@ -160,12 +168,16 @@ export class UnifiedPermissionSystem {
 /**
  * Factory function to create a permission checker for a specific context
  */
-export function createChannelPermissionChecker(context: PermissionContext): ChannelPermissionChecker {
+export function createChannelPermissionChecker(
+  context: PermissionContext
+): ChannelPermissionChecker {
   const permissionSystem = new UnifiedPermissionSystem(context);
 
   return {
-    canDeleteMessage: (message: MessageType) => permissionSystem.canDeleteMessage(message),
-    canPinMessage: (message: MessageType) => permissionSystem.canPinMessage(message),
+    canDeleteMessage: (message: MessageType) =>
+      permissionSystem.canDeleteMessage(message),
+    canPinMessage: (message: MessageType) =>
+      permissionSystem.canPinMessage(message),
     canPostMessage: () => permissionSystem.canPostMessage(),
     canKickUser: () => permissionSystem.canKickUser(),
   };
@@ -188,7 +200,7 @@ export function hasChannelPermission(
     isSpaceOwner,
     space,
     channel,
-    message
+    message,
   };
 
   const checker = createChannelPermissionChecker(context);
@@ -229,8 +241,9 @@ export function canManageReadOnlyChannel(
     return false;
   }
 
-  return space.roles.some(role => 
-    channel.managerRoleIds?.includes(role.roleId) && 
-    role.members.includes(userAddress)
+  return space.roles.some(
+    (role) =>
+      channel.managerRoleIds?.includes(role.roleId) &&
+      role.members.includes(userAddress)
   );
 }

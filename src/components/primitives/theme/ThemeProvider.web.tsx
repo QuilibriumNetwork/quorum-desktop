@@ -12,7 +12,14 @@ const ThemeContext = createContext<ThemeContextType>({
 
 export const useTheme = () => useContext(ThemeContext);
 
-const ACCENT_COLORS: AccentColor[] = ['blue', 'purple', 'fuchsia', 'orange', 'green', 'yellow'];
+const ACCENT_COLORS: AccentColor[] = [
+  'blue',
+  'purple',
+  'fuchsia',
+  'orange',
+  'green',
+  'yellow',
+];
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -69,7 +76,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     setTheme(savedTheme); // this will call applyTheme internally
 
     // Load saved accent
-    const savedAccent = (localStorage.getItem('accent-color') as AccentColor) || 'blue';
+    const savedAccent =
+      (localStorage.getItem('accent-color') as AccentColor) || 'blue';
     setAccent(savedAccent); // this will call applyAccent internally
 
     // Listen for system theme changes
@@ -83,7 +91,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme, accent, setAccent }}>
+    <ThemeContext.Provider
+      value={{ theme, setTheme, resolvedTheme, accent, setAccent }}
+    >
       {children}
     </ThemeContext.Provider>
   );

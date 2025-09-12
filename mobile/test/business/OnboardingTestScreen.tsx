@@ -35,29 +35,27 @@ export const OnboardingTestScreen: React.FC = () => {
   return (
     <AuthScreenWrapper>
       <AuthSpacer />
-      
-      <AuthTitle>
-        Onboarding Complete! 🎉
-      </AuthTitle>
-      
+
+      <AuthTitle>Onboarding Complete! 🎉</AuthTitle>
+
       {user && (
         <AuthContent centerContent>
           <FlexColumn gap="md" align="center">
-            <Text 
-              size="lg" 
+            <Text
+              size="lg"
               weight="medium"
               style={{ color: 'white', textAlign: 'center' }}
             >
               Welcome, {user.displayName}!
             </Text>
-            <Text 
-              size="sm" 
+            <Text
+              size="sm"
               style={{ color: 'rgba(255, 255, 255, 0.8)', textAlign: 'center' }}
             >
               Address: {user.address}
             </Text>
-            <Text 
-              size="sm" 
+            <Text
+              size="sm"
               style={{ color: 'rgba(255, 255, 255, 0.8)', textAlign: 'center' }}
             >
               Status: {user.status}
@@ -65,7 +63,7 @@ export const OnboardingTestScreen: React.FC = () => {
           </FlexColumn>
         </AuthContent>
       )}
-      
+
       <AuthContent centerContent>
         <Button
           type="primary-white"
@@ -75,7 +73,7 @@ export const OnboardingTestScreen: React.FC = () => {
           Test Onboarding Again
         </Button>
       </AuthContent>
-      
+
       <AuthSpacer />
     </AuthScreenWrapper>
   );

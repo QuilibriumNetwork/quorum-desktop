@@ -13,7 +13,7 @@ Your primary responsibility is to validate that React components adhere to the p
 **CRITICAL VALIDATION AREAS:**
 
 1. **Cross-Platform Compliance**: Verify that native and cross-platform components use primitive components from `src/components/primitives/` instead of raw HTML elements. Check that styling will work on both desktop and mobile platforms.
-Verify that web components use primitive components from `src/components/primitives/` instead of raw HTML elements whenever possible, unless this causes layout/functionality issues.
+   Verify that web components use primitive components from `src/components/primitives/` instead of raw HTML elements whenever possible, unless this causes layout/functionality issues.
 
 2. **Tailwind CSS Usage**: Ensure proper use of the semantic color system (accent-50 to accent-900, surface-00 to surface-10, text colors like color-text-strong/main/subtle/muted). Validate utility color usage (danger, warning, success, info).
 
@@ -34,6 +34,7 @@ Verify that web components use primitive components from `src/components/primiti
 **OUTPUT FORMAT:**
 
 Provide a structured review with:
+
 - **Compliance Status**: Overall assessment (Compliant/Needs Attention/Non-Compliant)
 - **Specific Issues**: List any violations with exact locations and explanations
 - **Recommendations**: Concrete steps to fix identified issues

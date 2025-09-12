@@ -37,8 +37,8 @@
 
 /* === REACT-DROPZONE STYLING === */
 /* Add cursor pointer for file upload areas */
-[class*="dropzone"],
-div[role="presentation"] {
+[class*='dropzone'],
+div[role='presentation'] {
   cursor: pointer !important;
   transition: background-color 0.15s ease !important;
 }
@@ -47,7 +47,7 @@ div[role="presentation"] {
 /* Common style for header icon buttons in Channel and DirectMessage */
 .header-icon-button {
   @apply w-6 h-6 p-2 rounded-md cursor-pointer flex items-center justify-center;
-  
+
   /* Icon styling - increased specificity to override Button styles */
   .quorum-button-icon-element {
     @apply text-base text-subtle !important;
@@ -59,4 +59,3 @@ div[role="presentation"] {
     @apply text-main !important;
   }
 }
-

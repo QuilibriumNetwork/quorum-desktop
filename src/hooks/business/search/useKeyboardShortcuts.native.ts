@@ -3,10 +3,10 @@ import { useCallback, useRef } from 'react';
 /**
  * REACT NATIVE VERSION: Keyboard Shortcuts Hook
  * =============================================
- * 
+ *
  * This is the React Native version of useKeyboardShortcuts.
  * Most keyboard shortcuts don't apply to mobile devices, so this is a simplified implementation.
- * 
+ *
  * TODO: Consider implementing mobile-specific shortcuts if needed (e.g., hardware keyboard support)
  */
 export function useKeyboardShortcuts({

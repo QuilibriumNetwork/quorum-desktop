@@ -1,19 +1,22 @@
 import React, { useState, useRef } from 'react';
-import { 
-  ScrollView, 
-  View, 
+import {
+  ScrollView,
+  View,
   Alert,
   TouchableOpacity,
   // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
   KeyboardAvoidingView,
   // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
-  Platform 
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Paragraph, Text, Title } from '@/primitives';
 import { useTheme } from '@/primitives/theme';
 import { commonTestStyles } from '@/styles/commonTestStyles';
-import { MessageComposer, MessageComposerRef } from '@/components/message/MessageComposer.native';
+import {
+  MessageComposer,
+  MessageComposerRef,
+} from '@/components/message/MessageComposer.native';
 
 export const MessageComposerTestScreen: React.FC = () => {
   const theme = useTheme();
@@ -31,7 +34,7 @@ export const MessageComposerTestScreen: React.FC = () => {
     // In real app, this would send the message to the channel/chat
     // The MessageComposer itself doesn't validate or show confirmations
     console.log('Submit message:', { message, hasFile: !!fileData });
-    
+
     // Clear message after sending (like real chat behavior)
     if (message.trim() || fileData) {
       setMessage('');
@@ -44,23 +47,22 @@ export const MessageComposerTestScreen: React.FC = () => {
     console.log('Sticker button clicked in MessageComposer!');
     const stickers = ['🌟', '🎭', '🎨', '🎪', '🎯', '🎲'];
     const stickerNames = ['Star', 'Theater', 'Art', 'Circus', 'Target', 'Dice'];
-    
-    Alert.alert(
-      'Sticker Picker',
-      'Choose a sticker to add to your message:',
-      [
-        { text: 'Cancel' },
-        ...stickers.map((sticker, index) => ({
-          text: `${sticker} ${stickerNames[index]}`,
-          onPress: () => setMessage(prev => prev + sticker)
-        }))
-      ]
-    );
+
+    Alert.alert('Sticker Picker', 'Choose a sticker to add to your message:', [
+      { text: 'Cancel' },
+      ...stickers.map((sticker, index) => ({
+        text: `${sticker} ${stickerNames[index]}`,
+        onPress: () => setMessage((prev) => prev + sticker),
+      })),
+    ]);
   };
 
   // Handle real file selection from MessageComposer
   const handleFileSelect = (fileData: ArrayBuffer, fileType: string) => {
-    console.log('Real file selected:', { size: fileData.byteLength, type: fileType });
+    console.log('Real file selected:', {
+      size: fileData.byteLength,
+      type: fileType,
+    });
     setFileData(fileData);
     setFileError(null);
   };
@@ -89,19 +91,19 @@ export const MessageComposerTestScreen: React.FC = () => {
       title: 'Reply',
       action: () => {
         console.log('Reply clicked');
-        setInReplyTo({ 
-          content: { 
-            senderId: 'alice_crypto'
-          }
+        setInReplyTo({
+          content: {
+            senderId: 'alice_crypto',
+          },
         });
-      }
+      },
     },
     {
       title: 'File Error',
       action: () => {
         console.log('File Error clicked');
         setFileError('File too large (max 10MB)');
-      }
+      },
     },
     {
       title: 'Clear All',
@@ -111,8 +113,8 @@ export const MessageComposerTestScreen: React.FC = () => {
         setFileData(undefined);
         setFileError(null);
         setInReplyTo(undefined);
-      }
-    }
+      },
+    },
   ];
 
   return (
@@ -127,8 +129,11 @@ export const MessageComposerTestScreen: React.FC = () => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 80}
       >
-        <ScrollView 
-          contentContainerStyle={[commonTestStyles.contentPadding, { flexGrow: 1 }]}
+        <ScrollView
+          contentContainerStyle={[
+            commonTestStyles.contentPadding,
+            { flexGrow: 1 },
+          ]}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="always"
           nestedScrollEnabled={true}
@@ -138,7 +143,7 @@ export const MessageComposerTestScreen: React.FC = () => {
               <Title size="lg" weight="bold">
                 MessageComposer Test
               </Title>
-              <Paragraph align='center'>
+              <Paragraph align="center">
                 Test the native message composer with mobile-specific features
               </Paragraph>
             </View>
@@ -154,17 +159,21 @@ export const MessageComposerTestScreen: React.FC = () => {
                 <TouchableOpacity
                   key={index}
                   onPress={scenario.action}
-                  style={{ 
+                  style={{
                     backgroundColor: theme.colors.surface[2],
                     paddingHorizontal: 16,
                     paddingVertical: 12,
                     borderRadius: 8,
                     flex: index < 2 ? 1 : 0,
-                    minWidth: index === 2 ? 100 : undefined
+                    minWidth: index === 2 ? 100 : undefined,
                   }}
                   activeOpacity={0.7}
                 >
-                  <Text size="sm" weight="medium" style={{ textAlign: 'center' }}>
+                  <Text
+                    size="sm"
+                    weight="medium"
+                    style={{ textAlign: 'center' }}
+                  >
                     {scenario.title}
                   </Text>
                 </TouchableOpacity>
@@ -172,38 +181,53 @@ export const MessageComposerTestScreen: React.FC = () => {
             </View>
           </View>
 
-
           {/* Feature Highlights */}
           <View style={{ marginBottom: 24 }}>
             <Text size="lg" weight="semibold" style={{ marginBottom: 12 }}>
               Mobile Features to Test:
             </Text>
             <View>
-              <Text size="sm" style={{ marginBottom: 4 }}>• Emoji/sticker buttons hide when textarea expands</Text>
-              <Text size="sm" style={{ marginBottom: 4 }}>• Right arrow appears to collapse expanded textarea</Text>
-              <Text size="sm" style={{ marginBottom: 4 }}>• KeyboardAvoidingView for mobile typing</Text>
-              <Text size="sm" style={{ marginBottom: 4 }}>• Touch-optimized button sizes (32px)</Text>
-              <Text size="sm">• Auto-resize textarea for multiline messages</Text>
+              <Text size="sm" style={{ marginBottom: 4 }}>
+                • Emoji/sticker buttons hide when textarea expands
+              </Text>
+              <Text size="sm" style={{ marginBottom: 4 }}>
+                • Right arrow appears to collapse expanded textarea
+              </Text>
+              <Text size="sm" style={{ marginBottom: 4 }}>
+                • KeyboardAvoidingView for mobile typing
+              </Text>
+              <Text size="sm" style={{ marginBottom: 4 }}>
+                • Touch-optimized button sizes (32px)
+              </Text>
+              <Text size="sm">
+                • Auto-resize textarea for multiline messages
+              </Text>
             </View>
           </View>
 
           {/* Spacer to push MessageComposer to bottom */}
           <View style={{ flex: 1 }} />
         </ScrollView>
-        
+
         {/* MessageComposer Component - Fixed at bottom */}
-        <View style={{
-          backgroundColor: theme.colors.bg.chat,
-          borderRadius: 12,
-          paddingVertical: 16,
-          paddingHorizontal: 8,
-          marginHorizontal: 16,
-          marginBottom: 16
-        }}>
-          <Text size="md" weight="semibold" style={{ marginBottom: 12, marginHorizontal: 8 }}>
+        <View
+          style={{
+            backgroundColor: theme.colors.bg.chat,
+            borderRadius: 12,
+            paddingVertical: 16,
+            paddingHorizontal: 8,
+            marginHorizontal: 16,
+            marginBottom: 16,
+          }}
+        >
+          <Text
+            size="md"
+            weight="semibold"
+            style={{ marginBottom: 12, marginHorizontal: 8 }}
+          >
             MessageComposer:
           </Text>
-          
+
           <MessageComposer
             ref={composerRef}
             value={message}

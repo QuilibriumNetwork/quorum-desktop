@@ -6,7 +6,7 @@ import { i18n } from '@lingui/core';
 const maxImageSize = 2 * 1024 * 1024; // 2MB
 
 /**
- * Hook for web-specific file upload functionality  
+ * Hook for web-specific file upload functionality
  * Handles drag/drop, file validation, and image processing
  * Web-only implementation using react-dropzone
  */
@@ -16,35 +16,36 @@ export const useWebFileUpload = () => {
   const [fileError, setFileError] = useState<string | null>(null);
 
   // Configure dropzone for image uploads
-  const { getRootProps, getInputProps, acceptedFiles, isDragActive } = useDropzone({
-    accept: {
-      'image/png': ['.png'],
-      'image/jpeg': ['.jpg', '.jpeg'],
-    },
-    minSize: 0,
-    maxSize: maxImageSize,
-    maxFiles: 1,
-    multiple: false,
-    onDropRejected: (fileRejections) => {
-      for (const rejection of fileRejections) {
-        if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          setFileError(
-            i18n._(`File cannot be larger than {maxFileSize}`, {
-              maxFileSize: `${maxImageSize / 1024 / 1024}MB`,
-            })
-          );
-        } else {
-          setFileError(t`File rejected`);
+  const { getRootProps, getInputProps, acceptedFiles, isDragActive } =
+    useDropzone({
+      accept: {
+        'image/png': ['.png'],
+        'image/jpeg': ['.jpg', '.jpeg'],
+      },
+      minSize: 0,
+      maxSize: maxImageSize,
+      maxFiles: 1,
+      multiple: false,
+      onDropRejected: (fileRejections) => {
+        for (const rejection of fileRejections) {
+          if (rejection.errors.some((err) => err.code === 'file-too-large')) {
+            setFileError(
+              i18n._(`File cannot be larger than {maxFileSize}`, {
+                maxFileSize: `${maxImageSize / 1024 / 1024}MB`,
+              })
+            );
+          } else {
+            setFileError(t`File rejected`);
+          }
         }
-      }
-    },
-    onDropAccepted: (files) => {
-      setFileError(null);
-      // Clear previous file data immediately when new file is accepted
-      setFileData(undefined);
-      setCurrentFile(files[0]);
-    },
-  });
+      },
+      onDropAccepted: (files) => {
+        setFileError(null);
+        // Clear previous file data immediately when new file is accepted
+        setFileData(undefined);
+        setCurrentFile(files[0]);
+      },
+    });
 
   // Process file into ArrayBuffer when file changes
   useEffect(() => {
@@ -64,11 +65,13 @@ export const useWebFileUpload = () => {
   // Generate data URL for image preview
   const getImageDataUrl = useCallback((): string | null => {
     if (!currentFile || !fileData) return null;
-    
-    return 'data:' + 
-      currentFile.type + 
-      ';base64,' + 
-      Buffer.from(fileData).toString('base64');
+
+    return (
+      'data:' +
+      currentFile.type +
+      ';base64,' +
+      Buffer.from(fileData).toString('base64')
+    );
   }, [currentFile, fileData]);
 
   // Validation helpers
@@ -85,22 +88,22 @@ export const useWebFileUpload = () => {
   return {
     // File state
     currentFile,
-    fileData, 
+    fileData,
     fileError,
     isDragActive,
-    
+
     // Validation
     hasValidFile,
     canSaveFile,
-    
+
     // Dropzone props
     getRootProps,
     getInputProps,
-    
+
     // Helpers
     getImageDataUrl,
     clearFile,
-    
+
     // Constants
     maxImageSize,
   };

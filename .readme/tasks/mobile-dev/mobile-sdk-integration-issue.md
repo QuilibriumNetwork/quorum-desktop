@@ -1,7 +1,5 @@
 # Quilibrium SDK Mobile Integration Issue
 
-
-
 **Status**: 🔴 Blocked  
 **Priority**: High  
 **Date**: 2025-08-08  
@@ -18,14 +16,16 @@ The `@quilibrium/quilibrium-js-sdk-channels` SDK, used for Passkey Authenticatio
 ## Problem Description
 
 ### Error Encountered
+
 ```
 Android Bundling failed
-The package at "node_modules/@quilibrium/quilibrium-js-sdk-channels/dist/index.esm.js" 
+The package at "node_modules/@quilibrium/quilibrium-js-sdk-channels/dist/index.esm.js"
 attempted to import the Node standard library module "crypto".
 It failed because the native React runtime does not include the Node standard library.
 ```
 
 ### SDK Details
+
 - **Package**: `@quilibrium/quilibrium-js-sdk-channels`
 - **Version**: 2.1.0-preview
 - **Location**: Linked as local dependency (`file:../quilibrium-js-sdk-channels`)
@@ -35,6 +35,7 @@ It failed because the native React runtime does not include the Node standard li
 ## Root Causes
 
 ### 1. WebAssembly (WASM) - Fundamental Blocker
+
 - SDK contains `channelwasm_bg.wasm` with compiled Rust crypto operations
 - Uses `new URL('channelwasm_bg.wasm', import.meta.url)` for loading
 - **React Native/Hermes does not support WebAssembly** - this is a runtime limitation
@@ -42,21 +43,25 @@ It failed because the native React runtime does not include the Node standard li
 - Core crypto operations (key generation, signing, encryption) depend on WASM
 
 ### 2. Web-Specific Global Objects
+
 - SDK assumes browser environment: `window.Buffer = Buffer` (line 2 of index.ts)
 - `window` object doesn't exist in React Native
 - While polyfillable, indicates SDK was built specifically for browsers
 
 ### 3. React Components Evaluated at Module Level
+
 - SDK exports React components directly: `export { PasskeysProvider, usePasskeysContext }`
 - Causes "Invalid hook call" errors when imported outside React component tree
 - Components use browser-specific APIs internally
 
 ### 4. WebAuthn/Passkey APIs
+
 - Passkey functionality relies on WebAuthn browser API
 - No React Native equivalent without native modules
 - Would require platform-specific implementations for iOS/Android biometrics
 
 ### 5. Node.js Dependencies (Partially Solvable)
+
 - `crypto` module - Can be polyfilled with `react-native-crypto`
 - `import.meta.url` - Can be transformed with Babel
 - Buffer, Stream, Process - Can be polyfilled
@@ -92,30 +97,34 @@ It failed because the native React runtime does not include the Node standard li
 ### Option A: Server-Side Proxy (RECOMMENDED)
 
 Move SDK operations to backend API:
+
 - Keep SDK on server only
 - Create REST/GraphQL endpoints for all SDK operations
 - Mobile app calls backend instead of using SDK directly
 - Backend handles all crypto, passkey, and channel operations
 
 **Implementation**:
+
 ```typescript
 // Backend endpoints needed:
-POST /api/passkey/create
-POST /api/passkey/authenticate
-POST /api/crypto/generateKeys
-POST /api/crypto/sign
-POST /api/crypto/encrypt
-POST /api/channel/send
+POST / api / passkey / create;
+POST / api / passkey / authenticate;
+POST / api / crypto / generateKeys;
+POST / api / crypto / sign;
+POST / api / crypto / encrypt;
+POST / api / channel / send;
 ```
 
-**Pros**: 
+**Pros**:
+
 - **100% feature parity with web app**
 - No SDK modifications needed
 - Works immediately with existing SDK
 - Single source of truth for crypto operations
 - Security benefit: keys can be managed server-side
 
-**Cons**: 
+**Cons**:
+
 - Requires backend infrastructure changes
 - Network dependency for all operations
 - Additional latency (~50-200ms per operation)
@@ -126,30 +135,33 @@ POST /api/channel/send
 ### Option B: Native Module Bridge
 
 Create native iOS/Android modules that replicate SDK functionality:
+
 - Implement crypto operations in Swift/Kotlin
 - Use platform biometric APIs for passkeys
 - Bridge to JavaScript via React Native modules
 - Essentially recreate WASM functionality natively
 
 **Implementation Components**:
+
 - iOS: CryptoKit + LocalAuthentication frameworks
 - Android: Android Keystore + BiometricPrompt API
 - React Native bridge layer
 - TypeScript interface matching SDK
 
-**Pros**: 
+**Pros**:
+
 - Full offline functionality
 - Native performance
 - Platform-specific optimizations
 - Direct biometric integration
 
-**Cons**: 
+**Cons**:
+
 - Significant development effort (2-4 weeks)
 - Requires iOS/Android expertise
 - Maintenance of three codebases (iOS/Android/Bridge)
 - Must keep in sync with SDK updates
 - Complex testing across platforms
-
 
 ## Current Workaround: SDK Shim
 
@@ -162,17 +174,20 @@ A temporary shim implementation is currently in place that provides mock functio
 ## Recommended Approach
 
 ### Immediate Action: Continue with SDK Shim
+
 - ✅ Already implemented and working
 - Allows mobile development to proceed
 - No blocking issues for UI/UX development
 
 ### Short-term Solution (1-2 weeks): Implement Server-Side Proxy
+
 - Create backend endpoints for SDK operations
 - Update mobile app to use API calls instead of direct SDK
 - Achieves full feature parity quickly
 - Can be done incrementally (start with critical features)
 
 ### Long-term Consideration (if needed): Native Module Bridge
+
 - Only if offline functionality becomes critical
 - Only if latency becomes unacceptable
 - Evaluate after proxy implementation
@@ -181,12 +196,14 @@ A temporary shim implementation is currently in place that provides mock functio
 ## Expo Dev Build Test Results (2025-01-07)
 
 **Configuration Applied:**
+
 - ✅ Node.js polyfills (crypto, buffer, stream, process)
 - ✅ Metro configuration with module aliasing
 - ✅ Babel transform for import.meta support
 - ✅ WebAssembly polyfill (non-functional stub)
 
 **Test Results:**
+
 - ✅ Metro bundling succeeds with polyfills
 - ✅ SDK attempts to load without bundling errors
 - ❌ WebAssembly operations return empty data (expected)
@@ -205,6 +222,7 @@ A temporary shim implementation is currently in place that provides mock functio
 ## Files Modified During Testing
 
 ### Configuration Files:
+
 - `mobile/metro.config.js` - Added Node.js module aliasing
 - `mobile/babel.config.js` - Enabled import.meta transformation
 - `mobile/polyfills.js` - Comprehensive polyfill setup
@@ -212,6 +230,7 @@ A temporary shim implementation is currently in place that provides mock functio
 - `mobile/index.ts` - Import polyfills before app
 
 ### Test Integration Files:
+
 - `src/shims/quilibrium-sdk-channels.native.tsx` - Smart shim with real SDK fallback
 - `.readme/tasks/todo/mobile-dev/sdk-integration-test-results.md` - Detailed test log
 
@@ -222,10 +241,12 @@ A temporary shim implementation is currently in place that provides mock functio
 - [SDK Integration Test Results](./sdk-integration-test-results.md) - Detailed test logs
 
 ## Resources
+
 - [React Native Crypto Libraries](https://github.com/tradle/react-native-crypto)
 - [Metro Bundler Configuration](https://facebook.github.io/metro/docs/configuration)
 - [WebAssembly in React Native Discussion](https://github.com/react-native-community/discussions-and-proposals/issues/564)
 - [Hermes WebAssembly Support Status](https://github.com/facebook/hermes/issues/114)
 
 ---
-*Last updated: 2025-01-07*
+
+_Last updated: 2025-01-07_

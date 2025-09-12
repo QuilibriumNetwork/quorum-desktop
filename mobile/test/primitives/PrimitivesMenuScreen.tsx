@@ -147,9 +147,7 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
           color={theme.colors.accent[500]}
           style={{ marginRight: 12 }}
         />
-        <Text size="xl">
-          {primitive.title}
-        </Text>
+        <Text size="xl">{primitive.title}</Text>
       </View>
       <Text size="sm" variant="subtle">
         {primitive.description}
@@ -213,26 +211,37 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
           ]}
         >
           <View style={commonTestStyles.titleContainer}>
-            <Title size='sm'>
-              Testing Notes
-            </Title>
+            <Title size="sm">Testing Notes</Title>
           </View>
           <FlexRow gap="xs" align="start">
-            <Text size="sm" variant="default">•</Text>
-            <View style={{flex: 1}}>
-              <Text size="sm" variant="default">Each primitive has both web (.web.tsx) and mobile (.native.tsx) implementations</Text>
+            <Text size="sm" variant="default">
+              •
+            </Text>
+            <View style={{ flex: 1 }}>
+              <Text size="sm" variant="default">
+                Each primitive has both web (.web.tsx) and mobile (.native.tsx)
+                implementations
+              </Text>
             </View>
           </FlexRow>
           <FlexRow gap="xs" align="start">
-            <Text size="sm" variant="default">•</Text>
-            <View style={{flex: 1}}>
-              <Text size="sm" variant="default">Focus on Android testing - Expo web can be unreliable</Text>
+            <Text size="sm" variant="default">
+              •
+            </Text>
+            <View style={{ flex: 1 }}>
+              <Text size="sm" variant="default">
+                Focus on Android testing - Expo web can be unreliable
+              </Text>
             </View>
           </FlexRow>
           <FlexRow gap="xs" align="start">
-            <Text size="sm" variant="default">•</Text>
-            <View style={{flex: 1}}>
-              <Text size="sm" variant="default">Use shake gesture to open developer menu if needed</Text>
+            <Text size="sm" variant="default">
+              •
+            </Text>
+            <View style={{ flex: 1 }}>
+              <Text size="sm" variant="default">
+                Use shake gesture to open developer menu if needed
+              </Text>
             </View>
           </FlexRow>
         </View>
@@ -240,5 +249,3 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
     </SafeAreaView>
   );
 };
-
-

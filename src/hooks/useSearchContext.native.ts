@@ -16,7 +16,7 @@ export const useSearchContext = (): SearchContext => {
   // MOBILE TODO: Replace with React Navigation hooks when implemented
   // const route = useRoute();
   // const navigation = useNavigation();
-  
+
   // For now, we'll simulate the web logic structure but with mobile defaults
   const location = { pathname: '/default' }; // Placeholder - replace with React Navigation
   const params: RouteParams = {}; // Placeholder - replace with React Navigation params

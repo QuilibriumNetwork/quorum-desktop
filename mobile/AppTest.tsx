@@ -9,7 +9,10 @@ import { I18nProvider } from '@lingui/react';
 import { i18n, initializeMobileI18n } from './i18n';
 import { PasskeysProvider } from '@quilibrium/quilibrium-js-sdk-channels';
 import { default as Button } from '@/primitives/Button';
-import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
+import {
+  commonTestStyles,
+  createThemedStyles,
+} from '@/styles/commonTestStyles';
 // Import main menu
 import { MainMenuScreen } from '@/test/MainMenuScreen';
 
@@ -44,28 +47,57 @@ import {
 } from '@/test/business';
 
 type Section = 'main' | 'primitives' | 'business';
-type PrimitiveScreen = 'list' | 'basic' | 'text' | 'input' | 'textarea' | 'button' | 'switch' | 'modal' | 'select' | 'colorswatch' | 'radiogroup' | 'tooltip' | 'icon' | 'fileupload';
-type BusinessScreen = 'list' | 'onboarding' | 'auth' | 'login' | 'maintenance' | 'copy' | 'modals' | 'spaces' | 'channel' | 'direct' | 'settings' | 'search' | 'messagecomposer';
+type PrimitiveScreen =
+  | 'list'
+  | 'basic'
+  | 'text'
+  | 'input'
+  | 'textarea'
+  | 'button'
+  | 'switch'
+  | 'modal'
+  | 'select'
+  | 'colorswatch'
+  | 'radiogroup'
+  | 'tooltip'
+  | 'icon'
+  | 'fileupload';
+type BusinessScreen =
+  | 'list'
+  | 'onboarding'
+  | 'auth'
+  | 'login'
+  | 'maintenance'
+  | 'copy'
+  | 'modals'
+  | 'spaces'
+  | 'channel'
+  | 'direct'
+  | 'settings'
+  | 'search'
+  | 'messagecomposer';
 
 // Themed App Content (must be inside ThemeProvider)
 function ThemedAppContent() {
   const [currentSection, setCurrentSection] = useState<Section>('main');
-  const [currentPrimitiveScreen, setCurrentPrimitiveScreen] = useState<PrimitiveScreen>('list');
-  const [currentBusinessScreen, setCurrentBusinessScreen] = useState<BusinessScreen>('list');
+  const [currentPrimitiveScreen, setCurrentPrimitiveScreen] =
+    useState<PrimitiveScreen>('list');
+  const [currentBusinessScreen, setCurrentBusinessScreen] =
+    useState<BusinessScreen>('list');
   const theme = useTheme();
   const themedStyles = createThemedStyles(theme);
 
   const renderBackButton = () => {
     if (currentSection === 'main') return null;
 
-    const isOnList = 
+    const isOnList =
       (currentSection === 'primitives' && currentPrimitiveScreen === 'list') ||
       (currentSection === 'business' && currentBusinessScreen === 'list');
 
-    const buttonText = isOnList 
-      ? 'Back to Main Menu' 
-      : currentSection === 'primitives' 
-        ? 'Back to Primitives' 
+    const buttonText = isOnList
+      ? 'Back to Main Menu'
+      : currentSection === 'primitives'
+        ? 'Back to Primitives'
         : 'Back to Business';
 
     const handleBack = () => {
@@ -81,11 +113,7 @@ function ThemedAppContent() {
     return (
       <View style={themedStyles.backBar}>
         <View style={commonTestStyles.backButtonContainer}>
-          <Button
-            type="secondary"
-            iconName="arrow-left"
-            onClick={handleBack}
-          >
+          <Button type="secondary" iconName="arrow-left" onClick={handleBack}>
             {buttonText}
           </Button>
         </View>
@@ -120,7 +148,9 @@ function ThemedAppContent() {
     if (currentSection === 'primitives') {
       switch (currentPrimitiveScreen) {
         case 'list':
-          return <PrimitivesMenuScreen onSelectPrimitive={handleSelectPrimitive} />;
+          return (
+            <PrimitivesMenuScreen onSelectPrimitive={handleSelectPrimitive} />
+          );
         case 'basic':
           return <PrimitivesTestScreen />;
         case 'text':
@@ -148,7 +178,9 @@ function ThemedAppContent() {
         case 'fileupload':
           return <FileUploadTestScreen />;
         default:
-          return <PrimitivesMenuScreen onSelectPrimitive={handleSelectPrimitive} />;
+          return (
+            <PrimitivesMenuScreen onSelectPrimitive={handleSelectPrimitive} />
+          );
       }
     }
 
@@ -168,7 +200,11 @@ function ThemedAppContent() {
         case 'copy':
           return <ClickToCopyTestScreen />;
         case 'modals':
-          return <ModalsTestScreen onGoBack={() => setCurrentBusinessScreen('list')} />;
+          return (
+            <ModalsTestScreen
+              onGoBack={() => setCurrentBusinessScreen('list')}
+            />
+          );
         case 'messagecomposer':
           return <MessageComposerTestScreen />;
         // Future screens will be added here
@@ -181,7 +217,12 @@ function ThemedAppContent() {
   };
 
   return (
-    <View style={[commonTestStyles.appContainer, { backgroundColor: theme.colors.bg.app }]}>
+    <View
+      style={[
+        commonTestStyles.appContainer,
+        { backgroundColor: theme.colors.bg.app },
+      ]}
+    >
       {renderBackButton()}
       {renderScreen()}
       <StatusBar style="auto" />
@@ -223,4 +264,3 @@ export default function App() {
     </GestureHandlerRootView>
   );
 }
-

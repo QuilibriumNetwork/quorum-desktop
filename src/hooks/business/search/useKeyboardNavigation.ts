@@ -25,9 +25,13 @@ export function useKeyboardNavigation({
           // CRITICAL: Always prevent Enter from submitting forms in search inputs
           // This prevents page refresh when user presses Enter while typing
           e.preventDefault();
-          
+
           // Only handle suggestion selection if we have suggestions and a selection
-          if (showSuggestions && suggestions.length > 0 && selectedSuggestionIndex >= 0) {
+          if (
+            showSuggestions &&
+            suggestions.length > 0 &&
+            selectedSuggestionIndex >= 0
+          ) {
             const suggestion = suggestions[selectedSuggestionIndex];
             onSuggestionSelect?.(suggestion);
             onHideSuggestions();

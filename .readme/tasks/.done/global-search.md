@@ -1,6 +1,5 @@
 # 🔍 Global Message Search Implementation Plan
 
-
 ## 📋 Overview
 
 Implementation of a Discord-like global search feature that allows users to search messages within their current context (DM or Space) with real-time results and proper scoping.

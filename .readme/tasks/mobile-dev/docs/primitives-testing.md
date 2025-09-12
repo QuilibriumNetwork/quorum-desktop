@@ -1,6 +1,5 @@
 # Primitives Testing Guide
 
-
 ## Accessing the Primitives Playground
 
 During development, you can test all primitives by navigating to:

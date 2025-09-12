@@ -11,8 +11,9 @@ Fast lookup guide for all primitive components with essential props and examples
 ## 📝 Text & Typography
 
 ### Text
+
 ```tsx
-<Text 
+<Text
   variant="default|strong|subtle|muted|error|success|warning|link"
   size="xs|sm|base|lg|xl|2xl|3xl"
   weight="normal|medium|semibold|bold"
@@ -26,6 +27,7 @@ Fast lookup guide for all primitive components with essential props and examples
 ```
 
 ### Semantic Typography
+
 ```tsx
 <Title>Page Title</Title>                    // size="lg" (24px), weight="bold" (default)
 <Title size="sm">Section Title</Title>       // size="sm" (18px), weight="bold"
@@ -37,10 +39,11 @@ Fast lookup guide for all primitive components with essential props and examples
 ```
 
 ### Title Props
+
 ```tsx
-<Title 
-  size="sm|md|lg|xl"           // sm=18px, md=20px, lg=24px, xl=30px
-  weight="normal|medium|semibold|bold"  // Default: bold
+<Title
+  size="sm|md|lg|xl" // sm=18px, md=20px, lg=24px, xl=30px
+  weight="normal|medium|semibold|bold" // Default: bold
 >
   Title Text
 </Title>
@@ -51,27 +54,29 @@ Fast lookup guide for all primitive components with essential props and examples
 ## 🎨 Buttons
 
 ### Button
+
 ```tsx
-<Button 
+<Button
   type="primary|secondary|light|light-outline|subtle|subtle-outline|danger|primary-white|secondary-white|light-white|light-outline-white|disabled-onboarding|unstyled"
   size="small|normal|large"
   onClick={() => {}}
   disabled={boolean}
   fullWidth={boolean}
-  fullWidthWithMargin={boolean}    // Native only
+  fullWidthWithMargin={boolean} // Native only
   iconName="icon-name"
   iconOnly={boolean}
-  hapticFeedback={boolean}         // Native only
+  hapticFeedback={boolean} // Native only
   accessibilityLabel="description" // Native only
   tooltip="tooltip text"
   highlightedTooltip={boolean}
-  className="css-classes"          // Web only
+  className="css-classes" // Web only
 >
   Button Text
 </Button>
 ```
 
 **Quick Examples:**
+
 ```tsx
 <Button type="primary" onClick={save}>Save</Button>
 <Button type="secondary" iconName="plus" onClick={add}>Add</Button>
@@ -85,8 +90,9 @@ Fast lookup guide for all primitive components with essential props and examples
 ## 📝 Form Elements
 
 ### Input
+
 ```tsx
-<Input 
+<Input
   value={string}
   onChange={(value) => {}}
   placeholder="placeholder text"
@@ -97,24 +103,25 @@ Fast lookup guide for all primitive components with essential props and examples
   disabled={boolean}
   noFocusStyle={boolean}
   autoFocus={boolean}
-  className="css-classes"          // Web only
+  className="css-classes" // Web only
   style={CSSProperties}
   testID="test-id"
   accessibilityLabel="description"
   // Native-specific props:
-  keyboardType="default|email-address|numeric|phone-pad|number-pad|decimal-pad|url"  // Native only
-  returnKeyType="done|go|next|search|send"  // Native only
-  autoComplete="off|email|name|tel|username|password"  // Native only
-  secureTextEntry={boolean}        // Native only
-  onSubmitEditing={() => {}}       // Native only
+  keyboardType="default|email-address|numeric|phone-pad|number-pad|decimal-pad|url" // Native only
+  returnKeyType="done|go|next|search|send" // Native only
+  autoComplete="off|email|name|tel|username|password" // Native only
+  secureTextEntry={boolean} // Native only
+  onSubmitEditing={() => {}} // Native only
   onBlur={() => {}}
   onFocus={() => {}}
 />
 ```
 
 ### TextArea
+
 ```tsx
-<TextArea 
+<TextArea
   value={string}
   onChange={(value) => {}}
   placeholder="placeholder text"
@@ -126,14 +133,15 @@ Fast lookup guide for all primitive components with essential props and examples
 ```
 
 ### Select
+
 ```tsx
-<Select 
+<Select
   value={string}
   onChange={(value) => {}}
   placeholder="Select option"
   options={[
     { label: 'Display Text', value: 'value' },
-    { label: 'Another Option', value: 'other' }
+    { label: 'Another Option', value: 'other' },
   ]}
   error={boolean}
   errorMessage="error text"
@@ -141,23 +149,24 @@ Fast lookup guide for all primitive components with essential props and examples
 ```
 
 ### FileUpload
+
 ```tsx
-<FileUpload 
+<FileUpload
   onFilesSelected={(files) => {}}
   accept={{ 'image/*': ['.png', '.jpg', '.jpeg'] }}
   multiple={boolean}
-  maxSize={number}                 // bytes
-  minSize={number}                 // bytes
+  maxSize={number} // bytes
+  minSize={number} // bytes
   disabled={boolean}
   onError={(error) => {}}
   testId="file-upload"
   // Web-specific props:
-  onDragActiveChange={(active) => {}}  // Web only
-  validator={(file) => string|null}    // Web only
+  onDragActiveChange={(active) => {}} // Web only
+  validator={(file) => string | null} // Web only
   // Native-specific props:
-  showCameraOption={boolean}       // Native only
-  imageQuality={number}            // Native only (0-1)
-  allowsEditing={boolean}          // Native only
+  showCameraOption={boolean} // Native only
+  imageQuality={number} // Native only (0-1)
+  allowsEditing={boolean} // Native only
 >
   <Text>Drop files here or click to upload</Text>
 </FileUpload>
@@ -168,8 +177,9 @@ Fast lookup guide for all primitive components with essential props and examples
 ## 🔄 Layout Components
 
 ### FlexRow
+
 ```tsx
-<FlexRow 
+<FlexRow
   gap="none|xs|sm|md|lg|xl"
   justify="start|end|center|between|around|evenly"
   align="start|end|center|stretch|baseline"
@@ -181,8 +191,9 @@ Fast lookup guide for all primitive components with essential props and examples
 ```
 
 ### FlexColumn
+
 ```tsx
-<FlexColumn 
+<FlexColumn
   gap="none|xs|sm|md|lg|xl"
   justify="start|end|center|between|around|evenly"
   align="start|end|center|stretch"
@@ -193,6 +204,7 @@ Fast lookup guide for all primitive components with essential props and examples
 ```
 
 ### FlexCenter & FlexBetween
+
 ```tsx
 <FlexCenter>                    // justify="center", align="center"
   <Text>Centered content</Text>
@@ -205,48 +217,49 @@ Fast lookup guide for all primitive components with essential props and examples
 ```
 
 ### Container
+
 ```tsx
-<Container 
+<Container
   width="auto|full|fit|custom-value"
   maxWidth="xs|sm|md|lg|xl|2xl|full|custom-value"
   padding="none|xs|sm|md|lg|xl|custom-value"
   margin="none|xs|sm|md|lg|xl|auto|custom-value"
   backgroundColor="hex-color"
-  className="css-classes"        // Web only
+  className="css-classes" // Web only
   style={CSSProperties}
   testId="container"
   // Web-specific props:
-  onClick={(event) => {}}        // Web only
-  onMouseEnter={(event) => {}}   // Web only
-  onMouseLeave={(event) => {}}   // Web only
-  role="button"                  // Web only
-  aria-label="description"       // Web only
+  onClick={(event) => {}} // Web only
+  onMouseEnter={(event) => {}} // Web only
+  onMouseLeave={(event) => {}} // Web only
+  role="button" // Web only
+  aria-label="description" // Web only
   // Native-specific props:
-  onPress={() => {}}             // Native only
-  accessible={boolean}           // Native only
-  accessibilityLabel="description"  // Native only
-  accessibilityRole="button"     // Native only
-  accessibilityHint="hint"       // Native only
+  onPress={() => {}} // Native only
+  accessible={boolean} // Native only
+  accessibilityLabel="description" // Native only
+  accessibilityRole="button" // Native only
+  accessibilityHint="hint" // Native only
 >
   <Text>Container content</Text>
 </Container>
 ```
 
 ### Spacer
+
 ```tsx
-<Spacer 
+<Spacer
   size="xs|sm|md|lg|xl|number"
-  direction="vertical|horizontal"  // Default: vertical
+  direction="vertical|horizontal" // Default: vertical
   testId="spacer"
-  className="css-classes"        // Web only
+  className="css-classes" // Web only
 />
 ```
 
 ### ResponsiveContainer
+
 ```tsx
-<ResponsiveContainer 
-  className="css-classes"
->
+<ResponsiveContainer className="css-classes">
   <Text>Responsive content that adapts to screen size</Text>
 </ResponsiveContainer>
 ```
@@ -256,8 +269,9 @@ Fast lookup guide for all primitive components with essential props and examples
 ## 🎛️ Interactive Components
 
 ### Switch
+
 ```tsx
-<Switch 
+<Switch
   value={boolean}
   onChange={(value) => {}}
   disabled={boolean}
@@ -267,13 +281,14 @@ Fast lookup guide for all primitive components with essential props and examples
 ```
 
 ### RadioGroup
+
 ```tsx
-<RadioGroup 
+<RadioGroup
   value={string}
   onChange={(value) => {}}
   options={[
     { label: 'Option 1', value: 'option1' },
-    { label: 'Option 2', value: 'option2' }
+    { label: 'Option 2', value: 'option2' },
   ]}
   direction="vertical|horizontal"
   disabled={boolean}
@@ -281,8 +296,9 @@ Fast lookup guide for all primitive components with essential props and examples
 ```
 
 ### Modal
+
 ```tsx
-<Modal 
+<Modal
   isOpen={boolean}
   onClose={() => {}}
   size="small|medium|large|fullscreen"
@@ -294,8 +310,9 @@ Fast lookup guide for all primitive components with essential props and examples
 ```
 
 ### ModalContainer
+
 ```tsx
-<ModalContainer 
+<ModalContainer
   visible={boolean}
   onClose={() => {}}
   closeOnBackdropClick={boolean}
@@ -303,7 +320,7 @@ Fast lookup guide for all primitive components with essential props and examples
   backdropBlur={boolean}
   zIndex="9999"
   className="css-classes"
-  animationDuration={300}        // ms
+  animationDuration={300} // ms
   closeOnEscape={boolean}
 >
   <Text>Modal content</Text>
@@ -311,23 +328,25 @@ Fast lookup guide for all primitive components with essential props and examples
 ```
 
 ### OverlayBackdrop
+
 ```tsx
-<OverlayBackdrop 
+<OverlayBackdrop
   visible={boolean}
   onBackdropClick={() => {}}
   zIndex="9999"
   blur={boolean}
   opacity={0.5}
   className="css-classes"
-  closeOnBackdropClick={boolean}  // Default: true
+  closeOnBackdropClick={boolean} // Default: true
 >
   <Text>Content rendered on top of backdrop</Text>
 </OverlayBackdrop>
 ```
 
 ### Tooltip
+
 ```tsx
-<Tooltip 
+<Tooltip
   content="Tooltip text"
   position="top|bottom|left|right"
   trigger="hover|click|focus"
@@ -341,8 +360,9 @@ Fast lookup guide for all primitive components with essential props and examples
 ## 🎨 Visual Components
 
 ### Icon
+
 ```tsx
-<Icon 
+<Icon
   name="icon-name"
   size="xs|sm|md|lg|xl|2xl"
   color="hex-color"
@@ -351,8 +371,9 @@ Fast lookup guide for all primitive components with essential props and examples
 ```
 
 ### ColorSwatch
+
 ```tsx
-<ColorSwatch 
+<ColorSwatch
   color="hex-color"
   size="small|medium|large"
   shape="circle|square"
@@ -366,6 +387,7 @@ Fast lookup guide for all primitive components with essential props and examples
 ## 📱 Native-Specific Props
 
 ### Common React Native Props
+
 ```tsx
 // Accessibility
 accessibilityLabel="Screen reader description"
@@ -390,28 +412,30 @@ secureTextEntry={true}              // Password masking
 ## 🎨 Theme Integration
 
 ### Using Theme Colors
+
 ```tsx
 import { useTheme } from '../components/primitives/theme';
 
 const theme = useTheme();
 
 // Available theme colors
-theme.colors.bg.app              // Main app background
-theme.colors.bg.card             // Card/panel background
-theme.colors.text.strong         // Primary text
-theme.colors.text.main           // Default text
-theme.colors.text.subtle         // Secondary text
-theme.colors.text.muted          // Disabled text
-theme.colors.accent[500]         // Accent color variations
-theme.colors.surface[1-10]       // Surface color levels
-theme.colors.border.default      // Border color
-theme.colors.utilities.danger    // Error/danger
-theme.colors.utilities.success   // Success
-theme.colors.utilities.warning   // Warning
-theme.colors.utilities.info      // Info
+theme.colors.bg.app; // Main app background
+theme.colors.bg.card; // Card/panel background
+theme.colors.text.strong; // Primary text
+theme.colors.text.main; // Default text
+theme.colors.text.subtle; // Secondary text
+theme.colors.text.muted; // Disabled text
+theme.colors.accent[500]; // Accent color variations
+theme.colors.surface[1 - 10]; // Surface color levels
+theme.colors.border.default; // Border color
+theme.colors.utilities.danger; // Error/danger
+theme.colors.utilities.success; // Success
+theme.colors.utilities.warning; // Warning
+theme.colors.utilities.info; // Info
 ```
 
 ### Applying Theme Colors
+
 ```tsx
 // In component styles
 <View style={{ backgroundColor: theme.colors.bg.card }}>
@@ -428,10 +452,11 @@ theme.colors.utilities.info      // Info
 ## ⚡ Common Patterns
 
 ### Form Field Group
+
 ```tsx
 <FlexColumn gap="xs">
   <Label>Email Address</Label>
-  <Input 
+  <Input
     type="email"
     value={email}
     onChange={setEmail}
@@ -442,6 +467,7 @@ theme.colors.utilities.info      // Info
 ```
 
 ### Header with Icon and Action
+
 ```tsx
 <FlexRow justify="between" align="center">
   <FlexRow gap="sm" align="center">
@@ -453,8 +479,9 @@ theme.colors.utilities.info      // Info
 ```
 
 ### Card Layout
+
 ```tsx
-<Container 
+<Container
   padding="md"
   backgroundColor={theme.colors.bg.card}
   style={{ borderRadius: 12, marginBottom: 16 }}
@@ -468,52 +495,61 @@ theme.colors.utilities.info      // Info
 ```
 
 ### Loading State
+
 ```tsx
-{loading ? (
-  <FlexCenter style={{ padding: 20 }}>
-    <Text variant="subtle">Loading...</Text>
-  </FlexCenter>
-) : (
-  <FlexColumn gap="md">
-    {data.map(item => <ItemComponent key={item.id} item={item} />)}
-  </FlexColumn>
-)}
+{
+  loading ? (
+    <FlexCenter style={{ padding: 20 }}>
+      <Text variant="subtle">Loading...</Text>
+    </FlexCenter>
+  ) : (
+    <FlexColumn gap="md">
+      {data.map((item) => (
+        <ItemComponent key={item.id} item={item} />
+      ))}
+    </FlexColumn>
+  );
+}
 ```
 
 ### File Upload Area
+
 ```tsx
-<FileUpload 
+<FileUpload
   onFilesSelected={handleFiles}
   accept={{ 'image/*': ['.png', '.jpg', '.jpeg', '.gif'] }}
   multiple
   maxSize={5 * 1024 * 1024} // 5MB
 >
-  <Container 
+  <Container
     padding="xl"
-    style={{ 
-      border: '2px dashed #ccc', 
+    style={{
+      border: '2px dashed #ccc',
       borderRadius: 8,
-      textAlign: 'center' 
+      textAlign: 'center',
     }}
   >
     <FlexColumn gap="sm" align="center">
       <Icon name="upload" size="lg" />
       <Text>Drop files here or click to upload</Text>
-      <Text variant="subtle" size="sm">Max 5MB per file</Text>
+      <Text variant="subtle" size="sm">
+        Max 5MB per file
+      </Text>
     </FlexColumn>
   </Container>
 </FileUpload>
 ```
 
 ### Modal with Backdrop
+
 ```tsx
-<ModalContainer 
+<ModalContainer
   visible={showModal}
   onClose={closeModal}
   closeOnBackdropClick
   backdropBlur
 >
-  <Container 
+  <Container
     backgroundColor={theme.colors.bg.card}
     padding="lg"
     style={{ borderRadius: 12, maxWidth: 400, width: '90vw' }}
@@ -526,8 +562,12 @@ theme.colors.utilities.info      // Info
       <Spacer size="sm" />
       <Text>Are you sure you want to continue?</Text>
       <FlexRow gap="sm" justify="end">
-        <Button type="secondary" onClick={closeModal}>Cancel</Button>
-        <Button type="danger" onClick={confirmAction}>Confirm</Button>
+        <Button type="secondary" onClick={closeModal}>
+          Cancel
+        </Button>
+        <Button type="danger" onClick={confirmAction}>
+          Confirm
+        </Button>
       </FlexRow>
     </FlexColumn>
   </Container>
@@ -538,20 +578,20 @@ theme.colors.utilities.info      // Info
 
 ## 🚫 Common Mistakes
 
-| ❌ Don't Do | ✅ Do Instead |
-|-------------|---------------|
-| `<div className="flex">` | `<FlexRow>` or `<FlexColumn>` |
-| `<View style={{ flexDirection: 'row' }}>` | `<FlexRow>` |
-| `<p>Text content</p>` | `<Text>Text content</Text>` |
-| `<button onClick={}>` | `<Button onClick={}>` |
-| `<input type="file" />` | `<FileUpload onFilesSelected={}>` |
-| `<div style={{ padding: 16 }}>` | `<Container padding="md">` |
-| Manual margin spacing between elements | `<Spacer size="md" />` |
-| Custom modal backdrop implementation | `<ModalContainer>` or `<OverlayBackdrop>` |
-| `style={{ color: '#000' }}` on Text | `variant="strong"` or `color={theme.colors.text.strong}` |
-| Manual margin/padding for spacing | Use Flex gap props or semantic components |
-| CSS classes in React Native | Use component props |
-| Raw text outside Text components | Always wrap text in Text components |
+| ❌ Don't Do                               | ✅ Do Instead                                            |
+| ----------------------------------------- | -------------------------------------------------------- |
+| `<div className="flex">`                  | `<FlexRow>` or `<FlexColumn>`                            |
+| `<View style={{ flexDirection: 'row' }}>` | `<FlexRow>`                                              |
+| `<p>Text content</p>`                     | `<Text>Text content</Text>`                              |
+| `<button onClick={}>`                     | `<Button onClick={}>`                                    |
+| `<input type="file" />`                   | `<FileUpload onFilesSelected={}>`                        |
+| `<div style={{ padding: 16 }}>`           | `<Container padding="md">`                               |
+| Manual margin spacing between elements    | `<Spacer size="md" />`                                   |
+| Custom modal backdrop implementation      | `<ModalContainer>` or `<OverlayBackdrop>`                |
+| `style={{ color: '#000' }}` on Text       | `variant="strong"` or `color={theme.colors.text.strong}` |
+| Manual margin/padding for spacing         | Use Flex gap props or semantic components                |
+| CSS classes in React Native               | Use component props                                      |
+| Raw text outside Text components          | Always wrap text in Text components                      |
 
 ## 🏗️ **View vs Flex Usage Pattern**
 
@@ -559,9 +599,9 @@ theme.colors.utilities.info      // Info
 
 ```tsx
 // ✅ BEST PRACTICE: Container for styling, Flex for layout
-<Container 
-  backgroundColor={theme.colors.bg.card} 
-  padding="md" 
+<Container
+  backgroundColor={theme.colors.bg.card}
+  padding="md"
   style={{ borderRadius: 8 }}
 >
   <FlexColumn gap="md">
@@ -582,6 +622,7 @@ theme.colors.utilities.info      // Info
 ```
 
 **When to use:**
+
 - **Container**: Styling containers (colors, borders, shadows, padding, accessibility)
 - **FlexRow/FlexColumn**: Layout, spacing, alignment, content organization
 - **Spacer**: Fixed spacing between non-flex elements
@@ -598,7 +639,7 @@ theme.colors.utilities.info      // Info
 
 ---
 
-*Last updated: 2025-08-14*
+_Last updated: 2025-08-14_
 
 ---
 

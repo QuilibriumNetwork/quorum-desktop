@@ -1,6 +1,5 @@
 # JoinSpaceModal "Invalid JSON" Error Due to Network Issues
 
-
 **Status**: Open (Low Priority)  
 **Priority**: Low  
 **Component**: Various

@@ -28,7 +28,8 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
 
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
   const [confirmationStep, setConfirmationStep] = React.useState<number>(0);
-  const [confirmationTimeout, setConfirmationTimeout] = React.useState<NodeJS.Timeout | null>(null);
+  const [confirmationTimeout, setConfirmationTimeout] =
+    React.useState<NodeJS.Timeout | null>(null);
 
   React.useEffect(() => {
     (async () => {
@@ -70,17 +71,24 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
         ...baseConv,
         isRepudiable: !nonRepudiable,
       });
-      
+
       // Invalidate conversation query to update DirectMessage component
       await queryClient.invalidateQueries({
         queryKey: buildConversationKey({ conversationId }),
       });
-      
+
       onClose();
     } catch {
       onClose();
     }
-  }, [nonRepudiable, conversationId, messageDB, conversation, onClose, queryClient]);
+  }, [
+    nonRepudiable,
+    conversationId,
+    messageDB,
+    conversation,
+    onClose,
+    queryClient,
+  ]);
 
   const handleDeleteClick = React.useCallback(async () => {
     if (confirmationStep === 0) {
@@ -104,7 +112,8 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
         .sort((a: any, b: any) => (b.timestamp || 0) - (a.timestamp || 0));
       const currentAddr = conversationId.split('/')[0];
       const next = list.find(
-        (c: any) => (c.address || c.conversationId.split('/')[0]) !== currentAddr
+        (c: any) =>
+          (c.address || c.conversationId.split('/')[0]) !== currentAddr
       );
       if (next) {
         const addr = (next as any).address || next.conversationId.split('/')[0];
@@ -115,7 +124,15 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
       setConfirmationStep(0);
       onClose();
     }
-  }, [confirmationStep, confirmationTimeout, deleteConversation, conversationId, convPages, navigate, onClose]);
+  }, [
+    confirmationStep,
+    confirmationTimeout,
+    deleteConversation,
+    conversationId,
+    convPages,
+    navigate,
+    onClose,
+  ]);
 
   // Reset confirmation when modal closes
   React.useEffect(() => {

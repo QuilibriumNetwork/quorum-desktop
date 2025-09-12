@@ -144,7 +144,6 @@ export function Tooltip({
       Math.min(left, screenWidth - tooltipWidth - minPadding)
     );
 
-
     return { top: finalTop, left: finalLeft };
   };
 
