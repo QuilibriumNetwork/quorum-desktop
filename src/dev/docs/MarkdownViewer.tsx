@@ -35,8 +35,57 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   const renderMarkdown = (markdown: string) => {
     // First, protect code blocks from paragraph processing
     const codeBlockPlaceholders: string[] = [];
+    const tablePlaceholders: string[] = [];
+    
+    // Helper function to process inline markdown in table cells
+    const processInlineMarkdown = (text: string): string => {
+      return text
+        // Bold
+        .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-semibold text-strong">$1</strong>')
+        // Italic
+        .replace(/\*([^*]+)\*/g, '<em class="italic">$1</em>')
+        // Inline code
+        .replace(/`([^`]+)`/g, '<code class="bg-surface-2 px-1 py-0.5 rounded text-sm font-mono text-accent">$1</code>')
+        // Links
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-accent hover:text-accent-600 underline" target="_blank" rel="noopener noreferrer">$1</a>');
+    };
+    
+    // Process tables first (before other replacements)
     let html = markdown
-      // Extract and protect code blocks first with syntax highlighting
+      // Extract and protect tables
+      .replace(/(\|[^\n]+\|\n)(\|[\s:|-]+\|\n)((?:\|[^\n]+\|\n?)+)/g, (match, header, separator, body) => {
+        const placeholder = `__TABLE_${tablePlaceholders.length}__`;
+        
+        // Parse header row
+        const headerCells = header.trim().split('|').filter(cell => cell.trim());
+        const headerRow = headerCells.map(cell => 
+          `<th class="border border-default px-3 py-2 text-left font-semibold bg-surface-2">${processInlineMarkdown(cell.trim())}</th>`
+        ).join('');
+        
+        // Parse body rows
+        const bodyRows = body.trim().split('\n').map(row => {
+          const cells = row.split('|').filter(cell => cell.trim());
+          const rowCells = cells.map(cell => 
+            `<td class="border border-default px-3 py-2">${processInlineMarkdown(cell.trim())}</td>`
+          ).join('');
+          return `<tr class="hover:bg-surface-1">${rowCells}</tr>`;
+        }).join('');
+        
+        const tableHtml = `
+          <div class="overflow-x-auto my-6">
+            <table class="min-w-full border-collapse border border-default">
+              <thead>
+                <tr>${headerRow}</tr>
+              </thead>
+              <tbody>${bodyRows}</tbody>
+            </table>
+          </div>
+        `;
+        
+        tablePlaceholders.push(tableHtml);
+        return placeholder;
+      })
+      // Extract and protect code blocks with syntax highlighting
       .replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
         const cleanCode = code.trim();
         const placeholder = `__CODE_BLOCK_${codeBlockPlaceholders.length}__`;
@@ -143,13 +192,13 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
       .replace(/^---+$/gm, '<hr class="border-default my-8" />')
       .replace(/^\*\*\*+$/gm, '<hr class="border-default my-8" />');
 
-    // Convert line breaks and paragraphs - skip code block placeholders entirely
+    // Convert line breaks and paragraphs - skip code block and table placeholders entirely
     const processedHtml = html
       .split('\n')
       .map((line) => {
         const trimmed = line.trim();
-        // Skip code block placeholders completely - don't process them at all
-        if (trimmed.includes('__CODE_BLOCK_')) {
+        // Skip code block and table placeholders completely - don't process them at all
+        if (trimmed.includes('__CODE_BLOCK_') || trimmed.includes('__TABLE_')) {
           return trimmed;
         }
         // Only add <br /> for empty lines that aren't part of special elements
@@ -174,10 +223,16 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
         match.replace(/<\/?p[^>]*>/g, '')
       );
 
-    // Restore code blocks
-    return codeBlockPlaceholders.reduce((result, codeBlock, index) => {
-      return result.replace(`__CODE_BLOCK_${index}__`, codeBlock);
+    // Restore tables and code blocks
+    let finalHtml = tablePlaceholders.reduce((result, table, index) => {
+      return result.replace(`__TABLE_${index}__`, table);
     }, processedHtml);
+    
+    finalHtml = codeBlockPlaceholders.reduce((result, codeBlock, index) => {
+      return result.replace(`__CODE_BLOCK_${index}__`, codeBlock);
+    }, finalHtml);
+    
+    return finalHtml;
   };
 
   return (
