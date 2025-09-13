@@ -5,6 +5,7 @@ export interface MarkdownFile {
   path: string;
   folder: string;
   title: string;
+  slug: string; // URL-safe identifier
   status?: 'pending' | 'done' | 'active' | 'solved';
   priority?: 'low' | 'medium' | 'high' | 'critical';
   content?: string;
@@ -20,6 +21,25 @@ const filenameToTitle = (filename: string): string => {
     .replace(/[-_]/g, ' ')
     .replace(/\b\w/g, (l) => l.toUpperCase())
     .replace(/^(DONE|FAILED|SOLVED)_?/, ''); // Remove status prefixes
+};
+
+// Generate URL-safe slug from file path
+const generateSlug = (path: string): string => {
+  // Remove .readme prefix and .md extension
+  let slug = path
+    .replace(/^\.readme\//, '')
+    .replace(/\.md$/, '')
+    .toLowerCase();
+  
+  // Remove type prefix (docs/, tasks/, bugs/)
+  slug = slug.replace(/^(docs|tasks|bugs)\//, '');
+  
+  // Replace special characters and spaces with hyphens
+  slug = slug
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+  
+  return slug;
 };
 
 // Determine status from filename or folder structure
@@ -80,12 +100,13 @@ export const useMarkdownFiles = (type: 'docs' | 'tasks' | 'bugs') => {
         // Get the raw file data
         const rawFiles = (markdownFilesData as any)[type] || [];
 
-        // Process the files with titles and status
+        // Process the files with titles, status, and slugs
         const processedFiles: MarkdownFile[] = rawFiles.map((file: any) => ({
           name: file.name,
           path: file.path,
           folder: file.folder,
           title: filenameToTitle(file.name),
+          slug: generateSlug(file.path),
           status: determineStatus(file.path, file.name, type),
           priority: type === 'bugs' ? determinePriority(file.name) : undefined,
         }));
@@ -103,7 +124,12 @@ export const useMarkdownFiles = (type: 'docs' | 'tasks' | 'bugs') => {
     loadFiles();
   }, [type]);
 
-  return { files, loading, error };
+  // Helper to find a file by slug
+  const findBySlug = (slug: string) => {
+    return files.find(f => f.slug === slug);
+  };
+
+  return { files, loading, error, findBySlug };
 };
 
 // Hook for loading individual markdown file content

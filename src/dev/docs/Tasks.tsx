@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   Button,
   FlexRow,
@@ -12,13 +13,15 @@ import { MarkdownViewer } from './MarkdownViewer';
 import { useMarkdownFiles, type MarkdownFile } from './hooks/useMarkdownFiles';
 
 export const Tasks: React.FC = () => {
+  const { taskId } = useParams<{ taskId?: string }>();
+  const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<MarkdownFile | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(['pending'])
   ); // Keep all sections open except done
 
   // Load markdown files dynamically
-  const { files: taskFiles, loading, error } = useMarkdownFiles('tasks');
+  const { files: taskFiles, loading, error, findBySlug } = useMarkdownFiles('tasks');
 
   // Group files by folder, separating done from others
   const groupedFiles = useMemo(() => {
@@ -63,12 +66,23 @@ export const Tasks: React.FC = () => {
     setExpandedSections(newExpanded);
   };
 
-  const handleFileClick = (file: MarkdownFile) => {
-    setSelectedFile(file);
-  };
+  // Handle URL-based navigation
+  useEffect(() => {
+    if (taskId && !loading) {
+      const file = findBySlug(taskId);
+      if (file) {
+        setSelectedFile(file);
+      } else {
+        // Invalid task ID, redirect to list
+        navigate('/dev/tasks', { replace: true });
+      }
+    } else {
+      setSelectedFile(null);
+    }
+  }, [taskId, loading, findBySlug, navigate]);
 
   const handleBackToList = () => {
-    setSelectedFile(null);
+    navigate('/dev/tasks');
   };
 
   if (selectedFile) {
@@ -170,14 +184,14 @@ export const Tasks: React.FC = () => {
                         .sort((a, b) => a.title.localeCompare(b.title))
                         .map((file) => (
                           <li key={file.path}>
-                            <div
-                              className="hover:text-accent transition-colors cursor-pointer"
-                              onClick={() => handleFileClick(file)}
+                            <Link
+                              to={`/dev/tasks/${file.slug}`}
+                              className="block hover:text-accent transition-colors"
                             >
                               <Text variant="main" size="md">
                                 • {file.title}
                               </Text>
-                            </div>
+                            </Link>
                           </li>
                         ))}
                     </ul>
@@ -233,14 +247,14 @@ export const Tasks: React.FC = () => {
                         .sort((a, b) => a.title.localeCompare(b.title))
                         .map((file) => (
                           <li key={file.path}>
-                            <div
-                              className="hover:text-accent transition-colors cursor-pointer"
-                              onClick={() => handleFileClick(file)}
+                            <Link
+                              to={`/dev/tasks/${file.slug}`}
+                              className="block hover:text-accent transition-colors"
                             >
                               <Text variant="main" size="md">
                                 • {file.title}
                               </Text>
-                            </div>
+                            </Link>
                           </li>
                         ))}
                     </ul>

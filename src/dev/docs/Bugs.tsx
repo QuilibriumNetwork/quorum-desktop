@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   Button,
   FlexRow,
@@ -12,13 +13,15 @@ import { MarkdownViewer } from './MarkdownViewer';
 import { useMarkdownFiles, type MarkdownFile } from './hooks/useMarkdownFiles';
 
 export const Bugs: React.FC = () => {
+  const { bugId } = useParams<{ bugId?: string }>();
+  const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<MarkdownFile | null>(null);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(['active'])
   ); // Active section open by default
 
   // Load markdown files dynamically
-  const { files: bugFiles, loading, error } = useMarkdownFiles('bugs');
+  const { files: bugFiles, loading, error, findBySlug } = useMarkdownFiles('bugs');
 
   // Simple grouping: solved vs active
   const groupedFiles = useMemo(() => {
@@ -41,12 +44,23 @@ export const Bugs: React.FC = () => {
     setExpandedSections(newExpanded);
   };
 
-  const handleFileClick = (file: MarkdownFile) => {
-    setSelectedFile(file);
-  };
+  // Handle URL-based navigation
+  useEffect(() => {
+    if (bugId && !loading) {
+      const file = findBySlug(bugId);
+      if (file) {
+        setSelectedFile(file);
+      } else {
+        // Invalid bug ID, redirect to list
+        navigate('/dev/bugs', { replace: true });
+      }
+    } else {
+      setSelectedFile(null);
+    }
+  }, [bugId, loading, findBySlug, navigate]);
 
   const handleBackToList = () => {
-    setSelectedFile(null);
+    navigate('/dev/bugs');
   };
 
   if (selectedFile) {
@@ -140,14 +154,14 @@ export const Bugs: React.FC = () => {
                     .sort((a, b) => a.title.localeCompare(b.title))
                     .map((file) => (
                       <li key={file.path}>
-                        <div
-                          className="hover:text-accent transition-colors cursor-pointer"
-                          onClick={() => handleFileClick(file)}
+                        <Link
+                          to={`/dev/bugs/${file.slug}`}
+                          className="block hover:text-accent transition-colors"
                         >
                           <Text variant="main" size="md">
                             • {file.title}
                           </Text>
-                        </div>
+                        </Link>
                       </li>
                     ))}
                 </ul>

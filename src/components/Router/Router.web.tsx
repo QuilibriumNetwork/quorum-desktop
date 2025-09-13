@@ -184,7 +184,7 @@ export function Router({ user, setUser }: RouterProps) {
       )}
       {process.env.NODE_ENV === 'development' && Docs && (
         <Route
-          path="/dev/docs"
+          path="/dev/docs/:docId?"
           element={
             <Suspense fallback={<div>Loading documentation...</div>}>
               <Docs />
@@ -194,7 +194,7 @@ export function Router({ user, setUser }: RouterProps) {
       )}
       {process.env.NODE_ENV === 'development' && Tasks && (
         <Route
-          path="/dev/tasks"
+          path="/dev/tasks/:taskId?"
           element={
             <Suspense fallback={<div>Loading tasks...</div>}>
               <Tasks />
@@ -204,7 +204,7 @@ export function Router({ user, setUser }: RouterProps) {
       )}
       {process.env.NODE_ENV === 'development' && Bugs && (
         <Route
-          path="/dev/bugs"
+          path="/dev/bugs/:bugId?"
           element={
             <Suspense fallback={<div>Loading bug reports...</div>}>
               <Bugs />

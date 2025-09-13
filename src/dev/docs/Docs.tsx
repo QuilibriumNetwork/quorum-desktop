@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   Input,
   Button,
@@ -13,11 +14,13 @@ import { MarkdownViewer } from './MarkdownViewer';
 import { useMarkdownFiles, type MarkdownFile } from './hooks/useMarkdownFiles';
 
 export const Docs: React.FC = () => {
+  const { docId } = useParams<{ docId?: string }>();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFile, setSelectedFile] = useState<MarkdownFile | null>(null);
 
   // Load markdown files dynamically
-  const { files: docFiles, loading, error } = useMarkdownFiles('docs');
+  const { files: docFiles, loading, error, findBySlug } = useMarkdownFiles('docs');
 
   const filteredFiles = useMemo(() => {
     return docFiles.filter(
@@ -49,12 +52,23 @@ export const Docs: React.FC = () => {
     return groups;
   }, [filteredFiles]);
 
-  const handleFileClick = (file: MarkdownFile) => {
-    setSelectedFile(file);
-  };
+  // Handle URL-based navigation
+  useEffect(() => {
+    if (docId && !loading) {
+      const file = findBySlug(docId);
+      if (file) {
+        setSelectedFile(file);
+      } else {
+        // Invalid doc ID, redirect to list
+        navigate('/dev/docs', { replace: true });
+      }
+    } else {
+      setSelectedFile(null);
+    }
+  }, [docId, loading, findBySlug, navigate]);
 
   const handleBackToList = () => {
-    setSelectedFile(null);
+    navigate('/dev/docs');
   };
 
   if (selectedFile) {
@@ -214,14 +228,14 @@ export const Docs: React.FC = () => {
                         .sort((a, b) => a.title.localeCompare(b.title))
                         .map((file) => (
                           <li key={file.path}>
-                            <div
-                              className="hover:text-accent transition-colors cursor-pointer"
-                              onClick={() => handleFileClick(file)}
+                            <Link
+                              to={`/dev/docs/${file.slug}`}
+                              className="block hover:text-accent transition-colors"
                             >
                               <Text variant="main" size="md">
                                 • {file.title}
                               </Text>
-                            </div>
+                            </Link>
                           </li>
                         ))}
                     </ul>
