@@ -120,11 +120,11 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ### **Interactive Elements**
 
-- Button, Input, TextArea, Select, Switch, RadioGroup
+- Button, Input, TextArea, Select, Switch, RadioGroup, FileUpload
 
 ### **Layout Components**
 
-- FlexRow, FlexColumn, FlexCenter, FlexBetween, Container, ResponsiveContainer
+- FlexRow, FlexColumn, FlexCenter, FlexBetween, Container, ResponsiveContainer, ScrollContainer, Spacer
 
 ### **Modal & Overlay**
 
@@ -156,7 +156,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ---
 
-_Last updated: 2025-08-14_
+_Last updated: 2025-09-13 14:13 UTC_
 
 ---
 

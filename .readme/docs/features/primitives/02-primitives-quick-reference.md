@@ -264,6 +264,31 @@ Fast lookup guide for all primitive components with essential props and examples
 </ResponsiveContainer>
 ```
 
+### ScrollContainer
+
+```tsx
+<ScrollContainer
+  height="auto|fit|full|custom-value"
+  borderRadius="none|sm|md|lg|xl|custom-value"
+  className="css-classes" // Web only
+  style={CSSProperties}
+  // Web-specific props:
+  onScroll={(event) => {}} // Web only
+  // Native-specific props:
+  horizontal={boolean} // Native only
+  showsVerticalScrollIndicator={boolean} // Native only
+  showsHorizontalScrollIndicator={boolean} // Native only
+  bounces={boolean} // Native only (iOS)
+  overScrollMode="auto|always|never" // Native only (Android)
+  scrollEventThrottle={16} // Native only
+  onScrollEndDrag={() => {}} // Native only
+  onMomentumScrollEnd={() => {}} // Native only
+  refreshControl={RefreshControl} // Native only
+>
+  <Text>Scrollable content</Text>
+</ScrollContainer>
+```
+
 ---
 
 ## 🎛️ Interactive Components
@@ -639,7 +664,7 @@ theme.colors.utilities.info; // Info
 
 ---
 
-_Last updated: 2025-08-14_
+_Last updated: 2025-09-13 14:12 UTC_
 
 ---
 
