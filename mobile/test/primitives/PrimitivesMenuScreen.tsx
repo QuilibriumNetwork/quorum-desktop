@@ -35,6 +35,13 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
       onPress: () => onSelectPrimitive('basic'),
     },
     {
+      id: 'scrollcontainer',
+      title: 'ScrollContainer',
+      description: 'Scrollable content container matching UserSettingsModal & SpaceEditor patterns',
+      icon: 'clipboard',
+      onPress: () => onSelectPrimitive('scrollcontainer'),
+    },
+    {
       id: 'input',
       title: 'Input',
       description: 'Cross-platform text input with error states and variants',

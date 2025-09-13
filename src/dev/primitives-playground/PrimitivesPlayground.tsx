@@ -20,6 +20,7 @@ import {
   Text,
   FileUpload,
   Spacer,
+  ScrollContainer,
 } from '@/components/primitives';
 import ThemeRadioGroup from '@/components/ThemeRadioGroup';
 import AccentColorSwitcher from '@/components/AccentColorSwitcher';
@@ -86,6 +87,7 @@ export const PrimitivesPlayground: React.FC = () => {
     { id: 'container-primitive', label: 'Container' },
     { id: 'flex-primitives', label: 'Flex Primitives' },
     { id: 'spacer', label: 'Spacer' },
+    { id: 'scrollcontainer', label: 'ScrollContainer' },
     { id: 'responsivecontainer', label: 'ResponsiveContainer' },
     { id: 'text-primitive', label: 'Text' },
     { id: 'button-primitive', label: 'Button' },
@@ -1009,6 +1011,96 @@ export const PrimitivesPlayground: React.FC = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Section: ScrollContainer */}
+          <section
+            id="scrollcontainer"
+            className="border border-default rounded-lg p-6 space-y-4"
+          >
+            <h2 className="text-xl font-semibold text-strong">ScrollContainer</h2>
+            <p className="text-subtle">
+              Scrollable content container with consistent styling, used in UserSettingsModal (devices list) and SpaceEditor (roles list).
+            </p>
+
+            {/* 4 Examples: 3 Minimal + 1 Full Content */}
+            <div className="grid grid-cols-3 gap-6">
+              {/* Example 1: Normal sm */}
+              <div>
+                <Text size="sm" variant="subtle" className="mb-2">Normal sm</Text>
+                <ScrollContainer height="sm">
+                  {Array.from({ length: 15 }, (_, i) => (
+                    <div key={i} className="py-3 px-3 border-b border-surface-7 last:border-b-0">
+                      <Text size="sm">Item {i + 1}</Text>
+                    </div>
+                  ))}
+                </ScrollContainer>
+              </div>
+
+              {/* Example 2: No border sm */}
+              <div>
+                <Text size="sm" variant="subtle" className="mb-2">No border sm</Text>
+                <ScrollContainer height="sm" showBorder={false} className="bg-surface-3">
+                  {Array.from({ length: 15 }, (_, i) => (
+                    <div key={i} className="py-3 px-3 border-b border-surface-7 last:border-b-0">
+                      <Text size="sm">Item {i + 1}</Text>
+                    </div>
+                  ))}
+                </ScrollContainer>
+              </div>
+
+              {/* Example 4: Full content sm */}
+              <div>
+                <Text size="sm" variant="subtle" className="mb-2">Full content sm</Text>
+                <ScrollContainer height="sm">
+                  <div className="p-4 space-y-4">
+                    <div>
+                      <Text size="md" weight="bold" className="mb-2">Article Title</Text>
+                      <Text size="sm" className="leading-relaxed">
+                        This demonstrates using ScrollContainer for full content without item separators.
+                        You can include paragraphs, headings, images, or any other content.
+                      </Text>
+                    </div>
+                    <div>
+                      <Text size="sm" weight="medium" className="mb-1">Subsection</Text>
+                      <Text size="sm" className="leading-relaxed">
+                        The content flows naturally without borders or separators between elements.
+                        This is perfect for articles, documentation, or any continuous content.
+                      </Text>
+                    </div>
+                    <div className="bg-surface-2 p-3 rounded">
+                      <Text size="xs" variant="subtle">
+                        Code example or highlighted content can be included as well.
+                      </Text>
+                    </div>
+                    <div>
+                      <Text size="sm">
+                        More paragraphs continue seamlessly. The ScrollContainer handles the scrolling
+                        while you focus on your content structure.
+                      </Text>
+                    </div>
+                  </div>
+                </ScrollContainer>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4">
+              <h3 className="text-lg font-medium text-strong mb-3">ScrollContainer Options</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <ul className="space-y-1 text-sm text-subtle">
+                  <li>• Height options: xs (200px), sm (280px), md (400px), lg (500px), xl (600px), auto, custom</li>
+                  <li>• Matches UserSettingsModal & SpaceEditor styles</li>
+                  <li>• Cross-platform (web: CSS overflow, mobile: ScrollView)</li>
+                  <li>• Consistent with existing app patterns</li>
+                </ul>
+                <ul className="space-y-1 text-sm text-subtle">
+                  <li>• showBorder: Toggle border visibility (default: true)</li>
+                  <li>• borderRadius: none, sm, md, lg (default: lg)</li>
+                  <li>• Semantic Tailwind classes (border-surface-6, rounded-lg)</li>
+                  <li>• Accessibility support for both platforms</li>
+                </ul>
               </div>
             </div>
           </section>

@@ -13,3 +13,4 @@ export { RadioGroupTestScreen } from './RadioGroupTestScreen';
 export { TooltipTestScreen } from './TooltipTestScreen';
 export { IconTestScreen } from './IconTestScreen';
 export { FileUploadTestScreen } from './FileUploadTestScreen';
+export { ScrollContainerTestScreen } from './ScrollContainerTestScreen';

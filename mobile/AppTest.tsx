@@ -32,6 +32,7 @@ import {
   TooltipTestScreen,
   IconTestScreen,
   FileUploadTestScreen,
+  ScrollContainerTestScreen,
 } from '@/test/primitives';
 
 // Import business component test screens
@@ -61,7 +62,8 @@ type PrimitiveScreen =
   | 'radiogroup'
   | 'tooltip'
   | 'icon'
-  | 'fileupload';
+  | 'fileupload'
+  | 'scrollcontainer';
 type BusinessScreen =
   | 'list'
   | 'onboarding'
@@ -153,6 +155,8 @@ function ThemedAppContent() {
           );
         case 'basic':
           return <PrimitivesTestScreen />;
+        case 'scrollcontainer':
+          return <ScrollContainerTestScreen />;
         case 'text':
           return <TextTestScreen />;
         case 'input':

@@ -8,6 +8,7 @@ export { FlexBetween } from './FlexBetween';
 export { FlexCenter } from './FlexCenter';
 export { ResponsiveContainer } from './ResponsiveContainer';
 export { Spacer } from './Spacer';
+export { ScrollContainer } from './ScrollContainer';
 
 // UI Primitives
 export { default as Button } from './Button';
@@ -40,6 +41,13 @@ export type { FlexBetweenProps } from './FlexBetween';
 export type { FlexCenterProps } from './FlexCenter';
 export type { ResponsiveContainerProps } from './ResponsiveContainer';
 export type { SpacerProps, SpacerSize, SpacerDirection } from './Spacer';
+export type {
+  ScrollContainerProps,
+  WebScrollContainerProps,
+  NativeScrollContainerProps,
+  ScrollContainerHeight,
+  ScrollContainerBorderRadius,
+} from './ScrollContainer';
 export type { ButtonProps } from './Button';
 export type { ModalProps } from './Modal';
 export type { InputProps, InputNativeProps } from './Input';
