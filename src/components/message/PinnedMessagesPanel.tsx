@@ -12,7 +12,6 @@ import {
   Icon,
 } from '../primitives';
 import { DropdownPanel } from '../DropdownPanel';
-import ConfirmationModal from '../modals/ConfirmationModal';
 import { t } from '@lingui/core/macro';
 import { usePinnedMessages } from '../../hooks';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
@@ -298,22 +297,6 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
               );
             })}
       </Container>
-      
-      {/* Unpin confirmation modal */}
-      {pinConfirmation?.modalConfig && (
-        <ConfirmationModal
-          visible={pinConfirmation.showModal}
-          title={pinConfirmation.modalConfig.title}
-          message={pinConfirmation.modalConfig.message}
-          preview={pinConfirmation.modalConfig.preview}
-          confirmText={pinConfirmation.modalConfig.confirmText}
-          cancelText={pinConfirmation.modalConfig.cancelText}
-          variant={pinConfirmation.modalConfig.variant}
-          protipAction={t`unpin`}
-          onConfirm={pinConfirmation.modalConfig.onConfirm}
-          onCancel={pinConfirmation.modalConfig.onCancel}
-        />
-      )}
     </DropdownPanel>
   );
 };

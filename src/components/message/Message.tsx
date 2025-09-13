@@ -41,7 +41,6 @@ import {
 } from '../../hooks';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import MessageActions from './MessageActions';
-import ConfirmationModal from '../modals/ConfirmationModal';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -630,23 +629,6 @@ export const Message = ({
             />
           </FlexCenter>
         </Modal>
-      )}
-      
-      
-      {/* Pin/Unpin confirmation modal */}
-      {pinnedMessages.pinConfirmation?.modalConfig && (
-        <ConfirmationModal
-          visible={pinnedMessages.pinConfirmation.showModal}
-          title={pinnedMessages.pinConfirmation.modalConfig.title}
-          message={pinnedMessages.pinConfirmation.modalConfig.message}
-          preview={pinnedMessages.pinConfirmation.modalConfig.preview}
-          confirmText={pinnedMessages.pinConfirmation.modalConfig.confirmText}
-          cancelText={pinnedMessages.pinConfirmation.modalConfig.cancelText}
-          variant={pinnedMessages.pinConfirmation.modalConfig.variant}
-          protipAction={message.isPinned ? t`unpin` : t`pin`}
-          onConfirm={pinnedMessages.pinConfirmation.modalConfig.onConfirm}
-          onCancel={pinnedMessages.pinConfirmation.modalConfig.onCancel}
-        />
       )}
     </FlexColumn>
   );

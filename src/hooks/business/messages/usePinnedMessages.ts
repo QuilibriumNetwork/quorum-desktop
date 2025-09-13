@@ -6,7 +6,7 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useSpaceOwner } from '../../queries/spaceOwner';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { hasPermission } from '../../../utils/permissions';
-import { useConfirmation } from '../../ui/useConfirmation';
+import { useConfirmationModal } from '../../../components/context/ConfirmationModalProvider';
 import MessagePreview from '../../../components/message/MessagePreview';
 import { t } from '@lingui/core/macro';
 
@@ -25,7 +25,7 @@ export const usePinnedMessages = (
   const user = usePasskeysContext();
   const { messageDB } = useMessageDB();
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
-  const [messageToPin, setMessageToPin] = useState<Message | null>(null);
+  const { showConfirmationModal } = useConfirmationModal();
   // Query for space data to check roles and permissions
   const { data: space } = useQuery({
     queryKey: ['space', spaceId],
@@ -85,7 +85,7 @@ export const usePinnedMessages = (
         await messageDB.updateMessagePinStatus(
           messageId,
           true,
-          user?.userInfo?.address
+          user?.currentPasskeyInfo?.address
         );
 
         // TODO: Send pin event message to channel
@@ -201,22 +201,6 @@ export const usePinnedMessages = (
     [canUserPin, unpinMutation, spaceId, channelId]
   );
 
-  // Confirmation hook for pin/unpin actions
-  const pinConfirmation = useConfirmation({
-    type: 'modal',
-    enableShiftBypass: true,
-    modalConfig: messageToPin ? {
-      title: messageToPin.isPinned ? t`Unpin Message` : t`Pin Message`,
-      message: messageToPin.isPinned 
-        ? t`Are you sure you want to unpin this message?` 
-        : t`Are you sure you want to pin this message?`,
-      preview: React.createElement(MessagePreview, { message: messageToPin, mapSenderToUser }),
-      confirmText: messageToPin.isPinned ? t`Unpin` : t`Pin`,
-      cancelText: t`Cancel`,
-      variant: messageToPin.isPinned ? 'danger' : 'primary',
-    } : undefined,
-  });
-
   const togglePin = useCallback(
     (e: React.MouseEvent, message: Message) => {
       if (!message || !message.messageId) {
@@ -224,20 +208,35 @@ export const usePinnedMessages = (
         return;
       }
       
-      setMessageToPin(message);
-      
       const performToggle = () => {
         if (message.isPinned) {
           unpinMessage(message.messageId);
         } else {
           pinMessage(message.messageId);
         }
-        setMessageToPin(null);
       };
       
-      pinConfirmation.handleClick(e, performToggle);
+      // Check for Shift+click bypass (desktop only)
+      if (e.shiftKey) {
+        performToggle();
+        return;
+      }
+      
+      // Show confirmation modal
+      showConfirmationModal({
+        title: message.isPinned ? t`Unpin Message` : t`Pin Message`,
+        message: message.isPinned 
+          ? t`Are you sure you want to unpin this message?` 
+          : t`Are you sure you want to pin this message?`,
+        preview: React.createElement(MessagePreview, { message, mapSenderToUser }),
+        confirmText: message.isPinned ? t`Unpin` : t`Pin`,
+        cancelText: t`Cancel`,
+        variant: message.isPinned ? 'danger' : 'primary',
+        protipAction: message.isPinned ? t`unpin` : t`pin`,
+        onConfirm: performToggle,
+      });
     },
-    [pinMessage, unpinMessage, pinConfirmation]
+    [pinMessage, unpinMessage, showConfirmationModal, mapSenderToUser]
   );
 
   return {
@@ -252,6 +251,5 @@ export const usePinnedMessages = (
     error: error || pinMutation.error || unpinMutation.error,
     pinError: pinMutation.error,
     unpinError: unpinMutation.error,
-    pinConfirmation,
   };
 };
