@@ -14,7 +14,7 @@ import ConfirmationModal from '../modals/ConfirmationModal';
 import { useSpace } from '../../hooks';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
 import { useMessageDB } from '../context/useMessageDB';
-import { Channel } from '../../api/quorumApi';
+import { Channel, Permission } from '../../api/quorumApi';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import ClickToCopyContent from '../ClickToCopyContent';
@@ -470,7 +470,7 @@ const SpaceEditor: React.FunctionComponent<{
                             fullWidth
                             groups={getChannelGroups}
                             value={defaultChannel?.channelId || ''}
-                            onChange={(channelId) => {
+                            onChange={(channelId: string) => {
                               const channel = space?.groups
                                 .flatMap((g) => g.channels)
                                 .find((c) => c.channelId === channelId);
@@ -612,10 +612,10 @@ const SpaceEditor: React.FunctionComponent<{
                                           roles.find((_, pi) => i == pi)
                                             ?.permissions || []
                                         }
-                                        onChange={(selectedPermissions) =>
+                                        onChange={(selectedPermissions: string | string[]) =>
                                           updateRolePermissions(
                                             i,
-                                            selectedPermissions as string[]
+                                            selectedPermissions as Permission[]
                                           )
                                         }
                                         placeholder={t`Select permissions`}
@@ -885,7 +885,7 @@ const SpaceEditor: React.FunctionComponent<{
                             fullWidth
                             options={getUserOptions()}
                             value={selectedUser?.address || ''}
-                            onChange={(address) => {
+                            onChange={(address: string) => {
                               // Find conversation and set selected user
                               const allConversations = getUserOptions();
                               const conversation = allConversations.find(

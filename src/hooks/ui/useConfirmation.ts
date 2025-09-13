@@ -40,6 +40,8 @@ export interface UseConfirmationResult {
     confirmText?: string;
     cancelText?: string;
     variant?: 'danger' | 'warning' | 'info';
+    onConfirm: () => void;
+    onCancel: () => void;
   };
   reset: () => void;
 }
