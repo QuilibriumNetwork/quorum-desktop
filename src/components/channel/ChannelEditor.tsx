@@ -13,6 +13,7 @@ import {
   Select,
   Tooltip,
 } from '../primitives';
+import ConfirmationModal from '../modals/ConfirmationModal';
 import '../../styles/_modal_common.scss';
 import { useChannelManagement } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
@@ -32,6 +33,7 @@ const ChannelEditor: React.FunctionComponent<{
     managerRoleIds,
     isPinned,
     hasMessages,
+    messageCount,
     showWarning,
     deleteConfirmationStep,
     isEditMode,
@@ -44,6 +46,7 @@ const ChannelEditor: React.FunctionComponent<{
     saveChanges,
     handleDeleteClick,
     setShowWarning,
+    deleteConfirmation,
   } = useChannelManagement({
     spaceId,
     groupName,
@@ -175,9 +178,9 @@ const ChannelEditor: React.FunctionComponent<{
               <Text
                 variant="danger"
                 className="cursor-pointer hover:text-danger-hover"
-                onClick={handleDeleteClick}
+                onClick={(e) => handleDeleteClick(e)}
               >
-                {deleteConfirmationStep === 0
+                {deleteConfirmation.confirmationStep === 0
                   ? t`Delete Channel`
                   : t`Click again to confirm`}
               </Text>
@@ -185,6 +188,21 @@ const ChannelEditor: React.FunctionComponent<{
           </>
         )}
       </Container>
+      
+      {/* Channel delete confirmation modal (for channels with messages) */}
+      {deleteConfirmation?.modalConfig && (
+        <ConfirmationModal
+          visible={deleteConfirmation.showModal}
+          title={deleteConfirmation.modalConfig.title}
+          message={deleteConfirmation.modalConfig.message}
+          preview={deleteConfirmation.modalConfig.preview}
+          confirmText={deleteConfirmation.modalConfig.confirmText}
+          cancelText={deleteConfirmation.modalConfig.cancelText}
+          variant={deleteConfirmation.modalConfig.variant}
+          onConfirm={deleteConfirmation.modalConfig.onConfirm}
+          onCancel={deleteConfirmation.modalConfig.onCancel}
+        />
+      )}
     </Modal>
   );
 };

@@ -3,6 +3,8 @@ import NavMenu from './navbar/NavMenu';
 import CloseButton from './CloseButton';
 import { ResponsiveContainer, Container } from './primitives';
 import CreateSpaceModal from './modals/CreateSpaceModal';
+import ConfirmationModal from './modals/ConfirmationModal';
+import { ConfirmationModalProvider } from './context/ConfirmationModalProvider';
 import Connecting from './Connecting';
 import { useModalManagement, useElectronDetection } from '../hooks';
 import { useNavigationHotkeys } from '@/hooks/platform/interactions/useNavigationHotkeys';
@@ -11,8 +13,14 @@ import { useSidebar } from './context/SidebarProvider';
 const Layout: React.FunctionComponent<{
   children: React.ReactNode;
 }> = (props) => {
-  const { createSpaceVisible, showCreateSpaceModal, hideCreateSpaceModal } =
-    useModalManagement();
+  const { 
+    createSpaceVisible, 
+    showCreateSpaceModal, 
+    hideCreateSpaceModal,
+    confirmationModal,
+    showConfirmationModal,
+    hideConfirmationModal,
+  } = useModalManagement();
   const { isElectron } = useElectronDetection();
   const { showRightSidebar, setShowRightSidebar, rightSidebarContent } =
     useSidebar();
@@ -26,6 +34,26 @@ const Layout: React.FunctionComponent<{
           onClose={hideCreateSpaceModal}
         />
       )}
+      
+      {/* Confirmation Modal */}
+      {confirmationModal.visible && confirmationModal.config && (
+        <ConfirmationModal
+          visible={confirmationModal.visible}
+          title={confirmationModal.config.title}
+          message={confirmationModal.config.message}
+          preview={confirmationModal.config.preview}
+          confirmText={confirmationModal.config.confirmText}
+          cancelText={confirmationModal.config.cancelText}
+          variant={confirmationModal.config.variant}
+          protipAction={confirmationModal.config.protipAction}
+          onConfirm={() => {
+            confirmationModal.config?.onConfirm();
+            hideConfirmationModal();
+          }}
+          onCancel={confirmationModal.config.onCancel}
+        />
+      )}
+      
       {/* {joinSpaceVisible && <JoinSpaceModal visible={joinSpaceVisible} onClose={() => setJoinSpaceVisible(false)}/>} */}
       <NavMenu
         showCreateSpaceModal={showCreateSpaceModal}
@@ -34,7 +62,9 @@ const Layout: React.FunctionComponent<{
         }}
       />
       <Container>{isElectron && <CloseButton />}</Container>
-      <ResponsiveContainer>{props.children}</ResponsiveContainer>
+      <ConfirmationModalProvider showConfirmationModal={showConfirmationModal}>
+        <ResponsiveContainer>{props.children}</ResponsiveContainer>
+      </ConfirmationModalProvider>
 
       {/* Mobile overlay - backdrop for sidebar below 1024px */}
       {showRightSidebar && (

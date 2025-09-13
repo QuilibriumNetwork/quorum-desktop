@@ -1,8 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { Channel } from '../../../api/quorumApi';
 import { useSpace } from '../../queries';
 import { useMessageDB } from '../../../components/context/useMessageDB';
+import { useConfirmation } from '../../ui/useConfirmation';
+import ChannelPreview from '../../../components/channel/ChannelPreview';
+import { t } from '@lingui/core/macro';
 
 export interface ChannelData {
   channelName: string;
@@ -47,6 +51,7 @@ export function useChannelManagement({
   // State for deletion flow
   const [deleteConfirmationStep, setDeleteConfirmationStep] = useState(0);
   const [hasMessages, setHasMessages] = useState<boolean>(false);
+  const [messageCount, setMessageCount] = useState<number>(0);
   const [showWarning, setShowWarning] = useState<boolean>(false);
 
   // Sync channel data when space data loads
@@ -69,7 +74,7 @@ export function useChannelManagement({
     }
   }, [channelId, space?.spaceId, groupName]);
 
-  // Check if channel has messages
+  // Check if channel has messages and get count
   useEffect(() => {
     const checkMessages = async () => {
       if (channelId && messageDB) {
@@ -77,9 +82,10 @@ export function useChannelManagement({
           const messages = await messageDB.getMessages({
             spaceId,
             channelId,
-            limit: 1,
+            limit: 50, // Get more messages to get a better count
           });
           setHasMessages(messages.messages.length > 0);
+          setMessageCount(messages.messages.length);
         } catch (error) {
           console.error('Error checking messages:', error);
         }
@@ -190,19 +196,48 @@ export function useChannelManagement({
     createChannel,
   ]);
 
-  // Handle delete confirmation
-  const handleDeleteClick = useCallback(() => {
-    if (deleteConfirmationStep === 0) {
-      setDeleteConfirmationStep(1);
-      if (hasMessages) {
-        setShowWarning(true);
-      }
-      // Reset confirmation after 5 seconds
-      setTimeout(() => setDeleteConfirmationStep(0), 5000);
-    } else {
+  // Confirmation hook for channel delete with smart escalation
+  const deleteConfirmation = useConfirmation({
+    type: 'inline',
+    escalateWhen: () => hasMessages, // Escalate to modal if channel has messages
+    enableShiftBypass: false, // Disable shift bypass for channel deletion
+    modalConfig: hasMessages ? {
+      title: t`Delete Channel`,
+      message: t`Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone.`,
+      preview: React.createElement(ChannelPreview, { 
+        channelName: channelData.channelName, 
+        messageCount 
+      }),
+      confirmText: t`Delete`,
+      cancelText: t`Cancel`,
+      variant: 'danger',
+    } : undefined,
+  });
+
+  // Handle delete with smart escalation
+  const handleDeleteClick = useCallback((e?: React.MouseEvent) => {
+    const performDelete = () => {
       deleteChannel();
+      setDeleteConfirmationStep(0);
+    };
+    
+    if (e) {
+      // Event-based call (from button click) - use new confirmation system
+      deleteConfirmation.handleClick(e, performDelete);
+    } else {
+      // Legacy call without event - fall back to old double-click system
+      if (deleteConfirmationStep === 0) {
+        setDeleteConfirmationStep(1);
+        if (hasMessages) {
+          setShowWarning(true);
+        }
+        // Reset confirmation after 5 seconds
+        setTimeout(() => setDeleteConfirmationStep(0), 5000);
+      } else {
+        performDelete();
+      }
     }
-  }, [deleteConfirmationStep, hasMessages]);
+  }, [deleteConfirmation, deleteConfirmationStep, hasMessages]);
 
   // Delete channel
   const deleteChannel = useCallback(async () => {
@@ -263,6 +298,7 @@ export function useChannelManagement({
     isPinned: channelData.isPinned,
     pinnedAt: channelData.pinnedAt,
     hasMessages,
+    messageCount,
     showWarning,
     deleteConfirmationStep,
     isEditMode: !!channelId,
@@ -278,5 +314,6 @@ export function useChannelManagement({
     handleDeleteClick,
     setShowWarning,
     resetDeleteConfirmation,
+    deleteConfirmation,
   };
 }

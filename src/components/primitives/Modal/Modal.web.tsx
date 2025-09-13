@@ -42,11 +42,13 @@ const Modal: React.FC<WebModalProps> = ({
           </div>
         )}
 
-        <div
-          className={`quorum-modal-title select-none cursor-default ${titleAlign === 'center' ? 'quorum-modal-title-center' : ''}`}
-        >
-          {title}
-        </div>
+        {title && (
+          <div
+            className={`quorum-modal-title select-none cursor-default ${titleAlign === 'center' ? 'quorum-modal-title-center' : ''}`}
+          >
+            {title}
+          </div>
+        )}
 
         <div className="quorum-modal-container">{children}</div>
       </div>

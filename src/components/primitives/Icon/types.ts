@@ -113,6 +113,9 @@ export type IconName =
   | 'thumbtack'
   | 'thumbtack-slash'
   | 'pin'
+  | 'badge'
+  | 'id-badge'
+  | 'certificate'
   // Dev navigation icons
   | 'book'
   | 'clipboard-list'

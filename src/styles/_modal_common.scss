@@ -185,6 +185,11 @@
   .quorum-modal-title {
     display: none; // Hide Modal primitive title
   }
+  
+  // Exception: Show title for ConfirmationModal even within complex wrappers
+  .confirmation-modal .quorum-modal-title {
+    display: block !important;
+  }
 
   .quorum-modal-container {
     height: 100%;

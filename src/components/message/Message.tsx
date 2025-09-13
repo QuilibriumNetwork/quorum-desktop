@@ -41,6 +41,7 @@ import {
 } from '../../hooks';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import MessageActions from './MessageActions';
+import ConfirmationModal from '../modals/ConfirmationModal';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -117,6 +118,7 @@ export const Message = ({
     onSetEmojiPickerOpen: setEmojiPickerOpen,
     onSetEmojiPickerDirection: setEmojiPickerOpenDirection,
     editorRef,
+    mapSenderToUser,
   });
 
   // Emoji picker business logic
@@ -164,7 +166,8 @@ export const Message = ({
   const pinnedMessages = usePinnedMessages(
     message.spaceId || spaceId || '',
     message.channelId || '',
-    channel
+    channel,
+    mapSenderToUser
   );
 
   // Message highlighting logic - replaces isHashTarget
@@ -361,7 +364,7 @@ export const Message = ({
                 onReply={messageActions.handleReply}
                 onCopyLink={messageActions.handleCopyLink}
                 onDelete={messageActions.handleDelete}
-                onPin={() => pinnedMessages.togglePin(message)}
+                onPin={(e) => pinnedMessages.togglePin(e, message)}
                 onMoreReactions={messageActions.handleMoreReactions}
                 copiedLinkId={messageActions.copiedLinkId}
               />
@@ -627,6 +630,23 @@ export const Message = ({
             />
           </FlexCenter>
         </Modal>
+      )}
+      
+      
+      {/* Pin/Unpin confirmation modal */}
+      {pinnedMessages.pinConfirmation?.modalConfig && (
+        <ConfirmationModal
+          visible={pinnedMessages.pinConfirmation.showModal}
+          title={pinnedMessages.pinConfirmation.modalConfig.title}
+          message={pinnedMessages.pinConfirmation.modalConfig.message}
+          preview={pinnedMessages.pinConfirmation.modalConfig.preview}
+          confirmText={pinnedMessages.pinConfirmation.modalConfig.confirmText}
+          cancelText={pinnedMessages.pinConfirmation.modalConfig.cancelText}
+          variant={pinnedMessages.pinConfirmation.modalConfig.variant}
+          protipAction={message.isPinned ? t`unpin` : t`pin`}
+          onConfirm={pinnedMessages.pinConfirmation.modalConfig.onConfirm}
+          onCancel={pinnedMessages.pinConfirmation.modalConfig.onCancel}
+        />
       )}
     </FlexColumn>
   );

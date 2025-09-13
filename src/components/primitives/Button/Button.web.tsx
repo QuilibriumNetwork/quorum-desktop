@@ -31,8 +31,8 @@ const Button: React.FC<WebButtonProps> = (props) => {
           (props.fullWidth ? ' btn-full-width' : '') +
           (props.className ? ' ' + props.className : '')
         }
-        onClick={() => {
-          if (!props.disabled) props.onClick();
+        onClick={(e) => {
+          if (!props.disabled) props.onClick(e);
         }}
       >
         {props.iconName && (

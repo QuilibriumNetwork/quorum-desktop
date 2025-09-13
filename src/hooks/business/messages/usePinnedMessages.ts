@@ -1,10 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
+import React from 'react';
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
 import type { Message, Channel } from '../../../api/quorumApi';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useSpaceOwner } from '../../queries/spaceOwner';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { hasPermission } from '../../../utils/permissions';
+import { useConfirmation } from '../../ui/useConfirmation';
+import MessagePreview from '../../../components/message/MessagePreview';
 import { t } from '@lingui/core/macro';
 
 // Configuration constants for pinned messages feature
@@ -15,12 +18,14 @@ const PINNED_MESSAGES_CONFIG = {
 export const usePinnedMessages = (
   spaceId: string,
   channelId: string,
-  channel?: Channel
+  channel?: Channel,
+  mapSenderToUser?: (senderId: string) => any
 ) => {
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
   const { messageDB } = useMessageDB();
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
+  const [messageToPin, setMessageToPin] = useState<Message | null>(null);
   // Query for space data to check roles and permissions
   const { data: space } = useQuery({
     queryKey: ['space', spaceId],
@@ -196,19 +201,43 @@ export const usePinnedMessages = (
     [canUserPin, unpinMutation, spaceId, channelId]
   );
 
+  // Confirmation hook for pin/unpin actions
+  const pinConfirmation = useConfirmation({
+    type: 'modal',
+    enableShiftBypass: true,
+    modalConfig: messageToPin ? {
+      title: messageToPin.isPinned ? t`Unpin Message` : t`Pin Message`,
+      message: messageToPin.isPinned 
+        ? t`Are you sure you want to unpin this message?` 
+        : t`Are you sure you want to pin this message?`,
+      preview: React.createElement(MessagePreview, { message: messageToPin, mapSenderToUser }),
+      confirmText: messageToPin.isPinned ? t`Unpin` : t`Pin`,
+      cancelText: t`Cancel`,
+      variant: messageToPin.isPinned ? 'danger' : 'primary',
+    } : undefined,
+  });
+
   const togglePin = useCallback(
-    (message: Message) => {
+    (e: React.MouseEvent, message: Message) => {
       if (!message || !message.messageId) {
         console.error('Invalid message object for toggle pin');
         return;
       }
-      if (message.isPinned) {
-        unpinMessage(message.messageId);
-      } else {
-        pinMessage(message.messageId);
-      }
+      
+      setMessageToPin(message);
+      
+      const performToggle = () => {
+        if (message.isPinned) {
+          unpinMessage(message.messageId);
+        } else {
+          pinMessage(message.messageId);
+        }
+        setMessageToPin(null);
+      };
+      
+      pinConfirmation.handleClick(e, performToggle);
     },
-    [pinMessage, unpinMessage]
+    [pinMessage, unpinMessage, pinConfirmation]
   );
 
   return {
@@ -223,5 +252,6 @@ export const usePinnedMessages = (
     error: error || pinMutation.error || unpinMutation.error,
     pinError: pinMutation.error,
     unpinError: unpinMutation.error,
+    pinConfirmation,
   };
 };

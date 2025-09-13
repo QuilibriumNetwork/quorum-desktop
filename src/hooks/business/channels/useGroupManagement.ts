@@ -23,7 +23,10 @@ export function useGroupManagement({
   // State for deletion flow
   const [deleteConfirmationStep, setDeleteConfirmationStep] = useState(0);
   const [hasMessages, setHasMessages] = useState<boolean>(false);
+  const [hasChannels, setHasChannels] = useState<boolean>(false);
+  const [channelCount, setChannelCount] = useState<number>(0);
   const [showWarning, setShowWarning] = useState<boolean>(false);
+  const [showChannelError, setShowChannelError] = useState<boolean>(false);
 
   // Sync group name when data loads
   useEffect(() => {
@@ -32,31 +35,44 @@ export function useGroupManagement({
     }
   }, [groupName]);
 
-  // Check if any channel in the group has messages
+  // Check if group has channels and if any channel in the group has messages
   useEffect(() => {
-    const checkGroupMessages = async () => {
-      if (groupName && space && messageDB) {
+    const checkGroupChannelsAndMessages = async () => {
+      if (groupName && space) {
         try {
           const group = space.groups.find((g) => g.groupName === groupName);
           if (group) {
-            for (const channel of group.channels) {
-              const messages = await messageDB.getMessages({
-                spaceId,
-                channelId: channel.channelId,
-                limit: 1,
-              });
-              if (messages.messages.length > 0) {
-                setHasMessages(true);
-                break;
+            const channelCount = group.channels.length;
+            setChannelCount(channelCount);
+            setHasChannels(channelCount > 0);
+            
+            // Only check messages if we have messageDB
+            if (messageDB && channelCount > 0) {
+              for (const channel of group.channels) {
+                const messages = await messageDB.getMessages({
+                  spaceId,
+                  channelId: channel.channelId,
+                  limit: 1,
+                });
+                if (messages.messages.length > 0) {
+                  setHasMessages(true);
+                  break;
+                }
               }
+            } else {
+              setHasMessages(false);
             }
+          } else {
+            setChannelCount(0);
+            setHasChannels(false);
+            setHasMessages(false);
           }
         } catch (error) {
-          console.error('Error checking group messages:', error);
+          console.error('Error checking group channels and messages:', error);
         }
       }
     };
-    checkGroupMessages();
+    checkGroupChannelsAndMessages();
   }, [groupName, space, spaceId, messageDB]);
 
   // Handle group name change
@@ -97,17 +113,23 @@ export function useGroupManagement({
 
   // Handle delete confirmation
   const handleDeleteClick = useCallback(() => {
+    // First check if group has channels - block deletion if it does
+    if (hasChannels) {
+      setShowChannelError(true);
+      // Hide error after 5 seconds
+      setTimeout(() => setShowChannelError(false), 5000);
+      return;
+    }
+    
+    // If no channels, proceed with simple double-click confirmation
     if (deleteConfirmationStep === 0) {
       setDeleteConfirmationStep(1);
-      if (hasMessages) {
-        setShowWarning(true);
-      }
       // Reset confirmation after 5 seconds
       setTimeout(() => setDeleteConfirmationStep(0), 5000);
     } else {
       deleteGroup();
     }
-  }, [deleteConfirmationStep, hasMessages]);
+  }, [deleteConfirmationStep, hasChannels]);
 
   // Delete group
   const deleteGroup = useCallback(async () => {
@@ -151,6 +173,7 @@ export function useGroupManagement({
   const resetDeleteConfirmation = useCallback(() => {
     setDeleteConfirmationStep(0);
     setShowWarning(false);
+    setShowChannelError(false);
   }, []);
 
   // Check if group name is valid for saving
@@ -170,7 +193,10 @@ export function useGroupManagement({
     // State
     group,
     hasMessages,
+    hasChannels,
+    channelCount,
     showWarning,
+    showChannelError,
     deleteConfirmationStep,
     isEditMode: !!groupName,
     canSave: isValidGroupName(),
@@ -180,6 +206,7 @@ export function useGroupManagement({
     saveChanges,
     handleDeleteClick,
     setShowWarning,
+    setShowChannelError,
     resetDeleteConfirmation,
   };
 }

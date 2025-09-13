@@ -19,7 +19,7 @@ interface MessageActionsProps {
   onReply: () => void;
   onCopyLink: () => void;
   onDelete: () => void;
-  onPin?: () => void;
+  onPin?: (e: React.MouseEvent) => void;
   onMoreReactions: (clientY: number) => void;
   copiedLinkId: string | null;
 }
@@ -50,18 +50,10 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
     onReaction,
   });
 
-  // Handle pin action with confirmation tooltip
-  const handlePinClick = () => {
-    const wasPinned = message.isPinned;
-
+  // Handle pin action with confirmation modal
+  const handlePinClick = (e: React.MouseEvent) => {
     if (onPin) {
-      onPin();
-      // Show confirmation tooltip
-      setPinAction(wasPinned ? 'unpinned' : 'pinned');
-      // Hide confirmation tooltip after configured duration
-      setTimeout(() => {
-        setPinAction(null);
-      }, MESSAGE_ACTIONS_CONFIG.PIN_CONFIRMATION_DURATION);
+      onPin(e);
     }
   };
 
@@ -181,7 +173,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
               <div
                 onClick={(e) => {
                   e.stopPropagation();
-                  handlePinClick();
+                  handlePinClick(e);
                 }}
                 onMouseEnter={handlePinHover}
                 className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"

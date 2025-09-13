@@ -24,7 +24,10 @@ const GroupEditor: React.FunctionComponent<{
   const {
     group,
     hasMessages,
+    hasChannels,
+    channelCount,
     showWarning,
+    showChannelError,
     deleteConfirmationStep,
     isEditMode,
     canSave,
@@ -32,6 +35,7 @@ const GroupEditor: React.FunctionComponent<{
     saveChanges,
     handleDeleteClick,
     setShowWarning,
+    setShowChannelError,
   } = useGroupManagement({ spaceId, groupName, onDeleteComplete: dismiss });
 
   const handleSave = React.useCallback(async () => {
@@ -73,16 +77,15 @@ const GroupEditor: React.FunctionComponent<{
               border
               direction="vertical"
             />
-            {hasMessages && showWarning && (
+            {showChannelError && (
               <Container className="error-label mb-3 relative pr-8">
                 <Trans>
-                  Are you sure? This group contains channels with messages.
-                  Deleting it will cause all content to be lost forever!
+                  Cannot delete group that contains channels. Please delete all {channelCount} channels in this group first.
                 </Trans>
                 <Icon
                   name="times"
                   className="absolute top-2 right-2 cursor-pointer hover:opacity-70"
-                  onClick={() => setShowWarning(false)}
+                  onClick={() => setShowChannelError(false)}
                 />
               </Container>
             )}

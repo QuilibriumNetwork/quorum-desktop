@@ -12,6 +12,7 @@ import {
   Icon,
 } from '../primitives';
 import { DropdownPanel } from '../DropdownPanel';
+import ConfirmationModal from '../modals/ConfirmationModal';
 import { t } from '@lingui/core/macro';
 import { usePinnedMessages } from '../../hooks';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
@@ -47,8 +48,8 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
   messageList,
 }) => {
   const navigate = useNavigate();
-  const { pinnedMessages, unpinMessage, canPinMessages, isLoading } =
-    usePinnedMessages(spaceId, channelId, channel);
+  const { pinnedMessages, unpinMessage, canPinMessages, isLoading, togglePin, pinConfirmation } =
+    usePinnedMessages(spaceId, channelId, channel, mapSenderToUser);
 
   // Use the new React state-based message highlighting
   const { highlightMessage, scrollToMessage } = useMessageHighlight();
@@ -277,7 +278,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                         >
                           <Button
                             type="unstyled"
-                            onClick={() => unpinMessage(message.messageId)}
+                            onClick={(e) => togglePin(e, message)}
                             iconName="times"
                             iconOnly={true}
                             size="compact"
@@ -297,6 +298,22 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
               );
             })}
       </Container>
+      
+      {/* Unpin confirmation modal */}
+      {pinConfirmation?.modalConfig && (
+        <ConfirmationModal
+          visible={pinConfirmation.showModal}
+          title={pinConfirmation.modalConfig.title}
+          message={pinConfirmation.modalConfig.message}
+          preview={pinConfirmation.modalConfig.preview}
+          confirmText={pinConfirmation.modalConfig.confirmText}
+          cancelText={pinConfirmation.modalConfig.cancelText}
+          variant={pinConfirmation.modalConfig.variant}
+          protipAction={t`unpin`}
+          onConfirm={pinConfirmation.modalConfig.onConfirm}
+          onCancel={pinConfirmation.modalConfig.onCancel}
+        />
+      )}
     </DropdownPanel>
   );
 };

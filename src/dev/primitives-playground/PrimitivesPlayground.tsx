@@ -110,7 +110,7 @@ export const PrimitivesPlayground: React.FC = () => {
       <div className="sticky top-[41px] z-10 bg-surface-2 p-6 pr-8 -mt-px">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-strong mb-2">
+            <h1 className="text-2xl font-bold  mb-2">
               Primitives Playground
             </h1>
             <p className="text-main text-sm">
@@ -136,7 +136,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="colors-section"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-2xl font-bold text-strong mb-6">Colors</h2>
+            <h2 className="text-2xl font-bold  mb-6">Colors</h2>
             {[
               {
                 title: 'Primary',
@@ -173,7 +173,7 @@ export const PrimitivesPlayground: React.FC = () => {
               {
                 title: 'Text',
                 vars: [
-                  '--color-text-strong',
+                  '--color-',
                   '--color-text-main',
                   '--color-text-subtle',
                   '--color-text-muted',
@@ -201,7 +201,7 @@ export const PrimitivesPlayground: React.FC = () => {
               },
             ].map(({ title, vars }) => (
               <div key={title} className="mb-8">
-                <h3 className="text-xl font-semibold text-strong mb-2">
+                <h3 className="text-xl font-semibold  mb-2">
                   {title}
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-8 xl:grid-cols-10 gap-4">
@@ -253,7 +253,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="modalcontainer"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">
+            <h2 className="text-xl font-semibold ">
               ModalContainer
             </h2>
 
@@ -377,7 +377,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="overlaybackdrop"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">
+            <h2 className="text-xl font-semibold ">
               OverlayBackdrop
             </h2>
 
@@ -409,7 +409,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="container-primitive"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">Container</h2>
+            <h2 className="text-xl font-semibold ">Container</h2>
             <p className="text-subtle">
               Flexible container primitive with width, padding, margin, and
               background options
@@ -418,7 +418,7 @@ export const PrimitivesPlayground: React.FC = () => {
             <div className="space-y-6">
               {/* Basic Container Examples */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Basic Containers
                 </h3>
 
@@ -467,7 +467,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Interactive Containers */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Interactive Containers
                 </h3>
 
@@ -511,7 +511,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Nested Containers */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Nested Containers
                 </h3>
 
@@ -560,7 +560,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
-              <h4 className="font-semibold text-strong mb-2">
+              <h4 className="font-semibold  mb-2">
                 Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
@@ -579,13 +579,13 @@ export const PrimitivesPlayground: React.FC = () => {
             id="flex-primitives"
             className="border border-default rounded-lg p-6 space-y-6"
           >
-            <h2 className="text-xl font-semibold text-strong">
+            <h2 className="text-xl font-semibold ">
               Flex Primitives
             </h2>
 
             {/* FlexRow Examples */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">FlexRow</h3>
+              <h3 className="text-lg ">FlexRow</h3>
 
               <div className="space-y-2">
                 <p className="text-sm text-subtle">Basic row with gap:</p>
@@ -648,7 +648,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* FlexBetween Examples */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">FlexBetween</h3>
+              <h3 className="text-lg ">FlexBetween</h3>
 
               <div className="space-y-2">
                 <p className="text-sm text-subtle">Space between items:</p>
@@ -683,7 +683,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* FlexCenter Examples */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">FlexCenter</h3>
+              <h3 className="text-lg ">FlexCenter</h3>
 
               <div className="space-y-2">
                 <p className="text-sm text-subtle">Center both axes:</p>
@@ -721,7 +721,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* FlexColumn Examples */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">FlexColumn</h3>
+              <h3 className="text-lg ">FlexColumn</h3>
 
               <div className="space-y-2">
                 <p className="text-sm text-subtle">Basic column with gap:</p>
@@ -798,7 +798,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="spacer"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">Spacer</h2>
+            <h2 className="text-xl font-semibold ">Spacer</h2>
             <p className="text-subtle">
               Semantic spacing component for adding consistent vertical or
               horizontal space between elements.
@@ -808,7 +808,7 @@ export const PrimitivesPlayground: React.FC = () => {
             <div className="grid grid-cols-3 gap-6">
               {/* Column 1: Vertical Spacers */}
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Vertical Spacers
                 </h3>
                 <p className="text-sm text-subtle">
@@ -862,7 +862,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Column 2: Horizontal Spacers */}
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Horizontal Spacers
                 </h3>
                 <p className="text-sm text-subtle">
@@ -920,7 +920,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Column 3: Custom Spacing */}
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Custom Spacing
                 </h3>
                 <p className="text-sm text-subtle">Numeric pixel values:</p>
@@ -963,7 +963,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Column 4: Border Examples */}
               <div className="space-y-2">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Spacer Borders
                 </h3>
                 <p className="text-sm text-subtle">
@@ -1020,7 +1020,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="scrollcontainer"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">ScrollContainer</h2>
+            <h2 className="text-xl font-semibold ">ScrollContainer</h2>
             <p className="text-subtle">
               Scrollable content container with consistent styling, used in UserSettingsModal (devices list) and SpaceEditor (roles list).
             </p>
@@ -1087,7 +1087,7 @@ export const PrimitivesPlayground: React.FC = () => {
             </div>
 
             <div className="mt-6 pt-4">
-              <h3 className="text-lg font-medium text-strong mb-3">ScrollContainer Options</h3>
+              <h3 className="mb-3">ScrollContainer Options</h3>
               <div className="grid grid-cols-2 gap-4">
                 <ul className="space-y-1 text-sm text-subtle">
                   <li>• Height options: xs (200px), sm (280px), md (400px), lg (500px), xl (600px), auto, custom</li>
@@ -1110,7 +1110,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="responsivecontainer"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">
+            <h2 className="text-xl font-semibold ">
               ResponsiveContainer
             </h2>
 
@@ -1161,21 +1161,21 @@ export const PrimitivesPlayground: React.FC = () => {
                 <div className="p-4 bg-surface-1 rounded-lg text-sm">
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <div className="font-medium text-main">Phone</div>
+                      <div className="text-main">Phone</div>
                       <div className="text-subtle">≤ 480px</div>
                       <div className="text-subtle">
                         Container: calc(100vw - 50px)
                       </div>
                     </div>
                     <div>
-                      <div className="font-medium text-main">Tablet</div>
+                      <div className="text-main">Tablet</div>
                       <div className="text-subtle">481px - 1023px</div>
                       <div className="text-subtle">
                         Container: calc(100vw - 74px)
                       </div>
                     </div>
                     <div>
-                      <div className="font-medium text-main">Desktop</div>
+                      <div className="text-main">Desktop</div>
                       <div className="text-subtle">≥ 1024px</div>
                       <div className="text-subtle">
                         Container: calc(100vw - 74px)
@@ -1210,7 +1210,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="text-primitive"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">Text</h2>
+            <h2 className="text-xl font-semibold ">Text</h2>
             <p className="text-subtle">
               Essential text component for React Native compatibility with
               variants, sizes, and weights
@@ -1219,7 +1219,7 @@ export const PrimitivesPlayground: React.FC = () => {
             <div className="space-y-6">
               {/* Text Variants */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Text Variants
                 </h3>
 
@@ -1264,7 +1264,7 @@ export const PrimitivesPlayground: React.FC = () => {
               {/* Text Sizes and Weights */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <h3 className="text-lg font-medium text-strong">
+                  <h3 className="text-lg ">
                     Text Sizes
                   </h3>
 
@@ -1294,7 +1294,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <h3 className="text-lg font-medium text-strong">
+                  <h3 className="text-lg ">
                     Text Weights
                   </h3>
 
@@ -1326,7 +1326,7 @@ export const PrimitivesPlayground: React.FC = () => {
               {/* Text Alignment & Interaction */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <h4 className="text-md font-medium text-strong">
+                  <h4 className="text-md ">
                     Text Alignment
                   </h4>
 
@@ -1352,7 +1352,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <h4 className="text-md font-medium text-strong">
+                  <h4 className="text-md ">
                     Interactive Text
                   </h4>
 
@@ -1380,7 +1380,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <h4 className="text-md font-medium text-strong">
+                  <h4 className="text-md ">
                     Link Styles (Web)
                   </h4>
                   <div className="space-y-3">
@@ -1479,7 +1479,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Combined Examples */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Combined Properties
                 </h3>
 
@@ -1519,11 +1519,11 @@ export const PrimitivesPlayground: React.FC = () => {
             id="button-primitive"
             className="border border-default rounded-lg p-6 space-y-6"
           >
-            <h2 className="text-xl font-semibold text-strong">Button</h2>
+            <h2 className="text-xl font-semibold ">Button</h2>
 
             {/* Button Types */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">Button Types</h3>
+              <h3 className="text-lg ">Button Types</h3>
 
               <div className="space-y-2">
                 <p className="text-sm text-subtle">Primary variants:</p>
@@ -1582,7 +1582,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Button Sizes and States */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">
+              <h3 className="text-lg ">
                 Sizes and States
               </h3>
 
@@ -1649,7 +1649,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Button with Icons */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">
+              <h3 className="text-lg ">
                 Buttons with Icons
               </h3>
 
@@ -1736,11 +1736,11 @@ export const PrimitivesPlayground: React.FC = () => {
             id="modal-primitive"
             className="border border-default rounded-lg p-6 space-y-6"
           >
-            <h2 className="text-xl font-semibold text-strong">Modal</h2>
+            <h2 className="text-xl font-semibold ">Modal</h2>
 
             {/* Modal Types */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">
+              <h3 className="text-lg ">
                 Modal Variants
               </h3>
 
@@ -1771,7 +1771,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </p>
 
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-strong">Key Features:</h4>
+                  <h4 className="font-semibold ">Key Features:</h4>
                   <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
                     <li>
                       Uses ModalContainer for consistent backdrop behavior
@@ -1818,18 +1818,18 @@ export const PrimitivesPlayground: React.FC = () => {
             id="input-primitive"
             className="border border-default rounded-lg p-6 space-y-4 bg-surface-5"
           >
-            <h2 className="text-xl font-semibold text-strong">Input</h2>
+            <h2 className="text-xl font-semibold ">Input</h2>
             <p className="text-subtle">
               Cross-platform input field primitive with error handling
             </p>
 
             {/* Input Types */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">Input Types</h3>
+              <h3 className="text-lg ">Input Types</h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Text Input:
                   </label>
                   <Input
@@ -1842,7 +1842,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Email Input:
                   </label>
                   <Input
@@ -1855,7 +1855,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Password Input:
                   </label>
                   <Input
@@ -1871,7 +1871,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Disabled Input:
                   </label>
                   <Input
@@ -1885,11 +1885,11 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Error States */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">Error States</h3>
+              <h3 className="text-lg ">Error States</h3>
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Input with Error:
                   </label>
                   <Input
@@ -1909,7 +1909,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Always Error:
                   </label>
                   <Input
@@ -1924,20 +1924,20 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Focus and Styling */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">
+              <h3 className="text-lg ">
                 Focus & Styling
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Auto Focus Input:
                   </label>
                   <Input placeholder="This input auto-focuses" autoFocus />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Custom Style:
                   </label>
                   <Input
@@ -1950,7 +1950,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     No Focus Style:
                   </label>
                   <Input
@@ -1963,13 +1963,13 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Input Variants */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">
+              <h3 className="text-lg ">
                 Input Variants
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Bordered Variant:
                   </label>
                   <Input
@@ -1982,7 +1982,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Onboarding Style:
                   </label>
                   <Input
@@ -1997,7 +1997,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Onboarding Input Test:
                   </label>
                   <Input
@@ -2016,7 +2016,7 @@ export const PrimitivesPlayground: React.FC = () => {
             </div>
             {/* Label Management */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">
+              <h3 className="text-lg ">
                 Label Management
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -2102,7 +2102,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Mobile Testing Notes */}
             <div className="p-4 rounded-lg">
-              <h4 className="font-semibold text-strong mb-2">
+              <h4 className="font-semibold  mb-2">
                 Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
@@ -2134,7 +2134,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="textarea-primitive"
             className="border border-default rounded-lg p-6 space-y-4 bg-surface-5"
           >
-            <h2 className="text-xl font-semibold text-strong">TextArea</h2>
+            <h2 className="text-xl font-semibold ">TextArea</h2>
             <p className="text-subtle">
               Cross-platform multiline text input primitive with auto-resize
               support
@@ -2142,13 +2142,13 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Basic TextArea Types */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">
+              <h3 className="text-lg ">
                 Basic TextArea
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Standard TextArea:
                   </label>
                   <TextArea
@@ -2164,7 +2164,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Auto-Resize TextArea:
                   </label>
                   <TextArea
@@ -2181,7 +2181,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Large TextArea:
                   </label>
                   <TextArea
@@ -2191,7 +2191,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Disabled TextArea:
                   </label>
                   <TextArea
@@ -2206,11 +2206,11 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Error States */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">Error States</h3>
+              <h3 className="text-lg ">Error States</h3>
 
               <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     TextArea with Error (type less than 10 chars):
                   </label>
                   <TextArea
@@ -2233,7 +2233,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Always Error:
                   </label>
                   <TextArea
@@ -2249,13 +2249,13 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* TextArea Variants */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">
+              <h3 className="text-lg ">
                 TextArea Variants
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Bordered Variant:
                   </label>
                   <TextArea
@@ -2269,7 +2269,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Onboarding Style:
                   </label>
                   <TextArea
@@ -2285,7 +2285,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Onboarding Auto-Resize:
                   </label>
                   <TextArea
@@ -2305,13 +2305,13 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Focus and Styling */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">
+              <h3 className="text-lg ">
                 Focus & Styling
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Auto Focus TextArea:
                   </label>
                   <TextArea
@@ -2322,7 +2322,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     No Focus Style:
                   </label>
                   <TextArea
@@ -2333,7 +2333,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Resizable TextArea:
                   </label>
                   <TextArea
@@ -2344,7 +2344,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-strong">
+                  <label className="text-sm ">
                     Non-Resizable (default):
                   </label>
                   <TextArea
@@ -2357,7 +2357,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Mobile Testing Notes */}
             <div className="p-4 rounded-lg">
-              <h4 className="font-semibold text-strong mb-2">
+              <h4 className="font-semibold  mb-2">
                 Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
@@ -2381,20 +2381,20 @@ export const PrimitivesPlayground: React.FC = () => {
             id="switch-primitive"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">Switch</h2>
+            <h2 className="text-xl font-semibold ">Switch</h2>
             <p className="text-subtle">
               Cross-platform toggle switch with multiple sizes and variants
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Basic Switch */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Basic Switch
                 </h3>
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-strong flex items-center gap-3">
+                    <label className="text-sm  flex items-center gap-3">
                       <Switch value={basicSwitch} onChange={setBasicSwitch} />
                       Basic Switch {basicSwitch ? '(ON)' : '(OFF)'}
                     </label>
@@ -2402,7 +2402,7 @@ export const PrimitivesPlayground: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-strong flex items-center gap-3">
+                    <label className="text-sm  flex items-center gap-3">
                       <Switch
                         value={disabledSwitch}
                         onChange={setDisabledSwitch}
@@ -2417,13 +2417,13 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Switch Sizes */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Switch Sizes
                 </h3>
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-strong flex items-center gap-3">
+                    <label className="text-sm  flex items-center gap-3">
                       <Switch
                         value={switchSizes.small}
                         onChange={(value: boolean) =>
@@ -2436,7 +2436,7 @@ export const PrimitivesPlayground: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-strong flex items-center gap-3">
+                    <label className="text-sm  flex items-center gap-3">
                       <Switch
                         value={switchSizes.medium}
                         onChange={(value: boolean) =>
@@ -2449,7 +2449,7 @@ export const PrimitivesPlayground: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-strong flex items-center gap-3">
+                    <label className="text-sm  flex items-center gap-3">
                       <Switch
                         value={switchSizes.large}
                         onChange={(value: boolean) =>
@@ -2466,7 +2466,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
-              <h4 className="font-semibold text-strong mb-2">
+              <h4 className="font-semibold  mb-2">
                 Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
@@ -2490,20 +2490,20 @@ export const PrimitivesPlayground: React.FC = () => {
             id="select-primitive"
             className="border border-default rounded-lg p-6 space-y-4 bg-surface-5"
           >
-            <h2 className="text-xl font-semibold text-strong">Select</h2>
+            <h2 className="text-xl font-semibold ">Select</h2>
             <p className="text-subtle">
               Cross-platform dropdown/picker component with rich options and
               customization
             </p>
 
             {/* All Select Examples in single grid as per screenshot */}
-            <h3 className="text-lg font-medium text-strong mb-3">
+            <h3 className="text-lg  mb-3">
               Advanced Features
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {/* Row 1: Advanced Features (all 4 cells) */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 mt-2 block">
+                <label className="text-sm  mb-2 mt-2 block">
                   Full Width
                 </label>
                 <Select
@@ -2519,7 +2519,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   With Disabled Options
                 </label>
                 <Select
@@ -2544,7 +2544,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   Custom 200px
                 </label>
                 <Select
@@ -2561,7 +2561,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   Custom 100px (Narrow)
                 </label>
                 <Select
@@ -2581,12 +2581,12 @@ export const PrimitivesPlayground: React.FC = () => {
             </div>
 
             {/* Multiselect Examples */}
-            <h3 className="text-lg font-medium text-strong mb-3 mt-6">
+            <h3 className="text-lg  mb-3 mt-6">
               Multiselect Features
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   Basic Multiselect
                 </label>
                 <Select
@@ -2608,7 +2608,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   Multiselect with Groups
                 </label>
                 <Select
@@ -2641,7 +2641,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   Multiselect without Select All
                 </label>
                 <Select
@@ -2664,7 +2664,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   Multiselect with Pre-selected
                 </label>
                 <Select
@@ -2686,7 +2686,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   Multiselect Full Width
                 </label>
                 <Select
@@ -2707,7 +2707,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   Multiselect with Many Options
                 </label>
                 <Select
@@ -2730,7 +2730,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Row 2: Original grouped options continued */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   Grouped Options (SpaceEditor Style)
                 </label>
                 <Select
@@ -2766,7 +2766,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   User Selection with Avatars
                 </label>
                 <Select
@@ -2803,7 +2803,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Row 3: Dropdown Placement (first 3 cells only) */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   Auto Placement
                 </label>
                 <Select
@@ -2823,7 +2823,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   Force Bottom
                 </label>
                 <Select
@@ -2843,7 +2843,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-strong mb-2 block">
+                <label className="text-sm  mb-2 block">
                   Force Top
                 </label>
                 <Select
@@ -2866,7 +2866,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Implementation Notes */}
             <div className="space-y-3">
-              <h3 className="text-lg font-medium text-strong">
+              <h3 className="text-lg ">
                 Implementation Notes
               </h3>
               <ul className="list-disc list-inside text-sm text-subtle space-y-1">
@@ -2905,7 +2905,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="colorswatch-primitive"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">ColorSwatch</h2>
+            <h2 className="text-xl font-semibold ">ColorSwatch</h2>
             <p className="text-subtle">
               Color picker component for selecting accent colors with visual
               feedback
@@ -2913,7 +2913,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Basic ColorSwatch Examples */}
             <div className="space-y-4">
-              <h3 className="text-lg font-medium text-strong">Basic Usage</h3>
+              <h3 className="text-lg ">Basic Usage</h3>
 
               <div className="space-y-2">
                 <p className="text-sm text-subtle">Click to select colors:</p>
@@ -2939,7 +2939,7 @@ export const PrimitivesPlayground: React.FC = () => {
               {/* Size Variants, States, and Custom Options in 3x1 Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-2">
-                  <h4 className="text-md font-medium text-strong">
+                  <h4 className="text-md ">
                     Size Variants
                   </h4>
                   <div className="space-y-3">
@@ -2989,7 +2989,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <h4 className="text-md font-medium text-strong">States</h4>
+                  <h4 className="text-md ">States</h4>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <span className="text-sm text-subtle w-16">Active:</span>
@@ -3019,7 +3019,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <h4 className="text-md font-medium text-strong">
+                  <h4 className="text-md ">
                     Custom Options
                   </h4>
                   <div className="flex items-center gap-3">
@@ -3042,7 +3042,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
-              <h4 className="font-semibold text-strong mb-2">
+              <h4 className="font-semibold  mb-2">
                 Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
@@ -3064,7 +3064,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="radiogroup-primitive"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">RadioGroup</h2>
+            <h2 className="text-xl font-semibold ">RadioGroup</h2>
             <p className="text-subtle">
               Accessible radio button group with icon support and flexible
               layouts
@@ -3073,7 +3073,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* RadioGroup Examples in 2x2 Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Theme Selection
                 </h3>
                 <p className="text-sm text-subtle">Using FontAwesome icons:</p>
@@ -3090,7 +3090,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Horizontal Layout
                 </h3>
                 <p className="text-sm text-subtle">
@@ -3109,7 +3109,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Disabled Options
                 </h3>
                 <p className="text-sm text-subtle">
@@ -3131,7 +3131,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Without Icons
                 </h3>
                 <p className="text-sm text-subtle">
@@ -3151,7 +3151,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
-              <h4 className="font-semibold text-strong mb-2">
+              <h4 className="font-semibold  mb-2">
                 Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
@@ -3176,7 +3176,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="tooltip-primitive"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">Tooltip</h2>
+            <h2 className="text-xl font-semibold ">Tooltip</h2>
             <p className="text-subtle">
               Cross-platform tooltip for information icons in modals and special
               cases
@@ -3185,7 +3185,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Tooltip Examples */}
             <div className="space-y-6">
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Basic Tooltips
                 </h3>
                 <div className="flex items-center gap-6 flex-wrap">
@@ -3241,7 +3241,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Positioning</h3>
+                <h3 className="text-lg ">Positioning</h3>
                 <div className="flex flex-wrap gap-4 justify-center py-8">
                   <Tooltip
                     id="tooltip-top"
@@ -3288,7 +3288,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Mobile Testing Notes */}
             <div className="p-4 bg-surface-1 rounded-lg">
-              <h4 className="font-semibold text-strong mb-2">
+              <h4 className="font-semibold  mb-2">
                 Mobile Testing Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
@@ -3318,7 +3318,7 @@ export const PrimitivesPlayground: React.FC = () => {
             id="icon-primitive"
             className="border border-default rounded-lg p-6 space-y-4"
           >
-            <h2 className="text-xl font-semibold text-strong">Icon</h2>
+            <h2 className="text-xl font-semibold ">Icon</h2>
             <p className="text-subtle">
               Cross-platform icon system using FontAwesome with unified API
             </p>
@@ -3326,7 +3326,7 @@ export const PrimitivesPlayground: React.FC = () => {
             {/* Icon Examples */}
             <div className="space-y-6">
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Basic Icons</h3>
+                <h3 className="text-lg ">Basic Icons</h3>
                 <div className="flex items-center gap-4 flex-wrap">
                   <div className="flex items-center gap-2">
                     <Icon name="check" />
@@ -3356,7 +3356,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Theme Icons</h3>
+                <h3 className="text-lg ">Theme Icons</h3>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <Icon name="sun" color="#f59e0b" />
@@ -3380,7 +3380,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">Sizes</h3>
+                <h3 className="text-lg ">Sizes</h3>
                 <div className="flex items-center gap-4 flex-wrap">
                   <div className="flex items-center gap-2">
                     <Icon name="heart" size="xs" />
@@ -3426,7 +3426,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Actions & States
                 </h3>
                 <div className="flex items-center gap-4 flex-wrap">
@@ -3456,7 +3456,7 @@ export const PrimitivesPlayground: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Navigation Icons
                 </h3>
                 <div className="flex items-center gap-4 flex-wrap">
@@ -3490,7 +3490,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
             {/* Implementation Notes */}
             <div className="bg-surface-1 p-4 rounded-lg">
-              <h4 className="font-medium text-strong mb-2">
+              <h4 className=" mb-2">
                 Implementation Notes
               </h4>
               <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
@@ -3519,7 +3519,7 @@ export const PrimitivesPlayground: React.FC = () => {
           >
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-strong mb-3">
+                <h2 className="text-2xl font-bold  mb-3">
                   FileUpload Primitive
                 </h2>
                 <p className="text-base text-main">
@@ -3530,7 +3530,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Image Upload */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Image Upload
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -3634,7 +3634,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Document Upload */}
               <div className="space-y-3">
-                <h3 className="text-lg font-medium text-strong">
+                <h3 className="text-lg ">
                   Document Upload
                 </h3>
                 <div className="space-y-3">
@@ -3675,7 +3675,7 @@ export const PrimitivesPlayground: React.FC = () => {
 
               {/* Implementation Details */}
               <div className="bg-surface-2 p-4 rounded-lg">
-                <h3 className="text-lg font-medium text-strong mb-3">
+                <h3 className="text-lg  mb-3">
                   Implementation Details
                 </h3>
                 <ul className="text-sm text-main space-y-1 list-disc list-inside">
@@ -3704,7 +3704,7 @@ export const PrimitivesPlayground: React.FC = () => {
       <div className="fixed right-0 top-[120px] h-[calc(100vh-120px)] w-80 p-6 overflow-y-auto z-10">
         <div className="mt-2">
           <div className="border border-default rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-strong mb-4">
+            <h3 className="text-lg font-semibold  mb-4">
               Quick Navigation
             </h3>
             <nav className="space-y-2">
@@ -3712,9 +3712,9 @@ export const PrimitivesPlayground: React.FC = () => {
                 <div
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className={`w-full text-left px-3 py-2 text-sm hover:bg-surface-3 hover:text-strong rounded-lg transition-colors duration-150 cursor-pointer ${
+                  className={`w-full text-left px-3 py-2 text-sm hover:bg-surface-3 hover: rounded-lg transition-colors duration-150 cursor-pointer ${
                     activeSection === item.id
-                      ? 'border border-accent-500 text-strong bg-surface-2'
+                      ? 'border border-accent-500  bg-surface-2'
                       : 'text-main'
                   }`}
                 >

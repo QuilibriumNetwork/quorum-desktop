@@ -23,7 +23,7 @@ export interface BaseButtonProps {
   iconName?: IconName; // FontAwesome icon to display (left of text or icon-only)
   iconOnly?: boolean; // If true, only show icon without text
   className?: string;
-  onClick: () => void;
+  onClick: (event?: React.MouseEvent) => void;
   tooltip?: string;
   highlightedTooltip?: boolean;
   children?: React.ReactNode;

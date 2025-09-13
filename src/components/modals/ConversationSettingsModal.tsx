@@ -5,21 +5,24 @@ import { useMessageDB } from '../context/useMessageDB';
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
 import { useConversations } from '../../hooks';
 import { DefaultImages } from '../../utils';
-import { 
-  Modal, 
-  Container, 
-  FlexColumn, 
-  FlexRow, 
+import {
+  Modal,
+  Container,
+  FlexColumn,
+  FlexRow,
   FlexBetween,
-  Button, 
-  Switch, 
-  Icon, 
-  Tooltip, 
+  FlexCenter,
+  Button,
+  Switch,
+  Icon,
+  Tooltip,
   Spacer,
-  Text
+  Text,
 } from '../primitives';
 import { useQueryClient } from '@tanstack/react-query';
 import { buildConversationKey } from '../../hooks/queries/conversation/buildConversationKey';
+import { useConfirmation } from '../../hooks/ui/useConfirmation';
+import ConfirmationModal from './ConfirmationModal';
 
 type ConversationSettingsModalProps = {
   conversationId: string;
@@ -39,10 +42,22 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   const queryClient = useQueryClient();
 
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
-  const [confirmationStep, setConfirmationStep] = React.useState<number>(0);
-  const [confirmationTimeout, setConfirmationTimeout] =
-    React.useState<NodeJS.Timeout | null>(null);
 
+  // Confirmation hook for conversation delete
+  const deleteConfirmation = useConfirmation({
+    type: 'modal',
+    enableShiftBypass: false, // Disable shift bypass for conversation deletion
+    modalConfig: conversation
+      ? {
+          title: t`Delete Conversation`,
+          message: t`Are you sure you want to delete this conversation?\n\nThis will delete the conversation from your device only. The other participant will still have access to the conversation history.`,
+          preview: undefined, // No preview for conversation deletion
+          confirmText: t`Delete`,
+          cancelText: t`Cancel`,
+          variant: 'danger',
+        }
+      : undefined,
+  });
   React.useEffect(() => {
     (async () => {
       try {
@@ -102,69 +117,48 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
     queryClient,
   ]);
 
-  const handleDeleteClick = React.useCallback(async () => {
-    if (confirmationStep === 0) {
-      // First click - show confirmation
-      setConfirmationStep(1);
-      // Reset confirmation after 5 seconds
-      const timeout = setTimeout(() => setConfirmationStep(0), 5000);
-      setConfirmationTimeout(timeout);
-    } else {
-      // Second click - execute deletion
-      // Clear the timeout since we're confirming
-      if (confirmationTimeout) {
-        clearTimeout(confirmationTimeout);
-        setConfirmationTimeout(null);
-      }
-      await deleteConversation(conversationId);
-      // Redirect to first conversation (excluding the deleted one) if exists, else /messages
-      const list = (convPages?.pages || [])
-        .flatMap((p: any) => p.conversations)
-        .filter((c: any) => !!c)
-        .sort((a: any, b: any) => (b.timestamp || 0) - (a.timestamp || 0));
-      const currentAddr = conversationId.split('/')[0];
-      const next = list.find(
-        (c: any) =>
-          (c.address || c.conversationId.split('/')[0]) !== currentAddr
-      );
-      if (next) {
-        const addr = (next as any).address || next.conversationId.split('/')[0];
-        navigate(`/messages/${addr}`);
-      } else {
-        navigate('/messages');
-      }
-      setConfirmationStep(0);
-      onClose();
-    }
-  }, [
-    confirmationStep,
-    confirmationTimeout,
-    deleteConversation,
-    conversationId,
-    convPages,
-    navigate,
-    onClose,
-  ]);
+  const handleDeleteClick = React.useCallback(
+    async (e: React.MouseEvent) => {
+      const performDelete = async () => {
+        await deleteConversation(conversationId);
+        // Redirect to first conversation (excluding the deleted one) if exists, else /messages
+        const list = (convPages?.pages || [])
+          .flatMap((p: any) => p.conversations)
+          .filter((c: any) => !!c)
+          .sort((a: any, b: any) => (b.timestamp || 0) - (a.timestamp || 0));
+        const currentAddr = conversationId.split('/')[0];
+        const next = list.find(
+          (c: any) =>
+            (c.address || c.conversationId.split('/')[0]) !== currentAddr
+        );
+        if (next) {
+          const addr =
+            (next as any).address || next.conversationId.split('/')[0];
+          navigate(`/messages/${addr}`);
+        } else {
+          navigate('/messages');
+        }
+        onClose();
+      };
+
+      deleteConfirmation.handleClick(e, performDelete);
+    },
+    [
+      deleteConfirmation,
+      deleteConversation,
+      conversationId,
+      convPages,
+      navigate,
+      onClose,
+    ]
+  );
 
   // Reset confirmation when modal closes
   React.useEffect(() => {
     if (!visible) {
-      setConfirmationStep(0);
-      if (confirmationTimeout) {
-        clearTimeout(confirmationTimeout);
-        setConfirmationTimeout(null);
-      }
+      deleteConfirmation.reset();
     }
-  }, [visible, confirmationTimeout]);
-
-  // Clean up timeout on unmount
-  React.useEffect(() => {
-    return () => {
-      if (confirmationTimeout) {
-        clearTimeout(confirmationTimeout);
-      }
-    };
-  }, [confirmationTimeout]);
+  }, [visible, deleteConfirmation]);
 
   return (
     <Modal
@@ -187,10 +181,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
                 className="!text-left !max-w-[260px]"
                 place="top"
               >
-                <Icon
-                  name="info-circle"
-                  size="sm"
-                />
+                <Icon name="info-circle" size="sm" />
               </Tooltip>
             </FlexRow>
             <Switch
@@ -199,13 +190,8 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
             />
           </FlexBetween>
 
-          <Spacer 
-            spaceBefore="sm" 
-            spaceAfter="sm" 
-            border={true} 
-            direction="vertical" 
-          />
-          
+          <Spacer size="sm" />
+
           <FlexRow justify="end">
             <Button type="primary" onClick={saveRepudiability}>
               {t`Save`}
@@ -213,31 +199,35 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
           </FlexRow>
         </FlexColumn>
 
-        <Spacer size="lg" />
+        <Spacer spaceBefore="lg" spaceAfter="md" border direction="vertical" />
 
         {/* Delete Section */}
-        <Container
-          padding="md"
-          style={{ 
-            borderRadius: 8, 
-            border: '2px dashed var(--color-text-danger)'
-          }}
-        >
-          <FlexColumn gap="md">
-            <Text variant="error" weight="semibold">
-              {t`Delete Conversation`}
-            </Text>
-            <Text variant="subtle" size="xs">
-              {t`Deletes conversation keys, user profile information, and messages on your computer only. These messages will still exist on the recipent's computer, so they must also delete on their end to complete a full deletion.`}
-            </Text>
-            <FlexRow>
-              <Button type="danger" onClick={handleDeleteClick}>
-                {confirmationStep === 0 ? t`Delete` : t`Click again to confirm`}
-              </Button>
-            </FlexRow>
-          </FlexColumn>
-        </Container>
+        <FlexCenter>
+          <Text
+            variant="danger"
+            className="cursor-pointer hover:text-danger-hover"
+            onClick={(e) => handleDeleteClick(e)}
+          >
+            {t`Delete Conversation`}
+          </Text>
+        </FlexCenter>
       </Container>
+
+      {/* Delete confirmation modal */}
+      {deleteConfirmation?.modalConfig && (
+        <ConfirmationModal
+          visible={deleteConfirmation.showModal}
+          title={deleteConfirmation.modalConfig.title}
+          message={deleteConfirmation.modalConfig.message}
+          preview={deleteConfirmation.modalConfig.preview}
+          confirmText={deleteConfirmation.modalConfig.confirmText}
+          cancelText={deleteConfirmation.modalConfig.cancelText}
+          variant={deleteConfirmation.modalConfig.variant}
+          showProtip={false}
+          onConfirm={deleteConfirmation.modalConfig.onConfirm}
+          onCancel={deleteConfirmation.modalConfig.onCancel}
+        />
+      )}
     </Modal>
   );
 };

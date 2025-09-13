@@ -10,6 +10,7 @@ import {
   Spacer,
   ScrollContainer,
 } from '../primitives';
+import ConfirmationModal from '../modals/ConfirmationModal';
 import { useSpace } from '../../hooks';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
 import { useMessageDB } from '../context/useMessageDB';
@@ -68,6 +69,7 @@ const SpaceEditor: React.FunctionComponent<{
     updateRoleDisplayName,
     toggleRolePermission,
     updateRolePermissions,
+    deleteConfirmation,
   } = useRoleManagement({
     initialRoles: space?.roles || [],
   });
@@ -648,7 +650,7 @@ const SpaceEditor: React.FunctionComponent<{
                                         <Icon
                                           name="trash"
                                           className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
-                                          onClick={() => deleteRole(i)}
+                                          onClick={(e) => deleteRole(e, i)}
                                         />
                                       </Tooltip>
                                     </div>
@@ -1077,6 +1079,21 @@ const SpaceEditor: React.FunctionComponent<{
           </div>
         </div>
       </div>
+      
+      {/* Role delete confirmation modal */}
+      {deleteConfirmation?.modalConfig && (
+        <ConfirmationModal
+          visible={deleteConfirmation.showModal}
+          title={deleteConfirmation.modalConfig.title}
+          message={deleteConfirmation.modalConfig.message}
+          preview={deleteConfirmation.modalConfig.preview}
+          confirmText={deleteConfirmation.modalConfig.confirmText}
+          cancelText={deleteConfirmation.modalConfig.cancelText}
+          variant={deleteConfirmation.modalConfig.variant}
+          onConfirm={deleteConfirmation.modalConfig.onConfirm}
+          onCancel={deleteConfirmation.modalConfig.onCancel}
+        />
+      )}
     </Modal>
   );
 };
