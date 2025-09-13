@@ -8,6 +8,7 @@ import {
   Icon,
   Tooltip,
   Spacer,
+  ScrollContainer,
 } from '../primitives';
 import '../../styles/_modal_common.scss';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -364,7 +365,7 @@ const UserSettingsModal: React.FunctionComponent<{
                       <div className="modal-content-section">
                         <Spacer size="md" direction="vertical" borderTop={true} />
                         <div className="modal-text-label pb-2">Devices</div>
-                        <div className="max-h-[280px] overflow-y-auto border border-surface-6 rounded-lg">
+                        <ScrollContainer height="sm">
                           {stagedRegistration?.device_registrations
                             .sort((a, b) => {
                               // Sort so "this device" appears first
@@ -420,7 +421,7 @@ const UserSettingsModal: React.FunctionComponent<{
                               </div>
                             )
                           )}
-                        </div>
+                        </ScrollContainer>
 
                         <div className="modal-content-info !pt-4">
                           <Spacer size="md" direction="vertical" borderTop={true} />

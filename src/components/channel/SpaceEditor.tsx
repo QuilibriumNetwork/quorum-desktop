@@ -8,6 +8,7 @@ import {
   Icon,
   Tooltip,
   Spacer,
+  ScrollContainer,
 } from '../primitives';
 import { useSpace } from '../../hooks';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
@@ -541,7 +542,7 @@ const SpaceEditor: React.FunctionComponent<{
                             <Trans>Add Role</Trans>
                           </Button>
                         </div>
-                        <div className="max-h-[400px] overflow-y-auto border border-surface-6 rounded-lg">
+                        <ScrollContainer height="md">
                           {roles.map((r, i) => {
                             return (
                               <div
@@ -662,7 +663,7 @@ const SpaceEditor: React.FunctionComponent<{
                               </div>
                             );
                           })}
-                        </div>
+                        </ScrollContainer>
                         {roleValidationError && (
                           <div
                             className="mt-4 text-sm"
