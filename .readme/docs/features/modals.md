@@ -2,9 +2,108 @@
 
 ## Overview
 
-The Quorum Desktop app uses a unified primitive-based modal system designed for cross-platform compatibility and consistent user experience. All modals use the Modal primitive from `src/components/primitives/Modal` and leverage other primitives for forms, buttons, and interactions.
+The Quorum Desktop app uses a **hybrid modal system** with multiple rendering strategies designed for cross-platform compatibility and consistent user experience. The system addresses different technical challenges (z-index stacking, state management, performance) through three distinct modal rendering patterns.
 
 ## Modal System Architecture
+
+### **Current System: Three Modal Rendering Strategies**
+
+The app currently uses **three different modal systems** in parallel, each solving specific technical problems:
+
+#### **🏗️ System 1: ModalProvider (App-Level Context Modals)**
+- **Render Location**: Router level (highest in component tree)
+- **Used By**: UserSettingsModal, SpaceEditor, ChannelEditor, KickUserModal, etc.
+- **State Management**: useModalState hook + React Context
+- **Problem Solved**: Complex state management, centralized modal control
+- **Z-Index**: Perfect (rendered above all UI elements)
+
+#### **📐 System 2: Layout-Level Modals (Layout Component)**  
+- **Render Location**: Layout.tsx component
+- **Used By**: CreateSpaceModal, ConfirmationModal
+- **State Management**: useModalManagement hook + Context providers
+- **Problem Solved**: Z-index stacking issues, simpler than ModalProvider
+- **Z-Index**: Perfect (rendered before NavMenu)
+
+#### **⚠️ System 3: Component-Level Modals (DEPRECATED - AVOID)**
+- **Render Location**: Deep in component tree (Message.tsx, etc.)
+- **Used By**: Previously ConfirmationModal (now migrated), some legacy modals
+- **State Management**: Local component state
+- **Problem Solved**: None (causes problems)
+- **Z-Index**: **BROKEN** - trapped by CSS stacking contexts
+
+### **Why Three Systems Exist**
+
+This hybrid approach emerged organically to solve different problems:
+
+1. **ModalProvider** was created for complex modals needing centralized state
+2. **Layout-Level** was used for simpler modals (CreateSpaceModal worked fine)
+3. **Component-Level** was the original approach but causes z-index issues
+
+### **System Comparison & Trade-offs**
+
+| Aspect | ModalProvider | Layout-Level | Component-Level |
+|--------|--------------|--------------|----------------|
+| **Z-Index** | ✅ Perfect | ✅ Perfect | ❌ Broken |
+| **Setup Complexity** | 🟡 High | 🟢 Low | 🟢 Very Low |
+| **State Management** | ✅ Centralized | 🟡 Local | 🟢 Simple |
+| **Performance** | ✅ Conditional render | ✅ Conditional render | ✅ Conditional render |
+| **Prop Drilling** | ✅ None (Context) | 🟡 Some (Context) | ❌ Heavy drilling |
+| **Maintainability** | ✅ High | 🟢 Good | ❌ Poor |
+
+### **Current System Issues & Improvements Needed**
+
+#### **🔴 Known Issues with Current Hybrid System**
+
+1. **Inconsistency**: Developers must learn three different patterns
+2. **Context Confusion**: Multiple context systems (ModalProvider, ConfirmationModalProvider, local state)
+3. **Code Duplication**: Similar state management patterns across systems
+4. **Documentation Burden**: More complex mental model for new developers
+5. **Migration Risk**: Legacy component-level modals can break with layout changes
+
+#### **📊 Modal Distribution Analysis**
+
+- **ModalProvider**: ~6 modals (complex modals)
+- **Layout-Level**: ~2 modals (CreateSpaceModal, ConfirmationModal) 
+- **Component-Level**: ~1-2 legacy modals (need migration)
+
+#### **Potential System Improvements**
+
+**Recommendations for future refactoring**:
+
+#### **🎯 Option A: Unified ModalProvider System (Recommended)**
+- Migrate all modals to single ModalProvider
+- Create modal "types" for different complexity levels
+- ✅ **Pros**: Single system, centralized state, perfect z-index, consistent patterns
+- ❌ **Cons**: Migration effort, slightly more boilerplate for simple modals
+- **Migration Effort**: Medium (2-3 modals to migrate)
+
+#### **Option B: Enhanced Layout-Level System**  
+- Make Layout-Level system more powerful (handle complex state)
+- Deprecate ModalProvider gradually
+- ✅ **Pros**: Simpler setup, good z-index, less context complexity
+- ❌ **Cons**: More code in Layout.tsx, less centralized than ModalProvider
+- **Migration Effort**: High (6+ modals to migrate)
+
+#### **Option C: Hybrid with Clear Rules (Current)**
+- Keep existing system with better documentation
+- Establish strict usage guidelines
+- ✅ **Pros**: No migration needed, works with existing code
+- ❌ **Cons**: Maintains three-system complexity, developer learning curve
+- **Migration Effort**: None (documentation only)
+
+#### **🚀 Recommended Next Steps**
+
+1. **Short Term**: Use current hybrid system with clear guidelines (this documentation)
+2. **Medium Term**: Evaluate unified ModalProvider migration  
+3. **Long Term**: Consider dedicated modal management library if complexity grows
+
+#### **Migration Strategy (If Chosen)**
+
+If moving to unified ModalProvider:
+1. Create generic modal types in ModalProvider
+2. Migrate Layout-Level modals first (easiest)
+3. Update documentation and examples
+4. Create migration guide for future modals
 
 ### Core Components
 
@@ -212,9 +311,36 @@ const EditorModal = ({ visible, onClose, isEdit, itemName }) => {
 - **Primitives**: Modal, Button
 - **Title**: "Kick User"
 
+#### **6. ConfirmationModal** - `src/components/modals/ConfirmationModal.tsx`
+
+- **Purpose**: Universal confirmation dialog with preview support
+- **Size**: Small
+- **Rendering**: Layout-Level (Layout.tsx) via ConfirmationModalProvider
+- **Primitives**: Modal, Button, Container, Text, FlexRow, Spacer, ScrollContainer, Icon
+- **Features**: 
+  - Preview content support (MessagePreview, etc.)
+  - Shift+click bypass functionality
+  - PROTIP display for power users
+  - Configurable variants (danger, warning, info)
+- **Usage Example**:
+```tsx
+const { showConfirmationModal } = useConfirmationModal();
+
+showConfirmationModal({
+  title: t`Delete Message`,
+  message: t`Are you sure you want to delete this message?`,
+  preview: <MessagePreview message={message} />,
+  variant: 'danger',
+  protipAction: t`delete`,
+  onConfirm: handleDelete,
+});
+```
+- **Title**: Dynamic (passed via config)
+- **Migration Note**: Previously rendered in Message component (caused z-index issues), now uses Layout-Level system
+
 ### **Complex Modals (Multi-Section Pattern)**
 
-#### **6. UserSettingsModal** - `src/components/modals/UserSettingsModal.tsx`
+#### **7. UserSettingsModal** - `src/components/modals/UserSettingsModal.tsx`
 
 - **Purpose**: User account settings and preferences
 - **Size**: Large
@@ -223,7 +349,7 @@ const EditorModal = ({ visible, onClose, isEdit, itemName }) => {
 - **Special**: File upload (ReactTooltip), ThemeRadioGroup, AccentColorSwitcher, ClickToCopyContent
 - **Title**: Hidden (custom layout)
 
-#### **7. SpaceEditor** - `src/components/channel/SpaceEditor.tsx`
+#### **8. SpaceEditor** - `src/components/channel/SpaceEditor.tsx`
 
 - **Purpose**: Comprehensive space management
 - **Size**: Large
@@ -234,7 +360,7 @@ const EditorModal = ({ visible, onClose, isEdit, itemName }) => {
 
 ### **Small Editor Modals**
 
-#### **8. ChannelEditor** - `src/components/channel/ChannelEditor.tsx`
+#### **9. ChannelEditor** - `src/components/channel/ChannelEditor.tsx`
 
 - **Purpose**: Create/edit channels
 - **Size**: Small
@@ -242,13 +368,130 @@ const EditorModal = ({ visible, onClose, isEdit, itemName }) => {
 - **Special**: Dynamic title, delete warnings with custom close icons
 - **Title**: "Add Channel" / "Edit Channel"
 
-#### **9. GroupEditor** - `src/components/channel/GroupEditor.tsx`
+#### **10. GroupEditor** - `src/components/channel/GroupEditor.tsx`
 
 - **Purpose**: Create/edit channel groups
 - **Size**: Small
 - **Primitives**: Modal, Input, Button, Icon
 - **Special**: Dynamic title, delete warnings with custom close icons
 - **Title**: "Add Group" / "Edit Group"
+
+## System Selection Guidelines
+
+### **Which Modal System Should I Use?**
+
+When creating a new modal, choose the appropriate system based on these criteria:
+
+#### **✅ Use ModalProvider System When:**
+- Modal has complex state management needs
+- Modal is used across multiple components/pages  
+- Modal needs centralized control (open from multiple places)
+- Modal has multi-section interface (UserSettingsModal, SpaceEditor)
+- **Examples**: UserSettingsModal, SpaceEditor, ChannelEditor
+
+#### **✅ Use Layout-Level System When:**
+- Modal is relatively simple (forms, confirmations)
+- Modal is triggered from specific UI areas
+- You want simpler setup than ModalProvider
+- Modal needs custom preview content
+- **Examples**: CreateSpaceModal, ConfirmationModal
+
+#### **❌ NEVER Use Component-Level Rendering**
+- Causes z-index stacking issues
+- Creates prop drilling problems  
+- Breaks with responsive layouts
+- **Migration Required**: Move to Layout-Level or ModalProvider
+
+### **Implementation Decision Tree**
+
+```
+New Modal Needed?
+│
+├─ Complex multi-section modal? 
+│  └─ YES → Use ModalProvider System
+│
+├─ Simple form/confirmation with custom content?
+│  └─ YES → Use Layout-Level System  
+│
+└─ Legacy component-level modal?
+   └─ MIGRATE → Choose ModalProvider or Layout-Level
+```
+
+### **System Implementation Examples**
+
+#### **ModalProvider System Implementation**
+
+1. **Add to Modal State** (`src/hooks/business/ui/useModalState.ts`):
+```tsx
+export interface ModalState {
+  // ... existing modals
+  myNewModal: {
+    isOpen: boolean;
+    data?: any; // modal-specific data
+  };
+}
+```
+
+2. **Add to ModalProvider** (`src/components/context/ModalProvider.tsx`):
+```tsx
+{modalState.state.myNewModal.isOpen && (
+  <MyNewModal
+    visible={true}
+    data={modalState.state.myNewModal.data}
+    onClose={modalState.closeMyNewModal}
+  />
+)}
+```
+
+3. **Use in Components**:
+```tsx
+const { openMyNewModal } = useModals();
+openMyNewModal(data);
+```
+
+#### **Layout-Level System Implementation**
+
+1. **Add to Modal Management** (`src/hooks/business/ui/useModalManagement.ts`):
+```tsx
+const [myModalVisible, setMyModalVisible] = useState(false);
+const showMyModal = useCallback(() => setMyModalVisible(true), []);
+const hideMyModal = useCallback(() => setMyModalVisible(false), []);
+```
+
+2. **Add to Layout** (`src/components/Layout.tsx`):
+```tsx
+{myModalVisible && (
+  <MyModal visible={myModalVisible} onClose={hideMyModal} />
+)}
+```
+
+3. **Pass via Context or Props**:
+```tsx
+<MyComponent onOpenModal={showMyModal} />
+```
+
+#### **ConfirmationModal Specific Pattern**
+
+```tsx
+// In any component within Layout tree:
+const { showConfirmationModal } = useConfirmationModal();
+
+const handleDeleteAction = () => {
+  showConfirmationModal({
+    title: t`Delete Item`,
+    message: t`Are you sure you want to delete this item?`,
+    preview: <ItemPreview item={item} />, // Optional
+    variant: 'danger',
+    protipAction: t`delete`,
+    confirmText: t`Delete`,
+    cancelText: t`Cancel`,
+    onConfirm: () => {
+      // Perform delete action
+      deleteItem(item.id);
+    },
+  });
+};
+```
 
 ## Development Guidelines
 
@@ -452,6 +695,22 @@ If upgrading existing modals:
 
 ---
 
-**Last Updated:** 2025-07-28
+## Summary
 
-This documentation reflects the current primitive-based modal architecture. All modals should follow these patterns for consistency, maintainability, and cross-platform compatibility.
+The Quorum Desktop app currently uses a **hybrid three-system modal architecture**:
+
+1. **ModalProvider System**: Complex modals with centralized state management
+2. **Layout-Level System**: Simple modals with good z-index handling  
+3. **Component-Level System**: ⚠️ **DEPRECATED** - causes z-index issues
+
+While this hybrid approach works, it creates complexity for developers. The **recommended long-term solution** is migrating to a unified ModalProvider system for consistency and maintainability.
+
+For **new modal development**, use the [System Selection Guidelines](#system-selection-guidelines) to choose the appropriate approach. When in doubt, use the Layout-Level system for simple modals and ModalProvider for complex ones.
+
+The recent **ConfirmationModal migration** from component-level to Layout-Level rendering demonstrates how z-index stacking issues can be resolved through proper modal architecture.
+
+---
+
+**Last Updated:** 2025-01-13
+
+This documentation reflects the current hybrid modal architecture with three rendering systems. Future versions may consolidate to a unified approach as the system evolves.
