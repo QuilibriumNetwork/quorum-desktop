@@ -167,7 +167,7 @@ After analyzing the risks of complex modal animations, we've decided to implemen
   - [x] Test route-based navigation behavior
   - [x] Verify space joining functionality
   - [x] Test invite link validation
-- [x] `/src/components/channel/SpaceEditor.tsx`
+- [x] `/src/components/space/SpaceEditor.tsx`
   - [x] Add animation wrapper div
   - [x] Implement closing state management
   - [x] Test with large DOM tree (5 sections)
@@ -177,12 +177,12 @@ After analyzing the risks of complex modal animations, we've decided to implemen
 
 ### Custom Small Modals
 
-- [x] `/src/components/channel/ChannelEditor.tsx`
+- [x] `/src/components/space/ChannelEditor.tsx`
   - [x] Add animation wrapper to modal container
   - [x] Implement fade + subtle scale CSS
   - [x] Test channel creation/editing
   - [x] Verify delete confirmation behavior
-- [x] `/src/components/channel/GroupEditor.tsx`
+- [x] `/src/components/space/GroupEditor.tsx`
   - [x] Add animation wrapper to modal container
   - [x] Implement fade + subtle scale CSS
   - [x] Test group creation/editing

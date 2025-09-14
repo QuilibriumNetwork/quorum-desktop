@@ -106,7 +106,7 @@ The message list disappearing issue discovered during debugging appears to be a 
 
 - `src/components/DropdownPanel.tsx` - Fixed click-outside detection logic
 - `src/components/message/PinnedMessagesPanel.tsx` - Restored to working state (debugging logs removed)
-- `src/components/channel/Channel.tsx` - Layout restructuring (related to initial bug trigger)
+- `src/components/space/Channel.tsx` - Layout restructuring (related to initial bug trigger)
 
 ## Testing Notes
 

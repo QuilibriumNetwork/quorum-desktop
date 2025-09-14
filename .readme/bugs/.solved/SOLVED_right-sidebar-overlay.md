@@ -220,7 +220,7 @@ AppWithSearch Level:
 
 - `src/components/AppWithSearch.tsx` - Mobile overlay and sidebar rendering
 - `src/components/direct/DirectMessage.tsx` - Desktop sidebar and content management
-- `src/components/channel/Channel.tsx` - Desktop sidebar and content management
+- `src/components/space/Channel.tsx` - Desktop sidebar and content management
 
 ### Supporting Files
 

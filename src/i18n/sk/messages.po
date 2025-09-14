@@ -71,7 +71,7 @@ msgid "Send a message to {user}"
 msgstr "Poslať správu {user}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:377
+#: src/components/space/Channel.tsx:377
 msgid "Send a message to #{channel_name}"
 msgstr "Poslať správu #{channel_name}"
 
@@ -121,7 +121,7 @@ msgstr "0 B"
 msgid "Account Address"
 msgstr "Adresa účtu"
 
-#: src/components/channel/ChannelEditor.tsx:51
+#: src/components/space/ChannelEditor.tsx:51
 msgid "Add Channel"
 msgstr "Pridať kanál"
 
@@ -129,12 +129,12 @@ msgstr "Pridať kanál"
 msgid "Add friend"
 msgstr "Pridať priateľa"
 
-#: src/components/channel/ChannelList.tsx:72
-#: src/components/channel/GroupEditor.tsx:44
+#: src/components/space/ChannelList.tsx:72
+#: src/components/space/GroupEditor.tsx:44
 msgid "Add Group"
 msgstr "Pridať skupinu"
 
-#: src/components/channel/SpaceEditor.tsx:531
+#: src/components/space/SpaceEditor.tsx:531
 msgid "Add Role"
 msgstr "Pridať úlohu"
 
@@ -142,7 +142,7 @@ msgstr "Pridať úlohu"
 msgid "add sticker"
 msgstr "pridať nálepku"
 
-#: src/components/channel/SpaceEditor.tsx:665
+#: src/components/space/SpaceEditor.tsx:665
 msgid ""
 "Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
 "You can upload PNG, JPG or GIF, max 256kB."
@@ -150,7 +150,7 @@ msgstr ""
 "Pridajte až 50 vlastných emoji. Vlastné emoji môžu byť použité iba v rámci "
 "Space. Môžete nahrať PNG, JPG alebo GIF, max 256kB."
 
-#: src/components/channel/SpaceEditor.tsx:751
+#: src/components/space/SpaceEditor.tsx:751
 msgid ""
 "Add up to 50 custom stickers. Custom stickers can only be used within a "
 "Space. You can upload PNG, JPG or GIF, max 256kB."
@@ -185,7 +185,7 @@ msgstr "Pokročilé nastavenia"
 msgid "All"
 msgstr "Všetko"
 
-#: src/components/channel/SpaceEditor.tsx:173
+#: src/components/space/SpaceEditor.tsx:173
 msgid "All roles must have both a tag name and display name."
 msgstr "Všetky úlohy musia mať názov značky aj zobrazený názov."
 
@@ -232,7 +232,7 @@ msgstr ""
 "Si si istý, že chceš opustiť tento Space? Nebudeš sa môcť znovu pripojiť, "
 "pokiaľ ťa znova nepozvú."
 
-#: src/components/channel/ChannelEditor.tsx:88
+#: src/components/space/ChannelEditor.tsx:88
 msgid ""
 "Are you sure? This channel contains messages. Deleting it will cause all "
 "content to be lost forever!"
@@ -240,7 +240,7 @@ msgstr ""
 "Si si si? Tento kanál obsahuje správy. Jeho odstránením sa všetok obsah "
 "navždy stratí!"
 
-#: src/components/channel/GroupEditor.tsx:76
+#: src/components/space/GroupEditor.tsx:76
 msgid ""
 "Are you sure? This group contains channels with messages. Deleting it will "
 "cause all content to be lost forever!"
@@ -260,7 +260,7 @@ msgstr "Preč"
 msgid "Backup Failed"
 msgstr "Zálohovanie zlyhalo"
 
-#: src/components/channel/SpaceEditor.tsx:941
+#: src/components/space/SpaceEditor.tsx:941
 msgid "Be patient, this can take a few seconds..."
 msgstr "Buďte trpezliví, môže to trvať niekoľko sekúnd..."
 
@@ -300,11 +300,11 @@ msgstr ""
 "Zmeny sa vykonávajú automaticky, ale aktívna stránka sa nemusí aktualizovať."
 " Obnovte stránku, aby ste použili nový jazyk."
 
-#: src/components/channel/ChannelEditor.tsx:59
+#: src/components/space/ChannelEditor.tsx:59
 msgid "Channel Name"
 msgstr "Názov kanála"
 
-#: src/components/channel/ChannelEditor.tsx:65
+#: src/components/space/ChannelEditor.tsx:65
 msgid "Channel Topic"
 msgstr "Téma kanála"
 
@@ -337,16 +337,16 @@ msgstr "Vymazať vyhľadávanie"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "Vymazanie oznámení s tagom: {tag}"
 
-#: src/components/channel/ChannelEditor.tsx:107
-#: src/components/channel/GroupEditor.tsx:95
-#: src/components/channel/SpaceEditor.tsx:1032
+#: src/components/space/ChannelEditor.tsx:107
+#: src/components/space/GroupEditor.tsx:95
+#: src/components/space/SpaceEditor.tsx:1032
 #: src/components/modals/ConversationSettingsModal.tsx:188
 #: src/components/modals/KickUserModal.tsx:47
 #: src/components/modals/LeaveSpaceModal.tsx:56
 msgid "Click again to confirm"
 msgstr "Kliknite znova na potvrdenie"
 
-#: src/components/channel/SpaceEditor.tsx:518
+#: src/components/space/SpaceEditor.tsx:518
 msgid "Click on the role name and tag to edit them."
 msgstr "Kliknite na názov úlohy a tag, aby ste ich upravili."
 
@@ -410,7 +410,7 @@ msgstr "Kopírovať adresu"
 msgid "Copy Failed"
 msgstr "Kopírovanie zlyhalo"
 
-#: src/components/channel/SpaceEditor.tsx:946
+#: src/components/space/SpaceEditor.tsx:946
 msgid "Copy invite link to clipboard"
 msgstr "Skopírovať pozývací odkaz do schránky"
 
@@ -457,7 +457,7 @@ msgstr "Vytvoriť Space"
 msgid "Creating Space..."
 msgstr "Vytváram Space..."
 
-#: src/components/channel/SpaceEditor.tsx:921
+#: src/components/space/SpaceEditor.tsx:921
 msgid "Current Invite Link"
 msgstr "Aktuálny pozývací odkaz"
 
@@ -473,7 +473,7 @@ msgstr "dešifrovaný space bez známeho konfiguračného kľúča"
 msgid "Decrypted Space with no known hub key"
 msgstr "Dešifrovaný Space bez známeho hub kľúča"
 
-#: src/components/channel/SpaceEditor.tsx:452
+#: src/components/space/SpaceEditor.tsx:452
 msgid "Default Channel"
 msgstr "Predvolený kanál"
 
@@ -489,7 +489,7 @@ msgstr ""
 msgid "Delete"
 msgstr "Zmazať"
 
-#: src/components/channel/ChannelEditor.tsx:106
+#: src/components/space/ChannelEditor.tsx:106
 msgid "Delete Channel"
 msgstr "Vymazať kanál"
 
@@ -497,7 +497,7 @@ msgstr "Vymazať kanál"
 msgid "Delete Conversation"
 msgstr "Zmazať konverzáciu"
 
-#: src/components/channel/GroupEditor.tsx:94
+#: src/components/space/GroupEditor.tsx:94
 msgid "Delete Group"
 msgstr "Vymazať skupinu"
 
@@ -506,21 +506,21 @@ msgstr "Vymazať skupinu"
 msgid "Delete message"
 msgstr "Vymazať správu"
 
-#: src/components/channel/SpaceEditor.tsx:600
+#: src/components/space/SpaceEditor.tsx:600
 msgid "Delete Messages"
 msgstr "Vymazať správy"
 
-#: src/components/channel/SpaceEditor.tsx:620
+#: src/components/space/SpaceEditor.tsx:620
 msgid "Delete Role"
 msgstr "Vymazať rolu"
 
-#: src/components/channel/SpaceEditor.tsx:285
-#: src/components/channel/SpaceEditor.tsx:337
-#: src/components/channel/SpaceEditor.tsx:1030
+#: src/components/space/SpaceEditor.tsx:285
+#: src/components/space/SpaceEditor.tsx:337
+#: src/components/space/SpaceEditor.tsx:1030
 msgid "Delete Space"
 msgstr "Zmazať Space"
 
-#: src/components/channel/SpaceEditor.tsx:1004
+#: src/components/space/SpaceEditor.tsx:1004
 msgid "Delete this space"
 msgstr "Zmazať túto Space"
 
@@ -567,11 +567,11 @@ msgstr "Zásuvka"
 msgid "Drop your profile photo here"
 msgstr "Sem vložte svoju profilovú fotografiu"
 
-#: src/components/channel/ChannelEditor.tsx:51
+#: src/components/space/ChannelEditor.tsx:51
 msgid "Edit Channel"
 msgstr "Upraviť kanál"
 
-#: src/components/channel/GroupEditor.tsx:44
+#: src/components/space/GroupEditor.tsx:44
 msgid "Edit Group"
 msgstr "Upraviť skupinu"
 
@@ -579,9 +579,9 @@ msgstr "Upraviť skupinu"
 msgid "Emoji picker"
 msgstr "Výber emoji"
 
-#: src/components/channel/SpaceEditor.tsx:259
-#: src/components/channel/SpaceEditor.tsx:325
-#: src/components/channel/SpaceEditor.tsx:662
+#: src/components/space/SpaceEditor.tsx:259
+#: src/components/space/SpaceEditor.tsx:325
+#: src/components/space/SpaceEditor.tsx:662
 msgid "Emojis"
 msgstr "Emojis"
 
@@ -597,7 +597,7 @@ msgstr "Zadajte názov pre váš nový Space"
 msgid "Enter a user's address to start messaging them."
 msgstr "Zadajte adresu používateľa, aby ste s ním mohli začať komunikovať."
 
-#: src/components/channel/SpaceEditor.tsx:876
+#: src/components/space/SpaceEditor.tsx:876
 msgid "Enter Address Manually"
 msgstr "Zadajte adresu ručne"
 
@@ -630,7 +630,7 @@ msgstr "Chyba pri žiadosti o povolenie na oznámenia:"
 msgid "Error showing notification:"
 msgstr "Chyba pri zobrazovaní oznámenia:"
 
-#: src/components/channel/SpaceEditor.tsx:852
+#: src/components/space/SpaceEditor.tsx:852
 msgid "Existing Conversations"
 msgstr "Existujúce konverzácie"
 
@@ -720,8 +720,8 @@ msgstr "Overenie súboru zlyhalo. Skúste to prosím znova."
 msgid "general"
 msgstr "všeobecné"
 
-#: src/components/channel/SpaceEditor.tsx:245
-#: src/components/channel/SpaceEditor.tsx:297
+#: src/components/space/SpaceEditor.tsx:245
+#: src/components/space/SpaceEditor.tsx:297
 #: src/components/modals/UserSettingsModal.tsx:174
 #: src/components/modals/UserSettingsModal.tsx:206
 msgid "General"
@@ -731,11 +731,11 @@ msgstr "Všeobecné"
 msgid "General Chat"
 msgstr "Všeobecný chat"
 
-#: src/components/channel/SpaceEditor.tsx:970
+#: src/components/space/SpaceEditor.tsx:970
 msgid "Generate New Invite Link"
 msgstr "Vytvoriť nový pozývací odkaz"
 
-#: src/components/channel/SpaceEditor.tsx:968
+#: src/components/space/SpaceEditor.tsx:968
 msgid "Generating link..."
 msgstr "Generovanie odkazu..."
 
@@ -743,7 +743,7 @@ msgstr "Generovanie odkazu..."
 msgid "Go to conversation"
 msgstr "Prejdite na konverzáciu"
 
-#: src/components/channel/GroupEditor.tsx:52
+#: src/components/space/GroupEditor.tsx:52
 msgid "Group Name"
 msgstr "Názov skupiny"
 
@@ -835,9 +835,9 @@ msgstr "neplatný typ správy"
 msgid "invalid response"
 msgstr "neplatná odpoveď"
 
-#: src/components/channel/SpaceEditor.tsx:273
-#: src/components/channel/SpaceEditor.tsx:318
-#: src/components/channel/SpaceEditor.tsx:836
+#: src/components/space/SpaceEditor.tsx:273
+#: src/components/space/SpaceEditor.tsx:318
+#: src/components/space/SpaceEditor.tsx:836
 msgid "Invites"
 msgstr "Pozvánky"
 
@@ -884,7 +884,7 @@ msgstr "Kľúč uložený"
 msgid "Kick User"
 msgstr "Vykopni používateľa"
 
-#: src/components/channel/SpaceEditor.tsx:608
+#: src/components/space/SpaceEditor.tsx:608
 msgid "Kick Users"
 msgstr "Vykopnúť používateľov"
 
@@ -959,7 +959,7 @@ msgstr ""
 msgid "Manual Backup Required"
 msgstr "Vyžaduje sa manuálna záloha"
 
-#: src/components/channel/Channel.tsx:310
+#: src/components/space/Channel.tsx:310
 #: src/components/direct/DirectMessage.tsx:369
 msgid "Members List"
 msgstr "Zoznam členov"
@@ -1040,7 +1040,7 @@ msgstr "Jeden z nás, jeden z nás!"
 msgid "Online"
 msgstr "Online"
 
-#: src/components/channel/SpaceEditor.tsx:586
+#: src/components/space/SpaceEditor.tsx:586
 msgid "Permissions:"
 msgstr "Oprávnenia:"
 
@@ -1072,7 +1072,7 @@ msgstr "Dosiahnutý limit pripnutia ({0})"
 msgid "Pin message"
 msgstr "Pripnúť správu"
 
-#: src/components/channel/SpaceEditor.tsx:604
+#: src/components/space/SpaceEditor.tsx:604
 msgid "Pin Messages"
 msgstr "Pripnúť správy"
 
@@ -1086,7 +1086,7 @@ msgstr "Pripnuté"
 msgid "Pinned by {0}"
 msgstr "Pripnuté od {0}"
 
-#: src/components/channel/Channel.tsx:278
+#: src/components/space/Channel.tsx:278
 msgid "Pinned Messages"
 msgstr "Pripnuté správy"
 
@@ -1099,7 +1099,7 @@ msgstr "Pripnuté!"
 msgid "PNG, JPG or JPEG • Max 2MB"
 msgstr "PNG, JPG alebo JPEG • Max 2MB"
 
-#: src/components/channel/SpaceEditor.tsx:472
+#: src/components/space/SpaceEditor.tsx:472
 msgid "Privacy Settings"
 msgstr "Nastavenia ochrany súkromia"
 
@@ -1113,11 +1113,11 @@ msgstr "Ochrana súkromia/Bezpečnosť"
 msgid "Private key saved to selected folder"
 msgstr "Súkromný kľúč bol uložený do vybraného priečinka"
 
-#: src/components/channel/SpaceEditor.tsx:896
+#: src/components/space/SpaceEditor.tsx:896
 msgid "Public Invite Link"
 msgstr "Verejný pozývací odkaz"
 
-#: src/components/channel/SpaceEditor.tsx:898
+#: src/components/space/SpaceEditor.tsx:898
 msgid ""
 "Public invite links allow anyone with access to the link join your Space. "
 "Understand the risks of enabling this, and to whom and where you share the "
@@ -1187,12 +1187,12 @@ msgstr "Odstrániť"
 msgid "Reply"
 msgstr "Odpovedať"
 
-#: src/components/channel/SpaceEditor.tsx:478
+#: src/components/space/SpaceEditor.tsx:478
 #: src/components/modals/CreateSpaceModal.tsx:107
 msgid "Require Message Signing"
 msgstr "Vyžadovať podpisovanie správ"
 
-#: src/components/channel/SpaceEditor.tsx:483
+#: src/components/space/SpaceEditor.tsx:483
 #: src/components/modals/CreateSpaceModal.tsx:112
 msgid ""
 "Require messages sent in this Space to be signed by the sender. Technically "
@@ -1201,9 +1201,9 @@ msgstr ""
 "Vyžadovať, aby správy odoslané v tejto Space boli podpísané odosielateľom. "
 "Technicky povedané, to robí správy v tejto Space neodvolateľnými."
 
-#: src/components/channel/SpaceEditor.tsx:252
-#: src/components/channel/SpaceEditor.tsx:311
-#: src/components/channel/SpaceEditor.tsx:515
+#: src/components/space/SpaceEditor.tsx:252
+#: src/components/space/SpaceEditor.tsx:311
+#: src/components/space/SpaceEditor.tsx:515
 msgid "Roles"
 msgstr "Úlohy"
 
@@ -1211,12 +1211,12 @@ msgstr "Úlohy"
 msgid "Save"
 msgstr "Uložiť"
 
-#: src/components/channel/ChannelEditor.tsx:75
-#: src/components/channel/GroupEditor.tsx:63
-#: src/components/channel/SpaceEditor.tsx:503
-#: src/components/channel/SpaceEditor.tsx:650
-#: src/components/channel/SpaceEditor.tsx:736
-#: src/components/channel/SpaceEditor.tsx:824
+#: src/components/space/ChannelEditor.tsx:75
+#: src/components/space/GroupEditor.tsx:63
+#: src/components/space/SpaceEditor.tsx:503
+#: src/components/space/SpaceEditor.tsx:650
+#: src/components/space/SpaceEditor.tsx:736
+#: src/components/space/SpaceEditor.tsx:824
 #: src/components/modals/UserSettingsModal.tsx:328
 #: src/components/modals/UserSettingsModal.tsx:469
 #: src/components/user/UserProfileEdit.tsx:158
@@ -1279,11 +1279,11 @@ msgstr "Bezpečnosť"
 msgid "Select an option"
 msgstr "Vyberte možnosť"
 
-#: src/components/channel/SpaceEditor.tsx:873
+#: src/components/space/SpaceEditor.tsx:873
 msgid "Select conversation"
 msgstr "Vyberte konverzáciu"
 
-#: src/components/channel/SpaceEditor.tsx:467
+#: src/components/space/SpaceEditor.tsx:467
 msgid "Select default channel"
 msgstr "Vybrať predvolený kanál"
 
@@ -1291,7 +1291,7 @@ msgstr "Vybrať predvolený kanál"
 msgid "Select Image"
 msgstr "Vybrať obrázok"
 
-#: src/components/channel/SpaceEditor.tsx:595
+#: src/components/space/SpaceEditor.tsx:595
 msgid "Select permissions"
 msgstr "Vyberte oprávnenia"
 
@@ -1303,11 +1303,11 @@ msgstr "Vybrať profilový obrázok"
 msgid "Send"
 msgstr "Odoslať"
 
-#: src/components/channel/SpaceEditor.tsx:992
+#: src/components/space/SpaceEditor.tsx:992
 msgid "Send Invite"
 msgstr "Odoslať pozvánku"
 
-#: src/components/channel/SpaceEditor.tsx:839
+#: src/components/space/SpaceEditor.tsx:839
 msgid ""
 "Send invites to people you've previously had conversations with. An invite "
 "button will appear in their inbox."
@@ -1351,7 +1351,7 @@ msgstr "zobraziť domovskú obrazovku"
 msgid "Skip Adding Photo"
 msgstr "Preskočiť pridanie fotografie"
 
-#: src/components/channel/SpaceEditor.tsx:391
+#: src/components/space/SpaceEditor.tsx:391
 msgid "Space Banner"
 msgstr "Banner Space"
 
@@ -1359,7 +1359,7 @@ msgstr "Banner Space"
 msgid "Space Icon Attachment"
 msgstr "Príloha ikony Space"
 
-#: src/components/channel/SpaceEditor.tsx:380
+#: src/components/space/SpaceEditor.tsx:380
 msgid "Space Name"
 msgstr "Názov Space"
 
@@ -1375,14 +1375,14 @@ msgstr "Štatút ide sem"
 msgid "Stay Connected, Stay Invisible"
 msgstr "Zostaňte pripojení, zostaňte neviditeľní"
 
-#: src/components/channel/SpaceEditor.tsx:266
-#: src/components/channel/SpaceEditor.tsx:304
-#: src/components/channel/SpaceEditor.tsx:748
+#: src/components/space/SpaceEditor.tsx:266
+#: src/components/space/SpaceEditor.tsx:304
+#: src/components/space/SpaceEditor.tsx:748
 msgid "Stickers"
 msgstr "Nálepky"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:886
+#: src/components/space/SpaceEditor.tsx:886
 msgid "Successfully sent invite to {0}"
 msgstr "Úspešne odoslaná pozvánka pre {0}"
 
@@ -1419,7 +1419,7 @@ msgstr ""
 "Toto je vaša verejná adresa a je bezpečné ju zdieľať s kýmkoľvek, s kým "
 "chcete interagovať."
 
-#: src/components/channel/SpaceEditor.tsx:926
+#: src/components/space/SpaceEditor.tsx:926
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link. Current Space members will not be removed "
@@ -1511,11 +1511,11 @@ msgstr ""
 "Pokým neodpíšete, tento odosielateľ neuvidí vaše zobrazené meno ani "
 "profilový obrázok"
 
-#: src/components/channel/SpaceEditor.tsx:680
+#: src/components/space/SpaceEditor.tsx:680
 msgid "Upload Emoji"
 msgstr "Nahraj Emoji"
 
-#: src/components/channel/SpaceEditor.tsx:766
+#: src/components/space/SpaceEditor.tsx:766
 msgid "Upload Sticker"
 msgstr "Nahraj Nálepku"
 

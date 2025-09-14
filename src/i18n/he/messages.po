@@ -71,7 +71,7 @@ msgid "Send a message to {user}"
 msgstr "שלח הודעה ל-{user}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:377
+#: src/components/space/Channel.tsx:377
 msgid "Send a message to #{channel_name}"
 msgstr "שלח הודעה ל-#{channel_name}"
 
@@ -121,7 +121,7 @@ msgstr "0 בתים"
 msgid "Account Address"
 msgstr "כתובת חשבון"
 
-#: src/components/channel/ChannelEditor.tsx:51
+#: src/components/space/ChannelEditor.tsx:51
 msgid "Add Channel"
 msgstr "הוסף ערוץ"
 
@@ -129,12 +129,12 @@ msgstr "הוסף ערוץ"
 msgid "Add friend"
 msgstr "הוסף חבר"
 
-#: src/components/channel/ChannelList.tsx:72
-#: src/components/channel/GroupEditor.tsx:44
+#: src/components/space/ChannelList.tsx:72
+#: src/components/space/GroupEditor.tsx:44
 msgid "Add Group"
 msgstr "הוסף קבוצה"
 
-#: src/components/channel/SpaceEditor.tsx:531
+#: src/components/space/SpaceEditor.tsx:531
 msgid "Add Role"
 msgstr "הוסף תפקיד"
 
@@ -142,7 +142,7 @@ msgstr "הוסף תפקיד"
 msgid "add sticker"
 msgstr "הוסף מדבקה"
 
-#: src/components/channel/SpaceEditor.tsx:665
+#: src/components/space/SpaceEditor.tsx:665
 msgid ""
 "Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
 "You can upload PNG, JPG or GIF, max 256kB."
@@ -150,7 +150,7 @@ msgstr ""
 "הוסף עד 50 אמוג'י מותאמים אישית. אמוג'ים מותאמים אישית יכולים לשמש רק בתוך "
 "Espacio. אתה יכול להעלות PNG, JPG או GIF, מקסימום 256kB."
 
-#: src/components/channel/SpaceEditor.tsx:751
+#: src/components/space/SpaceEditor.tsx:751
 msgid ""
 "Add up to 50 custom stickers. Custom stickers can only be used within a "
 "Space. You can upload PNG, JPG or GIF, max 256kB."
@@ -185,7 +185,7 @@ msgstr "הגדרות מתקדמות"
 msgid "All"
 msgstr "הכל"
 
-#: src/components/channel/SpaceEditor.tsx:173
+#: src/components/space/SpaceEditor.tsx:173
 msgid "All roles must have both a tag name and display name."
 msgstr "כל התפקידים חייבים לכלול גם שם תג וגם שם תצוגה."
 
@@ -230,13 +230,13 @@ msgstr ""
 "האם אתה בטוח שאתה רוצה לעזוב את ה- Space הזה? לא תוכל להצטרף מחדש אלא אם כן "
 "תוזמן מחדש."
 
-#: src/components/channel/ChannelEditor.tsx:88
+#: src/components/space/ChannelEditor.tsx:88
 msgid ""
 "Are you sure? This channel contains messages. Deleting it will cause all "
 "content to be lost forever!"
 msgstr "אתה בטוח? הערוץ הזה מכיל הודעות. מחיקתו תגרום לאובדן כל התוכן לנצח!"
 
-#: src/components/channel/GroupEditor.tsx:76
+#: src/components/space/GroupEditor.tsx:76
 msgid ""
 "Are you sure? This group contains channels with messages. Deleting it will "
 "cause all content to be lost forever!"
@@ -256,7 +256,7 @@ msgstr "רחוק"
 msgid "Backup Failed"
 msgstr "גיבוי נכשל"
 
-#: src/components/channel/SpaceEditor.tsx:941
+#: src/components/space/SpaceEditor.tsx:941
 msgid "Be patient, this can take a few seconds..."
 msgstr "היה סבלני, זה יכול לקחת כמה שניות..."
 
@@ -294,11 +294,11 @@ msgstr ""
 "שינויים מתבצעים אוטומטית, אך הדף הפעיל עשוי לא להתעדכן. רענן את הדף כדי "
 "להחיל את השפה החדשה."
 
-#: src/components/channel/ChannelEditor.tsx:59
+#: src/components/space/ChannelEditor.tsx:59
 msgid "Channel Name"
 msgstr "שם ערוץ"
 
-#: src/components/channel/ChannelEditor.tsx:65
+#: src/components/space/ChannelEditor.tsx:65
 msgid "Channel Topic"
 msgstr "נושא ערוץ"
 
@@ -331,16 +331,16 @@ msgstr "נקה חיפוש"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "ניקוי התראות עם תג: {tag}"
 
-#: src/components/channel/ChannelEditor.tsx:107
-#: src/components/channel/GroupEditor.tsx:95
-#: src/components/channel/SpaceEditor.tsx:1032
+#: src/components/space/ChannelEditor.tsx:107
+#: src/components/space/GroupEditor.tsx:95
+#: src/components/space/SpaceEditor.tsx:1032
 #: src/components/modals/ConversationSettingsModal.tsx:188
 #: src/components/modals/KickUserModal.tsx:47
 #: src/components/modals/LeaveSpaceModal.tsx:56
 msgid "Click again to confirm"
 msgstr "לחץ שוב כדי לאשר"
 
-#: src/components/channel/SpaceEditor.tsx:518
+#: src/components/space/SpaceEditor.tsx:518
 msgid "Click on the role name and tag to edit them."
 msgstr "לחץ על שם התפקיד והתג כדי לערוך אותם."
 
@@ -402,7 +402,7 @@ msgstr "העתק כתובת"
 msgid "Copy Failed"
 msgstr "העתקה נכשלה"
 
-#: src/components/channel/SpaceEditor.tsx:946
+#: src/components/space/SpaceEditor.tsx:946
 msgid "Copy invite link to clipboard"
 msgstr "להעתיק קישור הזמנה ללוח"
 
@@ -449,7 +449,7 @@ msgstr "צור Space"
 msgid "Creating Space..."
 msgstr "יוצר Space..."
 
-#: src/components/channel/SpaceEditor.tsx:921
+#: src/components/space/SpaceEditor.tsx:921
 msgid "Current Invite Link"
 msgstr "קישור ההזמנה הנוכחי"
 
@@ -465,7 +465,7 @@ msgstr "מרחב מפוענח ללא מפתח קונפיגורציה ידוע"
 msgid "Decrypted Space with no known hub key"
 msgstr "מרחב מפוענח ללא מפתח מרכז ידוע"
 
-#: src/components/channel/SpaceEditor.tsx:452
+#: src/components/space/SpaceEditor.tsx:452
 msgid "Default Channel"
 msgstr "ערוץ ברירת מחדל"
 
@@ -481,7 +481,7 @@ msgstr ""
 msgid "Delete"
 msgstr "מחק"
 
-#: src/components/channel/ChannelEditor.tsx:106
+#: src/components/space/ChannelEditor.tsx:106
 msgid "Delete Channel"
 msgstr "מחוק ערוץ"
 
@@ -489,7 +489,7 @@ msgstr "מחוק ערוץ"
 msgid "Delete Conversation"
 msgstr "מחק שיחה"
 
-#: src/components/channel/GroupEditor.tsx:94
+#: src/components/space/GroupEditor.tsx:94
 msgid "Delete Group"
 msgstr "מחוק קבוצה"
 
@@ -498,21 +498,21 @@ msgstr "מחוק קבוצה"
 msgid "Delete message"
 msgstr "מחוק הודעה"
 
-#: src/components/channel/SpaceEditor.tsx:600
+#: src/components/space/SpaceEditor.tsx:600
 msgid "Delete Messages"
 msgstr "מחק הודעות"
 
-#: src/components/channel/SpaceEditor.tsx:620
+#: src/components/space/SpaceEditor.tsx:620
 msgid "Delete Role"
 msgstr "מחק תפקיד"
 
-#: src/components/channel/SpaceEditor.tsx:285
-#: src/components/channel/SpaceEditor.tsx:337
-#: src/components/channel/SpaceEditor.tsx:1030
+#: src/components/space/SpaceEditor.tsx:285
+#: src/components/space/SpaceEditor.tsx:337
+#: src/components/space/SpaceEditor.tsx:1030
 msgid "Delete Space"
 msgstr "מחק Espacio"
 
-#: src/components/channel/SpaceEditor.tsx:1004
+#: src/components/space/SpaceEditor.tsx:1004
 msgid "Delete this space"
 msgstr "מחק את ה-Espacio הזה"
 
@@ -558,11 +558,11 @@ msgstr "מגירה"
 msgid "Drop your profile photo here"
 msgstr "גרור את תמונת הפרופיל שלך לכאן"
 
-#: src/components/channel/ChannelEditor.tsx:51
+#: src/components/space/ChannelEditor.tsx:51
 msgid "Edit Channel"
 msgstr "ערוך ערוץ"
 
-#: src/components/channel/GroupEditor.tsx:44
+#: src/components/space/GroupEditor.tsx:44
 msgid "Edit Group"
 msgstr "ערוך קבוצה"
 
@@ -570,9 +570,9 @@ msgstr "ערוך קבוצה"
 msgid "Emoji picker"
 msgstr "בוחר אמוג'י"
 
-#: src/components/channel/SpaceEditor.tsx:259
-#: src/components/channel/SpaceEditor.tsx:325
-#: src/components/channel/SpaceEditor.tsx:662
+#: src/components/space/SpaceEditor.tsx:259
+#: src/components/space/SpaceEditor.tsx:325
+#: src/components/space/SpaceEditor.tsx:662
 msgid "Emojis"
 msgstr "Emojis"
 
@@ -588,7 +588,7 @@ msgstr "הזן שם עבור ה-Space החדש שלך"
 msgid "Enter a user's address to start messaging them."
 msgstr "הזן את כתובת המשתמש כדי להתחיל לשלוח לו הודעות."
 
-#: src/components/channel/SpaceEditor.tsx:876
+#: src/components/space/SpaceEditor.tsx:876
 msgid "Enter Address Manually"
 msgstr "הזן כתובת ידנית"
 
@@ -621,7 +621,7 @@ msgstr "שגיאה בבקשת הרשאת התראה:"
 msgid "Error showing notification:"
 msgstr "שגיאה בהצגת התראה:"
 
-#: src/components/channel/SpaceEditor.tsx:852
+#: src/components/space/SpaceEditor.tsx:852
 msgid "Existing Conversations"
 msgstr "שיחות קיימות"
 
@@ -710,8 +710,8 @@ msgstr "אימות הקובץ נכשל. אנא נסה שוב."
 msgid "general"
 msgstr "כללי"
 
-#: src/components/channel/SpaceEditor.tsx:245
-#: src/components/channel/SpaceEditor.tsx:297
+#: src/components/space/SpaceEditor.tsx:245
+#: src/components/space/SpaceEditor.tsx:297
 #: src/components/modals/UserSettingsModal.tsx:174
 #: src/components/modals/UserSettingsModal.tsx:206
 msgid "General"
@@ -721,11 +721,11 @@ msgstr "כללי"
 msgid "General Chat"
 msgstr "שיחת צ'אט כללית"
 
-#: src/components/channel/SpaceEditor.tsx:970
+#: src/components/space/SpaceEditor.tsx:970
 msgid "Generate New Invite Link"
 msgstr "צור קישור הזמנה חדש"
 
-#: src/components/channel/SpaceEditor.tsx:968
+#: src/components/space/SpaceEditor.tsx:968
 msgid "Generating link..."
 msgstr "מייצר קישור..."
 
@@ -733,7 +733,7 @@ msgstr "מייצר קישור..."
 msgid "Go to conversation"
 msgstr "לך לשיחה"
 
-#: src/components/channel/GroupEditor.tsx:52
+#: src/components/space/GroupEditor.tsx:52
 msgid "Group Name"
 msgstr "שם הקבוצה"
 
@@ -822,9 +822,9 @@ msgstr "סוג הודעה לא חוקי"
 msgid "invalid response"
 msgstr "תשובה לא חוקית"
 
-#: src/components/channel/SpaceEditor.tsx:273
-#: src/components/channel/SpaceEditor.tsx:318
-#: src/components/channel/SpaceEditor.tsx:836
+#: src/components/space/SpaceEditor.tsx:273
+#: src/components/space/SpaceEditor.tsx:318
+#: src/components/space/SpaceEditor.tsx:836
 msgid "Invites"
 msgstr "הזמנות"
 
@@ -871,7 +871,7 @@ msgstr "המפתח נשמר"
 msgid "Kick User"
 msgstr "הסר משתמש"
 
-#: src/components/channel/SpaceEditor.tsx:608
+#: src/components/space/SpaceEditor.tsx:608
 msgid "Kick Users"
 msgstr "הדחף משתמשים"
 
@@ -944,7 +944,7 @@ msgstr "נהל מכשירים, ותנאי פרטיות להודעות ולסנכ
 msgid "Manual Backup Required"
 msgstr "גיבוי ידני נדרש"
 
-#: src/components/channel/Channel.tsx:310
+#: src/components/space/Channel.tsx:310
 #: src/components/direct/DirectMessage.tsx:369
 msgid "Members List"
 msgstr "רשימת חברים"
@@ -1023,7 +1023,7 @@ msgstr "אחד מאיתנו, אחד מאיתנו!"
 msgid "Online"
 msgstr "באינטרנט"
 
-#: src/components/channel/SpaceEditor.tsx:586
+#: src/components/space/SpaceEditor.tsx:586
 msgid "Permissions:"
 msgstr "הרשאות:"
 
@@ -1054,7 +1054,7 @@ msgstr "הגעת למגבלת ההצמדה ({0})"
 msgid "Pin message"
 msgstr "הצמד הודעה"
 
-#: src/components/channel/SpaceEditor.tsx:604
+#: src/components/space/SpaceEditor.tsx:604
 msgid "Pin Messages"
 msgstr "הצמד הודעות"
 
@@ -1068,7 +1068,7 @@ msgstr "מוצמד"
 msgid "Pinned by {0}"
 msgstr "מוצמד על ידי {0}"
 
-#: src/components/channel/Channel.tsx:278
+#: src/components/space/Channel.tsx:278
 msgid "Pinned Messages"
 msgstr "הודעות מוצמדות"
 
@@ -1081,7 +1081,7 @@ msgstr "מוצמד!"
 msgid "PNG, JPG or JPEG • Max 2MB"
 msgstr "PNG, JPG או JPEG • מקסימום 2MB"
 
-#: src/components/channel/SpaceEditor.tsx:472
+#: src/components/space/SpaceEditor.tsx:472
 msgid "Privacy Settings"
 msgstr "הגדרות פרטיות"
 
@@ -1095,11 +1095,11 @@ msgstr "פרטיות/אבטחה"
 msgid "Private key saved to selected folder"
 msgstr "המפתח הפרטי נשמר בתיקייה שנבחרה"
 
-#: src/components/channel/SpaceEditor.tsx:896
+#: src/components/space/SpaceEditor.tsx:896
 msgid "Public Invite Link"
 msgstr "קישור הזמנה ציבורי"
 
-#: src/components/channel/SpaceEditor.tsx:898
+#: src/components/space/SpaceEditor.tsx:898
 msgid ""
 "Public invite links allow anyone with access to the link join your Space. "
 "Understand the risks of enabling this, and to whom and where you share the "
@@ -1165,12 +1165,12 @@ msgstr "הסר"
 msgid "Reply"
 msgstr "ענה"
 
-#: src/components/channel/SpaceEditor.tsx:478
+#: src/components/space/SpaceEditor.tsx:478
 #: src/components/modals/CreateSpaceModal.tsx:107
 msgid "Require Message Signing"
 msgstr "דרוש חתימת הודעות"
 
-#: src/components/channel/SpaceEditor.tsx:483
+#: src/components/space/SpaceEditor.tsx:483
 #: src/components/modals/CreateSpaceModal.tsx:112
 msgid ""
 "Require messages sent in this Space to be signed by the sender. Technically "
@@ -1179,9 +1179,9 @@ msgstr ""
 "דרוש שההודעות שנשלחות ב- Space זה יהיו חתומות על ידי השולח. מבחינה טכנית, זה"
 " עושה את ההודעות ב- Space זה בלתי ניתנות להכחשה."
 
-#: src/components/channel/SpaceEditor.tsx:252
-#: src/components/channel/SpaceEditor.tsx:311
-#: src/components/channel/SpaceEditor.tsx:515
+#: src/components/space/SpaceEditor.tsx:252
+#: src/components/space/SpaceEditor.tsx:311
+#: src/components/space/SpaceEditor.tsx:515
 msgid "Roles"
 msgstr "תפקידים"
 
@@ -1189,12 +1189,12 @@ msgstr "תפקידים"
 msgid "Save"
 msgstr "שמור"
 
-#: src/components/channel/ChannelEditor.tsx:75
-#: src/components/channel/GroupEditor.tsx:63
-#: src/components/channel/SpaceEditor.tsx:503
-#: src/components/channel/SpaceEditor.tsx:650
-#: src/components/channel/SpaceEditor.tsx:736
-#: src/components/channel/SpaceEditor.tsx:824
+#: src/components/space/ChannelEditor.tsx:75
+#: src/components/space/GroupEditor.tsx:63
+#: src/components/space/SpaceEditor.tsx:503
+#: src/components/space/SpaceEditor.tsx:650
+#: src/components/space/SpaceEditor.tsx:736
+#: src/components/space/SpaceEditor.tsx:824
 #: src/components/modals/UserSettingsModal.tsx:328
 #: src/components/modals/UserSettingsModal.tsx:469
 #: src/components/user/UserProfileEdit.tsx:158
@@ -1257,11 +1257,11 @@ msgstr "אבטחה"
 msgid "Select an option"
 msgstr "בחר אפשרות"
 
-#: src/components/channel/SpaceEditor.tsx:873
+#: src/components/space/SpaceEditor.tsx:873
 msgid "Select conversation"
 msgstr "בחר שיחה"
 
-#: src/components/channel/SpaceEditor.tsx:467
+#: src/components/space/SpaceEditor.tsx:467
 msgid "Select default channel"
 msgstr "בחר ערוץ ברירת מחדל"
 
@@ -1269,7 +1269,7 @@ msgstr "בחר ערוץ ברירת מחדל"
 msgid "Select Image"
 msgstr "בחר תמונה"
 
-#: src/components/channel/SpaceEditor.tsx:595
+#: src/components/space/SpaceEditor.tsx:595
 msgid "Select permissions"
 msgstr "בחר הרשאות"
 
@@ -1281,11 +1281,11 @@ msgstr "בחר תמונת פרופיל"
 msgid "Send"
 msgstr "שלח"
 
-#: src/components/channel/SpaceEditor.tsx:992
+#: src/components/space/SpaceEditor.tsx:992
 msgid "Send Invite"
 msgstr "שלח הזמנה"
 
-#: src/components/channel/SpaceEditor.tsx:839
+#: src/components/space/SpaceEditor.tsx:839
 msgid ""
 "Send invites to people you've previously had conversations with. An invite "
 "button will appear in their inbox."
@@ -1327,7 +1327,7 @@ msgstr "הצג מסך בית"
 msgid "Skip Adding Photo"
 msgstr "דלג על הוספת תמונה"
 
-#: src/components/channel/SpaceEditor.tsx:391
+#: src/components/space/SpaceEditor.tsx:391
 msgid "Space Banner"
 msgstr "באנר חלל"
 
@@ -1335,7 +1335,7 @@ msgstr "באנר חלל"
 msgid "Space Icon Attachment"
 msgstr "סמל חלל מצורף"
 
-#: src/components/channel/SpaceEditor.tsx:380
+#: src/components/space/SpaceEditor.tsx:380
 msgid "Space Name"
 msgstr "שם חלל"
 
@@ -1351,14 +1351,14 @@ msgstr "סטטוס הולך כאן"
 msgid "Stay Connected, Stay Invisible"
 msgstr "שמור מחובר, שמור בלתי נראה"
 
-#: src/components/channel/SpaceEditor.tsx:266
-#: src/components/channel/SpaceEditor.tsx:304
-#: src/components/channel/SpaceEditor.tsx:748
+#: src/components/space/SpaceEditor.tsx:266
+#: src/components/space/SpaceEditor.tsx:304
+#: src/components/space/SpaceEditor.tsx:748
 msgid "Stickers"
 msgstr "מדבקות"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:886
+#: src/components/space/SpaceEditor.tsx:886
 msgid "Successfully sent invite to {0}"
 msgstr "הזמנה נשלחה בהצלחה ל-{0}"
 
@@ -1394,7 +1394,7 @@ msgid ""
 msgstr ""
 "זו הכתובת הציבורית שלך והיא בטוחה לשיתוף עם כל מי שאתה רוצה לתקשר איתו."
 
-#: src/components/channel/SpaceEditor.tsx:926
+#: src/components/space/SpaceEditor.tsx:926
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link. Current Space members will not be removed "
@@ -1484,11 +1484,11 @@ msgid ""
 "picture"
 msgstr "עד שתשיב, השולח הזה לא יראה את שם התצוגה או את תמונת הפרופיל שלך"
 
-#: src/components/channel/SpaceEditor.tsx:680
+#: src/components/space/SpaceEditor.tsx:680
 msgid "Upload Emoji"
 msgstr "להעלות אמוג'י"
 
-#: src/components/channel/SpaceEditor.tsx:766
+#: src/components/space/SpaceEditor.tsx:766
 msgid "Upload Sticker"
 msgstr "להעלות מדבקה"
 

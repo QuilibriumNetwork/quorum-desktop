@@ -106,7 +106,7 @@ queryClient.invalidateQueries({ queryKey: ['Messages', spaceId, channelId] }); /
 
 #### Channel Header
 
-**File: `src/components/channel/Channel.tsx`**
+**File: `src/components/space/Channel.tsx`**
 
 - Thumbtack button in header shows pin count badge
 - Opens PinnedMessagesPanel when clicked

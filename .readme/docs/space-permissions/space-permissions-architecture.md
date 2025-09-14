@@ -117,13 +117,13 @@ graph TD
 
 - `src/hooks/business/spaces/useRoleManagement.ts` - Role CRUD operations
 - `src/hooks/business/user/useUserRoleManagement.ts` - User-role assignments
-- `src/components/channel/SpaceEditor.tsx` - Role management UI
+- `src/components/space/SpaceEditor.tsx` - Role management UI
 
 #### **Read-Only Channel System**
 
 - `src/hooks/business/channels/useChannelManagement.ts` - Channel configuration
-- `src/components/channel/ChannelEditor.tsx` - Read-only channel settings
-- `src/components/channel/Channel.tsx` - Permission integration
+- `src/components/space/ChannelEditor.tsx` - Read-only channel settings
+- `src/components/space/Channel.tsx` - Permission integration
 
 ### Data Models
 

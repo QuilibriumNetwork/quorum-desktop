@@ -40,7 +40,7 @@ Initial analysis suggests that NewDirectMessageModal and KickUserModal don't nee
 
 - `src/components/Layout.tsx` (lines 23-44)
 - `src/components/direct/DirectMessageContactsList.tsx`
-- `src/components/channel/Channel.tsx`
+- `src/components/space/Channel.tsx`
 - `src/App.tsx` (kickUserAddress state management)
 - `src/components/context/ModalProvider.tsx`
 

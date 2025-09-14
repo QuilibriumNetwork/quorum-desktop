@@ -71,7 +71,7 @@ msgid "Send a message to {user}"
 msgstr "Pošaljite poruku {user}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:377
+#: src/components/space/Channel.tsx:377
 msgid "Send a message to #{channel_name}"
 msgstr "Pošaljite poruku #{channel_name}"
 
@@ -121,7 +121,7 @@ msgstr "0 B"
 msgid "Account Address"
 msgstr "Adresa naloga"
 
-#: src/components/channel/ChannelEditor.tsx:51
+#: src/components/space/ChannelEditor.tsx:51
 msgid "Add Channel"
 msgstr "Dodaj kanal"
 
@@ -129,12 +129,12 @@ msgstr "Dodaj kanal"
 msgid "Add friend"
 msgstr "Dodaj prijatelja"
 
-#: src/components/channel/ChannelList.tsx:72
-#: src/components/channel/GroupEditor.tsx:44
+#: src/components/space/ChannelList.tsx:72
+#: src/components/space/GroupEditor.tsx:44
 msgid "Add Group"
 msgstr "Dodaj grupu"
 
-#: src/components/channel/SpaceEditor.tsx:531
+#: src/components/space/SpaceEditor.tsx:531
 msgid "Add Role"
 msgstr "Dodaj ulogu"
 
@@ -142,7 +142,7 @@ msgstr "Dodaj ulogu"
 msgid "add sticker"
 msgstr "dodaj nalepnicu"
 
-#: src/components/channel/SpaceEditor.tsx:665
+#: src/components/space/SpaceEditor.tsx:665
 msgid ""
 "Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
 "You can upload PNG, JPG or GIF, max 256kB."
@@ -150,7 +150,7 @@ msgstr ""
 "Dodajte do 50 prilagođenih emoji. Prilagođeni emoji se mogu koristiti samo "
 "unutar Espacio. Možete otpremiti PNG, JPG ili GIF, maksimalno 256kB."
 
-#: src/components/channel/SpaceEditor.tsx:751
+#: src/components/space/SpaceEditor.tsx:751
 msgid ""
 "Add up to 50 custom stickers. Custom stickers can only be used within a "
 "Space. You can upload PNG, JPG or GIF, max 256kB."
@@ -186,7 +186,7 @@ msgstr "Napredne postavke"
 msgid "All"
 msgstr "Sve"
 
-#: src/components/channel/SpaceEditor.tsx:173
+#: src/components/space/SpaceEditor.tsx:173
 msgid "All roles must have both a tag name and display name."
 msgstr "Sve uloge moraju imati i oznaku i prikazno ime."
 
@@ -233,7 +233,7 @@ msgstr ""
 "Da li ste sigurni da želite da napustite ovaj Espacio? Nećete moći ponovo da"
 " se pridružite osim ako vas ponovo ne pozovu."
 
-#: src/components/channel/ChannelEditor.tsx:88
+#: src/components/space/ChannelEditor.tsx:88
 msgid ""
 "Are you sure? This channel contains messages. Deleting it will cause all "
 "content to be lost forever!"
@@ -241,7 +241,7 @@ msgstr ""
 "Da li si siguran? Ovaj kanal sadrži poruke. Brisanjem će se sav sadržaj "
 "zauvek izgubiti!"
 
-#: src/components/channel/GroupEditor.tsx:76
+#: src/components/space/GroupEditor.tsx:76
 msgid ""
 "Are you sure? This group contains channels with messages. Deleting it will "
 "cause all content to be lost forever!"
@@ -261,7 +261,7 @@ msgstr "Daleko"
 msgid "Backup Failed"
 msgstr "Backup nije uspeo"
 
-#: src/components/channel/SpaceEditor.tsx:941
+#: src/components/space/SpaceEditor.tsx:941
 msgid "Be patient, this can take a few seconds..."
 msgstr "Budite strpljivi, ovo može potrajati nekoliko sekundi..."
 
@@ -301,11 +301,11 @@ msgstr ""
 "Promene se automatski primenjuju, ali aktivna stranica možda nije ažurirana."
 " Osveži stranicu da bi primenio novi jezik."
 
-#: src/components/channel/ChannelEditor.tsx:59
+#: src/components/space/ChannelEditor.tsx:59
 msgid "Channel Name"
 msgstr "Naziv kanala"
 
-#: src/components/channel/ChannelEditor.tsx:65
+#: src/components/space/ChannelEditor.tsx:65
 msgid "Channel Topic"
 msgstr "Tema kanala"
 
@@ -338,16 +338,16 @@ msgstr "Obriši pretragu"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "Čišćenje obaveštenja sa oznakom: {tag}"
 
-#: src/components/channel/ChannelEditor.tsx:107
-#: src/components/channel/GroupEditor.tsx:95
-#: src/components/channel/SpaceEditor.tsx:1032
+#: src/components/space/ChannelEditor.tsx:107
+#: src/components/space/GroupEditor.tsx:95
+#: src/components/space/SpaceEditor.tsx:1032
 #: src/components/modals/ConversationSettingsModal.tsx:188
 #: src/components/modals/KickUserModal.tsx:47
 #: src/components/modals/LeaveSpaceModal.tsx:56
 msgid "Click again to confirm"
 msgstr "Kliknite ponovo da potvrdite"
 
-#: src/components/channel/SpaceEditor.tsx:518
+#: src/components/space/SpaceEditor.tsx:518
 msgid "Click on the role name and tag to edit them."
 msgstr "Kliknite na naziv uloge i oznaku da ih izmenite."
 
@@ -411,7 +411,7 @@ msgstr "Kopiraj adresu"
 msgid "Copy Failed"
 msgstr "Kopiranje nije uspelo"
 
-#: src/components/channel/SpaceEditor.tsx:946
+#: src/components/space/SpaceEditor.tsx:946
 msgid "Copy invite link to clipboard"
 msgstr "Kopiraj link za poziv u međuspremnik"
 
@@ -458,7 +458,7 @@ msgstr "Kreiraj Space"
 msgid "Creating Space..."
 msgstr "Kreiram Space..."
 
-#: src/components/channel/SpaceEditor.tsx:921
+#: src/components/space/SpaceEditor.tsx:921
 msgid "Current Invite Link"
 msgstr "Trenutni link za poziv"
 
@@ -474,7 +474,7 @@ msgstr "dekriptovani space bez poznatog konfiguracionog ključa"
 msgid "Decrypted Space with no known hub key"
 msgstr "Dekriptovani Space bez poznatog hub ključa"
 
-#: src/components/channel/SpaceEditor.tsx:452
+#: src/components/space/SpaceEditor.tsx:452
 msgid "Default Channel"
 msgstr "Podrazumevani kanal"
 
@@ -490,7 +490,7 @@ msgstr ""
 msgid "Delete"
 msgstr "Obriši"
 
-#: src/components/channel/ChannelEditor.tsx:106
+#: src/components/space/ChannelEditor.tsx:106
 msgid "Delete Channel"
 msgstr "Obriši kanal"
 
@@ -498,7 +498,7 @@ msgstr "Obriši kanal"
 msgid "Delete Conversation"
 msgstr "Obriši razgovor"
 
-#: src/components/channel/GroupEditor.tsx:94
+#: src/components/space/GroupEditor.tsx:94
 msgid "Delete Group"
 msgstr "Obriši grupu"
 
@@ -507,21 +507,21 @@ msgstr "Obriši grupu"
 msgid "Delete message"
 msgstr "Obriši poruku"
 
-#: src/components/channel/SpaceEditor.tsx:600
+#: src/components/space/SpaceEditor.tsx:600
 msgid "Delete Messages"
 msgstr "Obriši poruke"
 
-#: src/components/channel/SpaceEditor.tsx:620
+#: src/components/space/SpaceEditor.tsx:620
 msgid "Delete Role"
 msgstr "Obriši ulogu"
 
-#: src/components/channel/SpaceEditor.tsx:285
-#: src/components/channel/SpaceEditor.tsx:337
-#: src/components/channel/SpaceEditor.tsx:1030
+#: src/components/space/SpaceEditor.tsx:285
+#: src/components/space/SpaceEditor.tsx:337
+#: src/components/space/SpaceEditor.tsx:1030
 msgid "Delete Space"
 msgstr "Obriši Espacio"
 
-#: src/components/channel/SpaceEditor.tsx:1004
+#: src/components/space/SpaceEditor.tsx:1004
 msgid "Delete this space"
 msgstr "Obriši ovaj Espacio"
 
@@ -568,11 +568,11 @@ msgstr "Fioka"
 msgid "Drop your profile photo here"
 msgstr "Prevuci svoju profilnu sliku ovde"
 
-#: src/components/channel/ChannelEditor.tsx:51
+#: src/components/space/ChannelEditor.tsx:51
 msgid "Edit Channel"
 msgstr "Uredi kanal"
 
-#: src/components/channel/GroupEditor.tsx:44
+#: src/components/space/GroupEditor.tsx:44
 msgid "Edit Group"
 msgstr "Uredi grupu"
 
@@ -580,9 +580,9 @@ msgstr "Uredi grupu"
 msgid "Emoji picker"
 msgstr "Birac emoji"
 
-#: src/components/channel/SpaceEditor.tsx:259
-#: src/components/channel/SpaceEditor.tsx:325
-#: src/components/channel/SpaceEditor.tsx:662
+#: src/components/space/SpaceEditor.tsx:259
+#: src/components/space/SpaceEditor.tsx:325
+#: src/components/space/SpaceEditor.tsx:662
 msgid "Emojis"
 msgstr "Emojis"
 
@@ -598,7 +598,7 @@ msgstr "Unesite ime za vaš novi Space"
 msgid "Enter a user's address to start messaging them."
 msgstr "Unesite adresu korisnika da biste započeli razgovor s njim."
 
-#: src/components/channel/SpaceEditor.tsx:876
+#: src/components/space/SpaceEditor.tsx:876
 msgid "Enter Address Manually"
 msgstr "Unesite adresu ručno"
 
@@ -631,7 +631,7 @@ msgstr "Greška prilikom traženja dozvole za obaveštenja:"
 msgid "Error showing notification:"
 msgstr "Greška prilikom prikazivanja obaveštenja:"
 
-#: src/components/channel/SpaceEditor.tsx:852
+#: src/components/space/SpaceEditor.tsx:852
 msgid "Existing Conversations"
 msgstr "Postojeći razgovori"
 
@@ -720,8 +720,8 @@ msgstr "Validacija fajla nije uspela. Pokušajte ponovo."
 msgid "general"
 msgstr "opšte"
 
-#: src/components/channel/SpaceEditor.tsx:245
-#: src/components/channel/SpaceEditor.tsx:297
+#: src/components/space/SpaceEditor.tsx:245
+#: src/components/space/SpaceEditor.tsx:297
 #: src/components/modals/UserSettingsModal.tsx:174
 #: src/components/modals/UserSettingsModal.tsx:206
 msgid "General"
@@ -731,11 +731,11 @@ msgstr "Opšte"
 msgid "General Chat"
 msgstr "Opšti Čat"
 
-#: src/components/channel/SpaceEditor.tsx:970
+#: src/components/space/SpaceEditor.tsx:970
 msgid "Generate New Invite Link"
 msgstr "Generiši novu pozivnicu"
 
-#: src/components/channel/SpaceEditor.tsx:968
+#: src/components/space/SpaceEditor.tsx:968
 msgid "Generating link..."
 msgstr "Generišem link..."
 
@@ -743,7 +743,7 @@ msgstr "Generišem link..."
 msgid "Go to conversation"
 msgstr "Idite na razgovor"
 
-#: src/components/channel/GroupEditor.tsx:52
+#: src/components/space/GroupEditor.tsx:52
 msgid "Group Name"
 msgstr "Ime grupe"
 
@@ -836,9 +836,9 @@ msgstr "nevažeća vrsta poruke"
 msgid "invalid response"
 msgstr "nevažeći odgovor"
 
-#: src/components/channel/SpaceEditor.tsx:273
-#: src/components/channel/SpaceEditor.tsx:318
-#: src/components/channel/SpaceEditor.tsx:836
+#: src/components/space/SpaceEditor.tsx:273
+#: src/components/space/SpaceEditor.tsx:318
+#: src/components/space/SpaceEditor.tsx:836
 msgid "Invites"
 msgstr "Pozivnice"
 
@@ -885,7 +885,7 @@ msgstr "Ključ je sačuvan"
 msgid "Kick User"
 msgstr "Isključi korisnika"
 
-#: src/components/channel/SpaceEditor.tsx:608
+#: src/components/space/SpaceEditor.tsx:608
 msgid "Kick Users"
 msgstr "Izbaci korisnike"
 
@@ -959,7 +959,7 @@ msgstr ""
 msgid "Manual Backup Required"
 msgstr "Ručno pravljenje rezervne kopije je potrebno"
 
-#: src/components/channel/Channel.tsx:310
+#: src/components/space/Channel.tsx:310
 #: src/components/direct/DirectMessage.tsx:369
 msgid "Members List"
 msgstr "Lista članova"
@@ -1040,7 +1040,7 @@ msgstr "Jedan od nas, jedan od nas!"
 msgid "Online"
 msgstr "Na mreži"
 
-#: src/components/channel/SpaceEditor.tsx:586
+#: src/components/space/SpaceEditor.tsx:586
 msgid "Permissions:"
 msgstr "Dozvole:"
 
@@ -1071,7 +1071,7 @@ msgstr "Dostignut limit za zakačene poruke ({0})"
 msgid "Pin message"
 msgstr "Zakači poruku"
 
-#: src/components/channel/SpaceEditor.tsx:604
+#: src/components/space/SpaceEditor.tsx:604
 msgid "Pin Messages"
 msgstr "Zakači poruke"
 
@@ -1085,7 +1085,7 @@ msgstr "Zakačeno"
 msgid "Pinned by {0}"
 msgstr "Zakačeno od {0}"
 
-#: src/components/channel/Channel.tsx:278
+#: src/components/space/Channel.tsx:278
 msgid "Pinned Messages"
 msgstr "Zakačene poruke"
 
@@ -1098,7 +1098,7 @@ msgstr "Zakačeno!"
 msgid "PNG, JPG or JPEG • Max 2MB"
 msgstr "PNG, JPG ili JPEG • Maks 2MB"
 
-#: src/components/channel/SpaceEditor.tsx:472
+#: src/components/space/SpaceEditor.tsx:472
 msgid "Privacy Settings"
 msgstr "Podešavanja privatnosti"
 
@@ -1112,11 +1112,11 @@ msgstr "Privatnost/Bezbednost"
 msgid "Private key saved to selected folder"
 msgstr "Privatni ključ je sačuvan u izabranom folderu"
 
-#: src/components/channel/SpaceEditor.tsx:896
+#: src/components/space/SpaceEditor.tsx:896
 msgid "Public Invite Link"
 msgstr "Javni pozivni link"
 
-#: src/components/channel/SpaceEditor.tsx:898
+#: src/components/space/SpaceEditor.tsx:898
 msgid ""
 "Public invite links allow anyone with access to the link join your Space. "
 "Understand the risks of enabling this, and to whom and where you share the "
@@ -1184,12 +1184,12 @@ msgstr "Ukloni"
 msgid "Reply"
 msgstr "Odgovori"
 
-#: src/components/channel/SpaceEditor.tsx:478
+#: src/components/space/SpaceEditor.tsx:478
 #: src/components/modals/CreateSpaceModal.tsx:107
 msgid "Require Message Signing"
 msgstr "Zahtevaj potpisivanje poruka"
 
-#: src/components/channel/SpaceEditor.tsx:483
+#: src/components/space/SpaceEditor.tsx:483
 #: src/components/modals/CreateSpaceModal.tsx:112
 msgid ""
 "Require messages sent in this Space to be signed by the sender. Technically "
@@ -1198,9 +1198,9 @@ msgstr ""
 "Zahtevaj da poruke poslate u ovom Espacio budu potpisane od strane "
 "pošiljaoca. Tehnički govoreći, ovo čini poruke u ovom Espacio neodbojivim."
 
-#: src/components/channel/SpaceEditor.tsx:252
-#: src/components/channel/SpaceEditor.tsx:311
-#: src/components/channel/SpaceEditor.tsx:515
+#: src/components/space/SpaceEditor.tsx:252
+#: src/components/space/SpaceEditor.tsx:311
+#: src/components/space/SpaceEditor.tsx:515
 msgid "Roles"
 msgstr "Uloge"
 
@@ -1208,12 +1208,12 @@ msgstr "Uloge"
 msgid "Save"
 msgstr "Sačuvaj"
 
-#: src/components/channel/ChannelEditor.tsx:75
-#: src/components/channel/GroupEditor.tsx:63
-#: src/components/channel/SpaceEditor.tsx:503
-#: src/components/channel/SpaceEditor.tsx:650
-#: src/components/channel/SpaceEditor.tsx:736
-#: src/components/channel/SpaceEditor.tsx:824
+#: src/components/space/ChannelEditor.tsx:75
+#: src/components/space/GroupEditor.tsx:63
+#: src/components/space/SpaceEditor.tsx:503
+#: src/components/space/SpaceEditor.tsx:650
+#: src/components/space/SpaceEditor.tsx:736
+#: src/components/space/SpaceEditor.tsx:824
 #: src/components/modals/UserSettingsModal.tsx:328
 #: src/components/modals/UserSettingsModal.tsx:469
 #: src/components/user/UserProfileEdit.tsx:158
@@ -1276,11 +1276,11 @@ msgstr "Bezbednost"
 msgid "Select an option"
 msgstr "Izaberi opciju"
 
-#: src/components/channel/SpaceEditor.tsx:873
+#: src/components/space/SpaceEditor.tsx:873
 msgid "Select conversation"
 msgstr "Izaberi razgovor"
 
-#: src/components/channel/SpaceEditor.tsx:467
+#: src/components/space/SpaceEditor.tsx:467
 msgid "Select default channel"
 msgstr "Izaberi podrazumevani kanal"
 
@@ -1288,7 +1288,7 @@ msgstr "Izaberi podrazumevani kanal"
 msgid "Select Image"
 msgstr "Izaberi sliku"
 
-#: src/components/channel/SpaceEditor.tsx:595
+#: src/components/space/SpaceEditor.tsx:595
 msgid "Select permissions"
 msgstr "Izaberite dozvole"
 
@@ -1300,11 +1300,11 @@ msgstr "Izaberi profilnu sliku"
 msgid "Send"
 msgstr "Pošalji"
 
-#: src/components/channel/SpaceEditor.tsx:992
+#: src/components/space/SpaceEditor.tsx:992
 msgid "Send Invite"
 msgstr "Pošalji pozivnicu"
 
-#: src/components/channel/SpaceEditor.tsx:839
+#: src/components/space/SpaceEditor.tsx:839
 msgid ""
 "Send invites to people you've previously had conversations with. An invite "
 "button will appear in their inbox."
@@ -1348,7 +1348,7 @@ msgstr "prikaži početni ekran"
 msgid "Skip Adding Photo"
 msgstr "Preskoči dodavanje fotografije"
 
-#: src/components/channel/SpaceEditor.tsx:391
+#: src/components/space/SpaceEditor.tsx:391
 msgid "Space Banner"
 msgstr "Baner Space-a"
 
@@ -1356,7 +1356,7 @@ msgstr "Baner Space-a"
 msgid "Space Icon Attachment"
 msgstr "Priključak ikone Space-a"
 
-#: src/components/channel/SpaceEditor.tsx:380
+#: src/components/space/SpaceEditor.tsx:380
 msgid "Space Name"
 msgstr "Ime Space-a"
 
@@ -1372,14 +1372,14 @@ msgstr "Status ide ovde"
 msgid "Stay Connected, Stay Invisible"
 msgstr "Ostanite povezani, ostanite nevidljivi"
 
-#: src/components/channel/SpaceEditor.tsx:266
-#: src/components/channel/SpaceEditor.tsx:304
-#: src/components/channel/SpaceEditor.tsx:748
+#: src/components/space/SpaceEditor.tsx:266
+#: src/components/space/SpaceEditor.tsx:304
+#: src/components/space/SpaceEditor.tsx:748
 msgid "Stickers"
 msgstr "Stiker"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:886
+#: src/components/space/SpaceEditor.tsx:886
 msgid "Successfully sent invite to {0}"
 msgstr "Uspešno poslata pozivnica {0}"
 
@@ -1416,7 +1416,7 @@ msgstr ""
 "Ovo je vaša javna adresa i sigurno je deliti je sa bilo kim s kim želite da "
 "komunicirate."
 
-#: src/components/channel/SpaceEditor.tsx:926
+#: src/components/space/SpaceEditor.tsx:926
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link. Current Space members will not be removed "
@@ -1508,11 +1508,11 @@ msgid ""
 msgstr ""
 "Dok ne odgovorite, ovaj pošiljalac neće videti vaše ime ili profilnu sliku"
 
-#: src/components/channel/SpaceEditor.tsx:680
+#: src/components/space/SpaceEditor.tsx:680
 msgid "Upload Emoji"
 msgstr "Otpremi Emoji"
 
-#: src/components/channel/SpaceEditor.tsx:766
+#: src/components/space/SpaceEditor.tsx:766
 msgid "Upload Sticker"
 msgstr "Otpremi nalepnicu"
 

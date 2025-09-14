@@ -5,7 +5,7 @@ import { Channel } from '../../../api/quorumApi';
 import { useSpace } from '../../queries';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useConfirmation } from '../../ui/useConfirmation';
-import ChannelPreview from '../../../components/channel/ChannelPreview';
+import ChannelPreview from '../../../components/space/ChannelPreview';
 import { t } from '@lingui/core/macro';
 
 export interface ChannelData {

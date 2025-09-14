@@ -71,7 +71,7 @@ msgid "Send a message to {user}"
 msgstr "Надіслати повідомлення {user}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:377
+#: src/components/space/Channel.tsx:377
 msgid "Send a message to #{channel_name}"
 msgstr "Надіслати повідомлення #{channel_name}"
 
@@ -121,7 +121,7 @@ msgstr "0 байт"
 msgid "Account Address"
 msgstr "Адреса облікового запису"
 
-#: src/components/channel/ChannelEditor.tsx:51
+#: src/components/space/ChannelEditor.tsx:51
 msgid "Add Channel"
 msgstr "Додати канал"
 
@@ -129,12 +129,12 @@ msgstr "Додати канал"
 msgid "Add friend"
 msgstr "Додати друга"
 
-#: src/components/channel/ChannelList.tsx:72
-#: src/components/channel/GroupEditor.tsx:44
+#: src/components/space/ChannelList.tsx:72
+#: src/components/space/GroupEditor.tsx:44
 msgid "Add Group"
 msgstr "Додати групу"
 
-#: src/components/channel/SpaceEditor.tsx:531
+#: src/components/space/SpaceEditor.tsx:531
 msgid "Add Role"
 msgstr "Додати роль"
 
@@ -142,7 +142,7 @@ msgstr "Додати роль"
 msgid "add sticker"
 msgstr "додати наліпку"
 
-#: src/components/channel/SpaceEditor.tsx:665
+#: src/components/space/SpaceEditor.tsx:665
 msgid ""
 "Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
 "You can upload PNG, JPG or GIF, max 256kB."
@@ -151,7 +151,7 @@ msgstr ""
 "використовувати лише в межах Простору. Ви можете завантажити PNG, JPG або "
 "GIF, макс 256кБ."
 
-#: src/components/channel/SpaceEditor.tsx:751
+#: src/components/space/SpaceEditor.tsx:751
 msgid ""
 "Add up to 50 custom stickers. Custom stickers can only be used within a "
 "Space. You can upload PNG, JPG or GIF, max 256kB."
@@ -187,7 +187,7 @@ msgstr "Розширені налаштування"
 msgid "All"
 msgstr "Усе"
 
-#: src/components/channel/SpaceEditor.tsx:173
+#: src/components/space/SpaceEditor.tsx:173
 msgid "All roles must have both a tag name and display name."
 msgstr "Усі ролі повинні мати як ім'я тегу, так і відображуване ім'я."
 
@@ -234,7 +234,7 @@ msgstr ""
 "Ви впевнені, що хочете покинути цей Espacio? Ви не зможете приєднатися "
 "знову, якщо вас не запросили знову."
 
-#: src/components/channel/ChannelEditor.tsx:88
+#: src/components/space/ChannelEditor.tsx:88
 msgid ""
 "Are you sure? This channel contains messages. Deleting it will cause all "
 "content to be lost forever!"
@@ -242,7 +242,7 @@ msgstr ""
 "Ви впевнені? Цей канал містить повідомлення. Видалення призведе до втрати "
 "всього вмісту назавжди!"
 
-#: src/components/channel/GroupEditor.tsx:76
+#: src/components/space/GroupEditor.tsx:76
 msgid ""
 "Are you sure? This group contains channels with messages. Deleting it will "
 "cause all content to be lost forever!"
@@ -262,7 +262,7 @@ msgstr "Відсутній"
 msgid "Backup Failed"
 msgstr "Резервне копіювання не вдалося"
 
-#: src/components/channel/SpaceEditor.tsx:941
+#: src/components/space/SpaceEditor.tsx:941
 msgid "Be patient, this can take a few seconds..."
 msgstr "Будьте терплячими, це може зайняти кілька секунд..."
 
@@ -302,11 +302,11 @@ msgstr ""
 "Зміни вносяться автоматично, але активна сторінка може не оновитися. Оновіть"
 " сторінку, щоб застосувати нову мову."
 
-#: src/components/channel/ChannelEditor.tsx:59
+#: src/components/space/ChannelEditor.tsx:59
 msgid "Channel Name"
 msgstr "Назва каналу"
 
-#: src/components/channel/ChannelEditor.tsx:65
+#: src/components/space/ChannelEditor.tsx:65
 msgid "Channel Topic"
 msgstr "Тема каналу"
 
@@ -339,16 +339,16 @@ msgstr "Очистити пошук"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "Очищення сповіщень з тегом: {tag}"
 
-#: src/components/channel/ChannelEditor.tsx:107
-#: src/components/channel/GroupEditor.tsx:95
-#: src/components/channel/SpaceEditor.tsx:1032
+#: src/components/space/ChannelEditor.tsx:107
+#: src/components/space/GroupEditor.tsx:95
+#: src/components/space/SpaceEditor.tsx:1032
 #: src/components/modals/ConversationSettingsModal.tsx:188
 #: src/components/modals/KickUserModal.tsx:47
 #: src/components/modals/LeaveSpaceModal.tsx:56
 msgid "Click again to confirm"
 msgstr "Натисніть ще раз, щоб підтвердити"
 
-#: src/components/channel/SpaceEditor.tsx:518
+#: src/components/space/SpaceEditor.tsx:518
 msgid "Click on the role name and tag to edit them."
 msgstr "Натисніть на назву ролі та тег, щоб їх редагувати."
 
@@ -412,7 +412,7 @@ msgstr "Скопіювати адресу"
 msgid "Copy Failed"
 msgstr "Копіювання не вдалося"
 
-#: src/components/channel/SpaceEditor.tsx:946
+#: src/components/space/SpaceEditor.tsx:946
 msgid "Copy invite link to clipboard"
 msgstr "Скопіювати посилання на запрошення в буфер обміну"
 
@@ -459,7 +459,7 @@ msgstr "Створити Space"
 msgid "Creating Space..."
 msgstr "Створення Space..."
 
-#: src/components/channel/SpaceEditor.tsx:921
+#: src/components/space/SpaceEditor.tsx:921
 msgid "Current Invite Link"
 msgstr "Поточне посилання на запрошення"
 
@@ -475,7 +475,7 @@ msgstr "розшифрований space без відомого ключа ко
 msgid "Decrypted Space with no known hub key"
 msgstr "Розшифрований Space без відомого ключа хаба"
 
-#: src/components/channel/SpaceEditor.tsx:452
+#: src/components/space/SpaceEditor.tsx:452
 msgid "Default Channel"
 msgstr "Типовий канал"
 
@@ -491,7 +491,7 @@ msgstr ""
 msgid "Delete"
 msgstr "Видалити"
 
-#: src/components/channel/ChannelEditor.tsx:106
+#: src/components/space/ChannelEditor.tsx:106
 msgid "Delete Channel"
 msgstr "Видалити канал"
 
@@ -499,7 +499,7 @@ msgstr "Видалити канал"
 msgid "Delete Conversation"
 msgstr "Видалити розмову"
 
-#: src/components/channel/GroupEditor.tsx:94
+#: src/components/space/GroupEditor.tsx:94
 msgid "Delete Group"
 msgstr "Видалити групу"
 
@@ -508,21 +508,21 @@ msgstr "Видалити групу"
 msgid "Delete message"
 msgstr "Видалити повідомлення"
 
-#: src/components/channel/SpaceEditor.tsx:600
+#: src/components/space/SpaceEditor.tsx:600
 msgid "Delete Messages"
 msgstr "Видалити повідомлення"
 
-#: src/components/channel/SpaceEditor.tsx:620
+#: src/components/space/SpaceEditor.tsx:620
 msgid "Delete Role"
 msgstr "Видалити роль"
 
-#: src/components/channel/SpaceEditor.tsx:285
-#: src/components/channel/SpaceEditor.tsx:337
-#: src/components/channel/SpaceEditor.tsx:1030
+#: src/components/space/SpaceEditor.tsx:285
+#: src/components/space/SpaceEditor.tsx:337
+#: src/components/space/SpaceEditor.tsx:1030
 msgid "Delete Space"
 msgstr "Видалити Простір"
 
-#: src/components/channel/SpaceEditor.tsx:1004
+#: src/components/space/SpaceEditor.tsx:1004
 msgid "Delete this space"
 msgstr "Видалити цей простір"
 
@@ -569,11 +569,11 @@ msgstr "Шухляда"
 msgid "Drop your profile photo here"
 msgstr "Перетягніть своє фото профілю сюди"
 
-#: src/components/channel/ChannelEditor.tsx:51
+#: src/components/space/ChannelEditor.tsx:51
 msgid "Edit Channel"
 msgstr "Редагувати канал"
 
-#: src/components/channel/GroupEditor.tsx:44
+#: src/components/space/GroupEditor.tsx:44
 msgid "Edit Group"
 msgstr "Редагувати групу"
 
@@ -581,9 +581,9 @@ msgstr "Редагувати групу"
 msgid "Emoji picker"
 msgstr "Вибір емодзі"
 
-#: src/components/channel/SpaceEditor.tsx:259
-#: src/components/channel/SpaceEditor.tsx:325
-#: src/components/channel/SpaceEditor.tsx:662
+#: src/components/space/SpaceEditor.tsx:259
+#: src/components/space/SpaceEditor.tsx:325
+#: src/components/space/SpaceEditor.tsx:662
 msgid "Emojis"
 msgstr "Emojis"
 
@@ -599,7 +599,7 @@ msgstr "Введіть ім'я для вашого нового Простору
 msgid "Enter a user's address to start messaging them."
 msgstr "Введіть адресу користувача, щоб почати з ним спілкуватися."
 
-#: src/components/channel/SpaceEditor.tsx:876
+#: src/components/space/SpaceEditor.tsx:876
 msgid "Enter Address Manually"
 msgstr "Ввести адресу вручну"
 
@@ -632,7 +632,7 @@ msgstr "Помилка запиту дозволу на сповіщення:"
 msgid "Error showing notification:"
 msgstr "Помилка показу сповіщення:"
 
-#: src/components/channel/SpaceEditor.tsx:852
+#: src/components/space/SpaceEditor.tsx:852
 msgid "Existing Conversations"
 msgstr "Існуючі розмови"
 
@@ -722,8 +722,8 @@ msgstr "Перевірка файлу не вдалася. Будь ласка, 
 msgid "general"
 msgstr "загальний"
 
-#: src/components/channel/SpaceEditor.tsx:245
-#: src/components/channel/SpaceEditor.tsx:297
+#: src/components/space/SpaceEditor.tsx:245
+#: src/components/space/SpaceEditor.tsx:297
 #: src/components/modals/UserSettingsModal.tsx:174
 #: src/components/modals/UserSettingsModal.tsx:206
 msgid "General"
@@ -733,11 +733,11 @@ msgstr "Загальний"
 msgid "General Chat"
 msgstr "Загальний чат"
 
-#: src/components/channel/SpaceEditor.tsx:970
+#: src/components/space/SpaceEditor.tsx:970
 msgid "Generate New Invite Link"
 msgstr "Згенерувати нове посилання для запрошення"
 
-#: src/components/channel/SpaceEditor.tsx:968
+#: src/components/space/SpaceEditor.tsx:968
 msgid "Generating link..."
 msgstr "Генерація посилання..."
 
@@ -745,7 +745,7 @@ msgstr "Генерація посилання..."
 msgid "Go to conversation"
 msgstr "Перейти до розмови"
 
-#: src/components/channel/GroupEditor.tsx:52
+#: src/components/space/GroupEditor.tsx:52
 msgid "Group Name"
 msgstr "Назва групи"
 
@@ -839,9 +839,9 @@ msgstr "недійсний тип повідомлення"
 msgid "invalid response"
 msgstr "недійсна відповідь"
 
-#: src/components/channel/SpaceEditor.tsx:273
-#: src/components/channel/SpaceEditor.tsx:318
-#: src/components/channel/SpaceEditor.tsx:836
+#: src/components/space/SpaceEditor.tsx:273
+#: src/components/space/SpaceEditor.tsx:318
+#: src/components/space/SpaceEditor.tsx:836
 msgid "Invites"
 msgstr "Запрошення"
 
@@ -888,7 +888,7 @@ msgstr "Ключ збережено"
 msgid "Kick User"
 msgstr "Викинути користувача"
 
-#: src/components/channel/SpaceEditor.tsx:608
+#: src/components/space/SpaceEditor.tsx:608
 msgid "Kick Users"
 msgstr "Викинути користувачів"
 
@@ -964,7 +964,7 @@ msgstr ""
 msgid "Manual Backup Required"
 msgstr "Необхідно ручне резервне копіювання"
 
-#: src/components/channel/Channel.tsx:310
+#: src/components/space/Channel.tsx:310
 #: src/components/direct/DirectMessage.tsx:369
 msgid "Members List"
 msgstr "Список учасників"
@@ -1044,7 +1044,7 @@ msgstr "Один з нас, один з нас!"
 msgid "Online"
 msgstr "Онлайн"
 
-#: src/components/channel/SpaceEditor.tsx:586
+#: src/components/space/SpaceEditor.tsx:586
 msgid "Permissions:"
 msgstr "Дозволи:"
 
@@ -1076,7 +1076,7 @@ msgstr "Досягнуто ліміту закріплення ({0})"
 msgid "Pin message"
 msgstr "Закріпити повідомлення"
 
-#: src/components/channel/SpaceEditor.tsx:604
+#: src/components/space/SpaceEditor.tsx:604
 msgid "Pin Messages"
 msgstr "Закріпити повідомлення"
 
@@ -1090,7 +1090,7 @@ msgstr "Закріплено"
 msgid "Pinned by {0}"
 msgstr "Закріплено {0}"
 
-#: src/components/channel/Channel.tsx:278
+#: src/components/space/Channel.tsx:278
 msgid "Pinned Messages"
 msgstr "Закріплені повідомлення"
 
@@ -1103,7 +1103,7 @@ msgstr "Закріплено!"
 msgid "PNG, JPG or JPEG • Max 2MB"
 msgstr "PNG, JPG або JPEG • Макс 2MB"
 
-#: src/components/channel/SpaceEditor.tsx:472
+#: src/components/space/SpaceEditor.tsx:472
 msgid "Privacy Settings"
 msgstr "Налаштування конфіденційності"
 
@@ -1117,11 +1117,11 @@ msgstr "Конфіденційність/Безпека"
 msgid "Private key saved to selected folder"
 msgstr "Приватний ключ збережено в обрану папку"
 
-#: src/components/channel/SpaceEditor.tsx:896
+#: src/components/space/SpaceEditor.tsx:896
 msgid "Public Invite Link"
 msgstr "Публічне запрошення"
 
-#: src/components/channel/SpaceEditor.tsx:898
+#: src/components/space/SpaceEditor.tsx:898
 msgid ""
 "Public invite links allow anyone with access to the link join your Space. "
 "Understand the risks of enabling this, and to whom and where you share the "
@@ -1190,12 +1190,12 @@ msgstr "Видалити"
 msgid "Reply"
 msgstr "Відповісти"
 
-#: src/components/channel/SpaceEditor.tsx:478
+#: src/components/space/SpaceEditor.tsx:478
 #: src/components/modals/CreateSpaceModal.tsx:107
 msgid "Require Message Signing"
 msgstr "Вимагати підписування повідомлень"
 
-#: src/components/channel/SpaceEditor.tsx:483
+#: src/components/space/SpaceEditor.tsx:483
 #: src/components/modals/CreateSpaceModal.tsx:112
 msgid ""
 "Require messages sent in this Space to be signed by the sender. Technically "
@@ -1204,9 +1204,9 @@ msgstr ""
 "Вимагати, щоб повідомлення, надіслані в цьому Espacio, були підписані "
 "відправником. Технічно це робить повідомлення в цьому Espacio непідробними."
 
-#: src/components/channel/SpaceEditor.tsx:252
-#: src/components/channel/SpaceEditor.tsx:311
-#: src/components/channel/SpaceEditor.tsx:515
+#: src/components/space/SpaceEditor.tsx:252
+#: src/components/space/SpaceEditor.tsx:311
+#: src/components/space/SpaceEditor.tsx:515
 msgid "Roles"
 msgstr "Ролі"
 
@@ -1214,12 +1214,12 @@ msgstr "Ролі"
 msgid "Save"
 msgstr "Зберегти"
 
-#: src/components/channel/ChannelEditor.tsx:75
-#: src/components/channel/GroupEditor.tsx:63
-#: src/components/channel/SpaceEditor.tsx:503
-#: src/components/channel/SpaceEditor.tsx:650
-#: src/components/channel/SpaceEditor.tsx:736
-#: src/components/channel/SpaceEditor.tsx:824
+#: src/components/space/ChannelEditor.tsx:75
+#: src/components/space/GroupEditor.tsx:63
+#: src/components/space/SpaceEditor.tsx:503
+#: src/components/space/SpaceEditor.tsx:650
+#: src/components/space/SpaceEditor.tsx:736
+#: src/components/space/SpaceEditor.tsx:824
 #: src/components/modals/UserSettingsModal.tsx:328
 #: src/components/modals/UserSettingsModal.tsx:469
 #: src/components/user/UserProfileEdit.tsx:158
@@ -1282,11 +1282,11 @@ msgstr "Безпека"
 msgid "Select an option"
 msgstr "Вибрати опцію"
 
-#: src/components/channel/SpaceEditor.tsx:873
+#: src/components/space/SpaceEditor.tsx:873
 msgid "Select conversation"
 msgstr "Вибрати розмову"
 
-#: src/components/channel/SpaceEditor.tsx:467
+#: src/components/space/SpaceEditor.tsx:467
 msgid "Select default channel"
 msgstr "Вибрати канал за замовчуванням"
 
@@ -1294,7 +1294,7 @@ msgstr "Вибрати канал за замовчуванням"
 msgid "Select Image"
 msgstr "Вибрати зображення"
 
-#: src/components/channel/SpaceEditor.tsx:595
+#: src/components/space/SpaceEditor.tsx:595
 msgid "Select permissions"
 msgstr "Вибрати дозволи"
 
@@ -1306,11 +1306,11 @@ msgstr "Вибрати зображення профілю"
 msgid "Send"
 msgstr "Надіслати"
 
-#: src/components/channel/SpaceEditor.tsx:992
+#: src/components/space/SpaceEditor.tsx:992
 msgid "Send Invite"
 msgstr "Надіслати запрошення"
 
-#: src/components/channel/SpaceEditor.tsx:839
+#: src/components/space/SpaceEditor.tsx:839
 msgid ""
 "Send invites to people you've previously had conversations with. An invite "
 "button will appear in their inbox."
@@ -1354,7 +1354,7 @@ msgstr "показати головний екран"
 msgid "Skip Adding Photo"
 msgstr "Пропустити додавання фото"
 
-#: src/components/channel/SpaceEditor.tsx:391
+#: src/components/space/SpaceEditor.tsx:391
 msgid "Space Banner"
 msgstr "Банер Простору"
 
@@ -1362,7 +1362,7 @@ msgstr "Банер Простору"
 msgid "Space Icon Attachment"
 msgstr "Прикріплення значка Простору"
 
-#: src/components/channel/SpaceEditor.tsx:380
+#: src/components/space/SpaceEditor.tsx:380
 msgid "Space Name"
 msgstr "Назва Простору"
 
@@ -1378,14 +1378,14 @@ msgstr "Статус йде сюди"
 msgid "Stay Connected, Stay Invisible"
 msgstr "Залишайтеся на зв'язку, залишайтеся невидимими"
 
-#: src/components/channel/SpaceEditor.tsx:266
-#: src/components/channel/SpaceEditor.tsx:304
-#: src/components/channel/SpaceEditor.tsx:748
+#: src/components/space/SpaceEditor.tsx:266
+#: src/components/space/SpaceEditor.tsx:304
+#: src/components/space/SpaceEditor.tsx:748
 msgid "Stickers"
 msgstr "Стікери"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:886
+#: src/components/space/SpaceEditor.tsx:886
 msgid "Successfully sent invite to {0}"
 msgstr "Успішно надіслано запрошення до {0}"
 
@@ -1422,7 +1422,7 @@ msgstr ""
 "Це ваша публічна адреса, і її безпечно ділитися з будь-ким, з ким ви хочете "
 "взаємодіяти."
 
-#: src/components/channel/SpaceEditor.tsx:926
+#: src/components/space/SpaceEditor.tsx:926
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link. Current Space members will not be removed "
@@ -1515,11 +1515,11 @@ msgstr ""
 "Поки ви не відповісте, цей відправник не побачить ваше ім'я відображення або"
 " профільне зображення"
 
-#: src/components/channel/SpaceEditor.tsx:680
+#: src/components/space/SpaceEditor.tsx:680
 msgid "Upload Emoji"
 msgstr "Завантажити Emoji"
 
-#: src/components/channel/SpaceEditor.tsx:766
+#: src/components/space/SpaceEditor.tsx:766
 msgid "Upload Sticker"
 msgstr "Завантажити стікер"
 

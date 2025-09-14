@@ -29,7 +29,7 @@ Add a search input field directly above the users list in the Channel right side
 
 ### Current Architecture
 
-**Location**: `src/components/channel/Channel.tsx:525-572`
+**Location**: `src/components/space/Channel.tsx:525-572`
 - Uses `react-virtuoso` for efficient rendering of large user lists
 - Data comes from `useChannelData` hook with pre-computed role sections
 - Already optimized for performance with memoization
@@ -58,7 +58,7 @@ type UserItem = {
 #### 1.1 Add Search State Management
 - [ ] **Status**: Not Started
 - [ ] **Risk Level**: Low
-- [ ] **Files**: `src/components/channel/Channel.tsx`
+- [ ] **Files**: `src/components/space/Channel.tsx`
 
 **Tasks**:
 - [ ] Add search input state with debouncing (200ms)
@@ -110,7 +110,7 @@ const generateVirtualizedUserList = useCallback((searchFilter = '') => {
 #### 1.3 Add Search Input UI Component
 - [ ] **Status**: Not Started
 - [ ] **Risk Level**: Low
-- [ ] **Files**: `src/components/channel/Channel.tsx`
+- [ ] **Files**: `src/components/space/Channel.tsx`
 
 **Tasks**:
 - [ ] Add search input above users list (both desktop & mobile)
@@ -180,7 +180,7 @@ const generateVirtualizedUserList = useCallback((searchFilter = '') => {
 
 ### Key Files to Modify
 
-1. **`src/components/channel/Channel.tsx:525-572`**
+1. **`src/components/space/Channel.tsx:525-572`**
    - Add search input UI above Virtuoso component
    - Integrate search state with user list generation
    - Handle mobile/desktop responsive behavior

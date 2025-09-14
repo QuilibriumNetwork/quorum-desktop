@@ -74,7 +74,7 @@ interface ResponsiveLayoutState {
 
 **Components to modify**:
 
-- `src/components/channel/Channel.tsx`
+- `src/components/space/Channel.tsx`
 - `src/components/direct/DirectMessage.tsx`
 - `src/components/search/GlobalSearch.tsx`
 

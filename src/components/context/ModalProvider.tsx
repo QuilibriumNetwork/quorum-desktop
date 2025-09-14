@@ -1,8 +1,8 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import UserSettingsModal from '../modals/UserSettingsModal';
-import SpaceEditor from '../channel/SpaceEditor';
-import ChannelEditor from '../channel/ChannelEditor';
-import GroupEditor from '../channel/GroupEditor';
+import SpaceEditor from '../space/SpaceEditor';
+import ChannelEditor from '../space/ChannelEditor';
+import GroupEditor from '../space/GroupEditor';
 import LeaveSpaceModal from '../modals/LeaveSpaceModal';
 import KickUserModal from '../modals/KickUserModal';
 import NewDirectMessageModal from '../modals/NewDirectMessageModal';

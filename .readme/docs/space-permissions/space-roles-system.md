@@ -150,7 +150,7 @@ export interface UseRoleManagementReturn {
 
 #### **SpaceEditor Role Management**
 
-**Location**: `src/components/channel/SpaceEditor.tsx`
+**Location**: `src/components/space/SpaceEditor.tsx`
 
 **Features**:
 

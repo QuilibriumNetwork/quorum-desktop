@@ -349,7 +349,7 @@ showConfirmationModal({
 - **Special**: File upload (ReactTooltip), ThemeRadioGroup, AccentColorSwitcher, ClickToCopyContent
 - **Title**: Hidden (custom layout)
 
-#### **8. SpaceEditor** - `src/components/channel/SpaceEditor.tsx`
+#### **8. SpaceEditor** - `src/components/space/SpaceEditor.tsx`
 
 - **Purpose**: Comprehensive space management
 - **Size**: Large
@@ -360,7 +360,7 @@ showConfirmationModal({
 
 ### **Small Editor Modals**
 
-#### **9. ChannelEditor** - `src/components/channel/ChannelEditor.tsx`
+#### **9. ChannelEditor** - `src/components/space/ChannelEditor.tsx`
 
 - **Purpose**: Create/edit channels
 - **Size**: Small
@@ -368,7 +368,7 @@ showConfirmationModal({
 - **Special**: Dynamic title, delete warnings with custom close icons
 - **Title**: "Add Channel" / "Edit Channel"
 
-#### **10. GroupEditor** - `src/components/channel/GroupEditor.tsx`
+#### **10. GroupEditor** - `src/components/space/GroupEditor.tsx`
 
 - **Purpose**: Create/edit channel groups
 - **Size**: Small

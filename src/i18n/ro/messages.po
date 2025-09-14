@@ -71,7 +71,7 @@ msgid "Send a message to {user}"
 msgstr "Trimite un mesaj lui {user}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:377
+#: src/components/space/Channel.tsx:377
 msgid "Send a message to #{channel_name}"
 msgstr "Trimite un mesaj către #{channel_name}"
 
@@ -121,7 +121,7 @@ msgstr "0 Bytes"
 msgid "Account Address"
 msgstr "Adresă de cont"
 
-#: src/components/channel/ChannelEditor.tsx:51
+#: src/components/space/ChannelEditor.tsx:51
 msgid "Add Channel"
 msgstr "Adaugă Canal"
 
@@ -129,12 +129,12 @@ msgstr "Adaugă Canal"
 msgid "Add friend"
 msgstr "Adaugă prieten"
 
-#: src/components/channel/ChannelList.tsx:72
-#: src/components/channel/GroupEditor.tsx:44
+#: src/components/space/ChannelList.tsx:72
+#: src/components/space/GroupEditor.tsx:44
 msgid "Add Group"
 msgstr "Adaugă grup"
 
-#: src/components/channel/SpaceEditor.tsx:531
+#: src/components/space/SpaceEditor.tsx:531
 msgid "Add Role"
 msgstr "Adaugă rol"
 
@@ -142,7 +142,7 @@ msgstr "Adaugă rol"
 msgid "add sticker"
 msgstr "adaugă autocolant"
 
-#: src/components/channel/SpaceEditor.tsx:665
+#: src/components/space/SpaceEditor.tsx:665
 msgid ""
 "Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
 "You can upload PNG, JPG or GIF, max 256kB."
@@ -151,7 +151,7 @@ msgstr ""
 "folosite doar în cadrul unui Espacio. Poți încărca PNG, JPG sau GIF, max "
 "256kB."
 
-#: src/components/channel/SpaceEditor.tsx:751
+#: src/components/space/SpaceEditor.tsx:751
 msgid ""
 "Add up to 50 custom stickers. Custom stickers can only be used within a "
 "Space. You can upload PNG, JPG or GIF, max 256kB."
@@ -187,7 +187,7 @@ msgstr "Setări avansate"
 msgid "All"
 msgstr "Toate"
 
-#: src/components/channel/SpaceEditor.tsx:173
+#: src/components/space/SpaceEditor.tsx:173
 msgid "All roles must have both a tag name and display name."
 msgstr ""
 "Toate rolurile trebuie să aibă atât un nume de etichetă, cât și un nume de "
@@ -236,7 +236,7 @@ msgstr ""
 "Ești sigur că vrei să părăsești acest Espacio? Nu vei putea să te reîntorci "
 "decât dacă ești reinvitat."
 
-#: src/components/channel/ChannelEditor.tsx:88
+#: src/components/space/ChannelEditor.tsx:88
 msgid ""
 "Are you sure? This channel contains messages. Deleting it will cause all "
 "content to be lost forever!"
@@ -244,7 +244,7 @@ msgstr ""
 "Ești sigur? Acest canal conține mesaje. Ștergerea lui va cauza pierderea "
 "tuturor conținutului pentru totdeauna!"
 
-#: src/components/channel/GroupEditor.tsx:76
+#: src/components/space/GroupEditor.tsx:76
 msgid ""
 "Are you sure? This group contains channels with messages. Deleting it will "
 "cause all content to be lost forever!"
@@ -264,7 +264,7 @@ msgstr "Departe"
 msgid "Backup Failed"
 msgstr "Backup Eșuat"
 
-#: src/components/channel/SpaceEditor.tsx:941
+#: src/components/space/SpaceEditor.tsx:941
 msgid "Be patient, this can take a few seconds..."
 msgstr "Fii răbdător, asta poate dura câteva secunde..."
 
@@ -304,11 +304,11 @@ msgstr ""
 "Modificările sunt efectuate automat, dar pagina activă s-ar putea să nu fie "
 "actualizată. Reîmprospătează pagina pentru a aplica noua limbă."
 
-#: src/components/channel/ChannelEditor.tsx:59
+#: src/components/space/ChannelEditor.tsx:59
 msgid "Channel Name"
 msgstr "Numele canalului"
 
-#: src/components/channel/ChannelEditor.tsx:65
+#: src/components/space/ChannelEditor.tsx:65
 msgid "Channel Topic"
 msgstr "Subiectul canalului"
 
@@ -341,16 +341,16 @@ msgstr "Șterge căutarea"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "Ștergerea notificărilor cu eticheta: {tag}"
 
-#: src/components/channel/ChannelEditor.tsx:107
-#: src/components/channel/GroupEditor.tsx:95
-#: src/components/channel/SpaceEditor.tsx:1032
+#: src/components/space/ChannelEditor.tsx:107
+#: src/components/space/GroupEditor.tsx:95
+#: src/components/space/SpaceEditor.tsx:1032
 #: src/components/modals/ConversationSettingsModal.tsx:188
 #: src/components/modals/KickUserModal.tsx:47
 #: src/components/modals/LeaveSpaceModal.tsx:56
 msgid "Click again to confirm"
 msgstr "Click din nou pentru a confirma"
 
-#: src/components/channel/SpaceEditor.tsx:518
+#: src/components/space/SpaceEditor.tsx:518
 msgid "Click on the role name and tag to edit them."
 msgstr "Fă clic pe numele rolului și eticheta pentru a le edita."
 
@@ -414,7 +414,7 @@ msgstr "Copiază adresa"
 msgid "Copy Failed"
 msgstr "Copiere Eșuată"
 
-#: src/components/channel/SpaceEditor.tsx:946
+#: src/components/space/SpaceEditor.tsx:946
 msgid "Copy invite link to clipboard"
 msgstr "Copie link invitație în clipboard"
 
@@ -461,7 +461,7 @@ msgstr "Creează Space"
 msgid "Creating Space..."
 msgstr "Creează Space..."
 
-#: src/components/channel/SpaceEditor.tsx:921
+#: src/components/space/SpaceEditor.tsx:921
 msgid "Current Invite Link"
 msgstr "Linkul actual de invitație"
 
@@ -477,7 +477,7 @@ msgstr "spațiu decriptat fără cheie de configurare cunoscută"
 msgid "Decrypted Space with no known hub key"
 msgstr "Space decriptat fără cheie de hub cunoscută"
 
-#: src/components/channel/SpaceEditor.tsx:452
+#: src/components/space/SpaceEditor.tsx:452
 msgid "Default Channel"
 msgstr "Canal implicit"
 
@@ -494,7 +494,7 @@ msgstr ""
 msgid "Delete"
 msgstr "Șterge"
 
-#: src/components/channel/ChannelEditor.tsx:106
+#: src/components/space/ChannelEditor.tsx:106
 msgid "Delete Channel"
 msgstr "Șterge canal"
 
@@ -502,7 +502,7 @@ msgstr "Șterge canal"
 msgid "Delete Conversation"
 msgstr "Șterge conversația"
 
-#: src/components/channel/GroupEditor.tsx:94
+#: src/components/space/GroupEditor.tsx:94
 msgid "Delete Group"
 msgstr "Șterge grup"
 
@@ -511,21 +511,21 @@ msgstr "Șterge grup"
 msgid "Delete message"
 msgstr "Șterge mesaj"
 
-#: src/components/channel/SpaceEditor.tsx:600
+#: src/components/space/SpaceEditor.tsx:600
 msgid "Delete Messages"
 msgstr "Șterge mesajele"
 
-#: src/components/channel/SpaceEditor.tsx:620
+#: src/components/space/SpaceEditor.tsx:620
 msgid "Delete Role"
 msgstr "Șterge rolul"
 
-#: src/components/channel/SpaceEditor.tsx:285
-#: src/components/channel/SpaceEditor.tsx:337
-#: src/components/channel/SpaceEditor.tsx:1030
+#: src/components/space/SpaceEditor.tsx:285
+#: src/components/space/SpaceEditor.tsx:337
+#: src/components/space/SpaceEditor.tsx:1030
 msgid "Delete Space"
 msgstr "Șterge Espacio"
 
-#: src/components/channel/SpaceEditor.tsx:1004
+#: src/components/space/SpaceEditor.tsx:1004
 msgid "Delete this space"
 msgstr "Șterge acest Espacio"
 
@@ -572,11 +572,11 @@ msgstr "Drawer"
 msgid "Drop your profile photo here"
 msgstr "Trage fotografia ta de profil aici"
 
-#: src/components/channel/ChannelEditor.tsx:51
+#: src/components/space/ChannelEditor.tsx:51
 msgid "Edit Channel"
 msgstr "Editează Canal"
 
-#: src/components/channel/GroupEditor.tsx:44
+#: src/components/space/GroupEditor.tsx:44
 msgid "Edit Group"
 msgstr "Editează Grup"
 
@@ -584,9 +584,9 @@ msgstr "Editează Grup"
 msgid "Emoji picker"
 msgstr "Selector de emoji"
 
-#: src/components/channel/SpaceEditor.tsx:259
-#: src/components/channel/SpaceEditor.tsx:325
-#: src/components/channel/SpaceEditor.tsx:662
+#: src/components/space/SpaceEditor.tsx:259
+#: src/components/space/SpaceEditor.tsx:325
+#: src/components/space/SpaceEditor.tsx:662
 msgid "Emojis"
 msgstr "Emojis"
 
@@ -602,7 +602,7 @@ msgstr "Introdu numele pentru noul tău Spațiu"
 msgid "Enter a user's address to start messaging them."
 msgstr "Introdu adresa unui utilizator pentru a începe să le trimiti mesaje."
 
-#: src/components/channel/SpaceEditor.tsx:876
+#: src/components/space/SpaceEditor.tsx:876
 msgid "Enter Address Manually"
 msgstr "Introdu adresa manual"
 
@@ -635,7 +635,7 @@ msgstr "Eroare la solicitarea permisiunii pentru notificări:"
 msgid "Error showing notification:"
 msgstr "Eroare la afișarea notificării:"
 
-#: src/components/channel/SpaceEditor.tsx:852
+#: src/components/space/SpaceEditor.tsx:852
 msgid "Existing Conversations"
 msgstr "Conversații existente"
 
@@ -728,8 +728,8 @@ msgstr "Validarea fișierului a eșuat. Te rugăm să încerci din nou."
 msgid "general"
 msgstr "general"
 
-#: src/components/channel/SpaceEditor.tsx:245
-#: src/components/channel/SpaceEditor.tsx:297
+#: src/components/space/SpaceEditor.tsx:245
+#: src/components/space/SpaceEditor.tsx:297
 #: src/components/modals/UserSettingsModal.tsx:174
 #: src/components/modals/UserSettingsModal.tsx:206
 msgid "General"
@@ -739,11 +739,11 @@ msgstr "General"
 msgid "General Chat"
 msgstr "Chat General"
 
-#: src/components/channel/SpaceEditor.tsx:970
+#: src/components/space/SpaceEditor.tsx:970
 msgid "Generate New Invite Link"
 msgstr "Generează un nou link de invitație"
 
-#: src/components/channel/SpaceEditor.tsx:968
+#: src/components/space/SpaceEditor.tsx:968
 msgid "Generating link..."
 msgstr "Generare link..."
 
@@ -751,7 +751,7 @@ msgstr "Generare link..."
 msgid "Go to conversation"
 msgstr "Mergi la conversație"
 
-#: src/components/channel/GroupEditor.tsx:52
+#: src/components/space/GroupEditor.tsx:52
 msgid "Group Name"
 msgstr "Numele grupului"
 
@@ -844,9 +844,9 @@ msgstr "tip de mesaj invalid"
 msgid "invalid response"
 msgstr "răspuns invalid"
 
-#: src/components/channel/SpaceEditor.tsx:273
-#: src/components/channel/SpaceEditor.tsx:318
-#: src/components/channel/SpaceEditor.tsx:836
+#: src/components/space/SpaceEditor.tsx:273
+#: src/components/space/SpaceEditor.tsx:318
+#: src/components/space/SpaceEditor.tsx:836
 msgid "Invites"
 msgstr "Invitații"
 
@@ -893,7 +893,7 @@ msgstr "Cheia a fost salvată"
 msgid "Kick User"
 msgstr "Kick User"
 
-#: src/components/channel/SpaceEditor.tsx:608
+#: src/components/space/SpaceEditor.tsx:608
 msgid "Kick Users"
 msgstr "Excluzi utilizatori"
 
@@ -969,7 +969,7 @@ msgstr ""
 msgid "Manual Backup Required"
 msgstr "Backup manual necesar"
 
-#: src/components/channel/Channel.tsx:310
+#: src/components/space/Channel.tsx:310
 #: src/components/direct/DirectMessage.tsx:369
 msgid "Members List"
 msgstr "Lista membrilor"
@@ -1051,7 +1051,7 @@ msgstr "Unul dintre noi, unul dintre noi!"
 msgid "Online"
 msgstr "Online"
 
-#: src/components/channel/SpaceEditor.tsx:586
+#: src/components/space/SpaceEditor.tsx:586
 msgid "Permissions:"
 msgstr "Permisiuni:"
 
@@ -1083,7 +1083,7 @@ msgstr "Limita de fixare a fost atinsă ({0})"
 msgid "Pin message"
 msgstr "Fixează mesajul"
 
-#: src/components/channel/SpaceEditor.tsx:604
+#: src/components/space/SpaceEditor.tsx:604
 msgid "Pin Messages"
 msgstr "Fixează mesajele"
 
@@ -1097,7 +1097,7 @@ msgstr "Fixat"
 msgid "Pinned by {0}"
 msgstr "Fixat de {0}"
 
-#: src/components/channel/Channel.tsx:278
+#: src/components/space/Channel.tsx:278
 msgid "Pinned Messages"
 msgstr "Mesaje fixate"
 
@@ -1110,7 +1110,7 @@ msgstr "Fixat!"
 msgid "PNG, JPG or JPEG • Max 2MB"
 msgstr "PNG, JPG sau JPEG • Max 2MB"
 
-#: src/components/channel/SpaceEditor.tsx:472
+#: src/components/space/SpaceEditor.tsx:472
 msgid "Privacy Settings"
 msgstr "Setări de Confidențialitate"
 
@@ -1124,11 +1124,11 @@ msgstr "Confidențialitate/Securitate"
 msgid "Private key saved to selected folder"
 msgstr "Cheia privată a fost salvată în folderul selectat"
 
-#: src/components/channel/SpaceEditor.tsx:896
+#: src/components/space/SpaceEditor.tsx:896
 msgid "Public Invite Link"
 msgstr "Link de Invitație Public"
 
-#: src/components/channel/SpaceEditor.tsx:898
+#: src/components/space/SpaceEditor.tsx:898
 msgid ""
 "Public invite links allow anyone with access to the link join your Space. "
 "Understand the risks of enabling this, and to whom and where you share the "
@@ -1198,12 +1198,12 @@ msgstr "Elimină"
 msgid "Reply"
 msgstr "Răspunde"
 
-#: src/components/channel/SpaceEditor.tsx:478
+#: src/components/space/SpaceEditor.tsx:478
 #: src/components/modals/CreateSpaceModal.tsx:107
 msgid "Require Message Signing"
 msgstr "Necesită semnarea mesajelor"
 
-#: src/components/channel/SpaceEditor.tsx:483
+#: src/components/space/SpaceEditor.tsx:483
 #: src/components/modals/CreateSpaceModal.tsx:112
 msgid ""
 "Require messages sent in this Space to be signed by the sender. Technically "
@@ -1213,9 +1213,9 @@ msgstr ""
 "Tehnic vorbind, acest lucru face ca mesajele din acest Space să fie non-"
 "repudiabile."
 
-#: src/components/channel/SpaceEditor.tsx:252
-#: src/components/channel/SpaceEditor.tsx:311
-#: src/components/channel/SpaceEditor.tsx:515
+#: src/components/space/SpaceEditor.tsx:252
+#: src/components/space/SpaceEditor.tsx:311
+#: src/components/space/SpaceEditor.tsx:515
 msgid "Roles"
 msgstr "Roluri"
 
@@ -1223,12 +1223,12 @@ msgstr "Roluri"
 msgid "Save"
 msgstr "Salvează"
 
-#: src/components/channel/ChannelEditor.tsx:75
-#: src/components/channel/GroupEditor.tsx:63
-#: src/components/channel/SpaceEditor.tsx:503
-#: src/components/channel/SpaceEditor.tsx:650
-#: src/components/channel/SpaceEditor.tsx:736
-#: src/components/channel/SpaceEditor.tsx:824
+#: src/components/space/ChannelEditor.tsx:75
+#: src/components/space/GroupEditor.tsx:63
+#: src/components/space/SpaceEditor.tsx:503
+#: src/components/space/SpaceEditor.tsx:650
+#: src/components/space/SpaceEditor.tsx:736
+#: src/components/space/SpaceEditor.tsx:824
 #: src/components/modals/UserSettingsModal.tsx:328
 #: src/components/modals/UserSettingsModal.tsx:469
 #: src/components/user/UserProfileEdit.tsx:158
@@ -1291,11 +1291,11 @@ msgstr "Securitate"
 msgid "Select an option"
 msgstr "Selectează o opțiune"
 
-#: src/components/channel/SpaceEditor.tsx:873
+#: src/components/space/SpaceEditor.tsx:873
 msgid "Select conversation"
 msgstr "Selectează conversația"
 
-#: src/components/channel/SpaceEditor.tsx:467
+#: src/components/space/SpaceEditor.tsx:467
 msgid "Select default channel"
 msgstr "Selectează canalul implicit"
 
@@ -1303,7 +1303,7 @@ msgstr "Selectează canalul implicit"
 msgid "Select Image"
 msgstr "Selectează imaginea"
 
-#: src/components/channel/SpaceEditor.tsx:595
+#: src/components/space/SpaceEditor.tsx:595
 msgid "Select permissions"
 msgstr "Selectează permisiunile"
 
@@ -1315,11 +1315,11 @@ msgstr "Selectează imaginea de profil"
 msgid "Send"
 msgstr "Trimite"
 
-#: src/components/channel/SpaceEditor.tsx:992
+#: src/components/space/SpaceEditor.tsx:992
 msgid "Send Invite"
 msgstr "Trimite invitație"
 
-#: src/components/channel/SpaceEditor.tsx:839
+#: src/components/space/SpaceEditor.tsx:839
 msgid ""
 "Send invites to people you've previously had conversations with. An invite "
 "button will appear in their inbox."
@@ -1363,7 +1363,7 @@ msgstr "arată ecranul principal"
 msgid "Skip Adding Photo"
 msgstr "Salt la adăugarea fotografiei"
 
-#: src/components/channel/SpaceEditor.tsx:391
+#: src/components/space/SpaceEditor.tsx:391
 msgid "Space Banner"
 msgstr "Banner Spațiu"
 
@@ -1371,7 +1371,7 @@ msgstr "Banner Spațiu"
 msgid "Space Icon Attachment"
 msgstr "Atasament Icon Spațiu"
 
-#: src/components/channel/SpaceEditor.tsx:380
+#: src/components/space/SpaceEditor.tsx:380
 msgid "Space Name"
 msgstr "Numele Spațiului"
 
@@ -1387,14 +1387,14 @@ msgstr "Starea merge aici"
 msgid "Stay Connected, Stay Invisible"
 msgstr "Rămâi conectat, rămâi invizibil"
 
-#: src/components/channel/SpaceEditor.tsx:266
-#: src/components/channel/SpaceEditor.tsx:304
-#: src/components/channel/SpaceEditor.tsx:748
+#: src/components/space/SpaceEditor.tsx:266
+#: src/components/space/SpaceEditor.tsx:304
+#: src/components/space/SpaceEditor.tsx:748
 msgid "Stickers"
 msgstr "Autocolante"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:886
+#: src/components/space/SpaceEditor.tsx:886
 msgid "Successfully sent invite to {0}"
 msgstr "Invitația a fost trimisă cu succes către {0}"
 
@@ -1432,7 +1432,7 @@ msgstr ""
 "Aceasta este adresa ta publică și este sigură pentru a fi împărtășită cu "
 "oricine dorești să interacționezi."
 
-#: src/components/channel/SpaceEditor.tsx:926
+#: src/components/space/SpaceEditor.tsx:926
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link. Current Space members will not be removed "
@@ -1526,11 +1526,11 @@ msgstr ""
 "Până când răspunzi, acest expeditor nu va vedea numele tău de afișare sau "
 "fotografia de profil"
 
-#: src/components/channel/SpaceEditor.tsx:680
+#: src/components/space/SpaceEditor.tsx:680
 msgid "Upload Emoji"
 msgstr "Încarcă Emoji"
 
-#: src/components/channel/SpaceEditor.tsx:766
+#: src/components/space/SpaceEditor.tsx:766
 msgid "Upload Sticker"
 msgstr "Încarcă Sticker"
 

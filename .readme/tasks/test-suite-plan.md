@@ -89,7 +89,7 @@ This phase focuses on testing how multiple components and services work together
 
 - [ ] **Task 3: Test Core Channel/Space Interaction**
   - [ ] **Mocking:** Mock the `QuorumApiContext` to provide a predictable state for channels, spaces, and user information.
-  - [ ] **Component:** `src/components/channel/ChannelList.tsx`.
+  - [ ] **Component:** `src/components/space/ChannelList.tsx`.
   - [ ] **Scenario:**
     - [ ] Render the `ChannelList` with a mocked API context.
     - [ ] Assert that the list of channels is displayed correctly.

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useParams } from 'react-router';
-import ChannelList from '../channel/ChannelList';
-import Channel from '../channel/Channel';
+import ChannelList from './ChannelList';
+import Channel from './Channel';
 import UserStatus from '../user/UserStatus';
 import { useSpace } from '../../hooks';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';

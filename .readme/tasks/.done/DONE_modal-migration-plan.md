@@ -62,7 +62,7 @@ These modals use custom layout containers and may require enhanced Modal primiti
 - **Features**: Profile editing, device management, theme/language settings
 - **Challenge**: Custom responsive sidebar layout
 
-#### **🔍 SpaceEditor** - `src/components/channel/SpaceEditor.tsx`
+#### **🔍 SpaceEditor** - `src/components/space/SpaceEditor.tsx`
 
 - **Layout**: Uses `modal-complex-container` with 5-section interface
 - **Complexity**: Most complex modal in the codebase
@@ -80,13 +80,13 @@ These modals use custom layout containers and may require enhanced Modal primiti
 
 These modals use specialized layouts that may not fit the standard Modal primitive:
 
-#### **🔍 ChannelEditor** - `src/components/channel/ChannelEditor.tsx`
+#### **🔍 ChannelEditor** - `src/components/space/ChannelEditor.tsx`
 
 - **Layout**: Uses `modal-small-container` custom layout
 - **Complexity**: Simple form with delete confirmation
 - **Challenge**: Specialized small modal styling
 
-#### **🔍 GroupEditor** - `src/components/channel/GroupEditor.tsx`
+#### **🔍 GroupEditor** - `src/components/space/GroupEditor.tsx`
 
 - **Layout**: Completely custom `group-editor` styling
 - **Complexity**: Single input field with delete confirmation
@@ -321,7 +321,7 @@ import { Modal } from '../primitives'; // New primitive
 **⚠️ Widespread Issue**: Found same pattern in multiple components that will need similar fixes:
 
 - ✅ `src/components/modals/CreateSpaceModal.tsx` (FIXED)
-- ❌ `src/components/channel/SpaceEditor.tsx` (needs fix)
+- ❌ `src/components/space/SpaceEditor.tsx` (needs fix)
 - ❌ `src/components/modals/UserSettingsModal.tsx` (needs fix)
 - ❌ `src/components/onboarding/Onboarding.tsx` (needs fix)
 - ❌ `src/components/user/UserProfile.tsx` (needs fix)

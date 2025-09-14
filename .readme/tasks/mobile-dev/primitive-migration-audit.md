@@ -25,7 +25,7 @@ This audit identifies components that still use div-based form elements or raw H
 
 #### Channel Message Input
 
-- **File:** `src/components/channel/Channel.tsx`
+- **File:** `src/components/space/Channel.tsx`
 - **Pattern:** Raw `<textarea>` element for message composition
 - **Location:** Approximately line 475
 - **Migration:** Replace with `TextArea` primitive component
@@ -61,7 +61,7 @@ This audit identifies components that still use div-based form elements or raw H
 
 #### SpaceEditor File Upload Buttons
 
-- **File:** `src/components/channel/SpaceEditor.tsx`
+- **File:** `src/components/space/SpaceEditor.tsx`
 - **Pattern:** `<div className="btn-secondary">` with onClick handlers
 - **Usage:** Emoji and sticker upload triggers
 - **Migration:** Replace with `Button` primitive components

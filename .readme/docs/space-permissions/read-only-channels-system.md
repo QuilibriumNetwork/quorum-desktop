@@ -51,7 +51,7 @@ export type Channel = {
 
 ### UI Components
 
-#### **Channel Editor** (`src/components/channel/ChannelEditor.tsx`)
+#### **Channel Editor** (`src/components/space/ChannelEditor.tsx`)
 
 **Read-Only Configuration UI**:
 
@@ -88,7 +88,7 @@ export type Channel = {
 </p>
 ```
 
-#### **Channel Headers** (`src/components/channel/Channel.tsx`)
+#### **Channel Headers** (`src/components/space/Channel.tsx`)
 
 **Visual Indicators**:
 
@@ -136,7 +136,7 @@ export type Channel = {
 </div>
 ```
 
-#### **Channel List** (`src/components/channel/ChannelGroup.tsx`)
+#### **Channel List** (`src/components/space/ChannelGroup.tsx`)
 
 **Icon Display**:
 
@@ -150,7 +150,7 @@ export type Channel = {
 
 ### Permission Logic Implementation
 
-#### **Post Permissions** (`src/components/channel/Channel.tsx`)
+#### **Post Permissions** (`src/components/space/Channel.tsx`)
 
 ```typescript
 function canPostInReadOnlyChannel(

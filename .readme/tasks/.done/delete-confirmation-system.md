@@ -431,8 +431,8 @@ const handleDelete = (e: React.MouseEvent) => {
 
 ### Modified Files
 - `src/components/message/MessageActions.tsx` - Add confirmation to delete
-- `src/components/channel/SpaceEditor.tsx` - Add confirmation to role delete, migrate existing
-- `src/components/channel/ChannelEditor.tsx` - Migrate existing confirmation
+- `src/components/space/SpaceEditor.tsx` - Add confirmation to role delete, migrate existing
+- `src/components/space/ChannelEditor.tsx` - Migrate existing confirmation
 
 ## Benefits
 

@@ -283,13 +283,13 @@ Well-structured semantic classes already following best practices:
 
 **Status:** Complex layouts - Careful conversion needed
 
-#### **src/components/channel/Channel.scss**
+#### **src/components/space/Channel.scss**
 
 - `.channel` - **theme-token** - Channel container with theme background
 - `.channel-header` - **@apply-convertible** - Header layout → `@apply flex justify-between items-center p-2`
 - `.channel-messages` - **@apply-convertible** - Messages area → `@apply flex-1 overflow-y-auto`
 
-#### **src/components/channel/ChannelList.scss**
+#### **src/components/space/ChannelList.scss**
 
 - `.channel-list` - **@apply-convertible** - Channel list → `@apply flex flex-col gap-1`
 - `.channel-item` - **theme-token** - Channel item with theme hover

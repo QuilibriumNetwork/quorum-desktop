@@ -80,7 +80,7 @@ const canPin = !channel.isReadOnly || isSpaceOwner || isChannelManager;
 #### Files to Modify
 
 - `src/api/quorumApi.ts` - Channel type definition
-- `src/components/channel/ChannelEditor.tsx` - Add read-only settings UI
+- `src/components/space/ChannelEditor.tsx` - Add read-only settings UI
 - `src/components/message/MessageComposer.tsx` - Handle disabled state
 - `src/hooks/business/messages/useMessageComposer.ts` - Permission checking
 - `src/hooks/business/channels/useChannelMessages.ts` - Manager privilege checks

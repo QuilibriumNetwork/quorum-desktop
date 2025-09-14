@@ -71,7 +71,7 @@ msgid "Send a message to {user}"
 msgstr "ส่งข้อความไปยัง {user}"
 
 #. js-lingui-explicit-id
-#: src/components/channel/Channel.tsx:377
+#: src/components/space/Channel.tsx:377
 msgid "Send a message to #{channel_name}"
 msgstr "ส่งข้อความไปยัง #{channel_name}"
 
@@ -121,7 +121,7 @@ msgstr "0 ไบต์"
 msgid "Account Address"
 msgstr "ที่อยู่บัญชี"
 
-#: src/components/channel/ChannelEditor.tsx:51
+#: src/components/space/ChannelEditor.tsx:51
 msgid "Add Channel"
 msgstr "เพิ่มช่องทาง"
 
@@ -129,12 +129,12 @@ msgstr "เพิ่มช่องทาง"
 msgid "Add friend"
 msgstr "เพิ่มเพื่อน"
 
-#: src/components/channel/ChannelList.tsx:72
-#: src/components/channel/GroupEditor.tsx:44
+#: src/components/space/ChannelList.tsx:72
+#: src/components/space/GroupEditor.tsx:44
 msgid "Add Group"
 msgstr "เพิ่มกลุ่ม"
 
-#: src/components/channel/SpaceEditor.tsx:531
+#: src/components/space/SpaceEditor.tsx:531
 msgid "Add Role"
 msgstr "เพิ่มบทบาท"
 
@@ -142,7 +142,7 @@ msgstr "เพิ่มบทบาท"
 msgid "add sticker"
 msgstr "เพิ่มสติกเกอร์"
 
-#: src/components/channel/SpaceEditor.tsx:665
+#: src/components/space/SpaceEditor.tsx:665
 msgid ""
 "Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
 "You can upload PNG, JPG or GIF, max 256kB."
@@ -151,7 +151,7 @@ msgstr ""
 "อีโมจิที่กำหนดเองสามารถใช้ได้เฉพาะภายใน Espacio เท่านั้น คุณสามารถอัปโหลด "
 "PNG, JPG หรือ GIF ขนาดสูงสุด 256kB"
 
-#: src/components/channel/SpaceEditor.tsx:751
+#: src/components/space/SpaceEditor.tsx:751
 msgid ""
 "Add up to 50 custom stickers. Custom stickers can only be used within a "
 "Space. You can upload PNG, JPG or GIF, max 256kB."
@@ -188,7 +188,7 @@ msgstr "การตั้งค่าขั้นสูง"
 msgid "All"
 msgstr "ทั้งหมด"
 
-#: src/components/channel/SpaceEditor.tsx:173
+#: src/components/space/SpaceEditor.tsx:173
 msgid "All roles must have both a tag name and display name."
 msgstr "บทบาททั้งหมดต้องมีทั้งชื่อแท็กและชื่อแสดง"
 
@@ -233,7 +233,7 @@ msgstr ""
 "คุณแน่ใจหรือว่าต้องการออกจาก Espacio นี้? คุณจะไม่สามารถเข้าร่วมใหม่ได้ "
 "เว้นแต่คุณจะได้รับเชิญอีกครั้ง"
 
-#: src/components/channel/ChannelEditor.tsx:88
+#: src/components/space/ChannelEditor.tsx:88
 msgid ""
 "Are you sure? This channel contains messages. Deleting it will cause all "
 "content to be lost forever!"
@@ -241,7 +241,7 @@ msgstr ""
 "คุณแน่ใจหรือ? ช่องนี้มีข้อความอยู่ "
 "การลบมันจะทำให้เนื้อหาทั้งหมดสูญหายไปตลอดกาล!"
 
-#: src/components/channel/GroupEditor.tsx:76
+#: src/components/space/GroupEditor.tsx:76
 msgid ""
 "Are you sure? This group contains channels with messages. Deleting it will "
 "cause all content to be lost forever!"
@@ -261,7 +261,7 @@ msgstr "ออกไป"
 msgid "Backup Failed"
 msgstr "การสำรองข้อมูลล้มเหลว"
 
-#: src/components/channel/SpaceEditor.tsx:941
+#: src/components/space/SpaceEditor.tsx:941
 msgid "Be patient, this can take a few seconds..."
 msgstr "โปรดอดทน สิ่งนี้อาจใช้เวลาสักครู่..."
 
@@ -302,11 +302,11 @@ msgstr ""
 "แต่หน้าเว็บที่ใช้งานอยู่อาจไม่ได้รับการอัปเดต "
 "รีเฟรชหน้าเว็บเพื่อใช้ภาษาที่ใหม่"
 
-#: src/components/channel/ChannelEditor.tsx:59
+#: src/components/space/ChannelEditor.tsx:59
 msgid "Channel Name"
 msgstr "ชื่อช่อง"
 
-#: src/components/channel/ChannelEditor.tsx:65
+#: src/components/space/ChannelEditor.tsx:65
 msgid "Channel Topic"
 msgstr "หัวข้อช่อง"
 
@@ -339,16 +339,16 @@ msgstr "ล้างการค้นหา"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "ล้างการแจ้งเตือนที่มีแท็ก: {tag}"
 
-#: src/components/channel/ChannelEditor.tsx:107
-#: src/components/channel/GroupEditor.tsx:95
-#: src/components/channel/SpaceEditor.tsx:1032
+#: src/components/space/ChannelEditor.tsx:107
+#: src/components/space/GroupEditor.tsx:95
+#: src/components/space/SpaceEditor.tsx:1032
 #: src/components/modals/ConversationSettingsModal.tsx:188
 #: src/components/modals/KickUserModal.tsx:47
 #: src/components/modals/LeaveSpaceModal.tsx:56
 msgid "Click again to confirm"
 msgstr "คลิกอีกครั้งเพื่อยืนยัน"
 
-#: src/components/channel/SpaceEditor.tsx:518
+#: src/components/space/SpaceEditor.tsx:518
 msgid "Click on the role name and tag to edit them."
 msgstr "คลิกที่ชื่อบทบาทและแท็กเพื่อแก้ไข."
 
@@ -410,7 +410,7 @@ msgstr "คัดลอกที่อยู่"
 msgid "Copy Failed"
 msgstr "การคัดลอกล้มเหลว"
 
-#: src/components/channel/SpaceEditor.tsx:946
+#: src/components/space/SpaceEditor.tsx:946
 msgid "Copy invite link to clipboard"
 msgstr "คัดลอกลิงก์เชิญไปยังคลิปบอร์ด"
 
@@ -457,7 +457,7 @@ msgstr "สร้าง Space"
 msgid "Creating Space..."
 msgstr "กำลังสร้าง Space..."
 
-#: src/components/channel/SpaceEditor.tsx:921
+#: src/components/space/SpaceEditor.tsx:921
 msgid "Current Invite Link"
 msgstr "ลิงก์เชิญปัจจุบัน"
 
@@ -473,7 +473,7 @@ msgstr "พื้นที่ที่ถอดรหัสแล้วโดย
 msgid "Decrypted Space with no known hub key"
 msgstr "พื้นที่ที่ถอดรหัสแล้วโดยไม่มีคีย์ฮับที่รู้จัก"
 
-#: src/components/channel/SpaceEditor.tsx:452
+#: src/components/space/SpaceEditor.tsx:452
 msgid "Default Channel"
 msgstr "ช่องทางเริ่มต้น"
 
@@ -489,7 +489,7 @@ msgstr ""
 msgid "Delete"
 msgstr "ลบ"
 
-#: src/components/channel/ChannelEditor.tsx:106
+#: src/components/space/ChannelEditor.tsx:106
 msgid "Delete Channel"
 msgstr "ลบช่องทาง"
 
@@ -497,7 +497,7 @@ msgstr "ลบช่องทาง"
 msgid "Delete Conversation"
 msgstr "ลบการสนทนา"
 
-#: src/components/channel/GroupEditor.tsx:94
+#: src/components/space/GroupEditor.tsx:94
 msgid "Delete Group"
 msgstr "ลบกลุ่ม"
 
@@ -506,21 +506,21 @@ msgstr "ลบกลุ่ม"
 msgid "Delete message"
 msgstr "ลบข้อความ"
 
-#: src/components/channel/SpaceEditor.tsx:600
+#: src/components/space/SpaceEditor.tsx:600
 msgid "Delete Messages"
 msgstr "ลบข้อความ"
 
-#: src/components/channel/SpaceEditor.tsx:620
+#: src/components/space/SpaceEditor.tsx:620
 msgid "Delete Role"
 msgstr "ลบบทบาท"
 
-#: src/components/channel/SpaceEditor.tsx:285
-#: src/components/channel/SpaceEditor.tsx:337
-#: src/components/channel/SpaceEditor.tsx:1030
+#: src/components/space/SpaceEditor.tsx:285
+#: src/components/space/SpaceEditor.tsx:337
+#: src/components/space/SpaceEditor.tsx:1030
 msgid "Delete Space"
 msgstr "ลบ Espacio"
 
-#: src/components/channel/SpaceEditor.tsx:1004
+#: src/components/space/SpaceEditor.tsx:1004
 msgid "Delete this space"
 msgstr "ลบ Espacio นี้"
 
@@ -566,11 +566,11 @@ msgstr "ลิ้นชัก"
 msgid "Drop your profile photo here"
 msgstr "วางรูปโปรไฟล์ของคุณที่นี่"
 
-#: src/components/channel/ChannelEditor.tsx:51
+#: src/components/space/ChannelEditor.tsx:51
 msgid "Edit Channel"
 msgstr "แก้ไขช่องทาง"
 
-#: src/components/channel/GroupEditor.tsx:44
+#: src/components/space/GroupEditor.tsx:44
 msgid "Edit Group"
 msgstr "แก้ไขกลุ่ม"
 
@@ -578,9 +578,9 @@ msgstr "แก้ไขกลุ่ม"
 msgid "Emoji picker"
 msgstr "ตัวเลือกอีโมจิ"
 
-#: src/components/channel/SpaceEditor.tsx:259
-#: src/components/channel/SpaceEditor.tsx:325
-#: src/components/channel/SpaceEditor.tsx:662
+#: src/components/space/SpaceEditor.tsx:259
+#: src/components/space/SpaceEditor.tsx:325
+#: src/components/space/SpaceEditor.tsx:662
 msgid "Emojis"
 msgstr "Emojis"
 
@@ -596,7 +596,7 @@ msgstr "กรุณาใส่ชื่อสำหรับ Space ใหม�
 msgid "Enter a user's address to start messaging them."
 msgstr "กรุณาใส่ที่อยู่ของผู้ใช้เพื่อเริ่มส่งข้อความถึงพวกเขา"
 
-#: src/components/channel/SpaceEditor.tsx:876
+#: src/components/space/SpaceEditor.tsx:876
 msgid "Enter Address Manually"
 msgstr "กรุณาใส่ที่อยู่ด้วยตนเอง"
 
@@ -629,7 +629,7 @@ msgstr "เกิดข้อผิดพลาดในการขออนุ
 msgid "Error showing notification:"
 msgstr "เกิดข้อผิดพลาดในการแสดงการแจ้งเตือน:"
 
-#: src/components/channel/SpaceEditor.tsx:852
+#: src/components/space/SpaceEditor.tsx:852
 msgid "Existing Conversations"
 msgstr "การสนทนาที่มีอยู่"
 
@@ -719,8 +719,8 @@ msgstr "การตรวจสอบไฟล์ล้มเหลว กร�
 msgid "general"
 msgstr "ทั่วไป"
 
-#: src/components/channel/SpaceEditor.tsx:245
-#: src/components/channel/SpaceEditor.tsx:297
+#: src/components/space/SpaceEditor.tsx:245
+#: src/components/space/SpaceEditor.tsx:297
 #: src/components/modals/UserSettingsModal.tsx:174
 #: src/components/modals/UserSettingsModal.tsx:206
 msgid "General"
@@ -730,11 +730,11 @@ msgstr "ทั่วไป"
 msgid "General Chat"
 msgstr "แชททั่วไป"
 
-#: src/components/channel/SpaceEditor.tsx:970
+#: src/components/space/SpaceEditor.tsx:970
 msgid "Generate New Invite Link"
 msgstr "สร้างลิงก์เชิญใหม่"
 
-#: src/components/channel/SpaceEditor.tsx:968
+#: src/components/space/SpaceEditor.tsx:968
 msgid "Generating link..."
 msgstr "กำลังสร้างลิงก์..."
 
@@ -742,7 +742,7 @@ msgstr "กำลังสร้างลิงก์..."
 msgid "Go to conversation"
 msgstr "ไปที่การสนทนา"
 
-#: src/components/channel/GroupEditor.tsx:52
+#: src/components/space/GroupEditor.tsx:52
 msgid "Group Name"
 msgstr "ชื่อกลุ่ม"
 
@@ -830,9 +830,9 @@ msgstr "ประเภทข้อความไม่ถูกต้อง"
 msgid "invalid response"
 msgstr "การตอบสนองไม่ถูกต้อง"
 
-#: src/components/channel/SpaceEditor.tsx:273
-#: src/components/channel/SpaceEditor.tsx:318
-#: src/components/channel/SpaceEditor.tsx:836
+#: src/components/space/SpaceEditor.tsx:273
+#: src/components/space/SpaceEditor.tsx:318
+#: src/components/space/SpaceEditor.tsx:836
 msgid "Invites"
 msgstr "คำเชิญ"
 
@@ -879,7 +879,7 @@ msgstr "บันทึกคีย์แล้ว"
 msgid "Kick User"
 msgstr "เตะผู้ใช้"
 
-#: src/components/channel/SpaceEditor.tsx:608
+#: src/components/space/SpaceEditor.tsx:608
 msgid "Kick Users"
 msgstr "เตะผู้ใช้"
 
@@ -953,7 +953,7 @@ msgstr ""
 msgid "Manual Backup Required"
 msgstr "ต้องการการสำรองข้อมูลด้วยตนเอง"
 
-#: src/components/channel/Channel.tsx:310
+#: src/components/space/Channel.tsx:310
 #: src/components/direct/DirectMessage.tsx:369
 msgid "Members List"
 msgstr "รายชื่อสมาชิก"
@@ -1032,7 +1032,7 @@ msgstr "หนึ่งในเรา หนึ่งในเรา!"
 msgid "Online"
 msgstr "ออนไลน์"
 
-#: src/components/channel/SpaceEditor.tsx:586
+#: src/components/space/SpaceEditor.tsx:586
 msgid "Permissions:"
 msgstr "สิทธิ์:"
 
@@ -1063,7 +1063,7 @@ msgstr "ถึงขีดจำกัดการปักหมุดแล้
 msgid "Pin message"
 msgstr "ปักหมุดข้อความ"
 
-#: src/components/channel/SpaceEditor.tsx:604
+#: src/components/space/SpaceEditor.tsx:604
 msgid "Pin Messages"
 msgstr "ปักหมุดข้อความ"
 
@@ -1077,7 +1077,7 @@ msgstr "ถูกปักหมุด"
 msgid "Pinned by {0}"
 msgstr "ถูกปักหมุดโดย {0}"
 
-#: src/components/channel/Channel.tsx:278
+#: src/components/space/Channel.tsx:278
 msgid "Pinned Messages"
 msgstr "ข้อความที่ถูกปักหมุด"
 
@@ -1090,7 +1090,7 @@ msgstr "ถูกปักหมุดแล้ว!"
 msgid "PNG, JPG or JPEG • Max 2MB"
 msgstr "PNG, JPG หรือ JPEG • ขนาดสูงสุด 2MB"
 
-#: src/components/channel/SpaceEditor.tsx:472
+#: src/components/space/SpaceEditor.tsx:472
 msgid "Privacy Settings"
 msgstr "การตั้งค่าความเป็นส่วนตัว"
 
@@ -1104,11 +1104,11 @@ msgstr "ความเป็นส่วนตัว/ความปลอด�
 msgid "Private key saved to selected folder"
 msgstr "คีย์ส่วนตัวถูกบันทึกไปยังโฟลเดอร์ที่เลือก"
 
-#: src/components/channel/SpaceEditor.tsx:896
+#: src/components/space/SpaceEditor.tsx:896
 msgid "Public Invite Link"
 msgstr "ลิงก์เชิญสาธารณะ"
 
-#: src/components/channel/SpaceEditor.tsx:898
+#: src/components/space/SpaceEditor.tsx:898
 msgid ""
 "Public invite links allow anyone with access to the link join your Space. "
 "Understand the risks of enabling this, and to whom and where you share the "
@@ -1176,12 +1176,12 @@ msgstr "ลบ"
 msgid "Reply"
 msgstr "ตอบกลับ"
 
-#: src/components/channel/SpaceEditor.tsx:478
+#: src/components/space/SpaceEditor.tsx:478
 #: src/components/modals/CreateSpaceModal.tsx:107
 msgid "Require Message Signing"
 msgstr "ต้องการการลงนามข้อความ"
 
-#: src/components/channel/SpaceEditor.tsx:483
+#: src/components/space/SpaceEditor.tsx:483
 #: src/components/modals/CreateSpaceModal.tsx:112
 msgid ""
 "Require messages sent in this Space to be signed by the sender. Technically "
@@ -1190,9 +1190,9 @@ msgstr ""
 "ต้องการให้ข้อความที่ส่งใน Space นี้ได้รับการลงนามโดยผู้ส่ง "
 "กล่าวโดยเทคนิคแล้ว สิ่งนี้ทำให้ข้อความใน Space นี้ไม่สามารถปฏิเสธได้"
 
-#: src/components/channel/SpaceEditor.tsx:252
-#: src/components/channel/SpaceEditor.tsx:311
-#: src/components/channel/SpaceEditor.tsx:515
+#: src/components/space/SpaceEditor.tsx:252
+#: src/components/space/SpaceEditor.tsx:311
+#: src/components/space/SpaceEditor.tsx:515
 msgid "Roles"
 msgstr "บทบาท"
 
@@ -1200,12 +1200,12 @@ msgstr "บทบาท"
 msgid "Save"
 msgstr "บันทึก"
 
-#: src/components/channel/ChannelEditor.tsx:75
-#: src/components/channel/GroupEditor.tsx:63
-#: src/components/channel/SpaceEditor.tsx:503
-#: src/components/channel/SpaceEditor.tsx:650
-#: src/components/channel/SpaceEditor.tsx:736
-#: src/components/channel/SpaceEditor.tsx:824
+#: src/components/space/ChannelEditor.tsx:75
+#: src/components/space/GroupEditor.tsx:63
+#: src/components/space/SpaceEditor.tsx:503
+#: src/components/space/SpaceEditor.tsx:650
+#: src/components/space/SpaceEditor.tsx:736
+#: src/components/space/SpaceEditor.tsx:824
 #: src/components/modals/UserSettingsModal.tsx:328
 #: src/components/modals/UserSettingsModal.tsx:469
 #: src/components/user/UserProfileEdit.tsx:158
@@ -1268,11 +1268,11 @@ msgstr "ความปลอดภัย"
 msgid "Select an option"
 msgstr "เลือกตัวเลือก"
 
-#: src/components/channel/SpaceEditor.tsx:873
+#: src/components/space/SpaceEditor.tsx:873
 msgid "Select conversation"
 msgstr "เลือกการสนทนา"
 
-#: src/components/channel/SpaceEditor.tsx:467
+#: src/components/space/SpaceEditor.tsx:467
 msgid "Select default channel"
 msgstr "เลือกช่องทางเริ่มต้น"
 
@@ -1280,7 +1280,7 @@ msgstr "เลือกช่องทางเริ่มต้น"
 msgid "Select Image"
 msgstr "เลือกภาพ"
 
-#: src/components/channel/SpaceEditor.tsx:595
+#: src/components/space/SpaceEditor.tsx:595
 msgid "Select permissions"
 msgstr "เลือกสิทธิ์"
 
@@ -1292,11 +1292,11 @@ msgstr "เลือกภาพโปรไฟล์"
 msgid "Send"
 msgstr "ส่ง"
 
-#: src/components/channel/SpaceEditor.tsx:992
+#: src/components/space/SpaceEditor.tsx:992
 msgid "Send Invite"
 msgstr "ส่งคำเชิญ"
 
-#: src/components/channel/SpaceEditor.tsx:839
+#: src/components/space/SpaceEditor.tsx:839
 msgid ""
 "Send invites to people you've previously had conversations with. An invite "
 "button will appear in their inbox."
@@ -1339,7 +1339,7 @@ msgstr "แสดงหน้าจอหลัก"
 msgid "Skip Adding Photo"
 msgstr "ข้ามการเพิ่มภาพ"
 
-#: src/components/channel/SpaceEditor.tsx:391
+#: src/components/space/SpaceEditor.tsx:391
 msgid "Space Banner"
 msgstr "แบนเนอร์ Space"
 
@@ -1347,7 +1347,7 @@ msgstr "แบนเนอร์ Space"
 msgid "Space Icon Attachment"
 msgstr "ไฟล์แนบไอคอน Space"
 
-#: src/components/channel/SpaceEditor.tsx:380
+#: src/components/space/SpaceEditor.tsx:380
 msgid "Space Name"
 msgstr "ชื่อ Space"
 
@@ -1363,14 +1363,14 @@ msgstr "สถานะไปที่นี่"
 msgid "Stay Connected, Stay Invisible"
 msgstr "เชื่อมต่ออยู่เสมอ อยู่ไม่เห็น"
 
-#: src/components/channel/SpaceEditor.tsx:266
-#: src/components/channel/SpaceEditor.tsx:304
-#: src/components/channel/SpaceEditor.tsx:748
+#: src/components/space/SpaceEditor.tsx:266
+#: src/components/space/SpaceEditor.tsx:304
+#: src/components/space/SpaceEditor.tsx:748
 msgid "Stickers"
 msgstr "สติกเกอร์"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/channel/SpaceEditor.tsx:886
+#: src/components/space/SpaceEditor.tsx:886
 msgid "Successfully sent invite to {0}"
 msgstr "ส่งคำเชิญไปยัง {0} สำเร็จ"
 
@@ -1406,7 +1406,7 @@ msgid ""
 msgstr ""
 "นี่คือที่อยู่สาธารณะของคุณและปลอดภัยที่จะแชร์กับใครก็ตามที่คุณต้องการติดต่อด้วย"
 
-#: src/components/channel/SpaceEditor.tsx:926
+#: src/components/space/SpaceEditor.tsx:926
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link. Current Space members will not be removed "
@@ -1497,11 +1497,11 @@ msgid ""
 "picture"
 msgstr "จนกว่าคุณจะตอบกลับ ผู้ส่งนี้จะไม่เห็นชื่อแสดงของคุณหรือรูปโปรไฟล์"
 
-#: src/components/channel/SpaceEditor.tsx:680
+#: src/components/space/SpaceEditor.tsx:680
 msgid "Upload Emoji"
 msgstr "อัปโหลด Emoji"
 
-#: src/components/channel/SpaceEditor.tsx:766
+#: src/components/space/SpaceEditor.tsx:766
 msgid "Upload Sticker"
 msgstr "อัปโหลดสติกเกอร์"
 

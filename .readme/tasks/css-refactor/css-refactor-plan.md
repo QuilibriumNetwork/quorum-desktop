@@ -259,9 +259,9 @@ From css-inventory.md, targeting the **highest priority @apply-convertible selec
   - Convert layout to `@apply flex justify-between items-center p-4;`
 - [ ] Migrate `src/components/space/Space.scss` - `.space-content` class
   - Convert layout to `@apply flex-1 overflow-hidden;`
-- [ ] Migrate `src/components/channel/Channel.scss` - `.channel-header` class
+- [ ] Migrate `src/components/space/Channel.scss` - `.channel-header` class
   - Convert layout to `@apply flex justify-between items-center p-2;`
-- [ ] Migrate `src/components/channel/Channel.scss` - `.channel-messages` class
+- [ ] Migrate `src/components/space/Channel.scss` - `.channel-messages` class
   - Convert layout to `@apply flex-1 overflow-y-auto;`
 - [ ] Test space and channel layout components
 - [ ] Visual regression test - verify space/channel interfaces unchanged

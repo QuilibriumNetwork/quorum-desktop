@@ -258,8 +258,8 @@ We identified two types of modals that needed different approaches:
 - `src/components/modals/NewDirectMessageModal.tsx` ✅ **Recently updated with responsive buttons**
 - `src/components/message/Message.tsx`
 - `src/components/AppWithSearch.tsx`
-- `src/components/channel/ChannelList.tsx`
-- `src/components/channel/ChannelGroup.tsx`
+- `src/components/space/ChannelList.tsx`
+- `src/components/space/ChannelGroup.tsx`
 
 #### CSS Changes:
 
