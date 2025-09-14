@@ -12,5 +12,6 @@ export { ColorSwatchTestScreen } from './ColorSwatchTestScreen';
 export { RadioGroupTestScreen } from './RadioGroupTestScreen';
 export { TooltipTestScreen } from './TooltipTestScreen';
 export { IconTestScreen } from './IconTestScreen';
+export { CalloutTestScreen } from './CalloutTestScreen';
 export { FileUploadTestScreen } from './FileUploadTestScreen';
 export { ScrollContainerTestScreen } from './ScrollContainerTestScreen';

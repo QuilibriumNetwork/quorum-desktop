@@ -31,6 +31,7 @@ import {
   RadioGroupTestScreen,
   TooltipTestScreen,
   IconTestScreen,
+  CalloutTestScreen,
   FileUploadTestScreen,
   ScrollContainerTestScreen,
 } from '@/test/primitives';
@@ -179,6 +180,8 @@ function ThemedAppContent() {
           return <TooltipTestScreen />;
         case 'icon':
           return <IconTestScreen />;
+        case 'callout':
+          return <CalloutTestScreen />;
         case 'fileupload':
           return <FileUploadTestScreen />;
         default:

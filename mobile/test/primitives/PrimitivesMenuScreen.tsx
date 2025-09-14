@@ -114,6 +114,13 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
       onPress: () => onSelectPrimitive('icon'),
     },
     {
+      id: 'callout',
+      title: 'Callout',
+      description: 'Centralized messaging component with variants, sizes, and dismissible options',
+      icon: 'info-circle',
+      onPress: () => onSelectPrimitive('callout'),
+    },
+    {
       id: 'text',
       title: 'Text',
       description: 'Essential text component with variants, sizes, and weights',

@@ -21,6 +21,7 @@ import {
   FileUpload,
   Spacer,
   ScrollContainer,
+  Callout,
 } from '@/components/primitives';
 import ThemeRadioGroup from '@/components/ThemeRadioGroup';
 import AccentColorSwitcher from '@/components/AccentColorSwitcher';
@@ -100,6 +101,7 @@ export const PrimitivesPlayground: React.FC = () => {
     { id: 'radiogroup-primitive', label: 'RadioGroup' },
     { id: 'tooltip-primitive', label: 'Tooltip' },
     { id: 'icon-primitive', label: 'Icon' },
+    { id: 'callout-primitive', label: 'Callout' },
     { id: 'fileupload-primitive', label: 'FileUpload' },
   ];
 
@@ -3509,6 +3511,121 @@ export const PrimitivesPlayground: React.FC = () => {
                 <li>Automatic theme color integration on mobile</li>
                 <li>Ready to replace all current FontAwesome usage</li>
               </ul>
+            </div>
+          </section>
+
+          {/* Callout Primitive */}
+          <section
+            id="callout-primitive"
+            className="border border-default rounded-lg p-6 space-y-4"
+          >
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold mb-3">
+                  Callout Primitive
+                </h2>
+                <p className="text-main">
+                  Centralized component for consistent messaging across the app
+                </p>
+              </div>
+
+              {/* Variant Examples */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Variants</h3>
+                <div className="space-y-3">
+                  <Callout variant="info">
+                    This is an info callout with important information for the user.
+                  </Callout>
+                  <Callout variant="success">
+                    Great! Your operation completed successfully.
+                  </Callout>
+                  <Callout variant="warning">
+                    Warning: Please review this information carefully.
+                  </Callout>
+                  <Callout variant="danger">
+                    Error: Something went wrong. Please try again.
+                  </Callout>
+                </div>
+              </div>
+
+              {/* Size Examples */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Sizes</h3>
+                <div className="space-y-3">
+                  <Callout variant="info" size="xs">
+                    Extra small callout for compact messages
+                  </Callout>
+                  <Callout variant="info" size="sm">
+                    Small callout (default size) for regular messages
+                  </Callout>
+                  <Callout variant="info" size="md">
+                    Medium callout for more prominent messages
+                  </Callout>
+                </div>
+              </div>
+
+              {/* Layout Examples */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Layout Modes</h3>
+                <div className="space-y-3">
+                  <Callout variant="success" layout="base">
+                    Base layout with background and border (default)
+                  </Callout>
+                  <Callout variant="success" layout="minimal">
+                    Minimal layout with icon and colored text only
+                  </Callout>
+                </div>
+              </div>
+
+              {/* Dismissible Examples */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Dismissible</h3>
+                <div className="space-y-3">
+                  <Callout variant="warning" dismissible onClose={() => console.log('Closed!')}>
+                    This callout can be dismissed by clicking the × button
+                  </Callout>
+                  <Callout variant="info" layout="minimal" dismissible>
+                    Minimal layout can also be dismissible
+                  </Callout>
+                </div>
+              </div>
+
+
+              {/* Combined Examples */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Combined Features</h3>
+                <div className="space-y-3">
+                  <Callout variant="danger" size="xs" layout="minimal" dismissible>
+                    Compact error message with minimal styling
+                  </Callout>
+                  <Callout variant="success" size="md" dismissible>
+                    Large success message with dismissible button
+                  </Callout>
+                  <Callout variant="warning" size="sm" layout="base">
+                    <div>
+                      <strong>Custom Content:</strong> You can pass any React content as children.
+                      <ul className="mt-2 ml-4 list-disc">
+                        <li>List item 1</li>
+                        <li>List item 2</li>
+                      </ul>
+                    </div>
+                  </Callout>
+                </div>
+              </div>
+
+              {/* Mobile Testing Notes */}
+              <div className="p-4 bg-surface-1 rounded-lg">
+                <h4 className="font-semibold mb-2">
+                  Mobile Testing Notes
+                </h4>
+                <ul className="text-sm text-subtle space-y-1 list-disc list-inside">
+                  <li>Web: Uses Tailwind classes with CSS transitions</li>
+                  <li>Native: Uses React Native Animated API for smooth transitions</li>
+                  <li>Icons adapt to platform (FontAwesome on web, react-native-vector-icons on mobile)</li>
+                  <li>Auto-close and dismissible features work on both platforms</li>
+                  <li>Touch targets are optimized for mobile interaction</li>
+                </ul>
+              </div>
             </div>
           </section>
 
