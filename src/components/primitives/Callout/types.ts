@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export type CalloutVariant = 'info' | 'success' | 'warning' | 'danger';
+export type CalloutVariant = 'info' | 'success' | 'warning' | 'error';
 export type CalloutSize = 'xs' | 'sm' | 'md';
 export type CalloutLayout = 'base' | 'minimal';
 

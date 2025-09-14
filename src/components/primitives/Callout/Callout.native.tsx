@@ -14,14 +14,14 @@ const variantIcons: Record<string, IconName> = {
   info: 'info',
   success: 'check',
   warning: 'exclamation-triangle',
-  danger: 'exclamation-triangle',
+  error: 'exclamation-triangle',
 };
 
 const variantColors = {
   info: '#3B82F6',
   success: '#10B981',
   warning: '#F59E0B',
-  danger: '#EF4444',
+  error: '#EF4444',
 };
 
 const getVariantStyles = (variant: string, layout: string) => {

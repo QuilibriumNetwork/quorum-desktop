@@ -3,7 +3,7 @@ import { Virtuoso } from 'react-virtuoso';
 import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../db/messages';
 import { SearchResultItem } from './SearchResultItem';
-import { Icon, FlexCenter, Container, Text } from '../primitives';
+import { Icon, FlexCenter, Container, Text, Callout } from '../primitives';
 import { DropdownPanel } from '../DropdownPanel';
 import {
   useSearchResultsState,
@@ -76,12 +76,11 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
 
     if (isError) {
       return (
-        <FlexCenter className="search-error-state">
-          <Icon name="exclamation-triangle" className="error-icon" />
-          <Text className="error-message">
+        <Container className="p-3">
+          <Callout variant="error" className="w-full">
             {t`Search failed: ${error?.message || 'Unknown error'}`}
-          </Text>
-        </FlexCenter>
+          </Callout>
+        </Container>
       );
     }
 

@@ -1,6 +1,6 @@
 // Button primitive styles - copied from original Button.scss
 %btn-base {
-  @apply flex items-center justify-center py-2 px-4 rounded-full shadow-lg font-medium text-sm text-center select-none transition duration-300 text-white;
+  @apply flex items-center justify-center py-2 px-4 rounded-full shadow-lg font-medium text-sm text-center select-none transition duration-300 text-white shadow-sm;
 }
 
 .btn-primary {
@@ -27,7 +27,7 @@
 
 .btn-light {
   @extend %btn-base;
-  @apply bg-accent-100 border-2 border-accent-100 cursor-pointer text-accent-700;
+  @apply bg-accent-100 border-2 border-transparent cursor-pointer text-accent-700;
 
   &:hover {
     @apply bg-transparent border-2 border-accent-100 text-accent-100;
@@ -45,16 +45,16 @@
 
 .btn-subtle {
   @extend %btn-base;
-  @apply bg-surface-6 border-2 border-surface-6 cursor-pointer text-main shadow-sm;
+  @apply bg-surface-7 border-2 border-transparent cursor-pointer text-main;
 
   &:hover {
-    @apply bg-surface-7 border-surface-7;
+    @apply bg-surface-8 border-surface-8;
   }
 }
 
 .btn-subtle-outline {
   @extend %btn-base;
-  @apply bg-transparent border-2 border-surface-6 cursor-pointer text-subtle shadow-sm;
+  @apply bg-transparent border-2 border-surface-6 cursor-pointer text-subtle;
 
   &:hover {
     @apply bg-surface-6 border-surface-6 text-main;

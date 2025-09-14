@@ -45,7 +45,7 @@ export const CalloutTestScreen: React.FC = () => {
             </Callout>
           </View>
           <View style={styles.exampleContainer}>
-            <Callout variant="danger">
+            <Callout variant="error">
               Error: Something went wrong. Please try again.
             </Callout>
           </View>
@@ -105,7 +105,7 @@ export const CalloutTestScreen: React.FC = () => {
         <View style={[styles.section, { backgroundColor: theme.colors.surface[1] }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Combined Features</Text>
           <View style={styles.exampleContainer}>
-            <Callout variant="danger" size="xs" layout="minimal" dismissible>
+            <Callout variant="error" size="xs" layout="minimal" dismissible>
               Compact error message with minimal styling
             </Callout>
           </View>

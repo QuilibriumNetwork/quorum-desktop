@@ -7,7 +7,7 @@ Create a centralized `Callout` primitive component to provide consistent messagi
 
 ### Core Features
 - **Cross-platform**: Web (.web.tsx) and Native (.native.tsx) versions
-- **Variants**: `info`, `success`, `warning`, `danger` (using existing Tailwind color scheme)
+- **Variants**: `info`, `success`, `warning`, `error` (using existing Tailwind color scheme)
 - **Two layout modes**:
   - **Base layout**: Rounded colored border + colored background + icon (left) + text (right)
   - **Minimal layout**: Icon + colored text only (no background, no border)
@@ -21,7 +21,7 @@ Create a centralized `Callout` primitive component to provide consistent messagi
 ### API Design
 ```tsx
 interface CalloutProps {
-  variant: 'info' | 'success' | 'warning' | 'danger';
+  variant: 'info' | 'success' | 'warning' | 'error';
   children: React.ReactNode;
   size?: 'xs' | 'sm' | 'md';
   layout?: 'base' | 'minimal';
@@ -65,7 +65,7 @@ interface CalloutProps {
   - `info`: info-circle
   - `success`: checkmark
   - `warning`: exclamation-triangle
-  - `danger`: exclamation-triangle
+  - `error`: exclamation-triangle
 
 ### 5. Export and documentation
 - [ ] Add to `src/components/primitives/index.ts`
@@ -73,7 +73,7 @@ interface CalloutProps {
 
 ### 6. Playground examples
 #### Web playground (`src/dev/primitives-playground/`)
-- [ ] Example for each variant: `info`, `success`, `warning`, `danger`
+- [ ] Example for each variant: `info`, `success`, `warning`, `error`
 - [ ] Example with minimal layout (text only)
 - [ ] Example with dismissible (closing ×)
 - [ ] Example with `xs` size
@@ -81,7 +81,7 @@ interface CalloutProps {
 
 #### Mobile playground (`mobile/test/primitives/`)
 - [ ] Create `CalloutTestScreen.tsx`
-- [ ] Example for each variant: `info`, `success`, `warning`, `danger`
+- [ ] Example for each variant: `info`, `success`, `warning`, `error`
 - [ ] Example with minimal layout (text only)
 - [ ] Example with dismissible (closing ×)
 - [ ] Example with `xs` size
@@ -90,11 +90,11 @@ interface CalloutProps {
 STOP HERE SO WE CAN TEST AND ADJUST STYLE
 
 ### 7. Audit existing implementations
-- [ ] Identify other ad-hoc messaging that can use Callout (e.g )
+- [ ] Identify components/places that can use Callout (e.g )
 - [ ] check in Modals (src\components\modals) - Input,Select,Textarea primitves must maintain their own success/error messages, no callout
 - [ ] check in other places, e.g. InviteLink.tsx, Error messages for file uploads, etc...
 - [ ] create a full audit of the potential implementations of the new Callout primitve witha list of files, current implementation of erros/success/warning message and how it could be changed
-- [ ] post audit in .readme/taks
+- [ ] post audit in .readme/tasks
 
 
 ## Technical Considerations

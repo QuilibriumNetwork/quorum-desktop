@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Input, Button, Modal, Switch, Icon, Tooltip, Spacer } from '../primitives';
+import { Input, Button, Modal, Switch, Icon, Tooltip, Spacer, Callout } from '../primitives';
 import './CreateSpaceModal.scss';
 import SpaceIcon from '../navbar/SpaceIcon';
 import { useSpaceCreation, useFileUpload, useSpaceSettings } from '../../hooks';
@@ -86,14 +86,15 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               labelType="static"
             />
             {fileError && (
-              <div className="error-label flex items-center justify-between mt-2">
-                <span>{fileError}</span>
-                <Icon
-                  name="times"
-                  className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
-                  onClick={clearFileError}
-                />
-              </div>
+              <Callout
+                variant="error"
+                size="sm"
+                className="mt-2"
+                dismissible
+                onClose={clearFileError}
+              >
+                {fileError}
+              </Callout>
             )}
           </div>
         </div>

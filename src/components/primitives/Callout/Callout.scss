@@ -1,0 +1,90 @@
+// Callout component styles
+// Optimized for display on surface-5 backgrounds (modals/panels)
+
+.callout {
+  // Base styles handled by Tailwind classes
+  // This file provides theme-specific color overrides
+}
+
+// Light theme callout colors - brighter for better visibility on light surfaces
+:root:not(.dark) {
+  // Info - Brighter blue for better contrast
+  .callout-info {
+    --callout-bg: rgba(59, 130, 246, 0.15); // Increased from 0.10
+    --callout-border: rgba(59, 130, 246, 0.45); // Increased from 0.30
+    --callout-text: rgb(37, 99, 235); // Slightly darker blue for better contrast
+  }
+
+  // Success - Brighter green
+  .callout-success {
+    --callout-bg: rgba(34, 197, 94, 0.15); // Increased from 0.10
+    --callout-border: rgba(34, 197, 94, 0.45); // Increased from 0.30
+    --callout-text: rgb(22, 163, 74); // Slightly darker green
+  }
+
+  // Warning - Brighter amber
+  .callout-warning {
+    --callout-bg: rgba(245, 158, 11, 0.15); // Increased from 0.10
+    --callout-border: rgba(245, 158, 11, 0.45); // Increased from 0.30
+    --callout-text: rgb(217, 119, 6); // Slightly darker amber
+  }
+
+  // Error - Brighter red
+  .callout-error {
+    --callout-bg: rgba(239, 68, 68, 0.15); // Increased from 0.10
+    --callout-border: rgba(239, 68, 68, 0.45); // Increased from 0.30
+    --callout-text: rgb(220, 38, 38); // Slightly darker red
+  }
+}
+
+// Dark theme callout colors - optimized for dark surface-5
+:root.dark {
+  // Info - Much brighter blue for dark theme
+  .callout-info {
+    --callout-bg: rgba(96, 165, 250, 0.15); // Brighter blue, higher opacity
+    --callout-border: rgba(96, 165, 250, 0.35);
+    --callout-text: rgb(147, 197, 253); // Bright blue
+  }
+
+  // Success - Brighter green for dark theme
+  .callout-success {
+    --callout-bg: rgba(74, 222, 128, 0.12);
+    --callout-border: rgba(74, 222, 128, 0.30);
+    --callout-text: rgb(134, 239, 172); // Bright green
+  }
+
+  // Warning - Brighter amber for dark theme
+  .callout-warning {
+    --callout-bg: rgba(251, 191, 36, 0.12);
+    --callout-border: rgba(251, 191, 36, 0.30);
+    --callout-text: rgb(252, 211, 77); // Bright amber
+  }
+
+  // Error - Brighter red for dark theme
+  .callout-error {
+    --callout-bg: rgba(248, 113, 113, 0.12);
+    --callout-border: rgba(248, 113, 113, 0.30);
+    --callout-text: rgb(252, 165, 165); // Bright red
+  }
+}
+
+// Apply the CSS variables to base layout callouts
+.callout-base {
+  background-color: var(--callout-bg) !important;
+  border-color: var(--callout-border) !important;
+  color: var(--callout-text) !important;
+
+  // Ensure icons also use the callout text color
+  svg {
+    color: var(--callout-text) !important;
+  }
+}
+
+// Apply text color to minimal layout callouts
+.callout-minimal {
+  color: var(--callout-text) !important;
+
+  svg {
+    color: var(--callout-text) !important;
+  }
+}

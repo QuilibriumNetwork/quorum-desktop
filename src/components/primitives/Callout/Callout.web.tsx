@@ -3,12 +3,13 @@ import clsx from 'clsx';
 import { CalloutWebProps } from './types';
 import { Icon } from '../Icon';
 import { IconName } from '../Icon/types';
+import './Callout.scss';
 
 const variantIcons: Record<string, IconName> = {
   info: 'info',
   success: 'check',
   warning: 'exclamation-triangle',
-  danger: 'exclamation-triangle',
+  error: 'exclamation-triangle',
 };
 
 const variantClasses = {
@@ -16,13 +17,13 @@ const variantClasses = {
     info: 'border-info/30 bg-info/10 text-info',
     success: 'border-success/30 bg-success/10 text-success',
     warning: 'border-warning/30 bg-warning/10 text-warning',
-    danger: 'border-danger/30 bg-danger/10 text-danger',
+    error: 'border-danger/30 bg-danger/10 text-danger',
   },
   minimal: {
     info: 'text-info',
     success: 'text-success',
     warning: 'text-warning',
-    danger: 'text-danger',
+    error: 'text-danger',
   },
 };
 
@@ -80,7 +81,10 @@ const Callout: React.FC<CalloutWebProps> = ({
     <div
       data-testid={testID}
       className={clsx(
+        'callout',
         'flex items-start gap-2 transition-all duration-200',
+        `callout-${variant}`, // Add variant class for CSS overrides
+        isBase ? 'callout-base' : 'callout-minimal', // Add layout class
         isBase && baseClasses,
         !isBase && variantClasses.minimal[variant],
         sizeClasses[size],

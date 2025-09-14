@@ -3517,7 +3517,7 @@ export const PrimitivesPlayground: React.FC = () => {
           {/* Callout Primitive */}
           <section
             id="callout-primitive"
-            className="border border-default rounded-lg p-6 space-y-4"
+            className="border border-default rounded-lg bg-surface-5 p-6 space-y-4"
           >
             <div className="space-y-6">
               <div>
@@ -3542,7 +3542,7 @@ export const PrimitivesPlayground: React.FC = () => {
                   <Callout variant="warning">
                     Warning: Please review this information carefully.
                   </Callout>
-                  <Callout variant="danger">
+                  <Callout variant="error">
                     Error: Something went wrong. Please try again.
                   </Callout>
                 </div>
@@ -3595,7 +3595,7 @@ export const PrimitivesPlayground: React.FC = () => {
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Combined Features</h3>
                 <div className="space-y-3">
-                  <Callout variant="danger" size="xs" layout="minimal" dismissible>
+                  <Callout variant="error" size="xs" layout="minimal" dismissible>
                     Compact error message with minimal styling
                   </Callout>
                   <Callout variant="success" size="md" dismissible>
@@ -3610,6 +3610,50 @@ export const PrimitivesPlayground: React.FC = () => {
                       </ul>
                     </div>
                   </Callout>
+                </div>
+              </div>
+
+              {/* Callout on bg-chat */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">On Chat Background</h3>
+                <div className="p-4 rounded-lg space-y-4" style={{ backgroundColor: 'var(--color-bg-chat)' }}>
+                  <div className="text-sm text-subtle mb-3">
+                    Testing how Callout variants look on chat background (used in message areas)
+                  </div>
+
+                  {/* Base layout */}
+                  <div className="space-y-3">
+                    <div className="text-xs font-semibold text-subtle uppercase tracking-wider">Base Layout</div>
+                    <Callout variant="info">
+                      Info callout on chat background
+                    </Callout>
+                    <Callout variant="success">
+                      Success callout on chat background
+                    </Callout>
+                    <Callout variant="warning">
+                      Warning callout on chat background
+                    </Callout>
+                    <Callout variant="error">
+                      Error callout on chat background
+                    </Callout>
+                  </div>
+
+                  {/* Minimal layout */}
+                  <div className="space-y-3 pt-3 border-t border-surface-6">
+                    <div className="text-xs font-semibold text-subtle uppercase tracking-wider">Minimal Layout</div>
+                    <Callout variant="info" layout="minimal">
+                      Info minimal callout on chat background
+                    </Callout>
+                    <Callout variant="success" layout="minimal">
+                      Success minimal callout on chat background
+                    </Callout>
+                    <Callout variant="warning" layout="minimal">
+                      Warning minimal callout on chat background
+                    </Callout>
+                    <Callout variant="error" layout="minimal">
+                      Error minimal callout on chat background
+                    </Callout>
+                  </div>
                 </div>
               </div>
 

@@ -9,6 +9,7 @@ import {
   Tooltip,
   Spacer,
   ScrollContainer,
+  Callout,
 } from '../primitives';
 import '../../styles/_modal_common.scss';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -133,43 +134,34 @@ const UserSettingsModal: React.FunctionComponent<{
       closeOnEscape={true}
     >
       <div className="modal-complex-container-inner relative">
-        {/* Saving/Error overlay */}
-        {(isSaving || saveError) && (
+        {/* Error/Success feedback */}
+        {saveError && (
+          <div className="p-4 border-b border-surface-6">
+            <Callout
+              variant="error"
+              size="sm"
+              dismissible
+              onClose={() => setSaveError('')}
+            >
+              <div>
+                <div className="font-medium">{t`Save Failed`}</div>
+                <div className="text-sm opacity-90 mt-1">{saveError}</div>
+              </div>
+            </Callout>
+          </div>
+        )}
+
+        {/* Loading overlay for saving */}
+        {isSaving && (
           <div className="absolute inset-0 z-50 flex items-center justify-center">
-            {/* Blur backdrop */}
             <div className="absolute inset-0 bg-black/30 backdrop-blur-sm rounded-lg" />
-            {/* Content - no background */}
             <div className="relative flex items-center gap-3">
-              {isSaving ? (
-                <>
-                  <Icon name="spinner" size={24} spin className="text-accent" />
-                  <div className="text-lg font-medium text-white">{t`Saving...`}</div>
-                </>
-              ) : (
-                <div className="flex flex-col items-center gap-4">
-                  <div className="flex items-center gap-3">
-                    <Icon
-                      name="exclamation-circle"
-                      size={24}
-                      className="text-danger"
-                    />
-                    <div className="text-lg font-medium text-danger">{t`Save Failed`}</div>
-                  </div>
-                  <div className="text-sm text-white/80 text-center">
-                    {saveError}
-                  </div>
-                  <Button
-                    type="secondary"
-                    size="small"
-                    onClick={() => setSaveError('')}
-                  >
-                    {t`Try Again`}
-                  </Button>
-                </div>
-              )}
+              <Icon name="spinner" size={24} spin className="text-accent" />
+              <div className="text-lg font-medium text-white">{t`Saving...`}</div>
             </div>
           </div>
         )}
+
         <div className="modal-complex-layout">
           {/* Desktop/Tablet Sidebar */}
           <div className="modal-complex-sidebar">

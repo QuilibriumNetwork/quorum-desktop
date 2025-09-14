@@ -1,4 +1,4 @@
-import { Button, Container, Text, FlexRow } from '../primitives';
+import { Button, Container, Text, FlexRow, Callout } from '../primitives';
 import {
   useInviteProcessing,
   useInviteJoining,
@@ -18,9 +18,9 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
   return (
     <Container className="w-full !max-w-[250px] sm:!max-w-[400px] lg:!max-w-[500px] lg:min-w-[500px] rounded-md p-2 sm:p-3 bg-surface-5 border border-surface-6">
       {displayError && (
-        <Text variant="error" className="mb-2 text-center sm:text-left">
+        <Callout variant="error" size="sm" className="mb-2">
           <Trans>The invite link has expired or is invalid.</Trans>
-        </Text>
+        </Callout>
       )}
       {space && (
         <Container className="font-bold flex flex-col items-center sm:items-start">
