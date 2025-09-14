@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 export type IconName =
   // Essential icons (currently used in primitives)
   | 'check'
+  | 'check-circle'
   | 'check-square'
   | 'square'
   | 'times'

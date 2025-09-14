@@ -1,5 +1,6 @@
 import {
   faCheck,
+  faCheckCircle,
   faCheckSquare,
   faSquare,
   faTimes,
@@ -95,6 +96,7 @@ import { IconName } from './types';
 export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   // Essential icons
   check: faCheck,
+  'check-circle': faCheckCircle,
   'check-square': faCheckSquare,
   square: faSquare,
   times: faTimes,
@@ -224,6 +226,7 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
 export const reactNativeIconMap: Record<IconName, string> = {
   // Essential icons
   check: 'check',
+  'check-circle': 'check-circle',
   'check-square': 'check-square',
   square: 'square-o',
   times: 'times',
