@@ -8,4 +8,5 @@ export type {
 
 // Platform-specific theme provider resolution
 // Vite will resolve ThemeProvider.web.tsx for web, Metro will resolve ThemeProvider.native.tsx for mobile
+// @ts-ignore - Platform-specific files (.web.tsx/.native.tsx) resolved by bundler
 export { useTheme, ThemeProvider } from './ThemeProvider';

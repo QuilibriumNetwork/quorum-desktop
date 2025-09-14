@@ -87,6 +87,8 @@ interface CalloutProps {
 - [ ] Example with `xs` size
 - [ ] Example with `md` size
 
+STOP HERE SO WE CAN TEST AND ADJUST STYLE
+
 ### 7. Audit existing implementations
 - [ ] Identify other ad-hoc messaging that can use Callout (e.g )
 - [ ] check in Modals (src\components\modals) - Input,Select,Textarea primitves must maintain their own success/error messages, no callout

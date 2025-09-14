@@ -84,6 +84,8 @@ import {
   faBug,
   faFlask,
   faChartLine,
+  faIdBadge,
+  faCertificate,
 } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -213,6 +215,9 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   bug: faBug,
   flask: faFlask,
   'chart-line': faChartLine,
+  badge: faIdBadge,
+  'id-badge': faIdBadge,
+  certificate: faCertificate,
 };
 
 // React Native vector icon names (using FontAwesome family from react-native-vector-icons)
@@ -339,6 +344,9 @@ export const reactNativeIconMap: Record<IconName, string> = {
   bug: 'bug',
   flask: 'flask',
   'chart-line': 'line-chart',
+  badge: 'id-badge',
+  'id-badge': 'id-badge',
+  certificate: 'certificate',
 };
 
 // Helper function to check if a string is a valid icon name
