@@ -110,6 +110,22 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 </FlexRow>
 ```
 
+### **Status Messages**
+
+```tsx
+<FlexColumn gap="sm">
+  <Callout variant="success" dismissible>
+    Operation completed successfully!
+  </Callout>
+  <Callout variant="warning" layout="minimal">
+    Connection issues detected. Some features may not work.
+  </Callout>
+  <Callout variant="info" size="xs">
+    New version available
+  </Callout>
+</FlexColumn>
+```
+
 ---
 
 ## 🎯 **Component Categories**
@@ -130,6 +146,10 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 - Modal, Tooltip, OverlayBackdrop, ModalContainer
 
+### **Messaging Components**
+
+- Callout
+
 ### **Visual Components**
 
 - Icon, ColorSwatch
@@ -145,6 +165,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 | `<button onClick={}>`             | `<Button onClick={}>`                     |
 | Manual margin/padding for spacing | Use Flex gap props or semantic components |
 | CSS classes in React Native       | Use component props                       |
+| Custom alert/notification divs    | `<Callout variant="...">`                 |
 
 ---
 
@@ -156,7 +177,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ---
 
-_Last updated: 2025-09-13 14:13 UTC_
+_Last updated: 2025-09-14 14:30 UTC_
 
 ---
 

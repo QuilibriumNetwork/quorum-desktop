@@ -382,6 +382,38 @@ Fast lookup guide for all primitive components with essential props and examples
 
 ---
 
+## 💬 Messaging Components
+
+### Callout
+
+```tsx
+<Callout
+  variant="info|success|warning|error"
+  size="xs|sm|md" // Default: sm
+  layout="base|minimal" // Default: base
+  dismissible={boolean}
+  autoClose={number} // seconds, web only
+  onClose={() => {}}
+  className="css-classes" // Web only
+  testID="test-id"
+>
+  <Text>Callout message content</Text>
+</Callout>
+```
+
+**Quick Examples:**
+
+```tsx
+<Callout variant="info">Information message</Callout>
+<Callout variant="success">Operation completed!</Callout>
+<Callout variant="warning" dismissible>Warning message</Callout>
+<Callout variant="error" size="md">Critical error message</Callout>
+<Callout variant="info" layout="minimal">Minimal info message</Callout>
+<Callout variant="warning" autoClose={5}>Auto-dismiss in 5 seconds</Callout>
+```
+
+---
+
 ## 🎨 Visual Components
 
 ### Icon
@@ -599,6 +631,30 @@ theme.colors.utilities.info; // Info
 </ModalContainer>
 ```
 
+### Status Message with Callout
+
+```tsx
+<FlexColumn gap="md">
+  <Callout variant="success" dismissible onClose={clearSuccessMessage}>
+    Settings have been saved successfully!
+  </Callout>
+
+  <Callout variant="warning" layout="minimal">
+    <FlexColumn gap="xs">
+      <Text weight="semibold">Connection Issues Detected</Text>
+      <Text size="sm">Some features may not work properly until connection is restored.</Text>
+    </FlexColumn>
+  </Callout>
+
+  <Callout variant="info" size="xs">
+    <FlexRow gap="sm" align="center">
+      <Text>New version available</Text>
+      <Button type="light" size="small" onClick={updateApp}>Update</Button>
+    </FlexRow>
+  </Callout>
+</FlexColumn>
+```
+
 ---
 
 ## 🚫 Common Mistakes
@@ -617,6 +673,7 @@ theme.colors.utilities.info; // Info
 | Manual margin/padding for spacing         | Use Flex gap props or semantic components                |
 | CSS classes in React Native               | Use component props                                      |
 | Raw text outside Text components          | Always wrap text in Text components                      |
+| Custom alert/notification components      | `<Callout variant="info\|success\|warning\|error">`      |
 
 ## 🏗️ **View vs Flex Usage Pattern**
 
@@ -664,7 +721,7 @@ theme.colors.utilities.info; // Info
 
 ---
 
-_Last updated: 2025-09-13 14:12 UTC_
+_Last updated: 2025-09-14 14:30 UTC_
 
 ---
 
