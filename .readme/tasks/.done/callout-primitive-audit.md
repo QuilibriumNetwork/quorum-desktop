@@ -382,4 +382,21 @@ Found many `console.error()` statements throughout hooks and services. These are
 
 ---
 
+## RECENT UPDATE: Color System Consolidation
+
+**Date:** 2025-09-14
+**Change:** Consolidated color system to use RGB-only approach
+
+### What Changed:
+- ❌ **Removed** all `-hex` color variants (`--danger-hex`, `--warning-hex`, etc.)
+- ✅ **Kept** RGB color variants (`--danger`, `--warning`, etc.)
+- 🔄 **Updated** all references to use `rgb(var(--danger))` instead of `var(--danger-hex)`
+
+### Impact on Callout Implementation:
+- All Callout examples in this audit now use the modern RGB approach
+- `variant="error"` uses `rgb(var(--danger))` for consistent theming
+- Both solid colors and opacity effects use single color source
+
+---
+
 *Updated: 2025-09-14*

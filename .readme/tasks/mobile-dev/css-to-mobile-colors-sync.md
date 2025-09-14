@@ -23,7 +23,7 @@
 - Text colors: `--color-text-main` → `text.main`
 - Background colors: `--color-bg-sidebar` → `bg.sidebar`
 - Border colors: `--color-border-strong` → `border.strong`
-- Utility colors: `--danger-hex` → `utilities.danger`
+- Utility colors: `--danger` → `utilities.danger` (RGB values)
 
 ### 3. Preserve Mobile-Specific Sections
 

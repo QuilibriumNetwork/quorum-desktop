@@ -649,7 +649,7 @@ const SpaceEditor: React.FunctionComponent<{
                                       >
                                         <Icon
                                           name="trash"
-                                          className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
+                                          className="cursor-pointer text-danger hover:text-danger-hover"
                                           onClick={(e) => deleteRole(e, i)}
                                         />
                                       </Tooltip>
@@ -752,7 +752,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 <div className="flex flex-col grow justify-around items-end">
                                   <Icon
                                     name="trash"
-                                    className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
+                                    className="cursor-pointer text-danger hover:text-danger-hover"
                                     onClick={() => removeEmoji(i)}
                                   />
                                 </div>
@@ -840,7 +840,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 <div className="flex flex-col grow justify-around items-end">
                                   <Icon
                                     name="trash"
-                                    className="cursor-pointer text-danger-hex hover:text-danger-hover-hex"
+                                    className="cursor-pointer text-danger hover:text-danger-hover"
                                     onClick={() => removeSticker(i)}
                                   />
                                 </div>
@@ -912,7 +912,7 @@ const SpaceEditor: React.FunctionComponent<{
                             labelType="static"
                           />
                           {success && (
-                            <div className="text-success-hex">
+                            <div className="text-success">
                               <Trans>
                                 Successfully sent invite to{' '}
                                 {selectedUser?.displayName}

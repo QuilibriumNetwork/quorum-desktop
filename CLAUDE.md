@@ -161,10 +161,11 @@ There are two themes: **light** and **dark**, controlled via the `dark` class on
 - `color-text-subtle`
 - `color-text-muted`
 
-**Utility Colors:**
+**Utility Colors (RGB-based, 2024 approach):**
 
-- `danger`, `warning`, `success`, `info` (with opacity support)
-- `danger-hex`, `warning-hex`, `success-hex`, `info-hex` (solid hex values)
+- `danger`, `warning`, `success`, `info` (RGB values with opacity support)
+- Usage: `rgb(var(--danger))` for solid colors, `rgb(var(--danger) / 0.5)` for opacity
+- Tailwind classes: `text-danger`, `bg-danger`, `border-danger`, etc.
 
 ### Semantic CSS Classes
 
@@ -267,6 +268,26 @@ content: ['./src/**/*.{js,ts,jsx,tsx,html}'];
 ---
 
 Stick to Tailwind's strengths, extract wisely, and keep your design system DRY, scalable, and clear.
+
+### **Modern Color System (Updated 2025-09-14)**
+
+The project uses a consolidated RGB-based color system following CSS Color Module Level 4 best practices:
+
+- **Single source of truth**: Each utility color has one RGB definition (e.g., `--danger: 231 74 74`)
+- **Flexible usage**: Same variable works for solid colors and opacity effects
+- **Modern CSS**: Uses `rgb(var(--danger))` syntax instead of separate HEX variants
+- **Cross-platform**: Consistent colors between web and mobile implementations
+
+**Example Usage:**
+```css
+/* Solid color */
+color: rgb(var(--danger));
+border-color: rgb(var(--success));
+
+/* With opacity */
+background: rgb(var(--warning) / 0.1);
+box-shadow: 0 0 10px rgb(var(--info) / 0.3);
+```
 
 ---
 

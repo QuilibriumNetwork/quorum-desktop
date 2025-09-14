@@ -9,16 +9,14 @@ This is the main index for all documentation, bug reports, and task management.
 - [Cross-Platform Repository Implementation](docs/cross-platform-repository-implementation.md)
 - [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
-- [Space Roles System Documentation](docs/space-roles.md)
 
 ### Development
-
 - [Unused Dependencies Analysis](docs/development/unused-dependencies-analysis.md)
 
 ### Features
-
 - [Cross-Platform Key Backup Implementation](docs/features/cross-platform-key-backup.md)
 - [Cross-Platform Theming System](docs/features/cross-platform-theming.md)
+- [Delete Confirmation System](docs/features/delete-confirmation-system.md)
 - [Desktop Notifications Feature](docs/features/desktop-notifications.md)
 - [Emoji Picker React - Styling & Customization](docs/features/emoji-picker-react-customization.md)
 - [Invite System Analysis - Comprehensive Report](docs/features/invite-system-analysis.md)
@@ -31,29 +29,34 @@ This is the main index for all documentation, bug reports, and task management.
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
 
 ### Features / Primitives
-
 - [Introduction and Core Concepts](docs/features/primitives/01-introduction-and-concepts.md)
 - [Primitives Quick Reference](docs/features/primitives/02-primitives-quick-reference.md)
 - [When to Use Primitives vs Raw HTML](docs/features/primitives/03-when-to-use-primitives.md)
 - [Web-to-Native Migration Guide](docs/features/primitives/04-web-to-native-migration.md)
 - [Primitive Styling Guidelines](docs/features/primitives/05-primitive-styling-guide.md)
 
+### Space Permissions
+- [Read-Only Channels System](docs/space-permissions/read-only-channels-system.md)
+- [Space Permissions Architecture](docs/space-permissions/space-permissions-architecture.md)
+- [Space Roles System](docs/space-permissions/space-roles-system.md)
+
 ## 🐛 Bug Reports
 
 ### Active Issues
-
-- [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors-ONGOING.md)
+- [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
 - [Message Hash Navigation Conflict Bug](bugs/message-hash-navigation-conflict.md)
 - [MessageDB Context: IndexedDB Platform Compatibility Issue](bugs/messagedb-cross-platform-storage-issue.md)
 - [Modal Gesture Handling Technical Debt](bugs/modal-gesture-handling-technical-debt.md)
-- [Search Focus Management Comprehensive Bug Report](bugs/search-focus-management.md)
+- [Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of Spaces](bugs/usersettingsmodal-scalability-performance.md)
+- [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
+- [Space Owner Delete Permissions Bug](bugs/space-owner-delete-permissions-bug.md)
 
 ### Solved Issues
-
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [NewDirectMessage Modal: URL-to-State Conversion](bugs/.solved/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)
 - [React Hooks Violation: Conditional Return Before Hooks](bugs/.solved/SOLVED_react-hooks-violation-conditional-return.md)
+- [Solved Search Results Page Refresh And Focus Stealing](bugs/.solved/SOLVED_search-results-page-refresh-and-focus-stealing.md)
 - [SOLVED: Fast Refresh Export Incompatibility](bugs/.solved/SOLVED_fast-refresh-export-incompatibility.md)
 - [SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/.solved/SOLVED_modal-navmenu-zindex-stacking.md)
 - [SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/.solved/SOLVED_right-sidebar-overlay.md)
@@ -64,25 +67,22 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
-- [Implement Background Sync Queue](tasks/implement-background-sync-queue.md)
+- [Implement Background Sync Queue for User Settings and Async Operations](tasks/implement-background-sync-queue.md)
 - [Invite Links Improve](tasks/invite-links-improve.md)
 - [Kick User UX Improvements](tasks/kick-user-ux-improvements.md)
-- [Pinned Messages Feature - Implementation Plan](tasks/pinned-messages-feature.md)
-- [Read-Only Channels with Role Managers](tasks/read-only-channels-with-role-managers.md)
 - [Refactor Modal Placement in Layout.tsx](tasks/refactor-modal-placement.md)
 - [Shared Git Hooks Setup](tasks/shared-git-hooks-setup.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
+- [🔍 Users List Filtering Feature](tasks/users-list-filtering-feature.md)
 - [🚀 Search Performance Optimization - Master Plan](tasks/search-performance-optimization.md)
 
-### CSS Refactor
-
+### Css Refactor
 - [CSS Inventory - Complete Codebase Analysis](tasks/css-refactor/css-inventory.md)
 - [CSS Refactor Analysis Report](tasks/css-refactor/analysis.md)
 - [CSS Refactor Plan - Claude Code Execution Strategy](tasks/css-refactor/css-refactor-plan.md)
 
-### Mobile Development
-
+### Mobile Dev
 - [Business Logic Extraction & Native Preparation Plan](tasks/mobile-dev/business-logic-extraction-plan.md)
 - [Component Architecture Masterplan - Desktop/Mobile Unification](tasks/mobile-dev/components-shared-arch-masterplan.md)
 - [Cross-Platform Development : Revised Plan](tasks/mobile-dev/plan-quick-recap.md)
@@ -96,10 +96,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Primitive Migration Audit Report](tasks/mobile-dev/primitive-migration-audit.md)
 - [Quilibrium SDK Mobile Integration Issue](tasks/mobile-dev/mobile-sdk-integration-issue.md)
 - [React Native Upgrade Risk Assessment](tasks/mobile-dev/upgrade-to-react-80.md)
-- [SDK Shim Temporary Solutions](tasks/mobile-dev/sdk-shim-temporary-solutions.md)
+- [Sdk Shim Temporary Solutions](tasks/mobile-dev/sdk-shim-temporary-solutions.md)
 
-### Mobile Development Documentation
-
+### Mobile Dev Docs
 - [Component Architecture Workflow - Detailed Explanation](tasks/mobile-dev/docs/component-architecture-workflow-explained.md)
 - [Mobile/Desktop Behavioral Differences Audit Plan](tasks/mobile-dev/docs/mobile-desktop-audit.md)
 - [Primitives Testing Guide](tasks/mobile-dev/docs/primitives-testing.md)
@@ -110,11 +109,14 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Android 7.0 File Download Fix - Implementation Plan](tasks/.done/FAILED_android-file-download-fix.md)
+- [Callout Primitive Audit Report](tasks/.done/callout-primitive-audit.md)
+- [Callout Primitive System](tasks/.done/callout-primitive-system.md)
 - [Channel Business Logic Extraction - Lessons Learned](tasks/.done/channel-business-logic-extraction-lessons.md)
 - [Color Switcher Implementation](tasks/.done/color-switcher.md)
 - [Complex Modal Primitive Migration Template](tasks/.done/usersettingsmodal-primitive-migration.md)
 - [Cross-Platform Component Audit](tasks/.done/components-audit.md)
 - [Cross-Platform Key Backup Implementation](tasks/.done/cross-platform-key-backup.md)
+- [Delete Confirmation System Implementation](tasks/.done/delete-confirmation-system.md)
 - [Emoji Picker Responsive Design Improvement](tasks/.done/emojipicker-responsive.md)
 - [Expo Go to Expo Dev Client Migration Plan - Simplified](tasks/.done/expo-go-to-dev-client-migration.md)
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
@@ -122,7 +124,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modal Animation Consistency Implementation](tasks/.done/new-modals-effect.md)
 - [Modal Migration Analysis & Progress Report](tasks/.done/DONE_modal-migration-plan.md)
 - [Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/.done/components-audit-dashboard.md)
+- [Pinned Messages Feature - Implementation Plan](tasks/.done/pinned-messages-feature.md)
 - [ReactTooltip Mobile Optimization](tasks/.done/reacttoolltip-mobile.md)
+- [Read-Only Channels with Role Managers](tasks/.done/read-only-channels-with-role-managers.md)
 - [Responsive Layout Implementation Plan](tasks/.done/responsive-layout.md)
 - [Responsive Layout Requirements](tasks/.done/responsive-layout_requirements.md)
 - [Search Components Primitive Migration](tasks/.done/search-primitive-migration.md)
@@ -130,9 +134,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [🔍 Global Message Search Implementation Plan](tasks/.done/global-search.md)
 
 ### Message Options Mobile
-
 - [Mobile Message Options UX Enhancement](tasks/.done/message-options-mobile/message-options-mobile.md)
 
 ---
 
-**Last Updated**: 2025-09-10 14:35:00
+**Last Updated**: 2025-09-14 15:20:18

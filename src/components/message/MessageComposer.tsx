@@ -235,7 +235,7 @@ export const MessageComposer = forwardRef<
                 onClick={onSigningToggle}
                 className={`w-8 h-8 p-0 rounded-md cursor-pointer flex items-center justify-center flex-shrink-0 -ml-2 ${
                   skipSigning
-                    ? 'text-warning-hex'
+                    ? 'text-warning'
                     : 'text-surface-9 hover:text-main'
                 }`}
                 iconName={skipSigning ? 'unlock' : 'lock'}

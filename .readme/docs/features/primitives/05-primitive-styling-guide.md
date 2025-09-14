@@ -71,7 +71,7 @@ borderColor: colors.field.borderError;
 --color-field-border: var(--color-border-strong);
 --color-field-border-hover: var(--color-border-stronger);
 --color-field-border-focus: var(--accent);
---color-field-border-error: var(--danger-hex);
+--color-field-border-error: rgb(var(--danger));
 // ... more variables
 ```
 

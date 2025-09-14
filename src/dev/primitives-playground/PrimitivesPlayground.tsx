@@ -182,16 +182,6 @@ export const PrimitivesPlayground: React.FC = () => {
                 ],
               },
               {
-                title: 'Utility (HEX)',
-                vars: [
-                  '--danger-hex',
-                  '--danger-hover-hex',
-                  '--warning-hex',
-                  '--success-hex',
-                  '--info-hex',
-                ],
-              },
-              {
                 title: 'Utility (RGB w/ opacity)',
                 vars: ['--danger', '--warning', '--success', '--info'].flatMap(
                   (name) =>
@@ -3229,7 +3219,7 @@ export const PrimitivesPlayground: React.FC = () => {
                     place="top"
                     highlighted={true}
                   >
-                    <button className="bg-warning-hex text-white px-3 py-2 rounded">
+                    <button className="bg-warning text-white px-3 py-2 rounded">
                       Highlighted
                     </button>
                   </Tooltip>

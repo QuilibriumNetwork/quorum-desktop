@@ -152,15 +152,15 @@
 
   // Error state - must come after variants for proper specificity
   &.error {
-    border-color: var(--danger-hex) !important;
+    border-color: rgb(var(--danger)) !important;
 
     &:focus {
-      border-color: var(--danger-hex) !important;
+      border-color: rgb(var(--danger)) !important;
       box-shadow: 0 0 0 3px var(--color-field-error-focus-shadow);
     }
 
     &:hover:not(:disabled) {
-      border-color: var(--danger-hex) !important;
+      border-color: rgb(var(--danger)) !important;
     }
   }
 
@@ -170,7 +170,7 @@
   }
 
   &.no-focus-style.error:focus {
-    border-color: var(--danger-hex);
+    border-color: rgb(var(--danger));
     box-shadow: none;
   }
 
@@ -230,15 +230,15 @@
   }
 
   &.error {
-    border-color: var(--danger-hex) !important;
+    border-color: rgb(var(--danger)) !important;
 
     &:focus {
-      border-color: var(--danger-hex) !important;
+      border-color: rgb(var(--danger)) !important;
       box-shadow: 0 0 0 3px var(--color-field-error-focus-shadow);
     }
 
     &:hover:not(:disabled) {
-      border-color: var(--danger-hex) !important;
+      border-color: rgb(var(--danger)) !important;
     }
   }
 
@@ -248,7 +248,7 @@
   }
 
   &.no-focus-style.error:focus {
-    border-color: var(--danger-hex);
+    border-color: rgb(var(--danger));
     box-shadow: none;
   }
 }

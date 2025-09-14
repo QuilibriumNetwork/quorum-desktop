@@ -1,78 +1,17 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useSpace } from '../../queries/space/useSpace';
 import { useSpaceMembers } from '../../queries/spaceMembers/useSpaceMembers';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../../utils';
 
-// Development mock data generator - REMOVE IN PRODUCTION  
-const generateMockUsers = (count: number) => {
-  const mockUsers = [];
-  // Pre-generate a few avatar URLs to avoid 1000 unique API calls
-  const avatarTemplates = [
-    DefaultImages.UNKNOWN_USER,
-    'https://ui-avatars.com/api/?name=User&background=007bff',
-    'https://ui-avatars.com/api/?name=Test&background=28a745', 
-    'https://ui-avatars.com/api/?name=Mock&background=dc3545',
-    'https://ui-avatars.com/api/?name=Demo&background=ffc107',
-  ];
-  
-  for (let i = 0; i < count; i++) {
-    mockUsers.push({
-      user_address: `mock_user_${i}`,
-      display_name: `Test User ${i + 1}`,
-      user_icon: avatarTemplates[i % avatarTemplates.length],
-      inbox_address: 'mock_inbox',
-    });
-  }
-  return mockUsers;
-};
-
-// Generate mock roles to distribute users realistically
-const generateMockRoles = (mockUsers: any[]) => {
-  if (!mockUsers.length) return [];
-  
-  const roles = [
-    { id: 'mock_admin', displayName: 'Admin', members: [] as string[] },
-    { id: 'mock_moderator', displayName: 'Moderator', members: [] as string[] },
-    { id: 'mock_role_a', displayName: 'Role A', members: [] as string[] },
-    { id: 'mock_role_b', displayName: 'Role B', members: [] as string[] },
-    { id: 'mock_role_c', displayName: 'Role C', members: [] as string[] },
-  ];
-  
-  // Realistic distribution: 1% admin, 9% mod, 10% role A, 10% role B, 20% role C, 50% no role
-  mockUsers.forEach((user, index) => {
-    const percentage = (index / mockUsers.length) * 100;
-    
-    if (percentage < 1) {
-      // 1% admin
-      roles[0].members.push(user.user_address);
-    } else if (percentage < 10) {
-      // 9% moderator
-      roles[1].members.push(user.user_address);
-    } else if (percentage < 20) {
-      // 10% role A
-      roles[2].members.push(user.user_address);
-    } else if (percentage < 30) {
-      // 10% role B
-      roles[3].members.push(user.user_address);
-    } else if (percentage < 50) {
-      // 20% role C
-      roles[4].members.push(user.user_address);
-    }
-    // Remaining 50% have no role
-  });
-  
-  return roles;
-};
-
 // Safe development-only testing - automatically disabled in production
-const ENABLE_MOCK_USERS = 
-  process.env.NODE_ENV === 'development' && 
-  (localStorage?.getItem('debug_mock_users') === 'true' || 
+const ENABLE_MOCK_USERS =
+  process.env.NODE_ENV === 'development' &&
+  (localStorage?.getItem('debug_mock_users') === 'true' ||
    new URLSearchParams(window.location?.search || '').get('mockUsers') !== null);
 const MOCK_USER_COUNT = parseInt(
-  new URLSearchParams(window.location?.search || '').get('mockUsers') || 
-  localStorage?.getItem('debug_mock_count') || 
+  new URLSearchParams(window.location?.search || '').get('mockUsers') ||
+  localStorage?.getItem('debug_mock_count') ||
   '1000'
 );
 
@@ -84,11 +23,26 @@ interface UseChannelDataProps {
 export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
   const { data: space } = useSpace({ spaceId });
   const { data: spaceMembers } = useSpaceMembers({ spaceId });
-  
+  const [mockUtils, setMockUtils] = useState<any>(null);
+
+  // Load mock utilities dynamically in development only
+  useEffect(() => {
+    if (ENABLE_MOCK_USERS) {
+      import('../../../utils/mock')
+        .then((utils) => {
+          setMockUtils(utils);
+        })
+        .catch(() => {
+          // Ignore import errors in production or if mock files don't exist
+          setMockUtils(null);
+        });
+    }
+  }, []);
+
   // Memoized mock users to prevent regeneration on every render
   const mockUsers = useMemo(() => {
-    return ENABLE_MOCK_USERS ? generateMockUsers(MOCK_USER_COUNT) : [];
-  }, []);
+    return ENABLE_MOCK_USERS && mockUtils ? mockUtils.generateMockUsers(MOCK_USER_COUNT) : [];
+  }, [mockUtils]);
 
   // Add mock users for testing virtualization performance
   const enhancedSpaceMembers = useMemo(() => {
@@ -148,8 +102,8 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
 
   const roles = useMemo(() => {
     const realRoles = space?.roles ?? [];
-    if (ENABLE_MOCK_USERS && mockUsers.length > 0) {
-      const mockRoles = generateMockRoles(mockUsers);
+    if (ENABLE_MOCK_USERS && mockUsers.length > 0 && mockUtils) {
+      const mockRoles = mockUtils.generateMockRoles(mockUsers);
       return [...realRoles, ...mockRoles];
     }
     return realRoles;

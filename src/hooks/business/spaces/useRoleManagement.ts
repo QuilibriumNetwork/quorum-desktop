@@ -42,7 +42,7 @@ export const useRoleManagement = (
       roleId: crypto.randomUUID(),
       roleTag: 'New Role' + (roles.length + 1),
       displayName: 'New Role',
-      color: 'var(--success-hex)',
+      color: 'rgb(var(--success))',
       members: [],
       permissions: [],
     };

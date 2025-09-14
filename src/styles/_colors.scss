@@ -36,7 +36,7 @@
   --color-text-subtle: #818181;
   --color-text-muted: #b6b6b6;
   --color-link-hover: var(--accent-400);
-  --color-text-danger: var(--danger-hex);
+  --color-text-danger: rgb(var(--danger));
 
   /* surface semantic */
   --color-bg-app: var(--surface-00);
@@ -71,7 +71,7 @@
   --color-field-border: var(--color-border-strong);
   --color-field-border-hover: var(--color-border-stronger);
   --color-field-border-focus: var(--accent);
-  --color-field-border-error: var(--danger-hex);
+  --color-field-border-error: rgb(var(--danger));
 
   /* Field text colors */
   --color-field-text: var(--color-text-main);
@@ -94,14 +94,8 @@
 
   --color-bg-card: var(--surface-2);
 
-  /* utilities */
-  --danger-hex: #e74a4a;
-  --danger-hover-hex: #ec3333;
-  --warning-hex: #e7b04a;
-  --success-hex: #46c236;
-  --info-hex: #3095bd;
-
-  /* utilities for use with opacity */
+  /* utilities - RGB values for use with or without opacity */
+  /* Usage: rgb(var(--danger)) for solid, rgb(var(--danger) / 0.5) for opacity */
   --danger: 231 74 74; /* RED #e74a4a */
   --danger-hover: 236 51 51; /* RED BRIGHTER #ec3333 */
   --warning: 231 176 74; /* YELLOw #e7b04a */
@@ -143,14 +137,8 @@ html.dark {
   /* Field semantic - dark theme override */
   --color-field-placeholder: var(--color-text-muted);
 
-  /* utilities */
-  --danger-hex: #c73737;
-  --danger-hover-hex: #b83030;
-  --warning-hex: #d09a3d;
-  --success-hex: #379e2b;
-  --info-hex: #267b9e;
-
-  /* utilities for use with opacity */
+  /* utilities - RGB values for use with or without opacity */
+  /* Usage: rgb(var(--danger)) for solid, rgb(var(--danger) / 0.5) for opacity */
   --danger: 199 55 55; /* #c73737 */
   --danger-hover: 184 48 48; /* #b83030 */
   --warning: 208 154 61; /* #d09a3d */

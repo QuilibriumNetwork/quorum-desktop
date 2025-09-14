@@ -59,12 +59,6 @@ export default {
         success: withOpacityValue('--success'),
         info: withOpacityValue('--info'),
 
-        // utilities HEX variables
-        'danger-hex': 'var(--danger-hex)',
-        'danger-hover-hex': 'var(--danger-hover-hex)',
-        'warning-hex': 'var(--warning-hex)',
-        'success-hex': 'var(--success-hex)',
-        'info-hex': 'var(--info-hex)',
       },
 
       // === semantic variables === //

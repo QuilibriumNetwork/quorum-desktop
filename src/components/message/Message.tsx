@@ -444,7 +444,7 @@ export const Message = ({
                   <Icon
                     name="exclamation-triangle"
                     size="xs"
-                    className="text-warning-hex"
+                    className="text-warning"
                   />
                 </Tooltip>
               )}

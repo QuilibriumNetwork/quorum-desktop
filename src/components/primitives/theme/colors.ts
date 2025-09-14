@@ -71,7 +71,7 @@ export const themeColors = {
       stronger: '#bbbbc3', // var(--surface-8)
     },
 
-    // Utility colors (matches CSS --*-hex variables)
+    // Utility colors (matches CSS --* variables)
     utilities: {
       danger: '#e74a4a',
       'danger-hover': '#ec3333',
@@ -178,7 +178,7 @@ export const themeColors = {
       stronger: '#92829b', // var(--surface-8)
     },
 
-    // Dark theme utility colors (matches CSS html.dark --*-hex variables)
+    // Dark theme utility colors (matches CSS html.dark --* variables)
     utilities: {
       danger: '#c73737',
       'danger-hover': '#b83030',
