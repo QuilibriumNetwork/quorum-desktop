@@ -14,7 +14,7 @@ Create a centralized `Callout` primitive component to provide consistent messagi
 - **Sizes**: `xs`, `sm` (default), `md` (using corresponding text sizes: text-xs, text-sm, text-base)
 
 ### Optional Features
-- **Dismissible**: Optional closing "×" button in top-right corner
+- **Dismissible**: Optional closing "×" (Icon primitive "times") button in top-right corner
 - **Auto-dismiss**: Optional auto-close after N seconds
 - **Transitions**: Smooth appear/disappear animations
 
@@ -61,12 +61,11 @@ interface CalloutProps {
 
 ### 4. Icon integration
 - [ ] Use existing `Icon` primitive for consistency
-- [ ] Default icons per variant:
-  - `info`: info-circle or similar
-  - `success`: check-circle
+- [ ] Default icons per variant (check that the right icons exist in our icons map, you can also add new icons to the map if necesasry, but check that theye xist in fontawesome):
+  - `info`: info-circle
+  - `success`: checkmark
   - `warning`: exclamation-triangle
-  - `danger`: exclamation-circle
-- [ ] Allow custom icon override
+  - `danger`: exclamation-triangle
 
 ### 5. Export and documentation
 - [ ] Add to `src/components/primitives/index.ts`
@@ -88,10 +87,13 @@ interface CalloutProps {
 - [ ] Example with `xs` size
 - [ ] Example with `md` size
 
-### 7. Replace existing implementations
-- [ ] Replace TODO items in `src/hooks/platform/files/useFileDownload.web.ts:45-57`
-- [ ] Replace console.log success/error messages with Callout
-- [ ] Identify other ad-hoc messaging that can use Callout
+### 7. Audit existing implementations
+- [ ] Identify other ad-hoc messaging that can use Callout (e.g )
+- [ ] check in Modals (src\components\modals) - Input,Select,Textarea primitves must maintain their own success/error messages, no callout
+- [ ] check in other places, e.g. InviteLink.tsx, Error messages for file uploads, etc...
+- [ ] create a full audit of the potential implementations of the new Callout primitve witha list of files, current implementation of erros/success/warning message and how it could be changed
+- [ ] post audit in .readme/taks
+
 
 ## Technical Considerations
 - Follow existing primitive patterns (cross-platform, theme integration)
