@@ -150,6 +150,9 @@ const SpaceEditor: React.FunctionComponent<{
   const [roleValidationError, setRoleValidationError] =
     React.useState<string>('');
 
+  // Saving state for loading indicator
+  const [isSaving, setIsSaving] = React.useState(false);
+
   // Public invite link state management (simplified approach)
   const [generationSuccess, setGenerationSuccess] = React.useState(false);
   const [deleting, setDeleting] = React.useState(false);
@@ -240,6 +243,7 @@ const SpaceEditor: React.FunctionComponent<{
   const saveChanges = React.useCallback(async () => {
     if (!space) return;
 
+    setIsSaving(true);
     // Clear previous validation errors
     setRoleValidationError('');
 
@@ -252,6 +256,7 @@ const SpaceEditor: React.FunctionComponent<{
       setRoleValidationError(
         t`All roles must have both a tag name and display name.`
       );
+      setIsSaving(false);
       return;
     }
 
@@ -285,9 +290,11 @@ const SpaceEditor: React.FunctionComponent<{
         emojis,
         stickers,
       });
+      setIsSaving(false);
       dismiss();
     } catch (error) {
       console.error('Failed to save space changes:', error);
+      setIsSaving(false);
       // Don't dismiss the modal if save failed
     }
   }, [
@@ -304,6 +311,7 @@ const SpaceEditor: React.FunctionComponent<{
     stickers,
     updateSpace,
     dismiss,
+    setIsSaving,
   ]);
 
   return (
@@ -319,6 +327,16 @@ const SpaceEditor: React.FunctionComponent<{
       closeOnEscape={true}
     >
       <div className="modal-complex-container-inner">
+        {/* Loading overlay for saving */}
+        {isSaving && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center">
+            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm rounded-lg" />
+            <div className="relative flex items-center gap-3">
+              <Icon name="spinner" size={24} spin className="text-accent" />
+              <div className="text-lg font-medium text-white">{t`Saving...`}</div>
+            </div>
+          </div>
+        )}
         <div className="modal-complex-layout">
           <div className="modal-complex-sidebar">
             <div className="modal-nav-title">Settings</div>
@@ -590,8 +608,12 @@ const SpaceEditor: React.FunctionComponent<{
                           </div>
                         </div>
                         <div className="modal-content-actions">
-                          <Button type="primary" onClick={() => saveChanges()}>
-                            <Trans>Save Changes</Trans>
+                          <Button
+                            type="primary"
+                            onClick={() => saveChanges()}
+                            disabled={isSaving}
+                          >
+                            <Trans>Save All Changes</Trans>
                           </Button>
                         </div>
                       </div>
@@ -754,8 +776,12 @@ const SpaceEditor: React.FunctionComponent<{
                         )}
                         <div className="modal-content-info"></div>
                         <div className="modal-content-actions">
-                          <Button type="primary" onClick={() => saveChanges()}>
-                            <Trans>Save Changes</Trans>
+                          <Button
+                            type="primary"
+                            onClick={() => saveChanges()}
+                            disabled={isSaving}
+                          >
+                            <Trans>Save All Changes</Trans>
                           </Button>
                         </div>
                       </div>
@@ -847,8 +873,12 @@ const SpaceEditor: React.FunctionComponent<{
                         )}
                         <div className="modal-content-info"></div>
                         <div className="modal-content-actions">
-                          <Button type="primary" onClick={() => saveChanges()}>
-                            <Trans>Save Changes</Trans>
+                          <Button
+                            type="primary"
+                            onClick={() => saveChanges()}
+                            disabled={isSaving}
+                          >
+                            <Trans>Save All Changes</Trans>
                           </Button>
                         </div>
                       </div>
@@ -942,8 +972,12 @@ const SpaceEditor: React.FunctionComponent<{
                         )}
                         <div className="modal-content-info"></div>
                         <div className="modal-content-actions">
-                          <Button type="primary" onClick={() => saveChanges()}>
-                            <Trans>Save Changes</Trans>
+                          <Button
+                            type="primary"
+                            onClick={() => saveChanges()}
+                            disabled={isSaving}
+                          >
+                            <Trans>Save All Changes</Trans>
                           </Button>
                         </div>
                       </div>
@@ -1202,7 +1236,6 @@ const SpaceEditor: React.FunctionComponent<{
                       </div>
                       <div className="modal-content-section">
                         <div className="modal-content-info"></div>
-                        <div className="modal-content-actions"></div>
                       </div>
                     </>
                   );
@@ -1210,8 +1243,9 @@ const SpaceEditor: React.FunctionComponent<{
             })()}
           </div>
         </div>
+
       </div>
-      
+
       {/* Role delete confirmation modal */}
       {deleteConfirmation?.modalConfig && (
         <ConfirmationModal

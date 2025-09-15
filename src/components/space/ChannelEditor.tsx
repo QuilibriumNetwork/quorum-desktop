@@ -26,6 +26,10 @@ const ChannelEditor: React.FunctionComponent<{
   dismiss: () => void;
   onEditModeClick?: () => void;
 }> = ({ spaceId, groupName, channelId, dismiss }) => {
+
+  // Simple loading state
+  const [isSaving, setIsSaving] = React.useState(false);
+
   const {
     channelName,
     channelTopic,
@@ -54,15 +58,22 @@ const ChannelEditor: React.FunctionComponent<{
     onDeleteComplete: dismiss,
   });
 
+
+
   const handleSave = React.useCallback(async () => {
+    setIsSaving(true);
     try {
       await saveChanges();
-      dismiss();
+      // Simple delay to allow UI to update before closing
+      setTimeout(() => {
+        dismiss();
+      }, 1500);
     } catch (error) {
       console.error('Failed to save channel changes:', error);
-      // Don't dismiss the modal if save failed
+      setIsSaving(false);
     }
   }, [saveChanges, dismiss]);
+
 
   return (
     <Modal
@@ -71,6 +82,16 @@ const ChannelEditor: React.FunctionComponent<{
       onClose={dismiss}
       size="small"
     >
+      {/* Loading overlay for saving */}
+      {isSaving && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm rounded-lg" />
+          <div className="relative flex items-center gap-3">
+            <Icon name="spinner" size={24} spin className="text-accent" />
+            <div className="text-lg font-medium text-white">{t`Saving...`}</div>
+          </div>
+        </div>
+      )}
       <Container style={{ textAlign: 'left' }}>
         <Container className="mb-4 max-sm:mb-1">
           <Input 
@@ -154,7 +175,7 @@ const ChannelEditor: React.FunctionComponent<{
         )}
 
         <FlexRow className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
-          <Button type="primary" className="max-sm:w-full" onClick={handleSave}>
+          <Button type="primary" className="max-sm:w-full" onClick={handleSave} disabled={isSaving}>
             <Trans>Save Changes</Trans>
           </Button>
         </FlexRow>
