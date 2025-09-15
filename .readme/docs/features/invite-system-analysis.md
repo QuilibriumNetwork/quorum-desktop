@@ -273,6 +273,14 @@ if (space?.inviteUrl) {
 2. **Misleading Tooltips**: Current tooltip doesn't explain the dual system impact
 3. **No Rollback**: Once public links are enabled, there's no way to go back to private-only mode
 
+### Current Public Invite Link UI Flow
+
+**No Link State**: Shows warning text + "Generate Public Invite Link" button → Direct generation → Link appears with "Delete Current Link" and "Generate New Link" buttons
+
+**Link Exists State**: Shows copyable link field with action buttons → "Delete Current Link" (modal confirm) or "Generate New Link" (modal confirm) → Operations show loading callouts → Success callouts (3s auto-dismiss)
+
+During any generation operation, existing UI elements hide and only the relevant loading callout displays.
+
 ## Conclusion
 
 The invite system uses a sophisticated **dual key architecture** that provides flexibility but creates significant UX confusion. The key findings are:
@@ -287,4 +295,5 @@ The system is cryptographically sound but the UX around key system transitions n
 ---
 
 _Document created: July 30, 2025_
+_Updated: September 15, 2025_
 _Analysis covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, MessageDB.tsx, InviteLink.tsx_

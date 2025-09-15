@@ -11,6 +11,7 @@ Improve the public invite links feature in SpaceEditor to provide clearer UX wit
 **DECISION:** Remove the toggle completely for a much simpler, more maintainable solution.
 
 ### **Why No-Toggle is Better:**
+
 - ✅ **Zero state conflicts** - No toggle visual state vs modal confirmation issues
 - ✅ **Simple logic** - Only 2 UI states: "No Link" vs "Link Exists"
 - ✅ **Clear user intent** - Buttons show direct actions, not feature enable/disable
@@ -20,6 +21,7 @@ Improve the public invite links feature in SpaceEditor to provide clearer UX wit
 ### **New User Flow:**
 
 **WHEN NO LINK EXISTS:**
+
 ```
 [Generate Public Invite Link] (button)
 ↓ click
@@ -27,6 +29,7 @@ Modal confirmation → Generate operation → Success callout → Link appears
 ```
 
 **WHEN LINK EXISTS:**
+
 ```
 [████████████████████] (clickable link field)
 [Generate New Link] [Delete Public Link] (buttons)
@@ -60,6 +63,7 @@ const [showDeleteModal, setShowDeleteModal] = useState(false);
 ### **Phase 2: Simple UI Logic**
 
 **Replace entire toggle section with:**
+
 ```typescript
 <div>
   <div className="modal-text-label">
@@ -158,17 +162,17 @@ const [showDeleteModal, setShowDeleteModal] = useState(false);
       <div className="flex gap-2 mt-4">
         <Button
           type="danger"
+          onClick={() => setShowDeleteModal(true)}
+          disabled={generating || deleting}
+        >
+          <Trans>Disable Public Link</Trans>
+        </Button>
+        <Button
+          type="primary"
           onClick={() => setShowGenerateModal(true)}
           disabled={generating || deleting}
         >
           <Trans>Generate New Link</Trans>
-        </Button>
-        <Button
-          type="danger"
-          onClick={() => setShowDeleteModal(true)}
-          disabled={generating || deleting}
-        >
-          <Trans>Delete Public Link</Trans>
         </Button>
       </div>
     </div>
@@ -223,7 +227,6 @@ const handleGenerateLink = async () => {
     // Show success
     setGenerationSuccess(true);
     setTimeout(() => setGenerationSuccess(false), 3000);
-
   } catch (error) {
     console.error('Failed to generate invite link:', error);
     setErrorMessage('Failed to generate public invite link. Please try again.');
@@ -248,7 +251,6 @@ const handleDeleteLink = async () => {
     // Show success
     setDeletionSuccess(true);
     setTimeout(() => setDeletionSuccess(false), 3000);
-
   } catch (error) {
     console.error('Failed to delete invite link:', error);
     setErrorMessage('Failed to delete public invite link. Please try again.');
@@ -279,14 +281,14 @@ const handleDeleteLink = async () => {
 
 ## **COMPARISON: Toggle vs Button-Only**
 
-| **Metric** | **Toggle Approach** | **Button-Only Approach** |
-|---|---|---|
-| **State Variables** | 10+ variables | 5 variables |
-| **Logic Conflicts** | 8 critical issues | 0 conflicts |
-| **Code Lines** | ~300 lines | ~150 lines |
-| **Edge Cases** | 6+ scenarios | 2 simple states |
-| **User Clarity** | "Enable feature" (confusing) | "Perform action" (clear) |
-| **Maintenance** | High complexity | Low complexity |
+| **Metric**          | **Toggle Approach**          | **Button-Only Approach** |
+| ------------------- | ---------------------------- | ------------------------ |
+| **State Variables** | 10+ variables                | 5 variables              |
+| **Logic Conflicts** | 8 critical issues            | 0 conflicts              |
+| **Code Lines**      | ~300 lines                   | ~150 lines               |
+| **Edge Cases**      | 6+ scenarios                 | 2 simple states          |
+| **User Clarity**    | "Enable feature" (confusing) | "Perform action" (clear) |
+| **Maintenance**     | High complexity              | Low complexity           |
 
 **RECOMMENDATION:** 🎯 **Use Button-Only Approach** - 50% less code, zero logic conflicts, much clearer UX.
 
@@ -295,6 +297,7 @@ const handleDeleteLink = async () => {
 ## Files to Modify
 
 **`src/components/space/SpaceEditor.tsx`**
+
 - Remove toggle section (lines ~930-1010)
 - Replace with simplified button-only implementation above
 - Add new imports: `import { Callout } from '../primitives';`

@@ -9,6 +9,7 @@ import {
   Tooltip,
   Spacer,
   ScrollContainer,
+  Callout,
 } from '../primitives';
 import ConfirmationModal from '../modals/ConfirmationModal';
 import { useSpace } from '../../hooks';
@@ -149,6 +150,14 @@ const SpaceEditor: React.FunctionComponent<{
   const [roleValidationError, setRoleValidationError] =
     React.useState<string>('');
 
+  // Public invite link state management (simplified approach)
+  const [generationSuccess, setGenerationSuccess] = React.useState(false);
+  const [deleting, setDeleting] = React.useState(false);
+  const [deletionSuccess, setDeletionSuccess] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
+  const [showGenerateModal, setShowGenerateModal] = React.useState(false);
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+
   // Helper functions for Select primitive
   const getChannelGroups = React.useMemo(() => {
     if (!space?.groups) return [];
@@ -161,6 +170,69 @@ const SpaceEditor: React.FunctionComponent<{
       })),
     }));
   }, [space?.groups]);
+
+  // Handler for generating public invite link (direct, no modal)
+  const handleGenerateLink = React.useCallback(async () => {
+    try {
+      setErrorMessage('');
+      setGenerationSuccess(false);
+      await generateNewInviteLink();
+
+      // Show success
+      setGenerationSuccess(true);
+      setTimeout(() => setGenerationSuccess(false), 3000);
+    } catch (error) {
+      console.error('Failed to generate invite link:', error);
+      setErrorMessage('Failed to generate public invite link. Please try again.');
+    }
+  }, [generateNewInviteLink]);
+
+  // Handler for regenerating link (with modal confirmation)
+  const handleRegenerateLink = React.useCallback(async () => {
+    setShowGenerateModal(false);
+
+    try {
+      setErrorMessage('');
+      setGenerationSuccess(false);
+      await generateNewInviteLink();
+
+      // Show success
+      setGenerationSuccess(true);
+      setTimeout(() => setGenerationSuccess(false), 3000);
+    } catch (error) {
+      console.error('Failed to generate invite link:', error);
+      setErrorMessage('Failed to generate public invite link. Please try again.');
+    }
+  }, [generateNewInviteLink]);
+
+  // Handler for deleting public invite link
+  const handleDeleteLink = React.useCallback(async () => {
+    setShowDeleteModal(false);
+
+    if (!space) {
+      setErrorMessage('Space not found. Please try again.');
+      return;
+    }
+
+    try {
+      setErrorMessage('');
+      setDeleting(true);
+
+      await updateSpace({
+        ...space,
+        inviteUrl: '',
+        isPublic: false,
+      });
+      // Show success
+      setDeletionSuccess(true);
+      setTimeout(() => setDeletionSuccess(false), 3000);
+    } catch (error) {
+      console.error('Failed to delete invite link:', error);
+      setErrorMessage('Failed to delete public invite link. Please try again.');
+    } finally {
+      setDeleting(false);
+    }
+  }, [space, updateSpace]);
 
   // Custom save function that integrates all hooks
   const saveChanges = React.useCallback(() => {
@@ -925,92 +997,132 @@ const SpaceEditor: React.FunctionComponent<{
                             border={true} 
                             direction="vertical" 
                           />
-                          <div className="flex flex-row justify-between">
-                            <div className="flex flex-col">
-                              <div className="modal-text-label">
-                                <Trans>Public Invite Link</Trans>
-                              </div>
-                              <div className="text-sm flex flex-col justify-around pt-2 max-w-[500px]">
-                                <Trans>
-                                  Public invite links allow anyone with access
-                                  to the link join your Space. Understand the
-                                  risks of enabling this, and to whom and
-                                  where you share the link.
-                                </Trans>
-                              </div>
+                          <div>
+                            <div className="modal-text-label">
+                              <Trans>Public Invite Links</Trans>
                             </div>
-                            <div className="flex flex-col justify-center pt-2">
-                              <Switch
-                                onChange={setPublicInvite}
-                                value={publicInvite}
-                              />
-                            </div>
-                          </div>
-                          {space?.isPublic && publicInvite && (
-                            <div>
-                              {space.inviteUrl && (
-                                <>
-                                  <div className="flex pt-2 pb-1 items-center">
-                                    <div className="flex flex-row items-center">
-                                      <div className="small-caps text-lg text-main">
-                                        <Trans>Current Invite Link</Trans>
-                                      </div>
-                                      <Tooltip
-                                        id="current-invite-link-tooltip"
-                                        content={t`This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space.`}
-                                        place="bottom"
-                                        className="!w-[400px]"
-                                        maxWidth={400}
-                                      >
-                                        <Icon
-                                          name="info-circle"
-                                          className="text-main hover:text-strong cursor-pointer ml-2"
-                                        />
-                                      </Tooltip>
+
+                            {/* Callouts for operations */}
+                            {generating && (
+                              <Callout variant="warning" size="sm" className="mb-4">
+                                <div className="flex items-center gap-2">
+                                  <Icon name="spinner" spin={true} className="text-warning" />
+                                  <span>Generating public invite link...</span>
+                                </div>
+                              </Callout>
+                            )}
+
+                            {generationSuccess && (
+                              <Callout variant="success" size="sm" className="mb-4" autoClose={3}>
+                                <span>Public invite link generated successfully.</span>
+                              </Callout>
+                            )}
+
+                            {deleting && (
+                              <Callout variant="warning" size="sm" className="mb-4">
+                                <div className="flex items-center gap-2">
+                                  <Icon name="spinner" spin={true} className="text-warning" />
+                                  <span>Deleting public invite link...</span>
+                                </div>
+                              </Callout>
+                            )}
+
+                            {deletionSuccess && (
+                              <Callout variant="success" size="sm" className="mb-4" autoClose={3}>
+                                <span>Public invite link deleted successfully.</span>
+                              </Callout>
+                            )}
+
+                            {errorMessage && (
+                              <Callout variant="error" size="sm" className="mb-4">
+                                <span>{errorMessage}</span>
+                              </Callout>
+                            )}
+
+                            {!space?.inviteUrl && !generating ? (
+                              // STATE 1: No link exists and not generating - Show generate button
+                              <div className="mt-4">
+                                <div className="text-sm text-subtle mb-4 max-w-[500px]">
+                                  <Trans>
+                                    Public invite links allow anyone with access to the link to join your Space.
+                                    Consider who you share the link with and where you post it.
+                                  </Trans>
+                                </div>
+                                <div className="flex">
+                                  <Button
+                                    type="secondary"
+                                    onClick={handleGenerateLink}
+                                    disabled={generating}
+                                  >
+                                    <Trans>Generate Public Invite Link</Trans>
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : !space?.inviteUrl && generating ? (
+                              // STATE 1b: Generating first link - Only show callout
+                              null
+                            ) : space?.inviteUrl && generating ? (
+                              // STATE 2b: Regenerating link - Only show callout
+                              null
+                            ) : (
+                              // STATE 2: Link exists and not generating - Show link + action buttons
+                              <div className="mt-4">
+                                <div className="flex pt-2 pb-1 items-center">
+                                  <div className="input-style-label">
+                                    <Trans>Current Invite Link</Trans>
+                                  </div>
+                                  <Tooltip
+                                    id="current-invite-link-tooltip"
+                                    content={t`This link will not expire, but you can generate a new one at any time, which will invalidate the old link.`}
+                                    place="bottom"
+                                    className="!w-[400px]"
+                                    maxWidth={400}
+                                  >
+                                    <Icon
+                                      name="info-circle"
+                                      className="text-main hover:text-strong cursor-pointer ml-2"
+                                    />
+                                  </Tooltip>
+                                </div>
+
+                                <ClickToCopyContent
+                                  text={space?.inviteUrl || ''}
+                                  tooltipText={t`Copy invite link to clipboard`}
+                                  className="bg-input border-0 rounded-md px-3 py-1.5 text-sm w-full max-w-full overflow-hidden whitespace-nowrap cursor-pointer"
+                                  iconClassName="text-muted hover:text-main"
+                                  copyOnContentClick
+                                >
+                                  <div className="flex items-center gap-2 w-full">
+                                    <div className="truncate flex-1 text-subtle">
+                                      {space?.inviteUrl}
                                     </div>
                                   </div>
-                                  {generating ? (
-                                    <div className="bg-input border border-strong rounded-md px-3 py-1.5 text-sm w-full text-subtle">
-                                      {t`Be patient, this can take a few seconds...`}
-                                    </div>
-                                  ) : (
-                                    <ClickToCopyContent
-                                      text={space.inviteUrl}
-                                      tooltipText={t`Copy invite link to clipboard`}
-                                      className="bg-input border-0 rounded-md px-3 py-1.5 text-sm w-full max-w-full overflow-hidden whitespace-nowrap cursor-pointer"
-                                      iconClassName="text-muted hover:text-main"
-                                      copyOnContentClick
-                                    >
-                                      <div className="flex items-center gap-2 w-full">
-                                        <div className="truncate flex-1 text-subtle">
-                                          {space.inviteUrl}
-                                        </div>
-                                      </div>
-                                    </ClickToCopyContent>
-                                  )}
-                                </>
-                              )}
+                                </ClickToCopyContent>
 
-                              <div className="mt-4 flex flex-row">
-                                <Button
-                                  type="danger"
-                                  disabled={generating}
-                                  onClick={generateNewInviteLink}
-                                >
-                                  {generating ? (
-                                    t`Generating link...`
-                                  ) : (
-                                    <Trans>Generate New Invite Link</Trans>
-                                  )}
-                                </Button>
+                                <div className="flex gap-2 mt-4">
+                                  <Button
+                                    type="danger-outline"
+                                    onClick={() => setShowDeleteModal(true)}
+                                    disabled={generating || deleting}
+                                  >
+                                    <Trans>Delete Current Link</Trans>
+                                  </Button>
+                                  <Button
+                                    type="secondary"
+                                    onClick={() => setShowGenerateModal(true)}
+                                    disabled={generating || deleting}
+                                  >
+                                    <Trans>Generate New Link</Trans>
+                                  </Button>
+                                </div>
                               </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
                         </div>
                         <div style={{ marginBottom: '20px' }}></div>
                         <div className="modal-content-actions">
                           <Button
-                            type="primary"
+                            type="secondary"
                             disabled={
                               sendingInvite || (!selectedUser && !resolvedUser)
                             }
@@ -1044,7 +1156,7 @@ const SpaceEditor: React.FunctionComponent<{
                           </div>
                           <div className="pt-6">
                             <Button
-                              type="danger"
+                              type="danger-outline"
                               className="!w-auto !inline-flex"
                               onClick={() => {
                                 if (deleteConfirmationStep === 0) {
@@ -1094,6 +1206,30 @@ const SpaceEditor: React.FunctionComponent<{
           onCancel={deleteConfirmation.modalConfig.onCancel}
         />
       )}
+
+      {/* Regenerate Modal - Only shown when replacing existing link */}
+      <ConfirmationModal
+        visible={showGenerateModal}
+        title={t`Generate New Public Invite Link`}
+        message={t`Are you sure you want to generate a new public invite link? Anyone with your old public invite link won't be able to join your Space anymore.`}
+        confirmText={t`Confirm`}
+        variant="danger"
+        showProtip={false}
+        onConfirm={handleRegenerateLink}
+        onCancel={() => setShowGenerateModal(false)}
+      />
+
+      {/* Delete Modal */}
+      <ConfirmationModal
+        visible={showDeleteModal}
+        title={t`Delete Public Invite Link`}
+        message={t`Are you sure you want to delete the public invite link? Anyone with your current public invite link won't be able to join your Space anymore.`}
+        confirmText={t`Delete`}
+        variant="danger"
+        showProtip={false}
+        onConfirm={handleDeleteLink}
+        onCancel={() => setShowDeleteModal(false)}
+      />
     </Modal>
   );
 };
