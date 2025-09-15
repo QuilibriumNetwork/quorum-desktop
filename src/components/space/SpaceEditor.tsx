@@ -237,7 +237,7 @@ const SpaceEditor: React.FunctionComponent<{
   }, [space, updateSpace]);
 
   // Custom save function that integrates all hooks
-  const saveChanges = React.useCallback(() => {
+  const saveChanges = React.useCallback(async () => {
     if (!space) return;
 
     // Clear previous validation errors
@@ -273,19 +273,23 @@ const SpaceEditor: React.FunctionComponent<{
         : space.bannerUrl;
 
     // Use the original updateSpace call with all our hook data
-    updateSpace({
-      ...space,
-      spaceName,
-      defaultChannelId: defaultChannel.channelId,
-      isRepudiable,
-      iconUrl,
-      bannerUrl,
-      roles,
-      emojis,
-      stickers,
-    });
-
-    dismiss();
+    try {
+      await updateSpace({
+        ...space,
+        spaceName,
+        defaultChannelId: defaultChannel.channelId,
+        isRepudiable,
+        iconUrl,
+        bannerUrl,
+        roles,
+        emojis,
+        stickers,
+      });
+      dismiss();
+    } catch (error) {
+      console.error('Failed to save space changes:', error);
+      // Don't dismiss the modal if save failed
+    }
   }, [
     space,
     spaceName,

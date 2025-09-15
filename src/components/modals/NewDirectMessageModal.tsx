@@ -54,12 +54,12 @@ const NewDirectMessageModal: React.FunctionComponent<
   }, [user.currentPasskeyInfo, keyset, getConfig]);
 
   // Override handleSubmit to save conversation settings
-  const handleSubmitWithSettings = React.useCallback(() => {
+  const handleSubmitWithSettings = React.useCallback(async () => {
     if (!!address) {
       // Persist the conversation record with the selected non-repudiability
       const now = Date.now();
-      messageDB
-        .saveConversation({
+      try {
+        await messageDB.saveConversation({
           conversationId: address + '/' + address,
           address: address,
           icon: DefaultImages.UNKNOWN_USER,
@@ -67,8 +67,11 @@ const NewDirectMessageModal: React.FunctionComponent<
           type: 'direct',
           timestamp: now,
           isRepudiable: !nonRepudiable ? true : false,
-        })
-        .catch(() => {});
+        });
+      } catch (error) {
+        console.error('Failed to save conversation settings:', error);
+        // Continue with modal submission even if save fails
+      }
     }
     handleSubmit();
   }, [address, nonRepudiable, messageDB, handleSubmit]);
