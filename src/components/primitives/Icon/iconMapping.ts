@@ -87,6 +87,9 @@ import {
   faChartLine,
   faIdBadge,
   faCertificate,
+  faCode,
+  faTerminal,
+  faFileCode,
 } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -220,6 +223,11 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   badge: faIdBadge,
   'id-badge': faIdBadge,
   certificate: faCertificate,
+
+  // Code-related icons
+  code: faCode,
+  terminal: faTerminal,
+  'file-code': faFileCode,
 };
 
 // React Native vector icon names (using FontAwesome family from react-native-vector-icons)
@@ -350,6 +358,11 @@ export const reactNativeIconMap: Record<IconName, string> = {
   badge: 'id-badge',
   'id-badge': 'id-badge',
   certificate: 'certificate',
+
+  // Code-related icons
+  code: 'code',
+  terminal: 'terminal',
+  'file-code': 'file-code',
 };
 
 // Helper function to check if a string is a valid icon name

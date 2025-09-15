@@ -122,7 +122,11 @@ export type IconName =
   | 'clipboard-list'
   | 'bug'
   | 'flask'
-  | 'chart-line';
+  | 'chart-line'
+  // Code-related icons
+  | 'code'
+  | 'terminal'
+  | 'file-code';
 
 export type IconSize =
   | 'xs'

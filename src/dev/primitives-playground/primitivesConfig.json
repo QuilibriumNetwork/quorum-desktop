@@ -1,0 +1,608 @@
+{
+  "callout": {
+    "id": "callout-primitive",
+    "title": "Callout",
+    "description": "Cross-platform callout component for important messages",
+    "background": "surface-1",
+    "columns": 4,
+    "dynamicProps": {},
+    "staticExamples": [
+      { "name": "Info", "props": { "variant": "info" }, "children": "This is an informational callout with helpful details." },
+      { "name": "Success", "props": { "variant": "success" }, "children": "Operation completed successfully!" },
+      { "name": "Warning", "props": { "variant": "warning" }, "children": "Please review this important warning message." },
+      { "name": "Error", "props": { "variant": "error" }, "children": "An error occurred. Please check your input." },
+      { "name": "Minimal", "props": { "variant": "minimal" }, "children": "Simple callout without border or background color." },
+      { "name": "With Close", "props": { "variant": "info", "showCloseButton": true }, "children": "This callout can be dismissed with the X button." }
+    ],
+    "quickTips": [
+      "Use variant='info' for neutral information",
+      "Use variant='success' for positive feedback",
+      "Use variant='warning' for cautionary messages",
+      "Use variant='error' for error states and validation",
+      "Use variant='minimal' for subtle notifications",
+      "Add showCloseButton for dismissible callouts"
+    ],
+    "codeExample": {
+      "title": "Form Feedback",
+      "code": "import { Callout } from '@/components/primitives';\n\n<Callout variant=\"error\">\n  Please fix the errors above before continuing.\n</Callout>"
+    }
+  },
+
+  "button": {
+    "id": "button-primitive",
+    "title": "Button",
+    "description": "Cross-platform button component for user interactions",
+    "background": "modal",
+    "columns": 4,
+    "dynamicProps": {
+      "size": {
+        "type": "select",
+        "options": ["small", "normal", "large"],
+        "default": "normal",
+        "label": "Size"
+      }
+    },
+    "staticExamples": [
+      { "name": "Primary", "props": { "type": "primary" }, "children": "Primary Button" },
+      { "name": "Secondary", "props": { "type": "secondary" }, "children": "Secondary Button" },
+      { "name": "Light", "props": { "type": "light" }, "children": "Light Button" },
+      { "name": "Light Outline", "props": { "type": "light-outline" }, "children": "Light Outline" },
+      { "name": "Subtle", "props": { "type": "subtle" }, "children": "Subtle Button" },
+      { "name": "Subtle Outline", "props": { "type": "subtle-outline" }, "children": "Subtle Outline" },
+      { "name": "Danger", "props": { "type": "danger" }, "children": "Danger Button" },
+      { "name": "Primary White", "props": { "type": "primary-white" }, "children": "Primary White" },
+      { "name": "Secondary White", "props": { "type": "secondary-white" }, "children": "Secondary White" },
+      { "name": "Light White", "props": { "type": "light-white" }, "children": "Light White" },
+      { "name": "Unstyled", "props": { "type": "unstyled" }, "children": "Unstyled Button" },
+      { "name": "With Icon", "props": { "type": "primary", "iconName": "plus" }, "children": "Add Item" },
+      { "name": "Icon Only", "props": { "type": "light", "iconName": "settings", "iconOnly": true }, "children": null },
+      { "name": "Full Width", "props": { "type": "primary", "fullWidth": true }, "children": "Full Width Button" },
+      { "name": "Disabled", "props": { "type": "primary", "disabled": true }, "children": "Disabled" }
+    ],
+    "quickTips": [
+      "Use type='primary' for main actions, 'secondary' for alternatives",
+      "Add iconName for better visual hierarchy and UX",
+      "Consider fullWidth on mobile for better touch targets",
+      "Always provide meaningful button text for accessibility"
+    ],
+    "codeExample": {
+      "title": "Basic Usage",
+      "code": "import { Button } from '@/components/primitives';\n\n<Button\n  type=\"primary\"\n  size=\"normal\"\n  onClick={handleClick}\n  iconName=\"plus\"\n>\n  Add Item\n</Button>"
+    }
+  },
+
+  "flexrow": {
+    "id": "flex-primitives",
+    "title": "FlexRow",
+    "description": "Horizontal flex layout container",
+    "background": "surface-1",
+    "columns": 1,
+    "dynamicProps": {
+      "gap": {
+        "type": "select",
+        "options": ["none", "xs", "sm", "md", "lg", "xl"],
+        "default": "md",
+        "label": "Gap"
+      },
+      "justify": {
+        "type": "select",
+        "options": ["start", "end", "center", "between", "around", "evenly"],
+        "default": "center",
+        "label": "Justify"
+      },
+      "align": {
+        "type": "select",
+        "options": ["start", "end", "center", "stretch", "baseline"],
+        "default": "center",
+        "label": "Align"
+      }
+    },
+    "staticExamples": [
+      { "name": "Four Items", "props": {}, "children": ["Home", "About", "Services", "Contact"] }
+    ],
+    "quickTips": [
+      "Use gap prop instead of manual spacing",
+      "justify controls horizontal distribution",
+      "align controls vertical alignment",
+      "wrap=true allows items to flow to next line"
+    ],
+    "codeExample": {
+      "title": "Header Layout",
+      "code": "import { FlexRow, Text, Button } from '@/components/primitives';\n\n<FlexRow justify=\"between\" align=\"center\">\n  <Text variant=\"strong\">Page Title</Text>\n  <Button type=\"primary\">Action</Button>\n</FlexRow>"
+    }
+  },
+
+  "colorswatch": {
+    "id": "colorswatch-primitive",
+    "title": "ColorSwatch",
+    "description": "Color selection component with visual feedback",
+    "background": "modal",
+    "columns": 4,
+    "dynamicProps": {
+      "size": {
+        "type": "select",
+        "options": ["small", "medium", "large"],
+        "default": "medium",
+        "label": "Size"
+      }
+    },
+    "staticExamples": [
+      { "name": "Blue", "props": { "color": "#3B82F6" }, "children": null },
+      { "name": "Green", "props": { "color": "#10B981" }, "children": null },
+      { "name": "Red", "props": { "color": "#EF4444" }, "children": null },
+      { "name": "Disabled", "props": { "color": "#6B7280", "disabled": true }, "children": null }
+    ],
+    "quickTips": [
+      "Use for color selection interfaces",
+      "isActive prop shows selection state",
+      "showCheckmark adds visual confirmation",
+      "Supports click/press interactions"
+    ],
+    "codeExample": {
+      "title": "Color Picker",
+      "code": "import { ColorSwatch } from '@/components/primitives';\n\nconst colors = ['#3B82F6', '#10B981', '#EF4444'];\n\n<FlexRow gap=\"sm\">\n  {colors.map(color => (\n    <ColorSwatch\n      key={color}\n      color={color}\n      isActive={selectedColor === color}\n      onPress={() => setSelectedColor(color)}\n    />\n  ))}\n</FlexRow>"
+    }
+  },
+
+  "container": {
+    "id": "container-primitive",
+    "title": "Container",
+    "description": "Cross-platform container with padding and layout control",
+    "background": "surface-1",
+    "columns": 1,
+    "dynamicProps": {
+      "padding": {
+        "type": "select",
+        "options": ["none", "xs", "sm", "md", "lg", "xl"],
+        "default": "md",
+        "label": "Padding"
+      },
+      "maxWidth": {
+        "type": "select",
+        "options": ["none", "sm", "md", "lg", "xl", "full"],
+        "default": "none",
+        "label": "Max Width"
+      }
+    },
+    "staticExamples": [
+      { "name": "Basic Container", "props": {}, "children": "This content is wrapped in a container. Use the controls above to adjust padding and max width to see how the container adapts." }
+    ],
+    "quickTips": [
+      "Use padding prop for consistent spacing",
+      "maxWidth controls responsive container width",
+      "centered prop centers content horizontally",
+      "fullWidth removes max-width constraints"
+    ],
+    "codeExample": {
+      "title": "Page Layout",
+      "code": "import { Container, Text } from '@/components/primitives';\n\n<Container padding=\"lg\" maxWidth=\"md\" centered>\n  <Text variant=\"strong\" size=\"xl\">Page Title</Text>\n  <Text>Your page content goes here...</Text>\n</Container>"
+    }
+  },
+
+  "flexcolumn": {
+    "id": "flexcolumn-primitive",
+    "title": "FlexColumn",
+    "description": "Vertical flex layout container",
+    "background": "surface-1",
+    "columns": 1,
+    "dynamicProps": {
+      "gap": {
+        "type": "select",
+        "options": ["none", "xs", "sm", "md", "lg", "xl"],
+        "default": "md",
+        "label": "Gap"
+      },
+      "align": {
+        "type": "select",
+        "options": ["start", "end", "center", "stretch"],
+        "default": "start",
+        "label": "Align"
+      }
+    },
+    "staticExamples": [
+      { "name": "Card Stack", "props": {}, "children": ["Header", "Content", "Footer"] }
+    ],
+    "quickTips": [
+      "Use gap prop for consistent vertical spacing",
+      "align controls horizontal alignment of children",
+      "Perfect for form layouts and card structures",
+      "Use with padding for contained layouts"
+    ],
+    "codeExample": {
+      "title": "Form Layout",
+      "code": "import { FlexColumn, Text, Input, Button } from '@/components/primitives';\n\n<FlexColumn gap=\"md\" align=\"stretch\">\n  <Text variant=\"strong\">Contact Form</Text>\n  <Input placeholder=\"Your name\" />\n  <Input placeholder=\"Your email\" type=\"email\" />\n  <Button type=\"primary\">Submit</Button>\n</FlexColumn>"
+    }
+  },
+
+  "fileupload": {
+    "id": "fileupload-primitive",
+    "title": "FileUpload",
+    "description": "Cross-platform file upload with drag and drop support",
+    "background": "surface-1",
+    "columns": 2,
+    "dynamicProps": {
+      "multiple": {
+        "type": "boolean",
+        "default": false,
+        "label": "Multiple Files"
+      }
+    },
+    "staticExamples": [
+      { "name": "Basic Upload", "props": { "accept": { "image/*": [".png", ".jpg", ".jpeg", ".gif"] } }, "children": "Click or drag files here" },
+      { "name": "Multiple Files", "props": { "multiple": true }, "children": "Upload multiple files" }
+    ],
+    "quickTips": [
+      "Supports drag and drop on web",
+      "Use accept prop to filter file types",
+      "maxSize prop limits file size",
+      "onFilesSelected receives file array"
+    ],
+    "codeExample": {
+      "title": "Image Upload",
+      "code": "import { FileUpload } from '@/components/primitives';\n\n<FileUpload\n  accept={{ 'image/*': ['.png', '.jpg'] }}\n  maxSize={5242880} // 5MB\n  onFilesSelected={(files) => {\n    console.log('Files:', files);\n  }}\n>\n  <div className=\"border-2 border-dashed p-8\">\n    Drop images here or click to browse\n  </div>\n</FileUpload>"
+    }
+  },
+
+  "icon": {
+    "id": "icon-primitive",
+    "title": "Icon",
+    "description": "Cross-platform icon component using FontAwesome",
+    "background": "modal",
+    "columns": 4,
+    "dynamicProps": {
+      "size": {
+        "type": "select",
+        "options": ["xs", "sm", "md", "lg", "xl", "2xl"],
+        "default": "md",
+        "label": "Size"
+      }
+    },
+    "staticExamples": [
+      { "name": "home", "props": { "name": "home" }, "children": null },
+      { "name": "settings", "props": { "name": "settings" }, "children": null },
+      { "name": "user", "props": { "name": "user" }, "children": null },
+      { "name": "search", "props": { "name": "search" }, "children": null },
+      { "name": "plus", "props": { "name": "plus" }, "children": null },
+      { "name": "times", "props": { "name": "times" }, "children": null },
+      { "name": "check", "props": { "name": "check" }, "children": null },
+      { "name": "arrow-right", "props": { "name": "arrow-right" }, "children": null },
+      { "name": "arrow-left", "props": { "name": "arrow-left" }, "children": null },
+      { "name": "chevron-down", "props": { "name": "chevron-down" }, "children": null },
+      { "name": "heart", "props": { "name": "heart" }, "children": null },
+      { "name": "star", "props": { "name": "star" }, "children": null },
+      { "name": "bell", "props": { "name": "bell" }, "children": null },
+      { "name": "mail", "props": { "name": "mail" }, "children": null },
+      { "name": "lock", "props": { "name": "lock" }, "children": null },
+      { "name": "eye", "props": { "name": "eye" }, "children": null }
+    ],
+    "quickTips": [
+      "Use semantic icon names that match FontAwesome icons",
+      "Size should match surrounding text for inline usage",
+      "Use consistent icon sizing throughout your app",
+      "Colors are controlled via CSS classes, not props"
+    ],
+    "codeExample": {
+      "title": "Icon Usage",
+      "code": "import { Icon } from '@/components/primitives';\n\n<Icon name=\"settings\" size=\"md\" />\n<Icon name=\"check\" size=\"sm\" className=\"text-success\" />\n<Icon name=\"times\" size=\"lg\" className=\"text-danger\" />"
+    }
+  },
+
+  "input": {
+    "id": "input-primitive",
+    "title": "Input",
+    "description": "Cross-platform text input component",
+    "background": "modal",
+    "columns": 2,
+    "dynamicProps": {},
+    "staticExamples": [
+      { "name": "Default (Filled)", "props": { "placeholder": "Enter text...", "variant": "filled" }, "children": null },
+      { "name": "Bordered", "props": { "placeholder": "Bordered input", "variant": "bordered" }, "children": null },
+      { "name": "Email Type", "props": { "placeholder": "email@example.com", "type": "email" }, "children": null },
+      { "name": "Password", "props": { "placeholder": "Password", "type": "password" }, "children": null },
+      { "name": "With Error", "props": { "placeholder": "Invalid input", "error": true, "errorMessage": "This field is required" }, "children": null },
+      { "name": "Disabled", "props": { "placeholder": "Disabled input", "disabled": true }, "children": null }
+    ],
+    "quickTips": [
+      "Use variant='bordered' for forms on light backgrounds",
+      "Always provide clear placeholder text",
+      "Use appropriate input types (email, password, number)",
+      "Show error states with clear messages"
+    ],
+    "codeExample": {
+      "title": "Form Input with Validation",
+      "code": "import { Input } from '@/components/primitives';\n\n<Input\n  value={email}\n  onChange={setEmail}\n  type=\"email\"\n  placeholder=\"Enter your email\"\n  error={!!emailError}\n  errorMessage={emailError}\n/>"
+    }
+  },
+
+  "modal": {
+    "id": "modal-primitive",
+    "title": "Modal",
+    "description": "Cross-platform modal dialog component",
+    "background": "chat",
+    "columns": 3,
+    "hideLabels": true,
+    "dynamicProps": {
+      "size": {
+        "type": "select",
+        "options": ["small", "medium", "large"],
+        "default": "medium",
+        "label": "Size"
+      }
+    },
+    "staticExamples": [
+      { "name": "Basic Modal", "props": { "hideClose": true }, "children": "Modal content goes here" },
+      { "name": "With Close Button", "props": { "hideClose": false }, "children": "Modal with close button" },
+      { "name": "No Backdrop Close", "props": { "closeOnBackdropClick": false }, "children": "Click backdrop won't close this modal" }
+    ],
+    "quickTips": [
+      "Use size='medium' for most dialogs",
+      "Always provide a way to close the modal",
+      "Consider closeOnBackdrop=false for critical actions",
+      "Test keyboard navigation (Escape key)"
+    ],
+    "codeExample": {
+      "title": "Confirmation Dialog",
+      "code": "import { Modal, FlexColumn, FlexRow, Button, Text } from '@/components/primitives';\n\n<Modal\n  visible={showModal}\n  title=\"Confirm Action\"\n  onClose={closeModal}\n  size=\"small\"\n>\n  <FlexColumn gap=\"md\">\n    <Text variant=\"strong\">Confirm Action</Text>\n    <Text>Are you sure you want to continue?</Text>\n    <FlexRow gap=\"sm\" justify=\"end\">\n      <Button type=\"secondary\" onClick={closeModal}>Cancel</Button>\n      <Button type=\"primary\" onClick={confirm}>Confirm</Button>\n    </FlexRow>\n  </FlexColumn>\n</Modal>"
+    }
+  },
+
+  "switch": {
+    "id": "switch-primitive",
+    "title": "Switch",
+    "description": "Cross-platform toggle switch component",
+    "background": "modal",
+    "columns": 3,
+    "dynamicProps": {
+      "size": {
+        "type": "select",
+        "options": ["small", "medium", "large"],
+        "default": "medium",
+        "label": "Size"
+      }
+    },
+    "staticExamples": [
+      { "name": "Default Off", "props": { "defaultValue": false }, "children": null },
+      { "name": "Default On", "props": { "defaultValue": true }, "children": null },
+      { "name": "Disabled Off", "props": { "defaultValue": false, "disabled": true }, "children": null },
+      { "name": "Disabled On", "props": { "defaultValue": true, "disabled": true }, "children": null },
+      { "name": "With Label", "props": { "defaultValue": false, "label": "Enable notifications" }, "children": null },
+      { "name": "Interactive", "props": { "defaultValue": false }, "children": null }
+    ],
+    "quickTips": [
+      "Use for binary on/off settings",
+      "Always provide clear labels for accessibility",
+      "Consider disabled state for unavailable options",
+      "Switch should provide immediate feedback"
+    ],
+    "codeExample": {
+      "title": "Switch with Handler",
+      "code": "const [enabled, setEnabled] = useState(false);\n\n<Switch\n  value={enabled}\n  onChange={setEnabled}\n  label=\"Enable dark mode\"\n  size=\"medium\"\n/>"
+    }
+  },
+
+  "radiogroup": {
+    "id": "radiogroup-primitive",
+    "title": "RadioGroup",
+    "description": "Cross-platform radio button group for single selection",
+    "background": "modal",
+    "columns": 2,
+    "dynamicProps": {
+      "direction": {
+        "type": "select",
+        "options": ["vertical", "horizontal"],
+        "default": "vertical",
+        "label": "Direction"
+      }
+    },
+    "staticExamples": [
+      { "name": "Basic Options", "props": { "options": [{"label": "Option A", "value": "a"}, {"label": "Option B", "value": "b"}, {"label": "Option C", "value": "c"}] }, "children": null },
+      { "name": "With Icons", "props": { "options": [{"label": "Home", "value": "home", "icon": "🏠"}, {"label": "Work", "value": "work", "icon": "💼"}, {"label": "Other", "value": "other", "icon": "📍"}] }, "children": null },
+      { "name": "Disabled Option", "props": { "options": [{"label": "Available", "value": "available"}, {"label": "Coming Soon", "value": "soon", "disabled": true}, {"label": "Premium", "value": "premium"}] }, "children": null }
+    ],
+    "quickTips": [
+      "Use for mutually exclusive choices",
+      "Provide clear, distinct labels",
+      "Add icons for visual context",
+      "Use direction prop for layout control"
+    ],
+    "codeExample": {
+      "title": "Settings Form",
+      "code": "import { RadioGroup } from '@/components/primitives';\n\nconst options = [\n  { label: 'Light Theme', value: 'light' },\n  { label: 'Dark Theme', value: 'dark' },\n  { label: 'System', value: 'system' }\n];\n\n<RadioGroup\n  options={options}\n  value={theme}\n  onChange={setTheme}\n  direction=\"vertical\"\n/>"
+    }
+  },
+
+  "scrollcontainer": {
+    "id": "scrollcontainer-primitive",
+    "title": "ScrollContainer",
+    "description": "Scrollable container with customizable height and styling",
+    "background": "modal",
+    "columns": 2,
+    "dynamicProps": {
+      "height": {
+        "type": "select",
+        "options": ["xs", "sm", "md", "lg", "xl"],
+        "default": "md",
+        "label": "Height"
+      }
+    },
+    "staticExamples": [
+      { "name": "Article Content", "props": {}, "children": "Title and paragraph content" },
+      { "name": "Long List", "props": {}, "children": "Extensive list with 50 items" }
+    ],
+    "quickTips": [
+      "Use for long content in limited space",
+      "Height can be preset or custom value",
+      "Supports border and border radius",
+      "Preserves scroll position by default"
+    ],
+    "codeExample": {
+      "title": "Message List",
+      "code": "import { ScrollContainer } from '@/components/primitives';\n\n<ScrollContainer\n  height=\"lg\"\n  showBorder\n  borderRadius=\"md\"\n>\n  {messages.map(msg => (\n    <MessageItem key={msg.id} {...msg} />\n  ))}\n</ScrollContainer>"
+    }
+  },
+
+  "select": {
+    "id": "select-primitive",
+    "title": "Select",
+    "description": "Cross-platform select dropdown component",
+    "background": "modal",
+    "columns": 4,
+    "dynamicProps": {
+      "size": {
+        "type": "select",
+        "options": ["small", "medium", "large"],
+        "default": "medium",
+        "label": "Size"
+      }
+    },
+    "staticExamples": [
+      { "name": "Basic Select", "props": { "placeholder": "Choose option...", "options": [{"label": "Option 1", "value": "1"}, {"label": "Option 2", "value": "2"}, {"label": "Option 3", "value": "3"}] }, "children": null },
+      { "name": "With Icons", "props": { "placeholder": "Select size...", "options": [{"label": "Small", "value": "sm", "icon": "📱"}, {"label": "Medium", "value": "md", "icon": "💻"}, {"label": "Large", "value": "lg", "icon": "🖥️"}] }, "children": null },
+      { "name": "With Subtitles", "props": { "placeholder": "Select user...", "options": [{"label": "John Doe", "value": "john", "subtitle": "john@example.com"}, {"label": "Jane Smith", "value": "jane", "subtitle": "jane@example.com"}] }, "children": null },
+      { "name": "Multiselect", "props": { "placeholder": "Choose multiple...", "multiple": true, "options": [{"label": "React", "value": "react"}, {"label": "Vue", "value": "vue"}, {"label": "Angular", "value": "angular"}, {"label": "Svelte", "value": "svelte"}] }, "children": null },
+      { "name": "Bordered", "props": { "placeholder": "Bordered select", "variant": "bordered", "options": [{"label": "Option A", "value": "a"}, {"label": "Option B", "value": "b"}] }, "children": null },
+      { "name": "Disabled", "props": { "disabled": true, "placeholder": "Disabled select", "options": [{"label": "Option 1", "value": "1"}] }, "children": null },
+      { "name": "With Error", "props": { "error": true, "errorMessage": "Please select an option", "placeholder": "Error state", "options": [{"label": "Option 1", "value": "1"}] }, "children": null }
+    ],
+    "quickTips": [
+      "Always provide clear option labels",
+      "Use placeholder text for initial state",
+      "Add icons and subtitles for rich options",
+      "Use multiple=true for multiselect functionality",
+      "Use variant='bordered' for forms on light backgrounds",
+      "Show error states with clear messages"
+    ],
+    "codeExample": {
+      "title": "Form Select",
+      "code": "import { Select } from '@/components/primitives';\n\nconst options = [\n  { label: 'Small', value: 'sm' },\n  { label: 'Medium', value: 'md' },\n  { label: 'Large', value: 'lg' }\n];\n\n<Select\n  options={options}\n  value={selectedSize}\n  onChange={setSelectedSize}\n  placeholder=\"Choose size\"\n/>"
+    }
+  },
+
+  "textarea": {
+    "id": "textarea-primitive",
+    "title": "TextArea",
+    "description": "Cross-platform multi-line text input component",
+    "background": "modal",
+    "columns": 2,
+    "dynamicProps": {},
+    "staticExamples": [
+      { "name": "Basic TextArea", "props": { "placeholder": "Enter your message...", "rows": 4 }, "children": null },
+      { "name": "With Value", "props": { "value": "This is some sample text content that spans multiple lines and demonstrates the textarea component.", "rows": 3 }, "children": null },
+      { "name": "Disabled", "props": { "disabled": true, "placeholder": "This textarea is disabled", "rows": 3 }, "children": null },
+      { "name": "With Error", "props": { "error": true, "errorMessage": "Message must be at least 10 characters", "placeholder": "Enter your message...", "rows": 4 }, "children": null }
+    ],
+    "quickTips": [
+      "Set appropriate rows for expected content length",
+      "Use clear placeholder text",
+      "Implement character counting for limits",
+      "Show error states with helpful messages"
+    ],
+    "codeExample": {
+      "title": "Feedback Form",
+      "code": "import { TextArea } from '@/components/primitives';\n\n<TextArea\n  value={feedback}\n  onChange={setFeedback}\n  placeholder=\"Share your feedback...\"\n  rows={6}\n  error={!!feedbackError}\n  errorMessage={feedbackError}\n/>"
+    }
+  },
+
+  "spacer": {
+    "id": "spacer-primitive",
+    "title": "Spacer",
+    "description": "Cross-platform spacing component for layout control",
+    "background": "surface-1",
+    "columns": 3,
+    "dynamicProps": {
+      "size": {
+        "type": "select",
+        "options": ["xs", "sm", "md", "lg", "xl"],
+        "default": "md",
+        "label": "Size"
+      }
+    },
+    "staticExamples": [
+      { "name": "Horizontal Spacing", "props": { "direction": "horizontal" }, "children": null },
+      { "name": "Vertical Spacing", "props": { "direction": "vertical" }, "children": null },
+      { "name": "With Border", "props": {}, "children": null }
+    ],
+    "quickTips": [
+      "Use for consistent spacing between elements",
+      "Works in both horizontal and vertical layouts",
+      "Size prop controls the amount of space",
+      "Better than manual margins for responsive design"
+    ],
+    "codeExample": {
+      "title": "Layout Spacing",
+      "code": "import { Spacer, Text, Button } from '@/components/primitives';\n\n<FlexColumn>\n  <Text>First section</Text>\n  <Spacer size=\"lg\" />\n  <Text>Second section</Text>\n  <Spacer size=\"md\" />\n  <Button type=\"primary\">Action</Button>\n</FlexColumn>\n\n// SPACER-BORDER-SPACER pattern\n<FlexColumn>\n  <Text>Section 1</Text>\n  <Spacer\n    spaceBefore=\"md\"\n    spaceAfter=\"md\"\n    border={true}\n    direction=\"vertical\"\n  />\n  <Text>Section 2</Text>\n</FlexColumn>"
+    }
+  },
+
+  "tooltip": {
+    "id": "tooltip-primitive",
+    "title": "Tooltip",
+    "description": "Cross-platform tooltip component for helpful hints",
+    "background": "surface-1",
+    "columns": 1,
+    "dynamicProps": {},
+    "staticExamples": [
+      { "name": "Basic Tooltip", "props": { "id": "basic", "content": "This is a helpful tooltip message", "place": "top" }, "children": "Hover me" },
+      { "name": "Custom Width", "props": { "id": "custom", "content": "Short", "maxWidth": 80, "place": "top" }, "children": "Small" },
+      { "name": "With Border", "props": { "id": "bordered", "content": "Highlighted tooltip with border", "highlighted": true, "place": "top" }, "children": "Bordered" }
+    ],
+    "quickTips": [
+      "Use for providing additional context",
+      "Keep tooltip content concise and helpful",
+      "Consider placement to avoid covering content",
+      "Use variants to indicate message importance"
+    ],
+    "codeExample": {
+      "title": "Interactive Help",
+      "code": "import { Tooltip, Button } from '@/components/primitives';\n\n<Tooltip content=\"This button performs the primary action\" placement=\"top\">\n  <Button type=\"primary\">Submit Form</Button>\n</Tooltip>"
+    }
+  },
+
+  "text": {
+    "id": "text-primitive",
+    "title": "Text",
+    "description": "Cross-platform text component with semantic variants",
+    "background": "chat",
+    "columns": 3,
+    "dynamicProps": {
+      "size": {
+        "type": "select",
+        "options": ["xs", "sm", "base", "lg", "xl", "2xl", "3xl"],
+        "default": "base",
+        "label": "Size"
+      },
+      "weight": {
+        "type": "select",
+        "options": ["normal", "medium", "semibold", "bold"],
+        "default": "normal",
+        "label": "Weight"
+      },
+      "align": {
+        "type": "select",
+        "options": ["left", "center", "right"],
+        "default": "left",
+        "label": "Align"
+      }
+    },
+    "staticExamples": [
+      { "name": "Default", "props": { "variant": "default" }, "children": "Default text style" },
+      { "name": "Strong", "props": { "variant": "strong" }, "children": "Strong emphasized text" },
+      { "name": "Subtle", "props": { "variant": "subtle" }, "children": "Subtle secondary text" },
+      { "name": "Muted", "props": { "variant": "muted" }, "children": "Muted disabled text" },
+      { "name": "Error", "props": { "variant": "error" }, "children": "Error message text" },
+      { "name": "Success", "props": { "variant": "success" }, "children": "Success message text" },
+      { "name": "Warning", "props": { "variant": "warning" }, "children": "Warning message text" },
+      { "name": "Link Style", "props": { "variant": "link" }, "children": "Link styled text" }
+    ],
+    "quickTips": [
+      "Use variant='strong' for headings and emphasis",
+      "variant='subtle' for secondary information",
+      "variant='muted' for disabled or less important text",
+      "Combine size and weight props for custom hierarchy"
+    ],
+    "codeExample": {
+      "title": "Text Hierarchy",
+      "code": "import { Text } from '@/components/primitives';\n\n<Text variant=\"strong\" size=\"lg\">\n  Section Heading\n</Text>\n<Text variant=\"default\">\n  Main content paragraph\n</Text>\n<Text variant=\"subtle\" size=\"sm\">\n  Helper text\n</Text>"
+    }
+  }
+}
