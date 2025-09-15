@@ -64,10 +64,7 @@ const ChannelEditor: React.FunctionComponent<{
     setIsSaving(true);
     try {
       await saveChanges();
-      // Simple delay to allow UI to update before closing
-      setTimeout(() => {
-        dismiss();
-      }, 1500);
+      dismiss();
     } catch (error) {
       console.error('Failed to save channel changes:', error);
       setIsSaving(false);
