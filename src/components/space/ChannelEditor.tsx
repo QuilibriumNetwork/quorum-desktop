@@ -55,8 +55,13 @@ const ChannelEditor: React.FunctionComponent<{
   });
 
   const handleSave = React.useCallback(async () => {
-    await saveChanges();
-    dismiss();
+    try {
+      await saveChanges();
+      dismiss();
+    } catch (error) {
+      console.error('Failed to save channel changes:', error);
+      // Don't dismiss the modal if save failed
+    }
   }, [saveChanges, dismiss]);
 
   return (
