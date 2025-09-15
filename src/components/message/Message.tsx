@@ -27,6 +27,7 @@ import {
   Icon,
   Tooltip,
 } from '../primitives';
+import { useImageModal } from '../context/ImageModalProvider';
 import './Message.scss';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
@@ -104,7 +105,9 @@ export const Message = ({
 
   // Component state that needs to be available to hooks
   const [showUserProfile, setShowUserProfile] = useState<boolean>(false);
-  const [openImage, setOpenImage] = useState<string | null>(null);
+
+  // Image modal context
+  const { showImageModal } = useImageModal();
 
   // Message actions business logic
   const messageActions = useMessageActions({
@@ -158,7 +161,7 @@ export const Message = ({
     message,
     stickers,
     mapSenderToUser,
-    onImageClick: setOpenImage,
+    onImageClick: showImageModal,
   });
 
   // Pinned messages logic
@@ -608,27 +611,6 @@ export const Message = ({
             </FlexRow>
           </Container>
         </FlexRow>
-      )}
-      {openImage && (
-        <Modal
-          title=""
-          visible={true}
-          onClose={() => setOpenImage(null)}
-          hideClose={false}
-        >
-          <FlexCenter>
-            <img
-              src={openImage}
-              style={{
-                maxHeight: '80vh',
-                width: 'auto',
-                height: 'auto',
-                maxWidth: '100%',
-              }}
-              className="rounded-lg"
-            />
-          </FlexCenter>
-        </Modal>
       )}
     </FlexColumn>
   );

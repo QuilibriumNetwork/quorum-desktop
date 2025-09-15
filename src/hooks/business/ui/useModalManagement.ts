@@ -30,6 +30,12 @@ interface UseModalManagementReturn {
     onConfirm: () => void;
   }) => void;
   hideConfirmationModal: () => void;
+  imageModal: {
+    visible: boolean;
+    imageUrl: string | null;
+  };
+  showImageModal: (imageUrl: string) => void;
+  hideImageModal: () => void;
 }
 
 export const useModalManagement = (): UseModalManagementReturn => {
@@ -50,6 +56,13 @@ export const useModalManagement = (): UseModalManagementReturn => {
   }>({
     visible: false,
     config: null,
+  });
+  const [imageModal, setImageModal] = useState<{
+    visible: boolean;
+    imageUrl: string | null;
+  }>({
+    visible: false,
+    imageUrl: null,
   });
 
   const showCreateSpaceModal = useCallback(() => {
@@ -85,6 +98,14 @@ export const useModalManagement = (): UseModalManagementReturn => {
     setConfirmationModal({ visible: false, config: null });
   }, []);
 
+  const showImageModal = useCallback((imageUrl: string) => {
+    setImageModal({ visible: true, imageUrl });
+  }, []);
+
+  const hideImageModal = useCallback(() => {
+    setImageModal({ visible: false, imageUrl: null });
+  }, []);
+
   return {
     createSpaceVisible,
     showCreateSpaceModal,
@@ -92,5 +113,8 @@ export const useModalManagement = (): UseModalManagementReturn => {
     confirmationModal,
     showConfirmationModal,
     hideConfirmationModal,
+    imageModal,
+    showImageModal,
+    hideImageModal,
   };
 };

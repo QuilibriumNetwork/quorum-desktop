@@ -4,7 +4,9 @@ import CloseButton from './CloseButton';
 import { ResponsiveContainer, Container } from './primitives';
 import CreateSpaceModal from './modals/CreateSpaceModal';
 import ConfirmationModal from './modals/ConfirmationModal';
+import ImageModal from './modals/ImageModal';
 import { ConfirmationModalProvider } from './context/ConfirmationModalProvider';
+import { ImageModalProvider } from './context/ImageModalProvider';
 import Connecting from './Connecting';
 import { useModalManagement, useElectronDetection } from '../hooks';
 import { useNavigationHotkeys } from '@/hooks/platform/interactions/useNavigationHotkeys';
@@ -13,13 +15,16 @@ import { useSidebar } from './context/SidebarProvider';
 const Layout: React.FunctionComponent<{
   children: React.ReactNode;
 }> = (props) => {
-  const { 
-    createSpaceVisible, 
-    showCreateSpaceModal, 
+  const {
+    createSpaceVisible,
+    showCreateSpaceModal,
     hideCreateSpaceModal,
     confirmationModal,
     showConfirmationModal,
     hideConfirmationModal,
+    imageModal,
+    showImageModal,
+    hideImageModal,
   } = useModalManagement();
   const { isElectron } = useElectronDetection();
   const { showRightSidebar, setShowRightSidebar, rightSidebarContent } =
@@ -53,6 +58,15 @@ const Layout: React.FunctionComponent<{
           onCancel={confirmationModal.config.onCancel}
         />
       )}
+
+      {/* Image Modal */}
+      {imageModal.visible && (
+        <ImageModal
+          visible={imageModal.visible}
+          imageUrl={imageModal.imageUrl}
+          onClose={hideImageModal}
+        />
+      )}
       
       {/* {joinSpaceVisible && <JoinSpaceModal visible={joinSpaceVisible} onClose={() => setJoinSpaceVisible(false)}/>} */}
       <NavMenu
@@ -63,7 +77,9 @@ const Layout: React.FunctionComponent<{
       />
       <Container>{isElectron && <CloseButton />}</Container>
       <ConfirmationModalProvider showConfirmationModal={showConfirmationModal}>
-        <ResponsiveContainer>{props.children}</ResponsiveContainer>
+        <ImageModalProvider showImageModal={showImageModal}>
+          <ResponsiveContainer>{props.children}</ResponsiveContainer>
+        </ImageModalProvider>
       </ConfirmationModalProvider>
 
       {/* Mobile overlay - backdrop for sidebar below 1024px */}
