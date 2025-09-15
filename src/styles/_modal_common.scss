@@ -457,6 +457,15 @@
   }
 }
 
+/* === BICOLOR LIST STYLING === */
+.modal-list-item {
+  @apply transition-colors odd:bg-surface-4 even:bg-surface-3;
+
+  &:hover {
+    background-color: var(--color-bg-modal);
+  }
+}
+
 // Small Modal Classes (for simple modals like ChannelEditor)
 .modal-small-container {
   position: absolute;

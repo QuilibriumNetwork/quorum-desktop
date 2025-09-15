@@ -171,8 +171,10 @@ const SpaceEditor: React.FunctionComponent<{
     }));
   }, [space?.groups]);
 
-  // Handler for generating public invite link (direct, no modal)
+  // Handler for generating public invite link (with modal)
   const handleGenerateLink = React.useCallback(async () => {
+    setShowGenerateModal(false); // Close modal first
+
     try {
       setErrorMessage('');
       setGenerationSuccess(false);
@@ -616,12 +618,13 @@ const SpaceEditor: React.FunctionComponent<{
                             <Trans>Add Role</Trans>
                           </Button>
                         </div>
-                        <ScrollContainer height="md">
-                          {roles.map((r, i) => {
+                        {roles.length > 0 && (
+                          <ScrollContainer height="md">
+                            {roles.map((r, i) => {
                             return (
                               <div
                                 key={'space-editor-role-' + i}
-                                className="text-main px-3"
+                                className="modal-list-item text-main px-3"
                               >
                                 <div
                                   className="flex flex-col gap-4 py-4 sm:grid sm:grid-cols-[1fr_1fr_auto]"
@@ -631,7 +634,7 @@ const SpaceEditor: React.FunctionComponent<{
                                     <div>
                                       @
                                       <input
-                                        className="border-0 bg-[rgba(0,0,0,0)] pr-2 outline-none focus:bg-surface-1 focus:px-2 focus:py-1 focus:rounded transition-all"
+                                        className="border-0 bg-[rgba(0,0,0,0)] pr-2 outline-none focus:bg-surface-1 focus:px-2 focus:py-1 focus:rounded transition-all font-mono"
                                         style={{
                                           width:
                                             (roles.find((_, pi) => i == pi)
@@ -680,6 +683,7 @@ const SpaceEditor: React.FunctionComponent<{
                                     <div className="mt-1">
                                       <Select
                                         multiple
+                                        variant="bordered"
                                         value={
                                           roles.find((_, pi) => i == pi)
                                             ?.permissions || []
@@ -731,13 +735,11 @@ const SpaceEditor: React.FunctionComponent<{
                                     </div>
                                   </div>
                                 </div>
-                                {i < roles.length - 1 && (
-                                  <div className="border-t border-dashed border-surface-7" />
-                                )}
                               </div>
-                            );
-                          })}
-                        </ScrollContainer>
+                              );
+                            })}
+                          </ScrollContainer>
+                        )}
                         {roleValidationError && (
                           <div
                             className="mt-4 text-sm"
@@ -785,8 +787,8 @@ const SpaceEditor: React.FunctionComponent<{
                           )}
                         </div>
                         {emojiFileError && (
-                          <div className="mt-2">
-                            <div className="error-label flex items-center justify-between">
+                          <Callout variant="error" size="sm" className="mt-2">
+                            <div className="flex items-center justify-between">
                               <span>{emojiFileError}</span>
                               <Icon
                                 name="times"
@@ -794,22 +796,21 @@ const SpaceEditor: React.FunctionComponent<{
                                 onClick={clearEmojiFileError}
                               />
                             </div>
-                          </div>
+                          </Callout>
                         )}
-                        <div className="pt-4">
-                          {emojis.map((em, i) => {
+                        {emojis.length > 0 && (
+                          <ScrollContainer height="md" className="mt-4">
+                            {emojis.map((em, i) => {
                             return (
                               <div
                                 key={'space-editor-emoji-' + i}
-                                className="modal-content-section-header text-main flex flex-row"
+                                className="modal-list-item text-main flex flex-row px-3 py-2 items-center"
                               >
-                                <img width="24" height="24" src={em.imgUrl} />
+                                <img width="24" height="24" src={em.imgUrl} className="rounded-md" />
                                 <div className="flex flex-col justify-around font-mono font-medium mx-2">
                                   <span>
                                     <input
-                                      className={
-                                        'border-0 bg-[rgba(0,0,0,0)] max-w-48 truncate'
-                                      }
+                                      className="border-0 bg-[rgba(0,0,0,0)] max-w-48 truncate outline-none focus:bg-surface-1 focus:px-2 focus:py-1 focus:rounded transition-all"
                                       title={em.name}
                                       onChange={(e) => {
                                         const sanitizedName = e.target.value
@@ -822,16 +823,24 @@ const SpaceEditor: React.FunctionComponent<{
                                   </span>
                                 </div>
                                 <div className="flex flex-col grow justify-around items-end">
-                                  <Icon
-                                    name="trash"
-                                    className="cursor-pointer text-danger hover:text-danger-hover"
-                                    onClick={() => removeEmoji(i)}
-                                  />
+                                  <Tooltip
+                                    id={`delete-emoji-${i}`}
+                                    content={t`Delete`}
+                                    place="left"
+                                    showOnTouch={false}
+                                  >
+                                    <Icon
+                                      name="trash"
+                                      className="cursor-pointer text-danger hover:text-danger-hover"
+                                      onClick={() => removeEmoji(i)}
+                                    />
+                                  </Tooltip>
                                 </div>
                               </div>
-                            );
-                          })}
-                        </div>
+                              );
+                            })}
+                          </ScrollContainer>
+                        )}
                         <div className="modal-content-info"></div>
                         <div className="modal-content-actions">
                           <Button type="primary" onClick={() => saveChanges()}>
@@ -871,8 +880,8 @@ const SpaceEditor: React.FunctionComponent<{
                           )}
                         </div>
                         {stickerFileError && (
-                          <div className="mt-2">
-                            <div className="error-label flex items-center justify-between">
+                          <Callout variant="error" size="sm" className="mt-2">
+                            <div className="flex items-center justify-between">
                               <span>{stickerFileError}</span>
                               <Icon
                                 name="times"
@@ -880,22 +889,21 @@ const SpaceEditor: React.FunctionComponent<{
                                 onClick={clearStickerFileError}
                               />
                             </div>
-                          </div>
+                          </Callout>
                         )}
-                        <div className="pt-4">
-                          {stickers.map((em, i) => {
+                        {stickers.length > 0 && (
+                          <ScrollContainer height="md" className="mt-4">
+                            {stickers.map((em, i) => {
                             return (
                               <div
                                 key={'space-editor-sticker-' + i}
-                                className="modal-content-section-header text-main flex flex-row"
+                                className="modal-list-item text-main flex flex-row px-3 py-2 items-center"
                               >
-                                <img width="24" height="24" src={em.imgUrl} />
+                                <img width="72" height="72" src={em.imgUrl} className="rounded-md" />
                                 <div className="flex flex-col justify-around font-mono font-medium mx-2">
                                   <span>
                                     <input
-                                      className={
-                                        'border-0 bg-[rgba(0,0,0,0)] max-w-48 truncate'
-                                      }
+                                      className="border-0 bg-[rgba(0,0,0,0)] max-w-48 truncate outline-none focus:bg-surface-1 focus:px-2 focus:py-1 focus:rounded transition-all"
                                       title={em.name}
                                       onChange={(e) => {
                                         const sanitizedName = e.target.value
@@ -910,16 +918,24 @@ const SpaceEditor: React.FunctionComponent<{
                                   </span>
                                 </div>
                                 <div className="flex flex-col grow justify-around items-end">
-                                  <Icon
-                                    name="trash"
-                                    className="cursor-pointer text-danger hover:text-danger-hover"
-                                    onClick={() => removeSticker(i)}
-                                  />
+                                  <Tooltip
+                                    id={`delete-sticker-${i}`}
+                                    content={t`Delete`}
+                                    place="left"
+                                    showOnTouch={false}
+                                  >
+                                    <Icon
+                                      name="trash"
+                                      className="cursor-pointer text-danger hover:text-danger-hover"
+                                      onClick={() => removeSticker(i)}
+                                    />
+                                  </Tooltip>
                                 </div>
                               </div>
-                            );
-                          })}
-                        </div>
+                              );
+                            })}
+                          </ScrollContainer>
+                        )}
                         <div className="modal-content-info"></div>
                         <div className="modal-content-actions">
                           <Button type="primary" onClick={() => saveChanges()}>
@@ -976,7 +992,7 @@ const SpaceEditor: React.FunctionComponent<{
                           />
                           <Spacer size="md"></Spacer>
                           <Input
-                            className="w-full"
+                            className="w-full placeholder:text-sm"
                             value={manualAddress}
                             placeholder="Type the address of the user you want to send to"
                             onChange={setManualAddress}
@@ -1004,7 +1020,7 @@ const SpaceEditor: React.FunctionComponent<{
 
                             {/* Callouts for operations */}
                             {generating && (
-                              <Callout variant="warning" size="sm" className="mb-4">
+                              <Callout variant="warning" size="sm" className="mb-4 mt-4">
                                 <div className="flex items-center gap-2">
                                   <Icon name="spinner" spin={true} className="text-warning" />
                                   <span>Generating public invite link...</span>
@@ -1013,13 +1029,13 @@ const SpaceEditor: React.FunctionComponent<{
                             )}
 
                             {generationSuccess && (
-                              <Callout variant="success" size="sm" className="mb-4" autoClose={3}>
+                              <Callout variant="success" size="sm" className="mb-4 mt-4" autoClose={3}>
                                 <span>Public invite link generated successfully.</span>
                               </Callout>
                             )}
 
                             {deleting && (
-                              <Callout variant="warning" size="sm" className="mb-4">
+                              <Callout variant="warning" size="sm" className="mb-4 mt-4">
                                 <div className="flex items-center gap-2">
                                   <Icon name="spinner" spin={true} className="text-warning" />
                                   <span>Deleting public invite link...</span>
@@ -1028,13 +1044,13 @@ const SpaceEditor: React.FunctionComponent<{
                             )}
 
                             {deletionSuccess && (
-                              <Callout variant="success" size="sm" className="mb-4" autoClose={3}>
+                              <Callout variant="success" size="sm" className="mb-4 mt-4" autoClose={3}>
                                 <span>Public invite link deleted successfully.</span>
                               </Callout>
                             )}
 
                             {errorMessage && (
-                              <Callout variant="error" size="sm" className="mb-4">
+                              <Callout variant="error" size="sm" className="mb-4 mt-4">
                                 <span>{errorMessage}</span>
                               </Callout>
                             )}
@@ -1051,7 +1067,7 @@ const SpaceEditor: React.FunctionComponent<{
                                 <div className="flex">
                                   <Button
                                     type="secondary"
-                                    onClick={handleGenerateLink}
+                                    onClick={() => setShowGenerateModal(true)}
                                     disabled={generating}
                                   >
                                     <Trans>Generate Public Invite Link</Trans>
@@ -1207,15 +1223,19 @@ const SpaceEditor: React.FunctionComponent<{
         />
       )}
 
-      {/* Regenerate Modal - Only shown when replacing existing link */}
+      {/* Generate/Regenerate Modal */}
       <ConfirmationModal
         visible={showGenerateModal}
-        title={t`Generate New Public Invite Link`}
-        message={t`Are you sure you want to generate a new public invite link? Anyone with your old public invite link won't be able to join your Space anymore.`}
+        title={!space?.inviteUrl ? t`Generate Public Invite Link` : t`Generate New Public Invite Link`}
+        message={
+          !space?.inviteUrl
+            ? t`Are you sure you want to generate a public invite link?\nThis will permanently invalidate ALL previously sent private invite links.`
+            : t`Are you sure you want to generate a new public invite link? Anyone with your old public invite link won't be able to join your Space anymore.`
+        }
         confirmText={t`Confirm`}
         variant="danger"
         showProtip={false}
-        onConfirm={handleRegenerateLink}
+        onConfirm={!space?.inviteUrl ? handleGenerateLink : handleRegenerateLink}
         onCancel={() => setShowGenerateModal(false)}
       />
 
