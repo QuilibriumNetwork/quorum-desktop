@@ -70,6 +70,15 @@
   }
 }
 
+.btn-danger-outline {
+  @extend %btn-base;
+  @apply bg-transparent border-2 cursor-pointer text-danger border-danger;
+
+  &:hover {
+    @apply bg-danger border-danger text-white;
+  }
+}
+
 .btn-small {
   @apply py-1 px-2 text-xs shadow-sm;
 }

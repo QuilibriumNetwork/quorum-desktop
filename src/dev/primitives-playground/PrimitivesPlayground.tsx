@@ -1549,6 +1549,9 @@ export const PrimitivesPlayground: React.FC = () => {
                   <Button type="danger" onClick={() => {}}>
                     Danger
                   </Button>
+                  <Button type="danger-outline" onClick={() => {}}>
+                    Danger Outline
+                  </Button>
                 </FlexRow>
               </div>
 
