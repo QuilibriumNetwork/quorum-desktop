@@ -41,7 +41,7 @@ export const Onboarding = ({
   const [fileError, setFileError] = useState<string | null>(null);
   const [isDragActive, setIsDragActive] = useState(false);
 
-  const maxImageSize = 2 * 1024 * 1024; // 2MB
+  const maxImageSize = 25 * 1024 * 1024; // 25MB
 
   // Handle file upload
   const handleFilesSelected = useCallback((files: any[]) => {
@@ -118,7 +118,7 @@ export const Onboarding = ({
               />
               <p className="text-xl">{t`Drop your profile photo here`}</p>
               <p className="text-sm text-subtle mt-2">
-                {t`PNG, JPG or JPEG • Max 2MB`}
+                {t`PNG, JPG or JPEG • Optimal ratio 1:1`}
               </p>
             </div>
           </div>
@@ -250,7 +250,7 @@ export const Onboarding = ({
                 <div className="mb-2 text-sm text-center">
                   {i18n._(
                     `Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension.`,
-                    { maxFileSize: `${maxImageSize / 1024 / 1024}MB` }
+                    { maxFileSize: `25MB` }
                   )}
                 </div>
                 {fileError && (

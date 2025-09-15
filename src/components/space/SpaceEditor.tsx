@@ -478,7 +478,7 @@ const SpaceEditor: React.FunctionComponent<{
                           /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */
                           <ReactTooltip
                             id="space-icon-tooltip"
-                            content="Upload an avatar for this Space - PNG or JPG, Max 1MB, Optimal size 123×123px"
+                            content="Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
                             place="bottom"
                             className="!w-[400px]"
                             anchorSelect="#space-icon-tooltip-target"
@@ -526,7 +526,7 @@ const SpaceEditor: React.FunctionComponent<{
                             /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */
                             <ReactTooltip
                               id="space-banner-tooltip"
-                              content="Upload a banner for this Space - PNG or JPG, Max 1MB, Optimal size 450×180px"
+                              content="Upload a banner for this Space - PNG or JPG - Optimal ratio 16:9"
                               place="bottom"
                               className="!w-[400px]"
                               anchorSelect="#space-banner-tooltip-target"
@@ -799,7 +799,7 @@ const SpaceEditor: React.FunctionComponent<{
                             <Trans>
                               Add up to 50 custom emoji. Custom emojis can only
                               be used within a Space. You can upload PNG, JPG or
-                              GIF, max 256kB.
+                              GIF, max 5MB (automatically optimized).
                             </Trans>
                           </div>
                         </div>
@@ -896,7 +896,7 @@ const SpaceEditor: React.FunctionComponent<{
                             <Trans>
                               Add up to 50 custom stickers. Custom stickers can
                               only be used within a Space. You can upload PNG,
-                              JPG or GIF, max 256kB.
+                              JPG or GIF, max 25MB (automatically optimized).
                             </Trans>
                           </div>
                         </div>

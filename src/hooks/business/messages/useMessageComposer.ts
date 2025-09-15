@@ -1,12 +1,12 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { FileWithPath, useDropzone } from 'react-dropzone';
-import Compressor from 'compressorjs';
 import {
   Message as MessageType,
   EmbedMessage,
   StickerMessage,
 } from '../../../api/quorumApi';
 import { t } from '@lingui/core/macro';
+import { processAttachmentImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 
 interface UseMessageComposerOptions {
   type: 'channel' | 'direct';
@@ -40,32 +40,14 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
   // Ref for textarea
   const editor = useRef<HTMLTextAreaElement>(null);
 
-  // Image compression
-  const compressImage = async (
-    file: FileWithPath,
-    acceptedFiles: FileWithPath[]
-  ) => {
-    return new Promise<File>((resolve, reject) => {
-      if (acceptedFiles[0].type === 'image/gif') {
-        resolve(acceptedFiles[0] as File);
-      } else {
-        new Compressor(file, {
-          quality: 0.8,
-          convertSize: Infinity,
-          retainExif: false,
-          mimeType: file.type,
-          success(result: Blob) {
-            const newFile = new File([result], acceptedFiles[0].name, {
-              type: result.type,
-            });
-            resolve(newFile);
-          },
-          error(err) {
-            reject(err);
-          },
-        });
-      }
-    });
+  // Image compression using standardized processor
+  const compressImage = async (file: FileWithPath): Promise<File> => {
+    try {
+      const result = await processAttachmentImage(file);
+      return result.file;
+    } catch (error) {
+      throw new Error(`Image compression failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   };
 
   // File dropzone
@@ -76,11 +58,11 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
       'image/gif': ['.gif'],
     },
     minSize: 0,
-    maxSize: 2 * 1024 * 1024,
+    maxSize: FILE_SIZE_LIMITS.MAX_INPUT_SIZE,
     onDropRejected: (fileRejections) => {
       for (const rejection of fileRejections) {
         if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          setFileError(t`File cannot be larger than 2MB`);
+          setFileError(t`File cannot be larger than 25MB`);
         } else {
           setFileError(t`File rejected`);
         }
@@ -95,9 +77,15 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
   useEffect(() => {
     if (acceptedFiles.length > 0) {
       (async () => {
-        const file = await compressImage(acceptedFiles[0], [...acceptedFiles]);
-        setFileData(await file.arrayBuffer());
-        setFileType(file.type);
+        try {
+          const file = await compressImage(acceptedFiles[0]);
+          setFileData(await file.arrayBuffer());
+          setFileType(file.type);
+          setFileError(null); // Clear any previous errors
+        } catch (error) {
+          console.error('Error compressing image:', error);
+          setFileError(error instanceof Error ? error.message : 'Unable to compress image. Please use a smaller image.');
+        }
       })();
     }
   }, [acceptedFiles]);

@@ -262,7 +262,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         {!isUserIconUploading && !isUserIconDragActive && (
                           <ReactTooltip
                             id="user-icon-tooltip"
-                            content="Upload an avatar for your profile - PNG or JPG, Max 1MB, Optimal size 123×123px"
+                            content="Upload an avatar for your profile - PNG or JPG - Optimal ratio 1:1"
                             place="bottom"
                             className="!w-[400px]"
                             anchorSelect="#user-icon-tooltip-target"

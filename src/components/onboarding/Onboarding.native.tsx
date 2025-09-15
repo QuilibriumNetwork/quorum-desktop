@@ -96,7 +96,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
   const [fileError, setFileError] = useState<string | null>(null);
   const [isDragActive, setIsDragActive] = useState(false);
 
-  const maxImageSize = 2 * 1024 * 1024; // 2MB
+  const maxImageSize = 25 * 1024 * 1024; // 25MB
 
   // Handle file upload
   const handleFilesSelected = useCallback((files: any[]) => {
@@ -177,7 +177,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
           {t`Drop your profile photo here`}
         </Text>
         <Text size="sm" style={{ color: '#6b7280', marginTop: 8 }}>
-          {t`PNG, JPG or JPEG • Max 2MB`}
+          {t`PNG, JPG or JPEG • Optimal ratio 1:1`}
         </Text>
       </Container>
     </Container>

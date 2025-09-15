@@ -69,7 +69,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */
               <ReactTooltip
                 id="space-icon-tooltip"
-                content="Upload an avatar for this Space - PNG or JPG, Max 1MB, Optimal size 128×128px"
+                content="Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
                 place="bottom"
                 className="!w-[400px]"
                 anchorSelect="#space-icon-tooltip-target"

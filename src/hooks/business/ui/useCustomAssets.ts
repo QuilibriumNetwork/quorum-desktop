@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { t } from '@lingui/core/macro';
 import { Emoji, Sticker } from '../../../api/quorumApi';
+import { processEmojiImage, processStickerImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 
 export interface UseCustomAssetsOptions {
   initialEmojis?: Emoji[];
@@ -16,6 +17,7 @@ export interface UseCustomAssetsReturn {
   setEmojis: (emojis: Emoji[]) => void;
   currentEmojiFiles: File[] | undefined;
   emojiFileError: string | null;
+  isProcessingEmojis: boolean;
   getEmojiRootProps: () => any;
   getEmojiInputProps: () => any;
   clearEmojiFileError: () => void;
@@ -28,6 +30,7 @@ export interface UseCustomAssetsReturn {
   setStickers: (stickers: Sticker[]) => void;
   currentStickerFiles: File[] | undefined;
   stickerFileError: string | null;
+  isProcessingStickers: boolean;
   getStickerRootProps: () => any;
   getStickerInputProps: () => any;
   clearStickerFileError: () => void;
@@ -66,6 +69,8 @@ export const useCustomAssets = (
   >();
   const [emojiFileError, setEmojiFileError] = useState<string | null>(null);
   const [stickerFileError, setStickerFileError] = useState<string | null>(null);
+  const [isProcessingEmojis, setIsProcessingEmojis] = useState<boolean>(false);
+  const [isProcessingStickers, setIsProcessingStickers] = useState<boolean>(false);
 
   const canAddMoreEmojis = emojis.length < 50;
   const canAddMoreStickers = stickers.length < 50;
@@ -81,12 +86,12 @@ export const useCustomAssets = (
       multiple: true,
       maxFiles: Math.min(10, 50 - emojis.length),
       minSize: 0,
-      maxSize: 256 * 1024,
+      maxSize: FILE_SIZE_LIMITS.MAX_EMOJI_INPUT_SIZE,
       disabled: emojis.length >= 50,
       onDropRejected: (fileRejections) => {
         for (const rejection of fileRejections) {
           if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-            const error = t`File cannot be larger than 256KB`;
+            const error = t`File cannot be larger than 5MB`;
             setEmojiFileError(error);
             onEmojiFileError?.(error);
           } else if (
@@ -109,6 +114,7 @@ export const useCustomAssets = (
         // Double-check we don't exceed the limit
         const allowedFiles = files.slice(0, 50 - emojis.length);
         setCurrentEmojiFiles(allowedFiles);
+        setIsProcessingEmojis(true); // Start processing indicator
       },
     });
 
@@ -125,12 +131,12 @@ export const useCustomAssets = (
     multiple: true,
     maxFiles: Math.min(10, 50 - stickers.length),
     minSize: 0,
-    maxSize: 256 * 1024,
+    maxSize: FILE_SIZE_LIMITS.MAX_INPUT_SIZE,
     disabled: stickers.length >= 50,
     onDropRejected: (fileRejections) => {
       for (const rejection of fileRejections) {
         if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          const error = t`File cannot be larger than 256KB`;
+          const error = t`File cannot be larger than 25MB`;
           setStickerFileError(error);
           onStickerFileError?.(error);
         } else if (
@@ -153,6 +159,7 @@ export const useCustomAssets = (
       // Double-check we don't exceed the limit
       const allowedFiles = files.slice(0, 50 - stickers.length);
       setCurrentStickerFiles(allowedFiles);
+      setIsProcessingStickers(true); // Start processing indicator
     },
   });
 
@@ -160,55 +167,79 @@ export const useCustomAssets = (
   useEffect(() => {
     if (currentEmojiFiles && currentEmojiFiles.length > 0) {
       (async () => {
-        const newEmojis = await Promise.all(
-          currentEmojiFiles.map(async (file) => {
-            const arrayBuffer = await file.arrayBuffer();
-            return {
-              id: crypto.randomUUID(),
-              name: file.name
-                .split('.')[0]
-                .toLowerCase()
-                .replace(/[^a-z0-9\-]/gi, ''),
-              imgUrl:
-                'data:' +
-                file.type +
-                ';base64,' +
-                Buffer.from(arrayBuffer).toString('base64'),
-            };
-          })
-        );
-        setEmojis((prev) => [...prev, ...newEmojis]);
-        setCurrentEmojiFiles(undefined); // Clear after processing
+        try {
+          const newEmojis = await Promise.all(
+            currentEmojiFiles.map(async (file) => {
+              // Compress emoji image for optimal size
+              const result = await processEmojiImage(file);
+              const arrayBuffer = await result.file.arrayBuffer();
+              return {
+                id: crypto.randomUUID(),
+                name: file.name
+                  .split('.')[0]
+                  .toLowerCase()
+                  .replace(/[^a-z0-9\-]/gi, ''),
+                imgUrl:
+                  'data:' +
+                  result.file.type +
+                  ';base64,' +
+                  Buffer.from(arrayBuffer).toString('base64'),
+              };
+            })
+          );
+          setEmojis((prev) => [...prev, ...newEmojis]);
+          setCurrentEmojiFiles(undefined); // Clear after processing
+          setEmojiFileError(null); // Clear any previous errors
+        } catch (error) {
+          console.error('Error processing emoji images:', error);
+          const errorMsg = error instanceof Error ? error.message : t`Unable to compress emoji images. Please use smaller images.`;
+          setEmojiFileError(errorMsg);
+          onEmojiFileError?.(errorMsg);
+        } finally {
+          setIsProcessingEmojis(false); // Stop processing indicator
+        }
       })();
     }
-  }, [currentEmojiFiles]);
+  }, [currentEmojiFiles, onEmojiFileError]);
 
   // Process sticker files
   useEffect(() => {
     if (currentStickerFiles && currentStickerFiles.length > 0) {
       (async () => {
-        const newStickers = await Promise.all(
-          currentStickerFiles.map(async (file) => {
-            const arrayBuffer = await file.arrayBuffer();
-            return {
-              id: crypto.randomUUID(),
-              name: file.name
-                .split('.')[0]
-                .toLowerCase()
-                .replace(/[^a-z0-9\-]/gi, ''),
-              imgUrl:
-                'data:' +
-                file.type +
-                ';base64,' +
-                Buffer.from(arrayBuffer).toString('base64'),
-            };
-          })
-        );
-        setStickers((prev) => [...prev, ...newStickers]);
-        setCurrentStickerFiles(undefined); // Clear after processing
+        try {
+          const newStickers = await Promise.all(
+            currentStickerFiles.map(async (file) => {
+              // Compress sticker image for optimal size
+              const result = await processStickerImage(file);
+              const arrayBuffer = await result.file.arrayBuffer();
+              return {
+                id: crypto.randomUUID(),
+                name: file.name
+                  .split('.')[0]
+                  .toLowerCase()
+                  .replace(/[^a-z0-9\-]/gi, ''),
+                imgUrl:
+                  'data:' +
+                  result.file.type +
+                  ';base64,' +
+                  Buffer.from(arrayBuffer).toString('base64'),
+              };
+            })
+          );
+          setStickers((prev) => [...prev, ...newStickers]);
+          setCurrentStickerFiles(undefined); // Clear after processing
+          setStickerFileError(null); // Clear any previous errors
+        } catch (error) {
+          console.error('Error processing sticker images:', error);
+          const errorMsg = error instanceof Error ? error.message : t`Unable to compress sticker images. Please use smaller images.`;
+          setStickerFileError(errorMsg);
+          onStickerFileError?.(errorMsg);
+        } finally {
+          setIsProcessingStickers(false); // Stop processing indicator
+        }
       })();
     }
-  }, [currentStickerFiles]);
+  }, [currentStickerFiles, onStickerFileError]);
 
   // Helper functions
   const removeEmoji = (index: number) => {
@@ -248,6 +279,7 @@ export const useCustomAssets = (
     setEmojis,
     currentEmojiFiles,
     emojiFileError,
+    isProcessingEmojis,
     getEmojiRootProps,
     getEmojiInputProps,
     clearEmojiFileError,
@@ -259,6 +291,7 @@ export const useCustomAssets = (
     setStickers,
     currentStickerFiles,
     stickerFileError,
+    isProcessingStickers,
     getStickerRootProps,
     getStickerInputProps,
     clearStickerFileError,

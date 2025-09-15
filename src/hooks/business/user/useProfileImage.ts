@@ -3,6 +3,7 @@ import { useDropzone, FileRejection } from 'react-dropzone';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../../utils';
+import { processAvatarImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 
 export interface UseProfileImageOptions {
   onImageChange?: (fileData?: ArrayBuffer, file?: File) => void;
@@ -40,12 +41,12 @@ export const useProfileImage = (
       'image/jpeg': ['.jpg', '.jpeg'],
     },
     minSize: 0,
-    maxSize: 1 * 1024 * 1024, // 1MB
+    maxSize: FILE_SIZE_LIMITS.MAX_INPUT_SIZE, // 25MB
     onDropRejected: (fileRejections: FileRejection[]) => {
       setIsUserIconUploading(false);
       for (const rejection of fileRejections) {
         if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          setUserIconFileError(t`File cannot be larger than 1MB`);
+          setUserIconFileError(t`File cannot be larger than 25MB`);
         } else {
           setUserIconFileError(t`File rejected`);
         }
@@ -77,13 +78,16 @@ export const useProfileImage = (
     if (currentFile) {
       (async () => {
         try {
-          const arrayBuffer = await currentFile.arrayBuffer();
+          // Compress image for optimal avatar size
+          const result = await processAvatarImage(currentFile);
+          const arrayBuffer = await result.file.arrayBuffer();
           setFileData(arrayBuffer);
           setIsUserIconUploading(false);
-          options.onImageChange?.(arrayBuffer, currentFile);
+          setUserIconFileError(null); // Clear any previous errors
+          options.onImageChange?.(arrayBuffer, result.file);
         } catch (error) {
-          console.error('Error reading file:', error);
-          setUserIconFileError(t`Error reading file`);
+          console.error('Error processing avatar image:', error);
+          setUserIconFileError(error instanceof Error ? error.message : t`Unable to compress image. Please use a smaller image.`);
           setIsUserIconUploading(false);
         }
       })();

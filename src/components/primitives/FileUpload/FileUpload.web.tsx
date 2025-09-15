@@ -2,6 +2,7 @@ import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import { FileUploadWebProps, FileUploadFile } from './types';
 import { t } from '@lingui/core/macro';
+import { processAvatarImage } from '../../../utils/imageProcessing';
 
 const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return t`0 Bytes`;
@@ -71,22 +72,35 @@ export const FileUpload: React.FC<FileUploadWebProps> = ({
       onError(new Error(errorMessage));
     }
 
-    // Convert File objects to FileUploadFile interface with proper data handling
+    // Convert File objects to FileUploadFile interface with compression for images
     const convertedFiles: FileUploadFile[] = await Promise.all(
       acceptedFiles.map(async (file) => {
+        let finalFile = file;
+
+        // Apply compression for image files (assuming avatar use case for FileUpload primitive)
+        if (file.type.startsWith('image/')) {
+          try {
+            const result = await processAvatarImage(file);
+            finalFile = result.file;
+          } catch (error) {
+            console.warn('Image compression failed, using original file:', error);
+            // Continue with original file if compression fails
+          }
+        }
+
         // Read file as ArrayBuffer for permanent storage
-        const arrayBuffer = await file.arrayBuffer();
+        const arrayBuffer = await finalFile.arrayBuffer();
 
         // Create data URL for preview (permanent, not a blob URL)
-        const dataUrl = `data:${file.type};base64,${Buffer.from(arrayBuffer).toString('base64')}`;
+        const dataUrl = `data:${finalFile.type};base64,${Buffer.from(arrayBuffer).toString('base64')}`;
 
         return {
           uri: dataUrl, // Use data URL instead of blob URL
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          file: file, // Include original File object
-          data: arrayBuffer, // Include ArrayBuffer for easy processing
+          name: file.name, // Keep original name
+          size: finalFile.size, // Use compressed size
+          type: finalFile.type,
+          file: finalFile, // Include compressed File object
+          data: arrayBuffer, // Include compressed ArrayBuffer
         };
       })
     );

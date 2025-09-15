@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { t } from '@lingui/core/macro';
+import { processAvatarImage, processBannerImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 
 export interface UseSpaceFileUploadsOptions {
   onIconFileError?: (error: string | null) => void;
@@ -59,12 +60,12 @@ export const useSpaceFileUploads = (
       'image/jpeg': ['.jpg', '.jpeg'],
     },
     minSize: 0,
-    maxSize: 1 * 1024 * 1024,
+    maxSize: FILE_SIZE_LIMITS.MAX_INPUT_SIZE,
     onDropRejected: (fileRejections) => {
       setIsIconUploading(false);
       for (const rejection of fileRejections) {
         if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          const error = t`File cannot be larger than 1MB`;
+          const error = t`File cannot be larger than 25MB`;
           setIconFileError(error);
           onIconFileError?.(error);
         } else {
@@ -106,12 +107,12 @@ export const useSpaceFileUploads = (
       'image/jpeg': ['.jpg', '.jpeg'],
     },
     minSize: 0,
-    maxSize: 1 * 1024 * 1024,
+    maxSize: FILE_SIZE_LIMITS.MAX_INPUT_SIZE,
     onDropRejected: (fileRejections) => {
       setIsBannerUploading(false);
       for (const rejection of fileRejections) {
         if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          const error = t`File cannot be larger than 1MB`;
+          const error = t`File cannot be larger than 25MB`;
           setBannerFileError(error);
           onBannerFileError?.(error);
         } else {
@@ -147,12 +148,16 @@ export const useSpaceFileUploads = (
     if (currentIconFile) {
       (async () => {
         try {
-          const arrayBuffer = await currentIconFile.arrayBuffer();
+          // Compress image for optimal space icon size
+          const result = await processAvatarImage(currentIconFile);
+          const arrayBuffer = await result.file.arrayBuffer();
           setIconData(arrayBuffer);
+          setIconFileError(null); // Clear any previous errors
+          onIconFileError?.(null);
           setIsIconUploading(false);
         } catch (error) {
-          console.error('Error reading icon file:', error);
-          const errorMsg = t`Error reading file`;
+          console.error('Error processing space icon:', error);
+          const errorMsg = error instanceof Error ? error.message : t`Unable to compress image. Please use a smaller image.`;
           setIconFileError(errorMsg);
           onIconFileError?.(errorMsg);
           setIsIconUploading(false);
@@ -166,12 +171,16 @@ export const useSpaceFileUploads = (
     if (currentBannerFile) {
       (async () => {
         try {
-          const arrayBuffer = await currentBannerFile.arrayBuffer();
+          // Compress image for optimal space banner size
+          const result = await processBannerImage(currentBannerFile);
+          const arrayBuffer = await result.file.arrayBuffer();
           setBannerData(arrayBuffer);
+          setBannerFileError(null); // Clear any previous errors
+          onBannerFileError?.(null);
           setIsBannerUploading(false);
         } catch (error) {
-          console.error('Error reading banner file:', error);
-          const errorMsg = t`Error reading file`;
+          console.error('Error processing space banner:', error);
+          const errorMsg = error instanceof Error ? error.message : t`Unable to compress image. Please use a smaller image.`;
           setBannerFileError(errorMsg);
           onBannerFileError?.(errorMsg);
           setIsBannerUploading(false);

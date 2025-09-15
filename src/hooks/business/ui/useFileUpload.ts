@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDropzone, DropzoneOptions, FileRejection } from 'react-dropzone';
 import { t } from '@lingui/core/macro';
+import { processAvatarImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 
 export interface UseFileUploadOptions {
   accept?: Record<string, string[]>;
@@ -36,7 +37,7 @@ export const useFileUpload = (
       'image/jpeg': ['.jpg', '.jpeg'],
     },
     multiple = false,
-    maxSize = 1 * 1024 * 1024, // 1MB default
+    maxSize = FILE_SIZE_LIMITS.MAX_INPUT_SIZE, // 25MB default
     onDropAccepted,
     onDropRejected,
   } = options;
@@ -50,7 +51,7 @@ export const useFileUpload = (
       setIsUploading(false);
       for (const rejection of fileRejections) {
         if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          setFileError(t`File cannot be larger than 1MB`);
+          setFileError(t`File cannot be larger than 25MB`);
         } else {
           setFileError(t`File rejected`);
         }
@@ -84,12 +85,15 @@ export const useFileUpload = (
     if (currentFile) {
       (async () => {
         try {
-          const arrayBuffer = await currentFile.arrayBuffer();
+          // Compress image for optimal avatar size (assuming this is for avatars/icons)
+          const result = await processAvatarImage(currentFile);
+          const arrayBuffer = await result.file.arrayBuffer();
           setFileData(arrayBuffer);
+          setFileError(null); // Clear any previous errors
           setIsUploading(false);
         } catch (error) {
-          console.error('Error reading file:', error);
-          setFileError(t`Error reading file`);
+          console.error('Error processing image:', error);
+          setFileError(error instanceof Error ? error.message : t`Unable to compress image. Please use a smaller image.`);
           setIsUploading(false);
         }
       })();

@@ -2,8 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
+import { processAvatarImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 
-const maxImageSize = 2 * 1024 * 1024; // 2MB
+const maxImageSize = FILE_SIZE_LIMITS.MAX_INPUT_SIZE; // 25MB input limit
 
 /**
  * Hook for web-specific file upload functionality
@@ -31,7 +32,7 @@ export const useWebFileUpload = () => {
           if (rejection.errors.some((err) => err.code === 'file-too-large')) {
             setFileError(
               i18n._(`File cannot be larger than {maxFileSize}`, {
-                maxFileSize: `${maxImageSize / 1024 / 1024}MB`,
+                maxFileSize: `25MB`,
               })
             );
           } else {
@@ -52,11 +53,14 @@ export const useWebFileUpload = () => {
     if (currentFile) {
       (async () => {
         try {
-          const arrayBuffer = await currentFile.arrayBuffer();
+          // Compress image for optimal avatar size
+          const result = await processAvatarImage(currentFile);
+          const arrayBuffer = await result.file.arrayBuffer();
           setFileData(arrayBuffer);
+          setFileError(null); // Clear any previous errors
         } catch (error) {
-          console.error('Error reading file:', error);
-          setFileError(t`Error reading file`);
+          console.error('Error processing avatar image:', error);
+          setFileError(error instanceof Error ? error.message : t`Unable to compress image. Please use a smaller image.`);
         }
       })();
     }
