@@ -17,7 +17,7 @@
   "scripts": {
     "dev": "vite --config web/vite.config.ts",
     "build": "vite build --config web/vite.config.ts",
-    "build:preview": "yarn build && yarn preview --port 3000 --config web/vite.config.ts",
+    "build:preview": "yarn build && yarn preview --config web/vite.config.ts",
     "electron:dev": "NODE_ENV=development electron web/electron/main.cjs",
     "electron:build": "yarn build && electron-builder",
     "lint": "eslint .",
