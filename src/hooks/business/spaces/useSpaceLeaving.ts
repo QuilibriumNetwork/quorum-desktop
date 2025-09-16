@@ -6,6 +6,7 @@ export const useSpaceLeaving = () => {
   const [confirmationStep, setConfirmationStep] = useState(0); // 0: initial, 1: awaiting confirmation
   const [confirmationTimeout, setConfirmationTimeout] =
     useState<NodeJS.Timeout | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { deleteSpace } = useMessageDB();
 
@@ -20,10 +21,17 @@ export const useSpaceLeaving = () => {
 
   const leaveSpace = useCallback(
     async (spaceId: string, onSuccess?: () => void) => {
-      await deleteSpace(spaceId);
-      navigate('/messages');
-      if (onSuccess) {
-        onSuccess();
+      try {
+        setError(null);
+        await deleteSpace(spaceId);
+        navigate('/messages');
+        if (onSuccess) {
+          onSuccess();
+        }
+      } catch (err) {
+        console.error('Failed to leave space:', err);
+        setError(err instanceof Error ? err.message : 'Failed to leave space. Please try again.');
+        setConfirmationStep(0); // Reset confirmation state on error
       }
     },
     [deleteSpace, navigate]
@@ -50,6 +58,7 @@ export const useSpaceLeaving = () => {
 
   const resetConfirmation = useCallback(() => {
     setConfirmationStep(0);
+    setError(null);
     if (confirmationTimeout) {
       clearTimeout(confirmationTimeout);
       setConfirmationTimeout(null);
@@ -60,5 +69,6 @@ export const useSpaceLeaving = () => {
     confirmationStep,
     handleLeaveClick,
     resetConfirmation,
+    error,
   };
 };

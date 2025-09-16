@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, FlexRow, Spacer } from '../primitives';
+import { Button, Modal, Container, Text, FlexRow, Spacer, Callout } from '../primitives';
 import { useSpace, useSpaceLeaving } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
@@ -16,7 +16,7 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
   onClose,
 }) => {
   const { data: space } = useSpace({ spaceId });
-  const { confirmationStep, handleLeaveClick, resetConfirmation } =
+  const { confirmationStep, handleLeaveClick, resetConfirmation, error } =
     useSpaceLeaving();
 
   // Reset confirmation when modal closes
@@ -43,6 +43,14 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
             </Trans>
           </Text>
         </Container>
+        {error && (
+          <>
+            <Spacer size="md"></Spacer>
+            <Callout variant="error">
+              {error}
+            </Callout>
+          </>
+        )}
         <Spacer size="lg"></Spacer>
         <FlexRow>
           <Button

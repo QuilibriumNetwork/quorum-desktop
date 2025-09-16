@@ -3303,8 +3303,15 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     async (spaceId: string) => {
       const hubKey = await messageDB.getSpaceKey(spaceId, 'hub');
       const inboxKey = await messageDB.getSpaceKey(spaceId, 'inbox');
+
+      // Check if hub key exists and has an address
+      if (!hubKey || !hubKey.address) {
+        console.error('Hub key or address missing for space:', spaceId, { hubKey });
+        throw new Error(t`Unable to leave space due to incomplete configuration. The space data may be corrupted.`);
+      }
+
       const envelope = await secureChannel.SealHubEnvelope(
-        hubKey.address!,
+        hubKey.address,
         {
           type: 'ed448',
           private_key: [
