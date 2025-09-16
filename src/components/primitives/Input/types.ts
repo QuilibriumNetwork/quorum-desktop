@@ -7,6 +7,8 @@ export interface InputProps {
   placeholder?: string;
   /** Change handler - receives the string value */
   onChange?: (value: string) => void;
+  /** Key down handler (web only) */
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   /** Input variant */
   variant?: 'filled' | 'bordered' | 'onboarding';
   /** Blur handler */

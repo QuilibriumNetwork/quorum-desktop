@@ -123,7 +123,6 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
     async (e: React.MouseEvent) => {
       const performDelete = async () => {
         await deleteConversation(conversationId, currentPasskeyInfo);
-        // Redirect to first conversation (excluding the deleted one) if exists, else /messages
         const list = (convPages?.pages || [])
           .flatMap((p: any) => p.conversations)
           .filter((c: any) => !!c)
@@ -195,7 +194,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
           <Spacer size="sm" />
 
           <FlexRow justify="end">
-            <Button type="primary" onClick={saveRepudiability}>
+            <Button type="primary" onClick={saveRepudiability} disabled={deleteConfirmation.isConfirming}>
               {t`Save`}
             </Button>
           </FlexRow>
@@ -208,7 +207,9 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
           <Text
             variant="danger"
             className="cursor-pointer hover:text-danger-hover"
-            onClick={(e) => handleDeleteClick(e)}
+            onClick={(e: React.MouseEvent) => {
+              if (!deleteConfirmation.isConfirming) handleDeleteClick(e);
+            }}
           >
             {t`Delete Conversation`}
           </Text>
@@ -226,6 +227,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
           cancelText={deleteConfirmation.modalConfig.cancelText}
           variant={deleteConfirmation.modalConfig.variant}
           showProtip={false}
+          busy={deleteConfirmation.isConfirming}
           onConfirm={deleteConfirmation.modalConfig.onConfirm}
           onCancel={deleteConfirmation.modalConfig.onCancel}
         />
