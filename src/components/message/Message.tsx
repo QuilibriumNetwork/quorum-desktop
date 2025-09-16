@@ -203,11 +203,26 @@ export const Message = ({
   const formatEventMessage = (userDisplayName: string, type: string) => {
     switch (type) {
       case 'join':
-        return i18n._('{user} has joined', { user: userDisplayName });
+        return (
+          <>
+            <Icon name="user-join" size="sm" className="mr-2 text-subtle" />
+            {i18n._('{user} has joined', { user: userDisplayName })}
+          </>
+        );
       case 'leave':
-        return i18n._('{user} has left', { user: userDisplayName });
+        return (
+          <>
+            <Icon name="user-leave" size="sm" className="mr-2 text-subtle" />
+            {i18n._('{user} has left', { user: userDisplayName })}
+          </>
+        );
       case 'kick':
-        return i18n._('{user} has been kicked', { user: userDisplayName });
+        return (
+          <>
+            <Icon name="user-kick" size="sm" className="mr-2 text-danger" />
+            {i18n._('{user} has been kicked', { user: userDisplayName })}
+          </>
+        );
     }
   };
 
@@ -290,8 +305,8 @@ export const Message = ({
         }
       })()}
       {['join', 'leave', 'kick'].includes(message.content.type) && (
-        <FlexRow className="font-[11px] px-[11px] py-[8px] italic">
-          <Text>
+        <FlexRow className="px-4 py-2 italic" align="center">
+          <Text variant={message.content.type === 'kick' ? 'danger' : 'subtle'}>
             {formatEventMessage(sender.displayName, message.content.type)}
           </Text>
         </FlexRow>
@@ -299,7 +314,7 @@ export const Message = ({
       {!['join', 'leave', 'kick'].includes(message.content.type) && (
         <FlexRow
           className={
-            'w-full font-[11pt] px-[11px] pb-[8px] items-start ' +
+            'w-full font-[11pt] px-[16px] pb-[8px] items-start ' +
             ((
               !(message.content as any).repliesToMessageId
                 ? undefined
