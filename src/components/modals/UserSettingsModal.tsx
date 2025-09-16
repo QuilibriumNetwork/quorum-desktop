@@ -12,6 +12,7 @@ import {
   Callout,
 } from '../primitives';
 import '../../styles/_modal_common.scss';
+import ModalSaveOverlay from './ModalSaveOverlay';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import ThemeRadioGroup from '../ThemeRadioGroup';
 import AccentColorSwitcher from '../AccentColorSwitcher';
@@ -130,8 +131,8 @@ const UserSettingsModal: React.FunctionComponent<{
       className="modal-complex-wrapper"
       hideClose={false}
       noPadding={true}
-      closeOnBackdropClick={true}
-      closeOnEscape={true}
+      closeOnBackdropClick={!isSaving}
+      closeOnEscape={!isSaving}
     >
       <div className="modal-complex-container-inner relative">
         {/* Error/Success feedback */}
@@ -152,15 +153,7 @@ const UserSettingsModal: React.FunctionComponent<{
         )}
 
         {/* Loading overlay for saving */}
-        {isSaving && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center">
-            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm rounded-lg" />
-            <div className="relative flex items-center gap-3">
-              <Icon name="spinner" size={24} spin className="text-accent" />
-              <div className="text-lg font-medium text-white">{t`Saving...`}</div>
-            </div>
-          </div>
-        )}
+        <ModalSaveOverlay visible={isSaving} />
 
         <div className="modal-complex-layout">
           {/* Desktop/Tablet Sidebar */}
@@ -356,14 +349,64 @@ const UserSettingsModal: React.FunctionComponent<{
                       </div>
                       <div className="modal-content-section">
                         <Spacer size="md" direction="vertical" borderTop={true} />
+                        <div className="modal-text-label">{t`Security`}</div>
+
+                        <div className="pt-2 modal-text-small text-main mb-4">
+                          {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
+                        </div>
+                        <div className="modal-content-info">
+                          <div className="flex flex-row justify-between pb-2">
+                            <div className="flex flex-row items-center">
+                              <div className="modal-text-small text-main">
+                                {t`Enable sync`}
+                              </div>
+                              <Tooltip
+                                id="settings-allow-sync-tooltip"
+                                content={t`When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined.`}
+                                place="bottom"
+                              >
+                                <Icon
+                                  name="info-circle"
+                                  className="text-main hover:text-strong cursor-pointer ml-2"
+                                />
+                              </Tooltip>
+                            </div>
+
+                            <Switch value={allowSync} onChange={setAllowSync} />
+                          </div>
+                          <div className="flex flex-row justify-between">
+                            <div className="flex flex-row items-center">
+                              <div className="modal-text-small text-main">
+                                {t`Always sign Direct Messages`}
+                              </div>
+                              <Tooltip
+                                id="settings-non-repudiable-tooltip"
+                                content={t`Always sign Direct Messages in conversations. This can be overridden for finer-grain control by clicking the lock icon found in each conversation view.`}
+                                place="bottom"
+                              >
+                                <Icon
+                                  name="info-circle"
+                                  className="text-main hover:text-strong cursor-pointer ml-2"
+                                />
+                              </Tooltip>
+                            </div>
+
+                            <Switch
+                              value={nonRepudiable}
+                              onChange={setNonRepudiable}
+                            />
+                          </div>
+                        </div>
+
+                        <Spacer size="md" direction="vertical" borderTop={true} />
                         <div className="modal-text-label pb-2">Devices</div>
-                        <ScrollContainer height="sm">
+                        <ScrollContainer height="xs">
                           {stagedRegistration?.device_registrations
                             .sort((a, b) => {
                               // Sort so "this device" appears first
                               const aIsThisDevice = keyset.deviceKeyset.inbox_keyset.inbox_address === a.inbox_registration.inbox_address;
                               const bIsThisDevice = keyset.deviceKeyset.inbox_keyset.inbox_address === b.inbox_registration.inbox_address;
-                              
+
                               if (aIsThisDevice && !bIsThisDevice) return -1;
                               if (!aIsThisDevice && bIsThisDevice) return 1;
                               return 0; // Keep original order for other devices
@@ -431,55 +474,6 @@ const UserSettingsModal: React.FunctionComponent<{
                             >
                               {t`Export`}
                             </Button>
-                          </div>
-                        </div>
-                        <Spacer size="md" direction="vertical" borderTop={true} />
-                        <div className="modal-text-label">{t`Security`}</div>
-
-                        <div className="pt-2 modal-text-small text-main mb-4">
-                          {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
-                        </div>
-                        <div className="modal-content-info">
-                          <div className="flex flex-row justify-between pb-2">
-                            <div className="flex flex-row items-center">
-                              <div className="modal-text-small text-main">
-                                {t`Enable sync`}
-                              </div>
-                              <Tooltip
-                                id="settings-allow-sync-tooltip"
-                                content={t`When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined.`}
-                                place="bottom"
-                              >
-                                <Icon
-                                  name="info-circle"
-                                  className="text-main hover:text-strong cursor-pointer ml-2"
-                                />
-                              </Tooltip>
-                            </div>
-
-                            <Switch value={allowSync} onChange={setAllowSync} />
-                          </div>
-                          <div className="flex flex-row justify-between">
-                            <div className="flex flex-row items-center">
-                              <div className="modal-text-small text-main">
-                                {t`Always sign Direct Messages`}
-                              </div>
-                              <Tooltip
-                                id="settings-non-repudiable-tooltip"
-                                content={t`Always sign Direct Messages in conversations. This can be overridden for finer-grain control by clicking the lock icon found in each conversation view.`}
-                                place="bottom"
-                              >
-                                <Icon
-                                  name="info-circle"
-                                  className="text-main hover:text-strong cursor-pointer ml-2"
-                                />
-                              </Tooltip>
-                            </div>
-
-                            <Switch
-                              value={nonRepudiable}
-                              onChange={setNonRepudiable}
-                            />
                           </div>
                         </div>
                         <div className="modal-content-actions">
