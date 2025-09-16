@@ -23,6 +23,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { buildConversationKey } from '../../hooks/queries/conversation/buildConversationKey';
 import { useConfirmation } from '../../hooks/ui/useConfirmation';
 import ConfirmationModal from './ConfirmationModal';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 
 type ConversationSettingsModalProps = {
   conversationId: string;
@@ -37,6 +38,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
 }) => {
   const { data: conversation } = useConversation({ conversationId });
   const { messageDB, getConfig, keyset, deleteConversation } = useMessageDB();
+  const { currentPasskeyInfo } = usePasskeysContext();
   const navigate = useNavigate();
   const { data: convPages } = useConversations({ type: 'direct' });
   const queryClient = useQueryClient();
@@ -120,7 +122,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   const handleDeleteClick = React.useCallback(
     async (e: React.MouseEvent) => {
       const performDelete = async () => {
-        await deleteConversation(conversationId);
+        await deleteConversation(conversationId, currentPasskeyInfo);
         // Redirect to first conversation (excluding the deleted one) if exists, else /messages
         const list = (convPages?.pages || [])
           .flatMap((p: any) => p.conversations)
