@@ -226,31 +226,29 @@ const UserSettingsModal: React.FunctionComponent<{
                 case 'general':
                   return (
                     <>
-                      <div className="modal-content-header flex flex-col md:flex-row md:items-center md:justify-center md:gap-6">
-                        <div className="flex justify-start md:mt-4">
-                          <div
-                            id="user-icon-tooltip-target"
-                            className={`avatar-upload ${!fileData && (!currentPasskeyInfo?.pfpUrl || currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) ? 'empty' : ''}`}
-                            style={
-                              fileData ||
-                              (currentPasskeyInfo?.pfpUrl &&
-                                !currentPasskeyInfo.pfpUrl.includes(
-                                  DefaultImages.UNKNOWN_USER
-                                ))
-                                ? {
-                                    backgroundImage: `url(${getProfileImageUrl()})`,
-                                  }
-                                : {}
-                            }
-                            {...getRootProps()}
-                          >
-                            <input {...getInputProps()} />
-                            {!fileData &&
-                              (!currentPasskeyInfo?.pfpUrl ||
-                                currentPasskeyInfo.pfpUrl.includes(
-                                  DefaultImages.UNKNOWN_USER
-                                )) && <Icon name="image" className="icon" />}
-                          </div>
+                      <div className="modal-content-header-avatar">
+                        <div
+                          id="user-icon-tooltip-target"
+                          className={`avatar-upload ${!fileData && (!currentPasskeyInfo?.pfpUrl || currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) ? 'empty' : ''}`}
+                          style={
+                            fileData ||
+                            (currentPasskeyInfo?.pfpUrl &&
+                              !currentPasskeyInfo.pfpUrl.includes(
+                                DefaultImages.UNKNOWN_USER
+                              ))
+                              ? {
+                                  backgroundImage: `url(${getProfileImageUrl()})`,
+                                }
+                              : {}
+                          }
+                          {...getRootProps()}
+                        >
+                          <input {...getInputProps()} />
+                          {!fileData &&
+                            (!currentPasskeyInfo?.pfpUrl ||
+                              currentPasskeyInfo.pfpUrl.includes(
+                                DefaultImages.UNKNOWN_USER
+                              )) && <Icon name="image" className="icon" />}
                         </div>
                         {!isUserIconUploading && !isUserIconDragActive && (
                           <ReactTooltip
@@ -261,8 +259,7 @@ const UserSettingsModal: React.FunctionComponent<{
                             anchorSelect="#user-icon-tooltip-target"
                           />
                         )}
-                        <div className="modal-text-section md:mt-0 md:ml-0 flex flex-col items-start">
-                          <Spacer size="xl" direction="vertical" className="hidden md:block" />
+                        <div className="modal-text-section">
                           <Input
                             className="w-full md:w-80 modal-input-text"
                             value={displayName}
@@ -273,6 +270,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         </div>
                       </div>
                       <div className="modal-content-section">
+                        <Spacer size="md" direction="vertical" borderTop={true} />
                         {userIconFileError && (
                           <div className="mb-4">
                             <div className="error-label flex items-center justify-between">

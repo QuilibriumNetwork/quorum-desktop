@@ -226,6 +226,7 @@
 }
 
 .modal-complex-content {
+  background-color: var(--color-bg-modal);
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -719,4 +720,66 @@
 
 .dark .modal-role {
   background: rgb(var(--success) / 0.7) !important;
+}
+
+// Avatar + Name Layout Classes
+// Special layout for avatar upload + name field (used in SpaceEditor and UserSettingsModal)
+.modal-content-header-avatar {
+  display: flex;
+  flex-direction: column;
+  user-select: none;
+  padding: 40px 16px 0px 16px;
+  align-items: center;
+  gap: 32px;
+
+  @media (min-width: 769px) {
+    flex-direction: row;
+    justify-content: center;
+    gap: 32px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 16px 12px;
+    min-height: auto;
+    flex-direction: column;
+    gap: 24px;
+    align-items: center;
+  }
+}
+
+// Modal Save Overlay Classes
+// Used for displaying a loading overlay with "Saving..." message during save operations
+.modal-save-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-save-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  border-radius: 0.5rem;
+}
+
+.modal-save-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  .modal-save-spinner {
+    color: var(--accent);
+    font-size: 24px;
+  }
+
+  .modal-save-text {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: white;
+  }
 }

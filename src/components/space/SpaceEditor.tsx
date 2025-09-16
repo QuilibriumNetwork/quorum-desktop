@@ -12,6 +12,7 @@ import {
   Callout,
 } from '../primitives';
 import ConfirmationModal from '../modals/ConfirmationModal';
+import ModalSaveOverlay from '../modals/ModalSaveOverlay';
 import { useSpace } from '../../hooks';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
 import { useMessageDB } from '../context/useMessageDB';
@@ -323,20 +324,12 @@ const SpaceEditor: React.FunctionComponent<{
       className="modal-complex-wrapper"
       hideClose={false}
       noPadding={true}
-      closeOnBackdropClick={true}
-      closeOnEscape={true}
+      closeOnBackdropClick={!isSaving}
+      closeOnEscape={!isSaving}
     >
       <div className="modal-complex-container-inner">
         {/* Loading overlay for saving */}
-        {isSaving && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center">
-            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm rounded-lg" />
-            <div className="relative flex items-center gap-3">
-              <Icon name="spinner" size={24} spin className="text-accent" />
-              <div className="text-lg font-medium text-white">{t`Saving...`}</div>
-            </div>
-          </div>
-        )}
+        <ModalSaveOverlay visible={isSaving} />
         <div className="modal-complex-layout">
           <div className="modal-complex-sidebar">
             <div className="modal-nav-title">Settings</div>
@@ -447,7 +440,7 @@ const SpaceEditor: React.FunctionComponent<{
                 case 'general':
                   return (
                     <>
-                      <div className="modal-content-header">
+                      <div className="modal-content-header-avatar">
                         <div
                           id="space-icon-tooltip-target"
                           className={`avatar-upload ${!iconData && !space?.iconUrl ? 'empty' : ''}`}
@@ -484,7 +477,7 @@ const SpaceEditor: React.FunctionComponent<{
                             anchorSelect="#space-icon-tooltip-target"
                           />
                         )}
-                        <div className="modal-text-section mt-4">
+                        <div className="modal-text-section">
                           <Input
                             className="w-full md:w-80 modal-input-text"
                             value={spaceName}
