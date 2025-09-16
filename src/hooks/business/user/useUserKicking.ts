@@ -97,6 +97,7 @@ export const useUserKicking = () => {
     kicking,
     confirmationStep,
     handleKickClick,
+    kickUserFromSpace,
     resetConfirmation,
   };
 };

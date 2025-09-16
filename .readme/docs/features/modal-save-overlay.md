@@ -123,6 +123,12 @@ const handleSave = useCallback(async () => {
 - **Protection**: Modal close mechanisms disabled during save
 - **Message**: "Saving..." (default)
 
+### KickUserModal
+- **Implementation**: `useModalSaveState` hook (`saveUntilComplete`)
+- **Timeout**: 3000ms for save operations
+- **Protection**: Modal close mechanisms disabled during save
+- **Message**: "Kicking..."
+
 **✅ All modals now use the consistent `useModalSaveState` pattern!**
 
 ## Operation Types
