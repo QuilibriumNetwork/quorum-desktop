@@ -72,6 +72,7 @@ type MessageDBContextValue = {
       deviceKeyset: secureChannel.DeviceKeyset;
     }>
   >;
+  deleteEncryptionStates: (args: { conversationId: string }) => Promise<void>;
   submitMessage: (
     address: string,
     pendingMessage: string | object,
@@ -197,7 +198,17 @@ type MessageDBContextValue = {
     }
   ) => Promise<void>;
   requestSync: (spaceId: string) => Promise<void>;
-  deleteConversation: (conversationId: string) => Promise<void>;
+  deleteConversation: (
+    conversationId: string,
+    currentPasskeyInfo?: {
+      credentialId: string;
+      address: string;
+      publicKey: string;
+      displayName?: string;
+      pfpUrl?: string;
+      completedOnboarding: boolean;
+    }
+  ) => Promise<void>;
 };
 
 type MessageDBContextProps = {
@@ -212,6 +223,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   const { apiClient } = useQuorumApiClient();
   const { setMessageHandler, enqueueOutbound, setResubscribe } = useWebSocket();
   const invalidateConversation = useInvalidateConversation();
+
   const [selfAddress, setSelfAddress] = useState<string>(
     null as unknown as string
   );
@@ -433,6 +445,26 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       );
     }
   };
+
+  const deleteEncryptionStates = React.useCallback(
+    async ({ conversationId }: { conversationId: string }) => {
+      try {
+        const states = await messageDB.getEncryptionStates({ conversationId });
+        for (const state of states) {
+          await messageDB.deleteEncryptionState(state);
+          if (state.inboxId) {
+            try {
+              await messageDB.deleteInboxMapping(state.inboxId);
+            } catch {}
+          }
+        }
+        try {
+          await messageDB.deleteLatestState(conversationId);
+        } catch {}
+      } catch {}
+    },
+    [messageDB]
+  );
 
   const addMessage = async (
     queryClient: QueryClient,
@@ -841,6 +873,15 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               decryptedContent?.channelId + '/' + decryptedContent?.channelId;
             session.user_address = decryptedContent!.channelId;
           }
+          if (decryptedContent?.content?.type === 'delete-conversation') {
+            await deleteEncryptionStates({ conversationId });
+            await deleteInboxMessages(
+              keyset.deviceKeyset.inbox_keyset,
+              [envelope.timestamp],
+              apiClient
+            );
+            return;
+          }
 
           const encryptionStates = await messageDB.getEncryptionStates({
             conversationId,
@@ -982,6 +1023,15 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             if (result.user_profile.user_address != self_address) {
               updatedUserProfile = result.user_profile;
             }
+            if (decryptedContent?.content?.type === 'delete-conversation') {
+              await deleteEncryptionStates({ conversationId });
+              await deleteInboxMessages(
+                keys.receiving_inbox,
+                [message.timestamp],
+                apiClient
+              );
+              return;
+            }
           } catch (error) {
             await deleteInboxMessages(
               keys.receiving_inbox,
@@ -1023,6 +1073,15 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             }
             decryptedContent = JSON.parse(result.message);
             sentAccept = found.sentAccept;
+            if ((decryptedContent as any)?.content?.type === 'delete-conversation') {
+              await deleteEncryptionStates({ conversationId });
+              await deleteInboxMessages(
+                keys.receiving_inbox,
+                [message.timestamp],
+                apiClient
+              );
+              return;
+            }
           } catch (error) {
             await deleteInboxMessages(
               keys.receiving_inbox,
@@ -2484,9 +2543,41 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   );
 
   const deleteConversation = React.useCallback(
-    async (conversationId: string) => {
+    async (
+      conversationId: string,
+      currentPasskeyInfo: {
+        credentialId: string;
+        address: string;
+        publicKey: string;
+        displayName?: string;
+        pfpUrl?: string;
+        completedOnboarding: boolean;
+      }
+
+    ) => {
       try {
         const [spaceId, channelId] = conversationId.split('/');
+        // Notify counterparty for direct conversations before local deletion
+        if (spaceId && channelId && spaceId === channelId) {
+          try {
+            const counterparty = await apiClient.getUser(spaceId);
+
+            if (currentPasskeyInfo?.address) {
+              const self = await apiClient.getUser(currentPasskeyInfo?.address!);
+              await submitMessage(
+                spaceId,
+                { type: 'delete-conversation' },
+                self.data,
+                counterparty.data,
+                queryClient,
+                currentPasskeyInfo,
+                keyset,
+                undefined,
+                false
+              );
+            }
+          } catch {}
+        }
         // Delete encryption states (keys) and latest state
         const states = await messageDB.getEncryptionStates({ conversationId });
         for (const state of states) {
@@ -2524,7 +2615,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         // no-op
       }
     },
-    [messageDB, queryClient]
+    [messageDB, queryClient, keyset]
   );
 
   const updateUserProfile = React.useCallback(
@@ -2558,6 +2649,26 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     },
     []
   );
+
+  // Ensure selfAddress is derived when key material is available
+  useEffect(() => {
+    (async () => {
+      try {
+        if (
+          !selfAddress &&
+          keyset?.userKeyset?.user_key?.public_key &&
+          (keyset as any) // guard access
+        ) {
+          const sh = await sha256.digest(
+            Buffer.from(
+              new Uint8Array(keyset.userKeyset.user_key.public_key)
+            )
+          );
+          setSelfAddress(base58btc.baseEncode(sh.bytes));
+        }
+      } catch {}
+    })();
+  }, [selfAddress, keyset]);
 
   const submitUpdateSpace = React.useCallback(
     async (manifest: secureChannel.SpaceManifest) => {
@@ -2763,6 +2874,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           outbounds.push(
             JSON.stringify({ type: 'direct', ...session.sealed_message })
           );
+        }
+
+        // do not save delete-conversation message
+        if (message.content.type === 'delete-conversation') {
+          return outbounds;
         }
 
         await saveMessage(message, messageDB, address!, address!, 'direct', {
@@ -5458,6 +5574,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         messageDB,
         keyset,
         setKeyset,
+        deleteEncryptionStates,
         submitMessage,
         createSpace,
         updateSpace,
@@ -5487,6 +5604,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   messageDB: undefined as never,
   keyset: undefined as never,
   setKeyset: (_) => {},
+  deleteEncryptionStates: () => undefined as never,
   submitMessage: () => undefined as never,
   createSpace: () => undefined as never,
   updateSpace: () => undefined as never,

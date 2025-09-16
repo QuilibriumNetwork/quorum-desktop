@@ -97,7 +97,8 @@ export type Message = {
     | KickMessage
     | UpdateProfileMessage
     | StickerMessage
-    | PinMessage;
+    | PinMessage
+    | DeleteConversationMessage;
   reactions: Reaction[];
   mentions: Mentions;
   publicKey?: string;
@@ -185,6 +186,11 @@ export type PinMessage = {
   type: 'pin';
   targetMessageId: string;
   action: 'pin' | 'unpin';
+};
+
+export type DeleteConversationMessage = {
+  senderId: string;
+  type: 'delete-conversation';
 };
 
 export type Reaction = {
