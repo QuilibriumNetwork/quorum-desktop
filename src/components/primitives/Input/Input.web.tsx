@@ -6,6 +6,7 @@ export const Input: React.FC<InputProps> = ({
   value,
   placeholder,
   onChange,
+  onKeyDown,
   variant = 'filled',
   onBlur,
   onFocus,
@@ -86,6 +87,7 @@ export const Input: React.FC<InputProps> = ({
               : placeholder // Normal placeholder for non-floating inputs
           }
           onChange={handleChange}
+          onKeyDown={onKeyDown}
           onBlur={handleBlur}
           onFocus={handleFocus}
           type={type}
