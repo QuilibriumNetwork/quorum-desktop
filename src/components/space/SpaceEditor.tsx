@@ -27,6 +27,7 @@ import {
   useSpaceFileUploads,
   useCustomAssets,
   useInviteManagement,
+  useModalSaveState,
 } from '../../hooks';
 import '../../styles/_modal_common.scss';
 
@@ -151,8 +152,14 @@ const SpaceEditor: React.FunctionComponent<{
   const [roleValidationError, setRoleValidationError] =
     React.useState<string>('');
 
-  // Saving state for loading indicator
-  const [isSaving, setIsSaving] = React.useState(false);
+  // Modal save state hook - close only when operation completes
+  const { isSaving, saveUntilComplete } = useModalSaveState({
+    maxTimeout: 30000, // 30 second failsafe
+    onSaveComplete: dismiss,
+    onSaveError: (error) => {
+      console.error('Save failed:', error);
+    },
+  });
 
   // Public invite link state management (simplified approach)
   const [generationSuccess, setGenerationSuccess] = React.useState(false);
@@ -244,7 +251,6 @@ const SpaceEditor: React.FunctionComponent<{
   const saveChanges = React.useCallback(async () => {
     if (!space) return;
 
-    setIsSaving(true);
     // Clear previous validation errors
     setRoleValidationError('');
 
@@ -257,29 +263,28 @@ const SpaceEditor: React.FunctionComponent<{
       setRoleValidationError(
         t`All roles must have both a tag name and display name.`
       );
-      setIsSaving(false);
       return;
     }
 
-    // Prepare all the data from our hooks
-    const iconUrl =
-      iconData && currentIconFile
-        ? 'data:' +
-          currentIconFile.type +
-          ';base64,' +
-          Buffer.from(iconData).toString('base64')
-        : space.iconUrl;
+    await saveUntilComplete(async () => {
+      // Prepare all the data from our hooks
+      const iconUrl =
+        iconData && currentIconFile
+          ? 'data:' +
+            currentIconFile.type +
+            ';base64,' +
+            Buffer.from(iconData).toString('base64')
+          : space.iconUrl;
 
-    const bannerUrl =
-      bannerData && currentBannerFile
-        ? 'data:' +
-          currentBannerFile.type +
-          ';base64,' +
-          Buffer.from(bannerData).toString('base64')
-        : space.bannerUrl;
+      const bannerUrl =
+        bannerData && currentBannerFile
+          ? 'data:' +
+            currentBannerFile.type +
+            ';base64,' +
+            Buffer.from(bannerData).toString('base64')
+          : space.bannerUrl;
 
-    // Use the original updateSpace call with all our hook data
-    try {
+      // Use the original updateSpace call with all our hook data
       await updateSpace({
         ...space,
         spaceName,
@@ -291,13 +296,8 @@ const SpaceEditor: React.FunctionComponent<{
         emojis,
         stickers,
       });
-      setIsSaving(false);
-      dismiss();
-    } catch (error) {
-      console.error('Failed to save space changes:', error);
-      setIsSaving(false);
-      // Don't dismiss the modal if save failed
-    }
+      // Modal will close automatically via onSaveComplete callback
+    });
   }, [
     space,
     spaceName,
@@ -311,15 +311,14 @@ const SpaceEditor: React.FunctionComponent<{
     emojis,
     stickers,
     updateSpace,
-    dismiss,
-    setIsSaving,
+    saveUntilComplete,
   ]);
 
   return (
     <Modal
       title=""
       visible={true}
-      onClose={dismiss}
+      onClose={isSaving ? undefined : dismiss}
       size="large"
       className="modal-complex-wrapper"
       hideClose={false}

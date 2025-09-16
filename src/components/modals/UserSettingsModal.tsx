@@ -24,6 +24,7 @@ import {
   useProfileImage,
   useLocaleSettings,
   useNotificationSettings,
+  useModalSaveState,
 } from '../../hooks';
 import ReactTooltip from '../ReactTooltip';
 
@@ -43,8 +44,16 @@ const UserSettingsModal: React.FunctionComponent<{
     >
   >;
 }> = ({ dismiss, setUser }) => {
-  // State for saving
-  const [isSaving, setIsSaving] = React.useState(false);
+  // Modal save state hook - close only when operation completes
+  const { isSaving, saveUntilComplete } = useModalSaveState({
+    maxTimeout: 30000, // 30 second failsafe
+    onSaveComplete: dismiss,
+    onSaveError: (error) => {
+      console.error('Save failed:', error);
+      setSaveError(error.message);
+    },
+  });
+
   const [saveError, setSaveError] = React.useState<string>('');
 
   // Use our extracted hooks
@@ -90,11 +99,10 @@ const UserSettingsModal: React.FunctionComponent<{
   } = useNotificationSettings();
 
   // Custom save handler that updates setUser callback
-  const saveChanges = async () => {
+  const saveChanges = React.useCallback(async () => {
     setSaveError('');
-    setIsSaving(true);
 
-    try {
+    await saveUntilComplete(async () => {
       await saveUserChanges(fileData, currentFile);
 
       // Update parent component's user state
@@ -111,22 +119,15 @@ const UserSettingsModal: React.FunctionComponent<{
             : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
         address: currentPasskeyInfo!.address,
       });
-
-      // Only close the modal after successful save
-      dismiss();
-    } catch (error) {
-      // Show error to user and don't dismiss
-      setSaveError(t`Failed to save settings. Please try again.`);
-    } finally {
-      setIsSaving(false);
-    }
-  };
+      // Modal will close automatically via onSaveComplete callback
+    });
+  }, [saveUntilComplete, saveUserChanges, fileData, currentFile, setUser, displayName, currentPasskeyInfo]);
 
   return (
     <Modal
       title=""
       visible={true}
-      onClose={dismiss}
+      onClose={isSaving ? undefined : dismiss}
       size="large"
       className="modal-complex-wrapper"
       hideClose={false}

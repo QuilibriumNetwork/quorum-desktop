@@ -14,14 +14,16 @@ This is the main index for all documentation, bug reports, and task management.
 - [Unused Dependencies Analysis](docs/development/unused-dependencies-analysis.md)
 
 ### Features
+- [Client-Side Image Compression](docs/features/client-side-image-compression.md)
 - [Cross-Platform Key Backup Implementation](docs/features/cross-platform-key-backup.md)
 - [Cross-Platform Theming System](docs/features/cross-platform-theming.md)
 - [Delete Confirmation System](docs/features/delete-confirmation-system.md)
 - [Desktop Notifications Feature](docs/features/desktop-notifications.md)
 - [Emoji Picker React - Styling & Customization](docs/features/emoji-picker-react-customization.md)
-- [Invite System Analysis - Comprehensive Report](docs/features/invite-system-analysis.md)
+- [Invite System Documentation](docs/features/invite-system-analysis.md)
 - [Kick User System Documentation](docs/features/kick-user-system.md)
 - [Mobile Message Actions Implementation](docs/features/message-actions-mobile.md)
+- [Modal Save Overlay System](docs/features/modal-save-overlay.md)
 - [Modal System Documentation](docs/features/modals.md)
 - [Pinned Messages Feature](docs/features/pinned-messages.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
@@ -68,7 +70,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/implement-background-sync-queue.md)
-- [Invite Links Improve](tasks/invite-links-improve.md)
 - [Kick User UX Improvements](tasks/kick-user-ux-improvements.md)
 - [Refactor Modal Placement in Layout.tsx](tasks/refactor-modal-placement.md)
 - [Shared Git Hooks Setup](tasks/shared-git-hooks-setup.md)
@@ -90,6 +91,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [CSS to Mobile Colors Sync Script](tasks/mobile-dev/css-to-mobile-colors-sync.md)
 - [File Upload Hooks Consolidation Task](tasks/mobile-dev/file-upload-hooks-consolidation.md)
 - [Mobile Development Plan - Improved Version](tasks/mobile-dev/mobile-dev-plan.md)
+- [Mobile Image Compression Implementation](tasks/mobile-dev/mobile-image-compression.md)
 - [Mobile Internationalization (i18n) Implementation Plan](tasks/mobile-dev/internationalization-i18n-implementation-plan.md)
 - [Mobile/Touch Implementation Transition Plan](tasks/mobile-dev/mobile-touch-transition-plan.md)
 - [Native Business Components Implementation Plan](tasks/mobile-dev/native-business-components-plan.md)
@@ -112,6 +114,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Callout Primitive Audit Report](tasks/.done/callout-primitive-audit.md)
 - [Callout Primitive System](tasks/.done/callout-primitive-system.md)
 - [Channel Business Logic Extraction - Lessons Learned](tasks/.done/channel-business-logic-extraction-lessons.md)
+- [Client-Side Image Processing for Large File Uploads](tasks/.done/client-side-image-processing.md)
 - [Color Switcher Implementation](tasks/.done/color-switcher.md)
 - [Complex Modal Primitive Migration Template](tasks/.done/usersettingsmodal-primitive-migration.md)
 - [Cross-Platform Component Audit](tasks/.done/components-audit.md)
@@ -125,6 +128,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modal Migration Analysis & Progress Report](tasks/.done/DONE_modal-migration-plan.md)
 - [Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/.done/components-audit-dashboard.md)
 - [Pinned Messages Feature - Implementation Plan](tasks/.done/pinned-messages-feature.md)
+- [Public Invite Links Improvement Task](tasks/.done/invite-links-improve.md)
 - [ReactTooltip Mobile Optimization](tasks/.done/reacttoolltip-mobile.md)
 - [Read-Only Channels with Role Managers](tasks/.done/read-only-channels-with-role-managers.md)
 - [Responsive Layout Implementation Plan](tasks/.done/responsive-layout.md)
@@ -138,4 +142,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-09-14 15:20:18
+**Last Updated**: 2025-09-16 10:45:44
