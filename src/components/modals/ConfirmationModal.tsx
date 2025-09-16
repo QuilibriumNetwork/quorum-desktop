@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, FlexRow, Spacer, ScrollContainer, Icon, Callout } from '../primitives';
+import { Button, Modal, Container, Text, FlexRow, Spacer, ScrollContainer, Callout } from '../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
-import clsx from 'clsx';
 
 export interface ConfirmationModalProps {
   visible: boolean;
@@ -15,6 +14,7 @@ export interface ConfirmationModalProps {
   size?: 'small' | 'medium' | 'large';
   showProtip?: boolean; // Show PROTIP text (default: true)
   protipAction?: string; // Action name for PROTIP text (e.g., "delete message")
+  busy?: boolean; // Disable controls and closing when busy
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -30,11 +30,10 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
   size = 'small',
   showProtip = true,
   protipAction,
+  busy = false,
   onConfirm,
   onCancel,
 }) => {
-
-
   return (
     <Modal
       visible={visible}
@@ -56,8 +55,8 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
         {/* Preview content in scrollable container */}
         {preview && (
           <Container>
-            <ScrollContainer 
-              height="sm" 
+            <ScrollContainer
+              height="sm"
               className="p-2 bg-surface-2 rounded-lg border border-surface-4"
               showBorder={false}
             >

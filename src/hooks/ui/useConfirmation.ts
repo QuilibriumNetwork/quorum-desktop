@@ -2,11 +2,11 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 
 export interface UseConfirmationOptions {
   type: 'inline' | 'modal';
-  
+
   // Smart escalation (Channel/Group deletion only)
   escalateWhen?: () => boolean; // When to escalate from inline to modal
   blockedWhen?: () => boolean;  // When to block with inline error
-  
+
   // Modal configuration (when type='modal' or escalating)
   modalConfig?: {
     title: string;
@@ -16,13 +16,13 @@ export interface UseConfirmationOptions {
     cancelText?: string;
     variant?: 'danger' | 'warning' | 'info';
   };
-  
+
   // Blocking error (Pattern C)
   blockedError?: string;
-  
+
   // Enable shift+click bypass for desktop (Pattern B)
   enableShiftBypass?: boolean;
-  
+
   // Double-click timeout in ms (Pattern A)
   doubleClickTimeout?: number;
 }
@@ -43,6 +43,7 @@ export interface UseConfirmationResult {
     onConfirm: () => void;
     onCancel: () => void;
   };
+  isConfirming: boolean;
   reset: () => void;
 }
 
@@ -50,6 +51,7 @@ export function useConfirmation(options: UseConfirmationOptions): UseConfirmatio
   const [confirmationStep, setConfirmationStep] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [blockedError, setBlockedError] = useState('');
+  const [isConfirming, setIsConfirming] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout>();
   const onConfirmRef = useRef<(() => void | Promise<void>) | null>(null);
 
@@ -66,6 +68,7 @@ export function useConfirmation(options: UseConfirmationOptions): UseConfirmatio
     setConfirmationStep(0);
     setShowModal(false);
     setBlockedError('');
+    setIsConfirming(false);
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -77,26 +80,26 @@ export function useConfirmation(options: UseConfirmationOptions): UseConfirmatio
       setBlockedError(options.blockedError || 'Operation not allowed');
       return;
     }
-    
+
     // Clear any previous errors
     setBlockedError('');
-    
+
     // Store the onConfirm callback
     onConfirmRef.current = onConfirm;
-    
+
     // Check for Shift+click bypass (desktop only, Pattern B)
     if (options.enableShiftBypass && e.shiftKey && (options.type === 'modal' || options.escalateWhen?.())) {
       onConfirm();
       reset();
       return;
     }
-    
+
     // Smart escalation logic
     if (options.type === 'inline' && options.escalateWhen?.()) {
       setShowModal(true);
       return;
     }
-    
+
     // Handle based on type
     if (options.type === 'modal') {
       setShowModal(true);
@@ -123,14 +126,20 @@ export function useConfirmation(options: UseConfirmationOptions): UseConfirmatio
   // Execute the stored onConfirm when modal confirms
   const modalConfig = options.modalConfig ? {
     ...options.modalConfig,
-    onConfirm: () => {
+    onConfirm: async () => {
       if (onConfirmRef.current) {
-        onConfirmRef.current();
-        reset();
+        try {
+          setIsConfirming(true);
+          await Promise.resolve(onConfirmRef.current());
+        } finally {
+          reset();
+        }
       }
     },
     onCancel: () => {
-      reset();
+      if (!isConfirming) {
+        reset();
+      }
     }
   } : undefined;
 
@@ -146,6 +155,7 @@ export function useConfirmation(options: UseConfirmationOptions): UseConfirmatio
     },
     blockedError,
     modalConfig,
+    isConfirming,
     reset
   };
 }

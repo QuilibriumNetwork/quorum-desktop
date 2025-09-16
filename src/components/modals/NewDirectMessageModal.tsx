@@ -101,9 +101,16 @@ const NewDirectMessageModal: React.FunctionComponent<
           <Input
             className="w-full !text-xs sm:!text-sm"
             onChange={(value: string) => handleAddressChange(value)}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === 'Enter' && !isButtonDisabled) {
+                e.preventDefault();
+                handleSubmitWithSettings();
+              }
+            }}
             placeholder={t`User address here`}
             error={!!error}
             errorMessage={error || undefined}
+            autoFocus={true}
           />
         </Container>
         <React.Suspense
