@@ -52,7 +52,6 @@ export function useChannelManagement({
   const [deleteConfirmationStep, setDeleteConfirmationStep] = useState(0);
   const [hasMessages, setHasMessages] = useState<boolean>(false);
   const [messageCount, setMessageCount] = useState<number>(0);
-  const [showWarning, setShowWarning] = useState<boolean>(false);
 
   // Sync channel data when space data loads
   useEffect(() => {
@@ -228,16 +227,13 @@ export function useChannelManagement({
       // Legacy call without event - fall back to old double-click system
       if (deleteConfirmationStep === 0) {
         setDeleteConfirmationStep(1);
-        if (hasMessages) {
-          setShowWarning(true);
-        }
         // Reset confirmation after 5 seconds
         setTimeout(() => setDeleteConfirmationStep(0), 5000);
       } else {
         performDelete();
       }
     }
-  }, [deleteConfirmation, deleteConfirmationStep, hasMessages]);
+  }, [deleteConfirmation, deleteConfirmationStep]);
 
   // Delete channel
   const deleteChannel = useCallback(async () => {
@@ -286,7 +282,6 @@ export function useChannelManagement({
   // Reset delete confirmation state
   const resetDeleteConfirmation = useCallback(() => {
     setDeleteConfirmationStep(0);
-    setShowWarning(false);
   }, []);
 
   return {
@@ -299,7 +294,6 @@ export function useChannelManagement({
     pinnedAt: channelData.pinnedAt,
     hasMessages,
     messageCount,
-    showWarning,
     deleteConfirmationStep,
     isEditMode: !!channelId,
     availableRoles: space?.roles || [],
@@ -312,7 +306,6 @@ export function useChannelManagement({
     handlePinChange,
     saveChanges,
     handleDeleteClick,
-    setShowWarning,
     resetDeleteConfirmation,
     deleteConfirmation,
   };

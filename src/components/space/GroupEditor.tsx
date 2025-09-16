@@ -9,9 +9,12 @@ import {
   FlexCenter,
   Text,
   Spacer,
+  Callout,
 } from '../primitives';
+import ModalSaveOverlay from '../modals/ModalSaveOverlay';
 import '../../styles/_modal_common.scss';
 import { useGroupManagement } from '../../hooks';
+import { useModalSaveState } from '../../hooks/business/ui/useModalSaveState';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 
@@ -23,10 +26,7 @@ const GroupEditor: React.FunctionComponent<{
 }> = ({ spaceId, groupName, dismiss }) => {
   const {
     group,
-    hasMessages,
-    hasChannels,
     channelCount,
-    showWarning,
     showChannelError,
     deleteConfirmationStep,
     isEditMode,
@@ -34,20 +34,28 @@ const GroupEditor: React.FunctionComponent<{
     handleGroupNameChange,
     saveChanges,
     handleDeleteClick,
-    setShowWarning,
     setShowChannelError,
   } = useGroupManagement({ spaceId, groupName, onDeleteComplete: dismiss });
 
+  // Modal save state hook with 3000ms timeout
+  const { isSaving, saveWithTimeout } = useModalSaveState({
+    defaultTimeout: 3000,
+    onSaveComplete: dismiss,
+  });
+
   const handleSave = React.useCallback(async () => {
-    await saveChanges();
-    dismiss();
-  }, [saveChanges, dismiss]);
+    await saveWithTimeout(async () => {
+      await saveChanges();
+    });
+  }, [saveWithTimeout, saveChanges]);
 
   return (
     <Modal
       title={isEditMode ? t`Edit Group` : t`Add Group`}
       visible={true}
-      onClose={dismiss}
+      onClose={isSaving ? undefined : dismiss}
+      closeOnBackdropClick={!isSaving}
+      closeOnEscape={!isSaving}
       size="small"
     >
       <Container style={{ textAlign: 'left' }}>
@@ -64,7 +72,7 @@ const GroupEditor: React.FunctionComponent<{
             type="primary"
             className="max-sm:w-full"
             onClick={handleSave}
-            disabled={!canSave}
+            disabled={!canSave || isSaving}
           >
             {t`Save Changes`}
           </Button>
@@ -78,16 +86,17 @@ const GroupEditor: React.FunctionComponent<{
               direction="vertical"
             />
             {showChannelError && (
-              <Container className="error-label mb-3 relative pr-8">
+              <Callout
+                variant="error"
+                size="sm"
+                className="mb-3"
+                dismissible={true}
+                onClose={() => setShowChannelError(false)}
+              >
                 <Trans>
-                  Cannot delete group that contains channels. Please delete all {channelCount} channels in this group first.
+                  You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first.
                 </Trans>
-                <Icon
-                  name="times"
-                  className="absolute top-2 right-2 cursor-pointer hover:opacity-70"
-                  onClick={() => setShowChannelError(false)}
-                />
-              </Container>
+              </Callout>
             )}
             <FlexCenter>
               <Text
@@ -103,6 +112,9 @@ const GroupEditor: React.FunctionComponent<{
           </>
         )}
       </Container>
+
+      {/* Modal save overlay */}
+      <ModalSaveOverlay visible={isSaving} message={t`Saving...`} />
     </Modal>
   );
 };

@@ -116,8 +116,6 @@ export function useGroupManagement({
     // First check if group has channels - block deletion if it does
     if (hasChannels) {
       setShowChannelError(true);
-      // Hide error after 5 seconds
-      setTimeout(() => setShowChannelError(false), 5000);
       return;
     }
     

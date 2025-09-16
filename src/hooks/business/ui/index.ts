@@ -10,3 +10,4 @@ export * from './useImageLoading';
 export * from './useDragState';
 export * from './useModalManagement';
 export * from './useElectronDetection';
+export * from './useModalSaveState';

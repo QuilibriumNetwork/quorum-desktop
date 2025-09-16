@@ -14,8 +14,9 @@ import {
   Tooltip,
 } from '../primitives';
 import ConfirmationModal from '../modals/ConfirmationModal';
+import ModalSaveOverlay from '../modals/ModalSaveOverlay';
 import '../../styles/_modal_common.scss';
-import { useChannelManagement } from '../../hooks';
+import { useChannelManagement, useModalSaveState } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 
@@ -27,8 +28,14 @@ const ChannelEditor: React.FunctionComponent<{
   onEditModeClick?: () => void;
 }> = ({ spaceId, groupName, channelId, dismiss }) => {
 
-  // Simple loading state
-  const [isSaving, setIsSaving] = React.useState(false);
+  // Modal save state for save operations only (3000ms timeout)
+  const { isSaving, saveWithTimeout } = useModalSaveState({
+    defaultTimeout: 3000,
+    onSaveComplete: dismiss,
+    onSaveError: (error) => {
+      console.error('Save failed:', error);
+    },
+  });
 
   const {
     channelName,
@@ -38,7 +45,6 @@ const ChannelEditor: React.FunctionComponent<{
     isPinned,
     hasMessages,
     messageCount,
-    showWarning,
     deleteConfirmationStep,
     isEditMode,
     availableRoles,
@@ -48,47 +54,39 @@ const ChannelEditor: React.FunctionComponent<{
     handleManagerRolesChange,
     handlePinChange,
     saveChanges,
-    handleDeleteClick,
-    setShowWarning,
+    handleDeleteClick: originalHandleDeleteClick,
     deleteConfirmation,
   } = useChannelManagement({
     spaceId,
     groupName,
     channelId,
-    onDeleteComplete: dismiss,
+    onDeleteComplete: dismiss, // Needed for double-click delete (channels without messages)
   });
 
-
-
   const handleSave = React.useCallback(async () => {
-    setIsSaving(true);
-    try {
+    saveWithTimeout(async () => {
       await saveChanges();
-      dismiss();
-    } catch (error) {
-      console.error('Failed to save channel changes:', error);
-      setIsSaving(false);
-    }
-  }, [saveChanges, dismiss]);
+    });
+  }, [saveChanges, saveWithTimeout]);
+
+  // Use original delete handler (ConfirmationModal will handle its own overlay)
+  const handleDeleteClick = originalHandleDeleteClick;
 
 
   return (
     <Modal
       title={isEditMode ? t`Edit Channel` : t`Add Channel`}
       visible={true}
-      onClose={dismiss}
+      onClose={isSaving ? undefined : dismiss}
       size="small"
+      closeOnBackdropClick={!isSaving}
+      closeOnEscape={!isSaving}
     >
-      {/* Loading overlay for saving */}
-      {isSaving && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm rounded-lg" />
-          <div className="relative flex items-center gap-3">
-            <Icon name="spinner" size={24} spin className="text-accent" />
-            <div className="text-lg font-medium text-white">{t`Saving...`}</div>
-          </div>
-        </div>
-      )}
+      {/* Loading overlay for save operations only */}
+      <ModalSaveOverlay
+        visible={isSaving}
+        message={t`Saving...`}
+      />
       <Container style={{ textAlign: 'left' }}>
         <Container className="mb-4 max-sm:mb-1">
           <Input 
@@ -184,19 +182,6 @@ const ChannelEditor: React.FunctionComponent<{
               border
               direction="vertical"
             />
-            {hasMessages && showWarning && (
-              <Container className="error-label mb-3 relative pr-8">
-                <Trans>
-                  Are you sure? This channel contains messages. Deleting it will
-                  cause all content to be lost forever!
-                </Trans>
-                <Icon
-                  name="times"
-                  className="absolute top-2 right-2 cursor-pointer hover:opacity-70"
-                  onClick={() => setShowWarning(false)}
-                />
-              </Container>
-            )}
             <FlexCenter>
               <Text
                 variant="danger"

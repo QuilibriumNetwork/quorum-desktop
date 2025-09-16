@@ -33,15 +33,15 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
+
+
   return (
     <Modal
       visible={visible}
-      onClose={onCancel} // Close triggers cancel action
+      onClose={onCancel}
       title={title}
       size={size}
       hideClose={true} // Hide X button to prevent conflicts with parent modals
-      closeOnBackdropClick={true} // Enable backdrop click
-      closeOnEscape={true} // Enable ESC key
       swipeToClose={false} // Keep swipe disabled for consistency
       className="confirmation-modal" // Add specific class for CSS targeting
     >
