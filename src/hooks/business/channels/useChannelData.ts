@@ -163,26 +163,54 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
     return userSections;
   }, [userSections]);
 
-  const generateVirtualizedUserList = useCallback(() => {
+  const generateVirtualizedUserList = useCallback((searchFilter = '') => {
     // Flatten pre-computed sections into virtualization format
     const flattenedItems: Array<
       | { type: 'header'; title: string }
       | { type: 'user'; address: string; userIcon?: string; displayName?: string }
     > = [];
 
-    userSections.forEach((section) => {
-      // Add section header
-      flattenedItems.push({ type: 'header', title: section.title });
-      // Add all users in this section
-      section.members.forEach((member) => {
-        flattenedItems.push({
-          type: 'user',
-          address: member.address,
-          userIcon: member.userIcon,
-          displayName: member.displayName,
+    if (!searchFilter.trim()) {
+      // No search - return full list
+      userSections.forEach((section) => {
+        // Add section header
+        flattenedItems.push({ type: 'header', title: section.title });
+        // Add all users in this section
+        section.members.forEach((member) => {
+          flattenedItems.push({
+            type: 'user',
+            address: member.address,
+            userIcon: member.userIcon,
+            displayName: member.displayName,
+          });
         });
       });
-    });
+    } else {
+      // Filter users based on search term
+      const term = searchFilter.toLowerCase();
+      const filteredSections = userSections.map(section => ({
+        ...section,
+        members: section.members.filter(member =>
+          member.displayName?.toLowerCase().includes(term) ||
+          member.address?.toLowerCase().includes(term)
+        )
+      })).filter(section => section.members.length > 0);
+
+      // Build flattened items from filtered sections
+      filteredSections.forEach((section) => {
+        // Add section header
+        flattenedItems.push({ type: 'header', title: section.title });
+        // Add filtered users in this section
+        section.members.forEach((member) => {
+          flattenedItems.push({
+            type: 'user',
+            address: member.address,
+            userIcon: member.userIcon,
+            displayName: member.displayName,
+          });
+        });
+      });
+    }
 
     return flattenedItems;
   }, [userSections]);

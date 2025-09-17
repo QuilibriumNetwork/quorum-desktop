@@ -17,7 +17,7 @@ import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
 import { useModals } from '../context/ModalProvider';
-import { Button, Tooltip, Icon } from '../primitives';
+import { Button, Tooltip, Icon, Input } from '../primitives';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
@@ -92,6 +92,12 @@ const Channel: React.FC<ChannelProps> = ({
     userIcon?: string;
   } | null>(null);
   const [modalPosition, setModalPosition] = useState<{ top: number } | null>(null);
+
+  // Search state
+  const [searchInput, setSearchInput] = useState('');
+  const [activeSearch, setActiveSearch] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);
+
   const headerRef = React.useRef<HTMLDivElement>(null);
   const { submitChannelMessage } = useMessageDB();
 
@@ -116,6 +122,16 @@ const Channel: React.FC<ChannelProps> = ({
 
   // Get pinned messages
   const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
+
+  // Debounced search effect
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (searchInput.length >= 3 || searchInput.length === 0) {
+        setActiveSearch(searchInput);
+      }
+    }, 200);
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
 
   // Handle message submission
   const handleSubmitMessage = useCallback(
@@ -229,46 +245,106 @@ const Channel: React.FC<ChannelProps> = ({
     };
   }, [setRightSidebarContent]);
 
-  // Set sidebar content in context
+  // Set sidebar content in context (includes mobile search)
   React.useEffect(() => {
     const sections = generateSidebarContent();
+
+    // Filter sections for mobile search
+    let filteredSections = sections;
+    if (activeSearch) {
+      const term = activeSearch.toLowerCase();
+      filteredSections = sections.map(section => ({
+        ...section,
+        members: section.members.filter(member =>
+          member.displayName?.toLowerCase().includes(term) ||
+          member.address?.toLowerCase().includes(term)
+        )
+      })).filter(section => section.members.length > 0);
+    }
+
     const sidebarContent = (
       <>
-        {sections.map((section) => (
-          <div className="flex flex-col mb-2" key={section.title}>
-            <div className="font-semibold ml-[1pt] mb-3 text-xs pb-1 border-b border-default">
-              {section.title}
-            </div>
-            {section.members.map((member) => (
-              <div
-                key={member.address}
-                className="w-full flex flex-row items-center mb-2"
-              >
-                <div
-                  className="rounded-full w-[30px] h-[30px]"
-                  style={{
-                    backgroundPosition: 'center',
-                    backgroundSize: 'cover',
-                    backgroundImage: member.userIcon?.includes(
-                      'var(--unknown-icon)'
-                    )
-                      ? member.userIcon
-                      : `url(${member.userIcon})`,
-                  }}
-                />
-                <div className="flex flex-col ml-2 text-main">
-                  <span className="text-md font-bold">
-                    {member.displayName}
-                  </span>
-                </div>
-              </div>
-            ))}
+        {/* Mobile Search Input */}
+        <div className="sticky top-0 z-10" style={{ backgroundColor: 'inherit' }}>
+          <div
+            className="flex items-center gap-2 py-3"
+            style={{
+              borderBottom: `1px solid ${searchFocused ? 'var(--accent)' : 'var(--color-border-default)'}`,
+              paddingBottom: '0',
+              transition: 'border-color 0.15s ease-in-out',
+            }}
+          >
+            <Icon
+              name="search"
+              size="sm"
+              className={searchFocused ? "text-accent" : "text-subtle"}
+              style={{ transition: 'color 0.15s ease-in-out' }}
+            />
+            <Input
+              value={searchInput}
+              onChange={setSearchInput}
+              placeholder={t`Username or Address`}
+              variant="minimal"
+              className="flex-1"
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              style={{ border: 'none', borderBottom: 'none' }}
+              type="search"
+              autoComplete="off"
+            />
           </div>
-        ))}
+          <div className="pb-3">
+            {activeSearch && filteredSections.length === 0 && (
+              <div className="text-xs text-subtle mt-1">
+                {t`No users found!`}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* User List */}
+        <div className="overflow-y-auto">
+          {filteredSections.map((section) => (
+            <div className="flex flex-col mb-2" key={section.title}>
+              <div className="mb-3 text-xs pb-1 border-b border-default px-3 pt-3">
+                {section.title}
+              </div>
+              {section.members.map((member) => (
+                <div
+                  key={member.address}
+                  className="w-full flex flex-row items-center mb-2 px-3 cursor-pointer hover:bg-surface-2 rounded-md py-1 transition-colors duration-150"
+                  onClick={(event) => handleUserProfileClick({
+                    address: member.address,
+                    displayName: member.displayName,
+                    userIcon: member.userIcon,
+                  }, event)}
+                >
+                  <div
+                    className="rounded-full w-[30px] h-[30px] opacity-80"
+                    style={{
+                      backgroundPosition: 'center',
+                      backgroundSize: 'cover',
+                      backgroundImage: member.userIcon?.includes(
+                        'var(--unknown-icon)'
+                      )
+                        ? member.userIcon
+                        : `url(${member.userIcon})`,
+                    }}
+                  />
+                  <div className="flex flex-col ml-2 text-subtle">
+                    <span className="text-md font-bold">
+                      {member.displayName}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </>
     );
     setRightSidebarContent(sidebarContent);
-  }, [generateSidebarContent, setRightSidebarContent]);
+  }, [generateSidebarContent, setRightSidebarContent, searchInput, activeSearch, handleUserProfileClick]);
 
   useEffect(() => {
     if (!init) {
@@ -522,14 +598,52 @@ const Channel: React.FC<ChannelProps> = ({
           {/* Desktop sidebar only - mobile sidebar renders via SidebarProvider at Layout level */}
           {showUsers && (
             <div className="hidden lg:block w-[260px] bg-chat border-l border-default flex-shrink-0">
+              {/* Search Input */}
+              <div className="px-4 pt-4 bg-chat sticky top-0 z-10">
+                <div
+                  className="flex items-center gap-2"
+                  style={{
+                    borderBottom: `1px solid ${searchFocused ? 'var(--accent)' : 'var(--color-border-default)'}`,
+                    paddingBottom: '0',
+                    transition: 'border-color 0.15s ease-in-out',
+                  }}
+                >
+                  <Icon
+                    name="search"
+                    size="sm"
+                    className={searchFocused ? "text-accent" : "text-muted"}
+                    style={{ transition: 'color 0.15s ease-in-out' }}
+                  />
+                  <Input
+                    value={searchInput}
+                    onChange={setSearchInput}
+                    placeholder={t`Username or Address`}
+                    variant="minimal"
+                    className="flex-1"
+                    onFocus={() => setSearchFocused(true)}
+                    onBlur={() => setSearchFocused(false)}
+                    style={{ border: 'none', borderBottom: 'none' }}
+                    type="search"
+                    autoComplete="off"
+                  />
+                </div>
+                <div className="pb-3">
+                  {activeSearch && generateVirtualizedUserList(activeSearch).length === 0 && (
+                    <div className="text-xs text-subtle mt-1">
+                      {t`No users found!`}
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <Virtuoso
-                data={generateVirtualizedUserList()}
+                data={generateVirtualizedUserList(activeSearch)}
                 overscan={10}
                 itemContent={(_index, item) => {
                   if (item.type === 'header') {
                     return (
                       <div className="flex flex-col p-4 pb-0">
-                        <div className="font-semibold ml-[1pt] mb-3 text-xs pb-1 border-b border-default">
+                        <div className="mb-3 text-xs pb-1 border-b border-default">
                           {item.title}
                         </div>
                       </div>
@@ -537,8 +651,8 @@ const Channel: React.FC<ChannelProps> = ({
                   } else {
                     return (
                       <div className="px-4 pb-2">
-                        <div 
-                          className="w-full flex flex-row items-center cursor-pointer hover:bg-surface-2 rounded-md p-1 -m-1 transition-colors duration-150"
+                        <div
+                          className="w-full flex flex-row items-center cursor-pointer hover:bg-surface-2 rounded-md p-1 -m-1 transition-colors duration-150 group"
                           onClick={(event) => handleUserProfileClick({
                             address: item.address,
                             displayName: item.displayName,
@@ -546,7 +660,7 @@ const Channel: React.FC<ChannelProps> = ({
                           }, event)}
                         >
                           <div
-                            className="rounded-full w-[30px] h-[30px]"
+                            className="rounded-full w-[30px] h-[30px] opacity-80 group-hover:opacity-100 transition-opacity duration-150"
                             style={{
                               backgroundPosition: 'center',
                               backgroundSize: 'cover',
@@ -557,7 +671,7 @@ const Channel: React.FC<ChannelProps> = ({
                                 : `url(${item.userIcon})`,
                             }}
                           />
-                          <div className="flex flex-col ml-2 text-main">
+                          <div className="flex flex-col ml-2 text-subtle group-hover:text-main transition-colors duration-150">
                             <span className="text-md font-bold">
                               {item.displayName}
                             </span>

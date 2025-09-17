@@ -108,6 +108,10 @@ const generateVirtualizedUserList = useCallback((searchFilter = '') => {
 ```
 
 #### 1.3 Add Search Input UI Component
+Use "Input" primitive with "minimal" style prop and search icon (Icon primitve) on the left.
+Placeholder: "Username or Address"
+
+
 - [ ] **Status**: Not Started
 - [ ] **Risk Level**: Low
 - [ ] **Files**: `src/components/space/Channel.tsx`
@@ -198,7 +202,7 @@ const generateVirtualizedUserList = useCallback((searchFilter = '') => {
 
 1. **Unicode/International Names**: Ensure search works with all character sets
 2. **Empty Display Names**: Handle users with missing display names (no need, users wil always have a display name)
-3. **Duplicate Names**: Multiple users with same display name (we simply show all of them, )
+3. **Duplicate Names**: Multiple users with same display name (we simply show all of them, they will likely have different avatars)
 4. **Role Updates**: Search results update when user roles change
 5. **User Leaves/Joins**: Search results stay consistent during member changes
 
@@ -211,57 +215,23 @@ const generateVirtualizedUserList = useCallback((searchFilter = '') => {
 
 ## 🎨 Design Specifications
 
-### Search Input Styling
-```scss
-.users-search {
-  padding: 12px;
-  border-bottom: 1px solid var(--border-default);
-  background: var(--bg-sidebar);
-}
-
-.users-search input {
-  width: 100%;
-  font-size: 14px;
-  placeholder: var(--text-subtle);
-}
-```
-
-### Mobile Responsive Behavior
 - Search input sticky at top of sidebar
 - Results scrollable below search
-- Virtual keyboard doesn't hide results
 - Clear search easily accessible
 
+### Mobile Responsive Behavior
+- Virtual keyboard doesn't hide results
+
 ### Empty States
-- **< 3 characters**: "Type X more characters to search"
-- **No results**: "No users found for 'query'"
-- **Loading** (if needed): Subtle spinner during expensive operations
+- **No results**: "No users found!"
 
 ## 🎯 Future Enhancements (Out of Scope)
 
 These could be added later based on user feedback:
 
 - **Role Filter Dropdown**: Filter by specific roles in addition to search
-- **User Status Filter**: Show only online/offline users  
-- **Advanced Search**: Boolean operators, exact match, regex
 - **Search History**: Remember recent search terms
-- **Keyboard Shortcuts**: Ctrl+F to focus search, Escape to clear
-- **User Actions**: Right-click context menu on search results
 
----
-
-## 📋 Definition of Done
-
-- [ ] Users can search by display name (case insensitive)
-- [ ] Users can search by user address (case insensitive)  
-- [ ] Search requires 3+ characters with clear feedback
-- [ ] Search is debounced for performance (200ms)
-- [ ] Empty results show helpful message
-- [ ] Search works on both desktop and mobile
-- [ ] No performance regression with large user lists
-- [ ] Search input is visually integrated with existing sidebar design
-- [ ] Feature works with existing virtualization and role groupings
-- [ ] All edge cases handled gracefully
 
 ---
 
