@@ -51,6 +51,7 @@ export const Input: React.FC<InputProps> = ({
   const inputClasses = clsx(
     variant === 'onboarding' ? 'onboarding-input' : 'quorum-input',
     variant === 'bordered' && 'quorum-input--bordered',
+    variant === 'minimal' && 'quorum-input--minimal',
     error && 'error',
     noFocusStyle && 'no-focus-style',
     showFloatingLabel && 'quorum-input--with-floating-label',

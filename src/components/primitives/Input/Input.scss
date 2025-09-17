@@ -150,6 +150,43 @@
     }
   }
 
+  // Minimal variant (only bottom border)
+  &--minimal {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid var(--color-field-border);
+    border-radius: 0;
+    padding: 0 4px 2px 4px; // Minimal vertical padding
+    height: auto; // Override default height
+    min-height: 28px; // Smaller minimum height for minimal variant
+
+    &:hover:not(:disabled):not(:focus) {
+      background-color: transparent;
+      border-bottom-color: var(--color-field-border-hover);
+    }
+
+    &:focus {
+      background-color: transparent;
+      border-bottom-color: var(--color-field-border-focus) !important;
+      box-shadow: none; // No focus shadow for minimal style
+    }
+
+    &:disabled {
+      background-color: transparent !important;
+      border-bottom-color: var(--color-field-border) !important;
+
+      &:hover {
+        background-color: transparent !important;
+        border-bottom-color: var(--color-field-border) !important;
+      }
+
+      &:focus {
+        border-bottom-color: var(--color-field-border) !important;
+        box-shadow: none !important;
+      }
+    }
+  }
+
   // Error state - must come after variants for proper specificity
   &.error {
     border-color: rgb(var(--danger)) !important;
@@ -161,6 +198,23 @@
 
     &:hover:not(:disabled) {
       border-color: rgb(var(--danger)) !important;
+    }
+
+    // Special case for minimal variant error state
+    &.quorum-input--minimal {
+      border: none;
+      border-bottom: 1px solid rgb(var(--danger)) !important;
+
+      &:focus {
+        border: none;
+        border-bottom: 1px solid rgb(var(--danger)) !important;
+        box-shadow: none;
+      }
+
+      &:hover:not(:disabled) {
+        border: none;
+        border-bottom: 1px solid rgb(var(--danger)) !important;
+      }
     }
   }
 

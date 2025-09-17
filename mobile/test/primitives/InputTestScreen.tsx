@@ -25,6 +25,8 @@ export const InputTestScreen: React.FC = () => {
   const [passwordValue, setPasswordValue] = useState('');
   const [errorInput, setErrorInput] = useState('');
   const [showInputError, setShowInputError] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   return (
     <SafeAreaView
@@ -160,6 +162,47 @@ export const InputTestScreen: React.FC = () => {
               <Input variant="onboarding" placeholder="Bongocat" />
               <Text size="sm" variant="subtle">
                 Full pill shape with brand blue colors
+              </Text>
+            </FlexColumn>
+
+            <FlexColumn gap="xs">
+              <Label>Minimal Search:</Label>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  borderBottomWidth: 1,
+                  borderBottomColor: isSearchFocused
+                    ? theme.colors.field.borderFocus
+                    : theme.colors.field.border,
+                  paddingBottom: 0,
+                }}
+              >
+                <Icon
+                  name="search"
+                  size="sm"
+                  style={{
+                    color: isSearchFocused
+                      ? theme.colors.accent[500]
+                      : theme.colors.text.subtle,
+                    marginRight: 8
+                  }}
+                />
+                <View style={{ flex: 1 }}>
+                  <Input
+                    variant="minimal"
+                    placeholder="Search something..."
+                    type="search"
+                    value={searchValue}
+                    onChange={setSearchValue}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setIsSearchFocused(false)}
+                    style={{ borderBottomWidth: 0 }}
+                  />
+                </View>
+              </View>
+              <Text size="sm" variant="subtle">
+                Minimal style with only bottom border
               </Text>
             </FlexColumn>
           </FlexColumn>

@@ -5,26 +5,38 @@
     "description": "Cross-platform callout component for important messages",
     "background": "surface-1",
     "columns": 4,
-    "dynamicProps": {},
+    "dynamicProps": {
+      "size": {
+        "type": "select",
+        "options": ["xs", "sm", "md"],
+        "default": "md",
+        "label": "Size"
+      },
+      "layout": {
+        "type": "select",
+        "options": ["base", "minimal"],
+        "default": "base",
+        "label": "Layout"
+      }
+    },
     "staticExamples": [
       { "name": "Info", "props": { "variant": "info" }, "children": "This is an informational callout with helpful details." },
       { "name": "Success", "props": { "variant": "success" }, "children": "Operation completed successfully!" },
       { "name": "Warning", "props": { "variant": "warning" }, "children": "Please review this important warning message." },
       { "name": "Error", "props": { "variant": "error" }, "children": "An error occurred. Please check your input." },
-      { "name": "Minimal", "props": { "variant": "minimal" }, "children": "Simple callout without border or background color." },
-      { "name": "With Close", "props": { "variant": "info", "showCloseButton": true }, "children": "This callout can be dismissed with the X button." }
+      { "name": "With Close", "props": { "variant": "info", "dismissible": true }, "children": "This callout can be dismissed with the X button." }
     ],
     "quickTips": [
       "Use variant='info' for neutral information",
       "Use variant='success' for positive feedback",
       "Use variant='warning' for cautionary messages",
       "Use variant='error' for error states and validation",
-      "Use variant='minimal' for subtle notifications",
-      "Add showCloseButton for dismissible callouts"
+      "Use layout='minimal' for subtle notifications",
+      "Add dismissible=true for closeable callouts"
     ],
     "codeExample": {
-      "title": "Form Feedback",
-      "code": "import { Callout } from '@/components/primitives';\n\n<Callout variant=\"error\">\n  Please fix the errors above before continuing.\n</Callout>"
+      "title": "All Callout Props",
+      "code": "import { Callout } from '@/components/primitives';\n\n<Callout\n  // Required\n  variant=\"info\" // 'info' | 'success' | 'warning' | 'error'\n  children=\"Your message content here\"\n  \n  // Optional sizing\n  size=\"md\" // 'xs' | 'sm' | 'md'\n  \n  // Layout variants\n  layout=\"base\" // 'base' | 'minimal'\n  \n  // Dismissible behavior\n  dismissible={false}\n  onClose={handleClose}\n  \n  // Auto-close timer\n  autoClose={5} // seconds\n  \n  // Styling\n  className=\"custom-class\"\n  \n  // Testing\n  testID=\"callout-test-id\"\n>\n  Your callout message content\n</Callout>"
     }
   },
 
@@ -37,7 +49,7 @@
     "dynamicProps": {
       "size": {
         "type": "select",
-        "options": ["small", "normal", "large"],
+        "options": ["compact", "small", "normal", "large"],
         "default": "normal",
         "label": "Size"
       }
@@ -66,8 +78,8 @@
       "Always provide meaningful button text for accessibility"
     ],
     "codeExample": {
-      "title": "Basic Usage",
-      "code": "import { Button } from '@/components/primitives';\n\n<Button\n  type=\"primary\"\n  size=\"normal\"\n  onClick={handleClick}\n  iconName=\"plus\"\n>\n  Add Item\n</Button>"
+      "title": "All Button Props",
+      "code": "import { Button } from '@/components/primitives';\n\n<Button\n  // Core props\n  onClick={handleClick}\n  children=\"Button Text\"\n  \n  // Button types (choose one)\n  type=\"primary\" // 'primary' | 'secondary' | 'light' | 'light-outline' | 'subtle' | 'subtle-outline' | 'danger' | 'primary-white' | 'secondary-white' | 'light-white' | 'light-outline-white' | 'disabled-onboarding' | 'unstyled'\n  \n  // Sizes\n  size=\"normal\" // 'compact' | 'small' | 'normal' | 'large'\n  \n  // States\n  disabled={false}\n  \n  // Layout\n  fullWidth={false}\n  \n  // Icons\n  iconName=\"plus\" // FontAwesome icon name\n  iconOnly={false} // Show only icon without text\n  icon={false} // Legacy prop for compatibility\n  \n  // Tooltips\n  tooltip=\"Helpful tooltip text\"\n  highlightedTooltip={false}\n  \n  // Styling\n  className=\"custom-class\"\n  \n  // Accessibility\n  id=\"button-id\"\n/>"
     }
   },
 
@@ -292,11 +304,12 @@
     "title": "Input",
     "description": "Cross-platform text input component",
     "background": "modal",
-    "columns": 2,
+    "columns": 3,
     "dynamicProps": {},
     "staticExamples": [
       { "name": "Default (Filled)", "props": { "placeholder": "Enter text...", "variant": "filled" }, "children": null },
       { "name": "Bordered", "props": { "placeholder": "Bordered input", "variant": "bordered" }, "children": null },
+      { "name": "Minimal Search", "props": { "placeholder": "Search something...", "variant": "minimal", "type": "search" }, "children": null },
       { "name": "Email Type", "props": { "placeholder": "email@example.com", "type": "email" }, "children": null },
       { "name": "Password", "props": { "placeholder": "Password", "type": "password" }, "children": null },
       { "name": "With Error", "props": { "placeholder": "Invalid input", "error": true, "errorMessage": "This field is required" }, "children": null },
@@ -309,8 +322,8 @@
       "Show error states with clear messages"
     ],
     "codeExample": {
-      "title": "Form Input with Validation",
-      "code": "import { Input } from '@/components/primitives';\n\n<Input\n  value={email}\n  onChange={setEmail}\n  type=\"email\"\n  placeholder=\"Enter your email\"\n  error={!!emailError}\n  errorMessage={emailError}\n/>"
+      "title": "All Input Props",
+      "code": "import { Input } from '@/components/primitives';\n\n<Input\n  // Core props\n  value={inputValue}\n  onChange={setInputValue}\n  placeholder=\"Enter text...\"\n  \n  // Variants\n  variant=\"filled\" // 'filled' | 'bordered' | 'minimal' | 'onboarding'\n  \n  // Input types\n  type=\"text\" // 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search'\n  \n  // States\n  disabled={false}\n  autoFocus={false}\n  noFocusStyle={false}\n  \n  // Error handling\n  error={hasError}\n  errorMessage=\"This field is required\"\n  \n  // Labels\n  label=\"Field Label\"\n  labelType=\"static\" // 'static' | 'floating'\n  required={true}\n  helperText=\"Additional help text\"\n  \n  // Event handlers\n  onFocus={() => console.log('focused')}\n  onBlur={() => console.log('blurred')}\n  onKeyDown={(e) => console.log('key:', e.key)}\n  \n  // Styling\n  className=\"custom-class\"\n  style={{ width: '100%' }}\n  \n  // Accessibility\n  testID=\"input-test-id\"\n  accessibilityLabel=\"Accessible label\"\n/>"
     }
   },
 
@@ -341,8 +354,8 @@
       "Test keyboard navigation (Escape key)"
     ],
     "codeExample": {
-      "title": "Confirmation Dialog",
-      "code": "import { Modal, FlexColumn, FlexRow, Button, Text } from '@/components/primitives';\n\n<Modal\n  visible={showModal}\n  title=\"Confirm Action\"\n  onClose={closeModal}\n  size=\"small\"\n>\n  <FlexColumn gap=\"md\">\n    <Text variant=\"strong\">Confirm Action</Text>\n    <Text>Are you sure you want to continue?</Text>\n    <FlexRow gap=\"sm\" justify=\"end\">\n      <Button type=\"secondary\" onClick={closeModal}>Cancel</Button>\n      <Button type=\"primary\" onClick={confirm}>Confirm</Button>\n    </FlexRow>\n  </FlexColumn>\n</Modal>"
+      "title": "All Modal Props",
+      "code": "import { Modal } from '@/components/primitives';\n\n<Modal\n  // Required props\n  visible={isOpen}\n  title=\"Modal Title\"\n  onClose={handleClose}\n  children={<div>Modal content</div>}\n  \n  // Sizing\n  size=\"medium\" // 'small' | 'medium' | 'large'\n  \n  // Close behavior\n  hideClose={false} // Hide the X button\n  closeOnBackdropClick={true} // Close when clicking outside\n  closeOnEscape={true} // Close with Escape key\n  \n  // Layout\n  noPadding={false} // Remove default padding\n  titleAlign=\"left\" // 'left' | 'center'\n  \n  // Styling\n  className=\"custom-modal-class\"\n  \n  // Native-specific props\n  // swipeToClose={true} // React Native only\n  // swipeUpToOpen={false} // React Native only\n  // keyboardAvoidingView={true} // React Native only\n>\n  <div>Your modal content here</div>\n</Modal>"
     }
   },
 
@@ -375,8 +388,8 @@
       "Switch should provide immediate feedback"
     ],
     "codeExample": {
-      "title": "Switch with Handler",
-      "code": "const [enabled, setEnabled] = useState(false);\n\n<Switch\n  value={enabled}\n  onChange={setEnabled}\n  label=\"Enable dark mode\"\n  size=\"medium\"\n/>"
+      "title": "All Switch Props",
+      "code": "import { Switch } from '@/components/primitives';\n\nconst [enabled, setEnabled] = useState(false);\n\n<Switch\n  // Required props\n  value={enabled}\n  onChange={setEnabled}\n  \n  // States\n  disabled={false}\n  \n  // Sizing (web)\n  size=\"medium\" // 'small' | 'medium' | 'large'\n  variant=\"default\" // Only 'default' currently supported\n  \n  // Styling\n  className=\"custom-switch\"\n  style={{ margin: 10 }}\n  \n  // Accessibility\n  accessibilityLabel=\"Toggle dark mode\"\n  testID=\"dark-mode-switch\"\n  \n  // Native-specific props\n  // hapticFeedback={true} // iOS haptic feedback\n  // trackColorFalse=\"#767577\" // Android track color when off\n  // trackColorTrue=\"#81b0ff\" // Android track color when on\n  // thumbColor=\"#f5dd4b\" // Thumb color for both platforms\n/>"
     }
   },
 
@@ -601,8 +614,8 @@
       "Combine size and weight props for custom hierarchy"
     ],
     "codeExample": {
-      "title": "Text Hierarchy",
-      "code": "import { Text } from '@/components/primitives';\n\n<Text variant=\"strong\" size=\"lg\">\n  Section Heading\n</Text>\n<Text variant=\"default\">\n  Main content paragraph\n</Text>\n<Text variant=\"subtle\" size=\"sm\">\n  Helper text\n</Text>"
+      "title": "All Text Props",
+      "code": "import { Text } from '@/components/primitives';\n\n<Text\n  // Content\n  children=\"Your text content\"\n  \n  // Visual variants\n  variant=\"default\" // 'default' | 'strong' | 'subtle' | 'muted' | 'error' | 'danger' | 'success' | 'warning' | 'link'\n  \n  // Typography\n  size=\"base\" // 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl'\n  weight=\"normal\" // 'normal' | 'medium' | 'semibold' | 'bold'\n  align=\"left\" // 'left' | 'center' | 'right'\n  \n  // Spacing (mobile-optimized)\n  marginBottom={16}\n  marginTop={8}\n  lineHeight={1.5}\n  \n  // Colors\n  color=\"custom-color\" // Custom color override\n  \n  // Web-specific props\n  as=\"p\" // 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div' | 'a'\n  style={{ fontFamily: 'custom' }}\n  onClick={handleClick}\n  \n  // Link props (when as=\"a\" or variant=\"link\")\n  href=\"https://example.com\"\n  target=\"_blank\"\n  rel=\"noopener noreferrer\"\n  \n  // Styling\n  className=\"custom-class\"\n  \n  // Testing & Accessibility\n  testId=\"text-element\"\n  // Native: accessibilityLabel, accessible, etc.\n>\n  Your text content here\n</Text>"
     }
   }
 }

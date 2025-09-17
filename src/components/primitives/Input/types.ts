@@ -10,7 +10,7 @@ export interface InputProps {
   /** Key down handler (web only) */
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   /** Input variant */
-  variant?: 'filled' | 'bordered' | 'onboarding';
+  variant?: 'filled' | 'bordered' | 'onboarding' | 'minimal';
   /** Blur handler */
   onBlur?: () => void;
   /** Focus handler */

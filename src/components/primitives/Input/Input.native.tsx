@@ -71,12 +71,14 @@ export const Input: React.FC<InputNativeProps> = ({
       return colors.field.borderFocus;
     }
     if (variant === 'bordered') return colors.field.border;
+    if (variant === 'minimal') return 'transparent'; // minimal variant has transparent border (bottom border is handled separately)
     return 'transparent'; // filled and onboarding variants have transparent border by default
   };
 
   const getBackgroundColor = () => {
     if (variant === 'onboarding') return '#ffffff'; // Always white for onboarding
-    // All variants use the same background colors
+    if (variant === 'minimal') return 'transparent'; // Minimal variant has transparent background
+    // All other variants use the same background colors
     if (isFocused && !disabled) return colors.field.bgFocus;
     return colors.field.bg;
   };
@@ -118,6 +120,20 @@ export const Input: React.FC<InputNativeProps> = ({
           borderColor: getBorderColor(),
         },
         error && styles.inputError,
+        disabled && styles.inputDisabled,
+      ];
+    }
+
+    if (variant === 'minimal') {
+      return [
+        ...baseStyles,
+        styles.inputMinimal,
+        {
+          backgroundColor: getBackgroundColor(),
+          color: colors.field.text,
+          borderColor: getBorderColor(),
+          borderBottomColor: error ? colors.utilities.danger : (isFocused && !noFocusStyle ? colors.field.borderFocus : colors.field.border),
+        },
         disabled && styles.inputDisabled,
       ];
     }
@@ -253,6 +269,15 @@ const styles = StyleSheet.create({
   },
   inputOnboarding: {
     borderRadius: 9999, // full pill shape like CSS border-radius: 9999px
+  },
+  inputMinimal: {
+    borderRadius: 0,
+    borderWidth: 0,
+    borderBottomWidth: 1,
+    paddingHorizontal: 4, // Minimal padding for cleaner look
+    paddingTop: 0,
+    paddingBottom: 2, // Reduced bottom padding for tighter look
+    height: 28, // Smaller height for minimal variant
   },
   inputError: {
     borderWidth: 1,

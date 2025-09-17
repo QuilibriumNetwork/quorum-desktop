@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   FlexRow,
@@ -60,13 +60,50 @@ const navigationItems = [
 export const PrimitivesPlayground: React.FC = () => {
   const [activeSection, setActiveSection] = useState('button-primitive');
 
+  // Scroll to section with offset
   const scrollToSection = (sectionId: string) => {
-    setActiveSection(sectionId);
     const element = document.getElementById(sectionId);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const elementTop = element.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({
+        top: elementTop - 160, // Offset for sticky header (41px nav + ~80px header + 40px buffer)
+        behavior: 'smooth'
+      });
     }
   };
+
+  // Handle initial URL hash navigation
+  useEffect(() => {
+    const hash = window.location.hash.slice(1); // Remove the # symbol
+    if (hash && navigationItems.some(item => item.id === hash)) {
+      // Small delay to ensure DOM is ready
+      setTimeout(() => {
+        scrollToSection(hash);
+        setActiveSection(hash);
+      }, 100);
+    }
+  }, []);
+
+  // Update active section based on scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY + 160; // Match the scroll offset
+
+      for (const item of navigationItems) {
+        const element = document.getElementById(item.id);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveSection(item.id);
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <div className="h-full flex flex-col">
@@ -131,10 +168,15 @@ export const PrimitivesPlayground: React.FC = () => {
             <div className="p-4">
               <nav className="space-y-2">
                 {navigationItems.map((item) => (
-                  <div
+                  <a
                     key={item.id}
-                    onClick={() => scrollToSection(item.id)}
-                    className={`cursor-pointer px-3 py-2 mt-6 rounded-lg text-sm transition-colors duration-150 flex items-center gap-2 ${
+                    href={`#${item.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      scrollToSection(item.id);
+                      window.history.pushState(null, '', `#${item.id}`);
+                    }}
+                    className={`block px-3 py-2 mt-6 rounded-lg text-sm transition-colors duration-150 flex items-center gap-2 no-underline cursor-pointer ${
                       activeSection === item.id
                         ? 'bg-accent text-white'
                         : 'text-subtle hover:bg-surface-3 hover:text-main'
@@ -142,7 +184,7 @@ export const PrimitivesPlayground: React.FC = () => {
                   >
                     <Icon name={item.icon} size="sm" />
                     {item.label}
-                  </div>
+                  </a>
                 ))}
               </nav>
             </div>

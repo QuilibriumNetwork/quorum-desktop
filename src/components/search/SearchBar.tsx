@@ -145,7 +145,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         )}
         {!query && (
           <Text className="search-shortcut invisible">
-            {navigator.platform.toLowerCase().includes('mac') ? '⌘K' : 'Ctrl+K'}
+            {navigator.userAgent.toLowerCase().includes('mac') ? '⌘K' : 'Ctrl+K'}
           </Text>
         )}
       </FlexRow>
