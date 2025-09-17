@@ -1,6 +1,12 @@
 import React from 'react';
-import { Text, Icon } from '../primitives';
-import { t } from '@lingui/core/macro';
+import {
+  Container,
+  Text,
+  Icon,
+  FlexRow,
+  FlexColumn,
+  Spacer,
+} from '../primitives';
 
 interface ChannelPreviewProps {
   channelName: string;
@@ -12,23 +18,25 @@ export const ChannelPreview: React.FC<ChannelPreviewProps> = ({
   messageCount,
 }) => {
   return (
-    <div className="space-y-2 p-2">
-      {/* Channel name with icon */}
-      <div className="flex items-center gap-2">
-        <Icon name="hashtag" size="xs" className="text-muted flex-shrink-0" />
-        <Text variant="main" size="sm">
-          {channelName}
-        </Text>
-      </div>
+    <Container padding="sm" backgroundColor="var(--color-bg-chat)">
+      <FlexColumn gap="sm">
+        {/* Channel name with icon */}
+        <FlexRow align="center" gap="xs">
+          <Icon name="hashtag" size="xs" />
+          <Text variant="main" size="sm">
+            {channelName}
+          </Text>
+        </FlexRow>
 
-      {/* Message count */}
-      <div className="flex items-center gap-2">
-        <Icon name="comment-dots" size="xs" className="text-muted flex-shrink-0" />
-        <Text variant="main" size="sm">
-          {messageCount} message{messageCount !== 1 ? 's' : ''}
-        </Text>
-      </div>
-    </div>
+        {/* Message count */}
+        <FlexRow align="center" gap="xs">
+          <Icon name="comment-dots" size="xs" />
+          <Text variant="main" size="sm">
+            {messageCount} message{messageCount !== 1 ? 's' : ''}
+          </Text>
+        </FlexRow>
+      </FlexColumn>
+    </Container>
   );
 };
 

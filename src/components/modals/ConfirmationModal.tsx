@@ -42,47 +42,52 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
       size={size}
       hideClose={true} // Hide X button to prevent conflicts with parent modals
       swipeToClose={false} // Keep swipe disabled for consistency
-      className="confirmation-modal" // Add specific class for CSS targeting
     >
-      <Container className="space-y-4">
+      <Container>
         {/* Main message */}
         <Container>
-          <Text variant="main" className="whitespace-pre-line">
+          <Text>
             {message}
           </Text>
         </Container>
 
+        <Spacer size="md" />
+
         {/* Preview content in scrollable container */}
         {preview && (
-          <Container>
-            <ScrollContainer
-              height="sm"
-              className="p-2 bg-surface-2 rounded-lg border border-surface-4"
-              showBorder={false}
-            >
-              {preview}
-            </ScrollContainer>
-          </Container>
+          <>
+            <Container>
+              <ScrollContainer
+                height="sm"
+                showBorder={true}
+                borderRadius="md"
+              >
+                {preview}
+              </ScrollContainer>
+            </Container>
+            <Spacer size="md" />
+          </>
         )}
 
         {/* PROTIP section */}
         {showProtip && protipAction && (
-          <Callout variant="info" size="sm">
-            <Trans>
-              TIP: Hold down shift when clicking {protipAction} to bypass this confirmation entirely.
-            </Trans>
-          </Callout>
+          <>
+            <Callout variant="info" size="sm">
+              <Trans>
+                TIP: Hold down shift when clicking {protipAction} to bypass this confirmation entirely.
+              </Trans>
+            </Callout>
+            <Spacer size="lg" />
+          </>
         )}
 
-        <Spacer size="lg" />
-
         {/* Action buttons */}
-        <FlexRow className="gap-3">
+        <FlexRow gap="sm">
           <Button
             type="subtle"
             onClick={onCancel}
             hapticFeedback={true}
-            className="flex-1"
+            fullWidth={true}
           >
             {cancelText}
           </Button>
@@ -90,7 +95,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
             type={variant}
             onClick={onConfirm}
             hapticFeedback={true}
-            className="flex-1"
+            fullWidth={true}
           >
             {confirmText}
           </Button>
