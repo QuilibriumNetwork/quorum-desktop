@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { WebSelectProps } from './types';
 import { Icon } from '../Icon';
 import { isValidIconName } from '../Icon/iconMapping';
@@ -36,12 +36,11 @@ const Select: React.FC<WebSelectProps> = ({
   const [selectedValue, setSelectedValue] = useState<string | string[]>(
     multiple ? (Array.isArray(value) ? value : []) : value || ''
   );
-  const [actualPlacement, setActualPlacement] = useState<'top' | 'bottom'>(
-    'bottom'
-  );
+  const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
   const selectRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const updateTimeoutRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     if (value !== undefined) {
@@ -59,25 +58,72 @@ const Select: React.FC<WebSelectProps> = ({
     }
   }, [autoFocus]);
 
-  // Calculate dropdown placement when opening
-  useEffect(() => {
-    if (isOpen && selectRef.current && dropdownPlacement === 'auto') {
-      const rect = selectRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const spaceBelow = viewportHeight - rect.bottom;
-      const spaceAbove = rect.top;
-      const dropdownHeight = 200; // Estimated dropdown height
+  // Calculate dropdown position
+  const calculateDropdownPosition = useCallback(() => {
+    if (!selectRef.current) return;
 
+    const rect = selectRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    const spaceBelow = viewportHeight - rect.bottom;
+    const spaceAbove = rect.top;
+    const dropdownHeight = maxHeight ? Math.min(Number(maxHeight), 240) : 240;
+
+    let top = rect.bottom + 4; // 4px gap
+
+    // Auto-placement logic
+    if (dropdownPlacement === 'auto') {
       if (spaceBelow < dropdownHeight && spaceAbove > spaceBelow) {
-        setActualPlacement('top');
-      } else {
-        setActualPlacement('bottom');
+        top = rect.top - dropdownHeight - 4;
       }
-    } else {
-      // Use explicit placement or default to bottom
-      setActualPlacement(dropdownPlacement === 'top' ? 'top' : 'bottom');
+    } else if (dropdownPlacement === 'top') {
+      top = rect.top - dropdownHeight - 4;
     }
-  }, [isOpen, dropdownPlacement]);
+
+    setDropdownStyle({
+      position: 'fixed',
+      top: `${top}px`,
+      left: `${rect.left}px`,
+      width: `${rect.width}px`,
+      maxHeight: maxHeight || 240,
+      zIndex: 1050, // Higher than most UI elements but not extreme
+      overflow: 'auto'
+    });
+  }, [dropdownPlacement, maxHeight]);
+
+  // Update position when dropdown opens
+  useEffect(() => {
+    if (isOpen) {
+      calculateDropdownPosition();
+    }
+  }, [isOpen, calculateDropdownPosition]);
+
+  // Debounced update on scroll/resize
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handlePositionUpdate = () => {
+      // Clear existing timeout
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+      }
+
+      // Debounce updates by 10ms
+      updateTimeoutRef.current = setTimeout(() => {
+        calculateDropdownPosition();
+      }, 10);
+    };
+
+    window.addEventListener('scroll', handlePositionUpdate, true);
+    window.addEventListener('resize', handlePositionUpdate);
+
+    return () => {
+      window.removeEventListener('scroll', handlePositionUpdate, true);
+      window.removeEventListener('resize', handlePositionUpdate);
+      if (updateTimeoutRef.current) {
+        clearTimeout(updateTimeoutRef.current);
+      }
+    };
+  }, [isOpen, calculateDropdownPosition]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -219,7 +265,6 @@ const Select: React.FC<WebSelectProps> = ({
     disabled && 'quorum-select--disabled',
     fullWidth && 'quorum-select--full-width',
     isOpen && 'quorum-select--open',
-    isOpen && `quorum-select--placement-${actualPlacement}`,
     className,
   ]
     .filter(Boolean)
@@ -258,9 +303,10 @@ const Select: React.FC<WebSelectProps> = ({
         {isOpen && (
           <div
             ref={dropdownRef}
-            className="quorum-select__dropdown"
+            className="quorum-select__dropdown quorum-select__dropdown--fixed"
             role="listbox"
-            style={maxHeight ? { maxHeight } : undefined}
+            style={dropdownStyle}
+            aria-label={placeholder}
           >
             {/* Select All / Clear All options for multiselect */}
             {multiple && showSelectAllOption && allOptions.length > 0 && (
