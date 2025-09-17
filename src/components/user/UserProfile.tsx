@@ -167,7 +167,7 @@ const UserProfile: React.FunctionComponent<{
                 availableRoles.map((r) => (
                   <Container
                     key={'user-profile-add-role-' + r.roleId}
-                    className="w-full sm:w-auto sm:inline-block mb-2"
+                    className="w-full sm:w-auto"
                   >
                     <Button
                       className="w-full sm:w-auto"
@@ -176,8 +176,9 @@ const UserProfile: React.FunctionComponent<{
                       }}
                       type="secondary"
                       size="small"
+                      iconName="plus"
                     >
-                      + {r.roleTag}
+                      {r.roleTag}
                     </Button>
                   </Container>
                 ))}

@@ -101,16 +101,17 @@
   top: 10px;
 }
 
+.user-profile-roles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 4px;
+}
+
 .user-profile-role-tag {
+  @apply flex items-center justify-center py-[3px] px-3 rounded-full font-medium text-xs text-center select-none;
   background: rgb(var(--success));
   color: white;
-  padding: 0px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 500;
-  display: inline-block;
-  margin-right: 4px;
-  margin-bottom: 4px;
 }
 
 .dark .user-profile-role-tag {

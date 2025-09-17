@@ -762,7 +762,7 @@ const Channel: React.FC<ChannelProps> = ({
                 canEditRoles={isSpaceOwner}
                 kickUserAddress={kickUserAddress}
                 setKickUserAddress={setKickUserAddress}
-                roles={roles?.filter(role => role.members.includes(selectedUser.address)) || []}
+                roles={roles || []}
                 user={selectedUser}
                 dismiss={handleUserProfileClose}
               />
