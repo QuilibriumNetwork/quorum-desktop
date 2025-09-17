@@ -10,6 +10,8 @@ export function RadioGroup<T extends string = string>({
   onChange,
   direction = 'vertical',
   disabled = false,
+  iconOnly = false,
+  variant = 'default',
   className = '',
   style,
   name = 'radio-group',
@@ -26,6 +28,8 @@ export function RadioGroup<T extends string = string>({
       className={`
         radio-group
         radio-group--${direction}
+        radio-group--${variant}
+        ${iconOnly ? 'radio-group--icon-only' : ''}
         ${disabled ? 'radio-group--disabled' : ''}
         ${className}
       `}
@@ -50,7 +54,6 @@ export function RadioGroup<T extends string = string>({
             <div className="radio-group__content">
               {option.icon && (
                 <span className="radio-group__icon">
-                  {/* Check if it's a valid icon name, otherwise render as text (emoji) */}
                   {isValidIconName(option.icon) ? (
                     <Icon name={option.icon} size="sm" />
                   ) : (
@@ -58,19 +61,21 @@ export function RadioGroup<T extends string = string>({
                   )}
                 </span>
               )}
-              <span className="radio-group__label">{option.label}</span>
+              {!iconOnly && <span className="radio-group__label">{option.label}</span>}
             </div>
 
-            <input
-              type="radio"
-              name={name}
-              value={option.value}
-              checked={isSelected}
-              onChange={() => handleChange(option.value)}
-              disabled={isDisabled}
-              className="radio-group__input"
-              aria-label={option.label}
-            />
+            {!iconOnly && (
+              <input
+                type="radio"
+                name={name}
+                value={option.value}
+                checked={isSelected}
+                onChange={() => handleChange(option.value)}
+                disabled={isDisabled}
+                className="radio-group__input"
+                aria-label={option.label}
+              />
+            )}
           </label>
         );
       })}

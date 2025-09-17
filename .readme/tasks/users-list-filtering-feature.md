@@ -197,8 +197,8 @@ const generateVirtualizedUserList = useCallback((searchFilter = '') => {
 ### Edge Cases to Handle
 
 1. **Unicode/International Names**: Ensure search works with all character sets
-2. **Empty Display Names**: Handle users with missing display names
-3. **Duplicate Names**: Multiple users with same display name
+2. **Empty Display Names**: Handle users with missing display names (no need, users wil always have a display name)
+3. **Duplicate Names**: Multiple users with same display name (we simply show all of them, )
 4. **Role Updates**: Search results update when user roles change
 5. **User Leaves/Joins**: Search results stay consistent during member changes
 

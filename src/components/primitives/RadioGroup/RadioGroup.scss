@@ -15,29 +15,167 @@
     @apply opacity-60 cursor-not-allowed;
   }
 
-  // Radio item (label container)
-  &__item {
-    @apply flex items-center justify-between px-4 py-2 rounded-md border cursor-pointer transition-all;
-    border-color: var(--color-field-border);
-    background-color: var(--color-field-bg);
+  // Default variant (no border, matches Input default style)
+  &--default {
+    .radio-group__item {
+      @apply cursor-pointer;
+      // Use exact Input primitive styling for consistency
+      background-color: var(--color-field-bg);
+      border: 1px solid transparent;
+      border-radius: 0.5rem;
+      padding: 10px 16px;
+      height: 42px;
+      font-size: 14px;
+      margin: 0px;
+      color: var(--color-field-text);
+      outline: 0px none;
+      width: 100%;
+      box-sizing: border-box;
+      transition: all 0.15s ease-in-out;
 
-    &:hover:not(&--disabled) {
-      border-color: var(--color-field-border-hover);
-      background-color: var(--color-field-bg-focus);
-    }
+      &:hover:not(.radio-group__item--disabled) {
+        background-color: var(--color-field-bg-focus);
+        border-color: transparent;
+      }
 
-    &--selected {
-      border-color: var(--color-field-border-focus);
-      background-color: var(--color-field-bg-focus);
-    }
+      &.radio-group__item--selected {
+        outline: none;
+        border-color: var(--color-field-border-focus) !important;
+        background-color: var(--color-field-bg-focus);
+        box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
+      }
 
-    &--disabled {
-      @apply cursor-not-allowed opacity-60;
+      &.radio-group__item--disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background-color: var(--color-field-bg) !important;
+        border-color: transparent !important;
 
-      &:hover {
-        background-color: transparent;
+        &:hover {
+          background-color: var(--color-field-bg) !important;
+          border-color: transparent !important;
+        }
       }
     }
+  }
+
+  // Bordered variant (explicit border, matches Input bordered style)
+  &--bordered {
+    .radio-group__item {
+      @apply cursor-pointer;
+      // Use exact Input primitive bordered styling for consistency
+      background-color: var(--color-field-bg);
+      border: 1px solid var(--color-field-border);
+      border-radius: 0.5rem;
+      padding: 10px 16px;
+      height: 42px;
+      font-size: 16px;
+      margin: 0px;
+      color: var(--color-field-text);
+      outline: 0px none;
+      width: 100%;
+      box-sizing: border-box;
+      transition: all 0.15s ease-in-out;
+
+      &:hover:not(.radio-group__item--disabled) {
+        border-color: var(--color-field-border-hover);
+        background-color: var(--color-field-bg-focus);
+      }
+
+      &.radio-group__item--selected {
+        border-color: var(--color-field-border-focus) !important;
+        background-color: var(--color-field-bg-focus);
+        box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
+      }
+
+      &.radio-group__item--disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        border-color: var(--color-field-border) !important;
+        background-color: var(--color-field-bg) !important;
+
+        &:hover {
+          border-color: var(--color-field-border) !important;
+          background-color: var(--color-field-bg) !important;
+        }
+      }
+    }
+  }
+
+  // Icon-only variant (circular items with icons)
+  &--icon-only {
+    .radio-group__item {
+      // Use Input primitive styling as base, but make it circular
+      background-color: var(--color-field-bg);
+      border: 1px solid transparent;
+      border-radius: 50%; // Make it circular instead of 0.5rem
+      padding: 0; // No padding for circular items
+      width: 42px; // Fixed square dimensions
+      height: 42px;
+      font-size: 16px;
+      margin: 0px;
+      color: var(--color-field-text);
+      outline: 0px none;
+      box-sizing: border-box;
+      transition: all 0.15s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+
+      &:hover:not(.radio-group__item--disabled) {
+        background-color: var(--color-field-bg-focus);
+        border-color: transparent;
+      }
+
+      &.radio-group__item--selected {
+        outline: none;
+        border-color: var(--color-field-border-focus) !important;
+        background-color: var(--color-field-bg-focus);
+        box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
+      }
+
+      &.radio-group__item--disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background-color: var(--color-field-bg) !important;
+        border-color: transparent !important;
+
+        &:hover {
+          background-color: var(--color-field-bg) !important;
+          border-color: transparent !important;
+        }
+      }
+
+      .radio-group__content {
+        justify-content: center;
+      }
+    }
+
+    // For bordered icon-only variant
+    &.radio-group--bordered .radio-group__item {
+      border: 1px solid var(--color-field-border);
+
+      &:hover:not(.radio-group__item--disabled) {
+        border-color: var(--color-field-border-hover);
+        background-color: var(--color-field-bg-focus);
+      }
+
+      &.radio-group__item--disabled {
+        border-color: var(--color-field-border) !important;
+        background-color: var(--color-field-bg) !important;
+
+        &:hover {
+          border-color: var(--color-field-border) !important;
+          background-color: var(--color-field-bg) !important;
+        }
+      }
+    }
+  }
+
+  // Radio item (label container) - base styles
+  &__item {
+    @apply flex items-center justify-between cursor-pointer;
   }
 
   // Content wrapper (icon + label)
@@ -51,10 +189,20 @@
     font-size: 1.1em;
   }
 
+  // Icon-only variant should use text-main color for icons
+  &--icon-only &__icon {
+    color: var(--color-text-main);
+  }
+
   // Label text
   &__label {
     @apply capitalize mr-3;
-    color: var(--color-text-main);
+    // Inherit font properties from parent container to match Input exactly
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    // Use text-main for proper visibility in all contexts - use rgb() syntax for better compatibility
+    color: rgb(var(--color-text-main)) !important;
   }
 
   // Native radio input

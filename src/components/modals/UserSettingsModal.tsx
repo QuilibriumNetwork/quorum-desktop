@@ -563,11 +563,11 @@ const UserSettingsModal: React.FunctionComponent<{
                       <div className="modal-content-section">
                         <ThemeRadioGroup />
 
-                        <div className="pt-4">
+                        <div className="mt-8">
                           <AccentColorSwitcher />
                         </div>
 
-                        <div className="pt-6">
+                        <div className="mt-8">
                           <Spacer size="md" direction="vertical" borderTop={true} />
                           <div className="modal-text-label pb-2">{t`Language`}</div>
                           <div className="flex flex-row gap-2 items-center">
