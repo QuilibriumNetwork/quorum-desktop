@@ -1402,7 +1402,7 @@
       "logic_extraction": "done",
       "hooks": [],
       "native": "done",
-      "notes": "UPDATED: Made fully cross-platform by removing Tailwind className dependencies. Uses primitive props (padding, marginBottom, fullWidth, gap) instead of web-specific CSS classes. Native version exists with mobile-optimized defaults. Component now truly shared between platforms using only primitive component APIs.",
+      "notes": "UPDATED: Made fully cross-platform by removing Tailwind className dependencies. Uses primitive props (padding, gap, fullWidth) instead of web-specific CSS classes. Native version exists with mobile-optimized defaults. Component is actually MEDIUM complexity - has 8 dependencies but simple conditional rendering logic. Reusable confirmation modal with danger/warning/info variants and optional preview.",
       "dependencies": [
         "Button",
         "Callout",
@@ -1502,20 +1502,42 @@
       "dependency_level": 0,
       "complexity_category": "medium",
       "updated": "2025-09-17"
+    },
+    "MessagePreview.tsx": {
+      "name": "MessagePreview",
+      "path": "src/components/message/MessagePreview.tsx",
+      "description": "Message preview component with sender info, timestamp, and content summary",
+      "category": "shared",
+      "used": "yes",
+      "primitives": "done",
+      "logic_extraction": "keep",
+      "hooks": [],
+      "native": "done",
+      "notes": "COMPLETED: Fully cross-platform using only primitives with Container+FlexColumn layout pattern. Contains moderate business logic (display name fallbacks, timestamp formatting, content type handling) that is cohesive and simple enough to keep in component. Uses proper primitive props (padding, backgroundColor, gap, align, size) with no className dependencies. Ready for both web and mobile deployment.",
+      "dependencies": [
+        "Container",
+        "FlexColumn",
+        "FlexRow",
+        "Spacer",
+        "Text"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "medium",
+      "updated": "2025-09-17"
     }
   },
   "stats": {
-    "total": 70,
-    "primitives_done": 39,
-    "logic_extraction_done": 66,
+    "total": 71,
+    "primitives_done": 40,
+    "logic_extraction_done": 67,
     "native_ready": 5,
-    "native_done": 13,
+    "native_done": 14,
     "by_category": {
       "platform_specific": 52,
-      "shared": 18
+      "shared": 19
     },
     "by_usage": {
-      "yes": 65,
+      "yes": 66,
       "no": 3,
       "unknown": 1,
       "suspended": 1
@@ -1588,7 +1610,7 @@
       ]
     },
     "medium": {
-      "count": 21,
+      "count": 22,
       "components": [
         "EmptyDirectMessage.tsx",
         "Layout.tsx",
@@ -1610,7 +1632,8 @@
         "MessageComposer.tsx",
         "RolePreview.tsx",
         "ChannelPreview.tsx",
-        "DropdownPanel.tsx"
+        "DropdownPanel.tsx",
+        "MessagePreview.tsx"
       ]
     },
     "complex": {
