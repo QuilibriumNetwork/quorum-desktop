@@ -70,7 +70,7 @@ const ChannelGroup: React.FunctionComponent<{
               name={props.group.icon as any}
               size="xs"
               style={{
-                color: getIconColorHex(props.group.iconColor as IconColor) || '#9ca3af'
+                color: getIconColorHex(props.group.iconColor as IconColor)
               }}
               title={`${props.group.groupName}`}
             />
@@ -113,7 +113,7 @@ const ChannelGroup: React.FunctionComponent<{
                     name={(channel.icon as any) || "hashtag"}
                     size="xs"
                     style={{
-                      color: getIconColorHex(channel.iconColor as IconColor) || '#9ca3af'
+                      color: getIconColorHex(channel.iconColor as IconColor)
                     }}
                     title={`${channel.channelName}`}
                   />

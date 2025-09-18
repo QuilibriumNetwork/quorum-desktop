@@ -1,11 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Button, Icon, FlexRow, ColorSwatch } from '../../primitives';
 import { DropdownPanel } from '../../DropdownPanel';
 import {
   IconPickerProps,
   ICON_OPTIONS,
   ICON_COLORS,
-  getIconColorClass,
   getIconColorHex,
   IconColor,
 } from './types';
@@ -16,9 +15,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   selectedIcon,
   selectedIconColor = 'default',
   onIconSelect,
-  buttonVariant = 'subtle',
   placeholder = 'Select icon',
-  disabled = false,
   className = '',
   testID,
 }) => {
@@ -26,6 +23,9 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   const [selectedColor, setSelectedColor] = useState(selectedIconColor);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const buttonRef = useRef<HTMLDivElement>(null);
+
+  // Memoize color calculations for performance
+  const iconColorHex = useMemo(() => getIconColorHex(selectedColor), [selectedColor]);
 
   // Sync selectedColor with prop changes
   useEffect(() => {
@@ -36,13 +36,13 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   useEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      const position = {
-        top: rect.bottom + 0, // 0px below button
-        left: rect.right + -24, // Open to the right
-      };
-      setDropdownPosition(position);
+      setDropdownPosition({
+        top: rect.bottom + 4, // 4px below button
+        left: rect.left, // Align with button left edge
+      });
     }
   }, [isOpen]);
+
 
   const handleIconClick = (iconName: IconName) => {
     onIconSelect(iconName, selectedColor);
@@ -50,7 +50,6 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   };
 
   const handleButtonClick = () => {
-    if (disabled) return;
     setIsOpen(!isOpen);
   };
 
@@ -67,8 +66,6 @@ export const IconPicker: React.FC<IconPickerProps> = ({
     }
   };
 
-  // Grid layout: responsive columns (4 mobile, 6 tablet, 8 desktop)
-  const gridCols = 'grid-cols-4 md:grid-cols-6 lg:grid-cols-8';
 
   return (
     <>
@@ -80,21 +77,13 @@ export const IconPicker: React.FC<IconPickerProps> = ({
         {selectedIcon ? (
           <span
             onClick={handleButtonClick}
-            className={`icon-picker-button cursor-pointer w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
-              buttonVariant === 'primary'
-                ? 'bg-accent text-white hover:bg-accent-400'
-                : ''
-            } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className="icon-picker-button cursor-pointer w-7 h-7 rounded-full flex items-center justify-center transition-colors"
             style={{ backgroundColor: 'var(--color-field-bg)' }}
             onMouseEnter={(e) => {
-              if (!disabled && buttonVariant !== 'primary') {
-                e.currentTarget.style.backgroundColor = 'var(--color-field-bg-focus)';
-              }
+              e.currentTarget.style.backgroundColor = 'var(--color-field-bg-focus)';
             }}
             onMouseLeave={(e) => {
-              if (!disabled && buttonVariant !== 'primary') {
-                e.currentTarget.style.backgroundColor = 'var(--color-field-bg)';
-              }
+              e.currentTarget.style.backgroundColor = 'var(--color-field-bg)';
             }}
             aria-label={`Selected icon: ${selectedIcon}`}
           >
@@ -102,7 +91,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
               name={selectedIcon}
               size="sm"
               style={{
-                color: getIconColorHex(selectedColor as IconColor) || '#9ca3af'
+                color: iconColorHex
               }}
               title={`${selectedIcon}`}
             />
@@ -110,21 +99,13 @@ export const IconPicker: React.FC<IconPickerProps> = ({
         ) : (
           <span
             onClick={handleButtonClick}
-            className={`icon-picker-button cursor-pointer w-7 h-7 rounded-full flex items-center justify-center transition-colors ${
-              buttonVariant === 'primary'
-                ? 'bg-accent text-white hover:bg-accent-400'
-                : ''
-            } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className="icon-picker-button cursor-pointer w-7 h-7 rounded-full flex items-center justify-center transition-colors"
             style={{ backgroundColor: 'var(--color-field-bg)' }}
             onMouseEnter={(e) => {
-              if (!disabled && buttonVariant !== 'primary') {
-                e.currentTarget.style.backgroundColor = 'var(--color-field-bg-focus)';
-              }
+              e.currentTarget.style.backgroundColor = 'var(--color-field-bg-focus)';
             }}
             onMouseLeave={(e) => {
-              if (!disabled && buttonVariant !== 'primary') {
-                e.currentTarget.style.backgroundColor = 'var(--color-field-bg)';
-              }
+              e.currentTarget.style.backgroundColor = 'var(--color-field-bg)';
             }}
             aria-label={placeholder}
           >
@@ -137,7 +118,6 @@ export const IconPicker: React.FC<IconPickerProps> = ({
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         position="fixed"
-        positionStyle="search-results"
         maxWidth={320}
         maxHeight={280}
         showCloseButton={false}
@@ -188,25 +168,34 @@ export const IconPicker: React.FC<IconPickerProps> = ({
         <div className="p-2 mt-2">
           <div className="grid grid-cols-8 gap-1">
             {ICON_OPTIONS.map((iconOption) => (
-              <span
+              <button
                 key={iconOption.name}
                 onClick={() => handleIconClick(iconOption.name)}
-                className={`w-7 h-7 p-0 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleIconClick(iconOption.name);
+                  }
+                }}
+                className={`w-7 h-7 p-0 rounded-full flex items-center justify-center transition-colors cursor-pointer border-0 ${
                   selectedIcon === iconOption.name
                     ? 'border border-accent bg-surface-5'
                     : 'bg-surface-3 hover:bg-surface-5'
                 }`}
+                aria-label={`Select ${iconOption.name} icon for ${iconOption.category.toLowerCase()}`}
+                aria-pressed={selectedIcon === iconOption.name}
+                title={`${iconOption.name} - ${iconOption.category}`}
               >
                 <Icon
                   name={iconOption.name}
                   size="sm"
                   style={{
-                    color: getIconColorHex(selectedColor as IconColor) || '#9ca3af',
+                    color: iconColorHex,
                     pointerEvents: 'none'
                   }}
-                  title={`${iconOption.name}`}
+                  aria-hidden="true"
                 />
-              </span>
+              </button>
             ))}
           </div>
         </div>

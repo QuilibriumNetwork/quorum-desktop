@@ -78,7 +78,6 @@ const GroupEditor: React.FunctionComponent<{
               selectedIcon={icon}
               selectedIconColor={iconColor}
               onIconSelect={handleIconChange}
-              buttonVariant="subtle"
             />
             <Text className="modal-text-small text-main">
               <Trans>Group Icon (optional)</Trans>
