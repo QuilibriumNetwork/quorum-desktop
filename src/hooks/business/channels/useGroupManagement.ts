@@ -92,7 +92,7 @@ export function useGroupManagement({
     ) {
       if (groupName) {
         // Update existing group
-        updateSpace({
+        await updateSpace({
           ...space,
           groups: space.groups.map((g) => {
             return {
@@ -103,7 +103,7 @@ export function useGroupManagement({
         });
       } else {
         // Create new group
-        updateSpace({
+        await updateSpace({
           ...space,
           groups: [...space.groups, { groupName: group, channels: [] }],
         });

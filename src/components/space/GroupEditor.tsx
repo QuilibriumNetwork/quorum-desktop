@@ -37,17 +37,17 @@ const GroupEditor: React.FunctionComponent<{
     setShowChannelError,
   } = useGroupManagement({ spaceId, groupName, onDeleteComplete: dismiss });
 
-  // Modal save state hook with 3000ms timeout
-  const { isSaving, saveWithTimeout } = useModalSaveState({
-    defaultTimeout: 3000,
+  // Modal save state hook
+  const { isSaving, saveUntilComplete } = useModalSaveState({
+    maxTimeout: 10000, // 10 second failsafe for group operations
     onSaveComplete: dismiss,
   });
 
   const handleSave = React.useCallback(async () => {
-    await saveWithTimeout(async () => {
+    await saveUntilComplete(async () => {
       await saveChanges();
     });
-  }, [saveWithTimeout, saveChanges]);
+  }, [saveUntilComplete, saveChanges]);
 
   return (
     <Modal

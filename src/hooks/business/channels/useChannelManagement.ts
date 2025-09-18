@@ -130,7 +130,7 @@ export function useChannelManagement({
 
     if (channelId) {
       // Update existing channel
-      updateSpace({
+      await updateSpace({
         ...space,
         groups: space.groups.map((g) => {
           return {
@@ -158,7 +158,7 @@ export function useChannelManagement({
     } else {
       // Create new channel
       const channelAddress = await createChannel(spaceId);
-      updateSpace({
+      await updateSpace({
         ...space,
         groups: space.groups.map((g) => {
           return {

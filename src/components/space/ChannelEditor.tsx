@@ -28,9 +28,9 @@ const ChannelEditor: React.FunctionComponent<{
   onEditModeClick?: () => void;
 }> = ({ spaceId, groupName, channelId, dismiss }) => {
 
-  // Modal save state for save operations only (3000ms timeout)
-  const { isSaving, saveWithTimeout } = useModalSaveState({
-    defaultTimeout: 3000,
+  // Modal save state for save operations only
+  const { isSaving, saveUntilComplete } = useModalSaveState({
+    maxTimeout: 10000, // 10 second failsafe for channel operations
     onSaveComplete: dismiss,
     onSaveError: (error) => {
       console.error('Save failed:', error);
@@ -64,10 +64,10 @@ const ChannelEditor: React.FunctionComponent<{
   });
 
   const handleSave = React.useCallback(async () => {
-    saveWithTimeout(async () => {
+    await saveUntilComplete(async () => {
       await saveChanges();
     });
-  }, [saveChanges, saveWithTimeout]);
+  }, [saveChanges, saveUntilComplete]);
 
   // Use original delete handler (ConfirmationModal will handle its own overlay)
   const handleDeleteClick = originalHandleDeleteClick;
