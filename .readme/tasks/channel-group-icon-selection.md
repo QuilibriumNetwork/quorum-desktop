@@ -32,6 +32,144 @@ Add icon selection functionality to GroupEditor and ChannelEditor components, al
 
 **Note:** All icons verified to exist in our current icon mapping.
 
+## Icon Color Selection Feature
+
+**Enhancement:** Add color selection for each group/channel icon using existing ColorSwatch primitive.
+
+### Color Selection UI Design
+
+**Layout in Icon Dropdown:**
+```
+┌─────────────────────────────────────────┐
+│ [Color Swatches Row - STICKY HEADER]    │
+│ ⚪ 🔵 🟣 🟡 🟠 🟢 🟡  ← Always visible  │
+│ ─────────────────────────────────────── │
+│ [Icon Grid - Scrollable Area]           │
+│ 📢 # 🏠 👥 💬 ⭐                        │
+│ 💼 🎮 🖼️ 📹 🎤 😊                      │
+│ 🔖 📊 🎁 🍃 🐾 🍽️                      │
+│ ↕️  [Scrollable - 35+ icons]           │
+│ [... more icons in selected color]      │
+└─────────────────────────────────────────┘
+```
+
+### Color Options (Based on AccentColorSwitcher)
+
+**Color Sequence:**
+1. **Default** - `text-subtle` (current icon color) - White/Light Gray swatch
+2. **Blue** - `blue` accent color
+3. **Purple** - `purple` accent color
+4. **Fuchsia** - `fuchsia` accent color
+5. **Orange** - `orange` accent color
+6. **Green** - `green` accent color
+7. **Yellow** - `yellow` accent color
+
+**Color Implementation:**
+```typescript
+const ICON_COLORS = [
+  { value: 'default', label: 'Default', class: 'text-subtle' },
+  { value: 'blue', label: 'Blue', class: 'text-accent-blue' },
+  { value: 'purple', label: 'Purple', class: 'text-accent-purple' },
+  { value: 'fuchsia', label: 'Fuchsia', class: 'text-accent-fuchsia' },
+  { value: 'orange', label: 'Orange', class: 'text-accent-orange' },
+  { value: 'green', label: 'Green', class: 'text-accent-green' },
+  { value: 'yellow', label: 'Yellow', class: 'text-accent-yellow' },
+];
+```
+
+### Data Model Extensions
+
+```typescript
+interface ChannelData {
+  channelName: string;
+  channelTopic: string;
+  isReadOnly: boolean;
+  managerRoleIds: string[];
+  isPinned: boolean;
+  pinnedAt?: number;
+  icon?: IconName;           // 🆕 Icon selection
+  iconColor?: IconColor;     // 🆕 Icon color selection
+}
+
+interface Group {
+  groupName: string;
+  icon?: IconName;           // 🆕 Icon selection
+  iconColor?: IconColor;     // 🆕 Icon color selection
+  channels: Channel[];
+}
+
+type IconColor = 'default' | AccentColor; // 'default' | 'blue' | 'purple' | etc.
+```
+
+### UI Behavior
+
+**Color Selection Flow:**
+1. User opens icon picker dropdown
+2. **Top row**: ColorSwatch components in small size for 7 colors
+3. **Color change**: Updates all icons in grid to show in selected color
+4. **Icon selection**: User clicks icon, picker closes with both icon + color
+5. **Save**: Both icon and iconColor saved to channel/group data
+
+**ColorSwatch Integration:**
+```typescript
+// Sticky header with ColorSwatch row
+<div className="sticky top-0 bg-surface-0 z-10">
+  <FlexRow gap={8} className="p-2 border-b border-surface-3">
+    {ICON_COLORS.map((colorOption) => (
+      <ColorSwatch
+        key={colorOption.value}
+        color={colorOption.value === 'default' ? 'var(--color-text-subtle)' : colorOption.value}
+        isActive={selectedColor === colorOption.value}
+        onPress={() => setSelectedColor(colorOption.value)}
+        size="small"
+      />
+    ))}
+  </FlexRow>
+</div>
+
+// Scrollable icon grid below
+<div className="max-h-64 overflow-y-auto">
+  {/* Icon grid content */}
+</div>
+```
+
+### Icon Display Updates
+
+**ChannelGroup.tsx:**
+```typescript
+// Current logic (to be updated)
+<Icon
+  name={channel.icon || "hashtag"}
+  size="xs"
+  className="text-subtle"  // Replace with dynamic color
+/>
+
+// New logic with color support
+<Icon
+  name={channel.icon || "hashtag"}
+  size="xs"
+  className={getIconColorClass(channel.iconColor)}
+/>
+
+const getIconColorClass = (iconColor?: IconColor): string => {
+  if (!iconColor || iconColor === 'default') return 'text-subtle';
+  return `text-accent-${iconColor}`;
+};
+```
+
+### Cross-Platform Considerations
+
+**Web Implementation:**
+- ColorSwatch row fits in modal dropdown
+- CSS accent color classes for icon coloring
+- Responsive grid layout maintained
+
+**Mobile Implementation:**
+- **Sticky ColorSwatch row** in expanded inline grid
+- Same sticky positioning with `position: sticky` for React Native
+- Touch-friendly swatch sizing
+- **ScrollView with stickyHeaderIndices** for native implementation
+
 ### Tier 1: Essential & Most Common (Top Row)
 1. `bullhorn` - Announcements (critical for communities)
 2. `hashtag` - General/default channels
@@ -82,6 +220,8 @@ Add icon selection functionality to GroupEditor and ChannelEditor components, al
 ## Technical Implementation
 
 ### Data Model Changes
+
+#### TypeScript Interfaces
 ```typescript
 // Groups
 interface Group {
@@ -100,13 +240,117 @@ interface Channel {
 }
 ```
 
+#### Data Persistence & Sync Strategy
+
+**Analysis of Current Architecture**: Based on existing `isPinned` and `isReadOnly` implementation
+
+**Current Pattern** (`src/hooks/business/channels/useChannelManagement.ts`):
+
+**1. Channel Metadata State**
+```typescript
+export interface ChannelData {
+  channelName: string;
+  channelTopic: string;
+  isReadOnly: boolean;      // ✅ Existing pattern
+  managerRoleIds: string[]; // ✅ Existing pattern
+  isPinned: boolean;        // ✅ Existing pattern
+  pinnedAt?: number;        // ✅ Existing pattern
+  icon?: IconName;          // 🆕 New field to add
+}
+```
+
+**2. State Management in Hook**
+```typescript
+// Current initialization (lines 42-49)
+const [channelData, setChannelData] = useState<ChannelData>({
+  channelName: currentChannel?.channelName || '',
+  channelTopic: currentChannel?.channelTopic || '',
+  isReadOnly: currentChannel?.isReadOnly || false,
+  managerRoleIds: currentChannel?.managerRoleIds || [],
+  isPinned: currentChannel?.isPinned || false,
+  pinnedAt: currentChannel?.pinnedAt,
+  icon: currentChannel?.icon || undefined,           // 🆕 Add this line
+  iconColor: currentChannel?.iconColor || 'default', // 🆕 Add this line
+});
+
+// Icon change handler (new)
+const handleIconChange = useCallback((iconName: IconName | null, iconColor: IconColor = 'default') => {
+  setChannelData((prev) => ({
+    ...prev,
+    icon: iconName || undefined,
+    iconColor: iconColor,
+  }));
+}, []);
+```
+
+**3. Save Changes Logic**
+```typescript
+// Current save pattern (lines 128-197) - just add icon field
+const saveChanges = useCallback(async () => {
+  if (channelId) {
+    // Update existing channel (line 143-152)
+    await updateSpace({
+      ...space,
+      groups: space.groups.map((g) => ({
+        ...g,
+        channels: groupName === g.groupName
+          ? g.channels.map((c) => c.channelId === channelId ? {
+              ...c,
+              channelName: channelData.channelName,
+              channelTopic: channelData.channelTopic,
+              isReadOnly: channelData.isReadOnly,
+              managerRoleIds: channelData.managerRoleIds,
+              isPinned: channelData.isPinned,
+              pinnedAt: channelData.pinnedAt,
+              icon: channelData.icon,           // 🆕 Add this line
+              iconColor: channelData.iconColor, // 🆕 Add this line
+              modifiedDate: Date.now(),
+            } : c)
+          : g.channels,
+      })),
+    });
+  }
+}, [space, channelData, /* ... other deps */]);
+```
+
+**4. Real-time Sync via updateSpace**
+```typescript
+// updateSpace function (MessageDB.tsx) handles:
+// 1. Encrypts space data with Quilibrium SDK
+// 2. Sends encrypted payload via WebSocket
+// 3. Server processes and broadcasts to all space members
+// 4. All clients receive update and re-render automatically
+// 5. Local IndexedDB is updated for persistence
+
+// Same pattern used for isPinned, isReadOnly - no additional sync needed
+```
+
+**5. Data Flow (Following Existing Pattern)**
+```
+User selects blue bullhorn icon:
+1. User selects blue color → icons in grid turn blue
+2. User clicks bullhorn icon → IconPicker → handleIconChange('bullhorn', 'blue')
+3. ChannelEditor Save → saveChanges()
+4. updateSpace() → encrypt + WebSocket send (includes icon + iconColor)
+5. Server broadcasts space update to all members
+6. All users see blue bullhorn icon instantly (same as pin/readonly changes)
+7. IndexedDB updated locally for offline access
+```
+
+**No API Changes Needed**: Icons sync via existing space update mechanism
+
 ### Component Updates
 
 #### IconPicker Component (New)
 - **IconPicker.web.tsx**: Responsive grid layout using CSS Grid (4/6/8 cols based on viewport)
 - **IconPicker.native.tsx**: Mobile app inline expandable grid (6 cols fixed)
 - **IconPicker.types.ts**: Shared interface and icon array
-- **Props**: `selectedIcon`, `onIconSelect`, `buttonVariant: "subtle"`
+- **Props**: `selectedIcon`, `selectedIconColor`, `onIconSelect: (icon, color) => void`, `buttonVariant: "subtle"`
+
+**Enhanced Features:**
+- **Color Selection**: ColorSwatch row above icon grid (7 colors)
+- **Dynamic Preview**: Icons change color in real-time based on selected color
+- **Combined Selection**: Returns both icon name and color in single callback
 
 #### Critical UI Considerations
 
@@ -157,10 +401,25 @@ ChannelEditor and GroupEditor are already bottom sheet modals on mobile. Icon pi
 // IconPicker.native.tsx
 - Button shows selected icon (collapsed state)
 - Tap button expands grid inline within bottom sheet
+- **Sticky ColorSwatch header** with ScrollView below
 - Grid slides down with animation, pushing other content down
 - 35 icons in ~6 rows (6 icons per row for mobile)
+- ColorSwatch row remains visible while scrolling icons
 - Collapse button or tap selected icon to close
-- Bottom sheet auto-adjusts height for grid
+- Bottom sheet auto-adjusts height for grid + sticky header
+
+// Native ScrollView implementation
+<ScrollView
+  stickyHeaderIndices={[0]}
+  style={{ maxHeight: 300 }}
+>
+  <View> {/* Sticky header - index 0 */}
+    <ColorSwatch row />
+  </View>
+  <View> {/* Scrollable content */}
+    <Icon grid />
+  </View>
+</ScrollView>
 ```
 
 #### GroupEditor.tsx
@@ -178,10 +437,30 @@ ChannelEditor and GroupEditor are already bottom sheet modals on mobile. Icon pi
 #### ChannelGroup.tsx
 - Update icon rendering logic:
   ```typescript
-  // Priority: custom icon > logic-based icon > default
-  const channelIcon = channel.icon || (channel.isReadOnly ? "lock" : "hashtag");
+  // BREAKING CHANGE: Remove automatic lock icon for read-only channels
+  // Priority: custom icon > default hashtag (regardless of read-only status)
+  const channelIcon = channel.icon || "hashtag";
   const groupIcon = group.icon; // No default for groups
+
+  // OLD LOGIC (to be removed):
+  // const channelIcon = channel.icon || (channel.isReadOnly ? "lock" : "hashtag");
   ```
+
+#### Read-Only Channel Icon Conflict Resolution
+
+**Problem**: Current system automatically shows lock icon for read-only channels, conflicting with custom icon selection.
+
+**Solution**: Remove automatic lock icon behavior
+- ✅ **User Choice**: Let users choose lock icon if they want it (available in icon set)
+- ✅ **Consistency**: All channels use same icon logic (custom or hashtag default)
+- ✅ **Flexibility**: Read-only announcement channels can use bullhorn, etc.
+- ✅ **Backwards Compatible**: Existing read-only channels just switch to hashtag default
+
+**Implementation**:
+- Remove `isReadOnly ? "lock" : "hashtag"` logic from ChannelGroup.tsx:96
+- Replace with simple `channel.icon || "hashtag"`
+- Read-only functionality remains unchanged (permissions system unaffected)
+- Users can manually select lock icon if desired
 
 ### Select Component Investigation ✅
 
@@ -295,10 +574,13 @@ src/components/space/
 - [ ] Icon selection in GroupEditor
 - [ ] Icon selection in ChannelEditor
 - [ ] Icon display in ChannelGroup component
-- [ ] Default behavior (channels show logic-based icons, groups empty)
+- [ ] Default behavior (all channels show hashtag default, groups empty)
+- [ ] **Breaking Change**: Read-only channels no longer show automatic lock icon
 - [ ] Cross-platform compatibility (web + mobile)
 - [ ] Accessibility (keyboard navigation, screen readers)
 - [ ] Save/load icon preferences
+- [ ] **Regression Testing**: Verify read-only channel permissions still work correctly
+- [ ] **Migration Testing**: Existing read-only channels display hashtag instead of lock
 
 ## Future Enhancements
 
@@ -309,10 +591,13 @@ src/components/space/
 
 ## Implementation Notes
 
+- **Breaking Change**: Remove automatic lock icon for read-only channels
 - Maintain backward compatibility (existing channels/groups without icons)
-- Consider migration strategy for existing data
+- **Migration Impact**: Existing read-only channels will show hashtag instead of lock
+- Consider data migration strategy for existing channels with no custom icon
 - Ensure icons work with existing theming (light/dark mode)
 - Document icon selection UX in component style guide
+- **Testing Priority**: Verify read-only permissions system remains intact
 
 ---
 
