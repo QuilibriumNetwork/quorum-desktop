@@ -98,6 +98,19 @@ import {
   faBan,
   faCakeCandles,
   faFrown,
+  faBullhorn,
+  faBriefcase,
+  faDollarSign,
+  faQuestionCircle,
+  faLeaf,
+  faPaw,
+  faUtensils,
+  faVideo,
+  faMicrophone,
+  faGamepad,
+  faHeadset,
+  faKhanda,
+  faLifeRing,
 } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -150,6 +163,28 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   envelope: faEnvelope,
   'comment-dots': faCommentDots,
   send: faPaperPlane,
+  bullhorn: faBullhorn,
+  'dollar-sign': faDollarSign,
+  money: faDollarSign, // alias
+  'question-circle': faQuestionCircle,
+  leaf: faLeaf,
+  nature: faLeaf, // alias
+  paw: faPaw,
+  animals: faPaw, // alias
+  utensils: faUtensils,
+  food: faUtensils, // alias
+  video: faVideo,
+  microphone: faMicrophone,
+  mic: faMicrophone, // alias
+  audio: faMicrophone, // alias
+  gamepad: faGamepad,
+  games: faGamepad, // alias
+  headset: faHeadset,
+  khanda: faKhanda,
+  sword: faKhanda, // alias
+  'life-ring': faLifeRing,
+  support: faLifeRing, // alias
+  help: faLifeRing, // alias
 
   // User & Social
   user: faUser,
@@ -200,6 +235,7 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   image: faImage,
   'file-image': faFileImage,
   tools: faTools,
+  briefcase: faBriefcase,
   hashtag: faHashtag,
   'calendar-alt': faCalendarAlt,
 
@@ -297,6 +333,28 @@ export const reactNativeIconMap: Record<IconName, string> = {
   envelope: 'envelope',
   'comment-dots': 'comment',
   send: 'paper-plane',
+  bullhorn: 'bullhorn',
+  'dollar-sign': 'dollar',
+  money: 'dollar',
+  'question-circle': 'question-circle',
+  leaf: 'leaf',
+  nature: 'leaf',
+  paw: 'paw',
+  animals: 'paw',
+  utensils: 'cutlery',
+  food: 'cutlery',
+  video: 'video-camera',
+  microphone: 'microphone',
+  mic: 'microphone',
+  audio: 'microphone',
+  gamepad: 'gamepad',
+  games: 'gamepad',
+  headset: 'headphones',
+  khanda: 'shield',
+  sword: 'shield',
+  'life-ring': 'life-ring',
+  support: 'life-ring',
+  help: 'life-ring',
 
   // User & Social
   user: 'user',
@@ -347,6 +405,7 @@ export const reactNativeIconMap: Record<IconName, string> = {
   image: 'image',
   'file-image': 'file-image-o',
   tools: 'wrench',
+  briefcase: 'briefcase',
   hashtag: 'hashtag',
   'calendar-alt': 'calendar',
 
