@@ -136,24 +136,9 @@ const ChannelEditor: React.FunctionComponent<{
 
         <Container className="mb-2 max-sm:mb-1">
           <FlexRow className="items-center justify-between">
-            <FlexRow className="items-center">
-              <Text className="modal-text-small text-main">
-                <Trans>Read only</Trans>
-              </Text>
-              <Tooltip
-                id="read-only-tooltip"
-                content={t`Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel.`}
-                place="bottom"
-                className="!w-[350px]"
-                maxWidth={350}
-              >
-                <Icon
-                  name="info-circle"
-                  size="sm"
-                  className="text-main hover:text-strong cursor-pointer ml-2"
-                />
-              </Tooltip>
-            </FlexRow>
+            <Text className="modal-text-small text-main">
+              <Trans>Read only</Trans>
+            </Text>
             <Switch
               value={isReadOnly}
               onChange={handleReadOnlyChange}
@@ -165,9 +150,24 @@ const ChannelEditor: React.FunctionComponent<{
         {isReadOnly && (
           <Container className="mb-4 max-sm:mb-1">
             <FlexRow className="items-center justify-between max-sm:flex-col max-sm:items-stretch">
-              <Text className="modal-text-small text-main whitespace-nowrap max-sm:mb-2">
-                <Trans>Channel Managers</Trans>
-              </Text>
+              <FlexRow className="items-center">
+                <Text className="modal-text-small text-main whitespace-nowrap max-sm:mb-2">
+                  <Trans>Channel Managers</Trans>
+                </Text>
+                <Tooltip
+                  id="channel-managers-tooltip"
+                  content={t`Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel.`}
+                  place="bottom"
+                  className="!w-[350px]"
+                  maxWidth={350}
+                >
+                  <Icon
+                    name="info-circle"
+                    size="sm"
+                    className="text-main hover:text-strong cursor-pointer ml-2 max-sm:mb-2"
+                  />
+                </Tooltip>
+              </FlexRow>
               <Select
                 value={managerRoleIds}
                 options={availableRoles.map((role) => ({

@@ -189,7 +189,8 @@ const Modal: React.FC<NativeModalProps> = ({
             styles.modalContent,
             {
               height: currentHeight,
-              backgroundColor: colors.surface[1],
+              backgroundColor: colors.bg.card || colors.surface[1],
+              opacity: 1, // Force full opacity
               transform: [{ translateY }],
               maxWidth: isTablet ? 600 : '100%',
               alignSelf: 'center',
