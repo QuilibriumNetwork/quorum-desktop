@@ -7,6 +7,8 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useConfirmation } from '../../ui/useConfirmation';
 import ChannelPreview from '../../../components/space/ChannelPreview';
 import { t } from '@lingui/core/macro';
+import { IconName } from '../../../components/primitives/Icon/types';
+import { IconColor } from '../../../components/space/IconPicker';
 
 export interface ChannelData {
   channelName: string;
@@ -15,6 +17,8 @@ export interface ChannelData {
   managerRoleIds: string[];
   isPinned: boolean;
   pinnedAt?: number;
+  icon: IconName;  // Channels always have an icon (defaults to hashtag)
+  iconColor?: IconColor;
 }
 
 export function useChannelManagement({
@@ -46,6 +50,8 @@ export function useChannelManagement({
     managerRoleIds: currentChannel?.managerRoleIds || [],
     isPinned: currentChannel?.isPinned || false,
     pinnedAt: currentChannel?.pinnedAt,
+    icon: (currentChannel?.icon || 'hashtag') as IconName,
+    iconColor: (currentChannel?.iconColor as IconColor) || 'default',
   });
 
   // State for deletion flow
@@ -68,6 +74,8 @@ export function useChannelManagement({
           managerRoleIds: channel.managerRoleIds || [],
           isPinned: channel.isPinned || false,
           pinnedAt: channel.pinnedAt,
+          icon: (channel.icon || 'hashtag') as IconName,
+          iconColor: (channel.iconColor as IconColor) || 'default',
         });
       }
     }
@@ -125,6 +133,15 @@ export function useChannelManagement({
     }));
   }, []);
 
+  // Handle icon change
+  const handleIconChange = useCallback((iconName: IconName | null, iconColor: IconColor = 'default') => {
+    setChannelData((prev) => ({
+      ...prev,
+      icon: iconName || 'hashtag', // Channels always have an icon, default to hashtag
+      iconColor: iconColor,
+    }));
+  }, []);
+
   // Save channel changes
   const saveChanges = useCallback(async () => {
     if (!space) return;
@@ -148,6 +165,8 @@ export function useChannelManagement({
                           managerRoleIds: channelData.managerRoleIds,
                           isPinned: channelData.isPinned,
                           pinnedAt: channelData.pinnedAt,
+                          icon: channelData.icon,
+                          iconColor: channelData.iconColor,
                           modifiedDate: Date.now(),
                         }
                       : c
@@ -177,6 +196,8 @@ export function useChannelManagement({
                       managerRoleIds: channelData.managerRoleIds,
                       isPinned: channelData.isPinned,
                       pinnedAt: channelData.pinnedAt,
+                      icon: channelData.icon,
+                      iconColor: channelData.iconColor,
                       createdDate: Date.now(),
                       modifiedDate: Date.now(),
                     } as Channel,
@@ -293,6 +314,8 @@ export function useChannelManagement({
     managerRoleIds: channelData.managerRoleIds,
     isPinned: channelData.isPinned,
     pinnedAt: channelData.pinnedAt,
+    icon: channelData.icon,
+    iconColor: channelData.iconColor,
     hasMessages,
     messageCount,
     deleteConfirmationStep,
@@ -305,6 +328,7 @@ export function useChannelManagement({
     handleReadOnlyChange,
     handleManagerRolesChange,
     handlePinChange,
+    handleIconChange,
     saveChanges,
     handleDeleteClick,
     resetDeleteConfirmation,

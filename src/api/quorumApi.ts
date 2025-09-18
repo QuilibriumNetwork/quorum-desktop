@@ -46,6 +46,8 @@ export type Space = {
 export type Group = {
   groupName: string;
   channels: Channel[];
+  icon?: string;
+  iconColor?: string;
 };
 
 export type Channel = {
@@ -62,6 +64,8 @@ export type Channel = {
   managerRoleIds?: string[]; // Roles that can manage this read-only channel
   isPinned?: boolean; // Whether the channel is pinned to the top of its group
   pinnedAt?: number; // Timestamp when the channel was pinned (for stack ordering)
+  icon?: string; // Custom icon name
+  iconColor?: string; // Custom icon color
 };
 
 export type Conversation = {

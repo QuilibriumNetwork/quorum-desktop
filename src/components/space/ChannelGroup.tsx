@@ -4,10 +4,13 @@ import { Link, useParams } from 'react-router-dom';
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import { useModalContext } from '../context/ModalProvider';
 import { Icon } from '../primitives';
+import { getIconColorHex, IconColor } from './IconPicker/types';
 
 const ChannelGroup: React.FunctionComponent<{
   group: {
     groupName: string;
+    icon?: string;
+    iconColor?: string;
     channels: {
       channelId: string;
       channelName: string;
@@ -18,6 +21,8 @@ const ChannelGroup: React.FunctionComponent<{
       isPinned?: boolean;
       pinnedAt?: number;
       createdDate?: number;
+      icon?: string;
+      iconColor?: string;
     }[];
   };
   onEditGroup: (groupName: string) => void;
@@ -51,7 +56,7 @@ const ChannelGroup: React.FunctionComponent<{
       <div className="channel-group-name small-caps flex flex-row justify-between">
         <div
           className={
-            'truncate ' + (isSpaceOwner ? 'hover:text-main cursor-pointer' : '')
+            'truncate flex items-center gap-2 ' + (isSpaceOwner ? 'hover:text-main cursor-pointer' : '')
           }
           onClick={() => {
             if (isSpaceOwner) {
@@ -59,6 +64,17 @@ const ChannelGroup: React.FunctionComponent<{
             }
           }}
         >
+          {props.group.icon && (
+            <Icon
+              key={`group-${props.group.groupName}-${props.group.icon}`}
+              name={props.group.icon as any}
+              size="xs"
+              style={{
+                color: getIconColorHex(props.group.iconColor as IconColor) || '#9ca3af'
+              }}
+              title={`${props.group.groupName}`}
+            />
+          )}
           {props.group.groupName}
         </div>
         {isSpaceOwner && (
@@ -76,7 +92,7 @@ const ChannelGroup: React.FunctionComponent<{
       </div>
       {sortedChannels.map((channel) => (
         <Link
-          key={channel.channelName}
+          key={channel.channelId}
           to={`/spaces/${spaceId}/${channel.channelId}`}
         >
           <div className="channel-group-channel">
@@ -93,10 +109,13 @@ const ChannelGroup: React.FunctionComponent<{
                 {/* Icon stack with base icon + optional pin overlay */}
                 <div className="channel-icon-container">
                   <Icon
-                    name={channel.isReadOnly ? "lock" : "hashtag"}
+                    key={`channel-${channel.channelId}`}
+                    name={(channel.icon as any) || "hashtag"}
                     size="xs"
-                    className="text-subtle"
-                    title={channel.isReadOnly ? "Read-only channel" : undefined}
+                    style={{
+                      color: getIconColorHex(channel.iconColor as IconColor) || '#9ca3af'
+                    }}
+                    title={`${channel.channelName}`}
                   />
                   {channel.isPinned && isSpaceOwner && (
                     <div className="channel-pin-overlay">

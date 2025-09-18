@@ -11,6 +11,7 @@ import {
   Spacer,
   Callout,
 } from '../primitives';
+import { IconPicker } from './IconPicker';
 import ModalSaveOverlay from '../modals/ModalSaveOverlay';
 import '../../styles/_modal_common.scss';
 import { useGroupManagement } from '../../hooks';
@@ -26,12 +27,15 @@ const GroupEditor: React.FunctionComponent<{
 }> = ({ spaceId, groupName, dismiss }) => {
   const {
     group,
+    icon,
+    iconColor,
     channelCount,
     showChannelError,
     deleteConfirmationStep,
     isEditMode,
     canSave,
     handleGroupNameChange,
+    handleIconChange,
     saveChanges,
     handleDeleteClick,
     setShowChannelError,
@@ -60,12 +64,26 @@ const GroupEditor: React.FunctionComponent<{
     >
       <Container style={{ textAlign: 'left' }}>
         <Container className="mb-4 max-sm:mb-1">
-          <Input 
-            value={group} 
+          <Input
+            value={group}
             onChange={handleGroupNameChange}
             label={t`Group Name`}
             labelType="static"
           />
+        </Container>
+
+        <Container className="mb-4">
+          <FlexRow className="items-center gap-2">
+            <IconPicker
+              selectedIcon={icon}
+              selectedIconColor={iconColor}
+              onIconSelect={handleIconChange}
+              buttonVariant="subtle"
+            />
+            <Text className="modal-text-small text-main">
+              <Trans>Group Icon (optional)</Trans>
+            </Text>
+          </FlexRow>
         </Container>
         <FlexRow className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
           <Button

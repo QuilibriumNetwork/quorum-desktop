@@ -11,6 +11,7 @@ export interface DropdownPanelProps {
   maxWidth?: number;
   maxHeight?: number;
   className?: string;
+  style?: React.CSSProperties;
   children: React.ReactNode;
   showCloseButton?: boolean;
   resultsCount?: number;
@@ -25,6 +26,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
   maxWidth = 500,
   maxHeight = 400,
   className = '',
+  style,
   children,
   showCloseButton = true,
   resultsCount,
@@ -129,6 +131,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
       style={{
         position: finalPosition,
         ...positionStyleObject,
+        ...style, // Apply custom style prop last to allow overrides
       }}
     >
       {(title || resultsCount !== undefined) && (

@@ -2,6 +2,14 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useSpace } from '../../queries';
 import { useMessageDB } from '../../../components/context/useMessageDB';
+import { IconName } from '../../../components/primitives/Icon/types';
+import { IconColor } from '../../../components/space/IconPicker';
+
+export interface GroupData {
+  groupName: string;
+  icon?: IconName;
+  iconColor?: IconColor;
+}
 
 export function useGroupManagement({
   spaceId,
@@ -17,8 +25,15 @@ export function useGroupManagement({
   const navigate = useNavigate();
   const { updateSpace, messageDB } = useMessageDB();
 
-  // Initialize group name state
-  const [group, setGroup] = useState<string>(groupName || '');
+  // Find the current group
+  const currentGroup = space?.groups.find((g) => g.groupName === groupName);
+
+  // Initialize group data state
+  const [groupData, setGroupData] = useState<GroupData>({
+    groupName: groupName || '',
+    icon: currentGroup?.icon as IconName | undefined,
+    iconColor: (currentGroup?.iconColor as IconColor) || 'default',
+  });
 
   // State for deletion flow
   const [deleteConfirmationStep, setDeleteConfirmationStep] = useState(0);
@@ -28,12 +43,19 @@ export function useGroupManagement({
   const [showWarning, setShowWarning] = useState<boolean>(false);
   const [showChannelError, setShowChannelError] = useState<boolean>(false);
 
-  // Sync group name when data loads
+  // Sync group data when space data loads
   useEffect(() => {
-    if (groupName) {
-      setGroup(groupName);
+    if (groupName && space) {
+      const group = space.groups.find((g) => g.groupName === groupName);
+      if (group) {
+        setGroupData({
+          groupName: group.groupName || '',
+          icon: group.icon as IconName | undefined,
+          iconColor: (group.iconColor as IconColor) || 'default',
+        });
+      }
     }
-  }, [groupName]);
+  }, [groupName, space?.spaceId]);
 
   // Check if group has channels and if any channel in the group has messages
   useEffect(() => {
@@ -77,39 +99,52 @@ export function useGroupManagement({
 
   // Handle group name change
   const handleGroupNameChange = useCallback((value: string) => {
-    setGroup(value);
+    // Remove only truly problematic characters (filesystem/URL unsafe), allow emojis and Unicode
+    const sanitized = value.replace(/[<>:"/\\|?*\x00-\x1f]/g, '');
+    setGroupData((prev) => ({ ...prev, groupName: sanitized }));
+  }, []);
+
+  // Handle icon change
+  const handleIconChange = useCallback((iconName: IconName | null, iconColor: IconColor = 'default') => {
+    setGroupData((prev) => ({
+      ...prev,
+      icon: iconName || undefined,
+      iconColor: iconColor,
+    }));
   }, []);
 
   // Save group changes
   const saveChanges = useCallback(async () => {
     if (!space) return;
 
-    // Check if group name is valid and not duplicate
-    if (
-      !space.groups.find((g) => g.groupName === group) &&
-      groupName !== group &&
-      group !== ''
-    ) {
-      if (groupName) {
-        // Update existing group
+    if (groupName) {
+      // Update existing group
+      await updateSpace({
+        ...space,
+        groups: space.groups.map((g) => {
+          return groupName === g.groupName ? {
+            ...g,
+            groupName: groupData.groupName,
+            icon: groupData.icon,
+            iconColor: groupData.iconColor,
+          } : g;
+        }),
+      });
+    } else {
+      // Create new group - must have valid name
+      if (groupData.groupName !== '' && !space.groups.find((g) => g.groupName === groupData.groupName)) {
         await updateSpace({
           ...space,
-          groups: space.groups.map((g) => {
-            return {
-              ...g,
-              groupName: groupName === g.groupName ? group : g.groupName,
-            };
-          }),
-        });
-      } else {
-        // Create new group
-        await updateSpace({
-          ...space,
-          groups: [...space.groups, { groupName: group, channels: [] }],
+          groups: [...space.groups, {
+            groupName: groupData.groupName,
+            icon: groupData.icon,
+            iconColor: groupData.iconColor,
+            channels: []
+          }],
         });
       }
     }
-  }, [space, group, groupName, updateSpace]);
+  }, [space, groupData, groupName, updateSpace]);
 
   // Handle delete confirmation
   const handleDeleteClick = useCallback(() => {
@@ -174,22 +209,24 @@ export function useGroupManagement({
     setShowChannelError(false);
   }, []);
 
-  // Check if group name is valid for saving
-  const isValidGroupName = useCallback(() => {
-    if (!space || group === '') return false;
+  // Check if changes can be saved
+  const canSaveChanges = useCallback(() => {
+    if (!space) return false;
 
-    // Can't save if name hasn't changed
-    if (groupName === group) return false;
-
-    // Can't save if name already exists
-    if (space.groups.find((g) => g.groupName === group)) return false;
-
-    return true;
-  }, [space, group, groupName]);
+    if (groupName) {
+      // For existing groups: always allow saving (like ChannelEditor)
+      return true;
+    } else {
+      // For new groups: must have valid name that doesn't already exist
+      return groupData.groupName !== '' && !space.groups.find((g) => g.groupName === groupData.groupName);
+    }
+  }, [space, groupData.groupName, groupName]);
 
   return {
     // State
-    group,
+    group: groupData.groupName, // For backward compatibility
+    icon: groupData.icon,
+    iconColor: groupData.iconColor,
     hasMessages,
     hasChannels,
     channelCount,
@@ -197,10 +234,11 @@ export function useGroupManagement({
     showChannelError,
     deleteConfirmationStep,
     isEditMode: !!groupName,
-    canSave: isValidGroupName(),
+    canSave: canSaveChanges(),
 
     // Actions
     handleGroupNameChange,
+    handleIconChange,
     saveChanges,
     handleDeleteClick,
     setShowWarning,

@@ -13,6 +13,7 @@ import {
   Select,
   Tooltip,
 } from '../primitives';
+import { IconPicker } from './IconPicker';
 import ConfirmationModal from '../modals/ConfirmationModal';
 import ModalSaveOverlay from '../modals/ModalSaveOverlay';
 import '../../styles/_modal_common.scss';
@@ -43,9 +44,8 @@ const ChannelEditor: React.FunctionComponent<{
     isReadOnly,
     managerRoleIds,
     isPinned,
-    hasMessages,
-    messageCount,
-    deleteConfirmationStep,
+    icon,
+    iconColor,
     isEditMode,
     availableRoles,
     handleChannelNameChange,
@@ -53,6 +53,7 @@ const ChannelEditor: React.FunctionComponent<{
     handleReadOnlyChange,
     handleManagerRolesChange,
     handlePinChange,
+    handleIconChange,
     saveChanges,
     handleDeleteClick: originalHandleDeleteClick,
     deleteConfirmation,
@@ -97,12 +98,26 @@ const ChannelEditor: React.FunctionComponent<{
           />
         </Container>
         <Container className="mb-4">
-          <Input 
-            value={channelTopic} 
+          <Input
+            value={channelTopic}
             onChange={handleChannelTopicChange}
             label={t`Channel Topic`}
             labelType="static"
           />
+        </Container>
+
+        <Container className="mb-4">
+          <FlexRow className="items-center gap-2">
+            <IconPicker
+              selectedIcon={icon}
+              selectedIconColor={iconColor}
+              onIconSelect={handleIconChange}
+              buttonVariant="subtle"
+            />
+            <Text className="modal-text-small text-main">
+              <Trans>Channel Icon</Trans>
+            </Text>
+          </FlexRow>
         </Container>
 
         {isEditMode && (
