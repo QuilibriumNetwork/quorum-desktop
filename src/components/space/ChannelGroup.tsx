@@ -89,27 +89,28 @@ const ChannelGroup: React.FunctionComponent<{
                   : '')
               }
             >
-              <div className="flex-1 min-w-0 flex items-center gap-1">
-                {channel.isReadOnly ? (
-                  <>
-                    <Icon
-                      name="lock"
-                      size="xs"
-                      className="text-subtle"
-                      title="Read-only channel"
-                    />
-                    <span title={channel.isPinned ? 'Pinned channel' : undefined}>
-                      {channel.channelName}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <Icon name="hashtag" size="xs" className="text-subtle" />
-                    <span title={channel.isPinned ? 'Pinned channel' : undefined}>
-                      {channel.channelName}
-                    </span>
-                  </>
-                )}
+              <div className="flex-1 min-w-0 flex items-center gap-2">
+                {/* Icon stack with base icon + optional pin overlay */}
+                <div className="channel-icon-container">
+                  <Icon
+                    name={channel.isReadOnly ? "lock" : "hashtag"}
+                    size="xs"
+                    className="text-subtle"
+                    title={channel.isReadOnly ? "Read-only channel" : undefined}
+                  />
+                  {channel.isPinned && isSpaceOwner && (
+                    <div className="channel-pin-overlay">
+                      <Icon
+                        name="thumbtack"
+                        className="pin-icon text-strong"
+                        title="Pinned channel"
+                      />
+                    </div>
+                  )}
+                </div>
+                <span title={channel.isPinned ? 'Pinned channel' : undefined}>
+                  {channel.channelName}
+                </span>
                 {!!channel.mentionCount ? (
                   <span
                     className={
