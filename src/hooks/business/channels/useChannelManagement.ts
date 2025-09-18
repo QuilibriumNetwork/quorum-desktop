@@ -95,7 +95,8 @@ export function useChannelManagement({
 
   // Handle channel name change
   const handleChannelNameChange = useCallback((value: string) => {
-    const sanitized = value.toLowerCase().replace(/[^a-z0-9\-]/gi, '');
+    // Remove only truly problematic characters (filesystem/URL unsafe), allow emojis and Unicode
+    const sanitized = value.replace(/[<>:"/\\|?*\x00-\x1f]/g, '');
     setChannelData((prev) => ({ ...prev, channelName: sanitized }));
   }, []);
 
