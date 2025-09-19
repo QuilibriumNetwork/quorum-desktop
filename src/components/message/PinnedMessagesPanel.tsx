@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Message as MessageType, Channel } from '../../api/quorumApi';
+import { Virtuoso } from 'react-virtuoso';
+import type { Message as MessageType, Channel, Sticker } from '../../api/quorumApi';
+import MessagePreview from './MessagePreview';
 import {
-  FlexColumn,
   FlexRow,
   FlexCenter,
   Text,
@@ -14,16 +15,10 @@ import {
 import { DropdownPanel } from '../DropdownPanel';
 import { t } from '@lingui/core/macro';
 import { usePinnedMessages } from '../../hooks';
-import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import { isTouchDevice } from '../../utils/platform';
 import * as moment from 'moment-timezone';
 import './PinnedMessagesPanel.scss';
-
-// Configuration constants for pinned messages panel
-const PINNED_PANEL_CONFIG = {
-  TEXT_PREVIEW_LENGTH: 800, // Maximum characters to show in message preview
-} as const;
 
 interface PinnedMessagesPanelProps {
   isOpen: boolean;
@@ -34,7 +29,144 @@ interface PinnedMessagesPanelProps {
   mapSenderToUser: (senderId: string) => any;
   virtuosoRef?: any;
   messageList?: MessageType[];
+  stickers?: { [key: string]: any };
 }
+
+interface PinnedMessageItemProps {
+  message: MessageType;
+  mapSenderToUser: (senderId: string) => any;
+  onJumpToMessage: (messageId: string) => void;
+  canPinMessages: boolean;
+  togglePin: (e: React.MouseEvent, message: MessageType) => void;
+  stickers?: { [key: string]: Sticker };
+}
+
+// Extract PinnedMessageItem component for Virtuoso optimization
+const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
+  message,
+  mapSenderToUser,
+  onJumpToMessage,
+  canPinMessages,
+  togglePin,
+  stickers,
+}) => {
+  const sender = mapSenderToUser(message.content?.senderId);
+
+  const formatMessageDate = (timestamp: number) => {
+    const time = moment.tz(
+      timestamp,
+      Intl.DateTimeFormat().resolvedOptions().timeZone
+    );
+    return time.format('MMM D, YYYY');
+  };
+
+  return (
+    <Container
+      key={message.messageId}
+      className="pinned-message-item"
+    >
+      <Container className="result-header">
+        {/* Mobile layout: actions on first row */}
+        <FlexRow className="sm:hidden items-center justify-end mb-2">
+          <FlexRow
+            className={`message-actions items-center${isTouchDevice() ? ' always-visible' : ''}`}
+          >
+          <Button
+            type="secondary"
+            onClick={() => onJumpToMessage(message.messageId)}
+            iconName="arrow-right"
+            size="small"
+            className="gap-1 mr-2"
+          >
+            {t`Jump`}
+          </Button>
+          {canPinMessages && (
+            <Tooltip
+              id={`unpin-${message.messageId}`}
+              content={t`Unpin this post`}
+              place="top"
+              showOnTouch={false}
+            >
+              <Button
+                type="danger-outline"
+                onClick={(e: React.MouseEvent) => togglePin(e, message)}
+                iconName="times"
+                iconOnly={true}
+                size="small"
+              />
+            </Tooltip>
+          )}
+          </FlexRow>
+        </FlexRow>
+
+        {/* Mobile layout: user info on second row */}
+        <FlexRow className="sm:hidden result-meta items-center">
+          <Icon name="user" className="result-user-icon" />
+          <Text className="result-sender mr-4">
+            {sender?.displayName || t`Unknown User`}
+          </Text>
+          <Icon name="calendar-alt" className="result-date-icon" />
+          <Text className="result-date">
+            {formatMessageDate(message.createdDate)}
+          </Text>
+        </FlexRow>
+
+        {/* Desktop layout: original single row */}
+        <FlexRow className="hidden sm:flex items-center justify-between">
+          <FlexRow className="result-meta items-center">
+            <Icon name="user" className="result-user-icon" />
+            <Text className="result-sender mr-4">
+              {sender?.displayName || t`Unknown User`}
+            </Text>
+            <Icon name="calendar-alt" className="result-date-icon" />
+            <Text className="result-date">
+              {formatMessageDate(message.createdDate)}
+            </Text>
+          </FlexRow>
+          <FlexRow
+            className={`message-actions items-center${isTouchDevice() ? ' always-visible' : ''}`}
+          >
+            <Button
+              type="secondary"
+              onClick={() => onJumpToMessage(message.messageId)}
+              iconName="arrow-right"
+              size="small"
+              className="gap-1 mr-2"
+            >
+              {t`Jump`}
+            </Button>
+            {canPinMessages && (
+              <Tooltip
+                id={`unpin-${message.messageId}`}
+                content={t`Unpin this post`}
+                place="top"
+                showOnTouch={false}
+              >
+                <Button
+                  type="danger-outline"
+                  onClick={(e: React.MouseEvent) => togglePin(e, message)}
+                  iconName="times"
+                  iconOnly={true}
+                  size="small"
+                />
+              </Tooltip>
+            )}
+          </FlexRow>
+        </FlexRow>
+      </Container>
+
+      <Container className="result-content">
+        <MessagePreview
+          message={message}
+          mapSenderToUser={mapSenderToUser}
+          stickers={stickers}
+          showBackground={false}
+          hideHeader={true}
+        />
+      </Container>
+    </Container>
+  );
+};
 
 export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
   isOpen,
@@ -45,10 +177,11 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
   mapSenderToUser,
   virtuosoRef,
   messageList,
+  stickers,
 }) => {
   const navigate = useNavigate();
-  const { pinnedMessages, unpinMessage, canPinMessages, isLoading, togglePin, pinConfirmation } =
-    usePinnedMessages(spaceId, channelId, channel, mapSenderToUser);
+  const { pinnedMessages, canPinMessages, isLoading, togglePin } =
+    usePinnedMessages(spaceId, channelId, channel, mapSenderToUser, stickers);
 
   // Use the new React state-based message highlighting
   const { highlightMessage, scrollToMessage } = useMessageHighlight();
@@ -80,120 +213,6 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
       messageList,
     ]
   );
-
-  // Component to render formatted message content with links, mentions, etc.
-  const FormattedMessageContent: React.FC<{ message: MessageType }> = ({
-    message,
-  }) => {
-    const formatting = useMessageFormatting({
-      message,
-      stickers: {},
-      mapSenderToUser,
-      onImageClick: () => {}, // Not needed for preview panel
-    });
-
-    if (!message.content) return null;
-
-    const contentData = formatting.getContentData();
-    if (!contentData) return null;
-
-    if (contentData.type === 'post') {
-      let totalChars = 0;
-      const maxChars = PINNED_PANEL_CONFIG.TEXT_PREVIEW_LENGTH;
-
-      return (
-        <>
-          {contentData.content.map((line, i) => {
-            const tokens = line.split(' ');
-            const renderedTokens: React.ReactNode[] = [];
-
-            for (let j = 0; j < tokens.length; j++) {
-              const token = tokens[j];
-              const tokenLength = token.length + 1; // +1 for space
-
-              // Check if adding this token would exceed the limit
-              if (totalChars + tokenLength > maxChars) {
-                renderedTokens.push(
-                  <React.Fragment key={`truncate-${i}-${j}`}>
-                    ...
-                  </React.Fragment>
-                );
-                break;
-              }
-
-              totalChars += tokenLength;
-              const tokenData = formatting.processTextToken(
-                token,
-                contentData.messageId,
-                i,
-                j
-              );
-
-              if (tokenData.type === 'mention') {
-                renderedTokens.push(
-                  <React.Fragment key={tokenData.key}>
-                    <Text className="message-name-mentions-you">
-                      {tokenData.displayName}
-                    </Text>{' '}
-                  </React.Fragment>
-                );
-              } else if (tokenData.type === 'link') {
-                renderedTokens.push(
-                  <React.Fragment key={tokenData.key}>
-                    <a
-                      href={tokenData.url}
-                      target="_blank"
-                      referrerPolicy="no-referrer"
-                      className="text-accent hover:underline"
-                      style={{ fontSize: 'inherit' }}
-                    >
-                      {tokenData.text}
-                    </a>{' '}
-                  </React.Fragment>
-                );
-              } else if (tokenData.type === 'youtube') {
-                renderedTokens.push(
-                  <React.Fragment key={tokenData.key}>
-                    <Text className="text-accent">[YouTube Video]</Text>{' '}
-                  </React.Fragment>
-                );
-              } else if (tokenData.type === 'invite') {
-                renderedTokens.push(
-                  <React.Fragment key={tokenData.key}>
-                    <Text className="text-accent">[Invite Link]</Text>{' '}
-                  </React.Fragment>
-                );
-              } else {
-                renderedTokens.push(
-                  <React.Fragment key={tokenData.key}>
-                    {tokenData.text}{' '}
-                  </React.Fragment>
-                );
-              }
-            }
-
-            return (
-              <React.Fragment key={`line-${i}`}>
-                {renderedTokens}
-                {i < contentData.content.length - 1 && <br />}
-              </React.Fragment>
-            );
-          })}
-        </>
-      );
-    }
-
-    // Since only 'post' type messages are pinnable, no need to handle other types
-    return null;
-  };
-
-  const formatMessageDate = (timestamp: number) => {
-    const time = moment.tz(
-      timestamp,
-      Intl.DateTimeFormat().resolvedOptions().timeZone
-    );
-    return time.format('MMM D, YYYY');
-  };
 
   if (!isOpen) return null;
 
@@ -235,68 +254,27 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
           : t`${pinnedMessages.length} pinned messages`
       }
       className="pinned-messages-panel"
-      showCloseButton={false}
+      showCloseButton={true}
     >
-      <Container className="pinned-messages-list">
-        {isLoading || pinnedMessages.length === 0
-          ? renderEmptyState()
-          : pinnedMessages.map((message) => {
-              const sender = mapSenderToUser(message.content?.senderId);
-              return (
-                <Container
-                  key={message.messageId}
-                  className="pinned-message-item"
-                >
-                  <FlexRow className="result-header items-center justify-between">
-                    <FlexRow className="result-meta items-center">
-                      <Text className="result-sender">
-                        {sender?.displayName || t`Unknown User`}
-                      </Text>
-                      <Text className="result-date">
-                        {formatMessageDate(message.createdDate)}
-                      </Text>
-                    </FlexRow>
-                    <FlexRow
-                      className={`message-actions items-center${isTouchDevice() ? ' always-visible' : ''}`}
-                    >
-                      <Button
-                        type="subtle-outline"
-                        onClick={() => handleJumpToMessage(message.messageId)}
-                        iconName="arrow-right"
-                        size="small"
-                        className="gap-1 mr-6"
-                      >
-                        {t`Jump`}
-                      </Button>
-                      {canPinMessages && (
-                        <Tooltip
-                          id={`unpin-${message.messageId}`}
-                          content={t`Unpin this post`}
-                          place="top"
-                          showOnTouch={false}
-                        >
-                          <Button
-                            type="unstyled"
-                            onClick={(e) => togglePin(e, message)}
-                            iconName="times"
-                            iconOnly={true}
-                            size="compact"
-                            className="unpin-button"
-                          />
-                        </Tooltip>
-                      )}
-                    </FlexRow>
-                  </FlexRow>
-
-                  <Container className="result-content">
-                    <Text className="result-text">
-                      <FormattedMessageContent message={message} />
-                    </Text>
-                  </Container>
-                </Container>
-              );
-            })}
-      </Container>
+      {isLoading || pinnedMessages.length === 0 ? (
+        renderEmptyState()
+      ) : (
+        <Virtuoso
+          style={{ height: '350px' }}
+          totalCount={pinnedMessages.length}
+          itemContent={(index) => (
+            <PinnedMessageItem
+              message={pinnedMessages[index]}
+              mapSenderToUser={mapSenderToUser}
+              onJumpToMessage={handleJumpToMessage}
+              canPinMessages={canPinMessages}
+              togglePin={togglePin}
+              stickers={stickers}
+            />
+          )}
+          className="pinned-messages-list"
+        />
+      )}
     </DropdownPanel>
   );
 };

@@ -105,7 +105,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       maxHeight={maxHeight}
       resultsCount={results.length}
       className={`search-results ${className || ''}`}
-      showCloseButton={false}
+      showCloseButton={true}
     >
       {!query.trim() || isLoading || isError || results.length === 0 ? (
         renderEmptyState()

@@ -19,7 +19,8 @@ export const usePinnedMessages = (
   spaceId: string,
   channelId: string,
   channel?: Channel,
-  mapSenderToUser?: (senderId: string) => any
+  mapSenderToUser?: (senderId: string) => any,
+  stickers?: { [key: string]: any }
 ) => {
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
@@ -228,7 +229,7 @@ export const usePinnedMessages = (
         message: message.isPinned 
           ? t`Are you sure you want to unpin this message?` 
           : t`Are you sure you want to pin this message?`,
-        preview: React.createElement(MessagePreview, { message, mapSenderToUser }),
+        preview: React.createElement(MessagePreview, { message, mapSenderToUser, stickers }),
         confirmText: message.isPinned ? t`Unpin` : t`Pin`,
         cancelText: t`Cancel`,
         variant: message.isPinned ? 'danger' : 'primary',

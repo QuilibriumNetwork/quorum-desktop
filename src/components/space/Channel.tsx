@@ -497,6 +497,7 @@ const Channel: React.FC<ChannelProps> = ({
                     mapSenderToUser={mapSenderToUser}
                     virtuosoRef={messageListRef.current?.getVirtuosoRef()}
                     messageList={messageList}
+                    stickers={stickers}
                   />
                 </div>
               )}

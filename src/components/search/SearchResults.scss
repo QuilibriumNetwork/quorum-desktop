@@ -1,63 +1,61 @@
-// Search results now use DropdownPanel - only keep specific overrides if needed
+@import '../../styles/dropdown-result-item';
+
+// Search results specific styling
 .search-results {
   // Any search-specific styling can go here
 }
 
-// Header styling now handled by DropdownPanel
-
-// Results count styling now handled by DropdownPanel
-
+// Use shared list styling
 .search-results-list {
-  overflow-y: auto;
-  max-height: 340px;
-  background: var(--surface-0);
-  padding-bottom: 8px;
+  @extend .dropdown-results-list;
+  max-height: 340px; // Slightly different from default
 }
 
-// Empty states
-.search-empty-state,
-.search-loading-state,
-.search-error-state,
+// Use shared empty state styling
+.search-empty-state {
+  @extend .dropdown-empty-state;
+}
+
+.search-loading-state {
+  @extend .dropdown-loading-state;
+}
+
+.search-error-state {
+  @extend .dropdown-empty-state;
+}
+
 .search-no-results {
-  // flex layout handled by FlexCenter primitive
-  flex-direction: column;
-  padding: 40px 20px;
-  text-align: center;
+  @extend .dropdown-empty-state;
 }
 
-.empty-icon,
-.loading-icon,
-.error-icon {
-  font-size: 24px;
-  margin-bottom: 12px;
-  color: var(--color-text-muted);
+.empty-icon {
+  @extend .dropdown-empty-icon;
 }
 
 .loading-icon {
-  color: var(--accent-500);
+  @extend .dropdown-loading-icon;
 }
 
 .error-icon {
+  @extend .dropdown-empty-icon;
   color: rgb(var(--danger));
 }
 
-.empty-message,
-.loading-message,
+.empty-message {
+  @extend .dropdown-empty-message;
+}
+
+.loading-message {
+  @extend .dropdown-loading-message;
+}
+
 .error-message {
-  font-size: 14px;
-  color: var(--color-text-main);
-  margin: 0 0 4px 0;
-  font-weight: 500;
+  @extend .dropdown-empty-message;
+  color: rgb(var(--danger));
 }
 
 .empty-hint {
-  font-size: 12px;
-  color: var(--color-text-subtle);
-  margin: 0;
-}
-
-.error-message {
-  color: rgb(var(--danger));
+  @extend .dropdown-empty-hint;
 }
 
 // Dark theme adjustments

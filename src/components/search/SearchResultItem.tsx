@@ -65,6 +65,10 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
           )}
           <Text className="result-channel mr-2">{channelName}</Text>
         </FlexRow>
+        <FlexRow className="result-meta">
+          <Icon name="calendar-alt" className="result-date-icon" />
+          <Text className="result-date">{formattedDate}</Text>
+        </FlexRow>
       </FlexBetween>
 
       <Container className="result-content">
@@ -75,10 +79,6 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
           }}
         />
       </Container>
-
-      <FlexBetween className="result-footer">
-        <Text className="result-date">{formattedDate}</Text>
-      </FlexBetween>
     </Container>
   );
 };
@@ -129,6 +129,10 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
           <Icon name="user" className="result-user-icon" />
           <Text className="result-sender">{displayName}</Text>
         </FlexRow>
+        <FlexRow className="result-meta">
+          <Icon name="calendar-alt" className="result-date-icon" />
+          <Text className="result-date">{formattedDate}</Text>
+        </FlexRow>
       </FlexBetween>
 
       <Container className="result-content">
@@ -139,10 +143,6 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
           }}
         />
       </Container>
-
-      <FlexBetween className="result-footer">
-        <Text className="result-date">{formattedDate}</Text>
-      </FlexBetween>
     </Container>
   );
 };

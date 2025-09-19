@@ -169,7 +169,8 @@ export const Message = ({
     message.spaceId || spaceId || '',
     message.channelId || '',
     channel,
-    mapSenderToUser
+    mapSenderToUser,
+    stickers
   );
 
   // Message highlighting logic - replaces isHashTarget
