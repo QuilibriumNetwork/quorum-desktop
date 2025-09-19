@@ -93,7 +93,6 @@ export const IconPicker: React.FC<IconPickerProps> = ({
               name={selectedIcon}
               size="sm"
               color={iconColorHex}
-              title={`${selectedIcon}`}
             />
           </span>
         ) : (
@@ -119,7 +118,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
         onClose={() => setIsOpen(false)}
         position="fixed"
         maxWidth={320}
-        maxHeight={280}
+        maxHeight={340}
         showCloseButton={false}
         style={{
           top: `${dropdownPosition.top}px`,
@@ -177,14 +176,13 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     handleIconClick(iconOption.name);
                   }
                 }}
-                className={`w-7 h-7 p-0 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
+                className={`w-7 h-7 p-0 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none ${
                   selectedIcon === iconOption.name
                     ? 'border-2 border-accent bg-surface-5'
-                    : 'border border-transparent bg-surface-3 hover:bg-surface-5'
+                    : 'border border-transparent bg-surface-3 hover:bg-surface-5 hover:border-accent focus:border-accent'
                 }`}
                 aria-label={`Select ${iconOption.name} icon for ${iconOption.category.toLowerCase()}`}
                 aria-pressed={selectedIcon === iconOption.name}
-                title={`${iconOption.name} - ${iconOption.category}`}
               >
                 <Icon
                   name={iconOption.name}

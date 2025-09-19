@@ -162,7 +162,13 @@ export type IconName =
   // Code-related icons
   | 'code'
   | 'terminal'
-  | 'file-code';
+  | 'file-code'
+  // Nature & sci-fi icons
+  | 'tree'
+  | 'robot'
+  | 'fire'
+  | 'globe'
+  | 'plane';
 
 export type IconSize =
   | 'xs'

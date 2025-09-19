@@ -111,6 +111,11 @@ import {
   faHeadset,
   faKhanda,
   faLifeRing,
+  faTree,
+  faRobot,
+  faFire,
+  faGlobe,
+  faPlane,
 } from '@fortawesome/free-solid-svg-icons';
 import { faCircle as faCircleRegular } from '@fortawesome/free-regular-svg-icons';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
@@ -285,6 +290,13 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   code: faCode,
   terminal: faTerminal,
   'file-code': faFileCode,
+
+  // Nature & sci-fi icons
+  tree: faTree,
+  robot: faRobot,
+  fire: faFire,
+  globe: faGlobe,
+  plane: faPlane,
 };
 
 // React Native vector icon names (using FontAwesome family from react-native-vector-icons)
@@ -456,6 +468,13 @@ export const reactNativeIconMap: Record<IconName, string> = {
   code: 'code',
   terminal: 'terminal',
   'file-code': 'file-code',
+
+  // Nature & sci-fi icons
+  tree: 'tree',
+  robot: 'android',
+  fire: 'fire',
+  globe: 'globe',
+  plane: 'plane',
 };
 
 // Helper function to check if a string is a valid icon name

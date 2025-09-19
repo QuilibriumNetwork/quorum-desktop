@@ -18,6 +18,7 @@ import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider'
 import { useSidebar } from '../context/SidebarProvider';
 import { useModals } from '../context/ModalProvider';
 import { Button, Tooltip, Icon, Input } from '../primitives';
+import { getIconColorHex } from './IconPicker/types';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
@@ -230,6 +231,32 @@ const Channel: React.FC<ChannelProps> = ({
     isSpaceOwner || false
   );
 
+  // Helper function to get channel icon and color
+  const getChannelIconAndColor = () => {
+    if (channel?.icon) {
+      // Use custom channel icon and color
+      return {
+        iconName: channel.icon,
+        iconColor: getIconColorHex(channel.iconColor as any),
+      };
+    }
+
+    // Fall back to default icons
+    if (channel?.isReadOnly) {
+      return {
+        iconName: 'lock' as const,
+        iconColor: undefined, // Use default text color
+      };
+    }
+
+    return {
+      iconName: 'hashtag' as const,
+      iconColor: undefined, // Use default text color
+    };
+  };
+
+  const { iconName, iconColor } = getChannelIconAndColor();
+
   // Message composer hook
   const composer = useMessageComposer({
     type: 'channel',
@@ -415,19 +442,13 @@ const Channel: React.FC<ChannelProps> = ({
             {/* Channel name - hidden on mobile first row, shown on desktop */}
             <div className="hidden lg:flex flex-1 min-w-0">
               <div className="flex items-center gap-2 truncate whitespace-nowrap overflow-hidden">
-                {channel?.isReadOnly ? (
-                  <Icon
-                    name="lock"
-                    size="sm"
-                    className="text-subtle flex-shrink-0"
-                  />
-                ) : (
-                  <Icon
-                    name="hashtag"
-                    size="sm"
-                    className="text-subtle flex-shrink-0"
-                  />
-                )}
+                <Icon
+                  name={iconName as any}
+                  size="sm"
+                  className="flex-shrink-0"
+                  color={iconColor}
+                  style={!iconColor ? { color: 'var(--color-text-subtle)' } : undefined}
+                />
                 <span className="text-main font-medium flex-shrink truncate">
                   {channel?.channelName}
                 </span>
@@ -501,19 +522,13 @@ const Channel: React.FC<ChannelProps> = ({
           {/* Second row on mobile: channel name / Hidden on desktop (shown above) */}
           <div className="w-full lg:hidden">
             <div className="flex items-center gap-2 truncate whitespace-nowrap overflow-hidden">
-              {channel?.isReadOnly ? (
-                <Icon
-                  name="lock"
-                  size="sm"
-                  className="text-subtle flex-shrink-0"
-                />
-              ) : (
-                <Icon
-                  name="hashtag"
-                  size="sm"
-                  className="text-subtle flex-shrink-0"
-                />
-              )}
+              <Icon
+                name={iconName as any}
+                size="sm"
+                className="flex-shrink-0"
+                color={iconColor}
+                style={!iconColor ? { color: 'var(--color-text-subtle)' } : undefined}
+              />
               <span className="text-main font-medium flex-shrink truncate">
                 {channel?.channelName}
               </span>

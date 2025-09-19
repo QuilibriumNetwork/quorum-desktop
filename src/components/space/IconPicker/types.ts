@@ -27,7 +27,7 @@ export interface IconPickerProps {
   defaultIcon?: IconName; // Icon to use when clearing (for channels that always need an icon)
 }
 
-// 35 icons as specified in the task, organized by tier
+// 50 icons organized by tier and category
 export const ICON_OPTIONS: IconOption[] = [
   // Tier 1: Essential & Most Common (Top Row)
   { name: 'bullhorn', tier: 1, category: 'Announcements' },
@@ -49,14 +49,13 @@ export const ICON_OPTIONS: IconOption[] = [
   { name: 'book', tier: 3, category: 'Documentation' },
   { name: 'tools', tier: 3, category: 'Development' },
   { name: 'code', tier: 3, category: 'Programming' },
-  { name: 'clipboard-list', tier: 3, category: 'Tasks' },
   { name: 'cog', tier: 3, category: 'Settings' },
   { name: 'shield', tier: 3, category: 'Security' },
+  { name: 'bug', tier: 3, category: 'Issues' },
 
   // Tier 4: Communication & Events
   { name: 'bell', tier: 4, category: 'Notifications' },
   { name: 'calendar-alt', tier: 4, category: 'Events' },
-  { name: 'birthday-cake', tier: 4, category: 'Parties' },
   { name: 'gift', tier: 4, category: 'Rewards' },
   { name: 'heart', tier: 4, category: 'Community' },
 
@@ -64,17 +63,38 @@ export const ICON_OPTIONS: IconOption[] = [
   { name: 'info-circle', tier: 5, category: 'Information' },
   { name: 'life-ring', tier: 5, category: 'Support' },
   { name: 'question-circle', tier: 5, category: 'FAQ' },
+  { name: 'check-circle', tier: 5, category: 'Success' },
+  { name: 'warning', tier: 5, category: 'Alerts' },
   { name: 'search', tier: 5, category: 'Research' },
   { name: 'bookmark', tier: 5, category: 'Resources' },
+  { name: 'thumbtack', tier: 5, category: 'Pinned' },
 
   // Tier 6: Specialized Interests
   { name: 'dollar-sign', tier: 6, category: 'Finance' },
   { name: 'utensils', tier: 6, category: 'Food' },
   { name: 'paw', tier: 6, category: 'Animals' },
   { name: 'leaf', tier: 6, category: 'Nature' },
-  { name: 'exclamation-triangle', tier: 6, category: 'Warning' },
+  { name: 'tree', tier: 6, category: 'Nature' },
   { name: 'headset', tier: 6, category: 'Gaming Communication' },
   { name: 'chart-line', tier: 6, category: 'Analytics' },
+
+  // Tier 7: Communication & Status (Common)
+  { name: 'globe', tier: 7, category: 'Network' },
+  { name: 'plane', tier: 7, category: 'Travel' },
+  { name: 'link', tier: 7, category: 'Links' },
+  { name: 'lock', tier: 7, category: 'Privacy' },
+  { name: 'eye', tier: 7, category: 'Visibility' },
+
+  // Tier 8: Actions & Features (Moderate Priority)
+  { name: 'target', tier: 8, category: 'Goals' },
+  { name: 'certificate', tier: 8, category: 'Official' },
+
+  // Tier 9: Creative & Special Purpose
+  { name: 'palette', tier: 8, category: 'Art' },
+  { name: 'flask', tier: 9, category: 'Experiments' },
+  { name: 'robot', tier: 9, category: 'Sci-Fi' },
+  { name: 'fire', tier: 9, category: 'Hot' },
+
 ];
 
 // Icon colors in rainbow order: app-default, blue, purple, fuchsia, green, orange, yellow, red
