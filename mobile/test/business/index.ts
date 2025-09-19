@@ -7,6 +7,7 @@ export { MaintenanceTestScreen } from './MaintenanceTestScreen';
 export { ClickToCopyTestScreen } from './ClickToCopyTestScreen';
 export { ModalsTestScreen } from './ModalsTestScreen';
 export { MessageComposerTestScreen } from './MessageComposerTestScreen';
+export { IconPickerTestScreen } from './IconPickerTestScreen';
 
 // Future exports will be added here as we create components:
 // export { SpaceNavigationTestScreen } from './SpaceNavigationTestScreen';

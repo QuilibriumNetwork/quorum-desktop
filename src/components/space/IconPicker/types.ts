@@ -1,6 +1,6 @@
 import { IconName } from '../../primitives/Icon/types';
 
-export type IconColor = 'default' | 'blue' | 'purple' | 'fuchsia' | 'orange' | 'green' | 'yellow';
+export type IconColor = 'default' | 'blue' | 'purple' | 'fuchsia' | 'green' | 'orange' | 'yellow' | 'red';
 
 export interface IconOption {
   name: IconName;
@@ -24,6 +24,7 @@ export interface IconPickerProps {
   disabled?: boolean;
   className?: string;
   testID?: string;
+  defaultIcon?: IconName; // Icon to use when clearing (for channels that always need an icon)
 }
 
 // 35 icons as specified in the task, organized by tier
@@ -55,7 +56,7 @@ export const ICON_OPTIONS: IconOption[] = [
   // Tier 4: Communication & Events
   { name: 'bell', tier: 4, category: 'Notifications' },
   { name: 'calendar-alt', tier: 4, category: 'Events' },
-  { name: 'celebration', tier: 4, category: 'Parties' },
+  { name: 'birthday-cake', tier: 4, category: 'Parties' },
   { name: 'gift', tier: 4, category: 'Rewards' },
   { name: 'heart', tier: 4, category: 'Community' },
 
@@ -67,24 +68,25 @@ export const ICON_OPTIONS: IconOption[] = [
   { name: 'bookmark', tier: 5, category: 'Resources' },
 
   // Tier 6: Specialized Interests
-  { name: 'money', tier: 6, category: 'Finance' },
-  { name: 'food', tier: 6, category: 'Food' },
+  { name: 'dollar-sign', tier: 6, category: 'Finance' },
+  { name: 'utensils', tier: 6, category: 'Food' },
   { name: 'paw', tier: 6, category: 'Animals' },
   { name: 'leaf', tier: 6, category: 'Nature' },
-  { name: 'sword', tier: 6, category: 'Combat' },
+  { name: 'exclamation-triangle', tier: 6, category: 'Warning' },
   { name: 'headset', tier: 6, category: 'Gaming Communication' },
   { name: 'chart-line', tier: 6, category: 'Analytics' },
 ];
 
-// Icon colors based on AccentColorSwitcher
+// Icon colors in rainbow order: app-default, blue, purple, fuchsia, green, orange, yellow, red
 export const ICON_COLORS: ColorOption[] = [
   { value: 'default', label: 'Default', class: 'text-subtle', hex: '#9ca3af' },
   { value: 'blue', label: 'Blue', class: 'text-accent-blue', hex: '#3b82f6' },
   { value: 'purple', label: 'Purple', class: 'text-accent-purple', hex: '#8b5cf6' },
   { value: 'fuchsia', label: 'Fuchsia', class: 'text-accent-fuchsia', hex: '#d946ef' },
-  { value: 'orange', label: 'Orange', class: 'text-accent-orange', hex: '#f97316' },
   { value: 'green', label: 'Green', class: 'text-accent-green', hex: '#22c55e' },
+  { value: 'orange', label: 'Orange', class: 'text-accent-orange', hex: '#f97316' },
   { value: 'yellow', label: 'Yellow', class: 'text-accent-yellow', hex: '#eab308' },
+  { value: 'red', label: 'Red', class: 'text-accent-red', hex: '#ef4444' },
 ];
 
 // Helper function to get icon color hex value

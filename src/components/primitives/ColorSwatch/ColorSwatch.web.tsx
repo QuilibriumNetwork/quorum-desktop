@@ -12,6 +12,7 @@ const getColorHex = (color: string): string => {
     orange: '#f97316', // orange-500
     green: '#22c55e', // green-500
     yellow: '#eab308', // yellow-500
+    red: '#ef4444', // red-500
   };
   return colorMap[color] || '#3b82f6';
 };

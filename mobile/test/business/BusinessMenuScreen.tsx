@@ -128,6 +128,15 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
       status: 'ready',
       onPress: () => onSelectFeature('messagecomposer'),
     },
+    {
+      id: 'iconpicker',
+      title: 'Icon Picker',
+      description:
+        'Native icon picker component with theme support and color selection',
+      icon: 'star',
+      status: 'ready',
+      onPress: () => onSelectFeature('iconpicker'),
+    },
   ];
 
   const getStatusColor = (status: BusinessFeature['status']) => {

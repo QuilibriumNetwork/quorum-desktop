@@ -16,6 +16,7 @@ export const Spacer: React.FC<NativeSpacerProps> = ({
   direction = 'vertical',
   borderTop,
   borderBottom,
+  borderColor = '#e5e7eb', // Default border color
   spaceBefore,
   spaceAfter,
   border,
@@ -55,13 +56,13 @@ export const Spacer: React.FC<NativeSpacerProps> = ({
                   height: 0,
                   width: '100%',
                   borderTopWidth: 1,
-                  borderTopColor: '#e5e7eb',
+                  borderTopColor: borderColor,
                 }
               : {
                   width: 0,
                   height: '100%',
                   borderLeftWidth: 1,
-                  borderLeftColor: '#e5e7eb',
+                  borderLeftColor: borderColor,
                 }),
           }}
         />
@@ -87,11 +88,11 @@ export const Spacer: React.FC<NativeSpacerProps> = ({
   const borderStyle: any = {
     ...(borderTop && {
       borderTopWidth: 1,
-      borderTopColor: '#e5e7eb', // Default border color
+      borderTopColor: borderColor,
     }),
     ...(borderBottom && {
       borderBottomWidth: 1,
-      borderBottomColor: '#e5e7eb', // Default border color
+      borderBottomColor: borderColor,
     }),
   };
 

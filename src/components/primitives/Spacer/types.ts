@@ -6,6 +6,7 @@ export interface BaseSpacerProps {
   direction?: SpacerDirection;
   borderTop?: boolean;
   borderBottom?: boolean;
+  borderColor?: string; // Custom border color (defaults to theme border color)
   // Compound spacer: SPACE-BORDER-SPACE pattern
   spaceBefore?: SpacerSize;
   spaceAfter?: SpacerSize;

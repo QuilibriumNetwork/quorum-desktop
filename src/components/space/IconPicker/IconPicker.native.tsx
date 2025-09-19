@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, Animated, StyleSheet } from 'react-native';
-import { Button, Icon, FlexRow, ColorSwatch, ScrollContainer, useTheme } from '../../primitives';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, TouchableOpacity, Animated } from 'react-native';
+import { Button, Icon, FlexRow, ColorSwatch, ScrollContainer, Spacer, useTheme } from '../../primitives';
 import { IconPickerProps, ICON_OPTIONS, ICON_COLORS, getIconColorHex, IconColor } from './types';
 import { IconName } from '../../primitives/Icon/types';
+import { createIconPickerStyles } from './IconPicker.native.styles';
 
 export const IconPicker: React.FC<IconPickerProps> = ({
   selectedIcon,
@@ -11,6 +12,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   placeholder = 'Select icon',
   className = '',
   testID,
+  defaultIcon,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(selectedIconColor);
@@ -37,7 +39,8 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   };
 
   const handleClearIcon = () => {
-    onIconSelect(null, 'default');
+    onIconSelect(defaultIcon || null, 'default');
+    setSelectedColor('default'); // Reset color to default
     setIsOpen(false);
   };
 
@@ -53,79 +56,9 @@ export const IconPicker: React.FC<IconPickerProps> = ({
     setIsOpen(!isOpen);
   };
 
-  const iconColorHex = getIconColorHex(selectedColor);
-
-  const styles = StyleSheet.create({
-    iconButton: {
-      width: 28,
-      height: 28,
-      borderRadius: 14,
-      backgroundColor: theme.colors.bg.field || theme.colors.surface[2],
-      borderWidth: 1,
-      borderColor: theme.colors.border.field || theme.colors.border.default,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    emptyIconPlaceholder: {
-      width: 20,
-      height: 20,
-      borderWidth: 1,
-      borderStyle: 'dashed',
-      borderColor: theme.colors.border.default,
-      borderRadius: 6,
-    },
-    dropdownContainer: {
-      overflow: 'hidden',
-      marginTop: 8,
-      borderRadius: 8,
-      backgroundColor: theme.colors.bg.card || theme.colors.surface[1],
-      borderWidth: 1,
-      borderColor: theme.colors.border.default,
-    },
-    headerContainer: {
-      backgroundColor: theme.colors.bg.card || theme.colors.surface[1],
-      padding: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.colors.border.default,
-      position: 'relative',
-    },
-    clearButtonContainer: {
-      position: 'absolute',
-      top: 8,
-      right: 8,
-      zIndex: 1,
-    },
-    colorRow: {
-      justifyContent: 'center',
-      paddingTop: 32,
-      gap: 12,
-    },
-    iconGridContainer: {
-      padding: 16,
-    },
-    iconGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 8,
-      justifyContent: 'space-around',
-    },
-    iconOption: {
-      width: 44,
-      height: 44,
-      borderRadius: 22,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom: 8,
-      backgroundColor: theme.colors.surface[2] || '#f3f4f6',
-      borderWidth: 1,
-      borderColor: theme.colors.border.subtle || theme.colors.border.default,
-    },
-    selectedOption: {
-      borderWidth: 2,
-      borderColor: theme.colors.accent.DEFAULT,
-      backgroundColor: theme.colors.surface[3] || '#e5e7eb',
-    },
-  });
+  // Memoize color calculation and styles for performance
+  const iconColorHex = useMemo(() => getIconColorHex(selectedColor), [selectedColor]);
+  const styles = useMemo(() => createIconPickerStyles(theme.colors), [theme.colors]);
 
   return (
     <View testID={testID}>
@@ -139,9 +72,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           <Icon
             name={selectedIcon}
             size="sm"
-            style={{
-              color: iconColorHex,
-            }}
+            color={iconColorHex}
           />
         </TouchableOpacity>
       ) : (
@@ -160,18 +91,19 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           styles.dropdownContainer,
           {
             height: animatedHeight,
+            borderWidth: isOpen ? 1 : 0,
           },
         ]}
       >
         {isOpen && (
-          <ScrollContainer height={300} showBorder={false} borderRadius="lg">
+          <ScrollContainer height={400} showBorder={false} borderRadius="lg">
             {/* Header with color swatches and clear button */}
             <View style={styles.headerContainer}>
               {/* Clear selection button */}
               <View style={styles.clearButtonContainer}>
                 <Button
                   type="subtle-outline"
-                  onPress={handleClearIcon}
+                  onClick={handleClearIcon}
                   size="small"
                   iconName="times"
                 >
@@ -179,8 +111,10 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                 </Button>
               </View>
 
+              <Spacer size={36} />
+
               {/* Color selection */}
-              <FlexRow gap="md" style={styles.colorRow}>
+              <FlexRow gap="md" justify="center" style={styles.colorRow}>
                 {ICON_COLORS.map((colorOption) => (
                   <ColorSwatch
                     key={colorOption.value}
@@ -191,12 +125,21 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     style={colorOption.value === 'default' ? {
                       backgroundColor: colorOption.hex,
                       borderWidth: 1,
-                      borderColor: '#d1d5db'
+                      borderColor: theme.colors.surface[5] || theme.colors.border.default
                     } : undefined}
                   />
                 ))}
               </FlexRow>
             </View>
+
+            {/* Custom spacer with theme-aware border */}
+            <Spacer
+              size="md"
+              spaceBefore="sm"
+              spaceAfter="md"
+              border
+              borderColor={theme.colors.border.default}
+            />
 
             {/* Icon Grid */}
             <View style={styles.iconGridContainer}>
@@ -207,7 +150,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     onPress={() => handleIconClick(iconOption.name)}
                     style={[
                       styles.iconOption,
-                      selectedIcon === iconOption.name && styles.selectedOption
+                      selectedIcon === iconOption.name ? styles.selectedOption : styles.unselectedOption
                     ]}
                     accessibilityLabel={`Select ${iconOption.name} icon for ${iconOption.category.toLowerCase()}`}
                     accessibilityHint={`Tap to select this icon`}
@@ -216,7 +159,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     <Icon
                       name={iconOption.name}
                       size="md"
-                      style={{ color: iconColorHex }}
+                      color={iconColorHex}
                     />
                   </TouchableOpacity>
                 ))}

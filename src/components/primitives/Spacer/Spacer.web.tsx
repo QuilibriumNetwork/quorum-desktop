@@ -15,6 +15,7 @@ export const Spacer: React.FC<WebSpacerProps> = ({
   direction = 'vertical',
   borderTop,
   borderBottom,
+  borderColor,
   spaceBefore,
   spaceAfter,
   border,
@@ -51,8 +52,18 @@ export const Spacer: React.FC<WebSpacerProps> = ({
 
         {/* Border */}
         <div
-          className={isVertical ? 'border-t w-full' : 'border-l h-full'}
-          style={isVertical ? { height: 0 } : { width: 0 }}
+          className={isVertical ? 'w-full' : 'h-full'}
+          style={
+            isVertical
+              ? {
+                  height: 0,
+                  borderTop: `1px solid ${borderColor || 'var(--color-border-default)'}`
+                }
+              : {
+                  width: 0,
+                  borderLeft: `1px solid ${borderColor || 'var(--color-border-default)'}`
+                }
+          }
         />
 
         {/* Space after */}

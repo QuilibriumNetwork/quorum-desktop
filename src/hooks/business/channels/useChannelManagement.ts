@@ -135,9 +135,10 @@ export function useChannelManagement({
 
   // Handle icon change
   const handleIconChange = useCallback((iconName: IconName | null, iconColor: IconColor = 'default') => {
+    const newIcon = iconName || 'hashtag'; // Channels always have an icon, default to hashtag
     setChannelData((prev) => ({
       ...prev,
-      icon: iconName || 'hashtag', // Channels always have an icon, default to hashtag
+      icon: newIcon,
       iconColor: iconColor,
     }));
   }, []);

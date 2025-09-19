@@ -83,6 +83,7 @@ export type IconName =
   | 'hand-wave'
   | 'ban'
   | 'cake-candles'
+  | 'birthday-cake'
   | 'champagne-glasses'
   | 'celebration'
   | 'smile'

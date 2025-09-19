@@ -46,6 +46,7 @@ import {
   ClickToCopyTestScreen,
   ModalsTestScreen,
   MessageComposerTestScreen,
+  IconPickerTestScreen,
 } from '@/test/business';
 
 type Section = 'main' | 'primitives' | 'business';
@@ -78,7 +79,8 @@ type BusinessScreen =
   | 'direct'
   | 'settings'
   | 'search'
-  | 'messagecomposer';
+  | 'messagecomposer'
+  | 'iconpicker';
 
 // Themed App Content (must be inside ThemeProvider)
 function ThemedAppContent() {
@@ -214,6 +216,8 @@ function ThemedAppContent() {
           );
         case 'messagecomposer':
           return <MessageComposerTestScreen />;
+        case 'iconpicker':
+          return <IconPickerTestScreen />;
         // Future screens will be added here
         default:
           return <BusinessMenuScreen onSelectFeature={handleSelectBusiness} />;

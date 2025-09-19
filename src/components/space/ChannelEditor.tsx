@@ -112,6 +112,7 @@ const ChannelEditor: React.FunctionComponent<{
               selectedIcon={icon}
               selectedIconColor={iconColor}
               onIconSelect={handleIconChange}
+              defaultIcon="hashtag"
             />
             <Text className="modal-text-small text-main">
               <Trans>Channel Icon</Trans>

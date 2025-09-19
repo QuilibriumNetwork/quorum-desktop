@@ -200,6 +200,7 @@ export const fontAwesomeIconMap: Record<IconName, IconDefinition> = {
   'hand-wave': faHandPeace, // using hand-peace as fallback
   ban: faBan,
   'cake-candles': faCakeCandles,
+  'birthday-cake': faCakeCandles,
   'champagne-glasses': faCakeCandles, // using cake-candles as fallback
   celebration: faCakeCandles,
   smile: faSmile,
@@ -370,6 +371,7 @@ export const reactNativeIconMap: Record<IconName, string> = {
   'hand-wave': 'hand-o-up',
   ban: 'ban',
   'cake-candles': 'birthday-cake',
+  'birthday-cake': 'birthday-cake',
   'champagne-glasses': 'glass-cheers',
   celebration: 'glass-cheers',
   smile: 'smile-o',

@@ -160,7 +160,7 @@ export const Tasks: React.FC = () => {
                 >
                   <div className="bg-surface-2 px-6 py-4 border-b border-default">
                     <FlexRow gap="sm" align="center">
-                      <Icon name="folder" size="md" className="text-accent" />
+                      <Icon name="book" size="md" className="text-accent" />
                       <Text variant="strong" size="lg" weight="medium">
                         {folder === 'root'
                           ? 'Root Tasks'

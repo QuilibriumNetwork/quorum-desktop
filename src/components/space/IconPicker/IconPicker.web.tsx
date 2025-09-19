@@ -18,6 +18,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   placeholder = 'Select icon',
   className = '',
   testID,
+  defaultIcon,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(selectedIconColor);
@@ -54,7 +55,8 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   };
 
   const handleClearIcon = () => {
-    onIconSelect(null, 'default');
+    onIconSelect(defaultIcon || null, 'default');
+    setSelectedColor('default'); // Reset color to default
     setIsOpen(false);
   };
 
@@ -90,9 +92,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
             <Icon
               name={selectedIcon}
               size="sm"
-              style={{
-                color: iconColorHex
-              }}
+              color={iconColorHex}
               title={`${selectedIcon}`}
             />
           </span>
@@ -141,7 +141,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
             <Trans>Clear</Trans>
           </Button>
 
-          <FlexRow gap={3} className="justify-left pt-8">
+          <FlexRow gap={3} justify="start" className="pt-8">
             {ICON_COLORS.map((colorOption) => (
               <ColorSwatch
                 key={colorOption.value}
@@ -155,7 +155,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                   colorOption.value === 'default'
                     ? {
                         backgroundColor: colorOption.hex,
-                        border: '1px solid #d1d5db',
+                        border: '1px solid var(--surface-5)',
                       }
                     : undefined
                 }
@@ -177,10 +177,10 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     handleIconClick(iconOption.name);
                   }
                 }}
-                className={`w-7 h-7 p-0 rounded-full flex items-center justify-center transition-colors cursor-pointer border-0 ${
+                className={`w-7 h-7 p-0 rounded-full flex items-center justify-center transition-colors cursor-pointer ${
                   selectedIcon === iconOption.name
-                    ? 'border border-accent bg-surface-5'
-                    : 'bg-surface-3 hover:bg-surface-5'
+                    ? 'border-2 border-accent bg-surface-5'
+                    : 'border border-transparent bg-surface-3 hover:bg-surface-5'
                 }`}
                 aria-label={`Select ${iconOption.name} icon for ${iconOption.category.toLowerCase()}`}
                 aria-pressed={selectedIcon === iconOption.name}
@@ -189,10 +189,8 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                 <Icon
                   name={iconOption.name}
                   size="sm"
-                  style={{
-                    color: iconColorHex,
-                    pointerEvents: 'none'
-                  }}
+                  color={iconColorHex}
+                  style={{ pointerEvents: 'none' }}
                   aria-hidden="true"
                 />
               </button>
