@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Fără rol - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:494
+#: src/components/space/Channel.tsx:585
 msgid "Send a message to #{channel_name}"
 msgstr "Trimite un mesaj către #{channel_name}"
 
@@ -147,7 +147,7 @@ msgstr "0 Bytes"
 msgid "Account Address"
 msgstr "Adresă de cont"
 
-#: src/components/space/ChannelEditor.tsx:78
+#: src/components/space/ChannelEditor.tsx:79
 msgid "Add Channel"
 msgstr "Adaugă Canal"
 
@@ -156,7 +156,7 @@ msgid "Add friend"
 msgstr "Adaugă prieten"
 
 #: src/components/space/ChannelList.tsx:74
-#: src/components/space/GroupEditor.tsx:54
+#: src/components/space/GroupEditor.tsx:58
 msgid "Add Group"
 msgstr "Adaugă grup"
 
@@ -262,7 +262,7 @@ msgstr ""
 "Ești sigur că vrei să ștergi linkul de invitație public? Oricine are linkul "
 "tău de invitație public actual nu va putea să se alăture Espaciului tău."
 
-#: src/hooks/business/channels/useChannelManagement.ts:205
+#: src/hooks/business/channels/useChannelManagement.ts:228
 msgid ""
 "Are you sure you want to delete this channel? All messages will be lost. "
 "This action cannot be undone."
@@ -309,7 +309,7 @@ msgid ""
 "Are you sure you want to leave this Space? You won't be able to rejoin "
 "unless you are re-invited."
 msgstr ""
-"Ești sigur că vrei să părăsești acest Espacio? Nu vei putea să te reîntorci "
+"Ești sigur că vrei să părăsești acest Space? Nu vei putea să te reîntorci "
 "decât dacă ești reinvitat."
 
 #: src/hooks/business/messages/usePinnedMessages.ts:230
@@ -349,7 +349,7 @@ msgstr "Permisiunea pentru cameră este necesară pentru a face fotografii"
 #: src/components/modals/ConfirmationModal.tsx:28
 #: src/components/modals/ConversationSettingsModal.tsx:58
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
-#: src/hooks/business/channels/useChannelManagement.ts:211
+#: src/hooks/business/channels/useChannelManagement.ts:234
 #: src/hooks/business/messages/useMessageActions.ts:106
 #: src/hooks/business/messages/usePinnedMessages.ts:233
 #: src/hooks/business/spaces/useRoleManagement.ts:62
@@ -375,15 +375,19 @@ msgstr ""
 "Modificările sunt efectuate automat, dar pagina activă s-ar putea să nu fie "
 "actualizată. Reîmprospătează pagina pentru a aplica noua limbă."
 
-#: src/components/space/ChannelEditor.tsx:155
+#: src/components/space/ChannelEditor.tsx:118
+msgid "Channel Icon"
+msgstr "Icon canal"
+
+#: src/components/space/ChannelEditor.tsx:156
 msgid "Channel Managers"
 msgstr "Manageri de canal"
 
-#: src/components/space/ChannelEditor.tsx:95
+#: src/components/space/ChannelEditor.tsx:96
 msgid "Channel Name"
 msgstr "Numele canalului"
 
-#: src/components/space/ChannelEditor.tsx:103
+#: src/components/space/ChannelEditor.tsx:104
 msgid "Channel Topic"
 msgstr "Subiectul canalului"
 
@@ -405,6 +409,7 @@ msgstr "Alege tema preferată pentru Quorum."
 
 #: src/components/primitives/Select/Select.native.tsx:37
 #: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/space/IconPicker/IconPicker.web.tsx:140
 msgid "Clear"
 msgstr "Șterge"
 
@@ -418,8 +423,8 @@ msgstr "Ștergerea notificărilor cu eticheta: {tag}"
 
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
-#: src/components/space/ChannelEditor.tsx:193
-#: src/components/space/GroupEditor.tsx:109
+#: src/components/space/ChannelEditor.tsx:208
+#: src/components/space/GroupEditor.tsx:126
 #: src/components/space/SpaceEditor.tsx:1223
 msgid "Click again to confirm"
 msgstr "Click din nou pentru a confirma"
@@ -507,11 +512,11 @@ msgstr "Copie link mesaj"
 
 #: src/components/context/MessageDB.tsx:5419
 msgid "Could not add Space"
-msgstr "Nu s-a putut adăuga Space"
+msgstr "Nu s-a putut adăuga Spațiu"
 
 #: src/components/context/MessageDB.tsx:5292
 msgid "Could not obtain manifest for Space"
-msgstr "Nu s-a putut obține manifestul pentru Space"
+msgstr "Nu s-a putut obține manifestul pentru Spațiu"
 
 #: src/hooks/business/invites/useInviteProcessing.ts:22
 #: src/hooks/business/spaces/useInviteValidation.ts:117
@@ -520,11 +525,11 @@ msgstr "Nu s-a putut verifica invitația"
 
 #: src/components/navbar/ExpandableNavMenu.tsx:29
 msgid "Create a new Space"
-msgstr "Creează un nou Espacio"
+msgstr "Creează un nou Space"
 
 #: src/components/modals/CreateSpaceModal.tsx:48
 msgid "Create a Space"
-msgstr "Creează un Space"
+msgstr "Creează un Spațiu"
 
 #: src/components/onboarding/Login.native.tsx:106
 #: src/components/onboarding/Login.tsx:62
@@ -533,11 +538,11 @@ msgstr "Creează cont nou"
 
 #: src/components/modals/CreateSpaceModal.tsx:177
 msgid "Create Space"
-msgstr "Creează Space"
+msgstr "Creează Spațiu"
 
 #: src/components/modals/CreateSpaceModal.tsx:177
 msgid "Creating Space..."
-msgstr "Creează Space..."
+msgstr "Creează Spațiu..."
 
 #: src/components/space/SpaceEditor.tsx:1118
 msgid "Current Invite Link"
@@ -553,7 +558,7 @@ msgstr "spațiu decriptat fără cheie de configurare cunoscută"
 
 #: src/components/context/MessageDB.tsx:5277
 msgid "Decrypted Space with no known hub key"
-msgstr "Space decriptat fără cheie de hub cunoscută"
+msgstr "Spațiu decriptat fără cheie de hub cunoscută"
 
 #: src/components/space/SpaceEditor.tsx:554
 msgid "Default Channel"
@@ -569,14 +574,14 @@ msgstr "șterge"
 #: src/components/space/SpaceEditor.tsx:850
 #: src/components/space/SpaceEditor.tsx:949
 #: src/components/space/SpaceEditor.tsx:1277
-#: src/hooks/business/channels/useChannelManagement.ts:210
+#: src/hooks/business/channels/useChannelManagement.ts:233
 #: src/hooks/business/messages/useMessageActions.ts:105
 #: src/hooks/business/spaces/useRoleManagement.ts:61
 msgid "Delete"
 msgstr "Șterge"
 
-#: src/components/space/ChannelEditor.tsx:192
-#: src/hooks/business/channels/useChannelManagement.ts:204
+#: src/components/space/ChannelEditor.tsx:207
+#: src/hooks/business/channels/useChannelManagement.ts:227
 msgid "Delete Channel"
 msgstr "Șterge canal"
 
@@ -589,7 +594,7 @@ msgstr "Șterge conversația"
 msgid "Delete Current Link"
 msgstr "Șterge linkul curent"
 
-#: src/components/space/GroupEditor.tsx:108
+#: src/components/space/GroupEditor.tsx:125
 msgid "Delete Group"
 msgstr "Șterge grup"
 
@@ -619,11 +624,11 @@ msgstr "Șterge rolul"
 #: src/components/space/SpaceEditor.tsx:432
 #: src/components/space/SpaceEditor.tsx:1221
 msgid "Delete Space"
-msgstr "Șterge Espacio"
+msgstr "Șterge Space"
 
 #: src/components/space/SpaceEditor.tsx:1195
 msgid "Delete this space"
-msgstr "Șterge acest Espacio"
+msgstr "Șterge acest Space"
 
 #: src/components/modals/UserSettingsModal.tsx:508
 msgid "Desktop Notifications"
@@ -657,11 +662,11 @@ msgstr "Drawer"
 msgid "Drop your profile photo here"
 msgstr "Trage fotografia ta de profil aici"
 
-#: src/components/space/ChannelEditor.tsx:78
+#: src/components/space/ChannelEditor.tsx:79
 msgid "Edit Channel"
 msgstr "Editează Canal"
 
-#: src/components/space/GroupEditor.tsx:54
+#: src/components/space/GroupEditor.tsx:58
 msgid "Edit Group"
 msgstr "Editează Grup"
 
@@ -826,7 +831,11 @@ msgstr "Generează link de invitație public"
 msgid "Go to conversation"
 msgstr "Mergi la conversație"
 
-#: src/components/space/GroupEditor.tsx:66
+#: src/components/space/GroupEditor.tsx:83
+msgid "Group Icon (optional)"
+msgstr "Icon grup (opțional)"
+
+#: src/components/space/GroupEditor.tsx:70
 msgid "Group Name"
 msgstr "Numele grupului"
 
@@ -964,7 +973,7 @@ msgid "Key Saved"
 msgstr "Cheia a fost salvată"
 
 #: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:204
+#: src/components/user/UserProfile.tsx:205
 msgid "Kick User"
 msgstr "Kick User"
 
@@ -1049,7 +1058,7 @@ msgid "Manual Backup Required"
 msgstr "Backup manual necesar"
 
 #: src/components/direct/DirectMessage.tsx:403
-#: src/components/space/Channel.tsx:408
+#: src/components/space/Channel.tsx:505
 msgid "Members List"
 msgstr "Lista membrilor"
 
@@ -1088,7 +1097,11 @@ msgstr "Niciun mesaj găsit"
 msgid "No pinned messages yet"
 msgstr "Nu sunt încă mesaje fixate"
 
-#: src/components/space/RolePreview.tsx:38
+#: src/components/space/Channel.tsx:326 src/components/space/Channel.tsx:648
+msgid "No users found!"
+msgstr "Niciun utilizator găsit!"
+
+#: src/components/space/RolePreview.tsx:39
 msgid "None"
 msgstr "Niciunul"
 
@@ -1134,7 +1147,7 @@ msgstr "Unul dintre noi, unul dintre noi!"
 msgid "Online"
 msgstr "Online"
 
-#: src/components/space/RolePreview.tsx:33
+#: src/components/space/RolePreview.tsx:34
 #: src/components/space/SpaceEditor.tsx:699
 msgid "Permissions:"
 msgstr "Permisiuni:"
@@ -1162,7 +1175,7 @@ msgstr "fixa"
 msgid "Pin"
 msgstr "Fixa"
 
-#: src/components/space/ChannelEditor.tsx:117
+#: src/components/space/ChannelEditor.tsx:132
 msgid "Pin channel to top"
 msgstr "Fixa canalul în sus"
 
@@ -1187,7 +1200,7 @@ msgstr "Fixa Mesajul"
 msgid "Pin Messages"
 msgstr "Fixează mesajele"
 
-#: src/components/space/ChannelEditor.tsx:112
+#: src/components/space/ChannelEditor.tsx:127
 msgid "Pin to top"
 msgstr "Fixa în sus"
 
@@ -1201,7 +1214,7 @@ msgstr "Fixat"
 msgid "Pinned by {0}"
 msgstr "Fixat de {0}"
 
-#: src/components/space/Channel.tsx:375
+#: src/components/space/Channel.tsx:472
 msgid "Pinned Messages"
 msgstr "Mesaje fixate"
 
@@ -1274,7 +1287,7 @@ msgstr ""
 "Quorum was loaded while the browser was not in focus or a passkey request "
 "was rejected. Please reauthorize to access your messages."
 
-#: src/components/space/ChannelEditor.tsx:127
+#: src/components/space/ChannelEditor.tsx:141
 msgid "Read only"
 msgstr "Doar citire"
 
@@ -1342,8 +1355,8 @@ msgstr "Salvează toate modificările"
 
 #: src/components/modals/UserSettingsModal.tsx:332
 #: src/components/modals/UserSettingsModal.tsx:486
-#: src/components/space/ChannelEditor.tsx:174
-#: src/components/space/GroupEditor.tsx:77
+#: src/components/space/ChannelEditor.tsx:189
+#: src/components/space/GroupEditor.tsx:94
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Salvează modificările"
@@ -1371,8 +1384,8 @@ msgid "saved config is out of date"
 msgstr "configurația salvată este depășită"
 
 #: src/components/modals/ModalSaveOverlay.tsx:43
-#: src/components/space/ChannelEditor.tsx:88
-#: src/components/space/GroupEditor.tsx:117
+#: src/components/space/ChannelEditor.tsx:89
+#: src/components/space/GroupEditor.tsx:134
 msgid "Saving..."
 msgstr "Se salvează..."
 
@@ -1387,7 +1400,7 @@ msgstr "Caută aici"
 
 #: src/hooks/useSearchContext.native.ts:100 src/hooks/useSearchContext.ts:92
 msgid "Search in this Space"
-msgstr "Caută în acest Space"
+msgstr "Caută în acest Spațiu"
 
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
@@ -1406,7 +1419,7 @@ msgstr "Securitate"
 msgid "Select an option"
 msgstr "Selectează o opțiune"
 
-#: src/components/space/ChannelEditor.tsx:131
+#: src/components/space/ChannelEditor.tsx:160
 msgid ""
 "Select any existing role as managers for this channel. Managers have post, "
 "delete, and pin permissions on ANY message by default. If no managers are "
@@ -1437,7 +1450,7 @@ msgstr "Selectează permisiunile"
 msgid "Select Profile Image"
 msgstr "Selectează imaginea de profil"
 
-#: src/components/space/ChannelEditor.tsx:164
+#: src/components/space/ChannelEditor.tsx:179
 msgid "Select Roles"
 msgstr "Selectează Roluri"
 
@@ -1457,7 +1470,7 @@ msgstr ""
 "Trimite invitații persoanelor cu care ai avut anterior conversații. Un buton"
 " de invitație va apărea în căsuța lor poștală."
 
-#: src/components/user/UserProfile.tsx:195
+#: src/components/user/UserProfile.tsx:196
 msgid "Send Message"
 msgstr "Trimite mesaj"
 
@@ -1568,7 +1581,7 @@ msgstr ""
 "va invalida vechiul link."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
-#: src/components/modals/ConfirmationModal.tsx:71
+#: src/components/modals/ConfirmationModal.tsx:76
 msgid ""
 "TIP: Hold down shift when clicking {protipAction} to bypass this "
 "confirmation entirely."
@@ -1638,7 +1651,7 @@ msgstr "Necunoscut"
 #: src/hooks/business/search/useSearchResultDisplay.ts:118
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:46
 msgid "Unknown Space"
-msgstr "Space necunoscut"
+msgstr "Spațiu necunoscut"
 
 #: src/components/message/MessagePreview.tsx:31
 msgid "Unknown time"
@@ -1732,6 +1745,10 @@ msgstr "Adresa utilizatorului aici"
 msgid "User does not exist."
 msgstr "Utilizatorul nu există."
 
+#: src/components/space/Channel.tsx:313 src/components/space/Channel.tsx:635
+msgid "Username or Address"
+msgstr "Nume de utilizator sau adresă"
+
 #: src/components/context/WebsocketProvider.tsx:219
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr "useWebSocket trebuie folosit în cadrul unui WebSocketProvider"
@@ -1803,7 +1820,7 @@ msgstr ""
 "Poți schimba asta mai târziu pentru această conversație făcând clic pe "
 "pictograma de blocare din vizualizarea Conversației."
 
-#: src/components/space/GroupEditor.tsx:96
+#: src/components/space/GroupEditor.tsx:113
 msgid ""
 "You cannot delete a group that contains channels. Delete all {channelCount} "
 "channels in this group first."
@@ -1812,7 +1829,7 @@ msgstr ""
 "{channelCount} canale din acest grup."
 
 #: src/components/message/MessageComposer.tsx:96
-#: src/components/space/Channel.tsx:515
+#: src/components/space/Channel.tsx:606
 msgid "You cannot post in this channel"
 msgstr "Nu poți posta în acest canal"
 
@@ -1883,7 +1900,7 @@ msgstr ""
 #~ "You can upload PNG, JPG or GIF, max 256kB."
 #~ msgstr ""
 #~ "Adaugă până la 50 de emoji personalizate. Emoji-urile personalizate pot fi "
-#~ "folosite doar în cadrul unui Espacio. Poți încărca PNG, JPG sau GIF, max "
+#~ "folosite doar în cadrul unui Space. Poți încărca PNG, JPG sau GIF, max "
 #~ "256kB."
 
 #~ msgid ""
@@ -1898,7 +1915,7 @@ msgstr ""
 #~ "Space. You can upload PNG, JPG or GIF, max 256kB."
 #~ msgstr ""
 #~ "Adaugă până la 50 de autocolante personalizate. Autocolantele personalizate "
-#~ "pot fi folosite doar în cadrul unui Espacio. Poți încărca PNG, JPG sau GIF, "
+#~ "pot fi folosite doar în cadrul unui Space. Poți încărca PNG, JPG sau GIF, "
 #~ "max 256kB."
 
 #~ msgid ""

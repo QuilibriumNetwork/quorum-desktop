@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "ไม่มีบทบาท - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:494
+#: src/components/space/Channel.tsx:585
 msgid "Send a message to #{channel_name}"
 msgstr "ส่งข้อความไปยัง #{channel_name}"
 
@@ -80,7 +80,7 @@ msgid ""
 " Default Space settings provide the most typical chat experience, but for "
 "higher privacy guarantees, review the Advanced Settings."
 msgstr ""
-"การตั้งค่า Espacio เริ่มต้นให้ประสบการณ์การสนทนาที่เป็นที่นิยมที่สุด "
+"การตั้งค่า Space เริ่มต้นให้ประสบการณ์การสนทนาที่เป็นที่นิยมที่สุด "
 "แต่เพื่อความเป็นส่วนตัวที่สูงขึ้น ให้ตรวจสอบการตั้งค่าขั้นสูง."
 
 #: src/components/Maintenance.native.tsx:61
@@ -146,7 +146,7 @@ msgstr "0 ไบต์"
 msgid "Account Address"
 msgstr "ที่อยู่บัญชี"
 
-#: src/components/space/ChannelEditor.tsx:78
+#: src/components/space/ChannelEditor.tsx:79
 msgid "Add Channel"
 msgstr "เพิ่มช่องทาง"
 
@@ -155,7 +155,7 @@ msgid "Add friend"
 msgstr "เพิ่มเพื่อน"
 
 #: src/components/space/ChannelList.tsx:74
-#: src/components/space/GroupEditor.tsx:54
+#: src/components/space/GroupEditor.tsx:58
 msgid "Add Group"
 msgstr "เพิ่มกลุ่ม"
 
@@ -173,7 +173,7 @@ msgid ""
 "You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
 msgstr ""
 "เพิ่มอีโมจิที่กำหนดเองได้สูงสุด 50 ตัว "
-"อีโมจิที่กำหนดเองสามารถใช้ได้เฉพาะภายใน Espacio เท่านั้น คุณสามารถอัปโหลด "
+"อีโมจิที่กำหนดเองสามารถใช้ได้เฉพาะภายใน Space เท่านั้น คุณสามารถอัปโหลด "
 "PNG, JPG หรือ GIF ขนาดสูงสุด 5MB (ปรับให้เหมาะสมโดยอัตโนมัติ)."
 
 #: src/components/space/SpaceEditor.tsx:888
@@ -182,7 +182,7 @@ msgid ""
 "Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
 msgstr ""
 "เพิ่มสติกเกอร์ที่กำหนดเองได้สูงสุด 50 ตัว "
-"สติกเกอร์ที่กำหนดเองสามารถใช้ได้เฉพาะภายใน Espacio เท่านั้น คุณสามารถอัปโหลด"
+"สติกเกอร์ที่กำหนดเองสามารถใช้ได้เฉพาะภายใน Space เท่านั้น คุณสามารถอัปโหลด"
 " PNG, JPG หรือ GIF ขนาดสูงสุด 25MB (ปรับให้เหมาะสมโดยอัตโนมัติ)."
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
@@ -256,10 +256,10 @@ msgid ""
 "current public invite link won't be able to join your Space anymore."
 msgstr ""
 "คุณแน่ใจหรือไม่ว่าต้องการลบลิงก์เชิญสาธารณะ? "
-"ใครก็ตามที่มีลิงก์เชิญสาธารณะปัจจุบันของคุณจะไม่สามารถเข้าร่วม Espacio "
+"ใครก็ตามที่มีลิงก์เชิญสาธารณะปัจจุบันของคุณจะไม่สามารถเข้าร่วม Space "
 "ของคุณได้อีกต่อไป."
 
-#: src/hooks/business/channels/useChannelManagement.ts:205
+#: src/hooks/business/channels/useChannelManagement.ts:228
 msgid ""
 "Are you sure you want to delete this channel? All messages will be lost. "
 "This action cannot be undone."
@@ -290,7 +290,7 @@ msgid ""
 " old public invite link won't be able to join your Space anymore."
 msgstr ""
 "คุณแน่ใจหรือไม่ว่าต้องการสร้างลิงก์เชิญสาธารณะใหม่? "
-"ใครก็ตามที่มีลิงก์เชิญสาธารณะเก่าของคุณจะไม่สามารถเข้าร่วม Espacio "
+"ใครก็ตามที่มีลิงก์เชิญสาธารณะเก่าของคุณจะไม่สามารถเข้าร่วม Space "
 "ของคุณได้อีกต่อไป."
 
 #: src/components/space/SpaceEditor.tsx:1262
@@ -306,7 +306,7 @@ msgid ""
 "Are you sure you want to leave this Space? You won't be able to rejoin "
 "unless you are re-invited."
 msgstr ""
-"คุณแน่ใจหรือว่าต้องการออกจาก Espacio นี้? คุณจะไม่สามารถเข้าร่วมใหม่ได้ "
+"คุณแน่ใจหรือว่าต้องการออกจาก Space นี้? คุณจะไม่สามารถเข้าร่วมใหม่ได้ "
 "เว้นแต่คุณจะได้รับเชิญอีกครั้ง"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:230
@@ -346,7 +346,7 @@ msgstr "ต้องการสิทธิ์กล้องเพื่อถ
 #: src/components/modals/ConfirmationModal.tsx:28
 #: src/components/modals/ConversationSettingsModal.tsx:58
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
-#: src/hooks/business/channels/useChannelManagement.ts:211
+#: src/hooks/business/channels/useChannelManagement.ts:234
 #: src/hooks/business/messages/useMessageActions.ts:106
 #: src/hooks/business/messages/usePinnedMessages.ts:233
 #: src/hooks/business/spaces/useRoleManagement.ts:62
@@ -373,15 +373,19 @@ msgstr ""
 "แต่หน้าเว็บที่ใช้งานอยู่อาจไม่ได้รับการอัปเดต "
 "รีเฟรชหน้าเว็บเพื่อใช้ภาษาที่ใหม่"
 
-#: src/components/space/ChannelEditor.tsx:155
+#: src/components/space/ChannelEditor.tsx:118
+msgid "Channel Icon"
+msgstr "ไอคอนช่อง"
+
+#: src/components/space/ChannelEditor.tsx:156
 msgid "Channel Managers"
 msgstr "ผู้จัดการช่อง"
 
-#: src/components/space/ChannelEditor.tsx:95
+#: src/components/space/ChannelEditor.tsx:96
 msgid "Channel Name"
 msgstr "ชื่อช่อง"
 
-#: src/components/space/ChannelEditor.tsx:103
+#: src/components/space/ChannelEditor.tsx:104
 msgid "Channel Topic"
 msgstr "หัวข้อช่อง"
 
@@ -403,6 +407,7 @@ msgstr "เลือกธีมที่คุณต้องการสำห
 
 #: src/components/primitives/Select/Select.native.tsx:37
 #: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/space/IconPicker/IconPicker.web.tsx:140
 msgid "Clear"
 msgstr "ล้าง"
 
@@ -416,8 +421,8 @@ msgstr "ล้างการแจ้งเตือนที่มีแท็
 
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
-#: src/components/space/ChannelEditor.tsx:193
-#: src/components/space/GroupEditor.tsx:109
+#: src/components/space/ChannelEditor.tsx:208
+#: src/components/space/GroupEditor.tsx:126
 #: src/components/space/SpaceEditor.tsx:1223
 msgid "Click again to confirm"
 msgstr "คลิกอีกครั้งเพื่อยืนยัน"
@@ -503,11 +508,11 @@ msgstr "คัดลอกลิงก์ข้อความ"
 
 #: src/components/context/MessageDB.tsx:5419
 msgid "Could not add Space"
-msgstr "ไม่สามารถเพิ่ม Space ได้"
+msgstr "ไม่สามารถเพิ่ม พื้นที่ ได้"
 
 #: src/components/context/MessageDB.tsx:5292
 msgid "Could not obtain manifest for Space"
-msgstr "ไม่สามารถรับ manifest สำหรับ Space ได้"
+msgstr "ไม่สามารถรับ manifest สำหรับ พื้นที่ ได้"
 
 #: src/hooks/business/invites/useInviteProcessing.ts:22
 #: src/hooks/business/spaces/useInviteValidation.ts:117
@@ -516,11 +521,11 @@ msgstr "ไม่สามารถตรวจสอบเชิญได้"
 
 #: src/components/navbar/ExpandableNavMenu.tsx:29
 msgid "Create a new Space"
-msgstr "สร้าง Espacio ใหม่"
+msgstr "สร้าง Space ใหม่"
 
 #: src/components/modals/CreateSpaceModal.tsx:48
 msgid "Create a Space"
-msgstr "สร้าง Space"
+msgstr "สร้าง พื้นที่"
 
 #: src/components/onboarding/Login.native.tsx:106
 #: src/components/onboarding/Login.tsx:62
@@ -529,11 +534,11 @@ msgstr "สร้างบัญชีใหม่"
 
 #: src/components/modals/CreateSpaceModal.tsx:177
 msgid "Create Space"
-msgstr "สร้าง Space"
+msgstr "สร้าง พื้นที่"
 
 #: src/components/modals/CreateSpaceModal.tsx:177
 msgid "Creating Space..."
-msgstr "กำลังสร้าง Space..."
+msgstr "กำลังสร้าง พื้นที่..."
 
 #: src/components/space/SpaceEditor.tsx:1118
 msgid "Current Invite Link"
@@ -565,14 +570,14 @@ msgstr "ลบ"
 #: src/components/space/SpaceEditor.tsx:850
 #: src/components/space/SpaceEditor.tsx:949
 #: src/components/space/SpaceEditor.tsx:1277
-#: src/hooks/business/channels/useChannelManagement.ts:210
+#: src/hooks/business/channels/useChannelManagement.ts:233
 #: src/hooks/business/messages/useMessageActions.ts:105
 #: src/hooks/business/spaces/useRoleManagement.ts:61
 msgid "Delete"
 msgstr "ลบ"
 
-#: src/components/space/ChannelEditor.tsx:192
-#: src/hooks/business/channels/useChannelManagement.ts:204
+#: src/components/space/ChannelEditor.tsx:207
+#: src/hooks/business/channels/useChannelManagement.ts:227
 msgid "Delete Channel"
 msgstr "ลบช่องทาง"
 
@@ -585,7 +590,7 @@ msgstr "ลบการสนทนา"
 msgid "Delete Current Link"
 msgstr "ลบลิงก์ปัจจุบัน"
 
-#: src/components/space/GroupEditor.tsx:108
+#: src/components/space/GroupEditor.tsx:125
 msgid "Delete Group"
 msgstr "ลบกลุ่ม"
 
@@ -615,11 +620,11 @@ msgstr "ลบบทบาท"
 #: src/components/space/SpaceEditor.tsx:432
 #: src/components/space/SpaceEditor.tsx:1221
 msgid "Delete Space"
-msgstr "ลบ Espacio"
+msgstr "ลบ Space"
 
 #: src/components/space/SpaceEditor.tsx:1195
 msgid "Delete this space"
-msgstr "ลบ Espacio นี้"
+msgstr "ลบ Space นี้"
 
 #: src/components/modals/UserSettingsModal.tsx:508
 msgid "Desktop Notifications"
@@ -653,11 +658,11 @@ msgstr "ลิ้นชัก"
 msgid "Drop your profile photo here"
 msgstr "วางรูปโปรไฟล์ของคุณที่นี่"
 
-#: src/components/space/ChannelEditor.tsx:78
+#: src/components/space/ChannelEditor.tsx:79
 msgid "Edit Channel"
 msgstr "แก้ไขช่องทาง"
 
-#: src/components/space/GroupEditor.tsx:54
+#: src/components/space/GroupEditor.tsx:58
 msgid "Edit Group"
 msgstr "แก้ไขกลุ่ม"
 
@@ -677,7 +682,7 @@ msgstr "เปิดใช้งานการซิงค์"
 
 #: src/components/modals/CreateSpaceModal.tsx:83
 msgid "Enter a name for your new Space"
-msgstr "กรุณาใส่ชื่อสำหรับ Space ใหม่ของคุณ"
+msgstr "กรุณาใส่ชื่อสำหรับ พื้นที่ ใหม่ของคุณ"
 
 #: src/components/modals/NewDirectMessageModal.tsx:97
 msgid "Enter a user's address to start messaging them."
@@ -819,7 +824,11 @@ msgstr "สร้างลิงก์เชิญสาธารณะ"
 msgid "Go to conversation"
 msgstr "ไปที่การสนทนา"
 
-#: src/components/space/GroupEditor.tsx:66
+#: src/components/space/GroupEditor.tsx:83
+msgid "Group Icon (optional)"
+msgstr "ไอคอนกลุ่ม (ไม่บังคับ)"
+
+#: src/components/space/GroupEditor.tsx:70
 msgid "Group Name"
 msgstr "ชื่อกลุ่ม"
 
@@ -921,7 +930,7 @@ msgstr "เข้าร่วม"
 #: src/components/modals/JoinSpaceModal.tsx:71
 #: src/components/modals/JoinSpaceModal.tsx:117
 msgid "Join Space"
-msgstr "เข้าร่วม Space"
+msgstr "เข้าร่วม พื้นที่"
 
 #: src/hooks/business/invites/useInviteUI.ts:20
 msgid "Joined"
@@ -952,7 +961,7 @@ msgid "Key Saved"
 msgstr "บันทึกคีย์แล้ว"
 
 #: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:204
+#: src/components/user/UserProfile.tsx:205
 msgid "Kick User"
 msgstr "เตะผู้ใช้"
 
@@ -979,7 +988,7 @@ msgstr "ออกจาก {0}"
 
 #: src/components/modals/LeaveSpaceModal.tsx:62
 msgid "Leave Space"
-msgstr "ออกจาก Space"
+msgstr "ออกจาก พื้นที่"
 
 #: src/components/onboarding/Onboarding.native.tsx:312
 #: src/components/onboarding/Onboarding.tsx:196
@@ -1035,7 +1044,7 @@ msgid "Manual Backup Required"
 msgstr "ต้องการการสำรองข้อมูลด้วยตนเอง"
 
 #: src/components/direct/DirectMessage.tsx:403
-#: src/components/space/Channel.tsx:408
+#: src/components/space/Channel.tsx:505
 msgid "Members List"
 msgstr "รายชื่อสมาชิก"
 
@@ -1073,7 +1082,11 @@ msgstr "ไม่พบข้อความ"
 msgid "No pinned messages yet"
 msgstr "ยังไม่มีข้อความที่ถูกปักหมุด"
 
-#: src/components/space/RolePreview.tsx:38
+#: src/components/space/Channel.tsx:326 src/components/space/Channel.tsx:648
+msgid "No users found!"
+msgstr "ไม่พบผู้ใช้!"
+
+#: src/components/space/RolePreview.tsx:39
 msgid "None"
 msgstr "ไม่มี"
 
@@ -1117,7 +1130,7 @@ msgstr "หนึ่งในเรา หนึ่งในเรา!"
 msgid "Online"
 msgstr "ออนไลน์"
 
-#: src/components/space/RolePreview.tsx:33
+#: src/components/space/RolePreview.tsx:34
 #: src/components/space/SpaceEditor.tsx:699
 msgid "Permissions:"
 msgstr "สิทธิ์:"
@@ -1144,7 +1157,7 @@ msgstr "ปักหมุด"
 msgid "Pin"
 msgstr "ปักหมุด"
 
-#: src/components/space/ChannelEditor.tsx:117
+#: src/components/space/ChannelEditor.tsx:132
 msgid "Pin channel to top"
 msgstr "ปักหมุดช่องไปที่ด้านบน"
 
@@ -1169,7 +1182,7 @@ msgstr "ปักหมุดข้อความ"
 msgid "Pin Messages"
 msgstr "ปักหมุดข้อความ"
 
-#: src/components/space/ChannelEditor.tsx:112
+#: src/components/space/ChannelEditor.tsx:127
 msgid "Pin to top"
 msgstr "ปักหมุดไปที่ด้านบน"
 
@@ -1183,7 +1196,7 @@ msgstr "ถูกปักหมุด"
 msgid "Pinned by {0}"
 msgstr "ถูกปักหมุดโดย {0}"
 
-#: src/components/space/Channel.tsx:375
+#: src/components/space/Channel.tsx:472
 msgid "Pinned Messages"
 msgstr "ข้อความที่ถูกปักหมุด"
 
@@ -1219,7 +1232,7 @@ msgid ""
 "Public invite links allow anyone with access to the link to join your Space."
 " Consider who you share the link with and where you post it."
 msgstr ""
-"ลิงก์เชิญสาธารณะอนุญาตให้ใครก็ตามที่เข้าถึงลิงก์เข้าร่วม Espacio ของคุณ "
+"ลิงก์เชิญสาธารณะอนุญาตให้ใครก็ตามที่เข้าถึงลิงก์เข้าร่วม Space ของคุณ "
 "พิจารณาว่าคุณจะแบ่งปันลิงก์กับใครและที่ไหน"
 
 #: src/components/Maintenance.tsx:28
@@ -1255,7 +1268,7 @@ msgstr ""
 "Quorum ถูกโหลดในขณะที่เบราว์เซอร์ไม่ได้อยู่ในโฟกัสหรือคำขอรหัสผ่านถูกปฏิเสธ "
 "กรุณาอนุญาตใหม่เพื่อเข้าถึงข้อความของคุณ"
 
-#: src/components/space/ChannelEditor.tsx:127
+#: src/components/space/ChannelEditor.tsx:141
 msgid "Read only"
 msgstr "อ่านอย่างเดียว"
 
@@ -1300,8 +1313,8 @@ msgid ""
 "Require messages sent in this Space to be signed by the sender. Technically "
 "speaking, this makes the messages in this Space non-repudiable."
 msgstr ""
-"ต้องการให้ข้อความที่ส่งใน Space นี้ได้รับการลงนามโดยผู้ส่ง "
-"กล่าวโดยเทคนิคแล้ว สิ่งนี้ทำให้ข้อความใน Space นี้ไม่สามารถปฏิเสธได้"
+"ต้องการให้ข้อความที่ส่งใน พื้นที่ นี้ได้รับการลงนามโดยผู้ส่ง "
+"กล่าวโดยเทคนิคแล้ว สิ่งนี้ทำให้ข้อความใน พื้นที่ นี้ไม่สามารถปฏิเสธได้"
 
 #: src/components/space/SpaceEditor.tsx:347
 #: src/components/space/SpaceEditor.tsx:406
@@ -1322,8 +1335,8 @@ msgstr "บันทึกการเปลี่ยนแปลงทั้ง
 
 #: src/components/modals/UserSettingsModal.tsx:332
 #: src/components/modals/UserSettingsModal.tsx:486
-#: src/components/space/ChannelEditor.tsx:174
-#: src/components/space/GroupEditor.tsx:77
+#: src/components/space/ChannelEditor.tsx:189
+#: src/components/space/GroupEditor.tsx:94
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "บันทึกการเปลี่ยนแปลง"
@@ -1351,8 +1364,8 @@ msgid "saved config is out of date"
 msgstr "การตั้งค่าที่บันทึกไว้ล้าสมัย"
 
 #: src/components/modals/ModalSaveOverlay.tsx:43
-#: src/components/space/ChannelEditor.tsx:88
-#: src/components/space/GroupEditor.tsx:117
+#: src/components/space/ChannelEditor.tsx:89
+#: src/components/space/GroupEditor.tsx:134
 msgid "Saving..."
 msgstr "กำลังบันทึก..."
 
@@ -1367,7 +1380,7 @@ msgstr "ค้นหาที่นี่"
 
 #: src/hooks/useSearchContext.native.ts:100 src/hooks/useSearchContext.ts:92
 msgid "Search in this Space"
-msgstr "ค้นหาใน Space นี้"
+msgstr "ค้นหาใน พื้นที่ นี้"
 
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
@@ -1386,7 +1399,7 @@ msgstr "ความปลอดภัย"
 msgid "Select an option"
 msgstr "เลือกตัวเลือก"
 
-#: src/components/space/ChannelEditor.tsx:131
+#: src/components/space/ChannelEditor.tsx:160
 msgid ""
 "Select any existing role as managers for this channel. Managers have post, "
 "delete, and pin permissions on ANY message by default. If no managers are "
@@ -1394,7 +1407,7 @@ msgid ""
 msgstr ""
 "เลือกบทบาทที่มีอยู่ใดๆ เป็นผู้จัดการสำหรับช่องนี้ ผู้จัดการมีสิทธิ์โพสต์ ลบ "
 "และปักหมุดข้อความใดๆ โดยค่าเริ่มต้น หากไม่มีผู้จัดการที่เลือก เจ้าของ "
-"Espacio เท่านั้นที่สามารถจัดการช่องนี้ได้"
+"Space เท่านั้นที่สามารถจัดการช่องนี้ได้"
 
 #: src/components/space/SpaceEditor.tsx:1021
 msgid "Select conversation"
@@ -1416,7 +1429,7 @@ msgstr "เลือกสิทธิ์"
 msgid "Select Profile Image"
 msgstr "เลือกภาพโปรไฟล์"
 
-#: src/components/space/ChannelEditor.tsx:164
+#: src/components/space/ChannelEditor.tsx:179
 msgid "Select Roles"
 msgstr "เลือกบทบาท"
 
@@ -1436,7 +1449,7 @@ msgstr ""
 "ส่งคำเชิญไปยังผู้คนที่คุณเคยสนทนาด้วยก่อนหน้านี้ "
 "ปุ่มคำเชิญจะปรากฏในกล่องจดหมายของพวกเขา"
 
-#: src/components/user/UserProfile.tsx:195
+#: src/components/user/UserProfile.tsx:196
 msgid "Send Message"
 msgstr "ส่งข้อความ"
 
@@ -1473,12 +1486,12 @@ msgstr "ข้ามการเพิ่มภาพ"
 
 #: src/components/space/SpaceEditor.tsx:492
 msgid "Space Banner"
-msgstr "แบนเนอร์ Space"
+msgstr "แบนเนอร์ พื้นที่"
 
 #: src/components/modals/CreateSpaceModal.tsx:85
 #: src/components/space/SpaceEditor.tsx:484
 msgid "Space Name"
-msgstr "ชื่อ Space"
+msgstr "ชื่อ พื้นที่"
 
 #: src/components/search/SearchResults.tsx:63
 msgid "Start typing to search messages..."
@@ -1526,7 +1539,7 @@ msgstr "อุปกรณ์นี้"
 #: src/components/onboarding/Onboarding.native.tsx:318
 #: src/components/onboarding/Onboarding.tsx:205
 msgid "This information is only provided to the Spaces you join."
-msgstr "ข้อมูลนี้จะถูกจัดเตรียมเฉพาะสำหรับ Spaces ที่คุณเข้าร่วม"
+msgstr "ข้อมูลนี้จะถูกจัดเตรียมเฉพาะสำหรับ พื้นที่s ที่คุณเข้าร่วม"
 
 #: src/components/modals/UserSettingsModal.tsx:290
 msgid ""
@@ -1544,7 +1557,7 @@ msgstr ""
 "ซึ่งจะทำให้ลิงก์เก่าไม่สามารถใช้งานได้"
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
-#: src/components/modals/ConfirmationModal.tsx:71
+#: src/components/modals/ConfirmationModal.tsx:76
 msgid ""
 "TIP: Hold down shift when clicking {protipAction} to bypass this "
 "confirmation entirely."
@@ -1596,7 +1609,7 @@ msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
 msgstr ""
-"ไม่สามารถออกจาก Espacio ได้เนื่องจากการกำหนดค่าที่ไม่สมบูรณ์ ข้อมูล Espacio "
+"ไม่สามารถออกจาก Space ได้เนื่องจากการกำหนดค่าที่ไม่สมบูรณ์ ข้อมูล Space "
 "อาจเสียหาย"
 
 #: src/components/modals/JoinSpaceModal.tsx:81
@@ -1607,7 +1620,7 @@ msgstr "ไม่ทราบ"
 #: src/hooks/business/search/useSearchResultDisplay.ts:118
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:46
 msgid "Unknown Space"
-msgstr "Space ที่ไม่รู้จัก"
+msgstr "พื้นที่ ที่ไม่รู้จัก"
 
 #: src/components/message/MessagePreview.tsx:31
 msgid "Unknown time"
@@ -1671,7 +1684,7 @@ msgstr "จนกว่าคุณจะตอบกลับ ผู้ส่�
 
 #: src/components/modals/CreateSpaceModal.tsx:102
 msgid "Upload an image and choose a name for your Space."
-msgstr "อัปโหลดภาพและเลือกชื่อสำหรับ Espacio ของคุณ"
+msgstr "อัปโหลดภาพและเลือกชื่อสำหรับ Space ของคุณ"
 
 #: src/components/space/SpaceEditor.tsx:806
 msgid "Upload Emoji"
@@ -1687,7 +1700,7 @@ msgstr "ใช้ \"บันทึกไปยังไฟล์\" เพื่
 
 #: src/components/modals/KickUserModal.tsx:75
 msgid "Use the below button to kick this user out of the Space"
-msgstr "ใช้ปุ่มด้านล่างเพื่อเตะผู้ใช้นี้ออกจาก Space"
+msgstr "ใช้ปุ่มด้านล่างเพื่อเตะผู้ใช้นี้ออกจาก พื้นที่"
 
 #: src/components/modals/NewDirectMessageModal.tsx:110
 msgid "User address here"
@@ -1697,6 +1710,10 @@ msgstr "ที่อยู่ผู้ใช้ที่นี่"
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "ผู้ใช้ไม่มีอยู่"
+
+#: src/components/space/Channel.tsx:313 src/components/space/Channel.tsx:635
+msgid "Username or Address"
+msgstr "ชื่อผู้ใช้หรือที่อยู่"
 
 #: src/components/context/WebsocketProvider.tsx:219
 msgid "useWebSocket must be used within a WebSocketProvider"
@@ -1721,7 +1738,7 @@ msgstr ""
 "เมื่อเปิดใช้งาน จะซิงโครไนซ์ข้อมูลผู้ใช้ของคุณ Spaces และกุญแจ Space "
 "ระหว่างอุปกรณ์ "
 "การเปิดใช้งานนี้จะเพิ่มความสามารถในการมองเห็นข้อมูลเมตาของบัญชีของคุณ "
-"ซึ่งอาจเปิดเผยเมื่อคุณเข้าร่วม Spaces ใหม่ แม้ว่าจะไม่ใช่ Spaces "
+"ซึ่งอาจเปิดเผยเมื่อคุณเข้าร่วม พื้นที่s ใหม่ แม้ว่าจะไม่ใช่ Spaces "
 "ที่คุณเข้าร่วม"
 
 #: src/components/modals/CreateSpaceModal.tsx:142
@@ -1733,9 +1750,9 @@ msgid ""
 "that possession of a public Space link can allow anyone with the link to "
 "read messages on the Space for the duration of the link being valid."
 msgstr ""
-"เมื่อการตั้งค่านี้เปิดใช้งาน ลิงก์เชิญจะอนุญาตให้ผู้ใช้เข้าร่วม Space "
+"เมื่อการตั้งค่านี้เปิดใช้งาน ลิงก์เชิญจะอนุญาตให้ผู้ใช้เข้าร่วม พื้นที่ "
 "ของคุณโดยอัตโนมัติ เมื่อไม่ได้เปิดใช้งาน "
-"ผู้ใช้ที่ติดตามลิงก์เชิญจะส่งคำขอให้คุณเข้าร่วม Space "
+"ผู้ใช้ที่ติดตามลิงก์เชิญจะส่งคำขอให้คุณเข้าร่วม พื้นที่ "
 "ของคุณที่คุณต้องอนุมัติด้วยตนเอง "
 "ลิงก์สาธารณะต้องการให้มีวัสดุสำคัญบางอย่างอยู่ในลิงก์ - "
 "โปรดทราบว่าการมีลิงก์ Space "
@@ -1769,7 +1786,7 @@ msgid ""
 msgstr ""
 "คุณสามารถเปลี่ยนสิ่งนี้ในภายหลังสำหรับการสนทนานี้โดยคลิกที่ไอคอนล็อคในมุมมองการสนทนา"
 
-#: src/components/space/GroupEditor.tsx:96
+#: src/components/space/GroupEditor.tsx:113
 msgid ""
 "You cannot delete a group that contains channels. Delete all {channelCount} "
 "channels in this group first."
@@ -1778,7 +1795,7 @@ msgstr ""
 "ทั้งหมดในกลุ่มนี้ก่อน"
 
 #: src/components/message/MessageComposer.tsx:96
-#: src/components/space/Channel.tsx:515
+#: src/components/space/Channel.tsx:606
 msgid "You cannot post in this channel"
 msgstr "คุณไม่สามารถโพสต์ในช่องนี้"
 
@@ -1802,7 +1819,7 @@ msgstr "คุณพร้อมแล้ว ยินดีต้อนรั�
 
 #: src/components/message/InviteLink.tsx:29
 msgid "You've been invited to join a Space"
-msgstr "คุณได้รับเชิญให้เข้าร่วม Space"
+msgstr "คุณได้รับเชิญให้เข้าร่วม พื้นที่"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:79
 msgid ""
@@ -1848,7 +1865,7 @@ msgstr ""
 #~ "You can upload PNG, JPG or GIF, max 256kB."
 #~ msgstr ""
 #~ "เพิ่มอีโมจิที่กำหนดเองได้สูงสุด 50 ตัว "
-#~ "อีโมจิที่กำหนดเองสามารถใช้ได้เฉพาะภายใน Espacio เท่านั้น คุณสามารถอัปโหลด "
+#~ "อีโมจิที่กำหนดเองสามารถใช้ได้เฉพาะภายใน Space เท่านั้น คุณสามารถอัปโหลด "
 #~ "PNG, JPG หรือ GIF ขนาดสูงสุด 256kB"
 
 #~ msgid ""
@@ -1863,7 +1880,7 @@ msgstr ""
 #~ "Space. You can upload PNG, JPG or GIF, max 256kB."
 #~ msgstr ""
 #~ "เพิ่มสติกเกอร์ที่กำหนดเองได้สูงสุด 50 ตัว "
-#~ "สติกเกอร์ที่กำหนดเองสามารถใช้ได้เฉพาะภายใน Espacio เท่านั้น คุณสามารถอัปโหลด"
+#~ "สติกเกอร์ที่กำหนดเองสามารถใช้ได้เฉพาะภายใน Space เท่านั้น คุณสามารถอัปโหลด"
 #~ " PNG, JPG หรือ GIF ขนาดสูงสุด 256kB"
 
 #~ msgid ""
@@ -1996,7 +2013,7 @@ msgstr ""
 #~ "Understand the risks of enabling this, and to whom and where you share the "
 #~ "link."
 #~ msgstr ""
-#~ "ลิงก์เชิญสาธารณะอนุญาตให้ใครก็ตามที่เข้าถึงลิงก์เข้าร่วม Space ของคุณ "
+#~ "ลิงก์เชิญสาธารณะอนุญาตให้ใครก็ตามที่เข้าถึงลิงก์เข้าร่วม พื้นที่ ของคุณ "
 #~ "เข้าใจความเสี่ยงของการเปิดใช้งานนี้ และกับใครและที่ไหนที่คุณแชร์ลิงก์"
 
 #~ msgid "Repudiability"

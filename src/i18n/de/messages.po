@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Keine Rolle - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:494
+#: src/components/space/Channel.tsx:585
 msgid "Send a message to #{channel_name}"
 msgstr "Senden Sie eine Nachricht an #{channel_name}"
 
@@ -80,7 +80,7 @@ msgid ""
 " Default Space settings provide the most typical chat experience, but for "
 "higher privacy guarantees, review the Advanced Settings."
 msgstr ""
-"Die Standard-Einstellungen für den Espacio bieten das typischste Chat-"
+"Die Standard-Einstellungen für den Space bieten das typischste Chat-"
 "Erlebnis, aber für höhere Datenschutzgarantien überprüfen Sie die "
 "erweiterten Einstellungen."
 
@@ -147,7 +147,7 @@ msgstr "0 Bytes"
 msgid "Account Address"
 msgstr "Kontoadresse"
 
-#: src/components/space/ChannelEditor.tsx:78
+#: src/components/space/ChannelEditor.tsx:79
 msgid "Add Channel"
 msgstr "Kanal hinzufügen"
 
@@ -156,7 +156,7 @@ msgid "Add friend"
 msgstr "Freund hinzufügen"
 
 #: src/components/space/ChannelList.tsx:74
-#: src/components/space/GroupEditor.tsx:54
+#: src/components/space/GroupEditor.tsx:58
 msgid "Add Group"
 msgstr "Gruppe hinzufügen"
 
@@ -174,7 +174,7 @@ msgid ""
 "You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
 msgstr ""
 "Fügen Sie bis zu 50 benutzerdefinierte Emojis hinzu. Benutzerdefinierte "
-"Emojis können nur innerhalb eines Espacios verwendet werden. Sie können PNG,"
+"Emojis können nur innerhalb eines Spaces verwendet werden. Sie können PNG,"
 " JPG oder GIF hochladen, max. 5 MB (automatisch optimiert)."
 
 #: src/components/space/SpaceEditor.tsx:888
@@ -183,7 +183,7 @@ msgid ""
 "Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
 msgstr ""
 "Fügen Sie bis zu 50 benutzerdefinierte Sticker hinzu. Benutzerdefinierte "
-"Sticker können nur innerhalb eines Espacios verwendet werden. Sie können "
+"Sticker können nur innerhalb eines Spaces verwendet werden. Sie können "
 "PNG, JPG oder GIF hochladen, max. 25 MB (automatisch optimiert)."
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
@@ -260,10 +260,10 @@ msgid ""
 "current public invite link won't be able to join your Space anymore."
 msgstr ""
 "Sind Sie sicher, dass Sie den öffentlichen Einladungslink löschen möchten? "
-"Jeder mit Ihrem aktuellen öffentlichen Einladungslink kann Ihrem Espacio "
+"Jeder mit Ihrem aktuellen öffentlichen Einladungslink kann Ihrem Space "
 "nicht mehr beitreten."
 
-#: src/hooks/business/channels/useChannelManagement.ts:205
+#: src/hooks/business/channels/useChannelManagement.ts:228
 msgid ""
 "Are you sure you want to delete this channel? All messages will be lost. "
 "This action cannot be undone."
@@ -296,7 +296,7 @@ msgid ""
 msgstr ""
 "Sind Sie sicher, dass Sie einen neuen öffentlichen Einladungslink generieren"
 " möchten? Jeder mit Ihrem alten öffentlichen Einladungslink kann Ihrem "
-"Espacio nicht mehr beitreten."
+"Space nicht mehr beitreten."
 
 #: src/components/space/SpaceEditor.tsx:1262
 msgid ""
@@ -351,7 +351,7 @@ msgstr "Kameraberechtigung ist erforderlich, um Fotos zu machen"
 #: src/components/modals/ConfirmationModal.tsx:28
 #: src/components/modals/ConversationSettingsModal.tsx:58
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
-#: src/hooks/business/channels/useChannelManagement.ts:211
+#: src/hooks/business/channels/useChannelManagement.ts:234
 #: src/hooks/business/messages/useMessageActions.ts:106
 #: src/hooks/business/messages/usePinnedMessages.ts:233
 #: src/hooks/business/spaces/useRoleManagement.ts:62
@@ -378,15 +378,19 @@ msgstr ""
 "möglicherweise nicht aktualisiert. Aktualisieren Sie die Seite, um die neue "
 "Sprache anzuwenden."
 
-#: src/components/space/ChannelEditor.tsx:155
+#: src/components/space/ChannelEditor.tsx:118
+msgid "Channel Icon"
+msgstr "Kanal-Icon"
+
+#: src/components/space/ChannelEditor.tsx:156
 msgid "Channel Managers"
 msgstr "Kanalmanager"
 
-#: src/components/space/ChannelEditor.tsx:95
+#: src/components/space/ChannelEditor.tsx:96
 msgid "Channel Name"
 msgstr "Kanal Name"
 
-#: src/components/space/ChannelEditor.tsx:103
+#: src/components/space/ChannelEditor.tsx:104
 msgid "Channel Topic"
 msgstr "Kanal Thema"
 
@@ -408,6 +412,7 @@ msgstr "Wählen Sie Ihr bevorzugtes Thema für Quorum."
 
 #: src/components/primitives/Select/Select.native.tsx:37
 #: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/space/IconPicker/IconPicker.web.tsx:140
 msgid "Clear"
 msgstr "Löschen"
 
@@ -421,8 +426,8 @@ msgstr "Benachrichtigung mit Tag löschen: {tag}"
 
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
-#: src/components/space/ChannelEditor.tsx:193
-#: src/components/space/GroupEditor.tsx:109
+#: src/components/space/ChannelEditor.tsx:208
+#: src/components/space/GroupEditor.tsx:126
 #: src/components/space/SpaceEditor.tsx:1223
 msgid "Click again to confirm"
 msgstr "Klicken Sie erneut, um zu bestätigen"
@@ -573,14 +578,14 @@ msgstr "löschen"
 #: src/components/space/SpaceEditor.tsx:850
 #: src/components/space/SpaceEditor.tsx:949
 #: src/components/space/SpaceEditor.tsx:1277
-#: src/hooks/business/channels/useChannelManagement.ts:210
+#: src/hooks/business/channels/useChannelManagement.ts:233
 #: src/hooks/business/messages/useMessageActions.ts:105
 #: src/hooks/business/spaces/useRoleManagement.ts:61
 msgid "Delete"
 msgstr "Löschen"
 
-#: src/components/space/ChannelEditor.tsx:192
-#: src/hooks/business/channels/useChannelManagement.ts:204
+#: src/components/space/ChannelEditor.tsx:207
+#: src/hooks/business/channels/useChannelManagement.ts:227
 msgid "Delete Channel"
 msgstr "Kanal löschen"
 
@@ -593,7 +598,7 @@ msgstr "Gespräch löschen"
 msgid "Delete Current Link"
 msgstr "Aktuellen Link löschen"
 
-#: src/components/space/GroupEditor.tsx:108
+#: src/components/space/GroupEditor.tsx:125
 msgid "Delete Group"
 msgstr "Gruppe löschen"
 
@@ -662,11 +667,11 @@ msgstr "Schublade"
 msgid "Drop your profile photo here"
 msgstr "Legen Sie Ihr Profilfoto hier ab"
 
-#: src/components/space/ChannelEditor.tsx:78
+#: src/components/space/ChannelEditor.tsx:79
 msgid "Edit Channel"
 msgstr "Kanal bearbeiten"
 
-#: src/components/space/GroupEditor.tsx:54
+#: src/components/space/GroupEditor.tsx:58
 msgid "Edit Group"
 msgstr "Gruppe bearbeiten"
 
@@ -829,7 +834,11 @@ msgstr "Öffentlichen Einladungslink generieren"
 msgid "Go to conversation"
 msgstr "Gehe zur Unterhaltung"
 
-#: src/components/space/GroupEditor.tsx:66
+#: src/components/space/GroupEditor.tsx:83
+msgid "Group Icon (optional)"
+msgstr "Gruppen-Icon (optional)"
+
+#: src/components/space/GroupEditor.tsx:70
 msgid "Group Name"
 msgstr "Gruppe Name"
 
@@ -967,7 +976,7 @@ msgid "Key Saved"
 msgstr "Schlüssel gespeichert"
 
 #: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:204
+#: src/components/user/UserProfile.tsx:205
 msgid "Kick User"
 msgstr "Kick-Benutzer"
 
@@ -1053,7 +1062,7 @@ msgid "Manual Backup Required"
 msgstr "Manuelle Sicherung erforderlich"
 
 #: src/components/direct/DirectMessage.tsx:403
-#: src/components/space/Channel.tsx:408
+#: src/components/space/Channel.tsx:505
 msgid "Members List"
 msgstr "Mitgliederliste"
 
@@ -1092,7 +1101,11 @@ msgstr "Keine Nachrichten gefunden"
 msgid "No pinned messages yet"
 msgstr "Noch keine angehefteten Nachrichten"
 
-#: src/components/space/RolePreview.tsx:38
+#: src/components/space/Channel.tsx:326 src/components/space/Channel.tsx:648
+msgid "No users found!"
+msgstr "Keine Benutzer gefunden!"
+
+#: src/components/space/RolePreview.tsx:39
 msgid "None"
 msgstr "Keine"
 
@@ -1138,7 +1151,7 @@ msgstr "Einer von uns, einer von uns!"
 msgid "Online"
 msgstr "Online"
 
-#: src/components/space/RolePreview.tsx:33
+#: src/components/space/RolePreview.tsx:34
 #: src/components/space/SpaceEditor.tsx:699
 msgid "Permissions:"
 msgstr "Berechtigungen:"
@@ -1166,7 +1179,7 @@ msgstr "Stecker"
 msgid "Pin"
 msgstr "Stecker"
 
-#: src/components/space/ChannelEditor.tsx:117
+#: src/components/space/ChannelEditor.tsx:132
 msgid "Pin channel to top"
 msgstr "Kanal nach oben stecken"
 
@@ -1192,7 +1205,7 @@ msgstr "Nachricht stecken"
 msgid "Pin Messages"
 msgstr "Nachrichten anheften"
 
-#: src/components/space/ChannelEditor.tsx:112
+#: src/components/space/ChannelEditor.tsx:127
 msgid "Pin to top"
 msgstr "Nach oben stecken"
 
@@ -1206,7 +1219,7 @@ msgstr "Angeheftet"
 msgid "Pinned by {0}"
 msgstr "Angeheftet von {0}"
 
-#: src/components/space/Channel.tsx:375
+#: src/components/space/Channel.tsx:472
 msgid "Pinned Messages"
 msgstr "Angeheftete Nachrichten"
 
@@ -1243,7 +1256,7 @@ msgid ""
 " Consider who you share the link with and where you post it."
 msgstr ""
 "Öffentliche Einladungslinks ermöglichen es jedem mit Zugang zum Link, deinem"
-" Espacio beizutreten. Überlege, mit wem du den Link teilst und wo du ihn "
+" Space beizutreten. Überlege, mit wem du den Link teilst und wo du ihn "
 "postest."
 
 #: src/components/Maintenance.tsx:28
@@ -1282,7 +1295,7 @@ msgstr ""
 "Passkey-Anfrage abgelehnt wurde. Bitte autorisieren Sie erneut, um auf Ihre "
 "Nachrichten zuzugreifen."
 
-#: src/components/space/ChannelEditor.tsx:127
+#: src/components/space/ChannelEditor.tsx:141
 msgid "Read only"
 msgstr "Nur lesen"
 
@@ -1350,8 +1363,8 @@ msgstr "Alle Änderungen speichern"
 
 #: src/components/modals/UserSettingsModal.tsx:332
 #: src/components/modals/UserSettingsModal.tsx:486
-#: src/components/space/ChannelEditor.tsx:174
-#: src/components/space/GroupEditor.tsx:77
+#: src/components/space/ChannelEditor.tsx:189
+#: src/components/space/GroupEditor.tsx:94
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Änderungen speichern"
@@ -1379,8 +1392,8 @@ msgid "saved config is out of date"
 msgstr "Gespeicherte Konfiguration ist veraltet"
 
 #: src/components/modals/ModalSaveOverlay.tsx:43
-#: src/components/space/ChannelEditor.tsx:88
-#: src/components/space/GroupEditor.tsx:117
+#: src/components/space/ChannelEditor.tsx:89
+#: src/components/space/GroupEditor.tsx:134
 msgid "Saving..."
 msgstr "Speichern..."
 
@@ -1414,7 +1427,7 @@ msgstr "Sicherheit"
 msgid "Select an option"
 msgstr "Wähle eine Option"
 
-#: src/components/space/ChannelEditor.tsx:131
+#: src/components/space/ChannelEditor.tsx:160
 msgid ""
 "Select any existing role as managers for this channel. Managers have post, "
 "delete, and pin permissions on ANY message by default. If no managers are "
@@ -1423,7 +1436,7 @@ msgstr ""
 "Wähle eine vorhandene Rolle als Manager für diesen Kanal aus. Manager haben "
 "standardmäßig die Berechtigungen zum Posten, Löschen und Stecken von ANY "
 "Nachrichten. Wenn keine Manager ausgewählt sind, kann nur der Eigentümer des"
-" Espacios den Kanal verwalten."
+" Spaces den Kanal verwalten."
 
 #: src/components/space/SpaceEditor.tsx:1021
 msgid "Select conversation"
@@ -1445,7 +1458,7 @@ msgstr "Berechtigungen auswählen"
 msgid "Select Profile Image"
 msgstr "Profilbild auswählen"
 
-#: src/components/space/ChannelEditor.tsx:164
+#: src/components/space/ChannelEditor.tsx:179
 msgid "Select Roles"
 msgstr "Rollen auswählen"
 
@@ -1466,7 +1479,7 @@ msgstr ""
 "haben. Im Posteingang dieser Personen wird eine Einladungsschaltfläche "
 "angezeigt."
 
-#: src/components/user/UserProfile.tsx:195
+#: src/components/user/UserProfile.tsx:196
 msgid "Send Message"
 msgstr "Nachricht senden"
 
@@ -1578,7 +1591,7 @@ msgstr ""
 " der den alten Link ungültig macht."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
-#: src/components/modals/ConfirmationModal.tsx:71
+#: src/components/modals/ConfirmationModal.tsx:76
 msgid ""
 "TIP: Hold down shift when clicking {protipAction} to bypass this "
 "confirmation entirely."
@@ -1635,8 +1648,8 @@ msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
 msgstr ""
-"Kann den Espacio aufgrund unvollständiger Konfiguration nicht verlassen. Die"
-" Espacio-Daten könnten beschädigt sein."
+"Kann den Space aufgrund unvollständiger Konfiguration nicht verlassen. Die"
+" Space-Daten könnten beschädigt sein."
 
 #: src/components/modals/JoinSpaceModal.tsx:81
 msgid "Unknown"
@@ -1712,7 +1725,7 @@ msgstr ""
 
 #: src/components/modals/CreateSpaceModal.tsx:102
 msgid "Upload an image and choose a name for your Space."
-msgstr "Lade ein Bild hoch und wähle einen Namen für deinen Espacio."
+msgstr "Lade ein Bild hoch und wähle einen Namen für deinen Space."
 
 #: src/components/space/SpaceEditor.tsx:806
 msgid "Upload Emoji"
@@ -1742,6 +1755,10 @@ msgstr "Benutzeradresse hier"
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "Benutzer existiert nicht."
+
+#: src/components/space/Channel.tsx:313 src/components/space/Channel.tsx:635
+msgid "Username or Address"
+msgstr "Benutzername oder Adresse"
 
 #: src/components/context/WebsocketProvider.tsx:219
 msgid "useWebSocket must be used within a WebSocketProvider"
@@ -1815,7 +1832,7 @@ msgstr ""
 "Sie können dies später für dieses Gespräch ändern, indem Sie auf das "
 "Schloss-Symbol in der Konversationsansicht klicken."
 
-#: src/components/space/GroupEditor.tsx:96
+#: src/components/space/GroupEditor.tsx:113
 msgid ""
 "You cannot delete a group that contains channels. Delete all {channelCount} "
 "channels in this group first."
@@ -1824,7 +1841,7 @@ msgstr ""
 " {channelCount} Kanäle in dieser Gruppe."
 
 #: src/components/message/MessageComposer.tsx:96
-#: src/components/space/Channel.tsx:515
+#: src/components/space/Channel.tsx:606
 msgid "You cannot post in this channel"
 msgstr "Du kannst in diesem Kanal nicht posten"
 

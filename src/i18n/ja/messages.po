@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "役割なし - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:494
+#: src/components/space/Channel.tsx:585
 msgid "Send a message to #{channel_name}"
 msgstr "#{channel_name} にメッセージを送信"
 
@@ -77,7 +77,7 @@ msgstr "{user} にメッセージを送信"
 msgid ""
 " Default Space settings provide the most typical chat experience, but for "
 "higher privacy guarantees, review the Advanced Settings."
-msgstr "デフォルトのEspacio設定は最も一般的なチャット体験を提供しますが、より高いプライバシー保証のために、詳細設定を確認してください。"
+msgstr "デフォルトのSpace設定は最も一般的なチャット体験を提供しますが、より高いプライバシー保証のために、詳細設定を確認してください。"
 
 #: src/components/Maintenance.native.tsx:61
 msgid " for updates."
@@ -142,7 +142,7 @@ msgstr "0 バイト"
 msgid "Account Address"
 msgstr "アカウントアドレス"
 
-#: src/components/space/ChannelEditor.tsx:78
+#: src/components/space/ChannelEditor.tsx:79
 msgid "Add Channel"
 msgstr "チャンネルを追加"
 
@@ -151,7 +151,7 @@ msgid "Add friend"
 msgstr "友達を追加"
 
 #: src/components/space/ChannelList.tsx:74
-#: src/components/space/GroupEditor.tsx:54
+#: src/components/space/GroupEditor.tsx:58
 msgid "Add Group"
 msgstr "グループを追加"
 
@@ -168,14 +168,14 @@ msgid ""
 "Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
 "You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
 msgstr ""
-"最大50個のカスタム絵文字を追加できます。カスタム絵文字はEspacio内でのみ使用できます。PNG、JPG、またはGIFをアップロードできます。最大5MB（自動最適化）。"
+"最大50個のカスタム絵文字を追加できます。カスタム絵文字はSpace内でのみ使用できます。PNG、JPG、またはGIFをアップロードできます。最大5MB（自動最適化）。"
 
 #: src/components/space/SpaceEditor.tsx:888
 msgid ""
 "Add up to 50 custom stickers. Custom stickers can only be used within a "
 "Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
 msgstr ""
-"最大50個のカスタムステッカーを追加できます。カスタムステッカーはEspacio内でのみ使用できます。PNG、JPG、またはGIFをアップロードできます。最大25MB（自動最適化）。"
+"最大50個のカスタムステッカーを追加できます。カスタムステッカーはSpace内でのみ使用できます。PNG、JPG、またはGIFをアップロードできます。最大25MB（自動最適化）。"
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
@@ -242,9 +242,9 @@ msgstr "外観"
 msgid ""
 "Are you sure you want to delete the public invite link? Anyone with your "
 "current public invite link won't be able to join your Space anymore."
-msgstr "公開招待リンクを削除してもよろしいですか？現在の公開招待リンクを持っている人は、もうあなたのEspacioに参加できなくなります。"
+msgstr "公開招待リンクを削除してもよろしいですか？現在の公開招待リンクを持っている人は、もうあなたのSpaceに参加できなくなります。"
 
-#: src/hooks/business/channels/useChannelManagement.ts:205
+#: src/hooks/business/channels/useChannelManagement.ts:228
 msgid ""
 "Are you sure you want to delete this channel? All messages will be lost. "
 "This action cannot be undone."
@@ -271,7 +271,7 @@ msgstr "この役割を削除してもよろしいですか？"
 msgid ""
 "Are you sure you want to generate a new public invite link? Anyone with your"
 " old public invite link won't be able to join your Space anymore."
-msgstr "新しい公開招待リンクを生成してもよろしいですか？古い公開招待リンクを持っている人は、もうあなたのEspacioに参加できなくなります。"
+msgstr "新しい公開招待リンクを生成してもよろしいですか？古い公開招待リンクを持っている人は、もうあなたのSpaceに参加できなくなります。"
 
 #: src/components/space/SpaceEditor.tsx:1262
 msgid ""
@@ -324,7 +324,7 @@ msgstr "写真を撮るにはカメラの権限が必要です"
 #: src/components/modals/ConfirmationModal.tsx:28
 #: src/components/modals/ConversationSettingsModal.tsx:58
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
-#: src/hooks/business/channels/useChannelManagement.ts:211
+#: src/hooks/business/channels/useChannelManagement.ts:234
 #: src/hooks/business/messages/useMessageActions.ts:106
 #: src/hooks/business/messages/usePinnedMessages.ts:233
 #: src/hooks/business/spaces/useRoleManagement.ts:62
@@ -346,15 +346,19 @@ msgid ""
 "Refresh the page to apply the new language."
 msgstr "変更は自動的に行われますが、アクティブなページが更新されない場合があります。新しい言語を適用するにはページを更新してください。"
 
-#: src/components/space/ChannelEditor.tsx:155
+#: src/components/space/ChannelEditor.tsx:118
+msgid "Channel Icon"
+msgstr "チャンネルアイコン"
+
+#: src/components/space/ChannelEditor.tsx:156
 msgid "Channel Managers"
 msgstr "チャンネルマネージャー"
 
-#: src/components/space/ChannelEditor.tsx:95
+#: src/components/space/ChannelEditor.tsx:96
 msgid "Channel Name"
 msgstr "チャンネル名"
 
-#: src/components/space/ChannelEditor.tsx:103
+#: src/components/space/ChannelEditor.tsx:104
 msgid "Channel Topic"
 msgstr "チャンネルトピック"
 
@@ -376,6 +380,7 @@ msgstr "Quorumの好みのテーマを選択してください。"
 
 #: src/components/primitives/Select/Select.native.tsx:37
 #: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/space/IconPicker/IconPicker.web.tsx:140
 msgid "Clear"
 msgstr "クリア"
 
@@ -389,8 +394,8 @@ msgstr "タグ {tag} の通知をクリア中"
 
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
-#: src/components/space/ChannelEditor.tsx:193
-#: src/components/space/GroupEditor.tsx:109
+#: src/components/space/ChannelEditor.tsx:208
+#: src/components/space/GroupEditor.tsx:126
 #: src/components/space/SpaceEditor.tsx:1223
 msgid "Click again to confirm"
 msgstr "再度クリックして確認してください"
@@ -535,14 +540,14 @@ msgstr "削除"
 #: src/components/space/SpaceEditor.tsx:850
 #: src/components/space/SpaceEditor.tsx:949
 #: src/components/space/SpaceEditor.tsx:1277
-#: src/hooks/business/channels/useChannelManagement.ts:210
+#: src/hooks/business/channels/useChannelManagement.ts:233
 #: src/hooks/business/messages/useMessageActions.ts:105
 #: src/hooks/business/spaces/useRoleManagement.ts:61
 msgid "Delete"
 msgstr "削除"
 
-#: src/components/space/ChannelEditor.tsx:192
-#: src/hooks/business/channels/useChannelManagement.ts:204
+#: src/components/space/ChannelEditor.tsx:207
+#: src/hooks/business/channels/useChannelManagement.ts:227
 msgid "Delete Channel"
 msgstr "チャンネルを削除"
 
@@ -555,7 +560,7 @@ msgstr "会話を削除"
 msgid "Delete Current Link"
 msgstr "現在のリンクを削除"
 
-#: src/components/space/GroupEditor.tsx:108
+#: src/components/space/GroupEditor.tsx:125
 msgid "Delete Group"
 msgstr "グループを削除"
 
@@ -623,11 +628,11 @@ msgstr "ドロワー"
 msgid "Drop your profile photo here"
 msgstr "ここにプロフィール写真をドロップ"
 
-#: src/components/space/ChannelEditor.tsx:78
+#: src/components/space/ChannelEditor.tsx:79
 msgid "Edit Channel"
 msgstr "チャンネルを編集"
 
-#: src/components/space/GroupEditor.tsx:54
+#: src/components/space/GroupEditor.tsx:58
 msgid "Edit Group"
 msgstr "グループを編集"
 
@@ -787,7 +792,11 @@ msgstr "公開招待リンクを生成"
 msgid "Go to conversation"
 msgstr "会話に移動"
 
-#: src/components/space/GroupEditor.tsx:66
+#: src/components/space/GroupEditor.tsx:83
+msgid "Group Icon (optional)"
+msgstr "グループアイコン（オプション）"
+
+#: src/components/space/GroupEditor.tsx:70
 msgid "Group Name"
 msgstr "グループ名"
 
@@ -917,7 +926,7 @@ msgid "Key Saved"
 msgstr "キーが保存されました"
 
 #: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:204
+#: src/components/user/UserProfile.tsx:205
 msgid "Kick User"
 msgstr "ユーザーをキック"
 
@@ -995,7 +1004,7 @@ msgid "Manual Backup Required"
 msgstr "手動バックアップが必要です"
 
 #: src/components/direct/DirectMessage.tsx:403
-#: src/components/space/Channel.tsx:408
+#: src/components/space/Channel.tsx:505
 msgid "Members List"
 msgstr "メンバーリスト"
 
@@ -1033,7 +1042,11 @@ msgstr "メッセージが見つかりませんでした"
 msgid "No pinned messages yet"
 msgstr "まだピン留めされたメッセージはありません"
 
-#: src/components/space/RolePreview.tsx:38
+#: src/components/space/Channel.tsx:326 src/components/space/Channel.tsx:648
+msgid "No users found!"
+msgstr "ユーザーが見つかりません！"
+
+#: src/components/space/RolePreview.tsx:39
 msgid "None"
 msgstr "なし"
 
@@ -1077,7 +1090,7 @@ msgstr "私たちの一員、私たちの一員！"
 msgid "Online"
 msgstr "オンライン"
 
-#: src/components/space/RolePreview.tsx:33
+#: src/components/space/RolePreview.tsx:34
 #: src/components/space/SpaceEditor.tsx:699
 msgid "Permissions:"
 msgstr "権限:"
@@ -1104,7 +1117,7 @@ msgstr "ピン"
 msgid "Pin"
 msgstr "ピン"
 
-#: src/components/space/ChannelEditor.tsx:117
+#: src/components/space/ChannelEditor.tsx:132
 msgid "Pin channel to top"
 msgstr "チャンネルを上部にピン留め"
 
@@ -1129,7 +1142,7 @@ msgstr "メッセージをピン留め"
 msgid "Pin Messages"
 msgstr "メッセージをピン留め"
 
-#: src/components/space/ChannelEditor.tsx:112
+#: src/components/space/ChannelEditor.tsx:127
 msgid "Pin to top"
 msgstr "上部にピン留め"
 
@@ -1143,7 +1156,7 @@ msgstr "ピン留め済み"
 msgid "Pinned by {0}"
 msgstr "{0} によってピン留めされました"
 
-#: src/components/space/Channel.tsx:375
+#: src/components/space/Channel.tsx:472
 msgid "Pinned Messages"
 msgstr "ピン留めされたメッセージ"
 
@@ -1209,7 +1222,7 @@ msgid ""
 msgstr ""
 "ブラウザがフォーカスされていない間にQuorumが読み込まれたか、パスキーリクエストが拒否されました。メッセージにアクセスするには再認証してください。"
 
-#: src/components/space/ChannelEditor.tsx:127
+#: src/components/space/ChannelEditor.tsx:141
 msgid "Read only"
 msgstr "読み取り専用"
 
@@ -1275,8 +1288,8 @@ msgstr "すべての変更を保存"
 
 #: src/components/modals/UserSettingsModal.tsx:332
 #: src/components/modals/UserSettingsModal.tsx:486
-#: src/components/space/ChannelEditor.tsx:174
-#: src/components/space/GroupEditor.tsx:77
+#: src/components/space/ChannelEditor.tsx:189
+#: src/components/space/GroupEditor.tsx:94
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "変更を保存"
@@ -1304,8 +1317,8 @@ msgid "saved config is out of date"
 msgstr "保存された設定は古くなっています"
 
 #: src/components/modals/ModalSaveOverlay.tsx:43
-#: src/components/space/ChannelEditor.tsx:88
-#: src/components/space/GroupEditor.tsx:117
+#: src/components/space/ChannelEditor.tsx:89
+#: src/components/space/GroupEditor.tsx:134
 msgid "Saving..."
 msgstr "保存中..."
 
@@ -1320,7 +1333,7 @@ msgstr "ここで検索"
 
 #: src/hooks/useSearchContext.native.ts:100 src/hooks/useSearchContext.ts:92
 msgid "Search in this Space"
-msgstr "この Space で検索"
+msgstr "このスペースで検索"
 
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
@@ -1339,7 +1352,7 @@ msgstr "セキュリティ"
 msgid "Select an option"
 msgstr "オプションを選択"
 
-#: src/components/space/ChannelEditor.tsx:131
+#: src/components/space/ChannelEditor.tsx:160
 msgid ""
 "Select any existing role as managers for this channel. Managers have post, "
 "delete, and pin permissions on ANY message by default. If no managers are "
@@ -1367,7 +1380,7 @@ msgstr "権限を選択"
 msgid "Select Profile Image"
 msgstr "プロフィール画像を選択"
 
-#: src/components/space/ChannelEditor.tsx:164
+#: src/components/space/ChannelEditor.tsx:179
 msgid "Select Roles"
 msgstr "役割を選択"
 
@@ -1385,7 +1398,7 @@ msgid ""
 "button will appear in their inbox."
 msgstr "以前に会話をしたことのある人に招待を送信します。招待ボタンが彼らの受信箱に表示されます。"
 
-#: src/components/user/UserProfile.tsx:195
+#: src/components/user/UserProfile.tsx:196
 msgid "Send Message"
 msgstr "メッセージを送信"
 
@@ -1490,7 +1503,7 @@ msgid ""
 msgstr "このリンクは期限切れになりませんが、いつでも新しいリンクを生成でき、古いリンクは無効になります。"
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
-#: src/components/modals/ConfirmationModal.tsx:71
+#: src/components/modals/ConfirmationModal.tsx:76
 msgid ""
 "TIP: Hold down shift when clicking {protipAction} to bypass this "
 "confirmation entirely."
@@ -1548,7 +1561,7 @@ msgstr "不明"
 #: src/hooks/business/search/useSearchResultDisplay.ts:118
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:46
 msgid "Unknown Space"
-msgstr "不明な Space"
+msgstr "不明なスペース"
 
 #: src/components/message/MessagePreview.tsx:31
 msgid "Unknown time"
@@ -1639,6 +1652,10 @@ msgstr "ユーザーアドレスはこちら"
 msgid "User does not exist."
 msgstr "ユーザーは存在しません。"
 
+#: src/components/space/Channel.tsx:313 src/components/space/Channel.tsx:635
+msgid "Username or Address"
+msgstr "ユーザー名またはアドレス"
+
 #: src/components/context/WebsocketProvider.tsx:219
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr "useWebSocketはWebSocketProvider内で使用する必要があります"
@@ -1697,7 +1714,7 @@ msgid ""
 " the Conversation view."
 msgstr "会話ビューでロックアイコンをクリックすることで、この会話のために後で変更できます。"
 
-#: src/components/space/GroupEditor.tsx:96
+#: src/components/space/GroupEditor.tsx:113
 msgid ""
 "You cannot delete a group that contains channels. Delete all {channelCount} "
 "channels in this group first."
@@ -1705,7 +1722,7 @@ msgstr ""
 "チャンネルを含むグループを削除することはできません。このグループ内のすべての{channelCount}チャンネルを最初に削除してください。"
 
 #: src/components/message/MessageComposer.tsx:96
-#: src/components/space/Channel.tsx:515
+#: src/components/space/Channel.tsx:606
 msgid "You cannot post in this channel"
 msgstr "このチャンネルに投稿することはできません"
 

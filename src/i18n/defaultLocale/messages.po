@@ -30,7 +30,7 @@ msgid "No Role - {count}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:494
+#: src/components/space/Channel.tsx:585
 msgid "Send a message to #{channel_name}"
 msgstr ""
 
@@ -145,7 +145,7 @@ msgstr ""
 msgid "Account Address"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:78
+#: src/components/space/ChannelEditor.tsx:79
 msgid "Add Channel"
 msgstr ""
 
@@ -154,7 +154,7 @@ msgid "Add friend"
 msgstr ""
 
 #: src/components/space/ChannelList.tsx:74
-#: src/components/space/GroupEditor.tsx:54
+#: src/components/space/GroupEditor.tsx:58
 msgid "Add Group"
 msgstr ""
 
@@ -252,7 +252,7 @@ msgstr ""
 msgid "Are you sure you want to delete the public invite link? Anyone with your current public invite link won't be able to join your Space anymore."
 msgstr ""
 
-#: src/hooks/business/channels/useChannelManagement.ts:205
+#: src/hooks/business/channels/useChannelManagement.ts:228
 msgid "Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone."
 msgstr ""
 
@@ -342,7 +342,7 @@ msgstr ""
 #: src/components/modals/ConfirmationModal.tsx:28
 #: src/components/modals/ConversationSettingsModal.tsx:58
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
-#: src/hooks/business/channels/useChannelManagement.ts:211
+#: src/hooks/business/channels/useChannelManagement.ts:234
 #: src/hooks/business/messages/useMessageActions.ts:106
 #: src/hooks/business/messages/usePinnedMessages.ts:233
 #: src/hooks/business/spaces/useRoleManagement.ts:62
@@ -361,15 +361,19 @@ msgstr ""
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:155
+#: src/components/space/ChannelEditor.tsx:118
+msgid "Channel Icon"
+msgstr ""
+
+#: src/components/space/ChannelEditor.tsx:156
 msgid "Channel Managers"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:95
+#: src/components/space/ChannelEditor.tsx:96
 msgid "Channel Name"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:103
+#: src/components/space/ChannelEditor.tsx:104
 msgid "Channel Topic"
 msgstr ""
 
@@ -391,6 +395,7 @@ msgstr ""
 
 #: src/components/primitives/Select/Select.native.tsx:37
 #: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/space/IconPicker/IconPicker.web.tsx:140
 msgid "Clear"
 msgstr ""
 
@@ -404,8 +409,8 @@ msgstr ""
 
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
-#: src/components/space/ChannelEditor.tsx:193
-#: src/components/space/GroupEditor.tsx:109
+#: src/components/space/ChannelEditor.tsx:208
+#: src/components/space/GroupEditor.tsx:126
 #: src/components/space/SpaceEditor.tsx:1223
 msgid "Click again to confirm"
 msgstr ""
@@ -570,14 +575,14 @@ msgstr ""
 #: src/components/space/SpaceEditor.tsx:850
 #: src/components/space/SpaceEditor.tsx:949
 #: src/components/space/SpaceEditor.tsx:1277
-#: src/hooks/business/channels/useChannelManagement.ts:210
+#: src/hooks/business/channels/useChannelManagement.ts:233
 #: src/hooks/business/messages/useMessageActions.ts:105
 #: src/hooks/business/spaces/useRoleManagement.ts:61
 msgid "Delete"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:192
-#: src/hooks/business/channels/useChannelManagement.ts:204
+#: src/components/space/ChannelEditor.tsx:207
+#: src/hooks/business/channels/useChannelManagement.ts:227
 msgid "Delete Channel"
 msgstr ""
 
@@ -590,7 +595,7 @@ msgstr ""
 msgid "Delete Current Link"
 msgstr ""
 
-#: src/components/space/GroupEditor.tsx:108
+#: src/components/space/GroupEditor.tsx:125
 msgid "Delete Group"
 msgstr ""
 
@@ -666,11 +671,11 @@ msgstr ""
 msgid "Drop your profile photo here"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:78
+#: src/components/space/ChannelEditor.tsx:79
 msgid "Edit Channel"
 msgstr ""
 
-#: src/components/space/GroupEditor.tsx:54
+#: src/components/space/GroupEditor.tsx:58
 msgid "Edit Group"
 msgstr ""
 
@@ -870,7 +875,11 @@ msgstr ""
 msgid "Go to conversation"
 msgstr ""
 
-#: src/components/space/GroupEditor.tsx:66
+#: src/components/space/GroupEditor.tsx:83
+msgid "Group Icon (optional)"
+msgstr ""
+
+#: src/components/space/GroupEditor.tsx:70
 msgid "Group Name"
 msgstr ""
 
@@ -999,7 +1008,7 @@ msgid "Key Saved"
 msgstr ""
 
 #: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:204
+#: src/components/user/UserProfile.tsx:205
 msgid "Kick User"
 msgstr ""
 
@@ -1086,7 +1095,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/direct/DirectMessage.tsx:403
-#: src/components/space/Channel.tsx:408
+#: src/components/space/Channel.tsx:505
 msgid "Members List"
 msgstr ""
 
@@ -1123,11 +1132,16 @@ msgstr ""
 msgid "No pinned messages yet"
 msgstr ""
 
+#: src/components/space/Channel.tsx:326
+#: src/components/space/Channel.tsx:648
+msgid "No users found!"
+msgstr ""
+
 #: src/components/modals/UserSettingsModal.tsx:390
 #~ msgid "Non-repudiability"
 #~ msgstr ""
 
-#: src/components/space/RolePreview.tsx:38
+#: src/components/space/RolePreview.tsx:39
 msgid "None"
 msgstr ""
 
@@ -1174,7 +1188,7 @@ msgstr ""
 msgid "Online"
 msgstr ""
 
-#: src/components/space/RolePreview.tsx:33
+#: src/components/space/RolePreview.tsx:34
 #: src/components/space/SpaceEditor.tsx:699
 msgid "Permissions:"
 msgstr ""
@@ -1201,7 +1215,7 @@ msgstr ""
 msgid "Pin"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:117
+#: src/components/space/ChannelEditor.tsx:132
 msgid "Pin channel to top"
 msgstr ""
 
@@ -1226,7 +1240,7 @@ msgstr ""
 msgid "Pin Messages"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:112
+#: src/components/space/ChannelEditor.tsx:127
 msgid "Pin to top"
 msgstr ""
 
@@ -1239,7 +1253,7 @@ msgstr ""
 msgid "Pinned by {0}"
 msgstr ""
 
-#: src/components/space/Channel.tsx:375
+#: src/components/space/Channel.tsx:472
 msgid "Pinned Messages"
 msgstr ""
 
@@ -1304,7 +1318,7 @@ msgstr ""
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:127
+#: src/components/space/ChannelEditor.tsx:141
 msgid "Read only"
 msgstr ""
 
@@ -1383,8 +1397,8 @@ msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:332
 #: src/components/modals/UserSettingsModal.tsx:486
-#: src/components/space/ChannelEditor.tsx:174
-#: src/components/space/GroupEditor.tsx:77
+#: src/components/space/ChannelEditor.tsx:189
+#: src/components/space/GroupEditor.tsx:94
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr ""
@@ -1412,8 +1426,8 @@ msgid "saved config is out of date"
 msgstr ""
 
 #: src/components/modals/ModalSaveOverlay.tsx:43
-#: src/components/space/ChannelEditor.tsx:88
-#: src/components/space/GroupEditor.tsx:117
+#: src/components/space/ChannelEditor.tsx:89
+#: src/components/space/GroupEditor.tsx:134
 msgid "Saving..."
 msgstr ""
 
@@ -1457,7 +1471,7 @@ msgstr ""
 msgid "Select an option"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:131
+#: src/components/space/ChannelEditor.tsx:160
 msgid "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
 msgstr ""
 
@@ -1481,7 +1495,7 @@ msgstr ""
 msgid "Select Profile Image"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:164
+#: src/components/space/ChannelEditor.tsx:179
 msgid "Select Roles"
 msgstr ""
 
@@ -1497,7 +1511,7 @@ msgstr ""
 msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 msgstr ""
 
-#: src/components/user/UserProfile.tsx:195
+#: src/components/user/UserProfile.tsx:196
 msgid "Send Message"
 msgstr ""
 
@@ -1614,7 +1628,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
-#: src/components/modals/ConfirmationModal.tsx:71
+#: src/components/modals/ConfirmationModal.tsx:76
 msgid "TIP: Hold down shift when clicking {protipAction} to bypass this confirmation entirely."
 msgstr ""
 
@@ -1767,6 +1781,11 @@ msgstr ""
 msgid "User does not exist."
 msgstr ""
 
+#: src/components/space/Channel.tsx:313
+#: src/components/space/Channel.tsx:635
+msgid "Username or Address"
+msgstr ""
+
 #: src/components/context/WebsocketProvider.tsx:219
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr ""
@@ -1817,12 +1836,12 @@ msgstr ""
 #~ msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
 #~ msgstr ""
 
-#: src/components/space/GroupEditor.tsx:96
+#: src/components/space/GroupEditor.tsx:113
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr ""
 
 #: src/components/message/MessageComposer.tsx:96
-#: src/components/space/Channel.tsx:515
+#: src/components/space/Channel.tsx:606
 msgid "You cannot post in this channel"
 msgstr ""
 
