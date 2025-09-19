@@ -25,7 +25,7 @@ import MessageComposer, {
 
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
-import ClickToCopyContent from '../ClickToCopyContent';
+import { ClickToCopyContent } from '../ui';
 import { DefaultImages, truncateAddress } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
 import { GlobalSearch } from '../search';

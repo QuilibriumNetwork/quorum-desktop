@@ -14,10 +14,9 @@ import {
 import '../../styles/_modal_common.scss';
 import ModalSaveOverlay from './ModalSaveOverlay';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
-import ThemeRadioGroup from '../ThemeRadioGroup';
-import AccentColorSwitcher from '../AccentColorSwitcher';
+import { ThemeRadioGroup, AccentColorSwitcher } from '../ui';
 import { t } from '@lingui/core/macro';
-import ClickToCopyContent from '../ClickToCopyContent';
+import { ClickToCopyContent } from '../ui';
 import { DefaultImages } from '../../utils';
 import {
   useUserSettings,
@@ -26,7 +25,7 @@ import {
   useNotificationSettings,
   useModalSaveState,
 } from '../../hooks';
-import ReactTooltip from '../ReactTooltip';
+import { ReactTooltip } from '../ui';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;

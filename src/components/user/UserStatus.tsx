@@ -5,7 +5,7 @@ import './UserStatus.scss';
 // import UserOnlineStateIndicator from './UserOnlineStateIndicator'; // TODO: Re-enable when online/offline status is implemented
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { t } from '@lingui/core/macro';
-import ClickToCopyContent from '../ClickToCopyContent';
+import { ClickToCopyContent } from '../ui';
 import { DefaultImages, truncateAddress } from '../../utils';
 
 type UserStatusProps = {

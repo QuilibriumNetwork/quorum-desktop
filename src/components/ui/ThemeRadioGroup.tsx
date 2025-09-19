@@ -1,8 +1,8 @@
 import React from 'react';
-import { useTheme, type Theme } from './primitives/theme';
-import { RadioGroup } from './primitives';
+import { useTheme, type Theme } from '../primitives/theme';
+import { RadioGroup } from '../primitives';
 import { t } from '@lingui/core/macro';
-import { RadioOption } from './primitives/RadioGroup/types';
+import { RadioOption } from '../primitives/RadioGroup/types';
 
 export interface ThemeRadioGroupProps {
   horizontal?: boolean;

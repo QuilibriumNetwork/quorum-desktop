@@ -8,7 +8,7 @@ import EmojiPicker, {
   Theme,
 } from 'emoji-picker-react';
 import { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
-import MobileDrawer from '../MobileDrawer';
+import { MobileDrawer } from '../ui';
 import './EmojiPickerDrawer.scss';
 
 export interface EmojiPickerDrawerProps {

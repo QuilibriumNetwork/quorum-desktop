@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../db/messages';
 import { SearchResultItem } from './SearchResultItem';
 import { Icon, FlexCenter, Container, Text, Callout } from '../primitives';
-import { DropdownPanel } from '../DropdownPanel';
+import { DropdownPanel } from '../ui';
 import {
   useSearchResultsState,
   useBatchSearchResultsDisplay,

@@ -419,11 +419,11 @@ msgstr "Clicca il pulsante qui sotto per creare un backup della tua chiave priva
 msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
 msgstr "Clicca il pulsante qui sotto per creare un backup delle tue informazioni chiave, perché una volta che sono andate, sono andate per sempre. Potresti essere invitato a autenticarti di nuovo."
 
-#: src/components/ClickToCopyContent.tsx:48
+#: src/components/ui/ClickToCopyContent.tsx:48
 msgid "Click to copy"
 msgstr "Clicca per copiare"
 
-#: src/components/MobileDrawer.tsx:150
+#: src/components/ui/MobileDrawer.tsx:150
 msgid "Close"
 msgstr "Chiudi"
 
@@ -446,10 +446,10 @@ msgstr "Impostazioni conversazione"
 msgid "Conversation Settings"
 msgstr "Impostazioni Conversazione"
 
-#: src/components/ClickToCopyContent.native.tsx:203
-#: src/components/ClickToCopyContent.native.tsx:275
-#: src/components/ClickToCopyContent.tsx:152
-#: src/components/ClickToCopyContent.tsx:196
+#: src/components/ui/ClickToCopyContent.native.tsx:203
+#: src/components/ui/ClickToCopyContent.native.tsx:275
+#: src/components/ui/ClickToCopyContent.tsx:152
+#: src/components/ui/ClickToCopyContent.tsx:196
 #: src/components/message/MessageActions.tsx:79
 msgid "Copied!"
 msgstr "Copiato!"
@@ -466,7 +466,7 @@ msgstr "Copia indirizzo"
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Copia indirizzo negli appunti"
 
-#: src/components/ClickToCopyContent.native.tsx:167
+#: src/components/ui/ClickToCopyContent.native.tsx:167
 #: src/hooks/platform/files/useFileDownload.native.ts:109
 msgid "Copy Failed"
 msgstr "Copia Fallita"
@@ -528,7 +528,7 @@ msgstr "Link di Invito Corrente"
 #~ msgid "dark"
 #~ msgstr "scuro"
 
-#: src/components/ThemeRadioGroup.tsx:23
+#: src/components/ui/ThemeRadioGroup.tsx:23
 msgid "Dark"
 msgstr "Scuro"
 
@@ -642,7 +642,7 @@ msgstr "Nome Visualizzato"
 #~ msgid "Do it!"
 #~ msgstr "Fallo!"
 
-#: src/components/MobileDrawer.tsx:132
+#: src/components/ui/MobileDrawer.tsx:132
 msgid "Drawer"
 msgstr "Cassetto"
 
@@ -1015,7 +1015,7 @@ msgstr "Andiamo!"
 #~ msgid "light"
 #~ msgstr "chiaro"
 
-#: src/components/ThemeRadioGroup.tsx:18
+#: src/components/ui/ThemeRadioGroup.tsx:18
 msgid "Light"
 msgstr "Luce"
 
@@ -1529,11 +1529,11 @@ msgstr "Invito inviato con successo a {0}"
 #~ msgid "system"
 #~ msgstr "sistema"
 
-#: src/components/ThemeRadioGroup.tsx:28
+#: src/components/ui/ThemeRadioGroup.tsx:28
 msgid "System"
 msgstr "Sistema"
 
-#: src/components/ClickToCopyContent.native.tsx:56
+#: src/components/ui/ClickToCopyContent.native.tsx:56
 msgid "Tap to copy"
 msgstr "Tocca per copiare"
 
@@ -1608,7 +1608,7 @@ msgstr "Impossibile comprimere l'immagine. Si prega di utilizzare un'immagine pi
 msgid "Unable to compress sticker images. Please use smaller images."
 msgstr "Impossibile comprimere le immagini degli adesivi. Si prega di utilizzare immagini più piccole."
 
-#: src/components/ClickToCopyContent.native.tsx:167
+#: src/components/ui/ClickToCopyContent.native.tsx:167
 msgid "Unable to copy to clipboard"
 msgstr "Impossibile copiare negli appunti"
 

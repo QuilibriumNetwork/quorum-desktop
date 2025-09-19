@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { WebButtonProps } from './types';
-import ReactTooltip from '../../ReactTooltip';
+import { ReactTooltip } from '../../ui';
 import { Icon } from '../Icon';
 import './Button.scss';
 

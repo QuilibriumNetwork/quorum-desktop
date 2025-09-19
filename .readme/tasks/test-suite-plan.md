@@ -36,8 +36,8 @@ This phase focuses on integrating the testing libraries and framework into the p
   - [ ] Update `tsconfig.json` to include Vitest and Testing Library types for full TypeScript support in test files.
 
 - [ ] **Task 4: Create Initial "Smoke Test"**
-  - [ ] Identify a simple, stateless component (e.g., `src/components/CloseButton.tsx`).
-  - [ ] Create the first test file: `src/components/CloseButton.test.tsx`.
+  - [ ] Identify a simple, stateless component (e.g., `src/components/ui/CloseButton.tsx`).
+  - [ ] Create the first test file: `src/components/ui/CloseButton.test.tsx`.
   - [ ] Write a basic "smoke test" that renders the component and asserts it doesn't crash.
   - [ ] Run `npm test` and confirm that the test passes and the entire setup is functioning correctly.
 
@@ -51,7 +51,7 @@ This phase aims to build a baseline of test coverage, focusing on individual com
   - [ ] `src/components/Button.jsx`
   - [ ] `src/components/Input.tsx`
   - [ ] `src/components/Loading.tsx`
-  - [ ] `src/components/UnknownAvatar.tsx`
+  - [ ] `src/components/ui/UnknownAvatar.tsx`
   - [ ] `src/components/Tooltip.jsx`
   - [ ] **Strategy:** Use **snapshot tests** for these to quickly capture their rendered output and prevent unintended visual changes.
 

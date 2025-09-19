@@ -223,7 +223,7 @@ setTimeout(() => {
 - Position adjustment to prevent off-screen display (via `right-aligned` positioning)
 - Non-focusable elements (`tabIndex={-1}`)
 
-**Architecture**: Refactored to use `src/components/DropdownPanel.tsx` for consistent positioning, styling, and interaction patterns shared with other panel components like `PinnedMessagesPanel`.
+**Architecture**: Refactored to use `src/components/ui/DropdownPanel.tsx` for consistent positioning, styling, and interaction patterns shared with other panel components like `PinnedMessagesPanel`.
 
 **Focus Preservation**:
 

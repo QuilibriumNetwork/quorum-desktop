@@ -44,7 +44,7 @@ AppWithSearch
 
 ### Technical Details
 
-**Container Component** (`src/components/Container.tsx`):
+**Container Component** (`src/components/ui/Container.tsx`):
 
 ```css
 .container-unit {
@@ -224,7 +224,7 @@ AppWithSearch Level:
 
 ### Supporting Files
 
-- `src/components/Container.tsx` - Identified stacking context source
+- `src/components/ui/Container.tsx` - Identified stacking context source
 - `src/components/navbar/NavMenu.scss` - Confirmed navbar z-index
 - `src/styles/_components.scss` - Confirmed overlay styling
 

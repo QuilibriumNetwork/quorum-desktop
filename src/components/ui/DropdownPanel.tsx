@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Container, FlexRow, Text, Icon, Button } from './primitives';
+import { Container, FlexRow, Text, Icon, Button } from '../primitives';
 import './DropdownPanel.scss';
 
 export interface DropdownPanelProps {
@@ -160,3 +160,5 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
     </Container>
   );
 };
+
+export default DropdownPanel;

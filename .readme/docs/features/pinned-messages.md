@@ -140,8 +140,8 @@ Full-featured panel displaying all pinned messages:
 
 #### DropdownPanel Component
 
-**File: `src/components/DropdownPanel.tsx`**
-**File: `src/components/DropdownPanel.scss`**
+**File: `src/components/ui/DropdownPanel.tsx`**
+**File: `src/components/ui/DropdownPanel.scss`**
 
 Shared component used by both SearchResults and PinnedMessagesPanel:
 

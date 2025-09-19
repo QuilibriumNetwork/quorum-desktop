@@ -5,7 +5,7 @@ import SpaceIcon from '../navbar/SpaceIcon';
 import { useSpaceCreation, useFileUpload, useSpaceSettings } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
-import ReactTooltip from '../ReactTooltip';
+import { ReactTooltip } from '../ui';
 
 type CreateSpaceModalProps = {
   visible: boolean;

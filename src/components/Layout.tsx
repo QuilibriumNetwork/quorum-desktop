@@ -1,6 +1,6 @@
 import * as React from 'react';
 import NavMenu from './navbar/NavMenu';
-import CloseButton from './CloseButton';
+import { CloseButton } from './ui';
 import { ResponsiveContainer, Container } from './primitives';
 import CreateSpaceModal from './modals/CreateSpaceModal';
 import ConfirmationModal from './modals/ConfirmationModal';

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Button, Icon, FlexRow, ColorSwatch } from '../../primitives';
-import { DropdownPanel } from '../../DropdownPanel';
+import { DropdownPanel } from '../../ui';
 import {
   IconPickerProps,
   ICON_OPTIONS,

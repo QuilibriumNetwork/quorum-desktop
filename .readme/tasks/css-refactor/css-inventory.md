@@ -175,7 +175,7 @@ Well-structured semantic classes already following best practices:
 - `.input-error` - **semantic-class** - Error state → `@apply border-red-500`
 - `.input-disabled` - **semantic-class** - Disabled state → `@apply opacity-50 cursor-not-allowed`
 
-### **src/components/MobileDrawer.scss**
+### **src/components/ui/MobileDrawer.scss**
 
 **Status:** PRESERVE - Well-architected modern component
 

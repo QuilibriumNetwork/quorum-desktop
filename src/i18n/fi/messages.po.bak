@@ -420,11 +420,11 @@ msgstr "Napsauta alla olevaa painiketta luodaksesi varmuuskopion tärkeistä tie
 msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
 msgstr "Napsauta alla olevaa painiketta luodaksesi varmuuskopion tärkeistä tiedoistasi, sillä kun ne ovat poissa, ne ovat poissa ikuisesti. Saatat joutua todentamaan itsesi uudelleen."
 
-#: src/components/ClickToCopyContent.tsx:48
+#: src/components/ui/ClickToCopyContent.tsx:48
 msgid "Click to copy"
 msgstr "Napsauta kopioidaksesi"
 
-#: src/components/MobileDrawer.tsx:150
+#: src/components/ui/MobileDrawer.tsx:150
 msgid "Close"
 msgstr "Sulje"
 
@@ -447,10 +447,10 @@ msgstr "Keskustelun asetukset"
 msgid "Conversation Settings"
 msgstr "Keskustelun Asetukset"
 
-#: src/components/ClickToCopyContent.native.tsx:203
-#: src/components/ClickToCopyContent.native.tsx:275
-#: src/components/ClickToCopyContent.tsx:152
-#: src/components/ClickToCopyContent.tsx:196
+#: src/components/ui/ClickToCopyContent.native.tsx:203
+#: src/components/ui/ClickToCopyContent.native.tsx:275
+#: src/components/ui/ClickToCopyContent.tsx:152
+#: src/components/ui/ClickToCopyContent.tsx:196
 #: src/components/message/MessageActions.tsx:79
 msgid "Copied!"
 msgstr "Kopioitu!"
@@ -467,7 +467,7 @@ msgstr "Kopioi osoite"
 #~ msgid "Copy address to clipboard"
 #~ msgstr "Kopioi osoite leikepöydälle"
 
-#: src/components/ClickToCopyContent.native.tsx:167
+#: src/components/ui/ClickToCopyContent.native.tsx:167
 #: src/hooks/platform/files/useFileDownload.native.ts:109
 msgid "Copy Failed"
 msgstr "Kopiointi epäonnistui"
@@ -529,7 +529,7 @@ msgstr "Nykyinen kutsulinkki"
 #~ msgid "dark"
 #~ msgstr "tumma"
 
-#: src/components/ThemeRadioGroup.tsx:23
+#: src/components/ui/ThemeRadioGroup.tsx:23
 msgid "Dark"
 msgstr "Tumma"
 
@@ -643,7 +643,7 @@ msgstr "Näyttönimi"
 #~ msgid "Do it!"
 #~ msgstr "Tehdään se!"
 
-#: src/components/MobileDrawer.tsx:132
+#: src/components/ui/MobileDrawer.tsx:132
 msgid "Drawer"
 msgstr "Laatikko"
 
@@ -1016,7 +1016,7 @@ msgstr "Mennäänpä!"
 #~ msgid "light"
 #~ msgstr "vaalea"
 
-#: src/components/ThemeRadioGroup.tsx:18
+#: src/components/ui/ThemeRadioGroup.tsx:18
 msgid "Light"
 msgstr "Valo"
 
@@ -1530,11 +1530,11 @@ msgstr "Onnistunut kutsun lähettäminen osoitteeseen {0}"
 #~ msgid "system"
 #~ msgstr "järjestelmä"
 
-#: src/components/ThemeRadioGroup.tsx:28
+#: src/components/ui/ThemeRadioGroup.tsx:28
 msgid "System"
 msgstr "Järjestelmä"
 
-#: src/components/ClickToCopyContent.native.tsx:56
+#: src/components/ui/ClickToCopyContent.native.tsx:56
 msgid "Tap to copy"
 msgstr "Koputa kopioidaksesi"
 
@@ -1609,7 +1609,7 @@ msgstr "Ei voitu pakata kuvaa. Käytä pienempää kuvaa."
 msgid "Unable to compress sticker images. Please use smaller images."
 msgstr "Ei voitu pakata tarra-kuvia. Käytä pienempiä kuvia."
 
-#: src/components/ClickToCopyContent.native.tsx:167
+#: src/components/ui/ClickToCopyContent.native.tsx:167
 msgid "Unable to copy to clipboard"
 msgstr "Ei voida kopioida leikepöydälle"
 

@@ -152,7 +152,7 @@ interface ResponsiveLayoutState {
 
 #### Task 10: Update Container Responsive Positioning
 
-**Location**: `src/components/Container.scss`
+**Location**: `src/components/ui/Container.scss`
 **Changes**:
 
 - Dynamic left offset calculation based on NavMenu responsive width

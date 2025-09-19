@@ -12,7 +12,7 @@ import {
   Tooltip,
   Icon,
 } from '../primitives';
-import { DropdownPanel } from '../DropdownPanel';
+import { DropdownPanel } from '../ui';
 import { t } from '@lingui/core/macro';
 import { usePinnedMessages } from '../../hooks';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';

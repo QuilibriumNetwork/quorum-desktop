@@ -9,7 +9,7 @@ import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider'
 import './DirectMessages.scss';
 import { useRegistrationContext } from '../context/useRegistrationContext';
 import { useModalContext } from '../context/ModalProvider';
-import ReactTooltip from '../ReactTooltip';
+import { ReactTooltip } from '../ui';
 import { t } from '@lingui/core/macro';
 
 type DirectMessagesProps = {

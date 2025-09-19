@@ -2,7 +2,7 @@ import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Button, Container, FlexRow, Text, Icon } from '../primitives';
 // import UserOnlineStateIndicator from './UserOnlineStateIndicator'; // TODO: Re-enable when online/offline status is implemented
-import ClickToCopyContent from '../ClickToCopyContent';
+import { ClickToCopyContent } from '../ui';
 import './UserProfile.scss';
 import { Role } from '../../api/quorumApi';
 import {

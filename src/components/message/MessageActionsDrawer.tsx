@@ -8,7 +8,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/core/macro';
 import { Message as MessageType } from '../../api/quorumApi';
-import MobileDrawer from '../MobileDrawer';
+import { MobileDrawer } from '../ui';
 import QuickReactionButton from './QuickReactionButton';
 import ActionMenuItem from './ActionMenuItem';
 import './MessageActionsDrawer.scss';

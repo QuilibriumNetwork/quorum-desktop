@@ -420,11 +420,11 @@ msgstr "아래 버튼을 클릭하여 키 정보를 백업하세요. 한 번 사
 msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
 msgstr "아래 버튼을 클릭하여 중요한 정보의 백업을 생성하세요. 한 번 사라지면 영원히 사라집니다. 다시 인증하라는 메시지가 표시될 수 있습니다."
 
-#: src/components/ClickToCopyContent.tsx:48
+#: src/components/ui/ClickToCopyContent.tsx:48
 msgid "Click to copy"
 msgstr "복사하려면 클릭"
 
-#: src/components/MobileDrawer.tsx:150
+#: src/components/ui/MobileDrawer.tsx:150
 msgid "Close"
 msgstr "닫기"
 
@@ -447,10 +447,10 @@ msgstr "대화 설정"
 msgid "Conversation Settings"
 msgstr "대화 설정"
 
-#: src/components/ClickToCopyContent.native.tsx:203
-#: src/components/ClickToCopyContent.native.tsx:275
-#: src/components/ClickToCopyContent.tsx:152
-#: src/components/ClickToCopyContent.tsx:196
+#: src/components/ui/ClickToCopyContent.native.tsx:203
+#: src/components/ui/ClickToCopyContent.native.tsx:275
+#: src/components/ui/ClickToCopyContent.tsx:152
+#: src/components/ui/ClickToCopyContent.tsx:196
 #: src/components/message/MessageActions.tsx:79
 msgid "Copied!"
 msgstr "복사됨!"
@@ -467,7 +467,7 @@ msgstr "주소 복사"
 #~ msgid "Copy address to clipboard"
 #~ msgstr "주소를 클립보드에 복사"
 
-#: src/components/ClickToCopyContent.native.tsx:167
+#: src/components/ui/ClickToCopyContent.native.tsx:167
 #: src/hooks/platform/files/useFileDownload.native.ts:109
 msgid "Copy Failed"
 msgstr "복사 실패"
@@ -529,7 +529,7 @@ msgstr "현재 초대 링크"
 #~ msgid "dark"
 #~ msgstr "어두운"
 
-#: src/components/ThemeRadioGroup.tsx:23
+#: src/components/ui/ThemeRadioGroup.tsx:23
 msgid "Dark"
 msgstr "어두운"
 
@@ -643,7 +643,7 @@ msgstr "표시 이름"
 #~ msgid "Do it!"
 #~ msgstr "해보세요!"
 
-#: src/components/MobileDrawer.tsx:132
+#: src/components/ui/MobileDrawer.tsx:132
 msgid "Drawer"
 msgstr "서랍"
 
@@ -1016,7 +1016,7 @@ msgstr "가자아아아아"
 #~ msgid "light"
 #~ msgstr "밝은"
 
-#: src/components/ThemeRadioGroup.tsx:18
+#: src/components/ui/ThemeRadioGroup.tsx:18
 msgid "Light"
 msgstr "빛"
 
@@ -1530,11 +1530,11 @@ msgstr "{0}에게 초대를 성공적으로 전송했습니다"
 #~ msgid "system"
 #~ msgstr "시스템"
 
-#: src/components/ThemeRadioGroup.tsx:28
+#: src/components/ui/ThemeRadioGroup.tsx:28
 msgid "System"
 msgstr "시스템"
 
-#: src/components/ClickToCopyContent.native.tsx:56
+#: src/components/ui/ClickToCopyContent.native.tsx:56
 msgid "Tap to copy"
 msgstr "복사하려면 탭하세요"
 
@@ -1609,7 +1609,7 @@ msgstr "이미지를 압축할 수 없습니다. 더 작은 이미지를 사용�
 msgid "Unable to compress sticker images. Please use smaller images."
 msgstr "스티커 이미지를 압축할 수 없습니다. 더 작은 이미지를 사용하세요."
 
-#: src/components/ClickToCopyContent.native.tsx:167
+#: src/components/ui/ClickToCopyContent.native.tsx:167
 msgid "Unable to copy to clipboard"
 msgstr "클립보드에 복사할 수 없습니다"
 

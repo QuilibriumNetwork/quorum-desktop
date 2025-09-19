@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { ColorSwatch, FlexRow } from './primitives';
-import { useTheme } from './primitives/theme';
-import { useResponsiveLayout } from '../hooks/useResponsiveLayout';
-import { isNative } from '../utils/platform';
-import type { AccentColor } from './primitives/theme/colors';
+import { ColorSwatch, FlexRow } from '../primitives';
+import { useTheme } from '../primitives/theme';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { isNative } from '../../utils/platform';
+import type { AccentColor } from '../primitives/theme/colors';
 
 const ACCENT_COLORS: AccentColor[] = [
   'blue',

@@ -497,7 +497,7 @@ From css-inventory.md, targeting these responsive selectors:
 
 #### 3.3 Container Responsive Migration
 
-- [ ] Migrate `src/components/Container.scss` - `.container` responsive max-width
+- [ ] Migrate `src/components/ui/Container.scss` - `.container` responsive max-width
   - Convert responsive max-width to Tailwind responsive utilities
 - [ ] Test container responsive behavior
 - [ ] Visual regression test - verify container responsive layout

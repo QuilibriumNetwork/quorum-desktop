@@ -89,7 +89,7 @@ const longPressHandlers = useLongPress({
 
 **Components to Keep:**
 
-- `src/components/MobileDrawer.tsx` - Bottom drawer with swipe gestures
+- `src/components/ui/MobileDrawer.tsx` - Bottom drawer with swipe gestures
 - `src/components/message/MessageActionsDrawer.tsx` - Mobile message actions
 - `src/components/message/EmojiPickerDrawer.tsx` - Mobile emoji picker
 
@@ -110,7 +110,7 @@ These components solve the **"mobile browser"** problem, not the **"native app"*
 
 ```tsx
 // Desktop Browser Context (React web app):
-import MobileDrawer from './MobileDrawer'; // Web-based drawer
+import MobileDrawer from './ui/MobileDrawer'; // Web-based drawer
 
 // Native App Context (React Native app):
 import { BottomSheet } from 'react-native-bottom-sheet'; // Platform-native drawer
@@ -243,7 +243,7 @@ const useDesktopHover = !isMobile && !isTouchDevice; // Desktop mice
 
    ```bash
    # These components stay - they serve mobile browser users
-   # src/components/MobileDrawer.tsx                    ✅ KEEP
+   # src/components/ui/MobileDrawer.tsx                    ✅ KEEP
    # src/components/message/MessageActionsDrawer.tsx   ✅ KEEP
    # src/components/message/EmojiPickerDrawer.tsx      ✅ KEEP
    ```
@@ -358,12 +358,12 @@ const useDesktopHover = !isMobile && !isTouchDevice; // Desktop mice
 
 - `src/hooks/useResponsiveLayout.ts` - Essential for all platforms
 - `src/hooks/useLongPress.ts` - Essential for touch devices
-- `src/components/ReactTooltip.tsx` - Essential for touch adaptation
-- `src/components/ClickToCopyContent.tsx` - Essential for touch devices
+- `src/components/ui/ReactTooltip.tsx` - Essential for touch adaptation
+- `src/components/ui/ClickToCopyContent.tsx` - Essential for touch devices
 
 ### Files to Keep (All Components):
 
-- `src/components/MobileDrawer.tsx` - Essential for mobile browser UX
+- `src/components/ui/MobileDrawer.tsx` - Essential for mobile browser UX
 - `src/components/message/MessageActionsDrawer.tsx` - Essential for mobile browser UX
 - `src/components/message/EmojiPickerDrawer.tsx` - Essential for mobile browser UX
 - Related SCSS files - Essential for mobile browser styling

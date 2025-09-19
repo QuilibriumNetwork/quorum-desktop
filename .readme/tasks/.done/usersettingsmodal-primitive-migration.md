@@ -101,8 +101,8 @@ import {
 } from '../primitives';
 
 // Exception imports (keep minimal):
-import ReactTooltip from '../ReactTooltip'; // For file uploads only
-import ClickToCopyContent from '../ClickToCopyContent'; // Complex components
+import ReactTooltip from '../ui/ReactTooltip'; // For file uploads only
+import ClickToCopyContent from '../ui/ClickToCopyContent'; // Complex components
 ```
 
 **Primitive Usage Stats:**

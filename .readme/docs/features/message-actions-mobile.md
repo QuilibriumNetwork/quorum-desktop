@@ -120,8 +120,8 @@ AppWithSearch (modal context level)
 ### New Files Created
 
 ```
-src/components/MobileDrawer.tsx - Common mobile drawer component
-src/components/MobileDrawer.scss - Shared drawer styling
+src/components/ui/MobileDrawer.tsx - Common mobile drawer component
+src/components/ui/MobileDrawer.scss - Shared drawer styling
 src/hooks/useLongPress.ts - Long-press gesture detection
 src/components/message/MessageActionsDrawer.tsx - Mobile drawer UI
 src/components/message/MessageActionsDrawer.scss - Drawer styling

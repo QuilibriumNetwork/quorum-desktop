@@ -3,8 +3,8 @@ import { Tooltip } from 'react-tooltip';
 import './ReactTooltip.scss';
 import 'react-tooltip/dist/react-tooltip.css';
 
-import { useTheme } from './primitives/theme';
-import { isTouchDevice } from '../utils/platform';
+import { useTheme } from '../primitives/theme';
+import { isTouchDevice } from '../../utils/platform';
 
 type ReactTooltipProps = {
   id: string;

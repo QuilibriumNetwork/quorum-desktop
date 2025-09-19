@@ -8,8 +8,7 @@ import {
   Callout,
   Icon,
 } from '@/components/primitives';
-import ThemeRadioGroup from '@/components/ThemeRadioGroup';
-import AccentColorSwitcher from '@/components/AccentColorSwitcher';
+import { ThemeRadioGroup, AccentColorSwitcher } from '@/components/ui';
 import { DevNavMenu } from '../DevNavMenu';
 import {
   ButtonExamples,

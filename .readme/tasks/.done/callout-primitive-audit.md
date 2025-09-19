@@ -131,7 +131,7 @@ Comprehensive audit of existing error/success/warning message implementations th
 
 ## 4. SUCCESS Messages (Copy to Clipboard)
 
-### **ClickToCopyContent** (`src/components/ClickToCopyContent.tsx`, `.native.tsx`)
+### **ClickToCopyContent** (`src/components/ui/ClickToCopyContent.tsx`, `.native.tsx`)
 **Current Implementation:** Uses tooltip to show "Copied!" success message
 **Callout Opportunity:** NO, LEAVE IT AS IT IS!
 

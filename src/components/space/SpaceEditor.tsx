@@ -19,8 +19,7 @@ import { useMessageDB } from '../context/useMessageDB';
 import { Channel, Permission } from '../../api/quorumApi';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
-import ClickToCopyContent from '../ClickToCopyContent';
-import ReactTooltip from '../ReactTooltip';
+import { ClickToCopyContent, ReactTooltip } from '../ui';
 import {
   useSpaceManagement,
   useRoleManagement,

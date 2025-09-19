@@ -74,7 +74,7 @@ class MessageDB {
 **Usage Locations**:
 
 - `src/components/context/ThemeProvider.tsx` - Theme preferences
-- `src/components/AccentColorSwitcher.tsx` - Accent color selection
+- `src/components/ui/AccentColorSwitcher.tsx` - Accent color selection
 - `src/i18n/i18n.ts` - Language preferences
 - Various components for temporary state
 

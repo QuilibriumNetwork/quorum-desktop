@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { t } from '@lingui/core/macro';
-import { Container, Icon, Text, Tooltip } from './primitives';
-import { useCopyToClipboard } from '../hooks';
-import { isTouchDevice } from '../utils/platform';
+import { Container, Icon, Text, Tooltip } from '../primitives';
+import { useCopyToClipboard } from '../../hooks';
+import { isTouchDevice } from '../../utils/platform';
 
 type ClickToCopyContentProps = {
   text: string;

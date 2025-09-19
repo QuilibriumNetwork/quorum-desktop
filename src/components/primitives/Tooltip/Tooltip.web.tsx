@@ -1,6 +1,6 @@
 import { cloneElement, isValidElement, ReactElement } from 'react';
 import { TooltipWebProps } from './types';
-import ReactTooltip from '../../ReactTooltip';
+import { ReactTooltip } from '../../ui';
 
 export function Tooltip({
   id,

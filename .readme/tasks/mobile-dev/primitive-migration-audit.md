@@ -101,7 +101,7 @@ This audit identifies components that still use div-based form elements or raw H
 
 #### Color Picker Divs
 
-- **File:** `src/components/AccentColorSwitcher.tsx`
+- **File:** `src/components/ui/AccentColorSwitcher.tsx`
 - **Pattern:** Color picker divs with onClick handlers
 - **Location:** Lines 34-42
 - **Migration:** Replace with `Button` primitive components with color styling
