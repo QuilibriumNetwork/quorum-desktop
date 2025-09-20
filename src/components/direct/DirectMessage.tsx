@@ -53,6 +53,7 @@ const DirectMessage: React.FC<{}> = () => {
   // State for message signing
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [nonRepudiable, setNonRepudiable] = useState<boolean>(true);
+  const [isDeletionInProgress, setIsDeletionInProgress] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
 
   // Extract business logic hooks but also get the original data for compatibility
@@ -156,6 +157,16 @@ const DirectMessage: React.FC<{}> = () => {
     async (message: string | object, inReplyTo?: string) => {
       if (!address) return; // Guard against undefined address
 
+      // Check if this is a deletion to prevent auto-scroll (for consistency with Channel.tsx)
+      const isDeletion =
+        typeof message === 'object' &&
+        'type' in message &&
+        message.type === 'remove-message';
+
+      if (isDeletion) {
+        setIsDeletionInProgress(true);
+      }
+
       const effectiveSkip = nonRepudiable ? false : skipSigning;
 
       if (typeof message === 'string') {
@@ -186,13 +197,18 @@ const DirectMessage: React.FC<{}> = () => {
         );
       }
 
+      // Clear deletion flag after a short delay
+      if (isDeletion) {
+        setTimeout(() => setIsDeletionInProgress(false), 300);
+      }
+
       // Auto-scroll to bottom after sending message (same logic as Channel.tsx)
       const isReaction =
         typeof message === 'object' &&
         'type' in message &&
         (message.type === 'reaction' || message.type === 'remove-reaction');
 
-      if (!isReaction) {
+      if (!isReaction && !isDeletion) {
         setTimeout(() => {
           messageListRef.current?.scrollToBottom();
         }, 100);
@@ -474,6 +490,7 @@ const DirectMessage: React.FC<{}> = () => {
                 setInReplyTo={composer.setInReplyTo}
                 members={members}
                 submitMessage={submit}
+                isDeletionInProgress={isDeletionInProgress}
                 fetchPreviousPage={() => {
                   fetchPreviousPage();
                 }}

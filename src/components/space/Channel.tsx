@@ -87,6 +87,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [showPinnedMessages, setShowPinnedMessages] = useState(false);
   const [showUserProfile, setShowUserProfile] = useState(false);
+  const [isDeletionInProgress, setIsDeletionInProgress] = useState(false);
   const [selectedUser, setSelectedUser] = useState<{
     address: string;
     displayName?: string;
@@ -137,6 +138,16 @@ const Channel: React.FC<ChannelProps> = ({
   // Handle message submission
   const handleSubmitMessage = useCallback(
     async (message: string | object, inReplyTo?: string) => {
+      // Check if this is a deletion to prevent auto-scroll
+      const isDeletion =
+        typeof message === 'object' &&
+        'type' in message &&
+        message.type === 'remove-message';
+
+      if (isDeletion) {
+        setIsDeletionInProgress(true);
+      }
+
       const effectiveSkip = space?.isRepudiable ? skipSigning : false;
       await submitChannelMessage(
         spaceId,
@@ -148,13 +159,18 @@ const Channel: React.FC<ChannelProps> = ({
         effectiveSkip
       );
 
-      // Only auto-scroll for actual messages (text/embed), not reactions
+      // Clear deletion flag after a short delay
+      if (isDeletion) {
+        setTimeout(() => setIsDeletionInProgress(false), 300);
+      }
+
+      // Only auto-scroll for actual messages (text/embed), not reactions or deletions
       const isReaction =
         typeof message === 'object' &&
         'type' in message &&
         (message.type === 'reaction' || message.type === 'remove-reaction');
 
-      if (!isReaction) {
+      if (!isReaction && !isDeletion) {
         setTimeout(() => {
           messageListRef.current?.scrollToBottom();
         }, 100);
@@ -571,6 +587,7 @@ const Channel: React.FC<ChannelProps> = ({
                 submitMessage={handleSubmitMessage}
                 kickUserAddress={kickUserAddress}
                 setKickUserAddress={setKickUserAddress}
+                isDeletionInProgress={isDeletionInProgress}
                 fetchPreviousPage={() => {
                   fetchPreviousPage();
                 }}

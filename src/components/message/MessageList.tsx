@@ -44,6 +44,7 @@ interface MessageListProps {
   roles: Role[];
   kickUserAddress?: string;
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
+  isDeletionInProgress?: boolean;
 }
 
 function useWindowSize() {
@@ -78,6 +79,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       roles,
       kickUserAddress,
       setKickUserAddress,
+      isDeletionInProgress,
     } = props;
 
     const [width, height] = useWindowSize();
@@ -184,6 +186,17 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               window.location.pathname + window.location.search
             );
           }, 1000);
+        } else {
+          // Message not found (possibly deleted) - mark as processed and remove hash
+          // This prevents infinite attempts to find a deleted message
+          setHasProcessedHash(true);
+          setTimeout(() => {
+            history.replaceState(
+              null,
+              '',
+              window.location.pathname + window.location.search
+            );
+          }, 100);
         }
       }
     }, [init, location.hash, scrollToMessage, highlightMessage, messageList]); // Added new dependencies
@@ -217,6 +230,11 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
             : messageList.length - 1
         }
         followOutput={(isAtBottom: boolean) => {
+          // Don't auto-scroll during deletions, even if user is at bottom
+          if (isDeletionInProgress) {
+            return false;
+          }
+          // Original logic for everything else
           if (isAtBottom) {
             return 'smooth';
           } else {
