@@ -1,11 +1,10 @@
 import { useCallback } from 'react';
 import * as linkify from 'linkifyjs';
 import { Message as MessageType, Sticker } from '../../../api/quorumApi';
+import { isYouTubeURL, extractYouTubeVideoId, YOUTUBE_URL_REGEX } from '../../../utils/youtubeUtils';
 
-// Regex patterns for content detection
-export const YTRegex = new RegExp(
-  /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu\.be))(\/(?:[\w\-]+\?v=|embed\/|live\/|v\/)?)([\w\-]{11})((?:\?|\&)\S+)?$/
-);
+// Legacy export for backward compatibility
+export const YTRegex = YOUTUBE_URL_REGEX;
 export const InviteRegex = new RegExp(
   /^((?:https?:)?\/\/?)?((?:www\.)?(?:qm\.one|app\.quorummessenger\.com))(\/(invite\/)?#(.*))$/
 );
@@ -128,14 +127,16 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         };
       }
 
-      // Check for YouTube videos
-      if (token.match(YTRegex)) {
-        const group = token.match(YTRegex)![6];
-        return {
-          type: 'youtube' as const,
-          key: `${messageId}-${lineIndex}-${tokenIndex}`,
-          videoId: group,
-        };
+      // Check for YouTube videos using centralized utilities
+      if (isYouTubeURL(token)) {
+        const videoId = extractYouTubeVideoId(token);
+        if (videoId) {
+          return {
+            type: 'youtube' as const,
+            key: `${messageId}-${lineIndex}-${tokenIndex}`,
+            videoId: videoId,
+          };
+        }
       }
 
       // Check for invite links

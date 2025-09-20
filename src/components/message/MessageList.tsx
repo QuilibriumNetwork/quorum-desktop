@@ -208,6 +208,12 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       }
     }, [location.hash]);
 
+    // Stable computeItemKey to prevent unnecessary re-mounts
+    const computeItemKey = React.useCallback((index: number) => {
+      const message = messageList[index];
+      return message?.messageId || `fallback-${index}`;
+    }, [messageList]);
+
     return (
       <Virtuoso
         ref={virtuoso}
@@ -242,6 +248,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           }
         }}
         totalCount={messageList.length}
+        computeItemKey={computeItemKey}
         itemContent={rowRenderer}
       />
     );

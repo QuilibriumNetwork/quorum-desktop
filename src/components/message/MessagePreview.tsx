@@ -4,6 +4,7 @@ import { Container, Text, FlexRow, FlexColumn, Spacer } from '../primitives';
 import moment from 'moment-timezone';
 import { t } from '@lingui/core/macro';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
+import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 
 interface MessagePreviewProps {
   message: MessageType;
@@ -70,15 +71,16 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
           {contentData.content.videoUrl?.startsWith(
             'https://www.youtube.com/embed'
           ) && (
-            <iframe
+            <YouTubeEmbed
               src={contentData.content.videoUrl}
               allow="autoplay; encrypted-media"
               className="rounded-lg youtube-embed"
               style={{
                 width: '100%',
                 maxWidth: 300,
-                height: 200,
+                aspectRatio: '16/9',
               }}
+              previewOnly={true}
             />
           )}
         </Container>
@@ -143,7 +145,7 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
                     key={tokenData.key}
                     className="message-preview-youtube"
                   >
-                    <iframe
+                    <YouTubeEmbed
                       src={
                         'https://www.youtube.com/embed/' +
                         tokenData.videoId
@@ -153,8 +155,9 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
                       style={{
                         width: '100%',
                         maxWidth: 300,
-                        height: 200,
+                        aspectRatio: '16/9',
                       }}
+                      previewOnly={true}
                     />
                   </Container>
                 );

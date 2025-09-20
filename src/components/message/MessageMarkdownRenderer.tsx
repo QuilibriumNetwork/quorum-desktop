@@ -1,23 +1,80 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { ScrollContainer } from '../primitives';
 import ClickToCopyContent from '../ui/ClickToCopyContent';
+import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import {
   extractCodeContent,
   shouldUseScrollContainer,
   getScrollContainerMaxHeight,
 } from '../../utils/codeFormatting';
+import {
+  isYouTubeURL,
+  convertToYouTubeEmbedURL,
+  replaceYouTubeURLsInText,
+  YOUTUBE_URL_DETECTION_REGEX
+} from '../../utils/youtubeUtils';
 
 interface MessageMarkdownRendererProps {
   content: string;
   className?: string;
 }
 
+
+// Stable processing functions outside component to prevent re-creation
+const processURLs = (text: string): string => {
+  // Replace non-YouTube URLs with markdown links, avoiding code blocks and existing markdown links
+  return text.replace(/^(?!.*```[\s\S]*?```.*$)(?!.*\[[^\]]*\]\([^)]*\).*$)(.*)$/gm, (line) => {
+    // Only process lines that don't contain code blocks or existing markdown links
+    if (line.includes('```') || line.includes('](')) {
+      return line;
+    }
+
+    // Replace non-YouTube URLs with markdown links
+    return line.replace(/https?:\/\/[^\s<>"{}|\\^`[\]]+/g, (url) => {
+      return isYouTubeURL(url) ? url : `[${url}](${url})`;
+    });
+  });
+};
+
+const processStandaloneYouTubeUrls = (text: string): string => {
+  return replaceYouTubeURLsInText(text, (url) => {
+    // Check if URL is on its own line (standalone)
+    const lines = text.split('\n');
+    const isStandalone = lines.some(line => line.trim() === url);
+
+    if (isStandalone) {
+      return `<div data-youtube-url="${url}" class="youtube-placeholder"></div>`;
+    }
+    return url; // Keep inline YouTube URLs as-is for link processing
+  });
+};
+
+// Reusable copy button component - outside component to prevent re-creation
+const CopyButton = ({ codeContent }: { codeContent: string }) => (
+  <div className="absolute top-1 right-1 w-8 h-8 z-50">
+    <ClickToCopyContent
+      text={codeContent}
+      className="w-full h-full flex items-center justify-center"
+      iconSize="sm"
+      iconClassName="text-subtle hover:text-main"
+      tooltipLocation="top"
+      copyOnContentClick={true}
+    >
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="w-4 h-4"></div>
+      </div>
+    </ClickToCopyContent>
+  </div>
+);
+
 export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = ({
   content,
   className = '',
 }) => {
+
   // Convert H1 and H2 headers to H3 since only H3 is allowed
   const convertHeadersToH3 = (text: string): string => {
     // Don't convert headers inside code blocks
@@ -59,27 +116,19 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     return text;
   };
 
-  const processedContent = fixUnclosedCodeBlocks(convertHeadersToH3(content));
-  // Reusable copy button component
-  const CopyButton = ({ codeContent }: { codeContent: string }) => (
-    <div className="absolute top-1 right-1 w-8 h-8 z-50">
-      <ClickToCopyContent
-        text={codeContent}
-        className="w-full h-full flex items-center justify-center"
-        iconSize="sm"
-        iconClassName="text-subtle hover:text-main"
-        tooltipLocation="top"
-        copyOnContentClick={true}
-      >
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="w-4 h-4"></div>
-        </div>
-      </ClickToCopyContent>
-    </div>
-  );
+  // Simplified processing pipeline with stable dependencies
+  const processedContent = useMemo(() => {
+    return fixUnclosedCodeBlocks(
+      convertHeadersToH3(
+        processURLs(
+          processStandaloneYouTubeUrls(content)
+        )
+      )
+    );
+  }, [content]); // Only content as dependency since functions are now stable
 
-  // Custom component overrides for markdown elements
-  const components = {
+  // Memoize components to prevent re-creation and YouTube component remounting
+  const components = useMemo(() => ({
     // Disable most headers but allow H3
     h1: () => null,
     h2: () => null,
@@ -92,9 +141,43 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     h5: () => null,
     h6: () => null,
 
-    // Disable markdown links for now (keep existing link handling)
-    // Just render the text content without link functionality
-    a: ({ children }: any) => <span>{children}</span>,
+    // Handle links - render YouTube embeds for YouTube URLs, regular links for others
+    a: ({ href, children, ...props }: any) => {
+      if (href && isYouTubeURL(href)) {
+        const embedUrl = convertToYouTubeEmbedURL(href);
+        if (embedUrl) {
+          return (
+            <YouTubeEmbed
+              src={embedUrl}
+              className="rounded-lg youtube-embed"
+              style={{
+                width: '100%',
+                maxWidth: 560,
+                aspectRatio: '16/9',
+              }}
+            />
+          );
+        }
+      }
+
+      // For non-YouTube links, render as regular clickable links
+      if (href) {
+        return (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent hover:underline"
+            {...props}
+          >
+            {children}
+          </a>
+        );
+      }
+
+      // If no href, just render as plain text
+      return <span>{children}</span>;
+    },
 
     // Enhanced code block rendering with scroll and copy functionality
     pre: ({ children, ...props }: any) => {
@@ -219,6 +302,37 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       </p>
     ),
 
+    // Handle YouTube placeholder divs
+    div: ({ children, className, 'data-youtube-url': youtubeUrl, ...props }: any) => {
+      if (className === 'youtube-placeholder' && youtubeUrl) {
+        if (isYouTubeURL(youtubeUrl)) {
+          const embedUrl = convertToYouTubeEmbedURL(youtubeUrl);
+          if (embedUrl) {
+            return (
+              <div className="my-2">
+                <YouTubeEmbed
+                  src={embedUrl}
+                  className="rounded-lg youtube-embed"
+                  style={{
+                    width: '100%',
+                    maxWidth: 560,
+                    aspectRatio: '16/9',
+                  }}
+                />
+              </div>
+            );
+          }
+        }
+      }
+
+      // For regular divs, render normally
+      return (
+        <div className={className} {...props}>
+          {children}
+        </div>
+      );
+    },
+
     // Style strikethrough
     del: ({ children, ...props }: any) => (
       <del className="line-through opacity-70" {...props}>
@@ -239,12 +353,14 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         {children}
       </em>
     ),
-  };
+
+  }), []); // Empty dependency array since components don't depend on props/state
 
   return (
     <div className={`break-words ${className || ''}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
         components={components}
       >
         {processedContent}

@@ -23,6 +23,14 @@
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 
+  /* Prevent re-rendering issues */
+  will-change: auto;
+  transform: translateZ(0); /* Force hardware acceleration for smooth scrolling */
+
+  /* Stable positioning to prevent layout shift */
+  position: relative;
+  contain: layout style paint;
+
   /* Below 1024px: enforce max-width to prevent full-width videos */
   @media (max-width: 1023px) {
     max-width: min(
@@ -62,6 +70,22 @@
     @media (max-width: 480px) {
       height: calc(min(300px, 100vw - 60px) * 9 / 16);
     }
+  }
+}
+
+/* YouTube facade-specific styles */
+.youtube-facade {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.02);
+  }
+
+  /* Thumbnail loading optimization */
+  img {
+    will-change: auto;
+    backface-visibility: hidden;
   }
 }
 

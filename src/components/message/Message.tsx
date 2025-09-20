@@ -32,6 +32,7 @@ import './Message.scss';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../utils';
+import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { useMobile } from '../context/MobileProvider';
 import {
   useMessageActions,
@@ -73,7 +74,7 @@ type MessageProps = {
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
-export const Message = ({
+export const Message = React.memo(({
   customEmoji,
   stickers,
   message,
@@ -520,14 +521,14 @@ export const Message = ({
                             key={tokenData.key}
                             className="message-post-content"
                           >
-                            <iframe
+                            <YouTubeEmbed
                               src={
                                 'https://www.youtube.com/embed/' +
                                 tokenData.videoId
                               }
                               allow="autoplay; encrypted-media"
                               className="rounded-lg youtube-embed"
-                            ></iframe>
+                            />
                           </Container>
                         );
                       }
@@ -577,11 +578,11 @@ export const Message = ({
                     {contentData.content.videoUrl?.startsWith(
                       'https://www.youtube.com/embed'
                     ) && (
-                      <iframe
+                      <YouTubeEmbed
                         src={contentData.content.videoUrl}
                         allow="autoplay; encrypted-media"
                         className="rounded-lg youtube-embed"
-                      ></iframe>
+                      />
                     )}
                     {contentData.content.imageUrl && (
                       <img
@@ -644,4 +645,18 @@ export const Message = ({
       )}
     </FlexColumn>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison function to prevent unnecessary re-renders
+  // Only re-render if these specific props change
+  const shouldRerender = (
+    prevProps.message.messageId !== nextProps.message.messageId ||
+    prevProps.emojiPickerOpen !== nextProps.emojiPickerOpen ||
+    prevProps.hoverTarget !== nextProps.hoverTarget ||
+    prevProps.height !== nextProps.height ||
+    prevProps.kickUserAddress !== nextProps.kickUserAddress ||
+    JSON.stringify(prevProps.message.reactions) !== JSON.stringify(nextProps.message.reactions) ||
+    prevProps.message.isPinned !== nextProps.message.isPinned
+  );
+
+  return !shouldRerender;
+});
