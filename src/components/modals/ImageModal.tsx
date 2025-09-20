@@ -20,17 +20,19 @@ const ImageModal: React.FC<ImageModalProps> = ({
       visible={visible}
       onClose={onClose}
       hideClose={true}
-      className="bg-transparent"
+      className="bg-transparent overflow-hidden"
       noPadding={true}
+      size="full"
     >
-      <FlexCenter className="relative">
+      <FlexCenter className="relative h-full w-full">
         <img
           src={imageUrl}
           style={{
-            maxHeight: '80vh',
+            maxHeight: '90vh',
+            maxWidth: '90vw',
             width: 'auto',
             height: 'auto',
-            maxWidth: '100%',
+            objectFit: 'contain',
           }}
           className="rounded-lg"
         />

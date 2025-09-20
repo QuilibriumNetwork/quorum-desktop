@@ -122,15 +122,16 @@ export const compressImage = async (
 
     // Handle dimension and cropping options
     if (maxWidth && maxHeight) {
-      // Both dimensions specified
-      compressorOptions.width = maxWidth;
-      compressorOptions.height = maxHeight;
-
-      // Use resize mode based on cropping preference
       if (options.cropToFit) {
+        // Fixed dimensions with cropping - set exact size and crop to fill
+        compressorOptions.width = maxWidth;
+        compressorOptions.height = maxHeight;
         compressorOptions.resize = 'cover'; // Crop to fill exact dimensions
-      } else if (options.maintainAspectRatio) {
-        compressorOptions.resize = 'contain'; // Fit within dimensions, maintain ratio
+      } else {
+        // Maintain aspect ratio - use max constraints, not fixed dimensions
+        compressorOptions.maxWidth = maxWidth;
+        compressorOptions.maxHeight = maxHeight;
+        // Don't set resize mode - let compressorjs handle aspect ratio naturally
       }
     } else {
       // Single dimension - compressorjs will maintain aspect ratio automatically
