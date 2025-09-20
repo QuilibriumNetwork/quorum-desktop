@@ -105,6 +105,75 @@ export const LazyIframe: React.FC<{
 - [ ] Add TypeScript definitions
 - [ ] Write unit tests for lazy loading components
 
+#### Detailed Placeholder Design Specifications
+
+**LazyImage Placeholder States:**
+1. **Loading Skeleton**: Animated shimmer effect matching image dimensions
+   - Gray gradient animation (surface-4 → surface-6 → surface-4)
+   - Maintains aspect ratio of target image when known
+   - Default 16:9 ratio for unknown dimensions
+   - Rounded corners matching current image styling (`rounded-lg`)
+   - CSS-only animations for 60fps performance
+
+2. **Error State**: Clean fallback when image fails to load
+   - Icon placeholder (exclamation-triangle with) (use Icon primitive)
+   - Background color (surface-4)
+   - "Image unavailable" text for accessibility (use lingui sintax) class: text-subtle
+   - Same dimensions as intended image
+
+3. **Transition**: Smooth fade-in when actual image loads
+   - 200ms opacity transition
+   - No layout shift (preserve placeholder dimensions)
+   - Maintain click handlers for image modal functionality
+
+**LazyIframe (YouTube) Loading Logic:**
+1. **Immediate Rendering**: Fresh user messages (< 10 seconds old)
+   - User just posted message with YouTube link → Render iframe immediately
+   - Preserves expected UX for user's own fresh posts
+   - No lazy loading for sender's recent messages
+
+2. **Lazy Loading**: Existing/older messages and other users' content
+   - Messages older than 10 seconds
+   - Messages from other users
+   - Messages outside initial viewport
+
+3. **YouTube Placeholder States**:
+   - **Static Video Placeholder**: 
+     - Generic video play icon (text-subtle) on surface-4 background (use Icon primitive)
+     - rounded borders matching current video embed styling (`rounded-lg`)
+     - responsive like current video embed styling
+     - "YouTube Video" accessibility label
+     - 16:9 aspect ratio maintained (`youtube-embed` class)
+     - CSS-only styling, no thumbnail fetching
+
+   - **Loading State**: When lazy loading triggers
+     - Replace placeholder with actual YouTube iframe
+
+**Implementation Logic in Message.tsx:**
+```tsx
+if (tokenData.type === 'youtube') {
+  const isFreshUserMessage = (
+    message.content.senderId === user.currentPasskeyInfo!.address &&
+    Date.now() - new Date(message.createdDate).getTime() < 10000
+  );
+
+  if (isFreshUserMessage) {
+    // Immediate embed for fresh user posts
+    return <iframe src={...} className="rounded-lg youtube-embed" />;
+  } else {
+    // Lazy load for everything else
+    return <LazyIframe src={...} className="rounded-lg youtube-embed" />;
+  }
+}
+```
+
+**Performance Considerations:**
+- Placeholder rendering must be <16ms (1 frame at 60fps)
+- No additional network requests for placeholder content
+- Maintain scrolling performance during skeleton animations
+- Preserve existing image click/zoom functionality
+- Zero bundle size increase (native APIs only)
+
 ### Phase 2: Web Integration (Week 1)
 - [ ] Update `Message.tsx` to use lazy loading components
 - [ ] Update `MessagePreview.tsx` to use lazy loading components
@@ -268,4 +337,4 @@ src/
 **Dependencies**: None
 **Blocking**: None
 
-**Last Updated**: 2025-01-19
+**Last Updated**: 2025-01-20 - Added detailed placeholder specifications and immediate vs lazy loading logic for YouTube embeds
