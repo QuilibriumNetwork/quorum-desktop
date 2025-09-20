@@ -18,6 +18,31 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   content,
   className = '',
 }) => {
+  // Convert H1 and H2 headers to H3 since only H3 is allowed
+  const convertHeadersToH3 = (text: string): string => {
+    // Don't convert headers inside code blocks
+    const codeBlockRegex = /```[\s\S]*?```/g;
+    const codeBlocks: string[] = [];
+
+    // Extract code blocks and replace with placeholders
+    let textWithPlaceholders = text.replace(codeBlockRegex, (match, index) => {
+      codeBlocks.push(match);
+      return `__CODE_BLOCK_${codeBlocks.length - 1}__`;
+    });
+
+    // Convert H1 and H2 to H3
+    textWithPlaceholders = textWithPlaceholders
+      .replace(/^##\s/gm, '### ')  // H2 to H3
+      .replace(/^#\s/gm, '### ');  // H1 to H3
+
+    // Restore code blocks
+    codeBlocks.forEach((block, index) => {
+      textWithPlaceholders = textWithPlaceholders.replace(`__CODE_BLOCK_${index}__`, block);
+    });
+
+    return textWithPlaceholders;
+  };
+
   // Fix unclosed code blocks by adding missing closing ```
   const fixUnclosedCodeBlocks = (text: string): string => {
     // Split by ``` to analyze the structure
@@ -34,7 +59,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     return text;
   };
 
-  const processedContent = fixUnclosedCodeBlocks(content);
+  const processedContent = fixUnclosedCodeBlocks(convertHeadersToH3(content));
   // Reusable copy button component
   const CopyButton = ({ codeContent }: { codeContent: string }) => (
     <div className="absolute top-1 right-1 w-8 h-8 z-50">
@@ -55,10 +80,14 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
   // Custom component overrides for markdown elements
   const components = {
-    // Disable headers (H1-H6) as per requirements
+    // Disable most headers but allow H3
     h1: () => null,
     h2: () => null,
-    h3: () => null,
+    h3: ({ children, ...props }: any) => (
+      <h3 className="text-lg font-bold text-subtle mt-4 mb-2 first:mt-0" {...props}>
+        {children}
+      </h3>
+    ),
     h4: () => null,
     h5: () => null,
     h6: () => null,

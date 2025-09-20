@@ -25,6 +25,7 @@ const markdownPatterns = [
   /`[^`]+`/,              // Inline code `code`
   /```[\s\S]*?```/,       // Closed code blocks ```code```
   /```[\s\S]*$/,          // Unclosed code blocks ```code (at end)
+  /^#{1,3}\s/m,           // H1, H2, H3 headers (all converted to H3)
   /^>\s/m,                // Blockquotes > text
   /^\s*[-*+]\s/m,         // Unordered lists - item
   /^\s*\d+\.\s/m,         // Ordered lists 1. item
