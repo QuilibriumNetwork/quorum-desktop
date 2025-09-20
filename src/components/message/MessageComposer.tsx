@@ -167,7 +167,7 @@ export const MessageComposer = forwardRef<
         <FlexRow
           className={`w-full items-center gap-2 ml-[11px] my-2 p-[6px] rounded-lg bg-chat-input ${inReplyTo ? 'rounded-t-none mt-0' : ''}`}
         >
-          <Tooltip id="attach-image" content={t`attach image`} place="top">
+          <Tooltip id="attach-image" content={t`attach image`} place="top" showOnTouch={false}>
             <div {...getRootProps()}>
               <input {...getInputProps()} />
               <Button
@@ -207,7 +207,7 @@ export const MessageComposer = forwardRef<
           />
 
           {hasStickers && (
-            <Tooltip id="add-sticker" content={t`add sticker`} place="top">
+            <Tooltip id="add-sticker" content={t`add sticker`} place="top" showOnTouch={false}>
               <Button
                 type="unstyled"
                 className="w-8 h-8 p-0 rounded-md cursor-pointer flex items-center justify-center flex-shrink-0 text-surface-9 hover:text-main"
@@ -227,7 +227,7 @@ export const MessageComposer = forwardRef<
                   : t`Messages are signed!`
               }
               place="top"
-              showOnTouch={true}
+              showOnTouch={false}
               autoHideAfter={1500}
             >
               <Button

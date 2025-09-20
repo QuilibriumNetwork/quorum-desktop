@@ -17,6 +17,26 @@ interface UseMessageFormattingOptions {
   onImageClick: (imageUrl: string) => void;
 }
 
+// Detect if text contains markdown patterns
+const markdownPatterns = [
+  /\*\*[^*]+\*\*/,        // Bold **text**
+  /\*[^*]+\*/,            // Italic *text*
+  /~~[^~]+~~/,            // Strikethrough ~~text~~
+  /`[^`]+`/,              // Inline code `code`
+  /```[\s\S]*?```/,       // Closed code blocks ```code```
+  /```[\s\S]*$/,          // Unclosed code blocks ```code (at end)
+  /^>\s/m,                // Blockquotes > text
+  /^\s*[-*+]\s/m,         // Unordered lists - item
+  /^\s*\d+\.\s/m,         // Ordered lists 1. item
+  /\|[^|]+\|/,            // Tables |col|
+  /^---+$/m,              // Horizontal rule ---
+];
+
+function hasMarkdownPatterns(text: string): boolean {
+  if (!text) return false;
+  return markdownPatterns.some(pattern => pattern.test(text));
+}
+
 export function useMessageFormatting(options: UseMessageFormattingOptions) {
   const { message, stickers, mapSenderToUser, onImageClick } = options;
 
@@ -39,6 +59,17 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
     [message.mentions]
   );
 
+  // Check if message content should be rendered with markdown
+  const shouldUseMarkdown = useCallback(() => {
+    if (message.content.type !== 'post') return false;
+
+    const text = Array.isArray(message.content.text)
+      ? message.content.text.join('\n')
+      : message.content.text;
+
+    return hasMarkdownPatterns(text);
+  }, [message]);
+
   // Get processed content data for rendering
   const getContentData = useCallback(() => {
     if (message.content.type === 'post') {
@@ -50,6 +81,10 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         type: 'post' as const,
         content: contentArray,
         messageId: message.messageId,
+        // Add full text for markdown rendering
+        fullText: Array.isArray(message.content.text)
+          ? message.content.text.join('\n')
+          : message.content.text,
       };
     } else if (message.content.type === 'embed') {
       return {
@@ -139,6 +174,7 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
     // Utilities
     isMentioned,
     handleImageClick,
+    shouldUseMarkdown,
 
     // Regex patterns
     YTRegex,

@@ -90,10 +90,24 @@ Implement markdown rendering support for messages in the chat system to enable u
    - Apply simple monospace styling with background
    - Ensure mobile compatibility
 
+4. **Enhanced code block features**
+   - **Auto-scrolling:** Wrap code blocks in `ScrollContainer` when:
+     - Line count > 10 lines
+     - Character count > 500 characters
+     - Rendered height > 200px
+   - **Copy functionality:** Integrate `ClickToCopyContent` component:
+     - Always show for code blocks (``` ```)
+     - Show for inline code > 20 characters
+     - Display copy success feedback
+   - **Responsive sizing:** Adjust ScrollContainer maxHeight based on screen size
+   - **Visual indicators:** Show scroll hints when content overflows
+
 **Acceptance Criteria:**
 - Users can format inline code with backticks
 - Users can format code blocks with triple backticks
 - Simple monospace styling with background (no syntax highlighting)
+- Long code blocks automatically get scrollable container
+- All code snippets have copy-to-clipboard functionality
 - Styling matches existing app theme
 
 ### Phase 2: Core Markdown (Week 2)
@@ -198,7 +212,7 @@ Implement markdown rendering support for messages in the chat system to enable u
 
 ### Component Configuration
 ```typescript
-// Component overrides to disable unsupported features
+// Component overrides to disable unsupported features and enhance code blocks
 const components = {
   // Disable headers
   h1: () => null,
@@ -208,7 +222,36 @@ const components = {
   h5: () => null,
   h6: () => null,
   // Disable markdown links (keep existing link handling)
-  a: ({ children }) => <span>{children}</span>
+  a: ({ children }) => <span>{children}</span>,
+  // Enhanced code block rendering
+  pre: ({ children }) => {
+    const codeContent = extractCodeContent(children);
+    const shouldScroll = codeContent.length > 500 || countLines(codeContent) > 10;
+
+    return (
+      <ClickToCopyContent content={codeContent}>
+        {shouldScroll ? (
+          <ScrollContainer maxHeight="200px">
+            <pre className="code-block">{children}</pre>
+          </ScrollContainer>
+        ) : (
+          <pre className="code-block">{children}</pre>
+        )}
+      </ClickToCopyContent>
+    );
+  },
+  // Enhanced inline code rendering
+  code: ({ children }) => {
+    const content = String(children);
+    if (content.length > 20) {
+      return (
+        <ClickToCopyContent content={content} inline>
+          <code className="inline-code">{children}</code>
+        </ClickToCopyContent>
+      );
+    }
+    return <code className="inline-code">{children}</code>;
+  }
 };
 ```
 
@@ -296,4 +339,4 @@ const components = {
 
 **Last Updated:** 2025-09-20
 **Next Review:** Weekly during implementation
-**Dependencies:** Prism.js (existing), React message system
+**Dependencies:** React message system, ScrollContainer (existing), ClickToCopyContent (existing)

@@ -1,4 +1,4 @@
-Convert this component ($ARGUMENTS) to use our src/components/primitives (docs:.readme\docs\features\primitives ). 
+Convert this component ($ARGUMENTS) to use our src/components/primitives (docs:.readme\docs\features\primitives). 
 
 Priority:
 

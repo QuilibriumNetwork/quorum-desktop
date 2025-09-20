@@ -42,6 +42,7 @@ import {
 } from '../../hooks';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import MessageActions from './MessageActions';
+import { MessageMarkdownRenderer } from './MessageMarkdownRenderer';
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -480,6 +481,16 @@ export const Message = ({
               if (!contentData) return null;
 
               if (contentData.type === 'post') {
+                // Check if we should use markdown rendering
+                if (formatting.shouldUseMarkdown()) {
+                  return (
+                    <Container className="message-post-content break-words">
+                      <MessageMarkdownRenderer content={contentData.fullText} />
+                    </Container>
+                  );
+                }
+
+                // Fall back to the original token-based rendering
                 return contentData.content.map((c, i) => (
                   <Container
                     key={contentData.messageId + '-' + i}
