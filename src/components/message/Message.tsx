@@ -531,6 +531,10 @@ export const Message = ({
                       }
 
                       if (tokenData.type === 'link') {
+                        const truncatedText = tokenData.text.length > 50
+                          ? tokenData.text.substring(0, 50) + '...'
+                          : tokenData.text;
+
                         return (
                           <React.Fragment key={tokenData.key}>
                             <Text
@@ -539,7 +543,7 @@ export const Message = ({
                               target="_blank"
                               referrerPolicy="no-referrer"
                             >
-                              {tokenData.text}
+                              {truncatedText}
                             </Text>{' '}
                           </React.Fragment>
                         );
