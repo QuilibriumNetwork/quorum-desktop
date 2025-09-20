@@ -1,9 +1,8 @@
 // This is for mobile users using the web app, for the native app we have /primitives/Modal/Modal.native.tsx
 
 import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/core/macro';
+import { Title, Button } from '../primitives';
 import './MobileDrawer.scss';
 
 export interface MobileDrawerProps {
@@ -134,30 +133,34 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Swipe handle indicator */}
-      {enableSwipeToClose && (
-        <div className="mobile-drawer__handle" aria-hidden="true" />
-      )}
+      {/* Header area with handle and close button */}
+      <div className="mobile-drawer__header-area">
+        {/* Swipe handle indicator */}
+        {enableSwipeToClose && (
+          <div className="mobile-drawer__handle" aria-hidden="true" />
+        )}
 
-      {/* Header */}
-      {(title || showCloseButton) && (
-        <div className="mobile-drawer__header">
-          {title && <h2 className="mobile-drawer__title">{title}</h2>}
+        {/* Header row with title and close button */}
+        <div className="mobile-drawer__header-row">
+          <div className="mobile-drawer__title-area">
+            {title && <Title size="sm">{title}</Title>}
+          </div>
+
           {showCloseButton && (
-            <button
-              className="mobile-drawer__close"
+            <Button
+              type="unstyled"
               onClick={handleClose}
-              aria-label={t`Close`}
-            >
-              <FontAwesomeIcon icon={faTimes} />
-            </button>
+              iconName="times"
+              iconOnly
+              className="mobile-drawer__close-btn"
+            />
           )}
         </div>
-      )}
+      </div>
 
       {/* Content */}
       <div
-        className={`mobile-drawer__content ${!(title || showCloseButton) ? 'mobile-drawer__content--no-header' : ''}`}
+        className={`mobile-drawer__content ${!title ? 'mobile-drawer__content--no-header' : ''}`}
       >
         {children}
       </div>

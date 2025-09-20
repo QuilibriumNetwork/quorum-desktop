@@ -157,7 +157,7 @@ export const MobileProvider: React.FC<MobileProviderProps> = ({ children }) => {
     <MobileContext.Provider value={contextValue}>
       {/* Render mobile drawers with z-[9999] for proper stacking */}
       {state.messageActionsDrawer.isOpen && state.messageActionsDrawer.data && (
-        <div className="fixed inset-0 z-[9999] flex items-end justify-center bg-overlay backdrop-blur">
+        <div className="fixed inset-0 z-[9999] flex items-end bg-overlay backdrop-blur">
           <MessageActionsDrawer
             isOpen={!state.messageActionsDrawer.isClosing}
             message={state.messageActionsDrawer.data.message}
@@ -165,10 +165,14 @@ export const MobileProvider: React.FC<MobileProviderProps> = ({ children }) => {
             onReply={state.messageActionsDrawer.data.onReply}
             onCopyLink={state.messageActionsDrawer.data.onCopyLink}
             onDelete={state.messageActionsDrawer.data.onDelete}
+            onPin={state.messageActionsDrawer.data.onPin}
             onReaction={state.messageActionsDrawer.data.onReaction}
             onMoreReactions={state.messageActionsDrawer.data.onMoreReactions}
             canDelete={state.messageActionsDrawer.data.canDelete}
+            canPinMessages={state.messageActionsDrawer.data.canPinMessages}
             userAddress={state.messageActionsDrawer.data.userAddress}
+            onDeleteWithConfirmation={state.messageActionsDrawer.data.onDeleteWithConfirmation}
+            onPinWithConfirmation={state.messageActionsDrawer.data.onPinWithConfirmation}
           />
           <div
             className="fixed inset-0 -z-10"
@@ -178,7 +182,7 @@ export const MobileProvider: React.FC<MobileProviderProps> = ({ children }) => {
       )}
 
       {state.emojiPickerDrawer.isOpen && state.emojiPickerDrawer.data && (
-        <div className="fixed inset-0 z-[9999] flex items-end justify-center bg-overlay backdrop-blur">
+        <div className="fixed inset-0 z-[9999] flex items-end bg-overlay backdrop-blur">
           <EmojiPickerDrawer
             isOpen={!state.emojiPickerDrawer.isClosing}
             onClose={handleCloseEmojiPicker}

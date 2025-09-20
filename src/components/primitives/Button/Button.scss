@@ -96,6 +96,11 @@
 .btn-unstyled {
   @apply cursor-pointer transition duration-300 select-none;
   // No padding, borders, or background - allows full className control
+
+  // Compact variant for list-style layouts
+  &.btn-list-item {
+    @apply py-2 px-3; // Reduced padding for list items
+  }
 }
 
 /* === WHITE BUTTON VARIANTS === */
@@ -134,11 +139,16 @@
   .quorum-button-icon-element {
     @apply mr-2;
   }
+
+  // Reduced spacing for compact buttons
+  &.btn-compact .quorum-button-icon-element {
+    @apply mr-1;
+  }
 }
 
 // Button sizes
 .btn-compact {
-  @apply py-0 px-1 text-xs;
+  @apply py-1 px-2 text-xs; // Improved spacing from py-0 px-1
 }
 
 .btn-small {

@@ -23,69 +23,53 @@
   }
 }
 
-.mobile-drawer__handle {
-  width: 40px;
-  height: 4px;
-  background: var(--surface-5);
-  border-radius: 0.125rem;
-  margin: 12px auto 0 auto;
+.mobile-drawer__header-area {
   flex-shrink: 0;
-  opacity: 0.6;
+  padding-bottom: 8px;
 }
 
-.mobile-drawer__header {
+.mobile-drawer__header-row {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 12px 16px 8px 16px;
-  flex-shrink: 0;
-
-  // When only close button exists, align to the right
-  &:has(.mobile-drawer__close:only-child) {
-    justify-content: flex-end;
-  }
-}
-
-.mobile-drawer__title {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-text-strong);
-  margin: 0;
-}
-
-.mobile-drawer__close {
-  background: none;
-  border: none;
-  color: var(--color-text-main);
-  cursor: pointer;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  transition: all 0.2s ease;
-  border-radius: 50%;
+  padding: 0 16px;
 
-  &:hover {
-    color: var(--color-text-strong);
-    background: var(--surface-2);
-    transform: scale(1.1);
+  // Only add min-height when there's a title
+  &:has(.mobile-drawer__title-area:not(:empty)) {
+    min-height: 32px;
   }
+}
 
-  &:active {
-    transform: scale(0.95);
-  }
+.mobile-drawer__title-area {
+  flex: 1;
+}
+
+.mobile-drawer__handle {
+  width: 36px;
+  height: 4px;
+  background: var(--surface-4);
+  border-radius: 100px;
+  margin: 8px auto 12px auto;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.mobile-drawer__close-btn {
+  position: absolute;
+  color: var(--color-text-muted);
+  top: 20px;
+  right: 0px;
 }
 
 .mobile-drawer__content {
   flex: 1;
   overflow: hidden;
-  padding: 8px 12px 12px 12px;
+  padding: 0;
 }
 
 // Adjust content padding when only handle is present
 .mobile-drawer__content--no-header {
-  padding-top: 12px;
+  padding-top: 0;
 }
 
 // Animations
@@ -126,13 +110,13 @@
   }
 }
 
-// For tablets and larger screens, add constraints
-@media (min-width: 768px) {
-  .mobile-drawer {
-    max-width: 500px;
-    margin: 0 auto;
-  }
-}
+// For tablets and larger screens, keep full width for touch interfaces
+// @media (min-width: 768px) {
+//   .mobile-drawer {
+//     max-width: 500px;
+//     margin: 0 auto;
+//   }
+// }
 
 // High contrast mode support
 @media (prefers-contrast: high) {

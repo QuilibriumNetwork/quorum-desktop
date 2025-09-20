@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, Modal, Container, Text, FlexRow, Spacer, ScrollContainer, Callout } from '../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
+import { isTouchDevice } from '../../utils/platform';
 
 export interface ConfirmationModalProps {
   visible: boolean;
@@ -69,8 +70,8 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
           </>
         )}
 
-        {/* PROTIP section */}
-        {showProtip && protipAction && (
+        {/* PROTIP section - hide shift key tip on touch devices */}
+        {showProtip && protipAction && !isTouchDevice() && (
           <>
             <Callout variant="info" size="sm">
               <Trans>

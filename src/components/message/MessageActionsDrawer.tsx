@@ -1,16 +1,8 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faReply,
-  faLink,
-  faTrash,
-  faFaceSmileBeam,
-} from '@fortawesome/free-solid-svg-icons';
 import { t } from '@lingui/core/macro';
 import { Message as MessageType } from '../../api/quorumApi';
 import { MobileDrawer } from '../ui';
-import QuickReactionButton from './QuickReactionButton';
-import ActionMenuItem from './ActionMenuItem';
+import { Button, Icon, Text } from '../primitives';
 import './MessageActionsDrawer.scss';
 
 export interface MessageActionsDrawerProps {
@@ -20,10 +12,14 @@ export interface MessageActionsDrawerProps {
   onReply: () => void;
   onCopyLink: () => void;
   onDelete?: () => void;
+  onPin?: () => void;
   onReaction: (emoji: string) => void;
   onMoreReactions: () => void;
   canDelete?: boolean;
+  canPinMessages?: boolean;
   userAddress: string;
+  onDeleteWithConfirmation?: () => void;
+  onPinWithConfirmation?: () => void;
 }
 
 /**
@@ -37,12 +33,23 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
   onReply,
   onCopyLink,
   onDelete,
+  onPin,
   onReaction,
   onMoreReactions,
   canDelete = false,
+  canPinMessages = false,
   userAddress,
+  onDeleteWithConfirmation,
+  onPinWithConfirmation,
 }) => {
   const quickReactions = ['❤️', '👍', '🔥', '😂', '😢', '😮'];
+
+  // Check if the user has reacted with a specific emoji
+  const hasReacted = (emoji: string) => {
+    return message.reactions
+      ?.find((r) => r.emojiId === emoji)
+      ?.memberIds.includes(userAddress) || false;
+  };
 
   const handleReaction = (emoji: string) => {
     onReaction(emoji);
@@ -60,8 +67,23 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
   };
 
   const handleDelete = () => {
-    if (onDelete) {
+    // Use the confirmation callback if provided, otherwise use direct delete
+    if (onDeleteWithConfirmation) {
+      onDeleteWithConfirmation();
+      onClose();
+    } else if (onDelete) {
       onDelete();
+      onClose();
+    }
+  };
+
+  const handlePin = () => {
+    // Use the confirmation callback if provided, otherwise use direct pin
+    if (onPinWithConfirmation) {
+      onPinWithConfirmation();
+      onClose();
+    } else if (onPin) {
+      onPin();
       onClose();
     }
   };
@@ -76,51 +98,84 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       ariaLabel={t`Message actions`}
-      showCloseButton={false}
+      showCloseButton={true}
     >
-      {/* Quick reactions row */}
-      <div className="message-actions-drawer__quick-reactions">
-        <div className="message-actions-drawer__quick-reactions-list">
+      {/* Quick reactions row with emoji picker */}
+      <div className="message-actions-drawer__reactions">
+        <div className="message-actions-drawer__reactions-row">
           {quickReactions.map((emoji) => (
-            <QuickReactionButton
+            <Button
               key={emoji}
-              emoji={emoji}
-              message={message}
-              userAddress={userAddress}
+              type="unstyled"
               onClick={() => handleReaction(emoji)}
-            />
+              className={`quick-reaction-emoji ${
+                hasReacted(emoji) ? 'quick-reaction-emoji--active' : ''
+              }`}
+            >
+              {emoji}
+            </Button>
           ))}
-          {/* More reactions button as smile icon */}
-          <button
-            className="quick-reaction-button quick-reaction-button--more"
+          {/* More reactions button with dashed circle */}
+          <Button
+            type="unstyled"
             onClick={handleMoreReactions}
-            aria-label={t`More reactions`}
-          >
-            <FontAwesomeIcon
-              icon={faFaceSmileBeam}
-              className="quick-reaction-button__more-icon"
-            />
-          </button>
+            iconName="face-smile-beam"
+            iconOnly
+            className="quick-reaction-more"
+          />
         </div>
       </div>
 
       {/* Actions menu */}
       <div className="message-actions-drawer__actions">
-        <ActionMenuItem icon={faReply} label={t`Reply`} onClick={handleReply} />
+        <Button
+          type="unstyled"
+          size="normal"
+          onClick={handleReply}
+          iconName="reply"
+          fullWidth
+          className="action-menu-item"
+        >
+          {t`Reply`}
+        </Button>
 
-        <ActionMenuItem
-          icon={faLink}
-          label={t`Copy message link`}
+        <Button
+          type="unstyled"
+          size="normal"
           onClick={handleCopyLink}
-        />
+          iconName="link"
+          fullWidth
+          className="action-menu-item"
+        >
+          {t`Copy message link`}
+        </Button>
+
+        {canPinMessages && onPin && (
+          <Button
+            type="unstyled"
+            size="normal"
+            onClick={handlePin}
+            iconName={message.isPinned ? "thumbtack-slash" : "thumbtack"}
+            fullWidth
+            className={`action-menu-item ${
+              message.isPinned ? 'action-menu-item--danger' : ''
+            }`}
+          >
+            {message.isPinned ? t`Unpin message` : t`Pin message`}
+          </Button>
+        )}
 
         {canDelete && (
-          <ActionMenuItem
-            icon={faTrash}
-            label={t`Delete message`}
+          <Button
+            type="unstyled"
+            size="normal"
             onClick={handleDelete}
-            variant="danger"
-          />
+            iconName="trash"
+            fullWidth
+            className="action-menu-item action-menu-item--danger"
+          >
+            {t`Delete message`}
+          </Button>
         )}
       </div>
     </MobileDrawer>

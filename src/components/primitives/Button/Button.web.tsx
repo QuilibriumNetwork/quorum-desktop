@@ -45,11 +45,7 @@ const Button: React.FC<WebButtonProps> = (props) => {
                   ? 'lg'
                   : 'md'
             }
-            className={
-              props.type === 'unstyled' && !props.className?.includes('header-icon-button')
-                ? '' 
-                : 'quorum-button-icon-element'
-            }
+            className="quorum-button-icon-element"
             style={{ color: 'inherit' }}
           />
         )}

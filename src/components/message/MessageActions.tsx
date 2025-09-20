@@ -18,7 +18,7 @@ interface MessageActionsProps {
   onReaction: (emoji: string) => void;
   onReply: () => void;
   onCopyLink: () => void;
-  onDelete: () => void;
+  onDelete: (e: React.MouseEvent) => void;
   onPin?: (e: React.MouseEvent) => void;
   onMoreReactions: (clientY: number) => void;
   copiedLinkId: string | null;

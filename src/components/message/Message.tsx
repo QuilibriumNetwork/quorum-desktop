@@ -140,16 +140,22 @@ export const Message = ({
     setShowUserProfile,
     onCloseEmojiPickers: emojiPicker.closeEmojiPickers,
     onMobileActionsDrawer: (config) => {
+      // For touch devices, always show confirmation (shiftKey = false)
+      // This ensures mobile/touch users always get confirmation modals
       openMobileActionsDrawer({
         ...config,
         onReply: messageActions.handleReply,
         onCopyLink: messageActions.handleCopyLink,
         onDelete: messageActions.canUserDelete
-          ? messageActions.handleDelete
+          ? () => messageActions.handleDelete({ shiftKey: false } as React.MouseEvent)
+          : undefined,
+        onPin: pinnedMessages.canPinMessages
+          ? () => pinnedMessages.togglePin({ shiftKey: false } as React.MouseEvent, message)
           : undefined,
         onReaction: messageActions.handleReaction,
         onMoreReactions: handleMoreReactions,
         canDelete: messageActions.canUserDelete,
+        canPinMessages: pinnedMessages.canPinMessages,
         userAddress: user.currentPasskeyInfo!.address,
       });
     },
@@ -565,13 +571,7 @@ export const Message = ({
                     {contentData.content.imageUrl && (
                       <img
                         src={contentData.content.imageUrl}
-                        style={{
-                          maxWidth: 300,
-                          maxHeight: 300,
-                          width: 'auto',
-                          cursor: 'pointer',
-                        }}
-                        className="rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+                        className="message-image rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer"
                         onClick={(e) =>
                           formatting.handleImageClick(
                             e,
@@ -586,8 +586,7 @@ export const Message = ({
                 return (
                   <img
                     src={contentData.sticker?.imgUrl}
-                    style={{ maxWidth: 300, maxHeight: 300 }}
-                    className="rounded-lg"
+                    className="message-sticker rounded-lg"
                   />
                 );
               }
