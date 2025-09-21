@@ -80,7 +80,7 @@ const ChannelEditor: React.FunctionComponent<{
       visible={true}
       onClose={isSaving ? undefined : dismiss}
       size="small"
-      closeOnBackdropClick={!isSaving}
+      closeOnBackdropClick={false}
       closeOnEscape={!isSaving}
     >
       {/* Loading overlay for save operations only */}

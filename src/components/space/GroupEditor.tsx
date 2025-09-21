@@ -58,7 +58,7 @@ const GroupEditor: React.FunctionComponent<{
       title={isEditMode ? t`Edit Group` : t`Add Group`}
       visible={true}
       onClose={isSaving ? undefined : dismiss}
-      closeOnBackdropClick={!isSaving}
+      closeOnBackdropClick={false}
       closeOnEscape={!isSaving}
       size="small"
     >
