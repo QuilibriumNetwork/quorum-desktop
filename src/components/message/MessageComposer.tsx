@@ -1,9 +1,9 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
-import { Button, FlexRow, Tooltip, Icon, TextArea } from '../primitives';
+import { Button, FlexRow, Tooltip, Icon, TextArea, Callout } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { Buffer } from 'buffer';
-import type { AttachmentProcessingResult } from '../../utils/imageProcessing/processors/attachmentProcessor';
+import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
 
 interface MessageComposerProps {
   // Textarea props
@@ -27,6 +27,7 @@ interface MessageComposerProps {
   // Reply-to and error handling
   inReplyTo?: any;
   fileError?: string | null;
+  isProcessingImage?: boolean;
   mapSenderToUser?: (senderId: string) => { displayName?: string };
   setInReplyTo?: (inReplyTo: any) => void;
 
@@ -64,6 +65,7 @@ export const MessageComposer = forwardRef<
       hasStickers = true,
       inReplyTo,
       fileError,
+      isProcessingImage = false,
       mapSenderToUser,
       setInReplyTo,
       showSigningToggle = false,
@@ -101,15 +103,31 @@ export const MessageComposer = forwardRef<
 
     return (
       <div className="w-full pr-6 lg:pr-8">
-        {/* Error and reply-to display */}
-        {(fileError || inReplyTo) && (
+        {/* Error, processing indicator, and reply-to display */}
+        {(fileError || inReplyTo || isProcessingImage) && (
           <div className="flex flex-col w-full ml-[11px] mt-2 mb-0">
+            {isProcessingImage && (
+              <div className="ml-1 mt-3 mb-1">
+                <Callout
+                  variant="warning"
+                  layout="minimal"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <Icon name="spinner" size="xs" spin={true} />
+                  {t`Processing image... This may take a moment for large files.`}
+                </Callout>
+              </div>
+            )}
             {fileError && (
-              <div
-                className="text-sm ml-1 mt-3 mb-1"
-                style={{ color: 'var(--color-text-danger)' }}
-              >
-                {fileError}
+              <div className="ml-1 mt-3 mb-1">
+                <Callout
+                  variant="error"
+                  layout="minimal"
+                  size="sm"
+                >
+                  {fileError}
+                </Callout>
               </div>
             )}
             {inReplyTo && mapSenderToUser && setInReplyTo && (

@@ -44,6 +44,15 @@ import {
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import MessageActions from './MessageActions';
 import { MessageMarkdownRenderer } from './MessageMarkdownRenderer';
+import { getImageConfig } from '../../utils/imageProcessing/config';
+
+// Utility function for robust GIF detection
+const createGifDetector = (url: string, isLargeGif?: boolean) => {
+  const normalizedUrl = url.toLowerCase();
+  return normalizedUrl.includes('data:image/gif') ||
+         /\.gif(\?[^#]*)?(?:#.*)?$/i.test(normalizedUrl) ||
+         !!isLargeGif;
+};
 
 type MessageProps = {
   customEmoji?: Emoji[];
@@ -584,37 +593,93 @@ export const Message = React.memo(({
                         className="rounded-lg youtube-embed"
                       />
                     )}
-                    {contentData.content.imageUrl && (
-                      <div className="relative inline-block">
-                        <img
-                          src={contentData.content.thumbnailUrl || contentData.content.imageUrl}
-                          className="message-image rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer"
-                          onClick={(e) =>
-                            formatting.handleImageClick(
-                              e,
-                              contentData.content.imageUrl!,
-                              !!contentData.content.thumbnailUrl
-                            )
-                          }
-                        />
-                        {contentData.content.isLargeGif && contentData.content.thumbnailUrl && (
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div className="bg-black/50 rounded-full p-2">
-                              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M8 5v14l11-7z"/>
-                              </svg>
+                    {contentData.content.imageUrl && (() => {
+                      const isGif = createGifDetector(contentData.content.imageUrl, contentData.content.isLargeGif);
+
+                      // Get the max display width from configuration
+                      const config = getImageConfig('messageAttachment');
+                      const gifMaxWidth = config.gifMaxDisplayWidth || 300;
+
+                      // Track if large GIF is showing animated version (not thumbnail)
+                      const [isShowingAnimation, setIsShowingAnimation] = useState(false);
+
+                      return (
+                        <div className="relative inline-block">
+                          <img
+                            src={contentData.content.thumbnailUrl || contentData.content.imageUrl}
+                            className={`message-image rounded-lg transition-opacity duration-200 ${
+                              isGif
+                                ? (contentData.content.isLargeGif && contentData.content.thumbnailUrl && !isShowingAnimation
+                                    ? 'cursor-pointer' // Pointer cursor for GIF static thumbnails
+                                    : 'cursor-auto') // No pointer cursor for animating GIFs
+                                : 'cursor-pointer hover:opacity-80' // Clickable for non-GIFs
+                            }`}
+                            style={{
+                              maxWidth: isGif ? `${gifMaxWidth}px` : undefined // Constrain GIFs using config value
+                            }}
+                            onClick={(e) => {
+                              if (isGif) {
+                                // For GIFs: animate in-place, don't open modal
+                                if (contentData.content.isLargeGif && contentData.content.thumbnailUrl) {
+                                  // Switch from thumbnail to full GIF animation with error handling
+                                  const img = e.target as HTMLImageElement;
+                                  if (img.src.includes('thumbnail') || img.src !== contentData.content.imageUrl) {
+                                    const originalSrc = img.src;
+
+                                    // Set up error handler before changing src
+                                    const handleError = () => {
+                                      console.warn('Failed to load full GIF, reverting to thumbnail');
+                                      img.src = originalSrc;
+                                      img.removeEventListener('error', handleError);
+                                      setIsShowingAnimation(false);
+                                    };
+
+                                    img.addEventListener('error', handleError);
+                                    img.src = contentData.content.imageUrl!;
+                                    setIsShowingAnimation(true); // Hide play icon when showing animation
+                                  }
+                                }
+                                // For small GIFs, they're already animating - do nothing
+                              } else {
+                                // For static images: open modal as usual
+                                formatting.handleImageClick(
+                                  e,
+                                  contentData.content.imageUrl!,
+                                  !!contentData.content.thumbnailUrl
+                                );
+                              }
+                            }}
+                          />
+                          {contentData.content.isLargeGif && contentData.content.thumbnailUrl && !isShowingAnimation && (
+                            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                              <div className="bg-black/50 rounded-full p-2">
+                                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                  <path d="M8 5v14l11-7z"/>
+                                </svg>
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                          )}
+                        </div>
+                      );
+                    })()}
                   </Container>
                 );
               } else if (contentData.type === 'sticker') {
+                // Use the same robust GIF detection for stickers
+                const isStickerGif = contentData.sticker?.imgUrl ?
+                  createGifDetector(contentData.sticker.imgUrl) : false;
+
+                // Get sticker config
+                const stickerConfig = getImageConfig('sticker');
+                const stickerGifMaxWidth = stickerConfig.gifMaxDisplayWidth || 300;
+
                 return (
                   <img
                     src={contentData.sticker?.imgUrl}
                     className="message-sticker rounded-lg"
+                    style={{
+                      maxWidth: isStickerGif ? `${stickerGifMaxWidth}px` : undefined // Use config value
+                    }}
                   />
                 );
               }

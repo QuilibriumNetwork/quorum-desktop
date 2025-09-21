@@ -89,3 +89,4 @@ export const getImageDimensions = (
     img.src = url;
   });
 };
+

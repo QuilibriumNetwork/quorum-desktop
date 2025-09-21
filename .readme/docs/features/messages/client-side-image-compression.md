@@ -14,12 +14,10 @@ src/utils/imageProcessing/
 ├── gifUtils.ts                 # GIF frame extraction utilities
 ├── types.ts                    # Shared interfaces
 ├── index.ts                    # Public API exports
-└── processors/                 # Specialized processors per use case
-    ├── avatarProcessor.ts      # User/space avatars (1:1 ratio)
-    ├── bannerProcessor.ts      # Space banners (16:9 ratio)
-    ├── attachmentProcessor.ts  # Message attachments with thumbnails
-    ├── emojiProcessor.ts       # Custom emojis (1:1 ratio)
-    └── stickerProcessor.ts     # Custom stickers (preserve ratio)
+├── config.ts                   # Unified configuration system
+├── errors.ts                   # Centralized error messages
+├── gifProcessor.ts             # Consolidated GIF handling
+└── unifiedProcessor.ts         # Single processor for all image types
 ```
 
 ### Integration Points
@@ -55,21 +53,20 @@ src/utils/imageProcessing/
 - **Full Image**: 1200×1200px max for modal view
 - **Bandwidth Savings**: ~90% (loads thumbnail first, full image on click)
 
-**For GIFs > 500KB:**
-- **Thumbnail**: Static first frame (300×300px JPEG)
-- **Full Animation**: Original GIF preserved (up to 2MB)
-- **UI Indicator**: Play button overlay on thumbnail
-- **Bandwidth Savings**: ~95% until user clicks to animate
-
-**For Small Images/GIFs ≤ 500KB:**
-- **Single Version**: No thumbnail needed
-- **GIFs**: Auto-play in message feed
+**For All GIFs (New Approach):**
+- **Display**: Always constrained to 300px max width via CSS
+- **Modal**: Never opens - GIFs animate in-place only
+- **Large GIFs (>500KB)**: Static first frame thumbnail with play button
+- **Click Behavior**: Animate full GIF in-place at 300px max width
+- **Small GIFs (≤500KB)**: Auto-play directly at 300px max width
+- **Bandwidth Savings**: ~90% for large GIFs (thumbnail first)
 
 ### GIF Animation Preservation Strategy
 
-- **Message GIFs**: 2MB limit, animation always preserved
-- **Sticker GIFs**: 500KB limit, no dimensional compression
+- **Message GIFs**: 2MB limit, always animate in-place at 300px max width
+- **Sticker GIFs**: 500KB limit, always animate in-place at 300px max width
 - **Emoji GIFs**: 100KB limit, perfect for tiny animations
+- **Modal Behavior**: GIFs never open in modal - only static images do
 - **Smart Processing**: Never convert animated GIFs to static images
 
 ## Usage
@@ -102,25 +99,34 @@ if (result.thumbnail) {
 }
 ```
 
-### Emoji/Sticker Processing with GIF Support
+### Unified Configuration-Driven Processing
 ```typescript
-import { processEmojiImage, processStickerImage } from '../../../utils/imageProcessing';
+import { processImage, IMAGE_CONFIGS } from '../../../utils/imageProcessing';
 
-// Process emoji (static: 36px, GIF: preserved up to 100KB)
-const emojiResult = await processEmojiImage(file);
+// Direct config-based processing (new approach)
+const result = await processImage(file, 'emoji');
+const stickerResult = await processImage(file, 'sticker');
 
-// Process sticker (static: 450px, GIF: preserved up to 500KB)
-const stickerResult = await processStickerImage(file);
+// Or use convenient type-specific processors
+const emojiResult = await processEmojiImage(file);   // 36px, 100KB GIF limit
+const stickerResult = await processStickerImage(file); // 450px, 500KB GIF limit
+const avatarResult = await processAvatarImage(file);   // 123px, no GIFs
 ```
 
-### Traditional Single-Image Processing
+### Error Handling with Centralized Messages
 ```typescript
-import { processAvatarImage, processBannerImage } from '../../../utils/imageProcessing';
+import { processImage, IMAGE_ERRORS } from '../../../utils/imageProcessing';
 
-// Process avatar with 1:1 cropping
-const result = await processAvatarImage(file);
-const compressedFile = result.file;
-const compressionRatio = result.compressionRatio; // e.g., 5.2x smaller
+try {
+  const result = await processImage(file, 'emoji');
+} catch (error) {
+  // Standardized error messages for better UX
+  if (error.message.includes('100KB')) {
+    // Handle emoji GIF size limit
+  } else if (error.message.includes('5MB')) {
+    // Handle general file size limit
+  }
+}
 ```
 
 ## File Size Limits
@@ -170,11 +176,19 @@ const compressionRatio = result.compressionRatio; // e.g., 5.2x smaller
 ## Development Notes
 
 ### Adding New Image Types
-1. Create processor in `processors/` directory
+1. Add configuration to `IMAGE_CONFIGS` in `config.ts`
 2. Define compression target (dimensions, ratio, quality)
-3. Handle GIF animation preservation if needed
-4. Update hook to use new processor
-5. Update file size constants if needed
+3. Set GIF size limits and animation preservation settings
+4. Export type-specific processor function if needed
+5. Update hooks to use new processor
+
+### Configuration System Benefits
+- **Single source of truth**: All compression settings in one place
+- **Type safety**: TypeScript ensures valid configurations
+- **Consistency**: Same logic applied across all image types
+- **Maintainability**: Easy to adjust compression targets
+- **Error handling**: Centralized, translatable error messages
+- **GIF Display Control**: `gifMaxDisplayWidth` setting controls max width across all GIF types
 
 ### Testing Thumbnail System
 ```javascript
@@ -201,8 +215,9 @@ console.log(`Animation preserved: ${!result.thumbnail || result.isLargeGif}`);
 ```
 
 ### Performance Optimizations
-- **Lazy thumbnail generation** - only when needed
-- **Single-pass processing** for both thumbnail and full image
+- **Configuration-driven processing** - eliminates code duplication
+- **Centralized GIF validation** - single validation path for all image types
+- **Smart thumbnail generation** - only when needed for large images/GIFs
 - **Skip compression** for files already within limits
 - **Memory efficient** GIF frame extraction
 - **Progressive enhancement** - works without thumbnails for old messages
@@ -213,4 +228,4 @@ console.log(`Animation preserved: ${!result.thumbnail || result.isLargeGif}`);
 - **Zero overhead** for small images/GIFs (no unnecessary thumbnails)
 
 ---
-*Updated: 2025-09-21 - Documentation for thumbnail system and GIF animation preservation*
+*Updated: 2025-09-21 - Enhanced GIF handling: 300px max width constraint, no modal opening, in-place animation with error handling*

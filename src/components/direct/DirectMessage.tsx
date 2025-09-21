@@ -525,6 +525,7 @@ const DirectMessage: React.FC<{}> = () => {
                 hasStickers={false}
                 inReplyTo={composer.inReplyTo}
                 fileError={composer.fileError}
+                isProcessingImage={composer.isProcessingImage}
                 mapSenderToUser={mapSenderToUser}
                 setInReplyTo={composer.setInReplyTo}
                 showSigningToggle={!nonRepudiable}

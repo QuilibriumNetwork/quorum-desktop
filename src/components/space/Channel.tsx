@@ -612,6 +612,7 @@ const Channel: React.FC<ChannelProps> = ({
                 onShowStickers={() => composer.setShowStickers(true)}
                 inReplyTo={composer.inReplyTo}
                 fileError={composer.fileError}
+                isProcessingImage={composer.isProcessingImage}
                 mapSenderToUser={mapSenderToUser}
                 setInReplyTo={composer.setInReplyTo}
                 showSigningToggle={space?.isRepudiable}

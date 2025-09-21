@@ -7,7 +7,7 @@ import {
 } from '../../../api/quorumApi';
 import { t } from '@lingui/core/macro';
 import { processAttachmentImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
-import type { AttachmentProcessingResult } from '../../../utils/imageProcessing/processors/attachmentProcessor';
+import type { AttachmentProcessingResult } from '../../../utils/imageProcessing';
 
 interface UseMessageComposerOptions {
   type: 'channel' | 'direct';
@@ -36,6 +36,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
   // File upload state
   const [processedImage, setProcessedImage] = useState<AttachmentProcessingResult | undefined>();
   const [fileError, setFileError] = useState<string | null>(null);
+  const [isProcessingImage, setIsProcessingImage] = useState(false);
 
   // Ref for textarea
   const editor = useRef<HTMLTextAreaElement>(null);
@@ -78,14 +79,17 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     if (acceptedFiles.length > 0) {
       (async () => {
         try {
+          setIsProcessingImage(true);
+          setFileError(null); // Clear any previous errors
           const file = acceptedFiles[0];
 
           const result = await processImage(file);
           setProcessedImage(result);
-          setFileError(null); // Clear any previous errors
         } catch (error) {
           console.error('Error processing image:', error);
           setFileError(error instanceof Error ? error.message : 'Unable to process image. Please use a smaller image.');
+        } finally {
+          setIsProcessingImage(false);
         }
       })();
     }
@@ -195,6 +199,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     // File state
     processedImage,
     fileError,
+    isProcessingImage,
     clearFile,
 
     // Sticker state
