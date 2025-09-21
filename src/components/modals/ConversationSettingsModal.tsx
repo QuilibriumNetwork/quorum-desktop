@@ -96,10 +96,13 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
         type: 'direct' as const,
         timestamp: Date.now(),
       };
-      await messageDB.saveConversation({
+
+      const updatedConv = {
         ...baseConv,
         isRepudiable: !nonRepudiable,
-      });
+      };
+
+      await messageDB.saveConversation(updatedConv);
 
       // Invalidate conversation query to update DirectMessage component
       await queryClient.invalidateQueries({
@@ -107,7 +110,8 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
       });
 
       onClose();
-    } catch {
+    } catch (error) {
+      console.error('Failed to update conversation repudiability:', error);
       onClose();
     }
   }, [

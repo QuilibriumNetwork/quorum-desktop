@@ -794,15 +794,24 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                   ...page.conversations.filter(
                     (c: Conversation) => c.conversationId !== conversationId
                   ),
-                  {
-                    conversationId,
-                    address: address,
-                    icon: updatedUserProfile?.user_icon,
-                    displayName: updatedUserProfile?.display_name,
-                    type: 'direct',
-                    timestamp: timestamp,
-                    lastReadTimestamp: lastReadTimestamp,
-                  },
+                  (() => {
+                    // Find existing conversation to preserve its data (especially isRepudiable)
+                    const existingConv = page.conversations.find(
+                      (c: Conversation) => c.conversationId === conversationId
+                    );
+                    return {
+                      ...existingConv, // Preserve all existing fields including isRepudiable
+                      conversationId,
+                      address: address,
+                      icon: updatedUserProfile?.user_icon ?? existingConv?.icon,
+                      displayName: updatedUserProfile?.display_name ?? existingConv?.displayName,
+                      type: 'direct' as const,
+                      timestamp: timestamp,
+                      lastReadTimestamp: lastReadTimestamp,
+                      // Explicitly preserve isRepudiable to ensure it's not lost
+                      isRepudiable: existingConv?.isRepudiable,
+                    };
+                  })(),
                 ],
                 nextCursor: page.nextCursor,
                 prevCursor: page.prevCursor,

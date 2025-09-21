@@ -629,15 +629,24 @@ export class MessageDB {
       messageRequest.onerror = () => reject(messageRequest.error);
 
       const conversationStore = transaction.objectStore('conversations');
-      const request = conversationStore.put({
-        conversationId: message.spaceId + '/' + message.channelId,
-        address: address,
-        icon: icon,
-        displayName: displayName,
-        type: conversationType,
-        timestamp: message.createdDate,
-      });
-      request.onerror = () => reject(request.error);
+
+      // Get existing conversation to preserve data like isRepudiable
+      const conversationId = message.spaceId + '/' + message.channelId;
+      const getRequest = conversationStore.get([conversationId]);
+      getRequest.onsuccess = () => {
+        const existingConv = getRequest.result;
+        const request = conversationStore.put({
+          ...existingConv, // Preserve existing fields including isRepudiable
+          conversationId,
+          address: address,
+          icon: icon,
+          displayName: displayName,
+          type: conversationType,
+          timestamp: message.createdDate,
+        });
+        request.onerror = () => reject(request.error);
+      };
+      getRequest.onerror = () => reject(getRequest.error);
 
       transaction.oncomplete = () => resolve();
       transaction.onerror = () => reject(transaction.error);

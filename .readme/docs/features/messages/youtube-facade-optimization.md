@@ -273,7 +273,29 @@ YouTube embeds maintain responsive design with hardware acceleration:
 
 
 
+## Security & Privacy Considerations
+
+**Note from Cassie (Q Founder) - 2025-09-21**
+
+The current YouTube facade implementation is acceptable for now, but we should be aware of potential privacy risks. Remote images (including YouTube thumbnails) can potentially be used for deanonymization attacks.
+
+**Long-term Security Approach:**
+
+For enhanced privacy protection, we should consider implementing a Signal-like approach:
+1. **Client-side metadata fetching**: The sending client fetches OpenGraph data (preview images and text) from the link
+2. **Content encryption**: The fetched image data is encrypted and sent to recipients
+3. **No direct external requests**: Recipients never need to make requests to external URLs
+
+**Future Safety Gradient:**
+
+We should implement user preference levels for external content:
+- **Paranoid mode**: Refuse to load external images/embeds entirely
+- **Permissive mode**: Allow external content with proper privacy protections
+- **Default mode**: Load with `no-referrer` behaviors and other privacy safeguards
+
+**Current Status**: The facade feature works well for performance, but we should evaluate whether we're properly implementing `no-referrer` policies to minimize tracking potential.
+
 ---
 
-**Last Updated**: 2025-01-20
-**File Last Modified**: 2025-01-20 18:30 UTC
+**Last Updated**: 2025-09-21
+**File Last Modified**: 2025-09-21 by Claude
