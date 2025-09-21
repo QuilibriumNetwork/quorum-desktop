@@ -30,6 +30,8 @@ const markdownPatterns = [
   /^\s*\d+\.\s/m,         // Ordered lists 1. item
   /\|[^|]+\|/,            // Tables |col|
   /^---+$/m,              // Horizontal rule ---
+  /\[[^\]]+\]\([^)]+\)/,  // Markdown links [text](url)
+  /<[^>]+>/,              // Angle bracket autolinks <url> or <email>
 ];
 
 function hasMarkdownPatterns(text: string): boolean {

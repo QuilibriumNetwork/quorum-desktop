@@ -26,14 +26,35 @@ interface MessageMarkdownRendererProps {
 // Stable processing functions outside component to prevent re-creation
 const processURLs = (text: string): string => {
   // Replace non-YouTube URLs with markdown links, avoiding code blocks and existing markdown links
-  return text.replace(/^(?!.*```[\s\S]*?```.*$)(?!.*\[[^\]]*\]\([^)]*\).*$)(.*)$/gm, (line) => {
-    // Only process lines that don't contain code blocks or existing markdown links
-    if (line.includes('```') || line.includes('](')) {
+  return text.replace(/^(?!.*```[\s\S]*?```.*$)(.*)$/gm, (line) => {
+    // Only process lines that don't contain code blocks
+    if (line.includes('```')) {
       return line;
     }
 
-    // Replace non-YouTube URLs with markdown links
-    return line.replace(/https?:\/\/[^\s<>"{}|\\^`[\]]+/g, (url) => {
+    // Replace non-YouTube URLs with markdown links, but avoid URLs already in markdown links or angle brackets
+    return line.replace(/https?:\/\/[^\s<>"{}|\\^`[\]]+/g, (url, offset) => {
+      // Check if this URL is already part of a markdown link or angle bracket autolink
+      const beforeUrl = line.substring(0, offset);
+      const afterUrl = line.substring(offset + url.length);
+
+      // Look for markdown link pattern: ](URL) - URL is already inside a markdown link
+      if (beforeUrl.includes('](') || (beforeUrl.endsWith('](') && afterUrl.startsWith(')'))) {
+        return url; // Don't modify - already in markdown link
+      }
+
+      // Look for partial markdown link pattern: [text](URL - we're at the URL part
+      const linkStart = beforeUrl.lastIndexOf('[');
+      const linkMiddle = beforeUrl.lastIndexOf('](');
+      if (linkStart > -1 && linkMiddle > linkStart && linkMiddle === beforeUrl.length - 2) {
+        return url; // Don't modify - already in markdown link
+      }
+
+      // Look for angle bracket autolinks: <URL>
+      if (beforeUrl.endsWith('<') && afterUrl.startsWith('>')) {
+        return url; // Don't modify - already in angle bracket autolink
+      }
+
       return isYouTubeURL(url) ? url : `[${url}](${url})`;
     });
   });
