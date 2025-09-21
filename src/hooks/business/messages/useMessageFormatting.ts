@@ -42,9 +42,11 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
 
   // Handle image click with size checking
   const handleImageClick = useCallback(
-    (e: React.MouseEvent<HTMLImageElement>, imageUrl: string) => {
+    (e: React.MouseEvent<HTMLImageElement>, imageUrl: string, hasThumbnail?: boolean) => {
       const img = e.currentTarget;
-      if ((img.naturalWidth > 300 || img.naturalHeight > 300) && imageUrl) {
+      // If we have a thumbnail, always allow clicking to see full image
+      // Otherwise, check if the image is larger than 300px
+      if (hasThumbnail || ((img.naturalWidth > 300 || img.naturalHeight > 300) && imageUrl)) {
         onImageClick(imageUrl);
       }
     },

@@ -585,16 +585,28 @@ export const Message = React.memo(({
                       />
                     )}
                     {contentData.content.imageUrl && (
-                      <img
-                        src={contentData.content.imageUrl}
-                        className="message-image rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer"
-                        onClick={(e) =>
-                          formatting.handleImageClick(
-                            e,
-                            contentData.content.imageUrl!
-                          )
-                        }
-                      />
+                      <div className="relative inline-block">
+                        <img
+                          src={contentData.content.thumbnailUrl || contentData.content.imageUrl}
+                          className="message-image rounded-lg hover:opacity-80 transition-opacity duration-200 cursor-pointer"
+                          onClick={(e) =>
+                            formatting.handleImageClick(
+                              e,
+                              contentData.content.imageUrl!,
+                              !!contentData.content.thumbnailUrl
+                            )
+                          }
+                        />
+                        {contentData.content.isLargeGif && contentData.content.thumbnailUrl && (
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div className="bg-black/50 rounded-full p-2">
+                              <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"/>
+                              </svg>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     )}
                   </Container>
                 );

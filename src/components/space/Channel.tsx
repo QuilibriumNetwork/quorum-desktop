@@ -606,8 +606,7 @@ const Channel: React.FC<ChannelProps> = ({
                 calculateRows={composer.calculateRows}
                 getRootProps={composer.getRootProps}
                 getInputProps={composer.getInputProps}
-                fileData={composer.fileData}
-                fileType={composer.fileType}
+                processedImage={composer.processedImage}
                 clearFile={composer.clearFile}
                 onSubmitMessage={composer.submitMessage}
                 onShowStickers={() => composer.setShowStickers(true)}

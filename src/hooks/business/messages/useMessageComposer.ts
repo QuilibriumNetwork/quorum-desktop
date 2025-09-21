@@ -7,6 +7,7 @@ import {
 } from '../../../api/quorumApi';
 import { t } from '@lingui/core/macro';
 import { processAttachmentImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
+import type { AttachmentProcessingResult } from '../../../utils/imageProcessing/processors/attachmentProcessor';
 
 interface UseMessageComposerOptions {
   type: 'channel' | 'direct';
@@ -33,20 +34,19 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
   const [showStickers, setShowStickers] = useState(false);
 
   // File upload state
-  const [fileData, setFileData] = useState<ArrayBuffer | undefined>();
-  const [fileType, setFileType] = useState<string>();
+  const [processedImage, setProcessedImage] = useState<AttachmentProcessingResult | undefined>();
   const [fileError, setFileError] = useState<string | null>(null);
 
   // Ref for textarea
   const editor = useRef<HTMLTextAreaElement>(null);
 
-  // Image compression using standardized processor
-  const compressImage = async (file: FileWithPath): Promise<File> => {
+  // Image processing using standardized processor with thumbnail support
+  const processImage = async (file: FileWithPath): Promise<AttachmentProcessingResult> => {
     try {
       const result = await processAttachmentImage(file);
-      return result.file;
+      return result;
     } catch (error) {
-      throw new Error(`Image compression failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Image processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -62,7 +62,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     onDropRejected: (fileRejections) => {
       for (const rejection of fileRejections) {
         if (rejection.errors.some((err) => err.code === 'file-too-large')) {
-          setFileError(t`File cannot be larger than 25MB`);
+          setFileError(t`File cannot be larger than 50MB`);
         } else {
           setFileError(t`File rejected`);
         }
@@ -78,13 +78,14 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     if (acceptedFiles.length > 0) {
       (async () => {
         try {
-          const file = await compressImage(acceptedFiles[0]);
-          setFileData(await file.arrayBuffer());
-          setFileType(file.type);
+          const file = acceptedFiles[0];
+
+          const result = await processImage(file);
+          setProcessedImage(result);
           setFileError(null); // Clear any previous errors
         } catch (error) {
-          console.error('Error compressing image:', error);
-          setFileError(error instanceof Error ? error.message : 'Unable to compress image. Please use a smaller image.');
+          console.error('Error processing image:', error);
+          setFileError(error instanceof Error ? error.message : 'Unable to process image. Please use a smaller image.');
         }
       })();
     }
@@ -109,23 +110,34 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
 
   // Submit message
   const submitMessage = useCallback(async () => {
-    if ((pendingMessage || fileData) && !isSubmitting) {
+    if ((pendingMessage || processedImage) && !isSubmitting) {
       setIsSubmitting(true);
       try {
         if (pendingMessage) {
           await onSubmitMessage(pendingMessage, inReplyTo?.messageId);
         }
-        if (fileData) {
+        if (processedImage) {
+          // Create base64 URLs for both thumbnail and full image
+          const fullImageBuffer = await processedImage.full.file.arrayBuffer();
+          const fullImageUrl = `data:${processedImage.full.file.type};base64,${Buffer.from(fullImageBuffer).toString('base64')}`;
+
+          let thumbnailUrl: string | undefined;
+          if (processedImage.thumbnail) {
+            const thumbnailBuffer = await processedImage.thumbnail.file.arrayBuffer();
+            thumbnailUrl = `data:${processedImage.thumbnail.file.type};base64,${Buffer.from(thumbnailBuffer).toString('base64')}`;
+          }
+
           const embedMessage: EmbedMessage = {
             type: 'embed',
-            imageUrl: `data:${fileType};base64,${Buffer.from(fileData).toString('base64')}`,
+            imageUrl: fullImageUrl,
+            thumbnailUrl,
+            isLargeGif: processedImage.isLargeGif,
           } as EmbedMessage;
           await onSubmitMessage(embedMessage, inReplyTo?.messageId);
         }
         // Clear state after successful submission
         setPendingMessage('');
-        setFileData(undefined);
-        setFileType(undefined);
+        setProcessedImage(undefined);
         setInReplyTo(undefined);
       } finally {
         setIsSubmitting(false);
@@ -133,8 +145,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     }
   }, [
     pendingMessage,
-    fileData,
-    fileType,
+    processedImage,
     isSubmitting,
     onSubmitMessage,
     inReplyTo,
@@ -170,8 +181,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
 
   // Clear file
   const clearFile = useCallback(() => {
-    setFileData(undefined);
-    setFileType(undefined);
+    setProcessedImage(undefined);
   }, []);
 
   return {
@@ -183,8 +193,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     setInReplyTo,
 
     // File state
-    fileData,
-    fileType,
+    processedImage,
     fileError,
     clearFile,
 

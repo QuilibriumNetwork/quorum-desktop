@@ -3,6 +3,7 @@ import { Button, FlexRow, Tooltip, Icon, TextArea } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { Buffer } from 'buffer';
+import type { AttachmentProcessingResult } from '../../utils/imageProcessing/processors/attachmentProcessor';
 
 interface MessageComposerProps {
   // Textarea props
@@ -15,8 +16,7 @@ interface MessageComposerProps {
   // File upload props
   getRootProps: () => any;
   getInputProps: () => any;
-  fileData?: ArrayBuffer;
-  fileType?: string;
+  processedImage?: AttachmentProcessingResult;
   clearFile: () => void;
 
   // Actions
@@ -57,8 +57,7 @@ export const MessageComposer = forwardRef<
       calculateRows,
       getRootProps,
       getInputProps,
-      fileData,
-      fileType,
+      processedImage,
       clearFile,
       onSubmitMessage,
       onShowStickers,
@@ -138,7 +137,7 @@ export const MessageComposer = forwardRef<
         )}
 
         {/* File preview */}
-        {fileData && (
+        {processedImage && (
           <div className="mx-3 mt-2">
             <div className="p-2 relative rounded-lg bg-surface-3 inline-block">
               <Button
@@ -149,16 +148,26 @@ export const MessageComposer = forwardRef<
               >
                 <Icon name="x" size="xs" />
               </Button>
-              <img
-                style={{ maxWidth: 140, maxHeight: 140 }}
-                src={
-                  'data:' +
-                  fileType +
-                  ';base64,' +
-                  Buffer.from(fileData).toString('base64')
-                }
-                alt="File preview"
-              />
+              <div className="relative">
+                <img
+                  style={{ maxWidth: 140, maxHeight: 140 }}
+                  src={
+                    processedImage.thumbnail
+                      ? URL.createObjectURL(processedImage.thumbnail.file)
+                      : URL.createObjectURL(processedImage.full.file)
+                  }
+                  alt="File preview"
+                />
+                {processedImage.isLargeGif && processedImage.thumbnail && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="bg-black/50 rounded-full p-1">
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}

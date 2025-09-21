@@ -15,6 +15,8 @@ export interface ImageProcessingOptions {
   cropToFit?: boolean;
   /** Skip compression for files smaller than this size (bytes) */
   skipCompressionThreshold?: number;
+  /** Force compression of GIFs (they are normally skipped to preserve animation) */
+  forceGifCompression?: boolean;
 }
 
 export interface ProcessedImage {

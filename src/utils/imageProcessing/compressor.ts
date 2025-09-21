@@ -69,12 +69,13 @@ export const compressImage = async (
     maxHeight,
     quality = 0.8,
     skipCompressionThreshold = 100000, // 100KB
+    forceGifCompression = false,
   } = options;
 
   const originalSize = file.size;
 
-  // Skip compression for GIFs (preserve animation)
-  if (file.type === 'image/gif') {
+  // Skip compression for GIFs (preserve animation) unless forced
+  if (file.type === 'image/gif' && !forceGifCompression) {
     return {
       file,
       compressionRatio: 1,

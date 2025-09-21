@@ -143,9 +143,11 @@ export type EmbedMessage = {
   senderId: string;
   type: 'embed';
   imageUrl?: string;
+  thumbnailUrl?: string;
   videoUrl?: string;
   width?: string;
   height?: string;
+  isLargeGif?: boolean;
   repliesToMessageId?: string;
 };
 

@@ -15,16 +15,25 @@ export { processAttachmentImage } from './processors/attachmentProcessor';
 export { processEmojiImage } from './processors/emojiProcessor';
 export { processStickerImage } from './processors/stickerProcessor';
 
+// GIF utilities
+export { extractGifFirstFrame, getImageDimensions } from './gifUtils';
+
 // Types
 export type { ImageProcessingOptions, ProcessedImage, ImageProcessor } from './types';
+export type { AttachmentProcessingResult } from './processors/attachmentProcessor';
 
 /**
  * File size limits (input limits before compression)
  */
 export const FILE_SIZE_LIMITS = {
   // Input limits - what users can upload
-  MAX_INPUT_SIZE: 25 * 1024 * 1024, // 25MB for most images
+  MAX_INPUT_SIZE: 25 * 1024 * 1024, // 25MB for static images (will be compressed)
+  MAX_GIF_SIZE: 2 * 1024 * 1024, // 2MB hard limit for GIFs (storage efficiency)
   MAX_EMOJI_INPUT_SIZE: 5 * 1024 * 1024, // 5MB for emojis
+
+  // Processing thresholds
+  GIF_THUMBNAIL_THRESHOLD: 500 * 1024, // 500KB - show thumbnail for GIFs above this
+  MAX_EMOJI_GIF_SIZE: 100 * 1024, // 100KB - animated emoji GIFs (displayed at 24x24px)
 
   // Legacy limits (for reference)
   LEGACY_MESSAGE_LIMIT: 2 * 1024 * 1024, // 2MB
