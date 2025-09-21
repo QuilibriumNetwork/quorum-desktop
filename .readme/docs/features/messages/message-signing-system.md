@@ -300,3 +300,43 @@ To verify the feature works correctly:
 - Always preserve existing conversation data when updating database records
 - React Query invalidation is critical for UI consistency across components
 - Consider the security implications when modifying default behaviors
+
+## Future Optimization Opportunities
+
+**⚠️ Analysis Report (September 2025):** Feature-analyzer identified this system as **over-engineered** with potential for simplification:
+
+### Priority Improvements
+
+1. **Unify Boolean Semantics**
+   - Current mixed use of `nonRepudiable` vs `isRepudiable` creates confusion
+   - Standardize on single terminology throughout codebase
+   - Consider using `requireSigning` for clarity
+
+2. **Simplify Hierarchy**
+   - Current 4-level system may be unnecessarily complex
+   - Evaluate if conversation-level settings could merge with global user settings
+   - Consider reducing to: Global → Space → Per-message
+
+3. **Data Flow Consolidation**
+   - Multiple data update patterns create maintenance burden
+   - Risk of similar corruption bugs in other database operations
+   - Consider centralizing conversation update logic
+
+4. **Code Consistency**
+   - DirectMessage and Channel have different implementation patterns
+   - Opportunity to create shared hooks/utilities for signing logic
+   - Standardize error handling patterns
+
+### Security Considerations
+
+- Complex override hierarchy may have undiscovered edge cases
+- Simplification could reduce attack surface
+- Maintain default-secure behavior during any refactoring
+
+### Technical Debt
+
+- Boolean logic inversion requires careful mental mapping
+- Database preservation pattern should be applied consistently
+- React Query cache management could be abstracted
+
+**Recommendation:** Address these optimizations before expanding the feature further to prevent complexity debt from compounding.
