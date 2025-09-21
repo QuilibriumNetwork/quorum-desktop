@@ -159,12 +159,12 @@ export const MessageComposer = forwardRef<
           <div className="mx-3 mt-2">
             <div className="p-2 relative rounded-lg bg-surface-3 inline-block">
               <Button
-                className="absolute p-1 px-2 m-1 bg-surface-7 rounded-full"
+                className="absolute top-1 right-1 w-6 h-6 p-0 bg-surface-7 hover:bg-surface-8 rounded-full z-10 shadow-sm flex items-center justify-center"
                 type="subtle"
                 size="small"
                 onClick={clearFile}
               >
-                <Icon name="x" size="xs" />
+                <Icon name="times" size="sm" />
               </Button>
               <div className="relative">
                 <img
