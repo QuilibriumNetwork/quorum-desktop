@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
@@ -20,6 +20,12 @@ import {
 interface MessageMarkdownRendererProps {
   content: string;
   className?: string;
+  mapSenderToUser?: (senderId: string) => { displayName?: string };
+  onUserClick?: (user: {
+    address: string;
+    displayName?: string;
+    userIcon?: string;
+  }, event: React.MouseEvent, context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }) => void;
 }
 
 
@@ -94,6 +100,8 @@ const CopyButton = ({ codeContent }: { codeContent: string }) => (
 export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = ({
   content,
   className = '',
+  mapSenderToUser,
+  onUserClick,
 }) => {
 
   // Convert H1 and H2 headers to H3 since only H3 is allowed
@@ -137,16 +145,30 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     return text;
   };
 
+  // Process mentions to show displayNames with proper styling and click handling
+  const processMentions = useCallback((text: string): string => {
+    if (!mapSenderToUser) return text;
+
+    // Replace @<address> with styled, clickable @DisplayName
+    return text.replace(/@<(Qm[a-zA-Z0-9]+)>/g, (match, address) => {
+      const user = mapSenderToUser(address);
+      const displayName = user?.displayName || address.substring(0, 8) + '...';
+      return `<span class="message-name-mentions-you cursor-pointer" data-user-address="${address}" data-user-display-name="${displayName || ''}" data-user-icon="${user?.userIcon || ''}">@${displayName}</span>`;
+    });
+  }, [mapSenderToUser]);
+
   // Simplified processing pipeline with stable dependencies
   const processedContent = useMemo(() => {
     return fixUnclosedCodeBlocks(
       convertHeadersToH3(
         processURLs(
-          processStandaloneYouTubeUrls(content)
+          processMentions(
+            processStandaloneYouTubeUrls(content)
+          )
         )
       )
     );
-  }, [content]); // Only content as dependency since functions are now stable
+  }, [content, processMentions]); // Include processMentions as dependency
 
   // Memoize components to prevent re-creation and YouTube component remounting
   const components = useMemo(() => ({
@@ -377,8 +399,26 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
   }), []); // Empty dependency array since components don't depend on props/state
 
+  // Handle mention clicks
+  const handleClick = useCallback((event: React.MouseEvent) => {
+    const target = event.target as HTMLElement;
+    if (target.classList.contains('message-name-mentions-you') && onUserClick) {
+      const address = target.dataset.userAddress;
+      const displayName = target.dataset.userDisplayName;
+      const userIcon = target.dataset.userIcon;
+
+      if (address) {
+        onUserClick({
+          address,
+          displayName: displayName || undefined,
+          userIcon: userIcon || undefined,
+        }, event, { type: 'mention', element: target });
+      }
+    }
+  }, [onUserClick]);
+
   return (
-    <div className={`break-words ${className || ''}`}>
+    <div className={`break-words ${className || ''}`} onClick={handleClick}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}

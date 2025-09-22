@@ -81,6 +81,11 @@ type MessageProps = {
   submitMessage: (message: any) => Promise<void>;
   kickUserAddress?: string;
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
+  onUserClick?: (user: {
+    address: string;
+    displayName?: string;
+    userIcon?: string;
+  }, event: React.MouseEvent, context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }) => void;
 };
 
 export const Message = React.memo(({
@@ -108,6 +113,7 @@ export const Message = React.memo(({
   submitMessage,
   kickUserAddress,
   setKickUserAddress,
+  onUserClick,
 }: MessageProps) => {
   const user = usePasskeysContext();
   const { spaceId } = useParams();
@@ -373,7 +379,20 @@ export const Message = React.memo(({
             </FlexRow>
           )}
           <Container
-            onClick={interactions.handleUserProfileClick}
+            onClick={(event) => {
+              event.stopPropagation();
+              if (onUserClick) {
+                onUserClick(
+                  {
+                    address: sender.address,
+                    displayName: sender.displayName,
+                    userIcon: sender.userIcon,
+                  },
+                  event,
+                  { type: 'message-avatar', element: event.currentTarget as HTMLElement }
+                );
+              }
+            }}
             className="message-sender-icon"
             style={{
               backgroundImage: sender.userIcon?.includes(
@@ -495,7 +514,11 @@ export const Message = React.memo(({
                 if (formatting.shouldUseMarkdown()) {
                   return (
                     <Container className="message-post-content break-words">
-                      <MessageMarkdownRenderer content={contentData.fullText} />
+                      <MessageMarkdownRenderer
+                        content={contentData.fullText}
+                        mapSenderToUser={mapSenderToUser}
+                        onUserClick={onUserClick}
+                      />
                     </Container>
                   );
                 }

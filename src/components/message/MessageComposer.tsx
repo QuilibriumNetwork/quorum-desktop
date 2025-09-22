@@ -1,9 +1,18 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState, useCallback, useEffect } from 'react';
 import { Button, FlexRow, Tooltip, Icon, TextArea, Callout } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { Buffer } from 'buffer';
 import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
+import { useMentionInput } from '../../hooks/business/mentions';
+import { truncateAddress } from '../../utils';
+import { DefaultImages } from '../../utils';
+
+interface User {
+  address: string;
+  displayName?: string;
+  userIcon?: string;
+}
 
 interface MessageComposerProps {
   // Textarea props
@@ -39,6 +48,9 @@ interface MessageComposerProps {
   // Read-only channel support
   disabled?: boolean;
   disabledMessage?: string;
+
+  // Mention support
+  users?: User[];
 }
 
 export interface MessageComposerRef {
@@ -73,16 +85,84 @@ export const MessageComposer = forwardRef<
       onSigningToggle,
       disabled = false,
       disabledMessage,
+      users = [],
     },
     ref
   ) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const composerRef = useRef<HTMLDivElement>(null);
+    const [cursorPosition, setCursorPosition] = useState(0);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     useImperativeHandle(ref, () => ({
       focus: () => {
         textareaRef.current?.focus();
       },
     }));
+
+    // Handle mention selection
+    const handleMentionSelect = useCallback(
+      (user: User, mentionStart: number, mentionEnd: number) => {
+        const newValue =
+          value.substring(0, mentionStart) +
+          `@<${user.address}>` +
+          value.substring(mentionEnd);
+        onChange(newValue);
+        // Set cursor position after the mention
+        setTimeout(() => {
+          const newPosition = mentionStart + user.address.length + 3; // +3 for @<>
+          textareaRef.current?.setSelectionRange(newPosition, newPosition);
+          textareaRef.current?.focus();
+        }, 0);
+      },
+      [value, onChange]
+    );
+
+    // Use mention input hook
+    const mentionInput = useMentionInput({
+      textValue: value,
+      cursorPosition,
+      users,
+      onMentionSelect: handleMentionSelect,
+    });
+
+    // Track cursor position
+    const handleTextareaChange = useCallback(
+      (newValue: string) => {
+        onChange(newValue);
+        setTimeout(() => {
+          setCursorPosition(textareaRef.current?.selectionStart || 0);
+        }, 0);
+      },
+      [onChange]
+    );
+
+    // Handle key down with mention support
+    const handleKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        // Let mention dropdown handle keys first
+        if (mentionInput.handleKeyDown(e)) {
+          return;
+        }
+        // Otherwise pass to original handler
+        onKeyDown(e);
+        // Update cursor position
+        setTimeout(() => {
+          setCursorPosition(textareaRef.current?.selectionStart || 0);
+        }, 0);
+      },
+      [mentionInput, onKeyDown]
+    );
+
+    // Update cursor position on click/selection
+    const handleSelect = useCallback(() => {
+      setCursorPosition(textareaRef.current?.selectionStart || 0);
+    }, []);
+
+    // Manage dropdown open state based on mentionInput
+    useEffect(() => {
+      setDropdownOpen(mentionInput.showDropdown);
+    }, [mentionInput.showDropdown]);
 
     // If disabled, show a message instead of the composer
     if (disabled) {
@@ -190,8 +270,47 @@ export const MessageComposer = forwardRef<
           </div>
         )}
 
+        {/* Mention Dropdown - positioned above the input */}
+        {dropdownOpen && mentionInput.filteredUsers.length > 0 && (
+          <div className="ml-[11px] mb-2 w-[250px] sm:w-[300px]">
+            <div className="bg-surface-0 border border-default rounded-lg shadow-lg max-h-60 overflow-y-auto">
+              {mentionInput.filteredUsers.map((user, index) => (
+                <div
+                  key={user.address}
+                  className={`flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-surface-2 ${
+                    index === mentionInput.selectedIndex ? 'bg-surface-3' : ''
+                  } ${
+                    index === 0 ? 'rounded-t-lg' : ''
+                  } ${
+                    index === mentionInput.filteredUsers.length - 1 ? 'rounded-b-lg' : ''
+                  }`}
+                  onClick={() => mentionInput.selectUser(user)}
+                >
+                  <div
+                    className="w-8 h-8 rounded-full bg-cover bg-center flex-shrink-0"
+                    style={{
+                      backgroundImage: user.userIcon?.includes(DefaultImages.UNKNOWN_USER)
+                        ? 'var(--unknown-icon)'
+                        : `url(${user.userIcon})`,
+                    }}
+                  />
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-sm font-medium text-main truncate">
+                      {user.displayName || t`Unknown User`}
+                    </span>
+                    <span className="text-xs text-subtle truncate">
+                      {truncateAddress(user.address)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Message input row */}
         <FlexRow
+          ref={composerRef}
           className={`w-full items-center gap-2 ml-[11px] my-2 p-[6px] rounded-lg bg-chat-input ${inReplyTo ? 'rounded-t-none mt-0' : ''}`}
         >
           <Tooltip id="attach-image" content={t`attach image`} place="top" showOnTouch={false}>
@@ -210,8 +329,9 @@ export const MessageComposer = forwardRef<
           <TextArea
             ref={textareaRef}
             value={value}
-            onChange={onChange}
-            onKeyDown={onKeyDown}
+            onChange={handleTextareaChange}
+            onKeyDown={handleKeyDown}
+            onSelect={handleSelect}
             placeholder={placeholder}
             autoResize={false}
             rows={value ? calculateRows() : 1}

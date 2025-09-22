@@ -45,6 +45,11 @@ interface MessageListProps {
   kickUserAddress?: string;
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
   isDeletionInProgress?: boolean;
+  onUserClick?: (user: {
+    address: string;
+    displayName?: string;
+    userIcon?: string;
+  }, event: React.MouseEvent, context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }) => void;
 }
 
 function useWindowSize() {
@@ -80,6 +85,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       kickUserAddress,
       setKickUserAddress,
       isDeletionInProgress,
+      onUserClick,
     } = props;
 
     const [width, height] = useWindowSize();
@@ -144,6 +150,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           submitMessage={submitMessage}
           kickUserAddress={kickUserAddress}
           setKickUserAddress={setKickUserAddress}
+          onUserClick={onUserClick}
         />
       );
     };

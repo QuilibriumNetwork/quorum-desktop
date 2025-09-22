@@ -127,7 +127,8 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         return {
           type: 'mention' as const,
           key: `${messageId}-${lineIndex}-${tokenIndex}`,
-          displayName: mention.displayName,
+          displayName: mention.displayName || `@${userId.substring(0, 8)}...`,
+          address: userId,
         };
       }
 
