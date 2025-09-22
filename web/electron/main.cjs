@@ -49,7 +49,7 @@ function createWindow() {
       contextIsolation: true,
       webAuthnEnabled: true,
       preload: path.join(__dirname, 'preload.cjs'),
-      webSecurity: true, // Always enable web security - proxy handles CORS
+      webSecurity: isDev ? false : true, // Disable web security in dev mode
     },
   });
 
@@ -62,7 +62,28 @@ function createWindow() {
 
   if (isDev) {
     mainWindow.webContents.openDevTools();
-    // CORS bypass removed - Vite proxy handles this securely
+
+    // Bypass CORS in development
+    mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
+      (details, callback) => {
+        callback({
+          requestHeaders: { ...details.requestHeaders, Origin: '*' },
+        });
+      }
+    );
+
+    mainWindow.webContents.session.webRequest.onHeadersReceived(
+      (details, callback) => {
+        callback({
+          responseHeaders: {
+            ...details.responseHeaders,
+            'Access-Control-Allow-Origin': ['*'],
+            'Access-Control-Allow-Methods': ['GET, POST, PUT, DELETE, OPTIONS'],
+            'Access-Control-Allow-Headers': ['*'],
+          },
+        });
+      }
+    );
   }
 }
 
