@@ -15,7 +15,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMessageDB } from '../context/useMessageDB';
 import { hasPermission, canKickUser } from '../../utils/permissions';
 import { t } from '@lingui/core/macro';
-import { DefaultImages } from '../../utils';
+import { DefaultImages, truncateAddress } from '../../utils';
 
 const UserProfile: React.FunctionComponent<{
   spaceId?: string;
@@ -56,11 +56,11 @@ const UserProfile: React.FunctionComponent<{
   const hasKickPermission = hasPermission(
     currentPasskeyInfo?.address || '',
     'user:kick',
-    space,
+    space || undefined,
     isSpaceOwner
   );
 
-  const canKickThisUser = canKickUser(props.user.address, space);
+  const canKickThisUser = canKickUser(props.user.address, space || undefined);
 
   const canKickUsers = hasKickPermission && canKickThisUser;
 
@@ -102,15 +102,15 @@ const UserProfile: React.FunctionComponent<{
             <Text>{props.user.displayName}</Text>
           </Container>
           <FlexRow className="py-1 text-subtle">
-            <Text className="text-xs w-[140px] truncate text-subtle">
-              {props.user.address}
+            <Text className="text-xs text-subtle">
+              {truncateAddress(props.user.address)}
             </Text>
             <ClickToCopyContent
               className="ml-2"
               tooltipText={t`Copy address`}
               text={props.user.address}
               tooltipLocation="top"
-              iconClassName="text-subtle hover:text-surface-7"
+              iconClassName="text-xs text-subtle hover:text-surface-7"
             >
               <></>
             </ClickToCopyContent>
