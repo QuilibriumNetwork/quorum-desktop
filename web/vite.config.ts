@@ -70,6 +70,20 @@ export default defineConfig(({ command }) => ({
       // Allow serving .readme folder in development (entire dev folder already excluded from prod)
       allow: ['..', '.readme'],
     },
+    proxy: {
+      '/api': {
+        target: 'https://api.quorummessenger.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/ws': {
+        target: 'wss://api.quorummessenger.com',
+        ws: true,
+        changeOrigin: true,
+        secure: true
+      }
+    },
   },
   resolve: {
     alias: {
