@@ -44,7 +44,7 @@ src/utils/imageProcessing/
 | **Space Banners** | 25MB | 450×253px | N/A (static only) | 300×120px |
 | **Message Attachments** | 25MB | 300px + 1200px | 2MB (animation preserved) | 300×300px max |
 | **Custom Emojis** | 5MB | 36×36px | 100KB (animation preserved) | 24×24px |
-| **Custom Stickers** | 25MB | 450×450px | 500KB (animation preserved) | 300×300px max |
+| **Custom Stickers** | 25MB | 400px width (600px max height) | 750KB (animation preserved) | 300px max width (600px max height) |
 
 ### Smart Thumbnail System (Message Attachments)
 
@@ -64,7 +64,7 @@ src/utils/imageProcessing/
 ### GIF Animation Preservation Strategy
 
 - **Message GIFs**: 2MB limit, always animate in-place at 300px max width
-- **Sticker GIFs**: 500KB limit, always animate in-place at 300px max width
+- **Sticker GIFs**: 750KB limit, always animate in-place at 300px max width
 - **Emoji GIFs**: 100KB limit, perfect for tiny animations
 - **Modal Behavior**: GIFs never open in modal - only static images do
 - **Smart Processing**: Never convert animated GIFs to static images
@@ -109,7 +109,7 @@ const stickerResult = await processImage(file, 'sticker');
 
 // Or use convenient type-specific processors
 const emojiResult = await processEmojiImage(file);   // 36px, 100KB GIF limit
-const stickerResult = await processStickerImage(file); // 450px, 500KB GIF limit
+const stickerResult = await processStickerImage(file); // 400px width, 750KB GIF limit
 const avatarResult = await processAvatarImage(file);   // 123px, no GIFs
 ```
 
@@ -134,7 +134,7 @@ try {
 ### Input Limits (What Users Can Upload)
 - **Static images**: 25MB (automatically compressed)
 - **Message GIFs**: 2MB hard limit (animation preserved)
-- **Sticker GIFs**: 500KB hard limit (animation preserved)
+- **Sticker GIFs**: 750KB hard limit (animation preserved)
 - **Emoji GIFs**: 100KB hard limit (animation preserved)
 - **Emojis (static)**: 5MB (compressed to 36×36px)
 
@@ -149,7 +149,7 @@ try {
 ### Error Messages
 - `"File cannot be larger than 25MB"` - Static image input limit
 - `"GIF files cannot be larger than 2MB"` - Message GIF limit
-- `"Animated sticker GIFs cannot be larger than 500KB"` - Sticker GIF limit
+- `"Animated sticker GIFs cannot be larger than 750KB"` - Sticker GIF limit
 - `"Animated emoji GIFs cannot be larger than 100KB"` - Emoji GIF limit
 - `"Unable to process image. Please use a smaller image."` - Processing failure
 
@@ -229,3 +229,5 @@ console.log(`Animation preserved: ${!result.thumbnail || result.isLargeGif}`);
 
 ---
 *Updated: 2025-09-21 - Enhanced GIF handling: 300px max width constraint, no modal opening, in-place animation with error handling*
+*Updated: 2025-09-22 - Increased sticker GIF limit to 750KB, removed max-height constraint for images to allow natural aspect ratio*
+*Updated: 2025-09-22 - Changed sticker compression to 400px max width with natural height scaling*

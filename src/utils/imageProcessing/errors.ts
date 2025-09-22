@@ -23,7 +23,7 @@ export const IMAGE_ERRORS = {
     t`Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF for emoji use.`,
 
   ANIMATED_STICKER_GIF_TOO_LARGE: () =>
-    t`Animated sticker GIFs cannot be larger than 500KB. Please optimize your GIF for sticker use.`,
+    t`Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use.`,
 
   // Processing errors
   COMPRESSION_FAILED: () =>

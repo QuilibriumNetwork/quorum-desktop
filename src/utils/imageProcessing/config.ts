@@ -16,6 +16,7 @@ export const FILE_SIZE_LIMITS = {
 
   // Processing thresholds
   GIF_THUMBNAIL_THRESHOLD: 500 * 1024, // 500KB - show thumbnail for GIFs above this
+  MAX_STICKER_GIF_SIZE: 750 * 1024, // 750KB - animated sticker GIFs (displayed at 300px max)
   MAX_EMOJI_GIF_SIZE: 100 * 1024, // 100KB - animated emoji GIFs (displayed at 24x24px)
 
   // Legacy limits (for reference)
@@ -136,18 +137,18 @@ export const IMAGE_CONFIGS = {
   } as ImageConfig,
 
   /**
-   * Custom stickers - All constrained to 300px max width
-   * GIFs: 500KB limit, always animate but display at 300px max
+   * Custom stickers - Compressed to 400px max width, displayed at 300px
+   * GIFs: 750KB limit, always animate but display at 300px max width
    */
   sticker: {
-    maxWidth: 450,
-    maxHeight: 450,
+    maxWidth: 400,
+    maxHeight: 600, // Max height limit to prevent overly tall stickers
     quality: 0.8,
     maintainAspectRatio: true,
     skipCompressionThreshold: 100 * 1024, // 100KB
-    gifSizeLimit: FILE_SIZE_LIMITS.GIF_THUMBNAIL_THRESHOLD,
+    gifSizeLimit: FILE_SIZE_LIMITS.MAX_STICKER_GIF_SIZE,
     preserveGifAnimation: true,
-    gifMaxDisplayWidth: 300, // All sticker GIFs constrained to 300px via CSS
+    gifMaxDisplayWidth: 300, // Display at 300px max width
   } as ImageConfig,
 } as const;
 

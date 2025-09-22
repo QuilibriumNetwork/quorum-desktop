@@ -90,11 +90,18 @@
 }
 
 /* === RESPONSIVE IMAGES AND STICKERS === */
-.message-image,
-.message-sticker {
+.message-image {
   max-width: min(300px, calc(100vw - 60px));
-  max-height: min(300px, calc(100vw - 60px));
   width: auto;
   height: auto;
+  /* No max-height constraint - allow natural height based on aspect ratio */
+}
+
+.message-sticker {
+  max-width: min(300px, calc(100vw - 60px));
+  max-height: 600px;
+  width: auto;
+  height: auto;
+  object-fit: contain; /* Ensure image fits within bounds while maintaining aspect ratio */
 }
 

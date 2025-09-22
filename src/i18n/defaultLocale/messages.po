@@ -40,14 +40,14 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:139
-msgid "Replying to {user}"
+#: src/components/message/MessageComposer.native.tsx:134
+msgid "Failed to process image"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:134
-msgid "Failed to process image"
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:139
+msgid "Replying to {user}"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -233,12 +233,12 @@ msgstr ""
 msgid "Always sign Direct Messages in conversations. This can be overridden for finer-grain control by clicking the lock icon found in each conversation view."
 msgstr ""
 
-#: src/components/modals/ConversationSettingsModal.tsx:176
+#: src/components/modals/ConversationSettingsModal.tsx:180
 #: src/components/modals/NewDirectMessageModal.tsx:146
 msgid "Always sign messages"
 msgstr ""
 
-#: src/components/modals/ConversationSettingsModal.tsx:180
+#: src/components/modals/ConversationSettingsModal.tsx:184
 msgid "Always sign messages sent in this conversation. Technically speaking, this makes your messages in non-repudiable. The default for all conversations can be changed in User Settings."
 msgstr ""
 
@@ -247,7 +247,7 @@ msgid "Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF
 msgstr ""
 
 #: src/utils/imageProcessing/errors.ts:26
-msgid "Animated sticker GIFs cannot be larger than 500KB. Please optimize your GIF for sticker use."
+msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr ""
 
 #: src/components/modals/UserSettingsModal.tsx:188
@@ -460,7 +460,7 @@ msgstr ""
 msgid "Conversation settings"
 msgstr ""
 
-#: src/components/modals/ConversationSettingsModal.tsx:168
+#: src/components/modals/ConversationSettingsModal.tsx:172
 msgid "Conversation Settings"
 msgstr ""
 
@@ -511,11 +511,11 @@ msgstr ""
 #~ msgid "Copy to clipboard"
 #~ msgstr ""
 
-#: src/components/context/MessageDB.tsx:5419
+#: src/components/context/MessageDB.tsx:5428
 msgid "Could not add Space"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:5292
+#: src/components/context/MessageDB.tsx:5301
 msgid "Could not obtain manifest for Space"
 msgstr ""
 
@@ -557,11 +557,11 @@ msgstr ""
 msgid "Dark"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:5271
+#: src/components/context/MessageDB.tsx:5280
 msgid "decrypted space with no known config key"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:5277
+#: src/components/context/MessageDB.tsx:5286
 msgid "Decrypted Space with no known hub key"
 msgstr ""
 
@@ -595,7 +595,7 @@ msgid "Delete Channel"
 msgstr ""
 
 #: src/components/modals/ConversationSettingsModal.tsx:54
-#: src/components/modals/ConversationSettingsModal.tsx:214
+#: src/components/modals/ConversationSettingsModal.tsx:218
 msgid "Delete Conversation"
 msgstr ""
 
@@ -766,7 +766,7 @@ msgstr ""
 msgid "Failed to copy to clipboard. Please try again."
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:970
+#: src/components/context/MessageDB.tsx:979
 msgid "Failed to decrypt message with any known state"
 msgstr ""
 
@@ -850,7 +850,7 @@ msgstr ""
 msgid "File validation failed. Please try again."
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:3031
+#: src/components/context/MessageDB.tsx:3040
 msgid "general"
 msgstr ""
 
@@ -861,7 +861,7 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:3032
+#: src/components/context/MessageDB.tsx:3041
 msgid "General Chat"
 msgstr ""
 
@@ -943,7 +943,7 @@ msgstr ""
 msgid "Important messages will be pinned here"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:1170
+#: src/components/context/MessageDB.tsx:1179
 msgid "invalid address for signature"
 msgstr ""
 
@@ -956,10 +956,10 @@ msgstr ""
 msgid "Invalid file type. Please check accepted file formats."
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:4530
-#: src/components/context/MessageDB.tsx:4567
-#: src/components/context/MessageDB.tsx:4573
-#: src/components/context/MessageDB.tsx:4671
+#: src/components/context/MessageDB.tsx:4539
+#: src/components/context/MessageDB.tsx:4576
+#: src/components/context/MessageDB.tsx:4582
+#: src/components/context/MessageDB.tsx:4680
 msgid "invalid link"
 msgstr ""
 
@@ -968,12 +968,12 @@ msgstr ""
 msgid "Invalid message ID"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:5036
+#: src/components/context/MessageDB.tsx:5045
 msgid "invalid message type"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:4535
-#: src/components/context/MessageDB.tsx:4634
+#: src/components/context/MessageDB.tsx:4544
+#: src/components/context/MessageDB.tsx:4643
 #: src/hooks/business/spaces/useInviteValidation.ts:84
 msgid "invalid response"
 msgstr ""
@@ -1358,7 +1358,7 @@ msgstr ""
 msgid "Reauthorize"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:5241
+#: src/components/context/MessageDB.tsx:5250
 msgid "received config with invalid signature!"
 msgstr ""
 
@@ -1408,7 +1408,7 @@ msgstr ""
 msgid "Roles"
 msgstr ""
 
-#: src/components/modals/ConversationSettingsModal.tsx:198
+#: src/components/modals/ConversationSettingsModal.tsx:202
 msgid "Save"
 msgstr ""
 
@@ -1445,7 +1445,7 @@ msgstr ""
 msgid "Save User Key"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:5199
+#: src/components/context/MessageDB.tsx:5208
 msgid "saved config is out of date"
 msgstr ""
 
@@ -1700,7 +1700,7 @@ msgstr ""
 msgid "Unable to copy to clipboard"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:3310
+#: src/components/context/MessageDB.tsx:3319
 msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
 msgstr ""
 
@@ -1730,11 +1730,11 @@ msgstr ""
 msgid "Unknown time"
 msgstr ""
 
-#: src/components/context/MessageDB.tsx:947
-#: src/components/context/MessageDB.tsx:966
-#: src/components/context/MessageDB.tsx:2888
-#: src/components/context/MessageDB.tsx:3924
-#: src/components/context/MessageDB.tsx:5148
+#: src/components/context/MessageDB.tsx:956
+#: src/components/context/MessageDB.tsx:975
+#: src/components/context/MessageDB.tsx:2897
+#: src/components/context/MessageDB.tsx:3933
+#: src/components/context/MessageDB.tsx:5157
 #: src/components/direct/DirectMessage.tsx:123
 #: src/components/direct/DirectMessage.tsx:138
 #: src/components/direct/DirectMessage.tsx:323
