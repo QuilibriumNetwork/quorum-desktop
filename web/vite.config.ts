@@ -55,9 +55,6 @@ export default defineConfig(({ command }) => ({
     }),
   ],
   server: {
-    proxy: {
-      '/api': 'https://api.quorummessenger.com'
-    },
     allowedHosts: [
       '.serveo.net',
       '.loca.lt',
