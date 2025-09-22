@@ -9,6 +9,7 @@ import { useRegistrationContext } from '../../../components/context/useRegistrat
 import { useQuorumApiClient } from '../../../components/context/QuorumApiContext';
 import { useConversations, useRegistration } from '../../queries';
 import { Conversation, Channel } from '../../../api/quorumApi';
+import { truncateAddress } from '../../../utils';
 
 export interface UseInviteManagementOptions {
   spaceId: string;
@@ -80,7 +81,7 @@ export const useInviteManagement = (
         value: conversation.address,
         label: conversation.displayName,
         avatar: conversation.icon,
-        subtitle: conversation.address,
+        subtitle: truncateAddress(conversation.address),
       }));
   }, [conversations]);
 

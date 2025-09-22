@@ -33,7 +33,8 @@ Private invites are sent directly to users via existing conversations or manual 
 **Characteristics:**
 - Unique keys per invite
 - Sent through direct messages
-- Valid indefinitely (until public links are enabled)
+- **Single-use consumption**: Each invite generation consumes one secret from a finite pool
+- **Limited supply**: Spaces have a limited number of secrets available for private invites
 - Cannot be shared publicly
 
 ### Public Invite Links
@@ -48,57 +49,83 @@ Public invite links are shareable URLs that anyone can use to join a space. They
 
 ## Critical System Behavior
 
-### 🚨 Permanent System Switch
+### 🔄 Reversible System Switch
 
-Once you generate a public invite link, the system **PERMANENTLY** switches from private-only to public-only mode. This is a **one-way operation** with significant implications.
+When you generate a public invite link, the system switches from private-only to public-only mode. This operation is **REVERSIBLE** - deleting the public link returns to private-only mode.
 
 **Exact Behavior Flow:**
 
 1. **Phase 1 - Private Only Mode:**
    - Send private invites via "existing conversations" or manual address
-   - All use unique, secure private keys per invite
-   - Private invites remain valid indefinitely
+   - Each invite generation consumes one secret from the space's finite `evals` array
+   - Generated invites remain valid until the space switches to public mode
+   - **Limited capacity**: Spaces can only generate a finite number of private invites
 
-2. **Phase 2 - The Switch (PERMANENT):**
+2. **Phase 2 - The Switch (REVERSIBLE):**
    - Generate first public link → **ALL previous private invites immediately stop working**
-   - Original config key is **overwritten** with new public key (MessageDB.tsx line 4007-4016)
-   - System permanently switches to public-only mode
+   - New public key is generated alongside original keys (MessageDB.tsx line 3849)
+   - System switches to public-only mode while public link exists
 
-3. **Phase 3 - Public-Only Mode (NO GOING BACK):**
+3. **Phase 3 - Public-Only Mode (REVERSIBLE):**
    - "Send invite to existing conversations" now sends the **same public URL** to everyone
-   - No more unique private invites possible
-   - All future invites are the same public link
+   - No more unique private invites possible while public link exists
+   - All future invites are the same public link until public link is deleted
 
-**🔥 Most Important Misunderstanding:**
+**🔥 Most Important Understanding:**
 
-**WRONG:** "After creating public link, I can still send new private invites from scratch"
-**CORRECT:** "After creating public link, ALL invites become the public URL - there are no more private invites ever"
+**KEY BEHAVIOR:** "After creating public link, ALL invites become the public URL until the public link is deleted"
+**REVERSIBLE:** "Deleting the public link returns the system to private-only mode, allowing private invites again"
 
 **Critical Code Evidence:**
 
 ```typescript
-// constructInviteLink() decision logic - MessageDB.tsx lines 3933-3935
+// constructInviteLink() decision logic - MessageDB.tsx lines 4066-4068
 const constructInviteLink = React.useCallback(async (spaceId: string) => {
   const space = await messageDB.getSpace(spaceId);
   if (space?.inviteUrl) {
-    return space.inviteUrl; // ← ALWAYS returns public URL if it exists
+    return space.inviteUrl; // ← Returns public URL if it exists and is truthy
   }
-  // ← This private invite code is NEVER reached again once public link exists
+  // ← Falls back to private invite generation when inviteUrl is empty/deleted
+```
+
+**Private Invite Secret Consumption - MessageDB.tsx lines 4084-4091:**
+
+```typescript
+// Private invite generation consumes secrets from finite pool
+const index_secret_raw = sets[0].evals.shift(); // ← REMOVES secret from evals array
+const secret = Buffer.from(new Uint8Array(index_secret_raw)).toString('hex');
+await messageDB.saveEncryptionState(
+  { ...response[0], state: JSON.stringify(sets[0]) }, // ← SAVES modified state
+  true
+);
+// Each private invite permanently consumes one secret from the evals array
+```
+
+**Delete Functionality - SpaceEditor.tsx lines 233-237:**
+
+```typescript
+await updateSpace({
+  ...space,
+  inviteUrl: '',      // ← Sets to empty string (falsy)
+  isPublic: false,
+});
+// After deletion, constructInviteLink falls back to private invite generation
 ```
 
 **User Experience Impact:**
 
 - **Private-Only Spaces**: Private invites are truly private and never expire
-- **Post-Public Spaces**: The "Send invite" feature becomes a public link distributor
-- **No Rollback**: There's no way to return to private-only mode once public links are enabled
-- **All Future Invites**: Same URL for everyone, no matter how you send them
+- **Active Public Spaces**: The "Send invite" feature becomes a public link distributor
+- **Rollback Available**: Users can return to private-only mode by deleting the public link
+- **Mode-Dependent Invites**: Private invites when no public link exists, public URL when public link is active
 
 **Example Timeline:**
-1. Send 5 private invites → All work with unique keys
-2. Generate public link → Those 5 private invites immediately break
-3. Send "private" invite to friend → Actually sends the public URL
-4. Regenerate public link → Previous public URL breaks, friend's link stops working
-5. Send another "private" invite → Sends the new public URL (same for everyone)
+1. Send 5 private invites → 5 secrets consumed from `evals` array, invites work with unique keys
+2. Generate public link → Those 5 private invites immediately break, but secrets already consumed
+3. Send "private" invite to friend → Actually sends the public URL (no secrets consumed)
+4. Delete public link → System returns to private-only mode
+5. Send new invite to friend → Consumes another secret from remaining `evals`, generates new private invite
+6. Generate new public link → Previous private invites break, new public URL active
 
 ## Technical Architecture Details
 
@@ -125,11 +152,13 @@ const constructInviteLink = React.useCallback(async (spaceId: string) => {
 
 ### Invite Link Structures
 
-**Private Invites (Original Keys):**
+**Private Invites (Original Keys + Consumed Secrets):**
 
 ```
-https://[domain]/#spaceId={SPACE_ID}&configKey={ORIGINAL_CONFIG_PRIVATE_KEY}&template={TEMPLATE}&secret={SECRET}&hubKey={HUB_PRIVATE_KEY}
+https://[domain]/#spaceId={SPACE_ID}&configKey={ORIGINAL_CONFIG_PRIVATE_KEY}&template={TEMPLATE}&secret={CONSUMED_SECRET}&hubKey={HUB_PRIVATE_KEY}
 ```
+
+**Note**: The `secret` parameter comes from `evals.shift()` - each private invite permanently consumes one secret from the space's finite pool.
 
 **Public Links (Generated Keys):**
 
@@ -148,9 +177,11 @@ https://[domain]/invite/#spaceId={SPACE_ID}&configKey={NEW_CONFIG_PRIVATE_KEY}
 
 1. **Check**: Does `space.inviteUrl` exist?
 2. **If NO**: Use original space creation keys
-3. **Template Construction**: Uses existing encryption states and ratchets
-4. **Link Generation**: Includes template, secret, and hub keys
-5. **Validation**: Uses original config keys for decryption
+3. **Secret Consumption**: `sets[0].evals.shift()` permanently removes one secret from the finite pool
+4. **Template Construction**: Uses existing encryption states and ratchets
+5. **Link Generation**: Includes template, consumed secret, and hub keys
+6. **State Update**: Save modified encryption state (with one less secret) back to database
+7. **Validation**: Uses original config keys for decryption
 
 **Public Links (generateNewInviteLink):**
 
@@ -185,18 +216,9 @@ if (space?.inviteUrl) {
 
 ### Security Improvements
 
-1. **Implement Kicked User Tracking**: Create persistent ban list to prevent re-joining
-2. **Enhanced Validation**: Add kicked user checks in invite processing
-3. **Key System Warning**: Alert users that enabling public links invalidates private invites
-4. **Separate Key Systems**: Consider maintaining both key systems simultaneously
+1. **Implement Banned User Tracking**: Create persistent ban list to prevent re-joining
+2. **Enhanced Validation**: Add banned user checks in invite processing
 
-### UX Improvements
-
-1. **Better Error Messages**: Distinguish between expired, invalid, and access-denied scenarios
-2. **Kicked User Notifications**: Clear indication when users are blocked from spaces
-3. **Invite History**: Track sent invites and their status
-4. **Key System Education**: Explain the difference between private and public invite systems
-5. **Migration Warning**: Warn users before switching from private-only to public linking
 
 ### Code Quality
 
@@ -204,12 +226,6 @@ if (space?.inviteUrl) {
 2. **Type Safety**: Improve TypeScript definitions for invite-related types
 3. **Error Handling**: More granular error categorization and handling
 4. **Documentation**: Better code comments explaining the dual key system
-
-### Critical UX Issues to Address
-
-1. **Hidden Key Switch**: Users don't understand that enabling public links breaks private invites
-2. **Misleading Tooltips**: Current tooltip doesn't explain the dual system impact
-3. **No Rollback**: Once public links are enabled, there's no way to go back to private-only mode
 
 ### Current Public Invite Link UI Flow
 
@@ -223,12 +239,12 @@ During any generation operation, existing UI elements hide and only the relevant
 
 The invite system uses a sophisticated **dual key architecture** that supports both private and public invite modes. Key characteristics:
 
-1. **Private invites are permanent** - they use stable space creation keys
-2. **Public link generation is a one-way operation** - permanently changes invite behavior
-3. **"Expiration" errors are key mismatches** - not time-based expiration
+1. **Private invites consume finite secrets** - each generation permanently uses one secret from the `evals` array
+2. **Public link mode is reversible** - can switch back to private-only by deleting public link
+3. **"Expiration" errors are validation failures** - often due to secret exhaustion or key mismatches
 4. **No persistent user blocking** - kicked users can easily rejoin
 
-The system is cryptographically sound but requires careful understanding of the permanent switch from private to public mode.
+The system is cryptographically sound but requires careful understanding of the switchable modes between private and public invite systems.
 
 ## Frequently Asked Questions
 
@@ -243,11 +259,12 @@ The system allows selecting any existing conversation and does not check if user
 **Answer:** This occurs due to cryptographic validation failures, not time-based expiration.
 
 **Common Causes:**
-- Key system conflict between original space keys vs. public link keys
+- **Secret exhaustion**: Space has run out of secrets in the `evals` array for private invites
+- **Key system conflict**: Using private invite links after switching to public mode
 - Links using old keys after public link generation
 - Missing or corrupted space configuration
 
-The error message "expired or invalid" is misleading - invite links don't actually expire based on time.
+The error message "expired or invalid" is misleading - invite links don't actually expire based on time, but private invites have limited capacity.
 
 ### Can kicked users rejoin via public invite links?
 
@@ -262,9 +279,9 @@ There is no persistent "ban list" or kicked user tracking. Public invite links b
 
 ### Can I go back to private-only mode after enabling public links?
 
-**Answer: NO** - Enabling public links is a permanent, one-way operation.
+**Answer: YES** - You can delete the public link to return to private-only mode.
 
-Once you generate a public link, all future "private" invites will actually send the same public URL. There is no way to return to true private-only mode.
+When you delete the public invite link via "Delete Current Link", the `inviteUrl` is set to an empty string. This causes `constructInviteLink()` to fall back to generating private invites using the original space keys, effectively returning the system to private-only mode.
 
 ---
 
@@ -306,5 +323,5 @@ The invite system now dynamically detects the environment and uses appropriate d
 ---
 
 _Document created: July 30, 2025_
-_Updated: September 22, 2025_
+_Updated: September 22, 2025 - Corrected reversibility of public invite links_
 _Covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, MessageDB.tsx, InviteLink.tsx, inviteDomain.ts_
