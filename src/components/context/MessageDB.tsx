@@ -28,6 +28,7 @@ import {
   QueryClient,
   useQueryClient,
 } from '@tanstack/react-query';
+import { getInviteUrlBase, getValidInvitePrefixes } from '@/utils/inviteDomain';
 import {
   channel_raw as ch,
   channel as secureChannel,
@@ -1627,7 +1628,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                   }
 
                   if (space?.inviteUrl) {
-                    space.inviteUrl = `https://qm.one/invite/#spaceId=${space.spaceId}&configKey=${inner_envelope.configKey}`;
+                    space.inviteUrl = `${getInviteUrlBase(true)}#spaceId=${space.spaceId}&configKey=${inner_envelope.configKey}`;
                     await messageDB.saveSpace(space);
                   }
                 }
@@ -3845,7 +3846,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
         await apiClient.postSpaceInviteEvals(out);
 
-        space!.inviteUrl = `https://qm.one/invite/#spaceId=${space!.spaceId}&configKey=${Buffer.from(new Uint8Array(configPair.private_key)).toString('hex')}`;
+        space!.inviteUrl = `${getInviteUrlBase(true)}#spaceId=${space!.spaceId}&configKey=${Buffer.from(new Uint8Array(configPair.private_key)).toString('hex')}`;
         await messageDB.saveSpace(space!);
         await queryClient.setQueryData(
           buildSpaceKey({ spaceId: space?.spaceId! }),
@@ -4088,7 +4089,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       { ...response[0], state: JSON.stringify(sets[0]) },
       true
     );
-    const link = `https://qm.one/#spaceId=${spaceId}&configKey=${config_key.privateKey}&template=${template}&secret=${secret}&hubKey=${hub_key.privateKey}`;
+    const link = `${getInviteUrlBase(false)}#spaceId=${spaceId}&configKey=${config_key.privateKey}&template=${template}&secret=${secret}&hubKey=${hub_key.privateKey}`;
     return link;
   }, []);
 
@@ -4421,7 +4422,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           ).toString('hex'),
         };
 
-        space!.inviteUrl = `https://qm.one/invite/#spaceId=${space!.spaceId}&configKey=${Buffer.from(new Uint8Array(configPair.private_key)).toString('hex')}`;
+        space!.inviteUrl = `${getInviteUrlBase(true)}#spaceId=${space!.spaceId}&configKey=${Buffer.from(new Uint8Array(configPair.private_key)).toString('hex')}`;
         const ciphertext = ch.js_encrypt_inbox_message(
           JSON.stringify({
             inbox_public_key: [...new Uint8Array(configPair.public_key)],
@@ -4495,13 +4496,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   );
 
   const processInviteLink = React.useCallback(async (inviteLink: string) => {
-    if (
-      inviteLink.startsWith('https://app.quorummessenger.com/invite/#') ||
-      inviteLink.startsWith('https://qm.one/#') ||
-      inviteLink.startsWith('https://qm.one/invite/#') ||
-      inviteLink.startsWith('app.quorummessenger.com/invite/#') ||
-      inviteLink.startsWith('qm.one/#')
-    ) {
+    const validPrefixes = getValidInvitePrefixes();
+    if (validPrefixes.some(prefix => inviteLink.startsWith(prefix))) {
       const output = inviteLink
         .split('#')[1]
         .split('&')
@@ -4598,13 +4594,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         completedOnboarding: boolean;
       }
     ) => {
-      if (
-        inviteLink.startsWith('https://app.quorummessenger.com/invite/#') ||
-        inviteLink.startsWith('https://qm.one/#') ||
-        inviteLink.startsWith('https://qm.one/invite/#') ||
-        inviteLink.startsWith('app.quorummessenger.com/invite/#') ||
-        inviteLink.startsWith('qm.one/#')
-      ) {
+      const validPrefixes = getValidInvitePrefixes();
+      if (validPrefixes.some(prefix => inviteLink.startsWith(prefix))) {
         const output = inviteLink
           .split('#')[1]
           .split('&')

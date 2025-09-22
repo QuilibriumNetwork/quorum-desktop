@@ -128,14 +128,19 @@ const constructInviteLink = React.useCallback(async (spaceId: string) => {
 **Private Invites (Original Keys):**
 
 ```
-https://qm.one/#spaceId={SPACE_ID}&configKey={ORIGINAL_CONFIG_PRIVATE_KEY}&template={TEMPLATE}&secret={SECRET}&hubKey={HUB_PRIVATE_KEY}
+https://[domain]/#spaceId={SPACE_ID}&configKey={ORIGINAL_CONFIG_PRIVATE_KEY}&template={TEMPLATE}&secret={SECRET}&hubKey={HUB_PRIVATE_KEY}
 ```
 
 **Public Links (Generated Keys):**
 
 ```
-https://qm.one/invite/#spaceId={SPACE_ID}&configKey={NEW_CONFIG_PRIVATE_KEY}
+https://[domain]/invite/#spaceId={SPACE_ID}&configKey={NEW_CONFIG_PRIVATE_KEY}
 ```
+
+**Domain Resolution (as of September 22, 2025):**
+- **Production** (`app.quorummessenger.com`): Uses `qm.one` for short links
+- **Staging** (`test.quorummessenger.com`): Uses `test.quorummessenger.com`
+- **Local Development** (`localhost`): Uses `localhost:port` with http protocol
 
 ### Cryptographic Flow
 
@@ -263,6 +268,43 @@ Once you generate a public link, all future "private" invites will actually send
 
 ---
 
+## Environment-Specific Invite System (September 2025 Update)
+
+### Dynamic Domain Resolution
+
+The invite system now dynamically detects the environment and uses appropriate domains:
+
+**Implementation:** `src/utils/inviteDomain.ts`
+
+1. **Production Environment** (`app.quorummessenger.com`):
+   - Generates invite links with `qm.one` (short domain)
+   - Accepts both `qm.one` and `app.quorummessenger.com` links
+   - Maintains backward compatibility with all existing invites
+
+2. **Staging Environment** (`test.quorummessenger.com`):
+   - Generates invite links with `test.quorummessenger.com`
+   - Only accepts staging domain links (isolation from production)
+   - Prevents cross-environment invite confusion
+
+3. **Local Development** (`localhost:port`):
+   - Generates invite links with `http://localhost:port`
+   - Accepts all domains for comprehensive testing
+   - Supports common development ports (3000, 5173, etc.)
+
+### Key Benefits:
+- **No hardcoded domains**: Automatically adapts to deployment environment
+- **Staging isolation**: Test environment works independently
+- **Local testing**: Developers can test invite flows without deployment
+- **Production safety**: No changes to existing production behavior
+
+### Files Modified:
+- `src/utils/inviteDomain.ts` - New utility for dynamic domain resolution
+- `src/components/context/MessageDB.tsx` - Uses dynamic domain for invite generation
+- `src/components/modals/JoinSpaceModal.tsx` - Uses dynamic domain for display
+- `src/hooks/business/spaces/useInviteValidation.ts` - Dynamic validation prefixes
+
+---
+
 _Document created: July 30, 2025_
-_Updated: September 15, 2025_
-_Covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, MessageDB.tsx, InviteLink.tsx_
+_Updated: September 22, 2025_
+_Covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, MessageDB.tsx, InviteLink.tsx, inviteDomain.ts_

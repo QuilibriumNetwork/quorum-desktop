@@ -12,6 +12,7 @@ import './JoinSpaceModal.scss';
 import { useLocation } from 'react-router';
 import { t } from '@lingui/core/macro';
 import { useSpaceJoining, useInviteValidation } from '../../hooks';
+import { getInviteDisplayDomain } from '@/utils/inviteDomain';
 
 type JoinSpaceModalProps = {
   visible: boolean;
@@ -35,7 +36,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
     if (!init) {
       setInit(true);
       if (hash.trim().length > 0) {
-        setLookup('qm.one/' + hash);
+        setLookup(getInviteDisplayDomain() + '/' + hash);
       }
     }
   }, [init, hash]);

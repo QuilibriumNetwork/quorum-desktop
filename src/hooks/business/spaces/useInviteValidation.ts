@@ -3,6 +3,7 @@ import { channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useQuorumApiClient } from '../../../components/context/QuorumApiContext';
 import { Space } from '../../../api/quorumApi';
 import { t } from '@lingui/core/macro';
+import { getValidInvitePrefixes } from '@/utils/inviteDomain';
 
 interface ValidatedSpace {
   iconUrl: string;
@@ -25,13 +26,7 @@ export const useInviteValidation = () => {
 
   const parseInviteLink = useCallback(
     (inviteLink: string): InviteInfo | null => {
-      const validPrefixes = [
-        'https://app.quorummessenger.com/invite/#',
-        'https://qm.one/#',
-        'https://qm.one/invite/#',
-        'app.quorummessenger.com/invite/#',
-        'qm.one/#',
-      ];
+      const validPrefixes = getValidInvitePrefixes();
 
       const matchingPrefix = validPrefixes.find((prefix) =>
         inviteLink.startsWith(prefix)
