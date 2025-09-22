@@ -8,10 +8,12 @@ import {
   Text,
 } from '../primitives';
 import SpaceIcon from '../navbar/SpaceIcon';
+import ModalSaveOverlay from './ModalSaveOverlay';
 import './JoinSpaceModal.scss';
 import { useLocation } from 'react-router';
 import { t } from '@lingui/core/macro';
 import { useSpaceJoining, useInviteValidation } from '../../hooks';
+import { useModalSaveState } from '../../hooks/business/ui/useModalSaveState';
 import { getInviteDisplayDomain } from '@/utils/inviteDomain';
 
 type JoinSpaceModalProps = {
@@ -30,6 +32,15 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
   const { joinSpace, joining, joinError } = useSpaceJoining();
   const { validatedSpace, validationError, validateInvite } =
     useInviteValidation();
+
+  // Modal save state for joining overlay
+  const { isSaving, saveUntilComplete } = useModalSaveState({
+    onSaveComplete: props.onClose, // Close modal when joining completes
+    onSaveError: (error) => {
+      console.error('Join space error:', error);
+      // Error handling is already managed by useSpaceJoining hook
+    },
+  });
 
   // Initialize with hash from URL if present
   React.useEffect(() => {
@@ -50,9 +61,15 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
 
   const handleJoin = React.useCallback(async () => {
     if (validatedSpace && lookup) {
-      await joinSpace(lookup);
+      await saveUntilComplete(async () => {
+        const success = await joinSpace(lookup);
+        if (!success) {
+          // If join failed, throw error to prevent modal from closing
+          throw new Error('Failed to join space');
+        }
+      });
     }
-  }, [validatedSpace, lookup, joinSpace]);
+  }, [validatedSpace, lookup, joinSpace, saveUntilComplete]);
 
   const error = validationError || joinError;
 
@@ -60,9 +77,18 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
     <Modal
       title={t`Join Space`}
       visible={props.visible}
-      onClose={props.onClose}
+      onClose={isSaving ? undefined : props.onClose}
+      closeOnBackdropClick={!isSaving}
+      closeOnEscape={!isSaving}
       size="medium"
     >
+      {/* Joining overlay - positioned to cover entire modal */}
+      <ModalSaveOverlay
+        visible={isSaving}
+        message={t`Joining Space...`}
+        className="!z-[9999]"
+      />
+
       <Container className="modal-join-space modal-width-medium">
         <FlexCenter width="full">
           <Input
@@ -112,7 +138,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
           <Button
             className="w-full sm:w-auto sm:inline-block sm:px-8"
             type="primary"
-            disabled={!validatedSpace || joining}
+            disabled={!validatedSpace || joining || isSaving}
             onClick={handleJoin}
           >
             {t`Join Space`}
