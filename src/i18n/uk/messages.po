@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Без ролі - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:603
+#: src/components/space/Channel.tsx:585
 msgid "Send a message to #{channel_name}"
 msgstr "Надіслати повідомлення #{channel_name}"
 
@@ -41,28 +41,28 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Розмір вашого профільного зображення має бути {maxFileSize} або менше і повинен мати розширення PNG, JPG або JPEG."
 
 #. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:219
+msgid "Replying to {user}"
+msgstr "Відповідаючи {user}"
+
+#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:134
 msgid "Failed to process image"
 msgstr "Не вдалося обробити зображення"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:139
-msgid "Replying to {user}"
-msgstr "Відповідаючи {user}"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:227
+#: src/components/message/Message.tsx:233
 msgid "{user} has joined"
 msgstr "{user} приєднався"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:234
+#: src/components/message/Message.tsx:240
 msgid "{user} has left"
 msgstr "{user} покинув"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:241
+#: src/components/message/Message.tsx:247
 msgid "{user} has been kicked"
 msgstr "{user} був вигнаний"
 
@@ -162,7 +162,7 @@ msgstr "Додати роль"
 #~ msgid "Add Space"
 #~ msgstr "Додати простір"
 
-#: src/components/message/MessageComposer.tsx:237
+#: src/components/message/MessageComposer.tsx:357
 msgid "add sticker"
 msgstr "додати наліпку"
 
@@ -247,7 +247,7 @@ msgstr "Анімовані стікерні GIF не можуть бути бі�
 msgid "Appearance"
 msgstr "Зовнішній вигляд"
 
-#: src/components/space/SpaceEditor.tsx:1275
+#: src/components/space/SpaceEditor.tsx:1278
 msgid "Are you sure you want to delete the public invite link? Anyone with your current public invite link won't be able to join your Space anymore."
 msgstr "Ви впевнені, що хочете видалити публічне посилання на запрошення? Будь-хто з вашим поточним публічним посиланням на запрошення не зможе більше приєднатися до вашого Space."
 
@@ -272,11 +272,11 @@ msgstr "Ви впевнені, що хочете видалити це пові�
 msgid "Are you sure you want to delete this role?"
 msgstr "Ви впевнені, що хочете видалити цю роль?"
 
-#: src/components/space/SpaceEditor.tsx:1262
+#: src/components/space/SpaceEditor.tsx:1265
 msgid "Are you sure you want to generate a new public invite link? Anyone with your old public invite link won't be able to join your Space anymore."
 msgstr "Ви впевнені, що хочете згенерувати нове публічне посилання на запрошення? Будь-хто з вашим старим публічним посиланням на запрошення не зможе більше приєднатися до вашого Space."
 
-#: src/components/space/SpaceEditor.tsx:1261
+#: src/components/space/SpaceEditor.tsx:1264
 msgid ""
 "Are you sure you want to generate a public invite link?\n"
 "This will permanently invalidate ALL previously sent private invite links."
@@ -305,7 +305,7 @@ msgstr "Ви впевнені, що хочете зняти закріпленн
 #~ msgid "Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!"
 #~ msgstr "Ви впевнені? Ця група містить канали з повідомленнями. Видалення призведе до втрати всього вмісту назавжди!"
 
-#: src/components/message/MessageComposer.tsx:197
+#: src/components/message/MessageComposer.tsx:316
 msgid "attach image"
 msgstr "додати зображення"
 
@@ -409,7 +409,7 @@ msgstr "Очищення сповіщень з тегом: {tag}"
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/space/ChannelEditor.tsx:208
 #: src/components/space/GroupEditor.tsx:126
-#: src/components/space/SpaceEditor.tsx:1222
+#: src/components/space/SpaceEditor.tsx:1225
 msgid "Click again to confirm"
 msgstr "Натисніть ще раз, щоб підтвердити"
 
@@ -432,7 +432,7 @@ msgstr "Натисніть, щоб скопіювати"
 #~ msgid "Close"
 #~ msgstr "Закрити"
 
-#: src/components/space/SpaceEditor.tsx:1264
+#: src/components/space/SpaceEditor.tsx:1267
 msgid "Confirm"
 msgstr "Підтвердити"
 
@@ -476,7 +476,7 @@ msgstr "Скопіювати адресу"
 msgid "Copy Failed"
 msgstr "Копіювання не вдалося"
 
-#: src/components/space/SpaceEditor.tsx:1135
+#: src/components/space/SpaceEditor.tsx:1138
 msgid "Copy invite link to clipboard"
 msgstr "Скопіювати посилання на запрошення в буфер обміну"
 
@@ -492,16 +492,16 @@ msgstr "Скопіювати посилання на повідомлення"
 #~ msgid "Copy to clipboard"
 #~ msgstr "Скопіювати в буфер обміну"
 
-#: src/components/context/MessageDB.tsx:5428
+#: src/components/context/MessageDB.tsx:5419
 msgid "Could not add Space"
 msgstr "Не вдалося додати Простір"
 
-#: src/components/context/MessageDB.tsx:5301
+#: src/components/context/MessageDB.tsx:5292
 msgid "Could not obtain manifest for Space"
 msgstr "Не вдалося отримати маніфест для Простір"
 
 #: src/hooks/business/invites/useInviteProcessing.ts:22
-#: src/hooks/business/spaces/useInviteValidation.ts:117
+#: src/hooks/business/spaces/useInviteValidation.ts:112
 msgid "Could not verify invite"
 msgstr "Не вдалося перевірити запрошення"
 
@@ -526,7 +526,7 @@ msgstr "Створити Простір"
 msgid "Creating Space..."
 msgstr "Створення Простір..."
 
-#: src/components/space/SpaceEditor.tsx:1117
+#: src/components/space/SpaceEditor.tsx:1120
 msgid "Current Invite Link"
 msgstr "Поточне посилання на запрошення"
 
@@ -537,11 +537,11 @@ msgstr "Поточне посилання на запрошення"
 msgid "Dark"
 msgstr "Темний"
 
-#: src/components/context/MessageDB.tsx:5280
+#: src/components/context/MessageDB.tsx:5271
 msgid "decrypted space with no known config key"
 msgstr "розшифрований space без відомого ключа конфігурації"
 
-#: src/components/context/MessageDB.tsx:5286
+#: src/components/context/MessageDB.tsx:5277
 msgid "Decrypted Space with no known hub key"
 msgstr "Розшифрований Простір без відомого ключа хаба"
 
@@ -561,7 +561,7 @@ msgstr "видалити"
 #: src/components/modals/ConversationSettingsModal.tsx:57
 #: src/components/space/SpaceEditor.tsx:849
 #: src/components/space/SpaceEditor.tsx:948
-#: src/components/space/SpaceEditor.tsx:1276
+#: src/components/space/SpaceEditor.tsx:1279
 #: src/hooks/business/channels/useChannelManagement.ts:233
 #: src/hooks/business/messages/useMessageActions.ts:105
 #: src/hooks/business/spaces/useRoleManagement.ts:61
@@ -578,7 +578,7 @@ msgstr "Видалити канал"
 msgid "Delete Conversation"
 msgstr "Видалити розмову"
 
-#: src/components/space/SpaceEditor.tsx:1153
+#: src/components/space/SpaceEditor.tsx:1156
 msgid "Delete Current Link"
 msgstr "Видалити поточне посилання"
 
@@ -599,7 +599,7 @@ msgstr "Видалити повідомлення"
 msgid "Delete Messages"
 msgstr "Видалити повідомлення"
 
-#: src/components/space/SpaceEditor.tsx:1274
+#: src/components/space/SpaceEditor.tsx:1277
 msgid "Delete Public Invite Link"
 msgstr "Видалити публічне посилання на запрошення"
 
@@ -610,11 +610,11 @@ msgstr "Видалити роль"
 
 #: src/components/space/SpaceEditor.tsx:379
 #: src/components/space/SpaceEditor.tsx:431
-#: src/components/space/SpaceEditor.tsx:1220
+#: src/components/space/SpaceEditor.tsx:1223
 msgid "Delete Space"
 msgstr "Видалити Простір"
 
-#: src/components/space/SpaceEditor.tsx:1194
+#: src/components/space/SpaceEditor.tsx:1197
 msgid "Delete this space"
 msgstr "Видалити цей простір"
 
@@ -736,7 +736,7 @@ msgstr "Експортуйте свій ключ у файл, натиснувш
 msgid "Failed to copy to clipboard. Please try again."
 msgstr "Не вдалося скопіювати в буфер обміну. Спробуйте ще раз."
 
-#: src/components/context/MessageDB.tsx:979
+#: src/components/context/MessageDB.tsx:980
 msgid "Failed to decrypt message with any known state"
 msgstr "Не вдалося розшифрувати повідомлення жодним відомим станом"
 
@@ -812,7 +812,7 @@ msgstr "Розмір файлу занадто малий. Мінімальни�
 msgid "File validation failed. Please try again."
 msgstr "Перевірка файлу не вдалася. Будь ласка, спробуйте ще раз."
 
-#: src/components/context/MessageDB.tsx:3040
+#: src/components/context/MessageDB.tsx:3041
 msgid "general"
 msgstr "загальний"
 
@@ -823,23 +823,23 @@ msgstr "загальний"
 msgid "General"
 msgstr "Загальний"
 
-#: src/components/context/MessageDB.tsx:3041
+#: src/components/context/MessageDB.tsx:3042
 msgid "General Chat"
 msgstr "Загальний чат"
 
 #~ msgid "Generate New Invite Link"
 #~ msgstr "Згенерувати нове посилання для запрошення"
 
-#: src/components/space/SpaceEditor.tsx:1160
+#: src/components/space/SpaceEditor.tsx:1163
 msgid "Generate New Link"
 msgstr "Згенерувати нове посилання"
 
-#: src/components/space/SpaceEditor.tsx:1258
+#: src/components/space/SpaceEditor.tsx:1261
 msgid "Generate New Public Invite Link"
 msgstr "Згенерувати нове публічне посилання на запрошення"
 
-#: src/components/space/SpaceEditor.tsx:1102
-#: src/components/space/SpaceEditor.tsx:1258
+#: src/components/space/SpaceEditor.tsx:1105
+#: src/components/space/SpaceEditor.tsx:1261
 msgid "Generate Public Invite Link"
 msgstr "Згенерувати публічне посилання на запрошення"
 
@@ -903,7 +903,7 @@ msgstr "Важлива інформація для користувачів вп
 msgid "Important messages will be pinned here"
 msgstr "Важливі повідомлення будуть закріплені тут"
 
-#: src/components/context/MessageDB.tsx:1179
+#: src/components/context/MessageDB.tsx:1180
 msgid "invalid address for signature"
 msgstr "недійсна адреса для підпису"
 
@@ -916,10 +916,10 @@ msgstr "Неправильний формат адреси. Адреси пов�
 msgid "Invalid file type. Please check accepted file formats."
 msgstr "Неправильний тип файлу. Будь ласка, перевірте прийнятні формати файлів."
 
-#: src/components/context/MessageDB.tsx:4539
-#: src/components/context/MessageDB.tsx:4576
-#: src/components/context/MessageDB.tsx:4582
-#: src/components/context/MessageDB.tsx:4680
+#: src/components/context/MessageDB.tsx:4535
+#: src/components/context/MessageDB.tsx:4572
+#: src/components/context/MessageDB.tsx:4578
+#: src/components/context/MessageDB.tsx:4671
 msgid "invalid link"
 msgstr "недійсне посилання"
 
@@ -928,13 +928,13 @@ msgstr "недійсне посилання"
 msgid "Invalid message ID"
 msgstr "Невірний ID повідомлення"
 
-#: src/components/context/MessageDB.tsx:5045
+#: src/components/context/MessageDB.tsx:5036
 msgid "invalid message type"
 msgstr "недійсний тип повідомлення"
 
-#: src/components/context/MessageDB.tsx:4544
-#: src/components/context/MessageDB.tsx:4643
-#: src/hooks/business/spaces/useInviteValidation.ts:84
+#: src/components/context/MessageDB.tsx:4540
+#: src/components/context/MessageDB.tsx:4634
+#: src/hooks/business/spaces/useInviteValidation.ts:79
 msgid "invalid response"
 msgstr "недійсна відповідь"
 
@@ -948,15 +948,19 @@ msgstr "Запрошення"
 msgid "Join"
 msgstr "Приєднатися"
 
-#: src/components/modals/JoinSpaceModal.tsx:60
-#: src/components/modals/JoinSpaceModal.tsx:71
-#: src/components/modals/JoinSpaceModal.tsx:117
+#: src/components/modals/JoinSpaceModal.tsx:78
+#: src/components/modals/JoinSpaceModal.tsx:98
+#: src/components/modals/JoinSpaceModal.tsx:144
 msgid "Join Space"
 msgstr "Приєднатися до Простору"
 
 #: src/hooks/business/invites/useInviteUI.ts:20
 msgid "Joined"
 msgstr "Приєднано"
+
+#: src/components/modals/JoinSpaceModal.tsx:88
+msgid "Joining Space..."
+msgstr ""
 
 #: src/hooks/business/invites/useInviteUI.ts:19
 msgid "Joining..."
@@ -1070,7 +1074,7 @@ msgstr "Необхідно ручне резервне копіювання"
 #~ msgstr "Максимальний розмір файлу: 256kB"
 
 #: src/components/direct/DirectMessage.tsx:419
-#: src/components/space/Channel.tsx:522
+#: src/components/space/Channel.tsx:503
 msgid "Members List"
 msgstr "Список учасників"
 
@@ -1078,15 +1082,15 @@ msgstr "Список учасників"
 msgid "Message actions"
 msgstr "Дії з повідомленнями"
 
-#: src/components/message/Message.tsx:476
+#: src/components/message/Message.tsx:495
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Повідомлення не має дійсного підпису, це може бути не від відправника"
 
-#: src/components/message/MessageComposer.tsx:253
+#: src/components/message/MessageComposer.tsx:373
 msgid "Messages are NOT signed!"
 msgstr "Повідомлення НЕ підписані!"
 
-#: src/components/message/MessageComposer.tsx:254
+#: src/components/message/MessageComposer.tsx:374
 msgid "Messages are signed!"
 msgstr "Повідомлення підписані!"
 
@@ -1106,8 +1110,8 @@ msgstr "Повідомлень не знайдено"
 msgid "No pinned messages yet"
 msgstr "Ще немає закріплених повідомлень"
 
-#: src/components/space/Channel.tsx:342
-#: src/components/space/Channel.tsx:666
+#: src/components/space/Channel.tsx:323
+#: src/components/space/Channel.tsx:649
 msgid "No users found!"
 msgstr "Користувачів не знайдено!"
 
@@ -1217,16 +1221,16 @@ msgstr "Закріпити повідомлення"
 msgid "Pin to top"
 msgstr "Закріпити вгорі"
 
-#: src/components/message/Message.tsx:464
+#: src/components/message/Message.tsx:483
 msgid "Pinned"
 msgstr "Закріплено"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:463
+#: src/components/message/Message.tsx:482
 msgid "Pinned by {0}"
 msgstr "Закріплено {0}"
 
-#: src/components/space/Channel.tsx:488
+#: src/components/space/Channel.tsx:469
 msgid "Pinned Messages"
 msgstr "Закріплені повідомлення"
 
@@ -1256,21 +1260,21 @@ msgstr "Конфіденційність/Безпека"
 msgid "Private key saved to selected folder"
 msgstr "Приватний ключ збережено в обрану папку"
 
-#: src/components/message/MessageComposer.tsx:118
+#: src/components/message/MessageComposer.tsx:198
 msgid "Processing image... This may take a moment for large files."
 msgstr "Обробка зображення... Це може зайняти деякий час для великих файлів."
 
 #~ msgid "Public Invite Link"
 #~ msgstr "Публічне запрошення"
 
-#: src/components/space/SpaceEditor.tsx:1047
+#: src/components/space/SpaceEditor.tsx:1050
 msgid "Public Invite Links"
 msgstr "Публічні запрошення"
 
 #~ msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
 #~ msgstr "Публічні посилання на запрошення дозволяють будь-кому, хто має доступ до посилання, приєднатися до вашого Простору. Зрозумійте ризики активації цього, і кому та де ви ділитеся посиланням."
 
-#: src/components/space/SpaceEditor.tsx:1091
+#: src/components/space/SpaceEditor.tsx:1094
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "Публічні запрошення дозволяють будь-кому з доступом до посилання приєднатися до вашого Space. Подумайте, з ким ви ділитеся посиланням і де ви його публікуєте."
 
@@ -1307,7 +1311,7 @@ msgstr "Готові почати справжню приватну розмов
 msgid "Reauthorize"
 msgstr "Повторна авторизація"
 
-#: src/components/context/MessageDB.tsx:5250
+#: src/components/context/MessageDB.tsx:5241
 msgid "received config with invalid signature!"
 msgstr "отримано конфігурацію з недійсним підписом!"
 
@@ -1388,7 +1392,7 @@ msgstr "Зберегти приватний ключ"
 msgid "Save User Key"
 msgstr "Зберегти ключ користувача"
 
-#: src/components/context/MessageDB.tsx:5208
+#: src/components/context/MessageDB.tsx:5199
 msgid "saved config is out of date"
 msgstr "збережена конфігурація застаріла"
 
@@ -1468,7 +1472,7 @@ msgstr "Вибрати ролі"
 msgid "Send"
 msgstr "Надіслати"
 
-#: src/components/space/SpaceEditor.tsx:1182
+#: src/components/space/SpaceEditor.tsx:1185
 msgid "Send Invite"
 msgstr "Надіслати запрошення"
 
@@ -1540,7 +1544,7 @@ msgid "Stickers"
 msgstr "Стікери"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/space/SpaceEditor.tsx:1033
+#: src/components/space/SpaceEditor.tsx:1035
 msgid "Successfully sent invite to {0}"
 msgstr "Успішно надіслано запрошення до {0}"
 
@@ -1579,7 +1583,7 @@ msgstr "Ця інформація надається лише для Прост�
 msgid "This is your public address and is safe to share with anyone you want to interact with."
 msgstr "Це ваша публічна адреса, і її безпечно ділитися з будь-ким, з ким ви хочете взаємодіяти."
 
-#: src/components/space/SpaceEditor.tsx:1121
+#: src/components/space/SpaceEditor.tsx:1124
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "Це посилання не закінчиться, але ви можете згенерувати нове в будь-який час, що зробить старе посилання недійсним."
 
@@ -1598,7 +1602,7 @@ msgstr "ПІДКАЗКА: Утримуйте Shift під час натиска�
 msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
 msgstr "Щоб вимкнути сповіщення, будь ласка, змініть налаштування у налаштуваннях вашого браузера. Сповіщення не можуть бути вимкнені програмно."
 
-#: src/components/message/Message.tsx:212
+#: src/components/message/Message.tsx:218
 msgid "Today at {timeFormatted}"
 msgstr "Сьогодні о {timeFormatted}"
 
@@ -1633,7 +1637,7 @@ msgstr "Не вдалося стиснути зображення наліпок
 msgid "Unable to copy to clipboard"
 msgstr "Не вдалося скопіювати в буфер обміну"
 
-#: src/components/context/MessageDB.tsx:3319
+#: src/components/context/MessageDB.tsx:3320
 msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
 msgstr "Не вдалося залишити Space через неповну конфігурацію. Дані Space можуть бути пошкоджені."
 
@@ -1649,7 +1653,7 @@ msgstr "Не вдалося обробити зображення. Будь ла
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "Не вдалося обробити зображення стікера. Будь ласка, використовуйте менше зображення."
 
-#: src/components/modals/JoinSpaceModal.tsx:81
+#: src/components/modals/JoinSpaceModal.tsx:108
 msgid "Unknown"
 msgstr "Невідомо"
 
@@ -1663,14 +1667,15 @@ msgstr "Невідомий Простір"
 msgid "Unknown time"
 msgstr "Невідомий час"
 
-#: src/components/context/MessageDB.tsx:956
-#: src/components/context/MessageDB.tsx:975
-#: src/components/context/MessageDB.tsx:2897
-#: src/components/context/MessageDB.tsx:3933
-#: src/components/context/MessageDB.tsx:5157
+#: src/components/context/MessageDB.tsx:957
+#: src/components/context/MessageDB.tsx:976
+#: src/components/context/MessageDB.tsx:2898
+#: src/components/context/MessageDB.tsx:3934
+#: src/components/context/MessageDB.tsx:5148
 #: src/components/direct/DirectMessage.tsx:123
 #: src/components/direct/DirectMessage.tsx:138
 #: src/components/direct/DirectMessage.tsx:323
+#: src/components/message/MessageComposer.tsx:299
 #: src/components/message/MessagePreview.tsx:41
 #: src/components/message/PinnedMessagesPanel.tsx:106
 #: src/components/message/PinnedMessagesPanel.tsx:119
@@ -1752,8 +1757,8 @@ msgstr "Адреса користувача тут"
 msgid "User does not exist."
 msgstr "Користувача не існує."
 
-#: src/components/space/Channel.tsx:329
-#: src/components/space/Channel.tsx:653
+#: src/components/space/Channel.tsx:310
+#: src/components/space/Channel.tsx:636
 msgid "Username or Address"
 msgstr "Ім'я користувача або адреса"
 
@@ -1788,7 +1793,7 @@ msgstr "Коли ви використовуєте Quorum у браузері, �
 #~ msgid "Yesterday"
 #~ msgstr "Вчора"
 
-#: src/components/message/Message.tsx:215
+#: src/components/message/Message.tsx:221
 msgid "Yesterday at {timeFormatted}"
 msgstr "Вчора о {timeFormatted}"
 
@@ -1808,8 +1813,8 @@ msgstr "Ви можете змінити це пізніше для цієї р�
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "Ви не можете видалити групу, яка містить канали. Спочатку видаліть усі {channelCount} канали в цій групі."
 
-#: src/components/message/MessageComposer.tsx:97
-#: src/components/space/Channel.tsx:624
+#: src/components/message/MessageComposer.tsx:177
+#: src/components/space/Channel.tsx:607
 msgid "You cannot post in this channel"
 msgstr "Ви не можете публікувати в цьому каналі"
 

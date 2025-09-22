@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Rol Yok - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:603
+#: src/components/space/Channel.tsx:585
 msgid "Send a message to #{channel_name}"
 msgstr "#{channel_name} kanalına bir mesaj gönder"
 
@@ -41,28 +41,28 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Profil resminizin boyutu {maxFileSize} veya daha az olmalı ve PNG, JPG veya JPEG dosya uzantısına sahip olmalıdır."
 
 #. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:219
+msgid "Replying to {user}"
+msgstr "{user} ile yanıt veriliyor"
+
+#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:134
 msgid "Failed to process image"
 msgstr "Görüntü işlenemedi"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:139
-msgid "Replying to {user}"
-msgstr "{user} ile yanıt veriliyor"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:227
+#: src/components/message/Message.tsx:233
 msgid "{user} has joined"
 msgstr "{user} katıldı"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:234
+#: src/components/message/Message.tsx:240
 msgid "{user} has left"
 msgstr "{user} ayrıldı"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:241
+#: src/components/message/Message.tsx:247
 msgid "{user} has been kicked"
 msgstr "{user} atıldı"
 
@@ -162,7 +162,7 @@ msgstr "Rol Ekle"
 #~ msgid "Add Space"
 #~ msgstr "Alan Ekle"
 
-#: src/components/message/MessageComposer.tsx:237
+#: src/components/message/MessageComposer.tsx:357
 msgid "add sticker"
 msgstr "sticker ekle"
 
@@ -247,7 +247,7 @@ msgstr "Animasyonlu çıkartma GIF'leri 750KB'den büyük olamaz. Lütfen GIF'in
 msgid "Appearance"
 msgstr "Görünüm"
 
-#: src/components/space/SpaceEditor.tsx:1275
+#: src/components/space/SpaceEditor.tsx:1278
 msgid "Are you sure you want to delete the public invite link? Anyone with your current public invite link won't be able to join your Space anymore."
 msgstr "Herkesin mevcut kamu davet bağlantınızla Space'nuzu artık katılamayacağını onaylamak istiyor musunuz?"
 
@@ -273,11 +273,11 @@ msgstr "Bu mesajı silmek istediğinize emin misiniz?"
 msgid "Are you sure you want to delete this role?"
 msgstr "Bu rolü silmek istediğinize emin misiniz?"
 
-#: src/components/space/SpaceEditor.tsx:1262
+#: src/components/space/SpaceEditor.tsx:1265
 msgid "Are you sure you want to generate a new public invite link? Anyone with your old public invite link won't be able to join your Space anymore."
 msgstr "Yeni bir kamu davet bağlantısı oluşturmak istediğinize emin misiniz? Eski kamu davet bağlantınızla Space'nuzu artık katılamayacağını onaylamak istiyor musunuz?"
 
-#: src/components/space/SpaceEditor.tsx:1261
+#: src/components/space/SpaceEditor.tsx:1264
 msgid ""
 "Are you sure you want to generate a public invite link?\n"
 "This will permanently invalidate ALL previously sent private invite links."
@@ -306,7 +306,7 @@ msgstr "Bu mesajın sabitlenmesini kaldırmak istediğinize emin misiniz?"
 #~ msgid "Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!"
 #~ msgstr "Emin misin? Bu grup mesaj içeren kanallar içeriyor. Silinmesi tüm içeriğin sonsuza dek kaybolmasına neden olacak!"
 
-#: src/components/message/MessageComposer.tsx:197
+#: src/components/message/MessageComposer.tsx:316
 msgid "attach image"
 msgstr "görüntü ekle"
 
@@ -410,7 +410,7 @@ msgstr "Etiketle bildirimleri temizleme: {tag}"
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/space/ChannelEditor.tsx:208
 #: src/components/space/GroupEditor.tsx:126
-#: src/components/space/SpaceEditor.tsx:1222
+#: src/components/space/SpaceEditor.tsx:1225
 msgid "Click again to confirm"
 msgstr "Onaylamak için tekrar tıklayın"
 
@@ -433,7 +433,7 @@ msgstr "Kopyalamak için tıklayın"
 #~ msgid "Close"
 #~ msgstr "Kapat"
 
-#: src/components/space/SpaceEditor.tsx:1264
+#: src/components/space/SpaceEditor.tsx:1267
 msgid "Confirm"
 msgstr "Onayla"
 
@@ -477,7 +477,7 @@ msgstr "Adresi kopyala"
 msgid "Copy Failed"
 msgstr "Kopyalama Başarısız"
 
-#: src/components/space/SpaceEditor.tsx:1135
+#: src/components/space/SpaceEditor.tsx:1138
 msgid "Copy invite link to clipboard"
 msgstr "Davet bağlantısını panoya kopyala"
 
@@ -493,16 +493,16 @@ msgstr "Mesaj bağlantısını kopyala"
 #~ msgid "Copy to clipboard"
 #~ msgstr "Panoya kopyala"
 
-#: src/components/context/MessageDB.tsx:5428
+#: src/components/context/MessageDB.tsx:5419
 msgid "Could not add Space"
 msgstr "Alan eklenemedi"
 
-#: src/components/context/MessageDB.tsx:5301
+#: src/components/context/MessageDB.tsx:5292
 msgid "Could not obtain manifest for Space"
 msgstr "Alan için manifest alınamadı"
 
 #: src/hooks/business/invites/useInviteProcessing.ts:22
-#: src/hooks/business/spaces/useInviteValidation.ts:117
+#: src/hooks/business/spaces/useInviteValidation.ts:112
 msgid "Could not verify invite"
 msgstr "Davet doğrulanamadı"
 
@@ -527,7 +527,7 @@ msgstr "Alan Oluştur"
 msgid "Creating Space..."
 msgstr "Alan Oluşturuluyor..."
 
-#: src/components/space/SpaceEditor.tsx:1117
+#: src/components/space/SpaceEditor.tsx:1120
 msgid "Current Invite Link"
 msgstr "Mevcut Davet Bağlantısı"
 
@@ -538,11 +538,11 @@ msgstr "Mevcut Davet Bağlantısı"
 msgid "Dark"
 msgstr "Karanlık"
 
-#: src/components/context/MessageDB.tsx:5280
+#: src/components/context/MessageDB.tsx:5271
 msgid "decrypted space with no known config key"
 msgstr "bilinmeyen yapılandırma anahtarı ile şifrelenmiş alan"
 
-#: src/components/context/MessageDB.tsx:5286
+#: src/components/context/MessageDB.tsx:5277
 msgid "Decrypted Space with no known hub key"
 msgstr "Bilinmeyen hub anahtarı ile şifrelenmiş Alan"
 
@@ -562,7 +562,7 @@ msgstr "sil"
 #: src/components/modals/ConversationSettingsModal.tsx:57
 #: src/components/space/SpaceEditor.tsx:849
 #: src/components/space/SpaceEditor.tsx:948
-#: src/components/space/SpaceEditor.tsx:1276
+#: src/components/space/SpaceEditor.tsx:1279
 #: src/hooks/business/channels/useChannelManagement.ts:233
 #: src/hooks/business/messages/useMessageActions.ts:105
 #: src/hooks/business/spaces/useRoleManagement.ts:61
@@ -579,7 +579,7 @@ msgstr "Kanalı Sil"
 msgid "Delete Conversation"
 msgstr "Konuşmayı Sil"
 
-#: src/components/space/SpaceEditor.tsx:1153
+#: src/components/space/SpaceEditor.tsx:1156
 msgid "Delete Current Link"
 msgstr "Mevcut Bağlantıyı Sil"
 
@@ -600,7 +600,7 @@ msgstr "Mesajı Sil"
 msgid "Delete Messages"
 msgstr "Mesajları Sil"
 
-#: src/components/space/SpaceEditor.tsx:1274
+#: src/components/space/SpaceEditor.tsx:1277
 msgid "Delete Public Invite Link"
 msgstr "Kamu Davet Bağlantısını Sil"
 
@@ -611,11 +611,11 @@ msgstr "Rolü Sil"
 
 #: src/components/space/SpaceEditor.tsx:379
 #: src/components/space/SpaceEditor.tsx:431
-#: src/components/space/SpaceEditor.tsx:1220
+#: src/components/space/SpaceEditor.tsx:1223
 msgid "Delete Space"
 msgstr "Space'yu sil"
 
-#: src/components/space/SpaceEditor.tsx:1194
+#: src/components/space/SpaceEditor.tsx:1197
 msgid "Delete this space"
 msgstr "Bu espacioyu sil"
 
@@ -737,7 +737,7 @@ msgstr "Bu düğmeye tıklayarak anahtarınızı bir dosyaya dışa aktarın. Bu
 msgid "Failed to copy to clipboard. Please try again."
 msgstr "Pano'ya kopyalama başarısız. Lütfen tekrar deneyin."
 
-#: src/components/context/MessageDB.tsx:979
+#: src/components/context/MessageDB.tsx:980
 msgid "Failed to decrypt message with any known state"
 msgstr "Bilinmeyen bir durumla mesajı şifreyi çözemedi"
 
@@ -813,7 +813,7 @@ msgstr "Dosya boyutu çok küçük. Minimum boyut: {minSizeMB}"
 msgid "File validation failed. Please try again."
 msgstr "Dosya doğrulaması başarısız oldu. Lütfen tekrar deneyin."
 
-#: src/components/context/MessageDB.tsx:3040
+#: src/components/context/MessageDB.tsx:3041
 msgid "general"
 msgstr "genel"
 
@@ -824,23 +824,23 @@ msgstr "genel"
 msgid "General"
 msgstr "Genel"
 
-#: src/components/context/MessageDB.tsx:3041
+#: src/components/context/MessageDB.tsx:3042
 msgid "General Chat"
 msgstr "Genel Sohbet"
 
 #~ msgid "Generate New Invite Link"
 #~ msgstr "Yeni Davet Bağlantısı Oluştur"
 
-#: src/components/space/SpaceEditor.tsx:1160
+#: src/components/space/SpaceEditor.tsx:1163
 msgid "Generate New Link"
 msgstr "Yeni Bağlantı Oluştur"
 
-#: src/components/space/SpaceEditor.tsx:1258
+#: src/components/space/SpaceEditor.tsx:1261
 msgid "Generate New Public Invite Link"
 msgstr "Yeni Kamu Davet Bağlantısı Oluştur"
 
-#: src/components/space/SpaceEditor.tsx:1102
-#: src/components/space/SpaceEditor.tsx:1258
+#: src/components/space/SpaceEditor.tsx:1105
+#: src/components/space/SpaceEditor.tsx:1261
 msgid "Generate Public Invite Link"
 msgstr "Kamu Davet Bağlantısı Oluştur"
 
@@ -904,7 +904,7 @@ msgstr "Önemli ilk kez kullanıcı bilgileri:"
 msgid "Important messages will be pinned here"
 msgstr "Önemli mesajlar burada sabitlenecek"
 
-#: src/components/context/MessageDB.tsx:1179
+#: src/components/context/MessageDB.tsx:1180
 msgid "invalid address for signature"
 msgstr "imza için geçersiz adres"
 
@@ -917,10 +917,10 @@ msgstr "Geçersiz adres formatı. Adresler geçerli alfanümerik karakterler kul
 msgid "Invalid file type. Please check accepted file formats."
 msgstr "Geçersiz dosya türü. Lütfen kabul edilen dosya formatlarını kontrol edin."
 
-#: src/components/context/MessageDB.tsx:4539
-#: src/components/context/MessageDB.tsx:4576
-#: src/components/context/MessageDB.tsx:4582
-#: src/components/context/MessageDB.tsx:4680
+#: src/components/context/MessageDB.tsx:4535
+#: src/components/context/MessageDB.tsx:4572
+#: src/components/context/MessageDB.tsx:4578
+#: src/components/context/MessageDB.tsx:4671
 msgid "invalid link"
 msgstr "geçersiz bağlantı"
 
@@ -929,13 +929,13 @@ msgstr "geçersiz bağlantı"
 msgid "Invalid message ID"
 msgstr "Geçersiz mesaj ID'si"
 
-#: src/components/context/MessageDB.tsx:5045
+#: src/components/context/MessageDB.tsx:5036
 msgid "invalid message type"
 msgstr "geçersiz mesaj türü"
 
-#: src/components/context/MessageDB.tsx:4544
-#: src/components/context/MessageDB.tsx:4643
-#: src/hooks/business/spaces/useInviteValidation.ts:84
+#: src/components/context/MessageDB.tsx:4540
+#: src/components/context/MessageDB.tsx:4634
+#: src/hooks/business/spaces/useInviteValidation.ts:79
 msgid "invalid response"
 msgstr "geçersiz yanıt"
 
@@ -949,15 +949,19 @@ msgstr "Davetler"
 msgid "Join"
 msgstr "Katıl"
 
-#: src/components/modals/JoinSpaceModal.tsx:60
-#: src/components/modals/JoinSpaceModal.tsx:71
-#: src/components/modals/JoinSpaceModal.tsx:117
+#: src/components/modals/JoinSpaceModal.tsx:78
+#: src/components/modals/JoinSpaceModal.tsx:98
+#: src/components/modals/JoinSpaceModal.tsx:144
 msgid "Join Space"
 msgstr "Uzaya Katıl"
 
 #: src/hooks/business/invites/useInviteUI.ts:20
 msgid "Joined"
 msgstr "Katıldı"
+
+#: src/components/modals/JoinSpaceModal.tsx:88
+msgid "Joining Space..."
+msgstr ""
 
 #: src/hooks/business/invites/useInviteUI.ts:19
 msgid "Joining..."
@@ -1071,7 +1075,7 @@ msgstr "Manuel Yedekleme Gerekiyor"
 #~ msgstr "Maksimum dosya boyutu: 256kB"
 
 #: src/components/direct/DirectMessage.tsx:419
-#: src/components/space/Channel.tsx:522
+#: src/components/space/Channel.tsx:503
 msgid "Members List"
 msgstr "Üyeler Listesi"
 
@@ -1079,15 +1083,15 @@ msgstr "Üyeler Listesi"
 msgid "Message actions"
 msgstr "Mesaj eylemleri"
 
-#: src/components/message/Message.tsx:476
+#: src/components/message/Message.tsx:495
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Mesajın geçerli bir imzası yok, bu gönderenden gelmiyor olabilir"
 
-#: src/components/message/MessageComposer.tsx:253
+#: src/components/message/MessageComposer.tsx:373
 msgid "Messages are NOT signed!"
 msgstr "Mesajlar İMZALANMAMIŞTIR!"
 
-#: src/components/message/MessageComposer.tsx:254
+#: src/components/message/MessageComposer.tsx:374
 msgid "Messages are signed!"
 msgstr "Mesajlar imzalanmıştır!"
 
@@ -1107,8 +1111,8 @@ msgstr "Mesaj bulunamadı"
 msgid "No pinned messages yet"
 msgstr "Henüz sabitlenmiş mesaj yok"
 
-#: src/components/space/Channel.tsx:342
-#: src/components/space/Channel.tsx:666
+#: src/components/space/Channel.tsx:323
+#: src/components/space/Channel.tsx:649
 msgid "No users found!"
 msgstr "Kullanıcı bulunamadı!"
 
@@ -1218,16 +1222,16 @@ msgstr "Mesajları Sabitle"
 msgid "Pin to top"
 msgstr "En üste sabitle"
 
-#: src/components/message/Message.tsx:464
+#: src/components/message/Message.tsx:483
 msgid "Pinned"
 msgstr "Sabitlenmiş"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:463
+#: src/components/message/Message.tsx:482
 msgid "Pinned by {0}"
 msgstr "{0} tarafından sabitlenmiş"
 
-#: src/components/space/Channel.tsx:488
+#: src/components/space/Channel.tsx:469
 msgid "Pinned Messages"
 msgstr "Sabitlenmiş Mesajlar"
 
@@ -1257,21 +1261,21 @@ msgstr "Gizlilik/Güvenlik"
 msgid "Private key saved to selected folder"
 msgstr "Özel anahtar seçilen klasöre kaydedildi"
 
-#: src/components/message/MessageComposer.tsx:118
+#: src/components/message/MessageComposer.tsx:198
 msgid "Processing image... This may take a moment for large files."
 msgstr "Görüntü işleniyor... Bu, büyük dosyalar için bir süre alabilir."
 
 #~ msgid "Public Invite Link"
 #~ msgstr "Açık Davet Bağlantısı"
 
-#: src/components/space/SpaceEditor.tsx:1047
+#: src/components/space/SpaceEditor.tsx:1050
 msgid "Public Invite Links"
 msgstr "Herkese Açık Davet Bağlantıları"
 
 #~ msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
 #~ msgstr "Açık davet bağlantıları, bağlantıya erişimi olan herkesin Uzayınıza katılmasına izin verir. Bunu etkinleştirmenin risklerini ve bağlantıyı kime ve nerede paylaştığınızı anlayın."
 
-#: src/components/space/SpaceEditor.tsx:1091
+#: src/components/space/SpaceEditor.tsx:1094
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "Herkese açık davet bağlantıları, bağlantıya erişimi olan herkesin Alanınıza katılmasına izin verir. Bağlantıyı kiminle paylaştığınıza ve nerede paylaştığınıza dikkat edin."
 
@@ -1308,7 +1312,7 @@ msgstr "Gerçekten özel bir sohbete başlamaya hazır mısınız?"
 msgid "Reauthorize"
 msgstr "Yeniden Yetkilendir"
 
-#: src/components/context/MessageDB.tsx:5250
+#: src/components/context/MessageDB.tsx:5241
 msgid "received config with invalid signature!"
 msgstr "geçersiz imzaya sahip yapılandırma alındı!"
 
@@ -1389,7 +1393,7 @@ msgstr "Özel Anahtarı Kaydet"
 msgid "Save User Key"
 msgstr "Kullanıcı Anahtarını Kaydet"
 
-#: src/components/context/MessageDB.tsx:5208
+#: src/components/context/MessageDB.tsx:5199
 msgid "saved config is out of date"
 msgstr "kaydedilen yapılandırma güncel değil"
 
@@ -1469,7 +1473,7 @@ msgstr "Rolleri Seç"
 msgid "Send"
 msgstr "Gönder"
 
-#: src/components/space/SpaceEditor.tsx:1182
+#: src/components/space/SpaceEditor.tsx:1185
 msgid "Send Invite"
 msgstr "Davet Gönder"
 
@@ -1541,7 +1545,7 @@ msgid "Stickers"
 msgstr "Çıkartmalar"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/space/SpaceEditor.tsx:1033
+#: src/components/space/SpaceEditor.tsx:1035
 msgid "Successfully sent invite to {0}"
 msgstr "{0} için davet başarıyla gönderildi"
 
@@ -1580,7 +1584,7 @@ msgstr "Bu bilgi yalnızca katıldığınız Alanlar için sağlanmaktadır."
 msgid "This is your public address and is safe to share with anyone you want to interact with."
 msgstr "Bu, herkese etkileşimde bulunmak istediğinizde paylaşabileceğiniz güvenli bir genel adresinizdir."
 
-#: src/components/space/SpaceEditor.tsx:1121
+#: src/components/space/SpaceEditor.tsx:1124
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "Bu bağlantı süresiz geçerli olacaktır, ancak istediğiniz zaman yeni bir tane oluşturabilirsiniz, bu da eski bağlantıyı geçersiz kılacaktır."
 
@@ -1599,7 +1603,7 @@ msgstr "İPUCU: Bu onayı tamamen atlamak için {protipAction} üzerine tıklark
 msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
 msgstr "Bildirimleri devre dışı bırakmak için lütfen tarayıcı ayarlarınızda ayarı değiştirin. Bildirimler programlı olarak devre dışı bırakılamaz."
 
-#: src/components/message/Message.tsx:212
+#: src/components/message/Message.tsx:218
 msgid "Today at {timeFormatted}"
 msgstr "Bugün {timeFormatted} tarihinde"
 
@@ -1634,7 +1638,7 @@ msgstr "Çıkartma resimlerini sıkıştırılamıyor. Lütfen daha küçük res
 msgid "Unable to copy to clipboard"
 msgstr "Pano'ya kopyalanamadı"
 
-#: src/components/context/MessageDB.tsx:3319
+#: src/components/context/MessageDB.tsx:3320
 msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
 msgstr "Tamamlanmamış yapılandırma nedeniyle alandan çıkılamıyor. Alan verileri bozulmuş olabilir."
 
@@ -1650,7 +1654,7 @@ msgstr "Görüntüyü işlemek mümkün değil. Lütfen daha küçük bir görü
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "Çıkartma görüntüsünü işlemek mümkün değil. Lütfen daha küçük bir görüntü kullanın."
 
-#: src/components/modals/JoinSpaceModal.tsx:81
+#: src/components/modals/JoinSpaceModal.tsx:108
 msgid "Unknown"
 msgstr "Bilinmeyen"
 
@@ -1664,14 +1668,15 @@ msgstr "Bilinmeyen Alan"
 msgid "Unknown time"
 msgstr "Bilinmeyen zaman"
 
-#: src/components/context/MessageDB.tsx:956
-#: src/components/context/MessageDB.tsx:975
-#: src/components/context/MessageDB.tsx:2897
-#: src/components/context/MessageDB.tsx:3933
-#: src/components/context/MessageDB.tsx:5157
+#: src/components/context/MessageDB.tsx:957
+#: src/components/context/MessageDB.tsx:976
+#: src/components/context/MessageDB.tsx:2898
+#: src/components/context/MessageDB.tsx:3934
+#: src/components/context/MessageDB.tsx:5148
 #: src/components/direct/DirectMessage.tsx:123
 #: src/components/direct/DirectMessage.tsx:138
 #: src/components/direct/DirectMessage.tsx:323
+#: src/components/message/MessageComposer.tsx:299
 #: src/components/message/MessagePreview.tsx:41
 #: src/components/message/PinnedMessagesPanel.tsx:106
 #: src/components/message/PinnedMessagesPanel.tsx:119
@@ -1753,8 +1758,8 @@ msgstr "Kullanıcı adresi burada"
 msgid "User does not exist."
 msgstr "Kullanıcı mevcut değil."
 
-#: src/components/space/Channel.tsx:329
-#: src/components/space/Channel.tsx:653
+#: src/components/space/Channel.tsx:310
+#: src/components/space/Channel.tsx:636
 msgid "Username or Address"
 msgstr "Kullanıcı Adı veya Adres"
 
@@ -1789,7 +1794,7 @@ msgstr "Bir tarayıcıda Quorum kullanırken, mesajlarınız tarayıcınıza yer
 #~ msgid "Yesterday"
 #~ msgstr "Dün"
 
-#: src/components/message/Message.tsx:215
+#: src/components/message/Message.tsx:221
 msgid "Yesterday at {timeFormatted}"
 msgstr "Dün {timeFormatted} tarihinde"
 
@@ -1809,8 +1814,8 @@ msgstr "Bu konuşma için bunu daha sonra, Konuşma görünümündeki kilit simg
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "Kanal içeren bir grubu silemezsiniz. Önce bu gruptaki tüm {channelCount} kanalları silin."
 
-#: src/components/message/MessageComposer.tsx:97
-#: src/components/space/Channel.tsx:624
+#: src/components/message/MessageComposer.tsx:177
+#: src/components/space/Channel.tsx:607
 msgid "You cannot post in this channel"
 msgstr "Bu kanalda paylaşım yapamazsınız"
 

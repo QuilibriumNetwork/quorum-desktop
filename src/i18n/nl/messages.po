@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Geen rol - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:603
+#: src/components/space/Channel.tsx:585
 msgid "Send a message to #{channel_name}"
 msgstr "Stuur een bericht naar #{channel_name}"
 
@@ -41,28 +41,28 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "De grootte van je profielafbeelding moet {maxFileSize} of kleiner zijn en moet een PNG-, JPG- of JPEG-bestandsextensie hebben."
 
 #. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:219
+msgid "Replying to {user}"
+msgstr "Beantwoorden aan {user}"
+
+#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:134
 msgid "Failed to process image"
 msgstr "Kon het beeld niet verwerken"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:139
-msgid "Replying to {user}"
-msgstr "Beantwoorden aan {user}"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:227
+#: src/components/message/Message.tsx:233
 msgid "{user} has joined"
 msgstr "{user} is toegetreden"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:234
+#: src/components/message/Message.tsx:240
 msgid "{user} has left"
 msgstr "{user} heeft de groep verlaten"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:241
+#: src/components/message/Message.tsx:247
 msgid "{user} has been kicked"
 msgstr "{user} is eruit gekickt"
 
@@ -162,7 +162,7 @@ msgstr "Rol toevoegen"
 #~ msgid "Add Space"
 #~ msgstr "Ruimte toevoegen"
 
-#: src/components/message/MessageComposer.tsx:237
+#: src/components/message/MessageComposer.tsx:357
 msgid "add sticker"
 msgstr "sticker toevoegen"
 
@@ -247,7 +247,7 @@ msgstr "Geanimeerde sticker GIFs mogen niet groter zijn dan 750KB. Optimaliseer 
 msgid "Appearance"
 msgstr "Uiterlijk"
 
-#: src/components/space/SpaceEditor.tsx:1275
+#: src/components/space/SpaceEditor.tsx:1278
 msgid "Are you sure you want to delete the public invite link? Anyone with your current public invite link won't be able to join your Space anymore."
 msgstr "Weet je zeker dat je de openbare uitnodigingslink wilt verwijderen? Iedereen met je huidige openbare uitnodigingslink kan niet meer bij je Space komen."
 
@@ -273,11 +273,11 @@ msgstr "Weet je zeker dat je dit bericht wilt verwijderen?"
 msgid "Are you sure you want to delete this role?"
 msgstr "Weet je zeker dat je deze rol wilt verwijderen?"
 
-#: src/components/space/SpaceEditor.tsx:1262
+#: src/components/space/SpaceEditor.tsx:1265
 msgid "Are you sure you want to generate a new public invite link? Anyone with your old public invite link won't be able to join your Space anymore."
 msgstr "Weet je zeker dat je een nieuwe openbare uitnodigingslink wilt genereren? Iedereen met je oude openbare uitnodigingslink kan niet meer bij je Space komen."
 
-#: src/components/space/SpaceEditor.tsx:1261
+#: src/components/space/SpaceEditor.tsx:1264
 msgid ""
 "Are you sure you want to generate a public invite link?\n"
 "This will permanently invalidate ALL previously sent private invite links."
@@ -306,7 +306,7 @@ msgstr "Weet je zeker dat je dit bericht wilt losmaken?"
 #~ msgid "Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!"
 #~ msgstr "Weet je het zeker? Deze groep bevat kanalen met berichten. Het verwijderen ervan zal ervoor zorgen dat alle inhoud voor altijd verloren gaat!"
 
-#: src/components/message/MessageComposer.tsx:197
+#: src/components/message/MessageComposer.tsx:316
 msgid "attach image"
 msgstr "afbeelding bijvoegen"
 
@@ -410,7 +410,7 @@ msgstr "Meldingen met tag wissen: {tag}"
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/space/ChannelEditor.tsx:208
 #: src/components/space/GroupEditor.tsx:126
-#: src/components/space/SpaceEditor.tsx:1222
+#: src/components/space/SpaceEditor.tsx:1225
 msgid "Click again to confirm"
 msgstr "Klik opnieuw om te bevestigen"
 
@@ -433,7 +433,7 @@ msgstr "Klik om te kopiëren"
 #~ msgid "Close"
 #~ msgstr "Sluiten"
 
-#: src/components/space/SpaceEditor.tsx:1264
+#: src/components/space/SpaceEditor.tsx:1267
 msgid "Confirm"
 msgstr "Bevestigen"
 
@@ -477,7 +477,7 @@ msgstr "Kopieer adres"
 msgid "Copy Failed"
 msgstr "Kopiëren mislukt"
 
-#: src/components/space/SpaceEditor.tsx:1135
+#: src/components/space/SpaceEditor.tsx:1138
 msgid "Copy invite link to clipboard"
 msgstr "Kopieer uitnodigingslink naar klembord"
 
@@ -493,16 +493,16 @@ msgstr "Kopieer berichtlink"
 #~ msgid "Copy to clipboard"
 #~ msgstr "Kopieer naar klembord"
 
-#: src/components/context/MessageDB.tsx:5428
+#: src/components/context/MessageDB.tsx:5419
 msgid "Could not add Space"
 msgstr "Kon Space niet toevoegen"
 
-#: src/components/context/MessageDB.tsx:5301
+#: src/components/context/MessageDB.tsx:5292
 msgid "Could not obtain manifest for Space"
 msgstr "Kon manifest voor Space niet verkrijgen"
 
 #: src/hooks/business/invites/useInviteProcessing.ts:22
-#: src/hooks/business/spaces/useInviteValidation.ts:117
+#: src/hooks/business/spaces/useInviteValidation.ts:112
 msgid "Could not verify invite"
 msgstr "Kon uitnodiging niet verifiëren"
 
@@ -527,7 +527,7 @@ msgstr "Maak Space"
 msgid "Creating Space..."
 msgstr "Space aanmaken..."
 
-#: src/components/space/SpaceEditor.tsx:1117
+#: src/components/space/SpaceEditor.tsx:1120
 msgid "Current Invite Link"
 msgstr "Huidige Uitnodigingslink"
 
@@ -538,11 +538,11 @@ msgstr "Huidige Uitnodigingslink"
 msgid "Dark"
 msgstr "Donker"
 
-#: src/components/context/MessageDB.tsx:5280
+#: src/components/context/MessageDB.tsx:5271
 msgid "decrypted space with no known config key"
 msgstr "gedecodeerde space zonder bekende configuratiesleutel"
 
-#: src/components/context/MessageDB.tsx:5286
+#: src/components/context/MessageDB.tsx:5277
 msgid "Decrypted Space with no known hub key"
 msgstr "Gedecodeerde Space zonder bekende hub-sleutel"
 
@@ -562,7 +562,7 @@ msgstr "verwijderen"
 #: src/components/modals/ConversationSettingsModal.tsx:57
 #: src/components/space/SpaceEditor.tsx:849
 #: src/components/space/SpaceEditor.tsx:948
-#: src/components/space/SpaceEditor.tsx:1276
+#: src/components/space/SpaceEditor.tsx:1279
 #: src/hooks/business/channels/useChannelManagement.ts:233
 #: src/hooks/business/messages/useMessageActions.ts:105
 #: src/hooks/business/spaces/useRoleManagement.ts:61
@@ -579,7 +579,7 @@ msgstr "Verwijder Kanaal"
 msgid "Delete Conversation"
 msgstr "Gesprek Verwijderen"
 
-#: src/components/space/SpaceEditor.tsx:1153
+#: src/components/space/SpaceEditor.tsx:1156
 msgid "Delete Current Link"
 msgstr "Verwijder Huidige Link"
 
@@ -600,7 +600,7 @@ msgstr "Verwijder Bericht"
 msgid "Delete Messages"
 msgstr "Berichten Verwijderen"
 
-#: src/components/space/SpaceEditor.tsx:1274
+#: src/components/space/SpaceEditor.tsx:1277
 msgid "Delete Public Invite Link"
 msgstr "Verwijder Openbare Uitnodigingslink"
 
@@ -611,11 +611,11 @@ msgstr "Rol Verwijderen"
 
 #: src/components/space/SpaceEditor.tsx:379
 #: src/components/space/SpaceEditor.tsx:431
-#: src/components/space/SpaceEditor.tsx:1220
+#: src/components/space/SpaceEditor.tsx:1223
 msgid "Delete Space"
 msgstr "Verwijder Space"
 
-#: src/components/space/SpaceEditor.tsx:1194
+#: src/components/space/SpaceEditor.tsx:1197
 msgid "Delete this space"
 msgstr "Verwijder deze space"
 
@@ -737,7 +737,7 @@ msgstr "Exporteer je sleutel naar een bestand door op deze knop te klikken. Deel
 msgid "Failed to copy to clipboard. Please try again."
 msgstr "Kopiëren naar klembord mislukt. Probeer het opnieuw."
 
-#: src/components/context/MessageDB.tsx:979
+#: src/components/context/MessageDB.tsx:980
 msgid "Failed to decrypt message with any known state"
 msgstr "Kon het bericht met geen enkele bekende staat ontsleutelen"
 
@@ -813,7 +813,7 @@ msgstr "Bestandsgrootte te klein. Minimale grootte: {minSizeMB}"
 msgid "File validation failed. Please try again."
 msgstr "Bestandsvalidatie mislukt. Probeer het opnieuw."
 
-#: src/components/context/MessageDB.tsx:3040
+#: src/components/context/MessageDB.tsx:3041
 msgid "general"
 msgstr "algemeen"
 
@@ -824,23 +824,23 @@ msgstr "algemeen"
 msgid "General"
 msgstr "Algemeen"
 
-#: src/components/context/MessageDB.tsx:3041
+#: src/components/context/MessageDB.tsx:3042
 msgid "General Chat"
 msgstr "Algemene chat"
 
 #~ msgid "Generate New Invite Link"
 #~ msgstr "Genereer nieuwe uitnodigingslink"
 
-#: src/components/space/SpaceEditor.tsx:1160
+#: src/components/space/SpaceEditor.tsx:1163
 msgid "Generate New Link"
 msgstr "Genereer Nieuwe Link"
 
-#: src/components/space/SpaceEditor.tsx:1258
+#: src/components/space/SpaceEditor.tsx:1261
 msgid "Generate New Public Invite Link"
 msgstr "Genereer Nieuwe Openbare Uitnodigingslink"
 
-#: src/components/space/SpaceEditor.tsx:1102
-#: src/components/space/SpaceEditor.tsx:1258
+#: src/components/space/SpaceEditor.tsx:1105
+#: src/components/space/SpaceEditor.tsx:1261
 msgid "Generate Public Invite Link"
 msgstr "Genereer Openbare Uitnodigingslink"
 
@@ -904,7 +904,7 @@ msgstr "Belangrijke informatie voor nieuwe gebruikers:"
 msgid "Important messages will be pinned here"
 msgstr "Belangrijke berichten worden hier vastgezet"
 
-#: src/components/context/MessageDB.tsx:1179
+#: src/components/context/MessageDB.tsx:1180
 msgid "invalid address for signature"
 msgstr "ongeldig adres voor handtekening"
 
@@ -917,10 +917,10 @@ msgstr "Ongeldig adresformaat. Adressen moeten geldige alfanumerieke tekens gebr
 msgid "Invalid file type. Please check accepted file formats."
 msgstr "Ongeldig bestandstype. Controleer de geaccepteerde bestandsformaten."
 
-#: src/components/context/MessageDB.tsx:4539
-#: src/components/context/MessageDB.tsx:4576
-#: src/components/context/MessageDB.tsx:4582
-#: src/components/context/MessageDB.tsx:4680
+#: src/components/context/MessageDB.tsx:4535
+#: src/components/context/MessageDB.tsx:4572
+#: src/components/context/MessageDB.tsx:4578
+#: src/components/context/MessageDB.tsx:4671
 msgid "invalid link"
 msgstr "ongeldige link"
 
@@ -929,13 +929,13 @@ msgstr "ongeldige link"
 msgid "Invalid message ID"
 msgstr "Ongeldig bericht-ID"
 
-#: src/components/context/MessageDB.tsx:5045
+#: src/components/context/MessageDB.tsx:5036
 msgid "invalid message type"
 msgstr "ongeldig berichttype"
 
-#: src/components/context/MessageDB.tsx:4544
-#: src/components/context/MessageDB.tsx:4643
-#: src/hooks/business/spaces/useInviteValidation.ts:84
+#: src/components/context/MessageDB.tsx:4540
+#: src/components/context/MessageDB.tsx:4634
+#: src/hooks/business/spaces/useInviteValidation.ts:79
 msgid "invalid response"
 msgstr "ongeldige reactie"
 
@@ -949,15 +949,19 @@ msgstr "Uitnodigingen"
 msgid "Join"
 msgstr "Deelnemen"
 
-#: src/components/modals/JoinSpaceModal.tsx:60
-#: src/components/modals/JoinSpaceModal.tsx:71
-#: src/components/modals/JoinSpaceModal.tsx:117
+#: src/components/modals/JoinSpaceModal.tsx:78
+#: src/components/modals/JoinSpaceModal.tsx:98
+#: src/components/modals/JoinSpaceModal.tsx:144
 msgid "Join Space"
 msgstr "Word bij Ruimte"
 
 #: src/hooks/business/invites/useInviteUI.ts:20
 msgid "Joined"
 msgstr "Verbonden"
+
+#: src/components/modals/JoinSpaceModal.tsx:88
+msgid "Joining Space..."
+msgstr ""
 
 #: src/hooks/business/invites/useInviteUI.ts:19
 msgid "Joining..."
@@ -1071,7 +1075,7 @@ msgstr "Handmatige back-up vereist"
 #~ msgstr "Maximale bestandsgrootte: 256kB"
 
 #: src/components/direct/DirectMessage.tsx:419
-#: src/components/space/Channel.tsx:522
+#: src/components/space/Channel.tsx:503
 msgid "Members List"
 msgstr "Ledenlijst"
 
@@ -1079,15 +1083,15 @@ msgstr "Ledenlijst"
 msgid "Message actions"
 msgstr "Berichtacties"
 
-#: src/components/message/Message.tsx:476
+#: src/components/message/Message.tsx:495
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Bericht heeft geen geldige handtekening, dit is mogelijk niet van de afzender"
 
-#: src/components/message/MessageComposer.tsx:253
+#: src/components/message/MessageComposer.tsx:373
 msgid "Messages are NOT signed!"
 msgstr "Berichten zijn NIET ondertekend!"
 
-#: src/components/message/MessageComposer.tsx:254
+#: src/components/message/MessageComposer.tsx:374
 msgid "Messages are signed!"
 msgstr "Berichten zijn ondertekend!"
 
@@ -1107,8 +1111,8 @@ msgstr "Geen berichten gevonden"
 msgid "No pinned messages yet"
 msgstr "Nog geen vastgezette boodschappen"
 
-#: src/components/space/Channel.tsx:342
-#: src/components/space/Channel.tsx:666
+#: src/components/space/Channel.tsx:323
+#: src/components/space/Channel.tsx:649
 msgid "No users found!"
 msgstr "Geen gebruikers gevonden!"
 
@@ -1218,16 +1222,16 @@ msgstr "Vastzet Berichten"
 msgid "Pin to top"
 msgstr "Pin naar boven"
 
-#: src/components/message/Message.tsx:464
+#: src/components/message/Message.tsx:483
 msgid "Pinned"
 msgstr "Vastgezet"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:463
+#: src/components/message/Message.tsx:482
 msgid "Pinned by {0}"
 msgstr "Vastgezet door {0}"
 
-#: src/components/space/Channel.tsx:488
+#: src/components/space/Channel.tsx:469
 msgid "Pinned Messages"
 msgstr "Vastgezette Berichten"
 
@@ -1257,21 +1261,21 @@ msgstr "Privacy/Beveiliging"
 msgid "Private key saved to selected folder"
 msgstr "Privésleutel opgeslagen in de geselecteerde map"
 
-#: src/components/message/MessageComposer.tsx:118
+#: src/components/message/MessageComposer.tsx:198
 msgid "Processing image... This may take a moment for large files."
 msgstr "Beeld aan het verwerken... Dit kan even duren voor grote bestanden."
 
 #~ msgid "Public Invite Link"
 #~ msgstr "Openbare Uitnodigingslink"
 
-#: src/components/space/SpaceEditor.tsx:1047
+#: src/components/space/SpaceEditor.tsx:1050
 msgid "Public Invite Links"
 msgstr "Openbare uitnodigingslinks"
 
 #~ msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
 #~ msgstr "Openbare uitnodigingslinks stellen iedereen met toegang tot de link in staat om je Ruimte te betreden. Begrijp de risico's van het inschakelen hiervan, en aan wie en waar je de link deelt."
 
-#: src/components/space/SpaceEditor.tsx:1091
+#: src/components/space/SpaceEditor.tsx:1094
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "Openbare uitnodigingslinks stellen iedereen met toegang tot de link in staat om je Space te joinen. Overweeg met wie je de link deelt en waar je deze plaatst."
 
@@ -1308,7 +1312,7 @@ msgstr "Klaar om een echt privégesprek te beginnen?"
 msgid "Reauthorize"
 msgstr "Herautoriseer"
 
-#: src/components/context/MessageDB.tsx:5250
+#: src/components/context/MessageDB.tsx:5241
 msgid "received config with invalid signature!"
 msgstr "ontvangen configuratie met ongeldige handtekening!"
 
@@ -1389,7 +1393,7 @@ msgstr "Privésleutel opslaan"
 msgid "Save User Key"
 msgstr "Gebruikerssleutel Opslaan"
 
-#: src/components/context/MessageDB.tsx:5208
+#: src/components/context/MessageDB.tsx:5199
 msgid "saved config is out of date"
 msgstr "opgeslagen configuratie is verouderd"
 
@@ -1469,7 +1473,7 @@ msgstr "Selecteer Rollen"
 msgid "Send"
 msgstr "Verzenden"
 
-#: src/components/space/SpaceEditor.tsx:1182
+#: src/components/space/SpaceEditor.tsx:1185
 msgid "Send Invite"
 msgstr "Uitnodiging Verzenden"
 
@@ -1541,7 +1545,7 @@ msgid "Stickers"
 msgstr "Stickers"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/space/SpaceEditor.tsx:1033
+#: src/components/space/SpaceEditor.tsx:1035
 msgid "Successfully sent invite to {0}"
 msgstr "Uitnodiging succesvol verzonden naar {0}"
 
@@ -1580,7 +1584,7 @@ msgstr "Deze informatie wordt alleen verstrekt aan de Spaces die je join."
 msgid "This is your public address and is safe to share with anyone you want to interact with."
 msgstr "Dit is je openbare adres en is veilig om te delen met iedereen met wie je wilt interageren."
 
-#: src/components/space/SpaceEditor.tsx:1121
+#: src/components/space/SpaceEditor.tsx:1124
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "Deze link verloopt niet, maar je kunt op elk moment een nieuwe genereren, die de oude link ongeldig maakt."
 
@@ -1599,7 +1603,7 @@ msgstr "TIP: Houd shift ingedrukt terwijl je {protipAction} aanklikt om deze bev
 msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
 msgstr "Om meldingen uit te schakelen, wijzig de instelling in uw browserinstellingen. Meldingen kunnen niet programmatisch worden uitgeschakeld."
 
-#: src/components/message/Message.tsx:212
+#: src/components/message/Message.tsx:218
 msgid "Today at {timeFormatted}"
 msgstr "Vandaag om {timeFormatted}"
 
@@ -1634,7 +1638,7 @@ msgstr "Kon stickerafbeeldingen niet comprimeren. Gebruik alstublieft kleinere a
 msgid "Unable to copy to clipboard"
 msgstr "Niet mogelijk om naar het klembord te kopiëren"
 
-#: src/components/context/MessageDB.tsx:3319
+#: src/components/context/MessageDB.tsx:3320
 msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
 msgstr "Kon de Space niet verlaten vanwege onvolledige configuratie. De ruimtegegevens kunnen beschadigd zijn."
 
@@ -1650,7 +1654,7 @@ msgstr "Kan afbeelding niet verwerken. Gebruik een kleinere afbeelding."
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "Kan stickerafbeelding niet verwerken. Gebruik een kleinere afbeelding."
 
-#: src/components/modals/JoinSpaceModal.tsx:81
+#: src/components/modals/JoinSpaceModal.tsx:108
 msgid "Unknown"
 msgstr "Onbekend"
 
@@ -1664,14 +1668,15 @@ msgstr "Onbekende Space"
 msgid "Unknown time"
 msgstr "Onbekende tijd"
 
-#: src/components/context/MessageDB.tsx:956
-#: src/components/context/MessageDB.tsx:975
-#: src/components/context/MessageDB.tsx:2897
-#: src/components/context/MessageDB.tsx:3933
-#: src/components/context/MessageDB.tsx:5157
+#: src/components/context/MessageDB.tsx:957
+#: src/components/context/MessageDB.tsx:976
+#: src/components/context/MessageDB.tsx:2898
+#: src/components/context/MessageDB.tsx:3934
+#: src/components/context/MessageDB.tsx:5148
 #: src/components/direct/DirectMessage.tsx:123
 #: src/components/direct/DirectMessage.tsx:138
 #: src/components/direct/DirectMessage.tsx:323
+#: src/components/message/MessageComposer.tsx:299
 #: src/components/message/MessagePreview.tsx:41
 #: src/components/message/PinnedMessagesPanel.tsx:106
 #: src/components/message/PinnedMessagesPanel.tsx:119
@@ -1753,8 +1758,8 @@ msgstr "Gebruikersadres hier"
 msgid "User does not exist."
 msgstr "Gebruiker bestaat niet."
 
-#: src/components/space/Channel.tsx:329
-#: src/components/space/Channel.tsx:653
+#: src/components/space/Channel.tsx:310
+#: src/components/space/Channel.tsx:636
 msgid "Username or Address"
 msgstr "Gebruikersnaam of adres"
 
@@ -1789,7 +1794,7 @@ msgstr "Wanneer je Quorum in een browser gebruikt, worden je berichten lokaal op
 #~ msgid "Yesterday"
 #~ msgstr "Gisteren"
 
-#: src/components/message/Message.tsx:215
+#: src/components/message/Message.tsx:221
 msgid "Yesterday at {timeFormatted}"
 msgstr "Gisteren om {timeFormatted}"
 
@@ -1809,8 +1814,8 @@ msgstr "U kunt dit later voor dit gesprek wijzigen door op het hangslotpictogram
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "Je kunt een groep die kanalen bevat niet verwijderen. Verwijder eerst alle {channelCount} kanalen in deze groep."
 
-#: src/components/message/MessageComposer.tsx:97
-#: src/components/space/Channel.tsx:624
+#: src/components/message/MessageComposer.tsx:177
+#: src/components/space/Channel.tsx:607
 msgid "You cannot post in this channel"
 msgstr "Je kunt niet posten in dit kanaal"
 

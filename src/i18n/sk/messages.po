@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Bez úlohy - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:603
+#: src/components/space/Channel.tsx:585
 msgid "Send a message to #{channel_name}"
 msgstr "Poslať správu #{channel_name}"
 
@@ -41,28 +41,28 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Veľkosť vašej profilovej fotografie musí byť {maxFileSize} alebo menej a musí mať príponu PNG, JPG alebo JPEG."
 
 #. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:219
+msgid "Replying to {user}"
+msgstr "Odpovedám {user}"
+
+#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:134
 msgid "Failed to process image"
 msgstr "Nepodarilo sa spracovať obrázok"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:139
-msgid "Replying to {user}"
-msgstr "Odpovedám {user}"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:227
+#: src/components/message/Message.tsx:233
 msgid "{user} has joined"
 msgstr "{user} sa pripojil"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:234
+#: src/components/message/Message.tsx:240
 msgid "{user} has left"
 msgstr "{user} opustil"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:241
+#: src/components/message/Message.tsx:247
 msgid "{user} has been kicked"
 msgstr "{user} bol vykopnutý"
 
@@ -162,7 +162,7 @@ msgstr "Pridať úlohu"
 #~ msgid "Add Space"
 #~ msgstr "Pridať priestor"
 
-#: src/components/message/MessageComposer.tsx:237
+#: src/components/message/MessageComposer.tsx:357
 msgid "add sticker"
 msgstr "pridať nálepku"
 
@@ -247,7 +247,7 @@ msgstr "Animované nálepky GIFy nemôžu byť väčšie ako 750KB. Prosím, opt
 msgid "Appearance"
 msgstr "Vzhľad"
 
-#: src/components/space/SpaceEditor.tsx:1275
+#: src/components/space/SpaceEditor.tsx:1278
 msgid "Are you sure you want to delete the public invite link? Anyone with your current public invite link won't be able to join your Space anymore."
 msgstr "Ste si istí, že chcete odstrániť verejný pozývací odkaz? Každý, kto má váš aktuálny verejný pozývací odkaz, už nebude môcť vstúpiť do vášho Space."
 
@@ -273,11 +273,11 @@ msgstr "Ste si istí, že chcete odstrániť túto správu?"
 msgid "Are you sure you want to delete this role?"
 msgstr "Ste si istí, že chcete odstrániť túto rolu?"
 
-#: src/components/space/SpaceEditor.tsx:1262
+#: src/components/space/SpaceEditor.tsx:1265
 msgid "Are you sure you want to generate a new public invite link? Anyone with your old public invite link won't be able to join your Space anymore."
 msgstr "Ste si istí, že chcete vygenerovať nový verejný pozývací odkaz? Každý, kto má váš starý verejný pozývací odkaz, už nebude môcť vstúpiť do vášho Space."
 
-#: src/components/space/SpaceEditor.tsx:1261
+#: src/components/space/SpaceEditor.tsx:1264
 msgid ""
 "Are you sure you want to generate a public invite link?\n"
 "This will permanently invalidate ALL previously sent private invite links."
@@ -306,7 +306,7 @@ msgstr "Ste si istí, že chcete odopnúť túto správu?"
 #~ msgid "Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!"
 #~ msgstr "Si si si? Táto skupina obsahuje kanály so správami. Jej odstránením sa všetok obsah navždy stratí!"
 
-#: src/components/message/MessageComposer.tsx:197
+#: src/components/message/MessageComposer.tsx:316
 msgid "attach image"
 msgstr "pripojiť obrázok"
 
@@ -410,7 +410,7 @@ msgstr "Vymazanie oznámení s tagom: {tag}"
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/space/ChannelEditor.tsx:208
 #: src/components/space/GroupEditor.tsx:126
-#: src/components/space/SpaceEditor.tsx:1222
+#: src/components/space/SpaceEditor.tsx:1225
 msgid "Click again to confirm"
 msgstr "Kliknite znova na potvrdenie"
 
@@ -433,7 +433,7 @@ msgstr "Kliknite na skopírovanie"
 #~ msgid "Close"
 #~ msgstr "Zavrieť"
 
-#: src/components/space/SpaceEditor.tsx:1264
+#: src/components/space/SpaceEditor.tsx:1267
 msgid "Confirm"
 msgstr "Potvrdiť"
 
@@ -477,7 +477,7 @@ msgstr "Kopírovať adresu"
 msgid "Copy Failed"
 msgstr "Kopírovanie zlyhalo"
 
-#: src/components/space/SpaceEditor.tsx:1135
+#: src/components/space/SpaceEditor.tsx:1138
 msgid "Copy invite link to clipboard"
 msgstr "Skopírovať pozývací odkaz do schránky"
 
@@ -493,16 +493,16 @@ msgstr "Skopírovať odkaz na správu"
 #~ msgid "Copy to clipboard"
 #~ msgstr "Skopírovať do schránky"
 
-#: src/components/context/MessageDB.tsx:5428
+#: src/components/context/MessageDB.tsx:5419
 msgid "Could not add Space"
 msgstr "Nepodarilo sa pridať Priestor"
 
-#: src/components/context/MessageDB.tsx:5301
+#: src/components/context/MessageDB.tsx:5292
 msgid "Could not obtain manifest for Space"
 msgstr "Nepodarilo sa získať manifest pre Priestor"
 
 #: src/hooks/business/invites/useInviteProcessing.ts:22
-#: src/hooks/business/spaces/useInviteValidation.ts:117
+#: src/hooks/business/spaces/useInviteValidation.ts:112
 msgid "Could not verify invite"
 msgstr "Nepodarilo sa overiť pozvánku"
 
@@ -527,7 +527,7 @@ msgstr "Vytvoriť Priestor"
 msgid "Creating Space..."
 msgstr "Vytváram Priestor..."
 
-#: src/components/space/SpaceEditor.tsx:1117
+#: src/components/space/SpaceEditor.tsx:1120
 msgid "Current Invite Link"
 msgstr "Aktuálny pozývací odkaz"
 
@@ -538,11 +538,11 @@ msgstr "Aktuálny pozývací odkaz"
 msgid "Dark"
 msgstr "Tmavý"
 
-#: src/components/context/MessageDB.tsx:5280
+#: src/components/context/MessageDB.tsx:5271
 msgid "decrypted space with no known config key"
 msgstr "dešifrovaný space bez známeho konfiguračného kľúča"
 
-#: src/components/context/MessageDB.tsx:5286
+#: src/components/context/MessageDB.tsx:5277
 msgid "Decrypted Space with no known hub key"
 msgstr "Dešifrovaný Priestor bez známeho hub kľúča"
 
@@ -562,7 +562,7 @@ msgstr "odstrániť"
 #: src/components/modals/ConversationSettingsModal.tsx:57
 #: src/components/space/SpaceEditor.tsx:849
 #: src/components/space/SpaceEditor.tsx:948
-#: src/components/space/SpaceEditor.tsx:1276
+#: src/components/space/SpaceEditor.tsx:1279
 #: src/hooks/business/channels/useChannelManagement.ts:233
 #: src/hooks/business/messages/useMessageActions.ts:105
 #: src/hooks/business/spaces/useRoleManagement.ts:61
@@ -579,7 +579,7 @@ msgstr "Vymazať kanál"
 msgid "Delete Conversation"
 msgstr "Zmazať konverzáciu"
 
-#: src/components/space/SpaceEditor.tsx:1153
+#: src/components/space/SpaceEditor.tsx:1156
 msgid "Delete Current Link"
 msgstr "Odstrániť aktuálny odkaz"
 
@@ -600,7 +600,7 @@ msgstr "Odstrániť správu"
 msgid "Delete Messages"
 msgstr "Vymazať správy"
 
-#: src/components/space/SpaceEditor.tsx:1274
+#: src/components/space/SpaceEditor.tsx:1277
 msgid "Delete Public Invite Link"
 msgstr "Odstrániť verejný pozývací odkaz"
 
@@ -611,11 +611,11 @@ msgstr "Vymazať rolu"
 
 #: src/components/space/SpaceEditor.tsx:379
 #: src/components/space/SpaceEditor.tsx:431
-#: src/components/space/SpaceEditor.tsx:1220
+#: src/components/space/SpaceEditor.tsx:1223
 msgid "Delete Space"
 msgstr "Zmazať Priestor"
 
-#: src/components/space/SpaceEditor.tsx:1194
+#: src/components/space/SpaceEditor.tsx:1197
 msgid "Delete this space"
 msgstr "Zmazať tento Priestor"
 
@@ -737,7 +737,7 @@ msgstr "Exportujte svoj kľúč do súboru kliknutím na toto tlačidlo. Tento s
 msgid "Failed to copy to clipboard. Please try again."
 msgstr "Nepodarilo sa skopírovať do schránky. Skús to znova."
 
-#: src/components/context/MessageDB.tsx:979
+#: src/components/context/MessageDB.tsx:980
 msgid "Failed to decrypt message with any known state"
 msgstr "Nepodarilo sa dešifrovať správu s akýmkoľvek známym stavom"
 
@@ -813,7 +813,7 @@ msgstr "Veľkosť súboru je príliš malá. Minimálna veľkosť: {minSizeMB}"
 msgid "File validation failed. Please try again."
 msgstr "Overenie súboru zlyhalo. Skúste to prosím znova."
 
-#: src/components/context/MessageDB.tsx:3040
+#: src/components/context/MessageDB.tsx:3041
 msgid "general"
 msgstr "všeobecné"
 
@@ -824,23 +824,23 @@ msgstr "všeobecné"
 msgid "General"
 msgstr "Všeobecné"
 
-#: src/components/context/MessageDB.tsx:3041
+#: src/components/context/MessageDB.tsx:3042
 msgid "General Chat"
 msgstr "Všeobecný chat"
 
 #~ msgid "Generate New Invite Link"
 #~ msgstr "Vytvoriť nový pozývací odkaz"
 
-#: src/components/space/SpaceEditor.tsx:1160
+#: src/components/space/SpaceEditor.tsx:1163
 msgid "Generate New Link"
 msgstr "Vygenerovať nový odkaz"
 
-#: src/components/space/SpaceEditor.tsx:1258
+#: src/components/space/SpaceEditor.tsx:1261
 msgid "Generate New Public Invite Link"
 msgstr "Vygenerovať nový verejný pozývací odkaz"
 
-#: src/components/space/SpaceEditor.tsx:1102
-#: src/components/space/SpaceEditor.tsx:1258
+#: src/components/space/SpaceEditor.tsx:1105
+#: src/components/space/SpaceEditor.tsx:1261
 msgid "Generate Public Invite Link"
 msgstr "Vygenerovať verejný pozývací odkaz"
 
@@ -904,7 +904,7 @@ msgstr "Dôležité informácie pre nových používateľov:"
 msgid "Important messages will be pinned here"
 msgstr "Dôležité správy budú pripnuté tu"
 
-#: src/components/context/MessageDB.tsx:1179
+#: src/components/context/MessageDB.tsx:1180
 msgid "invalid address for signature"
 msgstr "neplatná adresa pre podpis"
 
@@ -917,10 +917,10 @@ msgstr "Neplatný formát adresy. Adresy musia používať platné alfanumerick�
 msgid "Invalid file type. Please check accepted file formats."
 msgstr "Neplatný typ súboru. Skontrolujte akceptované formáty súborov."
 
-#: src/components/context/MessageDB.tsx:4539
-#: src/components/context/MessageDB.tsx:4576
-#: src/components/context/MessageDB.tsx:4582
-#: src/components/context/MessageDB.tsx:4680
+#: src/components/context/MessageDB.tsx:4535
+#: src/components/context/MessageDB.tsx:4572
+#: src/components/context/MessageDB.tsx:4578
+#: src/components/context/MessageDB.tsx:4671
 msgid "invalid link"
 msgstr "neplatný odkaz"
 
@@ -929,13 +929,13 @@ msgstr "neplatný odkaz"
 msgid "Invalid message ID"
 msgstr "Neplatné ID správy"
 
-#: src/components/context/MessageDB.tsx:5045
+#: src/components/context/MessageDB.tsx:5036
 msgid "invalid message type"
 msgstr "neplatný typ správy"
 
-#: src/components/context/MessageDB.tsx:4544
-#: src/components/context/MessageDB.tsx:4643
-#: src/hooks/business/spaces/useInviteValidation.ts:84
+#: src/components/context/MessageDB.tsx:4540
+#: src/components/context/MessageDB.tsx:4634
+#: src/hooks/business/spaces/useInviteValidation.ts:79
 msgid "invalid response"
 msgstr "neplatná odpoveď"
 
@@ -949,15 +949,19 @@ msgstr "Pozvánky"
 msgid "Join"
 msgstr "Pripojiť sa"
 
-#: src/components/modals/JoinSpaceModal.tsx:60
-#: src/components/modals/JoinSpaceModal.tsx:71
-#: src/components/modals/JoinSpaceModal.tsx:117
+#: src/components/modals/JoinSpaceModal.tsx:78
+#: src/components/modals/JoinSpaceModal.tsx:98
+#: src/components/modals/JoinSpaceModal.tsx:144
 msgid "Join Space"
 msgstr "Pridaj sa do Priestoru"
 
 #: src/hooks/business/invites/useInviteUI.ts:20
 msgid "Joined"
 msgstr "Pridané"
+
+#: src/components/modals/JoinSpaceModal.tsx:88
+msgid "Joining Space..."
+msgstr ""
 
 #: src/hooks/business/invites/useInviteUI.ts:19
 msgid "Joining..."
@@ -1071,7 +1075,7 @@ msgstr "Vyžaduje sa manuálna záloha"
 #~ msgstr "Maximálna veľkosť súboru: 256kB"
 
 #: src/components/direct/DirectMessage.tsx:419
-#: src/components/space/Channel.tsx:522
+#: src/components/space/Channel.tsx:503
 msgid "Members List"
 msgstr "Zoznam členov"
 
@@ -1079,15 +1083,15 @@ msgstr "Zoznam členov"
 msgid "Message actions"
 msgstr "Akcie správy"
 
-#: src/components/message/Message.tsx:476
+#: src/components/message/Message.tsx:495
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Správa nemá platný podpis, nemusí byť od odosielateľa"
 
-#: src/components/message/MessageComposer.tsx:253
+#: src/components/message/MessageComposer.tsx:373
 msgid "Messages are NOT signed!"
 msgstr "Správy NIE sú podpísané!"
 
-#: src/components/message/MessageComposer.tsx:254
+#: src/components/message/MessageComposer.tsx:374
 msgid "Messages are signed!"
 msgstr "Správy sú podpísané!"
 
@@ -1107,8 +1111,8 @@ msgstr "Žiadne správy nenájdené"
 msgid "No pinned messages yet"
 msgstr "Zatiaľ žiadne pripnuté správy"
 
-#: src/components/space/Channel.tsx:342
-#: src/components/space/Channel.tsx:666
+#: src/components/space/Channel.tsx:323
+#: src/components/space/Channel.tsx:649
 msgid "No users found!"
 msgstr "Žiadni používatelia nenájdení!"
 
@@ -1218,16 +1222,16 @@ msgstr "Pripnúť správy"
 msgid "Pin to top"
 msgstr "Pripinúť na vrchol"
 
-#: src/components/message/Message.tsx:464
+#: src/components/message/Message.tsx:483
 msgid "Pinned"
 msgstr "Pripnuté"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:463
+#: src/components/message/Message.tsx:482
 msgid "Pinned by {0}"
 msgstr "Pripnuté od {0}"
 
-#: src/components/space/Channel.tsx:488
+#: src/components/space/Channel.tsx:469
 msgid "Pinned Messages"
 msgstr "Pripnuté správy"
 
@@ -1257,21 +1261,21 @@ msgstr "Ochrana súkromia/Bezpečnosť"
 msgid "Private key saved to selected folder"
 msgstr "Súkromný kľúč bol uložený do vybraného priečinka"
 
-#: src/components/message/MessageComposer.tsx:118
+#: src/components/message/MessageComposer.tsx:198
 msgid "Processing image... This may take a moment for large files."
 msgstr "Spracovávanie obrázka... Môže to chvíľu trvať pri veľkých súboroch."
 
 #~ msgid "Public Invite Link"
 #~ msgstr "Verejný pozývací odkaz"
 
-#: src/components/space/SpaceEditor.tsx:1047
+#: src/components/space/SpaceEditor.tsx:1050
 msgid "Public Invite Links"
 msgstr "Verejné pozvánkové odkazy"
 
 #~ msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
 #~ msgstr "Verejné pozývacie odkazy umožňujú komukoľvek s prístupom k odkazu pripojiť sa do tvojho Space. Pochop riziká spojené s povolením tohto a komu a kde zdieľaš odkaz."
 
-#: src/components/space/SpaceEditor.tsx:1091
+#: src/components/space/SpaceEditor.tsx:1094
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "Verejné pozvánkové odkazy umožňujú každému, kto má prístup k odkazu, pripojiť sa k vášmu Space. Zvážte, s kým zdieľate odkaz a kde ho zverejňujete."
 
@@ -1308,7 +1312,7 @@ msgstr "Pripravení začať naozaj súkromnú konverzáciu?"
 msgid "Reauthorize"
 msgstr "Znovu autorizovať"
 
-#: src/components/context/MessageDB.tsx:5250
+#: src/components/context/MessageDB.tsx:5241
 msgid "received config with invalid signature!"
 msgstr "prijatá konfigurácia s neplatným podpisom!"
 
@@ -1389,7 +1393,7 @@ msgstr "Uložiť súkromný kľúč"
 msgid "Save User Key"
 msgstr "Uložiť používateľský kľúč"
 
-#: src/components/context/MessageDB.tsx:5208
+#: src/components/context/MessageDB.tsx:5199
 msgid "saved config is out of date"
 msgstr "uložená konfigurácia je zastaraná"
 
@@ -1469,7 +1473,7 @@ msgstr "Vybrať role"
 msgid "Send"
 msgstr "Odoslať"
 
-#: src/components/space/SpaceEditor.tsx:1182
+#: src/components/space/SpaceEditor.tsx:1185
 msgid "Send Invite"
 msgstr "Odoslať pozvánku"
 
@@ -1541,7 +1545,7 @@ msgid "Stickers"
 msgstr "Nálepky"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/space/SpaceEditor.tsx:1033
+#: src/components/space/SpaceEditor.tsx:1035
 msgid "Successfully sent invite to {0}"
 msgstr "Úspešne odoslaná pozvánka pre {0}"
 
@@ -1580,7 +1584,7 @@ msgstr "Tieto informácie sú poskytované iba pre Priestory, ktoré sa pripojí
 msgid "This is your public address and is safe to share with anyone you want to interact with."
 msgstr "Toto je vaša verejná adresa a je bezpečné ju zdieľať s kýmkoľvek, s kým chcete interagovať."
 
-#: src/components/space/SpaceEditor.tsx:1121
+#: src/components/space/SpaceEditor.tsx:1124
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "Tento odkaz nevyprší, ale môžete kedykoľvek vygenerovať nový, ktorý zneplatní starý odkaz."
 
@@ -1599,7 +1603,7 @@ msgstr "TIP: Držte stlačený shift pri kliknutí na {protipAction}, aby ste ú
 msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
 msgstr "Ak chcete vypnúť upozornenia, zmeňte nastavenia vo svojom prehliadači. Upozornenia nie je možné vypnúť programovo."
 
-#: src/components/message/Message.tsx:212
+#: src/components/message/Message.tsx:218
 msgid "Today at {timeFormatted}"
 msgstr "Dnes o {timeFormatted}"
 
@@ -1634,7 +1638,7 @@ msgstr "Nemožno komprimovať obrázky nálepiek. Použite menšie obrázky."
 msgid "Unable to copy to clipboard"
 msgstr "Nemožno skopírovať do schránky"
 
-#: src/components/context/MessageDB.tsx:3319
+#: src/components/context/MessageDB.tsx:3320
 msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
 msgstr "Nemožno opustiť espacio kvôli neúplnej konfigurácii. Údaje o espaci môžu byť poškodené."
 
@@ -1650,7 +1654,7 @@ msgstr "Nemožno spracovať obrázok. Prosím, použite menší obrázok."
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "Nemožno spracovať nálepku obrázok. Prosím, použite menší obrázok."
 
-#: src/components/modals/JoinSpaceModal.tsx:81
+#: src/components/modals/JoinSpaceModal.tsx:108
 msgid "Unknown"
 msgstr "Neznáme"
 
@@ -1664,14 +1668,15 @@ msgstr "Neznámy Priestor"
 msgid "Unknown time"
 msgstr "Neznámy čas"
 
-#: src/components/context/MessageDB.tsx:956
-#: src/components/context/MessageDB.tsx:975
-#: src/components/context/MessageDB.tsx:2897
-#: src/components/context/MessageDB.tsx:3933
-#: src/components/context/MessageDB.tsx:5157
+#: src/components/context/MessageDB.tsx:957
+#: src/components/context/MessageDB.tsx:976
+#: src/components/context/MessageDB.tsx:2898
+#: src/components/context/MessageDB.tsx:3934
+#: src/components/context/MessageDB.tsx:5148
 #: src/components/direct/DirectMessage.tsx:123
 #: src/components/direct/DirectMessage.tsx:138
 #: src/components/direct/DirectMessage.tsx:323
+#: src/components/message/MessageComposer.tsx:299
 #: src/components/message/MessagePreview.tsx:41
 #: src/components/message/PinnedMessagesPanel.tsx:106
 #: src/components/message/PinnedMessagesPanel.tsx:119
@@ -1753,8 +1758,8 @@ msgstr "Adresa používateľa tu"
 msgid "User does not exist."
 msgstr "Používateľ neexistuje."
 
-#: src/components/space/Channel.tsx:329
-#: src/components/space/Channel.tsx:653
+#: src/components/space/Channel.tsx:310
+#: src/components/space/Channel.tsx:636
 msgid "Username or Address"
 msgstr "Používateľské meno alebo adresa"
 
@@ -1789,7 +1794,7 @@ msgstr "Keď používate Quorum v prehliadači, vaše správy sú uložené lok�
 #~ msgid "Yesterday"
 #~ msgstr "Včera"
 
-#: src/components/message/Message.tsx:215
+#: src/components/message/Message.tsx:221
 msgid "Yesterday at {timeFormatted}"
 msgstr "Včera o {timeFormatted}"
 
@@ -1809,8 +1814,8 @@ msgstr "Toto môžete neskôr zmeniť pre túto konverzáciu kliknutím na ikonu
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "Nemôžete odstrániť skupinu, ktorá obsahuje kanály. Najprv odstráňte všetky {channelCount} kanály v tejto skupine."
 
-#: src/components/message/MessageComposer.tsx:97
-#: src/components/space/Channel.tsx:624
+#: src/components/message/MessageComposer.tsx:177
+#: src/components/space/Channel.tsx:607
 msgid "You cannot post in this channel"
 msgstr "Nemôžete prispievať v tomto kanáli"
 

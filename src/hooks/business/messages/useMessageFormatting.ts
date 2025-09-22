@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import * as linkify from 'linkifyjs';
 import { Message as MessageType, Sticker } from '../../../api/quorumApi';
 import { isYouTubeURL, extractYouTubeVideoId, YOUTUBE_URL_REGEX } from '../../../utils/youtubeUtils';
+import { getValidInvitePrefixes } from '../../../utils/inviteDomain';
 
 // Legacy export for backward compatibility
 export const YTRegex = YOUTUBE_URL_REGEX;
@@ -37,6 +38,12 @@ const markdownPatterns = [
 function hasMarkdownPatterns(text: string): boolean {
   if (!text) return false;
   return markdownPatterns.some(pattern => pattern.test(text));
+}
+
+// Check if a token is an invite link using dynamic domain validation
+function isInviteLink(token: string): boolean {
+  const validPrefixes = getValidInvitePrefixes();
+  return validPrefixes.some(prefix => token.startsWith(prefix));
 }
 
 export function useMessageFormatting(options: UseMessageFormattingOptions) {
@@ -144,8 +151,8 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         }
       }
 
-      // Check for invite links
-      if (token.match(InviteRegex)) {
+      // Check for invite links using dynamic domain validation
+      if (isInviteLink(token)) {
         return {
           type: 'invite' as const,
           key: `${messageId}-${tokenIndex}`,

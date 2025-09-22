@@ -1029,12 +1029,15 @@ const SpaceEditor: React.FunctionComponent<{
                             labelType="static"
                           />
                           {success && (
-                            <Callout variant="success" layout="minimal" size="sm" autoClose={3}>
-                              <Trans>
-                                Successfully sent invite to{' '}
-                                {selectedUser?.displayName}
-                              </Trans>
-                            </Callout>
+                            <>
+                              <Spacer size="sm"/>
+                              <Callout variant="success" layout="minimal" size="sm" autoClose={3}>
+                                <Trans>
+                                  Successfully sent invite to{' '}
+                                  {selectedUser?.displayName}
+                                </Trans>
+                              </Callout>
+                            </>
                           )}
                           <Spacer 
                             spaceBefore="lg" 
