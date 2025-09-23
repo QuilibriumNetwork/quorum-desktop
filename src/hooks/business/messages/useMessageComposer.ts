@@ -95,21 +95,10 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     }
   }, [acceptedFiles]);
 
-  // Calculate textarea rows
+  // Simple row calculation - let CSS handle the auto-resize
   const calculateRows = useCallback(() => {
-    const rowCount =
-      pendingMessage.split('').filter((c) => c === '\n').length + 1;
-
-    if (rowCount > 4) return 4;
-    if (pendingMessage === '') return 1;
-
-    return Math.min(
-      4,
-      Math.max(
-        rowCount,
-        editor.current ? Math.round(editor.current.scrollHeight / 28) : rowCount
-      )
-    );
+    // Return 1 for empty, otherwise let CSS grid handle the height
+    return pendingMessage === '' ? 1 : undefined;
   }, [pendingMessage]);
 
   // Submit message

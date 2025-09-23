@@ -7,6 +7,8 @@ import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
 import { useMentionInput } from '../../hooks/business/mentions';
 import { truncateAddress } from '../../utils';
 import { DefaultImages } from '../../utils';
+import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import './MessageComposer.scss';
 
 interface User {
   address: string;
@@ -93,6 +95,8 @@ export const MessageComposer = forwardRef<
     const composerRef = useRef<HTMLDivElement>(null);
     const [cursorPosition, setCursorPosition] = useState(0);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [isTyping, setIsTyping] = useState(false);
+    const { isMobile, isDesktop } = useResponsiveLayout();
 
     useImperativeHandle(ref, () => ({
       focus: () => {
@@ -164,16 +168,40 @@ export const MessageComposer = forwardRef<
       setDropdownOpen(mentionInput.showDropdown);
     }, [mentionInput.showDropdown]);
 
+    // Track typing state for mobile button hiding
+    useEffect(() => {
+      setIsTyping(value.length > 0);
+    }, [value]);
+
+    // Auto-resize textarea based on content
+    useEffect(() => {
+      if (textareaRef.current) {
+        const textarea = textareaRef.current;
+
+        // For empty textarea, use fixed height that matches button height
+        if (!value || value.trim() === '') {
+          textarea.style.height = '32px'; // With box-sizing: border-box, this includes padding
+          textarea.style.overflowY = 'hidden';
+          return;
+        }
+
+        // For content, calculate based on scrollHeight
+        textarea.style.height = 'auto';
+        const scrollHeight = textarea.scrollHeight;
+        const maxHeight = isDesktop ? 240 : 100;
+
+        const newHeight = Math.min(scrollHeight, maxHeight);
+        textarea.style.height = `${newHeight}px`;
+        textarea.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
+      }
+    }, [value, isDesktop]);
     // If disabled, show a message instead of the composer
     if (disabled) {
       return (
-        <div className="w-full pr-6 lg:pr-8">
-          <div className="w-full items-center gap-2 ml-[11px] my-2 py-2 pl-4 pr-[6px] rounded-lg flex justify-start bg-chat-input">
-            <Icon name="lock" size="xs" className="text-muted flex-shrink-0" />
-            <span
-              className="text-base font-normal"
-              style={{ color: 'var(--color-field-placeholder)' }}
-            >
+        <div className="message-composer-container">
+          <div className="message-composer-disabled">
+            <Icon name="lock" size="xs" className="message-composer-disabled-icon" />
+            <span className="message-composer-disabled-text">
               {disabledMessage || t`You cannot post in this channel`}
             </span>
           </div>
@@ -182,12 +210,12 @@ export const MessageComposer = forwardRef<
     }
 
     return (
-      <div className="w-full pr-6 lg:pr-8">
+      <div className="message-composer-container">
         {/* Error, processing indicator, and reply-to display */}
         {(fileError || inReplyTo || isProcessingImage) && (
-          <div className="flex flex-col w-full ml-[11px] mt-2 mb-0">
+          <div className="message-composer-info-container">
             {isProcessingImage && (
-              <div className="ml-1 mt-3 mb-1">
+              <div className="message-composer-callout">
                 <Callout
                   variant="warning"
                   layout="minimal"
@@ -200,7 +228,7 @@ export const MessageComposer = forwardRef<
               </div>
             )}
             {fileError && (
-              <div className="ml-1 mt-3 mb-1">
+              <div className="message-composer-callout">
                 <Callout
                   variant="error"
                   layout="minimal"
@@ -213,9 +241,9 @@ export const MessageComposer = forwardRef<
             {inReplyTo && mapSenderToUser && setInReplyTo && (
               <div
                 onClick={() => setInReplyTo(undefined)}
-                className="rounded-t-lg px-4 cursor-pointer py-1 text-xs flex flex-row justify-between items-center bg-surface-4"
+                className="message-composer-reply-bar"
               >
-                <span className="text-subtle">
+                <span className="message-composer-reply-text">
                   {i18n._('Replying to {user}', {
                     user: mapSenderToUser(inReplyTo.content.senderId)
                       .displayName,
@@ -224,7 +252,7 @@ export const MessageComposer = forwardRef<
                 <Icon
                   name="times"
                   size="sm"
-                  className="cursor-pointer hover:opacity-70"
+                  className="message-composer-reply-close"
                   onClick={() => {
                     setInReplyTo(undefined);
                   }}
@@ -236,10 +264,10 @@ export const MessageComposer = forwardRef<
 
         {/* File preview */}
         {processedImage && (
-          <div className="mx-3 mt-2">
-            <div className="p-2 relative rounded-lg bg-surface-3 inline-block">
+          <div className="message-composer-file-preview">
+            <div className="message-composer-file-container">
               <Button
-                className="absolute top-1 right-1 w-6 h-6 p-0 bg-surface-7 hover:bg-surface-8 rounded-full z-10 shadow-sm flex items-center justify-center"
+                className="message-composer-file-close"
                 type="subtle"
                 size="small"
                 onClick={clearFile}
@@ -248,7 +276,7 @@ export const MessageComposer = forwardRef<
               </Button>
               <div className="relative">
                 <img
-                  style={{ maxWidth: 140, maxHeight: 140 }}
+                  className="message-composer-file-image"
                   src={
                     processedImage.thumbnail
                       ? URL.createObjectURL(processedImage.thumbnail.file)
@@ -257,9 +285,9 @@ export const MessageComposer = forwardRef<
                   alt="File preview"
                 />
                 {processedImage.isLargeGif && processedImage.thumbnail && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-black/50 rounded-full p-1">
-                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <div className="message-composer-gif-overlay">
+                    <div className="message-composer-play-icon">
+                      <svg className="message-composer-play-svg" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z"/>
                       </svg>
                     </div>
@@ -272,33 +300,33 @@ export const MessageComposer = forwardRef<
 
         {/* Mention Dropdown - positioned above the input */}
         {dropdownOpen && mentionInput.filteredUsers.length > 0 && (
-          <div className="ml-[11px] mb-2 w-[250px] sm:w-[300px]">
-            <div className="bg-surface-0 border border-default rounded-lg shadow-lg max-h-60 overflow-y-auto">
+          <div className="message-composer-mention-dropdown">
+            <div className="message-composer-mention-container">
               {mentionInput.filteredUsers.map((user, index) => (
                 <div
                   key={user.address}
-                  className={`flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-surface-2 ${
-                    index === mentionInput.selectedIndex ? 'bg-surface-3' : ''
+                  className={`message-composer-mention-item ${
+                    index === mentionInput.selectedIndex ? 'selected' : ''
                   } ${
-                    index === 0 ? 'rounded-t-lg' : ''
+                    index === 0 ? 'first' : ''
                   } ${
-                    index === mentionInput.filteredUsers.length - 1 ? 'rounded-b-lg' : ''
+                    index === mentionInput.filteredUsers.length - 1 ? 'last' : ''
                   }`}
                   onClick={() => mentionInput.selectUser(user)}
                 >
                   <div
-                    className="w-8 h-8 rounded-full bg-cover bg-center flex-shrink-0"
+                    className="message-composer-mention-avatar"
                     style={{
                       backgroundImage: user.userIcon?.includes(DefaultImages.UNKNOWN_USER)
                         ? 'var(--unknown-icon)'
                         : `url(${user.userIcon})`,
                     }}
                   />
-                  <div className="flex flex-col min-w-0">
-                    <span className="text-sm font-medium text-main truncate">
+                  <div className="message-composer-mention-info">
+                    <span className="message-composer-mention-name">
                       {user.displayName || t`Unknown User`}
                     </span>
-                    <span className="text-xs text-subtle truncate">
+                    <span className="message-composer-mention-address">
                       {truncateAddress(user.address)}
                     </span>
                   </div>
@@ -311,7 +339,7 @@ export const MessageComposer = forwardRef<
         {/* Message input row */}
         <FlexRow
           ref={composerRef}
-          className={`w-full items-center gap-2 ml-[11px] my-2 p-[6px] rounded-lg bg-chat-input ${inReplyTo ? 'rounded-t-none mt-0' : ''}`}
+          className={`message-composer-row ${inReplyTo ? 'has-reply' : ''} ${isTyping ? 'typing' : ''}`}
         >
           <Tooltip id="attach-image" content={t`attach image`} place="top" showOnTouch={false}>
             <div {...getRootProps()}>
@@ -319,45 +347,35 @@ export const MessageComposer = forwardRef<
               <Button
                 type="unstyled"
                 onClick={() => {}} // onClick handled by dropzone
-                className="w-7 h-7 rounded-full bg-surface-5 hover:bg-surface-6 cursor-pointer flex items-center justify-center flex-shrink-0"
+                className="message-composer-upload-btn"
                 iconName="plus"
                 iconOnly
               />
             </div>
           </Tooltip>
 
-          <TextArea
-            ref={textareaRef}
-            value={value}
-            onChange={handleTextareaChange}
-            onKeyDown={handleKeyDown}
-            onSelect={handleSelect}
-            placeholder={placeholder}
-            autoResize={false}
-            rows={value ? calculateRows() : 1}
-            variant="filled"
-            noFocusStyle={true}
-            resize={false}
-            className="flex-1 bg-transparent border-0 outline-0 py-1 text-main"
-            style={{
-              border: 'none',
-              boxShadow: 'none',
-              backgroundColor: 'transparent',
-              minHeight: '28px',
-              maxHeight: '112px',
-              height: value ? 'auto' : '28px',
-              paddingLeft: '4px',
-              paddingRight: '4px',
-              whiteSpace: value ? 'pre-wrap' : 'nowrap',
-              overflow: 'hidden',
-            }}
-          />
+          <div className="message-composer-textarea-container">
+            <TextArea
+              ref={textareaRef}
+              value={value}
+              onChange={handleTextareaChange}
+              onKeyDown={handleKeyDown}
+              onSelect={handleSelect}
+              placeholder={placeholder}
+              autoResize={false}
+              rows={1}
+              variant="filled"
+              noFocusStyle={true}
+              resize={false}
+              className="message-composer-textarea"
+            />
+          </div>
 
           {hasStickers && (
             <Tooltip id="add-sticker" content={t`add sticker`} place="top" showOnTouch={false}>
               <Button
                 type="unstyled"
-                className="w-8 h-8 p-0 rounded-md cursor-pointer flex items-center justify-center flex-shrink-0 text-surface-9 hover:text-main"
+                className="message-composer-sticker-btn"
                 onClick={onShowStickers}
                 iconName="smile"
                 iconOnly
@@ -380,10 +398,8 @@ export const MessageComposer = forwardRef<
               <Button
                 type="unstyled"
                 onClick={onSigningToggle}
-                className={`w-8 h-8 p-0 rounded-md cursor-pointer flex items-center justify-center flex-shrink-0 -ml-2 ${
-                  skipSigning
-                    ? 'text-warning'
-                    : 'text-surface-9 hover:text-main'
+                className={`message-composer-signing-btn ${
+                  skipSigning ? 'unsigned' : 'signed'
                 }`}
                 iconName={skipSigning ? 'unlock' : 'lock'}
                 iconOnly
@@ -394,7 +410,7 @@ export const MessageComposer = forwardRef<
           <Button
             type="unstyled"
             onClick={onSubmitMessage}
-            className="hover:bg-accent-400 cursor-pointer w-8 h-8 rounded-full bg-accent bg-center bg-no-repeat bg-[url('/send.png')] bg-[length:60%] flex-shrink-0"
+            className="message-composer-send-btn"
           />
         </FlexRow>
       </div>

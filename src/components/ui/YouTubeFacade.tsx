@@ -102,60 +102,75 @@ export const YouTubeFacade: React.FC<YouTubeFacadeProps> = ({
 
   // Render facade with thumbnail
   return (
-    <div
-      className={`relative ${previewOnly ? '' : 'cursor-pointer group'} ${className}`}
-      style={style}
-      onClick={previewOnly ? undefined : handleFacadeClick}
-    >
-      {/* Thumbnail Background */}
-      {!thumbnailError ? (
-        <img
-          src={thumbnailUrl}
-          alt={title || t`YouTube Video Thumbnail`}
-          className="w-full h-full object-cover rounded-lg"
-          onError={handleThumbnailError}
-          loading="lazy"
-        />
-      ) : (
-        // Fallback when thumbnail fails to load
-        <div className="w-full h-full bg-surface-4 rounded-lg flex items-center justify-center">
-          <Icon name="video" size="xl" className="text-subtle" />
-        </div>
-      )}
+    <div className="flex flex-col gap-1">
+      <div
+        className={`relative ${previewOnly ? '' : 'cursor-pointer group'} ${className}`}
+        style={style}
+        onClick={previewOnly ? undefined : handleFacadeClick}
+      >
+        {/* Thumbnail Background */}
+        {!thumbnailError ? (
+          <img
+            src={thumbnailUrl}
+            alt={title || t`YouTube Video Thumbnail`}
+            className="w-full h-full object-cover rounded-lg"
+            onError={handleThumbnailError}
+            loading="lazy"
+          />
+        ) : (
+          // Fallback when thumbnail fails to load
+          <div className="w-full h-full bg-surface-4 rounded-lg flex items-center justify-center">
+            <Icon name="video" size="xl" className="text-subtle" />
+          </div>
+        )}
 
-      {/* Play Button Overlay - always show, but interactive only if not preview-only */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="relative w-16 h-16">
-          {/* YouTube-style play button background */}
-          <div className={`absolute inset-0 w-16 h-16 bg-black bg-opacity-70 rounded-full transform scale-100 ${!previewOnly ? 'group-hover:scale-110' : ''} transition-transform duration-200`} />
+        {/* Play Button Overlay - always show, but interactive only if not preview-only */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="relative w-16 h-16">
+            {/* YouTube-style play button background */}
+            <div className={`absolute inset-0 w-16 h-16 bg-black bg-opacity-70 rounded-full transform scale-100 ${!previewOnly ? 'group-hover:scale-110' : ''} transition-transform duration-200`} />
 
-          {/* Play icon */}
-          <div className="relative z-10 w-16 h-16 flex items-center justify-center">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              className="text-white ml-1"
-            >
-              <path
-                d="M8 5.14v13.72L19 12L8 5.14z"
-                fill="currentColor"
-              />
-            </svg>
+            {/* Play icon */}
+            <div className="relative z-10 w-16 h-16 flex items-center justify-center">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                className="text-white ml-1"
+              >
+                <path
+                  d="M8 5.14v13.72L19 12L8 5.14z"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
           </div>
         </div>
+
+        {/* YouTube logo badge (optional) */}
+        <div className="absolute bottom-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
+          YouTube
+        </div>
+
+        {/* Hover overlay - only show if not preview-only */}
+        {!previewOnly && (
+          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-colors duration-200 rounded-lg" />
+        )}
       </div>
 
-      {/* YouTube logo badge (optional) */}
-      <div className="absolute bottom-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
-        YouTube
+      {/* External link to YouTube */}
+      <div className="flex justify-end">
+        <a
+          href={`https://www.youtube.com/watch?v=${videoId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-subtle hover:text-main transition-colors"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {t`Open video on YouTube`}
+        </a>
       </div>
-
-      {/* Hover overlay - only show if not preview-only */}
-      {!previewOnly && (
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-colors duration-200 rounded-lg" />
-      )}
     </div>
   );
 };

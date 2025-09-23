@@ -1,0 +1,226 @@
+/* === MESSAGE COMPOSER STYLES === */
+
+/* Auto-resizing textarea container */
+.message-composer-textarea-container {
+  @apply flex-1;
+}
+
+/* Textarea specific styles */
+.message-composer-textarea {
+  @apply bg-transparent border-0 outline-0 text-main;
+  border: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  box-sizing: border-box !important; /* Height includes padding */
+  min-height: auto !important; /* Override TextArea primitive's min-height: 72px */
+  padding: 4px;
+  line-height: 1.5;
+  font-size: 16px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  resize: none;
+  /* min-height and max-height removed - now calculated dynamically in JavaScript */
+  transition: height 0.1s ease;
+
+  /* Prevent placeholder from wrapping */
+  &::placeholder {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Smaller font and height on smaller screens to match button size */
+  @media (max-width: 768px) {
+    /* min-height removed - now calculated dynamically in JavaScript */
+    padding: 4px;
+  }
+
+  @media (max-width: 640px) {
+    font-size: 14px;
+  }
+
+  /* Allow more growth on larger screens */
+  @media (min-width: 1024px) {
+    max-height: 240px; /* ~10 rows on desktop */
+  }
+}
+
+/* Composer container */
+.message-composer-container {
+  @apply w-full pr-6 lg:pr-8;
+  /* Safe area handling for devices with bottom bars/notches */
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* Main composer row */
+.message-composer-row {
+  @apply w-full items-center gap-2 ml-[11px] my-2 p-[6px] rounded-lg bg-chat-input;
+
+  /* When textarea grows beyond single line, align buttons to top */
+  &:has(.message-composer-textarea[style*="height: 4"]),
+  &:has(.message-composer-textarea[style*="height: 5"]),
+  &:has(.message-composer-textarea[style*="height: 6"]),
+  &:has(.message-composer-textarea[style*="height: 7"]),
+  &:has(.message-composer-textarea[style*="height: 8"]),
+  &:has(.message-composer-textarea[style*="height: 9"]) {
+    @apply items-start;
+  }
+}
+
+.message-composer-row.has-reply {
+  @apply rounded-t-none mt-0;
+}
+
+/* Hide buttons when typing on mobile except send button */
+@media (max-width: 640px) {
+  .message-composer-row.typing {
+    .message-composer-upload-btn,
+    .message-composer-sticker-btn,
+    .message-composer-signing-btn {
+      opacity: 0;
+      transform: scale(0.8);
+      pointer-events: none;
+      width: 0;
+      overflow: hidden;
+      transition: opacity 0.2s ease, transform 0.2s ease, width 0.2s ease;
+    }
+  }
+}
+
+/* File upload button */
+.message-composer-upload-btn {
+  @apply w-7 h-7 rounded-full bg-surface-5 hover:bg-surface-6 cursor-pointer flex items-center justify-center flex-shrink-0;
+}
+
+/* Sticker button */
+.message-composer-sticker-btn {
+  @apply w-8 h-8 p-0 rounded-md cursor-pointer flex items-center justify-center flex-shrink-0 text-surface-9 hover:text-main;
+}
+
+/* Send button */
+.message-composer-send-btn {
+  @apply hover:bg-accent-400 cursor-pointer w-8 h-8 rounded-full bg-accent bg-center bg-no-repeat bg-[url('/send.png')] bg-[length:60%] flex-shrink-0;
+}
+
+/* Signing toggle button */
+.message-composer-signing-btn {
+  @apply w-8 h-8 p-0 rounded-md cursor-pointer flex items-center justify-center flex-shrink-0;
+  margin-left: -4px; /* Slight negative margin for tighter spacing */
+}
+
+.message-composer-signing-btn.unsigned {
+  @apply text-warning;
+}
+
+.message-composer-signing-btn.signed {
+  @apply text-surface-9 hover:text-main;
+}
+
+/* Disabled state */
+.message-composer-disabled {
+  @apply w-full items-center gap-2 ml-[11px] my-2 py-2 pl-4 pr-[6px] rounded-lg flex justify-start bg-chat-input;
+}
+
+.message-composer-disabled-icon {
+  @apply text-muted flex-shrink-0;
+}
+
+.message-composer-disabled-text {
+  @apply text-base font-normal;
+  color: var(--color-field-placeholder);
+}
+
+/* Error and info containers */
+.message-composer-info-container {
+  @apply flex flex-col w-full ml-[11px] mt-2 mb-0;
+}
+
+.message-composer-callout {
+  @apply ml-1 mt-3 mb-1;
+}
+
+/* Reply-to bar */
+.message-composer-reply-bar {
+  @apply rounded-t-lg px-4 cursor-pointer py-1 text-xs flex flex-row justify-between items-center bg-surface-4;
+}
+
+.message-composer-reply-text {
+  @apply text-subtle;
+}
+
+.message-composer-reply-close {
+  @apply cursor-pointer hover:opacity-70;
+}
+
+/* File preview */
+.message-composer-file-preview {
+  @apply mx-3 mt-2;
+}
+
+.message-composer-file-container {
+  @apply p-2 relative rounded-lg bg-surface-3 inline-block;
+}
+
+.message-composer-file-close {
+  @apply absolute top-1 right-1 w-6 h-6 p-0 bg-surface-7 hover:bg-surface-8 rounded-full z-10 shadow-sm flex items-center justify-center;
+}
+
+.message-composer-file-image {
+  max-width: 140px;
+  max-height: 140px;
+}
+
+.message-composer-gif-overlay {
+  @apply absolute inset-0 flex items-center justify-center;
+}
+
+.message-composer-play-icon {
+  @apply bg-black/50 rounded-full p-1;
+}
+
+.message-composer-play-svg {
+  @apply w-4 h-4 text-white;
+}
+
+/* Mention dropdown */
+.message-composer-mention-dropdown {
+  @apply ml-[11px] mb-2 w-[250px] sm:w-[300px];
+}
+
+.message-composer-mention-container {
+  @apply bg-surface-0 border rounded-lg shadow-lg max-h-60 overflow-y-auto;
+  border-color: var(--color-border-default);
+}
+
+.message-composer-mention-item {
+  @apply flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-surface-2;
+}
+
+.message-composer-mention-item.selected {
+  @apply bg-surface-3;
+}
+
+.message-composer-mention-item.first {
+  @apply rounded-t-lg;
+}
+
+.message-composer-mention-item.last {
+  @apply rounded-b-lg;
+}
+
+.message-composer-mention-avatar {
+  @apply w-8 h-8 rounded-full bg-cover bg-center flex-shrink-0;
+}
+
+.message-composer-mention-info {
+  @apply flex flex-col min-w-0;
+}
+
+.message-composer-mention-name {
+  @apply text-sm font-medium text-main truncate;
+}
+
+.message-composer-mention-address {
+  @apply text-xs text-subtle truncate;
+}
