@@ -152,6 +152,15 @@
   top: 10px;
   color: var(--color-text-subtle);
   transition: color 0.2s ease;
+  // Increase touch target for mobile
+  padding: 8px;
+  margin: -8px;
+
+  @media (max-width: 768px) {
+    // Even larger touch target on mobile (44x44px minimum)
+    padding: 12px;
+    margin: -12px;
+  }
 
   &:hover {
     color: var(--color-text-strong);

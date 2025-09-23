@@ -162,6 +162,11 @@
   // Move close button left to avoid scrollbar overlap
   .quorum-modal-close {
     right: 30px !important;
+
+    @media (max-width: 768px) {
+      // On mobile, keep closer to edge for easier reach
+      right: 20px !important;
+    }
   }
 
   &.quorum-modal-large {
@@ -169,16 +174,16 @@
     overflow: hidden;
     width: 800px !important;
     max-width: 90vw !important;
-    max-height: 90vh !important;
+    max-height: 85vh !important;
 
-    // Desktop: consistent 800px height, max 90vh for very short screens
+    // Desktop: consistent 800px height, max 85vh for very short screens
     @media (min-width: 768px) {
-      height: min(800px, 90vh) !important;
+      height: min(800px, 85vh) !important;
     }
 
-    // Mobile/Tablet: fixed 90vh height
+    // Mobile/Tablet: fixed 85vh height
     @media (max-width: 767px) {
-      height: 90vh !important;
+      height: 85vh !important;
     }
   }
 
