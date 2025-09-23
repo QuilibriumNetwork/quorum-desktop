@@ -13,15 +13,15 @@ import {
   Select,
   Tooltip,
 } from '../primitives';
-import { IconPicker } from './IconPicker';
-import ConfirmationModal from '../modals/ConfirmationModal';
-import ModalSaveOverlay from '../modals/ModalSaveOverlay';
+import { IconPicker } from '../space/IconPicker';
+import ConfirmationModal from './ConfirmationModal';
+import ModalSaveOverlay from './ModalSaveOverlay';
 import '../../styles/_modal_common.scss';
 import { useChannelManagement, useModalSaveState } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 
-const ChannelEditor: React.FunctionComponent<{
+const ChannelEditorModal: React.FunctionComponent<{
   spaceId: string;
   groupName: string;
   channelId?: string;
@@ -230,4 +230,4 @@ const ChannelEditor: React.FunctionComponent<{
   );
 };
 
-export default ChannelEditor;
+export default ChannelEditorModal;

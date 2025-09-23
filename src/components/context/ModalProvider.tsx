@@ -1,8 +1,8 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { UserSettingsModal } from '../modals/UserSettingsModal';
 import { SpaceSettingsModal } from '../modals/SpaceSettingsModal';
-import ChannelEditor from '../space/ChannelEditor';
-import GroupEditor from '../space/GroupEditor';
+import ChannelEditorModal from '../modals/ChannelEditorModal';
+import GroupEditorModal from '../modals/GroupEditorModal';
 import LeaveSpaceModal from '../modals/LeaveSpaceModal';
 import KickUserModal from '../modals/KickUserModal';
 import NewDirectMessageModal from '../modals/NewDirectMessageModal';
@@ -118,7 +118,7 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
       {modalState.state.channelEditor.isOpen &&
         modalState.state.channelEditor.spaceId &&
         modalState.state.channelEditor.groupName && (
-          <ChannelEditor
+          <ChannelEditorModal
             spaceId={modalState.state.channelEditor.spaceId}
             groupName={modalState.state.channelEditor.groupName}
             channelId={modalState.state.channelEditor.channelId || ''}
@@ -128,7 +128,7 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
 
       {modalState.state.groupEditor.isOpen &&
         modalState.state.groupEditor.spaceId && (
-          <GroupEditor
+          <GroupEditorModal
             spaceId={modalState.state.groupEditor.spaceId}
             groupName={modalState.state.groupEditor.groupName}
             dismiss={modalState.closeGroupEditor}

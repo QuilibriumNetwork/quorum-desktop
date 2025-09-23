@@ -11,15 +11,15 @@ import {
   Spacer,
   Callout,
 } from '../primitives';
-import { IconPicker } from './IconPicker';
-import ModalSaveOverlay from '../modals/ModalSaveOverlay';
+import { IconPicker } from '../space/IconPicker';
+import ModalSaveOverlay from './ModalSaveOverlay';
 import '../../styles/_modal_common.scss';
 import { useGroupManagement } from '../../hooks';
 import { useModalSaveState } from '../../hooks/business/ui/useModalSaveState';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 
-const GroupEditor: React.FunctionComponent<{
+const GroupEditorModal: React.FunctionComponent<{
   spaceId: string;
   groupName?: string;
   dismiss: () => void;
@@ -136,4 +136,4 @@ const GroupEditor: React.FunctionComponent<{
   );
 };
 
-export default GroupEditor;
+export default GroupEditorModal;
