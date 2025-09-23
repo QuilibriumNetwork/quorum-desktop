@@ -1,6 +1,6 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { UserSettingsModal } from '../modals/UserSettingsModal';
-import SpaceEditor from '../space/SpaceEditor';
+import { SpaceSettingsModal } from '../modals/SpaceSettingsModal';
 import ChannelEditor from '../space/ChannelEditor';
 import GroupEditor from '../space/GroupEditor';
 import LeaveSpaceModal from '../modals/LeaveSpaceModal';
@@ -109,7 +109,7 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
 
       {modalState.state.spaceEditor.isOpen &&
         modalState.state.spaceEditor.spaceId && (
-          <SpaceEditor
+          <SpaceSettingsModal
             spaceId={modalState.state.spaceEditor.spaceId}
             dismiss={modalState.closeSpaceEditor}
           />

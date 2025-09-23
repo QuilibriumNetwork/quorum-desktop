@@ -1,0 +1,441 @@
+import * as React from 'react';
+import {
+  Button,
+  Modal,
+} from '../../primitives';
+import '../../../styles/_modal_common.scss';
+import ConfirmationModal from '../ConfirmationModal';
+import ModalSaveOverlay from '../ModalSaveOverlay';
+import { useSpace } from '../../../hooks';
+import { useMessageDB } from '../../context/useMessageDB';
+import { Channel } from '../../../api/quorumApi';
+import { t } from '@lingui/core/macro';
+import {
+  useSpaceManagement,
+  useRoleManagement,
+  useSpaceFileUploads,
+  useCustomAssets,
+  useInviteManagement,
+  useModalSaveState,
+} from '../../../hooks';
+import General from './General';
+import Roles from './Roles';
+import Emojis from './Emojis';
+import Stickers from './Stickers';
+import Invites from './Invites';
+import Danger from './Danger';
+import Navigation from './Navigation';
+
+const SpaceSettingsModal: React.FunctionComponent<{
+  spaceId: string;
+  dismiss: () => void;
+}> = ({ spaceId, dismiss }) => {
+  const { data: space } = useSpace({ spaceId });
+  const { updateSpace } = useMessageDB();
+
+  // Default channel state
+  const [defaultChannel, setDefaultChannel] = React.useState<Channel | undefined>(
+    space?.groups
+      ?.find((g) =>
+        g.channels.find((c) => c.channelId === space.defaultChannelId)
+      )
+      ?.channels.find((c) => c.channelId === space.defaultChannelId)
+  );
+
+  // Space management hook
+  const {
+    spaceName,
+    setSpaceName,
+    selectedCategory,
+    setSelectedCategory,
+    isRepudiable,
+    setIsRepudiable,
+    handleDeleteSpace,
+  } = useSpaceManagement({
+    spaceId,
+    onClose: dismiss,
+  });
+
+  // Role management hook
+  const {
+    roles,
+    addRole,
+    deleteRole,
+    updateRoleTag,
+    updateRoleDisplayName,
+    toggleRolePermission,
+    updateRolePermissions,
+    deleteConfirmation,
+  } = useRoleManagement({
+    initialRoles: space?.roles || [],
+  });
+
+  // File uploads hook
+  const {
+    iconData,
+    currentIconFile,
+    iconFileError,
+    isIconUploading,
+    isIconDragActive,
+    getIconRootProps,
+    getIconInputProps,
+    clearIconFileError,
+
+    bannerData,
+    currentBannerFile,
+    bannerFileError,
+    isBannerUploading,
+    isBannerDragActive,
+    getBannerRootProps,
+    getBannerInputProps,
+    clearBannerFileError,
+  } = useSpaceFileUploads();
+
+  // Custom assets hook
+  const {
+    emojis,
+    emojiFileError,
+    getEmojiRootProps,
+    getEmojiInputProps,
+    clearEmojiFileError,
+    removeEmoji,
+    updateEmoji,
+    canAddMoreEmojis,
+
+    stickers,
+    stickerFileError,
+    getStickerRootProps,
+    getStickerInputProps,
+    clearStickerFileError,
+    removeSticker,
+    updateSticker,
+    canAddMoreStickers,
+  } = useCustomAssets({
+    initialEmojis: space?.emojis || [],
+    initialStickers: space?.stickers || [],
+  });
+
+  // Invite management hook
+  const {
+    selectedUser,
+    setSelectedUser,
+    manualAddress,
+    setManualAddress,
+    resolvedUser,
+    getUserOptions,
+    sendingInvite,
+    success,
+    invite,
+    publicInvite,
+    setPublicInvite,
+    generating,
+    generateNewInviteLink,
+  } = useInviteManagement({
+    spaceId,
+    space,
+    defaultChannel,
+  });
+
+  // Delete confirmation state - kept local as it's UI-specific
+  const [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
+
+  // Role validation error state
+  const [roleValidationError, setRoleValidationError] =
+    React.useState<string>('');
+
+  // Modal save state hook - close only when operation completes
+  const { isSaving, saveUntilComplete } = useModalSaveState({
+    maxTimeout: 30000, // 30 second failsafe
+    onSaveComplete: dismiss,
+    onSaveError: (error) => {
+      console.error('Save failed:', error);
+    },
+  });
+
+  // Public invite link state management (simplified approach)
+  const [generationSuccess, setGenerationSuccess] = React.useState(false);
+  const [deleting, setDeleting] = React.useState(false);
+  const [deletionSuccess, setDeletionSuccess] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
+  const [showGenerateModal, setShowGenerateModal] = React.useState(false);
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+
+  // Helper functions for Select primitive
+  const getChannelGroups = React.useMemo(() => {
+    if (!space?.groups) return [];
+    return space.groups.map((group) => ({
+      groupLabel: group.groupName,
+      options: group.channels.map((channel) => ({
+        value: channel.channelId,
+        label: channel.channelName, // Channel name without # symbol
+        icon: '#', // Just the # symbol as icon
+      })),
+    }));
+  }, [space?.groups]);
+
+  // Save changes function
+  const saveChanges = React.useCallback(async () => {
+    if (!space) return;
+
+    await saveUntilComplete(async () => {
+      // Convert file data to URLs similar to original SpaceEditor
+      const iconUrl =
+        currentIconFile && iconData
+          ? 'data:' +
+            currentIconFile.type +
+            ';base64,' +
+            Buffer.from(iconData).toString('base64')
+          : space.iconUrl;
+
+      const bannerUrl =
+        currentBannerFile && bannerData
+          ? 'data:' +
+            currentBannerFile.type +
+            ';base64,' +
+            Buffer.from(bannerData).toString('base64')
+          : space.bannerUrl;
+
+      // Use the original updateSpace call with all our hook data
+      await updateSpace({
+        ...space,
+        spaceName,
+        defaultChannelId: defaultChannel?.channelId || space.defaultChannelId,
+        isRepudiable,
+        iconUrl,
+        bannerUrl,
+        roles,
+        emojis,
+        stickers,
+      });
+    });
+  }, [
+    saveUntilComplete,
+    updateSpace,
+    space,
+    spaceName,
+    defaultChannel,
+    isRepudiable,
+    roles,
+    emojis,
+    stickers,
+    iconData,
+    currentIconFile,
+    bannerData,
+    currentBannerFile,
+  ]);
+
+  // Determine if current category needs save button
+  const categoryNeedsSave = ['general', 'roles', 'emojis', 'stickers'].includes(selectedCategory);
+
+  return (
+    <>
+      <Modal
+        title=""
+        visible={true}
+        onClose={isSaving ? undefined : dismiss}
+        size="large"
+        className="modal-complex-wrapper"
+        hideClose={false}
+        noPadding={true}
+        closeOnBackdropClick={!isSaving}
+        closeOnEscape={!isSaving}
+      >
+        <div className="modal-complex-container-inner relative">
+          {/* Loading overlay for saving */}
+          <ModalSaveOverlay visible={isSaving} />
+
+          <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <div className="modal-complex-layout-with-footer">
+              <Navigation
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+              />
+
+              <div className="modal-complex-content-with-footer">
+                {(() => {
+                  switch (selectedCategory) {
+                    case 'general':
+                      return (
+                        <General
+                          space={space}
+                          spaceName={spaceName}
+                          setSpaceName={setSpaceName}
+                          iconData={iconData}
+                          currentIconFile={currentIconFile}
+                          iconFileError={iconFileError}
+                          isIconUploading={isIconUploading}
+                          isIconDragActive={isIconDragActive}
+                          getIconRootProps={getIconRootProps}
+                          getIconInputProps={getIconInputProps}
+                          clearIconFileError={clearIconFileError}
+                          bannerData={bannerData}
+                          currentBannerFile={currentBannerFile}
+                          bannerFileError={bannerFileError}
+                          isBannerUploading={isBannerUploading}
+                          isBannerDragActive={isBannerDragActive}
+                          getBannerRootProps={getBannerRootProps}
+                          getBannerInputProps={getBannerInputProps}
+                          clearBannerFileError={clearBannerFileError}
+                          defaultChannel={defaultChannel}
+                          setDefaultChannel={setDefaultChannel}
+                          getChannelGroups={getChannelGroups}
+                          isRepudiable={isRepudiable}
+                          setIsRepudiable={setIsRepudiable}
+                          onSave={saveChanges}
+                          isSaving={isSaving}
+                        />
+                      );
+                    case 'roles':
+                      return (
+                        <Roles
+                          roles={roles}
+                          addRole={addRole}
+                          deleteRole={deleteRole}
+                          updateRoleTag={updateRoleTag}
+                          updateRoleDisplayName={updateRoleDisplayName}
+                          updateRolePermissions={updateRolePermissions}
+                          roleValidationError={roleValidationError}
+                          onSave={saveChanges}
+                          isSaving={isSaving}
+                        />
+                      );
+                    case 'emojis':
+                      return (
+                        <Emojis
+                          emojis={emojis}
+                          canAddMoreEmojis={canAddMoreEmojis}
+                          emojiFileError={emojiFileError}
+                          getEmojiRootProps={getEmojiRootProps}
+                          getEmojiInputProps={getEmojiInputProps}
+                          clearEmojiFileError={clearEmojiFileError}
+                          updateEmoji={updateEmoji}
+                          removeEmoji={removeEmoji}
+                          onSave={saveChanges}
+                          isSaving={isSaving}
+                        />
+                      );
+                    case 'stickers':
+                      return (
+                        <Stickers
+                          stickers={stickers}
+                          canAddMoreStickers={canAddMoreStickers}
+                          stickerFileError={stickerFileError}
+                          getStickerRootProps={getStickerRootProps}
+                          getStickerInputProps={getStickerInputProps}
+                          clearStickerFileError={clearStickerFileError}
+                          updateSticker={updateSticker}
+                          removeSticker={removeSticker}
+                          onSave={saveChanges}
+                          isSaving={isSaving}
+                        />
+                      );
+                    case 'invites':
+                      return (
+                        <Invites
+                          space={space}
+                          selectedUser={selectedUser}
+                          setSelectedUser={setSelectedUser}
+                          manualAddress={manualAddress}
+                          setManualAddress={setManualAddress}
+                          resolvedUser={resolvedUser}
+                          getUserOptions={getUserOptions}
+                          sendingInvite={sendingInvite}
+                          invite={invite}
+                          success={success}
+                          generating={generating}
+                          generationSuccess={generationSuccess}
+                          deleting={deleting}
+                          deletionSuccess={deletionSuccess}
+                          errorMessage={errorMessage}
+                          setShowGenerateModal={setShowGenerateModal}
+                          setShowDeleteModal={setShowDeleteModal}
+                        />
+                      );
+                    case 'danger':
+                      return (
+                        <Danger
+                          space={space}
+                          handleDeleteSpace={handleDeleteSpace}
+                          deleteConfirmationStep={deleteConfirmationStep}
+                          setDeleteConfirmationStep={setDeleteConfirmationStep}
+                        />
+                      );
+                    default:
+                      return null;
+                  }
+                })()}
+              </div>
+            </div>
+
+            {/* Footer - Only show for categories that need save */}
+            {categoryNeedsSave && (
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <div className="modal-complex-sidebar-footer"></div>
+                <div className="modal-complex-footer">
+                  <Button
+                    type="primary"
+                    onClick={saveChanges}
+                    disabled={isSaving}
+                  >
+                    {t`Save Changes`}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </Modal>
+
+      {/* Confirmation modals for invite management */}
+      {showGenerateModal && (
+        <ConfirmationModal
+          visible={showGenerateModal}
+          title={t`Generate Public Invite Link`}
+          message={
+            space?.inviteUrl
+              ? t`This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it.`
+              : t`This will create a public invite link that anyone can use to join your Space. Consider who you share this link with.`
+          }
+          confirmText={space?.inviteUrl ? t`Generate New Link` : t`Generate Link`}
+          onConfirm={() => {
+            generateNewInviteLink();
+            setShowGenerateModal(false);
+          }}
+          onCancel={() => setShowGenerateModal(false)}
+        />
+      )}
+
+      {showDeleteModal && (
+        <ConfirmationModal
+          visible={showDeleteModal}
+          title={t`Delete Public Invite Link`}
+          message={t`This will permanently delete the current public invite link. Anyone who has this link will no longer be able to use it to join your Space.`}
+          confirmText={t`Delete Link`}
+          variant="danger"
+          onConfirm={() => {
+            // Delete logic would go here
+            setShowDeleteModal(false);
+          }}
+          onCancel={() => setShowDeleteModal(false)}
+        />
+      )}
+
+      {/* Role deletion confirmation modal */}
+      {deleteConfirmation?.modalConfig && (
+        <ConfirmationModal
+          visible={deleteConfirmation.showModal}
+          title={deleteConfirmation.modalConfig.title}
+          message={deleteConfirmation.modalConfig.message}
+          preview={deleteConfirmation.modalConfig.preview}
+          confirmText={deleteConfirmation.modalConfig.confirmText}
+          cancelText={deleteConfirmation.modalConfig.cancelText}
+          variant={deleteConfirmation.modalConfig.variant}
+          onConfirm={deleteConfirmation.modalConfig.onConfirm}
+          onCancel={deleteConfirmation.modalConfig.onCancel}
+        />
+      )}
+    </>
+  );
+};
+
+export default SpaceSettingsModal;
