@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import UserSettingsModal from '../modals/UserSettingsModal';
+import { UserSettingsModal } from '../modals/UserSettingsModal';
 import SpaceEditor from '../space/SpaceEditor';
 import ChannelEditor from '../space/ChannelEditor';
 import GroupEditor from '../space/GroupEditor';
