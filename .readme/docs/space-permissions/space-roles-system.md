@@ -148,9 +148,9 @@ export interface UseRoleManagementReturn {
 
 ### UI Components
 
-#### **SpaceEditor Role Management**
+#### **SpaceSettingsModal Role Management**
 
-**Location**: `src/components/space/SpaceEditor.tsx`
+**Location**: `src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx`
 
 **Features**:
 

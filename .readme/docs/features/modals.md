@@ -12,7 +12,7 @@ The app currently uses **three different modal systems** in parallel, each solvi
 
 #### **🏗️ System 1: ModalProvider (App-Level Context Modals)**
 - **Render Location**: Router level (highest in component tree)
-- **Used By**: UserSettingsModal, SpaceEditor, ChannelEditor, KickUserModal, etc.
+- **Used By**: UserSettingsModal, SpaceSettingsModal, ChannelEditorModal, GroupEditorModal, KickUserModal, etc.
 - **State Management**: useModalState hook + React Context
 - **Problem Solved**: Complex state management, centralized modal control
 - **Z-Index**: Perfect (rendered above all UI elements)
@@ -159,16 +159,16 @@ Core modal functionality:
 
 Complex modal layouts and business logic styling:
 
-- `.modal-complex-*` - Complex modal layouts (UserSettingsModal, SpaceEditor)
+- `.modal-complex-*` - Complex modal layouts (UserSettingsModal, SpaceSettingsModal)
 - `.modal-content-*` - Content section patterns
 - `.modal-nav-*` - Navigation and sidebar patterns
 - Form styling patterns and responsive layouts
 
 ### Modal Size Variants
 
-- **`small`** - 400px max-width, for simple editors (ChannelEditor, GroupEditor)
+- **`small`** - 400px max-width, for simple editors (ChannelEditorModal, GroupEditorModal)
 - **`medium`** - 600px max-width, for standard forms (CreateSpaceModal, JoinSpaceModal)
-- **`large`** - 800px max-width, for complex modals (UserSettingsModal, SpaceEditor)
+- **`large`** - 800px max-width, for complex modals (UserSettingsModal, SpaceSettingsModal)
 - **`full`** - 95vw max-width, for content-heavy modals
 
 ## Modal Implementation Patterns
@@ -205,7 +205,7 @@ const SimpleModal = ({ visible, onClose }) => {
 ### **Pattern 2: Complex Modal with Navigation**
 
 **Best for**: Multi-section modals with sidebar navigation
-**Components**: UserSettingsModal, SpaceEditor
+**Components**: UserSettingsModal, SpaceSettingsModal
 
 ```tsx
 import { Modal, Button, Switch, Icon } from '../primitives';
@@ -243,7 +243,7 @@ const ComplexModal = ({ visible, onClose }) => {
 ### **Pattern 3: Small Editor Modal**
 
 **Best for**: Simple editors, quick configuration
-**Components**: ChannelEditor, GroupEditor
+**Components**: ChannelEditorModal, GroupEditorModal
 
 ```tsx
 import { Modal, Button, Input, Icon } from '../primitives';
@@ -349,18 +349,19 @@ showConfirmationModal({
 - **Special**: File upload (ReactTooltip), ThemeRadioGroup, AccentColorSwitcher, ClickToCopyContent
 - **Title**: Hidden (custom layout)
 
-#### **8. SpaceEditor** - `src/components/space/SpaceEditor.tsx`
+#### **8. SpaceSettingsModal** - `src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx`
 
 - **Purpose**: Comprehensive space management
 - **Size**: Large
 - **Primitives**: Modal, Switch, Input, Icon, Tooltip, Select, Button
-- **Sections**: General, Roles, Emojis, Stickers, Invites
-- **Special**: File uploads (ReactTooltip), complex role management
+- **Sections**: General, Roles, Emojis, Stickers, Invites, Danger Zone
+- **Special**: File uploads (ReactTooltip), complex role management, modular component architecture
 - **Title**: Hidden (custom layout)
+- **Architecture**: Refactored into modular sub-components (General.tsx, Roles.tsx, etc.) with shared Navigation component
 
 ### **Small Editor Modals**
 
-#### **9. ChannelEditor** - `src/components/space/ChannelEditor.tsx`
+#### **9. ChannelEditorModal** - `src/components/modals/ChannelEditorModal.tsx`
 
 - **Purpose**: Create/edit channels
 - **Size**: Small
@@ -368,7 +369,7 @@ showConfirmationModal({
 - **Special**: Dynamic title, delete warnings with custom close icons
 - **Title**: "Add Channel" / "Edit Channel"
 
-#### **10. GroupEditor** - `src/components/space/GroupEditor.tsx`
+#### **10. GroupEditorModal** - `src/components/modals/GroupEditorModal.tsx`
 
 - **Purpose**: Create/edit channel groups
 - **Size**: Small
@@ -386,8 +387,8 @@ When creating a new modal, choose the appropriate system based on these criteria
 - Modal has complex state management needs
 - Modal is used across multiple components/pages  
 - Modal needs centralized control (open from multiple places)
-- Modal has multi-section interface (UserSettingsModal, SpaceEditor)
-- **Examples**: UserSettingsModal, SpaceEditor, ChannelEditor
+- Modal has multi-section interface (UserSettingsModal, SpaceSettingsModal)
+- **Examples**: UserSettingsModal, SpaceSettingsModal, ChannelEditorModal, GroupEditorModal
 
 #### **✅ Use Layout-Level System When:**
 - Modal is relatively simple (forms, confirmations)
@@ -711,6 +712,6 @@ The recent **ConfirmationModal migration** from component-level to Layout-Level 
 
 ---
 
-**Last Updated:** 2025-01-13
+**Last Updated:** 2025-01-28
 
-This documentation reflects the current hybrid modal architecture with three rendering systems. Future versions may consolidate to a unified approach as the system evolves.
+This documentation reflects the current hybrid modal architecture with three rendering systems. Recent updates include the refactoring of SpaceEditor into SpaceSettingsModal with modular component architecture, and the reorganization of all editor modals to the `/modals/` folder with consistent "Modal" naming convention.

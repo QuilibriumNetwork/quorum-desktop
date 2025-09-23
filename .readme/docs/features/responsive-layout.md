@@ -273,13 +273,13 @@ A comprehensive modal system has been implemented with consistent responsive beh
 
 ### Modal Types
 
-#### Complex Modals (UserSettingsModal, SpaceEditor)
+#### Complex Modals (UserSettingsModal, SpaceSettingsModal)
 
 - **Desktop**: Sidebar navigation with main content area
 - **Mobile**: Stacked category navigation with 1-column or 2-column layouts
 - Uses `.modal-complex-container`, `.modal-complex-layout`, `.modal-complex-content`
 
-#### Small Modals (ChannelEditor)
+#### Small Modals (ChannelEditorModal)
 
 - **All screens**: Compact, auto-sized containers
 - Uses `.modal-small-container`, `.modal-small-layout`, `.modal-small-content`

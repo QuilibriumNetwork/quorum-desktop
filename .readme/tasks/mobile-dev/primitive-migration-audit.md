@@ -61,7 +61,7 @@ This audit identifies components that still use div-based form elements or raw H
 
 #### SpaceEditor File Upload Buttons
 
-- **File:** `src/components/space/SpaceEditor.tsx`
+- **File:** `src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx`
 - **Pattern:** `<div className="btn-secondary">` with onClick handlers
 - **Usage:** Emoji and sticker upload triggers
 - **Migration:** Replace with `Button` primitive components

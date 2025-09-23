@@ -51,7 +51,7 @@ export type Channel = {
 
 ### UI Components
 
-#### **Channel Editor** (`src/components/space/ChannelEditor.tsx`)
+#### **Channel Editor** (`src/components/modals/ChannelEditorModal.tsx`)
 
 **Read-Only Configuration UI**:
 

@@ -128,13 +128,13 @@
         "useModalState"
       ],
       "native": "todo",
-      "notes": "COMPLETED: Business logic extracted into useModalState hook with reducer pattern, modal state management, and all open/close actions. Component now focuses purely on rendering modals with web-specific CSS classes (z-[9999], fixed positioning). Hook is cross-platform ready with complete modal coordination logic. Legacy hooks useModals and useModalContext maintained for backward compatibility. MANUAL TESTING VERIFIED: All modal functionality (UserSettings, SpaceEditor, ChannelEditor, GroupEditor, LeaveSpace, NewDirectMessage) works correctly after extraction.",
+      "notes": "COMPLETED: Business logic extracted into useModalState hook with reducer pattern, modal state management, and all open/close actions. Component now focuses purely on rendering modals with web-specific CSS classes (z-[9999], fixed positioning). Hook is cross-platform ready with complete modal coordination logic. Legacy hooks useModals and useModalContext maintained for backward compatibility. MANUAL TESTING VERIFIED: All modal functionality (UserSettings, SpaceSettingsModal, ChannelEditorModal, GroupEditorModal, LeaveSpace, NewDirectMessage) works correctly after extraction.",
       "updated": "2025-09-17",
       "dependencies": [
         "UserSettingsModal",
-        "SpaceEditor",
-        "ChannelEditor",
-        "GroupEditor",
+        "SpaceSettingsModal",
+        "ChannelEditorModal",
+        "GroupEditorModal",
         "LeaveSpaceModal"
       ],
       "dependency_level": 0,
@@ -1045,10 +1045,10 @@
       "dependency_level": 0,
       "complexity_category": "basic"
     },
-    "SpaceEditor.tsx": {
-      "name": "SpaceEditor",
-      "path": "src/components/space/SpaceEditor.tsx",
-      "description": "Complex space settings modal with permissions, roles, and file upload",
+    "SpaceSettingsModal.tsx": {
+      "name": "SpaceSettingsModal",
+      "path": "src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx",
+      "description": "Complex space settings modal with modular architecture - permissions, roles, file upload, emojis, stickers, invites",
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
@@ -1060,8 +1060,8 @@
         "useFileUpload"
       ],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports '../../styles/_modal_common.scss'. Uses many primitives but has SCSS dependencies. Business logic extraction already done.",
-      "updated": "2025-09-17",
+      "notes": "REFACTORED 2025-01-28: Moved to modals folder and completely refactored into modular architecture. Split into separate components (General, Roles, Emojis, Stickers, Invites, Danger) with shared Navigation component. Business logic already extracted to multiple specialized hooks. Imports '../../styles/_modal_common.scss' so remains platform_specific. Improved maintainability and code organization.",
+      "updated": "2025-01-28",
       "dependencies": [
         "ClickToCopyContent",
         "ReactTooltip",
@@ -1070,9 +1070,9 @@
       "dependency_level": 0,
       "complexity_category": "simple"
     },
-    "ChannelEditor.tsx": {
-      "name": "ChannelEditor",
-      "path": "src/components/space/ChannelEditor.tsx",
+    "ChannelEditorModal.tsx": {
+      "name": "ChannelEditorModal",
+      "path": "src/components/modals/ChannelEditorModal.tsx",
       "description": "Channel creation and editing modal",
       "category": "platform_specific",
       "used": "yes",
@@ -1083,8 +1083,8 @@
         "useChannelPermissions"
       ],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports ../../styles/_modal_common.scss. Business logic extracted to useChannelManagement (channel CRUD, delete confirmation) and useChannelPermissions hooks. Now uses primitives (Modal, Container, FlexRow, Input, Button, Text, Icon) but retains SCSS dependency.",
-      "updated": "2025-09-17",
+      "notes": "MOVED TO MODALS FOLDER 2025-01-28: Relocated to modals folder with Modal suffix for consistency. Imports ../../styles/_modal_common.scss. Business logic extracted to useChannelManagement (channel CRUD, delete confirmation) and useChannelPermissions hooks. Uses primitives (Modal, Container, FlexRow, Input, Button, Text, Icon) but retains SCSS dependency.",
+      "updated": "2025-01-28",
       "dependencies": [
         "Modal",
         "Container",
@@ -1097,9 +1097,9 @@
       "dependency_level": 0,
       "complexity_category": "complex"
     },
-    "GroupEditor.tsx": {
-      "name": "GroupEditor",
-      "path": "src/components/space/GroupEditor.tsx",
+    "GroupEditorModal.tsx": {
+      "name": "GroupEditorModal",
+      "path": "src/components/modals/GroupEditorModal.tsx",
       "description": "Channel group creation and editing modal",
       "category": "platform_specific",
       "used": "yes",
@@ -1109,8 +1109,8 @@
         "useGroupManagement"
       ],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Imports ../../styles/_modal_common.scss. Business logic extracted to useGroupManagement hook (group CRUD, delete confirmation, message checking). Now uses primitives (Modal, Container, FlexRow, Input, Button, Text, Icon) but retains SCSS dependency.",
-      "updated": "2025-09-17",
+      "notes": "MOVED TO MODALS FOLDER 2025-01-28: Relocated to modals folder with Modal suffix for consistency. Imports ../../styles/_modal_common.scss. Business logic extracted to useGroupManagement hook (group CRUD, delete confirmation, message checking). Uses primitives (Modal, Container, FlexRow, Input, Button, Text, Icon) but retains SCSS dependency.",
+      "updated": "2025-01-28",
       "dependencies": [
         "Modal",
         "Container",
@@ -1630,7 +1630,7 @@
         "JoinSpaceModal.tsx",
         "GlobalSearch.tsx",
         "Login.tsx",
-        "SpaceEditor.tsx",
+        "SpaceSettingsModal.tsx",
         "EmojiPickerDrawer.tsx",
         "WebsocketProvider.tsx",
         "MessageDB.tsx",
@@ -1674,8 +1674,8 @@
         "CreateSpaceModal.tsx",
         "DirectMessage.tsx",
         "Message.tsx",
-        "ChannelEditor.tsx",
-        "GroupEditor.tsx",
+        "ChannelEditorModal.tsx",
+        "GroupEditorModal.tsx",
         "ConfirmationModal.tsx",
       ]
     }

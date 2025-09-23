@@ -64,7 +64,7 @@ AppWithSearch (modal context level)
 - Follows established modal pattern in the codebase
 - Ensures drawer appears above all UI elements
 
-**Implementation**: Uses same pattern as `UserSettingsModal`, `SpaceEditor`, etc.
+**Implementation**: Uses same pattern as `UserSettingsModal`, `SpaceSettingsModal`, etc.
 
 ### 2. Common MobileDrawer Component
 

@@ -99,13 +99,13 @@ const handleSave = useCallback(async () => {
 
 ## Current Implementations
 
-### ChannelEditor
+### ChannelEditorModal
 - **Implementation**: `useModalSaveState` hook (`saveWithTimeout`)
 - **Timeout**: 3000ms for save operations
 - **Protection**: Modal close mechanisms disabled during save
 - **Message**: "Saving..."
 
-### GroupEditor
+### GroupEditorModal
 - **Implementation**: `useModalSaveState` hook (`saveWithTimeout`)
 - **Timeout**: 3000ms for save operations
 - **Protection**: Modal close mechanisms disabled during save
@@ -117,7 +117,7 @@ const handleSave = useCallback(async () => {
 - **Protection**: Modal close mechanisms disabled during save
 - **Message**: "Saving..." (default)
 
-### SpaceEditor
+### SpaceSettingsModal
 - **Implementation**: `useModalSaveState` hook (`saveUntilComplete`)
 - **Timeout**: Closes only on completion (30s failsafe)
 - **Protection**: Modal close mechanisms disabled during save
@@ -172,9 +172,9 @@ const handleSave = useCallback(async () => {
 - `src/hooks/business/ui/useModalSaveState.ts` - State management hook
 
 ### Modified Files
-- `src/components/space/ChannelEditor.tsx` - Migrated to `useModalSaveState` hook (saves only)
-- `src/components/space/GroupEditor.tsx` - Migrated to `useModalSaveState` hook, updated error handling
-- `src/components/space/SpaceEditor.tsx` - Migrated to `useModalSaveState` hook (`saveUntilComplete`)
+- `src/components/modals/ChannelEditorModal.tsx` - Migrated to `useModalSaveState` hook (saves only)
+- `src/components/modals/GroupEditorModal.tsx` - Migrated to `useModalSaveState` hook, updated error handling
+- `src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx` - Migrated to `useModalSaveState` hook (`saveUntilComplete`)
 - `src/components/modals/UserSettingsModal.tsx` - Migrated to `useModalSaveState` hook (`saveUntilComplete`)
 - `src/components/modals/ConfirmationModal.tsx` - Simplified (removed timeout overlay logic)
 - `src/hooks/business/channels/useChannelManagement.ts` - Cleaned up legacy `showWarning`

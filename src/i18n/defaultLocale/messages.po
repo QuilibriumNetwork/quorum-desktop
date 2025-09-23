@@ -41,7 +41,7 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:219
+#: src/components/message/MessageComposer.tsx:247
 msgid "Replying to {user}"
 msgstr ""
 
@@ -141,11 +141,11 @@ msgstr ""
 msgid "0 Bytes"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:287
+#: src/components/modals/UserSettingsModal/General.tsx:104
 msgid "Account Address"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:79
+#: src/components/modals/ChannelEditorModal.tsx:79
 msgid "Add Channel"
 msgstr ""
 
@@ -153,12 +153,12 @@ msgstr ""
 msgid "Add friend"
 msgstr ""
 
+#: src/components/modals/GroupEditorModal.tsx:58
 #: src/components/space/ChannelList.tsx:74
-#: src/components/space/GroupEditor.tsx:58
 msgid "Add Group"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:635
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 msgid "Add Role"
 msgstr ""
 
@@ -166,7 +166,7 @@ msgstr ""
 #~ msgid "Add Space"
 #~ msgstr ""
 
-#: src/components/message/MessageComposer.tsx:357
+#: src/components/message/MessageComposer.tsx:375
 msgid "add sticker"
 msgstr ""
 
@@ -178,7 +178,7 @@ msgstr ""
 #~ msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 256kB."
 #~ msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:790
+#: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
 msgstr ""
 
@@ -190,7 +190,7 @@ msgstr ""
 #~ msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 256kB."
 #~ msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:887
+#: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
 msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
 msgstr ""
 
@@ -204,7 +204,7 @@ msgstr ""
 msgid "Addresses start with \"Qm\"."
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:353
+#: src/components/modals/UserSettingsModal/Privacy.tsx:46
 msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
 msgstr ""
 
@@ -218,10 +218,10 @@ msgid "All"
 msgstr ""
 
 #: src/components/space/SpaceEditor.tsx:263
-msgid "All roles must have both a tag name and display name."
-msgstr ""
+#~ msgid "All roles must have both a tag name and display name."
+#~ msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:378
+#: src/components/modals/UserSettingsModal/Privacy.tsx:71
 msgid "Always sign Direct Messages"
 msgstr ""
 
@@ -229,7 +229,7 @@ msgstr ""
 #~ msgid "Always sign Direct Messages in  Conversations. This can be overridden for finer-grain control by clicking the lock icon found in each Conversation view."
 #~ msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:382
+#: src/components/modals/UserSettingsModal/Privacy.tsx:75
 msgid "Always sign Direct Messages in conversations. This can be overridden for finer-grain control by clicking the lock icon found in each conversation view."
 msgstr ""
 
@@ -250,15 +250,14 @@ msgstr ""
 msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:188
-#: src/components/modals/UserSettingsModal.tsx:220
-#: src/components/modals/UserSettingsModal.tsx:556
+#: src/components/modals/UserSettingsModal/Appearance.tsx:25
+#: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
 msgstr ""
 
 #: src/components/space/SpaceEditor.tsx:1278
-msgid "Are you sure you want to delete the public invite link? Anyone with your current public invite link won't be able to join your Space anymore."
-msgstr ""
+#~ msgid "Are you sure you want to delete the public invite link? Anyone with your current public invite link won't be able to join your Space anymore."
+#~ msgstr ""
 
 #: src/hooks/business/channels/useChannelManagement.ts:228
 msgid "Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone."
@@ -280,14 +279,14 @@ msgid "Are you sure you want to delete this role?"
 msgstr ""
 
 #: src/components/space/SpaceEditor.tsx:1265
-msgid "Are you sure you want to generate a new public invite link? Anyone with your old public invite link won't be able to join your Space anymore."
-msgstr ""
+#~ msgid "Are you sure you want to generate a new public invite link? Anyone with your old public invite link won't be able to join your Space anymore."
+#~ msgstr ""
 
 #: src/components/space/SpaceEditor.tsx:1264
-msgid ""
-"Are you sure you want to generate a public invite link?\n"
-"This will permanently invalidate ALL previously sent private invite links."
-msgstr ""
+#~ msgid ""
+#~ "Are you sure you want to generate a public invite link?\n"
+#~ "This will permanently invalidate ALL previously sent private invite links."
+#~ msgstr ""
 
 #: src/components/modals/LeaveSpaceModal.tsx:36
 #~ msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
@@ -313,7 +312,7 @@ msgstr ""
 #~ msgid "Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!"
 #~ msgstr ""
 
-#: src/components/message/MessageComposer.tsx:316
+#: src/components/message/MessageComposer.tsx:344
 msgid "attach image"
 msgstr ""
 
@@ -365,23 +364,23 @@ msgstr ""
 msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:584
+#: src/components/modals/UserSettingsModal/Appearance.tsx:53
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:118
+#: src/components/modals/ChannelEditorModal.tsx:118
 msgid "Channel Icon"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:156
+#: src/components/modals/ChannelEditorModal.tsx:156
 msgid "Channel Managers"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:96
+#: src/components/modals/ChannelEditorModal.tsx:96
 msgid "Channel Name"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:104
+#: src/components/modals/ChannelEditorModal.tsx:104
 msgid "Channel Topic"
 msgstr ""
 
@@ -397,7 +396,7 @@ msgstr ""
 msgid "Choose how you'd like to add your profile image"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:558
+#: src/components/modals/UserSettingsModal/Appearance.tsx:27
 msgid "Choose your preferred theme for Quorum."
 msgstr ""
 
@@ -415,15 +414,15 @@ msgstr ""
 msgid "Clearing notifications with tag: {tag}"
 msgstr ""
 
+#: src/components/modals/ChannelEditorModal.tsx:208
+#: src/components/modals/GroupEditorModal.tsx:126
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
-#: src/components/space/ChannelEditor.tsx:208
-#: src/components/space/GroupEditor.tsx:126
-#: src/components/space/SpaceEditor.tsx:1225
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:51
 msgid "Click again to confirm"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:622
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Click on the role name and tag to edit them."
 msgstr ""
 
@@ -444,8 +443,8 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/space/SpaceEditor.tsx:1267
-msgid "Confirm"
-msgstr ""
+#~ msgid "Confirm"
+#~ msgstr ""
 
 #: src/components/space/GroupEditor.tsx:121
 #: src/components/space/ChannelEditor.tsx:167
@@ -475,7 +474,7 @@ msgstr ""
 #: src/components/direct/DirectMessage.tsx:261
 #: src/components/direct/DirectMessage.tsx:386
 #: src/components/direct/DirectMessage.tsx:458
-#: src/components/modals/UserSettingsModal.tsx:297
+#: src/components/modals/UserSettingsModal/General.tsx:114
 #: src/components/user/UserProfile.tsx:110
 #: src/components/user/UserStatus.tsx:50
 msgid "Copy address"
@@ -494,7 +493,7 @@ msgstr ""
 msgid "Copy Failed"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:1138
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:206
 msgid "Copy invite link to clipboard"
 msgstr ""
 
@@ -545,7 +544,7 @@ msgstr ""
 msgid "Creating Space..."
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:1120
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:188
 msgid "Current Invite Link"
 msgstr ""
 
@@ -565,7 +564,7 @@ msgstr ""
 msgid "Decrypted Space with no known hub key"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:553
+#: src/components/modals/SpaceSettingsModal/General.tsx:177
 msgid "Default Channel"
 msgstr ""
 
@@ -580,16 +579,15 @@ msgstr ""
 #: src/components/modals/ConfirmationModal.native.tsx:26
 #: src/components/modals/ConfirmationModal.tsx:28
 #: src/components/modals/ConversationSettingsModal.tsx:57
-#: src/components/space/SpaceEditor.tsx:849
-#: src/components/space/SpaceEditor.tsx:948
-#: src/components/space/SpaceEditor.tsx:1279
+#: src/components/modals/SpaceSettingsModal/Emojis.tsx:103
+#: src/components/modals/SpaceSettingsModal/Stickers.tsx:105
 #: src/hooks/business/channels/useChannelManagement.ts:233
 #: src/hooks/business/messages/useMessageActions.ts:105
 #: src/hooks/business/spaces/useRoleManagement.ts:61
 msgid "Delete"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:207
+#: src/components/modals/ChannelEditorModal.tsx:207
 #: src/hooks/business/channels/useChannelManagement.ts:227
 msgid "Delete Channel"
 msgstr ""
@@ -599,12 +597,16 @@ msgstr ""
 msgid "Delete Conversation"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:1156
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:224
 msgid "Delete Current Link"
 msgstr ""
 
-#: src/components/space/GroupEditor.tsx:125
+#: src/components/modals/GroupEditorModal.tsx:125
 msgid "Delete Group"
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:413
+msgid "Delete Link"
 msgstr ""
 
 #: src/components/message/MessageActions.tsx:84
@@ -616,26 +618,25 @@ msgstr ""
 msgid "Delete Message"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:719
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:142
 msgid "Delete Messages"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:1277
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:411
 msgid "Delete Public Invite Link"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:739
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:162
 #: src/hooks/business/spaces/useRoleManagement.ts:58
 msgid "Delete Role"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:379
-#: src/components/space/SpaceEditor.tsx:431
-#: src/components/space/SpaceEditor.tsx:1223
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:49
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:20
 msgid "Delete Space"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:1197
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:23
 msgid "Delete this space"
 msgstr ""
 
@@ -643,11 +644,11 @@ msgstr ""
 #~ msgid "Deletes conversation keys, user profile information, and messages on your computer only. These messages will still exist on the recipent's computer, so they must also delete on their end to complete a full deletion."
 #~ msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:507
+#: src/components/modals/UserSettingsModal/Notifications.tsx:35
 msgid "Desktop Notifications"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:529
+#: src/components/modals/UserSettingsModal/Notifications.tsx:57
 msgid "Desktop notifications are not supported in this browser."
 msgstr ""
 
@@ -662,7 +663,7 @@ msgstr ""
 msgid "Direct Messages"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:267
+#: src/components/modals/UserSettingsModal/General.tsx:84
 msgid "Display Name"
 msgstr ""
 
@@ -679,11 +680,11 @@ msgstr ""
 msgid "Drop your profile photo here"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:79
+#: src/components/modals/ChannelEditorModal.tsx:79
 msgid "Edit Channel"
 msgstr ""
 
-#: src/components/space/GroupEditor.tsx:58
+#: src/components/modals/GroupEditorModal.tsx:58
 msgid "Edit Group"
 msgstr ""
 
@@ -699,13 +700,12 @@ msgstr ""
 msgid "Emoji picker"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:353
-#: src/components/space/SpaceEditor.tsx:419
-#: src/components/space/SpaceEditor.tsx:787
+#: src/components/modals/SpaceSettingsModal/Emojis.tsx:41
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:17
 msgid "Emojis"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:359
+#: src/components/modals/UserSettingsModal/Privacy.tsx:52
 msgid "Enable sync"
 msgstr ""
 
@@ -717,7 +717,7 @@ msgstr ""
 msgid "Enter a user's address to start messaging them."
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:1028
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:96
 msgid "Enter Address Manually"
 msgstr ""
 
@@ -750,15 +750,15 @@ msgstr ""
 msgid "Error showing notification:"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:999
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:67
 msgid "Existing Conversations"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:473
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "Export"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:464
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 msgstr ""
 
@@ -854,10 +854,8 @@ msgstr ""
 msgid "general"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:167
-#: src/components/modals/UserSettingsModal.tsx:199
-#: src/components/space/SpaceEditor.tsx:339
-#: src/components/space/SpaceEditor.tsx:391
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:15
+#: src/components/modals/UserSettingsModal/Navigation.tsx:15
 msgid "General"
 msgstr ""
 
@@ -865,20 +863,25 @@ msgstr ""
 msgid "General Chat"
 msgstr ""
 
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:399
+msgid "Generate Link"
+msgstr ""
+
 #: src/components/space/SpaceEditor.tsx:970
 #~ msgid "Generate New Invite Link"
 #~ msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:1163
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:231
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:399
 msgid "Generate New Link"
 msgstr ""
 
 #: src/components/space/SpaceEditor.tsx:1261
-msgid "Generate New Public Invite Link"
-msgstr ""
+#~ msgid "Generate New Public Invite Link"
+#~ msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:1105
-#: src/components/space/SpaceEditor.tsx:1261
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:173
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:393
 msgid "Generate Public Invite Link"
 msgstr ""
 
@@ -894,11 +897,11 @@ msgstr ""
 msgid "Go to conversation"
 msgstr ""
 
-#: src/components/space/GroupEditor.tsx:83
+#: src/components/modals/GroupEditorModal.tsx:83
 msgid "Group Icon (optional)"
 msgstr ""
 
-#: src/components/space/GroupEditor.tsx:70
+#: src/components/modals/GroupEditorModal.tsx:70
 msgid "Group Name"
 msgstr ""
 
@@ -978,9 +981,8 @@ msgstr ""
 msgid "invalid response"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:367
-#: src/components/space/SpaceEditor.tsx:412
-#: src/components/space/SpaceEditor.tsx:983
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:51
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:19
 msgid "Invites"
 msgstr ""
 
@@ -1019,7 +1021,7 @@ msgstr ""
 msgid "Key Copied!"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:461
+#: src/components/modals/UserSettingsModal/Privacy.tsx:154
 msgid "Key Export"
 msgstr ""
 
@@ -1036,7 +1038,7 @@ msgstr ""
 msgid "Kick User"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:727
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:150
 msgid "Kick Users"
 msgstr ""
 
@@ -1048,7 +1050,7 @@ msgstr ""
 msgid "Kicking..."
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:571
+#: src/components/modals/UserSettingsModal/Appearance.tsx:40
 msgid "Language"
 msgstr ""
 
@@ -1101,11 +1103,11 @@ msgstr ""
 msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:498
+#: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:344
+#: src/components/modals/UserSettingsModal/Privacy.tsx:37
 msgid "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr ""
 
@@ -1131,11 +1133,11 @@ msgstr ""
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:373
+#: src/components/message/MessageComposer.tsx:391
 msgid "Messages are NOT signed!"
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:374
+#: src/components/message/MessageComposer.tsx:392
 msgid "Messages are signed!"
 msgstr ""
 
@@ -1172,9 +1174,8 @@ msgstr ""
 msgid "Notification permission not granted"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:181
-#: src/components/modals/UserSettingsModal.tsx:213
-#: src/components/modals/UserSettingsModal.tsx:496
+#: src/components/modals/UserSettingsModal/Navigation.tsx:17
+#: src/components/modals/UserSettingsModal/Notifications.tsx:24
 msgid "Notifications"
 msgstr ""
 
@@ -1182,7 +1183,7 @@ msgstr ""
 #~ msgid "Notifications are blocked. Please enable them in your browser settings for this site."
 #~ msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:538
+#: src/components/modals/UserSettingsModal/Notifications.tsx:66
 msgid "Notifications are blocked. Please enable them in your browser settings."
 msgstr ""
 
@@ -1211,8 +1212,12 @@ msgstr ""
 msgid "Online"
 msgstr ""
 
+#: src/components/ui/YouTubeFacade.tsx:171
+msgid "Open video on YouTube"
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:121
 #: src/components/space/RolePreview.tsx:34
-#: src/components/space/SpaceEditor.tsx:698
 msgid "Permissions:"
 msgstr ""
 
@@ -1238,7 +1243,7 @@ msgstr ""
 msgid "Pin"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:132
+#: src/components/modals/ChannelEditorModal.tsx:132
 msgid "Pin channel to top"
 msgstr ""
 
@@ -1260,11 +1265,11 @@ msgstr ""
 msgid "Pin Message"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:723
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:146
 msgid "Pin Messages"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:127
+#: src/components/modals/ChannelEditorModal.tsx:127
 msgid "Pin to top"
 msgstr ""
 
@@ -1295,13 +1300,12 @@ msgstr ""
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:574
+#: src/components/modals/SpaceSettingsModal/General.tsx:198
 msgid "Privacy Settings"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:174
-#: src/components/modals/UserSettingsModal.tsx:206
-#: src/components/modals/UserSettingsModal.tsx:342
+#: src/components/modals/UserSettingsModal/Navigation.tsx:16
+#: src/components/modals/UserSettingsModal/Privacy.tsx:35
 msgid "Privacy/Security"
 msgstr ""
 
@@ -1309,7 +1313,7 @@ msgstr ""
 msgid "Private key saved to selected folder"
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:198
+#: src/components/message/MessageComposer.tsx:226
 msgid "Processing image... This may take a moment for large files."
 msgstr ""
 
@@ -1317,7 +1321,7 @@ msgstr ""
 #~ msgid "Public Invite Link"
 #~ msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:1050
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:118
 msgid "Public Invite Links"
 msgstr ""
 
@@ -1325,7 +1329,7 @@ msgstr ""
 #~ msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
 #~ msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:1094
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:162
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr ""
 
@@ -1346,11 +1350,11 @@ msgstr ""
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:141
+#: src/components/modals/ChannelEditorModal.tsx:141
 msgid "Read only"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:146
+#: src/components/modals/ChannelEditorModal.tsx:146
 msgid "Read only channel"
 msgstr ""
 
@@ -1368,11 +1372,11 @@ msgstr ""
 
 #: src/components/Maintenance.native.tsx:73
 #: src/components/Maintenance.tsx:52
-#: src/components/modals/UserSettingsModal.tsx:592
+#: src/components/modals/UserSettingsModal/Appearance.tsx:61
 msgid "Refresh"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:439
+#: src/components/modals/UserSettingsModal/Privacy.tsx:132
 msgid "Remove"
 msgstr ""
 
@@ -1392,12 +1396,12 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/modals/CreateSpaceModal.tsx:115
-#: src/components/space/SpaceEditor.tsx:580
+#: src/components/modals/SpaceSettingsModal/General.tsx:204
 msgid "Require Message Signing"
 msgstr ""
 
 #: src/components/modals/CreateSpaceModal.tsx:119
-#: src/components/space/SpaceEditor.tsx:584
+#: src/components/modals/SpaceSettingsModal/General.tsx:208
 msgid "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
 msgstr ""
 
@@ -1406,9 +1410,8 @@ msgstr ""
 #~ msgid "Requirements:"
 #~ msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:346
-#: src/components/space/SpaceEditor.tsx:405
-#: src/components/space/SpaceEditor.tsx:619
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:16
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:42
 msgid "Roles"
 msgstr ""
 
@@ -1420,13 +1423,13 @@ msgstr ""
 #: src/components/space/SpaceEditor.tsx:775
 #: src/components/space/SpaceEditor.tsx:872
 #: src/components/space/SpaceEditor.tsx:971
-msgid "Save All Changes"
-msgstr ""
+#~ msgid "Save All Changes"
+#~ msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:331
-#: src/components/modals/UserSettingsModal.tsx:485
-#: src/components/space/ChannelEditor.tsx:189
-#: src/components/space/GroupEditor.tsx:94
+#: src/components/modals/ChannelEditorModal.tsx:189
+#: src/components/modals/GroupEditorModal.tsx:94
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:380
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:236
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr ""
@@ -1436,7 +1439,7 @@ msgstr ""
 msgid "Save Contact Photo"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:148
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:145
 msgid "Save Failed"
 msgstr ""
 
@@ -1453,9 +1456,9 @@ msgstr ""
 msgid "saved config is out of date"
 msgstr ""
 
+#: src/components/modals/ChannelEditorModal.tsx:89
+#: src/components/modals/GroupEditorModal.tsx:134
 #: src/components/modals/ModalSaveOverlay.tsx:43
-#: src/components/space/ChannelEditor.tsx:89
-#: src/components/space/GroupEditor.tsx:134
 msgid "Saving..."
 msgstr ""
 
@@ -1490,7 +1493,7 @@ msgstr ""
 msgid "Searching..."
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:350
+#: src/components/modals/UserSettingsModal/Privacy.tsx:43
 msgid "Security"
 msgstr ""
 
@@ -1499,15 +1502,15 @@ msgstr ""
 msgid "Select an option"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:160
+#: src/components/modals/ChannelEditorModal.tsx:160
 msgid "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:1020
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:88
 msgid "Select conversation"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:568
+#: src/components/modals/SpaceSettingsModal/General.tsx:192
 msgid "Select default channel"
 msgstr ""
 
@@ -1515,7 +1518,7 @@ msgstr ""
 msgid "Select Image"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:714
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:137
 msgid "Select permissions"
 msgstr ""
 
@@ -1523,7 +1526,7 @@ msgstr ""
 msgid "Select Profile Image"
 msgstr ""
 
-#: src/components/space/ChannelEditor.tsx:179
+#: src/components/modals/ChannelEditorModal.tsx:179
 msgid "Select Roles"
 msgstr ""
 
@@ -1531,11 +1534,11 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:1185
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:253
 msgid "Send Invite"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:986
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:54
 msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 msgstr ""
 
@@ -1552,11 +1555,11 @@ msgstr ""
 msgid "Set Display Name"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:161
+#: src/components/modals/UserSettingsModal/Navigation.tsx:25
 msgid "Settings"
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:511
+#: src/components/modals/UserSettingsModal/Notifications.tsx:39
 msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
 msgstr ""
 
@@ -1569,7 +1572,7 @@ msgstr ""
 msgid "Skip Adding Photo"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:491
+#: src/components/modals/SpaceSettingsModal/General.tsx:116
 msgid "Space Banner"
 msgstr ""
 
@@ -1578,8 +1581,12 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/modals/CreateSpaceModal.tsx:85
-#: src/components/space/SpaceEditor.tsx:483
+#: src/components/modals/SpaceSettingsModal/General.tsx:108
 msgid "Space Name"
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:27
+msgid "Space Settings"
 msgstr ""
 
 #: src/components/search/SearchResults.tsx:63
@@ -1598,14 +1605,13 @@ msgstr ""
 msgid "Stay Connected, Stay Invisible"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:360
-#: src/components/space/SpaceEditor.tsx:398
-#: src/components/space/SpaceEditor.tsx:884
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:18
+#: src/components/modals/SpaceSettingsModal/Stickers.tsx:41
 msgid "Stickers"
 msgstr ""
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/space/SpaceEditor.tsx:1035
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:103
 msgid "Successfully sent invite to {0}"
 msgstr ""
 
@@ -1634,7 +1640,7 @@ msgstr ""
 msgid "The invite link has expired or is invalid."
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:450
+#: src/components/modals/UserSettingsModal/Privacy.tsx:143
 msgid "This device"
 msgstr ""
 
@@ -1643,17 +1649,29 @@ msgstr ""
 msgid "This information is only provided to the Spaces you join."
 msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:289
+#: src/components/modals/UserSettingsModal/General.tsx:106
 msgid "This is your public address and is safe to share with anyone you want to interact with."
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:1124
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:192
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr ""
 
 #: src/components/space/SpaceEditor.tsx:926
 #~ msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
 #~ msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:397
+msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:396
+msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:412
+msgid "This will permanently delete the current public invite link. Anyone who has this link will no longer be able to use it to join your Space."
+msgstr ""
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:77
@@ -1664,7 +1682,7 @@ msgstr ""
 #~ msgid "To disable notifications, please change the notification settings in your browser for this site."
 #~ msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:544
+#: src/components/modals/UserSettingsModal/Notifications.tsx:72
 msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
 msgstr ""
 
@@ -1742,7 +1760,7 @@ msgstr ""
 #: src/components/direct/DirectMessage.tsx:123
 #: src/components/direct/DirectMessage.tsx:138
 #: src/components/direct/DirectMessage.tsx:323
-#: src/components/message/MessageComposer.tsx:299
+#: src/components/message/MessageComposer.tsx:327
 #: src/components/message/MessagePreview.tsx:41
 #: src/components/message/PinnedMessagesPanel.tsx:106
 #: src/components/message/PinnedMessagesPanel.tsx:119
@@ -1796,11 +1814,11 @@ msgstr ""
 msgid "Upload an image and choose a name for your Space."
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:805
+#: src/components/modals/SpaceSettingsModal/Emojis.tsx:59
 msgid "Upload Emoji"
 msgstr ""
 
-#: src/components/space/SpaceEditor.tsx:902
+#: src/components/modals/SpaceSettingsModal/Stickers.tsx:59
 msgid "Upload Sticker"
 msgstr ""
 
@@ -1847,7 +1865,7 @@ msgstr ""
 #~ msgid "When enabled, direct messages are not signed by your user key..."
 #~ msgstr ""
 
-#: src/components/modals/UserSettingsModal.tsx:363
+#: src/components/modals/UserSettingsModal/Privacy.tsx:56
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
 msgstr ""
 
@@ -1880,11 +1898,11 @@ msgstr ""
 #~ msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
 #~ msgstr ""
 
-#: src/components/space/GroupEditor.tsx:113
+#: src/components/modals/GroupEditorModal.tsx:113
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:177
+#: src/components/message/MessageComposer.tsx:205
 #: src/components/space/Channel.tsx:607
 msgid "You cannot post in this channel"
 msgstr ""
@@ -1935,6 +1953,6 @@ msgstr ""
 msgid "YouTube Video"
 msgstr ""
 
-#: src/components/ui/YouTubeFacade.tsx:114
+#: src/components/ui/YouTubeFacade.tsx:115
 msgid "YouTube Video Thumbnail"
 msgstr ""

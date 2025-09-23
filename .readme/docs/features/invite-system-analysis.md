@@ -10,7 +10,7 @@ The invite system operates through several key components:
 
 ### Core Components
 
-1. **SpaceEditor.tsx** - Main UI for managing invites (lines 742-907)
+1. **SpaceSettingsModal.tsx** - Main UI for managing invites (lines 742-907)
 2. **useInviteManagement.ts** - Hook managing invite state and logic
 3. **useInviteValidation.ts** - Hook for validating invite links
 4. **useSpaceJoining.ts** - Hook for joining spaces via invites
@@ -101,7 +101,7 @@ await messageDB.saveEncryptionState(
 // Each private invite permanently consumes one secret from the evals array
 ```
 
-**Delete Functionality - SpaceEditor.tsx lines 233-237:**
+**Delete Functionality - SpaceSettingsModal.tsx lines 233-237:**
 
 ```typescript
 await updateSpace({

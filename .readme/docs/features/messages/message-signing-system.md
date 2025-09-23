@@ -50,7 +50,7 @@ type UserConfig = {
 
 ### 2. Space-level Settings
 
-**File:** `src/components/space/SpaceEditor.tsx`
+**File:** `src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx`
 
 ```typescript
 // Space configuration
@@ -216,7 +216,7 @@ const effectiveSkip = space?.isRepudiable ? skipSigning : false;
 | Level | Location | Control |
 |-------|----------|---------|
 | Global | UserSettingsModal → Privacy/Security | "Always sign Direct Messages" |
-| Space | SpaceEditor → General | "Require Message Signing" |
+| Space | SpaceSettingsModal → General | "Require Message Signing" |
 | Conversation | ConversationSettingsModal | "Always sign messages" |
 | Message | MessageComposer | Lock/unlock icon |
 
@@ -289,7 +289,7 @@ Default: true (always sign)
 To verify the feature works correctly:
 
 1. **Global Settings:** Change in UserSettingsModal → affects new conversations
-2. **Space Settings:** Toggle in SpaceEditor → affects all space messages
+2. **Space Settings:** Toggle in SpaceSettingsModal → affects all space messages
 3. **Conversation Settings:** Change in ConversationSettingsModal → persists after sending messages
 4. **Per-message Toggle:** Click lock/unlock → applies to individual message
 5. **Hierarchy:** Verify more specific settings override general ones

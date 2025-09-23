@@ -128,7 +128,7 @@ const handleDelete = (e: React.MouseEvent) => {
 - Pin/Unpin operations (modal with preview)
 
 **Integration Points:**
-- `useRoleManagement.ts` - Role deletion in SpaceEditor
+- `useRoleManagement.ts` - Role deletion in SpaceSettingsModal
 - `useMessageActions.ts` - Message deletion 
 - `usePinnedMessages.ts` - Pin/Unpin operations
 - `useChannelManagement.ts` - Channel deletion

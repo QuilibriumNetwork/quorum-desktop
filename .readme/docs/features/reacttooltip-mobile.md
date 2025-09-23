@@ -140,7 +140,7 @@ const isTouchDevice = () =>
 
 ### 1. Info Icon Pattern
 
-Used in SpaceEditor, UserSettingsModal, CreateSpaceModal:
+Used in SpaceSettingsModal, UserSettingsModal, CreateSpaceModal:
 
 ```tsx
 <div className="info-icon">ℹ</div>
