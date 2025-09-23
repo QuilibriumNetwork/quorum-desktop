@@ -27,7 +27,10 @@ const AccentColorSwitcher: React.FC = () => {
   const swatchGap = isNative() ? 12 : isMobile ? 12 : 3;
 
   return (
-    <FlexRow gap={swatchGap}>
+    <FlexRow
+      gap={isMobile ? 'lg' : 'sm'}
+      style={isMobile ? { gap: '16px' } : undefined}
+    >
       {ACCENT_COLORS.map((color) => (
         <ColorSwatch
           key={color}

@@ -2,7 +2,6 @@ import * as React from 'react';
 import {
   Button,
   Modal,
-  Icon,
   Callout,
 } from '../../primitives';
 import '../../../styles/_modal_common.scss';
@@ -20,6 +19,7 @@ import General from './General';
 import Privacy from './Privacy';
 import Notifications from './Notifications';
 import Appearance from './Appearance';
+import Navigation from './Navigation';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -154,70 +154,10 @@ const UserSettingsModal: React.FunctionComponent<{
 
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           <div className="modal-complex-layout-with-footer">
-            {/* Desktop/Tablet Sidebar */}
-            <div className="modal-complex-sidebar">
-              <div className="modal-nav-title">{t`Settings`}</div>
-              <div
-                onClick={() => setSelectedCategory('general')}
-                className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
-              >
-                <Icon name="user" className="mr-2 text-accent" />
-                {t`General`}
-              </div>
-              <div
-                onClick={() => setSelectedCategory('privacy')}
-                className={`modal-nav-category ${selectedCategory === 'privacy' ? 'active' : ''}`}
-              >
-                <Icon name="shield" className="mr-2 text-accent" />
-                {t`Privacy/Security`}
-              </div>
-              <div
-                onClick={() => setSelectedCategory('notifications')}
-                className={`modal-nav-category ${selectedCategory === 'notifications' ? 'active' : ''}`}
-              >
-                <Icon name="bell" className="mr-2 text-accent" />
-                {t`Notifications`}
-              </div>
-              <div
-                onClick={() => setSelectedCategory('appearance')}
-                className={`modal-nav-category ${selectedCategory === 'appearance' ? 'active' : ''}`}
-              >
-                <Icon name="palette" className="mr-2 text-accent" />
-                {t`Appearance`}
-              </div>
-            </div>
-
-            {/* Mobile Stacked Menu */}
-            <div className="modal-nav-mobile-single">
-              <div
-                onClick={() => setSelectedCategory('general')}
-                className={`modal-nav-category ${selectedCategory === 'general' ? 'active' : ''}`}
-              >
-                <Icon name="user" className="mr-2 text-accent" />
-                {t`General`}
-              </div>
-              <div
-                onClick={() => setSelectedCategory('privacy')}
-                className={`modal-nav-category ${selectedCategory === 'privacy' ? 'active' : ''}`}
-              >
-                <Icon name="shield" className="mr-2 text-accent" />
-                {t`Privacy/Security`}
-              </div>
-              <div
-                onClick={() => setSelectedCategory('notifications')}
-                className={`modal-nav-category ${selectedCategory === 'notifications' ? 'active' : ''}`}
-              >
-                <Icon name="bell" className="mr-2 text-accent" />
-                {t`Notifications`}
-              </div>
-              <div
-                onClick={() => setSelectedCategory('appearance')}
-                className={`modal-nav-category ${selectedCategory === 'appearance' ? 'active' : ''}`}
-              >
-                <Icon name="palette" className="mr-2 text-accent" />
-                {t`Appearance`}
-              </div>
-            </div>
+            <Navigation
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+            />
 
             <div className="modal-complex-content-with-footer">
               {(() => {
