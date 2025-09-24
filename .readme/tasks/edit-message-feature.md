@@ -4,6 +4,8 @@
 **Status**: Pending
 **Priority**: Medium
 
+GitHub Issues: https://github.com/QuilibriumNetwork/quorum-desktop/issues/77
+
 > **Note**: This analysis was conducted via Claude Code and may lack accuracy in some areas. Implementation details should be validated against the actual codebase and requirements.
 
 ## Overview
