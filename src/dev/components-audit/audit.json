@@ -218,30 +218,143 @@
     },
     "UserSettingsModal.tsx": {
       "name": "UserSettingsModal",
-      "path": "src/components/modals/UserSettingsModal.tsx",
-      "description": "Complex user settings modal with multiple tabs and configuration options",
+      "path": "src/components/modals/UserSettingsModal/UserSettingsModal.tsx",
+      "description": "Complex user settings modal with modular architecture - main container with state management for 5 subcomponents",
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
       "hooks": [
+        "useState",
+        "useCallback",
         "useUserSettings",
         "useProfileImage",
-        "useThemeSettings",
-        "useLocaleSettings"
+        "useLocaleSettings",
+        "useNotificationSettings",
+        "useModalSaveState"
       ],
       "native": "todo",
-      "notes": "Complex settings with API calls, file upload, validation (>10 lines each). Extract: useUserSettings, useProfileImage, useThemeSettings, useLocaleSettings.",
-      "updated": "2025-09-17",
+      "notes": "REFACTORED 2025-09-24: Main container for modular user settings architecture. Contains all state management and business logic. Subcomponents (General, Privacy, Notifications, Appearance, Navigation) are stateless and receive props from parent. Imports SCSS styles so remains platform_specific.",
+      "updated": "2025-09-24",
+      "dependencies": [
+        "Modal",
+        "Callout",
+        "ModalSaveOverlay",
+        "UserSettingsModal.General",
+        "UserSettingsModal.Privacy",
+        "UserSettingsModal.Notifications",
+        "UserSettingsModal.Appearance",
+        "UserSettingsModal.Navigation"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "complex"
+    },
+    "UserSettingsModal.General": {
+      "name": "UserSettingsModal.General",
+      "path": "src/components/modals/UserSettingsModal/General.tsx",
+      "description": "User general settings subcomponent - display name, avatar upload, user profile settings",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "not_extracted",
+      "hooks": [],
+      "native": "todo",
+      "notes": "Subcomponent of UserSettingsModal. Handles user profile settings, display name, avatar upload functionality. Uses ClickToCopyContent and ReactTooltip for user address copying. Stateless component.",
+      "updated": "2025-09-24",
+      "dependencies": [
+        "ClickToCopyContent",
+        "ReactTooltip",
+        "Button",
+        "Input",
+        "Icon",
+        "Spacer"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "simple"
+    },
+    "UserSettingsModal.Privacy": {
+      "name": "UserSettingsModal.Privacy",
+      "path": "src/components/modals/UserSettingsModal/Privacy.tsx",
+      "description": "Privacy settings subcomponent - secure channel settings and privacy preferences",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "not_extracted",
+      "hooks": [],
+      "native": "todo",
+      "notes": "Subcomponent of UserSettingsModal. Manages privacy and security settings including secure channel configuration. Stateless component receiving privacy state from parent.",
+      "updated": "2025-09-24",
+      "dependencies": [
+        "Button",
+        "Switch",
+        "Icon",
+        "Tooltip",
+        "Spacer",
+        "ScrollContainer"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "simple"
+    },
+    "UserSettingsModal.Notifications": {
+      "name": "UserSettingsModal.Notifications",
+      "path": "src/components/modals/UserSettingsModal/Notifications.tsx",
+      "description": "Notification preferences subcomponent - manage notification settings and preferences",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "not_extracted",
+      "hooks": [],
+      "native": "todo",
+      "notes": "Subcomponent of UserSettingsModal. Notification preferences and settings management interface. Stateless component.",
+      "updated": "2025-09-24",
+      "dependencies": [
+        "Switch",
+        "Icon",
+        "Tooltip"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "simple"
+    },
+    "UserSettingsModal.Appearance": {
+      "name": "UserSettingsModal.Appearance",
+      "path": "src/components/modals/UserSettingsModal/Appearance.tsx",
+      "description": "Appearance settings subcomponent - theme, accent color, and locale preferences",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "not_extracted",
+      "hooks": [],
+      "native": "todo",
+      "notes": "Subcomponent of UserSettingsModal. Theme selection, accent color picker, and locale settings. Uses ThemeRadioGroup and AccentColorSwitcher components. Stateless component.",
+      "updated": "2025-09-24",
       "dependencies": [
         "ThemeRadioGroup",
         "AccentColorSwitcher",
-        "ClickToCopyContent",
-        "ReactTooltip",
-        "primitives"
+        "Select",
+        "Button",
+        "Tooltip",
+        "Spacer"
       ],
       "dependency_level": 0,
-      "complexity_category": "medium"
+      "complexity_category": "simple"
+    },
+    "UserSettingsModal.Navigation": {
+      "name": "UserSettingsModal.Navigation",
+      "path": "src/components/modals/UserSettingsModal/Navigation.tsx",
+      "description": "Tab navigation subcomponent for user settings modal sections",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "not_extracted",
+      "hooks": [],
+      "native": "todo",
+      "notes": "Subcomponent of UserSettingsModal. Provides tab navigation between modal sections (General, Privacy, Notifications, Appearance). Stateless component receiving active tab state from parent.",
+      "updated": "2025-09-24",
+      "dependencies": [
+        "Icon"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "simple"
     },
     "SpaceButton.tsx": {
       "name": "SpaceButton",
@@ -1048,24 +1161,190 @@
     "SpaceSettingsModal.tsx": {
       "name": "SpaceSettingsModal",
       "path": "src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx",
-      "description": "Complex space settings modal with modular architecture - permissions, roles, file upload, emojis, stickers, invites",
+      "description": "Complex space settings modal with modular architecture - main container with state management for 7 subcomponents",
       "category": "platform_specific",
       "used": "yes",
       "primitives": "done",
       "logic_extraction": "done",
       "hooks": [
+        "useState",
+        "useCallback",
+        "useMemo",
+        "useSpace",
+        "useMessageDB",
         "useSpaceManagement",
-        "usePermissions",
         "useRoleManagement",
-        "useFileUpload"
+        "useSpaceFileUploads",
+        "useCustomAssets",
+        "useInviteManagement",
+        "useModalSaveState"
       ],
       "native": "todo",
-      "notes": "REFACTORED 2025-01-28: Moved to modals folder and completely refactored into modular architecture. Split into separate components (General, Roles, Emojis, Stickers, Invites, Danger) with shared Navigation component. Business logic already extracted to multiple specialized hooks. Imports '../../styles/_modal_common.scss' so remains platform_specific. Improved maintainability and code organization.",
-      "updated": "2025-01-28",
+      "notes": "REFACTORED 2025-09-24: Main container for modular space settings architecture. Contains all state management and business logic. Subcomponents (General, Roles, Emojis, Stickers, Invites, Danger, Navigation) are stateless and receive props from parent. Imports '../../styles/_modal_common.scss' so remains platform_specific.",
+      "updated": "2025-09-24",
+      "dependencies": [
+        "Modal",
+        "ConfirmationModal",
+        "ModalSaveOverlay",
+        "SpaceSettingsModal.General",
+        "SpaceSettingsModal.Roles",
+        "SpaceSettingsModal.Emojis",
+        "SpaceSettingsModal.Stickers",
+        "SpaceSettingsModal.Invites",
+        "SpaceSettingsModal.Danger",
+        "SpaceSettingsModal.Navigation"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "complex"
+    },
+    "SpaceSettingsModal.General": {
+      "name": "SpaceSettingsModal.General",
+      "path": "src/components/modals/SpaceSettingsModal/General.tsx",
+      "description": "Space general settings subcomponent - space name, icon/banner upload, default channel, privacy settings",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "not_extracted",
+      "hooks": [],
+      "native": "todo",
+      "notes": "Subcomponent of SpaceSettingsModal. Handles general settings, space name, icon/banner upload UI, default channel selection, and privacy settings. Stateless - receives all props from parent container. Uses file upload dropzone patterns.",
+      "updated": "2025-09-24",
+      "dependencies": [
+        "ReactTooltip",
+        "Button",
+        "Select",
+        "Switch",
+        "Input",
+        "Icon",
+        "Tooltip",
+        "Spacer"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "simple"
+    },
+    "SpaceSettingsModal.Roles": {
+      "name": "SpaceSettingsModal.Roles",
+      "path": "src/components/modals/SpaceSettingsModal/Roles.tsx",
+      "description": "Role management subcomponent - create, edit, delete roles and manage permissions",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "not_extracted",
+      "hooks": [],
+      "native": "todo",
+      "notes": "Subcomponent of SpaceSettingsModal. Manages role creation, editing, deletion, and permission assignment. Stateless component receiving role data and handlers from parent.",
+      "updated": "2025-09-24",
+      "dependencies": [
+        "Button",
+        "Select",
+        "Icon",
+        "Tooltip",
+        "ScrollContainer"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "simple"
+    },
+    "SpaceSettingsModal.Emojis": {
+      "name": "SpaceSettingsModal.Emojis",
+      "path": "src/components/modals/SpaceSettingsModal/Emojis.tsx",
+      "description": "Custom emoji management subcomponent - upload, manage, and delete custom emojis",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "not_extracted",
+      "hooks": [],
+      "native": "todo",
+      "notes": "Subcomponent of SpaceSettingsModal. Custom emoji pack management interface with upload, preview, and deletion. Stateless component.",
+      "updated": "2025-09-24",
+      "dependencies": [
+        "Button",
+        "Icon",
+        "Tooltip",
+        "ScrollContainer",
+        "Callout"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "simple"
+    },
+    "SpaceSettingsModal.Stickers": {
+      "name": "SpaceSettingsModal.Stickers",
+      "path": "src/components/modals/SpaceSettingsModal/Stickers.tsx",
+      "description": "Custom sticker management subcomponent - upload, manage, and delete sticker packs",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "not_extracted",
+      "hooks": [],
+      "native": "todo",
+      "notes": "Subcomponent of SpaceSettingsModal. Custom sticker pack management with upload, preview, and deletion functionality. Stateless component.",
+      "updated": "2025-09-24",
+      "dependencies": [
+        "Button",
+        "Icon",
+        "Tooltip",
+        "ScrollContainer",
+        "Callout"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "simple"
+    },
+    "SpaceSettingsModal.Invites": {
+      "name": "SpaceSettingsModal.Invites",
+      "path": "src/components/modals/SpaceSettingsModal/Invites.tsx",
+      "description": "Invite management subcomponent - generate, copy, and manage space invite links",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "not_extracted",
+      "hooks": [],
+      "native": "todo",
+      "notes": "Subcomponent of SpaceSettingsModal. Invite link generation, copying, and management interface. Uses ClickToCopyContent for copy functionality. Stateless component.",
+      "updated": "2025-09-24",
       "dependencies": [
         "ClickToCopyContent",
-        "ReactTooltip",
-        "primitives"
+        "Button",
+        "Select",
+        "Input",
+        "Icon",
+        "Tooltip",
+        "Spacer",
+        "Callout"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "simple"
+    },
+    "SpaceSettingsModal.Danger": {
+      "name": "SpaceSettingsModal.Danger",
+      "path": "src/components/modals/SpaceSettingsModal/Danger.tsx",
+      "description": "Dangerous actions subcomponent - space deletion and other destructive operations",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "not_extracted",
+      "hooks": [],
+      "native": "todo",
+      "notes": "Subcomponent of SpaceSettingsModal. Handles dangerous destructive actions like space deletion. Simple confirmation interface. Stateless component.",
+      "updated": "2025-09-24",
+      "dependencies": [
+        "Button"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "simple"
+    },
+    "SpaceSettingsModal.Navigation": {
+      "name": "SpaceSettingsModal.Navigation",
+      "path": "src/components/modals/SpaceSettingsModal/Navigation.tsx",
+      "description": "Tab navigation subcomponent for space settings modal sections",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "todo",
+      "logic_extraction": "not_extracted",
+      "hooks": [],
+      "native": "todo",
+      "notes": "Subcomponent of SpaceSettingsModal. Provides tab navigation between modal sections (General, Roles, Emojis, etc.). Stateless component receiving active tab state from parent.",
+      "updated": "2025-09-24",
+      "dependencies": [
+        "Icon"
       ],
       "dependency_level": 0,
       "complexity_category": "simple"
@@ -1557,23 +1836,23 @@
     }
   },
   "stats": {
-    "total": 72,
+    "total": 84,
     "primitives_done": 41,
     "logic_extraction_done": 67,
     "native_ready": 5,
     "native_done": 15,
     "by_category": {
-      "platform_specific": 53,
+      "platform_specific": 65,
       "shared": 19
     },
     "by_usage": {
-      "yes": 67,
+      "yes": 79,
       "no": 3,
       "unknown": 1,
       "suspended": 1
     },
-    "analysis_notes": "AUTHENTICATION FLOW NATIVE IMPLEMENTATION COMPLETE: Both Login.native.tsx and Onboarding.native.tsx successfully implemented with full cross-platform architecture. Complete authentication flow (Login \u2192 Onboarding) working with step indicator, responsive design, and proper mobile UX. Shared business logic hooks (useAuthenticationFlow, useOnboardingFlow, useKeyBackup) work across platforms. Components demonstrate successful cross-platform pattern: shared logic, platform-specific UI. Ready for mobile deployment testing.",
-    "last_updated": "2025-09-19"
+    "analysis_notes": "MODAL ARCHITECTURE REFACTORING COMPLETE: SpaceSettingsModal and UserSettingsModal have been refactored into modular architectures with 12 new subcomponents (7 for SpaceSettingsModal, 5 for UserSettingsModal). Main modal containers handle state management while subcomponents are stateless presentation components. This improves maintainability and follows clean architecture patterns. All subcomponents marked as platform_specific with primitives and logic extraction still to do.",
+    "last_updated": "2025-09-24"
   },
   "metadata": {
     "audit_version": "1.0",
@@ -1664,7 +1943,7 @@
         "ChannelPreview.tsx",
         "DropdownPanel.tsx",
         "MessagePreview.tsx",
-         "IconPicker"
+        "IconPicker"
       ]
     },
     "complex": {
@@ -1676,7 +1955,7 @@
         "Message.tsx",
         "ChannelEditorModal.tsx",
         "GroupEditorModal.tsx",
-        "ConfirmationModal.tsx",
+        "ConfirmationModal.tsx"
       ]
     }
   },
