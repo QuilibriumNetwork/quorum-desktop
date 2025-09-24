@@ -16,6 +16,7 @@ interface UseMessageActionsOptions {
   onSetEmojiPickerDirection: (direction: string) => void;
   editorRef?: any;
   mapSenderToUser?: (senderId: string) => any;
+  stickers?: { [key: string]: any };
 }
 
 export function useMessageActions(options: UseMessageActionsOptions) {
@@ -30,6 +31,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     onSetEmojiPickerDirection,
     editorRef,
     mapSenderToUser,
+    stickers,
   } = options;
 
   // State for copied link feedback
@@ -101,14 +103,14 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     showConfirmationModal({
       title: t`Delete Message`,
       message: t`Are you sure you want to delete this message?`,
-      preview: React.createElement(MessagePreview, { message, mapSenderToUser }),
+      preview: React.createElement(MessagePreview, { message, mapSenderToUser, stickers }),
       confirmText: t`Delete`,
       cancelText: t`Cancel`,
       variant: 'danger',
       protipAction: t`delete`,
       onConfirm: performDelete,
     });
-  }, [message, onSubmitMessage, showConfirmationModal, mapSenderToUser]);
+  }, [message, onSubmitMessage, showConfirmationModal, mapSenderToUser, stickers]);
 
   // Handle more reactions (emoji picker)
   const handleMoreReactions = useCallback(

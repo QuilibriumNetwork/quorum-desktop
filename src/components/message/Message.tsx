@@ -138,6 +138,7 @@ export const Message = React.memo(({
     onSetEmojiPickerDirection: setEmojiPickerOpenDirection,
     editorRef,
     mapSenderToUser,
+    stickers,
   });
 
   // Emoji picker business logic

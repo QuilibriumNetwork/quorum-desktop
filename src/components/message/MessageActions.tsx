@@ -190,7 +190,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
           {/* Delete (if user can delete) */}
           {canUserDelete && (
             <>
-              <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
+              <div className="w-2 text-center flex flex-col"></div>
               <div
                 onClick={onDelete}
                 onMouseEnter={() => setHoveredAction('delete')}
