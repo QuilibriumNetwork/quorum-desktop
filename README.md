@@ -67,7 +67,7 @@ localStorage.removeItem('debug_mock_users')
 
 ### Prerequisites
 
-Requires Node.js and `quilibrium-js-sdk-channels` cloned alongside this repository. Running locally in a browser against prod Quorum API requires CORS to be disabled, consult your extensions or settings to perform this.
+Requires Node.js and `quilibrium-js-sdk-channels` cloned alongside this repository. Running locally in a browser against prod Quorum API requires CORS to be disabled, consult your extensions or settings to perform this (if you disable CORS in your browser, remember to re-enable it as soon as you have finished testing).
 
 ### Initial Setup
 
