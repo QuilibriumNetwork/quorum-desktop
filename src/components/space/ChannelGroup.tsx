@@ -1,10 +1,16 @@
 import * as React from 'react';
 import './ChannelGroup.scss';
-import { Link, useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import { useModalContext } from '../context/ModalProvider';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { Icon } from '../primitives';
 import { getIconColorHex, IconColor } from './IconPicker/types';
+import { isTouchDevice } from '../../utils/platform';
+import { useLongPressWithDefaults } from '../../hooks/useLongPress';
+import { hapticLight, hapticMedium } from '../../utils/haptic';
+import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
+import ChannelItem from './ChannelItem';
 
 const ChannelGroup: React.FunctionComponent<{
   group: {
@@ -28,11 +34,14 @@ const ChannelGroup: React.FunctionComponent<{
   onEditGroup: (groupName: string) => void;
 }> = (props) => {
   const { openChannelEditor } = useModalContext();
+  const navigate = useNavigate();
+  const { isMobile, isTablet, closeLeftSidebar } = useResponsiveLayoutContext();
   let { spaceId, channelId } = useParams<{
     spaceId: string;
     channelId: string;
   }>();
   let { data: isSpaceOwner } = useSpaceOwner({ spaceId: spaceId! });
+  const isTouch = isTouchDevice();
 
   // Sort channels: pinned first (newest pin on top), then unpinned (by creation date)
   const sortedChannels = React.useMemo(() => {
@@ -51,18 +60,54 @@ const ChannelGroup: React.FunctionComponent<{
     });
   }, [props.group.channels]);
 
+  // Long press handler for group name (touch devices)
+  const groupLongPressHandlers = useLongPressWithDefaults({
+    delay: TOUCH_INTERACTION_TYPES.STANDARD.delay,
+    onLongPress: () => {
+      if (isTouch && isSpaceOwner) {
+        hapticMedium();
+        props.onEditGroup(props.group.groupName);
+      }
+    },
+    onTap: () => {
+      // On desktop or for space owners, handle the click
+      if (!isTouch && isSpaceOwner) {
+        props.onEditGroup(props.group.groupName);
+      }
+    },
+    shouldPreventDefault: true,
+    threshold: TOUCH_INTERACTION_TYPES.STANDARD.threshold
+  });
+
+  // Handle channel navigation
+  const handleChannelNavigate = React.useCallback((channelId: string) => {
+    navigate(`/spaces/${spaceId}/${channelId}`);
+  }, [navigate, spaceId]);
+
+  // Handle channel click for non-touch devices
+  const handleChannelClick = React.useCallback(() => {
+    if (isMobile || isTablet) {
+      closeLeftSidebar();
+    }
+  }, [isMobile, isTablet, closeLeftSidebar]);
+
   return (
     <div className="channel-group">
       <div className="channel-group-name small-caps flex flex-row justify-between">
         <div
           className={
-            'truncate flex items-center gap-2 ' + (isSpaceOwner ? 'hover:text-main cursor-pointer' : '')
+            'truncate flex items-center gap-2 ' +
+            ((isSpaceOwner && !isTouch) ? 'hover:text-main cursor-pointer' : '') +
+            (isTouch ? ' cursor-pointer' : '') +
+            (groupLongPressHandlers.className ? ` ${groupLongPressHandlers.className}` : '')
           }
-          onClick={() => {
-            if (isSpaceOwner) {
+          style={groupLongPressHandlers.style}
+          onClick={(e) => {
+            if (!isTouch && isSpaceOwner) {
               props.onEditGroup(props.group.groupName);
             }
           }}
+          {...(isTouch ? groupLongPressHandlers : {})}
         >
           {props.group.icon && (
             <Icon
@@ -91,74 +136,21 @@ const ChannelGroup: React.FunctionComponent<{
         )}
       </div>
       {sortedChannels.map((channel) => (
-        <Link
+        <ChannelItem
           key={channel.channelId}
-          to={`/spaces/${spaceId}/${channel.channelId}`}
-        >
-          <div className="channel-group-channel">
-            <div
-              className={
-                'channel-group-channel-name flex items-start justify-between' +
-                (channel.channelId === channelId ? '-focused' : '') +
-                (channel.unreads && channel.unreads > 0
-                  ? ' !font-bold !opacity-100'
-                  : '')
-              }
-            >
-              <div className="flex-1 min-w-0 flex items-center gap-2">
-                {/* Icon stack with base icon + optional pin overlay */}
-                <div className="channel-icon-container">
-                  <Icon
-                    key={`channel-${channel.channelId}`}
-                    name={(channel.icon as any) || "hashtag"}
-                    size="xs"
-                    style={{
-                      color: getIconColorHex(channel.iconColor as IconColor)
-                    }}
-                    title={`${channel.channelName}`}
-                  />
-                  {channel.isPinned && isSpaceOwner && (
-                    <div className="channel-pin-overlay">
-                      <Icon
-                        name="thumbtack"
-                        className="pin-icon text-strong"
-                        title="Pinned channel"
-                      />
-                    </div>
-                  )}
-                </div>
-                <span title={channel.isPinned ? 'Pinned channel' : undefined}>
-                  {channel.channelName}
-                </span>
-                {!!channel.mentionCount ? (
-                  <span
-                    className={
-                      'channel-group-channel-name-mentions-' + channel.mentions
-                    }
-                  >
-                    {channel.mentionCount}
-                  </span>
-                ) : (
-                  <></>
-                )}
-              </div>
-              {isSpaceOwner && (
-                <div
-                  onClick={() => {
-                    openChannelEditor(
-                      spaceId!,
-                      props.group.groupName,
-                      channel.channelId
-                    );
-                  }}
-                  className={'channel-configure flex-shrink-0 ml-2'}
-                >
-                  <Icon name="cog" size="xs" />
-                </div>
-              )}
-            </div>
-          </div>
-        </Link>
+          channel={channel}
+          spaceId={spaceId!}
+          currentChannelId={channelId!}
+          isSpaceOwner={isSpaceOwner}
+          isTouch={isTouch}
+          isMobile={isMobile}
+          isTablet={isTablet}
+          groupName={props.group.groupName}
+          onChannelClick={handleChannelClick}
+          onChannelNavigate={handleChannelNavigate}
+          closeLeftSidebar={closeLeftSidebar}
+          openChannelEditor={openChannelEditor}
+        />
       ))}
     </div>
   );

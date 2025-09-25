@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
+import { isTouchDevice } from '../utils/platform';
 
 export interface LongPressOptions {
   delay?: number;
@@ -6,6 +7,8 @@ export interface LongPressOptions {
   onTap?: () => void;
   shouldPreventDefault?: boolean;
   threshold?: number;
+  /** Automatically prevent browser default context menu and text selection on touch devices */
+  preventTouchDefaults?: boolean;
 }
 
 export interface LongPressHandlers {
@@ -15,6 +18,18 @@ export interface LongPressHandlers {
   onMouseDown: (e: React.MouseEvent) => void;
   onMouseUp: (e: React.MouseEvent) => void;
   onMouseLeave: (e: React.MouseEvent) => void;
+  /** Prevent context menu on touch devices - use this on your element */
+  onContextMenu?: (e: React.MouseEvent) => void;
+}
+
+/**
+ * Enhanced interface that includes styles and className for touch behavior prevention
+ */
+export interface LongPressHandlersWithStyles extends LongPressHandlers {
+  /** CSS styles to prevent text selection and touch callouts */
+  style?: React.CSSProperties;
+  /** CSS classes for touch behavior prevention */
+  className?: string;
 }
 
 /**
@@ -32,7 +47,10 @@ export const useLongPress = (
     onTap,
     shouldPreventDefault = true,
     threshold = 10,
+    preventTouchDefaults = true,
   } = options;
+
+  const isTouch = isTouchDevice();
 
   const [longPressTriggered, setLongPressTriggered] = useState(false);
   const timeout = useRef<NodeJS.Timeout>(undefined);
@@ -95,6 +113,15 @@ export const useLongPress = (
     [threshold]
   );
 
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      if (isTouch && preventTouchDefaults && onLongPress) {
+        e.preventDefault();
+      }
+    },
+    [isTouch, preventTouchDefaults, onLongPress]
+  );
+
   return {
     onTouchStart: (e: React.TouchEvent) => start(e),
     onTouchEnd: (e: React.TouchEvent) => clear(e),
@@ -102,5 +129,39 @@ export const useLongPress = (
     onMouseDown: (e: React.MouseEvent) => start(e),
     onMouseUp: (e: React.MouseEvent) => clear(e),
     onMouseLeave: (e: React.MouseEvent) => clear(e, false),
+    onContextMenu: handleContextMenu,
+  };
+};
+
+/**
+ * Enhanced version of useLongPress that automatically provides styles and classes
+ * for preventing browser default touch behaviors (context menu, text selection, etc.)
+ *
+ * Use this for elements where you want long press functionality with automatic
+ * touch behavior prevention.
+ */
+export const useLongPressWithDefaults = (
+  options: LongPressOptions = {}
+): LongPressHandlersWithStyles => {
+  const handlers = useLongPress(options);
+  const isTouch = isTouchDevice();
+  const { preventTouchDefaults = true, onLongPress } = options;
+
+  const touchPreventionStyles: React.CSSProperties | undefined =
+    isTouch && preventTouchDefaults && onLongPress ? {
+      WebkitUserSelect: 'none',
+      WebkitTouchCallout: 'none',
+      WebkitTapHighlightColor: 'transparent',
+      userSelect: 'none',
+      touchAction: 'manipulation',
+    } : undefined;
+
+  const touchPreventionClasses =
+    isTouch && preventTouchDefaults && onLongPress ? 'select-none' : undefined;
+
+  return {
+    ...handlers,
+    style: touchPreventionStyles,
+    className: touchPreventionClasses,
   };
 };

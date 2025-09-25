@@ -843,18 +843,54 @@
     "ChannelGroup.tsx": {
       "name": "ChannelGroup",
       "path": "src/components/space/ChannelGroup.tsx",
-      "description": "Channel group container with channels list and admin controls",
+      "description": "Channel group container with touch interactions, long press handlers, and permission-aware editor access",
       "category": "platform_specific",
       "used": "yes",
-      "primitives": "todo",
+      "primitives": "partial",
       "logic_extraction": "done",
-      "hooks": [],
+      "hooks": [
+        "useLongPressWithDefaults",
+        "useResponsiveLayoutContext",
+        "useNavigate",
+        "useCallback"
+      ],
       "native": "todo",
-      "notes": "MOVED TO PLATFORM_SPECIFIC: Uses ChannelGroup.scss, FontAwesome icons, raw Link elements. Different navigation patterns for web/native. Easier to build native version.",
-      "updated": "2025-09-17",
-      "dependencies": [],
+      "notes": "MAJOR REFACTOR COMPLETED: Enhanced with touch interaction system using useLongPressWithDefaults hook. Implements permission-aware long press handlers (space owners only) with haptic feedback. Auto-closes sidebar on mobile/tablet channel selection. Code duplication eliminated by extracting ChannelItem component. Uses TOUCH_INTERACTION_TYPES constants for consistent timing. Security fix: prevents non-space owners from accessing editors via touch. Still uses ChannelGroup.scss so remains platform_specific.",
+      "updated": "2025-01-25",
+      "dependencies": [
+        "ChannelItem",
+        "Icon",
+        "TOUCH_INTERACTION_TYPES",
+        "haptic",
+        "useLongPressWithDefaults"
+      ],
       "dependency_level": 0,
-      "complexity_category": "basic"
+      "complexity_category": "medium"
+    },
+    "ChannelItem.tsx": {
+      "name": "ChannelItem",
+      "path": "src/components/space/ChannelItem.tsx",
+      "description": "Reusable channel item component with touch interactions, long press handlers, and cross-platform navigation support",
+      "category": "platform_specific",
+      "used": "yes",
+      "primitives": "partial",
+      "logic_extraction": "done",
+      "hooks": [
+        "useLongPressWithDefaults"
+      ],
+      "native": "todo",
+      "notes": "NEWLY CREATED: Extracted from ChannelGroup to eliminate code duplication. Handles both touch and non-touch interactions with conditional rendering (div for touch, Link for desktop). Implements permission-aware long press to open channel editor (space owners only). Uses TOUCH_INTERACTION_TYPES constants and haptic feedback. Auto-closes sidebar on mobile/tablet navigation. Contains ChannelContent sub-component for shared JSX. Uses Icon primitive but retains CSS class dependencies, so remains platform_specific.",
+      "updated": "2025-01-25",
+      "dependencies": [
+        "Icon",
+        "Link",
+        "TOUCH_INTERACTION_TYPES",
+        "haptic",
+        "useLongPressWithDefaults",
+        "IconPicker/types"
+      ],
+      "dependency_level": 0,
+      "complexity_category": "medium"
     },
     "ChannelList.tsx": {
       "name": "ChannelList",
@@ -1836,23 +1872,23 @@
     }
   },
   "stats": {
-    "total": 84,
+    "total": 85,
     "primitives_done": 41,
-    "logic_extraction_done": 67,
+    "logic_extraction_done": 68,
     "native_ready": 5,
     "native_done": 15,
     "by_category": {
-      "platform_specific": 65,
+      "platform_specific": 66,
       "shared": 19
     },
     "by_usage": {
-      "yes": 79,
+      "yes": 80,
       "no": 3,
       "unknown": 1,
       "suspended": 1
     },
-    "analysis_notes": "MODAL ARCHITECTURE REFACTORING COMPLETE: SpaceSettingsModal and UserSettingsModal have been refactored into modular architectures with 12 new subcomponents (7 for SpaceSettingsModal, 5 for UserSettingsModal). Main modal containers handle state management while subcomponents are stateless presentation components. This improves maintainability and follows clean architecture patterns. All subcomponents marked as platform_specific with primitives and logic extraction still to do.",
-    "last_updated": "2025-09-24"
+    "analysis_notes": "TOUCH INTERACTION SYSTEM COMPLETED: ChannelGroup.tsx enhanced with touch interactions and ChannelItem.tsx extracted to eliminate code duplication. Both components now support permission-aware long press handlers with haptic feedback. Touch system includes centralized constants, automatic browser default prevention, and responsive sidebar management. Security improvements prevent non-space owners from accessing editors via touch interactions.",
+    "last_updated": "2025-01-25"
   },
   "metadata": {
     "audit_version": "1.0",
@@ -1867,7 +1903,7 @@
   },
   "dependency_hierarchy": {
     "basic": {
-      "count": 19,
+      "count": 18,
       "components": [
         "SidebarProvider.tsx",
         "Elements.tsx",
@@ -1880,7 +1916,6 @@
         "UnknownAvatar.tsx",
         "ActionMenuItem.tsx",
         "UserOnlineStateIndicator.tsx",
-        "ChannelGroup.tsx",
         "MobileDrawer.tsx",
         "ThemeProvider.tsx",
         "ResponsiveLayoutProvider.tsx",
@@ -1919,7 +1954,7 @@
       ]
     },
     "medium": {
-      "count": 22,
+      "count": 24,
       "components": [
         "EmptyDirectMessage.tsx",
         "Layout.tsx",
@@ -1929,6 +1964,8 @@
         "UserSettingsModal.tsx",
         "ClickToCopyContent.tsx",
         "DirectMessages.tsx",
+        "ChannelGroup.tsx",
+        "ChannelItem.tsx",
         "ChannelList.tsx",
         "InviteLink.tsx",
         "NewDirectMessageModal.tsx",
