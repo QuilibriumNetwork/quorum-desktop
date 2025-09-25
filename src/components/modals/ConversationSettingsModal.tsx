@@ -181,7 +181,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
               </Text>
               <Tooltip
                 id="conv-repudiability-tooltip"
-                content={t`Always sign messages sent in this conversation. Technically speaking, this makes your messages in non-repudiable. The default for all conversations can be changed in User Settings.`}
+                content={t`When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings.`}
                 maxWidth={260}
                 className="!text-left !max-w-[260px]"
                 place="top"

@@ -72,7 +72,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               </div>
               <Tooltip
                 id="settings-non-repudiable-tooltip"
-                content={t`Always sign Direct Messages in conversations. This can be overridden for finer-grain control by clicking the lock icon found in each conversation view.`}
+                content={t`When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually.`}
                 place="bottom"
               >
                 <Icon

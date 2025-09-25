@@ -205,7 +205,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
               </div>
               <Tooltip
                 id="repudiability-tooltip"
-                content={t`Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable.`}
+                content={t`When messages are signed, senders confirm they come from their key. When messages aren't signed, senders have plausible deniability. This setting applies to all messages in this Space.`}
                 place="bottom"
                 className="!w-[400px]"
                 maxWidth={400}
