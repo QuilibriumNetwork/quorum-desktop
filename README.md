@@ -46,7 +46,7 @@ After running `yarn dev`, you can access the development tools at: `http://local
 
 #### Testing with Mock Users
 
-To test channel performance with large user lists (useful for testing virtualization):
+To test a Space performance with large user lists (useful for testing virtualization):
 
 **URL Parameter (temporary):**
 ```
@@ -102,8 +102,6 @@ To build for production and preview:
 ```bash
 yarn build:preview
 ```
-
-_If you are on Windows, we suggest testing on WSL for better performance_.
 
 ### Mobile Development
 
