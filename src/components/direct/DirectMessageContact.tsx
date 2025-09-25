@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import './DirectMessageContact.scss';
-import { DefaultImages } from '../../utils';
+import { DefaultImages, truncateAddress } from '../../utils';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 const DirectMessageContact: React.FunctionComponent<{
@@ -49,11 +49,11 @@ const DirectMessageContact: React.FunctionComponent<{
                 : ' ')
             }
           >
-            {props.displayName ?? props.address}
+            {props.displayName ?? truncateAddress(props.address)}
           </div>
           {props.displayName && (
             <div className="text-muted pl-2 text-xs w-[180px] truncate">
-              {props.address}
+              {truncateAddress(props.address)}
             </div>
           )}
         </div>
