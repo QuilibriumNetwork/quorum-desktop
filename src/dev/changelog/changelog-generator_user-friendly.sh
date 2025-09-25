@@ -57,7 +57,8 @@ Please analyze these commits and create a user-friendly changelog with these req
 
 # Updates for Quorum Development
 
-This list is for the web app, these changes are not yet live but we'll have a staging site soon so you can help testing them.
+This list is for the web app, these changes are not yet live but you can test them on https://test.quorummessenger.com/
+For Test Space access see: https://t.me/c/1967251104/146703/187208
 
 📌 [Category Name]
    - [User-friendly feature description]
