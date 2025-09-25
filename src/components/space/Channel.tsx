@@ -754,7 +754,7 @@ const Channel: React.FC<ChannelProps> = ({
       )}
 
       {/* User Profile Modal - desktop only (≥1024px) */}
-      {userProfileModal.isOpen && userProfileModal.selectedUser && userProfileModal.modalPosition && window.innerWidth >= 1024 && (
+      {userProfileModal.isOpen && userProfileModal.selectedUser && userProfileModal.modalPosition && isDesktop && (
         <>
           {/* Background click area - excludes sidebar to allow user switching */}
           <div
