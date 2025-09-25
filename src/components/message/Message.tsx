@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as moment from 'moment-timezone';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -45,6 +45,8 @@ import { useMessageHighlight } from '../../hooks/business/messages/useMessageHig
 import MessageActions from './MessageActions';
 import { MessageMarkdownRenderer } from './MessageMarkdownRenderer';
 import { getImageConfig } from '../../utils/imageProcessing/config';
+import { isTouchDevice } from '../../utils/platform';
+import { hapticLight } from '../../utils/haptic';
 
 // Utility function for robust GIF detection
 const createGifDetector = (url: string, isLargeGif?: boolean) => {
@@ -162,19 +164,7 @@ export const Message = React.memo(({
       // This ensures mobile/touch users always get confirmation modals
       openMobileActionsDrawer({
         ...config,
-        onReply: messageActions.handleReply,
-        onCopyLink: messageActions.handleCopyLink,
-        onDelete: messageActions.canUserDelete
-          ? () => messageActions.handleDelete({ shiftKey: false } as React.MouseEvent)
-          : undefined,
-        onPin: pinnedMessages.canPinMessages
-          ? () => pinnedMessages.togglePin({ shiftKey: false } as React.MouseEvent, message)
-          : undefined,
-        onReaction: messageActions.handleReaction,
-        onMoreReactions: handleMoreReactions,
-        canDelete: messageActions.canUserDelete,
-        canPinMessages: pinnedMessages.canPinMessages,
-        userAddress: user.currentPasskeyInfo!.address,
+        ...buildDrawerConfig(),
       });
     },
     onEmojiPickerUserProfileClick: emojiPicker.handleUserProfileClick,
@@ -263,11 +253,43 @@ export const Message = React.memo(({
     }
   };
 
+  // Handle 3-dots menu click for touch devices
+  const handle3DotsMenuClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+
+    // Add haptic feedback for touch interaction
+    hapticLight();
+
+    // All touch devices: Open bottom drawer with message actions
+    openMobileActionsDrawer(buildDrawerConfig());
+  };
+
+  // Shared drawer configuration builder to avoid duplication
+  const buildDrawerConfig = useCallback(() => ({
+    message,
+    onReply: messageActions.handleReply,
+    onCopyLink: messageActions.handleCopyLink,
+    onDelete: messageActions.canUserDelete
+      ? () => messageActions.handleDelete({ shiftKey: false } as React.MouseEvent)
+      : undefined,
+    onPin: pinnedMessages.canPinMessages
+      ? () => pinnedMessages.togglePin({ shiftKey: false } as React.MouseEvent, message)
+      : undefined,
+    onReaction: messageActions.handleReaction,
+    onMoreReactions: handleMoreReactions,
+    canDelete: messageActions.canUserDelete,
+    canPinMessages: pinnedMessages.canPinMessages,
+    userAddress: user.currentPasskeyInfo!.address,
+  }), [message, messageActions, pinnedMessages, user, handleMoreReactions]);
+
   return (
     <FlexColumn
       id={`msg-${message.messageId}`}
       className={
-        'text-base relative hover:bg-chat-hover ' +
+        'text-base relative ' +
+        (isTouchDevice()
+          ? 'border-t border-t-surface-0 ' // Add top border for touch devices
+          : 'hover:bg-chat-hover ') + // Only add hover effect on non-touch devices
         (formatting.isMentioned(user.currentPasskeyInfo!.address)
           ? ' message-mentions-you'
           : '') +
@@ -277,9 +299,22 @@ export const Message = React.memo(({
       onMouseOver={interactions.handleMouseOver}
       onMouseOut={interactions.handleMouseOut}
       onClick={interactions.handleMessageClick}
-      // Mobile and tablet touch interaction
-      {...interactions.touchHandlers}
     >
+      {/* 3-Dots Menu Button for Touch Devices - Top Right Corner */}
+      {isTouchDevice() && (
+        <Container
+          onClick={handle3DotsMenuClick}
+          className="absolute top-2 right-2 p-2 cursor-pointer rounded z-10"
+          style={{ minWidth: '32px', minHeight: '32px' }}
+        >
+          <Icon
+            name="dots-vertical"
+            size="sm"
+            className="text-subtle hover:text-main transition-colors"
+          />
+        </Container>
+      )}
+
       {(() => {
         if (message.content.type == 'post') {
           let replyIndex = !message.content.repliesToMessageId
@@ -380,7 +415,7 @@ export const Message = React.memo(({
             </FlexRow>
           )}
           <Container
-            onClick={(event) => {
+            onClick={isTouchDevice() ? interactions.handleUserProfileClick : (event: React.MouseEvent) => {
               event.stopPropagation();
               if (onUserClick) {
                 onUserClick(
@@ -506,6 +541,7 @@ export const Message = React.memo(({
               )}
             </Text>
             <Text className="message-timestamp">{displayedTimestmap}</Text>
+
             {(() => {
               const contentData = formatting.getContentData();
               if (!contentData) return null;
@@ -618,7 +654,7 @@ export const Message = React.memo(({
                       />
                     )}
                     {contentData.content.imageUrl && (() => {
-                      const isGif = createGifDetector(contentData.content.imageUrl, contentData.content.isLargeGif);
+                      const isGif = createGifDetector(contentData.content.imageUrl, (contentData.content as any).isLargeGif);
 
                       // Get the max display width from configuration
                       const config = getImageConfig('messageAttachment');
@@ -630,21 +666,18 @@ export const Message = React.memo(({
                       return (
                         <div className="relative inline-block">
                           <img
-                            src={contentData.content.thumbnailUrl || contentData.content.imageUrl}
+                            src={(contentData.content as any).thumbnailUrl || contentData.content.imageUrl}
                             className={`message-image rounded-lg transition-opacity duration-200 ${
                               isGif
-                                ? (contentData.content.isLargeGif && contentData.content.thumbnailUrl && !isShowingAnimation
+                                ? ((contentData.content as any).isLargeGif && (contentData.content as any).thumbnailUrl && !isShowingAnimation
                                     ? 'cursor-pointer' // Pointer cursor for GIF static thumbnails
                                     : 'cursor-auto') // No pointer cursor for animating GIFs
                                 : 'cursor-pointer hover:opacity-80' // Clickable for non-GIFs
                             }`}
-                            style={{
-                              maxWidth: isGif ? `${gifMaxWidth}px` : undefined // Constrain GIFs using config value
-                            }}
                             onClick={(e) => {
                               if (isGif) {
                                 // For GIFs: animate in-place, don't open modal
-                                if (contentData.content.isLargeGif && contentData.content.thumbnailUrl) {
+                                if ((contentData.content as any).isLargeGif && (contentData.content as any).thumbnailUrl) {
                                   // Switch from thumbnail to full GIF animation with error handling
                                   const img = e.target as HTMLImageElement;
                                   if (img.src.includes('thumbnail') || img.src !== contentData.content.imageUrl) {
@@ -669,12 +702,12 @@ export const Message = React.memo(({
                                 formatting.handleImageClick(
                                   e,
                                   contentData.content.imageUrl!,
-                                  !!contentData.content.thumbnailUrl
+                                  !!(contentData.content as any).thumbnailUrl
                                 );
                               }
                             }}
                           />
-                          {contentData.content.isLargeGif && contentData.content.thumbnailUrl && !isShowingAnimation && (
+                          {(contentData.content as any).isLargeGif && (contentData.content as any).thumbnailUrl && !isShowingAnimation && (
                             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                               <div className="bg-black/50 rounded-full p-2">
                                 <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -701,9 +734,6 @@ export const Message = React.memo(({
                   <img
                     src={contentData.sticker?.imgUrl}
                     className="message-sticker rounded-lg"
-                    style={{
-                      maxWidth: isStickerGif ? `${stickerGifMaxWidth}px` : undefined // Use config value
-                    }}
                   />
                 );
               }

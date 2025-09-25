@@ -1,8 +1,9 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { Message as MessageType } from '../../../api/quorumApi';
 import { useResponsiveLayout } from '../../useResponsiveLayout';
 import { useLongPress } from '../../useLongPress';
 import { isTouchDevice as detectTouchDevice } from '../../../utils/platform';
+import { hapticMedium } from '../../../utils/haptic';
 
 interface UseMessageInteractionsOptions {
   message: MessageType;
@@ -31,9 +32,17 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
   // Responsive layout and device detection
   const { isMobile } = useResponsiveLayout();
   const isTouchDevice = detectTouchDevice();
-  const useMobileDrawer = isMobile;
-  const useDesktopTap = !isMobile && isTouchDevice;
-  const useDesktopHover = !isMobile && !isTouchDevice;
+
+  // Simplified device interaction modes
+  const deviceInteractionMode = useMemo(() => {
+    if (isMobile) return 'mobile-drawer';
+    if (isTouchDevice) return 'desktop-touch';
+    return 'desktop-hover';
+  }, [isMobile, isTouchDevice]);
+
+  const useMobileDrawer = deviceInteractionMode === 'mobile-drawer';
+  const useDesktopTap = deviceInteractionMode === 'desktop-touch';
+  const useDesktopHover = deviceInteractionMode === 'desktop-hover';
 
   // State for desktop tap interaction
   const [actionsVisibleOnTap, setActionsVisibleOnTap] = useState(false);
@@ -72,13 +81,7 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
         onMobileActionsDrawer({
           message,
         });
-        if ('vibrate' in navigator) {
-          try {
-            navigator.vibrate(50);
-          } catch (e) {
-            // Silently ignore vibration blocked by browser
-          }
-        }
+        hapticMedium();
       } else if (useDesktopTap) {
         // Tablet: Show inline actions and hide others
         setHoverTarget(message.messageId);
@@ -157,9 +160,7 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
     (hoverTarget === message.messageId && useDesktopHover) ||
     (hoverTarget === message.messageId && actionsVisibleOnTap && useDesktopTap);
 
-  // Get touch handlers for mobile/tablet
-  const touchHandlers =
-    useMobileDrawer || useDesktopTap ? longPressHandlers : {};
+
 
   return {
     // State
@@ -178,6 +179,5 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
     handleMessageClick,
     handleUserProfileClick,
     handleUserProfileBackgroundClick,
-    touchHandlers,
   };
 }

@@ -8,6 +8,12 @@ import React, {
 import MessageActionsDrawer from '../message/MessageActionsDrawer';
 import EmojiPickerDrawer from '../message/EmojiPickerDrawer';
 
+// Mobile drawer configuration constants
+const MOBILE_DRAWER_CONFIG = {
+  MAX_WIDTH: '480px',
+  ANIMATION_DURATION: 300,
+} as const;
+
 // Mobile state interface
 interface MobileState {
   messageActionsDrawer: {
@@ -132,7 +138,7 @@ export const MobileProvider: React.FC<MobileProviderProps> = ({ children }) => {
     setTimeout(() => {
       dispatch({ type: 'CLOSE_MESSAGE_ACTIONS' });
       dispatch({ type: 'SET_MESSAGE_ACTIONS_CLOSING', isClosing: false });
-    }, 300);
+    }, MOBILE_DRAWER_CONFIG.ANIMATION_DURATION);
   };
 
   const handleCloseEmojiPicker = () => {
@@ -140,7 +146,7 @@ export const MobileProvider: React.FC<MobileProviderProps> = ({ children }) => {
     setTimeout(() => {
       dispatch({ type: 'CLOSE_EMOJI_PICKER' });
       dispatch({ type: 'SET_EMOJI_PICKER_CLOSING', isClosing: false });
-    }, 300);
+    }, MOBILE_DRAWER_CONFIG.ANIMATION_DURATION);
   };
 
   const contextValue: MobileContextType = {
@@ -157,8 +163,9 @@ export const MobileProvider: React.FC<MobileProviderProps> = ({ children }) => {
     <MobileContext.Provider value={contextValue}>
       {/* Render mobile drawers with z-[9999] for proper stacking */}
       {state.messageActionsDrawer.isOpen && state.messageActionsDrawer.data && (
-        <div className="fixed inset-0 z-[9999] flex items-end bg-overlay backdrop-blur">
-          <MessageActionsDrawer
+        <div className="fixed inset-0 z-[9999] flex items-end justify-center bg-overlay backdrop-blur">
+          <div className="w-full" style={{ maxWidth: MOBILE_DRAWER_CONFIG.MAX_WIDTH }}>
+            <MessageActionsDrawer
             isOpen={!state.messageActionsDrawer.isClosing}
             message={state.messageActionsDrawer.data.message}
             onClose={handleCloseMessageActions}
@@ -174,6 +181,7 @@ export const MobileProvider: React.FC<MobileProviderProps> = ({ children }) => {
             onDeleteWithConfirmation={state.messageActionsDrawer.data.onDeleteWithConfirmation}
             onPinWithConfirmation={state.messageActionsDrawer.data.onPinWithConfirmation}
           />
+          </div>
           <div
             className="fixed inset-0 -z-10"
             onClick={handleCloseMessageActions}

@@ -95,6 +95,11 @@
   width: auto;
   height: auto;
   /* No max-height constraint - allow natural height based on aspect ratio */
+
+  /* Add top margin below 640px to avoid 3-dots overlap */
+  @media (max-width: 640px) {
+    margin-top: 0.75rem; /* 12px top margin for spacing */
+  }
 }
 
 .message-sticker {
@@ -103,5 +108,10 @@
   width: auto;
   height: auto;
   object-fit: contain; /* Ensure image fits within bounds while maintaining aspect ratio */
+
+  /* Add top margin below 640px to avoid 3-dots overlap */
+  @media (max-width: 640px) {
+    margin-top: 0.75rem; /* 12px top margin for spacing */
+  }
 }
 
