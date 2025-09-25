@@ -178,6 +178,10 @@ type MessageDBContextValue = {
       completedOnboarding: boolean;
     }
   ) => Promise<{ spaceId: string; channelId: string } | undefined>;
+  getSpaceMember: (
+    spaceId: string,
+    userAddress: string
+  ) => Promise<any>;
   deleteSpace: (spaceId: string) => Promise<void>;
   kickUser: (
     spaceId: string,
@@ -4834,6 +4838,14 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             ).toString('hex'),
           });
           await messageDB.saveSpace(space);
+
+          // Check if user is already a member to prevent duplicate joins
+          const existingMember = await messageDB.getSpaceMember(space.spaceId, currentPasskeyInfo.address);
+          if (existingMember) {
+            // User is already a member, just return space info without rejoining
+            return { spaceId: space.spaceId, channelId: space.defaultChannelId };
+          }
+
           await messageDB.saveSpaceMember(space.spaceId, {
             user_address: currentPasskeyInfo.address,
             user_icon: currentPasskeyInfo.pfpUrl,
@@ -5595,6 +5607,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         generateNewInviteLink,
         processInviteLink,
         joinInviteLink,
+        getSpaceMember: (spaceId: string, userAddress: string) =>
+          messageDB.getSpaceMember(spaceId, userAddress),
         deleteSpace,
         kickUser,
         updateUserProfile,
@@ -5625,6 +5639,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   generateNewInviteLink: () => undefined as never,
   processInviteLink: () => undefined as never,
   joinInviteLink: () => undefined as never,
+  getSpaceMember: () => undefined as never,
   deleteSpace: () => undefined as never,
   kickUser: () => undefined as never,
   updateUserProfile: () => undefined as never,

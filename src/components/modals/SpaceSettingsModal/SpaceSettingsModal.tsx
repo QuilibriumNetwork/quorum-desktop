@@ -125,6 +125,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
     getUserOptions,
     sendingInvite,
     success,
+    membershipWarning,
     invite,
     publicInvite,
     setPublicInvite,
@@ -342,6 +343,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           sendingInvite={sendingInvite}
                           invite={invite}
                           success={success}
+                          membershipWarning={membershipWarning}
                           generating={generating}
                           generationSuccess={generationSuccess}
                           deleting={deleting}

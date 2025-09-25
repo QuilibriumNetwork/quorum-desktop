@@ -320,8 +320,20 @@ The invite system now dynamically detects the environment and uses appropriate d
 - `src/components/modals/JoinSpaceModal.tsx` - Uses dynamic domain for display
 - `src/hooks/business/spaces/useInviteValidation.ts` - Dynamic validation prefixes
 
+## Duplicate Prevention (Fixed)
+
+**Issues Fixed**: Multiple join messages, redundant invites to existing members
+
+**Changes**:
+- `joinInviteLink()` - Added membership check before saving member/sending join message
+- `useInviteManagement.invite()` - Added membership validation with warning display
+- `MessageDB` context - Exposed `getSpaceMember()` for membership checks
+
+**Result**: Clean invite flow with no duplicate joins or redundant invite sending.
+
 ---
 
 _Document created: July 30, 2025_
 _Updated: September 22, 2025 - Corrected reversibility of public invite links_
+_Updated: September 25, 2025 - Added duplicate prevention fixes_
 _Covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, MessageDB.tsx, InviteLink.tsx, inviteDomain.ts_

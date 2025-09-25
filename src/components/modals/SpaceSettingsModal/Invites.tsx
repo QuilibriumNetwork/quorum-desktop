@@ -15,6 +15,7 @@ interface InvitesProps {
   sendingInvite: boolean;
   invite: (address: string) => void;
   success: boolean;
+  membershipWarning: string | undefined;
   generating: boolean;
   generationSuccess: boolean;
   deleting: boolean;
@@ -35,6 +36,7 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
   sendingInvite,
   invite,
   success,
+  membershipWarning,
   generating,
   generationSuccess,
   deleting,
@@ -104,6 +106,14 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
                   Successfully sent invite to{' '}
                   {selectedUser?.displayName}
                 </Trans>
+              </Callout>
+            </>
+          )}
+          {membershipWarning && (
+            <>
+              <Spacer size="sm"/>
+              <Callout variant="warning" layout="minimal" size="sm" autoClose={5}>
+                {membershipWarning}
               </Callout>
             </>
           )}

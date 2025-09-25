@@ -10,6 +10,7 @@ import { useQuorumApiClient } from '../../../components/context/QuorumApiContext
 import { useConversations, useRegistration } from '../../queries';
 import { Conversation, Channel } from '../../../api/quorumApi';
 import { truncateAddress } from '../../../utils';
+import { t } from '@lingui/core/macro';
 
 export interface UseInviteManagementOptions {
   spaceId: string;
@@ -29,6 +30,7 @@ export interface UseInviteManagementReturn {
   // Invite management
   sendingInvite: boolean;
   success: boolean;
+  membershipWarning: string | undefined;
   invite: (address: string) => Promise<void>;
 
   // Public invite link
@@ -51,6 +53,7 @@ export const useInviteManagement = (
   >();
   const [sendingInvite, setSendingInvite] = useState<boolean>(false);
   const [success, setSuccess] = useState<boolean>(false);
+  const [membershipWarning, setMembershipWarning] = useState<string | undefined>();
   const [generating, setGenerating] = useState<boolean>(false);
   const [publicInvite, setPublicInvite] = useState<boolean>(
     space?.isPublic || false
@@ -62,6 +65,7 @@ export const useInviteManagement = (
     ensureKeyForSpace,
     sendInviteToUser,
     generateNewInviteLink: generateInviteLink,
+    getSpaceMember,
   } = useMessageDB();
   const { keyset } = useRegistrationContext();
   const { data: registration } = useRegistration({
@@ -107,7 +111,17 @@ export const useInviteManagement = (
   const invite = useCallback(
     async (address: string) => {
       setSendingInvite(true);
+      setSuccess(false);
+      setMembershipWarning(undefined);
+
       try {
+        // Check if user is already a member of this space
+        const existingMember = await getSpaceMember(spaceId, address);
+        if (existingMember) {
+          setMembershipWarning(t`This user is already a member of this space.`);
+          return;
+        }
+
         const spaceAddress = await ensureKeyForSpace(
           currentPasskeyInfo!.address,
           space!
@@ -118,15 +132,19 @@ export const useInviteManagement = (
 
         await sendInviteToUser(address, spaceAddress, currentPasskeyInfo!);
         setSuccess(true);
+      } catch (error) {
+        console.error('Invite error:', error);
+        setMembershipWarning(t`Failed to send invite. Please try again.`);
       } finally {
         setSendingInvite(false);
       }
     },
     [
+      getSpaceMember,
+      spaceId,
       ensureKeyForSpace,
       currentPasskeyInfo,
       space,
-      spaceId,
       defaultChannel,
       navigate,
       sendInviteToUser,
@@ -161,6 +179,7 @@ export const useInviteManagement = (
 
     sendingInvite,
     success,
+    membershipWarning,
     invite,
 
     publicInvite,
