@@ -51,6 +51,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
     isRepudiable,
     setIsRepudiable,
     handleDeleteSpace,
+    deleteError,
+    clearDeleteError,
   } = useSpaceManagement({
     spaceId,
     onClose: dismiss,
@@ -360,6 +362,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           handleDeleteSpace={handleDeleteSpace}
                           deleteConfirmationStep={deleteConfirmationStep}
                           setDeleteConfirmationStep={setDeleteConfirmationStep}
+                          deleteError={deleteError}
+                          clearDeleteError={clearDeleteError}
                         />
                       );
                     default:

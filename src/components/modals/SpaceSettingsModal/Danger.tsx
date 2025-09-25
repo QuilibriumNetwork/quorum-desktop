@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { Button } from '../../primitives';
-import { Trans } from '@lingui/react/macro';
+import { Button, Callout } from '../../primitives';
+import { Trans, t } from '@lingui/react/macro';
 
 interface DangerProps {
   space: any;
   handleDeleteSpace: () => void;
   deleteConfirmationStep: number;
   setDeleteConfirmationStep: (step: number) => void;
+  deleteError: string | null;
+  clearDeleteError: () => void;
 }
 
 const Danger: React.FunctionComponent<DangerProps> = ({
@@ -14,6 +16,8 @@ const Danger: React.FunctionComponent<DangerProps> = ({
   handleDeleteSpace,
   deleteConfirmationStep,
   setDeleteConfirmationStep,
+  deleteError,
+  clearDeleteError,
 }) => {
   return (
     <>
@@ -23,11 +27,24 @@ const Danger: React.FunctionComponent<DangerProps> = ({
             <Trans>Delete this space</Trans>
           </div>
           <div className="pt-2 text-sm text-main">
-            Are you sure you want to delete your '
-            {space?.spaceName}' space? This action cannot be
-            undone and will permanently remove all messages,
-            channels, and settings associated with this space.
+            <Trans>This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels.</Trans>
           </div>
+          {deleteError && (
+            <div className="pt-4">
+              <Callout
+                variant="error"
+                size="sm"
+                dismissible
+                onClose={clearDeleteError}
+              >
+                {deleteError === 'channels-exist' ? (
+                  <Trans>Cannot delete Space with channels. Please delete all channels first.</Trans>
+                ) : (
+                  <Trans>An error occurred while deleting the Space. Please try again.</Trans>
+                )}
+              </Callout>
+            </div>
+          )}
           <div className="pt-6">
             <Button
               type="danger-outline"

@@ -29,6 +29,8 @@ export interface UseSpaceManagementReturn {
   handleDeleteSpace: () => Promise<void>;
   isOwner: boolean;
   currentPasskeyInfo: any;
+  deleteError: string | null;
+  clearDeleteError: () => void;
 }
 
 export const useSpaceManagement = (
@@ -41,6 +43,7 @@ export const useSpaceManagement = (
   const [isRepudiable, setIsRepudiable] = useState(false);
   const [saving, setSaving] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('general');
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const { updateSpace, deleteSpace } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
@@ -102,6 +105,7 @@ export const useSpaceManagement = (
   );
 
   const handleDeleteSpace = useCallback(async () => {
+    setDeleteError(null);
     try {
       console.log(
         'Attempting to delete space with ID:',
@@ -116,14 +120,32 @@ export const useSpaceManagement = (
         );
       }
 
+      // Check if space has channels - prevent deletion if channels exist
+      if (space?.groups) {
+        const totalChannelCount = space.groups.reduce(
+          (total, group) => total + (group.channels?.length || 0),
+          0
+        );
+
+        if (totalChannelCount > 0) {
+          setDeleteError('channels-exist');
+          return;
+        }
+      }
+
       await deleteSpace(spaceId);
       navigate('/');
       onClose?.();
     } catch (error) {
       console.error('Failed to delete space:', error);
       console.error('Space ID was:', spaceId);
+      setDeleteError('unknown');
     }
-  }, [deleteSpace, spaceId, navigate, onClose]);
+  }, [deleteSpace, spaceId, navigate, onClose, space]);
+
+  const clearDeleteError = useCallback(() => {
+    setDeleteError(null);
+  }, []);
 
   // Determine if current user is owner (simplified logic)
   const isOwner = true; // For now, assume user is owner - would need proper implementation
@@ -142,5 +164,7 @@ export const useSpaceManagement = (
     handleDeleteSpace,
     isOwner,
     currentPasskeyInfo,
+    deleteError,
+    clearDeleteError,
   };
 };
