@@ -14,6 +14,7 @@ interface PrivacyProps {
   downloadKey: () => void;
   onSave: () => void;
   isSaving: boolean;
+  removedDevices?: string[];
 }
 
 const Privacy: React.FunctionComponent<PrivacyProps> = ({
@@ -27,6 +28,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   downloadKey,
   onSave,
   isSaving,
+  removedDevices = [],
 }) => {
   return (
     <>
@@ -91,6 +93,14 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
 
         <Spacer size="md" direction="vertical" borderTop={true} />
         <div className="modal-text-label pb-2">Devices</div>
+        {removedDevices.length > 0 && (
+          <div className="bg-warning/10 border border-warning/20 rounded p-2 mb-2 text-sm text-warning">
+            <Icon name="exclamation-triangle" className="mr-1" />
+{removedDevices.length === 1
+              ? t`1 device marked for removal. Click "Save Changes" to confirm.`
+              : t`${removedDevices.length} devices marked for removal. Click "Save Changes" to confirm.`}
+          </div>
+        )}
         <ScrollContainer height="xs">
           {stagedRegistration?.device_registrations
             .sort((a, b) => {
@@ -106,46 +116,55 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
             (
               d: secureChannel.DeviceRegistration,
               index: number
-            ) => (
-              <div
-                key={d.inbox_registration.inbox_address}
-                className={`flex flex-row justify-between items-center py-3 px-3 ${
-                  index > 0
-                    ? 'border-t border-dashed border-surface-7'
-                    : ''
-                }`}
-              >
-                <div className="flex flex-col justify-around font-light break-all flex-1 mr-2 text-sm">
-                  {d.inbox_registration.inbox_address}
+            ) => {
+              const isRemoved = removedDevices.includes(d.identity_public_key);
+              const isThisDevice = keyset.deviceKeyset?.inbox_keyset?.inbox_address === d.inbox_registration.inbox_address;
+
+              return (
+                <div
+                  key={d.inbox_registration.inbox_address}
+                  className={`flex flex-row justify-between items-center py-3 px-3 ${
+                    index > 0
+                      ? 'border-t border-dashed border-surface-7'
+                      : ''
+                  } ${isRemoved ? 'opacity-50' : ''}`}
+                >
+                  <div className="flex flex-col justify-around flex-1 mr-2">
+                    <div className="font-light break-all text-sm">
+                      {d.inbox_registration.inbox_address}
+                    </div>
+                    {isRemoved && (
+                      <div className="text-xs text-danger mt-1">
+                        {t`Pending removal - click Save to confirm`}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-shrink-0">
+                    {!isThisDevice && (
+                      <Button
+                        onClick={() => {
+                          removeDevice(d.identity_public_key);
+                        }}
+                        type="danger-outline"
+                        size="small"
+                        disabled={isRemoved}
+                      >
+                        {isRemoved ? t`Pending` : t`Remove`}
+                      </Button>
+                    )}
+                    {isThisDevice && (
+                      <Button
+                        size="small"
+                        disabled={true}
+                        onClick={() => {}}
+                      >
+                        {t`This device`}
+                      </Button>
+                    )}
+                  </div>
                 </div>
-                <div className="flex-shrink-0">
-                  {keyset.deviceKeyset?.inbox_keyset
-                    ?.inbox_address !==
-                    d.inbox_registration.inbox_address && (
-                    <Button
-                      onClick={() => {
-                        removeDevice(d.identity_public_key);
-                      }}
-                      type="danger-outline"
-                      size="small"
-                    >
-                      {t`Remove`}
-                    </Button>
-                  )}
-                  {keyset.deviceKeyset.inbox_keyset
-                    .inbox_address ===
-                    d.inbox_registration.inbox_address && (
-                    <Button
-                      size="small"
-                      disabled={true}
-                      onClick={() => {}}
-                    >
-                      {t`This device`}
-                    </Button>
-                  )}
-                </div>
-              </div>
-            )
+              );
+            }
           )}
         </ScrollContainer>
 

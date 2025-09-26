@@ -66,6 +66,7 @@ const UserSettingsModal: React.FunctionComponent<{
     removeDevice,
     downloadKey,
     keyset,
+    removedDevices,
   } = useUserSettings();
 
   const {
@@ -132,23 +133,6 @@ const UserSettingsModal: React.FunctionComponent<{
       closeOnEscape={!isSaving}
     >
       <div className="modal-complex-container-inner relative">
-        {/* Error/Success feedback */}
-        {saveError && (
-          <div className="p-4 border-b border-surface-6">
-            <Callout
-              variant="error"
-              size="sm"
-              dismissible
-              onClose={() => setSaveError('')}
-            >
-              <div>
-                <div className="font-medium">{t`Save Failed`}</div>
-                <div className="text-sm opacity-90 mt-1">{saveError}</div>
-              </div>
-            </Callout>
-          </div>
-        )}
-
         {/* Loading overlay for saving */}
         <ModalSaveOverlay visible={isSaving} />
 
@@ -194,6 +178,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         downloadKey={downloadKey}
                         onSave={saveChanges}
                         isSaving={isSaving}
+                        removedDevices={removedDevices}
                       />
                     );
                   case 'notifications':
@@ -228,6 +213,22 @@ const UserSettingsModal: React.FunctionComponent<{
             <div style={{ display: 'flex', flexDirection: 'row' }}>
               <div className="modal-complex-sidebar-footer"></div>
               <div className="modal-complex-footer">
+                {/* Error/Success feedback above Save button */}
+                {saveError && (
+                  <div className="mb-4">
+                    <Callout
+                      variant="error"
+                      size="sm"
+                      dismissible
+                      onClose={() => setSaveError('')}
+                    >
+                      <div>
+                        <div className="font-medium">{t`Save Failed`}</div>
+                        <div className="text-sm opacity-90 mt-1">{saveError}</div>
+                      </div>
+                    </Callout>
+                  </div>
+                )}
                 <Button
                   type="primary"
                   onClick={saveChanges}

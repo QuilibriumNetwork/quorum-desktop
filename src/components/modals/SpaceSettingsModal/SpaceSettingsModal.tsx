@@ -146,12 +146,16 @@ const SpaceSettingsModal: React.FunctionComponent<{
   const [roleValidationError, setRoleValidationError] =
     React.useState<string>('');
 
+  // Save error state
+  const [saveError, setSaveError] = React.useState<string>('');
+
   // Modal save state hook - close only when operation completes
   const { isSaving, saveUntilComplete } = useModalSaveState({
     maxTimeout: 30000, // 30 second failsafe
     onSaveComplete: dismiss,
     onSaveError: (error) => {
       console.error('Save failed:', error);
+      setSaveError(error.message);
     },
   });
 
@@ -179,6 +183,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
   // Save changes function
   const saveChanges = React.useCallback(async () => {
     if (!space) return;
+
+    setSaveError('');
 
     await saveUntilComplete(async () => {
       // Convert file data to URLs similar to original SpaceEditor
@@ -378,6 +384,22 @@ const SpaceSettingsModal: React.FunctionComponent<{
               <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <div className="modal-complex-sidebar-footer"></div>
                 <div className="modal-complex-footer">
+                  {/* Error/Success feedback above Save button */}
+                  {saveError && (
+                    <div className="mb-4">
+                      <Callout
+                        variant="error"
+                        size="sm"
+                        dismissible
+                        onClose={() => setSaveError('')}
+                      >
+                        <div>
+                          <div className="font-medium">{t`Save Failed`}</div>
+                          <div className="text-sm opacity-90 mt-1">{saveError}</div>
+                        </div>
+                      </Callout>
+                    </div>
+                  )}
                   <Button
                     type="primary"
                     onClick={saveChanges}

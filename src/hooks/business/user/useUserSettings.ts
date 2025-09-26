@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useRegistration } from '../../queries';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { UserConfig } from '../../../db/messages';
 import { DefaultImages } from '../../../utils';
+import { useUploadRegistration } from '../../mutations/useUploadRegistration';
 
 export interface UseUserSettingsOptions {
   onSave?: () => void;
@@ -26,6 +27,7 @@ export interface UseUserSettingsReturn {
   removeDevice: (identityKey: string) => void;
   downloadKey: () => Promise<void>;
   keyset: any;
+  removedDevices: string[];
 }
 
 export const useUserSettings = (
@@ -46,11 +48,13 @@ export const useUserSettings = (
   });
   const { keyset } = useRegistrationContext();
   const { saveConfig, getConfig, updateUserProfile } = useMessageDB();
+  const uploadRegistration = useUploadRegistration();
   const existingConfig = useRef<UserConfig | null>(null);
 
   const [stagedRegistration, setStagedRegistration] = useState(
     registration?.registration
   );
+  const [removedDevices, setRemovedDevices] = useState<string[]>([]);
 
   // Update staged registration when registration data becomes available
   useEffect(() => {
@@ -84,6 +88,8 @@ export const useUserSettings = (
         ),
       };
     });
+
+    setRemovedDevices(prev => [...prev, identityKey]);
   };
 
   const downloadKey = async () => {
@@ -143,6 +149,29 @@ export const useUserSettings = (
       keyset: keyset,
     });
 
+    // If devices were removed, reconstruct and upload the registration
+    if (removedDevices.length > 0 && stagedRegistration) {
+      try {
+        // Reconstruct the registration with the updated device list
+        // This ensures proper signing of the modified registration
+        const updatedRegistration = await secureChannel.ConstructUserRegistration(
+          keyset.userKeyset,
+          stagedRegistration.device_registrations,
+          [] // No new devices to add
+        );
+
+        await uploadRegistration({
+          address: currentPasskeyInfo.address,
+          registration: updatedRegistration,
+        });
+
+        // Clear the removed devices list after successful save
+        setRemovedDevices([]);
+      } catch (error) {
+        throw error; // Re-throw to be handled by the modal
+      }
+    }
+
     options.onSave?.();
   };
 
@@ -162,5 +191,6 @@ export const useUserSettings = (
     removeDevice,
     downloadKey,
     keyset,
+    removedDevices,
   };
 };
