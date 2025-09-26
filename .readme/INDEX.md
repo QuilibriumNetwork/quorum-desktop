@@ -24,6 +24,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modal System Documentation](docs/features/modals.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
+- [Touch Long Press System](docs/features/touch-long-press-system.md)
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
 
 ### Features / Messages
@@ -81,10 +82,13 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
+- [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [Edit Message Feature](tasks/edit-message-feature.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/implement-background-sync-queue.md)
 - [Implement Mention Notification Bubbles](tasks/implement-mention-notification-bubbles.md)
+- [MessageDB.tsx Refactoring Analysis](tasks/messagedb-refactoring-analysis.md)
 - [Refactor Modal Placement in Layout.tsx](tasks/refactor-modal-placement.md)
+- [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Shared Git Hooks Setup](tasks/shared-git-hooks-setup.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
@@ -158,4 +162,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-09-24 15:48:06
+**Last Updated**: 2025-09-26 13:05:53
