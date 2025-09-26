@@ -102,9 +102,11 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         type: 'embed' as const,
         content: message.content as {
           imageUrl?: string;
+          thumbnailUrl?: string;
           videoUrl?: string;
           width?: string;
           height?: string;
+          isLargeGif?: boolean;
         },
         messageId: message.messageId,
       };

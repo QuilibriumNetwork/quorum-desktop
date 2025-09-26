@@ -59,7 +59,7 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
         <Container className="message-preview-embed">
           {contentData.content.imageUrl && (
             <img
-              src={contentData.content.imageUrl}
+              src={contentData.content.thumbnailUrl || contentData.content.imageUrl}
               style={{
                 maxWidth: 200,
                 maxHeight: 150,
