@@ -24,6 +24,7 @@ export const Input: React.FC<InputProps> = ({
   labelType = 'static',
   required = false,
   helperText,
+  clearable = false,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const inputId = useId();
@@ -75,7 +76,13 @@ export const Input: React.FC<InputProps> = ({
       )}
 
       {/* Input wrapper for floating label */}
-      <div className={showFloatingLabel ? 'input-wrapper' : undefined}>
+      <div
+        className={clsx(
+          'input-wrapper',
+          className,
+          clearable && hasValue && !disabled && 'input-has-clear'
+        )}
+      >
         <input
           id={inputId}
           className={inputClasses}
@@ -99,6 +106,17 @@ export const Input: React.FC<InputProps> = ({
           aria-label={accessibilityLabel || label}
           aria-required={required}
         />
+
+        {clearable && hasValue && !disabled && (
+          <button
+            type="button"
+            aria-label="Clear input"
+            className="input-clear-button"
+            onClick={() => onChange && onChange('')}
+          >
+            ×
+          </button>
+        )}
 
         {/* Floating Label - only show when active (focused or has value) */}
         {showFloatingLabel && (isFocused || hasValue) && (

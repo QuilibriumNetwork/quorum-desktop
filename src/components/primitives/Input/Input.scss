@@ -16,6 +16,30 @@
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
+}
+
+.input-clear-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--color-text-subtle);
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-text-main);
+  }
+}
+
+/* Ensure the input has right padding to avoid overlap with the clear button */
+.input-has-clear .quorum-input {
+  padding-right: 36px;
 }
 
 .input-label {

@@ -43,6 +43,8 @@ export interface InputProps {
   required?: boolean;
   /** Helper text shown below the input */
   helperText?: string;
+  /** Show a clear (×) control when there is input (web only) */
+  clearable?: boolean;
 }
 
 // React Native specific props
