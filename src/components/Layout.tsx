@@ -1,7 +1,7 @@
 import * as React from 'react';
 import NavMenu from './navbar/NavMenu';
 import { CloseButton } from './ui';
-import { ResponsiveContainer, Container } from './primitives';
+import { ResponsiveContainer, Container, Callout } from './primitives';
 import CreateSpaceModal from './modals/CreateSpaceModal';
 import ConfirmationModal from './modals/ConfirmationModal';
 import ImageModal from './modals/ImageModal';
@@ -31,6 +31,17 @@ const Layout: React.FunctionComponent<{
     useSidebar();
   useNavigationHotkeys();
 
+  const [kickToast, setKickToast] = React.useState<{ message: string } | null>(
+    null
+  );
+  React.useEffect(() => {
+    const handler = (e: any) => {
+      setKickToast({ message: `You've been kicked from ${e.detail?.spaceName}` });
+    };
+    (window as any).addEventListener('quorum:kick-toast', handler);
+    return () => (window as any).removeEventListener('quorum:kick-toast', handler);
+  }, []);
+
   return (
     <React.Suspense fallback={<Connecting />}>
       {createSpaceVisible && (
@@ -39,7 +50,7 @@ const Layout: React.FunctionComponent<{
           onClose={hideCreateSpaceModal}
         />
       )}
-      
+
       {/* Confirmation Modal */}
       {confirmationModal.visible && confirmationModal.config && (
         <ConfirmationModal
@@ -67,7 +78,7 @@ const Layout: React.FunctionComponent<{
           onClose={hideImageModal}
         />
       )}
-      
+
       {/* {joinSpaceVisible && <JoinSpaceModal visible={joinSpaceVisible} onClose={() => setJoinSpaceVisible(false)}/>} */}
       <NavMenu
         showCreateSpaceModal={showCreateSpaceModal}
@@ -78,7 +89,21 @@ const Layout: React.FunctionComponent<{
       <Container>{isElectron && <CloseButton />}</Container>
       <ConfirmationModalProvider showConfirmationModal={showConfirmationModal}>
         <ImageModalProvider showImageModal={showImageModal}>
-          <ResponsiveContainer>{props.children}</ResponsiveContainer>
+          <ResponsiveContainer>
+            {props.children}
+            {kickToast && (
+              <div className="fixed bottom-4 right-4 z-[11000] max-w-[360px]">
+                <Callout
+                  variant="warning"
+                  size="sm"
+                  dismissible
+                  onClose={() => setKickToast(null)}
+                >
+                  {kickToast.message}
+                </Callout>
+              </div>
+            )}
+          </ResponsiveContainer>
         </ImageModalProvider>
       </ConfirmationModalProvider>
 

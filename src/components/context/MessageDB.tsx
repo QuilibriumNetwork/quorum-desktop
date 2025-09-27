@@ -59,6 +59,7 @@ import { useNavigate } from 'react-router';
 import { sha256, base58btc } from '../../utils/crypto';
 import { buildConfigKey } from '../../hooks/queries/config/buildConfigKey';
 import { t } from '@lingui/core/macro';
+import { Callout } from '../primitives';
 import { DefaultImages, getDefaultUserConfig } from '../../utils';
 import { canKickUser } from '../../utils/permissions';
 
@@ -1675,6 +1676,16 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 if (verify) {
                   if (envelope.message.kick === self_address) {
                     const spaceId = conversationId.split('/')[0];
+                    try {
+                      const space = await messageDB.getSpace(spaceId);
+                      if (typeof window !== 'undefined' && (window as any).dispatchEvent) {
+                        (window as any).dispatchEvent(
+                          new CustomEvent('quorum:kick-toast', {
+                            detail: { spaceName: space?.spaceName || spaceId },
+                          })
+                        );
+                      }
+                    } catch {}
                     // Immediately navigate away from the space view when kicked
                     navigate('/messages', { replace: true, state: { from: 'kicked', spaceId } });
                     const hubKey = await messageDB.getSpaceKey(spaceId, 'hub');
