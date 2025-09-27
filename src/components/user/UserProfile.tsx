@@ -199,8 +199,9 @@ const UserProfile: React.FunctionComponent<{
                   size="small"
                   className="justify-center text-center rounded text-main"
                   onClick={() => kickUser(props.user.address)}
+                  disabled={props.user.isKicked}
                 >
-                  {t`Kick User`}
+                  {props.user.isKicked ? t`Kicked!` : t`Kick User`}
                 </Button>
               )}
             </Container>

@@ -52,6 +52,7 @@ import { useQuorumApiClient } from './QuorumApiContext';
 import { QuorumApiClient, isQuorumApiError } from '../../api/baseTypes';
 import { useWebSocket } from './WebsocketProvider';
 import { useInvalidateConversation } from '../../hooks/queries/conversation/useInvalidateConversation';
+import { useNavigate } from 'react-router';
 // Use platform-specific crypto utilities
 // Web: uses multiformats directly
 // Native: uses React Native compatible implementations
@@ -199,6 +200,7 @@ type MessageDBContextValue = {
     }
   ) => Promise<void>;
   requestSync: (spaceId: string) => Promise<void>;
+  sendVerifyKickedStatuses: (spaceId: string) => Promise<number>;
   deleteConversation: (
     conversationId: string,
     currentPasskeyInfo: {
@@ -224,6 +226,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   const { apiClient } = useQuorumApiClient();
   const { setMessageHandler, enqueueOutbound, setResubscribe } = useWebSocket();
   const invalidateConversation = useInvalidateConversation();
+  const navigate = useNavigate();
 
   const [selfAddress, setSelfAddress] = useState<string>(
     null as unknown as string
@@ -1243,6 +1246,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                     user_icon: participant.userIcon,
                     display_name: participant.displayName,
                     inbox_address: participant.inboxAddress,
+                    isKicked: false,
                   });
                   await queryClient.setQueryData(
                     buildSpaceMembersKey({
@@ -1255,6 +1259,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                           user_address: participant.address,
                           user_icon: participant.userIcon,
                           display_name: participant.displayName,
+                          // isKicked intentionally omitted here (defaults to false on fetch)
                         },
                       ];
                     }
@@ -1480,6 +1485,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                       (
                         oldData: (secureChannel.UserProfile & {
                           inbox_address: string;
+                          isKicked?: boolean;
                         })[]
                       ) => {
                         const previous = oldData ?? [];
@@ -1669,6 +1675,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 if (verify) {
                   if (envelope.message.kick === self_address) {
                     const spaceId = conversationId.split('/')[0];
+                    // Immediately navigate away from the space view when kicked
+                    navigate('/messages', { replace: true, state: { from: 'kicked', spaceId } });
                     const hubKey = await messageDB.getSpaceKey(spaceId, 'hub');
                     const inboxKey = await messageDB.getSpaceKey(
                       spaceId,
@@ -1872,20 +1880,69 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 );
                 if (verify) {
                   for (const member of envelope.message.members) {
-                    await messageDB.saveSpaceMember(
-                      conversationId.split('/')[0],
-                      member
-                    );
+                    try {
+                      const existing = await messageDB.getSpaceMember(
+                        conversationId.split('/')[0],
+                        (member as any).user_address
+                      );
+                      await messageDB.saveSpaceMember(
+                        conversationId.split('/')[0],
+                        {
+                          ...(member as any),
+                          isKicked: existing?.isKicked ?? false,
+                        } as any
+                      );
+                    } catch {
+                      await messageDB.saveSpaceMember(
+                        conversationId.split('/')[0],
+                        member as any
+                      );
+                    }
                   }
                   await queryClient.setQueryData(
                     buildSpaceMembersKey({
                       spaceId: conversationId.split('/')[0],
                     }),
-                    (oldData: secureChannel.UserProfile[]) => {
-                      return [...(oldData ?? []), ...envelope.message.members];
+                    (oldData: (secureChannel.UserProfile & { isKicked?: boolean })[]) => {
+                      const existingMap = new Map(
+                        (oldData ?? []).map((m) => [m.user_address, m])
+                      );
+                      const merged = (envelope.message.members as any[]).map((m) => {
+                        const prev = existingMap.get(m.user_address);
+                        return { ...m, isKicked: prev?.isKicked ?? false };
+                      });
+                      return [...(oldData ?? []), ...merged];
                     }
                   );
                 }
+              }
+            } else if (envelope.message.type === 'verify-kicked') {
+              if (Array.isArray(envelope.message.addresses)) {
+                const spaceId = conversationId.split('/')[0];
+                for (const address of envelope.message.addresses) {
+                  const member = await messageDB.getSpaceMember(spaceId, address);
+                  if (member) {
+                    await messageDB.saveSpaceMember(spaceId, {
+                      ...member,
+                      isKicked: true,
+                    });
+                  }
+                }
+                await queryClient.setQueryData(
+                  buildSpaceMembersKey({ spaceId }),
+                  (
+                    oldData: (secureChannel.UserProfile & {
+                      inbox_address: string;
+                      isKicked?: boolean;
+                    })[]
+                  ) => {
+                    const previous = oldData ?? [];
+                    const mark = new Set(envelope.message.addresses as string[]);
+                    return previous.map((m) =>
+                      mark.has(m.user_address) ? { ...m, isKicked: true } : m
+                    );
+                  }
+                );
               }
             } else if (envelope.message.type === 'sync-messages') {
               let reg = spaceInfo.current[conversationId.split('/')[0]];
@@ -2526,6 +2583,46 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       });
     } catch {}
   }, []);
+
+  const sendVerifyKickedStatuses = React.useCallback(
+    async (spaceId: string): Promise<number> => {
+      const messages = await messageDB.getAllSpaceMessages({ spaceId });
+      const lastEventByUser = new Map<string, 'kick' | 'join'>();
+      messages
+        .filter((m) => m.content?.type === 'kick' || m.content?.type === 'join')
+        .sort((a, b) => a.createdDate - b.createdDate)
+        .forEach((m) => {
+          const addr = (m.content as any).senderId;
+          if (!addr) return;
+          if (m.content.type === 'kick') lastEventByUser.set(addr, 'kick');
+          else if (m.content.type === 'join') lastEventByUser.set(addr, 'join');
+        });
+
+      const kicked = Array.from(lastEventByUser.entries())
+        .filter(([, evt]) => evt === 'kick')
+        .map(([addr]) => addr);
+
+      if (kicked.length === 0) return 0;
+
+      enqueueOutbound(async () => {
+        return [
+          await sendHubMessage(
+            spaceId,
+            JSON.stringify({
+              type: 'control',
+              message: {
+                type: 'verify-kicked',
+                addresses: kicked,
+              },
+            })
+          ),
+        ];
+      });
+
+      return kicked.length;
+    },
+    [enqueueOutbound, messageDB]
+  );
 
   const informSyncData = React.useCallback(
     async (
@@ -3808,6 +3905,32 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           {}
         );
         await addMessage(queryClient, spaceId, space!.defaultChannelId, msg);
+        try {
+          const kicked = await messageDB.getSpaceMember(spaceId, userAddress);
+          if (kicked) {
+            await messageDB.saveSpaceMember(spaceId, {
+              ...kicked,
+              inbox_address: '',
+              isKicked: true,
+            });
+            await queryClient.setQueryData(
+              buildSpaceMembersKey({ spaceId }),
+              (
+                oldData: (secureChannel.UserProfile & {
+                  inbox_address: string;
+                  isKicked?: boolean;
+                })[]
+              ) => {
+                const previous = oldData ?? [];
+                return previous.map((m) =>
+                  m.user_address === userAddress
+                    ? { ...m, inbox_address: '', isKicked: true }
+                    : m
+                );
+              }
+            );
+          }
+        } catch {}
 
         const space_evals = [] as string[];
         for (
@@ -5609,6 +5732,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         kickUser,
         updateUserProfile,
         requestSync,
+        sendVerifyKickedStatuses,
         deleteConversation,
       }}
     >
@@ -5639,6 +5763,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   kickUser: () => undefined as never,
   updateUserProfile: () => undefined as never,
   requestSync: () => undefined as never,
+  sendVerifyKickedStatuses: () => undefined as never,
   deleteConversation: () => undefined as never,
 });
 

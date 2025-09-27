@@ -541,7 +541,7 @@ export class MessageDB {
 
   async saveSpaceMember(
     spaceId: string,
-    userProfile: channel.UserProfile & { inbox_address: string }
+    userProfile: channel.UserProfile & { inbox_address: string; isKicked?: boolean }
   ): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -557,7 +557,7 @@ export class MessageDB {
   async getSpaceMember(
     spaceId: string,
     user_address: string
-  ): Promise<channel.UserProfile & { inbox_address: string }> {
+  ): Promise<channel.UserProfile & { inbox_address: string; isKicked?: boolean }> {
     await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction('space_members', 'readonly');
@@ -574,7 +574,7 @@ export class MessageDB {
 
   async getSpaceMembers(
     spaceId: string
-  ): Promise<(channel.UserProfile & { inbox_address: string })[]> {
+  ): Promise<(channel.UserProfile & { inbox_address: string; isKicked?: boolean })[]> {
     await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction('space_members', 'readonly');

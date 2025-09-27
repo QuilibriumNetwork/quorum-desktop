@@ -2,6 +2,7 @@ import * as React from 'react';
 import {
   Button,
   Modal,
+  Callout,
 } from '../../primitives';
 import '../../../styles/_modal_common.scss';
 import ConfirmationModal from '../ConfirmationModal';
@@ -34,7 +35,21 @@ const SpaceSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
 }> = ({ spaceId, dismiss }) => {
   const { data: space } = useSpace({ spaceId });
-  const { updateSpace, messageDB } = useMessageDB();
+  const { updateSpace, requestSync, messageDB, sendVerifyKickedStatuses } = useMessageDB();
+  const [syncingKicks, setSyncingKicks] = React.useState<boolean>(false);
+  const handleSyncKicked = React.useCallback(async () => {
+    if (!space) return;
+    setSyncingKicks(true);
+    try {
+      const count = await sendVerifyKickedStatuses(space.spaceId);
+      if (count > 0) {
+        // Optionally, request a members sync shortly after
+        await requestSync(space.spaceId);
+      }
+    } finally {
+      setSyncingKicks(false);
+    }
+  }, [space, sendVerifyKickedStatuses, requestSync]);
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
 
@@ -312,13 +327,13 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           space={space}
                           spaceName={spaceName}
                           setSpaceName={setSpaceName}
-                          fixes={missingOwnerMembership ? [{
+                          fixes={(missingOwnerMembership ? [{
                             id: 'owner-membership',
                             message: t`You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address).`,
                             actionLabel: t`Fix`,
                             onFix: addOwnerToMembers,
                             loading: addingOwner,
-                          }] : []}
+                          }] : []).concat([{ id: 'sync-kicked', message: t`Sync kick status for previously kicked users. This verifies kicks without posting visible messages.`, actionLabel: t`Sync Kick Status`, onFix: handleSyncKicked, loading: syncingKicks }])}
                           iconData={iconData}
                           currentIconFile={currentIconFile}
                           iconFileError={iconFileError}

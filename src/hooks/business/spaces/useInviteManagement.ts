@@ -117,7 +117,12 @@ export const useInviteManagement = (
       try {
         // Check if user is already a member of this space
         const existingMember = await messageDB.getSpaceMember(spaceId, address);
-        if (existingMember && existingMember.inbox_address && existingMember.inbox_address !== '') {
+        if (
+            existingMember
+            && existingMember.inbox_address
+            && existingMember.inbox_address !== ''
+            && !existingMember.isKicked
+        ) {
           setMembershipWarning(t`This user is already a member of this space.`);
           return;
         }

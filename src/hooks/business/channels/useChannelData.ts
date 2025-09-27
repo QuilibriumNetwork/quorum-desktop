@@ -66,6 +66,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
             address: curr.user_address,
             userIcon: curr.user_icon,
             displayName: curr.display_name,
+            isKicked: curr.isKicked || false,
           },
         }),
       {} as {
@@ -73,6 +74,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
           address: string;
           userIcon?: string;
           displayName?: string;
+          isKicked?: boolean;
         };
       }
     );
@@ -87,6 +89,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
             userIcon: curr.user_icon,
             displayName: curr.display_name,
             left: curr.inbox_address === '',
+            isKicked: curr.isKicked || false,
           },
         }),
       {} as {
@@ -95,6 +98,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
           userIcon?: string;
           displayName?: string;
           left: boolean;
+          isKicked?: boolean;
         };
       }
     );
@@ -114,7 +118,8 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
     const allRoleMembers = new Set(roles.flatMap((r) => r.members));
     return Object.keys(activeMembers)
       .filter((s) => !allRoleMembers.has(s))
-      .filter((r) => !activeMembers[r].left);
+      .filter((r) => !activeMembers[r].left)
+      .filter((r) => !activeMembers[r].isKicked);
   }, [roles, activeMembers]);
 
   const stickers = useMemo(() => {
@@ -131,7 +136,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
       .map((role) => {
         const roleMembers = Object.keys(activeMembers).filter((s) =>
           role.members.includes(s)
-        );
+        ).filter((s) => !activeMembers[s].isKicked);
         return {
           title: i18n._('{role} - {count}', {
             role: role.displayName.toUpperCase(),
