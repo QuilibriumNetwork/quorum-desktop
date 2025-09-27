@@ -1,6 +1,6 @@
 # MessageDB.tsx Refactoring Analysis
 
-**Status**: DRAFT/IDEA - Requires deeper analysis before implementation
+**Status**: DRAFT/IDEA
 **Priority**: High
 **Complexity**: Very High
 **Estimated Effort**: 4-6 weeks
@@ -94,8 +94,15 @@ src/hooks/ - Service-specific hooks
 - Zero breaking changes to existing API
 - Clear separation of concerns
 
+
+## NOTES
+
+It may be worth pinning down with some unit tests first and then changing it.  Essentially verifying behaviors remain the same across the versions.
+
+I would also say to make sure to tell it to first move in-place most code, with no optimizations, and then once everything is deemed working to go and start reducing/optimizing
+
 ---
 
-**Note**: This is a preliminary analysis. A comprehensive code audit and architectural review is needed before proceeding with implementation planning.
+
 
 _Last updated: 2025-09-25_

@@ -1,5 +1,7 @@
 # Space Owner Delete Permissions Bug
 
+https://github.com/QuilibriumNetwork/quorum-desktop/issues/68
+
 ## Issue Description
 
 **Space owners cannot delete other users' messages** despite having the correct UI permissions. Delete buttons appear for space owners but clicking them does nothing - messages are not deleted locally or on other clients.
