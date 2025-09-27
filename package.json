@@ -27,6 +27,8 @@
     "lingui:extract": "lingui extract",
     "lingui:compile": "lingui compile",
     "scan-docs": "node src/dev/docs/utils/scanMarkdownFiles.cjs",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
     "mobile": "cd mobile && expo start --dev-client",
     "mobile:tunnel": "cd mobile && expo start --dev-client --tunnel",
     "mobile:clear": "cd mobile && expo start --dev-client --clear",
@@ -97,11 +99,14 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
     "@types/prismjs": "^1.26.5",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-basic-ssl": "^1.2.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/ui": "^2.1.8",
     "autoprefixer": "^10.4.20",
     "babel-plugin-macros": "^3.1.0",
     "electron": "^33.2.1",
@@ -111,6 +116,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.12.0",
+    "jsdom": "^25.0.1",
     "postcss": "^8.4.49",
     "prettier": "^3.4.2",
     "prismjs": "^1.30.0",
@@ -118,7 +124,8 @@
     "tailwindcss": "^3.4.16",
     "unenv": "^1.10.0",
     "vite": "^6.0.1",
-    "vite-plugin-node-polyfills": "^0.22.0"
+    "vite-plugin-node-polyfills": "^0.22.0",
+    "vitest": "^2.1.8"
   },
   "resolutions": {
     "@quilibrium/quilibrium-js-sdk-channels": "file:../quilibrium-js-sdk-channels"
