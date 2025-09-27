@@ -48,7 +48,9 @@ const ChannelContent: React.FC<{
     <div
       className={
         'channel-group-channel-name flex items-start justify-between' +
-        (channel.channelId === currentChannelId ? '-focused' : '') +
+        (channel.channelId === currentChannelId
+          ? ' channel-group-channel-name-focused'
+          : '') +
         (channel.unreads && channel.unreads > 0
           ? ' !font-bold !opacity-100'
           : '')
