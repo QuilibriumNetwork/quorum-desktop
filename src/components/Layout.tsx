@@ -4,6 +4,7 @@ import { CloseButton } from './ui';
 import { ResponsiveContainer, Container, Callout } from './primitives';
 import { createPortal } from 'react-dom';
 import CreateSpaceModal from './modals/CreateSpaceModal';
+import AddSpaceModal from './modals/AddSpaceModal';
 import ConfirmationModal from './modals/ConfirmationModal';
 import ImageModal from './modals/ImageModal';
 import { ConfirmationModalProvider } from './context/ConfirmationModalProvider';
@@ -17,6 +18,9 @@ const Layout: React.FunctionComponent<{
   children: React.ReactNode;
 }> = (props) => {
   const {
+    addSpaceVisible,
+    showAddSpaceModal,
+    hideAddSpaceModal,
     createSpaceVisible,
     showCreateSpaceModal,
     hideCreateSpaceModal,
@@ -57,6 +61,17 @@ const Layout: React.FunctionComponent<{
         />
       )}
 
+      {addSpaceVisible && (
+        <AddSpaceModal
+          visible={addSpaceVisible}
+          onClose={hideAddSpaceModal}
+          onCreateSpace={() => {
+            hideAddSpaceModal();
+            showCreateSpaceModal();
+          }}
+        />
+      )}
+
       {/* Confirmation Modal */}
       {confirmationModal.visible && confirmationModal.config && (
         <ConfirmationModal
@@ -87,10 +102,8 @@ const Layout: React.FunctionComponent<{
 
       {/* {joinSpaceVisible && <JoinSpaceModal visible={joinSpaceVisible} onClose={() => setJoinSpaceVisible(false)}/>} */}
       <NavMenu
-        showCreateSpaceModal={showCreateSpaceModal}
-        showJoinSpaceModal={() => {
-          /*setJoinSpaceVisible(true)*/
-        }}
+        showCreateSpaceModal={showAddSpaceModal}
+        showJoinSpaceModal={() => {}}
       />
       <Container>{isElectron && <CloseButton />}</Container>
       <ConfirmationModalProvider showConfirmationModal={showConfirmationModal}>

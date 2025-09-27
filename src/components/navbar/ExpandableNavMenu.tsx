@@ -20,13 +20,13 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
   const user = usePasskeysContext();
   const { isDesktop } = useResponsiveLayout();
 
-  // Desktop: Show only + button for creating spaces
+  // Desktop: Show only + button for adding spaces
   if (isDesktop) {
     return (
       <FlexColumn className="nav-buttons-centered-container">
         <Tooltip
           id="create-space-desktop"
-          content={t`Create a new Space`}
+          content={t`Add a Space`}
           place="right"
           highlighted={true}
         >

@@ -2,6 +2,9 @@ import { useState, useCallback } from 'react';
 import type { Message as MessageType } from '../../../api/quorumApi';
 
 interface UseModalManagementReturn {
+  addSpaceVisible: boolean;
+  showAddSpaceModal: () => void;
+  hideAddSpaceModal: () => void;
   createSpaceVisible: boolean;
   showCreateSpaceModal: () => void;
   hideCreateSpaceModal: () => void;
@@ -39,6 +42,7 @@ interface UseModalManagementReturn {
 }
 
 export const useModalManagement = (): UseModalManagementReturn => {
+  const [addSpaceVisible, setAddSpaceVisible] = useState(false);
   const [createSpaceVisible, setCreateSpaceVisible] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState<{
     visible: boolean;
@@ -64,6 +68,14 @@ export const useModalManagement = (): UseModalManagementReturn => {
     visible: false,
     imageUrl: null,
   });
+
+  const showAddSpaceModal = useCallback(() => {
+    setAddSpaceVisible(true);
+  }, []);
+
+  const hideAddSpaceModal = useCallback(() => {
+    setAddSpaceVisible(false);
+  }, []);
 
   const showCreateSpaceModal = useCallback(() => {
     setCreateSpaceVisible(true);
@@ -107,6 +119,9 @@ export const useModalManagement = (): UseModalManagementReturn => {
   }, []);
 
   return {
+    addSpaceVisible,
+    showAddSpaceModal,
+    hideAddSpaceModal,
     createSpaceVisible,
     showCreateSpaceModal,
     hideCreateSpaceModal,
