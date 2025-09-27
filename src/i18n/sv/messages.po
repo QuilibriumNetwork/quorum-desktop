@@ -21,12 +21,12 @@ msgid "File cannot be larger than {maxFileSize}"
 msgstr "Filen kan inte vara större än {maxFileSize}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:136
+#: src/hooks/business/channels/useChannelData.ts:141
 msgid "{role} - {count}"
 msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:152
+#: src/hooks/business/channels/useChannelData.ts:157
 msgid "No Role - {count}"
 msgstr "Ingen roll - {count}"
 
@@ -37,8 +37,12 @@ msgstr "Skicka ett meddelande till #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/Onboarding.tsx:251
-msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "Din profilbild måste vara {maxFileSize} eller mindre och måste ha filändelsen PNG, JPG eller JPEG."
+msgid ""
+"Your profile image size must be {maxFileSize} or less and must be a PNG, "
+"JPG, or JPEG file extension."
+msgstr ""
+"Din profilbild måste vara {maxFileSize} eller mindre och måste ha "
+"filändelsen PNG, JPG eller JPEG."
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
@@ -72,8 +76,12 @@ msgid "Send a message to {user}"
 msgstr "Skicka ett meddelande till {user}"
 
 #: src/components/modals/CreateSpaceModal.tsx:107
-msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
-msgstr "Standardinställningar för Space ger den mest typiska chatupplevelsen, men för högre integritetsskydd, granska de avancerade inställningarna."
+msgid ""
+" Default Space settings provide the most typical chat experience, but for "
+"higher privacy guarantees, review the Advanced Settings."
+msgstr ""
+"Standardinställningar för Space ger den mest typiska chatupplevelsen, men "
+"för högre integritetsskydd, granska de avancerade inställningarna."
 
 #: src/components/Maintenance.native.tsx:61
 msgid " for updates."
@@ -83,16 +91,17 @@ msgstr "för uppdateringar."
 msgid "[Empty message]"
 msgstr "[Tomt meddelande]"
 
-#~ msgid "[Image/Media]"
-#~ msgstr "[Bild/Media]"
-
 #: src/components/message/MessagePreview.tsx:54
 #: src/components/message/MessagePreview.tsx:190
 msgid "[Message]"
 msgstr "[Meddelande]"
 
-#~ msgid "[Sticker]"
-#~ msgstr "[Klistermärke]"
+#. placeholder {0}: removedDevices.length
+#: src/components/modals/UserSettingsModal/Privacy.tsx:101
+msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
+msgstr ""
+"{0} enheter markerade för borttagning. Klicka på \"Spara ändringar\" för att"
+" bekräfta."
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:253
@@ -103,12 +112,6 @@ msgstr "{0} fastsatt meddelande"
 #: src/components/message/PinnedMessagesPanel.tsx:254
 msgid "{0} pinned messages"
 msgstr "{0} fastsatta meddelanden"
-
-#~ msgid "{0} result"
-#~ msgstr "{0} resultat"
-
-#~ msgid "{0} results"
-#~ msgstr "{0} resultat"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:13
 msgid "{size} Bytes"
@@ -138,9 +141,20 @@ msgstr "Lägg till en vän"
 msgid "0 Bytes"
 msgstr "0 Byte"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:100
+msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
+msgstr ""
+"1 enhet markerad för borttagning. Klicka på \"Spara ändringar\" för att "
+"bekräfta."
+
 #: src/components/modals/UserSettingsModal/General.tsx:104
 msgid "Account Address"
 msgstr "Kontoadress"
+
+#: src/components/modals/AddSpaceModal.tsx:116
+#: src/components/navbar/ExpandableNavMenu.tsx:29
+msgid "Add a Space"
+msgstr "Lägg till en Space"
 
 #: src/components/modals/ChannelEditorModal.tsx:79
 msgid "Add Channel"
@@ -159,32 +173,27 @@ msgstr "Lägg till grupp"
 msgid "Add Role"
 msgstr "Lägg till roll"
 
-#~ msgid "Add Space"
-#~ msgstr "Lägg till Space"
-
 #: src/components/message/MessageComposer.tsx:375
 msgid "add sticker"
 msgstr "lägg till klistermärke"
 
-#~ msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
-#~ msgstr "Lägg till upp till 50 anpassade emoji. Anpassade emojis kan endast användas inom en Space."
-
-#~ msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 256kB."
-#~ msgstr "Lägg till upp till 50 anpassade emojis. Anpassade emojis kan endast användas inom en Space. Du kan ladda upp PNG, JPG eller GIF, max 256kB."
-
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
-msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
-msgstr "Lägg till upp till 50 anpassade emojis. Anpassade emojis kan endast användas inom ett Space. Du kan ladda upp PNG, JPG eller GIF, max 5MB (automatiskt optimerad)."
-
-#~ msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space."
-#~ msgstr "Lägg till upp till 50 anpassade klistermärken. Anpassade klistermärken kan endast användas inom en Space."
-
-#~ msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 256kB."
-#~ msgstr "Lägg till upp till 50 anpassade klistermärken. Anpassade klistermärken kan endast användas inom en Space. Du kan ladda upp PNG, JPG eller GIF, max 256kB."
+msgid ""
+"Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
+"You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
+msgstr ""
+"Lägg till upp till 50 anpassade emojis. Anpassade emojis kan endast användas"
+" inom ett Space. Du kan ladda upp PNG, JPG eller GIF, max 5MB (automatiskt "
+"optimerad)."
 
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
-msgstr "Lägg till upp till 50 anpassade klistermärken. Anpassade klistermärken kan endast användas inom ett Space. Du kan ladda upp PNG, JPG eller GIF, max 25MB (automatiskt optimerad)."
+msgid ""
+"Add up to 50 custom stickers. Custom stickers can only be used within a "
+"Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
+msgstr ""
+"Lägg till upp till 50 anpassade klistermärken. Anpassade klistermärken kan "
+"endast användas inom ett Space. Du kan ladda upp PNG, JPG eller GIF, max "
+"25MB (automatiskt optimerad)."
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
@@ -196,9 +205,13 @@ msgstr "Adresser måste vara exakt 46 tecken långa."
 msgid "Addresses start with \"Qm\"."
 msgstr "Adresser börjar med \"Qm\"."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:46
-msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
-msgstr "Justera säkerhetsrelaterade inställningar, vilket kan påverka användarupplevelsen men öka säkerheten för ditt Quorum-konto."
+#: src/components/modals/UserSettingsModal/Privacy.tsx:48
+msgid ""
+"Adjust security-related settings, which may impact user  experience but "
+"increase the security of your Quorum account."
+msgstr ""
+"Justera säkerhetsrelaterade inställningar, vilket kan påverka "
+"användarupplevelsen men öka säkerheten för ditt Quorum-konto."
 
 #: src/components/modals/CreateSpaceModal.tsx:166
 msgid "Advanced Settings"
@@ -209,50 +222,51 @@ msgstr "Avancerade inställningar"
 msgid "All"
 msgstr "Alla"
 
-#~ msgid "All roles must have both a tag name and display name."
-#~ msgstr "Alla roller måste ha både ett taggnamn och ett visningsnamn."
+#: src/components/modals/AddSpaceModal.tsx:249
+msgid "Already Joined"
+msgstr "Redan ansluten"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:71
+#: src/components/modals/UserSettingsModal/Privacy.tsx:73
 msgid "Always sign Direct Messages"
 msgstr "Signera alltid direktmeddelanden"
-
-#~ msgid "Always sign Direct Messages in  Conversations. This can be overridden for finer-grain control by clicking the lock icon found in each Conversation view."
-#~ msgstr "Signera alltid direktmeddelanden i konversationer. Detta kan åsidosättas för mer detaljerad kontroll genom att klicka på låsikonen som finns i varje konversationsvy."
-
-#~ msgid "Always sign Direct Messages in conversations. This can be overridden for finer-grain control by clicking the lock icon found in each conversation view."
-#~ msgstr "Signera alltid Direktmeddelanden i konversationer. Detta kan åsidosättas för mer detaljerad kontroll genom att klicka på låsikonen som finns i varje konversationsvy."
 
 #: src/components/modals/ConversationSettingsModal.tsx:180
 #: src/components/modals/NewDirectMessageModal.tsx:146
 msgid "Always sign messages"
 msgstr "Signera alltid meddelanden"
 
-#~ msgid "Always sign messages sent in this conversation. Technically speaking, this makes your messages in non-repudiable. The default for all conversations can be changed in User Settings."
-#~ msgstr "Signera alltid meddelanden som skickas i denna konversation. Tekniskt sett gör detta dina meddelanden icke-förnekbara. Standardinställningen för alla konversationer kan ändras i Användarinställningar."
-
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:43
 msgid "An error occurred while deleting the Space. Please try again."
-msgstr ""
+msgstr "Ett fel inträffade vid borttagning av Space. Vänligen försök igen."
 
 #: src/utils/imageProcessing/errors.ts:23
-msgid "Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF for emoji use."
-msgstr "Animerade emoji GIF:ar får inte vara större än 100KB. Vänligen optimera din GIF för emoji användning."
+msgid ""
+"Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF "
+"for emoji use."
+msgstr ""
+"Animerade emoji GIF:ar får inte vara större än 100KB. Vänligen optimera din "
+"GIF för emoji användning."
 
 #: src/utils/imageProcessing/errors.ts:26
-msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
-msgstr "Animerade klistermärke GIF:ar får inte vara större än 750KB. Vänligen optimera din GIF för klistermärke användning."
+msgid ""
+"Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF "
+"for sticker use."
+msgstr ""
+"Animerade klistermärke GIF:ar får inte vara större än 750KB. Vänligen "
+"optimera din GIF för klistermärke användning."
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:25
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
 msgstr "Utseende"
 
-#~ msgid "Are you sure you want to delete the public invite link? Anyone with your current public invite link won't be able to join your Space anymore."
-#~ msgstr "Är du säker på att du vill ta bort den offentliga inbjudningslänken? Alla med din nuvarande offentliga inbjudningslänk kommer inte längre att kunna gå med i ditt Space."
-
 #: src/hooks/business/channels/useChannelManagement.ts:228
-msgid "Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone."
-msgstr "Är du säker på att du vill ta bort den här kanalen? Alla meddelanden kommer att gå förlorade. Denna åtgärd kan inte ångras."
+msgid ""
+"Are you sure you want to delete this channel? All messages will be lost. "
+"This action cannot be undone."
+msgstr ""
+"Är du säker på att du vill ta bort den här kanalen? Alla meddelanden kommer "
+"att gå förlorade. Denna åtgärd kan inte ångras."
 
 #: src/components/modals/ConversationSettingsModal.tsx:55
 msgid ""
@@ -272,22 +286,13 @@ msgstr "Är du säker på att du vill ta bort det här meddelandet?"
 msgid "Are you sure you want to delete this role?"
 msgstr "Är du säker på att du vill ta bort den här rollen?"
 
-#~ msgid "Are you sure you want to generate a new public invite link? Anyone with your old public invite link won't be able to join your Space anymore."
-#~ msgstr "Är du säker på att du vill generera en ny offentlig inbjudningslänk? Alla med din gamla offentliga inbjudningslänk kommer inte längre att kunna gå med i ditt Space."
-
-#~ msgid ""
-#~ "Are you sure you want to generate a public invite link?\n"
-#~ "This will permanently invalidate ALL previously sent private invite links."
-#~ msgstr ""
-#~ "Är du säker på att du vill generera en offentlig inbjudningslänk?\n"
-#~ "Detta kommer permanent att ogiltigförklara ALLA tidigare skickade privata inbjudningslänkar."
-
-#~ msgid "Are you sure you want to leave {0}? You won't be able to rejoin unless you are re-invited."
-#~ msgstr "Är du säker på att du vill lämna {0}? Du kommer inte kunna återansluta om du inte blir inbjuden igen."
-
 #: src/components/modals/LeaveSpaceModal.tsx:40
-msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited."
-msgstr "Är du säker på att du vill lämna detta Space? Du kommer inte att kunna återansluta om du inte blir inbjuden igen."
+msgid ""
+"Are you sure you want to leave this Space? You won't be able to rejoin "
+"unless you are re-invited."
+msgstr ""
+"Är du säker på att du vill lämna detta Space? Du kommer inte att kunna "
+"återansluta om du inte blir inbjuden igen."
 
 #: src/hooks/business/messages/usePinnedMessages.ts:231
 msgid "Are you sure you want to pin this message?"
@@ -297,12 +302,6 @@ msgstr "Är du säker på att du vill fästa det här meddelandet?"
 msgid "Are you sure you want to unpin this message?"
 msgstr "Är du säker på att du vill avfästa det här meddelandet?"
 
-#~ msgid "Are you sure? This channel contains messages. Deleting it will cause all content to be lost forever!"
-#~ msgstr "Är du säker? Denna kanal innehåller meddelanden. Att radera den kommer att orsaka att allt innehåll går förlorat för alltid!"
-
-#~ msgid "Are you sure? This group contains channels with messages. Deleting it will cause all content to be lost forever!"
-#~ msgstr "Är du säker? Denna grupp innehåller kanaler med meddelanden. Att radera den kommer att orsaka att allt innehåll går förlorat för alltid!"
-
 #: src/components/message/MessageComposer.tsx:344
 msgid "attach image"
 msgstr "bifoga bild"
@@ -311,12 +310,13 @@ msgstr "bifoga bild"
 msgid "Away"
 msgstr "Borta"
 
+#: src/components/modals/AddSpaceModal.tsx:211
+msgid "Back to invite link"
+msgstr "Tillbaka till inbjudningslänk"
+
 #: src/hooks/platform/files/useFileDownload.native.ts:224
 msgid "Backup Failed"
 msgstr "Säkerhetskopiering misslyckades"
-
-#~ msgid "Be patient, this can take a few seconds..."
-#~ msgstr "Var tålmodig, detta kan ta några sekunder..."
 
 #: src/components/user/UserOnlineStateIndicator.tsx:30
 msgid "Busy"
@@ -330,9 +330,6 @@ msgstr "Kamera"
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:36
 msgid "Camera permission is required to take photos"
 msgstr "Kamerabehörighet krävs för att ta foton"
-
-#~ msgid "Can delete messages?"
-#~ msgstr "Kan radera meddelanden?"
 
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:29
@@ -350,16 +347,23 @@ msgstr "Avbryt"
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:41
 msgid "Cannot delete Space with channels. Please delete all channels first."
 msgstr ""
+"Kan inte ta bort Space med kanaler. Vänligen ta bort alla kanaler först."
 
 #. placeholder {0}: Math.min(10, remaining)
 #: src/hooks/business/ui/useCustomAssets.ts:101
 #: src/hooks/business/ui/useCustomAssets.ts:146
-msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
-msgstr "Kan inte ladda upp mer än {0} filer åt gången ({remaining} platser kvar)"
+msgid ""
+"Cannot upload more than {0} files at once ({remaining} slots remaining)"
+msgstr ""
+"Kan inte ladda upp mer än {0} filer åt gången ({remaining} platser kvar)"
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:53
-msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
-msgstr "Ändringar görs automatiskt, men den aktiva sidan kanske inte uppdateras. Uppdatera sidan för att tillämpa det nya språket."
+msgid ""
+"Changes are made automatically, but the active page may not be updated. "
+"Refresh the page to apply the new language."
+msgstr ""
+"Ändringar görs automatiskt, men den aktiva sidan kanske inte uppdateras. "
+"Uppdatera sidan för att tillämpa det nya språket."
 
 #: src/components/modals/ChannelEditorModal.tsx:118
 msgid "Channel Icon"
@@ -420,25 +424,30 @@ msgid "Click on the role name and tag to edit them."
 msgstr "Klicka på rollnamnet och taggen för att redigera dem."
 
 #: src/components/onboarding/Onboarding.tsx:161
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
-msgstr "Klicka på knappen nedan för att skapa en säkerhetskopia av din viktiga information, för när den väl är borta, är den borta för alltid. Du kan bli ombedd att autentisera igen."
+msgid ""
+"Click the button below to create a backup of your key info, because once "
+"it's gone, it's gone  forever. You may be prompted to authenticate again."
+msgstr ""
+"Klicka på knappen nedan för att skapa en säkerhetskopia av din viktiga "
+"information, för när den väl är borta, är den borta för alltid. Du kan bli "
+"ombedd att autentisera igen."
 
 #: src/components/onboarding/Onboarding.native.tsx:259
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
-msgstr "Klicka på knappen nedan för att skapa en säkerhetskopia av din viktiga information, för när den är borta, är den borta för alltid. Du kan bli ombedd att autentisera igen."
+msgid ""
+"Click the button below to create a backup of your key info, because once "
+"it's gone, it's gone forever. You may be prompted to authenticate again."
+msgstr ""
+"Klicka på knappen nedan för att skapa en säkerhetskopia av din viktiga "
+"information, för när den är borta, är den borta för alltid. Du kan bli "
+"ombedd att autentisera igen."
 
 #: src/components/ui/ClickToCopyContent.tsx:48
 msgid "Click to copy"
 msgstr "Klicka för att kopiera"
 
-#~ msgid "Close"
-#~ msgstr "Stäng"
-
-#~ msgid "Confirm"
-#~ msgstr "Bekräfta"
-
-#~ msgid "Confirm Deletion"
-#~ msgstr "Bekräfta radering"
+#: src/components/modals/AddSpaceModal.tsx:172
+msgid "Config Key"
+msgstr "Konfigurationsnyckel"
 
 #: src/components/Connecting.tsx:14
 msgid "Connecting"
@@ -469,9 +478,6 @@ msgstr "Kopierad!"
 msgid "Copy address"
 msgstr "Kopiera adress"
 
-#~ msgid "Copy address to clipboard"
-#~ msgstr "Kopiera adress till urklipp"
-
 #: src/components/ui/ClickToCopyContent.native.tsx:167
 #: src/hooks/platform/files/useFileDownload.native.ts:109
 msgid "Copy Failed"
@@ -490,26 +496,25 @@ msgstr "Kopiera nyckel och fortsätt"
 msgid "Copy message link"
 msgstr "Kopiera meddelandelänk"
 
-#~ msgid "Copy to clipboard"
-#~ msgstr "Kopiera till urklipp"
-
-#: src/components/context/MessageDB.tsx:5431
+#: src/components/context/MessageDB.tsx:5563
 msgid "Could not add Space"
 msgstr "Det gick inte att lägga till Space"
 
-#: src/components/context/MessageDB.tsx:5304
+#: src/components/message/InviteLink.tsx:25
+#: src/hooks/business/invites/useInviteProcessing.ts:28
+msgid "Could not fetch the Space details. Please try again."
+msgstr "Kunde inte hämta Space-detaljer. Vänligen försök igen."
+
+#: src/components/context/MessageDB.tsx:5436
 msgid "Could not obtain manifest for Space"
 msgstr "Det gick inte att hämta manifest för Space"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:22
+#: src/hooks/business/invites/useInviteProcessing.ts:24
 #: src/hooks/business/spaces/useInviteValidation.ts:112
 msgid "Could not verify invite"
 msgstr "Det gick inte att verifiera inbjudan"
 
-#: src/components/navbar/ExpandableNavMenu.tsx:29
-msgid "Create a new Space"
-msgstr "Skapa en ny Space"
-
+#: src/components/modals/AddSpaceModal.tsx:273
 #: src/components/modals/CreateSpaceModal.tsx:48
 msgid "Create a Space"
 msgstr "Skapa en Space"
@@ -531,27 +536,21 @@ msgstr "Skapar Space..."
 msgid "Current Invite Link"
 msgstr "Nuvarande inbjudningslänk"
 
-#~ msgid "dark"
-#~ msgstr "mörk"
-
 #: src/components/ui/ThemeRadioGroup.tsx:23
 msgid "Dark"
 msgstr "Mörk"
 
-#: src/components/context/MessageDB.tsx:5283
+#: src/components/context/MessageDB.tsx:5415
 msgid "decrypted space with no known config key"
 msgstr "dekrypterad space utan känd konfigurationsnyckel"
 
-#: src/components/context/MessageDB.tsx:5289
+#: src/components/context/MessageDB.tsx:5421
 msgid "Decrypted Space with no known hub key"
 msgstr "Dekrypterad Space utan känd hubbnyckel"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:177
+#: src/components/modals/SpaceSettingsModal/General.tsx:206
 msgid "Default Channel"
 msgstr "Standardkanal"
-
-#~ msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review Advanced Settings."
-#~ msgstr "Standardinställningar för Space ger den mest typiska chatupplevelsen, men för högre integritetsskydd, granska avancerade inställningar."
 
 #: src/hooks/business/messages/useMessageActions.ts:110
 msgid "delete"
@@ -586,7 +585,7 @@ msgstr "Ta bort nuvarande länk"
 msgid "Delete Group"
 msgstr "Ta bort grupp"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:419
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:516
 msgid "Delete Link"
 msgstr "Ta bort länk"
 
@@ -603,7 +602,7 @@ msgstr "Ta bort meddelande"
 msgid "Delete Messages"
 msgstr "Ta bort meddelanden"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:417
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:514
 msgid "Delete Public Invite Link"
 msgstr "Ta bort offentlig inbjudningslänk"
 
@@ -620,9 +619,6 @@ msgstr "Ta bort Space"
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:27
 msgid "Delete this space"
 msgstr "Ta bort den här space"
-
-#~ msgid "Deletes conversation keys, user profile information, and messages on your computer only. These messages will still exist on the recipent's computer, so they must also delete on their end to complete a full deletion."
-#~ msgstr "Tar bort konversationsnycklar, användarprofilinformation och meddelanden på din dator endast. Dessa meddelanden kommer fortfarande att finnas på mottagarens dator, så de måste också ta bort dem på sin sida för att slutföra en fullständig borttagning."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:35
 msgid "Desktop Notifications"
@@ -647,9 +643,6 @@ msgstr "Direktmeddelanden"
 msgid "Display Name"
 msgstr "Visningsnamn"
 
-#~ msgid "Do it!"
-#~ msgstr "Gör det!"
-
 #: src/components/ui/MobileDrawer.tsx:131
 msgid "Drawer"
 msgstr "Låda"
@@ -667,12 +660,6 @@ msgstr "Redigera kanal"
 msgid "Edit Group"
 msgstr "Redigera grupp"
 
-#~ msgid "Edit Profile"
-#~ msgstr "Redigera profil"
-
-#~ msgid "Edit Space"
-#~ msgstr "Redigera Space"
-
 #: src/components/message/EmojiPickerDrawer.tsx:40
 msgid "Emoji picker"
 msgstr "Emoji-väljare"
@@ -682,7 +669,7 @@ msgstr "Emoji-väljare"
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:52
+#: src/components/modals/UserSettingsModal/Privacy.tsx:54
 msgid "Enable sync"
 msgstr "Aktivera synkronisering"
 
@@ -698,6 +685,14 @@ msgstr "Ange en användares adress för att börja skicka meddelanden till dem."
 msgid "Enter Address Manually"
 msgstr "Ange adress manuellt"
 
+#: src/components/modals/AddSpaceModal.tsx:179
+msgid "Enter both Space ID and Config Key to validate"
+msgstr "Ange både Space-ID och konfigurationsnyckel för att validera"
+
+#: src/components/modals/AddSpaceModal.tsx:152
+msgid "Enter details manually"
+msgstr "Ange detaljer manuellt"
+
 #: src/components/context/WebsocketProvider.tsx:108
 msgid "Error processing inbound:"
 msgstr "Fel vid behandling av inkommande:"
@@ -709,9 +704,6 @@ msgstr "Fel vid behandling av utgående:"
 #: src/components/context/WebsocketProvider.tsx:137
 msgid "Error processing queue:"
 msgstr "Fel vid behandling av kö:"
-
-#~ msgid "Error reading file"
-#~ msgstr "Fel vid läsning av fil"
 
 #: src/services/notificationService.ts:77
 msgid "Error requesting notification permission:"
@@ -726,13 +718,19 @@ msgstr "Fel vid visning av avisering:"
 msgid "Existing Conversations"
 msgstr "Existerande konversationer"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:166
+#: src/components/modals/UserSettingsModal/Privacy.tsx:185
 msgid "Export"
 msgstr "Exportera"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:157
-msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
-msgstr "Exportera din nyckel till en fil genom att klicka på denna knapp. Dela inte denna fil med någon annan, annars kan de utge sig för att vara du eller stjäla din Spaces Apex-intäkter."
+#: src/components/modals/UserSettingsModal/Privacy.tsx:176
+msgid ""
+"Export your key to a file by clicking this button. Do not share this file "
+"with anyone else or they can impersonate you or steal your Space's Apex "
+"earnings."
+msgstr ""
+"Exportera din nyckel till en fil genom att klicka på denna knapp. Dela inte "
+"denna fil med någon annan, annars kan de utge sig för att vara du eller "
+"stjäla din Spaces Apex-intäkter."
 
 #: src/hooks/platform/files/useFileDownload.native.ts:110
 msgid "Failed to copy to clipboard. Please try again."
@@ -750,26 +748,17 @@ msgstr "Misslyckades att öppna bildväljaren"
 msgid "Failed to parse WebSocket message:"
 msgstr "Misslyckades med att analysera WebSocket-meddelande:"
 
-#~ msgid "Failed to save settings. Please try again."
-#~ msgstr "Misslyckades med att spara inställningar. Försök igen."
-
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:147
 msgid "Failed to select document"
 msgstr "Misslyckades att välja dokument"
 
-#: src/hooks/business/spaces/useInviteManagement.ts:137
+#: src/hooks/business/spaces/useInviteManagement.ts:142
 msgid "Failed to send invite. Please try again."
-msgstr ""
+msgstr "Misslyckades med att skicka inbjudan. Vänligen försök igen."
 
 #: src/utils/imageProcessing/errors.ts:16
 msgid "File cannot be larger than {maxSize}"
 msgstr "Fil får inte vara större än {maxSize}"
-
-#~ msgid "File cannot be larger than 1MB"
-#~ msgstr "Fil får inte vara större än 1MB"
-
-#~ msgid "File cannot be larger than 256KB"
-#~ msgstr "Fil får inte vara större än 256KB"
 
 #: src/hooks/business/ui/useCustomAssets.ts:139
 #: src/hooks/business/ui/useFileUpload.ts:54
@@ -778,9 +767,6 @@ msgstr "Fil får inte vara större än {maxSize}"
 #: src/hooks/business/user/useProfileImage.ts:49
 msgid "File cannot be larger than 25MB"
 msgstr "Fil får inte vara större än 25MB"
-
-#~ msgid "File cannot be larger than 2MB"
-#~ msgstr "Fil kan inte vara större än 2MB"
 
 #: src/hooks/business/messages/useMessageComposer.ts:66
 msgid "File cannot be larger than 50MB"
@@ -818,7 +804,19 @@ msgstr "Filstorlek för liten. Minimi storlek: {minSizeMB}"
 msgid "File validation failed. Please try again."
 msgstr "Filvalidering misslyckades. Försök igen."
 
-#: src/components/context/MessageDB.tsx:3045
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:343
+msgid "Fix"
+msgstr "Fix"
+
+#: src/components/modals/SpaceSettingsModal/General.tsx:121
+msgid "Fixes"
+msgstr "Fixar"
+
+#: src/components/modals/SpaceSettingsModal/General.tsx:135
+msgid "Fixing..."
+msgstr "Fixar..."
+
+#: src/components/context/MessageDB.tsx:3186
 msgid "general"
 msgstr "allmän"
 
@@ -827,36 +825,28 @@ msgstr "allmän"
 msgid "General"
 msgstr "Allmän"
 
-#: src/components/context/MessageDB.tsx:3046
+#: src/components/context/MessageDB.tsx:3187
 msgid "General Chat"
 msgstr "Allmän chatt"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:405
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:502
 msgid "Generate Link"
 msgstr "Generera länk"
 
-#~ msgid "Generate New Invite Link"
-#~ msgstr "Generera ny inbjudningslänk"
-
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:241
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:405
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:502
 msgid "Generate New Link"
 msgstr "Generera ny länk"
 
-#~ msgid "Generate New Public Invite Link"
-#~ msgstr "Generera ny offentlig inbjudningslänk"
-
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:183
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:399
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:496
 msgid "Generate Public Invite Link"
 msgstr "Generera offentlig inbjudningslänk"
 
-#~ msgid "Generating link..."
-#~ msgstr "Genererar länk..."
-
 #: src/utils/imageProcessing/errors.ts:20
 msgid "GIF files cannot be larger than {maxSize}. Please use a smaller GIF."
-msgstr "GIF-filer får inte vara större än {maxSize}. Vänligen använd en mindre GIF."
+msgstr ""
+"GIF-filer får inte vara större än {maxSize}. Vänligen använd en mindre GIF."
 
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:35
 msgid "Go to conversation"
@@ -886,16 +876,26 @@ msgstr "Jag har sparat det"
 #: src/components/onboarding/Onboarding.tsx:314
 #: src/components/onboarding/Onboarding.tsx:321
 msgid "If skipped, you'll get the default profile image and can set it later"
-msgstr "Om du hoppar över det får du den förvalda profilbilden och kan ställa in den senare"
+msgstr ""
+"Om du hoppar över det får du den förvalda profilbilden och kan ställa in den"
+" senare"
 
 #: src/components/onboarding/Onboarding.tsx:147
-msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
-msgstr "Om du rensar din webbläsares lagring eller byter webbläsare kan dina gamla meddelanden och nycklar försvinna."
+msgid ""
+"If you clear your browser storage or switch browsers, your old messages and "
+"keys may disappear."
+msgstr ""
+"Om du rensar din webbläsares lagring eller byter webbläsare kan dina gamla "
+"meddelanden och nycklar försvinna."
 
 #: src/components/onboarding/Onboarding.native.tsx:254
 #: src/components/onboarding/Onboarding.tsx:154
-msgid "If you uninstall the app from your device, you will lose your old messages and keys."
-msgstr "Om du avinstallerar appen från din enhet kommer du att förlora dina gamla meddelanden och nycklar."
+msgid ""
+"If you uninstall the app from your device, you will lose your old messages "
+"and keys."
+msgstr ""
+"Om du avinstallerar appen från din enhet kommer du att förlora dina gamla "
+"meddelanden och nycklar."
 
 #: src/components/onboarding/Login.native.tsx:115
 #: src/components/onboarding/Login.tsx:76
@@ -917,17 +917,19 @@ msgstr "ogiltig adress för signatur"
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:97
 #: src/hooks/business/validation/useAddressValidation.ts:98
-msgid "Invalid address format. Addresses must use valid alphanumeric characters."
-msgstr "Ogiltigt adressformat. Adresser måste använda giltiga alfanumeriska tecken."
+msgid ""
+"Invalid address format. Addresses must use valid alphanumeric characters."
+msgstr ""
+"Ogiltigt adressformat. Adresser måste använda giltiga alfanumeriska tecken."
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:63
 msgid "Invalid file type. Please check accepted file formats."
 msgstr "Ogiltig filtyp. Kontrollera accepterade filformat."
 
-#: src/components/context/MessageDB.tsx:4539
-#: src/components/context/MessageDB.tsx:4576
-#: src/components/context/MessageDB.tsx:4582
-#: src/components/context/MessageDB.tsx:4675
+#: src/components/context/MessageDB.tsx:4690
+#: src/components/context/MessageDB.tsx:4701
+#: src/components/context/MessageDB.tsx:4738
+#: src/components/context/MessageDB.tsx:4809
 msgid "invalid link"
 msgstr "ogiltig länk"
 
@@ -936,12 +938,12 @@ msgstr "ogiltig länk"
 msgid "Invalid message ID"
 msgstr "Ogiltigt meddelande-ID"
 
-#: src/components/context/MessageDB.tsx:5048
+#: src/components/context/MessageDB.tsx:5180
 msgid "invalid message type"
 msgstr "ogiltig meddelandetyp"
 
-#: src/components/context/MessageDB.tsx:4544
-#: src/components/context/MessageDB.tsx:4638
+#: src/components/context/MessageDB.tsx:4706
+#: src/components/context/MessageDB.tsx:4772
 #: src/hooks/business/spaces/useInviteValidation.ts:79
 msgid "invalid response"
 msgstr "ogiltigt svar"
@@ -955,6 +957,7 @@ msgstr "Inbjudningar"
 msgid "Join"
 msgstr "Gå med"
 
+#: src/components/modals/AddSpaceModal.tsx:249
 #: src/components/modals/JoinSpaceModal.tsx:78
 #: src/components/modals/JoinSpaceModal.tsx:98
 #: src/components/modals/JoinSpaceModal.tsx:144
@@ -965,9 +968,10 @@ msgstr "Gå med i Space"
 msgid "Joined"
 msgstr "Medlem"
 
+#: src/components/modals/AddSpaceModal.tsx:125
 #: src/components/modals/JoinSpaceModal.tsx:88
 msgid "Joining Space..."
-msgstr "Går med i Espacio..."
+msgstr "Går med i Space..."
 
 #: src/hooks/business/invites/useInviteUI.ts:19
 msgid "Joining..."
@@ -978,14 +982,11 @@ msgstr "Går med..."
 msgid "Jump"
 msgstr "Hoppa"
 
-#~ msgid "Jump to message"
-#~ msgstr "Hoppa till meddelande"
-
 #: src/hooks/platform/files/useFileDownload.native.ts:96
 msgid "Key Copied!"
 msgstr "Nyckel kopierad!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:154
+#: src/components/modals/UserSettingsModal/Privacy.tsx:173
 msgid "Key Export"
 msgstr "Nyckelexport"
 
@@ -998,7 +999,7 @@ msgid "Key Saved"
 msgstr "Nyckel sparad"
 
 #: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:203
+#: src/components/user/UserProfile.tsx:204
 msgid "Kick User"
 msgstr "Kicka användare"
 
@@ -1009,6 +1010,10 @@ msgstr "Sparka användare"
 #: src/components/modals/KickUserModal.tsx:86
 msgid "Kick!"
 msgstr "Sparka!"
+
+#: src/components/user/UserProfile.tsx:204
+msgid "Kicked!"
+msgstr "Utkastad!"
 
 #: src/components/modals/KickUserModal.tsx:70
 msgid "Kicking..."
@@ -1027,21 +1032,19 @@ msgstr "Lämna {0}"
 msgid "Leave Space"
 msgstr "Lämna Space"
 
-#~ msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than {0}"
-#~ msgstr "Låt dina vänner veta vem du är! Välj ett vänligt namn att visa i dina konversationer, något lättare att läsa än {0}"
-
 #: src/components/onboarding/Onboarding.native.tsx:312
 #: src/components/onboarding/Onboarding.tsx:196
-msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
-msgstr "Låt dina vänner veta vem du är! Välj ett vänligt namn att visa i dina konversationer, något som är lättare att läsa än:"
+msgid ""
+"Let your friends know who you are! Pick a friendly name to display in your "
+"conversations, something easier to read than:"
+msgstr ""
+"Låt dina vänner veta vem du är! Välj ett vänligt namn att visa i dina "
+"konversationer, något som är lättare att läsa än:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
 #: src/components/onboarding/Onboarding.tsx:347
 msgid "Let's gooooooooo"
 msgstr "Låt oss gåooooo"
-
-#~ msgid "light"
-#~ msgstr "ljus"
 
 #: src/components/ui/ThemeRadioGroup.tsx:18
 msgid "Light"
@@ -1055,30 +1058,36 @@ msgstr "Laddar fastsatta meddelanden..."
 msgid "Looking up user..."
 msgstr "Letar upp användare..."
 
-#: src/components/Maintenance.native.tsx:42
-#: src/components/Maintenance.tsx:14
+#: src/components/modals/AddSpaceModal.tsx:202
+msgid "Lookup"
+msgstr "Sök"
+
+#: src/components/Maintenance.native.tsx:42 src/components/Maintenance.tsx:14
 msgid "Maintenance in Progress"
 msgstr "Underhåll pågår"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
 #: src/components/onboarding/Onboarding.tsx:242
-msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
-msgstr "Gör ditt konto unikt – ställ in en kontaktbild. Denna information ges endast till de Spaces du går med i."
+msgid ""
+"Make your account uniquely yours – set a contact photo. This information is "
+"only provided to the Spaces you join."
+msgstr ""
+"Gör ditt konto unikt – ställ in en kontaktbild. Denna information ges endast"
+" till de Spaces du går med i."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
 msgstr "Hantera inställningar för skrivbordsaviseringar för nya meddelanden."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:37
-msgid "Manage devices, and privacy conditions for messaging and synchronization."
-msgstr "Hantera enheter och sekretessvillkor för meddelanden och synkronisering."
+#: src/components/modals/UserSettingsModal/Privacy.tsx:39
+msgid ""
+"Manage devices, and privacy conditions for messaging and synchronization."
+msgstr ""
+"Hantera enheter och sekretessvillkor för meddelanden och synkronisering."
 
 #: src/hooks/platform/files/useFileDownload.native.ts:78
 msgid "Manual Backup Required"
 msgstr "Manuell säkerhetskopiering krävs"
-
-#~ msgid "Max file size: 256kB"
-#~ msgstr "Max filstorlek: 256kB"
 
 #: src/components/direct/DirectMessage.tsx:419
 #: src/components/space/Channel.tsx:503
@@ -1090,8 +1099,11 @@ msgid "Message actions"
 msgstr "Meddelandeåtgärder"
 
 #: src/components/message/Message.tsx:531
-msgid "Message does not have a valid signature, this may not be from the sender"
-msgstr "Meddelandet har inte en giltig signatur, detta kanske inte är från avsändaren"
+msgid ""
+"Message does not have a valid signature, this may not be from the sender"
+msgstr ""
+"Meddelandet har inte en giltig signatur, detta kanske inte är från "
+"avsändaren"
 
 #: src/components/message/MessageComposer.tsx:391
 msgid "Messages are NOT signed!"
@@ -1117,13 +1129,9 @@ msgstr "Inga meddelanden hittades"
 msgid "No pinned messages yet"
 msgstr "Inga fastsatta meddelanden än"
 
-#: src/components/space/Channel.tsx:323
-#: src/components/space/Channel.tsx:649
+#: src/components/space/Channel.tsx:323 src/components/space/Channel.tsx:649
 msgid "No users found!"
 msgstr "Inga användare hittades!"
-
-#~ msgid "Non-repudiability"
-#~ msgstr "Ej avvisande"
 
 #: src/components/space/RolePreview.tsx:39
 msgid "None"
@@ -1138,12 +1146,11 @@ msgstr "Aviseringstillstånd beviljades inte"
 msgid "Notifications"
 msgstr "Aviseringar"
 
-#~ msgid "Notifications are blocked. Please enable them in your browser settings for this site."
-#~ msgstr "Aviseringar blockeras. Vänligen aktivera dem i dina webbläsarinställningar för denna webbplats."
-
 #: src/components/modals/UserSettingsModal/Notifications.tsx:66
-msgid "Notifications are blocked. Please enable them in your browser settings."
-msgstr "Aviseringar blockeras. Vänligen aktivera dem i dina webbläsarinställningar."
+msgid ""
+"Notifications are blocked. Please enable them in your browser settings."
+msgstr ""
+"Aviseringar blockeras. Vänligen aktivera dem i dina webbläsarinställningar."
 
 #: src/services/notificationService.ts:55
 #: src/services/notificationService.ts:180
@@ -1173,6 +1180,18 @@ msgstr "Online"
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "Öppna video på YouTube"
+
+#: src/components/modals/AddSpaceModal.tsx:137
+msgid "Paste an invite link"
+msgstr "Klistra in en inbjudningslänk"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:152
+msgid "Pending"
+msgstr "Väntande"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:138
+msgid "Pending removal - click Save to confirm"
+msgstr "Väntande borttagning - klicka på Spara för att bekräfta"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:121
 #: src/components/space/RolePreview.tsx:34
@@ -1235,7 +1254,8 @@ msgstr "Nåla till toppen"
 msgid "Pinned"
 msgstr "Fastsatt"
 
-#. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
+#. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
+#. message.pinnedBy
 #: src/components/message/Message.tsx:518
 msgid "Pinned by {0}"
 msgstr "Fastsatt av {0}"
@@ -1248,20 +1268,17 @@ msgstr "Fastsatta meddelanden"
 msgid "Pinned!"
 msgstr "Fastsatt!"
 
-#~ msgid "PNG, JPG or JPEG • Max 2MB"
-#~ msgstr "PNG, JPG eller JPEG • Max 2MB"
-
 #: src/components/onboarding/Onboarding.native.tsx:180
 #: src/components/onboarding/Onboarding.tsx:121
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG eller JPEG • Optimal förhållande 1:1"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:198
+#: src/components/modals/SpaceSettingsModal/General.tsx:227
 msgid "Privacy Settings"
 msgstr "Integritetsinställningar"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:35
+#: src/components/modals/UserSettingsModal/Privacy.tsx:37
 msgid "Privacy/Security"
 msgstr "Integritet/Säkerhet"
 
@@ -1273,36 +1290,51 @@ msgstr "Privat nyckel sparad i vald mapp"
 msgid "Processing image... This may take a moment for large files."
 msgstr "Bearbetar bild... Detta kan ta en stund för stora filer."
 
-#~ msgid "Public Invite Link"
-#~ msgstr "Offentlig inbjudningslänk"
-
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:128
 msgid "Public Invite Links"
 msgstr "Offentliga inbjudningslänkar"
 
-#~ msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
-#~ msgstr "Offentliga inbjudningslänkar tillåter alla med tillgång till länken att gå med i din Space. Förstå riskerna med att aktivera detta, och till vem och var du delar länken."
-
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:172
-msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
-msgstr "Offentliga inbjudningslänkar tillåter alla med tillgång till länken att gå med i ditt Space. Tänk på vem du delar länken med och var du postar den."
+msgid ""
+"Public invite links allow anyone with access to the link to join your Space."
+" Consider who you share the link with and where you post it."
+msgstr ""
+"Offentliga inbjudningslänkar tillåter alla med tillgång till länken att gå "
+"med i ditt Space. Tänk på vem du delar länken med och var du postar den."
 
 #: src/components/Maintenance.tsx:28
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
-msgstr "Quorum-infrastruktur deployeras för närvarande. Vänligen försök att uppdatera, och kolla <0>https://status.quilibrium.com/</0> för uppdateringar."
+msgid ""
+"Quorum infrastructure is being deployed at this time. Please try refreshing,"
+" and check <0>https://status.quilibrium.com/</0> for updates."
+msgstr ""
+"Quorum-infrastruktur deployeras för närvarande. Vänligen försök att "
+"uppdatera, och kolla <0>https://status.quilibrium.com/</0> för "
+"uppdateringar."
 
 #: src/components/Maintenance.native.tsx:47
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
+msgid ""
+"Quorum infrastructure is being deployed at this time. Please try refreshing."
 msgstr "Quorum-infrastruktur deployeras för närvarande. Försök att uppdatera."
 
 #: src/components/onboarding/Onboarding.native.tsx:249
 #: src/components/onboarding/Onboarding.tsx:135
-msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
-msgstr "Quorum är peer-to-peer och end-to-end krypterat. Detta betyder att dina meddelanden förblir privata, men lika viktigt, de lever endast på nätverket under den tid som krävs för att nå dig och dina mottagare."
+msgid ""
+"Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
+"stay private, but equally important, they only live on the network for the "
+"time required to reach you and your recipients."
+msgstr ""
+"Quorum är peer-to-peer och end-to-end krypterat. Detta betyder att dina "
+"meddelanden förblir privata, men lika viktigt, de lever endast på nätverket "
+"under den tid som krävs för att nå dig och dina mottagare."
 
 #: src/components/context/RegistrationPersister.tsx:272
-msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
-msgstr "Quorum laddades medan webbläsaren inte var i fokus eller en begäran om passnyckel avslogs. Vänligen auktorisera om för att få tillgång till dina meddelanden."
+msgid ""
+"Quorum was loaded while the browser was not in focus or a passkey request "
+"was rejected. Please reauthorize to access your messages."
+msgstr ""
+"Quorum laddades medan webbläsaren inte var i fokus eller en begäran om "
+"passnyckel avslogs. Vänligen auktorisera om för att få tillgång till dina "
+"meddelanden."
 
 #: src/components/modals/ChannelEditorModal.tsx:141
 msgid "Read only"
@@ -1320,17 +1352,16 @@ msgstr "Redo att börja en verkligt privat konversation?"
 msgid "Reauthorize"
 msgstr "Auktorisera om"
 
-#: src/components/context/MessageDB.tsx:5253
+#: src/components/context/MessageDB.tsx:5385
 msgid "received config with invalid signature!"
 msgstr "mottagen konfiguration med ogiltig signatur!"
 
-#: src/components/Maintenance.native.tsx:73
-#: src/components/Maintenance.tsx:52
+#: src/components/Maintenance.native.tsx:73 src/components/Maintenance.tsx:52
 #: src/components/modals/UserSettingsModal/Appearance.tsx:61
 msgid "Refresh"
 msgstr "Uppdatera"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:132
+#: src/components/modals/UserSettingsModal/Privacy.tsx:152
 msgid "Remove"
 msgstr "Ta bort"
 
@@ -1339,23 +1370,22 @@ msgstr "Ta bort"
 msgid "Reply"
 msgstr "Svara"
 
-#~ msgid "Repudiability"
-#~ msgstr "Repudiabilitet"
-
-#~ msgid "Repudiability is a setting that makes conversations in this Space unverifiable as originating from the named sender. This can be useful in sensitive situations, but it also means others may forge messages that appear to come from you."
-#~ msgstr "Repudiabilitet är en inställning som gör att konversationer i detta Space inte kan verifieras som härstammande från den namngivna avsändaren. Detta kan vara användbart i känsliga situationer, men det innebär också att andra kan förfalska meddelanden som verkar komma från dig."
-
 #: src/components/modals/CreateSpaceModal.tsx:115
-#: src/components/modals/SpaceSettingsModal/General.tsx:204
+#: src/components/modals/SpaceSettingsModal/General.tsx:233
 msgid "Require Message Signing"
 msgstr "Kräv meddelandesignering"
 
 #: src/components/modals/CreateSpaceModal.tsx:119
-msgid "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
-msgstr "Kräv att meddelanden som skickas i detta Space ska signeras av avsändaren. Tekniskt sett gör detta meddelandena i detta Space icke-repudiabla."
+msgid ""
+"Require messages sent in this Space to be signed by the sender. Technically "
+"speaking, this makes the messages in this Space non-repudiable."
+msgstr ""
+"Kräv att meddelanden som skickas i detta Space ska signeras av avsändaren. "
+"Tekniskt sett gör detta meddelandena i detta Space icke-repudiabla."
 
-#~ msgid "Requirements:"
-#~ msgstr "Krav:"
+#: src/components/modals/AddSpaceModal.tsx:256
+msgid "Reset"
+msgstr "Återställ"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:16
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:42
@@ -1366,13 +1396,10 @@ msgstr "Roller"
 msgid "Save"
 msgstr "Spara"
 
-#~ msgid "Save All Changes"
-#~ msgstr "Spara alla ändringar"
-
 #: src/components/modals/ChannelEditorModal.tsx:189
 #: src/components/modals/GroupEditorModal.tsx:94
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:386
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:236
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:483
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:237
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Spara ändringar"
@@ -1382,7 +1409,8 @@ msgstr "Spara ändringar"
 msgid "Save Contact Photo"
 msgstr "Spara kontaktfoto"
 
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:145
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:472
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:226
 msgid "Save Failed"
 msgstr "Spara misslyckades"
 
@@ -1395,7 +1423,7 @@ msgstr "Spara privat nyckel"
 msgid "Save User Key"
 msgstr "Spara användarnyckel"
 
-#: src/components/context/MessageDB.tsx:5211
+#: src/components/context/MessageDB.tsx:5343
 msgid "saved config is out of date"
 msgstr "sparad konfiguration är föråldrad"
 
@@ -1410,21 +1438,13 @@ msgstr "Sparar..."
 msgid "Search failed: {0}"
 msgstr "Sökningen misslyckades: {0}"
 
-#: src/hooks/useSearchContext.native.ts:102
-#: src/hooks/useSearchContext.ts:94
+#: src/hooks/useSearchContext.native.ts:102 src/hooks/useSearchContext.ts:94
 msgid "Search here"
 msgstr "Sök här"
 
-#~ msgid "Search in direct messages"
-#~ msgstr "Sök i direktmeddelanden"
-
-#: src/hooks/useSearchContext.native.ts:100
-#: src/hooks/useSearchContext.ts:92
+#: src/hooks/useSearchContext.native.ts:100 src/hooks/useSearchContext.ts:92
 msgid "Search in this Space"
 msgstr "Sök i detta Space"
-
-#~ msgid "Search messages"
-#~ msgstr "Sök meddelanden"
 
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
@@ -1434,7 +1454,7 @@ msgstr "Sök meddelanden..."
 msgid "Searching..."
 msgstr "Söker..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:43
+#: src/components/modals/UserSettingsModal/Privacy.tsx:45
 msgid "Security"
 msgstr "Säkerhet"
 
@@ -1444,14 +1464,20 @@ msgid "Select an option"
 msgstr "Välj ett alternativ"
 
 #: src/components/modals/ChannelEditorModal.tsx:160
-msgid "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
-msgstr "Välj vilken befintlig roll som chefer för denna kanal. Chefer har rätt att posta, radera och nåla på ALLA meddelanden som standard. Om inga chefer väljs kan endast Space-ägaren hantera kanalen."
+msgid ""
+"Select any existing role as managers for this channel. Managers have post, "
+"delete, and pin permissions on ANY message by default. If no managers are "
+"selected, only the Space owner can manage the channel."
+msgstr ""
+"Välj vilken befintlig roll som chefer för denna kanal. Chefer har rätt att "
+"posta, radera och nåla på ALLA meddelanden som standard. Om inga chefer "
+"väljs kan endast Space-ägaren hantera kanalen."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:90
 msgid "Select conversation"
 msgstr "Välj konversation"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:192
+#: src/components/modals/SpaceSettingsModal/General.tsx:221
 msgid "Select default channel"
 msgstr "Välj standardkanal"
 
@@ -1480,8 +1506,12 @@ msgid "Send Invite"
 msgstr "Skicka inbjudan"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:56
-msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
-msgstr "Skicka inbjudningar till personer du tidigare har haft konversationer med. En inbjudningsknapp kommer att visas i deras inkorg."
+msgid ""
+"Send invites to people you've previously had conversations with. An invite "
+"button will appear in their inbox."
+msgstr ""
+"Skicka inbjudningar till personer du tidigare har haft konversationer med. "
+"En inbjudningsknapp kommer att visas i deras inkorg."
 
 #: src/components/user/UserProfile.tsx:194
 msgid "Send Message"
@@ -1501,8 +1531,14 @@ msgid "Settings"
 msgstr "Inställningar"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:39
-msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
-msgstr "Visa skrivbordsaviseringar när du får nya meddelanden medan Quorum är i bakgrunden. Din webbläsare kommer att be om tillstånd när du aktiverar denna funktion."
+msgid ""
+"Show desktop notifications when you receive new messages while Quorum is in "
+"the background. Your browser will ask for permission when you enable this "
+"feature."
+msgstr ""
+"Visa skrivbordsaviseringar när du får nya meddelanden medan Quorum är i "
+"bakgrunden. Din webbläsare kommer att be om tillstånd när du aktiverar denna"
+" funktion."
 
 #: src/components/direct/EmptyDirectMessage.tsx:78
 msgid "show home screen"
@@ -1513,28 +1549,26 @@ msgstr "visa hemskärm"
 msgid "Skip Adding Photo"
 msgstr "Hoppa över att lägga till foto"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:116
+#: src/components/modals/SpaceSettingsModal/General.tsx:145
 msgid "Space Banner"
 msgstr "Space-banner"
 
-#~ msgid "Space Icon Attachment"
-#~ msgstr "Space-ikonbilaga"
+#: src/components/modals/AddSpaceModal.tsx:164
+msgid "Space ID"
+msgstr "Space-ID"
 
 #: src/components/modals/CreateSpaceModal.tsx:85
-#: src/components/modals/SpaceSettingsModal/General.tsx:108
+#: src/components/modals/SpaceSettingsModal/General.tsx:110
 msgid "Space Name"
 msgstr "Namn på Space"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:27
 msgid "Space Settings"
-msgstr "Espacio-inställningar"
+msgstr "Space-inställningar"
 
 #: src/components/search/SearchResults.tsx:63
 msgid "Start typing to search messages..."
 msgstr "Börja skriva för att söka meddelanden..."
-
-#~ msgid "Start with a message to a friend. Click on the add button next to the direct messages list."
-#~ msgstr "Börja med ett meddelande till en vän. Klicka på lägg till-knappen bredvid listan med direkta meddelanden."
 
 #: src/components/user/UserProfileEdit.tsx:102
 msgid "Status goes here"
@@ -1554,11 +1588,17 @@ msgstr "Klippor"
 msgid "Successfully sent invite to {0}"
 msgstr "Framgångsrikt skickad inbjudan till {0}"
 
-#~ msgid "Supported types: PNG, JPG, GIF"
-#~ msgstr "Stödda typer: PNG, JPG, GIF"
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:346
+msgid "Sync Kick Status"
+msgstr "Synkronisera kickstatus"
 
-#~ msgid "system"
-#~ msgstr "system"
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:346
+msgid ""
+"Sync kick status for previously kicked users. This verifies kicks without "
+"posting visible messages."
+msgstr ""
+"Synkronisera kickstatus för tidigare utkastade användare. Detta verifierar "
+"utkast utan att posta synliga meddelanden."
 
 #: src/components/ui/ThemeRadioGroup.tsx:28
 msgid "System"
@@ -1572,15 +1612,26 @@ msgstr "Tryck för att kopiera"
 msgid "Tap to select"
 msgstr "Tryck för att välja"
 
-#: src/components/message/InviteLink.tsx:22
+#: src/components/message/InviteLink.tsx:21
+#: src/components/modals/AddSpaceModal.tsx:69
+#: src/hooks/business/invites/useInviteProcessing.ts:26
+msgid "The invite link format is invalid."
+msgstr "Inbjudningslänkens format är ogiltigt."
+
+#: src/components/message/InviteLink.tsx:33
 msgid "The invite link has expired or is invalid."
 msgstr "Inbjudningslänken har gått ut eller är ogiltig."
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:30
-msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
+msgid ""
+"This action cannot be undone and will permanently remove all the Space "
+"settings. To delete the Space, you must first delete all Channels."
 msgstr ""
+"Denna åtgärd kan inte ångras och kommer permanent att ta bort alla "
+"inställningar för Space. För att ta bort Space måste du först ta bort "
+"alla kanaler."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:143
+#: src/components/modals/UserSettingsModal/Privacy.tsx:161
 msgid "This device"
 msgstr "Denna enhet"
 
@@ -1590,43 +1641,72 @@ msgid "This information is only provided to the Spaces you join."
 msgstr "Denna information tillhandahålls endast till de Spaces du går med i."
 
 #: src/components/modals/UserSettingsModal/General.tsx:106
-msgid "This is your public address and is safe to share with anyone you want to interact with."
-msgstr "Detta är din offentliga adress och är säker att dela med vem som helst du vill interagera med."
+msgid ""
+"This is your public address and is safe to share with anyone you want to "
+"interact with."
+msgstr ""
+"Detta är din offentliga adress och är säker att dela med vem som helst du "
+"vill interagera med."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:202
-msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
-msgstr "Denna länk kommer inte att gå ut, men du kan generera en ny när som helst, vilket kommer att ogiltigförklara den gamla länken."
-
-#~ msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
-#~ msgstr "Denna länk kommer inte att gå ut, men du kan generera en ny när som helst, vilket kommer att ogiltigförklara den gamla länken. Nuvarande Space-medlemmar kommer inte att tas bort från Space."
-
-#: src/hooks/business/spaces/useInviteManagement.ts:121
-msgid "This user is already a member of this space."
+msgid ""
+"This link will not expire, but you can generate a new one at any time, which"
+" will invalidate the old link."
 msgstr ""
+"Denna länk kommer inte att gå ut, men du kan generera en ny när som helst, "
+"vilket kommer att ogiltigförklara den gamla länken."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:403
-msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
-msgstr "Detta kommer att skapa en offentlig inbjudningslänk som vem som helst kan använda för att gå med i ditt Espacio. Tänk på vem du delar denna länk med."
+#: src/components/context/MessageDB.tsx:4819
+#: src/components/message/InviteLink.tsx:31
+msgid "This public invite link is no longer valid."
+msgstr "Denna offentliga inbjudningslänk är inte längre giltig."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:402
-msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
-msgstr "Detta kommer att generera en ny offentlig inbjudningslänk och ogiltigförklara den nuvarande. Vem som helst med den gamla länken kommer inte längre att kunna använda den."
+#: src/hooks/business/spaces/useInviteManagement.ts:126
+msgid "This user is already a member of this space."
+msgstr "Denna användare är redan medlem i detta Space."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:418
-msgid "This will permanently delete the current public invite link. Anyone who has this link will no longer be able to use it to join your Space."
-msgstr "Detta kommer permanent att ta bort den nuvarande offentliga inbjudningslänken. Vem som helst som har denna länk kommer inte längre att kunna använda den för att gå med i ditt Espacio."
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:500
+msgid ""
+"This will create a public invite link that anyone can use to join your "
+"Space. Consider who you share this link with."
+msgstr ""
+"Detta kommer att skapa en offentlig inbjudningslänk som vem som helst kan "
+"använda för att gå med i ditt Space. Tänk på vem du delar denna länk med."
+
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:499
+msgid ""
+"This will generate a new public invite link and invalidate the current one. "
+"Anyone with the old link will no longer be able to use it."
+msgstr ""
+"Detta kommer att generera en ny offentlig inbjudningslänk och "
+"ogiltigförklara den nuvarande. Vem som helst med den gamla länken kommer "
+"inte längre att kunna använda den."
+
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:515
+msgid ""
+"This will permanently delete the current public invite link. Anyone who has "
+"this link will no longer be able to use it to join your Space."
+msgstr ""
+"Detta kommer permanent att ta bort den nuvarande offentliga "
+"inbjudningslänken. Vem som helst som har denna länk kommer inte längre att "
+"kunna använda den för att gå med i ditt Space."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:77
-msgid "TIP: Hold down shift when clicking {protipAction} to bypass this confirmation entirely."
-msgstr "TIPS: Håll ner shift när du klickar {protipAction} för att helt kringgå denna bekräftelse."
-
-#~ msgid "To disable notifications, please change the notification settings in your browser for this site."
-#~ msgstr "För att inaktivera aviseringar, vänligen ändra aviseringarnas inställningar i din webbläsare för denna webbplats."
+msgid ""
+"TIP: Hold down shift when clicking {protipAction} to bypass this "
+"confirmation entirely."
+msgstr ""
+"TIPS: Håll ner shift när du klickar {protipAction} för att helt kringgå "
+"denna bekräftelse."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:72
-msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
-msgstr "För att inaktivera aviseringar, vänligen ändra inställningen i din webbläsarinställningar. Aviseringar kan inte inaktiveras programmässigt."
+msgid ""
+"To disable notifications, please change the setting in your browser "
+"settings. Notifications cannot be disabled programmatically."
+msgstr ""
+"För att inaktivera aviseringar, vänligen ändra inställningen i din "
+"webbläsarinställningar. Aviseringar kan inte inaktiveras programmässigt."
 
 #: src/components/message/Message.tsx:209
 msgid "Today at {timeFormatted}"
@@ -1635,9 +1715,6 @@ msgstr "I dag kl. {timeFormatted}"
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:65
 msgid "Too many files selected. Please select fewer files."
 msgstr "För många filer valda. Vänligen välj färre filer."
-
-#~ msgid "Try Again"
-#~ msgstr "Försök igen"
 
 #: src/components/search/SearchResults.tsx:92
 msgid "Try different keywords or check your spelling"
@@ -1657,15 +1734,20 @@ msgstr "Kunde inte komprimera bild. Vänligen använd en mindre bild."
 
 #: src/hooks/business/ui/useCustomAssets.ts:234
 msgid "Unable to compress sticker images. Please use smaller images."
-msgstr "Kunde inte komprimera klistermärkesbilder. Vänligen använd mindre bilder."
+msgstr ""
+"Kunde inte komprimera klistermärkesbilder. Vänligen använd mindre bilder."
 
 #: src/components/ui/ClickToCopyContent.native.tsx:167
 msgid "Unable to copy to clipboard"
 msgstr "Kunde inte kopiera till urklipp"
 
-#: src/components/context/MessageDB.tsx:3324
-msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
-msgstr "Kunde inte lämna espacio på grund av ofullständig konfiguration. Space-data kan vara korrupt."
+#: src/components/context/MessageDB.tsx:3482
+msgid ""
+"Unable to leave space due to incomplete configuration. The space data may be"
+" corrupted."
+msgstr ""
+"Kunde inte lämna space på grund av ofullständig konfiguration. Space-data "
+"kan vara korrupt."
 
 #: src/utils/imageProcessing/errors.ts:33
 msgid "Unable to process emoji image. Please use a smaller image."
@@ -1677,7 +1759,8 @@ msgstr "Kunde inte bearbeta bild. Vänligen använd en mindre bild."
 
 #: src/utils/imageProcessing/errors.ts:36
 msgid "Unable to process sticker image. Please use a smaller image."
-msgstr "Kunde inte bearbeta klistermärke-bild. Vänligen använd en mindre bild."
+msgstr ""
+"Kunde inte bearbeta klistermärke-bild. Vänligen använd en mindre bild."
 
 #: src/components/modals/JoinSpaceModal.tsx:108
 msgid "Unknown"
@@ -1695,9 +1778,9 @@ msgstr "Okänd tid"
 
 #: src/components/context/MessageDB.tsx:961
 #: src/components/context/MessageDB.tsx:980
-#: src/components/context/MessageDB.tsx:2902
-#: src/components/context/MessageDB.tsx:3938
-#: src/components/context/MessageDB.tsx:5160
+#: src/components/context/MessageDB.tsx:3043
+#: src/components/context/MessageDB.tsx:4122
+#: src/components/context/MessageDB.tsx:5292
 #: src/components/direct/DirectMessage.tsx:123
 #: src/components/direct/DirectMessage.tsx:138
 #: src/components/direct/DirectMessage.tsx:323
@@ -1748,8 +1831,12 @@ msgid "Unpinned!"
 msgstr "Avfäst!"
 
 #: src/components/direct/DirectMessage.tsx:503
-msgid "Until you reply, this sender will not see your display name or profile picture"
-msgstr "Tills du svarar kommer denna avsändare inte att se ditt visningsnamn eller profilbild"
+msgid ""
+"Until you reply, this sender will not see your display name or profile "
+"picture"
+msgstr ""
+"Tills du svarar kommer denna avsändare inte att se ditt visningsnamn eller "
+"profilbild"
 
 #: src/components/modals/CreateSpaceModal.tsx:102
 msgid "Upload an image and choose a name for your Space."
@@ -1775,22 +1862,22 @@ msgstr "Använd knappen nedan för att sparka ut denna användare från Space"
 msgid "User address here"
 msgstr "Användaradress här"
 
-#~ msgid "User does not exist"
-#~ msgstr "Användaren existerar inte"
-
 #: src/hooks/business/validation/useAddressValidation.native.ts:109
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "Användaren existerar inte."
 
-#: src/components/space/Channel.tsx:310
-#: src/components/space/Channel.tsx:636
+#: src/components/space/Channel.tsx:310 src/components/space/Channel.tsx:636
 msgid "Username or Address"
 msgstr "Användarnamn eller adress"
 
 #: src/components/context/WebsocketProvider.tsx:219
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr "useWebSocket måste användas inom en WebSocketProvider"
+
+#: src/components/modals/AddSpaceModal.tsx:185
+msgid "Validating invite..."
+msgstr "Validerar inbjudan..."
 
 #: src/components/onboarding/Onboarding.native.tsx:239
 #: src/components/onboarding/Onboarding.tsx:105
@@ -1801,35 +1888,74 @@ msgstr "Välkommen till Quorum!"
 msgid "What's on your mind today?"
 msgstr "Vad tänker du på idag?"
 
-#~ msgid "When enabled, direct messages are not signed by your user key..."
-#~ msgstr "När det är aktiverat signeras direktmeddelanden inte av din användarnyckel..."
+#: src/components/modals/UserSettingsModal/Privacy.tsx:58
+msgid ""
+"When enabled, synchronizes your user data, Spaces, and Space keys between "
+"devices. Enabling this increases metadata visibility of your account, which "
+"can reveal when you have joined new Spaces, although not the Spaces you have"
+" joined."
+msgstr ""
+"När detta alternativ är aktiverat synkroniseras dina användardata, Spaces "
+"och Space-nycklar mellan enheter. Att aktivera detta ökar metadata-"
+"synligheten för ditt konto, vilket kan avslöja när du har gått med i nya "
+"Spaces, även om inte de Spaces du har gått med i."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:56
-msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
-msgstr "När detta alternativ är aktiverat synkroniseras dina användardata, Spaces och Space-nycklar mellan enheter. Att aktivera detta ökar metadata-synligheten för ditt konto, vilket kan avslöja när du har gått med i nya Spaces, även om inte de Spaces du har gått med i."
-
-#: src/components/modals/SpaceSettingsModal/General.tsx:208
-msgid "When messages are signed, senders confirm they come from their key. When messages aren't signed, senders have plausible deniability. This setting applies to all messages in this Space."
-msgstr "När meddelanden är signerade bekräftar avsändarna att de kommer från deras nyckel. När meddelanden inte är signerade har avsändarna rimlig förneklighet. Denna inställning gäller för alla meddelanden i detta Espacio."
+#: src/components/modals/SpaceSettingsModal/General.tsx:237
+msgid ""
+"When messages are signed, senders confirm they come from their key. When "
+"messages aren't signed, senders have plausible deniability. This setting "
+"applies to all messages in this Space."
+msgstr ""
+"När meddelanden är signerade bekräftar avsändarna att de kommer från deras "
+"nyckel. När meddelanden inte är signerade har avsändarna rimlig "
+"förneklighet. Denna inställning gäller för alla meddelanden i detta Space."
 
 #: src/components/modals/CreateSpaceModal.tsx:142
-msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
-msgstr "När denna inställning är aktiverad kommer inbjudningslänkar automatiskt att tillåta en användare att gå med i din Space. När den inte är aktiverad kommer användare som följer en inbjudningslänk att skicka dig en begäran om att gå med i din Space som du måste godkänna manuellt. Offentliga länkar kräver att viss nyckelmaterial finns i länken – var medveten om att innehav av en offentlig Space-länk kan tillåta vem som helst med länken att läsa meddelanden på Space under den tid länken är giltig."
+msgid ""
+"When this setting is enabled, invite links will automatically allow a user "
+"to join your Space. When it is not enabled, users following an invite link "
+"will send you a request to join your Space that you must manually approve. "
+"Public links require some key material to be present in the link – be aware "
+"that possession of a public Space link can allow anyone with the link to "
+"read messages on the Space for the duration of the link being valid."
+msgstr ""
+"När denna inställning är aktiverad kommer inbjudningslänkar automatiskt att "
+"tillåta en användare att gå med i din Space. När den inte är aktiverad "
+"kommer användare som följer en inbjudningslänk att skicka dig en begäran om "
+"att gå med i din Space som du måste godkänna manuellt. Offentliga länkar "
+"kräver att viss nyckelmaterial finns i länken – var medveten om att innehav "
+"av en offentlig Space-länk kan tillåta vem som helst med länken att läsa "
+"meddelanden på Space under den tid länken är giltig."
 
 #: src/components/onboarding/Onboarding.tsx:143
-msgid "When using Quorum on a browser, your messages are saved locally to your browser."
-msgstr "När du använder Quorum i en webbläsare sparas dina meddelanden lokalt i din webbläsare."
+msgid ""
+"When using Quorum on a browser, your messages are saved locally to your "
+"browser."
+msgstr ""
+"När du använder Quorum i en webbläsare sparas dina meddelanden lokalt i din "
+"webbläsare."
 
 #: src/components/modals/ConversationSettingsModal.tsx:184
-msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
-msgstr "När du signerar ett meddelande bekräftar du att det kommer från din nyckel. När du inte signerar ett meddelande har du rimlig förneklighet. Standardinställningen för alla konversationer kan ändras i användarinställningarna."
+msgid ""
+"When you sign a message, you are confirming that it comes from your key. "
+"When you don't sign a message, you have plausible deniability. The default "
+"for all conversations can be changed in User Settings."
+msgstr ""
+"När du signerar ett meddelande bekräftar du att det kommer från din nyckel. "
+"När du inte signerar ett meddelande har du rimlig förneklighet. "
+"Standardinställningen för alla konversationer kan ändras i "
+"användarinställningarna."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:75
-msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
-msgstr "När du signerar ett meddelande bekräftar du att det kommer från din nyckel. När du inte signerar ett meddelande har du rimlig förneklighet. Du kan kontrollera denna inställning för varje konversation och meddelande individuellt."
-
-#~ msgid "Yesterday"
-#~ msgstr "Igår"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:77
+msgid ""
+"When you sign a message, you are confirming that it comes from your key. "
+"When you don't sign a message, you have plausible deniability. You can "
+"control this setting for each conversation and message individually."
+msgstr ""
+"När du signerar ett meddelande bekräftar du att det kommer från din nyckel. "
+"När du inte signerar ett meddelande har du rimlig förneklighet. Du kan "
+"kontrollera denna inställning för varje konversation och meddelande "
+"individuellt."
 
 #: src/components/message/Message.tsx:212
 msgid "Yesterday at {timeFormatted}"
@@ -1840,16 +1966,25 @@ msgstr "I går kl. {timeFormatted}"
 msgid "You"
 msgstr "Du"
 
-#: src/components/modals/NewDirectMessageModal.tsx:149
-msgid "You can change this later for this conversation by clicking the lock icon in the Conversation view."
-msgstr "Du kan ändra detta senare för denna konversation genom att klicka på låsikonen i konversationsvyn."
+#: src/components/modals/AddSpaceModal.tsx:112
+msgid "You are already a member of this Space."
+msgstr "Du är redan medlem i detta Space."
 
-#~ msgid "You can click the default image below to select it with your system's file dialog or drag and drop a new one."
-#~ msgstr "Du kan klicka på standardbilden nedan för att välja den med din systems fildialog eller dra och släppa en ny."
+#: src/components/modals/NewDirectMessageModal.tsx:149
+msgid ""
+"You can change this later for this conversation by clicking the lock icon in"
+" the Conversation view."
+msgstr ""
+"Du kan ändra detta senare för denna konversation genom att klicka på "
+"låsikonen i konversationsvyn."
 
 #: src/components/modals/GroupEditorModal.tsx:113
-msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
-msgstr "Du kan inte radera en grupp som innehåller kanaler. Radera först alla {channelCount} kanaler i denna grupp."
+msgid ""
+"You cannot delete a group that contains channels. Delete all {channelCount} "
+"channels in this group first."
+msgstr ""
+"Du kan inte radera en grupp som innehåller kanaler. Radera först alla "
+"{channelCount} kanaler i denna grupp."
 
 #: src/components/message/MessageComposer.tsx:205
 #: src/components/space/Channel.tsx:607
@@ -1869,33 +2004,58 @@ msgstr "Du har ett nytt oläst meddelande"
 msgid "You have new unread messages"
 msgstr "Du har nya olästa meddelanden"
 
-#~ msgid "You will be able to change this later in your settings."
-#~ msgstr "Du kommer att kunna ändra detta senare i dina inställningar."
-
 #: src/components/onboarding/Onboarding.native.tsx:494
 #: src/components/onboarding/Onboarding.tsx:335
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Du är redo. Välkommen till Quorum!"
 
-#: src/components/message/InviteLink.tsx:29
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:342
+msgid ""
+"You're not listed in this Space's members. Correcting this will add you to "
+"the Space Members list (stores your profile locally with your inbox "
+"address)."
+msgstr ""
+"Du är inte listad bland medlemmarna i detta Spaces. Att rätta till detta "
+"kommer att lägga till dig i listan över Spaces Medlemmar (lagrar din "
+"profil lokalt med din inkorgsadress)."
+
+#: src/components/message/InviteLink.tsx:47
+#: src/components/message/InviteLink.tsx:69
 msgid "You've been invited to join a Space"
 msgstr "Du har blivit inbjuden att gå med i en Space"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:79
-msgid "Your device doesn't support automatic file downloads. Your private key will be copied to clipboard so you can save it manually."
-msgstr "Din enhet stöder inte automatiska filnedladdningar. Din privata nyckel kommer att kopieras till urklipp så att du kan spara den manuellt."
+msgid ""
+"Your device doesn't support automatic file downloads. Your private key will "
+"be copied to clipboard so you can save it manually."
+msgstr ""
+"Din enhet stöder inte automatiska filnedladdningar. Din privata nyckel "
+"kommer att kopieras till urklipp så att du kan spara den manuellt."
 
 #: src/hooks/platform/files/useFileDownload.native.ts:97
-msgid "Your private key has been copied to clipboard. Save it as \"AccountID.key\" (you can find your Account ID in Settings later). NEVER share this key!"
-msgstr "Din privata nyckel har kopierats till urklipp. Spara den som \"AccountID.key\" (du kan hitta ditt konto-ID i Inställningar senare). DELA ALDRIG denna nyckel!"
+msgid ""
+"Your private key has been copied to clipboard. Save it as \"AccountID.key\" "
+"(you can find your Account ID in Settings later). NEVER share this key!"
+msgstr ""
+"Din privata nyckel har kopierats till urklipp. Spara den som "
+"\"AccountID.key\" (du kan hitta ditt konto-ID i Inställningar senare). DELA "
+"ALDRIG denna nyckel!"
 
 #: src/utils/imageProcessing/errors.ts:40
-msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "Din profilbilds storlek måste vara {maxSize} eller mindre och måste vara en PNG, JPG eller JPEG filändelse."
+msgid ""
+"Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
+" JPEG file extension."
+msgstr ""
+"Din profilbilds storlek måste vara {maxSize} eller mindre och måste vara en "
+"PNG, JPG eller JPEG filändelse."
 
 #: src/components/onboarding/Onboarding.native.tsx:369
-msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "Din profilbild måste vara 2MB eller mindre och måste ha filändelsen PNG, JPG eller JPEG."
+msgid ""
+"Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG "
+"file extension."
+msgstr ""
+"Din profilbild måste vara 2MB eller mindre och måste ha filändelsen PNG, JPG"
+" eller JPEG."
 
 #: src/components/ui/YouTubeFacade.tsx:92
 msgid "YouTube Video"
@@ -1904,3 +2064,320 @@ msgstr "YouTube Video"
 #: src/components/ui/YouTubeFacade.tsx:115
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube Video Miniatyr"
+
+#~ msgid "[Image/Media]"
+#~ msgstr "[Bild/Media]"
+
+#~ msgid "[Sticker]"
+#~ msgstr "[Klistermärke]"
+
+#~ msgid "{0} result"
+#~ msgstr "{0} resultat"
+
+#~ msgid "{0} results"
+#~ msgstr "{0} resultat"
+
+#~ msgid "Add Space"
+#~ msgstr "Lägg till Space"
+
+#~ msgid ""
+#~ "Add up to 50 custom emoji. Custom emojis can only be used within a Space."
+#~ msgstr ""
+#~ "Lägg till upp till 50 anpassade emoji. Anpassade emojis kan endast användas "
+#~ "inom en Space."
+
+#~ msgid ""
+#~ "Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
+#~ "You can upload PNG, JPG or GIF, max 256kB."
+#~ msgstr ""
+#~ "Lägg till upp till 50 anpassade emojis. Anpassade emojis kan endast användas"
+#~ " inom en Space. Du kan ladda upp PNG, JPG eller GIF, max 256kB."
+
+#~ msgid ""
+#~ "Add up to 50 custom stickers. Custom stickers can only be used within a "
+#~ "Space."
+#~ msgstr ""
+#~ "Lägg till upp till 50 anpassade klistermärken. Anpassade klistermärken kan "
+#~ "endast användas inom en Space."
+
+#~ msgid ""
+#~ "Add up to 50 custom stickers. Custom stickers can only be used within a "
+#~ "Space. You can upload PNG, JPG or GIF, max 256kB."
+#~ msgstr ""
+#~ "Lägg till upp till 50 anpassade klistermärken. Anpassade klistermärken kan "
+#~ "endast användas inom en Space. Du kan ladda upp PNG, JPG eller GIF, max "
+#~ "256kB."
+
+#~ msgid "All roles must have both a tag name and display name."
+#~ msgstr "Alla roller måste ha både ett taggnamn och ett visningsnamn."
+
+#~ msgid ""
+#~ "Always sign Direct Messages in  Conversations. This can be overridden for "
+#~ "finer-grain control by clicking the lock icon found in each Conversation "
+#~ "view."
+#~ msgstr ""
+#~ "Signera alltid direktmeddelanden i konversationer. Detta kan åsidosättas för"
+#~ " mer detaljerad kontroll genom att klicka på låsikonen som finns i varje "
+#~ "konversationsvy."
+
+#~ msgid ""
+#~ "Always sign Direct Messages in conversations. This can be overridden for "
+#~ "finer-grain control by clicking the lock icon found in each conversation "
+#~ "view."
+#~ msgstr ""
+#~ "Signera alltid Direktmeddelanden i konversationer. Detta kan åsidosättas för"
+#~ " mer detaljerad kontroll genom att klicka på låsikonen som finns i varje "
+#~ "konversationsvy."
+
+#~ msgid ""
+#~ "Always sign messages sent in this conversation. Technically speaking, this "
+#~ "makes your messages in non-repudiable. The default for all conversations can"
+#~ " be changed in User Settings."
+#~ msgstr ""
+#~ "Signera alltid meddelanden som skickas i denna konversation. Tekniskt sett "
+#~ "gör detta dina meddelanden icke-förnekbara. Standardinställningen för alla "
+#~ "konversationer kan ändras i Användarinställningar."
+
+#~ msgid ""
+#~ "Are you sure you want to delete the public invite link? Anyone with your "
+#~ "current public invite link won't be able to join your Space anymore."
+#~ msgstr ""
+#~ "Är du säker på att du vill ta bort den offentliga inbjudningslänken? Alla "
+#~ "med din nuvarande offentliga inbjudningslänk kommer inte längre att kunna gå"
+#~ " med i ditt Space."
+
+#~ msgid ""
+#~ "Are you sure you want to generate a new public invite link? Anyone with your"
+#~ " old public invite link won't be able to join your Space anymore."
+#~ msgstr ""
+#~ "Är du säker på att du vill generera en ny offentlig inbjudningslänk? Alla "
+#~ "med din gamla offentliga inbjudningslänk kommer inte längre att kunna gå med"
+#~ " i ditt Space."
+
+#~ msgid ""
+#~ "Are you sure you want to generate a public invite link?\n"
+#~ "This will permanently invalidate ALL previously sent private invite links."
+#~ msgstr ""
+#~ "Är du säker på att du vill generera en offentlig inbjudningslänk?\n"
+#~ "Detta kommer permanent att ogiltigförklara ALLA tidigare skickade privata inbjudningslänkar."
+
+#~ msgid ""
+#~ "Are you sure you want to leave {0}? You won't be able to rejoin unless you "
+#~ "are re-invited."
+#~ msgstr ""
+#~ "Är du säker på att du vill lämna {0}? Du kommer inte kunna återansluta om du"
+#~ " inte blir inbjuden igen."
+
+#~ msgid ""
+#~ "Are you sure? This channel contains messages. Deleting it will cause all "
+#~ "content to be lost forever!"
+#~ msgstr ""
+#~ "Är du säker? Denna kanal innehåller meddelanden. Att radera den kommer att "
+#~ "orsaka att allt innehåll går förlorat för alltid!"
+
+#~ msgid ""
+#~ "Are you sure? This group contains channels with messages. Deleting it will "
+#~ "cause all content to be lost forever!"
+#~ msgstr ""
+#~ "Är du säker? Denna grupp innehåller kanaler med meddelanden. Att radera den "
+#~ "kommer att orsaka att allt innehåll går förlorat för alltid!"
+
+#~ msgid "Be patient, this can take a few seconds..."
+#~ msgstr "Var tålmodig, detta kan ta några sekunder..."
+
+#~ msgid "Can delete messages?"
+#~ msgstr "Kan radera meddelanden?"
+
+#~ msgid "Close"
+#~ msgstr "Stäng"
+
+#~ msgid "Confirm"
+#~ msgstr "Bekräfta"
+
+#~ msgid "Confirm Deletion"
+#~ msgstr "Bekräfta radering"
+
+#~ msgid "Copy address to clipboard"
+#~ msgstr "Kopiera adress till urklipp"
+
+#~ msgid "Copy to clipboard"
+#~ msgstr "Kopiera till urklipp"
+
+#~ msgid "Create a new Space"
+#~ msgstr "Skapa en ny Space"
+
+#~ msgid "dark"
+#~ msgstr "mörk"
+
+#~ msgid ""
+#~ "Default Space settings provide the most typical chat experience, but for "
+#~ "higher privacy guarantees, review Advanced Settings."
+#~ msgstr ""
+#~ "Standardinställningar för Space ger den mest typiska chatupplevelsen, men "
+#~ "för högre integritetsskydd, granska avancerade inställningar."
+
+#~ msgid ""
+#~ "Deletes conversation keys, user profile information, and messages on your "
+#~ "computer only. These messages will still exist on the recipent's computer, "
+#~ "so they must also delete on their end to complete a full deletion."
+#~ msgstr ""
+#~ "Tar bort konversationsnycklar, användarprofilinformation och meddelanden på "
+#~ "din dator endast. Dessa meddelanden kommer fortfarande att finnas på "
+#~ "mottagarens dator, så de måste också ta bort dem på sin sida för att "
+#~ "slutföra en fullständig borttagning."
+
+#~ msgid "Do it!"
+#~ msgstr "Gör det!"
+
+#~ msgid "Edit Profile"
+#~ msgstr "Redigera profil"
+
+#~ msgid "Edit Space"
+#~ msgstr "Redigera Space"
+
+#~ msgid "Error reading file"
+#~ msgstr "Fel vid läsning av fil"
+
+#~ msgid "Failed to save settings. Please try again."
+#~ msgstr "Misslyckades med att spara inställningar. Försök igen."
+
+#~ msgid "File cannot be larger than 1MB"
+#~ msgstr "Fil får inte vara större än 1MB"
+
+#~ msgid "File cannot be larger than 256KB"
+#~ msgstr "Fil får inte vara större än 256KB"
+
+#~ msgid "File cannot be larger than 2MB"
+#~ msgstr "Fil kan inte vara större än 2MB"
+
+#~ msgid "Generate New Invite Link"
+#~ msgstr "Generera ny inbjudningslänk"
+
+#~ msgid "Generate New Public Invite Link"
+#~ msgstr "Generera ny offentlig inbjudningslänk"
+
+#~ msgid "Generating link..."
+#~ msgstr "Genererar länk..."
+
+#~ msgid "Jump to message"
+#~ msgstr "Hoppa till meddelande"
+
+#~ msgid ""
+#~ "Let your friends know who you are! Pick a friendly name to display in your "
+#~ "conversations, something easier to read than {0}"
+#~ msgstr ""
+#~ "Låt dina vänner veta vem du är! Välj ett vänligt namn att visa i dina "
+#~ "konversationer, något lättare att läsa än {0}"
+
+#~ msgid "light"
+#~ msgstr "ljus"
+
+#~ msgid "Max file size: 256kB"
+#~ msgstr "Max filstorlek: 256kB"
+
+#~ msgid "Non-repudiability"
+#~ msgstr "Ej avvisande"
+
+#~ msgid ""
+#~ "Notifications are blocked. Please enable them in your browser settings for "
+#~ "this site."
+#~ msgstr ""
+#~ "Aviseringar blockeras. Vänligen aktivera dem i dina webbläsarinställningar "
+#~ "för denna webbplats."
+
+#~ msgid "PNG, JPG or JPEG • Max 2MB"
+#~ msgstr "PNG, JPG eller JPEG • Max 2MB"
+
+#~ msgid "Public Invite Link"
+#~ msgstr "Offentlig inbjudningslänk"
+
+#~ msgid ""
+#~ "Public invite links allow anyone with access to the link join your Space. "
+#~ "Understand the risks of enabling this, and to whom and where you share the "
+#~ "link."
+#~ msgstr ""
+#~ "Offentliga inbjudningslänkar tillåter alla med tillgång till länken att gå "
+#~ "med i din Space. Förstå riskerna med att aktivera detta, och till vem och "
+#~ "var du delar länken."
+
+#~ msgid "Repudiability"
+#~ msgstr "Repudiabilitet"
+
+#~ msgid ""
+#~ "Repudiability is a setting that makes conversations in this Space "
+#~ "unverifiable as originating from the named sender. This can be useful in "
+#~ "sensitive situations, but it also means others may forge messages that "
+#~ "appear to come from you."
+#~ msgstr ""
+#~ "Repudiabilitet är en inställning som gör att konversationer i detta Space "
+#~ "inte kan verifieras som härstammande från den namngivna avsändaren. Detta "
+#~ "kan vara användbart i känsliga situationer, men det innebär också att andra "
+#~ "kan förfalska meddelanden som verkar komma från dig."
+
+#~ msgid "Requirements:"
+#~ msgstr "Krav:"
+
+#~ msgid "Save All Changes"
+#~ msgstr "Spara alla ändringar"
+
+#~ msgid "Search in direct messages"
+#~ msgstr "Sök i direktmeddelanden"
+
+#~ msgid "Search messages"
+#~ msgstr "Sök meddelanden"
+
+#~ msgid "Space Icon Attachment"
+#~ msgstr "Space-ikonbilaga"
+
+#~ msgid ""
+#~ "Start with a message to a friend. Click on the add button next to the direct"
+#~ " messages list."
+#~ msgstr ""
+#~ "Börja med ett meddelande till en vän. Klicka på lägg till-knappen bredvid "
+#~ "listan med direkta meddelanden."
+
+#~ msgid "Supported types: PNG, JPG, GIF"
+#~ msgstr "Stödda typer: PNG, JPG, GIF"
+
+#~ msgid "system"
+#~ msgstr "system"
+
+#~ msgid ""
+#~ "This link will not expire, but you can generate a new one at any time, which"
+#~ " will invalidate the old link. Current Space members will not be removed "
+#~ "from the Space."
+#~ msgstr ""
+#~ "Denna länk kommer inte att gå ut, men du kan generera en ny när som helst, "
+#~ "vilket kommer att ogiltigförklara den gamla länken. Nuvarande Space-"
+#~ "medlemmar kommer inte att tas bort från Space."
+
+#~ msgid ""
+#~ "To disable notifications, please change the notification settings in your "
+#~ "browser for this site."
+#~ msgstr ""
+#~ "För att inaktivera aviseringar, vänligen ändra aviseringarnas inställningar "
+#~ "i din webbläsare för denna webbplats."
+
+#~ msgid "Try Again"
+#~ msgstr "Försök igen"
+
+#~ msgid "User does not exist"
+#~ msgstr "Användaren existerar inte"
+
+#~ msgid "When enabled, direct messages are not signed by your user key..."
+#~ msgstr ""
+#~ "När det är aktiverat signeras direktmeddelanden inte av din "
+#~ "användarnyckel..."
+
+#~ msgid "Yesterday"
+#~ msgstr "Igår"
+
+#~ msgid ""
+#~ "You can click the default image below to select it with your system's file "
+#~ "dialog or drag and drop a new one."
+#~ msgstr ""
+#~ "Du kan klicka på standardbilden nedan för att välja den med din systems "
+#~ "fildialog eller dra och släppa en ny."
+
+#~ msgid "You will be able to change this later in your settings."
+#~ msgstr "Du kommer att kunna ändra detta senare i dina inställningar."

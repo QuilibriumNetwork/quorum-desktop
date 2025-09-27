@@ -21,12 +21,12 @@ msgid "File cannot be larger than {maxFileSize}"
 msgstr "檔案不能大於 {maxFileSize}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:136
+#: src/hooks/business/channels/useChannelData.ts:141
 msgid "{role} - {count}"
 msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:152
+#: src/hooks/business/channels/useChannelData.ts:157
 msgid "No Role - {count}"
 msgstr "無角色 - {count}"
 
@@ -94,6 +94,11 @@ msgstr "[訊息]"
 #~ msgid "[Sticker]"
 #~ msgstr "[貼圖]"
 
+#. placeholder {0}: removedDevices.length
+#: src/components/modals/UserSettingsModal/Privacy.tsx:101
+msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
+msgstr ""
+
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:253
 msgid "{0} pinned message"
@@ -138,9 +143,18 @@ msgstr "添加朋友"
 msgid "0 Bytes"
 msgstr "0 位元組"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:100
+msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
+msgstr ""
+
 #: src/components/modals/UserSettingsModal/General.tsx:104
 msgid "Account Address"
 msgstr "帳戶地址"
+
+#: src/components/modals/AddSpaceModal.tsx:116
+#: src/components/navbar/ExpandableNavMenu.tsx:29
+msgid "Add a Space"
+msgstr ""
 
 #: src/components/modals/ChannelEditorModal.tsx:79
 msgid "Add Channel"
@@ -196,7 +210,7 @@ msgstr "地址必須正好 46 個字符長。"
 msgid "Addresses start with \"Qm\"."
 msgstr "地址以 \"Qm\" 開頭。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:46
+#: src/components/modals/UserSettingsModal/Privacy.tsx:48
 msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
 msgstr "調整與安全性相關的設定，這可能會影響使用者體驗，但會提高您的 Quorum 帳戶的安全性。"
 
@@ -209,18 +223,20 @@ msgstr "進階設定"
 msgid "All"
 msgstr "全部"
 
-#: src/components/space/SpaceEditor.tsx:263
 #~ msgid "All roles must have both a tag name and display name."
 #~ msgstr "所有角色必須同時擁有標籤名稱和顯示名稱。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:71
+#: src/components/modals/AddSpaceModal.tsx:249
+msgid "Already Joined"
+msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:73
 msgid "Always sign Direct Messages"
 msgstr "始終簽署直接消息"
 
 #~ msgid "Always sign Direct Messages in  Conversations. This can be overridden for finer-grain control by clicking the lock icon found in each Conversation view."
 #~ msgstr "始終在對話中簽署直接消息。這可以通過點擊每個對話視圖中的鎖定圖標來進行更細緻的控制。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:75
 #~ msgid "Always sign Direct Messages in conversations. This can be overridden for finer-grain control by clicking the lock icon found in each conversation view."
 #~ msgstr "始終在對話中簽署直接消息。這可以通過點擊每個對話視圖中的鎖定圖標來進行更細緻的控制。"
 
@@ -229,9 +245,12 @@ msgstr "始終簽署直接消息"
 msgid "Always sign messages"
 msgstr "始終簽署消息"
 
-#: src/components/modals/ConversationSettingsModal.tsx:184
 #~ msgid "Always sign messages sent in this conversation. Technically speaking, this makes your messages in non-repudiable. The default for all conversations can be changed in User Settings."
 #~ msgstr "始終在此對話中簽署消息。從技術上講，這使得您的消息不可否認。所有對話的默認設置可以在用戶設置中更改。"
+
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:43
+msgid "An error occurred while deleting the Space. Please try again."
+msgstr ""
 
 #: src/utils/imageProcessing/errors.ts:23
 msgid "Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF for emoji use."
@@ -246,7 +265,6 @@ msgstr "動畫貼圖 GIF 不能大於 750KB。請優化您的 GIF 以供貼圖�
 msgid "Appearance"
 msgstr "外觀"
 
-#: src/components/space/SpaceEditor.tsx:1278
 #~ msgid "Are you sure you want to delete the public invite link? Anyone with your current public invite link won't be able to join your Space anymore."
 #~ msgstr "您確定要刪除公開邀請鏈接嗎？擁有您當前公開邀請鏈接的任何人將無法再加入您的 Space。"
 
@@ -271,11 +289,9 @@ msgstr "您確定要刪除此訊息嗎？"
 msgid "Are you sure you want to delete this role?"
 msgstr "您確定要刪除此角色嗎？"
 
-#: src/components/space/SpaceEditor.tsx:1265
 #~ msgid "Are you sure you want to generate a new public invite link? Anyone with your old public invite link won't be able to join your Space anymore."
 #~ msgstr "您確定要生成新的公開邀請鏈接嗎？擁有您舊的公開邀請鏈接的任何人將無法再加入您的 Space。"
 
-#: src/components/space/SpaceEditor.tsx:1264
 #~ msgid ""
 #~ "Are you sure you want to generate a public invite link?\n"
 #~ "This will permanently invalidate ALL previously sent private invite links."
@@ -312,6 +328,10 @@ msgstr "附加圖片"
 msgid "Away"
 msgstr "離開"
 
+#: src/components/modals/AddSpaceModal.tsx:211
+msgid "Back to invite link"
+msgstr ""
+
 #: src/hooks/platform/files/useFileDownload.native.ts:224
 msgid "Backup Failed"
 msgstr "備份失敗"
@@ -347,6 +367,10 @@ msgstr "需要相機權限才能拍攝照片"
 #: src/hooks/platform/files/useFileDownload.native.ts:82
 msgid "Cancel"
 msgstr "取消"
+
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:41
+msgid "Cannot delete Space with channels. Please delete all channels first."
+msgstr ""
 
 #. placeholder {0}: Math.min(10, remaining)
 #: src/hooks/business/ui/useCustomAssets.ts:101
@@ -408,7 +432,7 @@ msgstr "清除標籤為 {tag} 的通知"
 #: src/components/modals/GroupEditorModal.tsx:126
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:51
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:68
 msgid "Click again to confirm"
 msgstr "再次點擊以確認"
 
@@ -431,7 +455,10 @@ msgstr "點擊以複製"
 #~ msgid "Close"
 #~ msgstr "關閉"
 
-#: src/components/space/SpaceEditor.tsx:1267
+#: src/components/modals/AddSpaceModal.tsx:172
+msgid "Config Key"
+msgstr ""
+
 #~ msgid "Confirm"
 #~ msgstr "確認"
 
@@ -475,7 +502,7 @@ msgstr "複製地址"
 msgid "Copy Failed"
 msgstr "複製失敗"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:206
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:216
 msgid "Copy invite link to clipboard"
 msgstr "將邀請連結複製到剪貼簿"
 
@@ -491,23 +518,29 @@ msgstr "複製訊息連結"
 #~ msgid "Copy to clipboard"
 #~ msgstr "複製到剪貼簿"
 
-#: src/components/context/MessageDB.tsx:5419
+#: src/components/context/MessageDB.tsx:5563
 msgid "Could not add Space"
 msgstr "無法新增空間"
 
-#: src/components/context/MessageDB.tsx:5292
+#: src/components/message/InviteLink.tsx:25
+#: src/hooks/business/invites/useInviteProcessing.ts:28
+msgid "Could not fetch the Space details. Please try again."
+msgstr ""
+
+#: src/components/context/MessageDB.tsx:5436
 msgid "Could not obtain manifest for Space"
 msgstr "無法獲取空間的清單"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:22
+#: src/hooks/business/invites/useInviteProcessing.ts:24
 #: src/hooks/business/spaces/useInviteValidation.ts:112
 msgid "Could not verify invite"
 msgstr "無法驗證邀請"
 
 #: src/components/navbar/ExpandableNavMenu.tsx:29
-msgid "Create a new Space"
-msgstr "創建一個新的空間"
+#~ msgid "Create a new Space"
+#~ msgstr "創建一個新的空間"
 
+#: src/components/modals/AddSpaceModal.tsx:273
 #: src/components/modals/CreateSpaceModal.tsx:48
 msgid "Create a Space"
 msgstr "創建一個空間"
@@ -525,7 +558,7 @@ msgstr "建立空間"
 msgid "Creating Space..."
 msgstr "正在創建空間..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:188
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:198
 msgid "Current Invite Link"
 msgstr "當前邀請連結"
 
@@ -536,15 +569,15 @@ msgstr "當前邀請連結"
 msgid "Dark"
 msgstr "黑暗"
 
-#: src/components/context/MessageDB.tsx:5271
+#: src/components/context/MessageDB.tsx:5415
 msgid "decrypted space with no known config key"
 msgstr "解密的空間沒有已知的配置密鑰"
 
-#: src/components/context/MessageDB.tsx:5277
+#: src/components/context/MessageDB.tsx:5421
 msgid "Decrypted Space with no known hub key"
 msgstr "解密的空間沒有已知的中心密鑰"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:177
+#: src/components/modals/SpaceSettingsModal/General.tsx:206
 msgid "Default Channel"
 msgstr "預設頻道"
 
@@ -576,7 +609,7 @@ msgstr "刪除頻道"
 msgid "Delete Conversation"
 msgstr "刪除對話"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:224
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:234
 msgid "Delete Current Link"
 msgstr "刪除當前鏈接"
 
@@ -584,9 +617,9 @@ msgstr "刪除當前鏈接"
 msgid "Delete Group"
 msgstr "刪除群組"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:413
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:516
 msgid "Delete Link"
-msgstr ""
+msgstr "刪除連結"
 
 #: src/components/message/MessageActions.tsx:84
 #: src/components/message/MessageActionsDrawer.tsx:177
@@ -601,7 +634,7 @@ msgstr "刪除訊息"
 msgid "Delete Messages"
 msgstr "刪除訊息"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:411
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:514
 msgid "Delete Public Invite Link"
 msgstr "刪除公開邀請鏈接"
 
@@ -610,12 +643,12 @@ msgstr "刪除公開邀請鏈接"
 msgid "Delete Role"
 msgstr "刪除角色"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:49
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:66
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:20
 msgid "Delete Space"
 msgstr "刪除空間"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:23
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:27
 msgid "Delete this space"
 msgstr "刪除此空間"
 
@@ -680,7 +713,7 @@ msgstr "Emoji 選擇器"
 msgid "Emojis"
 msgstr "表情符號"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:52
+#: src/components/modals/UserSettingsModal/Privacy.tsx:54
 msgid "Enable sync"
 msgstr "啟用同步"
 
@@ -692,9 +725,17 @@ msgstr "為您的新空間輸入一個名稱"
 msgid "Enter a user's address to start messaging them."
 msgstr "輸入用戶的地址以開始與他們發送消息。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:96
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:98
 msgid "Enter Address Manually"
 msgstr "手動輸入地址"
+
+#: src/components/modals/AddSpaceModal.tsx:179
+msgid "Enter both Space ID and Config Key to validate"
+msgstr ""
+
+#: src/components/modals/AddSpaceModal.tsx:152
+msgid "Enter details manually"
+msgstr ""
 
 #: src/components/context/WebsocketProvider.tsx:108
 msgid "Error processing inbound:"
@@ -720,15 +761,15 @@ msgstr "請求通知權限時出錯："
 msgid "Error showing notification:"
 msgstr "顯示通知時出錯："
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:67
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:69
 msgid "Existing Conversations"
 msgstr "現有對話"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:166
+#: src/components/modals/UserSettingsModal/Privacy.tsx:185
 msgid "Export"
 msgstr "匯出"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:157
+#: src/components/modals/UserSettingsModal/Privacy.tsx:176
 msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 msgstr "通過點擊此按鈕將您的密鑰匯出到文件中。不要與其他人分享此文件，否則他們可能會冒充您或竊取您空間的 Apex 收益。"
 
@@ -736,7 +777,7 @@ msgstr "通過點擊此按鈕將您的密鑰匯出到文件中。不要與其他
 msgid "Failed to copy to clipboard. Please try again."
 msgstr "無法複製到剪貼板。請再試一次。"
 
-#: src/components/context/MessageDB.tsx:980
+#: src/components/context/MessageDB.tsx:984
 msgid "Failed to decrypt message with any known state"
 msgstr "無法使用任何已知狀態解密消息"
 
@@ -754,6 +795,10 @@ msgstr "無法解析 WebSocket 消息："
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:147
 msgid "Failed to select document"
 msgstr "無法選擇文件"
+
+#: src/hooks/business/spaces/useInviteManagement.ts:142
+msgid "Failed to send invite. Please try again."
+msgstr ""
 
 #: src/utils/imageProcessing/errors.ts:16
 msgid "File cannot be larger than {maxSize}"
@@ -812,7 +857,19 @@ msgstr "文件大小過小。最小大小：{minSizeMB}"
 msgid "File validation failed. Please try again."
 msgstr "文件驗證失敗。請再試一次。"
 
-#: src/components/context/MessageDB.tsx:3041
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:343
+msgid "Fix"
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/General.tsx:121
+msgid "Fixes"
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/General.tsx:135
+msgid "Fixing..."
+msgstr ""
+
+#: src/components/context/MessageDB.tsx:3186
 msgid "general"
 msgstr "一般"
 
@@ -821,28 +878,27 @@ msgstr "一般"
 msgid "General"
 msgstr "一般設定"
 
-#: src/components/context/MessageDB.tsx:3042
+#: src/components/context/MessageDB.tsx:3187
 msgid "General Chat"
 msgstr "一般聊天"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:399
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:502
 msgid "Generate Link"
-msgstr ""
+msgstr "生成連結"
 
 #~ msgid "Generate New Invite Link"
 #~ msgstr "產生新邀請連結"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:231
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:399
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:241
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:502
 msgid "Generate New Link"
 msgstr "生成新鏈接"
 
-#: src/components/space/SpaceEditor.tsx:1261
 #~ msgid "Generate New Public Invite Link"
 #~ msgstr "生成新的公開邀請鏈接"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:173
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:393
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:183
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:496
 msgid "Generate Public Invite Link"
 msgstr "生成公開邀請鏈接"
 
@@ -906,7 +962,7 @@ msgstr "首次使用重要資訊："
 msgid "Important messages will be pinned here"
 msgstr "重要訊息將固定在這裡"
 
-#: src/components/context/MessageDB.tsx:1180
+#: src/components/context/MessageDB.tsx:1184
 msgid "invalid address for signature"
 msgstr "簽名的地址無效"
 
@@ -919,10 +975,10 @@ msgstr "地址格式無效。地址必須使用有效的字母數字字符。"
 msgid "Invalid file type. Please check accepted file formats."
 msgstr "無效的文件類型。請檢查接受的文件格式。"
 
-#: src/components/context/MessageDB.tsx:4535
-#: src/components/context/MessageDB.tsx:4572
-#: src/components/context/MessageDB.tsx:4578
-#: src/components/context/MessageDB.tsx:4671
+#: src/components/context/MessageDB.tsx:4690
+#: src/components/context/MessageDB.tsx:4701
+#: src/components/context/MessageDB.tsx:4738
+#: src/components/context/MessageDB.tsx:4809
 msgid "invalid link"
 msgstr "鏈接無效"
 
@@ -931,17 +987,17 @@ msgstr "鏈接無效"
 msgid "Invalid message ID"
 msgstr "無效的訊息 ID"
 
-#: src/components/context/MessageDB.tsx:5036
+#: src/components/context/MessageDB.tsx:5180
 msgid "invalid message type"
 msgstr "消息類型無效"
 
-#: src/components/context/MessageDB.tsx:4540
-#: src/components/context/MessageDB.tsx:4634
+#: src/components/context/MessageDB.tsx:4706
+#: src/components/context/MessageDB.tsx:4772
 #: src/hooks/business/spaces/useInviteValidation.ts:79
 msgid "invalid response"
 msgstr "響應無效"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:51
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:53
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:19
 msgid "Invites"
 msgstr "邀請"
@@ -950,6 +1006,7 @@ msgstr "邀請"
 msgid "Join"
 msgstr "加入"
 
+#: src/components/modals/AddSpaceModal.tsx:249
 #: src/components/modals/JoinSpaceModal.tsx:78
 #: src/components/modals/JoinSpaceModal.tsx:98
 #: src/components/modals/JoinSpaceModal.tsx:144
@@ -960,9 +1017,10 @@ msgstr "加入空間"
 msgid "Joined"
 msgstr "已加入"
 
+#: src/components/modals/AddSpaceModal.tsx:125
 #: src/components/modals/JoinSpaceModal.tsx:88
 msgid "Joining Space..."
-msgstr ""
+msgstr "加入空間中..."
 
 #: src/hooks/business/invites/useInviteUI.ts:19
 msgid "Joining..."
@@ -980,7 +1038,7 @@ msgstr "跳轉"
 msgid "Key Copied!"
 msgstr "密鑰已複製！"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:154
+#: src/components/modals/UserSettingsModal/Privacy.tsx:173
 msgid "Key Export"
 msgstr "密鑰匯出"
 
@@ -993,7 +1051,7 @@ msgid "Key Saved"
 msgstr "密鑰已保存"
 
 #: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:203
+#: src/components/user/UserProfile.tsx:204
 msgid "Kick User"
 msgstr "踢除使用者"
 
@@ -1004,6 +1062,10 @@ msgstr "踢出用戶"
 #: src/components/modals/KickUserModal.tsx:86
 msgid "Kick!"
 msgstr "踢出！"
+
+#: src/components/user/UserProfile.tsx:204
+msgid "Kicked!"
+msgstr ""
 
 #: src/components/modals/KickUserModal.tsx:70
 msgid "Kicking..."
@@ -1050,6 +1112,10 @@ msgstr "正在加載固定訊息..."
 msgid "Looking up user..."
 msgstr "正在查找用戶..."
 
+#: src/components/modals/AddSpaceModal.tsx:202
+msgid "Lookup"
+msgstr ""
+
 #: src/components/Maintenance.native.tsx:42
 #: src/components/Maintenance.tsx:14
 msgid "Maintenance in Progress"
@@ -1064,7 +1130,7 @@ msgstr "使您的帳戶獨一無二 - 設置聯繫人照片。此信息僅提供
 msgid "Manage desktop notification preferences for new messages."
 msgstr "管理新消息的桌面通知偏好設定。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:37
+#: src/components/modals/UserSettingsModal/Privacy.tsx:39
 msgid "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr "管理設備和消息傳遞及同步的隱私條件。"
 
@@ -1167,6 +1233,18 @@ msgstr "在線"
 
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
+msgstr "在 YouTube 上打開視頻"
+
+#: src/components/modals/AddSpaceModal.tsx:137
+msgid "Paste an invite link"
+msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:152
+msgid "Pending"
+msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:138
+msgid "Pending removal - click Save to confirm"
 msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:121
@@ -1251,12 +1329,12 @@ msgstr "已固定！"
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG、JPG或JPEG • 最佳比例1:1"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:198
+#: src/components/modals/SpaceSettingsModal/General.tsx:227
 msgid "Privacy Settings"
 msgstr "隱私設定"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:35
+#: src/components/modals/UserSettingsModal/Privacy.tsx:37
 msgid "Privacy/Security"
 msgstr "隱私/安全"
 
@@ -1271,14 +1349,14 @@ msgstr "處理圖像中... 對於大型檔案，這可能需要一些時間。"
 #~ msgid "Public Invite Link"
 #~ msgstr "公開邀請連結"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:118
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:128
 msgid "Public Invite Links"
 msgstr "公開邀請連結"
 
 #~ msgid "Public invite links allow anyone with access to the link join your Space. Understand the risks of enabling this, and to whom and where you share the link."
 #~ msgstr "公開邀請鏈接允許任何擁有鏈接的人加入您的空間。了解啟用此功能的風險，以及您與誰和在哪裡分享鏈接。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:162
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:172
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "公開邀請連結允許任何擁有連結的人加入你的Space。考慮你與誰分享連結以及你在哪裡發布它。"
 
@@ -1315,7 +1393,7 @@ msgstr "準備開始一個真正私密的對話了嗎？"
 msgid "Reauthorize"
 msgstr "重新授權"
 
-#: src/components/context/MessageDB.tsx:5241
+#: src/components/context/MessageDB.tsx:5385
 msgid "received config with invalid signature!"
 msgstr "收到無效簽名的配置！"
 
@@ -1325,7 +1403,7 @@ msgstr "收到無效簽名的配置！"
 msgid "Refresh"
 msgstr "重新整理"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:132
+#: src/components/modals/UserSettingsModal/Privacy.tsx:152
 msgid "Remove"
 msgstr "移除"
 
@@ -1341,7 +1419,7 @@ msgstr "回覆"
 #~ msgstr "可否認性是一個設置，使這個空間中的對話無法驗證為來自指定發件人的。這在敏感情況下可能很有用，但這也意味著其他人可能會偽造看似來自您的消息。"
 
 #: src/components/modals/CreateSpaceModal.tsx:115
-#: src/components/modals/SpaceSettingsModal/General.tsx:204
+#: src/components/modals/SpaceSettingsModal/General.tsx:233
 msgid "Require Message Signing"
 msgstr "需要消息簽名"
 
@@ -1352,6 +1430,10 @@ msgstr "要求在此空間中發送的消息由發送者簽名。從技術上講
 #~ msgid "Requirements:"
 #~ msgstr "要求："
 
+#: src/components/modals/AddSpaceModal.tsx:256
+msgid "Reset"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:16
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:42
 msgid "Roles"
@@ -1361,17 +1443,13 @@ msgstr "角色"
 msgid "Save"
 msgstr "保存"
 
-#: src/components/space/SpaceEditor.tsx:607
-#: src/components/space/SpaceEditor.tsx:775
-#: src/components/space/SpaceEditor.tsx:872
-#: src/components/space/SpaceEditor.tsx:971
 #~ msgid "Save All Changes"
 #~ msgstr "保存所有更改"
 
 #: src/components/modals/ChannelEditorModal.tsx:189
 #: src/components/modals/GroupEditorModal.tsx:94
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:380
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:236
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:483
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:237
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "儲存變更"
@@ -1381,7 +1459,8 @@ msgstr "儲存變更"
 msgid "Save Contact Photo"
 msgstr "儲存聯絡人照片"
 
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:145
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:472
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:226
 msgid "Save Failed"
 msgstr "儲存失敗"
 
@@ -1394,7 +1473,7 @@ msgstr "保存私鑰"
 msgid "Save User Key"
 msgstr "儲存使用者金鑰"
 
-#: src/components/context/MessageDB.tsx:5199
+#: src/components/context/MessageDB.tsx:5343
 msgid "saved config is out of date"
 msgstr "保存的配置已過期"
 
@@ -1433,7 +1512,7 @@ msgstr "搜尋訊息..."
 msgid "Searching..."
 msgstr "搜尋中..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:43
+#: src/components/modals/UserSettingsModal/Privacy.tsx:45
 msgid "Security"
 msgstr "安全"
 
@@ -1446,11 +1525,11 @@ msgstr "選擇一個選項"
 msgid "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
 msgstr "選擇任何現有角色作為此頻道的管理員。管理員對任何訊息擁有發佈、刪除和釘住的權限。如果未選擇管理員，只有Space擁有者可以管理該頻道。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:88
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:90
 msgid "Select conversation"
 msgstr "選擇對話"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:192
+#: src/components/modals/SpaceSettingsModal/General.tsx:221
 msgid "Select default channel"
 msgstr "選擇默認頻道"
 
@@ -1474,11 +1553,11 @@ msgstr "選擇角色"
 msgid "Send"
 msgstr "發送"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:253
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:263
 msgid "Send Invite"
 msgstr "傳送邀請"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:54
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:56
 msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 msgstr "向曾有對話的對象發送邀請，他們的收件箱將顯示邀請按鈕。"
 
@@ -1512,21 +1591,25 @@ msgstr "顯示主屏幕"
 msgid "Skip Adding Photo"
 msgstr "跳過添加照片"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:116
+#: src/components/modals/SpaceSettingsModal/General.tsx:145
 msgid "Space Banner"
 msgstr "空間橫幅"
 
 #~ msgid "Space Icon Attachment"
 #~ msgstr "空間圖示附件"
 
+#: src/components/modals/AddSpaceModal.tsx:164
+msgid "Space ID"
+msgstr ""
+
 #: src/components/modals/CreateSpaceModal.tsx:85
-#: src/components/modals/SpaceSettingsModal/General.tsx:108
+#: src/components/modals/SpaceSettingsModal/General.tsx:110
 msgid "Space Name"
 msgstr "空間名稱"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:27
 msgid "Space Settings"
-msgstr ""
+msgstr "空間設置"
 
 #: src/components/search/SearchResults.tsx:63
 msgid "Start typing to search messages..."
@@ -1549,12 +1632,20 @@ msgid "Stickers"
 msgstr "貼圖"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:103
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:105
 msgid "Successfully sent invite to {0}"
 msgstr "已成功發送邀請給 {0}"
 
 #~ msgid "Supported types: PNG, JPG, GIF"
 #~ msgstr "支援格式：PNG、JPG、GIF"
+
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:346
+msgid "Sync Kick Status"
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:346
+msgid "Sync kick status for previously kicked users. This verifies kicks without posting visible messages."
+msgstr ""
 
 #~ msgid "system"
 #~ msgstr "系統"
@@ -1571,11 +1662,21 @@ msgstr "點擊以複製"
 msgid "Tap to select"
 msgstr "點擊以選擇"
 
-#: src/components/message/InviteLink.tsx:22
+#: src/components/message/InviteLink.tsx:21
+#: src/components/modals/AddSpaceModal.tsx:69
+#: src/hooks/business/invites/useInviteProcessing.ts:26
+msgid "The invite link format is invalid."
+msgstr ""
+
+#: src/components/message/InviteLink.tsx:33
 msgid "The invite link has expired or is invalid."
 msgstr "邀請連結已失效或無效。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:143
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:30
+msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
+msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:161
 msgid "This device"
 msgstr "這個設備"
 
@@ -1588,24 +1689,33 @@ msgstr "此信息僅提供給您加入的空間。"
 msgid "This is your public address and is safe to share with anyone you want to interact with."
 msgstr "這是您的公共地址，可以安全地與任何您想互動的人分享。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:192
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:202
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "此連結不會過期，但你可以隨時生成一個新連結，這將使舊連結失效。"
 
 #~ msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link. Current Space members will not be removed from the Space."
 #~ msgstr "此鏈接不會過期，但您可以隨時生成一個新鏈接，這將使舊鏈接失效。當前空間成員將不會被移除。"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:397
+#: src/components/context/MessageDB.tsx:4819
+#: src/components/message/InviteLink.tsx:31
+msgid "This public invite link is no longer valid."
+msgstr ""
+
+#: src/hooks/business/spaces/useInviteManagement.ts:126
+msgid "This user is already a member of this space."
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:500
 msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
-msgstr ""
+msgstr "這將創建一個公共邀請連結，任何人都可以使用它來加入您的空間。考慮與誰分享這個連結。"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:396
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:499
 msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
-msgstr ""
+msgstr "這將生成一個新的公共邀請連結並使當前的連結失效。擁有舊連結的任何人將不再能夠使用它。"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:412
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:515
 msgid "This will permanently delete the current public invite link. Anyone who has this link will no longer be able to use it to join your Space."
-msgstr ""
+msgstr "這將永久刪除當前的公共邀請連結。擁有此連結的任何人將不再能夠使用它來加入您的空間。"
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:77
@@ -1654,7 +1764,7 @@ msgstr "無法壓縮貼圖圖片。請使用較小的圖片。"
 msgid "Unable to copy to clipboard"
 msgstr "無法複製到剪貼簿"
 
-#: src/components/context/MessageDB.tsx:3320
+#: src/components/context/MessageDB.tsx:3482
 msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
 msgstr "由於配置不完整，無法離開空間。空間數據可能已損壞。"
 
@@ -1684,11 +1794,11 @@ msgstr "未知的空間"
 msgid "Unknown time"
 msgstr "未知時間"
 
-#: src/components/context/MessageDB.tsx:957
-#: src/components/context/MessageDB.tsx:976
-#: src/components/context/MessageDB.tsx:2898
-#: src/components/context/MessageDB.tsx:3934
-#: src/components/context/MessageDB.tsx:5148
+#: src/components/context/MessageDB.tsx:961
+#: src/components/context/MessageDB.tsx:980
+#: src/components/context/MessageDB.tsx:3043
+#: src/components/context/MessageDB.tsx:4122
+#: src/components/context/MessageDB.tsx:5292
 #: src/components/direct/DirectMessage.tsx:123
 #: src/components/direct/DirectMessage.tsx:138
 #: src/components/direct/DirectMessage.tsx:323
@@ -1783,6 +1893,10 @@ msgstr "用戶名或地址"
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr "useWebSocket 必須在 WebSocketProvider 內使用"
 
+#: src/components/modals/AddSpaceModal.tsx:185
+msgid "Validating invite..."
+msgstr ""
+
 #: src/components/onboarding/Onboarding.native.tsx:239
 #: src/components/onboarding/Onboarding.tsx:105
 msgid "Welcome to Quorum!"
@@ -1795,13 +1909,13 @@ msgstr "今天你在想什麼？"
 #~ msgid "When enabled, direct messages are not signed by your user key..."
 #~ msgstr "當啟用時，私訊不會由您的用戶金鑰簽名..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:56
+#: src/components/modals/UserSettingsModal/Privacy.tsx:58
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
 msgstr "當啟用時，會在設備之間同步您的用戶數據、空間和空間密鑰。啟用此功能會增加您帳戶的元數據可見性，這可能會顯示您何時加入新空間，但不會顯示您已加入的空間。"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:208
+#: src/components/modals/SpaceSettingsModal/General.tsx:237
 msgid "When messages are signed, senders confirm they come from their key. When messages aren't signed, senders have plausible deniability. This setting applies to all messages in this Space."
-msgstr ""
+msgstr "當消息被簽名時，發送者確認它來自他們的密鑰。當消息未被簽名時，發送者具有合理的否認權。此設置適用於此空間中的所有消息。"
 
 #: src/components/modals/CreateSpaceModal.tsx:142
 msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
@@ -1813,11 +1927,11 @@ msgstr "在瀏覽器上使用 Quorum 時，您的消息會保存在本地瀏覽�
 
 #: src/components/modals/ConversationSettingsModal.tsx:184
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
-msgstr ""
+msgstr "當您簽署一條消息時，您確認它來自您的密鑰。當您不簽署一條消息時，您具有合理的否認權。所有對話的默認設置可以在用戶設置中更改。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:75
+#: src/components/modals/UserSettingsModal/Privacy.tsx:77
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
-msgstr ""
+msgstr "當您簽署一條消息時，您確認它來自您的密鑰。當您不簽署一條消息時，您具有合理的否認權。您可以單獨控制每個對話和消息的此設置。"
 
 #~ msgid "Yesterday"
 #~ msgstr "昨天"
@@ -1830,6 +1944,10 @@ msgstr "昨天 {timeFormatted}"
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "你"
+
+#: src/components/modals/AddSpaceModal.tsx:112
+msgid "You are already a member of this Space."
+msgstr ""
 
 #: src/components/modals/NewDirectMessageModal.tsx:149
 msgid "You can change this later for this conversation by clicking the lock icon in the Conversation view."
@@ -1868,7 +1986,12 @@ msgstr "你有新的未讀消息"
 msgid "You're all set. Welcome to Quorum!"
 msgstr "一切就緒，歡迎使用 Quorum！"
 
-#: src/components/message/InviteLink.tsx:29
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:342
+msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
+msgstr ""
+
+#: src/components/message/InviteLink.tsx:47
+#: src/components/message/InviteLink.tsx:69
 msgid "You've been invited to join a Space"
 msgstr "你已被邀請加入一個空間"
 
