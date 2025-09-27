@@ -3257,6 +3257,19 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         display_name: userDisplayName,
         inbox_address: inboxAddress,
       });
+      // Defensive: ensure creator is present in member list
+      const ensuredMember = await messageDB.getSpaceMember(
+        spaceAddress,
+        registration.user_address
+      );
+      if (!ensuredMember) {
+        await messageDB.saveSpaceMember(spaceAddress, {
+          user_address: registration.user_address,
+          user_icon: userIcon,
+          display_name: userDisplayName,
+          inbox_address: inboxAddress,
+        });
+      }
       const config = await messageDB.getUserConfig({
         address: registration.user_address,
       });
@@ -3283,6 +3296,10 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         },
         true
       );
+      // Ensure member list reflects the creator immediately
+      await queryClient.invalidateQueries({
+        queryKey: buildSpaceMembersKey({ spaceId: spaceAddress }),
+      });
       await queryClient.invalidateQueries({ queryKey: buildSpacesKey({}) });
       await queryClient.invalidateQueries({
         queryKey: buildConfigKey({ userAddress: registration.user_address }),

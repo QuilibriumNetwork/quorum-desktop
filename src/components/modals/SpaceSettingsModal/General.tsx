@@ -9,6 +9,7 @@ interface GeneralProps {
   space: any;
   spaceName: string;
   setSpaceName: (value: string) => void;
+  fixes?: { id: string; message: string; actionLabel: string; onFix: () => void; loading?: boolean }[];
   iconData: ArrayBuffer | undefined;
   currentIconFile: File | undefined;
   iconFileError: string | null;
@@ -38,6 +39,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
   space,
   spaceName,
   setSpaceName,
+  fixes,
   iconData,
   currentIconFile,
   iconFileError,
@@ -111,6 +113,33 @@ const General: React.FunctionComponent<GeneralProps> = ({
         </div>
       </div>
       <div className="modal-content-section">
+        {/* Fixes section (hidden if none) */}
+        {fixes && fixes.length > 0 && (
+          <>
+            <Spacer size="md" direction="vertical" borderTop={true} />
+            <div className="modal-text-label">
+              <Trans>Fixes</Trans>
+            </div>
+            <div className="modal-content-info">
+              <div className="flex flex-col gap-2">
+                {fixes.map((fix) => (
+                  <div
+                    key={fix.id}
+                    className="flex items-center justify-between gap-3 p-3 rounded-md"
+                    style={{ border: '1px solid var(--color-border-default)', background: 'var(--surface-2)' }}
+                  >
+                    <div className="text-sm" style={{ lineHeight: 1.3 }}>
+                      {fix.message}
+                    </div>
+                    <Button type="primary" onClick={fix.onFix} disabled={!!fix.loading}>
+                      {fix.loading ? t`Fixing...` : fix.actionLabel}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
         <Spacer size="md" direction="vertical" borderTop={true} />
         <div className="modal-text-label">
           <Trans>Space Banner</Trans>

@@ -10,6 +10,9 @@ import { useSpace } from '../../../hooks';
 import { useMessageDB } from '../../context/useMessageDB';
 import { Channel } from '../../../api/quorumApi';
 import { t } from '@lingui/core/macro';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { useQueryClient } from '@tanstack/react-query';
+import { buildSpaceMembersKey } from '../../../hooks';
 import {
   useSpaceManagement,
   useRoleManagement,
@@ -31,7 +34,47 @@ const SpaceSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
 }> = ({ spaceId, dismiss }) => {
   const { data: space } = useSpace({ spaceId });
-  const { updateSpace } = useMessageDB();
+  const { updateSpace, messageDB } = useMessageDB();
+  const user = usePasskeysContext();
+  const queryClient = useQueryClient();
+
+  // Legacy owner membership check
+  const [checkingOwnerMembership, setCheckingOwnerMembership] = React.useState<boolean>(false);
+  const [missingOwnerMembership, setMissingOwnerMembership] = React.useState<boolean>(false);
+  const [addingOwner, setAddingOwner] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    (async () => {
+      if (!space || !user?.currentPasskeyInfo?.address) return;
+      setCheckingOwnerMembership(true);
+      try {
+        const existing = await messageDB.getSpaceMember(spaceId, user.currentPasskeyInfo.address);
+        const isMissing = !existing || !existing.inbox_address || existing.inbox_address === '';
+        setMissingOwnerMembership(isMissing);
+      } finally {
+        setCheckingOwnerMembership(false);
+      }
+    })();
+  }, [spaceId, space, user?.currentPasskeyInfo?.address, messageDB]);
+
+  const addOwnerToMembers = React.useCallback(async () => {
+    if (!user?.currentPasskeyInfo) return;
+    setAddingOwner(true);
+    try {
+      const inboxKey = await messageDB.getSpaceKey(spaceId, 'inbox');
+      const inboxAddress = inboxKey?.address || '';
+      await messageDB.saveSpaceMember(spaceId, {
+        user_address: user.currentPasskeyInfo.address,
+        user_icon: user.currentPasskeyInfo.pfpUrl || '',
+        display_name: user.currentPasskeyInfo.displayName || '',
+        inbox_address: inboxAddress,
+      } as any);
+      setMissingOwnerMembership(false);
+      await queryClient.invalidateQueries({ queryKey: buildSpaceMembersKey({ spaceId }) });
+    } finally {
+      setAddingOwner(false);
+    }
+  }, [messageDB, queryClient, spaceId, user?.currentPasskeyInfo]);
 
   // Default channel state
   const [defaultChannel, setDefaultChannel] = React.useState<Channel | undefined>(
@@ -269,6 +312,13 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           space={space}
                           spaceName={spaceName}
                           setSpaceName={setSpaceName}
+                          fixes={missingOwnerMembership ? [{
+                            id: 'owner-membership',
+                            message: t`You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address).`,
+                            actionLabel: t`Fix`,
+                            onFix: addOwnerToMembers,
+                            loading: addingOwner,
+                          }] : []}
                           iconData={iconData}
                           currentIconFile={currentIconFile}
                           iconFileError={iconFileError}
