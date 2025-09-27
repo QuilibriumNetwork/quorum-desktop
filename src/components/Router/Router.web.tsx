@@ -9,6 +9,31 @@ import DirectMessages from '@/components/direct/DirectMessages';
 import Connecting from '@/components/Connecting';
 import InviteRoute from '@/components/InviteRoute';
 
+class RouteErrorBoundary extends React.Component<
+  { fallback: React.ReactNode; children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { fallback: React.ReactNode; children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(_error: any) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: any, info: any) {
+    console.error('Route error boundary caught:', error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+
 // Helper function for conditional dev imports
 const lazyDevImport = (importFn: () => Promise<any>, exportName?: string) =>
   process.env.NODE_ENV === 'development'
@@ -124,13 +149,15 @@ export function Router({ user, setUser }: RouterProps) {
             <MobileProvider>
               <SidebarProvider>
                 <Layout>
-                  <Space
-                    setUser={setUser}
-                    setAuthState={() => {
-                      setUser(undefined);
-                    }}
-                    user={user}
-                  />
+                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                    <Space
+                      setUser={setUser}
+                      setAuthState={() => {
+                        setUser(undefined);
+                      }}
+                      user={user}
+                    />
+                  </RouteErrorBoundary>
                 </Layout>
               </SidebarProvider>
             </MobileProvider>
