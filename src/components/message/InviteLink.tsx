@@ -8,19 +8,59 @@ import { Trans } from '@lingui/react/macro';
 
 export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
   // Extract business logic into focused hooks
-  const { space, error } = useInviteProcessing(inviteLink);
+  const { space, error, isProcessing } = useInviteProcessing(inviteLink);
   const { joining, joinSpace, joinError } = useInviteJoining(inviteLink);
   const { buttonText, isButtonDisabled } = useInviteUI(space, joining);
 
-  // Combine all errors for display
-  const displayError = error || joinError;
+  // Combine and map errors for display
+  const rawError = error || joinError;
+  const displayError = (() => {
+    if (!rawError) return undefined;
+    const msg = String(rawError);
+    if (/invalid link/i.test(msg)) {
+      return <Trans>The invite link format is invalid.</Trans>;
+    }
+    if (/invalid response/i.test(msg)) {
+      return (
+        <Trans>
+          Could not fetch the Space details. Please try again.
+        </Trans>
+      );
+    }
+    if (/invite\/eval\s*404/i.test(msg) || /public invite link is no longer valid/i.test(msg)) {
+      return <Trans>This public invite link is no longer valid.</Trans>;
+    }
+    return <Trans>The invite link has expired or is invalid.</Trans>;
+  })();
 
   return (
     <Container className="w-full !max-w-[250px] sm:!max-w-[400px] lg:!max-w-[500px] lg:min-w-[500px] rounded-md p-2 sm:p-3 bg-surface-5 border border-surface-6">
       {displayError && (
         <Callout variant="error" size="sm" className="mb-2">
-          <Trans>The invite link has expired or is invalid.</Trans>
+          {displayError}
         </Callout>
+      )}
+      {!displayError && isProcessing && (
+        <Container className="font-bold flex flex-col items-center sm:items-start">
+          <Container className="mb-2 text-center sm:text-left">
+            <Text>
+              <Trans>You've been invited to join a Space</Trans>
+            </Text>
+          </Container>
+          <FlexRow className="flex-col lg:flex-row lg:items-center gap-2 lg:gap-3 w-full">
+            <FlexRow className="items-center bg-surface-4 rounded-lg px-1 sm:px-2 py-1 sm:py-2 gap-1 sm:gap-2 lg:gap-3 w-full lg:flex-1 overflow-hidden">
+              <Container
+                className="w-8 sm:w-10 lg:w-12 h-8 sm:h-10 lg:h-12 rounded-md sm:rounded-lg overflow-hidden flex-shrink-0 bg-surface-3"
+              />
+              <Container className="flex-1 min-w-0 overflow-hidden">
+                <Container className="h-4 bg-surface-3 rounded w-3/4 sm:w-1/2" />
+              </Container>
+            </FlexRow>
+            <Container className="flex justify-center w-full lg:w-auto lg:flex-shrink-0">
+              <Container className="h-9 sm:h-10 bg-surface-4 rounded w-full lg:w-[110px]" />
+            </Container>
+          </FlexRow>
+        </Container>
       )}
       {space && (
         <Container className="font-bold flex flex-col items-center sm:items-start">

@@ -163,3 +163,37 @@ export function getInviteDisplayDomain(): string {
   const domain = getInviteBaseDomain();
   return domain;
 }
+
+/**
+ * Parse invite URL parameters from a link's hash portion into a simple map.
+ * Accepts both public and private invite variants.
+ */
+export function parseInviteParams(inviteLink: string):
+  | {
+      spaceId?: string;
+      configKey?: string;
+      template?: string;
+      secret?: string;
+      hubKey?: string;
+    }
+  | null {
+  if (!inviteLink || typeof inviteLink !== 'string') return null;
+  const idx = inviteLink.indexOf('#');
+  if (idx < 0 || idx === inviteLink.length - 1) return null;
+  const hashContent = inviteLink.slice(idx + 1);
+  const params = Object.create(null) as Record<string, string>;
+  for (const pair of hashContent.split('&')) {
+    const [k, v] = pair.split('=');
+    if (!k || !v) continue;
+    if (
+      k === 'spaceId' ||
+      k === 'configKey' ||
+      k === 'template' ||
+      k === 'secret' ||
+      k === 'hubKey'
+    ) {
+      params[k] = v;
+    }
+  }
+  return Object.keys(params).length ? (params as any) : null;
+}

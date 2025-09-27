@@ -18,8 +18,16 @@ export const useInviteProcessing = (inviteLink: string) => {
         setError(undefined);
         const spaceData = await processInviteLink(inviteLink);
         setSpace(spaceData);
-      } catch (e) {
-        setError(t`Could not verify invite`);
+      } catch (e: any) {
+        const raw = e?.message || e?.toString?.() || '';
+        // Surface specific, user-friendly errors from known conditions
+        let friendly = t`Could not verify invite`;
+        if (/invalid link/i.test(raw)) {
+          friendly = t`The invite link format is invalid.`;
+        } else if (/invalid response/i.test(raw)) {
+          friendly = t`Could not fetch the Space details. Please try again.`;
+        }
+        setError(friendly);
         setSpace(undefined);
       }
     };

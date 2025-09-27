@@ -62,10 +62,10 @@ export const useInviteManagement = (
   // Hooks
   const { currentPasskeyInfo } = usePasskeysContext();
   const {
+    messageDB,
     ensureKeyForSpace,
     sendInviteToUser,
     generateNewInviteLink: generateInviteLink,
-    getSpaceMember,
   } = useMessageDB();
   const { keyset } = useRegistrationContext();
   const { data: registration } = useRegistration({
@@ -116,8 +116,8 @@ export const useInviteManagement = (
 
       try {
         // Check if user is already a member of this space
-        const existingMember = await getSpaceMember(spaceId, address);
-        if (existingMember) {
+        const existingMember = await messageDB.getSpaceMember(spaceId, address);
+        if (existingMember && existingMember.inbox_address && existingMember.inbox_address !== '') {
           setMembershipWarning(t`This user is already a member of this space.`);
           return;
         }
@@ -140,7 +140,7 @@ export const useInviteManagement = (
       }
     },
     [
-      getSpaceMember,
+      messageDB,
       spaceId,
       ensureKeyForSpace,
       currentPasskeyInfo,

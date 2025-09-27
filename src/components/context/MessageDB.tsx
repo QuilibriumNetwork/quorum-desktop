@@ -28,7 +28,7 @@ import {
   QueryClient,
   useQueryClient,
 } from '@tanstack/react-query';
-import { getInviteUrlBase, getValidInvitePrefixes } from '@/utils/inviteDomain';
+import { getInviteUrlBase, parseInviteParams } from '@/utils/inviteDomain';
 import {
   channel_raw as ch,
   channel as secureChannel,
@@ -49,7 +49,7 @@ import {
   UpdateProfileMessage,
 } from '../../api/quorumApi';
 import { useQuorumApiClient } from './QuorumApiContext';
-import { QuorumApiClient } from '../../api/baseTypes';
+import { QuorumApiClient, isQuorumApiError } from '../../api/baseTypes';
 import { useWebSocket } from './WebsocketProvider';
 import { useInvalidateConversation } from '../../hooks/queries/conversation/useInvalidateConversation';
 // Use platform-specific crypto utilities
@@ -178,10 +178,6 @@ type MessageDBContextValue = {
       completedOnboarding: boolean;
     }
   ) => Promise<{ spaceId: string; channelId: string } | undefined>;
-  getSpaceMember: (
-    spaceId: string,
-    userAddress: string
-  ) => Promise<any>;
   deleteSpace: (spaceId: string) => Promise<void>;
   kickUser: (
     spaceId: string,
@@ -205,7 +201,7 @@ type MessageDBContextValue = {
   requestSync: (spaceId: string) => Promise<void>;
   deleteConversation: (
     conversationId: string,
-    currentPasskeyInfo?: {
+    currentPasskeyInfo: {
       credentialId: string;
       address: string;
       publicKey: string;
@@ -1481,11 +1477,17 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                       buildSpaceMembersKey({
                         spaceId: conversationId.split('/')[0],
                       }),
-                      (oldData: secureChannel.UserProfile[]) => {
-                        return [
-                          ...(oldData ?? []),
-                          { ...member, inbox_address: '' },
-                        ];
+                      (
+                        oldData: (secureChannel.UserProfile & {
+                          inbox_address: string;
+                        })[]
+                      ) => {
+                        const previous = oldData ?? [];
+                        return previous.map((m) =>
+                          m.user_address === member.user_address
+                            ? { ...m, inbox_address: '' }
+                            : m
+                        );
                       }
                     );
                     const space = await messageDB.getSpace(
@@ -1757,6 +1759,39 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                     );
                     await messageDB.deleteSpace(spaceId);
                     return;
+                  }
+                  // If someone else was kicked, mark them inactive locally
+                  if (
+                    envelope.message.kick &&
+                    envelope.message.kick !== self_address
+                  ) {
+                    const spaceId = conversationId.split('/')[0];
+                    const kickedAddress = envelope.message.kick;
+                    const kicked = await messageDB.getSpaceMember(
+                      spaceId,
+                      kickedAddress
+                    );
+                    if (kicked) {
+                      await messageDB.saveSpaceMember(spaceId, {
+                        ...kicked,
+                        inbox_address: '',
+                      });
+                      await queryClient.setQueryData(
+                        buildSpaceMembersKey({ spaceId }),
+                        (
+                          oldData: (secureChannel.UserProfile & {
+                            inbox_address: string;
+                          })[]
+                        ) => {
+                          const previous = oldData ?? [];
+                          return previous.map((m) =>
+                            m.user_address === kickedAddress
+                              ? { ...m, inbox_address: '' }
+                              : m
+                          );
+                        }
+                      );
+                    }
                   }
                 }
               }
@@ -2660,9 +2695,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           currentPasskeyInfo
         );
       }
-    },
-    []
-  );
+  }, []);
 
   // Ensure selfAddress is derived when key material is available
   useEffect(() => {
@@ -4215,6 +4248,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             registration,
             filteredMembers.length + 200
           );
+
+        console.log("new link session", session);
         let outbounds: string[] = [];
         let newPeerIdSet = {
           [trState.id_peer_map[1].public_key]: 1,
@@ -4500,86 +4535,59 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   );
 
   const processInviteLink = React.useCallback(async (inviteLink: string) => {
-    const validPrefixes = getValidInvitePrefixes();
-    if (validPrefixes.some(prefix => inviteLink.startsWith(prefix))) {
-      const output = inviteLink
-        .split('#')[1]
-        .split('&')
-        .map((l) => {
-          const [key, value] = l.split('=');
-          if (!key || !value) {
-            return undefined;
-          }
+    const params = parseInviteParams(inviteLink);
+    if (!params) throw new Error(t`invalid link`);
 
-          if (
-            key != 'spaceId' &&
-            key != 'configKey' &&
-            key != 'secret' &&
-            key != 'template' &&
-            key != 'hubKey'
-          ) {
-            return undefined;
-          }
+    const info = params as {
+      spaceId?: string;
+      configKey?: string;
+      secret?: string;
+      template?: string;
+      hubKey?: string;
+    };
 
-          return { [key]: value };
-        })
-        .filter((l) => !!l)
-        .reduce((prev, curr) => Object.assign(prev, curr), {});
-
-      if (output) {
-        const info = output as {
-          spaceId: string;
-          configKey: string;
-          secret: string;
-          template: string;
-          hubKey: string;
-        };
-
-        if (!info.spaceId || !info.configKey) {
-          throw new Error(t`invalid link`);
-        }
-
-        const manifest = await apiClient.getSpaceManifest(info.spaceId);
-        if (!manifest) {
-          throw new Error(t`invalid response`);
-        }
-
-        const ciphertext = JSON.parse(manifest.data.space_manifest) as {
-          ciphertext: string;
-          initialization_vector: string;
-          associated_data: string;
-        };
-        const space = JSON.parse(
-          Buffer.from(
-            JSON.parse(
-              ch.js_decrypt_inbox_message(
-                JSON.stringify({
-                  inbox_private_key: [
-                    ...new Uint8Array(Buffer.from(info.configKey, 'hex')),
-                  ],
-                  ephemeral_public_key: [
-                    ...new Uint8Array(
-                      Buffer.from(manifest.data.ephemeral_public_key, 'hex')
-                    ),
-                  ],
-                  ciphertext: ciphertext,
-                })
-              )
-            )
-          ).toString('utf-8')
-        ) as Space;
-
-        if (
-          (space.inviteUrl == '' || !space.inviteUrl) &&
-          (!info.secret || !info.template || !info.hubKey)
-        ) {
-          throw new Error(t`invalid link`);
-        }
-
-        return space;
-      }
+    if (!info.spaceId || !info.configKey) {
+      throw new Error(t`invalid link`);
     }
-    throw new Error(t`invalid link`);
+
+    const manifest = await apiClient.getSpaceManifest(info.spaceId);
+    if (!manifest) {
+      throw new Error(t`invalid response`);
+    }
+
+    const ciphertext = JSON.parse(manifest.data.space_manifest) as {
+      ciphertext: string;
+      initialization_vector: string;
+      associated_data: string;
+    };
+    const space = JSON.parse(
+      Buffer.from(
+        JSON.parse(
+          ch.js_decrypt_inbox_message(
+            JSON.stringify({
+              inbox_private_key: [
+                ...new Uint8Array(Buffer.from(info.configKey, 'hex')),
+              ],
+              ephemeral_public_key: [
+                ...new Uint8Array(
+                  Buffer.from(manifest.data.ephemeral_public_key, 'hex')
+                ),
+              ],
+              ciphertext: ciphertext,
+            })
+          )
+        )
+      ).toString('utf-8')
+    ) as Space;
+
+    if (
+      (space.inviteUrl == '' || !space.inviteUrl) &&
+      (!info.secret || !info.template || !info.hubKey)
+    ) {
+      throw new Error(t`invalid link`);
+    }
+
+    return space;
   }, []);
 
   const joinInviteLink = React.useCallback(
@@ -4598,40 +4606,15 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         completedOnboarding: boolean;
       }
     ) => {
-      const validPrefixes = getValidInvitePrefixes();
-      if (validPrefixes.some(prefix => inviteLink.startsWith(prefix))) {
-        const output = inviteLink
-          .split('#')[1]
-          .split('&')
-          .map((l) => {
-            const [key, value] = l.split('=');
-            if (!key || !value) {
-              return undefined;
-            }
-
-            if (
-              key != 'spaceId' &&
-              key != 'configKey' &&
-              key != 'secret' &&
-              key != 'template' &&
-              key != 'hubKey'
-            ) {
-              return undefined;
-            }
-
-            return { [key]: value };
-          })
-          .filter((l) => !!l)
-          .reduce((prev, curr) => Object.assign(prev, curr), {});
-
-        if (output) {
-          const info = output as {
-            spaceId: string;
-            configKey: string;
-            secret: string;
-            template: string;
-            hubKey: string;
-          };
+      const params = parseInviteParams(inviteLink);
+      if (params) {
+        const info = params as {
+          spaceId: string;
+          configKey: string;
+          secret?: string;
+          template?: string;
+          hubKey?: string;
+        };
 
           const manifest = await apiClient.getSpaceManifest(info.spaceId);
           if (!manifest) {
@@ -4675,9 +4658,17 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               throw new Error(t`invalid link`);
             }
 
-            const inviteEval = await apiClient.getSpaceInviteEval(
+          let inviteEval;
+          try {
+            inviteEval = await apiClient.getSpaceInviteEval(
               configPub.toString('hex')
             );
+          } catch (e: any) {
+            if (isQuorumApiError(e) && e.status === 404) {
+              throw new Error(t`This public invite link is no longer valid.`);
+            }
+            throw e;
+          }
             const invite = JSON.parse(
               Buffer.from(
                 JSON.parse(
@@ -4708,7 +4699,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             template = JSON.parse(info.template);
           } else {
             template = JSON.parse(
-              Buffer.from(info.template, 'hex').toString('utf-8')
+              Buffer.from(info.template!, 'hex').toString('utf-8')
             );
           }
 
@@ -4720,7 +4711,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           const inboxAddress = base58btc.baseEncode(ih.bytes);
           const hubPub = Buffer.from(
             ch.js_get_pubkey_ed448(
-              Buffer.from(info.hubKey, 'hex').toString('base64')
+              Buffer.from(info.hubKey!, 'hex').toString('base64')
             ),
             'base64'
           );
@@ -4733,15 +4724,15 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           ratchet.secret = Buffer.from(
             new Uint8Array(secret_pair.private_key)
           ).toString('base64');
-          ratchet.scalar = Buffer.from(info.secret, 'hex').toString('base64');
+          ratchet.scalar = Buffer.from(info.secret!, 'hex').toString('base64');
           ratchet.point = JSON.parse(
             ch.js_get_pubkey_x448(
-              Buffer.from(info.secret, 'hex').toString('base64')
+              Buffer.from(info.secret!, 'hex').toString('base64')
             )
           );
           ratchet.random_commitment_point = JSON.parse(
             ch.js_get_pubkey_x448(
-              Buffer.from(info.secret, 'hex').toString('base64')
+              Buffer.from(info.secret!, 'hex').toString('base64')
             )
           );
           template.dkg_ratchet = JSON.stringify(ratchet);
@@ -4773,7 +4764,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             hub_signature: Buffer.from(
               JSON.parse(
                 ch.js_sign_ed448(
-                  Buffer.from(info.hubKey, 'hex').toString('base64'),
+                  Buffer.from(info.hubKey!, 'hex').toString('base64'),
                   Buffer.from(
                     new Uint8Array([
                       ...new Uint8Array(
@@ -4817,7 +4808,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             keyId: 'hub',
             address: hubAddress,
             publicKey: hubPub.toString('hex'),
-            privateKey: info.hubKey,
+            privateKey: info.hubKey || '',
           });
           await messageDB.saveSpaceKey({
             spaceId: space.spaceId,
@@ -4838,14 +4829,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             ).toString('hex'),
           });
           await messageDB.saveSpace(space);
-
-          // Check if user is already a member to prevent duplicate joins
-          const existingMember = await messageDB.getSpaceMember(space.spaceId, currentPasskeyInfo.address);
-          if (existingMember) {
-            // User is already a member, just return space info without rejoining
-            return { spaceId: space.spaceId, channelId: space.defaultChannelId };
-          }
-
           await messageDB.saveSpaceMember(space.spaceId, {
             user_address: currentPasskeyInfo.address,
             user_icon: currentPasskeyInfo.pfpUrl,
@@ -4891,7 +4874,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             pubKey: Buffer.from(
               JSON.parse(
                 ch.js_get_pubkey_x448(
-                  Buffer.from(info.secret, 'hex').toString('base64')
+                  Buffer.from(info.secret!, 'hex').toString('base64')
                 )
               ),
               'base64'
@@ -4947,10 +4930,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           await requestSync(space.spaceId);
           return { spaceId: space.spaceId, channelId: space.defaultChannelId };
         }
-      }
-    },
-    []
-  );
+
+    }, []);
 
   const createChannel = React.useCallback(async (spaceId: string) => {
     const gp = ch.js_generate_ed448();
@@ -5607,8 +5588,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         generateNewInviteLink,
         processInviteLink,
         joinInviteLink,
-        getSpaceMember: (spaceId: string, userAddress: string) =>
-          messageDB.getSpaceMember(spaceId, userAddress),
         deleteSpace,
         kickUser,
         updateUserProfile,
@@ -5639,7 +5618,6 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   generateNewInviteLink: () => undefined as never,
   processInviteLink: () => undefined as never,
   joinInviteLink: () => undefined as never,
-  getSpaceMember: () => undefined as never,
   deleteSpace: () => undefined as never,
   kickUser: () => undefined as never,
   updateUserProfile: () => undefined as never,
