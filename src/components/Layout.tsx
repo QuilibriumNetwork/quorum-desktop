@@ -2,6 +2,7 @@ import * as React from 'react';
 import NavMenu from './navbar/NavMenu';
 import { CloseButton } from './ui';
 import { ResponsiveContainer, Container, Callout } from './primitives';
+import { createPortal } from 'react-dom';
 import CreateSpaceModal from './modals/CreateSpaceModal';
 import ConfirmationModal from './modals/ConfirmationModal';
 import ImageModal from './modals/ImageModal';
@@ -31,15 +32,20 @@ const Layout: React.FunctionComponent<{
     useSidebar();
   useNavigationHotkeys();
 
-  const [kickToast, setKickToast] = React.useState<{ message: string } | null>(
-    null
-  );
+  const [kickToast, setKickToast] = React.useState<{ message: string; variant?: 'info' | 'success' | 'warning' | 'error' } | null>(null);
   React.useEffect(() => {
-    const handler = (e: any) => {
-      setKickToast({ message: `You've been kicked from ${e.detail?.spaceName}` });
+    const kickHandler = (e: any) => {
+      setKickToast({ message: `You've been kicked from ${e.detail?.spaceName}`, variant: 'warning' });
     };
-    (window as any).addEventListener('quorum:kick-toast', handler);
-    return () => (window as any).removeEventListener('quorum:kick-toast', handler);
+    const genericHandler = (e: any) => {
+      setKickToast({ message: e.detail?.message, variant: e.detail?.variant || 'info' });
+    };
+    (window as any).addEventListener('quorum:kick-toast', kickHandler);
+    (window as any).addEventListener('quorum:toast', genericHandler);
+    return () => {
+      (window as any).removeEventListener('quorum:kick-toast', kickHandler);
+      (window as any).removeEventListener('quorum:toast', genericHandler);
+    };
   }, []);
 
   return (
@@ -91,18 +97,23 @@ const Layout: React.FunctionComponent<{
         <ImageModalProvider showImageModal={showImageModal}>
           <ResponsiveContainer>
             {props.children}
-            {kickToast && (
-              <div className="fixed bottom-4 right-4 z-[11000] max-w-[360px]">
-                <Callout
-                  variant="warning"
-                  size="sm"
-                  dismissible
-                  onClose={() => setKickToast(null)}
+            {kickToast &&
+              createPortal(
+                <div
+                  className="fixed bottom-4 right-4 max-w-[360px]"
+                  style={{ zIndex: 2147483647 }}
                 >
-                  {kickToast.message}
-                </Callout>
-              </div>
-            )}
+                  <Callout
+                    variant={kickToast.variant || 'info'}
+                    size="sm"
+                    dismissible
+                    onClose={() => setKickToast(null)}
+                  >
+                    {kickToast.message}
+                  </Callout>
+                </div>,
+                document.body
+              )}
           </ResponsiveContainer>
         </ImageModalProvider>
       </ConfirmationModalProvider>

@@ -45,6 +45,16 @@ const SpaceSettingsModal: React.FunctionComponent<{
       if (count > 0) {
         // Optionally, request a members sync shortly after
         await requestSync(space.spaceId);
+        if (typeof window !== 'undefined' && (window as any).dispatchEvent) {
+          (window as any).dispatchEvent(
+            new CustomEvent('quorum:toast', {
+              detail: {
+                message: `Updated records for ${count} users that have been kicked.`,
+                variant: 'success',
+              },
+            })
+          );
+        }
       }
     } finally {
       setSyncingKicks(false);
