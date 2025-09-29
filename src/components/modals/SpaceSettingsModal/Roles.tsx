@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Select, Icon, Tooltip, ScrollContainer } from '../../primitives';
+import { Button, Select, Icon, Tooltip, ScrollContainer, Callout } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { Permission } from '../../../api/quorumApi';
@@ -45,6 +45,23 @@ const Roles: React.FunctionComponent<RolesProps> = ({
             <Trans>
               Click on the role name and tag to edit them.
             </Trans>
+          </div>
+          <div className="pt-3">
+            <Callout variant="info" size="sm" dismissible>
+              <Trans>
+                As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages.{' '}
+                <Tooltip
+                  id="role-privacy-info"
+                  content={t`This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection.`}
+                  place="top"
+                  className="!w-[400px]"
+                >
+                  <span className="underline cursor-help">
+                    Learn more
+                  </span>
+                </Tooltip>
+              </Trans>
+            </Callout>
           </div>
         </div>
       </div>

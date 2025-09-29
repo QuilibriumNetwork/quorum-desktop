@@ -157,7 +157,7 @@ msgstr "Add friend"
 msgid "Add Group"
 msgstr "Add Group"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:58
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:75
 msgid "Add Role"
 msgstr "Add Role"
 
@@ -259,6 +259,10 @@ msgstr "Are you sure you want to pin this message?"
 #: src/hooks/business/messages/usePinnedMessages.ts:230
 msgid "Are you sure you want to unpin this message?"
 msgstr "Are you sure you want to unpin this message?"
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:51
+msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
+msgstr "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 
 #: src/components/message/MessageComposer.tsx:344
 msgid "attach image"
@@ -539,7 +543,7 @@ msgstr "Delete message"
 msgid "Delete Message"
 msgstr "Delete Message"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:142
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:159
 msgid "Delete Messages"
 msgstr "Delete Messages"
 
@@ -547,7 +551,7 @@ msgstr "Delete Messages"
 msgid "Delete Public Invite Link"
 msgstr "Delete Public Invite Link"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:162
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:179
 #: src/hooks/business/spaces/useRoleManagement.ts:58
 msgid "Delete Role"
 msgstr "Delete Role"
@@ -925,7 +929,7 @@ msgstr "Key Saved"
 msgid "Kick User"
 msgstr "Kick User"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:150
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:167
 msgid "Kick Users"
 msgstr "Kick Users"
 
@@ -1106,7 +1110,7 @@ msgstr "Pending"
 msgid "Pending removal - click Save to confirm"
 msgstr "Pending removal - click Save to confirm"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:121
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:138
 #: src/components/space/RolePreview.tsx:34
 msgid "Permissions:"
 msgstr "Permissions:"
@@ -1155,7 +1159,7 @@ msgstr "Pin message"
 msgid "Pin Message"
 msgstr "Pin Message"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:146
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:163
 msgid "Pin Messages"
 msgstr "Pin Messages"
 
@@ -1369,7 +1373,7 @@ msgstr "Select default channel"
 msgid "Select Image"
 msgstr "Select Image"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:137
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:154
 msgid "Select permissions"
 msgstr "Select permissions"
 
@@ -1512,6 +1516,10 @@ msgstr "This is your public address and is safe to share with anyone you want to
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:202
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:55
+msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
+msgstr "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
 
 #: src/components/context/MessageDB.tsx:4819
 #: src/components/message/InviteLink.tsx:31
