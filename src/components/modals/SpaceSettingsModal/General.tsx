@@ -125,13 +125,12 @@ const General: React.FunctionComponent<GeneralProps> = ({
                 {fixes.map((fix) => (
                   <div
                     key={fix.id}
-                    className="flex items-center justify-between gap-3 p-3 rounded-md"
-                    style={{ border: '1px solid var(--color-border-default)', background: 'var(--surface-2)' }}
+                    className="flex items-start justify-between gap-3 p-3 rounded-md border"
                   >
                     <div className="text-sm" style={{ lineHeight: 1.3 }}>
                       {fix.message}
                     </div>
-                    <Button type="primary" onClick={fix.onFix} disabled={!!fix.loading}>
+                    <Button type="secondary" size="small" className="whitespace-nowrap" onClick={fix.onFix} disabled={!!fix.loading}>
                       {fix.loading ? t`Fixing...` : fix.actionLabel}
                     </Button>
                   </div>

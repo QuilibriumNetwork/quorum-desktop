@@ -337,8 +337,9 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           space={space}
                           spaceName={spaceName}
                           setSpaceName={setSpaceName}
+                          // set 'owner-membership' to 'true' to see in frontend
                           fixes={(missingOwnerMembership ? [{
-                            id: 'owner-membership',
+                            id: 'true',
                             message: t`You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address).`,
                             actionLabel: t`Fix`,
                             onFix: addOwnerToMembers,
