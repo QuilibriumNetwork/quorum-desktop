@@ -7,6 +7,8 @@ import {
   FlexCenter,
   Text,
   Spacer,
+  Callout,
+  Icon,
 } from '../primitives';
 import SpaceIcon from '../navbar/SpaceIcon';
 import ModalSaveOverlay from './ModalSaveOverlay';
@@ -15,7 +17,10 @@ import { t } from '@lingui/core/macro';
 import { useSpaceJoining, useInviteValidation } from '../../hooks';
 import { useSpaces } from '../../hooks';
 import { useModalSaveState } from '../../hooks/business/ui/useModalSaveState';
-import { getValidInvitePrefixes, parseInviteParams } from '@/utils/inviteDomain';
+import {
+  getValidInvitePrefixes,
+  parseInviteParams,
+} from '@/utils/inviteDomain';
 
 type AddSpaceModalProps = {
   visible: boolean;
@@ -23,16 +28,14 @@ type AddSpaceModalProps = {
   onCreateSpace: () => void;
 };
 
-const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (
-  props
-) => {
+const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
   const [lookup, setLookup] = React.useState<string>('');
   const [manualMode, setManualMode] = React.useState<boolean>(false);
   const [manualSpaceId, setManualSpaceId] = React.useState<string>('');
   const [manualConfigKey, setManualConfigKey] = React.useState<string>('');
-  const [urlFormatError, setUrlFormatError] = React.useState<string | undefined>(
-    undefined
-  );
+  const [urlFormatError, setUrlFormatError] = React.useState<
+    string | undefined
+  >(undefined);
 
   // Extract business logic hooks for joining
   const { joinSpace, joining, joinError } = useSpaceJoining();
@@ -85,7 +88,6 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (
     // validateInvite will run via lookup effect
   }, [manualSpaceId, manualConfigKey]);
 
-
   const handleJoin = React.useCallback(async () => {
     if (validatedSpace && lookup) {
       await saveUntilComplete(async () => {
@@ -109,16 +111,19 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (
     return spaces?.some?.((s: any) => s.spaceId === validatedSpace.spaceId);
   }, [spaces, validatedSpace]);
 
-  const error = validationError || joinError || (isAlreadyMember ? t`You are already a member of this Space.` : undefined);
+  const error =
+    validationError ||
+    joinError ||
+    (isAlreadyMember ? t`You are already a member of this Space.` : undefined);
 
   return (
     <Modal
       title={t`Add a Space`}
       visible={props.visible}
       onClose={isSaving ? undefined : props.onClose}
-      closeOnBackdropClick={!isSaving}
+      closeOnBackdropClick={false}
       closeOnEscape={!isSaving}
-      size="medium"
+      size="small"
     >
       <ModalSaveOverlay
         visible={isSaving}
@@ -126,27 +131,25 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (
         className="!z-[9999]"
       />
 
-      <Container className="modal-width-medium">
+      <Container>
         <Container className="flex flex-col gap-3">
           {!manualMode && !validatedSpace && (
-            <FlexCenter width="full">
-              <Input
-                className="w-full max-w-[500px] mx-auto !text-sm"
-                value={lookup}
-                onChange={(value: string) => setLookup(value)}
-                placeholder={t`Paste an invite link`}
-                clearable={true}
-                error={!!(urlFormatError || error)}
-                errorMessage={urlFormatError || error}
-              />
-            </FlexCenter>
+            <Input
+              className="w-full !text-sm"
+              value={lookup}
+              onChange={(value: string) => setLookup(value)}
+              placeholder={t`Paste an invite link`}
+              clearable={true}
+              error={!!(urlFormatError || error)}
+              errorMessage={urlFormatError || error}
+            />
           )}
 
           {!manualMode && !validatedSpace && (
             <Container className="flex justify-center">
               <Button
                 type="unstyled"
-                className="underline text-accent-500 text-sm"
+                className="text-accent text-sm hover:text-accent-300"
                 onClick={() => setManualMode(true)}
               >
                 {t`Enter details manually`}
@@ -156,56 +159,53 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (
 
           {manualMode && !validatedSpace && (
             <>
-              <FlexCenter width="full">
-                <Input
-                  className="w-full max-w-[500px] mx-auto !text-sm"
-                  value={manualSpaceId}
-                  onChange={(value: string) => setManualSpaceId(value)}
-                  placeholder={t`Space ID`}
-                />
-              </FlexCenter>
-              <FlexCenter width="full">
-                <Input
-                  className="w-full max-w-[500px] mx-auto !text-sm"
-                  value={manualConfigKey}
-                  onChange={(value: string) => setManualConfigKey(value)}
-                  placeholder={t`Config Key`}
-                />
-              </FlexCenter>
+              <Callout variant="info" size="sm">
+                {t`Enter both Space ID and Config Key to validate`}
+              </Callout>
 
-              {/* Status for manual link building */}
-              {!(manualSpaceId && manualConfigKey) && (
-                <Text size="sm" align="center" className="opacity-80">
-                  {t`Enter both Space ID and Config Key to validate`}
-                </Text>
-              )}
+              <Input
+                className="w-full !text-sm"
+                value={manualSpaceId}
+                onChange={(value: string) => setManualSpaceId(value)}
+                placeholder={t`Space ID`}
+              />
+              <Input
+                className="w-full !text-sm"
+                value={manualConfigKey}
+                onChange={(value: string) => setManualConfigKey(value)}
+                placeholder={t`Config Key`}
+              />
 
               {manualSpaceId && manualConfigKey && isValidating && (
-                <Text size="sm" align="center" className="opacity-80">
-                  {t`Validating invite...`}
-                </Text>
+                <Callout variant="warning" size="sm">
+                  <div className="flex items-center gap-2">
+                    <Icon name="spinner" spin={true} className="text-warning" />
+                    <span>{t`Validating invite...`}</span>
+                  </div>
+                </Callout>
               )}
 
               {manualSpaceId && manualConfigKey && error && !isValidating && (
-                <Text size="sm" align="center" className="text-red-500">
+                <Callout variant="error" size="sm">
                   {error}
-                </Text>
+                </Callout>
               )}
-
+              <Spacer size="sm"></Spacer>
               <Container className="modal-join-space-actions !pt-0">
                 <Button
                   className="w-full sm:w-auto sm:inline-block sm:px-8"
-                  type="secondary"
+                  type="primary"
                   disabled={!manualSpaceId || !manualConfigKey || isValidating}
                   onClick={handleManualLookup}
                 >
                   {t`Lookup`}
                 </Button>
               </Container>
+              <Spacer size="md"></Spacer>
               <Container className="flex justify-center">
                 <Button
                   type="unstyled"
-                  className="underline text-accent-500 text-sm"
+                  className="text-accent text-sm hover:text-accent-300"
                   onClick={() => setManualMode(false)}
                 >
                   {t`Back to invite link`}
@@ -214,7 +214,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (
             </>
           )}
 
-            {validatedSpace && !isValidating && (
+          {validatedSpace && !isValidating && (
             <Container className="modal-join-space-icon justify-center">
               <SpaceIcon
                 noToggle={true}
@@ -237,49 +237,58 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (
             </Container>
           )}
 
-            {validatedSpace && !isValidating && (
-                <Container className="modal-join-space-actions flex justify-center gap-3">
-                    <>
-                        <Button
-                        className="w-full sm:w-auto sm:inline-block sm:px-8"
-                        type="primary"
-                        disabled={joining || isSaving || isAlreadyMember}
-                        onClick={handleJoin}
-                        >
-                        {isAlreadyMember ? t`Already Joined` : t`Join Space`}
-                        </Button>
-                        <Button
-                            className="w-full sm:w-auto sm:inline-block sm:px-8"
-                            type="secondary"
-                            onClick={resetManual}
-                        >
-                            {t`Reset`}
-                        </Button>
-                    </>
-                </Container>
-            )}
-        </Container>
-
-        {!(manualMode || lookup || manualSpaceId || manualConfigKey || isValidating || validatedSpace) && (
-          <>
-            <Spacer spaceBefore="lg" spaceAfter="lg" border={true} direction="vertical" />
-
-            <Container className="modal-join-space-actions !pt-0">
-              <Button
-                type="primary"
-                className="w-full sm:w-auto sm:inline-block sm:px-8"
-                onClick={() => props.onCreateSpace()}
-              >
-                {t`Create a Space`}
-              </Button>
+          {validatedSpace && !isValidating && (
+            <Container className="modal-join-space-actions flex justify-center gap-3">
+              <>
+                <Button
+                  className="w-full sm:w-auto sm:inline-block sm:px-8"
+                  type="primary"
+                  disabled={joining || isSaving || isAlreadyMember}
+                  onClick={handleJoin}
+                >
+                  {isAlreadyMember ? t`Already Joined` : t`Join Space`}
+                </Button>
+                <Button
+                  className="w-full sm:w-auto sm:inline-block sm:px-8"
+                  type="secondary"
+                  onClick={resetManual}
+                >
+                  {t`Reset`}
+                </Button>
+              </>
             </Container>
-          </>
-        )}
+          )}
+
+          {!(
+            manualMode ||
+            lookup ||
+            manualSpaceId ||
+            manualConfigKey ||
+            isValidating ||
+            validatedSpace
+          ) && (
+            <>
+              <Container className="relative flex items-center my-6">
+                <div className="flex-grow border-t border-default"></div>
+                <Text className="px-3 text-subtle text-sm">{t`OR`}</Text>
+                <div className="flex-grow border-t border-default"></div>
+              </Container>
+
+              <Container className="modal-join-space-actions !pt-0">
+                <Button
+                  type="primary"
+                  className="w-full sm:w-auto sm:inline-block sm:px-8"
+                  onClick={() => props.onCreateSpace()}
+                >
+                  {t`Create a Space`}
+                </Button>
+              </Container>
+            </>
+          )}
+        </Container>
       </Container>
     </Modal>
   );
 };
 
 export default AddSpaceModal;
-
-
