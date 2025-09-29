@@ -80,7 +80,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
       onClose={isSaving ? undefined : props.onClose}
       closeOnBackdropClick={!isSaving}
       closeOnEscape={!isSaving}
-      size="medium"
+      size="small"
     >
       {/* Joining overlay - positioned to cover entire modal */}
       <ModalSaveOverlay
@@ -89,17 +89,15 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
         className="!z-[9999]"
       />
 
-      <Container className="modal-join-space modal-width-medium">
-        <FlexCenter width="full">
-          <Input
-            className="w-full max-w-[500px] mx-auto !text-sm"
-            value={lookup}
-            onChange={(value: string) => setLookup(value)}
-            placeholder={t`Join Space`}
-            error={!!error}
-            errorMessage={error}
-          />
-        </FlexCenter>
+      <Container className="modal-join-space">
+        <Input
+          className="w-full !text-sm"
+          value={lookup}
+          onChange={(value: string) => setLookup(value)}
+          placeholder={t`Join Space`}
+          error={!!error}
+          errorMessage={error}
+        />
         <Container className="modal-join-space-icon">
           {!validatedSpace ? (
             <SpaceIcon
