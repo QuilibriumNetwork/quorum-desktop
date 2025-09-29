@@ -35,7 +35,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
 
   // Modal save state for joining overlay
   const { isSaving, saveUntilComplete } = useModalSaveState({
-    onSaveComplete: props.onClose, // Close modal when joining completes
+    // Don't close modal on save complete - let navigation handle modal closure
     onSaveError: (error) => {
       console.error('Join space error:', error);
       // Error handling is already managed by useSpaceJoining hook
