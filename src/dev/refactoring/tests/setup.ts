@@ -38,21 +38,26 @@ beforeAll(() => {
   global.WebSocket = mockWebSocket as any;
 
   // Mock crypto for encryption tests
-  global.crypto = {
-    getRandomValues: vi.fn((arr) => {
-      for (let i = 0; i < arr.length; i++) {
-        arr[i] = Math.floor(Math.random() * 256);
-      }
-      return arr;
-    }),
-    subtle: {
-      generateKey: vi.fn(),
-      exportKey: vi.fn(),
-      importKey: vi.fn(),
-      encrypt: vi.fn(),
-      decrypt: vi.fn(),
+  // Use Object.defineProperty to override read-only crypto
+  Object.defineProperty(global, 'crypto', {
+    value: {
+      getRandomValues: vi.fn((arr) => {
+        for (let i = 0; i < arr.length; i++) {
+          arr[i] = Math.floor(Math.random() * 256);
+        }
+        return arr;
+      }),
+      subtle: {
+        generateKey: vi.fn(),
+        exportKey: vi.fn(),
+        importKey: vi.fn(),
+        encrypt: vi.fn(),
+        decrypt: vi.fn(),
+      },
     },
-  } as any;
+    configurable: true,
+    writable: true,
+  });
 });
 
 afterAll(() => {

@@ -92,3 +92,6 @@ export const resetIndexedDBMocks = (mocks: ReturnType<typeof createMockIndexedDB
     }
   });
 };
+
+// Export the default mock for convenience
+export const mockIndexedDB = createMockIndexedDB();
