@@ -31,6 +31,50 @@ The `src/components/context/MessageDB.tsx` file has grown to 5,650 lines and vio
 - ✅ **Immediate failure detection** for breaking changes during refactoring
 - ✅ **Phase 1 Complete** - Ready for service extraction
 
+## 📊 EXTRACTION PROGRESS TRACKER
+
+### 🎯 BOUNDARY COMMENT STRATEGY
+
+**Important**: Large function replacements (200-300+ lines) are causing file corruption due to incorrect boundary detection.
+Add boundary comments before attempting large function replacements:
+
+```typescript
+// START_FUNCTION_NAME_FUNCTION
+const functionName = React.useCallback(async (...) => {
+  // Large function body (200+ lines)
+}, []);
+// END_FUNCTION_NAME_FUNCTION
+```
+
+**Benefits**:
+- ✅ Safe replacement of massive functions without corruption
+- ✅ Clear identification of function boundaries
+- ✅ Prevents accidental truncation or malformed edits
+- ✅ Enables clean delegation while preserving exact APIs
+
+**Usage**: Apply boundary comments → verify placement → replace entire block with delegation
+
+> Note: the line numbers in the below lists are relative to the original file: src\components\context\MessageDB.bak.tsx
+
+#### MessageService
+- [x] **saveMessage** - Extracted 2025-09-30 (198 lines, 5 branches)
+- [x] **addMessage** - Extracted 2025-09-30 (276 lines, 5 branches)
+- [x] **submitMessage** - Extracted 2025-09-30 (204 lines, P2P encryption workflow)
+- [x] **handleNewMessage**
+- [ ] **submitChannelMessage** - MessageDB.tsx:1567
+- [ ] **deleteConversation** - MessageDB.tsx:2234
+
+#### EncryptionService (to be created)
+- [ ] **deleteEncryptionStates** - MessageDB.tsx:3456
+- [ ] **ensureKeyForSpace** - MessageDB.tsx:2789
+
+#### SpaceService (to be created)
+- [ ] **createSpace** - MessageDB.tsx:3234
+- [ ] **updateSpace** - MessageDB.tsx:3567
+- [ ] **createChannel** - MessageDB.tsx:4123
+- [ ] **deleteSpace** - MessageDB.tsx:4456
+- [ ] **kickUser** - MessageDB.tsx:4789
+
 **🚨 Testing Requirements During Refactoring**:
 1. **NEVER skip testing** after each service extraction
 2. **STOP immediately** if any test fails during refactoring
@@ -267,7 +311,7 @@ Before extracting anything, perform complete audit:
 
 **✅ Verification Complete Criteria**: All tests pass, TypeScript compiles, functionality preserved
 
-### **ONLY AFTER STEP 5 SUCCEEDS**: Commit and move to next function
+### **ONLY AFTER STEP 5 SUCCEEDS**: Move to next function
 
 **NEVER work on multiple functions simultaneously - complete one full cycle before starting the next.**
 
