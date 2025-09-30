@@ -168,6 +168,109 @@ yarn vitest src/dev/refactoring/tests/ --run  # Verify tests pass
 - **STOP immediately** if any test fails
 - **Commit after each successful extraction**
 
+## 🚨 CRITICAL EXTRACTION REQUIREMENTS
+
+### **MANDATORY COMPLETE EXTRACTION RULE**
+
+**❌ IT IS NOT OK TO DO PARTIAL EXTRACTIONS**
+
+During the previous refactoring attempt, we discovered that partial function extractions create serious issues:
+- **Broken logic**: Missing parts of functions lead to incorrect behavior
+- **Hard-to-debug issues**: Incomplete implementations cause subtle bugs
+- **Code duplication**: Partial extractions leave duplicate logic in both places
+- **Maintenance nightmare**: Changes must be made in multiple locations
+
+### **EXTRACTION COMPLETENESS REQUIREMENTS**
+
+When extracting ANY function from MessageDB.tsx:
+
+1. **EXTRACT EVERYTHING** - Every single line of the function implementation MUST be extracted
+2. **NO STUBS OR PLACEHOLDERS** - Never leave `// TODO:` or `throw new Error("Not implemented")`
+3. **NO PARTIAL LOGIC** - If a function has 500 lines, extract all 500 lines exactly
+4. **EXACT COPY ONLY** - Use `// EXACT COPY:` comments to track what was moved from where
+5. **COMPLETE DEPENDENCIES** - Include all helper functions, imports, and dependencies
+6. **ALL BRANCHES** - Extract every if/else, try/catch, switch case completely
+7. **ALL ERROR HANDLING** - Preserve every error handling scenario exactly as-is
+
+### **VERIFICATION CHECKLIST FOR EACH EXTRACTION**
+
+Before marking any function as "extracted", verify:
+- [ ] **Line count matches**: Original function lines = extracted function lines (excluding whitespace)
+- [ ] **All branches covered**: Every if/else, try/catch, switch case is preserved
+- [ ] **All dependencies included**: No missing imports, helper functions, or utilities
+- [ ] **Error handling complete**: All error scenarios handled identically
+- [ ] **State mutations preserved**: All state changes happen exactly the same way
+- [ ] **Side effects maintained**: All API calls, database operations, cache updates preserved
+- [ ] **Comments preserved**: All important comments explaining complex logic included
+
+### **EXTRACTION FAILURE INDICATORS**
+
+**STOP IMMEDIATELY** if you find yourself:
+- Writing `// TODO: Complete this section later`
+- Using `throw new Error("Not implemented yet")`
+- Thinking "I'll implement this complex part later"
+- Removing error handling to "simplify" extraction
+- Skipping complex nested logic
+- Leaving function stubs or placeholders
+
+**Remember**: It's better to extract one function completely than to partially extract multiple functions.
+
+## 📋 STEP-BY-STEP WORKFLOW (MUST FOLLOW THIS ORDER)
+
+### **Step 1: AUDIT Phase - Review All Code Before Extraction**
+
+Before extracting anything, perform complete audit:
+
+1. **Identify Target Function**: Choose one function to extract (e.g., `saveMessage`)
+2. **Map Dependencies**: List all imports, helper functions, types this function needs
+3. **Count Lines**: Note exact line count of function (including all branches)
+4. **Document Complexity**: Note any particularly complex sections
+5. **Check Test Coverage**: Verify this function is covered by existing tests
+
+**✅ Audit Complete Criteria**: Can answer "What exactly needs to be moved?" with complete precision
+
+### **Step 2: CREATE Service File**
+
+1. **Create empty service file** (e.g., `src/services/MessageService.ts`)
+2. **Add minimal structure**: Class definition, constructor, dependencies
+3. **Add imports**: All necessary imports identified in audit
+4. **NO implementation yet** - just file structure
+5. **Verify it compiles**: Run TypeScript check to ensure no import errors
+
+**✅ Service Created Criteria**: Empty service file compiles without errors
+
+### **Step 3: EXTRACT Function (Complete Copy)**
+
+1. **Copy entire function** from MessageDB.tsx to service
+2. **Preserve EXACT logic** - every line, every branch, every comment
+3. **Add dependency injection** only where needed (change `messageDB` to `this.messageDB`)
+4. **Add `// EXACT COPY:` comment** with original line numbers
+5. **NO other changes** - resist any urge to "improve" or optimize
+
+**✅ Extraction Complete Criteria**: Function does exactly the same thing in service as original
+
+### **Step 4: WIRE Service Into MessageDB Context**
+
+1. **Create service instance** in MessageDB provider
+2. **Replace function implementation** with delegation call to service
+3. **Maintain identical API** - same parameters, same return type
+4. **NO behavioral changes** - exact same function signature
+
+**✅ Integration Complete Criteria**: MessageDB.tsx now delegates to service, API unchanged
+
+### **Step 5: TEST AND VERIFY**
+
+1. **Run all tests**: `yarn test` - ALL tests must pass
+2. **Check TypeScript**: `yarn tsc --noEmit` - no compilation errors
+3. **Test manually**: Basic functionality works as expected
+4. **If ANY issues**: Rollback immediately, debug, try again
+
+**✅ Verification Complete Criteria**: All tests pass, TypeScript compiles, functionality preserved
+
+### **ONLY AFTER STEP 5 SUCCEEDS**: Commit and move to next function
+
+**NEVER work on multiple functions simultaneously - complete one full cycle before starting the next.**
+
 ### Phase 3: Service Integration & Testing
 Claude Code will automatically:
 
@@ -615,4 +718,28 @@ Claude Code will execute this refactoring automatically in sequential phases, up
 
 
 
-_Last updated: 2025-09-25_
+## ✅ CLAUDE CODE UNDERSTANDING CONFIRMATION
+
+**I understand the following requirements:**
+
+1. **Complete Extraction Only**: Never do partial extractions - extract entire functions with all logic
+2. **Gradual Approach**: Follow 5-step workflow strictly - audit → create → extract → wire → test
+3. **Test-First Safety**: All tests must pass after each change, rollback immediately if any fail
+4. **No Optimization**: Move code exactly as-is, no improvements during extraction phase
+5. **One Function at a Time**: Complete full cycle for one function before starting next
+6. **Dependency Mapping**: Identify all imports, helpers, types needed before extraction
+7. **API Preservation**: Maintain identical function signatures and behavior
+8. **Error Prevention**: Stop immediately if writing TODOs, stubs, or partial implementations
+
+**I will NOT:**
+- Rush through multiple functions simultaneously
+- Leave placeholder implementations or TODOs
+- Skip complex parts of functions
+- Optimize or improve code during extraction
+- Continue if any tests fail
+
+**I will follow the 5-step workflow religiously and ask for guidance if anything is unclear.**
+
+---
+
+_Last updated: 2025-09-30_
