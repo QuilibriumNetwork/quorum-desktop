@@ -60,9 +60,9 @@ const functionName = React.useCallback(async (...) => {
 - [x] **saveMessage** - Extracted 2025-09-30 (198 lines, 5 branches)
 - [x] **addMessage** - Extracted 2025-09-30 (276 lines, 5 branches)
 - [x] **submitMessage** - Extracted 2025-09-30 (204 lines, P2P encryption workflow)
-- [x] **handleNewMessage**
-- [ ] **submitChannelMessage** - MessageDB.tsx:1567
-- [ ] **deleteConversation** - MessageDB.tsx:2234
+- [x] **handleNewMessage**function to extract
+- [x] **submitChannelMessage** - MessageDB.tsx:1567
+- [x] **deleteConversation** - MessageDB.tsx:2234
 
 #### EncryptionService (to be created)
 - [ ] **deleteEncryptionStates** - MessageDB.tsx:3456

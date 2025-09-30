@@ -338,7 +338,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                       conversationId,
                       address: address,
                       icon: updatedUserProfile?.user_icon ?? existingConv?.icon,
-                      displayName: updatedUserProfile?.display_name ?? existingConv?.displayName,
+                      displayName:
+                        updatedUserProfile?.display_name ??
+                        existingConv?.displayName,
                       type: 'direct' as const,
                       timestamp: timestamp,
                       lastReadTimestamp: lastReadTimestamp,
@@ -906,82 +908,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     []
   );
 
-  const deleteConversation = React.useCallback(
-    async (
-      conversationId: string,
-      currentPasskeyInfo: {
-        credentialId: string;
-        address: string;
-        publicKey: string;
-        displayName?: string;
-        pfpUrl?: string;
-        completedOnboarding: boolean;
-      }
-
-    ) => {
-      try {
-        const [spaceId, channelId] = conversationId.split('/');
-        // Notify counterparty for direct conversations before local deletion
-        if (spaceId && channelId && spaceId === channelId) {
-          try {
-            const counterparty = await apiClient.getUser(spaceId);
-
-            if (currentPasskeyInfo?.address) {
-              const self = await apiClient.getUser(currentPasskeyInfo?.address!);
-              await submitMessage(
-                spaceId,
-                { type: 'delete-conversation' },
-                self.data,
-                counterparty.data,
-                queryClient,
-                currentPasskeyInfo,
-                keyset,
-                undefined,
-                false
-              );
-            }
-          } catch {}
-        }
-        // Delete encryption states (keys) and latest state
-        const states = await messageDB.getEncryptionStates({ conversationId });
-        for (const state of states) {
-          await messageDB.deleteEncryptionState(state);
-          // Best-effort cleanup of inbox mapping for this inbox
-          if (state.inboxId) {
-            await messageDB.deleteInboxMapping(state.inboxId);
-          }
-        }
-        await messageDB.deleteLatestState(conversationId);
-
-        // Delete all messages for this conversation and remove from indices
-        await messageDB.deleteMessagesForConversation(conversationId);
-
-        // Delete conversation users mapping and metadata
-        await messageDB.deleteConversationUsers(conversationId);
-        await messageDB.deleteConversation(conversationId);
-
-        // Best-effort: remove cached user profile for counterparty
-        if (spaceId && spaceId === channelId) {
-          await messageDB.deleteUser(spaceId);
-        }
-
-        // Invalidate queries
-        await queryClient.invalidateQueries({
-          queryKey: buildMessagesKey({ spaceId, channelId }),
-        });
-        await queryClient.invalidateQueries({
-          queryKey: buildConversationKey({ conversationId }),
-        });
-        await queryClient.invalidateQueries({
-          queryKey: buildConversationsKey({ type: 'direct' }),
-        });
-      } catch (e) {
-        // no-op
-      }
-    },
-    [messageDB, queryClient, keyset]
-  );
-
   const updateUserProfile = React.useCallback(
     async (
       displayName: string,
@@ -1010,7 +936,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           currentPasskeyInfo
         );
       }
-  }, []);
+    },
+    []
+  );
 
   // Ensure selfAddress is derived when key material is available
   useEffect(() => {
@@ -1022,9 +950,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           (keyset as any) // guard access
         ) {
           const sh = await sha256.digest(
-            Buffer.from(
-              new Uint8Array(keyset.userKeyset.user_key.public_key)
-            )
+            Buffer.from(new Uint8Array(keyset.userKeyset.user_key.public_key))
           );
           setSelfAddress(base58btc.baseEncode(sh.bytes));
         }
@@ -1484,8 +1410,12 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
       // Check if hub key exists and has an address
       if (!hubKey || !hubKey.address) {
-        console.error('Hub key or address missing for space:', spaceId, { hubKey });
-        throw new Error(t`Unable to leave space due to incomplete configuration. The space data may be corrupted.`);
+        console.error('Hub key or address missing for space:', spaceId, {
+          hubKey,
+        });
+        throw new Error(
+          t`Unable to leave space due to incomplete configuration. The space data may be corrupted.`
+        );
       }
 
       const envelope = await secureChannel.SealHubEnvelope(
@@ -2406,7 +2336,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             filteredMembers.length + 200
           );
 
-        console.log("new link session", session);
+        console.log('new link session', session);
         let outbounds: string[] = [];
         let newPeerIdSet = {
           [trState.id_peer_map[1].public_key]: 1,
@@ -2773,47 +2703,47 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           hubKey?: string;
         };
 
-          const manifest = await apiClient.getSpaceManifest(info.spaceId);
-          if (!manifest) {
-            throw new Error(t`invalid response`);
-          }
+        const manifest = await apiClient.getSpaceManifest(info.spaceId);
+        if (!manifest) {
+          throw new Error(t`invalid response`);
+        }
 
-          const ciphertext = JSON.parse(manifest.data.space_manifest) as {
-            ciphertext: string;
-            initialization_vector: string;
-            associated_data: string;
-          };
-          const space = JSON.parse(
-            Buffer.from(
-              JSON.parse(
-                ch.js_decrypt_inbox_message(
-                  JSON.stringify({
-                    inbox_private_key: [
-                      ...new Uint8Array(Buffer.from(info.configKey, 'hex')),
-                    ],
-                    ephemeral_public_key: [
-                      ...new Uint8Array(
-                        Buffer.from(manifest.data.ephemeral_public_key, 'hex')
-                      ),
-                    ],
-                    ciphertext: ciphertext,
-                  })
-                )
+        const ciphertext = JSON.parse(manifest.data.space_manifest) as {
+          ciphertext: string;
+          initialization_vector: string;
+          associated_data: string;
+        };
+        const space = JSON.parse(
+          Buffer.from(
+            JSON.parse(
+              ch.js_decrypt_inbox_message(
+                JSON.stringify({
+                  inbox_private_key: [
+                    ...new Uint8Array(Buffer.from(info.configKey, 'hex')),
+                  ],
+                  ephemeral_public_key: [
+                    ...new Uint8Array(
+                      Buffer.from(manifest.data.ephemeral_public_key, 'hex')
+                    ),
+                  ],
+                  ciphertext: ciphertext,
+                })
               )
-            ).toString('utf-8')
-          ) as Space;
+            )
+          ).toString('utf-8')
+        ) as Space;
 
-          const configPub = Buffer.from(
-            ch.js_get_pubkey_x448(
-              Buffer.from(info.configKey, 'hex').toString('base64')
-            ),
-            'base64'
-          );
-          let template: any;
-          if (!info.secret && !info.template && !info.hubKey) {
-            if (!space.inviteUrl || space.inviteUrl == '') {
-              throw new Error(t`invalid link`);
-            }
+        const configPub = Buffer.from(
+          ch.js_get_pubkey_x448(
+            Buffer.from(info.configKey, 'hex').toString('base64')
+          ),
+          'base64'
+        );
+        let template: any;
+        if (!info.secret && !info.template && !info.hubKey) {
+          if (!space.inviteUrl || space.inviteUrl == '') {
+            throw new Error(t`invalid link`);
+          }
 
           let inviteEval;
           try {
@@ -2826,269 +2756,270 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             }
             throw e;
           }
-            const invite = JSON.parse(
-              Buffer.from(
-                JSON.parse(
-                  ch.js_decrypt_inbox_message(
-                    JSON.stringify({
-                      inbox_private_key: [
-                        ...new Uint8Array(Buffer.from(info.configKey, 'hex')),
-                      ],
-                      ephemeral_public_key: [
-                        ...new Uint8Array(
-                          Buffer.from(manifest.data.ephemeral_public_key, 'hex')
-                        ),
-                      ],
-                      ciphertext: JSON.parse(inviteEval.data),
-                    })
-                  )
-                )
-              ).toString('utf-8')
-            ) as {
-              id: number;
-              secret: string;
-              template: string;
-              hubKey: string;
-            };
-            info.secret = invite.secret;
-            info.template = invite.template;
-            info.hubKey = invite.hubKey;
-            template = JSON.parse(info.template);
-          } else {
-            template = JSON.parse(
-              Buffer.from(info.template!, 'hex').toString('utf-8')
-            );
-          }
-
-          const ip = ch.js_generate_ed448();
-          const inboxPair = JSON.parse(ip);
-          const ih = await sha256.digest(
-            Buffer.from(new Uint8Array(inboxPair.public_key))
-          );
-          const inboxAddress = base58btc.baseEncode(ih.bytes);
-          const hubPub = Buffer.from(
-            ch.js_get_pubkey_ed448(
-              Buffer.from(info.hubKey!, 'hex').toString('base64')
-            ),
-            'base64'
-          );
-          const hh = await sha256.digest(hubPub);
-          const hubAddress = base58btc.baseEncode(hh.bytes);
-          const secret_pair = JSON.parse(ch.js_generate_x448());
-          const eph_pair = JSON.parse(ch.js_generate_x448());
-          const ratchet = JSON.parse(template.dkg_ratchet);
-          ratchet.total++;
-          ratchet.secret = Buffer.from(
-            new Uint8Array(secret_pair.private_key)
-          ).toString('base64');
-          ratchet.scalar = Buffer.from(info.secret!, 'hex').toString('base64');
-          ratchet.point = JSON.parse(
-            ch.js_get_pubkey_x448(
-              Buffer.from(info.secret!, 'hex').toString('base64')
-            )
-          );
-          ratchet.random_commitment_point = JSON.parse(
-            ch.js_get_pubkey_x448(
-              Buffer.from(info.secret!, 'hex').toString('base64')
-            )
-          );
-          template.dkg_ratchet = JSON.stringify(ratchet);
-          template.next_dkg_ratchet = JSON.stringify(ratchet);
-          template.peer_key = Buffer.from(
-            new Uint8Array(
-              keyset.deviceKeyset.inbox_keyset.inbox_encryption_key.private_key
-            )
-          ).toString('base64');
-          template.ephemeral_private_key = Buffer.from(
-            new Uint8Array(eph_pair.private_key)
-          ).toString('base64');
-          const session = {
-            state: JSON.stringify(template),
-          };
-          await messageDB.saveEncryptionState(
-            {
-              state: JSON.stringify(session),
-              timestamp: Date.now(),
-              conversationId: space.spaceId + '/' + space.spaceId,
-              inboxId: inboxAddress,
-            },
-            true
-          );
-
-          await apiClient.postHubAdd({
-            hub_address: hubAddress,
-            hub_public_key: hubPub.toString('hex'),
-            hub_signature: Buffer.from(
-              JSON.parse(
-                ch.js_sign_ed448(
-                  Buffer.from(info.hubKey!, 'hex').toString('base64'),
-                  Buffer.from(
-                    new Uint8Array([
-                      ...new Uint8Array(
-                        Buffer.from(
-                          'add' +
-                            Buffer.from(
-                              new Uint8Array(inboxPair.public_key)
-                            ).toString('hex'),
-                          'utf-8'
-                        )
-                      ),
-                    ])
-                  ).toString('base64')
-                )
-              ),
-              'base64'
-            ).toString('hex'),
-            inbox_public_key: Buffer.from(
-              new Uint8Array(inboxPair.public_key)
-            ).toString('hex'),
-            inbox_signature: Buffer.from(
-              JSON.parse(
-                ch.js_sign_ed448(
-                  Buffer.from(new Uint8Array(inboxPair.private_key)).toString(
-                    'base64'
-                  ),
-                  Buffer.from(
-                    new Uint8Array([
-                      ...new Uint8Array(
-                        Buffer.from('add' + hubPub.toString('hex'), 'utf-8')
-                      ),
-                    ])
-                  ).toString('base64')
-                )
-              ),
-              'base64'
-            ).toString('hex'),
-          });
-          await messageDB.saveSpaceKey({
-            spaceId: space.spaceId,
-            keyId: 'hub',
-            address: hubAddress,
-            publicKey: hubPub.toString('hex'),
-            privateKey: info.hubKey || '',
-          });
-          await messageDB.saveSpaceKey({
-            spaceId: space.spaceId,
-            keyId: 'config',
-            publicKey: configPub.toString('hex'),
-            privateKey: info.configKey,
-          });
-
-          await messageDB.saveSpaceKey({
-            spaceId: space.spaceId,
-            keyId: 'inbox',
-            address: inboxAddress,
-            publicKey: Buffer.from(
-              new Uint8Array(inboxPair.public_key)
-            ).toString('hex'),
-            privateKey: Buffer.from(
-              new Uint8Array(inboxPair.private_key)
-            ).toString('hex'),
-          });
-          await messageDB.saveSpace(space);
-          await messageDB.saveSpaceMember(space.spaceId, {
-            user_address: currentPasskeyInfo.address,
-            user_icon: currentPasskeyInfo.pfpUrl,
-            display_name: currentPasskeyInfo.displayName,
-            inbox_address: inboxAddress,
-          });
-          let config = await getConfig({
-            address: currentPasskeyInfo.address,
-            userKey: keyset.userKeyset,
-          });
-          if (config) {
-            config.spaceIds = [...(config.spaceIds ?? []), space.spaceId];
-          } else {
-            config = {
-              address: currentPasskeyInfo.address,
-              spaceIds: [space.spaceId],
-            };
-          }
-          await saveConfig({ config, keyset });
-          await queryClient.invalidateQueries({ queryKey: buildSpacesKey({}) });
-          await queryClient.invalidateQueries({
-            queryKey: buildConfigKey({
-              userAddress: currentPasskeyInfo.address,
-            }),
-          });
-          enqueueOutbound(async () => {
-            return [
-              JSON.stringify({
-                type: 'listen',
-                inbox_addresses: [inboxAddress],
-              }),
-            ];
-          });
-          let participant = {
-            address: currentPasskeyInfo!.address,
-            id: ratchet.id,
-            inboxAddress: inboxAddress,
-            inboxPubKey: Buffer.from(
-              new Uint8Array(
-                keyset.deviceKeyset.inbox_keyset.inbox_key.public_key
-              )
-            ).toString('hex'),
-            pubKey: Buffer.from(
-              JSON.parse(
-                ch.js_get_pubkey_x448(
-                  Buffer.from(info.secret!, 'hex').toString('base64')
-                )
-              ),
-              'base64'
-            ).toString('hex'),
-            inboxKey: Buffer.from(
-              new Uint8Array(
-                keyset.deviceKeyset.inbox_keyset.inbox_encryption_key.public_key
-              )
-            ).toString('hex'),
-            identityKey: Buffer.from(
-              new Uint8Array(keyset.deviceKeyset.identity_key.public_key)
-            ).toString('hex'),
-            preKey: Buffer.from(
-              new Uint8Array(keyset.deviceKeyset.pre_key.public_key)
-            ).toString('hex'),
-            userIcon: currentPasskeyInfo!.pfpUrl,
-            displayName: currentPasskeyInfo!.displayName,
-            signature: '',
-          };
-          const msg = Buffer.from(
-            currentPasskeyInfo.address +
-              ratchet.id +
-              participant.inboxAddress +
-              participant.pubKey +
-              participant.inboxKey +
-              participant.identityKey +
-              participant.preKey +
-              participant.userIcon +
-              participant.displayName,
-            'utf-8'
-          ).toString('base64');
-          const sig = ch.js_sign_ed448(
+          const invite = JSON.parse(
             Buffer.from(
-              new Uint8Array(
-                keyset.deviceKeyset.inbox_keyset.inbox_key.private_key
+              JSON.parse(
+                ch.js_decrypt_inbox_message(
+                  JSON.stringify({
+                    inbox_private_key: [
+                      ...new Uint8Array(Buffer.from(info.configKey, 'hex')),
+                    ],
+                    ephemeral_public_key: [
+                      ...new Uint8Array(
+                        Buffer.from(manifest.data.ephemeral_public_key, 'hex')
+                      ),
+                    ],
+                    ciphertext: JSON.parse(inviteEval.data),
+                  })
+                )
               )
-            ).toString('base64'),
-            msg
+            ).toString('utf-8')
+          ) as {
+            id: number;
+            secret: string;
+            template: string;
+            hubKey: string;
+          };
+          info.secret = invite.secret;
+          info.template = invite.template;
+          info.hubKey = invite.hubKey;
+          template = JSON.parse(info.template);
+        } else {
+          template = JSON.parse(
+            Buffer.from(info.template!, 'hex').toString('utf-8')
           );
-          participant.signature = JSON.parse(sig);
-          enqueueOutbound(async () => [
-            await sendHubMessage(
-              space.spaceId,
-              JSON.stringify({
-                type: 'control',
-                message: {
-                  type: 'join',
-                  participant,
-                },
-              })
-            ),
-          ]);
-          await requestSync(space.spaceId);
-          return { spaceId: space.spaceId, channelId: space.defaultChannelId };
         }
 
-    }, []);
+        const ip = ch.js_generate_ed448();
+        const inboxPair = JSON.parse(ip);
+        const ih = await sha256.digest(
+          Buffer.from(new Uint8Array(inboxPair.public_key))
+        );
+        const inboxAddress = base58btc.baseEncode(ih.bytes);
+        const hubPub = Buffer.from(
+          ch.js_get_pubkey_ed448(
+            Buffer.from(info.hubKey!, 'hex').toString('base64')
+          ),
+          'base64'
+        );
+        const hh = await sha256.digest(hubPub);
+        const hubAddress = base58btc.baseEncode(hh.bytes);
+        const secret_pair = JSON.parse(ch.js_generate_x448());
+        const eph_pair = JSON.parse(ch.js_generate_x448());
+        const ratchet = JSON.parse(template.dkg_ratchet);
+        ratchet.total++;
+        ratchet.secret = Buffer.from(
+          new Uint8Array(secret_pair.private_key)
+        ).toString('base64');
+        ratchet.scalar = Buffer.from(info.secret!, 'hex').toString('base64');
+        ratchet.point = JSON.parse(
+          ch.js_get_pubkey_x448(
+            Buffer.from(info.secret!, 'hex').toString('base64')
+          )
+        );
+        ratchet.random_commitment_point = JSON.parse(
+          ch.js_get_pubkey_x448(
+            Buffer.from(info.secret!, 'hex').toString('base64')
+          )
+        );
+        template.dkg_ratchet = JSON.stringify(ratchet);
+        template.next_dkg_ratchet = JSON.stringify(ratchet);
+        template.peer_key = Buffer.from(
+          new Uint8Array(
+            keyset.deviceKeyset.inbox_keyset.inbox_encryption_key.private_key
+          )
+        ).toString('base64');
+        template.ephemeral_private_key = Buffer.from(
+          new Uint8Array(eph_pair.private_key)
+        ).toString('base64');
+        const session = {
+          state: JSON.stringify(template),
+        };
+        await messageDB.saveEncryptionState(
+          {
+            state: JSON.stringify(session),
+            timestamp: Date.now(),
+            conversationId: space.spaceId + '/' + space.spaceId,
+            inboxId: inboxAddress,
+          },
+          true
+        );
+
+        await apiClient.postHubAdd({
+          hub_address: hubAddress,
+          hub_public_key: hubPub.toString('hex'),
+          hub_signature: Buffer.from(
+            JSON.parse(
+              ch.js_sign_ed448(
+                Buffer.from(info.hubKey!, 'hex').toString('base64'),
+                Buffer.from(
+                  new Uint8Array([
+                    ...new Uint8Array(
+                      Buffer.from(
+                        'add' +
+                          Buffer.from(
+                            new Uint8Array(inboxPair.public_key)
+                          ).toString('hex'),
+                        'utf-8'
+                      )
+                    ),
+                  ])
+                ).toString('base64')
+              )
+            ),
+            'base64'
+          ).toString('hex'),
+          inbox_public_key: Buffer.from(
+            new Uint8Array(inboxPair.public_key)
+          ).toString('hex'),
+          inbox_signature: Buffer.from(
+            JSON.parse(
+              ch.js_sign_ed448(
+                Buffer.from(new Uint8Array(inboxPair.private_key)).toString(
+                  'base64'
+                ),
+                Buffer.from(
+                  new Uint8Array([
+                    ...new Uint8Array(
+                      Buffer.from('add' + hubPub.toString('hex'), 'utf-8')
+                    ),
+                  ])
+                ).toString('base64')
+              )
+            ),
+            'base64'
+          ).toString('hex'),
+        });
+        await messageDB.saveSpaceKey({
+          spaceId: space.spaceId,
+          keyId: 'hub',
+          address: hubAddress,
+          publicKey: hubPub.toString('hex'),
+          privateKey: info.hubKey || '',
+        });
+        await messageDB.saveSpaceKey({
+          spaceId: space.spaceId,
+          keyId: 'config',
+          publicKey: configPub.toString('hex'),
+          privateKey: info.configKey,
+        });
+
+        await messageDB.saveSpaceKey({
+          spaceId: space.spaceId,
+          keyId: 'inbox',
+          address: inboxAddress,
+          publicKey: Buffer.from(new Uint8Array(inboxPair.public_key)).toString(
+            'hex'
+          ),
+          privateKey: Buffer.from(
+            new Uint8Array(inboxPair.private_key)
+          ).toString('hex'),
+        });
+        await messageDB.saveSpace(space);
+        await messageDB.saveSpaceMember(space.spaceId, {
+          user_address: currentPasskeyInfo.address,
+          user_icon: currentPasskeyInfo.pfpUrl,
+          display_name: currentPasskeyInfo.displayName,
+          inbox_address: inboxAddress,
+        });
+        let config = await getConfig({
+          address: currentPasskeyInfo.address,
+          userKey: keyset.userKeyset,
+        });
+        if (config) {
+          config.spaceIds = [...(config.spaceIds ?? []), space.spaceId];
+        } else {
+          config = {
+            address: currentPasskeyInfo.address,
+            spaceIds: [space.spaceId],
+          };
+        }
+        await saveConfig({ config, keyset });
+        await queryClient.invalidateQueries({ queryKey: buildSpacesKey({}) });
+        await queryClient.invalidateQueries({
+          queryKey: buildConfigKey({
+            userAddress: currentPasskeyInfo.address,
+          }),
+        });
+        enqueueOutbound(async () => {
+          return [
+            JSON.stringify({
+              type: 'listen',
+              inbox_addresses: [inboxAddress],
+            }),
+          ];
+        });
+        let participant = {
+          address: currentPasskeyInfo!.address,
+          id: ratchet.id,
+          inboxAddress: inboxAddress,
+          inboxPubKey: Buffer.from(
+            new Uint8Array(
+              keyset.deviceKeyset.inbox_keyset.inbox_key.public_key
+            )
+          ).toString('hex'),
+          pubKey: Buffer.from(
+            JSON.parse(
+              ch.js_get_pubkey_x448(
+                Buffer.from(info.secret!, 'hex').toString('base64')
+              )
+            ),
+            'base64'
+          ).toString('hex'),
+          inboxKey: Buffer.from(
+            new Uint8Array(
+              keyset.deviceKeyset.inbox_keyset.inbox_encryption_key.public_key
+            )
+          ).toString('hex'),
+          identityKey: Buffer.from(
+            new Uint8Array(keyset.deviceKeyset.identity_key.public_key)
+          ).toString('hex'),
+          preKey: Buffer.from(
+            new Uint8Array(keyset.deviceKeyset.pre_key.public_key)
+          ).toString('hex'),
+          userIcon: currentPasskeyInfo!.pfpUrl,
+          displayName: currentPasskeyInfo!.displayName,
+          signature: '',
+        };
+        const msg = Buffer.from(
+          currentPasskeyInfo.address +
+            ratchet.id +
+            participant.inboxAddress +
+            participant.pubKey +
+            participant.inboxKey +
+            participant.identityKey +
+            participant.preKey +
+            participant.userIcon +
+            participant.displayName,
+          'utf-8'
+        ).toString('base64');
+        const sig = ch.js_sign_ed448(
+          Buffer.from(
+            new Uint8Array(
+              keyset.deviceKeyset.inbox_keyset.inbox_key.private_key
+            )
+          ).toString('base64'),
+          msg
+        );
+        participant.signature = JSON.parse(sig);
+        enqueueOutbound(async () => [
+          await sendHubMessage(
+            space.spaceId,
+            JSON.stringify({
+              type: 'control',
+              message: {
+                type: 'join',
+                participant,
+              },
+            })
+          ),
+        ]);
+        await requestSync(space.spaceId);
+        return { spaceId: space.spaceId, channelId: space.defaultChannelId };
+      }
+    },
+    []
+  );
 
   const createChannel = React.useCallback(async (spaceId: string) => {
     const gp = ch.js_generate_ed448();
@@ -3184,142 +3115,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       }
 
       throw new Error(t`invalid message type`);
-    },
-    []
-  );
-
-  const submitChannelMessage = React.useCallback(
-    async (
-      spaceId: string,
-      channelId: string,
-      pendingMessage: string | object,
-      queryClient: QueryClient,
-      currentPasskeyInfo: {
-        credentialId: string;
-        address: string;
-        publicKey: string;
-        displayName?: string;
-        pfpUrl?: string;
-        completedOnboarding: boolean;
-      },
-      inReplyTo?: string,
-      skipSigning?: boolean
-    ) => {
-      enqueueOutbound(async () => {
-        let outbounds: string[] = [];
-        const nonce = crypto.randomUUID();
-        const space = await messageDB.getSpace(spaceId);
-        const messageId = await crypto.subtle.digest(
-          'SHA-256',
-          Buffer.from(
-            nonce +
-              'post' +
-              currentPasskeyInfo.address +
-              canonicalize(pendingMessage as any),
-            'utf-8'
-          )
-        );
-        const message = {
-          spaceId: spaceId,
-          channelId: channelId,
-          messageId: Buffer.from(messageId).toString('hex'),
-          digestAlgorithm: 'SHA-256',
-          nonce: nonce,
-          createdDate: Date.now(),
-          modifiedDate: Date.now(),
-          lastModifiedHash: '',
-          content:
-            typeof pendingMessage === 'string'
-              ? ({
-                  type: 'post',
-                  senderId: currentPasskeyInfo.address,
-                  text: pendingMessage,
-                  repliesToMessageId: inReplyTo,
-                } as PostMessage)
-              : {
-                  ...(pendingMessage as any),
-                  senderId: currentPasskeyInfo.address,
-                },
-        } as Message;
-
-        let conversationId = spaceId + '/' + channelId;
-        const conversation = await messageDB.getConversation({
-          conversationId,
-        });
-        let response = await messageDB.getEncryptionStates({
-          conversationId: spaceId + '/' + spaceId,
-        });
-        const sets = response.map((e) => JSON.parse(e.state));
-
-        // enforce non-repudiability
-        if (
-          !space?.isRepudiable ||
-          (space?.isRepudiable && !skipSigning) ||
-          (typeof pendingMessage !== 'string' &&
-            (pendingMessage as any).type === 'update-profile')
-        ) {
-          const inboxKey = await messageDB.getSpaceKey(spaceId, 'inbox');
-          message.publicKey = inboxKey.publicKey;
-          message.signature = Buffer.from(
-            JSON.parse(
-              ch.js_sign_ed448(
-                Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
-                Buffer.from(messageId).toString('base64')
-              )
-            ),
-            'base64'
-          ).toString('hex');
-        }
-
-        const msg = secureChannel.TripleRatchetEncrypt(
-          JSON.stringify({
-            ratchet_state: sets[0].state,
-            message: [
-              ...new Uint8Array(Buffer.from(JSON.stringify(message), 'utf-8')),
-            ],
-          } as secureChannel.TripleRatchetStateAndMessage)
-        );
-        const result = JSON.parse(
-          msg
-        ) as secureChannel.TripleRatchetStateAndEnvelope;
-        outbounds.push(
-          await sendHubMessage(
-            spaceId,
-            JSON.stringify({
-              type: 'message',
-              message: JSON.parse(result.envelope),
-            })
-          )
-        );
-        await saveMessage(message, messageDB, spaceId, channelId, 'group', {
-          user_icon:
-            conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-          display_name:
-            conversation.conversation?.displayName ?? t`Unknown User`,
-        });
-        await addMessage(queryClient, spaceId, channelId, message);
-
-        return outbounds;
-      });
-    },
-    []
-  );
-
-  const sendHubMessage = React.useCallback(
-    async (spaceId: string, message: string) => {
-      const hubKey = await messageDB.getSpaceKey(spaceId, 'hub');
-      const envelope = await secureChannel.SealHubEnvelope(
-        hubKey.address!,
-        {
-          type: 'ed448',
-          private_key: [
-            ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
-          ],
-          public_key: [...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex'))],
-        },
-        message
-      );
-      return JSON.stringify({ type: 'group', ...envelope });
     },
     []
   );
@@ -3725,6 +3520,25 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     }
   }, [keyset, selfAddress]);
 
+  const sendHubMessage = React.useCallback(
+    async (spaceId: string, message: string) => {
+      const hubKey = await messageDB.getSpaceKey(spaceId, 'hub');
+      const envelope = await secureChannel.SealHubEnvelope(
+        hubKey.address!,
+        {
+          type: 'ed448',
+          private_key: [
+            ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
+          ],
+          public_key: [...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex'))],
+        },
+        message
+      );
+      return JSON.stringify({ type: 'group', ...envelope });
+    },
+    [messageDB]
+  );
+
   // Create MessageService instance (after all dependencies are declared)
   const messageService = useMemo(() => {
     return new MessageService({
@@ -3744,8 +3558,25 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       saveConfig,
       int64ToBytes,
       canonicalize,
+      sendHubMessage,
     });
-  }, [messageDB, enqueueOutbound, apiClient, deleteEncryptionStates, deleteInboxMessages, navigate, spaceInfo, syncInfo, synchronizeAll, informSyncData, initiateSync, directSync, saveConfig, canonicalize]);
+  }, [
+    messageDB,
+    enqueueOutbound,
+    apiClient,
+    deleteEncryptionStates,
+    deleteInboxMessages,
+    navigate,
+    spaceInfo,
+    syncInfo,
+    synchronizeAll,
+    informSyncData,
+    initiateSync,
+    directSync,
+    saveConfig,
+    canonicalize,
+    sendHubMessage,
+  ]);
 
   // START_HANDLE_NEW_MESSAGE_FUNCTION
   // USING MessageService: handleNewMessage now delegates to the extracted service
@@ -3758,7 +3589,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       },
       message: EncryptedMessage
     ) => {
-      // Delegate to MessageService - maintaining exact same API
       return messageService.handleNewMessage(
         self_address,
         keyset,
@@ -3794,7 +3624,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       inReplyTo?: string,
       skipSigning?: boolean
     ) => {
-      // Delegate to MessageService - maintaining exact same API
       return messageService.submitMessage(
         address,
         pendingMessage,
@@ -3821,7 +3650,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     conversationType: string,
     updatedUserProfile: { user_icon?: string; display_name?: string }
   ) => {
-    // Delegate to MessageService - maintaining exact same API
     return messageService.saveMessage(
       decryptedContent,
       messageDB,
@@ -3841,7 +3669,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     channelId: string,
     decryptedContent: Message
   ) => {
-    // Delegate to MessageService - maintaining exact same API
     return messageService.addMessage(
       queryClient,
       spaceId,
@@ -3850,6 +3677,65 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     );
   };
   // END_ADD_MESSAGE_FUNCTION
+
+  // START_SUBMIT_CHANNEL_MESSAGE_FUNCTION
+  // USING MessageService: submitMessage now delegates to the extracted service
+  const submitChannelMessage = React.useCallback(
+    async (
+      spaceId: string,
+      channelId: string,
+      pendingMessage: string | object,
+      queryClient: QueryClient,
+      currentPasskeyInfo: {
+        credentialId: string;
+        address: string;
+        publicKey: string;
+        displayName?: string;
+        pfpUrl?: string;
+        completedOnboarding: boolean;
+      },
+      inReplyTo?: string,
+      skipSigning?: boolean
+    ) => {
+      return messageService.submitChannelMessage(
+        spaceId,
+        channelId,
+        pendingMessage,
+        queryClient,
+        currentPasskeyInfo,
+        inReplyTo,
+        skipSigning
+      );
+    },
+    [messageService]
+  );
+  // END_SUBMIT_CHANNEL_MESSAGE_FUNCTION
+
+  // START_DELETE_CONVERSATION_FUNCTION
+  // USING MessageService: deleteConversation now delegates to the extracted service
+  const deleteConversation = React.useCallback(
+    async (
+      conversationId: string,
+      currentPasskeyInfo: {
+        credentialId: string;
+        address: string;
+        publicKey: string;
+        displayName?: string;
+        pfpUrl?: string;
+        completedOnboarding: boolean;
+      }
+    ) => {
+      return messageService.deleteConversation(
+        conversationId,
+        currentPasskeyInfo,
+        queryClient,
+        keyset,
+        submitMessage
+      );
+    },
+    [messageService, queryClient, keyset, submitMessage]
+  );
+  // END_DELETE_CONVERSATION_FUNCTION
 
   return (
     <MessageDBContext.Provider

@@ -5,7 +5,8 @@ import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
 import { Message, ReactionMessage, RemoveReactionMessage, PostMessage, JoinMessage, LeaveMessage, KickMessage, Space } from '../api/quorumApi';
 import { sha256, base58btc } from '../utils/crypto';
 import { QueryClient, InfiniteData } from '@tanstack/react-query';
-import { buildMessagesKey, buildSpaceMembersKey, buildSpaceKey, buildConfigKey } from '../hooks';
+import { buildMessagesKey, buildSpaceMembersKey, buildSpaceKey, buildConfigKey, buildConversationsKey } from '../hooks';
+import { buildConversationKey } from '../hooks/queries/conversation/buildConversationKey';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../utils';
@@ -42,6 +43,7 @@ export interface MessageServiceDependencies {
   saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
   int64ToBytes: (num: number) => Uint8Array;
   canonicalize: (obj: any) => string;
+  sendHubMessage: (spaceId: string, message: string) => Promise<string>;
 }
 
 export class MessageService {
@@ -72,6 +74,7 @@ export class MessageService {
   private saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
   private int64ToBytes: (num: number) => Uint8Array;
   private canonicalize: (obj: any) => string;
+  private sendHubMessage: (spaceId: string, message: string) => Promise<string>;
 
   constructor(dependencies: MessageServiceDependencies) {
     this.messageDB = dependencies.messageDB;
@@ -90,6 +93,7 @@ export class MessageService {
     this.saveConfig = dependencies.saveConfig;
     this.int64ToBytes = dependencies.int64ToBytes;
     this.canonicalize = dependencies.canonicalize;
+    this.sendHubMessage = dependencies.sendHubMessage;
   }
 
   // EXACT COPY: saveMessage function from MessageDB.tsx line 255
@@ -2092,6 +2096,220 @@ export class MessageService {
         [message.timestamp],
         this.apiClient
       );
+    }
+  }
+
+  // EXACT COPY: submitChannelMessage function from MessageDB.tsx line 3191-3306
+  async submitChannelMessage(
+    spaceId: string,
+    channelId: string,
+    pendingMessage: string | object,
+    queryClient: QueryClient,
+    currentPasskeyInfo: {
+      credentialId: string;
+      address: string;
+      publicKey: string;
+      displayName?: string;
+      pfpUrl?: string;
+      completedOnboarding: boolean;
+    },
+    inReplyTo?: string,
+    skipSigning?: boolean
+  ) {
+    this.enqueueOutbound(async () => {
+      let outbounds: string[] = [];
+      const nonce = crypto.randomUUID();
+      const space = await this.messageDB.getSpace(spaceId);
+      const messageId = await crypto.subtle.digest(
+        'SHA-256',
+        Buffer.from(
+          nonce +
+            'post' +
+            currentPasskeyInfo.address +
+            this.canonicalize(pendingMessage as any),
+          'utf-8'
+        )
+      );
+      const message = {
+        spaceId: spaceId,
+        channelId: channelId,
+        messageId: Buffer.from(messageId).toString('hex'),
+        digestAlgorithm: 'SHA-256',
+        nonce: nonce,
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        lastModifiedHash: '',
+        content:
+          typeof pendingMessage === 'string'
+            ? ({
+                type: 'post',
+                senderId: currentPasskeyInfo.address,
+                text: pendingMessage,
+                repliesToMessageId: inReplyTo,
+              } as PostMessage)
+            : {
+                ...(pendingMessage as any),
+                senderId: currentPasskeyInfo.address,
+              },
+      } as Message;
+
+      let conversationId = spaceId + '/' + channelId;
+      const conversation = await this.messageDB.getConversation({
+        conversationId,
+      });
+      let response = await this.messageDB.getEncryptionStates({
+        conversationId: spaceId + '/' + spaceId,
+      });
+      const sets = response.map((e) => JSON.parse(e.state));
+
+      // enforce non-repudiability
+      if (
+        !space?.isRepudiable ||
+        (space?.isRepudiable && !skipSigning) ||
+        (typeof pendingMessage !== 'string' &&
+          (pendingMessage as any).type === 'update-profile')
+      ) {
+        const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+        message.publicKey = inboxKey.publicKey;
+        message.signature = Buffer.from(
+          JSON.parse(
+            ch.js_sign_ed448(
+              Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
+              Buffer.from(messageId).toString('base64')
+            )
+          ),
+          'base64'
+        ).toString('hex');
+      }
+
+      const msg = secureChannel.TripleRatchetEncrypt(
+        JSON.stringify({
+          ratchet_state: sets[0].state,
+          message: [
+            ...new Uint8Array(Buffer.from(JSON.stringify(message), 'utf-8')),
+          ],
+        } as secureChannel.TripleRatchetStateAndMessage)
+      );
+      const result = JSON.parse(
+        msg
+      ) as secureChannel.TripleRatchetStateAndEnvelope;
+      outbounds.push(
+        await this.sendHubMessage(
+          spaceId,
+          JSON.stringify({
+            type: 'message',
+            message: JSON.parse(result.envelope),
+          })
+        )
+      );
+      await this.saveMessage(message, this.messageDB, spaceId, channelId, 'group', {
+        user_icon:
+          conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+        display_name:
+          conversation.conversation?.displayName ?? t`Unknown User`,
+      });
+      await this.addMessage(queryClient, spaceId, channelId, message);
+
+      return outbounds;
+    });
+  }
+
+  // EXACT COPY: deleteConversation function from MessageDB.tsx line 909-983
+  async deleteConversation(
+    conversationId: string,
+    currentPasskeyInfo: {
+      credentialId: string;
+      address: string;
+      publicKey: string;
+      displayName?: string;
+      pfpUrl?: string;
+      completedOnboarding: boolean;
+    },
+    queryClient: QueryClient,
+    keyset: {
+      deviceKeyset: secureChannel.DeviceKeyset;
+      userKeyset: secureChannel.UserKeyset;
+    },
+    submitMessage: (
+      address: string,
+      pendingMessage: string | object,
+      self: secureChannel.UserRegistration,
+      counterparty: secureChannel.UserRegistration,
+      queryClient: QueryClient,
+      currentPasskeyInfo: {
+        credentialId: string;
+        address: string;
+        publicKey: string;
+        displayName?: string;
+        pfpUrl?: string;
+        completedOnboarding: boolean;
+      },
+      keyset: {
+        deviceKeyset: secureChannel.DeviceKeyset;
+        userKeyset: secureChannel.UserKeyset;
+      },
+      inReplyTo?: string,
+      skipSigning?: boolean
+    ) => Promise<void>
+  ) {
+    try {
+      const [spaceId, channelId] = conversationId.split('/');
+      // Notify counterparty for direct conversations before local deletion
+      if (spaceId && channelId && spaceId === channelId) {
+        try {
+          const counterparty = await this.apiClient.getUser(spaceId);
+
+          if (currentPasskeyInfo?.address) {
+            const self = await this.apiClient.getUser(currentPasskeyInfo?.address!);
+            await submitMessage(
+              spaceId,
+              { type: 'delete-conversation' },
+              self.data,
+              counterparty.data,
+              queryClient,
+              currentPasskeyInfo,
+              keyset,
+              undefined,
+              false
+            );
+          }
+        } catch {}
+      }
+      // Delete encryption states (keys) and latest state
+      const states = await this.messageDB.getEncryptionStates({ conversationId });
+      for (const state of states) {
+        await this.messageDB.deleteEncryptionState(state);
+        // Best-effort cleanup of inbox mapping for this inbox
+        if (state.inboxId) {
+          await this.messageDB.deleteInboxMapping(state.inboxId);
+        }
+      }
+      await this.messageDB.deleteLatestState(conversationId);
+
+      // Delete all messages for this conversation and remove from indices
+      await this.messageDB.deleteMessagesForConversation(conversationId);
+
+      // Delete conversation users mapping and metadata
+      await this.messageDB.deleteConversationUsers(conversationId);
+      await this.messageDB.deleteConversation(conversationId);
+
+      // Best-effort: remove cached user profile for counterparty
+      if (spaceId && spaceId === channelId) {
+        await this.messageDB.deleteUser(spaceId);
+      }
+
+      // Invalidate queries
+      await queryClient.invalidateQueries({
+        queryKey: buildMessagesKey({ spaceId, channelId }),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: buildConversationKey({ conversationId }),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: buildConversationsKey({ type: 'direct' }),
+      });
+    } catch (e) {
+      // no-op
     }
   }
 }
