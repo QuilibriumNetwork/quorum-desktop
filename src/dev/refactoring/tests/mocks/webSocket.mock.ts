@@ -123,3 +123,6 @@ export const MockWebSocketConstructor = vi.fn().mockImplementation((url: string,
   }
   return mockWebSocket;
 });
+
+// Export convenience alias
+export const MockWebSocket = createMockWebSocket();

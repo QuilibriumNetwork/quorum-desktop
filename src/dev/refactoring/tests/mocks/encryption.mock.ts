@@ -113,3 +113,6 @@ export const mockEncryptionHelpers = {
     mocks.mockGetRandomValues.mockClear();
   },
 };
+
+// Export convenience alias
+export const mockEncryption = createMockEncryption;

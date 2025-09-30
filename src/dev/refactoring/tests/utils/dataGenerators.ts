@@ -380,3 +380,16 @@ export const scenarios = {
     return { message, conflict };
   },
 };
+
+// Export convenience functions for common generators
+export function generateMockMessage(overrides = {}) {
+  return dataGenerators.message.text(overrides);
+}
+
+export function generateMockSpace(overrides = {}) {
+  return dataGenerators.space.basic(overrides);
+}
+
+export function generateMockUser(overrides = {}) {
+  return dataGenerators.user.basic(overrides);
+}
