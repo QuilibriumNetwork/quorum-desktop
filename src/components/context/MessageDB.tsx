@@ -16,6 +16,7 @@ import {
   UserConfig,
 } from '../../db/messages';
 import { MessageService } from '../../services/MessageService';
+import { EncryptionService } from '../../services/EncryptionService';
 import {
   buildConversationsKey,
   buildMessagesKey,
@@ -254,27 +255,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   }>({});
 
   // saveMessage will be defined after messageService instantiation
-
-  const deleteEncryptionStates = React.useCallback(
-    async ({ conversationId }: { conversationId: string }) => {
-      try {
-        const states = await messageDB.getEncryptionStates({ conversationId });
-        for (const state of states) {
-          await messageDB.deleteEncryptionState(state);
-          if (state.inboxId) {
-            try {
-              await messageDB.deleteInboxMapping(state.inboxId);
-            } catch {}
-          }
-        }
-        try {
-          await messageDB.deleteLatestState(conversationId);
-        } catch {}
-      } catch {}
-    },
-    [messageDB]
-  );
-
+  // deleteEncryptionStates will be defined after encryptionService instantiation
   // addMessage will be defined after messageService instantiation
 
   const deleteInboxMessages = async (
@@ -1987,203 +1968,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [selfAddress]
   );
 
-  const ensureKeyForSpace = React.useCallback(
-    async (user_address: string, space: Space) => {
-      let spaceKey:
-        | {
-            address?: string;
-            spaceId: string;
-            keyId: string;
-            publicKey: string;
-            privateKey: string;
-          }
-        | undefined = undefined;
-      try {
-        spaceKey = await messageDB.getSpaceKey(space.spaceId, space.spaceId);
-      } catch {}
-      if (spaceKey) {
-        return space.spaceId;
-      }
-
-      const sp = ch.js_generate_ed448();
-      const spacePair = JSON.parse(sp);
-      const sh = await sha256.digest(
-        Buffer.from(new Uint8Array(spacePair.public_key))
-      );
-      const spaceAddress = base58btc.baseEncode(sh.bytes);
-      const cp = ch.js_generate_x448();
-      const configPair = JSON.parse(cp);
-      let ownerKey: {
-        address?: string;
-        spaceId: string;
-        keyId: string;
-        publicKey: string;
-        privateKey: string;
-      };
-      let inboxAddress = '';
-
-      const keys = await messageDB.getSpaceKeys(space.spaceId);
-      for (const key of keys) {
-        await messageDB.deleteSpaceKey(space.spaceId, key.keyId);
-        if (key.keyId != 'config') {
-          await messageDB.saveSpaceKey({ ...key, spaceId: spaceAddress });
-        }
-
-        if (key.keyId == 'inbox') {
-          inboxAddress = key.address!;
-        }
-
-        if (key.keyId.startsWith('Qm')) {
-          const conversations = await messageDB.getConversations({
-            type: 'group',
-            limit: 100000,
-          });
-          for (const conv of conversations.conversations) {
-            conv.conversationId =
-              spaceAddress + '/' + conv.conversationId.split('/')[1];
-            await messageDB.saveConversation(conv);
-          }
-          const messages = await messageDB.getMessages({
-            spaceId: space.spaceId,
-            channelId: key.keyId,
-            limit: 100000,
-          });
-          for (const message of messages.messages) {
-            await messageDB.saveMessage(
-              { ...message, spaceId: spaceAddress },
-              0,
-              spaceAddress,
-              'group',
-              DefaultImages.UNKNOWN_USER,
-              t`Unknown User`
-            );
-          }
-        }
-
-        if (key.keyId == 'owner') {
-          ownerKey = key;
-        }
-      }
-
-      const encryptionStates = await messageDB.getEncryptionStates({
-        conversationId: space.spaceId + '/' + space.spaceId,
-      });
-      for (const es of encryptionStates) {
-        await messageDB.deleteEncryptionState(es);
-        es.conversationId = spaceAddress + '/' + spaceAddress;
-        await messageDB.saveEncryptionState(es, true);
-      }
-
-      const members = await messageDB.getSpaceMembers(space.spaceId);
-      for (const member of members) {
-        await messageDB.deleteSpaceMember(space.spaceId, member.user_address);
-        if (member.user_address == selfAddress) {
-          await messageDB.saveSpaceMember(spaceAddress, {
-            ...member,
-            spaceId: spaceAddress,
-            inbox_address: inboxAddress,
-          } as any);
-        } else {
-          await messageDB.saveSpaceMember(spaceAddress, {
-            ...member,
-            spaceId: spaceAddress,
-          } as any);
-        }
-      }
-
-      await messageDB.saveSpaceKey({
-        spaceId: spaceAddress,
-        keyId: 'config',
-        publicKey: Buffer.from(new Uint8Array(configPair.public_key)).toString(
-          'hex'
-        ),
-        privateKey: Buffer.from(
-          new Uint8Array(configPair.private_key)
-        ).toString('hex'),
-      });
-
-      const ts = Date.now();
-      const ownerPayload = Buffer.from(
-        new Uint8Array([
-          ...spacePair.public_key,
-          ...configPair.public_key,
-          ...new Uint8Array(Buffer.from(ownerKey!.publicKey, 'hex')),
-          ...int64ToBytes(ts),
-        ])
-      ).toString('base64');
-      const spacePayload = Buffer.from(
-        new Uint8Array([
-          ...spacePair.public_key,
-          ...configPair.public_key,
-          ...new Uint8Array(Buffer.from(ownerKey!.publicKey, 'hex')),
-          ...int64ToBytes(ts),
-        ])
-      ).toString('base64');
-      const spaceSignature = JSON.parse(
-        ch.js_sign_ed448(
-          Buffer.from(new Uint8Array(spacePair.private_key)).toString('base64'),
-          spacePayload
-        )
-      );
-      const ownerSignature = JSON.parse(
-        ch.js_sign_ed448(
-          Buffer.from(
-            new Uint8Array(Buffer.from(ownerKey!.privateKey, 'hex'))
-          ).toString('base64'),
-          ownerPayload
-        )
-      );
-
-      await apiClient.postSpace(spaceAddress, {
-        space_address: spaceAddress,
-        space_public_key: Buffer.from(
-          new Uint8Array(spacePair.public_key)
-        ).toString('hex'),
-        space_signature: Buffer.from(spaceSignature, 'base64').toString('hex'),
-        config_public_key: Buffer.from(
-          new Uint8Array(configPair.public_key)
-        ).toString('hex'),
-        owner_public_keys: [ownerKey!.publicKey],
-        owner_signatures: [
-          Buffer.from(ownerSignature, 'base64').toString('hex'),
-        ],
-        timestamp: ts,
-      });
-
-      const config = await messageDB.getUserConfig({ address: user_address });
-      config.spaceIds = config.spaceIds.map((s) =>
-        s == space.spaceId ? spaceAddress : s
-      );
-      await saveConfig({ config, keyset });
-
-      await messageDB.deleteSpace(space.spaceId);
-      await messageDB.saveSpaceKey({
-        spaceId: spaceAddress,
-        keyId: spaceAddress,
-        address: spaceAddress,
-        publicKey: Buffer.from(new Uint8Array(spacePair.public_key)).toString(
-          'hex'
-        ),
-        privateKey: Buffer.from(new Uint8Array(spacePair.private_key)).toString(
-          'hex'
-        ),
-      });
-      space.spaceId = spaceAddress;
-      await updateSpace(space);
-      const spaces = await messageDB.getSpaces();
-      queryClient.setQueryData(buildSpacesKey({}), (oldData) => {
-        return spaces;
-      });
-      queryClient.setQueryData(
-        buildConfigKey({ userAddress: user_address }),
-        () => {
-          return config;
-        }
-      );
-      return spaceAddress;
-    },
-    [keyset]
-  );
+  // ensureKeyForSpace moved to after EncryptionService instantiation
 
   const constructInviteLink = React.useCallback(async (spaceId: string) => {
     const space = await messageDB.getSpace(spaceId);
@@ -3539,6 +3324,27 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [messageDB]
   );
 
+  // Create EncryptionService instance (after all dependencies are declared)
+  const encryptionService = useMemo(() => {
+    return new EncryptionService({
+      messageDB,
+      apiClient,
+      saveConfig,
+      keyset,
+      updateSpace,
+      int64ToBytes,
+      selfAddress,
+    });
+  }, [messageDB, apiClient, saveConfig, keyset, updateSpace, int64ToBytes, selfAddress]);
+
+  // Create bound method for MessageService to use
+  const deleteEncryptionStates = useCallback(
+    async ({ conversationId }: { conversationId: string }) => {
+      return encryptionService.deleteEncryptionStates({ conversationId });
+    },
+    [encryptionService]
+  );
+
   // Create MessageService instance (after all dependencies are declared)
   const messageService = useMemo(() => {
     return new MessageService({
@@ -3736,6 +3542,16 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [messageService, queryClient, keyset, submitMessage]
   );
   // END_DELETE_CONVERSATION_FUNCTION
+
+  // START_ENSURE_KEY_FOR_SPACE_FUNCTION
+  // USING EncryptionService: ensureKeyForSpace now delegates to the extracted service
+  const ensureKeyForSpace = React.useCallback(
+    async (user_address: string, space: Space) => {
+      return encryptionService.ensureKeyForSpace(user_address, space, queryClient);
+    },
+    [encryptionService, queryClient]
+  );
+  // END_ENSURE_KEY_FOR_SPACE_FUNCTION
 
   return (
     <MessageDBContext.Provider

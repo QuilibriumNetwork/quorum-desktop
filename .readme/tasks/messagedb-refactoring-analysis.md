@@ -561,16 +561,16 @@ Claude Code will execute this refactoring automatically in sequential phases, up
   - [x] **Ready for Phase 2**: Service extraction workflow documented and validated
 
 ### Phase 2: Service Extraction
-- [ ] Create service directory structure
-  - [ ] Create `src/services/` directory
-  - [ ] Create `src/services/types/` directory for shared types
-  - [ ] Create `src/services/utils/` directory for shared utilities
-- [ ] Extract MessageService with zero optimization
-  - [ ] Create `src/services/MessageService.ts`
-  - [ ] Move message CRUD operations (exact copy)
-  - [ ] Move message encryption/decryption operations (exact copy)
-  - [ ] Move reaction management operations (exact copy)
-  - [ ] Move file attachment handling (exact copy)
+- [x] Create service directory structure
+  - [x] Create `src/services/` directory
+  - [x] Create `src/services/types/` directory for shared types
+  - [x] Create `src/services/utils/` directory for shared utilities
+- [x] Extract MessageService with zero optimization
+  - [x] Create `src/services/MessageService.ts`
+  - [x] Move message CRUD operations (exact copy)
+  - [x] Move message encryption/decryption operations (exact copy)
+  - [x] Move reaction management operations (exact copy)
+  - [x] Move file attachment handling (exact copy)
   - [ ] Create `src/dev/refactoring/tests/services/MessageService.test.ts`
   - [ ] Claude Code runs `yarn test` automatically to verify MessageService works identically to original
 - [ ] Extract EncryptionService with zero optimization
