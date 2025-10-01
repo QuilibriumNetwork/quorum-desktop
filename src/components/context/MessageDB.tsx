@@ -13,12 +13,14 @@ import {
   MessageDB,
   UserConfig,
 } from '../../db/messages';
-import { MessageService } from '../../services/MessageService';
-import { EncryptionService } from '../../services/EncryptionService';
-import { SpaceService } from '../../services/SpaceService';
-import { SyncService } from '../../services/SyncService';
-import { ConfigService } from '../../services/ConfigService';
-import { InvitationService } from '../../services/InvitationService';
+import {
+  MessageService,
+  EncryptionService,
+  SpaceService,
+  SyncService,
+  ConfigService,
+  InvitationService,
+} from '../../services';
 import {
   buildConversationsKey,
 } from '../../hooks';

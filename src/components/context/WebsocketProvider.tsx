@@ -9,7 +9,7 @@ import { useQuorumApiClient } from './QuorumApiContext';
 import { getConfig } from '../../config/config';
 import { EncryptedMessage } from '../../db/messages';
 import { t } from '@lingui/core/macro';
-import { notificationService } from '../../services/notificationService';
+import { notificationService } from '../../services/NotificationService';
 
 type MessageHandler = (message: EncryptedMessage) => Promise<void>;
 type OutboundMessage = () => Promise<string[]>;
