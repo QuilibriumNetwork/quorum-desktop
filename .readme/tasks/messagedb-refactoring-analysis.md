@@ -56,24 +56,52 @@ const functionName = React.useCallback(async (...) => {
 
 > Note: the line numbers in the below lists are relative to the original file: src\components\context\MessageDB.bak.tsx
 
-#### MessageService
-- [x] **saveMessage** - Extracted 2025-09-30 (198 lines, 5 branches)
-- [x] **addMessage** - Extracted 2025-09-30 (276 lines, 5 branches)
-- [x] **submitMessage** - Extracted 2025-09-30 (204 lines, P2P encryption workflow)
-- [x] **handleNewMessage**function to extract
-- [x] **submitChannelMessage** - MessageDB.tsx:1567
-- [x] **deleteConversation** - MessageDB.tsx:2234
+#### MessageService ✅ COMPLETE (6 functions, 2,314 lines)
+- [x] **saveMessage** - Extracted 2025-09-30 (198 lines)
+- [x] **addMessage** - Extracted 2025-09-30 (276 lines)
+- [x] **submitMessage** - Extracted 2025-09-30 (204 lines)
+- [x] **handleNewMessage** - Extracted 2025-09-30 (1,324 lines - needs Phase 4 optimization)
+- [x] **submitChannelMessage** - Extracted 2025-09-30 (116 lines)
+- [x] **deleteConversation** - Extracted 2025-09-30 (89 lines)
 
-#### EncryptionService (to be created)
-- [ ] **deleteEncryptionStates** - MessageDB.tsx:3456
-- [ ] **ensureKeyForSpace** - MessageDB.tsx:2789
+**Note**: `canonicalize` and `updateUserProfile` intentionally left in MessageDB for now. They will be addressed in Phase 4 (Optimization) after other services are extracted.
 
-#### SpaceService (to be created)
-- [ ] **createSpace** - MessageDB.tsx:3234
-- [ ] **updateSpace** - MessageDB.tsx:3567
-- [ ] **createChannel** - MessageDB.tsx:4123
-- [ ] **deleteSpace** - MessageDB.tsx:4456
-- [ ] **kickUser** - MessageDB.tsx:4789
+#### EncryptionService ✅ COMPLETE (2 functions, 263 lines)
+- [x] **deleteEncryptionStates** - Extracted 2025-10-01 (19 lines, line 258-276)
+- [x] **ensureKeyForSpace** - Extracted 2025-10-01 (197 lines, line 1990-2186)
+
+#### SpaceService (to be created - 7 functions, ~1,130 lines)
+- [ ] **createSpace** - 352 lines (line 985-1336)
+- [ ] **updateSpace** - 48 lines (line 1338-1385)
+- [ ] **deleteSpace** - 119 lines (line 1387-1505)
+- [ ] **kickUser** - 463 lines (line 1507-1969)
+- [ ] **createChannel** - 97 lines (line 2809-2905)
+- [ ] **submitUpdateSpace** - 33 lines (line 942-974) - broadcasts space manifest updates
+- [ ] **sendHubMessage** - 18 lines (line 3308-3325) - sends messages to space hub
+
+#### InvitationService (to be created - 5 functions, ~1,204 lines)
+- [ ] **constructInviteLink** - 60 lines (line 1973-2032)
+- [ ] **sendInviteToUser** - 28 lines (line 2005-2032)
+- [ ] **generateNewInviteLink** - 374 lines (line 2034-2407)
+- [ ] **processInviteLink** - 399 lines (line 2409-2807)
+- [ ] **joinInviteLink** - 343 lines (line 2465-2807)
+
+#### SyncService (to be created - 6 functions, ~738 lines)
+- [ ] **synchronizeAll** - 155 lines (line 358-512)
+- [ ] **initiateSync** - 233 lines (line 514-746)
+- [ ] **directSync** - 169 lines (line 578-746)
+- [ ] **requestSync** - 79 lines (line 748-826)
+- [ ] **sendVerifyKickedStatuses** - 39 lines (line 788-826)
+- [ ] **informSyncData** - 63 lines (line 828-890)
+
+#### ConfigService (to be created - 2 functions, ~355 lines)
+- [ ] **getConfig** - 261 lines (line 2907-3167)
+- [ ] **saveConfig** - 94 lines (line 3169-3262)
+
+**📊 Extraction Progress Summary:**
+- ✅ **Completed**: 2 services, 8 functions, ~2,577 lines extracted
+- ⏳ **Remaining**: 5 services, 26 functions, ~3,427 lines to extract
+- 🎯 **Next**: SpaceService (7 functions, ~1,130 lines)
 
 **🚨 Testing Requirements During Refactoring**:
 1. **NEVER skip testing** after each service extraction
@@ -647,6 +675,17 @@ Claude Code will execute this refactoring automatically in sequential phases, up
   - [ ] Document any deviation from original behavior (should be none)
 
 ### Phase 4: Optimization
+- [ ] **CRITICAL: Refactor MessageService.handleNewMessage (1,324 lines)**
+  - [ ] Break down handleNewMessage to delegate to SpaceService (control messages: join/leave/kick/manifest)
+  - [ ] Delegate sync operations to SyncService (sync-peer-map messages)
+  - [ ] Delegate encryption state management to EncryptionService where appropriate
+  - [ ] Extract message type handlers into smaller, focused methods
+  - [ ] Goal: Reduce handleNewMessage from 1,324 lines to <200 lines of orchestration logic
+  - [ ] Run tests after each refactoring step to ensure no regressions
+- [ ] Extract remaining MessageDB functions
+  - [ ] Extract `canonicalize` (75 lines) - decide: MessageService utility or shared util?
+  - [ ] Extract `updateUserProfile` (31 lines) - decide: MessageService or UserProfileService?
+  - [ ] Run tests after extractions
 - [ ] Optimize MessageService and EncryptionService
   - [ ] Remove duplicate code within MessageService
   - [ ] Optimize data structures in MessageService
