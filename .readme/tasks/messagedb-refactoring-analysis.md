@@ -71,20 +71,13 @@ const functionName = React.useCallback(async (...) => {
 - [x] **ensureKeyForSpace** - Extracted 2025-10-01 (197 lines, line 1990-2186)
 
 #### SpaceService (to be created - 7 functions, ~1,130 lines)
-- [ ] **createSpace** - 352 lines (line 985-1336)
-- [ ] **updateSpace** - 48 lines (line 1338-1385)
-- [ ] **deleteSpace** - 119 lines (line 1387-1505)
-- [ ] **kickUser** - 463 lines (line 1507-1969)
-- [ ] **createChannel** - 97 lines (line 2809-2905)
-- [ ] **submitUpdateSpace** - 33 lines (line 942-974) - broadcasts space manifest updates
-- [ ] **sendHubMessage** - 18 lines (line 3308-3325) - sends messages to space hub
-
-#### InvitationService (to be created - 5 functions, ~1,204 lines)
-- [ ] **constructInviteLink** - 60 lines (line 1973-2032)
-- [ ] **sendInviteToUser** - 28 lines (line 2005-2032)
-- [ ] **generateNewInviteLink** - 374 lines (line 2034-2407)
-- [ ] **processInviteLink** - 399 lines (line 2409-2807)
-- [ ] **joinInviteLink** - 343 lines (line 2465-2807)
+- [x] **createSpace** - 352 lines (line 985-1336)
+- [x] **updateSpace** - 48 lines (line 1338-1385)
+- [x] **deleteSpace** - 119 lines (line 1387-1505)
+- [x] **kickUser** - 463 lines (line 1507-1969)
+- [x] **createChannel** - 97 lines (line 2809-2905)
+- [x] **submitUpdateSpace** - 33 lines (line 942-974) - broadcasts space manifest updates
+- [x] **sendHubMessage** - 18 lines (line 3308-3325) - sends messages to space hub
 
 #### SyncService (to be created - 6 functions, ~738 lines)
 - [ ] **synchronizeAll** - 155 lines (line 358-512)
@@ -97,6 +90,14 @@ const functionName = React.useCallback(async (...) => {
 #### ConfigService (to be created - 2 functions, ~355 lines)
 - [ ] **getConfig** - 261 lines (line 2907-3167)
 - [ ] **saveConfig** - 94 lines (line 3169-3262)
+
+#### InvitationService (to be created - 5 functions, ~1,204 lines)
+- [ ] **constructInviteLink** - 60 lines (line 1973-2032)
+- [ ] **sendInviteToUser** - 28 lines (line 2005-2032)
+- [ ] **generateNewInviteLink** - 374 lines (line 2034-2407)
+- [ ] **processInviteLink** - 399 lines (line 2409-2807)
+- [ ] **joinInviteLink** - 343 lines (line 2465-2807)
+
 
 **📊 Extraction Progress Summary:**
 - ✅ **Completed**: 2 services, 8 functions, ~2,577 lines extracted
