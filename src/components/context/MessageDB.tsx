@@ -19,6 +19,7 @@ import { MessageService } from '../../services/MessageService';
 import { EncryptionService } from '../../services/EncryptionService';
 import { SpaceService } from '../../services/SpaceService';
 import { SyncService } from '../../services/SyncService';
+import { ConfigService } from '../../services/ConfigService';
 import {
   buildConversationsKey,
   buildMessagesKey,
@@ -1339,362 +1340,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     []
   );
 
-  const getConfig = React.useCallback(
-    async ({
-      address,
-      userKey,
-    }: {
-      address: string;
-      userKey: secureChannel.UserKeyset;
-    }) => {
-      let savedConfig: secureChannel.UserConfig | undefined;
-      try {
-        savedConfig = (await apiClient.getUserSettings(address)).data;
-      } catch {}
-
-      const storedConfig = await messageDB.getUserConfig({ address });
-      if (!savedConfig) {
-        if (!storedConfig) {
-          return getDefaultUserConfig(address);
-        }
-        return storedConfig;
-      }
-
-      if (savedConfig.timestamp < (storedConfig?.timestamp ?? 0)) {
-        console.warn(t`saved config is out of date`);
-        return storedConfig;
-      }
-
-      if (savedConfig.timestamp == storedConfig?.timestamp) {
-        return storedConfig;
-      }
-
-      const derived = await crypto.subtle.digest(
-        'SHA-512',
-        Buffer.from(new Uint8Array(userKey.user_key.private_key))
-      );
-
-      const subtleKey = await window.crypto.subtle.importKey(
-        'raw',
-        derived.slice(0, 32),
-        {
-          name: 'AES-GCM',
-          length: 256,
-        },
-        false,
-        ['decrypt']
-      );
-
-      if (
-        !JSON.parse(
-          ch.js_verify_ed448(
-            Buffer.from(new Uint8Array(userKey.user_key.public_key)).toString(
-              'base64'
-            ),
-            Buffer.from(
-              new Uint8Array([
-                ...new Uint8Array(
-                  Buffer.from(savedConfig.user_config, 'utf-8')
-                ),
-                ...int64ToBytes(savedConfig.timestamp),
-              ])
-            ).toString('base64'),
-            Buffer.from(savedConfig.signature, 'hex').toString('base64')
-          )
-        )
-      ) {
-        console.warn(t`received config with invalid signature!`);
-        return storedConfig;
-      }
-
-      const iv = savedConfig.user_config.substring(
-        savedConfig.user_config.length - 24
-      );
-      const ciphertext = savedConfig.user_config.substring(
-        0,
-        savedConfig.user_config.length - 24
-      );
-      const config = JSON.parse(
-        Buffer.from(
-          await window.crypto.subtle.decrypt(
-            { name: 'AES-GCM', iv: Buffer.from(iv, 'hex') },
-            subtleKey,
-            Buffer.from(ciphertext, 'hex')
-          )
-        ).toString('utf-8')
-      ) as UserConfig;
-      if (!config) {
-        return storedConfig;
-      }
-
-      for (const space of config.spaceKeys ?? []) {
-        const existingSpace = await messageDB.getSpace(space.spaceId);
-        if (!existingSpace) {
-          try {
-            const config = space.keys.find((k) => k.keyId == 'config');
-            if (!config) {
-              console.warn(t`decrypted space with no known config key`);
-              continue;
-            }
-
-            const hub = space.keys.find((k) => k.keyId == 'hub');
-            if (!hub) {
-              console.warn(t`Decrypted Space with no known hub key`);
-              continue;
-            }
-
-            for (const key of space.keys) {
-              await messageDB.saveSpaceKey(key);
-            }
-
-            let reg = (await apiClient.getSpace(space.spaceId)).data;
-            spaceInfo.current[space.spaceId] = reg;
-
-            const manifestPayload = await apiClient.getSpaceManifest(
-              space.spaceId
-            );
-            if (!manifestPayload) {
-              console.warn(t`Could not obtain manifest for Space`);
-              continue;
-            }
-
-            const ciphertext = JSON.parse(
-              manifestPayload.data.space_manifest
-            ) as {
-              ciphertext: string;
-              initialization_vector: string;
-              associated_data: string;
-            };
-            const manifest = JSON.parse(
-              Buffer.from(
-                JSON.parse(
-                  ch.js_decrypt_inbox_message(
-                    JSON.stringify({
-                      inbox_private_key: [
-                        ...new Uint8Array(
-                          Buffer.from(config.privateKey, 'hex')
-                        ),
-                      ],
-                      ephemeral_public_key: [
-                        ...new Uint8Array(
-                          Buffer.from(
-                            manifestPayload.data.ephemeral_public_key,
-                            'hex'
-                          )
-                        ),
-                      ],
-                      ciphertext: ciphertext,
-                    })
-                  )
-                )
-              ).toString('utf-8')
-            ) as Space;
-
-            const ip = ch.js_generate_ed448();
-            const inboxPair = JSON.parse(ip);
-            const ih = await sha256.digest(
-              Buffer.from(new Uint8Array(inboxPair.public_key))
-            );
-            const inboxAddress = base58btc.baseEncode(ih.bytes);
-
-            await messageDB.saveSpace(manifest);
-            await messageDB.saveEncryptionState(
-              { ...space.encryptionState, inboxId: inboxAddress },
-              true
-            );
-
-            await apiClient.postHubAdd({
-              hub_address: hub.address!,
-              hub_public_key: hub.publicKey,
-              hub_signature: Buffer.from(
-                JSON.parse(
-                  ch.js_sign_ed448(
-                    Buffer.from(hub.privateKey, 'hex').toString('base64'),
-                    Buffer.from(
-                      new Uint8Array([
-                        ...new Uint8Array(
-                          Buffer.from(
-                            'add' +
-                              Buffer.from(
-                                new Uint8Array(inboxPair.public_key)
-                              ).toString('hex'),
-                            'utf-8'
-                          )
-                        ),
-                      ])
-                    ).toString('base64')
-                  )
-                ),
-                'base64'
-              ).toString('hex'),
-              inbox_public_key: Buffer.from(
-                new Uint8Array(inboxPair.public_key)
-              ).toString('hex'),
-              inbox_signature: Buffer.from(
-                JSON.parse(
-                  ch.js_sign_ed448(
-                    Buffer.from(new Uint8Array(inboxPair.private_key)).toString(
-                      'base64'
-                    ),
-                    Buffer.from(
-                      new Uint8Array([
-                        ...new Uint8Array(
-                          Buffer.from('add' + hub.publicKey, 'utf-8')
-                        ),
-                      ])
-                    ).toString('base64')
-                  )
-                ),
-                'base64'
-              ).toString('hex'),
-            });
-
-            enqueueOutbound(async () => [
-              JSON.stringify({
-                type: 'listen',
-                inbox_addresses: [inboxAddress],
-              }),
-            ]);
-
-            await messageDB.saveSpaceKey({
-              spaceId: space.spaceId,
-              keyId: 'inbox',
-              address: inboxAddress,
-              publicKey: Buffer.from(
-                new Uint8Array(inboxPair.public_key)
-              ).toString('hex'),
-              privateKey: Buffer.from(
-                new Uint8Array(inboxPair.private_key)
-              ).toString('hex'),
-            });
-
-            enqueueOutbound(async () => [
-              await sendHubMessage(
-                space.spaceId,
-                JSON.stringify({
-                  type: 'control',
-                  message: {
-                    type: 'sync',
-                    inboxAddress: inboxAddress,
-                  },
-                })
-              ),
-            ]);
-          } catch (e) {
-            console.error(t`Could not add Space`, e);
-          }
-        }
-      }
-
-      await messageDB.saveUserConfig({
-        ...config,
-        timestamp: savedConfig.timestamp,
-      });
-      const updatedSpaces = await messageDB.getSpaces();
-      await queryClient.setQueryData(buildSpacesKey({}), () => updatedSpaces);
-      await queryClient.setQueryData(
-        buildConfigKey({ userAddress: config.address! }),
-        () => config
-      );
-      return config;
-    },
-    []
-  );
-
-  const saveConfig = React.useCallback(
-    async ({
-      config,
-      keyset,
-    }: {
-      config: UserConfig;
-      keyset: {
-        userKeyset: secureChannel.UserKeyset;
-        deviceKeyset: secureChannel.DeviceKeyset;
-      };
-    }) => {
-      const ts = Date.now();
-      config.timestamp = ts;
-
-      if (config.allowSync) {
-        console.log('syncing config', config);
-        const userKey = keyset.userKeyset;
-        const derived = await crypto.subtle.digest(
-          'SHA-512',
-          Buffer.from(new Uint8Array(userKey.user_key.private_key))
-        );
-
-        const subtleKey = await window.crypto.subtle.importKey(
-          'raw',
-          derived.slice(0, 32),
-          {
-            name: 'AES-GCM',
-            length: 256,
-          },
-          false,
-          ['encrypt']
-        );
-
-        const spaces = await messageDB.getSpaces();
-
-        // Fetch all space keys and encryption states in parallel
-        const spaceKeysPromises = spaces.map(async (space) => {
-          const [keys, encryptionState] = await Promise.all([
-            messageDB.getSpaceKeys(space.spaceId),
-            messageDB.getEncryptionStates({
-              conversationId: space.spaceId + '/' + space.spaceId,
-            }),
-          ]);
-          return {
-            spaceId: space.spaceId,
-            encryptionState: encryptionState[0],
-            keys: keys,
-          };
-        });
-
-        config.spaceKeys = await Promise.all(spaceKeysPromises);
-
-        let iv = crypto.getRandomValues(new Uint8Array(12));
-        const ciphertext =
-          Buffer.from(
-            await window.crypto.subtle.encrypt(
-              { name: 'AES-GCM', iv: iv },
-              subtleKey,
-              Buffer.from(JSON.stringify(config), 'utf-8')
-            )
-          ).toString('hex') + Buffer.from(iv).toString('hex');
-
-        const signature = Buffer.from(
-          JSON.parse(
-            ch.js_sign_ed448(
-              Buffer.from(
-                new Uint8Array(userKey.user_key.private_key)
-              ).toString('base64'),
-              Buffer.from(
-                new Uint8Array([
-                  ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
-                  ...int64ToBytes(ts),
-                ])
-              ).toString('base64')
-            )
-          ),
-          'base64'
-        ).toString('hex');
-
-        await apiClient.postUserSettings(config.address, {
-          user_address: config.address,
-          user_public_key: Buffer.from(
-            new Uint8Array(userKey.user_key.public_key)
-          ).toString('hex'),
-          user_config: ciphertext,
-          timestamp: ts,
-          signature: signature,
-        });
-      }
-
-      await messageDB.saveUserConfig(config);
-    },
-    []
-  );
+  // OLD CONFIG FUNCTIONS REMOVED - Now handled by ConfigService
+  // getConfig and saveConfig moved to ConfigService.ts and delegated below (after ConfigService instantiation)
 
   useEffect(() => {
     if (keyset?.deviceKeyset?.identity_key && selfAddress) {
@@ -1762,6 +1409,51 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       return sendHubMessageRef.current(spaceId, message);
     },
     []
+  );
+
+  // ConfigService instantiation (MUST be first - other services depend on saveConfig)
+  const configService = useMemo(() => {
+    return new ConfigService({
+      messageDB,
+      apiClient,
+      int64ToBytes,
+      spaceInfo,
+      enqueueOutbound,
+      sendHubMessage,
+      queryClient,
+    });
+  }, [messageDB, apiClient, int64ToBytes, spaceInfo, enqueueOutbound, sendHubMessage, queryClient]);
+
+  // ConfigService delegation functions
+  // USING ConfigService: getConfig now delegates to the extracted service
+  const getConfig = React.useCallback(
+    async ({
+      address,
+      userKey,
+    }: {
+      address: string;
+      userKey: secureChannel.UserKeyset;
+    }) => {
+      return configService.getConfig({ address, userKey });
+    },
+    [configService]
+  );
+
+  // USING ConfigService: saveConfig now delegates to the extracted service
+  const saveConfig = React.useCallback(
+    async ({
+      config,
+      keyset,
+    }: {
+      config: UserConfig;
+      keyset: {
+        userKeyset: secureChannel.UserKeyset;
+        deviceKeyset: secureChannel.DeviceKeyset;
+      };
+    }) => {
+      return configService.saveConfig({ config, keyset });
+    },
+    [configService]
   );
 
   // Create EncryptionService instance (uses updateSpace forward reference)

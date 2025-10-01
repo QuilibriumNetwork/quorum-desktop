@@ -80,12 +80,12 @@ const functionName = React.useCallback(async (...) => {
 - [x] **sendHubMessage** - 18 lines (line 3308-3325) - sends messages to space hub
 
 #### SyncService (to be created - 6 functions, ~738 lines)
-- [ ] **synchronizeAll** - 155 lines (line 358-512)
-- [ ] **initiateSync** - 233 lines (line 514-746)
-- [ ] **directSync** - 169 lines (line 578-746)
-- [ ] **requestSync** - 79 lines (line 748-826)
-- [ ] **sendVerifyKickedStatuses** - 39 lines (line 788-826)
-- [ ] **informSyncData** - 63 lines (line 828-890)
+- [x] **synchronizeAll** - 155 lines (line 358-512)
+- [x] **initiateSync** - 233 lines (line 514-746)
+- [x] **directSync** - 169 lines (line 578-746)
+- [x] **requestSync** - 79 lines (line 748-826)
+- [x] **sendVerifyKickedStatuses** - 39 lines (line 788-826)
+- [x] **informSyncData** - 63 lines (line 828-890)
 
 #### ConfigService (to be created - 2 functions, ~355 lines)
 - [ ] **getConfig** - 261 lines (line 2907-3167)
