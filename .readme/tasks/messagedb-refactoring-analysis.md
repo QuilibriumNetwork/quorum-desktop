@@ -80,7 +80,7 @@ const functionName = React.useCallback(async (...) => {
 - [x] **directSync** - 169 lines (line 578-746)
 - [x] **requestSync** - 79 lines (line 748-826)
 - [x] **sendVerifyKickedStatuses** - 39 lines (line 788-826)
-- [x] **informSyncData** - 63 lines (line 828-890)
+- [x] **informSyncData** - 63 lines (line 828-890)/clear
 
 #### ConfigService (to be created - 2 functions, ~355 lines)
 - [x] **getConfig** - 261 lines (line 2907-3167)
@@ -582,146 +582,21 @@ Claude Code will execute this refactoring automatically in sequential phases, up
   - [x] **Ready for Phase 2**: Service extraction workflow documented and validated
 
 ### Phase 2: Service Extraction
-- [x] Create service directory structure
-  - [x] Create `src/services/` directory
-  - [x] Create `src/services/types/` directory for shared types
-  - [x] Create `src/services/utils/` directory for shared utilities
-- [x] Extract MessageService with zero optimization
-  - [x] Create `src/services/MessageService.ts`
-  - [x] Move message CRUD operations (exact copy)
-  - [x] Move message encryption/decryption operations (exact copy)
-  - [x] Move reaction management operations (exact copy)
-  - [x] Move file attachment handling (exact copy)
-  - [ ] Create `src/dev/refactoring/tests/services/MessageService.test.ts`
-  - [ ] Claude Code runs `yarn test` automatically to verify MessageService works identically to original
-- [ ] Extract EncryptionService with zero optimization
-  - [ ] Create `src/services/EncryptionService.ts`
-  - [ ] Move key generation and management (exact copy)
-  - [ ] Move encryption state tracking (exact copy)
-  - [ ] Move key rotation workflows (exact copy)
-  - [ ] Create `src/dev/refactoring/tests/services/EncryptionService.test.ts`
-  - [ ] Claude Code runs `yarn test` automatically to verify EncryptionService works identically to original
-- [ ] Extract SpaceService with zero optimization
-  - [ ] Create `src/services/SpaceService.ts`
-  - [ ] Move space creation and management (exact copy)
-  - [ ] Move member management operations (exact copy)
-  - [ ] Move permission handling (exact copy)
-  - [ ] Move space configuration (exact copy)
-  - [ ] Create `src/dev/refactoring/tests/services/SpaceService.test.ts`
-  - [ ] Claude Code runs `yarn test` automatically to verify SpaceService works identically to original
-- [ ] Extract SyncService with zero optimization
-  - [ ] Create `src/services/SyncService.ts`
-  - [ ] Move message synchronization (exact copy)
-  - [ ] Move space synchronization (exact copy)
-  - [ ] Move conflict resolution (exact copy)
-  - [ ] Move offline/online state management (exact copy)
-  - [ ] Create `src/dev/refactoring/tests/services/SyncService.test.ts`
-  - [ ] Claude Code runs `yarn test` automatically to verify SyncService works identically to original
-- [ ] Extract ConfigService with zero optimization
-  - [ ] Create `src/services/ConfigService.ts`
-  - [ ] Move application configuration (exact copy)
-  - [ ] Move user preferences (exact copy)
-  - [ ] Move migration handling (exact copy)
-  - [ ] Create `src/dev/refactoring/tests/services/ConfigService.test.ts`
-  - [ ] Claude Code runs `yarn test` automatically to verify ConfigService works identically to original
-- [ ] Validation after each extraction
-  - [ ] Claude Code runs complete test suite (`yarn test`) after each service extraction
-  - [ ] Verify all tests pass before proceeding to next service
-  - [ ] Run `yarn build` to ensure no build errors
-  - [ ] Verify no TypeScript compilation errors
+See "extraction progress tracker" above.
 
-### Phase 3: Integration & Validation
-- [ ] Create decomposed context structure
-  - [ ] Create `src/contexts/` directory
-  - [ ] Create `src/contexts/MessageContext.tsx`
-  - [ ] Create `src/contexts/SpaceContext.tsx`
-  - [ ] Create `src/contexts/EncryptionContext.tsx`
-  - [ ] Create `src/contexts/SyncContext.tsx`
-  - [ ] Create `src/contexts/ConfigContext.tsx`
-- [ ] Wire all services into decomposed contexts
-  - [ ] Update MessageContext to use MessageService
-  - [ ] Update SpaceContext to use SpaceService
-  - [ ] Update EncryptionContext to use EncryptionService
-  - [ ] Update SyncContext to use SyncService
-  - [ ] Update ConfigContext to use ConfigService
-  - [ ] Maintain exact same API surface for all contexts
-- [ ] Update MessageDB.tsx to orchestrate contexts
-  - [ ] Remove extracted code from MessageDB.tsx
-  - [ ] Wire decomposed contexts together
-  - [ ] Maintain exact same export interface
-  - [ ] Preserve all existing React Query integrations
-- [ ] Comprehensive validation with full test suite
-  - [ ] Claude Code runs complete test suite (`yarn test`) to verify all functionality preserved
-  - [ ] Create integration tests for context interactions in `src/dev/refactoring/tests/integration/`
-  - [ ] Test cross-service communication works correctly
-  - [ ] Verify all original MessageDB functionality still works through comprehensive tests
-- [ ] Performance validation and cross-platform testing
-  - [ ] Run `yarn build` and compare bundle size to baseline
-  - [ ] Run performance benchmark tests
-  - [ ] Test on web platform in development
-  - [ ] Verify memory usage patterns haven't changed significantly
-- [ ] Final validation before optimization
-  - [ ] Confirm all tests pass (`yarn test`)
-  - [ ] Confirm TypeScript compilation succeeds
-  - [ ] Verify lint checks pass (`yarn lint`)
-  - [ ] Test in both development and production builds
-  - [ ] Document any deviation from original behavior (should be none)
+### Phase 3: Integration & Validation (SKIPPED)
 
 ### Phase 4: Optimization
-- [ ] **CRITICAL: Refactor MessageService.handleNewMessage (1,324 lines)**
-  - [ ] Break down handleNewMessage to delegate to SpaceService (control messages: join/leave/kick/manifest)
-  - [ ] Delegate sync operations to SyncService (sync-peer-map messages)
-  - [ ] Delegate encryption state management to EncryptionService where appropriate
-  - [ ] Extract message type handlers into smaller, focused methods
-  - [ ] Goal: Reduce handleNewMessage from 1,324 lines to <200 lines of orchestration logic
-  - [ ] Run tests after each refactoring step to ensure no regressions
-- [ ] Extract remaining MessageDB functions
-  - [ ] Extract `canonicalize` (75 lines) - decide: MessageService utility or shared util?
-  - [ ] Extract `updateUserProfile` (31 lines) - decide: MessageService or UserProfileService?
-  - [ ] Run tests after extractions
-- [ ] Optimize MessageService and EncryptionService
-  - [ ] Remove duplicate code within MessageService
-  - [ ] Optimize data structures in MessageService
-  - [ ] Improve error handling in MessageService
-  - [ ] Remove duplicate code within EncryptionService
-  - [ ] Optimize encryption algorithms if possible
-  - [ ] Improve TypeScript types for both services
-  - [ ] Run tests after each optimization to ensure no regressions
-- [ ] Optimize SpaceService, SyncService, ConfigService
-  - [ ] Remove duplicate code within SpaceService
-  - [ ] Optimize space management algorithms
-  - [ ] Remove duplicate code within SyncService
-  - [ ] Optimize synchronization logic
-  - [ ] Remove duplicate code within ConfigService
-  - [ ] Improve configuration handling
-  - [ ] Improve TypeScript types for all services
-  - [ ] Run tests after each optimization to ensure no regressions
-- [ ] Optimize context integration
-  - [ ] Optimize React Query usage across contexts
-  - [ ] Add proper memoization where needed
-  - [ ] Reduce unnecessary re-renders
-  - [ ] Improve context provider performance
-  - [ ] Add error boundaries where appropriate
-- [ ] Final performance optimization
-  - [ ] Optimize IndexedDB operation efficiency
-  - [ ] Review and optimize async operation patterns
-  - [ ] Add performance monitoring where beneficial
-  - [ ] Final performance benchmark comparison
-- [ ] Code cleanup and TypeScript improvements
-  - [ ] Add comprehensive JSDoc comments
-  - [ ] Improve TypeScript type definitions
-  - [ ] Remove any remaining dead code
-  - [ ] Ensure consistent code style across all files
-  - [ ] Add proper exports/imports structure
-- [ ] Final testing and production readiness verification
-  - [ ] Run complete test suite (`yarn test`) with all optimizations
-  - [ ] Verify performance meets or exceeds baseline (bundle size, memory)
-  - [ ] Confirm cross-platform compatibility maintained
-  - [ ] Validate TypeScript compilation (`yarn build`)
-  - [ ] Run linting and formatting checks (`yarn lint`, `yarn format`)
-  - [ ] Create final documentation for changes in `src/dev/refactoring/`
-  - [ ] Prepare rollback plan documentation
-  - [ ] Remove test infrastructure from production build (tests stay in `src/dev/`)
+
+**See detailed plan**: [MessageDB Phase 4 Optimization Plan](./messagedb-phase4-optimization.md)
+
+**Summary of Phase 4 objectives**:
+- Refactor `handleNewMessage` from 1,324 lines → <200 lines
+- Extract remaining MessageDB functions (`canonicalize`, `updateUserProfile`)
+- Optimize all 6 services (reduce duplication, improve error handling, add JSDoc)
+- Performance optimization (IndexedDB, React Query, memoization)
+- Code quality improvements (TypeScript types, documentation)
+- Final validation and production readiness
 
 ## Success Criteria (Updated)
 
@@ -776,23 +651,7 @@ Claude Code will execute this refactoring automatically in sequential phases, up
 - **Final Approval**: User approves final optimized implementation
 - **Emergency Stops**: User can halt process if issues are detected
 
-**Automated Quality Assurance:**
-- All tests must pass before proceeding to next phase
-- Performance benchmarks must be maintained or improved
-- Cross-platform compatibility validated automatically
-- TypeScript compilation must succeed at all phases
-- Lint checks must pass throughout the process
-- Checkboxes updated automatically as Claude Code completes each task
-
-**Rollback Strategy:**
-- Git branches created for each phase
-- Automatic rollback if any phase fails validation
-- User can request rollback at any intervention point
-- Full restore capability to original state
-
 ---
-
-
 
 ## ✅ CLAUDE CODE UNDERSTANDING CONFIRMATION
 
