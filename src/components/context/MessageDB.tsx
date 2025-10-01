@@ -3,7 +3,6 @@ import React, {
   FC,
   ReactNode,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -11,7 +10,6 @@ import React, {
 } from 'react';
 import {
   EncryptedMessage,
-  EncryptionState,
   MessageDB,
   UserConfig,
 } from '../../db/messages';
@@ -23,18 +21,12 @@ import { ConfigService } from '../../services/ConfigService';
 import { InvitationService } from '../../services/InvitationService';
 import {
   buildConversationsKey,
-  buildMessagesKey,
-  buildSpaceKey,
-  buildSpaceMembersKey,
-  buildSpacesKey,
 } from '../../hooks';
-import { buildConversationKey } from '../../hooks/queries/conversation/buildConversationKey';
 import {
   InfiniteData,
   QueryClient,
   useQueryClient,
 } from '@tanstack/react-query';
-import { getInviteUrlBase, parseInviteParams } from '../../utils/inviteDomain';
 import {
   channel_raw as ch,
   channel as secureChannel,
@@ -42,9 +34,6 @@ import {
 import {
   Conversation,
   EmbedMessage,
-  JoinMessage,
-  KickMessage,
-  LeaveMessage,
   Message,
   PostMessage,
   ReactionMessage,
@@ -55,7 +44,7 @@ import {
   UpdateProfileMessage,
 } from '../../api/quorumApi';
 import { useQuorumApiClient } from './QuorumApiContext';
-import { QuorumApiClient, isQuorumApiError } from '../../api/baseTypes';
+import { QuorumApiClient } from '../../api/baseTypes';
 import { useWebSocket } from './WebsocketProvider';
 import { useInvalidateConversation } from '../../hooks/queries/conversation/useInvalidateConversation';
 import { useNavigate } from 'react-router';
@@ -63,10 +52,7 @@ import { useNavigate } from 'react-router';
 // Web: uses multiformats directly
 // Native: uses React Native compatible implementations
 import { sha256, base58btc } from '../../utils/crypto';
-import { buildConfigKey } from '../../hooks/queries/config/buildConfigKey';
 import { t } from '@lingui/core/macro';
-import { Callout } from '../primitives';
-import { DefaultImages, getDefaultUserConfig } from '../../utils';
 import { canKickUser } from '../../utils/permissions';
 
 type MessageDBContextValue = {
@@ -258,10 +244,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     };
   }>({});
 
-  // saveMessage will be defined after messageService instantiation
-  // deleteEncryptionStates will be defined after encryptionService instantiation
-  // addMessage will be defined after messageService instantiation
-
   const deleteInboxMessages = async (
     inboxKeyset: secureChannel.InboxKeyset,
     timestamps: number[],
@@ -356,12 +338,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     invalidateConversation({ conversationId });
   };
 
-  // MessageService will be instantiated after all dependencies are declared
-  // handleNewMessage will be defined after messageService instantiation
-  // OLD SYNC FUNCTIONS REMOVED - Now handled by SyncService
-  // synchronizeAll, initiateSync, directSync, requestSync, sendVerifyKickedStatuses, informSyncData
-  // All moved to SyncService.ts and delegated below (after service instantiation)
-
   const updateUserProfile = React.useCallback(
     async (
       displayName: string,
@@ -412,26 +388,12 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     })();
   }, [selfAddress, keyset]);
 
-  // submitMessage will be defined after messageService instantiation
-
   const int64ToBytes = (num: number) => {
     const arr = new Uint8Array(8);
     const view = new DataView(arr.buffer);
     view.setBigInt64(0, BigInt(num), false);
     return arr;
   };
-
-
-
-
-
-  // ensureKeyForSpace moved to after EncryptionService instantiation
-
-  // OLD INVITATION FUNCTIONS REMOVED - Now handled by InvitationService
-  // constructInviteLink, sendInviteToUser, generateNewInviteLink, processInviteLink, joinInviteLink
-  // All moved to InvitationService.ts and delegated below (after service instantiation)
-
-  // createChannel moved to after SpaceService instantiation
 
   const canonicalize = React.useCallback(
     (
@@ -508,9 +470,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     },
     []
   );
-
-  // OLD CONFIG FUNCTIONS REMOVED - Now handled by ConfigService
-  // getConfig and saveConfig moved to ConfigService.ts and delegated below (after ConfigService instantiation)
 
   useEffect(() => {
     if (keyset?.deviceKeyset?.identity_key && selfAddress) {
@@ -601,7 +560,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     []
   );
 
-  // ConfigService instantiation (MUST be first - other services depend on saveConfig)
+  // ConfigService (must be first - provides saveConfig dependency)
   const configService = useMemo(() => {
     return new ConfigService({
       messageDB,
@@ -614,8 +573,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     });
   }, [messageDB, apiClient, int64ToBytes, spaceInfo, enqueueOutbound, sendHubMessage, queryClient]);
 
-  // ConfigService delegation functions
-  // USING ConfigService: getConfig now delegates to the extracted service
   const getConfig = React.useCallback(
     async ({
       address,
@@ -629,7 +586,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [configService]
   );
 
-  // USING ConfigService: saveConfig now delegates to the extracted service
   const saveConfig = React.useCallback(
     async ({
       config,
@@ -667,7 +623,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [encryptionService]
   );
 
-  // SyncService instantiation (MUST be before MessageService since MessageService depends on sync functions)
+  // SyncService (must be before MessageService - provides sync dependencies)
   const syncService = useMemo(() => {
     return new SyncService({
       messageDB,
@@ -677,8 +633,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     });
   }, [messageDB, enqueueOutbound, syncInfo, sendHubMessage]);
 
-  // SyncService delegation functions
-  // USING SyncService: synchronizeAll now delegates to the extracted service
   const synchronizeAll = React.useCallback(
     async (spaceId: string, inboxAddress: string) => {
       return syncService.synchronizeAll(spaceId, inboxAddress);
@@ -686,7 +640,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [syncService]
   );
 
-  // USING SyncService: directSync now delegates to the extracted service
   const directSync = React.useCallback(
     async (
       spaceId: string,
@@ -703,7 +656,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [syncService]
   );
 
-  // USING SyncService: requestSync now delegates to the extracted service
   const requestSync = React.useCallback(
     async (spaceId: string) => {
       return syncService.requestSync(spaceId);
@@ -711,7 +663,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [syncService]
   );
 
-  // USING SyncService: sendVerifyKickedStatuses now delegates to the extracted service
   const sendVerifyKickedStatuses = React.useCallback(
     async (spaceId: string) => {
       return syncService.sendVerifyKickedStatuses(spaceId);
@@ -719,7 +670,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [syncService]
   );
 
-  // USING SyncService: informSyncData now delegates to the extracted service
   const informSyncData = React.useCallback(
     async (
       spaceId: string,
@@ -732,7 +682,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [syncService]
   );
 
-  // USING SyncService: initiateSync now delegates to the extracted service
   // Note: This is needed by MessageService (called in handleNewMessage)
   const initiateSync = React.useCallback(
     async (spaceId: string) => {
@@ -741,7 +690,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [syncService]
   );
 
-  // InvitationService instantiation (after SyncService since it depends on requestSync and sendHubMessage)
+  // InvitationService (depends on requestSync, sendHubMessage)
   const invitationService = useMemo(() => {
     return new InvitationService({
       messageDB,
@@ -758,16 +707,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     });
   }, [messageDB, apiClient, int64ToBytes, spaceInfo, selfAddress, enqueueOutbound, queryClient, getConfig, saveConfig, sendHubMessage, requestSync]);
 
-  // InvitationService delegation functions
-  // USING InvitationService: constructInviteLink now delegates to the extracted service
-  const constructInviteLink = React.useCallback(
-    async (spaceId: string) => {
-      return invitationService.constructInviteLink(spaceId);
-    },
-    [invitationService]
-  );
-
-  // USING InvitationService: sendInviteToUser now delegates to the extracted service
   const sendInviteToUser = React.useCallback(
     async (
       address: string,
@@ -786,7 +725,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [invitationService, keyset, submitMessage]
   );
 
-  // USING InvitationService: generateNewInviteLink now delegates to the extracted service
   const generateNewInviteLink = React.useCallback(
     async (
       spaceId: string,
@@ -799,7 +737,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [invitationService]
   );
 
-  // USING InvitationService: processInviteLink now delegates to the extracted service
   const processInviteLink = React.useCallback(
     async (inviteLink: string) => {
       return invitationService.processInviteLink(inviteLink);
@@ -807,7 +744,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [invitationService]
   );
 
-  // USING InvitationService: joinInviteLink now delegates to the extracted service
   const joinInviteLink = React.useCallback(
     async (
       inviteLink: string,
@@ -829,7 +765,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [invitationService]
   );
 
-  // Create MessageService instance (after all dependencies are declared)
+  // MessageService (requires most dependencies)
   const messageService = useMemo(() => {
     return new MessageService({
       messageDB,
@@ -868,8 +804,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     sendHubMessage,
   ]);
 
-  // START_HANDLE_NEW_MESSAGE_FUNCTION
-  // USING MessageService: handleNewMessage now delegates to the extracted service
   const handleNewMessage = useCallback(
     async (
       self_address: string,
@@ -888,9 +822,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     },
     [messageService, queryClient]
   );
-  // END_HANDLE_NEW_MESSAGE_FUNCTION
 
-  // START_SUBMIT_MESSAGE_FUNCTION
   // Assign MessageService.submitMessage to the forward reference
   submitMessageRef.current = (
     address: string,
@@ -913,10 +845,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     inReplyTo,
     skipSigning
   );
-  // END_SUBMIT_MESSAGE_FUNCTION
 
-  // START_SAVE_MESSAGE_FUNCTION
-  // USING MessageService: saveMessage now delegates to the extracted service
   const saveMessage = async (
     decryptedContent: Message,
     messageDB: MessageDB,
@@ -934,10 +863,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       updatedUserProfile
     );
   };
-  // END_SAVE_MESSAGE_FUNCTION
 
-  // START_ADD_MESSAGE_FUNCTION
-  // USING MessageService: addMessage now delegates to the extracted service
   const addMessage = async (
     queryClient: QueryClient,
     spaceId: string,
@@ -951,9 +877,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       decryptedContent
     );
   };
-  // END_ADD_MESSAGE_FUNCTION
 
-  // Create SpaceService instance (now that saveMessage and addMessage are available)
+  // SpaceService (depends on saveMessage, addMessage)
   const spaceService = useMemo(() => {
     return new SpaceService({
       messageDB,
@@ -970,19 +895,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     });
   }, [messageDB, apiClient, enqueueOutbound, saveConfig, int64ToBytes, selfAddress, keyset, spaceInfo, canKickUser, saveMessage, addMessage]);
 
-  // SpaceService delegation functions
-  // START_SUBMIT_UPDATE_SPACE_FUNCTION
-  // USING SpaceService: submitUpdateSpace now delegates to the extracted service
-  const submitUpdateSpace = React.useCallback(
-    async (manifest: secureChannel.SpaceManifest) => {
-      return spaceService.submitUpdateSpace(manifest);
-    },
-    [spaceService]
-  );
-  // END_SUBMIT_UPDATE_SPACE_FUNCTION
-
-  // START_CREATE_SPACE_FUNCTION
-  // USING SpaceService: createSpace now delegates to the extracted service
   const createSpace = React.useCallback(
     async (
       spaceName: string,
@@ -1011,26 +923,18 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     },
     [spaceService, queryClient]
   );
-  // END_CREATE_SPACE_FUNCTION
 
-  // START_UPDATE_SPACE_FUNCTION
   // Assign SpaceService.updateSpace to the forward reference (with queryClient bound)
   updateSpaceRef.current = (space: Space) =>
     spaceService.updateSpace(space, queryClient);
-  // END_UPDATE_SPACE_FUNCTION
 
-  // START_DELETE_SPACE_FUNCTION
-  // USING SpaceService: deleteSpace now delegates to the extracted service
   const deleteSpace = React.useCallback(
     async (spaceId: string) => {
       return spaceService.deleteSpace(spaceId, queryClient);
     },
     [spaceService, queryClient]
   );
-  // END_DELETE_SPACE_FUNCTION
 
-  // START_KICK_USER_FUNCTION
-  // USING SpaceService: kickUser now delegates to the extracted service
   const kickUser = React.useCallback(
     async (
       spaceId: string,
@@ -1050,26 +954,18 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     },
     [spaceService, queryClient]
   );
-  // END_KICK_USER_FUNCTION
 
-  // START_CREATE_CHANNEL_FUNCTION
-  // USING SpaceService: createChannel now delegates to the extracted service
   const createChannel = React.useCallback(
     async (spaceId: string) => {
       return spaceService.createChannel(spaceId);
     },
     [spaceService]
   );
-  // END_CREATE_CHANNEL_FUNCTION
 
-  // START_SEND_HUB_MESSAGE_FUNCTION
   // Assign SpaceService.sendHubMessage to the forward reference
   sendHubMessageRef.current = (spaceId: string, message: string) =>
     spaceService.sendHubMessage(spaceId, message);
-  // END_SEND_HUB_MESSAGE_FUNCTION
 
-  // START_SUBMIT_CHANNEL_MESSAGE_FUNCTION
-  // USING MessageService: submitMessage now delegates to the extracted service
   const submitChannelMessage = React.useCallback(
     async (
       spaceId: string,
@@ -1099,10 +995,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     },
     [messageService]
   );
-  // END_SUBMIT_CHANNEL_MESSAGE_FUNCTION
 
-  // START_DELETE_CONVERSATION_FUNCTION
-  // USING MessageService: deleteConversation now delegates to the extracted service
   const deleteConversation = React.useCallback(
     async (
       conversationId: string,
@@ -1125,17 +1018,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     },
     [messageService, queryClient, keyset, submitMessage]
   );
-  // END_DELETE_CONVERSATION_FUNCTION
 
-  // START_ENSURE_KEY_FOR_SPACE_FUNCTION
-  // USING EncryptionService: ensureKeyForSpace now delegates to the extracted service
   const ensureKeyForSpace = React.useCallback(
     async (user_address: string, space: Space) => {
       return encryptionService.ensureKeyForSpace(user_address, space, queryClient);
     },
     [encryptionService, queryClient]
   );
-  // END_ENSURE_KEY_FOR_SPACE_FUNCTION
 
   return (
     <MessageDBContext.Provider
