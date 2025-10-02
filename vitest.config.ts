@@ -23,5 +23,6 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
       crypto: 'crypto-browserify',
     },
+    extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.tsx', '.ts', '.jsx', '.js'],
   },
 });
