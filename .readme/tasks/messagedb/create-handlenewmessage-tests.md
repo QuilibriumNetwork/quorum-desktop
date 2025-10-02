@@ -1,10 +1,60 @@
 # Task: Create Comprehensive Test Suite for handleNewMessage
 
-**Status**: Ready to Start
+**Status**: ⚠️ BLOCKED - Architecture Issue (See Warning Below)
 **Priority**: 🔴 CRITICAL - Blocks Phase 4 Task 2
 **Complexity**: High
 **Created**: 2025-10-01
-**Context**: [Test Gap Analysis](./test-gap-analysis.md) | [Phase 4 Plan](./messagedb-phase4-optimization.md)
+**Updated**: 2025-10-02
+**Context**: [Test Gap Analysis](./test-gap-analysis.md) | [Phase 4 Plan](./messagedb-phase4-optimization.md) | [Blocker Analysis](./handlenewmessage-tests-blocker.md)
+
+---
+
+## ⚠️ IMPORTANT WARNING - Tests Cannot Run (2025-10-02)
+
+**The test files described in this document have been created but CANNOT RUN due to an architectural blocker.**
+
+### The Problem
+
+MessageService cannot be imported in the test environment due to an unsolvable dependency chain:
+
+```
+Test Files → MessageService
+  → imports from @/hooks (query key builders)
+    → hooks/index.ts exports from ./business/search and ./business/channels
+      → those hooks import IconName type from @/components/primitives
+        → primitives barrel export tries to load .web.tsx/.native.tsx files
+          → ❌ FAILS: Platform-specific files don't exist in test environment
+```
+
+**What we tried (all failed)**:
+- Mocking @/components/primitives (Vitest parses real files before applying mocks)
+- Mocking individual hooks (too many, hoisting issues)
+- Adding .web.tsx to Vite resolve extensions (causes Rollup parsing errors)
+- Aliasing primitives in vitest.config (Vite still loads actual files)
+
+### Root Cause
+
+**MessageService should not depend on UI-layer code.** The query key builders (`buildMessagesKey`, etc.) are pure utility functions but live in `@/hooks` alongside UI hooks, creating unavoidable coupling.
+
+### Proposed Solution
+
+**Extract Query Key Builders** (30 minutes of work):
+
+1. Create `src/utils/queryKeys.ts`
+2. Move or re-export all `build*Key` functions from `src/hooks/queries/*/build*Key.ts`
+3. Update `MessageService.ts` to import from `@/utils/queryKeys` instead of `@/hooks`
+4. Add re-export in `hooks/index.ts` for backward compatibility
+5. Tests will then work! ✨
+
+**Benefits**:
+- Clean architectural fix (business logic shouldn't import from UI layer)
+- Makes MessageService testable
+- All 56 tests will immediately work
+- Better code organization long-term
+
+**See**: [handlenewmessage-tests-blocker.md](./handlenewmessage-tests-blocker.md) for detailed analysis
+
+---
 
 ## Overview
 
@@ -49,7 +99,7 @@ Create comprehensive test coverage for `handleNewMessage` (1,321 lines) **BEFORE
 
 ### File 1: handleNewMessage.control.test.tsx (CRITICAL)
 
-**Location**: `src/dev/refactoring/tests/messagedb/handleNewMessage.control.test.tsx`
+**Location**: `src/dev/tests/messagedb/handleNewMessage.control.test.tsx`
 
 **Coverage**: 13 control message types
 - `join` - Add user to space, update ratchet peer map
@@ -461,7 +511,7 @@ describe('handleNewMessage - Control Messages', () => {
 
 ### File 2: handleNewMessage.sync.test.tsx (CRITICAL)
 
-**Location**: `src/dev/refactoring/tests/messagedb/handleNewMessage.sync.test.tsx`
+**Location**: `src/dev/tests/messagedb/handleNewMessage.sync.test.tsx`
 
 **Coverage**: 8 sync message types
 - `sync-request` - Request sync from peer
@@ -613,7 +663,7 @@ describe('handleNewMessage - Sync Messages', () => {
 
 ### File 3: handleNewMessage.crypto.test.tsx (CRITICAL)
 
-**Location**: `src/dev/refactoring/tests/messagedb/handleNewMessage.crypto.test.tsx`
+**Location**: `src/dev/tests/messagedb/handleNewMessage.crypto.test.tsx`
 
 **Coverage**: Cryptographic operations
 - Ed448 signature verification
@@ -830,7 +880,7 @@ describe('handleNewMessage - Cryptographic Operations', () => {
 
 ### File 4: handleNewMessage.errors.test.tsx (MODERATE)
 
-**Location**: `src/dev/refactoring/tests/messagedb/handleNewMessage.errors.test.tsx`
+**Location**: `src/dev/tests/messagedb/handleNewMessage.errors.test.tsx`
 
 **Coverage**: Error handling paths
 - Malformed encrypted content
@@ -959,7 +1009,7 @@ describe('handleNewMessage - Error Handling', () => {
 
 ### File 5: handleNewMessage.envelopes.test.tsx (MODERATE)
 
-**Location**: `src/dev/refactoring/tests/messagedb/handleNewMessage.envelopes.test.tsx`
+**Location**: `src/dev/tests/messagedb/handleNewMessage.envelopes.test.tsx`
 
 **Coverage**: Envelope types
 - Initialization envelopes (new conversation setup)
@@ -1056,8 +1106,8 @@ describe('handleNewMessage - Envelope Processing', () => {
 
 ### Pre-Implementation Setup
 - [ ] Review [handlenewmessage-analysis.md](./handlenewmessage-analysis.md) for function structure
-- [ ] Review existing test utilities in `src/dev/refactoring/tests/utils/`
-- [ ] Review existing mock setup in `src/dev/refactoring/tests/mocks/`
+- [ ] Review existing test utilities in `src/dev/tests/utils/`
+- [ ] Review existing mock setup in `src/dev/tests/mocks/`
 - [ ] Set up test environment with proper TypeScript configuration
 
 ### File 1: Control Messages (CRITICAL) - 3-4 hours
@@ -1070,7 +1120,7 @@ describe('handleNewMessage - Envelope Processing', () => {
 - [ ] Implement LEAVE message tests (2 tests)
 - [ ] Implement REKEY message test (1 test)
 - [ ] Implement VERIFY-KICKED message test (1 test)
-- [ ] Run tests: `yarn vitest src/dev/refactoring/tests/messagedb/handleNewMessage.control.test.tsx`
+- [ ] Run tests: `yarn vitest src/dev/tests/messagedb/handleNewMessage.control.test.tsx`
 - [ ] Verify all 15+ tests pass
 
 ### File 2: Sync Messages (CRITICAL) - 2-3 hours
@@ -1082,7 +1132,7 @@ describe('handleNewMessage - Envelope Processing', () => {
 - [ ] Implement SYNC-MESSAGES message tests (3 tests)
 - [ ] Implement SYNC-INFO message test (1 test)
 - [ ] Implement SYNC (general) message test (1 test)
-- [ ] Run tests: `yarn vitest src/dev/refactoring/tests/messagedb/handleNewMessage.sync.test.tsx`
+- [ ] Run tests: `yarn vitest src/dev/tests/messagedb/handleNewMessage.sync.test.tsx`
 - [ ] Verify all 10+ tests pass
 
 ### File 3: Cryptographic Operations (CRITICAL) - 3-4 hours
@@ -1093,7 +1143,7 @@ describe('handleNewMessage - Envelope Processing', () => {
 - [ ] Implement message ID validation tests (2 tests)
 - [ ] Implement ratchet state tests (2 tests)
 - [ ] Implement non-repudiable space tests (2 tests)
-- [ ] Run tests: `yarn vitest src/dev/refactoring/tests/messagedb/handleNewMessage.crypto.test.tsx`
+- [ ] Run tests: `yarn vitest src/dev/tests/messagedb/handleNewMessage.crypto.test.tsx`
 - [ ] Verify all 12+ tests pass
 
 ### File 4: Error Handling (MODERATE) - 2 hours
@@ -1104,7 +1154,7 @@ describe('handleNewMessage - Envelope Processing', () => {
 - [ ] Implement invalid envelope test (1 test)
 - [ ] Implement state corruption prevention tests (2 tests)
 - [ ] Implement cleanup on failure tests (2 tests)
-- [ ] Run tests: `yarn vitest src/dev/refactoring/tests/messagedb/handleNewMessage.errors.test.tsx`
+- [ ] Run tests: `yarn vitest src/dev/tests/messagedb/handleNewMessage.errors.test.tsx`
 - [ ] Verify all 8+ tests pass
 
 ### File 5: Envelope Processing (MODERATE) - 2-3 hours
@@ -1114,11 +1164,11 @@ describe('handleNewMessage - Envelope Processing', () => {
 - [ ] Implement regular direct message tests (2 tests)
 - [ ] Implement group message envelope test (1 test)
 - [ ] Implement delete-conversation handling test (1 test)
-- [ ] Run tests: `yarn vitest src/dev/refactoring/tests/messagedb/handleNewMessage.envelopes.test.tsx`
+- [ ] Run tests: `yarn vitest src/dev/tests/messagedb/handleNewMessage.envelopes.test.tsx`
 - [ ] Verify all 8+ tests pass
 
 ### Final Validation
-- [ ] Run complete test suite: `yarn vitest src/dev/refactoring/tests/ --run`
+- [ ] Run complete test suite: `yarn vitest src/dev/tests/ --run`
 - [ ] Verify test count: ~100-110 tests passing (61 existing + ~40-50 new)
 - [ ] Review test coverage report
 - [ ] Fix any failing tests
