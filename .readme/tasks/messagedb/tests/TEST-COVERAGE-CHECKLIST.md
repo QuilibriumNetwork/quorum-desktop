@@ -1,266 +1,180 @@
-# MessageDB Test Coverage - Implementation Checklist
+# MessageDB Test Coverage - Unit Test Checklist
 
-**Quick Reference for Implementing Comprehensive Test Suite**
+**Quick Reference for Implementing Unit Test Suite**
 
----
-
-## 📋 Phase 1: Infrastructure Setup
-
-### Dependencies
-- [ ] Install `fake-indexeddb`: `yarn add -D fake-indexeddb`
-- [ ] Verify vitest is installed (already present)
-- [ ] Verify @testing-library/react is installed (already present)
-
-### Test Helpers
-
-#### `src/dev/tests/utils/realDBHelpers.ts`
-- [ ] `createTestMessageDB()` - Creates real MessageDB with fake-indexeddb
-- [ ] `assertMessageSaved()` - Verifies message in IndexedDB
-- [ ] `assertSpaceSaved()` - Verifies space in IndexedDB
-- [ ] `getAllConversationMessages()` - Gets all messages for verification
-- [ ] `cleanupTestDB()` - Cleanup after each test
-
-#### `src/dev/tests/utils/encryptionHelpers.ts`
-- [ ] `createTestKeyset()` - Generate test keypairs
-- [ ] `testEncryptionCycle()` - Test encrypt → decrypt
-- [ ] `assertEncryptionIntegrity()` - Verify encryption worked
-
-#### `src/dev/tests/utils/reactQueryHelpers.ts`
-- [ ] `createTestQueryClient()` - Fresh QueryClient per test
-- [ ] `assertMessageInCache()` - Verify message in RQ cache
-- [ ] `getCacheMessages()` - Get cache data for debugging
+**Approach**: Simple unit tests with mocks and spies (not integration tests)
+**Target**: 50+ unit tests covering all service functions
+**Timeline**: 6-8 hours estimated
 
 ---
 
-## 📋 Phase 2: MessageService Tests
+## 📋 Phase 1: MessageService Unit Tests
 
-**File**: `src/dev/tests/services/MessageService.integration.test.tsx`
+**File**: `src/dev/tests/services/MessageService.unit.test.tsx`
+**Status**: ⬜ Not Started
+**Estimated Tests**: ~15 tests
 
-### Test Suite 1: `submitMessage()` - P2P Messages
-- [ ] Complete workflow: encrypt → save → cache → WebSocket
-- [ ] Reply message linkage works correctly
-- [ ] Rollback on encryption failure
-- [ ] Concurrent submissions without data loss
-- [ ] **Assertions**: Message in DB, message in cache, encrypted correctly
+### Test Suite 1: `submitMessage()` - P2P Message Submission
+- [ ] Should call saveMessage with correct parameters
+- [ ] Should link reply messages correctly
+- [ ] Should handle encryption errors gracefully
+- [ ] Should call queryClient.setQueryData to update cache
+- [ ] Should call enqueueOutbound for WebSocket
 
 ### Test Suite 2: `handleNewMessage()` - Message Routing
-- [ ] Routes POST_MESSAGE correctly
-- [ ] Routes all 7 message types correctly
-- [ ] Decrypts encrypted messages
-- [ ] Updates cache after processing
-- [ ] Handles malformed messages gracefully
-- [ ] **Assertions**: Message saved, cache updated, decrypted correctly
+- [ ] Should route POST_MESSAGE type correctly
+- [ ] Should route REACTION_MESSAGE type correctly
+- [ ] Should route REMOVE_MESSAGE type correctly
+- [ ] Should route JOIN_MESSAGE type correctly
+- [ ] Should route LEAVE_MESSAGE type correctly
+- [ ] Should route KICK_MESSAGE type correctly
+- [ ] Should route UPDATE_PROFILE_MESSAGE type correctly
+- [ ] Should handle all message types without throwing
 
 ### Test Suite 3: `addMessage()` - Message Creation
-- [ ] Creates message with all required fields
-- [ ] Generates unique messageId
-- [ ] Sets correct timestamps
-- [ ] **Assertions**: Message structure correct
+- [ ] Should create message with all required fields
+- [ ] Should generate unique messageId
 
-### Test Suite 4: `saveMessage()` - DB Persistence
-- [ ] Saves message to IndexedDB
-- [ ] Handles duplicate messageId
-- [ ] Updates existing messages
-- [ ] **Assertions**: Message persisted, retrievable
+### Test Suite 4: `saveMessage()` - Database Persistence
+- [ ] Should call messageDB.saveMessage with correct parameters
 
-### Test Suite 5: `deleteConversation()` - Deletion
-- [ ] Deletes all messages in conversation
-- [ ] Updates cache correctly
-- [ ] Preserves other conversations
-- [ ] **Assertions**: Messages deleted, cache updated
+### Test Suite 5: `deleteConversation()` - Message Deletion
+- [ ] Should delete messages from specific conversation
+- [ ] Should invalidate cache after deletion
 
-### Estimated: **50+ tests**
+**Progress**: 0 / 15 tests
 
 ---
 
-## 📋 Phase 3: SpaceService Tests
+## 📋 Phase 2: SpaceService Unit Tests
 
-**File**: `src/dev/tests/services/SpaceService.integration.test.tsx`
+**File**: `src/dev/tests/services/SpaceService.unit.test.tsx`
+**Status**: ⬜ Not Started
+**Estimated Tests**: ~10 tests
 
 ### Test Coverage
-- [ ] `createSpace()` - Space saved with correct structure
-- [ ] `createSpace()` - Default channel created
-- [ ] `createSpace()` - Member added as owner
-- [ ] `createSpace()` - Public vs private space handling
-- [ ] `updateSpace()` - Space updates persist
-- [ ] `deleteSpace()` - Cascade deletion (messages, members, keys)
-- [ ] `kickUser()` - Member removed, message sent
-- [ ] `createChannel()` - Channel created, space updated
+- [ ] `createSpace()` - Verifies space structure with correct parameters
+- [ ] `createSpace()` - Verifies default channel created
+- [ ] `createSpace()` - Verifies member added as owner
+- [ ] `createSpace()` - Handles public vs private space flag
+- [ ] `updateSpace()` - Calls update with correct parameters
+- [ ] `deleteSpace()` - Calls deletion methods for messages, members, keys
+- [ ] `kickUser()` - Creates kick message
+- [ ] `kickUser()` - Removes member from space
+- [ ] `createChannel()` - Creates channel with correct structure
+- [ ] `createChannel()` - Updates space with new channel
 
-### Estimated: **30+ tests**
+**Progress**: 0 / 10 tests
 
 ---
 
-## 📋 Phase 4: InvitationService Tests
+## 📋 Phase 3: InvitationService Unit Tests
 
-**File**: `src/dev/tests/services/InvitationService.integration.test.tsx`
+**File**: `src/dev/tests/services/InvitationService.unit.test.tsx`
+**Status**: ⬜ Not Started
+**Estimated Tests**: ~10 tests
 
 ### Test Coverage
-- [ ] `generateNewInviteLink()` - Invite saved to DB
-- [ ] `generateNewInviteLink()` - Invite encrypted correctly (private spaces)
-- [ ] `processInviteLink()` - Valid invite returns space info
-- [ ] `processInviteLink()` - Invalid invite throws error
-- [ ] `processInviteLink()` - Expired invite throws error
-- [ ] `joinInviteLink()` - Key exchange works
-- [ ] `joinInviteLink()` - Member added to space
-- [ ] `joinInviteLink()` - Space synced after join
-- [ ] `sendInviteToUser()` - Direct invite sent via P2P
+- [ ] `generateNewInviteLink()` - Creates invite with correct structure
+- [ ] `generateNewInviteLink()` - Sets encryption flag for private spaces
+- [ ] `generateNewInviteLink()` - Saves invite to database
+- [ ] `processInviteLink()` - Validates invite structure
+- [ ] `processInviteLink()` - Returns space info for valid invite
+- [ ] `processInviteLink()` - Throws error for invalid invite
+- [ ] `processInviteLink()` - Throws error for expired invite
+- [ ] `joinInviteLink()` - Calls key exchange methods
+- [ ] `joinInviteLink()` - Adds member to space
+- [ ] `sendInviteToUser()` - Creates and sends invite message
 
-### Estimated: **35+ tests**
+**Progress**: 0 / 10 tests
 
 ---
 
-## 📋 Phase 5: SyncService Tests
+## 📋 Phase 4: SyncService Unit Tests
 
-**File**: `src/dev/tests/services/SyncService.integration.test.tsx`
+**File**: `src/dev/tests/services/SyncService.unit.test.tsx`
+**Status**: ⬜ Not Started
+**Estimated Tests**: ~8 tests
 
 ### Test Coverage
-- [ ] `requestSync()` - Sync workflow executes
-- [ ] `synchronizeAll()` - All spaces synchronized
-- [ ] `initiateSync()` - Sync initiated correctly
-- [ ] `directSync()` - Direct peer sync works
-- [ ] Conflict resolution (newer message wins)
-- [ ] Incremental sync (only new messages)
-- [ ] Sync with offline/online transitions
+- [ ] `requestSync()` - Calls sync with correct parameters
+- [ ] `requestSync()` - Handles sync errors gracefully
+- [ ] `synchronizeAll()` - Processes all spaces
+- [ ] `synchronizeAll()` - Handles empty space list
+- [ ] `initiateSync()` - Sends sync request message
+- [ ] `initiateSync()` - Includes correct sync metadata
+- [ ] `directSync()` - Calls direct sync with peer address
+- [ ] `directSync()` - Validates peer registration
 
-### Estimated: **30+ tests**
+**Progress**: 0 / 8 tests
 
 ---
 
-## 📋 Phase 6: EncryptionService Tests
+## 📋 Phase 5: EncryptionService Unit Tests
 
-**File**: `src/dev/tests/services/EncryptionService.integration.test.tsx`
+**File**: `src/dev/tests/services/EncryptionService.unit.test.tsx`
+**Status**: ⬜ Not Started
+**Estimated Tests**: ~5 tests
 
 ### Test Coverage
-- [ ] `ensureKeyForSpace()` - Key generated and saved
-- [ ] `ensureKeyForSpace()` - Existing key retrieved
-- [ ] `deleteEncryptionStates()` - Encryption states cleaned up
-- [ ] Key rotation workflow
-- [ ] Multi-device key synchronization
+- [ ] `ensureKeyForSpace()` - Retrieves existing key if present
+- [ ] `ensureKeyForSpace()` - Generates new key if missing
+- [ ] `ensureKeyForSpace()` - Saves generated key to database
+- [ ] `deleteEncryptionStates()` - Calls delete for space encryption states
+- [ ] `deleteEncryptionStates()` - Handles missing encryption states
 
-### Estimated: **20+ tests**
+**Progress**: 0 / 5 tests
 
 ---
 
-## 📋 Phase 7: ConfigService Tests
+## 📋 Phase 6: ConfigService Unit Tests
 
-**File**: `src/dev/tests/services/ConfigService.integration.test.tsx`
+**File**: `src/dev/tests/services/ConfigService.unit.test.tsx`
+**Status**: ⬜ Not Started
+**Estimated Tests**: ~5 tests
 
 ### Test Coverage
-- [ ] `getConfig()` - Config retrieved and decrypted
-- [ ] `getConfig()` - Default config returned if none exists
-- [ ] `saveConfig()` - Config encrypted and saved
-- [ ] Config migration from v1 to v2
-- [ ] Config persistence across sessions
+- [ ] `getConfig()` - Retrieves config from database
+- [ ] `getConfig()` - Returns default config if none exists
+- [ ] `getConfig()` - Handles decryption errors
+- [ ] `saveConfig()` - Encrypts config before saving
+- [ ] `saveConfig()` - Saves config to database
 
-### Estimated: **15+ tests**
-
----
-
-## 📋 Phase 8: End-to-End Workflows
-
-**File**: `src/dev/tests/workflows/CompleteWorkflows.integration.test.tsx`
-
-### Workflow Tests
-- [ ] **Space Invitation Flow**: Create space → Generate invite → Process invite → Join space
-  - Verify space created
-  - Verify invite saved
-  - Verify member added
-  - Verify encryption keys exchanged
-
-- [ ] **P2P Messaging Flow**: Send message → Receive → Reply
-  - Verify message encrypted
-  - Verify message saved in both DBs
-  - Verify cache updated
-  - Verify reply linkage
-
-- [ ] **Channel Messaging Flow**: Create space → Create channel → Send message → Receive
-  - Verify channel created
-  - Verify message broadcast to all members
-  - Verify all members have message
-
-- [ ] **Space Management Flow**: Create space → Add member → Kick member → Delete space
-  - Verify member added
-  - Verify kick message sent
-  - Verify member removed
-  - Verify cascade deletion
-
-### Estimated: **20+ tests**
-
----
-
-## 📋 Phase 9: Error Scenarios
-
-**File**: `src/dev/tests/error-scenarios/ErrorHandling.test.tsx`
-
-### Error Coverage
-- [ ] Network failure during message send
-- [ ] Encryption failure (corrupt keys)
-- [ ] IndexedDB quota exceeded
-- [ ] Concurrent race conditions (10 simultaneous submits)
-- [ ] Invalid message format
-- [ ] Malformed invite link
-- [ ] Permission denied (kick unauthorized user)
-- [ ] Database transaction failure
-- [ ] WebSocket connection lost
-
-### Estimated: **25+ tests**
-
----
-
-## 📋 Phase 10: Performance Baselines
-
-**File**: `src/dev/tests/performance/PerformanceBaseline.test.tsx`
-
-### Performance Tests
-- [ ] `submitMessage()` completes within 200ms
-- [ ] `handleNewMessage()` processes 100 messages within 5s
-- [ ] `createSpace()` completes within 1000ms
-- [ ] `requestSync()` completes within 2000ms
-- [ ] No memory leaks after 1000 operations
-- [ ] Performance within 5% of baseline after refactoring
-
-### Estimated: **15+ tests**
+**Progress**: 0 / 5 tests
 
 ---
 
 ## 📊 Coverage Summary
 
-| Phase | Test File | Est. Tests | Status |
-|-------|-----------|------------|--------|
-| 1 | Infrastructure | - | ⬜ Not Started |
-| 2 | MessageService | 50+ | ⬜ Not Started |
-| 3 | SpaceService | 30+ | ⬜ Not Started |
-| 4 | InvitationService | 35+ | ⬜ Not Started |
-| 5 | SyncService | 30+ | ⬜ Not Started |
-| 6 | EncryptionService | 20+ | ⬜ Not Started |
-| 7 | ConfigService | 15+ | ⬜ Not Started |
-| 8 | Workflows | 20+ | ⬜ Not Started |
-| 9 | Error Scenarios | 25+ | ⬜ Not Started |
-| 10 | Performance | 15+ | ⬜ Not Started |
-| **TOTAL** | **10 files** | **240+** | **⬜ 0%** |
+| Phase | Service | Tests | Status |
+|-------|---------|-------|--------|
+| 1 | MessageService | 15 | ⬜ Not Started |
+| 2 | SpaceService | 10 | ⬜ Not Started |
+| 3 | InvitationService | 10 | ⬜ Not Started |
+| 4 | SyncService | 8 | ⬜ Not Started |
+| 5 | EncryptionService | 5 | ⬜ Not Started |
+| 6 | ConfigService | 5 | ⬜ Not Started |
+| **TOTAL** | **6 services** | **53** | **⬜ 0%** |
 
-**Target**: 250+ real integration tests with 85%+ code coverage
+**Target**: 50+ unit tests covering all service functions
 
 ---
 
 ## ✅ Success Criteria
 
 ### Before Starting Phase 4 Optimization:
-- [ ] All 240+ tests implemented
+- [ ] All 53 unit tests implemented
 - [ ] All tests passing (100% pass rate)
 - [ ] No app code changes required
-- [ ] Full test suite runs in <30 seconds
-- [ ] Coverage reports show 85%+ line coverage
-- [ ] All critical workflows tested end-to-end
-- [ ] All error scenarios covered
-- [ ] Performance baselines established
+- [ ] Full test suite runs in <5 seconds
+- [ ] No TypeScript compilation errors
+- [ ] All service functions have at least one test
 
 ### Validation Tests:
-- [ ] Inject intentional bug → test fails immediately
-- [ ] Remove encryption → test detects plaintext
-- [ ] Skip DB save → test detects missing data
-- [ ] Break cache sync → test detects desync
+- [ ] Remove function call → test fails (detects missing calls)
+- [ ] Pass wrong parameters → test fails (detects incorrect parameters)
+- [ ] Skip error handling → test fails (detects missing error handling)
+- [ ] All tests have clear failure messages
 
 ---
 
@@ -268,38 +182,40 @@
 
 ❌ **Tests passing but code broken** → Tests are too lenient
 ❌ **Tests failing intermittently** → Flaky tests, need fixing
-❌ **Tests take >1 minute to run** → Too slow, optimize
-❌ **App code changes needed** → Re-evaluate approach
+❌ **Tests take >10 seconds to run** → Too slow, optimize
+❌ **TypeScript errors in test files** → Fix compilation first
 ❌ **Tests don't catch injected bugs** → Insufficient assertions
 
 ---
 
 ## 📈 Progress Tracking
 
-**Current Status**: ⬜ Not Started
+**Current Status**: ⬜ Not Started (0%)
 
 **Last Updated**: 2025-10-02
 
 **Next Steps**:
-1. Install `fake-indexeddb`
-2. Create test helper utilities
-3. Start with MessageService tests (highest priority)
+1. Create `MessageService.unit.test.tsx` file
+2. Setup mock dependencies (messageDB, queryClient, enqueueOutbound)
+3. Write first test: `submitMessage()` calls saveMessage
+4. Validate test passes and catches bugs
+5. Continue with remaining MessageService tests
+6. Move to other services
 
 ---
 
 ## 🎯 Final Goal
 
-**HIGH CONFIDENCE (90%+)** that Phase 4 optimization won't break functionality.
+**MEDIUM-HIGH CONFIDENCE (70-80%)** that Phase 4 optimization won't break functionality.
 
-Tests must:
-- ✅ Test real implementation, not mocks
-- ✅ Verify actual DB state
-- ✅ Validate cache synchronization
-- ✅ Confirm encryption integrity
-- ✅ Cover all error paths
-- ✅ Establish performance baselines
+Unit tests verify:
+- ✅ Services call correct methods (using vi.fn())
+- ✅ Services pass correct parameters (using expect.objectContaining)
+- ✅ Services handle errors properly (using rejects.toThrow)
+- ✅ Services update state correctly (checking mock calls)
+- ✅ Fast feedback (<5 seconds full suite)
 
-**When all checkboxes are complete, we can safely optimize Phase 4! 🚀**
+**When all checkboxes are complete, we can proceed with Phase 4 optimization! 🚀**
 
 ---
 

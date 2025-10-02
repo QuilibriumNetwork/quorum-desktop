@@ -2,6 +2,31 @@
 
 This directory contains the test suite created to ensure the safe refactoring of the `MessageDB.tsx` component. The goal of this suite is to verify that the critical functionality of `MessageDB.tsx` is preserved after breaking it down into smaller, more focused services.
 
+## Test Strategy Overview
+
+### Phase 1: Refactoring Safety Net (COMPLETE ✅)
+- **Location**: `messagedb/` directory
+- **Type**: Mock integration tests
+- **Purpose**: Detect breaking changes during MessageDB → Services refactoring
+- **Status**: 61 tests passing
+- **Coverage**: 7 critical MessageDB functions
+- **Approach**: Tests verify expected behavior patterns using mocked dependencies
+
+### Phase 2: Service Extraction (COMPLETE ✅)
+- **Status**: All services extracted from MessageDB monolith
+- **Services**: MessageService, SpaceService, InvitationService, SyncService, EncryptionService, ConfigService
+- **Result**: MessageDB successfully refactored into 6 focused services
+
+### Phase 3: Service Validation (PENDING ⬜)
+- **Location**: `services/` directory
+- **Type**: Unit tests with vi.fn() mocks
+- **Purpose**: Validate extracted services work correctly
+- **Status**: Not started
+- **Target**: 53 tests for 6 services
+- **Approach**: Tests verify services call correct methods with correct parameters
+
+**NOTE**: Phase 1 tests remain valuable for regression detection. Phase 3 tests will validate the extracted services.
+
 ## Directory Structure
 
 -   **`docs/`**: Contains manual testing guides and documentation for the test implementation.
