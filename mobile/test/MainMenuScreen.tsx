@@ -8,8 +8,8 @@ import {
   commonTestStyles,
   createThemedStyles,
 } from '@/styles/commonTestStyles';
-import ThemeRadioGroup from '@/components/ThemeRadioGroup';
-import AccentColorSwitcher from '@/components/AccentColorSwitcher';
+import ThemeRadioGroup from '@/components/ui/ThemeRadioGroup';
+import AccentColorSwitcher from '@/components/ui/AccentColorSwitcher';
 
 interface MenuOption {
   id: string;

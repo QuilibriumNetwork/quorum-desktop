@@ -16,8 +16,8 @@ import {
   Icon,
   useTheme,
 } from '@/primitives';
-import ThemeRadioGroup from '@/components/ThemeRadioGroup';
-import AccentColorSwitcher from '@/components/AccentColorSwitcher';
+import ThemeRadioGroup from '@/components/ui/ThemeRadioGroup';
+import AccentColorSwitcher from '@/components/ui/AccentColorSwitcher';
 import {
   commonTestStyles,
   createThemedStyles,

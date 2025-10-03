@@ -15,7 +15,7 @@ import {
   commonTestStyles,
   createThemedStyles,
 } from '@/styles/commonTestStyles';
-import ClickToCopyContent from '@/components/ClickToCopyContent';
+import ClickToCopyContent from '@/components/ui/ClickToCopyContent';
 
 export const ClickToCopyTestScreen: React.FC = () => {
   const theme = useTheme();
