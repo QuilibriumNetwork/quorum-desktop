@@ -11,7 +11,7 @@ import {
   Icon,
   FlexRow,
   FlexColumn,
-} from '@/primitives';
+} from '@/components/primitives';
 import {
   commonTestStyles,
   createThemedStyles,

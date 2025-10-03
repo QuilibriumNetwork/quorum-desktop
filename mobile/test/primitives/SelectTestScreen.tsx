@@ -10,7 +10,7 @@ import {
   Button,
   Icon,
   useTheme,
-} from '@/primitives';
+} from '@/components/primitives';
 import {
   commonTestStyles,
   createThemedStyles,

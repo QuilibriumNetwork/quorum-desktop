@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Icon, useTheme, Text, Paragraph, Title } from '@/primitives';
-import { FlexRow, FlexColumn } from '@/primitives';
+import { Icon, useTheme, Text, Paragraph, Title } from '@/components/primitives';
+import { FlexRow, FlexColumn } from '@/components/primitives';
 import { commonTestStyles } from '@/styles/commonTestStyles';
 
 export const IconTestScreen: React.FC = () => {

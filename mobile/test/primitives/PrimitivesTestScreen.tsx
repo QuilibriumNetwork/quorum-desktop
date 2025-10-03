@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@/primitives/theme';
+import { useTheme } from '@/components/primitives/theme';
 
 // Import our primitives
-import { FlexRow } from '@/primitives/FlexRow';
-import { FlexColumn } from '@/primitives/FlexColumn';
-import { FlexBetween } from '@/primitives/FlexBetween';
-import { FlexCenter } from '@/primitives/FlexCenter';
-import { ResponsiveContainer } from '@/primitives/ResponsiveContainer';
-import { Spacer } from '@/primitives/Spacer';
-import Button from '@/primitives/Button';
-import { Text, Title } from '@/primitives/Text';
-import { Icon } from '@/primitives/Icon';
+import { FlexRow } from '@/components/primitives/FlexRow';
+import { FlexColumn } from '@/components/primitives/FlexColumn';
+import { FlexBetween } from '@/components/primitives/FlexBetween';
+import { FlexCenter } from '@/components/primitives/FlexCenter';
+import { ResponsiveContainer } from '@/components/primitives/ResponsiveContainer';
+import { Spacer } from '@/components/primitives/Spacer';
+import Button from '@/components/primitives/Button';
+import { Text, Title } from '@/components/primitives/Text';
+import { Icon } from '@/components/primitives/Icon';
 import {
   commonTestStyles,
   createThemedStyles,

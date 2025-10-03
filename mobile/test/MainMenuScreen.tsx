@@ -1,9 +1,9 @@
 import React from 'react';
 import { ScrollView, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, FlexColumn, FlexRow, Text, Icon } from '@/primitives';
-import { useTheme } from '@/primitives/theme';
-import { IconName } from '@/primitives/Icon/types';
+import { Container, FlexColumn, FlexRow, Text, Icon } from '@/components/primitives';
+import { useTheme } from '@/components/primitives/theme';
+import { IconName } from '@/components/primitives/Icon/types';
 import {
   commonTestStyles,
   createThemedStyles,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, FlexColumn, Text, Button } from '@/primitives';
+import { Container, FlexColumn, Text, Button } from '@/components/primitives';
 import { Onboarding } from '@/components/onboarding/Onboarding.native';
 import {
   AuthScreenWrapper,

@@ -12,11 +12,11 @@ import {
   Icon,
   Modal,
   Input,
-} from '@/primitives';
-import { useTheme } from '@/primitives/theme';
+} from '@/components/primitives';
+import { useTheme } from '@/components/primitives/theme';
 import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
 import { IconPicker } from '@/components/space/IconPicker/IconPicker.native';
-import type { IconName } from '@/primitives/Icon/types';
+import type { IconName } from '@/components/primitives/Icon/types';
 import type { IconColor } from '@/components/space/IconPicker/types';
 
 export const IconPickerTestScreen: React.FC = () => {

@@ -10,7 +10,7 @@ import {
   Label,
   FlexColumn,
   FlexRow,
-} from '@/primitives';
+} from '@/components/primitives';
 import {
   commonTestStyles,
   createThemedStyles,

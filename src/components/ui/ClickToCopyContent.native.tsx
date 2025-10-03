@@ -9,9 +9,9 @@ import {
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { t } from '@lingui/core/macro';
-import { Icon, Text, Tooltip } from '@/primitives';
+import { Icon, Text, Tooltip } from '@/components/primitives';
 import { useCopyToClipboard } from '@/hooks/business/ui/useCopyToClipboard';
-import { useTheme } from '@/primitives/theme';
+import { useTheme } from '@/components/primitives/theme';
 
 type ClickToCopyContentProps = {
   text: string;

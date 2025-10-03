@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { ScrollView, View, SafeAreaView, StatusBar } from 'react-native';
-import { useTheme } from '@/primitives/theme';
-import { ColorSwatch } from '@/primitives/ColorSwatch';
-import { Icon } from '@/primitives/Icon';
-import { Text, Paragraph, Label, Caption, Title } from '@/primitives';
-import { FlexRow, FlexColumn, FlexCenter } from '@/primitives';
+import { useTheme } from '@/components/primitives/theme';
+import { ColorSwatch } from '@/components/primitives/ColorSwatch';
+import { Icon } from '@/components/primitives/Icon';
+import { Text, Paragraph, Label, Caption, Title } from '@/components/primitives';
+import { FlexRow, FlexColumn, FlexCenter } from '@/components/primitives';
 import {
   commonTestStyles,
   createThemedStyles,

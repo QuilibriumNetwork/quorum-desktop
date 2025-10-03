@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, FlexRow, Spacer } from '@/primitives';
+import { Button, Modal, Container, Text, FlexRow, Spacer } from '@/components/primitives';
 import { t } from '@lingui/core/macro';
 import { useState, useCallback, useEffect } from 'react';
 

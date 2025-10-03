@@ -15,7 +15,7 @@ import {
   Title,
   Icon,
   useTheme,
-} from '@/primitives';
+} from '@/components/primitives';
 import ThemeRadioGroup from '@/components/ui/ThemeRadioGroup';
 import AccentColorSwitcher from '@/components/ui/AccentColorSwitcher';
 import {

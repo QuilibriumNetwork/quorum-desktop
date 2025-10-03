@@ -4,11 +4,11 @@ import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ThemeProvider, useTheme } from '@/primitives/theme';
+import { ThemeProvider, useTheme } from '@/components/primitives/theme';
 import { I18nProvider } from '@lingui/react';
 import { i18n, initializeMobileI18n } from './i18n';
 import { PasskeysProvider } from '@quilibrium/quilibrium-js-sdk-channels';
-import { default as Button } from '@/primitives/Button';
+import { default as Button } from '@/components/primitives/Button';
 import {
   commonTestStyles,
   createThemedStyles,

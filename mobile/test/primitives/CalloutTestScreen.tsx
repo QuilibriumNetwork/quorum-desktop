@@ -1,9 +1,9 @@
 import React from 'react';
 import { ScrollView, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme, Text, Title, Icon } from '@/primitives';
-import Callout from '@/primitives/Callout';
-import { FlexRow, FlexColumn } from '@/primitives';
+import { useTheme, Text, Title, Icon } from '@/components/primitives';
+import Callout from '@/components/primitives/Callout';
+import { FlexRow, FlexColumn } from '@/components/primitives';
 import { commonTestStyles } from '@/styles/commonTestStyles';
 
 export const CalloutTestScreen: React.FC = () => {

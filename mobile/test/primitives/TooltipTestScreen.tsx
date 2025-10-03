@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@/primitives/theme';
+import { useTheme } from '@/components/primitives/theme';
 import {
   Tooltip,
   Text,
@@ -10,7 +10,7 @@ import {
   FlexColumn,
   FlexRow,
   Button,
-} from '@/primitives';
+} from '@/components/primitives';
 import {
   commonTestStyles,
   createThemedStyles,

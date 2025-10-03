@@ -10,8 +10,8 @@ import {
   Icon,
   FileUpload,
   FileUploadFile,
-} from '@/primitives';
-import { useTheme } from '@/primitives/theme';
+} from '@/components/primitives';
+import { useTheme } from '@/components/primitives/theme';
 import { commonTestStyles } from '@/styles/commonTestStyles';
 
 export const FileUploadTestScreen: React.FC = () => {

@@ -9,8 +9,8 @@ import {
   Title,
   Paragraph,
   Button,
-} from '@/primitives';
-import { useTheme } from '@/primitives/theme';
+} from '@/components/primitives';
+import { useTheme } from '@/components/primitives/theme';
 import {
   commonTestStyles,
   createThemedStyles,

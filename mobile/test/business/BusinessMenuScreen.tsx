@@ -8,9 +8,9 @@ import {
   Text,
   Icon,
   Title,
-} from '@/primitives';
-import { useTheme } from '@/primitives/theme';
-import { IconName } from '@/primitives/Icon/types';
+} from '@/components/primitives';
+import { useTheme } from '@/components/primitives/theme';
+import { IconName } from '@/components/primitives/Icon/types';
 import {
   commonTestStyles,
   createThemedStyles,

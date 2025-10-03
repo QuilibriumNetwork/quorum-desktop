@@ -10,8 +10,8 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Paragraph, Text, Title } from '@/primitives';
-import { useTheme } from '@/primitives/theme';
+import { Paragraph, Text, Title } from '@/components/primitives';
+import { useTheme } from '@/components/primitives/theme';
 import { commonTestStyles } from '@/styles/commonTestStyles';
 import {
   MessageComposer,
