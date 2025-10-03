@@ -3,18 +3,55 @@
 **Created**: 2025-10-03
 **Objective**: Create developer-centric documentation that enables developers to understand, extend, and build on top of Quorum's decentralized messenger platform
 
+https://github.com/QuilibriumNetwork/quorum-desktop/issues/87
+
+---
+
+## Repository Structure Recommendation
+
+**Recommendation: Keep Docusaurus in the same repository** (`/docs` folder)
+
+**Why this is industry standard:**
+- Next.js, React, Vue, and most modern frameworks keep docs with code
+- "Docs as Code" philosophy - docs updated in same PR as features
+- Version sync guaranteed - docs version matches code version
+- CI can validate code examples against actual implementation
+- Single source of truth - prevents docs from drifting out of sync
+- **Perfect for AI agents** - can read code + docs simultaneously for validation
+
+**Benefits for Quorum:**
+- AI can auto-update docs when code changes
+- Contributors update docs alongside features in same PR
+- Existing 33 docs in `.readme/docs` already internal
+- Cross-platform architecture requires tight code-docs coupling
+- Small team - no need for separate docs repo/team
+
+**Proposed structure:**
+```
+quorum-desktop/
+├── src/           # App code
+├── web/           # Web specific
+├── mobile/        # Mobile specific
+├── docs/          # Docusaurus documentation site
+│   ├── docs/     # Markdown files
+│   ├── src/      # Docusaurus React components
+│   └── docusaurus.config.js
+└── .readme/      # Internal development docs (migrate to docs/)
+```
+
 ---
 
 ## Table of Contents
 
-1. [Philosophy & Approach](#philosophy--approach)
-2. [Target Developer Personas](#target-developer-personas)
-3. [Optimal Documentation Structure](#optimal-documentation-structure)
-4. [Developer Journey Mapping](#developer-journey-mapping)
-5. [Bot Development & Extensibility](#bot-development--extensibility)
-6. [Cryptocurrency & Wallet Features](#cryptocurrency--wallet-features)
-7. [Content Mapping from Existing Docs](#content-mapping-from-existing-docs)
-8. [Implementation Strategy](#implementation-strategy)
+1. [Repository Structure Recommendation](#repository-structure-recommendation)
+2. [Philosophy & Approach](#philosophy--approach)
+3. [Target Developer Personas](#target-developer-personas)
+4. [Optimal Documentation Structure](#optimal-documentation-structure)
+5. [Developer Journey Mapping](#developer-journey-mapping)
+6. [Bot Development & Extensibility](#bot-development--extensibility)
+7. [Cryptocurrency & Wallet Features](#cryptocurrency--wallet-features)
+8. [Content Mapping from Existing Docs](#content-mapping-from-existing-docs)
+9. [Implementation Strategy](#implementation-strategy)
 
 ---
 
