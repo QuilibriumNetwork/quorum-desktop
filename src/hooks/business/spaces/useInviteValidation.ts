@@ -4,6 +4,7 @@ import { useQuorumApiClient } from '../../../components/context/QuorumApiContext
 import { Space } from '../../../api/quorumApi';
 import { t } from '@lingui/core/macro';
 import { getValidInvitePrefixes } from '@/utils/inviteDomain';
+import { hexToSpreadArray } from '@/utils/crypto';
 
 interface ValidatedSpace {
   iconUrl: string;
@@ -87,14 +88,10 @@ export const useInviteValidation = () => {
 
         const decryptedData = ch.js_decrypt_inbox_message(
           JSON.stringify({
-            inbox_private_key: [
-              ...new Uint8Array(Buffer.from(inviteInfo.configKey, 'hex')),
-            ],
-            ephemeral_public_key: [
-              ...new Uint8Array(
-                Buffer.from(manifest.data.ephemeral_public_key, 'hex')
-              ),
-            ],
+            inbox_private_key: hexToSpreadArray(inviteInfo.configKey),
+            ephemeral_public_key: hexToSpreadArray(
+              manifest.data.ephemeral_public_key
+            ),
             ciphertext: ciphertext,
           })
         );

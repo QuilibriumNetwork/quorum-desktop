@@ -3,7 +3,7 @@
 
 import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
 import { Message, ReactionMessage, RemoveReactionMessage, PostMessage, JoinMessage, LeaveMessage, KickMessage, Space } from '../api/quorumApi';
-import { sha256, base58btc } from '../utils/crypto';
+import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
 import { QueryClient, InfiniteData } from '@tanstack/react-query';
 import { buildMessagesKey, buildSpaceMembersKey, buildSpaceKey, buildConfigKey, buildConversationsKey } from '../hooks';
@@ -1048,12 +1048,8 @@ export class MessageService {
             await secureChannel.UnsealHubEnvelope(
               {
                 type: 'ed448',
-                public_key: [
-                  ...new Uint8Array(Buffer.from(hub_key.publicKey, 'hex')),
-                ],
-                private_key: [
-                  ...new Uint8Array(Buffer.from(hub_key.privateKey, 'hex')),
-                ],
+                public_key: hexToSpreadArray(hub_key.publicKey),
+                private_key: hexToSpreadArray(hub_key.privateKey),
               },
               JSON.parse(message.encryptedContent)
             )
@@ -2080,12 +2076,8 @@ export class MessageService {
           inbox_encryption_key: {} as never,
           inbox_key: {
             type: 'ed448',
-            public_key: [
-              ...new Uint8Array(Buffer.from(inbox_key.publicKey, 'hex')),
-            ],
-            private_key: [
-              ...new Uint8Array(Buffer.from(inbox_key.privateKey, 'hex')),
-            ],
+            public_key: hexToSpreadArray(inbox_key.publicKey),
+            private_key: hexToSpreadArray(inbox_key.privateKey),
           },
         },
         [message.timestamp],

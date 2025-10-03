@@ -4,6 +4,7 @@
 import { MessageDB } from '../db/messages';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Message } from '../api/quorumApi';
+import { hexToSpreadArray } from '../utils/crypto';
 
 export class SyncService {
   private messageDB: MessageDB;
@@ -58,21 +59,13 @@ export class SyncService {
             hubKey.address!,
             {
               type: 'ed448',
-              private_key: [
-                ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
-              ],
-              public_key: [
-                ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
-              ],
+              private_key: hexToSpreadArray(hubKey.privateKey),
+              public_key: hexToSpreadArray(hubKey.publicKey),
             },
             {
               type: 'ed448',
-              private_key: [
-                ...new Uint8Array(Buffer.from(ownerKey.privateKey, 'hex')),
-              ],
-              public_key: [
-                ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
-              ],
+              private_key: hexToSpreadArray(ownerKey.privateKey),
+              public_key: hexToSpreadArray(ownerKey.publicKey),
             },
             JSON.stringify({
               type: 'control',
@@ -111,21 +104,13 @@ export class SyncService {
               hubKey.address!,
               {
                 type: 'ed448',
-                private_key: [
-                  ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
-                ],
-                public_key: [
-                  ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
-                ],
+                private_key: hexToSpreadArray(hubKey.privateKey),
+                public_key: hexToSpreadArray(hubKey.publicKey),
               },
               {
                 type: 'ed448',
-                private_key: [
-                  ...new Uint8Array(Buffer.from(ownerKey.privateKey, 'hex')),
-                ],
-                public_key: [
-                  ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
-                ],
+                private_key: hexToSpreadArray(ownerKey.privateKey),
+                public_key: hexToSpreadArray(ownerKey.publicKey),
               },
               JSON.stringify({
                 type: 'control',
@@ -157,21 +142,13 @@ export class SyncService {
               hubKey.address!,
               {
                 type: 'ed448',
-                private_key: [
-                  ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
-                ],
-                public_key: [
-                  ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
-                ],
+                private_key: hexToSpreadArray(hubKey.privateKey),
+                public_key: hexToSpreadArray(hubKey.publicKey),
               },
               {
                 type: 'ed448',
-                private_key: [
-                  ...new Uint8Array(Buffer.from(ownerKey.privateKey, 'hex')),
-                ],
-                public_key: [
-                  ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
-                ],
+                private_key: hexToSpreadArray(ownerKey.privateKey),
+                public_key: hexToSpreadArray(ownerKey.publicKey),
               },
               JSON.stringify({
                 type: 'control',
@@ -220,19 +197,13 @@ export class SyncService {
         hubKey.address!,
         {
           type: 'ed448',
-          private_key: [
-            ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
-          ],
-          public_key: [...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex'))],
+          private_key: hexToSpreadArray(hubKey.privateKey),
+          public_key: hexToSpreadArray(hubKey.publicKey),
         },
         {
           type: 'ed448',
-          private_key: [
-            ...new Uint8Array(Buffer.from(inboxKey.privateKey, 'hex')),
-          ],
-          public_key: [
-            ...new Uint8Array(Buffer.from(inboxKey.publicKey, 'hex')),
-          ],
+          private_key: hexToSpreadArray(inboxKey.privateKey),
+          public_key: hexToSpreadArray(inboxKey.publicKey),
         },
         JSON.stringify({
           type: 'control',
@@ -282,21 +253,13 @@ export class SyncService {
         hubKey.address!,
         {
           type: 'ed448',
-          private_key: [
-            ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
-          ],
-          public_key: [
-            ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
-          ],
+          private_key: hexToSpreadArray(hubKey.privateKey),
+          public_key: hexToSpreadArray(hubKey.publicKey),
         },
         {
           type: 'ed448',
-          private_key: [
-            ...new Uint8Array(Buffer.from(inboxKey.privateKey, 'hex')),
-          ],
-          public_key: [
-            ...new Uint8Array(Buffer.from(inboxKey.publicKey, 'hex')),
-          ],
+          private_key: hexToSpreadArray(inboxKey.privateKey),
+          public_key: hexToSpreadArray(inboxKey.publicKey),
         },
         JSON.stringify({
           type: 'control',
@@ -334,21 +297,13 @@ export class SyncService {
           hubKey.address!,
           {
             type: 'ed448',
-            private_key: [
-              ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
-            ],
-            public_key: [
-              ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
-            ],
+            private_key: hexToSpreadArray(hubKey.privateKey),
+            public_key: hexToSpreadArray(hubKey.publicKey),
           },
           {
             type: 'ed448',
-            private_key: [
-              ...new Uint8Array(Buffer.from(inboxKey.privateKey, 'hex')),
-            ],
-            public_key: [
-              ...new Uint8Array(Buffer.from(inboxKey.publicKey, 'hex')),
-            ],
+            private_key: hexToSpreadArray(inboxKey.privateKey),
+            public_key: hexToSpreadArray(inboxKey.publicKey),
           },
           JSON.stringify({
             type: 'control',
@@ -392,21 +347,13 @@ export class SyncService {
           hubKey.address!,
           {
             type: 'ed448',
-            private_key: [
-              ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
-            ],
-            public_key: [
-              ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
-            ],
+            private_key: hexToSpreadArray(hubKey.privateKey),
+            public_key: hexToSpreadArray(hubKey.publicKey),
           },
           {
             type: 'ed448',
-            private_key: [
-              ...new Uint8Array(Buffer.from(inboxKey.privateKey, 'hex')),
-            ],
-            public_key: [
-              ...new Uint8Array(Buffer.from(inboxKey.publicKey, 'hex')),
-            ],
+            private_key: hexToSpreadArray(inboxKey.privateKey),
+            public_key: hexToSpreadArray(inboxKey.publicKey),
           },
           JSON.stringify({
             type: 'control',
@@ -435,12 +382,8 @@ export class SyncService {
           hubKey.address!,
           {
             type: 'ed448',
-            private_key: [
-              ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
-            ],
-            public_key: [
-              ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
-            ],
+            private_key: hexToSpreadArray(hubKey.privateKey),
+            public_key: hexToSpreadArray(hubKey.publicKey),
           },
           JSON.stringify({
             type: 'control',
@@ -529,21 +472,13 @@ export class SyncService {
             hubKey.address!,
             {
               type: 'ed448',
-              private_key: [
-                ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
-              ],
-              public_key: [
-                ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
-              ],
+              private_key: hexToSpreadArray(hubKey.privateKey),
+              public_key: hexToSpreadArray(hubKey.publicKey),
             },
             {
               type: 'ed448',
-              private_key: [
-                ...new Uint8Array(Buffer.from(inboxKey.privateKey, 'hex')),
-              ],
-              public_key: [
-                ...new Uint8Array(Buffer.from(inboxKey.publicKey, 'hex')),
-              ],
+              private_key: hexToSpreadArray(inboxKey.privateKey),
+              public_key: hexToSpreadArray(inboxKey.publicKey),
             },
             JSON.stringify({
               type: 'control',

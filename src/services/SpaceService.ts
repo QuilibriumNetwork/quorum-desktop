@@ -3,7 +3,7 @@
 
 import { MessageDB } from '../db/messages';
 import { Space, Message, KickMessage } from '../api/quorumApi';
-import { sha256, base58btc } from '../utils/crypto';
+import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildSpaceKey, buildSpaceMembersKey, buildConfigKey } from '../hooks';
@@ -94,10 +94,10 @@ export class SpaceService {
           {
             type: 'ed448',
             private_key: [
-              ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
+              ...hexToSpreadArray(hubKey.privateKey),
             ],
             public_key: [
-              ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
+              ...hexToSpreadArray(hubKey.publicKey),
             ],
           },
           JSON.stringify({
@@ -475,7 +475,7 @@ export class SpaceService {
     const ciphertext = ch.js_encrypt_inbox_message(
       JSON.stringify({
         inbox_public_key: [
-          ...new Uint8Array(Buffer.from(config_key.publicKey, 'hex')),
+          ...hexToSpreadArray(config_key.publicKey),
         ],
         ephemeral_private_key: ephemeral_key.private_key,
         plaintext: [
@@ -535,9 +535,9 @@ export class SpaceService {
       {
         type: 'ed448',
         private_key: [
-          ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
+          ...hexToSpreadArray(hubKey.privateKey),
         ],
-        public_key: [...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex'))],
+        public_key: [...hexToSpreadArray(hubKey.publicKey)],
       },
       JSON.stringify({
         type: 'control',
@@ -676,17 +676,17 @@ export class SpaceService {
       const ts = Date.now();
       const ownerPayload = Buffer.from(
         new Uint8Array([
-          ...new Uint8Array(Buffer.from(spaceKey.publicKey, 'hex')),
+          ...hexToSpreadArray(spaceKey.publicKey),
           ...configPair.public_key,
-          ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
+          ...hexToSpreadArray(ownerKey.publicKey),
           ...int64ToBytes(ts),
         ])
       ).toString('base64');
       const spacePayload = Buffer.from(
         new Uint8Array([
-          ...new Uint8Array(Buffer.from(spaceKey.publicKey, 'hex')),
+          ...hexToSpreadArray(spaceKey.publicKey),
           ...configPair.public_key,
-          ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
+          ...hexToSpreadArray(ownerKey.publicKey),
           ...int64ToBytes(ts),
         ])
       ).toString('base64');
@@ -886,19 +886,19 @@ export class SpaceService {
           {
             type: 'ed448',
             private_key: [
-              ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
+              ...hexToSpreadArray(hubKey.privateKey),
             ],
             public_key: [
-              ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
+              ...hexToSpreadArray(hubKey.publicKey),
             ],
           },
           {
             type: 'ed448',
             private_key: [
-              ...new Uint8Array(Buffer.from(ownerKey.privateKey, 'hex')),
+              ...hexToSpreadArray(ownerKey.privateKey),
             ],
             public_key: [
-              ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
+              ...hexToSpreadArray(ownerKey.publicKey),
             ],
           },
           JSON.stringify({
@@ -919,19 +919,19 @@ export class SpaceService {
         {
           type: 'ed448',
           private_key: [
-            ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
+            ...hexToSpreadArray(hubKey.privateKey),
           ],
           public_key: [
-            ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
+            ...hexToSpreadArray(hubKey.publicKey),
           ],
         },
         {
           type: 'ed448',
           private_key: [
-            ...new Uint8Array(Buffer.from(ownerKey.privateKey, 'hex')),
+            ...hexToSpreadArray(ownerKey.privateKey),
           ],
           public_key: [
-            ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
+            ...hexToSpreadArray(ownerKey.publicKey),
           ],
         },
         JSON.stringify({
@@ -1131,9 +1131,9 @@ export class SpaceService {
       {
         type: 'ed448',
         private_key: [
-          ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
+          ...hexToSpreadArray(hubKey.privateKey),
         ],
-        public_key: [...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex'))],
+        public_key: [...hexToSpreadArray(hubKey.publicKey)],
       },
       message
     );

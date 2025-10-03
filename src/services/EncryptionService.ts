@@ -3,7 +3,7 @@
 
 import { MessageDB, EncryptionState } from '../db/messages';
 import { Space } from '../api/quorumApi';
-import { sha256, base58btc } from '../utils/crypto';
+import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildConfigKey } from '../hooks';
@@ -183,7 +183,7 @@ export class EncryptionService {
       new Uint8Array([
         ...spacePair.public_key,
         ...configPair.public_key,
-        ...new Uint8Array(Buffer.from(ownerKey!.publicKey, 'hex')),
+        ...hexToSpreadArray(ownerKey!.publicKey),
         ...int64ToBytes(ts),
       ])
     ).toString('base64');
@@ -191,7 +191,7 @@ export class EncryptionService {
       new Uint8Array([
         ...spacePair.public_key,
         ...configPair.public_key,
-        ...new Uint8Array(Buffer.from(ownerKey!.publicKey, 'hex')),
+        ...hexToSpreadArray(ownerKey!.publicKey),
         ...int64ToBytes(ts),
       ])
     ).toString('base64');

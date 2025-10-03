@@ -4,7 +4,7 @@
 import { MessageDB } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
-import { sha256, base58btc } from '../utils/crypto';
+import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
 import { t } from '@lingui/core/macro';
 import { QueryClient } from '@tanstack/react-query';
@@ -140,17 +140,17 @@ export class InvitationService {
       const ts = Date.now();
       const ownerPayload = Buffer.from(
         new Uint8Array([
-          ...new Uint8Array(Buffer.from(spaceKey.publicKey, 'hex')),
+          ...hexToSpreadArray(spaceKey.publicKey),
           ...configPair.public_key,
-          ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
+          ...hexToSpreadArray(ownerKey.publicKey),
           ...int64ToBytes(ts),
         ])
       ).toString('base64');
       const spacePayload = Buffer.from(
         new Uint8Array([
-          ...new Uint8Array(Buffer.from(spaceKey.publicKey, 'hex')),
+          ...hexToSpreadArray(spaceKey.publicKey),
           ...configPair.public_key,
-          ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
+          ...hexToSpreadArray(ownerKey.publicKey),
           ...int64ToBytes(ts),
         ])
       ).toString('base64');
@@ -296,21 +296,13 @@ export class InvitationService {
           hubKey.address!,
           {
             type: 'ed448',
-            private_key: [
-              ...new Uint8Array(Buffer.from(hubKey.privateKey, 'hex')),
-            ],
-            public_key: [
-              ...new Uint8Array(Buffer.from(hubKey.publicKey, 'hex')),
-            ],
+            private_key: hexToSpreadArray(hubKey.privateKey),
+            public_key: hexToSpreadArray(hubKey.publicKey),
           },
           {
             type: 'ed448',
-            private_key: [
-              ...new Uint8Array(Buffer.from(ownerKey.privateKey, 'hex')),
-            ],
-            public_key: [
-              ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
-            ],
+            private_key: hexToSpreadArray(ownerKey.privateKey),
+            public_key: hexToSpreadArray(ownerKey.publicKey),
           },
           JSON.stringify({
             type: 'control',
@@ -516,14 +508,10 @@ export class InvitationService {
         JSON.parse(
           ch.js_decrypt_inbox_message(
             JSON.stringify({
-              inbox_private_key: [
-                ...new Uint8Array(Buffer.from(info.configKey, 'hex')),
-              ],
-              ephemeral_public_key: [
-                ...new Uint8Array(
-                  Buffer.from(manifest.data.ephemeral_public_key, 'hex')
-                ),
-              ],
+              inbox_private_key: hexToSpreadArray(info.configKey),
+              ephemeral_public_key: hexToSpreadArray(
+                manifest.data.ephemeral_public_key
+              ),
               ciphertext: ciphertext,
             })
           )
@@ -582,14 +570,10 @@ export class InvitationService {
           JSON.parse(
             ch.js_decrypt_inbox_message(
               JSON.stringify({
-                inbox_private_key: [
-                  ...new Uint8Array(Buffer.from(info.configKey, 'hex')),
-                ],
-                ephemeral_public_key: [
-                  ...new Uint8Array(
-                    Buffer.from(manifest.data.ephemeral_public_key, 'hex')
-                  ),
-                ],
+                inbox_private_key: hexToSpreadArray(info.configKey),
+                ephemeral_public_key: hexToSpreadArray(
+                  manifest.data.ephemeral_public_key
+                ),
                 ciphertext: ciphertext,
               })
             )
@@ -625,14 +609,10 @@ export class InvitationService {
             JSON.parse(
               ch.js_decrypt_inbox_message(
                 JSON.stringify({
-                  inbox_private_key: [
-                    ...new Uint8Array(Buffer.from(info.configKey, 'hex')),
-                  ],
-                  ephemeral_public_key: [
-                    ...new Uint8Array(
-                      Buffer.from(manifest.data.ephemeral_public_key, 'hex')
-                    ),
-                  ],
+                  inbox_private_key: hexToSpreadArray(info.configKey),
+                  ephemeral_public_key: hexToSpreadArray(
+                    manifest.data.ephemeral_public_key
+                  ),
                   ciphertext: JSON.parse(inviteEval.data),
                 })
               )
