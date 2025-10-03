@@ -36,7 +36,9 @@ export class SyncService {
     this.sendHubMessage = dependencies.sendHubMessage;
   }
 
-  // EXACT COPY: synchronizeAll from MessageDB.tsx line 359-513
+  /**
+   * Syncs all space data (peer map, members, messages) to specific inbox in 5MB chunks.
+   */
   async synchronizeAll(spaceId: string, inboxAddress: string): Promise<void> {
     try {
       const ownerKey = await this.messageDB.getSpaceKey(spaceId, 'owner');
@@ -166,7 +168,9 @@ export class SyncService {
     } catch {}
   }
 
-  // EXACT COPY: initiateSync from MessageDB.tsx line 515-577
+  /**
+   * Initiates sync to best candidate peer (highest message count).
+   */
   async initiateSync(spaceId: string): Promise<void> {
     if (
       !this.syncInfo.current[spaceId] ||
@@ -225,7 +229,9 @@ export class SyncService {
     });
   }
 
-  // EXACT COPY: directSync from MessageDB.tsx line 579-747
+  /**
+   * Sends missing data to peer based on their timestamp range.
+   */
   async directSync(
     spaceId: string,
     message: {
@@ -369,7 +375,9 @@ export class SyncService {
     });
   }
 
-  // EXACT COPY: requestSync from MessageDB.tsx line 749-787
+  /**
+   * Broadcasts sync request to all members via hub (30s expiry, schedules initiateSync).
+   */
   async requestSync(spaceId: string): Promise<void> {
     try {
       this.enqueueOutbound(async () => {
@@ -406,7 +414,9 @@ export class SyncService {
     } catch {}
   }
 
-  // EXACT COPY: sendVerifyKickedStatuses from MessageDB.tsx line 789-827
+  /**
+   * Sends verify-kicked message for users whose last event was kick.
+   */
   async sendVerifyKickedStatuses(spaceId: string): Promise<number> {
     const messages = await this.messageDB.getAllSpaceMessages({ spaceId });
     const lastEventByUser = new Map<string, 'kick' | 'join'>();
@@ -444,7 +454,9 @@ export class SyncService {
     return kicked.length;
   }
 
-  // EXACT COPY: informSyncData from MessageDB.tsx line 829-891
+  /**
+   * Responds to sync-request with our counts if we have more data.
+   */
   async informSyncData(
     spaceId: string,
     inboxAddress: string,

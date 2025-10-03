@@ -49,7 +49,9 @@ export class InvitationService {
     this.requestSync = dependencies.requestSync;
   }
 
-  // EXACT COPY: constructInviteLink from MessageDB.tsx line 429-459
+  /**
+   * Constructs one-time invite link with embedded template/secret (consumes one eval).
+   */
   async constructInviteLink(spaceId: string) {
     const space = await this.messageDB.getSpace(spaceId);
     if (space?.inviteUrl) {
@@ -82,7 +84,9 @@ export class InvitationService {
     return link;
   }
 
-  // EXACT COPY: sendInviteToUser from MessageDB.tsx line 461-488
+  /**
+   * Sends invite link to user via DM.
+   */
   async sendInviteToUser(
     address: string,
     spaceId: string,
@@ -111,7 +115,9 @@ export class InvitationService {
     );
   }
 
-  // EXACT COPY: generateNewInviteLink from MessageDB.tsx line 490-863
+  /**
+   * Generates public invite system with 200+ one-time invites, sends rekey to members.
+   */
   async generateNewInviteLink(
     spaceId: string,
     user_keyset: secureChannel.UserKeyset,
@@ -476,7 +482,9 @@ export class InvitationService {
     }
   }
 
-  // EXACT COPY: processInviteLink from MessageDB.tsx line 865-919
+  /**
+   * Validates and decrypts invite link to retrieve space info.
+   */
   async processInviteLink(inviteLink: string) {
     const params = parseInviteParams(inviteLink);
     if (!params) throw new Error(t`invalid link`);
@@ -529,7 +537,9 @@ export class InvitationService {
     return space;
   }
 
-  // EXACT COPY: joinInviteLink from MessageDB.tsx line 921-1263
+  /**
+   * Joins space from invite: sets up encryption, registers with hub, saves keys, sends join message.
+   */
   async joinInviteLink(
     inviteLink: string,
     keyset: {

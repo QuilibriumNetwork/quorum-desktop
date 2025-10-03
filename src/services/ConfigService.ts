@@ -36,7 +36,9 @@ export class ConfigService {
     this.queryClient = dependencies.queryClient;
   }
 
-  // EXACT COPY: getConfig from MessageDB.tsx line 1342-1602
+  /**
+   * Retrieves user config from remote/local, decrypts, verifies signature, and syncs new spaces.
+   */
   async getConfig({
     address,
     userKey,
@@ -296,7 +298,9 @@ export class ConfigService {
     return config;
   }
 
-  // EXACT COPY: saveConfig from MessageDB.tsx line 1604-1697
+  /**
+   * Saves config to local DB and optionally syncs to remote (encrypted with AES-GCM, signed with Ed448).
+   */
   async saveConfig({
     config,
     keyset,

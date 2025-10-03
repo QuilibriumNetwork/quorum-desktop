@@ -45,7 +45,9 @@ export class EncryptionService {
     this.selfAddress = dependencies.selfAddress;
   }
 
-  // EXACT COPY: deleteEncryptionStates function from MessageDB.tsx line 258-276
+  /**
+   * Deletes all encryption states, inbox mappings, and cache for a conversation.
+   */
   async deleteEncryptionStates({ conversationId }: { conversationId: string }) {
     try {
       const states = await this.messageDB.getEncryptionStates({ conversationId });
@@ -63,7 +65,9 @@ export class EncryptionService {
     } catch {}
   }
 
-  // EXACT COPY: ensureKeyForSpace function from MessageDB.tsx line 1990-2186
+  /**
+   * Ensures space has valid keys. If missing, generates new keys and migrates all data to new address.
+   */
   async ensureKeyForSpace(user_address: string, space: Space, queryClient: QueryClient) {
     let spaceKey:
       | {

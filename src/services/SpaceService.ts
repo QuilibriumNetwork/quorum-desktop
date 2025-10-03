@@ -81,7 +81,9 @@ export class SpaceService {
     this.addMessage = dependencies.addMessage;
   }
 
-  // EXACT COPY: submitUpdateSpace from MessageDB.tsx line 943-975
+  /**
+   * Submits space manifest update via hub.
+   */
   async submitUpdateSpace(manifest: secureChannel.SpaceManifest) {
     try {
       this.enqueueOutbound(async () => {
@@ -113,7 +115,9 @@ export class SpaceService {
     } catch {}
   }
 
-  // EXACT COPY: createSpace from MessageDB.tsx line 988-1339
+  /**
+   * Creates new space: generates keys, registers with API, saves manifest, sends invites.
+   */
   async createSpace(
     spaceName: string,
     spaceIcon: string,
@@ -465,7 +469,9 @@ export class SpaceService {
     return { spaceId: spaceAddress, channelId: groupAddress };
   }
 
-  // EXACT COPY: updateSpace from MessageDB.tsx line 1343-1390
+  /**
+   * Updates space manifest: encrypts, uploads to API, updates local DB and cache.
+   */
   async updateSpace(space: Space, queryClient: QueryClient) {
     const config_key = await this.messageDB.getSpaceKey(space.spaceId, 'config');
     const owner_key = await this.messageDB.getSpaceKey(space.spaceId, 'owner');
@@ -515,7 +521,9 @@ export class SpaceService {
     });
   }
 
-  // EXACT COPY: deleteSpace from MessageDB.tsx line 1394-1512
+  /**
+   * Deletes space: sends delete message via hub, removes from DB and config, updates cache.
+   */
   async deleteSpace(spaceId: string, queryClient: QueryClient) {
     const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
     const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
@@ -633,7 +641,9 @@ export class SpaceService {
     await this.messageDB.deleteSpace(spaceId);
   }
 
-  // EXACT COPY: kickUser from MessageDB.tsx line 1516-1978
+  /**
+   * Kicks user from space: validates permissions, sends kick message, rekeys encryption.
+   */
   async kickUser(
     spaceId: string,
     userAddress: string,
@@ -1100,7 +1110,9 @@ export class SpaceService {
     });
   }
 
-  // EXACT COPY: createChannel from MessageDB.tsx line 2820-2840
+  /**
+   * Creates new channel in space: generates keys, saves to DB, returns channel ID.
+   */
   async createChannel(spaceId: string) {
     const gp = ch.js_generate_ed448();
     const groupPair = JSON.parse(gp);
@@ -1123,7 +1135,9 @@ export class SpaceService {
     return groupAddress;
   }
 
-  // EXACT COPY: sendHubMessage from MessageDB.tsx line 3321-3338
+  /**
+   * Sends control message to space via hub (signed with hub key).
+   */
   async sendHubMessage(spaceId: string, message: string) {
     const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
     const envelope = await secureChannel.SealHubEnvelope(

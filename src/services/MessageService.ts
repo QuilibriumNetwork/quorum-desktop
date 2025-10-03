@@ -91,7 +91,9 @@ export class MessageService {
     this.sendHubMessage = dependencies.sendHubMessage;
   }
 
-  // EXACT COPY: saveMessage function from MessageDB.tsx line 255
+  /**
+   * Saves message to DB and updates query cache.
+   */
   async saveMessage(
     decryptedContent: Message,
     messageDB: MessageDB,
@@ -291,7 +293,9 @@ export class MessageService {
     }
   }
 
-  // EXACT COPY: addMessage function from MessageDB.tsx line 304
+  /**
+   * Adds message to query cache (optimistic update).
+   */
   async addMessage(
     queryClient: QueryClient,
     spaceId: string,
@@ -569,7 +573,9 @@ export class MessageService {
     }
   }
 
-  // EXACT COPY: submitMessage function from MessageDB.tsx line 2431
+  /**
+   * Submits direct message: encrypts, signs, sends to API, saves locally.
+   */
   async submitMessage(
     address: string,
     pendingMessage: string | object,
@@ -770,7 +776,9 @@ export class MessageService {
     });
   }
 
-  // EXACT COPY: handleNewMessage function from MessageDB.tsx line 418-1741
+  /**
+   * Handles all incoming messages: decrypts, processes control/sync/post messages, updates state.
+   */
   async handleNewMessage(
     self_address: string,
     keyset: {
@@ -2086,7 +2094,9 @@ export class MessageService {
     }
   }
 
-  // EXACT COPY: submitChannelMessage function from MessageDB.tsx line 3191-3306
+  /**
+   * Submits channel message: encrypts with triple ratchet, sends via hub, saves locally.
+   */
   async submitChannelMessage(
     spaceId: string,
     channelId: string,
@@ -2201,7 +2211,9 @@ export class MessageService {
     });
   }
 
-  // EXACT COPY: deleteConversation function from MessageDB.tsx line 909-983
+  /**
+   * Deletes conversation: removes messages, encryption states, updates cache.
+   */
   async deleteConversation(
     conversationId: string,
     currentPasskeyInfo: {
