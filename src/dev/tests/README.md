@@ -285,42 +285,23 @@ describe('ServiceName - Unit Tests', () => {
 
 ### Manual Testing Guides
 
-For reference, manual testing guides are available in `docs/`:
-- `TEST-MANUAL_ConfigService.md` - ConfigService manual testing
-- `TEST-MANUAL_InvitationService.md` - InvitationService manual testing
-- `TEST-MANUAL_SpaceService.md` - SpaceService manual testing
-- `test-implementation-guide.md` - General test implementation guidance
+Quick reference guides for manually testing each service in the UI are available in `docs/`:
 
-**Note**: These are reference documents. The automated unit tests in `services/` are the primary test suite.
+- `manual-test_MessageService.md` - Message operations (send, receive, delete, reactions)
+- `manual-test_SpaceService.md` - Space operations (create, update, delete, kick)
+- `manual-test_InvitationService.md` - Invite operations (generate, send, join)
+- `manual-test_SyncService.md` - Sync operations (automatic syncing, data exchange)
+- `manual-test_EncryptionService.md` - Encryption operations (key management, cleanup)
+- `manual-test_ConfigService.md` - Config operations (save, load, cross-device sync)
 
-### Project Task Documentation
+Each guide includes:
+- Quick test checklist for rapid testing
+- Detailed step-by-step procedures
+- Expected results and verification steps
+- Common errors and troubleshooting
 
-For detailed refactoring context:
-- `.readme/tasks/messagedb/tests/improve-test-coverage.md` - Full unit test strategy
-- `.readme/tasks/messagedb/tests/TEST-COVERAGE-CHECKLIST.md` - Progress tracking
+**Note**: Manual testing guides complement the automated unit tests. Use them to verify end-to-end functionality in the actual UI.
 
----
-
-## ✅ Success Criteria Met
-
-- [x] All 75 unit tests implemented
-- [x] All tests passing (100% pass rate)
-- [x] No app code changes required
-- [x] Full test suite runs in ~10 seconds
-- [x] No TypeScript compilation errors
-- [x] All service functions have at least one test
-
----
-
-## 🎯 Confidence Level
-
-**HIGH (85-90%)** - The MessageDB refactoring is well-validated with comprehensive unit tests covering all 6 extracted services.
-
-**What this means**:
-- Safe to proceed with Phase 4 optimization
-- Services are validated to call correct methods with correct parameters
-- Error handling is verified
-- Fast feedback loop (<10 seconds)
 
 ---
 
