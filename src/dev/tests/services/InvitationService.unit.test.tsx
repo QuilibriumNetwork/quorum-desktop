@@ -92,7 +92,6 @@ describe('InvitationService - Unit Tests', () => {
         postSpaceInviteEvals: vi.fn().mockResolvedValue({}),
         postHubAdd: vi.fn().mockResolvedValue({}),
       } as any,
-      int64ToBytes: vi.fn().mockReturnValue(new Uint8Array(8)),
       spaceInfo: { current: {} } as any,
       selfAddress: 'address-self',
       enqueueOutbound: vi.fn(),

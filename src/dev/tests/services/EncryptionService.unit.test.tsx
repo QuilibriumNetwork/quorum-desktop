@@ -76,7 +76,6 @@ describe('EncryptionService - Unit Tests', () => {
         deviceKeyset: { privateKey: 'device-key' } as any,
       },
       updateSpace: vi.fn().mockResolvedValue(undefined),
-      int64ToBytes: vi.fn().mockReturnValue(new Uint8Array(8)),
       selfAddress: 'address-self',
     };
 

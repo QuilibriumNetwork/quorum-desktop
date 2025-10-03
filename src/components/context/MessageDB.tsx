@@ -391,12 +391,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     })();
   }, [selfAddress, keyset]);
 
-  const int64ToBytes = (num: number) => {
-    const arr = new Uint8Array(8);
-    const view = new DataView(arr.buffer);
-    view.setBigInt64(0, BigInt(num), false);
-    return arr;
-  };
 
   useEffect(() => {
     if (keyset?.deviceKeyset?.identity_key && selfAddress) {
@@ -492,13 +486,12 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     return new ConfigService({
       messageDB,
       apiClient,
-      int64ToBytes,
       spaceInfo,
       enqueueOutbound,
       sendHubMessage,
       queryClient,
     });
-  }, [messageDB, apiClient, int64ToBytes, spaceInfo, enqueueOutbound, sendHubMessage, queryClient]);
+  }, [messageDB, apiClient, spaceInfo, enqueueOutbound, sendHubMessage, queryClient]);
 
   const getConfig = React.useCallback(
     async ({
@@ -537,10 +530,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       saveConfig,
       keyset,
       updateSpace,
-      int64ToBytes,
       selfAddress,
     });
-  }, [messageDB, apiClient, saveConfig, keyset, updateSpace, int64ToBytes, selfAddress]);
+  }, [messageDB, apiClient, saveConfig, keyset, updateSpace, selfAddress]);
 
   // Create bound method for MessageService to use
   const deleteEncryptionStates = useCallback(
@@ -622,7 +614,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     return new InvitationService({
       messageDB,
       apiClient,
-      int64ToBytes,
       spaceInfo,
       selfAddress,
       enqueueOutbound,
@@ -632,7 +623,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       sendHubMessage,
       requestSync,
     });
-  }, [messageDB, apiClient, int64ToBytes, spaceInfo, selfAddress, enqueueOutbound, queryClient, getConfig, saveConfig, sendHubMessage, requestSync]);
+  }, [messageDB, apiClient, spaceInfo, selfAddress, enqueueOutbound, queryClient, getConfig, saveConfig, sendHubMessage, requestSync]);
 
   const sendInviteToUser = React.useCallback(
     async (
@@ -709,7 +700,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       initiateSync,
       directSync,
       saveConfig,
-      int64ToBytes,
       sendHubMessage,
     });
   }, [
@@ -810,7 +800,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       apiClient,
       enqueueOutbound,
       saveConfig,
-      int64ToBytes,
       selfAddress,
       keyset,
       spaceInfo,
@@ -818,7 +807,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       saveMessage,
       addMessage,
     });
-  }, [messageDB, apiClient, enqueueOutbound, saveConfig, int64ToBytes, selfAddress, keyset, spaceInfo, canKickUser, saveMessage, addMessage]);
+  }, [messageDB, apiClient, enqueueOutbound, saveConfig, selfAddress, keyset, spaceInfo, canKickUser, saveMessage, addMessage]);
 
   const createSpace = React.useCallback(
     async (

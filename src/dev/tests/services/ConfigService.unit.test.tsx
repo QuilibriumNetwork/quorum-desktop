@@ -65,7 +65,6 @@ describe('ConfigService - Unit Tests', () => {
         getSpaceManifest: vi.fn().mockResolvedValue({ data: {} }),
         postHubAdd: vi.fn().mockResolvedValue({}),
       } as any,
-      int64ToBytes: vi.fn().mockReturnValue(new Uint8Array(8)),
       spaceInfo: { current: {} } as any,
       enqueueOutbound: vi.fn(),
       sendHubMessage: vi.fn().mockResolvedValue('hub-message-json'),

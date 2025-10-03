@@ -5,6 +5,7 @@ import { MessageDB } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { sha256, base58btc } from '../utils/crypto';
+import { int64ToBytes } from '../utils/bytes';
 import { t } from '@lingui/core/macro';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildConfigKey, buildSpaceKey } from '../hooks';
@@ -15,7 +16,6 @@ import { isQuorumApiError } from '../api/baseTypes';
 export class InvitationService {
   private messageDB: MessageDB;
   private apiClient: QuorumApiClient;
-  private int64ToBytes: (num: number) => Uint8Array;
   private spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
   private selfAddress: string;
   private enqueueOutbound: (action: () => Promise<string[]>) => void;
@@ -28,7 +28,6 @@ export class InvitationService {
   constructor(dependencies: {
     messageDB: MessageDB;
     apiClient: QuorumApiClient;
-    int64ToBytes: (num: number) => Uint8Array;
     spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
     selfAddress: string;
     enqueueOutbound: (action: () => Promise<string[]>) => void;
@@ -40,7 +39,6 @@ export class InvitationService {
   }) {
     this.messageDB = dependencies.messageDB;
     this.apiClient = dependencies.apiClient;
-    this.int64ToBytes = dependencies.int64ToBytes;
     this.spaceInfo = dependencies.spaceInfo;
     this.selfAddress = dependencies.selfAddress;
     this.enqueueOutbound = dependencies.enqueueOutbound;
@@ -145,7 +143,7 @@ export class InvitationService {
           ...new Uint8Array(Buffer.from(spaceKey.publicKey, 'hex')),
           ...configPair.public_key,
           ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
-          ...this.int64ToBytes(ts),
+          ...int64ToBytes(ts),
         ])
       ).toString('base64');
       const spacePayload = Buffer.from(
@@ -153,7 +151,7 @@ export class InvitationService {
           ...new Uint8Array(Buffer.from(spaceKey.publicKey, 'hex')),
           ...configPair.public_key,
           ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
-          ...this.int64ToBytes(ts),
+          ...int64ToBytes(ts),
         ])
       ).toString('base64');
       const spaceSignature = JSON.parse(
@@ -441,7 +439,7 @@ export class InvitationService {
               Buffer.from(
                 new Uint8Array([
                   ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
-                  ...this.int64ToBytes(ts),
+                  ...int64ToBytes(ts),
                 ])
               ).toString('base64')
             )

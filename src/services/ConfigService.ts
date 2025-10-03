@@ -5,6 +5,7 @@ import { MessageDB, UserConfig } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { sha256, base58btc } from '../utils/crypto';
+import { int64ToBytes } from '../utils/bytes';
 import { getDefaultUserConfig } from '../utils';
 import { t } from '@lingui/core/macro';
 import { QueryClient } from '@tanstack/react-query';
@@ -14,7 +15,6 @@ import { Space } from '../api/quorumApi';
 export class ConfigService {
   private messageDB: MessageDB;
   private apiClient: QuorumApiClient;
-  private int64ToBytes: (num: number) => Uint8Array;
   private spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
   private enqueueOutbound: (action: () => Promise<string[]>) => void;
   private sendHubMessage: (spaceId: string, message: string) => Promise<string>;
@@ -23,7 +23,6 @@ export class ConfigService {
   constructor(dependencies: {
     messageDB: MessageDB;
     apiClient: QuorumApiClient;
-    int64ToBytes: (num: number) => Uint8Array;
     spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
     enqueueOutbound: (action: () => Promise<string[]>) => void;
     sendHubMessage: (spaceId: string, message: string) => Promise<string>;
@@ -31,7 +30,6 @@ export class ConfigService {
   }) {
     this.messageDB = dependencies.messageDB;
     this.apiClient = dependencies.apiClient;
-    this.int64ToBytes = dependencies.int64ToBytes;
     this.spaceInfo = dependencies.spaceInfo;
     this.enqueueOutbound = dependencies.enqueueOutbound;
     this.sendHubMessage = dependencies.sendHubMessage;
@@ -95,7 +93,7 @@ export class ConfigService {
               ...new Uint8Array(
                 Buffer.from(savedConfig.user_config, 'utf-8')
               ),
-              ...this.int64ToBytes(savedConfig.timestamp),
+              ...int64ToBytes(savedConfig.timestamp),
             ])
           ).toString('base64'),
           Buffer.from(savedConfig.signature, 'hex').toString('base64')
@@ -369,7 +367,7 @@ export class ConfigService {
             Buffer.from(
               new Uint8Array([
                 ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
-                ...this.int64ToBytes(ts),
+                ...int64ToBytes(ts),
               ])
             ).toString('base64')
           )

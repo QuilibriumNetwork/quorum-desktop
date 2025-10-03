@@ -4,6 +4,7 @@
 import { MessageDB, EncryptionState } from '../db/messages';
 import { Space } from '../api/quorumApi';
 import { sha256, base58btc } from '../utils/crypto';
+import { int64ToBytes } from '../utils/bytes';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildConfigKey } from '../hooks';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -21,7 +22,6 @@ export interface EncryptionServiceDependencies {
     userKeyset: secureChannel.UserKeyset;
   };
   updateSpace: (space: Space) => Promise<void>;
-  int64ToBytes: (num: number) => Uint8Array;
   selfAddress: string;
 }
 
@@ -34,7 +34,6 @@ export class EncryptionService {
     userKeyset: secureChannel.UserKeyset;
   };
   private updateSpace: (space: Space) => Promise<void>;
-  private int64ToBytes: (num: number) => Uint8Array;
   private selfAddress: string;
 
   constructor(dependencies: EncryptionServiceDependencies) {
@@ -43,7 +42,6 @@ export class EncryptionService {
     this.saveConfig = dependencies.saveConfig;
     this.keyset = dependencies.keyset;
     this.updateSpace = dependencies.updateSpace;
-    this.int64ToBytes = dependencies.int64ToBytes;
     this.selfAddress = dependencies.selfAddress;
   }
 
@@ -186,7 +184,7 @@ export class EncryptionService {
         ...spacePair.public_key,
         ...configPair.public_key,
         ...new Uint8Array(Buffer.from(ownerKey!.publicKey, 'hex')),
-        ...this.int64ToBytes(ts),
+        ...int64ToBytes(ts),
       ])
     ).toString('base64');
     const spacePayload = Buffer.from(
@@ -194,7 +192,7 @@ export class EncryptionService {
         ...spacePair.public_key,
         ...configPair.public_key,
         ...new Uint8Array(Buffer.from(ownerKey!.publicKey, 'hex')),
-        ...this.int64ToBytes(ts),
+        ...int64ToBytes(ts),
       ])
     ).toString('base64');
     const spaceSignature = JSON.parse(

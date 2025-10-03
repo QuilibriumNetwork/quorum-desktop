@@ -80,7 +80,6 @@ describe('SpaceService - Unit Tests', () => {
       } as any,
       enqueueOutbound: vi.fn(),
       saveConfig: vi.fn().mockResolvedValue(undefined),
-      int64ToBytes: vi.fn().mockReturnValue(new Uint8Array(8)),
       selfAddress: 'address-self',
       keyset: {
         userKeyset: { privateKey: 'user-key' } as any,

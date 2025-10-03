@@ -4,6 +4,7 @@
 import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
 import { Message, ReactionMessage, RemoveReactionMessage, PostMessage, JoinMessage, LeaveMessage, KickMessage, Space } from '../api/quorumApi';
 import { sha256, base58btc } from '../utils/crypto';
+import { int64ToBytes } from '../utils/bytes';
 import { QueryClient, InfiniteData } from '@tanstack/react-query';
 import { buildMessagesKey, buildSpaceMembersKey, buildSpaceKey, buildConfigKey, buildConversationsKey } from '../hooks';
 import { buildConversationKey } from '../hooks/queries/conversation/buildConversationKey';
@@ -41,7 +42,6 @@ export interface MessageServiceDependencies {
   initiateSync: (spaceId: string) => Promise<void>;
   directSync: (spaceId: string, message: any) => Promise<void>;
   saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
-  int64ToBytes: (num: number) => Uint8Array;
   sendHubMessage: (spaceId: string, message: string) => Promise<string>;
 }
 
@@ -71,7 +71,6 @@ export class MessageService {
   private initiateSync: (spaceId: string) => Promise<void>;
   private directSync: (spaceId: string, message: any) => Promise<void>;
   private saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
-  private int64ToBytes: (num: number) => Uint8Array;
   private sendHubMessage: (spaceId: string, message: string) => Promise<string>;
 
   constructor(dependencies: MessageServiceDependencies) {
@@ -89,7 +88,6 @@ export class MessageService {
     this.initiateSync = dependencies.initiateSync;
     this.directSync = dependencies.directSync;
     this.saveConfig = dependencies.saveConfig;
-    this.int64ToBytes = dependencies.int64ToBytes;
     this.sendHubMessage = dependencies.sendHubMessage;
   }
 
@@ -1324,7 +1322,7 @@ export class MessageService {
                       ...new Uint8Array(
                         Buffer.from(manifest.space_manifest, 'utf-8')
                       ),
-                      ...this.int64ToBytes(manifest.timestamp),
+                      ...int64ToBytes(manifest.timestamp),
                     ])
                   ).toString('base64'),
                   Buffer.from(manifest.owner_signature, 'hex').toString(

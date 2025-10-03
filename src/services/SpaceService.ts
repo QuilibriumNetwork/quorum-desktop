@@ -4,6 +4,7 @@
 import { MessageDB } from '../db/messages';
 import { Space, Message, KickMessage } from '../api/quorumApi';
 import { sha256, base58btc } from '../utils/crypto';
+import { int64ToBytes } from '../utils/bytes';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildSpaceKey, buildSpaceMembersKey, buildConfigKey } from '../hooks';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -17,7 +18,6 @@ export interface SpaceServiceDependencies {
   apiClient: QuorumApiClient;
   enqueueOutbound: (action: () => Promise<string[]>) => void;
   saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
-  int64ToBytes: (num: number) => Uint8Array;
   selfAddress: string;
   keyset: {
     deviceKeyset: secureChannel.DeviceKeyset;
@@ -46,7 +46,6 @@ export class SpaceService {
   private apiClient: QuorumApiClient;
   private enqueueOutbound: (action: () => Promise<string[]>) => void;
   private saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
-  private int64ToBytes: (num: number) => Uint8Array;
   private selfAddress: string;
   private keyset: {
     deviceKeyset: secureChannel.DeviceKeyset;
@@ -74,7 +73,6 @@ export class SpaceService {
     this.apiClient = dependencies.apiClient;
     this.enqueueOutbound = dependencies.enqueueOutbound;
     this.saveConfig = dependencies.saveConfig;
-    this.int64ToBytes = dependencies.int64ToBytes;
     this.selfAddress = dependencies.selfAddress;
     this.keyset = dependencies.keyset;
     this.spaceInfo = dependencies.spaceInfo;
@@ -164,7 +162,7 @@ export class SpaceService {
         ...spacePair.public_key,
         ...configPair.public_key,
         ...ownerPair.public_key,
-        ...this.int64ToBytes(ts),
+        ...int64ToBytes(ts),
       ])
     ).toString('base64');
     const spacePayload = Buffer.from(
@@ -172,7 +170,7 @@ export class SpaceService {
         ...spacePair.public_key,
         ...configPair.public_key,
         ...ownerPair.public_key,
-        ...this.int64ToBytes(ts),
+        ...int64ToBytes(ts),
       ])
     ).toString('base64');
     const spaceSignature = JSON.parse(
@@ -272,7 +270,7 @@ export class SpaceService {
             Buffer.from(
               new Uint8Array([
                 ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
-                ...this.int64ToBytes(ts),
+                ...int64ToBytes(ts),
               ])
             ).toString('base64')
           )
@@ -501,7 +499,7 @@ export class SpaceService {
             Buffer.from(
               new Uint8Array([
                 ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
-                ...this.int64ToBytes(ts),
+                ...int64ToBytes(ts),
               ])
             ).toString('base64')
           )
@@ -681,7 +679,7 @@ export class SpaceService {
           ...new Uint8Array(Buffer.from(spaceKey.publicKey, 'hex')),
           ...configPair.public_key,
           ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
-          ...this.int64ToBytes(ts),
+          ...int64ToBytes(ts),
         ])
       ).toString('base64');
       const spacePayload = Buffer.from(
@@ -689,7 +687,7 @@ export class SpaceService {
           ...new Uint8Array(Buffer.from(spaceKey.publicKey, 'hex')),
           ...configPair.public_key,
           ...new Uint8Array(Buffer.from(ownerKey.publicKey, 'hex')),
-          ...this.int64ToBytes(ts),
+          ...int64ToBytes(ts),
         ])
       ).toString('base64');
       const spaceSignature = JSON.parse(
@@ -764,7 +762,7 @@ export class SpaceService {
               Buffer.from(
                 new Uint8Array([
                   ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
-                  ...this.int64ToBytes(ts),
+                  ...int64ToBytes(ts),
                 ])
               ).toString('base64')
             )
