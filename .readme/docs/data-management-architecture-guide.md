@@ -28,9 +28,13 @@ A comprehensive guide to data storage, management, and flow patterns in the Quor
 
 Quorum uses a sophisticated multi-layer data architecture that combines local persistence, real-time communication, and end-to-end encryption. The application employs IndexedDB for primary data storage, localStorage for preferences, and a comprehensive caching system powered by TanStack Query.
 
+**Architectural Update: Service-Oriented Design**
+Following recent refactoring, core MessageDB functionalities have been extracted into dedicated services located in `src/services/`. The `MessageDB` class now primarily acts as an orchestration layer, providing a unified interface to these specialized services, which handle specific business logic and data interactions. This enhances modularity, maintainability, and testability.
+
 ### Key Components
 
-- **MessageDB**: Primary IndexedDB interface (`src/db/messages.ts`)
+- **MessageDB Orchestrator**: Coordinates interactions with specialized services and IndexedDB (`src/db/messages.ts`, `src/components/context/MessageDB.tsx`)
+- **Specialized Services**: Encapsulate business logic for specific domains (`src/services/MessageService.ts`, `src/services/SpaceService.ts`, `src/services/EncryptionService.ts`, `src/services/SyncService.ts`, `src/services/InvitationService.ts`, `src/services/ConfigService.ts`, `src/services/SearchService.ts`, `src/services/NotificationService.ts`)
 - **Context Providers**: Data management contexts (`src/components/context/`)
 - **Query System**: TanStack Query hooks (`src/hooks/queries/`)
 - **API Layer**: RESTful client (`src/api/`)
@@ -44,7 +48,7 @@ Quorum uses a sophisticated multi-layer data architecture that combines local pe
 
 **Location**: `src/db/messages.ts` - `MessageDB` class
 
-IndexedDB serves as the primary persistent storage layer with the following characteristics:
+`src/db/messages.ts` now primarily handles low-level IndexedDB operations, providing a robust and efficient persistent storage layer. Higher-level business logic and data manipulation are delegated to specialized services within `src/services/`.
 
 ```typescript
 class MessageDB {
@@ -94,7 +98,7 @@ localStorage.setItem(`userStatus_${address}`, status);
 
 **Context Providers**: Manage in-memory state and provide data access patterns
 
-- **MessageDB Context** (`src/components/context/MessageDB.tsx`)
+- **MessageDB Context** (`src/components/context/MessageDB.tsx`): Provides access to the specialized services (e.g., MessageService, SpaceService) for interacting with application data and business logic.
 - **WebSocket Context** (`src/components/context/WebsocketProvider.tsx`)
 - **Registration Context** (`src/components/context/RegistrationPersister.tsx`)
 - **Theme Context** (`src/components/context/ThemeProvider.tsx`)
@@ -260,20 +264,9 @@ export type Message = {
 
 ### Message Submission
 
-**Location**: `src/components/context/MessageDB.tsx`
+**Location**: Handled by `MessageService` via `MessageDB Context`
 
-```typescript
-submitMessage: (
-  address: string,
-  pendingMessage: string | object,
-  self: secureChannel.UserRegistration,
-  counterparty: secureChannel.UserRegistration,
-  queryClient: QueryClient,
-  currentPasskeyInfo: PasskeyInfo,
-  keyset: KeysetInfo,
-  inReplyTo?: string
-) => Promise<void>;
-```
+Message submission logic is now encapsulated within the `MessageService` (`src/services/MessageService.ts`), which is exposed through the `MessageDB Context`. This service handles the encryption, local storage, and network transmission of messages.
 
 ### Encryption & Decryption
 
@@ -426,18 +419,9 @@ export type Permission = 'message:delete';
 
 ### Space Operations
 
-**Space Creation** (`src/components/context/MessageDB.tsx`):
+**Space Creation** (`src/services/SpaceService.ts` via `MessageDB Context`):
 
-```typescript
-createSpace: (
-  spaceName: string,
-  spaceIcon: string,
-  keyset: KeysetInfo,
-  registration: secureChannel.UserRegistration,
-  isRepudiable: boolean,
-  isPublic: boolean
-) => Promise<void>;
-```
+Space creation logic is now encapsulated within the `SpaceService` (`src/services/SpaceService.ts`), which is exposed through the `MessageDB Context`. This service handles key generation, API registration, initial channel setup, and data persistence for new spaces.
 
 **Space Membership**: Managed through `space_members` object store with efficient indexing for membership queries.
 
@@ -762,7 +746,7 @@ interface SearchContext {
 
 **Primary Contexts**:
 
-1. **MessageDB Context** - Core data operations
+1. **MessageDB Context** - Orchestrates access to specialized services for core data operations and business logic.
 2. **WebSocket Context** - Real-time communication
 3. **Registration Context** - User authentication
 4. **Theme Context** - UI preferences
@@ -877,13 +861,21 @@ class ErrorBoundary extends React.Component {
 
 ### Core Data Management Files
 
-- **`src/db/messages.ts`** - MessageDB class, IndexedDB interface
-- **`src/components/context/MessageDB.tsx`** - MessageDB React context
+- **`src/db/messages.ts`** - Low-level IndexedDB interface and schema management.
+- **`src/components/context/MessageDB.tsx`** - MessageDB React context, providing access to specialized services.
+- **`src/services/`** - Directory containing specialized services for business logic:
+  - `MessageService.ts` - Handles message-related operations.
+  - `SpaceService.ts` - Manages space creation, membership, and operations.
+  - `EncryptionService.ts` - Encapsulates encryption/decryption logic.
+  - `SyncService.ts` - Manages data synchronization.
+  - `InvitationService.ts` - Handles invitation-related logic.
+  - `ConfigService.ts` - Manages user and application configuration.
+  - `SearchService.ts` - Implements full-text search functionality.
+  - `NotificationService.ts` - Manages application notifications.
 - **`src/components/context/WebsocketProvider.tsx`** - WebSocket management
 - **`src/components/context/RegistrationPersister.tsx`** - User authentication
 - **`src/api/baseTypes.ts`** - API client implementation
 - **`src/api/quorumApi.ts`** - Type definitions and API endpoints
-- **`src/services/searchService.ts`** - Search implementation
 
 ### Query Management Files
 

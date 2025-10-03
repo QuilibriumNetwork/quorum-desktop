@@ -309,14 +309,17 @@ const saveChanges = useCallback(async () => {
 
 ## Processing Layer Integration
 
-### MessageDB Processing
+### Service-Oriented Processing (via MessageDB Context)
 
-**Read-Only Channel Validation** (`src/components/context/MessageDB.tsx`):
+**Read-Only Channel Validation** (orchestrated by `MessageService` or `SpaceService` via `MessageDB Context`):
+
+The logic for validating delete messages in read-only channels is now encapsulated within specialized services (e.g., `MessageService` or `SpaceService`). These services interact with the low-level `MessageDB` (`src/db/messages.ts`) for data access.
 
 ```typescript
-// Delete message processing
+// Delete message processing (example of how a service would orchestrate)
 if (spaceId != channelId) {
-  const space = await messageDB.getSpace(spaceId);
+  // Service would fetch space data
+  const space = await messageDB.getSpace(spaceId); // Internal call within a service
 
   // Find the channel
   const channel = space?.groups
@@ -334,6 +337,7 @@ if (spaceId != channelId) {
       )
     );
     if (isManager) {
+      // Service would call messageDB.deleteMessage()
       await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
       return;
     }
@@ -351,6 +355,7 @@ if (spaceId != channelId) {
   ) {
     return;
   }
+  // Service would call messageDB.deleteMessage()
   await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
 }
 ```
@@ -424,7 +429,7 @@ if (spaceId != channelId) {
 ### ⚠️ Space Owner Considerations
 
 - **UI Permissions**: Space owners see appropriate buttons and can attempt actions
-- **Processing Gap**: Space owner verification in MessageDB context needs architectural consideration
+- **Processing Gap**: Space owner verification within the relevant service (e.g., `SpaceService`) exposed via `MessageDB Context` needs architectural consideration.
 - **Workaround**: Space owners can assign themselves to manager roles for full functionality
 
 ### 🔧 Future Enhancements
@@ -471,7 +476,7 @@ if (spaceId != channelId) {
 1. **Follow Isolation Principle**: New features should ignore traditional roles
 2. **Manager-Centric Design**: Base permissions on manager status, not traditional roles
 3. **Maintain UI Clarity**: Ensure visual distinction between regular and read-only channels
-4. **Consider Processing**: Ensure MessageDB processing supports new features
+4. **Consider Processing**: Ensure the relevant service (e.g., `MessageService`, `SpaceService`) exposed via `MessageDB Context` supports new features.
 
 ### Testing Considerations
 
@@ -491,7 +496,7 @@ if (spaceId != channelId) {
 ### Permission Architecture Integration
 
 - **UI Level**: Integrated with unified permission checking system
-- **Processing Level**: Validated independently in MessageDB context
+- **Processing Level**: Validated independently within the relevant service (e.g., `MessageService`, `SpaceService`) exposed via `MessageDB Context`.
 - **Hierarchy Respect**: Maintains space owner privilege while adding manager layer
 
 ## Related Documentation

@@ -13,9 +13,9 @@ export default defineConfig({
   ],
   test: {
     environment: 'jsdom',
-    setupFiles: ['src/dev/refactoring/tests/setup.ts'],
+    setupFiles: ['src/dev/tests/setup.ts'],
     globals: true,
-    include: ['src/dev/refactoring/tests/**/*.{test,spec}.{js,ts,jsx,tsx}'],
+    include: ['src/dev/tests/**/*.{test,spec}.{js,ts,jsx,tsx}'],
     exclude: ['node_modules', 'dist'],
   },
   resolve: {
@@ -23,5 +23,6 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
       crypto: 'crypto-browserify',
     },
+    extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.tsx', '.ts', '.jsx', '.js'],
   },
 });

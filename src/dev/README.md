@@ -63,12 +63,22 @@ Comprehensive development suite for building and managing cross-platform compone
 
 ### 🧭 Navigation System
 
-**Path**: `DevNavMenu.tsx`  
+**Path**: `DevNavMenu.tsx`
 **Purpose**: Consistent navigation across all development tools
 
 - Unified navigation bar for all dev interfaces
 - Active page highlighting and smooth transitions
 - Sticky positioning for easy tool switching
+
+### 🧪 Test Suite
+
+**Path**: `tests/` folder
+**Purpose**: Comprehensive unit test suite for MessageDB service refactoring
+
+- 75 unit tests across 6 services (MessageService, SpaceService, InvitationService, SyncService, EncryptionService, ConfigService)
+- 100% passing with ~10 second runtime
+- Uses vi.fn() mocks to validate service behavior
+- See `tests/README.md` for detailed documentation and test descriptions
 
 ## Usage
 
@@ -93,4 +103,4 @@ yarn dev
 
 ---
 
-_Updated: 2025-09-10 16:15_
+_Last updated: 2025-10-03_

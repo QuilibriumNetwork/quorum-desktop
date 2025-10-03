@@ -1,4 +1,4 @@
-import { SearchService, SearchQuery } from '../../../services/searchService';
+import { SearchService, SearchQuery } from '../../../services/SearchService';
 import { SearchResult } from '../../../db/messages';
 
 const buildSearchFetcher =

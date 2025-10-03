@@ -10,13 +10,6 @@ afterEach(() => {
   cleanup();
 });
 
-// Mock IndexedDB for tests
-const mockIndexedDB = {
-  open: vi.fn(),
-  deleteDatabase: vi.fn(),
-  cmp: vi.fn(),
-};
-
 // Mock WebSocket for tests
 const mockWebSocket = vi.fn(() => ({
   close: vi.fn(),
@@ -27,13 +20,6 @@ const mockWebSocket = vi.fn(() => ({
 
 // Setup global mocks
 beforeAll(() => {
-  // Mock IndexedDB
-  global.indexedDB = mockIndexedDB as any;
-  global.IDBRequest = vi.fn() as any;
-  global.IDBObjectStore = vi.fn() as any;
-  global.IDBTransaction = vi.fn() as any;
-  global.IDBDatabase = vi.fn() as any;
-
   // Mock WebSocket
   global.WebSocket = mockWebSocket as any;
 

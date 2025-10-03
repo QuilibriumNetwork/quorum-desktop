@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { SearchService } from '../../../services/searchService';
+import { SearchService } from '../../../services/SearchService';
 
 export interface UseSearchServiceProps {
   messageDB: any; // TODO: Type this properly based on your MessageDB interface

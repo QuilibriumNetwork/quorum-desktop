@@ -27,7 +27,7 @@ export type Permission = 'message:delete' | 'message:pin' | 'user:kick';
 
 - **Scope**: Delete any message in regular channels
 - **UI Integration**: Controls delete button visibility in message actions
-- **Processing**: Validated in MessageDB for message removal operations
+- **Processing**: Validated by `MessageService` for message removal operations (interacting with MessageDB for persistence)
 - **Restrictions**: Does not work in read-only channels (isolation principle)
 
 #### **`message:pin`**
@@ -110,9 +110,9 @@ export function getUserPermissions(
 
 #### **Processing Level Enforcement**
 
-- **MessageDB Operations**: Server-side validation for delete operations (role-based only, space owners NOT implemented)
+- **MessageService Operations**: Server-side validation for delete operations (role-based only, space owners NOT implemented), interacting with MessageDB for persistence.
 - **Pinning System**: Permission checks in mutation hooks (role-based only, space owners NOT implemented)
-- **User Management**: Multi-layer kick protection system (including space owner protection)
+- **User Management**: Multi-layer kick protection system (including space owner protection), handled by `SpaceService`.
 
 ## Role Management Components
 
@@ -196,7 +196,7 @@ export interface UseRoleManagementReturn {
 
 1. **UI Layer**: Kick buttons hidden for space owners using `canKickUser()`
 2. **Permission Layer**: `hasPermission()` considers target user protection
-3. **Processing Layer**: MessageDB server-side validation prevents space owner kicks
+3. **Processing Layer**: `SpaceService` server-side validation prevents space owner kicks (interacting with MessageDB for persistence)
 
 ```typescript
 export function canKickUser(targetUserAddress: string, space: Space): boolean {
@@ -219,7 +219,7 @@ export function canKickUser(targetUserAddress: string, space: Space): boolean {
 
 - **UI Controls**: Prevent unauthorized action attempts
 - **Business Logic**: Validate permissions in hooks and utilities
-- **Server Validation**: Final authorization in MessageDB processing
+- **Server Validation**: Final authorization in relevant services (e.g., `MessageService`, `SpaceService`) exposed via `MessageDB Context`.
 - **Space Owner Priority**: Owners bypass all permission checks
 
 ## Integration with Permission Architecture
@@ -234,17 +234,21 @@ export function canKickUser(targetUserAddress: string, space: Space): boolean {
 
 ### Processing Integration
 
-**MessageDB Validation Pattern**:
+**Service-Oriented Validation Pattern (via MessageDB Context)**:
+
+The logic for validating and processing messages (e.g., deletion) is now encapsulated within specialized services (e.g., `MessageService`, `SpaceService`) exposed via `MessageDB Context`. These services interact with the low-level `MessageDB` (`src/db/messages.ts`) for data access.
 
 ```typescript
-// Example: Delete message processing
+// Example: Delete message processing (orchestrated by a service)
 if (spaceId != channelId) {
-  const space = await messageDB.getSpace(spaceId);
+  // Service would fetch space data
+  const space = await messageDB.getSpace(spaceId); // Internal call within a service
 
   // For read-only channels: isolated manager system
   if (channel?.isReadOnly) {
     const isManager = /* manager role check */;
     if (isManager) {
+      // Service would call messageDB.deleteMessage()
       await messageDB.deleteMessage(messageId);
       return;
     }
@@ -258,6 +262,7 @@ if (spaceId != channelId) {
   )) {
     return;
   }
+  // Service would call messageDB.deleteMessage()
   await messageDB.deleteMessage(messageId);
 }
 ```
@@ -363,7 +368,7 @@ export type Role = {
 1. **Extend Permission type**: Add new permission string literal
 2. **Update UI components**: Add permission to multiselect options
 3. **Implement enforcement**: Add checks to relevant components/hooks
-4. **Add server validation**: Ensure MessageDB processing validates new permission
+4. **Add server validation**: Ensure the relevant service (e.g., `MessageService`, `SpaceService`) exposed via `MessageDB Context` validates new permission.
 5. **Update documentation**: Document new permission scope and behavior
 
 ### Testing Considerations

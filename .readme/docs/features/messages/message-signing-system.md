@@ -203,9 +203,9 @@ const effectiveSkip = space?.isRepudiable ? skipSigning : false;
 
 ### Critical Implementation Details
 
-1. **Database Preservation:** The `saveMessage()` function in `src/db/messages.ts` was modified to preserve existing conversation data including `isRepudiable` when updating conversation timestamps.
+1. **Database Preservation:** The `MessageService.saveMessage()` function (which interacts with `src/db/messages.ts`) was modified to preserve existing conversation data including `isRepudiable` when updating conversation timestamps.
 
-2. **React Query Cache:** The `addOrUpdateConversation()` function preserves `isRepudiable` field when updating conversation lists.
+2. **React Query Cache:** The `MessageService` (or a related service) ensures that the `addOrUpdateConversation()` function preserves the `isRepudiable` field when updating conversation lists.
 
 3. **Invalidation Chain:** Changes trigger React Query invalidation to update all dependent components.
 
@@ -273,16 +273,16 @@ Default: true (always sign)
 
 **Issue:** Conversation-level signing settings were reverting after sending messages.
 
-**Root Cause:** The `saveMessage()` database function was overwriting conversation records without preserving the `isRepudiable` field.
+**Root Cause:** The `MessageService.saveMessage()` function was overwriting conversation records without preserving the `isRepudiable` field.
 
-**Fix:** Modified `saveMessage()` to:
+**Fix:** Modified `MessageService.saveMessage()` (which interacts with `src/db/messages.ts`) to:
 1. Retrieve existing conversation data
 2. Preserve all existing fields including `isRepudiable`
 3. Only update necessary fields (timestamp, icon, displayName)
 
 **Files Modified:**
-- `src/db/messages.ts` - Fixed database preservation
-- `src/components/context/MessageDB.tsx` - Enhanced React Query cache preservation
+- `src/db/messages.ts` - Fixed database preservation (low-level IndexedDB interaction)
+- `src/components/context/MessageDB.tsx` - `MessageDB Context` now provides access to `MessageService` which handles enhanced React Query cache preservation.
 
 ## Testing
 
