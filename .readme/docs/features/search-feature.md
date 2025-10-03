@@ -28,14 +28,14 @@ The global search feature is fully implemented and functional with:
 ### Search Technology Stack
 
 - **MiniSearch 7.1.2**: Client-side full-text search engine
-- **IndexedDB**: Persistent message storage via existing MessageDB
+- **IndexedDB**: Persistent message storage, accessed by `SearchService` via `MessageDB`
 - **React Query**: Caching and state management
 - **React Router**: Navigation and context detection
 
 ### Data Flow
 
 ```
-User Types → Search Service → MiniSearch Index → MessageDB → Search Results → Navigation
+User Types → Search Service → MiniSearch Index → MessageDB (via SearchService) → Search Results → Navigation
      ↓              ↓              ↓              ↓              ↓              ↓
   Debounced    Text Analysis   In-Memory      IndexedDB    UI Components   Message Flash
    (300ms)     & Ranking      Indices        Queries      & Highlighting   & Scroll
@@ -94,22 +94,24 @@ src/
 }
 ```
 
-### 2. MessageDB Search Enhancement (`src/db/messages.ts`)
+### 2. SearchService Integration with MessageDB (`src/services/searchService.ts` and `src/db/messages.ts`)
 
-**Added Methods**:
+The `SearchService` (`src/services/searchService.ts`) is responsible for managing search indices and executing searches. It interacts with `src/db/messages.ts` for low-level access to message data in IndexedDB.
 
-- `initializeSearchIndices()`: Builds indices for all spaces and DMs
-- `searchMessages(query, context, limit)`: Context-aware search
-- `addMessageToIndex(message)`: Real-time index updates
-- `removeMessageFromIndex(messageId, spaceId, channelId)`: Index cleanup
+**Key Methods in `SearchService` (interacting with `MessageDB`)**:
 
-**Index Structure**:
+- `initializeSearchIndices()`: Orchestrates building indices for all spaces and DMs by fetching data from MessageDB.
+- `searchMessages(query, context, limit)`: Performs context-aware search using its internal MiniSearch indices, fetching additional data from MessageDB as needed.
+- `addMessageToIndex(message)`: Updates the internal search index in real-time when new messages are added to MessageDB.
+- `removeMessageFromIndex(messageId, spaceId, channelId)`: Cleans up the internal search index when messages are removed from MessageDB.
+
+**Internal Index Structure (within `SearchService`)**:
 
 ```typescript
 // Index keys: "space:{spaceId}" or "dm:{conversationId}"
 searchIndices: Map<string, MiniSearch<SearchableMessage>>;
 
-// Searchable message format
+// Searchable message format (used by MiniSearch within SearchService)
 interface SearchableMessage {
   id: string; // messageId
   spaceId: string; // Space identifier
@@ -493,14 +495,14 @@ expect(result.current).toEqual({
 
 - **Search Logic**: `src/services/searchService.ts`
 - **UI Components**: `src/components/search/`
-- **Database Integration**: `src/db/messages.ts` (search methods)
+- **Database Integration**: `src/services/searchService.ts` (orchestrates interaction with `src/db/messages.ts` for data access)
 - **Context Detection**: `src/hooks/useSearchContext.ts`
 - **Navigation**: `src/components/search/GlobalSearch.tsx`
 
 ### Common Debugging Tips
 
 1. **Check Context**: Verify `useSearchContext` returns expected values
-2. **Verify Indices**: Check `searchIndices.size` in MessageDB
+2. **Verify Indices**: Check `SearchService`'s internal `searchIndices.size` (accessed via `useMessageDB()`)
 3. **Test Navigation**: Ensure URL patterns match router configuration
 4. **Monitor Focus**: Use browser dev tools to track `document.activeElement`
 5. **Cache Issues**: Clear React Query cache if stale results appear

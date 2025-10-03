@@ -42,10 +42,10 @@ The system operates two **parallel but coordinated** permission models:
 - **Components**: Buttons, UI states, visual indicators
 - **Logic**: Shows/hides actions based on all permission types
 
-#### **MessageDB Processing**
+#### **Service-Oriented Processing (via MessageDB Context)**
 
 - **Purpose**: Validate and execute actual operations
-- **Implementation**: Server-side validation in MessageDB context
+- **Processing Level**: Validated independently within the relevant service (e.g., `MessageService`, `SpaceService`) exposed via `MessageDB Context`.
 - **Validation**: Ensures UI permissions match processing permissions
 - **Security**: Final authorization layer
 
@@ -100,8 +100,8 @@ graph TD
 ### Processing Limitations
 
 - **Space owners in regular channels**: May need traditional roles with delete permissions
-- **MessageDB processing**: Currently limited to role-based and self-delete validation
-- **Architectural gap**: Space owner verification in MessageDB context needs resolution
+- **Service-oriented processing**: Validation is now handled by specialized services (e.g., `MessageService`, `SpaceService`) exposed via `MessageDB Context`, and is currently limited to role-based and self-delete validation.
+- **Architectural gap**: Space owner verification within the relevant service exposed via `MessageDB Context` needs resolution.
 
 ## Implementation Structure
 
@@ -111,7 +111,7 @@ graph TD
 
 - `src/utils/permissions.ts` - Traditional role permission checking
 - `src/utils/channelPermissions.ts` - Unified UI permission system
-- `src/components/context/MessageDB.tsx` - Processing validation
+- `src/components/context/MessageDB.tsx` - Provides access to services (e.g., `MessageService`, `SpaceService`) that handle processing validation.
 
 #### **Space Role Management**
 
@@ -175,7 +175,7 @@ export type Channel = {
 
 ### 🔧 Future Enhancements
 
-- **Enhanced space owner support**: Proper MessageDB processing for space owners
+- **Enhanced space owner support**: Proper processing for space owners within the relevant service (e.g., `SpaceService`) exposed via `MessageDB Context`.
 - **Permission expansion**: Additional permission types beyond current three
 - **Role hierarchy**: Advanced role inheritance and priority systems
 - **Audit capabilities**: Permission usage tracking and logging
@@ -192,7 +192,7 @@ export type Channel = {
 ### Integration Patterns
 
 1. **UI Components**: Use unified permission system from `channelPermissions.ts`
-2. **Processing Logic**: Validate in MessageDB context with current working patterns
+2. **Processing Logic**: Validate within the relevant service (e.g., `MessageService`, `SpaceService`) exposed via `MessageDB Context` with current working patterns.
 3. **New Features**: Follow existing isolation and hierarchy principles
 4. **Testing**: Verify both UI behavior and processing validation
 

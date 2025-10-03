@@ -14,15 +14,16 @@ The invite system operates through several key components:
 2. **useInviteManagement.ts** - Hook managing invite state and logic
 3. **useInviteValidation.ts** - Hook for validating invite links
 4. **useSpaceJoining.ts** - Hook for joining spaces via invites
-5. **MessageDB.tsx** - Core database operations for invites
-6. **InviteLink.tsx** - Component for displaying and processing invite links
+5. **InvitationService.ts** - Encapsulates core invite-related business logic and interacts with MessageDB for persistence.
+6. **MessageDB Context** - Provides access to InvitationService and other services.
+7. **InviteLink.tsx** - Component for displaying and processing invite links
 
 ### Data Flow
 
-1. **Invite Creation**: Generated through `generateNewInviteLink()` in MessageDB.tsx (lines 3829-3869)
-2. **Invite Sending**: Sent via `sendInviteToUser()` to direct message conversations (lines 3800-3827)
+1. **Invite Creation**: Handled by `InvitationService` via `generateNewInviteLink()`
+2. **Invite Sending**: Sent via `sendInviteToUser()` to direct message conversations (logic likely within `MessageService` or `InvitationService`)
 3. **Invite Processing**: Links parsed and validated through `useInviteValidation` hook
-4. **Space Joining**: Users join via `joinInviteLink()` function (lines 4290-4346)
+4. **Space Joining**: Users join via `InvitationService`'s `joinInviteLink()` function
 
 ## Invite Types and Behavior
 
@@ -63,7 +64,7 @@ When you generate a public invite link, the system switches from private-only to
 
 2. **Phase 2 - The Switch (REVERSIBLE):**
    - Generate first public link → **ALL previous private invites immediately stop working**
-   - New public key is generated alongside original keys (MessageDB.tsx line 3849)
+   - New public key is generated alongside original keys (logic now within `InvitationService` or `SpaceService`)
    - System switches to public-only mode while public link exists
 
 3. **Phase 3 - Public-Only Mode (REVERSIBLE):**
@@ -79,25 +80,28 @@ When you generate a public invite link, the system switches from private-only to
 **Critical Code Evidence:**
 
 ```typescript
-// constructInviteLink() decision logic - MessageDB.tsx lines 4066-4068
+// constructInviteLink() decision logic (now within InvitationService)
+// The MessageDB Context provides access to the InvitationService, which orchestrates this logic.
 const constructInviteLink = React.useCallback(async (spaceId: string) => {
-  const space = await messageDB.getSpace(spaceId);
+  // Interaction with SpaceService or MessageDB for space data
+  const space = await messageDB.getSpace(spaceId); // This call would be internal to a service
   if (space?.inviteUrl) {
     return space.inviteUrl; // ← Returns public URL if it exists and is truthy
   }
   // ← Falls back to private invite generation when inviteUrl is empty/deleted
 ```
 
-**Private Invite Secret Consumption - MessageDB.tsx lines 4084-4091:**
+**Private Invite Secret Consumption (now orchestrated by InvitationService):**
 
 ```typescript
 // Private invite generation consumes secrets from finite pool
 const index_secret_raw = sets[0].evals.shift(); // ← REMOVES secret from evals array
 const secret = Buffer.from(new Uint8Array(index_secret_raw)).toString('hex');
-await messageDB.saveEncryptionState(
-  { ...response[0], state: JSON.stringify(sets[0]) }, // ← SAVES modified state
-  true
-);
+// The InvitationService would handle saving the modified encryption state
+// await messageDB.saveEncryptionState( // This call would be internal to a service
+//   { ...response[0], state: JSON.stringify(sets[0]) }, // ← SAVES modified state
+//   true
+// );
 // Each private invite permanently consumes one secret from the evals array
 ```
 
@@ -180,7 +184,7 @@ https://[domain]/invite/#spaceId={SPACE_ID}&configKey={NEW_CONFIG_PRIVATE_KEY}
 3. **Secret Consumption**: `sets[0].evals.shift()` permanently removes one secret from the finite pool
 4. **Template Construction**: Uses existing encryption states and ratchets
 5. **Link Generation**: Includes template, consumed secret, and hub keys
-6. **State Update**: Save modified encryption state (with one less secret) back to database
+6. **State Update**: The `InvitationService` now handles saving the modified encryption state (with one less secret) back to the database.
 7. **Validation**: Uses original config keys for decryption
 
 **Public Links (generateNewInviteLink):**
@@ -194,11 +198,11 @@ https://[domain]/invite/#spaceId={SPACE_ID}&configKey={NEW_CONFIG_PRIVATE_KEY}
 ### Key Decision Logic
 
 ```typescript
-// The critical decision point in constructInviteLink()
+// The critical decision point in constructInviteLink(), now orchestrated by InvitationService
 if (space?.inviteUrl) {
   return space.inviteUrl; // PUBLIC SYSTEM
 } else {
-  // PRIVATE SYSTEM - use original keys
+  // PRIVATE SYSTEM - use original keys. These calls would be internal to a service.
   const config_key = await messageDB.getSpaceKey(spaceId, 'config');
   const hub_key = await messageDB.getSpaceKey(spaceId, 'hub');
 }
@@ -210,7 +214,7 @@ if (space?.inviteUrl) {
 - **Key Evolution**: Original keys preserved, new keys added when public links enabled
 - **Space State**: `inviteUrl` property determines which key system is active
 - **Member Management**: Real-time updates via WebSocket sync
-- **Message History**: Persistent storage in local MessageDB
+- **Message History**: Persistent storage in local MessageDB, managed by `MessageService`.
 
 ## Recommendations
 
@@ -316,7 +320,7 @@ The invite system now dynamically detects the environment and uses appropriate d
 
 ### Files Modified:
 - `src/utils/inviteDomain.ts` - New utility for dynamic domain resolution
-- `src/components/context/MessageDB.tsx` - Uses dynamic domain for invite generation
+- `src/components/context/MessageDB.tsx` - Provides access to `InvitationService` which uses dynamic domain for invite generation
 - `src/components/modals/JoinSpaceModal.tsx` - Uses dynamic domain for display
 - `src/hooks/business/spaces/useInviteValidation.ts` - Dynamic validation prefixes
 
@@ -325,9 +329,9 @@ The invite system now dynamically detects the environment and uses appropriate d
 **Issues Fixed**: Multiple join messages, redundant invites to existing members
 
 **Changes**:
-- `joinInviteLink()` - Added membership check before saving member/sending join message
+- `InvitationService.joinInviteLink()` - Added membership check before saving member/sending join message
 - `useInviteManagement.invite()` - Added membership validation with warning display
-- `MessageDB` context - Exposed `getSpaceMember()` for membership checks
+- `MessageDB` context - Provides access to `SpaceService` for `getSpaceMember()` for membership checks
 
 **Result**: Clean invite flow with no duplicate joins or redundant invite sending.
 
@@ -336,4 +340,4 @@ The invite system now dynamically detects the environment and uses appropriate d
 _Document created: July 30, 2025_
 _Updated: September 22, 2025 - Corrected reversibility of public invite links_
 _Updated: September 25, 2025 - Added duplicate prevention fixes_
-_Covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, MessageDB.tsx, InviteLink.tsx, inviteDomain.ts_
+_Covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, InvitationService.ts, MessageDB Context, InviteLink.tsx, inviteDomain.ts_

@@ -13,7 +13,7 @@ KickUserModal (UI Component)
     ↓
 useUserKicking (Business Logic Hook)
     ↓
-MessageDB.kickUser (Core Implementation)
+SpaceService.kickUser (Core Implementation via MessageDB Context)
     ↓
 IndexedDB + Server API
 ```
@@ -74,7 +74,7 @@ const [confirmationTimeout, setConfirmationTimeout] =
 - `useRegistrationContext()` - User's keyset for cryptographic operations
 - `useRegistration()` - User's registration data
 - `useQueryClient()` - React Query cache management
-- `useMessageDB()` - Database operations
+- `useMessageDB()` - Provides access to specialized services (e.g., `SpaceService`) for database operations.
 
 **Key Functions**:
 
@@ -82,7 +82,7 @@ const [confirmationTimeout, setConfirmationTimeout] =
 
 - Validates required parameters (spaceId, registration, userAddress)
 - Sets loading state
-- Calls `MessageDB.kickUser()` with cryptographic parameters
+- Calls `SpaceService.kickUser()` (accessed via `useMessageDB()`) with cryptographic parameters
 - Invalidates React Query cache for space members
 - Executes success callback (typically closes modal)
 - Handles errors and cleanup
@@ -140,7 +140,7 @@ handleKickClick(userAddress, onClose)
     ↓
 kickUserFromSpace(userAddress, onClose)
     ↓
-MessageDB.kickUser(spaceId, userAddress, userKeyset, deviceKeyset, registration)
+SpaceService.kickUser(spaceId, userAddress, userKeyset, deviceKeyset, registration) (via MessageDB Context)
     ↓
 [Server Operations + Local Database Updates]
     ↓
@@ -149,11 +149,11 @@ queryClient.invalidateQueries(['SpaceMembers', spaceId])
 onClose() - Modal closes
 ```
 
-### 3. MessageDB.kickUser Implementation
+### 3. `SpaceService.kickUser` Implementation
 
-**Location**: `src/components/context/MessageDB.tsx` (lines ~3140-3568)
+**Location**: `src/services/SpaceService.ts`
 
-**Core Operations**:
+**Core Operations**: The `SpaceService.kickUser` method, exposed via the `MessageDB Context`, orchestrates the following operations:
 
 #### Server-Side Operations:
 
@@ -165,20 +165,20 @@ onClose() - Modal closes
 
 #### Local Database Operations:
 
-1. **Kick Message**: Saves kick confirmation message to local chat history
-2. **Encryption State**: Updates encryption state excluding kicked user from peer mappings
+1. **Kick Message**: Saves kick confirmation message to local chat history (via `MessageService`)
+2. **Encryption State**: Updates encryption state excluding kicked user from peer mappings (via `EncryptionService`)
 3. **Member Filtering**: Creates `filteredMembers` list for future encryption sessions
 
 #### **Important**:
 
-The `kickUser` function does **NOT** remove the kicked user from the local IndexedDB space members table. The user remains visible in the UI until server synchronization updates the local database.
+The `kickUser` function does **NOT** remove the kicked user from the local IndexedDB space members table directly. The user remains visible in the UI until server synchronization updates the local database.
 
 ## Data Flow and Caching
 
 ### 1. Space Members Data Flow
 
 ```
-IndexedDB (messageDB.getSpaceMembers)
+IndexedDB (via SpaceService.getSpaceMembers)
     ↓
 useSpaceMembers React Query Hook
     ↓
@@ -220,7 +220,7 @@ await queryClient.invalidateQueries({
 ### Required Parameters for Kick Operation
 
 ```tsx
-kickUser(
+SpaceService.kickUser(
   spaceId: string,                           // Target space ID
   userAddress: string,                       // User to kick
   userKeyset: secureChannel.UserKeyset,     // Admin's user keyset
@@ -291,7 +291,7 @@ kickUser(
 
 ### Mock Requirements
 
-- Mock `useMessageDB()` for kick operations
+- Mock `useMessageDB()` to provide a mocked `SpaceService` for kick operations
 - Mock `useQueryClient()` for cache invalidation
 - Mock `useParams()` for spaceId
 - Mock authentication contexts for user data
@@ -302,7 +302,7 @@ kickUser(
 
 - **Authentication**: Requires valid passkey and registration
 - **Routing**: Needs spaceId from URL parameters
-- **Database**: Integrates with MessageDB for operations
+- **Database**: Integrates with `SpaceService` (via `MessageDB Context`) for operations
 - **Caching**: Uses React Query for data management
 - **UI**: Uses primitive components for cross-platform compatibility
 
