@@ -102,7 +102,7 @@ The MessageDB refactoring has successfully extracted 6 services from the origina
 
 ---
 
-## Remaining in MessageDB.tsx (1,090 lines)
+## Remaining in MessageDB.tsx (~1,015 lines)
 
 ### Context Provider Responsibilities
 - Service instantiation and dependency injection
@@ -112,11 +112,14 @@ The MessageDB refactoring has successfully extracted 6 services from the origina
 - Ref state management (spaceInfo, syncInfo)
 
 ### Functions Still in MessageDB.tsx
-- `canonicalize()` - 75 lines (utility function)
-- `updateUserProfile()` - 31 lines (user profile updates)
-- Various helper utilities and callbacks
+- `updateUserProfile()` - 31 lines (orchestration function - broadcasts profile updates to all spaces)
+- Various helper utilities (`int64ToBytes`, etc.)
+- React hooks and effects
 
-**Status**: ⚠️ May be extracted in Phase 4 Task 6
+### Recently Extracted (2025-10-03)
+- ✅ `canonicalize()` - Moved to `src/utils/canonicalize.ts` (pure utility function)
+
+**Status**: ✅ Clean context provider - no further extraction needed
 
 ---
 

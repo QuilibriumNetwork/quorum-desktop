@@ -28,7 +28,7 @@
     "lingui:compile": "lingui compile",
     "scan-docs": "node src/dev/docs/utils/scanMarkdownFiles.cjs",
     "test": "vitest",
-    "test:ui": "vitest --ui",
+    "test:run": "vitest --run",
     "mobile": "cd mobile && expo start --dev-client",
     "mobile:tunnel": "cd mobile && expo start --dev-client --tunnel",
     "mobile:clear": "cd mobile && expo start --dev-client --clear",

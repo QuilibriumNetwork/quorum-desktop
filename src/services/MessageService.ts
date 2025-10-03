@@ -11,7 +11,7 @@ import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibr
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../utils';
 import { getInviteUrlBase } from '../utils/inviteDomain';
-// canonicalize will be passed as a dependency
+import { canonicalize } from '../utils/canonicalize';
 import { QuorumApiClient } from '../api/baseTypes';
 
 // Type definitions for the service
@@ -42,7 +42,6 @@ export interface MessageServiceDependencies {
   directSync: (spaceId: string, message: any) => Promise<void>;
   saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
   int64ToBytes: (num: number) => Uint8Array;
-  canonicalize: (obj: any) => string;
   sendHubMessage: (spaceId: string, message: string) => Promise<string>;
 }
 
@@ -73,7 +72,6 @@ export class MessageService {
   private directSync: (spaceId: string, message: any) => Promise<void>;
   private saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
   private int64ToBytes: (num: number) => Uint8Array;
-  private canonicalize: (obj: any) => string;
   private sendHubMessage: (spaceId: string, message: string) => Promise<string>;
 
   constructor(dependencies: MessageServiceDependencies) {
@@ -92,7 +90,6 @@ export class MessageService {
     this.directSync = dependencies.directSync;
     this.saveConfig = dependencies.saveConfig;
     this.int64ToBytes = dependencies.int64ToBytes;
-    this.canonicalize = dependencies.canonicalize;
     this.sendHubMessage = dependencies.sendHubMessage;
   }
 
@@ -1105,7 +1102,7 @@ export class MessageService {
                   decryptedContent.nonce +
                     'post' +
                     decryptedContent.content.senderId +
-                    this.canonicalize(decryptedContent.content as any),
+                    canonicalize(decryptedContent.content as any),
                   'utf-8'
                 )
               );
@@ -1946,7 +1943,7 @@ export class MessageService {
                         message.nonce +
                           'post' +
                           message.content.senderId +
-                          this.canonicalize(message.content as any),
+                          canonicalize(message.content as any),
                         'utf-8'
                       )
                     );
@@ -2126,7 +2123,7 @@ export class MessageService {
           nonce +
             'post' +
             currentPasskeyInfo.address +
-            this.canonicalize(pendingMessage as any),
+            canonicalize(pendingMessage as any),
           'utf-8'
         )
       );
