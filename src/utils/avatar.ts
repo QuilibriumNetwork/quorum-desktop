@@ -1,20 +1,17 @@
 /**
- * Generates initials from a user's display name or address
- * @param fullName - User's display name or address
- * @returns Uppercase initials (1-2 characters) or "?" for empty input
+ * Generates initials from a user's display name
+ * @param displayName - User's display name (required, always present)
+ * @returns Uppercase initials (1-2 characters)
  *
  * Behavior:
  * - Regular names: First letter of first 2 words ("John Doe" → "JD")
  * - Names starting with emoji: Only the first character ("😊 John" → "😊")
- * - Empty/whitespace: Returns "?"
  *
  * Note: Uses simple emoji detection - if more complex emoji handling is needed
  * (skin tones, ZWJ sequences, etc.), consider using a library like emoji-regex
  */
-export const getInitials = (fullName: string): string => {
-  if (!fullName?.trim()) return "?";
-
-  const trimmed = fullName.trim();
+export const getInitials = (displayName: string): string => {
+  const trimmed = displayName.trim();
 
   // Use codePointAt on the original string to properly detect emojis
   // (emojis are often multi-byte UTF-16 surrogate pairs)
@@ -51,16 +48,17 @@ export const getInitials = (fullName: string): string => {
     .join("")
     .toUpperCase();
 
-  return initials || "?";
+  return initials;
 };
 
 /**
- * Generates a consistent color for a user based on their address
+ * Generates a consistent color for a user based on their display name
  * Uses improved DJB2 hash algorithm for better distribution
- * @param address - User's address (for deterministic color)
+ * Privacy: Color is tied to display name, not address, preventing user fingerprinting
+ * @param displayName - User's display name (for deterministic color)
  * @returns Hex color string
  */
-export const getColorFromAddress = (address: string): string => {
+export const getColorFromDisplayName = (displayName: string): string => {
   const colors = [
     // Blues
     '#3B82F6', // blue-500
@@ -109,15 +107,13 @@ export const getColorFromAddress = (address: string): string => {
     '#22D3EE', // cyan-400
   ];
 
-  // Handle undefined or empty address - return first color
-  if (!address || address.length === 0) {
-    return colors[0];
-  }
+  // Normalize display name for consistent hashing (case-insensitive)
+  const normalized = displayName.toLowerCase().trim();
 
   // DJB2 hash algorithm for better distribution
   let hash = 5381;
-  for (let i = 0; i < address.length; i++) {
-    hash = ((hash << 5) + hash) + address.charCodeAt(i); // hash * 33 + c
+  for (let i = 0; i < normalized.length; i++) {
+    hash = ((hash << 5) + hash) + normalized.charCodeAt(i); // hash * 33 + c
   }
 
   // Use unsigned right shift to ensure positive number

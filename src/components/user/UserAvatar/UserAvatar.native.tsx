@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Image, StyleSheet, ViewStyle } from 'react-native';
 import { UserInitials } from '../UserInitials';
 import { DefaultImages } from '../../../utils';
-import { getColorFromAddress } from '../../../utils/avatar';
+import { getColorFromDisplayName } from '../../../utils/avatar';
 
 interface UserAvatarProps {
   userIcon?: string;
@@ -25,8 +25,8 @@ export function UserAvatar({
 }: UserAvatarProps) {
   const hasValidImage = userIcon && !userIcon.includes(DefaultImages.UNKNOWN_USER);
 
-  // Memoize color calculation for performance (only recalculates when address changes)
-  const backgroundColor = useMemo(() => getColorFromAddress(address), [address]);
+  // Memoize color calculation for performance (only recalculates when display name changes)
+  const backgroundColor = useMemo(() => getColorFromDisplayName(displayName), [displayName]);
 
   if (hasValidImage) {
     return (
