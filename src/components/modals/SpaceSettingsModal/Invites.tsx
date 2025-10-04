@@ -18,11 +18,8 @@ interface InvitesProps {
   membershipWarning: string | undefined;
   generating: boolean;
   generationSuccess: boolean;
-  deleting: boolean;
-  deletionSuccess: boolean;
   errorMessage: string;
   setShowGenerateModal: (show: boolean) => void;
-  setShowDeleteModal: (show: boolean) => void;
 }
 
 const Invites: React.FunctionComponent<InvitesProps> = ({
@@ -39,11 +36,8 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
   membershipWarning,
   generating,
   generationSuccess,
-  deleting,
-  deletionSuccess,
   errorMessage,
   setShowGenerateModal,
-  setShowDeleteModal,
 }) => {
   return (
     <>
@@ -144,21 +138,6 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
               </Callout>
             )}
 
-            {deleting && (
-              <Callout variant="warning" size="sm" className="mb-4 mt-4">
-                <div className="flex items-center gap-2">
-                  <Icon name="spinner" spin={true} className="text-warning" />
-                  <span>Deleting public invite link...</span>
-                </div>
-              </Callout>
-            )}
-
-            {deletionSuccess && (
-              <Callout variant="success" size="sm" className="mb-4 mt-4" autoClose={3}>
-                <span>Public invite link deleted successfully.</span>
-              </Callout>
-            )}
-
             {errorMessage && (
               <Callout variant="error" size="sm" className="mb-4 mt-4">
                 <span>{errorMessage}</span>
@@ -227,16 +206,9 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
 
                 <div className="flex gap-2 mt-4">
                   <Button
-                    type="danger-outline"
-                    onClick={() => setShowDeleteModal(true)}
-                    disabled={generating || deleting}
-                  >
-                    <Trans>Delete Current Link</Trans>
-                  </Button>
-                  <Button
                     type="secondary"
                     onClick={() => setShowGenerateModal(true)}
-                    disabled={generating || deleting}
+                    disabled={generating}
                   >
                     <Trans>Generate New Link</Trans>
                   </Button>
@@ -248,7 +220,7 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
         <div style={{ marginBottom: '20px' }}></div>
         <div className="modal-content-actions">
           <Button
-            type="secondary"
+            type="primary"
             disabled={
               sendingInvite || (!selectedUser && !resolvedUser)
             }

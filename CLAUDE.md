@@ -129,6 +129,20 @@ The `.readme/` folder tracks tasks, bugs, features, and development context.
 - `.readme/tasks/` — Task management (pending and ongoing tasks)
   - `.done/`: Completed tasks
 
+### Documentation Creation Guidelines
+
+When creating new docs in `.readme/` (tasks, bugs, features):
+
+1. **Add disclaimer at top**:
+   ```markdown
+   > **⚠️ AI-Generated**: May contain errors. Verify before use.
+   ```
+
+2. **Add footer**:
+   ```markdown
+   _Created: YYYY-MM-DD by Claude Code_
+   ```
+
 ---
 
 ## Styling

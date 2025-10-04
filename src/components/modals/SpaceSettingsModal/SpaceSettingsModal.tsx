@@ -227,13 +227,10 @@ const SpaceSettingsModal: React.FunctionComponent<{
     },
   });
 
-  // Public invite link state management (simplified approach)
+  // Public invite link state management
   const [generationSuccess, setGenerationSuccess] = React.useState(false);
-  const [deleting, setDeleting] = React.useState(false);
-  const [deletionSuccess, setDeletionSuccess] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const [showGenerateModal, setShowGenerateModal] = React.useState(false);
-  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
 
   // Helper functions for Select primitive
   const getChannelGroups = React.useMemo(() => {
@@ -430,11 +427,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           membershipWarning={membershipWarning}
                           generating={generating}
                           generationSuccess={generationSuccess}
-                          deleting={deleting}
-                          deletionSuccess={deletionSuccess}
                           errorMessage={errorMessage}
                           setShowGenerateModal={setShowGenerateModal}
-                          setShowDeleteModal={setShowDeleteModal}
                         />
                       );
                     case 'danger':
@@ -506,21 +500,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
             setShowGenerateModal(false);
           }}
           onCancel={() => setShowGenerateModal(false)}
-        />
-      )}
-
-      {showDeleteModal && (
-        <ConfirmationModal
-          visible={showDeleteModal}
-          title={t`Delete Public Invite Link`}
-          message={t`This will permanently delete the current public invite link. Anyone who has this link will no longer be able to use it to join your Space.`}
-          confirmText={t`Delete Link`}
-          variant="danger"
-          onConfirm={() => {
-            // Delete logic would go here
-            setShowDeleteModal(false);
-          }}
-          onCancel={() => setShowDeleteModal(false)}
         />
       )}
 

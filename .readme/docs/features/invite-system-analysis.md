@@ -1,5 +1,7 @@
 # Invite System Documentation
 
+> **⚠️ AI-Generated**: May contain errors. Verify before use.
+
 ## Overview
 
 The Quorum desktop application features a sophisticated dual-key invite system that supports both private and public invite links for spaces. This document explains how the invite system works, its architecture, and important behavioral considerations.
@@ -50,9 +52,9 @@ Public invite links are shareable URLs that anyone can use to join a space. They
 
 ## Critical System Behavior
 
-### 🔄 Reversible System Switch
+### ⚠️ System Switch Behavior
 
-When you generate a public invite link, the system switches from private-only to public-only mode. This operation is **REVERSIBLE** - deleting the public link returns to private-only mode.
+When you generate a public invite link, the system switches from private-only to public-only mode.
 
 **Exact Behavior Flow:**
 
@@ -62,20 +64,21 @@ When you generate a public invite link, the system switches from private-only to
    - Generated invites remain valid until the space switches to public mode
    - **Limited capacity**: Spaces can only generate a finite number of private invites
 
-2. **Phase 2 - The Switch (REVERSIBLE):**
+2. **Phase 2 - The Switch:**
    - Generate first public link → **ALL previous private invites immediately stop working**
    - New public key is generated alongside original keys (logic now within `InvitationService` or `SpaceService`)
    - System switches to public-only mode while public link exists
 
-3. **Phase 3 - Public-Only Mode (REVERSIBLE):**
+3. **Phase 3 - Public-Only Mode:**
    - "Send invite to existing conversations" now sends the **same public URL** to everyone
    - No more unique private invites possible while public link exists
-   - All future invites are the same public link until public link is deleted
+   - Can generate new public links (invalidates old one by creating new config key)
+   - **Cannot delete**: True deletion requires backend API endpoint that doesn't exist
 
 **🔥 Most Important Understanding:**
 
-**KEY BEHAVIOR:** "After creating public link, ALL invites become the public URL until the public link is deleted"
-**REVERSIBLE:** "Deleting the public link returns the system to private-only mode, allowing private invites again"
+**KEY BEHAVIOR:** "After creating public link, ALL invites become the public URL"
+**LIMITATION:** "Cannot return to private-only mode - deletion requires backend API support"
 
 **Critical Code Evidence:**
 
@@ -105,31 +108,36 @@ const secret = Buffer.from(new Uint8Array(index_secret_raw)).toString('hex');
 // Each private invite permanently consumes one secret from the evals array
 ```
 
-**Delete Functionality - SpaceSettingsModal.tsx lines 233-237:**
+**Regenerate Functionality (Invalidates Old Link):**
 
 ```typescript
-await updateSpace({
-  ...space,
-  inviteUrl: '',      // ← Sets to empty string (falsy)
-  isPublic: false,
+// Generate new config keypair
+const configPair = JSON.parse(ch.js_generate_x448());
+
+// Post new evals with NEW config key
+await apiClient.postSpaceInviteEvals({
+  config_public_key: newConfigKey,
+  space_evals: newEvals,
+  ...
 });
-// After deletion, constructInviteLink falls back to private invite generation
+
+// Update local inviteUrl to use new key
+space.inviteUrl = `${baseUrl}#spaceId=${spaceId}&configKey=${newConfigKey}`;
 ```
 
 **User Experience Impact:**
 
-- **Private-Only Spaces**: Private invites are truly private and never expire
+- **Private-Only Spaces**: Private invites are truly private and never expire (until switching to public)
 - **Active Public Spaces**: The "Send invite" feature becomes a public link distributor
-- **Rollback Available**: Users can return to private-only mode by deleting the public link
-- **Mode-Dependent Invites**: Private invites when no public link exists, public URL when public link is active
+- **No Rollback**: Once in public mode, cannot return to private-only (requires backend delete API)
+- **Regeneration Works**: Creating new public link orphans old server data, making old link unusable
 
 **Example Timeline:**
 1. Send 5 private invites → 5 secrets consumed from `evals` array, invites work with unique keys
 2. Generate public link → Those 5 private invites immediately break, but secrets already consumed
 3. Send "private" invite to friend → Actually sends the public URL (no secrets consumed)
-4. Delete public link → System returns to private-only mode
-5. Send new invite to friend → Consumes another secret from remaining `evals`, generates new private invite
-6. Generate new public link → Previous private invites break, new public URL active
+4. Generate new public link → Old public link stops working (new config key), old server data orphaned
+5. Cannot return to private mode → Stuck in public-only mode permanently
 
 ## Technical Architecture Details
 
@@ -233,22 +241,23 @@ if (space?.inviteUrl) {
 
 ### Current Public Invite Link UI Flow
 
-**No Link State**: Shows warning text + "Generate Public Invite Link" button → Direct generation → Link appears with "Delete Current Link" and "Generate New Link" buttons
+**No Link State**: Shows warning text + "Generate Public Invite Link" button → Direct generation → Link appears with "Generate New Link" button
 
-**Link Exists State**: Shows copyable link field with action buttons → "Delete Current Link" (modal confirm) or "Generate New Link" (modal confirm) → Operations show loading callouts → Success callouts (3s auto-dismiss)
+**Link Exists State**: Shows copyable link field with "Generate New Link" button (modal confirm) → Operations show loading callouts → Success callouts (3s auto-dismiss)
 
-During any generation operation, existing UI elements hide and only the relevant loading callout displays.
+**Note**: Delete button was removed (2025-10-04) as true deletion requires backend API support that doesn't exist.
 
 ## Summary
 
 The invite system uses a sophisticated **dual key architecture** that supports both private and public invite modes. Key characteristics:
 
 1. **Private invites consume finite secrets** - each generation permanently uses one secret from the `evals` array
-2. **Public link mode is reversible** - can switch back to private-only by deleting public link
+2. **Public link mode is NOT reversible** - switching to public is permanent (deletion requires backend API)
 3. **"Expiration" errors are validation failures** - often due to secret exhaustion or key mismatches
 4. **No persistent user blocking** - kicked users can easily rejoin
+5. **Regeneration invalidates old links** - creates new config key, orphaning old server data
 
-The system is cryptographically sound but requires careful understanding of the switchable modes between private and public invite systems.
+The system is cryptographically sound but switching to public mode is a one-way operation with current implementation.
 
 ## Frequently Asked Questions
 
@@ -277,15 +286,17 @@ The error message "expired or invalid" is misleading - invite links don't actual
 There is no persistent "ban list" or kicked user tracking. Public invite links bypass membership checks entirely.
 
 **Prevention methods:**
-- Regenerate invite links after kicking users
-- Switch to private-only invites
+- Regenerate invite links after kicking users (creates new config key)
 - Manually manage invite distribution
+- ~~Switch to private-only invites~~ (not possible once in public mode)
 
 ### Can I go back to private-only mode after enabling public links?
 
-**Answer: YES** - You can delete the public link to return to private-only mode.
+**Answer: NO** - Cannot return to private-only mode with current implementation.
 
-When you delete the public invite link via "Delete Current Link", the `inviteUrl` is set to an empty string. This causes `constructInviteLink()` to fall back to generating private invites using the original space keys, effectively returning the system to private-only mode.
+True deletion requires a backend `DELETE /invite/evals` API endpoint that doesn't exist. You can only:
+- **Regenerate** the public link (invalidates old one by creating new config key)
+- **Cannot delete** server-side invite evals (remains in public mode permanently)
 
 ---
 
@@ -337,7 +348,8 @@ The invite system now dynamically detects the environment and uses appropriate d
 
 ---
 
-_Document created: July 30, 2025_
+_Created: July 30, 2025 by Claude Code_
 _Updated: September 22, 2025 - Corrected reversibility of public invite links_
 _Updated: September 25, 2025 - Added duplicate prevention fixes_
+_Updated: October 4, 2025 - Corrected deletion capability (requires backend API, not currently possible)_
 _Covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, InvitationService.ts, MessageDB Context, InviteLink.tsx, inviteDomain.ts_
