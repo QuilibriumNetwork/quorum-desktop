@@ -3,6 +3,7 @@ import {
   Button,
   Modal,
   Callout,
+  Spacer,
 } from '../../primitives';
 import '../../../styles/_modal_common.scss';
 import ConfirmationModal from '../ConfirmationModal';
@@ -365,6 +366,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           setIsRepudiable={setIsRepudiable}
                           onSave={saveChanges}
                           isSaving={isSaving}
+                          hasValidationError={!spaceName.trim()}
                         />
                       );
                     case 'roles':
@@ -451,7 +453,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
 
             {/* Footer - Only show for categories that need save */}
             {categoryNeedsSave && (
-              <div style={{ display: 'flex', flexDirection: 'row' }}>
+              <div className="flex flex-row">
                 <div className="modal-complex-sidebar-footer"></div>
                 <div className="modal-complex-footer">
                   {/* Error/Success feedback above Save button */}
@@ -473,7 +475,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                   <Button
                     type="primary"
                     onClick={saveChanges}
-                    disabled={isSaving}
+                    disabled={isSaving || !spaceName.trim()}
                   >
                     {t`Save Changes`}
                   </Button>

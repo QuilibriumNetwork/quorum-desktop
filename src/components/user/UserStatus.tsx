@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { t } from '@lingui/core/macro';
 import { ClickToCopyContent } from '../ui';
 import { DefaultImages, truncateAddress } from '../../utils';
+import { UserAvatar } from './UserAvatar';
 
 type UserStatusProps = {
   user: any;
@@ -30,15 +31,12 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
   return (
     <>
       <div className="user-status">
-        <div
+        <UserAvatar
+          userIcon={props.user.userIcon}
+          displayName={props.user.displayName}
+          address={props.user.address}
+          size={32}
           className="user-status-icon"
-          style={{
-            backgroundImage:
-              props.user.userIcon &&
-              !props.user.userIcon.includes(DefaultImages.UNKNOWN_USER)
-                ? `url(${props.user.userIcon})`
-                : 'var(--unknown-icon)',
-          }}
         />
         <div className="user-status-text">
           <div className="user-status-username w-[164px] text-ellipsis overflow-hidden whitespace-nowrap">

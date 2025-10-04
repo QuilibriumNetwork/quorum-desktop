@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMessageDB } from '../context/useMessageDB';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../utils';
+import { UserAvatar } from './UserAvatar';
 
 const UserProfileEdit: React.FunctionComponent<{
   user: any;
@@ -66,18 +67,19 @@ const UserProfileEdit: React.FunctionComponent<{
       <div className="user-profile-header">
         <div
           className="user-profile-icon-editable"
-          style={{
-            backgroundImage:
-              fileData !== undefined
-                ? `url(data:${acceptedFiles[0].type};base64,${Buffer.from(fileData).toString('base64')})`
-                : props.user.userIcon &&
-                    !props.user.userIcon.includes(DefaultImages.UNKNOWN_USER)
-                  ? `url(${props.user.userIcon})`
-                  : 'var(--unknown-icon)',
-          }}
           {...getRootProps()}
         >
           <input {...getInputProps()} />
+          <UserAvatar
+            userIcon={
+              fileData !== undefined
+                ? `data:${acceptedFiles[0].type};base64,${Buffer.from(fileData).toString('base64')}`
+                : props.user.userIcon
+            }
+            displayName={props.user.displayName}
+            address={props.user.address}
+            size={49}
+          />
         </div>
         <div className="user-profile-text">
           <Input

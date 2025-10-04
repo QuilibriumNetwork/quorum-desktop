@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import './DirectMessageContact.scss';
-import { DefaultImages, truncateAddress } from '../../utils';
+import { truncateAddress } from '../../utils';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
+import { UserAvatar } from '../user/UserAvatar';
 
 const DirectMessageContact: React.FunctionComponent<{
   unread: boolean;
@@ -30,16 +31,13 @@ const DirectMessageContact: React.FunctionComponent<{
         {props.unread && address !== props.address && (
           <div className="w-1 h-1 mt-4 absolute ml-[-6pt] bg-accent rounded-full"></div>
         )}
-        <div
-          className="direct-message-contact-icon flex flex-col justify-around w-[38px] h-[38px] bg-cover bg-center rounded-full"
-          style={{
-            backgroundImage:
-              props.userIcon &&
-              !props.userIcon.includes(DefaultImages.UNKNOWN_USER)
-                ? `url(${props.userIcon})`
-                : 'var(--unknown-icon)',
-          }}
-        ></div>
+        <UserAvatar
+          userIcon={props.userIcon}
+          displayName={props.displayName || truncateAddress(props.address)}
+          address={props.address}
+          size={38}
+          className="direct-message-contact-icon"
+        />
         <div className="flex flex-col justify-around">
           <div
             className={

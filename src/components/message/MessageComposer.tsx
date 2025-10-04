@@ -9,6 +9,7 @@ import { truncateAddress } from '../../utils';
 import { DefaultImages } from '../../utils';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import './MessageComposer.scss';
+import { UserAvatar } from '../user/UserAvatar';
 
 interface User {
   address: string;
@@ -314,13 +315,12 @@ export const MessageComposer = forwardRef<
                   }`}
                   onClick={() => mentionInput.selectUser(user)}
                 >
-                  <div
+                  <UserAvatar
+                    userIcon={user.userIcon}
+                    displayName={user.displayName || t`Unknown User`}
+                    address={user.address}
+                    size={32}
                     className="message-composer-mention-avatar"
-                    style={{
-                      backgroundImage: user.userIcon?.includes(DefaultImages.UNKNOWN_USER)
-                        ? 'var(--unknown-icon)'
-                        : `url(${user.userIcon})`,
-                    }}
                   />
                   <div className="message-composer-mention-info">
                     <span className="message-composer-mention-name">

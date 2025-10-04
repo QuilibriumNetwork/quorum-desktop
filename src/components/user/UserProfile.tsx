@@ -16,6 +16,7 @@ import { useMessageDB } from '../context/useMessageDB';
 import { hasPermission, canKickUser } from '../../utils/permissions';
 import { t } from '@lingui/core/macro';
 import { DefaultImages, truncateAddress } from '../../utils';
+import { UserAvatar } from './UserAvatar';
 
 const UserProfile: React.FunctionComponent<{
   spaceId?: string;
@@ -87,15 +88,12 @@ const UserProfile: React.FunctionComponent<{
             : '')
         }
       >
-        <Container
+        <UserAvatar
+          userIcon={props.user.userIcon}
+          displayName={props.user.displayName}
+          address={props.user.address}
+          size={49}
           className="user-profile-icon"
-          style={{
-            backgroundImage:
-              props.user.userIcon &&
-              !props.user.userIcon.includes(DefaultImages.UNKNOWN_USER)
-                ? `url(${props.user.userIcon})`
-                : 'var(--unknown-icon)',
-          }}
         />
         <Container className="user-profile-text">
           <Container className="user-profile-username break-words">

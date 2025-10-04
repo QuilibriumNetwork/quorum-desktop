@@ -27,6 +27,7 @@ import { Virtuoso } from 'react-virtuoso';
 import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
 import type { Channel, Role } from '../../api/quorumApi';
+import { UserAvatar } from '../user/UserAvatar';
 
 // Helper function to check if user can post in read-only channel
 function canPostInReadOnlyChannel(
@@ -343,17 +344,12 @@ const Channel: React.FC<ChannelProps> = ({
                     userIcon: member.userIcon,
                   }, event)}
                 >
-                  <div
-                    className="rounded-full w-[30px] h-[30px] opacity-80"
-                    style={{
-                      backgroundPosition: 'center',
-                      backgroundSize: 'cover',
-                      backgroundImage: member.userIcon?.includes(
-                        'var(--unknown-icon)'
-                      )
-                        ? member.userIcon
-                        : `url(${member.userIcon})`,
-                    }}
+                  <UserAvatar
+                    userIcon={member.userIcon}
+                    displayName={member.displayName}
+                    address={member.address}
+                    size={30}
+                    className="opacity-80"
                   />
                   <div className="flex flex-col ml-2 text-subtle">
                     <span className="text-md font-bold">
@@ -675,17 +671,12 @@ const Channel: React.FC<ChannelProps> = ({
                             userIcon: item.userIcon,
                           }, event)}
                         >
-                          <div
-                            className="rounded-full w-[30px] h-[30px] opacity-80 group-hover:opacity-100 transition-opacity duration-150"
-                            style={{
-                              backgroundPosition: 'center',
-                              backgroundSize: 'cover',
-                              backgroundImage: item.userIcon?.includes(
-                                'var(--unknown-icon)'
-                              )
-                                ? item.userIcon
-                                : `url(${item.userIcon})`,
-                            }}
+                          <UserAvatar
+                            userIcon={item.userIcon}
+                            displayName={item.displayName}
+                            address={item.address}
+                            size={30}
+                            className="opacity-80 group-hover:opacity-100 transition-opacity duration-150"
                           />
                           <div className="flex flex-col ml-2 text-subtle group-hover:text-main transition-colors duration-150">
                             <span className="text-md font-bold">

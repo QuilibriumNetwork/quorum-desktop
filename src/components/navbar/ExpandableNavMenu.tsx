@@ -7,6 +7,7 @@ import { useModalContext } from '../context/ModalProvider';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { DefaultImages } from '../../utils';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { UserAvatar } from '../user/UserAvatar';
 
 type ExpandableNavMenuProps = {
   showCreateSpaceModal: () => void;
@@ -51,16 +52,13 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
       >
         <Icon name="plus" />
       </Container>
-      <Container
+      <UserAvatar
+        userIcon={user?.currentPasskeyInfo?.pfpUrl}
+        displayName={user?.currentPasskeyInfo?.displayName || 'User'}
+        address={user?.currentPasskeyInfo?.address || ''}
+        size={40}
         className="expanded-nav-button-avatar"
         onClick={() => openUserSettings()}
-        style={{
-          backgroundImage:
-            user?.currentPasskeyInfo?.pfpUrl &&
-            !user.currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)
-              ? `url(${user.currentPasskeyInfo.pfpUrl})`
-              : 'var(--unknown-icon)',
-        }}
       />
     </FlexColumn>
   );

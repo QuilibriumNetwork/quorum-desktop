@@ -83,21 +83,19 @@
 }
 
 .message-sender-icon {
-  width: 49px;
-  height: 49px;
-  min-width: 49px;
-  background-position: center;
-  background-size: cover;
-  border-radius: 29px;
+  // UserAvatar component handles border-radius
   display: block;
   align-self: flex-start;
+  cursor: pointer;
 
-  // Smaller on mobile phones
+  // Responsive sizing for smaller devices
   @media (max-width: 480px) {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    border-radius: 18px;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+
+    // Adjust font size for initials
+    font-size: 14px !important;
   }
 }
 
