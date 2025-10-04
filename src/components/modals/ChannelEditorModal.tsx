@@ -90,8 +90,8 @@ const ChannelEditorModal: React.FunctionComponent<{
       />
       <Container style={{ textAlign: 'left' }}>
         <Container className="mb-4 max-sm:mb-1">
-          <Input 
-            value={channelName} 
+          <Input
+            value={channelName}
             onChange={handleChannelNameChange}
             label={t`Channel Name`}
             labelType="static"
@@ -185,7 +185,7 @@ const ChannelEditorModal: React.FunctionComponent<{
         )}
 
         <FlexRow className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
-          <Button type="primary" className="max-sm:w-full" onClick={handleSave} disabled={isSaving}>
+          <Button type="primary" className="max-sm:w-full" onClick={handleSave} disabled={isSaving || !channelName.trim()}>
             <Trans>Save Changes</Trans>
           </Button>
         </FlexRow>

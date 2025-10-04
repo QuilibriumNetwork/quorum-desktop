@@ -3,6 +3,7 @@ import {
   Button,
   Modal,
   Callout,
+  Spacer,
 } from '../../primitives';
 import '../../../styles/_modal_common.scss';
 import ModalSaveOverlay from '../ModalSaveOverlay';
@@ -163,6 +164,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         getProfileImageUrl={getProfileImageUrl}
                         onSave={saveChanges}
                         isSaving={isSaving}
+                        hasValidationError={!displayName.trim()}
                       />
                     );
                   case 'privacy':
@@ -210,7 +212,7 @@ const UserSettingsModal: React.FunctionComponent<{
 
           {/* Footer - Only show for categories that need save */}
           {categoryNeedsSave && (
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div className="flex flex-row">
               <div className="modal-complex-sidebar-footer"></div>
               <div className="modal-complex-footer">
                 {/* Error/Success feedback above Save button */}
@@ -232,7 +234,7 @@ const UserSettingsModal: React.FunctionComponent<{
                 <Button
                   type="primary"
                   onClick={saveChanges}
-                  disabled={isSaving}
+                  disabled={isSaving || !displayName.trim()}
                 >
                   {t`Save Changes`}
                 </Button>

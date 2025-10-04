@@ -33,6 +33,7 @@ interface GeneralProps {
   setIsRepudiable: (value: boolean) => void;
   onSave: () => void;
   isSaving: boolean;
+  hasValidationError: boolean;
 }
 
 const General: React.FunctionComponent<GeneralProps> = ({
@@ -63,6 +64,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
   setIsRepudiable,
   onSave,
   isSaving,
+  hasValidationError,
 }) => {
   return (
     <>
@@ -109,6 +111,8 @@ const General: React.FunctionComponent<GeneralProps> = ({
             onChange={setSpaceName}
             label={t`Space Name`}
             labelType="static"
+            error={hasValidationError}
+            errorMessage={hasValidationError ? t`Space name is required` : undefined}
           />
         </div>
       </div>
