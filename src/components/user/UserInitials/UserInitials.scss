@@ -1,0 +1,19 @@
+.user-initials {
+  // Use @apply for Tailwind utilities first
+  @apply rounded-full flex items-center justify-center;
+  @apply text-white font-medium select-none;
+  @apply transition-all duration-200;
+
+  // Raw CSS only for what Tailwind can't handle
+  line-height: 1;
+  text-align: center;
+}
+
+// Hover effect for interactive contexts
+.user-initials--interactive {
+  @apply cursor-pointer;
+
+  &:hover {
+    @apply shadow-md scale-105;
+  }
+}
