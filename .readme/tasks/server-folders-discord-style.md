@@ -1,8 +1,14 @@
 # Server Folders - Discord-Style Grouping Feature
 
+https://github.com/QuilibriumNetwork/quorum-desktop/issues/89
+
+> **⚠️ AI-Generated**: May contain errors. Verify before use.
+> Optimized via feature-analyzer agent.
+> Human reviewed only for UI/UX.
+
 **Status**: Planning
 **Priority**: Medium
-**Complexity**: Medium (simplified from High)
+**Complexity**: Medium
 **Cross-Platform**: ✅ Must work on both desktop and mobile
 
 ---
@@ -38,7 +44,7 @@ type UserConfig = {
 
 ### 1. Extended User Config Schema
 
-**Simplified Schema Design**:
+**Schema Design**:
 ```typescript
 type UserConfig = {
   address: string;
@@ -67,21 +73,21 @@ interface ServerFolder {
 }
 ```
 
-**Simplified Data Flow Architecture**:
+**Data Flow Architecture**:
 1. **Creation**: User drags server onto another → Create `ServerFolder` with defaults
 2. **Persistence**: Use existing `saveConfig()` pattern - no new database methods
 3. **Sync**: Include in existing sync payload (if `allowSync: true`)
-4. **Migration**: Simple conversion from `spaceIds` to `folderOrder` format
+4. **Migration**: Conversion from `spaceIds` to `folderOrder` format
 
 ### 2. Cross-Account Data Synchronization
 
 Based on the existing sync architecture:
 
-**Simplified Sync Strategy**:
+**Sync Strategy**:
 ```typescript
 // Use existing sync mechanism - no new interfaces needed
 // Folders included automatically in UserConfig sync payload
-// Simple conflict resolution: timestamp-based (most recent wins)
+// Conflict resolution: timestamp-based (most recent wins)
 ```
 
 **Sync Behavior**:
@@ -90,9 +96,9 @@ Based on the existing sync architecture:
 - **Folder Names/Colors**: Synced across devices
 - **Server Assignments**: Synced (which servers are in which folders)
 
-### 3. Simplified Database Operations
+### 3. Database Operations
 
-**No New Database Methods Needed**:
+**Reuse Existing Patterns**:
 ```typescript
 // REUSE existing patterns instead of creating new methods:
 const { saveConfig } = useMessageDB();
@@ -104,7 +110,7 @@ await saveConfig({
 });
 ```
 
-**Simple Migration Strategy**:
+**Migration Strategy**:
 ```typescript
 const migrateUserConfigToFolders = (oldConfig: UserConfig): UserConfig => {
   // Convert existing spaceIds to folderOrder format
@@ -124,17 +130,18 @@ const migrateUserConfigToFolders = (oldConfig: UserConfig): UserConfig => {
 
 ## UI/UX Implementation
 
-### 1. Simplified Component Architecture
+### 1. Component Architecture
 
-**Extend Existing Components (60% fewer new components)**:
+**Extend Existing Components**:
 ```
 src/components/navbar/
 ├── SpaceButton.tsx              # EXTEND: Add folder support with isFolder prop
 ├── SpaceIcon.tsx               # EXTEND: Add folder icon variants and stacking
 └── FolderEditorModal.tsx       # NEW: Reuse GroupEditorModal pattern
+                                 # REUSE: ConfirmationModal for delete confirmations
 ```
 
-**Simplified Component Extensions**:
+**Component Extensions**:
 ```typescript
 // SpaceButton.tsx - EXTEND existing component
 interface SpaceButtonProps {
@@ -160,21 +167,21 @@ interface FolderEditorModalProps {
 }
 ```
 
-### 2. Simplified Drag & Drop Logic
+### 2. Drag & Drop Logic
 
 **EXTEND Existing Hook**: `src/hooks/business/spaces/useSpaceDragAndDrop.ts`
 
-**Simple Drag Logic (leverage @dnd-kit built-ins)**:
+**Drag Logic**:
 ```typescript
 const handleDragEnd = (event: DragEndEvent) => {
   const { active, over } = event;
   if (!over) return;
 
-  // Simple collision detection using @dnd-kit's built-in features
+  // Collision detection using @dnd-kit's built-in features
   const draggedItem = findItemById(active.id);
   const targetItem = findItemById(over.id);
 
-  // Simple conditional logic instead of complex operation detection
+  // Conditional logic for different drag scenarios
   if (draggedItem.type === 'server' && targetItem.type === 'server') {
     // Create folder with both servers
     createFolderWithServers([draggedItem.id, targetItem.id]);
@@ -182,17 +189,11 @@ const handleDragEnd = (event: DragEndEvent) => {
     // Add server to existing folder
     addServerToFolder(draggedItem.id, targetItem.id);
   } else {
-    // Simple reordering using existing arrayMove logic
+    // Reordering using existing arrayMove logic
     handleReorder(active, over);
   }
 };
 ```
-
-**Removed Complexity**:
-- ❌ Complex `DragOperation` interface
-- ❌ `determineDragOperation` function
-- ❌ Separate drag detection system
-- ✅ Simple conditional logic in existing `handleDragEnd`
 
 ### 3. Visual Design
 
@@ -217,41 +218,38 @@ const handleDragEnd = (event: DragEndEvent) => {
 
 ---
 
-## Simplified Implementation Plan (40% less complexity)
+## Implementation Plan
 
-### Phase 1: Minimal Data Layer (1 week)
+### Phase 1: Data Layer
 1. **Schema Extension**
    - Add `folderOrder: FolderItem[]` and `folders: ServerFolder[]` to `UserConfig`
-   - Simple migration from existing `spaceIds` array
+   - Migration from existing `spaceIds` array
    - No new database methods - use existing `saveConfig` pattern
 
-### Phase 2: Component Extensions (1 week)
+### Phase 2: Component Extensions
 1. **Extend Existing Components**
    - Add folder support to `SpaceButton.tsx` (`isFolder` prop)
    - Enhance `SpaceIcon.tsx` with folder variants and stacking
    - Create `FolderEditorModal.tsx` using GroupEditorModal pattern
 
-2. **Simple Drag Integration**
-   - Extend existing `useSpaceDragAndDrop.ts` with simple conditional logic
-   - No complex operation detection - leverage @dnd-kit built-ins
+2. **Drag Integration**
+   - Extend existing `useSpaceDragAndDrop.ts` with conditional logic
+   - Leverage @dnd-kit built-ins for drag detection
    - Add folder creation and management functions
+   - Integrate ConfirmationModal for folder deletion
 
-### Phase 3: Polish & Mobile (0.5 weeks)
+### Phase 3: Polish & Mobile
 1. **IconPicker Integration**
    - Reuse existing `IconPicker` component as-is
    - Default folder icon: `folder` from existing icon set
    - Tooltip shows folder name on hover
 
 2. **Mobile Touch Support**
+   - Use existing touch device detection logic (search codebase for touch detection patterns)
+   - Implement long-press gesture for folder editing on touch devices
+   - Disable tooltips on touch devices
    - Test existing drag patterns work on mobile
-   - Add long-press for mobile folder creation
    - Ensure touch targets are appropriate size
-
-**Removed Phases**:
-- ❌ Complex drag state management
-- ❌ Separate drag detection system
-- ❌ Custom database operations
-- ❌ New component architecture
 
 ---
 
@@ -263,22 +261,33 @@ const handleDragEnd = (event: DragEndEvent) => {
 1. User drags Server A onto Server B
 2. System shows "Create Folder" overlay
 3. On drop, create folder immediately with defaults:
-   - Name: "Folder"
+   - Name: "Spaces"
    - Icon: `folder` from icon set
    - Color: `default` (gray)
 4. Create folder containing both servers
 5. Auto-expand folder to show contents
-6. User can right-click to edit name/icon/color later
+6. User can right-click (or long press if touch device) to edit name/icon/color later
+7. User can drag Space icons out of the folder list, when just one Space remains in the folder, the folder is automatically deleted
 
-**Folder Management**:
-- **Edit**: Right-click folder → "Edit Folder" → Opens FolderEditorModal
+**Folder Management - Desktop Devices**:
+- **Edit**: Right-click folder → "Edit Folder" → Opens FolderEditorModal (For touch devices: long press folder > Opens FolderEditorModal )
   - Name editing with real-time validation
   - Icon selection using existing IconPicker component
   - Color selection using existing ColorSwatch components
   - Same UI pattern as GroupEditorModal for consistency
+  - FolderEditorModal has a "Delete folder" link at the bottom, similar to what we have in GroupEditorModal. On desktop devices the user can delete the folder either via the quick "right click" option or by using the link at the bottom of FolderEditorModal. On touch devices the users can only use the link in FolderEditorModal.
 - **Delete**: Right-click folder → "Delete Folder" (moves servers back to main area)
 - **Expand/Collapse**: Click folder icon to toggle
 - **Tooltip**: Hover over folder shows name and server count
+
+**Folder Management - Touch devices**:
+- **Edit**: Long press folder > Opens FolderEditorModal
+- **Delete**: Long press folder > Opens FolderEditorModal > click link "Delete folder" in the modal > moves servers back to main area
+- **Expand/Collapse**: Tap folder icon to toggle
+- **Tooltip**: Tooltip disabled
+
+**"Delete folder" option or link**:
+- Opens ConfirmationModal with a message like "Are you sure you want to delete this folder? The Spaces inside it will not be deleted.", and the buttons "Confirm" and "Cancel" (the pattern is similar to other ConfirmationModal instances used for delete confirmations)
 
 **Context Menu Actions**:
 - "Edit Folder" (primary action - opens modal)
@@ -358,30 +367,6 @@ const handleDragEnd = (event: DragEndEvent) => {
 - Migration rollback capabilities
 - Schema validation and error handling
 
----
-
-## Success Metrics
-
-### User Adoption
-- Percentage of users creating folders
-- Average folders per user
-- Folder interaction frequency
-- User retention with folder feature
-
-### Performance Metrics
-- Drag operation response time
-- UI rendering performance
-- Database operation latency
-- Memory usage impact
-
-### Quality Metrics
-- Bug reports related to folders
-- User feedback scores
-- Cross-platform consistency
-- Accessibility compliance
-
----
-
 ## Risk Assessment
 
 ### Technical Risks
@@ -403,32 +388,9 @@ const handleDragEnd = (event: DragEndEvent) => {
 
 ---
 
-**Created**: 2025-09-26
-**Last Updated**: 2025-09-26
-**Estimated Effort**: 2.5 weeks (reduced from 3-4 weeks due to simplification)
-**Dependencies**: Existing drag-and-drop infrastructure, cross-platform primitives
-
 ---
 
-## ✅ Simplification Summary
+_Created: 2025-09-26 by Claude Code_
+_Last Updated: 2025-10-04 by Claude Code_
 
-**Key Improvements Made** (based on feature-analyzer feedback):
-
-### 🎯 Reduced Complexity by 40%
-- **Database Layer**: Eliminated 3 custom methods → Reuse existing `saveConfig` pattern
-- **Components**: Reduced from 5+ new components → 2 component extensions + 1 new modal
-- **Drag Logic**: Removed complex operation detection → Simple conditional logic using @dnd-kit built-ins
-- **Data Schema**: Single source of truth with `folderOrder` → Eliminated data duplication risks
-
-### 📊 Implementation Quality Score: **8/10** (improved from 6/10)
-- ✅ Follows existing codebase patterns
-- ✅ Leverages proven infrastructure
-- ✅ Maintains backward compatibility
-- ✅ 40% less implementation time
-- ✅ Significantly reduced maintenance burden
-
-### 🔧 Core Simplifications
-1. **Extend existing components** instead of creating new ones
-2. **Use existing database patterns** instead of custom methods
-3. **Leverage @dnd-kit built-ins** instead of complex detection logic
-4. **Start with minimal viable implementation** and iterate based on feedback
+**Dependencies**: Existing drag-and-drop infrastructure, cross-platform primitives
