@@ -23,23 +23,57 @@ export const getInitials = (fullName: string): string => {
  */
 export const getColorFromAddress = (address: string): string => {
   const colors = [
-    '#3B82F6', // bg-blue-500
-    '#10B981', // bg-green-500
-    '#8B5CF6', // bg-purple-500
-    '#EC4899', // bg-pink-500
-    '#6366F1', // bg-indigo-500
-    '#14B8A6', // bg-teal-500
-    '#F59E0B', // bg-orange-500
-    '#EF4444', // bg-red-500
-    '#F97316', // bg-orange-600
-    '#06B6D4', // bg-cyan-500
-    '#7C3AED', // bg-violet-500 (fixed duplicate)
-    '#D946EF', // bg-fuchsia-500
-    '#84CC16', // bg-lime-500
-    '#F43F5E', // bg-rose-500
-    '#0EA5E9', // bg-sky-500
-    '#A855F7', // bg-purple-600
+    // Blues
+    '#3B82F6', // blue-500
+    '#2563EB', // blue-600
+    '#0EA5E9', // sky-500
+    '#0284C7', // sky-600
+
+    // Greens
+    '#10B981', // green-500
+    '#059669', // green-600
+    '#14B8A6', // teal-500
+    '#0D9488', // teal-600
+    '#84CC16', // lime-500
+    '#65A30D', // lime-600
+
+    // Purples & Violets
+    '#8B5CF6', // purple-500
+    '#7C3AED', // violet-500
+    '#6366F1', // indigo-500
+    '#4F46E5', // indigo-600
+    '#A855F7', // purple-600
+    '#9333EA', // purple-700
+
+    // Pinks & Reds
+    '#EC4899', // pink-500
+    '#DB2777', // pink-600
+    '#F43F5E', // rose-500
+    '#E11D48', // rose-600
+    '#EF4444', // red-500
+    '#DC2626', // red-600
+
+    // Oranges & Yellows
+    '#F59E0B', // amber-500
+    '#D97706', // amber-600
+    '#F97316', // orange-500
+    '#EA580C', // orange-600
+
+    // Magentas & Fuchsias
+    '#D946EF', // fuchsia-500
+    '#C026D3', // fuchsia-600
+    '#E879F9', // fuchsia-400
+
+    // Cyans & Aqua
+    '#06B6D4', // cyan-500
+    '#0891B2', // cyan-600
+    '#22D3EE', // cyan-400
   ];
+
+  // Handle undefined or empty address - return first color
+  if (!address || address.length === 0) {
+    return colors[0];
+  }
 
   // DJB2 hash algorithm for better distribution
   let hash = 5381;

@@ -33,7 +33,7 @@ export function UserAvatar({
     return (
       <div
         id={id}
-        className={className}
+        className={`rounded-full ${className}`}
         style={{
           backgroundImage: `url(${userIcon})`,
           width: size,
@@ -54,6 +54,7 @@ export function UserAvatar({
       size={size}
       className={className}
       id={id}
+      onClick={onClick}
     />
   );
 }

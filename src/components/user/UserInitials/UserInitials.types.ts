@@ -7,7 +7,9 @@ export interface UserInitialsProps {
   // Web-specific props (ignored on mobile)
   className?: string;
   id?: string;
+  onClick?: (event: React.MouseEvent) => void;
 
   // Mobile-specific props (ignored on web)
   testID?: string;
+  onPress?: () => void;
 }

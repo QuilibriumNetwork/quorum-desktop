@@ -7,7 +7,8 @@ export function UserInitials({
   name,
   backgroundColor,
   size = 40,
-  testID
+  testID,
+  onPress
 }: UserInitialsProps) {
   // Memoize initials calculation for performance
   const initials = useMemo(() => getInitials(name), [name]);
@@ -25,15 +26,19 @@ export function UserInitials({
     fontSize: size * 0.4
   }), [size]);
 
+  const ViewComponent = onPress ? require('react-native').TouchableOpacity : View;
+
   return (
-    <View
+    <ViewComponent
       testID={testID}
       style={[styles.container, containerStyle]}
+      onPress={onPress}
+      activeOpacity={onPress ? 0.7 : 1}
     >
       <Text style={[styles.text, textStyle]}>
         {initials}
       </Text>
-    </View>
+    </ViewComponent>
   );
 }
 

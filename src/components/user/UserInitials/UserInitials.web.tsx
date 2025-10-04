@@ -8,7 +8,8 @@ export function UserInitials({
   backgroundColor,
   size = 40,
   className = '',
-  id
+  id,
+  onClick
 }: UserInitialsProps) {
   // Memoize initials calculation for performance
   const initials = useMemo(() => getInitials(name), [name]);
@@ -28,6 +29,7 @@ export function UserInitials({
         backgroundColor,
         fontSize
       }}
+      onClick={onClick}
     >
       {initials}
     </div>

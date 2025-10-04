@@ -51,6 +51,7 @@ export function UserAvatar({
       backgroundColor={backgroundColor}
       size={size}
       testID={testID}
+      onPress={onPress}
     />
   );
 }

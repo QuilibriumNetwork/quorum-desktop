@@ -21,15 +21,13 @@
 }
 
 .user-status-icon {
-  width: 32px;
-  height: 32px;
+  // UserAvatar component handles size and border-radius
   margin-top: 4px;
   margin-left: 8px;
   margin-right: 8px;
-  background-position: center;
-  background-size: cover;
-  border-radius: 29px;
+  margin-bottom: 4px; // Match margin-top for symmetry
   display: inline-block;
+  vertical-align: middle; // Ensure consistent vertical alignment
 }
 
 .user-status-text {

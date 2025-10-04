@@ -31,6 +31,7 @@ import { isTouchDevice } from '../../utils/platform';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useModalContext } from '../context/ModalProvider';
+import { UserAvatar } from '../user/UserAvatar';
 import {
   Button,
   Container,
@@ -240,13 +241,12 @@ const DirectMessage: React.FC<{}> = () => {
       <div className="flex flex-col">
         {Object.keys(members).map((s) => (
           <div key={s} className="w-full flex flex-row items-center mb-2">
-            <div
-              className="rounded-full w-[36px] h-[36px] flex-shrink-0"
-              style={{
-                backgroundPosition: 'center',
-                backgroundSize: 'cover',
-                backgroundImage: `url(${members[s].userIcon})`,
-              }}
+            <UserAvatar
+              userIcon={members[s].userIcon}
+              displayName={members[s].displayName}
+              address={members[s].address || ''}
+              size={36}
+              className="flex-shrink-0"
             />
             <div className="flex flex-col ml-2">
               <span className="text-md font-bold truncate w-[190px] text-main/90">
@@ -336,10 +336,6 @@ const DirectMessage: React.FC<{}> = () => {
     [handleSubmitMessage]
   );
 
-  const userIcon = otherUser.userIcon;
-  const icon = userIcon?.includes(DefaultImages.UNKNOWN_USER)
-    ? 'var(--unknown-icon)'
-    : 'url(' + userIcon + ')';
   return (
     <div className="chat-container">
       <FlexColumn>
@@ -365,11 +361,11 @@ const DirectMessage: React.FC<{}> = () => {
             <Container className="hidden lg:flex flex-1 min-w-0">
               <FlexRow className="items-center">
                 <FlexColumn className="justify-around">
-                  <Container
-                    className="w-[28px] h-[28px] bg-cover bg-center rounded-full"
-                    style={{
-                      backgroundImage: `${icon}`,
-                    }}
+                  <UserAvatar
+                    userIcon={otherUser.userIcon}
+                    displayName={otherUser.displayName}
+                    address={otherUser.address || ''}
+                    size={28}
                   />
                 </FlexColumn>
                 <FlexRow className="pl-2">
@@ -437,11 +433,11 @@ const DirectMessage: React.FC<{}> = () => {
           <Container className="w-full lg:hidden">
             <FlexRow className="items-center">
               <FlexColumn className="justify-around">
-                <Container
-                  className="w-[28px] h-[28px] bg-cover bg-center rounded-full"
-                  style={{
-                    backgroundImage: `${icon}`,
-                  }}
+                <UserAvatar
+                  userIcon={otherUser.userIcon}
+                  displayName={otherUser.displayName}
+                  address={otherUser.address || ''}
+                  size={28}
                 />
               </FlexColumn>
               <FlexRow className="pl-2">

@@ -31,9 +31,9 @@ import { useImageModal } from '../context/ImageModalProvider';
 import './Message.scss';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
-import { DefaultImages } from '../../utils';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { useMobile } from '../context/MobileProvider';
+import { UserAvatar } from '../user/UserAvatar';
 import {
   useMessageActions,
   useEmojiPicker,
@@ -339,17 +339,12 @@ export const Message = React.memo(({
                 }
               >
                 <Container className="message-reply-curve" />
-                <Container
+                <UserAvatar
+                  userIcon={mapSenderToUser(reply.content.senderId).userIcon}
+                  displayName={mapSenderToUser(reply.content.senderId).displayName}
+                  address={reply.content.senderId}
+                  size={32}
                   className="message-reply-sender-icon"
-                  style={{
-                    backgroundImage: `url(${
-                      mapSenderToUser(
-                        reply.content.senderId
-                      ).userIcon?.includes(DefaultImages.UNKNOWN_USER)
-                        ? 'var(--unknown-icon)'
-                        : mapSenderToUser(reply.content.senderId).userIcon
-                    })`,
-                  }}
                 />
                 <Text className="message-reply-sender-name">
                   {mapSenderToUser(reply.content.senderId).displayName}
@@ -414,7 +409,12 @@ export const Message = React.memo(({
               </Container>
             </FlexRow>
           )}
-          <Container
+          <UserAvatar
+            userIcon={sender.userIcon}
+            displayName={sender.displayName}
+            address={sender.address}
+            size={49}
+            className="message-sender-icon"
             onClick={isTouchDevice() ? interactions.handleUserProfileClick : (event: React.MouseEvent) => {
               event.stopPropagation();
               if (onUserClick) {
@@ -428,14 +428,6 @@ export const Message = React.memo(({
                   { type: 'message-avatar', element: event.currentTarget as HTMLElement }
                 );
               }
-            }}
-            className="message-sender-icon"
-            style={{
-              backgroundImage: sender.userIcon?.includes(
-                DefaultImages.UNKNOWN_USER
-              )
-                ? 'var(--unknown-icon)'
-                : `url(${sender.userIcon})`,
             }}
           />
           <Container className="message-content">

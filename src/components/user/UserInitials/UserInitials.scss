@@ -4,9 +4,23 @@
   @apply text-white font-medium select-none;
   @apply transition-all duration-200;
 
-  // Raw CSS only for what Tailwind can't handle
-  line-height: 1;
-  text-align: center;
+  // Ensure proper centering - CRITICAL
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0;
+
+  // Text centering - compensate for font metrics
+  line-height: 1 !important;
+  text-align: center !important;
+
+  // Remove padding but allow margins from parent classes
+  padding: 0 !important;
+
+  // Font rendering for better centering
+  font-feature-settings: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 // Hover effect for interactive contexts
