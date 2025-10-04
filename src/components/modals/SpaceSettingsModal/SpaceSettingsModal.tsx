@@ -495,9 +495,16 @@ const SpaceSettingsModal: React.FunctionComponent<{
               : t`This will create a public invite link that anyone can use to join your Space. Consider who you share this link with.`
           }
           confirmText={space?.inviteUrl ? t`Generate New Link` : t`Generate Link`}
-          onConfirm={() => {
-            generateNewInviteLink();
+          onConfirm={async () => {
             setShowGenerateModal(false);
+            setErrorMessage('');
+            try {
+              await generateNewInviteLink();
+              setGenerationSuccess(true);
+              setTimeout(() => setGenerationSuccess(false), 3000);
+            } catch (error) {
+              setErrorMessage(t`Failed to generate invite link. Please try again.`);
+            }
           }}
           onCancel={() => setShowGenerateModal(false)}
         />
