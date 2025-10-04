@@ -28,6 +28,16 @@ Currently, users without profile images see a generic "unknown user" icon. This 
 2. User display name → Initials extraction → Avatar text
 3. All users see the same color for the same address (client-side deterministic sync)
 
+## Onboarding Integration
+
+**No onboarding changes needed.** The existing flow already supports this:
+
+1. User enters display name (Step 2) → Saved ✅
+2. User skips photo upload (Step 3) → `pfpUrl = DefaultImages.UNKNOWN_USER`
+3. UserAvatar detects unknown user icon → Automatically renders UserInitials with saved display name
+
+The system works seamlessly with the current onboarding flow.
+
 ## Architecture
 
 Following the established component guidelines:
