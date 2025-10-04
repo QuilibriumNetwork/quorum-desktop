@@ -2,17 +2,56 @@
  * Generates initials from a user's display name or address
  * @param fullName - User's display name or address
  * @returns Uppercase initials (1-2 characters) or "?" for empty input
+ *
+ * Behavior:
+ * - Regular names: First letter of first 2 words ("John Doe" → "JD")
+ * - Names starting with emoji: Only the first character ("😊 John" → "😊")
+ * - Empty/whitespace: Returns "?"
+ *
+ * Note: Uses simple emoji detection - if more complex emoji handling is needed
+ * (skin tones, ZWJ sequences, etc.), consider using a library like emoji-regex
  */
 export const getInitials = (fullName: string): string => {
-  if (!fullName) return "?";
+  if (!fullName?.trim()) return "?";
 
-  return fullName
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2) // Take first 2 words
+  const trimmed = fullName.trim();
+
+  // Use codePointAt on the original string to properly detect emojis
+  // (emojis are often multi-byte UTF-16 surrogate pairs)
+  const codePoint = trimmed.codePointAt(0) || 0;
+
+  // Simple emoji detection: check if first char is in common emoji ranges
+  // Covers ~99% of actual emoji usage without over-engineering
+  // Performance: O(1) - constant time checks, extremely fast even for thousands of users
+  const isEmoji = (
+    // Modern emojis (most common)
+    (codePoint >= 0x1F600 && codePoint <= 0x1F64F) || // Emoticons (😀-🙏)
+    (codePoint >= 0x1F300 && codePoint <= 0x1F5FF) || // Misc Symbols (🌀-🗿)
+    (codePoint >= 0x1F680 && codePoint <= 0x1F6FF) || // Transport (🚀-🛿)
+    (codePoint >= 0x1F900 && codePoint <= 0x1F9FF) || // Supplemental (🤐-🧿)
+    (codePoint >= 0x1FA70 && codePoint <= 0x1FAFF) || // Extended-A (🩰-🫶)
+    // Older Unicode emojis (still commonly used)
+    (codePoint >= 0x2600 && codePoint <= 0x26FF) ||   // Misc symbols (☀️-⛿)
+    (codePoint >= 0x2700 && codePoint <= 0x27BF) ||   // Dingbats (✀-➿)
+    // Special cases
+    (codePoint >= 0x1F1E0 && codePoint <= 0x1F1FF)    // Regional indicators (flags 🇦-🇿)
+  );
+
+  // If starts with emoji, extract and return it properly
+  // Use String.fromCodePoint to handle multi-byte emojis correctly
+  if (isEmoji) {
+    return String.fromCodePoint(codePoint);
+  }
+
+  // Standard initials: first letter of first 2 words
+  const words = trimmed.split(/\s+/);
+  const initials = words
+    .slice(0, 2)
     .map(word => word[0])
     .join("")
     .toUpperCase();
+
+  return initials || "?";
 };
 
 /**
