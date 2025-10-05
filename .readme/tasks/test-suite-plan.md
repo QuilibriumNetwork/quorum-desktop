@@ -1,10 +1,10 @@
 # Test Suite Implementation Plan for Quorum Desktop
 
-This document outlines the plan to create a comprehensive testing suite for the Quorum Desktop application. The goal is to improve code quality, reduce regressions, and enable safe refactoring, starting with fixing existing TypeScript errors.
+This document outlines the plan to create a comprehensive testing suite for the Quorum Desktop application. The goal is to improve code quality, reduce regressions, and enable safe refactoring.
 
 **This plan uses checkboxes (`- [ ]`). As the agent, I will update this file and mark tasks as complete (`- [x]`) as I execute them.**
 
-The primary tools for this initiative will be:
+The primary tools for this initiative are:
 
 - **[Vitest](https://vitest.dev/):** A modern, fast, and Vite-native test runner.
 - **[React Testing Library](https://testing-library.com/docs/react-testing-library/intro/):** For testing React components from a user-centric perspective.
@@ -13,55 +13,77 @@ The primary tools for this initiative will be:
 
 ---
 
-## Phase 1: Setup and Configuration
+## Phase 1: Setup and Configuration ✅ COMPLETED
 
 This phase focuses on integrating the testing libraries and framework into the project, ensuring a solid foundation for all future tests.
 
-- [ ] **Task 1: Install Core Dependencies**
-  - [ ] Install `vitest`
-  - [ ] Install `jsdom`
-  - [ ] Install `@testing-library/react`
-  - [ ] Install `@testing-library/jest-dom`
-  - [ ] Install `@testing-library/user-event`
+- [x] **Task 1: Install Core Dependencies**
+  - [x] Install `vitest`
+  - [x] Install `jsdom`
+  - [x] Install `@testing-library/react`
+  - [x] Install `@testing-library/jest-dom`
+  - [x] Install `@testing-library/user-event`
 
-- [ ] **Task 2: Configure Testing Environment**
-  - [ ] Create a `vitest.config.ts` file.
-  - [ ] Configure Vitest to integrate with the existing `vite.config.js`.
-  - [ ] Set up the test environment to use `jsdom`.
-  - [ ] Configure Vitest to correctly handle path aliases (e.g., `@/`), SCSS imports, and other project-specific file types.
+- [x] **Task 2: Configure Testing Environment**
+  - [x] Create a `vitest.config.ts` file.
+  - [x] Configure Vitest to integrate with the existing Vite config.
+  - [x] Set up the test environment to use `jsdom`.
+  - [x] Configure Vitest to correctly handle path aliases (e.g., `@/`), SCSS imports, and other project-specific file types.
 
-- [ ] **Task 3: Update Project Configuration**
-  - [ ] Add a `"test": "vitest"` script to `package.json`.
-  - [ ] Add a `"test:ui": "vitest --ui"` script for an interactive test runner.
-  - [ ] Update `tsconfig.json` to include Vitest and Testing Library types for full TypeScript support in test files.
+- [x] **Task 3: Update Project Configuration**
+  - [x] Add a `"test": "vitest"` script to `package.json`.
+  - [x] Create global test setup at `src/dev/tests/setup.ts` with WebSocket and crypto mocks.
 
-- [ ] **Task 4: Create Initial "Smoke Test"**
-  - [ ] Identify a simple, stateless component (e.g., `src/components/ui/CloseButton.tsx`).
-  - [ ] Create the first test file: `src/components/ui/CloseButton.test.tsx`.
-  - [ ] Write a basic "smoke test" that renders the component and asserts it doesn't crash.
-  - [ ] Run `npm test` and confirm that the test passes and the entire setup is functioning correctly.
+- [x] **Task 4: Create Initial Unit Tests**
+  - [x] Created comprehensive unit test suite for MessageDB services.
+  - [x] Implemented 75 tests across 6 services (100% passing).
+  - [x] Set up test infrastructure with proper mocking patterns.
 
 ---
 
-## Phase 2: Foundational Unit & Snapshot Tests
+## Phase 1.5: MessageDB Service Tests ✅ COMPLETED
 
-This phase aims to build a baseline of test coverage, focusing on individual components and utilities. This will provide an immediate safety net against UI regressions.
+This phase created a comprehensive unit test suite for all MessageDB services.
 
-- [ ] **Task 1: Test Core Presentational Components**
-  - [ ] `src/components/Button.jsx`
-  - [ ] `src/components/Input.tsx`
-  - [ ] `src/components/Loading.tsx`
-  - [ ] `src/components/ui/UnknownAvatar.tsx`
-  - [ ] `src/components/Tooltip.jsx`
-  - [ ] **Strategy:** Use **snapshot tests** for these to quickly capture their rendered output and prevent unintended visual changes.
+**Location:** `src/dev/tests/services/`
+
+**Completed:**
+- [x] **MessageService** (16 tests) - Message handling, routing, and persistence
+- [x] **SpaceService** (13 tests) - Space/channel management operations
+- [x] **InvitationService** (15 tests) - Invite creation, validation, and processing
+- [x] **SyncService** (15 tests) - Space synchronization operations
+- [x] **EncryptionService** (8 tests) - Encryption state management and key operations
+- [x] **ConfigService** (8 tests) - User configuration management
+
+**Documentation:**
+- [x] Created comprehensive README at `src/dev/tests/README.md`
+- [x] Created manual testing guides in `src/dev/tests/docs/`
+
+**Total Coverage:** 75 tests across 6 services (100% passing)
+
+---
+
+## Phase 2: Foundational Component & Utility Tests
+
+This phase aims to build a baseline of test coverage for UI components and utilities, providing a safety net against UI regressions.
+
+- [ ] **Task 1: Test Primitive Components**
+  - [ ] `src/components/primitives/Button.tsx`
+  - [ ] `src/components/primitives/Input.tsx`
+  - [ ] `src/components/primitives/Modal.tsx`
+  - [ ] `src/components/primitives/FlexRow.tsx`
+  - [ ] `src/components/primitives/FlexCol.tsx`
+  - [ ] **Strategy:** Use **React Testing Library** to test component behavior and user interactions.
 
 - [ ] **Task 2: Test Utility Functions**
-  - [ ] Review `src/utils.ts` for pure, testable functions and add unit tests.
-  - [ ] Review helper functions in `src/hooks/utils/` and add unit tests.
+  - [ ] Review `src/utils/` directory for pure, testable functions and add unit tests.
+  - [ ] Test platform detection utilities (`src/utils/platform.ts`)
+  - [ ] Test image processing utilities if applicable
 
 - [ ] **Task 3: Test Custom Hooks**
   - [ ] `src/hooks/useResponsiveLayout.ts`: Test the logic that returns layout information based on window size.
   - [ ] `src/hooks/useSearchContext.ts`: Test that the context provider works as expected.
+  - [ ] Other business logic hooks in `src/hooks/`
 
 ---
 
@@ -70,45 +92,99 @@ This phase aims to build a baseline of test coverage, focusing on individual com
 This phase focuses on testing how multiple components and services work together to deliver a complete feature, simulating real user workflows.
 
 - [ ] **Task 1: Test the Global Search Feature**
-  - [ ] **Mocking:** Create a mock version of the `searchService` to provide controlled data without hitting a real search index.
-  - [ ] **Component:** `src/components/search/GlobalSearchBar.tsx`.
-  - [ ] **Scenario:**
-    - [ ] Render the search bar.
-    - [ ] Simulate a user typing a query.
-    - [ ] Assert that the mocked `searchService` is called.
-    - [ ] Assert that the UI updates to show the search results from the mock.
+  - [ ] Mock the search service to provide controlled data
+  - [ ] Test search input and query handling
+  - [ ] Test search results rendering and updates
+  - [ ] Test search navigation and selection
 
 - [ ] **Task 2: Test the Modal System**
-  - [ ] **Component:** `src/components/Modal.tsx`.
-  - [ ] **Scenario:**
-    - [ ] Create a test that renders a component that can trigger a modal.
-    - [ ] Simulate the action that opens the modal.
-    - [ ] Assert that the modal and its content become visible.
-    - [ ] Simulate a click on the close button or overlay.
-    - [ ] Assert that the modal is removed from the DOM.
+  - [ ] Test modal opening and closing
+  - [ ] Test modal backdrop clicks and ESC key handling
+  - [ ] Test modal content rendering
+  - [ ] Test nested modals if applicable
+  - [ ] Test modal animations and transitions
 
 - [ ] **Task 3: Test Core Channel/Space Interaction**
-  - [ ] **Mocking:** Mock the `QuorumApiContext` to provide a predictable state for channels, spaces, and user information.
-  - [ ] **Component:** `src/components/space/ChannelList.tsx`.
-  - [ ] **Scenario:**
-    - [ ] Render the `ChannelList` with a mocked API context.
-    - [ ] Assert that the list of channels is displayed correctly.
-    - [ ] Simulate a user clicking on a specific channel.
-    - [ ] Assert that the application's state changes accordingly (e.g., a navigation or state update function is called with the correct channel ID).
+  - [ ] Mock the `QuorumApiContext` for predictable state
+  - [ ] Test channel list rendering
+  - [ ] Test channel selection and navigation
+  - [ ] Test space switching
+  - [ ] Test channel creation/deletion UI flows
+
+- [ ] **Task 4: Test Message Flow**
+  - [ ] Mock MessageService and related dependencies
+  - [ ] Test message composition UI
+  - [ ] Test message sending workflow
+  - [ ] Test message receiving and display
+  - [ ] Test reactions and message deletion UI
 
 ---
 
-## Phase 4: Fix TypeScript Errors with Test Safety Net
+## Phase 4: End-to-End Testing Strategy
 
-With the test suite in place, this phase involves systematically working through the `lint-report.md` and fixing the errors with confidence.
+This phase defines the approach for E2E testing that simulates real user workflows across the entire application.
 
-- [ ] **Task 1: Analyze and Prioritize**
-  - [ ] Read the `lint-report.md` file.
-  - [ ] Group errors by file and create a priority list. Files with newly created test coverage will be top priority.
+- [ ] **Task 1: Choose E2E Framework**
+  - [ ] Evaluate Playwright vs Cypress for Electron app testing
+  - [ ] Set up E2E testing infrastructure
+  - [ ] Create E2E test configuration
 
-- [ ] **Task 2: Iterative Fixing and Verification**
-  - [ ] For each file in the priority list:
-    - [ ] **Fix:** Apply the necessary code changes to resolve the TypeScript errors.
-    - [ ] **Verify (Automated):** Run the relevant tests (`vitest <path/to/file>`) and ensure all tests still pass.
-    - [ ] **Verify (Manual):** Briefly run the application and manually check the part of the UI related to the change to ensure it behaves and looks as expected.
-    - [ ] **Commit:** Commit the fix for that file or group of related files.
+- [ ] **Task 2: Define Critical User Journeys**
+  - [ ] User onboarding and account setup
+  - [ ] Space creation and joining
+  - [ ] Sending and receiving messages
+  - [ ] Invite generation and acceptance
+  - [ ] Profile and settings management
+
+- [ ] **Task 3: Implement E2E Test Suite**
+  - [ ] Create E2E tests for critical user journeys
+  - [ ] Set up test data management
+  - [ ] Implement proper cleanup between tests
+  - [ ] Add E2E tests to CI/CD pipeline
+
+---
+
+## Running Tests
+
+**All Service Unit Tests:**
+```bash
+yarn vitest src/dev/tests/services/ --run
+```
+
+**Watch Mode (Development):**
+```bash
+yarn vitest src/dev/tests/services/ --watch
+```
+
+**Specific Service:**
+```bash
+yarn vitest src/dev/tests/services/MessageService.unit.test.tsx --run
+```
+
+**All Tests (when more test suites are added):**
+```bash
+yarn test
+```
+
+---
+
+## Test Coverage Goals
+
+- **Service Layer:** ✅ 75 tests (100% passing)
+- **Primitive Components:** 🔲 Target: 20-30 tests
+- **Utility Functions:** 🔲 Target: 15-25 tests
+- **Custom Hooks:** 🔲 Target: 10-15 tests
+- **Integration Tests:** 🔲 Target: 10-15 tests
+- **E2E Tests:** 🔲 Target: 5-10 critical user journeys
+
+---
+
+## Related Documentation
+
+- **Test Suite README:** `src/dev/tests/README.md` - Comprehensive guide to running and understanding the service tests
+- **Manual Testing Guides:** `src/dev/tests/docs/manual-test_*.md` - Step-by-step manual testing procedures for each service
+- **Test Setup:** `src/dev/tests/setup.ts` - Global test configuration and mocks
+
+---
+
+_Last updated: 2025-10-05 by Claude Code_

@@ -310,7 +310,7 @@ export const Message = React.memo(({
           <Icon
             name="dots-vertical"
             size="sm"
-            className="text-subtle hover:text-main transition-colors"
+            className="text-muted hover:text-main transition-colors"
           />
         </Container>
       )}
