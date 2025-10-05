@@ -125,39 +125,6 @@ Toast auto-closes after 5 seconds
 
 ---
 
-## UI/UX Details
-
-### Visual Design
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│ Fixes                                                         │
-├──────────────────────────────────────────────────────────────┤
-│ ┌────────────────────────────────────────────────────────┐   │
-│ │ You're not listed in this Space's members.            │ Fix│
-│ │ Correcting this will add you to the Space Members...  │   │
-│ └────────────────────────────────────────────────────────┘   │
-│ ┌────────────────────────────────────────────────────────┐   │
-│ │ Sync kick status for previously kicked users.         │Sync│
-│ │ This verifies kicks without posting visible messages. │Kick│
-│ └────────────────────────────────────────────────────────┘Status│
-└──────────────────────────────────────────────────────────────┘
-```
-
-### Styling Classes
-
-- Container: `flex flex-col gap-2`
-- Fix item: `flex items-start justify-between gap-3 p-3 rounded-md border`
-- Message: `text-sm` with `lineHeight: 1.3`
-- Button: `type="secondary" size="small" className="whitespace-nowrap"`
-
-### Loading States
-
-When a fix is running:
-- Button becomes disabled
-- Button text changes to "Fixing..." (or fix-specific loading text)
-- `loading` prop controls this state
-
 ### Success Feedback
 
 The kick sync fix shows a success toast notification:
@@ -230,30 +197,6 @@ fixes={(existingFixes).concat(fixNeeded ? [{
 
 ---
 
-## Best Practices
-
-### When to Add a Fix
-
-✅ **Good use cases:**
-- One-time migrations for legacy data
-- Repair tools for known sync issues
-- Database consistency checks that can be automated
-- Operations that are safe to run multiple times
-
-❌ **Avoid using for:**
-- Regular user actions (use normal UI instead)
-- Destructive operations (use confirmation modals)
-- Operations that should be automatic (fix the root cause)
-
-### Fix Design Guidelines
-
-1. **Clear messaging:** Explain what the fix does and why it's needed
-2. **Loading states:** Always show when a fix is running
-3. **Feedback:** Show success/error messages after completion
-4. **Idempotent:** Safe to run multiple times without side effects
-5. **Fast execution:** Fixes should complete quickly (< 5 seconds)
-6. **Error handling:** Gracefully handle failures, show error messages
-
 ### Toast Notifications
 
 Use the global toast system for feedback:
@@ -284,32 +227,6 @@ Toasts automatically:
 - [Space Settings Modal](./modals.md) - Overall modal architecture
 - [Kick User System](./kick-user-system.md) - Details on kick functionality
 - [Modal System](./modals.md) - General modal patterns
-
----
-
-## Testing
-
-### Manual Testing
-
-**Owner Membership Fix:**
-1. Join a space as owner
-2. Manually delete your record from `space_members` table (dev tools)
-3. Open Space Settings → General
-4. Verify fix appears
-5. Click "Fix"
-6. Verify fix disappears
-7. Check database for your member record
-
-**Sync Kick Status Fix:**
-1. Create a space with multiple members
-2. Kick a user
-3. Open Space Settings → General
-4. Verify "Sync Kick Status" fix is always visible
-5. Click the fix button
-6. Verify success toast shows with kicked user count
-7. Verify toast auto-closes after 5 seconds
-8. Close and reopen modal
-9. Verify fix is still visible (always available)
 
 ---
 

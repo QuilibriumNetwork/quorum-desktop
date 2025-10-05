@@ -96,7 +96,7 @@ const ChannelGroup: React.FunctionComponent<{
       <div className="channel-group-name small-caps flex flex-row justify-between">
         <div
           className={
-            'truncate flex items-center gap-2 ' +
+            'truncate ' +
             ((isSpaceOwner && !isTouch) ? 'hover:text-main cursor-pointer' : '') +
             (isTouch ? ' cursor-pointer' : '') +
             (groupLongPressHandlers.className ? ` ${groupLongPressHandlers.className}` : '')
@@ -109,18 +109,21 @@ const ChannelGroup: React.FunctionComponent<{
           }}
           {...(isTouch ? groupLongPressHandlers : {})}
         >
-          {props.group.icon && (
-            <Icon
-              key={`group-${props.group.groupName}-${props.group.icon}`}
-              name={props.group.icon as any}
-              size="xs"
-              style={{
-                color: getIconColorHex(props.group.iconColor as IconColor)
-              }}
-              title={`${props.group.groupName}`}
-            />
-          )}
-          {props.group.groupName}
+          {/* Inner wrapper for icon + text with gap - not affected by long press handlers */}
+          <div className="flex items-center gap-2">
+            {props.group.icon && (
+              <Icon
+                key={`group-${props.group.groupName}-${props.group.icon}`}
+                name={props.group.icon as any}
+                size="xs"
+                style={{
+                  color: getIconColorHex(props.group.iconColor as IconColor)
+                }}
+                title={`${props.group.groupName}`}
+              />
+            )}
+            <span>{props.group.groupName}</span>
+          </div>
         </div>
         {isSpaceOwner && (
           <div className="pt-[.15rem]">
