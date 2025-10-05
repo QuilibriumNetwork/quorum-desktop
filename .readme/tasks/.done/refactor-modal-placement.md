@@ -1,6 +1,14 @@
 # Refactor Modal Placement in Layout.tsx
 
-Update: this is probably obsolete
+> **⚠️ OBSOLETE - DO NOT IMPLEMENT**
+>
+> **Status**: This task is obsolete and should NOT be implemented.
+>
+> **Reason**: The modals mentioned (NewDirectMessageModal, KickUserModal) are now correctly placed in **ModalProvider** (not Layout.tsx) to solve z-index stacking issues. Moving them "closer to usage" would reintroduce CSS stacking context problems that the current architecture explicitly solves.
+>
+> **Context**: See `.readme/docs/features/modals.md` for the three-system modal architecture. Component-level modal rendering is deprecated due to z-index issues. ModalProvider rendering at Router level ensures perfect z-index stacking (rendered above all UI elements).
+>
+> **Verified**: 2025-10-05
 
 ## Problem
 

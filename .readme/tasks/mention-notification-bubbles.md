@@ -34,83 +34,73 @@ Implement the backend logic to populate channel mention counts and enable notifi
 - Messages stored with `mentions.memberIds[]` containing user addresses
 - `useMessageFormatting.ts:68` checks if user is mentioned: `message.mentions?.memberIds.includes(userAddress)`
 
-## Implementation Plan
+## Implementation Plan (Simplified per Lead Dev)
 
-### Phase 1: Read State Tracking
-**Goal**: Track when user last viewed each channel
+### Step 1: Investigate Current Read Status System
+**Goal**: Understand if/how message read status is currently tracked
 
-**Components to create/modify**:
-- `src/hooks/business/channels/useChannelReadState.ts` - Track read timestamps per channel
-- `src/services/readStateService.ts` - Persist read state to localStorage/IndexedDB
-- Integrate with channel navigation to update read timestamps
+**Tasks**:
+- Search codebase for existing read status tracking
+- Check MessageDB for read/unread properties
+- Document current implementation (if any)
+- Determine if we need to implement read status from scratch
 
-**Data Structure**:
-```typescript
-interface ChannelReadState {
-  [channelId: string]: {
-    lastReadTimestamp: number;
-    lastReadMessageId?: string;
-  };
-}
-```
+### Step 2: Add `isMention` Property to Message
+**Goal**: Add boolean flag to messages that mention current user
 
-### Phase 2: Mention Counting Logic
-**Goal**: Count unread mentions per channel for current user
+**Components to modify**:
+- `src/types/` - Add `isMention?: boolean` to Message interface
+- Message creation/processing logic - Set `isMention` when message contains mention
+- Use existing `isMentioned()` function from `useMessageFormatting.ts` to determine value
+
+### Step 3: Database Indexing
+**Goal**: Optimize queries for mention counts
+
+**Tasks**:
+- Add database index on `isMention` field in messages table
+- Verify/add index on `channel` field in messages table (if not existing)
+- Test query performance with indexes
+
+### Step 4: Create Mention Count Hook
+**Goal**: Query unread mention counts per channel
 
 **Components to create**:
 - `src/hooks/business/mentions/useChannelMentionCounts.ts`
-- `src/services/mentionCountingService.ts`
 
 **Logic**:
-1. For each channel, scan messages newer than `lastReadTimestamp`
-2. Use existing `isMentioned()` function to detect mentions
-3. Count mentions and categorize as "you" vs "role"
+1. Use channel index to filter messages by channel
+2. Filter by `isMention === true`
+3. Filter by unread status (using read status system from Step 1)
 4. Return counts per channel
+5. Leverage database indexes for performance
 
-**Performance Considerations**:
-- Cache mention counts to avoid recalculating on every render
-- Use message indexes if available for efficient querying
-- Consider pagination for channels with large message histories
+### Step 5: Create Read Status Update Hook
+**Goal**: Mark messages as read
 
-### Phase 3: Data Integration
-**Goal**: Populate channel objects with mention counts
+**Components to create**:
+- Hook to update message read status by space/channel/message IDs
+- Integrate into message viewing flow
 
-**Components to modify**:
-- Enhance space data fetching to include calculated mention counts
-- Update `MessageDB.getSpace()` or create wrapper function
-- Ensure mention counts are included in space data returned to components
+### Step 6: Integration
+**Goal**: Wire everything together
 
-**Integration Points**:
-- `buildSpaceFetcher()` - Add mention count calculation
-- Space data transformation layer
-- Real-time WebSocket message handling
-
-### Phase 4: Real-time Updates
-**Goal**: Update mention counts when new messages arrive
-
-**Components to modify**:
-- WebSocket message handlers
-- Message processing pipeline
-- Space data cache invalidation
-
-**Flow**:
-1. New message arrives via WebSocket
-2. Check if message mentions current user
-3. Update mention counts for affected channel
-4. Trigger UI refresh
+**Tasks**:
+- On page load: Run mention count hook to populate initial counts
+- On new message: Update mention counts in real-time
+- On channel view: Mark messages as read and update counts
+- Populate `mentionCount` property on channel objects for UI
 
 ## Technical Considerations
 
 ### Performance
-- **Indexing**: Consider message indexing by mentions for faster queries
-- **Caching**: Cache mention counts and invalidate strategically
-- **Batching**: Batch mention count calculations for multiple channels
-- **Lazy Loading**: Only calculate counts for visible channels initially
+- **Database Indexes**: Use indexes on `isMention` and `channel` fields for fast queries
+- **Efficient Queries**: Let database handle filtering instead of scanning all messages
+- **Index Verification**: Ensure indexes exist before implementation
 
 ### Data Consistency
 - **Race Conditions**: Handle concurrent message arrivals and read state updates
-- **Offline/Online**: Sync mention counts when coming back online
-- **Message Ordering**: Ensure proper timestamp-based filtering
+- **Message Processing**: Set `isMention` flag during message creation/receipt
+- **Read Status Sync**: Investigate how read status currently works (unknown)
 
 ### Testing Strategy
 - **Unit Tests**: Test mention counting logic with various message patterns
@@ -122,14 +112,14 @@ interface ChannelReadState {
 
 ```
 src/
+├── types/
+│   └── message.ts                     # Modify - Add isMention property
 ├── hooks/business/mentions/
-│   ├── useChannelMentionCounts.ts     # New - Main mention counting hook
+│   ├── useChannelMentionCounts.ts     # New - Query mention counts via indexes
+│   ├── useMessageReadStatus.ts        # New - Update read status
 │   └── useMentionInput.ts             # Existing - Mention input handling
-├── hooks/business/channels/
-│   └── useChannelReadState.ts         # New - Read state tracking
-├── services/
-│   ├── mentionCountingService.ts      # New - Core counting logic
-│   └── readStateService.ts            # New - Read state persistence
+├── db/
+│   └── MessageDB.ts                   # Modify - Add indexes for isMention and channel
 └── components/space/
     ├── ChannelGroup.tsx               # Existing - Already renders bubbles
     └── ChannelGroup.scss              # Existing - Already styled
@@ -138,14 +128,14 @@ src/
 ## Dependencies Analysis
 
 ### Existing Dependencies to Leverage
-- `useMessageFormatting.ts` - Already has mention detection logic
-- `MessageDB` - Message storage and querying
+- `useMessageFormatting.ts` - Already has `isMentioned()` function for detection
+- `MessageDB` - Message storage, querying, and indexing
 - `useSpace()` - Space/channel data fetching
 - WebSocket providers - Real-time message handling
 
-### Potential New Dependencies
-- Consider if any additional indexing/querying libraries are needed
-- Evaluate if current message storage supports efficient mention queries
+### Database Indexing
+- Use MessageDB's existing indexing capabilities
+- No additional libraries needed - leverage built-in database indexes
 
 ## Success Criteria
 
@@ -168,26 +158,32 @@ src/
 ## Risk Assessment
 
 ### High Risk
-- **Performance Impact**: Scanning large message histories could be slow
-- **Data Consistency**: Race conditions between message arrival and read state
+- **Read Status Unknown**: Need to investigate if read status tracking exists
+- **Data Migration**: Existing messages need `isMention` field populated
 
 ### Medium Risk
-- **Complex State Management**: Managing read state across multiple channels
+- **Index Performance**: Need to test query performance with indexes
 - **WebSocket Integration**: Ensuring real-time updates work reliably
 
 ### Low Risk
 - **UI Integration**: Components and styling already exist
 - **Message Format**: Mention format is well-established
+- **Database Capability**: MessageDB supports indexing
 
 ## Next Steps
 
-1. **Review Existing Code**: Deep dive into `MessageDB`, `useSpace()`, and message handling
-2. **Prototype Counting Logic**: Create basic mention counting function and test performance
-3. **Design Read State System**: Determine best approach for persisting read timestamps
-4. **Implementation Planning**: Break down into smaller, testable increments
-5. **Performance Testing**: Test with realistic message volumes
+1. **Investigate Read Status** (CRITICAL - UNKNOWN): Search codebase for existing read/unread tracking
+2. **Review MessageDB**: Understand indexing capabilities and message schema
+3. **Add `isMention` Property**: Update Message type and processing logic
+4. **Implement Indexes**: Add database indexes for `isMention` and `channel`
+5. **Create Hooks**: Build `useChannelMentionCounts` and `useMessageReadStatus`
+6. **Integration**: Wire hooks into page load and real-time flows
+7. **Testing**: Test with realistic message volumes and verify index performance
+
+
 
 ---
 
 *Task created: 2025-09-24*
+*Updated: 2025-10-05 - Simplified per lead dev's approach*
 *Analysis conducted via Claude Code - requires manual verification*

@@ -24,6 +24,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modal System Documentation](docs/features/modals.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
+- [Space Settings Modal - Fixes Section](docs/features/space-settings-fixes-section.md)
 - [Touch Long Press System](docs/features/touch-long-press-system.md)
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
 
@@ -83,14 +84,16 @@ This is the main index for all documentation, bug reports, and task management.
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
+- [Docusaurus Developer Documentation Blueprint](tasks/docusaurus-blueprint-v2.md)
 - [Edit Message Feature](tasks/edit-message-feature.md)
-- [Implement Background Sync Queue for User Settings and Async Operations](tasks/implement-background-sync-queue.md)
-- [Implement Mention Notification Bubbles](tasks/implement-mention-notification-bubbles.md)
-- [MessageDB.tsx Refactoring Analysis](tasks/messagedb-refactoring-analysis.md)
-- [Refactor Modal Placement in Layout.tsx](tasks/refactor-modal-placement.md)
+- [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
+- [Implement Mention Notification Bubbles](tasks/mention-notification-bubbles.md)
+- [Modal System Consolidation via Route Wrapper Component](tasks/modal-system-consolidation.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Shared Git Hooks Setup](tasks/shared-git-hooks-setup.md)
+- [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
+- [User Config Sync on Existing Accounts](tasks/user-config-sync-on-existing-accounts.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
 - [🚀 Search Performance Optimization - Master Plan](tasks/search-performance-optimization.md)
 
@@ -98,6 +101,14 @@ This is the main index for all documentation, bug reports, and task management.
 - [CSS Inventory - Complete Codebase Analysis](tasks/css-refactor/css-inventory.md)
 - [CSS Refactor Analysis Report](tasks/css-refactor/analysis.md)
 - [CSS Refactor Plan - Claude Code Execution Strategy](tasks/css-refactor/css-refactor-plan.md)
+
+### Messagedb
+- [handleNewMessage Integration Tests Guide](tasks/messagedb/handlenewmessage-tests.md)
+- [handleNewMessage Refactoring Plan](tasks/messagedb/handlenewmessage-refactor-plan.md)
+- [High-Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-3.md)
+- [Low/Medium Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-1.md)
+- [MessageDB Refactoring - Current State](tasks/messagedb/messagedb-current-state.md)
+- [MessageDB: Optimization Plan](tasks/messagedb/messagedb-optimization-2.md)
 
 ### Mobile Dev
 - [Business Logic Extraction & Native Preparation Plan](tasks/mobile-dev/business-logic-extraction-plan.md)
@@ -134,6 +145,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Client-Side Image Processing for Large File Uploads](tasks/.done/client-side-image-processing.md)
 - [Color Switcher Implementation](tasks/.done/color-switcher.md)
 - [Complex Modal Primitive Migration Template](tasks/.done/usersettingsmodal-primitive-migration.md)
+- [CRITICAL: Improve MessageDB Test Coverage for Refactoring Safety](tasks/.done/messagedb-unit-tests.md)
 - [Cross-Platform Component Audit](tasks/.done/components-audit.md)
 - [Cross-Platform Key Backup Implementation](tasks/.done/cross-platform-key-backup.md)
 - [Delete Confirmation System Implementation](tasks/.done/delete-confirmation-system.md)
@@ -143,6 +155,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Lazy Loading Implementation for Message Lists](tasks/.done/lazy-loading-implementation.md)
 - [Message Handling Report](tasks/.done/messages-report.md)
 - [Message Markdown Support Implementation](tasks/.done/message-markdown-support.md)
+- [MessageDB Circular Dependency Status](tasks/.done/messagedb-circular-dependecy-status.md)
+- [MessageDB.tsx Refactoring Analysis and TAsk](tasks/.done/DONE_messagedb-refactoring.md)
 - [Mobile Message Options UX Enhancement](tasks/.done/message-options-mobile.md)
 - [Modal Animation Consistency Implementation](tasks/.done/new-modals-effect.md)
 - [Modal Migration Analysis & Progress Report](tasks/.done/DONE_modal-migration-plan.md)
@@ -151,15 +165,17 @@ This is the main index for all documentation, bug reports, and task management.
 - [Public Invite Links Improvement Task](tasks/.done/invite-links-improve.md)
 - [ReactTooltip Mobile Optimization](tasks/.done/reacttoolltip-mobile.md)
 - [Read-Only Channels with Role Managers](tasks/.done/read-only-channels-with-role-managers.md)
+- [Refactor Modal Placement in Layout.tsx](tasks/.done/refactor-modal-placement.md)
 - [Responsive Layout Implementation Plan](tasks/.done/responsive-layout.md)
 - [Responsive Layout Requirements](tasks/.done/responsive-layout_requirements.md)
 - [Search Components Primitive Migration](tasks/.done/search-primitive-migration.md)
 - [Task: Improve User Mention System](tasks/.done/improve-user-mention-system.md)
 - [UI Folder Reorganization Task](tasks/.done/ui-folder-reorganization.md)
+- [User Initials Avatars](tasks/.done/user-initials.md)
 - [🎯 Objective: Implement Global Message Search](tasks/.done/global-search-plan.md)
 - [🔍 Global Message Search Implementation Plan](tasks/.done/global-search.md)
 - [🔍 Users List Filtering Feature](tasks/.done/users-list-filtering-feature.md)
 
 ---
 
-**Last Updated**: 2025-09-26 13:05:53
+**Last Updated**: 2025-10-05 11:37:50
