@@ -120,6 +120,7 @@ const Layout: React.FunctionComponent<{
                     variant={kickToast.variant || 'info'}
                     size="sm"
                     dismissible
+                    autoClose={5}
                     onClose={() => setKickToast(null)}
                   >
                     {kickToast.message}

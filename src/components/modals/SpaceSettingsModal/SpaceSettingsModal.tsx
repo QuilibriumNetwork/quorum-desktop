@@ -337,12 +337,12 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           setSpaceName={setSpaceName}
                           // set 'owner-membership' to 'true' to see in frontend
                           fixes={(missingOwnerMembership ? [{
-                            id: 'true',
+                            id: 'owner-membership',
                             message: t`You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address).`,
                             actionLabel: t`Fix`,
                             onFix: addOwnerToMembers,
                             loading: addingOwner,
-                          }] : []).concat([{ id: 'sync-kicked', message: t`Sync kick status for previously kicked users. This verifies kicks without posting visible messages.`, actionLabel: t`Sync Kick Status`, onFix: handleSyncKicked, loading: syncingKicks }])}
+                          }] : []).concat([{ id: 'sync-kicked', message: t`Update kick records for all members. Use this if kicked users still appear active to some members.`, actionLabel: t`Sync Kick Status`, onFix: handleSyncKicked, loading: syncingKicks }])}
                           iconData={iconData}
                           currentIconFile={currentIconFile}
                           iconFileError={iconFileError}
@@ -463,6 +463,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                         variant="error"
                         size="sm"
                         dismissible
+                        autoClose={5}
                         onClose={() => setSaveError('')}
                       >
                         <div>
