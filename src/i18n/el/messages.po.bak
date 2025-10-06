@@ -41,15 +41,15 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Το μέγεθος της εικόνας προφίλ σας πρέπει να είναι {maxFileSize} ή λιγότερο και πρέπει να έχει κατάληξη PNG, JPG ή JPEG."
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:134
-msgid "Failed to process image"
-msgstr "Αποτυχία επεξεργασίας εικόνας"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
 #: src/components/message/MessageComposer.tsx:248
 msgid "Replying to {user}"
 msgstr "Απαντώντας στον {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:134
+msgid "Failed to process image"
+msgstr "Αποτυχία επεξεργασίας εικόνας"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:224
@@ -67,7 +67,7 @@ msgid "{user} has been kicked"
 msgstr "{user} έχει αποβληθεί"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:511
+#: src/components/direct/DirectMessage.tsx:516
 msgid "Send a message to {user}"
 msgstr "Στείλτε ένα μήνυμα στον {user}"
 
@@ -135,9 +135,17 @@ msgstr "0 Bytes"
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 apparaat gemarkeerd voor verwijdering. Klik op \"Wijzigingen opslaan\" om te bevestigen."
 
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:20
+msgid "Account"
+msgstr ""
+
 #: src/components/modals/UserSettingsModal/General.tsx:108
 msgid "Account Address"
 msgstr "Διεύθυνση Λογαριασμού"
+
+#: src/components/modals/SpaceSettingsModal/Account.tsx:72
+msgid "Account Settings for This Space"
+msgstr ""
 
 #: src/components/modals/AddSpaceModal.tsx:121
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -153,7 +161,7 @@ msgid "Add friend"
 msgstr "Προσθήκη φίλου"
 
 #: src/components/modals/GroupEditorModal.tsx:58
-#: src/components/space/ChannelList.tsx:74
+#: src/components/space/ChannelList.tsx:81
 msgid "Add Group"
 msgstr "Προσθήκη Ομάδας"
 
@@ -251,6 +259,10 @@ msgstr "Είστε σίγουροι ότι θέλετε να διαγράψετ�
 msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited."
 msgstr "Είστε σίγουροι ότι θέλετε να φύγετε από αυτό το Space; Δεν θα μπορείτε να ξαναενωθείτε εκτός αν σας ξανακαλέσουν."
 
+#: src/components/modals/SpaceSettingsModal/Account.tsx:166
+msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
+msgstr ""
+
 #: src/hooks/business/messages/usePinnedMessages.ts:231
 msgid "Are you sure you want to pin this message?"
 msgstr "Είστε σίγουροι ότι θέλετε να καρφιτσώσετε αυτό το μήνυμα;"
@@ -315,6 +327,10 @@ msgstr "Δεν είναι δυνατή η διαγραφή Χώρου με κα�
 msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
 msgstr "Δεν μπορείτε να ανεβάσετε περισσότερα από {0} αρχεία ταυτόχρονα ({remaining} θέσεις διαθέσιμες)"
 
+#: src/components/modals/SpaceSettingsModal/Account.tsx:75
+msgid "Change your avatar and name for this Space."
+msgstr ""
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:53
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 msgstr "Οι αλλαγές γίνονται αυτόματα, αλλά η ενεργή σελίδα μπορεί να μην έχει ενημερωθεί. Ανανεώστε τη σελίδα για να εφαρμόσετε τη νέα γλώσσα."
@@ -369,6 +385,7 @@ msgstr "Καθαρισμός ειδοποιήσεων με ετικέτα: {tag}
 #: src/components/modals/GroupEditorModal.tsx:126
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
+#: src/components/modals/SpaceSettingsModal/Account.tsx:186
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:68
 msgid "Click again to confirm"
 msgstr "Κάντε κλικ ξανά για επιβεβαίωση"
@@ -397,7 +414,7 @@ msgstr "Configuratiesleutel"
 msgid "Connecting"
 msgstr "Σύνδεση"
 
-#: src/components/direct/DirectMessage.tsx:401
+#: src/components/direct/DirectMessage.tsx:406
 msgid "Conversation settings"
 msgstr "Ρυθμίσεις συνομιλίας"
 
@@ -413,9 +430,9 @@ msgstr "Ρυθμίσεις Συνομιλίας"
 msgid "Copied!"
 msgstr "Αντιγράφηκε!"
 
-#: src/components/direct/DirectMessage.tsx:261
-#: src/components/direct/DirectMessage.tsx:382
-#: src/components/direct/DirectMessage.tsx:454
+#: src/components/direct/DirectMessage.tsx:266
+#: src/components/direct/DirectMessage.tsx:387
+#: src/components/direct/DirectMessage.tsx:459
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:108
 #: src/components/user/UserStatus.tsx:48
@@ -525,7 +542,6 @@ msgstr "Διαγραφή Καναλιού"
 msgid "Delete Conversation"
 msgstr "Διαγραφή Συνομιλίας"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:234
 #~ msgid "Delete Current Link"
 #~ msgstr "Διαγραφή Τρέχοντος Συνδέσμου"
 
@@ -533,7 +549,6 @@ msgstr "Διαγραφή Συνομιλίας"
 msgid "Delete Group"
 msgstr "Διαγραφή Ομάδας"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:517
 #~ msgid "Delete Link"
 #~ msgstr "Verwijder Link"
 
@@ -550,7 +565,6 @@ msgstr "Διαγραφή Μηνύματος"
 msgid "Delete Messages"
 msgstr "Διαγραφή μηνυμάτων"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:515
 #~ msgid "Delete Public Invite Link"
 #~ msgstr "Διαγραφή Δημόσιου Συνδέσμου Πρόσκλησης"
 
@@ -560,7 +574,7 @@ msgid "Delete Role"
 msgstr "Διαγραφή ρόλου"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:66
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:20
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:26
 msgid "Delete Space"
 msgstr "Διαγραφή Χώρος"
 
@@ -587,13 +601,15 @@ msgstr "Άμεσο Μήνυμα"
 msgid "Direct Messages"
 msgstr "Άμεσες Μηνύματα"
 
+#: src/components/modals/SpaceSettingsModal/Account.tsx:115
 #: src/components/modals/UserSettingsModal/General.tsx:86
 msgid "Display Name"
 msgstr "Όνομα Εμφάνισης"
 
+#: src/components/modals/SpaceSettingsModal/Account.tsx:119
 #: src/components/modals/UserSettingsModal/General.tsx:89
 msgid "Display name is required"
-msgstr ""
+msgstr "Το όνομα εμφάνισης είναι υποχρεωτικό"
 
 #: src/components/ui/MobileDrawer.tsx:131
 msgid "Drawer"
@@ -617,7 +633,7 @@ msgid "Emoji picker"
 msgstr "Επιλογέας emoji"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:41
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:17
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:23
 msgid "Emojis"
 msgstr "Emojis"
 
@@ -683,13 +699,13 @@ msgid "Failed to copy to clipboard. Please try again."
 msgstr "Αποτυχία αντιγραφής στο πρόχειρο. Παρακαλώ δοκιμάστε ξανά."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:923
+#: src/services/MessageService.ts:934
 msgid "Failed to decrypt message with any known state"
 msgstr "Αποτυχία αποκρυπτογράφησης μηνύματος με οποιαδήποτε γνωστή κατάσταση"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:509
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:554
 msgid "Failed to generate invite link. Please try again."
-msgstr ""
+msgstr "Απέτυχε η δημιουργία του συνδέσμου πρόσκλησης. Παρακαλώ δοκιμάστε ξανά."
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:105
 msgid "Failed to open image picker"
@@ -707,10 +723,15 @@ msgstr "Αποτυχία επιλογής εγγράφου"
 msgid "Failed to send invite. Please try again."
 msgstr "Verzenden van uitnodiging mislukt. Probeer het opnieuw."
 
+#: src/hooks/business/spaces/useSpaceProfile.ts:217
+msgid "Failed to update profile"
+msgstr ""
+
 #: src/utils/imageProcessing/errors.ts:16
 msgid "File cannot be larger than {maxSize}"
 msgstr "Plik nie może być większy niż {maxSize}"
 
+#: src/hooks/business/spaces/useSpaceProfile.ts:81
 #: src/hooks/business/ui/useCustomAssets.ts:139
 #: src/hooks/business/ui/useFileUpload.ts:54
 #: src/hooks/business/ui/useSpaceFileUploads.ts:68
@@ -728,6 +749,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "Το αρχείο δεν πρέπει να είναι μεγαλύτερο από 5MB"
 
 #: src/hooks/business/messages/useMessageComposer.ts:68
+#: src/hooks/business/spaces/useSpaceProfile.ts:83
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
 #: src/hooks/business/ui/useFileUpload.ts:56
@@ -755,7 +777,7 @@ msgstr "Το μέγεθος του αρχείου είναι πολύ μικρό
 msgid "File validation failed. Please try again."
 msgstr "Η επικύρωση του αρχείου απέτυχε. Παρακαλώ δοκιμάστε ξανά."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:342
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:383
 msgid "Fix"
 msgstr "Fix"
 
@@ -772,7 +794,7 @@ msgstr "Bezig met fixen..."
 msgid "general"
 msgstr "γενικό"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:15
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:21
 #: src/components/modals/UserSettingsModal/Navigation.tsx:15
 msgid "General"
 msgstr "Γενικό"
@@ -782,17 +804,17 @@ msgstr "Γενικό"
 msgid "General Chat"
 msgstr "Γενική Συνομιλία"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:500
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:545
 msgid "Generate Link"
 msgstr "Genereer Link"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:213
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:500
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:545
 msgid "Generate New Link"
 msgstr "Δημιουργία Νέου Συνδέσμου"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:162
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:494
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:539
 msgid "Generate Public Invite Link"
 msgstr "Δημιουργία Δημόσιου Συνδέσμου Πρόσκλησης"
 
@@ -854,7 +876,7 @@ msgid "Important messages will be pinned here"
 msgstr "Σημαντικά μηνύματα θα καρφιτσωθούν εδώ"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1119
+#: src/services/MessageService.ts:1130
 msgid "invalid address for signature"
 msgstr "μη έγκυρη διεύθυνση για υπογραφή"
 
@@ -897,7 +919,7 @@ msgid "invalid response"
 msgstr "μη έγκυρη απάντηση"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:19
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "Προσκλήσεις"
 
@@ -977,8 +999,13 @@ msgid "Leave {0}"
 msgstr "Αφήστε {0}"
 
 #: src/components/modals/LeaveSpaceModal.tsx:62
+#: src/components/modals/SpaceSettingsModal/Account.tsx:184
 msgid "Leave Space"
 msgstr "Αποχώρηση από το Χώρος"
+
+#: src/components/modals/SpaceSettingsModal/Account.tsx:163
+msgid "Leave this space"
+msgstr ""
 
 #: src/components/onboarding/Onboarding.native.tsx:312
 #: src/components/onboarding/Onboarding.tsx:196
@@ -1028,7 +1055,7 @@ msgstr "Διαχείριση συσκευών και συνθηκών ιδιωτ
 msgid "Manual Backup Required"
 msgstr "Απαιτείται χειροκίνητο αντίγραφο ασφαλείας"
 
-#: src/components/direct/DirectMessage.tsx:415
+#: src/components/direct/DirectMessage.tsx:420
 #: src/components/space/Channel.tsx:499
 msgid "Members List"
 msgstr "Λίστα μελών"
@@ -1302,7 +1329,7 @@ msgstr "Απαιτείται τα μηνύματα που αποστέλλοντ
 msgid "Reset"
 msgstr "Reset"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:16
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:42
 msgid "Roles"
 msgstr "Ρόλοι"
@@ -1313,7 +1340,7 @@ msgstr "Αποθήκευση"
 
 #: src/components/modals/ChannelEditorModal.tsx:189
 #: src/components/modals/GroupEditorModal.tsx:94
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:481
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:526
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:239
 #: src/components/user/UserProfileEdit.tsx:160
 msgid "Save Changes"
@@ -1324,7 +1351,7 @@ msgstr "Αποθήκευση Αλλαγών"
 msgid "Save Contact Photo"
 msgstr "Αποθήκευση Φωτογραφίας Επαφής"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:470
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:511
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:228
 msgid "Save Failed"
 msgstr "Αποτυχία αποθήκευσης"
@@ -1466,9 +1493,10 @@ msgstr "Όνομα Χώρου"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:115
 msgid "Space name is required"
-msgstr ""
+msgstr "Το όνομα του Χώρου είναι υποχρεωτικό"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:27
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
+#: src/components/space/ChannelList.tsx:56
 msgid "Space Settings"
 msgstr "Ρυθμίσεις Χώρου"
 
@@ -1484,7 +1512,7 @@ msgstr "Η κατάσταση πηγαίνει εδώ"
 msgid "Stay Connected, Stay Invisible"
 msgstr "Μείνετε Συνδεδεμένοι, Μείνετε Αόρατοι"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:18
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:24
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:41
 msgid "Stickers"
 msgstr "Αυτοκόλλητα"
@@ -1494,11 +1522,10 @@ msgstr "Αυτοκόλλητα"
 msgid "Successfully sent invite to {0}"
 msgstr "Επιτυχώς αποστάλθηκε πρόσκληση στον {0}"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:345
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:386
 msgid "Sync Kick Status"
 msgstr "Synchroniseer Kick-status"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:347
 #~ msgid "Sync kick status for previously kicked users. This verifies kicks without posting visible messages."
 #~ msgstr "Synchroniseer kickstatus voor eerder verwijderde gebruikers. Dit verifieert kicks zonder zichtbare berichten te plaatsen."
 
@@ -1559,15 +1586,14 @@ msgstr "Deze openbare uitnodigingslink is niet langer geldig."
 msgid "This user is already a member of this space."
 msgstr "Αυτός ο χρήστης είναι ήδη μέλος αυτού του Χώρου."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:498
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:543
 msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
 msgstr "Dit zal een openbare uitnodigingslink creëren die iedereen kan gebruiken om να εισέλθει στον Χώρο σας. Σκεφτείτε με ποιον μοιράζεστε αυτόν τον σύνδεσμο."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:497
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:542
 msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
 msgstr "Dit zal een nieuwe openbare uitnodigingslink genereren en de huidige ongeldig maken. Iedereen met de oude link kan deze niet meer gebruiken."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:516
 #~ msgid "This will permanently delete the current public invite link. Anyone who has this link will no longer be able to use it to join your Space."
 #~ msgstr "Dit zal de huidige openbare uitnodigingslink permanent verwijderen. Iedereen που έχει αυτόν τον σύνδεσμο, δεν θα μπορεί πλέον να τον χρησιμοποιήσει για να εισέλθει στον Χώρο σας betreden."
 
@@ -1596,6 +1622,7 @@ msgstr "Δοκιμάστε διαφορετικές λέξεις-κλειδιά 
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "Kon emoji-afbeeldingen niet comprimeren. Gebruik alstublieft kleinere afbeeldingen."
 
+#: src/hooks/business/spaces/useSpaceProfile.ts:122
 #: src/hooks/business/ui/useFileUpload.ts:96
 #: src/hooks/business/ui/useSpaceFileUploads.ts:160
 #: src/hooks/business/ui/useSpaceFileUploads.ts:183
@@ -1648,9 +1675,9 @@ msgstr "Άγνωστη ώρα"
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:124
-#: src/components/direct/DirectMessage.tsx:139
-#: src/components/direct/DirectMessage.tsx:323
+#: src/components/direct/DirectMessage.tsx:129
+#: src/components/direct/DirectMessage.tsx:144
+#: src/components/direct/DirectMessage.tsx:328
 #: src/components/message/MessageComposer.tsx:320
 #: src/components/message/MessageComposer.tsx:327
 #: src/components/message/MessagePreview.tsx:41
@@ -1658,7 +1685,7 @@ msgstr "Άγνωστη ώρα"
 #: src/components/message/PinnedMessagesPanel.tsx:119
 #: src/components/modals/ConversationSettingsModal.tsx:95
 #: src/components/modals/NewDirectMessageModal.tsx:66
-#: src/hooks/business/channels/useChannelMessages.ts:151
+#: src/hooks/business/channels/useChannelMessages.ts:144
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:133
@@ -1670,10 +1697,10 @@ msgstr "Άγνωστη ώρα"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:759
-#: src/services/MessageService.ts:900
-#: src/services/MessageService.ts:919
-#: src/services/MessageService.ts:2206
+#: src/services/MessageService.ts:770
+#: src/services/MessageService.ts:911
+#: src/services/MessageService.ts:930
+#: src/services/MessageService.ts:2227
 msgid "Unknown User"
 msgstr "Άγνωστος Χρήστης"
 
@@ -1703,12 +1730,16 @@ msgstr "Αφαίρεση αυτού του δημοσιεύματος"
 msgid "Unpinned!"
 msgstr "Αφαίρεση καρφιτσώματος!"
 
-#: src/components/direct/DirectMessage.tsx:499
+#: src/components/direct/DirectMessage.tsx:504
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Μέχρι να απαντήσεις, αυτός ο αποστολέας δεν θα δει το όνομα ή την εικόνα προφίλ σου"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:345
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:386
 msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
+msgstr "Ενημερώστε τα αρχεία αποβολής για όλα τα μέλη. Χρησιμοποιήστε αυτό αν οι αποβληθέντες χρήστες εξακολουθούν να εμφανίζονται ενεργοί σε ορισμένα μέλη."
+
+#: src/components/modals/SpaceSettingsModal/Account.tsx:104
+msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr ""
 
 #: src/components/modals/CreateSpaceModal.tsx:102
@@ -1790,7 +1821,7 @@ msgstr "Wanneer je een bericht ondertekent, bevestig je dat het van je sleutel k
 msgid "Yesterday at {timeFormatted}"
 msgstr "Χθες στις {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:255
+#: src/components/direct/DirectMessage.tsx:260
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "Εσύ"
@@ -1830,7 +1861,7 @@ msgstr "Έχεις νέα μη αναγνωσμένα μηνύματα"
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Είσαι έτοιμος. Καλώς ήρθες στο Quorum!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:341
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:382
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Δεν είστε καταχωρημένος στα μέλη αυτού του Χώρου. Η διόρθωση αυτού θα σας προσθέσει στη λίστα μελών Χώρου (αποθηκεύει το προφίλ σας τοπικά με τη διεύθυνση του skrzynki odbiorczej)."
 
@@ -1854,6 +1885,10 @@ msgstr "Rozmiar obrazu profilowego musi wynosić {maxSize} lub mniej i musi mie�
 #: src/components/onboarding/Onboarding.native.tsx:369
 msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "Το μέγεθος της εικόνας προφίλ σας πρέπει να είναι 2MB ή λιγότερο και πρέπει να έχει κατάληξη αρχείου PNG, JPG ή JPEG."
+
+#: src/components/modals/SpaceSettingsModal/Account.tsx:141
+msgid "Your Roles"
+msgstr ""
 
 #: src/components/ui/YouTubeFacade.tsx:92
 msgid "YouTube Video"

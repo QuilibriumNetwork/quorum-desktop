@@ -90,12 +90,17 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Mention Notification Bubbles](tasks/mention-notification-bubbles.md)
 - [Modal System Consolidation via Route Wrapper Component](tasks/modal-system-consolidation.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
-- [Shared Git Hooks Setup](tasks/shared-git-hooks-setup.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [User Config Sync on Existing Accounts](tasks/user-config-sync-on-existing-accounts.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
-- [🚀 Search Performance Optimization - Master Plan](tasks/search-performance-optimization.md)
+- [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/search-performance-optimization.md)
+
+### .Archived
+- [Search Performance Optimization - Architecture Analysis Report](tasks/.archived/search-performance-optimization_ANALYSIS.md)
+- [Search Performance Optimization - Executive Summary](tasks/.archived/search-performance-analysis_SUMMARY.md)
+- [Shared Git Hooks Setup](tasks/.archived/shared-git-hooks-setup.md)
+- [Space/Channel Message Deletion Placeholders](tasks/.archived/space-message-deletion-placeholders.md)
 
 ### Css Refactor
 - [CSS Inventory - Complete Codebase Analysis](tasks/css-refactor/css-inventory.md)
@@ -149,8 +154,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Cross-Platform Component Audit](tasks/.done/components-audit.md)
 - [Cross-Platform Key Backup Implementation](tasks/.done/cross-platform-key-backup.md)
 - [Delete Confirmation System Implementation](tasks/.done/delete-confirmation-system.md)
+- [Direct Message Deletion Feature](tasks/.done/dm-message-deletion.md)
 - [Emoji Picker Responsive Design Improvement](tasks/.done/emojipicker-responsive.md)
 - [Expo Go to Expo Dev Client Migration Plan - Simplified](tasks/.done/expo-go-to-dev-client-migration.md)
+- [Implement Per-Space Display Names and Avatars with Account Section](tasks/.done/per-space-display-name-avatar.md)
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
 - [Lazy Loading Implementation for Message Lists](tasks/.done/lazy-loading-implementation.md)
 - [Message Handling Report](tasks/.done/messages-report.md)
@@ -160,6 +167,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mobile Message Options UX Enhancement](tasks/.done/message-options-mobile.md)
 - [Modal Animation Consistency Implementation](tasks/.done/new-modals-effect.md)
 - [Modal Migration Analysis & Progress Report](tasks/.done/DONE_modal-migration-plan.md)
+- [Per-Space Profile Data Flow Analysis](tasks/.done/per-space-profile-data-flow-analysis.md)
 - [Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/.done/components-audit-dashboard.md)
 - [Pinned Messages Feature - Implementation Plan](tasks/.done/pinned-messages-feature.md)
 - [Public Invite Links Improvement Task](tasks/.done/invite-links-improve.md)
@@ -178,4 +186,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-10-05 11:37:50
+**Last Updated**: 2025-10-06 17:35:21
