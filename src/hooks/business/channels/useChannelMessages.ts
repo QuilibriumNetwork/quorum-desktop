@@ -95,27 +95,19 @@ export function useChannelMessages({
         }
       }
 
-      // Use centralized permission utility (handles space owners + role permissions)
-      const hasDeletePermission = hasPermission(
-        userAddress,
-        'message:delete',
-        space,
-        isSpaceOwner
+      // Check if user has delete permission through a role
+      // Note: We explicitly check roles instead of using hasPermission() because
+      // hasPermission() always returns true for space owners, which would show
+      // the delete button even when it won't work (backend doesn't support it yet)
+      const hasDeleteRole = space?.roles?.some(
+        (role: Role) =>
+          role.members.includes(userAddress) &&
+          role.permissions.includes('message:delete')
       );
 
-      // Only log for debugging when it should work but doesn't
-      if (isSpaceOwner && !hasDeletePermission) {
-        console.log('🚨 SPACE OWNER DELETE FAILING:', {
-          userAddress,
-          isSpaceOwner,
-          hasDeletePermission,
-          space: !!space,
-        });
-      }
-
-      return hasDeletePermission;
+      return !!hasDeleteRole;
     },
-    [roles, user.currentPasskeyInfo, isSpaceOwner, channel, space]
+    [roles, user.currentPasskeyInfo, channel, space]
   );
 
   const canPinMessages = useCallback(
@@ -139,6 +131,7 @@ export function useChannelMessages({
       }
 
       // Use centralized permission utility (handles space owners + role permissions)
+      // Note: Unlike delete, pin permissions work correctly for space owners
       return hasPermission(userAddress, 'message:pin', space, isSpaceOwner);
     },
     [roles, user.currentPasskeyInfo, isSpaceOwner, channel, space]
