@@ -101,8 +101,13 @@ const DirectMessage: React.FC<{}> = () => {
   ]);
 
   // Use business logic hooks for message handling
-  const { messageList, acceptChat, fetchNextPage, fetchPreviousPage } =
-    useDirectMessagesList();
+  const {
+    messageList,
+    acceptChat,
+    fetchNextPage,
+    fetchPreviousPage,
+    canDeleteMessages,
+  } = useDirectMessagesList();
 
   // Recreate members logic exactly as original (temporary fix)
   const members = useMemo(() => {
@@ -480,7 +485,7 @@ const DirectMessage: React.FC<{}> = () => {
                 ref={messageListRef}
                 isRepudiable={!nonRepudiable}
                 roles={[]}
-                canDeleteMessages={() => false}
+                canDeleteMessages={canDeleteMessages}
                 editor={composer.editor}
                 messageList={messageList}
                 setInReplyTo={composer.setInReplyTo}

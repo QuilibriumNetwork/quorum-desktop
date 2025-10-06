@@ -6,7 +6,7 @@ export interface MarkdownFile {
   folder: string;
   title: string;
   slug: string; // URL-safe identifier
-  status?: 'pending' | 'done' | 'active' | 'solved';
+  status?: 'pending' | 'done' | 'archived' | 'active' | 'solved';
   priority?: 'low' | 'medium' | 'high' | 'critical';
   content?: string;
 }
@@ -52,6 +52,10 @@ const determineStatus = (
     // Check if it's in a .done folder or has status prefix
     if (path.includes('/.done/') || filename.startsWith('DONE_')) {
       return 'done';
+    }
+    // Check if it's in a .archived folder or has ARCHIVED prefix
+    if (path.includes('/.archived/') || filename.startsWith('ARCHIVED_')) {
+      return 'archived';
     }
     return 'pending';
   }

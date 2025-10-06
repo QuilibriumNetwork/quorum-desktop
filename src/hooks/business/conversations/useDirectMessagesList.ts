@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessages } from '../../queries/messages/useMessages';
@@ -12,6 +12,7 @@ export interface UseDirectMessagesListReturn {
   fetchNextPage: () => void;
   fetchPreviousPage: () => void;
   saveReadTime: () => void;
+  canDeleteMessages: (message: MessageType) => boolean;
 }
 
 /**
@@ -77,11 +78,27 @@ export function useDirectMessagesList(): UseDirectMessagesListReturn {
     invalidateConversation({ conversationId });
   };
 
+  const canDeleteMessages = useCallback(
+    (message: MessageType) => {
+      const userAddress = user.currentPasskeyInfo?.address;
+      if (!userAddress) return false;
+
+      // Users can always delete their own messages (no time limit)
+      if (message.content.senderId === userAddress) {
+        return true;
+      }
+
+      return false;
+    },
+    [user.currentPasskeyInfo]
+  );
+
   return {
     messageList,
     acceptChat,
     fetchNextPage,
     fetchPreviousPage,
     saveReadTime,
+    canDeleteMessages,
   };
 }

@@ -23,14 +23,17 @@ export const Tasks: React.FC = () => {
   // Load markdown files dynamically
   const { files: taskFiles, loading, error, findBySlug } = useMarkdownFiles('tasks');
 
-  // Group files by folder, separating done from others
+  // Group files by folder, separating done and archived from others
   const groupedFiles = useMemo(() => {
     const groups: Record<string, MarkdownFile[]> = {};
     const done: MarkdownFile[] = [];
+    const archived: MarkdownFile[] = [];
 
     taskFiles.forEach((file) => {
       if (file.status === 'done') {
         done.push(file);
+      } else if (file.status === 'archived') {
+        archived.push(file);
       } else {
         // Extract the full folder path from the file path for better grouping
         let folderName = 'root';
@@ -53,6 +56,7 @@ export const Tasks: React.FC = () => {
     return {
       regular: groups,
       done,
+      archived,
     };
   }, [taskFiles]);
 
@@ -244,6 +248,62 @@ export const Tasks: React.FC = () => {
                   <div className="p-6">
                     <ul className="space-y-2 opacity-75">
                       {groupedFiles.done
+                        .sort((a, b) => a.title.localeCompare(b.title))
+                        .map((file) => (
+                          <li key={file.path}>
+                            <Link
+                              to={`/dev/tasks/${file.slug}`}
+                              className="block hover:text-accent transition-colors"
+                            >
+                              <Text variant="main" size="md">
+                                • {file.title}
+                              </Text>
+                            </Link>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Archived Tasks Section - Collapsible */}
+            {groupedFiles.archived.length > 0 && (
+              <div className="bg-surface-1 rounded-lg border border-default overflow-hidden">
+                <div
+                  onClick={() => toggleSection('archived')}
+                  className="w-full bg-surface-2 px-6 py-4 border-b border-default hover:bg-surface-3 transition-colors cursor-pointer"
+                >
+                  <FlexRow gap="sm" align="center" justify="between">
+                    <FlexRow gap="sm" align="center">
+                      <Icon
+                        name="archive"
+                        size="md"
+                        className="text-subtle"
+                      />
+                      <Text variant="strong" size="lg" weight="medium">
+                        Archived
+                      </Text>
+                      <Text variant="subtle" size="sm">
+                        ({groupedFiles.archived.length} tasks)
+                      </Text>
+                    </FlexRow>
+                    <Icon
+                      name={
+                        expandedSections.has('archived')
+                          ? 'chevron-up'
+                          : 'chevron-down'
+                      }
+                      size="sm"
+                      className="text-subtle"
+                    />
+                  </FlexRow>
+                </div>
+
+                {expandedSections.has('archived') && (
+                  <div className="p-6">
+                    <ul className="space-y-2 opacity-60">
+                      {groupedFiles.archived
                         .sort((a, b) => a.title.localeCompare(b.title))
                         .map((file) => (
                           <li key={file.path}>

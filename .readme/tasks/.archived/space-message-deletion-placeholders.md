@@ -1,5 +1,7 @@
 # Space/Channel Message Deletion Placeholders
 
+Could create a messy situation when mods delete many spam messages at the same time.
+
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
 ## Overview

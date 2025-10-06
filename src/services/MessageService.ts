@@ -199,21 +199,30 @@ export class MessageService {
         return;
       }
 
-      if (
+      // For DMs: Both users store messages with their partner's address as spaceId/channelId
+      // So we can't do a direct comparison. Instead, check if both are DMs (spaceId == channelId)
+      const isTargetDM = targetMessage.spaceId === targetMessage.channelId;
+      const isRequestDM = decryptedContent.spaceId === decryptedContent.channelId;
+
+      if (isTargetDM && isRequestDM) {
+        // Both are DMs - this is valid even if IDs don't match exactly
+        // The IDs represent conversation partners' addresses
+      } else if (
         targetMessage.channelId !== decryptedContent.channelId ||
         targetMessage.spaceId !== decryptedContent.spaceId
       ) {
+        // For Spaces: IDs must match exactly
         return;
       }
 
+      // For DMs (spaceId == channelId): Always honor deletion if sender owns the target message
       if (
         targetMessage.content.senderId === decryptedContent.content.senderId
       ) {
         await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
-        return;
-      }
-
-      if (spaceId != channelId) {
+        // Don't return early - allow addMessage() to update React Query cache
+      } else if (spaceId != channelId) {
+        // For Spaces: Check role-based permissions
         const space = await messageDB.getSpace(spaceId);
 
         // For read-only channels: ISOLATED permission system - only managers can delete
@@ -234,23 +243,25 @@ export class MessageService {
             await messageDB.deleteMessage(
               decryptedContent.content.removeMessageId
             );
+            // Don't return early - allow addMessage() to update React Query cache
+          } else {
+            // For read-only channels, if not a manager, deny delete (even if user has traditional roles)
             return;
           }
-          // For read-only channels, if not a manager, deny delete (even if user has traditional roles)
-          return;
+        } else {
+          // For regular channels: Traditional role-based permissions
+          if (
+            !space?.roles.find(
+              (r) =>
+                r.members.includes(decryptedContent.content.senderId) &&
+                r.permissions.includes('message:delete')
+            )
+          ) {
+            return;
+          }
+          await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
+          // Don't return early - allow addMessage() to update React Query cache
         }
-
-        // For regular channels: Traditional role-based permissions
-        if (
-          !space?.roles.find(
-            (r) =>
-              r.members.includes(decryptedContent.content.senderId) &&
-              r.permissions.includes('message:delete')
-          )
-        ) {
-          return;
-        }
-        await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
       }
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await messageDB.getSpaceMember(
