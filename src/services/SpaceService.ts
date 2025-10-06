@@ -747,6 +747,15 @@ export class SpaceService {
         ch.js_generate_x448()
       ) as secureChannel.X448Keypair;
       const space = await this.messageDB.getSpace(spaceId);
+
+      // Remove kicked user from all roles
+      if (space) {
+        space.roles = space.roles.map(role => ({
+          ...role,
+          members: role.members.filter(m => m !== userAddress)
+        }));
+      }
+
       const ciphertext = ch.js_encrypt_inbox_message(
         JSON.stringify({
           inbox_public_key: [...new Uint8Array(configPair.public_key)],

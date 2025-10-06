@@ -1446,6 +1446,16 @@ export class MessageService {
                   const space = await this.messageDB.getSpace(
                     conversationId.split('/')[0]
                   );
+
+                  // Remove leaving user from all roles
+                  if (space) {
+                    space.roles = space.roles.map(role => ({
+                      ...role,
+                      members: role.members.filter(m => m !== member.user_address)
+                    }));
+                    await this.messageDB.saveSpace(space);
+                  }
+
                   const messageId = await crypto.subtle.digest(
                     'SHA-256',
                     Buffer.from('leave' + member.inbox_address, 'utf-8')
