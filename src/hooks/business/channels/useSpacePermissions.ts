@@ -11,16 +11,19 @@ export const useSpacePermissions = (spaceId: string) => {
   const { openSpaceEditor, openLeaveSpace } = useModalContext();
 
   const handleSpaceContextAction = useCallback(() => {
-    if (isSpaceOwner) {
-      openSpaceEditor(spaceId);
-    } else {
-      openLeaveSpace(spaceId);
-    }
-  }, [isSpaceOwner, openSpaceEditor, openLeaveSpace, spaceId]);
+    // Always open Space Settings - Account tab for members, all tabs for owners
+    openSpaceEditor(spaceId);
+  }, [openSpaceEditor, spaceId]);
 
   const getContextIcon = useCallback(() => {
-    return isSpaceOwner ? 'sliders' : 'door-open';
-  }, [isSpaceOwner]);
+    // Always show sliders icon for Space Settings
+    return 'sliders';
+  }, []);
+
+  const getContextTooltip = useCallback(() => {
+    // Generic tooltip for all users
+    return 'Space Settings';
+  }, []);
 
   const canManageSpace = Boolean(isSpaceOwner);
   const canAddGroups = Boolean(isSpaceOwner);
@@ -33,5 +36,6 @@ export const useSpacePermissions = (spaceId: string) => {
     canEditGroups,
     handleSpaceContextAction,
     getContextIcon,
+    getContextTooltip,
   };
 };

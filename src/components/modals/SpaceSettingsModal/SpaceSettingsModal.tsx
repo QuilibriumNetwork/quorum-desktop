@@ -10,6 +10,7 @@ import ConfirmationModal from '../ConfirmationModal';
 import ModalSaveOverlay from '../ModalSaveOverlay';
 import { useSpace } from '../../../hooks';
 import { useMessageDB } from '../../context/useMessageDB';
+import { useSpaceOwner } from '../../../hooks/queries/spaceOwner/useSpaceOwner';
 import { Channel } from '../../../api/quorumApi';
 import { t } from '@lingui/core/macro';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -22,7 +23,9 @@ import {
   useCustomAssets,
   useInviteManagement,
   useModalSaveState,
+  useSpaceProfile,
 } from '../../../hooks';
+import Account from './Account';
 import General from './General';
 import Roles from './Roles';
 import Emojis from './Emojis';
@@ -37,6 +40,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
 }> = ({ spaceId, dismiss }) => {
   const { data: space } = useSpace({ spaceId });
   const { updateSpace, requestSync, messageDB, sendVerifyKickedStatuses } = useMessageDB();
+  const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
   const [syncingKicks, setSyncingKicks] = React.useState<boolean>(false);
   const handleSyncKicked = React.useCallback(async () => {
     if (!space) return;
@@ -101,6 +105,13 @@ const SpaceSettingsModal: React.FunctionComponent<{
       setAddingOwner(false);
     }
   }, [messageDB, queryClient, spaceId, user?.currentPasskeyInfo]);
+
+  // Set default tab based on ownership
+  React.useEffect(() => {
+    if (selectedCategory === 'general' && isSpaceOwner === false) {
+      setSelectedCategory('account');
+    }
+  }, [isSpaceOwner]);
 
   // Default channel state
   const [defaultChannel, setDefaultChannel] = React.useState<Channel | undefined>(
@@ -208,6 +219,12 @@ const SpaceSettingsModal: React.FunctionComponent<{
     defaultChannel,
   });
 
+  // Space profile hook (for Account tab)
+  const spaceProfile = useSpaceProfile({
+    spaceId,
+    onSave: dismiss,
+  });
+
   // Delete confirmation state - kept local as it's UI-specific
   const [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
 
@@ -300,7 +317,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
   ]);
 
   // Determine if current category needs save button
-  const categoryNeedsSave = ['general', 'roles', 'emojis', 'stickers'].includes(selectedCategory);
+  const categoryNeedsSave = ['account', 'general', 'roles', 'emojis', 'stickers'].includes(selectedCategory);
 
   return (
     <>
@@ -324,11 +341,35 @@ const SpaceSettingsModal: React.FunctionComponent<{
               <Navigation
                 selectedCategory={selectedCategory}
                 setSelectedCategory={setSelectedCategory}
+                spaceId={spaceId}
               />
 
               <div className="modal-complex-content-with-footer">
                 {(() => {
                   switch (selectedCategory) {
+                    case 'account':
+                      return (
+                        <Account
+                          spaceId={spaceId}
+                          displayName={spaceProfile.displayName}
+                          setDisplayName={spaceProfile.setDisplayName}
+                          currentPasskeyInfo={user?.currentPasskeyInfo || null}
+                          fileData={spaceProfile.fileData}
+                          currentFile={spaceProfile.currentFile}
+                          avatarFileError={spaceProfile.avatarFileError}
+                          isAvatarUploading={spaceProfile.isAvatarUploading}
+                          isAvatarDragActive={spaceProfile.isAvatarDragActive}
+                          getRootProps={spaceProfile.getRootProps}
+                          getInputProps={spaceProfile.getInputProps}
+                          clearFileError={spaceProfile.clearFileError}
+                          getProfileImageUrl={spaceProfile.getProfileImageUrl}
+                          onSave={spaceProfile.onSave}
+                          isSaving={spaceProfile.isSaving}
+                          hasValidationError={spaceProfile.hasValidationError}
+                          onClose={dismiss}
+                          roles={roles}
+                        />
+                      );
                     case 'general':
                       return (
                         <General
@@ -475,8 +516,12 @@ const SpaceSettingsModal: React.FunctionComponent<{
                   )}
                   <Button
                     type="primary"
-                    onClick={saveChanges}
-                    disabled={isSaving || !spaceName.trim()}
+                    onClick={selectedCategory === 'account' ? spaceProfile.onSave : saveChanges}
+                    disabled={
+                      selectedCategory === 'account'
+                        ? spaceProfile.isSaving || spaceProfile.hasValidationError
+                        : isSaving || !spaceName.trim()
+                    }
                   >
                     {t`Save Changes`}
                   </Button>

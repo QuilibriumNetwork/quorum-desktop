@@ -8,3 +8,4 @@ export * from './useInviteValidation';
 export * from './useSpaceLeaving';
 export * from './useSpaceOrdering';
 export * from './useSpaceDragAndDrop';
+export * from './useSpaceProfile';

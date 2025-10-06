@@ -9,7 +9,7 @@ import {
   useSpaceGroups,
 } from '../../hooks';
 import { t } from '@lingui/core/macro';
-import { Button, Container, Icon, Text } from '../primitives';
+import { Button, Container, Icon, Text, Tooltip } from '../primitives';
 
 type ChannelListProps = { spaceId: string };
 
@@ -51,7 +51,14 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
           className="space-context-menu-toggle-button relative z-10"
           onClick={handleSpaceContextAction}
         >
-          <Icon name={getContextIcon()} />
+          <Tooltip
+            id="space-settings-icon"
+            content={t`Space Settings`}
+            place="left"
+            showOnTouch={false}
+          >
+            <Icon name={getContextIcon()} />
+          </Tooltip>
         </Container>
       </Container>
       <Container className="channels-list">
