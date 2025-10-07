@@ -60,6 +60,18 @@ const SpaceSettingsModal: React.FunctionComponent<{
             })
           );
         }
+      } else {
+        // No updates needed
+        if (typeof window !== 'undefined' && (window as any).dispatchEvent) {
+          (window as any).dispatchEvent(
+            new CustomEvent('quorum:toast', {
+              detail: {
+                message: t`All kick records are up to date.`,
+                variant: 'info',
+              },
+            })
+          );
+        }
       }
     } finally {
       setSyncingKicks(false);

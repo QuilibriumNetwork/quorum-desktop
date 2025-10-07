@@ -158,23 +158,21 @@ const Account: React.FunctionComponent<AccountProps> = ({
         {!isSpaceOwner && (
           <>
             <Spacer size="xl" direction="vertical" />
-            <div className="border border-danger rounded p-4">
-              <div className="modal-text-label !text-danger">
+            <Callout variant="error" size="md">
+              <div className="text-lg">
                 <Trans>Leave this space</Trans>
               </div>
-              <div className="pt-2 text-sm text-danger">
+              <div className="pt-2 text-sm">
                 <Trans>
                   Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted.
                 </Trans>
               </div>
               {leaveError && (
-                <div className="pt-4">
-                  <Callout variant="error" size="sm">
-                    {leaveError}
-                  </Callout>
+                <div className="pt-4 text-sm">
+                  {leaveError}
                 </div>
               )}
-              <div className="pt-6">
+              <div className="pt-4 pb-2">
                 <Button
                   type="danger-outline"
                   className="!w-auto !inline-flex"
@@ -187,7 +185,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
                   )}
                 </Button>
               </div>
-            </div>
+            </Callout>
           </>
         )}
       </div>
