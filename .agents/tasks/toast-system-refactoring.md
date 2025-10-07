@@ -1,91 +1,47 @@
 # Toast System Refactoring
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **Status**: Ready for Implementation (reviewed 2025-10-07)
 
 ## Overview
 
 Refactor the current toast notification system from a event-based implementation to a proper React Context-based architecture. The current system has lack of type safety, single-toast limitation, and platform coupling that prevents future mobile implementation.
 
-## Current State Analysis
+## ⚠️ Critical Fixes Required
 
-### Architecture Problems
+The following issues MUST be addressed before implementation:
 
-**Current Implementation:**
-- Uses global `window.dispatchEvent` and `CustomEvent` API
-- Toast logic embedded directly in `Layout.tsx`
-- Single state variable handles ALL toasts (only one visible at a time)
-- No separation of concerns or proper abstraction layer
-- Heavy use of `any` types and unsafe casting
+1. **Timer Memory Leaks** - Add `useRef` for timeout cleanup
+2. **Double Timer Bug** - Coordinate auto-dismiss between ToastProvider and Callout
+3. **MessageService Migration** - Non-React code can't use hooks (see Phase 5, Step 3a)
+4. **Error Boundary Missing** - Toast errors could crash app (see Phase 2a)
+5. **Keyboard Support** - Implement Escape key dismissal (see Phase 3a)
 
-**Files Currently Involved:**
-- `/src/components/Layout.tsx` (lines 39-53, 113-130) - Toast display logic
-- `/src/hooks/business/spaces/useSpaceProfile.ts` - Dispatches toast events
-- `/src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx` - Dispatches toast events
-- `/src/services/MessageService.ts` - Dispatches toast events
-- 3+ other files dispatching `quorum:toast` and `quorum:kick-toast` events
+## Current Problems
 
-### Critical Issues
+**Architecture Issues:**
+- Event-based system (`window.dispatchEvent`) repeated in 6+ files
+- All logic embedded in `Layout.tsx` (lines 39-53, 113-130)
+- Heavy use of `any` types, no type safety
+- Single toast limitation (new toasts replace existing ones)
+- No accessibility (ARIA, keyboard support)
+- Platform-coupled (window checks everywhere)
 
-1. **Single Toast Limitation**
-   ```typescript
-   // Current: Only one toast at a time
-   const [kickToast, setKickToast] = useState<{...} | null>(null);
-   // New toasts immediately replace existing ones
-   ```
+**Key Files:**
+- `/src/components/Layout.tsx` - Toast display logic
+- `/src/hooks/business/spaces/useSpaceProfile.ts` - Dispatches events
+- `/src/services/MessageService.ts` - Dispatches events (⚠️ non-React class)
 
-2. **Platform Coupling**
-   ```typescript
-   // Repeated 6+ times across codebase
-   if (typeof window !== 'undefined' && (window as any).dispatchEvent) {
-     (window as any).dispatchEvent(
-       new CustomEvent('quorum:toast', { detail: { ... } })
-     );
-   }
-   ```
+## Solution
 
-3. **No Type Safety**
-   ```typescript
-   const genericHandler = (e: any) => { // ❌ any type
-     setKickToast({
-       message: e.detail?.message, // ❌ Uncertain structure
-       variant: e.detail?.variant || 'info'
-     });
-   };
-   ```
+**Replace with:** React Context + TypeScript + proper primitives
 
-4. **Misleading State Names**
-   ```typescript
-   // State named 'kickToast' but used for ALL toasts
-   const [kickToast, setKickToast] = useState<{...} | null>(null);
-   ```
-
-5. **No Accessibility**
-   - Missing ARIA live regions
-   - No screen reader announcements
-   - No keyboard navigation for dismissal
-
-6. **Code Duplication**
-   - Toast dispatch logic repeated across 6+ files
-   - Two separate event types (`quorum:toast` and `quorum:kick-toast`)
-   - Inconsistent error handling
-
-## Goals
-
-### Primary Goals
-
-1. **Create proper abstraction layer** - Replace event-based system with React Context
-2. **Enable multiple toasts** - Implement queue/stack system
-3. **Add type safety** - Full TypeScript interfaces throughout
-4. **Improve accessibility** - ARIA live regions and keyboard support
-5. **Platform-agnostic API** - Design allows future mobile implementation without breaking changes
-
-### Secondary Goals
-
-1. Configurable toast positioning
-2. Programmatic toast control (update, dismiss by ID)
-3. Toast action buttons support
-4. Better testing utilities
-5. Comprehensive documentation
+**Goals:**
+1. Type-safe Context API (zero `any` types)
+2. Multiple toasts support (start with 1, infrastructure supports more)
+3. Keyboard accessibility (Escape key)
+4. Platform-agnostic (works for future mobile)
+5. Fix memory leaks (timer cleanup)
 
 ## Implementation Plan
 
@@ -136,9 +92,30 @@ export interface ToastContextValue {
 
 ### Phase 2: Core Implementation - Context & Provider
 
-**Create Toast Context:**
+**2a. Error Boundary** (`/src/components/primitives/Toast/ToastErrorBoundary.tsx`)
 
-File: `/src/components/context/ToastContext.tsx`
+```typescript
+import React, { Component, ErrorInfo, ReactNode } from 'react';
+
+export class ToastErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+
+  static getDerivedStateFromError() { return { hasError: true }; }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Toast system error:', error, errorInfo);
+  }
+
+  render() {
+    return this.state.hasError ? null : this.props.children;
+  }
+}
+```
+
+**2b. Context** (`/src/components/context/ToastContext.tsx`)
 
 ```typescript
 import React, { createContext, useContext } from 'react';
@@ -148,28 +125,27 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 
 export const useToastContext = () => {
   const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToastContext must be used within ToastProvider');
-  }
+  if (!context) throw new Error('useToastContext must be used within ToastProvider');
   return context;
 };
 
 export { ToastContext };
 ```
 
-**Create Toast Provider:**
+**2c. Provider** (`/src/components/context/ToastProvider.tsx`)
 
 File: `/src/components/context/ToastProvider.tsx`
 
 ```typescript
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { ToastContext } from './ToastContext';
 import { ToastContainer } from '@/components/primitives/Toast/ToastContainer';
+import { ToastErrorBoundary } from '@/components/primitives/Toast/ToastErrorBoundary';
 import type { Toast, ToastConfig } from '@/types/toast';
 
 const DEFAULT_CONFIG: ToastConfig = {
   position: 'bottom-right',
-  maxVisible: 3,
+  maxVisible: 1, // ✅ START: Single toast (matches current behavior, increase if needed)
   defaultDuration: 5,
 };
 
@@ -185,6 +161,9 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
   const [toasts, setToasts] = useState<Toast[]>([]);
   const config = useMemo(() => ({ ...DEFAULT_CONFIG, ...userConfig }), [userConfig]);
 
+  // ✅ FIX: Store timeout refs for cleanup (prevents memory leaks)
+  const timeoutRefs = useRef<Map<string, NodeJS.Timeout>>(new Map());
+
   const showToast = useCallback((toast: Omit<Toast, 'id'>): string => {
     const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     const newToast: Toast = {
@@ -196,18 +175,21 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
 
     setToasts(prev => {
       const updated = [...prev, newToast];
-      // Enforce max visible limit
+      // Enforce max visible limit (start with 1, increase if needed)
       if (config.maxVisible && updated.length > config.maxVisible) {
         return updated.slice(-config.maxVisible);
       }
       return updated;
     });
 
-    // Auto-dismiss if duration is set
+    // ✅ FIX: Auto-dismiss with proper cleanup
     if (newToast.duration && newToast.duration > 0) {
-      setTimeout(() => {
-        dismissToast(id);
+      const timeoutId = setTimeout(() => {
+        setToasts(prev => prev.filter(t => t.id !== id));
+        timeoutRefs.current.delete(id);
       }, newToast.duration * 1000);
+
+      timeoutRefs.current.set(id, timeoutId);
     }
 
     return id;
@@ -223,10 +205,27 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
 
   const dismissToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
+    // ✅ FIX: Clear timeout when manually dismissed
+    const timeoutId = timeoutRefs.current.get(id);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutRefs.current.delete(id);
+    }
   }, []);
 
   const dismissAll = useCallback(() => {
     setToasts([]);
+    // ✅ FIX: Clear all timeouts
+    timeoutRefs.current.forEach(clearTimeout);
+    timeoutRefs.current.clear();
+  }, []);
+
+  // ✅ FIX: Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      timeoutRefs.current.forEach(clearTimeout);
+      timeoutRefs.current.clear();
+    };
   }, []);
 
   const value = useMemo(() => ({
@@ -241,7 +240,9 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
   return (
     <ToastContext.Provider value={value}>
       {children}
-      <ToastContainer />
+      <ToastErrorBoundary>
+        <ToastContainer />
+      </ToastErrorBoundary>
     </ToastContext.Provider>
   );
 };
@@ -249,15 +250,16 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
 
 ### Phase 3: Toast Container Component
 
-**Create Web Toast Container:**
+**Phase 3a: Create Web Toast Container:**
 
 File: `/src/components/primitives/Toast/ToastContainer.web.tsx`
 
 ```typescript
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useToastContext } from '@/components/context/ToastContext';
 import { Callout } from '@/components/primitives/Callout';
+import { FlexColumn } from '@/components/primitives'; // ✅ FIX: Use primitive instead of raw div
 import type { Toast } from '@/types/toast';
 
 const POSITION_CLASSES = {
@@ -274,53 +276,72 @@ const TOAST_Z_INDEX = 2147483647; // Max safe z-index
 export const ToastContainer: React.FC = () => {
   const { toasts, config, dismissToast } = useToastContext();
 
+  // ✅ FIX: Keyboard support - Escape to dismiss
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && toasts.length > 0) {
+        // Dismiss the most recent toast
+        dismissToast(toasts[toasts.length - 1].id);
+      }
+    };
+
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [toasts, dismissToast]);
+
   if (toasts.length === 0) return null;
 
   const positionClass = POSITION_CLASSES[config.position || 'bottom-right'];
 
   return createPortal(
-    <div
+    <FlexColumn
       role="status"
       aria-live="polite"
       aria-atomic="true"
-      className={`fixed ${positionClass} max-w-[360px] flex flex-col gap-2 pointer-events-none`}
+      className={`fixed ${positionClass} max-w-[360px] gap-2 pointer-events-none`}
       style={{ zIndex: TOAST_Z_INDEX }}
     >
       {toasts.map((toast) => (
-        <div key={toast.id} className="pointer-events-auto">
+        <FlexColumn key={toast.id} className="pointer-events-auto">
           <Callout
             variant={toast.variant}
             size="sm"
             dismissible={toast.dismissible}
-            autoClose={toast.duration}
+            autoClose={0} // ✅ FIX: Disable Callout's auto-close (ToastProvider handles it)
             onClose={() => dismissToast(toast.id)}
             aria-label={`${toast.variant} notification`}
           >
             {toast.message}
           </Callout>
-        </div>
+        </FlexColumn>
       ))}
-    </div>,
+    </FlexColumn>,
     document.body
   );
 };
 ```
 
-**Create Platform Index:**
-
-File: `/src/components/primitives/Toast/ToastContainer.tsx`
+**3b. Platform Index** (`/src/components/primitives/Toast/ToastContainer.tsx`)
 
 ```typescript
-// Platform-agnostic export
-// Future: Add ToastContainer.native.tsx for mobile
+// Metro bundler automatically picks .native.tsx for mobile
 export { ToastContainer } from './ToastContainer.web';
+```
+
+**3c. Mobile Stub** (`/src/components/primitives/Toast/ToastContainer.native.tsx`)
+
+```typescript
+import React from 'react';
+
+export const ToastContainer: React.FC = () => {
+  if (__DEV__) console.warn('Toast system not yet implemented for mobile');
+  return null;
+};
 ```
 
 ### Phase 4: Developer-Friendly Hook
 
-**Create useToast Hook:**
-
-File: `/src/hooks/ui/useToast.ts`
+**useToast Hook** (`/src/hooks/ui/useToast.ts`)
 
 ```typescript
 import { useToastContext } from '@/components/context/ToastContext';
@@ -329,535 +350,307 @@ import type { Toast } from '@/types/toast';
 export const useToast = () => {
   const context = useToastContext();
 
-  // Convenience methods
-  const showSuccess = (message: string, options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>) => {
-    return context.showToast({ message, variant: 'success', ...options });
-  };
+  const showSuccess = (message: string, options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>) =>
+    context.showToast({ message, variant: 'success', ...options });
 
-  const showError = (message: string, options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>) => {
-    return context.showToast({ message, variant: 'error', ...options });
-  };
+  const showError = (message: string, options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>) =>
+    context.showToast({ message, variant: 'error', ...options });
 
-  const showWarning = (message: string, options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>) => {
-    return context.showToast({ message, variant: 'warning', ...options });
-  };
+  const showWarning = (message: string, options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>) =>
+    context.showToast({ message, variant: 'warning', ...options });
 
-  const showInfo = (message: string, options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>) => {
-    return context.showToast({ message, variant: 'info', ...options });
-  };
+  const showInfo = (message: string, options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>) =>
+    context.showToast({ message, variant: 'info', ...options });
 
-  return {
-    ...context,
-    showSuccess,
-    showError,
-    showWarning,
-    showInfo,
-  };
+  return { ...context, showSuccess, showError, showWarning, showInfo };
 };
 ```
 
 ### Phase 5: Integration & Migration
 
-**Step 1: Add ToastProvider to App Root**
+**⚠️ IMPORTANT: Use Phased Rollout, NOT Big Bang**
+
+This is a **high-risk migration**. Follow the phased approach to allow rollback if issues arise.
+
+**Step 1: Add ToastProvider Alongside Old System (Week 1)**
 
 File: `/src/components/Layout.tsx` or `/web/main.tsx`
 
 ```typescript
 import { ToastProvider } from '@/components/context/ToastProvider';
 
-// Wrap app with ToastProvider
-<ToastProvider config={{ position: 'bottom-right', maxVisible: 3 }}>
-  {/* existing app */}
+// ✅ Add new system WITHOUT removing old one yet
+<ToastProvider config={{ position: 'bottom-right', maxVisible: 1 }}>
+  {/* existing app with old toast system still working */}
 </ToastProvider>
 ```
 
-**Step 2: Remove Old Toast Logic from Layout.tsx**
+**Step 2: Migrate React Components One-by-One (Week 2)**
 
-Remove:
-- Lines 39-53: Old event listeners
+**Priority Order (safest first):**
+
+1. `/src/hooks/business/spaces/useSpaceProfile.ts` (simple hook)
+2. `/src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx` (isolated modal)
+3. Other React components (identify via grep: `quorum:toast`)
+
+**For each file:**
+- [ ] Create feature flag check (optional but recommended)
+- [ ] Migrate to `useToast()`
+- [ ] Test thoroughly
+- [ ] Deploy to production
+- [ ] Monitor for issues before next migration
+
+**Step 3: Handle Non-React Code (Week 3)**
+
+**⚠️ CRITICAL: MessageService Migration Strategy**
+
+**Problem:** `/src/services/MessageService.ts` is a **class**, not a React component. It **cannot use hooks**.
+
+**Solution Options:**
+
+**Option A: Hybrid System (RECOMMENDED - Less Risky)**
+
+Keep event dispatch for non-React code, accept hybrid system:
+
+```typescript
+// In MessageService.ts (lines 1637-1642)
+// Keep existing event dispatch - it works fine for non-React code
+if (typeof window !== 'undefined') {
+  window.dispatchEvent(
+    new CustomEvent('quorum:kick-toast', {
+      detail: { message: t`You've been kicked from ${spaceName}`, variant: 'warning' }
+    })
+  );
+}
+
+// In ToastProvider.tsx - Add event listener bridge
+useEffect(() => {
+  const handleLegacyEvent = (e: CustomEvent) => {
+    showToast({
+      message: e.detail.message,
+      variant: e.detail.variant || 'info',
+    });
+  };
+
+  window.addEventListener('quorum:toast', handleLegacyEvent as EventListener);
+  window.addEventListener('quorum:kick-toast', handleLegacyEvent as EventListener);
+
+  return () => {
+    window.removeEventListener('quorum:toast', handleLegacyEvent as EventListener);
+    window.removeEventListener('quorum:kick-toast', handleLegacyEvent as EventListener);
+  };
+}, [showToast]);
+```
+
+**Option B: Refactor MessageService (Higher Risk)**
+
+Pass toast context through dependency injection:
+
+```typescript
+// In MessageServiceDependencies interface
+export interface MessageServiceDependencies {
+  // ... existing
+  showToast: (toast: Omit<Toast, 'id'>) => string; // ✅ NEW
+}
+
+// In Layout.tsx where MessageService is instantiated
+const { showToast } = useToast();
+const messageService = new MessageService({
+  // ... existing deps
+  showToast, // ✅ Pass toast function
+});
+```
+
+**Choose ONE approach before proceeding.**
+
+**Step 3a: Document Decision**
+
+Create: `/docs/architecture/toast-system-hybrid.md` explaining chosen approach and rationale.
+
+**Step 4: Remove Old System (Week 4 - Only After All Migrations Succeed)**
+
+**Remove from Layout.tsx:**
+- Lines 39-53: Old event listeners (`useEffect` for `quorum:toast` and `quorum:kick-toast`)
 - Lines 113-130: Old toast rendering with `createPortal`
 - State: `const [kickToast, setKickToast] = useState<{...} | null>(null);`
 
-**Step 3: Migrate All Toast Dispatchers**
-
-Replace this pattern (found in 6+ files):
-```typescript
-// ❌ OLD
-if (typeof window !== 'undefined' && (window as any).dispatchEvent) {
-  (window as any).dispatchEvent(
-    new CustomEvent('quorum:toast', {
-      detail: { message: 'Success!', variant: 'success' }
-    })
-  );
-}
+**Verify all migrations complete:**
+```bash
+# Should return NO results
+grep -r "quorum:toast" src/ --include="*.ts" --include="*.tsx"
+grep -r "quorum:kick-toast" src/ --include="*.ts" --include="*.tsx"
 ```
 
-With:
-```typescript
-// ✅ NEW
-import { useToast } from '@/hooks/ui/useToast';
+**Step 5: Rollback Plan**
 
-const { showSuccess } = useToast();
-showSuccess('Profile updated successfully!');
-```
+If issues arise:
 
-**Files to Migrate:**
-1. `/src/hooks/business/spaces/useSpaceProfile.ts:213-221`
-2. `/src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx`
-3. `/src/services/MessageService.ts`
-4. Search for all `quorum:toast` and `quorum:kick-toast` dispatches
+1. **Phase 1 rollback**: Remove `<ToastProvider>` wrapper, old system still works
+2. **Phase 2 rollback**: Keep new system, but revert individual file migrations
+3. **Phase 3 rollback**: If MessageService breaks, revert to event dispatch (Option A)
 
-**Step 4: Handle Kick Toast Special Case**
+**Keep this checklist:**
+- [ ] Old system still works when new provider added
+- [ ] Each migrated file tested independently
+- [ ] Production monitoring shows no toast-related errors
+- [ ] User reports no missing/duplicate toasts
 
-Instead of hardcoding the message in the event handler:
-```typescript
-// ❌ OLD
-const kickHandler = (e: any) => {
-  setKickToast({
-    message: `You've been kicked from ${e.detail?.spaceName}`,
-    variant: 'warning'
-  });
-};
-```
+### Phase 6: Testing
 
-Use i18n-friendly approach:
-```typescript
-// ✅ NEW
-import { t } from '@lingui/macro';
-
-const { showWarning } = useToast();
-showWarning(t`You've been kicked from ${spaceName}`);
-```
-
-### Phase 6: Testing & Quality Assurance
-
-**Create Test Utilities:**
-
-File: `/src/test-utils/toast.tsx`
-
-```typescript
-import React from 'react';
-import { ToastProvider } from '@/components/context/ToastProvider';
-import type { ToastConfig } from '@/types/toast';
-
-export const ToastTestProvider: React.FC<{
-  children: React.ReactNode;
-  config?: Partial<ToastConfig>;
-}> = ({ children, config }) => (
-  <ToastProvider config={config}>
-    {children}
-  </ToastProvider>
-);
-
-export const mockToastContext = {
-  toasts: [],
-  config: { position: 'bottom-right' as const, maxVisible: 3, defaultDuration: 5 },
-  showToast: jest.fn(() => 'mock-toast-id'),
-  updateToast: jest.fn(),
-  dismissToast: jest.fn(),
-  dismissAll: jest.fn(),
-};
-```
-
-**Test Cases to Implement:**
-
-1. **Toast Display**
-   - Single toast shows correctly
-   - Multiple toasts stack properly
-   - Max visible limit enforced
-
-2. **Auto-dismiss**
-   - Toasts auto-close after specified duration
-   - Duration = 0 disables auto-close
-   - Manual dismiss works
-
-3. **Queue Management**
-   - FIFO queue when exceeding maxVisible
-   - Dismiss by ID works
-   - Dismiss all works
-
-4. **Accessibility**
-   - ARIA live region announces toasts
-   - Keyboard dismissal works
-   - Screen reader compatibility
-
-5. **Type Safety**
-   - TypeScript catches invalid variants
-   - Required fields enforced
+**Critical Test Cases:**
+- [ ] **Memory leaks**: Verify timeouts cleaned up (Chrome DevTools)
+- [ ] **No double timers**: Only ToastProvider handles auto-dismiss
+- [ ] **Error boundary**: Toast errors don't crash app
+- [ ] **Keyboard**: Escape key dismisses toast
+- [ ] **Accessibility**: ARIA live regions work with screen readers
+- [ ] Auto-dismiss after duration works
+- [ ] Manual dismiss clears timeout
+- [ ] Type safety enforced (invalid variants caught by TS)
+- [ ] Hook throws error outside provider
 
 ### Phase 7: Documentation
 
-**Create Toast Documentation:**
+Create `/src/components/primitives/Toast/README.md` with:
 
-File: `/src/components/primitives/Toast/README.md`
-
-````markdown
-# Toast System
-
-## Overview
-
-Global toast notification system using React Context. Supports multiple toasts, auto-dismiss, and platform-agnostic API designed for future mobile implementation.
-
-## Basic Usage
-
+**Basic Usage:**
 ```typescript
-import { useToast } from '@/hooks/ui/useToast';
-
-const MyComponent = () => {
-  const { showSuccess, showError } = useToast();
-
-  const handleSave = async () => {
-    try {
-      await saveData();
-      showSuccess('Data saved successfully!');
-    } catch (error) {
-      showError('Failed to save data');
-    }
-  };
-
-  return <button onClick={handleSave}>Save</button>;
-};
+const { showSuccess, showError } = useToast();
+showSuccess('Data saved!');
 ```
 
-## API Reference
+**API:**
+- `showSuccess/Error/Warning/Info(message, options?)` - Convenience methods
+- `showToast(toast)` - Returns toast ID
+- `dismissToast(id)` / `dismissAll()`
+- `updateToast(id, updates)` - Optional, experimental
 
-### `useToast()`
+**Migration:**
+Replace `window.dispatchEvent(new CustomEvent('quorum:toast', ...))` with `useToast()`
 
-Returns toast context with the following methods:
+## Pre-Launch Checklist
 
-#### Convenience Methods
-- `showSuccess(message, options?)` - Show success toast
-- `showError(message, options?)` - Show error toast
-- `showWarning(message, options?)` - Show warning toast
-- `showInfo(message, options?)` - Show info toast
+### Before Merging
+- [ ] All timeouts stored in `useRef` and cleaned up
+- [ ] Error boundary wraps `ToastContainer`
+- [ ] Escape key handler added
+- [ ] Primitives used (FlexColumn, not raw divs)
+- [ ] Mobile stub exists (`ToastContainer.native.tsx`)
+- [ ] Callout receives `autoClose={0}`
+- [ ] TypeScript has zero `any` types
+- [ ] Lingui used for user-facing strings
 
-#### Advanced Methods
-- `showToast(toast)` - Show custom toast, returns toast ID
-- `updateToast(id, updates)` - Update existing toast
-- `dismissToast(id)` - Dismiss specific toast
-- `dismissAll()` - Dismiss all toasts
+### After Full Migration
+- [ ] `grep -r "quorum:toast" src/` returns nothing (or only MessageService if hybrid)
+- [ ] Old Layout.tsx toast code removed
+- [ ] No memory leaks verified (Chrome DevTools)
+- [ ] No console errors
+- [ ] Production monitoring: 48 hours with no toast errors
 
-### Toast Options
+## Future Enhancements (Post-Launch)
 
-```typescript
-interface Toast {
-  message: string;
-  variant: 'info' | 'success' | 'warning' | 'error';
-  duration?: number; // seconds, 0 = no auto-close
-  dismissible?: boolean; // default: true
-  action?: {
-    label: string;
-    onPress: () => void;
-  };
-}
-```
+- Toast history tracking
+- Progress toasts (upload/download status)
+- Toast groups (dismiss related toasts together)
+- Sound notifications
+- Full mobile implementation with react-native-reanimated
 
-### Provider Configuration
+## Mobile Implementation (Future)
 
-```typescript
-<ToastProvider config={{
-  position: 'bottom-right', // 'top-left' | 'top-center' | etc.
-  maxVisible: 3, // Maximum toasts shown simultaneously
-  defaultDuration: 5, // Default auto-close duration (seconds)
-}}>
-  {/* app */}
-</ToastProvider>
-```
+When ready, implement `/src/components/primitives/Toast/ToastContainer.native.tsx`:
+- Use `react-native-reanimated` for animations
+- Respect safe area insets
+- Consider keyboard visibility
+- Add haptic feedback for errors
+- `useToast()` hook works identically (no API changes)
 
-## Examples
-
-### Long-lived Toast
-```typescript
-showInfo('Processing...', { duration: 0 }); // Manual dismiss only
-```
-
-### Toast with Action Button
-```typescript
-showToast({
-  message: 'File deleted',
-  variant: 'warning',
-  action: {
-    label: 'Undo',
-    onPress: () => restoreFile(),
-  },
-});
-```
-
-### Programmatic Control
-```typescript
-const toastId = showInfo('Uploading...');
-
-// Later: update the toast
-updateToast(toastId, {
-  message: 'Upload complete!',
-  variant: 'success'
-});
-
-// Or dismiss it
-dismissToast(toastId);
-```
-
-## Migration from Old System
-
-**Before:**
-```typescript
-if (typeof window !== 'undefined' && (window as any).dispatchEvent) {
-  (window as any).dispatchEvent(
-    new CustomEvent('quorum:toast', {
-      detail: { message: 'Success!', variant: 'success' }
-    })
-  );
-}
-```
-
-**After:**
-```typescript
-import { useToast } from '@/hooks/ui/useToast';
-
-const { showSuccess } = useToast();
-showSuccess('Success!');
-```
-
-## Accessibility
-
-- Toasts use ARIA live regions for screen reader announcements
-- Keyboard navigation supported
-- Dismissible toasts have proper focus management
-
-## Future: Mobile Implementation
-
-The API is designed to be platform-agnostic. When mobile support is added:
-
-1. Create `/src/components/primitives/Toast/ToastContainer.native.tsx`
-2. Implement using React Native's `Animated` API
-3. No changes required to consumer code (`useToast()` hook remains identical)
-````
-
-## Testing Checklist
-
-### Functional Testing
-
-- [ ] Single toast displays correctly
-- [ ] Multiple toasts stack properly (up to `maxVisible`)
-- [ ] Auto-dismiss works after specified duration
-- [ ] Manual dismiss (X button) works
-- [ ] Toast positioning configurable (all 6 positions)
-- [ ] Max visible limit enforced (oldest removed when exceeded)
-- [ ] `showSuccess`, `showError`, `showWarning`, `showInfo` shortcuts work
-- [ ] `updateToast` updates existing toast
-- [ ] `dismissToast` removes specific toast
-- [ ] `dismissAll` clears all toasts
-- [ ] Duration = 0 disables auto-close
-- [ ] Dismissible = false hides X button
-
-### Type Safety Testing
-
-- [ ] TypeScript catches invalid variants
-- [ ] Required fields enforced (`message`, `variant`)
-- [ ] Hook throws error when used outside provider
-- [ ] Toast ID returned from `showToast()`
-
-### Accessibility Testing
-
-- [ ] ARIA live region announces toasts
-- [ ] Screen reader reads toast message and variant
-- [ ] Keyboard can dismiss toasts (Escape key)
-- [ ] Focus management works properly
-- [ ] Color contrast meets WCAG standards
-
-### Edge Cases
-
-- [ ] Rapid toast creation doesn't break UI
-- [ ] Toast dismissed during animation doesn't error
-- [ ] Provider unmount clears all toasts
-- [ ] Multiple providers don't conflict (if nested)
-- [ ] Long messages don't break layout
-- [ ] Special characters in messages render correctly
-- [ ] i18n messages work properly
-
-### Performance Testing
-
-- [ ] No memory leaks with auto-dismiss timers
-- [ ] No unnecessary re-renders
-- [ ] Large number of toasts (10+) doesn't lag UI
-
-### Migration Testing
-
-- [ ] All old `quorum:toast` dispatches removed
-- [ ] All old `quorum:kick-toast` dispatches removed
-- [ ] Old event listeners removed from Layout.tsx
-- [ ] Old toast state (`kickToast`) removed
-- [ ] No console errors in browser
-- [ ] TypeScript compiles with no errors
-- [ ] Linting passes
-
-## Future Enhancements (Post-Implementation)
-
-### Phase 8: Advanced Features (Optional)
-
-**Toast History:**
-```typescript
-interface ToastContextValue {
-  // ... existing
-  history: Toast[]; // All dismissed toasts
-  clearHistory: () => void;
-}
-```
-
-**Progress Toasts:**
-```typescript
-interface ProgressToast extends Toast {
-  progress?: number; // 0-100
-}
-
-// Usage:
-const id = showInfo('Uploading...', { progress: 0 });
-// Update progress
-updateToast(id, { progress: 50 });
-updateToast(id, { progress: 100, message: 'Upload complete!', variant: 'success' });
-```
-
-**Toast Groups:**
-```typescript
-interface Toast {
-  // ... existing
-  group?: string; // Group related toasts
-}
-
-// Dismiss entire group
-dismissGroup(groupName: string);
-```
-
-**Sound Notifications:**
-```typescript
-interface ToastConfig {
-  // ... existing
-  playSound?: boolean;
-  sounds?: {
-    success?: string; // path to audio file
-    error?: string;
-    warning?: string;
-    info?: string;
-  };
-}
-```
-
-## Mobile Implementation Notes (Future)
-
-When mobile notifications are ready to implement:
-
-### Platform Detection Strategy
-
-```typescript
-// src/components/primitives/Toast/ToastContainer.tsx
-import { isMobile } from '@/utils/platform';
-
-export const ToastContainer = isMobile()
-  ? require('./ToastContainer.native').ToastContainer
-  : require('./ToastContainer.web').ToastContainer;
-```
-
-### React Native Implementation Considerations
-
-**File:** `/src/components/primitives/Toast/ToastContainer.native.tsx`
-
-Key differences for mobile:
-1. Use `react-native-reanimated` for animations
-2. Position relative to safe area (notch/home indicator)
-3. Consider keyboard visibility
-4. Use haptic feedback for important toasts
-5. Handle orientation changes
-
-**Possible Implementation:**
-```typescript
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useToastContext } from '@/components/context/ToastContext';
-import { Callout } from '@/components/primitives/Callout';
-
-export const ToastContainer: React.FC = () => {
-  const { toasts, dismissToast } = useToastContext();
-  const insets = useSafeAreaInsets();
-
-  if (toasts.length === 0) return null;
-
-  return (
-    <View
-      style={[
-        styles.container,
-        { top: insets.top + 16, right: 16 }
-      ]}
-      pointerEvents="box-none"
-    >
-      {toasts.map((toast) => (
-        <Animated.View
-          key={toast.id}
-          entering={FadeInUp}
-          exiting={FadeOutUp}
-        >
-          <Callout
-            variant={toast.variant}
-            size="sm"
-            dismissible={toast.dismissible}
-            onClose={() => dismissToast(toast.id)}
-          >
-            {toast.message}
-          </Callout>
-        </Animated.View>
-      ))}
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    zIndex: 9999,
-    maxWidth: 360,
-    gap: 8,
-  },
-});
-```
-
-**No changes to consumer code required** - `useToast()` hook works identically on both platforms.
-
-## Success Criteria
+## Success Criteria (Revised)
 
 This refactoring is considered complete when:
 
-1. ✅ All old event-based toast code removed
-2. ✅ New Context-based system implemented
-3. ✅ Multiple toasts can display simultaneously
-4. ✅ Full TypeScript type safety
-5. ✅ Accessibility features working (ARIA)
-6. ✅ All existing toast functionality preserved
-7. ✅ Developer-friendly API (`useToast` hook)
-8. ✅ Comprehensive documentation
-9. ✅ Test coverage for core functionality
+### Core Requirements (Must Have)
+1. ✅ All old event-based toast code removed (or documented as hybrid for MessageService)
+2. ✅ New Context-based system implemented with error boundary
+3. ✅ **No memory leaks** - All timeouts cleaned up properly
+4. ✅ Full TypeScript type safety (zero `any` types)
+5. ✅ **Keyboard support** - Escape key dismisses toasts
+6. ✅ ARIA live regions for screen readers
+7. ✅ All existing toast functionality preserved
+8. ✅ Developer-friendly API (`useToast` hook with convenience methods)
+9. ✅ **Mobile stub created** (prevents build failures)
 10. ✅ Zero breaking changes to user-facing behavior
-11. ✅ API designed to accommodate future mobile implementation without breaking changes
+
+### Quality Requirements (Must Have)
+11. ✅ **Test coverage**: Timer cleanup, error boundary, keyboard events
+12. ✅ **Performance**: Toast render time < 16ms, no memory leaks verified
+13. ✅ **Documentation**: README, migration guide, MessageService decision doc
+14. ✅ **Rollback strategy tested**: Can revert to old system if needed
+
+### Stretch Goals (Nice to Have)
+15. 🎯 Multiple toasts display simultaneously (start with 1, add if needed)
+16. 🎯 Toast positioning configurable (all 6 positions tested)
+17. 🎯 `updateToast` method (mark as experimental)
+18. 🎯 Toast action buttons support (defer to Phase 8)
+
+### Future Work (Post-Implementation)
+19. 📋 Mobile implementation with react-native-reanimated
+20. 📋 Toast history tracking
+21. 📋 Progress toasts
+22. 📋 Sound notifications
 
 ## References
 
-### Current Implementation Files
-- `/src/components/Layout.tsx` - Current toast logic (lines 39-53, 113-130)
-- `/src/components/primitives/Callout/` - Underlying toast UI component
+- `/src/components/Layout.tsx` - Current implementation (lines 39-53, 113-130)
+- `/src/components/primitives/Callout/` - Underlying UI component
+- `.agents/tasks/.done/callout-primitive-system.md` - Callout component docs
 
-### Related Documentation
-- `.agents/tasks/.done/callout-primitive-system.md` - Callout component implementation
-- `.agents/tasks/.done/callout-primitive-audit.md` - Callout component audit
-- `.agents/INDEX.md` - Project documentation index
+## Implementation Timeline
 
-### TypeScript Resources
-- [TypeScript Handbook - Generics](https://www.typescriptlang.org/docs/handbook/2/generics.html)
-- [React Context TypeScript](https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/context/)
+### Week 1: Foundation (8-12 hours)
+- [ ] Implement timer cleanup fixes (2 hours)
+- [ ] Create error boundary (1 hour)
+- [ ] Create mobile stub (30 min)
+- [ ] Implement keyboard support (1 hour)
+- [ ] Add ToastProvider alongside old system (2 hours)
+- [ ] Write unit tests for ToastProvider (3-4 hours)
 
-### Accessibility Resources
-- [WAI-ARIA: status role](https://www.w3.org/TR/wai-aria-1.2/#status)
-- [WCAG 2.1 - Time-based Media](https://www.w3.org/WAI/WCAG21/Understanding/time-based-media)
+### Week 2: Safe Migration (8-10 hours)
+- [ ] Migrate `useSpaceProfile.ts` (1 hour)
+- [ ] Test in production (monitoring)
+- [ ] Migrate `SpaceSettingsModal.tsx` (1 hour)
+- [ ] Test in production (monitoring)
+- [ ] Identify and migrate remaining React components (4-6 hours)
+- [ ] Document any issues encountered (1 hour)
+
+### Week 3: Non-React Code (6-8 hours)
+- [ ] Decide MessageService approach (hybrid vs refactor) (2 hours)
+- [ ] Implement chosen approach (3-4 hours)
+- [ ] Document decision and rationale (1 hour)
+- [ ] Integration testing (1-2 hours)
+
+### Week 4: Cleanup & Launch (4-6 hours)
+- [ ] Remove old toast system (1 hour)
+- [ ] Verify all grep searches return nothing (30 min)
+- [ ] Final accessibility audit (1 hour)
+- [ ] Performance testing (memory leaks, render time) (1-2 hours)
+- [ ] Production monitoring (48 hours observation)
+- [ ] Update documentation (1 hour)
+
+**Total Estimated Effort:** 26-36 hours (3-4.5 weeks at 8-10 hours/week)
+
+## Risks & Mitigation
+
+**High Risk:**
+- Timer memory leaks → useRef cleanup
+- MessageService can't use hooks → Hybrid approach or dependency injection
+- Double timer bug → Set Callout `autoClose={0}`
+- Toast errors crash app → Error boundary
+
+**Medium Risk:**
+- Big bang migration → Phased 4-week rollout
+- Mobile build failures → .native.tsx stub
+- Accessibility regression → Escape key + ARIA
 
 ---
 
 _Created: 2025-10-07 by Claude Code_
+_Updated: 2025-10-07 by Claude Code (post-analysis improvements)_
