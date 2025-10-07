@@ -107,7 +107,7 @@ export const loadMarkdownContent = async (
   } catch (error) {
     console.error('Error loading markdown content:', error);
     // Return placeholder content for development
-    return `# File Not Found\n\n**Path:** ${filePath}\n\n*This file could not be loaded. In development, this would show the actual markdown content.*\n\n## Note\n\nTo fully implement this feature, you need to create API endpoints that can:\n1. Scan the .readme directory structure\n2. Read markdown file contents\n3. Return the data to the frontend\n\nAlternatively, you could use a build-time process to generate a manifest of all markdown files.`;
+    return `# File Not Found\n\n**Path:** ${filePath}\n\n*This file could not be loaded. In development, this would show the actual markdown content.*\n\n## Note\n\nTo fully implement this feature, you need to create API endpoints that can:\n1. Scan the .agents directory structure\n2. Read markdown file contents\n3. Return the data to the frontend\n\nAlternatively, you could use a build-time process to generate a manifest of all markdown files.`;
   }
 };
 
@@ -117,47 +117,47 @@ const getHardcodedFiles = (type: 'docs' | 'tasks' | 'bugs'): MarkdownFile[] => {
     docs: [
       {
         name: 'component-management-guide.md',
-        path: '.readme/docs/component-management-guide.md',
+        path: '.agents/docs/component-management-guide.md',
         folder: 'root',
       },
       {
         name: 'cross-platform-components-guide.md',
-        path: '.readme/docs/cross-platform-components-guide.md',
+        path: '.agents/docs/cross-platform-components-guide.md',
         folder: 'root',
       },
       {
         name: 'cross-platform-repository-implementation.md',
-        path: '.readme/docs/cross-platform-repository-implementation.md',
+        path: '.agents/docs/cross-platform-repository-implementation.md',
         folder: 'root',
       },
       {
         name: 'data-management-architecture-guide.md',
-        path: '.readme/docs/data-management-architecture-guide.md',
+        path: '.agents/docs/data-management-architecture-guide.md',
         folder: 'root',
       },
       {
         name: 'expo-dev-testing-guide.md',
-        path: '.readme/docs/expo-dev-testing-guide.md',
+        path: '.agents/docs/expo-dev-testing-guide.md',
         folder: 'root',
       },
       {
         name: 'space-roles.md',
-        path: '.readme/docs/space-roles.md',
+        path: '.agents/docs/space-roles.md',
         folder: 'root',
       },
       {
         name: 'unused-dependencies-analysis.md',
-        path: '.readme/docs/development/unused-dependencies-analysis.md',
+        path: '.agents/docs/development/unused-dependencies-analysis.md',
         folder: 'development',
       },
       {
         name: 'cross-platform-key-backup.md',
-        path: '.readme/docs/features/cross-platform-key-backup.md',
+        path: '.agents/docs/features/cross-platform-key-backup.md',
         folder: 'features',
       },
       {
         name: 'cross-platform-theming.md',
-        path: '.readme/docs/features/cross-platform-theming.md',
+        path: '.agents/docs/features/cross-platform-theming.md',
         folder: 'features',
       },
       // ... add more as needed
@@ -165,22 +165,22 @@ const getHardcodedFiles = (type: 'docs' | 'tasks' | 'bugs'): MarkdownFile[] => {
     tasks: [
       {
         name: 'combined-text-image-messages.md',
-        path: '.readme/tasks/combined-text-image-messages.md',
+        path: '.agents/tasks/combined-text-image-messages.md',
         folder: 'root',
       },
       {
         name: 'conversation-deletion-state-sync.md',
-        path: '.readme/tasks/conversation-deletion-state-sync.md',
+        path: '.agents/tasks/conversation-deletion-state-sync.md',
         folder: 'root',
       },
       {
         name: 'pinned-messages-feature.md',
-        path: '.readme/tasks/pinned-messages-feature.md',
+        path: '.agents/tasks/pinned-messages-feature.md',
         folder: 'root',
       },
       {
         name: 'analysis.md',
-        path: '.readme/tasks/css-refactor/analysis.md',
+        path: '.agents/tasks/css-refactor/analysis.md',
         folder: 'css-refactor',
       },
       // ... add more as needed
@@ -188,17 +188,17 @@ const getHardcodedFiles = (type: 'docs' | 'tasks' | 'bugs'): MarkdownFile[] => {
     bugs: [
       {
         name: 'brave-browser-react-hook-errors.md',
-        path: '.readme/bugs/brave-browser-react-hook-errors.md',
+        path: '.agents/bugs/brave-browser-react-hook-errors.md',
         folder: 'root',
       },
       {
         name: 'joinspacemodal-invalid-json-network-error.md',
-        path: '.readme/bugs/joinspacemodal-invalid-json-network-error.md',
+        path: '.agents/bugs/joinspacemodal-invalid-json-network-error.md',
         folder: 'root',
       },
       {
         name: 'messagedb-cross-platform-storage-issue.md',
-        path: '.readme/bugs/messagedb-cross-platform-storage-issue.md',
+        path: '.agents/bugs/messagedb-cross-platform-storage-issue.md',
         folder: 'root',
       },
       // ... add more as needed

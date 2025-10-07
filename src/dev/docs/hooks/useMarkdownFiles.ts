@@ -25,9 +25,9 @@ const filenameToTitle = (filename: string): string => {
 
 // Generate URL-safe slug from file path
 const generateSlug = (path: string): string => {
-  // Remove .readme prefix and .md extension
+  // Remove .agents prefix and .md extension
   let slug = path
-    .replace(/^\.readme\//, '')
+    .replace(/^\.agents\//, '')
     .replace(/\.md$/, '')
     .toLowerCase();
   
@@ -150,7 +150,7 @@ export const useMarkdownContent = (filePath: string) => {
       setError('');
 
       // In development, fetch the actual markdown file
-      // The Vite config allows serving .readme folder
+      // The Vite config allows serving .agents folder
       const response = await fetch(`/${filePath}`);
 
       if (!response.ok) {
@@ -179,12 +179,12 @@ export const useMarkdownContent = (filePath: string) => {
 This error typically occurs when:
 
 1. **File doesn't exist** at the specified path
-2. **Vite dev server** isn't configured to serve .readme folder
+2. **Vite dev server** isn't configured to serve .agents folder
 3. **Network error** preventing file fetch
 
 ## Current Setup
 
-The dev dashboards are configured to read markdown files directly from your \`.readme\` folder using Vite's static file serving.
+The dev dashboards are configured to read markdown files directly from your \`.agents\` folder using Vite's static file serving.
 
 **Expected location:** \`${filePath}\``;
 

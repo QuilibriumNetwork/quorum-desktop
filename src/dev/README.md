@@ -20,9 +20,9 @@ Comprehensive development suite for building and managing cross-platform compone
 **Access**: `/dev` route during development  
 **Purpose**: Interactive frontend for browsing project documentation, tasks, and bug reports
 
-- Browse all documentation files from `.readme/docs/`
-- View task management files from `.readme/tasks/` (pending, ongoing, completed)
-- Access bug reports from `.readme/bugs/` (active and solved)
+- Browse all documentation files from `.agents/docs/`
+- View task management files from `.agents/tasks/` (pending, ongoing, completed)
+- Access bug reports from `.agents/bugs/` (active and solved)
 - Features search functionality and categorization
 - Full markdown rendering with syntax highlighting
 - Organized by folder structure (e.g., mobile-dev/docs, features/primitives)

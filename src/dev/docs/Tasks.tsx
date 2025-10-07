@@ -39,8 +39,8 @@ export const Tasks: React.FC = () => {
         let folderName = 'root';
         if (file.path.includes('/')) {
           const pathParts = file.path.split('/');
-          // Remove .readme, tasks, and filename to get the folder structure
-          const relevantParts = pathParts.slice(2, -1); // Skip ".readme/tasks" and filename
+          // Remove .agents, tasks, and filename to get the folder structure
+          const relevantParts = pathParts.slice(2, -1); // Skip ".agents/tasks" and filename
           if (relevantParts.length > 0) {
             folderName = relevantParts.join('/');
           }
@@ -114,7 +114,7 @@ export const Tasks: React.FC = () => {
             Development Tasks & Implementation Plans
           </Text>
           <Text as="p" variant="subtle" align="center">
-            Browse all task files from .readme/tasks/
+            Browse all task files from .agents/tasks/
           </Text>
         </div>
 

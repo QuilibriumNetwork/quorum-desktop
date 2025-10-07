@@ -47,7 +47,7 @@ export const Login: React.FC<LoginProps> = ({
   // 4. Connect setShowPasskeyPrompt to trigger the modal
   //
   // Current implementation uses manual navigation to onboarding as temporary solution
-  // See: .readme/tasks/todo/mobile-dev/sdk-shim-temporary-solutions.md for full SDK integration plan
+  // See: .agents/tasks/todo/mobile-dev/sdk-shim-temporary-solutions.md for full SDK integration plan
 
   const handleCreateNewAccount = () => {
     authFlow.startNewAccount();

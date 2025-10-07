@@ -31,7 +31,7 @@ config.resolver = {
   ]),
   // TEMPORARY: Redirect SDK to mock implementation for mobile
   // TODO: Remove this when proper SDK integration is implemented
-  // See: .readme/tasks/todo/mobile-sdk-integration-issue.md
+  // See: .agents/tasks/todo/mobile-sdk-integration-issue.md
   extraNodeModules: {
     '@quilibrium/quilibrium-js-sdk-channels': path.resolve(
       monorepoRoot,

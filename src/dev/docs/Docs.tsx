@@ -37,8 +37,8 @@ export const Docs: React.FC = () => {
       let folderName = 'root';
       if (file.path.includes('/')) {
         const pathParts = file.path.split('/');
-        // Remove .readme, docs, and filename to get the folder structure
-        const relevantParts = pathParts.slice(2, -1); // Skip ".readme/docs" and filename
+        // Remove .agents, docs, and filename to get the folder structure
+        const relevantParts = pathParts.slice(2, -1); // Skip ".agents/docs" and filename
         if (relevantParts.length > 0) {
           folderName = relevantParts.join('/');
         }
@@ -96,7 +96,7 @@ export const Docs: React.FC = () => {
             Project Documentation & Guides
           </Text>
           <Text as="p" variant="subtle" align="center">
-            Browse all documentation files from .readme/docs/
+            Browse all documentation files from .agents/docs/
           </Text>
         </div>
 

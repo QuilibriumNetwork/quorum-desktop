@@ -9,7 +9,7 @@ This is a React project using Vite and Electron with a **cross-platform web + mo
 - **Shared Code Architecture**: Components are built using custom primitives that abstract platform differences
 - **Mobile-First Approach**: Every UI change must work on both desktop and mobile
 - **Primitive Components**: Use components from `src/components/primitives/` (Input, Button, Modal, FlexRow, etc.) instead of raw HTML elements
-- **Reference Documentation**: See `.readme/tasks/mobile-dev/docs/component-architecture-workflow-explained.md` for detailed architecture explanation
+- **Reference Documentation**: See `.agents/tasks/mobile-dev/docs/component-architecture-workflow-explained.md` for detailed architecture explanation
 
 **When making any changes, always ask**: "Will this work on mobile?" If uncertain, use primitives and follow mobile-first design principles.
 
@@ -118,20 +118,20 @@ if (someCondition) return <SomeComponent />;
 
 ## Claude Code Development Resources
 
-The `.readme/` folder tracks tasks, bugs, features, and development context.
+The `.agents/` folder tracks tasks, bugs, features, and development context.
 
 ### Important Claude Locations
 
 - `.claude/` — Claude commands, agents, local settings
-- `.readme/INDEX.md` - Index of all the docs available in `.claude/`
-- `.readme/docs/` — Documentation on custom features (Look here when you work on specific things (e.g. Modals, Search, etc.))
-- `.readme/bugs/` — Bug reports and solutions
-- `.readme/tasks/` — Task management (pending and ongoing tasks)
+- `.agents/INDEX.md` - Index of all the docs available in `.claude/`
+- `.agents/docs/` — Documentation on custom features (Look here when you work on specific things (e.g. Modals, Search, etc.))
+- `.agents/bugs/` — Bug reports and solutions
+- `.agents/tasks/` — Task management (pending and ongoing tasks)
   - `.done/`: Completed tasks
 
 ### Documentation Creation Guidelines
 
-When creating new docs in `.readme/` (tasks, bugs, features):
+When creating new docs in `.agents/` (tasks, bugs, features):
 
 1. **Add disclaimer at top**:
    ```markdown

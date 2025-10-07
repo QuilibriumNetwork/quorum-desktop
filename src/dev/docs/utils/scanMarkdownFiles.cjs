@@ -1,4 +1,4 @@
-// Node.js utility to scan markdown files from .readme directory
+// Node.js utility to scan markdown files from .agents directory
 // This can be run as a build step or used in an API endpoint
 
 const fs = require('fs');
@@ -39,7 +39,7 @@ const scanDirectory = (dirPath, baseFolder = '') => {
 };
 
 const scanMarkdownFiles = () => {
-  const readmeDir = path.join(process.cwd(), '.readme');
+  const readmeDir = path.join(process.cwd(), '.agents');
 
   const results = {
     docs: scanDirectory(path.join(readmeDir, 'docs')),

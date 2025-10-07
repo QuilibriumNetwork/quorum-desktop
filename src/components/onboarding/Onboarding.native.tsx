@@ -89,7 +89,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
   // 4. Let PasskeyModal handle getUserRegistration and uploadRegistration automatically
   //
   // Current implementation uses SDK shim and manual registration as a temporary solution
-  // See: .readme/tasks/todo/mobile-sdk-integration-issue.md for full SDK integration plan
+  // See: .agents/tasks/todo/mobile-sdk-integration-issue.md for full SDK integration plan
 
   // FileUpload state management
   const [profileImage, setProfileImage] = useState<string | null>(null);

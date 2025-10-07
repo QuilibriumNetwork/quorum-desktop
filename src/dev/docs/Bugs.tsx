@@ -88,7 +88,7 @@ export const Bugs: React.FC = () => {
             Bug Reports & Known Issues
           </Text>
           <Text as="p" variant="subtle" align="center">
-            Browse all bug reports from .readme/bugs/
+            Browse all bug reports from .agents/bugs/
           </Text>
         </div>
 

@@ -6,7 +6,7 @@ This is the mobile development environment for testing cross-platform components
 
 The mobile app uses **Expo Dev Client** (not Expo Go) and shares components with the web app through a cross-platform architecture.
 
-For complete environment setup, see: [Expo Dev Testing Guide](../.readme/docs/expo-dev-testing-guide.md)
+For complete environment setup, see: [Expo Dev Testing Guide](../.agents/docs/expo-dev-testing-guide.md)
 
 ## Quick Development Workflow
 

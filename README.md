@@ -13,22 +13,22 @@ Powered by Quilibrium and the libp2p stack, Quorum can be used over TCP, QUIC, W
 
 ## Documentation
 
-For detailed documentation on specific features and components, please refer to the [`.readme/docs`](.readme/docs) directory. You can find the complete index of available documentation in [`.readme/INDEX.md`](.readme/INDEX.md).
+For detailed documentation on specific features and components, please refer to the [`.agents/docs`](.agents/docs) directory. You can find the complete index of available documentation in [`.agents/INDEX.md`](.agents/INDEX.md).
 
 **Key Documentation:**
 
-- [Component Management Guide](.readme/docs/component-management-guide.md) - Creating cross-platform components
-- [Cross-Platform Architecture](.readme/docs/cross-platform-repository-implementation.md) - How the shared codebase works
+- [Component Management Guide](.agents/docs/component-management-guide.md) - Creating cross-platform components
+- [Cross-Platform Architecture](.agents/docs/cross-platform-repository-implementation.md) - How the shared codebase works
 
 A complete documentation website will be created at a later time.
 
 ## Development Resources
 
-The [`.readme/`](.readme) folder contains development resources including:
+The [`.agents/`](.agents) folder contains development resources including:
 
 - Architecture documentation and component guides
 - Bug reports and solutions
-- Task management ([pending & ongoing](.readme/tasks), [completed](.readme/tasks/.done))
+- Task management ([pending & ongoing](.agents/tasks), [completed](.agents/tasks/.done))
 - Mobile development guidelines and cross-platform considerations
 
 ### Development Tools
@@ -36,7 +36,7 @@ The [`.readme/`](.readme) folder contains development resources including:
 The [`src/dev/`](src/dev) folder contains development utilities:
 
 - **Dev tools** (`/dev`) - Hub for the current available development tools
-- **Documentation Viewer** (`/dev`) - Interactive frontend for browsing docs, tasks, and bug reports from the `.readme/` folder
+- **Documentation Viewer** (`/dev`) - Interactive frontend for browsing docs, tasks, and bug reports from the `.agents/` folder
 - **Primitives Playground** (`/playground`) - Web-based testing environment for UI primitives and components
 - **Mobile Playground** - Comprehensive testing environment accessible by running the mobile app (see Mobile Development section)
 
@@ -116,7 +116,7 @@ yarn mobile  # Start development server
 For detailed setup and testing instructions, see:
 
 - [Mobile README](mobile/README.md) - Complete mobile development guide
-- [Expo Dev Testing Guide](.readme/docs/expo-dev-testing-guide.md) - Environment setup and troubleshooting
+- [Expo Dev Testing Guide](.agents/docs/expo-dev-testing-guide.md) - Environment setup and troubleshooting
 
 ## Translation Workflow
 

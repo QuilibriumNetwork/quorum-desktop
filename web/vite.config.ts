@@ -67,8 +67,8 @@ export default defineConfig(({ command }) => ({
       'Permissions-Policy': 'publickey-credentials-get=*',
     },
     fs: {
-      // Allow serving .readme folder in development (entire dev folder already excluded from prod)
-      allow: ['..', '.readme'],
+      // Allow serving .agents folder in development (entire dev folder already excluded from prod)
+      allow: ['..', '.agents'],
     },
   },
   resolve: {

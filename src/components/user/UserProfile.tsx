@@ -115,7 +115,7 @@ const UserProfile: React.FunctionComponent<{
           </FlexRow>
           <Container className="user-profile-state">
             {/* TODO: Re-enable when online/offline status is implemented
-                See .readme/tasks/todo/user-status.md for implementation plan
+                See .agents/tasks/todo/user-status.md for implementation plan
                 Phase 1: Show current user's connection state
                 Phase 2: Show all users' online/offline status via presence system
             <UserOnlineStateIndicator user={props.user} />

@@ -16,7 +16,7 @@
  * IMPORTANT: All methods currently return mock data or no-ops.
  * Passkey functionality is NOT available on mobile until properly implemented.
  *
- * See: .readme/tasks/todo/mobile-sdk-integration-issue.md for full details
+ * See: .agents/tasks/todo/mobile-sdk-integration-issue.md for full details
  */
 
 import React, { createContext, useContext, ReactNode, useState } from 'react';

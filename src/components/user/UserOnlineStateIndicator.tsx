@@ -12,7 +12,7 @@ import { t } from '@lingui/core/macro';
  * - UserProfile users: Have state/status from authentication flow
  * - Message users: Only have displayName/userIcon from space members
  *
- * IMPLEMENTATION PLAN: See .readme/tasks/todo/user-status.md
+ * IMPLEMENTATION PLAN: See .agents/tasks/todo/user-status.md
  * - Phase 1: Show current user's WebSocket connection state (online/offline)
  * - Phase 2: Full presence system for all users (requires server changes)
  */
