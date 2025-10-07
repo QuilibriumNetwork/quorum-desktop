@@ -40,14 +40,14 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:248
-msgid "Replying to {user}"
+#: src/components/message/MessageComposer.native.tsx:134
+msgid "Failed to process image"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:134
-msgid "Failed to process image"
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:248
+msgid "Replying to {user}"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -201,6 +201,10 @@ msgstr ""
 #: src/components/primitives/Select/Select.native.tsx:36
 #: src/components/primitives/Select/Select.web.tsx:29
 msgid "All"
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:69
+msgid "All kick records are up to date."
 msgstr ""
 
 #: src/components/modals/AddSpaceModal.tsx:249
@@ -382,7 +386,7 @@ msgstr ""
 #: src/components/modals/GroupEditorModal.tsx:126
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
-#: src/components/modals/SpaceSettingsModal/Account.tsx:186
+#: src/components/modals/SpaceSettingsModal/Account.tsx:184
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:68
 msgid "Click again to confirm"
 msgstr ""
@@ -703,7 +707,7 @@ msgstr ""
 msgid "Failed to decrypt message with any known state"
 msgstr ""
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:554
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:566
 msgid "Failed to generate invite link. Please try again."
 msgstr ""
 
@@ -777,7 +781,7 @@ msgstr ""
 msgid "File validation failed. Please try again."
 msgstr ""
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:383
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:395
 msgid "Fix"
 msgstr ""
 
@@ -804,17 +808,17 @@ msgstr ""
 msgid "General Chat"
 msgstr ""
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:545
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:557
 msgid "Generate Link"
 msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:213
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:545
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:557
 msgid "Generate New Link"
 msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:162
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:539
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:551
 msgid "Generate Public Invite Link"
 msgstr ""
 
@@ -999,7 +1003,7 @@ msgid "Leave {0}"
 msgstr ""
 
 #: src/components/modals/LeaveSpaceModal.tsx:62
-#: src/components/modals/SpaceSettingsModal/Account.tsx:184
+#: src/components/modals/SpaceSettingsModal/Account.tsx:182
 msgid "Leave Space"
 msgstr ""
 
@@ -1340,7 +1344,7 @@ msgstr ""
 
 #: src/components/modals/ChannelEditorModal.tsx:189
 #: src/components/modals/GroupEditorModal.tsx:94
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:526
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:538
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:239
 #: src/components/user/UserProfileEdit.tsx:160
 msgid "Save Changes"
@@ -1351,7 +1355,7 @@ msgstr ""
 msgid "Save Contact Photo"
 msgstr ""
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:511
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:523
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:228
 msgid "Save Failed"
 msgstr ""
@@ -1522,7 +1526,7 @@ msgstr ""
 msgid "Successfully sent invite to {0}"
 msgstr ""
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:386
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:398
 msgid "Sync Kick Status"
 msgstr ""
 
@@ -1587,11 +1591,11 @@ msgstr ""
 msgid "This user is already a member of this space."
 msgstr ""
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:543
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:555
 msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
 msgstr ""
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:542
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:554
 msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
 msgstr ""
 
@@ -1736,7 +1740,7 @@ msgstr ""
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr ""
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:386
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:398
 msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
 msgstr ""
 
@@ -1863,7 +1867,7 @@ msgstr ""
 msgid "You're all set. Welcome to Quorum!"
 msgstr ""
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:382
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:394
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr ""
 
