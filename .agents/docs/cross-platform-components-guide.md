@@ -74,7 +74,7 @@ This framework aligns with the practical guidance in [Component Management Guide
 **Related Documentation:**
 - [Primitives Overview](./features/primitives/INDEX.md) - Complete primitives documentation
 - [API Reference](./features/primitives/API-REFERENCE.md) - Quick prop lookup
-- [Quick Reference](../QUICK-REFERENCE.md) - Fast lookup for common patterns
+- [Quick Reference](../AGENTS.md) - Fast lookup for common patterns
 
 ### Use Single Shared Component When:
 

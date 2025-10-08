@@ -39,7 +39,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Features / Primitives
 - [Introduction and Core Concepts](docs/features/primitives/01-introduction-and-concepts.md)
-- [Primitives Quick Reference](docs/features/primitives/02-primitives-quick-reference.md)
+- [Primitives Quick Reference](docs/features/primitives/02-primitives-AGENTS.md)
 - [When to Use Primitives vs Raw HTML](docs/features/primitives/03-when-to-use-primitives.md)
 - [Web-to-Native Migration Guide](docs/features/primitives/04-web-to-native-migration.md)
 - [Primitive Styling Guidelines](docs/features/primitives/05-primitive-styling-guide.md)

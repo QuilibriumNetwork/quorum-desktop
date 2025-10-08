@@ -401,7 +401,7 @@ You don't need to convert everything at once:
 
 ### **Next Steps**
 
-1. **Need quick component reference?** → [02-primitives-quick-reference.md](./02-primitives-quick-reference.md)
+1. **Need quick component reference?** → [02-primitives-AGENTS.md](./02-primitives-AGENTS.md)
 2. **Understanding when to use primitives?** → [03-when-to-use-primitives.md](./03-when-to-use-primitives.md)
 3. **Converting web components?** → [04-web-to-native-migration.md](./04-web-to-native-migration.md)
 

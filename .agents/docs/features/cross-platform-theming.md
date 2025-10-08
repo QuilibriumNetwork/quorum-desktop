@@ -82,7 +82,7 @@ interface PrimitivesThemeContextType extends ThemeContextType {
 
 - [Primitives Styling Guide](./primitives/05-primitive-styling-guide.md) - Styling system and color usage
 - [API Reference](./primitives/API-REFERENCE.md) - Theme integration in primitives
-- [Quick Reference](../../QUICK-REFERENCE.md) - Theme system overview
+- [Quick Reference](../../AGENTS.md) - Theme system overview
 - [Cross-Platform Guide](../cross-platform-components-guide.md) - Component architecture
 
 ## Color System

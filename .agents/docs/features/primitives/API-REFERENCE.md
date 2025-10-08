@@ -802,7 +802,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 ## Related Documentation
 
 - [Primitives INDEX](./INDEX.md) - Complete primitives documentation hub
-- [Quick Reference](./02-primitives-quick-reference.md) - Detailed examples and patterns
+- [Quick Reference](./02-primitives-AGENTS.md) - Detailed examples and patterns
 - [When to Use Primitives](./03-when-to-use-primitives.md) - Decision framework
 - [Migration Guide](./04-web-to-native-migration.md) - Web to native migration patterns
 - [Styling Guide](./05-primitive-styling-guide.md) - Color system and styling rules

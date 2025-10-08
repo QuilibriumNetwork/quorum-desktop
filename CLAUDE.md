@@ -8,7 +8,7 @@ This is a React project using Vite and Electron with a **cross-platform web + mo
 
 **IMPORTANT**: Before starting ANY task, read these three files in order:
 
-1. **[QUICK-REFERENCE.md](.agents/QUICK-REFERENCE.md)** - Fast lookup for file paths, patterns, and common tasks
+1. **[AGENTS.md](.agents/AGENTS.md)** - Fast lookup for file paths, patterns, and common tasks
 2. **[agents-workflow.md](.agents/agents-workflow.md)** - How to effectively use documentation
 3. **[INDEX.md](.agents/INDEX.md)** - Find specific documentation for your task
 
@@ -27,7 +27,7 @@ This is a React project using Vite and Electron with a **cross-platform web + mo
 
 **When making any changes, always ask**: "Will this work on mobile?" If uncertain, use primitives and follow mobile-first design principles.
 
-**Reference**: [QUICK-REFERENCE.md - Core Architectural Patterns](.agents/QUICK-REFERENCE.md#-core-architectural-patterns)
+**Reference**: [AGENTS.md - Core Architectural Patterns](.agents/AGENTS.md#-core-architectural-patterns)
 
 ---
 
@@ -95,7 +95,7 @@ if (someCondition) return <SomeComponent />;
 
 The `.agents/` folder contains all development context, tasks, and documentation:
 
-- **[QUICK-REFERENCE.md](.agents/QUICK-REFERENCE.md)** - ⭐ START HERE - Fast lookup for everything
+- **[AGENTS.md](.agents/AGENTS.md)** - ⭐ START HERE - Fast lookup for everything
 - **[agents-workflow.md](.agents/agents-workflow.md)** - ⭐ READ THIS - How to work effectively
 - **[INDEX.md](.agents/INDEX.md)** - Complete documentation index
 
@@ -109,10 +109,10 @@ The `.agents/` folder contains all development context, tasks, and documentation
 
 ## Development Workflow
 
-**See**: [QUICK-REFERENCE.md - Workflow Guidelines](.agents/QUICK-REFERENCE.md#-workflow-guidelines)
+**See**: [AGENTS.md - Workflow Guidelines](.agents/AGENTS.md#-workflow-guidelines)
 
 Quick checklist:
-- ✅ Read QUICK-REFERENCE.md for relevant patterns
+- ✅ Read AGENTS.md for relevant patterns
 - ✅ Use primitives for interactive elements
 - ✅ Think mobile-first
 - ✅ Follow React Hooks rules

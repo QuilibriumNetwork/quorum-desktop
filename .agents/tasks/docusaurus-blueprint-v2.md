@@ -501,7 +501,7 @@ quorum-desktop/
 | Existing Doc | New Location | Action |
 |--------------|--------------|--------|
 | `features/primitives/01-introduction-and-concepts.md` | `ui-architecture/primitives/introduction-concepts.md` | Migrate as-is |
-| `features/primitives/02-primitives-quick-reference.md` | `ui-architecture/primitives/quick-reference.md` | Migrate as-is |
+| `features/primitives/02-primitives-AGENTS.md` | `ui-architecture/primitives/AGENTS.md` | Migrate as-is |
 | `features/primitives/03-when-to-use-primitives.md` | `ui-architecture/primitives/when-to-use.md` | Migrate as-is |
 | `features/primitives/04-web-to-native-migration.md` | `ui-architecture/primitives/web-to-native-migration.md` | Migrate as-is |
 | `features/primitives/05-primitive-styling-guide.md` | `ui-architecture/primitives/styling-guide.md` | Migrate as-is |

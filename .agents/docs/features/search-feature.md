@@ -27,7 +27,7 @@ The global search feature is fully implemented and functional with:
 
 - [Primitives Overview](./primitives/INDEX.md) - UI components used in search
 - [Cross-Platform Guide](../cross-platform-components-guide.md) - Component architecture
-- [Quick Reference](../../QUICK-REFERENCE.md) - Search implementation guide
+- [Quick Reference](../../AGENTS.md) - Search implementation guide
 - [Performance Optimization Task](../../tasks/search-performance-optimization.md) - Ongoing improvements
 
 ## 🏗️ Architecture Overview

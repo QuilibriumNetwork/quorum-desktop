@@ -19,7 +19,7 @@ Best practices for AI-assisted development on the Quorum Desktop project.
 
 ### Step 1: Check Quick Reference
 
-**Always start here**: [QUICK-REFERENCE.md](QUICK-REFERENCE.md)
+**Always start here**: [AGENTS.md](AGENTS.md)
 
 This file contains:
 - File paths for all major components
@@ -121,7 +121,7 @@ Before implementing, read relevant docs:
 **Key Resources**:
 - [Primitive Styling Guide](docs/features/primitives/05-primitive-styling-guide.md)
 - [Theming System](docs/features/cross-platform-theming.md)
-- [Quick Reference - Styling](../QUICK-REFERENCE.md#styling)
+- [Quick Reference - Styling](../AGENTS.md#styling)
 
 ---
 
@@ -133,7 +133,7 @@ Before implementing, read relevant docs:
 3. ✅ Create shared `types.ts` interface
 4. ✅ Export from `src/components/primitives/index.ts`
 5. ✅ Update [API Reference](docs/features/primitives/API-REFERENCE.md)
-6. ✅ Add examples to [Quick Reference](docs/features/primitives/02-primitives-quick-reference.md)
+6. ✅ Add examples to [Quick Reference](docs/features/primitives/02-primitives-AGENTS.md)
 
 **Key Resources**:
 - [Primitives Introduction](docs/features/primitives/01-introduction-and-concepts.md)
@@ -185,7 +185,7 @@ Before implementing, read relevant docs:
 | Component architecture | [Component Architecture Workflow](tasks/mobile-dev/docs/component-architecture-workflow-explained.md) |
 | Testing primitives | [Primitives Testing Guide](tasks/mobile-dev/docs/primitives-testing.md) |
 | Repository structure | [Web/Native Repo Structure](tasks/mobile-dev/docs/web-and-native-repo-structure.md) |
-| Platform detection | [Quick Reference - Platform Detection](../QUICK-REFERENCE.md#mobile-first-development) |
+| Platform detection | [Quick Reference - Platform Detection](../AGENTS.md#mobile-first-development) |
 
 ---
 
@@ -263,7 +263,7 @@ _Created: YYYY-MM-DD_
 **Why**: Understanding existing patterns saves time and prevents conflicts
 
 **How**:
-- Use QUICK-REFERENCE.md for fast pattern lookup
+- Use AGENTS.md for fast pattern lookup
 - Read related docs before implementing
 - Check `.done/` and `.solved/` for completed examples
 
@@ -394,7 +394,7 @@ yarn add package-name
 - Create incompatible solutions
 
 **Good**:
-- Read QUICK-REFERENCE.md first
+- Read AGENTS.md first
 - Search INDEX.md for related docs
 - Follow existing patterns
 
@@ -418,7 +418,7 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn lint"
 
 **Why**: Node.js is installed on Windows, not WSL
 
-**Reference**: [QUICK-REFERENCE.md - Development Commands](../QUICK-REFERENCE.md#development-commands-wslwindows)
+**Reference**: [AGENTS.md - Development Commands](../AGENTS.md#development-commands-wslwindows)
 
 ---
 
@@ -426,7 +426,7 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn lint"
 
 ### Before Starting Task
 
-- [ ] Read QUICK-REFERENCE.md for relevant patterns
+- [ ] Read AGENTS.md for relevant patterns
 - [ ] Search INDEX.md for related documentation
 - [ ] Review active bugs in `bugs/` folder
 - [ ] Check primitives documentation if UI work involved
@@ -458,7 +458,7 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn lint"
 ## Quick Reference Summary
 
 **Most Important Files**:
-1. [QUICK-REFERENCE.md](QUICK-REFERENCE.md) - Start here for every task
+1. [AGENTS.md](AGENTS.md) - Start here for every task
 2. [INDEX.md](INDEX.md) - Find documentation
 3. [API Reference](docs/features/primitives/API-REFERENCE.md) - Component props lookup
 4. [Cross-Platform Guide](docs/cross-platform-components-guide.md) - Architecture patterns
@@ -479,7 +479,7 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn lint"
 
 ## Related Documentation
 
-- [QUICK-REFERENCE.md](QUICK-REFERENCE.md) - Fast lookup for common tasks
+- [AGENTS.md](AGENTS.md) - Fast lookup for common tasks
 - [INDEX.md](INDEX.md) - Complete documentation index
 - [CLAUDE.md](../../CLAUDE.md) - Project setup and guidelines
 - [Cross-Platform Components Guide](docs/cross-platform-components-guide.md) - Architecture patterns

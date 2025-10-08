@@ -332,7 +332,7 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn build"
 **Primitives (UI Components):**
 - Primitives overview: `docs/features/primitives/INDEX.md`
 - API reference: `docs/features/primitives/API-REFERENCE.md`
-- Quick reference: `docs/features/primitives/02-primitives-quick-reference.md`
+- Quick reference: `docs/features/primitives/02-primitives-AGENTS.md`
 - When to use: `docs/features/primitives/03-when-to-use-primitives.md`
 - Migration guide: `docs/features/primitives/04-web-to-native-migration.md`
 - Styling guide: `docs/features/primitives/05-primitive-styling-guide.md`
@@ -354,7 +354,7 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn build"
 ## 🚦 Workflow Guidelines
 
 ### Before Starting Any Task
-1. ✅ Check `QUICK-REFERENCE.md` (this file) for patterns
+1. ✅ Check `AGENTS.md` (this file) for patterns
 2. ✅ Search `.agents/INDEX.md` for relevant docs
 3. ✅ Review active bugs in `bugs/` folder
 4. ✅ Check primitives documentation if UI work involved
