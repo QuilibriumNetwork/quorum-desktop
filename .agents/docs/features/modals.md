@@ -696,6 +696,16 @@ If upgrading existing modals:
 
 ---
 
+## Related Documentation
+
+- [Primitives Modal Documentation](./primitives/INDEX.md) - Primitive modal components
+- [API Reference - Modal](./primitives/API-REFERENCE.md#modal) - Modal component props
+- [API Reference - ModalContainer](./primitives/API-REFERENCE.md#modalcontainer) - ModalContainer props
+- [Cross-Platform Guide](../cross-platform-components-guide.md) - Component architecture patterns
+- [Quick Reference](../../QUICK-REFERENCE.md) - Fast lookup for modal patterns
+
+---
+
 ## Summary
 
 The Quorum Desktop app currently uses a **hybrid three-system modal architecture**:

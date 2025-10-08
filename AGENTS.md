@@ -1,109 +1,123 @@
 # AGENTS.md
 
-> A project manifest for AI coding agents.  
-> This file provides the essential context, architecture rules, and development guidelines required for contributing to this repository.  
-> Agents should use this as the single source of truth for how to operate on the project.
+This is a React project using Vite and Electron with a **cross-platform web + mobile architecture**.
 
 ---
 
-## Project Overview
+## 🚀 Quick Start for AI Development
 
-Quorum is a **fully private and decentralized group messenger**, powered by Quilibrium and the libp2p stack.  
-It supports **Web, Desktop (Electron), and Mobile (React Native)** platforms from a shared cross-platform codebase.
+**IMPORTANT**: Before starting ANY task, read these three files in order:
 
-- **Website**: [quorummessenger.com](https://www.quorummessenger.com/)  
-- **Web app (beta)**: [app.quorummessenger.com](https://app.quorummessenger.com/)  
-- **Docs**: See [`.agents/INDEX.md`](.agents/INDEX.md)  
-
----
-
-## Cross-Platform Architecture (Critical)
-
-All development must be **mobile-first** and **cross-platform**:
-
-- Shared primitives live in: `src/components/primitives/`  
-- Platform detection utilities: `src/utils/platform.ts`  
-- Directory layout:  
-  - `src/` → Shared code (90% of app: components, hooks, api, services, utils)  
-  - `web/` → Web-specific files (Vite, Electron wrapper)  
-  - `mobile/` → React Native app (Expo configuration, test screens)  
-
-**Golden Question**: _“Will this work on mobile?”_  
+1. **[QUICK-REFERENCE.md](.agents/QUICK-REFERENCE.md)** - Fast lookup for file paths, patterns, and common tasks
+2. **[agents-workflow.md](.agents/agents-workflow.md)** - How to effectively use documentation
+3. **[INDEX.md](.agents/INDEX.md)** - Find specific documentation for your task
 
 ---
 
-## Development Guidelines
+## Cross-Platform Architecture - CRITICAL
 
-### Package Management
-- Use **Yarn only**.  
-- Never use `npm`. If `package-lock.json` appears, delete it immediately.  
+**IMPORTANT**: This project uses a shared codebase with primitive components designed for both web and mobile platforms. All development must consider mobile compatibility from the start.
 
-### Scripts
-- `yarn dev` → Start dev server (user runs this manually)  
-- `yarn build` → Production build  
-- `yarn electron:dev` / `yarn electron:build` → Desktop build tools  
-- `yarn lint`, `yarn format` → Maintain coding standards  
-- `yarn lingui:*` → i18n workflows  
+### Key Principles
 
-### Code Style
-- Follow React best practices and never violate **Rules of Hooks**.  
-- Use Lingui for localization in all user-facing text.  
-- Follow Tailwind + semantic class system for styling (`src/index.css`, `tailwind.config.js`).  
+- **Shared Code Architecture**: Components are built using custom primitives that abstract platform differences
+- **Mobile-First Approach**: Every UI change must work on both desktop and mobile
+- **Pragmatic Primitive Usage**: Use primitives for interactive elements and layouts, but don't over-engineer (see [When to Use Primitives](.agents/docs/features/primitives/03-when-to-use-primitives.md))
+- **Platform Detection**: Use `src/utils/platform.ts` utilities (`isWeb()`, `isMobile()`, `isElectron()`)
 
-### Mobile + Web Testing
-- Web playground: `src/dev/primitives-playground`  
-- Mobile playground: `mobile/test/`  
+**When making any changes, always ask**: "Will this work on mobile?" If uncertain, use primitives and follow mobile-first design principles.
+
+**Reference**: [QUICK-REFERENCE.md - Core Architectural Patterns](.agents/QUICK-REFERENCE.md#-core-architectural-patterns)
 
 ---
 
-## Contribution Process
+## Repository Structure
 
-- When committing via AI agent, **do not reference the LLM (e.g. Claude or Anthropic)**.  
-- Run `yarn lint` and `yarn format` on modified files before committing.  
-- Check production build with `yarn build`.  
-- For new docs in `.agents/`, add disclaimer and footer:  
+```
+quorum/
+├── src/                          # SHARED CODE (90% of app)
+│   ├── components/              # Business logic components
+│   │   ├── primitives/         # Cross-platform UI components
+│   │   └── Router/             # Platform-aware routing
+│   ├── hooks/                  # 100% shared business logic
+│   ├── api/                    # 100% shared API layer
+│   ├── services/               # 100% shared services
+│   ├── types/                  # 100% shared TypeScript types
+│   └── utils/                  # 100% shared utilities (including platform detection)
+│
+├── web/                        # WEB-SPECIFIC FILES
+│   ├── index.html             # Web HTML entry
+│   ├── main.tsx               # Web React entry point
+│   ├── vite.config.ts         # Vite bundler config
+│   └── electron/              # Electron desktop wrapper
+│
+├── mobile/                     # MOBILE-SPECIFIC FILES
+│   ├── App.tsx                # React Native entry point
+│   └── app.json               # Expo configuration
+```
 
-```markdown
-> **⚠️ AI-Generated**: May contain errors. Verify before use.
-
-_Created: YYYY-MM-DD by AI Agent_
-````
-
----
-
-## Permissions & Automation
-
-Agent operations are restricted via `settings.local.json`:
-
-* **Allowed**: build, lint, format, TypeScript checks, Git read commands, local scripts.
-* **Denied**: `npm`, `rm -rf`, `sudo`.
-* **Ask first**: `yarn install`, dependency changes, `git push/pull`.
-
----
-
-## Styling Principles
-
-* Tailwind utilities for one-off components.
-* Extract shared styles via semantic classes (`src/index.css`).
-* Themes: light/dark, with RGB-based utility system (`--danger`, `--success`, etc.).
-* Use `clsx` for conditional classes.
+**Detailed Guide**: [Cross-Platform Repository Implementation](.agents/docs/cross-platform-repository-implementation.md)
 
 ---
 
-## Translation Workflow
+## CRITICAL: Package Management
 
-* Translations live in `src/i18n/`.
-* Run `yarn lingui:extract` and `yarn lingui:compile` to update messages.
-* Proofreading completed for English and Italian.
-
----
-
-## Agent Best Practices
-
-* Always consider cross-platform impact.
-* Minimize destructive changes; preserve shared functionality.
-* Keep project maintainable, DRY, and user-friendly.
+- **NEVER use npm commands** - this project uses Yarn exclusively
+- **Always use `yarn` commands** - npm creates package-lock.json which conflicts with yarn.lock
+- **If package-lock.json appears, DELETE it immediately**
 
 ---
 
-*Last updated: 2025-10-07*
+## React Hooks Rules - IMPORTANT
+
+**NEVER violate React's Rules of Hooks:**
+
+```tsx
+// ❌ BAD - Conditional return before hooks
+if (someCondition) return <SomeComponent />;
+useEffect(() => {...}, []);  // This hook is called conditionally!
+
+// ✅ GOOD - All hooks before conditionals
+useEffect(() => {...}, []);
+if (someCondition) return <SomeComponent />;
+```
+
+**Rules:**
+- Call all hooks at the top level (not inside functions, conditionals, or loops)
+- Call hooks in the same order on every render
+- NEVER put conditional returns before hooks
+
+**Reference**: [React Hooks Violation Bug](.agents/bugs/.solved/SOLVED_react-hooks-violation-conditional-return.md)
+
+---
+
+## Documentation Structure
+
+The `.agents/` folder contains all development context, tasks, and documentation:
+
+- **[QUICK-REFERENCE.md](.agents/QUICK-REFERENCE.md)** - ⭐ START HERE - Fast lookup for everything
+- **[agents-workflow.md](.agents/agents-workflow.md)** - ⭐ READ THIS - How to work effectively
+- **[INDEX.md](.agents/INDEX.md)** - Complete documentation index
+
+**For specific topics**, see [INDEX.md](.agents/INDEX.md) which organizes all documentation by:
+- Architecture & Components
+- Features (Modals, Search, Theming, etc.)
+- Mobile Development
+- Active Bugs & Tasks
+
+---
+
+## Development Workflow
+
+**See**: [QUICK-REFERENCE.md - Workflow Guidelines](.agents/QUICK-REFERENCE.md#-workflow-guidelines)
+
+Quick checklist:
+- ✅ Read QUICK-REFERENCE.md for relevant patterns
+- ✅ Use primitives for interactive elements
+- ✅ Think mobile-first
+- ✅ Follow React Hooks rules
+- ✅ Use Yarn (never npm)
+
+---
+
+_Last updated: 2025-10-08_

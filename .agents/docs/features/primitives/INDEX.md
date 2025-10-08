@@ -25,7 +25,7 @@ Start with [01-introduction-and-concepts.md](./01-introduction-and-concepts.md) 
 
 ### **Need Component Reference?**
 
-Use [02-primitives-quick-reference.md](./02-primitives-quick-reference.md) for comprehensive component documentation with all props and examples.
+Use [API-REFERENCE.md](./API-REFERENCE.md) for quick prop lookups, or [02-primitives-quick-reference.md](./02-primitives-quick-reference.md) for comprehensive component documentation with all props and examples.
 
 ### **Architecture Decisions?**
 
@@ -171,13 +171,18 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ## 📖 **Related Documentation**
 
-- [Main Documentation Index](../../INDEX.md) - Complete project documentation
+- [Main Documentation Index](../../../INDEX.md) - Complete project documentation
+- [Quick Reference Guide](../../../QUICK-REFERENCE.md) - Fast lookup for common tasks and file locations
+- [API Reference](./API-REFERENCE.md) - Quick prop lookup for all primitives
+- [Agents Workflow Guide](../../../agents-workflow.md) - How to use documentation effectively
 - [Component Architecture Guide](../component-architecture-workflow-explained.md) - Overall architecture explanation
-- [Theme System](../theme/) - Color system and theming documentation
+- [Modal System](../modals.md) - Modal implementation patterns
+- [Theming System](../cross-platform-theming.md) - Color system and theming
+- [Responsive Layout](../responsive-layout.md) - Responsive design patterns
 
 ---
 
-_Last updated: 2025-09-14 14:30 UTC_
+_Last updated: 2025-10-08_
 
 ---
 

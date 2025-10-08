@@ -43,6 +43,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [When to Use Primitives vs Raw HTML](docs/features/primitives/03-when-to-use-primitives.md)
 - [Web-to-Native Migration Guide](docs/features/primitives/04-web-to-native-migration.md)
 - [Primitive Styling Guidelines](docs/features/primitives/05-primitive-styling-guide.md)
+- [Primitives API Reference](docs/features/primitives/API-REFERENCE.md)
 
 ### Space Permissions
 - [Read-Only Channels System](docs/space-permissions/read-only-channels-system.md)
@@ -89,10 +90,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Implement Mention Notification Bubbles](tasks/mention-notification-bubbles.md)
 - [Modal System Consolidation via Route Wrapper Component](tasks/modal-system-consolidation.md)
-- [Rename .agents to .agents](tasks/rename-readme-to-agents.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
+- [Toast System Refactoring](tasks/toast-system-refactoring.md)
 - [User Config Sync on Existing Accounts](tasks/user-config-sync-on-existing-accounts.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/search-performance-optimization.md)
@@ -103,10 +104,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Shared Git Hooks Setup](tasks/.archived/shared-git-hooks-setup.md)
 - [Space/Channel Message Deletion Placeholders](tasks/.archived/space-message-deletion-placeholders.md)
 
-### Css Refactor
-- [CSS Inventory - Complete Codebase Analysis](tasks/css-refactor/css-inventory.md)
-- [CSS Refactor Analysis Report](tasks/css-refactor/analysis.md)
-- [CSS Refactor Plan - Claude Code Execution Strategy](tasks/css-refactor/css-refactor-plan.md)
+### .Archived Css Refactor
+- [CSS Inventory - Complete Codebase Analysis](tasks/.archived/css-refactor/css-inventory.md)
+- [CSS Refactor Analysis Report](tasks/.archived/css-refactor/analysis.md)
+- [CSS Refactor Plan - Claude Code Execution Strategy](tasks/.archived/css-refactor/css-refactor-plan.md)
 
 ### Messagedb
 - [handleNewMessage Integration Tests Guide](tasks/messagedb/handlenewmessage-tests.md)
@@ -175,6 +176,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [ReactTooltip Mobile Optimization](tasks/.done/reacttoolltip-mobile.md)
 - [Read-Only Channels with Role Managers](tasks/.done/read-only-channels-with-role-managers.md)
 - [Refactor Modal Placement in Layout.tsx](tasks/.done/refactor-modal-placement.md)
+- [Rename .agents to .agents](tasks/.done/rename-readme-to-agents.md)
 - [Responsive Layout Implementation Plan](tasks/.done/responsive-layout.md)
 - [Responsive Layout Requirements](tasks/.done/responsive-layout_requirements.md)
 - [Search Components Primitive Migration](tasks/.done/search-primitive-migration.md)
@@ -187,4 +189,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-10-07 16:43:10
+**Last Updated**: 2025-10-08 11:09:00
