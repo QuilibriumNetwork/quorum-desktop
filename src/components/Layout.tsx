@@ -13,6 +13,8 @@ import Connecting from './Connecting';
 import { useModalManagement, useElectronDetection } from '../hooks';
 import { useNavigationHotkeys } from '@/hooks/platform/interactions/useNavigationHotkeys';
 import { useSidebar } from './context/SidebarProvider';
+import { ACTION_QUEUE_PANEL_ENABLED } from '../config/actionQueue';
+import { ActionQueuePanel } from './dev/ActionQueuePanel';
 
 const Layout: React.FunctionComponent<{
   children: React.ReactNode;
@@ -35,6 +37,19 @@ const Layout: React.FunctionComponent<{
   const { showRightSidebar, setShowRightSidebar, rightSidebarContent } =
     useSidebar();
   useNavigationHotkeys();
+
+  // Offline red banner
+  const [isOffline, setIsOffline] = React.useState(!navigator.onLine);
+  React.useEffect(() => {
+    const onOnline = () => setIsOffline(false);
+    const onOffline = () => setIsOffline(true);
+    window.addEventListener('online', onOnline);
+    window.addEventListener('offline', onOffline);
+    return () => {
+      window.removeEventListener('online', onOnline);
+      window.removeEventListener('offline', onOffline);
+    };
+  }, []);
 
   const [kickToast, setKickToast] = React.useState<{ message: string; variant?: 'info' | 'success' | 'warning' | 'error' } | null>(null);
   React.useEffect(() => {
@@ -101,6 +116,11 @@ const Layout: React.FunctionComponent<{
       )}
 
       {/* {joinSpaceVisible && <JoinSpaceModal visible={joinSpaceVisible} onClose={() => setJoinSpaceVisible(false)}/>} */}
+      {isOffline && (
+        <div className="fixed top-0 left-0 right-0 text-center py-2 text-white" style={{ backgroundColor: '#b91c1c', zIndex: 2147483647 }}>
+          {`You are offline. Some actions will be queued.`}
+        </div>
+      )}
       <NavMenu
         showCreateSpaceModal={showAddSpaceModal}
         showJoinSpaceModal={() => {}}
@@ -153,6 +173,8 @@ const Layout: React.FunctionComponent<{
           {rightSidebarContent}
         </div>
       )}
+
+      {ACTION_QUEUE_PANEL_ENABLED && <ActionQueuePanel />}
     </React.Suspense>
   );
 };

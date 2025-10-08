@@ -175,32 +175,47 @@ const DirectMessage: React.FC<{}> = () => {
 
       const effectiveSkip = nonRepudiable ? false : skipSigning;
 
-      if (typeof message === 'string') {
-        // Text message
-        await submitMessage(
-          address,
-          message,
-          self.registration!,
-          registration.registration!,
-          queryClient,
-          user.currentPasskeyInfo!,
-          keyset,
-          inReplyTo,
-          effectiveSkip
+      try {
+        const { useActionQueue } = require('../../hooks/actions/useActionQueue');
+        const { addAction } = useActionQueue();
+        await addAction(
+          'send-message',
+          {
+            spaceId: address,
+            channelId: address,
+            pendingMessage: message,
+            inReplyTo,
+            skipSigning: effectiveSkip,
+            currentPasskeyInfo: user.currentPasskeyInfo!,
+          },
+          `${address}/${address}`
         );
-      } else {
-        // Embed message (image)
-        await submitMessage(
-          address,
-          message as EmbedMessage,
-          self.registration!,
-          registration.registration!,
-          queryClient,
-          user.currentPasskeyInfo!,
-          keyset,
-          inReplyTo,
-          effectiveSkip
-        );
+      } catch {
+        if (typeof message === 'string') {
+          await submitMessage(
+            address,
+            message,
+            self.registration!,
+            registration.registration!,
+            queryClient,
+            user.currentPasskeyInfo!,
+            keyset,
+            inReplyTo,
+            effectiveSkip
+          );
+        } else {
+          await submitMessage(
+            address,
+            message as EmbedMessage,
+            self.registration!,
+            registration.registration!,
+            queryClient,
+            user.currentPasskeyInfo!,
+            keyset,
+            inReplyTo,
+            effectiveSkip
+          );
+        }
       }
 
       // Clear deletion flag after a short delay

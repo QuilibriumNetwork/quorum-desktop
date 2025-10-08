@@ -72,7 +72,7 @@ export interface SearchResult {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 3;
+  private readonly DB_VERSION = 4;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexInitialized = false;
 
@@ -146,6 +146,137 @@ export class MessageDB {
               'pinnedAt',
             ]);
           }
+        }
+
+        if (event.oldVersion < 4) {
+          // Persistent background action queue store
+          const queueStore = db.createObjectStore('action_queue', {
+            keyPath: 'id',
+            autoIncrement: true,
+          });
+          queueStore.createIndex('by_status', 'status');
+          queueStore.createIndex('by_createdAt', 'createdAt');
+          queueStore.createIndex('by_key_status', ['key', 'status']);
+        }
+      };
+    });
+  }
+
+  // --- Action Queue (persistent) ---
+  private ensureDb() {
+    if (!this.db) throw new Error('DB not initialized');
+  }
+
+  async addQueueTask(task: {
+    taskType: string;
+    context: any;
+    key: string;
+    status?: 'pending' | 'processing' | 'completed' | 'failed';
+    retryCount?: number;
+    createdAt?: number;
+    processedAt?: number;
+    error?: string;
+  }): Promise<number> {
+    await this.init();
+    this.ensureDb();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readwrite');
+      const store = tx.objectStore('action_queue');
+      const record = {
+        taskType: task.taskType,
+        context: task.context,
+        key: task.key,
+        status: task.status ?? 'pending',
+        retryCount: task.retryCount ?? 0,
+        createdAt: task.createdAt ?? Date.now(),
+        processedAt: task.processedAt,
+        error: task.error,
+      } as any;
+      const req = store.add(record);
+      req.onsuccess = () => resolve(req.result as number);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async getPendingQueueTasks(): Promise<any[]> {
+    await this.init();
+    this.ensureDb();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readonly');
+      const index = tx.objectStore('action_queue').index('by_status');
+      const req = index.getAll('pending');
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async getQueueTasksByKeyAndStatus(key: string, status: 'pending' | 'processing' | 'completed' | 'failed'): Promise<any[]> {
+    await this.init();
+    this.ensureDb();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readonly');
+      const index = tx.objectStore('action_queue').index('by_key_status');
+      const range = IDBKeyRange.only([key, status]);
+      const req = index.getAll(range);
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async getQueueTasksByStatus(status: 'pending' | 'processing' | 'completed' | 'failed'): Promise<any[]> {
+    await this.init();
+    this.ensureDb();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readonly');
+      const index = tx.objectStore('action_queue').index('by_status');
+      const req = index.getAll(status);
+      req.onsuccess = () => resolve(req.result || []);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async updateQueueTask(task: any): Promise<void> {
+    await this.init();
+    this.ensureDb();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readwrite');
+      const store = tx.objectStore('action_queue');
+      const req = store.put(task);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async deleteQueueTask(id: number): Promise<void> {
+    await this.init();
+    this.ensureDb();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readwrite');
+      const store = tx.objectStore('action_queue');
+      const req = store.delete(id);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async resetProcessingToPending(): Promise<void> {
+    await this.init();
+    this.ensureDb();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readwrite');
+      const store = tx.objectStore('action_queue');
+      const index = store.index('by_status');
+      const req = index.openCursor('processing');
+      req.onerror = () => reject(req.error);
+      req.onsuccess = (ev) => {
+        const cursor = (ev.target as IDBRequest<IDBCursorWithValue | null>).result;
+        if (cursor) {
+          const value = cursor.value;
+          value.status = 'pending';
+          store.put(value);
+          cursor.continue();
+        } else {
+          resolve();
         }
       };
     });

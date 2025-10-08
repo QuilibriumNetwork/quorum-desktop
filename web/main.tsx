@@ -12,6 +12,7 @@ import { ThemeProvider } from '../src/components/primitives/theme';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { dynamicActivate, getUserLocale } from '../src/i18n/i18n';
+import { ActionQueueProvider } from '../src/components/context/ActionQueue';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,11 +41,13 @@ const Root = () => {
           <QuorumApiClientProvider>
             <WebSocketProvider>
               <MessageDBProvider>
-                <ThemeProvider>
-                  <I18nProvider i18n={i18n}>
-                    <App />
-                  </I18nProvider>
-                </ThemeProvider>
+                <ActionQueueProvider>
+                  <ThemeProvider>
+                    <I18nProvider i18n={i18n}>
+                      <App />
+                    </I18nProvider>
+                  </ThemeProvider>
+                </ActionQueueProvider>
               </MessageDBProvider>
             </WebSocketProvider>
           </QuorumApiClientProvider>

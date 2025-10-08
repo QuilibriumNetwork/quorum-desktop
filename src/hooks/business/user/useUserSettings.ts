@@ -48,6 +48,8 @@ export const useUserSettings = (
   });
   const { keyset } = useRegistrationContext();
   const { saveConfig, getConfig, updateUserProfile } = useMessageDB();
+  const { useActionQueue } = require('../../hooks/actions/useActionQueue');
+  const { addAction } = useActionQueue();
   const uploadRegistration = useUploadRegistration();
   const existingConfig = useRef<UserConfig | null>(null);
 
@@ -139,15 +141,19 @@ export const useUserSettings = (
       currentPasskeyInfo
     );
 
-    // Save config
-    await saveConfig({
-      config: {
-        ...existingConfig.current!,
-        allowSync,
-        nonRepudiable: nonRepudiable,
+    // Save config via background queue
+    await addAction(
+      'save-user-config',
+      {
+        config: {
+          ...existingConfig.current!,
+          allowSync,
+          nonRepudiable: nonRepudiable,
+        },
+        keyset: keyset,
       },
-      keyset: keyset,
-    });
+      currentPasskeyInfo.address
+    );
 
     // If devices were removed, reconstruct and upload the registration
     if (removedDevices.length > 0 && stagedRegistration) {

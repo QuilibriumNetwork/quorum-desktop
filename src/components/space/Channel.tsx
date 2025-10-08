@@ -147,15 +147,34 @@ const Channel: React.FC<ChannelProps> = ({
       }
 
       const effectiveSkip = space?.isRepudiable ? skipSigning : false;
-      await submitChannelMessage(
-        spaceId,
-        channelId,
-        message,
-        queryClient,
-        user.currentPasskeyInfo!,
-        inReplyTo,
-        effectiveSkip
-      );
+      // Enqueue send-message to background queue
+      try {
+        const { useActionQueue } = require('../../hooks/actions/useActionQueue');
+        const { addAction } = useActionQueue();
+        await addAction(
+          'send-message',
+          {
+            spaceId,
+            channelId,
+            pendingMessage: message,
+            inReplyTo,
+            skipSigning: effectiveSkip,
+            currentPasskeyInfo: user.currentPasskeyInfo!,
+          },
+          `${spaceId}/${channelId}`
+        );
+      } catch {
+        // Fallback to direct submit on any error wiring queue
+        await submitChannelMessage(
+          spaceId,
+          channelId,
+          message,
+          queryClient,
+          user.currentPasskeyInfo!,
+          inReplyTo,
+          effectiveSkip
+        );
+      }
 
       // Clear deletion flag after a short delay
       if (isDeletion) {
@@ -193,15 +212,32 @@ const Channel: React.FC<ChannelProps> = ({
         type: 'sticker',
         stickerId: stickerId,
       } as StickerMessage;
-      await submitChannelMessage(
-        spaceId,
-        channelId,
-        stickerMessage,
-        queryClient,
-        user.currentPasskeyInfo!,
-        inReplyTo,
-        false // Stickers are always signed
-      );
+      try {
+        const { useActionQueue } = require('../../hooks/actions/useActionQueue');
+        const { addAction } = useActionQueue();
+        await addAction(
+          'send-message',
+          {
+            spaceId,
+            channelId,
+            pendingMessage: stickerMessage,
+            inReplyTo,
+            skipSigning: false,
+            currentPasskeyInfo: user.currentPasskeyInfo!,
+          },
+          `${spaceId}/${channelId}`
+        );
+      } catch {
+        await submitChannelMessage(
+          spaceId,
+          channelId,
+          stickerMessage,
+          queryClient,
+          user.currentPasskeyInfo!,
+          inReplyTo,
+          false
+        );
+      }
       // Auto-scroll to bottom after sending sticker
       setTimeout(() => {
         messageListRef.current?.scrollToBottom();

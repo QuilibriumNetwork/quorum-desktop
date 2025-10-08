@@ -14,6 +14,8 @@ export const useUserKicking = () => {
 
   const queryClient = useQueryClient();
   const { kickUser } = useMessageDB();
+  const { useActionQueue } = require('../../hooks/actions/useActionQueue');
+  const { addAction } = useActionQueue();
   const { currentPasskeyInfo } = usePasskeysContext();
   const { keyset } = useRegistrationContext();
   const { data: registration } = useRegistration({
@@ -36,12 +38,16 @@ export const useUserKicking = () => {
 
       setKicking(true);
       try {
-        await kickUser(
-          spaceId,
-          userAddress,
-          keyset.userKeyset,
-          keyset.deviceKeyset,
-          registration.registration
+        await addAction(
+          'kick-user',
+          {
+            spaceId,
+            userAddress,
+            userKeyset: keyset.userKeyset,
+            deviceKeyset: keyset.deviceKeyset,
+            registration: registration.registration,
+          },
+          `${spaceId}/${userAddress}`
         );
 
         // The kickUser function doesn't remove the user from local IndexedDB
