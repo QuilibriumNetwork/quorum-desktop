@@ -34,61 +34,271 @@ Implement the backend logic to populate channel mention counts and enable notifi
 - Messages stored with `mentions.memberIds[]` containing user addresses
 - `useMessageFormatting.ts:68` checks if user is mentioned: `message.mentions?.memberIds.includes(userAddress)`
 
+## Investigation Summary (Step 1 Completed)
+
+**Key Discoveries**:
+1. ✅ **Read status tracking EXISTS** - `MessageDB.saveReadTime()` and `Conversation.lastReadTimestamp`
+2. ✅ **Mention detection EXISTS** - `Message.mentions.memberIds[]` and `useMessageFormatting.isMentioned()`
+3. ❌ **Missing**: Channels don't save read time (only DirectMessages do)
+4. ❌ **Missing**: No counting system for unread mentions
+5. ✅ **UI ready** - ChannelGroup already renders bubbles when `mentionCount > 0`
+
+**What We Need to Build**:
+- Add `saveReadTime()` calls when viewing channels (like DMs do)
+- Create `useChannelMentionCounts()` hook to count unread mentions
+- Wire hook into sidebar to populate `mentionCount` on channels
+
+**Simplified Approach** (No database changes needed!):
+1. Query messages per channel using existing `by_conversation_time` index
+2. Filter in JavaScript: `messages.filter(m => m.mentions?.memberIds.includes(userAddress) && m.createdDate > lastReadTimestamp)`
+3. Count and display
+
+## Future Enhancements (Post-MVP)
+
+**Phase 2 - After Core Feature is Complete & Tested**:
+
+1. **@everyone Mention Support**
+   - Add `@everyone` as a special mention type
+   - Treat as mention for all channel members
+   - Update mention detection logic to check for `@everyone`
+   - Impact: `useChannelMentionCounts()` needs to also check for `@everyone` in messages
+
+2. **Notification List Dropdown**
+   - Create dropdown panel using existing `DropdownPanel` component
+   - Display list of unread mentions across all channels
+   - Filter options: User mentions / Role mentions / @everyone
+   - Click to navigate to mentioned message
+   - Mark as read functionality
+
+3. **Notification Settings**
+   - Add to `UserSettingsModal/Account.tsx`
+   - Toggle switch to enable/disable mention notifications
+   - Store preference in user config
+   - Respect setting when showing bubbles/dropdown
+
+**Architecture Considerations**:
+- Design mention counting hook to be extensible for @everyone
+- Keep mention detection logic centralized for easy updates
+- Ensure notification preferences are checked before displaying UI
+
+**Type Changes Needed (Phase 2)**:
+```typescript
+// Current (src/api/quorumApi.ts:210-214)
+export type Mentions = {
+  memberIds: string[];
+  roleIds: string[];
+  channelIds: string[];
+};
+
+// Future (Phase 2)
+export type Mentions = {
+  memberIds: string[];
+  roleIds: string[];
+  channelIds: string[];
+  everyone?: boolean;  // NEW: @everyone mention flag
+};
+```
+
+**Implementation Notes**:
+- Phase 1 must work with current `Mentions` type
+- Phase 2 will extend the type (backward compatible)
+- All mention detection logic should be in helper functions for easy updates
+
+---
+
 ## Implementation Plan (Simplified per Lead Dev)
 
-### Step 1: Investigate Current Read Status System
+### Step 1: Investigate Current Read Status System ✅ COMPLETED
 **Goal**: Understand if/how message read status is currently tracked
 
-**Tasks**:
-- Search codebase for existing read status tracking
-- Check MessageDB for read/unread properties
-- Document current implementation (if any)
-- Determine if we need to implement read status from scratch
+**Status**: COMPLETED - Read status system found and documented
 
-### Step 2: Add `isMention` Property to Message
+**Findings**:
+
+1. **Read Status System EXISTS**:
+   - `MessageDB.saveReadTime()` (src/db/messages.ts:406-430) - Saves `lastReadTimestamp` to conversations table
+   - `Conversation.lastReadTimestamp` property tracks when user last read messages
+   - Used in Direct Messages: `useDirectMessagesList.ts:64-79` automatically saves read time when viewing
+   - **NOT currently used in Channel messages** - this is the gap we need to fill
+
+2. **Current Data Model**:
+   ```typescript
+   // Conversation interface (stored in 'conversations' table)
+   {
+     conversationId: string;  // format: "spaceId/channelId"
+     timestamp: number;       // last message time
+     lastReadTimestamp: number;  // last time user read messages
+     type: 'direct' | 'group';
+     // ... other fields
+   }
+   ```
+
+3. **How it Works**:
+   - When user views DMs, `saveReadTime()` is called with current timestamp
+   - To determine unread: compare `message.createdDate > conversation.lastReadTimestamp`
+   - **This same system can be used for channels and mentions!**
+
+4. **Existing Mention Detection**:
+   - `Message.mentions.memberIds[]` contains array of mentioned user addresses
+   - `useMessageFormatting.isMentioned(userAddress)` checks if user is mentioned
+   - Format: `@<QmAddressHere>` in message text
+
+5. **What We Need to Add**:
+   - Save read time for channels (currently only DMs do this)
+   - Query messages where `isMentioned(currentUser) && createdDate > lastReadTimestamp`
+   - Count these per channel for notification bubbles
+
+**Key Files**:
+- `src/db/messages.ts:406-430` - saveReadTime implementation
+- `src/hooks/business/conversations/useDirectMessagesList.ts:64-79` - Example usage
+- `src/hooks/business/messages/useMessageFormatting.ts:66-71` - isMentioned function
+- `src/api/quorumApi.ts:83-113, 210-214` - Message and Mentions types
+
+### Step 2: Add `isMention` Property to Message ❌ NOT NEEDED
 **Goal**: Add boolean flag to messages that mention current user
 
-**Components to modify**:
-- `src/types/` - Add `isMention?: boolean` to Message interface
-- Message creation/processing logic - Set `isMention` when message contains mention
-- Use existing `isMentioned()` function from `useMessageFormatting.ts` to determine value
+**Status**: SKIPPED - Not needed, existing `mentions.memberIds` array is sufficient
 
-### Step 3: Database Indexing
+**Reasoning**:
+- Messages already have `mentions.memberIds[]` array containing mentioned user addresses
+- We can filter messages in-memory: `messages.filter(m => m.mentions?.memberIds.includes(userAddress))`
+- Adding a redundant `isMention` boolean would:
+  - Require database migration for existing messages
+  - Add complexity to message creation logic
+  - Not provide performance benefit (we still need to check per-user)
+- Better approach: Query messages and filter in JavaScript
+
+### Step 3: Database Indexing ✅ ANALYSIS COMPLETE
 **Goal**: Optimize queries for mention counts
 
-**Tasks**:
-- Add database index on `isMention` field in messages table
-- Verify/add index on `channel` field in messages table (if not existing)
-- Test query performance with indexes
+**Status**: Analysis complete - No new indexes needed
 
-### Step 4: Create Mention Count Hook
-**Goal**: Query unread mention counts per channel
+**Current Indexes** (from src/db/messages.ts:91-149):
+- `by_conversation_time` on `[spaceId, channelId, createdDate]` - Already exists! ✅
+- `by_channel_pinned` on `[spaceId, channelId, isPinned, pinnedAt]` - For pinned messages
 
-**Components to create**:
-- `src/hooks/business/mentions/useChannelMentionCounts.ts`
+**Analysis**:
+- ✅ We already have index on `[spaceId, channelId, createdDate]` for efficient channel queries
+- ❌ No index on `mentions.memberIds` - but IndexedDB doesn't support array indexes well
+- **Best approach**: Use existing index to get all channel messages, then filter in-memory
+- For large channels (1000+ messages), this may need optimization later
 
-**Logic**:
-1. Use channel index to filter messages by channel
-2. Filter by `isMention === true`
-3. Filter by unread status (using read status system from Step 1)
-4. Return counts per channel
-5. Leverage database indexes for performance
+**Decision**: Start without additional indexes, monitor performance, add only if needed
 
-### Step 5: Create Read Status Update Hook
-**Goal**: Mark messages as read
+### Step 4: Implement Mention Counting System
+**Goal**: Count unread mentions per channel and display notification bubbles
 
-**Components to create**:
-- Hook to update message read status by space/channel/message IDs
-- Integrate into message viewing flow
+**Components to create/modify**:
 
-### Step 6: Integration
-**Goal**: Wire everything together
+1. **`src/hooks/business/mentions/useChannelMentionCounts.ts`** (NEW)
+   - Hook that calculates unread mention counts for all channels in a space
+   - Returns: `{ [channelId]: mentionCount }`
 
-**Tasks**:
-- On page load: Run mention count hook to populate initial counts
-- On new message: Update mention counts in real-time
-- On channel view: Mark messages as read and update counts
-- Populate `mentionCount` property on channel objects for UI
+   **Logic**:
+   ```typescript
+   1. Get current user address
+   2. Get all channels in space
+   3. For each channel:
+      a. Get conversation to find lastReadTimestamp
+      b. Query messages WHERE createdDate > lastReadTimestamp
+      c. Filter messages WHERE isMentioned(userAddress, message)
+      d. Count = filtered messages length
+   4. Return counts object
+   ```
+
+   **Helper Function** (prepare for future @everyone):
+   ```typescript
+   function isMentioned(userAddress: string, message: Message): boolean {
+     // Current: Check memberIds and roleIds
+     if (message.mentions?.memberIds.includes(userAddress)) return true;
+
+     // Future: Will also check for @everyone
+     // if (message.mentions?.everyone) return true;
+
+     // Future: Check roleIds when we have user roles
+     // if (userRoles.some(roleId => message.mentions?.roleIds.includes(roleId))) return true;
+
+     return false;
+   }
+   ```
+
+   **Design Note**: Keep mention detection logic in a separate helper function so it's easy to extend for @everyone, role mentions, and notification preferences later.
+
+2. **Modify Channel.tsx** (or useChannelMessages)
+   - Add call to `messageDB.saveReadTime()` when user views channel
+   - Similar to how DirectMessages does it (useDirectMessagesList.ts:64-79)
+   - Save read time when user scrolls or when component unmounts
+
+3. **Modify ChannelGroup.tsx or parent**
+   - Use `useChannelMentionCounts()` to get counts
+   - Pass `mentionCount` to ChannelGroup components
+   - UI already renders bubbles when `mentionCount > 0` ✅
+
+**Implementation Order & Checklist**:
+
+**Step 4.1: Create Mention Detection Utility** (Foundation)
+- [ ] Create `src/utils/mentionUtils.ts`
+- [ ] Implement `isMentioned()` with `MentionCheckOptions` interface
+- [ ] Implement `getMentionType()` for Phase 3 filtering
+- [ ] Add unit tests for mention detection logic
+- [ ] Document future extension points (comments for @everyone, roles)
+
+**Step 4.2: Add Read Time Tracking to Channels** (Prerequisite)
+- [ ] Modify `Channel.tsx` or `useChannelMessages.ts`
+- [ ] Add `useEffect` to save read time on message list change
+- [ ] Add cleanup `useEffect` to save read time on unmount
+- [ ] Test: Verify `lastReadTimestamp` updates in conversations table
+- [ ] Ensure doesn't break existing channel functionality
+
+**Step 4.3: Create Mention Count Hook** (Core Feature)
+- [ ] Create `src/hooks/business/mentions/useChannelMentionCounts.ts`
+- [ ] Implement React Query hook with 30s stale time
+- [ ] Query messages per channel after `lastReadTimestamp`
+- [ ] Filter using `isMentioned()` from mentionUtils
+- [ ] Return `{ [channelId]: mentionCount }` object
+- [ ] Add query key: `['mention-counts', spaceId, userAddress]`
+
+**Step 4.4: Wire into UI** (Integration)
+- [ ] Find parent component rendering `ChannelGroup` (likely Space.tsx or Sidebar)
+- [ ] Call `useChannelMentionCounts(spaceId)`
+- [ ] Pass `mentionCount={counts[channel.channelId] || 0}` to ChannelGroup
+- [ ] Verify UI already renders bubbles (it should!)
+
+**Step 4.5: Add Invalidation** (Real-time updates)
+- [ ] Add invalidation in message handler (when new message arrives)
+- [ ] Add invalidation after `saveReadTime()` (when viewing channel)
+- [ ] Test: New mentions trigger bubble update
+- [ ] Test: Viewing channel clears bubble
+
+### Step 5: Real-Time Updates
+**Goal**: Update mention counts when new messages arrive
+
+**Approach**:
+- Use existing message invalidation system (React Query)
+- When new message arrives, invalidate mention count query
+- React Query will automatically re-fetch and update UI
+
+**Files to modify**:
+- Add query key for mention counts
+- Invalidate in message handler (MessageDB.tsx or useMessages)
+
+### Step 6: Testing & Refinement
+**Goal**: Ensure system works reliably
+
+**Test Cases**:
+1. ✅ Mention bubble appears when mentioned in channel
+2. ✅ Count shows correct number of unread mentions
+3. ✅ Bubble disappears when viewing channel
+4. ✅ Real-time updates when new mention arrives
+5. ✅ Works across page refresh (persisted in DB)
+6. ✅ Performance acceptable with large message histories
+
+**Performance Monitoring**:
+- Test with channels containing 1000+ messages
+- If slow, consider:
+  - Caching mention counts in memory
+  - Debouncing count recalculation
+  - Only counting recent messages (last 30 days)
 
 ## Technical Considerations
 
@@ -142,7 +352,7 @@ src/
 ### Functional Requirements
 - ✅ Mention bubbles appear next to channel names when user is mentioned
 - ✅ Bubble shows correct count of unread mentions
-- ✅ Bubbles disappear when user views the channel
+- ✅ Bubbles disappear when user views the channel (better UX woudl be mention disappear when userviews the actual message where they are mentioned)
 - ✅ Real-time updates when new mentions arrive
 - ✅ Proper distinction between personal and role mentions
 
@@ -184,6 +394,112 @@ src/
 
 ---
 
+## Next Actions
+
+**Phase 1: Core Feature (Current Task)**
+1. Create `useChannelMentionCounts.ts` hook with extensible `isMentioned()` helper
+2. Add `saveReadTime()` to Channel.tsx when viewing
+3. Wire hook into ChannelGroup parent to display bubbles
+4. Test thoroughly with various mention scenarios
+
+**Phase 2: @everyone Mention (After Phase 1 Complete)**
+1. Update `Mentions` type to include `everyone?: boolean`
+2. Update mention input/parsing to support `@everyone`
+3. Modify `isMentioned()` helper to check `everyone` flag
+4. Test @everyone mentions create notifications
+
+**Phase 3: Notification Dropdown (After Phase 2 Complete)**
+1. Create notification dropdown using `DropdownPanel` component
+2. Build list view of unread mentions across all channels
+3. Add filter: User / Role / @everyone mentions
+4. Implement click-to-navigate functionality
+5. Add mark-as-read action
+
+**Phase 4: Settings Integration (After Phase 3 Complete)**
+1. Add notification toggle to `UserSettingsModal/Account.tsx`
+2. Store preference in user config
+3. Check preference before showing notifications
+4. Add UI feedback when notifications disabled
+
+**Design Decisions (Phase 1) ✅ RESOLVED**:
+
+| Question | Decision | Rationale |
+|----------|----------|-----------|
+| **Count all mentions?** | ✅ Yes, all (with 10k safety limit) | Users expect completeness; query is efficient with existing index |
+| **When to save read time?** | ✅ On message list change + unmount | Mirrors DirectMessages pattern; catches all viewing scenarios |
+| **Cache strategy?** | ✅ React Query with 30s stale time | Balance performance and real-time updates; automatic invalidation |
+| **isMentioned structure?** | ✅ Separate `mentionUtils.ts` with options pattern | Extensible for @everyone/roles; testable; maintainable |
+
+**Implementation Details:**
+
+1. **Mention Counting:** Query all messages after `lastReadTimestamp`, filter with `isMentioned()`, no arbitrary date limits
+
+2. **Read Time Saving:**
+   ```typescript
+   // In Channel.tsx or useChannelMessages
+   useEffect(() => {
+     // Save when messages change (user is viewing)
+     if (messageList.length > 0) {
+       messageDB.saveReadTime({
+         conversationId: `${spaceId}/${channelId}`,
+         lastMessageTimestamp: Date.now(),
+       });
+     }
+   }, [messageList]);
+
+   // Save on unmount (user leaving channel)
+   useEffect(() => {
+     return () => messageDB.saveReadTime({...});
+   }, []);
+   ```
+
+3. **React Query Configuration:**
+   ```typescript
+   useQuery({
+     queryKey: ['mention-counts', spaceId, userAddress],
+     queryFn: calculateMentionCounts,
+     staleTime: 30000, // 30 second cache
+     refetchOnWindowFocus: true,
+   });
+   ```
+
+4. **Mention Detection Utility:** `src/utils/mentionUtils.ts`
+   ```typescript
+   export interface MentionCheckOptions {
+     userAddress: string;
+     userRoles?: string[];      // Phase 2
+     checkEveryone?: boolean;   // Phase 2
+   }
+
+   export function isMentioned(
+     message: Message,
+     options: MentionCheckOptions
+   ): boolean {
+     // Checks: memberIds, roleIds (future), everyone (future)
+   }
+   ```
+
+---
+
+---
+
+## Task Status
+
+✅ **Phase 1 Planning Complete - Ready to Implement**
+
+**Completed:**
+- Step 1: Read status system investigation ✅
+- Step 2: isMention property analysis (not needed) ✅
+- Step 3: Database indexing analysis (existing indexes sufficient) ✅
+- Design decisions resolved ✅
+- Implementation checklist created ✅
+
+**Next:** Begin Step 4.1 - Create `mentionUtils.ts`
+
+---
+
 *Task created: 2025-09-24*
 *Updated: 2025-10-05 - Simplified per lead dev's approach*
+*Updated: 2025-10-09 - Investigation complete, design decisions finalized, ready to implement*
+*Future phases: @everyone mentions, notification dropdown, settings toggle*
 *Analysis conducted via Claude Code - requires manual verification*
