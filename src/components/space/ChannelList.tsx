@@ -8,6 +8,7 @@ import {
   useSpaceHeader,
   useSpaceGroups,
 } from '../../hooks';
+import { useChannelMentionCounts } from '../../hooks/business/mentions';
 import { t } from '@lingui/core/macro';
 import { Button, Container, Icon, Text, Tooltip } from '../primitives';
 
@@ -31,6 +32,28 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   } = useSpaceHeader(space);
 
   const { groups } = useSpaceGroups(space);
+
+  // Get all channel IDs from all groups
+  const channelIds = React.useMemo(
+    () => groups.flatMap((group) => group.channels.map((c) => c.channelId)),
+    [groups]
+  );
+
+  // Get mention counts for all channels
+  const mentionCounts = useChannelMentionCounts({ spaceId, channelIds });
+
+  // Merge mention counts into groups
+  const groupsWithMentionCounts = React.useMemo(
+    () =>
+      groups.map((group) => ({
+        ...group,
+        channels: group.channels.map((channel) => ({
+          ...channel,
+          mentionCount: mentionCounts[channel.channelId] || 0,
+        })),
+      })),
+    [groups, mentionCounts]
+  );
 
   return (
     <Container className="channels-list-wrapper">
@@ -62,7 +85,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
         </Container>
       </Container>
       <Container className="channels-list">
-        {groups.map((group: any) => (
+        {groupsWithMentionCounts.map((group: any) => (
           <ChannelGroup
             onEditGroup={openEditGroupEditor}
             key={group.groupName}

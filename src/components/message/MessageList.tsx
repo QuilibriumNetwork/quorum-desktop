@@ -50,6 +50,7 @@ interface MessageListProps {
     displayName?: string;
     userIcon?: string;
   }, event: React.MouseEvent, context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }) => void;
+  lastReadTimestamp?: number;
 }
 
 function useWindowSize() {
@@ -86,6 +87,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       setKickUserAddress,
       isDeletionInProgress,
       onUserClick,
+      lastReadTimestamp = 0,
     } = props;
 
     const [width, height] = useWindowSize();
@@ -151,6 +153,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           kickUserAddress={kickUserAddress}
           setKickUserAddress={setKickUserAddress}
           onUserClick={onUserClick}
+          lastReadTimestamp={lastReadTimestamp}
         />
       );
     };

@@ -14,6 +14,7 @@ import { DefaultImages } from '../utils';
 import { getInviteUrlBase } from '../utils/inviteDomain';
 import { canonicalize } from '../utils/canonicalize';
 import { QuorumApiClient } from '../api/baseTypes';
+import { extractMentionsFromText } from '../utils/mentionUtils';
 
 // Type definitions for the service
 export interface MessageServiceDependencies {
@@ -581,6 +582,15 @@ export class MessageService {
           };
         }
       );
+    }
+
+    // Invalidate mention counts when a message with mentions is added
+    if (decryptedContent.mentions?.memberIds && decryptedContent.mentions.memberIds.length > 0) {
+      // Get user address from current passkey (we need to pass this in or get it from context)
+      // For now, invalidate for the whole space to catch all potential mentions
+      await queryClient.invalidateQueries({
+        queryKey: ['mention-counts', spaceId],
+      });
     }
   }
 
@@ -2148,6 +2158,14 @@ export class MessageService {
           'utf-8'
         )
       );
+      // Extract mentions from message text
+      let mentions;
+      if (typeof pendingMessage === 'string') {
+        mentions = extractMentionsFromText(pendingMessage);
+      } else if ((pendingMessage as any).text) {
+        mentions = extractMentionsFromText((pendingMessage as any).text);
+      }
+
       const message = {
         spaceId: spaceId,
         channelId: channelId,
@@ -2169,6 +2187,7 @@ export class MessageService {
                 ...(pendingMessage as any),
                 senderId: currentPasskeyInfo.address,
               },
+        mentions: mentions && mentions.memberIds.length > 0 ? mentions : undefined,
       } as Message;
 
       let conversationId = spaceId + '/' + channelId;

@@ -42,6 +42,7 @@ import {
   usePinnedMessages,
 } from '../../hooks';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
+import { useViewportMentionHighlight } from '../../hooks/business/messages/useViewportMentionHighlight';
 import MessageActions from './MessageActions';
 import { MessageMarkdownRenderer } from './MessageMarkdownRenderer';
 import { getImageConfig } from '../../utils/imageProcessing/config';
@@ -88,6 +89,7 @@ type MessageProps = {
     displayName?: string;
     userIcon?: string;
   }, event: React.MouseEvent, context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }) => void;
+  lastReadTimestamp?: number;
 };
 
 export const Message = React.memo(({
@@ -116,6 +118,7 @@ export const Message = React.memo(({
   kickUserAddress,
   setKickUserAddress,
   onUserClick,
+  lastReadTimestamp = 0,
 }: MessageProps) => {
   const user = usePasskeysContext();
   const { spaceId } = useParams();
@@ -188,13 +191,24 @@ export const Message = React.memo(({
   );
 
   // Message highlighting logic - replaces isHashTarget
-  const { isHighlighted } = useMessageHighlight();
+  const { isHighlighted, highlightMessage } = useMessageHighlight();
   const isMessageHighlighted = useMemo(() => {
     // Check both URL hash (for backward compatibility) and React state highlighting
     const isUrlTarget = location.hash === `#msg-${message.messageId}`;
     const isStateHighlighted = isHighlighted(message.messageId);
     return isUrlTarget || isStateHighlighted;
   }, [message.messageId, location.hash, isHighlighted]);
+
+  // Auto-highlight mentioned messages when they enter viewport (3 second duration)
+  // Only highlights UNREAD mentions (messages created after last read time)
+  const isMentioned = formatting.isMentioned(user.currentPasskeyInfo!.address);
+  const isUnread = message.createdDate > lastReadTimestamp;
+  const mentionRef = useViewportMentionHighlight(
+    message.messageId,
+    isMentioned,
+    isUnread,
+    highlightMessage
+  );
 
   let sender = mapSenderToUser(message.content?.senderId);
   const time = moment.tz(
@@ -284,15 +298,15 @@ export const Message = React.memo(({
 
   return (
     <FlexColumn
+      ref={mentionRef}
       id={`msg-${message.messageId}`}
       className={
         'text-base relative ' +
         (isTouchDevice()
           ? 'border-t border-t-surface-0 pt-2' // Add top border for touch devices
           : 'hover:bg-chat-hover ') + // Only add hover effect on non-touch devices
-        (formatting.isMentioned(user.currentPasskeyInfo!.address)
-          ? ' message-mentions-you'
-          : '') +
+        // Note: Mentions now use temporary highlight (message-highlighted) instead of permanent background
+        // The viewport hook auto-triggers the highlight when mentioned messages enter view
         (isMessageHighlighted ? ' message-highlighted' : '')
       }
       // Desktop mouse interaction

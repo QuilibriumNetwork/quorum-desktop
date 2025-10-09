@@ -11,7 +11,6 @@ interface Channel {
   channelName: string;
   unreads?: number;
   mentionCount?: number;
-  mentions?: string;
   isReadOnly?: boolean;
   isPinned?: boolean;
   pinnedAt?: number;
@@ -81,16 +80,10 @@ const ChannelContent: React.FC<{
         <span title={channel.isPinned ? 'Pinned channel' : undefined}>
           {channel.channelName}
         </span>
-        {!!channel.mentionCount ? (
-          <span
-            className={
-              'channel-group-channel-name-mentions-' + channel.mentions
-            }
-          >
+        {!!channel.mentionCount && (
+          <span className="channel-group-channel-name-mentions">
             {channel.mentionCount}
           </span>
-        ) : (
-          <></>
         )}
       </div>
       {isSpaceOwner && !isTouch && (

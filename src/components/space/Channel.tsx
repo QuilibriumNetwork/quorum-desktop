@@ -99,7 +99,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [searchFocused, setSearchFocused] = useState(false);
 
   const headerRef = React.useRef<HTMLDivElement>(null);
-  const { submitChannelMessage } = useMessageDB();
+  const { submitChannelMessage, messageDB } = useMessageDB();
 
   // Create refs for textarea (MessageList needs this for scrolling and we need it for focus)
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -122,6 +122,15 @@ const Channel: React.FC<ChannelProps> = ({
 
   // Get pinned messages
   const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
+
+  // Get last read timestamp for mention highlighting
+  const [lastReadTimestamp, setLastReadTimestamp] = React.useState<number>(0);
+  React.useEffect(() => {
+    const conversationId = `${spaceId}/${channelId}`;
+    messageDB.getConversation({ conversationId }).then(({ conversation }) => {
+      setLastReadTimestamp(conversation?.lastReadTimestamp || 0);
+    });
+  }, [spaceId, channelId, messageDB]);
 
   // Debounced search effect
   useEffect(() => {
@@ -411,6 +420,48 @@ const Channel: React.FC<ChannelProps> = ({
     }
   }, [kickUserAddress, openKickUser, setKickUserAddress]);
 
+  // Save read time when viewing channel (for mention count tracking)
+  // Note: Does NOT invalidate cache - bubble updates only on page refresh
+  useEffect(() => {
+    if (messageList.length > 0) {
+      const conversationId = `${spaceId}/${channelId}`;
+      const latestMessageTimestamp = Math.max(
+        ...messageList.map((msg) => msg.createdDate || 0)
+      );
+
+      // Debounce: Save after 2 seconds of viewing channel
+      const timeoutId = setTimeout(() => {
+        messageDB.saveReadTime({
+          conversationId,
+          lastMessageTimestamp: latestMessageTimestamp,
+        });
+        // NOTE: Intentionally NOT invalidating query cache here
+        // Bubble will update on next page refresh when cache is refetched
+      }, 2000);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [messageList, messageDB, spaceId, channelId]);
+
+  // Save immediately when leaving channel (component unmount)
+  useEffect(() => {
+    return () => {
+      if (messageList.length > 0) {
+        const conversationId = `${spaceId}/${channelId}`;
+        const latestMessageTimestamp = Math.max(
+          ...messageList.map((msg) => msg.createdDate || 0)
+        );
+
+        messageDB.saveReadTime({
+          conversationId,
+          lastMessageTimestamp: latestMessageTimestamp,
+        });
+        // NOTE: Intentionally NOT invalidating query cache here
+        // Bubble will update on next page refresh
+      }
+    };
+  }, [messageList, messageDB, spaceId, channelId]);
+
   return (
     <div className="chat-container">
       <div className="flex flex-col flex-1 min-w-0">
@@ -566,6 +617,7 @@ const Channel: React.FC<ChannelProps> = ({
                 setKickUserAddress={setKickUserAddress}
                 isDeletionInProgress={isDeletionInProgress}
                 onUserClick={userProfileModal.handleUserClick}
+                lastReadTimestamp={lastReadTimestamp}
                 fetchPreviousPage={() => {
                   fetchPreviousPage();
                 }}
