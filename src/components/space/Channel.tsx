@@ -6,6 +6,8 @@ import {
   useChannelMessages,
   useMessageComposer,
   usePinnedMessages,
+  useConversation,
+  useUpdateReadTime,
 } from '../../hooks';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
@@ -123,14 +125,13 @@ const Channel: React.FC<ChannelProps> = ({
   // Get pinned messages
   const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
 
-  // Get last read timestamp for mention highlighting
-  const [lastReadTimestamp, setLastReadTimestamp] = React.useState<number>(0);
-  React.useEffect(() => {
-    const conversationId = `${spaceId}/${channelId}`;
-    messageDB.getConversation({ conversationId }).then(({ conversation }) => {
-      setLastReadTimestamp(conversation?.lastReadTimestamp || 0);
-    });
-  }, [spaceId, channelId, messageDB]);
+  // Get last read timestamp for mention highlighting - using React Query
+  const conversationId = `${spaceId}/${channelId}`;
+  const { data: conversationData } = useConversation({ conversationId });
+  const lastReadTimestamp = conversationData?.conversation?.lastReadTimestamp || 0;
+
+  // Mutation for updating read time with proper cache invalidation
+  const { mutate: updateReadTime } = useUpdateReadTime({ spaceId, channelId });
 
   // Debounced search effect
   useEffect(() => {
@@ -421,46 +422,46 @@ const Channel: React.FC<ChannelProps> = ({
   }, [kickUserAddress, openKickUser, setKickUserAddress]);
 
   // Save read time when viewing channel (for mention count tracking)
-  // Note: Does NOT invalidate cache - bubble updates only on page refresh
+  // Uses mutation to ensure proper cache invalidation
+  // Uses ref + interval pattern to avoid restarting timer on every new message
+  const latestTimestampRef = useRef<number>(0);
+  const lastSavedTimestampRef = useRef<number>(0);
+
   useEffect(() => {
     if (messageList.length > 0) {
-      const conversationId = `${spaceId}/${channelId}`;
-      const latestMessageTimestamp = Math.max(
+      // Update ref with latest timestamp (doesn't restart timer)
+      latestTimestampRef.current = Math.max(
         ...messageList.map((msg) => msg.createdDate || 0)
       );
-
-      // Debounce: Save after 2 seconds of viewing channel
-      const timeoutId = setTimeout(() => {
-        messageDB.saveReadTime({
-          conversationId,
-          lastMessageTimestamp: latestMessageTimestamp,
-        });
-        // NOTE: Intentionally NOT invalidating query cache here
-        // Bubble will update on next page refresh when cache is refetched
-      }, 2000);
-
-      return () => clearTimeout(timeoutId);
     }
-  }, [messageList, messageDB, spaceId, channelId]);
+  }, [messageList]);
+
+  useEffect(() => {
+    // Periodic check every 2 seconds to save if there's new content
+    const intervalId = setInterval(() => {
+      if (
+        latestTimestampRef.current > 0 &&
+        latestTimestampRef.current > lastSavedTimestampRef.current
+      ) {
+        // Use mutation - handles DB write + invalidation in correct order
+        updateReadTime(latestTimestampRef.current);
+        lastSavedTimestampRef.current = latestTimestampRef.current;
+      }
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, [updateReadTime]);
 
   // Save immediately when leaving channel (component unmount)
   useEffect(() => {
     return () => {
-      if (messageList.length > 0) {
-        const conversationId = `${spaceId}/${channelId}`;
-        const latestMessageTimestamp = Math.max(
-          ...messageList.map((msg) => msg.createdDate || 0)
-        );
-
-        messageDB.saveReadTime({
-          conversationId,
-          lastMessageTimestamp: latestMessageTimestamp,
-        });
-        // NOTE: Intentionally NOT invalidating query cache here
-        // Bubble will update on next page refresh
+      // Save any unsaved progress on unmount
+      if (latestTimestampRef.current > lastSavedTimestampRef.current) {
+        // Use mutation - ensures proper invalidation on unmount
+        updateReadTime(latestTimestampRef.current);
       }
     };
-  }, [messageList, messageDB, spaceId, channelId]);
+  }, [updateReadTime]);
 
   return (
     <div className="chat-container">

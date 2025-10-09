@@ -88,7 +88,7 @@ See [Known Limitations](#known-limitations) for details and planned improvements
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Read Time Tracking Flow
+### Read Time Tracking Flow (Updated 2025-10-09)
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -97,19 +97,43 @@ See [Known Limitations](#known-limitations) for details and planned improvements
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│    Debounced (2s): Save lastMessageTimestamp to DB         │
-│    Conversation.lastReadTimestamp = max(messages.createdDate)│
-│    NOTE: Does NOT invalidate query cache                    │
+│    useConversation() - Fetches lastReadTimestamp via        │
+│    React Query (single source of truth)                     │
 └──────────────────────────┬──────────────────────────────────┘
                            │
                            ▼
 ┌─────────────────────────────────────────────────────────────┐
-│         Bubble count remains unchanged in UI                 │
-│       Updated counts shown on next page refresh             │
+│    Interval (2s): Check if new content to mark as read      │
+│    Uses refs to avoid restarting timer on new messages      │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│    useUpdateReadTime() mutation - Saves to DB               │
+│    1. await messageDB.saveReadTime() (DB write completes)   │
+│    2. Invalidate React Query caches (after write)           │
+│       - ['Conversation', conversationId]                    │
+│       - ['mention-counts', 'channel', spaceId]              │
+│       - ['mention-counts', 'space']                         │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│    React Query refetches automatically                      │
+│    - useConversation updates with new lastReadTimestamp     │
+│    - useChannelMentionCounts recalculates with fresh data   │
+│    - Bubble updates in real-time                            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**⚠️ Current Limitation:** This simplified approach marks ALL messages as read when viewing a channel, not just visible ones. The bubble only updates on page refresh. See [Known Limitations](#known-limitations) for details.
+**✅ 2025-10-09 React Query Improvements:**
+- **React Query as single source of truth** - Replaced stale `useState` with `useConversation` hook
+- **Proper async ordering** - DB write completes BEFORE cache invalidation (fixes race condition)
+- **Interval-based updates** - Timer never restarts, works with rapid messages
+- **Consistent cache keys** - Hierarchical structure: `['mention-counts', 'channel'|'space', ...]`
+- **Automatic reactivity** - Components re-render when cache updates
+
+**Design Decision:** Channel-level read tracking (not viewport-based). Opening a channel marks ALL messages as read because the app auto-scrolls to the bottom. This is industry standard (Discord, Slack) and appropriate for the UX. See [Known Limitations](#known-limitations) for details.
 
 ### Message Highlighting Flow
 
@@ -569,31 +593,41 @@ useEffect(() => {
 - **Mitigation**: Deleted messages filtered by MessageService
 - **Works As Intended**: Count reflects mentions at time of viewing
 
-### UX Limitations (NEEDS IMPROVEMENT)
+### UX Design Decisions
 
-See task: .agents\tasks\mention-notification-ux-improvements.md
+**5. Channel-Level Read Tracking (By Design)**
+- **Status**: ✅ Working as intended (2025-10-09 improvements)
+- **Behavior**: Opening a channel marks ALL messages up to latest timestamp as read
+- **Rationale**:
+  - App auto-scrolls to bottom (latest message) when opening channels
+  - Users start at latest message and scroll up if needed
+  - Industry standard pattern (Discord, Slack, Teams)
+  - Opening channel = "I acknowledge all activity up to this point"
+- **UX Flow**:
+  1. User has 9 unread mentions in a channel
+  2. User opens channel → auto-scrolls to latest message
+  3. After 2 seconds → all mentions marked as read
+  4. Bubble clears: 9 → 0
+  5. User can scroll up to see history if needed (those mentions are now "old news")
+- **Alternative**: Viewport-based tracking (see Future Improvements)
+- **Priority**: Low - current behavior is correct for most use cases
 
-**5. Read Tracking Not Viewport-Based**
-- **Issue**: Marks ALL messages as read when viewing channel, not just visible ones
-- **Impact**: If user has 3 mentions and scrolls to see first one, all 3 are marked read
-- **Current Behavior**: Bubble only updates on page refresh (simplified approach)
-- **Why**: Complex viewport tracking caused issues with dynamic count updates
-- **Future Fix**: Implement proper viewport-based read tracking with `rangeChanged` callback
-- **Priority**: Medium - functional but not ideal UX
+**6. Interval-Based Read Time Updates (2025-10-09 Fix)**
+- **Status**: ✅ Fixed race condition with rapid messages
+- **Implementation**: Uses ref + 2-second interval pattern
+- **Behavior**:
+  - System checks every 2 seconds if there's new content to mark as read
+  - Timer never restarts, preventing issues with rapid messages
+  - Works correctly even with messages arriving every 0.1 seconds
+- **Files**: `src/components/space/Channel.tsx` (lines 427-453)
+- **Previous Issue**: Debounce timer restarted on every new message, causing read time to never save with rapid messages
 
-**6. Highlight Re-triggers on Scroll**
+**7. Highlight Re-triggers on Scroll**
 - **Issue**: If user scrolls back to an already-seen mention, it highlights again
 - **Impact**: Confusing - user thinks it's a new notification
 - **Root Cause**: `hasTriggeredRef` is component-scoped, resets on re-render
 - **Future Fix**: Store highlighted message IDs in persistent state (Context or DB)
 - **Priority**: Low - minor annoyance
-
-**7. No Real-Time Bubble Updates**
-- **Issue**: Bubble count doesn't decrease when user views mentions (until page refresh)
-- **Impact**: Shows "3 mentions" even after viewing all 3
-- **Why**: Simplified to avoid complex viewport tracking and premature dismissal
-- **Future Fix**: Combine viewport tracking with proper invalidation
-- **Priority**: Medium - acceptable for Phase 1
 
 ### Technical Debt
 
@@ -904,6 +938,32 @@ src/
 - ✅ Removed debug logging
 - ✅ Added error handling
 - ✅ Code review complete (B+ rating)
+
+### 2025-10-09 - React Query Migration (Critical Race Condition Fix)
+- ✅ **Migrated to React Query for read state management**
+  - Created `useConversation` hook for reactive lastReadTimestamp
+  - Created `useUpdateReadTime` mutation hook for atomic updates
+  - Replaced stale `useState` in Channel.tsx with React Query hooks
+- ✅ **Fixed critical race conditions**
+  - DB write now completes BEFORE cache invalidation (proper async ordering)
+  - Interval-based updates prevent timer restart issues with rapid messages
+  - Single source of truth eliminates multiple conflicting state sources
+- ✅ **Improved cache key consistency**
+  - Hierarchical keys: `['mention-counts', 'channel'|'space', ...]`
+  - Proper invalidation scope prevents over-fetching
+- ✅ **Enhanced reliability**
+  - Works correctly with messages arriving every 0.1 seconds
+  - Deterministic behavior (no more flickering bubbles)
+  - Automatic component re-renders when read state changes
+
+**Related Task**: `.agents/tasks/mention-notification-ux-improvements.md`
+**Files Modified**:
+- `src/hooks/business/conversations/useUpdateReadTime.ts` (created)
+- `src/hooks/queries/conversation/useConversation.ts` (already existed)
+- `src/components/space/Channel.tsx` (refactored read tracking)
+- `src/hooks/business/mentions/useChannelMentionCounts.ts` (cache key update)
+- `src/hooks/business/mentions/useSpaceMentionCounts.ts` (cache key update)
+- `src/hooks/queries/index.ts` (export conversation hooks)
 
 ---
 

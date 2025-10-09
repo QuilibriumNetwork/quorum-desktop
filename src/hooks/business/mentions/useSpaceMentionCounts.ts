@@ -32,9 +32,11 @@ export function useSpaceMentionCounts({
 
   const { data } = useQuery({
     // Query key includes space IDs to invalidate when spaces change
-    // Can be invalidated at space level ['mention-counts', spaceId]
+    // Can be invalidated at space level ['mention-counts', 'space', spaceId] or
+    // more broadly ['mention-counts', 'space'] for all spaces
     queryKey: [
-      'space-mention-counts',
+      'mention-counts',
+      'space',
       userAddress,
       ...spaces.map((s) => s.spaceId).sort(),
     ],

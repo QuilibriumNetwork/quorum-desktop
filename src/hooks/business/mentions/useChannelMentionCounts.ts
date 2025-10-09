@@ -34,9 +34,9 @@ export function useChannelMentionCounts({
 
   const { data } = useQuery({
     // Note: Query key includes all channelIds so it invalidates when channels change
-    // Can be invalidated at space level ['mention-counts', spaceId] or
-    // channel level ['mention-counts', spaceId, channelId] for granular updates
-    queryKey: ['mention-counts', spaceId, userAddress, ...channelIds.sort()],
+    // Can be invalidated at space level ['mention-counts', 'channel', spaceId] or
+    // more broadly ['mention-counts', 'channel'] for all channels
+    queryKey: ['mention-counts', 'channel', spaceId, userAddress, ...channelIds.sort()],
     queryFn: async () => {
       if (!userAddress) return {};
 
