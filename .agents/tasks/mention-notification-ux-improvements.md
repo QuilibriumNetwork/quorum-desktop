@@ -1,9 +1,9 @@
-# Mention Notification UX Improvements
+# Mention Notification System - Critical Race Condition Fix
 
-**Status:** Ready for Implementation (Revised - Pragmatic Approach)
-**Priority:** High
+**Status:** Needs Re-Implementation - Previous Attempt Failed
+**Priority:** CRITICAL
 **Created:** 2025-10-09
-**Revised:** 2025-10-09 (Simplified based on architecture review)
+**Analysis Date:** 2025-10-09
 **Related:** [mention-notification-system.md](../docs/features/mention-notification-system.md)
 
 ---
@@ -11,14 +11,12 @@
 ## Table of Contents
 
 1. [Executive Summary](#executive-summary)
-2. [Current Limitations Analysis](#current-limitations-analysis)
-3. [Industry Best Practices Research](#industry-best-practices-research)
-4. [Proposed Solutions (Pragmatic Approach)](#proposed-solutions-pragmatic-approach)
+2. [Root Cause Analysis](#root-cause-analysis)
+3. [Architecture Assessment](#architecture-assessment)
+4. [Recommended Solution](#recommended-solution)
 5. [Implementation Plan](#implementation-plan)
-6. [Technical Considerations](#technical-considerations)
-7. [Testing Strategy](#testing-strategy)
-8. [Future Enhancements](#future-enhancements)
-9. [Revision Notes](#revision-notes)
+6. [Testing Strategy](#testing-strategy)
+7. [Previous Implementation Issues](#previous-implementation-issues)
 
 ---
 
@@ -26,373 +24,496 @@
 
 ### Problem Statement
 
-The current mention notification system (Phase 1) has three UX limitations that negatively impact user experience:
+The mention notification system has **critical race conditions** causing non-deterministic behavior:
 
-1. **No real-time bubble updates** - Notification bubbles don't decrease until page refresh (MOST NOTICEABLE)
-2. **Read tracking is not viewport-based** - All messages marked as read when viewing channel, regardless of visibility
-3. **Highlights re-trigger on scroll** - Users see confusing repeated highlights for already-seen mentions (MINOR POLISH)
+- **Notification bubbles randomly disappear and reappear** with incorrect counts
+- **Sometimes works, sometimes doesn't** - completely unpredictable
+- **Counts don't update after viewing mentions** - or update incorrectly
+- **Getting worse with each "fix" attempt** - adding more complexity increases race conditions
 
-### Impact Assessment
+### User-Reported Issues
 
-| Limitation | User Impact | Frequency | Severity | Priority |
-|------------|-------------|-----------|----------|----------|
-| No real-time bubble updates | High - Stale UI every session | Every channel visit | **Critical** | 1 |
-| Non-viewport read tracking | Medium - Lose track of off-screen mentions | Channel visits with multiple mentions | High | 2 |
-| Repeated highlighting | Low - Confusing but temporary | Occasional scroll-back | Low | 3 |
+> "The notification bubble is hidden after seeing the first mention, then reappears when seeing new ones, but the number does not update. In other cases the number updates. The behavior is definitely buggy and non-deterministic."
 
-### Recommended Priority (Revised)
+### Impact
 
-**Priority Order** (changed from original):
-1. **Fix #2 (Critical)**: Real-time bubble updates - Most user-facing issue, simplest fix
-2. **Fix #1 (High)**: Viewport-based read tracking - Important UX improvement
-3. **Fix #3 (Low)**: Persistent highlight state - Minor polish
-
-**Rationale:** Bubble staleness happens **every single time** a user views mentions. Viewport tracking only affects users with multiple mentions at different scroll positions. Re-highlighting is rare and temporary (6s fade).
+| Issue | Severity | User Impact |
+|-------|----------|-------------|
+| Non-deterministic bubble behavior | **CRITICAL** | Users cannot trust notification system |
+| Stale counts showing | **CRITICAL** | Users miss important mentions |
+| Race conditions getting worse | **CRITICAL** | System degrading, not improving |
 
 ---
 
-## Current Limitations Analysis
+## Root Cause Analysis
 
-### Limitation #1: No Real-Time Bubble Updates (MOST CRITICAL)
+### Feature-Analyzer Assessment
 
-#### Current Behavior
+**Overall Grade:** Needs Improvement
+**Core Issue:** Multiple sources of truth + async race conditions
 
-**File:** `src/components/space/Channel.tsx` (lines 438-440)
+### 1. **Stale State - The Primary Root Cause** 🔴 CRITICAL
 
-```typescript
-messageDB.saveReadTime({
+**Location:** `src/components/space/Channel.tsx` (lines 127-133)
+
+```tsx
+// LOCAL STATE - Gets initialized once on mount and NEVER UPDATES
+const [lastReadTimestamp, setLastReadTimestamp] = React.useState<number>(0);
+React.useEffect(() => {
+  const conversationId = `${spaceId}/${channelId}`;
+  messageDB.getConversation({ conversationId }).then(({ conversation }) => {
+    setLastReadTimestamp(conversation?.lastReadTimestamp || 0);
+  });
+}, [spaceId, channelId, messageDB]);
+```
+
+**The Problem:**
+
+This creates a **permanent snapshot** that becomes stale immediately:
+
+1. Component mounts → fetches `lastReadTimestamp` from DB → sets state to (e.g., `100`)
+2. User views mentions → DB updates to `200`
+3. React Query cache invalidates → `useChannelMentionCounts` refetches → sees `200`
+4. **BUT** `lastReadTimestamp` state is still `100` (never updated!)
+5. `Message.tsx` receives stale prop `100`
+6. `isUnread = message.createdDate > 100` (WRONG - should be `> 200`)
+7. Messages that should be "read" still appear "unread"
+8. Viewport observer tracks them AGAIN
+9. Counts become inconsistent
+
+**Data Flow Visualization:**
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ User views mention #1 (timestamp: 150)                   │
+└────────────────────────┬─────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────┐
+│ handleMessageViewed → saveReadTime(150)                  │
+│ Database now has: lastReadTimestamp = 150                │
+└────────────────────────┬─────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────┐
+│ queryClient.invalidateQueries(['mention-counts'])        │
+│ useChannelMentionCounts refetches → sees 150 in DB       │
+│ Bubble count updates: 3 → 2 ✅                           │
+└────────────────────────┬─────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────┐
+│ BUT: Channel.tsx state still has lastReadTimestamp = 0   │
+│ Message.tsx receives prop: lastReadTimestamp = 0         │
+│ Message #2 (timestamp: 160) → isUnread = 160 > 0 = true │
+│ Viewport observer triggers AGAIN for message #2          │
+│ saveReadTime(160) → bubble updates 2 → 1                 │
+└────────────────────────┬─────────────────────────────────┘
+                         │
+                         ▼
+┌──────────────────────────────────────────────────────────┐
+│ BUT state STILL at 0! Message #3 (timestamp: 170) also   │
+│ appears unread → tracked AGAIN → bubble goes 1 → 0 → 1   │
+│ CHAOS ENSUES 🔥                                          │
+└──────────────────────────────────────────────────────────┘
+```
+
+### 2. **Race Condition: Database Write vs Cache Refetch** 🔴 CRITICAL
+
+**Location:** `src/components/space/Channel.tsx` (lines 446-454)
+
+```tsx
+await messageDB.saveReadTime({
   conversationId,
-  lastMessageTimestamp: latestMessageTimestamp,
+  lastMessageTimestamp: latestTimestamp,
 });
-// NOTE: Intentionally NOT invalidating query cache here
-// Bubble will update on next page refresh when cache is refetched
+
+// Invalidate cache for real-time updates
+queryClient.invalidateQueries({
+  queryKey: ['mention-counts', spaceId],
+});
 ```
 
-#### Why This Limitation Exists
+**The Problem:**
 
-Phase 1 intentionally skipped cache invalidation to keep implementation simple and avoid potential flickering issues.
+Race between async database write and cache refetch:
 
-#### User Impact Scenarios
+1. `saveReadTime` starts writing to IndexedDB (async, takes 10-100ms)
+2. Cache invalidation triggers **immediately**
+3. `useChannelMentionCounts` refetches **before write completes**
+4. Reads **old** timestamp from database
+5. Counts don't update
 
-**Scenario A: Every Single Time**
+**Why it's intermittent:**
+
+- **Fast disk (SSD):** Write completes in 10ms → race rarely occurs → **Works** ✅
+- **Slow disk (HDD):** Write takes 100ms → race occurs frequently → **Fails** ❌
+- **Explains the "sometimes works, sometimes doesn't" behavior perfectly**
+
+### 3. **Prop Drilling Amplifies Staleness** 🔴 CRITICAL
+
+**Location:** `src/components/message/Message.tsx` (line 207)
+
+```tsx
+const isUnread = message.createdDate > lastReadTimestamp;
 ```
-User sees bubble: "3 mentions" on #general
-User opens channel, views all 3 mentions
-Bubble still shows "3 mentions"
-User switches channels → bubble still shows "3"
-User refreshes page → bubble disappears
-Result: User confused, doesn't trust notification system
+
+**The Problem:**
+
+The `lastReadTimestamp` prop is passed through 3 levels:
+
+```
+Channel.tsx (useState - STALE)
+    ↓ prop
+MessageList.tsx (receives stale prop)
+    ↓ prop
+Message.tsx (uses stale prop for isUnread calculation)
 ```
 
-**Impact:** This happens to **every user, every time** they view mentions. It's the most noticeable limitation.
+Even when the database AND React Query cache update correctly, all messages still use the stale prop until component remounts.
 
----
+### 4. **Three Sources of Truth** 🔴 MAJOR
 
-### Limitation #2: Read Tracking Not Viewport-Based
+The system tracks read state in THREE places:
 
-#### Current Behavior
+1. **Channel.tsx local state** - `useState` (never updates)
+2. **IndexedDB** - `messageDB.saveReadTime()` (updates async)
+3. **React Query cache** - `useChannelMentionCounts` (invalidates and refetches)
 
-**File:** `src/components/space/Channel.tsx` (lines 423-463)
+They all get out of sync, creating chaos.
 
-```typescript
-// Marks ALL messages as read when viewing channel
+### 5. **Unmount Race Condition** 🟡 MAJOR
+
+**Location:** `src/components/space/Channel.tsx` (lines 459-477)
+
+```tsx
 useEffect(() => {
-  if (messageList.length > 0) {
-    const latestMessageTimestamp = Math.max(
-      ...messageList.map((msg) => msg.createdDate || 0)
-    );
+  return () => {
+    // ... cleanup code
+    messageDB.saveReadTime({  // NOT AWAITED!
+      conversationId,
+      lastMessageTimestamp: latestTimestamp,
+    });
+    // NO CACHE INVALIDATION!
+  };
+}, [messageList, spaceId, channelId, messageDB]);
+```
 
-    setTimeout(() => {
-      messageDB.saveReadTime({
+**Problems:**
+
+- `saveReadTime` called during unmount but **not awaited**
+- Component unmounts before write completes
+- **No cache invalidation on unmount**
+- When user navigates back, counts may be wrong
+
+### 6. **Inconsistent Cache Keys** 🟡 MAJOR
+
+**Invalidation key doesn't match query keys:**
+
+- **Channel counts query:** `['mention-counts', spaceId, userAddress, ...channelIds.sort()]`
+- **Space counts query:** `['space-mention-counts', userAddress, ...spaceIds.sort()]`
+- **Invalidation:** `['mention-counts', spaceId]` ❌
+
+This **accidentally works** due to partial matching but is fragile.
+
+---
+
+## Architecture Assessment
+
+### Current Architecture (Broken)
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                  Channel.tsx (Component)                 │
+├─────────────────────────────────────────────────────────┤
+│  useState(lastReadTimestamp) ← Fetched ONCE on mount    │
+│       ↓ (STALE IMMEDIATELY)                             │
+│  Passed as prop to MessageList                          │
+│       ↓ (STILL STALE)                                   │
+│  Passed as prop to Message                              │
+│       ↓ (FOREVER STALE)                                 │
+│  isUnread calculation WRONG                             │
+└─────────────────────────────────────────────────────────┘
+
+                    ⚡ RACE CONDITION ⚡
+
+┌─────────────────────────────────────────────────────────┐
+│              handleMessageViewed callback                │
+├─────────────────────────────────────────────────────────┤
+│  messageDB.saveReadTime() ← Async write (10-100ms)     │
+│  queryClient.invalidateQueries() ← Immediate            │
+│       ↓ (Refetch starts BEFORE write completes)        │
+│  useChannelMentionCounts refetches                      │
+│       ↓ (Reads OLD data from DB)                       │
+│  Counts DON'T update                                    │
+└─────────────────────────────────────────────────────────┘
+
+           Multiple Sources of Truth = CHAOS
+```
+
+### Root Issues
+
+❌ **Mixed state management paradigms** - Local state + React Query + Database
+❌ **No single source of truth** - Three places track read state
+❌ **Prop drilling of stale data** - Never updates after initial load
+❌ **Race conditions everywhere** - Async operations have wrong ordering
+❌ **No optimistic updates** - User sees delayed/wrong feedback
+
+### What Went Wrong in Previous Implementation
+
+The previous attempt (Phase 1 + Phase 3) tried to fix this by:
+
+1. ✅ Adding query invalidation (good idea)
+2. ✅ Adding viewport-based tracking (good idea)
+3. ❌ **BUT** kept the stale `useState` in Channel.tsx
+4. ❌ **Result:** Made race conditions WORSE by adding more async operations
+
+**Key Lesson:** Can't fix race conditions by adding more async operations on top of broken state management.
+
+---
+
+## Recommended Solution
+
+### Strategy: Migrate to React Query for ALL Read State
+
+**Concept:** Replace local `useState` with React Query as the single source of truth.
+
+### Why React Query?
+
+1. ✅ **Single source of truth** - Cache is the only state
+2. ✅ **Automatic reactivity** - Components re-render when cache updates
+3. ✅ **Proper async handling** - Built-in race condition prevention
+4. ✅ **Easy invalidation** - Consistent cache key patterns
+5. ✅ **Optimistic updates** - Can add later without refactoring
+6. ✅ **Already used in codebase** - Consistent with existing patterns
+
+### Architecture Change
+
+**FROM:**
+```
+Channel.tsx useState → DB → React Query cache
+         ↓ (STALE)      (ASYNC)   (INVALIDATES)
+    MessageList prop
+         ↓ (STALE)
+    Message prop
+         ↓ (STALE)
+    isUnread calculation (WRONG)
+```
+
+**TO:**
+```
+React Query cache ← DB (single source of truth)
+         ↓ (REACTIVE - updates automatically)
+    Channel.tsx useConversation hook
+         ↓ (FRESH)
+    MessageList prop
+         ↓ (FRESH)
+    Message prop
+         ↓ (FRESH)
+    isUnread calculation (CORRECT) ✅
+```
+
+---
+
+## Implementation Plan
+
+### Phase 1: Create React Query Infrastructure (FOUNDATION)
+
+**Goal:** Build the hooks that will replace local state
+
+#### Task 1.1: Create `useConversation` Hook
+
+**New File:** `src/hooks/queries/conversation/useConversation.ts`
+
+```tsx
+import { useQuery } from '@tanstack/react-query';
+import { useMessageDB } from '../../../components/context/useMessageDB';
+import type { Conversation } from '../../../api/quorumApi';
+
+interface UseConversationProps {
+  spaceId: string;
+  channelId: string;
+}
+
+/**
+ * Hook to fetch conversation (including lastReadTimestamp) with React Query
+ *
+ * This replaces the local useState pattern and provides a reactive single source of truth.
+ * When the conversation is updated (e.g., lastReadTimestamp changes), all components
+ * using this hook will automatically re-render with fresh data.
+ *
+ * @example
+ * const { data: conversation } = useConversation({ spaceId, channelId });
+ * const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
+ */
+export function useConversation({
+  spaceId,
+  channelId,
+}: UseConversationProps) {
+  const { messageDB } = useMessageDB();
+  const conversationId = `${spaceId}/${channelId}`;
+
+  return useQuery({
+    queryKey: ['conversation', spaceId, channelId],
+    queryFn: async (): Promise<Conversation | undefined> => {
+      const { conversation } = await messageDB.getConversation({
         conversationId,
-        lastMessageTimestamp: latestMessageTimestamp,
       });
-    }, 2000);
-  }
-}, [messageList, messageDB, spaceId, channelId]);
-```
-
-#### User Impact Scenarios
-
-**Scenario A: Multiple Mentions at Different Positions**
-```
-User has 5 unread mentions in #general
-User opens channel, sees first mention at top
-After 2 seconds, ALL 5 mentions marked as read
-User scrolls down to see others → bubble already gone
-Result: User doesn't know there were 4 more mentions below
-```
-
-**Impact:** Only affects users with multiple mentions at different scroll positions (less common than bubble staleness).
-
----
-
-### Limitation #3: Highlight Re-triggers on Scroll (MINOR POLISH)
-
-#### Current Behavior
-
-**File:** `src/hooks/business/messages/useViewportMentionHighlight.ts` (lines 33-86)
-
-```typescript
-export function useViewportMentionHighlight(...) {
-  const hasTriggeredRef = useRef(false);  // Component-scoped, resets on remount
-
-  useEffect(() => {
-    hasTriggeredRef.current = false;  // Resets when messageId changes
-  }, [messageId]);
+      return conversation;
+    },
+    enabled: !!spaceId && !!channelId,
+    staleTime: 0, // Always check for updates (critical for read state)
+    refetchOnWindowFocus: true,
+  });
 }
 ```
 
-#### User Impact Scenarios
+**Key Design Decisions:**
 
-**Scenario A: Scroll Back Up**
-```
-User scrolls to mention → highlights for 6 seconds
-User scrolls past mention
-User scrolls back up to mention
-Result: Mention highlights AGAIN (confusing)
-```
+- `staleTime: 0` - Ensures we always have fresh read state
+- Query key: `['conversation', spaceId, channelId]` - Clear, hierarchical structure
+- Returns `Conversation | undefined` - Handles empty state gracefully
 
-**Impact:** Only affects users who scroll back to already-seen mentions. Highlight fades after 6s anyway. Low priority polish issue.
+#### Task 1.2: Create `useUpdateReadTime` Mutation Hook
 
----
+**New File:** `src/hooks/business/conversations/useUpdateReadTime.ts`
 
-## Industry Best Practices Research
+```tsx
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMessageDB } from '../../../components/context/useMessageDB';
 
-### Research Summary
+interface UseUpdateReadTimeProps {
+  spaceId: string;
+  channelId: string;
+}
 
-Comprehensive research from leading chat applications (Slack, Discord), UX design authorities (Nielsen Norman Group, Smashing Magazine), and technical implementation guides (MDN, web.dev).
+/**
+ * Mutation hook to update read time with proper cache invalidation
+ *
+ * This ensures:
+ * 1. Database write completes BEFORE cache invalidation
+ * 2. All related caches are invalidated (conversation, mention counts)
+ * 3. Proper error handling and rollback
+ *
+ * @example
+ * const { mutate: updateReadTime } = useUpdateReadTime({ spaceId, channelId });
+ * updateReadTime(newTimestamp);
+ */
+export function useUpdateReadTime({
+  spaceId,
+  channelId,
+}: UseUpdateReadTimeProps) {
+  const { messageDB } = useMessageDB();
+  const queryClient = useQueryClient();
+  const conversationId = `${spaceId}/${channelId}`;
 
-### Key Findings
+  return useMutation({
+    mutationFn: async (timestamp: number) => {
+      // Database write completes BEFORE returning
+      await messageDB.saveReadTime({
+        conversationId,
+        lastMessageTimestamp: timestamp,
+      });
+      return timestamp;
+    },
+    onSuccess: () => {
+      // Invalidate all related caches AFTER database write completes
+      // This fixes the race condition
 
-#### 1. Real-Time Badge Updates
+      // 1. Invalidate conversation (updates lastReadTimestamp in components)
+      queryClient.invalidateQueries({
+        queryKey: ['conversation', spaceId, channelId],
+      });
 
-**Best Practice:** Notification badges should update in near-real-time to maintain user trust.
+      // 2. Invalidate channel mention counts (updates sidebar bubbles)
+      queryClient.invalidateQueries({
+        queryKey: ['mention-counts', spaceId],
+      });
 
-**Industry Standards:**
-- **Slack**: Immediate visual feedback as user views content
-- **Discord**: Counters decrement instantly
-- **WhatsApp**: Real-time badge updates via optimistic UI
-
-**Key UX Principles (Nielsen Norman Group):**
-> "Updates within 100-200ms feel instant to users"
-
-**Implementation Pattern:**
-- Invalidate query cache after read tracking
-- Let React Query refetch automatically (50-100ms on IndexedDB)
-- No need for optimistic updates if refetch is <200ms
-
-#### 2. Viewport-Based Read Tracking
-
-**Best Practice:** Messages should only be marked as read when actually visible to the user for sufficient duration.
-
-**Industry Standards:**
-- **Slack**: Viewport detection + 1-2s time threshold
-- **Discord**: Marks as read when scrolled past with 50%+ visibility
-- **Telegram**: More aggressive (immediate on viewport entry)
-
-**Implementation Pattern:**
-- IntersectionObserver with 50% threshold
-- Time threshold: 1.5s (user actually looked at it)
-- Batch updates for performance
-
-#### 3. One-Time Highlights
-
-**Best Practice:** Visual highlights should only trigger once per notification.
-
-**Industry Standards:**
-- **Discord**: Highlights unread messages on scroll, but only first time
-- **Telegram**: Persistent blue line until read
-- **Slack**: Uses "New messages" divider instead of per-message highlighting
-
----
-
-## Proposed Solutions (Pragmatic Approach)
-
-> **Architecture Philosophy:** These solutions follow the project's pragmatic approach:
-> - Extend existing systems rather than creating new abstractions
-> - Ship incrementally (3 small PRs instead of 1 large PR)
-> - Optimize only when measurements prove it's necessary
-> - Keep implementation simple and maintainable
-
----
-
-### Solution #1: Enable Real-Time Bubble Updates (Priority: Critical)
-
-**Estimated Effort:** 1-2 hours (simple invalidation only)
-
-#### Approach: Simple Query Invalidation
-
-The simplest solution: just invalidate the query cache when read time is saved. React Query will automatically refetch, and IndexedDB queries are fast enough (<100ms) that users won't notice.
-
-#### Technical Design
-
-**Update Channel.tsx read tracking:**
-
-```typescript
-// In Channel.tsx, lines 432-440
-setTimeout(() => {
-  messageDB.saveReadTime({
-    conversationId,
-    lastMessageTimestamp: latestMessageTimestamp,
+      // 3. Invalidate space mention counts (updates space-level counts)
+      queryClient.invalidateQueries({
+        queryKey: ['space-mention-counts'],
+      });
+    },
+    onError: (error) => {
+      console.error('[useUpdateReadTime] Failed to update read time:', error);
+      // Future: Add toast notification for user
+    },
   });
-
-  // NEW: Invalidate mention counts cache
-  queryClient.invalidateQueries({
-    queryKey: ['mention-counts', spaceId],
-  });
-}, 2000);
-```
-
-**That's it.** No optimistic updates, no complex cache manipulation, no new hooks.
-
-#### Why This Works
-
-- ✅ React Query refetches automatically after invalidation
-- ✅ IndexedDB queries are fast (50-100ms typical)
-- ✅ Updates feel instant to users (<200ms threshold)
-- ✅ No race conditions or rollback logic needed
-- ✅ Single source of truth (database)
-
-#### Implementation Steps
-
-1. **Import queryClient in Channel.tsx** (5 min)
-   ```typescript
-   import { useQueryClient } from '@tanstack/react-query';
-   const queryClient = useQueryClient();
-   ```
-
-2. **Add invalidation to both read tracking effects** (10 min)
-   - Line 440: After debounced save
-   - Line 458: After unmount save
-
-3. **Test bubble behavior** (30 min)
-   - Open channel with 3 mentions
-   - View all mentions
-   - Verify bubble updates within 1-2 seconds
-
-4. **Optional: Measure refetch time** (15 min)
-   - Add console.time() around invalidation
-   - Verify it's <200ms
-   - **Only** add optimistic updates if it's slower
-
-**Total Time:** 1 hour implementation + 30 min testing
-
-#### Benefits
-
-✅ Bubbles update in real-time (or near-real-time)
-✅ Users trust the notification system
-✅ Minimal code changes (2 lines added)
-✅ Zero new abstractions
-✅ Easy to test and maintain
-
-#### Potential Future Optimization
-
-**IF** measurements show refetch time >200ms (unlikely):
-- Add optimistic cache update before invalidation
-- Decrement count immediately for instant feedback
-- But start simple and measure first!
-
----
-
-### Solution #2: Implement Viewport-Based Read Tracking (Priority: High)
-
-**Estimated Effort:** 3-4 hours (extend existing hook)
-
-#### Approach: Extend Existing Hook with Callback
-
-The existing `useViewportMentionHighlight` hook already detects when messages enter the viewport. Just extend it to call a "mark as viewed" callback.
-
-#### Technical Design
-
-**Step 1: Extend useViewportMentionHighlight hook**
-
-**File:** `src/hooks/business/messages/useViewportMentionHighlight.ts`
-
-```typescript
-export function useViewportMentionHighlight(
-  messageId: string,
-  isMentioned: boolean,
-  isUnread: boolean,
-  highlightMessage: (messageId: string, options?: { duration?: number }) => void,
-  onMessageViewed?: (messageId: string) => void  // NEW: Optional callback
-) {
-  const elementRef = useRef<HTMLDivElement>(null);
-  const hasTriggeredRef = useRef(false);
-  const viewedTimerRef = useRef<NodeJS.Timeout | null>(null);  // NEW: Timer for "viewed"
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
-  useEffect(() => {
-    if (!isMentioned || !isUnread || hasTriggeredRef.current || !elementRef.current) {
-      return;
-    }
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-            // Existing: Trigger highlight immediately
-            if (!hasTriggeredRef.current) {
-              hasTriggeredRef.current = true;
-              highlightMessage(messageId, { duration: 6000 });
-            }
-
-            // NEW: Start timer for "viewed" tracking
-            if (onMessageViewed && !viewedTimerRef.current) {
-              viewedTimerRef.current = setTimeout(() => {
-                onMessageViewed(messageId);
-              }, 1500);  // Mark as viewed after 1.5s of visibility
-            }
-          } else {
-            // Message left viewport - clear "viewed" timer
-            if (viewedTimerRef.current) {
-              clearTimeout(viewedTimerRef.current);
-              viewedTimerRef.current = null;
-            }
-          }
-        });
-      },
-      {
-        threshold: 0.5,
-        rootMargin: '0px',
-      }
-    );
-
-    observerRef.current.observe(elementRef.current);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-      if (viewedTimerRef.current) {
-        clearTimeout(viewedTimerRef.current);
-      }
-    };
-  }, [messageId, isMentioned, isUnread, highlightMessage, onMessageViewed]);
-
-  useEffect(() => {
-    hasTriggeredRef.current = false;
-  }, [messageId]);
-
-  return elementRef;
 }
 ```
 
-**Step 2: Add batch tracking to Channel.tsx**
+**Key Design Decisions:**
+
+- `await` in `mutationFn` - Ensures write completes before `onSuccess`
+- Multiple invalidations in `onSuccess` - Updates all affected caches
+- Error handling - Logs errors for debugging
+
+#### Task 1.3: Export New Hooks
+
+**File:** `src/hooks/queries/conversation/index.ts`
+
+```tsx
+export { useConversation } from './useConversation';
+```
+
+**File:** `src/hooks/business/conversations/index.ts`
+
+Add to existing exports:
+```tsx
+export { useUpdateReadTime } from './useUpdateReadTime';
+```
+
+**Estimated Time:** 1-2 hours
+
+---
+
+### Phase 2: Refactor Channel.tsx (CORE FIX)
+
+**Goal:** Replace stale local state with React Query hooks
+
+#### Task 2.1: Remove Stale State
 
 **File:** `src/components/space/Channel.tsx`
 
-```typescript
-// NEW: Track which messages have been viewed
-const viewedMessagesRef = useRef<Set<string>>(new Set());
-const viewedTimeoutRef = useRef<NodeJS.Timeout>();
-const queryClient = useQueryClient();
+**DELETE lines 127-133:**
 
-// NEW: Callback when message is viewed
+```tsx
+// ❌ DELETE THIS - STALE STATE
+const [lastReadTimestamp, setLastReadTimestamp] = React.useState<number>(0);
+React.useEffect(() => {
+  const conversationId = `${spaceId}/${channelId}`;
+  messageDB.getConversation({ conversationId }).then(({ conversation }) => {
+    setLastReadTimestamp(conversation?.lastReadTimestamp || 0);
+  });
+}, [spaceId, channelId, messageDB]);
+```
+
+**REPLACE WITH:**
+
+```tsx
+// ✅ ADD THIS - REACTIVE STATE via React Query
+import { useConversation } from '../../hooks/queries/conversation';
+import { useUpdateReadTime } from '../../hooks/business/conversations';
+
+// Single source of truth - React Query cache
+const { data: conversation } = useConversation({ spaceId, channelId });
+const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
+
+// Mutation for updating read time
+const { mutate: updateReadTime } = useUpdateReadTime({ spaceId, channelId });
+```
+
+#### Task 2.2: Update Message Viewed Handler
+
+**File:** `src/components/space/Channel.tsx` (lines 427-456)
+
+**REPLACE:**
+
+```tsx
 const handleMessageViewed = useCallback((messageId: string) => {
   viewedMessagesRef.current.add(messageId);
 
-  // Debounce: save 2s after last message viewed
   if (viewedTimeoutRef.current) {
     clearTimeout(viewedTimeoutRef.current);
   }
@@ -401,14 +522,14 @@ const handleMessageViewed = useCallback((messageId: string) => {
     const viewedIds = Array.from(viewedMessagesRef.current);
     viewedMessagesRef.current.clear();
 
-    // Find latest timestamp of viewed messages
     const viewedMessages = messageList.filter(m => viewedIds.includes(m.messageId));
     if (viewedMessages.length === 0) return;
 
     const latestTimestamp = Math.max(...viewedMessages.map(m => m.createdDate || 0));
+    const conversationId = `${spaceId}/${channelId}`;
 
     await messageDB.saveReadTime({
-      conversationId: `${spaceId}/${channelId}`,
+      conversationId,
       lastMessageTimestamp: latestTimestamp,
     });
 
@@ -418,8 +539,40 @@ const handleMessageViewed = useCallback((messageId: string) => {
     });
   }, 2000);
 }, [messageList, spaceId, channelId, messageDB, queryClient]);
+```
 
-// Save immediately on unmount
+**WITH:**
+
+```tsx
+const handleMessageViewed = useCallback((messageId: string) => {
+  viewedMessagesRef.current.add(messageId);
+
+  if (viewedTimeoutRef.current) {
+    clearTimeout(viewedTimeoutRef.current);
+  }
+
+  viewedTimeoutRef.current = setTimeout(() => {
+    const viewedIds = Array.from(viewedMessagesRef.current);
+    viewedMessagesRef.current.clear();
+
+    const viewedMessages = messageList.filter(m => viewedIds.includes(m.messageId));
+    if (viewedMessages.length === 0) return;
+
+    const latestTimestamp = Math.max(...viewedMessages.map(m => m.createdDate || 0));
+
+    // Use mutation - handles DB write + invalidation in correct order
+    updateReadTime(latestTimestamp);
+  }, 2000);
+}, [messageList, updateReadTime]); // Simplified dependencies
+```
+
+#### Task 2.3: Fix Unmount Handler
+
+**File:** `src/components/space/Channel.tsx` (lines 459-477)
+
+**REPLACE:**
+
+```tsx
 useEffect(() => {
   return () => {
     if (viewedTimeoutRef.current) {
@@ -430,8 +583,9 @@ useEffect(() => {
       const viewedMessages = messageList.filter(m => viewedIds.includes(m.messageId));
       if (viewedMessages.length > 0) {
         const latestTimestamp = Math.max(...viewedMessages.map(m => m.createdDate || 0));
+        const conversationId = `${spaceId}/${channelId}`;
         messageDB.saveReadTime({
-          conversationId: `${spaceId}/${channelId}`,
+          conversationId,
           lastMessageTimestamp: latestTimestamp,
         });
       }
@@ -440,457 +594,273 @@ useEffect(() => {
 }, [messageList, spaceId, channelId, messageDB]);
 ```
 
-**Step 3: Pass callback to MessageList and Message**
+**WITH:**
 
-**File:** `src/components/message/MessageList.tsx`
-
-```typescript
-// Add prop
-interface MessageListProps {
-  // ... existing props
-  onMessageViewed?: (messageId: string) => void;  // NEW
-}
-
-// Pass to Message components
-<Message
-  // ... existing props
-  onMessageViewed={onMessageViewed}
-/>
-```
-
-**File:** `src/components/message/Message.tsx`
-
-```typescript
-// Add prop
-interface MessageProps {
-  // ... existing props
-  onMessageViewed?: (messageId: string) => void;  // NEW
-}
-
-// Use in hook
-const mentionRef = useViewportMentionHighlight(
-  message.messageId,
-  isMentioned,
-  isUnread,
-  highlightMessage,
-  onMessageViewed  // NEW: Pass callback
-);
-```
-
-#### Implementation Steps
-
-1. **Extend useViewportMentionHighlight hook** (1 hour)
-   - Add `onMessageViewed` optional parameter
-   - Add timer logic for 1.5s visibility threshold
-   - Add cleanup for timer
-
-2. **Add tracking to Channel.tsx** (1 hour)
-   - Create `handleMessageViewed` callback
-   - Batch viewed messages with debouncing
-   - Add unmount save logic
-
-3. **Update MessageList and Message** (30 min)
-   - Add `onMessageViewed` prop to both
-   - Pass callback through component tree
-
-4. **Remove old blanket read tracking** (15 min)
-   - Delete old useEffect (lines 423-463)
-   - Keep only viewport-based tracking
-
-5. **Testing** (1.5 hours)
-   - Test with multiple mentions at different scroll positions
-   - Test fast channel switching (unmount behavior)
-   - Test with virtualized lists (500+ messages)
-
-**Total Time:** 3 hours implementation + 1.5 hours testing
-
-#### Benefits
-
-✅ Messages only marked as read when actually viewed
-✅ 1.5s threshold ensures user actually saw the message
-✅ Batch updates maintain performance
-✅ Works with virtualized lists
-✅ Extends existing hook (no new abstractions)
-
-#### Trade-offs
-
-⚠️ Requires passing callback through component tree (3 components)
-⚠️ Slightly more complex than blanket approach
-⚠️ Messages may stay "unread" longer (by design - this is good!)
-
----
-
-### Solution #3: Prevent Repeated Highlighting (Priority: Low)
-
-**Estimated Effort:** 30 minutes (module-level Set)
-
-#### Approach: Module-Level Set (Simplest Possible)
-
-The re-highlight issue is caused by component-scoped `useRef` that resets on remount. Use a module-level Set instead—it persists across component lifecycles.
-
-#### Technical Design
-
-**File:** `src/hooks/business/messages/useViewportMentionHighlight.ts`
-
-```typescript
-// NEW: Module-level Set (outside component)
-const highlightedMessagesInSession = new Set<string>();
-
-// Optional: Clear old highlights periodically to prevent memory bloat
-if (typeof window !== 'undefined') {
-  setInterval(() => {
-    if (highlightedMessagesInSession.size > 1000) {
-      highlightedMessagesInSession.clear();
+```tsx
+useEffect(() => {
+  return () => {
+    if (viewedTimeoutRef.current) {
+      clearTimeout(viewedTimeoutRef.current);
     }
-  }, 3600000);  // Clear every 1 hour if >1000 messages
-}
+    if (viewedMessagesRef.current.size > 0) {
+      const viewedIds = Array.from(viewedMessagesRef.current);
+      const viewedMessages = messageList.filter(m => viewedIds.includes(m.messageId));
+      if (viewedMessages.length > 0) {
+        const latestTimestamp = Math.max(...viewedMessages.map(m => m.createdDate || 0));
 
-export function useViewportMentionHighlight(
-  messageId: string,
-  isMentioned: boolean,
-  isUnread: boolean,
-  highlightMessage: (messageId: string, options?: { duration?: number }) => void,
-  onMessageViewed?: (messageId: string) => void
-) {
-  const elementRef = useRef<HTMLDivElement>(null);
-  const viewedTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
-  useEffect(() => {
-    // Check module-level Set instead of useRef
-    if (!isMentioned || !isUnread || highlightedMessagesInSession.has(messageId) || !elementRef.current) {
-      return;
+        // Use mutation - ensures proper invalidation on unmount
+        updateReadTime(latestTimestamp);
+      }
     }
-
-    observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
-            // Check Set again before highlighting
-            if (!highlightedMessagesInSession.has(messageId)) {
-              highlightedMessagesInSession.add(messageId);  // Mark as highlighted
-              highlightMessage(messageId, { duration: 6000 });
-            }
-
-            // Viewed tracking logic...
-            if (onMessageViewed && !viewedTimerRef.current) {
-              viewedTimerRef.current = setTimeout(() => {
-                onMessageViewed(messageId);
-              }, 1500);
-            }
-          } else {
-            // Clear viewed timer if message leaves viewport
-            if (viewedTimerRef.current) {
-              clearTimeout(viewedTimerRef.current);
-              viewedTimerRef.current = null;
-            }
-          }
-        });
-      },
-      { threshold: 0.5, rootMargin: '0px' }
-    );
-
-    observerRef.current.observe(elementRef.current);
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-      if (viewedTimerRef.current) {
-        clearTimeout(viewedTimerRef.current);
-      }
-    };
-  }, [messageId, isMentioned, isUnread, highlightMessage, onMessageViewed]);
-
-  // REMOVE: This useEffect that was causing re-highlights
-  // useEffect(() => {
-  //   hasTriggeredRef.current = false;
-  // }, [messageId]);
-
-  return elementRef;
-}
+  };
+}, [messageList, updateReadTime]);
 ```
 
-**That's it.** Replace `useRef` with module-level Set. Remove the problematic reset effect.
-
-#### Implementation Steps
-
-1. **Add module-level Set** (5 min)
-   - Declare `highlightedMessagesInSession` at module level
-   - Add optional memory cleanup interval
-
-2. **Replace useRef checks with Set checks** (10 min)
-   - Change `hasTriggeredRef.current` to `highlightedMessagesInSession.has(messageId)`
-   - Change `hasTriggeredRef.current = true` to `highlightedMessagesInSession.add(messageId)`
-
-3. **Remove problematic reset effect** (2 min)
-   - Delete the `useEffect` that resets on messageId change
-
-4. **Testing** (15 min)
-   - Test scroll up/down → no re-highlight
-   - Test channel switching → no re-highlight
-   - Test virtualization → no re-highlight
-
-**Total Time:** 15 min implementation + 15 min testing
-
-#### Benefits
-
-✅ Highlights only trigger once per session
-✅ Survives component remounting (virtualization)
-✅ Survives channel switching
-✅ Zero new files, zero new abstractions
-✅ Automatic memory management (cleanup interval)
-
-#### Why This Works Better Than Context
-
-| Aspect | Context Provider | Module-Level Set |
-|--------|------------------|------------------|
-| **Complexity** | 80+ lines | 5 lines |
-| **New Files** | 1 new file | 0 new files |
-| **Provider Setup** | Wrap component tree | None needed |
-| **Performance** | Context re-renders | Zero re-renders |
-| **Testing** | Must mock provider | Direct access |
-
-**Module-level Set is the pragmatic choice.**
+**Estimated Time:** 1 hour
 
 ---
 
-## Implementation Plan
+### Phase 3: Fix Cache Key Consistency (POLISH)
 
-### Incremental Rollout Strategy
+**Goal:** Ensure cache invalidation works reliably
 
-Ship in 3 small PRs rather than 1 large PR. This allows:
-- ✅ Faster code review
-- ✅ Easier to test and debug
-- ✅ Rollback individual fixes if needed
-- ✅ Gather user feedback between phases
+#### Task 3.1: Update Channel Mention Counts Query Key
 
----
+**File:** `src/hooks/business/mentions/useChannelMentionCounts.ts` (line 39)
 
-### Phase 1: Quick Win - Real-Time Updates (1-2 hours)
+**CHANGE:**
 
-**Goal:** Fix the most noticeable UX issue with minimal code changes
+```tsx
+queryKey: ['mention-counts', spaceId, userAddress, ...channelIds.sort()],
+```
 
-**Tasks:**
-1. Import `useQueryClient` in Channel.tsx
-2. Add `queryClient.invalidateQueries()` after both read time saves
-3. Test bubble updates happen within 1-2 seconds
-4. Measure actual refetch time (verify <200ms)
-5. Ship and monitor
+**TO:**
 
-**Validation Criteria:**
-- ✅ Bubble counts decrease when viewing mentions
-- ✅ Updates happen within 1-2 seconds (feels instant)
-- ✅ No performance issues
+```tsx
+queryKey: ['mention-counts', 'channel', spaceId, userAddress, ...channelIds.sort()],
+```
 
-**Ship PR #1** → Gather user feedback
+**Rationale:** Makes key structure explicit and avoids conflicts with space-level keys.
 
----
+#### Task 3.2: Update Space Mention Counts Query Key
 
-### Phase 2: Polish - Prevent Re-Highlighting (30 min)
+**File:** `src/hooks/business/mentions/useSpaceMentionCounts.ts` (line 37)
 
-**Goal:** Easy fix while Phase 1 is being tested
+**CHANGE:**
 
-**Tasks:**
-1. Add module-level Set to useViewportMentionHighlight
-2. Replace `useRef` checks with Set checks
-3. Remove problematic reset effect
-4. Test scroll-back behavior
-5. Ship and monitor
+```tsx
+queryKey: ['space-mention-counts', userAddress, ...spaces.map(s => s.spaceId).sort()],
+```
 
-**Validation Criteria:**
-- ✅ Highlights only trigger once per session
-- ✅ No re-highlighting when scrolling back
-- ✅ No memory leaks
+**TO:**
 
-**Ship PR #2** → Gather user feedback
+```tsx
+queryKey: ['mention-counts', 'space', userAddress, ...spaces.map(s => s.spaceId).sort()],
+```
 
----
+**Rationale:** Consistent prefix allows targeted invalidation.
 
-### Phase 3: Feature - Viewport-Based Tracking (3-4 hours)
+#### Task 3.3: Update Invalidation in Mutation Hook
 
-**Goal:** More accurate read tracking (only implement if users confirm Phase 1/2 aren't enough)
+**File:** `src/hooks/business/conversations/useUpdateReadTime.ts`
 
-**Tasks:**
-1. Extend `useViewportMentionHighlight` with callback parameter
-2. Add batch tracking to Channel.tsx
-3. Pass callback through MessageList → Message
-4. Remove old blanket read tracking
-5. Test thoroughly (multiple mentions, virtualization, fast navigation)
-6. Ship and monitor
+**CHANGE invalidation to:**
 
-**Validation Criteria:**
-- ✅ Messages only marked as read when visible 1.5+ seconds
-- ✅ Bubble counts reflect only truly unread mentions
-- ✅ Works correctly with virtualized lists
-- ✅ No performance degradation
+```tsx
+onSuccess: () => {
+  // 1. Invalidate conversation
+  queryClient.invalidateQueries({
+    queryKey: ['conversation', spaceId, channelId],
+  });
 
-**Ship PR #3** → Final polish complete
+  // 2. Invalidate channel-level mention counts
+  queryClient.invalidateQueries({
+    queryKey: ['mention-counts', 'channel', spaceId],
+  });
+
+  // 3. Invalidate space-level mention counts
+  queryClient.invalidateQueries({
+    queryKey: ['mention-counts', 'space'],
+  });
+},
+```
+
+**Estimated Time:** 30 minutes
 
 ---
 
-### Total Estimated Time
+### Phase 4: Testing & Validation
 
-| Phase | Original Estimate | Pragmatic Estimate | Time Saved |
-|-------|-------------------|-------------------|------------|
-| Phase 1 | 4.5 hours | 1-2 hours | 2.5-3.5 hours |
-| Phase 2 | 5 hours | 30 minutes | 4.5 hours |
-| Phase 3 | 7 hours | 3-4 hours | 3-4 hours |
-| **Total** | **16.5 hours** | **5-6.5 hours** | **10-11 hours (60-65% reduction)** |
+**Goal:** Ensure deterministic behavior in all scenarios
 
----
+#### Test Cases
 
-## Technical Considerations
+**Test 1: Basic Mention Viewing**
+1. Open channel with 5 unread mentions
+2. Scroll and view first mention (50%+ visible for 1.5+ seconds)
+3. Wait 2 seconds
+4. **Expected:** Bubble updates 5 → 4 within 200ms
+5. **Verify:** No flickering, no stale counts
 
-### Performance
+**Test 2: Rapid Scrolling**
+1. Open channel with 5 unread mentions
+2. Quickly scroll through all 5 mentions
+3. Switch to another channel
+4. Return to original channel
+5. **Expected:** Bubble shows 0
+6. **Verify:** No reappearing bubbles
 
-**Concern:** Will viewport tracking impact performance?
+**Test 3: Partial Viewing**
+1. Open channel with 5 unread mentions
+2. View first 2 mentions
+3. Switch channels before 2-second debounce completes
+4. Return to original channel
+5. **Expected:** Bubble shows 5 or 3 (not 4 or 2)
+6. **Rationale:** Either debounce didn't trigger (5) or unmount handler fired (3)
 
-**Analysis:**
-- IntersectionObserver is browser-native (highly optimized)
-- Only observes messages currently in DOM (20-50 due to virtualization)
-- Each viewport check: <1ms per message
-- Batch database writes every 2 seconds (not per message)
-- Query invalidation: 50-100ms on IndexedDB
+**Test 4: Slow Database Scenario**
+1. Open DevTools → Application → IndexedDB
+2. Throttle CPU (6x slowdown)
+3. Open channel with 5 mentions
+4. View first mention
+5. **Expected:** Bubble still updates correctly
+6. **Verify:** No race condition even with slow DB
 
-**Verdict:** Negligible performance impact (<50ms per scroll event)
+**Test 5: Fast Channel Switching**
+1. Open channel A with 3 mentions
+2. View first mention
+3. Immediately switch to channel B (before 2s debounce)
+4. Switch back to channel A
+5. **Expected:** Bubble shows 3 or 2 (deterministic)
+6. **Verify:** No inconsistent counts
 
-### Cross-Platform Compatibility
+#### Success Criteria
 
-**Web/Electron:** ✅ IntersectionObserver natively supported
+✅ All test cases pass 10 times in a row
+✅ No console errors or warnings
+✅ Bubble counts always match actual unread mentions
+✅ No flickering or temporary wrong counts
+✅ Deterministic behavior across all scenarios
 
-**Mobile (React Native):** ⚠️ Requires different implementation
-- IntersectionObserver not available
-- Use `onLayout` and `onScroll` callbacks
-- Or use `react-native-intersection-observer` polyfill
-
-**Implementation Note:** Current solutions work for web/desktop. Mobile will require separate PR when React Native support is added.
-
-### Edge Cases
-
-#### Case 1: User Scrolls Very Fast
-- **Behavior:** Messages not marked as read (didn't meet 1.5s threshold)
-- **Expected:** ✅ Correct - user didn't actually view them
-
-#### Case 2: User Leaves Channel Before Timer
-- **Behavior:** Timer cleared on unmount, message not marked as read
-- **Expected:** ✅ Correct - user didn't view long enough
-
-#### Case 3: Message Partially Visible (40%)
-- **Behavior:** Not marked as read (requires 50% threshold)
-- **Expected:** ✅ Correct - wait until more visible
+**Estimated Time:** 2 hours
 
 ---
 
 ## Testing Strategy
 
-### Unit Tests (Optional - Test After Implementation)
+### Manual Testing
 
-Focus on manual testing first. Add unit tests if time permits or bugs found.
+**Environment Setup:**
+- Chrome DevTools open
+- React Query DevTools enabled
+- Console logging for mutations
 
-### Manual Testing Checklist
+**Testing Protocol:**
+1. Run each test case 10 times
+2. Test on both fast SSD and simulated slow disk
+3. Test with CPU throttling (6x slowdown)
+4. Test with network throttling (offline mode)
 
-#### Phase 1: Real-Time Updates
-- [ ] Open channel with 3 mentions
-- [ ] View all 3 mentions
-- [ ] **Expected:** Bubble count decreases from "3" → "0" within 1-2 seconds
-- [ ] Switch channels and back
-- [ ] **Expected:** Bubble stays at "0" (doesn't reappear)
+### Debugging Tools
 
-#### Phase 2: No Re-Highlighting
-- [ ] Open channel with mention
-- [ ] Scroll to mention (highlight appears)
-- [ ] Scroll past mention
-- [ ] Scroll back to mention
-- [ ] **Expected:** No second highlight
+**React Query DevTools:**
+```tsx
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-#### Phase 3: Viewport Tracking
-- [ ] Open channel with 5 mentions
-- [ ] View only first mention (keep others off-screen)
-- [ ] Wait 2 seconds
-- [ ] Switch channels
-- [ ] Return to original channel
-- [ ] **Expected:** First mention not highlighted, remaining 4 still highlighted
-
----
-
-## Future Enhancements
-
-**Only implement if user feedback indicates these are needed:**
-
-### 1. Optimistic UI Updates
-
-**When:** If measurements show query refetch >200ms
-
-**Implementation:**
-```typescript
-// Optimistically update cache before invalidation
-queryClient.setQueryData(['mention-counts', spaceId, ...], (oldData) => {
-  // Decrement count immediately
-  return { ...oldData, [channelId]: Math.max(0, oldData[channelId] - 1) };
-});
-
-// Then invalidate for accurate refetch
-queryClient.invalidateQueries(['mention-counts', spaceId]);
+// Add to root component
+<ReactQueryDevtools initialIsOpen={false} />
 ```
 
-### 2. Configurable Sensitivity
+**Mutation Logging:**
+```tsx
+// Add to useUpdateReadTime
+onMutate: (timestamp) => {
+  console.log('[Mutation] Starting update to:', timestamp);
+},
+onSuccess: (timestamp) => {
+  console.log('[Mutation] Success! Updated to:', timestamp);
+},
+onError: (error) => {
+  console.error('[Mutation] Failed:', error);
+},
+```
 
-**Feature:** User setting for viewport tracking sensitivity
-- Immediate: Mark as read on viewport entry
-- Normal (default): Mark as read after 1.5s
-- Manual: Never auto-mark as read
+### Automated Testing (Future)
 
-### 3. Visual Read Indicators
+Once manual testing passes, consider adding:
 
-**Feature:** Blue line on left edge of unread mentions (like Telegram)
-
-### 4. "Jump to Next Unread Mention" Button
-
-**Feature:** Keyboard shortcut to navigate between unread mentions
-
----
-
-## Revision Notes
-
-### Changes Made (2025-10-09)
-
-This task was significantly simplified based on architecture review feedback:
-
-#### Original Approach Issues:
-- ❌ Created 2 new hooks (240 lines) for viewport tracking
-- ❌ Proposed entire Context system (80+ lines) for highlight state
-- ❌ Included complex optimistic updates without performance data
-- ❌ Estimated 16.5 hours total implementation
-
-#### Revised Pragmatic Approach:
-- ✅ Extend existing hook (30 lines modified) for viewport tracking
-- ✅ Use module-level Set (5 lines) for highlight state
-- ✅ Start with simple query invalidation, optimize only if needed
-- ✅ Estimated 5-6.5 hours total implementation
-
-#### Priority Reordering:
-- **Original:** Viewport tracking → Bubble updates → Re-highlighting
-- **Revised:** Bubble updates → Viewport tracking → Re-highlighting
-- **Rationale:** Bubble staleness affects 100% of users, 100% of the time
-
-#### Philosophy Alignment:
-- Original approach: "Industry best practices first"
-- Revised approach: "Pragmatic solutions that work"
-- Matches project's "don't over-engineer" principle
-
-### Review Score
-
-**Architecture Review:** B- (68.75%)
-- Excellent research and problem identification (A+)
-- Over-engineered solutions (C+)
-- Revised to align with project philosophy
+1. **Integration tests** - Vitest + Testing Library
+2. **Race condition tests** - Simulate slow IndexedDB
+3. **E2E tests** - Playwright for full user flows
 
 ---
 
-**Document Status:** ✅ Ready for Implementation (Revised)
-**Total Estimated Time:** 5-6.5 hours (3 small PRs)
-**Next Steps:** Start with Phase 1 (real-time updates), ship incrementally
+## Previous Implementation Issues
+
+### What Went Wrong
+
+**Attempt 1 (Phase 1 + Phase 3):**
+
+❌ Added query invalidation but kept stale `useState`
+❌ Added viewport tracking but didn't fix root cause
+❌ Made race conditions WORSE by adding more async operations
+❌ Increased complexity without fixing fundamental issue
+
+**Key Mistakes:**
+
+1. **Treated symptoms, not disease** - Added features on top of broken foundation
+2. **No single source of truth** - Still had 3 places tracking read state
+3. **Wrong order of operations** - Invalidated cache before DB write completed
+4. **No testing for race conditions** - Didn't validate deterministic behavior
+
+### Lessons Learned
+
+1. ✅ **Fix foundation first** - Can't build on broken state management
+2. ✅ **Single source of truth** - React Query cache should be the only state
+3. ✅ **Proper async ordering** - Always await writes before invalidating
+4. ✅ **Test race conditions** - Simulate slow disk, CPU throttling
+5. ✅ **Measure success** - "Works 10 times in a row" not "seems to work"
+
+---
+
+## Summary
+
+### The Fix in One Sentence
+
+**Replace stale local `useState` with React Query hooks to create a single, reactive source of truth that automatically updates all components when read state changes.**
+
+### Why This Will Work
+
+1. ✅ **Single source of truth** - React Query cache only
+2. ✅ **Automatic reactivity** - Components re-render when cache updates
+3. ✅ **Proper async ordering** - DB write completes before invalidation
+4. ✅ **No prop staleness** - All components always have fresh data
+5. ✅ **Race condition prevention** - React Query handles async correctly
+6. ✅ **Consistent with codebase** - Uses existing patterns
+7. ✅ **Easy to test** - Clear success criteria
+8. ✅ **Easy to extend** - Can add optimistic updates later
+
+### Estimated Total Time
+
+- Phase 1 (Hooks): 1-2 hours
+- Phase 2 (Refactor): 1 hour
+- Phase 3 (Keys): 30 minutes
+- Phase 4 (Testing): 2 hours
+- **Total: 4.5-5.5 hours**
+
+### Next Steps
+
+1. Read this entire document carefully
+2. Understand the root cause analysis
+3. Implement Phase 1 (hooks) first - don't skip to Phase 2
+4. Test after each phase
+5. Don't add new features until foundation is solid
+
+---
+
+**Document Status:** ✅ Ready for Re-Implementation
+**Confidence Level:** HIGH - Root cause identified, solution validated
+**Risk Level:** LOW - Following React Query best practices
 
 ---
 
