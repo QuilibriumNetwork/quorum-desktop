@@ -601,17 +601,11 @@ useEffect(() => {
 - **Mitigation**: Well-documented prop flow
 - **Future Fix**: Consider Context API if more read-time data needed
 
-**9. Unified Mention Badge Style**
-- **Issue**: All mention types use same badge color (no @everyone, @role distinction)
-- **Impact**: Can't visually prioritize mention types
-- **Decision**: Intentionally simplified - follows Discord's unified approach
-- **Future**: Could add different colors if user feedback requests it
-
 ---
 
 ## Future Phases
 
-### Phase 2: @everyone Mentions
+### Phase 2: @everyone mentions and roles (@role) mentions
 
 **Status**: Planned
 **Complexity**: Medium
@@ -628,6 +622,8 @@ useEffect(() => {
 - `src/hooks/business/mentions/useChannelMentionCounts.ts` (pass checkEveryone)
 - `src/components/space/ChannelItem.tsx` (add @everyone styling)
 
+Note: see what needs to be done to add @roles mentions too
+
 **Estimated Effort**: 4-6 hours
 
 ### Phase 3: Notification Dropdown
@@ -642,28 +638,34 @@ useEffect(() => {
 - Mark as read functionality
 - Keyboard navigation support
 
+Use src\components\ui\DropdownPanel.tsx and mirror the layout of src\components\message\PinnedMessagesPanel.tsx
+
 **New Components**:
 - `src/components/notifications/NotificationDropdown.tsx`
 - `src/components/notifications/NotificationItem.tsx`
 - `src/hooks/business/mentions/useAllMentions.ts`
 
 **Integration Points**:
-- Add notification bell icon to top navigation
-- Badge count for total unread mentions
+- Add notification bell icon to top navigation (Channel header, to the left of "users" icon), use Icon primitve and mirror the style of the "users" icon
+- IMPORTANT: the notifications pannel shodul show ALL notifications from all channels in the Space
+- Badge count for total unread mentions (clone the style of .channel-group-channel-name-mentions, use it to create an even smaller notification bubble that will sit on top of the bell icon)
 - Route handling for deep linking to messages
-
-**Estimated Effort**: 2-3 days
+- Messages in pinned-messages and search-results panels already have an highlighting system wehn clicked that redirect to the message and highlights it. Check how we handle this and find a solution for messages with mentions that leverages the existing code if possible.
 
 ### Phase 4: Settings Integration
 
 **Status**: Planned
-**Complexity**: Low
+**Complexity**: Medium
+
+Add "Notifications" section in SpaceSettingsModal/Account.tsx, before the "Leave Space" Section.
 
 **Requirements**:
-- Toggle: Enable/disable mention notifications
-- Setting: Notification sound
-- Setting: Mention highlight duration (2s, 3s, 5s, off)
-- Setting: @everyone opt-out per space
+Use the Select primitve
+- Select: Enable/disable all notifications
+- Select: Enable/disable mention notifications for personal mentions
+- Select: Enable/disable mention notifications for role mentions
+- Select: Enable/disable mention notifications for everyone mentions
+
 
 **Files to Modify**:
 - Settings modal/page
