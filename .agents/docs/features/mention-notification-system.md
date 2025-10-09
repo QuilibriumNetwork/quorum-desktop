@@ -205,7 +205,7 @@ See [Known Limitations](#known-limitations) for details and planned improvements
 
 **5. ChannelItem** (`src/components/space/ChannelItem.tsx`)
 - Renders bubble when `mentionCount > 0`
-- CSS class: `channel-group-channel-name-mentions-you`
+- CSS class: `channel-mentions-bubble-you`
 - Display: Shows count number in accent-colored bubble
 
 **6. Message** (`src/components/message/Message.tsx`)
@@ -516,7 +516,7 @@ useEffect(() => {
 
 **Files Used** (not modified):
 - `src/components/space/ChannelItem.tsx` (lines 84-94)
-- `src/styles/_chat.scss` (`.channel-group-channel-name-mentions-you`)
+- `src/styles/_chat.scss` (`.channel-mentions-bubble-you`)
 
 **Why No Changes Needed**:
 - UI was already designed for mention counts
@@ -571,6 +571,8 @@ useEffect(() => {
 
 ### UX Limitations (NEEDS IMPROVEMENT)
 
+See task: .agents\tasks\mention-notification-ux-improvements.md
+
 **5. Read Tracking Not Viewport-Based**
 - **Issue**: Marks ALL messages as read when viewing channel, not just visible ones
 - **Impact**: If user has 3 mentions and scrolls to see first one, all 3 are marked read
@@ -624,8 +626,6 @@ useEffect(() => {
 
 Note: see what needs to be done to add @roles mentions too
 
-**Estimated Effort**: 4-6 hours
-
 ### Phase 3: Notification Dropdown
 
 **Status**: Planned
@@ -647,10 +647,10 @@ Use src\components\ui\DropdownPanel.tsx and mirror the layout of src\components\
 
 **Integration Points**:
 - Add notification bell icon to top navigation (Channel header, to the left of "users" icon), use Icon primitve and mirror the style of the "users" icon
+- Add simple dot in accent color overlayed to the bell icon when there are notifications available
 - IMPORTANT: the notifications pannel shodul show ALL notifications from all channels in the Space
-- Badge count for total unread mentions (clone the style of .channel-group-channel-name-mentions, use it to create an even smaller notification bubble that will sit on top of the bell icon)
 - Route handling for deep linking to messages
-- Messages in pinned-messages and search-results panels already have an highlighting system wehn clicked that redirect to the message and highlights it. Check how we handle this and find a solution for messages with mentions that leverages the existing code if possible.
+- Messages in pinned-messages and search-results panels already have an highlighting system when clicked that redirect to the message and highlights it. Check how we handle this and find a solution for messages with mentions that leverages the existing code if possible.
 
 ### Phase 4: Settings Integration
 

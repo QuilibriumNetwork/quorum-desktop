@@ -5,6 +5,7 @@ import { getIconColorHex, IconColor } from './IconPicker/types';
 import { useLongPressWithDefaults } from '../../hooks/useLongPress';
 import { hapticLight, hapticMedium } from '../../utils/haptic';
 import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
+import { formatMentionCount } from '../../utils/formatMentionCount';
 
 interface Channel {
   channelId: string;
@@ -43,12 +44,12 @@ const ChannelContent: React.FC<{
   groupName: string;
   openChannelEditor: (spaceId: string, groupName: string, channelId: string) => void;
 }> = ({ channel, currentChannelId, isSpaceOwner, isTouch, spaceId, groupName, openChannelEditor }) => (
-  <div className="channel-group-channel">
+  <div className="channel">
     <div
       className={
-        'channel-group-channel-name flex items-start justify-between' +
+        'channel-name flex items-start justify-between' +
         (channel.channelId === currentChannelId
-          ? ' channel-group-channel-name-focused'
+          ? ' channel-name-focused'
           : '') +
         (channel.unreads && channel.unreads > 0
           ? ' !font-bold !opacity-100'
@@ -81,8 +82,8 @@ const ChannelContent: React.FC<{
           {channel.channelName}
         </span>
         {!!channel.mentionCount && (
-          <span className="channel-group-channel-name-mentions">
-            {channel.mentionCount}
+          <span className="channel-mentions-bubble">
+            {formatMentionCount(channel.mentionCount)}
           </span>
         )}
       </div>

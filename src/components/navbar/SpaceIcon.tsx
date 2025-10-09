@@ -3,6 +3,7 @@ import './SpaceIcon.scss';
 import { Tooltip } from '../primitives';
 import { useImageLoading } from '../../hooks';
 import { useDragStateContext } from '../../context/DragStateContext';
+import { formatMentionCount } from '../../utils/formatMentionCount';
 
 type SpaceIconProps = {
   selected: boolean;
@@ -15,6 +16,7 @@ type SpaceIconProps = {
   noToggle?: boolean;
   spaceId?: string; // Add spaceId to make IDs unique
   highlightedTooltip?: boolean;
+  mentionCount?: number;
 };
 const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
   const { backgroundImage } = useImageLoading({
@@ -60,6 +62,11 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
         }}
         {...(props.noTooltip ? {} : { id: `${iconId}-anchor` })}
       />
+      {props.mentionCount && props.mentionCount > 0 && (
+        <span className="space-icon-mention-bubble">
+          {formatMentionCount(props.mentionCount, 9)}
+        </span>
+      )}
     </div>
   );
 

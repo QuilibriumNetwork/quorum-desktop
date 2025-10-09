@@ -51,8 +51,38 @@
 
 // Unified mention badge for all mention types (@user, @role, @everyone)
 // Uses single style regardless of mention type (Discord approach)
+// Light theme: accent-400, Dark theme: accent-600
 .channel-mentions-bubble {
-    @apply inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full ml-2 font-bold text-xs leading-none text-white bg-accent-400 dark:bg-accent-600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9999px;
+  margin-left: 0px;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  text-align: center;
+  color: white;
+  background-color: var(--accent-400);
+
+  // Mobile phone optimization - slightly smaller bubble
+  @media (max-width: 480px) {
+    min-width: 16px;
+    height: 16px;
+    font-size: 11px;
+    margin-left: 6px;
+    // Ensure centering is maintained on mobile
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+html.dark .channel-mentions-bubble {
+  background-color: var(--accent-600);
 }
 
 // Channel icon container with pin overlay

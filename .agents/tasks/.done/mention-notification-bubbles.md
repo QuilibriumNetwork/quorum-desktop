@@ -11,7 +11,7 @@ Implement the backend logic to populate channel mention counts and enable notifi
 
 ### What Exists ✅
 - **UI Components**: `ChannelGroup.tsx` renders mention bubbles when `mentionCount > 0`
-- **Styling**: Complete CSS for `.channel-group-channel-name-mentions-you` and `.channel-group-channel-name-mentions-role`
+- **Styling**: Complete CSS for `.channel-mentions-bubble-you` and `.channel-mentions-bubble-role`
 - **Data Types**: Channel interface includes `mentionCount?: number` and `mentions?: string` properties
 - **Message Mention Detection**: `useMessageFormatting.ts` has `isMentioned()` function
 - **Mention Format**: Users mention with `@<address>` format (e.g., `@<QmV5xWMo5CYSxgAAy6emKFZZPCPKwCsBZKZxXD3mCUZF2n>`)
