@@ -50,10 +50,10 @@ export function isMentioned(
   //   if (hasRoleMention) return true;
   // }
 
-  // Future: Check for @everyone mentions when implemented
-  // if (checkEveryone && message.mentions.everyone) {
-  //   return true;
-  // }
+  // Check for @everyone mentions
+  if (options.checkEveryone && message.mentions.everyone) {
+    return true;
+  }
 
   return false;
 }
@@ -87,10 +87,10 @@ export function getMentionType(
   //   if (hasRoleMention) return 'role';
   // }
 
-  // Future: Check for @everyone mentions
-  // if (checkEveryone && message.mentions.everyone) {
-  //   return 'everyone';
-  // }
+  // Check for @everyone mentions
+  if (options.checkEveryone && message.mentions.everyone) {
+    return 'everyone';
+  }
 
   return null;
 }
@@ -100,24 +100,47 @@ export function getMentionType(
  * Parses @<address> format mentions and returns a Mentions object
  *
  * @param text - The message text to parse
+ * @param options - Optional configuration for mention extraction
+ * @param options.allowEveryone - Whether the user has permission to use @everyone (default: false)
  * @returns Mentions object with memberIds array populated
  *
  * @example
  * const text = "Hey @<QmAbc123> and @<QmDef456>, check this out!";
  * const mentions = extractMentionsFromText(text);
  * // Returns: { memberIds: ['QmAbc123', 'QmDef456'], roleIds: [], channelIds: [] }
+ *
+ * @example
+ * const text = "Hey @everyone, important announcement!";
+ * const mentions = extractMentionsFromText(text, { allowEveryone: true });
+ * // Returns: { memberIds: [], roleIds: [], channelIds: [], everyone: true }
  */
-export function extractMentionsFromText(text: string): Mentions {
+export function extractMentionsFromText(
+  text: string,
+  options?: { allowEveryone?: boolean }
+): Mentions {
   const mentions: Mentions = {
     memberIds: [],
     roleIds: [],
     channelIds: [],
   };
 
-  // Match @<address> pattern
-  // The address is between @< and >
+  // Remove code blocks (both inline and fenced) before processing mentions
+  // This prevents @everyone in code examples from triggering notifications
+  const textWithoutCodeBlocks = text
+    .replace(/```[\s\S]*?```/g, '') // Remove fenced code blocks
+    .replace(/`[^`]+`/g, '');        // Remove inline code
+
+  // Check for @everyone mention (only if user has permission)
+  if (/@everyone\b/i.test(textWithoutCodeBlocks)) {
+    if (options?.allowEveryone) {
+      mentions.everyone = true;
+    }
+    // If allowEveryone is false/undefined, @everyone is ignored (not extracted)
+  }
+
+  // Match @<address> pattern in text without code blocks
   const mentionRegex = /@<([^>]+)>/g;
-  const matches = text.matchAll(mentionRegex);
+  const matches = Array.from(textWithoutCodeBlocks.matchAll(mentionRegex));
 
   for (const match of matches) {
     const address = match[1];

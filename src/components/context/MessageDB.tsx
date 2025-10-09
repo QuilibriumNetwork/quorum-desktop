@@ -366,7 +366,10 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             senderId: currentPasskeyInfo.address,
           } as UpdateProfileMessage,
           queryClient,
-          currentPasskeyInfo
+          currentPasskeyInfo,
+          undefined, // inReplyTo
+          undefined, // skipSigning
+          undefined  // isSpaceOwner - not needed for profile updates
         );
       }
     },
@@ -895,7 +898,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         completedOnboarding: boolean;
       },
       inReplyTo?: string,
-      skipSigning?: boolean
+      skipSigning?: boolean,
+      isSpaceOwner?: boolean
     ) => {
       return messageService.submitChannelMessage(
         spaceId,
@@ -904,7 +908,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         queryClient,
         currentPasskeyInfo,
         inReplyTo,
-        skipSigning
+        skipSigning,
+        isSpaceOwner
       );
     },
     [messageService]

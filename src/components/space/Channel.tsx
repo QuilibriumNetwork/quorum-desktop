@@ -164,7 +164,8 @@ const Channel: React.FC<ChannelProps> = ({
         queryClient,
         user.currentPasskeyInfo!,
         inReplyTo,
-        effectiveSkip
+        effectiveSkip,
+        isSpaceOwner
       );
 
       // Clear deletion flag after a short delay
@@ -210,7 +211,8 @@ const Channel: React.FC<ChannelProps> = ({
         queryClient,
         user.currentPasskeyInfo!,
         inReplyTo,
-        false // Stickers are always signed
+        false, // Stickers are always signed
+        isSpaceOwner
       );
       // Auto-scroll to bottom after sending sticker
       setTimeout(() => {
@@ -223,6 +225,7 @@ const Channel: React.FC<ChannelProps> = ({
       submitChannelMessage,
       queryClient,
       user.currentPasskeyInfo,
+      isSpaceOwner,
     ]
   );
 

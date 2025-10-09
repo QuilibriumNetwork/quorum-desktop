@@ -561,6 +561,7 @@ export const Message = React.memo(({
                         content={contentData.fullText}
                         mapSenderToUser={mapSenderToUser}
                         onUserClick={onUserClick}
+                        hasEveryoneMention={message.mentions?.everyone}
                       />
                     </Container>
                   );

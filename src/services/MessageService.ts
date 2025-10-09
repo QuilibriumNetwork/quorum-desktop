@@ -15,6 +15,7 @@ import { getInviteUrlBase } from '../utils/inviteDomain';
 import { canonicalize } from '../utils/canonicalize';
 import { QuorumApiClient } from '../api/baseTypes';
 import { extractMentionsFromText } from '../utils/mentionUtils';
+import { hasPermission } from '../utils/permissions';
 
 // Type definitions for the service
 export interface MessageServiceDependencies {
@@ -2142,7 +2143,8 @@ export class MessageService {
       completedOnboarding: boolean;
     },
     inReplyTo?: string,
-    skipSigning?: boolean
+    skipSigning?: boolean,
+    isSpaceOwner?: boolean
   ) {
     this.enqueueOutbound(async () => {
       let outbounds: string[] = [];
@@ -2159,11 +2161,19 @@ export class MessageService {
         )
       );
       // Extract mentions from message text
+      // Check if user has permission to use @everyone
+      const canUseEveryone = hasPermission(
+        currentPasskeyInfo.address,
+        'mention:everyone',
+        space,
+        isSpaceOwner || false
+      );
+
       let mentions;
       if (typeof pendingMessage === 'string') {
-        mentions = extractMentionsFromText(pendingMessage);
+        mentions = extractMentionsFromText(pendingMessage, { allowEveryone: canUseEveryone });
       } else if ((pendingMessage as any).text) {
-        mentions = extractMentionsFromText((pendingMessage as any).text);
+        mentions = extractMentionsFromText((pendingMessage as any).text, { allowEveryone: canUseEveryone });
       }
 
       const message = {
@@ -2187,7 +2197,7 @@ export class MessageService {
                 ...(pendingMessage as any),
                 senderId: currentPasskeyInfo.address,
               },
-        mentions: mentions && mentions.memberIds.length > 0 ? mentions : undefined,
+        mentions: mentions && (mentions.memberIds.length > 0 || mentions.everyone) ? mentions : undefined,
       } as Message;
 
       let conversationId = spaceId + '/' + channelId;

@@ -1,6 +1,6 @@
 # Mention Notification System
 
-**Status:** Phase 1 Complete (Bubble Notifications) ✅ - UX improvements needed
+**Status:** Phase 1 & 2 Complete ✅ - UX improvements needed for Phase 1
 **Last Updated:** 2025-10-09
 **Related Task:** [mention-notification-bubbles.md](../../tasks/mention-notification-bubbles.md)
 
@@ -11,12 +11,13 @@
 1. [Overview](#overview)
 2. [Architecture](#architecture)
 3. [Phase 1: Bubble Notifications](#phase-1-bubble-notifications)
-4. [Technical Implementation](#technical-implementation)
-5. [Key Design Decisions](#key-design-decisions)
-6. [Integration Points](#integration-points)
-7. [Known Limitations](#known-limitations)
-8. [Future Phases](#future-phases)
-9. [Troubleshooting](#troubleshooting)
+4. [Phase 2: @everyone Mentions](#phase-2-everyone-mentions)
+5. [Technical Implementation](#technical-implementation)
+6. [Key Design Decisions](#key-design-decisions)
+7. [Integration Points](#integration-points)
+8. [Known Limitations](#known-limitations)
+9. [Future Phases](#future-phases)
+10. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -25,7 +26,8 @@
 The Mention Notification System provides real-time visual feedback when users are mentioned in messages. The system consists of multiple phases:
 
 - **Phase 1 (✅ Complete)**: Notification bubbles in channel sidebar + temporary message highlighting
-- **Phase 2 (Planned)**: @everyone mentions
+- **Phase 2 (✅ Complete)**: @everyone mentions with permission system
+- **Phase 2b (Planned)**: @role mentions
 - **Phase 3 (Planned)**: Notification dropdown/inbox
 - **Phase 4 (Planned)**: User settings integration
 
@@ -255,6 +257,156 @@ See [Known Limitations](#known-limitations) for details and planned improvements
 - Stores `lastReadTimestamp` in conversations table
 - `saveReadTime()`: Updates timestamp
 - `getConversation()`: Retrieves timestamp for count calculation
+
+---
+
+## Phase 2: @everyone Mentions
+
+**Status**: ✅ Complete (2025-10-09)
+
+### What Phase 2 Adds
+
+Phase 2 introduces **permission-based @everyone mentions** that allow authorized users to notify all members in a channel at once.
+
+**Key Features**:
+1. **Permission System**: Only space owners and users with the `mention:everyone` role permission can use @everyone
+2. **Selective Styling**: @everyone text only appears in accent color when user has permission
+3. **Cross-Platform**: Works consistently on web (markdown) and mobile (primitives)
+4. **Security**: Non-authorized users' @everyone text is ignored (no notifications, no styling)
+5. **Code Block Safety**: @everyone inside code blocks doesn't trigger notifications
+
+### Usage
+
+**As Space Owner**:
+- You automatically have permission to use @everyone
+- Type `@everyone` in any message to notify all channel members
+- Text appears in accent color, all users receive notification bubbles
+
+**Assigning Permission to Roles**:
+1. Go to Space Settings → Roles tab
+2. Create or edit a role
+3. Select "Mention Everyone" from permissions dropdown
+4. Assign users to that role
+
+**As Regular User** (without permission):
+- Typing `@everyone` creates plain text (no styling)
+- No notifications are sent to other users
+
+### Technical Flow
+
+#### Message Creation with @everyone
+
+```typescript
+// 1. User types message with @everyone
+const messageText = "Hey @everyone, check this out!";
+
+// 2. Permission check in MessageService
+const isSpaceOwner = space?.hubAddress === currentPasskeyInfo.address;
+const canUseEveryone = hasPermission(
+  currentPasskeyInfo.address,
+  'mention:everyone',
+  space,
+  isSpaceOwner
+);
+
+// 3. Extraction with permission validation
+mentions = extractMentionsFromText(messageText, {
+  allowEveryone: canUseEveryone
+});
+// Result: { memberIds: [], roleIds: [], channelIds: [], everyone: true }
+
+// 4. Message saved with mentions field
+const message = {
+  // ... other fields
+  mentions: mentions // everyone: true for authorized users
+};
+```
+
+#### Notification Counting
+
+```typescript
+// In useChannelMentionCounts
+const unreadMentions = messages.filter((message: Message) => {
+  if (message.createdDate <= lastReadTimestamp) return false;
+
+  // Checks both personal mentions and @everyone
+  return isMentioned(message, {
+    userAddress,
+    checkEveryone: true
+  });
+});
+```
+
+#### Rendering
+
+**Web (Markdown)**:
+```typescript
+// Only styles if message.mentions.everyone === true
+if (hasEveryoneMention) {
+  processedText = processedText.replace(
+    /@everyone\b/gi,
+    '<span class="message-name-mentions-you">@everyone</span>'
+  );
+}
+```
+
+**Mobile (Primitives)**:
+```typescript
+// Only returns mention token if message.mentions.everyone === true
+if (token.match(/^@everyone$/i) && message.mentions?.everyone) {
+  return {
+    type: 'mention',
+    displayName: '@everyone',
+    address: 'everyone',
+  };
+}
+```
+
+### Integration Points
+
+**Permission System**:
+- `src/utils/permissions.ts` - Space owners get `mention:everyone` automatically
+- `src/api/quorumApi.ts` - Added to Permission union type
+- `src/components/modals/SpaceSettingsModal/Roles.tsx` - UI for assigning to roles
+
+**Mention Processing**:
+- `src/utils/mentionUtils.ts` - Extraction with permission check and code block filtering
+- `src/services/MessageService.ts` - Permission validation before message submission
+
+**Rendering**:
+- `src/components/message/MessageMarkdownRenderer.tsx` - Web markdown rendering
+- `src/hooks/business/messages/useMessageFormatting.ts` - Mobile primitives rendering
+
+**Notification System**:
+- `src/hooks/business/mentions/useChannelMentionCounts.ts` - Counts @everyone mentions
+- `src/hooks/business/messages/useViewportMentionHighlight.ts` - Highlights @everyone messages
+
+### Edge Cases Handled
+
+**Code Block Filtering**:
+```typescript
+// This does NOT trigger notifications:
+const code = "Use @everyone to notify all users";
+```
+
+**Case Insensitivity**:
+- `@everyone`, `@Everyone`, `@EVERYONE` all work identically
+
+**Punctuation**:
+- `@everyone!`, `@everyone,`, `@everyone.` all correctly recognized
+
+**Multiple @everyone**:
+- Message with multiple @everyone instances triggers single notification
+
+**Permission Denial**:
+- Non-authorized user types @everyone → appears as plain text, no notifications
+
+### Known Limitations
+
+1. **No Visual Differentiation**: @everyone bubbles look identical to personal mention bubbles
+2. **Combined Count**: @everyone mentions combined with personal mentions in bubble count
+3. **Channel-Wide Only**: All channel members notified (no filtering by online status, etc.)
+4. **No Separate Tracking**: Can't distinguish @everyone from personal mentions in notification counts
 
 ---
 
@@ -641,24 +793,121 @@ useEffect(() => {
 
 ## Future Phases
 
-### Phase 2: @everyone mentions and roles (@role) mentions
+### Phase 2: @everyone mentions
+
+**Status**: ✅ Complete
+**Complexity**: Medium
+**Completed**: 2025-10-09
+
+#### What Was Implemented
+
+**Core Functionality**:
+- Permission-based @everyone mentions (space owners + role-based permission)
+- Notification bubbles for all users when @everyone is used
+- Accent color styling for @everyone text (only when permission granted)
+- Cross-platform support (web markdown + mobile primitives)
+
+**Permission System**:
+- Added `'mention:everyone'` permission type to Permission union
+- Space owners automatically have permission
+- Assignable to roles via Space Settings → Roles tab → "Mention Everyone" option
+
+**Security & Edge Cases**:
+- Permission validation before extracting mentions
+- Code block filtering (prevents `@everyone` in code blocks from triggering notifications)
+- Case-insensitive matching (@everyone, @Everyone, @EVERYONE)
+- Punctuation handling (@everyone! @everyone, etc.)
+- Conditional styling (only styled when user has permission)
+
+#### Files Modified
+
+**Type Definitions**:
+- `src/api/quorumApi.ts` - Added `everyone?: boolean` to Mentions type, added `'mention:everyone'` to Permission type
+
+**Mention Processing**:
+- `src/utils/mentionUtils.ts` - Updated `extractMentionsFromText()` to parse @everyone with permission check and code block filtering
+- `src/utils/mentionUtils.ts` - Enabled `checkEveryone` logic in `isMentioned()` and `getMentionType()`
+
+**Permission System**:
+- `src/utils/permissions.ts` - Added `'mention:everyone'` to space owner permissions
+- `src/services/MessageService.ts` - Permission check before message submission, passes `isSpaceOwner` parameter
+
+**Rendering (Web)**:
+- `src/components/message/MessageMarkdownRenderer.tsx` - Conditional @everyone styling based on `hasEveryoneMention` prop
+- `src/components/message/Message.tsx` - Pass `hasEveryoneMention` prop to renderer
+
+**Rendering (Mobile)**:
+- `src/hooks/business/messages/useMessageFormatting.ts` - Added @everyone token detection with permission check
+- `src/hooks/business/messages/useMessageFormatting.ts` - Updated `isMentioned()` to include @everyone
+
+**Notification Counting**:
+- `src/hooks/business/mentions/useChannelMentionCounts.ts` - Pass `checkEveryone: true` to `isMentioned()`
+
+**UI Integration**:
+- `src/components/modals/SpaceSettingsModal/Roles.tsx` - Added "Mention Everyone" to role permissions dropdown
+- `src/components/context/MessageDB.tsx` - Updated `submitChannelMessage` wrapper signature
+- `src/components/space/Channel.tsx` - Pass `isSpaceOwner` to message submission
+- `src/hooks/business/spaces/useSpaceProfile.ts` - Updated profile update to include new parameter
+
+#### How It Works
+
+**For Users with Permission** (Space Owner or Role with `mention:everyone`):
+1. User types `@everyone` in message
+2. Permission check passes
+3. `mentions.everyone = true` saved to message
+4. Text styled in accent color
+5. All channel members receive notification bubble
+
+**For Users without Permission**:
+1. User types `@everyone` in message
+2. Permission check fails
+3. `mentions.everyone` not set (remains undefined)
+4. Text appears as plain text (no styling)
+5. No notifications sent
+
+**Code Block Safety**:
+```typescript
+// This will NOT trigger @everyone notification:
+const example = "Use @everyone to mention all users";
+```
+
+#### Known Limitations
+
+- @everyone mentions all users in the channel (no granular filtering by online status, etc.)
+- Bubble styling is identical to user mentions (no visual differentiation)
+- No separate @everyone notification count (combined with personal mentions)
+
+#### Testing
+
+**Test Scenarios**:
+1. ✅ Space owner can use @everyone → notifications + styling
+2. ✅ User with role permission can use @everyone → notifications + styling
+3. ✅ Regular user types @everyone → no notifications, no styling
+4. ✅ @everyone in code blocks → no notifications
+5. ✅ Case variations work (@Everyone, @EVERYONE)
+6. ✅ Works with punctuation (@everyone! @everyone,)
+7. ✅ Cross-platform (web markdown + mobile primitives)
+
+---
+
+### Phase 2b: @role mentions (Future)
 
 **Status**: Planned
 **Complexity**: Medium
 
 **Implementation Plan**:
-1. Add `everyone` field to `Mentions` type
-2. Update `extractMentionsFromText()` to parse `@everyone`
-3. Add `checkEveryone` option to `isMentioned()`
-4. Update UI to show different bubble color/icon for @everyone
+1. Parse `@<roleTag>` pattern in `extractMentionsFromText()`
+2. Get user's roles from Space data using `useSpace()` hook
+3. Pass `userRoles` to `isMentioned()` via `MentionCheckOptions`
+4. Uncomment role checking logic in `isMentioned()` and `getMentionType()`
+5. Add role mention rendering and styling
+6. Consider permission system for who can mention roles
 
 **Files to Modify**:
-- `src/utils/mentionUtils.ts` (uncomment prepared code)
-- `src/api/quorumApi.ts` (add `everyone?: boolean` to Mentions type)
-- `src/hooks/business/mentions/useChannelMentionCounts.ts` (pass checkEveryone)
-- `src/components/space/ChannelItem.tsx` (add @everyone styling)
-
-Note: see what needs to be done to add @roles mentions too
+- `src/utils/mentionUtils.ts` (uncomment and enhance role logic)
+- `src/hooks/business/mentions/useChannelMentionCounts.ts` (pass userRoles)
+- `src/components/message/MessageMarkdownRenderer.tsx` (render role mentions)
+- `src/hooks/business/messages/useMessageFormatting.ts` (detect role mentions)
 
 ### Phase 3: Notification Dropdown
 
@@ -969,8 +1218,8 @@ src/
 
 **Document maintained by**: Development Team
 **For questions**: See troubleshooting section or check related task file
-**Next review**: When Phase 2 begins
+**Next review**: When Phase 3 (Notification Dropdown) begins
 
 ---
 
-*Last updated: 2025-10-09*
+*Last updated: 2025-10-09 - Phase 2 (@everyone mentions) completed*

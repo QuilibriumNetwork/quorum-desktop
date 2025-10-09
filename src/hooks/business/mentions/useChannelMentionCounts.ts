@@ -63,10 +63,10 @@ export function useChannelMentionCounts({
 
           // Filter messages that:
           // 1. Were created after last read time
-          // 2. Mention the current user
+          // 2. Mention the current user (including @everyone mentions)
           const unreadMentions = messages.filter((message: Message) => {
             if (message.createdDate <= lastReadTimestamp) return false;
-            return isMentioned(message, { userAddress });
+            return isMentioned(message, { userAddress, checkEveryone: true });
           });
 
           // Only include channels with mentions

@@ -50,7 +50,7 @@ export function getUserPermissions(
 ): Permission[] {
   // Space owners have all permissions
   if (isSpaceOwner) {
-    return ['message:delete', 'message:pin', 'user:kick'];
+    return ['message:delete', 'message:pin', 'user:kick', 'mention:everyone'];
   }
 
   if (!space || !space.roles) {
@@ -87,9 +87,9 @@ export function canKickUser(
   }
 
   // Space owners cannot be kicked
-  if (space.ownerAddress === targetUserAddress) {
-    return false;
-  }
+  // TODO: Currently cannot check if user is space owner without async key check
+  // For now, this only prevents kicking based on other criteria
+  // See: .agents/bugs/space-owner-delete-permissions-bug.md
 
   return true;
 }

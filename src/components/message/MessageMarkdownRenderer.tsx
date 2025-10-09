@@ -26,6 +26,7 @@ interface MessageMarkdownRendererProps {
     displayName?: string;
     userIcon?: string;
   }, event: React.MouseEvent, context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }) => void;
+  hasEveryoneMention?: boolean; // Whether the message has mentions.everyone = true
 }
 
 
@@ -102,6 +103,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   className = '',
   mapSenderToUser,
   onUserClick,
+  hasEveryoneMention = false,
 }) => {
 
   // Convert H1 and H2 headers to H3 since only H3 is allowed
@@ -149,13 +151,22 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   const processMentions = useCallback((text: string): string => {
     if (!mapSenderToUser) return text;
 
+    let processedText = text;
+
+    // Only style @everyone if the message has mentions.everyone = true
+    if (hasEveryoneMention) {
+      processedText = processedText.replace(/@everyone\b/gi, '<span class="message-name-mentions-you">@everyone</span>');
+    }
+
     // Replace @<address> with styled, clickable @DisplayName
-    return text.replace(/@<(Qm[a-zA-Z0-9]+)>/g, (match, address) => {
+    processedText = processedText.replace(/@<(Qm[a-zA-Z0-9]+)>/g, (match, address) => {
       const user = mapSenderToUser(address);
       const displayName = user?.displayName || address.substring(0, 8) + '...';
       return `<span class="message-name-mentions-you cursor-pointer" data-user-address="${address}" data-user-display-name="${displayName || ''}" data-user-icon="${user?.userIcon || ''}">@${displayName}</span>`;
     });
-  }, [mapSenderToUser]);
+
+    return processedText;
+  }, [mapSenderToUser, hasEveryoneMention]);
 
   // Simplified processing pipeline with stable dependencies
   const processedContent = useMemo(() => {
