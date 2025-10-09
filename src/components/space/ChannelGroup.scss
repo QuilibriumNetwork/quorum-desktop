@@ -8,11 +8,11 @@
   font-size: 18px;
 }
 
-.channel-group-channel {
+.channel-group .channel {
   padding: 0px 0px 0px 10px;
 }
 
-.channel-group-channel-name {
+.channel-group .channel-name {
   font-weight: 300;
   opacity: 0.8;
   cursor: pointer;
@@ -22,7 +22,7 @@
   display: none;
 }
 
-.channel-group-channel-name:hover {
+.channel-group .channel-name:hover {
   background: var(--surface-2);
   padding: 0px 15px;
   margin: 0px -15px;
@@ -34,7 +34,7 @@
   }
 }
 
-.channel-group-channel-name-focused {
+.channel-group .channel-name-focused {
   font-weight: 700;
   background: var(--surface-2);
   padding: 0px 15px;
@@ -43,7 +43,7 @@
   border-radius: 0.5rem 0rem 0rem 0.5rem;
 }
 
-.channel-group-channel-name-focused:hover {
+.channel-group .channel-name-focused:hover {
   .channel-configure {
     display: block !important;
   }
@@ -51,7 +51,7 @@
 
 // Unified mention badge for all mention types (@user, @role, @everyone)
 // Uses single style regardless of mention type (Discord approach)
-.channel-group-channel-name-mentions {
+.channel-mentions-bubble {
     @apply inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full ml-2 font-bold text-xs leading-none text-white bg-accent-400 dark:bg-accent-600;
 }
 
@@ -82,15 +82,15 @@
 
 // Mobile layout
 @media (max-width: 1023px) {
-  .channel-group-channel {
+  .channel-group .channel {
     padding: 0px 10px;
   }
 
-  .channel-group-channel-name:hover {
+  .channel-group .channel-name:hover {
     border-radius: 0.5rem;
   }
 
-  .channel-group-channel-name-focused {
+  .channel-group .channel-name-focused {
     border-radius: 0.5rem;
   }
 }
