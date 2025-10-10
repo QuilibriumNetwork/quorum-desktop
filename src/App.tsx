@@ -89,6 +89,11 @@ const App = () => {
     }
   }, [currentPasskeyInfo, passkeyRegistrationComplete, setUser, user]);
 
+  // Check if we're on a dev route that doesn't need authentication
+  const isDevRoute = process.env.NODE_ENV === 'development' &&
+    (window.location.pathname.startsWith('/playground') ||
+     window.location.pathname.startsWith('/dev'));
+
   return (
     <>
       <I18nProvider i18n={i18n}>
@@ -100,7 +105,12 @@ const App = () => {
             </div>
           }
         >
-          {user && currentPasskeyInfo ? (
+          {isDevRoute ? (
+            <div className="bg-app flex flex-col min-h-screen text-main">
+              {isWeb() && isElectron() && <CustomTitlebar />}
+              <Router user={user} setUser={setUser} />
+            </div>
+          ) : user && currentPasskeyInfo ? (
             <div className="bg-app flex flex-col min-h-screen text-main">
               {isWeb() && isElectron() && <CustomTitlebar />}
               <Suspense fallback={<Connecting />}>

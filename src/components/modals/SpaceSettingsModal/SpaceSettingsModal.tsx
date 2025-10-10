@@ -25,6 +25,7 @@ import {
   useModalSaveState,
   useSpaceProfile,
 } from '../../../hooks';
+import { useMentionNotificationSettings } from '../../../hooks/business/mentions';
 import Account from './Account';
 import General from './General';
 import Roles from './Roles';
@@ -237,6 +238,46 @@ const SpaceSettingsModal: React.FunctionComponent<{
     onSave: dismiss,
   });
 
+  // Mention notification settings (for Account tab)
+  const mentionSettings = useMentionNotificationSettings({ spaceId });
+
+  // Wrapped save handler for Account tab (saves both profile and mention settings)
+  const handleAccountSave = React.useCallback(async () => {
+    // Note: spaceProfile.onSave() already has its own isSaving state and manages the overlay
+    // But we need to also save mention settings, so we wrap both operations
+    // to show a unified saving state
+
+    try {
+      // Save mention settings first
+      await mentionSettings.saveSettings();
+
+      // Invalidate mention count queries to recalculate with new settings
+      await queryClient.invalidateQueries({
+        queryKey: ['mention-counts', 'channel', spaceId],
+      });
+
+      // Then save profile changes (which dismisses the modal)
+      await spaceProfile.onSave();
+    } catch (error) {
+      console.error('[SpaceSettings] Error saving account settings:', error);
+      // spaceProfile.onSave already shows error toasts, so we don't need to duplicate
+      // But if mention settings fail, we should show an error
+      if (error instanceof Error && error.message.includes('mention')) {
+        if (typeof window !== 'undefined' && (window as any).dispatchEvent) {
+          (window as any).dispatchEvent(
+            new CustomEvent('quorum:toast', {
+              detail: {
+                message: t`Failed to save notification settings`,
+                variant: 'error',
+              },
+            })
+          );
+        }
+      }
+      throw error; // Re-throw to prevent modal from closing
+    }
+  }, [mentionSettings, spaceProfile, queryClient, spaceId]);
+
   // Delete confirmation state - kept local as it's UI-specific
   const [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
 
@@ -336,17 +377,17 @@ const SpaceSettingsModal: React.FunctionComponent<{
       <Modal
         title=""
         visible={true}
-        onClose={isSaving ? undefined : dismiss}
+        onClose={(isSaving || spaceProfile.isSaving || mentionSettings.isSaving) ? undefined : dismiss}
         size="large"
         className="modal-complex-wrapper"
         hideClose={false}
         noPadding={true}
-        closeOnBackdropClick={!isSaving}
-        closeOnEscape={!isSaving}
+        closeOnBackdropClick={!(isSaving || spaceProfile.isSaving || mentionSettings.isSaving)}
+        closeOnEscape={!(isSaving || spaceProfile.isSaving || mentionSettings.isSaving)}
       >
         <div className="modal-complex-container-inner relative">
           {/* Loading overlay for saving */}
-          <ModalSaveOverlay visible={isSaving} />
+          <ModalSaveOverlay visible={isSaving || (selectedCategory === 'account' && (spaceProfile.isSaving || mentionSettings.isSaving))} />
 
           <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <div className="modal-complex-layout-with-footer">
@@ -380,6 +421,9 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           hasValidationError={spaceProfile.hasValidationError}
                           onClose={dismiss}
                           roles={roles}
+                          selectedMentionTypes={mentionSettings.selectedTypes}
+                          setSelectedMentionTypes={mentionSettings.setSelectedTypes}
+                          isMentionSettingsLoading={mentionSettings.isLoading}
                         />
                       );
                     case 'general':
@@ -528,10 +572,10 @@ const SpaceSettingsModal: React.FunctionComponent<{
                   )}
                   <Button
                     type="primary"
-                    onClick={selectedCategory === 'account' ? spaceProfile.onSave : saveChanges}
+                    onClick={selectedCategory === 'account' ? handleAccountSave : saveChanges}
                     disabled={
                       selectedCategory === 'account'
-                        ? spaceProfile.isSaving || spaceProfile.hasValidationError
+                        ? spaceProfile.isSaving || spaceProfile.hasValidationError || mentionSettings.isSaving
                         : isSaving || !spaceName.trim()
                     }
                   >

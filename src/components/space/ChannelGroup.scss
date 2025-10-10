@@ -8,11 +8,11 @@
   font-size: 18px;
 }
 
-.channel-group-channel {
+.channel-group .channel {
   padding: 0px 0px 0px 10px;
 }
 
-.channel-group-channel-name {
+.channel-group .channel-name {
   font-weight: 300;
   opacity: 0.8;
   cursor: pointer;
@@ -22,7 +22,7 @@
   display: none;
 }
 
-.channel-group-channel-name:hover {
+.channel-group .channel-name:hover {
   background: var(--surface-2);
   padding: 0px 15px;
   margin: 0px -15px;
@@ -34,7 +34,7 @@
   }
 }
 
-.channel-group-channel-name-focused {
+.channel-group .channel-name-focused {
   font-weight: 700;
   background: var(--surface-2);
   padding: 0px 15px;
@@ -43,29 +43,46 @@
   border-radius: 0.5rem 0rem 0rem 0.5rem;
 }
 
-.channel-group-channel-name-focused:hover {
+.channel-group .channel-name-focused:hover {
   .channel-configure {
     display: block !important;
   }
 }
 
-.channel-group-channel-name-mentions-you,
-.channel-group-channel-name-mentions-role {
-  display: inline-block;
-  padding: 0px 6px;
-  border-radius: 1rem;
-  line-height: 20px;
-  margin-top: 4px;
-  margin-left: 8px;
+// Unified mention badge for all mention types (@user, @role, @everyone)
+// Uses single style regardless of mention type (Discord approach)
+// Light theme: accent-400, Dark theme: accent-600
+.channel-mentions-bubble {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9999px;
+  margin-left: 0px;
   font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  text-align: center;
+  color: white;
+  background-color: var(--accent-400);
+
+  // Mobile phone optimization - slightly smaller bubble
+  @media (max-width: 480px) {
+    min-width: 16px;
+    height: 16px;
+    font-size: 11px;
+    margin-left: 6px;
+    // Ensure centering is maintained on mobile
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
-.channel-group-channel-name-mentions-role {
-  background: #3e8914;
-}
-
-.channel-group-channel-name-mentions-you {
-  background: #eeb155;
+html.dark .channel-mentions-bubble {
+  background-color: var(--accent-600);
 }
 
 // Channel icon container with pin overlay
@@ -95,15 +112,15 @@
 
 // Mobile layout
 @media (max-width: 1023px) {
-  .channel-group-channel {
+  .channel-group .channel {
     padding: 0px 10px;
   }
 
-  .channel-group-channel-name:hover {
+  .channel-group .channel-name:hover {
     border-radius: 0.5rem;
   }
 
-  .channel-group-channel-name-focused {
+  .channel-group .channel-name-focused {
     border-radius: 0.5rem;
   }
 }

@@ -38,6 +38,9 @@ const Select: React.FC<NativeSelectProps> = ({
   maxHeight,
   showSelectAllOption = true,
   maxDisplayedChips = 3,
+  compactMode = false,
+  compactIcon = 'filter',
+  showSelectionCount = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState<string | string[]>(
@@ -108,6 +111,11 @@ const Select: React.FC<NativeSelectProps> = ({
 
   // Helper to get display content
   const getDisplayContent = () => {
+    // Compact mode: show only icon
+    if (compactMode) {
+      return { isCompact: true };
+    }
+
     if (multiple) {
       const selectedValues = selectedValue as string[];
 
@@ -195,9 +203,32 @@ const Select: React.FC<NativeSelectProps> = ({
   const customStyle = [
     styles.container,
     fullWidth && styles.fullWidth,
+    compactMode && styles.compact,
     width && { width },
     style,
   ];
+
+  const triggerStyle = compactMode
+    ? [
+        styles.compactTrigger,
+        {
+          padding: size === 'small' ? 6 : size === 'large' ? 10 : 8,
+          opacity: disabled ? 0.5 : 1,
+        },
+      ]
+    : [
+        styles.trigger,
+        variantStyles,
+        {
+          paddingVertical: sizeStyles.paddingVertical,
+          paddingHorizontal: sizeStyles.paddingHorizontal,
+          borderColor: error
+            ? colors.field.borderError
+            : variantStyles.borderColor,
+          borderWidth: error ? 2 : variantStyles.borderWidth || 1,
+          opacity: disabled ? 0.5 : 1,
+        },
+      ];
 
   return (
     <View style={customStyle}>
@@ -205,24 +236,31 @@ const Select: React.FC<NativeSelectProps> = ({
         testID={testID}
         onPress={() => !disabled && setIsOpen(true)}
         disabled={disabled}
-        style={[
-          styles.trigger,
-          variantStyles,
-          {
-            paddingVertical: sizeStyles.paddingVertical,
-            paddingHorizontal: sizeStyles.paddingHorizontal,
-            borderColor: error
-              ? colors.field.borderError
-              : variantStyles.borderColor,
-            borderWidth: error ? 2 : variantStyles.borderWidth || 1,
-            opacity: disabled ? 0.5 : 1,
-          },
-        ]}
+        style={triggerStyle}
       >
-        <View style={styles.valueContainer}>
-          {displayData.element ? (
-            displayData.element
-          ) : (
+        {compactMode ? (
+          <View style={styles.compactContent}>
+            <Icon
+              name={compactIcon}
+              size={size === 'small' ? 'sm' : 'md'}
+              color={colors.text.subtle}
+            />
+            {showSelectionCount && multiple && (() => {
+              const selectedValues = selectedValue as string[];
+              const count = selectedValues.length;
+              return count > 0 ? (
+                <View style={[styles.selectionBadge, { backgroundColor: colors.accent[500] }]}>
+                  <Text style={styles.badgeText}>{count}</Text>
+                </View>
+              ) : null;
+            })()}
+          </View>
+        ) : (
+          <>
+            <View style={styles.valueContainer}>
+              {displayData.element ? (
+                displayData.element
+              ) : (
             <>
               {displayData.avatar && (
                 <Image
@@ -303,8 +341,10 @@ const Select: React.FC<NativeSelectProps> = ({
               </View>
             </>
           )}
-        </View>
-        <Icon name="chevron-down" size="xs" color={colors.field.placeholder} />
+            </View>
+            <Icon name="chevron-down" size="xs" color={colors.field.placeholder} />
+          </>
+        )}
       </TouchableOpacity>
 
       {error && errorMessage && (
@@ -792,6 +832,40 @@ const styles = StyleSheet.create({
   actionText: {
     fontSize: 14,
     fontWeight: '500',
+  },
+  // Compact mode styles
+  compact: {
+    minWidth: undefined,
+    maxWidth: undefined,
+    width: 'auto',
+  },
+  compactTrigger: {
+    borderWidth: 0,
+    backgroundColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  compactContent: {
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectionBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 10,
+    paddingHorizontal: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '600',
+    lineHeight: 12,
   },
 });
 

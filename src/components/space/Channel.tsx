@@ -6,7 +6,10 @@ import {
   useChannelMessages,
   useMessageComposer,
   usePinnedMessages,
+  useConversation,
+  useUpdateReadTime,
 } from '../../hooks';
+import { useAllMentions } from '../../hooks/business/mentions';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -23,6 +26,7 @@ import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
+import { NotificationPanel } from '../notifications/NotificationPanel';
 import { Virtuoso } from 'react-virtuoso';
 import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
@@ -88,6 +92,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [init, setInit] = useState(false);
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [showPinnedMessages, setShowPinnedMessages] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [isDeletionInProgress, setIsDeletionInProgress] = useState(false);
 
   // User profile modal state and logic
@@ -99,7 +104,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [searchFocused, setSearchFocused] = useState(false);
 
   const headerRef = React.useRef<HTMLDivElement>(null);
-  const { submitChannelMessage } = useMessageDB();
+  const { submitChannelMessage, messageDB } = useMessageDB();
 
   // Create refs for textarea (MessageList needs this for scrolling and we need it for focus)
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -122,6 +127,21 @@ const Channel: React.FC<ChannelProps> = ({
 
   // Get pinned messages
   const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
+
+  // Get all unread mentions across all channels for notification bell
+  const { mentions: allMentions } = useAllMentions({
+    spaceId,
+    channelIds: space?.groups.flatMap(g => g.channels.map(c => c.channelId)) || [],
+  });
+  const totalMentions = allMentions.length;
+
+  // Get last read timestamp for mention highlighting - using React Query
+  const conversationId = `${spaceId}/${channelId}`;
+  const { data: conversationData } = useConversation({ conversationId });
+  const lastReadTimestamp = conversationData?.conversation?.lastReadTimestamp || 0;
+
+  // Mutation for updating read time with proper cache invalidation
+  const { mutate: updateReadTime } = useUpdateReadTime({ spaceId, channelId });
 
   // Debounced search effect
   useEffect(() => {
@@ -154,7 +174,8 @@ const Channel: React.FC<ChannelProps> = ({
         queryClient,
         user.currentPasskeyInfo!,
         inReplyTo,
-        effectiveSkip
+        effectiveSkip,
+        isSpaceOwner
       );
 
       // Clear deletion flag after a short delay
@@ -200,7 +221,8 @@ const Channel: React.FC<ChannelProps> = ({
         queryClient,
         user.currentPasskeyInfo!,
         inReplyTo,
-        false // Stickers are always signed
+        false, // Stickers are always signed
+        isSpaceOwner
       );
       // Auto-scroll to bottom after sending sticker
       setTimeout(() => {
@@ -213,6 +235,7 @@ const Channel: React.FC<ChannelProps> = ({
       submitChannelMessage,
       queryClient,
       user.currentPasskeyInfo,
+      isSpaceOwner,
     ]
   );
 
@@ -411,6 +434,48 @@ const Channel: React.FC<ChannelProps> = ({
     }
   }, [kickUserAddress, openKickUser, setKickUserAddress]);
 
+  // Save read time when viewing channel (for mention count tracking)
+  // Uses mutation to ensure proper cache invalidation
+  // Uses ref + interval pattern to avoid restarting timer on every new message
+  const latestTimestampRef = useRef<number>(0);
+  const lastSavedTimestampRef = useRef<number>(0);
+
+  useEffect(() => {
+    if (messageList.length > 0) {
+      // Update ref with latest timestamp (doesn't restart timer)
+      latestTimestampRef.current = Math.max(
+        ...messageList.map((msg) => msg.createdDate || 0)
+      );
+    }
+  }, [messageList]);
+
+  useEffect(() => {
+    // Periodic check every 2 seconds to save if there's new content
+    const intervalId = setInterval(() => {
+      if (
+        latestTimestampRef.current > 0 &&
+        latestTimestampRef.current > lastSavedTimestampRef.current
+      ) {
+        // Use mutation - handles DB write + invalidation in correct order
+        updateReadTime(latestTimestampRef.current);
+        lastSavedTimestampRef.current = latestTimestampRef.current;
+      }
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, [updateReadTime]);
+
+  // Save immediately when leaving channel (component unmount)
+  useEffect(() => {
+    return () => {
+      // Save any unsaved progress on unmount
+      if (latestTimestampRef.current > lastSavedTimestampRef.current) {
+        // Use mutation - ensures proper invalidation on unmount
+        updateReadTime(latestTimestampRef.current);
+      }
+    };
+  }, [updateReadTime]);
+
   return (
     <div className="chat-container">
       <div className="flex flex-col flex-1 min-w-0">
@@ -494,6 +559,41 @@ const Channel: React.FC<ChannelProps> = ({
                   />
                 </div>
               )}
+
+              {/* Notification Bell */}
+              <div className="relative">
+                <Tooltip
+                  id={`notifications-${channelId}`}
+                  content={t`Notifications`}
+                  showOnTouch={false}
+                >
+                  <Button
+                    type="unstyled"
+                    onClick={() => setShowNotifications(true)}
+                    className="relative header-icon-button"
+                    iconName="bell"
+                    iconOnly
+                  >
+                    {totalMentions > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-accent text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                        {totalMentions > 9 ? '9+' : totalMentions}
+                      </span>
+                    )}
+                  </Button>
+                </Tooltip>
+
+                {/* Notification Panel */}
+                <NotificationPanel
+                  isOpen={showNotifications}
+                  onClose={() => setShowNotifications(false)}
+                  spaceId={spaceId}
+                  channelIds={space?.groups.flatMap(g => g.channels.map(c => c.channelId)) || []}
+                  mapSenderToUser={mapSenderToUser}
+                  virtuosoRef={messageListRef.current?.getVirtuosoRef()}
+                  messageList={messageList}
+                />
+              </div>
+
               <Tooltip
                 id={`members-list-${channelId}`}
                 content={t`Members List`}
@@ -566,6 +666,7 @@ const Channel: React.FC<ChannelProps> = ({
                 setKickUserAddress={setKickUserAddress}
                 isDeletionInProgress={isDeletionInProgress}
                 onUserClick={userProfileModal.handleUserClick}
+                lastReadTimestamp={lastReadTimestamp}
                 fetchPreviousPage={() => {
                   fetchPreviousPage();
                 }}

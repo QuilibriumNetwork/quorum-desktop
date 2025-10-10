@@ -65,7 +65,7 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
   // Check if message mentions current user
   const isMentioned = useCallback(
     (userAddress: string) => {
-      return message.mentions?.memberIds.includes(userAddress) || false;
+      return message.mentions?.memberIds.includes(userAddress) || message.mentions?.everyone || false;
     },
     [message.mentions]
   );
@@ -129,7 +129,17 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
       lineIndex: number,
       tokenIndex: number
     ) => {
-      // Check for mentions
+      // Check for @everyone mention (only style if message has everyone mention)
+      if (token.match(/^@everyone$/i) && message.mentions?.everyone) {
+        return {
+          type: 'mention' as const,
+          key: `${messageId}-${lineIndex}-${tokenIndex}`,
+          displayName: '@everyone',
+          address: 'everyone',
+        };
+      }
+
+      // Check for user mentions
       if (token.match(new RegExp(`^@<Qm[a-zA-Z0-9]+>$`))) {
         const userId = token.substring(2, token.length - 1);
         const mention = mapSenderToUser(userId);

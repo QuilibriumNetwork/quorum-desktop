@@ -196,7 +196,8 @@ export const useSpaceProfile = (
         queryClient,
         currentPasskeyInfo,
         undefined, // inReplyTo
-        false // skipSigning - must sign for security
+        false, // skipSigning - must sign for security
+        undefined // isSpaceOwner - not needed for profile updates
       );
 
       // Invalidate cache to refresh UI

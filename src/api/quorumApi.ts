@@ -1,6 +1,6 @@
 import { getConfig } from '../config/config';
 
-export type Permission = 'message:delete' | 'message:pin' | 'user:kick';
+export type Permission = 'message:delete' | 'message:pin' | 'user:kick' | 'mention:everyone';
 
 export type Role = {
   roleId: string;
@@ -211,6 +211,7 @@ export type Mentions = {
   memberIds: string[];
   roleIds: string[];
   channelIds: string[];
+  everyone?: boolean;
 };
 
 export type GetChannelParams = {

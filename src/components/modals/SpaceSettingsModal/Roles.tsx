@@ -166,6 +166,10 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                             value: 'user:kick',
                             label: t`Kick Users`,
                           },
+                          {
+                            value: 'mention:everyone',
+                            label: t`Mention Everyone`,
+                          },
                         ]}
                       />
                     </div>

@@ -481,6 +481,8 @@
       { "name": "With Icons", "props": { "placeholder": "Select size...", "options": [{"label": "Small", "value": "sm", "icon": "📱"}, {"label": "Medium", "value": "md", "icon": "💻"}, {"label": "Large", "value": "lg", "icon": "🖥️"}] }, "children": null },
       { "name": "With Subtitles", "props": { "placeholder": "Select user...", "options": [{"label": "John Doe", "value": "john", "subtitle": "john@example.com"}, {"label": "Jane Smith", "value": "jane", "subtitle": "jane@example.com"}] }, "children": null },
       { "name": "Multiselect", "props": { "placeholder": "Choose multiple...", "multiple": true, "options": [{"label": "React", "value": "react"}, {"label": "Vue", "value": "vue"}, {"label": "Angular", "value": "angular"}, {"label": "Svelte", "value": "svelte"}] }, "children": null },
+      { "name": "Compact Filter", "props": { "compactMode": true, "compactIcon": "filter", "multiple": true, "showSelectAllOption": false, "options": [{"label": "You", "value": "you", "subtitle": "Direct @mentions"}, {"label": "Everyone", "value": "everyone", "subtitle": "@everyone mentions"}, {"label": "Roles", "value": "roles", "subtitle": "@role mentions"}] }, "children": null },
+      { "name": "Compact Settings", "props": { "compactMode": true, "compactIcon": "cog", "showSelectionCount": true, "multiple": true, "options": [{"label": "Notifications", "value": "notif"}, {"label": "Privacy", "value": "privacy"}, {"label": "Security", "value": "security"}] }, "children": null },
       { "name": "Bordered", "props": { "placeholder": "Bordered select", "variant": "bordered", "options": [{"label": "Option A", "value": "a"}, {"label": "Option B", "value": "b"}] }, "children": null },
       { "name": "Disabled", "props": { "disabled": true, "placeholder": "Disabled select", "options": [{"label": "Option 1", "value": "1"}] }, "children": null },
       { "name": "With Error", "props": { "error": true, "errorMessage": "Please select an option", "placeholder": "Error state", "options": [{"label": "Option 1", "value": "1"}] }, "children": null }
@@ -490,6 +492,8 @@
       "Use placeholder text for initial state",
       "Add icons and subtitles for rich options",
       "Use multiple=true for multiselect functionality",
+      "Use compactMode=true for icon-only filter buttons",
+      "Add showSelectionCount=true to display badge with count",
       "Use variant='bordered' for forms on light backgrounds",
       "Show error states with clear messages"
     ],

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Input, Icon, Spacer, Callout, Text } from '../../primitives';
+import { Button, Input, Icon, Spacer, Callout, Text, Select } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../../utils';
@@ -9,6 +9,7 @@ import { useSpaceLeaving } from '../../../hooks/business/spaces/useSpaceLeaving'
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useUserRoleDisplay } from '../../../hooks/business/user/useUserRoleDisplay';
 import { Role } from '../../../api/quorumApi';
+import type { MentionTypeId } from '../../../types/notifications';
 
 interface AccountProps {
   spaceId: string;
@@ -32,6 +33,10 @@ interface AccountProps {
   hasValidationError: boolean;
   onClose: () => void;
   roles?: Role[];
+  // Mention notification settings props (passed from parent)
+  selectedMentionTypes: MentionTypeId[];
+  setSelectedMentionTypes: (types: MentionTypeId[]) => void;
+  isMentionSettingsLoading: boolean;
 }
 
 const Account: React.FunctionComponent<AccountProps> = ({
@@ -53,6 +58,9 @@ const Account: React.FunctionComponent<AccountProps> = ({
   hasValidationError,
   onClose,
   roles,
+  selectedMentionTypes,
+  setSelectedMentionTypes,
+  isMentionSettingsLoading,
 }) => {
   const { currentPasskeyInfo: userInfo } = usePasskeysContext();
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
@@ -153,18 +161,62 @@ const Account: React.FunctionComponent<AccountProps> = ({
                 </Text>
               ))}
             </div>
+            <Spacer size="lg" direction="vertical" />
           </>
         )}
+
+        {/* Mention Notification Settings */}
+        <Spacer size="md" direction="vertical" borderTop={true} />
+        <div className="modal-text-label">
+          <Trans>Notifications</Trans>
+        </div>
+        <div className="modal-text-small text-main pt-1">
+          <Trans>Select for which mentions you will receive notifications</Trans>
+        </div>
+        <div className="pt-4">
+          <Select
+            value={selectedMentionTypes}
+            onChange={(value: string | string[]) => setSelectedMentionTypes(value as MentionTypeId[])}
+            multiple={true}
+            placeholder={t`Select`}
+            showSelectAllOption={true}
+            selectAllLabel={t`All`}
+            clearAllLabel={t`Clear`}
+            options={[
+              {
+                value: 'you',
+                label: t`@you`,
+                subtitle: t`When someone mentions you directly`,
+              },
+              {
+                value: 'everyone',
+                label: t`@everyone`,
+                subtitle: t`When someone mentions @everyone`,
+              },
+              {
+                value: 'roles',
+                label: t`@roles`,
+                subtitle: t`When someone mentions a role you have (Coming Soon)`,
+                disabled: true, // Phase 2b - not yet implemented
+              },
+            ]}
+            size="medium"
+            fullWidth={true}
+            disabled={isMentionSettingsLoading}
+          />
+        </div>
+        <Spacer size="lg" direction="vertical" borderBottom={true} />
+
         {!isSpaceOwner && (
           <>
             <Spacer size="xl" direction="vertical" />
             <Callout variant="error" size="md">
-              <div className="text-lg">
+              <div className="text-md">
                 <Trans>Leave this space</Trans>
               </div>
               <div className="pt-2 text-sm">
                 <Trans>
-                  Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted.
+                  You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted.
                 </Trans>
               </div>
               {leaveError && (

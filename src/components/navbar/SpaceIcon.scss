@@ -1,4 +1,4 @@
-.space-icon {
+ .space-icon {
   width: 48px;
   height: 48px;
   box-sizing: border-box;
@@ -100,4 +100,45 @@
     margin-top: 11px;
     height: 18px;
   }
+}
+
+// Mention count bubble for space icons
+// Light theme: accent-400, Dark theme: accent-600
+.space-icon-mention-bubble {
+  position: absolute;
+  top: 4px;
+  right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1;
+  text-align: center;
+  color: white;
+  background-color: var(--accent-400);
+  z-index: 1001;
+  pointer-events: none;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+  // Mobile phone optimization - slightly smaller bubble
+  @media (max-width: 480px) {
+    min-width: 16px;
+    height: 16px;
+    font-size: 11px;
+    top: 2px;
+    right: -2px;
+    // Ensure centering is maintained on mobile
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+html.dark .space-icon-mention-bubble {
+  background-color: var(--accent-600);
 }

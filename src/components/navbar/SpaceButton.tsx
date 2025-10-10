@@ -15,9 +15,10 @@ interface Space {
 
 type SpaceButtonProps = {
   space: Space;
+  mentionCount?: number;
 };
 
-const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space }) => {
+const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mentionCount }) => {
   const { spaceId: currentSpaceId } = useParams<{ spaceId: string }>();
 
   // Drag and drop functionality - platform-specific
@@ -63,6 +64,7 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space }) => {
         spaceName={space.spaceName}
         spaceId={space.spaceId}
         highlightedTooltip={true}
+        mentionCount={mentionCount}
       />
     </Link>
   );

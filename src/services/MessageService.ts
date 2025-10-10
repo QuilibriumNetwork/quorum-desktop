@@ -14,6 +14,8 @@ import { DefaultImages } from '../utils';
 import { getInviteUrlBase } from '../utils/inviteDomain';
 import { canonicalize } from '../utils/canonicalize';
 import { QuorumApiClient } from '../api/baseTypes';
+import { extractMentionsFromText } from '../utils/mentionUtils';
+import { hasPermission } from '../utils/permissions';
 
 // Type definitions for the service
 export interface MessageServiceDependencies {
@@ -581,6 +583,19 @@ export class MessageService {
           };
         }
       );
+    }
+
+    // Invalidate mention counts when a message with mentions is added
+    if (decryptedContent.mentions?.memberIds && decryptedContent.mentions.memberIds.length > 0) {
+      // Get user address from current passkey (we need to pass this in or get it from context)
+      // For now, invalidate for the whole space to catch all potential mentions
+      await queryClient.invalidateQueries({
+        queryKey: ['mention-counts', spaceId],
+      });
+      // Also invalidate notification inbox query
+      await queryClient.invalidateQueries({
+        queryKey: ['mention-notifications', spaceId],
+      });
     }
   }
 
@@ -2132,7 +2147,8 @@ export class MessageService {
       completedOnboarding: boolean;
     },
     inReplyTo?: string,
-    skipSigning?: boolean
+    skipSigning?: boolean,
+    isSpaceOwner?: boolean
   ) {
     this.enqueueOutbound(async () => {
       let outbounds: string[] = [];
@@ -2148,6 +2164,22 @@ export class MessageService {
           'utf-8'
         )
       );
+      // Extract mentions from message text
+      // Check if user has permission to use @everyone
+      const canUseEveryone = hasPermission(
+        currentPasskeyInfo.address,
+        'mention:everyone',
+        space,
+        isSpaceOwner || false
+      );
+
+      let mentions;
+      if (typeof pendingMessage === 'string') {
+        mentions = extractMentionsFromText(pendingMessage, { allowEveryone: canUseEveryone });
+      } else if ((pendingMessage as any).text) {
+        mentions = extractMentionsFromText((pendingMessage as any).text, { allowEveryone: canUseEveryone });
+      }
+
       const message = {
         spaceId: spaceId,
         channelId: channelId,
@@ -2169,6 +2201,7 @@ export class MessageService {
                 ...(pendingMessage as any),
                 senderId: currentPasskeyInfo.address,
               },
+        mentions: mentions && (mentions.memberIds.length > 0 || mentions.everyone) ? mentions : undefined,
       } as Message;
 
       let conversationId = spaceId + '/' + channelId;

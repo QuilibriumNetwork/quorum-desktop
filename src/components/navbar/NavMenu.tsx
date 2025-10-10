@@ -15,6 +15,7 @@ import {
   useSpaceOrdering,
   useSpaceDragAndDrop,
 } from '../../hooks';
+import { useSpaceMentionCounts } from '../../hooks/business/mentions';
 import './NavMenu.scss';
 
 type NavMenuProps = {
@@ -36,6 +37,9 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
     setMappedSpaces,
     config,
   });
+
+  // Get mention counts for all spaces
+  const spaceMentionCounts = useSpaceMentionCounts({ spaces: mappedSpaces });
 
   return (
     <header
@@ -70,9 +74,16 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
           onDragEnd={handleDragEnd}
         >
           <SortableContext items={mappedSpaces}>
-            {mappedSpaces.map((space) => (
-              <SpaceButton key={space.spaceId} space={space} />
-            ))}
+            {mappedSpaces.map((space) => {
+              const mentionCount = spaceMentionCounts[space.spaceId];
+              return (
+                <SpaceButton
+                  key={space.spaceId}
+                  space={space}
+                  mentionCount={mentionCount && mentionCount > 0 ? mentionCount : undefined}
+                />
+              );
+            })}
           </SortableContext>
         </DndContext>
       </div>

@@ -1,0 +1,49 @@
+@use '../../styles/dropdown-result-item';
+
+// Notification item uses shared dropdown result item styling
+.notification-item {
+  @extend .dropdown-result-item;
+
+  &:focus {
+    outline: none;
+    background-color: var(--surface-2);
+  }
+}
+
+// Use shared styling for notification components
+.notification-header {
+  @extend .dropdown-result-header;
+}
+
+.notification-meta {
+  @extend .dropdown-result-meta;
+}
+
+.notification-channel-icon {
+  @extend .dropdown-result-type-icon;
+}
+
+.notification-mention-type-icon {
+  @extend .dropdown-result-user-icon;
+}
+
+.notification-date-icon {
+  @extend .dropdown-result-date-icon;
+}
+
+.notification-date {
+  @extend .dropdown-result-date;
+}
+
+.notification-channel,
+.notification-sender {
+  @extend .dropdown-result-channel;
+}
+
+.notification-content {
+  @extend .dropdown-result-content;
+}
+
+.notification-text {
+  @extend .dropdown-result-text;
+}

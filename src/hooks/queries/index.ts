@@ -5,6 +5,7 @@ export * from './spaceMembers';
 export * from './registration';
 export * from './userInfo';
 export * from './encryptionStates';
+export * from './conversation';
 export * from './conversations';
 export * from './inbox';
 export * from './channels';

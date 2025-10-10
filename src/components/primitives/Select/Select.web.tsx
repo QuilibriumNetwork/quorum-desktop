@@ -31,6 +31,9 @@ const Select: React.FC<WebSelectProps> = ({
   maxHeight,
   showSelectAllOption = true,
   maxDisplayedChips = 3,
+  compactMode = false,
+  compactIcon = 'filter',
+  showSelectionCount = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState<string | string[]>(
@@ -199,6 +202,30 @@ const Select: React.FC<WebSelectProps> = ({
 
   // Helper to get display text/content
   const getDisplayContent = () => {
+    // Compact mode: show only icon
+    if (compactMode) {
+      return (
+        <div className="quorum-select__compact-content">
+          <Icon
+            name={compactIcon}
+            size={size === 'small' ? 'sm' : 'md'}
+            className="quorum-select__compact-icon"
+          />
+          {showSelectionCount && multiple && (
+            (() => {
+              const selectedValues = selectedValue as string[];
+              const count = selectedValues.length;
+              return count > 0 ? (
+                <span className="quorum-select__selection-badge">
+                  {count}
+                </span>
+              ) : null;
+            })()
+          )}
+        </div>
+      );
+    }
+
     if (multiple) {
       const selectedValues = selectedValue as string[];
 
@@ -265,6 +292,7 @@ const Select: React.FC<WebSelectProps> = ({
     disabled && 'quorum-select--disabled',
     fullWidth && 'quorum-select--full-width',
     isOpen && 'quorum-select--open',
+    compactMode && 'quorum-select--compact',
     className,
   ]
     .filter(Boolean)
