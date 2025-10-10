@@ -4,27 +4,9 @@
 
 The Mention Notification System provides real-time visual feedback when users are mentioned in messages. The system tracks unread mentions across devices and provides contextual highlighting.
 
-**Status**: Phases 1 & 2 Complete ✅
-
-### Completed Features
-
-**Phase 1: Notification Bubbles & Highlighting**
-- Sidebar bubbles show unread mention counts per channel
-- Messages auto-highlight when scrolled into view (6s yellow fade)
-- Database-tracked read states that persist across sessions
-- Cross-device synchronization via SyncService
-
-**Phase 2: @everyone Mentions**
-- Permission-based @everyone mentions (space owners + role permission)
-- All channel members receive notifications when used
-- Conditional styling (only styled for authorized users)
-- Code block filtering (prevents false triggers)
-
 ### Planned Features
 
-**Phase 2b**: @role mentions with user role checking
-**Phase 3**: Notification dropdown/inbox UI
-**Phase 4**: User-configurable notification settings (see `.agents/tasks/mention-notification-settings-phase4.md`)
+- @role mentions with user role checking
 
 ---
 
@@ -87,6 +69,7 @@ Flash-highlight animation (yellow fade, 6s)
 **`src/utils/mentionUtils.ts`**
 - `extractMentionsFromText(text, options)`: Parses @<address>, @everyone patterns
 - `isMentioned(message, options)`: Checks if user is mentioned
+- `isMentionedWithSettings(message, options)`: Checks mention with user settings
 - `getMentionType(message, options)`: Returns mention type for UI
 
 ### Hooks
@@ -96,6 +79,17 @@ Flash-highlight animation (yellow fade, 6s)
 - Query key: `['mention-counts', 'channel', spaceId, userAddress, ...channelIds]`
 - Stale time: 30 seconds (balances real-time vs performance)
 - Returns: `{ [channelId]: mentionCount }`
+
+**`src/hooks/business/mentions/useSpaceMentionCounts.ts`**
+- Space-level mention counts (sum of all channels)
+- Used for notification bell badge
+- Returns: `{ totalMentions }`
+
+**`src/hooks/business/mentions/useAllMentions.ts`**
+- Fetches all unread mentions across all channels in a space
+- Supports filtering by mention type (you, everyone, roles)
+- Returns: `{ mentions: MentionNotification[], isLoading }`
+- Used by notification inbox dropdown
 
 **`src/hooks/business/mentions/useViewportMentionHighlight.ts`**
 - Auto-highlights mentions when entering viewport
@@ -133,6 +127,18 @@ Flash-highlight animation (yellow fade, 6s)
 - Uses `useConversation()` for lastReadTimestamp
 - Implements interval-based read time updates (2s)
 - Saves immediately on unmount
+- Renders notification bell icon with dropdown
+
+**`src/components/notifications/NotificationDropdown.tsx`**
+- Main notification inbox dropdown panel
+- Filter by mention type (multiselect)
+- Mark all as read functionality
+- Click-to-navigate with highlighting
+
+**`src/components/notifications/NotificationItem.tsx`**
+- Individual notification item display
+- Matches SearchResults layout (channel - author - date - message)
+- Message truncation (200 chars max)
 
 ### Services
 
@@ -358,7 +364,9 @@ src/
 ├── hooks/
 │   ├── business/
 │   │   ├── mentions/
-│   │   │   ├── useChannelMentionCounts.ts # Count calculation
+│   │   │   ├── useChannelMentionCounts.ts # Count calculation (channel-level)
+│   │   │   ├── useSpaceMentionCounts.ts   # Count calculation (space-level)
+│   │   │   ├── useAllMentions.ts          # Fetch all mentions for inbox
 │   │   │   └── useViewportMentionHighlight.ts # Viewport trigger
 │   │   └── conversations/
 │   │       └── useUpdateReadTime.ts       # Read time mutation
@@ -367,13 +375,16 @@ src/
 │           └── useConversation.ts         # Read time query
 ├── components/
 │   ├── space/
-│   │   ├── Channel.tsx                    # Read time tracking
+│   │   ├── Channel.tsx                    # Read time tracking + bell icon
 │   │   ├── ChannelList.tsx                # Count integration
 │   │   └── ChannelItem.tsx                # Bubble rendering
-│   └── message/
-│       ├── Message.tsx                    # Highlight trigger
-│       ├── MessageList.tsx                # Prop passing
-│       └── MessageMarkdownRenderer.tsx    # @everyone rendering (web)
+│   ├── message/
+│   │   ├── Message.tsx                    # Highlight trigger
+│   │   ├── MessageList.tsx                # Prop passing
+│   │   └── MessageMarkdownRenderer.tsx    # @everyone rendering (web)
+│   └── notifications/
+│       ├── NotificationDropdown.tsx       # Inbox dropdown
+│       └── NotificationItem.tsx           # Individual notification
 ├── services/
 │   └── MessageService.ts                  # Mention extraction
 └── db/
@@ -387,7 +398,32 @@ src/
 - **[Data Management Architecture](../data-management-architecture-guide.md)** - Sync service integration
 - **[Cross-Platform Architecture](../cross-platform-repository-implementation.md)** - Primitive usage
 
+---
 
+## Notification Inbox UI
+
+### Overview
+
+The notification inbox provides a centralized view of all unread mentions across all channels in a space.
+
+### Features
+
+- **Bell icon**: Appears in channel header (left of users icon) when unread mentions exist
+- **Visual indicator**: Red notification dot on bell icon
+- **Dropdown panel**: Shows all unread mentions sorted by date (newest first)
+- **Filtering**: Multiselect filter by mention type (you, everyone, roles)
+- **Message preview**: Channel name, author, date, and truncated message (200 chars)
+- **Navigation**: Click to jump to message with 6-second highlight
+- **Mark all read**: Clear all notifications with one button
+- **Auto-clear**: Notifications clear when viewing the channel
+
+### Technical Details
+
+**Query key**: `['mention-notifications', spaceId, userAddress, ...channelIds, ...enabledTypes]`
+**Stale time**: 30 seconds (matches mention count system)
+**Layout**: Reuses SearchResults patterns for consistency
+
+See [notification-inbox-ui.md](../../tasks/.done/notification-inbox-ui.md) for full implementation details.
 
 ---
 
