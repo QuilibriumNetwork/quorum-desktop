@@ -216,6 +216,11 @@ export const Onboarding = ({
                     value={onboardingFlow.displayName}
                     onChange={onboardingFlow.setDisplayName}
                     placeholder="Bongocat"
+                    error={
+                      onboardingFlow.displayName.trim().toLowerCase() ===
+                      'everyone'
+                    }
+                    errorMessage={t`'everyone' is a reserved name.`}
                   />
                 </div>
                 <div className="flex flex-col justify-center sm:min-w-[180px] sm:pl-2">

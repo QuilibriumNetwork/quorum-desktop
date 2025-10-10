@@ -111,7 +111,9 @@ export const useOnboardingFlowLogic = (adapter: OnboardingAdapter) => {
   );
 
   // Validation helpers
-  const canProceedWithName = displayName.length > 0;
+  const canProceedWithName =
+    displayName.trim().length > 0 &&
+    displayName.trim().toLowerCase() !== 'everyone';
   const isOnboardingComplete =
     exported && currentPasskeyInfo?.displayName && currentPasskeyInfo?.pfpUrl;
 

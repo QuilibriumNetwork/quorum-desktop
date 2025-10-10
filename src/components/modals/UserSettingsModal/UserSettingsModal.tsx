@@ -93,6 +93,18 @@ const UserSettingsModal: React.FunctionComponent<{
     showRevokeMessage,
   } = useNotificationSettings();
 
+  const validateDisplayName = (name: string): string | undefined => {
+    if (!name.trim()) {
+      return t`Display name is required`;
+    }
+    if (name.trim().toLowerCase() === 'everyone') {
+      return t`'everyone' is a reserved name.`;
+    }
+    return undefined;
+  };
+
+  const displayNameError = validateDisplayName(displayName);
+
   // Custom save handler that updates setUser callback
   const saveChanges = React.useCallback(async () => {
     setSaveError('');
@@ -164,7 +176,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         getProfileImageUrl={getProfileImageUrl}
                         onSave={saveChanges}
                         isSaving={isSaving}
-                        hasValidationError={!displayName.trim()}
+                        validationError={displayNameError}
                       />
                     );
                   case 'privacy':
@@ -234,7 +246,7 @@ const UserSettingsModal: React.FunctionComponent<{
                 <Button
                   type="primary"
                   onClick={saveChanges}
-                  disabled={isSaving || !displayName.trim()}
+                  disabled={isSaving || !!displayNameError}
                 >
                   {t`Save Changes`}
                 </Button>

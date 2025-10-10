@@ -36,20 +36,20 @@ msgid "Send a message to #{channel_name}"
 msgstr "Send a message to #{channel_name}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:251
+#: src/components/onboarding/Onboarding.tsx:256
 msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:134
+msgid "Failed to process image"
+msgstr "Failed to process image"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
 #: src/components/message/MessageComposer.tsx:248
 msgid "Replying to {user}"
 msgstr "Replying to {user}"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:134
-msgid "Failed to process image"
-msgstr "Failed to process image"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:238
@@ -78,6 +78,11 @@ msgstr " Default Space settings provide the most typical chat experience, but fo
 #: src/components/Maintenance.native.tsx:61
 msgid " for updates."
 msgstr " for updates."
+
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:101
+#: src/components/onboarding/Onboarding.tsx:223
+msgid "'everyone' is a reserved name."
+msgstr "'everyone' is a reserved name."
 
 #: src/components/message/MessagePreview.tsx:51
 msgid "[Empty message]"
@@ -642,7 +647,7 @@ msgid "Display Name"
 msgstr "Display Name"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:127
-#: src/components/modals/UserSettingsModal/General.tsx:89
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:98
 msgid "Display name is required"
 msgstr "Display name is required"
 
@@ -886,8 +891,8 @@ msgstr "I already saved mine"
 msgid "I've Saved It"
 msgstr "I've Saved It"
 
-#: src/components/onboarding/Onboarding.tsx:314
-#: src/components/onboarding/Onboarding.tsx:321
+#: src/components/onboarding/Onboarding.tsx:319
+#: src/components/onboarding/Onboarding.tsx:326
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr "If skipped, you'll get the default profile image and can set it later"
 
@@ -1052,7 +1057,7 @@ msgid "Let your friends know who you are! Pick a friendly name to display in you
 msgstr "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
-#: src/components/onboarding/Onboarding.tsx:347
+#: src/components/onboarding/Onboarding.tsx:352
 msgid "Let's gooooooooo"
 msgstr "Let's gooooooooo"
 
@@ -1082,7 +1087,7 @@ msgid "Maintenance in Progress"
 msgstr "Maintenance in Progress"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
-#: src/components/onboarding/Onboarding.tsx:242
+#: src/components/onboarding/Onboarding.tsx:247
 msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
 msgstr "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
 
@@ -1398,18 +1403,18 @@ msgstr "Save"
 #: src/components/modals/ChannelEditorModal.tsx:189
 #: src/components/modals/GroupEditorModal.tsx:94
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:582
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:239
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:251
 #: src/components/user/UserProfileEdit.tsx:160
 msgid "Save Changes"
 msgstr "Save Changes"
 
 #: src/components/onboarding/Onboarding.native.tsx:473
-#: src/components/onboarding/Onboarding.tsx:303
+#: src/components/onboarding/Onboarding.tsx:308
 msgid "Save Contact Photo"
 msgstr "Save Contact Photo"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:567
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:228
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:240
 msgid "Save Failed"
 msgstr "Save Failed"
 
@@ -1522,7 +1527,7 @@ msgid "Session Encrypted"
 msgstr "Session Encrypted"
 
 #: src/components/onboarding/Onboarding.native.tsx:344
-#: src/components/onboarding/Onboarding.tsx:228
+#: src/components/onboarding/Onboarding.tsx:233
 msgid "Set Display Name"
 msgstr "Set Display Name"
 
@@ -1539,7 +1544,7 @@ msgid "show home screen"
 msgstr "show home screen"
 
 #: src/components/onboarding/Onboarding.native.tsx:461
-#: src/components/onboarding/Onboarding.tsx:310
+#: src/components/onboarding/Onboarding.tsx:315
 msgid "Skip Adding Photo"
 msgstr "Skip Adding Photo"
 
@@ -1945,7 +1950,7 @@ msgid "You're all caught up!"
 msgstr "You're all caught up!"
 
 #: src/components/onboarding/Onboarding.native.tsx:494
-#: src/components/onboarding/Onboarding.tsx:335
+#: src/components/onboarding/Onboarding.tsx:340
 msgid "You're all set. Welcome to Quorum!"
 msgstr "You're all set. Welcome to Quorum!"
 

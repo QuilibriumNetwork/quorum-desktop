@@ -23,7 +23,7 @@ interface GeneralProps {
   getProfileImageUrl: () => string;
   onSave: () => void;
   isSaving: boolean;
-  hasValidationError: boolean;
+  validationError?: string;
 }
 
 const General: React.FunctionComponent<GeneralProps> = ({
@@ -41,7 +41,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
   getProfileImageUrl,
   onSave,
   isSaving,
-  hasValidationError,
+  validationError,
 }) => {
   return (
     <>
@@ -85,8 +85,8 @@ const General: React.FunctionComponent<GeneralProps> = ({
             onChange={setDisplayName}
             label={t`Display Name`}
             labelType="static"
-            error={hasValidationError}
-            errorMessage={hasValidationError ? t`Display name is required` : undefined}
+            error={!!validationError}
+            errorMessage={validationError}
           />
         </div>
       </div>
