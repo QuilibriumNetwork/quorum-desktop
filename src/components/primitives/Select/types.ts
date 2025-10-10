@@ -40,6 +40,11 @@ export interface BaseSelectProps {
   maxHeight?: string | number; // Maximum height for dropdown
   showSelectAllOption?: boolean; // Show select all/clear all options (default: true when multiple)
   maxDisplayedChips?: number; // Maximum number of chips to display before showing count (default: 3)
+
+  // Compact mode props
+  compactMode?: boolean; // Show only icon button, hide selected values
+  compactIcon?: string; // Icon to display in compact mode (default: 'filter')
+  showSelectionCount?: boolean; // Show badge with selection count in compact mode (default: false)
 }
 
 export interface WebSelectProps extends BaseSelectProps {
