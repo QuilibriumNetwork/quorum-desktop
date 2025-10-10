@@ -18,6 +18,7 @@
 8. [Known Limitations](#known-limitations)
 9. [Future Phases](#future-phases)
 10. [Troubleshooting](#troubleshooting)
+11. [Cross-Device Synchronization](#cross-device-synchronization)
 
 ---
 
@@ -1046,6 +1047,168 @@ Use the Select primitve
 
 ---
 
+## Cross-Device Synchronization
+
+**Status**: ✅ Supported via database persistence and sync service
+
+### How It Works
+
+Read states for mention notifications sync across devices through the application's data synchronization architecture:
+
+**Synchronization Flow**:
+
+```
+Device A: User views channel with mentions
+    ↓
+Update lastReadTimestamp in IndexedDB (conversations store)
+    ↓
+SyncService detects change and syncs to server
+    ↓
+Server stores updated conversation state
+    ↓
+Device B: Opens app / refreshes data
+    ↓
+Fetches latest conversation state from server (includes lastReadTimestamp)
+    ↓
+Updates local IndexedDB with synced lastReadTimestamp
+    ↓
+React Query refetches mention counts
+    ↓
+Mention count calculation uses synced lastReadTimestamp
+    ↓
+Already-read mentions filtered out (createdDate <= lastReadTimestamp)
+    ↓
+Bubble counts update correctly - no duplicate notifications
+```
+
+### Technical Implementation
+
+**Database Persistence** (see [Database-Based Read Tracking](#2-database-based-read-tracking)):
+- `lastReadTimestamp` stored in IndexedDB `conversations` object store
+- Persists across app restarts and device switches
+- Single source of truth for read state
+
+**Sync Service Integration** (see [Data Management Architecture](../data-management-architecture-guide.md)):
+- `SyncService` (`src/services/SyncService.ts`) handles data synchronization
+- User configuration includes `allowSync` flag to control sync behavior
+- Conversation states sync bidirectionally between devices and server
+
+**Query Invalidation**:
+- React Query automatically refetches data when app regains focus
+- Manual refresh triggers full sync from server
+- Ensures UI reflects latest synced state
+
+### User Experience
+
+**Scenario 1: Desktop → Mobile**
+1. User sees 5 mention notifications on desktop
+2. User opens channel on desktop → mentions marked as read
+3. User opens app on mobile later
+4. Mobile syncs from server → `lastReadTimestamp` updated
+5. ✅ No mention bubbles appear on mobile (already read on desktop)
+
+**Scenario 2: Mobile → Desktop**
+1. User sees notification bubble on mobile
+2. User taps channel → message highlighted, marked as read
+3. User opens desktop app later
+4. Desktop fetches conversation state from server
+5. ✅ Bubble doesn't appear on desktop (already read on mobile)
+
+### Sync Timing & Behavior
+
+**When Sync Occurs**:
+- **On app focus**: React Query refetches with `refetchOnWindowFocus: true`
+- **On app launch**: Initial data load fetches latest server state
+- **Manual refresh**: User-triggered sync pulls fresh data
+- **Background sync**: Periodic sync based on `SyncService` configuration
+
+**Eventual Consistency**:
+- ⚠️ **Not instantaneous**: Sync requires network round-trip
+- ⚠️ **Requires app refresh**: UI updates on next data fetch, not real-time
+- ✅ **Guaranteed consistency**: Once synced, all devices show same state
+- ✅ **Offline resilient**: Local changes queued and synced when online
+
+**Stale Time Behavior**:
+- Mention counts have 30-second stale time (see [30-Second Stale Time](#4-30-second-stale-time))
+- After 30s, next focus/navigation triggers refetch from server
+- Balances real-time updates with performance
+
+### Configuration
+
+**Enabling Sync**:
+
+The `allowSync` flag in user configuration controls cross-device synchronization:
+
+```typescript
+interface UserConfig {
+  address: string;
+  allowSync?: boolean; // Defaults to true
+  // ... other fields
+}
+```
+
+**Location**: `src/db/messages.ts` - `user_config` object store
+
+**Related Documentation**:
+- [Data Management Architecture - User Data Management](../data-management-architecture-guide.md#user-data-management)
+- [Data Management Architecture - Real-time Communication](../data-management-architecture-guide.md#real-time-communication)
+
+### Known Limitations
+
+**1. Not Real-Time**
+- **Issue**: Changes on Device A don't instantly appear on Device B
+- **Impact**: User must refresh app or wait for automatic refetch
+- **Workaround**: Manual refresh on Device B to pull latest state
+- **Future Fix**: WebSocket-based real-time sync for instant updates
+
+**2. Network Dependency**
+- **Issue**: Requires network connection to sync between devices
+- **Impact**: Offline changes only sync when connection restored
+- **Mitigation**: Local changes queued and synced automatically when online
+
+**3. App Must Be Open/Focused**
+- **Issue**: Background apps don't receive updates until brought to foreground
+- **Impact**: Notifications may briefly appear until app fetches fresh state
+- **Behavior**: Bubble appears → user focuses app → React Query refetches → bubble disappears
+
+### Troubleshooting Cross-Device Sync
+
+**Problem**: Notifications cleared on Device A still show on Device B
+
+**Debug Steps**:
+1. Check if `allowSync` is enabled in user config:
+   ```javascript
+   // In browser console
+   messageDB.getUserConfig({ address }).then(config =>
+     console.log('Sync enabled:', config?.allowSync)
+   );
+   ```
+2. Verify network connectivity on Device B
+3. Check React Query DevTools for stale data (look for `stale` status)
+4. Manually refetch on Device B: focus window or navigate to different space and back
+5. Check browser console for sync errors
+
+**Common Causes**:
+- `allowSync: false` in user configuration
+- Network connectivity issues preventing sync
+- Device B using stale cache (within 30s stale time window)
+- App backgrounded on Device B (needs focus to trigger refetch)
+
+**Problem**: Sync taking too long (>1 minute)
+
+**Debug Steps**:
+1. Check network latency: DevTools → Network tab
+2. Verify `SyncService` is running: Check console for sync logs
+3. Check React Query stale time: May be caching longer than expected
+4. Force refetch: `queryClient.invalidateQueries(['mention-counts'])`
+
+**Solutions**:
+- Reduce stale time in `useChannelMentionCounts` for more frequent updates
+- Check `SyncService` configuration for sync interval settings
+- Ensure WebSocket connection is active for faster updates
+
+---
+
 ## Testing Checklist
 
 ### Manual Testing
@@ -1060,6 +1223,19 @@ Use the Select primitve
 - [ ] **Multiple Channels**: Mentions in 3+ channels → each shows correct count
 - [ ] **Self-Mention**: Mention yourself → no bubble appears (once fixed)
 - [ ] **Cross-Platform**: Test on web, desktop (Electron), mobile
+
+### Cross-Device Sync Testing
+
+- [ ] **Desktop → Mobile Sync**: Clear mention on desktop → verify bubble doesn't appear on mobile
+- [ ] **Mobile → Desktop Sync**: Clear mention on mobile → verify bubble doesn't appear on desktop
+- [ ] **Offline → Online**: Clear mention offline on Device A → go online → verify Device B syncs when focused
+- [ ] **Multiple Devices**: Have 3+ devices → clear on Device A → verify all others sync correctly
+- [ ] **Sync Timing**: Measure sync latency (should be <5s with good network)
+- [ ] **Partial Read**: Read some mentions on Device A → verify correct remaining count on Device B
+- [ ] **App Focus Trigger**: Background Device B → clear on Device A → focus Device B → bubble should disappear
+- [ ] **Manual Refresh**: Clear on Device A → manually refresh Device B → verify immediate sync
+- [ ] **Network Interruption**: Sync during poor connectivity → verify queuing and retry behavior
+- [ ] **allowSync Disabled**: Disable sync → verify mentions don't sync between devices
 
 ### Edge Cases
 
@@ -1222,4 +1398,4 @@ src/
 
 ---
 
-*Last updated: 2025-10-09 - Phase 2 (@everyone mentions) completed*
+*Last updated: 2025-10-10 - Added cross-device synchronization documentation*
