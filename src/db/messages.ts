@@ -43,6 +43,12 @@ export type UserConfig = {
       spaceId: string;
     }[];
   }[];
+  mentionSettings?: {
+    [spaceId: string]: {
+      spaceId: string;
+      enabledMentionTypes: string[];
+    };
+  };
 };
 
 export interface SearchableMessage {

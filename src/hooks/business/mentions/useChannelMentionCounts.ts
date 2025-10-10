@@ -1,7 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { isMentioned } from '../../../utils/mentionUtils';
+import { isMentioned, isMentionedWithSettings } from '../../../utils/mentionUtils';
+import { getDefaultMentionSettings } from '../../../utils/notificationSettingsUtils';
 import type { Message } from '../../../api/quorumApi';
 
 interface UseChannelMentionCountsProps {
@@ -16,13 +17,16 @@ interface UseChannelMentionCountsProps {
  * Only channels with mentions > 0 are included in the result.
  *
  * The hook:
- * 1. Gets the last read timestamp for each channel
- * 2. Queries messages after that timestamp
- * 3. Filters messages where the user is mentioned
- * 4. Returns count per channel
+ * 1. Loads user's mention notification settings for this space
+ * 2. Gets the last read timestamp for each channel
+ * 3. Queries messages after that timestamp
+ * 4. Filters messages where the user is mentioned (based on enabled mention types)
+ * 5. Returns count per channel
  *
  * Uses React Query with 30s stale time for performance while maintaining
  * reasonable real-time updates when invalidated.
+ *
+ * @see .agents/tasks/mention-notification-settings-phase4.md
  */
 export function useChannelMentionCounts({
   spaceId,
@@ -43,6 +47,19 @@ export function useChannelMentionCounts({
       const counts: Record<string, number> = {};
 
       try {
+        // Load user's mention notification settings for this space
+        const config = await messageDB.getUserConfig({ address: userAddress });
+        const settings = config?.mentionSettings?.[spaceId];
+
+        // If no settings exist, use defaults (all mention types enabled)
+        const enabledTypes = settings?.enabledMentionTypes ||
+          getDefaultMentionSettings(spaceId).enabledMentionTypes;
+
+        // If no mention types are enabled, return empty counts
+        if (enabledTypes.length === 0) {
+          return {};
+        }
+
         // Process each channel
         for (const channelId of channelIds) {
           const conversationId = `${spaceId}/${channelId}`;
@@ -63,10 +80,15 @@ export function useChannelMentionCounts({
 
           // Filter messages that:
           // 1. Were created after last read time
-          // 2. Mention the current user (including @everyone mentions)
+          // 2. Mention the current user (respecting enabled mention types)
           const unreadMentions = messages.filter((message: Message) => {
             if (message.createdDate <= lastReadTimestamp) return false;
-            return isMentioned(message, { userAddress, checkEveryone: true });
+
+            // Use settings-aware mention check (Phase 4)
+            return isMentionedWithSettings(message, {
+              userAddress,
+              enabledTypes,
+            });
           });
 
           // Only include channels with mentions
