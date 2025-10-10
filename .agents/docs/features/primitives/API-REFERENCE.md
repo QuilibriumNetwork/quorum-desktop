@@ -238,21 +238,52 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ### Select
 
-**Location**: `src/components/primitives/Select/Select.tsx`
+**Location**: `src/components/primitives/Select/Select.web.tsx` (web), `src/components/primitives/Select/Select.native.tsx` (native)
 
 **Props**:
-- `value: string` - Selected value (required)
-- `onChange: (value: string) => void` - Change handler (required)
-- `placeholder?: string` - Placeholder text
-- `options: Array<{ label: string; value: string }>` - Select options (required)
+
+**Core Props**:
+- `value: string | string[]` - Selected value(s) (required)
+- `onChange: (value: string | string[]) => void` - Change handler (required)
+- `placeholder?: string` - Placeholder text (default: "Select an option")
+- `options?: Array<{ label: string; value: string; icon?: string; avatar?: string; subtitle?: string; disabled?: boolean }>` - Select options
+- `groups?: Array<{ groupLabel: string; options: Array<...> }>` - Grouped options
 - `error?: boolean` - Show error state
 - `errorMessage?: string` - Error message to display
 - `disabled?: boolean` - Disable select
-- `className?: string` - CSS classes (web only)
-- `style?: CSSProperties | StyleProp<ViewStyle>` - Additional styles
 - `testID?: string` - Test identifier
 
-**Example**:
+**Display Props**:
+- `size?: 'small' | 'medium' | 'large'` - Select size (default: 'medium')
+- `variant?: 'filled' | 'bordered'` - Visual variant (default: 'filled')
+- `fullWidth?: boolean` - Make select full width (default: false)
+- `width?: string | number` - Custom width override
+
+**Multiselect Props**:
+- `multiple?: boolean` - Enable multiple selection (default: false)
+- `renderSelectedValue?: (values: string[], options: SelectOption[]) => ReactNode` - Custom render for selected values
+- `selectAllLabel?: string` - Label for "select all" option (default: "All")
+- `clearAllLabel?: string` - Label for "clear all" option (default: "Clear")
+- `maxDisplayedChips?: number` - Max number of chips to show before "+N more" (default: 3)
+- `showSelectAllOption?: boolean` - Show select all/clear all actions (default: true)
+
+**Compact Mode Props**:
+- `compactMode?: boolean` - Enable compact icon-only display (default: false)
+- `compactIcon?: string` - Icon to display in compact mode (default: 'filter')
+- `showSelectionCount?: boolean` - Show selection count badge in compact mode (default: false)
+
+**Web-specific Props**:
+- `dropdownPlacement?: 'auto' | 'top' | 'bottom'` - Dropdown placement (default: 'auto')
+- `maxHeight?: number | string` - Max dropdown height (default: 240)
+- `name?: string` - Form field name for native form compatibility
+- `id?: string` - Form field ID
+- `autoFocus?: boolean` - Auto-focus on mount
+- `className?: string` - CSS classes
+
+**Native-specific Props**:
+- `style?: StyleProp<ViewStyle>` - Additional styles
+
+**Example - Basic**:
 ```tsx
 <Select
   value={selectedOption}
@@ -261,6 +292,61 @@ Complete API reference for all primitive components. Use this for quick prop loo
   options={[
     { label: 'Option 1', value: 'opt1' },
     { label: 'Option 2', value: 'opt2' },
+  ]}
+/>
+```
+
+**Example - Multiselect**:
+```tsx
+<Select
+  multiple
+  value={selectedOptions}
+  onChange={setSelectedOptions}
+  placeholder="Select multiple"
+  options={[
+    { label: 'Option 1', value: 'opt1' },
+    { label: 'Option 2', value: 'opt2' },
+    { label: 'Option 3', value: 'opt3' },
+  ]}
+  maxDisplayedChips={2}
+/>
+```
+
+**Example - Compact Mode**:
+```tsx
+<Select
+  compactMode
+  compactIcon="filter"
+  multiple
+  showSelectionCount
+  value={selectedFilters}
+  onChange={setSelectedFilters}
+  options={[
+    { label: 'All', value: 'all' },
+    { label: 'Mentions', value: 'mentions' },
+    { label: 'Threads', value: 'threads' },
+  ]}
+/>
+```
+
+**Example - With Icons and Subtitles**:
+```tsx
+<Select
+  value={selectedUser}
+  onChange={setSelectedUser}
+  options={[
+    {
+      label: 'John Doe',
+      value: 'user1',
+      icon: 'user',
+      subtitle: 'Admin',
+    },
+    {
+      label: 'Jane Smith',
+      value: 'user2',
+      avatar: '/avatars/jane.png',
+      subtitle: 'Member',
+    },
   ]}
 />
 ```
@@ -810,3 +896,4 @@ Complete API reference for all primitive components. Use this for quick prop loo
 ---
 
 _Created: 2025-10-08_
+_Last updated: 2025-10-10 - Added compact mode documentation for Select primitive_
