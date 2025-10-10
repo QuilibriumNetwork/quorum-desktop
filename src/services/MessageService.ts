@@ -592,6 +592,10 @@ export class MessageService {
       await queryClient.invalidateQueries({
         queryKey: ['mention-counts', spaceId],
       });
+      // Also invalidate notification inbox query
+      await queryClient.invalidateQueries({
+        queryKey: ['mention-notifications', spaceId],
+      });
     }
   }
 

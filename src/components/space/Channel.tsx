@@ -9,6 +9,7 @@ import {
   useConversation,
   useUpdateReadTime,
 } from '../../hooks';
+import { useAllMentions } from '../../hooks/business/mentions';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -25,6 +26,7 @@ import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
+import { NotificationPanel } from '../notifications/NotificationPanel';
 import { Virtuoso } from 'react-virtuoso';
 import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
@@ -90,6 +92,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [init, setInit] = useState(false);
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [showPinnedMessages, setShowPinnedMessages] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
   const [isDeletionInProgress, setIsDeletionInProgress] = useState(false);
 
   // User profile modal state and logic
@@ -124,6 +127,13 @@ const Channel: React.FC<ChannelProps> = ({
 
   // Get pinned messages
   const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
+
+  // Get all unread mentions across all channels for notification bell
+  const { mentions: allMentions } = useAllMentions({
+    spaceId,
+    channelIds: space?.groups.flatMap(g => g.channels.map(c => c.channelId)) || [],
+  });
+  const totalMentions = allMentions.length;
 
   // Get last read timestamp for mention highlighting - using React Query
   const conversationId = `${spaceId}/${channelId}`;
@@ -549,6 +559,41 @@ const Channel: React.FC<ChannelProps> = ({
                   />
                 </div>
               )}
+
+              {/* Notification Bell */}
+              <div className="relative">
+                <Tooltip
+                  id={`notifications-${channelId}`}
+                  content={t`Notifications`}
+                  showOnTouch={false}
+                >
+                  <Button
+                    type="unstyled"
+                    onClick={() => setShowNotifications(true)}
+                    className="relative header-icon-button"
+                    iconName="bell"
+                    iconOnly
+                  >
+                    {totalMentions > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-accent text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                        {totalMentions > 9 ? '9+' : totalMentions}
+                      </span>
+                    )}
+                  </Button>
+                </Tooltip>
+
+                {/* Notification Panel */}
+                <NotificationPanel
+                  isOpen={showNotifications}
+                  onClose={() => setShowNotifications(false)}
+                  spaceId={spaceId}
+                  channelIds={space?.groups.flatMap(g => g.channels.map(c => c.channelId)) || []}
+                  mapSenderToUser={mapSenderToUser}
+                  virtuosoRef={messageListRef.current?.getVirtuosoRef()}
+                  messageList={messageList}
+                />
+              </div>
+
               <Tooltip
                 id={`members-list-${channelId}`}
                 content={t`Members List`}
