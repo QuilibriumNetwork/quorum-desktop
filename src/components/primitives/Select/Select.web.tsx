@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { WebSelectProps } from './types';
 import { Icon } from '../Icon';
 import { isValidIconName } from '../Icon/iconMapping';
@@ -63,9 +64,10 @@ const Select: React.FC<WebSelectProps> = ({
 
   // Calculate dropdown position
   const calculateDropdownPosition = useCallback(() => {
-    if (!selectRef.current) return;
+    if (!selectRef.current || !buttonRef.current) return;
 
-    const rect = selectRef.current.getBoundingClientRect();
+    // Use buttonRef for more accurate positioning (the actual trigger element)
+    const rect = buttonRef.current.getBoundingClientRect();
     const viewportHeight = window.innerHeight;
     const spaceBelow = viewportHeight - rect.bottom;
     const spaceAbove = rect.top;
@@ -82,16 +84,29 @@ const Select: React.FC<WebSelectProps> = ({
       top = rect.top - dropdownHeight - 4;
     }
 
-    setDropdownStyle({
+    // In compact mode, let dropdown size based on content with constraints
+    // Otherwise, match the button width exactly
+    const dropdownStyle: React.CSSProperties = {
       position: 'fixed',
       top: `${top}px`,
       left: `${rect.left}px`,
-      width: `${rect.width}px`,
       maxHeight: maxHeight || 240,
-      zIndex: 1050, // Higher than most UI elements but not extreme
-      overflow: 'auto'
-    });
-  }, [dropdownPlacement, maxHeight]);
+      zIndex: 10001, // Higher than mobile drawer (10000) to ensure visibility
+      overflow: 'auto',
+    };
+
+    if (compactMode) {
+      // Compact mode: auto-size based on content with min/max constraints
+      dropdownStyle.width = 'fit-content';
+      dropdownStyle.minWidth = '150px';
+      dropdownStyle.maxWidth = '250px';
+    } else {
+      // Regular mode: match button width
+      dropdownStyle.width = `${rect.width}px`;
+    }
+
+    setDropdownStyle(dropdownStyle);
+  }, [dropdownPlacement, maxHeight, compactMode]);
 
   // Update position when dropdown opens
   useEffect(() => {
@@ -130,10 +145,13 @@ const Select: React.FC<WebSelectProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        selectRef.current &&
-        !selectRef.current.contains(event.target as Node)
-      ) {
+      const target = event.target as Node;
+
+      // Check if click is inside the select button OR inside the dropdown
+      const isInsideButton = selectRef.current && selectRef.current.contains(target);
+      const isInsideDropdown = dropdownRef.current && dropdownRef.current.contains(target);
+
+      if (!isInsideButton && !isInsideDropdown) {
         setIsOpen(false);
       }
     };
@@ -328,7 +346,7 @@ const Select: React.FC<WebSelectProps> = ({
           />
         </button>
 
-        {isOpen && (
+        {isOpen && createPortal(
           <div
             ref={dropdownRef}
             className="quorum-select__dropdown quorum-select__dropdown--fixed"
@@ -521,7 +539,8 @@ const Select: React.FC<WebSelectProps> = ({
                     </div>
                   );
                 })}
-          </div>
+          </div>,
+          document.body
         )}
       </div>
 

@@ -10,7 +10,7 @@ export const ModalContainer: React.FC<ModalContainerProps> = ({
   closeOnBackdropClick = true,
   showBackdrop = true,
   backdropBlur = true,
-  zIndex = 'z-[9999]',
+  zIndex = 'z-[10100]', // Higher than MobileDrawer (10000) and DropdownPanel (10001)
   className,
   animationDuration = 300,
   closeOnEscape = true,

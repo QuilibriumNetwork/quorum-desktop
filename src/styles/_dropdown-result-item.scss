@@ -46,7 +46,7 @@
 // Common icons in result headers
 .dropdown-result-type-icon {
   font-size: 10px;
-  color: var(--accent-500);
+  color: var(--color-text-muted);
 }
 
 // User and date icons (same muted color)
@@ -148,10 +148,17 @@
 
 // Common list container
 .dropdown-results-list {
-  overflow-y: auto;
-  max-height: 350px;
   background: var(--surface-0);
   padding-bottom: 12px;
+
+  // On desktop, handle own scrolling and limit height
+  @media (hover: hover) and (pointer: fine) {
+    overflow-y: auto;
+    max-height: 350px;
+  }
+
+  // On mobile (touch devices in MobileDrawer), no overflow handling
+  // MobileDrawer__content handles scrolling, this just grows naturally
 }
 
 // Responsive design - unified sizing for all dropdown panels

@@ -38,9 +38,16 @@
 }
 
 .notification-panel__list {
-  max-height: 350px;
-  overflow-y: auto;
   padding: 0 0 16px 0; // Zero horizontal padding for full-width borders, bottom padding for spacing
+
+  // On desktop, handle own scrolling and limit height
+  @media (hover: hover) and (pointer: fine) {
+    overflow-y: auto;
+    max-height: 350px;
+  }
+
+  // On mobile (touch devices in MobileDrawer), no overflow handling
+  // MobileDrawer__content handles scrolling, this just grows naturally
 }
 
 .notification-loading-state {

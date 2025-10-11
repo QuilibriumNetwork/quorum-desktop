@@ -36,8 +36,8 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   const { messageDB } = useMessageDB();
   const queryClient = useQueryClient();
 
-  // Filter state (all types enabled by default)
-  const [selectedTypes, setSelectedTypes] = useState<MentionTypeId[]>(['you', 'everyone', 'roles']);
+  // Filter state (you and everyone enabled by default, roles not supported yet)
+  const [selectedTypes, setSelectedTypes] = useState<MentionTypeId[]>(['you', 'everyone']);
 
   // Fetch mentions with current filter
   const { mentions, isLoading } = useAllMentions({
@@ -62,6 +62,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     {
       value: 'roles' as MentionTypeId,
       label: t`@roles`,
+      disabled: true, // Role mentions not supported yet
     },
   ];
 

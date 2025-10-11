@@ -250,8 +250,8 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
       maxHeight={420}
       title={
         pinnedMessages.length === 1
-          ? t`${pinnedMessages.length} pinned message`
-          : t`${pinnedMessages.length} pinned messages`
+          ? t`${pinnedMessages.length} pinned message in this Channel`
+          : t`${pinnedMessages.length} pinned messages in this Channel`
       }
       className="pinned-messages-panel"
       showCloseButton={true}
@@ -260,7 +260,11 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
         renderEmptyState()
       ) : (
         <Virtuoso
-          style={{ height: '350px' }}
+          style={
+            isTouchDevice()
+              ? {} // Mobile: no inline height, let CSS handle it
+              : { height: '350px' } // Desktop: fixed height with own scrolling
+          }
           totalCount={pinnedMessages.length}
           itemContent={(index) => (
             <PinnedMessageItem

@@ -8,8 +8,15 @@
 // Use shared list styling with zero horizontal padding for full-width borders
 .search-results-list {
   @extend .dropdown-results-list;
-  max-height: 340px; // Slightly different from default
   padding: 0 0 16px 0 !important; // Override to ensure zero horizontal padding
+
+  // On desktop, handle own scrolling with slightly different height
+  @media (hover: hover) and (pointer: fine) {
+    max-height: 340px; // Slightly different from default
+  }
+
+  // On mobile (touch devices in MobileDrawer), no overflow handling
+  // MobileDrawer__content handles scrolling, this just grows naturally
 }
 
 // Use shared empty state styling

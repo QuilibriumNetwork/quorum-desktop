@@ -75,7 +75,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
         let currentElement = targetElement;
         let isTooltipElement = false;
 
-        // Walk up the DOM tree to find button-related elements
+        // Walk up the DOM tree to find button-related elements or Select dropdown
         for (let i = 0; i < 5 && currentElement && !isTooltipElement; i++) {
           const elementId = currentElement.id || '';
           const elementClassName =
@@ -89,6 +89,8 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
             elementClassName.includes('jump-button') ||
             elementClassName.includes('unpin-button') ||
             elementClassName.includes('btn-unstyled') ||
+            elementClassName.includes('quorum-select__dropdown') || // Exclude Select dropdowns (rendered as portals)
+            elementClassName.includes('quorum-select__') || // Exclude all Select-related elements
             currentElement.tagName === 'BUTTON' ||
             currentElement.tagName === 'A';
 
@@ -166,7 +168,10 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
       {(title || resultsCount !== undefined) && (
         <Container className="dropdown-panel__header">
           <FlexRow className="items-center justify-between">
-            <Text className="dropdown-panel__title">
+            <Text
+              variant="subtle"
+              className="dropdown-panel__title"
+            >
               {title ||
                 (resultsCount === 1
                   ? `${resultsCount} result`

@@ -27,6 +27,12 @@
 .pinned-messages-list {
   @extend .dropdown-results-list;
   padding: 0 0 16px 0 !important; // Override to ensure zero horizontal padding
+
+  // On mobile (touch devices), Virtuoso needs a height to work
+  // Set to a large value that will be constrained by MobileDrawer's 80vh
+  @media (hover: none) and (pointer: coarse) {
+    height: 70vh !important; // Large height for Virtuoso, MobileDrawer will constrain
+  }
 }
 
 // Use shared item styling with pinned-specific class name
