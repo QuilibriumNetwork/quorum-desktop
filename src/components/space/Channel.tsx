@@ -610,6 +610,24 @@ const Channel: React.FC<ChannelProps> = ({
                   iconOnly
                 />
               </Tooltip>
+
+              {/* Search: Desktop shows inline GlobalSearch, Mobile shows search icon */}
+              {!isDesktop ? (
+                <Tooltip
+                  id={`search-${channelId}`}
+                  content={t`Search Messages`}
+                  showOnTouch={false}
+                >
+                  <Button
+                    type="unstyled"
+                    onClick={() => setActivePanel('search')}
+                    className="header-icon-button"
+                    iconName="search"
+                    iconOnly
+                  />
+                </Tooltip>
+              ) : null}
+
               <GlobalSearch
                 className="channel-search ml-2"
                 isOpen={activePanel === 'search'}

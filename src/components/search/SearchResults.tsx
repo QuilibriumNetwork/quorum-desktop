@@ -1,10 +1,11 @@
 import React from 'react';
 import { Virtuoso } from 'react-virtuoso';
 import { t } from '@lingui/core/macro';
-import { SearchResult } from '../../db/messages';
+import { SearchResult, SearchContext } from '../../db/messages';
 import { SearchResultItem } from './SearchResultItem';
-import { Icon, FlexCenter, Container, Text, Callout } from '../primitives';
+import { Icon, FlexCenter, Container, Text, Callout, Input, Button } from '../primitives';
 import { DropdownPanel } from '../ui';
+import { isTouchDevice } from '../../utils/platform';
 import {
   useSearchResultsState,
   useBatchSearchResultsDisplay,
@@ -23,6 +24,10 @@ interface SearchResultsProps {
   className?: string;
   maxHeight?: number;
   isOpen?: boolean;
+  // Mobile-specific props
+  onQueryChange?: (query: string) => void;
+  onClear?: () => void;
+  searchContext?: SearchContext;
 }
 
 export const SearchResults: React.FC<SearchResultsProps> = ({
@@ -37,7 +42,12 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   className,
   maxHeight = 400,
   isOpen = true,
+  onQueryChange,
+  onClear,
+  searchContext,
 }) => {
+  const isTouch = isTouchDevice();
+
   // Business logic hooks
   const { searchTerms, handleNavigate } = useSearchResultsState({
     results,
@@ -103,10 +113,44 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       positionStyle="right-aligned"
       maxWidth={500}
       maxHeight={maxHeight}
-      resultsCount={results.length}
+      resultsCount={!isTouch ? results.length : undefined}
+      title={!isTouch && searchContext ? `Search ${searchContext.name}` : undefined}
       className={`search-results ${className || ''}`}
       showCloseButton={true}
     >
+      {/* Mobile: Search input at top of bottom sheet */}
+      {isTouch && (
+        <div className="search-mobile-sticky-header">
+          <div className="search-mobile-header">
+            <Input
+              type="search"
+              placeholder={t`Search in this Space...`}
+              value={query}
+              onChange={(value) => {
+                if (value === '') {
+                  onClear?.();
+                } else {
+                  onQueryChange?.(value);
+                }
+              }}
+              className="search-mobile-input"
+              autoComplete="off"
+              clearable={true}
+              autoFocus={isOpen}
+            />
+          </div>
+          {query.trim() && !isLoading && !isError && (
+            <div className="search-results-count">
+              <Text variant="subtle" size="sm">
+                {results.length === 1
+                  ? t`${results.length} result`
+                  : t`${results.length} results`}
+              </Text>
+            </div>
+          )}
+        </div>
+      )}
+
       {!query.trim() || isLoading || isError || results.length === 0 ? (
         renderEmptyState()
       ) : (

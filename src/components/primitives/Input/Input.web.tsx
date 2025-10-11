@@ -1,8 +1,8 @@
-import React, { useState, useId } from 'react';
+import React, { useState, useId, forwardRef } from 'react';
 import clsx from 'clsx';
 import { InputProps } from './types';
 
-export const Input: React.FC<InputProps> = ({
+export const Input = forwardRef<HTMLInputElement, InputProps>(({
   value,
   placeholder,
   onChange,
@@ -25,7 +25,7 @@ export const Input: React.FC<InputProps> = ({
   required = false,
   helperText,
   clearable = false,
-}) => {
+}, ref) => {
   const [isFocused, setIsFocused] = useState(false);
   const inputId = useId();
   const hasValue = value && value.length > 0;
@@ -84,6 +84,7 @@ export const Input: React.FC<InputProps> = ({
         )}
       >
         <input
+          ref={ref}
           id={inputId}
           className={inputClasses}
           value={value}
@@ -143,4 +144,6 @@ export const Input: React.FC<InputProps> = ({
       )}
     </div>
   );
-};
+});
+
+Input.displayName = 'Input';

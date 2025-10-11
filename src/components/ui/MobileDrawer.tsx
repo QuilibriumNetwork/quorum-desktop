@@ -89,10 +89,9 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
     // Only allow downward swipes (positive deltaY)
     if (deltaY > 0) {
       // Add visual feedback by slightly moving the drawer
-      // Preserve horizontal centering while dragging
       const drawer = e.currentTarget as HTMLElement;
-      const translateY = Math.min(deltaY * 0.5, 100); // Limit movement
-      drawer.style.transform = `translateX(-50%) translateY(${translateY}px)`;
+      const translateY = deltaY * 0.5; // Allow full drag range with damping
+      drawer.style.transform = `translateY(${translateY}px)`;
     }
   };
 

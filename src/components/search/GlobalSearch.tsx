@@ -3,6 +3,7 @@ import { SearchBar } from './SearchBar';
 import { SearchResults } from './SearchResults';
 import { useMessageDB } from '../context/useMessageDB';
 import { Container } from '../primitives';
+import { isTouchDevice } from '../../utils/platform';
 import {
   useGlobalSearch,
   useGlobalSearchState,
@@ -27,6 +28,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
   onClose: externalOnClose,
 }) => {
   const { messageDB } = useMessageDB();
+  const isTouch = isTouchDevice();
 
   // Get search context from current route
   const searchContext = useSearchContext();
@@ -98,18 +100,21 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
 
   return (
     <Container className={`global-search ${className || ''}`}>
-      <SearchBar
-        query={query}
-        onQueryChange={(newQuery) => handleQueryChange(newQuery, setQuery)}
-        onClear={() => handleClear(clearSearch)}
-        placeholder={placeholder}
-        suggestions={suggestions}
-        onSuggestionSelect={(suggestion) =>
-          handleSuggestionSelect(suggestion, setQuery)
-        }
-        className="global-search-bar"
-        isResultsVisible={showResults}
-      />
+      {/* Desktop: Show search bar inline */}
+      {!isTouch && (
+        <SearchBar
+          query={query}
+          onQueryChange={(newQuery) => handleQueryChange(newQuery, setQuery)}
+          onClear={() => handleClear(clearSearch)}
+          placeholder={placeholder}
+          suggestions={suggestions}
+          onSuggestionSelect={(suggestion) =>
+            handleSuggestionSelect(suggestion, setQuery)
+          }
+          className="global-search-bar"
+          isResultsVisible={showResults}
+        />
+      )}
 
       <SearchResults
         results={results}
@@ -122,6 +127,10 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
         onClose={handleCloseResults}
         className="global-search-results"
         isOpen={showResults}
+        // Mobile-specific props
+        onQueryChange={setQuery}
+        onClear={() => clearSearch()}
+        searchContext={searchContext}
       />
     </Container>
   );

@@ -14,6 +14,7 @@
   transition: transform 0.2s ease-out;
   // Safe area handling for mobile devices
   padding-bottom: calc(8px + env(safe-area-inset-bottom));
+  overflow: hidden; // Ensure border-radius clips content properly
 
   // Below 500px, take full width
   @media (max-width: 500px) {
@@ -37,6 +38,7 @@
   position: sticky; // Make header sticky when scrolling
   top: 0;
   z-index: 10; // Ensure header stays above content when sticky
+  border-radius: 16px 16px 0 0; // Match drawer border-radius for top corners
 
   // When there's no title AND no headerContent, remove border and reduce padding
   &:has(.mobile-drawer__title-area:empty):not(:has(.mobile-drawer__header-content)) {
