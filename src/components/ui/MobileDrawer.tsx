@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { t } from '@lingui/core/macro';
-import { Title, Button } from '../primitives';
+import { Title, Button, OverlayBackdrop } from '../primitives';
 import './MobileDrawer.scss';
 
 export interface MobileDrawerProps {
@@ -86,9 +86,10 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
     // Only allow downward swipes (positive deltaY)
     if (deltaY > 0) {
       // Add visual feedback by slightly moving the drawer
+      // Preserve horizontal centering while dragging
       const drawer = e.currentTarget as HTMLElement;
       const translateY = Math.min(deltaY * 0.5, 100); // Limit movement
-      drawer.style.transform = `translateY(${translateY}px)`;
+      drawer.style.transform = `translateX(-50%) translateY(${translateY}px)`;
     }
   };
 
@@ -124,17 +125,27 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
   if (!shouldRender) return null;
 
   return (
-    <div
-      className={`mobile-drawer ${isOpen && !isClosing ? 'mobile-drawer--open' : ''} ${isClosing ? 'mobile-drawer--closing' : ''} ${isDragging ? 'mobile-drawer--dragging' : ''}`}
-      role="dialog"
-      aria-modal="true"
-      aria-label={ariaLabel || title || t`Drawer`}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
+    <OverlayBackdrop
+      visible={shouldRender}
+      onBackdropClick={handleClose}
+      zIndex="z-[10000]"
+      blur={false}
+      opacity={0.5}
+      closeOnBackdropClick={true}
+      className={`${isOpen && !isClosing ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 !items-end !justify-center`}
     >
-      {/* Header area with handle and close button */}
-      <div className="mobile-drawer__header-area">
+      {/* Drawer */}
+      <div
+        className={`mobile-drawer ${isOpen && !isClosing ? 'mobile-drawer--open' : ''} ${isClosing ? 'mobile-drawer--closing' : ''} ${isDragging ? 'mobile-drawer--dragging' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-label={ariaLabel || title || t`Drawer`}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Header area with handle and close button */}
+        <div className="mobile-drawer__header-area">
         {/* Swipe handle indicator */}
         {enableSwipeToClose && (
           <div className="mobile-drawer__handle" aria-hidden="true" />
@@ -165,6 +176,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
         {children}
       </div>
     </div>
+    </OverlayBackdrop>
   );
 };
 

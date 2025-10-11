@@ -91,8 +91,11 @@ const Channel: React.FC<ChannelProps> = ({
   } = useSidebar();
   const [init, setInit] = useState(false);
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
-  const [showPinnedMessages, setShowPinnedMessages] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
+
+  // Unified panel state - ensures only one panel can be open at a time
+  type ActivePanel = 'pinned' | 'notifications' | 'search' | null;
+  const [activePanel, setActivePanel] = useState<ActivePanel>(null);
+
   const [isDeletionInProgress, setIsDeletionInProgress] = useState(false);
 
   // User profile modal state and logic
@@ -532,9 +535,7 @@ const Channel: React.FC<ChannelProps> = ({
                   >
                     <Button
                       type="unstyled"
-                      onClick={() => {
-                        setShowPinnedMessages(true);
-                      }}
+                      onClick={() => setActivePanel('pinned')}
                       className="relative header-icon-button"
                       iconName="thumbtack"
                       iconOnly
@@ -547,8 +548,8 @@ const Channel: React.FC<ChannelProps> = ({
 
                   {/* Pinned Messages Panel */}
                   <PinnedMessagesPanel
-                    isOpen={showPinnedMessages}
-                    onClose={() => setShowPinnedMessages(false)}
+                    isOpen={activePanel === 'pinned'}
+                    onClose={() => setActivePanel(null)}
                     spaceId={spaceId}
                     channelId={channelId}
                     channel={channel}
@@ -569,7 +570,7 @@ const Channel: React.FC<ChannelProps> = ({
                 >
                   <Button
                     type="unstyled"
-                    onClick={() => setShowNotifications(true)}
+                    onClick={() => setActivePanel('notifications')}
                     className="relative header-icon-button"
                     iconName="bell"
                     iconOnly
@@ -584,8 +585,8 @@ const Channel: React.FC<ChannelProps> = ({
 
                 {/* Notification Panel */}
                 <NotificationPanel
-                  isOpen={showNotifications}
-                  onClose={() => setShowNotifications(false)}
+                  isOpen={activePanel === 'notifications'}
+                  onClose={() => setActivePanel(null)}
                   spaceId={spaceId}
                   channelIds={space?.groups.flatMap(g => g.channels.map(c => c.channelId)) || []}
                   mapSenderToUser={mapSenderToUser}
@@ -609,7 +610,12 @@ const Channel: React.FC<ChannelProps> = ({
                   iconOnly
                 />
               </Tooltip>
-              <GlobalSearch className="channel-search ml-2" />
+              <GlobalSearch
+                className="channel-search ml-2"
+                isOpen={activePanel === 'search'}
+                onOpen={() => setActivePanel('search')}
+                onClose={() => setActivePanel(null)}
+              />
             </div>
           </div>
 

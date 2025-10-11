@@ -2,7 +2,7 @@
 
 // Pinned messages panel specific styling
 .pinned-messages-panel {
-  z-index: 1000 !important; // Lower than tooltips but still above normal content
+  // z-index inherited from DropdownPanel (10001) - no override needed
 
   .dropdown-panel__title {
     font-size: 14px !important; // Smaller title font size

@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Container, FlexRow, Text, Icon, Button } from '../primitives';
+import { isTouchDevice } from '../../utils/platform';
+import MobileDrawer from './MobileDrawer';
 import './DropdownPanel.scss';
 
 export interface DropdownPanelProps {
@@ -15,6 +17,7 @@ export interface DropdownPanelProps {
   children: React.ReactNode;
   showCloseButton?: boolean;
   resultsCount?: number;
+  useMobileBottomSheet?: boolean; // Default: true (use bottom sheet on touch devices)
 }
 
 export const DropdownPanel: React.FC<DropdownPanelProps> = ({
@@ -30,7 +33,33 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
   children,
   showCloseButton = true,
   resultsCount,
+  useMobileBottomSheet = true, // Default to mobile bottom sheet
 }) => {
+  const isTouch = isTouchDevice();
+
+  // Mobile bottom sheet mode (touch devices with useMobileBottomSheet=true)
+  if (isTouch && useMobileBottomSheet) {
+    return (
+      <MobileDrawer
+        isOpen={isOpen}
+        onClose={onClose}
+        title={
+          title ||
+          (resultsCount !== undefined
+            ? resultsCount === 1
+              ? `${resultsCount} result`
+              : `${resultsCount} results`
+            : undefined)
+        }
+        showCloseButton={showCloseButton}
+        enableSwipeToClose={true}
+      >
+        {children}
+      </MobileDrawer>
+    );
+  }
+
+  // Desktop dropdown mode (existing implementation)
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Handle outside clicks and escape key
