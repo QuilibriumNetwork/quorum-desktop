@@ -31,12 +31,12 @@ msgid "No Role - {count}"
 msgstr "Нет роли - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:682
+#: src/components/space/Channel.tsx:706
 msgid "Send a message to #{channel_name}"
 msgstr "Отправить сообщение для #{channel_name}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:251
+#: src/components/onboarding/Onboarding.tsx:256
 msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "Размер вашего изображения профиля должен быть {maxFileSize} или меньше и должен иметь расширение файла PNG, JPG или JPEG."
 
@@ -79,6 +79,11 @@ msgstr "Настройки по умолчанию для Space обеспечи
 msgid " for updates."
 msgstr "для обновлений."
 
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:101
+#: src/components/onboarding/Onboarding.tsx:223
+msgid "'everyone' is a reserved name."
+msgstr ""
+
 #: src/components/message/MessagePreview.tsx:51
 msgid "[Empty message]"
 msgstr "[Пустое сообщение]"
@@ -93,25 +98,43 @@ msgstr "[Сообщение]"
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} устройств, помеченных для удаления. Нажмите \"Сохранить изменения\", чтобы подтвердить."
 
+#: src/components/message/PinnedMessagesPanel.tsx:253
+#~ msgid "{0} pinned message"
+#~ msgstr "{0} закреплённое сообщение"
+
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:253
-msgid "{0} pinned message"
-msgstr "{0} закреплённое сообщение"
+msgid "{0} pinned message in this Channel"
+msgstr ""
+
+#: src/components/message/PinnedMessagesPanel.tsx:254
+#~ msgid "{0} pinned messages"
+#~ msgstr "{0} закреплённых сообщений"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:254
-msgid "{0} pinned messages"
-msgstr "{0} закреплённых сообщений"
+msgid "{0} pinned messages in this Channel"
+msgstr ""
 
-#. placeholder {0}: mentions.length
-#: src/components/notifications/NotificationPanel.tsx:153
-msgid "{0} unread mention"
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:146
+msgid "{0} result"
+msgstr ""
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:147
+msgid "{0} results"
 msgstr ""
 
 #. placeholder {0}: mentions.length
 #: src/components/notifications/NotificationPanel.tsx:154
+msgid "{0} unread mention"
+msgstr "{0} непрочитанное упоминание"
+
+#. placeholder {0}: mentions.length
+#: src/components/notifications/NotificationPanel.tsx:155
 msgid "{0} unread mentions"
-msgstr ""
+msgstr "{0} непрочитанных упоминаний"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:13
 msgid "{size} Bytes"
@@ -136,17 +159,17 @@ msgstr "{size} ТБ"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:193
 #: src/components/notifications/NotificationPanel.tsx:60
 msgid "@everyone"
-msgstr ""
+msgstr "@everyone"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:198
 #: src/components/notifications/NotificationPanel.tsx:64
 msgid "@roles"
-msgstr ""
+msgstr "@roles"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:188
 #: src/components/notifications/NotificationPanel.tsx:56
 msgid "@you"
-msgstr ""
+msgstr "@you"
 
 #: src/components/direct/DirectMessageContactsList.tsx:53
 msgid "+ Add a friend"
@@ -226,13 +249,13 @@ msgstr "Дополнительные настройки"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:183
 #: src/components/primitives/Select/Select.native.tsx:36
-#: src/components/primitives/Select/Select.web.tsx:29
+#: src/components/primitives/Select/Select.web.tsx:30
 msgid "All"
 msgstr "Все"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:70
 msgid "All kick records are up to date."
-msgstr ""
+msgstr "Все записи о киках актуальны."
 
 #: src/components/modals/AddSpaceModal.tsx:249
 msgid "Already Joined"
@@ -289,7 +312,6 @@ msgstr "Вы уверены, что хотите удалить эту роль?
 msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited."
 msgstr "Вы уверены, что хотите покинуть это Пространство? Вы не сможете вернуться, если вас не пригласят снова."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:166
 #~ msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 #~ msgstr "Вы уверены, что хотите покинуть это Пространство? Вы не сможете вернуться, если вас не пригласят снова. Ваши существующие сообщения НЕ будут удалены."
 
@@ -399,7 +421,7 @@ msgstr "Выберите предпочитаемую тему для Quorum."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:184
 #: src/components/primitives/Select/Select.native.tsx:37
-#: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/primitives/Select/Select.web.tsx:31
 #: src/components/space/IconPicker/IconPicker.web.tsx:140
 msgid "Clear"
 msgstr "Очистить"
@@ -484,7 +506,7 @@ msgid "Copy Key & Continue"
 msgstr "Скопировать ключ и продолжить"
 
 #: src/components/message/MessageActions.tsx:80
-#: src/components/message/MessageActionsDrawer.tsx:150
+#: src/components/message/MessageActionsDrawer.tsx:154
 msgid "Copy message link"
 msgstr "Скопируйте ссылку на сообщение"
 
@@ -584,7 +606,7 @@ msgstr "Удалить группу"
 #~ msgstr "Удалить ссылку"
 
 #: src/components/message/MessageActions.tsx:84
-#: src/components/message/MessageActionsDrawer.tsx:177
+#: src/components/message/MessageActionsDrawer.tsx:181
 msgid "Delete message"
 msgstr "Удалить сообщение"
 
@@ -638,11 +660,11 @@ msgid "Display Name"
 msgstr "Отображаемое имя"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:127
-#: src/components/modals/UserSettingsModal/General.tsx:89
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:98
 msgid "Display name is required"
 msgstr "Отображаемое имя обязательно"
 
-#: src/components/ui/MobileDrawer.tsx:131
+#: src/components/ui/MobileDrawer.tsx:145
 msgid "Drawer"
 msgstr "Ящик"
 
@@ -748,7 +770,7 @@ msgstr "Не удалось разобрать сообщение WebSocket:"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:270
 msgid "Failed to save notification settings"
-msgstr ""
+msgstr "Не удалось сохранить настройки уведомлений"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:147
 msgid "Failed to select document"
@@ -882,8 +904,8 @@ msgstr "Я уже сохранил свой"
 msgid "I've Saved It"
 msgstr "Я сохранил это"
 
-#: src/components/onboarding/Onboarding.tsx:314
-#: src/components/onboarding/Onboarding.tsx:321
+#: src/components/onboarding/Onboarding.tsx:319
+#: src/components/onboarding/Onboarding.tsx:326
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr "Если пропустить, вы получите изображение профиля по умолчанию и сможете установить его позже"
 
@@ -1048,7 +1070,7 @@ msgid "Let your friends know who you are! Pick a friendly name to display in you
 msgstr "Дайте вашим друзьям знать, кто вы! Выберите дружелюбное имя для отображения в ваших разговорах, что-то более легкое для чтения, чем:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
-#: src/components/onboarding/Onboarding.tsx:347
+#: src/components/onboarding/Onboarding.tsx:352
 msgid "Let's gooooooooo"
 msgstr "Поехали!"
 
@@ -1056,9 +1078,9 @@ msgstr "Поехали!"
 msgid "Light"
 msgstr "Свет"
 
-#: src/components/notifications/NotificationPanel.tsx:127
+#: src/components/notifications/NotificationPanel.tsx:128
 msgid "Loading notifications..."
-msgstr ""
+msgstr "Загрузка уведомлений..."
 
 #: src/components/message/PinnedMessagesPanel.tsx:225
 msgid "Loading pinned messages..."
@@ -1078,7 +1100,7 @@ msgid "Maintenance in Progress"
 msgstr "Текущее обслуживание"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
-#: src/components/onboarding/Onboarding.tsx:242
+#: src/components/onboarding/Onboarding.tsx:247
 msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
 msgstr "Сделайте вашу учетную запись уникальной – установите фото контакта. Эта информация предоставляется только пространствам, в которые вы присоединяетесь."
 
@@ -1094,20 +1116,20 @@ msgstr "Управляйте устройствами и условиями ко
 msgid "Manual Backup Required"
 msgstr "Требуется ручное резервное копирование"
 
-#: src/components/notifications/NotificationPanel.tsx:177
+#: src/components/notifications/NotificationPanel.tsx:178
 msgid "Mark all as read"
-msgstr ""
+msgstr "Отметить все как прочитанные"
 
 #: src/components/direct/DirectMessage.tsx:420
-#: src/components/space/Channel.tsx:599
+#: src/components/space/Channel.tsx:600
 msgid "Members List"
 msgstr "Список участников"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:171
 msgid "Mention Everyone"
-msgstr ""
+msgstr "Упомянуть всех"
 
-#: src/components/message/MessageActionsDrawer.tsx:100
+#: src/components/message/MessageActionsDrawer.tsx:128
 msgid "Message actions"
 msgstr "Действия с сообщениями"
 
@@ -1131,7 +1153,7 @@ msgstr "Другие реакции"
 msgid "New Direct Message"
 msgstr "Новое прямое сообщение"
 
-#: src/components/search/SearchResults.tsx:90
+#: src/components/search/SearchResults.tsx:100
 msgid "No messages found"
 msgstr "Сообщений не найдено"
 
@@ -1139,12 +1161,12 @@ msgstr "Сообщений не найдено"
 msgid "No pinned messages yet"
 msgstr "Пока нет закреплённых сообщений"
 
-#: src/components/notifications/NotificationPanel.tsx:135
+#: src/components/notifications/NotificationPanel.tsx:136
 msgid "No unread mentions"
-msgstr ""
+msgstr "Нет непрочитанных упоминаний"
 
-#: src/components/space/Channel.tsx:347
-#: src/components/space/Channel.tsx:746
+#: src/components/space/Channel.tsx:350
+#: src/components/space/Channel.tsx:770
 msgid "No users found!"
 msgstr "Пользователи не найдены!"
 
@@ -1159,7 +1181,7 @@ msgstr "Разрешение на уведомления не предостав
 #: src/components/modals/SpaceSettingsModal/Account.tsx:171
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:567
+#: src/components/space/Channel.tsx:568
 msgid "Notifications"
 msgstr "Уведомления"
 
@@ -1253,7 +1275,7 @@ msgid "Pin limit reached ({0})"
 msgstr "Достигнут лимит закреплений ({0})"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:164
+#: src/components/message/MessageActionsDrawer.tsx:168
 msgid "Pin message"
 msgstr "Закрепить сообщение"
 
@@ -1278,7 +1300,7 @@ msgstr "Закреплено"
 msgid "Pinned by {0}"
 msgstr "Закреплено пользователем {0}"
 
-#: src/components/space/Channel.tsx:530
+#: src/components/space/Channel.tsx:533
 msgid "Pinned Messages"
 msgstr "Закреплённые сообщения"
 
@@ -1365,7 +1387,7 @@ msgid "Remove"
 msgstr "Удалить"
 
 #: src/components/message/MessageActions.tsx:76
-#: src/components/message/MessageActionsDrawer.tsx:139
+#: src/components/message/MessageActionsDrawer.tsx:143
 msgid "Reply"
 msgstr "Ответить"
 
@@ -1394,18 +1416,18 @@ msgstr "Сохранить"
 #: src/components/modals/ChannelEditorModal.tsx:189
 #: src/components/modals/GroupEditorModal.tsx:94
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:582
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:239
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:251
 #: src/components/user/UserProfileEdit.tsx:160
 msgid "Save Changes"
 msgstr "Сохранить изменения"
 
 #: src/components/onboarding/Onboarding.native.tsx:473
-#: src/components/onboarding/Onboarding.tsx:303
+#: src/components/onboarding/Onboarding.tsx:308
 msgid "Save Contact Photo"
 msgstr "Сохранить фотографию контакта"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:567
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:228
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:240
 msgid "Save Failed"
 msgstr "Сохранение не удалось"
 
@@ -1430,7 +1452,7 @@ msgid "Saving..."
 msgstr "Сохранение..."
 
 #. placeholder {0}: error?.message || 'Unknown error'
-#: src/components/search/SearchResults.tsx:81
+#: src/components/search/SearchResults.tsx:91
 msgid "Search failed: {0}"
 msgstr "Поиск не удался: {0}"
 
@@ -1444,11 +1466,19 @@ msgstr "Искать здесь"
 msgid "Search in this Space"
 msgstr "Поиск в этом Пространство"
 
+#: src/components/search/SearchResults.tsx:127
+msgid "Search in this Space..."
+msgstr ""
+
+#: src/components/space/Channel.tsx:618
+msgid "Search Messages"
+msgstr ""
+
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
 msgstr "Поиск сообщений..."
 
-#: src/components/search/SearchResults.tsx:72
+#: src/components/search/SearchResults.tsx:82
 msgid "Searching..."
 msgstr "Поиск..."
 
@@ -1458,10 +1488,10 @@ msgstr "Безопасность"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:181
 msgid "Select"
-msgstr ""
+msgstr "Выбрать"
 
 #: src/components/primitives/Select/Select.native.tsx:24
-#: src/components/primitives/Select/Select.web.tsx:13
+#: src/components/primitives/Select/Select.web.tsx:14
 msgid "Select an option"
 msgstr "Выберите вариант"
 
@@ -1479,7 +1509,7 @@ msgstr "Выберите канал по умолчанию"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:174
 msgid "Select for which mentions you will receive notifications"
-msgstr ""
+msgstr "Выберите, для каких упоминаний вы будете получать уведомления"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:161
 msgid "Select Image"
@@ -1518,7 +1548,7 @@ msgid "Session Encrypted"
 msgstr "Сессия зашифрована"
 
 #: src/components/onboarding/Onboarding.native.tsx:344
-#: src/components/onboarding/Onboarding.tsx:228
+#: src/components/onboarding/Onboarding.tsx:233
 msgid "Set Display Name"
 msgstr "Установить отображаемое имя"
 
@@ -1535,7 +1565,7 @@ msgid "show home screen"
 msgstr "показать главный экран"
 
 #: src/components/onboarding/Onboarding.native.tsx:461
-#: src/components/onboarding/Onboarding.tsx:310
+#: src/components/onboarding/Onboarding.tsx:315
 msgid "Skip Adding Photo"
 msgstr "Пропустить добавление фото"
 
@@ -1561,7 +1591,7 @@ msgstr "Название пространства обязательно"
 msgid "Space Settings"
 msgstr "Настройки Пространства"
 
-#: src/components/search/SearchResults.tsx:63
+#: src/components/search/SearchResults.tsx:73
 msgid "Start typing to search messages..."
 msgstr "Начните вводить, чтобы искать сообщения..."
 
@@ -1675,7 +1705,7 @@ msgstr "Сегодня в {timeFormatted}"
 msgid "Too many files selected. Please select fewer files."
 msgstr "Слишком много файлов выбрано. Пожалуйста, выберите меньше файлов."
 
-#: src/components/search/SearchResults.tsx:92
+#: src/components/search/SearchResults.tsx:102
 msgid "Try different keywords or check your spelling"
 msgstr "Попробуйте другие ключевые слова или проверьте правописание"
 
@@ -1746,7 +1776,7 @@ msgstr "Неизвестное время"
 #: src/components/message/PinnedMessagesPanel.tsx:119
 #: src/components/modals/ConversationSettingsModal.tsx:95
 #: src/components/modals/NewDirectMessageModal.tsx:66
-#: src/components/notifications/NotificationPanel.tsx:204
+#: src/components/notifications/NotificationPanel.tsx:205
 #: src/hooks/business/channels/useChannelMessages.ts:144
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
@@ -1775,7 +1805,7 @@ msgid "Unpin"
 msgstr "Открепить"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:164
+#: src/components/message/MessageActionsDrawer.tsx:168
 msgid "Unpin message"
 msgstr "Открепить сообщение"
 
@@ -1833,8 +1863,8 @@ msgstr "Адрес пользователя здесь"
 msgid "User does not exist."
 msgstr "Пользователь не существует."
 
-#: src/components/space/Channel.tsx:334
-#: src/components/space/Channel.tsx:733
+#: src/components/space/Channel.tsx:337
+#: src/components/space/Channel.tsx:757
 msgid "Username or Address"
 msgstr "Имя пользователя или адрес"
 
@@ -1865,15 +1895,15 @@ msgstr "Когда сообщения подписаны, отправители
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:194
 msgid "When someone mentions @everyone"
-msgstr ""
+msgstr "Когда кто-то упоминает @everyone"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:199
 msgid "When someone mentions a role you have (Coming Soon)"
-msgstr ""
+msgstr "Когда кто-то упоминает роль, которую вы имеете (Скоро)"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:189
 msgid "When someone mentions you directly"
-msgstr ""
+msgstr "Когда кто-то упоминает вас напрямую"
 
 #: src/components/modals/CreateSpaceModal.tsx:142
 msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
@@ -1913,7 +1943,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "Вы не можете удалить группу, содержащую каналы. Сначала удалите все {channelCount} каналы в этой группе."
 
 #: src/components/message/MessageComposer.tsx:206
-#: src/components/space/Channel.tsx:704
+#: src/components/space/Channel.tsx:728
 msgid "You cannot post in this channel"
 msgstr "Вы не можете публиковать в этом канале"
 
@@ -1932,14 +1962,14 @@ msgstr "У вас новые непрочитанные сообщения"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:218
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
-msgstr ""
+msgstr "Вы не сможете вернуться, если вас не пригласят снова. Ваши существующие сообщения НЕ будут удалены."
 
-#: src/components/notifications/NotificationPanel.tsx:137
+#: src/components/notifications/NotificationPanel.tsx:138
 msgid "You're all caught up!"
-msgstr ""
+msgstr "Вы в курсе всех событий!"
 
 #: src/components/onboarding/Onboarding.native.tsx:494
-#: src/components/onboarding/Onboarding.tsx:335
+#: src/components/onboarding/Onboarding.tsx:340
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Все готово. Добро пожаловать в Quorum!"
 

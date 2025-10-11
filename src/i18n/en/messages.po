@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "No Role - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:682
+#: src/components/space/Channel.tsx:706
 msgid "Send a message to #{channel_name}"
 msgstr "Send a message to #{channel_name}"
 
@@ -41,15 +41,15 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:134
-msgid "Failed to process image"
-msgstr "Failed to process image"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
 #: src/components/message/MessageComposer.tsx:248
 msgid "Replying to {user}"
 msgstr "Replying to {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:134
+msgid "Failed to process image"
+msgstr "Failed to process image"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:238
@@ -98,23 +98,41 @@ msgstr "[Message]"
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 
+#: src/components/message/PinnedMessagesPanel.tsx:253
+#~ msgid "{0} pinned message"
+#~ msgstr "{0} pinned message"
+
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:253
-msgid "{0} pinned message"
-msgstr "{0} pinned message"
+msgid "{0} pinned message in this Channel"
+msgstr "{0} pinned message in this Channel"
+
+#: src/components/message/PinnedMessagesPanel.tsx:254
+#~ msgid "{0} pinned messages"
+#~ msgstr "{0} pinned messages"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:254
-msgid "{0} pinned messages"
-msgstr "{0} pinned messages"
+msgid "{0} pinned messages in this Channel"
+msgstr "{0} pinned messages in this Channel"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:146
+msgid "{0} result"
+msgstr "{0} result"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:147
+msgid "{0} results"
+msgstr "{0} results"
 
 #. placeholder {0}: mentions.length
-#: src/components/notifications/NotificationPanel.tsx:153
+#: src/components/notifications/NotificationPanel.tsx:154
 msgid "{0} unread mention"
 msgstr "{0} unread mention"
 
 #. placeholder {0}: mentions.length
-#: src/components/notifications/NotificationPanel.tsx:154
+#: src/components/notifications/NotificationPanel.tsx:155
 msgid "{0} unread mentions"
 msgstr "{0} unread mentions"
 
@@ -231,7 +249,7 @@ msgstr "Advanced Settings"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:183
 #: src/components/primitives/Select/Select.native.tsx:36
-#: src/components/primitives/Select/Select.web.tsx:29
+#: src/components/primitives/Select/Select.web.tsx:30
 msgid "All"
 msgstr "All"
 
@@ -405,7 +423,7 @@ msgstr "Choose your preferred theme for Quorum."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:184
 #: src/components/primitives/Select/Select.native.tsx:37
-#: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/primitives/Select/Select.web.tsx:31
 #: src/components/space/IconPicker/IconPicker.web.tsx:140
 msgid "Clear"
 msgstr "Clear"
@@ -490,7 +508,7 @@ msgid "Copy Key & Continue"
 msgstr "Copy Key & Continue"
 
 #: src/components/message/MessageActions.tsx:80
-#: src/components/message/MessageActionsDrawer.tsx:150
+#: src/components/message/MessageActionsDrawer.tsx:154
 msgid "Copy message link"
 msgstr "Copy message link"
 
@@ -592,7 +610,7 @@ msgstr "Delete Group"
 #~ msgstr "Delete Link"
 
 #: src/components/message/MessageActions.tsx:84
-#: src/components/message/MessageActionsDrawer.tsx:177
+#: src/components/message/MessageActionsDrawer.tsx:181
 msgid "Delete message"
 msgstr "Delete message"
 
@@ -651,7 +669,7 @@ msgstr "Display Name"
 msgid "Display name is required"
 msgstr "Display name is required"
 
-#: src/components/ui/MobileDrawer.tsx:131
+#: src/components/ui/MobileDrawer.tsx:145
 msgid "Drawer"
 msgstr "Drawer"
 
@@ -1065,7 +1083,7 @@ msgstr "Let's gooooooooo"
 msgid "Light"
 msgstr "Light"
 
-#: src/components/notifications/NotificationPanel.tsx:127
+#: src/components/notifications/NotificationPanel.tsx:128
 msgid "Loading notifications..."
 msgstr "Loading notifications..."
 
@@ -1103,12 +1121,12 @@ msgstr "Manage devices, and privacy conditions for messaging and synchronization
 msgid "Manual Backup Required"
 msgstr "Manual Backup Required"
 
-#: src/components/notifications/NotificationPanel.tsx:177
+#: src/components/notifications/NotificationPanel.tsx:178
 msgid "Mark all as read"
 msgstr "Mark all as read"
 
 #: src/components/direct/DirectMessage.tsx:420
-#: src/components/space/Channel.tsx:599
+#: src/components/space/Channel.tsx:600
 msgid "Members List"
 msgstr "Members List"
 
@@ -1116,7 +1134,7 @@ msgstr "Members List"
 msgid "Mention Everyone"
 msgstr "Mention Everyone"
 
-#: src/components/message/MessageActionsDrawer.tsx:100
+#: src/components/message/MessageActionsDrawer.tsx:128
 msgid "Message actions"
 msgstr "Message actions"
 
@@ -1140,7 +1158,7 @@ msgstr "More reactions"
 msgid "New Direct Message"
 msgstr "New Direct Message"
 
-#: src/components/search/SearchResults.tsx:90
+#: src/components/search/SearchResults.tsx:100
 msgid "No messages found"
 msgstr "No messages found"
 
@@ -1148,12 +1166,12 @@ msgstr "No messages found"
 msgid "No pinned messages yet"
 msgstr "No pinned messages yet"
 
-#: src/components/notifications/NotificationPanel.tsx:135
+#: src/components/notifications/NotificationPanel.tsx:136
 msgid "No unread mentions"
 msgstr "No unread mentions"
 
-#: src/components/space/Channel.tsx:347
-#: src/components/space/Channel.tsx:746
+#: src/components/space/Channel.tsx:350
+#: src/components/space/Channel.tsx:770
 msgid "No users found!"
 msgstr "No users found!"
 
@@ -1168,7 +1186,7 @@ msgstr "Notification permission not granted"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:171
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:567
+#: src/components/space/Channel.tsx:568
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -1262,7 +1280,7 @@ msgid "Pin limit reached ({0})"
 msgstr "Pin limit reached ({0})"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:164
+#: src/components/message/MessageActionsDrawer.tsx:168
 msgid "Pin message"
 msgstr "Pin message"
 
@@ -1287,7 +1305,7 @@ msgstr "Pinned"
 msgid "Pinned by {0}"
 msgstr "Pinned by {0}"
 
-#: src/components/space/Channel.tsx:530
+#: src/components/space/Channel.tsx:533
 msgid "Pinned Messages"
 msgstr "Pinned Messages"
 
@@ -1374,7 +1392,7 @@ msgid "Remove"
 msgstr "Remove"
 
 #: src/components/message/MessageActions.tsx:76
-#: src/components/message/MessageActionsDrawer.tsx:139
+#: src/components/message/MessageActionsDrawer.tsx:143
 msgid "Reply"
 msgstr "Reply"
 
@@ -1439,7 +1457,7 @@ msgid "Saving..."
 msgstr "Saving..."
 
 #. placeholder {0}: error?.message || 'Unknown error'
-#: src/components/search/SearchResults.tsx:81
+#: src/components/search/SearchResults.tsx:91
 msgid "Search failed: {0}"
 msgstr "Search failed: {0}"
 
@@ -1453,11 +1471,19 @@ msgstr "Search here"
 msgid "Search in this Space"
 msgstr "Search in this Space"
 
+#: src/components/search/SearchResults.tsx:127
+msgid "Search in this Space..."
+msgstr "Search in this Space..."
+
+#: src/components/space/Channel.tsx:618
+msgid "Search Messages"
+msgstr "Search Messages"
+
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
 msgstr "Search messages..."
 
-#: src/components/search/SearchResults.tsx:72
+#: src/components/search/SearchResults.tsx:82
 msgid "Searching..."
 msgstr "Searching..."
 
@@ -1470,7 +1496,7 @@ msgid "Select"
 msgstr "Select"
 
 #: src/components/primitives/Select/Select.native.tsx:24
-#: src/components/primitives/Select/Select.web.tsx:13
+#: src/components/primitives/Select/Select.web.tsx:14
 msgid "Select an option"
 msgstr "Select an option"
 
@@ -1570,7 +1596,7 @@ msgstr "Space name is required"
 msgid "Space Settings"
 msgstr "Space Settings"
 
-#: src/components/search/SearchResults.tsx:63
+#: src/components/search/SearchResults.tsx:73
 msgid "Start typing to search messages..."
 msgstr "Start typing to search messages..."
 
@@ -1686,7 +1712,7 @@ msgstr "Today at {timeFormatted}"
 msgid "Too many files selected. Please select fewer files."
 msgstr "Too many files selected. Please select fewer files."
 
-#: src/components/search/SearchResults.tsx:92
+#: src/components/search/SearchResults.tsx:102
 msgid "Try different keywords or check your spelling"
 msgstr "Try different keywords or check your spelling"
 
@@ -1757,7 +1783,7 @@ msgstr "Unknown time"
 #: src/components/message/PinnedMessagesPanel.tsx:119
 #: src/components/modals/ConversationSettingsModal.tsx:95
 #: src/components/modals/NewDirectMessageModal.tsx:66
-#: src/components/notifications/NotificationPanel.tsx:204
+#: src/components/notifications/NotificationPanel.tsx:205
 #: src/hooks/business/channels/useChannelMessages.ts:144
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
@@ -1786,7 +1812,7 @@ msgid "Unpin"
 msgstr "Unpin"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:164
+#: src/components/message/MessageActionsDrawer.tsx:168
 msgid "Unpin message"
 msgstr "Unpin message"
 
@@ -1844,8 +1870,8 @@ msgstr "User address here"
 msgid "User does not exist."
 msgstr "User does not exist."
 
-#: src/components/space/Channel.tsx:334
-#: src/components/space/Channel.tsx:733
+#: src/components/space/Channel.tsx:337
+#: src/components/space/Channel.tsx:757
 msgid "Username or Address"
 msgstr "Username or Address"
 
@@ -1924,7 +1950,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 
 #: src/components/message/MessageComposer.tsx:206
-#: src/components/space/Channel.tsx:704
+#: src/components/space/Channel.tsx:728
 msgid "You cannot post in this channel"
 msgstr "You cannot post in this channel"
 
@@ -1945,7 +1971,7 @@ msgstr "You have new unread messages"
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 
-#: src/components/notifications/NotificationPanel.tsx:137
+#: src/components/notifications/NotificationPanel.tsx:138
 msgid "You're all caught up!"
 msgstr "You're all caught up!"
 

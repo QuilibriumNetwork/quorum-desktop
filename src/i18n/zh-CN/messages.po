@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "无角色 - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:682
+#: src/components/space/Channel.tsx:706
 msgid "Send a message to #{channel_name}"
 msgstr "向 #{channel_name} 发送信息"
 
@@ -41,15 +41,15 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "您的个人资料图片大小必须为 {maxFileSize} 或更小，并且必须是 PNG、JPG 或 JPEG 文件扩展名。"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:134
-msgid "Failed to process image"
-msgstr "无法处理图像"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
 #: src/components/message/MessageComposer.tsx:248
 msgid "Replying to {user}"
 msgstr "回复 {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:134
+msgid "Failed to process image"
+msgstr "无法处理图像"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:238
@@ -82,7 +82,7 @@ msgstr "更新中。"
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:101
 #: src/components/onboarding/Onboarding.tsx:223
 msgid "'everyone' is a reserved name."
-msgstr ""
+msgstr "'everyone' 是一个保留名称。"
 
 #: src/components/message/MessagePreview.tsx:51
 msgid "[Empty message]"
@@ -98,23 +98,39 @@ msgstr "[消息]"
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} 设备标记为删除。点击 \"保存更改\" 以确认。"
 
+#~ msgid "{0} pinned message"
+#~ msgstr "{0} 条置顶消息"
+
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:253
-msgid "{0} pinned message"
-msgstr "{0} 条置顶消息"
+msgid "{0} pinned message in this Channel"
+msgstr "{0} 在此频道中固定的消息"
+
+#~ msgid "{0} pinned messages"
+#~ msgstr "{0} 条置顶消息"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:254
-msgid "{0} pinned messages"
-msgstr "{0} 条置顶消息"
+msgid "{0} pinned messages in this Channel"
+msgstr "{0} 在此频道中固定的消息"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:146
+msgid "{0} result"
+msgstr "{0} 结果"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:147
+msgid "{0} results"
+msgstr "{0} 结果"
 
 #. placeholder {0}: mentions.length
-#: src/components/notifications/NotificationPanel.tsx:153
+#: src/components/notifications/NotificationPanel.tsx:154
 msgid "{0} unread mention"
 msgstr "{0} 条未读提及"
 
 #. placeholder {0}: mentions.length
-#: src/components/notifications/NotificationPanel.tsx:154
+#: src/components/notifications/NotificationPanel.tsx:155
 msgid "{0} unread mentions"
 msgstr "{0} 条未读提及"
 
@@ -231,7 +247,7 @@ msgstr "高级设置"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:183
 #: src/components/primitives/Select/Select.native.tsx:36
-#: src/components/primitives/Select/Select.web.tsx:29
+#: src/components/primitives/Select/Select.web.tsx:30
 msgid "All"
 msgstr "全部"
 
@@ -404,7 +420,7 @@ msgstr "选择您在 Quorum 中的首选主题。"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:184
 #: src/components/primitives/Select/Select.native.tsx:37
-#: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/primitives/Select/Select.web.tsx:31
 #: src/components/space/IconPicker/IconPicker.web.tsx:140
 msgid "Clear"
 msgstr "清除"
@@ -489,7 +505,7 @@ msgid "Copy Key & Continue"
 msgstr "复制密钥并继续"
 
 #: src/components/message/MessageActions.tsx:80
-#: src/components/message/MessageActionsDrawer.tsx:150
+#: src/components/message/MessageActionsDrawer.tsx:154
 msgid "Copy message link"
 msgstr "复制信息链接"
 
@@ -589,7 +605,7 @@ msgstr "删除组"
 #~ msgstr "删除链接"
 
 #: src/components/message/MessageActions.tsx:84
-#: src/components/message/MessageActionsDrawer.tsx:177
+#: src/components/message/MessageActionsDrawer.tsx:181
 msgid "Delete message"
 msgstr "删除信息"
 
@@ -647,7 +663,7 @@ msgstr "显示名称"
 msgid "Display name is required"
 msgstr "显示名称是必需的"
 
-#: src/components/ui/MobileDrawer.tsx:131
+#: src/components/ui/MobileDrawer.tsx:145
 msgid "Drawer"
 msgstr "抽屉"
 
@@ -1061,7 +1077,7 @@ msgstr "我们走吧"
 msgid "Light"
 msgstr "光"
 
-#: src/components/notifications/NotificationPanel.tsx:127
+#: src/components/notifications/NotificationPanel.tsx:128
 msgid "Loading notifications..."
 msgstr "正在加载通知..."
 
@@ -1099,12 +1115,12 @@ msgstr "管理设备和消息传递及同步的隐私条件。"
 msgid "Manual Backup Required"
 msgstr "需要手动备份"
 
-#: src/components/notifications/NotificationPanel.tsx:177
+#: src/components/notifications/NotificationPanel.tsx:178
 msgid "Mark all as read"
 msgstr "全部标记为已读"
 
 #: src/components/direct/DirectMessage.tsx:420
-#: src/components/space/Channel.tsx:599
+#: src/components/space/Channel.tsx:600
 msgid "Members List"
 msgstr "成员列表"
 
@@ -1112,7 +1128,7 @@ msgstr "成员列表"
 msgid "Mention Everyone"
 msgstr "提及所有人"
 
-#: src/components/message/MessageActionsDrawer.tsx:100
+#: src/components/message/MessageActionsDrawer.tsx:128
 msgid "Message actions"
 msgstr "消息操作"
 
@@ -1136,7 +1152,7 @@ msgstr "更多反应"
 msgid "New Direct Message"
 msgstr "新的直接消息"
 
-#: src/components/search/SearchResults.tsx:90
+#: src/components/search/SearchResults.tsx:100
 msgid "No messages found"
 msgstr "未找到消息"
 
@@ -1144,12 +1160,12 @@ msgstr "未找到消息"
 msgid "No pinned messages yet"
 msgstr "尚无置顶消息"
 
-#: src/components/notifications/NotificationPanel.tsx:135
+#: src/components/notifications/NotificationPanel.tsx:136
 msgid "No unread mentions"
 msgstr "没有未读提及"
 
-#: src/components/space/Channel.tsx:347
-#: src/components/space/Channel.tsx:746
+#: src/components/space/Channel.tsx:350
+#: src/components/space/Channel.tsx:770
 msgid "No users found!"
 msgstr "未找到用户！"
 
@@ -1164,7 +1180,7 @@ msgstr "未授予通知权限"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:171
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:567
+#: src/components/space/Channel.tsx:568
 msgid "Notifications"
 msgstr "通知"
 
@@ -1258,7 +1274,7 @@ msgid "Pin limit reached ({0})"
 msgstr "已达到置顶上限 ({0})"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:164
+#: src/components/message/MessageActionsDrawer.tsx:168
 msgid "Pin message"
 msgstr "置顶消息"
 
@@ -1283,7 +1299,7 @@ msgstr "已置顶"
 msgid "Pinned by {0}"
 msgstr "由 {0} 置顶"
 
-#: src/components/space/Channel.tsx:530
+#: src/components/space/Channel.tsx:533
 msgid "Pinned Messages"
 msgstr "置顶消息"
 
@@ -1370,7 +1386,7 @@ msgid "Remove"
 msgstr "移除"
 
 #: src/components/message/MessageActions.tsx:76
-#: src/components/message/MessageActionsDrawer.tsx:139
+#: src/components/message/MessageActionsDrawer.tsx:143
 msgid "Reply"
 msgstr "答复"
 
@@ -1435,7 +1451,7 @@ msgid "Saving..."
 msgstr "保存中..."
 
 #. placeholder {0}: error?.message || 'Unknown error'
-#: src/components/search/SearchResults.tsx:81
+#: src/components/search/SearchResults.tsx:91
 msgid "Search failed: {0}"
 msgstr "搜索失败：{0}"
 
@@ -1449,11 +1465,19 @@ msgstr "在这里搜索"
 msgid "Search in this Space"
 msgstr "在此空间中搜索"
 
+#: src/components/search/SearchResults.tsx:127
+msgid "Search in this Space..."
+msgstr "在此空间中搜索..."
+
+#: src/components/space/Channel.tsx:618
+msgid "Search Messages"
+msgstr "搜索消息"
+
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
 msgstr "搜索消息..."
 
-#: src/components/search/SearchResults.tsx:72
+#: src/components/search/SearchResults.tsx:82
 msgid "Searching..."
 msgstr "搜索中..."
 
@@ -1466,7 +1490,7 @@ msgid "Select"
 msgstr "选择"
 
 #: src/components/primitives/Select/Select.native.tsx:24
-#: src/components/primitives/Select/Select.web.tsx:13
+#: src/components/primitives/Select/Select.web.tsx:14
 msgid "Select an option"
 msgstr "选择一个选项"
 
@@ -1566,7 +1590,7 @@ msgstr "空间名称是必需的"
 msgid "Space Settings"
 msgstr "空间设置"
 
-#: src/components/search/SearchResults.tsx:63
+#: src/components/search/SearchResults.tsx:73
 msgid "Start typing to search messages..."
 msgstr "开始输入以搜索消息..."
 
@@ -1680,7 +1704,7 @@ msgstr "今天 {0}"
 msgid "Too many files selected. Please select fewer files."
 msgstr "选择的文件过多。请减少选择的文件数量。"
 
-#: src/components/search/SearchResults.tsx:92
+#: src/components/search/SearchResults.tsx:102
 msgid "Try different keywords or check your spelling"
 msgstr "尝试不同的关键字或检查拼写"
 
@@ -1751,7 +1775,7 @@ msgstr "未知时间"
 #: src/components/message/PinnedMessagesPanel.tsx:119
 #: src/components/modals/ConversationSettingsModal.tsx:95
 #: src/components/modals/NewDirectMessageModal.tsx:66
-#: src/components/notifications/NotificationPanel.tsx:204
+#: src/components/notifications/NotificationPanel.tsx:205
 #: src/hooks/business/channels/useChannelMessages.ts:144
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
@@ -1780,7 +1804,7 @@ msgid "Unpin"
 msgstr "取消固定"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:164
+#: src/components/message/MessageActionsDrawer.tsx:168
 msgid "Unpin message"
 msgstr "取消置顶消息"
 
@@ -1838,8 +1862,8 @@ msgstr "用户地址在这里"
 msgid "User does not exist."
 msgstr "用户不存在。"
 
-#: src/components/space/Channel.tsx:334
-#: src/components/space/Channel.tsx:733
+#: src/components/space/Channel.tsx:337
+#: src/components/space/Channel.tsx:757
 msgid "Username or Address"
 msgstr "用户名或地址"
 
@@ -1918,7 +1942,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "你不能删除包含频道的组。请先删除该组中的所有{channelCount}个频道。"
 
 #: src/components/message/MessageComposer.tsx:206
-#: src/components/space/Channel.tsx:704
+#: src/components/space/Channel.tsx:728
 msgid "You cannot post in this channel"
 msgstr "你不能在此频道中发布"
 
@@ -1939,7 +1963,7 @@ msgstr "你有新的未读消息"
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "除非您被重新邀请，否则您将无法重新加入。您现有的消息将不会被删除。"
 
-#: src/components/notifications/NotificationPanel.tsx:137
+#: src/components/notifications/NotificationPanel.tsx:138
 msgid "You're all caught up!"
 msgstr "您已全部跟进！"
 

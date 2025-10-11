@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Нет роли - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:682
+#: src/components/space/Channel.tsx:706
 msgid "Send a message to #{channel_name}"
 msgstr "Отправить сообщение для #{channel_name}"
 
@@ -41,15 +41,15 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Размер вашего изображения профиля должен быть {maxFileSize} или меньше и должен иметь расширение файла PNG, JPG или JPEG."
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:134
-msgid "Failed to process image"
-msgstr "Не удалось обработать изображение"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
 #: src/components/message/MessageComposer.tsx:248
 msgid "Replying to {user}"
 msgstr "Ответ на {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:134
+msgid "Failed to process image"
+msgstr "Не удалось обработать изображение"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:238
@@ -82,7 +82,7 @@ msgstr "для обновлений."
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:101
 #: src/components/onboarding/Onboarding.tsx:223
 msgid "'everyone' is a reserved name."
-msgstr ""
+msgstr "'все' — зарезервированное имя."
 
 #: src/components/message/MessagePreview.tsx:51
 msgid "[Empty message]"
@@ -98,23 +98,39 @@ msgstr "[Сообщение]"
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} устройств, помеченных для удаления. Нажмите \"Сохранить изменения\", чтобы подтвердить."
 
+#~ msgid "{0} pinned message"
+#~ msgstr "{0} закреплённое сообщение"
+
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:253
-msgid "{0} pinned message"
-msgstr "{0} закреплённое сообщение"
+msgid "{0} pinned message in this Channel"
+msgstr "{0} закрепленное сообщение в этом канале"
+
+#~ msgid "{0} pinned messages"
+#~ msgstr "{0} закреплённых сообщений"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:254
-msgid "{0} pinned messages"
-msgstr "{0} закреплённых сообщений"
+msgid "{0} pinned messages in this Channel"
+msgstr "{0} закрепленных сообщений в этом канале"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:146
+msgid "{0} result"
+msgstr "{0} результат"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:147
+msgid "{0} results"
+msgstr "{0} результаты"
 
 #. placeholder {0}: mentions.length
-#: src/components/notifications/NotificationPanel.tsx:153
+#: src/components/notifications/NotificationPanel.tsx:154
 msgid "{0} unread mention"
 msgstr "{0} непрочитанное упоминание"
 
 #. placeholder {0}: mentions.length
-#: src/components/notifications/NotificationPanel.tsx:154
+#: src/components/notifications/NotificationPanel.tsx:155
 msgid "{0} unread mentions"
 msgstr "{0} непрочитанных упоминаний"
 
@@ -231,7 +247,7 @@ msgstr "Дополнительные настройки"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:183
 #: src/components/primitives/Select/Select.native.tsx:36
-#: src/components/primitives/Select/Select.web.tsx:29
+#: src/components/primitives/Select/Select.web.tsx:30
 msgid "All"
 msgstr "Все"
 
@@ -403,7 +419,7 @@ msgstr "Выберите предпочитаемую тему для Quorum."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:184
 #: src/components/primitives/Select/Select.native.tsx:37
-#: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/primitives/Select/Select.web.tsx:31
 #: src/components/space/IconPicker/IconPicker.web.tsx:140
 msgid "Clear"
 msgstr "Очистить"
@@ -488,7 +504,7 @@ msgid "Copy Key & Continue"
 msgstr "Скопировать ключ и продолжить"
 
 #: src/components/message/MessageActions.tsx:80
-#: src/components/message/MessageActionsDrawer.tsx:150
+#: src/components/message/MessageActionsDrawer.tsx:154
 msgid "Copy message link"
 msgstr "Скопируйте ссылку на сообщение"
 
@@ -588,7 +604,7 @@ msgstr "Удалить группу"
 #~ msgstr "Удалить ссылку"
 
 #: src/components/message/MessageActions.tsx:84
-#: src/components/message/MessageActionsDrawer.tsx:177
+#: src/components/message/MessageActionsDrawer.tsx:181
 msgid "Delete message"
 msgstr "Удалить сообщение"
 
@@ -646,7 +662,7 @@ msgstr "Отображаемое имя"
 msgid "Display name is required"
 msgstr "Отображаемое имя обязательно"
 
-#: src/components/ui/MobileDrawer.tsx:131
+#: src/components/ui/MobileDrawer.tsx:145
 msgid "Drawer"
 msgstr "Ящик"
 
@@ -1060,7 +1076,7 @@ msgstr "Поехали!"
 msgid "Light"
 msgstr "Свет"
 
-#: src/components/notifications/NotificationPanel.tsx:127
+#: src/components/notifications/NotificationPanel.tsx:128
 msgid "Loading notifications..."
 msgstr "Загрузка уведомлений..."
 
@@ -1098,12 +1114,12 @@ msgstr "Управляйте устройствами и условиями ко
 msgid "Manual Backup Required"
 msgstr "Требуется ручное резервное копирование"
 
-#: src/components/notifications/NotificationPanel.tsx:177
+#: src/components/notifications/NotificationPanel.tsx:178
 msgid "Mark all as read"
 msgstr "Отметить все как прочитанные"
 
 #: src/components/direct/DirectMessage.tsx:420
-#: src/components/space/Channel.tsx:599
+#: src/components/space/Channel.tsx:600
 msgid "Members List"
 msgstr "Список участников"
 
@@ -1111,7 +1127,7 @@ msgstr "Список участников"
 msgid "Mention Everyone"
 msgstr "Упомянуть всех"
 
-#: src/components/message/MessageActionsDrawer.tsx:100
+#: src/components/message/MessageActionsDrawer.tsx:128
 msgid "Message actions"
 msgstr "Действия с сообщениями"
 
@@ -1135,7 +1151,7 @@ msgstr "Другие реакции"
 msgid "New Direct Message"
 msgstr "Новое прямое сообщение"
 
-#: src/components/search/SearchResults.tsx:90
+#: src/components/search/SearchResults.tsx:100
 msgid "No messages found"
 msgstr "Сообщений не найдено"
 
@@ -1143,12 +1159,12 @@ msgstr "Сообщений не найдено"
 msgid "No pinned messages yet"
 msgstr "Пока нет закреплённых сообщений"
 
-#: src/components/notifications/NotificationPanel.tsx:135
+#: src/components/notifications/NotificationPanel.tsx:136
 msgid "No unread mentions"
 msgstr "Нет непрочитанных упоминаний"
 
-#: src/components/space/Channel.tsx:347
-#: src/components/space/Channel.tsx:746
+#: src/components/space/Channel.tsx:350
+#: src/components/space/Channel.tsx:770
 msgid "No users found!"
 msgstr "Пользователи не найдены!"
 
@@ -1163,7 +1179,7 @@ msgstr "Разрешение на уведомления не предостав
 #: src/components/modals/SpaceSettingsModal/Account.tsx:171
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:567
+#: src/components/space/Channel.tsx:568
 msgid "Notifications"
 msgstr "Уведомления"
 
@@ -1257,7 +1273,7 @@ msgid "Pin limit reached ({0})"
 msgstr "Достигнут лимит закреплений ({0})"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:164
+#: src/components/message/MessageActionsDrawer.tsx:168
 msgid "Pin message"
 msgstr "Закрепить сообщение"
 
@@ -1282,7 +1298,7 @@ msgstr "Закреплено"
 msgid "Pinned by {0}"
 msgstr "Закреплено пользователем {0}"
 
-#: src/components/space/Channel.tsx:530
+#: src/components/space/Channel.tsx:533
 msgid "Pinned Messages"
 msgstr "Закреплённые сообщения"
 
@@ -1369,7 +1385,7 @@ msgid "Remove"
 msgstr "Удалить"
 
 #: src/components/message/MessageActions.tsx:76
-#: src/components/message/MessageActionsDrawer.tsx:139
+#: src/components/message/MessageActionsDrawer.tsx:143
 msgid "Reply"
 msgstr "Ответить"
 
@@ -1434,7 +1450,7 @@ msgid "Saving..."
 msgstr "Сохранение..."
 
 #. placeholder {0}: error?.message || 'Unknown error'
-#: src/components/search/SearchResults.tsx:81
+#: src/components/search/SearchResults.tsx:91
 msgid "Search failed: {0}"
 msgstr "Поиск не удался: {0}"
 
@@ -1448,11 +1464,19 @@ msgstr "Искать здесь"
 msgid "Search in this Space"
 msgstr "Поиск в этом Пространство"
 
+#: src/components/search/SearchResults.tsx:127
+msgid "Search in this Space..."
+msgstr "Поиск в этом Пространстве..."
+
+#: src/components/space/Channel.tsx:618
+msgid "Search Messages"
+msgstr "Поиск сообщений"
+
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
 msgstr "Поиск сообщений..."
 
-#: src/components/search/SearchResults.tsx:72
+#: src/components/search/SearchResults.tsx:82
 msgid "Searching..."
 msgstr "Поиск..."
 
@@ -1465,7 +1489,7 @@ msgid "Select"
 msgstr "Выбрать"
 
 #: src/components/primitives/Select/Select.native.tsx:24
-#: src/components/primitives/Select/Select.web.tsx:13
+#: src/components/primitives/Select/Select.web.tsx:14
 msgid "Select an option"
 msgstr "Выберите вариант"
 
@@ -1565,7 +1589,7 @@ msgstr "Название пространства обязательно"
 msgid "Space Settings"
 msgstr "Настройки Пространства"
 
-#: src/components/search/SearchResults.tsx:63
+#: src/components/search/SearchResults.tsx:73
 msgid "Start typing to search messages..."
 msgstr "Начните вводить, чтобы искать сообщения..."
 
@@ -1679,7 +1703,7 @@ msgstr "Сегодня в {timeFormatted}"
 msgid "Too many files selected. Please select fewer files."
 msgstr "Слишком много файлов выбрано. Пожалуйста, выберите меньше файлов."
 
-#: src/components/search/SearchResults.tsx:92
+#: src/components/search/SearchResults.tsx:102
 msgid "Try different keywords or check your spelling"
 msgstr "Попробуйте другие ключевые слова или проверьте правописание"
 
@@ -1750,7 +1774,7 @@ msgstr "Неизвестное время"
 #: src/components/message/PinnedMessagesPanel.tsx:119
 #: src/components/modals/ConversationSettingsModal.tsx:95
 #: src/components/modals/NewDirectMessageModal.tsx:66
-#: src/components/notifications/NotificationPanel.tsx:204
+#: src/components/notifications/NotificationPanel.tsx:205
 #: src/hooks/business/channels/useChannelMessages.ts:144
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
@@ -1779,7 +1803,7 @@ msgid "Unpin"
 msgstr "Открепить"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:164
+#: src/components/message/MessageActionsDrawer.tsx:168
 msgid "Unpin message"
 msgstr "Открепить сообщение"
 
@@ -1837,8 +1861,8 @@ msgstr "Адрес пользователя здесь"
 msgid "User does not exist."
 msgstr "Пользователь не существует."
 
-#: src/components/space/Channel.tsx:334
-#: src/components/space/Channel.tsx:733
+#: src/components/space/Channel.tsx:337
+#: src/components/space/Channel.tsx:757
 msgid "Username or Address"
 msgstr "Имя пользователя или адрес"
 
@@ -1917,7 +1941,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "Вы не можете удалить группу, содержащую каналы. Сначала удалите все {channelCount} каналы в этой группе."
 
 #: src/components/message/MessageComposer.tsx:206
-#: src/components/space/Channel.tsx:704
+#: src/components/space/Channel.tsx:728
 msgid "You cannot post in this channel"
 msgstr "Вы не можете публиковать в этом канале"
 
@@ -1938,7 +1962,7 @@ msgstr "У вас новые непрочитанные сообщения"
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Вы не сможете вернуться, если вас не пригласят снова. Ваши существующие сообщения НЕ будут удалены."
 
-#: src/components/notifications/NotificationPanel.tsx:137
+#: src/components/notifications/NotificationPanel.tsx:138
 msgid "You're all caught up!"
 msgstr "Вы в курсе всех событий!"
 

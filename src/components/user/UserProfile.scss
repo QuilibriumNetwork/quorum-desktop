@@ -7,6 +7,10 @@
   color: var(--color-text-main);
   user-select: none;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+
+  @media screen and (max-width: 480px) {
+    width: 240px;
+  }
 }
 
 .user-profile-header {

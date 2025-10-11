@@ -31,12 +31,12 @@ msgid "No Role - {count}"
 msgstr "Ingen rolle - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:682
+#: src/components/space/Channel.tsx:706
 msgid "Send a message to #{channel_name}"
 msgstr "Send en besked til #{channel_name}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:251
+#: src/components/onboarding/Onboarding.tsx:256
 msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "Dit profilbillede skal være {maxFileSize} eller mindre og skal være en PNG, JPG eller JPEG filtype."
 
@@ -79,6 +79,11 @@ msgstr "Standardindstillinger for Space giver den mest typiske chatoplevelse, me
 msgid " for updates."
 msgstr "for opdateringer."
 
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:101
+#: src/components/onboarding/Onboarding.tsx:223
+msgid "'everyone' is a reserved name."
+msgstr ""
+
 #: src/components/message/MessagePreview.tsx:51
 msgid "[Empty message]"
 msgstr "[Tom besked]"
@@ -93,25 +98,43 @@ msgstr "[Besked]"
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} enheder markeret til fjernelse. Klik på \"Gem ændringer\" for at bekræfte."
 
+#: src/components/message/PinnedMessagesPanel.tsx:253
+#~ msgid "{0} pinned message"
+#~ msgstr "{0} fastgjort besked"
+
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:253
-msgid "{0} pinned message"
-msgstr "{0} fastgjort besked"
+msgid "{0} pinned message in this Channel"
+msgstr ""
+
+#: src/components/message/PinnedMessagesPanel.tsx:254
+#~ msgid "{0} pinned messages"
+#~ msgstr "{0} fastgjorte beskeder"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:254
-msgid "{0} pinned messages"
-msgstr "{0} fastgjorte beskeder"
+msgid "{0} pinned messages in this Channel"
+msgstr ""
 
-#. placeholder {0}: mentions.length
-#: src/components/notifications/NotificationPanel.tsx:153
-msgid "{0} unread mention"
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:146
+msgid "{0} result"
+msgstr ""
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:147
+msgid "{0} results"
 msgstr ""
 
 #. placeholder {0}: mentions.length
 #: src/components/notifications/NotificationPanel.tsx:154
+msgid "{0} unread mention"
+msgstr "{0} ulæste omtaler"
+
+#. placeholder {0}: mentions.length
+#: src/components/notifications/NotificationPanel.tsx:155
 msgid "{0} unread mentions"
-msgstr ""
+msgstr "{0} ulæste omtaler"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:13
 msgid "{size} Bytes"
@@ -136,17 +159,17 @@ msgstr "{size} TB"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:193
 #: src/components/notifications/NotificationPanel.tsx:60
 msgid "@everyone"
-msgstr ""
+msgstr "@everyone"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:198
 #: src/components/notifications/NotificationPanel.tsx:64
 msgid "@roles"
-msgstr ""
+msgstr "@roles"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:188
 #: src/components/notifications/NotificationPanel.tsx:56
 msgid "@you"
-msgstr ""
+msgstr "@you"
 
 #: src/components/direct/DirectMessageContactsList.tsx:53
 msgid "+ Add a friend"
@@ -226,13 +249,13 @@ msgstr "Avancerede indstillinger"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:183
 #: src/components/primitives/Select/Select.native.tsx:36
-#: src/components/primitives/Select/Select.web.tsx:29
+#: src/components/primitives/Select/Select.web.tsx:30
 msgid "All"
 msgstr "Alle"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:70
 msgid "All kick records are up to date."
-msgstr ""
+msgstr "Alle kick-optegnelser er opdaterede."
 
 #: src/components/modals/AddSpaceModal.tsx:249
 msgid "Already Joined"
@@ -290,7 +313,6 @@ msgstr "Er du sikker på, at du vil slette denne rolle?"
 msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited."
 msgstr "Er du sikker på, at du vil forlade dette Space? Du vil ikke kunne genindtræde, medmindre du bliver geninviteret."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:166
 #~ msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 #~ msgstr "Er du sikker på, at du vil forlade dette Space? Du vil ikke kunne genindtræde, medmindre du bliver geninviteret. Dine eksisterende beskeder vil IKKE blive slettet."
 
@@ -400,7 +422,7 @@ msgstr "Vælg dit foretrukne tema for Quorum."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:184
 #: src/components/primitives/Select/Select.native.tsx:37
-#: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/primitives/Select/Select.web.tsx:31
 #: src/components/space/IconPicker/IconPicker.web.tsx:140
 msgid "Clear"
 msgstr "Ryd"
@@ -485,7 +507,7 @@ msgid "Copy Key & Continue"
 msgstr "Kopier nøgle & fortsæt"
 
 #: src/components/message/MessageActions.tsx:80
-#: src/components/message/MessageActionsDrawer.tsx:150
+#: src/components/message/MessageActionsDrawer.tsx:154
 msgid "Copy message link"
 msgstr "Kopier link til besked"
 
@@ -585,7 +607,7 @@ msgstr "Slet gruppe"
 #~ msgstr "Slet Link"
 
 #: src/components/message/MessageActions.tsx:84
-#: src/components/message/MessageActionsDrawer.tsx:177
+#: src/components/message/MessageActionsDrawer.tsx:181
 msgid "Delete message"
 msgstr "Slet besked"
 
@@ -639,11 +661,11 @@ msgid "Display Name"
 msgstr "Visningsnavn"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:127
-#: src/components/modals/UserSettingsModal/General.tsx:89
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:98
 msgid "Display name is required"
 msgstr "Visningsnavn er påkrævet"
 
-#: src/components/ui/MobileDrawer.tsx:131
+#: src/components/ui/MobileDrawer.tsx:145
 msgid "Drawer"
 msgstr "Skuffe"
 
@@ -749,7 +771,7 @@ msgstr "Failed to parse WebSocket message:"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:270
 msgid "Failed to save notification settings"
-msgstr ""
+msgstr "Fejl ved gemme notifikationsindstillinger"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:147
 msgid "Failed to select document"
@@ -883,8 +905,8 @@ msgstr "Jeg har allerede gemt min"
 msgid "I've Saved It"
 msgstr "Jeg har gemt det"
 
-#: src/components/onboarding/Onboarding.tsx:314
-#: src/components/onboarding/Onboarding.tsx:321
+#: src/components/onboarding/Onboarding.tsx:319
+#: src/components/onboarding/Onboarding.tsx:326
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr "If skipped, you'll get the default profile image and can set it later"
 
@@ -1049,7 +1071,7 @@ msgid "Let your friends know who you are! Pick a friendly name to display in you
 msgstr "Lad dine venner vide, hvem du er! Vælg et venligt navn til at vise i dine samtaler, noget der er lettere at læse end:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
-#: src/components/onboarding/Onboarding.tsx:347
+#: src/components/onboarding/Onboarding.tsx:352
 msgid "Let's gooooooooo"
 msgstr "Lad os komme af sted"
 
@@ -1057,9 +1079,9 @@ msgstr "Lad os komme af sted"
 msgid "Light"
 msgstr "Lys"
 
-#: src/components/notifications/NotificationPanel.tsx:127
+#: src/components/notifications/NotificationPanel.tsx:128
 msgid "Loading notifications..."
-msgstr ""
+msgstr "Indlæser notifikationer..."
 
 #: src/components/message/PinnedMessagesPanel.tsx:225
 msgid "Loading pinned messages..."
@@ -1079,7 +1101,7 @@ msgid "Maintenance in Progress"
 msgstr "Vedligeholdelse i gang"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
-#: src/components/onboarding/Onboarding.tsx:242
+#: src/components/onboarding/Onboarding.tsx:247
 msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
 msgstr "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
 
@@ -1095,20 +1117,20 @@ msgstr "Manage devices, and privacy conditions for messaging and synchronization
 msgid "Manual Backup Required"
 msgstr "Manuel backup kræves"
 
-#: src/components/notifications/NotificationPanel.tsx:177
+#: src/components/notifications/NotificationPanel.tsx:178
 msgid "Mark all as read"
-msgstr ""
+msgstr "Marker alle som læst"
 
 #: src/components/direct/DirectMessage.tsx:420
-#: src/components/space/Channel.tsx:599
+#: src/components/space/Channel.tsx:600
 msgid "Members List"
 msgstr "Medlemsliste"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:171
 msgid "Mention Everyone"
-msgstr ""
+msgstr "Nævn Alle"
 
-#: src/components/message/MessageActionsDrawer.tsx:100
+#: src/components/message/MessageActionsDrawer.tsx:128
 msgid "Message actions"
 msgstr "Besked handlinger"
 
@@ -1132,7 +1154,7 @@ msgstr "Flere reaktioner"
 msgid "New Direct Message"
 msgstr "Ny direkte besked"
 
-#: src/components/search/SearchResults.tsx:90
+#: src/components/search/SearchResults.tsx:100
 msgid "No messages found"
 msgstr "Ingen beskeder fundet"
 
@@ -1140,12 +1162,12 @@ msgstr "Ingen beskeder fundet"
 msgid "No pinned messages yet"
 msgstr "Ingen fastgjorte beskeder endnu"
 
-#: src/components/notifications/NotificationPanel.tsx:135
+#: src/components/notifications/NotificationPanel.tsx:136
 msgid "No unread mentions"
-msgstr ""
+msgstr "Ingen ulæste omtaler"
 
-#: src/components/space/Channel.tsx:347
-#: src/components/space/Channel.tsx:746
+#: src/components/space/Channel.tsx:350
+#: src/components/space/Channel.tsx:770
 msgid "No users found!"
 msgstr "Ingen brugere fundet!"
 
@@ -1160,7 +1182,7 @@ msgstr "Meddelelsesrettigheder ikke givet"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:171
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:567
+#: src/components/space/Channel.tsx:568
 msgid "Notifications"
 msgstr "Meddelelser"
 
@@ -1254,7 +1276,7 @@ msgid "Pin limit reached ({0})"
 msgstr "Fastgørelsesgrænsen er nået ({0})"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:164
+#: src/components/message/MessageActionsDrawer.tsx:168
 msgid "Pin message"
 msgstr "Fastgør besked"
 
@@ -1279,7 +1301,7 @@ msgstr "Fastgjort"
 msgid "Pinned by {0}"
 msgstr "Fastgjort af {0}"
 
-#: src/components/space/Channel.tsx:530
+#: src/components/space/Channel.tsx:533
 msgid "Pinned Messages"
 msgstr "Fastgjorte beskeder"
 
@@ -1366,7 +1388,7 @@ msgid "Remove"
 msgstr "Fjern"
 
 #: src/components/message/MessageActions.tsx:76
-#: src/components/message/MessageActionsDrawer.tsx:139
+#: src/components/message/MessageActionsDrawer.tsx:143
 msgid "Reply"
 msgstr "Svar"
 
@@ -1395,18 +1417,18 @@ msgstr "Gem"
 #: src/components/modals/ChannelEditorModal.tsx:189
 #: src/components/modals/GroupEditorModal.tsx:94
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:582
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:239
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:251
 #: src/components/user/UserProfileEdit.tsx:160
 msgid "Save Changes"
 msgstr "Gem ændringer"
 
 #: src/components/onboarding/Onboarding.native.tsx:473
-#: src/components/onboarding/Onboarding.tsx:303
+#: src/components/onboarding/Onboarding.tsx:308
 msgid "Save Contact Photo"
 msgstr "Gem kontaktfoto"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:567
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:228
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:240
 msgid "Save Failed"
 msgstr "Gemte ikke"
 
@@ -1431,7 +1453,7 @@ msgid "Saving..."
 msgstr "Gemmer..."
 
 #. placeholder {0}: error?.message || 'Unknown error'
-#: src/components/search/SearchResults.tsx:81
+#: src/components/search/SearchResults.tsx:91
 msgid "Search failed: {0}"
 msgstr "Søgning mislykkedes: {0}"
 
@@ -1445,11 +1467,19 @@ msgstr "Søg her"
 msgid "Search in this Space"
 msgstr "Søg i dette Space"
 
+#: src/components/search/SearchResults.tsx:127
+msgid "Search in this Space..."
+msgstr ""
+
+#: src/components/space/Channel.tsx:618
+msgid "Search Messages"
+msgstr ""
+
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
 msgstr "Søg beskeder..."
 
-#: src/components/search/SearchResults.tsx:72
+#: src/components/search/SearchResults.tsx:82
 msgid "Searching..."
 msgstr "Søger..."
 
@@ -1459,10 +1489,10 @@ msgstr "Sikkerhed"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:181
 msgid "Select"
-msgstr ""
+msgstr "Vælg"
 
 #: src/components/primitives/Select/Select.native.tsx:24
-#: src/components/primitives/Select/Select.web.tsx:13
+#: src/components/primitives/Select/Select.web.tsx:14
 msgid "Select an option"
 msgstr "Vælg en mulighed"
 
@@ -1480,7 +1510,7 @@ msgstr "Vælg standardkanal"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:174
 msgid "Select for which mentions you will receive notifications"
-msgstr ""
+msgstr "Vælg for hvilke omtaler du vil modtage notifikationer"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:161
 msgid "Select Image"
@@ -1519,7 +1549,7 @@ msgid "Session Encrypted"
 msgstr "Session Krypteret"
 
 #: src/components/onboarding/Onboarding.native.tsx:344
-#: src/components/onboarding/Onboarding.tsx:228
+#: src/components/onboarding/Onboarding.tsx:233
 msgid "Set Display Name"
 msgstr "Indstil visningsnavn"
 
@@ -1536,7 +1566,7 @@ msgid "show home screen"
 msgstr "vis startskærm"
 
 #: src/components/onboarding/Onboarding.native.tsx:461
-#: src/components/onboarding/Onboarding.tsx:310
+#: src/components/onboarding/Onboarding.tsx:315
 msgid "Skip Adding Photo"
 msgstr "Spring over at tilføje foto"
 
@@ -1562,7 +1592,7 @@ msgstr "Navn på Space er påkrævet"
 msgid "Space Settings"
 msgstr "Space Indstillinger"
 
-#: src/components/search/SearchResults.tsx:63
+#: src/components/search/SearchResults.tsx:73
 msgid "Start typing to search messages..."
 msgstr "Begynd at skrive for at søge beskeder..."
 
@@ -1676,7 +1706,7 @@ msgstr "I dag klokken {timeFormatted}."
 msgid "Too many files selected. Please select fewer files."
 msgstr "For mange filer valgt. Vælg venligst færre filer."
 
-#: src/components/search/SearchResults.tsx:92
+#: src/components/search/SearchResults.tsx:102
 msgid "Try different keywords or check your spelling"
 msgstr "Prøv forskellige søgeord eller tjek din stavemåde"
 
@@ -1747,7 +1777,7 @@ msgstr "Ukendt tid"
 #: src/components/message/PinnedMessagesPanel.tsx:119
 #: src/components/modals/ConversationSettingsModal.tsx:95
 #: src/components/modals/NewDirectMessageModal.tsx:66
-#: src/components/notifications/NotificationPanel.tsx:204
+#: src/components/notifications/NotificationPanel.tsx:205
 #: src/hooks/business/channels/useChannelMessages.ts:144
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
@@ -1776,7 +1806,7 @@ msgid "Unpin"
 msgstr "Fjern fastgørelse"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:164
+#: src/components/message/MessageActionsDrawer.tsx:168
 msgid "Unpin message"
 msgstr "Fjern fastgørelse af besked"
 
@@ -1834,8 +1864,8 @@ msgstr "Brugeradresse her"
 msgid "User does not exist."
 msgstr "Bruger eksisterer ikke."
 
-#: src/components/space/Channel.tsx:334
-#: src/components/space/Channel.tsx:733
+#: src/components/space/Channel.tsx:337
+#: src/components/space/Channel.tsx:757
 msgid "Username or Address"
 msgstr "Brugernavn eller adresse"
 
@@ -1866,15 +1896,15 @@ msgstr "Når beskeder er underskrevet, bekræfter afsenderne, at de kommer fra d
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:194
 msgid "When someone mentions @everyone"
-msgstr ""
+msgstr "Når nogen nævner @everyone"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:199
 msgid "When someone mentions a role you have (Coming Soon)"
-msgstr ""
+msgstr "Når nogen nævner en rolle, du har (Kommer Snart)"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:189
 msgid "When someone mentions you directly"
-msgstr ""
+msgstr "Når nogen nævner dig direkte"
 
 #: src/components/modals/CreateSpaceModal.tsx:142
 msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
@@ -1914,7 +1944,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "Du kan ikke slette en gruppe, der indeholder kanaler. Slet først alle {channelCount} kanaler i denne gruppe."
 
 #: src/components/message/MessageComposer.tsx:206
-#: src/components/space/Channel.tsx:704
+#: src/components/space/Channel.tsx:728
 msgid "You cannot post in this channel"
 msgstr "Du kan ikke poste i denne kanal"
 
@@ -1933,14 +1963,14 @@ msgstr "Du har nye ulæste beskeder"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:218
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
-msgstr ""
+msgstr "Du vil ikke kunne genindtræde, medmindre du bliver geninviteret. Dine eksisterende beskeder vil IKKE blive slettet."
 
-#: src/components/notifications/NotificationPanel.tsx:137
+#: src/components/notifications/NotificationPanel.tsx:138
 msgid "You're all caught up!"
-msgstr ""
+msgstr "Du er helt opdateret!"
 
 #: src/components/onboarding/Onboarding.native.tsx:494
-#: src/components/onboarding/Onboarding.tsx:335
+#: src/components/onboarding/Onboarding.tsx:340
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Så er du klar. Velkommen til Quorum!"
 

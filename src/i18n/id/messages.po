@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Tidak Ada Peran - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:682
+#: src/components/space/Channel.tsx:706
 msgid "Send a message to #{channel_name}"
 msgstr "Kirim pesan ke #{channel_name}"
 
@@ -41,15 +41,15 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Ukuran gambar profil Anda harus {maxFileSize} atau kurang dan harus memiliki ekstensi file PNG, JPG, atau JPEG."
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:134
-msgid "Failed to process image"
-msgstr "Gagal memproses gambar"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
 #: src/components/message/MessageComposer.tsx:248
 msgid "Replying to {user}"
 msgstr "Menjawab {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:134
+msgid "Failed to process image"
+msgstr "Gagal memproses gambar"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:238
@@ -82,7 +82,7 @@ msgstr "untuk pembaruan."
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:101
 #: src/components/onboarding/Onboarding.tsx:223
 msgid "'everyone' is a reserved name."
-msgstr ""
+msgstr "'semua' adalah nama yang terlarang."
 
 #: src/components/message/MessagePreview.tsx:51
 msgid "[Empty message]"
@@ -98,23 +98,39 @@ msgstr "[Pesan]"
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} perangkat ditandai untuk dihapus. Klik \"Simpan Perubahan\" untuk mengonfirmasi."
 
+#~ msgid "{0} pinned message"
+#~ msgstr "{0} pesan yang dipin"
+
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:253
-msgid "{0} pinned message"
-msgstr "{0} pesan yang dipin"
+msgid "{0} pinned message in this Channel"
+msgstr "{0} pesan yang disematkan di Channel ini"
+
+#~ msgid "{0} pinned messages"
+#~ msgstr "{0} pesan yang dipin"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:254
-msgid "{0} pinned messages"
-msgstr "{0} pesan yang dipin"
+msgid "{0} pinned messages in this Channel"
+msgstr "{0} pesan yang disematkan di Channel ini"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:146
+msgid "{0} result"
+msgstr "{0} hasil"
+
+#. placeholder {0}: results.length
+#: src/components/search/SearchResults.tsx:147
+msgid "{0} results"
+msgstr "{0} hasil"
 
 #. placeholder {0}: mentions.length
-#: src/components/notifications/NotificationPanel.tsx:153
+#: src/components/notifications/NotificationPanel.tsx:154
 msgid "{0} unread mention"
 msgstr "{0} penyebutan yang belum dibaca"
 
 #. placeholder {0}: mentions.length
-#: src/components/notifications/NotificationPanel.tsx:154
+#: src/components/notifications/NotificationPanel.tsx:155
 msgid "{0} unread mentions"
 msgstr "{0} penyebutan yang belum dibaca"
 
@@ -231,7 +247,7 @@ msgstr "Pengaturan Lanjutan"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:183
 #: src/components/primitives/Select/Select.native.tsx:36
-#: src/components/primitives/Select/Select.web.tsx:29
+#: src/components/primitives/Select/Select.web.tsx:30
 msgid "All"
 msgstr "Semua"
 
@@ -404,7 +420,7 @@ msgstr "Pilih tema yang Anda inginkan untuk Quorum."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:184
 #: src/components/primitives/Select/Select.native.tsx:37
-#: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/primitives/Select/Select.web.tsx:31
 #: src/components/space/IconPicker/IconPicker.web.tsx:140
 msgid "Clear"
 msgstr "Bersihkan"
@@ -489,7 +505,7 @@ msgid "Copy Key & Continue"
 msgstr "Salin Kunci & Lanjutkan"
 
 #: src/components/message/MessageActions.tsx:80
-#: src/components/message/MessageActionsDrawer.tsx:150
+#: src/components/message/MessageActionsDrawer.tsx:154
 msgid "Copy message link"
 msgstr "Salin tautan pesan"
 
@@ -589,7 +605,7 @@ msgstr "Hapus Grup"
 #~ msgstr "Hapus Tautan"
 
 #: src/components/message/MessageActions.tsx:84
-#: src/components/message/MessageActionsDrawer.tsx:177
+#: src/components/message/MessageActionsDrawer.tsx:181
 msgid "Delete message"
 msgstr "Hapus pesan"
 
@@ -647,7 +663,7 @@ msgstr "Nama Tampilan"
 msgid "Display name is required"
 msgstr "Nama tampilan diperlukan"
 
-#: src/components/ui/MobileDrawer.tsx:131
+#: src/components/ui/MobileDrawer.tsx:145
 msgid "Drawer"
 msgstr "Laci"
 
@@ -1061,7 +1077,7 @@ msgstr "Ayo berangkat!"
 msgid "Light"
 msgstr "Cahaya"
 
-#: src/components/notifications/NotificationPanel.tsx:127
+#: src/components/notifications/NotificationPanel.tsx:128
 msgid "Loading notifications..."
 msgstr "Memuat notifikasi..."
 
@@ -1099,12 +1115,12 @@ msgstr "Kelola perangkat, dan kondisi privasi untuk pesan dan sinkronisasi."
 msgid "Manual Backup Required"
 msgstr "Cadangan Manual Diperlukan"
 
-#: src/components/notifications/NotificationPanel.tsx:177
+#: src/components/notifications/NotificationPanel.tsx:178
 msgid "Mark all as read"
 msgstr "Tandai semua sebagai dibaca"
 
 #: src/components/direct/DirectMessage.tsx:420
-#: src/components/space/Channel.tsx:599
+#: src/components/space/Channel.tsx:600
 msgid "Members List"
 msgstr "Daftar Anggota"
 
@@ -1112,7 +1128,7 @@ msgstr "Daftar Anggota"
 msgid "Mention Everyone"
 msgstr "Sebutkan Semua"
 
-#: src/components/message/MessageActionsDrawer.tsx:100
+#: src/components/message/MessageActionsDrawer.tsx:128
 msgid "Message actions"
 msgstr "Tindakan pesan"
 
@@ -1136,7 +1152,7 @@ msgstr "Lebih banyak reaksi"
 msgid "New Direct Message"
 msgstr "Pesan Langsung Baru"
 
-#: src/components/search/SearchResults.tsx:90
+#: src/components/search/SearchResults.tsx:100
 msgid "No messages found"
 msgstr "Tidak ada pesan yang ditemukan"
 
@@ -1144,12 +1160,12 @@ msgstr "Tidak ada pesan yang ditemukan"
 msgid "No pinned messages yet"
 msgstr "Belum ada pesan yang dipin"
 
-#: src/components/notifications/NotificationPanel.tsx:135
+#: src/components/notifications/NotificationPanel.tsx:136
 msgid "No unread mentions"
 msgstr "Tidak ada penyebutan yang belum dibaca"
 
-#: src/components/space/Channel.tsx:347
-#: src/components/space/Channel.tsx:746
+#: src/components/space/Channel.tsx:350
+#: src/components/space/Channel.tsx:770
 msgid "No users found!"
 msgstr "Tidak ada pengguna yang ditemukan!"
 
@@ -1164,7 +1180,7 @@ msgstr "Izin notifikasi tidak diberikan"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:171
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:567
+#: src/components/space/Channel.tsx:568
 msgid "Notifications"
 msgstr "Notifikasi"
 
@@ -1258,7 +1274,7 @@ msgid "Pin limit reached ({0})"
 msgstr "Batas pin tercapai ({0})"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:164
+#: src/components/message/MessageActionsDrawer.tsx:168
 msgid "Pin message"
 msgstr "Pin pesan"
 
@@ -1283,7 +1299,7 @@ msgstr "Dipin"
 msgid "Pinned by {0}"
 msgstr "Dipin oleh {0}"
 
-#: src/components/space/Channel.tsx:530
+#: src/components/space/Channel.tsx:533
 msgid "Pinned Messages"
 msgstr "Pesan yang Dipin"
 
@@ -1370,7 +1386,7 @@ msgid "Remove"
 msgstr "Hapus"
 
 #: src/components/message/MessageActions.tsx:76
-#: src/components/message/MessageActionsDrawer.tsx:139
+#: src/components/message/MessageActionsDrawer.tsx:143
 msgid "Reply"
 msgstr "Balas"
 
@@ -1435,7 +1451,7 @@ msgid "Saving..."
 msgstr "Menyimpan..."
 
 #. placeholder {0}: error?.message || 'Unknown error'
-#: src/components/search/SearchResults.tsx:81
+#: src/components/search/SearchResults.tsx:91
 msgid "Search failed: {0}"
 msgstr "Pencarian gagal: {0}"
 
@@ -1449,11 +1465,19 @@ msgstr "Cari di sini"
 msgid "Search in this Space"
 msgstr "Cari di Space ini"
 
+#: src/components/search/SearchResults.tsx:127
+msgid "Search in this Space..."
+msgstr "Cari di Ruang ini..."
+
+#: src/components/space/Channel.tsx:618
+msgid "Search Messages"
+msgstr "Cari Pesan"
+
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
 msgstr "Cari pesan..."
 
-#: src/components/search/SearchResults.tsx:72
+#: src/components/search/SearchResults.tsx:82
 msgid "Searching..."
 msgstr "Mencari..."
 
@@ -1466,7 +1490,7 @@ msgid "Select"
 msgstr "Pilih"
 
 #: src/components/primitives/Select/Select.native.tsx:24
-#: src/components/primitives/Select/Select.web.tsx:13
+#: src/components/primitives/Select/Select.web.tsx:14
 msgid "Select an option"
 msgstr "Pilih opsi"
 
@@ -1566,7 +1590,7 @@ msgstr "Nama Ruang diperlukan"
 msgid "Space Settings"
 msgstr "Pengaturan Ruang"
 
-#: src/components/search/SearchResults.tsx:63
+#: src/components/search/SearchResults.tsx:73
 msgid "Start typing to search messages..."
 msgstr "Mulai mengetik untuk mencari pesan..."
 
@@ -1680,7 +1704,7 @@ msgstr "Hari ini pada {timeFormatted}"
 msgid "Too many files selected. Please select fewer files."
 msgstr "Terlalu banyak file yang dipilih. Silakan pilih file yang lebih sedikit."
 
-#: src/components/search/SearchResults.tsx:92
+#: src/components/search/SearchResults.tsx:102
 msgid "Try different keywords or check your spelling"
 msgstr "Coba kata kunci yang berbeda atau periksa ejaan Anda"
 
@@ -1751,7 +1775,7 @@ msgstr "Waktu tidak diketahui"
 #: src/components/message/PinnedMessagesPanel.tsx:119
 #: src/components/modals/ConversationSettingsModal.tsx:95
 #: src/components/modals/NewDirectMessageModal.tsx:66
-#: src/components/notifications/NotificationPanel.tsx:204
+#: src/components/notifications/NotificationPanel.tsx:205
 #: src/hooks/business/channels/useChannelMessages.ts:144
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
@@ -1780,7 +1804,7 @@ msgid "Unpin"
 msgstr "Unpin"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:164
+#: src/components/message/MessageActionsDrawer.tsx:168
 msgid "Unpin message"
 msgstr "Lepaskan pesan"
 
@@ -1838,8 +1862,8 @@ msgstr "Alamat pengguna di sini"
 msgid "User does not exist."
 msgstr "Pengguna tidak ada."
 
-#: src/components/space/Channel.tsx:334
-#: src/components/space/Channel.tsx:733
+#: src/components/space/Channel.tsx:337
+#: src/components/space/Channel.tsx:757
 msgid "Username or Address"
 msgstr "Nama Pengguna atau Alamat"
 
@@ -1918,7 +1942,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "Anda tidak dapat menghapus grup yang berisi saluran. Hapus semua {channelCount} saluran di grup ini terlebih dahulu."
 
 #: src/components/message/MessageComposer.tsx:206
-#: src/components/space/Channel.tsx:704
+#: src/components/space/Channel.tsx:728
 msgid "You cannot post in this channel"
 msgstr "Anda tidak dapat memposting di saluran ini"
 
@@ -1939,7 +1963,7 @@ msgstr "Kamu memiliki pesan baru yang belum dibaca"
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Kamu tidak akan bisa bergabung kembali kecuali kamu diundang kembali. Pesanmu yang ada TIDAK akan dihapus."
 
-#: src/components/notifications/NotificationPanel.tsx:137
+#: src/components/notifications/NotificationPanel.tsx:138
 msgid "You're all caught up!"
 msgstr "Kamu sudah semua terupdate!"
 
