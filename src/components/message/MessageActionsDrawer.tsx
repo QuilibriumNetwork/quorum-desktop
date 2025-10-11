@@ -93,41 +93,45 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
     onClose();
   };
 
+  // Quick reactions as header content
+  const reactionsContent = (
+    <div className="message-actions-drawer__reactions">
+      <div className="message-actions-drawer__reactions-row">
+        {quickReactions.map((emoji) => (
+          <Button
+            key={emoji}
+            type="unstyled"
+            onClick={() => handleReaction(emoji)}
+            className={`quick-reaction-emoji ${
+              hasReacted(emoji) ? 'quick-reaction-emoji--active' : ''
+            }`}
+          >
+            {emoji}
+          </Button>
+        ))}
+        {/* More reactions button with dashed circle */}
+        <Button
+          type="unstyled"
+          onClick={handleMoreReactions}
+          iconName="face-smile-beam"
+          iconOnly
+          className="quick-reaction-more"
+        />
+      </div>
+    </div>
+  );
+
   return (
     <MobileDrawer
       isOpen={isOpen}
       onClose={onClose}
       ariaLabel={t`Message actions`}
-      showCloseButton={true}
+      showCloseButton={false}
+      headerContent={reactionsContent}
     >
-      {/* Quick reactions row with emoji picker */}
-      <div className="message-actions-drawer__reactions">
-        <div className="message-actions-drawer__reactions-row">
-          {quickReactions.map((emoji) => (
-            <Button
-              key={emoji}
-              type="unstyled"
-              onClick={() => handleReaction(emoji)}
-              className={`quick-reaction-emoji ${
-                hasReacted(emoji) ? 'quick-reaction-emoji--active' : ''
-              }`}
-            >
-              {emoji}
-            </Button>
-          ))}
-          {/* More reactions button with dashed circle */}
-          <Button
-            type="unstyled"
-            onClick={handleMoreReactions}
-            iconName="face-smile-beam"
-            iconOnly
-            className="quick-reaction-more"
-          />
-        </div>
-      </div>
-
-      {/* Actions menu */}
-      <div className="message-actions-drawer__actions">
+      <div className="mobile-drawer__padded-content">
+        {/* Actions menu */}
+        <div className="message-actions-drawer__actions">
         <Button
           type="unstyled"
           size="normal"
@@ -177,6 +181,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
             {t`Delete message`}
           </Button>
         )}
+        </div>
       </div>
     </MobileDrawer>
   );

@@ -3,7 +3,7 @@
 .emoji-picker-drawer__content {
   flex: 1;
   overflow: hidden;
-  padding: 8px 12px 12px 12px;
+  padding: 16px; // Standard padding for non-list content
 
   // Override emoji picker styles for mobile drawer
   .EmojiPickerReact {
@@ -12,6 +12,12 @@
     box-shadow: none;
     background: transparent;
 
+    // Remove excessive header padding
+    --epr-header-padding: 0 !important;
+
+    // Increase preview height for mobile drawer
+    --epr-preview-height: 88px !important;
+
     // Ensure proper sizing
     width: 100% !important;
 
@@ -19,7 +25,7 @@
 
     // Mobile-optimized search
     .epr-search-container {
-      padding: 12px 8px;
+      padding: 0px 8px 8px 8px;
     }
 
     .epr-search {
@@ -62,7 +68,6 @@
 // Responsive adjustments
 @media (max-width: 375px) {
   .emoji-picker-drawer__content {
-    padding: 6px 8px 8px 8px;
 
     .EmojiPickerReact {
       // Size variables handled globally, only drawer-specific heights here

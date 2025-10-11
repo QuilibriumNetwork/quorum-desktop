@@ -38,7 +38,7 @@ const EmojiPickerDrawer: React.FC<EmojiPickerDrawerProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       ariaLabel={t`Emoji picker`}
-      showCloseButton={true}
+      showCloseButton={false}
     >
       <div className="emoji-picker-drawer__content">
         <EmojiPicker

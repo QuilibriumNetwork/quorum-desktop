@@ -1,6 +1,7 @@
 // This is for mobile users using the web app, for the native app we have /primitives/Modal/Modal.native.tsx
 
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { t } from '@lingui/core/macro';
 import { Title, Button, OverlayBackdrop } from '../primitives';
 import './MobileDrawer.scss';
@@ -12,6 +13,7 @@ export interface MobileDrawerProps {
   showCloseButton?: boolean;
   enableSwipeToClose?: boolean;
   ariaLabel?: string;
+  headerContent?: React.ReactNode; // Optional content to render in header area (e.g., emoji reactions)
   children: React.ReactNode;
 }
 
@@ -26,6 +28,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
   showCloseButton = true,
   enableSwipeToClose = true,
   ariaLabel,
+  headerContent,
   children,
 }) => {
   const [isClosing, setIsClosing] = useState(false);
@@ -124,7 +127,8 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
 
   if (!shouldRender) return null;
 
-  return (
+  // Render to document.body using portal to escape stacking context issues
+  return createPortal(
     <OverlayBackdrop
       visible={shouldRender}
       onBackdropClick={handleClose}
@@ -167,6 +171,13 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
             />
           )}
         </div>
+
+        {/* Optional custom header content (e.g., emoji reactions) */}
+        {headerContent && (
+          <div className="mobile-drawer__header-content">
+            {headerContent}
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -176,7 +187,8 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
         {children}
       </div>
     </div>
-    </OverlayBackdrop>
+    </OverlayBackdrop>,
+    document.body
   );
 };
 

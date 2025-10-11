@@ -5,10 +5,11 @@
   // Any search-specific styling can go here
 }
 
-// Use shared list styling
+// Use shared list styling with zero horizontal padding for full-width borders
 .search-results-list {
   @extend .dropdown-results-list;
   max-height: 340px; // Slightly different from default
+  padding: 0 0 16px 0 !important; // Override to ensure zero horizontal padding
 }
 
 // Use shared empty state styling

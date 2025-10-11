@@ -1,74 +1,72 @@
 @use '../../styles/dropdown-result-item';
 
 // Notification Panel styling
-.notification-panel {
-  .notification-panel__header {
-    padding: 16px;
-    border-bottom: 1px solid var(--color-border-default);
-  }
 
-  .notification-panel__title {
-    font-weight: 600;
-    color: var(--color-text-strong);
-  }
+.notification-panel__header {
+  padding: 16px;
+  border-bottom: 1px solid var(--color-border-default);
+}
 
-  .notification-panel__controls {
-    padding: 0px 8px;
-    border-bottom: 1px solid var(--surface-3);
-    background-color: var(--surface-0);
+.notification-panel__title {
+  font-weight: 600;
+  color: var(--color-text-strong);
+}
 
-    // Ensure filter icon (Select in compact mode) is centered
-    .select-container {
-      button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+.notification-panel__controls {
+  padding: 4px 16px ;
+  border-bottom: 1px solid var(--surface-3);
+
+  // Ensure filter icon (Select in compact mode) is centered
+  .select-container {
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
+}
 
-  .notification-panel__mark-read {
-    color: var(--color-text-subtle);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.notification-panel__mark-read {
+  color: var(--color-text-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    &:hover {
-      color: var(--accent);
-    }
+  &:hover {
+    color: var(--accent);
   }
+}
 
-  .notification-panel__list {
-    max-height: 350px;
-    overflow-y: auto;
-    padding-bottom: 16px; // Ensure last item's content is fully visible
-  }
+.notification-panel__list {
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 0 0 16px 0; // Zero horizontal padding for full-width borders, bottom padding for spacing
+}
 
-  .notification-loading-state {
-    @extend .dropdown-loading-state;
-  }
+.notification-loading-state {
+  @extend .dropdown-loading-state;
+}
 
-  .notification-empty-state {
-    @extend .dropdown-empty-state;
-  }
+.notification-empty-state {
+  @extend .dropdown-empty-state;
+}
 
-  .empty-icon {
-    @extend .dropdown-empty-icon;
-  }
+.empty-icon {
+  @extend .dropdown-empty-icon;
+}
 
-  .loading-icon {
-    @extend .dropdown-loading-icon;
-  }
+.loading-icon {
+  @extend .dropdown-loading-icon;
+}
 
-  .empty-message {
-    @extend .dropdown-empty-message;
-  }
+.empty-message {
+  @extend .dropdown-empty-message;
+}
 
-  .loading-message {
-    @extend .dropdown-loading-message;
-  }
+.loading-message {
+  @extend .dropdown-loading-message;
+}
 
-  .empty-hint {
-    @extend .dropdown-empty-hint;
-  }
+.empty-hint {
+  @extend .dropdown-empty-hint;
 }

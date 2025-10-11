@@ -51,7 +51,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
               : `${resultsCount} results`
             : undefined)
         }
-        showCloseButton={showCloseButton}
+        showCloseButton={false} // No close button on mobile - use swipe or backdrop tap
         enableSwipeToClose={true}
       >
         {children}

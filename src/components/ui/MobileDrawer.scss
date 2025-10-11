@@ -1,7 +1,7 @@
 // Common Mobile Drawer Styles
 // Note: Backdrop is handled by OverlayBackdrop primitive
 .mobile-drawer {
-  background: var(--surface-1);
+  background: var(--surface-0); // Match DropdownPanel background
   border-radius: 16px 16px 0 0;
   width: 500px; // Fixed width of 500px by default
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
@@ -31,23 +31,56 @@
 
 .mobile-drawer__header-area {
   flex-shrink: 0;
-  padding-bottom: 8px;
+  background: var(--surface-0); // Same as drawer background (better contrast with backdrop)
+  border-bottom: 1px solid var(--surface-3); // Full-width border separator
+  padding-bottom: 16px; // Padding below title/close button
+  position: sticky; // Make header sticky when scrolling
+  top: 0;
+  z-index: 10; // Ensure header stays above content when sticky
+
+  // When there's no title AND no headerContent, remove border and reduce padding
+  &:has(.mobile-drawer__title-area:empty):not(:has(.mobile-drawer__header-content)) {
+    border-bottom: none;
+    padding-bottom: 8px;
+  }
 }
 
 .mobile-drawer__header-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: top;
   padding: 0 16px;
 
   // Only add min-height when there's a title
   &:has(.mobile-drawer__title-area:not(:empty)) {
     min-height: 32px;
+    padding-top: 4px; // Reduced padding - title will be higher
   }
 }
 
 .mobile-drawer__title-area {
   flex: 1;
+
+  // Match DropdownPanel title styling
+  h4, h5, h6 {
+    font-size: 12px;
+    color: var(--color-text-subtle);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+}
+
+.mobile-drawer__header-content {
+  padding: 0 16px; // Match horizontal padding
+  margin-top: 12px; // Default space between title and custom content
+
+  // When there's no title (e.g., MessageActionsDrawer with only reactions in header)
+  // Reduce the top margin for tighter spacing after handle
+  .mobile-drawer__header-area:has(.mobile-drawer__title-area:empty) & {
+    margin-top: 4px; // Tighter spacing when no title
+  }
 }
 
 .mobile-drawer__handle {
@@ -55,27 +88,38 @@
   height: 4px;
   background: var(--surface-4);
   border-radius: 100px;
-  margin: 8px auto 12px auto;
+  margin: 12px auto 8px auto; // Top margin: 12px, Bottom margin: 8px (more space at top)
   flex-shrink: 0;
   opacity: 0.8;
 }
 
 .mobile-drawer__close-btn {
-  position: absolute;
   color: var(--color-text-muted);
-  top: 20px;
-  right: 0px;
+  flex-shrink: 0; // Prevent button from shrinking
+
+  &:hover {
+    color: var(--color-text-main);
+  }
 }
 
 .mobile-drawer__content {
   flex: 1;
   overflow: hidden;
-  padding: 0;
+  background: var(--surface-0); // Ensure content background matches
+  padding: 0; // No default padding - let child content control spacing
 }
 
-// Adjust content padding when only handle is present
-.mobile-drawer__content--no-header {
-  padding-top: 0;
+// Content padding utilities for consistent spacing across drawers
+// Use these classes on direct children of .mobile-drawer__content
+
+// For action menus, forms, and general content (needs padding on all sides)
+.mobile-drawer__padded-content {
+  padding: 16px;
+}
+
+// For list-based content with full-width borders (notifications, search, pinned messages)
+.mobile-drawer__list-content {
+  padding: 0 0 16px 0; // Zero horizontal padding, bottom padding for spacing
 }
 
 // Animations
@@ -111,9 +155,6 @@
     font-size: 16px;
   }
 
-  .mobile-drawer__content {
-    padding: 6px 8px 8px 8px;
-  }
 }
 
 // High contrast mode support

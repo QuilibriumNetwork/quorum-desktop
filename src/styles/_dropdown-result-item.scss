@@ -2,7 +2,7 @@
 
 // Common result item container
 .dropdown-result-item {
-  padding: 12px 16px;
+  padding: 16px 20px;
   border-bottom: 1px solid var(--surface-3);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -157,7 +157,7 @@
 // Responsive design - unified sizing for all dropdown panels
 @media (max-width: 639px) {
   .dropdown-result-item {
-    padding: 10px 12px;
+    padding: 12px 16px;
   }
 
   // Reduce all text sizes consistently
