@@ -1,26 +1,28 @@
+@use '@/styles/variables' as *;
+
 /**
  * Modal Primitive Styles
- * 
+ *
  * PURPOSE: Core modal functionality, reusable across platforms
  * CONTAINS: Basic structure, size variants, animations, close buttons, width utilities
  * EXCLUDES: Application-specific layouts, content patterns, navigation styles
- * 
+ *
  * See: _modal_common.scss for application-specific modal patterns
  */
 .quorum-modal {
   position: relative;
   background-color: var(--color-bg-modal);
-  border-radius: 0.5rem;
-  padding: 26px;
-  animation: modalOpen 0.3s ease-out;
+  border-radius: $rounded-lg;
+  padding: $s-6;
+  animation: modalOpen $duration-300 $ease-out;
   max-width: 90vw;
   max-height: 90vh;
   overflow-y: auto;
 
-  @media (max-width: 768px) {
-    margin: 16px;
-    padding: 20px;
-    border-radius: 0.5rem;
+  @media (max-width: $screen-md) {
+    margin: $s-4;
+    padding: $s-5;
+    border-radius: $rounded-lg;
     max-width: calc(100vw - 32px);
     max-height: calc(100vh - 32px);
   }
@@ -31,8 +33,8 @@
   padding: 0;
 
   .quorum-modal-close {
-    right: 12px;
-    top: 12px;
+    right: $s-3;
+    top: $s-3;
     z-index: 10;
   }
 }
@@ -51,12 +53,12 @@
     // Let Modal primitive handle padding consistently
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     width: 95vw;
     max-width: 400px; // Keep 400px limit on mobile too
     min-width: 200px;
     max-height: 60vh;
-    border-radius: 0.5rem;
+    border-radius: $rounded-lg;
   }
 }
 
@@ -65,7 +67,7 @@
   min-width: 590px;
   max-height: 70vh;
 
-  @media (max-width: 640px) {
+  @media (max-width: $screen-sm) {
     min-width: 200px;
   }
 }
@@ -79,51 +81,17 @@
   max-width: 95vw;
   max-height: 95vh;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     max-width: calc(100vw - 16px);
     max-height: calc(100vh - 16px);
-    margin: 8px;
+    margin: $s-2;
   }
 }
 
 // Override gap for small modals on mobile
 [data-small-modal].modal-body {
-  @media (max-width: 640px) {
-    gap: 4px !important;
-  }
-}
-
-// Small modal specific layout styles (for ChannelEditor, GroupEditor)
-.quorum-modal-small-layout {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.quorum-modal-small-content {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  overflow-y: auto;
-}
-
-.quorum-modal-small-actions {
-  display: flex;
-  justify-content: right;
-  gap: 8px;
-  margin-top: 10px;
-
-  .quorum-button {
-    height: 38px;
-    font-size: 13px;
-  }
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    justify-content: left;
-    margin-top: 16px;
-    margin-bottom: 20px;
-    gap: 12px;
+  @media (max-width: $screen-sm) {
+    gap: $s-1 !important;
   }
 }
 
@@ -131,8 +99,8 @@
   opacity: 0;
   transform: scale(0.95);
   transition:
-    opacity 0.3s ease-out,
-    transform 0.3s ease-out;
+    opacity $duration-300 $ease-out,
+    transform $duration-300 $ease-out;
 }
 
 @keyframes modalOpen {
@@ -148,18 +116,18 @@
 
 .quorum-modal-close {
   position: absolute;
-  right: 14px;
-  top: 10px;
+  right: $s-3-5;
+  top: $s-2-5;
   color: var(--color-text-subtle);
-  transition: color 0.2s ease;
+  transition: color $duration-200 $ease-in-out;
   // Increase touch target for mobile
-  padding: 8px;
-  margin: -8px;
+  padding: $s-2;
+  margin: -$s-2;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     // Even larger touch target on mobile (44x44px minimum)
-    padding: 12px;
-    margin: -12px;
+    padding: $s-3;
+    margin: -$s-3;
   }
 
   &:hover {
@@ -168,22 +136,22 @@
 }
 
 .quorum-modal-title {
-  font-size: 24px;
+  font-size: $text-2xl;
   text-align: left;
   color: var(--color-text-strong);
-  margin-bottom: 24px;
+  margin-bottom: $s-6;
 
-  @media (max-width: 640px) {
-    font-size: 20px;
+  @media (max-width: $screen-sm) {
+    font-size: $text-xl;
     text-align: left;
-    margin-bottom: 20px;
+    margin-bottom: $s-5;
   }
 }
 
 .quorum-modal-title-center {
   text-align: center;
 
-  @media (max-width: 640px) {
+  @media (max-width: $screen-sm) {
     text-align: center;
   }
 }
@@ -192,29 +160,4 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}
-
-// Reusable Modal Width Classes (moved from _modal_common.scss)
-.modal-width-large {
-  width: 100%;
-  max-width: 500px;
-  min-width: 490px;
-  margin: 0 auto;
-
-  @media (max-width: 640px) {
-    max-width: 95vw;
-    min-width: 200px;
-  }
-}
-
-.modal-width-medium {
-  width: 100%;
-  max-width: 400px;
-  min-width: 390px;
-  margin: 0 auto;
-
-  @media (max-width: 640px) {
-    max-width: 95vw;
-    min-width: 200px;
-  }
 }
