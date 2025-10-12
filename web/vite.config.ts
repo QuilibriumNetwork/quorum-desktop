@@ -97,4 +97,12 @@ export default defineConfig(({ command }) => ({
   optimizeDeps: {
     include: ['@quilibrium/quilibrium-js-sdk-channels'], // Force Vite to pre-bundle or app doesn't load (WSL)
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // Tell SCSS to resolve @ alias (pointing to src/) - same as JS imports
+        includePaths: [resolve(__dirname, '../src')],
+      },
+    },
+  },
 }));

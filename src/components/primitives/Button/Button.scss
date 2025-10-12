@@ -1,105 +1,168 @@
-// Button primitive styles - copied from original Button.scss
+// Button primitive styles
+@use '@/styles/variables' as *;
+
 %btn-base {
-  @apply flex items-center justify-center py-2 px-4 rounded-full shadow-lg font-medium text-sm text-center select-none transition duration-300 text-white shadow-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-2 $spacing-4;
+  border-radius: $rounded-full;
+  box-shadow: $shadow-sm;
+  font-weight: $font-medium;
+  font-size: $text-sm;
+  text-align: center;
+  user-select: none;
+  transition: all $duration-300 $ease-in-out;
+  color: white;
 }
 
 .btn-primary {
   @extend %btn-base;
-  @apply bg-accent border-2 border-accent cursor-pointer;
+  background-color: var(--accent);
+  border: $border-2 solid var(--accent);
+  cursor: pointer;
 
   &:hover {
-    @apply bg-accent-400 border-accent-400 text-white;
+    background-color: var(--accent-400);
+    border-color: var(--accent-400);
+    color: white;
   }
 }
 
 .btn-secondary {
   @extend %btn-base;
-  @apply bg-transparent border-2 border-accent-500 cursor-pointer text-accent-500;
+  background-color: transparent;
+  border: $border-2 solid var(--accent-500);
+  cursor: pointer;
+  color: var(--accent-500);
 
   &:hover {
-    @apply bg-accent border-accent text-white;
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: white;
   }
 
   @media (prefers-color-scheme: dark) {
-    @apply border-accent-400 text-accent-400;
+    border-color: var(--accent-400);
+    color: var(--accent-400);
   }
 }
 
 .btn-light {
   @extend %btn-base;
-  @apply bg-accent-100 border-2 border-transparent cursor-pointer text-accent-700;
+  background-color: var(--accent-100);
+  border: $border-2 solid transparent;
+  cursor: pointer;
+  color: var(--accent-700);
 
   &:hover {
-    @apply bg-transparent border-2 border-accent-100 text-accent-100;
+    background-color: transparent;
+    border: $border-2 solid var(--accent-100);
+    color: var(--accent-100);
   }
 }
 
 .btn-light-outline {
   @extend %btn-base;
-  @apply bg-transparent border-2 border-accent-100 cursor-pointer text-accent-100;
+  background-color: transparent;
+  border: $border-2 solid var(--accent-100);
+  cursor: pointer;
+  color: var(--accent-100);
 
   &:hover {
-    @apply bg-accent-100 border-2 border-accent-100 text-accent-700;
+    background-color: var(--accent-100);
+    border: $border-2 solid var(--accent-100);
+    color: var(--accent-700);
   }
 }
 
 .btn-subtle {
   @extend %btn-base;
-  @apply bg-surface-7 border-2 border-transparent cursor-pointer text-main;
+  background-color: var(--surface-7);
+  border: $border-2 solid transparent;
+  cursor: pointer;
+  color: rgb(var(--color-text-main));
 
   &:hover {
-    @apply bg-surface-8 border-surface-8;
+    background-color: var(--surface-8);
+    border-color: var(--surface-8);
   }
 }
 
 .btn-subtle-outline {
   @extend %btn-base;
-  @apply bg-transparent border-2 border-surface-6 cursor-pointer text-subtle;
+  background-color: transparent;
+  border: $border-2 solid var(--surface-6);
+  cursor: pointer;
+  color: var(--color-text-subtle);
 
   &:hover {
-    @apply bg-surface-6 border-surface-6 text-main;
+    background-color: var(--surface-6);
+    border-color: var(--surface-6);
+    color: rgb(var(--color-text-main));
   }
 }
 
 .btn-danger {
   @extend %btn-base;
-  @apply border-2 border-transparent cursor-pointer bg-danger/80;
+  border: $border-2 solid transparent;
+  cursor: pointer;
+  background-color: rgb(var(--danger) / 0.8);
 
   &:hover {
-    @apply border-2 border-transparent bg-danger;
+    border: $border-2 solid transparent;
+    background-color: rgb(var(--danger));
   }
 }
 
 .btn-danger-outline {
   @extend %btn-base;
-  @apply bg-transparent border-2 cursor-pointer text-danger border-danger;
+  background-color: transparent;
+  border: $border-2 solid rgb(var(--danger));
+  cursor: pointer;
+  color: rgb(var(--danger));
 
   &:hover {
-    @apply bg-danger border-danger text-white;
+    background-color: rgb(var(--danger));
+    border-color: rgb(var(--danger));
+    color: white;
   }
 }
 
 .btn-small {
-  @apply py-1 px-2 text-xs shadow-sm border;
+  padding: $spacing-1 $spacing-2;
+  font-size: $text-xs;
+  box-shadow: $shadow-sm;
+  border: $border solid currentColor;
 }
 
 .btn-disabled {
   @extend %btn-base;
-  @apply bg-surface-9 border-2 border-transparent text-surface-3 cursor-default pointer-events-none;
+  background-color: var(--surface-9);
+  border: $border-2 solid transparent;
+  color: var(--surface-3);
+  cursor: default;
+  pointer-events: none;
 }
 
 .btn-disabled-onboarding {
   @extend %btn-base;
-  @apply border-2 border-transparent text-white cursor-default pointer-events-none bg-white/30;
+  border: $border-2 solid transparent;
+  color: white;
+  cursor: default;
+  pointer-events: none;
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .btn-unstyled {
-  @apply cursor-pointer transition duration-300 select-none;
+  cursor: pointer;
+  transition: all $duration-300 $ease-in-out;
+  user-select: none;
   // No padding, borders, or background - allows full className control
 
   // Compact variant for list-style layouts
   &.btn-list-item {
-    @apply py-2 px-3; // Reduced padding for list items
+    padding: $spacing-2 $spacing-3; // Reduced padding for list items
   }
 }
 
@@ -107,81 +170,119 @@
 /* These buttons use white backgrounds with opacity and hardcoded accent colors */
 /* Used in Onboarding.tsx and Maintenance.tsx - no dark mode variants needed */
 
-.btn-primary-white {
+.btn-light-white {
   @extend %btn-base;
-  @apply bg-white border-2 border-white cursor-pointer text-[#0287f2];
+  background-color: rgba(255, 255, 255, 0.2);
+  border: $border-2 solid transparent;
+  cursor: pointer;
+  color: white;
 
   &:hover {
-    @apply border-2 bg-[#d6ee93] border-[#d6ee93] text-[#025ead];
+    background-color: #d6ee93;
+    border: $border-2 solid #d6ee93;
+    color: #025ead;
+  }
+}
+
+.btn-primary-white {
+  @extend %btn-base;
+  background-color: white;
+  border: $border-2 solid white;
+  cursor: pointer;
+  color: #0287f2;
+
+  &:hover {
+    border: $border-2 solid #d6ee93;
+    background-color: #d6ee93;
+    color: #025ead;
   }
 }
 
 .btn-secondary-white {
   @extend %btn-base;
-  @apply bg-transparent border-2 border-white cursor-pointer text-white;
+  background-color: transparent;
+  border: $border-2 solid white;
+  cursor: pointer;
+  color: white;
 
   &:hover {
-    @apply border-2 bg-[#d6ee93] border-[#d6ee93] text-[#025ead];
+    border: $border-2 solid #d6ee93;
+    background-color: #d6ee93;
+    color: #025ead;
   }
 }
 
 .btn-light-outline-white {
   @extend %btn-base;
-  @apply bg-transparent border-2 cursor-pointer border-white/80 text-white/80;
+  background-color: transparent;
+  border: $border-2 solid rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.8);
 
   &:hover {
-    @apply border-2 bg-[#d6ee93] border-[#d6ee93] text-[#025ead];
+    border: $border-2 solid #d6ee93;
+    background-color: #d6ee93;
+    color: #025ead;
   }
 }
 
 // Icon button styles
 .quorum-button-with-icon {
   .quorum-button-icon-element {
-    @apply mr-2;
+    margin-right: $spacing-2;
   }
 
   // Reduced spacing for compact buttons
   &.btn-compact .quorum-button-icon-element {
-    @apply mr-1;
+    margin-right: $spacing-1;
   }
 }
 
 // Button sizes
 .btn-compact {
-  @apply py-1 px-2 text-xs; // Improved spacing from py-0 px-1
+  padding: $spacing-1 $spacing-2;
+  font-size: $text-xs; // Improved spacing from py-0 px-1
 }
 
 .btn-small {
-  @apply py-1 px-3 text-xs;
+  padding: $spacing-1 $spacing-3;
+  font-size: $text-xs;
 }
 
 .btn-large {
-  @apply py-3 px-6 text-base;
+  padding: $spacing-3 $spacing-6;
+  font-size: $text-base;
 }
 
 .quorum-button-icon-only {
-  @apply w-10 h-10 !px-0;
+  width: $spacing-10;
+  height: $spacing-10;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
   border-radius: 50% !important;
 
   &.btn-compact {
-    @apply w-7 h-7;
-    border-radius: 4px !important;
+    width: $spacing-7;
+    height: $spacing-7;
+    border-radius: $rounded !important;
   }
 
   &.btn-small {
-    @apply w-8 h-8;
+    width: $spacing-8;
+    height: $spacing-8;
   }
 
   &.btn-large {
-    @apply w-12 h-12;
+    width: $spacing-12;
+    height: $spacing-12;
   }
 
   .quorum-button-icon-element {
-    @apply mr-0;
+    margin-right: 0;
   }
 }
 
 // Full width button style
 .btn-full-width {
-  @apply w-full;
+  width: 100%;
 }
