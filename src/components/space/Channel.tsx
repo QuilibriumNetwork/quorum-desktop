@@ -9,7 +9,6 @@ import {
   useConversation,
   useUpdateReadTime,
 } from '../../hooks';
-import { useAllMentions } from '../../hooks/business/mentions';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -130,13 +129,6 @@ const Channel: React.FC<ChannelProps> = ({
 
   // Get pinned messages
   const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
-
-  // Get all unread mentions across all channels for notification bell
-  const { mentions: allMentions } = useAllMentions({
-    spaceId,
-    channelIds: space?.groups.flatMap(g => g.channels.map(c => c.channelId)) || [],
-  });
-  const totalMentions = allMentions.length;
 
   // Get last read timestamp for mention highlighting - using React Query
   const conversationId = `${spaceId}/${channelId}`;
@@ -574,13 +566,7 @@ const Channel: React.FC<ChannelProps> = ({
                     className="relative header-icon-button"
                     iconName="bell"
                     iconOnly
-                  >
-                    {totalMentions > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-accent text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
-                        {totalMentions > 9 ? '9+' : totalMentions}
-                      </span>
-                    )}
-                  </Button>
+                  />
                 </Tooltip>
 
                 {/* Notification Panel */}

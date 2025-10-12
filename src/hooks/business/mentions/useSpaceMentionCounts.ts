@@ -87,7 +87,7 @@ export function useSpaceMentionCounts({
 
             // Count mentions that are for the current user
             for (const message of messages) {
-              if (isMentioned(message, { userAddress })) {
+              if (isMentioned(message, { userAddress, checkEveryone: true })) {
                 spaceTotal++;
 
                 // Early exit if we've hit the display threshold
