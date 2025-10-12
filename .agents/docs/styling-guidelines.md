@@ -90,10 +90,12 @@ padding: 16px;
 
 **Common Values:** `0.25rem` (1), `0.5rem` (2), `0.75rem` (3), `1rem` (4), `1.5rem` (6), `2rem` (8), `3rem` (12)
 
-**Note:** Spacing variables now use simplified naming (`$s-4` instead of `$spacing-4`) for perfect Tailwind alignment.
-
-**Approximation:** If a raw pixel value is off by only 1px from a variable in the scale, it's acceptable to use the closest variable to maintain consistency. For example, a `49px` width can use the `$s-12` variable (48px).
-
+**Approximation:** If a raw pixel value is off by only 1px (for small sizes) or 2-4px (for large sizes) from a variable in the scale, it's acceptable to use the closest variable to maintain consistency. 
+- Small sizes: A `3px` width can use the `$s-1` variable (4px) or `$s-0-5` variable (2px).
+- Medium sizes: A `50px` width can use the `$s-12` variable (48px).
+- Large sizes: A `140px` width can use the `$s-36` variable (144px).
+- NEVER use complex calculations (e.g.:`$s-80 * 10;`). For extra-large sizes, just keep the original raw px value.
+- NEVER us evariables inside calculations, e.g.: `calc(100vw - $s-20)`.
 ---
 
 ### 2. Colors - Use CSS Variables

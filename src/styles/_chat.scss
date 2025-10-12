@@ -1,6 +1,8 @@
+@use '@/styles/variables' as *;
+
 .chat-container {
   flex: 1 0;
-  border-top-left-radius: 0.75rem;
+  border-top-left-radius: $rounded-xl;
   background: var(--color-bg-chat);
   z-index: 11; /* Higher than sidebar space-header (z-index: 10) */
   display: flex;
@@ -33,16 +35,16 @@
 
 .message-name-mentions-you,
 .message-name-mentions-role {
-  font-weight: 700;
+  font-weight: $font-bold;
 }
 
 .message-mentions-you {
-  border-left: 2px solid var(--accent);
+  border-left: $border-2 solid var(--accent);
   background: rgba(var(--accent-rgb), 0.2);
 }
 
 .message-mentions-role {
-  border-left: 2px solid var(--success);
+  border-left: $border-2 solid var(--success);
   background: rgb(var(--success) / 0.2);
 }
 
@@ -89,23 +91,23 @@
   cursor: pointer;
 
   // Responsive sizing for smaller devices
-  @media (max-width: 480px) {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
+  @media (max-width: $screen-xs) {
+    width: $s-9 !important;
+    height: $s-9 !important;
+    min-width: $s-9 !important;
 
     // Adjust font size for initials
-    font-size: 14px !important;
+    font-size: $text-sm !important;
   }
 }
 
 .message-content {
   flex: 1 0;
-  padding-left: 10px;
+  padding-left: $s-2-5;
   width: 100%;
   max-width: none;
   position: relative;
-  padding-right: 1rem;
+  padding-right: $s-4;
 
   // Mobile override - use full available width
   @media (max-width: 1023px) {
@@ -115,31 +117,31 @@
 }
 
 .message-sender-name {
-  font-weight: 700;
+  font-weight: $font-bold;
 }
 
 .message-timestamp {
   color: var(--color-text-subtle);
-  margin-left: 9px;
-  font-size: 10pt;
+  margin-left: $s-2;
+  font-size: $text-sm;
 }
 
 .message-post-content {
-  margin-top: 2px;
+  margin-top: $s-0-5;
 }
 
 .message-editor {
   max-width: 100%;
-  border-radius: 0.5rem;
-  padding: 6px;
+  border-radius: $rounded-lg;
+  padding: $s-1-5;
   overflow: hidden;
-  border: 0px none;
+  border: $border-0 none;
   color: var(--color-text-main);
-  outline: 0px none;
-  font-weight: 300;
+  outline: $border-0 none;
+  font-weight: $font-light;
   resize: none;
-  line-height: 18px;
-  margin: 8px 11px;
+  line-height: $leading-5;
+  margin: $s-2 $s-3;
 
   ::placeholder {
     color: var(--color-text-muted);
