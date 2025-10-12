@@ -1,14 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { isMentioned, isMentionedWithSettings } from '../../../utils/mentionUtils';
+import { isMentionedWithSettings } from '../../../utils/mentionUtils';
 import { getDefaultMentionSettings } from '../../../utils/notificationSettingsUtils';
-import type { Message } from '../../../api/quorumApi';
 
 interface UseChannelMentionCountsProps {
   spaceId: string;
   channelIds: string[];
 }
+
+// Early-exit threshold: Stop counting after 10 mentions per channel
+// (UI shows "9+" for counts > 9, so exact count beyond 10 is unnecessary)
+const DISPLAY_THRESHOLD = 10;
 
 /**
  * Hook to calculate unread mention counts for channels in a space
@@ -71,29 +74,35 @@ export function useChannelMentionCounts({
 
           const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
 
-          // Get all messages after last read (up to 10k for safety)
-          const { messages } = await messageDB.getMessages({
+          // Use optimized database query to get only unread messages with mentions
+          // This is much faster than fetching all 10k messages
+          const messages = await messageDB.getUnreadMentions({
             spaceId,
             channelId,
-            limit: 10000, // Safety limit to prevent excessive memory usage
+            afterTimestamp: lastReadTimestamp,
+            limit: DISPLAY_THRESHOLD, // Only fetch what we need for display
           });
 
-          // Filter messages that:
-          // 1. Were created after last read time
-          // 2. Mention the current user (respecting enabled mention types)
-          const unreadMentions = messages.filter((message: Message) => {
-            if (message.createdDate <= lastReadTimestamp) return false;
-
+          // Count mentions with per-message early exit
+          let channelMentionCount = 0;
+          for (const message of messages) {
             // Use settings-aware mention check (Phase 4)
-            return isMentionedWithSettings(message, {
+            if (isMentionedWithSettings(message, {
               userAddress,
               enabledTypes,
-            });
-          });
+            })) {
+              channelMentionCount++;
+
+              // Early exit if we've hit the display threshold
+              if (channelMentionCount >= DISPLAY_THRESHOLD) {
+                break; // Stop scanning messages in this channel
+              }
+            }
+          }
 
           // Only include channels with mentions
-          if (unreadMentions.length > 0) {
-            counts[channelId] = unreadMentions.length;
+          if (channelMentionCount > 0) {
+            counts[channelId] = channelMentionCount;
           }
         }
       } catch (error) {
@@ -105,8 +114,8 @@ export function useChannelMentionCounts({
       return counts;
     },
     enabled: !!userAddress && channelIds.length > 0,
-    staleTime: 30000, // 30 seconds - balance between performance and real-time updates
-    refetchOnWindowFocus: true,
+    staleTime: 90000, // 90 seconds (1.5 minutes) - reduces query frequency while maintaining reasonable UX
+    refetchOnWindowFocus: true, // Immediate updates when user returns to app
   });
 
   return data || {};

@@ -1303,4 +1303,78 @@ export class MessageDB {
       };
     });
   }
+
+  /**
+   * Get unread messages that mention a specific user
+   *
+   * This is an optimized query for mention counting that:
+   * 1. Only retrieves messages after lastReadTimestamp
+   * 2. Filters for messages that mention the user
+   * 3. Supports early-exit with limit parameter
+   *
+   * Note: This implementation uses existing indexes and filters in memory.
+   * For optimal performance at scale, consider adding a dedicated compound index
+   * for [spaceId, channelId, mentionedUserId, createdDate] in a future DB migration.
+   *
+   * @param spaceId - The space ID
+   * @param channelId - The channel ID
+   * @param afterTimestamp - Only get messages created after this timestamp (typically lastReadTimestamp)
+   * @param limit - Maximum number of mention messages to return (default: 10 for early-exit optimization)
+   * @returns Array of messages mentioning the user
+   */
+  async getUnreadMentions({
+    spaceId,
+    channelId,
+    afterTimestamp,
+    limit = 10,
+  }: {
+    spaceId: string;
+    channelId: string;
+    afterTimestamp: number;
+    limit?: number;
+  }): Promise<Message[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+      const index = store.index('by_conversation_time');
+
+      // Use existing index to get messages after timestamp
+      const range = IDBKeyRange.bound(
+        [spaceId, channelId, afterTimestamp],
+        [spaceId, channelId, Number.MAX_VALUE],
+        true, // Exclude afterTimestamp itself
+        false
+      );
+
+      const request = index.openCursor(range, 'next');
+      const messages: Message[] = [];
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest).result;
+
+        if (cursor && messages.length < limit) {
+          const message = cursor.value as Message;
+
+          // Only include messages with mentions
+          // Note: The calling code will still need to filter by userAddress
+          // since we don't have a dedicated mention index yet
+          if (message.mentions) {
+            messages.push(message);
+          }
+
+          // Continue only if we haven't reached the limit
+          if (messages.length < limit) {
+            cursor.continue();
+          } else {
+            resolve(messages);
+          }
+        } else {
+          resolve(messages);
+        }
+      };
+
+      request.onerror = () => reject(request.error);
+    });
+  }
 }

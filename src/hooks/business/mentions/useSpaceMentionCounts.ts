@@ -2,11 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { isMentioned } from '../../../utils/mentionUtils';
-import type { Message, Space } from '../../../api/quorumApi';
+import type { Space } from '../../../api/quorumApi';
 
 interface UseSpaceMentionCountsProps {
   spaces: Space[];
 }
+
+// Early-exit threshold: Stop counting after 10 mentions
+// (UI shows "9+" for counts > 9, so exact count beyond 10 is unnecessary)
+const DISPLAY_THRESHOLD = 10;
 
 /**
  * Hook to calculate unread mention counts for entire spaces
@@ -55,8 +59,13 @@ export function useSpaceMentionCounts({
             group.channels.map((channel) => channel.channelId)
           );
 
-          // Process each channel in the space
+          // Process each channel in the space with early exit
           for (const channelId of channelIds) {
+            // Early exit: no need to count beyond display threshold
+            if (spaceTotal >= DISPLAY_THRESHOLD) {
+              break; // Stop scanning remaining channels
+            }
+
             const conversationId = `${space.spaceId}/${channelId}`;
 
             // Get conversation to find last read timestamp
@@ -66,22 +75,27 @@ export function useSpaceMentionCounts({
 
             const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
 
-            // Get all messages after last read (up to 10k for safety)
-            const { messages } = await messageDB.getMessages({
+            // Use optimized database query to get only unread messages with mentions
+            // This is much faster than fetching all 10k messages
+            const remainingLimit = DISPLAY_THRESHOLD - spaceTotal;
+            const messages = await messageDB.getUnreadMentions({
               spaceId: space.spaceId,
               channelId,
-              limit: 10000, // Safety limit to prevent excessive memory usage
+              afterTimestamp: lastReadTimestamp,
+              limit: remainingLimit, // Only fetch what we need
             });
 
-            // Filter messages that:
-            // 1. Were created after last read time
-            // 2. Mention the current user
-            const unreadMentions = messages.filter((message: Message) => {
-              if (message.createdDate <= lastReadTimestamp) return false;
-              return isMentioned(message, { userAddress });
-            });
+            // Count mentions that are for the current user
+            for (const message of messages) {
+              if (isMentioned(message, { userAddress })) {
+                spaceTotal++;
 
-            spaceTotal += unreadMentions.length;
+                // Early exit if we've hit the display threshold
+                if (spaceTotal >= DISPLAY_THRESHOLD) {
+                  break; // Stop scanning messages
+                }
+              }
+            }
           }
 
           // Only include spaces with mentions
@@ -98,8 +112,8 @@ export function useSpaceMentionCounts({
       return spaceCounts;
     },
     enabled: !!userAddress && spaces.length > 0,
-    staleTime: 30000, // 30 seconds - balance between performance and real-time updates
-    refetchOnWindowFocus: true,
+    staleTime: 90000, // 90 seconds (1.5 minutes) - reduces query frequency while maintaining reasonable UX
+    refetchOnWindowFocus: true, // Immediate updates when user returns to app
   });
 
   return data || {};
