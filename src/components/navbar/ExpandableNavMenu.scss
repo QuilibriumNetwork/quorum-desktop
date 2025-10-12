@@ -1,27 +1,29 @@
+@use '@/styles/variables' as *;
+
 .expand-button {
   font-size: 24px;
   text-align: center;
-  padding-top: 12px;
+  padding-top: $s-3;
   width: 57px;
   height: 57px;
   flex-shrink: 0;
-  margin-left: 8px;
-  margin-top: 6px;
-  margin-bottom: -4px;
-  transition: color 0.2s ease;
+  margin-left: $s-2;
+  margin-top: $s-1-5;
+  margin-bottom: -$s-1;
+  transition: color $duration-200 ease;
 
   &:hover {
     color: var(--accent-500);
   }
 
   // Mobile phone optimization
-  @media (max-width: 480px) {
-    width: 40px;
-    height: 40px;
-    font-size: 16px;
-    padding-top: 8px;
-    margin-left: 4px;
-    margin-top: 4px;
+  @media (max-width: $screen-xs) {
+    width: $s-10;
+    height: $s-10;
+    font-size: $text-base;
+    padding-top: $s-2;
+    margin-left: $s-1;
+    margin-top: $s-1;
   }
 }
 
@@ -53,48 +55,77 @@
 }
 
 .expanded-nav-buttons-container {
-  @apply fixed bottom-0 flex flex-col items-center justify-end;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
   width: 57px;
   height: 100vh;
-  padding-bottom: 40px;
-  padding-left: 16px;
-  gap: 8px;
+  padding-bottom: $s-10;
+  padding-left: $s-4;
+  gap: $s-2;
 
   // Mobile phone optimization
-  @media (max-width: 480px) {
-    width: 40px;
-    padding-bottom: 40px;
-    padding-left: 8px;
-    gap: 8px;
+  @media (max-width: $screen-xs) {
+    width: $s-10;
+    padding-bottom: $s-10;
+    padding-left: $s-2;
+    gap: $s-2;
   }
 }
 
 .expanded-nav-button-primary {
-  @apply w-[40px] h-[40px] flex items-center justify-center rounded-full;
-  @apply bg-surface-4 text-main;
-  @apply transition-all duration-200 lg:hover:bg-surface-6;
-  @apply cursor-pointer;
-  margin-top: 12px;
+  width: $s-10;
+  height: $s-10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $rounded-full;
+  background-color: var(--surface-4);
+  color: var(--color-text-main);
+  transition-property: all;
+  transition-duration: $duration-200;
+  cursor: pointer;
+  margin-top: $s-3;
+
+  @media (min-width: $screen-lg) {
+    &:hover {
+      background-color: var(--surface-6);
+    }
+  }
 
   // Mobile phone optimization
-  @media (max-width: 480px) {
-    @apply w-[32px] h-[32px];
-    margin-top: 8px;
+  @media (max-width: $screen-xs) {
+    width: $s-8;
+    height: $s-8;
+    margin-top: $s-2;
   }
 }
 
 .expanded-nav-button-avatar {
-  @apply w-[40px] h-[40px] rounded-full;
-  @apply transition-all duration-200 lg:hover:opacity-80;
-  @apply cursor-pointer;
+  width: $s-10;
+  height: $s-10;
+  border-radius: $rounded-full;
+  transition-property: all;
+  transition-duration: $duration-200;
+  cursor: pointer;
   background-position: center;
   background-size: cover;
-  margin-top: 12px;
+  margin-top: $s-3;
+
+  @media (min-width: $screen-lg) {
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 
   // Mobile phone optimization
-  @media (max-width: 480px) {
-    @apply w-[32px] h-[32px];
-    margin-top: 8px;
+  @media (max-width: $screen-xs) {
+    width: $s-8;
+    height: $s-8;
+    margin-top: $s-2;
   }
 }
 

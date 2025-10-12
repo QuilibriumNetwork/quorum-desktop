@@ -2,10 +2,10 @@
 
 ## Overview
 
-This document audits all remaining `@apply` usage in the codebase to guide conversion to raw CSS with SCSS variables following our [styling guidelines](.agents/docs/styling-guidelines.md).
+This document audits all remaining `@apply` usage in the codebase to guide conversion to raw CSS with SCSS variables following our [styling guidelines](.agents/docs/styling-in-react.md).
 
 **Status**: ✅ Button.scss already converted (reference implementation)
-**Remaining files**: 7 files with 144 @apply instances
+**Remaining files**: 3 files with 110 @apply instances
 
 ---
 
@@ -14,16 +14,16 @@ This document audits all remaining `@apply` usage in the codebase to guide conve
 | File | @apply Count | Complexity | Priority |
 |------|--------------|------------|----------|
 | MessageComposer.scss | 64 | High | High |
-| ExpandableNavMenu.scss | 14 | Medium | Medium |
-| MessageActionsDrawer.scss | 14 | Low | Low |
+| ExpandableNavMenu.scss | 0 | Medium | Medium |
+| MessageActionsDrawer.scss | 0 | Low | Low |
 | _modal_common.scss | 1 | Low | Medium |
-| _components.scss | 5 | Low | Low |
-| UserProfile.scss | 1 | Low | Low |
-| UserInitials.scss | 5 | Low | Low |
+| _components.scss | 0 | Low | Low |
+| UserProfile.scss | 0 | Low | Low |
+| UserInitials.scss | 0 | Low | Low |
 | ColorSwatch.scss | 12 | Low | Low |
 | RadioGroup.scss | 28 | Medium | Medium |
 
-**Total**: 144 @apply instances across 9 files
+**Total**: 110 @apply instances across 5 files
 
 ---
 
@@ -119,7 +119,7 @@ Lines with @apply:
 
 </details>
 
-#### 3. ExpandableNavMenu.scss
+#### 3. ExpandableNavMenu.scss - DONE
 **Location**: `src/components/navbar/ExpandableNavMenu.scss`
 **@apply count**: 14 instances
 **Complexity**: Medium
@@ -180,7 +180,7 @@ transition: background-color $duration-200 $ease-in-out;
 
 ### Priority 3: Low Impact (Convert Last)
 
-#### 5. MessageActionsDrawer.scss
+#### 5. MessageActionsDrawer.scss - DONE
 **Location**: `src/components/message/MessageActionsDrawer.scss`
 **@apply count**: 14 instances
 **Complexity**: Low
@@ -212,7 +212,7 @@ Lines with @apply:
 
 </details>
 
-#### 6. _components.scss
+#### 6. _components.scss - DONE
 **Location**: `src/styles/_components.scss`
 **@apply count**: 5 instances
 **Complexity**: Low
@@ -232,7 +232,7 @@ Lines with @apply:
 
 </details>
 
-#### 7. UserProfile.scss
+#### 7. UserProfile.scss - DONE
 **Location**: `src/components/user/UserProfile.scss`
 **@apply count**: 1 instance
 **Complexity**: Low
@@ -259,7 +259,7 @@ user-select: none;
 
 </details>
 
-#### 8. UserInitials.scss
+#### 8. UserInitials.scss - DONE
 **Location**: `src/components/user/UserInitials/UserInitials.scss`
 **@apply count**: 5 instances
 **Complexity**: Low
@@ -280,7 +280,7 @@ Lines with @apply:
 
 </details>
 
-#### 9. ColorSwatch.scss
+#### 9. ColorSwatch.scss- DONE
 **Location**: `src/components/primitives/ColorSwatch/ColorSwatch.scss`
 **@apply count**: 12 instances
 **Complexity**: Low

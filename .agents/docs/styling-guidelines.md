@@ -92,6 +92,8 @@ padding: 16px;
 
 **Note:** Spacing variables now use simplified naming (`$s-4` instead of `$spacing-4`) for perfect Tailwind alignment.
 
+**Approximation:** If a raw pixel value is off by only 1px from a variable in the scale, it's acceptable to use the closest variable to maintain consistency. For example, a `49px` width can use the `$s-12` variable (48px).
+
 ---
 
 ### 2. Colors - Use CSS Variables

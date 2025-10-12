@@ -186,7 +186,7 @@ const UserProfile: React.FunctionComponent<{
             <Container className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2">
               <Button
                 size="small"
-                className="justify-center text-center rounded text-main"
+                className="justify-center text-center"
                 onClick={() => sendMessage(props.user.address)}
               >
                 {t`Send Message`}
@@ -195,7 +195,7 @@ const UserProfile: React.FunctionComponent<{
                 <Button
                   type="danger"
                   size="small"
-                  className="justify-center text-center rounded text-main"
+                  className="justify-center text-center"
                   onClick={() => kickUser(props.user.address)}
                   disabled={props.user.isKicked}
                 >

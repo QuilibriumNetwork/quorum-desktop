@@ -1,45 +1,107 @@
 // Mobile Message Actions Drawer Specific Styles
+@use '@/styles/variables' as *;
 
 // Quick reactions container
 .message-actions-drawer__reactions {
-  @apply py-2;
+  padding-top: $s-2;
+  padding-bottom: $s-2;
 }
 
 .message-actions-drawer__reactions-row {
-  @apply flex items-center justify-center gap-1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $s-1;
   width: 100%;
   max-width: 100%;
 }
 
 // Quick reaction emoji buttons
 .quick-reaction-emoji {
-  @apply w-11 h-11 rounded-full flex items-center justify-center text-lg transition-all;
-  @apply bg-surface-2 hover:bg-surface-3 hover:scale-110 active:scale-95;
+  width: $s-11;
+  height: $s-11;
+  border-radius: $rounded-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $text-lg;
+  transition: all $duration-150 ease-in-out;
+  background-color: var(--surface-2);
+
+  &:hover {
+    background-color: var(--surface-3);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 
   &--active {
-    @apply bg-accent-100 border-2 border-accent-500;
+    background-color: var(--accent-100);
+    border-width: $border-2;
+    border-color: var(--accent-500);
     box-shadow: 0 0 0 2px var(--accent-500);
   }
 }
 
 // More reactions button
 .quick-reaction-more {
-  @apply w-11 h-11 rounded-full flex items-center justify-center;
-  @apply bg-transparent border-2 border-dashed border-surface-4 ml-1;
-  @apply transition-all hover:bg-surface-2 hover:border-surface-5 hover:scale-110 active:scale-95;
+  width: $s-11;
+  height: $s-11;
+  border-radius: $rounded-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border-width: $border-2;
+  border-style: dashed;
+  border-color: var(--surface-4);
+  margin-left: $s-1;
+  transition: all $duration-150 ease-in-out;
+
+  &:hover {
+    background-color: var(--surface-2);
+    border-color: var(--surface-5);
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 // Actions menu container
 .message-actions-drawer__actions {
-  @apply flex flex-col gap-1 pb-2 px-2;
+  display: flex;
+  flex-direction: column;
+  gap: $s-1;
+  padding-bottom: $s-2;
+  padding-left: $s-2;
+  padding-right: $s-2;
 }
 
 // Action menu items - for unstyled normal Button primitives
 .action-menu-item {
-  @apply min-h-[44px] py-2 rounded-xl transition-all; // Reduced padding and min-height
-  @apply hover:bg-surface-2 active:scale-[0.98];
-  @apply text-left justify-start flex items-center;
-  @apply text-main text-base; // Bigger text size
+  min-height: $s-11;
+  padding-top: $s-2;
+  padding-bottom: $s-2;
+  border-radius: $rounded-xl;
+  transition: all $duration-150 ease-in-out;
+  text-align: left;
+  justify-content: flex-start;
+  display: flex;
+  align-items: center;
+  color: var(--color-text-main);
+  font-size: $text-base;
+
+  &:hover {
+    background-color: var(--surface-2);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 
   // Force left alignment and proper spacing
   justify-content: flex-start !important;
@@ -47,11 +109,15 @@
 
   // Increase icon spacing
   .quorum-button-icon-element {
-    margin-right: 12px !important; // More space between icon and text
+    margin-right: $s-3 !important; // More space between icon and text
   }
 
   &--danger {
-    @apply text-danger hover:bg-danger/10;
+    color: rgb(var(--danger));
+
+    &:hover {
+      background-color: rgba(var(--danger), 0.1);
+    }
 
     // Ensure danger color for icons
     .quorum-button-icon-element {
@@ -60,16 +126,14 @@
   }
 }
 
-
-
 // High contrast mode support
 @media (prefers-contrast: high) {
-  .quick-reaction-button {
-    border-width: 2px;
+  .quick-reaction-emoji {
+    border-width: $border-2;
   }
 
   .action-menu-item {
-    border: 1px solid transparent;
+    border: $border solid transparent;
 
     &:hover {
       border-color: var(--color-text-main);
@@ -79,7 +143,7 @@
 
 // Reduce motion for accessibility
 @media (prefers-reduced-motion: reduce) {
-  .quick-reaction-button,
+  .quick-reaction-emoji,
   .action-menu-item {
     transition: none;
   }

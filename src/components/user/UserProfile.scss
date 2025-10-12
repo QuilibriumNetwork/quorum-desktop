@@ -1,27 +1,29 @@
+@use '@/styles/variables' as *;
+
 .user-profile {
   position: absolute;
   z-index: 3000;
   width: 330px;
   background: var(--surface-3);
-  border-radius: 0.75rem;
+  border-radius: $rounded-xl;
   color: var(--color-text-main);
   user-select: none;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  box-shadow:  $shadow-xl;
 
-  @media screen and (max-width: 480px) {
+  @media screen and (max-width: $screen-xs) {
     width: 240px;
   }
 }
 
 .user-profile-header {
   background: var(--surface-5);
-  min-height: 80px;
-  border-top-left-radius: 0.75rem;
-  border-top-right-radius: 10px;
+  min-height: $s-20;
+  border-top-left-radius: $rounded-xl;
+  border-top-right-radius: $s-2-5;
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 12px 0;
+  padding: $s-3 0;
 }
 
 .user-profile-text {
@@ -33,12 +35,12 @@
 }
 
 .user-profile-username {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: $text-lg;
+  font-weight: $font-bold;
 }
 
 .user-profile-info {
-  font-size: 13px;
+  font-size: $text-sm;
 
   // quorum-input styles now handled by Input primitive
 }
@@ -46,51 +48,51 @@
 .user-profile-editor-actions {
   display: flex;
   justify-content: right;
-  margin-top: 10px;
+  margin-top: $s-2-5;
 
   .quorum-button {
-    height: 38px;
-    font-size: 13px;
+    height: $s-10;
+    font-size: $text-sm;
   }
 }
 
 .user-profile-content {
-  padding: 14px;
+  padding: $s-3-5;
 }
 
 .user-profile-icon,
 .user-profile-icon-editable {
-  width: 49px;
-  height: 49px;
-  margin-left: 18px;
-  margin-right: 18px;
+  width: $s-12;
+  height: $s-12;
+  margin-left: $s-4;
+  margin-right: $s-4;
   background-position: center;
   background-size: cover;
-  border-radius: 25px;
+  border-radius: $s-6;
   display: inline-block;
   flex-shrink: 0;
 }
 
 .user-profile-icon-editable::after {
-  width: 24px;
-  height: 24px;
+  width: $s-6;
+  height: $s-6;
   background: var(--surface-3);
   color: var(--accent-200);
   content: '+';
   display: block;
   text-align: center;
-  border-radius: 0.75rem;
-  font-weight: 700;
+  border-radius: $rounded-xl;
+  font-weight: $font-bold;
   float: right;
   margin-top: 58px;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  box-shadow: $shadow-md;
 }
 
 .user-profile-content-section-header {
-  font-weight: 500;
-  border-top: 1px solid var(--surface-6);
-  padding: 8px 0px 4px 0px;
-  margin-top: 8px;
+  font-weight: $font-medium;
+  border-top: $border solid var(--surface-6);
+  padding: $s-2 0 $s-1 0;
+  margin-top: $s-2;
 }
 
 .user-profile-content-section-header:first-child {
@@ -101,19 +103,26 @@
 
 .user-profile-edit-button {
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: $s-2-5;
+  top: $s-2-5;
 }
 
 .user-profile-roles {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 4px;
+  gap: $s-1;
 }
 
 .user-profile-role-tag {
-  @apply inline-flex items-center py-[3px] px-3 rounded-full font-medium text-xs text-center select-none;
+  display: inline-flex;
+  align-items: center;
+  padding: $s-0-5 $s-2;
+  border-radius: $rounded-full;
+  font-weight: $font-medium;
+  font-size: $text-xs;
+  text-align: center;
+  user-select: none;
   background: rgb(var(--success));
   color: white;
 }

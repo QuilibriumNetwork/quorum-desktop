@@ -129,13 +129,6 @@
   }
 }
 
-.btn-small {
-  padding: $s-1 $s-2;
-  font-size: $text-xs;
-  box-shadow: $shadow-sm;
-  border: $border solid currentColor;
-}
-
 .btn-disabled {
   @extend %btn-base;
   background-color: var(--surface-9);
@@ -247,6 +240,11 @@
 .btn-small {
   padding: $s-1 $s-3;
   font-size: $text-xs;
+  border-width: $border;
+
+  &:hover {
+    border-width: $border;
+  }
 }
 
 .btn-large {

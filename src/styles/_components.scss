@@ -1,4 +1,6 @@
 /* === ELECTRON TITLEBAR === */
+@use '@/styles/variables' as *;
+
 .-webkit-app-region-drag {
   -webkit-app-region: drag;
 }
@@ -9,9 +11,14 @@
 
 /* === INFO ICON TOOLTIPS === */
 .info-icon-tooltip {
-  @apply text-subtle hover:text-main cursor-pointer;
+  color: var(--color-text-subtle);
+  cursor: pointer;
   outline: none !important;
   -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    color: var(--color-text-main);
+  }
 }
 
 .titlebar {
@@ -46,16 +53,24 @@ div[role='presentation'] {
 /* === HEADER ICON BUTTONS === */
 /* Common style for header icon buttons in Channel and DirectMessage */
 .header-icon-button {
-  @apply w-6 h-6 p-2 rounded-md cursor-pointer flex items-center justify-center;
+  width: $s-6;
+  height: $s-6;
+  padding: $s-2;
+  border-radius: $rounded-md;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   /* Icon styling - increased specificity to override Button styles */
   .quorum-button-icon-element {
-    @apply text-base text-subtle !important;
+    font-size: $text-base;
+    color: var(--color-text-subtle) !important;
     transition: color 0.15s ease !important;
   }
 
   /* Hover state - increased specificity */
   &:hover .quorum-button-icon-element {
-    @apply text-main !important;
+    color: var(--color-text-main) !important;
   }
 }

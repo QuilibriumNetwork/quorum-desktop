@@ -1,8 +1,11 @@
+@use '@/styles/variables' as *;
+
 .user-initials {
-  // Use @apply for Tailwind utilities first
-  @apply rounded-full flex items-center justify-center;
-  @apply text-white font-medium select-none;
-  @apply transition-all duration-200;
+  border-radius: $rounded-full;
+  color: white;
+  font-weight: $font-medium;
+  user-select: none;
+  transition: all $duration-200 $ease-in-out;
 
   // Ensure proper centering - CRITICAL
   display: flex !important;
@@ -25,9 +28,10 @@
 
 // Hover effect for interactive contexts
 .user-initials--interactive {
-  @apply cursor-pointer;
+  cursor: pointer;
 
   &:hover {
-    @apply shadow-md scale-105;
+    box-shadow: $shadow-md;
+    transform: scale(1.05);
   }
 }
