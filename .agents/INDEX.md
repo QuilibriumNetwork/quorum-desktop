@@ -18,8 +18,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Cross-Platform Theming System](docs/features/cross-platform-theming.md)
 - [Delete Confirmation System](docs/features/delete-confirmation-system.md)
 - [Desktop Notifications Feature](docs/features/desktop-notifications.md)
+- [Dropdown Panels](docs/features/dropdown-panels.md)
 - [Invite System Documentation](docs/features/invite-system-analysis.md)
 - [Kick User System Documentation](docs/features/kick-user-system.md)
+- [Mention Notification System](docs/features/mention-notification-system.md)
 - [Modal Save Overlay System](docs/features/modal-save-overlay.md)
 - [Modal System Documentation](docs/features/modals.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
@@ -39,7 +41,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Features / Primitives
 - [Introduction and Core Concepts](docs/features/primitives/01-introduction-and-concepts.md)
-- [Primitives Quick Reference](docs/features/primitives/02-primitives-AGENTS.md)
+- [Primitives Quick Reference](docs/features/primitives/02-primitives-quick-reference.md)
 - [When to Use Primitives vs Raw HTML](docs/features/primitives/03-when-to-use-primitives.md)
 - [Web-to-Native Migration Guide](docs/features/primitives/04-web-to-native-migration.md)
 - [Primitive Styling Guidelines](docs/features/primitives/05-primitive-styling-guide.md)
@@ -88,7 +90,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Docusaurus Developer Documentation Blueprint](tasks/docusaurus-blueprint-v2.md)
 - [Edit Message Feature](tasks/edit-message-feature.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
-- [Implement Mention Notification Bubbles](tasks/mention-notification-bubbles.md)
 - [Modal System Consolidation via Route Wrapper Component](tasks/modal-system-consolidation.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
@@ -157,11 +158,16 @@ This is the main index for all documentation, bug reports, and task management.
 - [Cross-Platform Key Backup Implementation](tasks/.done/cross-platform-key-backup.md)
 - [Delete Confirmation System Implementation](tasks/.done/delete-confirmation-system.md)
 - [Direct Message Deletion Feature](tasks/.done/dm-message-deletion.md)
+- [Dropdown Panels Consolidation & Mobile Bottom Sheet Implementation](tasks/.done/dropdown-panels-consolidation.md)
 - [Emoji Picker Responsive Design Improvement](tasks/.done/emojipicker-responsive.md)
 - [Expo Go to Expo Dev Client Migration Plan - Simplified](tasks/.done/expo-go-to-dev-client-migration.md)
+- [Implement Mention Notification Bubbles](tasks/.done/mention-notification-bubbles.md)
 - [Implement Per-Space Display Names and Avatars with Account Section](tasks/.done/per-space-display-name-avatar.md)
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
 - [Lazy Loading Implementation for Message Lists](tasks/.done/lazy-loading-implementation.md)
+- [Mention Counts Performance Optimization](tasks/.done/mention-counts-performance-optimization.md)
+- [Mention Notification Settings - Phase 4](tasks/.done/mention-notification-settings-phase4.md)
+- [Mention Notification System - Critical Race Condition Fix](tasks/.done/mention-notification-ux-improvements.md)
 - [Message Handling Report](tasks/.done/messages-report.md)
 - [Message Markdown Support Implementation](tasks/.done/message-markdown-support.md)
 - [MessageDB Circular Dependency Status](tasks/.done/messagedb-circular-dependecy-status.md)
@@ -169,6 +175,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mobile Message Options UX Enhancement](tasks/.done/message-options-mobile.md)
 - [Modal Animation Consistency Implementation](tasks/.done/new-modals-effect.md)
 - [Modal Migration Analysis & Progress Report](tasks/.done/DONE_modal-migration-plan.md)
+- [Notification Dropdown/Inbox UI Implementation](tasks/.done/notification-inbox-ui.md)
 - [Per-Space Profile Data Flow Analysis](tasks/.done/per-space-profile-data-flow-analysis.md)
 - [Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/.done/components-audit-dashboard.md)
 - [Pinned Messages Feature - Implementation Plan](tasks/.done/pinned-messages-feature.md)
@@ -180,6 +187,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Responsive Layout Implementation Plan](tasks/.done/responsive-layout.md)
 - [Responsive Layout Requirements](tasks/.done/responsive-layout_requirements.md)
 - [Search Components Primitive Migration](tasks/.done/search-primitive-migration.md)
+- [Space Icon Mention Bubbles](tasks/.done/space-icon-mention-bubbles.md)
 - [Task: Improve User Mention System](tasks/.done/improve-user-mention-system.md)
 - [UI Folder Reorganization Task](tasks/.done/ui-folder-reorganization.md)
 - [User Initials Avatars](tasks/.done/user-initials.md)
@@ -189,4 +197,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-10-08 11:09:00
+**Last Updated**: 2025-10-12 11:47:10
