@@ -20,10 +20,10 @@ This project uses a **hybrid CSS system**:
 
 ```tsx
 // ✅ Tailwind for simple styles
-<div className="flex items-center gap-4 p-4 rounded-lg bg-card" />
+<div class="flex items-center gap-4 p-4 rounded-lg bg-card" />
 
 // ✅ Raw CSS for complex styles
-<div className="message-composer" /> {/* See MessageComposer.scss */}
+<div class="message-composer" /> {/* See MessageComposer.scss */}
 ```
 
 ### 2. Follow Tailwind's Design Language
@@ -42,7 +42,7 @@ This project uses a **hybrid CSS system**:
 .button { @apply px-4 py-2 rounded-md; }
 
 /* ✅ GOOD - Option 1: Tailwind classes */
-<button className="px-4 py-2 rounded-md">
+<button class="px-4 py-2 rounded-md">
 
 /* ✅ GOOD - Option 2: Raw CSS */
 .button {
@@ -74,9 +74,9 @@ This project uses a **hybrid CSS system**:
 ### 1. Spacing - Use `rem` and SCSS Variables
 
 ```scss
-/* ✅ BEST */
-padding: $spacing-4;      /* p-4 → 1rem → 16px */
-gap: $spacing-2;          /* gap-2 → 0.5rem → 8px */
+/* ✅ BEST - Simplified variables match Tailwind exactly */
+padding: $s-4;              /* p-4 → 1rem → 16px */
+gap: $s-2;                  /* gap-2 → 0.5rem → 8px */
 
 /* ✅ GOOD */
 padding: 1rem;
@@ -89,6 +89,8 @@ padding: 16px;
 **Conversion:** Tailwind number ÷ 4 = rem value (e.g., `gap-6` → `6 ÷ 4 = 1.5rem`)
 
 **Common Values:** `0.25rem` (1), `0.5rem` (2), `0.75rem` (3), `1rem` (4), `1.5rem` (6), `2rem` (8), `3rem` (12)
+
+**Note:** Spacing variables now use simplified naming (`$s-4` instead of `$spacing-4`) for perfect Tailwind alignment.
 
 ---
 
@@ -172,7 +174,7 @@ transition: all $duration-200 $ease-in-out;  /* 200ms ease-in-out */
 @use 'src/styles/_variables.scss' as *;  /* If not already available */
 
 .card {
-  padding: $spacing-6;
+  padding: $s-6;
   font-size: $text-lg;
   border-radius: $rounded-lg;
   box-shadow: $shadow-md;
@@ -181,7 +183,7 @@ transition: all $duration-200 $ease-in-out;  /* 200ms ease-in-out */
 ```
 
 **Available:**
-- Spacing: `$spacing-0` → `$spacing-96`
+- Spacing: $s-0 → $s-96 (simplified - matches Tailwind exactly)
 - Typography: `$text-xs` → `$text-9xl`, `$text-*-lh` (line-heights)
 - Font Weights: `$font-thin` → `$font-black`
 - Line Heights: `$leading-none`, `$leading-tight`, `$leading-3` → `$leading-10`
@@ -284,7 +286,7 @@ background-color: var(--color-bg-modal);    /* or bg-modal */
 .badge { @apply inline-flex items-center px-3 py-1 rounded-full; }
 
 /* After */
-<span className="inline-flex items-center px-3 py-1 rounded-full">
+<span class="inline-flex items-center px-3 py-1 rounded-full">
 ```
 
 **Option 2: Convert to Raw CSS**
@@ -310,7 +312,7 @@ background-color: var(--color-bg-modal);    /* or bg-modal */
 | Simple layout (< 7 classes) | Tailwind classes |
 | Complex component | Raw CSS + SCSS variables |
 | Shared styles | Raw CSS in shared file |
-| Spacing/sizing | `$spacing-*` or `rem` |
+| Spacing/sizing | $s-4, $s-6, etc. or rem |
 | Colors | CSS variables (`var(--accent)`) |
 | Form fields | `--color-field-*` variables |
 | Breakpoints | SCSS: `@media (min-width: $screen-md)` / Tailwind: `md:` |
@@ -340,7 +342,7 @@ background-color: var(--color-bg-modal);    /* or bg-modal */
 1. **Tailwind in JSX** for simple styles (< 7 classes)
 2. **Raw CSS** for complex/shared styles
 3. **Never use `@apply`**
-4. **Use SCSS variables** (`$spacing-4`, `$text-lg`)
+4. **Use SCSS variables** (`$s-4`, `$s-6`, `$text-lg`)
 5. **Use `rem`** instead of `px`
 6. **Use CSS variables** for colors
 7. **Form fields use `--color-field-*`**

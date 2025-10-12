@@ -11,43 +11,44 @@
 
 /* === SPACING SCALE === */
 /* Tailwind's default spacing scale (0 = 0px, 96 = 384px) */
-/* Usage: padding: var(--spacing-4); → 1rem (16px) → Same as p-4 */
+/* Usage: padding: $s-4; → 1rem (16px) → Same as p-4 */
+/* Simplified naming for designer-friendly Tailwind alignment */
 
-$spacing-0: 0;
-$spacing-px: 1px;
-$spacing-0-5: 0.125rem;  /* 2px  - Tailwind: 0.5 */
-$spacing-1: 0.25rem;     /* 4px  - Tailwind: 1 */
-$spacing-1-5: 0.375rem;  /* 6px  - Tailwind: 1.5 */
-$spacing-2: 0.5rem;      /* 8px  - Tailwind: 2 */
-$spacing-2-5: 0.625rem;  /* 10px - Tailwind: 2.5 */
-$spacing-3: 0.75rem;     /* 12px - Tailwind: 3 */
-$spacing-3-5: 0.875rem;  /* 14px - Tailwind: 3.5 */
-$spacing-4: 1rem;        /* 16px - Tailwind: 4 */
-$spacing-5: 1.25rem;     /* 20px - Tailwind: 5 */
-$spacing-6: 1.5rem;      /* 24px - Tailwind: 6 */
-$spacing-7: 1.75rem;     /* 28px - Tailwind: 7 */
-$spacing-8: 2rem;        /* 32px - Tailwind: 8 */
-$spacing-9: 2.25rem;     /* 36px - Tailwind: 9 */
-$spacing-10: 2.5rem;     /* 40px - Tailwind: 10 */
-$spacing-11: 2.75rem;    /* 44px - Tailwind: 11 */
-$spacing-12: 3rem;       /* 48px - Tailwind: 12 */
-$spacing-14: 3.5rem;     /* 56px - Tailwind: 14 */
-$spacing-16: 4rem;       /* 64px - Tailwind: 16 */
-$spacing-20: 5rem;       /* 80px - Tailwind: 20 */
-$spacing-24: 6rem;       /* 96px - Tailwind: 24 */
-$spacing-28: 7rem;       /* 112px - Tailwind: 28 */
-$spacing-32: 8rem;       /* 128px - Tailwind: 32 */
-$spacing-36: 9rem;       /* 144px - Tailwind: 36 */
-$spacing-40: 10rem;      /* 160px - Tailwind: 40 */
-$spacing-44: 11rem;      /* 176px - Tailwind: 44 */
-$spacing-48: 12rem;      /* 192px - Tailwind: 48 */
-$spacing-52: 13rem;      /* 208px - Tailwind: 52 */
-$spacing-56: 14rem;      /* 224px - Tailwind: 56 */
-$spacing-60: 15rem;      /* 240px - Tailwind: 60 */
-$spacing-64: 16rem;      /* 256px - Tailwind: 64 */
-$spacing-72: 18rem;      /* 288px - Tailwind: 72 */
-$spacing-80: 20rem;      /* 320px - Tailwind: 80 */
-$spacing-96: 24rem;      /* 384px - Tailwind: 96 */
+$s-0: 0;
+$s-px: 1px;
+$s-0-5: 0.125rem;   /* 2px  - Tailwind: 0.5 */
+$s-1: 0.25rem;      /* 4px  - Tailwind: 1 */
+$s-1-5: 0.375rem;   /* 6px  - Tailwind: 1.5 */
+$s-2: 0.5rem;       /* 8px  - Tailwind: 2 */
+$s-2-5: 0.625rem;   /* 10px - Tailwind: 2.5 */
+$s-3: 0.75rem;      /* 12px - Tailwind: 3 */
+$s-3-5: 0.875rem;   /* 14px - Tailwind: 3.5 */
+$s-4: 1rem;         /* 16px - Tailwind: 4 */
+$s-5: 1.25rem;      /* 20px - Tailwind: 5 */
+$s-6: 1.5rem;       /* 24px - Tailwind: 6 */
+$s-7: 1.75rem;      /* 28px - Tailwind: 7 */
+$s-8: 2rem;         /* 32px - Tailwind: 8 */
+$s-9: 2.25rem;      /* 36px - Tailwind: 9 */
+$s-10: 2.5rem;      /* 40px - Tailwind: 10 */
+$s-11: 2.75rem;     /* 44px - Tailwind: 11 */
+$s-12: 3rem;        /* 48px - Tailwind: 12 */
+$s-14: 3.5rem;      /* 56px - Tailwind: 14 */
+$s-16: 4rem;        /* 64px - Tailwind: 16 */
+$s-20: 5rem;        /* 80px - Tailwind: 20 */
+$s-24: 6rem;        /* 96px - Tailwind: 24 */
+$s-28: 7rem;        /* 112px - Tailwind: 28 */
+$s-32: 8rem;        /* 128px - Tailwind: 32 */
+$s-36: 9rem;        /* 144px - Tailwind: 36 */
+$s-40: 10rem;       /* 160px - Tailwind: 40 */
+$s-44: 11rem;       /* 176px - Tailwind: 44 */
+$s-48: 12rem;       /* 192px - Tailwind: 48 */
+$s-52: 13rem;       /* 208px - Tailwind: 52 */
+$s-56: 14rem;       /* 224px - Tailwind: 56 */
+$s-60: 15rem;       /* 240px - Tailwind: 60 */
+$s-64: 16rem;       /* 256px - Tailwind: 64 */
+$s-72: 18rem;       /* 288px - Tailwind: 72 */
+$s-80: 20rem;       /* 320px - Tailwind: 80 */
+$s-96: 24rem;       /* 384px - Tailwind: 96 */
 
 /* === FONT SIZE SCALE === */
 /* Tailwind's typography scale with line-heights */
@@ -214,11 +215,11 @@ $container-2xl: 1536px;      /* Container max-width at 2xl breakpoint */
    USAGE EXAMPLES
    ============================================
 
-   Spacing:
+   Spacing (Simplified - matches Tailwind exactly):
    .card {
-     padding: $spacing-4;           // p-4 (16px)
-     margin-bottom: $spacing-6;     // mb-6 (24px)
-     gap: $spacing-2;               // gap-2 (8px)
+     padding: $s-4;                   // p-4 (16px)
+     margin-bottom: $s-6;             // mb-6 (24px)
+     gap: $s-2;                       // gap-2 (8px)
    }
 
    Typography:

@@ -2,7 +2,7 @@
 
 .radio-group {
   display: flex;
-  gap: $spacing-3;
+  gap: $s-3;
 
   // Direction variants
   &--horizontal {
@@ -28,7 +28,7 @@
       background-color: var(--color-field-bg);
       border: $border solid transparent;
       border-radius: $rounded-lg;
-      padding: $spacing-2-5 $spacing-4;
+      padding: $s-2-5 $s-4;
       height: 42px;
       font-size: $text-sm;
       margin: 0;
@@ -72,7 +72,7 @@
       background-color: var(--color-field-bg);
       border: $border solid var(--color-field-border);
       border-radius: $rounded-lg;
-      padding: $spacing-2-5 $spacing-4;
+      padding: $s-2-5 $s-4;
       height: 42px;
       font-size: $text-base;
       margin: 0;
@@ -190,7 +190,7 @@
   &__content {
     display: flex;
     align-items: center;
-    gap: $spacing-2;
+    gap: $s-2;
   }
 
   // Icon
@@ -207,7 +207,7 @@
   // Label text
   &__label {
     text-transform: capitalize;
-    margin-right: $spacing-3;
+    margin-right: $s-3;
     // Inherit font properties from parent container to match Input exactly
     font-size: inherit;
     font-weight: inherit;
@@ -218,8 +218,8 @@
 
   // Native radio input
   &__input {
-    width: $spacing-4;
-    height: $spacing-4;
+    width: $s-4;
+    height: $s-4;
     margin: 0;
     cursor: pointer;
 

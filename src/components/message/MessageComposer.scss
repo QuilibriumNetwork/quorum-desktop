@@ -15,15 +15,15 @@
   box-shadow: none !important;
   box-sizing: border-box !important; /* Height includes padding */
   min-height: auto !important; /* Override TextArea primitive's min-height: 72px */
-  padding: 4px;
-  line-height: 1.5;
-  font-size: 16px;
+  padding: $s-1;
+  line-height: $leading-normal;
+  font-size: $text-base;
   white-space: pre-wrap;
   word-wrap: break-word;
   overflow-wrap: break-word;
   resize: none;
   /* min-height and max-height removed - now calculated dynamically in JavaScript */
-  transition: height 0.1s ease;
+  transition: height $duration-100 ease;
 
   /* Override TextArea primitive's focus background color */
   &:focus {
@@ -38,30 +38,30 @@
   }
 
   /* Smaller font and height on smaller screens to match button size */
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     /* min-height removed - now calculated dynamically in JavaScript */
-    padding: 4px;
+    padding: $s-1;
   }
 
-  @media (max-width: 640px) {
-    font-size: 14px;
+  @media (max-width: $screen-sm) {
+    font-size: $text-sm;
   }
 
   /* Allow more growth on larger screens */
-  @media (min-width: 1024px) {
-    max-height: 240px; /* ~10 rows on desktop */
+  @media (min-width: $screen-lg) {
+    max-height: $s-60; /* ~10 rows on desktop */
   }
 }
 
 /* Composer container */
 .message-composer-container {
   width: 100%;
-  padding-right: $spacing-6;
+  padding-right: $s-6;
   /* Safe area handling for devices with bottom bars/notches */
   padding-bottom: env(safe-area-inset-bottom, 0);
 
   @media (min-width: $screen-lg) {
-    padding-right: $spacing-8;
+    padding-right: $s-8;
   }
 }
 
@@ -70,11 +70,11 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: $spacing-2;
-  margin-left: 11px;
-  margin-top: $spacing-2;
-  margin-bottom: $spacing-2;
-  padding: 6px;
+  gap: $s-2;
+  margin-left: $s-3;
+  margin-top: $s-2;
+  margin-bottom: $s-2;
+  padding: $s-1-5;
   border-radius: $rounded-lg;
   background-color: var(--color-bg-chat-input);
 
@@ -96,7 +96,7 @@
 }
 
 /* Hide buttons when typing on mobile except send button */
-@media (max-width: 640px) {
+@media (max-width: $screen-sm) {
   .message-composer-row.typing {
     .message-composer-upload-btn,
     .message-composer-sticker-btn,
@@ -106,15 +106,15 @@
       pointer-events: none;
       width: 0;
       overflow: hidden;
-      transition: opacity 0.2s ease, transform 0.2s ease, width 0.2s ease;
+      transition: opacity $duration-200 ease, transform $duration-200 ease, width $duration-200 ease;
     }
   }
 }
 
 /* File upload button */
 .message-composer-upload-btn {
-  width: $spacing-7;
-  height: $spacing-7;
+  width: $s-7;
+  height: $s-7;
   border-radius: $rounded-full;
   background-color: var(--surface-5);
   cursor: pointer;
@@ -130,8 +130,8 @@
 
 /* Sticker button */
 .message-composer-sticker-btn {
-  width: $spacing-8;
-  height: $spacing-8;
+  width: $s-8;
+  height: $s-8;
   padding: 0;
   border-radius: $rounded-md;
   cursor: pointer;
@@ -149,8 +149,8 @@
 /* Send button */
 .message-composer-send-btn {
   cursor: pointer;
-  width: $spacing-8;
-  height: $spacing-8;
+  width: $s-8;
+  height: $s-8;
   border-radius: $rounded-full;
   background-color: var(--accent);
   background-position: center;
@@ -166,8 +166,8 @@
 
 /* Signing toggle button */
 .message-composer-signing-btn {
-  width: $spacing-8;
-  height: $spacing-8;
+  width: $s-8;
+  height: $s-8;
   padding: 0;
   border-radius: $rounded-md;
   cursor: pointer;
@@ -175,7 +175,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-left: -4px; /* Slight negative margin for tighter spacing */
+  margin-left: -$s-1; /* Slight negative margin for tighter spacing */
 }
 
 .message-composer-signing-btn.unsigned {
@@ -196,14 +196,14 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: $spacing-2;
+  gap: $s-2;
   margin-left: 11px;
-  margin-top: $spacing-2;
-  margin-bottom: $spacing-2;
-  padding-top: $spacing-2;
-  padding-bottom: $spacing-2;
-  padding-left: $spacing-4;
-  padding-right: 6px;
+  margin-top: $s-2;
+  margin-bottom: $s-2;
+  padding-top: $s-2;
+  padding-bottom: $s-2;
+  padding-left: $s-4;
+  padding-right: $s-1-5;
   border-radius: $rounded-lg;
   background-color: var(--color-bg-chat-input);
 }
@@ -225,24 +225,24 @@
   flex-direction: column;
   width: 100%;
   margin-left: 11px;
-  margin-top: $spacing-2;
+  margin-top: $s-2;
   margin-bottom: 0;
 }
 
 .message-composer-callout {
-  margin-left: $spacing-1;
-  margin-top: $spacing-3;
-  margin-bottom: $spacing-1;
+  margin-left: $s-1;
+  margin-top: $s-3;
+  margin-bottom: $s-1;
 }
 
 /* Reply-to bar */
 .message-composer-reply-bar {
   border-top-left-radius: $rounded-lg;
   border-top-right-radius: $rounded-lg;
-  padding-left: $spacing-4;
-  padding-right: $spacing-4;
-  padding-top: $spacing-1;
-  padding-bottom: $spacing-1;
+  padding-left: $s-4;
+  padding-right: $s-4;
+  padding-top: $s-1;
+  padding-bottom: $s-1;
   cursor: pointer;
   font-size: $text-xs;
   display: flex;
@@ -266,13 +266,13 @@
 
 /* File preview */
 .message-composer-file-preview {
-  margin-left: $spacing-3;
-  margin-right: $spacing-3;
-  margin-top: $spacing-2;
+  margin-left: $s-3;
+  margin-right: $s-3;
+  margin-top: $s-2;
 }
 
 .message-composer-file-container {
-  padding: $spacing-2;
+  padding: $s-2;
   position: relative;
   border-radius: $rounded-lg;
   background-color: var(--surface-3);
@@ -281,10 +281,10 @@
 
 .message-composer-file-close {
   position: absolute;
-  top: $spacing-1;
-  right: $spacing-1;
-  width: $spacing-6;
-  height: $spacing-6;
+  top: $s-1;
+  right: $s-1;
+  width: $s-6;
+  height: $s-6;
   padding: 0;
   background-color: var(--surface-7);
   border-radius: $rounded-full;
@@ -318,19 +318,19 @@
 .message-composer-play-icon {
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: $rounded-full;
-  padding: $spacing-1;
+  padding: $s-1;
 }
 
 .message-composer-play-svg {
-  width: $spacing-4;
-  height: $spacing-4;
+  width: $s-4;
+  height: $s-4;
   color: white;
 }
 
 /* Mention dropdown */
 .message-composer-mention-dropdown {
-  margin-left: 11px;
-  margin-bottom: $spacing-2;
+  margin-left: $s-3;
+  margin-bottom: $s-2;
   width: 250px;
 
   @media (min-width: $screen-sm) {
@@ -343,18 +343,18 @@
   border: $border solid var(--color-border-default);
   border-radius: $rounded-lg;
   box-shadow: $shadow-lg;
-  max-height: 15rem; /* 240px - equivalent to max-h-60 */
+  max-height: $s-60; /* 240px - equivalent to max-h-60 */
   overflow-y: auto;
 }
 
 .message-composer-mention-item {
   display: flex;
   align-items: center;
-  gap: $spacing-3;
-  padding-left: $spacing-3;
-  padding-right: $spacing-3;
-  padding-top: $spacing-2;
-  padding-bottom: $spacing-2;
+  gap: $s-3;
+  padding-left: $s-3;
+  padding-right: $s-3;
+  padding-top: $s-2;
+  padding-bottom: $s-2;
   cursor: pointer;
 
   &:hover {
@@ -377,8 +377,8 @@
 }
 
 .message-composer-mention-avatar {
-  width: $spacing-8;
-  height: $spacing-8;
+  width: $s-8;
+  height: $s-8;
   border-radius: $rounded-full;
   background-size: cover;
   background-position: center;

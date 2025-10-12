@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: $spacing-2 $spacing-4;
+  padding: $s-2 $s-4;
   border-radius: $rounded-full;
   box-shadow: $shadow-sm;
   font-weight: $font-medium;
@@ -130,7 +130,7 @@
 }
 
 .btn-small {
-  padding: $spacing-1 $spacing-2;
+  padding: $s-1 $s-2;
   font-size: $text-xs;
   box-shadow: $shadow-sm;
   border: $border solid currentColor;
@@ -162,7 +162,7 @@
 
   // Compact variant for list-style layouts
   &.btn-list-item {
-    padding: $spacing-2 $spacing-3; // Reduced padding for list items
+    padding: $s-2 $s-3; // Reduced padding for list items
   }
 }
 
@@ -229,52 +229,52 @@
 // Icon button styles
 .quorum-button-with-icon {
   .quorum-button-icon-element {
-    margin-right: $spacing-2;
+    margin-right: $s-2;
   }
 
   // Reduced spacing for compact buttons
   &.btn-compact .quorum-button-icon-element {
-    margin-right: $spacing-1;
+    margin-right: $s-1;
   }
 }
 
 // Button sizes
 .btn-compact {
-  padding: $spacing-1 $spacing-2;
+  padding: $s-1 $s-2;
   font-size: $text-xs; // Improved spacing from py-0 px-1
 }
 
 .btn-small {
-  padding: $spacing-1 $spacing-3;
+  padding: $s-1 $s-3;
   font-size: $text-xs;
 }
 
 .btn-large {
-  padding: $spacing-3 $spacing-6;
+  padding: $s-3 $s-6;
   font-size: $text-base;
 }
 
 .quorum-button-icon-only {
-  width: $spacing-10;
-  height: $spacing-10;
+  width: $s-10;
+  height: $s-10;
   padding-left: 0 !important;
   padding-right: 0 !important;
   border-radius: 50% !important;
 
   &.btn-compact {
-    width: $spacing-7;
-    height: $spacing-7;
+    width: $s-7;
+    height: $s-7;
     border-radius: $rounded !important;
   }
 
   &.btn-small {
-    width: $spacing-8;
-    height: $spacing-8;
+    width: $s-8;
+    height: $s-8;
   }
 
   &.btn-large {
-    width: $spacing-12;
-    height: $spacing-12;
+    width: $s-12;
+    height: $s-12;
   }
 
   .quorum-button-icon-element {
