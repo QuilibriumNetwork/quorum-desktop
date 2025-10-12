@@ -1,37 +1,42 @@
+@use '@/styles/variables' as *;
+
 .radio-group {
-  @apply flex gap-3;
+  display: flex;
+  gap: $spacing-3;
 
   // Direction variants
   &--horizontal {
-    @apply flex-row;
+    flex-direction: row;
   }
 
   &--vertical {
-    @apply flex-col max-w-[300px];
+    flex-direction: column;
+    max-width: 300px;
   }
 
   // Disabled state
   &--disabled {
-    @apply opacity-60 cursor-not-allowed;
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   // Default variant (no border, matches Input default style)
   &--default {
     .radio-group__item {
-      @apply cursor-pointer;
+      cursor: pointer;
       // Use exact Input primitive styling for consistency
       background-color: var(--color-field-bg);
-      border: 1px solid transparent;
-      border-radius: 0.5rem;
-      padding: 10px 16px;
+      border: $border solid transparent;
+      border-radius: $rounded-lg;
+      padding: $spacing-2-5 $spacing-4;
       height: 42px;
-      font-size: 14px;
-      margin: 0px;
+      font-size: $text-sm;
+      margin: 0;
       color: var(--color-field-text);
-      outline: 0px none;
+      outline: none;
       width: 100%;
       box-sizing: border-box;
-      transition: all 0.15s ease-in-out;
+      transition: all $duration-150 $ease-in-out;
 
       &:hover:not(.radio-group__item--disabled) {
         background-color: var(--color-field-bg-focus);
@@ -62,20 +67,20 @@
   // Bordered variant (explicit border, matches Input bordered style)
   &--bordered {
     .radio-group__item {
-      @apply cursor-pointer;
+      cursor: pointer;
       // Use exact Input primitive bordered styling for consistency
       background-color: var(--color-field-bg);
-      border: 1px solid var(--color-field-border);
-      border-radius: 0.5rem;
-      padding: 10px 16px;
+      border: $border solid var(--color-field-border);
+      border-radius: $rounded-lg;
+      padding: $spacing-2-5 $spacing-4;
       height: 42px;
-      font-size: 16px;
-      margin: 0px;
+      font-size: $text-base;
+      margin: 0;
       color: var(--color-field-text);
-      outline: 0px none;
+      outline: none;
       width: 100%;
       box-sizing: border-box;
-      transition: all 0.15s ease-in-out;
+      transition: all $duration-150 $ease-in-out;
 
       &:hover:not(.radio-group__item--disabled) {
         border-color: var(--color-field-border-hover);
@@ -107,17 +112,17 @@
     .radio-group__item {
       // Use Input primitive styling as base, but make it circular
       background-color: var(--color-field-bg);
-      border: 1px solid transparent;
-      border-radius: 50%; // Make it circular instead of 0.5rem
+      border: $border solid transparent;
+      border-radius: 50%; // Make it circular
       padding: 0; // No padding for circular items
       width: 42px; // Fixed square dimensions
       height: 42px;
-      font-size: 16px;
-      margin: 0px;
+      font-size: $text-base;
+      margin: 0;
       color: var(--color-field-text);
-      outline: 0px none;
+      outline: none;
       box-sizing: border-box;
-      transition: all 0.15s ease-in-out;
+      transition: all $duration-150 $ease-in-out;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -154,7 +159,7 @@
 
     // For bordered icon-only variant
     &.radio-group--bordered .radio-group__item {
-      border: 1px solid var(--color-field-border);
+      border: $border solid var(--color-field-border);
 
       &:hover:not(.radio-group__item--disabled) {
         border-color: var(--color-field-border-hover);
@@ -175,17 +180,22 @@
 
   // Radio item (label container) - base styles
   &__item {
-    @apply flex items-center justify-between cursor-pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
   }
 
   // Content wrapper (icon + label)
   &__content {
-    @apply flex items-center gap-2;
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
   }
 
   // Icon
   &__icon {
-    @apply text-surface-9;
+    color: var(--surface-9);
     font-size: 1.1em;
   }
 
@@ -196,7 +206,8 @@
 
   // Label text
   &__label {
-    @apply capitalize mr-3;
+    text-transform: capitalize;
+    margin-right: $spacing-3;
     // Inherit font properties from parent container to match Input exactly
     font-size: inherit;
     font-weight: inherit;
@@ -207,8 +218,8 @@
 
   // Native radio input
   &__input {
-    width: 16px;
-    height: 16px;
+    width: $spacing-4;
+    height: $spacing-4;
     margin: 0;
     cursor: pointer;
 
@@ -216,15 +227,15 @@
     -webkit-appearance: none !important;
     -moz-appearance: none !important;
     appearance: none !important;
-    border: 2px solid var(--color-field-border) !important;
+    border: $border-2 solid var(--color-field-border) !important;
     border-radius: 50% !important;
     background-color: transparent !important;
     position: relative;
-    transition: all 0.2s ease;
+    transition: all $duration-200 ease;
 
     // Only show accent color when checked - no hover effects
     &:checked {
-      border: 2px solid var(--color-field-border) !important;
+      border: $border-2 solid var(--color-field-border) !important;
       background-color: transparent !important;
 
       &::after {
