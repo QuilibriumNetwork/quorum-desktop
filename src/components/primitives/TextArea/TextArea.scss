@@ -1,3 +1,5 @@
+@use '@/styles/variables' as *;
+
 .textarea-wrapper {
   display: flex;
   flex-direction: column;
@@ -7,19 +9,19 @@
 .quorum-textarea {
   // Default filled style (matches Select default)
   background-color: var(--color-field-bg);
-  border: 1px solid transparent;
-  border-radius: 0.5rem;
-  padding: 10px 16px;
-  min-height: 72px; /* Approximately 3 rows */
-  font-size: 16px;
+  border: $border solid transparent;
+  border-radius: $rounded-lg;
+  padding: $s-2-5 $s-4;
+  min-height: $s-16; /* Approximately 3 rows */
+  font-size: $text-base;
   font-family: inherit;
-  line-height: 1.5;
-  margin: 0px;
+  line-height: $leading-normal;
+  margin: 0;
   color: var(--color-field-text);
-  outline: 0px none;
+  outline: 0 none;
   width: 100%;
   box-sizing: border-box;
-  transition: all 0.15s ease-in-out;
+  transition: all $duration-150 $ease-in-out;
 
   &::placeholder {
     color: var(--color-field-placeholder);
@@ -36,7 +38,7 @@
       --color-field-border-focus
     ) !important; // Show accent border on focus, override hover
     background-color: var(--color-field-bg-focus);
-    box-shadow: 0 0 0 3px var(--color-field-focus-shadow); // Keep focus glow
+    box-shadow: 0 0 0 $s-1 var(--color-field-focus-shadow); // Keep focus glow
   }
 
   &:disabled {
@@ -71,7 +73,7 @@
         --color-field-border-focus
       ) !important; // Override hover state
       background-color: var(--color-field-bg-focus); // Same bg as default
-      box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
+      box-shadow: 0 0 0 $s-1 var(--color-field-focus-shadow);
     }
 
     &:disabled {
@@ -98,7 +100,7 @@
 
     &:focus {
       border-color: rgb(var(--danger)) !important;
-      box-shadow: 0 0 0 3px var(--color-field-error-focus-shadow);
+      box-shadow: 0 0 0 $s-1 var(--color-field-error-focus-shadow);
     }
 
     &:hover:not(:disabled) {
@@ -125,17 +127,17 @@
   // Onboarding style with hardcoded brand blue colors
   background-color: #ffffff !important;
   color: #034081; // Brand blue-700 for text
-  border-radius: 16px; /* More rounded for onboarding */
-  padding: 10px 16px;
-  min-height: 72px;
-  font-size: 16px;
+  border-radius: $s-4; /* More rounded for onboarding */
+  padding: $s-2-5 $s-4;
+  min-height: $s-16;
+  font-size: $text-base;
   font-family: inherit;
-  line-height: 1.5;
-  margin: 0px;
-  border: 1px solid transparent;
+  line-height: $leading-normal;
+  margin: 0;
+  border: $border solid transparent;
   width: 100%;
   box-sizing: border-box;
-  transition: all 0.15s ease-in-out;
+  transition: all $duration-150 $ease-in-out;
 
   &::placeholder {
     color: #6fc3ff; // Brand blue-200 for placeholder
@@ -151,7 +153,7 @@
     outline: none;
     border-color: #3aa9f8 !important; // Brand blue-400 for focus border, override hover
     background-color: #ffffff !important;
-    box-shadow: 0 0 0 3px rgba(58, 169, 248, 0.1); // Brand blue focus shadow
+    box-shadow: 0 0 0 $s-1 rgba(58, 169, 248, 0.1); // Brand blue focus shadow
   }
 
   &:disabled {
@@ -176,7 +178,7 @@
 
     &:focus {
       border-color: rgb(var(--danger)) !important;
-      box-shadow: 0 0 0 3px var(--color-field-error-focus-shadow);
+      box-shadow: 0 0 0 $s-1 var(--color-field-error-focus-shadow);
     }
 
     &:hover:not(:disabled) {
@@ -200,7 +202,7 @@
 }
 
 .textarea-error-message {
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
+  margin-top: $s-1;
+  font-size: $text-xs;
   color: var(--color-text-danger);
 }

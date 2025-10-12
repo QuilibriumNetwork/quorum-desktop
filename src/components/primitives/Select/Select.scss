@@ -1,3 +1,5 @@
+@use '@/styles/variables' as *;
+
 .quorum-select-wrapper {
   position: relative;
   display: inline-block;
@@ -26,15 +28,15 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    padding: 0.5rem 0.75rem;
+    padding: $s-2 $s-3;
     background-color: var(--color-field-bg);
-    border: 1px solid transparent;
-    border-radius: 0.5rem;
+    border: $border solid transparent;
+    border-radius: $rounded-lg;
     color: var(--color-field-text);
-    font-size: 0.875rem;
-    line-height: 1.5;
+    font-size: $text-sm;
+    line-height: $leading-normal;
     cursor: pointer;
-    transition: all 0.15s ease-in-out;
+    transition: all $duration-150 $ease-in-out;
 
     &:hover:not(:disabled) {
       background-color: var(--color-field-bg-focus);
@@ -46,7 +48,7 @@
       border-color: var(
         --color-field-border-focus
       ); // Show accent border on focus
-      box-shadow: 0 0 0 3px var(--color-field-focus-shadow); // Keep focus glow
+      box-shadow: 0 0 0 $s-1 var(--color-field-focus-shadow); // Keep focus glow
     }
 
     &:disabled {
@@ -74,24 +76,24 @@
 
   // Size variants
   &--small &__trigger {
-    padding: 0.375rem 0.625rem;
-    font-size: 0.75rem;
+    padding: $s-1-5 $s-2-5;
+    font-size: $text-xs;
   }
 
   &--large &__trigger {
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
+    padding: $s-3 $s-4;
+    font-size: $text-base;
   }
 
   // Option text sizes should match trigger sizes
   &--small &__option {
-    font-size: 0.75rem;
-    padding: 0.375rem 0.625rem;
+    font-size: $text-xs;
+    padding: $s-1-5 $s-2-5;
   }
 
   &--large &__option {
-    font-size: 1rem;
-    padding: 0.75rem 1rem;
+    font-size: $text-base;
+    padding: $s-3 $s-4;
   }
 
   // Bordered variant (explicit bordered style)
@@ -107,7 +109,7 @@
     &:focus {
       border-color: var(--color-field-border-focus);
       background-color: var(--color-field-bg-focus); // Same bg as default
-      box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
+      box-shadow: 0 0 0 $s-1 var(--color-field-focus-shadow);
     }
 
     &:disabled {
@@ -131,13 +133,13 @@
   // Open state - default (filled)
   &--open &__trigger {
     border-color: var(--color-field-border-focus);
-    box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
+    box-shadow: 0 0 0 $s-1 var(--color-field-focus-shadow);
   }
 
   // Bordered variant open state
   &--bordered.quorum-select--open &__trigger {
     border-color: var(--color-field-border-focus);
-    box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
+    box-shadow: 0 0 0 $s-1 var(--color-field-focus-shadow);
   }
 
   // Error state - must come after variants for proper specificity
@@ -146,7 +148,7 @@
 
     &:focus {
       border-color: var(--color-field-border-error) !important;
-      box-shadow: 0 0 0 3px var(--color-field-error-focus-shadow);
+      box-shadow: 0 0 0 $s-1 var(--color-field-error-focus-shadow);
     }
 
     &:hover:not(:disabled) {
@@ -158,7 +160,7 @@
   &__value {
     display: flex;
     align-items: center;
-    gap: 0.25rem; // Smaller gap between icon and text for tighter grouping
+    gap: $s-1; // Smaller gap between icon and text for tighter grouping
     flex: 1;
     text-align: left;
     min-width: 0; // Allow flex item to shrink below content size
@@ -177,23 +179,23 @@
   }
 
   &__icon {
-    font-size: 1.125rem;
-    line-height: 1;
+    font-size: $text-lg;
+    line-height: $leading-none;
     flex-shrink: 0;
     margin-right: 0; // Remove margin since we now use gap in __value
   }
 
   &__option-icon {
-    font-size: 1.125rem;
-    line-height: 1;
-    margin-right: 0.5rem;
+    font-size: $text-lg;
+    line-height: $leading-none;
+    margin-right: $s-2;
     flex-shrink: 0;
   }
 
   &__arrow {
     font-size: 0.625rem;
-    margin-left: 0.5rem;
-    transition: transform 0.2s ease;
+    margin-left: $s-2;
+    transition: transform $duration-200 $ease-linear;
     color: var(--color-text-subtle);
   }
 
@@ -204,19 +206,17 @@
   // Dropdown - default (filled) style
   &__dropdown {
     position: absolute;
-    top: calc(100% + 0.25rem);
+    top: calc(100% + $s-1);
     left: 0;
     right: 0;
     width: 100%; // Match trigger width exactly
-    max-height: 15rem;
+    max-height: $s-60;
     overflow-y: auto;
     overflow-x: hidden; // Prevent horizontal scroll
     background-color: var(--color-field-options-bg);
     border: none; // Default filled style - no border
-    border-radius: 0.5rem;
-    box-shadow:
-      0 4px 6px -1px rgba(0, 0, 0, 0.1),
-      0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-radius: $rounded-lg;
+    box-shadow: $shadow-md;
     z-index: 1000;
 
     // Fixed dropdown styles (prevents clipping in scroll containers)
@@ -227,7 +227,7 @@
 
     // Scrollbar styling
     &::-webkit-scrollbar {
-      width: 0.5rem;
+      width: $s-2;
     }
 
     &::-webkit-scrollbar-track {
@@ -236,7 +236,7 @@
 
     &::-webkit-scrollbar-thumb {
       background: var(--surface-5);
-      border-radius: 0.25rem;
+      border-radius: $rounded;
 
       &:hover {
         background: var(--surface-6);
@@ -246,17 +246,17 @@
 
   // Bordered variant dropdown - has border
   &--bordered &__dropdown {
-    border: 1px solid var(--color-field-border);
+    border: $border solid var(--color-field-border);
   }
 
   // Dropdown placement
   &--placement-top &__dropdown {
     top: auto;
-    bottom: calc(100% + 0.25rem);
+    bottom: calc(100% + $s-1);
   }
 
   &--placement-bottom &__dropdown {
-    top: calc(100% + 0.25rem);
+    top: calc(100% + $s-1);
     bottom: auto;
   }
 
@@ -265,10 +265,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.5rem 0.75rem;
+    padding: $s-2 $s-3;
     cursor: pointer;
-    transition: background-color 0.1s ease;
-    font-size: 0.875rem; // Default medium size
+    transition: background-color $duration-100 $ease-linear;
+    font-size: $text-sm; // Default medium size
     white-space: nowrap;
 
     &:hover:not(&--disabled) {
@@ -278,7 +278,7 @@
     &--selected {
       background-color: var(--color-field-option-selected);
       color: var(--accent);
-      font-weight: 500;
+      font-weight: $font-medium;
     }
 
     &--disabled {
@@ -305,34 +305,34 @@
   }
 
   &__checkmark {
-    margin-left: 0.5rem;
+    margin-left: $s-2;
     color: var(--accent);
-    font-weight: bold;
+    font-weight: $font-bold;
     flex-shrink: 0;
   }
 
   // Error message
   &__error-message {
-    margin-top: 0.25rem;
-    font-size: 0.75rem;
+    margin-top: $s-1;
+    font-size: $text-xs;
     color: var(--color-text-danger);
   }
 
   // Group support
   &__group {
     &:not(:first-child) {
-      margin-top: 0.5rem;
+      margin-top: $s-2;
     }
   }
 
   &__group-label {
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
     color: var(--color-text-subtle);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.5rem 0.75rem 0.25rem 0.75rem;
-    margin-bottom: 0.25rem;
+    letter-spacing: $tracking-wide;
+    padding: $s-2 $s-3 $s-1 $s-3;
+    margin-bottom: $s-1;
     background-color: var(--color-field-bg);
     position: sticky;
     top: 0;
@@ -340,20 +340,20 @@
   }
 
   &__option--grouped {
-    padding-left: 1rem; // Indent grouped options slightly
+    padding-left: $s-4; // Indent grouped options slightly
   }
 
   // Avatar support
   &__option-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
+    width: $s-8;
+    height: $s-8;
+    border-radius: $rounded-full;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    margin-right: 0.75rem;
+    margin-right: $s-3;
     flex-shrink: 0;
-    border: 1px solid var(--color-border-default);
+    border: $border solid var(--color-border-default);
   }
 
   // Enhanced text layout for subtitles
@@ -365,7 +365,7 @@
   }
 
   &__option-label {
-    font-weight: 500;
+    font-weight: $font-medium;
     color: var(--color-text-main);
     white-space: nowrap;
     overflow: hidden;
@@ -373,12 +373,12 @@
   }
 
   &__option-subtitle {
-    font-size: 0.75rem;
+    font-size: $text-xs;
     color: var(--color-text-subtle);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-top: 0.125rem;
+    margin-top: $s-0-5;
   }
 
   // Adjust content layout when avatars or subtitles are present
@@ -391,9 +391,9 @@
 
   // Multiselect specific styles
   &__checkbox {
-    margin-right: 0.5rem;
+    margin-right: $s-2;
     color: var(--color-text-subtle);
-    font-size: 1rem;
+    font-size: $text-base;
     flex-shrink: 0;
 
     // Selected state
@@ -406,7 +406,7 @@
   &__chips {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: $s-1;
     flex-wrap: wrap;
     flex: 1;
     min-width: 0;
@@ -415,12 +415,12 @@
   &__chip {
     display: inline-flex;
     align-items: center;
-    padding: 0.125rem 0.5rem;
+    padding: $s-0-5 $s-2;
     background-color: var(--color-field-chip-bg, var(--surface-3));
     color: var(--color-field-chip-text, var(--color-text-main));
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
-    font-weight: 500;
+    border-radius: $rounded;
+    font-size: $text-xs;
+    font-weight: $font-medium;
     white-space: nowrap;
     max-width: 150px;
     overflow: hidden;
@@ -429,7 +429,7 @@
     &--count {
       background-color: var(--color-field-chip-count-bg, var(--accent-100));
       color: var(--color-field-chip-count-text, var(--accent-700));
-      font-weight: 600;
+      font-weight: $font-semibold;
     }
   }
 
@@ -437,8 +437,8 @@
   &__actions {
     display: flex;
     justify-content: space-between;
-    padding: 0.5rem 0.75rem;
-    border-bottom: 1px solid var(--color-border-default);
+    padding: $s-2 $s-3;
+    border-bottom: $border solid var(--color-border-default);
     background-color: var(--color-field-bg);
     position: sticky;
     top: 0;
@@ -448,13 +448,13 @@
   &__action {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
+    gap: $s-2;
+    padding: $s-1 $s-2;
+    border-radius: $rounded;
     cursor: pointer;
-    transition: background-color 0.1s ease;
-    font-size: 0.875rem;
-    font-weight: 500;
+    transition: background-color $duration-100 $ease-linear;
+    font-size: $text-sm;
+    font-weight: $font-medium;
     color: var(--color-text-main);
 
     &:hover {
@@ -481,7 +481,7 @@
     width: auto;
 
     .quorum-select__trigger {
-      padding: 0.5rem;
+      padding: $s-2;
       min-width: auto;
       width: auto;
       background-color: transparent;
@@ -499,11 +499,11 @@
     }
 
     &.quorum-select--small .quorum-select__trigger {
-      padding: 0.375rem;
+      padding: $s-1-5;
     }
 
     &.quorum-select--large .quorum-select__trigger {
-      padding: 0.625rem;
+      padding: $s-2-5;
     }
 
     .quorum-select__value {
@@ -523,7 +523,7 @@
 
     .quorum-select__compact-icon {
       color: var(--color-text-subtle);
-      transition: color 0.15s ease;
+      transition: color $duration-150 $ease-linear;
 
       .quorum-select__trigger:hover & {
         color: var(--accent);
@@ -532,17 +532,17 @@
 
     .quorum-select__selection-badge {
       position: absolute;
-      top: -4px;
-      right: -4px;
+      top: -$s-1;
+      right: -$s-1;
       background-color: var(--accent);
       color: white;
       font-size: 10px;
-      font-weight: 600;
-      line-height: 1;
-      padding: 2px 4px;
+      font-weight: $font-semibold;
+      line-height: $leading-none;
+      padding: $s-0-5 $s-1;
       border-radius: 10px;
-      min-width: 16px;
-      height: 16px;
+      min-width: $s-4;
+      height: $s-4;
       display: flex;
       align-items: center;
       justify-content: center;

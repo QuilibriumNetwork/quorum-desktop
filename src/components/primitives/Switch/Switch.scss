@@ -1,10 +1,12 @@
+@use '@/styles/variables' as *;
+
 // Switch primitive styles
 .switch-container {
   position: relative;
   display: inline-block;
   cursor: pointer;
   user-select: none;
-  transition: opacity 0.2s ease;
+  transition: opacity $duration-200 $ease-linear;
 
   &.switch-disabled {
     cursor: not-allowed;
@@ -19,7 +21,7 @@
   position: absolute;
 
   &:focus + .switch-slider {
-    box-shadow: 0 0 0 2px var(--accent-200);
+    box-shadow: 0 0 0 $s-0-5 var(--accent-200);
   }
 }
 
@@ -29,15 +31,15 @@
   background-color: var(--surface-4);
   border-radius: 34px;
   transition:
-    background-color 0.3s ease,
-    padding-left 0.3s ease;
-  padding: 2px;
+    background-color $duration-300 $ease-linear,
+    padding-left $duration-300 $ease-linear;
+  padding: $s-0-5;
 
   .switch-thumb {
     background-color: white;
-    border-radius: 50%;
-    transition: box-shadow 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: $rounded-full;
+    transition: box-shadow $duration-200 $ease-linear;
+    box-shadow: 0 $s-0-5 $s-1 rgba(0, 0, 0, 0.2);
     display: block;
   }
 }
@@ -45,43 +47,43 @@
 // Size variants
 .switch-small {
   .switch-slider {
-    width: 36px;
-    height: 20px;
+    width: $s-9; // 36px
+    height: $s-5; // 20px
   }
   .switch-thumb {
-    width: 16px;
-    height: 16px;
+    width: $s-4; // 16px
+    height: $s-4; // 16px
   }
   &.switch-on .switch-slider {
-    padding-left: 18px; // 36px - 16px - 2px = 18px
+    padding-left: 18px; // 36px - 16px - 2px
   }
 }
 
 .switch-medium {
   .switch-slider {
-    width: 44px;
-    height: 24px;
+    width: $s-11; // 44px
+    height: $s-6; // 24px
   }
   .switch-thumb {
-    width: 20px;
-    height: 20px;
+    width: $s-5; // 20px
+    height: $s-5; // 20px
   }
   &.switch-on .switch-slider {
-    padding-left: 22px; // 44px - 20px - 2px = 22px
+    padding-left: 22px; // 44px - 20px - 2px
   }
 }
 
 .switch-large {
   .switch-slider {
-    width: 52px;
-    height: 28px;
+    width: $s-12; // 48px 
+    height: $s-7; // 28px
   }
   .switch-thumb {
-    width: 24px;
-    height: 24px;
+    width: $s-6; // 24px
+    height: $s-6; // 24px
   }
   &.switch-on .switch-slider {
-    padding-left: 26px; // 52px - 24px - 2px = 26px
+    padding-left: 22px; // 48px - 24px - 2px 
   }
 }
 
@@ -100,7 +102,7 @@
 // Hover states (non-disabled)
 .switch-container:not(.switch-disabled):hover {
   .switch-thumb {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 $s-0-5 $s-2 rgba(0, 0, 0, 0.3);
   }
 }
 

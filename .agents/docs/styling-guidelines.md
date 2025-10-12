@@ -94,6 +94,8 @@ padding: 16px;
 - Small sizes: A `3px` width can use the `$s-1` variable (4px) or `$s-0-5` variable (2px).
 - Medium sizes: A `50px` width can use the `$s-12` variable (48px).
 - Large sizes: A `140px` width can use the `$s-36` variable (144px).
+
+**DON'T:**
 - NEVER use complex calculations (e.g.:`$s-80 * 10;`). For extra-large sizes, just keep the original raw px value.
 - NEVER us evariables inside calculations, e.g.: `calc(100vw - $s-20)`.
 ---

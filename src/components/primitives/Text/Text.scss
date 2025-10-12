@@ -1,6 +1,8 @@
 /* === TEXT PRIMITIVE LINK STYLING === */
+@use '@/styles/variables' as *;
+
 .text-link-primitive {
-  font-weight: 500;
+  font-weight: $font-medium;
   color: var(--accent);
   text-decoration: inherit;
 }
