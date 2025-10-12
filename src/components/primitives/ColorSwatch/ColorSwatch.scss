@@ -1,29 +1,41 @@
+@use '@/styles/variables' as *;
+
 .color-swatch {
-  @apply rounded-full cursor-pointer border-2 flex items-center justify-center transition-all relative;
-  border-color: transparent;
+  border-radius: $rounded-full;
+  cursor: pointer;
+  border: $border-2 solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $duration-150 $ease-in-out;
+  position: relative;
   // background-color set via inline style for specific color
 
   &:hover:not(&--disabled):not(&--active) {
-    @apply scale-110;
+    transform: scale(1.1);
   }
 
   &:focus-visible {
-    @apply outline-none ring-2 ring-offset-2;
-    ring-color: var(--accent);
-    ring-offset-color: var(--surface-1);
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--accent),
+      0 0 0 4px var(--surface-1);
   }
 
   // Size variants
   &--small {
-    @apply w-6 h-6;
+    width: $s-6;
+    height: $s-6;
   }
 
   &--medium {
-    @apply w-8 h-8;
+    width: $s-8;
+    height: $s-8;
   }
 
   &--large {
-    @apply w-10 h-10;
+    width: $s-10;
+    height: $s-10;
   }
 
   // Active state
@@ -36,12 +48,14 @@
 
   // Disabled state
   &--disabled {
-    @apply cursor-not-allowed opacity-50;
+    cursor: not-allowed;
+    opacity: 0.5;
   }
 
   // Checkmark icon
   &__checkmark {
-    @apply text-white absolute;
+    color: white;
+    position: absolute;
     font-size: 0.75em;
     top: 50%;
     left: 50%;

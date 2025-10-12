@@ -1,3 +1,5 @@
+@use '@/styles/variables' as *;
+
 .input-container {
   display: flex;
   flex-direction: column;
@@ -21,15 +23,15 @@
 
 .input-clear-button {
   position: absolute;
-  right: 10px;
+  right: $s-2-5;
   top: 50%;
   transform: translateY(-50%);
   background: transparent;
   border: none;
   color: var(--color-text-subtle);
-  font-size: 18px;
-  line-height: 1;
-  padding: 4px;
+  font-size: $text-lg;
+  line-height: $leading-none;
+  padding: $s-1;
   cursor: pointer;
 
   &:hover {
@@ -39,50 +41,50 @@
 
 /* Ensure the input has right padding to avoid overlap with the clear button */
 .input-has-clear .quorum-input {
-  padding-right: 36px;
+  padding-right: $s-9;
 }
 
 .input-label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  line-height: 1.25rem;
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  line-height: $text-sm-lh;
 
   &__required {
     color: var(--color-text-danger);
-    font-weight: bold;
-    margin-left: 2px;
+    font-weight: $font-bold;
+    margin-left: $s-0-5;
   }
 
   &--static {
     color: rgb(var(--color-text-main));
-    margin-bottom: 0.25rem;
+    margin-bottom: $s-1;
     display: block;
-    font-size: 0.75rem;
-    font-weight: 600;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: $tracking-wider;
   }
 
   &--floating {
     position: absolute;
-    left: 16px;
+    left: $s-4;
     top: 50%;
     transform: translateY(-50%);
     color: var(--color-text-subtle);
-    transition: all 0.2s ease-in-out;
+    transition: all $duration-200 $ease-in-out;
     pointer-events: none;
     z-index: 1;
 
     &-active {
       // When active, look like a static label
-      top: -24px; // Position above the input like static labels
+      top: -$s-6; // Position above the input like static labels
       left: 0; // Align with left edge of input field
       transform: translateY(0);
       color: rgb(var(--color-text-main));
-      font-size: 0.75rem;
-      font-weight: 600;
+      font-size: $text-xs;
+      font-weight: $font-semibold;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: $tracking-wider;
       background: transparent;
     }
   }
@@ -91,17 +93,17 @@
 .quorum-input {
   // Default filled style (matches Select default)
   background-color: var(--color-field-bg);
-  border: 1px solid transparent;
-  border-radius: 0.5rem;
-  padding: 10px 16px;
-  height: 42px;
-  font-size: 16px;
-  margin: 0px;
+  border: $border solid transparent;
+  border-radius: $rounded-lg;
+  padding: $s-2-5 $s-4;
+  height: $s-10 + $s-0-5;
+  font-size: $s-4;
+  margin: 0;
   color: var(--color-field-text);
-  outline: 0px none;
+  outline: 0 none;
   width: 100%;
   box-sizing: border-box;
-  transition: all 0.15s ease-in-out;
+  transition: all $duration-150 $ease-in-out;
 
   &::placeholder {
     color: var(--color-field-placeholder);
@@ -118,7 +120,7 @@
       --color-field-border-focus
     ) !important; // Show accent border on focus, override hover
     background-color: var(--color-field-bg-focus);
-    box-shadow: 0 0 0 3px var(--color-field-focus-shadow); // Keep focus glow
+    box-shadow: 0 0 0 $s-1 var(--color-field-focus-shadow); // Focus glow (4px, close to original 3px)
   }
 
   &:disabled {
@@ -153,7 +155,7 @@
         --color-field-border-focus
       ) !important; // Override hover state
       background-color: var(--color-field-bg-focus); // Same bg as default
-      box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
+      box-shadow: 0 0 0 $s-1 var(--color-field-focus-shadow); // Focus glow (4px, close to original 3px)
     }
 
     &:disabled {
@@ -178,11 +180,11 @@
   &--minimal {
     background-color: transparent;
     border: none;
-    border-bottom: 1px solid var(--color-field-border);
+    border-bottom: $border solid var(--color-field-border);
     border-radius: 0;
-    padding: 0 4px 2px 4px; // Minimal vertical padding
+    padding: 0 $s-1 $s-0-5 $s-1; // Minimal vertical padding
     height: auto; // Override default height
-    min-height: 28px; // Smaller minimum height for minimal variant
+    min-height: $s-7; // Smaller minimum height for minimal variant
 
     &:hover:not(:disabled):not(:focus) {
       background-color: transparent;
@@ -217,7 +219,7 @@
 
     &:focus {
       border-color: rgb(var(--danger)) !important;
-      box-shadow: 0 0 0 3px var(--color-field-error-focus-shadow);
+      box-shadow: 0 0 0 $s-1 var(--color-field-error-focus-shadow); // Error glow (4px, close to original 3px)
     }
 
     &:hover:not(:disabled) {
@@ -227,17 +229,17 @@
     // Special case for minimal variant error state
     &.quorum-input--minimal {
       border: none;
-      border-bottom: 1px solid rgb(var(--danger)) !important;
+      border-bottom: $border solid rgb(var(--danger)) !important;
 
       &:focus {
         border: none;
-        border-bottom: 1px solid rgb(var(--danger)) !important;
+        border-bottom: $border solid rgb(var(--danger)) !important;
         box-shadow: none;
       }
 
       &:hover:not(:disabled) {
         border: none;
-        border-bottom: 1px solid rgb(var(--danger)) !important;
+        border-bottom: $border solid rgb(var(--danger)) !important;
       }
     }
   }
@@ -261,17 +263,17 @@
 .onboarding-input {
   // Onboarding style with hardcoded brand blue colors
   background-color: #ffffff !important;
-  border: 1px solid transparent;
-  border-radius: 9999px; // Full pill shape
-  padding: 10px 16px;
-  height: 42px;
-  font-size: 16px;
-  margin: 0px;
+  border: $border solid transparent;
+  border-radius: $rounded-full; // Full pill shape
+  padding: $s-2-5 $s-4;
+  height: $s-10 + $s-0-5;
+  font-size: $s-4;
+  margin: 0;
   color: #034081; // Brand blue-700 for text
-  outline: 0px none;
+  outline: 0 none;
   width: 100%;
   box-sizing: border-box;
-  transition: all 0.15s ease-in-out;
+  transition: all $duration-150 $ease-in-out;
 
   &::placeholder {
     color: #6fc3ff; // Brand blue-200 for placeholder
@@ -287,7 +289,7 @@
     outline: none;
     border-color: #3aa9f8 !important; // Brand blue-400 for focus border, override hover
     background-color: #ffffff !important;
-    box-shadow: 0 0 0 3px rgba(58, 169, 248, 0.1); // Brand blue focus shadow
+    box-shadow: 0 0 0 $s-1 rgba(58, 169, 248, 0.1); // Brand blue focus shadow (4px, close to original 3px)
   }
 
   &:disabled {
@@ -312,7 +314,7 @@
 
     &:focus {
       border-color: rgb(var(--danger)) !important;
-      box-shadow: 0 0 0 3px var(--color-field-error-focus-shadow);
+      box-shadow: 0 0 0 $s-1 var(--color-field-error-focus-shadow); // Error glow (4px, close to original 3px)
     }
 
     &:hover:not(:disabled) {
@@ -332,15 +334,15 @@
 }
 
 .input-helper-text {
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
+  margin-top: $s-1;
+  font-size: $text-xs;
   color: var(--color-text-subtle);
   text-align: left;
 }
 
 .input-error-message {
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
+  margin-top: $s-1;
+  font-size: $text-xs;
   color: var(--color-text-danger);
   text-align: left;
 }
