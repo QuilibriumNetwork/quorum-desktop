@@ -1,3 +1,5 @@
+@use '@/styles/variables' as *;
+
 @keyframes flash-highlight {
   0% {
     background-color: rgb(var(--warning) / 0.2);
@@ -20,8 +22,8 @@
   max-width: 560px;
   height: auto;
   aspect-ratio: 16 / 9;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-top: $s-2;
+  margin-bottom: $s-2;
 
   /* Prevent re-rendering issues */
   will-change: auto;
@@ -76,7 +78,7 @@
 /* YouTube facade-specific styles */
 .youtube-facade {
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: transform $duration-200 ease;
 
   &:hover {
     transform: scale(1.02);
@@ -98,7 +100,7 @@
 
   /* Add top margin below 640px to avoid 3-dots overlap */
   @media (max-width: 640px) {
-    margin-top: 0.75rem; /* 12px top margin for spacing */
+    margin-top: $s-3; /* 12px top margin for spacing */
   }
 }
 
@@ -111,7 +113,7 @@
 
   /* Add top margin below 640px to avoid 3-dots overlap */
   @media (max-width: 640px) {
-    margin-top: 0.75rem; /* 12px top margin for spacing */
+    margin-top: $s-3; /* 12px top margin for spacing */
   }
 }
 

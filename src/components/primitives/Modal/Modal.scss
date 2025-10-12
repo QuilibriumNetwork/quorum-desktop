@@ -122,12 +122,12 @@
   transition: color $duration-200 $ease-in-out;
   // Increase touch target for mobile
   padding: $s-2;
-  margin: -$s-2;
+  margin: (-$s-2);
 
   @media (max-width: $screen-md) {
     // Even larger touch target on mobile (44x44px minimum)
     padding: $s-3;
-    margin: -$s-3;
+    margin: (-$s-3);
   }
 
   &:hover {

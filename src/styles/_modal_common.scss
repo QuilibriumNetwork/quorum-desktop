@@ -314,7 +314,7 @@
   font-weight: $font-medium;
   cursor: pointer;
   padding: $s-2 $s-3;
-  margin: $s-3 -$s-2;
+  margin: $s-3 ((-$s-2));
   border-radius: $rounded-md;
   font-size: $text-sm;
   transition: background-color $duration-200 ease;
@@ -705,8 +705,8 @@
     border-radius: $rounded-xl;
     font-weight: $font-bold;
     position: absolute;
-    top: -$s-1;
-    right: -$s-1;
+    top: (-$s-1);
+    right: (-$s-1);
     box-shadow: 0px $s-1 $s-1 rgba(0, 0, 0, 0.25);
     line-height: $s-6;
   }

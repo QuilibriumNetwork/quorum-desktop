@@ -1,9 +1,10 @@
 // Mobile Emoji Picker Drawer Specific Styles
+@use '@/styles/variables' as *;
 
 .emoji-picker-drawer__content {
   flex: 1;
   overflow: hidden;
-  padding: 16px; // Standard padding for non-list content
+  padding: $s-4; // Standard padding for non-list content
 
   // Override emoji picker styles for mobile drawer
   .EmojiPickerReact {
@@ -16,7 +17,7 @@
     --epr-header-padding: 0 !important;
 
     // Increase preview height for mobile drawer
-    --epr-preview-height: 88px !important;
+    --epr-preview-height: 90px !important;
 
     // Ensure proper sizing
     width: 100% !important;
@@ -25,19 +26,19 @@
 
     // Mobile-optimized search
     .epr-search-container {
-      padding: 0px 8px 8px 8px;
+      padding: 0 $s-2 $s-2 $s-2;
     }
 
     .epr-search {
-      font-size: 16px; // Prevent iOS zoom
-      padding: 12px 16px;
-      border-radius: 0.75rem;
+      font-size: $text-base; // Prevent iOS zoom
+      padding: $s-3 $s-4;
+      border-radius: $rounded-xl;
     }
 
     // Category navigation - basic spacing only (focus styling is global)
     .epr-category-nav {
-      padding: 8px 4px;
-      gap: 4px;
+      padding: $s-2 $s-1;
+      gap: $s-1;
     }
 
     // Emoji body
@@ -58,9 +59,9 @@
 
     // Preview section
     .epr-preview {
-      padding: 12px;
-      border-top: 1px solid var(--surface-3);
-      min-height: 60px;
+      padding: $s-3;
+      border-top: $border solid var(--surface-3);
+      min-height: $s-16;
     }
   }
 }

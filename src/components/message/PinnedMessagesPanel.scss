@@ -1,24 +1,25 @@
 @use '../../styles/dropdown-result-item';
+@use '@/styles/variables' as *;
 
 // Pinned messages panel specific styling
 .pinned-messages-panel {
   // z-index inherited from DropdownPanel (10001) - no override needed
 
   .dropdown-panel__title {
-    font-size: 14px !important; // Smaller title font size
+    font-size: $text-sm !important; // Smaller title font size
   }
 
   // Responsive: reduce message preview text to match header text at 640px breakpoint
   @media (max-width: 639px) {
     .message-preview-post {
-      font-size: 12px !important;
+      font-size: $text-xs !important;
     }
   }
 
   // Override any other responsive rules that might affect text at 768px
   @media (min-width: 640px) {
     .message-preview-post {
-      font-size: 14px !important;
+      font-size: $text-sm !important;
     }
   }
 }
@@ -26,7 +27,7 @@
 // Use shared list styling with zero horizontal padding for full-width borders
 .pinned-messages-list {
   @extend .dropdown-results-list;
-  padding: 0 0 16px 0 !important; // Override to ensure zero horizontal padding
+  padding: 0 0 $s-4 0 !important; // Override to ensure zero horizontal padding
 
   // On mobile (touch devices), Virtuoso needs a height to work
   // Set to a large value that will be constrained by MobileDrawer's 80vh
@@ -52,7 +53,7 @@
   // Mobile: remove flex properties to allow stacking
   @media (max-width: 639px) {
     display: block;
-    padding-bottom: 8px;
+    padding-bottom: $s-2;
   }
 }
 

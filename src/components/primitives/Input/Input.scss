@@ -77,7 +77,7 @@
 
     &-active {
       // When active, look like a static label
-      top: -$s-6; // Position above the input like static labels
+      top: (-$s-6); // Position above the input like static labels
       left: 0; // Align with left edge of input field
       transform: translateY(0);
       color: rgb(var(--color-text-main));

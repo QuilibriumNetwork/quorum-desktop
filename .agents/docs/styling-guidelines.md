@@ -95,9 +95,12 @@ padding: 16px;
 - Medium sizes: A `50px` width can use the `$s-12` variable (48px).
 - Large sizes: A `140px` width can use the `$s-36` variable (144px).
 
+**NEGATIVE VALUES:**
+When using negative spacing (e.g. for margins), wrap the negative variable in parentheses so Sass parses it correctly, e.g.: `margin: $s-3 (-$s-2);`. This avoids the Sass strict-unary warning.
+
 **DON'T:**
-- NEVER use complex calculations (e.g.:`$s-80 * 10;`). For extra-large sizes, just keep the original raw px value.
-- NEVER us evariables inside calculations, e.g.: `calc(100vw - $s-20)`.
+- NEVER use variables inside calculations, e.g.: `calc(100vw - $s-20)`, or `$s-80 * 10;`. Just keep the original raw px values.
+
 ---
 
 ### 2. Colors - Use CSS Variables
