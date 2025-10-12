@@ -1,3 +1,5 @@
+@use '@/styles/variables' as *;
+
 .direct-messages-container {
   display: flex;
   flex-direction: row;
@@ -38,11 +40,11 @@
     height: 100vh;
     background-color: var(--color-bg-sidebar);
     z-index: 998;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: $s-px 0 $s-2 rgba(0, 0, 0, 0.15);
     transform: translateX(-100%); // Hidden: move completely left
-    transition: transform 300ms ease-in-out;
+    transition: transform $duration-300 $ease-in-out;
 
     &.open {
       transform: translateX(100%); // Visible: slide to navbar edge position

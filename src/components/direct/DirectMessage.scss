@@ -1,13 +1,14 @@
 @use '../../styles/chat';
+@use '@/styles/variables' as *;
 
 .direct-message-name {
-  font-weight: 700;
-  font-size: 16px;
-  border-bottom: 1px solid var(--surface-5);
+  font-weight: $font-bold;
+  font-size: $text-base;
+  border-bottom: $border solid var(--surface-5);
 
   // Responsive layout for mobile/tablet
   @media (max-width: 1023px) {
-    gap: 6px;
+    gap: $s-1-5;
 
     // Ensure search bar + users icon are properly spaced on top
     .dm-search {
@@ -36,17 +37,17 @@
 // Message editor styles moved to MessageComposer.scss
 
 .message-reply-curve {
-  width: 32px;
-  height: 20px;
-  border-radius: 4px 0px 0px 0px;
-  border-right: 0px;
-  border-bottom: 0px;
-  border-left: 1px;
-  border-top: 1px;
+  width: $s-8;
+  height: $s-5;
+  border-radius: $rounded 0 0 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-left: $border;
+  border-top: $border;
   border-color: var(--color-border-strong);
   border-style: solid;
-  margin-left: 37px;
-  margin-top: 8px;
+  margin-left: $s-9;
+  margin-top: $s-2;
 }
 
 .message-reply-heading {
@@ -55,7 +56,7 @@
   align-content: center;
   vertical-align: middle;
   cursor: pointer;
-  padding-bottom: 3px;
+  padding-bottom: $s-1;
 }
 
 // Ensure the composer stays visible at bottom and doesn't get pushed off-screen
@@ -68,20 +69,20 @@
 
 .message-reply-sender-icon {
   // UserAvatar component handles size and border-radius
-  margin: 2px;
+  margin: $s-0-5;
 }
 
 .message-reply-sender-name {
-  padding-left: 2pt;
-  padding-top: 2pt;
-  font-size: 10pt;
-  font-weight: 600;
+  padding-left: $s-0-5;
+  padding-top: $s-0-5;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
 }
 
 .message-reply-text {
-  padding-left: 4pt;
-  padding-top: 2pt;
-  font-size: 10pt;
+  padding-left: $s-1;
+  padding-top: $s-0-5;
+  font-size: $text-xs;
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 40%;

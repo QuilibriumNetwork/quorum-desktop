@@ -1,10 +1,12 @@
+@use '@/styles/variables' as *;
+
 .direct-message-contact {
-  margin: 5px 8px;
-  padding: 5px 7px;
-  margin-right: 18px;
+  margin: $s-1 $s-2;
+  padding: $s-1 $s-2;
+  margin-right: $s-4;
 }
 
 .direct-message-contact-name {
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: $font-bold;
+  font-size: $text-sm;
 }

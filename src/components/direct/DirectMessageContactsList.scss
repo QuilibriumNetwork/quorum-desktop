@@ -1,7 +1,9 @@
+@use '@/styles/variables' as *;
+
 .direct-messages-list-wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 52px); // Account for UserStatus height
+  height: calc(100% - 48px); // Account for UserStatus height
   overflow: hidden;
 
   // On mobile, UserStatus is hidden so expand to full height
@@ -15,7 +17,7 @@
   top: 0;
   background-color: var(--color-bg-sidebar);
   z-index: 10;
-  border-top-left-radius: 0.75rem;
+  border-top-left-radius: $rounded-xl;
 }
 
 .direct-messages-list {
