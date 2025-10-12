@@ -20,6 +20,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: '480px', // Mobile breakpoint (matches app's 480px standard)
+      },
       colors: {
         // accent color
         accent: {

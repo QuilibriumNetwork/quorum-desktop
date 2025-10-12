@@ -9,6 +9,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Cross-Platform Repository Implementation](docs/cross-platform-repository-implementation.md)
 - [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
+- [**Styling Guidelines - Tailwind vs Raw CSS**](docs/styling-guidelines.md) ⭐ NEW
 
 ### Development
 - [Unused Dependencies Analysis](docs/development/unused-dependencies-analysis.md)

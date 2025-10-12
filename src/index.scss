@@ -1,8 +1,9 @@
 /* === IMPORTS === */
-@use './styles/_colors.scss';
-@use './styles/_base.scss';
-@use './styles/_components.scss';
-@use './styles/_emoji-picker.scss';
+@use './styles/_variables.scss' as *; /* Tailwind design tokens (spacing, typography, etc.) */
+@use './styles/_colors.scss';         /* Theme colors (light/dark, accent, surfaces) */
+@use './styles/_base.scss';           /* Base styles and global resets */
+@use './styles/_components.scss';     /* Shared component styles */
+@use './styles/_emoji-picker.scss';   /* Emoji picker customization */
 
 @tailwind base;
 @tailwind components;

@@ -18,15 +18,23 @@ Fast lookup guide for common tasks, file locations, and architectural patterns i
 - **Utilities**: `src/utils/`
 
 ### Styling
-- **Theme config**: `src/index.css` (semantic colors, CSS variables)
+- **Styling Guidelines**: `docs/styling-guidelines.md` ⭐ **READ THIS FIRST**
+- **Theme config**: `src/styles/_colors.scss` (CSS variables)
 - **Tailwind config**: `tailwind.config.js`
 - **Color system**: RGB-based utilities (`--danger`, `--success`, `--warning`, `--info`)
 
 #### Quick Styling Reference
 
+**Core Rules:**
+- **Use Tailwind in JSX** for simple styles (< 7 classes)
+- **Use raw CSS in .scss** for complex/shared styles
+- **NEVER use `@apply`** (anti-pattern - loses benefits of both)
+- **Always use `rem`** instead of `px` (follow Tailwind spacing scale)
+- **Always use CSS variables** for colors (never hardcode hex values)
+
 **Theme System:**
 - Light/dark themes controlled via `dark` class on `<html>`
-- Accent colors: `accent-50` → `accent-900`
+- Accent colors: `accent-50` → `accent-900` (dynamic theming support)
 - Surface colors: `surface-00` → `surface-10`
 - Text colors: `text-strong`, `text-main`, `text-subtle`, `text-muted`
 
@@ -39,9 +47,10 @@ Fast lookup guide for common tasks, file locations, and architectural patterns i
 - `bg-app`: Main background
 - `bg-sidebar`: Sidebar background
 - `bg-card`: Card background
-- Defined in: `src/index.css`
+- Form fields: Use `--color-field-*` variables (see styling guide)
 
 **Detailed Guides:**
+- [**Styling Guidelines**](docs/styling-guidelines.md) ⭐ Complete Tailwind vs CSS guide
 - [Primitive Styling Guide](docs/features/primitives/05-primitive-styling-guide.md)
 - [Cross-Platform Theming](docs/features/cross-platform-theming.md)
 
